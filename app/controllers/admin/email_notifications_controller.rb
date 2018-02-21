@@ -58,7 +58,7 @@ class Admin::EmailNotificationsController < Admin::AdminController
     @default_language = current_account.language 
     @type = params[:type]
     url_check = @email_notification.fetch_template || params[:type]
-    if @email_notification.send(url_check).nil?
+    if @email_notification.safe_send(url_check).nil?
       flash[:error] = t(:'flash.email_notifications.update.does_not_exist')
       redirect_to admin_email_notifications_path
     end

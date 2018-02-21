@@ -462,7 +462,7 @@ HTML
     curr_admin_group.map do |group, items|
       dup_items = items.reject do |item| 
         feature_enabled = "#{item}_enabled?".to_sym
-        current_account.respond_to?(feature_enabled) && !current_account.send(feature_enabled)
+        current_account.respond_to?(feature_enabled) && !current_account.safe_send(feature_enabled)
       end
       curr_admin_group[group] = dup_items
     end

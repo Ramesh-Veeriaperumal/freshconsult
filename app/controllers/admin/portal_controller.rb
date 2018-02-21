@@ -118,7 +118,7 @@ class Admin::PortalController < Admin::AdminController
     end
     
     def delete_icon(icon_type)
-      @portal.send(icon_type).destroy
+      @portal.safe_send(icon_type).destroy
       @portal.save
       redirect_to :back
       # render :text => "success"

@@ -60,7 +60,7 @@ module SearchService
       end
 
       def log(message, level = 'info')
-        log_device.send(level, "[#{@log_uuid}] [#{timestamp}] #{message}")
+        log_device.safe_send(level, "[#{@log_uuid}] [#{timestamp}] #{message}")
       rescue Exception => e
         Rails.logger.error("[#{@log_uuid}] Exception in ES Logger :: #{e.message}")
         NewRelic::Agent.notice_error(e)

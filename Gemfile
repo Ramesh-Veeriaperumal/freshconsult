@@ -3,7 +3,7 @@ Encoding.default_external = Encoding::UTF_8
 source 'https://rubygems.org'
 
 gem "rake", "~> 10.4.0"
-gem "rails","3.2.22.3"
+gem "rails","3.2.22.5"
 
 gem "freemail", "0.2.0", :require => false 
 gem 'stopwords-filter', "0.4.1", require: 'stopwords'
@@ -19,6 +19,7 @@ gem "mysql2", "~> 0.3.0"
 
 gem "connection_pool"
 gem "clamav-client", "3.1.0", require: "clamav/client"
+gem "rest-client", "1.8.0"
 gem "rate-limiting", :git =>"git://github.com/freshdesk/rate-limiting.git", :tag => 'v1.2'
 gem 'fd_rate_limiter', :git => 'git@github.com:freshdesk/fd_rate_limiter.git', :branch => 'dynamic_rules'
 gem "white_list", :git =>"git://github.com/neubloc/white_list.git"
@@ -72,20 +73,20 @@ end
 #gem "rack-mini-profiler", :group => [:development]
 gem "brakeman", :require => false, :group => [:development]
 gem "bullet", :group => [:development, :test, :staging]
-gem "mail"
+gem 'mail', '2.5.5'
 gem "i18n", "~> 0.6.0"
 gem "i18n-js", "3.0.0.rc11"
-gem "RedCloth", "4.2.9"
+gem "RedCloth", "4.3.2"
 gem "authlogic", "~> 3.4.2"
 gem "request_store", "~> 1.0"
 gem "httparty", "0.10.0"
-gem "omniauth", "1.2.2"
+gem "omniauth", "1.3.2"
 gem "omniauth-oauth", "1.1.0"
 gem "oauth", "0.4.5"
 gem "tzinfo", "~> 0.3.29"
 gem 'rails_autolink', '1.1.6'
 
-gem "omniauth-oauth2", "1.0"
+gem "omniauth-oauth2", "1.1.2"
 gem "omniauth-openid", "1.0.1"
 # TODO-RAILS3 need check are we still using this
 gem "omniauth-google", "1.0.2"
@@ -99,10 +100,10 @@ gem "dynamics_crm", :git => 'git@github.com:TinderBox/dynamics_crm.git', :branch
 gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"
 
-gem 'sidekiq', "3.4.1"
+gem 'sidekiq', "3.4.2"
 # This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
 source "https://690a8c5e:5d9334f0@gems.contribsys.com/" do
-  gem 'sidekiq-pro' 
+  gem 'sidekiq-pro'
 end 
 gem 'shoryuken', '2.0.4'
 
@@ -117,7 +118,10 @@ gem 'postoffice', :git => "git://github.com/chrisbutcher/postoffice.git", :branc
 gem "ruby-saml", "1.4.2"
 
 gem 'xeroizer', :git => "git@github.com:freshdesk/xeroizer.git"
-gem "rubyzip", "0.9.4" , :require => "zip/zip"
+
+gem 'rubyzip', '1.2.1' # will load new rubyzip version
+gem 'zip-zip' # will load compatibility for old rubyzip API.
+
 gem "riak-client", "1.4.2"
 
 gem "http_accept_language", "~> 2.0.1"
@@ -132,9 +136,9 @@ gem "newrelic_rpm","~> 3.17.2.327"
 gem "faraday" , "0.9"
 gem 'faraday_middleware', '~> 0.10.0'
 gem "twitter", "~> 5.16.0"
-gem "gnip-rule", "0.4.1"
+gem "gnip-rule", "1.0.0"
 gem "curb", "~> 0.8.5"
-gem "sanitize", "2.0.3"
+gem "sanitize", "4.5.0"
 gem "koala", "1.10.1"
 gem "spreadsheet", "0.6.8"
 
@@ -183,7 +187,7 @@ gem "gemoji-parser", "~> 1.3.1"
 
 # Please do not update Paperclip unless you can get it Monkey Patched for Imagemagick DoS Bug.
 # Please see https://hackerone.com/reports/390 
-gem "paperclip", "~> 2.8.0"
+gem "paperclip", "~> 4.2.2"
 
 gem "aws-sdk", "~> 1.31.3"
 gem "aws-sdk-resources", '~> 2'
@@ -199,7 +203,7 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
-gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v1.0.1'
+gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v1.0.1.1'
 
 gem 'net-http-persistent', '~> 2.9.4'
 
@@ -298,10 +302,8 @@ end
 
   # TODO_RAILS3 Remove the default asset pipeline
   gem "jammit",         "0.6.5"
-  gem "uglifier",         "~> 2.1.2"
   gem "yui-compressor",     :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
 
-  gem "sprockets",              "2.2.2"
   gem "asset_sync",             "1.1.0"
   gem "turbo-sprockets-rails3", "0.3.14"  
   gem "ejs",                    "1.1.1"
@@ -345,4 +347,8 @@ gem 'rugged'
 
 gem 'clearbit'
 
+gem 'nokogiri', '= 1.8.2'
 gem 'acts_as_api', '1.0.1'
+gem "uglifier", "~> 2.7.2"
+gem "sprockets", "2.2.3"
+gem "rubocop", "0.52.1"

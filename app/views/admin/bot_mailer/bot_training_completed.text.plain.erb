@@ -1,0 +1,15 @@
+<%= I18n.t('bot_training_completed.email.user',user_name: user_name) %>
+
+<%= I18n.t('bot_training_completed.email.info1') %>
+
+<% categories.each_with_index do |category,index| %>
+  <%= index+1 %>. <%= category %>
+<% end %>
+
+<%= I18n.t('bot_training_completed.email.info2') %>
+
+<%= I18n.t('bot_training_completed.email.widget_code_plain_text')%> <%= url %>
+
+<%= I18n.t('bot_training_completed.email.info3') %>
+<%= I18n.t('bot_training_completed.email.bot_name',bot_name: bot_name) %>
+<%= I18n.t('bot_training_completed.email.signature') %>

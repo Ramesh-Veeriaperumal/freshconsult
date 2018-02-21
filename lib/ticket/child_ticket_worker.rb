@@ -57,7 +57,7 @@ class Ticket::ChildTicketWorker < BaseWorker
   end
 
   def execute_on_db(db_name="run_on_slave")
-    Sharding.send(db_name.to_sym) do
+    Sharding.safe_send(db_name.to_sym) do
       yield
     end
   end
@@ -145,7 +145,7 @@ class Ticket::ChildTicketWorker < BaseWorker
       elsif key == "description_html"
         @item.ticket_body.description_html = value
       else
-        @item.send("#{key}=",value)
+        @item.safe_send("#{key}=",value)
       end
     else
       @item.custom_field.merge!({key => value})
@@ -178,7 +178,7 @@ class Ticket::ChildTicketWorker < BaseWorker
 
   def validate_attrbs
     ["group", "product", "responder", "requester"].each do |attrb|
-      send("validate_#{attrb}")
+      safe_send("validate_#{attrb}")
     end
   end
 
@@ -222,7 +222,7 @@ class Ticket::ChildTicketWorker < BaseWorker
         pl_section_fd_ids = []
         section_parent_fds.each do |section_field|
           key = section_field.name
-          parent_field_value = @assoc_parent_ticket.send(key)
+          parent_field_value = @assoc_parent_ticket.safe_send(key)
           next if parent_field_value.nil?
           picklist = section_field.picklist_values_with_sections.find_by_value(parent_field_value)
           if picklist and (pl_section = picklist.section)

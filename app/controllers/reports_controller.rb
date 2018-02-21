@@ -16,7 +16,7 @@ class ReportsController < ApplicationController
   def show
     @current_report  = @t_reports[params[:report_type].to_sym]
     unless @current_report.nil?
-   	  @current_object  = current_account.send(@current_report[:object])
+   	  @current_object  = current_account.safe_send(@current_report[:object])
       @report_data     = build_tkts_hash(@current_report[:name],params)
     else
       redirect_to :action => "index"

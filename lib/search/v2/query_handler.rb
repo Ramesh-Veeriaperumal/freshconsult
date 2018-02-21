@@ -5,7 +5,7 @@ module Search
   module V2
 
     class QueryHandler
-      
+
       def initialize(args={})
         @account_id       = args[:account_id]
         @search_context   = args[:context]
@@ -19,13 +19,13 @@ module Search
         @templates        = args[:templates]
         @records          = []
       end
-      
+
       def query_results
         begin
           # Temp hack for handling pubsub/souq cases.
           handle_spl_queries
 
-          @locale = SearchService::Utils.valid_locale(@searchable_types, @locale)            
+          @locale = SearchService::Utils.valid_locale(@searchable_types, @locale)
           template_name = Search::Utils.get_template_id(@search_context, @exact_match, @locale)
           paginate_params = { page: @current_page.to_i, from: @offset }
           request_id = @es_params.delete(:request_id)
@@ -38,7 +38,7 @@ module Search
         rescue Exception => e
           Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
           NewRelic::Agent.notice_error(e)
-          @records = Search::Utils.send(:wrap_paginate, [], @current_page, @offset, 0)
+          @records = Search::Utils.safe_send(:wrap_paginate, [], @current_page, @offset, 0)
         end
         @records
       end

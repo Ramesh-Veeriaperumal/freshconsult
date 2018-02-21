@@ -219,7 +219,7 @@ module Integrations::GoogleContactsUtil
         if(from_user.has_attribute?(prop_name))
           prop_value = from_user.read_attribute(prop_name)
           unless prop_value.blank?
-            to_user.send(:write_attribute,prop_name, prop_value)
+            to_user.safe_send(:write_attribute,prop_name, prop_value)
           end
         end
       }

@@ -120,7 +120,7 @@ module Mobile::Actions::Ticket
 
   def ticket_current_state
     ticket_current_state = self.ticket_states.current_state
-    t("ticket.ticket_user_list_status_"+ticket_current_state,:time_ago => time_ago_in_words(self.ticket_states.send(ticket_current_state)))
+    t("ticket.ticket_user_list_status_"+ticket_current_state,:time_ago => time_ago_in_words(self.ticket_states.safe_send(ticket_current_state)))
   end
 
   def ticket_sla_status

@@ -59,7 +59,7 @@ class Import::Customers::Base
   end
 
   def save_item row
-    @item = current_account.send("#{@type.pluralize}").new if @item.blank?
+    @item = current_account.safe_send("#{@type.pluralize}").new if @item.blank?
     set_validatable_custom_fields
     construct_company_params if is_user? && Account.current.multiple_user_companies_enabled?
     unless @item.new_record?
@@ -71,7 +71,7 @@ class Import::Customers::Base
         failed_item(row)
       end
     else
-      send("create_imported_#{@params[:type]}") ? @created+=1 : failed_item(row)
+      safe_send("create_imported_#{@params[:type]}") ? @created+=1 : failed_item(row)
     end
   end
 
@@ -84,7 +84,7 @@ class Import::Customers::Base
 
   def set_current_user
     @current_user = (current_account.user_emails.user_for_email(@params[:email])).make_current
-    @current_form = current_account.send("#{@params[:type]}_form")
+    @current_form = current_account.safe_send("#{@params[:type]}_form")
     @cf_type = @current_form.custom_fields
     disable_user_activation(current_account)
   end
@@ -94,7 +94,7 @@ class Import::Customers::Base
   end
 
   def customer_import
-    @import ||= current_account.send("#{@params[:type]}_import")
+    @import ||= current_account.safe_send("#{@params[:type]}_import")
   end
 
   def is_user?

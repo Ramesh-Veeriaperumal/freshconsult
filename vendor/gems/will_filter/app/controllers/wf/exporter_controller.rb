@@ -73,7 +73,7 @@ private
       wf_filter.results.each do |obj|
         xml.tag!(class_name.underscore) do
           wf_filter.fields.each do |field|
-            xml.tag!(field.to_s, obj.send(field).to_s) 
+            xml.tag!(field.to_s, obj.safe_send(field).to_s) 
           end    
         end
       end
@@ -88,7 +88,7 @@ private
     wf_filter.results.each do |obj|
       hash = {}
       wf_filter.fields.each do |field|
-        hash[field] = obj.send(field).to_s 
+        hash[field] = obj.safe_send(field).to_s 
       end  
       result << hash
     end
@@ -103,7 +103,7 @@ private
       wf_filter.results.each do |obj|
         row = []
         wf_filter.fields.each do |field|
-          row << obj.send(field).to_s 
+          row << obj.safe_send(field).to_s 
         end    
         csv << row
       end

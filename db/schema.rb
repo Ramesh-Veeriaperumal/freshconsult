@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20171214095940) do
+ActiveRecord::Schema.define(:version => 20180205101318) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -381,7 +381,6 @@ ActiveRecord::Schema.define(:version => 20171214095940) do
 
   create_table "bots", :force => true do |t|
     t.string   "name"
-    t.text     "bot_avatar"
     t.integer  "account_id",          :limit => 8, :null => false
     t.integer  "portal_id",           :limit => 8, :null => false
     t.integer  "product_id",          :limit => 8
@@ -1556,6 +1555,19 @@ ActiveRecord::Schema.define(:version => 20171214095940) do
   end
 
   add_index "freshcaller_accounts", ["account_id"], :name => "index_freshcaller_accounts_on_account_id"\
+
+  create_table "freshcaller_calls", :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "fc_call_id",       :limit => 8, :null => false
+    t.integer  "recording_status", :limit => 1
+    t.integer  "notable_id",       :limit => 8
+    t.string   "notable_type"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
+
+  add_index "freshcaller_calls", ["account_id", "fc_call_id"], :name => "index_freshcaller_calls_on_account_id_and_fc_call_id"
+  add_index "freshcaller_calls", ["fc_call_id"], :name => "fc_call_id", :unique => true
 
   create_table "freshcaller_calls", :force => true do |t|
     t.integer  "account_id",       :limit => 8

@@ -143,13 +143,13 @@ end
   end
 
   def get_field_value field, item
-    field_value = item.send(field.field_name) unless item.nil?
+    field_value = item.safe_send(field.field_name) unless item.nil?
      if(field.field_type == "nested_field" && !item.nil?)
       field_value = {}
       field.nested_levels.each do |ff|
-        field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = item.send(ff[:name])
+        field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = item.safe_send(ff[:name])
       end
-      field_value.merge!({:category_val => item.send(field.field_name)})
+      field_value.merge!({:category_val => item.safe_send(field.field_name)})
     end   
 
     return field_value

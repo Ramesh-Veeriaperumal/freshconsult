@@ -37,7 +37,7 @@ class Solution::Category < ActiveRecord::Base
   validate :name_uniqueness_validation
   validates_uniqueness_of :language_id, :scope => [:account_id , :parent_id], :if => "!solution_category_meta.new_record?"
   
-  after_commit ->(obj) { obj.send(:clear_cache) }, on: :update
+  after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :update
 
   attr_accessible :name, :description, :import_id
 

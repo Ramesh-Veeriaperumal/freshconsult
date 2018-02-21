@@ -310,12 +310,12 @@ module Search::Filters::QueryHelper
 
     # For generically handling other fields
     def handle_field(field_name, values)
-      send("#{field_name}_es_filter", field_name, values) rescue missing_es_filter(field_name, values)
+      safe_send("#{field_name}_es_filter", field_name, values) rescue missing_es_filter(field_name, values)
     end
 
     # for handling a specific case where the method needs two args
     def handle_field_ext(field_name, field_values, group_values)
-      send("#{field_name}_es_filter", field_name, field_values, group_values) rescue missing_es_filter(field_name, field_values)
+      safe_send("#{field_name}_es_filter", field_name, field_values, group_values) rescue missing_es_filter(field_name, field_values)
     end
 
     ### ES METHODS ###

@@ -69,7 +69,7 @@ class Account < ActiveRecord::Base
   Limits.each do |name, meth|
     define_method("reached_#{name}?") do
       return false unless self.subscription
-      self.subscription.send(name) && self.subscription.send(name) <= meth.call(self)
+      self.subscription.safe_send(name) && self.subscription.safe_send(name) <= meth.call(self)
     end
   end
 
@@ -305,7 +305,7 @@ class Account < ActiveRecord::Base
   def default_friendly_email_personalize(user_name)
     primary_email_config.active? ? 
       primary_email_config.friendly_email_personalize(user_name) :
-      "#{primary_email_config.send(:format_name, user_name)} <support@#{full_domain}>"
+      "#{primary_email_config.safe_send(:format_name, user_name)} <support@#{full_domain}>"
   end
   
   def default_email
@@ -372,7 +372,7 @@ class Account < ActiveRecord::Base
     unless p_features.nil?
       p_features[:inherits].each { |p_n| add_features_of(p_n) } unless p_features[:inherits].nil?
 
-      p_features[:features].each { |f_n| features.send(f_n).create } unless p_features[:features].nil?
+      p_features[:features].each { |f_n| features.safe_send(f_n).create } unless p_features[:features].nil?
     end
   end
   
@@ -381,7 +381,7 @@ class Account < ActiveRecord::Base
     unless p_features.nil?
       p_features[:inherits].each { |p_n| remove_features_of(p_n) } unless p_features[:inherits].nil?
       
-      p_features[:features].each { |f_n| features.send(f_n).destroy } unless p_features[:features].nil?
+      p_features[:features].each { |f_n| features.safe_send(f_n).destroy } unless p_features[:features].nil?
     end
   end
 
@@ -390,7 +390,7 @@ class Account < ActiveRecord::Base
   end
 
   def remove_feature(feature)
-    features.send(feature).destroy
+    features.safe_send(feature).destroy
   end
   
   def ticket_type_values

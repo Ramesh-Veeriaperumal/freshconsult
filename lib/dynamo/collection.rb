@@ -27,7 +27,7 @@ class Dynamo::Collection
 	def method_missing(meth_name, *args, &block)
 		meth_name = meth_name.to_s.chomp('!')
 		if @records.respond_to?(meth_name)
-			@records.send(meth_name, *args, &block)
+			@records.safe_send(meth_name, *args, &block)
 		else
 			raise NoMethodError
 		end

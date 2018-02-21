@@ -86,7 +86,7 @@ module Features
     private
     
     def feature_owner_instance
-      send(self.class.feature_owner)
+      safe_send(self.class.feature_owner)
     end
     def update_owner_timestamp
       feature_owner_instance.update_attribute(:updated_at, Time.now) if feature_owner_instance && !feature_owner_instance.new_record?
@@ -98,7 +98,7 @@ module Features
     
     def destroy_dependant_features
       dependant_features.each do |dependant|
-        feature_owner_instance.features.send(dependant.to_sym).destroy
+        feature_owner_instance.features.safe_send(dependant.to_sym).destroy
       end
     end
     

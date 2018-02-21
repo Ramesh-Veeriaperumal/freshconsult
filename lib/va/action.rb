@@ -49,9 +49,9 @@ class Va::Action
       @doer = doer
       @triggered_event = triggered_event
       Va::Logger::Automation.log "action=#{action_key.inspect}, value=#{value.inspect}"
-      return send(action_key, act_on) if respond_to?(action_key)
+      return safe_send(action_key, act_on) if respond_to?(action_key)
       if act_on.respond_to?("#{action_key}=")
-        act_on.send("#{action_key}=", value)
+        act_on.safe_send("#{action_key}=", value)
         record_action(act_on)
         return
       else
@@ -59,7 +59,7 @@ class Va::Action
         obj = clazz.new
         if obj.respond_to?(value)
           act_hash[:va_rule] = @va_rule if act_hash.delete(:include_va_rule)
-          obj.send(value, act_on, act_hash)
+          obj.safe_send(value, act_on, act_hash)
           # add_activity(property_message act_on)  # TODO
           return
         end

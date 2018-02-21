@@ -1,0 +1,19 @@
+<p>
+  <%= I18n.t('bot_training_completed.email.user',user_name: user_name) %>
+</p>
+<%= I18n.t('bot_training_completed.email.info1') %>
+<br/>
+<ol>
+    <% categories.each do |category| %>
+      <li><%= category %></li>
+    <% end %>
+</ol>
+<%= I18n.t('bot_training_completed.email.info2') %>
+<p align = 'center'>
+  <%= link_to I18n.t('bot_training_completed.email.widget_code'), url %>
+</p>
+<%= I18n.t('bot_training_completed.email.info3') %>
+<br/>
+<%= I18n.t('bot_training_completed.email.bot_name',bot_name: bot_name) %>
+<br/>
+<%= I18n.t('bot_training_completed.email.signature') %>

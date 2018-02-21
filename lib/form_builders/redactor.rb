@@ -73,7 +73,7 @@ module FormBuilders::Redactor
 
       def rich_editor(method, options = {})
         options[:id] = options[:id] || field_id( method, options[:index] )  
-        rich_editor_tag(field_name(method), @object.send(method), options).html_safe
+        rich_editor_tag(field_name(method), @object.safe_send(method), options).html_safe
       end
 
       def rich_editor_tag(name, content = nil, options = {})

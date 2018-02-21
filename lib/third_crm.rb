@@ -88,8 +88,8 @@ class ThirdCRM
 
     def user_info(account)
       account_info = {
-          "default" => (LEAD_INFO["default"].inject({}) { |h, (k, v)| h[k] = account.send(v); h }).merge(clearbit_info(account)),
-          "custom" => LEAD_INFO["custom"].inject({}) { |h, (k, v)| h[k] = account.send(v); h }.merge(
+          "default" => (LEAD_INFO["default"].inject({}) { |h, (k, v)| h[k] = account.safe_send(v); h }).merge(clearbit_info(account)),
+          "custom" => LEAD_INFO["custom"].inject({}) { |h, (k, v)| h[k] = account.safe_send(v); h }.merge(
             {'string--Associated--Accounts' => @associated_account_id_list })
       }
       if @old_email
@@ -113,7 +113,7 @@ class ThirdCRM
 
     def subscription_info(subscription)
       {
-        'custom' => SUBSCRIPTION_INFO["custom"].inject({}) { |h, (k, v)| h[k] = AUTOPILOT_STATES[subscription.send(v).to_s] || subscription.send(v).to_s; h }.merge(
+        'custom' => SUBSCRIPTION_INFO["custom"].inject({}) { |h, (k, v)| h[k] = AUTOPILOT_STATES[subscription.safe_send(v).to_s] || subscription.safe_send(v).to_s; h }.merge(
           {  'date--Signup--Date' => subscription.created_at.strftime("%Y-%m-%d"),
             'date--Renewal--Date' => subscription.next_renewal_at.strftime("%Y-%m-%d")})
       }
@@ -121,17 +121,17 @@ class ThirdCRM
 
     def signup_info(metrics)
       {
-        'default' => SIGNUP_INFO["default"].inject({}) { |h, (k, v)| h[k] = metrics.send(v).to_s; h },
-        'custom' => SIGNUP_INFO["custom"].inject({}) { |h, (k, v)| h[k] = metrics.send(v).to_s; h }.merge(
+        'default' => SIGNUP_INFO["default"].inject({}) { |h, (k, v)| h[k] = metrics.safe_send(v).to_s; h },
+        'custom' => SIGNUP_INFO["custom"].inject({}) { |h, (k, v)| h[k] = metrics.safe_send(v).to_s; h }.merge(
           {"string--Signup--ID" => @signup_id})
       }
     end
 
     def make_api(req_type, url, data={})
       if req_type.to_s == REQUEST_TYPES[:get]
-        RestClient.send(req_type, url, AUTOPILOT_CREDENTIALS)
+        RestClient.safe_send(req_type, url, AUTOPILOT_CREDENTIALS)
       elsif req_type.to_s == REQUEST_TYPES[:post]
-        RestClient.send(req_type, url, data, AUTOPILOT_CREDENTIALS)
+        RestClient.safe_send(req_type, url, data, AUTOPILOT_CREDENTIALS)
       end
     end
 end

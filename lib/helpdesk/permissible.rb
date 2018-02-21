@@ -29,7 +29,7 @@ module Helpdesk::Permissible
     current_user ? t("flash.general.access_denied") : t("flash.general.need_login")
   end
 
-  def handle_responses(redirect_url = send(Helpdesk::ACCESS_DENIED_ROUTE)) 
+  def handle_responses(redirect_url = safe_send(Helpdesk::ACCESS_DENIED_ROUTE)) 
     respond_to do |format|
       format.html {
         flash[:notice] = access_denied_message

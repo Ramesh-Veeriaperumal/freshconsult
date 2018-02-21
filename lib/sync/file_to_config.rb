@@ -39,7 +39,7 @@ module Sync
           if obj.respond_to?(clear_cache_method, true)
             p "Clearing Cache for : #{model}"
             obj.account_id = Account.current.id if obj.respond_to?("account_id")
-            obj.send(clear_cache_method)
+            obj.safe_send(clear_cache_method)
           end
         end
       end
@@ -66,7 +66,7 @@ module Sync
       # p "Dir path : #{dir_path}"
       return {} unless File.directory?(dir_path)
       table_directory = {}
-      object   = base_object.class.reflections[association.to_sym].klass.new  #send(association).new
+      object   = base_object.class.reflections[association.to_sym].klass.new  #safe_send(association).new
       # p "Object Class : #{object.class} Dir name : #{dir_path}"
       model_name = object.class.superclass.to_s != "ActiveRecord::Base" ? object.class.superclass.to_s : object.class.name
       table_directory[model_name] ||= []
@@ -128,7 +128,7 @@ module Sync
       @mapping_table[model] ||= {}
       @mapping_table[model][:id] ||= {}
       return unless File.directory?(path)
-      object              = model.constantize.new  #send(association).new
+      object              = model.constantize.new  #safe_send(association).new
       serialized_columns  = object.class.serialized_attributes.keys
       table_name          = object.class.table_name
 
@@ -184,7 +184,7 @@ module Sync
             column_values[column] = @mapping_table[associated_model][:id][data]
           end
         elsif column_values[column].present? && @transformer.available?(model, column)
-          transformed_column_value = @transformer.send("transform_#{model.gsub("::","").snakecase}_#{column}", column_values[column], @mapping_table)
+          transformed_column_value = @transformer.safe_send("transform_#{model.gsub("::","").snakecase}_#{column}", column_values[column], @mapping_table)
           if transformed_column_value != column_values[column] && !serialized_columns.include?(column)
             @mapping_table[model][column] ||= {}
             @mapping_table[model][column][column_values[column]] = transformed_column_value
@@ -198,7 +198,7 @@ module Sync
     end
 
     def model_table_mapping
-      @model_table_mapping ||= Hash[ActiveRecord::Base.send(:descendants).collect{|c| [c.name, c.table_name]}]
+      @model_table_mapping ||= Hash[ActiveRecord::Base.safe_send(:descendants).collect{|c| [c.name, c.table_name]}]
     end
 
     def post_data_migration_activities
@@ -214,8 +214,8 @@ module Sync
         condition +=" AND #{self_association[2]} = '#{self_association[0]}'" if self_association[2].present?
         self_association[0].constantize.where([condition, @mapping_table[self_association[0]][:id].keys]).find_in_batches do |collection|
           collection.each do |obj|
-            new_value = @mapping_table[self_association[0]][:id][obj.send("#{self_association[1]}")]
-            obj.send("#{self_association[1]}=", new_value)
+            new_value = @mapping_table[self_association[0]][:id][obj.safe_send("#{self_association[1]}")]
+            obj.safe_send("#{self_association[1]}=", new_value)
             obj.save
           end
         end
@@ -227,16 +227,16 @@ module Sync
 
     def reindex_sandbox_account
       ASSOCIATIONS_TO_REINDEX.each do |assocition_to_index|
-        account.send(assocition_to_index).find_each do |item|
-          item.send(:add_to_es_count) if item.respond_to?(:add_to_es_count, true)
+        account.safe_send(assocition_to_index).find_each do |item|
+          item.safe_send(:add_to_es_count) if item.respond_to?(:add_to_es_count, true)
         end
       end
-      account.send(:enable_searchv2)
+      account.safe_send(:enable_searchv2)
     end
 
     def clear_account_cache
       ACCOUNT_MEMCACHE_KEYS.each do |clear_cache_method|
-        Account.current.send(clear_cache_method) if Account.current.respond_to?(clear_cache_method)
+        Account.current.safe_send(clear_cache_method) if Account.current.respond_to?(clear_cache_method)
       end
     end
 

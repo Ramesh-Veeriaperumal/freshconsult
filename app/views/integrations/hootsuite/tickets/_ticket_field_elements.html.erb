@@ -6,7 +6,7 @@
 %>
 <% ticket_fields.each do |field| 
   if field.visible_in_view_form?
-    field_value = @ticket.send(field.field_name)
+    field_value = @ticket.safe_send(field.field_name)
     field_label = t("ticket_fields.fields.#{field.name}")
     dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
     field_value = nested_ticket_field_value(@ticket, field) if(field.field_type == "nested_field") and !@ticket.new_record?

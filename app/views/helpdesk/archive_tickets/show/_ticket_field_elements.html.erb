@@ -10,7 +10,7 @@
   next if field.section_field? || field.shared_ownership_field?
   if field.visible_in_view_form?
     if field.is_default_field?
-      field_value = @ticket.send(field.field_name)
+      field_value = @ticket.safe_send(field.field_name)
       field_label = t("ticket_fields.fields.#{field.name}")
     else
       field_value = @ticket.custom_field_value(field.name)

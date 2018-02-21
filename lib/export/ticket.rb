@@ -68,7 +68,7 @@ class Export::Ticket < Struct.new(:export_params)
   end
 
   def export_file
-    send("#{export_params[:format]}_export")
+    safe_send("#{export_params[:format]}_export")
   end
 
   def csv_export
@@ -130,13 +130,13 @@ class Export::Ticket < Struct.new(:export_params)
       data = ""
       begin
         @headers.each do |val|
-          data = export_params[:archived_tickets] ? fetch_field_value(item, val) : item.send(val)
+          data = export_params[:archived_tickets] ? fetch_field_value(item, val) : item.safe_send(val)
           record << format_data(val, data)
         end
         ['contact', 'company'].each do |type|
           assoc = type.eql?('contact') ? 'requester' : 'company'
           instance_variable_get("@#{type}_headers").each do |val|
-            data = item.send(assoc).respond_to?(val) ? item.send(assoc).send(val) : ""
+            data = item.safe_send(assoc).respond_to?(val) ? item.safe_send(assoc).safe_send(val) : ""
             record << format_data(val, data)
           end
         end
@@ -179,7 +179,7 @@ class Export::Ticket < Struct.new(:export_params)
   end
 
   def fetch_field_value(item, field)
-    item.respond_to?(field) ? item.send(field) : item.custom_field_value(field)
+    item.respond_to?(field) ? item.safe_send(field) : item.custom_field_value(field)
   end
 
   def allowed_fields

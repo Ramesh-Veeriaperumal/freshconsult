@@ -6,7 +6,7 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 		return unless multilingual
 		meta(object)
 		return unless @meta
-		if object.send(:transaction_include_action?, :destroy)
+		if object.safe_send(:transaction_include_action?, :destroy)
 			update_available(object, false)
 		else
 			update_available(object, true)
@@ -42,7 +42,7 @@ class Solution::BinarizeObserver < ActiveRecord::Observer
 		end
 
 		def update_key(key, language_key, val)
-			@meta.send("#{language_key}_#{key}=", val) if @meta.respond_to?(key)
+			@meta.safe_send("#{language_key}_#{key}=", val) if @meta.respond_to?(key)
 		end
 
 		def save_meta(object)

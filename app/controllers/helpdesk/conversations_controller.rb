@@ -114,7 +114,7 @@ class Helpdesk::ConversationsController < ApplicationController
     error_message, @tweet_body = get_tweet_text(twt_type, @parent, tweet_text)
     if error_message.blank?
       if @item.save_note 
-        error_message, reply_twt = send("send_tweet_as_#{twt_type}")
+        error_message, reply_twt = safe_send("send_tweet_as_#{twt_type}")
         flash[:notice] = error_message.blank? ?  t(:'flash.tickets.reply.success') : error_message
         process_and_redirect
       else

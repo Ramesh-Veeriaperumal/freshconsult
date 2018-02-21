@@ -44,13 +44,13 @@ module Admin::Sla::Escalation
         execute_on_db do
           overdue_tickets_count = 0
           overdue_tickets = account.tickets.unresolved.visible.
-                            send("#{overdue_type}_sla", account, Time.zone.now.to_s(:db)).
+                            safe_send("#{overdue_type}_sla", account, Time.zone.now.to_s(:db)).
                             updated_in(2.month.ago)
           overdue_tickets.find_each do |ticket|
             overdue_tickets_count += 1
             sla_policy = sla_rule_based[ticket.sla_policy_id] || sla_default
             execute_on_db("run_on_master") do
-              sla_policy.send("escalate_#{overdue_type}_overdue", ticket)
+              sla_policy.safe_send("escalate_#{overdue_type}_overdue", ticket)
             end
           end
           overdue_tickets_count

@@ -80,12 +80,13 @@
     <%
       site_id = Account.current.chat_setting.site_id
       user_id = User.current.id
+      has_admin_privilege = User.current.privilege?(:admin_tasks)
       params.merge!({:table_row_max_limit => row_limit }) 
     %> 
     window.chatReportData = window.chatReportData || {};
     chatReportData.site_id = "<%= site_id %>";
     chatReportData.user_id = "<%= user_id  %>";
-    chatReportData.livechat_token = "<%= livechat_token(site_id,user_id) %>";
+    chatReportData.livechat_token = "<%= livechat_token(site_id,user_id,has_admin_privilege) %>";
     chatReportData.freshchat_agents =<%= Hash[Account.current.agents_from_cache.map { |c| [c.user.id,c.user.name] }].to_json.html_safe %>;
     var params = <%= params.to_json.html_safe %>;
     chatReport.initializePDFReport(CHAT_ENV, URL, FC_HTTP_ONLY,params);

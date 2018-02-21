@@ -32,7 +32,7 @@ module Liquid
     # called by liquid to invoke a drop
     def invoke_drop(method_or_key)
       if method_or_key && method_or_key != EMPTY_STRING && self.class.public_method_defined?(method_or_key.to_s.to_sym)
-        send(method_or_key.to_s.to_sym)
+        safe_send(method_or_key.to_s.to_sym)
       else
         before_method(method_or_key)
       end

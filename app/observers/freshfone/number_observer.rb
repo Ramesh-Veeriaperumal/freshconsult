@@ -23,7 +23,7 @@ class Freshfone::NumberObserver < ActiveRecord::Observer
 	end
 
 	def after_commit(number)
-		return unless number.send(:transaction_include_action?, :create) && trial?
+		return unless number.safe_send(:transaction_include_action?, :create) && trial?
 		if number.account.freshfone_numbers.count == 1 # for first number in trial
 			NateroWorker.perform_async(
 					custom_options: {

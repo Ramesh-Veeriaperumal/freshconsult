@@ -95,7 +95,7 @@ class SupportScore < ActiveRecord::Base
 
   def get_leader_ids account, board_category, category, end_of_search_time, result_count
     search_time = end_of_search_time.in_time_zone account.time_zone
-    key = send("#{board_category}_leaderboard_key", category, search_time.month)
+    key = safe_send("#{board_category}_leaderboard_key", category, search_time.month)
 
     response = get_largest_members_of_sorted_set_redis key, result_count
 
@@ -108,7 +108,7 @@ class SupportScore < ActiveRecord::Base
 
   def get_mini_list account, user, category, version = "v1"
     search_time = Time.use_zone(account.time_zone){ Time.now }
-    key = send("agents_leaderboard_key", category, search_time.month)
+    key = safe_send("agents_leaderboard_key", category, search_time.month)
     # Find length of the list
     size = size_of_sorted_set_redis key
 
@@ -167,7 +167,7 @@ class SupportScore < ActiveRecord::Base
     list_size, indent = mini_list_size(version.to_sym)
     others = []
 		start = rank - indent > 0 ? rank - indent : 1
-		stop = start + list_size > size ? size : start + list_size 
+		stop = start + list_size > size ? size : start + list_size
 		start = stop == size ? (size - list_size > 0 ? size - list_size : 1) : start
 		others = get_largest_members_of_sorted_set_redis key, stop, start
 		others.each_with_index do |person, index|
@@ -175,7 +175,7 @@ class SupportScore < ActiveRecord::Base
 		end
 		largest << others
 		return largest
-  end 
+  end
 
   def get_mini_leaderboard_for_all_category(rank, size, redis_keys, version, category_list)
     # Getting the rank holder for each category
@@ -209,7 +209,7 @@ class SupportScore < ActiveRecord::Base
       stop[category] = category_stop
     end
     return start, stop
-  end 
+  end
 
   def agents_scoper account, start_time, end_time
     account.support_scores.by_performance.user_score({ :conditions => ["user_id is not null"] }).created_at_inside(start_time, end_time)
@@ -261,7 +261,7 @@ protected
 
     keys_to_be_updated.each do |key, details|
       category_list.each do |category|
-        redis_key = send(key, category, created_time.month)
+        redis_key = safe_send(key, category, created_time.month)
         if key_exists_sorted_set_redis redis_key
           incr_score_of_sorted_set_redis(redis_key, details[:member], value)
         else
@@ -284,11 +284,11 @@ protected
   end
 
   def store_leaderboard_in_redis key, account, board_category, category, end_time, result_count = nil
-    result = category == :mvp ? send("#{board_category}_scoper", account, end_time.beginning_of_month, end_time).all : send("#{board_category}_scoper", account, end_time.beginning_of_month, end_time).send(category).all
+    result = category == :mvp ? safe_send("#{board_category}_scoper", account, end_time.beginning_of_month, end_time).all : safe_send("#{board_category}_scoper", account, end_time.beginning_of_month, end_time).safe_send(category).all
 
     if result.present?
       attribute = board_category == "groups" ? "group_id" : "user_id"
-      leader_list = result.inject([]) {|list, item| list << [item.tot_score, item.send(attribute)] }
+      leader_list = result.inject([]) {|list, item| list << [item.tot_score, item.safe_send(attribute)] }
 
       multi_add_in_sorted_set_redis(key, leader_list, 3.months.from_now(end_time).end_of_month.to_i - end_time.to_i)
 

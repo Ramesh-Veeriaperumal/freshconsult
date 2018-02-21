@@ -121,7 +121,7 @@ namespace :scheduler do
     queue_length = Sidekiq::Queue.new(queue_name).size
     puts "#{queue_name} queue length is #{queue_length}"
     #queue_length === 0 and !Rails.env.staging?
-    if queue_length < 1 and !Rails.env.staging?
+    if queue_length < 1
       true
     else
       subject = "Scheduler skipped for #{queue_name} at #{Time.now.utc.to_s} in #{Rails.env}"
@@ -151,7 +151,7 @@ namespace :scheduler do
       rake_logger.info "rake=#{task_name} #{name}" unless rake_logger.nil?
       accounts_queued = 0
       Sharding.run_on_all_slaves do
-        Account.send(automation[task_name][:account_method]).current_pod.send(premium_constant).each do |account|
+        Account.safe_send(automation[task_name][:account_method]).current_pod.safe_send(premium_constant).each do |account|
           begin
             account.make_current
             if name.eql?("supervisor")
@@ -178,7 +178,7 @@ namespace :scheduler do
     if empty_queue?(queue_name)
       Sharding.run_on_all_slaves do
         Account.reset_current_account
-        Social::FacebookPage.current_pod.send(FACEBOOK_TASKS[task_name][:account_method]).each do |fb_page|
+        Social::FacebookPage.current_pod.safe_send(FACEBOOK_TASKS[task_name][:account_method]).each do |fb_page|
           Account.reset_current_account
           account = fb_page.account
           next unless account
@@ -199,7 +199,7 @@ namespace :scheduler do
     if empty_queue?(queue_name)
       Sharding.run_on_all_slaves do
         Account.reset_current_account
-        Social::TwitterHandle.current_pod.send(TWITTER_TASKS[task_name][:account_method]).each do |twitter_handle|
+        Social::TwitterHandle.current_pod.safe_send(TWITTER_TASKS[task_name][:account_method]).each do |twitter_handle|
           Account.reset_current_account
           account = twitter_handle.account
           next unless account

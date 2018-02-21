@@ -15,6 +15,7 @@ HelpdeskReports.ChartsInitializer.TimeSpent = (function ($) {
 			groupByDropDown : function(){
 				var options = HelpdeskReports.locals.lifecycle_group_by_options;
 				var keys = _.keys(HelpdeskReports.locals.lifecycle_group_by_options);
+				var custom_fields = _.keys(HelpdeskReports.locals.custom_field_hash);
 				var option_label;
 				jQuery.each(keys,function(i,el){
 						switch(el) {
@@ -25,7 +26,7 @@ HelpdeskReports.ChartsInitializer.TimeSpent = (function ($) {
 								option_label = I18n.t('ticket_fields.fields.group');
 								break;
 							default:
-								option_label = I18n.t('ticket_fields.fields.'+el);
+								option_label = (_.contains(custom_fields,el)) ? options[el] :I18n.t('ticket_fields.fields.'+el);
 						}
 						var option = jQuery("<option value=" + el +">" + option_label  + "</option>")
 						jQuery("[name=group_by]").append(option);

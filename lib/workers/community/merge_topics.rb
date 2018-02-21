@@ -28,7 +28,7 @@ module Workers::Community::MergeTopics
 
 		def aggregate_meta(target, source)
 		  STATES_TO_BE_MOVED.each do |state|
-		    source.send("merge_#{state}", target)
+		    source.safe_send("merge_#{state}", target)
 		  end
 		end
 

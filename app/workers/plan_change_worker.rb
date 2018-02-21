@@ -15,7 +15,7 @@ class PlanChangeWorker
       # Ref: https://github.com/freshdesk/helpkit/commit/7da2749537bfac540bbf8495d144e8a68c9c9e0d
       #
       begin
-        send(method, account) if respond_to?(method)
+        safe_send(method, account) if respond_to?(method)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
@@ -143,7 +143,7 @@ class PlanChangeWorker
     #   :solution_categories => 'Solution::Category'
       
     # }.each do |solution_entity, entity_class|
-    #   account.send(solution_entity).where(["language_id NOT IN (?)", [Account.current.language_object.id]]).destroy_all
+    #   account.safe_send(solution_entity).where(["language_id NOT IN (?)", [Account.current.language_object.id]]).destroy_all
     # end
     # account.remove_feature(:enable_multilingual)
     # new_settings = account.account_additional_settings.additional_settings.merge(:portal_languages => [])

@@ -21,7 +21,7 @@ module Ebayr
     def []=(key, value)
       key = convert_key(key)
       value = convert_value(value)
-      (class << self; self; end).send(:define_method, key) { value }
+      (class << self; self; end).safe_send(:define_method, key) { value }
       super(key, value)
     end
 

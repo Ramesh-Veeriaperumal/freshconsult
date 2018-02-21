@@ -6,6 +6,7 @@ var freshfonePlayerSettings = function () {
 	}
 	jQuery(".call_duration").each(function () {
 		if (jQuery(this).data("time") === undefined) { return; }
+		if(jQuery(this).hasClass('freshcaller')){ return; }
 		time = jQuery(this).data("time");
 			if (time >= 3600) {
 			 format = "hh:mm:ss";

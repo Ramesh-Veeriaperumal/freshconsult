@@ -139,7 +139,7 @@ class Company < ActiveRecord::Base
         validation_method = "no_op"
       end
       if respond_to?(validation_method, true)
-        send(validation_method, field, error_label) if send(field.name).present?
+        safe_send(validation_method, field, error_label) if safe_send(field.name).present?
       else
         warn "Validation Method #{validation_method} is not present
              for the #{field.field_type} - #{field.inspect}".squish
@@ -148,14 +148,14 @@ class Company < ActiveRecord::Base
   end
 
   def validate_format_of_default_dropdown field, error_label
-    add_error_to_self(field, error_label) unless field.choices_value.include? send(field.name)
+    add_error_to_self(field, error_label) unless field.choices_value.include? safe_send(field.name)
   end
 
   def no_op field, error_label
   end
 
   def add_error_to_self field, error_label
-    self.errors.add(field.send(error_label),
+    self.errors.add(field.safe_send(error_label),
       I18n.t("#{self.class.to_s.downcase}.errors.default_dropdown"))
   end
 
@@ -165,16 +165,16 @@ class Company < ActiveRecord::Base
 
   TAM_DEFAULT_FIELD_MAPPINGS.keys.each do |attribute|
     define_method("#{attribute}") do
-      self.flexifield.send(attribute)
+      self.flexifield.safe_send(attribute)
     end
 
     define_method("#{attribute}?") do
-      self.flexifield.send(attribute)
+      self.flexifield.safe_send(attribute)
     end
 
     define_method("#{attribute}=") do |value|
       value = value.to_time if attribute == :datetime_cc01
-      self.flexifield.send("#{attribute}=", value)
+      self.flexifield.safe_send("#{attribute}=", value)
     end
   end
 

@@ -46,7 +46,7 @@ module SpamDetection
 					 :message_id => "#{Mail.random_tag}.#{::Socket.gethostname}@spamreport.freshdesk.com"}
 					mail = Helpdesk::Email::SpamDetector.construct_raw_mail(params)
 					sds = FdSpamDetectionService::Service.new(account.id, mail.to_s)
-					sds.send(mthd)
+					sds.safe_send(mthd)
 				end
 				break if count >= MAX_COUNT
 			end

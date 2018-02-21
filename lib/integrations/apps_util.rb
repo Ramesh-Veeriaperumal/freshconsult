@@ -16,7 +16,7 @@ module Integrations::AppsUtil
       obj = clazz_str.constantize
       obj = obj.new unless obj.respond_to?(method_str)
       if obj.respond_to?(method_str)
-        obj.send(method_str, args)
+        obj.safe_send(method_str, args)
       else
         raise "#{clazz_str} is not responding to #{method_str}."
       end

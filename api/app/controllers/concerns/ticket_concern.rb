@@ -91,7 +91,7 @@ module TicketConcern
     def verify_object_state(ticket = @item)
       action_scopes = ApiTicketConstants::SCOPE_BASED_ON_ACTION[action_name] || ApiTicketConstants::CONDITIONS_FOR_TICKET_ACTIONS
       action_scopes.each_pair do |scope_attribute, value|
-        item_value = ticket.send(scope_attribute)
+        item_value = ticket.safe_send(scope_attribute)
         next if item_value == value
         Rails.logger.debug "Ticket display_id: #{ticket.display_id} with #{scope_attribute} is #{item_value}"
         # Render 405 in case of update/delete as it acts on ticket endpoint itself

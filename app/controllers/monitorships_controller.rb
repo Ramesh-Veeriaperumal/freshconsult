@@ -10,7 +10,7 @@ class MonitorshipsController < ApplicationController
   before_filter :load_parent , :only => [:followers, :toggle]  
 
   def toggle
-    send(params[:type])
+    safe_send(params[:type])
     respond_to do |format|
       format.html { 
                     assign_flash
