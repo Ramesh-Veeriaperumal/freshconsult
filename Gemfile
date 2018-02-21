@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 gem "rake", "~> 10.4.0"
 gem "rails","3.2.22.5"
 
-gem "freemail", "0.2.0", :require => false 
+gem "freemail", "0.2.0", :require => false
 gem 'stopwords-filter', "0.4.1", require: 'stopwords'
 
 gem 'rack-cors', '~> 0.3.1'
@@ -47,7 +47,7 @@ gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git
 
 
 group :development, :test do
-  gem 'active_record_query_trace'  
+  gem 'active_record_query_trace'
   gem 'rails-dev-boost', :git => 'git://github.com/thedarkone/rails-dev-boost.git'
   gem 'better_errors', '~> 1.1.0'
   # Commenting out for ruby ~> 2.1.0 upgrade
@@ -61,13 +61,13 @@ group :development, :test do
   gem 'fake_dynamo'
 end
 
-group :development do
-  gem 'pronto'
-  gem 'pronto-rubocop', require: false
-  gem 'pronto-rails_best_practices', require: false
-  gem 'pronto-brakeman', require: false
-  gem 'pronto-reek', require: false
-end
+# group :development do
+#   gem 'pronto'
+#   gem 'pronto-rubocop', require: false
+#   gem 'pronto-rails_best_practices', require: false
+#   gem 'pronto-brakeman', require: false
+#   gem 'pronto-reek', require: false
+# end
 
 #commenting it out as rack mini profiler strips out etag response headers. Using it for falcon apis.
 #gem "rack-mini-profiler", :group => [:development]
@@ -104,7 +104,7 @@ gem 'sidekiq', "3.4.2"
 # This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
 source "https://690a8c5e:5d9334f0@gems.contribsys.com/" do
   gem 'sidekiq-pro'
-end 
+end
 gem 'shoryuken', '2.0.4'
 
 gem "soap4r-ruby1.9", "~> 2.0.5"
@@ -186,7 +186,7 @@ gem "gemoji-parser", "~> 1.3.1"
 # gem "cloudfront_asset_host", github: "freshdesk/cloudfront_asset_host", branch: :rails3upgrade
 
 # Please do not update Paperclip unless you can get it Monkey Patched for Imagemagick DoS Bug.
-# Please see https://hackerone.com/reports/390 
+# Please see https://hackerone.com/reports/390
 gem "paperclip", "~> 4.2.2"
 
 gem "aws-sdk", "~> 1.31.3"
@@ -280,7 +280,7 @@ group :test do
   gem "fuubar"
   gem "json-compare", "0.1.8"
   gem "rspec_junit_formatter" # Used by API
-  gem "simplecov-rcov" 
+  gem "simplecov-rcov"
   gem "rubocop-checkstyle_formatter" # Used by API
   gem "minitest-rails", "1.0.1" # Used by API
   gem "minitest-reporters", "0.14.24" # Used by API
@@ -305,7 +305,7 @@ end
   gem "yui-compressor",     :git => "git://github.com/freshdesk/ruby-yui-compressor.git"
 
   gem "asset_sync",             "1.1.0"
-  gem "turbo-sprockets-rails3", "0.3.14"  
+  gem "turbo-sprockets-rails3", "0.3.14"
   gem "ejs",                    "1.1.1"
 
   # SASS and Compass gems
@@ -318,9 +318,9 @@ end
 
   # To optimize sprite generation
   gem "oily_png",               "1.1.1"
-  
+
   # Building custom font icons inside the application
-  gem "fontcustom",             "1.3.3"  
+  gem "fontcustom",             "1.3.3"
 
 # end
 
