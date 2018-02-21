@@ -6,7 +6,7 @@ class Templates::CleanupWorker < BaseWorker
   def perform(args)
     args.symbolize_keys!
     acc = Account.current
-    templates = acc.send("#{args[:assn_item_type]}_templates").where(id: args[:templates_ids])
+    templates = acc.safe_send("#{args[:assn_item_type]}_templates").where(id: args[:templates_ids])
     templates.each do |templ|
       templ.reset_tmpl_assoc = true
       if args[:assn_item_type] == "parent"

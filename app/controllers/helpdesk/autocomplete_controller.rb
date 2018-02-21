@@ -28,13 +28,13 @@ class Helpdesk::AutocompleteController < ApplicationController
         if current_action == "requester"
           scoper.matching_users_from(params[:q])
         else
-          scoper.find(:all, :conditions => send("#{current_action}_conditions"), :limit => 100 )
+          scoper.find(:all, :conditions => safe_send("#{current_action}_conditions"), :limit => 100 )
         end
       end
   	end
   	
   	def scoper
-  		send("#{current_action}_scope")
+  		safe_send("#{current_action}_scope")
   	end
 
     def current_action

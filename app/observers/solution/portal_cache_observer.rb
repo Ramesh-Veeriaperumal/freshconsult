@@ -6,9 +6,9 @@ class Solution::PortalCacheObserver < ActiveRecord::Observer
 	  Solution::CategoryMeta, Solution::FolderMeta, Solution::ArticleMeta, PortalSolutionCategory
 
 	def after_commit(item)
-		if (item.send(:transaction_include_action?, :create) || 
-			item.send(:transaction_include_action?, :update) ||
-			item.send(:transaction_include_action?, :destroy)) 
+		if (item.safe_send(:transaction_include_action?, :create) || 
+			item.safe_send(:transaction_include_action?, :update) ||
+			item.safe_send(:transaction_include_action?, :destroy)) 
 			increment_version_and_enqueue_flush(item)
 		end
 	end

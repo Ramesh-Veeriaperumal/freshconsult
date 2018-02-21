@@ -62,7 +62,7 @@ class Helpdesk::TicketDrop < BaseDrop
   ["requester", "company"].each do |assoc|
     define_method(assoc) do
       return instance_variable_get("@#{assoc}") if instance_variable_defined?("@#{assoc}")
-      current_assoc = @source.send(assoc).presence
+      current_assoc = @source.safe_send(assoc).presence
       if current_assoc
         current_assoc.escape_liquid_attributes = @source.escape_liquid_attributes
       end

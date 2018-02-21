@@ -22,7 +22,7 @@
 				<%= f.label :solution_folder_meta_id, t('solution.folder'), :class => "control-label" %>
 				<div class="controls">
 					<% unless @article.is_primary? %>
-						<div class="mt7"> <%= @folder_meta.send("#{@language.to_key}_folder").name %> </div>
+						<div class="mt7"> <%= @folder_meta.safe_send("#{@language.to_key}_folder").name %> </div>
 					<% else %>
 						<%= f.select :solution_folder_meta_id , 
 									grouped_options_for_select(grouped_options_for_folder_select, @article_meta.solution_folder_meta_id), 

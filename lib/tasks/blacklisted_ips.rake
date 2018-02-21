@@ -1,4 +1,4 @@
-require 'zip/zip'
+require 'zip'
 require 'tempfile'
 
 RETRY_COUNT = 3
@@ -71,7 +71,7 @@ end
 def extract_blocked_ips(ips)
   zip_file = Tempfile.new('blacklisted_ips.zip',:encoding => 'ascii-8bit')
   zip_file.write(ips) 
-  ip_zip=Zip::ZipFile.open(zip_file)
+  ip_zip=Zip::File.open(zip_file)
   ip_zip.each do |file|                                                     
     ips = file.get_input_stream.read
   end  

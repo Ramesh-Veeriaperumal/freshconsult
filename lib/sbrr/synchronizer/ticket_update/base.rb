@@ -14,11 +14,11 @@ module SBRR
         private
 
           def perform_in_queues _queues, operation, _ticket
-            _queues.each{ |_queue| _queue.send(operation, _ticket) }
+            _queues.each{ |_queue| _queue.safe_send(operation, _ticket) }
           end
 
           def refresh_in_queues _queues, operation, _ticket, score = nil
-            _queues.each{ |_queue| _queue.send(operation, _ticket, score) }
+            _queues.each{ |_queue| _queue.safe_send(operation, _ticket, score) }
           end
 
           def old_queues

@@ -52,7 +52,7 @@ private
     	return unless article.status_changed? && article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && !article.draft
 			draft = article.build_draft
       article.draft_attributes(:user_id => article.user_id).each do |k, v|
-        draft.send("#{k}=", v)
+        draft.safe_send("#{k}=", v)
       end
 			article.draft.populate_defaults
     end

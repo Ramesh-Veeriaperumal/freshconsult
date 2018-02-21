@@ -34,7 +34,7 @@ module IntegrationServices::Services
     end
 
     def receive_object_metadata
-      send("#{@payload[:object]}_resource").get_fields
+      safe_send("#{@payload[:object]}_resource").get_fields
     end
 
     def receive_create_instance_object_definition
@@ -86,7 +86,7 @@ module IntegrationServices::Services
     end
 
     def receive_fetch_user_selected_fields
-      send("#{@payload[:type]}_resource").get_selected_fields(@installed_app.send("configs_#{@payload[:type]}_fields"), @payload[:value], @meta_data[:app_name])
+      safe_send("#{@payload[:type]}_resource").get_selected_fields(@installed_app.safe_send("configs_#{@payload[:type]}_fields"), @payload[:value], @meta_data[:app_name])
     end
 
     def receive_integrated_resource
@@ -330,7 +330,7 @@ module IntegrationServices::Services
       ticket_states = ticket.ticket_states
       co_attributes = assign_ticket_prop ticket, fd_user, co_attributes
       TICKET_STATES.each do |sf,fd|
-        co_attributes[sf] = ticket_states.send(fd)
+        co_attributes[sf] = ticket_states.safe_send(fd)
       end
       co_custom_fields = populate_custom_fields ticket #separating Post of Custom fields and Normal Fields, Because it will error out it the Custom_field is not exist.
       [co_attributes, co_custom_fields, ticket.id]
@@ -345,7 +345,7 @@ module IntegrationServices::Services
       fd_det = ["email", "mobile", "phone", "twitter_id", "fb_profile_id", "external_id"]
       user_det = Hash[CONTACT_FIELDS.zip fd_det]
       user_det.each do |k, v|
-        fd_contact[k] = fd_user.send(v) if fd_user.send(v).present? && v != "email"
+        fd_contact[k] = fd_user.safe_send(v) if fd_user.safe_send(v).present? && v != "email"
       end 
       other_query =  fd_contact.map{|k,v| "#{k}='#{v}'"}
       query = email_query.concat(other_query).join(' OR ') # Query will be the same.
@@ -479,14 +479,14 @@ module IntegrationServices::Services
     def build_body object, sync_hash # object is either either contact or company.
       body = {}
       sync_hash.each do |k,v|
-        value = object.send(k)
+        value = object.safe_send(k)
         body[v] = value if value.present?
       end
       body
     end
 
     def assign_ticket_prop ticket, fd_user, co_attributes
-      co_attributes["freshdesk__RequesterEmail__c"] = fd_user.send("email")
+      co_attributes["freshdesk__RequesterEmail__c"] = fd_user.safe_send("email")
       co_attributes["freshdesk__TicketPriority__c"] = TicketConstants::PRIORITY_NAMES_BY_KEY[ticket.priority].titlecase
       co_attributes["freshdesk__TicketSource__c"] = TicketConstants::SOURCE_TOKEN_BY_KEY[ticket.source].to_s.titlecase
       co_attributes["freshdesk__TicketProduct__c"] = (ticket.product.present?) ? ticket.product.name : nil
@@ -501,7 +501,7 @@ module IntegrationServices::Services
         co_attributes["freshdesk__SalesforceUser__c"] = user_response.first["Id"] unless user_response.blank?
       end       
       TICKET_FIELDS.each do |sf,fd|
-        co_attributes[sf] = ticket.send(fd)
+        co_attributes[sf] = ticket.safe_send(fd)
       end
       co_attributes
     end
@@ -514,7 +514,7 @@ module IntegrationServices::Services
       formatted_fields = sf_custom_fields(fd_custom_fields)
       return co_custom_fields if fd_custom_fields.blank?
       formatted_fields.each do |custom_field|
-        fd_cust_field_value = ticket.send(custom_field[0])
+        fd_cust_field_value = ticket.safe_send(custom_field[0])
         co_custom_fields[custom_field[1]] = fd_cust_field_value
       end
       co_custom_fields

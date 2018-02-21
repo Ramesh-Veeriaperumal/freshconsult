@@ -4,7 +4,7 @@ module Search::SearchHelper
 	def search_sort_menu
 		@search_sort = @search_sort || 'relevance'
 		sort_menu = ["relevance", "created_at", "updated_at"].each_with_index.map do |s, i|
-						[ 	t("search.sort_by.#{s}"), send("search_#{current_filter}_path", {:term => @search_key, :search_sort => s}),
+						[ 	t("search.sort_by.#{s}"), safe_send("search_#{current_filter}_path", {:term => @search_key, :search_sort => s}),
 							(@search_sort.to_s == s) ]
 					end
 		

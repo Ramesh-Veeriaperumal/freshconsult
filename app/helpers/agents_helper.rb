@@ -86,7 +86,7 @@ module AgentsHelper
 
   def agent_count(state)
     scoper = :occasional.eql?(state) ? "occasional_agents" : "full_time_agents"
-    current_account.all_agents.send(scoper).size
+    current_account.all_agents.safe_send(scoper).size
   end
   
   def agent_list_sort

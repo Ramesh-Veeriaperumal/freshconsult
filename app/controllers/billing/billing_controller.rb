@@ -61,7 +61,7 @@ class Billing::BillingController < ApplicationController
   
   def trigger
     if not_api_source? or sync_for_all_sources?
-      send(params[:event_type], params[:content])
+      safe_send(params[:event_type], params[:content])
     end
 
     if LIVE_CHAT_EVENTS.include? params[:event_type]
@@ -304,7 +304,7 @@ class Billing::BillingController < ApplicationController
     end
 
     def build_meta_info(invoice)
-      meta_info = META_INFO.inject({}) { |h, (k, v)| h[k] = @account.subscription.send(v); h }
+      meta_info = META_INFO.inject({}) { |h, (k, v)| h[k] = @account.subscription.safe_send(v); h }
       meta_info.merge({ :description => invoice[:line_items][0][:description] })
     end
 

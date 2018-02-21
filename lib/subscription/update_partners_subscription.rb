@@ -16,7 +16,7 @@ class Subscription::UpdatePartnersSubscription
     begin
       account = Account.current
       return if account.subscription.affiliate.nil? 
-      send(%(trigger_#{args['event_type']}_event), account, args)
+      safe_send(%(trigger_#{args['event_type']}_event), account, args)
     rescue Exception => e
       logger.info "#{e}"
       logger.info e.backtrace.join("\n")

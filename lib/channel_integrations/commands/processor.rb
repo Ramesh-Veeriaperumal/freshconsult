@@ -9,7 +9,7 @@ module ChannelIntegrations
         klass = construct_klass(payload)
 
         if klass
-          klass.new.public_send(command, payload)
+          klass.new.safe_send(command, payload)
         else
           invalid_action_message
         end

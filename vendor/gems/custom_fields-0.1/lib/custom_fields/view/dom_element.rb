@@ -28,7 +28,7 @@ module CustomFields
       end
 
       def construct
-        element = (@disabled and @dom_type != :checkbox) ? construct_disabled : send(:"construct_#{@dom_type}")
+        element = (@disabled and @dom_type != :checkbox) ? construct_disabled : safe_send(:"construct_#{@dom_type}")
         element += loading_gif if @args[:include_loading_symbol] and @dom_type != :checkbox
         element += autocomplete_box if @args[:autocomplete]
         @dom_type == :checkbox ? wrap_checkbox(element).html_safe : wrap(element).html_safe

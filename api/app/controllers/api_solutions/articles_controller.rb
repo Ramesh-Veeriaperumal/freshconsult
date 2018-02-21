@@ -90,7 +90,7 @@ module ApiSolutions
 
       def construct_article_object
         @meta = Solution::Builder.article(solution_article_meta: @article_params, language_id: @lang_id)
-        @item = @meta.send(language_scoper)
+        @item = @meta.safe_send(language_scoper)
         @item.tags = construct_tags(@tags) if @tags
         @item.create_draft_from_article if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && create?
         !(@item.errors.any? || @item.parent.errors.any?)

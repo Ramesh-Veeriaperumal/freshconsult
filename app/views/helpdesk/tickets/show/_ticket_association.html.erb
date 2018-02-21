@@ -28,7 +28,7 @@
           <%=h(tracker_ticket.responder.display_name)%>,
         <% end -%>
         <%= t("ticket.ticket_user_list_status_" + tracker_ticket.ticket_states.current_state(ticket.outbound_email?),
-                :time_ago => time_ago_in_words(tracker_ticket.ticket_states.send(tracker_ticket.ticket_states.current_state(tracker_ticket.outbound_email?)))
+                :time_ago => time_ago_in_words(tracker_ticket.ticket_states.safe_send(tracker_ticket.ticket_states.current_state(tracker_ticket.outbound_email?)))
                 ).html_safe %>
       </small>
       <small class="block tracker_details"><%=t('ticket.status')%>: <%= h(tracker_ticket.status_name.html_safe) %></small>
@@ -136,7 +136,7 @@
       </small>
       <small class="block tracker_details">
         <%= t("ticket.ticket_user_list_status_" + ticket.ticket_states.current_state(ticket.outbound_email?),
-          :time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state(ticket.outbound_email?)))
+          :time_ago => time_ago_in_words(ticket.ticket_states.safe_send(ticket.ticket_states.current_state(ticket.outbound_email?)))
           ).html_safe %>
       </small>
     </div>

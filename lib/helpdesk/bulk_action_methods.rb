@@ -107,7 +107,7 @@ module Helpdesk::BulkActionMethods
       if ticket.observer_args.present?
         run_observer_inline(ticket)
       else
-        Rails.logger.debug "Skipping observer as observer_args is nil. Account # #{Account.current.id}, display id # #{ticket.display_id}, model_changes #{ticket.model_changes.inspect}, filter_observer_events #{ticket.send(:filter_observer_events, false, false).inspect}"
+        Rails.logger.debug "Skipping observer as observer_args is nil. Account # #{Account.current.id}, display id # #{ticket.display_id}, model_changes #{ticket.model_changes.inspect}, filter_observer_events #{ticket.safe_send(:filter_observer_events, false, false).inspect}"
         @sbrr_exec_objs = (@sbrr_exec_objs || []).push(ticket.sbrr_exec_obj)
       end
     else

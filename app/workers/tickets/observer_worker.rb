@@ -33,7 +33,7 @@ module Tickets
           evaluate_on.save!
           evaluate_on.va_rules_after_save_actions.each do |action|
             klass = action[:klass].constantize
-            klass.send(action[:method], action[:args])
+            klass.safe_send(action[:method], action[:args])
           end
         else
           Va::Logger::Automation.log "Skipping observer worker::ticket present?=#{evaluate_on.present?}::user present?=#{(doer.present? || system_event)}"

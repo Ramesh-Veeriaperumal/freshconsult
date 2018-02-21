@@ -684,7 +684,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
     def update_chargebee_subscription(state)
       chargebee_action_name = ((state == Subscription::ACTIVE) ? 'reactivate_subscription' : 'cancel_subscription')
-      billing_data = Billing::ChargebeeWrapper.new.send(chargebee_action_name, Account.current.id)
+      billing_data = Billing::ChargebeeWrapper.new.safe_send(chargebee_action_name, Account.current.id)
       chargebee_state =  ((state == Subscription::ACTIVE) ? 'active' : 'cancelled')
       billing_data.subscription.status == chargebee_state
     end

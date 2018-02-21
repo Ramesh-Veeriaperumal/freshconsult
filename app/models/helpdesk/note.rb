@@ -116,17 +116,17 @@ class Helpdesk::Note < ActiveRecord::Base
   SCHEMA_LESS_ATTRIBUTES.each do |attribute|
     define_method("#{attribute}") do
       load_schema_less_note
-      schema_less_note.send(attribute)
+      schema_less_note.safe_send(attribute)
     end
 
     define_method("#{attribute}?") do
       load_schema_less_note
-      schema_less_note.send(attribute)
+      schema_less_note.safe_send(attribute)
     end
 
     define_method("#{attribute}=") do |value|
       load_schema_less_note
-      schema_less_note.send("#{attribute}=", value)
+      schema_less_note.safe_send("#{attribute}=", value)
     end
   end
 
@@ -465,7 +465,7 @@ class Helpdesk::Note < ActiveRecord::Base
         if(SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?")))
           load_schema_less_note
           args = args.first if args && args.is_a?(Array)
-          (method.to_s.include? '=') ? schema_less_note.send(method, args) : schema_less_note.send(method)
+          (method.to_s.include? '=') ? schema_less_note.safe_send(method, args) : schema_less_note.safe_send(method)
         end
       end
     end

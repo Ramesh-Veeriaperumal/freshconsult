@@ -147,7 +147,7 @@ class TicketValidation < ApiValidation
 
 
   def requester_id_mandatory? # requester_id is must if any one of email/twitter_id/fb_profile_id/phone is not given.
-    MANDATORY_FIELD_ARRAY.all? { |x| send(x).blank? && errors[x].blank? }
+    MANDATORY_FIELD_ARRAY.all? { |x| safe_send(x).blank? && errors[x].blank? }
   end
 
   def name_required? # Name mandatory if phone number of a non existent contact is given. so that the contact will get on ticket callbacks.

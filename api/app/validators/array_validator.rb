@@ -1,6 +1,6 @@
 class ArrayValidator < ApiValidator
   def validate_each
-    valid_options = options.except(*record.class.send(:_validates_default_keys))
+    valid_options = options.except(*record.class.safe_send(:_validates_default_keys))
 
     value.each do |element_value|
       valid_options.each do |key, args|

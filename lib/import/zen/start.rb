@@ -54,7 +54,7 @@ class Import::Zen::Start < Struct.new(:params)
     set_queue_keys 'attachments'
     import_list.each do |object|
        SUB_FUNCTION_MAP[object.to_sym].each do |func|
-            send('read_data',func.to_s) 
+            safe_send('read_data',func.to_s) 
        end
     end
     Resque.enqueue_at(1.hour.from_now, Import::Zen::ZendeskImportStatus, 
@@ -76,7 +76,7 @@ def read_data(obj_node)
                                                                    :username => username,
                                                                    :password => password})
           else
-            send("save_#{obj_node}" , reader.outer_xml)
+            safe_send("save_#{obj_node}" , reader.outer_xml)
           end
        end
     end

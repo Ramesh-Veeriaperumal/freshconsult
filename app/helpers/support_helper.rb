@@ -533,7 +533,7 @@ module SupportHelper
 
   def ticket_field_display_value(field, ticket)
     _field_type = field.field_type
-    _field_value = (field.is_default_field?) ? ticket.send(field.field_name) : fetch_custom_field(ticket, field.name)
+    _field_value = (field.is_default_field?) ? ticket.safe_send(field.field_name) : fetch_custom_field(ticket, field.name)
     _dom_type = (_field_type == "default_source") ? "dropdown" : field.dom_type
 
     case _dom_type
@@ -557,7 +557,7 @@ module SupportHelper
 
   def ticket_field_form_value(field, ticket)
     form_value = (field.is_default_field?) ?
-                  ticket.send(field.field_name) : fetch_custom_field(ticket, field.name)
+                  ticket.safe_send(field.field_name) : fetch_custom_field(ticket, field.name)
 
     if(field.field_type == "nested_field")
       form_value = {}

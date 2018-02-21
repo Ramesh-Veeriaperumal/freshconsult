@@ -18,15 +18,15 @@ module Freshquery
 
     def validate_each(record, key, options, values)
       method = method_name(options)
-      send(method, record, key, values) if method
+      safe_send(method, record, key, values) if method
     end
 
     def method_name(options)
       if options[:choices]
-        @options[:in] = options[:choices].is_a?(Array) ? options[:choices] : @helper.send(options[:choices])
+        @options[:in] = options[:choices].is_a?(Array) ? options[:choices] : @helper.safe_send(options[:choices])
         return 'validate_custom_dropdown_array'
       elsif options[:regex]
-        @options[:with] = @helper.send(options[:regex])
+        @options[:with] = @helper.safe_send(options[:regex])
         return 'validate_custom_format_array'
       elsif options[:type]
         if options[:type] == 'positive_integer'

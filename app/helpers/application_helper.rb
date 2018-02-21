@@ -484,7 +484,7 @@ module ApplicationHelper
       end
     else
       data['eval_args'].each_pair do |k, v|
-        data[k] = send(v[0].to_sym, v[1])
+        data[k] = safe_send(v[0].to_sym, v[1])
       end
     end
 
@@ -1405,7 +1405,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       section_elements = ""
       picklist.section_ticket_fields.each do |section_tkt_field|
         if is_edit || required
-          section_field_value = item.is_a?(Helpdesk::Ticket) ? item.send(section_tkt_field.field_name) :
+          section_field_value = item.is_a?(Helpdesk::Ticket) ? item.safe_send(section_tkt_field.field_name) :
             item.custom_field_value(section_tkt_field.field_name)
           section_field_value = nested_ticket_field_value(item,
                                   section_tkt_field) if section_tkt_field.field_type == "nested_field"
@@ -1443,7 +1443,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
           section_field_value = if item.is_a?(Helpdesk::TicketTemplate)
             item.template_data[section_tkt_field.field_name]
           elsif item.is_a?(Helpdesk::Ticket)
-            item.send(section_tkt_field.field_name)
+            item.safe_send(section_tkt_field.field_name)
           else
             item.custom_field_value(section_tkt_field.field_name)
           end
@@ -1946,7 +1946,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   def asset_manifest(type = :js)
     return {} unless [:js, :css].include?(type)
     load_manifest if ASSET_MANIFEST.blank? and !Rails.env.development?
-    Rails.env.development? ? AssetLoader.send("#{type}_assets") : ASSET_MANIFEST[type]
+    Rails.env.development? ? AssetLoader.safe_send("#{type}_assets") : ASSET_MANIFEST[type]
   end
 
   def asset_host_url

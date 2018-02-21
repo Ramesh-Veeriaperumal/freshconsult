@@ -126,11 +126,11 @@ class Portal < ActiveRecord::Base
 
   #Yeah.. It is ugly.
   def ticket_fields(additional_scope = :all)
-    filter_fields account.ticket_fields.send(additional_scope), ticket_field_conditions
+    filter_fields account.ticket_fields.safe_send(additional_scope), ticket_field_conditions
   end
 
   def ticket_fields_including_nested_fields(additional_scope = :all)
-    filter_fields account.ticket_fields_including_nested_fields.send(additional_scope), ticket_field_conditions
+    filter_fields account.ticket_fields_including_nested_fields.safe_send(additional_scope), ticket_field_conditions
   end
 
   def customer_editable_ticket_fields
@@ -230,13 +230,13 @@ class Portal < ActiveRecord::Base
     end
 
     def handle_icon(icon_field, icon_attr)
-      unless send(icon_field)
-        icon = send("build_#{icon_field}")
+      unless safe_send(icon_field)
+        icon = safe_send("build_#{icon_field}")
         icon.description = icon_field
         icon.content = icon_attr[:content]
         icon.account_id = account_id
       else
-        send(icon_field).update_attributes(icon_attr)
+        safe_send(icon_field).update_attributes(icon_attr)
       end
     end
 
@@ -347,7 +347,7 @@ class Portal < ActiveRecord::Base
     # * * * POD Operation Methods Begin * * *
     def update_custom_portal
       if Fdadmin::APICalls.non_global_pods? && portal_url_changed?
-        action = (send(:transaction_include_action?, :create) && new_record?) ? :create : :update
+        action = (safe_send(:transaction_include_action?, :create) && new_record?) ? :create : :update
         request_parameters = {
           :target_method => :update_domain_mapping_for_pod,
           :operation => action,

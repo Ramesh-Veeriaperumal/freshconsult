@@ -14,7 +14,7 @@ class Highchart
     # create the chart and return it in the format requested
     if @@types.include?(m.to_s)  
       chart = new(options.merge!({:type => m}))
-      chart.send(format)
+      chart.safe_send(format)
     else
       "#{m} is not a supported chart format, please use one of the following: #{supported_types}."
     end  
@@ -135,9 +135,9 @@ class Highchart
     options.each do |attribute, value|
       if value.is_a?(Hash)
         # if provided a hash attempt to merge with defaults, otherwise just override defaults
-        send("#{attribute}=", (send(attribute) || {}).merge_recursive(value)) if self.respond_to?("#{attribute}=")
+        safe_send("#{attribute}=", (safe_send(attribute) || {}).merge_recursive(value)) if self.respond_to?("#{attribute}=")
       else
-        send("#{attribute.to_s}=", value) if self.respond_to?("#{attribute}=")
+        safe_send("#{attribute.to_s}=", value) if self.respond_to?("#{attribute}=")
       end
     end  
   end

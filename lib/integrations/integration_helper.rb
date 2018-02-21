@@ -52,7 +52,7 @@ module Integrations::IntegrationHelper
       begin
         if obj.respond_to?(app_name)
           condition = { :dispatcher => va_rules_controller?, :observer => observer_rules_controller? }
-          option = obj.send(app_name, installed_app, condition)
+          option = obj.safe_send(app_name, installed_app, condition)
           integration_actions.push(option)
         end
       rescue => err

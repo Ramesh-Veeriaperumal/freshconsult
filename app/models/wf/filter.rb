@@ -583,7 +583,7 @@ class Wf::Filter < ActiveRecord::Base
     end
     
     validation_arr.each do |attr|
-     @errors[attr] = "is blank" if self.send(attr.to_s).blank?
+     @errors[attr] = "is blank" if self.safe_send(attr.to_s).blank?
     end
     
     unless required_conditions_met?

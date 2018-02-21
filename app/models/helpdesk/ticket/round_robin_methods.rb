@@ -91,7 +91,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     end
     actions.each do |act|
-      send("#{act[0]}_agent_capping_limit", act[1], act[2])
+      safe_send("#{act[0]}_agent_capping_limit", act[1], act[2])
     end
   end
 
@@ -231,7 +231,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def fetch_lbrr_id ticket_changes, key, state=false
     ticket_changes.has_key?(key) ? ticket_changes[key][state ? 0 : 1] : 
-                                   send(key.to_s)
+                                   safe_send(key.to_s)
   end
 
   def lbrr_status_change? status_ids, status, old_status

@@ -262,7 +262,7 @@ class PartnerAdmin::AffiliatesController < ApplicationController
 
       accounts[start_index..end_index].collect do |subscription|
         Sharding.select_shard_of(subscription.account_id) do
-          SUBSCRIPTION.inject({}) { |h, (k, v)| h[k] = subscription.send(v); h }
+          SUBSCRIPTION.inject({}) { |h, (k, v)| h[k] = subscription.safe_send(v); h }
         end
       end
     end

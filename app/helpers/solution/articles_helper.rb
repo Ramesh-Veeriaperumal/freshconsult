@@ -160,7 +160,7 @@ module Solution::ArticlesHelper
 
   def missing_translations? article
     return false unless Account.current.multilingual?
-    !(article.solution_folder_meta.send("#{article.language.to_key}_available?") && article.parent.solution_category_meta.send("#{article.language.to_key}_available?"))
+    !(article.solution_folder_meta.safe_send("#{article.language.to_key}_available?") && article.parent.solution_category_meta.safe_send("#{article.language.to_key}_available?"))
   end
 
   def draft_portal_preview

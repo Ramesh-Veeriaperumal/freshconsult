@@ -333,7 +333,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       @data_export.save
       @export_query_params[:export_id] = @data_export.id
 
-      acc_export = current_user.data_exports.send("reports_export")
+      acc_export = current_user.data_exports.safe_send("reports_export")
       acc_export.first.destroy if acc_export.count >= TICKET_EXPORT_LIMIT
       return true
     else

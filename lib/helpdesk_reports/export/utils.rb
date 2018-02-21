@@ -17,7 +17,7 @@ module HelpdeskReports::Export::Utils
 
     write_file(file_string, file_path)
     if compress
-      Zip::ZipFile.open("#{file_path.gsub('.'+format, '.zip')}", Zip::ZipFile::CREATE) do |zipfile|
+      Zip::File.open("#{file_path.gsub('.'+format, '.zip')}", Zip::File::CREATE) do |zipfile|
         zipfile.add(file_name, file_path)
       end
       File.delete(file_path)

@@ -36,13 +36,13 @@ module ConfirmDeleteHelper
 
 	def deletion_message(item)
 		respond_to?("#{item.class.name.parameterize.underscore}_delete_message") ?
-			send("#{item.class.name.parameterize.underscore}_delete_message", item) : default_deletion_message
+			safe_send("#{item.class.name.parameterize.underscore}_delete_message", item) : default_deletion_message
 	end
 
 	def item_title(item, options)
 		title = options[:"item-title"] || item[:name] || item[:title]
 		[:name, :title].each do |type|
-			title ||= item.send(type) if item.respond_to?(type)
+			title ||= item.safe_send(type) if item.respond_to?(type)
 		end
 		title || ""
 	end

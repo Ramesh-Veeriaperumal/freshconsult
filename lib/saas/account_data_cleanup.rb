@@ -19,7 +19,7 @@ class SAAS::AccountDataCleanup
     features_to_process.each do |feature|
       method = "handle_#{feature}_#{action}_data"
       begin
-        send(method) if respond_to?(method)
+        safe_send(method) if respond_to?(method)
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end
@@ -276,7 +276,7 @@ end
     ::Tickets::ResetAssociations.perform_async({:parent_child_feature_disable => true})
     clear_fragment_caches
     obj = account.features?(:ticket_templates) ? "parent" : "prime"
-    account.send("#{obj}_templates").destroy_all
+    account.safe_send("#{obj}_templates").destroy_all
   end
 
   def handle_ticket_activity_export_drop_data

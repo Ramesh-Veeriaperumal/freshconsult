@@ -240,7 +240,7 @@ class CRM::Salesforce < Resque::Job
 
     def payment_attributes(payment)
       # return { :Name => payment.to_s } unless DayPassPurchase.find_by_payment_id(payment.id).blank?
-      payment_attr = PAYMENT_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = payment.send(v).to_s; h } 
+      payment_attr = PAYMENT_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = payment.safe_send(v).to_s; h } 
     end
 
     def opportunity_attributes(payment)

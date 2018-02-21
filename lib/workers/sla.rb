@@ -124,7 +124,7 @@ end
   end
 
   def self.execute_on_db(db_name)
-    Sharding.send(db_name.to_sym) do
+    Sharding.safe_send(db_name.to_sym) do
       yield
     end
   end

@@ -18,7 +18,7 @@ class Solution::Folder < ActiveRecord::Base
 
   self.table_name =  "solution_folders"
   
-  after_commit ->(obj) { obj.send(:clear_cache) }, on: :update
+  after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :update
   
   alias_method :parent, :solution_folder_meta
   

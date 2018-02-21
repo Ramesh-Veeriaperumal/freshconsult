@@ -165,7 +165,7 @@ private
 			@forum_category = @forum.forum_category
 			wrong_portal and return unless current_portal.has_forum_category?(@forum_category)
 			raise(ActiveRecord::RecordNotFound) unless (@forum.account_id == current_account.id)
-			redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)
+			redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) unless @forum.visible?(current_user)
 		end
 	end
 
@@ -175,7 +175,7 @@ private
 			resource_not_found :post
 		else
 			(raise(ActiveRecord::RecordNotFound) unless (@post.account_id == current_account.id))
-			redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.topic.forum.visible?(current_user)
+			redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.topic.forum.visible?(current_user)
 		end
 	end
 	
@@ -194,11 +194,11 @@ private
 	end
 
 	def verify_user
-		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.user == current_user
+		redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) unless @post.user == current_user
 	end
 
 	def verify_topic_user
-		redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless (current_user.agent? || @topic.user == current_user)
+		redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) unless (current_user.agent? || @topic.user == current_user)
 	end
 
 	def vote_parent

@@ -1,4 +1,15 @@
 
+class LivechatWorkerException <  Exception
+	def initialize(message, action)
+		# Call the parent's constructor to set the message
+		super(message)
+
+		# Store the action in an instance variable
+		@action = action
+	end
+end
+
+
 class LivechatWorker < BaseWorker
 	require 'httparty'
 	include Livechat::Token
@@ -9,22 +20,32 @@ class LivechatWorker < BaseWorker
   sidekiq_options :queue => :livechat_worker, :retry => 0, :backtrace => true, :failures => :exhausted
 
 	def perform(args)
-		args["token"] 					= get_token(args)
+		worker_method_name = args["worker_method"]
+		args["token"] 					= get_token(args, worker_method_name)
 		# added account and current user params to the arguments.
 		# current_user_id is being used in live chat privilege check.
 		args["account_id"] 			 = Account.current.id
 		args["userId"]           = User.current.id unless User.current.nil?
 		args['siteId'] 					 = Account.current.chat_setting.site_id
 		args['appId'] 					 = ChatConfig['app_id']
-		send(args["worker_method"],args)
+		safe_send(worker_method_name, args)
 	end
 
-	def get_token(params)
+	def get_token(params, worker_method_name)
 		site_id = Account.current.chat_setting.site_id
-		if User.current && User.current.id
-			return livechat_token(site_id, User.current.id)
+		if User.current.nil? || site_id.nil?
+			exception_obj = LivechatWorkerException.new(
+				"Unexpected User.current is nil : #{User.current.nil? ?  'nil' : User.current.id } or site_id is nil: #{site_id.nil? ?  'nil' : site_id }",
+				worker_method_name)
+				NewRelic::Agent.notice_error(exception_obj,
+                                     {:description => "error occured while running worker #{worker_method_name}  in account: #{ Account.current.nil? ? "nil" :  Account.current.id}"})
+			raise exception_obj
 		else
-			return livechat_partial_token(site_id)
+			#return livechat_partial_token(site_id)
+			return livechat_token(site_id, User.current.id,
+                            # current_user.privilege?(:admin_tasks)
+                            User.current.privilege?(:admin_tasks)
+			)
 		end
 	end
 

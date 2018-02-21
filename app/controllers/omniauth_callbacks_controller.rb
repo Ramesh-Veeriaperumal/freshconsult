@@ -76,7 +76,9 @@ class OmniauthCallbacksController < ApplicationController
     if @state_params["ignore_build"].present?
       @ignore_build = true
     else
-      @domain = (@state_params["portal_domain"].presence || @state_params["full_domain"].presence)[0]
+      domain_param = (@state_params["portal_domain"].presence || @state_params["full_domain"].presence )
+      return unless domain_param.present?
+      @domain = domain_param[0] 
       domain_mapping = DomainMapping.find_by_domain(@domain)
       if domain_mapping.present?
         @account_id =  domain_mapping.account_id

@@ -20,7 +20,7 @@ class Import::TenderImport < Struct.new(:params)
    disable_notification 
    object_list.each do |obj|
      path = File.join(path, OBJ_TO_PATH[obj])
-     send("read_data",path, obj)
+     safe_send("read_data",path, obj)
    end  
    enable_notification
  end
@@ -33,7 +33,7 @@ def read_data(path, object ,name=nil )
       read_data(full_path, object,entry)
     else
       begin
-        send("save_#{object.to_s}", full_path) if File.extname(entry) == '.json'
+        safe_send("save_#{object.to_s}", full_path) if File.extname(entry) == '.json'
       rescue => e
         puts "Unable to save object #{e.message}\n#{e.backtrace.join("\n")}"
       end

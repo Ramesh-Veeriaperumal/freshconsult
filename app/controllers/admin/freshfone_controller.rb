@@ -188,7 +188,7 @@ class Admin::FreshfoneController < Admin::AdminController
 
 		def get_available_numbers(type)
 			TwilioMaster.account.available_phone_numbers.get(
-				params[:country]).send(type).list(params[:search_options])
+				params[:country]).safe_send(type).list(params[:search_options])
 		end
 
 		def populate_results(available_numbers, type)

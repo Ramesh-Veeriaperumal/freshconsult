@@ -20,7 +20,7 @@ module Admin
                   :type => ::Marketplace::Constants::EXTENSION_TYPE[:ni],
                   :enabled => ::Marketplace::Constants::EXTENSION_STATUS[:enabled]
                  }) if ['install', 'update'].include?(args[:method])
-        ext_result = send("#{args[:method]}_extension", params)
+        ext_result = safe_send("#{args[:method]}_extension", params)
         if error_status?(ext_result)
           enqueue_later(args)
           return

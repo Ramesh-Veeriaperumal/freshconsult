@@ -53,7 +53,7 @@ class ContactEnrichment
     merge_type = (email_update || Account.current.email_signup?)  ? :merge : :reverse_merge
     account_contact_info = Account.current.contact_info
     account_contact_info.reject! { |k,v| v.nil? || v.empty? }
-    account_contact_info.send(merge_type, person_contact_info)
+    account_contact_info.safe_send(merge_type, person_contact_info)
   end
 
   def generate_clearbit_company_info(result)

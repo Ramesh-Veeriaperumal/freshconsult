@@ -366,7 +366,7 @@ module FreshdeskCore::Model
     def clear_archive_data_from_s3(account)
       begin
         ARCHIVE_S3_BUCKET_MAPPING.each do |association_type, s3_bucket|
-          account.send(association_type).find_in_batches do |assn|
+          account.safe_send(association_type).find_in_batches do |assn|
             db_ids = assn.map(&:id)
             s3_keys = db_ids.inject([]) do |keys,db_id|
               if association_type == :archive_tickets
