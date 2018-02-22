@@ -755,7 +755,7 @@ private
   end
 
   def execute_observer?
-    execute_observer = user_present? and !disable_observer_rule
+    execute_observer = user_present? && !disable_observer_rule
     SBRR.log "Ticket ##{self.display_id} save done. Model_changes #{@model_changes.inspect}"
     Va::Logger::Automation.log "Skipping observer" unless execute_observer
     execute_observer
