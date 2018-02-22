@@ -93,8 +93,8 @@ class CompanyDecorator < ApiDecorator
     end
 
     def widget_fields_hash(obj, fields, name_mapping = false)
-      return fields.inject({}) { |a, e| a.merge(e.name => obj.send(e.name)) } unless name_mapping
-      fields.inject({}) { |a, e| a.merge(CustomFieldDecorator.display_name(e.name) => obj.send(e.name)) }
+      return fields.inject({}) { |a, e| a.merge(e.name => obj.safe_send(e.name)) } unless name_mapping
+      fields.inject({}) { |a, e| a.merge(CustomFieldDecorator.display_name(e.name) => obj.safe_send(e.name)) }
     end
 
     def current_account

@@ -10,9 +10,9 @@
     <% num_of_unanswered = unanswered_calls_count([call_list]) + unanswered_transfers([call_list])%>
     <% headers.keys.each do |header| %>
       <% if([:call_handle_time, :avg_handle_time].include?(header)) %>
-        <% content = call_duration_formatted(send(header,[call_list])) %>
+        <% content = call_duration_formatted(safe_send(header,[call_list])) %>
       <% else %>
-        <% content =[:agent_name].include?(header) ? "" : send(header,[call_list]) %>
+        <% content =[:agent_name].include?(header) ? "" : safe_send(header,[call_list]) %>
         <% if([:calls_count].include?(header) && num_of_unanswered.to_i != 0) %>
           <% content = content - external_transfers_count([call_list])%>
           <td><%=h(content)%><span class='muted'><%= (call_type == Freshfone::Call::CALL_TYPE_HASH[:incoming]) ? " (#{num_of_unanswered.to_i} " + t("reports.freshfone.unanswered_count") + ")" : nil %></span></td>
@@ -34,9 +34,9 @@
       <% num_of_unanswered = unanswered_calls_count([call_list]) + unanswered_transfers([call_list])%>
       <%headers.keys.each do |header| %>
         <%if([:call_handle_time].include?(header)) %>
-          <% content = call_duration_formatted(send(header,[call_list])) %>
+          <% content = call_duration_formatted(safe_send(header,[call_list])) %>
         <%else%>
-          <%content =[:agent_name].include?(header) ? "" : send(header,[call_list])%>
+          <%content =[:agent_name].include?(header) ? "" : safe_send(header,[call_list])%>
           <%if([:calls_count].include?(header) && num_of_unanswered.to_i != 0)%>
             <td><span class='muted'><%=" #{num_of_unanswered.to_i} " + t("reports.freshfone.unanswered_count") %></span></td>
             <%next%>

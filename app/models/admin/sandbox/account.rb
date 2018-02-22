@@ -23,7 +23,7 @@ class Admin::Sandbox::Account < ActiveRecord::Base
 
     if self.config.blank?
       CONFIGS.each do |c|
-        self.send("mark_#{c}_config")
+        self.safe_send("mark_#{c}_config")
       end
     end
   end

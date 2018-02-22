@@ -14,7 +14,7 @@ module AccountSetup
   module InstanceMethods
     def complete_step
       Rails.logger.debug "::::::: Trial widget update : #{current_flag} set up :::::::"
-      current_account.send("mark_#{current_flag}_setup_and_save")
+      current_account.safe_send("mark_#{current_flag}_setup_and_save")
     rescue Exception => e
       Rails.logger.debug "::::::: Trial widget account setup error : #{e}"
     end
@@ -24,7 +24,7 @@ module AccountSetup
     end
 
     def setup_not_complete?
-      response.code == '200' && current_account.subscription.trial? && !current_account.send("#{current_flag}_setup?")
+      response.code == '200' && current_account.subscription.trial? && !current_account.safe_send("#{current_flag}_setup?")
     end
   end
 end

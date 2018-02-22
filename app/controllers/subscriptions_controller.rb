@@ -324,7 +324,7 @@ class SubscriptionsController < ApplicationController
     #Events
     def subscription_info(subscription)
       subscription_attributes =
-        Subscription::SUBSCRIPTION_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = subscription.send(v); h }
+        Subscription::SUBSCRIPTION_ATTRIBUTES.inject({}) { |h, (k, v)| h[k] = subscription.safe_send(v); h }
       subscription_attributes.merge!( :next_renewal_at => subscription.next_renewal_at.to_s(:db) )
     end
 

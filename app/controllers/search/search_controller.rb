@@ -148,7 +148,7 @@ class Search::SearchController < ApplicationController
 				@results[result.class.name] ||= []
 				result = SearchUtil.highlight_results(result, hit) unless hit['highlight'].blank?
 				@results[result.class.name] << result
-				@result_json[:results] << send(%{#{result.class.model_name.singular}_json}, result) if result
+				@result_json[:results] << safe_send(%{#{result.class.model_name.singular}_json}, result) if result
 			end
 
 			@search_results = (@search_results.presence || []) + @result_set.results

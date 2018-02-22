@@ -83,7 +83,7 @@ module ApiDiscussions
 
       def assign_parent(item, parent, value)
         if item.has_attribute?(parent.to_sym) # eg: topic has forum_id
-          item.send(:write_attribute, parent, value[parent]) if value.key?(parent)
+          item.safe_send(:write_attribute, parent, value[parent]) if value.key?(parent)
         else
           item.association(parent.to_sym).writer(value) # here topic is not yet saved hence, topic_id cannot be retrieved.
         end

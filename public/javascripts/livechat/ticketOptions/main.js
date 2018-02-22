@@ -238,7 +238,12 @@
     			excludeOngoing : this.excludeOngoing,
     		};
       	window.liveChat.request('chats/' + chatId + '/getUnmarkedMsgs', 'GET', requestData, function(err, data){
-      		callback(data);
+          if (err) {
+            console.log("INFO public/javascripts/livechat/ticketOptions/main.js, getMessagesFromLivechat - err: ", JSON.stringify(err));
+            callback(data);
+          } else {
+            callback(data);
+          }
       	});
 			},
 

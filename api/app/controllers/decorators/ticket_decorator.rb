@@ -352,7 +352,7 @@ class TicketDecorator < ApiDecorator
 
   def dirty_fixed_stats
     DIRTY_FIX_MAPPING.each_with_object({}) do |(key, value), res|
-      res[key] = ticket_states.send(key).try(:utc) || (value.include?(status) ? ticket_states.updated_at.try(:utc) : nil)
+      res[key] = ticket_states.safe_send(key).try(:utc) || (value.include?(status) ? ticket_states.updated_at.try(:utc) : nil)
       res
     end
   end

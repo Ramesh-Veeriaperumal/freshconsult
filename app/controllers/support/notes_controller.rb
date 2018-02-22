@@ -13,7 +13,7 @@ class Support::NotesController < ApplicationController
      (current_user.contractor_ticket? @ticket) ||
      (privilege?(:manage_tickets))
 
-    return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless access
+    return redirect_to(safe_send(Helpdesk::ACCESS_DENIED_ROUTE)) unless access
   
     @note = @ticket.notes.build({
         "incoming" => true,

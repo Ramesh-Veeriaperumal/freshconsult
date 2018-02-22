@@ -116,7 +116,7 @@ module SeedFu
       record = get
       return if !record.new_record? and insert_only
       @data.each do |k, v|
-        record.send("#{k}=", v)
+        record.safe_send("#{k}=", v)
       end
       raise "Error Saving: #{record.inspect}" unless record.save
       Rails.logger.debug " - #{@model_class} #{condition_hash.inspect}"      
@@ -126,7 +126,7 @@ module SeedFu
     def method_missing(method_name, *args) #:nodoc:
       if args.size == 1 and (match = method_name.to_s.match(/(.*)=$/))
         self.class.class_eval "def #{method_name} arg; @data[:#{match[1]}] = arg; end"
-        send(method_name, args[0])
+        safe_send(method_name, args[0])
       else
         super
       end

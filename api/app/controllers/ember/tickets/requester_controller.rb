@@ -17,7 +17,7 @@ module Ember
             next if object.blank?
             cname_params[type.to_sym][:customer_id] = @company.id if type.eql?('contact') && @contact.companies.blank? && add_company
             render_errors(object.errors) unless object.update_attributes(cname_params[type.to_sym])
-            send("#{type}_decorator")
+            safe_send("#{type}_decorator")
           end
           @item.update_attributes(owner_id: @company.id) if add_company
         end
@@ -61,16 +61,16 @@ module Ember
           cname_params.permit(*REQUESTER_FIELDS)
           REQUESTER_FIELDS.each do |type|
             next if instance_variable_get("@#{type}").blank?
-            fields = current_account.send("#{type}_form").custom_fields_in_widget
+            fields = current_account.safe_send("#{type}_form").custom_fields_in_widget
             instance_variable_set("@#{type}_name_mapping", CustomFieldDecorator.name_mapping(fields))
 
             object_name_mapping = instance_variable_get("@#{type}_name_mapping")
             custom_fields = object_name_mapping.empty? ? [nil] : object_name_mapping.values
-            allowed_fields = send("requester_#{type}_fields") | ['custom_fields' => custom_fields]
+            allowed_fields = safe_send("requester_#{type}_fields") | ['custom_fields' => custom_fields]
             cname_params[type.to_sym].permit(*allowed_fields.compact)
 
             ParamsHelper.modify_custom_fields(cname_params[type.to_sym][:custom_fields], object_name_mapping.invert)
-            requester = send("#{type}_validation")
+            requester = safe_send("#{type}_validation")
             requester_error_messages(requester, type) unless requester.valid?(ACTION)
           end
           render_requester_errors if @errors.present? && @error.blank?
@@ -83,7 +83,7 @@ module Ember
             next if instance_variable_get("@#{type}").blank?
             ParamsHelper.assign_checkbox_value(
               params_hash[type.to_sym][:custom_fields],
-              current_account.send("#{type}_form").custom_checkbox_fields.map(&:name)
+              current_account.safe_send("#{type}_form").custom_checkbox_fields.map(&:name)
             ) if params_hash[type.to_sym][:custom_fields]
             ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params_hash[type.to_sym])
           end
@@ -95,7 +95,7 @@ module Ember
             next if object.blank?
             custom_fields = cname_params[type.to_sym].delete(:custom_field)
             object.assign_attributes(custom_field: custom_fields)
-            requester_delegator = send("#{type}_delegator", custom_fields)
+            requester_delegator = safe_send("#{type}_delegator", custom_fields)
             requester_error_messages(requester_delegator, type) unless requester_delegator.valid?(ACTION)
           end
           render_requester_errors if @errors.present?

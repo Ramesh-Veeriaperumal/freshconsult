@@ -121,7 +121,7 @@ jQuery('body').one('assetLoaded.fjax', function() {
 	<% survey_association = current_account.new_survey_enabled? ? "custom_survey_results" : "survey_results" %>
 	<% if current_account.customer_sentiment_ui_enabled? && current_user.language=="en" %>;
 		<% if current_user.privilege?(:admin_tasks) || current_user.privilege?(:view_reports) %>
-			<% if @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil? %>
+			<% if @ticket.safe_send(survey_association).nil? || @ticket.safe_send(survey_association).last.nil? %>
 				sentiment = {};sentiment.last_note={};
 				sentiment.ticket_id = <%= @ticket.id %>
 				sentiment.key = "<%= MlAppConfig["kissmetrics"] %>"

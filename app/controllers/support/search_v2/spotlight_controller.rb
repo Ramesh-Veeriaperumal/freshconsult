@@ -219,7 +219,7 @@ class Support::SearchV2::SpotlightController < SupportController
     end
 
     def require_user_login
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
     
     def set_es_locale

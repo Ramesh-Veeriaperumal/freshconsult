@@ -48,7 +48,7 @@ class Fixtures::DefaultChatTicket < Fixtures::DefaultTicket
         conv_type = (chat_conversation[:requester].key?(:"#{conv_index}") ? "requester".to_sym : "agent".to_sym)
         msg = chat_conversation[conv_type][:"#{conv_index}"]
         data_hash = (conv_type == :requester ? { photo_url: '/images/fillers/profile_blank_thumb.gif', background_color: 'rgba(255,255,255,0.5)'} : { photo_url: '/images/misc/profile_blank_thumb.jpg', background_color: 'rgba(242,242,242,0.3)'})
-        data_hash.merge!({ name: send(conv_type.to_s).name, msg: msg })
+        data_hash.merge!({ name: safe_send(conv_type.to_s).name, msg: msg })
         template += template(data_hash)
       end
       template

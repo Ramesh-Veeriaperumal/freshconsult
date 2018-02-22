@@ -10,14 +10,14 @@ module Redis::RedisWrapper
   Redis.class_eval do
     if Rails.env.production?
       def perform_redis_op(operator, *args)
-        send(operator, *args)
+        safe_send(operator, *args)
       rescue Redis::BaseError => e
         NewRelic::Agent.notice_error(e)
       end
     else
       def perform_redis_op(operator, *args)
         track_redis_calls(operator, *args)
-        send(operator, *args)
+        safe_send(operator, *args)
       rescue Redis::BaseError => e
         NewRelic::Agent.notice_error(e)
       end

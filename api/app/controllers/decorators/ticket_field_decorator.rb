@@ -79,7 +79,7 @@ class TicketFieldDecorator < ApiDecorator
                        when 'nested_field'
                          nested_field_choices_by_id(record.picklist_values)
                        when *DEFAULT_FIELDS
-                         send(:"#{record.field_type}_choices")
+                         safe_send(:"#{record.field_type}_choices")
                        else
                          []
                        end

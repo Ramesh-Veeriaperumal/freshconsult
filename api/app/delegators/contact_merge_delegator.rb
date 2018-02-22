@@ -9,7 +9,7 @@ class ContactMergeDelegator < BaseDelegator
     super(record)
     @target_ids = options[:target_ids]
     @user_hash = options[:params]
-    @primary_email = record.send(:email)
+    @primary_email = record.safe_send(:email)
     fetch_target_users(options[:scoper]) if @target_ids
   end
 
@@ -53,6 +53,6 @@ class ContactMergeDelegator < BaseDelegator
     end
 
     def fetch_attributes(att)
-      [send(att), @target_users.map { |x| x.send(att) }].flatten.compact
+      [send(att), @target_users.map { |x| x.safe_send(att) }].flatten.compact
     end
 end

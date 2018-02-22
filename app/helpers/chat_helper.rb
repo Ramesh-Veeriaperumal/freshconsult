@@ -1,6 +1,6 @@
 module ChatHelper
 
-  include Livechat::Token
+  include Livechat::Enabler
 
   # LIVECHAT_ROUTE_MAPPINGS = [
   #   [ :create_site,   '/sites/create',    Net::HTTP::Post],
@@ -35,7 +35,7 @@ module ChatHelper
   end
 
   def portal_chat_enabled?
-    if chat_enabled? && current_chat_widget.show_on_portal 
+    if chat_enabled? && current_chat_widget.show_on_portal
       if logged_in?
         return current_user.customer?
       else
@@ -47,7 +47,7 @@ module ChatHelper
   end
 
   def multiple_business_hours?
-    current_account.multiple_business_hours_enabled? && 
+    current_account.multiple_business_hours_enabled? &&
       current_account.business_calendar.count > 1
   end
 
@@ -56,7 +56,7 @@ module ChatHelper
   end
 
   def chat_trial_expiry
-    subscription = current_account.subscription 
+    subscription = current_account.subscription
     subscription.trial? ? subscription.next_renewal_at.to_i * 1000 : 0
   end
 
@@ -119,7 +119,7 @@ module ChatHelper
     return livechat_support_setting.to_json.html_safe
   end
   def i18n_text
-      text = { 
+      text = {
             :portal_name => t("current_portal.portal_name"),
             :title  => t("livechat.title"),
             :says => t("livechat.says"),
@@ -283,17 +283,17 @@ module ChatHelper
             :last_active => t('helpdesk.dashboard.livechat.last_active'),
             :chats_in_progress => t('helpdesk.dashboard.livechat.chats_in_progress'),
             :cobrowse_request => t('livechat.cobrowse_request'),
-            :cobrowsing_start_msg => t('livechat.cobrowsing_start_msg'), 
-            :cobrowsing_stop_msg => t('livechat.cobrowsing_stop_msg'),    
-            :cobrowsing_deny_msg => t('livechat.cobrowsing_deny_msg'), 
+            :cobrowsing_start_msg => t('livechat.cobrowsing_start_msg'),
+            :cobrowsing_stop_msg => t('livechat.cobrowsing_stop_msg'),
+            :cobrowsing_deny_msg => t('livechat.cobrowsing_deny_msg'),
             :cobrowsing_agent_busy => t('livechat.cobrowsing_agent_busy'),
-            :cobrowsing_visitor_onhttp_error => t('livechat.cobrowsing_visitor_onhttp_error'),          
-            :cobrowsing_viewing_screen => t('livechat.cobrowsing_viewing_screen'),    
-            :cobrowsing_controlling_screen => t('livechat.cobrowsing_controlling_screen'),    
-            :cobrowsing_request_control => t('livechat.cobrowsing_request_control'),    
+            :cobrowsing_visitor_onhttp_error => t('livechat.cobrowsing_visitor_onhttp_error'),
+            :cobrowsing_viewing_screen => t('livechat.cobrowsing_viewing_screen'),
+            :cobrowsing_controlling_screen => t('livechat.cobrowsing_controlling_screen'),
+            :cobrowsing_request_control => t('livechat.cobrowsing_request_control'),
             :cobrowsing_give_visitor_control => t('livechat.cobrowsing_give_visitor_control'),
             :chat_with_us => t('livechat.chat_with_us'),
-            :cobrowsing_stop_request => t('livechat.cobrowsing_stop_request'),    
+            :cobrowsing_stop_request => t('livechat.cobrowsing_stop_request'),
             :cobrowsing_request_control_rejected => t('livechat.cobrowsing_request_control_rejected'),
             :agent_parallel_accept_error => t('livechat.agent_parallel_accept_error')
         }
@@ -310,129 +310,21 @@ module ChatHelper
       image = msg[:photo] ? msg[:photo] : '/images/fillers/profile_blank_thumb.gif';
       if msg[:type] != "2"
         message = '<tr style="vertical-align:top; border-top: 1px solid #eee; ' + msgclass + '">' +
-               '<td style="padding:10px; width:50px; border:0"><img src="'+image+'" style="border-radius: 4px; width: 30px; float: left; border: 1px solid #eaeaea; max-width:inherit" alt="" /></td>' + 
-               '<td style="padding:10px 0; width: 80%; border:0"><b style="color:#666;">'+msg[:name]+'</b><p style="margin:2px 0 0 0; line-height:18px; color:#777;">'+msg[:msg]+'</p></td><td>&nbsp;</td>' 
-        conversation += message;   
-      end   
+               '<td style="padding:10px; width:50px; border:0"><img src="'+image+'" style="border-radius: 4px; width: 30px; float: left; border: 1px solid #eaeaea; max-width:inherit" alt="" /></td>' +
+               '<td style="padding:10px 0; width: 80%; border:0"><b style="color:#666;">'+msg[:name]+'</b><p style="margin:2px 0 0 0; line-height:18px; color:#777;">'+msg[:msg]+'</p></td><td>&nbsp;</td>'
+        conversation += message;
+      end
     end
     conversation = '<div class="conversation_wrap"><table style="width:100%; font-size:12px; border-spacing:0px; margin:0; border-collapse: collapse; border-right:0; border-bottom:0;">'+conversation+'</table></div>';
     return conversation
   end
 
-  def live_chat_url
-    url = "http://" + ChatConfig["communication_url"]
-    url = url + ":4000" if Rails.env == "development"
-    return url
-  end
-
-  def livechat_request(type, params, path, requestType)
-    response_code = 200
-    content_type  = "application/json"
-    accept_type   = "application/json"
-    response_type = "application/json"
-    begin
-      # request_url = live_chat_url + REST_URL[type.to_sym].to_s
-      request_url = live_chat_url + "/" + path
-      options = Hash.new
-      auth_details = { :appId => ChatConfig["app_id"], :userId => current_user.id }
-      unless type === "create_site"
-        site_id  = current_account.chat_setting.site_id
-        auth_details[:siteId] = site_id
-        auth_details[:token]   = livechat_token(site_id, current_user.id)
-      else
-        auth_details[:token]   = livechat_partial_token(current_user.id)
-      end
-      request_data      = params.merge(auth_details)
-      if requestType == "GET"
-        options[:query] = request_data.collect{|k,v| [k.to_sym, v]}.to_h
-      else
-        options[:body] = JSON.generate(request_data)
-      end
-      options[:headers] = { "Accept" => accept_type, "Content-Type" => content_type}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
-      options[:timeout] = params[:timeout] || 15 #Returns status code 504 on timeout expiry 
-      begin
-        # proxy_request  = HTTParty::Request.new(HTTP_METHODS[type.to_sym], request_url, options)
-        proxy_request  = HTTParty::Request.new(HTTP_METHODS[requestType], request_url, options)
-        proxy_response = proxy_request.perform
-        response_body  = proxy_response.body
-        response_code  = proxy_response.code
-        response_type  = proxy_response.headers['content-type']
-      rescue Timeout::Error
-        Rails.logger.error("Timeout trying to complete the request. \n#{params.inspect}")
-        response_body = '{"result":"timeout"}'
-        response_code = 504  # Timeout
-      rescue => e
-        Rails.logger.error("Error while processing proxy request::: #{e.message}\n#{e.backtrace.join("\n")}")
-        response_body = '{"result":"error"}'
-        response_code = 502  # Bad Gateway
-      end
-    rescue => e
-      Rails.logger.error("Error while processing proxy request:::: #{params.inspect}. \n#{e.message}\n#{e.backtrace.join("\n")}")
-      response_body = '{"result":"error"}'
-      response_code = 500  # Internal server error
-    end
-    response_type = accept_type if response_type.blank?
-    begin
-      if proxy_response.present? && accept_type == "application/json" && !(response_type.start_with?("application/json") || response_type.start_with?("js"))
-        response_body = proxy_response.parsed_response.to_json
-        response_type = "application/json"
-      end
-    rescue => e
-     Rails.logger.error("Error while parsing remote response.")
-    end
-    return { :text=> response_body, :content_type => response_type, :status => response_code }
-  end
-
-  def enable_livechat_feature
-    attributes = {
-                  :external_id        => current_account.id,
-                  :site_url           => current_account.full_domain,
-                  :name               => current_account.main_portal.name,
-                  :expires_at         => current_account.subscription.next_renewal_at.utc,
-                  :suspended          => !current_account.active?,
-                  :language           => current_account.language ? current_account.language : I18n.default_locale,
-                  :timezone           => current_account.time_zone
-                }
-    request_params = { :options    => { :widget => true }, :attributes => attributes }
-    response = livechat_request("create_site", request_params, 'sites', 'POST')
-    if response && (response[:status] == 200 || response[:status] == 201)
-      result = JSON.parse(response[:text])['data']
-      current_account.chat_setting.update_attributes({ :active => true, :enabled => true, :site_id => result['site']['site_id']})
-      current_account.main_chat_widget.update_attributes({ :widget_id => result['widget']['widget_id']})
-      create_widget_for_product
-      # added Livechat sync
-      # Livechat::Sync.new.sync_data_to_livechat(result['site_id'])
-      LivechatWorker.perform_async({:worker_method => "livechat_sync", :siteId => result['site']['site_id']})
-      "success"
-    else
-      "error"
-    end
-  end
-
-  def create_widget_for_product
-    products = current_account.products
-    unless products.blank?
-      products.each do |product|
-        if product.chat_widget.blank?
-          product.build_chat_widget
-          product.chat_widget.account_id = current_account.id
-          product.chat_widget.chat_setting_id = current_account.chat_setting.id
-          product.chat_widget.main_widget = false
-          product.chat_widget.show_on_portal = false
-          product.chat_widget.portal_login_required = false
-          product.chat_widget.name = product.name
-          product.chat_widget.save
-        end
-      end
-    end
-  end
-  
   def in_app_support?
     # enable only if paid account or test account and user has admin privilege
     ((current_account.subscription.paid_account? && is_chat_support_plan? &&
       current_account.full_domain != ChatConfig['support_account']['url']) ||
      (ChatSetting::TEST_ACCOUNTS.include?(current_account.id))) &&
-    (current_user && current_user.privilege?(:admin_tasks)) 
+    (current_user && current_user.privilege?(:admin_tasks))
   end
 
   def is_chat_support_plan?

@@ -37,7 +37,7 @@ module HelpdeskReports
         list_of_tickets.each do |item|
           record = []
           headers.each do |val|
-            data = archive_status ? fetch_field_value(item, val) : item.send(val)
+            data = archive_status ? fetch_field_value(item, val) : item.safe_send(val)
             data = handling_deleted_field(data,val)
             if data.present?
               if DATE_TIME_PARSE.include?(val.to_sym)
@@ -65,7 +65,7 @@ module HelpdeskReports
       end 
       
       def fetch_field_value(item, field)
-        item.respond_to?(field) ? item.send(field) : item.custom_field_value(field)
+        item.respond_to?(field) ? item.safe_send(field) : item.custom_field_value(field)
       end
 
       def parse_date(date_time)

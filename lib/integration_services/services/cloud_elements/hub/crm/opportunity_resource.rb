@@ -31,7 +31,7 @@ module IntegrationServices::Services
         query = build_query(value, app_name)
         request_url = "#{cloud_elements_api_url}/hubs/crm/opportunities?where=#{query}"
         response = http_get request_url
-        opportunity = send("#{app_name}_selected_fields", fields, response, [200], "Opportunity")
+        opportunity = safe_send("#{app_name}_selected_fields", fields, response, [200], "Opportunity")
         opportunity[FRONTEND_OBJECTS[:records]].each { |opportunity_record| opportunity_record["link_status"] = link_status } if @service.payload[:ticket_id].present?
         opportunity
       end
@@ -67,7 +67,7 @@ module IntegrationServices::Services
         query = URI.encode(OBJECT_QUERIES[:opportunity_id_resource][app_name] % {:account_id => account_id, :opportunity_id => opportunity_id})
         request_url = "#{cloud_elements_api_url}/hubs/crm/#{@service.meta_data[:object]}?where=#{query}"
         response = http_get request_url
-        send("#{@service.meta_data[:app_name]}_selected_fields", fields, response, [200], "Opportunity") do |opportunity|
+        safe_send("#{@service.meta_data[:app_name]}_selected_fields", fields, response, [200], "Opportunity") do |opportunity|
           return opportunity
         end
       end

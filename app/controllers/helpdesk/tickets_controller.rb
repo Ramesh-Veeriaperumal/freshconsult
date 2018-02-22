@@ -134,7 +134,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def check_custom_view_feature
     unless current_account.custom_ticket_views_enabled?
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
 
@@ -182,7 +182,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def get_properties_hash(ticket, fields_to_compute, extra_fields)
     fields_hash = fields_to_compute.map{|field| [field,ticket[field]]}.to_h
-    extra_hash = extra_fields.select{|field| (ticket.respond_to? field)}.map{|field| [field, ticket.send(field)]}.to_h
+    extra_hash = extra_fields.select{|field| (ticket.respond_to? field)}.map{|field| [field, ticket.safe_send(field)]}.to_h
     fields_hash.merge(extra_hash).select{|_,field_value| (!field_value.nil?)}
   end
 
@@ -262,12 +262,12 @@ class Helpdesk::TicketsController < ApplicationController
                     order by n.created_at;",
                     Account.current.id, 'Helpdesk::Ticket', ticket_ids.join(',')]
 
-      sentiment_sql = ActiveRecord::Base.send(:sanitize_sql_array, sentiment_sql_array)
+      sentiment_sql = ActiveRecord::Base.safe_send(:sanitize_sql_array, sentiment_sql_array)
 
       note_senti = ActiveRecord::Base.connection.execute(sentiment_sql).collect{|i| i}.to_h
 
       @items.each do |ticket|
-        if ticket.send(survey_association).nil? || ticket.send(survey_association).last.nil?
+        if ticket.safe_send(survey_association).nil? || ticket.safe_send(survey_association).last.nil?
           if note_senti[ticket.id].present?
             sentiment_value[ticket.id] = note_senti[ticket.id]
           else
@@ -1099,7 +1099,7 @@ class Helpdesk::TicketsController < ApplicationController
   def quick_assign
     if allowed_quick_assign_fields.include?(params[:assign])
       unless params[:assign] == 'agent'
-        @item.send( params[:assign] + '=' ,  params[:value]) if @item.respond_to?(params[:assign])
+        @item.safe_send( params[:assign] + '=' ,  params[:value]) if @item.respond_to?(params[:assign])
       else
         @item.responder = nil
         @item.responder = current_account.users.find(params[:value]) unless params[:value]== "-"
@@ -1232,7 +1232,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def get_solution_detail
     language = Language.find_by_code(params[:language]) || Language.for_current_account
-    sol_desc = current_account.solution_article_meta.find(params[:id]).send("#{language.to_key}_article")
+    sol_desc = current_account.solution_article_meta.find(params[:id]).safe_send("#{language.to_key}_article")
     @sol_attach = sol_desc.attachments
     @sol_cloud_files = sol_desc.cloud_files
     @sol_description = Helpdesk::HTMLSanitizer.sanitize_for_insert_solution(sol_desc.description) || ""
@@ -1414,7 +1414,7 @@ class Helpdesk::TicketsController < ApplicationController
       @cloud_files = @template.cloud_files
       @template.template_data.each do |key,value|
         next if (compose_email? && invisible_fields?(key)) || !@item.respond_to?("#{key}=")
-        key == "tags" ? (@item[key] = value) : (@item.send("#{key}=",value))
+        key == "tags" ? (@item[key] = value) : (@item.safe_send("#{key}=",value))
       end
       @item.description_html = @template.data_description_html
     else
@@ -1603,7 +1603,7 @@ class Helpdesk::TicketsController < ApplicationController
                     st.ticket_id= t.id and st.account_id=%s and t.account_id=%s
                     set st.%s = 1 where t.id in (%s)",
                     current_account.id, current_account.id, Helpdesk::SchemaLessTicket.trashed_column, @items.map(&:id).join(',')]
-      sql = ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
+      sql = ActiveRecord::Base.safe_send(:sanitize_sql_array, sql_array)
 
       ActiveRecord::Base.connection.execute(sql)
     end
@@ -1626,7 +1626,7 @@ class Helpdesk::TicketsController < ApplicationController
       ticket_actions_background
       req_list if action_name.to_sym == :spam
       if [:spam, :destroy, :unspam, :restore].include? action_name.to_sym
-        send("display_#{action_name}_flash")
+        safe_send("display_#{action_name}_flash")
       else
         flash_message = t('helpdesk.flash.tickets_background')
         respond_to do |format|
@@ -2079,7 +2079,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def run_on_db(&block)
     db_type = current_account.master_queries? ? :run_on_master : :run_on_slave
-    Sharding.send(db_type) do
+    Sharding.safe_send(db_type) do
       yield
     end
   end
@@ -2278,7 +2278,7 @@ class Helpdesk::TicketsController < ApplicationController
     all_attrs_from_parent.each { |key|
       next if key == "tags"
       value = prt_tkt_fd_value(key)
-      @item.send("#{key}=",value) }
+      @item.safe_send("#{key}=",value) }
     @all_attachments   = @assoc_parent_ticket.all_attachments
     @cloud_files       = @assoc_parent_ticket.cloud_files
     @item.requester_id = (@assoc_parent_ticket.responder_id.nil? ? @current_user.id :

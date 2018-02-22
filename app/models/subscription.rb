@@ -428,13 +428,13 @@ class Subscription < ActiveRecord::Base
 
     def update_gnip_subscription(twitter_method_name)
       account.twitter_handles.each do |twt_handle|
-        twt_handle.send(twitter_method_name)
+        twt_handle.safe_send(twitter_method_name)
       end
     end
 
     def update_facebook_subscription(facebook_method_name)
       account.facebook_pages.each do |fb_page|
-        fb_page.send(facebook_method_name)
+        fb_page.safe_send(facebook_method_name)
       end
     end
     
@@ -489,7 +489,7 @@ class Subscription < ActiveRecord::Base
     end
 
     def address(card)
-      ADDRESS_INFO.inject({}) { |h, (k, v)| h[k] = card.send(v); h }
+      ADDRESS_INFO.inject({}) { |h, (k, v)| h[k] = card.safe_send(v); h }
     end
     
     def config_from_file(file)
@@ -578,7 +578,7 @@ class Subscription < ActiveRecord::Base
 
     def autopilot_fields_changed?
       AUTOPILOT_FILEDS.each do |field|
-        return true if self.send(field) != @old_subscription.send(field)
+        return true if self.safe_send(field) != @old_subscription.safe_send(field)
       end
       return nil
     end

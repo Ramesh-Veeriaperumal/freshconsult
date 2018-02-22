@@ -56,7 +56,7 @@ module Features
     module InstanceMethods
       # Allows you to check for multiple features like account.features?(:suggestions, :suggestions_on_web)
       def features?(*feature_names)
-        feature_names.all? { |feature_name| features.send("#{feature_name}?") }
+        feature_names.all? { |feature_name| features.safe_send("#{feature_name}?") }
       end
 
       def update_attributes_with_features(attributes)
@@ -74,7 +74,7 @@ module Features
       def update_feature_attributes(attributes)
         if attributes && feature_attributes = attributes.delete(:features)
           feature_attributes.each do |feature_name, value|
-            feature = features.send(feature_name)
+            feature = features.safe_send(feature_name)
             if feature.protected?
               logger.warn("someone tried to mass update the protected #{feature_name} feature")
             else

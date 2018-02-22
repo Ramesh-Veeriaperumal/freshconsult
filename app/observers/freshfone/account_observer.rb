@@ -18,7 +18,7 @@ class Freshfone::AccountObserver < ActiveRecord::Observer
 	end
 
 	def after_commit(freshfone_account)
-		return unless freshfone_account.send(:transaction_include_action?, :create)
+		return unless freshfone_account.safe_send(:transaction_include_action?, :create)
 		set_usage_trigger(freshfone_account)
 		initiate_trial_actions(freshfone_account) if freshfone_account.trial?
 	end

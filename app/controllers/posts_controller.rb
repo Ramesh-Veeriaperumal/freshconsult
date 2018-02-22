@@ -17,8 +17,8 @@ class PostsController < ApplicationController
   
   def index
 #    conditions = []
-#    [:user_id, :forum_id, :topic_id].each { |attr| conditions << Post.send(:sanitize_sql, ["#{Post.table_name}.#{attr} = ?", params[attr]]) if params[attr] }
-#    conditions << Post.send(:sanitize_sql, ["#{Post.table_name}.account_id = ?", current_account.id]) #by Shan temp
+#    [:user_id, :forum_id, :topic_id].each { |attr| conditions << Post.safe_send(:sanitize_sql, ["#{Post.table_name}.#{attr} = ?", params[attr]]) if params[attr] }
+#    conditions << Post.safe_send(:sanitize_sql, ["#{Post.table_name}.account_id = ?", current_account.id]) #by Shan temp
 #    conditions = conditions.empty? ? nil : conditions.collect { |c| "(#{c})" }.join(' AND ')
 #    #@posts = Post.paginate @@query_options.merge(:conditions => conditions, :page => params[:page], :count => {:select => "#{Post.table_name}.id"}, :order => post_order, :limit =>10 )
 #    @posts = Post.find(:all,:conditions => conditions, :order => post_order, :limit =>10 )

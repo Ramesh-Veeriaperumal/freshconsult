@@ -26,11 +26,11 @@ module CommunityHelper
 
   def active_attachments(att_type, article)
     draft = article.draft
-    return article.send(att_type) unless draft.present?
+    return article.safe_send(att_type) unless draft.present?
 
-    (article.send(att_type).reject do |a|
+    (article.safe_send(att_type).reject do |a|
       (draft.deleted_attachments(att_type) || []).include?(a.id)
-    end) + draft.send(att_type)
+    end) + draft.safe_send(att_type)
   end
 
   def inline_manual_classes_for_multilingual

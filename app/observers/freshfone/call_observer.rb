@@ -40,7 +40,7 @@ class Freshfone::CallObserver < ActiveRecord::Observer
   end
 
   def after_commit(call)
-    return unless call.send(:transaction_include_action?, :update)
+    return unless call.safe_send(:transaction_include_action?, :update)
     initiate_subscription_actions(call) if
       call.previous_changes[:total_duration] && trial?
     if call_not_ringing?(call)

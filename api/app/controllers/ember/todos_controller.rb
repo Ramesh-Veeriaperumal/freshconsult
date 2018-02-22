@@ -43,7 +43,7 @@ module Ember
     private
 
       def decorator_options
-        rememberable_type ? 
+        rememberable_type ?
           super({ "#{rememberable_type}": rememberable }) : super
       end
 
@@ -72,7 +72,7 @@ module Ember
       def check_privilege
         return false unless super # break if there is no enough privilege.
         if rememberable_type == :ticket && rememberable
-          return verify_ticket_permission(api_current_user, rememberable) 
+          return verify_ticket_permission(api_current_user, rememberable)
         end
         true
       end
@@ -83,14 +83,14 @@ module Ember
 
       def fetch_reminders
         if rememberable
-          @rememberable.send(REMINDERS[rememberable_type])
+          @rememberable.safe_send(REMINDERS[rememberable_type])
         else
           api_current_user.reminders
         end
       end
 
       def scoper
-        return @rememberable.send(REMINDERS[rememberable_type]) if rememberable
+        return @rememberable.safe_send(REMINDERS[rememberable_type]) if rememberable
         Helpdesk::Reminder
       end
 
@@ -98,11 +98,11 @@ module Ember
         return @rememberable if @rememberable
         if rememberable_type.present?
           if reminder.present?
-            @rememberable = @reminder.send(rememberable_type)
+            @rememberable = @reminder.safe_send(rememberable_type)
           elsif FIND_REMEMBERABLE[rememberable_type]
-            @rememberable = send(FIND_REMEMBERABLE[rememberable_type],
+            @rememberable = safe_send(FIND_REMEMBERABLE[rememberable_type],
                                   params[:rememberable_id])
-          end  
+          end
         end
       end
 
@@ -124,7 +124,7 @@ module Ember
 
       def rememberable_type
         return @rememberable_type if @rememberable_type
-        @rememberable_type = reminder ? reminder.rememberable_type : 
+        @rememberable_type = reminder ? reminder.rememberable_type :
             params[:type].try(:to_sym)
       end
 

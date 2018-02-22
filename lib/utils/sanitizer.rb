@@ -5,9 +5,9 @@ module Utils
     def sanitize_body_and_unhtml_it(item, *elements)
       elements.each do |element|
         element_html = element+"_html"
-        if item.send(element_html) && (new_record? || item.send(element_html+"_changed?"))
-          item.send(:write_attribute,element_html,
-                               Helpdesk::HTMLSanitizer.clean(item.send(element_html)))
+        if item.safe_send(element_html) && (new_record? || item.safe_send(element_html+"_changed?"))
+          item.safe_send(:write_attribute,element_html,
+                               Helpdesk::HTMLSanitizer.clean(item.safe_send(element_html)))
         end
       end
       populate_content_create(item, *elements) if new_record?

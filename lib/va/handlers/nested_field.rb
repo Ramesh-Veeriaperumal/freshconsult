@@ -2,16 +2,18 @@ class Va::Handlers::NestedField < Va::RuleHandler
 
   def match_nested_rules(evaluate_on)
     to_ret = false
+    #making sure that condition.operator is not tampered, to prevent remote code execution security issue
+    return to_ret if condition.operator.nil? || va_operator_list[condition.operator.to_sym].nil?
     if evaluate_on.respond_to?(condition.key)
-      #return evaluate_on.send(filter.key).send(operator_fn(@operator), @values)
-      to_ret = send(condition.operator, evaluate_on.send(condition.key), value)
+      #return evaluate_on.safe_send(filter.key).safe_send(operator_fn(@operator), @values)
+      to_ret = safe_send(condition.operator, evaluate_on.safe_send(condition.key), value)
       return true if value == '--'
       return to_ret unless to_ret
       
       (nested_rules || []).each do |nested_rule|
         return true if nested_rule[:value] == '--'
         if evaluate_on.respond_to?(nested_rule[:name])
-          to_ret = send(condition.operator, evaluate_on.send(nested_rule[:name]),nested_rule[:value])
+          to_ret = safe_send(condition.operator, evaluate_on.safe_send(nested_rule[:name]),nested_rule[:value])
           return to_ret unless to_ret
         else
           Rails.logger.debug "############### The ticket did not respond to #{nested_rule[:name]} property"
@@ -28,10 +30,10 @@ class Va::Handlers::NestedField < Va::RuleHandler
 
   def filter_query
     return '' if value == "--"
-    query_conditions = send("filter_query_#{condition.operator}", condition.key, (query_value value))
+    query_conditions = safe_send("filter_query_#{condition.operator}", condition.key, (query_value value))
     (nested_rules || []).each do |nested_rule|
       return ["(#{query_conditions})"] if nested_rule[:value] == "--"
-      query_condition = send("filter_query_#{condition.operator}", nested_rule[:name], (query_value nested_rule[:value]))
+      query_condition = safe_send("filter_query_#{condition.operator}", nested_rule[:name], (query_value nested_rule[:value]))
       query_conditions = "#{query_conditions} and #{query_condition}"
     end
     ["(#{query_conditions})"]

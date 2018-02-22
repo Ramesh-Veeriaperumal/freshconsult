@@ -116,7 +116,7 @@ class ApiContactsController < ApiApplicationController
       @item.account = current_account if scoper.attribute_names.include?('account_id')
       action_scopes = ContactConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
       action_scopes.each_pair do |scope_attribute, value|
-        item_value = @item.send(scope_attribute)
+        item_value = @item.safe_send(scope_attribute)
         next unless item_value != value
         Rails.logger.debug "Contact id: #{@item.id} with #{scope_attribute} is #{item_value}"
         # Render 405 in case of update/delete as it acts on contact endpoint itself

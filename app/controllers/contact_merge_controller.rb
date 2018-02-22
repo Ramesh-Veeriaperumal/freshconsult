@@ -126,7 +126,7 @@ class ContactMergeController < ApplicationController
     end
 
     def exceded_user_attribute att, max
-      [@source_user.send(att), @target_users.map{|x| x.send(att)}].flatten.compact.reject(&:empty?).uniq.length > max
+      [@source_user.safe_send(att), @target_users.map{|x| x.safe_send(att)}].flatten.compact.reject(&:empty?).uniq.length > max
     end
 
     def set_error att, max

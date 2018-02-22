@@ -16,7 +16,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def show
     account_summary = {}
-    account = Account.find_by_id(params[:account_id])
+    account = Account.find_by_id(params[:account_id]).make_current
     shard_info = ShardMapping.find(params[:account_id])
     account_summary[:account_info] = fetch_account_info(account) 
     account_summary[:reputation] = account.reputation
@@ -56,7 +56,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def features
     feature_info = {}
-    account = Account.find(params[:account_id])
+    account = Account.find(params[:account_id]).make_current
     feature_info[:social] = fetch_social_info(account)
     feature_info[:chat] = { :enabled => account.features?(:chat) , :active => (account.chat_setting.active && account.chat_setting.site_id?) }
     feature_info[:mailbox] = account.features?(:mailbox)
@@ -74,7 +74,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def tickets
     account_tickets = {}
-    account = Account.find(params[:account_id])
+    account = Account.find(params[:account_id]).make_current
     account_tickets[:tickets] = fetch_ticket_details(account)
     respond_to do |format|
       format.json do
@@ -85,7 +85,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def agents
     agents_info = {}
-    account = Account.find(params[:account_id])
+    account = Account.find(params[:account_id]).make_current
     agents_info[:agents] = fetch_agents_details(account)
     respond_to do |format|
       format.json do
@@ -97,7 +97,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def portal
     portal_info = {}
-    account = Account.find(params[:account_id])
+    account = Account.find(params[:account_id]).make_current
     portal_info[:portals] = fetch_portal_details(account)
     portal_info[:multi_product] = account.portals.count > 1
     portal_info[:main_portal] = account.main_portal.ssl_enabled
@@ -110,7 +110,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   def add_day_passes
     result = {}
-    account = Account.find(params[:account_id])
+    account = Account.find(params[:account_id]).make_current
     if request.put?
       render :json => {:status => "error"} and return unless /[0-9]/.match(params[:passes_count])
       day_pass_config = account.day_pass_config
@@ -174,7 +174,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   end
 
   def remove_feature
-    @account = Account.find(params[:account_id])
+    @account = Account.find(params[:account_id]).make_current
     result = {:account_id => @account.id , :account_name => @account.name }
     begin
       render :json => {:status => "notice"}.to_json and return unless disableable?(@feature_name)
@@ -340,7 +340,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   end
 
   def change_account_name
-    account = Account.find(params[:account_id])
+    account = Account.find(params[:account_id]).make_current
     result = { :account_id => account.id , :account_name => account.name }
     account.name = params[:account_name]
     account.helpdesk_name = params[:account_name]
@@ -684,7 +684,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
     def update_chargebee_subscription(state)
       chargebee_action_name = ((state == Subscription::ACTIVE) ? 'reactivate_subscription' : 'cancel_subscription')
-      billing_data = Billing::ChargebeeWrapper.new.send(chargebee_action_name, Account.current.id)
+      billing_data = Billing::ChargebeeWrapper.new.safe_send(chargebee_action_name, Account.current.id)
       chargebee_state =  ((state == Subscription::ACTIVE) ? 'active' : 'cancelled')
       billing_data.subscription.status == chargebee_state
     end

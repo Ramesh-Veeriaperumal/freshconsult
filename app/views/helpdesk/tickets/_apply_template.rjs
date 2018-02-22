@@ -21,12 +21,12 @@ if @template.present?
   else
     if @all_attachments.present?
       @all_attachments.each do |att|
-        attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "helpdesk_ticket[attachments][][resource]"})
+        attachment_dom << safe_send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "helpdesk_ticket[attachments][][resource]"})
       end
     end
     if @cloud_files.present?
       @cloud_files.each do |att|
-        attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.filename)}", :value => "#{att.serialize}", :name => "[cloud_file_attachments][]"})
+        attachment_dom << safe_send(:description_attachment, {:filename=>"#{escape_javascript(att.filename)}", :value => "#{att.serialize}", :name => "[cloud_file_attachments][]"})
       end
     end
   end

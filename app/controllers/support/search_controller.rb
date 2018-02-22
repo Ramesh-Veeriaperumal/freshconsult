@@ -338,7 +338,7 @@ class Support::SearchController < SupportController
     end
 
     def require_user_login
-      return redirect_to(send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
+      return redirect_to(safe_send(Helpdesk::ACCESS_DENIED_ROUTE)) unless current_user
     end
 
 end

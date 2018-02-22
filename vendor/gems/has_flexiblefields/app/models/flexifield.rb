@@ -99,7 +99,7 @@ class Flexifield < ActiveRecord::Base
     if self.class.flexiblefield_names.include?(attribute.to_s)
       read_attribute(attribute)
     elsif SERIALIZED_ATTRIBUTES.include?(attribute) && denormalized_flexifield.present?
-      denormalized_flexifield.send(attribute)
+      denormalized_flexifield.safe_send(attribute)
     else
       raise ArgumentError, "Trying to read #{attribute}; Field doesnt exist"
     end

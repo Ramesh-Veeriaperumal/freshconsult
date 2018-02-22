@@ -72,7 +72,7 @@ module Reports::HelpdeskReportingQuery
     column_array = select_columns.split(";").collect do |c|
       args = c.split(",")
       method = args.shift
-      args.blank? ? r_db.send("select_#{method}") : r_db.send("select_#{method}",args)
+      args.blank? ? r_db.safe_send("select_#{method}") : r_db.safe_send("select_#{method}",args)
     end
     column_array.join(",")
   end

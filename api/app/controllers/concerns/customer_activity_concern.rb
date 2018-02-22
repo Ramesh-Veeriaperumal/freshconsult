@@ -42,10 +42,10 @@ module CustomerActivityConcern
       return if @type == 'archive_tickets' &&
                 !current_account.features_included?(:archive_tickets)
       @total_tickets ||= begin
-        tickets = current_account.send(@type)
+        tickets = current_account.safe_send(@type)
                                  .preload(ticket_preload_options)
                                  .permissible(api_current_user)
-                                 .send(ticket_scope, @item.id)
+                                 .safe_send(ticket_scope, @item.id)
                                  .newest(CompanyConstants::MAX_ACTIVITIES_COUNT + 1)
         @type == 'tickets' ? tickets.visible : tickets
       end

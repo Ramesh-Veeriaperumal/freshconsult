@@ -29,7 +29,7 @@ module Fdadmin::FeatureMethods
 
     FEATURE_TYPES.each do |feature_type|
       define_method("#{feature_type}_feature_disabled?") do |feature_name|
-        !send("#{feature_type}_feature_enabled?", feature_name)
+        !safe_send("#{feature_type}_feature_enabled?", feature_name)
       end
     end
 
@@ -37,7 +37,7 @@ module Fdadmin::FeatureMethods
       feature_types = feature_types(feature_name)
       raise "Invalid feature name" if feature_types.blank?
       feature_types(feature_name).any? do |feature_type|
-        send("#{feature_type}_feature_disabled?", feature_name) 
+        safe_send("#{feature_type}_feature_disabled?", feature_name) 
       end
     end
 
@@ -45,7 +45,7 @@ module Fdadmin::FeatureMethods
       feature_types = feature_types(feature_name)
       raise "Invalid feature name" if feature_types.blank?
       feature_types(feature_name).any? do |feature_type|
-        send("#{feature_type}_feature_enabled?", feature_name) 
+        safe_send("#{feature_type}_feature_enabled?", feature_name) 
       end
     end
 
@@ -55,7 +55,7 @@ module Fdadmin::FeatureMethods
         raise "Invalid feature name" if feature_types.blank?
         ActiveRecord::Base.transaction do
           feature_types.each do |feature_type|
-            send("#{toggle_setting}_#{feature_type}_feature", feature_name)
+            safe_send("#{toggle_setting}_#{feature_type}_feature", feature_name)
           end
         end
         true
@@ -72,7 +72,7 @@ module Fdadmin::FeatureMethods
     end
 
     def enable_db_feature(feature_name)
-      @account.features.send(feature_name).save!
+      @account.features.safe_send(feature_name).save!
     end
 
     def enable_launchparty_feature(feature_name)
@@ -84,7 +84,7 @@ module Fdadmin::FeatureMethods
     end
 
     def disable_db_feature(feature_name)
-      @account.features.send(feature_name).destroy
+      @account.features.safe_send(feature_name).destroy
     end
 
     def disable_launchparty_feature(feature_name)

@@ -5,9 +5,9 @@ class Security::Admin::AgentObserver < ActiveRecord::Observer
   include SecurityNotification
   
   def after_commit(agent)
-    if agent.send(:transaction_include_action?, :create)
+    if agent.safe_send(:transaction_include_action?, :create)
       commit_on_create(agent)
-    elsif agent.send(:transaction_include_action?, :destroy)
+    elsif agent.safe_send(:transaction_include_action?, :destroy)
       commit_on_destroy(agent)
     end
     true

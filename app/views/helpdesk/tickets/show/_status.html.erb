@@ -17,7 +17,7 @@
 	<% end %>
 	<p>
 		<% 
-		changed_time = ticket.ticket_states.send(status_changed_time_value_hash(ticket)[:method]) 
+		changed_time = ticket.ticket_states.safe_send(status_changed_time_value_hash(ticket)[:method]) 
 		Rails.logger.info "::::::::#{changed_time}"
 		%>
 		<%= t('since').html_safe %> <abbr data-livestamp="<%= changed_time.to_i %>"><%= distance_of_time_in_words(Time.now(), changed_time) %></abbr>

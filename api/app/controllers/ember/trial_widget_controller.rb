@@ -21,7 +21,7 @@ class Ember::TrialWidgetController < ApiApplicationController
     def setup_key_info(setup_key)
       {
         name: setup_key,
-        isComplete: current_account.send("#{setup_key}_setup?")
+        isComplete: current_account.safe_send("#{setup_key}_setup?")
       }
     end
 end

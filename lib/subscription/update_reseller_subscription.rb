@@ -18,7 +18,7 @@ class Subscription::UpdateResellerSubscription
       account = Account.current
       return if account.subscription.affiliate.nil?
       
-      send(%(trigger_#{args[:event_type]}_event), account, args)
+      safe_send(%(trigger_#{args[:event_type]}_event), account, args)
     end
 
     private

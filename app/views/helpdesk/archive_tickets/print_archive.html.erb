@@ -42,7 +42,7 @@
   <% if field.visible_in_view_form? && field.flexifield_def_entry %>
     <span>
       <b><%= field.label %></b>
-      <% value = field.is_default_field? ? @ticket.send(field.field_name) : @ticket.custom_field_value(field.name) %>
+      <% value = field.is_default_field? ? @ticket.safe_send(field.field_name) : @ticket.custom_field_value(field.name) %>
       <% if value.present? && field.field_type == "custom_date" %>
         <%= Time.parse(value).utc.strftime(@date_format) %> 
       <% else %>

@@ -7,7 +7,7 @@ module Ember
       before_filter :validate_body_params, only: [:update_activation_email, :update_channel_config]
       before_filter :set_user_email_config, only: [:update_activation_email]
       before_filter :check_onboarding_finished, only: [:update_channel_config]
-      
+
       def update_activation_email
         @item.email = @user_email_config[:new_email]
         @item.keep_user_active = true
@@ -43,7 +43,7 @@ module Ember
           channels_config = params[cname][:channels]
 
           channels_config.each do |channel|
-            current_account.send("enable_#{channel}_channel")
+            current_account.safe_send("enable_#{channel}_channel")
           end
         end
 
@@ -51,7 +51,7 @@ module Ember
           unselected_channels = (OnboardingConstants::CHANNELS - params[cname][:channels])
           disableable_channels = (unselected_channels & OnboardingConstants::DISABLEABLE_CHANNELS)
           disableable_channels.each do |channel|
-            current_account.send("disable_#{channel}_channel")
+            current_account.safe_send("disable_#{channel}_channel")
           end
         end
 

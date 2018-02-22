@@ -43,7 +43,7 @@
         @ticket.autoreply
         @ticket.va_rules_after_save_actions.each do |action|
           klass = action[:klass].constantize
-          klass.send(action[:method], action[:args])
+          klass.safe_send(action[:method], action[:args])
         end
       }
     rescue Exception => e

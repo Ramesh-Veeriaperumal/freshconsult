@@ -18,7 +18,7 @@ class ApiValidation
     @request_params = request_params
     if item
       item.attributes.keys.each do |field, value|
-        send("#{field}=", format_value(item.send(field))) if respond_to?("#{field}=")
+        safe_send("#{field}=", format_value(item.safe_send(field))) if respond_to?("#{field}=")
       end
     end
 
@@ -54,7 +54,7 @@ class ApiValidation
 
   def trim_attributes
     attributes_to_be_stripped.each do |x|
-      attribute = send(x)
+      attribute = safe_send(x)
       next if attribute.nil?
       if attribute.respond_to?(:strip!)
         attribute.strip!
@@ -77,7 +77,7 @@ class ApiValidation
   def set_instance_variables(request_params)
     request_params.each_pair do |key, value|
       if respond_to?("#{key}=")
-        send("#{key}=", value)
+        safe_send("#{key}=", value)
       else
         instance_variable_set("@#{key}", value)
       end

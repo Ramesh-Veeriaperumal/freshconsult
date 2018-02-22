@@ -188,12 +188,12 @@ class ContactDecorator < ApiDecorator
 
     def widget_fields_hash(obj, fields, name_mapping = false)
       return fields.inject({}) { |a, e| a.merge(field_mapping(e)) } unless name_mapping
-      fields.inject({}) { |a, e| a.merge(CustomFieldDecorator.display_name(e.name) => obj.send(e.name)) }
+      fields.inject({}) { |a, e| a.merge(CustomFieldDecorator.display_name(e.name) => obj.safe_send(e.name)) }
     end
 
     def field_mapping(field)
       mapped_field = FIELD_NAME_MAPPING[field.name.to_s]
-      mapped_field ? { mapped_field => send("#{mapped_field}") } : {field.name => record.send(field.name)}
+      mapped_field ? { mapped_field => safe_send("#{mapped_field}") } : {field.name => record.safe_send(field.name)}
     end
 
     def current_account

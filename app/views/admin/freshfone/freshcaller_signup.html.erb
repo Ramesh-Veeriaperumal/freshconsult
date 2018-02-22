@@ -18,13 +18,7 @@
     <li class="inline-field">
       <div class="row-fluid admin_help_image ff_welcome_page trial">
         <div class="freshcaller-admin">
-          <% if old_ui %>
-            <div class="freshcaller-content-text">
-              <%= t('freshcaller.admin.freshcaller_not_available').html_safe %>
-            </div>
-          <% else %>
-            <%= render :partial => 'create_or_link_account' %>               
-          <% end %>
+            <%= render :partial => 'create_or_link_account' %>
         </div>
       </div>
     </li>
@@ -37,4 +31,4 @@
   accessError ="<%= t('freshcaller.admin.link_account_request_content.link_errors.access_error') %>";
   apiError ="<%= t('freshcaller.admin.link_account_request_content.link_errors.api_error') %>";
 <% end %>
-<%= javascript_include_tag :'cdn/freshcaller' %>
+<%= javascript_include_tag :'cdn/freshcaller_signup' %>

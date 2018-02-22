@@ -66,7 +66,7 @@ class Admin::Skill < ActiveRecord::Base
   def matches?(ticket)
     Rails.logger.debug "Inside SKILL matches? WITH ticket : #{ticket.inspect} conditions : #{conditions.inspect}"
     return true if conditions.blank?
-    conditions.send("#{match_type}?") do |c|
+    conditions.safe_send("#{match_type}?") do |c|
       current_evaluate_on = custom_eval(ticket, c.evaluate_on_type)
       current_evaluate_on.present? ? c.matches(current_evaluate_on) : negation_operator?(c.operator)
     end
@@ -118,6 +118,7 @@ class Admin::Skill < ActiveRecord::Base
       end
       keys.flatten!
 
+      Rails.logger.debug "Deleting Skill queues #{keys.inspect}"
       del_round_robin_redis keys
     end
 

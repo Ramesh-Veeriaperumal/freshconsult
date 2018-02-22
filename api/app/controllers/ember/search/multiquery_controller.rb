@@ -40,7 +40,7 @@ module Ember
         def decorate_objects
           @items = {}
           @records.each do |record|
-            @items[record[:context]] = send("decorate_#{template_type(record[:context])}_objects", record[:data])
+            @items[record[:context]] = safe_send("decorate_#{template_type(record[:context])}_objects", record[:data])
           end
         end
 

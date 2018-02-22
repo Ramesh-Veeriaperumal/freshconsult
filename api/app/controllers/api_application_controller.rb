@@ -157,7 +157,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def remove_ignore_params
-      
+
     end
 
     def render_500(e)
@@ -209,7 +209,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def activerecord_error_handler(e)
-      err = ActiveRecord::Base.connection.send(:translate_exception, e, e.message)
+      err = ActiveRecord::Base.connection.safe_send(:translate_exception, e, e.message)
       err.instance_variable_set :@original_exception, nil
       case err.class.to_s
       when 'ActiveRecord::RecordNotUnique'
@@ -418,7 +418,7 @@ class ApiApplicationController < MetalApiController
 
     # Using optional parameters for extensibility
     def render_201_with_location(template_name: "#{controller_path.gsub(NAMESPACED_CONTROLLER_REGEX, '')}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
-      render template_name, location: send(location_url, item_id), status: 201
+      render template_name, location: safe_send(location_url, item_id), status: 201
     end
 
     def nscname # namespaced controller name
@@ -578,7 +578,7 @@ class ApiApplicationController < MetalApiController
         current_account.make_current
       end
       set_current_portal
-      
+
       User.current = api_current_user
       Thread.current[:message_uuid] = request.try(:uuid).to_a
       Rails.logger.info "Locale:: #{I18n.locale}, User:: #{User.current.try(:id)}, User lang:: #{User.current.try(:language)}, Account lang:: #{Account.current.language}"
@@ -795,14 +795,14 @@ class ApiApplicationController < MetalApiController
 
     def run_on_db
       db_type = current_account.master_queries? ? :run_on_master : :run_on_slave
-      Sharding.send(db_type) do
+      Sharding.safe_send(db_type) do
         yield
       end
     end
 
     def on_slave?
       get_request? && self.class::SLAVE_ACTIONS.include?(action_name)
-    end 
+    end
 
     def custom_field_error_mappings
       @custom_field_error_mapping ||= Hash[@name_mapping.map{|k,v| [k, "custom_fields.#{v}"]}] if @name_mapping.present?

@@ -13,7 +13,7 @@ class PopulateAccountSetupData < BaseWorker
 
 	def perform
 		Account::Setup::KEYS.each do |setup_key|
-			Account.current.send("mark_#{setup_key}_setup") if send("#{setup_key}_markable?")
+			Account.current.safe_send("mark_#{setup_key}_setup") if safe_send("#{setup_key}_markable?")
 		end
 		Account.current.save_setup
 	end
@@ -39,7 +39,7 @@ class PopulateAccountSetupData < BaseWorker
 
 	def automation_markable?
 		DEFAULT_AUTOMATION_RULES_COUNT.keys.each do |va_rule_type|
-			return true if Account.current.send("all_#{va_rule_type}").count != DEFAULT_AUTOMATION_RULES_COUNT[va_rule_type]
+			return true if Account.current.safe_send("all_#{va_rule_type}").count != DEFAULT_AUTOMATION_RULES_COUNT[va_rule_type]
 		end
 		false
 	end

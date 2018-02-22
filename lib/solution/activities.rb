@@ -36,7 +36,7 @@ module Solution::Activities
 
   def create_activity(type)
     type << "_translation" if translation_activity?
-    path = Rails.application.routes.url_helpers.send("solution_#{class_short_name}_path", self)
+    path = Rails.application.routes.url_helpers.safe_send("solution_#{class_short_name}_path", self)
     path << "/#{url_locale}" if translation_activity? && class_short_name == 'article'
     self.activities.create(
       :description => "activities.solutions.#{type}.long",
