@@ -14,8 +14,8 @@ module Has
           fields      = required_fields[:fields]
 
           fields.each do |field|
-            field_value = send(field.name)
-            self.errors.add( field.send(error_label), 
+            field_value = safe_send(field.name)
+            self.errors.add( field.safe_send(error_label), 
               I18n.t("#{self.class.to_s.downcase}.errors.required_field")) if (field_value.blank? || 
                                   field_value.is_a?(FalseClass)) # latter condition for checkbox alone
           end
@@ -28,7 +28,7 @@ module Has
           fields.each do |field|
             validation_method = "validate_format_of_#{field.field_type}"
             if respond_to?(validation_method, true)
-              send("validate_format_of_#{field.field_type}", field, error_label) if send(field.name).present?
+              safe_send("validate_format_of_#{field.field_type}", field, error_label) if safe_send(field.name).present?
             else
               warn :"Validation Method #{validation_method} is not present for the #{field.field_type} - #{field.inspect}"
             end
@@ -36,23 +36,23 @@ module Has
         end
         
         # def validate_format_of_custom_date field, error_label 
-        #   add_error_to_self(field, error_label) unless send(field.name).is_a? DateTime
+        #   add_error_to_self(field, error_label) unless safe_send(field.name).is_a? DateTime
         # end
         # Doesn't work. Somewhere DateTime is already being parsed & no errors are being added if invalid
 
         def validate_format_of_custom_text field, error_label
           if field.regex.present?
-            add_error_to_self(field, error_label) unless send(field.name) =~ field.regex
+            add_error_to_self(field, error_label) unless safe_send(field.name) =~ field.regex
           end
         end
 
         def validate_format_of_custom_dropdown field, error_label
-          add_error_to_self(field, error_label) unless field.choices_value.include? send(field.name)
+          add_error_to_self(field, error_label) unless field.choices_value.include? safe_send(field.name)
         end
 
         def validate_format_of_custom_url field, error_label
           valid = true
-          url = send(field.name)
+          url = safe_send(field.name)
           begin
             if url.present?
               uri = URI.parse(url)
@@ -65,11 +65,11 @@ module Has
         end
 
         def validate_format_using_regex field, error_label
-          add_error_to_self(field, error_label) unless send(field.name) =~ VALIDATION_REGEX[field.field_type.to_sym]
+          add_error_to_self(field, error_label) unless safe_send(field.name) =~ VALIDATION_REGEX[field.field_type.to_sym]
         end
 
         def add_error_to_self field, error_label
-          self.errors.add( field.send(error_label), 
+          self.errors.add( field.safe_send(error_label), 
             I18n.t("#{self.class.to_s.downcase}.errors.#{field.field_type}"))
         end
 

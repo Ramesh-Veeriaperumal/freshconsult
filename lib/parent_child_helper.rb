@@ -94,7 +94,7 @@ module ParentChildHelper
     if key == "tags"
       @assoc_parent_ticket.tag_names.join(',')
     else
-      @assoc_parent_ticket.send(key)
+      @assoc_parent_ticket.safe_send(key)
     end
   end
 end

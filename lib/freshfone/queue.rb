@@ -161,7 +161,7 @@ module Freshfone::Queue
   end
 
   def priority_queue
-    priority_queue_key = send("#{params[:hunt_type]}_queue_key")
+    priority_queue_key = safe_send("#{params[:hunt_type]}_queue_key")
     calls = get_key(priority_queue_key)
     waiting_calls = (calls) ? JSON.parse(calls) : {}
     waiting_calls[params[:hunt_id]] ||= []

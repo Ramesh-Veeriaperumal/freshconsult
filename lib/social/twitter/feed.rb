@@ -127,7 +127,7 @@ class Social::Twitter::Feed
     return if param.blank?
     twt_sandbox(handle) do
       twitter = TwitterWrapper.new(handle).get_twitter
-      action_response = twitter.send(action, "#{param}")
+      action_response = twitter.safe_send(action, "#{param}")
     end
   end   
   

@@ -12,7 +12,7 @@
 			<% if privilege?(:manage_forums) -%>
 				<div class="btn-group pull-right mt18 mr20">
 					<%= link_to(t('reorder'),'#', :id => "forums_reorder_button", :class => "btn") unless
-							(@forum_category.send("#{@content_scope}forums").size <= 1) %>
+							(@forum_category.safe_send("#{@content_scope}forums").size <= 1) %>
 					<%= link_to t('forum.new'), new_category_forum_path(@forum_category), :class => "btn" %>
 					<%= link_to t('category.edit') ,edit_category_path(@forum_category), :class => "btn" %>
 				</div>
@@ -24,5 +24,5 @@
 </div>
 
 <% if privilege?(:manage_forums) -%>	
-	<%= render :partial => "/shared/reorder_list", :locals => { :items => @forum_category.send("#{@content_scope}forums"),  :action_url => reorder_category_forums_path(@forum_category), :title => :name, :container_id => "forums_sort", :reorder_id => "forums_reorder_button", :list_id => "forums_list"} %>
+	<%= render :partial => "/shared/reorder_list", :locals => { :items => @forum_category.safe_send("#{@content_scope}forums"),  :action_url => reorder_category_forums_path(@forum_category), :title => :name, :container_id => "forums_sort", :reorder_id => "forums_reorder_button", :list_id => "forums_list"} %>
 <% end %>

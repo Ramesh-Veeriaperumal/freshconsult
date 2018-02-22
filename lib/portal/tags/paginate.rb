@@ -34,7 +34,7 @@ class Portal::Tags::Paginate < ::Liquid::Block
 
       # Paginating if the collection is not already paginated from the model
       unless pagination.respond_to?(:total_pages)
-        pagination = context[@collection_name].send(:paginate, {
+        pagination = context[@collection_name].safe_send(:paginate, {
           :page       => params[:page],
           :per_page   => @per_page })
       end

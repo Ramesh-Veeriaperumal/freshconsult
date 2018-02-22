@@ -41,7 +41,7 @@ module Dynamo::Callbacks
 		def callback(what = :after, action = :save)
 			return true unless [:before, :after].include?(what) && [:update, :save, :destroy].include?(action)
 			(self.class.instance_variable_get("@#{what}_#{action}_callbacks") || []).each do |meth|
-				send(meth) if respond_to?(meth)
+				safe_send(meth) if respond_to?(meth)
 			end
 		end
 end

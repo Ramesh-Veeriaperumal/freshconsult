@@ -306,7 +306,7 @@ module Helpdesk::TicketActions
           load_cached_ticket_filters
           load_ticket_filter
           db_type = get_db_type(params)
-          Sharding.send(db_type) do
+          Sharding.safe_send(db_type) do
             @ticket_filter.deserialize_from_params(params)
             if current_account.count_es_enabled?
               total_entries = Search::Tickets::Docs.new(@ticket_filter.query_hash).count(Helpdesk::Ticket)

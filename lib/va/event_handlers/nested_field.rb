@@ -2,7 +2,7 @@ class Va::EventHandlers::NestedField < Va::EventHandler
 
 	def matches? current_events, evaluate_on
 		return false unless current_events[@event.name].present? || (matches_nested_fields? current_events)
-		current_value = evaluate_on.flexifield.send(@event.name) if current_events[@event.name].nil?
+		current_value = evaluate_on.flexifield.safe_send(@event.name) if current_events[@event.name].nil?
 		from, to = current_events[@event.name] || [current_value, current_value]
 
     @handler = "Va::Handlers::Text".constantize.new @event, rule
@@ -28,7 +28,7 @@ class Va::EventHandlers::NestedField < Va::EventHandler
 		end
 
 		def matches_single_rule? current_events, evaluate_on, event, rule
-			current_value = evaluate_on.flexifield.send(event.name)
+			current_value = evaluate_on.flexifield.safe_send(event.name)
 			current_events[event.name] ||= [current_value, current_value]
 			return (event.event_matches? current_events, evaluate_on)
 		end

@@ -24,7 +24,7 @@ private
 		render_404 if @forum.nil?
 		unless @forum.nil? || @forum.visible?(current_user)
 			store_location
-			redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+			redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
 		end
 
 	end

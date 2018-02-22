@@ -8,7 +8,7 @@ module ChannelIntegrations
         command = get_command(payload)
         klass = construct_klass(payload)
 
-        klass.new.public_send(command, payload) if klass
+        klass.new.safe_send(command, payload) if klass
       rescue => e
         Rails.logger.debug "Exception in Processing Replies from Channel, #{e.message}"
       end

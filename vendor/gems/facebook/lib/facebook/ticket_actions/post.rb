@@ -25,7 +25,7 @@ module Facebook
             }
           )
 
-          description_html = send("html_content_from_#{koala_feed.type}", koala_feed.feed, ticket)
+          description_html = safe_send("html_content_from_#{koala_feed.type}", koala_feed.feed, ticket)
           ticket.ticket_body_attributes = {
               :description      => koala_feed.description,
               :description_html => description_html
@@ -70,7 +70,7 @@ module Facebook
             }
           )
 
-          body_html = send("html_content_from_#{koala_comment.type}", koala_comment.feed, note)
+          body_html = safe_send("html_content_from_#{koala_comment.type}", koala_comment.feed, note)
           note.note_body_attributes = {
               :body => koala_comment.description,
               :body_html => body_html

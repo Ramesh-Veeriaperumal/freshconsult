@@ -326,6 +326,7 @@ module ChatHelper
   end
 
   def livechat_request(type, params, path, requestType)
+    #TODO - delete later
     response_code = 200
     content_type  = "application/json"
     accept_type   = "application/json"
@@ -335,15 +336,39 @@ module ChatHelper
       request_url = live_chat_url + "/" + path
       options = Hash.new
       auth_details = { :appId => ChatConfig["app_id"], :userId => current_user.id }
-      unless type === "create_site"
-        site_id  = current_account.chat_setting.site_id
-        auth_details[:siteId] = site_id
-        auth_details[:token]   = livechat_token(site_id, current_user.id)
-      else
-        auth_details[:token]   = livechat_partial_token(current_user.id)
+
+      #whitelist the allowed type(s)
+      case type
+        when "create_site"
+          auth_details[:token]   = livechat_partial_token(current_user.id, current_user.privilege?(:admin_tasks))
+        when "update_site", "export", "getExportUrl", "create_widget", "update_widget",
+          "available", "get_agents_availability", "update_availability",
+          "create_shortcode", "update_shortcode", "delete_shortcode",
+          "get_shortcode"
+          site_id  = current_account.chat_setting.site_id
+          auth_details[:siteId] = site_id
+          auth_details[:token]   = livechat_token(site_id, current_user.id, current_user.privilege?(:admin_tasks))
+        else
+          Rails.logger.error("chat_helper.rb livechat_request called with invalid value for type: #{type}")
+          NewRelic::Agent.notice_error(e,{:description => "#{current_account.id} - Error occurred in livechat_request"})
+          response_body = '{"result":"error"}'
+          response_code = 500  # Internal server error
+          return { :text=> response_body, :content_type => response_type, :status => response_code }
       end
+
+      # unless type === "create_site"
+      #   site_id  = current_account.chat_setting.site_id
+      #   auth_details[:siteId] = site_id
+      #   auth_details[:token]   = livechat_token(site_id, current_user.id, current_user.privilege?(:admin_tasks))
+      # else
+      #   auth_details[:token]   = livechat_partial_token(current_user.id, current_user.privilege?(:admin_tasks))
+      # end
       request_data      = params.merge(auth_details)
-      options[:body]    = JSON.generate(request_data)
+      if requestType == "GET" || requestType == "DELETE"
+        options[:query] = request_data.collect{|k,v| [k.to_sym, v]}.to_h
+      else
+        options[:body] = JSON.generate(request_data)
+      end
       options[:headers] = { "Accept" => accept_type, "Content-Type" => content_type}.delete_if{ |k,v| v.blank? }  # TODO: remove delete_if use and find any better way to do it in single line
       options[:timeout] = params[:timeout] || 15 #Returns status code 504 on timeout expiry 
       begin

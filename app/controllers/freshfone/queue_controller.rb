@@ -105,7 +105,7 @@ class Freshfone::QueueController < FreshfoneBaseController
     end
 
     def redis_queue_key
-      return send("#{params[:hunt_type]}_queue_key") if priority_queue?
+      return safe_send("#{params[:hunt_type]}_queue_key") if priority_queue?
       default_queue_key
     end
 

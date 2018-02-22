@@ -363,7 +363,7 @@ class Admin::VaRulesController < Admin::AdminController
     end
 
     def add_customer_custom_fields filter_hash, type
-      cf = current_account.send("#{type}_form").send("custom_#{type}_fields")
+      cf = current_account.safe_send("#{type}_form").safe_send("custom_#{type}_fields")
       unless cf.blank? 
         filter_hash.push({ :name => -1,
                           :value => "---------------------" 

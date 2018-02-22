@@ -6,7 +6,7 @@ class Language
 
 	def initialize(args)
 		args.each do |k,v|
-			self.send("#{k.to_s}=",v)
+			self.safe_send("#{k.to_s}=",v)
 		end
 	end
 
@@ -85,7 +85,7 @@ class Language
 
 		def set_current(params={})
 			[:url, :user, :browser, :portal, :primary].each do |meth|
-				language = send("fetch_from_#{meth}", params)
+				language = safe_send("fetch_from_#{meth}", params)
 				Thread.current[:language] = language if Account.current.valid_portal_language?(language)
 				break if Language.current?
 			end

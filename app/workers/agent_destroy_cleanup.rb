@@ -30,13 +30,13 @@ class AgentDestroyCleanup < BaseWorker
     def destroy_agents_personal_items # destroy agents personal canned_responses,scn_automations,tkt_templates
       user = @account.users.find_by_id args[:user_id]
       ["canned_responses","scn_automations","ticket_templates"].each do |items|
-        @account.send(items).only_me(user).destroy_all if user.present?
+        @account.safe_send(items).only_me(user).destroy_all if user.present?
       end
     end
 
     def delete_user_associated
       USER_ASSOCIATED_MODELS.each do |model|
-        @account.send(model).where(:user_id => args[:user_id]).destroy_all
+        @account.safe_send(model).where(:user_id => args[:user_id]).destroy_all
       end
     end
 

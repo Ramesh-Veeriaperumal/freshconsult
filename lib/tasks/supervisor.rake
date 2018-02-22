@@ -66,7 +66,7 @@ def execute_supevisor(task_name)
     end    
     rake_logger.info "rake=#{task_name} Supervisor" unless rake_logger.nil?
     Sharding.execute_on_all_shards do
-      Account.send(SUPERVISOR_TAKS[task_name][:account_method]).current_pod.non_premium_accounts.each do |account|         
+      Account.safe_send(SUPERVISOR_TAKS[task_name][:account_method]).current_pod.non_premium_accounts.each do |account|         
         if account.supervisor_rules.count > 0 
           if spam_account_ids.include?(account.id) and Rails.env.production?
             Resque.enqueue(SUPERVISOR_TAKS["free"][:class_name].constantize, {:account_id => account.id })            

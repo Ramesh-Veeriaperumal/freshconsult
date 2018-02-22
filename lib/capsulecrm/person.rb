@@ -20,7 +20,7 @@ class CapsuleCRM::Person < CapsuleCRM::Party
     attrs = {}
     arr = [:about, :name, :last_name, :title, :job_title,:organisation_name,:email,:organisation_id,:phone]
     arr.each do |key|
-      attrs[key] = self.send(key)
+      attrs[key] = self.safe_send(key)
     end
     attrs
   end

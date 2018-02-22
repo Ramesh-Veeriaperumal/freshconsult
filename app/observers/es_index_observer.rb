@@ -9,11 +9,11 @@ class EsIndexObserver < ActiveRecord::Observer
   def after_commit(model)
     return unless (model.account.esv1_enabled? or COUNT_MODELS.include?(model.class.name.to_sym))
 
-    if model.send(:transaction_include_action?, :create)
+    if model.safe_send(:transaction_include_action?, :create)
       commit_on_create(model)
-    elsif model.send(:transaction_include_action?, :update)
+    elsif model.safe_send(:transaction_include_action?, :update)
       commit_on_update(model)  
-    elsif model.send(:transaction_include_action?, :destroy)
+    elsif model.safe_send(:transaction_include_action?, :destroy)
       commit_on_destroy(model) 
     end
     true
@@ -26,7 +26,7 @@ class EsIndexObserver < ActiveRecord::Observer
 	end
 
 	def commit_on_update(model)
-		model.update_es_index if model.respond_to?(:search_fields_updated?) ? model.send(:search_fields_updated?) : true
+		model.update_es_index if model.respond_to?(:search_fields_updated?) ? model.safe_send(:search_fields_updated?) : true
 		model.update_notes_es_index if [:"Helpdesk::Ticket"].include? model.class.name.to_sym
 	end
 

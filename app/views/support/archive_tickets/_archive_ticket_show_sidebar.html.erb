@@ -22,7 +22,7 @@
     has_visible_field = false
     current_portal.ticket_fields.each do |field|
       field_value = @ticket.respond_to?(field.field_name) ? 
-            @ticket.send(field.field_name) : @ticket.custom_field_value(field.field_name)
+            @ticket.safe_send(field.field_name) : @ticket.custom_field_value(field.field_name)
       has_visible_field = true if (field.visible_in_view_form? && field.visible_in_portal && !field_value.blank?)
     end
   %>
@@ -36,16 +36,16 @@
           <% current_portal.ticket_fields.each do |field| %>
             <% if (field.visible_in_view_form? && field.visible_in_portal) %>
             <% p field.field_name * 100
-              field_value = @ticket.respond_to?(field.field_name) ? @ticket.send(field.field_name) : @ticket.custom_field_value(field.field_name)
+              field_value = @ticket.respond_to?(field.field_name) ? @ticket.safe_send(field.field_name) : @ticket.custom_field_value(field.field_name)
               dom_type = (field.field_type == "default_source") ? "dropdown" : field.dom_type
               if(field.field_type == "nested_field")
                 field_value = {}
                 field.nested_levels.each do |ff|
-                  t_val = @ticket.respond_to?(ff[:name]) ? @ticket.send(ff[:name]) : @ticket.custom_field_value(ff[:name])
+                  t_val = @ticket.respond_to?(ff[:name]) ? @ticket.safe_send(ff[:name]) : @ticket.custom_field_value(ff[:name])
                   field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = t_val
                 end
               
-                f_value = @ticket.respond_to?(field.field_name) ? @ticket.send(field.field_name) : @ticket.custom_field_value(field.field_name)
+                f_value = @ticket.respond_to?(field.field_name) ? @ticket.safe_send(field.field_name) : @ticket.custom_field_value(field.field_name)
                 field_value.merge!({ :category_val => f_value })
               end
             %>

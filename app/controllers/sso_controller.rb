@@ -5,7 +5,7 @@ class SsoController < ApplicationController
 
   skip_before_filter :check_privilege, :verify_authenticity_token
   before_filter :check_csrf_token, :only => [:portal_google_sso, :login]
-  before_filter :set_current_user, :only =>[:portal_google_sso, :marketplace_google_sso]
+  before_filter :set_current_google_user, :only =>[:portal_google_sso, :marketplace_google_sso]
   skip_after_filter :set_last_active_time
   before_filter :form_authenticity_token, :only => :mobile_app_google_login, :if => :is_native_mobile?
 
@@ -43,7 +43,7 @@ class SsoController < ApplicationController
         end
       end
       flash[:notice] = t(:'flash.g_app.authentication_failed')
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
 
@@ -100,7 +100,9 @@ class SsoController < ApplicationController
       end
     end
 
-    def set_current_user
+    def set_current_google_user
+      Rails.logger.debug(">>set current google user called #{Account.current.full_domain} #{caller.select { |f| f.include?(Rails.root.to_s) }.join("\n")}")
+      return if @current_user.present? # current user called twice always
       redis_oauth_key = GOOGLE_OAUTH_SSO % {:random_key => params['sso']}
       uid = get_others_redis_key(redis_oauth_key)
       auth = current_account.authorizations.where(:uid => uid, :provider => 'google').first

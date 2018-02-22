@@ -87,7 +87,7 @@ module Liquid
       elsif ary.first.respond_to?('[]') and !ary.first[property].nil?
         ary.sort {|a,b| a[property] <=> b[property] }
       elsif ary.first.respond_to?(property)
-        ary.sort {|a,b| a.send(property) <=> b.send(property) }
+        ary.sort {|a,b| a.safe_send(property) <=> b.safe_send(property) }
       end
     end
 
@@ -97,7 +97,7 @@ module Liquid
       if ary.first.respond_to?('[]') and !ary.first[property].nil?
         ary.map {|e| e[property] }
       elsif ary.first.respond_to?(property)
-        ary.map {|e| e.send(property) }
+        ary.map {|e| e.safe_send(property) }
       end
     end
 

@@ -126,7 +126,7 @@ class MergeContacts < BaseWorker
 
   def move_each_of(arr=[], children_ids)
     arr.each do |relation|
-      update_by_batches(@account.send(relation), 
+      update_by_batches(@account.safe_send(relation), 
                         { :user_id => @parent_user.id }, 
                         ["user_id in (?)", children_ids])
     end
@@ -136,18 +136,18 @@ class MergeContacts < BaseWorker
   # Then we nullify that attribute for that particular target user alone.
   def move_if_exists(user_att)
     user_att.each do |att|
-      if @parent_user.send(att).blank?
+      if @parent_user.safe_send(att).blank?
         if(att == "mobile" || att == "phone")
-          related_children = @children.select{|i| i.send(att).present?}
-          @parent_user.send("#{att}=", related_children.first.send(att)) unless related_children.empty?
+          related_children = @children.select{|i| i.safe_send(att).present?}
+          @parent_user.safe_send("#{att}=", related_children.first.safe_send(att)) unless related_children.empty?
           related_children.each do |child|
-            child.send("#{att}=", nil)
+            child.safe_send("#{att}=", nil)
           end
         else
-          related = @children.detect{|i| i.send(att).present?}
+          related = @children.detect{|i| i.safe_send(att).present?}
           unless related.nil?
-            @parent_user.send("#{att}=", related.send(att))
-            related.send("#{att}=", nil) unless att == "avatar" 
+            @parent_user.safe_send("#{att}=", related.safe_send(att))
+            related.safe_send("#{att}=", nil) unless att == "avatar" 
             #avatar is a has_one relation and hence will error out without the check
           end
         end
@@ -165,23 +165,23 @@ class MergeContacts < BaseWorker
   def update_polymorphic children_ids, options
     update_ids, delete_ids = [], []
     options[:types].each do |obj|        
-      current_children_objects  = @account.send(options[:object])
+      current_children_objects  = @account.safe_send(options[:object])
                                     .where({options[:user] => children_ids, options[:poly_type] => obj})
-      current_parent_object_ids = @parent_user.send(options[:object])
+      current_parent_object_ids = @parent_user.safe_send(options[:object])
                                     .where({options[:poly_type] => obj})
                                     .select(options[:poly_id])
-                                    .collect{|x| x.send(options[:poly_id])}
+                                    .collect{|x| x.safe_send(options[:poly_id])}
 
       current_children_objects.each do |child|
-        if current_parent_object_ids.include?(child.send(options[:poly_id]))
+        if current_parent_object_ids.include?(child.safe_send(options[:poly_id]))
           delete_ids << child.id
         else
           update_ids << child.id
-          current_parent_object_ids << child.send(options[:poly_id])  # If multiple children have votes/mons. for the same poly_id
+          current_parent_object_ids << child.safe_send(options[:poly_id])  # If multiple children have votes/mons. for the same poly_id
         end
       end
     end
-    @account.send(options[:object]).where({:id => update_ids}).update_all_with_publish({ options[:user] => @parent_user.id }, ["#{options[:user]} != ?", @parent_user.id]) if update_ids.present?
-    @account.send(options[:object]).where({:id => delete_ids}).destroy_all if delete_ids.present?
+    @account.safe_send(options[:object]).where({:id => update_ids}).update_all_with_publish({ options[:user] => @parent_user.id }, ["#{options[:user]} != ?", @parent_user.id]) if update_ids.present?
+    @account.safe_send(options[:object]).where({:id => delete_ids}).destroy_all if delete_ids.present?
   end
 end

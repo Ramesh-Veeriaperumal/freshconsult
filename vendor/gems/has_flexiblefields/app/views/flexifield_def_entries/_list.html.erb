@@ -22,7 +22,7 @@ fdescss_size = "size1of" + (fdelist ? fields.size.succ.to_s : fields.size.to_s)
         </div>
       <% end %>
       <% fields.each do |ffield| %>
-        <div class="<%= ffield.content + " " + fdescss_size %> shoveR4px"><%=h fde.send(ffield.field) || ".." %></div>
+        <div class="<%= ffield.content + " " + fdescss_size %> shoveR4px"><%=h fde.safe_send(ffield.field) || ".." %></div>
       <% end %>
       </div>
     <% end %>

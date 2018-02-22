@@ -222,7 +222,7 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
   end
 
   def check_ca_privilege
-    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless vizible_to_me?(@ca_response)
+    redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) unless vizible_to_me?(@ca_response)
   end
 
   def vizible_to_me?(ca_response)

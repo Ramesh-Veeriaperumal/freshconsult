@@ -66,7 +66,7 @@ class Helpdesk::TagsController < ApplicationController
         :conditions => ["name like ?", "#{params[:v]}%"],
         :limit => 30)
 
-    r = {:results => items.map {|i| {:id => autocomplete_id(i), :value => i.send(autocomplete_field)} } }
+    r = {:results => items.map {|i| {:id => autocomplete_id(i), :value => i.safe_send(autocomplete_field)} } }
 
     respond_to do |format|
       format.json { render :json => r.to_json }
@@ -76,7 +76,7 @@ class Helpdesk::TagsController < ApplicationController
   def check_manage_tags_privilege
     if !(current_user and  current_user.privilege?(:manage_tags))
       flash[:notice] = t('flash.general.access_denied')
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) 
     end
   end 
 

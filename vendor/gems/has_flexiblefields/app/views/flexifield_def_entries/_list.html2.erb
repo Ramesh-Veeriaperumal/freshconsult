@@ -13,7 +13,7 @@ names = FlexifieldDefEntry.viewable_column_names
         <tr>
           <% names.each do |name| %>
           <td>
-            <%= h fde.send(name) %>
+            <%= h fde.safe_send(name) %>
           </td>
           <% end %>
         </tr>

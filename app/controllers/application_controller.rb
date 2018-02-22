@@ -85,7 +85,7 @@ class ApplicationController < ActionController::Base
             return redirect_to(subscription_url)
           else
             flash[:notice] = t('suspended_account_admin_info')
-            redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+            redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
           end
         }
       end
@@ -340,7 +340,7 @@ class ApplicationController < ActionController::Base
     end
 
     def non_covered_feature
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
 
     def non_covered_admin_feature

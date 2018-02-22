@@ -44,7 +44,7 @@ module Solution::ApiDelegator
     parent_json = json_from_parent(options)
     children_json = json_from_children(options)
     primary_json =  (self.respond_to?(:current_child_id) ? {} : 
-        self.send("primary_#{api_root_name}").as_json({
+        self.safe_send("primary_#{api_root_name}").as_json({
           :only => CHILD_ATTRIBUTES[class_api_name],
           :except => (options[:except] || []) + [:id] 
         })[api_root_name]) 
@@ -88,7 +88,7 @@ module Solution::ApiDelegator
       parent_options = api_includes(parent_assoc, options)
       next unless parent_options
       parent_json.merge!({
-        parent_assoc => self.send(PARENT_ASSOCIATIONS[class_api_name][parent_assoc]).as_json(
+        parent_assoc => self.safe_send(PARENT_ASSOCIATIONS[class_api_name][parent_assoc]).as_json(
             parent_options.merge!({:root => false}))
       })
     end
@@ -111,7 +111,7 @@ module Solution::ApiDelegator
       child_options[:except] = (child_options[:except] || []) + [:tags] if (class_api_name == :folder_meta)
       
       children_json.merge!({
-        child_assoc => (self.send(CHILD_ASSOCIATIONS[class_api_name][child_assoc]).collect do |child|
+        child_assoc => (self.safe_send(CHILD_ASSOCIATIONS[class_api_name][child_assoc]).collect do |child|
           child_json = child.as_json(child_options)
           options.key?(:to_xml) ? Solution::ApiXmlResponse.new(child_json.merge(:root => root_key)) : child_json
         end)

@@ -27,9 +27,9 @@ class PortalObserver < ActiveRecord::Observer
   	end
     
     def after_commit(portal)
-      if portal.send(:transaction_include_action?, :update)
+      if portal.safe_send(:transaction_include_action?, :update)
         commit_on_update(portal)
-      elsif portal.send(:transaction_include_action?, :destroy)
+      elsif portal.safe_send(:transaction_include_action?, :destroy)
         commit_on_destroy(portal)
       end
       update_users_language(portal) if portal.main_portal? and @all_changes.present? and @all_changes.has_key?(:language)

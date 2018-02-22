@@ -342,8 +342,6 @@ module TicketConstants
 
   LBRR_REFLECTION_KEYS = [:deleted, :spam, :status, :responder_id, :group_id]
 
-  LBRR_REFLECTION_KEYS = [:deleted, :spam, :status, :responder_id, :group_id]
-
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])
   end

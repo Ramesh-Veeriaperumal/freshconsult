@@ -544,7 +544,7 @@ class AccountsController < ApplicationController
       end
       if (action == "create" && !restricted_helpdesk) ||
            (action == "destroy" && restricted_helpdesk )
-        @account.features.restricted_helpdesk.send(action)
+        @account.features.restricted_helpdesk.safe_send(action)
       end
     end
 

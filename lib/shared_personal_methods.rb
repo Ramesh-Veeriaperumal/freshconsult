@@ -22,7 +22,7 @@ module SharedPersonalMethods
       15 :  params[:per_page])
     @page = params[:page].to_i.zero? ? nil : params[:page]
     @all_items = if current_tab_shared?
-      scoper.send("shared_#{human_name.pluralize}", current_user).order(@order_by).paginate(:per_page =>
+      scoper.safe_send("shared_#{human_name.pluralize}", current_user).order(@order_by).paginate(:per_page =>
         @per_page, :page => @page)
     else
       scoper.only_me(current_user).order(@order_by).paginate(:per_page => @per_page, :page => @page)
@@ -59,14 +59,14 @@ module SharedPersonalMethods
     if verify_access?(@item)
       @current_tab = reset_tab
     else
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
 
   def manage_personal_tab
     if (params[:current_tab] and !ALLOWED_TABS.include?(params[:current_tab])) or
         (!has_privilege? and params[:current_tab] == "shared")
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
 

@@ -24,7 +24,7 @@ class ContactsController < ApplicationController
    before_filter :init_user_email, :only => :edit
    before_filter :load_companies, :only => :edit
    before_filter :check_parent, :only => :restore
-   before_filter :fetch_contacts, :only => [:index]
+   before_filter :validate_state_param, :fetch_contacts, :only => [:index]
    before_filter :set_native_mobile, :only => [:show, :index, :create, :destroy, :restore,:update]
    before_filter :set_required_fields, :only => [:create_contact, :update_contact]
    before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_contact, :update_contact]
@@ -191,12 +191,28 @@ class ContactsController < ApplicationController
     Rails.logger.info "$$$$$$$$ -> #{@user.inspect}"
 
     respond_to do |format|
-      format.html { 
-        define_contact_properties
-      }
+      format.html { }
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.as_json }
       format.any(:mobile,:nmobile) { render :json => @user.to_mob_json }
+    end
+  end
+
+  def view_conversations
+    @user = current_account.all_users.find(params[:id])
+    types = ["all", "tickets", "forums", "archived_tickets"]
+    conversation_type = types.include?(params[:type]) ? params[:type] : types[0]
+
+    if conversation_type == types[0] || conversation_type == types[1]
+      define_contact_tickets
+    elsif conversation_type == types[3] && current_account.features_included?(:archive_tickets)
+      define_contact_archive_tickets
+    end
+
+    respond_to do |format|
+      format.html {
+        render :partial => "contacts/view_conversations_#{conversation_type}"
+      }
     end
   end
   
@@ -404,16 +420,15 @@ protected
                                 :error_label => :label }
     end
 
-    # TODO: FOR ARCHIVE NEED TO AJAXIFY
-    def define_contact_properties 
-      @merged_user = @user.parent unless @user.parent.nil?
-
+    def define_contact_tickets
       @total_user_tickets = current_account.tickets.permissible(current_user).
         requester_active(@user).visible.newest(11).find(:all, 
           :include => [:ticket_states,:ticket_status,:responder,:requester])
       @total_user_tickets_size = @total_user_tickets.length
       @user_tickets = @total_user_tickets.take(10)
+    end
 
+    def define_contact_archive_tickets
       if current_account.features_included?(:archive_tickets)
         @total_archive_user_tickets = current_account.archive_tickets.permissible(current_user).
           requester_active(@user).newest(11).find(:all, :include => [:responder,:requester])
@@ -422,8 +437,20 @@ protected
       end
     end
 
+    # TODO: FOR ARCHIVE NEED TO AJAXIFY
+    def define_contact_properties
+      @merged_user = @user.parent unless @user.parent.nil?
+      define_contact_tickets
+      define_contact_archive_tickets
+    end
+
     def get_formatted_message(exception)
       exception.message # TODO: Proper error reporting.
+    end
+
+    def validate_state_param
+      #whitelisting contacts filter param
+      render :nothing => true, :status => 400 if params[:state] && !User::USER_FILTER_TYPES.include?(params[:state])
     end
 
     def fetch_contacts

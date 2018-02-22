@@ -39,8 +39,8 @@ module SentientController
   def self.included(base)
     base.class_eval {
       before_filter do |c|
-        User.current = c.send(:current_user)
-        #c.send(:current_account).send(:make_current)
+        User.current = c.safe_send(:current_user)
+        #c.safe_send(:current_account).safe_send(:make_current)
       end
     }
   end

@@ -11,13 +11,13 @@ module RabbitMq::Subscribers::Search::SqsUtils
       sqs_params['action']      = action
       if parent_id
         sqs_params['routing_id']  =  Account.current.try(:id) || model_object.account_id
-        sqs_params['parent_id']   =  model_object.send(parent_id)
+        sqs_params['parent_id']   =  model_object.safe_send(parent_id)
       end
     end
   end
 
   def es_v2_valid?(obj, model)
-    Account.current.features_included?(:es_v2_writes) && obj.send('valid_esv2_model?', model)
+    Account.current.features_included?(:es_v2_writes) && obj.safe_send('valid_esv2_model?', model)
   end
 
   # To manually publish to SQS without checks.
@@ -29,7 +29,7 @@ module RabbitMq::Subscribers::Search::SqsUtils
     model_exchange  = RabbitMq::Constants::MODEL_TO_EXCHANGE_MAPPING[model_name]
     model_message   = RabbitMq::SqsMessage.skeleton_message(model_name, action, model_uuid, Account.current.try(:id) || model_object.account_id)
     
-    model_message["#{model_name}_properties"].deep_merge!(model_object.send("mq_search_#{model_name}_properties", action))
+    model_message["#{model_name}_properties"].deep_merge!(model_object.safe_send("mq_search_#{model_name}_properties", action))
     model_message["subscriber_properties"].merge!({ 'search' => model_object.mq_search_subscriber_properties(action) })
     
     if (Rails.env.development? || Rails.env.test?)

@@ -78,7 +78,7 @@ class Search::V2::Freshfone::AutocompleteController < ApplicationController
     def search_by_context(entity)
       search(esv2_autocomplete_models) do |results|
         results.each do |result|
-          self.search_results[:results].push(send("format_#{entity}_results", result))
+          self.search_results[:results].push(safe_send("format_#{entity}_results", result))
         end
       end
     end

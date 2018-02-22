@@ -89,9 +89,9 @@ module Reports::ChartGenerator
   
   def get_column_value(value,column_name)
     if ticket_columns.has_key?(column_name)
-      return ticket_columns.fetch(column_name).send(:fetch,value.to_i)
+      return ticket_columns.fetch(column_name).safe_send(:fetch,value.to_i)
     elsif("status".eql?column_name)
-      ticket_status_mapping.send(:fetch,value.to_i)
+      ticket_status_mapping.safe_send(:fetch,value.to_i)
     end
     value
   end

@@ -49,7 +49,7 @@ module Freshfone::Jobs
         def export_call_history
           run_on_slave { load_calls }
           return if @calls.empty? && !export_params[:api]
-          file_string = send("generate_#{format}") # generate_csv or generate_xls
+          file_string = safe_send("generate_#{format}") # generate_csv or generate_xls
           build_file file_string, EXPORT_TYPE, format
         end
 

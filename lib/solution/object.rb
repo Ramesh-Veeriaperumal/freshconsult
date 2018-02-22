@@ -59,24 +59,24 @@ class Solution::Object
 
 	def create_parent_translation
 		return if PARENT_OF[obj].blank? || @params["#{PARENT_OF[obj]}_meta"].blank?
-    @params["#{PARENT_OF[obj]}_meta"]['id'] = @meta_obj.send("#{PARENT_OF[obj]}_meta_id") if @meta_obj.send("#{PARENT_OF[obj]}_meta_id")
-		@meta_obj.send("#{PARENT_OF[obj]}_meta=", Solution::Object.new(@params, PARENT_OF[obj], @meta_obj).object)
+    @params["#{PARENT_OF[obj]}_meta"]['id'] = @meta_obj.safe_send("#{PARENT_OF[obj]}_meta_id") if @meta_obj.safe_send("#{PARENT_OF[obj]}_meta_id")
+		@meta_obj.safe_send("#{PARENT_OF[obj]}_meta=", Solution::Object.new(@params, PARENT_OF[obj], @meta_obj).object)
 	end
   
   
   def new_meta
     @child.try("build_#{obj}_meta") ||
-        Account.current.send("#{obj}_meta").new
+        Account.current.safe_send("#{obj}_meta").new
   end
   
   def initialize_meta
-    return @child.send("#{obj}_meta") || @child.send("build_#{obj}_meta") if @child.present?
-    Account.current.send("#{obj}_meta").find_by_id(@params[:id]) || raise('Meta object not found')
+    return @child.safe_send("#{obj}_meta") || @child.safe_send("build_#{obj}_meta") if @child.present?
+    Account.current.safe_send("#{obj}_meta").find_by_id(@params[:id]) || raise('Meta object not found')
   end
 
 	def assign_meta_attributes
 		META_ATTRIBUTES[@obj].each do |attribute|
-			@meta_obj.send("#{attribute}=", @params.delete(attribute)) if @params[attribute].present?
+			@meta_obj.safe_send("#{attribute}=", @params.delete(attribute)) if @params[attribute].present?
 		end
 		@meta_obj.account_id = Account.current.id
 	end
@@ -102,9 +102,9 @@ class Solution::Object
 	end
 	
 	def build_for(lang)
-		object = @meta_obj.send("#{lang}_#{short_name}") || @meta_obj.send("build_#{lang}_#{short_name}") 
+		object = @meta_obj.safe_send("#{lang}_#{short_name}") || @meta_obj.safe_send("build_#{lang}_#{short_name}") 
 		params_for(lang).with_indifferent_access.slice(*VERSION_ATTRIBUTES[obj]).each do |k,v|
-			object.send("#{k}=", v)
+			object.safe_send("#{k}=", v)
 		end
 		build_associations(object, lang)
 		@objects << object
@@ -138,9 +138,9 @@ class Solution::Object
 	end
   
   def assign_new_parent(attribute)
-    parent = Account.current.send("#{PARENT_OF[obj]}_meta").find_by_id(params[attribute])
+    parent = Account.current.safe_send("#{PARENT_OF[obj]}_meta").find_by_id(params[attribute])
     raise "#{PARENT_OF[obj]} id not valid" if parent.blank?
-    @meta_obj.send("#{PARENT_OF[obj]}_meta_id=", params.delete(attribute))
+    @meta_obj.safe_send("#{PARENT_OF[obj]}_meta_id=", params.delete(attribute))
   end
 
   def add_errors_to_base

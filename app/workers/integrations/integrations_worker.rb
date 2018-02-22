@@ -9,7 +9,7 @@ module Integrations
         obj = ::Integrations::IntegrationOperationsHandler.new
         if options[:operation_name].present?
           value = options[:operation_name]
-          obj.send(value, options)
+          obj.safe_send(value, options)
         end
       rescue Exception => error
         Rails.logger.debug "Integrations worker job failed - #{error}"

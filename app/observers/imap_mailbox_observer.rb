@@ -14,11 +14,11 @@ class ImapMailboxObserver < ActiveRecord::Observer
   end
   
   def after_commit(mailbox)
-    if mailbox.send(:transaction_include_action?, :create)
+    if mailbox.safe_send(:transaction_include_action?, :create)
       commit_on_create mailbox
-    elsif mailbox.send(:transaction_include_action?, :update) 
+    elsif mailbox.safe_send(:transaction_include_action?, :update) 
       commit_on_update mailbox
-    elsif mailbox.send(:transaction_include_action?, :destroy)
+    elsif mailbox.safe_send(:transaction_include_action?, :destroy)
       commit_on_destroy mailbox
     end
     true

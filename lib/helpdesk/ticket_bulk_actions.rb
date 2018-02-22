@@ -16,7 +16,7 @@ class Helpdesk::TicketBulkActions
   def perform(ticket)
     @change_hash.each do |key, value|
       value = nil if value == '-1'
-      ticket.send("#{key}=", value) if (value.nil? || value.present? || value.is_a?(FalseClass)) and ticket.respond_to?("#{key}=")
+      ticket.safe_send("#{key}=", value) if (value.nil? || value.present? || value.is_a?(FalseClass)) and ticket.respond_to?("#{key}=")
     end
     update_tags(@tags,false,ticket) if @tags
     if [:spam, :deleted].include? @action

@@ -23,14 +23,14 @@ module ApiIntegrations
     private
 
       def responder_detail_missing
-        if MANDATORY_RESPONDER_FIELDS.all? { |x| send(x).blank? && errors[x].blank? }
+        if MANDATORY_RESPONDER_FIELDS.all? { |x| safe_send(x).blank? && errors[x].blank? }
           errors[:responder_id] << :fill_a_mandatory_field
           error_options[:responder_id] = { field_names: MANDATORY_RESPONDER_STRING }
         end
       end
 
       def requester_detail_missing
-        if MANDATORY_REQUESTER_FIELDS.all? { |x| send(x).blank? && errors[x].blank? }
+        if MANDATORY_REQUESTER_FIELDS.all? { |x| safe_send(x).blank? && errors[x].blank? }
           errors[:requester_id] << :fill_a_mandatory_field
           error_options[:requester_id] = { field_names: MANDATORY_REQUESTER_STRING }
         end

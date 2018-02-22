@@ -46,7 +46,7 @@ module Solution::LanguageAssociations
 
     define_method delegation_title do
       delegation_assoc = Language.current? ? :"current_#{child_name}" : :"primary_#{child_name}"
-      self.attributes[delegation_title.to_s] || send(delegation_assoc).send(delegation_title)
+      self.attributes[delegation_title.to_s] || safe_send(delegation_assoc).safe_send(delegation_title)
     end
 
     def self.short_name
@@ -84,28 +84,28 @@ module Solution::LanguageAssociations
     base::BINARIZE_COLUMNS.each do |col|
       define_method "any_supported_#{col}?" do
         Account.current.all_language_objects.map(&:to_key).each do |lan|
-          return true if self.send("#{lan}_#{col}?")
+          return true if self.safe_send("#{lan}_#{col}?")
         end
         return false
       end
 
       define_method "all_supported_#{col}?" do
         Account.current.all_language_objects.map(&:to_key).each do |lan|
-          return false unless self.send("#{lan}_#{col}?")
+          return false unless self.safe_send("#{lan}_#{col}?")
         end
         true
       end
 
       define_method "supported_in_#{col}?" do
-        send("in_#{col}") & Account.current.all_language_objects.map(&:to_key)
+        safe_send("in_#{col}") & Account.current.all_language_objects.map(&:to_key)
       end
 
       define_method "primary_#{col}?" do
-        send("#{Language.for_current_account.to_key}_#{col}?")
+        safe_send("#{Language.for_current_account.to_key}_#{col}?")
       end
 
       define_method "current_#{col}?" do
-        send("#{Language.current.to_key}_#{col}?")
+        safe_send("#{Language.current.to_key}_#{col}?")
       end
     end
 
@@ -121,7 +121,7 @@ module Solution::LanguageAssociations
 
     def compute_assign_binarize(col, child)
       val = self.read_attribute(col).to_i || 0
-      val = val | flag_mapping(col, child.language_key) if child.send("#{col}?")
+      val = val | flag_mapping(col, child.language_key) if child.safe_send("#{col}?")
       self[col] = val
     end
     
@@ -131,8 +131,8 @@ module Solution::LanguageAssociations
 			Rails.logger.debug "#{self.class.name} :: method_missing :: args is #{args.inspect} and method:: #{method}"
 			args = args.first if args.present? && args.is_a?(Array)
       child_assoc = self.class.name.chomp('Meta').gsub("Solution::", '').downcase
-			return ((args.present? || args.nil?) ? self.send("current_#{child_assoc}").send(method, args) :
-            self.send("current_#{child_assoc}").send(method))
+			return ((args.present? || args.nil?) ? self.safe_send("current_#{child_assoc}").safe_send(method, args) :
+            self.safe_send("current_#{child_assoc}").safe_send(method))
 			raise e
     end
       

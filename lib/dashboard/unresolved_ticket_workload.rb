@@ -22,7 +22,7 @@ include Cache::Memcache::Dashboard::CacheData
 
   def process_response(resp, top_hits)
     group_by_values_1 = fetch_primary_group_by_values(group_by.first.to_s)
-    group_by_values_2 = send(GROUP_BY_VALUES_MAPPING[group_by.last.to_s])
+    group_by_values_2 = safe_send(GROUP_BY_VALUES_MAPPING[group_by.last.to_s])
 
     group_by_names = []
     formatted_response = top_hits.inject({}) do |res_hash, id|
@@ -63,7 +63,7 @@ include Cache::Memcache::Dashboard::CacheData
   end
 
   def agents_for_group(group_ids)
-    agents = send(GROUP_BY_VALUES_MAPPING[group_by.first.to_s])
+    agents = safe_send(GROUP_BY_VALUES_MAPPING[group_by.first.to_s])
     agent_ids = Account.current.agent_groups.where(:group_id => group_ids).pluck(:user_id).uniq
     agent_ids.inject({}) do |agent_hash, agent_id|
       agent_hash.merge!({agent_id => agents[agent_id]})
@@ -77,7 +77,7 @@ include Cache::Memcache::Dashboard::CacheData
         group_hash.merge!(group.id => group.name)
       end
     else
-      send(GROUP_BY_VALUES_MAPPING[group_by.first.to_s])
+      safe_send(GROUP_BY_VALUES_MAPPING[group_by.first.to_s])
     end
   end
 
@@ -88,7 +88,7 @@ include Cache::Memcache::Dashboard::CacheData
       group_ids = filter_condition[:group_id].presence || user_agent_groups
       agents_for_group(group_ids)
     else
-      filter_condition[:group_id].present? ? agents_for_group(filter_condition[:group_id]) : send(GROUP_BY_VALUES_MAPPING[group_by.first.to_s])
+      filter_condition[:group_id].present? ? agents_for_group(filter_condition[:group_id]) : safe_send(GROUP_BY_VALUES_MAPPING[group_by.first.to_s])
     end
   end
 

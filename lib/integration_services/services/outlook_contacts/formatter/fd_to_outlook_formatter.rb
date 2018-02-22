@@ -48,13 +48,13 @@ module IntegrationServices::Services
             contact[attribute.to_sym] = fd_phone(user)
           elsif address_attributes.include?(attribute)
             contact["BusinessAddress"] = {} if contact["BusinessAddress"].blank?
-            contact["BusinessAddress"][attribute] = user.send(fd_fields[index]) if user.send(fd_fields[index]).present?
+            contact["BusinessAddress"][attribute] = user.safe_send(fd_fields[index]) if user.safe_send(fd_fields[index]).present?
           elsif attribute == "DisplayName"
-            fdname = user.send('name')
+            fdname = user.safe_send('name')
             contact["GivenName"] = fdname.rpartition(" ").first
             contact["Surname"] = fdname.rpartition(" ").last
           else
-            contact[attribute.to_sym] = user.send(fd_fields[index])
+            contact[attribute.to_sym] = user.safe_send(fd_fields[index])
           end
         end
         contact

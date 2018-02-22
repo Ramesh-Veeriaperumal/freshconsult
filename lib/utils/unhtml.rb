@@ -3,19 +3,19 @@ module Utils
     def populate_content_create(item,*elements)
       elements.flatten!
       elements.each do |body|
-        if item.send(:read_attribute,body).blank? && !item.send(:read_attribute , "#{body}_html").blank?
-          item.send(:write_attribute , body, Helpdesk::HTMLSanitizer.plain(item.send(:read_attribute,"#{body}_html")).strip)
-        elsif item.send(:read_attribute , "#{body}_html").blank? && !item.send(:read_attribute,body).blank?
-          item.send(:write_attribute , "#{body}_html",  body_html_with_formatting(CGI.escapeHTML(item.send(:read_attribute,body))))
-        elsif item.send(:read_attribute,body).blank? && item.send(:read_attribute , "#{body}_html").blank?
-          item.send(:write_attribute , "#{body}_html", I18n.t('not_given'))
-          item.send(:write_attribute , body,I18n.t('not_given'))
+        if item.safe_send(:read_attribute,body).blank? && !item.safe_send(:read_attribute , "#{body}_html").blank?
+          item.safe_send(:write_attribute , body, Helpdesk::HTMLSanitizer.plain(item.safe_send(:read_attribute,"#{body}_html")).strip)
+        elsif item.safe_send(:read_attribute , "#{body}_html").blank? && !item.safe_send(:read_attribute,body).blank?
+          item.safe_send(:write_attribute , "#{body}_html",  body_html_with_formatting(CGI.escapeHTML(item.safe_send(:read_attribute,body))))
+        elsif item.safe_send(:read_attribute,body).blank? && item.safe_send(:read_attribute , "#{body}_html").blank?
+          item.safe_send(:write_attribute , "#{body}_html", I18n.t('not_given'))
+          item.safe_send(:write_attribute , body,I18n.t('not_given'))
         end
-        text = Nokogiri::HTML(item.send(:read_attribute,"#{body}_html"))
+        text = Nokogiri::HTML(item.safe_send(:read_attribute,"#{body}_html"))
         unless text.at_css("body").blank?
           text.xpath("//del").each { |div|  div.name= "span";}
           text.xpath("//p").each { |div|  div.name= "div";}
-          item.send(:write_attribute , "#{body}_html", FDRinku.auto_link(text.at_css("body").inner_html, { :attr => 'rel="noreferrer"' }))
+          item.safe_send(:write_attribute , "#{body}_html", FDRinku.auto_link(text.at_css("body").inner_html, { :attr => 'rel="noreferrer"' }))
         end
       end
     end
