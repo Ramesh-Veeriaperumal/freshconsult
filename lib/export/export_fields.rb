@@ -4,7 +4,7 @@ module Export::ExportFields
 		return true if feature.nil?
 		account = Account.current
 		if account.respond_to? feature
-			return account.send(feature)
+			return account.safe_send(feature)
 		end
 		false
 	end

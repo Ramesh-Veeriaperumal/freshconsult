@@ -40,14 +40,14 @@ module IntegrationServices::Services
             when "twitter_id"
               value = contact_response.social_profiles[selected_fc_fields[index]] || ""
               next if value.blank? || Account.current.contacts.where(twitter_id: value).first
-              current_contact.send(field + "=", value)
+              current_contact.safe_send(field + "=", value)
             else
-              if current_contact.send(field).blank?
+              if current_contact.safe_send(field).blank?
                 if contact_response.respond_to? selected_fc_fields[index]
-                  current_contact.send(field + '=', contact_response.send(selected_fc_fields[index]))
+                  current_contact.safe_send(field + '=', contact_response.safe_send(selected_fc_fields[index]))
                 else
                   value = contact_response.social_profiles[selected_fc_fields[index]] || ""
-                  current_contact.send(field + '=', value)
+                  current_contact.safe_send(field + '=', value)
                 end
               end
             end
@@ -67,9 +67,9 @@ module IntegrationServices::Services
         diff_array = [] #array of {fc_field_name => [fd_display_label, fd_val, fc_val, fc_field_type]}
         @service.configs["contact"]["fc_field"].each_with_index do |fc_field, index|
           fd_field = @service.configs["contact"]["fd_field"][index]
-          fc_val = contact_response.respond_to?(fc_field) ? contact_response.send(fc_field) : contact_response.social_profiles[fc_field]
+          fc_val = contact_response.respond_to?(fc_field) ? contact_response.safe_send(fc_field) : contact_response.social_profiles[fc_field]
           next unless contact_fields_list.include? fd_field and fc_val.present?
-          fd_val = current_contact.send(fd_field)
+          fd_val = current_contact.safe_send(fd_field)
           fc_field_type = FC_CONTACT_DATA_TYPES[FC_CONTACT_FIELDS_HASH[fc_field]]
           case fc_field
           when "avatar"
@@ -97,7 +97,7 @@ module IntegrationServices::Services
             next if value.blank? || Account.current.contacts.find_by_twitter_id(value)
             current_contact.twitter_id = value
           else
-            current_contact.send(name + '=', value)
+            current_contact.safe_send(name + '=', value)
           end
         end
         current_contact.save!

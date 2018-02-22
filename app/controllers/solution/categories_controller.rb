@@ -53,7 +53,7 @@ class Solution::CategoriesController < ApplicationController
   end
 
   def edit
-    @category = @category_meta.send(language_scoper)
+    @category = @category_meta.safe_send(language_scoper)
     @primary = @category_meta.primary_category
     @category = current_account.solution_categories.new unless @category
     
@@ -62,14 +62,14 @@ class Solution::CategoriesController < ApplicationController
 
   def create
     @category_meta = Solution::Builder.category(params)
-    @category = @category_meta.send(language_scoper)
+    @category = @category_meta.safe_send(language_scoper)
 
     post_response(@category_meta, @category)
   end
 
   def update
     @category_meta = Solution::Builder.category(params)
-    @category = @category_meta.send(language_scoper)
+    @category = @category_meta.safe_send(language_scoper)
 
     post_response(@category_meta, @category)
   end

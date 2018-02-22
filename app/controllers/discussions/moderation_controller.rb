@@ -100,7 +100,7 @@ class Discussions::ModerationController < ApplicationController
 		end
 
 		def load_posts
-			@posts = current_account.posts.send(filter_scope).include_topics_and_forums.paginate(:page => [params[:page].to_i, 1].max )
+			@posts = current_account.posts.safe_send(filter_scope).include_topics_and_forums.paginate(:page => [params[:page].to_i, 1].max )
 		end
 
 		def filter_scope

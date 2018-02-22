@@ -173,7 +173,7 @@ class Search::AutocompleteController < ApplicationController
   	def results
       @results ||= begin 
         return [] if params[:q].blank? 
-        current_account.users.find(:all, :conditions => send("requester_conditions"), :limit => 100 )
+        current_account.users.find(:all, :conditions => safe_send("requester_conditions"), :limit => 100 )
       end
   	end  
 

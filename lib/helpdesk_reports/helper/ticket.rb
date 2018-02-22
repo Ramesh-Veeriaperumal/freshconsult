@@ -186,7 +186,7 @@ module HelpdeskReports::Helper::Ticket
     error_list = []
     @query_params.each do |param|
       error_list << VALIDATIONS.inject([]) do |errors, func|
-        errors << send(func, param)
+        errors << safe_send(func, param)
       end
     end
     error_list = error_list.flatten.uniq.compact.reject(&:blank?)

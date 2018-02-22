@@ -352,7 +352,7 @@ class ApiApplicationController < MetalApiController
 
     # Using optional parameters for extensibility
     def render_201_with_location(template_name: "#{controller_path.gsub(NAMESPACED_CONTROLLER_REGEX, '')}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
-      render template_name, location: send(location_url, item_id), status: 201
+      render template_name, location: safe_send(location_url, item_id), status: 201
     end
 
     def nscname # namespaced controller name

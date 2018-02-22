@@ -133,7 +133,7 @@ class ContactValidation < ApiValidation
   private
 
     def email_mandatory?
-      MANDATORY_FIELD_ARRAY.all? { |x| send(x).blank? && errors[x].blank? }
+      MANDATORY_FIELD_ARRAY.all? { |x| safe_send(x).blank? && errors[x].blank? }
     end
 
     def contact_detail_missing

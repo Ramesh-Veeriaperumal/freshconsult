@@ -10,7 +10,7 @@
           <span>
             <%= t("ticket.merge_ticket_list_status_"+@target_ticket.ticket_states.current_state(@target_ticket.outbound_email?), 
             :username => "<span class = 'muted'>#{h(@target_ticket.requester.display_name)}</span>", 
-            :time_ago => time_ago_in_words(@target_ticket.ticket_states.send(@target_ticket.ticket_states.current_state(@target_ticket.outbound_email?)))).html_safe %>
+            :time_ago => time_ago_in_words(@target_ticket.ticket_states.safe_send(@target_ticket.ticket_states.current_state(@target_ticket.outbound_email?)))).html_safe %>
           </span>
         </div>
       </div>
@@ -32,7 +32,7 @@
               <span>
                 <%= t("ticket.merge_ticket_list_status_"+source.ticket_states.current_state, 
                 :username => "<span class = 'muted'>#{h(source.requester.display_name)}</span>",
-                :time_ago => time_ago_in_words(source.ticket_states.send(source.ticket_states.current_state))).html_safe %>
+                :time_ago => time_ago_in_words(source.ticket_states.safe_send(source.ticket_states.current_state))).html_safe %>
               </span>
             </div>
           </div>

@@ -68,7 +68,7 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 		has_editable_field = false;
 
 		current_portal.ticket_fields.each do |field|
-			field_value = @ticket.send(field.field_name)
+			field_value = @ticket.safe_send(field.field_name)
 			field_value = formatted_date(field_value) if field.field_type == "custom_date"
 			has_visible_field = true if (field.visible_in_view_form? && field.visible_in_portal && !field_value.blank?)
 			has_editable_field = true if (field.visible_in_view_form? && field.editable_in_portal)
@@ -89,14 +89,14 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 				   <% current_portal.ticket_fields.each do |field| %>
 				     <% if (field.visible_in_view_form? && field.visible_in_portal)%>
 				       <% 
-				          field_value = @ticket.send(field.field_name)
+				          field_value = @ticket.safe_send(field.field_name)
 				          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type
 				          if(field.field_type == "nested_field")
 				          	field_value = {}
 				          	field.nested_levels.each do |ff|
-				          		field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.send(ff[:name])
+				          		field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.safe_send(ff[:name])
 				          	end
-				          	field_value.merge!({:category_val => @ticket.send(field.field_name)})
+				          	field_value.merge!({:category_val => @ticket.safe_send(field.field_name)})
 				          end
 				          field_value = formatted_date(field_value) if field.field_type == "custom_date"
 				       %>
@@ -114,13 +114,13 @@ jQuery('#add_cc_btn').bind("click", function(ev){
 						   <% current_portal.ticket_fields.each do |field| %>
 						     <% if (field.visible_in_view_form? && field.editable_in_portal)%>
 						       <% 
-						          field_value = @ticket.send(field.field_name)
+						          field_value = @ticket.safe_send(field.field_name)
 						          if(field.field_type == "nested_field")
 						          	field_value = {}
 						          	field.nested_levels.each do |ff|
-						          	field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.send(ff[:name])
+						          	field_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = @ticket.safe_send(ff[:name])
 						          	end
-						          	field_value.merge!({:category_val => @ticket.send(field.field_name)})
+						          	field_value.merge!({:category_val => @ticket.safe_send(field.field_name)})
 						          end
 						          field_value = formatted_date(field_value) if field.field_type == "custom_date"
 						          dom_type    = (field.field_type == "default_source") ? "dropdown" : field.dom_type

@@ -187,7 +187,7 @@ class Helpdesk::NotesController < ApplicationController
         if tweet?
           twt_type = params[:tweet_type] || :mention.to_s
           @tweet_body = @note.body.strip
-          error_message, reply_twt = send("send_tweet_as_#{twt_type}")
+          error_message, reply_twt = safe_send("send_tweet_as_#{twt_type}")
           if error_message.blank?
             flash[:notice] = t(:'flash.tickets.reply.success') 
           else

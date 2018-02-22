@@ -6877,7 +6877,7 @@ en:
       agent_received_resolved: My Performance
       top_customers_by_open_tickets: Top 10 Customers by Unresolved Tickets ( >2 )
       top_agents_by_open_tickets: Top 10 Agents by Old Tickets ( >7 Days )
-      csat: Customer Satisfaction
+      csat_title: Customer Satisfaction
       group_performance: Group Performance Today
       agent_performance: Agent Performance Today
       ticket_workload_channels: Today's Ticket Trend by Channels

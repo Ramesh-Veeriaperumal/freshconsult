@@ -41,7 +41,7 @@ class Va::RuleActivityLogger
   def record_activity(args = nil)
     message = nil
     if respond_to?("#{action_key}", true)
-      message = (args.nil? ? send("#{action_key}") : send("#{action_key}", args))
+      message = (args.nil? ? safe_send("#{action_key}") : safe_send("#{action_key}", args))
     else
       message = custom_fields
     end

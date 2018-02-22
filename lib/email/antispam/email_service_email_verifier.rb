@@ -31,7 +31,7 @@ module Email::Antispam
         parsed_response = {}
         begin
           Timeout.timeout(Email::EmailService::EmailDelivery::EMAIL_SERVICE_TIMEOUT) do 
-            response = HTTParty.send('post', "#{Email::EmailService::EmailDelivery::EMAIL_SERVICE_HOST}/#{Email::EmailService::EmailDelivery::ACCOUNT_VALIDATE_URLPATH}", :body => @parameters,:headers => headers)
+            response = HTTParty.safe_send('post', "#{Email::EmailService::EmailDelivery::EMAIL_SERVICE_HOST}/#{Email::EmailService::EmailDelivery::ACCOUNT_VALIDATE_URLPATH}", :body => @parameters,:headers => headers)
             Rails.logger.info "Response from EmailServ for parameters :#{@parameters.inspect}  ---  #{response.body}"
             parsed_response = parse_response(response.body)
           end

@@ -9,7 +9,7 @@ class Freshfone::Jobs::UsageTrigger
     return delete_usage_trigger(args) if args[:delete]
     @trigger_type = args[:trigger_type] 
     action = "ut_#{trigger_type}"
-    send(action, args) if respond_to?(action)
+    safe_send(action, args) if respond_to?(action)
     # delete_trigger if args[:recurring].blank? && Freshfone::UsageTrigger::TRIAL_TRIGGERS.exclude?(args[:trigger_type].to_sym)
     Freshfone::UsageTrigger.create_trigger(Account.current, args)
   end

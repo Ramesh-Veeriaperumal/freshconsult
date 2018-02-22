@@ -30,17 +30,20 @@ module SBRR
           user_id, score = queue.top #checking top here to generate relevant queues
           SBRR.log "TOP USER #{user_id}, #{"%16d" % score.to_i}" 
           user = Account.current.users.find_by_id(user_id) if user_id
+          conditions_matched = user.match_sbrr_conditions?(ticket) if user
           is_user_eligible = user_id && user &&
             (no_of_tickets_assigned(score) < group.capping_limit) && 
               group.skill_based_round_robin_enabled? &&
-                user.match_sbrr_conditions?(ticket) && user.agent.available
+                conditions_matched && user.agent.available
 
           if is_user_eligible
             relevant_queues = relevant_queues(user)
             right_queue     = right_queue(relevant_queues)
             user_id         = right_queue.pop_if_within_capping_limit user, group.capping_limit, relevant_queues
             return user if user_id
-          end 
+          else
+            SBRR.log "USER :: #{user_id} #{user && user.id}, is_user_eligible :: false, #{group.capping_limit}, #{conditions_matched.inspect}, #{user && user.agent && user.agent.available.inspect}"
+          end
         end until !is_user_eligible # should there be a max retry? as users will always be in the queue? - Hari
         return nil
       end

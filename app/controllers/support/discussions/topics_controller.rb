@@ -28,7 +28,7 @@ class Support::Discussions::TopicsController < SupportController
   def check_user_permission
     if (current_user.id != @topic.user_id)
           flash[:notice] =  t(:'flash.general.access_denied')
-          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+          redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
 
@@ -87,7 +87,7 @@ class Support::Discussions::TopicsController < SupportController
 
   def create
 		@forum = forum_scoper.find(params[:topic][:forum_id])
-    (redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) and return) unless @forum.visible?(current_user) 
+    (redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) and return) unless @forum.visible?(current_user) 
 		if @forum.announcement?
 			flash[:notice] = t(".flash.portal.discussions.topics.not_allowed")
 			creation_response(false) 
@@ -220,7 +220,7 @@ class Support::Discussions::TopicsController < SupportController
 
         unless @forum.visible?(current_user)
           store_location
-          redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+          redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) 
         end
       end
     end

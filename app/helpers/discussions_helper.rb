@@ -213,9 +213,9 @@ module DiscussionsHelper
 	def heading(topic, type)
 		op = "<div id='modal-heading-#{type}'><h3 class='ellipsis'>"
 		op << t("discussions.unpublished.index.#{type}")
-		op << " (#{topic.send("#{type}_count")})" if topic.send("#{type}_count") > 0
+		op << " (#{topic.safe_send("#{type}_count")})" if topic.safe_send("#{type}_count") > 0
 		op << "</h3>"
-		op << empty_link(topic.id) if topic.send("#{type}_count") > 1 && type.eql?('spam')
+		op << empty_link(topic.id) if topic.safe_send("#{type}_count") > 1 && type.eql?('spam')
 		op << "</div>"
 		op
 	end

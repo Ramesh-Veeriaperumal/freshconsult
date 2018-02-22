@@ -21,7 +21,7 @@ module IntegrationServices::Services
         query = build_query value, app_name
         request_url = "#{cloud_elements_api_url}/hubs/crm/#{@service.meta_data[:object]}?where=#{query}"
         response = http_get request_url
-        send("#{@service.meta_data[:app_name]}_selected_fields", fields, response, [200], "Order") do |order|
+        safe_send("#{@service.meta_data[:app_name]}_selected_fields", fields, response, [200], "Order") do |order|
           return order
         end
       end

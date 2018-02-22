@@ -153,7 +153,7 @@ module HelpdeskControllerMethods
       :conditions => ["#{autocomplete_field} like ? and account_id = ?", "%#{params[:v]}%", current_account],
       :limit => 30)
 
-    r = {:results => items.map {|i| {:id => autocomplete_id(i), :value => i.send(autocomplete_field)} } }
+    r = {:results => items.map {|i| {:id => autocomplete_id(i), :value => i.safe_send(autocomplete_field)} } }
 
     respond_to do |format|
       format.json { render :json => r.to_json }

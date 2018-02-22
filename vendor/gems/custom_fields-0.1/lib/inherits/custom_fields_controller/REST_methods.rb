@@ -53,7 +53,7 @@ module Inherits
 
           ['create', 'update', 'delete', nil].each do |action| # order - important (affects queries - acts_as_list)
             grouped_fields[action].each do |field|
-              field       =  send("#{action || "return"}_field", field)
+              field       =  safe_send("#{action || "return"}_field", field)
               unless field.nil?
                 # label.gsub!(' ','&nbsp;') is not working # TODO - indent flash messages
                 unless field.errors.count.zero?

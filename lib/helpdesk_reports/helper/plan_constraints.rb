@@ -63,7 +63,7 @@ module HelpdeskReports::Helper::PlanConstraints
   end
 
   def allowed_plan?(report_type)
-    send("#{PLAN_BASED_FEATURE_CONSTRAINT_MAPPING[report_type.to_sym]}?")
+    safe_send("#{PLAN_BASED_FEATURE_CONSTRAINT_MAPPING[report_type.to_sym]}?")
   end
 
   def exclude_filters(report_type)  
@@ -91,7 +91,7 @@ module HelpdeskReports::Helper::PlanConstraints
     limit = max_limit(feature, context)
     if current_count.blank?
       custom_count_method = "#{feature}_#{context}_count".freeze
-      current_count = send(custom_count_method) if current_count.blank? && defined?(custom_count_method)
+      current_count = safe_send(custom_count_method) if current_count.blank? && defined?(custom_count_method)
     end
     exceeded = (current_count >= limit) if (limit && current_count).is_a? Fixnum
     exceeded

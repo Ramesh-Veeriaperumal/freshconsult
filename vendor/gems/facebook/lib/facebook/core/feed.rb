@@ -20,7 +20,7 @@ module Facebook
           select_shard_and_account(@fan_page.account_id) do |account|
             sandbox(raw_obj) do
               if perform_method && klass && can_process_feed?
-                ("facebook/core/#{klass}").camelize.constantize.new(fan_page, feed_id).send(perform_method)
+                ("facebook/core/#{klass}").camelize.constantize.new(fan_page, feed_id).safe_send(perform_method)
               end
             end
           end

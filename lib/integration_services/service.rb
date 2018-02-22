@@ -104,7 +104,7 @@ module IntegrationServices
       logger.info("Sending :#{@event} using #{self.class}")
       timeout_sec = (timeout || 50).to_i
       Timeout.timeout(timeout_sec, TimeoutError) do
-        send(event_method)
+        safe_send(event_method)
       end
     rescue Service::ConfigurationError, Errno::EHOSTUNREACH, Errno::ECONNRESET,
       SocketError, Net::ProtocolError, Faraday::Error::ConnectionFailed => err

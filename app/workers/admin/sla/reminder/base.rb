@@ -49,14 +49,14 @@ module Admin::Sla::Reminder
         execute_on_db do
           reminder_tickets_count = 0
           reminder_tickets = account.tickets.unresolved.visible.
-                             send("#{reminder_type}_sla", account, reminder_overdue.to_s(:db)).
-                             send("#{reminder_type}_reminder", sla_rule_based.keys).
+                             safe_send("#{reminder_type}_sla", account, reminder_overdue.to_s(:db)).
+                             safe_send("#{reminder_type}_reminder", sla_rule_based.keys).
                              updated_in(2.month.ago)
           reminder_tickets.find_each do |ticket|
             reminder_tickets_count += 1
             sla_policy = sla_rule_based[ticket.sla_policy_id]
             execute_on_db("run_on_master") do
-              sla_policy.send("escalate_#{reminder_type}_reminder", ticket)
+              sla_policy.safe_send("escalate_#{reminder_type}_reminder", ticket)
             end
           end
           reminder_tickets_count

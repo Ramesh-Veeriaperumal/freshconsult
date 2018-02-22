@@ -7,7 +7,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
 
   def belongs_to_ticket
     IDENTIFICATION_METHODS.each do |fn|
-      send(fn)
+      safe_send(fn)
       if ticket
         check_parent
         return nil if ticket.is_a?(Helpdesk::ArchiveTicket)
@@ -106,7 +106,7 @@ class Helpdesk::Email::IdentifyTicket < Struct.new(:email, :user, :account)
 
   def belongs_to_archive
     IDENTIFICATION_METHODS.each do |fn|
-      send("archive_"+fn) unless self.archived_ticket
+      safe_send("archive_"+fn) unless self.archived_ticket
       if self.archived_ticket
         self.ticket = self.archived_ticket
         merge_flag_for_parent_ticket = can_be_added_to_ticket?

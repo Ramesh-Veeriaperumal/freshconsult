@@ -46,11 +46,11 @@ class Export::Customer
 
     def map_csv csv
       Sharding.run_on_slave do
-        Account.current.send(@type.pluralize).preload(:flexifield).find_in_batches(:batch_size => 300) do |items|
+        Account.current.safe_send(@type.pluralize).preload(:flexifield).find_in_batches(:batch_size => 300) do |items|
           items.each do |record|
             csv_data = []
             @headers.each do |val|
-              csv_data << strip_equal(record.send(VALUE_MAPPING.fetch(val, @csv_hash[val]))) if record.respond_to?(VALUE_MAPPING.fetch(val, @csv_hash[val]))
+              csv_data << strip_equal(record.safe_send(VALUE_MAPPING.fetch(val, @csv_hash[val]))) if record.respond_to?(VALUE_MAPPING.fetch(val, @csv_hash[val]))
             end
             csv << csv_data if csv_data.any?
           end

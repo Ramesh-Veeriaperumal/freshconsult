@@ -7,7 +7,7 @@ class Account::Setup::CreatedObjectsObserver < ActiveRecord::Observer
 
 
 	def after_commit(object)
-		if object.send(:transaction_include_action?, :create)
+		if object.safe_send(:transaction_include_action?, :create)
 			if account_signup_completed? && current_flag_unmarked?(object)
 				mark_current_flag(object)
 			end

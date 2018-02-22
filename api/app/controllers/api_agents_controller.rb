@@ -64,7 +64,7 @@ class ApiAgentsController < ApiApplicationController
         params[cname][:role_ids] = params[cname][:user_attributes][:role_ids]
         # This is to forcefully call user callbacks only when role_ids are there.
         # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
-        @item.user.send(:attribute_will_change!, :role_ids_changed)
+        @item.user.safe_send(:attribute_will_change!, :role_ids_changed)
       end
     end
 

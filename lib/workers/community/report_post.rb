@@ -21,7 +21,7 @@ class Workers::Community::ReportPost
 		end
 
 		def analysis(type, current_post)
-			Akismetor.send(type ? :submit_ham : :submit_spam, akismet_params(current_post))
+			Akismetor.safe_send(type ? :submit_ham : :submit_spam, akismet_params(current_post))
 		end
 
 		def akismet_params(post)

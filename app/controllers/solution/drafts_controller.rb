@@ -103,7 +103,7 @@ class Solution::DraftsController < ApplicationController
 
     def load_attachment
       @assoc = (ATTACHMENT_TYPES.include?(params[:attachment_type]) && params[:attachment_type]) || ATTACHMENT_TYPES.first
-      @attachment = @article.send(@assoc.pluralize.to_sym).find(params[:attachment_id])
+      @attachment = @article.safe_send(@assoc.pluralize.to_sym).find(params[:attachment_id])
     end
 
     def autosave_validate
@@ -163,7 +163,7 @@ class Solution::DraftsController < ApplicationController
       if (params[:type] == 'all' and get_portal_id == 0)
         current_account.solution_drafts
       else
-        current_account.solution_drafts.send(*scope)
+        current_account.solution_drafts.safe_send(*scope)
       end
     end
 end

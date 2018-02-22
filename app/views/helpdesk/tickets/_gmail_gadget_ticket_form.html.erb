@@ -5,7 +5,7 @@
 <% current_portal.ticket_fields.each do |field|
     next if field.section_field? || field.field_type == "nested_field"
     if is_edit
-      field_value = @item.send(field.field_name)
+      field_value = @item.safe_send(field.field_name)
     elsif field.is_default_field? or !params[:topic_id].blank?
       field_value = @item[field.field_name]
     end

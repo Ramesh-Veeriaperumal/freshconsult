@@ -48,8 +48,8 @@ module FDPasswordPolicy
           # Returns true if Time.now.utc < expiry.to_time
           def password_active?
             raise "Can not determine the records login state because there is no current_login_at column" if !respond_to?(:current_login_at)
-            return true unless send(password_expiry_timeout[:if])
-            expiry = ((send("#{password_expiry_field}") || {})[:password_expiry_date])
+            return true unless safe_send(password_expiry_timeout[:if])
+            expiry = ((safe_send("#{password_expiry_field}") || {})[:password_expiry_date])
             return true if expiry.nil?
             Time.now.utc < expiry.to_time
           end
@@ -64,13 +64,13 @@ module FDPasswordPolicy
           end
           
           def password_expiry
-            expiry = (send("#{password_expiry_field}") || {})[:password_expiry_date]
+            expiry = (safe_send("#{password_expiry_field}") || {})[:password_expiry_date]
             expiry.to_time if expiry
           end
 
           def update_password_expiry_date
-            if self.errors.empty? && send("#{crypted_password_field}_changed?") && send(password_expiry_timeout[:if]) 
-              last_date = Time.now.utc + send(password_expiry_timeout[:duration])
+            if self.errors.empty? && safe_send("#{crypted_password_field}_changed?") && safe_send(password_expiry_timeout[:if]) 
+              last_date = Time.now.utc + safe_send(password_expiry_timeout[:duration])
               set_expiry({:password_expiry_date => last_date.to_s})
             end
           end
@@ -85,7 +85,7 @@ module FDPasswordPolicy
             end
             
             def set_expiry(option = {})
-              send("#{password_expiry_field}=", (send("#{password_expiry_field}") || {}).deep_merge(option))
+              safe_send("#{password_expiry_field}=", (safe_send("#{password_expiry_field}") || {}).deep_merge(option))
             end
         end
       end

@@ -62,7 +62,7 @@ class SurveyResult < ActiveRecord::Base
       txt = 'neutral_text'
     end
 
-    Account.current.survey.send(txt)
+    Account.current.survey.safe_send(txt)
   end
 
   def self.generate_reports_list(survey_reports,category,sort_by)

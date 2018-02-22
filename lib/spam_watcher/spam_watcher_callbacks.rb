@@ -30,7 +30,7 @@ module SpamWatcherCallbacks
               if "#{user_column}".blank?
                 user_id = ""
               else
-                user_id = self.send("#{user_column}") 
+                user_id = self.safe_send("#{user_column}") 
               end
               account_id = self.account_id
               key = "#{key}"

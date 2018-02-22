@@ -66,10 +66,10 @@ module Integrations::CtiHelper
     html = ""
     requester_widget_fields.each do |field|
       value = nil
-      if field.class == ContactField && user.send(field.name).present?
-        value = user.send(field.name)
-      elsif field.class != ContactField && user.company && user.company.send(field.name).present?
-        value = user.company.send(field.name)
+      if field.class == ContactField && user.safe_send(field.name).present?
+        value = user.safe_send(field.name)
+      elsif field.class != ContactField && user.company && user.company.safe_send(field.name).present?
+        value = user.company.safe_send(field.name)
       end
       count = count + 1 if value.present?
       next if ["name", "job_title"].include?(field.name)

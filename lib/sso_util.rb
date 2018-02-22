@@ -218,7 +218,7 @@ module SsoUtil
       if key == 'company_name' #no need to check if company exists as it will only add a company and not overwrite it.
         user.assign_company(value)
       else
-        user.send("#{key}=", value) if !value.nil? && (override || user.send(key).nil?) 
+        user.safe_send("#{key}=", value) if !value.nil? && (override || user.safe_send(key).nil?) 
       end
     end
     user.active = true

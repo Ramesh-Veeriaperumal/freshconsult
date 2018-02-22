@@ -49,7 +49,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     fields      = required_fields[:fields]
 
     fields.each do |field|
-      field_value = send(field.field_name)
+      field_value = safe_send(field.field_name)
       if field_value_blank?(field_value)
         add_required_field_error(field, error_label)
         next
@@ -60,7 +60,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         next if parent_picklist.nil?
 
         field.nested_ticket_fields.each do |child_field|
-          child_field_value = send(child_field.field_name)
+          child_field_value = safe_send(child_field.field_name)
           if field_value_blank?(child_field_value)
             add_required_field_error(child_field, error_label) if parent_picklist.sub_picklist_values.any?
             break
@@ -78,7 +78,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     account.section_parent_fields_from_cache.each do |field|
-      picklist = find_picklist(field.picklist_values, send(field.name))
+      picklist = find_picklist(field.picklist_values, safe_send(field.name))
       picklist.section.reqd_ticket_fields.each do |ticket_field|
         return false unless field_validations(ticket_field)
       end if picklist && picklist.section
@@ -88,7 +88,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def field_validations field
-    return false unless validate_field(field, send(field.name))
+    return false unless validate_field(field, safe_send(field.name))
     return false if field.nested_field? && !validate_nested_field(field)
     true
   end
@@ -102,11 +102,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def validate_nested_field field
-    parent_picklist = find_picklist(field.picklist_values, send(field.name))
+    parent_picklist = find_picklist(field.picklist_values, safe_send(field.name))
 
     field.nested_ticket_fields.each do |child_field|
       break if parent_picklist.nil? || parent_picklist.sub_picklist_values.empty?
-      child_field_value = send(child_field.field_name)
+      child_field_value = safe_send(child_field.field_name)
       return false unless validate_field(child_field, child_field_value)
       parent_picklist = find_picklist(parent_picklist.sub_picklist_values, child_field_value)
     end
@@ -126,7 +126,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   private
 
     def add_required_field_error field, error_label
-      self.errors.add(field.send(error_label), I18n.t("ticket.errors.required_field"))
+      self.errors.add(field.safe_send(error_label), I18n.t("ticket.errors.required_field"))
     end
 
     def field_value_blank? field_value

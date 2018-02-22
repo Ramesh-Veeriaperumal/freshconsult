@@ -6,7 +6,7 @@
 <% current_portal.ticket_fields_including_nested_fields.each do |field|
     next if field.section_field?
     if is_edit or params[:template_form] or is_new_child_tkt
-      field_value = @item.send(field.field_name)
+      field_value = @item.safe_send(field.field_name)
       field_value = nested_ticket_field_value(@item, field) if field.field_type == "nested_field"
     elsif field.is_default_field? or !params[:topic_id].blank?
       field_value = @item[field.field_name]

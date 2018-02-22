@@ -78,7 +78,7 @@ module Helpdesk::TicketsHelper
   end
 
   def fetch_custom_field_value(item, field_name)
-    item.is_a?(Helpdesk::Ticket) ? item.send(field_name) : item.custom_field_value(field_name)
+    item.is_a?(Helpdesk::Ticket) ? item.safe_send(field_name) : item.custom_field_value(field_name)
   end
 
   def ticket_field_element(field, dom_type, attributes, pl_value_id=nil)

@@ -63,7 +63,7 @@ class Helpdesk::AttachmentsController < ApplicationController
       flash[:notice] = t(:'flash.tickets.notes.remove_attachment.success')
     else
       flash[:notice] = t(:'flash.general.access_denied')
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
   end
 

@@ -39,7 +39,7 @@ module Helpdesk::TicketActivities
 	  def update_activity
       return if self.disable_activities
       @model_changes.each_key do |attr|
-        send(ACTIVITY_HASH[attr.to_sym()]) if ACTIVITY_HASH.has_key?(attr.to_sym())
+        safe_send(ACTIVITY_HASH[attr.to_sym()]) if ACTIVITY_HASH.has_key?(attr.to_sym())
       end
     end
 

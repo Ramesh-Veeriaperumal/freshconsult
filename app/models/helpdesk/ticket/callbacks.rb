@@ -312,7 +312,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     self.va_rules_after_save_actions.each do |action|
       klass = action[:klass].constantize
-      klass.send(action[:method], action[:args])
+      klass.safe_send(action[:method], action[:args])
     end
   end
 
@@ -546,7 +546,7 @@ private
 
   def set_boolean_custom_fields
     Account.current.ticket_field_def.boolean_ff_aliases.each do |f|
-      set_ff_value(f, 0) unless self.send(f)
+      set_ff_value(f, 0) unless self.safe_send(f)
     end
   end
 

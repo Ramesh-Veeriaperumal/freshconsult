@@ -37,7 +37,7 @@ class WhitelistedIp < ActiveRecord::Base
 		ip_ranges.each do |ip|
 			start_ip = IPAddress ip["start_ip"]
 			end_ip = IPAddress ip["end_ip"]
-			if start_ip.send(@current_ip_version) && end_ip.send(@current_ip_version)
+			if start_ip.safe_send(@current_ip_version) && end_ip.safe_send(@current_ip_version)
         if @current_ip >= start_ip && @current_ip <= end_ip
        		return true
        	end
