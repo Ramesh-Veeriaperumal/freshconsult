@@ -173,7 +173,8 @@
 						</ul>
 					</div>
 				<% else %>
-          <h1 class='conv-title'>
+
+          <h1 class='conv-title' id="conv_all-tab" href="#conv_all" data-url="<%= view_conversations_contact_path(@user, :type => "all") %>">
             <span class='sub-info'><%= t('contacts.conversations.recent_tickets') %></span>
           </h1>
        <% end %>
