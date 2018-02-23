@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Integrations::GmailGadgetsController do
+describe Integrations::GmailGadgetController do
   setup :activate_authlogic
   self.use_transactional_fixtures = false
 

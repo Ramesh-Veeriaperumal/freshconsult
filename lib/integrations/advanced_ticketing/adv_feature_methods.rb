@@ -8,7 +8,7 @@ module Integrations::AdvancedTicketing
     end
 
     def fetch_advanced_features feature
-      @advanced_feature ||= current_account.send("#{feature}_toggle_enabled?")
+      @advanced_feature ||= current_account.safe_send("#{feature}_toggle_enabled?")
     end
 
     def add_feature feature

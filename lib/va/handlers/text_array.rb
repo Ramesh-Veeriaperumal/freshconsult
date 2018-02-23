@@ -52,7 +52,7 @@ class Va::Handlers::TextArray < Va::RuleHandler
 
     def evaluate_the_op(operator, evaluate_on_value)
       evaluate_on_value.each do |ev|
-        return true if ev.downcase.send(operator, value.downcase)
+        return true if ev.downcase.safe_send(operator, value.downcase)
       end
       false
     end

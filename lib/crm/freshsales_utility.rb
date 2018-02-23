@@ -1,38 +1,40 @@
 class CRM::FreshsalesUtility
 
   NEGATIVE_LEAD_STAGES    = ['Unqualified']
-  
+
   PRODUCT_NAME            = AppConfig['app_name']
-  
+
   WON_DEAL_STAGE          = 'Closed Won'
-  
+
   LOST_DEAL_STAGE         = 'Closed Lost'
-  
+
   PAYMENT_STATUS          = { online: "Online", offline: "Offline" }
-  
+
   LOOKUP_URL              = "/lookup.json?f=%{field}&entities=%{entities}&q=%{query}&include=%{includes}&per_page=100"
-  
+
   SELECTOR_URL            = "/selector/%{entity_type}"
-  
-  CUSTOMER_STATUS         = { trial: 'Trial', suspended: 'Trial Expired', free: 'Free', 
-                              paid: 'Customer', deleted: 'Deleted', active: 'Active', 
-                              no_payment_suspended: 'Suspended', trial_extended: 'Trial Extended'
+
+  CUSTOMER_STATUS         = {
+                              trial: 'Trial', suspended: 'Trial Expired', free: 'Free',
+                              paid: 'Customer', active: 'Active',
+                              no_payment_suspended: 'Suspended', trial_extended: 'Trial Extended',
+                              deleted: 'Deleted'
                             }
-  
-  DEAL_TYPES              = { new_business: 'New Business', upgrade: 'Existing Business-Upgrade', 
-                              downgrade: 'Existing Business-Downgrade', 
+
+  DEAL_TYPES              = { new_business: 'New Business', upgrade: 'Existing Business-Upgrade',
+                              downgrade: 'Existing Business-Downgrade',
                               renewal: 'Existing Business-Renewal',
                               free: 'Free' }
-  
+
   OFFLINE                 = 'off'
-  
+
   NONE                    = 'None'
-  
+
   ZERO                    = 0
 
   DEFAULT_ACCOUNT_MANAGER = { display_name:   "Bobby",
                               email:          "eval@freshdesk.com" }
-                              
+
   SUCCESS_CODES = (200...300).to_a
   ADMIN_BASIC_INFO_KEYS = [:first_name, :last_name, :work_number, :email, :country, :job_title, :twitter, :facebook, :linkedin, :time_zone]
   EMPLOYMENT_COUNT = [10001, 5001,1001,501,201,51,11,1, 0]
@@ -42,7 +44,7 @@ class CRM::FreshsalesUtility
     @account = data[:account]
     @subscription = data[:subscription]
     @cmrr = data[:cmrr]
-    
+
     @deal_product_id = get_entity_id('deal_products', :name, PRODUCT_NAME)
   end
 
@@ -50,15 +52,15 @@ class CRM::FreshsalesUtility
     @source_and_campaign_info = get_lead_source_and_campaign_id
 
     # assign leads based on email domain and farming account flag.
-    # If the leads email domain is already associated with an account & if it is farming account, 
+    # If the leads email domain is already associated with an account & if it is farming account,
     # then assign new lead to the owner of the respective account.
     # user_domain = @account.admin_email.gsub(/.+@([^.]+).+/, '\1')
 
     farming_account = get_farming_account(@account.admin_email)
-    
+
     if farming_account
       # Updating the sales account's owner ID to leads if its the farming account, irrespective of the account's updated_at value.
-      updated_at = Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z") # To reuse the create_lead_with_same_owner method, Adding updated_at value as current datatime. 
+      updated_at = Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z") # To reuse the create_lead_with_same_owner method, Adding updated_at value as current datatime.
       status,response = create_lead_with_same_owner(farming_account[:owner_id], updated_at)
     else
       result = search({ entities: 'lead,contact', field: 'email', query: @account.admin_email,
@@ -77,7 +79,7 @@ class CRM::FreshsalesUtility
         else
           company_leads = search_leads_by_company_name(@account.name, 'owner')[:leads]
           company_lead  = recent_lead_by_account_and_product(company_leads, @account.id, @deal_product_id)
-          status, response = company_lead ? create_lead_with_same_owner(company_lead[:owner_id], company_lead[:updated_at]) : 
+          status, response = company_lead ? create_lead_with_same_owner(company_lead[:owner_id], company_lead[:updated_at]) :
                                             fs_create('lead', new_lead_params)
         end
       end
@@ -122,7 +124,7 @@ class CRM::FreshsalesUtility
       if leads.any?
         recent_lead = recently_updated(leads)
         admin_leads = leads.select{ |lead| lead[:email] == @account.admin_email }
-        admin_leads.any? ? fs_update('lead', recently_updated(admin_leads)[:id], admin_basic_info) : 
+        admin_leads.any? ? fs_update('lead', recently_updated(admin_leads)[:id], admin_basic_info) :
                            create_lead_with_same_owner(recent_lead[:owner_id], recent_lead[:updated_at])
       else
         fs_create('lead', new_lead_params)
@@ -144,7 +146,7 @@ class CRM::FreshsalesUtility
         mark_deal_as_closed_won(open_deal, { deal_type: deal_type, amount: amount })
       else
         deal_account_id = result[:sales_accounts].find{ |acc| acc[:id] == result[:deals].first[:sales_account_id] }[:id]
-        deal_params = { deal_type: deal_type, amount: amount, customer_status: customer_status, 
+        deal_params = { deal_type: deal_type, amount: amount, customer_status: customer_status,
                         sales_account_id: deal_account_id }.merge(contact_and_owner(deal_account_id))
         create_deal_and_close(deal_params)
       end
@@ -162,7 +164,7 @@ class CRM::FreshsalesUtility
 
       other_leads_of_account = admin_lead.nil? ? leads : (leads - [admin_lead])
       other_leads_of_account.each{|lead| convert_lead(lead, {customer_status: customer_status}) }
-    end    
+    end
   end
 
   def account_trial_expiry
@@ -177,7 +179,7 @@ class CRM::FreshsalesUtility
 
   def account_trial_extension
     Rails.logger.debug "In FreshsalesUtility :: account_trial_extension"
-    data = { custom_field: { cf_customer_status: CUSTOMER_STATUS[:trial_extended], 
+    data = { custom_field: { cf_customer_status: CUSTOMER_STATUS[:trial_extended],
                              cf_trial_expiry_date: @subscription[:next_renewal_at] } }
     update_deal_or_lead(data)
   end
@@ -233,7 +235,7 @@ class CRM::FreshsalesUtility
           country: metrics.try(:country), zipcode: metrics.try(:zip_code)
         },
         custom_attrs: {
-          cf_first_referrer: metrics.try(:first_referrer), 
+          cf_first_referrer: metrics.try(:first_referrer),
           cf_signup_referrer: metrics.try(:landing_url)
         }
       }
@@ -242,7 +244,7 @@ class CRM::FreshsalesUtility
     def new_lead_subscription_params
       {
         custom_attrs: {
-          cf_agent_count: @subscription[:agent_limit], 
+          cf_agent_count: @subscription[:agent_limit],
           cf_customer_status: CUSTOMER_STATUS[@subscription[:state].to_sym],
           cf_signup_date: @subscription[:created_at].strftime("%Y-%m-%d")
         },
@@ -302,15 +304,15 @@ class CRM::FreshsalesUtility
     end
 
     def deal_name(domain, type)
-      "#{domain} - #{DEAL_TYPES[type.to_sym]}" 
+      "#{domain} - #{DEAL_TYPES[type.to_sym]}"
     end
 
     def paid_customer?(payments_count)
       payments_count > ZERO
     end
-    
+
     def get_customer_status(state, payments_count)
-      (state == :suspended && paid_customer?(payments_count)) ? 
+      (state == :suspended && paid_customer?(payments_count)) ?
                                 CUSTOMER_STATUS[:no_payment_suspended] : CUSTOMER_STATUS[state]
     end
 
@@ -343,8 +345,8 @@ class CRM::FreshsalesUtility
         fs_create('lead', new_lead_params)
       else
         if lead[:deal].try(:[], :deal_product_id).blank?
-          data = { 
-            deal: { deal_product_id: @deal_product_id }, 
+          data = {
+            deal: { deal_product_id: @deal_product_id },
             custom_field: { cf_account_id: @account.id, cf_domain_name: @account.full_domain }
           }
           data.merge!(@source_and_campaign_info)
@@ -360,8 +362,8 @@ class CRM::FreshsalesUtility
       NEGATIVE_LEAD_STAGES.include?(stage_name)
     end
 
-    def create_lead_with_same_owner(owner_id, updated_at) 
-      lead_info = new_lead_params     
+    def create_lead_with_same_owner(owner_id, updated_at)
+      lead_info = new_lead_params
       lead_info.merge!({ owner_id: owner_id }) if updated_in_last_90_days?(updated_at)
 
       fs_create('lead', lead_info)
@@ -386,11 +388,11 @@ class CRM::FreshsalesUtility
       attributes.merge!({
         name: deal_name(@account.full_domain, options[:deal_type]),
         amount: options[:amount],
-        deal_product_id: @deal_product_id, 
+        deal_product_id: @deal_product_id,
         sales_account_id: options[:sales_account_id],
         owner_id: options[:owner_id],
         deal_type_id: deal_type_id,
-        custom_field: attributes[:custom_field].merge({ cf_account_id: @account.id, 
+        custom_field: attributes[:custom_field].merge({ cf_account_id: @account.id,
                                                         cf_customer_status: options[:customer_status],
                                                         cf_presales_contact: NONE,
                                                         cf_renewal_period: fetch_renewal_period.humanize})
@@ -400,7 +402,7 @@ class CRM::FreshsalesUtility
 
       fs_create('deal', attributes)
     end
- 
+
     def create_lead_and_convert_and_close_deal(options)
       lead_info        = new_lead_params
 
@@ -428,7 +430,7 @@ class CRM::FreshsalesUtility
 
     def convert_lead(lead, options={})
       if lead[:custom_field][:cf_presales_contact].blank?
-        status, response = fs_update('lead', lead[:id], { custom_field: { cf_presales_contact: NONE } }) 
+        status, response = fs_update('lead', lead[:id], { custom_field: { cf_presales_contact: NONE } })
         return [status, response] unless success_status?(status)
       end
 
@@ -439,7 +441,7 @@ class CRM::FreshsalesUtility
       end
       config = { rest_url: "/leads/#{lead[:id]}/convert", method: 'post', body: { 'lead' => data } }
       status,response = request_freshsales(config)
-      fs_update('contact', response[:contact][:id], { custom_field: 
+      fs_update('contact', response[:contact][:id], { custom_field:
                               { cf_customer_status: options[:customer_status] } }) if success_status?(status)
       [status, response]
     end
@@ -470,7 +472,7 @@ class CRM::FreshsalesUtility
     end
 
     def deals_by_account_and_product(deals, account_id, product_id)
-      deals.select{ |deal| deal[:deal_product_id] == product_id && 
+      deals.select{ |deal| deal[:deal_product_id] == product_id &&
                            deal[:custom_field][:cf_account_id] == account_id }
     end
 
@@ -485,7 +487,7 @@ class CRM::FreshsalesUtility
     end
 
     def recent_lead_by_account_and_product(leads, account_id, product_id)
-      leads_of_same_prod = leads.select{ |lead| lead[:deal].try(:[], :deal_product_id) == product_id && 
+      leads_of_same_prod = leads.select{ |lead| lead[:deal].try(:[], :deal_product_id) == product_id &&
                                                 lead[:custom_field][:cf_account_id] == account_id }
       recently_updated(leads_of_same_prod)
     end
@@ -575,10 +577,10 @@ class CRM::FreshsalesUtility
         method: options[:method]
       }
       response = proxy.fetch_using_req_params(params, request_params)
-      raise "Error occured while requesting Freshsales status:: #{response[:status]} 
+      raise "Error occured while requesting Freshsales status:: #{response[:status]}
                                           account:: #{Account.current.id}" unless success_status?(response[:status])
 
-      response_content = symbolize_response(JSON.parse(response[:text]))      
+      response_content = symbolize_response(JSON.parse(response[:text]))
       [response[:status], response_content]
     rescue => e
       NewRelic::Agent.notice_error(e)
@@ -602,7 +604,7 @@ class CRM::FreshsalesUtility
         obj
       end
     end
-    
+
     def success_status?(status)
       status.in?(SUCCESS_CODES)
     end

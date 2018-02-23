@@ -100,7 +100,7 @@ module Helpdesk::Activities
         activities.each do |act|
           begin
             activity = ActivityParser.new(act, data_hash, ticket, type)
-            act_arr << activity.send("get_#{type}")
+            act_arr << activity.safe_send("get_#{type}")
           rescue => e
             Rails.logger.error "#{e} Exception in parse activity #{JSON.parse(act.content)}"
             dev_notification("Error in parse activity",

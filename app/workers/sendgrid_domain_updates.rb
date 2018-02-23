@@ -26,7 +26,7 @@ class SendgridDomainUpdates < BaseWorker
           notify_and_update(args['domain'], args['vendor_id'])
         elsif (args['action'] == 'create' or args['action'] == 'delete')
           Rails.logger.info "Sendgrid #{args['action']} triggered for domain #{args['domain']}"
-          self.send("#{args['action']}_record", args['domain'], args['vendor_id'])
+          self.safe_send("#{args['action']}_record", args['domain'], args['vendor_id'])
         end
       end
     rescue => e
@@ -175,7 +175,7 @@ class SendgridDomainUpdates < BaseWorker
 
   def send_request(action, url, post_args={})
     Timeout::timeout(TIMEOUT) do
-      response = HTTParty.send(action, url, :body => post_args.to_json, 
+      response = HTTParty.safe_send(action, url, :body => post_args.to_json, 
         :headers => { "Authorization" => "Bearer #{SendgridWebhookConfig::CONFIG['api_key']}" })
     end
   end

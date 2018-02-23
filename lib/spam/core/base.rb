@@ -60,9 +60,9 @@ module Spam::Core
         ticket_associations_data.each do |key,value|
           next if key == :ticket_old_body
           if value.is_a?(Array)
-            ticket.send(key).build(value) unless value.blank?
+            ticket.safe_send(key).build(value) unless value.blank?
           else
-            ticket.send("build_#{key}",value)
+            ticket.safe_send("build_#{key}",value)
           end
         end
         ticket.save_ticket
@@ -79,11 +79,11 @@ module Spam::Core
             note_associations_data = note.associations_data[:helpdesk_notes_association]
             note_associations_data.each do |key,value|
               next if key == :note_old_body
-              restored_note.send("build_#{key}",value)
+              restored_note.safe_send("build_#{key}",value)
               if value.is_a?(Array)
-                restored_note.send(key).build(value) unless value.blank?
+                restored_note.safe_send(key).build(value) unless value.blank?
               else
-                restored_note.send("build_#{key}",value)
+                restored_note.safe_send("build_#{key}",value)
               end
             end
             restored_note.save_note
@@ -107,7 +107,7 @@ module Spam::Core
       # Generating model_hash for tickets
       ticket_model_hash[:helpdesk_tickets] = association_data_of_object(model)
       ASSOCIATIONS_TO_SERIALIZE[:helpdesk_tickets].each do |association_name| 
-        model_association = model.send(association_name)
+        model_association = model.safe_send(association_name)
         ticket_association_hash[association_name] = association_data_of_object(model_association) if model_association
       end
       ticket_model_hash[:helpdesk_tickets_association] = ticket_association_hash
@@ -119,7 +119,7 @@ module Spam::Core
         note_model_hash[:helpdesk_notes] = association_data_of_object(note)
         note_model_hash[:helpdesk_notes_association] = {}
         ASSOCIATIONS_TO_SERIALIZE[:helpdesk_notes].each do |association_name| 
-          model_association = note.send(association_name)
+          model_association = note.safe_send(association_name)
           note_model_hash[:helpdesk_notes_association][association_name] = association_data_of_object(model_association) if model_association
         end
         note_model.push(note_model_hash)
@@ -167,17 +167,17 @@ module Spam::Core
     def modify_association(responder,spam, polymorphic_type,symbol)
       ASSOCIATIONS_TO_MODIFY[symbol].each do |association|
         association.each do |key,value|
-          model_association = responder.send(key)
+          model_association = responder.safe_send(key)
           unless model_association.blank?
             if model_association.is_a?(Array)
               model_association.each do |element|
-                element.send("#{value}_id=",spam.id)
-                element.send("#{value}_type=",polymorphic_type)
+                element.safe_send("#{value}_id=",spam.id)
+                element.safe_send("#{value}_type=",polymorphic_type)
                 element.save
               end
             else
-              model_association.send("#{value}_id=",spam.id)
-              model_association.send("#{value}_type=",polymorphic_type)
+              model_association.safe_send("#{value}_id=",spam.id)
+              model_association.safe_send("#{value}_type=",polymorphic_type)
               model_association.save
             end
           end

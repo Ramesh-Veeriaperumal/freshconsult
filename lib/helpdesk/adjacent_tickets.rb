@@ -54,7 +54,7 @@ module Helpdesk::AdjacentTickets
 			index = tickets_adjacents_list.index(@item.display_id.to_s)
 			return nil if index.blank?
 
-			new_index = index.send(SWITCHES[direction][:list_index_operator] , 1)
+			new_index = index.safe_send(SWITCHES[direction][:list_index_operator] , 1)
 			return tickets_adjacents_list[new_index] if within_bounds?(new_index)
 
 			find_in_adjacent_pages(direction)
@@ -84,7 +84,7 @@ module Helpdesk::AdjacentTickets
 					adding_to_list = tickets.collect { |ticket| ticket.display_id.to_s }
 					adding_to_list.reverse! unless direction == :next
 					tickets_list_push(adjacent_list_redis_key,adding_to_list, (SWITCHES[direction][:list_push]))
-					return tickets.send(SWITCHES[direction][:which_end]).display_id
+					return tickets.safe_send(SWITCHES[direction][:which_end]).display_id
 				end
 			end
 			return NO_ADJACENT_TICKET_FLAG
@@ -130,7 +130,7 @@ module Helpdesk::AdjacentTickets
 					current = end_page[direction]
 				end
 
-				current = send("new_page_" + direction.to_s , filter_params, current)
+				current = safe_send("new_page_" + direction.to_s , filter_params, current)
 
 				end_page[direction] = current
 				set_tickets_redis_key(adjacent_meta_key, end_page.to_json,3600)

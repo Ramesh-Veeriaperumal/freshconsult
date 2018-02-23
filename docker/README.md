@@ -7,12 +7,6 @@ Mac Setup:
     - Change CPU/Memory settings 
         - Docker --> Preferences -> Advanced
             - Change as you see fit.
-    - Docker has a [bug](https://github.com/docker/for-mac/issues/668) which slows down mysql instances    
-        - [Reason](https://github.com/docker/for-mac/issues/668#issuecomment-248011625)
-        - Fix
-          - Run `docker/bin/docker_for_mac_fsync_fix.sh`
-          - [script source](https://github.com/freshdesk/labs/blob/labs-arvind/docker/docker_for_mac_fsync_fix.sh)
-            - Script derived from [1](https://github.com/docker/for-mac/issues/668#issuecomment-284028148) and [2](https://github.com/docker/for-mac/issues/668#issuecomment-292948953)
 
 2. Download Repo    
     - [Create new ssh keys](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#generating-a-new-ssh-key)
@@ -33,6 +27,7 @@ Mac Setup:
     - [Local AWS](https://github.com/localstack/localstack)(Optional)
         - S3
         - SQS 
+        - DynamoDB
 
 4. Pull and build docker images for all the services: 
     ```

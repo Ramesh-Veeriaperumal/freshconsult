@@ -111,14 +111,14 @@ class Fdadmin::FreshopsPodController < Fdadmin::DevopsMainController
   end
 
   def pod_endpoint
-    status = send(params[:target_method])
+    status = safe_send(params[:target_method])
     render :json => {:account_id => status}
   end
 
   def fetch_pod_info
     if params && (params[:account_id] || params[:domain_name])
       selected_finder , parameter = select_finder_by_parameter
-      domain_record = DomainMapping.send(selected_finder , parameter)
+      domain_record = DomainMapping.safe_send(selected_finder , parameter)
       shard_details = ShardMapping.find_by_account_id(domain_record.account_id) if domain_record
       result = shard_details ? set_return_params(shard_details.pod_info,domain_record.domain,"Account found",200) : set_return_params
     end

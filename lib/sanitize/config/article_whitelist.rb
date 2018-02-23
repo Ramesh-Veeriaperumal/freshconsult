@@ -52,7 +52,7 @@ class Sanitize
         
         return if data_attrs.empty?
         
-        Sanitize.clean_node!(node, {
+        Sanitize.node!(node, {
           :elements => ARTICLE_WHITELIST[:elements],
           :attributes => ARTICLE_WHITELIST[:attributes].merge({node.name => (ARTICLE_WHITELIST[:attributes][node.name] || []) + data_attrs.collect(&:name) }),
           :protocols => ARTICLE_WHITELIST[:protocols],

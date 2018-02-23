@@ -1,6 +1,3 @@
-#TODO
-# - Add fake aws services - https://github.com/localstack/localstack
-
 version: '3.0'
 
 services:
@@ -11,14 +8,15 @@ services:
       - '6379:6379'
     container_name: redis32    
 
-  mysql56:
-    image: mysql:5.6 #https://hub.docker.com/r/library/mysql/tags/
+  mysql57:
+    image: mysql:5.7 #https://hub.docker.com/r/library/mysql/tags/
     network_mode: "bridge"
+    command: --sql_mode="NO_ENGINE_SUBSTITUTION" #https://github.com/docker-library/mysql/issues/149
     ports:
       - "3306:3306"
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-    container_name: mysql56    
+    container_name: mysql57    
 
   memcached14:
     image: bitnami/memcached:latest #https://hub.docker.com/r/bitnami/memcached/ - this image has better logging support
@@ -27,15 +25,15 @@ services:
       - "11211:11211"
     container_name: memcached14
 
-  localaws:
-    image: localstack/localstack:0.7.5
+  localaws084:
+    image: localstack/localstack:0.8.4
     network_mode: "bridge"
     ports:
       - "4569:4569" #dynamoDB
       - "4572:4572" #S3
       - "4576:4576" #SQS
       - "8080:8080" #localstack web
-    container_name: localaws
+    container_name: localaws084
     environment:
         - USE_SSL=true
         - SERVICES=dynamodb,s3,sqs

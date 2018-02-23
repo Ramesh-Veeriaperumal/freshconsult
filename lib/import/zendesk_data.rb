@@ -2,7 +2,7 @@
 class Import::ZendeskData < Struct.new(:params)
    require 'rexml/document'    
    require 'rexml/xpath'   
-   require 'zip/zip'
+   require 'zip'
    require 'fileutils'
     
     include Import::CustomField
@@ -505,7 +505,7 @@ def extract_zendesk_zip
     
     @out_dir = "#{Rails.root}/public/files/temp/#{@upload_file_name.gsub('.zip','')}"
     FileUtils.mkdir_p @out_dir    
-    zf = Zip::ZipFile.open(zip_file_name)
+    zf = Zip::File.open(zip_file_name)
     
     zf.each do |zip_file|        
       report_name = File.basename(zip_file.name).gsub('zip','xml')

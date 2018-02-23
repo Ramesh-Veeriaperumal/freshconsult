@@ -132,7 +132,7 @@ module Ember
       def deleted_agent
         @deleted_agent ||= current_account.all_users.where(deleted: true, helpdesk_agent:true).find_by_id(params[:id])
       end
-       
+
 
       def construct_delegator_params
         {
@@ -234,7 +234,7 @@ module Ember
       end
 
       def render_201_with_location(template_name: "api_contacts/#{action_name}", location_url: 'api_contact_url', item_id: @item.id)
-        render template_name, location: send(location_url, item_id), status: 201
+        render template_name, location: safe_send(location_url, item_id), status: 201
       end
 
       def send_activation_mail(item)
@@ -259,7 +259,7 @@ module Ember
         contact = Ember::ContactValidation.new(params[cname], @item, string_request_params?)
         render_custom_errors(contact, true) unless contact.valid?(action_name.to_sym)
       end
-      
+
       def validate_url_params
         params.permit(*ContactConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
         @include_validation = ContactFilterValidation.new(params, nil, string_request_params?)

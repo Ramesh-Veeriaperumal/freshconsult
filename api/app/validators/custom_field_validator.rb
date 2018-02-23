@@ -23,7 +23,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
         @is_required = required_field?(record, values) # find if the field is required
         @current_field_defined = key_exists?(values, field_name) # check if the field is defined for required validator
         next unless validate?(record, field_name, values) # check if it can be validated
-        record.class.send(:attr_accessor, field_name)
+        record.class.safe_send(:attr_accessor, field_name)
         record.instance_variable_set("@#{field_name}", value) if @current_field_defined
         absence_validator_check(record, field_name, values)
         validate_each(record, field_name, value) if record.errors[field_name].blank?
@@ -34,7 +34,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, _values)
     method = method_name
     if respond_to?(method, true)
-      send(method, record, attribute)
+      safe_send(method, record, attribute)
     else
       warn :"Validation Method #{method} is not present for the #{current_field.field_type} - #{current_field.inspect}"
     end
@@ -126,14 +126,14 @@ class CustomFieldValidator < ActiveModel::EachValidator
 
     # Search methods, validates array of custom fields
     def validate_custom_text_array(record, field_name)
-      values = record.send(field_name)
+      values = record.safe_send(field_name)
       values.each do |value|
         CustomLengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING)).validate_value(record, value.to_s)
       end
     end
 
     def validate_custom_number_array(record, field_name)
-      values = record.send(field_name)
+      values = record.safe_send(field_name)
       values.each do |value|
         numericality_options = construct_options(only_integer: true, attributes: field_name, allow_nil: true)
         CustomNumericalityValidator.new(numericality_options).validate_value(record, value)
@@ -141,7 +141,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     def validate_custom_checkbox_array(record, field_name)
-      values = record.send(field_name)
+      values = record.safe_send(field_name)
       values.each do |value|
         boolean_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: 'Boolean', required: @is_required)
         DataTypeValidator.new(boolean_options).validate_value(record, value)
@@ -149,7 +149,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     def validate_custom_date_array(record, field_name)
-      values = record.send(field_name)
+      values = record.safe_send(field_name)
       values.each do |value|
         date_options = construct_options(attributes: field_name, allow_nil: true, only_date: true)
         DateTimeValidator.new(date_options).validate_value(record, value)
@@ -157,11 +157,11 @@ class CustomFieldValidator < ActiveModel::EachValidator
     end
 
     def validate_custom_dropdown_array(record, field_name)
-      values = record.send(field_name)
+      values = record.safe_send(field_name)
       values.each do |value|
         choices = proc_to_object(@drop_down_choices, record)
         CustomInclusionValidator.new(options.merge(attributes: field_name, in: choices[field_name], allow_nil: true)).validate_value(record, value)
-      end      
+      end
     end
 
     def absence_validator_check(record, field_name, values)
@@ -202,7 +202,7 @@ class CustomFieldValidator < ActiveModel::EachValidator
     # required based on ticket field attribute or combination of status & ticket field attribute.
     def required_field?(record, values)
       # Should we have to raise exception or warn if current_field doen't respond to required_attribute?
-      is_required = (@required_attribute && @current_field.send(@required_attribute.to_sym)) || (@closure_status && @current_field.required_for_closure)
+      is_required = (@required_attribute && @current_field.safe_send(@required_attribute.to_sym)) || (@closure_status && @current_field.required_for_closure)
       is_required ||= @parent[:required] if @parent.present?
       is_required = section_parent_present?(record, values) if is_required && section_field?
       is_required

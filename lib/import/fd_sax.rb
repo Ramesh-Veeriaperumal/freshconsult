@@ -4,7 +4,7 @@ class Import::FdSax
     def to_hash
       {}.tap do |hash|
         self.class.column_names.each do |key|
-          hash[key] = send(key)
+          hash[key] = safe_send(key)
         end
       end
     end  

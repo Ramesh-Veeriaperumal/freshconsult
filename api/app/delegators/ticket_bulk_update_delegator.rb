@@ -31,7 +31,7 @@ class TicketBulkUpdateDelegator < BaseDelegator
     super(record, options)
     [:group, :product, :agent].each do |field|
       field_mapping = ApiTicketConstants::FIELD_MAPPINGS[field]
-      instance_variable_set("@#{field}", (field == :product) ? schema_less_ticket.product_id : self.send(field_mapping))
+      instance_variable_set("@#{field}", (field == :product) ? schema_less_ticket.product_id : self.safe_send(field_mapping))
     end
   end
 

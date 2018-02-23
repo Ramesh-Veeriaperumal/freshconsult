@@ -152,7 +152,7 @@ class Search::V2::SpotlightController < ApplicationController
 
     def process_results
       @result_set.each do |result|
-        @result_json[:results] << send(%{#{result.class.model_name.singular}_json}, result) if result
+        @result_json[:results] << safe_send(%{#{result.class.model_name.singular}_json}, result) if result
       end
 
       @result_json[:current_page] = @current_page

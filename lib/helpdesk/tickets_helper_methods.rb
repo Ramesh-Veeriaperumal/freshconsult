@@ -48,7 +48,7 @@ module Helpdesk::TicketsHelperMethods
         end
       else
         " #{h(status_changed_time_value_hash(ticket)[:title])} #{t('for')} 
-            #{distance_of_time_in_words(Time.now, ticket.ticket_states.send(status_changed_time_value_hash(ticket)[:method]))} "
+            #{distance_of_time_in_words(Time.now, ticket.ticket_states.safe_send(status_changed_time_value_hash(ticket)[:method]))} "
       end
  
     else

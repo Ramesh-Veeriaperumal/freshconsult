@@ -6,7 +6,7 @@ class CustomLengthValidator < ApiValidator
       # CHECKS    = { :is => :==, :minimum => :>=, :maximum => :<= }.freeze
       ActiveModel::Validations::LengthValidator::CHECKS.each do |key, operator|
         next unless expected_value = options[key]
-        return true unless value_length.send(operator, expected_value)
+        return true unless value_length.safe_send(operator, expected_value)
       end
       false
     end

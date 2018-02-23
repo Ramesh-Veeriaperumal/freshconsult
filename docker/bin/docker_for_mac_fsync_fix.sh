@@ -4,6 +4,13 @@
 # https://github.com/docker/for-mac/issues/668
 # From https://github.com/docker/for-mac/issues/668#issuecomment-284028148
 
+# Docker has a [bug](https://github.com/docker/for-mac/issues/668) which slows down mysql instances    
+#   - [Reason](https://github.com/docker/for-mac/issues/668#issuecomment-248011625)
+#   - Fix
+#     - Run `docker/bin/docker_for_mac_fsync_fix.sh`
+#     - [script source](https://github.com/freshdesk/labs/blob/labs-arvind/docker/docker_for_mac_fsync_fix.sh)
+#       - Script derived from [1](https://github.com/docker/for-mac/issues/668#issuecomment-284028148) and [2](https://github.com/docker/for-mac/issues/668#issuecomment-292948953)
+
 set -e
 cd ~/Library/Containers/com.docker.docker/Data/database
 git reset --hard

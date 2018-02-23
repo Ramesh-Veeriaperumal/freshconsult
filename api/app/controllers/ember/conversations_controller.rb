@@ -365,11 +365,11 @@ module Ember
 
       def render_201_with_location(template_name: "conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)
         return super(location_url: location_url) if ember_redirect?
-        render template_name, location: send(location_url, item_id), status: 201
+        render template_name, location: safe_send(location_url, item_id), status: 201
       end
 
       def tweet_and_render
-        error_msg, _tweet = send("send_tweet_as_#{@tweet_type}", @ticket, @item, @item.body)
+        error_msg, _tweet = safe_send("send_tweet_as_#{@tweet_type}", @ticket, @item, @item.body)
         if error_msg
           @item.errors[:body] << :unable_to_connect_twitter
           render_response(false)

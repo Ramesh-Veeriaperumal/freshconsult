@@ -42,7 +42,7 @@
   <% if field.visible_in_view_form? && field.flexifield_def_entry %>
     <span>
       <b><%= field.label %></b>
-      <% value = @ticket.send(field.field_name) %>
+      <% value = @ticket.safe_send(field.field_name) %>
       <% if value.present? && field.field_type == "custom_date" %>
         <%= value.utc.strftime(@date_format) %> 
       <% else %>
@@ -53,7 +53,7 @@
       <% field.nested_ticket_fields.each do |nested_field| %>
         <span>
           <b><%= nested_field.label %></b>
-          <%= @item.send(nested_field.name) %>      
+          <%= @item.safe_send(nested_field.name) %>      
         </span>
       <% end %>
     <% end %>

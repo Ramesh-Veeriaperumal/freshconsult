@@ -33,9 +33,9 @@ module Dkim::Methods
 
   def make_api(req_type, url, data={})
     if req_type.to_s == REQUEST_TYPES[:get] or req_type.to_s == REQUEST_TYPES[:delete]
-      response = RestClient.send(req_type, url, SENDGRID_CREDENTIALS)
+      response = RestClient.safe_send(req_type, url, SENDGRID_CREDENTIALS)
     elsif req_type.to_s == REQUEST_TYPES[:post]
-      response = RestClient.send(req_type, url, data, SENDGRID_CREDENTIALS)
+      response = RestClient.safe_send(req_type, url, data, SENDGRID_CREDENTIALS)
     end
     response.headers[:content_length].to_i > 2 ? [response.code.to_i, JSON.parse(response)] : [response.code.to_i, response]
   rescue RestClient::RequestFailed, RestClient::ResourceNotFound => e
@@ -55,7 +55,7 @@ module Dkim::Methods
   def create_dkim_records(response, req_records, category = 5) # default category 5
     req_records.each do |rec|
       Rails.logger.debug "response :: #{response.inspect} rec -> #{rec}_records"
-      data = Dkim::SendgridParser.new(response, category).send("#{rec}_records")
+      data = Dkim::SendgridParser.new(response, category).safe_send("#{rec}_records")
       Rails.logger.debug "In create dkim_records..... #{data.inspect}"
       domain_category.dkim_records.new(data).save!
     end

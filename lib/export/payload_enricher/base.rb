@@ -22,7 +22,7 @@ class Export::PayloadEnricher::Base
   end
 
   def field_value(object, name)
-    object.send(name)
+    object.safe_send(name)
   rescue Exception => e
     Rails.logger.error "[Export::PayloadEnricher::Base] Exception occured while 
         trying to get value for property: #{name} on object: #{object.inspect},

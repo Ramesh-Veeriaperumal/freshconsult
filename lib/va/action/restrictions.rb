@@ -17,7 +17,7 @@ module Va::Action::Restrictions
 
   def restricted?
     current_restriction = RESTRICTIONS_BY_ACTION_NAME[action_key]
-    if current_restriction && send(current_restriction[:method])
+    if current_restriction && safe_send(current_restriction[:method])
       va_rule.errors.add(:base,I18n.t(current_restriction[:error_msg_key]))
     end
   end

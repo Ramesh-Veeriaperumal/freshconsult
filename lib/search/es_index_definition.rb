@@ -333,7 +333,7 @@ class Search::EsIndexDefinition
               }
             }
           },
-          :mappings =>  Search::EsIndexDefinition.send(model_mapping.to_sym) 
+          :mappings =>  Search::EsIndexDefinition.safe_send(model_mapping.to_sym) 
         )
   	end
   }

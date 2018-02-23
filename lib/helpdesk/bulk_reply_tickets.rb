@@ -77,7 +77,7 @@ class Helpdesk::BulkReplyTickets
       # Injecting '@skip_resource_rate_limit' instance variable to skip spam watcher
       note.instance_variable_set(:@skip_resource_rate_limit, true)
       build_attachments note
-      send("#{note.source_name}_reply", ticket, note) if note.save_note
+      safe_send("#{note.source_name}_reply", ticket, note) if note.save_note
     end
 
     def get_from_email
@@ -147,7 +147,7 @@ class Helpdesk::BulkReplyTickets
     def twitter_reply ticket, note
       twt_type = ticket.tweet.tweet_type || :mention.to_s
       error_message, tweet_body = get_tweet_text(twt_type, ticket, note.body.strip)
-      send("send_tweet_as_#{twt_type}", ticket, note, tweet_body) unless error_message
+      safe_send("send_tweet_as_#{twt_type}", ticket, note, tweet_body) unless error_message
     end
 
     def mobihelp_reply ticket, note

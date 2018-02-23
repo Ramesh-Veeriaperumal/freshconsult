@@ -28,7 +28,7 @@ class Group < ActiveRecord::Base
     
     $redis_round_robin.multi do |m|
       m.zadd(key, new_score, user_id)
-      m.send(operation, agent_key)
+      m.safe_send(operation, agent_key)
     end
   end
 

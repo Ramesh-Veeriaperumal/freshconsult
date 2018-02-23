@@ -15,7 +15,7 @@
 			<% if @topic.ticket.responder_id? %>
 			<div><%= t('.agent') %>: <%= @topic.ticket.responder.name %></div>
 			<% end %>
-			<% changed_time = @topic.ticket.ticket_states.send(status_changed_time_value_hash(@topic.ticket)[:method]) %>
+			<% changed_time = @topic.ticket.ticket_states.safe_send(status_changed_time_value_hash(@topic.ticket)[:method]) %>
 			<div>
 				<%= @topic.ticket.status_name %>,
 				<abbr data-livestamp="<%= changed_time.to_i %>"><%= distance_of_time_in_words(Time.now(), changed_time) %></abbr>

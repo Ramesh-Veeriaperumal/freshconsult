@@ -132,7 +132,7 @@ module Solution::ControllerMethods
 		return unless params[nscname].present?
 		api_parent_key = "#{parent_model}_id".to_sym
 		params[nscname][api_parent_key] ||= params[api_parent_key]
-		parent = current_account.send("solution_#{parent_model}_meta").find_by_id(params[nscname][api_parent_key])
+		parent = current_account.safe_send("solution_#{parent_model}_meta").find_by_id(params[nscname][api_parent_key])
 		params[nscname].delete(api_parent_key) if parent.blank?
 		return if (parent.present? || (action == :update))
 		meta_class = "Solution::#{controller_name.classify}Meta".constantize

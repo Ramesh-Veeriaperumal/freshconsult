@@ -19,7 +19,7 @@ module RabbitMq::Subscribers::Notes::Reports
   end
 
   def mq_reports_valid(action, model)
-    reports_valid_model?(model) && send("#{model}_valid?", action)
+    reports_valid_model?(model) && safe_send("#{model}_valid?", action)
   end
 
   private

@@ -27,15 +27,15 @@ services:
       - "4576" #SQS
     environment:
         - BUNDLE_PATH=/gems/2_2
-        - HELPKIT_DATABASE_HOST=mysql56
+        - HELPKIT_DATABASE_HOST=mysql57
         - HELPKIT_REDIS_HOST=redis32
         - HELPKIT_MEMCACHED_HOST=memcached14:11211
         - RAILS_ENV=development   
     external_links:
-      - mysql56
+      - mysql57
       - redis32
       - memcached14
-      - localaws
+      - localaws084
     network_mode: "bridge"
 
     # Keep the stdin open, so we can attach to our app container's process and do things such as

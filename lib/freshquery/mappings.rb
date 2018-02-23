@@ -76,7 +76,7 @@ module Freshquery
     def custom_attributes(options)
       options = sanitize_options(options)
       raise 'mappings proc required for custom data types' unless options[:mappings].present?
-      mappings_proc = @fqhelper.send(options[:mappings])
+      mappings_proc = @fqhelper.safe_send(options[:mappings])
       if mappings_proc.class != Proc
         raise 'mappings should be a proc'
       else
@@ -89,10 +89,10 @@ module Freshquery
       raise 'mappings proc required for custom data types' unless options[:mappings].present?
       raise 'choices proc required for custom dropdown' unless options[:choices].present?
 
-      mappings_proc = @fqhelper.send(options[:mappings])
+      mappings_proc = @fqhelper.safe_send(options[:mappings])
       raise 'mappings should be a proc' if mappings_proc.class != Proc
 
-      choices_proc = @fqhelper.send(options[:choices])
+      choices_proc = @fqhelper.safe_send(options[:choices])
       raise 'choices should be a proc' if choices_proc.class != Proc
 
       @custom_choices = choices_proc

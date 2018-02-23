@@ -268,7 +268,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def product_id=(product_id)
-    self.send(:write_attribute,:product_id,product_id)
+    self.safe_send(:write_attribute,:product_id,product_id)
   end
 
   def product_id

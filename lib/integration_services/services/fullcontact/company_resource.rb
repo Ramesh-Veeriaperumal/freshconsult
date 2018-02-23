@@ -20,9 +20,9 @@ module IntegrationServices::Services
         begin
           selected_fc_fields = @service.configs["company"]["fc_field"]
           @service.configs["company"]["fd_field"].each_with_index do |field, index|
-            if current_company.send(field).blank? and company_response.send(selected_fc_fields[index]).present?
-              value = company_response.send(selected_fc_fields[index])
-              current_company.send(field + "=" , value)
+            if current_company.safe_send(field).blank? and company_response.safe_send(selected_fc_fields[index]).present?
+              value = company_response.safe_send(selected_fc_fields[index])
+              current_company.safe_send(field + "=" , value)
             end
           end
           current_company.save!
@@ -36,9 +36,9 @@ module IntegrationServices::Services
         diff_array = [] #array of {fc_field_name => [fd_display_label, fd_val, fc_val, fc_field_type]}
         @service.configs["company"]["fc_field"].each_with_index do |fc_field, index|
           fd_field = @service.configs["company"]["fd_field"][index]
-          fc_val = company_response.send(fc_field)
+          fc_val = company_response.safe_send(fc_field)
           next unless company_fields_list.include?fd_field and fc_val.present?
-          fd_val = current_company.send(fd_field)
+          fd_val = current_company.safe_send(fd_field)
           fc_field_type = FC_COMPANY_DATA_TYPES[FC_COMPANY_FIELDS_HASH[fc_field]]
           case fd_field
           when "name"
@@ -63,7 +63,7 @@ module IntegrationServices::Services
             message = I18n.t(:'integrations.fullcontact.message.company_exists', :name => value)
             next
           end
-          current_company.send(name + '=', value)
+          current_company.safe_send(name + '=', value)
         end
         current_company.save!
         {:status => 200, :message => message}

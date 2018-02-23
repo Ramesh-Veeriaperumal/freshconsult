@@ -6,10 +6,13 @@ liveChat.admin_short_codes = (function(){
       _new_code_dom_fragment : window.JST["livechat/templates/shortcodes/shortCodes"],
       _auth_params: null,
       _action_urls: {
-          create   : {type: "POST", url: "shortcodes"},
-          getCodes : {type: "GET", url: "shortcodes"},
-          update   : {type: "PUT", url: "shortcodes/:id"},
-          destroy  : {type: "DELETE", url: "shortcodes/:id"}
+          create   : { type: "POST",
+              url: "/livechat/shortcodes"
+              //url: "/shortcodes"
+          },
+          getCodes : { type: "GET", url: "/shortcodes" },
+          update   : { type: "PUT", url: "/livechat/shortcodes/:id" },
+          destroy  : { type: "DELETE", url: "/livechat/shortcodes/:id" }
       },
       _error_messages: {
           CODE_EMPTY : "Code cannot be empty.",
@@ -168,17 +171,73 @@ liveChat.admin_short_codes = (function(){
       },
 
       ajaxCall: function(params, callback, parent_elem, id){
+        console.log("ENTER shortcodes/main.js ajaxCall params:", JSON.stringify(params));
         parent_elem.length > 0 ? parent_elem.addClass("sloading") : "";
-        var path = params.action.url.replace(':id', id);
-        window.liveChat.request(path, params.action.type, params.data, function(err, response) {
-          if(err){
-            var _msg = _module._error_messages['ER_DUP_ENTRY']+ ' \/ ' +_module._error_messages['CODE_EMPTY'];
-            _module.showAlertMsg(parent_elem,_msg);
-          }else if(response){
-            callback(response, params.selector_id);
-          }
-          parent_elem.length > 0 ? parent_elem.removeClass("sloading") : "";
-        });
+        var path = params.action.type === "GET" || params.action.type === "POST" ?
+            params.action.url :
+            params.action.url.replace(':id', id);
+        if (params.action.type === 'GET'
+            //|| params.action.type === 'POST'
+        ) {
+            window.liveChat.request(path, params.action.type, params.data, function(err, response) {
+              if(err){
+                var _msg = _module._error_messages['ER_DUP_ENTRY']+ ' \/ ' +_module._error_messages['CODE_EMPTY'];
+                _module.showAlertMsg(parent_elem,_msg);
+              }else if(response){
+                callback(response, params.selector_id);
+              }
+              parent_elem.length > 0 ? parent_elem.removeClass("sloading") : "";
+            });
+
+        } else {
+
+
+            jQuery.ajax({
+                type: params.action.type,
+                url: path,
+                dataType: 'json',
+                data: params.data,
+                success: function (response) {
+                    // that.flashNotice("ticket", response.status, response.external_id);
+                    // if(response.status === true){
+                    //     var options = {
+                    //         externalId : response.external_id,
+                    //         ongoingChat : data.ongoingChat,
+                    //         chatId : data.chatId
+                    //     }
+                    //     that.closeWindow(null,options);
+                    // }else{
+                    //     that.flashNotice("ticket",false);
+                    //     that.closeWindow(null,null,true);
+                    // }
+                    console.log("shortcodes/main.js received response from chat shorthands ajax api call - ",
+                        JSON.stringify(response));
+                    response = response && response.data ? response.data : {};
+                    _.isFunction( callback ) && callback( response, params.selector_id );
+                    parent_elem.length > 0 ? parent_elem.removeClass("sloading") : "";
+                },
+                error: function (httpReq, status, exception) {
+                    switch (params.type) {
+                        case "POST":
+                            that.flashNotice("unable-to-create-short-code", false);
+                            break;
+                        case "PUT":
+                            // var _msg = _module._error_messages['ER_DUP_ENTRY']+ ' \/ ' +_module._error_messages['CODE_EMPTY'];
+                            // _module.showAlertMsg(parent_elem,_msg);
+                            that.flashNotice("unable-to-update-short-code", false);
+                            break;
+                        case "DELETE":
+                            that.flashNotice("unable-to-delete-short-code", false);
+                            break;
+                        default:
+                            console.log("shortcodes/main.js ajaxCall: unhandled backend action");
+                    }
+                    var _msg = _module._error_messages['ER_DUP_ENTRY']+ ' \/ ' +_module._error_messages['CODE_EMPTY'];
+                    _module.showAlertMsg(parent_elem,_msg);
+                }
+            });
+        }
+
       }
     };
 

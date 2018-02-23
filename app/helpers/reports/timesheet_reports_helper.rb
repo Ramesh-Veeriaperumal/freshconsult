@@ -33,11 +33,11 @@ module Reports::TimesheetReportsHelper
       if(item.eql?(:hours))
         content ||= (time_entry.time_spent || 0) + (time_entry.timer_running ? (load_time - time_entry.start_time) : 0)
       elsif(item.eql?(:requester_name) || item.eql?(:ticket_type))
-        content ||= time_entry.workable.send(item)
+        content ||= time_entry.workable.safe_send(item)
       elsif(item.eql?(:customer_name))
         content ||= time_entry.customer_name_reports
       else
-        content ||= time_entry.send(item)
+        content ||= time_entry.safe_send(item)
       end
       html_content = ""
       if item.eql?(:workable)

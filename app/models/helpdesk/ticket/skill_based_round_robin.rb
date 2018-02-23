@@ -125,7 +125,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def sbrr_attributes
     attrs = {}
-    TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES.each { |att| attrs[att] = send(att) }
+    TicketConstants::SKILL_BASED_TICKET_ATTRIBUTES.each { |att| attrs[att] = safe_send(att) }
     attrs
   end
 

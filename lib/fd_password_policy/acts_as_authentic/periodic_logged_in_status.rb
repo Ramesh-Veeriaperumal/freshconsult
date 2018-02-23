@@ -34,9 +34,9 @@ module FDPasswordPolicy
         module InstanceMethods
           def periodic_logged_in?
             
-            return true unless send(periodic_logged_in_timeout[:if])
+            return true unless safe_send(periodic_logged_in_timeout[:if])
             raise "Can not determine the records login state because there is no current_login_at column" if !respond_to?(:current_login_at)
-            !current_login_at.nil? && ((current_login_at.utc + send(periodic_logged_in_timeout[:duration])) > Time.now.utc)
+            !current_login_at.nil? && ((current_login_at.utc + safe_send(periodic_logged_in_timeout[:duration])) > Time.now.utc)
           end
 
           def periodic_logged_out?

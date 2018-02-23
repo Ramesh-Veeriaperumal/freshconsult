@@ -73,8 +73,8 @@ module Helpdesk::TicketModelExtension
   end
 
   def contact_company_fields_order type
-    fields = Account.current.send("#{type}_form")
-      .send("#{type}_fields_from_cache")
+    fields = Account.current.safe_send("#{type}_form")
+      .safe_send("#{type}_fields_from_cache")
       .map{|f| [f.name, f.position]}
     count = fields.count
     default_fields = Helpdesk::TicketModelExtension.customer_fields(type)

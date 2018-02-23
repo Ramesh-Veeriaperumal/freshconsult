@@ -2525,7 +2525,7 @@ de:
       agent_received_resolved: "Meine Leistung"
       top_customers_by_open_tickets: "Top 10 Kunden nach nicht gelösten Tickets ( >2 )"
       top_agents_by_open_tickets: "Top 10 Bearbeiter nach alten Tickets ( >7 Tage )"
-      csat: Kundenzufriedenheit
+      csat_title: Kundenzufriedenheit
       group_performance: "Heutige Gruppenleistung"
       agent_performance: "Heutige Bearbeiterleistung"
       ticket_workload_channels: "Heutige Ticket-Trends nach Kanälen"

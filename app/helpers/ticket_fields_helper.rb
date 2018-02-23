@@ -9,7 +9,6 @@ module TicketFieldsHelper
         :label                  => ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{field.name}") : field.label,
         :label_in_portal        => field.label_in_portal,
         :description            => field.description,
-        :field_type             => field.field_type,
         :position               => field.position,
         :active                 => field.active,
         :required               => field.required,

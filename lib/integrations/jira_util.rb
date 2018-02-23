@@ -24,7 +24,7 @@ class Integrations::JiraUtil
       end
       
       Rails.logger.debug "After jira_app_biz_rule #{jira_app_biz_rule.inspect}"
-      notify_value = installed_app.send("configs_#{jira_app_biz_rule.name}")
+      notify_value = installed_app.safe_send("configs_#{jira_app_biz_rule.name}")
       if (notify_value.blank? || notify_value == "none")
         jira_app_biz_rule.app_business_rule.destroy unless jira_app_biz_rule.new_record?  # delete it if the option choosen is none.
       else
@@ -68,7 +68,7 @@ class Integrations::JiraUtil
             mapped_data = obj_mapper.map_it(account.id, notify_value, data, :ours_to_theirs, [:map])
             Rails.logger.debug "mapped_data #{mapped_data}"
             invoke_action = notify_value.match("comment_in_jira") ? ADD_COMMENT : UPDATE_STATUS
-            response  = jira_obj.send(invoke_action, issue_id, mapped_data)
+            response  = jira_obj.safe_send(invoke_action, issue_id, mapped_data)
             jira_key = if invoke_action == ADD_COMMENT
               INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account.id, :local_integratable_id=>notify_resource.local_integratable_id, :remote_integratable_id=>notify_resource.remote_integratable_id, :comment_id => response[:json_data]["id"] }
             elsif invoke_action == UPDATE_STATUS

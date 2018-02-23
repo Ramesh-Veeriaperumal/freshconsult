@@ -54,7 +54,7 @@ module Export
         @agents.each do |agent|
           csv_data = []
           @headers.each do |val|
-            csv_data << strip_equal(send(@csv_hash[val], agent))
+            csv_data << strip_equal(safe_send(@csv_hash[val], agent))
           end
           csv << csv_data if csv_data.any?
         end
@@ -65,7 +65,7 @@ module Export
           if identifier == "language"
             agent.user.language_name
           else
-            agent.user.send(identifier)
+            agent.user.safe_send(identifier)
           end
         end
       end

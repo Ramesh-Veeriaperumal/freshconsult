@@ -15,7 +15,7 @@ module Freshquery
 
     def set_instance_variables(request_params)
       request_params.each_pair do |key, value|
-        self.class.send(:attr_accessor, key)
+        self.class.safe_send(:attr_accessor, key)
         instance_variable_set("@#{key}", value)
       end
     end

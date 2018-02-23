@@ -11,7 +11,7 @@ class Security::AgentNotificationObserver < ActiveRecord::Observer
   }
 
   def after_commit(user)
-    if user.send(:transaction_include_action?, :update)
+    if user.safe_send(:transaction_include_action?, :update)
       if user.agent?
         changed_attributes = user.previous_changes.keys & USER_ATTRIBUTES.keys
         unless changed_attributes.empty?
