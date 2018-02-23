@@ -12,7 +12,7 @@ class Integrations::ObjectMapper
     data_hash = {:input => data}
     stages.each {|s|
       config = mapper_config[s]
-      self.send(s, data_hash, config, convertion_type) unless config.blank?
+      self.safe_send(s, data_hash, config, convertion_type) unless config.blank?
       Rails.logger.debug "=========== After #{s} for #{mapper_name}: =========="
     }
     data_hash[:to_entity]
@@ -55,7 +55,7 @@ class Integrations::ObjectMapper
                 set_data = set_data[m]
               }
             else
-              set_data = from_entity.send(from_meth)
+              set_data = from_entity.safe_send(from_meth)
             end
           end
         else
@@ -70,7 +70,7 @@ class Integrations::ObjectMapper
         if to_entity.class == Hash
           to_entity[to_meth] = set_data
         elsif !to_meth.nil? and to_entity.respond_to?(to_meth)
-          to_entity.send(to_meth+"=", set_data)
+          to_entity.safe_send(to_meth+"=", set_data)
         else
           data_hash[:to_entity] = set_data
         end
@@ -99,7 +99,7 @@ class Integrations::ObjectMapper
     def invoke_handler(handler_name, data, config)
       ours_handler_config = HANDLERS[handler_name]
       ours_handler = ours_handler_config[:clazz].constantize.new
-      ours_handler.send(ours_handler_config[:method], data, config)
+      ours_handler.safe_send(ours_handler_config[:method], data, config)
     end
 
     def self.clone(obj)
@@ -115,8 +115,8 @@ class Integrations::ObjectMapper
         },
         :map=>[
           {:ours=>"note_body_content", :theirs_to_ours=>{:handler=>:db_fetch, :create_if_empty=>true, :entity=>Helpdesk::NoteBody,
-                          :create_params => {:body => "JIRA comment {{notification_cause}} # {{comment.id}}:\n {{comment.body}}\n",                                              
-                                              :account_id => "{{account_id}}"}}}, 
+                          :create_params => {:body => "JIRA comment {{notification_cause}} # {{comment.id}}:\n {{comment.body}}\n", 
+                          :account_id => "{{account_id}}"}}}, 
           {:ours=>"user", :theirs_to_ours=>{:handler=>:db_fetch, :use_if_empty=>"admin", :entity=>User, :using=>{:conditions=>["email=?", "{{comment.author.emailAddress}}"]}}},
 
           {:ours=>"source", :theirs_to_ours=>{:handler=>:static_value, :value=>Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"]}},

@@ -37,7 +37,7 @@ class CustomFieldsController < Admin::AdminController
         #                             "custom_dropdown".eql?(f_d[:field_type]) || 
         #                             "default_ticket_type".eql?(f_d[:field_type]))
         f_d[:field_options].delete("section_present") if delete_section_present_key? f_d
-        send("#{action}_field", f_d)
+        safe_send("#{action}_field", f_d)
       end
     end
 
@@ -112,7 +112,7 @@ class CustomFieldsController < Admin::AdminController
             is_saved = create_nested_field(nested_ff_def_entry, custom_field, nested_field.merge(type: "nested_field"))
             construct_child_levels(nested_ff_def_entry, custom_field, nested_field) if is_saved
           else
-            send("#{action}_nested_field", custom_field, nested_field)
+            safe_send("#{action}_nested_field", custom_field, nested_field)
           end
         end
       end
@@ -208,7 +208,7 @@ class CustomFieldsController < Admin::AdminController
       sec_params.each do |sec|
         sec.symbolize_keys!
         if (action = sec.delete(:action)).present? && SECTION_ACTIONS.include?(action)
-          send("#{action}_section_data",account,sec) 
+          safe_send("#{action}_section_data",account,sec) 
         else
           invalid_section? sec
         end

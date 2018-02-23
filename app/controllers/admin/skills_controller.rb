@@ -250,7 +250,7 @@ class Admin::SkillsController < Admin::AdminController
 
     def add_customer_custom_fields filter_hash, type
       special_case = [['', t('none')]]
-      cf = current_account.send("#{type}_form").custom_drop_down_fields
+      cf = current_account.safe_send("#{type}_form").custom_drop_down_fields
       unless cf.blank? 
         filter_hash.push({ :name => -1,
                           :value => "---------------------" 

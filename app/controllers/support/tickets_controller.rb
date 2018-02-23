@@ -211,7 +211,7 @@ class Support::TicketsController < SupportController
     end
 
     def verify_ticket_permission
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless current_user.has_customer_ticket_permission?(@item)
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) unless current_user.has_customer_ticket_permission?(@item)
     end
 
     def not_facebook?

@@ -8,9 +8,9 @@ module Liquid
   #
   class Condition #:nodoc:
     @@operators = {
-      '==' => lambda { |cond, left, right|  cond.send(:equal_variables, left, right) },
-      '!=' => lambda { |cond, left, right| !cond.send(:equal_variables, left, right) },
-      '<>' => lambda { |cond, left, right| !cond.send(:equal_variables, left, right) },
+      '==' => lambda { |cond, left, right|  cond.safe_send(:equal_variables, left, right) },
+      '!=' => lambda { |cond, left, right| !cond.safe_send(:equal_variables, left, right) },
+      '<>' => lambda { |cond, left, right| !cond.safe_send(:equal_variables, left, right) },
       '<'  => :<,
       '>'  => :>,
       '>=' => :>=,
@@ -69,7 +69,7 @@ module Liquid
     def equal_variables(left, right)
       if left.is_a?(Symbol)
         if right.respond_to?(left)
-          return right.send(left.to_s)
+          return right.safe_send(left.to_s)
         else
           return nil
         end
@@ -77,7 +77,7 @@ module Liquid
 
       if right.is_a?(Symbol)
         if left.respond_to?(right)
-          return left.send(right.to_s)
+          return left.safe_send(right.to_s)
         else
           return nil
         end
@@ -99,7 +99,7 @@ module Liquid
       if operation.respond_to?(:call)
         operation.call(self, left, right)
       elsif left.respond_to?(operation) and right.respond_to?(operation)
-        left.send(operation, right)
+        left.safe_send(operation, right)
       else
         nil
       end

@@ -187,7 +187,7 @@ module Helpdesk::Activities
     def set_activities(activity_hash)
       activity_hash.each do |attribute, value|
         if respond_to?("#{attribute}", true)
-          send(attribute, value)
+          safe_send(attribute, value)
         else
           custom_fields(attribute, value[1])
         end
@@ -567,7 +567,7 @@ module Helpdesk::Activities
     # for merge, split, ticket import and round robin
     def activity_type(value)
       if value[:type].present?
-        send(value[:type], value) if respond_to?(value[:type], true)
+        safe_send(value[:type], value) if respond_to?(value[:type], true)
       end
     end
 

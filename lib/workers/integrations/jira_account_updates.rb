@@ -32,7 +32,7 @@ class Workers::Integrations::JiraAccountUpdates
 			else
 				jira_webhook = Integrations::JiraWebhook.new(installed_app,HttpRequestProxy.new,options)
 				Timeout.timeout(JIRA_TIMEOUT) {
-					jira_webhook.send(operation)
+					jira_webhook.safe_send(operation)
 				}
 				
 			end

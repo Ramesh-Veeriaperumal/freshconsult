@@ -1,7 +1,7 @@
 module ActivationsHelper
 
   def user_info(attr_name)
-    email_signup_admin? ? Account.current.send("admin_#{attr_name}") : @user.send(attr_name)
+    email_signup_admin? ? Account.current.safe_send("admin_#{attr_name}") : @user.safe_send(attr_name)
   end
 
   def company_name

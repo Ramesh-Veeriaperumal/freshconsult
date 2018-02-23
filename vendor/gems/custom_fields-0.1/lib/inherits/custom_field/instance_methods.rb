@@ -145,7 +145,7 @@ module Inherits
 
       private
         def return_account_property
-          (account || Account.current).send(name)
+          (account || Account.current).safe_send(name)
         end
         
     end

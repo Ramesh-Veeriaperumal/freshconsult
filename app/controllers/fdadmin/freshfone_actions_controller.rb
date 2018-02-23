@@ -156,7 +156,7 @@ module Fdadmin
         end
         @account.freshfone_numbers.each do |number|
           number.deleted = true
-          number.send(:update_without_callbacks)
+          number.safe_send(:update_without_callbacks)
         end
         result[:status] = 'success'
       else

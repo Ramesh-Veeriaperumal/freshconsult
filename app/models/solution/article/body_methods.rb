@@ -14,13 +14,13 @@ class Solution::Article < ActiveRecord::Base
 
 	BODY_ATTRIBUTES.each do |attrib|
 		define_method "#{attrib}=" do |value|
-			article_body.send("#{attrib}=", value)
+			article_body.safe_send("#{attrib}=", value)
 		end
 	end
 
 	def []=(attr_name, value)
 		if(BODY_ATTRIBUTES.include?(attr_name.to_s))
-			send("#{attr_name}=", value)
+			safe_send("#{attr_name}=", value)
 		else
 			super(attr_name, value)
 		end
@@ -28,7 +28,7 @@ class Solution::Article < ActiveRecord::Base
 
 	def [](attr_name)
 		if(BODY_ATTRIBUTES.include?(attr_name.to_s))
-			send("#{attr_name}")
+			safe_send("#{attr_name}")
 		else
 			super(attr_name)
 		end

@@ -12,7 +12,7 @@ module Export::Util
   end
 
   def limit_data_exports type
-    acc_export = User.current.data_exports.send("#{type.to_s}_export")
+    acc_export = User.current.data_exports.safe_send("#{type.to_s}_export")
     acc_export.first.destroy if acc_export.count >= DataExport::TICKET_EXPORT_LIMIT
   end
 

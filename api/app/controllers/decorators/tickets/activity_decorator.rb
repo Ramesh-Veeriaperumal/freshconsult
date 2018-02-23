@@ -68,14 +68,14 @@ module Tickets
         highlight: summary.nil? ? nil : summary.to_i,
         ticket_id: @ticket.display_id,
         performed_at: parse_activity_time(published_time),
-        actions: send("#{performer_type}_actions").reject(&:empty?)
+        actions: safe_send("#{performer_type}_actions").reject(&:empty?)
       }
     end
 
     private
 
       def performer
-        performing_hash = send("performing_#{performer_type}")
+        performing_hash = safe_send("performing_#{performer_type}")
         return if performing_hash.nil?
         performer_hash = {}
         performer_hash[:type] = performer_type
@@ -184,13 +184,13 @@ module Tickets
           content = (send(key, value) if respond_to?(key.to_s, true))
         elsif key.to_s == SPECIAL_ACTION_IDENTIFIER && SPECIAL_ACTIONS.include?(value[:type].to_sym) && respond_to?(value[:type], true)
           type = value[:type]
-          content = send(value[:type], value)
+          content = safe_send(value[:type], value)
         elsif CONTENT_LESS_TYPES.include?(key)
           # content will be empty for this types
           type = type_mapping(send(key, value))
         elsif respond_to?(key.to_s, true)
           type = type_mapping(key)
-          content = send(key, value)
+          content = safe_send(key, value)
         elsif custom_field?(key)
           type = :property_update
           content = custom_fields(key, value)

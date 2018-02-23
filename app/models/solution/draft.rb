@@ -114,7 +114,7 @@ class Solution::Draft < ActiveRecord::Base
 
   def publish!
     COMMON_ATTRIBUTES.each do |attr|
-      article.send("#{attr}=", self.send(attr))
+      article.safe_send("#{attr}=", self.safe_send(attr))
     end
 
     move_attachments
@@ -169,8 +169,8 @@ class Solution::Draft < ActiveRecord::Base
 
     def move_attachments
       [:attachments, :cloud_files].each do |assoc|
-        article.send(assoc).where( :id => self.deleted_attachments(assoc) ).destroy_all
-        self.send(assoc).each do |item|
+        article.safe_send(assoc).where( :id => self.deleted_attachments(assoc) ).destroy_all
+        self.safe_send(assoc).each do |item|
           item.update_attributes(item.object_type => article)
         end
       end

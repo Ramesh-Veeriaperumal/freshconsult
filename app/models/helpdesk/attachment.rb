@@ -33,8 +33,12 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :s3_host_name => S3_CONFIG[:s3_host_name],
     :s3_server_side_encryption => 'AES256',
     :whiny => false,
+    :validate_media_type => false,
     :restricted_characters => /[&$+,\/:;=?@<>\[\]\{\}\|\\\^~%#]/,
     :styles => Proc.new  { |attachment| attachment.instance.attachment_sizes }
+
+  # TODO - please remove this. Refer https://github.com/thoughtbot/paperclip#security-validations
+  do_not_validate_attachment_file_type :content
 
    scope :gallery_images,
     {

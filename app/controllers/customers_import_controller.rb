@@ -10,7 +10,7 @@ class CustomersImportController < ApplicationController
    #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
   def csv
-    redirect_to "/#{params[:type].pluralize}", :flash => { :notice => t(:'flash.import.already_running')} if current_account.send("#{params[:type]}_import")
+    redirect_to "/#{params[:type].pluralize}", :flash => { :notice => t(:'flash.import.already_running')} if current_account.safe_send("#{params[:type]}_import")
   end
 
   def map_fields
@@ -22,7 +22,7 @@ class CustomersImportController < ApplicationController
   
   def create
     if fields_mapped?
-      current_account.send(:"create_#{params[:type]}_import",{:import_status => Admin::DataImport::IMPORT_STATUS[:started]})
+      current_account.safe_send(:"create_#{params[:type]}_import",{:import_status => Admin::DataImport::IMPORT_STATUS[:started]})
       import_worker = params[:type].eql?("company") ?
         "Import::CompanyWorker" :
         "Import::ContactWorker"
@@ -36,7 +36,7 @@ class CustomersImportController < ApplicationController
   private
 
   def validate_customer_type
-    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless CUSTOMER_TYPE.include?(params[:type])
+    redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) unless CUSTOMER_TYPE.include?(params[:type])
   end
 
   def validate_params

@@ -78,6 +78,7 @@ class Admin::ChatWidgetsController < Admin::AdminController
   def toggle
     app_id = ChatConfig['app_id']
     widget = current_account.chat_widgets.find_by_id(params[:id])
+    #TODO NxD - note this code can be improved - test - if widget should come after
     site_id = widget.chat_setting.site_id
     if widget
       request_params = { :attributes => params[:attributes] }

@@ -21,7 +21,7 @@ module Gnip::RuleHelper
     def gnip_rule_send_action(rule, action)
       replay_or_prod = @replay ? STREAM[:replay] : STREAM[:production]
       begin
-        response = @url.send(action,rule)
+        response = @url.safe_send(action,rule)
         error = response.to_s + response.code.to_s unless action_response?(response,action)
       rescue => e
         error = error.to_s + e.to_s

@@ -163,7 +163,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def log_data(content, log_type)
-      Rails.logger.send(log_type, content)
+      Rails.logger.safe_send(log_type, content)
     end
 
     def key

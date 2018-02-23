@@ -9,13 +9,13 @@ module Ember
     end
 
     def create
-      return render_request_error(:existing_import_inprogress, 409) if import_exists?(params[:type]) 
+      return render_request_error(:existing_import_inprogress, 409) if import_exists?(params[:type])
       store_file
-      current_account.send(:"create_#{@item[:type]}_import", IMPORT_STARTED)
+      current_account.safe_send(:"create_#{@item[:type]}_import", IMPORT_STARTED)
       IMPORT_WORKERS[@item[:type]].perform_async import_data
       head 204
     rescue Exception => e
-      Rails.logger.error "Exception while parsing csv file for contact/company 
+      Rails.logger.error "Exception while parsing csv file for contact/company
                         import, message: #{e.message}, exception: #{e.backtrace}"
       render_errors INVALID_CSV_FILE_ERROR
     end
@@ -33,11 +33,11 @@ module Ember
     end
 
     def import_exists?(type)
-      current_account.send(:"#{type}_import").present?
+      current_account.safe_send(:"#{type}_import").present?
     end
 
     def build_object
-      @item = { 
+      @item = {
         account_id: current_account.id,
         email: current_user.email,
         type: params[:type],
@@ -56,7 +56,7 @@ module Ember
 
     def validate_filter_params
       params.permit(*VALID_INDEX_PARAMS, *ApiConstants::DEFAULT_INDEX_FIELDS)
-      @import_filter = CustomerImportFilterValidation.new(params, nil, 
+      @import_filter = CustomerImportFilterValidation.new(params, nil,
                                                         string_request_params?)
       render_errors(@import_filter.errors, @import_filter.error_options) unless @import_filter.valid?
     end

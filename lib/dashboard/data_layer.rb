@@ -93,11 +93,11 @@ class Dashboard::DataLayer < Dashboard
   end
 
   def first_group_by_limit
-    send(GROUP_BY_VALUES_MAPPING[group_by.first.to_s]).count
+    safe_send(GROUP_BY_VALUES_MAPPING[group_by.first.to_s]).count
   end
 
   def last_group_by_limit
-    send(GROUP_BY_VALUES_MAPPING[group_by.last.to_s]).count
+    safe_send(GROUP_BY_VALUES_MAPPING[group_by.last.to_s]).count
   end
 
   def group_filter_present?

@@ -1,11 +1,10 @@
 class Bot < ActiveRecord::Base
-
   include Redis::OthersRedis
   include Redis::RedisKeys
 
   self.primary_key = :id
 
-  attr_accessible :name, :avatar, :portal_id, :template_data, :enable_in_portal
+  attr_accessible :name, :portal_id, :template_data, :enable_in_portal
 
   attr_accessor :training_completed
 
@@ -14,6 +13,10 @@ class Bot < ActiveRecord::Base
   validates :enable_in_portal, inclusion: {in: [true, false]}
   validates :external_id, uniqueness: true
   validates :portal_id, uniqueness: true
+
+  after_create :training_not_started!
+  before_update :check_constant_fields
+
 
   has_one :logo,
           as: :attachable,
@@ -37,43 +40,79 @@ class Bot < ActiveRecord::Base
     through: :portal_solution_categories
 
   serialize :template_data, Hash
-  serialize :avatar, Hash
   serialize :additional_settings, Hash
 
+  UPDATE_DISALLOWED_FIELDS = %w[external_id portal_id  product_id account_id]
+
+  def check_constant_fields
+    (changes.keys & UPDATE_DISALLOWED_FIELDS).empty?
+  end
 
   def render_widget_code?
-    enable_in_portal && (get_others_redis_key(status_redis_key).to_i == BotConstants::BOT_STATUS_HASH[:training_completed] || !redis_key_exists?(status_redis_key))
+    enable_in_portal && (get_others_redis_key(status_redis_key).to_i == BotConstants::BOT_STATUS[:training_completed] || !redis_key_exists?(status_redis_key))
+  end
+  
+  def training_not_started!
+    set_others_redis_key(status_redis_key, BotConstants::BOT_STATUS[:training_not_started])
+  end
+
+  def training_inprogress!
+    set_others_redis_key(status_redis_key, BotConstants::BOT_STATUS[:training_inprogress])
+  end
+
+  def training_completed!
+    set_others_redis_key(status_redis_key, BotConstants::BOT_STATUS[:training_completed])
   end
 
   def status_redis_key
     BOT_STATUS % { account_id: Account.current.id, portal_id: portal_id }
   end
 
-
-  def logo_url
-    template_data[:logo_url]
+  def  training_status
+    get_others_redis_key(status_redis_key)
   end
 
+  def self.default_profile
+    profile_json = {
+      theme_colour: BotConstants::DEFAULT_BOT_THEME_COLOUR,
+      widget_size: BotConstants::DEFAULT_WIDGET_SIZE
+    }
+    profile_json
+  end
+
+
   def profile
-    avatar_cdn = get_avatar_with_cdn 
+    default = default_avatar?
+    avatar_id = additional_settings[:avatar_id] if default
+    avatar_hash = {
+      url: get_cdn_url,
+      avatar_id: avatar_id,
+      is_default: default
+
+    }
     profile_hash = {
       name: name,
-      avatar: avatar_cdn,
+      avatar: avatar_hash,
       header: template_data[:header],
       theme_colour: template_data[:theme_colour],
-      widget_size: template_data[:size],
-      #widget_position: template_data[:position],
-      enable_in_portal: enable_in_portal
+      widget_size: template_data[:widget_size]
     }
     profile_hash
   end
 
-  def get_avatar_with_cdn 
-    avatar[:url] = avatar[:url].gsub(BOT_CONFIG[:avatar_bucket_url], BOT_CONFIG[:avatar_cdn_url]) unless avatar[:is_default] 
-    avatar         
+  def get_cdn_url
+    return if default_avatar?
+    cdn_url = logo.content.url.gsub(BOT_CONFIG[:avatar_bucket_url], BOT_CONFIG[:avatar_cdn_url]) if logo && logo.content
   end
 
   def category_ids=(category_ids = [])
     self.portal_solution_category_ids = self.portal.portal_solution_categories.where(solution_category_meta_id: category_ids).pluck(:id)
   end
+
+ private
+
+  def default_avatar?
+    additional_settings.present? && additional_settings[:is_default]
+  end
+
 end

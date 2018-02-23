@@ -7,13 +7,13 @@ class Admin::TemplatesController < Admin::AdminController
   
   before_filter(:only => :update) do |c| #validating the syntax before persisting.
     custom_css = c.request.params[:portal_template][:custom_css]
-    c.send(:css_syntax?, custom_css) unless custom_css.nil?
+    c.safe_send(:css_syntax?, custom_css) unless custom_css.nil?
     if current_account.falcon_support_portal_theme_enabled?
       Portal::Template::TEMPLATE_MAPPING_FILE_BY_TOKEN_FALCON
     else
       Portal::Template::TEMPLATE_MAPPING_FILE_BY_TOKEN
     end.each do |key,file|
-      c.send(:liquid_syntax?, c.request.params[:portal_template][key.to_sym])
+      c.safe_send(:liquid_syntax?, c.request.params[:portal_template][key.to_sym])
     end
   end
 

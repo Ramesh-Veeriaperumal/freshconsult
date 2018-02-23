@@ -8,7 +8,7 @@ module Integrations
         account = Account.current
         args = args.deep_symbolize_keys
         events = [args[:current_event].to_sym]
-        evaluate_on = account.send(args[:association].pluralize.to_sym).find args[:evaluate_on_id]
+        evaluate_on = account.safe_send(args[:association].pluralize.to_sym).find args[:evaluate_on_id]
         account.installed_app_business_rules_from_cache.each do |vr|
           vr.pass_through evaluate_on, events
         end

@@ -8,7 +8,7 @@ class HashValidator < ApiValidator
   end
 
   def validate_hash
-    valid_options = options.except(*record.class.send(:_validates_default_keys))
+    valid_options = options.except(*record.class.safe_send(:_validates_default_keys))
     # the delimiter could be a proc (eg: SatisfactionRatingValidation) in
     # some cases. So the proc has to be invoked for those cases.
     valid_options = call_block(delimeter) if delimeter && delimeter.is_a?(Proc)

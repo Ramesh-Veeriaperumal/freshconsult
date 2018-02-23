@@ -9,7 +9,7 @@ module ContactsCompaniesConcern
   }
 
   def export_field_mappings
-    current_account.send("#{cname}_form").send("#{cname}_fields_from_cache").inject({}) do |a, e|
+    current_account.safe_send("#{cname}_form").safe_send("#{cname}_fields_from_cache").inject({}) do |a, e|
       fields_to_export.include?(e.name) ? a.merge!(e.label => e.name) : a
     end
   end
@@ -29,7 +29,7 @@ module ContactsCompaniesConcern
     params_hash = params[cname].merge("export_type"=>cname)
     return false unless validate_body_params(nil, params_hash)
     sanitize_body_params
-    args = { :csv_hash => export_field_mappings, 
+    args = { :csv_hash => export_field_mappings,
              :user => api_current_user.id,
              :portal_url => portal_url }
     if !redis_key_exists?(COMPANIES_EXPORT_SIDEKIQ_ENABLED) &&

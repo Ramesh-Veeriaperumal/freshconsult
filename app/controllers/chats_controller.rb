@@ -3,7 +3,7 @@ class ChatsController < ApplicationController
   include ApplicationHelper
   include ChatHelper
 
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :enable, :update_site, :toggle, :trigger]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :enable, :toggle, :trigger]
   before_filter  :verify_chat_token, :only => [:trigger]
   around_filter  :select_account, :only => [:trigger]
   before_filter  :load_ticket, :only => [:add_note, :missed_chat]
@@ -27,6 +27,35 @@ class ChatsController < ApplicationController
     end
   end
 
+
+  def request_proxy
+    action = params[:action]
+    agent_id = params[:id].to_i
+    method = convert_http_request_symbol_to_string(params[:method])
+    #regular agent can update his own availability (not someone else's)
+    if action == 'update_availability' && agent_id == current_user.id
+      path, request_params = ["agents/#{agent_id}/updateAvailability", params.slice('status')]
+      response = livechat_request(action, request_params,
+                                  path, method)
+      response_body, response_status = handle_livechat_response(response)
+      render :json => response_body, status: response_status
+    elsif current_user.privilege?(:admin_tasks)
+      path, request_params = parse_and_sanitise_admin_proxy_request(action, method, params)
+      response = livechat_request(action, request_params,
+                                  path, method)
+
+      response_body, response_status = handle_livechat_response(response)
+      render :json => response_body, status: response_status
+    else
+      render :json => { code: :only_admin_can_create_shortcodes, :status => 403 }, status: 403
+    end
+  end
+
+
+  alias_method :create_shortcode, :request_proxy
+  alias_method :delete_shortcode, :request_proxy
+  alias_method :update_shortcode, :request_proxy
+  alias_method :update_availability, :request_proxy
 
   def create_ticket
     ticket_params = {
@@ -93,6 +122,7 @@ class ChatsController < ApplicationController
 
   def enable
     status = enable_livechat_feature
+    #TODO  neil - fix this as well - status code needed
     render :json => { :status => status }
   end
 
@@ -105,6 +135,7 @@ class ChatsController < ApplicationController
       chat_setting.update_attributes({:enabled => params[:attributes][:active]})
       render :json => { :status => "success" }
     else
+      #TODO  neil - fix this as well - status code needed
       render :json => { :status => "error" }
     end
   end
@@ -116,15 +147,18 @@ class ChatsController < ApplicationController
     if response && response[:status] == 200
       render :json => { :status => "success" }
     else
+      #TODO  neil - fix this as well - status code needed
       render :json => { :status => "error" }
     end
   end
 
   def trigger
+    #TODO NxD - add check - only certain predefined events are allowed to pass thru,
+    #TODO contd - reject everything else
     event = params[:eventType]
     content = params[:content]
     content = JSON.parse(params[:content], symbolize_names: true) if content.is_a?(String)
-    send(event, content)
+    safe_send(event, content)
   end
 
   def export 
@@ -142,6 +176,7 @@ class ChatsController < ApplicationController
     else
       status = "error"
     end
+    #TODO  neil - fix this as well - status code needed
     render :json => { :status => status}
   end
 
@@ -153,11 +188,64 @@ class ChatsController < ApplicationController
       url = result['url']
       redirect_to url
     else
+      #TODO  neil - fix this as well - status code needed
       render :json => { :status=> "error", :message => "Error while downloading export!"}
     end
   end
 
   private
+
+  def parse_and_sanitise_admin_proxy_request(action, method, params)
+    path, request_params =
+      if action == 'create_shortcode' && method == 'POST'
+        #puts "INFO app/controllers/chats_controller.rb request_proxy create_shortcode"
+        ['shortcodes', params.slice('attributes', 'appId', 'userId', 'siteId', 'token')]
+      elsif action == 'delete_shortcode' && method == 'DELETE'
+        #puts "INFO app/controllers/chats_controller.rb request_proxy action : delete_shortcode params: #{params.inspect}"
+        ["shortcodes/#{params[:id]}", {:attributes => {:empty => :empty}}]
+      elsif action == 'update_shortcode' && method == 'PUT'
+        #puts "INFO app/controllers/chats_controller.rb  request_proxy update_shortcode"
+        ["shortcodes/#{params[:id]}", params.slice('attributes', 'appId', 'userId', 'siteId', 'token') ]
+      elsif action == 'update_availability' && method == 'PUT'
+        #puts "INFO app/controllers/chats_controller.rb request_proxy action: update_availability  params: #{params.inspect}"
+        ["agents/#{agent_id}/updateAvailability", params.slice('status')]
+      else
+        #puts "Catch all else "
+        ["none/livechat_invalid_request", {:attributes => {:empty => :empty}}]
+      end
+    [path, request_params]
+  end
+
+  # this function is needed because httparty needs method as string, comes as :post (interned string from Rails router)
+  def convert_http_request_symbol_to_string(method)
+    case method
+      when :post
+        'POST'
+      when :get
+        'GET'
+      when :put
+        'PUT'
+      when :delete
+        'DELETE'
+      else
+        #cause httparty to fail
+        'UNKNOWN'
+    end
+  end
+
+  def handle_livechat_response(response)
+    response_body, response_status =
+      if response[:status] >= 200 && response[:status] <= 226 # highest 2xx response code as of 2-nov-2017
+        response_body = { code: :success, :status => response[:status] }
+        json_parse_body = JSON.parse(response[:text])
+        response_body.merge!({ data: json_parse_body['data']}) if json_parse_body.has_key?('data')
+        [response_body, response[:status]]
+      else
+        #render :json => { code: :something_went_wrong, :status => response[:status] }, status: response[:status]
+        [{ code: :something_went_wrong, :status => response[:status] }, response[:status]]
+      end
+    [response_body, response_status]
+  end
 
   def select_account(&block)
     render :json => { :status=> "error", :message => "Account ID Not Found!"} if params[:account_id].nil?
@@ -169,6 +257,7 @@ class ChatsController < ApplicationController
         Account.reset_current_account
       end 
     rescue => e
+      #TODO  neil - fix this as well - status code needed
       render :json => { :status=> "error", :message => "Something went wrong => "+e }
     end
   end
@@ -185,7 +274,11 @@ class ChatsController < ApplicationController
                 :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
                 :note_body_attributes => { :body_html => note }
             )
-    @note.save_note
+    if @note.save_note
+      return true
+    else
+      return false
+    end
   end
 
 
@@ -212,9 +305,12 @@ class ChatsController < ApplicationController
       note = add_style params[:messages]
     end
     status = create_note(@ticket.requester_id, note, current_account.id)
+    #TODO nxd missing save failure should be logged to new relic
+    #TODO  neil - fix this as well - status code needed
     render :json => { :ticket_id=> @note.notable.display_id , :status => status }
   end
 
+  # NOTE - this is triggered from livechat.
   def missed_chat params
     subject = t("livechat.offline_chat_subject", :visitor_name => params[:name],
                   :date => formated_date(Time.now(), {:format => :short_day_with_week, :include_year => true}))
@@ -241,7 +337,9 @@ class ChatsController < ApplicationController
     ticket_params[:group_id] = group.id if group
 
     @ticket = current_account.tickets.build(ticket_params)
+    #TODO - nxd - missing save failure should be logged to New relic.
     status = @ticket.save_ticket
+    #TODO  neil - fix this as well - status code needed - nxd
     render :json => { :external_id=> @ticket.display_id , :status => status }
   end
 

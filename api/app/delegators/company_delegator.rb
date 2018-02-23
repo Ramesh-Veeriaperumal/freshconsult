@@ -72,30 +72,6 @@ class CompanyDelegator < BaseDelegator
       ContactConstants::ALLOWED_AVATAR_SIZE
     end
 
-    def default_field_validations
-      {
-        health_score: { custom_inclusion: { in: proc { |x| x.valid_health_score_choices } } },
-        account_tier: { custom_inclusion: { in: proc { |x| x.valid_account_tier_choices } } },
-        industry: { custom_inclusion: { in: proc { |x| x.valid_industry_choices } } }
-      }
-    end
-
-    def required_default_fields
-      company_form.default_company_fields.select(&:required_for_agent)
-    end
-
-    def valid_health_score_choices
-      company_form.default_health_score_choices
-    end
-
-    def valid_account_tier_choices
-      company_form.default_account_tier_choices
-    end
-
-    def valid_industry_choices
-      company_form.default_industry_choices
-    end
-
     def company_form
       @company_form ||= Account.current.company_form
     end

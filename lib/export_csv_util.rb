@@ -84,8 +84,8 @@ module ExportCsvUtil
 
   def export_customer_fields type
     return unless ["contact", "company"].include?(type)
-    custom_form = Account.current.send("#{type}_form")
-    custom_fields = type.eql?("contact") ? custom_form.send("#{type}_fields", true) : custom_form.send("#{type}_fields")
+    custom_form = Account.current.safe_send("#{type}_form")
+    custom_fields = type.eql?("contact") ? custom_form.safe_send("#{type}_fields", true) : custom_form.safe_send("#{type}_fields")
     custom_fields.reject!{|x| ["tag_names"].include?(x.name)} if type.eql?("contact")
     custom_fields.collect { |cf| 
             { :label => cf.label, 
@@ -151,7 +151,7 @@ module ExportCsvUtil
       record = []
       headers.each do |val|
         data = item.is_a?(Helpdesk::ArchiveTicket) ? 
-                  fetch_archive_ticket_value(item, val) : item.send(val)
+                  fetch_archive_ticket_value(item, val) : item.safe_send(val)
         if data.present?
           if DATE_TIME_PARSE.include?(val.to_sym)
             data = parse_date(data)
@@ -205,7 +205,7 @@ module ExportCsvUtil
   end
 
   def fetch_archive_ticket_value(item, val)
-    item.respond_to?(val) ? item.send(val) : item.custom_field_value(val)
+    item.respond_to?(val) ? item.safe_send(val) : item.custom_field_value(val)
   end
 
   private

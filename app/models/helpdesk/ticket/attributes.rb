@@ -58,14 +58,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     begin
     # in case of new record return new object
       return Helpdesk::TicketBody.new unless self.id
-      ticket_body = send("read_from_#{$primary_cluster}") 
+      ticket_body = safe_send("read_from_#{$primary_cluster}") 
       if ticket_body
         return ticket_body
       else
-        send("read_from_#{$secondary_cluster}") 
+        safe_send("read_from_#{$secondary_cluster}") 
       end
     rescue Exception => e
-      send("read_from_#{$secondary_cluster}") 
+      safe_send("read_from_#{$secondary_cluster}") 
     end
   end
   

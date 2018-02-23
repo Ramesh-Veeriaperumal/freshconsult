@@ -62,8 +62,8 @@ module DeleteSpamConcern
       model_name  = define_model
 
       @items.each do |file|
-        file_type       = file.send("#{model_name}_type")
-        file_attachable = file.send(model_name) unless ['UserDraft'].include? file_type
+        file_type       = file.safe_send("#{model_name}_type")
+        file_attachable = file.safe_send(model_name) unless ['UserDraft'].include? file_type
 
         if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? file_type
           ticket = file_attachable.respond_to?(:notable) ? file_attachable.notable : file_attachable

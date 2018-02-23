@@ -13,7 +13,7 @@ def extract_zendesk_zip(file_url,username,password)
         f.write(file.read)
       end    
       @file_list = Array.new       
-      zf = Zip::ZipFile.open(zip_file_name)
+      zf = Zip::File.open(zip_file_name)
     
       zf.each do |zip_file|        
         report_name = File.basename(zip_file.name).gsub('zip','xml')

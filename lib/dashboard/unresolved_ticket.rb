@@ -32,7 +32,7 @@ class Dashboard::UnresolvedTicket < Dashboard
         return {}
       end
     else
-      send("aggregation_from_#{WIDGET_OPTIONS[widget_name][:fallback]}")
+      safe_send("aggregation_from_#{WIDGET_OPTIONS[widget_name][:fallback]}")
     end
     id_name_mapping(tickets_count,group_by.first.to_sym)
   end
@@ -46,7 +46,7 @@ class Dashboard::UnresolvedTicket < Dashboard
         NewRelic::Agent.notice_error(e)
       end
     else
-      send("records_from_#{WIDGET_OPTIONS[widget_name][:fallback]}")
+      safe_send("records_from_#{WIDGET_OPTIONS[widget_name][:fallback]}")
     end
   end
 
@@ -85,7 +85,7 @@ class Dashboard::UnresolvedTicket < Dashboard
 
   def options_for_query
     include_missing = ["priority", "status"].include?(group_by.first.to_s) ?  false : true
-    {:first_limit => send(GROUP_BY_VALUES_MAPPING[group_by.first.to_s]).count, :include_missing => include_missing}
+    {:first_limit => safe_send(GROUP_BY_VALUES_MAPPING[group_by.first.to_s]).count, :include_missing => include_missing}
   end
 
 end

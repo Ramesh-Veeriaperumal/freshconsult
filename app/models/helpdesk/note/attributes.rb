@@ -68,14 +68,14 @@ class Helpdesk::Note < ActiveRecord::Base
   def fetch
     begin
       return Helpdesk::NoteBody.new unless self.id
-      note_body = send("read_from_#{$primary_cluster}") 
+      note_body = safe_send("read_from_#{$primary_cluster}") 
       if note_body
         return note_body
       else
-        send("read_from_#{$secondary_cluster}") 
+        safe_send("read_from_#{$secondary_cluster}") 
       end
     rescue Exception => e
-      send("read_from_#{$secondary_cluster}") 
+      safe_send("read_from_#{$secondary_cluster}") 
     end
   end
   

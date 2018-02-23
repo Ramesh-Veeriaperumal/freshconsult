@@ -63,7 +63,7 @@ module Archive
           # Generating model_hash for tickets
           ticket_model_hash[:helpdesk_tickets] = association_data_of_object(ticket)
           ASSOCIATIONS_TO_SERIALIZE[:helpdesk_tickets].each do |association_name|
-            model_association = ticket.send(association_name)
+            model_association = ticket.safe_send(association_name)
             ticket_association_hash[association_name] = association_data_of_object(model_association) if model_association
           end
           ticket_model_hash[:helpdesk_tickets_association] = ticket_association_hash
@@ -119,7 +119,7 @@ module Archive
           :notable_id => archive_ticket.ticket_id,
           :source => note.source,
           :incoming => note.incoming,
-          :private => note.send(:private),
+          :private => note.safe_send(:private),
           :created_at => note.created_at,
           :updated_at => note.updated_at,
           :deleted  => note.deleted
@@ -135,7 +135,7 @@ module Archive
           # Generating model_hash for tickets
           note_model_hash[:helpdesk_tickets] = association_data_of_object(note)
           ASSOCIATIONS_TO_SERIALIZE[:helpdesk_notes].each do |association_name|
-            model_association = note.send(association_name)
+            model_association = note.safe_send(association_name)
             note_association_hash[association_name] = association_data_of_object(model_association) if model_association
           end
           note_model_hash[:helpdesk_notes_association] = note_association_hash
@@ -150,7 +150,7 @@ module Archive
             :notable_id => archive_ticket.ticket_id,
             :source => note.source,
             :incoming => note.incoming,
-            :private => note.send(:private),
+            :private => note.safe_send(:private),
             :created_at => note.created_at,
             :updated_at => note.updated_at,
           }

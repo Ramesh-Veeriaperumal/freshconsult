@@ -18,9 +18,9 @@ module ForumHelperMethods
 		options = params[:q].blank? ? {} : {:q => params[:q]}
 		options[:format] = 'rss' if rss
 		[[:user, :user_id], [:forum, :forum_id]].each do |(route_key, param_key)|
-			return send("#{route_key}_posts_path", options.update(param_key => params[param_key])) if params[param_key]
+			return safe_send("#{route_key}_posts_path", options.update(param_key => params[param_key])) if params[param_key]
 		end
-		options[:q] ? search_all_posts_path(options) : send("all_posts_path", options)
+		options[:q] ? search_all_posts_path(options) : safe_send("all_posts_path", options)
 	end
 
 end

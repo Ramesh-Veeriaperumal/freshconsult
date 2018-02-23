@@ -18,7 +18,7 @@ module LeaderboardConcern
   def feature_name
     :gamification
   end
-  
+
   def fields_to_validate
     ApiLeaderboardConstants::LEADERBOARD_AGENTS_FIELDS
   end
@@ -113,10 +113,10 @@ module LeaderboardConcern
 
   def category_score_for_custom_range(category, ind)
     leader_module = @group_action ? 'group' : 'user'
-    scoper = @support_score.send("#{@board_category}_scoper", current_account, @start_time, @end_time)
+    scoper = @support_score.safe_send("#{@board_category}_scoper", current_account, @start_time, @end_time)
     scoper = scoper.includes(:group) if @group_action
-    scoper_result = category == :mvp ? scoper.limit(50).all : scoper.send(category).limit(50).all
-    result = scoper_result.map { |ss| [ss.send(leader_module).id, ss.tot_score] }
+    scoper_result = category == :mvp ? scoper.limit(50).all : scoper.safe_send(category).limit(50).all
+    result = scoper_result.map { |ss| [ss.safe_send(leader_module).id, ss.tot_score] }
     category_hash(result, category, ind + 1)
   end
 
@@ -151,7 +151,7 @@ module LeaderboardConcern
   def leader_module_scores(leader_modules)
     conditions = { id: leader_modules.map(&:first) }
     conditions.merge!({ helpdesk_agent: true, deleted: false }) unless @group_action
-    result = current_account.send(@module_association).where(conditions).order("FIELD(id, #{conditions[:id]})")
+    result = current_account.safe_send(@module_association).where(conditions).order("FIELD(id, #{conditions[:id]})")
     @group_action ? result : result.includes(:avatar)
   end
 

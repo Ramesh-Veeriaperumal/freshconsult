@@ -87,7 +87,7 @@ class Dashboard::ActivityDecorator < ApiDecorator
   UNWANTED_FIELDS = [:updated_at, :created_at, :size, :content_type]
 
   DEFAULT_PROPERTIES = ['status_name', 'priority_name']
-  
+
     PRIORITIES = {
       "low" => 1,
       "medium" => 2,
@@ -155,12 +155,12 @@ class Dashboard::ActivityDecorator < ApiDecorator
     @activity_name = activity_name
     action = SUMMARY_MAP_ACTION_BY_NAME[@activity_name]
     type = SUMMARY_MAP_TYPE_BY_NAME[@activity_name]
-    content = send(action) if action.present? && respond_to?(action.to_s, true)
+    content = safe_send(action) if action.present? && respond_to?(action.to_s, true)
     if !CONTENT_LESS_TYPES.include?(type) && data['eval_args'].nil?
       data.each_pair do |k, v|
         key = k.to_s.split('_').last
         if key.present? && ALLOWED_CONTENT_SUFFIX.include?(key)
-          content[k] = (DEFAULT_PROPERTIES.include?(k) ? send(k, v) : h(v))
+          content[k] = (DEFAULT_PROPERTIES.include?(k) ? safe_send(k, v) : h(v))
         end
       end
     end

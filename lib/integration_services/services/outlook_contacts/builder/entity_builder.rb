@@ -60,7 +60,7 @@ module IntegrationServices::Services
         def get_seek_columns(user_info)
           seek_columns = {}
           SEEK_COLS.each do |column|
-            seek_columns[column.to_sym] = @formatter.send(column.to_sym, user_info)
+            seek_columns[column.to_sym] = @formatter.safe_send(column.to_sym, user_info)
           end
           seek_columns
         end
@@ -141,13 +141,13 @@ module IntegrationServices::Services
                   user.user_emails.new(:email => value)
                 end
               else
-                user.send("#{attribute}=", value) #handle error if errors out
+                user.safe_send("#{attribute}=", value) #handle error if errors out
               end
             else
               if overwrite
-                user.send("#{attribute}=", value)
+                user.safe_send("#{attribute}=", value)
               elsif user[attribute].blank?
-                user.send("#{attribute}=", value)
+                user.safe_send("#{attribute}=", value)
               end
             end
           end
@@ -157,9 +157,9 @@ module IntegrationServices::Services
         def handle_new_user(user, user_attrs, update_email_attribute)
           user_attrs.each do |attribute, value|
             if attribute.to_s == "email"
-              user.send("#{attribute}=", value) if update_email_attribute
+              user.safe_send("#{attribute}=", value) if update_email_attribute
             else
-              user.send("#{attribute}=", value)
+              user.safe_send("#{attribute}=", value)
             end
           end
           user

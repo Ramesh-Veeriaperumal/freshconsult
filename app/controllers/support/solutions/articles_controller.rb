@@ -32,7 +32,7 @@ class Support::Solutions::ArticlesController < SupportController
 
 
   def handle_unknown
-     redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+     redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
   end
   
   def index
@@ -166,7 +166,7 @@ class Support::Solutions::ArticlesController < SupportController
       draft = @article.draft
       if @article.draft.present?
         @article.attributes.each do |key, value|
-          @article.send("#{key}=", draft.send(key)) if draft.respond_to?(key) and key != 'id'
+          @article.safe_send("#{key}=", draft.safe_send(key)) if draft.respond_to?(key) and key != 'id'
         end
         adapt_attachments
         @article.freeze
@@ -182,8 +182,8 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def active_attachments(att_type)
-      return @article.send(att_type) unless @article.draft.present?
-      att = @article.send(att_type) + @article.draft.send(att_type)
+      return @article.safe_send(att_type) unless @article.draft.present?
+      att = @article.safe_send(att_type) + @article.draft.safe_send(att_type)
       deleted_att_ids = []
       if @article.draft.meta.present? && @article.draft.meta[:deleted_attachments].present? && @article.draft.meta[:deleted_attachments][att_type].present?
         deleted_att_ids = @article.draft.meta[:deleted_attachments][att_type]
@@ -200,7 +200,7 @@ class Support::Solutions::ArticlesController < SupportController
     end
 
     def route_name(language)
-      support_solutions_article_path(@solution_item.send("#{language.to_key}_article") || @solution_item, :url_locale => language.code)
+      support_solutions_article_path(@solution_item.safe_send("#{language.to_key}_article") || @solution_item, :url_locale => language.code)
     end
 
     def unscoped_fetch

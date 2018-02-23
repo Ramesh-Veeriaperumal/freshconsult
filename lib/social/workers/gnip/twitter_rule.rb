@@ -17,7 +17,7 @@ class Social::Workers::Gnip::TwitterRule
     powertrack_envs.each do |env|
       client = Gnip::RuleClient.new(source, env, rule)
       next unless Rails.env.production? || !client.replay
-      response = client.send(args[:action]) #add/delete the given rule
+      response = client.safe_send(args[:action]) #add/delete the given rule
 
       unless response.nil?
         #update delete action response

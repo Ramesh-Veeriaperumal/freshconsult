@@ -45,7 +45,7 @@ module SpamPostMethods
 	end
 
 	def timestamp(post, att)
-		post.send(att) * (10 ** 17) + post.created_at.to_f * (10 ** 7)
+		post.safe_send(att) * (10 ** 17) + post.created_at.to_f * (10 ** 7)
 	end
 
 	def report_post(post, type)

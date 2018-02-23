@@ -14,7 +14,7 @@ class EmailConfigObserver < ActiveRecord::Observer
   end
 
   def after_commit(email_config)
-    unless email_config.send(:transaction_include_action?,:destroy)
+    unless email_config.safe_send(:transaction_include_action?,:destroy)
       deliver_email_activation email_config
     end
   end

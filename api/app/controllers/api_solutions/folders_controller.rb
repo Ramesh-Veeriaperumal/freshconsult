@@ -49,7 +49,7 @@ module ApiSolutions
 
       def create_or_update_folder
         @meta = Solution::Builder.folder(solution_folder_meta: @folder_params, language_id: @lang_id)
-        @item = @meta.send(language_scoper)
+        @item = @meta.safe_send(language_scoper)
         !(@item.errors.any? || @item.parent.errors.any?)
       end
 
