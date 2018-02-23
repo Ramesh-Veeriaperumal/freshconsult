@@ -40,7 +40,7 @@ module Facebook
       # returns nil if there is any Exception
       def execute(verb,*options)
         begin
-          (options.blank?  ? self.send(verb) : self.send(verb,options)) if @graph
+          (options.blank?  ? self.safe_send(verb) : self.safe_send(verb,options)) if @graph
         rescue => e
           return nil
           #Handle Exception Later

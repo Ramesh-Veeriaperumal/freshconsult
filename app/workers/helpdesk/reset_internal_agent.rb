@@ -13,9 +13,11 @@ class Helpdesk::ResetInternalAgent < BaseWorker
     options             = {:reason => args[:reason], :manual_publish => true}
 
     updates_hash = {:internal_agent_id => nil}
-    tickets = account.tickets.where(:internal_group_id => internal_group_id, 
-      :internal_agent_id => internal_agent_id)
-    ticket_ids = tickets.map(&:id)
+    tickets = nil
+    Sharding.run_on_slave do
+      tickets = account.tickets.where(:internal_group_id => internal_group_id, 
+        :internal_agent_id => internal_agent_id)
+    end
     tickets.update_all_with_publish(updates_hash, {}, options)
 
   rescue Exception => e

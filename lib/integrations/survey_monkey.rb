@@ -64,7 +64,7 @@ module Integrations::SurveyMonkey
   end
 
   def self.sanitize_survey_text installed_app
-    installed_app.configs[:inputs]['survey_text'] = Sanitize.clean(installed_app.configs[:inputs]['survey_text'],
+    installed_app.configs[:inputs]['survey_text'] = Sanitize.fragment(installed_app.configs[:inputs]['survey_text'],
       Sanitize::Config::BASIC)
     add_api_version installed_app
   end

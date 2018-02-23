@@ -1,11 +1,12 @@
 #!/bin/bash
 DIR=`dirname "${BASH_SOURCE[0]}"`
 echo "Creating docker images"
-for service in redis32 mysql56 memcached14 localaws
+for service in redis32 mysql57 memcached14 localaws084
 do 
-  docker-compose -f docker/service.yml create $service
+  docker-compose -f docker/service.yml up --no-start $service
 done
-${DIR}/docker_for_mac_fsync_fix.sh
-docker restart mysql56
-bundle exec rake db:create
+docker start mysql57
+echo "Waiting for mysql to start. Sleeping for 10 seconds"
+sleep 10
+mysql -h 127.0.0.1 -u root -e "create database helpkit1" #getting an error while running db:create rake task
 bundle exec rake db:bootstrap

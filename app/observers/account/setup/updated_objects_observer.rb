@@ -4,8 +4,8 @@ class Account::Setup::UpdatedObjectsObserver < ActiveRecord::Observer
   observe Account, EmailConfig, VaRule, EmailNotification
 
 	def after_commit(object)
-		if object.send(:transaction_include_action?, :update)
-			if current_flag_unmarked?(object) && send("additional_check_for_#{current_flag(object)}", object)
+		if object.safe_send(:transaction_include_action?, :update)
+			if current_flag_unmarked?(object) && safe_send("additional_check_for_#{current_flag(object)}", object)
 				mark_current_flag(object)
 			end
 		end

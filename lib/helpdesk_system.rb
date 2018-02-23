@@ -7,7 +7,7 @@ module HelpdeskSystem
       format.html { 
         flash[:notice] = access_denied_message
 
-        redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless request.headers['X-PJAX']
+        redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) unless request.headers['X-PJAX']
         render :text => "abort" if request.headers['X-PJAX']
       }
       format.any(:json,:nmobile) { 
@@ -15,7 +15,7 @@ module HelpdeskSystem
         render :json => current_user ? {:access_denied => true} : {:require_login => true}}
       format.js { 
         flash[:notice] = access_denied_message
-        redirect_url = send(Helpdesk::ACCESS_DENIED_ROUTE)
+        redirect_url = safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
         render :js => "window.location.href='"+ redirect_url +"'"
       }
       format.widget {
@@ -68,8 +68,8 @@ module HelpdeskSystem
       model_name  = define_model
 
       @items.each do |file|
-        file_type       = file.send("#{model_name}_type")
-        file_attachable = file.send(model_name)
+        file_type       = file.safe_send("#{model_name}_type")
+        file_attachable = file.safe_send(model_name)
 
         if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? file_type
           ticket = file_attachable.respond_to?(:notable) ? file_attachable.notable : file_attachable
@@ -104,7 +104,7 @@ module HelpdeskSystem
 
   def process_denied
     flash[:notice] = t(:'flash.general.access_denied')
-    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) 
+    redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) 
   end
 
   def template_priv? item

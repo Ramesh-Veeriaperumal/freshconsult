@@ -211,6 +211,7 @@ defaults: &defaults
     - [active_ticket_central_publish]
     - [channel_framework_command]
     - [ml_solutions_training]
+    - [mixpanel_queue]
 
 development:
   <<: *defaults

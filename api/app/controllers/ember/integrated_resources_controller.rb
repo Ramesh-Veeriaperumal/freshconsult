@@ -46,9 +46,9 @@ module Ember
           ticket = fetch_ticket_using_display_id(params[:local_integratable_id])
           if verify_ticket_state ticket
             installed_application = current_account.installed_applications.find_by_id(params[:installed_application_id])
-            @items = Integrations::IntegratedResource.where(account_id: current_account.id, 
+            @items = Integrations::IntegratedResource.where(account_id: current_account.id,
               installed_application_id: params[:installed_application_id],
-              local_integratable_id: ticket.send(local_integratable_lookup_column(installed_application)))
+              local_integratable_id: ticket.safe_send(local_integratable_lookup_column(installed_application)))
           end
         else
           @items = Integrations::IntegratedResource.where(installed_application_id: params[:installed_application_id], local_integratable_id: params[:local_integratable_id])

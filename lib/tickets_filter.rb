@@ -201,7 +201,7 @@ module TicketsFilter
 
   def self.accessible_filter?(filter, feature_keys = FEATURES_KEYS_BY_FILTER_KEY)
     feature = feature_keys[filter]
-    Account.current and (feature.nil? or Account.current.send("#{feature}_enabled?"))
+    Account.current and (feature.nil? or Account.current.safe_send("#{feature}_enabled?"))
   end
 
   def self.filter(filter, user = nil, scope = nil)

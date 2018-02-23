@@ -28,7 +28,7 @@ Helpkit One Time Setup:
 1. Setup DB
     ``` 
     $ cd <directory containing helpkit code>
-    $ docker-compose -f docker/helpkit.yml run helpkit bash -c "mysql -u root -h mysql56  -e 'CREATE DATABASE IF NOT EXISTS helpkit1' && bundle exec rake db:bootstrap"
+    $ docker-compose -f docker/helpkit.yml run helpkit bash -c "mysql -u root -h mysql57  -e 'CREATE DATABASE IF NOT EXISTS helpkit1' && bundle exec rake db:bootstrap"
     ```    
 
     Note: 

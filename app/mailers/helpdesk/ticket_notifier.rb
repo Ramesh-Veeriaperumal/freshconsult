@@ -267,7 +267,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       params[:attachments].each do |a|
         attachments[a.content_file_name] = {
           :mime_type => a.content_content_type,
-          :content => File.read(a.content.to_file.path, :mode => "rb")
+          :content => Paperclip.io_adapters.for(a.content).read
         }
       end if params[:attachments].present?
       
@@ -372,7 +372,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       note.all_attachments.each do |a|
         attachments[a.content_file_name] = {
           :mime_type => a.content_content_type, 
-          :content => File.read(a.content.to_file.path, :mode => "rb")
+          :content => Paperclip.io_adapters.for(a.content).read
         }
       end
 
@@ -428,7 +428,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         note.all_attachments.each do |a|
           attachments[a.content_file_name] = {
             :mime_type => a.content_content_type, 
-            :content => File.read(a.content.to_file.path, :mode => "rb")
+            :content => Paperclip.io_adapters.for(a.content).read
           }
         end
       end
@@ -480,7 +480,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         note.all_attachments.each do |a|
           attachments[a.content_file_name] = {
             :mime_type => a.content_content_type, 
-            :content => File.read(a.content.to_file.path, :mode => "rb")
+            :content => Paperclip.io_adapters.for(a.content).read
           }
         end
       end
@@ -604,7 +604,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         ticket.all_attachments.each do |a|
           attachments[ a.content_file_name] = { 
             :mime_type => a.content_content_type, 
-            :content => File.read(a.content.to_file.path, :mode => "rb")
+            :content => Paperclip.io_adapters.for(a.content).read
           }
         end
       end

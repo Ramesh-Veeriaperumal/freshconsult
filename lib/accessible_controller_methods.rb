@@ -5,7 +5,7 @@ module AccessibleControllerMethods
       accessible = item.create_helpdesk_accessible(:access_type => visible_type_id)
       if visible_type_id != Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
         accessible_ids = [*params[model_name][:visibility]["#{visible_type_str}_id"]]
-        accessible.send("create_#{visible_type_str}_accesses",accessible_ids)
+        accessible.safe_send("create_#{visible_type_str}_accesses",accessible_ids)
       end
     end
 
@@ -18,7 +18,7 @@ module AccessibleControllerMethods
         old_visible_type_str = Helpdesk::Access::ACCESS_TYPES_KEYS[old_visible_type_id]
         accessible_ids = [*params[model_name][:visibility]["#{new_visible_type_str}_id"]] if new_visible_type_id != Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
         item.helpdesk_accessible.update_attributes(:access_type =>  new_visible_type_id)
-        item.helpdesk_accessible.send("update_#{old_visible_type_str}_access_type_to_#{new_visible_type_str}",accessible_ids)
+        item.helpdesk_accessible.safe_send("update_#{old_visible_type_str}_access_type_to_#{new_visible_type_str}",accessible_ids)
       end
     end
 

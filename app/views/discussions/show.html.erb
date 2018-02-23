@@ -33,7 +33,7 @@
 <% else %>
 	<div class="clearfix mb20">
 			<%= render :partial => "reorder_list", :locals => {
-							:items => @forum_category.send("#{@content_scope}forums"),
+							:items => @forum_category.safe_send("#{@content_scope}forums"),
 							:action_url => reorder_discussions_forums_path,
 							:title => :name, :container_id => "forums_sort",
 							:reorder_id => "forums_reorder_button",

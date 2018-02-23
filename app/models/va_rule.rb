@@ -2,6 +2,7 @@ class VaRule < ActiveRecord::Base
 
   self.primary_key = :id
   include Cache::Memcache::VARule
+  include Va::Constants
 
   TICKET_CREATED_EVENT = { :ticket_action => :created }
   CASCADE_DISPATCHR_DATA  = [
@@ -14,7 +15,7 @@ class VaRule < ActiveRecord::Base
   
   validates_presence_of :name, :rule_type
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type] , :unless => :automation_rule?
-  validate :has_events?, :has_conditions?, :has_actions?
+  validate :has_events?, :has_conditions?, :has_actions?, :has_safe_conditions?
   validate :any_restricted_actions?
 
   before_save :set_encrypted_password
@@ -411,5 +412,14 @@ class VaRule < ActiveRecord::Base
         next if k == 'updated_at' || v.first == v.last
         Va::Logger::Automation.log "ATTR=#{k}::OLD=#{v.first.inspect}::NEW=#{v.last.inspect}"
       }
+    end
+
+    # To make sure that condition operators are not being tampered.
+    def has_safe_conditions?
+      return true if filter_array.nil?
+      filter_array.each do |filter|
+        filter.symbolize_keys!
+        errors.add(:base,"Enter a valid condition") if filter[:operator].present? && va_operator_list[filter[:operator].to_sym].nil?
+      end
     end
 end

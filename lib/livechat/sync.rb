@@ -6,7 +6,7 @@ class Livechat::Sync
   def sync_data_to_livechat(siteId)
     # data_methods = [ 'roles', 'agents', 'groups', 'enable_privileges' ]
     data_methods = [ 'agents', 'groups' ]
-    send(data_methods.shift, data_methods, siteId)
+    safe_send(data_methods.shift, data_methods, siteId)
   end
 
   def sync_account_state args
@@ -99,7 +99,7 @@ class Livechat::Sync
         if user.present?
           user.make_current
           unless next_methods.blank?
-            send(next_methods.shift, next_methods, options['siteId'])
+            safe_send(next_methods.shift, next_methods, options['siteId'])
           else
             LivechatWorker.perform_async({ :worker_method => worker_method, :attributes => options[:attributes]})
           end

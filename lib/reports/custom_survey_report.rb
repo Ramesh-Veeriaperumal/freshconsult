@@ -97,7 +97,7 @@ module Reports::CustomSurveyReport
 
     def rating_text_for_custom_questions survey_result, question, question_column
       return '' if survey_result.survey_result_data.nil?
-      survey_answer = survey_result.survey_result_data.send(question_column)
+      survey_answer = survey_result.survey_result_data.safe_send(question_column)
 
       face_value = (question.custom_field_choices || []).find do |choice|
         choice.face_value == survey_answer

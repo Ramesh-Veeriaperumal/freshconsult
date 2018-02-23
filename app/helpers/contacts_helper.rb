@@ -17,7 +17,7 @@ module ContactsHelper
   end
 
   def render_as_list form_builder, field
-    field_value = (field_value = @user.send(field.name)).blank? ? field.default_value : field_value
+    field_value = (field_value = @user.safe_send(field.name)).blank? ? field.default_value : field_value
     if form_builder.nil? 
       if field.name == "email"
         render_user_email_field field
@@ -37,7 +37,7 @@ module ContactsHelper
   def view_contact_fields 
     reject_fields = [:default_name, :default_job_title, :default_company_name, :default_description, :default_tag_names]
     view_contact_fields = contact_fields.reject do |item|
-      (reject_fields.include? item.field_type) || !(@user.send(item.name).present?)
+      (reject_fields.include? item.field_type) || !(@user.safe_send(item.name).present?)
     end
   end
 
@@ -121,7 +121,7 @@ HTML
   end
 
   def contact_count
-    # count = current_account.all_users.send("contacts").size
+    # count = current_account.all_users.safe_send("contacts").size
     "<span class='company-list-count' data-company-count='40'></span>".html_safe
   end
 end

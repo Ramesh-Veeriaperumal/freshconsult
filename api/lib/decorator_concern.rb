@@ -34,7 +34,7 @@ module DecoratorConcern
   end
 
   def render_with_before_render_action(*options, &block)
-    send(decorator_method) if errors_empty? && decorator_method
+    safe_send(decorator_method) if errors_empty? && decorator_method
     render_without_before_render_action(*options, &block)
   end
 

@@ -30,14 +30,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def associated_prime_ticket type #prime => parent or tracker ticket
     return false unless ["child", "related"].include? type
-    if self.send("#{type}_ticket?") and self.associates.present?
+    if self.safe_send("#{type}_ticket?") and self.associates.present?
       account.tickets.find_by_display_id(self.associates.first)
     end
   end
 
   def associated_subsidiary_tickets(type, options=[]) #subsidiary => child or related tickets
     return false unless ["assoc_parent", "tracker"].include? type
-    account.tickets.preload(options).where(:display_id => self.associates) if self.send("#{type}_ticket?") && self.associates.present?
+    account.tickets.preload(options).where(:display_id => self.associates) if self.safe_send("#{type}_ticket?") && self.associates.present?
   end
 
   def can_be_associated?

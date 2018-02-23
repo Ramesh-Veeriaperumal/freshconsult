@@ -23,7 +23,7 @@ class Workers::MergeTickets
       source_ticket.time_sheets.update_all("workable_id = #{args[:target_ticket_id]}", [ "account_id = ?", 
                                                                                 args[:account_id] ] )
       STATES_TO_BE_MOVED.each do |state|
-        TICKET_STATE_COLLECTION[state] = (TICKET_STATE_COLLECTION[state] || []).push(source_ticket.send(state))
+        TICKET_STATE_COLLECTION[state] = (TICKET_STATE_COLLECTION[state] || []).push(source_ticket.safe_send(state))
       end
       add_note_to_source_ticket(source_ticket, args[:source_note_private], args[:source_note])
       remove_ecommerce_mapping(source_ticket) if source_ticket.ecommerce?
@@ -53,9 +53,9 @@ class Workers::MergeTickets
 
   def self.update_target_ticket_states(target_ticket)
     STATES_TO_BE_MOVED.each do |state| 
-      current_state_collection = TICKET_STATE_COLLECTION[state].push(target_ticket.send(state))
+      current_state_collection = TICKET_STATE_COLLECTION[state].push(target_ticket.safe_send(state))
       operator = ( state == 'first_response_time' ? 'min' : 'max' )
-      target_ticket.ticket_states.send("#{state}=",current_state_collection.compact.send(operator))
+      target_ticket.ticket_states.safe_send("#{state}=",current_state_collection.compact.safe_send(operator))
     end
     target_ticket.ticket_states.set_avg_response_time
     if target_ticket.ticket_states.first_response_time_changed?
@@ -92,10 +92,10 @@ class Workers::MergeTickets
     # Need to append RMQ_GENERIC_NOTE_KEY to enable for other subscribers
     target_ticket_notes = target_ticket.notes.where({:id => note_ids})
     target_ticket_notes.each do |note|
-      next unless note.send(:human_note_for_ticket?)
-      category = note.send(:reports_note_category)
+      next unless note.safe_send(:human_note_for_ticket?)
+      category = note.safe_send(:reports_note_category)
       next unless Helpdesk::SchemaLessTicket::COUNT_COLUMNS_FOR_REPORTS.include?(category)
-      note.notable.schema_less_ticket.send("update_#{category}_count", "create")
+      note.notable.schema_less_ticket.safe_send("update_#{category}_count", "create")
       note.notable.schema_less_ticket.save
       note.manual_publish_to_rmq("create", RabbitMq::Constants::RMQ_REPORTS_NOTE_KEY)
     end

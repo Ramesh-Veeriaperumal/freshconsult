@@ -6,7 +6,7 @@
 		<% current_portal.ticket_fields(:customer_editable).each do |field| %>
 		    <% if(field.visible_in_view_form?) %>
 		       	<% 
-		          field_value = (field.is_default_field?) ? @ticket.send(field.field_name) : @ticket.get_ff_value(field.name)
+		          field_value = (field.is_default_field?) ? @ticket.safe_send(field.field_name) : @ticket.get_ff_value(field.name)
 		          if(field.field_type == "nested_field")
 		          	field_value = {}
 		          	field.nested_levels.each do |ff|

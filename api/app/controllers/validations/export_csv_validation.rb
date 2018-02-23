@@ -3,17 +3,17 @@ class ExportCsvValidation < ApiValidation
 
   CUSTOMER_EXPORT_EXCLUDE_FIELDS = %w(tag_names).freeze
 
-  validates :default_fields, 
-    data_type: { rules: Array, allow_nil: false }, 
-    array: { 
-      data_type: { rules: String }, 
+  validates :default_fields,
+    data_type: { rules: Array, allow_nil: false },
+    array: {
+      data_type: { rules: String },
       custom_inclusion: { in: proc { |x| x.default_field_names } }
     }
 
-  validates :custom_fields, 
-    data_type: { rules: Array, allow_nil: false }, 
-    array: { 
-      data_type: { rules: String }, 
+  validates :custom_fields,
+    data_type: { rules: Array, allow_nil: false },
+    array: {
+      data_type: { rules: String },
       custom_inclusion: { in: proc { |x| x.custom_field_names } }
     }
 
@@ -24,13 +24,13 @@ class ExportCsvValidation < ApiValidation
   end
 
   def default_field_names
-    Account.current.send("#{@export_type}_form").
-        send("default_#{@export_type}_fields").map(&:name) - CUSTOMER_EXPORT_EXCLUDE_FIELDS
+    Account.current.safe_send("#{@export_type}_form").
+        safe_send("default_#{@export_type}_fields").map(&:name) - CUSTOMER_EXPORT_EXCLUDE_FIELDS
   end
 
   def custom_field_names
-    Account.current.send("#{@export_type}_form").
-        send("custom_#{@export_type}_fields").map(&:name).collect { |x| x[3..-1] }
+    Account.current.safe_send("#{@export_type}_form").
+        safe_send("custom_#{@export_type}_fields").map(&:name).collect { |x| x[3..-1] }
   end
 
   def validate_request_params

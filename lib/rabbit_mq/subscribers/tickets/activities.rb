@@ -77,7 +77,7 @@ module RabbitMq::Subscribers::Tickets::Activities
 
   def mq_activities_valid(action, model)
     if VALID_MODELS.include?(model)
-      send("mq_activities_#{model}_valid", action, model)
+      safe_send("mq_activities_#{model}_valid", action, model)
     else
       false
     end
@@ -211,7 +211,7 @@ module RabbitMq::Subscribers::Tickets::Activities
       key = PROPERTIES_RENAME_MAP[k.to_sym] || k
       v1  = PROPERTIES_AS_ARRAY.include?(key.to_sym) ? v.dup : add_dont_care(v.dup)
       if PROPERTIES_TO_CONVERT.include?(key.to_sym)
-        value = send("activity_#{key}", v1.dup)
+        value = safe_send("activity_#{key}", v1.dup)
         hash.merge!(value) if value != false
       else
         hash[key] = v1
@@ -298,7 +298,7 @@ module RabbitMq::Subscribers::Tickets::Activities
     acc_ff_fields  = Account.current.flexifields_with_ticket_fields_from_cache
     ff_fields_name = acc_ff_fields.map(&field.to_sym).map(&:to_sym)
     changes.each do |k,v|
-      tf = acc_ff_fields.find {|f_field| f_field.send(field) == k.to_s}.ticket_field if ff_fields_name.include?(k.to_sym)
+      tf = acc_ff_fields.find {|f_field| f_field.safe_send(field) == k.to_s}.ticket_field if ff_fields_name.include?(k.to_sym)
       if tf
         # for single/multi line text
         if tf.field_type == "custom_paragraph" or tf.field_type == "custom_text"

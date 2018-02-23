@@ -21,13 +21,13 @@ class Tickets::UpdateCompanyId < BaseWorker
       condition = "owner_id = ?" if old_company_id
 
       execute_on_db {
-        Account.current.send(tkts).where(["requester_id in (?) AND #{condition}", 
+        Account.current.safe_send(tkts).where(["requester_id in (?) AND #{condition}", 
                                             user_ids]).find_in_batches(:batch_size => TICKET_LIMIT) do |tickets|
 
           #company id is explicitly updated to avoid reload for tickets.
           ticket_ids = tickets.inject([]) { |tkt_ids, tkt| tkt.company_id = company_id; tkt_ids << tkt.id }
           execute_on_db("run_on_master") { 
-            Account.current.send(tkts).where("id in (?)", ticket_ids).update_all(:owner_id => company_id)
+            Account.current.safe_send(tkts).where("id in (?)", ticket_ids).update_all(:owner_id => company_id)
           }
           send_updates_to_rmq(tickets, tickets[0].class.name) if tkts == "archive_tickets"
           subscribers_manual_publish(tickets) if tkts == "tickets"

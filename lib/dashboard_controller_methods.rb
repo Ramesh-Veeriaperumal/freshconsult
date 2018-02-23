@@ -40,7 +40,7 @@ module DashboardControllerMethods
 
   def unresolved_tickets_dashboard
     widget_type = Dashboard::UnresolvedTicket::WIDGET_OPTIONS[@widget_name][:method]
-    widget_count = Dashboard::UnresolvedTicket.new(@es_enabled,@filter_params).send("fetch_#{widget_type}")
+    widget_count = Dashboard::UnresolvedTicket.new(@es_enabled,@filter_params).safe_send("fetch_#{widget_type}")
     render :json => {@widget_name.to_sym => widget_count}.to_json
   end
 
@@ -55,7 +55,7 @@ module DashboardControllerMethods
   end
 
   def check_dashboard_feature
-    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless current_account.launched?(:admin_dashboard) || current_account.launched?(:supervisor_dashboard) || current_account.launched?(:agent_dashboard)
+    redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) unless current_account.launched?(:admin_dashboard) || current_account.launched?(:supervisor_dashboard) || current_account.launched?(:agent_dashboard)
   end
 
   def available_agents
@@ -71,11 +71,11 @@ module DashboardControllerMethods
   end
 
   def check_admin_privilege
-    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless User.current.privilege?(:admin_tasks)
+    redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) unless User.current.privilege?(:admin_tasks)
   end
 
   def check_supervisor_privilege
-    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) unless (User.current.privilege?(:view_reports) || User.current.privilege?(:admin_tasks))
+    redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) unless (User.current.privilege?(:view_reports) || User.current.privilege?(:admin_tasks))
   end
 
   def my_performance

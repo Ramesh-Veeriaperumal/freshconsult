@@ -76,16 +76,16 @@ attachment_dom = ""
     if @all_attachments.present?
       @all_attachments.each do |att|
         if att.attachable_type != "Account"
-          attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "helpdesk_ticket[attachments][][resource]"})
+          attachment_dom << safe_send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}",:value => "#{att.id}", :name => "helpdesk_ticket[attachments][][resource]"})
         else
-          attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}", :value => "#{att.id}", :name => "shared_attachments[]"})
+          attachment_dom << safe_send(:description_attachment, {:filename=>"#{escape_javascript(att.content_file_name)}", :value => "#{att.id}", :name => "shared_attachments[]"})
         end
       end
     end
 
     if @cloud_files.present?
       @cloud_files.each do |att|
-        attachment_dom << send(:description_attachment, {:filename=>"#{escape_javascript(att.filename)}", :value => "#{att.serialize}", :name => "[cloud_file_attachments][]"})
+        attachment_dom << safe_send(:description_attachment, {:filename=>"#{escape_javascript(att.filename)}", :value => "#{att.serialize}", :name => "[cloud_file_attachments][]"})
       end
     end
   end

@@ -347,7 +347,7 @@ class Social::TwitterController < Social::BaseController
     @social_error_msg, query, @sorted_feeds, @next_results, @refresh_url, next_fetch_id =
       Social::Twitter::Feed.fetch_tweets(twt_handle, search_params, params[:max_id], params[:since_id], fetch_options)
     save_search(search_params, twt_query.query_string) if @social_error_msg.blank? and search_type == SEARCH_TYPE[:live]
-    send("populate_fd_info_#{SOURCE[:twitter].downcase}",@sorted_feeds, search_type) unless @sorted_feeds.blank?
+    safe_send("populate_fd_info_#{SOURCE[:twitter].downcase}",@sorted_feeds, search_type) unless @sorted_feeds.blank?
   end
 
   def save_search(search_params, query_string)

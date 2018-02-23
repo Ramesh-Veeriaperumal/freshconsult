@@ -81,7 +81,7 @@ class Social::StreamsController < Social::BaseController
       @stream_ids     = @valid_stream_ids.join(",")
       sorted_feeds   = feeds.take(NUM_RECORDS_TO_DISPLAY)
       twitter_feeds   = sorted_feeds.select{ |feed| feed.source.eql?(SOURCE[:twitter]) }
-      send("populate_fd_info_#{SOURCE[:twitter].downcase}", twitter_feeds, SEARCH_TYPE[:saved])
+      safe_send("populate_fd_info_#{SOURCE[:twitter].downcase}", twitter_feeds, SEARCH_TYPE[:saved])
     end
     @all_handles      = current_account.twitter_handles_from_cache
     @all_screen_names = @all_handles.map {|handle| handle.screen_name }

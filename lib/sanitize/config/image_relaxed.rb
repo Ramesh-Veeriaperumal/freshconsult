@@ -29,7 +29,7 @@ class Sanitize
         ol p pre q rp rt ruby s samp section summary small strike strong sub sup table tbody td
         tfoot th thead time tr tt u ul var wbr span source video
       ],
-      :remove_contents => [ 'style','title','script'],
+      :remove_contents => ['style','title','script'],
       :attributes => {
         :all         => ['dir', 'lang', 'title', 'style', 'id', 'align', 'class', 'rel'],
         'a'          => ['href','target','download'],

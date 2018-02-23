@@ -26,12 +26,12 @@ services:
       - "6379"
     environment:
         - BUNDLE_PATH=/gems/2_2
-        - HELPKIT_DATABASE_HOST=mysql56
+        - HELPKIT_DATABASE_HOST=mysql57
         - HELPKIT_REDIS_HOST=redis32
         #- SSH_AUTH_SOCK=/ssh-agent/ssh-agent.sock     
         - RAILS_ENV=development   
     external_links:
-      - mysql56
+      - mysql57
       - redis32
     network_mode: "bridge"
     # Keep the stdin open, so we can attach to our app container's process and do things such as

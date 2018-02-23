@@ -5,9 +5,9 @@ class Security::Admin::WhitelistedIpObserver < ActiveRecord::Observer
   include SecurityNotification
   
   def after_commit(whitelisted_ip)
-    if whitelisted_ip.send(:transaction_include_action?, :create)
+    if whitelisted_ip.safe_send(:transaction_include_action?, :create)
       commit_on_create(whitelisted_ip)
-    elsif whitelisted_ip.send(:transaction_include_action?, :update)
+    elsif whitelisted_ip.safe_send(:transaction_include_action?, :update)
       commit_on_update(whitelisted_ip)
     end
     true

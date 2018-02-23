@@ -12,7 +12,7 @@ class Helpdesk::Note < ActiveRecord::Base
   after_commit :fire_create_event, on: :create
   # Doing update note count before pushing to ticket_states queue
   # So that note count will be reflected if the rmq publish happens via ticket states queue
-  after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
+  after_commit ->(obj) { obj.safe_send(:update_note_count_for_reports)  }, on: :create , :if => :report_note_metrics?
   after_commit :update_ticket_states, on: :create, :unless => :send_and_set?
   after_commit :notify_ticket_monitor, on: :create
 
@@ -22,7 +22,7 @@ class Helpdesk::Note < ActiveRecord::Base
   after_commit ->(obj) { obj.update_es_index }, on: :create, :if => :human_note_for_ticket?
   after_commit ->(obj) { obj.update_es_index }, on: :update, :if => :human_note_for_ticket?
 
-  after_commit ->(obj) { obj.send(:update_note_count_for_reports)  }, on: :destroy, :if => :report_note_metrics?
+  after_commit ->(obj) { obj.safe_send(:update_note_count_for_reports)  }, on: :destroy, :if => :report_note_metrics?
 
   after_commit :subscribe_event_create, on: :create, :if => :api_webhook_note_check
   after_commit :remove_es_document, on: :destroy, :if => :deleted_archive_note
@@ -356,9 +356,9 @@ class Helpdesk::Note < ActiveRecord::Base
       note_category = reports_note_category
       if note_category && Helpdesk::SchemaLessTicket::COUNT_COLUMNS_FOR_REPORTS.include?(note_category)
         if (notable.created_at < ('1-10-2015'.to_datetime) && notable.schema_less_ticket.reports_hash["recalculated_count"].nil?)
-          notable.schema_less_ticket.send("recalculate_note_count")
+          notable.schema_less_ticket.safe_send("recalculate_note_count")
         else
-          notable.schema_less_ticket.send("update_#{note_category}_count", action)
+          notable.schema_less_ticket.safe_send("update_#{note_category}_count", action)
         end
         notable.schema_less_ticket.save
       end
@@ -367,11 +367,11 @@ class Helpdesk::Note < ActiveRecord::Base
     # This can be put in a separate module and can be included wherever needed.
     # This remains common for all active record transactions
     def model_transaction_action
-      if self.send(:transaction_include_action?, :create)
+      if self.safe_send(:transaction_include_action?, :create)
         action = "create"
-      elsif self.send(:transaction_include_action?, :update)
+      elsif self.safe_send(:transaction_include_action?, :update)
         action = "update"
-      elsif self.send(:transaction_include_action?, :destroy)
+      elsif self.safe_send(:transaction_include_action?, :destroy)
         action = "destroy"
       end 
     end

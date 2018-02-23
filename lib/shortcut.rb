@@ -58,7 +58,6 @@ class Shortcut
 			:show_activities_toggle	=> "}",
 			:properties			=> "p",
 			:undo				=> "z",
-			:expand 			=> "]",
 			:select_watcher		=> "shift+w",
 			:go_to_next			=> ['j', 'down'],
 			:go_to_previous		=> ['k', 'up'],

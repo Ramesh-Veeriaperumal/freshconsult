@@ -12,7 +12,6 @@
     - es_alias_queue
     - es_index_queue
     - new_es_index
-    - es_v2_queue
     - account_info_to_dynamo
     - count_es_queue
     - round_robin_capping
@@ -32,11 +31,9 @@
     - livechat_worker
     - smart_filter_tweet_to_ticket
     - channel_framework_command
-    
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
-
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup
@@ -155,6 +152,7 @@
     - github
     - freshid_events
     - freshid_account_details_update
+    - mixpanel_queue
   :free:
     - free_sla
     - free_supervisor
@@ -163,8 +161,9 @@
     - free_account_jobs
     - contacts_sync_free
     - free_ticket_central_publish
-  :email:
+  :mailbox_jobs:
     - mailbox_jobs
+  :email:
     - active_account_jobs
     - premium_account_jobs
     - delayed_jobs
@@ -192,6 +191,7 @@
     - archive_modify_ticket_association
     - archive_delete_ticket
     - archive_delete_ticket_dependencies
+    - es_v2_queue
   :exports:
     - scheduled_ticket_export_config
     - scheduled_ticket_export

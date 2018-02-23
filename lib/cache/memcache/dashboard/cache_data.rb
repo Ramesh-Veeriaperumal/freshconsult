@@ -16,14 +16,14 @@ module Cache::Memcache::Dashboard::CacheData
 
   def redshift_cache_data memcachekey, process, cache_identifier = "redshift_cache_identifier"
     result_data = MemcacheKeys.newrelic_begin_rescue {
-      key = memcachekey % {:account_id => Account.current.id, :cache_identifier => send(cache_identifier), :user_id => User.current.id}    
+      key = memcachekey % {:account_id => Account.current.id, :cache_identifier => safe_send(cache_identifier), :user_id => User.current.id}
       data = MemcacheKeys.get_from_cache(key)
       redis_key = key.split(":").first
       if (data.present? || data.is_a?(Array))
         increment_others_redis("#{redis_key}_GET")
         return MemcacheKeys.unset_null(data)
       end
-      data, expiry = send(process)
+      data, expiry = safe_send(process)
       cache_data = MemcacheKeys.set_null(data)
       MemcacheKeys.cache(key, cache_data, expiry) if expiry.present?
       increment_others_redis("#{redis_key}_SET")
@@ -33,13 +33,13 @@ module Cache::Memcache::Dashboard::CacheData
     redshift_cache_error_response
   end
 
-  private 
+  private
 
   def redshift_cache_error_response
     {errors: I18n.t("helpdesk.realtime_dashboard.something_went_wrong")}
   end
 
-  #This method caches data to memcache and sets a redis key while caching and also while fetching. 
+  #This method caches data to memcache and sets a redis key while caching and also while fetching.
   #To monitor how effectively caching is used by customers.
   #No of sets and gets will say the no of times its being cached and its being used respectively(cache time is 10 mins.)
   def cache_and_notify_redis(key, cache_type)
@@ -101,5 +101,4 @@ module Cache::Memcache::Dashboard::CacheData
       end
     end
   end
-  
 end

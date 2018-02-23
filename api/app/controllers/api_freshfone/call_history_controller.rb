@@ -34,7 +34,7 @@ module ApiFreshfone
     private
 
     def render_202_with_location(template_name: "#{controller_path.gsub(/pipe\/|channel\//, '')}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
-      render template_name, location: send(location_url, item_id), status: 202
+      render template_name, location: safe_send(location_url, item_id), status: 202
     end
 
     def data_export

@@ -149,7 +149,7 @@ class Freshfone::CallInitiator
 
 		def status_url
 			params = [:batch_call, :below_safe_threshold].inject({}) do |params, condition_sym|
-				send(condition_sym) ? params.merge({ condition_sym => true }) : params
+				safe_send(condition_sym) ? params.merge({ condition_sym => true }) : params
 			end
 			params.blank? ? "#{host}/freshfone/call/status" : "#{host}/freshfone/call/status?#{params.to_query}"
 		end

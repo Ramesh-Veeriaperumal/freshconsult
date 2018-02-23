@@ -61,9 +61,9 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		"status", "modified_at", "created_at", "art_type", "current_child_thumbs_up", "current_child_thumbs_down"]
 
 	before_save :set_default_art_type
-	after_commit ->(obj) { obj.send(:clear_cache) }, on: :destroy
-	after_commit ->(obj) { obj.send(:clear_cache) }, on: :create
-	after_commit ->(obj) { obj.send(:clear_cache_after_update) }, on: :update
+	after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :destroy
+	after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :create
+	after_commit ->(obj) { obj.safe_send(:clear_cache_after_update) }, on: :update
 	after_commit :update_search_index, on: :update
 	after_find :deserialize_attr
 
@@ -106,14 +106,14 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
 	Solution::Article::BODY_ATTRIBUTES.each do |attrib|
 		define_method "#{attrib}" do
-			self[attrib] || current_article_body.send("#{attrib}")
+			self[attrib] || current_article_body.safe_send("#{attrib}")
 		end
 	end
 
 	AGGREGATED_COLUMNS.each do |col|
 		define_method "aggregated_#{col}" do
-			return self.send(col) if Account.current.multilingual?
-			primary_article.send(col)
+			return self.safe_send(col) if Account.current.multilingual?
+			primary_article.safe_send(col)
 		end
 	end	
 
@@ -127,8 +127,8 @@ class Solution::ArticleMeta < ActiveRecord::Base
 
   def all_versions_outdated?
   	Account.current.applicable_languages.each do |lan|
-  		next unless self.send("#{lan}_available?")
-      return false unless self.send("#{lan}_outdated?")
+  		next unless self.safe_send("#{lan}_available?")
+      return false unless self.safe_send("#{lan}_outdated?")
     end
     true
   end

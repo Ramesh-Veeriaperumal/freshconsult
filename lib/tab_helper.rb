@@ -55,7 +55,7 @@ module TabHelper
 		end
 
 		def method_missing( *args, &block )
-			@template.send( *args, &block )
+			@template.safe_send( *args, &block )
 		end
 
 	end

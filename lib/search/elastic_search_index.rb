@@ -38,7 +38,7 @@ module Search::ElasticSearchIndex
       end
 
       def es_highlight(item)
-        self.send("highlight_#{item}") || h(truncate(self.send("#{item}"), :length => 250))
+        self.safe_send("highlight_#{item}") || h(truncate(self.safe_send("#{item}"), :length => 250))
       end
 
       def queued?

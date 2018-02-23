@@ -137,7 +137,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
       condition  = ["association_type = ?", Helpdesk::TicketTemplate::
         ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general]] unless check_for_parent_child_feature?
     end
-    current_account.send("#{model_name}_templates").where(condition)
+    current_account.safe_send("#{model_name}_templates").where(condition)
   end
 
   def nscname
@@ -333,7 +333,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
               when 'edit_child'
                 true if !@item.child_template? or !(@parent and @parent.parent_template?)
               end
-    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE) if result
+    redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE) if result
   end
 
   def build_assn_attributes

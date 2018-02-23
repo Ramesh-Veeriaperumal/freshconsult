@@ -28,7 +28,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
     Sharding.admin_select_shard_of(params[:account_id]) do 
       @account = Account.find(params[:account_id])
       if !@account.features?(params[:feature_name])
-        feature = @account.features.send(params[:feature_name])
+        feature = @account.features.safe_send(params[:feature_name])
         if feature.create
           flash[:notice] = "Feature added"
         else
@@ -45,7 +45,7 @@ class SubscriptionAdmin::AccountsController < ApplicationController
     Sharding.admin_select_shard_of(params[:account_id]) do 
       @account = Account.find(params[:account_id])
       if @account.features?(params[:feature_name])
-        feature = @account.features.send(params[:feature_name])
+        feature = @account.features.safe_send(params[:feature_name])
         if feature.destroy
           flash[:notice] = "Feature removed"
         else

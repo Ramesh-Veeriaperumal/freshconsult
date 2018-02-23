@@ -35,7 +35,7 @@ module SBRR
         private
 
           def perform_in_queues _user_queues, operation, _user
-            _user_queues.each{ |_user_queue| _user_queue.send(operation, _user) }
+            _user_queues.each{ |_user_queue| _user_queue.safe_send(operation, _user) }
           end
 
       end

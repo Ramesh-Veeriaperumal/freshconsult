@@ -210,7 +210,7 @@ class Solution::Article < ActiveRecord::Base
     define_method "#{method}=" do |value|
       logger.warn "WARNING!! Assigning #{method.to_s} in this manner is not advised. Please make use of object.#{method.to_s}!"
       return unless new_record?
-      solution_article_meta.send("#{method}=", (solution_article_meta.send("#{method}") + value))
+      solution_article_meta.safe_send("#{method}=", (solution_article_meta.safe_send("#{method}") + value))
       super(value) 
     end
   end
@@ -243,7 +243,7 @@ class Solution::Article < ActiveRecord::Base
   def build_draft_from_article(opts = {})
     draft = self.account.solution_drafts.build
     draft_attributes(opts).each do |k, v|
-      draft.send("#{k}=", v)
+      draft.safe_send("#{k}=", v)
     end
     draft
   end
@@ -251,7 +251,7 @@ class Solution::Article < ActiveRecord::Base
   def draft_attributes(opts = {})
     draft_attrs = opts.merge(:article_id => self.id, :category_meta_id => solution_folder_meta.solution_category_meta_id)
     Solution::Draft::COMMON_ATTRIBUTES.each do |attribute|
-      draft_attrs[attribute] = self.send(attribute)
+      draft_attrs[attribute] = self.safe_send(attribute)
     end
     draft_attrs
   end

@@ -6,6 +6,7 @@ development:
   s3_bucket: 'helpkit-freshcaller-migration'
   domain_prefix: ''
   domain_suffix: ''
+  widget_loader_url: '//localhost:8002/fc-widget.js'
 test:
   signing_key: "iM6YIMpv7N3G4EsCTFTsCgN3GPwshizpsfnYo--4dvw"
   verification_keys: ["iM6YIMpv7N3G4EsCTFTsCgN3GPwshizpsfnYo--4dvw"]
@@ -13,3 +14,4 @@ test:
   signup_domain: 'http://localhost:3000'
   s3_bucket: 'dummy'
   domain_prefix: ''
+  widget_loader_url: '//localhost:8002/fc-widget.js'
