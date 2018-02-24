@@ -16,7 +16,7 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			App.Contacts.Contacts_merge.initialize();
 			this.checkForInfoMsgs();
 			this.bindEvents();
-			this.switchConversationView($("#conv_all-tab")); //Load the first tab on pageload
+			this.initConversationView(); //Load the first tab or tickets on pageload
 
 			// To show the tooltip in the tickets list
 			App.Customers.Tickets.init();
@@ -88,17 +88,33 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 				$('div.info-highlight').show();
 			}
 		},
+		initConversationView: function() {
+			if ($('.conv-menu .sub-info').length) {
+				this.switchConversationView($("#conv_all-tab"));
+			} else {
+				var element = $("#conv_recent_tickets");
+				var url = $(element).data("url");
+				var target = $(element).data("target");
+				$(target).load(url, function(response, status, xhr) {
+					if (status === "error") {
+						$(target).text("Error loading the items. Please try again.");
+					}
+				});
+			}
+		},
 		switchConversationView: function(element) {
 			$('.conv-menu .sub-info').text(element.text());
-
-      //Load content through ajax
-      var url = $(element).data("url");
-      var href = element.attr("href");
-      var pane = $(element);
-      $(href).text("Loading...");
-      $(href).load(url, function(result) {
-        pane.tab('show');
-      });
+			var url = $(element).data("url");
+			var target = element.attr("href");
+			var pane = $(element);
+			$(target).text("Loading...");
+			$(target).load(url, function(response, status, xhr) {
+				if (status === "error") {
+					$(target).text("Error loading the items. Please try again.");
+					return;
+				}
+				pane.tab('show');
+			});
 		},
 		bindEvents: function() {
 			var self = this;

@@ -191,7 +191,9 @@ class ContactsController < ApplicationController
     Rails.logger.info "$$$$$$$$ -> #{@user.inspect}"
 
     respond_to do |format|
-      format.html { }
+      format.html { 
+        define_merged_user
+      }
       format.xml  { render :xml => @user.to_xml} # bad request
       format.json { render :json => @user.as_json }
       format.any(:mobile,:nmobile) { render :json => @user.to_mob_json }
@@ -420,6 +422,10 @@ protected
                                 :error_label => :label }
     end
 
+    def define_merged_user
+      @merged_user = @user.parent unless @user.parent.nil?
+    end
+
     def define_contact_tickets
       @total_user_tickets = current_account.tickets.permissible(current_user).
         requester_active(@user).visible.newest(11).find(:all, 
@@ -437,9 +443,8 @@ protected
       end
     end
 
-    # TODO: FOR ARCHIVE NEED TO AJAXIFY
     def define_contact_properties
-      @merged_user = @user.parent unless @user.parent.nil?
+      define_merged_user
       define_contact_tickets
       define_contact_archive_tickets
     end
