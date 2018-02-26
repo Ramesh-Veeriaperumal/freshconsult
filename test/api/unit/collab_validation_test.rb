@@ -7,17 +7,15 @@ class CollabValidationTest < ActionView::TestCase
     errors = collab_validation.errors.full_messages
     assert errors.include?('Body datatype_mismatch')
     assert errors.include?('Metadata datatype_mismatch')
-    assert errors.include?('Mid datatype_mismatch')
     assert errors.include?('Token datatype_mismatch')
   end
 
   def test_field_value_validation
-    collab_validation = CollabValidation.new(body: '', m_ts: '', m_type: '', metadata: '', mid: '', token: '', top_members: '')
+    collab_validation = CollabValidation.new(body: '', m_ts: '', m_type: '', metadata: '', token: '', top_members: '')
     refute collab_validation.valid?
     errors = collab_validation.errors.full_messages
     assert errors.include?('Body blank')
     assert errors.include?('Metadata blank')
-    assert errors.include?('Mid blank')
     assert errors.include?('Token blank')
   end
 
