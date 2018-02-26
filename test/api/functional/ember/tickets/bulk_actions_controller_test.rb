@@ -550,7 +550,7 @@ module Ember
           visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents],
           attachments: { resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }
         )
-        cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
+        cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
         reply_hash = { body: Faker::Lorem.paragraph,
                        attachment_ids: [attachment_id, canned_response.shared_attachments[0].attachment_id],
                        cloud_files: cloud_file_params }

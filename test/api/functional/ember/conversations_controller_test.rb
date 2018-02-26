@@ -157,7 +157,7 @@ module Ember
     end
 
     def test_create_with_cloud_files_upload
-      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
+      cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params = create_note_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 201
@@ -287,7 +287,7 @@ module Ember
     end
 
     def test_reply_with_cloud_files_upload
-      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
+      cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params = reply_note_params_hash.merge(cloud_files: cloud_file_params)
       post :reply, construct_params({ version: 'private', id: ticket.display_id }, params)
       assert_response 201
@@ -769,7 +769,7 @@ module Ember
 
     def test_forward_with_cloud_files_upload
       t = create_ticket
-      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
+      cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params = forward_note_params_hash.merge(cloud_files: cloud_file_params)
       post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
@@ -781,7 +781,7 @@ module Ember
 
     def test_forward_with_invalid_cloud_files
       t = create_ticket
-      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 10_000 }]
+      cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 10_000 }]
       params = forward_note_params_hash.merge(cloud_files: cloud_file_params)
       post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 400
@@ -790,7 +790,7 @@ module Ember
 
     def test_forward_with_existing_and_new_cloud_files
       t = create_ticket(cloud_files:  [Helpdesk::CloudFile.new(filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20)])
-      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
+      cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params = forward_note_params_hash.merge(cloud_files: cloud_file_params)
       post :forward, construct_params({ version: 'private', id: t.display_id }, params)
       assert_response 201
@@ -1204,7 +1204,7 @@ module Ember
     end
 
     def test_update_with_cloud_files
-      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
+      cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params_hash = update_note_params_hash.merge(cloud_files: cloud_file_params)
       t = create_ticket
       note = create_private_note(t)

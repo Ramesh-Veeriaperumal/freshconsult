@@ -118,6 +118,7 @@ module TicketConcern
       prepare_tags # Sanitizing is required to avoid duplicate records, we are sanitizing here instead of validating in model to avoid extra query.
       process_requester_params
       process_email_params
+      sanitize_cloud_files(cname_params[:cloud_files])
     end
 
     def modify_ticket_params

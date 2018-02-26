@@ -3,7 +3,7 @@ module AttachmentConstants
   CREATE_FIELDS = %w(user_id content inline inline_type).freeze
   UNLINK_FIELDS = %w(attachable_id attachable_type).freeze
 
-  CLOUD_FILE_FIELDS = [cloud_files: [:url, :filename, :application_id]].freeze
+  CLOUD_FILE_FIELDS = [cloud_files: [:url, :name, :application_id]].freeze
 
   STANDALONE_ATTACHMENT_TYPE = 'UserDraft'.freeze
 
@@ -51,6 +51,7 @@ module AttachmentConstants
 
   PARAMS_MAPPINGS = { user_id: :attachable_id }.freeze
   PARAMS_TO_REMOVE = [:inline, :inline_type].freeze
+  CLOUD_FILE_PARAMS_MAPPING = { name: :filename }.freeze
 
   VALIDATION_CLASS = 'AttachmentValidation'.freeze
   DELEGATOR_CLASS = 'AttachmentDelegator'.freeze

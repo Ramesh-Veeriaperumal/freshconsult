@@ -134,6 +134,7 @@ module Ember
       @item.assign_attributes(validatable_delegator_attributes)
       return unless validate_delegator(@item, ticket_fields: @ticket_fields, attachment_ids: @attachment_ids)
       @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
+      build_cloud_files(@item, @cloud_files)
       if @item.update_ticket_attributes(cname_params)
         render 'ember/tickets/show'
       else

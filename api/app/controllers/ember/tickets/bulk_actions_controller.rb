@@ -126,6 +126,7 @@ module Ember
         end
 
         def sanitize_property_params
+          sanitize_cloud_files(cname_params[:reply][:cloud_files]) if cname_params[:reply]
           @ticket_ids = cname_params[:ids]
           @reply_hash = cname_params[:reply]
           params[cname] = (cname_params[:properties] || {}).deep_dup

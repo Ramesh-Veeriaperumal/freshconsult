@@ -19,4 +19,10 @@ module AttachmentConcern
       item.cloud_files.build(cloud_file)
     end
   end
+
+  def sanitize_cloud_files(cloud_files)
+    (cloud_files || []).map do |item|
+      ParamsHelper.assign_and_clean_params(AttachmentConstants::CLOUD_FILE_PARAMS_MAPPING, item)
+    end
+  end
 end
