@@ -5,7 +5,6 @@
 /bootstrap/agents_groups:
   $ref: ./bootstrap/agents_groups.yaml
 
-
 /tickets:
   $ref: ./tickets/list_and_create.yaml
 /tickets/{id}:
@@ -159,7 +158,7 @@
 # password policies
 /contact_password_policies:
   $ref: ./password_policies/contact_password_policies.yaml
-/agent_password_policies: 
+/agent_password_policies:
   $ref: ./password_policies/agent_password_policies.yaml
 
 # Ticket Filters
@@ -315,3 +314,20 @@
 #Marketplace
 /marketplace_apps:
   $ref: ./marketplace_apps/list.yaml
+
+# Frankbot
+
+/bots:
+  $ref: ./bots/list_and_create.yaml
+/bots/new:
+  $ref: ./bots/new.yaml
+/bots/{id}:
+  $ref: ./bots/show_and_update.yaml
+/bots/{external_id}/training_completed:
+  $ref: ./bots/training_completed.yaml
+/bots/{id}/mark_completed_status_seen:
+  $ref: ./bots/mark_completed_status_seen.yaml
+/bots/{id}/enable_on_portal:
+  $ref: ./bots/enable_on_portal.yaml
+/bots/{id}/map_categories:
+  $ref: ./bots/map_categories.yaml

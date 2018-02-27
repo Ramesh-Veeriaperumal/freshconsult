@@ -1,0 +1,25 @@
+type: object
+properties:
+  product:
+    type: object
+    properties:
+      name:
+        type: string
+      portal_id:
+        type: integer
+      portal_logo:
+        type: string
+  theme_colour:
+    type: string
+  widget_size:
+    type: string
+  all_categories:
+    type: array
+    description: Categories associated to the portal
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        label:
+          type: string

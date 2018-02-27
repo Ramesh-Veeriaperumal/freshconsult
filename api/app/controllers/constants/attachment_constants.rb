@@ -1,6 +1,6 @@
 module AttachmentConstants
   # Controller constants
-  CREATE_FIELDS = %w(user_id content inline inline_type).freeze
+  CREATE_FIELDS = %w[user_id content inline inline_type description].freeze
   UNLINK_FIELDS = %w(attachable_id attachable_type).freeze
 
   CLOUD_FILE_FIELDS = [cloud_files: [:url, :name, :application_id]].freeze

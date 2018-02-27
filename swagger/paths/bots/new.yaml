@@ -1,0 +1,21 @@
+get:
+  tags: [Bot]
+  summary: New
+  description: Bot new page
+  parameters:
+    - name: portal_id
+      in: query
+      type: string
+      description: Portal ID of the bot.
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/bot_new'
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access deniedt

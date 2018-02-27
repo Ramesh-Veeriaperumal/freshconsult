@@ -118,8 +118,8 @@ class QueryHashTest < ActionView::TestCase
   end
 
   def test_created_at_transformed_values
-    from_time = (Time.now - 1.month)
-    to_time = Time.now
+    from_time = (Time.zone.now - 1.month)
+    to_time = Time.zone.now
     q = sample_created_at_input_condition({ from: from_time.iso8601, to: to_time.iso8601 })
     aq = QueryHash.new(q)
     sq = aq.to_system_format

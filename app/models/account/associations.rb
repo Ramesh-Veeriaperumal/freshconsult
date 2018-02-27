@@ -352,5 +352,5 @@ class Account < ActiveRecord::Base
   has_one :collab_settings, :class_name => 'Collab::Setting'
 
   has_many :bot_tickets, class_name: 'Bot::Ticket', dependent: :destroy
-  has_many :bots, class_name: 'Bot'
+  has_many :bots, class_name: 'Bot', dependent: :destroy
 end

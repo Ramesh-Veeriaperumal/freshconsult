@@ -1,0 +1,18 @@
+post:
+  tags: [Bot]
+  summary: Bot training is completed
+  parameters:
+    - name: external_id
+      in: path
+      type: string
+      description: External Id of the bot
+      required: true
+  responses:
+    204:
+      description: Success
+    403:
+      description: Access denied
+    404:
+      description: Resource not found
+    409:
+      description: Invalid Bot state
