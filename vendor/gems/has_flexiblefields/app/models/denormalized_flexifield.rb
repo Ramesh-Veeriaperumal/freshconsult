@@ -42,7 +42,7 @@ class DenormalizedFlexifield < ActiveRecord::Base
   end
 
   def duplicate_load_state
-    @load_state ||= self.attributes.with_indifferent_access #works as we dont have arrays
+    @load_state ||= self.deserialized_attributes.with_indifferent_access #works as we dont have arrays
     #Marshal.load(Marshal.dump(self.attributes)).with_indifferent_access #for deep cloning #need to check on security issues
   end
 
@@ -80,8 +80,8 @@ class DenormalizedFlexifield < ActiveRecord::Base
   #   safe_send("#{attribute}=", safe_send(attribute).to_f) if safe_send(attribute).present?
   # end
 
-  def attributes_with_deserialization
-    attributes_without_deserialization.deep_dup.each_with_object({}) do |(attribute, value), attrs|
+  def deserialized_attributes
+    attributes.deep_dup.each_with_object({}) do |(attribute, value), attrs|
       if value.is_a? Hash
         attrs.merge!(value) unless value.blank?
       else
@@ -89,7 +89,5 @@ class DenormalizedFlexifield < ActiveRecord::Base
       end
     end
   end
-
-  alias_method_chain :attributes, :deserialization
 
 end
