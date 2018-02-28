@@ -12,7 +12,7 @@ namespace :gnip_stream do
       ) do |stream_block|
         stream_block.each do |stream|
           account = stream.account
-          if !account.features?(:twitter)
+          unless account.twitter_feature_present?
             error_params = {
               :stream_id => stream.id,
               :account_id => stream.account_id,

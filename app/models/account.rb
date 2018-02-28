@@ -512,6 +512,10 @@ class Account < ActiveRecord::Base
     advanced_twitter?
   end
 
+  def twitter_feature_present?
+    basic_twitter_enabled? || advanced_twitter?
+  end
+
   def ehawk_reputation_score
     if self.conversion_metric
       self.conversion_metric.spam_score
