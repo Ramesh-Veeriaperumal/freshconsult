@@ -6,7 +6,9 @@ class AuthHelper
       Rails.logger.info "FRESHID API V2 auth_type :: UN_PASS, a=#{account.id}"
       if user && !user.deleted
         valid_pwd = account.freshid_enabled? ? user.valid_freshid_password?(pwd) : user.valid_password?(pwd)
-        user.update_failed_login_count(valid_pwd, username, ip)
+        Sharding.run_on_master do
+          user.update_failed_login_count(valid_pwd, username, ip)
+        end
       end
     end
 

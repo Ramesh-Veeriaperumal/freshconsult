@@ -191,6 +191,15 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :bots, controller: 'ember/admin/bots', only: [:index, :new, :create, :show, :update] do
+      member do
+        put :map_categories
+        post :training_completed
+        post :mark_completed_status_seen
+        put :enable_on_portal
+      end
+    end
+
     resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
       collection do
         put :bulk_delete, to: 'ember/tickets/delete_spam#bulk_delete'

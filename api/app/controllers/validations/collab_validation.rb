@@ -1,7 +1,7 @@
 class CollabValidation < ApiValidation
   attr_accessor :body, :m_ts, :m_type, :metadata, :mid, :token, :top_members, :only
-  validates :body, :m_ts, :m_type, :metadata, :mid, :token, :top_members, data_type: { rules: String, allow_blank: false }
-  validates :body, :metadata, :mid, :token, data_type: { required: true, rules: String }
+  validates :body, :m_ts, :m_type, :metadata, :token, :top_members, data_type: { rules: String, allow_blank: false }
+  validates :body, :metadata, :token, data_type: { required: true, rules: String }
   validate :json_format, if: -> { errors[:content].blank? }
 
   def json_format

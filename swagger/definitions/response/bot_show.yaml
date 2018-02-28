@@ -1,0 +1,51 @@
+type: object
+properties:
+  id:
+    type: integer
+  status:
+    type: string
+  name:
+    type: string
+  avatar:
+    type: object
+    properties:
+      url:
+        type: string
+      avatar_id:
+        type: integer
+      is_default:
+        type: boolean
+  header:
+    type: string
+  theme_colour:
+    type: string
+  widget_size:
+    type: string
+  external_id:
+    type: string
+  enable_on_portal:
+    type: boolean
+  product:
+    type: object
+    properties:
+      name:
+       type: string
+      portal_id:
+        type: integer
+      portal_logo:
+        type: string
+  all_categories:
+    type: array
+    description: Categories associated to the bot's portal
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+        label:
+          type: string
+  selected_category_ids:
+    type: array
+    description: Ids of categories associated to the bot
+    items:
+      type: integer

@@ -36,6 +36,7 @@ module ConversationConcern
 
     def modify_and_remove_params
       ParamsHelper.assign_and_clean_params(ConversationConstants::PARAMS_MAPPINGS, cname_params)
+      sanitize_cloud_files(cname_params[:cloud_files])
       ParamsHelper.save_and_remove_params(self, ConversationConstants::PARAMS_TO_SAVE_AND_REMOVE, cname_params)
       modify_note_body_attributes
       ParamsHelper.clean_params(ConversationConstants::PARAMS_TO_REMOVE, cname_params)

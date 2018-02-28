@@ -101,6 +101,8 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     result = parse_response(@response.body)
     call = ::Freshcaller::Call.last
     match_json(ticket_only_pattern(call))
+    assert_equal call.notable.description.present?, true # for missed call, the call will be directly assocaited to ticket
+    assert_equal call.notable.description_html.present?, true
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
     assert_equal User.current, nil
   end
@@ -113,6 +115,8 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     result = parse_response(@response.body)
     call = ::Freshcaller::Call.last
     match_json(ticket_with_note_pattern(call))
+    assert_equal call.notable.notable.description.present?, true # for voicemail, the call will be associated to note of a ticket
+    assert_equal call.notable.notable.description_html.present?, true
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   end
 

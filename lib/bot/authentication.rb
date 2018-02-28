@@ -1,10 +1,6 @@
 module Bot::Authentication
-  TOKEN_REGEX = /Bearer (.*)/
-
   def authenticate_request
-    auth = request.headers['Authorization']
-    auth = auth.match(TOKEN_REGEX) unless auth.nil?
-    token = auth[1] if !auth.nil? and auth.length > 1
+    token = request.headers['X-Channel-Auth']
     render_request_error(:access_denied, 403) unless token.present? && verify(token)
   end
 

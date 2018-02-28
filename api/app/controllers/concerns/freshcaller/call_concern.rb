@@ -9,7 +9,7 @@ module Freshcaller::CallConcern
                 created_at: @options[:call_created_at],
                 phone: @options[:customer_number],
                 name: @options[:customer_number],
-                ticket_body_attributes: { description_html: description } }
+                ticket_body_attributes: { description_html: description, description: description } }
     params_hash = params_hash.merge(requester_id: @contact.id) if @contact.present?
     params_hash = params_hash.merge(meta_data: { 'created_by' => @agent.id }, responder_id: @agent.id) if @agent.present?
     params_hash
