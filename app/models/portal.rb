@@ -386,7 +386,7 @@ class Portal < ActiveRecord::Base
         account_main_portal = Account.current.main_portal_from_cache
         valid_domains << account_main_portal.elb_dns_name if account_main_portal.elb_dns_name.present?
       end
-      valid_domains.map { |d| d.chomp('.') }
+      valid_domains.map { |d| d.downcase.chomp('.') }
     end
 
     def domains_for_recaptcha
