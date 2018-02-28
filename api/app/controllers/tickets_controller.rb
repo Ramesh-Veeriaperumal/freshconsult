@@ -4,6 +4,7 @@ class TicketsController < ApiApplicationController
   include CloudFilesHelper
   include TicketConcern
   include SearchHelper
+  include AttachmentConcern
   include Search::Filters::QueryHelper
   include Helpdesk::SpamAccountConstants
   include Redis::RedisKeys
@@ -224,6 +225,7 @@ class TicketsController < ApiApplicationController
         checkbox_names = TicketsValidationHelper.custom_checkbox_names(@ticket_fields)
         ParamsHelper.assign_checkbox_value(params[cname][:custom_fields], checkbox_names)
       end
+      sanitize_cloud_files(params[cname][:cloud_files]) if private_api?
 
       params_to_be_deleted = [:cc_emails]
       [:due_by, :fr_due_by].each { |key| params_to_be_deleted << key if params[cname][key].nil? }
@@ -232,6 +234,7 @@ class TicketsController < ApiApplicationController
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
                                              type: :ticket_type }, params[cname])
+      ParamsHelper.save_and_remove_params(self, [:cloud_files], params[cname]) if private_api?
 
       # Sanitizing is required to avoid duplicate records, we are sanitizing here instead of validating in model to avoid extra query.
       prepare_tags
@@ -279,14 +282,20 @@ class TicketsController < ApiApplicationController
       @item.build_schema_less_ticket unless @item.schema_less_ticket
       @item.account = current_account
       @item.cc_email = @cc_emails unless @cc_emails.nil?
-      build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
+      build_attachments
       if create? # assign attachments so that it will not be queried again in model callbacks
         @item.attachments = @item.attachments
+        @item.cloud_files = @item.cloud_files if private_api?
         @item.ticket_old_body = @item.ticket_old_body # This will prevent ticket_old_body query during save
         @item.inline_attachments = @item.inline_attachments
         @item.schema_less_ticket.product ||= current_portal.product unless params[cname].key?(:product_id)
       end
       assign_ticket_status
+    end
+
+    def build_attachments
+      build_normal_attachments(@item, params[cname][:attachments]) if params[cname][:attachments]
+      build_cloud_files(@item, @cloud_files) if private_api? && @cloud_files
     end
 
     def check_search_feature

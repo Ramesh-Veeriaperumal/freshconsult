@@ -1,0 +1,14 @@
+type: object
+properties:
+  name:
+    type: string
+  portal_enabled:
+    type: boolean
+  portal_id:
+    type: integer
+  portal_logo:
+    type: string
+  bot_name:
+    type: string
+  bot_id:
+    type: integer

@@ -1,0 +1,18 @@
+post:
+  tags: [Bot]
+  summary: Clear Bot's status redis key
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      description: Id of the bot
+      required: true
+  responses:
+    204:
+      description: Success
+    403:
+      description: Access denied
+    404:
+      description: Resource not found
+    409:
+      description: Invalid Bot state

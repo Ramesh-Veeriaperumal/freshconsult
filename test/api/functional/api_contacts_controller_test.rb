@@ -2512,4 +2512,18 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.revoke_feature(:unique_contact_identifier)
   end
 
+  # Though index action is run on slave, the update query should go to master when we update failed_login_count 
+  def test_index_with_invalid_password
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.email, 'wrongpassword')
+    params = ActionController::Parameters.new('format' => 'json')
+    controller.params = params
+    @controller.request.env['HTTP_AUTHORIZATION'] = auth
+    QueryCounter.queries = []
+    get :index, controller_params
+    assert_response 401
+    # Two update queries will be fired for failed_login_count update
+    write_query_count = QueryCounter.queries.select{ |q| q.include?('UPDATE ') or q.include?('INSERT INTO') }.count
+    assert write_query_count == 2
+  end
+
 end

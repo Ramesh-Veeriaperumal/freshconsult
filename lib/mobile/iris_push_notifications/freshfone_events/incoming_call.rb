@@ -1,5 +1,5 @@
 module Mobile::IrisPushNotifications::FreshfoneEvents::IncomingCall
-  include Mobile::IrisPushNotifications::CommunicationUtil
+  include Helpdesk::IrisNotifications
   include Mobile::Constants
 
   def notify_incoming_call_event_to_iris (message)

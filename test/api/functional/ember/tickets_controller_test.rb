@@ -466,7 +466,7 @@ module Ember
     end
 
     def test_create_with_invalid_cloud_files
-      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 10_000 }]
+      cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 10_000 }]
       params = ticket_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 400
@@ -474,7 +474,7 @@ module Ember
     end
 
     def test_create_cloud_files_with_no_app_id
-      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL }]
+      cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL }]
       params = ticket_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 400
@@ -488,14 +488,14 @@ module Ember
     end
 
     def test_create_cloud_files_with_no_file_url
-      cloud_file_params = [{ filename: 'image.jpg', application_id: 20 }]
+      cloud_file_params = [{ name: 'image.jpg', application_id: 20 }]
       params = ticket_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 400
     end
 
     def test_create_with_cloud_files
-      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
+      cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params_hash = ticket_params_hash.merge(cloud_files: cloud_file_params)
       post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 201
@@ -523,7 +523,7 @@ module Ember
       # normal attachment
       file = fixture_file_upload('/files/attachment.txt', 'text/plain', :binary)
       # cloud file
-      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
+      cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       # shared attachment
       canned_response = create_response(
         title: Faker::Lorem.sentence,
@@ -1584,6 +1584,51 @@ module Ember
       match_json(ticket_show_pattern(t.reload))
     end
 
+    def test_update_properties_with_cloud_files
+      ticket = create_ticket
+      cloud_file_params = [{ name: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      params_hash = { cloud_files: cloud_file_params }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      ticket.reload
+      assert_equal 1, ticket.cloud_files.count
+    end
+
+    def test_update_properties_with_empty_cloud_files
+      # update properties empty cloud files
+      ticket = create_ticket
+      cloud_file_params = []
+      params_hash = { cloud_files: cloud_file_params }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      ticket.reload
+      assert_equal 0, ticket.cloud_files.count
+    end
+
+    def test_update_properties_with_cloud_files_id
+      ticket = create_ticket
+      cloud_file_params = [{ id: 2, name: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }]
+      params_hash = { cloud_files: cloud_file_params }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      ticket.reload
+    end
+
+    def test_update_properties_with_cloud_files_and_attachments
+      ticket = create_ticket
+      attachment_ids = []
+      rand(2..10).times do
+        attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      end
+      cloud_file_params = [{ name: 'image.jpg', url: 'https://www.dropbox.com/image.jpg', application_id: 20 }, { name: 'image2.jpg', url: 'https://www.dropbox.com/image2.jpg', application_id: 20 }]
+      params_hash = { cloud_files: cloud_file_params, attachment_ids: attachment_ids }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      ticket.reload
+      assert_equal 2, ticket.cloud_files.count
+      assert_equal attachment_ids, ticket.attachment_ids
+    end
+
     def test_show_with_facebook_post
       Account.stubs(:current).returns(Account.first)
       ticket = create_ticket_from_fb_post
@@ -1776,7 +1821,7 @@ module Ember
 
     def test_update_with_cloud_files
       t = create_ticket
-      cloud_file_params = [{ filename: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
+      cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params_hash = update_ticket_params_hash.merge(cloud_files: cloud_file_params)
       put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
       assert_response 200

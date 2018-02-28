@@ -1,0 +1,8 @@
+type: object
+properties:
+  onboarded:
+    type: boolean
+  products:
+    type: array
+    items:
+      $ref: '#/definitions/bot_product_data'
