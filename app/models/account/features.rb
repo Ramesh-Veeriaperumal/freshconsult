@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
                    :dkim, :bulk_security, :scheduled_ticket_export, :ticket_contact_export,
                    :email_failures, :disable_emails, :skip_one_hop, :falcon_portal_theme, :freshid, :freshchat_integration,
                    :smart_filter, :year_in_review_2017, :facebook_page_redirect, :announcements_tab, :archive_ghost, :ticket_central_publish,
-                   :solutions_central_publish]
+                   :solutions_central_publish, :es_msearch]
 
   DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :archive_tickets, :sitemap]
   BITMAP_FEATURES = [
