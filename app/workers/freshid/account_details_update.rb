@@ -12,7 +12,7 @@ module Freshid
       args[:destroy].present? ? Freshid::Account.new(args).destroy : Freshid::Account.new(args).update
 
     rescue Exception => e
-      Rails.logger.debug "Error while updating account information in Freshid, #{e.inspect} : #{args.inspect}"
+      Rails.logger.debug "FRESHID Error while updating account information, #{e.inspect} : #{args.inspect}"
       NewRelic::Agent.notice_error(e, {:args => args})
       DevNotification.publish(SNS["freshid_notification_topic"], DESCRIPTION, args.to_json)
     end

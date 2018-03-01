@@ -11,6 +11,7 @@ class UserSessionsController < ApplicationController
   include Redis::OthersRedis
   include SsoUtil
   include Mobile::Actions::Push_Notifier
+  include Freshid::ControllerMethods
 
   skip_before_filter :check_privilege, :verify_authenticity_token  
   skip_before_filter :require_user, :except => [:destroy, :freshid_destroy]
@@ -293,9 +294,14 @@ class UserSessionsController < ApplicationController
       flash[:notice] = "Please provide valid login details!!"
       return redirect_to login_url 
     end
-    
+    if @current_user.active_freshid_user?
+      redirect_to support_login_url(params: {new_account_signup: true}) and return
+    elsif freshid_enabled?
+      new_freshid_signup = @current_user.active = true
+    end
     @user_session = current_account.user_sessions.new(@current_user)
     if @user_session.save
+      @current_user.primary_email.update_attributes({verified: false}) if new_freshid_signup
       @current_user.reset_perishable_token!
       @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)

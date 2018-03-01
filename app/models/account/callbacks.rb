@@ -3,6 +3,7 @@ class Account < ActiveRecord::Base
 
   before_create :downcase_full_domain,:set_default_values, :set_shard_mapping, :save_route_info
   before_create :add_features_to_binary_column
+  before_create :create_freshid_account, if: :freshid_signup_allowed?
   before_update :check_default_values, :update_users_time_zone, :backup_changes
   before_destroy :backup_changes, :make_shard_mapping_inactive, :deleted_model_info
 
@@ -18,6 +19,7 @@ class Account < ActiveRecord::Base
   
   after_destroy :remove_global_shard_mapping, :remove_from_master_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
+  after_destroy :destroy_freshid_account
 
   after_commit :add_to_billing, :enable_elastic_search, on: :create
   after_commit :clear_api_limit_cache, :update_redis_display_id, on: :update
@@ -33,6 +35,7 @@ class Account < ActiveRecord::Base
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
   after_commit :trigger_launchparty_feature_callbacks, on: :create
+  after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_signup_allowed?
 
 
   # Need to revisit when we push all the events for an account
@@ -89,11 +92,29 @@ class Account < ActiveRecord::Base
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
       self.launch(:archive_ghost)           # enabling archive ghost feature
     end
+    self.launch(:freshid) if freshid_signup_allowed?
   end
 
   def update_activity_export
     ScheduledExport::ActivitiesExport.perform_async if time_zone_changed? && activity_export_from_cache.try(:active)
   end
+  
+  def create_freshid_account
+    freshid_acc = Freshid::Account.create({ name: self.name, domain: self.full_domain })
+    raise(ActiveRecord::Rollback, "FRESHID account not created") unless freshid_acc.present?
+  end
+  
+  def destroy_freshid_account
+    account_params = {
+      name: self.name,
+      account_id: self.id,
+      domain: self.full_domain,
+      destroy: true
+    }
+    Freshid::AccountDetailsUpdate.perform_async(account_params)
+  end
+  
+  alias_method :destroy_freshid_account_on_rollback, :destroy_freshid_account
 
   # Need to revisit when we push all the events for an account
   def central_publish_worker_class
@@ -407,6 +428,10 @@ class Account < ActiveRecord::Base
 
     def falcon_ui_applicable?
       ismember?(FALCON_ENABLED_LANGUAGES, self.language)
+    end
+
+    def freshid_signup_allowed?
+      redis_key_exists? FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED
     end
 
 end
