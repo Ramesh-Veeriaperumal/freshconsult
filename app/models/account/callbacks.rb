@@ -1,4 +1,5 @@
 class Account < ActiveRecord::Base
+  require 'launch_party/feature_class_mapping'
 
   before_create :downcase_full_domain,:set_default_values, :set_shard_mapping, :save_route_info
   before_create :add_features_to_binary_column
@@ -31,11 +32,12 @@ class Account < ActiveRecord::Base
   after_commit :update_crm_and_map, on: :update, :if => :account_domain_changed?
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
+  after_commit :trigger_launchparty_feature_callbacks, on: :create
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
 
-  after_launchparty_change :trigger_launchparty_feature_callbacks
+  after_launchparty_change :collect_launchparty_actions
 
   def downcase_full_domain
     self.full_domain.downcase!
@@ -125,13 +127,22 @@ class Account < ActiveRecord::Base
 
   private
 
+    def collect_launchparty_actions(changes)
+      feature_name = changes[:launch] || changes[:rollback]
+      @launch_party_features ||= []
+      @launch_party_features << changes if FeatureClassMapping.get_class(feature_name.to_s)
+      trigger_launchparty_feature_callbacks unless self.new_record?
+    end
+
     # define your callback method in this format ->
     # eg:  on launch  feature_name => falcon, method_name => def falcon_on_launch ; end
     #      on rollback feature_name => falcon, method_name => def falcon_on_rollback ; end
-    def trigger_launchparty_feature_callbacks(changes)
+    def trigger_launchparty_feature_callbacks
+      return if @launch_party_features.blank?
       self.make_current
-      args = { :feature => changes, :account_id => self.id }
+      args = { :features => @launch_party_features, :account_id => self.id }
       LaunchPartyActionWorker.perform_async(args)
+      @launch_party_features = nil
     end
 
     def sync_name_helpdesk_name
