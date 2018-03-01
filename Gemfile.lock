@@ -272,6 +272,12 @@ GIT
       rest-client (~> 1.6)
 
 GIT
+  remote: git@github.com:freshdesk/ruby-jwe.git
+  revision: 85175aa156158d16398ed1a53ecada2c7aeda24d
+  specs:
+    jwe (0.3.0)
+
+GIT
   remote: git@github.com:freshdesk/xeroizer.git
   revision: db93979351dc8047d6aeeeab63d697f8c4517f7b
   specs:
@@ -900,7 +906,6 @@ GEM
     json-compare (0.1.8)
     json_expressions (0.8.3)
     json_pure (1.8.3)
-    jwe (0.3.0)
     jwt (1.5.4)
     koala (1.10.1)
       addressable
@@ -1428,7 +1433,7 @@ DEPENDENCIES
   json (= 1.8.3)
   json-compare (= 0.1.8)
   json_expressions
-  jwe (= 0.3.0)
+  jwe (= 0.3.0)!
   jwt (= 1.5.4)
   koala (= 1.10.1)
   launchparty!

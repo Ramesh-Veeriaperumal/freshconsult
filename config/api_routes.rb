@@ -206,6 +206,8 @@ Helpkit::Application.routes.draw do
 
   channel_routes = proc do
     resources :tickets, controller: 'channel/tickets', only: [:create]
+    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create]
+    resources :companies, controller: 'channel/api_companies', only: [:create]
     scope '/bot' do
       resources :tickets, controller: 'channel/bot/tickets', only: [:create]
     end

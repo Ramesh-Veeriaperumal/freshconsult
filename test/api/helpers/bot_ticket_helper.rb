@@ -1,4 +1,8 @@
 module BotTicketHelper
+
+  SUPPORT_BOT = 'frankbot'.freeze
+  CONFIG = CHANNEL_API_CONFIG[SUPPORT_BOT]
+
   def enable_bot_feature
     Account.current.add_feature(:support_bot)
     if block_given?
@@ -11,15 +15,15 @@ module BotTicketHelper
     Account.current.revoke_feature(:support_bot)
   end
 
-  def sign_payload(payload = {}, expiration = BOT_CONFIG[:jwt_default_expiry])
+  def sign_payload(payload = {}, expiration = CONFIG[:jwt_default_expiry])
     payload = payload.dup
     payload['exp'] = Time.now.to_i + expiration.to_i if expiration
-    jwt = JWT.encode(payload, BOT_JWT_SECRET)
-    JWE.encrypt(jwt, BOT_JWE_SECRET, alg: 'dir')
+    jwt = JWT.encode(payload, CONFIG[:jwt_secret])
+    JWE.encrypt(jwt, CONFIG[:secret_key], alg: 'dir', source: SUPPORT_BOT)
   end
 
   def set_auth_header
-    request.env['HTTP_AUTHORIZATION'] = "Bearer #{sign_payload({})}"
+    request.env['X-Channel-Auth'] = sign_payload({})
   end
 
   def create_bot(portal_id)
