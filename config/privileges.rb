@@ -155,6 +155,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_freshfone/call_history", :only => [:export, :export_status]
     resource :"announcement", :only => [:index, :account_login_url]
     resource :"email_preview"
+    resource :"doorkeeper/authorize"
   end
 
   export_tickets do
