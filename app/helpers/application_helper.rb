@@ -25,6 +25,8 @@ module ApplicationHelper
   include JsonEscape
   include FalconHelperMethods
   include YearInReviewMethods
+  include Redis::OthersRedis
+  include Redis::RedisKeys
 
   require "twitter"
 
@@ -1748,6 +1750,13 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         "alert-message block-message warning full-width")
     end
     return
+  end
+
+  def check_smart_filter_revoked
+    if current_account.twitter_smart_filter_revoked?
+      return content_tag('div', "#{t('smart_filter_disabled')}".html_safe, :class =>
+        "alert-message block-message full-width")
+    end
   end
 
   def social_reauth_required

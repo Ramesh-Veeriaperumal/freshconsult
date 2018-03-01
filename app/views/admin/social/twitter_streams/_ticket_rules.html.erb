@@ -1,10 +1,8 @@
-<% if @ticket_rules.blank? %>
+<% if ticket_rules.blank? %>
   <%= render :partial => 'ticket_rule_form', :locals => { :ticket_rule => @twitter_stream.new_ticket_rule} %>
 <% else %>
-  <% @ticket_rules.each_with_index do |ticket_rule| %>
-    <% if ticket_rule[:rule_type].nil? %>
-      <%= render :partial => 'ticket_rule_form', :locals => { :ticket_rule => ticket_rule}%>
-      <% end %>
+  <% ticket_rules.each_with_index do |ticket_rule| %>
+    <%= render :partial => 'ticket_rule_form', :locals => { :ticket_rule => ticket_rule}%>
   <% end %>
 <% end %>
 <a href="" id="add_new_rule" class="add-another"><%= font_icon "plus", :size=>"14" %><%= t('admin.social.ticket_rules.add') %></a>
@@ -13,9 +11,7 @@
 
   jQuery(document).on('click', '#add_new_rule', function (event) {
     event.preventDefault();
-    jQuery('#add_new_rule').remove();
-    jQuery("#ticket_rules").append("<%= escape_javascript(render :partial => 'ticket_rule_form', :locals =>{:ticket_rule => @twitter_stream.new_ticket_rule})%>");
-    jQuery("#ticket_rules").append('<a href="" id="add_new_rule" class="add-another"><%= font_icon "plus", :size=>"14" %> <%= t('admin.social.ticket_rules.add') %></a>');
+    jQuery("<%= escape_javascript(render :partial => 'ticket_rule_form', :locals =>{:ticket_rule => @twitter_stream.new_ticket_rule})%>").insertBefore('#add_new_rule');
   });
 
   jQuery(document).on('click', ".ce-btn", function() {

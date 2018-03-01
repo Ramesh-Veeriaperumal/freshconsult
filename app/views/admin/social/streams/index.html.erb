@@ -1,3 +1,6 @@
+<% if current_user && current_account %>
+    <%= check_smart_filter_revoked %>
+<% end %>
 <% content_for :sidebar do -%>&nbsp;
 <%- end %>
 

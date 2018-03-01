@@ -1,4 +1,6 @@
- 
+<% if current_user && current_account && @twitter_stream.default_stream? %>
+    <%= check_smart_filter_revoked %>
+<% end %>
 <%= javascript_include_tag :'cdn/social_admin' %>
 <%= stylesheet_link_tag_with_rtl :'cdn/social' %>
 <% content_for :sidebar do -%>&nbsp;<%-end %>
@@ -15,44 +17,110 @@
   </div>
 
   <h3 class="lead"><%= t('.title')%></h3><hr />
-  
+
   <% unless @twitter_stream.default_stream? %>
       <%= render :partial => 'form', :locals => { :twitter_stream => @twitter_stream } %>
   <% else %>
-      <%= render :partial => 'handle_form', :locals => { :twitter_handle => @twitter_handle } %>
+      <%= render :partial => 'handle_form', :locals => { :f => f, :twitter_handle => @twitter_handle } %>
   <% end %>
 
   <div class="adm-social sts">
-   <h4 class="adm-title"><%= t('admin.social.ticket_rules.title') %></h3>
-    <p><%= t('admin.social.ticket_rules.brief_desc') %></p>
+    <div id="tweet_to_ticket_wrapper">
+      <% if @twitter_stream.default_stream? %>
+        <ul class="rules_settings">
+          <li>
+            <div class="radio label-choice">
+              <%= radio_button_tag(:keyword_rules, 0, !@twitter_stream.keyword_rules_present?) %>
+              <label class="disable-rules"><%= t('admin.social.smart_filter.convert_all')%></label>
+            </div>
+            <div class="convert_without_keywords">
+              <% if @twitter_stream.account.twitter_smart_filter_enabled? || @twitter_stream.smart_filter_rule %>
+                <div class="smart-filter-wrapper">
+                  <%= render :partial => 'smart_filter_header', :locals => {:twitter_handle => @twitter_handle, :f => f, :keyword_rules => false, :filter_val => "without_keywords", :ticket_rule => @smart_filter_rule } %>
+                </div>
+              <% else %>
+                <% convert_all_rule = @ticket_rules.select {|rule| rule[:action_data][:convert_all] }.empty? ?                     @twitter_stream.new_ticket_rule :
+                 @ticket_rules.find {|rule| rule[:action_data][:convert_all] }
+                 %>
+                <div class="form_data span12 mb20">
+                  <div class="control-group span6">
+                    <%= hidden_field_tag "social_ticket_rule[][ticket_rule_id]", convert_all_rule.id%>
+                    <%= hidden_field_tag "social_ticket_rule[][includes]","#{@twitter_handle.default_stream.name}"%>
+                    <%= hidden_field_tag "social_ticket_rule[][convert_all]", true%>
+                    <%= hidden_field_tag "social_ticket_rule[][deleted]", false, :class => "ticket_deleted" %>
 
-    <div class="rules-wrapper">
-        <%= render :partial => 'ticket_rules_header', :locals => { :twitter_stream => @twitter_stream } %>
-        <div id = "ticket_rules" class="adm-social sts adm-bg c-tkt">
-          <%= render :partial => 'ticket_rules', :locals => { :ticket_rules => @ticket_rules } %>
+                    <label><%= t("admin.social.ticket_rules.assign_to_gp")%></label>
+                    <%= select_tag "social_ticket_rule[][group_id]", options_for_select(current_account.groups.collect{ |c| [c.name, c.id]}.insert(0, "..."), convert_all_rule.group_id), {:class => "select2 filter_item rule_group span6"} %>
+                  </div>  
+                </div>
+              <% end %>
+            </div>
+          </li>
+          <li>
+            <div class="radio label-choice">
+              <%= radio_button_tag(:keyword_rules, 1, @twitter_stream.keyword_rules_present?) %>
+              <label class="enable-rules"><%= t('admin.social.smart_filter.convert_with_filters')%></label>
+            </div>
+            <div class="convert_with_keywords">
+              <p><%= t('admin.social.ticket_rules.brief_desc') %></p>
+              <div class="rules-wrapper">
+                <div id="ticket_rules" class="adm-social sts adm-bg c-tkt">
+                  <%= render :partial => 'ticket_rules', :locals => { :ticket_rules => @twitter_stream.keyword_rules } %>
+                </div>
+              </div>
+              <% if @twitter_stream.account.twitter_smart_filter_enabled? || @twitter_stream.smart_filter_rule %>
+                <div class="smart-filter-wrapper">
+                  <%= render :partial => 'smart_filter_header', :locals => {:twitter_handle => @twitter_handle, :f => f, :keyword_rules => true, :filter_val => "with_keywords", :ticket_rule => @smart_filter_rule } %>
+                </div>                
+              <% end %>
+            </div>
+          </li>
+        </ul>
+      <% else %>
+        <h4 class="adm-title"><%= t('admin.social.ticket_rules.title') %></h4>
+        <p><%= t('admin.social.ticket_rules.brief_desc') %></p>
+        <div class="rules-wrapper">
+          <%= render :partial => 'ticket_rules_header', :locals => { :twitter_stream => @twitter_stream } %>
+          <div id = "ticket_rules" class="adm-social sts adm-bg c-tkt">
+            <%= render :partial => 'ticket_rules', :locals => { :ticket_rules => @twitter_stream.keyword_rules } %>
+          </div>          
+        </div> 
+      <% end %>        
+    </div>
+      <% if @twitter_stream.default_stream?%>
+      <%# hide/show handled in js %>
+        <div class="rules-wrapper" id="dm_to_ticket_wrapper">
+            <%= render :partial => 'convert_dm',  :locals => { :twitter_handle => @twitter_handle } %>
         </div>
-    </div>       
-    <% if @twitter_stream.default_stream? and @twitter_stream.account.twitter_smart_filter_enabled?%>
-      <div class="smart-filter-wrapper">
-        <%= render :partial => 'smart_filter_header', :locals => { :twitter_handle => @twitter_handle, :f => f } %>
-      <div id = "smart_filter_rules" class="adm-social sts adm-bg c-tkt">
-          <%= render :partial => 'smart_filter', :locals => { :smart_filter_rule => @smart_filter_rule } %>
-      </div>
-      </div>
-    <% end %>
-    <% if @twitter_stream.default_stream? and @twitter_handle.capture_dm_as_ticket%>
-      <div class="rules-wrapper">
-          <%= render :partial => 'convert_dm',  :locals => { :twitter_handle => @twitter_handle } %>
-      </div>
-    <% end %>
+      <% end %>
   </div>
 <% end %>
 
 <script  type="text/javascript">
-  smartFilterToggle();
-  jQuery('#smart_filter_button').click(function(){
-    smartFilterToggle();
-  });
+  if(<%= @twitter_stream.default_stream? %>){
+    var $captureTweetAsTicket = jQuery('#capture_tweet_as_ticket');
+    var $captureDmAsTicket = jQuery('#capture_dm_as_ticket');
+    var $convertWithKeyWords = jQuery('.convert_with_keywords');
+    var $convertWithoutKeyWords = jQuery('.convert_without_keywords');
+    jQuery(document).on('ready.twitterNC', function(){
+      if(!$captureDmAsTicket.prop('checked'))
+        jQuery('#dm_to_ticket_wrapper').hide();
+      if(!$captureTweetAsTicket.prop('checked'))
+        jQuery('#tweet_to_ticket_wrapper').hide();
+      rulesSettingsCheck();
+    
+    });  
+    $captureDmAsTicket.on('click.twitterNC', function(){
+      jQuery('#dm_to_ticket_wrapper').toggle();
+    });
+    $captureTweetAsTicket.on('click.twitterNC', function(){
+      jQuery('#tweet_to_ticket_wrapper').toggle();
+    });
+
+    jQuery('.rules_settings .radio').on('click',function() { rulesSettingsCheck(); });      
+    
+  }
+  
   jQuery(".twt-stream-name").trigger('click');
   jQuery(function() {
     if(jQuery("#social_twitter_handle_capture_mention_as_ticket").prop('checked')){
@@ -60,24 +128,25 @@
     }else{
       jQuery('.mention_rule').hide()
     }
-    
+
   });
-  
+
   jQuery('#social_twitter_handle_capture_mention_as_ticket').click(function(){
     jQuery('#ticket_rules').toggle();
   });
 
-  function smartFilterToggle() {
-    if(jQuery("#smart_filter_toggle").prop('checked')){
-      jQuery('#smart_filter_rules').show();
-    }else{
-      jQuery("#smart_filter_rules").hide();
-     }
 
+  function rulesSettingsCheck(){
+   if(jQuery('#keyword_rules_1').prop("checked")) {
+    $convertWithKeyWords.show().find('.ticket_deleted').val("false");;
+    $convertWithoutKeyWords.hide().find('.ticket_deleted').val("true");;
+   }
+   else {
+    $convertWithKeyWords.hide().find('.ticket_deleted').val("true");;
+    $convertWithoutKeyWords.show().find('.ticket_deleted').val("false");;
+   }
   }
 
-
-  
 </script>
 
 <div id="previewFeeds"></div>

@@ -10,7 +10,7 @@ class SAAS::SubscriptionEventActions
                            :auto_ticket_export, :multiple_companies_toggle]
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle,
-                           :multiple_companies_toggle, :tam_default_fields].freeze
+                           :multiple_companies_toggle, :tam_default_fields, :smart_filter].freeze
 
   DROP  = "drop"
   ADD   = "add"
