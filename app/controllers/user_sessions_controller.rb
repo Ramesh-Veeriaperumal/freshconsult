@@ -21,13 +21,15 @@ class UserSessionsController < ApplicationController
   before_filter :set_native_mobile, :only => [:create, :destroy, :freshid_destroy]
   skip_after_filter :set_last_active_time
   before_filter :decode_jwt_payload, :check_jwt_required_fields, :only => [:jwt_sso_login]
+  before_filter :only => :create do |c|
+    redirect_to_freshid_login if params[:user_session].try(:[], :email) && freshid_agent?(params[:user_session][:email])
+  end
 
   def new
     flash.keep
     # Login normal supersets all login access (can be used by agents)
     if request.path == "/login/normal"
-      @user_session = current_account.user_sessions.new 
-      redirect_to_freshid_login if freshid_enabled?
+      @user_session = current_account.user_sessions.new
     elsif current_account.sso_enabled?
       sso_login_page_redirect
     else
