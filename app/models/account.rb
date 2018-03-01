@@ -16,6 +16,7 @@ class Account < ActiveRecord::Base
   include Onboarding::OnboardingRedisMethods
   include FreshdeskFeatures::Feature
   include Helpdesk::SharedOwnershipMigrationMethods
+  include ParserUtil
 
   has_many_attachments
   
@@ -338,6 +339,11 @@ class Account < ActiveRecord::Base
   
   def support_emails
     to_ret = email_configs.collect { |ec| ec.reply_email }
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
+  end
+
+  def parsed_support_emails
+    to_ret = email_configs.collect { |ec| trim_trailing_characters(parse_email_text(ec.reply_email)[:email]) }
     to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
   end
 

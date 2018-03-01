@@ -928,7 +928,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
-  def reply_to_all_emails
+ def reply_to_all_emails
     emails_hash = cc_email_hash
     return [] if emails_hash.nil?
     to_emails_array = []
@@ -936,15 +936,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_to_emails = self.to_emails || []
     to_emails_array = (ticket_to_emails || []).clone
 
-    reply_to_all_emails = (cc_emails_array + to_emails_array).map{|email| parse_email(email)[:email]}.compact.uniq
+    reply_to_all_emails = (cc_emails_array + to_emails_array).map{|email| trim_trailing_characters(parse_email_text(email)[:email])}.compact.uniq
+    parsed_support_emails = account.parsed_support_emails
 
-    account.support_emails.each do |support_email|
+    parsed_support_emails.each do |support_email|
       reply_to_all_emails.delete_if {|to_email| (
-        (trim_trailing_characters(parse_email_text(support_email)[:email])).casecmp(trim_trailing_characters(parse_email_text(to_email.strip)[:email])) == 0) ||
-        (parse_email_with_domain(to_email.strip)[:domain] == account.full_domain)
+        support_email.casecmp(to_email) == 0)
       }
     end
 
+    reply_to_all_emails.delete_if {|to_email|
+      (parse_email_with_domain(to_email.strip)[:domain] == account.full_domain)
+    }
     reply_to_all_emails
   end
 
