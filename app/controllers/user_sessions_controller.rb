@@ -46,13 +46,24 @@ class UserSessionsController < ApplicationController
       :phone => saml_response.phone,
       :company => saml_response.company,
       :title => saml_response.title,
-      :external_id => saml_response.external_id
+      :external_id => saml_response.external_id,
+      :custom_fields => saml_response.custom_fields
     }
 
-    if saml_response.valid?
-      handle_sso_response(sso_data, relay_state_url)
-    else
-      flash[:notice] = t(:'flash.login.failed') + " -  #{saml_response.error_message}"
+    valid = saml_response.valid?
+    message = saml_response.error_message
+    if valid
+      begin 
+        handle_sso_response(sso_data, relay_state_url)
+      rescue SsoFieldValidationError => e 
+        valid = false
+        message = "Field validation error #{e.message}"
+      end  
+    end
+
+    unless valid
+      flash[:notice] = "#{t(:'flash.login.failed')} - #{message}"
+      Rails.logger.debug("SAML Login failed #{message}")
       redirect_to login_normal_url
     end
   end

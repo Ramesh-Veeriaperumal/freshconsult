@@ -1161,7 +1161,7 @@ GEM
     ruby-openid-apps-discovery (1.2.0)
       ruby-openid (>= 2.1.7)
     ruby-progressbar (1.9.0)
-    ruby-saml (1.4.2)
+    ruby-saml (1.7.0)
       nokogiri (>= 1.5.10)
     rubytree (0.9.7)
       json (~> 1.8)
@@ -1506,7 +1506,7 @@ DEPENDENCIES
   rubocop-checkstyle_formatter
   ruby-openid!
   ruby-openid-apps-discovery (= 1.2.0)
-  ruby-saml (= 1.4.2)
+  ruby-saml (= 1.7.0)
   rubytree
   rubyzip (= 1.2.1)
   rugged

@@ -106,7 +106,7 @@ gem "twilio-ruby", :git => "git://github.com/freshdesk/twilio-ruby.git", :branch
 gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 gem 'postoffice', :git => "git://github.com/chrisbutcher/postoffice.git", :branch => "master"
 
-gem "ruby-saml", "1.4.2"
+gem "ruby-saml", "1.7.0"
 
 gem 'xeroizer', :git => "git@github.com:freshdesk/xeroizer.git"
 
