@@ -1245,6 +1245,7 @@ en:
         title: "Deleting this portal will remove"
         info1: "All the settings in portal customization"
         info2: "All the linked solution and forum categories"
+        info3: "The configured bot"
       settings:
         title: 'Customer Portals'
         portal_customizer_title: "Customer Portal Configuration"

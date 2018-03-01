@@ -81,15 +81,20 @@ module ConfirmDeleteHelper
 		t('forum_category.delete_confirm', :forums => forum_category.forums.size, :topics => forum_category.topics.size)
 	end
 
-	def portal_delete_message(portal)
-		content_tag(:div) do
-			content_tag(:span, "#{t('admin.portal.delete_confirm.title')}:") + 
-			(content_tag(:ul) do
-				content_tag(:li, "#{bullet}#{t('admin.portal.delete_confirm.info1')}") +
-				content_tag(:li, "#{bullet}#{t('admin.portal.delete_confirm.info2')}")
-			end)
-		end
-	end
+  def portal_delete_message(portal)
+    content_tag(:div) do
+      content_tag(:span, "#{t('admin.portal.delete_confirm.title')}:") + 
+      (content_tag(:ul) do
+        portal_delete_confirm_messages(portal)
+      end)
+    end
+  end
+
+  def portal_delete_confirm_messages(portal)
+    result = content_tag(:li, "#{bullet}#{t('admin.portal.delete_confirm.info1')}") + content_tag(:li, "#{bullet}#{t('admin.portal.delete_confirm.info2')}")
+    result << content_tag(:li, "#{bullet}#{t('admin.portal.delete_confirm.info3')}") if portal.bot.present?
+    result
+  end
 
 	def bullet
 		"<span class='bullet'></span>".html_safe

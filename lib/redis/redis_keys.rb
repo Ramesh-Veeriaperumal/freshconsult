@@ -376,7 +376,7 @@ module Redis::RedisKeys
 
   ZENDESK_IMPORT_APP_KEY = "ZENDESK_IMPORT_APP"
   DISABLE_PORTAL_NEW_THEME = "DISABLE_PORTAL_NEW_THEME"
-  BOT_STATUS = "BOT_STATUS:%{account_id}:%{portal_id}"
+  BOT_STATUS = "BOT_STATUS:%{account_id}:%{bot_id}"
 
   # Key for enabling TAM company fields
   TAM_FIELDS_ENABLED = "TAM_FIELDS_ENABLED"

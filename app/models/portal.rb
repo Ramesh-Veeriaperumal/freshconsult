@@ -64,7 +64,7 @@ class Portal < ActiveRecord::Base
 
   has_one :primary_email_config, :class_name => 'EmailConfig', :through => :product
 
-  has_one :bot, class_name: 'Bot'
+  has_one :bot, class_name: 'Bot', dependent: :destroy
 
   has_many :monitorships, :dependent => :nullify
 
