@@ -29,7 +29,7 @@ class Wf::FilterController < ApplicationController
 
   def check_custom_view_feature
     unless current_account.custom_ticket_views_enabled?
-      render js: "window.location='#{send(Helpdesk::ACCESS_DENIED_ROUTE)}'"
+      render js: "window.location='#{safe_send(Helpdesk::ACCESS_DENIED_ROUTE)}'"
     end
   end
   
@@ -37,7 +37,7 @@ class Wf::FilterController < ApplicationController
     @edit_filters = []
     view_filters = scoper.my_ticket_filters(current_user)
     view_filters.each do |filter|
-      if (filter.accessible.user_id == current_user.id) or privilege?(:manage_users)
+      if (filter.accessible.user_id == current_user.id) or privilege?(:manage_dashboard)
         @edit_filters.push(filter)
       end
     end
@@ -46,9 +46,9 @@ class Wf::FilterController < ApplicationController
  
   def chk_usr_permission 
      @wf_filter = current_account.ticket_filters.find_by_id(params[:id])
-     if @wf_filter and @wf_filter.accessible.user_id != current_user.id and !privilege?(:manage_users)
+     if @wf_filter and @wf_filter.accessible.user_id != current_user.id and !privilege?(:manage_dashboard)
       flash[:notice] =  t(:'flash.general.access_denied')
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
      end
   end
   
@@ -73,7 +73,7 @@ class Wf::FilterController < ApplicationController
   def save_filter
     params.delete(:wf_id)
     params[:custom_ticket_filter][:visibility][:user_id] = current_user.id
-    unless privilege?(:manage_users)
+    unless privilege?(:manage_dashboard)
       params[:custom_ticket_filter][:visibility][:visibility] = \
         Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] 
       params[:custom_ticket_filter][:visibility][:group_id] = nil

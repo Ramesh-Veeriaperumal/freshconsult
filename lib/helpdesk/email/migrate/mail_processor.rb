@@ -18,7 +18,7 @@ module Helpdesk::Email::Migrate
     def initialise_attributes(attributes)
       attributes.each do |name, value|
         if respond_to?("#{name}=")
-          send("#{name}=", value)
+          safe_send("#{name}=", value)
         end
       end
     end

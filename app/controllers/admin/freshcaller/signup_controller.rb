@@ -62,6 +62,7 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
 
   def enable_freshcaller
     current_account.add_feature(:freshcaller)
+    current_account.add_feature(:freshcaller_widget)
   end
 
   def disable_freshfone

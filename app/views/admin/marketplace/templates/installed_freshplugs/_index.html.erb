@@ -32,7 +32,8 @@
               <%= extension_details['display_name'] %></a> 
             <div class="mkp-prog hide" id="delete_prog_<%= installation_details['installed_extension_id']%>">
               <div class="mkp-prog-spinner"></div>
-              <div class="mkp-prog-text">Please wait...</div>
+              <div class="mkp-prog-text">
+              <%= t("marketplace.installing_text") %></div>
             </div>
 
           <% unless unsupported_apps %>
@@ -65,7 +66,7 @@
                   <%= link_to "<span class='#{font_class('keyicon', 16)}'></span>".html_safe, "",
                 "data-url"=> "#{admin_marketplace_installed_extensions_edit_oauth_iparams_path(installation_details['extension_id'], installation_details['version_id'])}?#{edit_params.to_query}",:class => "btn btn-mini btn-settings update tooltip", "data-placement" => "below", "data-original-title" => t('marketplace.reauthorize'), "data-developedby"=> extension_details['account'] %>
                 <% else %>
-                  <% reauthorize_url = send("admin_marketplace_installed_extensions_edit_oauth_configs_path", extension_details['extension_id'], extension_details['version_id']) + "?installed_extn_id=" + installation_details['installed_extension_id'].to_s %>
+                  <% reauthorize_url = safe_send("admin_marketplace_installed_extensions_edit_oauth_configs_path", extension_details['extension_id'], extension_details['version_id']) + "?installed_extn_id=" + installation_details['installed_extension_id'].to_s %>
                   <a href="#toggle-confirm" rel="freshdialog" class="btn btn-mini tooltip reauthorize-btn" title="<%= t('marketplace.reauthorize') %>" data-placement="below" data-modal-title="<%=t('marketplace.reauthorize_header')%>" data-original-title="<%= t('integrations.uninstall') %>" data-width="600" data-close-on-submit="true" data-show-close="true" data-destroy-on-close="true"  data-url="<%= reauthorize_url %>" data-confirm-content="<%= t('marketplace.reauthorize_oauth_app')%>" data-close-label="<%= t('marketplace.cancel') %>" data-submit-label="<%= t('marketplace.reauthorize') %>" data-submit-class="btn btn-primary reauthorize-confirm" >
                     <span class="<%= font_class('keyicon', 16) %>"></span>
                   </a>

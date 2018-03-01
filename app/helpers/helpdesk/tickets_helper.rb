@@ -78,7 +78,7 @@ module Helpdesk::TicketsHelper
   end
 
   def fetch_custom_field_value(item, field_name)
-    item.is_a?(Helpdesk::Ticket) ? item.send(field_name) : item.custom_field_value(field_name)
+    item.is_a?(Helpdesk::Ticket) ? item.safe_send(field_name) : item.custom_field_value(field_name)
   end
 
   def ticket_field_element(field, dom_type, attributes, pl_value_id=nil)
@@ -487,7 +487,7 @@ module Helpdesk::TicketsHelper
       content << "<span class='disabled prev_page'>#{options[:previous_label]}</span>"
     else
       content << "<a class='prev_page #{tooltip}' href='/helpdesk/tickets?page=#{(current_page-1)}'
-                      title='Previous'
+                      title=#{t('previous')}
                       #{shortcut_options('previous') unless full_pagination} >#{options[:previous_label]}</a>"
     end
 
@@ -508,7 +508,7 @@ module Helpdesk::TicketsHelper
       content << "<span class='disabled next_page'>#{options[:next_label]}</span>"
     else
       content << "<a class='next_page #{tooltip}' href='/helpdesk/tickets?page=#{(current_page+1)}'
-                      rel='next' title='Next'
+                      rel='next' title=#{t('next')}
                       #{shortcut_options('next') unless full_pagination} >#{options[:next_label]}</a>"
     end
     content << "</div>" if full_pagination
@@ -618,6 +618,23 @@ module Helpdesk::TicketsHelper
         end
       end
       return raw(dom)
+  end
+
+  def freshcaller_audio_dom(notable = nil)
+    notable ||= @ticket
+    call = notable.freshcaller_call
+    dom = ''
+    if call.present? && %w[inprogress completed].any? { |status| call.send("recording_#{status}?") }
+      dom << tag(:br)
+      if call.recording_completed?
+        dom << content_tag(:div, content_tag(:div, link_to(I18n.t('freshcaller.ticket.recording.play'), "#{'http://localhost:3004' if Rails.env.development?}/freshcaller_proxy/recording_url?call_id=#{call.fc_call_id}", :type => 'audio/mp3',
+         :class => 'call_duration freshcaller', :'data-time' => 0), class: 'ui360'), class: 'freshfoneAudio')
+        dom.html_safe
+      else
+        dom << tag(:br) << content_tag(:div, raw(I18n.t('freshfone.recording_on_process')), class: 'freshfoneAudio_text')
+      end
+    end
+    raw(dom)
   end
 
   def ticket_body_form form_builder, widget=false, to=false

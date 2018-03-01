@@ -63,13 +63,13 @@ class Helpdesk::LeaderboardController < ApplicationController
         leader_module = group_action ? "group" : "user"
 
         category_list.each do |category|
-          scoper = support_score.send("#{params[:action]}_scoper", current_account, start_time, end_time)
+          scoper = support_score.safe_send("#{params[:action]}_scoper", current_account, start_time, end_time)
           scoper = scoper.includes(:group) if group_action
-          result = category == :mvp ? scoper.limit(50).all : scoper.send(category).limit(50).all
+          result = category == :mvp ? scoper.limit(50).all : scoper.safe_send(category).limit(50).all
           @leaderboard[category] = []
 
           result.each do |score|
-            @leaderboard[category] << [score.send(leader_module), score.tot_score]
+            @leaderboard[category] << [score.safe_send(leader_module), score.tot_score]
           end
         end
       else
@@ -82,7 +82,7 @@ class Helpdesk::LeaderboardController < ApplicationController
 
           if leader_module_ids
             id_list = leader_module_ids.map(&:first).join(',')
-            result = current_account.send(module_association).where("id in (#{id_list}) #{group_action ? "" : "and helpdesk_agent = 1 and deleted = 0"}").order("FIELD(id, #{id_list})")
+            result = current_account.safe_send(module_association).where("id in (#{id_list}) #{group_action ? "" : "and helpdesk_agent = 1 and deleted = 0"}").order("FIELD(id, #{id_list})")
             result = result.includes(:avatar) unless group_action
 
             result.each_with_index do |leader_module, counter|

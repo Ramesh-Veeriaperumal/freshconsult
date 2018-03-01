@@ -35,7 +35,7 @@ class Solution::ArticlesController < ApplicationController
   end
 
   def show
-    @article = @article_meta.send("build_#{language_scoper}") unless @article
+    @article = @article_meta.safe_send("build_#{language_scoper}") unless @article
     respond_to do |format|
       format.html {
         unless @article.new_record?
@@ -76,7 +76,7 @@ class Solution::ArticlesController < ApplicationController
   def create
     set_common_attributes
     @article_meta = Solution::Builder.article(params)
-    @article = @article_meta.send(language_scoper)
+    @article = @article_meta.safe_send(language_scoper)
     set_tags_changed
     @article.create_draft_from_article if save_as_draft? && @article_meta.errors.blank?
     load_article_parents if @article_meta.errors.present?
@@ -91,7 +91,7 @@ class Solution::ArticlesController < ApplicationController
                 params[:publish].blank?)
       update_article
     else
-      send("article_#{(UPDATE_FLAGS & params.keys.map(& :to_sym)).first}")
+      safe_send("article_#{(UPDATE_FLAGS & params.keys.map(& :to_sym)).first}")
     end
   end
 
@@ -139,7 +139,7 @@ class Solution::ArticlesController < ApplicationController
   # end
 
   def mark_as_uptodate
-    meta_scoper.find(params[:item_id]).send("#{language.to_key}_article").update_attributes(:outdated => false)
+    meta_scoper.find(params[:item_id]).safe_send("#{language.to_key}_article").update_attributes(:outdated => false)
     respond_to do |format|
       format.json { head :ok }
     end
@@ -204,7 +204,7 @@ class Solution::ArticlesController < ApplicationController
       id = get_meta_id
       return if id.blank?
       @article_meta = current_account.solution_article_meta.find_by_id!(id)
-      @article = @article_meta.send(language_scoper)
+      @article = @article_meta.safe_send(language_scoper)
       load_article_parents
     end
 
@@ -381,8 +381,14 @@ class Solution::ArticlesController < ApplicationController
     end
 
     def bulk_update_folder
-      @articles = meta_scoper.where(:id => params[:items])
-      @articles.map { |a| a.update_attributes(:solution_folder_meta_id => params[:parent_id]) }
+      @articles = meta_scoper.where(:id => params[:items]).preload(:primary_article)
+      @articles.map do |a|
+        ActiveRecord::Base.transaction do
+          a.solution_folder_meta_id = params[:parent_id]
+          a.save
+          a.primary_article.save # Dummy save to trigger publishable callbacks
+        end
+      end
       @updated_items = params[:items].map(&:to_i) & @new_folder.solution_article_metum_ids
       @other_items = params[:items].map(&:to_i) - @updated_items
     end

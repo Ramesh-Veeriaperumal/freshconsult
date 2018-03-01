@@ -3,13 +3,15 @@ module ApiTicketConstants
   ARRAY_FIELDS = %w(tags cc_emails attachments).freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
-                     email phone twitter_id facebook_id requester_id name internal_agent_id
-                     responder_id source status subject type product_id company_id
+  CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id 
+                    internal_group_id priority email phone twitter_id facebook_id 
+                    requester_id name internal_agent_id responder_id source 
+                    status subject type product_id company_id unique_external_id
                   ).freeze | ARRAY_FIELDS | HASH_FIELDS
-  UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
-                     email phone twitter_id facebook_id requester_id name internal_agent_id
-                     responder_id source status subject type product_id company_id
+  UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id 
+                    internal_group_id priority email phone twitter_id facebook_id 
+                    requester_id name internal_agent_id responder_id source 
+                    status subject type product_id company_id unique_external_id
                   ).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include']
@@ -20,9 +22,11 @@ module ApiTicketConstants
   ORDER_BY = TicketsFilter::SORT_FIELDS.map(&:first).map(&:to_s) - ['priority']
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
   DEFAULT_ORDER_TYPE = TicketsFilter::DEFAULT_SORT_ORDER
-  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(group_id responder_id product_id internal_agent_id internal_group_id
+  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(group_id responder_id product_id 
+                                        internal_agent_id internal_group_id
                                         email_config_id custom_field requester_id
-                                        status facebook_id ticket_type company_id).freeze
+                                        status facebook_id ticket_type company_id 
+                                        unique_external_id).freeze
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze
   SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :chat, :mobihelp, :feedback_widget).values.freeze
 
@@ -66,4 +70,7 @@ module ApiTicketConstants
                      product: :product_id, ticket_type: :type }.freeze
 
   SEARCH_ALLOWED_DEFAULT_FIELDS = ['status'].freeze
+
+  VERIFY_REQUESTER_ON_PROPERTY_VALUE_CHANGES = %w(email phone twitter_id 
+                                          facebook_id unique_external_id).freeze
 end.freeze

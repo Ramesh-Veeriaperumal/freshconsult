@@ -6,7 +6,7 @@
       minimumResultsForSearch: 5 // at least 5 results must be displayed
 		});
     var $ticket_desc = $("#helpdesk_ticket_ticket_body_attributes_description_html"),
-        proxy_placeholders = jQuery(".form-placeholder").find("input[type=text], textarea");
+        proxy_placeholders = jQuery(".form-placeholder").find("input[type=text], input[type=email], textarea");
 
     jQuery.each(proxy_placeholders, function(i, item) {
         var $item = jQuery(item);

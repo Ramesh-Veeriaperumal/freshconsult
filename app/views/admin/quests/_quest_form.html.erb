@@ -47,7 +47,7 @@
 						<strong id="selected-badge-name"><%= @badge_class[:name] if @badge_class%></strong>
 					</div>
 					<a href="#select-badge" data-template-footer="" 
-						id="showbadges" rel="freshdialog" title="Select a badge">
+						id="showbadges" rel="freshdialog" title="<%= t("quests.badge_mand") %>">
 						<%= (!@badge_class) ? t('admin.quests.quest_form.pick_badge') : t('admin.quests.quest_form.change') %>
 					</a>
 				</div>

@@ -28,6 +28,35 @@ class ChatsController < ApplicationController
   end
 
 
+  def request_proxy
+    action = params[:action]
+    agent_id = params[:id].to_i
+    method = convert_http_request_symbol_to_string(params[:method])
+    #regular agent can update his own availability (not someone else's)
+    if action == 'update_availability' && agent_id == current_user.id
+      path, request_params = ["agents/#{agent_id}/updateAvailability", params.slice('status')]
+      response = livechat_request(action, request_params,
+                                  path, method)
+      response_body, response_status = handle_livechat_response(response)
+      render :json => response_body, status: response_status
+    elsif current_user.privilege?(:admin_tasks)
+      path, request_params = parse_and_sanitise_admin_proxy_request(action, method, params)
+      response = livechat_request(action, request_params,
+                                  path, method)
+
+      response_body, response_status = handle_livechat_response(response)
+      render :json => response_body, status: response_status
+    else
+      render :json => { code: :only_admin_can_create_shortcodes, :status => 403 }, status: 403
+    end
+  end
+
+
+  alias_method :create_shortcode, :request_proxy
+  alias_method :delete_shortcode, :request_proxy
+  alias_method :update_shortcode, :request_proxy
+  alias_method :update_availability, :request_proxy
+
   def create_ticket
     ticket_params = {
                       :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],
@@ -124,7 +153,7 @@ class ChatsController < ApplicationController
     event = params[:eventType]
     content = params[:content]
     content = JSON.parse(params[:content], symbolize_names: true) if content.is_a?(String)
-    send(event, content)
+    safe_send(event, content)
   end
 
   def export 
@@ -158,6 +187,58 @@ class ChatsController < ApplicationController
   end
 
   private
+
+  def parse_and_sanitise_admin_proxy_request(action, method, params)
+    path, request_params =
+      if action == 'create_shortcode' && method == 'POST'
+        #puts "INFO app/controllers/chats_controller.rb request_proxy create_shortcode"
+        ['shortcodes', params.slice('attributes', 'appId', 'userId', 'siteId', 'token')]
+      elsif action == 'delete_shortcode' && method == 'DELETE'
+        #puts "INFO app/controllers/chats_controller.rb request_proxy action : delete_shortcode params: #{params.inspect}"
+        ["shortcodes/#{params[:id]}", {:attributes => {:empty => :empty}}]
+      elsif action == 'update_shortcode' && method == 'PUT'
+        #puts "INFO app/controllers/chats_controller.rb  request_proxy update_shortcode"
+        ["shortcodes/#{params[:id]}", params.slice('attributes', 'appId', 'userId', 'siteId', 'token') ]
+      elsif action == 'update_availability' && method == 'PUT'
+        #puts "INFO app/controllers/chats_controller.rb request_proxy action: update_availability  params: #{params.inspect}"
+        ["agents/#{agent_id}/updateAvailability", params.slice('status')]
+      else
+        #puts "Catch all else "
+        ["none/livechat_invalid_request", {:attributes => {:empty => :empty}}]
+      end
+    [path, request_params]
+  end
+
+  # this function is needed because httparty needs method as string, comes as :post (interned string from Rails router)
+  def convert_http_request_symbol_to_string(method)
+    case method
+      when :post
+        'POST'
+      when :get
+        'GET'
+      when :put
+        'PUT'
+      when :delete
+        'DELETE'
+      else
+        #cause httparty to fail
+        'UNKNOWN'
+    end
+  end
+
+  def handle_livechat_response(response)
+    response_body, response_status =
+      if response[:status] >= 200 && response[:status] <= 226 # highest 2xx response code as of 2-nov-2017
+        response_body = { code: :success, :status => response[:status] }
+        json_parse_body = JSON.parse(response[:text])
+        response_body.merge!({ data: json_parse_body['data']}) if json_parse_body.has_key?('data')
+        [response_body, response[:status]]
+      else
+        #render :json => { code: :something_went_wrong, :status => response[:status] }, status: response[:status]
+        [{ code: :something_went_wrong, :status => response[:status] }, response[:status]]
+      end
+    [response_body, response_status]
+  end
 
   def select_account(&block)
     render :json => { :status=> "error", :message => "Account ID Not Found!"} if params[:account_id].nil?

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20171208111955) do
+ActiveRecord::Schema.define(:version => 20180205101318) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -378,6 +378,38 @@ ActiveRecord::Schema.define(:version => 20171208111955) do
 
   add_index "authorizations", ["account_id", "user_id"], :name => "index_authorizations_on_account_id_and_user_id"
   add_index "authorizations", ["account_id", "uid", "provider"], :name => "index_authorizations_on_account_id_uid_and_provider"
+
+  create_table "bots", :force => true do |t|
+    t.string   "name"
+    t.integer  "account_id",          :limit => 8, :null => false
+    t.integer  "portal_id",           :limit => 8, :null => false
+    t.integer  "product_id",          :limit => 8
+    t.text     "template_data"
+    t.boolean  "enable_in_portal"
+    t.integer  "last_updated_by",     :limit => 8, :null => false
+    t.string   "external_id",                      :null => false
+    t.text     "additional_settings"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+  end
+
+  add_index "bots", ["account_id"], :name => "index_bot_on_account_id"
+  add_index "bots", ["portal_id"], :name => "index_bot_on_portal_id"
+  add_index "bots", ["product_id"], :name => "index_bot_on_product_id"
+
+  create_table "bot_tickets", :force => true do |t|
+    t.integer  "ticket_id",       :limit => 8, :null => false
+    t.integer  "account_id",      :limit => 8, :null => false
+    t.integer  "bot_id",          :limit => 8, :null => false
+    t.string   "query_id"
+    t.string   "conversation_id"
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+  end
+
+  add_index "bot_tickets", ["account_id", "query_id"], :name => "index_bot_tickets_on_account_id_and_query_id"
+  add_index "bot_tickets", ["account_id", "ticket_id"], :name => "index_bot_tickets_on_account_id_and_ticket_id"
+  add_index "bot_tickets", ["account_id", "bot_id"], :name => "index_bot_tickets_on_account_id_and_bot_id"
 
   create_table "business_calendars", :force => true do |t|
     t.integer  "account_id",         :limit => 8
@@ -1524,6 +1556,19 @@ ActiveRecord::Schema.define(:version => 20171208111955) do
 
   add_index "freshcaller_accounts", ["account_id"], :name => "index_freshcaller_accounts_on_account_id"
 
+  create_table "freshcaller_calls", :force => true do |t|
+    t.integer  "account_id",       :limit => 8
+    t.integer  "fc_call_id",       :limit => 8, :null => false
+    t.integer  "recording_status", :limit => 1
+    t.integer  "notable_id",       :limit => 8
+    t.string   "notable_type"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
+
+  add_index "freshcaller_calls", ["account_id", "fc_call_id"], :name => "index_freshcaller_calls_on_account_id_and_fc_call_id"
+  add_index "freshcaller_calls", ["fc_call_id"], :name => "fc_call_id", :unique => true
+
   create_table "freshfone_accounts", :force => true do |t|
     t.integer  "account_id",              :limit => 8
     t.string   "friendly_name"
@@ -2110,8 +2155,15 @@ ActiveRecord::Schema.define(:version => 20171208111955) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id", :limit => 8
+    t.integer  "contact_id",  :limit => 8
+    t.integer  "company_id",  :limit => 8
+    t.datetime "reminder_at"
   end
 
+  add_index "helpdesk_reminders", ["account_id", "company_id"], 
+    :name => "index_helpdesk_reminders_on_account_id_company_id"
+  add_index "helpdesk_reminders", ["account_id", "contact_id"], 
+    :name => "index_helpdesk_reminders_on_account_id_contact_id"
   add_index "helpdesk_reminders", ["ticket_id"], :name => "index_helpdesk_reminders_on_ticket_id"
   add_index "helpdesk_reminders", ["user_id"], :name => "index_helpdesk_reminders_on_user_id"
 
@@ -2786,6 +2838,7 @@ ActiveRecord::Schema.define(:version => 20171208111955) do
     t.integer "account_id",           :limit => 8
     t.integer "position"
     t.integer "solution_category_meta_id", :limit => 8
+    t.integer "bot_id"
   end
 
   add_index "portal_solution_categories", ["account_id", "portal_id"], :name => "index_portal_solution_categories_on_account_id_and_portal_id"
@@ -3741,6 +3794,9 @@ ActiveRecord::Schema.define(:version => 20171208111955) do
   add_index "survey_results", ["account_id", "survey_id"], :name => "nameindex_on_account_id_and_survey_id"
   add_index "survey_results", ["surveyable_id", "surveyable_type"], :name => "index_survey_results_on_surveyable_id_and_surveyable_type"
   add_index "survey_results", ["account_id", "created_at"], :name => "index_survey_results_on_account_id_and_created_at"
+  add_index "survey_results", ["account_id", "agent_id", "created_at", "rating"], :name => "index_survey_results_on_acc_agent_id_created_at_rating"
+  add_index "survey_results", ["account_id", "group_id", "created_at", "rating"], :name => "index_survey_results_on_acc_group_id_created_at_rating"
+
   execute "ALTER TABLE survey_results ADD PRIMARY KEY (id,account_id)"
 
   create_table "surveys", :force => true do |t|
@@ -4207,4 +4263,19 @@ ActiveRecord::Schema.define(:version => 20171208111955) do
     end
   add_index :qna_insights_reports , [:account_id, :user_id], :name => 'index_qna_insights_reports_on_account_id_and_user_id'
  
+  create_table :failed_central_feeds, :force => true do |t|
+    t.integer :account_id, limit: 8, null: false
+    t.integer :model_id, limit: 8, null: false
+    t.string  :uuid, limit: 255
+    t.string  :payload_type, limit: 255
+    t.text    :model_changes
+    t.text    :additional_info
+    t.string  :exception, limit: 255
+    t.timestamps null: false
+  end
+
+  add_index :failed_central_feeds, :uuid, :name => 'index_failed_central_feeds_on_uuid'
+  add_index :failed_central_feeds, :model_id, :name => 'index_failed_central_feeds_on_model_id'
+  add_index :failed_central_feeds, :account_id, :name => 'index_failed_central_feeds_on_account_id'
+  add_index :failed_central_feeds, :created_at, :name => 'index_failed_central_feeds_on_created_at'
 end

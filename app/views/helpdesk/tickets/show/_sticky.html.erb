@@ -154,7 +154,7 @@
 			  	<% end %>
 
 			  	<li class = "collapse_on_default">
-			  		<%= link_to( "Print", print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
+			  		<%= link_to(t('print'), print_helpdesk_ticket_path(@ticket), :target => "_blank") %>
 			  	</li>
 			  	<li class = "collapse_on_default spam reload-action">
 			  		<%= render :partial => "spam", :locals => { :ticket => @ticket, :page => params[:page] } %>

@@ -28,6 +28,9 @@
       @user       = params['user_id'].blank? ? nil : @account.all_users.find(params['user_id'])
       @ticket     = @account.tickets.find(params['ticket_id'])
       @is_webhook = params['is_webhook']
+      Va::Logger::Automation.set_thread_variables(@account.id, params['ticket_id'], params['user_id'])
+      Va::Logger::Automation.log "user=nil" if @user.nil?
+      Va::Logger::Automation.log "ticket=nil" if @ticket.nil?
     end
 
     def execute
@@ -40,12 +43,16 @@
         @ticket.autoreply
         @ticket.va_rules_after_save_actions.each do |action|
           klass = action[:klass].constantize
-          klass.send(action[:method], action[:args])
+          klass.safe_send(action[:method], action[:args])
         end
       }
     rescue Exception => e
+      Va::Logger::Automation.log "Something is wrong in Disatcher::Exception=#{e.message}::#{e.backtrace.join('\n')}"
       NewRelic::Agent.notice_error(e)
       raise e
+    ensure
+      Va::Logger::Automation.log "********* END OF DISPATCHER *********"
+      Va::Logger::Automation.unset_thread_variables
     end
 
     private
@@ -60,12 +67,14 @@
       evaluate_on = @ticket
       @account.va_rules.each do |vr|
         begin
+          Va::Logger::Automation.set_rule_id(vr.id)
           evaluate_on = vr.pass_through(@ticket,nil,@user)
+          Va::Logger::Automation.log "Rule executed=#{evaluate_on.present?}"
         rescue Exception => e
-          Rails.logger.error "pass_through failed - T=#{@ticket.id} :: R=#{vr.id}"
+          Va::Logger::Automation.log "Something is wrong::Exception=#{e.message}::#{e.backtrace.join('\n')}"
         end
         next if @account.features?(:cascade_dispatchr)
-        return unless evaluate_on.nil?
+        return if evaluate_on.present?
       end
     end
 

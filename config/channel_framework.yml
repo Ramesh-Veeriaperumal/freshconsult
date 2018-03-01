@@ -1,0 +1,24 @@
+development:
+  dedup_interval: 60
+  hop_interval: 5
+  schema_version: 1
+  pod: development
+  region: us-east-1
+test:
+  dedup_interval: 60
+  hop_interval: 5
+  schema_version: 1
+  region: us-east-1
+  pod: development
+staging:
+  dedup_interval: 60
+  hop_interval: 5
+  schema_version: 1
+  region: us-east-1
+  pod: development
+production:
+  dedup_interval: 60
+  hop_interval: 5
+  schema_version: 1
+  region: us-east-1
+  pod: development

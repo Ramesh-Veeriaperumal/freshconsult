@@ -9,40 +9,38 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   before_save :check_sla_time
 
   RESPONSETIME = [
-    [ :half,    I18n.t('half'),  1800 ], 
-    [ :one,      I18n.t('one'),      3600 ], 
-    [ :two,      I18n.t('two'),      7200 ], 
-    [ :four,     I18n.t('four'),     14400 ], 
-    [ :eight,    I18n.t('eight'),     28800 ], 
-    [ :twelve,   I18n.t('twelve'),    43200 ], 
-    [ :day,      I18n.t('day'),      86400 ],
-    [ :twoday,   I18n.t('twoday'),     172800 ], 
-    [ :threeday, I18n.t('threeday'),     259200 ]
+    [ :half,      1800 ], 
+    [ :one,       3600 ], 
+    [ :two,       7200 ], 
+    [ :four,      14400 ], 
+    [ :eight,     28800 ], 
+    [ :twelve,    43200 ], 
+    [ :day,       86400 ],
+    [ :twoday,    172800 ], 
+    [ :threeday,  259200 ]
   ]
 
   ONE_DAY_IN_SECONDS = 86400
-
-  RESPONSETIME_OPTIONS = RESPONSETIME.map { |i| [i[1], i[2]] }
-  RESPONSETIME_NAMES_BY_KEY = Hash[*RESPONSETIME.map { |i| [i[2], i[1]] }.flatten]
+  
   RESPONSETIME_KEYS_BY_TOKEN = Hash[*RESPONSETIME.map { |i| [i[0], i[2]] }.flatten]
 
   RESOLUTIONTIME = [
-    [ :half,    I18n.t('half'),  1800 ], 
-    [ :one,      I18n.t('one'),      3600 ], 
-    [ :two,      I18n.t('two'),      7200 ], 
-    [ :four,     I18n.t('four'),     14400 ], 
-    [ :eight,    I18n.t('eight'),     28800 ], 
-    [ :twelve,   I18n.t('twelve'),    43200 ], 
-    [ :day,      I18n.t('day'),      86400 ],
-    [ :twoday,   I18n.t('twoday'),     172800 ], 
-    [ :threeday, I18n.t('threeday'),     259200 ],
-    [ :oneweek, I18n.t('oneweek'),     604800 ],
-    [ :twoweek, I18n.t('twoweek'),     1209600 ],
-    [ :onemonth, I18n.t('onemonth'),   2592000 ],
-    [ :twomonth, I18n.t('twomonth'),   5184000 ],
-    [ :threemonth, I18n.t('threemonth'),   7776000 ],
-    [ :sixmonth, I18n.t('sixmonth'),   15811200 ],
-    [ :oneyear, I18n.t('oneyear'),   31536000 ]
+    [ :half,        1800 ], 
+    [ :one,         3600 ], 
+    [ :two,          7200 ], 
+    [ :four,        14400 ], 
+    [ :eight,       28800 ], 
+    [ :twelve,      43200 ], 
+    [ :day,         86400 ],
+    [ :twoday,      172800 ], 
+    [ :threeday,    259200 ],
+    [ :oneweek,     604800 ],
+    [ :twoweek,     1209600 ],
+    [ :onemonth,    2592000 ],
+    [ :twomonth,    5184000 ],
+    [ :threemonth,  7776000 ],
+    [ :sixmonth,    15811200 ],
+    [ :oneyear,     31536000 ]
   ]
 
   SLA_OPTIONS = [
@@ -60,14 +58,12 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
   SECONDS_RANGE = Hash[*SECONDS.map { |i| [i[0], i[1]] }.flatten]
 
-  RESOLUTIONTIME_OPTIONS = RESOLUTIONTIME.map { |i| [i[1], i[2]] }
-  RESOLUTIONTIME_NAMES_BY_KEY = Hash[*RESOLUTIONTIME.map { |i| [i[2], i[1]] }.flatten]
   RESOLUTIONTIME_KEYS_BY_TOKEN = Hash[*RESOLUTIONTIME.map { |i| [i[0], i[2]] }.flatten]
 
   PREMIUM_TIME_OPTIONS = [ 
-    [I18n.t('premium_sla_times.five_minutes'),300], 
-    [I18n.t('premium_sla_times.ten_minutes'),600], 
-    [I18n.t('premium_sla_times.fifteen_minutes'), 900] 
+    [:five_minutes,     300], 
+    [:ten_minutes,      600], 
+    [:fifteen_minutes,  900] 
   ]
 
   PRIORITIES = [
@@ -82,33 +78,15 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
   PRIORITY_KEYS_BY_TOKEN = Hash[*PRIORITIES.map { |i| [i[0], i[2]] }.flatten]
 
   SLA_TIME = [
-    [ :business,       I18n.t('admin.home.index.business-hours'),      false ], 
-    [ :calendar,    I18n.t('sla_policy.calendar_time'),      true ],        
+    [ :business, false ], 
+    [ :calendar, true ],        
   ]
 
-  SLA_TIME_OPTIONS = SLA_TIME.map { |i| [i[1], i[2]] }
-  SLA_TIME_BY_KEY = Hash[*SLA_TIME.map { |i| [i[2], i[0]] }.flatten]
-  SLA_TIME_BY_TOKEN = Hash[*SLA_TIME.map { |i| [i[0], i[2]] }.flatten]
+  # SLA_TIME_OPTIONS = SLA_TIME.map { |i| [i[1], i[2]] }
+  SLA_TIME_BY_KEY = Hash[*SLA_TIME.map { |i| [i[1], i[0]] }.flatten]
+  SLA_TIME_BY_TOKEN = Hash[*SLA_TIME.map { |i| [i[0], i[1]] }.flatten]
 
   default_scope :order => "priority DESC"
-
-  def calculate_due_by_time_on_priority_change(created_time, calendar)
-    override_bhrs ? (created_time + resolution_time.seconds) : business_time(resolution_time, created_time, calendar)
-  end
-
-  def calculate_frDue_by_time_on_priority_change(created_time, calendar)
-    override_bhrs ? (created_time + response_time.seconds) : business_time(response_time, created_time, calendar)
-  end
-
-  def calculate_due_by_time_on_status_change(ticket,calendar)
-    override_bhrs ? on_status_change_override_bhrs(ticket, ticket.due_by) : 
-      on_status_change_bhrs(ticket, ticket.due_by,calendar)
-  end
-
-  def calculate_frDue_by_time_on_status_change(ticket,calendar)
-    override_bhrs ? on_status_change_override_bhrs(ticket, ticket.frDueBy) :
-      on_status_change_bhrs(ticket, ticket.frDueBy,calendar)
-  end
 
   def calculate_due_by(created_time, total_time_worked, calendar)
     Rails.logger.debug "SLA :::: Account id #{self.account_id} :: Calculating due by :: created_time :: #{created_time} resolution_time :: #{resolution_time} total_time_worked :: #{total_time_worked} calendar :: #{calendar.id} - #{calendar.name} override_bhrs :: #{override_bhrs}"
@@ -122,6 +100,30 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
 
   def self.sla_options
     SLA_OPTIONS.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def self.sla_time_options
+    SLA_TIME.map { |i| [I18n.t("sla_policy.#{i[0]}"), i[1]] }
+  end
+
+  def self.response_time_options
+    RESPONSETIME.map { |i| [I18n.t(i[0]), i[1]] }
+  end
+
+  def self.response_time_name_by_key
+    Hash[*RESPONSETIME.map { |i| [i[1], I18n.t(i[0])] }.flatten]
+  end
+
+  def self.resolution_time_option
+    RESOLUTIONTIME.map { |i| [I18n.t(i[0]), i[1]] }
+  end
+
+  def self.resolution_time_name_by_key
+    Hash[*RESOLUTIONTIME.map { |i| [i[1], I18n.t(i[0])] }.flatten]
+  end
+
+  def self.premium_time_options
+    @premiumtime ||= PREMIUM_TIME_OPTIONS.map { |i| [I18n.t("premium_sla_times.#{i[0]}"), i[1]] }
   end
 
   private
@@ -139,31 +141,7 @@ class Helpdesk::SlaDetail < ActiveRecord::Base
         business_minute.after(from_time)
       end
     end
-
-    def on_status_change_override_bhrs(ticket, due_by_type)
-      elapsed_time = Time.zone.now - ticket.ticket_states.sla_timer_stopped_at  
-      if due_by_type > ticket.ticket_states.sla_timer_stopped_at
-        due_by_type + elapsed_time 
-      else
-        due_by_type
-      end
-    end
-
-    def on_status_change_bhrs(ticket, due_by_type, calendar)
-      due_by_value = due_by_type.in_time_zone(Time.zone)
-      sla_timer = ticket.ticket_states.sla_timer_stopped_at.in_time_zone(Time.zone)
-      bhrs_during_elapsed_time =  sla_timer.business_time_until(
-        Time.zone.now,calendar)
-      Rails.logger.info "Acc id:: #{ticket.account_id}, Ticket id:: #{ticket.id}, Value:: #{due_by_value.inspect}, sla_timer:: #{sla_timer.inspect} Zone:: #{Time.zone.name}"
-      if due_by_value > sla_timer
-        business_minute = bhrs_during_elapsed_time.div(60).business_minute
-        business_minute.business_calendar_config = calendar
-        business_minute.after(due_by_value) 
-      else
-        due_by_value
-      end
-    end 
-
+    
     def set_account_id
       self.account_id = sla_policy.account_id
     end

@@ -44,9 +44,9 @@ module Reports::ActivityReport
       tot_count += ticket.count.to_i
       if column_name.to_s.starts_with?('flexifields.')
        
-        tickets_hash.store(ticket.send(column_name.gsub('flexifields.','')),{:count => ticket.count})
+        tickets_hash.store(ticket.safe_send(column_name.gsub('flexifields.','')),{:count => ticket.count})
       else
-        tickets_hash.store(ticket.send(column_name),{:count => ticket.count})
+        tickets_hash.store(ticket.safe_send(column_name),{:count => ticket.count})
       end
     end
     tickets_hash.store(RESOLVED,{ :count =>  add_resolved_and_closed_tickets(tickets_hash)}) if column_name.to_s == "status"
@@ -101,7 +101,7 @@ def get_nested_field_reports(column_name)
 
         nested_data.each do |data|
             next if data.nil?
-              value = data.send(column_names[0])
+              value = data.safe_send(column_names[0])
               next if value.nil?
               unless top_level_data.include?(value)
                 top_level_data.push(value)
@@ -118,12 +118,12 @@ def get_nested_field_reports(column_name)
               end
 
                 #Adding the second level data
-                value = data.send(column_names[1])
+                value = data.safe_send(column_names[1])
                 next if value.nil?
-                count = get_data_count(value,column_names[1],nested_data,column_names[0],data.send(column_names[0]))
+                count = get_data_count(value,column_names[1],nested_data,column_names[0],data.safe_send(column_names[0]))
                 percentage = count/tot_count.to_f * 100
-                if((second_vs_first[value] != data.send(column_names[0])))
-                    second_vs_first[value] = data.send(column_names[0])
+                if((second_vs_first[value] != data.safe_send(column_names[0])))
+                    second_vs_first[value] = data.safe_send(column_names[0])
                     xaxis_arr.push(value)
                     column_width = (value.length * 8) if((value.length * 8) > 60 && column_width< (value.length * 8))
                     data_arr.push({:name=>value,:y=>sprintf( "%0.02f",percentage).to_f,:count=>count,:color=>'#89A54E',:borderColor=>'black',:borderWidth=>1})
@@ -131,7 +131,7 @@ def get_nested_field_reports(column_name)
 
                 #Adding third level data. No check as the queried data is grouped by all 3 cols so data is unique.
                 next if(column_names.length == 2) #Last level can be left blank
-                value = data.send(column_names[2])
+                value = data.safe_send(column_names[2])
                 next if value.nil?
                   count = data.count
                   percentage = count.to_f/tot_count.to_f * 100
@@ -157,9 +157,9 @@ def get_data_count(value,column,nested_data,group_column,group_value)
   nested_data.each do |data|
     next if data.nil?
       if group_column.nil? 
-        count = count+data.count.to_i if(value == data.send(column))
+        count = count+data.count.to_i if(value == data.safe_send(column))
       else
-        count = count +data.count.to_i if((value == data.send(column)) && group_value == data.send(group_column))
+        count = count +data.count.to_i if((value == data.safe_send(column)) && group_value == data.safe_send(group_column))
       end
   end
   return count

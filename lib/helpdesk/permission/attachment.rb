@@ -24,7 +24,7 @@ module Helpdesk::Permission
 
     def visible_to_me?
       obj = owner_type.tableize.singularize.gsub('/','_')
-      respond_to?("can_view_#{obj}?") ? send("can_view_#{obj}?") : true
+      respond_to?("can_view_#{obj}?") ? safe_send("can_view_#{obj}?") : true
     end
 
     def can_be_deleted_by_me?

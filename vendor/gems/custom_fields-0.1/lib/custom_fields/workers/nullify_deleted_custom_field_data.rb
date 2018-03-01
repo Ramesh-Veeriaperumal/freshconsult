@@ -31,7 +31,7 @@ module CustomFields
             data_field_ids = data_fields.map(&:id)
             custom_field_data_class.where(id: data_field_ids).update_all(column_name.to_sym => nil)
 
-            parent_ids = data_fields.map { |df| df.send(df.parent_id) }
+            parent_ids = data_fields.map { |df| df.safe_send(df.parent_id) }
             UpdateAllPublisher.perform_async(klass_name: parent_class, ids: parent_ids)
           end
 

@@ -3,7 +3,7 @@
   <div class="link_tracker_box related_box " id="link_tracker_box">
     <div class="row-fluid">
       <p class="related_ticket_label">
-        <small>Related ticket</small>
+        <small><%= t("ticket.link_tracker.rlt_ticket_plural") %></small>
         <a href="#unlink_from_tracker"
           data-action="unlink_from_tracker"
           id="unlink_asscociation"
@@ -28,7 +28,7 @@
           <%=h(tracker_ticket.responder.display_name)%>,
         <% end -%>
         <%= t("ticket.ticket_user_list_status_" + tracker_ticket.ticket_states.current_state(ticket.outbound_email?),
-                :time_ago => time_ago_in_words(tracker_ticket.ticket_states.send(tracker_ticket.ticket_states.current_state(tracker_ticket.outbound_email?)))
+                :time_ago => time_ago_in_words(tracker_ticket.ticket_states.safe_send(tracker_ticket.ticket_states.current_state(tracker_ticket.outbound_email?)))
                 ).html_safe %>
       </small>
       <small class="block tracker_details"><%=t('ticket.status')%>: <%= h(tracker_ticket.status_name.html_safe) %></small>
@@ -104,7 +104,8 @@
       <% if ticket.child_tkts_count < 10 %>
         <span class="seperator"></span>
         <p class="tracker_label">
-          <a href="#" data-parent="tracker-label" data-placement = "bottomLeft" data-trigger="add_child" class="lnk_tkt_tracker_show_dropdown" id="add_child_tkt"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="<%= ticket.display_id %>">Add Child </a>
+          <a href="#" data-parent="tracker-label" data-placement = "bottomLeft" data-trigger="add_child" class="lnk_tkt_tracker_show_dropdown" id="add_child_tkt"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="<%= ticket.display_id %>">
+          <%= t("ticket.parent_child.add_child") %></a>
         </p>
       <% end %>
        <!-- view all related  modal -->
@@ -117,7 +118,7 @@
   <div class="link_tracker_box mb10 child_ticket_box" id="link_tracker_box">
     <div class="row-fluid">
       <span class="block mb5 parent">
-        Associated Parent
+        <%= t("ticket.link_tracker.associated_parent") %>
         <span class="pull-right show_parent">
           <%=h(assoc_parent_ticket.status_name.html_safe)%>
         </span>
@@ -135,7 +136,7 @@
       </small>
       <small class="block tracker_details">
         <%= t("ticket.ticket_user_list_status_" + ticket.ticket_states.current_state(ticket.outbound_email?),
-          :time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state(ticket.outbound_email?)))
+          :time_ago => time_ago_in_words(ticket.ticket_states.safe_send(ticket.ticket_states.current_state(ticket.outbound_email?)))
           ).html_safe %>
       </small>
     </div>
@@ -152,7 +153,7 @@
 
 <% if Account.current.parent_child_tkts_enabled? %>
   <input type="hidden" id="template_previlage" value="<%= privilege?(:manage_ticket_templates) %>" />
-  <input type="hidden" id="template_count" value="<%= templates_count_from_cache < Helpdesk::TicketTemplate.max_limit %>" />
+  <input type="hidden" id="template_count" value="<%= prime_templates_count_from_cache < Helpdesk::TicketTemplate.max_limit %>" />
 
   <%= render(:partial => "helpdesk/tickets/show/add_child_template") %>
 <% end %>
@@ -180,4 +181,3 @@
      }
     }
 <% end %>
-

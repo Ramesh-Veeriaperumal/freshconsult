@@ -37,7 +37,7 @@ module ApiSolutions
 
       def create_or_update_category
         @meta = Solution::Builder.category(solution_category_meta: @category_params, language_id: @lang_id)
-        @item = @meta.send(language_scoper)
+        @item = @meta.safe_send(language_scoper)
         !(@item.errors.any? || @item.parent.errors.any?)
       end
 

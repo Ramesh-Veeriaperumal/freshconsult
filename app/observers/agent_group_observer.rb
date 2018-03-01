@@ -10,7 +10,7 @@ class AgentGroupObserver < ActiveRecord::Observer
 
   def after_commit(agent_group)
     #enqueue in resque to avoid duplicate when list is created in group callback
-    if agent_group.send(:transaction_include_action?, :create)
+    if agent_group.safe_send(:transaction_include_action?, :create)
       group = agent_group.group
       if group.round_robin_enabled?
         Resque.enqueue(Helpdesk::AddAgentToRoundRobin, 

@@ -69,9 +69,9 @@ module DataStoreCallbacks
 
       class_eval do
         def datastore(type)
-          send(type+"_in_#{$primary_cluster}")
-          send(type+"_in_#{$secondary_cluster}")
-          send(type+"_in_#{$backup_cluster}")
+          safe_send(type+"_in_#{$primary_cluster}")
+          safe_send(type+"_in_#{$secondary_cluster}")
+          safe_send(type+"_in_#{$backup_cluster}")
         end
       end
     end

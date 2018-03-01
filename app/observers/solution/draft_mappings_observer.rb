@@ -3,7 +3,7 @@ class Solution::DraftMappingsObserver < ActiveRecord::Observer
   observe Solution::ArticleMeta, Solution::FolderMeta
 
   def after_update(object)
-    send("fetch_#{object.class.name.tableize.split('/').last}", object)
+    safe_send("fetch_#{object.class.name.tableize.split('/').last}", object)
   end
 
   private

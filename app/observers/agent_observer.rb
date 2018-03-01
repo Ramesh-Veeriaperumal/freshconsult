@@ -13,7 +13,7 @@ class AgentObserver < ActiveRecord::Observer
   end
   
   def after_commit(agent)
-    if agent.send(:transaction_include_action?, :create)
+    if agent.safe_send(:transaction_include_action?, :create)
       update_crm(agent)
     end
     create_update_fc_agent(agent) if save_fc_agent?(agent)
@@ -64,9 +64,9 @@ class AgentObserver < ActiveRecord::Observer
 
       action = agent.available ? "add_agent_to_group_capping" : "remove_agent_from_group_capping"
       agent.groups.each do |group|
-        group.send(action, agent.user_id) if group.round_robin_capping_enabled?
+        group.safe_send(action, agent.user_id) if group.round_robin_capping_enabled?
         
-        Rails.logger.debug "RR Success : #{action} : #{group.list_capping_range.inspect}
+        Rails.logger.debug "RR Success : #{action} : #{agent.user_id} : #{group.id} : #{group.round_robin_capping_enabled?} : #{group.list_capping_range.inspect}
                             #{group.list_unassigned_tickets_in_group.inspect}".squish
       end
 

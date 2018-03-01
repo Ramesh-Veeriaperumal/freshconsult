@@ -45,7 +45,7 @@ var UnresolvedTickets = (function () {
 			});
 			// Filter transition
 			$supervisorDashboard.on('blur.unresolved', '.dataTables_filter input', function(){
-				jQuery(this).removeClass('widelength').attr('placeholder', "Search");
+				jQuery(this).removeClass('widelength').attr('placeholder', I18n.t('helpdesk.realtime_dashboard.search'));
 				jQuery(this).parent().removeClass('widelength');
 			});
 
@@ -276,17 +276,17 @@ var UnresolvedTickets = (function () {
 			});
 			var agentfilterlabel = jQuery('.agent_text').text();
 			var groupfilterlabel = jQuery('.group_text').text();
-			
+			var all = I18n.t('helpdesk.realtime_dashboard.all')
 			if(group_data.length <= 0 && agent_data.length <= 0){
 				templateData = {
-					"agentfilter" : ["All"], 
-					"groupfilter" : ["All"],
+					"agentfilter" : [all], 
+					"groupfilter" : [all],
 					"agentfilterlabel" : agentfilterlabel,
 					"groupfilterlabel" : groupfilterlabel
 				};
 			}else{	
-				var group_filter = ((group_data.length !== 0) ? group_data : ["All"]);
-				var agent_filter = ((agent_data.length !== 0) ? agent_data : ["All"]);
+				var group_filter = ((group_data.length !== 0) ? group_data : [all]);
+				var agent_filter = ((agent_data.length !== 0) ? agent_data : [all]);
 				templateData = {
 					"agentfilter" : agent_filter, 
 					"groupfilter" : group_filter,
@@ -382,7 +382,7 @@ var UnresolvedTickets = (function () {
 						"sPrevious": "<"
 					},
 					"sSearch": '<i class="ficon-search"></i>',
-					"sSearchPlaceholder": "Search"
+					"sSearchPlaceholder": I18n.t('helpdesk.realtime_dashboard.search')
                 },
                 "fnDrawCallback" : function(){
                 	_FD.tableDrawCallback(data.tickets_data.content.length);
@@ -438,7 +438,7 @@ var UnresolvedTickets = (function () {
 						"sPrevious": "<"
 					},
 					"sSearch": '<i class="ficon-search"></i>',
-					"sSearchPlaceholder": "Search"
+					"sSearchPlaceholder": I18n.t('helpdesk.realtime_dashboard.search')
                 },
                 "fnDrawCallback" : function(){
                 	_FD.tableDrawCallback(data.tickets_data.content.length);

@@ -1,5 +1,8 @@
 class TicketValidation < ApiValidation
-  MANDATORY_FIELD_ARRAY = [:requester_id, :phone, :email, :twitter_id, :facebook_id].freeze
+  MANDATORY_FIELD_ARRAY = [:requester_id, :phone, :email, :twitter_id, 
+    :facebook_id, :unique_external_id].freeze
+  MANDATORY_FIELD_STRING_WITHOUT_UNIQUE_EXTERNAL_ID = (MANDATORY_FIELD_ARRAY - 
+                              [:unique_external_id]).join(', ').freeze
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
   CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) +
                               %w(fr_due_by due_by subject description custom_fields company_id
@@ -11,7 +14,8 @@ class TicketValidation < ApiValidation
                 :facebook_id, :requester_id, :name, :agent, :source, :status,
                 :subject, :ticket_type, :product, :tags, :custom_fields,
                 :attachments, :request_params, :item, :statuses, :status_ids,
-                :ticket_fields, :company_id, :internal_group_id, :internal_agent_id
+                :ticket_fields, :internal_group_id, :internal_agent_id, 
+                :company_id, :unique_external_id
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -125,6 +129,14 @@ class TicketValidation < ApiValidation
   validates :twitter_id, :phone, :name, data_type: { rules: String, allow_nil: true }
   validates :twitter_id, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :phone, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+  validates :unique_external_id, custom_absence: { 
+            message: :require_feature_for_attribute, 
+            code: :inaccessible_field, 
+            message_options: { 
+              attribute: 'unique_external_id', 
+              feature: :unique_contact_identifier 
+            } 
+          }, unless: :unique_external_identifier_enabled?
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
@@ -142,12 +154,17 @@ class TicketValidation < ApiValidation
     field = MANDATORY_FIELD_ARRAY.detect { |x| instance_variable_defined?("@#{x}_set") }
     field ? error_options[field] = { code: :invalid_value } : field = :requester_id
     errors[field] = :fill_a_mandatory_field
-    (error_options[field] ||= {}).merge!(field_names: MANDATORY_FIELD_STRING)
+    field_names = unique_external_identifier_enabled? ? 
+       MANDATORY_FIELD_STRING : MANDATORY_FIELD_STRING_WITHOUT_UNIQUE_EXTERNAL_ID
+    (error_options[field] ||= {}).merge!(field_names: field_names)
   end
 
+  def unique_external_identifier_enabled?
+    Account.current.unique_contact_identifier_enabled?
+  end
 
   def requester_id_mandatory? # requester_id is must if any one of email/twitter_id/fb_profile_id/phone is not given.
-    MANDATORY_FIELD_ARRAY.all? { |x| send(x).blank? && errors[x].blank? }
+    MANDATORY_FIELD_ARRAY.all? { |x| safe_send(x).blank? && errors[x].blank? }
   end
 
   def name_required? # Name mandatory if phone number of a non existent contact is given. so that the contact will get on ticket callbacks.

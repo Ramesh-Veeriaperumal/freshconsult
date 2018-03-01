@@ -12,7 +12,7 @@ module Freshquery
       end
 
       def reduce_level(data, left, right)
-        if [data, left.type, right.type] == ['OR', :operand, :operand] && left.key == right.key && @date_fields.exclude?(left.key)
+        if [data, left.type, right.type] == ['OR', :operand, :operand] && left.key == right.key && [left.value, right.value].exclude?(nil) && @date_fields.exclude?(left.key)
           { Freshquery::Constants::ES_OPERATORS[data] => [terms_filter(construct_key(left), [left.value, right.value])] }
         else
           { Freshquery::Constants::ES_OPERATORS[data] => [left.accept(self), right.accept(self)] }

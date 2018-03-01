@@ -2,7 +2,7 @@
      :url  => post_path(:forum_id => params[:forum_id], :topic_id => params[:topic_id], :id => @post, :page => params[:page]) do |f| -%>
 <ul class="note_form ui-form">
 	<li>
-	 	<h3 class="title">Edit Post</h3>
+	 	<h3 class="title"><%= t("posts.edit.edit_post") %></h3>
 	</li>
 	<li>
 		<h2><%= link_to h(@post.topic.title), forum_topic_path(@post.forum_id, @post.topic) %></h2>

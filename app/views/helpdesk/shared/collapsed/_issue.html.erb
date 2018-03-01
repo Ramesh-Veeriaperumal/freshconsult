@@ -19,7 +19,8 @@
 
   <td class="assign">
       <% if issue.freshness == :new %>
-        <button class="accept-button" action="<%= assign_helpdesk_issue_url(issue) %>">Take It</button> 
+        <button class="accept-button" action="<%= assign_helpdesk_issue_url(issue) %>">
+        <%= t("helpdesk.issue.take_it") %></button> 
       <% else %>
         <span>Assigned to <%= issue.owner.name %></span>
       <% end %>

@@ -102,6 +102,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :order => "executed_at", :include => {:user => :avatar}
 
   has_one :freshfone_call, :class_name => 'Freshfone::Call', :as => 'notable'
+  has_one :freshcaller_call, :class_name => 'Freshcaller::Call', :as => 'notable'
 
   has_one :mobihelp_ticket_info, :class_name => 'Mobihelp::TicketInfo' , :dependent => :destroy
   
@@ -115,4 +116,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   has_many :linked_applications, :through => :integrated_resources,
            :source => :installed_application
+
+  has_one :bot_ticket, class_name: 'Bot::Ticket', dependent: :destroy
 end

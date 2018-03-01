@@ -228,7 +228,7 @@ module Search::TicketSearch
 
   def customers_meta_data(key, ids)
     association = (key.to_s == "requester_id" ? "users" : "companies")
-    Account.current.send(association).where(id: ids ).select("id, name").map { |o| {id: o.id, value: o.name, text: o.name}}
+    Account.current.safe_send(association).where(id: ids ).select("id, name").map { |o| {id: o.id, value: o.name, text: o.name}}
   end
 
   def tags_meta_data(key, values)

@@ -11,8 +11,19 @@
 				<ul class="unstyled form-inline flow-form">
 					<li class="control-group">
 						<div class="controls">
-							<%= f.rich_editor  :body_html, :height => "200px", :class=>"required_redactor", 'editor-type' => :forum %>
-						</div>
+						 <div id="sticky_redactor_toolbar" class="hide sticky_editor_toolbar"></div>
+						 <div class='editor-body'>
+						 		<%= f.text_area  :body_html, 'editor-type' => :forum, :height => "200px", 
+                	:class => "required_redactor", 
+                	:value => "",
+                	:id => :reply_description,
+                	:data => {
+                  	:"remove-cursor" => true,
+                  	:"toolbar-external" => '#sticky_redactor_toolbar',
+                  	:"new-editor" => current_account.launched?(:froala_editor_forums)
+                	} %>
+              </div>
+						
 					</li>
 					<li class="control-group">
 						<div class="controls">

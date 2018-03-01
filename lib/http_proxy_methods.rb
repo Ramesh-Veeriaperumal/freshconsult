@@ -7,7 +7,7 @@ module HttpProxyMethods
       domain_pattern = Regexp.new "^https?:\/\/#{item[:domain]}$"
       if(domain_pattern.match domain)
         item[:placeholders].each do |placeholder, m|
-          rest_url = rest_url.gsub(placeholder, send(m, rest_url))
+          rest_url = rest_url.gsub(placeholder, safe_send(m, rest_url))
         end
       end
     end

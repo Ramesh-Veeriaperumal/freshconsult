@@ -2,6 +2,7 @@ helpdesk:
   initializers:
     - mri2.1_patches
     - rails3_patches
+    - core_ext/object
     - mail_message_patch
     - authlogic_patch
     - helpdesk
@@ -104,6 +105,9 @@ helpdesk:
     - threaded_init
     - ner_api_config
     - freshid
-    - smart_filter_config
     - freshquery
+    - smart_filter_config
     - heap_analytics
+    - bot
+    - central
+    - sanitize_monkey_patch

@@ -9,7 +9,7 @@ class FlexifieldDefsController < ApplicationController
   
   #This controller is not used for anything so redirecting to access denied
   def access_denied
-    redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+    redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
   end
 
   # GET /flexifield_defs

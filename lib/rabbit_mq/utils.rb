@@ -54,12 +54,16 @@ module RabbitMq::Utils
       RabbitMq::Keys.const_get("#{exchange.upcase}_SUBSCRIBERS").each { |f|
         begin
           valid = construct_message_for_subscriber(f, message, model, action)
-          key = generate_routing_key(key, valid)
         rescue => e
+          valid = false
+          Rails.logger.error e.backtrace.join("\n")
           Rails.logger.info "Publisher payload construct Error.. #{e.message}, #{message.to_json}"
+        ensure
+          key = generate_routing_key(key, valid)
         end
       }
       message["routing_key"] = key
+      message["pod"] = ChannelFrameworkConfig['pod']
       send_message(uuid, exchange, message.to_json, key)
     end
   end
@@ -70,11 +74,11 @@ module RabbitMq::Utils
   end
 
   def construct_message_for_subscriber(s, message, model, action)
-    valid = send("mq_#{s}_valid", action, model)
+    valid = safe_send("mq_#{s}_valid", action, model)
     if valid
-      message["#{model}_properties"].deep_merge!(send("mq_#{s}_#{model}_properties", action))
-      message["subscriber_properties"].merge!({ s => send("mq_#{s}_subscriber_properties", action) })
-      send("mq_custom_#{s}_#{model}_method", message) if CUSTOM_METHODS[model] && CUSTOM_METHODS[model].include?(s)
+      message["#{model}_properties"].deep_merge!(safe_send("mq_#{s}_#{model}_properties", action))
+      message["subscriber_properties"].merge!({ s => safe_send("mq_#{s}_subscriber_properties", action) })
+      safe_send("mq_custom_#{s}_#{model}_method", message) if CUSTOM_METHODS[model] && CUSTOM_METHODS[model].include?(s)
     end
     valid
   end
@@ -89,8 +93,8 @@ module RabbitMq::Utils
         else
           next if f == "count"
         end
-        message["#{model}_properties"].deep_merge!(send("mq_#{f}_#{model}_properties", action))
-        message["subscriber_properties"].merge!({ f => send("mq_#{f}_subscriber_properties", action)})
+        message["#{model}_properties"].deep_merge!(safe_send("mq_#{f}_#{model}_properties", action))
+        message["subscriber_properties"].merge!({ f => safe_send("mq_#{f}_subscriber_properties", action)})
       rescue => e
         Rails.logger.info "Manual Publisher payload construct Error.. #{e.message}, #{message.to_json}"
       end

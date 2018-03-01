@@ -119,7 +119,9 @@ class TicketsController < ApiApplicationController
     end
 
     def load_objects
+      Rails.logger.info ":::Loading objects started:::"
       super tickets_filter.preload(conditional_preload_options)
+      Rails.logger.info ":::Loading objects done:::"
     end
 
     def conditional_preload_options
@@ -128,6 +130,7 @@ class TicketsController < ApiApplicationController
         preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc] || assoc)
         increment_api_credit_by(2)
       end
+      Rails.logger.info ":::preloads: #{preload_options.inspect}"
       preload_options
     end
 
@@ -232,7 +235,8 @@ class TicketsController < ApiApplicationController
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
 
       # During update set requester_id to nil if it is not a part of params and if any of the contact detail is given in the params
-      if update? && !params[cname].key?(:requester_id) && (params[cname].keys & %w(email phone twitter_id facebook_id)).present?
+      if update? && !params[cname].key?(:requester_id) && (params[cname].keys & 
+          ApiTicketConstants::VERIFY_REQUESTER_ON_PROPERTY_VALUE_CHANGES).present?
         params[cname][:requester_id] = nil
       end
 
@@ -283,7 +287,7 @@ class TicketsController < ApiApplicationController
     def verify_object_state
       action_scopes = ApiTicketConstants::SCOPE_BASED_ON_ACTION[action_name] || {}
       action_scopes.each_pair do |scope_attribute, value|
-        item_value = @item.send(scope_attribute)
+        item_value = @item.safe_send(scope_attribute)
         if item_value != value
           Rails.logger.debug "Ticket display_id: #{@item.display_id} with #{scope_attribute} is #{item_value}"
           # Render 405 in case of update/delete as it acts on ticket endpoint itself

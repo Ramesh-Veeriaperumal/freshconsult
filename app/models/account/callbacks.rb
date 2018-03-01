@@ -71,9 +71,9 @@ class Account < ActiveRecord::Base
 
   def populate_features
     add_features_of self.plan_name
-    SELECTABLE_FEATURES.each { |key,value| features.send(key).create  if value}
-    TEMPORARY_FEATURES.each { |key,value| features.send(key).create  if value}
-    ADMIN_CUSTOMER_PORTAL_FEATURES.each { |key,value| features.send(key).create  if value}
+    SELECTABLE_FEATURES.each { |key,value| features.safe_send(key).create  if value}
+    TEMPORARY_FEATURES.each { |key,value| features.safe_send(key).create  if value}
+    ADMIN_CUSTOMER_PORTAL_FEATURES.each { |key,value| features.safe_send(key).create  if value}
     LAUNCHPARTY_FEATURES.select{|k,v| v}.each_key {|feature| self.launch(feature)}
     # Temp for falcon signup
     # Enable customer portal by default
@@ -188,7 +188,7 @@ class Account < ActiveRecord::Base
         # Temp for falcon signup
         # Enable falcon UI for helpdesk by default
         if falcon_ui_applicable?
-          [:falcon, :freshcaller].each do |feature_key|
+          [:falcon, :freshcaller, :freshcaller_widget].each do |feature_key|
             bitmap_value = self.set_feature(feature_key)
           end
         end

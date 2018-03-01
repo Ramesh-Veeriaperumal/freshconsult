@@ -15,15 +15,28 @@ HelpdeskReports.ChartsInitializer.TimeSpent = (function ($) {
 			groupByDropDown : function(){
 				var options = HelpdeskReports.locals.lifecycle_group_by_options;
 				var keys = _.keys(HelpdeskReports.locals.lifecycle_group_by_options);
+				var custom_fields = _.keys(HelpdeskReports.locals.custom_field_hash);
+				var option_label;
 				jQuery.each(keys,function(i,el){
-						var option = jQuery("<option value=" + el +">" + options[el]  + "</option>")
-						jQuery("[name=group_by]").append(option)
+						switch(el) {
+							case 'product_id':
+								option_label = I18n.t('ticket_fields.fields.product');
+								break;
+							case 'group_id':
+								option_label = I18n.t('ticket_fields.fields.group');
+								break;
+							default:
+								option_label = (_.contains(custom_fields,el)) ? options[el] :I18n.t('ticket_fields.fields.'+el);
+						}
+						var option = jQuery("<option value=" + el +">" + option_label  + "</option>")
+						jQuery("[name=group_by]").append(option);
+						option_label = '';
 				});
 				jQuery("[name=group_by]").val(HelpdeskReports.locals.current_group_by)
 				if(HelpdeskReports.locals.current_group_by != 'group_id'){
-					jQuery("[rel=suffix]").html('in each group')
+					jQuery("[rel=suffix]").html(I18n.t('helpdesk_reports.in_each_group'));
 				}else{
-					jQuery("[rel=suffix]").html('with each agent')
+					jQuery("[rel=suffix]").html(I18n.t('helpdesk_reports.with_each_agent'));
 				}
 				var help_msg = HelpdeskReports.CoreUtil.getTimespentExportHelpText();
 				jQuery('#timespent_aggregate_help_msg').text(help_msg);

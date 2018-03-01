@@ -67,6 +67,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/slack_v2", :only => [:add_slack_agent]
     resource :"integrations/data_pipe"
     resource :"integrations/cloud_elements/crm", :only => [:fetch]
+    resource :"integrations/microsoft_team", :only => [:authorize_agent]
 
 
     # Used by API V2 Search
@@ -111,7 +112,12 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/ticket", :only => [:index]
     resource :"search/v2/mobile/merge_ticket", :only => [:index]
     resource :"search/v2/spotlight", :only => [:all, :tickets]
-    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable, :index, :visitor, :get_groups, :update_site, :toggle, :trigger, :export, :download_export]
+    resource :"chat", :only => [:create_ticket, :add_note, :agents, :enable,
+                                :index, :visitor, :get_groups, :update_site,
+                                :toggle, :trigger, :export, :download_export,
+                                :update_availability, :create_shortcode,
+                                :delete_shortcode, :update_shortcode
+                                ]
     resource :"chat_widget", :only => [:update, :toggle, :enable]
     resource :"helpdesk/survey"
     resource :"admin/data_export" , :only => [:download]
@@ -147,6 +153,8 @@ Authority::Authorization::PrivilegeList.build do
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as ticket create.
     resource :api_ticket_field, :only => [:index]
     resource :"api_freshfone/call_history", :only => [:export, :export_status]
+    resource :"announcement", :only => [:index, :account_login_url]
+    resource :"email_preview"
   end
 
   export_tickets do
@@ -291,7 +299,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/spotlight", :only => [:forums]
     resource :"search/merge_topic", :only => [:index]
     resource :"search/v2/merge_topic", :only => [:search_topics]
-    resource :forums_uploaded_image, :only => [:create]
+    resource :forums_uploaded_image, :only => [:index, :create]
     resource :monitorship, :only => [:followers]
 
     # Used for API V2
@@ -588,6 +596,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"freshfone/dashboard", :only => [:index]
     resource :"integrations/marketplace_app"
     resource :"integrations/cloud_elements/crm", :only => [:instances, :edit, :update, :settings, :create]
+    resource :"integrations/microsoft_team", :only => [:oauth, :install]
+    resource :"integrations/google_hangout_chat", :only => [:oauth, :install]
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]

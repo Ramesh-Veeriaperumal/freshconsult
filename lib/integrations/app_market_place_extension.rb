@@ -51,13 +51,13 @@ module Integrations
     def app_updates(method, app_name, configs = nil)
       return true if Rails.env.development?
       mkt_obj = ::Marketplace::MarketPlaceObject.new
-      ni_latest_result = mkt_obj.send(:ni_latest_details, app_name)
-      return false if mkt_obj.send(:error_status?, ni_latest_result)
+      ni_latest_result = mkt_obj.safe_send(:ni_latest_details, app_name)
+      return false if mkt_obj.safe_send(:error_status?, ni_latest_result)
       params = ni_latest_result.body.symbolize_keys
       params.merge!({:type => ::Marketplace::Constants::EXTENSION_TYPE[:ni]})
       
-      extn_details = mkt_obj.send(:extension_details, params[:extension_id], params[:type])
-      return false if mkt_obj.send(:error_status?, extn_details)
+      extn_details = mkt_obj.safe_send(:extension_details, params[:extension_id], params[:type])
+      return false if mkt_obj.safe_send(:error_status?, extn_details)
       @extension = extn_details.body
 
       params.merge!(paid_app_params) if ['install', 'uninstall'].include?(method)
@@ -67,9 +67,9 @@ module Integrations
         :enabled => ::Marketplace::Constants::EXTENSION_STATUS[:enabled]
       }) if ['install', 'update'].include?(method)
 
-      ext_result = mkt_obj.send("#{method}_extension", params)
+      ext_result = mkt_obj.safe_send("#{method}_extension", params)
 
-      return false if mkt_obj.send(:error_status?, ext_result)
+      return false if mkt_obj.safe_send(:error_status?, ext_result)
       true
     end
 

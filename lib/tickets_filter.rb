@@ -3,7 +3,7 @@ module TicketsFilter
   include Helpdesk::Ticketfields::TicketStatus
   
   DEFAULT_FILTER = "new_and_my_open"
-  DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted )
+  DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted)
   DEFAULT_FILTERS_FEATURES = {
     :archived       => :archive_tickets,
     :shared_by_me   => :shared_ownership,

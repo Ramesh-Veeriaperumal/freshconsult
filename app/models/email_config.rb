@@ -1,4 +1,6 @@
 class EmailConfig < ActiveRecord::Base
+  require 'securerandom'
+
   self.primary_key = :id
 
   belongs_to_account
@@ -49,6 +51,12 @@ class EmailConfig < ActiveRecord::Base
       product.try(:primary_email_config) ? product.primary_email_config.friendly_email : 
                                            account.default_friendly_email
     end
+  end
+
+  def random_noreply_email
+    noreply_id = SecureRandom.base64(40).tr('+/=', '').strip.delete("\n")
+    noreply_domain = Helpdesk::EMAIL[:activation_email_domain] || "smtp.freshdesk.com"
+    "#{format_name(account.name)} <noreply-#{noreply_id}@#{noreply_domain}>"
   end
   
   def friendly_email_personalize(user_name)

@@ -1,5 +1,5 @@
-<h1>Account created</h1>
+<h1><%= t("accounts.thank_you.account_created") %></h1>
 
 <p>
-  Thank you for creating an account!  You can now log in to your account at <a href="http://<%= flash[:domain] %>.<%= AppConfig['base_domain'][Rails.env] %>/">http://<%= flash[:domain] %>.<%= AppConfig['base_domain'][Rails.env] %>/</a>.
+	<%= t("accounts.thank_you.account_created_login") %> <a href="http://<%= flash[:domain] %>.<%= AppConfig['base_domain'][Rails.env] %>/">http://<%= flash[:domain] %>.<%= AppConfig['base_domain'][Rails.env] %>/</a>.
 </p>

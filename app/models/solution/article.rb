@@ -3,7 +3,11 @@ class Solution::Article < ActiveRecord::Base
   self.primary_key= :id
   self.table_name =  "solution_articles"
   belongs_to_account
-  concerned_with :associations, :body_methods, :esv2_methods
+  concerned_with :associations, :body_methods, :esv2_methods, :presenter
+
+  publishable
+
+  before_destroy :save_deleted_article_info
   
   include Juixe::Acts::Voteable
   include Search::ElasticSearchIndex
@@ -195,6 +199,10 @@ class Solution::Article < ActiveRecord::Base
       self.class.increment_counter(method, self.id)
       meta_class.increment_counter(method, self.parent_id)
       self.sqs_manual_publish #=> Publish to ES
+      if self.class.central_publish_enabled?
+        self.central_payload_type = "article_#{method}".to_sym
+        central_publish_action(method)
+      end
       queue_quest_job if (method == :thumbs_up && self.published?)
       return true
     end
@@ -202,7 +210,7 @@ class Solution::Article < ActiveRecord::Base
     define_method "#{method}=" do |value|
       logger.warn "WARNING!! Assigning #{method.to_s} in this manner is not advised. Please make use of object.#{method.to_s}!"
       return unless new_record?
-      solution_article_meta.send("#{method}=", (solution_article_meta.send("#{method}") + value))
+      solution_article_meta.safe_send("#{method}=", (solution_article_meta.safe_send("#{method}") + value))
       super(value) 
     end
   end
@@ -235,7 +243,7 @@ class Solution::Article < ActiveRecord::Base
   def build_draft_from_article(opts = {})
     draft = self.account.solution_drafts.build
     draft_attributes(opts).each do |k, v|
-      draft.send("#{k}=", v)
+      draft.safe_send("#{k}=", v)
     end
     draft
   end
@@ -243,7 +251,7 @@ class Solution::Article < ActiveRecord::Base
   def draft_attributes(opts = {})
     draft_attrs = opts.merge(:article_id => self.id, :category_meta_id => solution_folder_meta.solution_category_meta_id)
     Solution::Draft::COMMON_ATTRIBUTES.each do |attribute|
-      draft_attrs[attribute] = self.send(attribute)
+      draft_attrs[attribute] = self.safe_send(attribute)
     end
     draft_attrs
   end
@@ -268,6 +276,13 @@ class Solution::Article < ActiveRecord::Base
   def folder_id
     # To make Gamification work
     @folder_id ||= solution_article_meta.solution_folder_meta_id
+  end
+
+  def save_deleted_article_info
+    @deleted_model_info = {
+      id: parent_id,
+      account_id: account_id
+    }  
   end
 
   private

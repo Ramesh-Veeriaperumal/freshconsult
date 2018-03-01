@@ -1,0 +1,24 @@
+common: &common
+  fbots_service: 'bot-admin'
+  freshdesk_product_id: '4fcd84dc8104bbdb1523e91c6e95b52b3c6ca2ed'
+  template_hash: '79a287a0593c500c2badb66334a71aa4cbc2dc38'
+  default_bot_widget_configuration_url: 'https://admin.intfreshbots.com/rest/api/v1/widget-config/default'
+  create_bot_url: 'https://admin.intfreshbots.com/rest/api/v1/bots'
+  update_bot_url: 'https://admin.intfreshbots.com/rest/api/v1/bots/%{botHash}'
+  avatar_bucket_url: 'https://s3.amazonaws.com/cdn.freshpo.com'
+  avatar_cdn_url: 'https://assets30.freshpo.com'
+  jwt_secret: 'fbaed9c2eb9811e7891d186590cc7ba7'
+  jwe_secret: '0222bcd8eb9911e7891d186590cc7ba7'
+  jwt_default_expiry: 30
+  widget_code_src: 'https://www.intfreshbots.com/assets/share/js/fbotsChat.js'
+  ml_onboarding_url: 'https://freshiqnew.freshpo.com/api/v1/afr/onboard'
+  ml_authorization_key: '7F77DC551CFF7BAB845879ABD41DA'
+
+development:
+  <<: *common
+
+test:
+  <<: *common
+
+staging:
+  <<: *common

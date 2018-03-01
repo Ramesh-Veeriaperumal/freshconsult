@@ -34,10 +34,10 @@ module Solution::Constants
  # Solution folder visiblity constants moved to here
 
  VISIBILITY = [
-  [ :anyone,       I18n.t("solutions.visibility.all_users"),       1 ], 
-  [ :logged_users, I18n.t("solutions.visibility.logged_in_users"), 2 ],
-  [ :agents,       I18n.t("solutions.visibility.agents"),          3 ],
-  [ :company_users ,I18n.t("solutions.visibility.select_company") , 4]
+  [ :anyone,       "solutions.visibility.all_users",       1 ], 
+  [ :logged_users, "solutions.visibility.logged_in_users", 2 ],
+  [ :agents,       "solutions.visibility.agents",          3 ],
+  [ :company_users ,"solutions.visibility.select_company" , 4]
   ]
   
   VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
@@ -69,4 +69,11 @@ module Solution::Constants
 
   CONTENT_ALPHA_NUMERIC_REGEX = "[^0-9|S|I|l|O|B|b|q]"
 
+  def self.translated_visibility_option
+    VISIBILITY.map { |i| [I18n.t(i[1]), i[2]] }
+  end
+
+  def translated_visibility_name_by_key
+    Hash[*VISIBILITY.map { |i| [i[2], I18n.t(i[1])] }.flatten]
+  end
 end

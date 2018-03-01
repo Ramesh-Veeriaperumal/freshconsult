@@ -28,6 +28,8 @@
               :rel => "freshdialog", 
               :title => t('email_configs.set_bcc_email_text'), 
               :"data-target" => "#assign-bcc", 
+              :"data-close-label" => t('cancel'),
+              :"data-submit-label" => t('save'),
               :"data-width" => "400" ) %>
   <%= content_tag :i, "", :class => "tooltip #{font_class(:help)} email-help", :title => t('email_configs.info17')%>
   </div>

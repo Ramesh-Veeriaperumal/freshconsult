@@ -14,7 +14,7 @@ class Va::Handlers::DateTime < Va::RuleHandler
 
   private
       def during(evaluated_on_value) #possible values are business_hours, non_business_hours & holidays
-        send(value, evaluated_on_value)
+        safe_send(value, evaluated_on_value)
       end
 
       def business_hours(evaluated_on_value)

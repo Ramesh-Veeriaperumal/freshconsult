@@ -23,8 +23,8 @@
 						<a rel="due_link" href="/helpdesk/tickets/filter/due_today" class="summery-filter clearfix" data-parallel-url="/helpdesk/tickets/filter_options" data-parallel-placeholder="#ticket-leftFilter" data-pjax="#body-container">
 							<div class="db-icon-wrap center pull-left"><i class="ficon-db-sand-clock dbicon-orange"></i></div>
 							<div class="summary-count pull-left ml10">
-								<h4 class='value'> 0 </h4>
-								<p>Due Today</p>
+								<h4 class='value'> 0</h4>
+								<p><%= t("helpdesk.realtime_dashboard.due_today") %></p>
 							</div>
 						</a>
 					</li>
@@ -33,7 +33,7 @@
 							<div class="db-icon-wrap center pull-left"><i class="ficon-db-calendar dbicon-red"></i></div>
 							<div class="summary-count pull-left ml10">
 								<h4 class='value'>0</h4>
-								<p>Overdue</p>
+								<p><%= t("helpdesk.realtime_dashboard.overdue") %></p>
 							</div>
 						</a>
 					</li>
@@ -56,9 +56,9 @@
 			         		<label class="text-right">Due in Days</label>
             				<div class="field">
             					<select class="frequency">
-				                  <option value="1">1</option>
-				                  <option value="2">2</option>
-				                  <option value="3">3</option>
+				                  <option value="1">1 %></option>
+				                  <option value="2">2 %></option>
+				                  <option value="3">3 %></option>
 				               </select>
             				</div>
 			         </div>

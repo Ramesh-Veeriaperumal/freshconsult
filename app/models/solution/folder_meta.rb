@@ -74,9 +74,9 @@ class Solution::FolderMeta < ActiveRecord::Base
 	after_commit :update_search_index, on: :update, :if => :update_es?
 	after_commit :set_mobihelp_solution_updated_time, :if => :valid_change?
   
-  after_commit ->(obj) { obj.send(:clear_cache) }, on: :create
-  after_commit ->(obj) { obj.send(:clear_cache) }, on: :destroy
-  after_commit ->(obj) { obj.send(:clear_cache_with_condition) }, on: :update
+  after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :create
+  after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :destroy
+  after_commit ->(obj) { obj.safe_send(:clear_cache_with_condition) }, on: :update
 
 	before_save :backup_category
 	before_destroy :backup_category
@@ -91,12 +91,12 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	def as_cache
 	  (CACHEABLE_ATTRIBUTES.inject({}) do |res, attribute|
-	    res.merge({ attribute => self.send(attribute) })
+	    res.merge({ attribute => self.safe_send(attribute) })
 	  end).with_indifferent_access
 	end
 
 	def visibility_type
-	  VISIBILITY_NAMES_BY_KEY[self.visibility]
+		translated_visibility_name_by_key[self.visibility]
 	end
 
   def customer_folders_attributes=(cust_attr)
@@ -109,9 +109,11 @@ class Solution::FolderMeta < ActiveRecord::Base
   end
 
 	def add_visibility(visibility, customer_ids, add_to_existing)
-    add_companies(customer_ids, add_to_existing) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
-    self.visibility = visibility
-    save
+    ActiveRecord::Base.transaction do
+      self.visibility = visibility
+      save
+      primary_folder.save # Dummy save to trigger publishable callbacks
+    end
   end
 
   def has_company_visiblity?

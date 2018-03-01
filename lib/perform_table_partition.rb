@@ -14,7 +14,7 @@ module PerformTablePartition
   def self.add_auto_increment
     PARTITION_TABLES.each do |table_name|
       sql_array = ["alter table %s MODIFY COLUMN id bigint(20) NOT NULL AUTO_INCREMENT;", table_name]
-      sql = ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
+      sql = ActiveRecord::Base.safe_send(:sanitize_sql_array, sql_array)
       ActiveRecord::Base.connection.execute(sql)
     end
   end
@@ -22,7 +22,7 @@ module PerformTablePartition
   def self.process
     PARTITION_TABLES.each do |table_name|
       sql_array = ["alter table %s partition by hash(%s) partitions %s;", table_name, PARTITION_COLUMN, PARTITION_SIZE]
-      sql = ActiveRecord::Base.send(:sanitize_sql_array, sql_array)
+      sql = ActiveRecord::Base.safe_send(:sanitize_sql_array, sql_array)
       ActiveRecord::Base.connection.execute(sql)
     end
   end

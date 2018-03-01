@@ -61,7 +61,8 @@ module Users
       activation_url = generate_activation_url(portal)
       activation_params = { :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
                                   'helpdesk_name' =>  account.helpdesk_name, 
-                                  'activation_url' => activation_url),
+                                  'activation_url' => activation_url,
+                                  'portal_name' => (!portal.name.blank?) ? portal.name : account.portal_name),
                             :subject => Liquid::Template.parse(subj_template).render(
                                   'portal_name' => (!portal.name.blank?) ? portal.name : account.portal_name) , 
                             :reply_email => reply_email,
@@ -71,7 +72,7 @@ module Users
     end
     
     def deliver_agent_invitation!(portal=nil)
-      portal ||= account.main_portal
+      portal = Portal.current || account.main_portal_from_cache
       reply_email = portal.main_portal ? account.default_friendly_email : portal.friendly_email 
       email_config = portal.main_portal ? account.primary_email_config : portal.primary_email_config
       
@@ -146,7 +147,7 @@ module Users
     def generate_activation_url(portal)
       url = ""
       if agent? && Account.current.freshid_enabled?
-        redirect_url = support_login_url({ host: account.full_domain, protocol: account.url_protocol })
+        redirect_url = support_login_url({ host: host(portal), protocol: url_protocol })
         url = Freshid::User.generate_activation_url(redirect_url, self.freshid_authorization.uid) if self.freshid_authorization.present?
         Rails.logger.error "FRESH ID Activation url is empty :: uid = #{self.id}, auth = #{self.freshid_authorization.inspect}" if url.blank?
       else

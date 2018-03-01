@@ -6,7 +6,7 @@ class BaseWorker
   include Sidekiq::Worker
   protected
     def execute_on_db(db_name="run_on_slave")
-      Sharding.send(db_name.to_sym) do
+      Sharding.safe_send(db_name.to_sym) do
         yield
       end
     end

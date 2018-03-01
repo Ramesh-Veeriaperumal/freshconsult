@@ -105,7 +105,7 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
     end
 
     def column_data(value, calls)
-      column_value = send(csv_hash[value], calls) 
+      column_value = safe_send(csv_hash[value], calls) 
       column_value = call_duration_in_mins(column_value) if(date_time_fields.include?(csv_hash[value]))
       column_value
     end

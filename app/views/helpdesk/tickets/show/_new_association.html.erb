@@ -1,9 +1,9 @@
 <div class="link_tracker_box p10">
   <span class="text-center block">
     <span class="mr12"> 
-    <a href="<%= new_helpdesk_ticket_child_path(@ticket.id) %>">Add Child </a>
+    <a href="<%= new_helpdesk_ticket_child_path(@ticket.id) %>"><%= t("ticket.parent_child.add_child") %></a>
     </span> 
-    <span class="or">or</span> 
+    <span class="or"><%= t("or") %></span> 
     <span class="ml12">
     <a href="#"  class="lnk_tkt_tracker" id="lnk_tkt_tracker" role="button" data-toggle="popover"><%= t('ticket.link_tracker.link_to_tracker') %></a>
     </span>
@@ -24,14 +24,14 @@
     </div>
  <div class="span 12">
    <div class="span 6 pull-left">
-    Recently Created
+    <%= t("ticket.link_tracker.recently_created") %>
    </div>
    <div class="span 6 pull-right">
-      <%= link_to ' + Create New ', '/helpdesk/tickets/link_tracker', 
-            data: { ticket_display_id: @ticket.display_id ,url: '/helpdesk/tickets/link_tracker' },class:"new_problem_ticket" %>
+      <%= link_to t("ticket.link_tracker.create_new"), '/helpdesk/tickets/link_tracker', 
+            data: { ticket_display_id: @ticket.display_id ,url: '/helpdesk/tickets/link_tracker' },
+            class:"new_problem_ticket" %>
    </div>
  </div>
  <!-- result -->
  <span class="loading-block sloading loading-small">
  </div>
-

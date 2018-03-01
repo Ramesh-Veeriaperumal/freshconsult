@@ -114,12 +114,12 @@
   def ticket_page_attachment(attachment)
     ["attachable", "droppable"].each do |name|
       if attachment.respond_to?("#{name}_type") and 
-        ["Helpdesk::Note", "Helpdesk::Ticket"].include?(attachment.send("#{name}_type")) 
+        ["Helpdesk::Note", "Helpdesk::Ticket"].include?(attachment.safe_send("#{name}_type")) 
   
-        id = attachment.send("#{name}_id")
-        attachments_count = attachment.send(name).all_attachments.size + 
-                         attachment.send(name).cloud_files.size
-        type = attachment.send("#{name}_type") == "Helpdesk::Note" ? 'note' : 'ticket'
+        id = attachment.safe_send("#{name}_id")
+        attachments_count = attachment.safe_send(name).all_attachments.size + 
+                         attachment.safe_send(name).cloud_files.size
+        type = attachment.safe_send("#{name}_type") == "Helpdesk::Note" ? 'note' : 'ticket'
         return {id: id , attachments_count: attachments_count , type: type}
       end
     end

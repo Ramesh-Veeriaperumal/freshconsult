@@ -2,7 +2,7 @@
   <div id="merge_info">
     <div class="merge-notice">
       <span class="merge-notice-important">
-        <%= t('.important') %>
+        <%= t('account.important') %>
       </span>
       <%= t('ticket.merge_notice') %>
     </div>
@@ -36,7 +36,7 @@
     			          	<span class="merge-ticket-info">
     			          		<%= t("ticket.merge_ticket_list_status_"+ticket.ticket_states.current_state(ticket.outbound_email?), 
               					:username => "<span class='muted requester_name'>#{h(ticket.requester.display_name)}</span>",
-                        :time_ago => time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state(ticket.outbound_email?)))).html_safe %>
+                        :time_ago => time_ago_in_words(ticket.ticket_states.safe_send(ticket.ticket_states.current_state(ticket.outbound_email?)))).html_safe %>
           						</span>
     			          </div>
     			        </div>
@@ -87,7 +87,7 @@
   var primary_ticket = App.Tickets.Merge_tickets.findOldestTicket();
   primary_ticket.parent().prepend(primary_ticket);
   primary_ticket.addClass('cont-primary');
-  primary_ticket.find('.primary-marker').attr('title','Primary ticket');
+  primary_ticket.find('.primary-marker').attr('title', I18n.translate('common_js_translations.primary_ticket'));
 
   App.Tickets.Merge_tickets.requesterFieldSearchbox();
 

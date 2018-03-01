@@ -44,9 +44,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   
   serialize :cc_email
 
-  concerned_with :associations, :validations, :callbacks, :riak, :s3, :mysql,
+  concerned_with :associations, :validations, :presenter, :callbacks, :riak, :s3, :mysql,
                  :attributes, :rabbitmq, :permissions, :esv2_methods, :count_es_methods,
-                 :round_robin_methods, :association_methods, :skill_based_round_robin
+                 :round_robin_methods, :association_methods, :skill_based_round_robin,
+                 :sla_calculation_methods
 
   text_datastore_callbacks :class => "ticket"
   spam_watcher_callbacks :user_column => "requester_id"
@@ -271,24 +272,24 @@ class Helpdesk::Ticket < ActiveRecord::Base
   SCHEMA_LESS_ATTRIBUTES.each do |attribute|
     define_method("#{attribute}") do
       build_schema_less_ticket unless schema_less_ticket
-      schema_less_ticket.send(attribute)
+      schema_less_ticket.safe_send(attribute)
     end
 
     define_method("#{attribute}?") do
       build_schema_less_ticket unless schema_less_ticket
-      schema_less_ticket.send(attribute)
+      schema_less_ticket.safe_send(attribute)
     end
 
     define_method("#{attribute}=") do |value|
       build_schema_less_ticket unless schema_less_ticket
-      schema_less_ticket.send("#{attribute}=", value)
+      schema_less_ticket.safe_send("#{attribute}=", value)
     end
   end
 
   TICKET_STATE_ATTRIBUTES.each do |attribute|
     define_method("#{attribute}") do
       if ticket_states
-        ticket_states.send(attribute)
+        ticket_states.safe_send(attribute)
       else
         # ticket_states should not be nil. Added for backward compatibility
         NewRelic::Agent.notice_error("ticket_states is nil for acc - #{Account.current.id} - #{self.id}")
@@ -755,7 +756,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Rails.logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
     build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array)
-    (attribute.to_s.include? '=') ? schema_less_ticket.send(attribute, args) : schema_less_ticket.send(attribute)
+    (attribute.to_s.include? '=') ? schema_less_ticket.safe_send(attribute, args) : schema_less_ticket.safe_send(attribute)
   end
 
   def agent
@@ -768,7 +769,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     rescue NoMethodError, NameError => e
       #Rails.logger.debug "method_missing :: args is #{args.inspect} and method:: #{method} "
       return schema_less_attributes(method, args) if SCHEMA_LESS_ATTRIBUTES.include?(method.to_s.chomp("=").chomp("?"))
-      return ticket_states.send(method) if ticket_states.respond_to?(method)
+      return ticket_states.safe_send(method) if ticket_states.respond_to?(method)
       return custom_field_attribute(method, args) if self.ff_aliases.include?(method.to_s.chomp("=").chomp("?"))
       raise e
     end
@@ -825,12 +826,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
       xml.custom_field do
         self.account.ticket_fields_including_nested_fields.custom_fields.each do |field|
           begin
-           value = send(field.name)
+           value = safe_send(field.name)
            xml.tag!(field.name.gsub(/[^0-9A-Za-z_]/, ''), value) unless value.blank?
 
            if(field.field_type == "nested_field")
               field.nested_ticket_fields.each do |nested_field|
-                nested_field_value = send(nested_field.name)
+                nested_field_value = safe_send(nested_field.name)
                 xml.tag!(nested_field.name.gsub(/[^0-9A-Za-z_]/, ''), nested_field_value) unless nested_field_value.blank?
               end
            end
@@ -1223,7 +1224,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
     _attributes.each do |_attribute, value| #to work around protected attributes
       next if TicketConstants::SKIPPED_TICKET_CHANGE_ATTRIBUTES.include? _attribute.to_sym #skipping deprecation warning
-      ticket_replica.send("#{_attribute}=", value)
+      ticket_replica.safe_send("#{_attribute}=", value)
     end
 
     _changes ||= begin 
@@ -1232,11 +1233,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     _changes.each do |_attribute, change|
       if ticket_replica.respond_to?(_attribute) && (change.size == 2) #Hack for tags in model_changes
-        ticket_replica.send("#{_attribute}=", change.send(index))
+        ticket_replica.safe_send("#{_attribute}=", change.safe_send(index))
       end
     end
     ticket_replica.replicated_state = TicketConstants::TICKET_REPLICA[index]
-    custom_attributes.each {|custom_attr| ticket_replica.send("#{custom_attr}=", send(custom_attr)) }
+    custom_attributes.each {|custom_attr| ticket_replica.safe_send("#{custom_attr}=", safe_send(custom_attr)) }
 
     ticket_replica.schema_less_ticket = 
       schema_less_ticket.replicate_schema_less_ticket(index, _schema_less_ticket_changes)

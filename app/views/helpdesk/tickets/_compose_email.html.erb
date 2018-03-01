@@ -8,7 +8,7 @@
     </div>
     <div class="to-address details-widget">
       <label class="inline-label" for="cc-email-address"><%= t('ticket.compose.to') %></label>
-      <%= render(:partial => "/shared/autocomplete_email", :formats => [:html],  :locals => {:placeholder => "Type a contact", :object_name => :helpdesk_ticket, :url => requesters_search_autocomplete_index_path }) %>
+      <%= render(:partial => "/shared/autocomplete_email", :formats => [:html],  :locals => {:placeholder => t('compose_email.type_a_contact'), :object_name => :helpdesk_ticket, :url => requesters_search_autocomplete_index_path }) %>
       <span class="show-cc" data-action="show-cc"><%= t('helpdesk.shared.cc_label') %></span>
     </div>
 

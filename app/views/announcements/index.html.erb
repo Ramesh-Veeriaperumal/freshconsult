@@ -1,0 +1,34 @@
+
+<div class="iframe-container">
+    <iframe scrolling="yes" frameborder="0" src="" class="iframe-content"></iframe>
+</div>
+<script type="text/javascript">
+
+<% if Rails.env.development? %>
+var ssoProtocol = "http://";
+<% else %> 
+var ssoProtocol = "https://";
+<% end %>
+
+var iFrameURLsso = ssoProtocol + window.location.host + "/announcements/account_login_url?redirect_to=https://<%= AnnouncementsController::ACCOUNT_URL %>";
+var homeURL = "/support/home";
+var params = "#old=true&email=<%=@user_email%>&account_id=<%= current_account.id%>&lang=<%= Language.current.try(:code) %>&plan=<%=@plan_name%>&state=<%=@state%>&articles_tag=<%=@announcement_bucket%>,<%=@role%>";
+
+var articleHash = (window.location.href).split("#")[1];
+var iFrameURL;
+
+window.addEventListener("message",scrollMessage);
+
+function scrollMessage(message) {
+	var scrollY = parseInt(message.data.value);
+	window.scrollTo(0,scrollY);
+}
+
+if (articleHash == null) {
+   iFrameURL = iFrameURLsso + homeURL + params;
+} else {
+   iFrameURL = iFrameURLsso + "/"+ articleHash + params;
+}
+
+jQuery(".iframe-content").attr("src", iFrameURL);
+</script>

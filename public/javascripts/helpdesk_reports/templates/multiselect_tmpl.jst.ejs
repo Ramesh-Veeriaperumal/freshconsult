@@ -1,5 +1,7 @@
 <div id="div_ff_<%=condition%>" class="ff_item filter-field" data-type="filter-field" condition="<%=condition%>" operator="<%=operator%>" container="<%=container%>" type="<%=field_type%>" data-label="<%=name%>">
-  <% filter_type = I18n.t(name.toLowerCase(),{scope: 'helpdesk_reports', defaultValue: name}) %>
+	<% var key = HelpdeskReports.CoreUtil.filter_options.indexOf(name) %>
+    <% var translate_name = (key >= 0)  ? name.toLowerCase().replace(/ /g, '_') : name.toLowerCase();
+		filter_type = I18n.t(translate_name,{scope: 'helpdesk_reports', defaultValue: name } ) %>
 	<label class="control-label"><%=filter_type%></label>
 	<% if(HelpdeskReports.CoreUtil.filter_remote.indexOf(condition) < 0){ %>
 		<select multiple="multiple" class="filter_item" id="<%=condition%>" name="<%=condition%>[]">

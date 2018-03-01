@@ -15,7 +15,7 @@ module SpamDetection
 				return
 			end
 			sds = FdSpamDetectionService::Service.new(account.id, email)
-			res = sds.send(method)
+			res = sds.safe_send(method)
 			Rails.logger.info "Response from sds for learning email: #{res}"
 			raise "Unable to connect to spam detection service" if res.eql?(false)
 		end

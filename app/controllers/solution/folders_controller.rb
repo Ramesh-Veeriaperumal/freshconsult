@@ -41,7 +41,7 @@ class Solution::FoldersController < ApplicationController
   end
 
   def edit
-    @folder = @folder_meta.send(language_scoper)
+    @folder = @folder_meta.safe_send(language_scoper)
     @primary = @folder_meta.primary_folder
     @folder = current_account.solution_folders.new unless @folder
     @customer_id = @folder_meta.customer_folders.collect { |cf| cf.customer_id.to_s }
@@ -51,7 +51,7 @@ class Solution::FoldersController < ApplicationController
 
   def create
     @folder_meta = Solution::Builder.folder(params)
-    @folder = @folder_meta.send(language_scoper)
+    @folder = @folder_meta.safe_send(language_scoper)
     @category_meta = @folder_meta.solution_category_meta
    
     post_response(@folder_meta, @folder)
@@ -59,7 +59,7 @@ class Solution::FoldersController < ApplicationController
 
   def update
     @folder_meta = Solution::Builder.folder(params)
-    @folder = @folder_meta.send(language_scoper)
+    @folder = @folder_meta.safe_send(language_scoper)
     
     post_response(@folder_meta, @folder)
   end
@@ -159,7 +159,7 @@ class Solution::FoldersController < ApplicationController
     end
 
     def change_visibility
-      @folders = meta_scoper.where(:id => params[:folderIds]).readonly(false)
+      @folders = meta_scoper.where(:id => params[:folderIds]).preload(:primary_folder).readonly(false)
       if @visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
         if valid_customers(params[:companies]).blank?
           flash[:notice] = t('solution.folders.visibility.no_companies')
@@ -168,7 +168,13 @@ class Solution::FoldersController < ApplicationController
         customer_ids, add_to_existing = [valid_customers(params[:companies]), (params[:addToExisting].to_i == 1)]
         change_result = @folders.map {|f| f.add_visibility(@visibility, customer_ids, add_to_existing)}.reduce(:&)
       else
-        change_result = !(@folders.map {|f| f.update_attributes(:visibility => @visibility)}.include?(false))
+        change_result = !(@folders.map do |f|
+                            ActiveRecord::Base.transaction do
+                              f.visibility = @visibility
+                              f.save
+                              f.primary_folder.save # Dummy save to trigger publishable callbacks
+                            end
+                          end.include?(false))
       end
       @updated_folders = @folders.select { |f| f.valid? }
       @other_folders = @folders - @updated_folders
@@ -177,8 +183,14 @@ class Solution::FoldersController < ApplicationController
     end
 
     def bulk_update_category
-      @folders = meta_scoper.where(:id => params[:items])
-      @folders.map { |f| f.update_attributes(:solution_category_meta_id => params[:parent_id]) }
+      @folders = meta_scoper.where(:id => params[:items]).preload(:primary_folder)
+      @folders.map do |f| 
+        ActiveRecord::Base.transaction do
+          f.solution_category_meta_id = params[:parent_id]
+          f.save
+          f.primary_folder.save # Dummy save to trigger publishable callbacks
+        end
+      end
       @new_category.reload
       @updated_items = params[:items].map(&:to_i) & @new_category.solution_folder_metum_ids
       @other_items = params[:items].map(&:to_i) - @updated_items

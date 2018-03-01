@@ -2,6 +2,7 @@ shared_path = node[:opsworks] ? "/data/helpkit/shared" : config.shared_path
 node.override[:rel_path] = node[:opsworks] ? "#{release_path}" : "#{config.release_path}"
 puts ":::::::::::release path is ::: #{node[:rel_path]}"
 puts ":::::::shared path is #{shared_path}"
+run "ln -nfs #{shared_path}/config/announcements.yml  #{node[:rel_path]}/config/announcements.yml"
 run "ln -nfs #{shared_path}/config/database_cluster.yml  #{node[:rel_path]}/config/database.yml"
 run "ln -nfs #{shared_path}/config/elasticsearch.yml  #{node[:rel_path]}/config/elasticsearch.yml"
 run "ln -nfs #{shared_path}/config/redshift.yml  #{node[:rel_path]}/config/redshift.yml"
@@ -81,8 +82,10 @@ run "ln -nfs #{shared_path}/config/ner_api.yml #{node[:rel_path]}/config/ner_api
 run "ln -nfs #{shared_path}/config/smart_filter.yml #{node[:rel_path]}/config/smart_filter.yml"
 run "ln -nfs #{shared_path}/config/heap_analytics.yml #{node[:rel_path]}/config/heap_analytics.yml"
 run "ln -nfs #{shared_path}/config/mailgun_out_going_email_mappings.yml #{node[:rel_path]}/config/mailgun_out_going_email_mappings.yml"
-
-
+run "ln -nfs #{shared_path}/config/bot.yml #{node[:rel_path]}/config/bot.yml"
+run "ln -nfs #{shared_path}/config/central.yml #{node[:rel_path]}/config/central.yml"
+run "ln -nfs #{shared_path}/config/kafka_collector.yml #{node[:rel_path]}/config/kafka_collector.yml"
+run "ln -nfs #{shared_path}/config/channel_framework.yml #{node[:rel_path]}/config/channel_framework.yml"
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"
 run "ln -nfs #{shared_path}/config/sandbox.yml  #{node[:rel_path]}/config/sandbox.yml"

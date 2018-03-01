@@ -50,7 +50,7 @@ module Solution::FlashHelper
         class='outdate-uptodate' 
         data-action-type='mark-#{action_type}' 
         data-item-id='#{@article_meta.id}' 
-        data-url='#{send("mark_as_#{action_type}_solution_articles_path")}' 
+        data-url='#{safe_send("mark_as_#{action_type}_solution_articles_path")}' 
         data-language-id='#{@article.language_id}'
       > #{t("solution.general.mark_as_#{action_type}.text_1")}</a> | "
   end

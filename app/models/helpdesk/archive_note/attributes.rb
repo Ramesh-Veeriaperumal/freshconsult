@@ -13,6 +13,6 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   end
 
   def fetch
-    send("read_from_#{$archive_store}")
+    safe_send("read_from_#{$archive_store}")
   end
 end

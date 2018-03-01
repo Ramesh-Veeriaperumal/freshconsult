@@ -34,7 +34,7 @@ module Search::SearchResultJson
 							:time_ago => time_ago_in_words(ticket.created_at))
 		}
 		to_ret.merge!({ 
-			:searchKey => (params[:search_field] == "requester") ? "#{ticket.requester_name} #{ticket.from_email}" : ticket.send(params[:search_field]) 
+			:searchKey => (params[:search_field] == "requester") ? "#{ticket.requester_name} #{ticket.from_email}" : ticket.safe_send(params[:search_field]) 
 		}) if params[:search_field].present?
 		to_ret
 	end
@@ -49,7 +49,7 @@ module Search::SearchResultJson
 			:ticket_info =>  t("ticket.ticket_list_status_" + ticket.ticket_states.current_state, 
 							:username => requester(ticket),
 							:time_ago => 
-						time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))),
+						time_ago_in_words(ticket.ticket_states.safe_send(ticket.ticket_states.current_state))),
 			:ticket_status => h(ticket.status_name),
 			:ticket_status_id => ticket.status,
 			:responder_id => (ticket.responder.id unless ticket.responder.blank?),
@@ -80,7 +80,7 @@ module Search::SearchResultJson
 			:created_at => ticket.created_at,
 			:created_at_int => ticket.created_at.to_i,
 			:ticket_path => helpdesk_archive_ticket_path(ticket.display_id),
-			:searchKey => (params[:search_field] == "requester") ? "#{ticket.requester_name} #{ticket.from_email}" : ticket.send(params[:search_field]),
+			:searchKey => (params[:search_field] == "requester") ? "#{ticket.requester_name} #{ticket.from_email}" : ticket.safe_send(params[:search_field]),
 			:ticket_info => t("ticket.merge_ticket_list_status_created_at", 
 							:username => "<span class='muted'>#{ticket.requester}</span>", 
 							:time_ago => time_ago_in_words(ticket.created_at))
@@ -97,7 +97,7 @@ module Search::SearchResultJson
 			:ticket_info =>  t("ticket.ticket_list_status_" + ticket.ticket_states.current_state, 
 							:username => requester(ticket),
 							:time_ago => 
-						time_ago_in_words(ticket.ticket_states.send(ticket.ticket_states.current_state))),
+						time_ago_in_words(ticket.ticket_states.safe_send(ticket.ticket_states.current_state))),
 			:ticket_status => h(ticket.status_name),
 			:ticket_status_id => ticket.status,
 			:responder_id => (ticket.responder.id unless ticket.responder.blank?),
@@ -192,7 +192,7 @@ module Search::SearchResultJson
 			:result_type => 'solution_article',
 			:title => article.es_highlight('title').html_safe,
 			:path => multilingual_article_path(article),
-			:folder_name => h((article.solution_folder_meta.send("#{article.language.to_key}_folder") || article.solution_folder_meta.primary_folder).name),
+			:folder_name => h((article.solution_folder_meta.safe_send("#{article.language.to_key}_folder") || article.solution_folder_meta.primary_folder).name),
 			:folder_path => solution_folder_path(article.solution_folder_meta),
 			:description => article.es_highlight('desc_un_html'),
 			:user_name => h(author.name),

@@ -12,7 +12,7 @@ class PortalSolutionCategory < ActiveRecord::Base
 
 	delegate :name, :to => :solution_category
 
-  after_commit ->(obj) { obj.send(:clear_cache_with_condition) }, on: :update
+  after_commit ->(obj) { obj.safe_send(:clear_cache_with_condition) }, on: :update
 
   CACHEABLE_ATTRS = ["portal_id","position"]
   
@@ -23,7 +23,7 @@ class PortalSolutionCategory < ActiveRecord::Base
 
   def as_cache
     (CACHEABLE_ATTRS.inject({}) do |res, attribute|
-      res.merge({ attribute => self.send(attribute) })
+      res.merge({ attribute => self.safe_send(attribute) })
     end).with_indifferent_access
   end
 

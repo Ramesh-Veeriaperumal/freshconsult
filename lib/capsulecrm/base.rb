@@ -25,7 +25,7 @@ module CapsuleCRM
     # nodoc
     def initialize(attributes={})
       attributes.each do |name, value|
-        send("#{name}=", value)
+        safe_send("#{name}=", value)
       end
       #changed_attributes.clear
     end

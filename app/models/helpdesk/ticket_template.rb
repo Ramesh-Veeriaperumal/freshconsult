@@ -10,7 +10,7 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
 
   belongs_to_account
 
-  TOTAL_SHARED_TEMPLATES = 300
+  TOTAL_SHARED_TEMPLATES = 300 #this max limit is for general and parent templates only.
   TOTAL_CHILD_TEMPLATES  = 10
 
 
@@ -180,7 +180,7 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
     templ_ids
   end
 
-  def self.max_limit
+  def self.max_limit #this max limit is for general and parent templates only.
     Account.current.max_template_limit || TOTAL_SHARED_TEMPLATES
   end
 
@@ -230,15 +230,15 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
     if (data = self.template_data).present? && data.keys.include?("inherit_parent") &&
       (data["inherit_parent"] == "all" || data["inherit_parent"].include?("description_html"))
       ["attachments", "shared_attachments", "cloud_files"].each do |files|
-        self.send(files).destroy_all
+        self.safe_send(files).destroy_all
       end
     end
   end
 
   def assn_templates item, assn_item_type
     assn_templ_ids =[]
-    self.send("#{assn_item_type}_templates").preload(item).map { |pt|
-        assn_templ_ids << pt.id if pt.send("#{item}").length <= 1 }
+    self.safe_send("#{assn_item_type}_templates").preload(item).map { |pt|
+        assn_templ_ids << pt.id if pt.safe_send("#{item}").length <= 1 }
     assn_templ_ids
   end
 end

@@ -24,7 +24,7 @@ module RabbitMq::Subscribers::CtiCalls::Cti
   def to_rmq_json(keys)
     new_hash = {}
     keys.each do |key|
-      new_hash[key] = send(key) if key.class.name == "String"
+      new_hash[key] = safe_send(key) if key.class.name == "String"
     end
     new_hash
   end

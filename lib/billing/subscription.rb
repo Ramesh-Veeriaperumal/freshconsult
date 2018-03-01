@@ -155,7 +155,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     end
     
     def customer_data(account)
-      data = CUSTOMER_INFO.inject({}) { |h, (k, v)| h[k] = account.send(v).to_str; h }
+      data = CUSTOMER_INFO.inject({}) { |h, (k, v)| h[k] = account.safe_send(v).to_str; h }
       data.merge(:email => account.invoice_emails.first)
     end
     
@@ -171,11 +171,11 @@ class Billing::Subscription < Billing::ChargebeeWrapper
     end
 
     def card_info(card)
-      CREDITCARD_INFO.inject({}) { |h, (k, v)| h[k] = card.send(v); h }
+      CREDITCARD_INFO.inject({}) { |h, (k, v)| h[k] = card.safe_send(v); h }
     end
 
     def billing_address(address)
-       ADDRESS_INFO.inject({}) { |h, (k, v)| h[k] = address.send(v); h }
+       ADDRESS_INFO.inject({}) { |h, (k, v)| h[k] = address.safe_send(v); h }
     end
 
     def day_pass_data(account, quantity)

@@ -273,6 +273,7 @@ class Account < ActiveRecord::Base
   has_many :all_freshfone_numbers, :class_name => 'Freshfone::Number', :dependent => :delete_all
   has_many :ivrs, :class_name => 'Freshfone::Ivr'
   has_many :freshfone_calls, :class_name => 'Freshfone::Call'
+  has_many :freshcaller_calls, :class_name => 'Freshcaller::Call'
   has_many :supervisor_controls, :class_name => 'Freshfone::SupervisorControl'
   delegate :find_by_call_sid, :to => :freshfone_calls
   has_one  :freshfone_credit, :class_name => 'Freshfone::Credit'
@@ -349,4 +350,7 @@ class Account < ActiveRecord::Base
   has_many :section_parent_fields, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id is NULL AND field_type IN ('default_ticket_type' , 'custom_dropdown') AND field_options LIKE '%section_present: true%'", :include => [:nested_ticket_fields, {:picklist_values => :section}], :limit => Helpdesk::TicketField::SECTION_LIMIT
 
   has_one :collab_settings, :class_name => 'Collab::Setting'
+
+  has_many :bot_tickets, class_name: 'Bot::Ticket', dependent: :destroy
+  has_many :bots, class_name: 'Bot'
 end

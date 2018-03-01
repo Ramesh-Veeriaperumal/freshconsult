@@ -10,15 +10,15 @@
     <%
       customer_opinion = "" 
       survey_association = Account.current.new_survey_enabled? ? "custom_survey_results" : "survey_results"
-      unless @ticket.send(survey_association).nil? || @ticket.send(survey_association).last.nil?
+      unless @ticket.safe_send(survey_association).nil? || @ticket.safe_send(survey_association).last.nil?
         if Account.current.new_survey_enabled? 
-          rating_class_value = " color-" + CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[@ticket.send(survey_association).last.ticket_info[:value]] + "' title='" + @ticket.send(survey_association).last.ticket_info[:text]
+          rating_class_value = " color-" + CustomSurvey::Survey::CUSTOMER_RATINGS_STYLE[@ticket.safe_send(survey_association).last.ticket_info[:value]] + "' title='" + @ticket.safe_send(survey_association).last.ticket_info[:text]
           tooltip_class = "tooltip "
         else
           rating_class_value = ""
           tooltip_class = ""
         end 
-        customer_opinion = ["<div class='customer-opinion ",tooltip_class, @ticket.send(survey_association).last.get_small_img_class, rating_class_value, "'></div>"].join.html_safe
+        customer_opinion = ["<div class='customer-opinion ",tooltip_class, @ticket.safe_send(survey_association).last.get_small_img_class, rating_class_value, "'></div>"].join.html_safe
       end     
     %>        
     <%=customer_opinion%>  
@@ -40,10 +40,10 @@
     </div>
     
     <div class="info"> 
-      <span><%= multiple_emails_container(@to_emails, "From: ") unless @ticket.cc_email_hash.blank? or @to_emails.blank?%></span>
-      <span>,<%= multiple_emails_container([@ticket.from_email], "To: ")%></span>
+      <span><%= multiple_emails_container(@to_emails, t("ticket.compose.from") + " ") unless @ticket.cc_email_hash.blank? or @to_emails.blank?%></span>
+      <span>,<%= multiple_emails_container([@ticket.from_email], t("ticket.compose.to") + " ")%></span>
 
-      <%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails], "Cc: ") unless @ticket.cc_email_hash.blank? %>
+      <%= content_tag :div, multiple_emails_container(@ticket.cc_email_hash[:cc_emails], t("ticket.compose.cc") + ': ') unless @ticket.cc_email_hash.blank? %>
         </div> 
   </div>
   <div rel="image-enlarge" id="ticket_original_request" class="request_mail">

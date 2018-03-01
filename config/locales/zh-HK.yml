@@ -1,0 +1,4 @@
+#Place holder file to prevent issue caused by paperclip including this locale automatically
+zh-HK:
+  meta:
+    language_name: 'Chinese - Hongkong'

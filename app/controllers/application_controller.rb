@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   around_filter :select_shard
   
   prepend_before_filter :determine_pod
-  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :set_current_account, :reset_language
+  before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :unset_thread_variables, :set_current_account, :reset_language
   before_filter :set_shard_for_payload
   before_filter :set_default_locale, :set_locale, :set_msg_id
   # before_filter :set_ui_preference
@@ -85,7 +85,7 @@ class ApplicationController < ActionController::Base
             return redirect_to(subscription_url)
           else
             flash[:notice] = t('suspended_account_admin_info')
-            redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+            redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
           end
         }
       end
@@ -340,7 +340,7 @@ class ApplicationController < ActionController::Base
     end
 
     def non_covered_feature
-      redirect_to send(Helpdesk::ACCESS_DENIED_ROUTE)
+      redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
     end
 
     def non_covered_admin_feature

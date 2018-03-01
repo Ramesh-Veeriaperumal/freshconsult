@@ -64,6 +64,8 @@ class Portal < ActiveRecord::Base
 
   has_one :primary_email_config, :class_name => 'EmailConfig', :through => :product
 
+  has_one :bot, class_name: 'Bot'
+
   has_many :monitorships, :dependent => :nullify
 
   belongs_to_account
@@ -71,7 +73,7 @@ class Portal < ActiveRecord::Base
 
   concerned_with :solution_associations
 
-  APP_CACHE_VERSION = "FD77"
+  APP_CACHE_VERSION = "FD78"
 
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -124,11 +126,11 @@ class Portal < ActiveRecord::Base
 
   #Yeah.. It is ugly.
   def ticket_fields(additional_scope = :all)
-    filter_fields account.ticket_fields.send(additional_scope), ticket_field_conditions
+    filter_fields account.ticket_fields.safe_send(additional_scope), ticket_field_conditions
   end
 
   def ticket_fields_including_nested_fields(additional_scope = :all)
-    filter_fields account.ticket_fields_including_nested_fields.send(additional_scope), ticket_field_conditions
+    filter_fields account.ticket_fields_including_nested_fields.safe_send(additional_scope), ticket_field_conditions
   end
 
   def customer_editable_ticket_fields
@@ -207,8 +209,9 @@ class Portal < ActiveRecord::Base
   end
 
   def matches_host?(hostname)
-    Rails.logger.debug("::::reCAPTCHA response::::: accountId => #{account.id}, current_url => #{host}, hostname => #{hostname}")
-    host == hostname
+    account_domains = domains_for_recaptcha
+    Rails.logger.debug("::::reCAPTCHA response::::: accountId => #{account.id}, domains => #{account_domains.inspect}, reCAPTCHA hostname => #{hostname}")
+    account_domains.include?(hostname.downcase) if hostname.present?
   end
 
   private
@@ -227,13 +230,13 @@ class Portal < ActiveRecord::Base
     end
 
     def handle_icon(icon_field, icon_attr)
-      unless send(icon_field)
-        icon = send("build_#{icon_field}")
+      unless safe_send(icon_field)
+        icon = safe_send("build_#{icon_field}")
         icon.description = icon_field
         icon.content = icon_attr[:content]
         icon.account_id = account_id
       else
-        send(icon_field).update_attributes(icon_attr)
+        safe_send(icon_field).update_attributes(icon_attr)
       end
     end
 
@@ -344,7 +347,7 @@ class Portal < ActiveRecord::Base
     # * * * POD Operation Methods Begin * * *
     def update_custom_portal
       if Fdadmin::APICalls.non_global_pods? && portal_url_changed?
-        action = (send(:transaction_include_action?, :create) && new_record?) ? :create : :update
+        action = (safe_send(:transaction_include_action?, :create) && new_record?) ? :create : :update
         request_parameters = {
           :target_method => :update_domain_mapping_for_pod,
           :operation => action,
@@ -383,6 +386,12 @@ class Portal < ActiveRecord::Base
         account_main_portal = Account.current.main_portal_from_cache
         valid_domains << account_main_portal.elb_dns_name if account_main_portal.elb_dns_name.present?
       end
-      valid_domains.map { |d| d.chomp('.') }
+      valid_domains.map { |d| d.downcase.chomp('.') }
+    end
+
+    def domains_for_recaptcha
+      valid_domains = [account.full_domain]
+      valid_domains << portal_url if portal_url.present?
+      valid_domains
     end
 end

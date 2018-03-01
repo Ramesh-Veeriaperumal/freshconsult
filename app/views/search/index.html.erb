@@ -1,5 +1,5 @@
 <div class="loading-box" id="loading-box" style="display: none"> 
-	<div class="reports-loading sloading loading-small loading-left repo generate-hd-reports">Searching</div> 
+	<div class="reports-loading sloading loading-small loading-left repo generate-hd-reports"><%= t("search.searching") %></div> 
 </div>
 <% content_for :layoutType do %>search-page<% end %>
 <% if current_account.has_feature?(:advanced_search) %>
@@ -36,7 +36,7 @@
           </div>
           <div class="bulk-action-pane hide">
             <div class="edit-filter span2">
-              <a class="btn btn-cancel" href="/helpdesk/tickets/update_multiple_tickets?term=<%= @search_key %>" id="bulk_actions_btn" data-target="#bulk" rel="freshdialog" data-width="709px" title="Bulk Actions" data-submit-label="Update" data-submit-loading="Updating..." data-close-label="Cancel">Bulk Actions</a>
+              <a class="btn btn-cancel" href="/helpdesk/tickets/update_multiple_tickets?term=<%= @search_key %>" id="bulk_actions_btn" data-target="#bulk" rel="freshdialog" data-width="709px" title="<%= t('bulk_actions') %>" data-submit-label="Update" data-submit-loading="Updating..." data-close-label="<%= t('cancel') %>"><%= t("bulk_actions") %></a>
             </div>
           </div>
           <div class="clear"></div>

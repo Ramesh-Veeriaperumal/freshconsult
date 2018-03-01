@@ -21,16 +21,16 @@ class NERWorker < BaseWorker
     args.symbolize_keys!
     account = Account.current
 
-    obj = account.send(args[:obj_type]).find(args[:obj_id])
+    obj = account.safe_send(args[:obj_type]).find(args[:obj_id])
 
-    user_email = args[:user_email] || obj.try(:user).try(:email)
+    user_email = args[:user_email] || fetch_pii(obj)
 
     req_body = {  text: args[:text].to_s.first(MAXIMUM_LENGTH), #Sending only first 3000 characters to api because the api response time is more than 4sec for the string length >3000
                   user_id: encrypt_pii(user_email),
                   client_id: encrypt_pii(obj.account.full_domain),
                   username: NER_API_TOKENS['username'] }.to_json
 
-    response = RestClient.send("post", NER_API_TOKENS['datetime'], req_body, {"Content-Type"=>"application/json"})
+    response = RestClient.safe_send("post", NER_API_TOKENS['datetime'], req_body, {"Content-Type"=>"application/json"})
 
     ner_data = JSON.parse(response)
 
@@ -45,6 +45,12 @@ class NERWorker < BaseWorker
   end
 
   private
+
+  def fetch_pii(obj)
+    obj.user.email ||  obj.user.phone|| obj.user.mobile || obj.user.twitter_id || Helpdesk::EMAIL[:default_requester_email]
+    rescue
+      Helpdesk::EMAIL[:default_requester_email]
+  end
 
   def encrypt_pii(key)
     Encryptor.encrypt(value: key, key: NER_API_TOKENS['secret_key'], iv: NER_API_TOKENS['iv'])

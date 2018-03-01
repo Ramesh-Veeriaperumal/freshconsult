@@ -72,8 +72,8 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	before_create :set_default_portal
 	before_save :validate_is_default
 
-  	after_commit ->(obj) { obj.send(:clear_cache) }, on: :create
-  	after_commit ->(obj) { obj.send(:clear_cache) }, on: :destroy
+  	after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :create
+  	after_commit ->(obj) { obj.safe_send(:clear_cache) }, on: :destroy
 
 	alias_method :children, :solution_categories
 	
@@ -81,7 +81,7 @@ class Solution::CategoryMeta < ActiveRecord::Base
 
 	def as_cache
 	  (CACHEABLE_ATTRIBUTES.inject({}) do |res, attribute|
-	    res.merge({ attribute => self.send(attribute) })
+	    res.merge({ attribute => self.safe_send(attribute) })
 	  end).with_indifferent_access
 	end
 	
@@ -134,4 +134,10 @@ class Solution::CategoryMeta < ActiveRecord::Base
 			:visible_folders => visible_folders
 		}
 	end
+
+	def portal_ids=(ids)
+		@model_changes = { portal_ids: [self.portal_ids, ids.map(&:to_i)]}
+		super
+	end
+
 end

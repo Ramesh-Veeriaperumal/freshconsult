@@ -61,7 +61,7 @@ def execute_sync(task_name)
   rake_logger.info "rake=contacts_sync #{task_name}" unless rake_logger.nil?
   accounts_queued = 0
   Sharding.run_on_all_slaves do
-    Account.current_pod.send(CONTACTS_SYNC_TASKS[task_name][:account_method]).each do |account|
+    Account.current_pod.safe_send(CONTACTS_SYNC_TASKS[task_name][:account_method]).each do |account|
       begin
         installed_application = account.installed_applications.joins(:application).where(
           'name in (?)', Integrations::Constants::CONTACTS_SYNC_APPS).last

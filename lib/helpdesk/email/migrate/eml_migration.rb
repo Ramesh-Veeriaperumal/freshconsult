@@ -1,4 +1,4 @@
-require 'zip/zip'
+require 'zip'
 
 module Helpdesk::Email::Migrate
   class EmlMigration
@@ -14,7 +14,7 @@ module Helpdesk::Email::Migrate
     def initialise_attributes(attributes = {})
       attributes.each do |name, value|
         if respond_to?("#{name}=")
-          send("#{name}=", value)
+          safe_send("#{name}=", value)
         end
       end
     end
@@ -36,7 +36,7 @@ module Helpdesk::Email::Migrate
       @mail_fetch_start_time = Time.zone.now
       @tickets_info = []
       Helpdesk::Email::Migrate::Mailer.send_mail(notify_email, "Migration started for zip file - #{file_path}")
-      Zip::ZipFile.open(file_path) do |zip_file|
+      Zip::File.open(file_path) do |zip_file|
         zip_file.each do |file|
           begin
             file_name = file.name

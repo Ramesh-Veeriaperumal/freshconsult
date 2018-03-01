@@ -1,7 +1,7 @@
 <div class="alert-message hide" id="language-message">
-  We are working on supporting other languages in the Mint experience.
+  <%= I18n.t("falcon_languages_alert") %>
   <br />
-  <a href="javascript: switchToOld()">Click here</a> to try other languages in old Freshdesk
+  <%= I18n.t("click_here").html_safe %>
 </div>
 
 <script type='text/javascript'>

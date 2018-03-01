@@ -6,20 +6,20 @@
 
     <div class="row-fluid">
       <div class="span12">
-        <h3 class="header-lead"><span>Tickets Received vs Resolved vs Backlog</span></h3>
-        <div id="received_resolved_backlog_line_chart" class="single-stacked-bar" style="height:220px;"><div class="noinfo">No data to display!</div></div>
+        <h3 class="header-lead"><span><%= t("helpdesk_reports.received_backlog") %></span></h3>
+        <div id="received_resolved_backlog_line_chart" class="single-stacked-bar" style="height:220px;"><div class="noinfo"><%= t("adv_reports.no_data_to_display_msg") %></div></div>
       </div>
     </div>
     <div class="row-fluid">
       <div class="span12">
-        <h3 class="header-lead"><span>Tickets by Source</span></h3>
-        <div id="tickets_by_source_line_chart" class="single-stacked-bar" style="height:220px;"><div class="noinfo">No data to display!</div></div>
+        <h3 class="header-lead"><span><%= t("helpdesk_reports.ticket_by_source") %></span></h3>
+        <div id="tickets_by_source_line_chart" class="single-stacked-bar" style="height:220px;"><div class="noinfo"><%= t("adv_reports.no_data_to_display_msg") %></div></div>
       </div>
     </div>
     <div class="row-fluid">
       <div class="span12">
-        <h3 class="header-lead"><span>Tickets by Time of Arrival</span></h3>
-        <div id="tickets_by_arrival_bar_chart" class="single-stacked-bar" style="height:260px;"><div class="noinfo">No data to display!</div></div>
+        <h3 class="header-lead"><span><%= t("helpdesk_reports.tickets_by_arrival", :default => ) %></span></h3>
+        <div id="tickets_by_arrival_bar_chart" class="single-stacked-bar" style="height:260px;"><div class="noinfo"><%= t("adv_reports.no_data_to_display_msg") %></div></div>
       </div>
     </div>
   </div>

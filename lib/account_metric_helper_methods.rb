@@ -28,7 +28,7 @@ module AccountMetricHelperMethods
       end
     end
     MODEL_META.each do |model_meta|
-      data << [model_meta, send(model_meta, account)]
+      data << [model_meta, safe_send(model_meta, account)]
     end
     data
   end

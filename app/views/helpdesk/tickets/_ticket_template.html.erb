@@ -6,7 +6,7 @@
       <div class="template-options">
         <span class="arrow-top"></span>
         <div class="filter-wrapper hide">
-          <input type="text" placeholder="Search templates" data-picklist-filter id="filter-template" autocomplete="off" />
+          <input type="text" placeholder="<%= t('ticket_templates.search_templates') %>" data-picklist-filter id="filter-template" autocomplete="off" />
         </div>
         <div id="wrapper-template-list">
           <ul id="template-items" data-picklist>
@@ -22,4 +22,4 @@
 	<i class="ficon-help fsize-20"></i>
 </div>
 <input type="hidden" id="template_previlage" value="<%= privilege?(:manage_ticket_templates) %>" />
-<input type="hidden" id="template_count" value="<%= templates_count_from_cache < Helpdesk::TicketTemplate.max_limit %>" />
+<input type="hidden" id="template_count" value="<%= prime_templates_count_from_cache < Helpdesk::TicketTemplate.max_limit %>" />

@@ -167,8 +167,8 @@ class Admin::SkillsController < Admin::AdminController
       operator_types = OPERATOR_TYPES.clone
       
       @op_types     = ActiveSupport::JSON.encode operator_types
-      @op_list      = ActiveSupport::JSON.encode OPERATOR_LIST
-      @op_label     = ActiveSupport::JSON.encode ALTERNATE_LABEL
+      @op_list      = ActiveSupport::JSON.encode va_operator_list
+      @op_label     = ActiveSupport::JSON.encode va_alternate_label
     end
 
     def add_ticket_fields filter_hash
@@ -250,7 +250,7 @@ class Admin::SkillsController < Admin::AdminController
 
     def add_customer_custom_fields filter_hash, type
       special_case = [['', t('none')]]
-      cf = current_account.send("#{type}_form").custom_drop_down_fields
+      cf = current_account.safe_send("#{type}_form").custom_drop_down_fields
       unless cf.blank? 
         filter_hash.push({ :name => -1,
                           :value => "---------------------" 

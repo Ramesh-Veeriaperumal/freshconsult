@@ -107,12 +107,13 @@ module Facebook
       #reply to a message in fb
       def send_dm(rest, ticket, note, fan_page)
         thread_identifier  = get_thread_key(fan_page, ticket.fb_post)
+        #Real time messages
         if thread_identifier.include? MESSAGE_THREAD_ID_DELIMITER
           page_scoped_user_id = thread_identifier.split(MESSAGE_THREAD_ID_DELIMITER)[1]
           page_token = fan_page.page_token
           message = nil
           begin
-            data = {:message => {:text => note.body}, :recipient => {:id => page_scoped_user_id}}
+            data = {:message => {:text => note.body}, :recipient => {:id => page_scoped_user_id}, :tag => MESSAGE_TAG, :messaging_type => MESSAGE_TYPE}
             message = RestClient.post "#{FACEBOOK_GRAPH_URL}/#{GRAPH_API_VERSION}/me/messages?access_token=#{page_token}", data.to_json, :content_type => :json, :accept => :json
             message = JSON.parse(message)
             message["id"] = "#{FB_MESSAGE_PREFIX}#{message["message_id"]}"
@@ -131,6 +132,7 @@ module Facebook
             return false
           end
         else
+          #Non realtime messages
           message    = rest.put_object(thread_identifier, 'messages', :message => note.body)
           message.symbolize_keys!
         end

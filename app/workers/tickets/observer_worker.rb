@@ -9,16 +9,20 @@ module Tickets
         args.symbolize_keys!
         account, ticket_id, doer_id, system_event = Account.current, args[:ticket_id], args[:doer_id], args[:system_event]
         current_events = args[:current_events].symbolize_keys
+        Va::Logger::Automation.set_thread_variables(account.id, ticket_id, doer_id)
 
         evaluate_on = account.tickets.find_by_id ticket_id
         evaluate_on.attributes = args[:attributes]
         doer = account.users.find_by_id doer_id unless system_event
-
+        Va::Logger::Automation.log "system_event=true" if system_event
+        Va::Logger::Automation.log "user=nil" if doer.nil?
         if evaluate_on.present? and (doer.present? || system_event)
           Thread.current[:observer_doer_id] = doer_id || SYSTEM_DOER_ID
           aggregated_response_time = 0
           account.observer_rules_from_cache.each do |vr|
-            vr.check_events doer, evaluate_on, current_events
+            Va::Logger::Automation.set_rule_id(vr.id)
+            ticket = vr.check_events doer, evaluate_on, current_events
+            Va::Logger::Automation.log "Rule executed=#{ticket.present?}"
             aggregated_response_time += vr.response_time[:matches] || 0
           end
           Rails.logger.debug "Response time :: #{aggregated_response_time}"
@@ -29,16 +33,18 @@ module Tickets
           evaluate_on.save!
           evaluate_on.va_rules_after_save_actions.each do |action|
             klass = action[:klass].constantize
-            klass.send(action[:method], action[:args])
+            klass.safe_send(action[:method], action[:args])
           end
         else
-          puts "Skipping observer worker for : Account id:: #{Account.current.id}, Ticket id:: #{args[:ticket_id]}, User id:: #{args[:doer_id]}"            
+          Va::Logger::Automation.log "Skipping observer worker::ticket present?=#{evaluate_on.present?}::user present?=#{(doer.present? || system_event)}"
         end
       rescue => e
-        puts "Something is wrong Observer : Account id:: #{Account.current.id}, Ticket id:: #{args[:ticket_id]}, #{e.message}"
+        Va::Logger::Automation.log "Something is wrong Observer::Exception=#{e.message}::#{e.backtrace.join('\n')}"
         NewRelic::Agent.notice_error(e, {:custom_params => {:args => args }})
         raise e
       ensure
+        Va::Logger::Automation.log "********* END OF OBSERVER *********"
+        Va::Logger::Automation.unset_thread_variables
         if Account.current.skill_based_round_robin_enabled?
           if args[:enqueued_class] == 'Helpdesk::Ticket'
             #merges the diff between previous save transaction & observer save transaction

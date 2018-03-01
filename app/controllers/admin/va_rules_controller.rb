@@ -177,8 +177,8 @@ class Admin::VaRulesController < Admin::AdminController
         operator_types[:decimal] = ["is", "is_not"]
       end
       @op_types     = ActiveSupport::JSON.encode operator_types
-      @op_list      = ActiveSupport::JSON.encode OPERATOR_LIST
-      @op_label     = ActiveSupport::JSON.encode ALTERNATE_LABEL
+      @op_list      = ActiveSupport::JSON.encode va_operator_list
+      @op_label     = ActiveSupport::JSON.encode va_alternate_label
     end
 
     def add_ticket_fields filter_hash
@@ -363,7 +363,7 @@ class Admin::VaRulesController < Admin::AdminController
     end
 
     def add_customer_custom_fields filter_hash, type
-      cf = current_account.send("#{type}_form").send("custom_#{type}_fields")
+      cf = current_account.safe_send("#{type}_form").safe_send("custom_#{type}_fields")
       unless cf.blank? 
         filter_hash.push({ :name => -1,
                           :value => "---------------------" 

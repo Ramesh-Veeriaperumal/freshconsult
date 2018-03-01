@@ -19,20 +19,20 @@
         }
     </style>
 
-    <div id="maxmin" class="minimize hide" title="Minimize the Gadget">&nbsp;</div>
-    <div id="maxmin_tip" class="hide">Click here to maximize the gadget</div>
+    <div id="maxmin" class="minimize hide" title="<%= I18n.t("integrations.applications.gmail_gadget.minimize_the_gadget") %>">&nbsp;</div>
+    <div id="maxmin_tip" class="hide"><%= I18n.t("integrations.applications.gmail_gadget.maximize_the_gadget") %></div>
     <div id="fullbody" class="hide">
         <ul class="tabs" id="gcgTabs">
-        <li id="contact" class="active" onclick="showContact()"><a href="#">Contact</a></li>
-        <li id="recent_tickets"><a href="#" onclick="showRecentTickets()">Recent Tickets</a></li>
-        <li id="ticket"><a href="#" onclick="showTicket()">Ticket</a></li>
+        <li id="contact" class="active" onclick="showContact()"><a href="#"><%= t("integrations.applications.crm.mapping.contact") %></a></li>
+        <li id="recent_tickets"><a href="#" onclick="showRecentTickets()"><%= t("integrations.screen_pop.widget.recent_tickets") %></a></li>
+        <li id="ticket"><a href="#" onclick="showTicket()"><%= t("integrations.applications.gmail_gadget.ticket") %></a></li>
         </ul>
         <div id="content_div"></div>
         <div id="output"></div>
     </div>
     <div id="auth" class="hide">
-        <div class="center">You have not yet linked this Gmail account with an agent in Freshdesk.</div><br/>
-        <a class="special uiButton" href="javascript:void(0);">Connect your Freshdesk</a>
+        <div class="center"><%= t("integrations.applications.gmail_gadget.no_linked_account") %></div><br/>
+        <a class="special uiButton" href="javascript:void(0);"><%= t("integrations.applications.gmail_gadget.connect_fd") %></a>
     </div>
     <div id="error"></div>
 

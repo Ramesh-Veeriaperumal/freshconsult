@@ -13,7 +13,7 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
 
   def install
     shop_name = params[:configs][:shop_name].include?(".myshopify.com") ? params[:configs][:shop_name] : params[:configs][:shop_name] + ".myshopify.com"
-    redirect_to AppConfig['integrations_url'][Rails.env] + "/auth/shopify?shop=#{shop_name}&origin=id%3D#{current_account.id}"
+    redirect_to AppConfig['global_integration_url'][Rails.env] + "/auth/shopify?shop=#{shop_name}&origin=id%3D#{current_account.id}"
   end
 
   def receive_webhook

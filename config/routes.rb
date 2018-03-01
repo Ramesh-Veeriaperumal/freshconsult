@@ -235,7 +235,7 @@ Helpkit::Application.routes.draw do
   match '/packages/:package.:extension' => 'jammit#package', :as => :jammit, :constraints => { :extension => /.+/ }
   resources :authorizations
 
-  ["github","salesforce", "magento", "shopify", "slack", "infusionsoft", "google_calendar", "google_login", "google_marketplace_sso", "google_contacts", "google_gadget", "outlook_contacts", "salesforce_v2", "facebook"].each do |provider|
+  Integrations::Constants::INTEGRATION_ROUTES.each do |provider|
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
@@ -251,8 +251,9 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  resources :forums_uploaded_images, :only => :create do
+  resources :forums_uploaded_images, :only => [:index, :create] do
     collection do
+      post :delete_file
       post :create_file
     end
   end
@@ -820,6 +821,17 @@ Helpkit::Application.routes.draw do
       post :help
       post :create_ticket
       post :tkt_create_v3
+    end
+
+    namespace :microsoft_teams, :path => "teams" do
+      get :oauth
+      get :install
+      get :authorize_agent
+    end
+
+    namespace :google_hangout_chat, :path => "google_hangout_chat" do
+      get :oauth
+      get :install
     end
 
     resources :applications, :only => [:index, :show] do
@@ -2575,6 +2587,9 @@ Helpkit::Application.routes.draw do
 
   filter :locale
 
+  match '/announcements' => 'announcements#index',via: :get
+  match '/announcements/account_login_url' => 'announcements#account_login_url',via: :get
+
   namespace :support do
     match 'home' => 'home#index', :as => :home
     match 'preview' => 'preview#index', :as => :preview
@@ -3212,6 +3227,12 @@ Helpkit::Application.routes.draw do
   end
   match '/livechat/visitor/:type', :controller => 'chats', :action => 'visitor', :method => :get
   match '/livechat/downloadexport/:token', :controller => 'chats', :action => 'download_export', :method => :get
+
+
+  post '/livechat/shortcodes', :controller => 'chats', :action => 'create_shortcode', :method => :post
+  delete '/livechat/shortcodes/:id', :controller => 'chats', :action => 'delete_shortcode', :method => :delete
+  put '/livechat/shortcodes/:id', :controller => 'chats', :action => 'update_shortcode', :method => :put
+  put '/livechat/agent/:id/update_availability', :controller => 'chats', :action => 'update_availability', :method => :put
   match '/livechat/*letter', :controller => 'chats', :action => 'index', :method => :get
 
   use_doorkeeper do

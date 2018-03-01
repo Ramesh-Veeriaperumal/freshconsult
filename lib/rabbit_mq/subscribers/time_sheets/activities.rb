@@ -40,7 +40,7 @@ module RabbitMq::Subscribers::TimeSheets::Activities
   def values_for_destroy
     values = {}
     PROPERTIES_TO_CONSIDER.each do |property|
-      values.merge!({:"#{property}" => [self.send(property), nil]}) if !PROPERTIES_NOT_FOR_DELETE.include?(property)
+      values.merge!({:"#{property}" => [self.safe_send(property), nil]}) if !PROPERTIES_NOT_FOR_DELETE.include?(property)
     end
     values
   end
@@ -53,7 +53,7 @@ module RabbitMq::Subscribers::TimeSheets::Activities
   def values_for_update
     value_hash = valid_changes
     PROPERTIES_TO_CONSIDER.each do |property|
-      value_hash.merge!(:"#{property}" => [self.send(property), self.send(property)]) if !value_hash.keys.include?(property) and !PROPERTIES_NOT_FOR_DELETE.include?(property)
+      value_hash.merge!(:"#{property}" => [self.safe_send(property), self.safe_send(property)]) if !value_hash.keys.include?(property) and !PROPERTIES_NOT_FOR_DELETE.include?(property)
     end
     value_hash
   end

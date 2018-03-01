@@ -414,7 +414,7 @@ module Reports::TimesheetReport
     @report_filters = params[:report_filters] || params[:data_hash][:report_filters]
     error_list = []
     error_list << VALIDATIONS.inject([]) do |errors, func|
-      errors << send(func)
+      errors << safe_send(func)
     end
     error_list = error_list.flatten.uniq.compact.reject(&:blank?)
     if error_list.any?
@@ -507,7 +507,7 @@ module Reports::TimesheetReport
     show_options(DEFAULT_COLUMNS_ORDER, DEFAULT_COLUMNS_KEYS_BY_TOKEN, DEFAULT_COLUMNS_OPTIONS)
     @show_options[:billable] = {:is_in=>:dropdown, :condition=>:billable, :name=>"Billable",
                                 :container=>"multi_select", :operator=>:is_in,
-                                :options=>[[0, "Non-Billable"], [1, "Billable"]],
+                                :options=>[[0, t('helpdesk.time_sheets.non_billable')], [1, t('helpdesk.time_sheets.billable')]],
                                 :value=>"", :field_type=>"default", :ff_name=>"default",
                                 :active=>false
                                 }
@@ -672,13 +672,13 @@ module Reports::TimesheetReport
         csv_data = []
         headers.each do |val|
           if date_fields.include?(val)
-            csv_data << parse_date(record.send(val))
+            csv_data << parse_date(record.safe_send(val))
           elsif workable_fields.include?(val)
-            csv_data << strip_equal(record.workable.send(val))
+            csv_data << strip_equal(record.workable.safe_send(val))
           elsif :customer_name == val
             csv_data << strip_equal(record.customer_name_reports)
           else
-            csv_data << strip_equal(record.send(val))
+            csv_data << strip_equal(record.safe_send(val))
           end
         end
         csv << csv_data
@@ -710,18 +710,18 @@ module Reports::TimesheetReport
       @metric_data[entry.current == 0 ? :previous : :current][:total_time] += (entry.time_spent || 0)
       if entry.current == 1
         @row_count += (entry.count || 0)
-        hash_key = entry.send(ALIAS_GROUP_NAME[group_by_caluse]) || 0
+        hash_key = entry.safe_send(ALIAS_GROUP_NAME[group_by_caluse]) || 0
         hash_key = hash_key.beginning_of_day if(group_by_caluse==:group_by_day_criteria)
         @group_count[hash_key] += (entry.time_spent || 0)
         if @group_names[hash_key].blank?
           if group_by_caluse == :workable
-            @group_names[hash_key] = "#{entry.send(group_by_caluse).subject} (##{entry.send(group_by_caluse).display_id})".gsub(/`|"/, " ")
+            @group_names[hash_key] = "#{entry.safe_send(group_by_caluse).subject} (##{entry.safe_send(group_by_caluse).display_id})".gsub(/`|"/, " ")
           elsif group_by_caluse == :group_by_day_criteria
             @group_names[hash_key] = hash_key
           elsif group_by_caluse == :customer_name
             @group_names[hash_key] = entry.customer_name_reports
           else
-            @group_names[hash_key] = entry.send(group_by_caluse).gsub(/`|"/, " ")
+            @group_names[hash_key] = entry.safe_send(group_by_caluse).gsub(/`|"/, " ")
           end
         end
       end
@@ -745,7 +745,7 @@ module Reports::TimesheetReport
     entries = fetch_timesheet_entries(offset, row_limit)
     result = {}
     entries.each do |entry|
-      hash_key = entry.send(ALIAS_GROUP_NAME[group_by_caluse]) || 0
+      hash_key = entry.safe_send(ALIAS_GROUP_NAME[group_by_caluse]) || 0
       hash_key = hash_key.beginning_of_day if(group_by_caluse==:group_by_day_criteria)
       result[hash_key] ||= []
       result[hash_key] << entry

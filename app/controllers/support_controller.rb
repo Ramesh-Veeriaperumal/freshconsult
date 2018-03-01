@@ -27,12 +27,12 @@ class SupportController < ApplicationController
     !controller_name.eql?('login') &&
     !controller_name.eql?('signups') &&
     !controller_name.eql?('feedback_widgets') &&
-    (controller.action_name.eql?('robots') ? true : !controller.send(:current_user)) && 
-    controller.send('flash').keys.blank?
+    (controller.action_name.eql?('robots') ? true : !controller.safe_send(:current_user)) && 
+    controller.safe_send('flash').keys.blank?
   }, 
   :cache_path => proc { |c| 
     cache_path = c.request.original_fullpath.gsub(/\?.*/, '')
-    Digest::SHA1.hexdigest("#{c.send(:current_portal).cache_prefix}#{cache_path}#{params[:portal_type]}")
+    Digest::SHA1.hexdigest("#{c.safe_send(:current_portal).cache_prefix}#{cache_path}#{params[:portal_type]}")
   }
  
   def cache_enabled?
@@ -184,8 +184,8 @@ class SupportController < ApplicationController
       partial = Portal::Page::PAGE_FILE_BY_TOKEN[ page_token ]
       dynamic_template = nil
       dynamic_template = page_data(page_token) if current_account.layout_customization_enabled?
-      _content = render_to_string :file => partial, :layout => false,
-                  :locals => { :dynamic_template => dynamic_template } if dynamic_template.nil? || !dynamic_template.blank?
+      _content = render_to_string file: partial, layout: false,
+                  locals: { dynamic_template: dynamic_template, request_domain: request.protocol+request.host } if dynamic_template.nil? || !dynamic_template.blank?
                   
                   
       @page_yield = @content_for_layout = _content

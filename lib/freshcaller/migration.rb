@@ -46,8 +46,9 @@ module Freshcaller
     end
 
     def enable_freshcaller_feature
-      Rails.logger.info "Enable freshcaller :: Account :: #{current_account.id}"
+      Rails.logger.info "Enable freshcaller & widget :: Account :: #{current_account.id}"
       current_account.add_feature(:freshcaller)
+      current_account.add_feature(:freshcaller_widget)
     end
 
     def save_freshcaller_agents(response)

@@ -126,9 +126,9 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                        health_score: Faker::Lorem.characters(5),
                                        account_tier: Faker::Lorem.characters(5))
     match_json([bad_request_error_pattern('health_score', :not_included,
-                                          list: 'At risk,Pretty OK,Happy'),
+                                          list: 'At risk,Doing okay,Happy'),
                 bad_request_error_pattern('account_tier', :not_included,
-                                          list: 'Platinum,Gold,Silver')])
+                                          list: 'Basic,Premium,Enterprise')])
     assert_response 400
   end
 
@@ -138,7 +138,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
                                        domains: domain_array,
                                        note: Faker::Lorem.characters(10),
                                        health_score: 'Happy',
-                                       account_tier: 'Gold',
+                                       account_tier: 'Premium',
                                        industry: 'Media',
                                        renewal_date: '2017-10-26')
     assert_response 201
@@ -241,14 +241,14 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     params_hash = {health_score: Faker::Lorem.characters(5), account_tier: Faker::Lorem.characters(5)}
     put :update, construct_params({ id: company.id }, params_hash)
     match_json([bad_request_error_pattern('health_score', :not_included,
-                                          list: 'At risk,Pretty OK,Happy'),
-                bad_request_error_pattern('account_tier', :not_included, list: 'Platinum,Gold,Silver')])
+                                          list: 'At risk,Doing okay,Happy'),
+                bad_request_error_pattern('account_tier', :not_included, list: 'Basic,Premium,Enterprise')])
     assert_response 400
   end
 
   def test_update_company_with_valid_data_for_tam_default_fields
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
-    params_hash = { health_score: 'Happy', account_tier: 'Gold',
+    params_hash = { health_score: 'Happy', account_tier: 'Premium',
                    industry: 'Media', renewal_date: '2017-10-26' }
     put :update, construct_params({ id: company.id }, params_hash)
     assert_response 200

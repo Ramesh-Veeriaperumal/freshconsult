@@ -121,7 +121,7 @@ window.App.FilterOps = window.App.FilterOps || {};
     getRemoteFilterConfig : function(condition){
          var _this = this;
          var include_none = false;
-         var noneVal = "-None-" ;
+         var noneVal = I18n.t('dashed_none');
          var none_value = -1;
 
          var config = {

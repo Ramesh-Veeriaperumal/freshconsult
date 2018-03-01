@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
 	  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Getting Started</title>
+    <title><%= t("accounts.edit_domain.getting_started") %></title>
     <meta name="description" content="">
     <meta name="author" content="">
 
@@ -112,9 +112,10 @@
 										class="hide submit-btn textbox-radius f-right tooltip" 
 										data-tab-ignore="true" data-placement="below"
 										title = "" data-test-url="<%= admin_email_config_path(@email_config) %>" 
-										data-loading-text= "Saving.." data-complete-text="Save">
+										data-loading-text= "<%=t('saving')%>" data-complete-text="<%=t('save')%>">
 
-										<span class="warning-tip">Invalid Address</span>
+										<span class="warning-tip">
+										<%= t("admin.home.index.invalid_address") %></span>
 									</div>
 
 								</div>

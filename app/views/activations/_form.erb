@@ -2,7 +2,7 @@
     <%= error_messages_for :user %>
     <fieldset>
 
-      <% if @user.can_verify_account? %>
+      <% if @user && @user.can_verify_account? %>
           <div class="control-group">
             <%= form.label :first_name, t('user.first_name'), :class => "control-label required" %>
             <div class="controls">
@@ -84,6 +84,11 @@
       <div class="form-actions">
         <button type="submit" class="btn btn-primary"> <%= t('activate_and_log_in_long') %> </button>
       </div>
+      <% if @user && @user.privilege?(:admin_tasks) %>
+        <div class="admin-consent">
+        <%= t("activations.admin_consent").html_safe %>
+        </div>
+      <% end %>
     </fieldset>
 <% end %>
 

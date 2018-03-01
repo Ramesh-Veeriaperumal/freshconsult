@@ -79,9 +79,9 @@ module FDPasswordPolicy
         end
 
         def update_old_passwords
-          if self.errors.empty? && send("#{crypted_password_field}_changed?") #&& send(validate_password_history[:if])
+          if self.errors.empty? && safe_send("#{crypted_password_field}_changed?") #&& safe_send(validate_password_history[:if])
             history = pwd_history
-            history.unshift({:password => send("#{crypted_password_field}"), :salt =>  send("#{password_salt_field}") })
+            history.unshift({:password => safe_send("#{crypted_password_field}"), :salt =>  safe_send("#{password_salt_field}") })
             history = history[0, 5]
             update_option({:password_history => history})
           end
@@ -111,9 +111,9 @@ module FDPasswordPolicy
 
         def password_repeated?
           return if self.password.blank?
-          if send(validate_password_history[:if]) 
+          if safe_send(validate_password_history[:if]) 
             history = pwd_history
-            depth = send(validate_password_history[:depth])
+            depth = safe_send(validate_password_history[:depth])
             history = history[0, depth]
             found = history.any? do |old_password|
               args = [self.password, old_password[:salt]].compact
@@ -128,7 +128,7 @@ module FDPasswordPolicy
           return if self.password.blank?
          
           password_format_options.each do |option|
-            if send(option[:if])
+            if safe_send(option[:if])
               found = self.password =~ option[:regex]
               self.errors.add(:base, option[:error]) unless found
             end
@@ -136,16 +136,16 @@ module FDPasswordPolicy
         end
 
         def password_not_short?
-          if send(validate_password_length[:if])
-            min_length = send(validate_password_length[:min_length])
+          if safe_send(validate_password_length[:if])
+            min_length = safe_send(validate_password_length[:min_length])
             short = self.password.blank? || self.password.length < min_length
             self.errors.add(:base, I18n.t('password_policy.min_length', :min_length => min_length)) if short
           end
         end
 
         def password_contains_login?
-          if send(validate_password_contains_login[:if])
-            login = send("#{self.class.login_field}")
+          if safe_send(validate_password_contains_login[:if])
+            login = safe_send("#{self.class.login_field}")
             found = self.password.downcase.include? login.downcase #pwd contains whole login
             found = self.password.downcase.include?(login[/.+(?=@)/].downcase) if !found and login[/.+(?=@)/] #pwd contains username if login is email
             found = login.downcase.include? self.password.downcase if !found and login.length >= self.password.length #pwd is some part of login
@@ -154,11 +154,11 @@ module FDPasswordPolicy
         end
 
         def update_option(option = {})
-            send("#{password_history_field}=", (send("#{password_history_field}") || {}).deep_merge(option))
+            safe_send("#{password_history_field}=", (safe_send("#{password_history_field}") || {}).deep_merge(option))
         end
 
         def pwd_history
-          pwd_hash = send("#{password_history_field}") || {}
+          pwd_hash = safe_send("#{password_history_field}") || {}
           history = pwd_hash.empty? || pwd_hash[:password_history].nil? ? [] : pwd_hash[:password_history]
         end
 

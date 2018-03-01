@@ -6,7 +6,7 @@ due_by_content_text = (due_by_content_text.gsub("\n" , " ")).html_safe if params
 <% if params[:format] != 'widget' %>
   <br /><%# No New line for widget for effective use of space %>
 <% end %>
-on <%= formated_date(due_by) %>
+<%= t("on") %> <%= formated_date(due_by) %>
 <% if privilege?(:edit_ticket_properties) && params[:format] != 'widget' %>
 <a id="edit-dueby-time"
 			data-placement="topRight"

@@ -63,6 +63,8 @@ class ApiApplicationController < MetalApiController
 
   before_filter :validate_url_params, only: [:show]
 
+  NAMESPACED_CONTROLLER_REGEX = /pipe\/|channel\/|bot\//
+
   def index
     load_objects
   end
@@ -222,6 +224,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_account_state
+      Rails.logger.info "::: Check account state :::"
       render_request_error(:account_suspended, 403) unless current_account.active?
     end
 
@@ -313,6 +316,7 @@ class ApiApplicationController < MetalApiController
 
     # will take items as one argument and is_array (whether scoper is a AR or array as another argument.)
     def paginate_items(items)
+      Rails.logger.info ":::Pagination started:::"
       is_array = !items.respond_to?(:scoped) # check if it is array or AR
       paginated_items = items.paginate(paginate_options(is_array))
 
@@ -347,12 +351,12 @@ class ApiApplicationController < MetalApiController
     end
 
     # Using optional parameters for extensibility
-    def render_201_with_location(template_name: "#{controller_path.gsub(/pipe\/|channel\//, '')}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
-      render template_name, location: send(location_url, item_id), status: 201
+    def render_201_with_location(template_name: "#{controller_path.gsub(NAMESPACED_CONTROLLER_REGEX, '')}/#{action_name}", location_url: "#{nscname}_url", item_id: @item.id)
+      render template_name, location: safe_send(location_url, item_id), status: 201
     end
 
     def nscname # namespaced controller name
-      controller_path.gsub(/pipe\/|channel\//, '').gsub('/', '_').singularize
+      controller_path.gsub(NAMESPACED_CONTROLLER_REGEX, '').tr('/', '_').singularize
     end
 
     def set_custom_errors(_item = @item)
@@ -643,8 +647,10 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_day_pass_usage_with_user_time_zone
+      Rails.logger.info "::: day pass check started :::"
       user_zone = TimeZone.find_time_zone
       Time.use_zone(user_zone) { check_day_pass_usage }
+      Rails.logger.info "::: day pass check done :::"
     end
 
     def run_on_slave

@@ -34,7 +34,7 @@ module Freshquery
       rescue Exception => e
         Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
         NewRelic::Agent.notice_error(e)
-        @records = Search::Utils.send(:wrap_paginate, [], @current_page, @offset, 0)
+        @records = Search::Utils.safe_send(:wrap_paginate, [], @current_page, @offset, 0)
       end
       @records
     end

@@ -9,6 +9,7 @@ module Helpdesk::TicketFilterMethods
     :userdefined_views => [:save, :cancel, :save_as, :edit, :delete ],
   }
   SHARED_OWNERSHIP_FILTERS = ["shared_with_me", "shared_by_me"]
+  FILTER_NAME_THRESHOLD = 200 #first n specified characters of filter_name would be stored in cookie
 
   def top_views(selected = DEFAULT_FILTER, dynamic_view = [], show_max = 1)
     selected = current_account.shared_ownership_enabled? ? selected : DEFAULT_FILTER if SHARED_OWNERSHIP_FILTERS.include?(selected)
@@ -23,7 +24,7 @@ module Helpdesk::TicketFilterMethods
       end
       selected_item = selected_from_default.blank? ?
                       (default_views.first) :
-                      (selected_from_default.map { |i| { :id => i[0], :name => i[1], :default  =>  true} }.first)
+                      (selected_from_default.map { |i| { :id => i[0], :name => I18n.t("helpdesk.tickets.views.#{i[0]}"), :default  =>  true} }.first)
     end
 
     top_view_html = drop_down_views(top_views_array, selected_item, "leftViewMenu", (selected.blank? or params[:unsaved_view])).to_s 
@@ -127,7 +128,7 @@ module Helpdesk::TicketFilterMethods
     control_links = ""
 
     order_of(view, default).each do |link_method|
-      control_links << send("#{link_method}_link", view)
+      control_links << safe_send("#{link_method}_link", view)
     end
     (content_tag :div, control_links.html_safe, :id => "view_manage_links").html_safe
   end
@@ -139,7 +140,7 @@ module Helpdesk::TicketFilterMethods
 
   def can_manage? view
     return false unless view[:id].is_a? Numeric
-    privilege?(:admin_tasks) or view[:user_id] == current_user.id
+    privilege?(:manage_dashboard) or view[:user_id] == current_user.id
   end
 
   def save_link view
@@ -237,8 +238,9 @@ module Helpdesk::TicketFilterMethods
     stored_key = params[:filter_key] || params[:filter_name]
     #To avoid setting the filter name to "Archived" as we don't store archived filter in cookies
     stored_key = "new_and_my_open" if stored_key == "archived"
-
-    cookies[:filter_name] = (stored_key ? stored_key : (!cookies[:filter_name].blank?) ? cookies[:filter_name] : "new_and_my_open" )
+    filter_name_for_cookie = (stored_key ? stored_key : (!cookies[:filter_name].blank?) ? cookies[:filter_name] : "new_and_my_open" )
+    #storing only first 200 characters of filter name in cookie to avoid cookie bombing
+    cookies[:filter_name] = filter_name_for_cookie.to_s.first(FILTER_NAME_THRESHOLD)
   end
 
   def current_wf_order
