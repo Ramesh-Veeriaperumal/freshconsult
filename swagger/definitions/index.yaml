@@ -103,13 +103,18 @@
   agent_input:
     $ref: ./request/agents/agent.yaml
   bulk_agent_input:
-    $ref: ./request/agents/bulk_agent.yaml  
+    $ref: ./request/agents/bulk_agent.yaml
   onboarding_update_activation_email_input:
     $ref: ./request/onboarding/update_activation_email.yaml
   update_channels_input:
     $ref: ./request/onboarding/update_channels.yaml
   suppression_list:
     $ref: ./request/tickets/suppression_list.yaml
+  bot_enable_on_portal_input:
+    $ref: ./request/bots/enable_on_portal_input.yaml
+
+  bot_map_categories_input:
+    $ref: ./request/bots/map_categories_input.yaml
 
   # RESOURCE
   conversation_template:
@@ -138,6 +143,8 @@
     $ref: ./resource/sla_policy.yaml
   draft:
     $ref: ./resource/draft.yaml
+  bot:
+    $ref: ./resource/bot.yaml
   canned_response:
     $ref: ./resource/canned_response.yaml
   canned_response_folder:
@@ -176,6 +183,7 @@
     $ref: ./resource/solution_article.yaml
   extension_generic:
     $ref: ./resource/extension/generic.yaml
+    
   extended_contact:
     allOf:
       - $ref: '#/definitions/contact'
@@ -273,6 +281,20 @@
     $ref: ./resource/reply_to_forward_template.yaml
   password_policy:
     $ref: ./resource/password_policy.yaml
+  bot_index:
+     type: array
+     items:
+        $ref: '#/definitions/bot_list'
+  bot_new:
+    $ref: './response/bot_new.yaml'
+  bot_create:
+    $ref: './response/bot_create.yaml'
+  bot_show:
+    $ref: './response/bot_show.yaml'
+  bot_list:
+    $ref: './response/bot_list.yaml'
+  bot_product_data:
+    $ref: './response/bot_product_data.yaml'
 
   # Dashboard activities
   dashboard_activities:

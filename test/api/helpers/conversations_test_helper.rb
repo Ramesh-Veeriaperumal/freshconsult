@@ -193,7 +193,7 @@ module ConversationsTestHelper
   end
 
   def forward_template_pattern(expected_output)
-    reply_template_pattern(expected_output).merge(attachments: Array)
+    reply_template_pattern(expected_output).merge(attachments: Array, cloud_files: Array)
   end
 
   def reply_to_forward_template_pattern(expected_output)

@@ -5021,6 +5021,319 @@
           }
         }
       }
+    },
+    "/bots": {
+      "get": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "List all",
+        "description": "Listing down main portal and all products along with the bots details.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bot_index"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Create",
+        "description": "Create a bot",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bot"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bot_create"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/bots/new": {
+      "get": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "New",
+        "description": "Bot new page",
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "query",
+            "type": "string",
+            "description": "Portal ID of the bot.",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bot_new"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access deniedt"
+          }
+        }
+      }
+    },
+    "/bots/{id}": {
+      "get": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Show",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Identifier of the bot",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bot_show"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Update",
+        "description": "Update Bot",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Identifier of the bot",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bot"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request error"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/bots/{external_id}/training_completed": {
+      "post": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Bot training is completed",
+        "parameters": [
+          {
+            "name": "external_id",
+            "in": "path",
+            "type": "string",
+            "description": "External Id of the bot",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          },
+          "409": {
+            "description": "Invalid Bot state"
+          }
+        }
+      }
+    },
+    "/bots/{id}/mark_completed_status_seen": {
+      "post": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Clear Bot's status redis key",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "description": "Id of the bot",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          },
+          "409": {
+            "description": "Invalid Bot state"
+          }
+        }
+      }
+    },
+    "/bots/{id}/enable_on_portal": {
+      "put": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Enable bot on portal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bot_enable_on_portal_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/bots/{id}/map_categories": {
+      "put": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Mapping categories to a bot",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bot_map_categories_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          },
+          "503": {
+            "description": "ML service unavailable"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -6837,6 +7150,34 @@
         }
       }
     },
+    "bot_enable_on_portal_input": {
+      "type": "object",
+      "required": [
+        "enable_on_portal"
+      ],
+      "properties": {
+        "enable_on_portal": {
+          "type": "boolean",
+          "description": "Boolean to indicate if bot should be enabled on portal"
+        }
+      }
+    },
+    "bot_map_categories_input": {
+      "type": "object",
+      "required": [
+        "category_ids"
+      ],
+      "properties": {
+        "category_ids": {
+          "type": "array",
+          "description": "Array of category ids to be mapped to the bot",
+          "items": {
+            "type": "integer",
+            "uniqueItems": true
+          }
+        }
+      }
+    },
     "contact": {
       "type": "object",
       "properties": {
@@ -7444,6 +7785,48 @@
           "type": "string",
           "format": "date-time",
           "description": "Represents the time at which the draft is saved"
+        }
+      }
+    },
+    "bot": {
+      "type": "object",
+      "required": [
+        "name",
+        "avatar",
+        "portal_id",
+        "header",
+        "theme_colur",
+        "widget_size"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "avatar_id": {
+              "type": "string"
+            },
+            "is_default": {
+              "type": "boolean"
+            }
+          }
+        },
+        "portal_id": {
+          "type": "integer"
+        },
+        "header": {
+          "type": "string"
+        },
+        "theme_colur": {
+          "type": "string"
+        },
+        "widget_size": {
+          "type": "string"
         }
       }
     },
@@ -9385,6 +9768,176 @@
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "bot_index": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/bot_list"
+      }
+    },
+    "bot_new": {
+      "type": "object",
+      "properties": {
+        "product": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "portal_id": {
+              "type": "integer"
+            },
+            "portal_logo": {
+              "type": "string"
+            }
+          }
+        },
+        "theme_colour": {
+          "type": "string"
+        },
+        "widget_size": {
+          "type": "string"
+        },
+        "all_categories": {
+          "type": "array",
+          "description": "Categories associated to the portal",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "label": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "bot_create": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "bot_show": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "status": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "avatar_id": {
+              "type": "integer"
+            },
+            "is_default": {
+              "type": "boolean"
+            }
+          }
+        },
+        "header": {
+          "type": "string"
+        },
+        "theme_colour": {
+          "type": "string"
+        },
+        "widget_size": {
+          "type": "string"
+        },
+        "external_id": {
+          "type": "string"
+        },
+        "enable_on_portal": {
+          "type": "boolean"
+        },
+        "product": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "portal_id": {
+              "type": "integer"
+            },
+            "portal_logo": {
+              "type": "string"
+            }
+          }
+        },
+        "all_categories": {
+          "type": "array",
+          "description": "Categories associated to the bot's portal",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "label": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "selected_category_ids": {
+          "type": "array",
+          "description": "Ids of categories associated to the bot",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "bot_list": {
+      "type": "object",
+      "properties": {
+        "onboarded": {
+          "type": "boolean"
+        },
+        "products": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bot_product_data"
+          }
+        }
+      }
+    },
+    "bot_product_data": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "portal_enabled": {
+          "type": "boolean"
+        },
+        "portal_id": {
+          "type": "integer"
+        },
+        "portal_logo": {
+          "type": "string"
+        },
+        "bot_name": {
+          "type": "string"
+        },
+        "bot_id": {
+          "type": "integer"
         }
       }
     },

@@ -126,6 +126,7 @@ module Ember
       def fetch_attachments
         return unless forward_template?
         @attachments = (@item || @ticket).attachments
+        @cloud_attachments = (@item || @ticket).cloud_files
       end
 
       def forward_template?

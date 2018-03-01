@@ -56,7 +56,7 @@ module ConversationConstants
   ERROR_FIELD_MAPPINGS = { notable_id: :ticket_id, user: :user_id }.freeze
   AGENT_USER_MAPPING = { user: :agent_id }.freeze
 
-  PARAMS_MAPPINGS = { notify_emails: :to_emails, agent_id: :user_id }.freeze
+  PARAMS_MAPPINGS = { notify_emails: :to_emails, agent_id: :user_id, name: :filename }.freeze
   PARAMS_TO_SAVE_AND_REMOVE = [:note_id, :cloud_files, :attachment_ids, :cloud_file_ids, :include_quoted_text, :include_original_attachments, :tweet_type, :twitter_handle_id].freeze
   PARAMS_TO_REMOVE = [:body, :full_text].freeze
 
