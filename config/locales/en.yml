@@ -7725,7 +7725,7 @@ en:
       sign_in_using: "...or Sign in using"
       sign_in_error: "Incorrect email or password."
   marketplace:
-    installing: "Installing:"
+    installing: "Installing"
     almost_done: "Almost Done!"
     app_installation_agreement: "By installing this app, you agree to abide by our "
     terms_of_use: "Terms of Use"
@@ -7749,6 +7749,7 @@ en:
     latest_apps: Latest Apps
     popular: Popular
     latest: Latest
+    backend_log: Serverless Logs
     settings: Settings
     coming_soon: Coming Soon
     install: Install
@@ -11730,7 +11731,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         admin_portal: Admin
         portal: Portal
       error_form:
-        authorize_failure: You are not allowed to access this page
+        authorize_failure_ssl: SSL must be enabled in order to log in to the developer portal.
+        authorize_failure_ssl_line1: "Go to Admin -> Security"
+        authorize_failure_ssl_line2: "Turn on Secure Connection using SSL"
+        authorize_failure_ssl_line3: "Log in to the developer portal"
+        authorize_failure_admin: You must have administrative privileges to log in to the developer portal.
   password_policy:
     alphanumeric: "Password must be alphanumeric"
     special_characters: "Password must have special characters"

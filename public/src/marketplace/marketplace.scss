@@ -3,7 +3,7 @@
 
 .app-browser{
   box-shadow: -5px 0 50px -10px rgba(0, 0, 0, 0.2);
-  background: #fff;
+  background: #fafafa;;
   @include border-left(1px solid #bbb);
   width:80%;
   height: 100%;
@@ -187,6 +187,7 @@
     display: block;
     @include clear(both);
     width: 100%;
+    margin-top:60px;
   }
   .apps-category{
     float: left;
@@ -202,9 +203,6 @@
     -moz-osx-font-smoothing: grayscale;
     display: block;
     text-decoration: none;
-  }
-  .head-spacer{
-    margin-top: 60px;
   }
   .apptype-head{
     @include padding(3px 23px);
@@ -634,7 +632,7 @@
     text-decoration: none;
   }
   .fa-hmeta{
-    @include padding(15px);
+    @include padding(15px 15px 0);
     @include clear(both);
     overflow: auto;
   }

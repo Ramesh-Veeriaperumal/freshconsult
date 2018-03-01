@@ -661,7 +661,7 @@ class User < ActiveRecord::Base
   def developer?
     marketplace_developer_application = Doorkeeper::Application.find_by_name(Marketplace::Constants::DEV_PORTAL_NAME)
     developer_privilege = access_tokens.find_by_application_id(marketplace_developer_application.id) if self.access_tokens
-    Account.current.features?(:fa_developer) && !developer_privilege.blank?
+    !developer_privilege.blank?
   end
 
   def can_assume?(user)

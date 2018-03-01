@@ -1,15 +1,13 @@
 <%= stylesheet_link_tag_with_rtl :'cdn/marketplace' %>
 <% content_for :helpcard do -%>
-  <% if feature?(:fa_developer) %>
-    <div class="dev-shortcuts">
-      <h3 class="title"><%= t('marketplace.developer_shortcuts').html_safe %></h3>
-      <ul>
-        <li class="shortcuts">
-          <a href="<%= MarketplaceConfig::DEV_URL %>/dashboard/<%= current_account.full_domain %>/login" target="_blank"><%= t('marketplace.go_to_dev_portal') %></a>
-        </li>
-      </ul>
-    </div>
-  <% end %>
+  <div class="dev-shortcuts">
+    <h3 class="title"><%= t('marketplace.developer_shortcuts').html_safe %></h3>
+    <ul>
+      <li class="shortcuts">
+        <a href="<%= MarketplaceConfig::DEV_URL %>/dashboard/<%= current_account.full_domain %>/login" target="_blank"><%= t('marketplace.go_to_dev_portal') %></a>
+      </li>
+    </ul>
+  </div>
   <div class="helpcard">
     <%= t("integrations.custom_application.helpnote", :full_domain => current_account.full_domain).html_safe %>
   </div>
@@ -24,7 +22,7 @@
 <%- end %>
   <%widget = @application.custom_widget
   disp_in_pages = widget.display_in_pages_option || ["helpdesk_tickets_show_page_side_bar"] %>
-    <% if feature?(:fa_developer) && !current_user.developer? %>
+    <% if !current_user.developer? %>
       <div class="fa-note row-fluid clear">
         <div class="span8 fapps-actions fapps-bdr">
           <p><%= t('marketplace.custom_app_info').html_safe %></p>
