@@ -13,10 +13,10 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			this.onVisit(data);
 		},
 		onVisit: function(data) {
+			this.initConversationView(); //Load the first tab or tickets on pageload
 			App.Contacts.Contacts_merge.initialize();
 			this.checkForInfoMsgs();
 			this.bindEvents();
-			this.initConversationView(); //Load the first tab or tickets on pageload
 
 			// To show the tooltip in the tickets list
 			App.Customers.Tickets.init();
