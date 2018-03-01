@@ -30,8 +30,10 @@ module ConversationConcern
 
     def update_edit_timestamps
       return unless update?
-      cname_params[:last_modified_user_id] = api_current_user.id.to_s
+      cname_params[:last_modified_user_id] = params[cname][:user_id] ?
+                                             params[cname][:user_id] : api_current_user.id.to_s
       cname_params[:last_modified_timestamp] = Time.now.utc
+      params[cname].delete(:user_id) if params[cname][:user_id]
     end
 
     def modify_and_remove_params
@@ -44,7 +46,7 @@ module ConversationConcern
 
     def modify_note_body_attributes
       cname_params[:note_body_attributes] = { body_html: cname_params[:body] } if cname_params[:body]
-      cname_params[:note_body_attributes][:full_text_html] = cname_params[:full_text] if cname_params[:full_text]
+      cname_params[:note_body_attributes][:full_text_html] = cname_params[:full_text] if cname_params[:full_text] 
     end
 
     def process_saved_params

@@ -315,7 +315,9 @@ class Helpdesk::Note < ActiveRecord::Base
     
     # VA - Observer Rule 
     def update_observer_events
-      return if user.nil? || !human_note_for_ticket? || feedback? || !(notable.instance_of? Helpdesk::Ticket) || broadcast_note? || disable_observer_rule
+      return if user.nil? || !human_note_for_ticket? || feedback? ||
+               !(notable.instance_of? Helpdesk::Ticket) || broadcast_note? ||
+                disable_observer_rule || summary_note?
       if replied_by_customer? || replied_by_agent?
         @model_changes = {:reply_sent => :sent}
       else
@@ -391,7 +393,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
     
     def report_note_metrics?
-      human_note_for_ticket? && !feedback?
+      human_note_for_ticket? && !feedback? && !summary_note?
     end
     ######## ****** Methods related to reports ends here ******** #####
     

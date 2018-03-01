@@ -1716,6 +1716,96 @@
         }
       }
     },
+    "/tickets/{id}/summary": {
+      "get": {
+        "tags": [
+          "ticket summary"
+        ],
+        "summary": "Show Ticket Summary",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/summary"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ticket summary"
+        ],
+        "summary": "Update Ticket Summary",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/summary_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/summary"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ticket summary"
+        ],
+        "summary": "Delete Ticket Summary",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
     "/conversations/{id}": {
       "put": {
         "tags": [
@@ -6310,6 +6400,40 @@
         }
       ]
     },
+    "summary_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "properties": {
+            "body": {
+              "type": "string"
+            },
+            "user_id": {
+              "type": "integer"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "cloud_files": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/cloud_file_input"
+              }
+            }
+          }
+        }
+      ]
+    },
     "full_text": {
       "type": "object",
       "properties": {
@@ -9783,6 +9907,52 @@
           }
         }
       }
+    },
+    "summary": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "properties": {
+            "body": {
+              "type": "string"
+            },
+            "body_text": {
+              "type": "string"
+            },
+            "ticket_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "user_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "last_edited_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "last_edited_user_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/attachment"
+              }
+            },
+            "cloud_files": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/extended_cloud_file"
+              }
+            }
+          }
+        }
+      ]
     },
     "bot_index": {
       "type": "array",

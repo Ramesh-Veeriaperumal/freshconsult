@@ -1,0 +1,20 @@
+type: object
+allOf:
+  - properties:
+      body:
+        type: string
+      user_id:
+        type: integer
+      attachments:
+        type: array
+        items:
+          type: string
+          format: byte
+      attachment_ids:
+        type: array
+        items:
+          type: integer
+      cloud_files:
+        type: array
+        items:
+          $ref: '#/definitions/cloud_file_input'

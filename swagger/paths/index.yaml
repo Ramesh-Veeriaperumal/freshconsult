@@ -92,6 +92,9 @@
   $ref: ./conversations/twitter_reply.yaml
 /tickets/{id}/reply_to_forward:
   $ref: ./conversations/reply_to_forward.yaml
+/tickets/{id}/summary:
+  $ref: ./tickets/summary.yaml
+
 
 /conversations/{id}:
   $ref: ./conversations/update.yaml

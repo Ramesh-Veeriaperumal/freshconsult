@@ -81,7 +81,15 @@ class Helpdesk::Note < ActiveRecord::Base
       :limit => 4
     }
   }
-  
+
+  scope :conversations, lambda { |preload_options = nil, order_conditions = nil, limit = nil|
+    {
+      :conditions => ["source NOT IN (?) and deleted = false", EXCLUDE_SOURCE.map{|s| SOURCE_KEYS_BY_TOKEN[s]}],
+      :order => order_conditions,
+      :include => preload_options,
+      :limit => limit
+    }
+  }
   scope :latest_facebook_message,
               :conditions => [" incoming = 1 and social_fb_posts.postable_type = 'Helpdesk::Note'"], 
               :joins => "INNER join social_fb_posts on helpdesk_notes.id = social_fb_posts.postable_id and helpdesk_notes.account_id = social_fb_posts.account_id", 
@@ -255,6 +263,10 @@ class Helpdesk::Note < ActiveRecord::Base
     schema_less_note.category == CATEGORIES[:reply_to_forward]
   end
 
+  def summary_note?
+    source == SOURCE_KEYS_BY_TOKEN["summary"]
+  end
+
   def support_email
     hash = parse_email_text(self.schema_less_note.try(:from_email))
     hash[:email]
@@ -339,6 +351,7 @@ class Helpdesk::Note < ActiveRecord::Base
     return "forward" if fwd_email?
     return "phone_note" if phone_note?
     return "broadcast_note" if broadcast_note?
+    return "summary" if summary_note?
     "reply"
   end
 

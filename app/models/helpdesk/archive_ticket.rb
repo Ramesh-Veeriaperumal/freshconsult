@@ -218,19 +218,19 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
 
   def conversation(page = nil, no_of_records = 5, includes=[])
     includes = note_preload_options if includes.blank?
-    archive_notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
+    archive_notes.conversations.newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
   end
 
   def conversation_since(since_id)
-    archive_notes.visible.exclude_source('meta').visible.newest_first.since(since_id).includes(note_preload_options)
+    archive_notes.conversations.visible.newest_first.since(since_id).includes(note_preload_options)
   end
 
   def conversation_before(before_id)
-    archive_notes.visible.exclude_source('meta').newest_first.before(before_id).includes(note_preload_options)
+    archive_notes.conversations.newest_first.before(before_id).includes(note_preload_options)
   end
 
   def conversation_count(page = nil, no_of_records = 5)
-    archive_notes.visible.exclude_source('meta').size
+    archive_notes.conversations.size
   end
 
   def to_emails

@@ -8744,6 +8744,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     shared_ownership:
       label: "Shared Ownership"
       desc: "Get improved agent visibility over tickets that require assistance from specialised teams with the ability to share tickets between agents."
+    ticket_summary: 
+      label: "Summary"
+      desc: "Create and share a summary of problems faced by customers when you're working on tickets."
     marketplace_login:
       associate_account:
         email: Email

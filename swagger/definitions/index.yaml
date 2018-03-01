@@ -60,6 +60,8 @@
   note_reply_to_forward_input:
     $ref: ./request/conversations/reply_to_forward.yaml
 
+  summary_input:
+    $ref: ./request/tickets/summary_input.yaml
   full_text:
     $ref: ./resource/full_text.yaml
   ticket_input:
@@ -281,6 +283,8 @@
     $ref: ./resource/reply_to_forward_template.yaml
   password_policy:
     $ref: ./resource/password_policy.yaml
+  summary:
+    $ref: ./response/tickets/summary.yaml
   bot_index:
      type: array
      items:
