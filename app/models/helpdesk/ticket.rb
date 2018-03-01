@@ -336,6 +336,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   end
 
+  def properties_updated?
+    self.changed? || self.schema_less_ticket_updated? || self.custom_fields_updated?
+  end
+
   def skill_name
     self.skill.try(:name)
   end
