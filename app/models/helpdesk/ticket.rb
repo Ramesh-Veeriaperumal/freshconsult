@@ -27,6 +27,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include BusinessHoursCalculation
   include AccountConstants
   include RoundRobinCapping::Methods
+  include MemcacheKeys
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
@@ -419,6 +420,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def outbound_email?
     (source == SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?
+  end
+
+  # Fetch NER data from cache.
+  def fetch_ner_data
+    key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.id }
+    MemcacheKeys.get_from_cache(key)
   end
 
   #This method will return the user who initiated the outbound email

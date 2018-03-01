@@ -379,13 +379,6 @@ class Helpdesk::Note < ActiveRecord::Base
     key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.notable_id }
     MemcacheKeys.cache(key, ner_data, NER_DATA_TIMEOUT)
   end
-
-  # Fetch NER data from cache.
-
-  def fetch_ner_data()
-    key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.notable_id }
-    MemcacheKeys.get_from_cache(key)
-  end
   
   # Instance level spam watcher condition
   # def rl_enabled?
