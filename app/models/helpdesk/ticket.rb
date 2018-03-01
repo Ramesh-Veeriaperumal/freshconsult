@@ -523,19 +523,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def conversation(page = nil, no_of_records = 5, includes=[])
     includes = note_preload_options if includes.blank?
-    notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
+    notes.conversations.newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
   end
 
   def conversation_since(since_id)
-    notes.visible.exclude_source('meta').since(since_id).includes(note_preload_options)
+    notes.conversations.since(since_id).includes(note_preload_options)
   end
 
   def conversation_before(before_id)
-    notes.visible.exclude_source('meta').newest_first.before(before_id).includes(note_preload_options)
+    notes.conversations.newest_first.before(before_id).includes(note_preload_options)
   end
 
   def conversation_count(page = nil, no_of_records = 5)
-    notes.visible.exclude_source('meta').size
+    notes.conversations.size
   end
 
   def latest_twitter_comment_user
@@ -732,11 +732,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def latest_public_comment
-    notes.visible.exclude_source('meta').public.newest_first.first
+    notes.conversations.public.newest_first.first
   end
 
   def latest_private_comment
-    notes.visible.exclude_source('meta').private.newest_first.first
+    notes.conversations.private.newest_first.first
   end
 
   def liquidize_comment(comm, html=true)

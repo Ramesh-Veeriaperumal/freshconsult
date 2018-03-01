@@ -95,7 +95,9 @@ module Helpdesk::Activities
         # for querying
         query_hash = response.members.present? ? JSON.parse(response.members).symbolize_keys : {}
         data_hash  = parse_query_hash(query_hash, ticket, archive)
-        activities = response.ticket_data
+        activities = filter_ticket_data(response.ticket_data)
+        filtered_count = response.ticket_data.count - activities.count
+        parse_notes data_hash[:notes]
         act_arr    = []
         activities.each do |act|
           begin
@@ -115,7 +117,7 @@ module Helpdesk::Activities
         res_hash = {
           :activity_list => act_arr
         }
-        res_hash.merge!({:total_count => response.total_count}) if response.total_count.present?
+        res_hash.merge!({:total_count => response.total_count - filtered_count}) if response.total_count.present?
       rescue Exception => e
         Rails.logger.error e.backtrace.join("\n")
         Rails.logger.error e.message
@@ -133,6 +135,9 @@ module Helpdesk::Activities
     end
 
   private
+    def filter_ticket_data(ticket_data)
+      ticket_data.select { |hash| hash.kind != 7 } #ticket summary
+    end
 
     def play_god_admin_emails
       agents = current_account.technicians.select("name, email, privileges")
@@ -187,8 +192,8 @@ module Helpdesk::Activities
         when :rule_ids
           obj_hash[:rules]  = Account.current.account_va_rules.select("id, name").where(:id => query_hash[:rule_ids]).collect {|x| [x.id, x.name]}.to_h
         when :note_ids
-          obj_hash[:notes]  = archive ? prefetch_archive_notes_for_v2(ticket, query_hash[:note_ids]) :
-                              prefetch_notes_for_v2(ticket, query_hash[:note_ids])                      
+          obj_hash[:notes] = archive ? prefetch_archive_notes_for_v2(ticket, query_hash[:note_ids]) :
+            prefetch_notes_for_v2(ticket, query_hash[:note_ids])
         end
       end
       obj_hash
@@ -229,6 +234,10 @@ module Helpdesk::Activities
         build_notes_last_modified_user_hash(note_hash.values)
       end
       note_hash
+    end
+
+    def parse_notes(notes)
+      notes.select { |key,value| value.source != Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['summary']}
     end
 
     def dev_notification(subj, message, topic = nil)

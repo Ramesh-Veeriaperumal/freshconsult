@@ -314,7 +314,7 @@ class Va::Action
       content           = RedCloth.new(content).to_html unless content_key == :email_subject
 
       placeholder_hash  = {'ticket' => act_on, 'helpdesk_name' => act_on.account.helpdesk_name,
-                          'comment' => act_on.notes.visible.exclude_source('meta').last}
+                          'comment' => act_on.notes.visible.exclude_source(Helpdesk::Note::EXCLUDE_SOURCE).last}
       placeholder_hash.merge!('event_performer' => doer) if doer.present?
 
       Liquid::Template.parse(content).render(placeholder_hash)
