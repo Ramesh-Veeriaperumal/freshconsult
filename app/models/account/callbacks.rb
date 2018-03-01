@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
   before_create :downcase_full_domain,:set_default_values, :set_shard_mapping, :save_route_info
   before_create :add_features_to_binary_column
   before_update :check_default_values, :update_users_time_zone, :backup_changes
-  before_destroy :backup_changes, :make_shard_mapping_inactive
+  before_destroy :backup_changes, :make_shard_mapping_inactive, :deleted_model_info
 
   after_create :populate_features, :change_shard_status
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain, :update_route_info
@@ -33,6 +33,11 @@ class Account < ActiveRecord::Base
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
   after_commit :trigger_launchparty_feature_callbacks, on: :create
+
+
+  # Need to revisit when we push all the events for an account
+  publishable on: :destroy
+
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
@@ -90,6 +95,11 @@ class Account < ActiveRecord::Base
     ScheduledExport::ActivitiesExport.perform_async if time_zone_changed? && activity_export_from_cache.try(:active)
   end
 
+  # Need to revisit when we push all the events for an account
+  def central_publish_worker_class
+    "CentralPublishWorker::AccountDeletionWorker"
+  end
+
   protected
 
     def set_default_values
@@ -103,6 +113,14 @@ class Account < ActiveRecord::Base
     def backup_changes
       @old_object = Account.find(id)
       @all_changes = self.changes.clone
+    end
+
+    def deleted_model_info
+      @deleted_model_info = {
+        id: id,
+        name: name,
+        full_domain: full_domain,
+      }
     end
 
     def account_verification_changed?
