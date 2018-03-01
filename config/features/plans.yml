@@ -46,6 +46,7 @@
       - :quick_reply
       - :tam_default_fields
       - :image_annotation
+      - :todos_reminder_scheduler
     :inherits: 
       - :sprout_jan_17
     :exclude: []
