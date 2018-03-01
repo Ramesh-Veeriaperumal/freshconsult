@@ -40,6 +40,13 @@ module ApplicationHelper
     { :text => "ticket_created", :default => false }
   ].freeze
 
+  #Add the features you want to send to inline manual(for segmenting) to the below array in string format
+  #NOTE: The limit for the features is 17 items with up to 24 characters each. 
+  # i.e, we can only send first 24 characters of first 17 enabled features for an account. 
+  INLINE_MANUAL_FEATURES = []
+
+  INLINE_MANUAL_FEATURE_THRESHOLDS = { char_length: 24, max_count: 17}
+
   def open_html_tag
     html_conditions = [ ["lt IE 7", "ie6"],
                         ["IE 7", "ie7"],
@@ -2042,8 +2049,11 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def inline_manual_people_tracing
+    role = current_user.privilege?(:admin_tasks) ? "admin" : "agent"
     state  = current_account.subscription.state
     bucket = current_account.account_additional_settings.additional_settings[:announcement_bucket].to_s
+    features_to_send = features_for_inline_manual
+    roles_to_send = [role, bucket, state].concat(features_to_send)
     {
       :uid      => current_user.id,
       :email    => current_user.email,
@@ -2052,8 +2062,18 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       :created  => current_account.created_at.to_i,
       :updated  => current_user.last_login_at.to_i,
       :plan     => Subscription.fetch_by_account_id(current_account.id).subscription_plan_from_cache.display_name,
-      :roles    => (current_user.privilege?(:admin_tasks)) ? ['admin', bucket, state] : ['agent', bucket, state]
+      :roles    => roles_to_send
     }
+  end
+
+  def features_for_inline_manual
+    enabled_features = INLINE_MANUAL_FEATURES.select {|feature_name| current_account.send("#{feature_name}_enabled?") if current_account.respond_to? "#{feature_name}_enabled?"}
+    
+    #Maximum of 17 features can be sent to inline manual
+    enabled_features = enabled_features[0..INLINE_MANUAL_FEATURE_THRESHOLDS[:max_count]-1]
+
+    #Maximum of 24 characters per feature name 
+    enabled_features.map! {|feature_name| feature_name[0..INLINE_MANUAL_FEATURE_THRESHOLDS[:char_length]-1]}
   end
 
   def description_attachment params = {}
