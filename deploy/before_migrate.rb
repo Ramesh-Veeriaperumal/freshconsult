@@ -86,6 +86,8 @@ run "ln -nfs #{shared_path}/config/bot.yml #{node[:rel_path]}/config/bot.yml"
 run "ln -nfs #{shared_path}/config/central.yml #{node[:rel_path]}/config/central.yml"
 run "ln -nfs #{shared_path}/config/kafka_collector.yml #{node[:rel_path]}/config/kafka_collector.yml"
 run "ln -nfs #{shared_path}/config/channel_framework.yml #{node[:rel_path]}/config/channel_framework.yml"
+run "ln -nfs #{shared_path}/config/scheduler_client_keys.yml #{node[:rel_path]}/config/scheduler_client_keys.yml"
+
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"
 run "ln -nfs #{shared_path}/config/sandbox.yml  #{node[:rel_path]}/config/sandbox.yml"

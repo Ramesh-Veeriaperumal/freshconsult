@@ -116,7 +116,7 @@ en:
     restore_notice:
       singular: "%{type} was restored"
       plural: "%{type} were restored"
-    delete_notice: 
+    delete_notice:
       singular: "%{type} was deleted"
       plural: "%{type} were deleted"
     others: "Others"
@@ -225,6 +225,13 @@ en:
       add_note_to_admin : "Notify admin of blocked address"
       hide_details: "Hide details"
       show_details: "Show details"
+  todos_reminder:
+    email:
+      user: "Hi %{user_name},"
+      message: "You have a reminder on the ticket"
+      due: "due now:"
+      at: "at"
+      association: "Here is the associated ticket:"
   bot_training_completed:
     email:
       subject: "Bot Training Completed! I can help your customers find answers now."
@@ -12090,4 +12097,3 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       satisfaction_survey: 'Includes satisfaction survey.'
       ticket_suverymonkey_survey: 'Includes text/link to survey in Surveymonkey'
       triggered_event: 'Details about the event that triggered the rule'
-

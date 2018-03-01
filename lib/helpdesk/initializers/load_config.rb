@@ -55,3 +55,5 @@ PartnerSubdomains =  AppConfig['partner_subdomain'].map { |k,v| v }.flatten
 KafkaCollectorConfig = YAML.load_file(File.join(Rails.root, 'config', 'kafka_collector.yml'))[Rails.env]
 
 ChannelFrameworkConfig = YAML.load_file(File.join(Rails.root, 'config', 'channel_framework.yml'))[Rails.env]
+
+SchedulerClientKeys = YAML.load_file(File.join(Rails.root, 'config', 'scheduler_client_keys.yml'))[Rails.env]

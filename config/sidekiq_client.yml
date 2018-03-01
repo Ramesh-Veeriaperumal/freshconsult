@@ -210,6 +210,8 @@ defaults: &defaults
     - [trial_ticket_central_publish]
     - [active_ticket_central_publish]
     - [channel_framework_command]
+    - [scheduler_post_message]
+    - [scheduler_cancel_message]
     - [ml_solutions_training]
     - [mixpanel_queue]
 

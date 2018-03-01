@@ -1,7 +1,7 @@
 module TodoConstants
-  CREATE_FIELDS = %w(body type rememberable_id).freeze | ApiConstants::DEFAULT_PARAMS
-  UPDATE_FIELDS = %w(body completed).freeze | ApiConstants::DEFAULT_PARAMS
-  INDEX_FIELDS  = %w(rememberable_id type).freeze | 
+  CREATE_FIELDS = %w(body type rememberable_id reminder_at).freeze | ApiConstants::DEFAULT_PARAMS
+  UPDATE_FIELDS = %w(body completed reminder_at).freeze | ApiConstants::DEFAULT_PARAMS
+  INDEX_FIELDS  = %w(rememberable_id type).freeze |
                     ApiConstants::DEFAULT_PARAMS | ApiConstants::DEFAULT_INDEX_FIELDS
   SHOW_FIELDS = ApiConstants::DEFAULT_PARAMS
   TODO_PARAMS_MAPPINGS = { completed: :deleted }.freeze
@@ -28,4 +28,7 @@ module TodoConstants
       company: [:contact],
       ticket: []
     })
+  MESSAGE_TYPE = "todo_message_type"
+  SCHEDULER_TYPE = "todo_scheduler_type"
+  IRIS_TYPE = "todo_reminder"
 end.freeze

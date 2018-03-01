@@ -1263,6 +1263,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     valid_internal_group? && (internal_group.try(:agent_ids) || []).include?(ia_id)
   end
 
+  def mint_url
+    "#{url_protocol}://#{portal_host}/a/tickets/#{display_id}"
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?

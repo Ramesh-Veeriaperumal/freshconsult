@@ -1,6 +1,6 @@
 class TodoDecorator < ApiDecorator
   delegate :id, :body, :deleted, :user_id, :created_at, :updated_at, 
-    :contact_id, :company_id, :rememberable_attribute, to: :record
+    :contact_id, :company_id, :rememberable_attribute, :reminder_at, to: :record
 
   def initialize(record, options)
     super
@@ -14,9 +14,9 @@ class TodoDecorator < ApiDecorator
       completed: deleted,
       user_id: user_id,
       contact_id: contact_id,
-      ticket_id: rememberable_attribute("display_id", @options[:ticket],  
+      ticket_id: rememberable_attribute("display_id", @options[:ticket],
         "ticket"),
-      ticket_subject: rememberable_attribute("subject", @options[:ticket], 
+      ticket_subject: rememberable_attribute("subject", @options[:ticket],
         "ticket"),
       contact_name: rememberable_attribute("name", @options[:contact], 
         "contact"),
@@ -25,7 +25,14 @@ class TodoDecorator < ApiDecorator
         "company"),
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc)
-    }
+    }.tap do |result|
+      result[:reminder_at] = reminder_at.try(:utc) if todos_reminder_scheduler_enabled?
+    end
   end
 
+  private
+
+    def todos_reminder_scheduler_enabled?
+      Account.current.todos_reminder_scheduler_enabled?
+    end
 end

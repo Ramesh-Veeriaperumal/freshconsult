@@ -3846,6 +3846,11 @@
                 "type": {
                   "type": "string",
                   "description": "Todo type must be any one this value (ticket/contact/company)"
+                },
+                "reminder_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "To set reminder for todos"
                 }
               }
             }
@@ -3889,6 +3894,10 @@
                 },
                 "completed": {
                   "type": "boolean"
+                },
+                "reminder_at": {
+                  "type": "string",
+                  "format": "date-time"
                 }
               }
             }
@@ -9003,6 +9012,10 @@
               "format": "date-time"
             },
             "updated_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "reminder_at": {
               "type": "string",
               "format": "date-time"
             }
