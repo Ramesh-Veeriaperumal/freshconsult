@@ -38,6 +38,7 @@ development:
   scheduled_user_export_queue: scheduled_user_export_queue_dev 
   scheduled_company_export_queue: scheduled_company_export_queue_dev
   channel_framework_services: fd_cf_services_dev
+  bot_feedback_queue: bot_feedback_staging
 staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging
@@ -74,6 +75,7 @@ staging:
   scheduled_ticket_export_queue: scheduled_ticket_export_queue_staging
   scheduled_user_export_queue: scheduled_user_export_queue_staging 
   scheduled_company_export_queue: scheduled_company_export_queue_staging
+  bot_feedback_queue: bot_feedback_staging
 
 production:
   twitter_realtime_queue: social_gnip_tweet_production
@@ -111,6 +113,7 @@ production:
   scheduled_ticket_export_queue: scheduled_ticket_export_queue_production
   scheduled_user_export_queue: scheduled_user_export_queue_production
   scheduled_company_export_queue: scheduled_company_export_queue_production
+  bot_feedback_queue: bot_feedback_production
   
 test:
   twitter_realtime_queue: social_gnip_2_0_tweet_test
@@ -146,3 +149,4 @@ test:
   scheduled_ticket_export_queue: scheduled_ticket_export_queue_test
   scheduled_user_export_queue: scheduled_user_export_queue_test
   scheduled_company_export_queue: scheduled_company_export_queue_test
+  bot_feedback_queue: bot_feedback_test
