@@ -47,6 +47,11 @@ module NoteHelper
     note.reload
   end
 
+  def create_ticket_summary(ticket)
+    note = create_note(source: 13, ticket_id: ticket.id, user_id: @agent.id,
+                       private: true, body: Faker::Lorem.paragraph)
+  end
+
   def create_feedback_note(ticket)
     survey_result = create_survey_result(ticket, 100, nil, create_survey(1))
     survey_result.surveyable.notes.last

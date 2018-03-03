@@ -16,12 +16,14 @@ integration_test = [
   'test/api/integration/flows/surveys_flows_test.rb'
 ]
 
+sidekiq_tests = Dir.glob('test/api/sidekiq/*_test.rb')
+shoryuken_tests = Dir.glob('test/api/shoryuken/*_test.rb')
 # Files to skip
 skip_files = [
   'test/api/unit/api_throttler_test.rb',
   'test/api/unit/api_solutions/article_validation_test.rb'
 ]
-all_tests = (unit_tests | functional_tests | integration_test | freshcaller_channel_tests) - skip_files
+all_tests = (unit_tests | functional_tests | sidekiq_tests | shoryuken_tests | integration_test | freshcaller_channel_tests) - skip_files
 puts 'Falcon Test suite - Tests to run'
 puts '*' * 100
 all_tests.each { |file| puts file }

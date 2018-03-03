@@ -88,7 +88,8 @@ module ApiDashboardConstants
 
   UNRESOLVED_COLUMN_KEY_MAPPING = {:group_id => "group_id", :responder_id => "responder_id", :status => "status", 
       :internal_group_id => "internal_group_id", :internal_agent_id => "internal_agent_id", :group_ids => "group_id",
-      :product_id => "helpdesk_schema_less_tickets.product_id", :responder_ids => "responder_id", :status_ids => "status" }.freeze
+      :product_id => "helpdesk_schema_less_tickets.product_id", :product_ids => "helpdesk_schema_less_tickets.product_id",
+      :responder_ids => "responder_id", :status_ids => "status" }.freeze
 
   UNRESOLVED_FILTER_HEADERS = {
     UNRESOLVED_COLUMN_KEY_MAPPING[:responder_id] => 'agent_label',

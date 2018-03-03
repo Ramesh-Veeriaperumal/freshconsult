@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <p> <%= I18n.t('todos_reminder.email.user',user_name: @user_name) %> </p>
+    <p>
+     <%= I18n.t('todos_reminder.email.message') %> <a href = '<%= @ticket_url %>'> <%= @ticket.subject %> </a> <%= I18n.t('todos_reminder.email.due') %>
+    </p>
+    <p>
+      <%= @todo_content %>  <%= I18n.t('todos_reminder.email.at') %> <%= @reminder_at %>
+    </p>
+  </body>
+</html>

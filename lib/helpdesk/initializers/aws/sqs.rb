@@ -88,7 +88,9 @@ begin
     SQS[:scheduled_ticket_export_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_ticket_export_queue]),
     SQS[:scheduled_user_export_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_user_export_queue]),
     SQS[:scheduled_company_export_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_company_export_queue]),
-    SQS[:scheduled_export_payload_enricher_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_export_payload_enricher_queue])
+    SQS[:scheduled_export_payload_enricher_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_export_payload_enricher_queue]),
+    SQS[:fd_scheduler_reminder_todo_queue] => AwsWrapper::SqsV2.queue_url(SQS[:fd_scheduler_reminder_todo_queue])
+
   }.freeze
 
 rescue => e

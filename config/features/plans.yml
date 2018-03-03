@@ -9,7 +9,7 @@
     :exclude: []
   :blossom_jan_17:
     :name: Blossom
-    :features: 
+    :features:
       - :split_tickets
       - :add_watcher
       - :traffic_cop
@@ -46,12 +46,13 @@
       - :quick_reply
       - :image_annotation
       - :tam_default_fields
-    :inherits: 
+      - :todos_reminder_scheduler
+    :inherits:
       - :sprout_jan_17
     :exclude: []
   :garden_jan_17:
     :name: Garden
-    :features: 
+    :features:
       - :forums
       - :multi_language
       - :css_customization
@@ -86,13 +87,13 @@
       - :round_robin_load_balancing
       - :multiple_user_companies
       - :multiple_companies_toggle
-      - :round_robin_on_update 
+      - :round_robin_on_update
       - :shared_ownership_toggle
       - :advanced_dkim
       - :multi_dynamic_sections
       - :auto_ticket_export
       - :ticket_activity_export
-    :inherits: 
+    :inherits:
       - :garden_jan_17
     :exclude: []
   :forest_jan_17:
@@ -101,6 +102,6 @@
       - :mailbox
       - :whitelisted_ips
       - :skill_based_round_robin
-    :inherits: 
+    :inherits:
       - :estate_jan_17
     :exclude: []

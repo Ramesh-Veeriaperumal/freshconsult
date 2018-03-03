@@ -13,7 +13,8 @@ module TodosTestHelper
       company_id: expected_output[:company_id],
       company_name: expected_output[:company_name],
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      reminder_at: expected_output[:reminder_at]
     }
     if expected_output[:type]
       response[:"#{expected_output[:type]}_id"] = expected_output[:rememberable_id]
@@ -26,12 +27,13 @@ module TodosTestHelper
   end
 
   def get_new_reminder(body, ticket_id = nil,
-    contact_id = nil, company_id = nil, user_id = User.current.id)
+    contact_id = nil, company_id = nil, user_id = User.current.id, reminder_at = nil)
     rem = scoper.new(body: body)
     rem.ticket_id = ticket_id
     rem.user_id = user_id
     rem.contact_id = contact_id
     rem.company_id = company_id
+    rem.reminder_at = reminder_at
     rem.save
     rem
   end

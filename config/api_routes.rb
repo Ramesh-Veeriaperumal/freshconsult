@@ -255,6 +255,7 @@ Helpkit::Application.routes.draw do
         post :parse_template, to: 'ember/tickets#parse_template'
       end
       resources :activities, controller: 'ember/tickets/activities', only: [:index]
+      resource :summary, controller: 'ticket_summary', only: [:show, :update, :destroy]
 
       member do
         post :watch, to: 'ember/subscriptions#watch'
