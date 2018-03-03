@@ -76,16 +76,16 @@ module DashboardConcern
     # need to work here based on es and db
     options = { group_by: @group_by, filter_condition: @filter_condition, cache_data: false, include_missing: true, workload: @group_by.first.to_s }
     if params[:widget]
-      options[:include_missing] = false
+      options[:include_missing] = false if @group_id.present?
       options[:limit_option] = UNRESOLVED_TICKETS_WIDGET_ROW_LIMIT
     elsif instance_variable_get("@#{@group_by.first}").present? || User.current.assigned_ticket_permission
       options[:include_missing] = false
     end
     ticket_counts = ::Dashboard::DataLayer.new(es_enabled, options).aggregated_data
-    build_response(ticket_counts, options[:include_missing])
+    build_response(ticket_counts, options[:include_missing], params[:widget])
   end
 
-  def build_response(ticket_counts, include_missing = false)
+  def build_response(ticket_counts, include_missing = false, is_widget = false)
     statuses_list = status_list_from_cache.keys
     build_group_by_list
     res_array = []
@@ -96,7 +96,7 @@ module DashboardConcern
         total_count += status_count
         obj << { 'status_id' => status, 'count' => status_count }
       end
-      stats_hash << { 'status_id' => 0, 'count' => total_count }
+      stats_hash << { 'status_id' => 0, 'count' => total_count } unless is_widget
       res_array << { @group_by.first => -1, 'stats' => stats_hash }
     end
     group_by_values.keys.each do |group|

@@ -93,6 +93,7 @@ api_error_messages:
   agent_roles_and_scope_error: 'You cannot edit your own roles & ticket scopes'
   action_restricted: "Cannot perform '%{action}' when %{reason}"
   only_avatar_or_avatar_id: "Cannot set both avatar and avatar_id"
+  only_ticket_type_allowed: "Cannot set reminder for Contact and Company todos"
   # TODO-EMBER : Error text to be changed
   included_original_attachments: "Cannot be set. Original attachments included already"
   action_restricted: "Cannot perform '%{action}' when %{reason}"
@@ -149,5 +150,7 @@ api_error_messages:
   outbound_limit_exceeded: "You can send a maximum of 5 outbound emails a day per account during the trial period"
   recipient_limit_exceeded: "You cannot email more than five people at once when you're on trial"
   invalid_bot: "There is no bot with the external id %{id}"
+  app_unavailable: "The %{feature} feature is not enabled. Please make sure to install %{app} app"
+  cant_access_summary: "The %{feature} feature is not available for %{assoc_tkt}"
   invalid_category_ids: "Categories should be associated to the portal."
   invalid_bot_state: "Cannot perform the action as bot state is invalid"

@@ -55,7 +55,8 @@ class ConversationsController < ApiApplicationController
 
   def ticket_conversations
     return if validate_filter_params
-    ticket_conversations = @ticket.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at)
+    preload_options = [:schema_less_note, :note_old_body, :attachments]
+    ticket_conversations = @ticket.notes.conversations(preload_options, :created_at)
     @items = paginate_items(ticket_conversations)
   end
 
@@ -135,7 +136,7 @@ class ConversationsController < ApiApplicationController
     end
 
     def load_object
-      super scoper.visible.exclude_source('meta')
+      super scoper.conversations
     end
 
     def scoper

@@ -34,10 +34,11 @@ development:
   scheduled_ticket_export_config: scheduled_ticket_export_config_dev
   scheduled_ticket_export_complete: scheduled_ticket_export_complete_dev
   scheduled_export_payload_enricher_queue: scheduled_export_payload_enricher_queue_dev
-  scheduled_ticket_export_queue: scheduled_ticket_export_queue_dev 
-  scheduled_user_export_queue: scheduled_user_export_queue_dev 
+  scheduled_ticket_export_queue: scheduled_ticket_export_queue_dev
+  scheduled_user_export_queue: scheduled_user_export_queue_dev
   scheduled_company_export_queue: scheduled_company_export_queue_dev
   channel_framework_services: fd_cf_services_dev
+  fd_scheduler_reminder_todo_queue: fd_scheduler_reminder_todo_queue_dev
 staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging
@@ -72,7 +73,7 @@ staging:
   scheduled_ticket_export_complete: scheduled_ticket_export_complete_staging
   scheduled_export_payload_enricher_queue: scheduled_export_payload_enricher_queue_staging
   scheduled_ticket_export_queue: scheduled_ticket_export_queue_staging
-  scheduled_user_export_queue: scheduled_user_export_queue_staging 
+  scheduled_user_export_queue: scheduled_user_export_queue_staging
   scheduled_company_export_queue: scheduled_company_export_queue_staging
 
 production:
@@ -111,7 +112,7 @@ production:
   scheduled_ticket_export_queue: scheduled_ticket_export_queue_production
   scheduled_user_export_queue: scheduled_user_export_queue_production
   scheduled_company_export_queue: scheduled_company_export_queue_production
-  
+
 test:
   twitter_realtime_queue: social_gnip_2_0_tweet_test
   facebook_realtime_queue: social_fb_feed_test
@@ -146,3 +147,4 @@ test:
   scheduled_ticket_export_queue: scheduled_ticket_export_queue_test
   scheduled_user_export_queue: scheduled_user_export_queue_test
   scheduled_company_export_queue: scheduled_company_export_queue_test
+  fd_scheduler_reminder_todo_queue: fd_scheduler_reminder_todo_queue_test

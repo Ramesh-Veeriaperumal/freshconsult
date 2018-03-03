@@ -31,9 +31,15 @@
     - livechat_worker
     - smart_filter_tweet_to_ticket
     - channel_framework_command
+
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
+
+  :falcon_occasional:
+    - scheduler_post_message
+    - scheduler_cancel_message
+
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup
@@ -87,6 +93,7 @@
     - smart_filter_feedback
     - launch_party_actions
     - ml_solutions_training
+
   :maintainence:
     - select_all_tickets
     - select_all_batcher

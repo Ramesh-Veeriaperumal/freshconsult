@@ -1,0 +1,7 @@
+<%= I18n.t('todos_reminder.email.user',user_name: @user_name) %>
+
+<%= I18n.t('todos_reminder.email.message') %>  '<%=@ticket.subject%>' <%= I18n.t('todos_reminder.email.due') %>
+
+<%= @todo_content %> <%= I18n.t('todos_reminder.email.at') %> <%=@reminder_at%> 
+
+<%= I18n.t('todos_reminder.email.association') %> <%=@ticket_url%> 

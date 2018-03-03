@@ -92,6 +92,9 @@
       :freshcaller_widget: 87
       :image_annotation: 88
       :tam_default_fields: 89
+      :todos_reminder_scheduler: 90
+      :smart_filter: 91
+      :ticket_summary: 92
 :selectable_features:
       :branding: true
       :gamification_enable: false

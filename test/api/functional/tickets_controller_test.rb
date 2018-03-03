@@ -2610,15 +2610,16 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_index_with_company
     company = create_company
-    user = User.first
+    user = add_new_user(@account)
     sidekiq_inline {
       user.company_id = company.id
       user.save!
     }
+    ticket = create_ticket(requester_id: user.id)
     get :index, controller_params(company_id: "#{company.id}")
     assert_response 200
 
-    tkts = Helpdesk::Ticket.where(requester_id: user.id)
+    tkts = Helpdesk::Ticket.where(owner_id: company.id)
     pattern = tkts.map { |tkt| index_ticket_pattern(tkt) }
     match_json(pattern)
   end

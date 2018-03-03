@@ -45,7 +45,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :public_notes,
     :class_name => 'Helpdesk::Note',
     :as => 'notable', :conditions => {:private =>  false, :deleted => false}
-    
+
+  has_one :summary, 
+    :class_name => 'Helpdesk::Note',
+    :as => 'notable', :conditions => {:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['summary']}
+
   has_many :activities, :class_name => 'Helpdesk::Activity', :as => 'notable', :dependent => :destroy
 
   has_many :reminders, :class_name => 'Helpdesk::Reminder', :dependent => :destroy

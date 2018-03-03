@@ -143,6 +143,7 @@ Authority::Authorization::PrivilegeList.build do
     # Used for API V2
     resource :"conversation", only: [:create, :ticket_conversations]
     resource :"ticket", :only => [:show, :create, :index, :search]
+    resource :"ticket_summary", only: [:update, :show]
 
     resource :"satisfaction_rating", :only => [:create, :survey_results]
 
@@ -202,6 +203,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used for API V2
     resource :conversation, only: [:destroy]
+    resource :ticket_summary, only: [:destroy]
   end
 
   edit_note do
@@ -209,6 +211,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used for API V2
     resource :"conversation", only: [:update], :owned_by => { :scoper => :notes }
+    resource :"ticket_summary", only: [:update], :owned_by => { :scoper => :notes }
   end
 
   view_time_entries do

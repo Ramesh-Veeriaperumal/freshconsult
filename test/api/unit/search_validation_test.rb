@@ -7,6 +7,7 @@ class SearchValidationTest < ActionView::TestCase
     params = {:term => 'test', :limit => 3, :templates => ['agentSpotlightTicket'], :context => 'spotlight'}
     search_validation = SearchValidation.new(params)
     assert search_validation.valid?
+    
   end
 
   def test_invalid_template_data_type

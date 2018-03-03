@@ -196,7 +196,7 @@ class Helpdesk::TicketDrop < BaseDrop
 
   def public_comments
     # source.notes.public.exclude_source('meta').newest_first
-    @source.public_notes.exclude_source('meta')
+    @source.public_notes.exclude_source(Helpdesk::Note::EXCLUDE_SOURCE)
   end
 
   def billable_hours

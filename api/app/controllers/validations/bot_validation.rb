@@ -2,7 +2,7 @@ class BotValidation < ApiValidation
   attr_accessor :id, :name, :avatar, :portal_id, :template_data, :category_ids, :enable_on_portal, :header
 
   validates :id, data_type: { rules: String, required: true, allow_nil: false }, if: :show_or_update
-  validates :name, data_type: { rules: String, required: true }, length: { maximum: 45 }, if: :create_or_update
+  validates :name, data_type: { rules: String, required: true }, length: { maximum: 25 }, if: :create_or_update
   validates :avatar, data_type: { rules: Hash, allow_nil: false, required: true }, on: :create
   validates :template_data, data_type: { rules: Hash, allow_nil: false }, if: :create_or_update
   validates :header, data_type: { rules: String }, length: { maximum: 100 }, if: :create_or_update
