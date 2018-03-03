@@ -85,6 +85,10 @@ module Va
         :AND => 'AND'
     }
 
+    NULL_QUERY = "%{db_column} IS NULL"
+
+    NOT_NULL_QUERY = "%{db_column} IS NOT NULL"
+
     def va_alternate_label
       va_alternate_label = {
         :object_id_array => Hash[*ALTERNATE_LABEL.map { |i, j| [i, I18n.t(j)] }.flatten]

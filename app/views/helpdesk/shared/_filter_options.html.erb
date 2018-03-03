@@ -228,7 +228,7 @@
                 <%= current_sort_name %>
               </a>
             <% else %>
-              <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{display_name}").html_safe.capitalize : display_name.html_safe.capitalize %></h4>
+              <h4 class="title"><%= (c_hash[:f_type] == :default) ? t("filter_options.#{display_name}").html_safe.capitalize : display_name.html_safe %></h4>
             <% end %>
             <%= render :partial => "/helpdesk/tickets/containers/#{container}", :locals => { :container => container, :options => c_hash[:options], :name => c_hash[:name],
              :selected_val => @current_options[c_hash[:condition].to_s].to_s.split(","),

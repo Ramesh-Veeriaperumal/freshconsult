@@ -11,6 +11,7 @@ class MergeTickets < BaseWorker
     target_ticket = account.tickets.find(args[:target_ticket_id])
     source_ticket_note_ids = []
     source_tickets.each do |source_ticket|
+      delete_ticket_summary(source_ticket)
       source_ticket_note_ids << source_ticket.notes.pluck(:id)
       source_ticket.notes.update_all_with_publish({ notable_id: args[:target_ticket_id] },
                                     [ "account_id = ? and notable_id != ?", account.id, args[:target_ticket_id] ])
@@ -37,6 +38,11 @@ class MergeTickets < BaseWorker
       end
     end
   end
+
+  def delete_ticket_summary(source_ticket)
+    source_ticket.summary.destroy if source_ticket.summary
+  end
+
 
   def add_note_to_source_ticket(source_ticket, source_note_private, source_info_note)
     pvt_note = source_ticket.requester_has_email? ? source_note_private : true

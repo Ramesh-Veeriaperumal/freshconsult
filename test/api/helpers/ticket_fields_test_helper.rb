@@ -325,7 +325,6 @@ module TicketFieldsTestHelper
     pattern.merge!(sections: section_pattern)
     pattern
   end
-end
 
   private
     def unused_ffs_col

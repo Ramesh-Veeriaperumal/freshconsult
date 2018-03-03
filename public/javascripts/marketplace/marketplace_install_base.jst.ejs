@@ -1,0 +1,6 @@
+
+<% if (platform_version == '1.0') { %>
+  <%= JST['marketplace/marketplace_install_v1'](self) %>
+<% } else if (platform_version == '2.0') { %>
+  <%= JST['marketplace/marketplace_install_v2'](self) %>
+<% } %>

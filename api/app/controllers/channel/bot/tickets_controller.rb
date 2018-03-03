@@ -1,11 +1,9 @@
 module Channel
   module Bot
     class TicketsController < Channel::TicketsController
-      include ::Bot::Authentication
 
       skip_before_filter :check_privilege
       before_filter :check_bot_feature
-      before_filter :authenticate_request
       before_filter :validate_bot
       before_filter :set_bot_source
       after_filter :create_bot_ticket, only: :create

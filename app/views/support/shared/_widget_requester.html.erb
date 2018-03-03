@@ -1,8 +1,7 @@
 <div class="row-fluid">
-	<%= text_field object_name, :email,
+	<%= email_field object_name, :email,
 			:value => value, :class => "span12 email required",
 			"data-check-email-path" => check_email_support_tickets_path,
-			:placeholder => t("ticket_form.your_email_address"), 
 			"data-remote" => "true", 
 			"data-remote-triggers" => "focusout" %>
 		

@@ -26,4 +26,6 @@ module FlexifieldConstants
   SERIALIZED_ATTRIBUTES = SERIALIZED_COLUMN_MAPPING_BY_ATTRIBUTES.keys
   SERIALIZED_TYPES      = SERIALIZED_COLUMN_MAPPING_BY_TYPE.keys
 
+  CREATED_SERIALIZED_COLUMNS = [:slt_text_11, :slt_text_12, :int_text_13, :decimal_text_14, :date_text_15, :boolean_text_16]
+
 end

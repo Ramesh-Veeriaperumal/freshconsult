@@ -3,6 +3,8 @@ class Integrations::JiraWebhook
   
   attr_accessor :updated_entity_type, :notification_cause, :updated_time, :params, :options
 
+  ALLOWED_JIRA_EVENTS = ["jira:issue_updated", "comment_created", "comment_updated"]
+
   def initialize(params,http_request_proxy = nil, options = {})
     if(http_request_proxy)  
       @installed_app = params
@@ -18,14 +20,9 @@ class Integrations::JiraWebhook
     current_url = @installed_app.account.url_protocol+"://"+@installed_app.account.full_domain +
                    "/integrations/jira_issue/notify?auth_key="+@installed_app[:configs][:inputs][:auth_key]
     req_data = {
-          "name" => "Freshdesk webhook",
-          "url"  =>  current_url,
-          "events" =>  [
-              # "jira:issue_created",
-              "jira:issue_updated",
-              # "jira:issue_deleted",
-              # "jira:worklog_updated"
-          ],
+          "name"   => "Freshdesk webhook",
+          "url"    => current_url,
+          "events" => ALLOWED_JIRA_EVENTS,
           "excludeIssueDetails" => false
         }
     webhook_data = construct_params_for_http(:register_webhooks)
@@ -63,16 +60,13 @@ class Integrations::JiraWebhook
     self.updated_time = Time.at(epoch_time.to_i)
     # self.updated_fields = params["updatedFields"]
 
-    parse_matches = /(jira):(issue)?_?(.*)/.match(params["webhookEvent"])
-    unless(parse_matches.blank?)
-      if(parse_matches[3] == "updated") # Pure issue related change.
-        if(params["changelog"] && params["changelog"]["items"].collect{ |m| m["field"]}.include?("status"))
-            self.params["updated_entity_type"] = self.updated_entity_type = "issue"
-            self.params["notification_cause"] = self.notification_cause = "added when status is changed"
-        elsif(params["comment"])
-            self.params["updated_entity_type"] = self.updated_entity_type = "comment"
-            self.params["notification_cause"] = self.notification_cause = (params["comment"]["created"]==params["comment"]["updated"]) ? "added" : "edited"
-        end
+    if ALLOWED_JIRA_EVENTS.include?(params["webhookEvent"])
+      if(params["changelog"] && params["changelog"]["items"].collect{ |m| m["field"]}.include?("status"))
+          self.params["updated_entity_type"] = self.updated_entity_type = "issue"
+          self.params["notification_cause"] = self.notification_cause = "added when status is changed"
+      elsif(params["comment"])
+          self.params["updated_entity_type"] = self.updated_entity_type = "comment"
+          self.params["notification_cause"] = self.notification_cause = (params["comment"]["created"]==params["comment"]["updated"]) ? "added" : "edited"
       end
     end
   end

@@ -42,7 +42,6 @@ var MarketplaceBrowser  = Class.create({
       var plug = {
         element: inProgressExt,
         url: inProgressExt.attr("data-url"),
-        deleteUrl: inProgressExt.attr("data-delete-url"),
         mkpRoute: inProgressExt.attr("data-mkp-route"),
         extensionId: inProgressExt.attr("data-extn-id"),
         installedExtnId: installedExtensionId,
@@ -149,7 +148,6 @@ var MarketplaceBrowser  = Class.create({
     this.deletablePlug =  { 
                             element: jQuery(e.currentTarget),
                             url: jQuery(e.currentTarget).attr("data-url"),
-                            deleteUrl: jQuery(e.currentTarget).attr("data-delete-url"),
                             mkpRoute: jQuery(e.currentTarget).attr("data-mkp-route"),
                             extensionId: jQuery(e.currentTarget).attr("data-extn-id"),
                             installedExtnId: jQuery(e.currentTarget).attr('data-installed-extn-id'),
@@ -186,34 +184,7 @@ var MarketplaceBrowser  = Class.create({
   onConfirmDelete: function(e) {
     var that = this;
     var plug = that.deletablePlug;
-    var el = plug.element;
-
-    if(plug.deleteUrl)
-    {
-      jQuery.ajax({
-        url: plug.deleteUrl,
-        type:"post",
-        headers: {
-          "MKP-ROUTE": plug.mkpRoute,
-          "MKP-EXTNID": plug.extensionId,
-          "MKP-VERSIONID": plug.versionId
-        },
-        success: function(resp_body, statustext, resp){
-          that.uninstallApp(plug);
-        },
-        error: function(){
-          jQuery("#toggle-confirm").modal("hide");
-          jQuery('.twipsy').remove();
-          jQuery("#noticeajax").html(that.customMessages.delete_error.unescapeHTML()).show().addClass("alert-danger");
-          closeableFlash('#noticeajax');
-        }
-      });
-    }
-    else
-    {
-      that.uninstallApp(plug);
-    }
-
+    that.uninstallApp(plug);
   },
   uninstallApp: function(plug){
     var that = this;

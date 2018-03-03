@@ -20,8 +20,7 @@ class Doorkeeper::Api::MarketplaceController < Doorkeeper::Api::ApiController
   private
 
   def allow_login?
-    current_resource_owner.privilege?(:admin_tasks) && 
-    current_resource_owner.account.features?(:fa_developer)
+    current_resource_owner.privilege?(:admin_tasks)
   end
 
   def ssl_enabled?
