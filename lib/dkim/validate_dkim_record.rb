@@ -13,7 +13,7 @@ class Dkim::ValidateDkimRecord
     set_first_verification_time
     statuses = sg_domain_ids.collect do |id|
       response = make_api(SG_URLS[:validate_domain][:request], SG_URLS[:validate_domain][:url]%{:id => id})
-      if response.first == API_SUCCESS_CODE
+      if response.first == SENDGRID_RESPONSE_CODE[:success]
         update_dkim_records(response.last)
       end
       response.last['valid']

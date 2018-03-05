@@ -24,7 +24,7 @@ class Dkim::RemoveDkimConfig
       result = sg_domain_ids.collect do |domain_id|
         make_api(SG_URLS[:delete_domain][:request], SG_URLS[:delete_domain][:url]+domain_id.to_s)[0]
       end
-      result.uniq.count == 1 and result.first == DELETE_RESPONSE_CODE
+      result.uniq.count == 1 and result.first == SENDGRID_RESPONSE_CODE[:deleted]
     end
 
     def delete_aws_records

@@ -2,11 +2,13 @@ module Dkim::Constants
   DNS_CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'pod_dns_config.yml'))
   SENDGRID_CONFIG = (YAML::load_file(File.join(Rails.root, 'config', 'sendgrid_webhook_api.yml')))[Rails.env]
 
-  VALID_RESPONSE_CODE = [201, 400]
-
-  DELETE_RESPONSE_CODE = 204
-
-  API_SUCCESS_CODE = 200
+  SENDGRID_RESPONSE_CODE = {
+    :success => 200,
+    :created => 201,
+    :deleted => 204,
+    :too_many_requests => 429,
+    :failed => 400
+  }
   
   TRUSTED_PERIOD = 30
   
@@ -18,6 +20,7 @@ module Dkim::Constants
     :post => 'post',
     :delete => 'delete'
   }
+  CONFIGURE_EXPIRE_TIME = SENDGRID_CONFIG['sendgrid']['dkim']['configure']['expire']
   
   RECORD_TYPES = {
     :res_1 => ["mail_server", "subdomain_spf", "dkim"],
@@ -30,8 +33,13 @@ module Dkim::Constants
     :validate_domain => {:url => 'https://api.sendgrid.com/v3/whitelabel/domains/%{id}/validate', :request => 'post'}
   }
   
-  SENDGRID_CREDENTIALS = {"Authorization" => "Bearer  #{SENDGRID_CONFIG['sendgrid']['dkim_key']}",
-                           "Content-Type" => 'application/json'}
+  SENDGRID_CREDENTIALS = {
+      :dkim_key => {  :user1 => {"Authorization" => "Bearer  #{SENDGRID_CONFIG['sendgrid']['dkim']['key']['user1']}",
+                                                      "Content-Type" => 'application/json'},
+                      :user2 => {"Authorization" => "Bearer  #{SENDGRID_CONFIG['sendgrid']['dkim']['key']['user2']}",
+                                                      "Content-Type" => 'application/json'}  
+      }
+  }
 
 
   DOMAINKEY_RECORD = "%{client_sub_domain}.domainkey.#{AppConfig['base_domain'][Rails.env]}."
@@ -40,6 +48,8 @@ module Dkim::Constants
 
   REQ_FIELDS = ['id', 'user_id', 'username', 'dns']
 
+  DKIM_CONFIGURE_TIMEOUT = SENDGRID_CONFIG['sendgrid']['dkim']['configure']['timeout']
+  DKIM_CONFIGURE_RETRIES = SENDGRID_CONFIG['sendgrid']['dkim']['configure']['retries']
 
   # 0 - Action 
   # 1 - Record type

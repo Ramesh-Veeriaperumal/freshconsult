@@ -15,11 +15,17 @@ class Admin::DkimConfigurationsController < Admin::AdminController
   end
 
   def create
+    # Sendgrid having limit of 1 DKIM configuration/sec, So we have put this configuration block in retries
     if @domain_category
-      Dkim::ConfigureDkimRecord.new(@domain_category).build_records
+      configure_with_retry_timeout 
+      raise unless @domain_category.status == OutgoingEmailDomainCategory::STATUS['unverified']
+      render :action => :verify_email_domain
+    else
+      raise "Domain Not Found"
     end
-    flash[:notice] = t('email_configs.dkim.config_fail') unless @domain_category.status == OutgoingEmailDomainCategory::STATUS['unverified']
-    render :action => :verify_email_domain
+  rescue Exception => e
+    Rails.logger.debug "Exception while configuring DKIM :: #{e} ::: Domain :: #{params.inspect} "
+    flash[:notice] = t('email_configs.dkim.config_fail')
   end
 
   def verify_email_domain
@@ -79,7 +85,6 @@ class Admin::DkimConfigurationsController < Admin::AdminController
       
       return if @dkim_count < OutgoingEmailDomainCategory::MAX_DKIM_ALLOWED and (current_account.basic_dkim_enabled? or current_account.dkim_enabled?)
       flash[:notice] = t('email_configs.dkim.limit_exceeded')
-      @button_name = t('email_configs.dkim.config')
       render :action => :create
     end
 end

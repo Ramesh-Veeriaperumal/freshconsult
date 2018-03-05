@@ -35,7 +35,7 @@ class Dkim::CategoryChanger
   private
     def delete_custom_mail_server_records
       result = make_api(SG_URLS[:delete_domain][:request], SG_URLS[:delete_domain][:url]+custom_record_id.to_s)[0]
-      result == DELETE_RESPONSE_CODE      
+      result == RESPONSE_CODE[:deleted]      
     end
 
     def custom_record_id
@@ -48,7 +48,7 @@ class Dkim::CategoryChanger
 
     def create_in_sg
       response = make_api(SG_URLS[:create_domain][:request], SG_URLS[:create_domain][:url], build_dkim_record(domain_category.email_domain, domain_category.category))
-      return false unless VALID_RESPONSE_CODE.include?(response[0])
+      return false unless RESPONSE_CODE[:created] == response[0]
       create_dkim_records(response[1], RECORD_TYPES[:res_1])
     end
 
