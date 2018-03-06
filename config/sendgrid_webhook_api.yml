@@ -11,6 +11,7 @@ defaults: &defaults
       key: 
         user1: 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
         user2: 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
+        parent: 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
       configure: 
         timeout: 50
         retries: 10

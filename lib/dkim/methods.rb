@@ -32,7 +32,7 @@ module Dkim::Methods
     }}
   end
 
-  def make_api(req_type, url, data={}, key=SENDGRID_CREDENTIALS[:dkim_key][:user1])
+  def make_api(req_type, url, data={}, key=SENDGRID_CREDENTIALS[:dkim_key][:parent])
     if req_type.to_s == REQUEST_TYPES[:get] or req_type.to_s == REQUEST_TYPES[:delete]
       response = RestClient.safe_send(req_type, url, key)
     elsif req_type.to_s == REQUEST_TYPES[:post]
