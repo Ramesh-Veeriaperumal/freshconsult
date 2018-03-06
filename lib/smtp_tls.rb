@@ -18,8 +18,8 @@ Net::SMTP.class_eval do
       check_response(critical { recv_response() }) 
       do_helo(helodomain)
     end
-    starttls_enabled = starttls
-    if @port.to_i == 465 or starttls_enabled
+    
+    if @port.to_i == 465 or starttls
       raise 'openssl library not installed' unless defined?(OpenSSL)
       ssl = OpenSSL::SSL::SSLSocket.new(sock)
       ssl.sync_close = true
@@ -31,7 +31,7 @@ Net::SMTP.class_eval do
     end
     
     check_response(critical { recv_response() }) if @port.to_i == 465
-    do_helo(helodomain) if starttls_enabled
+    do_helo(helodomain)
 
     authenticate user, secret, authtype if user
     @started = true
