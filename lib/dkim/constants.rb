@@ -37,7 +37,9 @@ module Dkim::Constants
       :dkim_key => {  :user1 => {"Authorization" => "Bearer  #{SENDGRID_CONFIG['sendgrid']['dkim']['key']['user1']}",
                                                       "Content-Type" => 'application/json'},
                       :user2 => {"Authorization" => "Bearer  #{SENDGRID_CONFIG['sendgrid']['dkim']['key']['user2']}",
-                                                      "Content-Type" => 'application/json'}  
+                                                      "Content-Type" => 'application/json'},
+                      :parent => {"Authorization" => "Bearer  #{SENDGRID_CONFIG['sendgrid']['dkim']['key']['parent']}",
+                                                      "Content-Type" => 'application/json'}    
       }
   }
 
