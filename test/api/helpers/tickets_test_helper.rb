@@ -62,7 +62,11 @@ module TicketsTestHelper
     if stats
       ticket.ticket_states ? result_pattern.merge!(stats: ticket_states_pattern(ticket.ticket_states)) : result_pattern.merge!(stats: {})
     end
-    result_pattern
+    result_pattern.except(:associated_tickets_count, :association_type, :can_be_associated, :email_failure_count)
+  end
+
+  def show_ticket_pattern(expected_output = {}, ticket)
+    ticket_pattern(expected_output, ticket).merge(association_type: expected_output[:association_type] || ticket.association_type)
   end
 
   def requester_pattern(requester)
@@ -80,6 +84,23 @@ module TicketsTestHelper
       id: company.id,
       name: company.name
     }
+  end
+
+  def show_ticket_pattern_with_association(ticket, limit = false, notes = true, requester = true, company = true, stats = true)
+    ticket_pattern_with_association(ticket, limit, notes, requester, company, stats).merge(association_type: ticket.association_type)
+  end
+
+  def show_deleted_ticket_pattern(expected_output = {}, ticket)
+    show_ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted).to_s.to_bool)
+  end
+
+  def show_ticket_pattern_with_notes(ticket, limit = false)
+    notes_pattern = []
+    ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
+      notes_pattern << index_note_pattern(n)
+    end
+    notes_pattern = notes_pattern.take(limit) if limit
+    show_ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
 
   def ticket_states_pattern(ticket_states)

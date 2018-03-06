@@ -14,7 +14,7 @@
 					buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link', 'image', 'removeFormat']});
 				break;
     		case 'forum':
-    			jQuery(element_id).redactor({autoresize:false,convertDivs: false, allowTagsInCodeSnippet:true, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link','image', 'video']});
+    			jQuery(element_id).redactor({autoresize:false,convertDivs: false, allowTagsInCodeSnippet:true, buttons:['bold','italic','underline','|','unorderedlist', 'orderedlist',  '|','fontcolor', 'backcolor', '|' ,'link','image', 'video'],  imageUpload: "/forums_uploaded_images", clipboardImageUpload: "/forums_uploaded_images/create_file", imageGetJson: "/forums_uploaded_images"});
     			break;
     		case 'solution':
     			jQuery(element_id).redactor({autoresize:true,convertDivs: false, allowTagsInCodeSnippet:true, tabindex: 2, imageUpload: "/solutions_uploaded_images", clipboardImageUpload: "/solutions_uploaded_images/create_file", imageGetJson: "/solutions_uploaded_images"});

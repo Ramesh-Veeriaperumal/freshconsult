@@ -17,46 +17,45 @@ module Social::SmartFilter
 
   def smart_filter_initialize(data)
     begin
-      Retry.retry_this(:max_tries => SmartFilterConfig::MAX_TRIES, :base_sleep_seconds => SmartFilterConfig::RETRY_BASE_SLEEP_SEC, :rescue => RestClient::Exception) do
-        response = RestClient.put(SmartFilterConfig::API_ENDPOINT + SmartFilterConfig::INIT_URL, data, {"Content-Type"=>"application/json", "Authorization"=>SmartFilterConfig::AUTH_KEY}) 
-        Rails.logger.info  "Response from Smart filter ML layer for init: Account_ID: #{Account.current.id} Params: #{data} Response code: #{response.code}"
-        response.code
-      end
-    rescue RestClient::Exception => e
-      Rails.logger.info "Error initializing smart filter Account_ID: #{Account.current.id} Params: #{data} Exception: #{e.message}, #{e.backtrace}"
-      e.http_code
+      response = RestClient.put(SmartFilterConfig::API_ENDPOINT + SmartFilterConfig::INIT_URL, data, {"Content-Type"=>"application/json", "Authorization"=>SmartFilterConfig::AUTH_KEY}) 
+      Rails.logger.info  "Response from Smart filter ML layer for init: Account_ID: #{Account.current.id} Params: #{data} Response code: #{response.code}"
+      response.code
     rescue Exception => e
-      Rails.logger.info "Error initializing smart filter. Account_ID: #{Account.current.id} Params: #{data} Exception: #{e.message}, #{e.backtrace}"
-      e
+      error_message = "Error initializing smart filter Account_ID: #{Account.current.id} Params: #{data} Exception: #{e.message}"
+      log_errors(error_message, e)
+      raise e
     end
   end
 
-  def smart_filter_query(data)
+  def smart_filter_query(data, convert_all_relevant_tweets)
     begin
-      response = RestClient.post(SmartFilterConfig::API_ENDPOINT + SmartFilterConfig::QUERY_URL, data, {"Content-Type"=>"application/json", "Authorization"=>SmartFilterConfig::AUTH_KEY}) 
-      Rails.logger.info "Response from Smart filter ML layer for query: Account_ID: #{Account.current.id} Params: #{data} Response code: #{response.code} Response body: #{response.body}" 
-      notify_social_dev("Smart filter query returned error code", {:msg => "Account_ID: #{Account.current.id} Params: #{data} Response code: #{response.code} Response body: #{response.body}"}) unless response.code == 200
-      JSON.parse(response.body)["Prediction"]
+      Retry.retry_this(:max_tries => SmartFilterConfig::MAX_TRIES, :rescue => RestClient::Exception) do
+        response = RestClient.post(SmartFilterConfig::API_ENDPOINT + SmartFilterConfig::QUERY_URL, data, {"Content-Type"=>"application/json", "Authorization"=>SmartFilterConfig::AUTH_KEY}) 
+        Rails.logger.info "Response from Smart filter ML layer for query: Account_ID: #{Account.current.id} Params: #{data} Response code: #{response.code} Response body: #{response.body}" 
+        JSON.parse(response.body)["Prediction"]
+      end
     rescue Exception => e
-      Rails.logger.info "Error querying smart filter. Account_ID: #{Account.current.id} Params: #{data} Exception: #{e.message}, #{e.backtrace}"
+      error_message = "Error querying smart filter. Account_ID: #{Account.current.id} Params: #{data} Exception: #{e.message}"
+      log_errors(error_message, e)
       notify_social_dev("Error querying smart filter", {:msg => "Account_ID: #{Account.current.id} Params: #{data} Exception: #{e.message}, #{e.backtrace}"})
-      0
+      convert_all_relevant_tweets ?  1 : 0;
     end 
   end
 
   def smart_filter_feedback(data)
     begin
-      Retry.retry_this(:max_tries => SmartFilterConfig::MAX_TRIES, :base_sleep_seconds => SmartFilterConfig::RETRY_BASE_SLEEP_SEC, :rescue => RestClient::Exception) do
-        response = RestClient.put(SmartFilterConfig::API_ENDPOINT + SmartFilterConfig::FEEDBACK_URL, data, {"Content-Type"=>"application/json", "Authorization"=>SmartFilterConfig::AUTH_KEY}) 
-        Rails.logger.info "Response from Smart filter ML layer for feedback: Account_ID: #{Account.current.id} Params: #{data} Response code: #{response.code}"
-        response.code
-      end
-    rescue RestClient::Exception => e
-      Rails.logger.info "Error sending feedback to smart filter Account_ID: #{Account.current.id} Params: #{data} Exception: #{e.message}, #{e.backtrace}"
-      e.http_code
+      response = RestClient.put(SmartFilterConfig::API_ENDPOINT + SmartFilterConfig::FEEDBACK_URL, data, {"Content-Type"=>"application/json", "Authorization"=>SmartFilterConfig::AUTH_KEY}) 
+      Rails.logger.info "Response from Smart filter ML layer for feedback: Account_ID: #{Account.current.id} Params: #{data} Response code: #{response.code}"
+      response.code
     rescue Exception => e
-      Rails.logger.info "Error sending feedback to smart filter. Account_ID: #{Account.current.id} Params: #{data} Exception: #{e.message}, #{e.backtrace}"
-      e
+      error_message = "Error sending feedback to smart filter Account_ID: #{Account.current.id} Params: #{data} Exception: #{e.message}"
+      log_errors(error_message, e)
+      raise e
     end
+  end
+
+  def log_errors(message, error)
+    Rails.logger.info message
+    NewRelic::Agent.notice_error(error, {:description => message})
   end
 end

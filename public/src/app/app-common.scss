@@ -4043,6 +4043,11 @@ $adm-bdr:#F0F0F0;
 .scl-btn-group{
 	padding-top: 30px;
 }
+
+.edit_social_twitter_stream{
+  min-height: 1050px;	
+}
+
 .adm-social{
 	padding: 20px;
 	&.adm-bg{
@@ -4180,12 +4185,19 @@ $adm-bdr:#F0F0F0;
 			@include margin-left(2.12766%);
 		}
 	}
-	&.sts{
-	padding: 0;
-		.tkt-rule{
-			padding:0;
-			margin-bottom: 18px;
-			border-bottom: 1px solid #ddd;
+  &.sts{
+    padding: 0;
+    .rules_settings input[type="radio"]{
+
+      &:checked+label {
+        font-weight:bold;
+        }
+    }
+    .tkt-rule{
+      padding:0;
+      border-bottom: 1px solid #ddd;
+      padding-top: 18px;
+
 			.select2,.text{
 				@include margin-left(0);
 			}
@@ -4203,7 +4215,6 @@ $adm-bdr:#F0F0F0;
 			}
 		}
 		&.c-tkt{
-			padding: 17px 0 0;
 			margin-bottom: 0;
 		}
 	}
@@ -4221,13 +4232,11 @@ $adm-bdr:#F0F0F0;
 	.key-handles-container{
 		display: none;
 	}
-	.add-another{
-		display: block;
-		background: #ffffff;
-		@include padding(12px 0 12px 8px);
-		@include margin(-21px 0 0);
-		color: #000;
-		border-top:1px solid #ddd;
+  .add-another{
+    display: block;
+    background: #f8f8f8;
+    @include padding(12px 0 12px 8px);
+    color: #000;
 	}
 	.ce-btn{
 		border: none;
@@ -4288,36 +4297,39 @@ $adm-bdr:#F0F0F0;
 		margin-left: 0;
 		font-size: 12px;
 	}
-	.smart-filter-wrapper{
-		background: #f8f8f8;
-		border: 1px solid #ddd;
-		@include border-radius(4px);
-		margin-bottom: 20px;
-		overflow: hidden;
-		min-height: 70px;
+  .smart-filter-wrapper{
+    background: #f8f8f8;
+    @include border-radius(4px);
+    overflow: hidden;
+    min-height: 70px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
 
-		#smart_filter_button{
-			padding-top: 8px;
-			}
+    .smart_filter_button{
+      padding-top: 8px;
+    }
 
-		#smart_filter_head{
-			.label-bold{
-				font-weight: bold;
-				display: inline-block;
-			}
-		}
+    #smart_filter_head{
+      .label-bold{
+        font-weight: bold;
+        display: inline-block;
+    }
+      .form_data{
+      	@include margin-left(25px);
+      }
+    }
 
-		.control-group{
-				.select2-container{
-					@include margin-left(0);
-				}
-		}
+    .control-group{
+      .select2-container{
+        @include margin-left(0);
+      }
+    }
+  }
 
-	}
+  #tweet_to_ticket_wrapper{
+  	margin-bottom: 40px;
+  }
 
-	#smart_filter_rules{
-		margin-left:113px;
-	}
 	.rules-wrapper{
 		background: #f1f1f1;
 		border: 1px solid #ddd;
@@ -4361,12 +4373,12 @@ $adm-bdr:#F0F0F0;
 				display: inline-block;
 			}
 		}
-		.dm-options{
-			padding-bottom:8px;
-			label{
-				@include margin-left(15px);
-			}
-		}
+    .dm-options{
+      padding: 18px 0 8px 0;
+        label{
+          @include margin-left(15px);
+        }
+    }
 		.dm-label{
 			border-top: 1px solid #ddd;
 			label{
@@ -4861,6 +4873,14 @@ span.email-preview-footer{
 	}	
 }
 
+div[class*='checkbox-ticket']{
+  margin-top: 10px;
+
+  span{
+    vertical-align: middle;
+    @include margin-left(4px);
+  }
+}
 
 /*-----------------New Tag Create differentiation in Select2-----------------------*/
 .new-tag-create{

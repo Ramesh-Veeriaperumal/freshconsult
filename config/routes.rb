@@ -3236,6 +3236,7 @@ Helpkit::Application.routes.draw do
 
   use_doorkeeper do
     skip_controllers :oauth_applications, :authorized_applications
+    controllers :authorizations => 'Doorkeeper::Authorize'
   end
 
   namespace :doorkeeper, :path => '' do

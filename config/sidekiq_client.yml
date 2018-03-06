@@ -212,6 +212,7 @@ defaults: &defaults
     - [channel_framework_command]
     - [ml_solutions_training]
     - [mixpanel_queue]
+    - [bot_cleanup]
 
 development:
   <<: *defaults

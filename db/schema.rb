@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180205101318) do
+ActiveRecord::Schema.define(:version => 20180223055939) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -380,22 +380,22 @@ ActiveRecord::Schema.define(:version => 20180205101318) do
   add_index "authorizations", ["account_id", "uid", "provider"], :name => "index_authorizations_on_account_id_uid_and_provider"
 
   create_table "bots", :force => true do |t|
-    t.string   "name"
-    t.integer  "account_id",          :limit => 8, :null => false
-    t.integer  "portal_id",           :limit => 8, :null => false
+    t.string   "name",                                                :null => false
+    t.integer  "account_id",          :limit => 8,                    :null => false
+    t.integer  "portal_id",           :limit => 8,                    :null => false
     t.integer  "product_id",          :limit => 8
-    t.text     "template_data"
-    t.boolean  "enable_in_portal"
-    t.integer  "last_updated_by",     :limit => 8, :null => false
-    t.string   "external_id",                      :null => false
-    t.text     "additional_settings"
-    t.datetime "created_at",                       :null => false
-    t.datetime "updated_at",                       :null => false
+    t.text     "template_data",                                       :null => false
+    t.boolean  "enable_in_portal",                 :default => false
+    t.integer  "last_updated_by",     :limit => 8,                    :null => false
+    t.string   "external_id",                                         :null => false
+    t.text     "additional_settings",                                 :null => false
+    t.datetime "created_at",                                          :null => false
+    t.datetime "updated_at",                                          :null => false
   end
 
-  add_index "bots", ["account_id"], :name => "index_bot_on_account_id"
-  add_index "bots", ["portal_id"], :name => "index_bot_on_portal_id"
-  add_index "bots", ["product_id"], :name => "index_bot_on_product_id"
+  add_index "bots", ["account_id", "external_id"], :name => "index_bot_on_account_id_and_external_id", :unique => true
+  add_index "bots", ["account_id", "portal_id"], :name => "index_bot_on_account_id_and_portal_id", :unique => true
+  add_index "bots", ["account_id", "product_id"], :name => "index_bot_on_account_id_and_product_id"
 
   create_table "bot_tickets", :force => true do |t|
     t.integer  "ticket_id",       :limit => 8, :null => false
@@ -4278,4 +4278,32 @@ ActiveRecord::Schema.define(:version => 20180205101318) do
   add_index :failed_central_feeds, :model_id, :name => 'index_failed_central_feeds_on_model_id'
   add_index :failed_central_feeds, :account_id, :name => 'index_failed_central_feeds_on_account_id'
   add_index :failed_central_feeds, :created_at, :name => 'index_failed_central_feeds_on_created_at'
+
+  create_table "bot_feedbacks", :force => true do |t|
+    t.integer  "bot_id",             :limit => 8,                 :null => false
+    t.integer  "account_id",         :limit => 8,                 :null => false
+    t.integer  "category",                         :default => 1
+    t.integer  "useful",                           :default => 1
+    t.datetime "received_at",                                     :null => false
+    t.string   "query_id",           :limit => 45,                :null => false
+    t.text     "query",                                           :null => false
+    t.text     "external_info",                                   :null => false
+    t.integer  "state",                            :default => 1
+    t.text     "suggested_articles"
+    t.datetime "created_at",                                      :null => false
+    t.datetime "updated_at",                                      :null => false
+  end
+
+  add_index "bot_feedbacks", ["account_id", "bot_id", "received_at"], :name => "index_bot_feedbacks_on_account_id_bot_id_received_at"
+  add_index "bot_feedbacks", ["account_id", "query_id"], :name => "index_bot_feedbacks_on_query_id", :unique => true
+
+  create_table "bot_feedback_mappings", :force => true do |t|
+    t.integer  "account_id",  :limit => 8, :null => false
+    t.integer  "feedback_id", :limit => 8, :null => false
+    t.integer  "article_id",  :limit => 8, :null => false
+    t.datetime "created_at",               :null => false
+    t.datetime "updated_at",               :null => false
+  end
+
+  add_index "bot_feedback_mappings", ["account_id", "feedback_id"], :name => "index_bot_feedback_mappings_on_feedback_id"
 end

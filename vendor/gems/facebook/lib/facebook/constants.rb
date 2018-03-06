@@ -73,12 +73,17 @@ module Facebook
 
     URL_PATH_DELIMITER          = "/"
 
+    #https://developers.facebook.com/docs/messenger-platform/send-messages/message-tags
+    MESSAGE_TAG                 = "ISSUE_RESOLUTION" 
+    MESSAGE_TYPE                = "MESSAGE_TAG"
+
     URL_PATHS = {
       :message => {
         :image => :image_data,
         :video => :video_data
       }
     }
+
 
     FEED_VIDEO      = "<div class=\"facebook_post\"><a class=\"thumbnail\" href=\"%{target_url}\" target=\"_blank\"><img src=\"%{thumbnail}\"></a><div><p><a href=\"%{att_url}}\" target=\"_blank\"> %{name}</a></p><p><strong>%{html_content}</strong></p><p>%{desc}</p></div></div>"
 

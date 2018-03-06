@@ -60,7 +60,11 @@ class ApiCompanyValidation < ApiValidation
     validatable_custom_fields: proc { Account.current.company_form.custom_non_dropdown_fields },
     required_attribute: :required_for_agent
   }
+  }, unless: -> { validation_context == :channel_company_create }
+  validates :custom_fields, custom_field: { custom_fields: {
+    validatable_custom_fields: proc { Account.current.company_form.custom_non_dropdown_fields }
   }
+  }, if: -> { validation_context == :channel_company_create }
 
   def initialize(request_params, item)
     super(request_params, item)
@@ -74,7 +78,7 @@ class ApiCompanyValidation < ApiValidation
   end
 
   def required_default_fields
-    Account.current.company_form.default_company_fields.select(&:required_for_agent)
+    validation_context == :channel_company_create ? [] : Account.current.contact_form.default_contact_fields.select(&:required_for_agent)
   end
 
   private

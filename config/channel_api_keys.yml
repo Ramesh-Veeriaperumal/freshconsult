@@ -1,0 +1,23 @@
+defaults: &defaults
+  zapier:
+    auth_type: dummy
+    jwt_secret: dummy
+    secret_key: dummy
+    iv: dummy
+  frankbot:
+    auth_type: dummy
+    secret_key: dummy
+    jwt_secret: dummy
+    jwt_default_expiry: dummy
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults

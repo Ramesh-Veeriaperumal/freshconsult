@@ -1,1 +1,10 @@
-<h3 class="lead"><%= t('.authorize_failure').html_safe %></h3>
+<% if err_msg == :admin %>
+<h3 class="lead"><%= t(".authorize_failure_#{err_msg.to_s}").html_safe %></h3>
+<% else %> 
+<h3 class="lead"><%= t(".authorize_failure_#{err_msg.to_s}").html_safe %></h3>
+<ol style="margin-left:40px;font-weight: 300;font-style: inherit;font-family: inherit;font-size: inherit;">
+  <li><span><%= t(".authorize_failure_ssl_line1").html_safe %></span></li>
+  <li><span><%= t(".authorize_failure_ssl_line2").html_safe %></span></li>
+  <li><span><%= t(".authorize_failure_ssl_line3").html_safe %></span></li>
+</ol>
+<% end %>

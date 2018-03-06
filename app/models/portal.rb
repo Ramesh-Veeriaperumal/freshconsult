@@ -64,7 +64,7 @@ class Portal < ActiveRecord::Base
 
   has_one :primary_email_config, :class_name => 'EmailConfig', :through => :product
 
-  has_one :bot, class_name: 'Bot'
+  has_one :bot, class_name: 'Bot', dependent: :destroy
 
   has_many :monitorships, :dependent => :nullify
 
@@ -73,7 +73,7 @@ class Portal < ActiveRecord::Base
 
   concerned_with :solution_associations
 
-  APP_CACHE_VERSION = "FD77"
+  APP_CACHE_VERSION = "FD78"
 
   def logo_attributes=(icon_attr)
     handle_icon 'logo', icon_attr
@@ -386,7 +386,7 @@ class Portal < ActiveRecord::Base
         account_main_portal = Account.current.main_portal_from_cache
         valid_domains << account_main_portal.elb_dns_name if account_main_portal.elb_dns_name.present?
       end
-      valid_domains.map { |d| d.chomp('.') }
+      valid_domains.map { |d| d.downcase.chomp('.') }
     end
 
     def domains_for_recaptcha

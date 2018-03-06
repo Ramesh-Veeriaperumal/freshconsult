@@ -1,4 +1,3 @@
---- 
 :development: 
   :dynamo: 
     :endpoint: http://localhost:4569

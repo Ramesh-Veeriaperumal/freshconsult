@@ -15,7 +15,7 @@ module Helpdesk::EmailParser::Constants
 	RFC822_HEADER_MIME_TYPE = "text/rfc822-headers"
   TNEF_MIME_TYPE = "application/ms-tnef"
 
-  KNOWN_ATTACHMENT_CONTENT_TYPES = [/application\//, /image\//, /audio\//, /video\//, /x-url\//, /java\//].freeze
+  KNOWN_ATTACHMENT_CONTENT_TYPES = [/application\//, /image\//, /audio\//, /video\//, /x-url\//, /java\//, /text\/calendar/].freeze
 
   FAILED_MAILS_EXPIRY = 604800
 
