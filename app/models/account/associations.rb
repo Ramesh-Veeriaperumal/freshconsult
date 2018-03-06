@@ -50,9 +50,9 @@ class Account < ActiveRecord::Base
 
   has_many :features
   has_many :flexi_field_defs, :class_name => 'FlexifieldDef'
-  has_one  :ticket_field_def,  :class_name => 'FlexifieldDef', 
+  has_one  :ticket_field_def,  :class_name => 'FlexifieldDef',
       :conditions => {:module => "Ticket"}
-      
+
   has_one  :contact_form
   has_one  :company_form
   has_many :flexifield_def_entries
@@ -98,7 +98,7 @@ class Account < ActiveRecord::Base
   has_many :solution_drafts, :class_name =>'Solution::Draft'
   has_many :solution_draft_bodies, :class_name =>'Solution::DraftBody'
   has_many :article_tickets, :class_name => 'ArticleTicket'
-  
+
   has_many :installed_applications, :class_name => 'Integrations::InstalledApplication'
   has_many :user_credentials, :class_name => 'Integrations::UserCredential'
   has_many :companies
@@ -119,7 +119,7 @@ class Account < ActiveRecord::Base
   has_many :sorted_skills, :order => "name", :class_name => 'Admin::Skill'
 
   has_many :user_skills
-  
+
   has_one :activity_export, :class_name => 'ScheduledExport::Activity', dependent: :destroy
 
   has_many :scheduled_ticket_exports
@@ -153,7 +153,7 @@ class Account < ActiveRecord::Base
 
   has_many :installed_app_business_rules, :class_name => 'VaRule', :conditions => {
   :rule_type => VAConfig::INSTALLED_APP_BUSINESS_RULE, :active => true }, :order => "position"
-   
+
   has_many :email_notifications
   has_many :groups
   has_many :agent_groups
@@ -176,13 +176,13 @@ class Account < ActiveRecord::Base
 
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:picklist_values, :flexifield_def_entry], :order => "helpdesk_ticket_fields.position"
-    
+
   has_many :ticket_fields_without_choices, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
-    :include => [:flexifield_def_entry], :order => "helpdesk_ticket_fields.position"   
+    :include => [:flexifield_def_entry], :order => "helpdesk_ticket_fields.position"
 
   has_many :ticket_fields_including_nested_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:picklist_values, :flexifield_def_entry, :nested_ticket_fields], :order => "helpdesk_ticket_fields.position"
-    
+
   has_many :ticket_fields_with_nested_fields, :class_name => 'Helpdesk::TicketField'
 
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
@@ -244,7 +244,7 @@ class Account < ActiveRecord::Base
 
   has_many :tags, :class_name =>'Helpdesk::Tag'
   has_many :tag_uses, :class_name =>'Helpdesk::TagUse'
-  
+
   # Archive Association Starts Here
   has_many :archive_tickets, :class_name => "Helpdesk::ArchiveTicket"
   has_many :archive_notes, :class_name => "Helpdesk::ArchiveNote"
@@ -288,7 +288,7 @@ class Account < ActiveRecord::Base
   has_many :freshfone_callers, :class_name => "Freshfone::Caller"
 
   has_many :freshfone_whitelist_country, :class_name => "Freshfone::WhitelistCountry"
-  
+
   has_one :chat
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
 
@@ -306,7 +306,7 @@ class Account < ActiveRecord::Base
   has_many :solution_customer_folders, :class_name => "Solution::CustomerFolder"
 
   has_many :sections, :class_name => 'Helpdesk::Section', :dependent => :destroy
-  has_many :section_fields_with_field_values_mapping, :class_name => 'Helpdesk::SectionField', 
+  has_many :section_fields_with_field_values_mapping, :class_name => 'Helpdesk::SectionField',
             :include => [:parent_ticket_field, :section => {:section_picklist_mappings => :picklist_value}]
   has_many :section_fields, :class_name => 'Helpdesk::SectionField', :dependent => :destroy
 
@@ -325,23 +325,23 @@ class Account < ActiveRecord::Base
   has_many :authorizations, :class_name => '::Authorization'
 
   has_many :ticket_templates, :class_name => "Helpdesk::TicketTemplate"
-  has_many :prime_templates, 
-            :class_name => "Helpdesk::TicketTemplate", 
+  has_many :prime_templates,
+            :class_name => "Helpdesk::TicketTemplate",
             :conditions =>['association_type != ?', Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child]]
   has_many :parent_templates,
-            :class_name => "Helpdesk::TicketTemplate", 
+            :class_name => "Helpdesk::TicketTemplate",
             :conditions => {:association_type => Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent]}
-  has_many :child_templates, 
-            :class_name => "Helpdesk::TicketTemplate", 
+  has_many :child_templates,
+            :class_name => "Helpdesk::TicketTemplate",
             :conditions => {:association_type => Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child]}
 
   has_many :status_groups
 
   has_many :account_webhook_key, dependent: :destroy
-  
+
   has_many :sandboxes,       :class_name => 'Admin::Sandbox::Account'
   has_many :sandbox_jobs,    :class_name => 'Admin::Sandbox::Job'
-  
+
   has_many :ticket_subscriptions, :class_name => 'Helpdesk::Subscription'
 
   has_many :required_ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id IS null AND required_for_closure IS true AND field_options NOT LIKE '%section: true%' AND field_type NOT IN ('default_subject','default_description','default_company')",
@@ -353,4 +353,7 @@ class Account < ActiveRecord::Base
 
   has_many :bot_tickets, class_name: 'Bot::Ticket', dependent: :destroy
   has_many :bots, class_name: 'Bot', dependent: :destroy
+
+  has_many :reminders,
+    :class_name => 'Helpdesk::Reminder',:dependent => :destroy
 end

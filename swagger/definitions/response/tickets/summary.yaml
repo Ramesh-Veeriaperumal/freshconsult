@@ -1,0 +1,28 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      body:
+        type: string
+      body_text:
+        type: string
+      ticket_id:
+        type: integer
+        format: int64
+      user_id:
+        type: integer
+        format: int64
+      last_edited_at:
+        type: string
+        format: date-time
+      last_edited_user_id:
+        type: integer
+        format: int64
+      attachments:
+        type: array
+        items:
+          $ref: '#/definitions/attachment'
+      cloud_files:
+        type: array
+        items:
+          $ref: '#/definitions/extended_cloud_file'

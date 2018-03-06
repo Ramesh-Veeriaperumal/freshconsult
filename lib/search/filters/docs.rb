@@ -36,6 +36,13 @@ class Search::Filters::Docs
     parsed_response['hits']['total']
   end
 
+  def bulk_count
+    response = bulk_es_request('_msearch', { search_type: 'count'})
+    parsed_response = JSON.parse(response)['responses']
+    Rails.logger.info "ES count response:: Account -> #{Account.current.id}, Queries: #{parsed_response.length}, Took:: #{parsed_response.map { |r| r['took'] }.join(',')}"
+    parsed_response.map { |r| r['hits']['total'] }
+  end
+
   # Fetch docs from Elasticsearch based on filters and load from ActiveRecord
   def records(model_class, options={})
     
@@ -102,15 +109,17 @@ class Search::Filters::Docs
     end
   end
 
+  def payload_params(options={})
+    permissible_value = with_permissible.nil? ? true : with_permissible
+    deserialized_params = es_query(params, negative_params, permissible_value).merge(options)
+  end
+
   private
 
     # Make request to ES to get the DOCS
     def es_request(model_class, end_point, options={}, query_params = {})
-      permissible_value = with_permissible.nil? ? true : with_permissible
-      deserialized_params = es_query(params, negative_params, permissible_value).merge(options)
-      query_params.merge!(query_string)
-      path = [host, alias_name, end_point].join('/')
-      full_path = "#{path}?#{query_params.to_query}"
+      full_path = request_path(end_point, query_params)
+      deserialized_params = payload_params(options)
       error_handle do
         request = RestClient::Request.new(method: :get,
                                            url: full_path,
@@ -120,6 +129,26 @@ class Search::Filters::Docs
         log_response(response)
         return response
       end
+    end
+
+    def bulk_es_request(end_point, query_params)
+      full_path = request_path(end_point, query_params)
+      error_handle do
+        request = Typhoeus::Request.new(full_path,
+                                          method: :get,
+                                          body: params,
+                                          headers: {content_type: "application/x-ndjson"})
+        Rails.logger.debug("#Request => #{request.original_options}")
+        response = request.run
+        Rails.logger.debug("# => #{response.code} #{response.class.to_s.gsub(/^Net::HTTP/, '')} | #{response.headers} \n")
+        response.response_body
+      end
+    end
+
+    def request_path(end_point, query_params)
+      query_params.merge!(query_string)
+      path = [host, alias_name, end_point].join('/')
+      "#{path}?#{query_params.to_query}"
     end
 
     #_Note_: Include type if not doing only for ticket

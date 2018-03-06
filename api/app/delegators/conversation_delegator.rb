@@ -18,6 +18,8 @@ class ConversationDelegator < ConversationBaseDelegator
   validate :validate_unseen_replies, on: :reply, if: :traffic_cop_required?
   validate :validate_unseen_replies_for_public_notes, on: :create, if: -> { public_note? && traffic_cop_required? }
 
+  validate :ticket_summary_presence
+
   def initialize(record, options = {})
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
@@ -75,6 +77,10 @@ class ConversationDelegator < ConversationBaseDelegator
       errors[:application_id] << :invalid_list
       (self.error_options ||= {}).merge!(application_id: { list: invalid_ids.join(', ').to_s })
     end
+  end
+
+  def ticket_summary_presence
+    errors[:id] << :"is invalid" if summary_note?
   end
 
   alias validate_unseen_replies_for_public_notes validate_unseen_replies

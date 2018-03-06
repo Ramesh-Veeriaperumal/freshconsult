@@ -265,12 +265,127 @@ module Ember
       assert_response 400
     end
 
+    def test_create_reminder_ticket_todo
+      ticket = get_ticket
+      todo = { body: 'Ticket todo 1', rememberable_id: ticket.display_id, type: 'ticket', reminder_at: 1.day.from_now.utc.iso8601 }
+      post :create, construct_params(@api_params.merge(todo), false)
+      assert_response 200
+      todo[:todo_id] = JSON.parse(response.body)["id"]
+      assert_not_nil /^\d+$/.match(todo[:todo_id].to_s),
+        '"id" is either nil or not valid'
+      match_json(todo_pattern(todo.merge(ticket_subject: ticket.subject)))
+    end
+
+    def test_create_reminder_contact_todo
+      contact = User.contacts.last
+      contact ||= get_contacts(1)[0] unless contact
+      todo = { body: 'Contact todo 1', rememberable_id: contact.id, type: 'contact', reminder_at: 1.day.from_now.utc.iso8601 }
+      post :create, construct_params(@api_params.merge(todo), false)
+      assert_response 400
+      match_json(
+        validation_error_response(
+          'reminder_at',
+          'Cannot set reminder for Contact and Company todos',
+          'incompatible_field'
+        )
+      )
+    end
+
+    def test_create_reminder_company_todo
+      company = Company.last
+      company ||= create_company unless company
+      todo = { body: 'Commpany todo 1', rememberable_id: company.id, type: 'company', reminder_at: 1.day.from_now.utc.iso8601 }
+      post :create, construct_params(@api_params.merge(todo), false)
+      assert_response 400
+      match_json(
+        validation_error_response(
+          'reminder_at',
+          'Cannot set reminder for Contact and Company todos',
+          'incompatible_field'
+        )
+      )
+    end
+
+    def test_update_reminder_with_ticket_todo
+      ticket = get_ticket
+      reminder = get_new_reminder('test delete', ticket.display_id)
+      todo = { body: Faker::Lorem.characters(200), completed: true, reminder_at: reminder.updated_at.utc.iso8601 }
+      put :update, construct_params({ version: 'private', id: reminder.id }, todo)
+      assert_response 200
+      match_json(todo_pattern(todo.merge(todo_id: reminder.id, type: 'ticket',
+        rememberable_id: ticket.display_id, ticket_subject: ticket.subject)))
+    end
+
+    def test_update_reminder_with_contact_todo
+      contact = User.contacts.last
+      contact ||= get_contacts(1)[0] unless contact
+      reminder = get_new_reminder('test delete', nil, contact.id, contact.customer_id)
+      todo = { body: Faker::Lorem.characters(200), completed: true, reminder_at: reminder.updated_at.utc.iso8601 }
+      put :update, construct_params({ version: 'private', id: reminder.id }, todo)
+      assert_response 400
+      match_json(
+        validation_error_response(
+          'reminder_at',
+          'Cannot set reminder for Contact and Company todos',
+          'incompatible_field'
+        )
+      )
+    end
+
+    def test_update_reminder_with_company_todo
+      company = Company.last
+      company ||= create_company unless company
+      reminder = get_new_reminder('test delete', nil, nil, company.id)
+      todo = { body: Faker::Lorem.characters(200), completed: true, reminder_at: reminder.updated_at.utc.iso8601 }
+      put :update, construct_params({ version: 'private', id: reminder.id }, todo)
+      assert_response 400
+      match_json(
+        validation_error_response(
+          'reminder_at',
+          'Cannot set reminder for Contact and Company todos',
+          'incompatible_field'
+        )
+      )
+    end
+
+    def test_update_reminder_with_invalid_format
+      ticket = get_ticket
+      reminder = get_new_reminder('test delete', ticket.display_id)
+      todo = { body: Faker::Lorem.characters(200), completed: true, reminder_at: '2013-04-22T09' }
+      put :update, construct_params({ version: 'private', id: reminder.id }, todo)
+      assert_response 400
+      match_json(
+        validation_error_response(
+          'reminder_at',
+          'Value set is of type String.It should be a/an DateTime',
+          'datatype_mismatch'
+        )
+      )
+    end
+
+    def test_valid_params_when_todos_reminder_scheduler_not_enabled
+      @account.stubs(:todos_reminder_scheduler_enabled?).returns(false)
+      ticket = get_ticket
+      reminder = get_new_reminder('test delete', ticket.display_id)
+      todo = { body: Faker::Lorem.characters(200), completed: true, reminder_at: reminder.updated_at.utc.iso8601 }
+      put :update, construct_params({ version: 'private', id: reminder.id }, todo)
+      match_json(
+        validation_error_response(
+          'reminder_at',
+          'The todos_reminder_scheduler feature is required to support reminder_at attribute in the request',
+          'inaccessible_field'
+        )
+      )
+      @account.unstub(:todos_reminder_scheduler_enabled?)
+      assert_response 400
+    end
+
     def validation_error_response(field, message, code)
-      { "description" => "Validation failed", 
-        "errors"      => [ {  "field"  => field,
-                              "message"=> message,
-                              "code"   => code
-                            } ]
+      {
+        'description' => 'Validation failed',
+        'errors'      => [{ 'field' => field,
+                            'message' => message,
+                            'code' => code }]
       }
     end
 

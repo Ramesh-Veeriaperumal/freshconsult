@@ -39,13 +39,16 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
 
-  SOURCES = %w{email form note status meta twitter feedback facebook forward_email phone mobihelp mobihelp_app_review}
+  SOURCES = %w{email form note status meta twitter feedback facebook 
+               forward_email phone mobihelp mobihelp_app_review summary}
 
   NOTE_TYPE = { true => :private, false => :public }
   
   SOURCE_KEYS_BY_TOKEN = Hash[*SOURCES.zip((0..SOURCES.size-1).to_a).flatten]
   
   ACTIVITIES_HASH = { Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => "twitter" }
+
+  EXCLUDE_SOURCE =  %w{meta summary}.freeze
 
   TICKET_NOTE_SOURCE_MAPPING = { 
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] => SOURCE_KEYS_BY_TOKEN["email"] , 
@@ -111,6 +114,15 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
 
   scope :exclude_source, lambda { |s| { :conditions => ['source <> ?', SOURCE_KEYS_BY_TOKEN[s]] } }
 
+  scope :conversations, lambda { |preload_options = nil, order_conditions = nil, limit = nil|
+    {
+      :conditions => ["source NOT IN (?) and deleted = false", EXCLUDE_SOURCE.map{|s| SOURCE_KEYS_BY_TOKEN[s]}],
+      :order => order_conditions,
+      :include => preload_options,
+      :limit => limit
+    }
+  }
+
   def status?
     source == SOURCE_KEYS_BY_TOKEN["status"]
   end
@@ -147,6 +159,10 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
     source == SOURCE_KEYS_BY_TOKEN["phone"]
   end
   
+  def summary_note?
+    source == SOURCE_KEYS_BY_TOKEN["summary"]
+  end
+
   def inbound_email?
     email? && incoming
   end
@@ -168,6 +184,7 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
     return "public_note" if public_note?
     return "forward" if fwd_email?
     return "phone_note" if phone_note?
+    return "summary" if summary_note?
     "reply"
   end
 

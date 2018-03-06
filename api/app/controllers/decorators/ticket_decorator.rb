@@ -93,7 +93,9 @@ class TicketDecorator < ApiDecorator
 
   def conversations
     if @sideload_options.include?('conversations')
-      ticket_conversations = record.notes.visible.exclude_source('meta').preload(:schema_less_note, :note_old_body, :attachments).order(:created_at).limit(ConversationConstants::MAX_INCLUDE)
+      preload_options = [:schema_less_note, :note_old_body, :attachments]
+      ticket_conversations = record.notes.
+                             conversations(preload_options, :created_at, ConversationConstants::MAX_INCLUDE)
       ticket_conversations.map { |conversation| ConversationDecorator.new(conversation, ticket: record).construct_json }
     end
   end

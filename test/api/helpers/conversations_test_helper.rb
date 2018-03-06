@@ -101,6 +101,16 @@ module ConversationsTestHelper
     private_note_pattern(expected_output, note).merge(body: body)
   end
 
+  def update_ticket_summary_pattern(expected_output, note)
+    body = expected_output[:body] || note.body_html
+    ticket_summary_pattern(expected_output, note).merge(body: body)
+  end
+
+  def update_private_ticket_summary_pattern(expected_output, note)
+    body = expected_output[:body] || note.body_html
+    private_ticket_summary_pattern(expected_output, note).merge(body: body)
+  end
+
   def index_note_pattern(note)
     index_note = {
       from_email: note.from_email,
@@ -223,5 +233,26 @@ module ConversationsTestHelper
 
   def create_broadcast_message(tracker_id, note_id)
     @account.broadcast_messages.create(tracker_display_id: tracker_id, body_html: Faker::Lorem.paragraph, note_id: note_id)
+  end
+
+  def ticket_summary_pattern(expected_output, note)
+     body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
+    {
+      body: body_html || note.body_html,
+      body_text: note.body,
+      id: Fixnum,
+      user_id: expected_output[:user_id] || note.user_id,
+      ticket_id: expected_output[:ticket_id] || note.notable.display_id,
+      attachments: Array,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      last_edited_at: note.last_modified_timestamp.try(:utc).try(:iso8601),
+      last_edited_user_id: note.last_modified_user_id.try(:to_i)
+    }
+  end
+
+  def private_ticket_summary_pattern(expected_output, note)
+    response_pattern = ticket_summary_pattern(expected_output, note).merge(
+                        cloud_files: Array)
   end
 end

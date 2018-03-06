@@ -30,3 +30,6 @@ allOf:
       updated_at:
         type: string
         format: date-time
+      reminder_at:
+        type: string
+        format: date-time 

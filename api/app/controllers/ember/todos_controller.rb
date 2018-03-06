@@ -58,7 +58,7 @@ module Ember
       end
 
       def validate_params
-        validate_body_params
+        validate_body_params @item 
       end
 
       def sanitize_update_params

@@ -13,6 +13,9 @@ put:
             type: string
           completed:
             type: boolean
+          reminder_at:
+            type: string
+            format: date-time
   responses:
     200:
       description: Success
