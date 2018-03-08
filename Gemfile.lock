@@ -201,14 +201,14 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: 71a71a4f7b1a68e795889d70c874181d7abde143
-  tag: v1.0.0
+  revision: d12ee372de55d53d7030314d7982d5c26e96b542
+  tag: v1.0.1
   specs:
-    central-publisher (0.0.1)
+    central-publisher (1.0.1)
       active_record_shards (~> 3.2.0)
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
-      newrelic_rpm (~> 3.17.2.327)
+      newrelic_rpm (~> 4.8.0.341)
       rails (~> 3.2.22.3)
       redis (= 3.3.1)
       sidekiq (~> 3.4.1)
@@ -963,7 +963,7 @@ GEM
     nestful (1.1.1)
     net-http-persistent (2.9.4)
     netrc (0.11.0)
-    newrelic_rpm (3.17.2.327)
+    newrelic_rpm (4.8.0.341)
     nokogiri (1.8.2)
       mini_portile2 (~> 2.3.0)
     nokogumbo (1.4.13)
@@ -1451,7 +1451,7 @@ DEPENDENCIES
   mysql2 (~> 0.3.0)
   namae (= 0.8.4)
   net-http-persistent (~> 2.9.4)
-  newrelic_rpm (~> 3.17.2.327)
+  newrelic_rpm (= 4.8.0.341)
   nokogiri (= 1.8.2)
   oauth (= 0.4.5)
   oily_png (= 1.1.1)
