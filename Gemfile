@@ -43,7 +43,7 @@ gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
-gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.1'
+gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.0'
 
 
 group :development, :test do
@@ -122,7 +122,7 @@ gem "riddle", "1.2.2"
 gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 
-gem "newrelic_rpm","4.8.0.341"
+gem "newrelic_rpm","~> 3.17.2.327"
 
 gem "faraday" , "0.9"
 gem 'faraday_middleware', '~> 0.10.0'
