@@ -98,6 +98,7 @@ class ApiCompanyValidation < ApiValidation
       []
     else
       company_form.default_company_fields.select(&:required_for_agent)
+    end
   end
 
   def validate_avatar
