@@ -15,6 +15,10 @@ module CompaniesTestHelper
       domains: expected_output[:domains] || domains,
       note: company.note,
       custom_fields: expected_output['custom_field'] || company.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v.respond_to?(:utc) ? v.strftime('%F') : v] }.to_h,
+      health_score: company.health_score,
+      account_tier: company.account_tier,
+      industry: company.industry,
+      renewal_date: format_renewal_date(company.renewal_date),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       avatar: expected_output[:avatar] || get_contact_avatar(company)

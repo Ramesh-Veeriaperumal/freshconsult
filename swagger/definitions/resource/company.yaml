@@ -10,5 +10,13 @@ properties:
       type: string
   note:
     type: string
+  health_score:
+    type: string
+  account_tier:
+    type: string
+  industry:
+    type: string
+  renewal_date:
+    type: string
   custom_fields:
     $ref: '#/definitions/custom_field'
