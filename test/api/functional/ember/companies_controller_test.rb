@@ -22,6 +22,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
 
   def initial_setup
     @private_api = true
+    set_others_redis_key(TAM_FIELDS_ENABLED, true)
     return if @@initial_setup_run
 
     @@initial_setup_run = true
@@ -29,6 +30,11 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
 
   def wrap_cname(params)
     { company: params }
+  end
+
+  def teardown
+    super
+    remove_others_redis_key(TAM_FIELDS_ENABLED)
   end
 
   def create_company(options = {})
@@ -39,6 +45,10 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     company.account_id = @account.id
     company.avatar = options[:avatar] if options[:avatar]
     company.domains = options[:domains].join(',') if options[:domains].present?
+    company.health_score = options[:health_score] if options[:health_score]
+    company.account_tier = options[:account_tier] if options[:account_tier]
+    company.industry = options[:industry] if options[:industry]
+    company.renewal_date = options[:renewal_date] if options[:renewal_date]
     company.save!
     company
   end
@@ -122,6 +132,27 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     params_hash = company_params_hash.merge(domains: [comp_domain])
     post :create, construct_params({ version: 'private' }, params_hash)
     assert_response 409
+  end
+
+  def test_create_company_with_invalid_tam_default_fields
+    params_hash = company_params_hash.merge(health_score: Faker::Lorem.characters(5),
+                                             account_tier: Faker::Lorem.characters(5))
+    post :create, construct_params({ version: 'private' }, params_hash)
+    match_json([bad_request_error_pattern('health_score', :not_included,
+                                          list: 'At risk,Doing okay,Happy'),
+                bad_request_error_pattern('account_tier', :not_included,
+                                          list: 'Basic,Premium,Enterprise')])
+    assert_response 400
+  end
+
+  def test_create_company_with_valid_data_for_tam_default_fields
+    params_hash = company_params_hash.merge(health_score: 'Happy',
+                                            account_tier: 'Premium',
+                                            industry: 'Media',
+                                            renewal_date: '2017-10-26')
+    post :create, construct_params({ version: 'private' }, params_hash)
+    assert_response 201
+    match_json(company_show_pattern(Company.last))
   end
 
   def test_show_a_company
@@ -306,6 +337,26 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     company.reload
     match_json(company_show_pattern(company))
     assert company.avatar.id == avatar.id
+  end
+
+  def test_update_company_with_invalid_tam_default_fields
+    company = create_company
+    params_hash = { health_score: Faker::Lorem.characters(5), account_tier: Faker::Lorem.characters(5) }
+    put :update, construct_params({ version: 'private', id: company.id }, params_hash)
+    match_json([bad_request_error_pattern('health_score', :not_included,
+                                          list: 'At risk,Doing okay,Happy'),
+                bad_request_error_pattern('account_tier', :not_included, list: 'Basic,Premium,Enterprise')])
+    assert_response 400
+  end
+
+  def test_update_company_with_valid_data_for_tam_default_fields
+    company = create_company
+    put :update, construct_params({ version: 'private', id: company.id },
+                                    { health_score: 'Happy', account_tier: 'Premium',
+                                    industry: 'Media', renewal_date: '2017-10-26' })
+    
+    assert_response 200
+    match_json(company_show_pattern(company.reload))
   end
 
   def test_bulk_delete_with_no_params
