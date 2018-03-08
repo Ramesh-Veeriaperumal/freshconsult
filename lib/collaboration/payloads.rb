@@ -1,4 +1,7 @@
 class Collaboration::Payloads
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
   HK_CLIENT_ID = 'hk'.freeze
   TOKEN_EXPIRY_TIME = 7200 # (in sec) 2 HRS
 
@@ -12,7 +15,8 @@ class Collaboration::Payloads
       client_account_id: Account.current.id.to_s,
       init_auth_token: acc_auth_token,
       collab_url: CollabConfig['collab_url'],
-      rts_url: CollabConfig['rts_url']
+      rts_url: CollabConfig['rts_url'],
+      collab_bell: collab_bell_enabled?
     }
   end
 
@@ -26,5 +30,9 @@ class Collaboration::Payloads
                    UserId: User.current.id.to_s,
                    exp: (Time.now.to_i + TOKEN_EXPIRY_TIME)
                  }, CollabConfig['secret_key'])
+    end
+
+    def collab_bell_enabled?
+      !redis_key_exists?(COLLAB_BELL_DISABLED)
     end
 end
