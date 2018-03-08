@@ -129,7 +129,7 @@ module Users
     end
   
     def deliver_admin_activation
-      UserNotifier.send_later(:deliver_admin_activation,self)
+      UserNotifier.send_later(:deliver_admin_activation,self) unless Account.current.freshid_enabled?
     end
 
     def restrict_domain
@@ -149,7 +149,7 @@ module Users
       if agent? && Account.current.freshid_enabled?
         redirect_url = support_login_url({ host: host(portal), protocol: url_protocol })
         url = Freshid::User.generate_activation_url(redirect_url, self.freshid_authorization.uid) if self.freshid_authorization.present?
-        Rails.logger.error "FRESH ID Activation url is empty :: uid = #{self.id}, auth = #{self.freshid_authorization.inspect}" if url.blank?
+        Rails.logger.error "FRESHID Activation url is empty :: uid = #{self.id}, auth = #{self.freshid_authorization.inspect}" if url.blank?
       else
         url = register_url(perishable_token, :host => host(portal), :protocol => url_protocol)
       end

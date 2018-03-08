@@ -17,6 +17,7 @@ class Account < ActiveRecord::Base
   include FreshdeskFeatures::Feature
   include Helpdesk::SharedOwnershipMigrationMethods
   include Account::ChannelUtils
+  include ParserUtil
 
   has_many_attachments
   
@@ -348,6 +349,11 @@ class Account < ActiveRecord::Base
     to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
   end
 
+  def parsed_support_emails
+    to_ret = email_configs.collect { |ec| trim_trailing_characters(parse_email_text(ec.reply_email)[:email]) }
+    to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret #to_email case will come, when none of the emails are active.. 
+  end
+
   def support_emails_in_downcase
     to_ret = email_configs.collect(&:reply_email_in_downcase)
     to_ret.empty? ? [ "support@#{full_domain}" ] : to_ret 
@@ -517,6 +523,10 @@ class Account < ActiveRecord::Base
 
   def add_custom_twitter_stream?
     advanced_twitter?
+  end
+
+  def twitter_feature_present?
+    basic_twitter_enabled? || advanced_twitter?
   end
 
   def ehawk_reputation_score

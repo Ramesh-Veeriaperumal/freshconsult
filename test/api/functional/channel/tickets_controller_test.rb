@@ -78,6 +78,19 @@ module Channel
       assert_response 201
     end
 
+    def test_create_without_default_fields_required_except_requester_with_jwt_header
+      params = { email: Faker::Internet.email }
+      set_jwt_auth_header('zapier')
+      post :create, construct_params({ version: 'private' }, params)
+      t = Helpdesk::Ticket.last
+      match_json(ticket_pattern(params, t))
+      match_json(ticket_pattern({}, t))
+      result = parse_response(@response.body)
+      assert_equal true, response.headers.include?('Location')
+      assert_equal "http://#{@request.host}/api/v2/tickets/#{result['id']}", response.headers['Location']
+      assert_response 201
+    end
+
     def test_create_without_default_fields_required
       params = {}
       post :create, construct_params({ version: 'private' }, params)
@@ -126,6 +139,20 @@ module Channel
       assert_response 201
     end
 
+    def test_create_without_custom_fields_required_with_jwt_header
+      params = ticket_params_hash
+      Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
+      set_jwt_auth_header('zapier')
+      post :create, construct_params({ version: 'private' }, params)
+      Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
+      match_json(ticket_pattern(params, Helpdesk::Ticket.last))
+      match_json(ticket_pattern({}, Helpdesk::Ticket.last))
+      result = parse_response(@response.body)
+      assert_equal true, response.headers.include?('Location')
+      assert_equal "http://#{@request.host}/api/v2/tickets/#{result['id']}", response.headers['Location']
+      assert_response 201
+    end
+
     def test_create_with_custom_fields_required_invalid
       params = ticket_params_hash.merge(custom_fields: {})
       VALIDATABLE_CUSTOM_FIELDS.each do |custom_field|
@@ -135,9 +162,10 @@ module Channel
       assert_response 400
       pattern = []
       VALIDATABLE_CUSTOM_FIELDS.each do |custom_field|
-        pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_PARAMS[custom_field]))
+        pattern << bad_request_error_pattern("custom_fields.test_custom_#{custom_field}", *(ERROR_PARAMS[custom_field]))
       end
       match_json(pattern)
     end
+
   end
 end

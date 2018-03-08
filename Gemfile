@@ -115,7 +115,7 @@ gem "twilio-ruby", :git => "git://github.com/freshdesk/twilio-ruby.git", :branch
 gem "carmen", :git => "git://github.com/jim/carmen.git", :tag => "ruby-18"
 gem 'postoffice', :git => "git://github.com/chrisbutcher/postoffice.git", :branch => "master"
 
-gem "ruby-saml", "1.4.2"
+gem "ruby-saml", "1.7.0"
 
 gem 'xeroizer', :git => "git@github.com:freshdesk/xeroizer.git"
 
@@ -203,7 +203,7 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
-gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v1.0.1.1'
+gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v1.0.6'
 
 gem 'net-http-persistent', '~> 2.9.4'
 
@@ -213,7 +213,7 @@ gem "add_pod_support", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ad
 gem "custom_fields", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/custom_fields-0.1"
 
 gem "jwt", "1.5.4"
-gem "jwe", "0.3.0"
+gem "jwe", "0.3.0", :git => 'git@github.com:freshdesk/ruby-jwe.git'
 gem "jose", "1.1.2"
 
 group :production, :test, :staging do

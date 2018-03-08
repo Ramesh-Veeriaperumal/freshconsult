@@ -214,6 +214,7 @@ defaults: &defaults
     - [scheduler_cancel_message]
     - [ml_solutions_training]
     - [mixpanel_queue]
+    - [bot_cleanup]
 
 development:
   <<: *defaults

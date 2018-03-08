@@ -356,6 +356,7 @@ en:
   freshpipe_email_disabled: "All outgoing emails and notifications are currently disabled since the data migration is in progress."
   reauthorize_facebook: "Reauthorize your facebook account."
   twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
+  smart_filter_disabled: "Smart filter is temporarily down. We are working on getting it up and running."
   reauthorize_twitter: Reauthorize your twitter handle.
   ecommerce_reauth:  "Your Ecommerce account is inaccessible. It looks like your auth token has expired. "
   reauthorize_ecommerce: Reauthorize your ecommerce account.
@@ -971,7 +972,9 @@ en:
         handle_title1: "Integrating a Twitter account"
         handle_info1: "If you support multiple products, you can link a different social account to each product. You can manage the visibility of each account. For example, you can make the tweets mentioning @yourproduct_france  visible only to your France support agent group. The stream for this account will contain all your @mentions and will be shown in your social tab. Your DMs will be converted to tickets, and you can assign them to a specific agent group. You can set up a ticket threading interval so that multiple DMs from the same person within that time interval can be merged into one ticket."
         handle_title2: "Converting specific tweets to tickets automatically"
+        handle_smart_filter_title: "Converting relevant tweets to tickets automatically"
         handle_info2: "You can convert tweets with certain keywords into tickets automatically using Ticket Rules. For example, every tweet mentioning your twitter handle with the words “not working” or “bug” could be converted into tickets and assigned to the “Bug report” group. And you can create another rule for tweets containing the words “system down” and assign them to your “Dev ops” group. The first rule satisfied will be executed. You can also link these tickets to specific products."
+        handle_smart_filter_info: "Smart filter is powered by a machine learning algorithm ( a system capable of learning and improving with feedback over time). This feature will automatically start converting only relevant tweets that require your attention into tickets. <br>You can provide feedback to the system such that it adopts to your business.<br><br>1. In case a tweet is converted into a ticket; Marking the ticket as spam to teach the system to not convert similar tweets into tickets.<br><br>2. In case a tweet was not converted into a ticket; On the social tab, clicking on Convert into a ticket will teach the system to convert similar tweets into tickets.<br><br>You can choose to simply use the smart filter alone or a combination of keyword based filters and smart filter if you have specific business keywords. <br>When you are using a combination of keyword based filters and smart filter, the keyword based filters are given precedence over the smart filter. Please note that smart filter support only English language for now."
         stream_title1: "Defining social streams"
         stream_info1: "You can create multiple streams to search for different sets of keywords on Twitter. Enter the main keywords you want to look for, based on your business and even exclude certain keywords, hashtags and handles to narrow your search. For example, you may not want to see tweets by your marketers or executives in the custom stream you created to monitor support queries coming in through your brand and brand acronyms.Each stream can be made visible to one or many agent groups. You can also pick the default reply handle for each stream."
         stream_title2: "Converting specific tweets to tickets automatically"
@@ -989,6 +992,7 @@ en:
         stream_deleted: "Twitter stream %{stream_name} has been deleted"
         stream_save_error: "Error encountred on stream save"
         ticket_rule_error: "Some ticket rules might not have been saved due to empty keyword filters"
+        empty_rule_error: "No keyword filters are configured"
       streams:
         visibility:
           all: Everyone
@@ -1027,7 +1031,7 @@ en:
         title: "Create Ticket Rules"
         header: "Convert tweets from above stream to tickets"
         header_ext: "and assign product"
-        add: "Add new ticket rule"
+        add: "Add new keyword filter"
         includes: "Convert to ticket when stream contains these keywords"
         assign_to_gp: "Assign to Group"
         assign_to_product: "Assign to Product"
@@ -1038,10 +1042,15 @@ en:
         dm_threading_interval: "Set Ticket Threading Interval"
         dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
         include_helptext: "example: support, \"System down\", @insideapple"
-        brief_desc: "Tweets will get converted to tickets automatically based on first matching rule"
+        brief_desc: "Tweets will get converted to tickets automatically based on first matching filter"
       smart_filter:
-        header: "Enable Smart Filters"
-        desc: "Automatically convert relevant tweets to tickets. Turn this on if you get a lot of noise on Twitter. Works on tweets in English."
+        header: "Enable Smart Filter"
+        desc_with_keywords: "Automatically convert relevant tweets to tickets. Supports only English language for now."
+        desc_without_keywords: "Automatically convert only relevant @mentions to tickets. Supports only English language for now." 
+        convert_tweet: "Start converting tweets into tickets"
+        convert_dm: "Start converting direct messages into tickets"
+        convert_all: "Convert relevant @mentions into tickets"
+        convert_with_filters: "Convert tweets to tickets using filters"
       facebook_streams:
         index:
           new_account: "New Account"
@@ -1252,6 +1261,7 @@ en:
         title: "Deleting this portal will remove"
         info1: "All the settings in portal customization"
         info2: "All the linked solution and forum categories"
+        info3: "The configured bot"
       settings:
         title: 'Customer Portals'
         portal_customizer_title: "Customer Portal Configuration"
@@ -7732,7 +7742,7 @@ en:
       sign_in_using: "...or Sign in using"
       sign_in_error: "Incorrect email or password."
   marketplace:
-    installing: "Installing:"
+    installing: "Installing"
     almost_done: "Almost Done!"
     app_installation_agreement: "By installing this app, you agree to abide by our "
     terms_of_use: "Terms of Use"
@@ -7756,6 +7766,7 @@ en:
     latest_apps: Latest Apps
     popular: Popular
     latest: Latest
+    backend_log: Serverless Logs
     settings: Settings
     coming_soon: Coming Soon
     install: Install
@@ -11741,7 +11752,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         admin_portal: Admin
         portal: Portal
       error_form:
-        authorize_failure: You are not allowed to access this page
+        authorize_failure_ssl: SSL must be enabled in order to log in to the developer portal.
+        authorize_failure_ssl_line1: "Go to Admin -> Security"
+        authorize_failure_ssl_line2: "Turn on Secure Connection using SSL"
+        authorize_failure_ssl_line3: "Log in to the developer portal"
+        authorize_failure_admin: You must have administrative privileges to log in to the developer portal.
   password_policy:
     alphanumeric: "Password must be alphanumeric"
     special_characters: "Password must have special characters"

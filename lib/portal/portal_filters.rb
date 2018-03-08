@@ -107,13 +107,7 @@ module Portal::PortalFilters
 	def login_via_facebook label
 		link_to(label, "/sso/facebook", :class => "btn btn-facebook") if Account.current.features? :facebook_signin
 	end
-  
-  def freshid_login_url request_domain
-    authorize_callback_url = request_domain + Rails.application.routes.url_helpers.freshid_authorize_callback_path
-    logout_url = request_domain + Rails.application.routes.url_helpers.freshid_logout_path
-    Freshid::Config.login_url(authorize_callback_url, logout_url)
-  end
-	
+
 	# Topic specific filters
 
 

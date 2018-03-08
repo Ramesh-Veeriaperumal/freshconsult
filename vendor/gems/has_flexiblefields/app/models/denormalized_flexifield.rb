@@ -19,6 +19,7 @@ class DenormalizedFlexifield < ActiveRecord::Base
   end
 
   before_validation :sanitize_serialized_data
+  after_commit :duplicate_load_state
 
   SERIALIZED_COLUMN_MAPPING_BY_ATTRIBUTES.each do |attribute, db_column|
     define_method attribute do
@@ -35,13 +36,13 @@ class DenormalizedFlexifield < ActiveRecord::Base
   end
 
   def set_default_values #helps in changes calculation
-    SERIALIZED_DB_COLUMNS.each do |db_column|
-      write_attribute(db_column, {}) if safe_send(db_column).nil?
+    CREATED_SERIALIZED_COLUMNS.each do |db_column|
+      write_attribute(db_column, {}) if respond_to?(db_column) && safe_send(db_column).nil?
     end
   end
 
   def duplicate_load_state
-    @load_state ||= self.attributes.deep_dup.with_indifferent_access #works as we dont have arrays
+    @load_state ||= self.deserialized_attributes.with_indifferent_access #works as we dont have arrays
     #Marshal.load(Marshal.dump(self.attributes)).with_indifferent_access #for deep cloning #need to check on security issues
   end
 
@@ -49,7 +50,7 @@ class DenormalizedFlexifield < ActiveRecord::Base
     @changes_of_serialized_attributes = {}
     SERIALIZED_COLUMN_MAPPING_BY_DB_COLUMN.each do |db_column, attributes|
       attributes.each do |attribute|
-        old_value = self.load_state[db_column][attribute]
+        old_value = self.load_state[attribute]
         new_value = self.safe_send(attribute)
         @changes_of_serialized_attributes[attribute] = [old_value, new_value] if old_value != new_value
       end
@@ -78,5 +79,15 @@ class DenormalizedFlexifield < ActiveRecord::Base
   # def convert_to_decimal attribute
   #   safe_send("#{attribute}=", safe_send(attribute).to_f) if safe_send(attribute).present?
   # end
+
+  def deserialized_attributes
+    attributes.deep_dup.each_with_object({}) do |(attribute, value), attrs|
+      if value.is_a? Hash
+        attrs.merge!(value) unless value.blank?
+      else
+        attrs[attribute] = value
+      end
+    end
+  end
 
 end

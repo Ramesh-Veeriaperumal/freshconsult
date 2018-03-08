@@ -1,4 +1,4 @@
-
+	@import "../../shared/mixins";
 	.conversation_thread {
 		@include padding(0 0px 15px 0);
 		@include margin-left(20px);
@@ -71,6 +71,9 @@
 
 		.post-content {
 			@include text-formatting();
+			@include portal-text-formatting();
+	    @include editor-text-formating();
+
 			margin: 10px 0 15px;
 			overflow-x: auto;
 		}
@@ -127,7 +130,7 @@
 		}
 	}
 	.topic-reply{
-		.flow-form{ @include border-radius(0 0 3px 3px); }		
+		.flow-form{ @include border-radius(0 0 3px 3px); }
 	}
 
 	.flow-form{
@@ -205,4 +208,3 @@
 		}
 
 	}
-

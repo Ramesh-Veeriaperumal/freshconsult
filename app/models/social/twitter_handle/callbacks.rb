@@ -4,6 +4,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   include Gnip::Constants
   include Social::Constants
   include Social::Util
+  include Social::SmartFilter
 
   before_save :add_default_search, :set_default_state, :persist_previous_changes
   before_create :set_default_threaded_time
@@ -13,6 +14,7 @@ class Social::TwitterHandle < ActiveRecord::Base
 
   after_commit ->(obj) { obj.clear_handles_cache }, on: :create
   after_commit ->(obj) { obj.clear_handles_cache }, on: :destroy  
+  after_commit :initialise_smart_filter, :on => :update, :if => :new_smart_filter_enabled?
 
   def construct_avatar
     args = {
@@ -113,6 +115,20 @@ class Social::TwitterHandle < ActiveRecord::Base
           :access_type => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
         }}) if type == TWITTER_STREAM_TYPE[:default]    
       stream_params
+    end
+
+    def smart_filter_init_params 
+      {
+        "account_id" => smart_filter_accountID(:twitter, self.account_id, self.twitter_user_id)
+      }.to_json
+    end
+
+    def initialise_smart_filter
+      Social::SmartFilterInitWorker.perform_async({:smart_filter_init_params => smart_filter_init_params, :account_id => self.account_id})
+    end
+
+    def new_smart_filter_enabled?
+      @custom_previous_changes[:smart_filter_enabled] && @custom_previous_changes[:smart_filter_enabled][0].nil? && @custom_previous_changes[:smart_filter_enabled][1]
     end
 
 end

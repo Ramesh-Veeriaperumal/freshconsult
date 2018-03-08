@@ -63,7 +63,7 @@ class ApiCompanyValidation < ApiValidation
   validates :custom_fields, custom_field: { custom_fields: {
     validatable_custom_fields: proc { |x| x.valid_custom_fields },
     required_attribute: :required_for_agent
-  } }
+  } }, unless: -> { validation_context == :channel_company_create }
 
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
     max: CompanyConstants::ALLOWED_AVATAR_SIZE
@@ -73,6 +73,11 @@ class ApiCompanyValidation < ApiValidation
   validates :avatar_id, custom_numericality: { only_integer: true, greater_than: 0,
                                                allow_nil: true,
                                                ignore_string: :allow_string_param }
+  
+  validates :custom_fields, custom_field: { custom_fields: {
+    validatable_custom_fields: proc { Account.current.company_form.custom_non_dropdown_fields }
+  } }, if: -> { validation_context == :channel_company_create }
+
 
   def initialize(request_params, item)
     super(request_params, item)
@@ -86,7 +91,13 @@ class ApiCompanyValidation < ApiValidation
   end
 
   def required_default_fields
-    requester_update? ? company_form.default_widget_fields.select(&:required_for_agent) : company_form.default_company_fields.select(&:required_for_agent)
+    case validation_context
+    when :requester_update
+      company_form.default_widget_fields.select(&:required_for_agent)
+    when :channel_company_create
+      []
+    else
+      company_form.default_company_fields.select(&:required_for_agent)
   end
 
   def validate_avatar

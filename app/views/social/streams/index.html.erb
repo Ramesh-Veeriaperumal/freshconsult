@@ -1,4 +1,7 @@
  
+<% if current_user && current_user.privilege?(:admin_tasks) && current_account %>
+    <%= check_smart_filter_revoked %>
+<% end %> 
 <%= stylesheet_link_tag_with_rtl :'cdn/social' %>
 <div class="row-fluid" id="social-tab-falcon-identifier">
   <div class="span2">

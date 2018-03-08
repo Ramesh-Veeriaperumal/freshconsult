@@ -3,6 +3,16 @@ module Freshid::CallbackMethodsExtensions
     ###### Overridden ######
     user.reset_tokens!
   end
+  
+  def user_active? user
+    ###### Overridden ######
+    user.active? && user.primary_email.verified?
+  end
+  
+  def company_field_update_required?
+    ###### Overridden ######
+    false
+  end
 
   def fetch_user_by_uuid account, uuid
      ###### Overridden ######

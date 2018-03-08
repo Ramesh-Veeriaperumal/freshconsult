@@ -3,18 +3,18 @@ module Freshid
 
     include Redis::RedisKeys
     include Redis::SortedSetRedis
+    include Freshid::SnsErrorNotificationExtensions
 
     sidekiq_options :queue => :freshid_account_details_update, :retry => 3, :backtrace => true, :failures => :exhausted
-    DESCRIPTION = "Freshid account details update SQS push error"
+    ERROR_ACCOUNT_UPDATE = "FRESHID account details update SQS push error"
 
     def perform(args)
       args.symbolize_keys!
       args[:destroy].present? ? Freshid::Account.new(args).destroy : Freshid::Account.new(args).update
-
     rescue Exception => e
-      Rails.logger.debug "Error while updating account information in Freshid, #{e.inspect} : #{args.inspect}"
+      Rails.logger.debug "#{ERROR_ACCOUNT_UPDATE}, #{e.inspect} : #{args.inspect}"
       NewRelic::Agent.notice_error(e, {:args => args})
-      DevNotification.publish(SNS["freshid_notification_topic"], DESCRIPTION, args.to_json)
+      notify_error(ERROR_ACCOUNT_UPDATE, args, e)
     end
 
   end

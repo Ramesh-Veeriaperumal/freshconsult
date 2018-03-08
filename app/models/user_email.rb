@@ -36,6 +36,7 @@ class UserEmail < ActiveRecord::Base
   after_update :drop_authorization, :if => [:email_changed?]
   after_commit :send_activation_on_update, on: :update, if: :email_updated?
   after_update :verify_account, :if => [:verified_changed?]
+  after_commit :verify_account, on: :create, if: :freshid_enabled_account?
 
   before_destroy :drop_authorization
   
@@ -136,6 +137,10 @@ class UserEmail < ActiveRecord::Base
     end
 
     def verify_account
-      self.account.verify_account_with_email  if (!self.account.verified? && self.verified == true && self.user.privilege?(:admin_tasks))
+      self.account.verify_account_with_email  if (self.verified == true && self.user.can_verify_account?)
+    end
+
+    def freshid_enabled_account?
+      Account.current.freshid_enabled?
     end
 end

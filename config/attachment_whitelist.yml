@@ -16,3 +16,4 @@ xlsx: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
 mp3 : audio/mpeg
 mp4 : video/mp4
 wav : audio/wav
+ics : text/calendar

@@ -10,7 +10,7 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
 
   belongs_to_account
 
-  TOTAL_SHARED_TEMPLATES = 300
+  TOTAL_SHARED_TEMPLATES = 300 #this max limit is for general and parent templates only.
   TOTAL_CHILD_TEMPLATES  = 10
 
 
@@ -180,7 +180,7 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
     templ_ids
   end
 
-  def self.max_limit
+  def self.max_limit #this max limit is for general and parent templates only.
     Account.current.max_template_limit || TOTAL_SHARED_TEMPLATES
   end
 

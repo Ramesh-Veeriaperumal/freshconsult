@@ -10,7 +10,7 @@ class AddTicketSummaryToApplication < ActiveRecord::Migration
       :name => "ticket_summary",
       :display_name => "integrations.ticket_summary.label",
       :description => "integrations.ticket_summary.desc",
-      :listing_order => 51,
+      :listing_order => 53,
       :options => {
         :direct_install => true,
         :user_specific_auth => true,
@@ -32,3 +32,4 @@ class AddTicketSummaryToApplication < ActiveRecord::Migration
     Integrations::Application.where(:name => "ticket_summary").first.destroy
   end
 end
+

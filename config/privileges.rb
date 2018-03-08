@@ -156,6 +156,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_freshfone/call_history", :only => [:export, :export_status]
     resource :"announcement", :only => [:index, :account_login_url]
     resource :"email_preview"
+    resource :"doorkeeper/authorize"
   end
 
   export_tickets do
@@ -360,7 +361,7 @@ Authority::Authorization::PrivilegeList.build do
   # ************** CONTACTS **************************
 
   view_contacts do
-    resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :contact_details_for_ticket, :view_conversations]
+    resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :contact_details_for_ticket]
     resource :customer, :only => [:index, :show] #should deprecate
     resource :company,  :only => [:index, :show]
     resource :agent, :only => [:show]

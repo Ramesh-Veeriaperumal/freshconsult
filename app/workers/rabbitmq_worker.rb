@@ -73,6 +73,7 @@ class RabbitmqWorker
                   invocation_type: "Event",
                   payload: message }
       if options[:function_name].present?
+        Rails.logger.debug("Lambda :: Account :: #{JSON.parse(message).fetch('account_id', 'not-set')} :: Exchange :: #{exchange}")
         response = $lambda_client.invoke(options)
         raise LambdaRequestError, "Lambda returned #{response[:status_code]}" if response[:status_code] != 202
       end

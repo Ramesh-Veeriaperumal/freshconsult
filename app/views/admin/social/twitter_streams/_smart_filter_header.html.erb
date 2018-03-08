@@ -1,20 +1,29 @@
-<div class="list-page-body" id="smart_filter_head">
-  <table class="table table-striped">
-    <tbody>
-      <tr>
-        <td>
-          <div class='span1 mt6' id="smart_filter_button">
-            <%= f.check_box(:private, :checked => @twitter_handle.smart_filter_enabled, :id => 'smart_filter_toggle', :class => 'tooltip', :name => 'smart_filter_enabled', "rel" => "toggle",  "data-checked-label" => t("plain_yes"), "data-unchecked-label" => t("plain_no") )  %>
-          </div>
-        </td>
-        <td>
-          <div class='form_data span11 mlt'>
-            <label class="label-bold"><%= t('admin.social.smart_filter.header') %></label>
-            <label><%= t('admin.social.smart_filter.desc') %></label>
-          </div>
-        </td>
+<% ticket_rule = ticket_rule.blank? ? @twitter_stream.new_ticket_rule : ticket_rule %>
 
-      </tr>
-    </tbody>
-  </table>
+<div id="smart_filter_head">
+  <div class="form-horizontal tkt-rule">
+
+    <div class="row-fluid">
+      <div class="span1 smart_filter_button">
+        <% if keyword_rules %>
+          <%= f.check_box(:private, :checked => @twitter_handle.smart_filter_enabled, :class => 'tooltip',:name => "smart_filter_enabled", "rel" => "toggle",  "data-checked-label" => t("plain_yes"), "data-unchecked-label" => t("plain_no") )  %>
+        <% else %>
+          <%= f.check_box(:private, :checked => true, :disabled => true, :class => 'tooltip',:name => "smart_filter_without_keywords", "rel" => "toggle",  "data-checked-label" => t("plain_yes"), "data-unchecked-label" => t("plain_no") )  %>
+        <% end %>
+      </div>
+      <div class="form_data span10">
+        <div class="control-group span12">
+          <label class="label-bold"><%= t('admin.social.smart_filter.header') %></label>
+          <label><%= t('admin.social.smart_filter.desc_'+filter_val) %></label>    
+        </div>
+        <div class="control-group span6">
+          <%= hidden_field_tag "smart_filter_rule_#{filter_val}[ticket_rule_id]",  ticket_rule.id %>
+          <label><%= t("admin.social.ticket_rules.assign_to_gp")%></label>
+          <%= select_tag "smart_filter_rule_#{filter_val}[group_id]", options_for_select(current_account.groups.collect{ |c| [c.name, c.id]}.insert(0, "..."),  ticket_rule.group_id), {:class => "select2 filter_item rule_group span12"} %>
+        </div>  
+        <div class="control-group span6">
+        </div>   
+      </div>
+    </div>
+  </div>
 </div>
