@@ -108,8 +108,6 @@ class Helpdesk::BulkReplyTickets
       build_cloud_file_attachments(note)
       # Shared attachments will be removed moving forward
       # build_shared_attachments(note)
-      # Used by Private API
-      build_cloud_files_from_params(note) if params[:cloud_files]
     end
 
     def build_new_attachments note
@@ -122,10 +120,6 @@ class Helpdesk::BulkReplyTickets
       (attachments[:shared] || []).each do |a|
         note.shared_attachments.build(:account_id => note.account_id,:attachment=> a )
       end
-    end
-
-    def build_cloud_files_from_params note
-      note.cloud_files.build(params[:cloud_files])
     end
 
     def build_cloud_file_attachments note
