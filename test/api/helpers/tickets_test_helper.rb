@@ -83,7 +83,7 @@ module TicketsTestHelper
     if stats
       result_pattern[:stats] = ticket.ticket_states ? ticket_states_pattern(ticket.ticket_states, ticket.status) : {}
     end
-    result_pattern.except(:associated_tickets_count, :association_type, :can_be_associated, :email_failure_count)
+    result_pattern
   end
 
   def show_ticket_pattern(expected_output = {}, ticket)
