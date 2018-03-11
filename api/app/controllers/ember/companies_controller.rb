@@ -19,8 +19,7 @@ module Ember
 
     def update
       delegator_params = construct_delegator_params
-      custom_fields = params[cname].delete(:custom_field)
-      @item.assign_attributes(custom_field: custom_fields)
+      @item.assign_attributes(validatable_delegator_attributes)
       return unless validate_delegator(@item, delegator_params)
       mark_avatar_for_destroy
       Company.transaction do
@@ -59,6 +58,15 @@ module Ember
 
     private
 
+      def validatable_delegator_attributes
+        params[cname].select do |key, value|
+          if CompanyConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(key)
+            params[cname].delete(key)
+            true
+          end
+        end
+      end
+
       def fetch_objects(items = scoper)
         @items = items.find_all_by_id(params[cname][:ids])
       end
@@ -71,7 +79,8 @@ module Ember
       def construct_delegator_params
         {
           custom_fields: params[cname][:custom_field],
-          avatar_id: params[cname][:avatar_id]
+          avatar_id: params[cname][:avatar_id],
+          default_fields: params[cname].except(:custom_field)
         }
       end
 

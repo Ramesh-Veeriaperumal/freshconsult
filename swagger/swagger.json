@@ -6858,6 +6858,18 @@
             "note": {
               "type": "string"
             },
+            "health_score": {
+              "type": "string"
+            },
+            "account_tier": {
+              "type": "string"
+            },
+            "industry": {
+              "type": "string"
+            },
+            "renewal_date": {
+              "type": "string"
+            },
             "custom_fields": {
               "$ref": "#/definitions/custom_field"
             }
@@ -7102,7 +7114,11 @@
               "name",
               "description",
               "domains",
-              "notes"
+              "notes",
+              "health_score",
+              "account_tier",
+              "industry",
+              "renewal_date"
             ],
             "uniqueItems": true
           }
@@ -7479,6 +7495,18 @@
           }
         },
         "note": {
+          "type": "string"
+        },
+        "helath_score": {
+          "type": "string"
+        },
+        "account_tier": {
+          "type": "string"
+        },
+        "industry": {
+          "type": "string"
+        },
+        "renewal_date": {
           "type": "string"
         },
         "custom_fields": {

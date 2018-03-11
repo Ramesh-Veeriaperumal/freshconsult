@@ -49,7 +49,7 @@ class CompanyDecorator < ApiDecorator
   end
 
   def to_hash
-    {
+    response = {
       id: id,
       name: name,
       description: description,
@@ -60,6 +60,8 @@ class CompanyDecorator < ApiDecorator
       custom_fields: custom_fields,
       avatar: avatar_hash
     }
+    response.merge!(tam_fields) if tam_default_company_fields_enabled?
+    response
   end
 
   def to_search_hash
