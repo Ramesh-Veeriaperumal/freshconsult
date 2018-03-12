@@ -579,8 +579,7 @@ private
       :external_id => external_id,
       :fb_profile_id => facebook_id,
       :phone => phone,
-      :unqiue_external_id => unique_external_id })
-
+      :unique_external_id => unique_external_id })
     create_requester unless requester
   end
 
@@ -605,7 +604,7 @@ private
         :twitter_id => twitter_id, :external_id => external_id,
         :name => name || twitter_id || @requester_name || external_id || unique_external_id,
         :helpdesk_agent => false, :active => email.blank?,
-        :phone => phone, :language => language, :unqiue_external_id => unique_external_id,
+        :phone => phone, :language => language, :unique_external_id => unique_external_id,
         :detect_language => detect_language
         }},
         portal, !outbound_email?) # check @requester_name and active
@@ -759,7 +758,7 @@ private
   end
 
   def execute_observer?
-    execute_observer = user_present? and !disable_observer_rule
+    execute_observer = user_present? && !disable_observer_rule
     SBRR.log "Ticket ##{self.display_id} save done. Model_changes #{@model_changes.inspect}"
     Va::Logger::Automation.log "Skipping observer" unless execute_observer
     execute_observer

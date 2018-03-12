@@ -22,7 +22,7 @@ module Freshcaller
       account = ::Account.current
       account_admin.make_current
       if account.users.present?
-        account.agents.each do |agent|
+        account.agents.full_time_agents.each do |agent|
           agent.update_attribute(:freshcaller_enabled, true) unless agent.freshcaller_agent
         end
       end

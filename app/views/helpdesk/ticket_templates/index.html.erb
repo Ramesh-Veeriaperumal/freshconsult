@@ -8,15 +8,14 @@
       <%= t('ticket_templates.title') %>
     </h3>
     <div class="pull-right">
-      <% templ_count     = templates_count_from_cache
-         total_templ     = Helpdesk::TicketTemplate.max_limit
-         # templates_count = @all_items.count
+      <% templ_count       = prime_templates_count_from_cache
+         total_prime_templ = Helpdesk::TicketTemplate.max_limit
          %>
-      <% if templ_count < total_templ %>
-        <%= t('ticket_templates.acc_templ_count', :templ_count => templ_count, :total_templ => total_templ).html_safe if templ_count >= 280 %>
+      <% if templ_count < total_prime_templ %>
+        <%= t('ticket_templates.acc_templ_count', :templ_count => templ_count, :total_templ => total_prime_templ).html_safe if templ_count >= 280 %>
         <%= (link_to t('ticket_templates.new_template'), new_helpdesk_ticket_template_path(), :class => "btn btn-primary") %>
       <% else %>
-        <%= t('ticket_templates.total_templ_count', :total_templ => total_templ).html_safe %>
+        <%= t('ticket_templates.total_templ_count', :total_templ => total_prime_templ).html_safe %>
       <% end %>
     </div>
   </div>
@@ -48,14 +47,14 @@
       <% if !@all_items.present? %> 
         <div class="list-noinfo">
           <%=t('ticket_templates.no_templates')%>
-          <% if templ_count < total_templ %>
+          <% if templ_count < total_prime_templ %>
             <a href="<%=new_helpdesk_ticket_template_path()%>"><%=t('ticket_templates.create_new')%></a>
           <% end %>
         </div>
       <%else%>
         <table class="table table-striped tkt-template-table">
           <tbody>
-            <%= render :partial => "template", :collection => @all_items, :locals => {:show_clone => (templ_count < total_templ)} %>
+            <%= render :partial => "template", :collection => @all_items, :locals => {:show_clone => (templ_count < total_prime_templ)} %>
           </tbody>
         </table>
         <%= will_paginate @all_items, :renderer => BootstrapPaginationRenderer,

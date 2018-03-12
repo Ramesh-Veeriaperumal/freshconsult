@@ -351,9 +351,10 @@ class Account < ActiveRecord::Base
 
   has_one :collab_settings, :class_name => 'Collab::Setting'
 
-  has_many :bot_tickets, class_name: 'Bot::Ticket', dependent: :destroy
-  has_many :bots, class_name: 'Bot', dependent: :destroy
-
   has_many :reminders,
     :class_name => 'Helpdesk::Reminder',:dependent => :destroy
+  has_many :bot_feedbacks, class_name: 'Bot::Feedback'
+  has_many :bot_tickets, class_name: 'Bot::Ticket'
+  has_many :bots, class_name: 'Bot', dependent: :destroy
+  has_many :bot_feedback_mappings, class_name: 'Bot::FeedbackMapping'
 end

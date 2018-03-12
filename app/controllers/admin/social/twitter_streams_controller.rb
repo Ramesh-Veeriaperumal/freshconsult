@@ -55,20 +55,50 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     end
   end
 
+  
   def update
-    update_twitter_handle if params[:social_twitter_handle]
+    check_rules if @twitter_stream.default_stream? && !dont_convert_tweets_to_ticket?
+    update_twitter_handle if params[:social_twitter_handle] and @ticket_error_flash.nil?
     update_twitter_stream if params[:twitter_stream] and @ticket_error_flash.nil?
     update_dm_rule(@twitter_handle) if params[:dm_rule] and @ticket_error_flash.nil?
-    update_ticket_rules if params[:social_ticket_rule] and @ticket_error_flash.nil?    
-    update_smart_filter_rule if params[:smart_filter_rule] and @ticket_error_flash.nil? #check if smart filter is enables
-
+    update_rules if params[:social_ticket_rule] and @ticket_error_flash.nil?
+    
     unless @ticket_error_flash.nil?
-      flash[:notice] = @ticket_error_flash
-      redirect_to :action => 'edit'
+     show_error
+     return
     else
       flash[:notice] = t('admin.social.flash.stream_updated', :stream_name => @twitter_stream.name)
       redirect_to admin_social_streams_url
     end
+  end
+
+  def update_rules
+    if @twitter_stream.custom_stream?
+      update_ticket_rules
+      return 
+    end
+    if dont_convert_tweets_to_ticket?
+      @twitter_stream.ticket_rules.delete_all
+    elsif rules_without_keywords?
+      smart_filter_feature_enabled? ? update_smart_filter_rule_without_keywords : update_ticket_rules      
+    else
+      update_ticket_rules   
+      update_smart_filter_rule_with_keywords if smart_filter_feature_enabled?
+    end  
+  end
+
+
+  def show_error
+    flash[:notice] = @ticket_error_flash
+    redirect_to :action => 'edit'
+  end
+
+  def dont_convert_tweets_to_ticket?
+    params.has_key?(:capture_tweet_as_ticket) && params[:capture_tweet_as_ticket].to_i.zero?
+  end
+
+  def rules_without_keywords?
+    params[:keyword_rules].to_i.zero?
   end
 
   def smart_filter_feature_enabled?
@@ -133,13 +163,21 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   def construct_handle_params
     social_twitter_handle = {
       :product_id           => params[:social_twitter_handle][:product_id],
-      :dm_thread_time       => params[:social_twitter_handle][:dm_thread_time]
+      :dm_thread_time       => params[:social_twitter_handle][:dm_thread_time],
+      :capture_dm_as_ticket => params[:capture_dm_as_ticket].to_i
     }
     if smart_filter_feature_enabled? && update_smart_filter_setting? 
-      Social::SmartFilterInitWorker.perform_async({:smart_filter_init_params => smart_filter_init_params, :account_id => Account.current.id}) if @twitter_handle.smart_filter_enabled.nil?
-      social_twitter_handle.merge!({:smart_filter_enabled => params[:smart_filter_enabled]})
+      social_twitter_handle.merge!({:smart_filter_enabled => smart_filter_enabled?})
     end
     social_twitter_handle
+  end
+
+  def check_rules
+    unless rules_without_keywords?
+      if (params[:social_ticket_rule].detect { |rule| rule[:includes].present? && !rule[:convert_all]}).nil? 
+         @ticket_error_flash = t('admin.social.flash.empty_rule_error')
+      end
+    end
   end
 
   def update_ticket_rules
@@ -164,6 +202,7 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
           :group_id   => group_id
         }
       }
+      rule_params[:action_data].merge!({:convert_all => true}) if rule[:convert_all]
       if rule[:ticket_rule_id].empty?
         ticket_rule = @twitter_stream.ticket_rules.new(rule_params)
         ticket_rule.save
@@ -174,23 +213,34 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     delete_rules(deleted_rules.compact) 
   end
 
-  def update_smart_filter_rule
-    rule = params[:smart_filter_rule]
+
+  def update_smart_filter_rule_with_keywords
     if params[:smart_filter_enabled] == SMART_FILTER_ON
-      smart_rule_params = @twitter_stream.build_smart_rule(rule)
-      if rule[:ticket_rule_id].empty?
-        ticket_rule = @twitter_stream.ticket_rules.new(smart_rule_params)
-        ticket_rule.save
-      else
-        @twitter_stream.ticket_rules.find_by_id(rule[:ticket_rule_id]).update_attributes(smart_rule_params)
-      end  
+      smart_rule = params[:smart_filter_rule_with_keywords]
+      smart_rule.merge!(:with_keywords => 1)
+      update_smart_filter_rule(smart_rule) 
     else
-      delete_rules(rule[:ticket_rule_id])
-      #delete if rule exist
+      delete_rules([@twitter_stream.smart_filter_rule])
     end    
   end
 
-  
+  def update_smart_filter_rule_without_keywords
+    @twitter_stream.delete_keyword_rules
+    smart_rule = params[:smart_filter_rule_without_keywords]
+    smart_rule.merge!(:with_keywords => 0)
+    update_smart_filter_rule(smart_rule) 
+  end
+
+  def update_smart_filter_rule(rule)
+    smart_rule_params = @twitter_stream.build_smart_rule(rule)
+    if rule[:ticket_rule_id].blank?
+      ticket_rule = @twitter_stream.ticket_rules.new(smart_rule_params)
+      ticket_rule.save
+    else
+      @twitter_stream.smart_filter_rule.update_attributes(smart_rule_params)
+    end  
+  end
+
   def delete_rules(deleted_rules)
     Social::TicketRule.delete_all ["id IN (?) AND account_id = ? AND stream_id =?", deleted_rules, current_account.id, @twitter_stream.id] unless deleted_rules.empty?
   end
@@ -235,9 +285,6 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
     {:filter => excluded_handles}
   end
   
-  
-  private
-
   def add_stream_allowed?
     redirect_to admin_social_streams_url unless current_account.add_custom_twitter_stream?
   end
@@ -252,14 +299,16 @@ class Admin::Social::TwitterStreamsController < Admin::Social::StreamsController
   end
 
   def update_smart_filter_setting?
-    return false if @twitter_handle.smart_filter_enabled.nil? && 
-                    params[:smart_filter_enabled] != SMART_FILTER_ON 
+    return false if @twitter_handle.smart_filter_enabled.nil? && !smart_filter_enabled?
     true        
   end
 
-  def smart_filter_init_params 
-    {
-      "account_id" => smart_filter_accountID(:twitter, current_account.id, @twitter_handle.twitter_user_id)
-    }.to_json
+  def smart_filter_enabled?
+    unless dont_convert_tweets_to_ticket?
+      rules_without_keywords? ? true : (params[:smart_filter_enabled] == SMART_FILTER_ON)
+    else 
+      false unless @twitter_handle.smart_filter_enabled.nil?
+    end 
   end
+
 end

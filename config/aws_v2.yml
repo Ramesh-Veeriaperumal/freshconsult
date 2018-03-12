@@ -1,4 +1,3 @@
---- 
 :development: 
   :dynamo: 
     :endpoint: https://localhost:4569
@@ -29,3 +28,4 @@
     :access_key_id: dummy
     :secret_access_key: dummy
     :ssl_verify_peer: false
+

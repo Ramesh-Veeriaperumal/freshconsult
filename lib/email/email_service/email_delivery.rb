@@ -16,8 +16,8 @@ include Email::EmailService::IpPoolHelper
  class EmailDeliveryError < StandardError
  end
 
-  def deliver_email(params, attachments)
-
+  def deliver_email(params, attachments = [], email_type = "")
+    params = merge_email_content_to_params(params, attachments, email_type, params[:html], params[:text])
     Rails.logger.info "Email Sending initiated for #{params["Message-ID"]}"
     start_time = Time.now
     con = Faraday.new(EMAIL_SERVICE_HOST) do |faraday|
@@ -46,7 +46,7 @@ include Email::EmailService::IpPoolHelper
     to_email = construct_email_json_array params[:to]
     cc = params[:cc].present? ? (construct_email_json_array params[:cc] ): nil
     bcc = params[:bcc].present? ? (construct_email_json_array params[:bcc]) : nil
-    reply_to = construct_email_json params["Reply-To"]
+    reply_to = construct_email_json params["Reply-To"] if params["Reply-To"].present?
     account_id = params["X-FD-Account-Id"].present? ? params["X-FD-Account-Id"] : -1
     type = (params["X-FD-Type"].present?) ? params["X-FD-Type"] : "empty"
     category_id = get_notification_category_id(params, type) || check_spam_category(params, type)
@@ -67,7 +67,6 @@ include Email::EmailService::IpPoolHelper
     end
     properties = construct_properties(params, category_id)
     header = construct_headers params
-
     result =  {"headers" => header,
                 "to" => to_email,
                 "cc" => (!cc.nil? ? (remove_duplicate_emails(to_email.to_a, cc.to_a)) : cc),
@@ -81,16 +80,22 @@ include Email::EmailService::IpPoolHelper
                 "categoryId" => "#{category_id}",
                 "properties"=> properties
               }
+    result.merge!("attachments" => params[:attachments]) if params[:attachments].present?
     result.merge!("ipPool" => ip_pool) unless ip_pool.nil?
-    Rails.logger.info "Sending email: Headers: #{result.except("text", "html").inspect}"
+    Rails.logger.info "Sending email: Headers: #{result.except("text", "html", "attachments").inspect}"
     email_logger.debug(result.inspect)
     return result.to_json
   end
 
   def construct_headers full_headers
-    headers = full_headers.except(:from, :to, :bcc, :cc, :subject, :text, :html, "X-FD-Account-Id", "X-FD-Type", "X-FD-Ticket-Id", "X-FD-Note-Id", "X-FD-Email-Category", "Reply-To")
-    message_id = headers["Message-ID"]
-    headers.delete("Message-ID")
+    headers = full_headers.except(:from, :to, :bcc, :cc, :subject, :text, :html, "X-FD-Account-Id", "X-FD-Type", "X-FD-Ticket-Id", "X-FD-Note-Id", "X-FD-Email-Category", "Reply-To", "Reply-to", :attachments)
+    message_id =""
+    if headers["Message-ID"]
+      message_id = headers["Message-ID"]
+      headers.delete("Message-ID")
+    else
+      message_id = "<#{Mail.random_tag}.#{::Socket.gethostname}@email.freshdesk.com>"
+    end
     headers.merge!("messageId" => message_id)
     headers
   end
@@ -196,5 +201,30 @@ include Email::EmailService::IpPoolHelper
     return res
   end
 
+private
+  def merge_email_content_to_params(params, attachments, email_type, html = "", text = "")
+        params[:to] = params[:to].split(/,|\;/) if params[:to].is_a? String
+        if !(html.present? || text.present?)
+          text = render_to_string(email_type + ".text.plain", {formats: :text})
+          html = render_to_string(email_type + ".text.html", {formats: :html})
+        end
+        coder = HTMLEntities.new
+        hmtl = coder.encode(html, :named)
+        params.merge!(:text => text, :html => html)
+        attachment_hash_array = get_attachment_hash_array attachments
+        params.merge!(:attachments => attachment_hash_array) if attachment_hash_array.present?
+        return params
+  end
+  def get_attachment_hash_array attachments
+    res = []
+    attachments.each do |att|
+      attachment_hash = {
+        "filename" => att.content_file_name,
+        "content"=> ActiveSupport::Base64.encode64(Paperclip.io_adapters.for(att.content).read).gsub("\n", "")
+      }
+      res << attachment_hash
+    end
+    return res
+  end
 
 end

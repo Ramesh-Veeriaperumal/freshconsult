@@ -86,5 +86,15 @@ class Social::TwitterHandle < ActiveRecord::Base
     end
     return nil
   end
-  
+
+  def self.drop_advanced_twitter_data(account)
+    account.twitter_handles.order("created_at asc").find_each do |twitter|
+      if twitter.smart_filter_enabled
+        twitter.smart_filter_enabled = 0 
+        twitter.default_stream.prepare_for_downgrade_to_sprout
+        twitter.save!
+      end
+    end
+  end
+
 end

@@ -158,6 +158,10 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
   def phone_note?
     source == SOURCE_KEYS_BY_TOKEN["phone"]
   end
+
+  def summary_note?
+    source == SOURCE_KEYS_BY_TOKEN["summary"]
+  end
   
   def summary_note?
     source == SOURCE_KEYS_BY_TOKEN["summary"]

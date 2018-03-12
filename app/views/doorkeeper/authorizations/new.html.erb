@@ -1,4 +1,4 @@
-<% if current_user.privilege?(:admin_tasks) && current_account.features?(:fa_developer) %>
+<% if current_user.privilege?(:admin_tasks)%>
   <%= render :partial => "new_form" %>
 <% else %>
   <%= render :partial => "error_form" %>

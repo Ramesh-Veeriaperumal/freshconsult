@@ -1,3 +1,5 @@
+//= require i18n.js
+//= require i18n/translations
 //= require prototype-1.6.js
 //= require jquery-1.7.1.min.js
 //= require bootstrap/twipsy.js
@@ -15,5 +17,3 @@
 //= require frameworks/plugins/jquery.form.js
 //= require feedback_widget_form.js
 //= require security.js
-//= require i18n.js
-//= require i18n/translations

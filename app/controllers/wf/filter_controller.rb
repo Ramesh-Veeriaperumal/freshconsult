@@ -57,7 +57,7 @@ class Wf::FilterController < ApplicationController
     unless wf_filter.nil?
       wf_filter = wf_filter.accessible
       wf_filter.deserialize_from_params params
-      wf_filter.visibility = params[:custom_ticket_filter][:visibility]
+      wf_filter.visibility = parse_visibility unless params[:custom_ticket_filter][:visibility].blank?
       wf_filter.save
 
       update_helpdesk_accessible(wf_filter,"custom_ticket_filter") unless (params[:custom_ticket_filter][:visibility].blank? || params[:custom_ticket_filter][:visibility][:visibility].blank?)
@@ -72,15 +72,9 @@ class Wf::FilterController < ApplicationController
   
   def save_filter
     params.delete(:wf_id)
-    params[:custom_ticket_filter][:visibility][:user_id] = current_user.id
-    unless privilege?(:manage_dashboard)
-      params[:custom_ticket_filter][:visibility][:visibility] = \
-        Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me] 
-      params[:custom_ticket_filter][:visibility][:group_id] = nil
-    end  
     
     wf_filter = Helpdesk::Filters::CustomTicketFilter.deserialize_from_params(params)
-    wf_filter.visibility = params[:custom_ticket_filter][:visibility]
+    wf_filter.visibility = parse_visibility unless params[:custom_ticket_filter][:visibility].blank?
     wf_filter.account_id = current_account.id
     wf_filter.validate!
     err_str = ""
@@ -118,6 +112,19 @@ class Wf::FilterController < ApplicationController
   
   def scoper
     current_account.ticket_filters
+  end
+
+  def parse_visibility
+    visibility = params[:custom_ticket_filter][:visibility]
+    visibility = {} unless visibility.is_a?(Hash) # This being sent from HTML forms, there is a chance it could be a string.
+
+    unless privilege?(:manage_dashboard)
+      visibility[:visibility] = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
+      visibility[:group_id] = nil
+    end
+
+    visibility[:user_id] = current_user.id
+    visibility    
   end
 
 end

@@ -134,10 +134,6 @@ module Helpdesk::Activities
       end
     end
 
-    def filter_ticket_data(ticket_data)
-      ticket_data.select { |hash| hash.kind != 7 } #ticket summary
-    end
-
     def fetch_activities(params, ticket, archive = false)
       $activities_thrift_transport.open()
       client    = ::HelpdeskActivities::TicketActivities::Client.new($activities_thrift_protocol)
@@ -177,7 +173,10 @@ module Helpdesk::Activities
       $activities_thrift_transport.close()
     end
 
-    private
+  private
+    def filter_ticket_data(ticket_data)
+      ticket_data.select { |hash| hash.kind != 7 } #ticket summary
+    end
 
     def play_god_admin_emails
       agents = current_account.technicians.select("name, email, privileges")
