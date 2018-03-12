@@ -8,7 +8,8 @@ module Freshbots
     class << self
       def create_bot(bot)
         current_user = User.current
-        domain = bot.portal.portal_url
+        portal = bot.portal
+        domain = portal.portal_url
         domain_url = domain.presence || Account.current.full_domain
         url = BOT_CONFIG[:create_bot_url]
         headers = build_headers(bot, :create)
@@ -23,12 +24,13 @@ module Freshbots
           },
           clnt: {
             clntId: bot.external_id,
-            dmn: domain_url,
+            dmn: bot.external_id, # Domain needs to be unique and freshbots will create an account on their end : freshdesk-#{dmn}.intfreshbots.com
             eml: current_user.email,
             mtdtPrprts: {
               bckgrndClr: bot.template_data[:theme_colour],
               sz: bot.template_data[:widget_size]
-            }
+            },
+            prtl: "#{portal.url_protocol}://#{domain_url}"
           }
         }.to_json
         response = RestClient.post url, payload, headers
