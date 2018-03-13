@@ -162,6 +162,7 @@ class Helpdesk::EmailParser::ProcessedPart
     		else
 	    		extension = Rack::Mime::MIME_TYPES.invert[part.mime_type].to_s
 	    		extension = ".eml" if extension.downcase == '.mime'
+	    		extension = ".ics" if extension.downcase == '.ifb'
 	    		filename = ('attachment' + extension )
 	    	end
     	end

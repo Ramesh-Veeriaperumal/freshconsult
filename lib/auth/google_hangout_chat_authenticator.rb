@@ -33,8 +33,7 @@ class GoogleHangoutChatAuthenticator < Auth::Authenticator
   private
 
   def fetch_redirect_url
-    url = 'integrations/google_hangout_chat/install'
-    @falcon_enabled == 'true' ? "#{@portal_url}/a/#{url}" : "#{@portal_url}/#{url}"
+    "#{@portal_url}/integrations/google_hangout_chat/install"
   end
 
 end

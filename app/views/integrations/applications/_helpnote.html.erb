@@ -1,13 +1,12 @@
-<% if feature?(:fa_developer) %>
-  <div class="dev-shortcuts">
-    <h3 class="title"><%= t('marketplace.developer_shortcuts').html_safe %></h3>
-    <ul>
-      <li class="shortcuts">
-        <a href="<%= MarketplaceConfig::DEV_URL %>/dashboard/<%= current_account.full_domain %>/login" target="_blank"><%= t('marketplace.go_to_dev_portal') %></a>
-      </li>
-    </ul>
-  </div>
-<% end %>
+<div class="dev-shortcuts">
+  <h3 class="title"><%= t('marketplace.developer_shortcuts').html_safe %></h3>
+  <ul>
+    <li class="shortcuts">
+      <a href="<%= MarketplaceConfig::DEV_URL %>/dashboard/<%= current_account.full_domain %>/login" target="_blank"><%= t('marketplace.go_to_dev_portal') %></a>
+    </li>
+  </ul>
+</div>
+
 <% if feature?(:marketplace) %>
   <h3 class="title"><%=t('marketplace.apps')%></h3>
   <p><%= t('marketplace.helpnote1')%></p>

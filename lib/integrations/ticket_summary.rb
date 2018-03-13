@@ -13,3 +13,4 @@ class Integrations::TicketSummary
     current_account.revoke_feature(:ticket_summary)
   end
 end
+

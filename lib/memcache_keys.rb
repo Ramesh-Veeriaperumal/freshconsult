@@ -173,7 +173,7 @@ module MemcacheKeys
 
   COMPOSE_EMAIL_FORM = "v3/COMPOSE_EMAIL_FORM:%{account_id}:%{language}"
 
-  TKT_TEMPLATES_COUNT = "v1/TKT_TEMPLATES_COUNT:%{account_id}"
+  PRIME_TKT_TEMPLATES_COUNT = "v1/PRIME_TKT_TEMPLATES_COUNT:%{account_id}"
 
   ACCOUNT_WEBHOOK_KEY = "ACCOUNT_WEBHOOK_KEY:%{account_id}:%{vendor_id}"
 
@@ -198,6 +198,10 @@ module MemcacheKeys
   NER_ENRICHED_NOTE = "NER_ENRICHED_NOTE:%{account_id}:%{ticket_id}"
 
   SUBSCRIPTION_PLANS = 'v1/SUBSCRIPTION_PLANS'
+
+  LEADERBOARD_MINILIST_REALTIME_FALCON = 'v1/LEADERBOARD_MINILIST_REALTIME_FALCON:%{account_id}:%{user_id}'
+
+  GROUP_AGENTS_LEADERBOARD_MINILIST_REALTIME_FALCON = 'v1/GROUP_AGENTS_LEADERBOARD_MINILIST_REALTIME_FALCON:%{account_id}:%{user_id}:%{group_id}'
 
   class << self
 

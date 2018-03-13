@@ -38,4 +38,5 @@ class Helpdesk::Note < ActiveRecord::Base
   NER_DATA_TIMEOUT = 30.days.to_i
 
   EXCLUDE_SOURCE =  %w{meta summary}.freeze
+
 end

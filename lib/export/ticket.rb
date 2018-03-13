@@ -216,7 +216,7 @@ class Export::Ticket < Struct.new(:export_params)
 
   def parse_date(date_time)
     if date_time.class == String
-      DateTime.parse(date_time).strftime("%F %T")
+      Time.zone.parse(date_time).strftime("%F %T")
     else
       date_time.strftime("%F %T")
     end

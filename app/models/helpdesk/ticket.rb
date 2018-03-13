@@ -27,6 +27,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include BusinessHoursCalculation
   include AccountConstants
   include RoundRobinCapping::Methods
+  include MemcacheKeys
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
@@ -340,6 +341,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   end
 
+  def properties_updated?
+    self.changed? || self.schema_less_ticket_updated? || self.custom_fields_updated?
+  end
+
   def skill_name
     self.skill.try(:name)
   end
@@ -424,6 +429,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def outbound_email?
     (source == SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?
+  end
+
+  # Fetch NER data from cache.
+  def fetch_ner_data
+    key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.id }
+    MemcacheKeys.get_from_cache(key)
   end
 
   #This method will return the user who initiated the outbound email
@@ -933,7 +944,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
-  def reply_to_all_emails
+ def reply_to_all_emails
     emails_hash = cc_email_hash
     return [] if emails_hash.nil?
     to_emails_array = []
@@ -941,15 +952,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ticket_to_emails = self.to_emails || []
     to_emails_array = (ticket_to_emails || []).clone
 
-    reply_to_all_emails = (cc_emails_array + to_emails_array).map{|email| parse_email(email)[:email]}.compact.uniq
+    reply_to_all_emails = (cc_emails_array + to_emails_array).map{|email| trim_trailing_characters(parse_email_text(email)[:email])}.compact.uniq
+    parsed_support_emails = account.parsed_support_emails
 
-    account.support_emails.each do |support_email|
+    parsed_support_emails.each do |support_email|
       reply_to_all_emails.delete_if {|to_email| (
-        (trim_trailing_characters(parse_email_text(support_email)[:email])).casecmp(trim_trailing_characters(parse_email_text(to_email.strip)[:email])) == 0) ||
-        (parse_email_with_domain(to_email.strip)[:domain] == account.full_domain)
+        support_email.casecmp(to_email) == 0)
       }
     end
 
+    reply_to_all_emails.delete_if {|to_email|
+      (parse_email_with_domain(to_email.strip)[:domain] == account.full_domain)
+    }
     reply_to_all_emails
   end
 

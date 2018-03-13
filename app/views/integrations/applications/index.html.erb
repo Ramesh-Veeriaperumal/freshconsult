@@ -97,7 +97,9 @@
                             no_connection: "<%= I18n.t('marketplace.no_connection') %>"
                           };
 
-    var platformVersion = '<%= current_account.falcon_ui_enabled?(current_user) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2] : Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>'
+
+    var platformVersion = '<%= current_account.falcon_ui_enabled?(current_user) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
+                              : Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>'
     var marketplaceBrowser = new MarketplaceBrowser(settingsLinks, customMessages, platformVersion);
 
     marketplaceBrowser.toggleAppsMessage(marketplaceBrowser.getAppsLength() > 0 );

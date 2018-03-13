@@ -6,7 +6,7 @@ class Social::SmartFilterFeedbackWorker < BaseWorker
   include Social::Util
 
   sidekiq_options :queue => :smart_filter_feedback, 
-                  :retry => 0,
+                  :retry => 3,
                   :backtrace => true, 
                   :failures => :exhausted
   
@@ -19,20 +19,20 @@ class Social::SmartFilterFeedbackWorker < BaseWorker
       @dynamo_helper = Social::Dynamo::Twitter.new
 
       if should_give_feedback_to_smart_filter?(args[:type_of_feedback])
-        response = smart_filter_feedback(generate_feedback_request_body(args[:type_of_feedback]))
-        if response == 202
+        begin
+          response = smart_filter_feedback(generate_feedback_request_body(args[:type_of_feedback]))
           record_smart_filter_feedback
-        else 
-          handle_failure(response, args) 
-        end
+        rescue Exception => e
+          handle_failure(e, args)
+        end 
       end
     end
   end
 
   def handle_failure(response, args) 
     notify_social_dev("Error sending feedback to smart filter", {:msg => "Account_ID: #{Account.current.id} Params: #{args} :: Response code: #{response}"})
-    if response.is_a?(Integer) && !(response.between?(400, 499))
-      Social::SmartFilterFeedbackWorker.perform_in(2.minutes.from_now, args)
+    unless response.is_a?(RestClient::Exception) && response.http_code.between?(400, 499)
+      raise "Error sending feedback to smart filter: Account_ID: #{Account.current.id}"
     end
   end
 

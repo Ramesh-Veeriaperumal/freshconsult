@@ -23,8 +23,8 @@ class NER::HtmlIndexTransformer
         sub_string = text[current_ner_data["value"]["start"]..(current_ner_data["value"]["end"] - 1)]
         start_index = html.to_s.index(sub_string)
         next unless start_index
-        end_index = start_index + sub_string.length - 1
-        html_sub_string = html_untouched[(offset + start_index)..(offset + end_index)]
+        end_index = start_index + sub_string.length 
+        html_sub_string = html_untouched[(offset + start_index)..(offset + end_index - 1)]
         if sub_string == html_sub_string
           html_ner_indexes << transform_current_value(current_ner_data, {"start" => offset + start_index, "end" => offset + end_index})
           @html = html[(end_index+1)..-1]

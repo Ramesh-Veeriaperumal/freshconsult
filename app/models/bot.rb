@@ -5,6 +5,7 @@ class Bot < ActiveRecord::Base
   self.primary_key = :id
 
   attr_accessible :name, :portal_id, :template_data, :enable_in_portal
+  attr_protected :account_id
 
   attr_protected :account_id
 
@@ -15,10 +16,11 @@ class Bot < ActiveRecord::Base
   validates :enable_in_portal, inclusion: { in: [true, false] }
   validates :external_id, uniqueness: true
   validates :portal_id, uniqueness: true
-  
+
   before_create :set_external_id
   after_create :training_not_started!
   before_update :check_constant_fields
+  before_destroy :cleanup # Destroy bot ticket mappings, feedbacks and feedback mappings.
 
   has_one :logo,
           as: :attachable,
@@ -29,6 +31,7 @@ class Bot < ActiveRecord::Base
   belongs_to :portal
   belongs_to_account
 
+  has_many :bot_feedbacks, class_name: '::Bot::Feedback'
   has_many :bot_tickets, class_name: 'Bot::Ticket'
   has_many :tickets,
            class_name: 'Helpdesk::Ticket',
@@ -71,7 +74,7 @@ class Bot < ActiveRecord::Base
   end
 
   def render_widget_code?
-    enable_in_portal && (get_others_redis_key(status_redis_key).to_i == BotConstants::BOT_STATUS[:training_completed] || !redis_key_exists?(status_redis_key))
+    enable_in_portal && training_completed?
   end
 
   def training_status
@@ -85,7 +88,6 @@ class Bot < ActiveRecord::Base
     }
     profile_json
   end
-
 
   def profile
     default = default_avatar?
@@ -123,5 +125,13 @@ class Bot < ActiveRecord::Base
 
     def set_external_id
       self.external_id = UUIDTools::UUID.timestamp_create.hexdigest
+    end
+
+    def cleanup
+      ::Bot::Cleanup.perform_async(bot_id: self.id)
+    end
+
+    def training_completed?
+      get_others_redis_key(status_redis_key).to_i == BotConstants::BOT_STATUS[:training_completed] || !redis_key_exists?(status_redis_key)
     end
 end
