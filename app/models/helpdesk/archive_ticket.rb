@@ -222,7 +222,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
   end
 
   def conversation_since(since_id)
-    archive_notes.conversations.visible.newest_first.since(since_id).includes(note_preload_options)
+    archive_notes.conversations.newest_first.since(since_id).includes(note_preload_options)
   end
 
   def conversation_before(before_id)

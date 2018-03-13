@@ -1813,6 +1813,16 @@ div[class$="-toggle"]{
 }
 /* End of Agent availabilty*/
 
+/* twitter smart filter */
+
+.smart-filter-wrapper {
+  #smart_filter_head {
+    .form_data {
+      @include margin-left(0px);
+    }
+  }
+}
+
 @import "falcon-community";
 @import "falcon-reports";
 @import "falcon-livechat";

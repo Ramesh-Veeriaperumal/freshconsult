@@ -244,7 +244,8 @@ class TicketsController < ApiApplicationController
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
 
       # During update set requester_id to nil if it is not a part of params and if any of the contact detail is given in the params
-      if update? && !params[cname].key?(:requester_id) && (params[cname].keys & %w(email phone twitter_id facebook_id)).present?
+      if update? && !params[cname].key?(:requester_id) && (params[cname].keys & 
+          ApiTicketConstants::VERIFY_REQUESTER_ON_PROPERTY_VALUE_CHANGES).present?
         params[cname][:requester_id] = nil
       end
 

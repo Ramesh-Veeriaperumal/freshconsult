@@ -14,7 +14,7 @@ module CustomDomain
     def cname_mapping?
       dns_response = retrieve_dns_records(@domain, Types.CNAME)
       return false unless dns_response.present?
-      dns_response.any? { |dns_rec| @valid_fd_domains.include?(dns_rec.cname.to_s.chomp('.')) }
+      dns_response.any? { |dns_rec| @valid_fd_domains.include?(dns_rec.cname.to_s.downcase.chomp('.')) }
     end
 
     def txt_mapping?

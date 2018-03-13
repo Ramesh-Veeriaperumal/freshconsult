@@ -1,10 +1,10 @@
 <div class="adm-social adm-bg bdr clearfix">
   <div class="smedia-spec row-fluid">
-    
+
     <div class="span1 ml0">
       <div class="profile-logo pull-left"><%= image_tag(s3_twitter_avatar(twitter_handle), size: "50x50") %></div>
     </div>
-    
+
     <div class="span11 pl20">
       <div>
          <div class="profile-name pull-left"><%= link_to "@#{twitter_handle.screen_name}", "http://twitter.com/#{twitter_handle.screen_name}", :target => "_blank", :class => "title" %> 
@@ -12,7 +12,7 @@
          </div>
         <div class="social-brand pull-right"><%= font_icon "twitter", :size => 48 %></div>
       </div>
-      
+
       <div class="adm-p">
         <div class="row-fluid">
           <div class='form_data span11 mlt mt20'>
@@ -22,7 +22,7 @@
                 <%= collection_select(:social_twitter_handle, :product_id, current_account.products, :id, :name, { :include_blank => 'Default Product', :selected => twitter_handle.product_id }, :class => 'select2-container select2 span12')%>
               </div>
             <% end %>
-            
+
             <div class="control-group span8">
               <label><%= t('admin.social.twitter_streams.edit.visible_to') %> <span class="field-important ">*</span></label>
               <%= visibility_options(twitter_handle)%>
@@ -30,10 +30,16 @@
           </div>
         </div>
       </div>
+      <div class="checkbox-ticket-tweet">
+        <%# change to capture_mention_as_ticket to capture_tweet_as_ticket %>
+        <%= f.check_box(:private, :checked => @twitter_handle.default_stream.capture_tweets_as_ticket?, :id => "capture_tweet_as_ticket", :name => 'capture_tweet_as_ticket', "data-checked-label" => t("plain_yes"), "data-unchecked-label" => t("plain_no") ) %>
+        <span><%= t('admin.social.smart_filter.convert_tweet') %></span>
+      </div>
+      <div class="checkbox-ticket-dm">
+        <%= f.check_box(:private, :checked => @twitter_handle.capture_dm_as_ticket, :id => "capture_dm_as_ticket", :name => 'capture_dm_as_ticket', "data-checked-label" => t("plain_yes"), "data-unchecked-label" => t("plain_no") ) %>
+        <span><%= t('admin.social.smart_filter.convert_dm') %></span>
+      </div>
     </div>
-    
+
   </div>
 </div>
-
-
-           

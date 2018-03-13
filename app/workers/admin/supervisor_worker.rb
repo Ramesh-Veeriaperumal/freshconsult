@@ -28,7 +28,7 @@ module Admin
                 next if ticket.sent_for_enrichment?
                 execute_on_db("run_on_master") { 
                   rule.trigger_actions ticket
-                  ticket.save_ticket! 
+                  ticket.save_ticket! if ticket.properties_updated?
                 }
               rescue Exception => e
                 logger.info "::::::::::::::::::::error:::::::::::::#{rule.inspect}"

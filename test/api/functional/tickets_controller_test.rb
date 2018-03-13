@@ -64,6 +64,7 @@ class TicketsControllerTest < ActionController::TestCase
     end
     @account.launch :add_watcher
     @account.save
+    @account.revoke_feature :unique_contact_identifier
     @@before_all_run = true
   end
 
@@ -1542,6 +1543,8 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_source
     params_hash = { source: 2 }
     t = ticket
+    t.send("test_custom_paragraph_#{@account.id}=", Faker::Lorem.characters(20))
+    t.save
     put :update, construct_params({ id: t.display_id }, params_hash)
     match_json(update_ticket_pattern({}, t.reload))
     assert_response 200
@@ -1707,7 +1710,9 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_status_resolved_and_only_due_by
     t = ticket
     time = 12.days.since.iso8601
-    params_hash = { status: 4, due_by: time }
+    params_hash = { status: 4, due_by: time, custom_fields: { 
+        test_custom_paragraph: Faker::Lorem.characters(200)
+      } }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
@@ -1715,6 +1720,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_status_closed_and_only_fr_due_by
     t = ticket
+    t.send("test_custom_paragraph_#{@account.id}=", Faker::Lorem.characters(20))
+    t.save
     time = 4.days.since.iso8601
     params_hash = { status: 5, fr_due_by: time }
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -1724,6 +1731,8 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_update_with_status_closed_and_due_by
     t = ticket
+    t.send("test_custom_paragraph_#{@account.id}=", Faker::Lorem.characters(20))
+    t.save
     time1 = 12.days.since.iso8601
     time2 = 4.days.since.iso8601
     params_hash = { status: 5, due_by: time1, fr_due_by: time2 }
@@ -3568,7 +3577,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 5, type: 'Problem')
     Helpdesk::TicketField.where(name: "test_custom_paragraph_#{@account.id}").update_all(required_for_closure: true)
     put :update, construct_params({ id: t.display_id }, params_hash)
-    Helpdesk::TicketField.where(name: "test_custom_paragraph_#{@account.id}").update_all(required_for_closure: false)
+    Helpdesk::TicketField.where(name: "custom_fields.test_custom_paragraph_#{@account.id}").update_all(required_for_closure: false)
     assert_response 200
   ensure
     @account.ticket_fields.custom_fields.each do |x|
@@ -3605,6 +3614,48 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(ticket_pattern({}, t))
     assert_equal t.owner_id, sample_requester.company_id
     assert_response 201
+  end
+
+  def test_create_with_unique_external_id_and_expect_validation_error
+    params = {
+      subject: Faker::Lorem.characters(100), 
+      description: Faker::Lorem.paragraph,
+      unique_external_id: Faker::Lorem.characters(30),
+      status: 2, priority: 2,
+    }
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern(
+      'unique_external_id', :require_feature_for_attribute, 
+      code: :inaccessible_field, feature: :unique_contact_identifier,
+        attribute: "unique_external_id")]
+    )
+  end
+
+  def test_create_with_unique_external_id
+    params = {
+      subject: Faker::Lorem.characters(100), 
+      description: Faker::Lorem.paragraph,
+      unique_external_id: Faker::Lorem.characters(30),
+      status: 2, priority: 2,
+    }
+    @account.add_feature :unique_contact_identifier
+    post :create, construct_params({}, params)
+    assert_response 201
+    results = parse_response(@response.body)
+    assert_not_nil results['id']
+    @account.revoke_feature :unique_contact_identifier
+  end
+
+  def test_update_with_new_unique_external_id
+    @account.add_feature :unique_contact_identifier
+    params_hash = { unique_external_id: Faker::Lorem.characters(20) }
+    t = ticket
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 200
+    results = parse_response(@response.body)
+    assert_not_equal results['requester_id'], t.requester_id
+    @account.revoke_feature :unique_contact_identifier
   end
 
   def test_create_with_company_id

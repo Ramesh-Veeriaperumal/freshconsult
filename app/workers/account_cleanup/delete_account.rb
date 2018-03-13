@@ -30,13 +30,6 @@ class AccountCleanup::DeleteAccount < BaseWorker
     end
 
     update_status(deleted_customer, STATUS[:deleted])
-
-    begin
-      update_account_status_in_freshid(account)
-    rescue Exception => error
-      Rails.logger.info "Error while creating job to update account state in Freshid, #{account.inspect} - #{error.inspect}"
-      NewRelic::Agent.notice_error(error) 
-    end
   end
 
   private 
@@ -129,15 +122,5 @@ class AccountCleanup::DeleteAccount < BaseWorker
      end
 
    end
-
-  def update_account_status_in_freshid(account)
-    account_details_params = {
-      name: account.name,
-      account_id: account.id,
-      domain: account.full_domain,
-      destroy: true
-    }
-    Freshid::AccountDetailsUpdate.perform_async(account_details_params)
-  end
 
  end

@@ -1,0 +1,35 @@
+<% if (typeof message !== 'undefined') { %>
+  <p class="text-error"><%= message %></p>
+<% } else if (typeof logs === 'undefined') { %>
+  <div style="top:30%;left:46%" class='sloading loading-block'>
+    <div class="loading-block log_loading_message"> <%- loading_message %></div>
+  </div>
+<% } else { %>
+  <div class="log_header">
+    <%- table_header %>
+  </div>
+  <div class="btn btn-flat reload_logs">
+    <span class="ficon-refresh"></span>
+    <a class="log-anchors">Reload</a>
+  </div>
+  <div class="btn btn-flat export_logs">
+    <span class="ficon-download" style="font-size:10px"></span>
+    <a class="log-anchors" href="<%= url %>" download>Export</a>
+  </div>
+  <table class="table logs-table">
+    <thead>
+      <tr>
+        <th class="log-time">Time</th>
+        <th class="log-id">ID</th>
+        <th class="log-message">Message</th>
+      </tr>
+    </thead>
+    <% logs.forEach(function(log) { %>
+      <tr>
+        <td> <%= log.timestamp %> </td>
+        <td> <%= log.id %> </td>
+        <td class="left-align-message <%= log.type %>"> <%- log.message %> </td>
+      </tr>
+    <% }) %>
+  </table>
+<% } %>

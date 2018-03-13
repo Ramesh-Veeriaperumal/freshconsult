@@ -34,6 +34,18 @@
 				</div>
 			 </li>
 			<%end%>
+      <% if current_account.freshid_enabled? %>
+        <section class="freshid_login">
+          <div class="agent-login-link">
+            <i class="ficon-helpdesk_new agent-login-icon"></i>
+            <div class="link-content">
+              <span><%= t('portal.agent_login_info') %> </span>
+              <%= link_to t('portal.agent_signin'), Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url) %>
+            </div>
+          </div>
+        </section>
+      <% end %>
+
 		</ul>
 	<% end %>
 </div>

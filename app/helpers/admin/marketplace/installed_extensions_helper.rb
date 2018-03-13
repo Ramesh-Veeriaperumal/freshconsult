@@ -1,6 +1,10 @@
 module Admin::Marketplace::InstalledExtensionsHelper
   include Admin::Marketplace::CommonHelper
 
+  def has_logs
+    @extension['features'].include?('backend') && (@extension['app_type'] == 2 || @extension['type'] == 6) && params[:action] == 'edit_configs'
+  end
+
   def install_btn
     params_hash = params[:version_id] ? { version_id: params[:version_id] } : {}
     query_params = params_hash.blank? ? '' : "?#{params_hash.to_query}"

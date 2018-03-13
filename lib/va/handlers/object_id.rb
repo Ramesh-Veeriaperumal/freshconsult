@@ -1,16 +1,13 @@
 class Va::Handlers::ObjectId < Va::RuleHandler
 
   private
-    NULL_QUERY = "OR %{db_column} IS NULL"
-    NOT_NULL_QUERY = "OR %{db_column} IS NOT NULL"
-
     def proper_value
       value.blank? ? nil : value.to_i
     end
 
     def numeric_values_list
       [*value].map do |each_value|
-        each_value.blank? ? nil : each_value.to_i
+        each_value.to_i if each_value.present?
       end
     end
 
@@ -31,19 +28,19 @@ class Va::Handlers::ObjectId < Va::RuleHandler
     end
 
     def filter_query_in
-      construct_query QUERY_OPERATOR[:in], numeric_values_list, '(?)'
+      construct_in_query QUERY_OPERATOR[:in]
     end
 
     def filter_query_not_in
-      construct_query QUERY_OPERATOR[:not_in], numeric_values_list, '(?)'
+      construct_in_query QUERY_OPERATOR[:not_in]
     end
 
     def filter_query_is
-      construct_query (proper_value ? QUERY_OPERATOR[:equal] : QUERY_OPERATOR[:is])
+      construct_is_query (proper_value ? QUERY_OPERATOR[:equal] : QUERY_OPERATOR[:is])
     end
 
     def filter_query_is_not
-      construct_query (proper_value ? QUERY_OPERATOR[:not_equal] : QUERY_OPERATOR[:is_not])
+      construct_is_query (proper_value ? QUERY_OPERATOR[:not_equal] : QUERY_OPERATOR[:is_not])
     end
 
     #Checking 'proper_value' to avoid "column != null" condition as its invalid
@@ -51,22 +48,36 @@ class Va::Handlers::ObjectId < Va::RuleHandler
       [ " #{condition.db_column} #{proper_value ? '!=' : 'is not'} ? OR #{condition.db_column} IS NULL ", proper_value ]
     end
 
-    def construct_query(q_operator, value = proper_value, replacement_operator = '?')
-      contain_nil_value = [*value].include?(nil)
-      is_none_condition = ''
-      is_none_condition = null_check_query(q_operator == QUERY_OPERATOR[:in] ? contain_nil_value : !contain_nil_value) if insert_in_condition?(q_operator)
-
-      [ " ( #{condition.db_column} #{q_operator} #{replacement_operator} #{is_none_condition} ) ", value ]
+    def construct_is_query(q_operator)
+      [ "#{condition.db_column} #{q_operator} ?", proper_value ]
     end
 
-    def insert_in_condition?(q_operator)
-      q_operator == QUERY_OPERATOR[:in] || q_operator == QUERY_OPERATOR[:not_in]
-    end
+    def construct_in_query(q_operator)
+      value = numeric_values_list
+      contain_nil_value = value.include?(nil) # check it has null value
+      value.compact! # remove null value from the list/array
 
-    def null_check_query(contain_nil_value)
-      column_name = condition.db_column
-      contain_nil_value ? (NULL_QUERY % {db_column:column_name}) : (NOT_NULL_QUERY % {db_column:column_name})
+      # if there is any non-null value then please include IN or NOT IN query
+      if value.length > 0
+        # "IS NULL" query will be added depending on whether it is "IN" or "NOT IN" query.
+        # In "IN" query, we will add "NULL query" if the list does have null value
+        # In "NOT IN" query, we will add "NULL query" if the list does not have null value
+        add_null_condition = (q_operator == QUERY_OPERATOR[:in] ? contain_nil_value : !contain_nil_value)
+        none_value_query = add_null_condition ? "OR #{null_query}" : ""
+        query = ["#{condition.db_column} #{q_operator} (?) #{none_value_query}", value]
+      else
+        # if list have only null value then we don't need to send "IN" or "NOT IN" query
+        query = (q_operator == QUERY_OPERATOR[:in]) ? [null_query] : [null_query(:not_null)]
+      end
+      query
     end
 
     alias_method :in_local, :in
 end
+
+# NOTE: PLEASE DON'T DELETE THE BELOW COMMENT
+
+=begin
+query = in           nonNullValue > 0 => if contain_null "OR col IS NULL" else ""          nonNullValue == 0 =>  "col IS NULL"
+query = not_in       nonNullValue > 0 => if contain_null "" else "OR col IS NULL"          nonNullValue == 0 =>  "col IS NOT NULL"
+=end

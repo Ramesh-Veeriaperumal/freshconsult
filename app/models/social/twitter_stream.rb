@@ -18,15 +18,22 @@ class Social::TwitterStream < Social::Stream
     :dependent   => :destroy,
     :conditions  => {:rule_type => SMART_FILTER_RULE_TYPE }
 
+  has_many :keyword_rules,
+    :class_name  => 'Social::TicketRule',
+    :foreign_key => :stream_id,
+    :dependent   => :destroy,
+    :conditions  => {:rule_type => nil }
+
+
   validates_presence_of :includes
 
   def check_ticket_rules(tweet_body)
     hash = {
       :stream_id => self.id
     }
-    tkt_rules = self.ticket_rules
+    tkt_rules = self.keyword_rules
     tkt_rules.each do |rule|
-      if rule.rule_type.blank? and rule.apply(tweet_body)
+      if rule.apply(tweet_body)
         hash.merge!({
           :convert    => true,
           :group_id   => rule.action_data[:group_id],
@@ -45,7 +52,8 @@ class Social::TwitterStream < Social::Stream
     }
     if is_english?(tweet_body)
       smart_filter_params = construct_smart_filter_params(tweet_body, tweet_id, twitter_user_id)
-      can_convert_to_ticket = smart_filter_query(smart_filter_params)
+      convert_all_relevant_tweets = self.smart_filter_rule.action_data[:with_keywords].to_i == 0
+      can_convert_to_ticket = smart_filter_query(smart_filter_params, convert_all_relevant_tweets)
       if can_convert_to_ticket == SMART_FILTER_DETECTED_AS_TICKET
         rule = smart_filter_rule #FOR NOW. WE NEED TO CHANGE THIS
         hash.merge!({
@@ -111,7 +119,8 @@ class Social::TwitterStream < Social::Stream
         },
         :action_data => {
           :product_id => product_id,
-          :group_id   => group_id
+          :group_id   => group_id,
+          :with_keywords => rule[:with_keywords]
         }
       }  
     smart_rule_params      
@@ -146,8 +155,55 @@ class Social::TwitterStream < Social::Stream
     end
   end
 
-  def should_check_smart_filter?(convert_hash)
-    !convert_hash[:convert] && Account.current.twitter_smart_filter_enabled? && self.default_stream? && self.twitter_handle.smart_filter_enabled?
+  def should_check_smart_filter?
+    self.default_stream? && self.twitter_handle.smart_filter_enabled?
+  end
+
+  def capture_tweets_as_ticket?
+    self.ticket_rules.exists?
+  end
+
+  def keyword_rules_present?
+    (self.smart_filter_rule && self.smart_filter_rule[:action_data][:with_keywords] == 1) || 
+    convert_using_keyword_rules.present?
+  end
+
+  def convert_using_keyword_rules
+    self.keyword_rules.delete_if {|rule| rule[:action_data][:convert_all]} 
+  end
+
+  def delete_keyword_rules
+    self.ticket_rules.where("rule_type IS NULL OR rule_type != #{SMART_FILTER_RULE_TYPE}").delete_all 
+  end
+
+  def prepare_for_downgrade_to_sprout 
+    return unless smart_filter_rule
+    if smart_filter_rule.action_data[:with_keywords].to_i == 0
+      convert_smart_filter_rule_to_keyword_rule
+    end
+    smart_filter_rule.destroy
+    save!
+  end
+
+  def prepare_for_upgrade_from_sprout 
+    keyword_rule = keyword_rules.first
+    return unless keyword_rule
+    if keyword_rule.action_data[:convert_all]
+      keyword_rule.action_data.delete(:convert_all)
+      keyword_rule.save!
+    end 
+  end
+
+  def convert_smart_filter_rule_to_keyword_rule
+    ticket_rule = self.ticket_rules.new
+    ticket_rule.action_data = {
+      :product_id => smart_filter_rule.action_data[:product_id],
+      :group_id   => smart_filter_rule.action_data[:group_id],
+      :convert_all => true
+    }
+    ticket_rule.filter_data = {
+      :includes => [self.name]
+    }
   end
 
   private
@@ -160,7 +216,7 @@ class Social::TwitterStream < Social::Stream
     end
 
     def can_create_dm_rule?
-      self.twitter_handle.capture_dm_as_ticket if self.twitter_handle and dm_stream?
+      self.twitter_handle and dm_stream?
     end
 
     def dm_stream?

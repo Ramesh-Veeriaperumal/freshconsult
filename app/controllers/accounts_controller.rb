@@ -104,7 +104,7 @@ class AccountsController < ApplicationController
   def edit_domain
     @user_session = current_account.user_sessions.new(current_user)
     if @user_session.save
-      current_account.schedule_account_activation_email(current_user.id)
+      current_account.schedule_account_activation_email(current_user.id) unless current_account.freshid_enabled?
       render :layout => false
       return
     else

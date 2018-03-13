@@ -1,3 +1,5 @@
+//= require i18n.js
+//= require i18n/translations
 //= require frameworks/plugins/jquery.livequery.js
 //= require frameworks/plugins/jquery.form.js
 //= require frameworks/plugins/jquery.validate.js

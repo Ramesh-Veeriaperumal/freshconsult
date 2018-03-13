@@ -86,6 +86,7 @@
   <%= render partial: "admin_onboarding/onboarding_modal" %>
 <% else %>
 	<% if current_account.launched?(:onboarding_inlinemanual) %>
+		<script>window.inlineManualOptions = { language: "<%= I18n.locale %>" } ;</script>
 		<% if Rails.env.production? %>
 			<script src="https://inlinemanual.com/embed/player.<%=INLINE_MANUAL_TOKENS['access_key']%>.js" async ></script>
 		<% else %>

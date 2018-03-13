@@ -7,5 +7,4 @@ module SmartFilterConfig
   QUERY_URL = tokens[Rails.env]['query_url']
   FEEDBACK_URL = tokens[Rails.env]['feedback_url']
   MAX_TRIES = tokens[Rails.env]['max_tries']
-  RETRY_BASE_SLEEP_SEC = tokens[Rails.env]['retry_base_sleep_seconds']
 end

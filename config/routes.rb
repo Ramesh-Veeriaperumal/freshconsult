@@ -365,7 +365,6 @@ Helpkit::Application.routes.draw do
       post :create_contact
       put :update_contact
       put :update_description_and_tags
-      get :view_conversations
     end
   end
 
@@ -3250,6 +3249,7 @@ Helpkit::Application.routes.draw do
 
   use_doorkeeper do
     skip_controllers :oauth_applications, :authorized_applications
+    controllers :authorizations => 'Doorkeeper::Authorize'
   end
 
   namespace :doorkeeper, :path => '' do

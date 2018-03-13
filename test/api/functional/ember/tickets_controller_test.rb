@@ -313,7 +313,7 @@ module Ember
     def test_index_with_company_side_load
       get :index, controller_params(version: 'private', include: 'company')
       assert_response 200
-      match_json(private_api_ticket_index_pattern(false, false, true))
+      match_json(private_api_ticket_index_pattern(false, false, true, 'created_at', 'desc', true))
     end
 
     def test_index_with_only_count
