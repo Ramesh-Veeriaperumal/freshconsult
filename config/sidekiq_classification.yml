@@ -135,6 +135,7 @@
     - dev_notification_worker
     - natero_worker
     - reports_no_activity
+    - bot_cleanup
   :external:
     - code_console_execution
     - integrations

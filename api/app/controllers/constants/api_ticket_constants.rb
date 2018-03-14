@@ -3,19 +3,18 @@ module ApiTicketConstants
   ARRAY_FIELDS = %w(tags cc_emails attachments attachment_ids related_ticket_ids).freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-
   IGNORE_PARAMS = %w(skip_close_notification parent_id parent_template_id child_template_ids related_ticket_ids).freeze | AttachmentConstants::CLOUD_FILE_FIELDS
 
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
                      email phone twitter_id facebook_id requester_id name
                      responder_id internal_agent_id source status subject type product_id company_id
-                     parent_id parent_template_id child_template_ids).freeze | ARRAY_FIELDS | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+                     parent_id parent_template_id child_template_ids unique_external_id).freeze | ARRAY_FIELDS | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
 
   # removed source since update of ticket source should not be allowed. - Might break API v2
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
                      email phone twitter_id facebook_id requester_id name
                      responder_id internal_agent_id source status subject type product_id company_id
-                     skip_close_notification).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+                     skip_close_notification unique_external_id).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   PARSE_TEMPLATE_FIELDS = [:template_text].freeze
   BULK_REPLY_FIELDS = [reply: ([:body, :from_email, :attachment_ids] | AttachmentConstants::CLOUD_FILE_FIELDS)].freeze
   BULK_UPDATE_FIELDS = (UPDATE_FIELDS - ['attachments']).freeze
@@ -30,9 +29,11 @@ module ApiTicketConstants
   BULK_DELETE_PRELOAD_OPTIONS = [:tags, :schema_less_ticket].freeze
   DEFAULT_ORDER_BY = TicketsFilter::DEFAULT_SORT
   DEFAULT_ORDER_TYPE = TicketsFilter::DEFAULT_SORT_ORDER
-  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(group_id responder_id product_id internal_agent_id internal_group_id
+  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(group_id responder_id product_id 
+                                        internal_agent_id internal_group_id
                                         email_config_id custom_field requester_id
-                                        status facebook_id ticket_type company_id).freeze
+                                        status facebook_id ticket_type company_id 
+                                        unique_external_id).freeze
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze
   SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :chat, :mobihelp, :feedback_widget).values.freeze
 
@@ -121,4 +122,6 @@ module ApiTicketConstants
   PARAMS_TO_SAVE_AND_REMOVE = [:status, :cloud_files, :attachment_ids, :skip_close_notification, :parent_template_id, :child_template_ids].freeze
 
   ALLOWED_ONLY_PARAMS = %w(count).freeze
+  VERIFY_REQUESTER_ON_PROPERTY_VALUE_CHANGES = %w(email phone twitter_id 
+                                          facebook_id unique_external_id).freeze
 end.freeze

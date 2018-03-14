@@ -3,8 +3,8 @@ class Account < ActiveRecord::Base
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
                    :dkim, :bulk_security, :scheduled_ticket_export, :ticket_contact_export,
                    :email_failures, :disable_emails, :skip_one_hop, :falcon_portal_theme, :freshid, :freshchat_integration,
-                   :smart_filter, :year_in_review_2017, :facebook_page_redirect, :announcements_tab, :archive_ghost, :ticket_central_publish,
-                   :solutions_central_publish, :es_msearch]
+                   :year_in_review_2017, :facebook_page_redirect, :announcements_tab, :archive_ghost, :ticket_central_publish,
+                   :solutions_central_publish, :es_msearch, :launch_smart_filter]
 
   DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :archive_tickets, :sitemap]
   BITMAP_FEATURES = [
@@ -16,7 +16,7 @@ class Account < ActiveRecord::Base
       :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
       :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
-      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields,
+      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, 
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
@@ -170,7 +170,11 @@ class Account < ActiveRecord::Base
   end
 
   def twitter_smart_filter_enabled?
-    advanced_twitter? && smart_filter_enabled?
+    smart_filter_enabled? && launch_smart_filter_enabled?
+  end
+
+  def twitter_smart_filter_revoked?
+    redis_key_exists?(TWITTER_SMART_FILTER_REVOKED) && smart_filter_enabled? && !Account.current.twitter_handles_from_cache.blank?
   end
 
   def on_new_plan?

@@ -86,10 +86,9 @@ $ticket-lifecycle-color: #183247;
 
 .helpkit-glance .glance-chart-wrapper .glance-chart .solution-article {
   position: absolute;
-  right: 110px;
-  border-right: 1px solid #ddd;
   padding: 0 10px 0 0;
-  margin: 30px 10px 0 0;
+  margin: 17px 10px 0 0;
+  right: 0px;
 }
 
 .helpkit-glance .glance-chart-wrapper .glance-chart .solution-article a,
@@ -105,7 +104,7 @@ $ticket-lifecycle-color: #183247;
 .helpkit-glance .glance-chart-wrapper .glance-chart .view-all-container {
   position: absolute;
   right: 0;
-  margin-top: 15px;
+  margin-top: 28px;
 }
 
 // realigning grids

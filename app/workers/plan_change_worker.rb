@@ -40,16 +40,9 @@ class PlanChangeWorker
   end
 
   def drop_twitter_data(account)
-    twitter_count = 0
-    account.twitter_handles.order("created_at asc").find_each do |twitter|
-      twitter.smart_filter_enabled = 0 if twitter.smart_filter_enabled == true
-      twitter.save!
-      next if twitter_count < 1
-      twitter.destroy
-      twitter_count+=1
-    end
+    Social::TwitterHandle.drop_advanced_twitter_data(account)
   end
-
+  
   def drop_custom_domain_data(account)
     account.main_portal.portal_url = nil
     account.save!

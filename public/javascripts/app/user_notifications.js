@@ -53,7 +53,7 @@ window.App = window.App || {};
                 onNotification: function(data){
                     if (!data.msg) { return; }
                     data = JSON.parse(JSON.parse(data.msg).payload);
-
+                    if (data.notification_type == 'todo_reminder') { return; }
                     if (!!data.system) { return; }
 
                     if (!data.extra) { return; }
@@ -128,14 +128,16 @@ window.App = window.App || {};
 
             if(this.iris){
                 this.iris[fnName](numResults, function(err, result){
+                    result.notifications = result.notifications.filter(function(x) { 
+                        return x.notification_type != 'todo_reminder'
+                    });
                     if(self.firstFetch){
                         self.firstFetch = false;
                         self.allNotifications = [];
                         self.notifications = [];
                         self.groupedNotifications = [];
                     }
-
-                    if(!err && result && result.notifications.length){
+                    if(!err && result &&result.notifications&& result.notifications.length){
                         self.allNotifications = self.allNotifications.concat(result.notifications);
                         self.notifications = result.notifications;
                         self.next_page = !!result.next_page;

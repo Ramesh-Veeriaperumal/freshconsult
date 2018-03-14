@@ -1,3 +1,13 @@
+var CustomIparamAPI = Class.create({});
+var RequestAPI = Class.create({
+  Initialize: function(bundle) {
+    this.ajax = jQuery.ajax;
+    this.dpUrl = '/mkp/data-pipe.json';
+    this.features = bundle.app.features;
+    this.isLocalApp = bundle.app.isLocalApp;
+    this.CsrfToken = $('meta[name=csrf-token]').attr('content');
+  }
+})
 var TemplateDockManager   = Class.create({
   initialize: function(extensionsEl, customMsgs, tabName, platformVersion) {
     this.extensionsWrapper = extensionsEl;
@@ -6,17 +16,35 @@ var TemplateDockManager   = Class.create({
     this.tabName = tabName;
     this.isSearched = false;
     this.appName;
-    this.extensionId;
+    this.extensionId = jQuery('#app-window').attr('data-extension_id');
     this.developedBy;
     this.action;
     this.pollRetryLimit = 5;
+    this.isAppBrowserOpened = false;
     this.accApiPollInterval = customMsgs.accapi_poll_interval;
     this.platformVersion = platformVersion;
+    this.frshParent;
+
+    this.loggerOptions = {
+      status: {
+        IN_PROGRESS: 202,
+        OK: 200,
+        NO_CONTENT: 204
+      },
+      messages: {
+        NO_LOGS_FOUND: 'There are no logs for the last 15 minutes.',
+        ERROR_FETCHING_LOGS: 'There was an error while trying to fetch the logs. Please <a class="reload_logs">try again</a> later.',
+        TAKING_TOO_LONG: 'The request is taking longer than usual. Please <a class="reload_logs">try again</a> later.',
+        FOUND_LOGS: 'Logs for the last 15 minutes',
+        LOADING: 'Retrieving logs for the last 15 minutes. This may take up to 30 seconds.'
+      },
+      count: 12,
+      logsAPIPollInterval: 5000
+    };
 
     this.bindTemplateEvents();
     this.setupCarousel();
-
-    var that = this;  
+    var that = this;
     jQuery(".search-query").livequery(function(){
       var _searchInput = jQuery(this);
       jQuery(this).autocomplete({
@@ -90,6 +118,7 @@ var TemplateDockManager   = Class.create({
                     .on("click.tmpl_events", ".install-iframe-settings, .update-iframe-settings" , this.updateIframeApp.bindAsEventListener(this))
                     .on("click.tmpl_events", ".nativeapp" , this.installNativeApp.bindAsEventListener(this))
                     .on("submit.tmpl_events", "form#extension-search-form" , this.onSearch.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".appbrowser-close" , this.appBrowserClosed.bindAsEventListener(this))
                     .on("click.tmpl_events", "[id^=carousel-selector-]" , this.carouselSelector.bindAsEventListener(this))
                     .on("click.tmpl_events", ".fa-tabd a", this.reinstateURL.bindAsEventListener(this))
                     .on("click.tmpl_events", ".remove-query", this.resetQuery.bindAsEventListener(this))
@@ -97,6 +126,8 @@ var TemplateDockManager   = Class.create({
                     .on("click.tmpl_events", ".carousel", this.carouselScroll.bindAsEventListener(this))
                     .on("click.tmpl_events", ".toggle_policy" , this.togglePolicyInfo.bindAsEventListener(this))
                     .on("click.tmpl_events", ".buy-app" , this.buyApp.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".tab" , this.switchTabs.bindAsEventListener(this))
+                    .on("click.tmpl_events", ".reload_logs" , this.pollLogAPI.bindAsEventListener(this))
                     .on("click.tmpl_events", ".update-payment-info" , this.updatePaymentInfo.bindAsEventListener(this));
   },
   togglePolicyInfo: function() {
@@ -289,7 +320,7 @@ var TemplateDockManager   = Class.create({
         that.showLoader();
       },
       success: function(extension) {
-        jQuery(that.extensionsWrapper).empty().append(JST["marketplace/marketplace_install"](extension));
+        jQuery(that.extensionsWrapper).empty().append(JST["marketplace/marketplace_install_v2"](extension));
       },
       error: function(jqXHR, exception) {
         that.showErrorMsg(that.customMessages.no_connection);
@@ -328,20 +359,6 @@ var TemplateDockManager   = Class.create({
     });
   },
 
-  isValidForm: function() {
-    var isFormValid = true;
-    if (this.platformVersion == '2.0') {
-      isFormValid = ((typeof validate == 'function')) ? validate() : true;
-    } else {
-      jQuery(".installer-form input.fa-textip.required").each(function(index, value){
-        if (jQuery.trim(jQuery(value).val()).length == 0){
-          isFormValid = false;
-        }
-      });
-    }
-    return isFormValid;
-  },
-
   displayFormFieldError: function() {
     jQuery("#install-error").show().text(this.customMessages.field_blank);
     jQuery(".install-form").css("height", "calc(100vh - 230px)");
@@ -369,55 +386,93 @@ var TemplateDockManager   = Class.create({
     });
   },
 
+  // Get the iparam values to save.
+  getIparamsValue: function() {
+    if(this.platformVersion == '2.0') {
+      if (this.frshParent) {
+        return this.frshParent.executeCustomIparam('postConfigs');
+      }
+      return Promise.resolve({ configs: (typeof postConfigs == 'function') ? postConfigs() : '' });
+    }
+    return Promise.resolve(jQuery('#install-form').serialize());
+  },
+
+  isValidForm: function() {
+    if (this.platformVersion == '2.0') {
+      if (this.frshParent) {
+        return this.frshParent.executeCustomIparam('validate', {});
+      }
+      return Promise.resolve({ isValid: ((typeof validate == 'function')) ? validate() : true });
+    }
+    // validation for V1 apps
+    var isFormValid = true;
+    jQuery(".installer-form input.fa-textip.required").each(function(index, value){
+      if (jQuery.trim(jQuery(value).val()).length == 0){
+        isFormValid = false;
+      }
+    });
+    return Promise.resolve({ isValid: isFormValid });
+  },
+
+  getIparamsSuccessCbk: function(el, configs) {
+    var that = this;
+    var initialCount = 0;
+    jQuery.ajax({
+      url: jQuery(el).attr("data-url"),
+      type: jQuery(el).attr("data-method"),
+      data: configs,
+      beforeSend: function(){
+        that.handleInstallProgress();
+      },
+      success: function(resp_body, statustext, resp){
+        if(resp.status == 200){
+          that.handleInstallSuccess();
+        } else if (resp.status == 202){
+          var installedExtensionId = resp_body.installed_extension_id;
+          setTimeout( function() {
+            that.pollAccountApi(initialCount, that.pollRetryLimit, installedExtensionId);
+          }, that.accApiPollInterval);
+        } else {
+          that.handleInstallFailure();
+        }
+      },
+      error: function(jqXHR, exception) {
+        that.handleInstallFailure();
+      }
+    });
+  },
+
   //install button in install config page
   installApp: function(e){
     e.preventDefault();
     e.stopPropagation();
     var that = this;
     var el = jQuery(e.currentTarget);
-    var formData = (that.platformVersion == '2.0') ? 
-      { configs: (typeof postConfigs == 'function') ? postConfigs() : '' } : 
-      jQuery('#install-form').serialize()
-  
-    var isFormValid = true;
-    isFormValid = this.isValidForm(that.platformVersion);
-    var initialCount = 0;
+    var isFormValid = this.isValidForm(that.platformVersion);;
 
-    if(isFormValid == true){
-      jQuery.ajax({
-        url: jQuery(el).attr("data-url"),
-        type: jQuery(el).attr("data-method"),
-        data: formData,
-        beforeSend: function(){
-          jQuery("#install-error").hide();
-          jQuery(".progress, .installing-text").show();
-          jQuery(".install-form").hide();
-          jQuery('.backbtn').attr('disabled', 'disabled');
-          that.startProgress();
-        },
-        success: function(resp_body, statustext, resp){
-          if(resp.status == 200){
-            that.handleInstallSuccess();
-          } else if (resp.status == 202){
-            var installedExtensionId = resp_body.installed_extension_id;
-            setTimeout( function() {
-              that.pollAccountApi(initialCount, that.pollRetryLimit, installedExtensionId);
-            }, that.accApiPollInterval);
-          } else {
-            that.handleInstallFailure();
-          }
-        },
-        error: function(jqXHR, exception) {
+    isFormValid.then(function(response) {
+      if(response.isValid === true) {
+        that.getIparamsValue().then(function(configs) {
+          that.getIparamsSuccessCbk(el, configs)
+        }, function(error) {
           that.handleInstallFailure();
+        });
+      } else{
+        if (that.platformVersion == '1.0'){
+          that.displayFormFieldError();
         }
-      });
-    }else{
-      if (that.platformVersion == '1.0'){
-        this.displayFormFieldError();
       }
-    }
+    }, function(error) {
+      that.handleInstallFailure();
+    });
   },
-
+  handleInstallProgress: function() {
+    jQuery("#install-error").hide();
+    jQuery(".progress, .installing-text").show();
+    jQuery(".install-form").hide();
+    jQuery('.backbtn').attr('disabled', 'disabled');
+    this.startProgress();
+  },
   handleInstallSuccess: function() {
     // TODO: custom app_type should be removed after new ext type is added for custom app
     if((this.appType == app_details.get('custom_app_type')) || (this.type == app_details.get('custom_app_ext_type'))){
@@ -447,7 +502,7 @@ var TemplateDockManager   = Class.create({
   handleInstallFailure: function(message) {
     jQuery(".progress .bar").css("width", "0");
     clearInterval(this.progressInterval);
-    var progEl = jQuery(".progress, .installing-text");
+    var progEl = jQuery(".progress, .installing-text, .install-form");
     progEl.hide();
     var backUrl = jQuery('#fa-nav .backbtn').attr('data-url');
     var html = '<span>'+ this.customMessages.app_setup_error +'</span> ';
@@ -457,7 +512,7 @@ var TemplateDockManager   = Class.create({
       html += '<div class="mkp-error-details"><a>View error details<a></div>';
       jQuery('.fa-installer .fa-hmeta').height('65px');
     }
-    progEl.siblings('.app-name').html(html);
+    jQuery('.fa-hmeta').css('height', 'auto').html(html);
     jQuery('.mkp-error-details').click(function() {
       jQuery('.mkp-error-details').html('<p>'+ escapeHtml(message) +'<p>');
     });
@@ -498,7 +553,7 @@ var TemplateDockManager   = Class.create({
     } else {
       self.handleInstallFailure();
     }
-  },
+   },
 
   buyApp: function(e) {
     e.preventDefault();
@@ -537,12 +592,171 @@ var TemplateDockManager   = Class.create({
     jQuery("#nativeapp-form").submit();
     jQuery(".nativeapp").attr('disabled', 'disabled');
   },
-  updateApp: function(e){
+  switchTabs: function(e) {
+    var formClasses = {
+      configs_tab: 'install-form',
+      logs_tab: 'logs-form'
+    };
+    var toShow = e.target.id;
+    var toHide = toShow === 'configs_tab' ? 'logs_tab' : 'configs_tab';
+    
+    jQuery('.' + formClasses[toHide]).css('display', 'none');
+    jQuery('.' + formClasses[toShow]).css('display', '');
+    jQuery('#' + toShow).addClass('active');
+    jQuery('#' + toHide).removeClass('active');
+  },
+  parseLogs: function(logs) {
+    function safeJSONParse(string) {
+      try {
+        return JSON.parse(string);
+      } catch(e) {
+        return {};
+      }
+    }
+    
+    function isLog(log) {
+      return log && log.length !== 0;
+    }
+    
+    function transform(log) {
+      var splitAt = log.indexOf(' ');
+      
+      log = [ log.slice(0, splitAt), log.slice(splitAt + 1) ];
+
+      var timestamp = log[0];
+      var log = safeJSONParse(log[1]);
+      
+      return {
+        timestamp: (new Date(timestamp || '')).toLocaleTimeString(),
+        id: (log.RequestId || '').slice(-5),
+        type: log.type || 'info',
+        message: log.message || ''
+      };
+    }
+    
+    return logs.split('\n').filter(isLog).map(transform);
+  },
+
+  appBrowserClosed: function() {
+    this.isAppBrowserOpened = false;
+  },
+
+  downloadLogs: function(url, extensionId) {
+    var self = this;
+    
+    jQuery.ajax({
+      method: 'GET',
+      url: url,
+      success: function(response) {
+        self.renderLogsTab({
+          url: url,
+          table_header: self.loggerOptions.messages.FOUND_LOGS,
+          logs: self.parseLogs(response)
+        }, extensionId);
+      },
+      error: self.renderLogsTab.bind(this, {
+        message: self.loggerOptions.messages.ERROR_FETCHING_LOGS
+      }, extensionId)
+    })
+  },
+  renderLogsTab: function(params, extensionId) {
+    var logsForm = jQuery('.logs-form');
+    
+    if (logsForm.attr('data-extension_id') == extensionId && this.isAppBrowserOpened) {
+      logsForm.html(JST['marketplace/marketplace_install_logs'](params));
+    }
+  },
+  pollLogAPI: function() {
+    var self = this;
+    var count = self.loggerOptions.count;
+    
+    function poll(extensionId, versionId) {
+      /**
+       *  The two extension ID will be different only if the slider has been opened
+       *  for a new app. If this is the case, stop polling. Don't poll if the app
+       *  browser is closed.
+       */
+      if (self.extensionId != extensionId || !self.isAppBrowserOpened) {
+        return;
+      }
+      
+      jQuery.ajax({
+        url: '/mkp/data-pipe.json',
+        method: 'POST',
+        dataType: 'json',
+        data: {
+          data_pipe: {
+            action: 'retrieve',
+            type: 'view'
+          }
+        },
+        headers: {
+          'MKP-EXTNID': extensionId,
+          'MKP-VERSIONID': versionId,
+          'MKP-ROUTE': 'log'
+        },
+        success: function(response) {
+          if (response.status === self.loggerOptions.status.IN_PROGRESS) {
+            if (--count <= 0) {
+              return self.renderLogsTab({
+                message: self.loggerOptions.messages.TAKING_TOO_LONG
+              }, extensionId);
+            }
+            
+            return setTimeout(poll.bind(null, extensionId, versionId), self.loggerOptions.logsAPIPollInterval);
+          }
+          
+          if (response.status === self.loggerOptions.status.OK) {
+            return self.downloadLogs(response.url, extensionId);
+          }
+          
+          if (response.status === self.loggerOptions.status.NO_CONTENT) {
+            return self.renderLogsTab({
+              message: self.loggerOptions.messages.NO_LOGS_FOUND
+            }, extensionId);
+          }
+          
+          return self.renderLogsTab({
+            message: self.loggerOptions.messages.ERROR_FETCHING_LOGS
+          }, extensionId);
+        },
+        error: self.renderLogsTab.bind(self, {
+          message: self.loggerOptions.messages.ERROR_FETCHING_LOGS
+        }, extensionId)
+      });
+    }
+    self.renderLogsTab({
+      loading_message: self.loggerOptions.messages.LOADING
+    }, self.extensionId);;
+    poll(self.extensionId, self.versionId);
+  },
+  getServices: function() {
+    return {
+      'CustomIparamAPI': CustomIparamAPI,
+      'RequestAPI' : RequestAPI
+    }
+  },
+
+  // Custom installation page set iframe container height
+  setFormHeight: function() {
+    var appContainer = jQuery(".app-container", this.extensionsWrapper);
+    var installFormPadding = jQuery('.install-form').innerHeight() - jQuery('.install-form').height();
+    var configsFormPadding = jQuery('.configs-form').innerHeight() - jQuery('.configs-form').height();
+    var footerHeight = jQuery('.button-container-v2').outerHeight();
+    var headerHeight = jQuery('.fa-hmeta').outerHeight();
+    var sliderHeight = jQuery('.app-browser').outerHeight();
+    var installStatus = jQuery('.install-status').outerHeight();
+    var breadcumbHeight = jQuery('#fa-nav').outerHeight();
+    var height = sliderHeight - footerHeight - headerHeight - installFormPadding - configsFormPadding - installStatus - breadcumbHeight;
+    jQuery(appContainer).css({ 'padding-bottom': height+ 'px' });
+  },
+
+  updateApp: function(e) {
     e.preventDefault();
     e.stopPropagation();
     var that = this;
-    var el = jQuery(e.currentTarget);
     
+    var el = jQuery(e.currentTarget);
     jQuery.ajax({
       url: jQuery(el).attr("data-url"),
       type: jQuery(el).attr("data-method"),
@@ -551,14 +765,38 @@ var TemplateDockManager   = Class.create({
         that.showLoader();
       },
       success: function(install_extension){
+        install_extension.self = install_extension;
         that.extensionId = install_extension.extension_id;
+        that.versionId = install_extension.version_id;
         that.action = install_extension.install_btn['text'].toLowerCase();
+        that.isAppBrowserOpened = true;
+
+        jQuery(document).one("click.tmpl_events", ".tab#logs_tab" , that.pollLogAPI.bindAsEventListener(that));
+        
         if ( install_extension.account_suspended ) {
           that.showErrorMsg(that.customMessages.suspended_plan_info);
         }
         else {
           jQuery(that.extensionsWrapper).empty()
-                                        .append(JST["marketplace/marketplace_install"](install_extension));
+                                        .append(JST["marketplace/marketplace_install_base"](install_extension));
+          if (install_extension.configs_url) {
+            var app = { 'url': install_extension.configs_url, features: install_extension.features }; // Details about the app
+            var bundle = { 'app': app };
+            var initializeApp = false;
+            // Initialize Parent and render iframe
+            that.frshParent = window.appf(app, bundle, that.getServices(), initializeApp);
+            var appContainer = jQuery(".app-container", that.extensionsWrapper);
+            jQuery('.button-container').addClass('button-container-v2');
+            that.setFormHeight();
+            jQuery(appContainer).html(that.frshParent.iframe); // Embed Configs IFrame
+
+            if(install_extension.configs != null ) {
+              // Invoke getConfigs method once channel is initialized 
+              that.frshParent.initialized().then(function() {
+                that.frshParent.executeCustomIparam('getConfigs', { configs: install_extension.configs });
+              });
+            }
+          }
           if ( install_extension.configs_page && install_extension.configs != null ){
             that.whenAvailable('getConfigs', install_extension.configs);
           }
@@ -575,8 +813,7 @@ var TemplateDockManager   = Class.create({
               developed_by: that.developedBy,
               time: new Date()
           });
-
-          if ( !install_extension.configs_page && (!install_extension.configs ? true : install_extension.configs.length == 0 )) { // no config
+          if ( !install_extension.configs_page && !install_extension.configs_url && (!install_extension.configs ? true : install_extension.configs.length == 0 )) { // no config
             jQuery(".install-form").hide();
             setTimeout( that.installTrigger('.install-btn'), 1000);
           }
@@ -612,7 +849,6 @@ var TemplateDockManager   = Class.create({
       }
     }, interval);
   },
-
 
   updateIframeApp: function(e){
     e.preventDefault();

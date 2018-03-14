@@ -33,13 +33,6 @@
 				{{ "Twitter" | login_via_twitter }}
 			</div>
 		{% endif %}
-		{% if portal.freshid_feature? %}
-			<div class="agent-login-link">
-				<i class="ficon-helpdesk_new agent-login-icon"></i>
-				<div class="link-content"><span>{% translate portal.agent_login_info %} </span><a href="{{ request_domain | freshid_login_url }}">{% translate portal.agent_signin %}</a></div>
-			</div>
-		{% endif %}
-		
 	</section>
 	{% if portal.can_signup_feature %}
 		<section id="signup-container" class="sidebar content-form rounded-6">

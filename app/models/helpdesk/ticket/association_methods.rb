@@ -189,6 +189,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     false
   end
 
+  def schema_less_ticket_updated?
+    self.schema_less_ticket.changed?
+  end
+
+  def custom_fields_updated?
+    self.flexifield.before_save_changes.present?
+  end
+
   private
 
     def table_name

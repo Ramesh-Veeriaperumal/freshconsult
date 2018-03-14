@@ -27,7 +27,7 @@ class TwitterWrapper
     access_token = request_token.get_access_token(:oauth_verifier => verifier)        
     @twitter_handle.access_token, @twitter_handle.access_secret = access_token.token, access_token.secret
     @twitter_handle.account_id = @account.id
-    @twitter_handle.capture_dm_as_ticket = true
+    @twitter_handle.capture_dm_as_ticket = false
     set_twitter_user   
   end
   

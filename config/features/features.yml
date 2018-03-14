@@ -185,6 +185,8 @@
       :shadow_fax8: 180
       :shadow_fax9: 181
       :shadow_fax10: 182
+      :smart_filter: 91	
+      :ticket_summary: 92
 :selectable_features:
       :branding: true
       :gamification_enable: false

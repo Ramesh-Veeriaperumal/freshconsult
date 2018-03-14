@@ -238,7 +238,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
   private
 
   def template_limit_reached?
-    redirect_to(helpdesk_ticket_templates_path) if templates_count_from_cache >= Helpdesk::TicketTemplate.max_limit
+    redirect_to(helpdesk_ticket_templates_path) if prime_templates_count_from_cache >= Helpdesk::TicketTemplate.max_limit
   end
 
   def child_templ_limit_reached?

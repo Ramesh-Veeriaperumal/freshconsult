@@ -617,7 +617,7 @@ class User < ActiveRecord::Base
 
   def update_account_info_and_verify(user_params)
     self.account.update_attributes!({:name => user_params[:company_name]}) if user_params.key?(:company_name) 
-    self.account.main_portal.update_attributes!({:name => user_params[:company_name]})
+    self.account.main_portal.update_attributes!({:name => user_params[:company_name]}) if user_params.key?(:company_name)
     self.account.account_configuration.update_contact_company_info!(user_params)
   end
 
@@ -668,7 +668,7 @@ class User < ActiveRecord::Base
   def developer?
     marketplace_developer_application = Doorkeeper::Application.find_by_name(Marketplace::Constants::DEV_PORTAL_NAME)
     developer_privilege = access_tokens.find_by_application_id(marketplace_developer_application.id) if self.access_tokens
-    Account.current.features?(:fa_developer) && !developer_privilege.blank?
+    !developer_privilege.blank?
   end
 
   def can_assume?(user)
@@ -1134,6 +1134,10 @@ class User < ActiveRecord::Base
     remove_password_flag(email, account_id)
   end
 
+  def active_freshid_user?
+    active? && freshid_enabled_account?
+  end
+
   private
 
     def freshid_enabled_account?
@@ -1146,10 +1150,6 @@ class User < ActiveRecord::Base
 
     def freshid_disabled_and_customer?
       !freshid_enabled_and_agent?
-    end
-    
-    def active_freshid_user?
-      freshid_enabled_account? && active?
     end
 
     def valid_freshid_login?(incoming_password)

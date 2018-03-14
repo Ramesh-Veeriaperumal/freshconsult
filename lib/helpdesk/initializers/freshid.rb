@@ -11,5 +11,6 @@ Freshid.account_class         = 'Account'
 Freshid.authorization_class   = 'Authorization'
 Freshid.domain_mapping_class  = 'DomainMapping'
 Freshid.events_to_track       = %w[PROFILE_UPDATED USER_ACTIVATED PASSWORD_UPDATED RESET_PASSWORD]
-Freshid::CallbackMethods.send(:prepend, Freshid::CallbackMethodsExtensions)
-Freshid::ApiCalls.send(:prepend, Freshid::ApiCallsExtensions)
+Freshid::CallbackMethods.safe_send(:prepend, Freshid::CallbackMethodsExtensions)
+Freshid::ApiCalls.safe_send(:prepend, Freshid::ApiCallsExtensions)
+Freshid::SnsErrorNotification.safe_send(:prepend, Freshid::SnsErrorNotificationExtensions)

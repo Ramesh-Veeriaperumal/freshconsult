@@ -227,8 +227,9 @@ private
 
 	def fetch_text_html_attachment_for_all_parts
 		default_charset = DEFAULT_CHARSET #workaround - to handle case with no proper encoding information
-		mail.all_parts.each do |p| 
-
+		mail_parts = mail.all_parts
+		mail_parts = get_parts_by_header_boundary if mail_parts.empty?
+		mail_parts.each do |p| 
         	processed_part = Helpdesk::EmailParser::ProcessedPart.new(p, default_charset)
         	if processed_part.text_charset.present?
         		default_charset = processed_part.text_charset
@@ -287,6 +288,29 @@ private
 				 :invalid => :replace, :replace => '?')
 			@encoded_header = Mail.new(email_text)
 		end
+	end
+
+	#if there is any space present around equal-to in content type parammeters then there is an issue while parsing boundary by mail gem and it result in empty parts
+    #here we trying to get parts by boundary from header
+	def get_parts_by_header_boundary
+		mail_content = mail
+		parts = []
+		if mail_content.header.present? && mail_content.header[:content_type].present? && mail_content.content_type.present? && 
+								   						   boundary_from_header_content_type != boundary_from_mail_content_type
+			mail_body = Mail::Body.new(mail_content.body).split!(boundary_from_header_content_type)
+			parts = mail_body.parts if mail_body.present? && mail_body.parts.present?
+		end
+		return parts
+	end
+
+	def boundary_from_header_content_type
+		mail.header[:content_type].value =~/boundary\s*=\s*\"(.+)\"/
+		$1
+	end
+
+	def boundary_from_mail_content_type
+		mail.content_type =~/boundary\s*=\s*\"(.+)\"/
+		$1
 	end
 	
 end

@@ -15,21 +15,28 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   layout "email_font"
 
   def suppression_list_alert(admin,dropped_address = nil,display_id)
-    headers = {
-      :to       => "support@freshdesk.com",
-      :from     => admin.email,
-      :subject  => I18n.t('email_failure.suppression_list_alert.subject'),
-      :sent_on  => Time.now
-    }
-    current_account     = Account.current
-    @account_name       = current_account.name
-    @account_url        = "#{current_account.url_protocol}://#{current_account.full_domain}"
-    @dropped_address    = dropped_address
-    @agent_name         = admin.name
-    @ticket_display_id  = display_id
-    mail(headers) do |part|
-      part.html { render "suppression_list_alert" }
-    end.deliver
+    begin
+      email_config = Account.current.primary_email_config
+      configure_email_config email_config
+      headers = {
+        :to       => "support@freshdesk.com",
+        :from     => admin.email,
+        :subject  => I18n.t('email_failure.suppression_list_alert.subject'),
+        :sent_on  => Time.now
+      }
+      current_account     = Account.current
+      @account_name       = current_account.name
+      @account_url        = "#{current_account.url_protocol}://#{current_account.full_domain}"
+      @dropped_address    = dropped_address
+      @agent_name         = admin.name
+      @ticket_display_id  = display_id
+      headers.merge!(make_header(@ticket_display_id, nil, current_account.id, "Supression List Alert"))
+      mail(headers) do |part|
+        part.html { render "suppression_list_alert" }
+      end.deliver
+    ensure 
+      remove_email_config
+    end
   end
 
   def self.notify_by_email(notification_type, ticket, comment = nil, opts = {})
@@ -275,16 +282,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
          headers[:cc] = params[:cc_mails].join(", ")
       end
       email_config = params[:ticket].reply_email_config
-      if (($redis_others.get(ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE) == "1" || params[:ticket].account.launched?(:send_emails_via_fd_email_service_feature)) && !(email_config && email_config.smtp_mailbox))
-        text = render_to_string("email_notification.text.plain", {formats: :text})
-        html = render_to_string("email_notification.text.html", {formats: :html})
-        coder = HTMLEntities.new
-
-        hmtl = coder.encode(html, :named)
-
-        headers.merge!(:text => text, :html => html)
-
-        deliver_email(headers, params[:attachments])
+      if via_email_service?(params[:ticket].account, email_config)
+         deliver_email(headers, params[:attachments], "email_notification")
       else
         ##Setting the templates for mail usage###
         message = mail(headers) do |part|
@@ -376,10 +375,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         }
       end
 
-      mail(headers) do |part|
-        part.text { render "reply.text.plain" }
-        part.html { render "reply.text.html" }
-      end.deliver
+      begin
+        mail(headers) do |part|
+          part.text{ render "reply.text.plain"}
+          part.html{ render "reply.text.html"}
+        end.deliver
+      rescue => e
+        deliver_email headers, note.all_attachments, "reply"
+      end
     ensure
       remove_email_config
     end
@@ -432,10 +435,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
           }
         end
       end
-      mail(headers) do |part|
-        part.text { render "forward.text.plain" }
-        part.html { render "forward.text.html" }
-      end.deliver
+      begin
+        mail(headers) do |part|
+          part.text{ render "forward.text.plain"}
+          part.html{ render "forward.text.html"}
+        end.deliver
+      rescue => e
+        deliver_email headers, note.all_attachments, "forward"
+      end
     ensure
       remove_email_config
     end
@@ -484,10 +491,15 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
           }
         end
       end
-      mail(headers) do |part|
-        part.text { render "reply_to_forward.text.plain" }
-        part.html { render "reply_to_forward.text.html" }
-      end.deliver
+
+      begin
+        mail(headers) do |part|
+          part.text{ render "reply_to_forward.text.plain"}
+          part.html{ render "reply_to_forward.text.html"}
+        end.deliver
+      rescue => e
+        deliver_email headers, note.all_attachments, "reply_to_forward"
+      end
     ensure
       remove_email_config
     end
@@ -608,11 +620,14 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
           }
         end
       end
-        
-      mail(headers) do |part|
-        part.text { render "notify_outbound_email.text.plain" }
-        part.html { render "notify_outbound_email.text.html" }
-      end.deliver
+      begin
+        mail(headers) do |part|
+          part.text{ render "notify_outbound_email.text.plain"}
+          part.html{ render "notify_outbound_email.text.html"}
+        end.deliver
+      rescue => e
+        deliver_email headers, ticket.all_attachments, "notify_outbound_email"
+      end
     ensure
       remove_email_config
     end

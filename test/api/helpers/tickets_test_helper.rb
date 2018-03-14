@@ -86,6 +86,10 @@ module TicketsTestHelper
     result_pattern
   end
 
+  def show_ticket_pattern(expected_output = {}, ticket)
+    ticket_pattern(expected_output, ticket).merge(association_type: expected_output[:association_type] || ticket.association_type)
+  end
+
   def show_ticket_pattern_with_association(ticket, limit = false, notes = true, requester = true, company = true, stats = true)
     ticket_pattern_with_association(ticket, limit, notes, requester, company, stats).merge(association_type: ticket.association_type)
   end
@@ -120,7 +124,24 @@ module TicketsTestHelper
     }
   end
 
-  def feedback_pattern(survey_result)
+  def show_ticket_pattern_with_association(ticket, limit = false, notes = true, requester = true, company = true, stats = true)
+    ticket_pattern_with_association(ticket, limit, notes, requester, company, stats).merge(association_type: ticket.association_type)
+  end
+
+  def show_deleted_ticket_pattern(expected_output = {}, ticket)
+    show_ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted).to_s.to_bool)
+  end
+
+  def show_ticket_pattern_with_notes(ticket, limit = false)
+    notes_pattern = []
+    ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
+      notes_pattern << index_note_pattern(n)
+    end
+    notes_pattern = notes_pattern.take(limit) if limit
+    show_ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
+  end
+  
+ def feedback_pattern(survey_result)
     {
       survey_id: survey_result.survey_id,
       agent_id: survey_result.agent_id,

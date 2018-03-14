@@ -115,6 +115,16 @@ class Helpdesk::Note < ActiveRecord::Base
       "helpdesk_schema_less_notes.#{Helpdesk::SchemaLessNote.category_column} = ?",
       "Helpdesk::Ticket", Helpdesk::Note::CATEGORIES[:broadcast]]
 
+  scope :conversations, lambda { |preload_options = nil, order_conditions = nil, limit = nil|
+      {
+        :conditions => ["source NOT IN (?) and deleted = false", EXCLUDE_SOURCE.map{|s| SOURCE_KEYS_BY_TOKEN[s]}],
+        :order => order_conditions,
+        :include => preload_options,
+        :limit => limit
+      }
+    }
+
+
   validates_presence_of  :source, :notable_id
   validates_numericality_of :source
   validates_inclusion_of :source, :in => 0..SOURCES.size-1
@@ -195,6 +205,10 @@ class Helpdesk::Note < ActiveRecord::Base
 
   def phone_note?
     source == SOURCE_KEYS_BY_TOKEN["phone"]
+  end
+
+  def summary_note?
+    source == SOURCE_KEYS_BY_TOKEN["summary"]
   end
 
   def ecommerce?
@@ -395,13 +409,6 @@ class Helpdesk::Note < ActiveRecord::Base
     ner_data = data.merge({"note_id"=>self.id})
     key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.notable_id }
     MemcacheKeys.cache(key, ner_data, NER_DATA_TIMEOUT)
-  end
-
-  # Fetch NER data from cache.
-
-  def fetch_ner_data()
-    key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.notable_id }
-    MemcacheKeys.get_from_cache(key)
   end
   
   # Instance level spam watcher condition

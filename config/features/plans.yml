@@ -47,7 +47,8 @@
       - :image_annotation
       - :tam_default_fields
       - :todos_reminder_scheduler
-    :inherits:
+      - :smart_filter
+    :inherits: 
       - :sprout_jan_17
     :exclude: []
   :garden_jan_17:

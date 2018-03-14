@@ -1,9 +1,11 @@
 class Account < ActiveRecord::Base
+  require 'launch_party/feature_class_mapping'
 
   before_create :downcase_full_domain,:set_default_values, :set_shard_mapping, :save_route_info
   before_create :add_features_to_binary_column
+  before_create :create_freshid_account, if: :freshid_signup_allowed?
   before_update :check_default_values, :update_users_time_zone, :backup_changes
-  before_destroy :backup_changes, :make_shard_mapping_inactive
+  before_destroy :backup_changes, :make_shard_mapping_inactive, :deleted_model_info
 
   after_create :populate_features, :change_shard_status
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain, :update_route_info
@@ -17,6 +19,7 @@ class Account < ActiveRecord::Base
   
   after_destroy :remove_global_shard_mapping, :remove_from_master_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
+  after_destroy :destroy_freshid_account
 
   after_commit :add_to_billing, :enable_elastic_search, on: :create
   after_commit :clear_api_limit_cache, :update_redis_display_id, on: :update
@@ -31,11 +34,18 @@ class Account < ActiveRecord::Base
   after_commit :update_crm_and_map, on: :update, :if => :account_domain_changed?
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
+  after_commit :trigger_launchparty_feature_callbacks, on: :create
+  after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_signup_allowed?
+
+
+  # Need to revisit when we push all the events for an account
+  publishable on: :destroy
+
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
 
-  after_launchparty_change :trigger_launchparty_feature_callbacks
+  after_launchparty_change :collect_launchparty_actions
 
   def downcase_full_domain
     self.full_domain.downcase!
@@ -82,10 +92,33 @@ class Account < ActiveRecord::Base
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
       self.launch(:archive_ghost)           # enabling archive ghost feature
     end
+    self.launch(:freshid) if freshid_signup_allowed?
   end
 
   def update_activity_export
     ScheduledExport::ActivitiesExport.perform_async if time_zone_changed? && activity_export_from_cache.try(:active)
+  end
+  
+  def create_freshid_account
+    freshid_acc = Freshid::Account.create({ name: self.name, domain: self.full_domain })
+    raise(ActiveRecord::Rollback, "FRESHID account not created") unless freshid_acc.present?
+  end
+  
+  def destroy_freshid_account
+    account_params = {
+      name: self.name,
+      account_id: self.id,
+      domain: self.full_domain,
+      destroy: true
+    }
+    Freshid::AccountDetailsUpdate.perform_async(account_params)
+  end
+  
+  alias_method :destroy_freshid_account_on_rollback, :destroy_freshid_account
+
+  # Need to revisit when we push all the events for an account
+  def central_publish_worker_class
+    "CentralPublishWorker::AccountDeletionWorker"
   end
 
   protected
@@ -101,6 +134,14 @@ class Account < ActiveRecord::Base
     def backup_changes
       @old_object = Account.find(id)
       @all_changes = self.changes.clone
+    end
+
+    def deleted_model_info
+      @deleted_model_info = {
+        id: id,
+        name: name,
+        full_domain: full_domain,
+      }
     end
 
     def account_verification_changed?
@@ -125,13 +166,22 @@ class Account < ActiveRecord::Base
 
   private
 
+    def collect_launchparty_actions(changes)
+      feature_name = changes[:launch] || changes[:rollback]
+      @launch_party_features ||= []
+      @launch_party_features << changes if FeatureClassMapping.get_class(feature_name.to_s)
+      trigger_launchparty_feature_callbacks unless self.new_record?
+    end
+
     # define your callback method in this format ->
     # eg:  on launch  feature_name => falcon, method_name => def falcon_on_launch ; end
     #      on rollback feature_name => falcon, method_name => def falcon_on_rollback ; end
-    def trigger_launchparty_feature_callbacks(changes)
+    def trigger_launchparty_feature_callbacks
+      return if @launch_party_features.blank?
       self.make_current
-      args = { :feature => changes, :account_id => self.id }
+      args = { :features => @launch_party_features, :account_id => self.id }
       LaunchPartyActionWorker.perform_async(args)
+      @launch_party_features = nil
     end
 
     def sync_name_helpdesk_name
@@ -378,6 +428,10 @@ class Account < ActiveRecord::Base
 
     def falcon_ui_applicable?
       ismember?(FALCON_ENABLED_LANGUAGES, self.language)
+    end
+
+    def freshid_signup_allowed?
+      redis_key_exists? FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED
     end
 
 end

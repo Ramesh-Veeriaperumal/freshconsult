@@ -59,6 +59,8 @@
 		<%= javascript_include_tag :'cdn/redactor' %>
 		<%= javascript_include_tag :'cdn/freshfone_portal' %>	
 		<%= javascript_include_tag :"cdn/lang/#{I18n.locale.to_s.downcase}" %>
+		<!-- for i18n-js translations -->
+  		<%= javascript_include_tag :"cdn/i18n/portal/#{I18n.locale.to_s}" %>
 		<!-- Including default portal based script at the bottom -->
 		<%= render :partial => "layouts/shared/scripts" %> 
 
@@ -66,5 +68,9 @@
 
 		<%# Page hit tracker %>
 		<%= page_tracker %>
+		<script type="text/javascript">
+     		I18n.defaultLocale = "<%= I18n.default_locale %>";
+     		I18n.locale = "<%= I18n.locale %>";
+		</script>
 	</body>
 </html>
