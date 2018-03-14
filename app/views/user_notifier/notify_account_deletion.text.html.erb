@@ -1,0 +1,21 @@
+Hi Team,<br/>
+
+Account deletion worker triggered. <br/>
+Below you can find account details.<br/>
+
+<table border="1px">
+  <% @details.deep_symbolize_keys.each do |data, value| %>
+  <tr>
+    <td><%=data.to_s.titleize%></td>
+    <%if value.is_a?(Hash)%>
+      <td><%="First Name: #{value[:first_name]}, Last Name: #{value[:last_name]}, Email: #{value[:email]}, Phone: #{value[:phone]}"%></td>
+    <%else%>
+      <td><%=value%></td>
+    <%end%>
+  </tr>
+  <%end%>
+</table>
+<br/>
+
+Sincerely,<br/>
+Freshdesk Team

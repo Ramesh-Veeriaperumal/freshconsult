@@ -165,7 +165,7 @@
       :g10_8: 160
       :g10_9: 161
       :g10_10: 162
-      :ninjas_1: 163
+      :opt_out_analytics: 163
       :ninjas_2: 164
       :ninjas_3: 165
       :ninjas_4: 166
@@ -197,3 +197,4 @@
       :freshcaller_widget: false
       :falcon: false
       :support_bot: false
+      :opt_out_analytics: false
