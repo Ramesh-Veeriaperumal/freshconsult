@@ -46,12 +46,7 @@ module Marketplace::InstExtControllerMethods
 
   def configs_page_v2
     s3_id = params[:version_id].to_s.reverse
-    if true # TODO: Remove if block once Custom iparam sandbox is ready to ship 
-      configs_url = "https://#{MarketplaceConfig::CDN_STATIC_ASSETS}/#{s3_id}/#{Marketplace::Constants::IPARAM}"
-      @configs_page = open(configs_url).read
-    else
-      @configs_url = "https://#{MarketplaceConfig::CDN_STATIC_ASSETS}/#{s3_id}/#{Marketplace::Constants::IPARAM}"
-    end
+    @configs_url = "https://#{MarketplaceConfig::CDN_STATIC_ASSETS}/#{s3_id}/#{Marketplace::Constants::IPARAM_IFRAME}"
   end
 
   def oauth_iparams_page

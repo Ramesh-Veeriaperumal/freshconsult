@@ -9,7 +9,7 @@ module Marketplace::Constants
   EXTENSION_SORT_TYPES = ['latest','popular']
   ADDON_ID_PREFIX = 'marketplaceapp_'
   ACCOUNT_ADDON_APP_UNITS = 1
-  IPARAM = 'config/iparams.html'.freeze
+  IPARAM_IFRAME = 'config/iparams_iframe.html'.freeze
   OAUTH_IPARAM = 'config/oauth_iparams.html'.freeze
   INTERNAL_SERVER_ERROR = 'Internal server error'
   PLATFORM_SOURCE = 'PLATFORM'
