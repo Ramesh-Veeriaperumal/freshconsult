@@ -8705,6 +8705,13 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       form:
         app_key: "Registered Application key for your domain"
         app_key_info: "Create an App in the dropbox and provide the app key here."
+    google_drive:
+      label: "Google Drive"
+      desc: "Attach and Share your data/files from Google Drive."
+      helptext: "<h4>Google Drive integration help</h4><br/><p>The Google Drive Integration lets agents and users browse for files from their Google Drive folder and share them when submitting or replying to a ticket in Freshdesk. A direct link to the file is shared in the ticket, removing the need for attachments and email size restrictions.</p><p>Before you setup the integration, go to the <a target='_blank' href='https://console.developers.google.com/'><b>Google Developers page</b></a>.</p><p>1. Select <b>Create Your Project</b> in the <b>API & Services</b> section.</p><p>2. Under <b>Enable APIs and Services</b>, enable <b>Google Drive API and Google Picker API</b>.</p><p>3. Under <b>Credentials section</b> create your OAuth client ID as well as API Key, while generating OAuth client ID, please enter the freshdesk url under Authorised Javascript origins section. </p><p>4. Finally, copy paste the Client ID and API Key into this page, and Save changes. Your Google Drive Chooser should now be ready. You can check it out in the New Ticket form.</p>"
+      form:
+        client_id: "OAuth client ID for your domain"
+        developer_key: "API key obtained from google developers console."
     box:
       change: "Change"
       chooser_title: "Choose a file from Box..."
