@@ -1408,20 +1408,10 @@ HelpdeskReports.CoreUtil = {
                     //_this.appendExportError();
                     _this.actions.flushExportSection();
                     if(HelpdeskReports.locals.report_type == 'timespent' && export_type != undefined) {
-                      var text = "";
-                      if(data.responseText == "ACCOUNT_REPORT_EXPORT_VIOLATION"){
-                        text = I18n.t("helpdesk_reports.export_tickets_account_error_msg");
-                      } else {
-                        text = I18n.t('helpdesk_reports.export_tickets_error_msg');
-                      }
+                      var text = I18n.t('helpdesk_reports.export_tickets_error_msg');
                       _this.showResponseMessage(text);
                     }
                     else{
-                        if(data.responseText == "ACCOUNT_REPORT_EXPORT_VIOLATION"){
-                            jQuery(".error_message").html("<strong>"+ I18n.t("helpdesk_reports.export_tickets_account_error_msg") + "</strong>");
-                        } else {
-                            jQuery(".error_message").html("<strong>"+ I18n.t('helpdesk_reports.export_tickets_error_msg') + "</strong>");
-                        }
                         jQuery(".error_message").removeClass("hide");
                         setTimeout(function() {
                             jQuery('.error_message').fadeOut('slow');

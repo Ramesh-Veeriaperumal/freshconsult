@@ -9666,8 +9666,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     no_data_to_display_msg: No data to display
     something_went_wrong_msg: 'Something went wrong, please try again'
     disabled_date_range: Disabled for this date range
-    export_tickets_error_msg: You have reached the maximum number of simultaneous export requests allowed. Please try again after some time.
-    export_tickets_account_error_msg: Your account has reached the maximum number of simultaneous export requests allowed. Please try again after some time.
+    export_tickets_error_msg: We currently allow only 1 concurrent exports. Kindly try again after some time. Apologies for the inconveniences caused.
     export_tickets_success_msg: Your ticket data will be sent to your email shortly!
     view_all_tickets: View all tickets
     view_all_compliant_tickets: View all compliant tickets

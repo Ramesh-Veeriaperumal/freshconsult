@@ -25,7 +25,6 @@ class DataExport < ActiveRecord::Base
   scope :call_history_export, :conditions => { :source => EXPORT_TYPE[:call_history] }
   scope :agent_export, :conditions => { :source => EXPORT_TYPE[:agent] }, :order => "id"
   scope :reports_export, :conditions => { :source => EXPORT_TYPE[:reports] }, :order => "id"
-  scope :current_exports, :conditions => ["status = #{EXPORT_STATUS[:started]} and last_error is null"]
 
 
   def owner?(downloader)
