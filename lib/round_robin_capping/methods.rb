@@ -4,13 +4,21 @@ module RoundRobinCapping::Methods
 
   MAX_CAPPING_RETRY         = 10
   ROUND_ROBIN_DEFAULT_SCORE = 10**15
+  ROUND_ROBIN_MAX_SCORE     = 200 * 10**15
+  RR_BUFFER                 = 5
 
-  def generate_new_score score
-    score <= 0 ? 0 : ROUND_ROBIN_DEFAULT_SCORE*(score) + Time.now.utc.to_i
+  def generate_new_score tickets_count, timestamp = nil
+    tickets_count = 0 if tickets_count < 0
+    timestamp ||= Time.now.utc.to_i
+    ROUND_ROBIN_DEFAULT_SCORE*(tickets_count) + timestamp
   end
 
   def agents_ticket_count score
     (score/ROUND_ROBIN_DEFAULT_SCORE).to_i
+  end
+
+  def last_assigned_timestamp score
+    (score % ROUND_ROBIN_DEFAULT_SCORE).to_i
   end
 
   def capping_enabled?

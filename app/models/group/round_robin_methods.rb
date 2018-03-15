@@ -18,8 +18,15 @@ class Group < ActiveRecord::Base
   end
 
   def next_available_agent
-    current_agent_id = get_others_redis_rpoplpush(round_robin_key, round_robin_key)
-    account.agents.find_by_user_id(current_agent_id)
+    queue_length = llen_round_robin_redis(round_robin_key)
+    (queue_length + RR_BUFFER).times do
+      current_agent_id = get_others_redis_rpoplpush(round_robin_key, round_robin_key)
+      return if current_agent_id.nil?
+      current_agent = account.available_agents.find_by_user_id(current_agent_id)
+      return current_agent if current_agent.present?
+      $redis_others.lrem(round_robin_key, 0, current_agent_id)
+    end
+    nil
   end
 
   def update_agent_capping_with_lock user_id, new_score, operation="incr"
@@ -42,7 +49,6 @@ class Group < ActiveRecord::Base
       MAX_CAPPING_RETRY.times do
         user_id, old_score = pick_next_agent(ticket_id)
         if user_id.present?  
-          #Need to revisit this
           new_score = generate_new_score(old_score + 1)
           result    = update_agent_capping_with_lock(user_id, new_score)
 
@@ -68,19 +74,36 @@ class Group < ActiveRecord::Base
   end
 
   def pick_next_agent ticket_id
-    user_score = zrange_round_robin_redis(round_robin_capping_key, 0, 0, true)
-    return unless user_score.present?
-    user_id = user_score[0][0].to_i
-    agent_key = round_robin_agent_capping_key(user_id)
-    watch_round_robin_redis(agent_key)
-    old_score = get_round_robin_redis(agent_key).to_i
+    queue_length = zcount_round_robin_redis(round_robin_capping_key, 0, ROUND_ROBIN_MAX_SCORE)
+    (queue_length + RR_BUFFER).times do
+      user_score = zrange_round_robin_redis(round_robin_capping_key, 0, 0, true)
+      return unless user_score.present?
+      user_id = user_score[0][0].to_i
+      current_agent = account.available_agents.find_by_user_id(user_id)
+      old_score = nil
+      if current_agent.present?
+        agent_key = round_robin_agent_capping_key(user_id)
+        watch_round_robin_redis(agent_key)
+        old_score = get_round_robin_redis(agent_key).to_i
+        old_score = old_score.to_i unless old_score.nil?
 
-    Rails.logger.debug "RR pick_next_agent : #{user_id} #{old_score} #{user_score.inspect} #{self.capping_limit}"
+        Rails.logger.debug "RR pick_next_agent : #{user_id} #{old_score} #{user_score.inspect} #{self.capping_limit}"
 
-    [user_id, old_score] if old_score < self.capping_limit
+        if old_score
+          if old_score < self.capping_limit
+            return [user_id, old_score]
+          else
+            break
+          end
+        end
+      end
+      remove_agent_from_group_capping(user_id) if old_score.nil?
+    end
+    nil
   end
 
   def add_agent_to_group_capping user_id
+    Rails.logger.debug "add_agent_to_group_capping #{user_id} #{self.id}"
     status_ids   = Helpdesk::TicketStatus::sla_timer_on_status_ids(account)
     ticket_count = Sharding.run_on_slave { tickets.visible.agent_tickets(status_ids, user_id).count }
     new_score    = generate_new_score(ticket_count)
@@ -90,6 +113,7 @@ class Group < ActiveRecord::Base
   end
 
   def remove_agent_from_group_capping user_id
+    Rails.logger.debug "remove_agent_from_group_capping #{user_id} #{self.id}"
     agent_key = round_robin_agent_capping_key(user_id)
     del_round_robin_redis(agent_key)
     
@@ -241,6 +265,7 @@ class Group < ActiveRecord::Base
 
 
   def lpush_to_rr_capping_queue ticket_id
+    Rails.logger.debug "lpush_to_rr_capping_queue #{ticket_id} #{self.id}"
     update_sorted_set("lpush", ticket_id)
     lpush_round_robin_redis(round_robin_tickets_key, ticket_id)
   end
@@ -258,6 +283,7 @@ class Group < ActiveRecord::Base
   end
 
   def lrem_from_rr_capping_queue ticket_id
+    Rails.logger.debug "lrem_from_rr_capping_queue #{ticket_id} #{self.id}"
     update_sorted_set("lrem", ticket_id)
     lrem_round_robin_redis(round_robin_tickets_key, ticket_id)
   end
