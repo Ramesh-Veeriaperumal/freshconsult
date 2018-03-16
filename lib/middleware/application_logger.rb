@@ -4,7 +4,7 @@ require 'custom_request_store'
 # In non dev environment the assets path are routed to CDN via direct route53 cdn map.
 # In development mode it lands on the app server itself so we have logs for assets as well when we enable middleware logging.
 
-class Middleware::CustomLogger
+class Middleware::ApplicationLogger
   include LogHelper
 
   def initialize(app, options = {})
