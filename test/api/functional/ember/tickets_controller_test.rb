@@ -1698,6 +1698,25 @@ module Ember
       match_json(ticket_show_pattern(t, nil, true))
     end
 
+    # Test date format for requester and company sideload
+    def test_show_with_full_requester_info_and_custom_date
+      company_field = create_company_field(company_params(type: 'date', field_type: 'custom_date', label: 'Company date', name: 'cf_company_date', field_options: { 'widget_position' => 12 }))
+      contact_field = create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'Requester Date', name: 'cf_requester_date', required_for_agent: true, editable_in_signup: true, field_options: { 'widget_position' => 12 }))
+      time_now = Time.zone.now
+      company = create_company
+      company.update_attributes(custom_field: {cf_company_date: time_now})
+      user = add_new_user(@account, { customer_id: company.id, custom_fields: { cf_requester_date: time_now}})
+      ticket = create_ticket(requester_id: user.id)
+      get :show, controller_params(version: 'private', id: ticket.display_id, include: 'requester,company')
+      assert_response 200
+      res = JSON.parse(response.body)
+      ticket_date_format = time_now.strftime('%F')
+      contact_field.destroy
+      company_field.destroy
+      assert_equal ticket_date_format, res['requester']['custom_fields']['requester_date']
+      assert_equal ticket_date_format, res['company']['custom_fields']['company_date']
+    end
+
     def test_show_with_requester
       user_tags = ['tag1','tags2']
       tag_field = @account.contact_form.default_fields.find_by_name(:tag_names)
@@ -2015,6 +2034,16 @@ module Ember
       get :show, controller_params(version: 'private', id: ticket.display_id)
 
       assert_match /#{ticket.description_html}/, response.body
+    end
+
+    def test_show_ticket_with_custom_date_format
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_date_#{@account.id}" }
+      time_now = Time.zone.now
+      t = create_ticket(custom_field: { ticket_field.name => time_now })
+      put :show, controller_params({ version: 'private', id: t.display_id })
+      ticket_date_format = time_now.strftime('%F')
+      assert_response 200
+      assert_equal ticket_date_format, JSON.parse(response.body)['custom_fields']['test_custom_date']
     end
 
     # Test when Internal agent have group tickets access.
