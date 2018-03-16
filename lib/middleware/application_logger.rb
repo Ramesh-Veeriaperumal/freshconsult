@@ -31,7 +31,7 @@ class Middleware::ApplicationLogger
     end
 
     def controller_log_info
-      CustomRequestStore.store[:controller_log_info]
+      CustomRequestStore.store[:controller_log_info] || {}
     end
 
     # Getting payload keys from request.env is highly preferred since the values got from controller log subscriber uses Thread.current and for errorneous requests and edge cases Thread.current is not reset.
