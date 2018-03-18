@@ -123,7 +123,7 @@
 <%= javascript_include_tag :'cdn/freshfone_subscription' if freshfone_trial_states? %>
 <%= javascript_include_tag :'cdn/freshfone_agent_conference' if current_account.features?(:agent_conference) %>
 <%= javascript_include_tag :'cdn/freshfone_warm_transfer' if current_account.features?(:freshfone_warm_transfer) %>
-<% unless AppMetrics::FRESHFONE_METRICS.blank? %>
+<% unless AppMetrics::FRESHFONE_METRICS.blank? || current_account.opt_out_analytics_enabled?%>
   <%= javascript_tag do %>	
   App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");
   App.Phone.Metrics.start(<%= AppMetrics::FRESHFONE_METRIC_EVENTS.to_json.html_safe %>);

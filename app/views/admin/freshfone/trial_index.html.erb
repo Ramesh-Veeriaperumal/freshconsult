@@ -78,7 +78,7 @@
   freshfone.request_error_message = "<%= t('freshfone.admin.feature_request_content.error_message')%>" ;
 <% end %>
 <%= javascript_include_tag :'cdn/freshfone_welcome_page' %>
-<% unless AppMetrics::FRESHFONE_METRICS.blank? %>
+<% unless AppMetrics::FRESHFONE_METRICS.blank? || current_account.opt_out_analytics_enabled?%>
   <%= javascript_tag do %>
     freshfone.full_domain = '<%= current_account.full_domain %>';
     App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");

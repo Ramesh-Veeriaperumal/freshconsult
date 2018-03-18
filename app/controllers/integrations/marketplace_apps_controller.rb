@@ -39,8 +39,9 @@ class Integrations::MarketplaceAppsController <  Admin::AdminController
         end
       else
         auth_url = @application.oauth_url({ :account_id => current_account.id,
-                    :portal_id => current_portal.id, :user_id => current_user.id },
-                    @application[:name])
+          :portal_id => current_portal.id, :user_id => current_user.id,
+          :falcon_enabled => current_account.falcon_ui_enabled?(current_user) },
+          @application[:name])
         redirect_to auth_url  and return
       end
     end

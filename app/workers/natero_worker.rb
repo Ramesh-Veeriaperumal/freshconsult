@@ -14,7 +14,7 @@ class NateroWorker < BaseWorker
               params.blank? || params[:custom_options].blank?
 
     current_account = ::Account.current
-
+    return if current_account.opt_out_analytics_enabled?
     account_response = api_request_get(current_account.id)
 
     if request_success?(account_response) && account_response['results'].present?

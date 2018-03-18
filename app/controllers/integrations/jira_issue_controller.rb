@@ -11,8 +11,9 @@ class Integrations::JiraIssueController < ApplicationController
   before_filter :validate_request, :only => [:notify] # TODO Needs to be replaced with OAuth authentication.
   before_filter :jira_object, :except => [:notify]
   before_filter :authenticated_agent_check,:except => [:notify]
-  
+
   def create
+    change_display_id_to_ticket_id
     begin
       res_data = @jira_obj.create(params)
       render :json => res_data
@@ -24,6 +25,7 @@ class Integrations::JiraIssueController < ApplicationController
   end
 
   def update
+    change_display_id_to_ticket_id
     begin
       res_data = @jira_obj.link_issue(params)
       render :json => res_data
@@ -86,6 +88,15 @@ class Integrations::JiraIssueController < ApplicationController
     @selected_key = params["changelog"].present? && params["changelog"]["items"].detect{ |changes| changes["field"] == "Key"}
   end
 
+
+  def change_display_id_to_ticket_id
+     if params[:local_integratable_display_id].present?
+      display_id = params[:local_integratable_display_id]
+      ticket = current_account.tickets.find_by_display_id(display_id)
+      params[:local_integratable_id] = ticket.id if ticket
+    end
+  end
+
   def validate_request
      old_issue_id = issue_changes && @selected_key["fromString"]
      if(params["issue"] && (old_issue_id || params["issue"]["key"]) && params["auth_key"])
@@ -98,7 +109,7 @@ class Integrations::JiraIssueController < ApplicationController
        if @installed_app && @installed_app.local_integratable_type == "Helpdesk::Ticket"
             local_integratable_id = @installed_app.local_integratable_id
             account_id = @installed_app.account_id
-            id = params["comment"]? params["comment"]["id"] : Digest::SHA512.hexdigest("@")  
+            id = params["comment"]? params["comment"]["id"] : Digest::SHA512.hexdigest("@")
             recently_updated_by_fd = get_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=> account_id, :local_integratable_id=> local_integratable_id, :remote_integratable_id=> remote_integratable_id, :comment_id => id})
             if recently_updated_by_fd || (params[:comment] && (params[:comment]["body"] =~ /Note added by .* in Freshdesk:/  || params[:comment]["body"] =~/Freshdesk ticket status changed to :/)) # If JIRA has been update recently with same params then ignore that event.
               remove_integ_redis_key(INTEGRATIONS_JIRA_NOTIFICATION % {:account_id=>account_id, :local_integratable_id=>local_integratable_id, :remote_integratable_id=>remote_integratable_id, :comment_id => id})
@@ -109,14 +120,14 @@ class Integrations::JiraIssueController < ApplicationController
         if integrated_resource
           archive_ticket = integrated_resource.local_integratable
           if archive_ticket
-            ticket = archive_ticket.ticket || create_ticket(archive_ticket) 
+            ticket = archive_ticket.ticket || create_ticket(archive_ticket)
             modify_integrated_resource(ticket,integrated_resource)
           end
         end
        end
        return
      end
-     render :text => "Unauthorized Access", :status => 401 
+     render :text => "Unauthorized Access", :status => 401
   end
 
   def authenticated_agent_check

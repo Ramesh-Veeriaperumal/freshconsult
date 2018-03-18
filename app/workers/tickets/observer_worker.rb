@@ -29,6 +29,7 @@ module Tickets
           ticket_changes = evaluate_on.merge_changes(current_events, 
                             evaluate_on.changes) if current_events.present?
           evaluate_on.round_robin_on_ticket_update(ticket_changes) if evaluate_on.rr_allowed_on_update?
+          ticket_changes = evaluate_on.merge_changes(ticket_changes, evaluate_on.changes.slice(:responder_id)) 
           evaluate_on.update_old_group_capping(ticket_changes)
           evaluate_on.save!
           evaluate_on.va_rules_after_save_actions.each do |action|

@@ -8,6 +8,7 @@ class ContactEnrichment
   def perform(args = {})
     email_update = args['email_update']
     account = Account.current
+    return if account.opt_out_analytics_enabled?
     begin
       email_id = account.contact_info[:email]
       result = Clearbit::Enrichment.find(email: email_id, stream: true)
