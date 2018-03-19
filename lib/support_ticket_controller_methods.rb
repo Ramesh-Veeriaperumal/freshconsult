@@ -36,8 +36,8 @@ module SupportTicketControllerMethods
         }
       end
     else
-      logger.debug "Ticket Errors is #{@ticket.errors}"
-      @params = fetch_params
+      logger.debug "Ticket Errors is #{@ticket.errors.inspect}"
+      @params = sanitize_params
       set_portal_page :submit_ticket
       render :action => :new
     end
@@ -85,10 +85,13 @@ module SupportTicketControllerMethods
       end
     end
 
-    def fetch_params
+    def sanitize_params
       # To avoid reflected xss - we assign sanitized description
       params["helpdesk_ticket"]["ticket_body_attributes"]["description_html"] = @ticket.description_html
-      params
+    rescue => e
+      Rails.logger.error(e)
+    ensure
+      return params
     end
 
 end

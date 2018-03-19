@@ -31,8 +31,12 @@ class Integrations::Application < ActiveRecord::Base
 
   def oauth_url(hash, app_name = nil)
     user_specific_apps = ["box", "google_calendar"]
-    app_config = (user_specific_apps.include? app_name) ? {  'account_id' => hash[:account_id], 'portal_id'  => hash[:portal_id],'user_id' => hash[:user_id] } :
-                                       {  'account_id' => hash[:account_id], 'portal_id'  => hash[:portal_id]}
+    app_config = {
+      'account_id' => hash[:account_id],
+      'portal_id' => hash[:portal_id], 
+      'falcon_enabled' => hash[:falcon_enabled]
+    }
+    app_config.merge!('user_id' => hash[:user_id]) if user_specific_apps.include? app_name
     AppConfig['integrations_url'][Rails.env] + 
       Liquid::Template.parse(options[:oauth_url]).render(app_config)
   end
