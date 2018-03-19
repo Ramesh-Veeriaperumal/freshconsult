@@ -938,7 +938,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_contact_filter_updated_at
-    update_timestamp = Time.now.utc.iso8601
+    update_timestamp = Time.now.utc.iso8601.to_datetime
     @account.all_contacts.first.update_column(:updated_at, update_timestamp)
     get :index, controller_params(_updated_since: update_timestamp)
     assert_response 200

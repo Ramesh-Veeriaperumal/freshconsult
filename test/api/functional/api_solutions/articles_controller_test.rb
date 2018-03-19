@@ -103,11 +103,19 @@ module ApiSolutions
     end
 
     def get_article_without_draft
-      @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.collect{ |x| x.solution_article_meta }.flatten.collect{ |x| x.children }.flatten.select{ |x| !x.draft.present? }.first
+      article = @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.collect{ |x| x.solution_article_meta }.flatten.collect{ |x| x.children }.flatten.first
+      article.draft.destroy if article.draft.present?
+      article.reload
     end
 
     def get_article_with_draft
-      @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.collect{ |x| x.solution_article_meta }.flatten.collect{ |x| x.children }.flatten.select{ |x| x.draft.present? }.first
+      article = @account.solution_category_meta.where(is_default: false).collect{ |x| x.solution_folder_meta }.flatten.map{ |x| x unless x.is_default}.collect{ |x| x.solution_article_meta }.flatten.collect{ |x| x.children }.flatten.first
+      unless article.draft.present?
+        draft = article.build_draft_from_article
+        draft.title = "Sample"
+        draft.save
+      end
+      article.reload
     end
 
     def get_folder_meta
