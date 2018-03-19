@@ -313,7 +313,7 @@ module Ember
         end
 
         def train_bot
-          Community::MlSolutionsTraining.perform_async(bot_id: @item.id)
+          Bot::MlSolutionsTraining.perform_async(bot_id: @item.id)
           @item.training_inprogress!
         end
 
