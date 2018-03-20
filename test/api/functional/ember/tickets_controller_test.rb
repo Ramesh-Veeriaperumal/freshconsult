@@ -78,6 +78,12 @@ module Ember
       end
     end
 
+   def change_subscription_state(subscription_state)
+      subscription = Account.current.subscription
+      subscription.state = subscription_state
+      subscription.save
+    end
+
     def get_user_with_multiple_companies
       user_company = @account.user_companies.group(:user_id).having(
         'count(user_id) > 1 '
@@ -321,6 +327,34 @@ module Ember
       assert_response 200
       assert response.api_meta[:count] == @account.tickets.where(['spam = false AND deleted = false AND created_at > ?', 30.days.ago]).count
       match_json([])
+    end
+
+    def test_show_when_account_suspended
+      ticket = create_ticket
+      change_subscription_state('suspended')
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      change_subscription_state('trial')
+      assert_response 200
+    end
+
+    def test_put_when_account_suspended
+      ticket = create_ticket
+      change_subscription_state('suspended')
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, {})
+      change_subscription_state('trial')
+      assert_response 402
+    end
+
+    def test_post_when_account_suspended
+      change_subscription_state('suspended')
+      attachment_ids = []
+      rand(2..10).times do
+        attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      end
+      params_hash = ticket_params_hash.merge(attachment_ids: attachment_ids)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      change_subscription_state('trial')
+      assert_response 402
     end
 
     def test_show_with_survey_result
