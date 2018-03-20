@@ -5304,6 +5304,9 @@
           "204": {
             "description": "Success"
           },
+          "401": {
+            "description": "Invalid credentials"
+          },
           "403": {
             "description": "Access denied"
           },

@@ -3,10 +3,10 @@ module Ember
     class BotsController < ApiApplicationController
       include HelperConcern
       include Helpdesk::IrisNotifications
-      include Bot::Authentication
+      include ChannelAuthentication
 
       skip_before_filter :check_privilege, :verify_authenticity_token, only: [:training_completed]
-      before_filter :authenticate_request, only: [:training_completed]
+      before_filter :channel_client_authentication, only: [:training_completed]
       before_filter :load_bot_by_external_id, only: [:training_completed]
       around_filter :handle_exception, only: [:training_completed, :mark_completed_status_seen, :enable_on_portal]
 

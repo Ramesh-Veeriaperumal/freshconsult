@@ -363,8 +363,8 @@ module Ember
         enable_bot do
           bot = create_bot({ product: true})
           post :training_completed, controller_params(version: 'private', id: bot.id)
-          assert_response 403
-          match_json(request_error_pattern(:access_denied))
+          assert_response 401
+          match_json(request_error_pattern(:invalid_credentials))
         end
       end
 
