@@ -69,7 +69,6 @@ gem "i18n", "~> 0.6.0"
 gem "i18n-js", "3.0.0.rc11"
 gem "RedCloth", "4.3.2"
 gem "authlogic", "~> 3.4.2"
-gem "request_store", "~> 1.0"
 gem "httparty", "0.10.0"
 gem "omniauth", "1.3.2"
 gem "omniauth-oauth", "1.1.0"
@@ -194,7 +193,7 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
-gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v1.0.6'
+gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v1.0.7'
 
 gem 'net-http-persistent', '~> 2.9.4'
 

@@ -2063,16 +2063,21 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     bucket = current_account.account_additional_settings.additional_settings[:announcement_bucket].to_s
     features_to_send = features_for_inline_manual
     roles_to_send = [role, bucket, state].concat(features_to_send)
-    {
+    inline_manual_people_tracing = {
       :uid      => current_user.id,
-      :email    => current_user.email,
-      :username => current_account.full_domain,
-      :name     => current_user.name,
+      :name     => current_account.full_domain,
       :created  => current_account.created_at.to_i,
       :updated  => current_user.last_login_at.to_i,
       :plan     => Subscription.fetch_by_account_id(current_account.id).subscription_plan_from_cache.display_name,
       :roles    => roles_to_send
     }
+    unless current_account.opt_out_analytics_enabled?
+      inline_manual_people_tracing.merge!({
+        :email    => current_user.email,
+        :username => current_user.name
+      })
+    end
+    inline_manual_people_tracing
   end
 
   def features_for_inline_manual

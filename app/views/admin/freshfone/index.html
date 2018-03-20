@@ -61,7 +61,7 @@
   if (typeof freshfone === "undefined") { freshfone = {}; }
   freshfone.request_success_message = "<%= t('freshfone.admin.feature_request_content.success')%>" ;
   freshfone.request_error_message = "<%= t('freshfone.admin.feature_request_content.error_message')%>" ;
-  <% unless AppMetrics::FRESHFONE_METRICS.blank? %>
+  <% unless AppMetrics::FRESHFONE_METRICS.blank? || current_account.opt_out_analytics_enabled?%>
     freshfone.full_domain = '<%= current_account.full_domain %>';
     App.Kissmetrics.kissMetricTrackingCode("<%= AppMetrics::FRESHFONE_METRICS %>");
     freshfone.admin_metrics = <%= AppMetrics::FRESHFONE_METRIC_EVENTS.slice(*['ADMIN_PHONE_PAGE_LOADED']).to_json.html_safe %>;

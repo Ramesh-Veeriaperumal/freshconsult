@@ -20,7 +20,7 @@
   <%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/#{MarketplaceConfig::FRESH_PARENT}" %>
 <% end %>
 
-<% unless AppMetrics::FRESHFONE_METRICS.blank? %>
+<% unless AppMetrics::FRESHFONE_METRICS.blank? || current_account.opt_out_analytics_enabled?%>
   <%= javascript_tag do %>
     jQuery(document).ready(function(){
       if(App.Kissmetrics != undefined){ 
