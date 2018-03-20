@@ -51,8 +51,8 @@
     position: absolute;
     height: calc(100% - 100px);
     overflow-y: auto;
-    word-break: break-word;
-    -ms-word-break: break-word;
+    word-break: break-all;
+    -ms-word-break: break-all;
     word-wrap: break-word;
   }
 
