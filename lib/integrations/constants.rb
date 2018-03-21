@@ -138,7 +138,8 @@ module Integrations::Constants
     APP_NAMES[:box] => 16,
     APP_NAMES[:onedrive] => 16,
     APP_NAMES[:surveymonkey] => 16,
-    APP_NAMES[:google_calendar] => 4
+    APP_NAMES[:google_calendar] => 4,
+    APP_NAMES[:salesforce] => 6
   }.freeze
 
   ATTACHMENT_APPS = [APP_NAMES[:dropbox],APP_NAMES[:box],APP_NAMES[:onedrive]].freeze

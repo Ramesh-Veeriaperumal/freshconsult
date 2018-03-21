@@ -128,6 +128,11 @@ module IntegrationServices
       @installed_app.save!
     end
     
+    def receive_fetch_user_selected_fields
+      fields = @installed_app.safe_send("configs_#{@payload[:type]}_fields")
+      return {} if fields.blank?
+      safe_send("#{@payload[:type]}_resource").get_selected_fields(fields, @payload[:value])
+    end
   end
 end
 Dir["#{Rails.root}/lib/integration_services/services/**/*.rb"].each { |f| require_dependency(f) }

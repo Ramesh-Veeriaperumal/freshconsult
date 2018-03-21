@@ -1,0 +1,13 @@
+type: object
+properties:
+  event:
+    description: one of the event value [fetch_user_selected_fields, integrated_resource]
+    type: string
+  payload:
+    description: is a json value depends on integrations.
+    type: object
+    properties:
+        type:
+          type: string
+        value:
+          type: object
