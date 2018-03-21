@@ -110,6 +110,7 @@ module Helpkit
 
     config.middleware.insert_before 0, "Middleware::CorsEnabler"
     config.middleware.insert_before 0, "Middleware::SecurityResponseHeader"
+    config.middleware.insert_before 0, "Middleware::ApplicationLogger" if ENV['MIDDLEWARE_LOG_ENABLE'] == 'true'
     config.middleware.insert_before 0, "Middleware::CustomLogger" if ENV['MIDDLEWARE_LOG_ENABLE'] == 'true'
     config.middleware.insert_before 0, "Middleware::GlobalRequestStore"
     config.middleware.insert_before 0, "Middleware::HealthCheck"

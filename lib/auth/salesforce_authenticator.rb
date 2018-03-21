@@ -23,6 +23,8 @@ class Auth::SalesforceAuthenticator < Auth::Authenticator
   end
 
   def get_redirect_url
-    "#{@portal_url}/integrations/salesforce/new"
+    (@falcon_enabled == 'true') ? 
+      "#{@portal_url}/a/admin/integrations/salesforce/new" : 
+      "#{@portal_url}/integrations/salesforce/new"
   end
 end

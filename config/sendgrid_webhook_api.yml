@@ -7,7 +7,15 @@ defaults: &defaults
       update_url: https://api.sendgrid.com/v3/user/webhooks/parse/settings/
     api_key: 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
     global_verification_key: 4a1beaedf946d6c4ea1b88567a
-    dkim_key: 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
+    dkim:
+      key: 
+        user1: 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
+        user2: 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
+        parent: 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
+      configure: 
+        timeout: 50
+        retries: 10
+        expire: 1
     timeout: 30
 development:
   <<: *defaults
@@ -17,5 +25,4 @@ test:
   <<: *defaults
 production:
   <<: *defaults
-
   

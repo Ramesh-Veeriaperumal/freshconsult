@@ -96,7 +96,8 @@ class Integrations::SalesforceController < Admin::AdminController
     if config_hash['opportunity_view'].to_bool
       config_hash['opportunity_fields'] = params[:opportunities].join(",") unless params[:opportunities].nil?
       config_hash['opportunity_labels'] = params['opportunity_labels']
-      config_hash['agent_settings'] = params["agent_settings"]["value"]
+      config_hash['agent_settings'] = params["agent_settings"] ? 
+                                        params["agent_settings"]["value"] : 'false'
       if config_hash['agent_settings'].to_bool
         config_hash["opportunity_stage_choices"] = service_obj.receive(:opportunity_stage_field)
       else
