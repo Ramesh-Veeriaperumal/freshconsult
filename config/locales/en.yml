@@ -3523,8 +3523,6 @@ en:
       login_message: Login with an account administrator's credentials to associate your Google Apps login to your Freshdesk account.
       login_button: Login & complete registration
     canceled_account: We're sorry to see you go, but your account has been canceled.
-    edit_domain:
-      getting_started: "Getting Started"
     new:
       create_an_account: Create an account
       errors_encountered: "Errors encountered with your account information:"
@@ -3685,6 +3683,7 @@ en:
       submit_button_text: Take me to my account
       account_url_defaulted: Due to inactivity, we've defaulted to an auto-generated URL for your account. Redirecting you to your dashboard now...
       check_activation_email: Due to inactivity, we've defaulted to an auto-generated URL for your account. Please check your inbox for our activation email.
+      getting_started: "Getting Started"
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   account_configuration:
