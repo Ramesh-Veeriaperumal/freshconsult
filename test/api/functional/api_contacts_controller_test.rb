@@ -2525,5 +2525,4 @@ class ApiContactsControllerTest < ActionController::TestCase
     write_query_count = QueryCounter.queries.select{ |q| q.include?('UPDATE ') or q.include?('INSERT INTO') }.count
     assert write_query_count == 2
   end
-
 end

@@ -31,7 +31,7 @@ module Freshcaller::CallsTestHelper
 
   def convert_call_params(call_id, status)
     {
-      version: 'private',
+      version: 'channel',
       id: call_id,
       call_status: status,
       customer_number: Faker::PhoneNumber.phone_number.to_s,
@@ -56,7 +56,7 @@ module Freshcaller::CallsTestHelper
 
   def update_invalid_params(call_id)
     {
-      version: 'private',
+      version: 'channel',
       id: call_id,
       call_status: 'cancelled',
       customer_number: 1_234_567,

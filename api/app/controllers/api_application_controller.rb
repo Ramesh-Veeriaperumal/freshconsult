@@ -1,4 +1,6 @@
 class ApiApplicationController < MetalApiController
+  # account suspended restricted methods.
+  RESTRICTED_ACCESS_METHODS = [:post, :put, :delete]
   prepend_before_filter :response_info
   # do not change the exception order # standard error has to have least priority hence placing at the top.
   rescue_from StandardError, with: :render_500
@@ -282,7 +284,13 @@ class ApiApplicationController < MetalApiController
 
     def check_account_state
       Rails.logger.info "::: Check account state :::"
-      render_request_error(:account_suspended, 403) unless current_account.active?
+      if current_account.suspended?
+        if private_api?
+          render_request_error(:account_suspended, 402) if RESTRICTED_ACCESS_METHODS.include?(request.method_symbol)
+        else
+          render_request_error(:account_suspended, 403)
+        end
+      end
     end
 
     def set_cache_buster

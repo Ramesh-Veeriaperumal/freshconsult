@@ -25,10 +25,6 @@ module IntegrationServices::Services
       deal_resource.stage_dropdown_values
     end
 
-    def receive_fetch_user_selected_fields
-      safe_send("#{@payload[:type]}_resource").get_selected_fields(@installed_app.safe_send("configs_#{@payload[:type]}_fields"), @payload[:value])
-    end
-
     def account_resource
       @account_resource ||= IntegrationServices::Services::Freshsales::FreshsalesAccountResource.new(self)
     end

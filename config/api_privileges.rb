@@ -35,7 +35,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/contact_field", only: [:index]
     resource :"ember/company_field", only: [:index]
     resource :"ember/livechat_setting", only: [:index]
-    resource :"ember/installed_application"
+    resource :"ember/installed_application", only: [:index, :show, :fetch]
     resource :"ember/integrated_resource"
     resource :"ember/integrated_user"
 

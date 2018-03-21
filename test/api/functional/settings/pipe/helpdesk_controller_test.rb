@@ -28,29 +28,29 @@ module Settings
 
     def test_toggle_email_valid_enable
       Account.current.rollback(:disable_emails)
-      put :toggle_email, construct_params({ version: 'private', disabled: true})
+      put :toggle_email, construct_params({ version: 'pipe', disabled: true})
       assert Account.current.launched?(:disable_emails)
       Account.current.rollback(:disable_emails)
     end  
 
     def test_toggle_email_valid_disable
       Account.current.launch(:disable_emails)
-      put :toggle_email, construct_params({ version: 'private', disabled: false})
+      put :toggle_email, construct_params({ version: 'pipe', disabled: false})
       assert !Account.current.launched?(:disable_emails)
     end
 
     def test_toggle_email_invalid_enable
-      put :toggle_email, construct_params({ version: 'private', disabledX: true})
+      put :toggle_email, construct_params({ version: 'pipe', disabledX: true})
       assert_response 400
-      put :toggle_email, construct_params({ version: 'private', disabled: "true"})
+      put :toggle_email, construct_params({ version: 'pipe', disabled: "true"})
       assert_response 400
-      put :toggle_email, construct_params({ version: 'private', disabledX: 123})
+      put :toggle_email, construct_params({ version: 'pipe', disabledX: 123})
       assert_response 400
     end
 
     def test_toggle_fast_ticket_creation_enable
       Account.current.features.redis_display_id.destroy if Account.current.features?(:redis_display_id)
-      put :toggle_fast_ticket_creation, construct_params({ version: 'private', disabled: false})
+      put :toggle_fast_ticket_creation, construct_params({ version: 'pipe', disabled: false})
       assert Account.current.features?(:redis_display_id)
       key = TICKET_DISPLAY_ID % { :account_id => Account.current.id }
       assert_equal(get_display_id_redis_key(key), "#{TicketConstants::TICKET_START_DISPLAY_ID}")
@@ -59,23 +59,23 @@ module Settings
 
     def test_toggle_fast_ticket_creation_disable
       Account.current.features.redis_display_id.create if Account.current.features?(:redis_display_id)
-      put :toggle_fast_ticket_creation, construct_params({ version: 'private', disabled: true})
+      put :toggle_fast_ticket_creation, construct_params({ version: 'pipe', disabled: true})
       assert !Account.current.features?(:redis_display_id)
       Account.current.features.redis_display_id.destroy
     end
 
     def test_toggle_fast_ticket_creation_invalid_param
-      put :toggle_fast_ticket_creation, construct_params({ version: 'private', disabledX: true})
+      put :toggle_fast_ticket_creation, construct_params({ version: 'pipe', disabledX: true})
       assert_response 400
-      put :toggle_fast_ticket_creation, construct_params({ version: 'private', disabled: "true"})
+      put :toggle_fast_ticket_creation, construct_params({ version: 'pipe', disabled: "true"})
       assert_response 400
-      put :toggle_fast_ticket_creation, construct_params({ version: 'private', disabledX: 123})
+      put :toggle_fast_ticket_creation, construct_params({ version: 'pipe', disabledX: 123})
       assert_response 400
     end
 
     def test_change_api_v2_limit_non_null
       set_default_limit
-      put :change_api_v2_limit, construct_params({ version: 'private', limit: 20000})
+      put :change_api_v2_limit, construct_params({ version: 'pipe', limit: 20000})
       expected = {
         old_limit: nil,
         limit: 20000
@@ -86,7 +86,7 @@ module Settings
 
     def test_change_api_v2_limit_revert
       set_account_api_limit(20000)
-      put :change_api_v2_limit, construct_params({ version: 'private', limit: nil})
+      put :change_api_v2_limit, construct_params({ version: 'pipe', limit: nil})
       expected = {
         old_limit: 20000,
         limit: nil
@@ -98,7 +98,7 @@ module Settings
 
     def test_change_api_v2_limit_max
       set_default_limit
-      put :change_api_v2_limit, construct_params({ version: 'private', limit: 30000})
+      put :change_api_v2_limit, construct_params({ version: 'pipe', limit: 30000})
       expected = {
         old_limit: nil,
         limit: ::Pipe::HelpdeskConstants::MAX_API_LIMIT
@@ -108,13 +108,13 @@ module Settings
     end
 
     def test_change_api_v2_limit_invalid_param
-      put :change_api_v2_limit, construct_params({ version: 'private', limitX: 30000})
+      put :change_api_v2_limit, construct_params({ version: 'pipe', limitX: 30000})
       assert_response 400
-      put :change_api_v2_limit, construct_params({ version: 'private', limit: "30000"})
+      put :change_api_v2_limit, construct_params({ version: 'pipe', limit: "30000"})
       assert_response 400
-      put :change_api_v2_limit, construct_params({ version: 'private', limit: true})
+      put :change_api_v2_limit, construct_params({ version: 'pipe', limit: true})
       assert_response 400
-      put :change_api_v2_limit, construct_params({ version: 'private', limasd: true})
+      put :change_api_v2_limit, construct_params({ version: 'pipe', limasd: true})
       assert_response 400
       
     end

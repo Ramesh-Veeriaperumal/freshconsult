@@ -8,9 +8,6 @@ module Freshbots
     class << self
       def create_bot(bot)
         current_user = User.current
-        portal = bot.portal
-        domain = portal.portal_url
-        domain_url = domain.presence || Account.current.full_domain
         url = BOT_CONFIG[:create_bot_url]
         headers = build_headers(bot, :create)
         payload = {
@@ -28,9 +25,9 @@ module Freshbots
             eml: current_user.email,
             mtdtPrprts: {
               bckgrndClr: bot.template_data[:theme_colour],
-              sz: bot.template_data[:widget_size]
-            },
-            prtl: "#{portal.url_protocol}://#{domain_url}"
+              sz: bot.template_data[:widget_size],
+              prtl: portal_url(bot)
+            }
           }
         }.to_json
         response = RestClient.post url, payload, headers
@@ -54,7 +51,8 @@ module Freshbots
           clnt: {
             mtdtPrprts: {
               bckgrndClr: bot.template_data[:theme_colour],
-              sz: bot.template_data[:widget_size]
+              sz: bot.template_data[:widget_size],
+              prtl: portal_url(bot)
             }
           }
         }.to_json
@@ -90,6 +88,11 @@ module Freshbots
           else
             bot.cdn_url
           end
+        end
+
+        def portal_url(bot)
+          portal = bot.portal
+          "#{portal.url_protocol}://#{portal.host}"
         end
     end
   end

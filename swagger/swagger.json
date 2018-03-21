@@ -4095,6 +4095,38 @@
         }
       }
     },
+    "/installed_applications/fetch": {
+      "post": {
+        "tags": [
+          "Integrations"
+        ],
+        "summary": "Fetch",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/installed_application_fetch"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Contact not found"
+          }
+        }
+      }
+    },
     "/integrated_resources": {
       "post": {
         "tags": [
@@ -7500,7 +7532,7 @@
         "note": {
           "type": "string"
         },
-        "helath_score": {
+        "health_score": {
           "type": "string"
         },
         "account_tier": {
@@ -8344,6 +8376,27 @@
           }
         }
       ]
+    },
+    "installed_application_fetch": {
+      "type": "object",
+      "properties": {
+        "event": {
+          "description": "one of the event value [fetch_user_selected_fields, integrated_resource]",
+          "type": "string"
+        },
+        "payload": {
+          "description": "is a json value depends on integrations.",
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "value": {
+              "type": "object"
+            }
+          }
+        }
+      }
     },
     "integrated_users": {
       "type": "object",

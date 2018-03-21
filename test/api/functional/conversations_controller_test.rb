@@ -624,6 +624,7 @@ class ConversationsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: n.id }, params)
     User.any_instance.unstub(:privilege?)
     assert_response 200
+    
     match_json(v2_update_note_pattern(params, n.reload))
     match_json(v2_update_note_pattern({}, n.reload))
   end
