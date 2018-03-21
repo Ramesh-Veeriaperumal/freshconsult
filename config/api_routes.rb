@@ -476,11 +476,11 @@ Helpkit::Application.routes.draw do
       scope '', &ember_routes # "/api/v2/.."
       scope '', &api_routes # "/api/v2/.."
     end
-    scope '/pipe', defaults: { version: 'private', format: 'json' }, constraints: { format: /(json|$^)/ } do
+    scope '/pipe', defaults: { version: 'pipe', format: 'json' }, constraints: { format: /(json|$^)/ } do
       scope '', &pipe_routes # "/api/v2/.."
       scope '', &api_routes # "/api/v2/.."
     end
-    scope '/channel', defaults: { version: 'private', format: 'json' }, constraints: { format: /(json|$^)/ } do
+    scope '/channel', defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ } do
       scope '', &channel_routes # "/api/v2/.."
       scope '', &api_routes # "/api/v2/.."
     end

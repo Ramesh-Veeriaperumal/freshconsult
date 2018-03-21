@@ -4,13 +4,13 @@ module Pipe
   class AccountInfoControllerTest < ActionController::TestCase
 
     def test_info_correct_account_id
-      get :index, controller_params(version: 'private', account_id: @account.id)
+      get :index, controller_params(version: 'pipe', account_id: @account.id)
       assert_response 200
       match_json(account_info(@account))
     end
 
     def test_info_non_existent_account
-      get :index, controller_params(version: 'private', account_id: 23423425235)
+      get :index, controller_params(version: 'pipe', account_id: 23423425235)
       assert_response 500
     end
 
