@@ -77,7 +77,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_contacts do
-    resource :"ember/contact", only: %i[index show send_invite bulk_send_invite]
+    resource :"ember/contact", only: %i[index show send_invite activities bulk_send_invite]
     resource :"ember/company", only: %i(index show activities)
     resource :"ember/contact/todo", only: [:index]
     resource :"ember/search/customer", only: [:results]
@@ -85,7 +85,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_contacts do
-    resource :"ember/contact", only: [:create, :update, :activities, :quick_create]
+    resource :"ember/contact", only: [:create, :update, :quick_create]
     resource :"ember/company", only: [:create, :update]
     resource :"ember/contacts/merge", only: [:merge]
     resource :"ember/customer_import", only: [:index, :create]
