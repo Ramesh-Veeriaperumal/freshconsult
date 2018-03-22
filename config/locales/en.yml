@@ -10404,6 +10404,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           validation_error: "This field is required"
           authentication_error: "The email or password provided is not valid."
           access_error: "You need to be an admin in both Freshcaller and Freshdesk to link your accounts."
+          pod_error: "Looks like your two accounts are in different data centers. Please create a new Freshcaller account to link to your Freshdesk account."
           api_error: "This Freshcaller account does not exist. Please provide a valid URL or create a new Freshcaller account."
     ticket:
       recording:

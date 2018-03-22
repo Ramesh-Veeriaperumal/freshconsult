@@ -18,7 +18,7 @@ class RemoteFile < ::Tempfile
   end
 
   def fetch
-    string_io = OpenURI.safe_send(:open, @remote_path, :http_basic_authentication => [username , password])
+    string_io = OpenURI.open_uri(@remote_path, @remote_path, :http_basic_authentication => [username , password])
     self.open_uri_path = string_io.path if string_io.respond_to?(:path)
     self.write string_io.read.force_encoding("UTF-8")
     self.rewind
@@ -26,7 +26,7 @@ class RemoteFile < ::Tempfile
   end
 
   def fetch_without_authentication
-    string_io = OpenURI.safe_send(:open, @remote_path)
+    string_io = OpenURI.open_uri(@remote_path, @remote_path)
     self.open_uri_path = string_io.path if string_io.respond_to?(:path)
     self.write string_io.read.force_encoding("UTF-8")
     self.rewind
