@@ -189,7 +189,7 @@ module ParserUtil
   def mail_parser(email)
     parsed_hash = { :email => email, :name => nil, :domain => nil }
     parsed_email = Mail::ToField.new 
-    parsed_email.value = email
+    parsed_email.value = (Account.current && Account.current.launched?(:q_value_encode)) ? (encode_non_usascii_q_val(email, "UTF-8")) : email
     name_prefix = ""
     parsed_email.addrs.each_with_index do |email,index|
       address = email.address

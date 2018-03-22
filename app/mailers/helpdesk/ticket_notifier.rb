@@ -317,7 +317,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def reply(ticket, note , options={})
     check_spam_email(ticket, note)
-    email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
+    email_config = (note.account.email_configs.find_by_reply_email(extract_email(note.from_email)) || ticket.reply_email_config)
     begin
       configure_email_config email_config
       to_emails = validate_emails(note.to_emails, note)
@@ -390,7 +390,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def forward(ticket, note, options={})
     check_spam_email(ticket, note)
-    email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
+    email_config = (note.account.email_configs.find_by_reply_email(extract_email(note.from_email)) || ticket.reply_email_config)
     begin
       remove_email_config
       configure_email_config email_config
