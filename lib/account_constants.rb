@@ -74,12 +74,12 @@ module AccountConstants
 
   ATTACHMENT_LIMIT = {
     :trial_or_sprout => 15,
-    :paid => 25
+    :paid => [25,20]
   }
    
   def attachment_limit
     @attachment_limit ||= begin
-      subscription.trial_or_sprout_plan? ? ATTACHMENT_LIMIT[:trial_or_sprout] : ATTACHMENT_LIMIT[:paid]
+      subscription.trial_or_sprout_plan? ? ATTACHMENT_LIMIT[:trial_or_sprout] : (Account.current.outgoing_attachment_limit_25_enabled? ? ATTACHMENT_LIMIT[:paid][0] : ATTACHMENT_LIMIT[:paid][1])
     rescue => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occurred while calculating attachment limit"}})
       ATTACHMENT_LIMIT[:trial_or_sprout]
