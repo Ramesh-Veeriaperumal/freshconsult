@@ -6559,6 +6559,14 @@ en:
     twitter_disabled: Twitter login will be disabled for customers and agents for security purposes.
     important: Important
     includes_contacts_company_domain: (includes existing contacts and company domains)
+    gdpr_admin_details: has changed your user permissions from
+    gdpr_agent: Agent
+    gdpr_admin: Admin.
+    gdpr_terms: By clicking on Accept , you agree to our  
+    gdpr_terms_link:  Terms
+    gdpr_acknowledgement: and acknowledge having read our
+    gdpr_policy: Privacy policy.
+    gdpr_to: to
     permission:
       helpdesk_restrictions: Helpdesk restrictions
       who_can_create: Who can log in (or) sign up (or) create tickets?

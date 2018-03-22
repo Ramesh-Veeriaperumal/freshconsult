@@ -1122,6 +1122,18 @@ class User < ActiveRecord::Base
     remove_password_flag(email, account_id)
   end
 
+  def gdpr_pending?
+    agent_preferences[:gdpr_acceptance]
+  end
+
+  def current_user_gdpr_admin
+      Account.current.agents_details_from_cache.find{ |n| n.id == agent_preferences[:gdpr_admin_id]}.try(:name) if gdpr_pending?
+  end
+
+  def agent_preferences
+    self.preferences[:agent_preferences]
+  end
+  
   def active_freshid_user?
     active? && freshid_enabled_account?
   end

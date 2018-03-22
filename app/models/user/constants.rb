@@ -57,5 +57,6 @@ class User < ActiveRecord::Base
   MAX_NO_OF_SKILLS_PER_USER = 35
 
   ACTIVATION_ATTRIBUTES = [:name, :mobile, :phone, :job_title, :password, :password_confirmation]
+  ADMIN_PRIVILEGES = [:view_admin]
 
 end

@@ -17,11 +17,12 @@ class User < ActiveRecord::Base
   before_update :create_freshid_user, if: :converted_to_agent?
   before_update :destroy_freshid_user, if: :converted_to_contact?
   before_update :update_freshid_user, if: [:freshid_enabled_and_agent?, :email_changed?]
+  before_update :set_gdpr_preference, :if => [:privileges_changed?, :agent_to_admin?]
+  before_update :remove_gdpr_preference, :if => [:privileges_changed?, :admin_to_agent?]
 
   after_update  :destroy_scheduled_ticket_exports, :if => :privileges_changed?
 
   after_update  :send_alert_email, :if => [:email_changed?,:agent?]
-
   before_save :set_time_zone, :set_default_company
   before_save :set_language, :unless => :detect_language?
   before_save :set_contact_name, :update_user_related_changes
@@ -105,6 +106,27 @@ class User < ActiveRecord::Base
     self.merge_preferences = { :agent_preferences => new_pref }
   end
 
+  def set_gdpr_preference
+    self.merge_preferences = { :agent_preferences => {
+      :gdpr_acceptance => true,
+      :gdpr_admin_id => User.current.id
+    }}
+  end
+
+  def remove_gdpr_preference
+    self.merge_preferences = { :agent_preferences => {
+      :gdpr_acceptance => false,
+    }}
+  end
+
+  def agent_to_admin?
+     admin_privilege_updated?
+  end
+
+  def admin_to_agent?
+     admin_privilege_updated? true
+  end
+
   def populate_privileges
     self.privileges = union_privileges(self.roles).to_s
     @role_change_flag = false
@@ -133,6 +155,19 @@ class User < ActiveRecord::Base
   def discard_blank_email
     self[:email] = nil
   end
+
+# admin_flag is to know whether this method has been called in the context 
+# of admin to agent or agent to admin check
+  def admin_privilege_updated? admin_to_agent = false
+    old_privilege = @all_changes[:privileges][0]
+    new_privilege = @all_changes[:privileges][1]
+    admin_privilege_mask = Role.privileges_mask(ADMIN_PRIVILEGES)
+    was_admin = ( admin_privilege_mask & old_privilege.to_i > 0 )
+    is_admin =  ( admin_privilege_mask & new_privilege.to_i > 0 )
+    return false if was_admin == is_admin # no change in admin privileges 
+    admin_to_agent ? was_admin : is_admin
+  end
+
 
   def set_password
     secure_string = SecureRandom.base64(User::PASSWORD_LENGTH)
