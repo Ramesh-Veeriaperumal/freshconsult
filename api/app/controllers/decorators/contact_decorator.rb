@@ -26,7 +26,7 @@ class ContactDecorator < ApiDecorator
   def custom_fields
     # @name_mapping will be nil for READ requests
     custom_fields_hash = {}
-    record.custom_field.each { |k, v| custom_fields_hash[@name_mapping[k]] = utc_format(v) } if @name_mapping.present?
+    record.custom_field.each { |k, v| custom_fields_hash[@name_mapping[k]] = format_date(v) } if @name_mapping.present?
     custom_fields_hash
   end
 
@@ -188,7 +188,7 @@ class ContactDecorator < ApiDecorator
 
     def widget_fields_hash(obj, fields, name_mapping = false)
       return fields.inject({}) { |a, e| a.merge(field_mapping(e)) } unless name_mapping
-      fields.inject({}) { |a, e| a.merge(CustomFieldDecorator.display_name(e.name) => obj.safe_send(e.name)) }
+      fields.inject({}) { |a, e| a.merge(CustomFieldDecorator.display_name(e.name) => format_date(obj.safe_send(e.name))) }
     end
 
     def field_mapping(field)

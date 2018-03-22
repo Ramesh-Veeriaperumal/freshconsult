@@ -5,6 +5,7 @@ class Ember::ProductFeedbackController < ApiApplicationController
   include TicketConstants
 
   skip_before_filter :build_object, only: [:create]
+  skip_before_filter :check_account_state
 
   # validate and sanitize gets called before create
   def create

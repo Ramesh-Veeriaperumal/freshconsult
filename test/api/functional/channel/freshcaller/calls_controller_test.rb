@@ -28,7 +28,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_create_with_invalid_auth
     invalid_auth_header
-    post :create, construct_params(version: 'private', fc_call_id: get_call_id)
+    post :create, construct_params(version: 'channel', fc_call_id: get_call_id)
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
   end
 
@@ -36,13 +36,13 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     invalid_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
-    put :update, construct_params(version: 'private', id: call_id, recording_status: 1)
+    put :update, construct_params(version: 'channel', id: call_id, recording_status: 1)
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
   end
 
   def test_create_with_valid_params_and_basic_auth
     set_basic_auth_header
-    post :create, construct_params(version: 'private', fc_call_id: get_call_id)
+    post :create, construct_params(version: 'channel', fc_call_id: get_call_id)
     result = parse_response(@response.body)
     match_json(create_pattern(::Freshcaller::Call.last))
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
@@ -52,7 +52,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     set_basic_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
-    put :update, construct_params(version: 'private', id: call_id, recording_status: 1)
+    put :update, construct_params(version: 'channel', id: call_id, recording_status: 1)
     call = ::Freshcaller::Call.last
     match_json(create_pattern(call))
     assert_equal 1, call.recording_status
@@ -61,7 +61,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_create_with_valid_params
     set_auth_header
-    post :create, construct_params(version: 'private', fc_call_id: get_call_id)
+    post :create, construct_params(version: 'channel', fc_call_id: get_call_id)
     result = parse_response(@response.body)
     match_json(create_pattern(::Freshcaller::Call.last))
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
@@ -69,14 +69,14 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_create_with_update_field
     set_auth_header
-    post :create, construct_params(version: 'private', fc_call_id: get_call_id, ticket_display_id: 1)
+    post :create, construct_params(version: 'channel', fc_call_id: get_call_id, ticket_display_id: 1)
     match_json([bad_request_error_pattern('ticket_display_id', :invalid_field)])
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:bad_request]
   end
 
   def test_create_with_empty_params
     set_auth_header
-    post :create, construct_params(version: 'private')
+    post :create, construct_params(version: 'channel')
     match_json([bad_request_error_pattern('fc_call_id', :missing_field)])
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:bad_request]
   end
@@ -85,7 +85,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     set_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
-    put :update, construct_params(version: 'private', id: call_id, recording_status: 1)
+    put :update, construct_params(version: 'channel', id: call_id, recording_status: 1)
     call = ::Freshcaller::Call.last
     match_json(create_pattern(call))
     assert_equal 1, call.recording_status
@@ -163,7 +163,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_update_without_fc_call_id
     set_auth_header
-    put :update, construct_params(version: 'private', id: '', recording_status: 1)
+    put :update, construct_params(version: 'channel', id: '', recording_status: 1)
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:not_found]
   end
 

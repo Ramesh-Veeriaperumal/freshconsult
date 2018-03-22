@@ -19,7 +19,7 @@ JSON.generate(@items.map do |contact_field|
     created_at: contact_field.created_at.try(:utc),
     updated_at: contact_field.updated_at.try(:utc)
   }
-  response_hash[:widget_position] = contact_field.field_options['widget_position'] if contact_field.field_options.present? && contact_field.field_options.key?('widget_position')
+  response_hash[:widget_position] = contact_field.field_options.present? ? contact_field.field_options['widget_position'] : nil
   response_hash[:choices] = contact_field.choice_list unless contact_field.choice_list.blank?
   response_hash
 end)

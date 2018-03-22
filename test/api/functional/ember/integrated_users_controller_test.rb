@@ -145,8 +145,8 @@ class Ember::IntegratedUsersControllerTest < ActionController::TestCase
       }
     }
     integ_user = create_integ_user_credentials(user_params)
-    harvest_app = Integrations::InstalledApplication.find_by_application_id(Integrations::Application.find_by_name('harvest').id)
-    delete :user_credentials_remove, controller_params({ version: 'private', installed_application_id: harvest_app.id }, true)
+    delete :user_credentials_remove, controller_params({ version: 'private', 
+      installed_application_id: integ_user.installed_application_id }, true)
     assert_response 204
   end
 

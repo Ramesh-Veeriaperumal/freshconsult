@@ -233,6 +233,8 @@
   $ref: ./installed_applications/list.yaml
 /installed_applications/{id}:
   $ref: ./installed_applications/crud.yaml
+/installed_applications/fetch:
+  $ref: ./installed_applications/fetch.yaml
 # Integrated Resources
 /integrated_resources:
   $ref: ./integrated_resources/list_and_create.yaml

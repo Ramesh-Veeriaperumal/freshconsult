@@ -154,3 +154,6 @@ api_error_messages:
   cant_access_summary: "The %{feature} feature is not available for %{assoc_tkt}"
   invalid_category_ids: "Categories should be associated to the portal."
   invalid_bot_state: "Cannot perform the action as bot state is invalid"
+  integration_service_not_found: "Integration service not found"
+  invalid_action: "Invalid action on this resource"
+  integration_timeout: "Didn't receive a timely response from the upstream server"

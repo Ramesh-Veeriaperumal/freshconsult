@@ -138,7 +138,8 @@ module Integrations::Constants
     APP_NAMES[:box] => 16,
     APP_NAMES[:onedrive] => 16,
     APP_NAMES[:surveymonkey] => 16,
-    APP_NAMES[:google_calendar] => 4
+    APP_NAMES[:google_calendar] => 4,
+    APP_NAMES[:salesforce] => 6
   }.freeze
 
   ATTACHMENT_APPS = [APP_NAMES[:dropbox],APP_NAMES[:box],APP_NAMES[:onedrive]].freeze
@@ -147,4 +148,7 @@ module Integrations::Constants
   ONCLICK_STRATEGY_AUTH_APPS = %w(slack_v2 microsoft_teams google_hangout_chat).freeze
 
   OAUTH_STRATEGIES_TO_SKIP = %w(github salesforce shopify slack infusionsoft google_oauth2 google_contacts google_gadget_oauth2 outlook_contacts salesforce_v2 microsoft_teams google_hangout_chat).freeze
+
+  FALCON_ENABLED_OAUTH_APPS = [APP_NAMES[:google_calendar], 
+    APP_NAMES[:salesforce], APP_NAMES[:mailchimp]].freeze
 end

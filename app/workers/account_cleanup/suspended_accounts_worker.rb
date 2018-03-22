@@ -47,6 +47,7 @@ module AccountCleanup
           account = Account.find account_id
           account.make_current
           return unless account.subscription.suspended?
+          UserNotifier.notify_account_deletion(build_notification_data) if Rails.env.production? #send email to infosec team
           perform_delete(account)
           clean_attachments(account_id: account_id)
           portal_urls = account.portals.map { |p| p.portal_url if p.portal_url.present? }
@@ -76,6 +77,19 @@ module AccountCleanup
       # this will delete domain mapping also
        shard = ShardMapping.find_by_account_id(account_id)
        shard.destroy 
+    end
+
+    def build_notification_data
+      shard_info = ShardMapping.find(Account.current.id)
+      {
+        :account_id       => Account.current.id,
+        :name             => Account.current.name,
+        :account_verified => !Account.current.reputation.zero?,
+        :shard            => shard_info.shard_name,
+        :pod_info         => shard_info.pod_info,
+        :contact_info     => Account.current.contact_info,
+        :created_at       => Account.current.created_at.to_s(:db)
+      }
     end
 
     def clear_domain_cache(account, portal_urls)

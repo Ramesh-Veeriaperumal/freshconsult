@@ -3,11 +3,13 @@ require_relative '../unit_test_helper'
 class SearchValidationTest < ActionView::TestCase
 
   def test_valid
+    SearchValidation.any_instance.stubs(:has_privileges?).returns(true)
     User.first.make_current
     params = {:term => 'test', :limit => 3, :templates => ['agentSpotlightTicket'], :context => 'spotlight'}
     search_validation = SearchValidation.new(params)
     assert search_validation.valid?
-    
+  ensure
+    SearchValidation.any_instance.unstub(:has_privileges?)    
   end
 
   def test_invalid_template_data_type
@@ -71,7 +73,7 @@ class SearchValidationTest < ActionView::TestCase
     error = search_validation.errors.full_messages
     assert error.include?('Templates access_denied')
   ensure
-    User.unstub(:current)
+    User.any_instance.unstub(:privilege?)
   end
 
   def test_without_term

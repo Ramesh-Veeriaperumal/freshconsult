@@ -67,7 +67,7 @@ module Pipe
         subject: Faker::Name.name, description: Faker::Lorem.paragraph,
         'created_at' => created_at, 'updated_at' => updated_at
       }
-      post :create, construct_params({ version: 'private' }, params)
+      post :create, construct_params({ version: 'pipe' }, params)
       assert_response 201
       t = Helpdesk::Ticket.last
       match_json(ticket_pattern(params, t))
@@ -85,7 +85,7 @@ module Pipe
         pending_since: pending_since, 'created_at' => created_at,
         'updated_at' => updated_at
       }
-      post :create, construct_params({ version: 'private' }, params)
+      post :create, construct_params({ version: 'pipe' }, params)
       assert_response 201
       t = Helpdesk::Ticket.last
       match_json(ticket_pattern(params, t))
@@ -100,7 +100,7 @@ module Pipe
         subject: Faker::Name.name, description: Faker::Lorem.paragraph,
         on_state_time: on_state_time
       }
-      post :create, construct_params({ version: 'private' }, params)
+      post :create, construct_params({ version: 'pipe' }, params)
       assert_response 201
       t = Helpdesk::Ticket.last
       match_json(ticket_pattern(params, t))

@@ -4,7 +4,8 @@ module MixpanelWrapper
       return unless Account.current
       msg = {:account_id => Account.current.id, :domain => Account.current.full_domain, :model => model_class.underscore.gsub(/\//, '_'),
        :options => data }
-      MixpanelWorker.perform_async(msg) if check_default_events(model_class)
+      MixpanelWorker.perform_async(msg) if check_default_events(model_class) && !Account.current.opt_out_analytics_enabled?
+      # these data are send to kissmetrics, not mixpanel
     end
 
     def check_default_events(model_class_name)
