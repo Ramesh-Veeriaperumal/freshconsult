@@ -938,7 +938,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   end
 
   def test_contact_filter_updated_at
-    update_timestamp = Time.now.utc.iso8601
+    update_timestamp = Time.now.utc.iso8601.to_datetime
     @account.all_contacts.first.update_column(:updated_at, update_timestamp)
     get :index, controller_params(_updated_since: update_timestamp)
     assert_response 200
@@ -2525,5 +2525,4 @@ class ApiContactsControllerTest < ActionController::TestCase
     write_query_count = QueryCounter.queries.select{ |q| q.include?('UPDATE ') or q.include?('INSERT INTO') }.count
     assert write_query_count == 2
   end
-
 end

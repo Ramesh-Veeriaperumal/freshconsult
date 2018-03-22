@@ -106,8 +106,11 @@ module Conversations::Twitter
   protected
 
     def reply_twitter_handle ticket
-      params[:twitter_handle].present? ? params[:twitter_handle] : ticket.fetch_twitter_handle
-      #params.key?(:twitter_handle)
+      if params[:twitter_handle].present?
+        params[:twitter_handle]
+      else
+        @twitter_handle_id.present? ? @twitter_handle_id : ticket.fetch_twitter_handle
+      end
     end
 
     def process_tweet note, twt, handle_id, twt_type

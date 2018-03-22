@@ -26,7 +26,7 @@ class TicketDecorator < ApiDecorator
 
   def custom_fields
     custom_fields_hash = {}
-    custom_field_via_mapping.each { |k, v| custom_fields_hash[@name_mapping[k]] = utc_format(v) }
+    custom_field_via_mapping.each { |k, v| custom_fields_hash[@name_mapping[k]] = format_date(v) }
     custom_fields_hash
   end
 

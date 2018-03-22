@@ -37,9 +37,7 @@ module ContactFieldsTestHelper
 
   def private_contact_field_pattern(expected_output = {}, contact_field)
     result = contact_field_pattern(expected_output, contact_field).except(:created_at, :updated_at)
-    if contact_field.field_options.present? && contact_field.field_options.key?('widget_position')
-      result[:widget_position] = contact_field.field_options['widget_position']
-    end
+    result[:widget_position] = contact_field.field_options.present? ? contact_field.field_options['widget_position'] : nil
     result
   end
 

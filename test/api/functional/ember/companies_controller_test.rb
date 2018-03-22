@@ -195,6 +195,20 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     assert_response :missing
   end
 
+  def test_show_a_company_with_custom_field_date
+    company_field = create_company_field(company_params(type: 'date', field_type: 'custom_date', label: 'Company date', name: 'cf_company_date', field_options: { 'widget_position' => 12 }))
+    time_now = Time.zone.now
+    company = create_company
+    company.update_attributes(custom_field: {cf_company_date: time_now})
+    @account.reload
+    get :show, controller_params(version: 'private', id: company.id)
+    assert_response 200
+    res = JSON.parse(response.body)
+    ticket_date_format = time_now.strftime('%F')
+    company_field.destroy
+    assert_equal ticket_date_format, res['custom_fields']['company_date']
+  end
+
   def test_index
     BULK_CREATE_COMPANY_COUNT.times do
       create_company

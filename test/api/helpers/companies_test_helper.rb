@@ -143,9 +143,7 @@ module CompaniesTestHelper
 
   def private_company_field_pattern(expected_output = {}, company_field)
     result = company_field_pattern(expected_output, company_field).except(:created_at, :updated_at)
-    if company_field.field_options.present? && company_field.field_options.key?('widget_position')
-      result[:widget_position] = company_field.field_options['widget_position']
-    end
+    result[:widget_position] = company_field.field_options.present? ? company_field.field_options['widget_position'] : nil
     result
   end
 

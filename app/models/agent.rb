@@ -176,7 +176,9 @@ class Agent < ActiveRecord::Base
 
   def current_load group
     agent_key = group.round_robin_agent_capping_key(user_id)
-    [get_round_robin_redis(agent_key).to_i, agent_key]
+    count = get_round_robin_redis(agent_key)
+    count = count.to_i unless count.nil?
+    [count, agent_key]
   end
 
   def assign_next_ticket group
@@ -197,7 +199,12 @@ class Agent < ActiveRecord::Base
       MAX_CAPPING_RETRY.times do
         ticket_count, agent_key = current_load(group)
   
-        if ticket_count < group.capping_limit
+        if ticket_count.present? && ticket_count < group.capping_limit
+          self.reload
+          unless self.available?
+            group.remove_agent_from_group_capping(self.user_id)
+            break
+          end
           watch_round_robin_redis(agent_key)
           new_score = generate_new_score(ticket_count + 1) #gen new score with the updated ticket count value
           result    = group.update_agent_capping_with_lock user_id, new_score
@@ -213,11 +220,15 @@ class Agent < ActiveRecord::Base
           end
           Rails.logger.debug "RR FAILED Agent's next ticket : #{ticket.display_id} - 
                               #{user_id}, #{group.id}, #{new_score}, #{result.inspect}".squish
+        elsif ticket_count.nil?
+          Rails.logger.debug "RR FAILED Agent not in redis #{ticket.display_id} #{user_id}, #{group.id}"
+          break                        
         end
         Rails.logger.debug "Looping again for ticket : #{ticket.display_id}"
       end
     end
     group.lpush_to_rr_capping_queue(ticket_id) if capping_condition
+    false
   end
 
   protected

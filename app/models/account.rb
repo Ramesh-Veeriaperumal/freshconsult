@@ -269,6 +269,10 @@ class Account < ActiveRecord::Base
     self.subscription && !self.subscription.suspended?
   end
 
+  def suspended?
+    subscription && subscription.suspended?
+  end
+
   #https://chrisarcand.com/null-coalescing-operators-and-rubys-conditional-assignments/
   def master_queries?
     @master_queries_enabled = defined?(@master_queries_enabled) ? @master_queries_enabled : ismember?(MASTER_QUERIES, id)

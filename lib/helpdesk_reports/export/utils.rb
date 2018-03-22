@@ -86,7 +86,7 @@ module HelpdeskReports::Export::Utils
       path = "data/helpdesk/#{export_type}/#{Rails.env}/#{User.current.id}/#{@today || DateTime.now.utc.strftime('%d-%m-%Y')}/#{file_name}"
     end
     file = File.open(file_path)
-    write_options = { :content_type => file.content_type,:acl => "public-read" }
+    write_options = { :content_type => MIME::Types.type_for(file_path).first.content_type,:acl => "public-read" }
     AwsWrapper::S3Object.store(path, file, S3_CONFIG[:bucket], write_options)
   end
   

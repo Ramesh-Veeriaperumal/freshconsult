@@ -21,9 +21,7 @@ class UserSessionsController < ApplicationController
   before_filter :set_native_mobile, :only => [:create, :destroy, :freshid_destroy]
   skip_after_filter :set_last_active_time
   before_filter :decode_jwt_payload, :check_jwt_required_fields, :only => [:jwt_sso_login]
-  before_filter :only => :create do |c|
-    redirect_to_freshid_login if params[:user_session].try(:[], :email) && freshid_agent?(params[:user_session][:email])
-  end
+  before_filter :redirect_to_freshid_login, :only =>[:create], :if => :is_freshid_agent_and_not_mobile?
 
   def new
     flash.keep
@@ -472,6 +470,10 @@ class UserSessionsController < ApplicationController
 
     def create_user_session user={}
       @user_session = current_account.user_sessions.new(user)
+    end
+
+    def is_freshid_agent_and_not_mobile?
+      !is_native_mobile? && params[:user_session].try(:[], :email) && freshid_agent?(params[:user_session][:email])
     end
 
 end

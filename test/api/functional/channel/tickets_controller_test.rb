@@ -68,7 +68,7 @@ module Channel
 
     def test_create_without_default_fields_required_except_requester
       params = { email: Faker::Internet.email }
-      post :create, construct_params({ version: 'private' }, params)
+      post :create, construct_params({version: 'channel'}, params)
       t = Helpdesk::Ticket.last
       match_json(ticket_pattern(params, t))
       match_json(ticket_pattern({}, t))
@@ -81,7 +81,7 @@ module Channel
     def test_create_without_default_fields_required_except_requester_with_jwt_header
       params = { email: Faker::Internet.email }
       set_jwt_auth_header('zapier')
-      post :create, construct_params({ version: 'private' }, params)
+      post :create, construct_params({version: 'channel'}, params)
       t = Helpdesk::Ticket.last
       match_json(ticket_pattern(params, t))
       match_json(ticket_pattern({}, t))
@@ -93,7 +93,7 @@ module Channel
 
     def test_create_without_default_fields_required
       params = {}
-      post :create, construct_params({ version: 'private' }, params)
+      post :create, construct_params({version: 'channel'}, params)
       assert_response 400
       match_json([bad_request_error_pattern('requester_id', :fill_a_mandatory_field, field_names: 'requester_id, phone, email, twitter_id, facebook_id')])
     end
@@ -112,7 +112,7 @@ module Channel
         type: 'Test',
         email: Faker::Internet.email
       }
-      post :create, construct_params({ version: 'private' }, params_hash)
+      post :create, construct_params({version: 'channel'}, params_hash)
       match_json([bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
                   bad_request_error_pattern('subject',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
                   bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'String'),
@@ -129,7 +129,7 @@ module Channel
     def test_create_without_custom_fields_required
       params = ticket_params_hash
       Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
-      post :create, construct_params({ version: 'private' }, params)
+      post :create, construct_params({version: 'channel'}, params)
       Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
       match_json(ticket_pattern(params, Helpdesk::Ticket.last))
       match_json(ticket_pattern({}, Helpdesk::Ticket.last))
@@ -143,7 +143,7 @@ module Channel
       params = ticket_params_hash
       Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: true)
       set_jwt_auth_header('zapier')
-      post :create, construct_params({ version: 'private' }, params)
+      post :create, construct_params({version: 'channel'}, params)
       Helpdesk::TicketField.where(name: [@@custom_field_names]).update_all(required: false)
       match_json(ticket_pattern(params, Helpdesk::Ticket.last))
       match_json(ticket_pattern({}, Helpdesk::Ticket.last))
@@ -158,7 +158,7 @@ module Channel
       VALIDATABLE_CUSTOM_FIELDS.each do |custom_field|
         params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES_INVALID[custom_field]
       end
-      post :create, construct_params({ version: 'private' }, params)
+      post :create, construct_params({version: 'channel'}, params)
       assert_response 400
       pattern = []
       VALIDATABLE_CUSTOM_FIELDS.each do |custom_field|

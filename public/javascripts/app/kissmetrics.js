@@ -3,7 +3,7 @@ window.App = window.App || {};
     "use strict";
 	App.Kissmetrics = {
 		push_event: function (event,property) {
-			if(typeof (_kmq) !== undefined ){
+			if(typeof (_kmq) !== 'undefined' ){
 				this.recordIdentity();
     			_kmq.push(['record',event,property]);	
 			}
@@ -13,7 +13,7 @@ window.App = window.App || {};
 			return freshfone.full_domain;
 		},
 		recordIdentity: function(){
-			if(typeof (_kmq) !== undefined ){
+			if(typeof (_kmq) !== 'undefined' ){
 				_kmq.push(['identify', this.getIdentity()]);
 			}
 		},

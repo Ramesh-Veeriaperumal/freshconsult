@@ -14,7 +14,7 @@ JSON.generate(@items.map do |company_field|
     created_at: company_field.created_at.try(:utc),
     updated_at: company_field.updated_at.try(:utc)
   }
-  response_hash[:widget_position] = company_field.field_options['widget_position'] if company_field.field_options.present? && company_field.field_options.key?('widget_position')
+  response_hash[:widget_position] = company_field.field_options.present? ? company_field.field_options['widget_position'] : nil
   response_hash[:choices] = company_field.choice_list unless company_field.choice_list.blank?
   response_hash
 end)
