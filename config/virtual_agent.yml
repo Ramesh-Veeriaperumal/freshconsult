@@ -24,6 +24,7 @@ fields:
         company_id: object_id
         ticlet_cc: email
         domains: text_array
+        renewal_date: date
 
         created_at: date_time
         opened_at: date_time
