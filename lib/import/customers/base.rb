@@ -69,6 +69,7 @@ class Import::Customers::Base
     @item = current_account.safe_send("#{@type.pluralize}").new if @item.blank?
     set_validatable_custom_fields
     construct_company_params if is_user? && Account.current.multiple_user_companies_enabled?
+    set_company_validatable_fields if @type == "company" && Account.current.tam_default_fields_enabled?
     unless @item.new_record?
       begin
         @item.update_attributes(@params_hash[:"#{@type}"]) ? @updated+=1 : failed_item(row)
@@ -256,5 +257,10 @@ class Import::Customers::Base
       "client_manager" => client_manager,
       "default_company" => default_value
     }
+  end
+
+  def set_company_validatable_fields
+    @item.validatable_default_fields = { :fields => current_account.company_form.default_company_fields,
+                                         :error_label => :label }
   end
 end
