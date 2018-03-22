@@ -70,7 +70,7 @@ module Channel
       def test_create_without_authentication
         enable_bot_feature do
           params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
-          post :create, construct_params({ version: 'private' }, params)
+          post :create, construct_params({version: 'channel'}, params)
           assert_response 401
           match_json(request_error_pattern(:invalid_credentials))
         end
@@ -80,7 +80,7 @@ module Channel
         enable_bot_feature do
           set_auth_header
           params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
-          post :create, construct_params({ version: 'private' }, params)
+          post :create, construct_params({version: 'channel'}, params)
           ticket = @account.tickets.last
           match_json(ticket_pattern(params, ticket))
           match_json(ticket_pattern({}, ticket))
@@ -96,7 +96,7 @@ module Channel
       def test_create_without_default_fields_required
         enable_bot_feature do
           set_auth_header
-          post :create, construct_params({ version: 'private' }, {})
+          post :create, construct_params({version: 'channel'}, {})
           assert_response 400
           match_json([bad_request_error_pattern('requester_id', :fill_a_mandatory_field, field_names: 'requester_id, phone, email, twitter_id, facebook_id'),
                       bad_request_error_pattern('bot_external_id', :datatype_mismatch, code: :missing_field, expected_data_type: String),
@@ -124,7 +124,7 @@ module Channel
             query_id: 12,
             conversation_id: 12
           }
-          post :create, construct_params({ version: 'private' }, params_hash)
+          post :create, construct_params({version: 'channel'}, params_hash)
           match_json([bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
                       bad_request_error_pattern('subject',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
                       bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'String'),
@@ -147,7 +147,7 @@ module Channel
           params_hash = ticket_params_hash
           custom_fields = Helpdesk::TicketField.where(name: [@custom_field_names])
           toggle_required_attribute(custom_fields)
-          post :create, construct_params({ version: 'private' }, params_hash)
+          post :create, construct_params({version: 'channel'}, params_hash)
           toggle_required_attribute(custom_fields)
           ticket = @account.tickets.last
           match_json(ticket_pattern(params_hash, ticket))
@@ -168,7 +168,7 @@ module Channel
           VALIDATABLE_CUSTOM_FIELDS.each do |custom_field|
             params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES_INVALID[custom_field]
           end
-          post :create, construct_params({ version: 'private' }, params)
+          post :create, construct_params({version: 'channel'}, params)
           assert_response 400
           pattern = []
           VALIDATABLE_CUSTOM_FIELDS.each do |custom_field|
@@ -181,7 +181,7 @@ module Channel
       def test_create_without_support_bot_feature
         set_auth_header
         params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
-        post :create, construct_params({ version: 'private' }, params)
+        post :create, construct_params({version: 'channel'}, params)
         assert_response 403
         match_json(request_error_pattern(:require_feature, feature: 'Support Bot'))
       end
@@ -190,7 +190,7 @@ module Channel
         enable_bot_feature do
           set_auth_header
           params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
-          post :create, construct_params({ version: 'private' }, params)
+          post :create, construct_params({version: 'channel'}, params)
           ticket = @account.tickets.last
           assert_response 201
           validate_bot_ticket_data ticket, params[:bot_external_id], params[:query_id], params[:conversation_id]
@@ -202,7 +202,7 @@ module Channel
         enable_bot_feature do
           set_auth_header
           params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b', source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:bot] }
-          post :create, construct_params({ version: 'private' }, params)
+          post :create, construct_params({version: 'channel'}, params)
           assert_response 400
           match_json([bad_request_error_pattern('source', :invalid_field)])
         end
@@ -212,7 +212,7 @@ module Channel
         enable_bot_feature do
           set_auth_header
           params = { email: Faker::Internet.email, bot_external_id: '1', query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
-          post :create, construct_params({ version: 'private' }, params)
+          post :create, construct_params({version: 'channel'}, params)
           assert_response 400
           match_json(request_error_pattern(:invalid_bot, id: '1'))
         end

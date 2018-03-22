@@ -29,7 +29,7 @@ module Pipe
       created_at = updated_at = Time.now
       params_hash = create_note_params_hash.merge('created_at' => created_at,
                                                   'updated_at' => updated_at)
-      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      post :create, construct_params({ version: 'pipe', id: ticket.display_id }, params_hash)
       assert_response 201
       note = Helpdesk::Note.last
       match_json(note_pattern(params_hash, note))

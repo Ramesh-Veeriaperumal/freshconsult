@@ -32,17 +32,17 @@ module Channel
 
     def test_create_company
       set_jwt_auth_header('zapier')
-      post :create, construct_params({version: 'private'}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+      post :create, construct_params({version: 'channel'}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                          domains: domain_array, note: Faker::Lorem.characters(10))
       assert_response 201
-      match_json(company_pattern(Company.last))
+      match_json(v2_company_pattern(Company.last))
     end
 
     def test_create_company_with_duplicate_name
       name = Faker::Lorem.characters(10)
       company = create_company(name: name, description: Faker::Lorem.paragraph)
       set_jwt_auth_header('zapier')
-      post :create, construct_params({version: 'private'}, name: name, description: Faker::Lorem.paragraph,
+      post :create, construct_params({version: 'channel'}, name: name, description: Faker::Lorem.paragraph,
                                          domains: domain_array, note: Faker::Lorem.characters(10))
       assert_response 409
       match_json([bad_request_error_pattern('name', :'has already been taken')])
@@ -53,7 +53,7 @@ module Channel
       company = create_company(name: name)
       domains = company.domains.split(',')
       set_jwt_auth_header('zapier')
-      post :create, construct_params({version: 'private'}, name: Faker::Lorem.characters(10), domains: domains, note: Faker::Lorem.characters(10))
+      post :create, construct_params({version: 'channel'}, name: Faker::Lorem.characters(10), domains: domains, note: Faker::Lorem.characters(10))
       assert_response 409
       match_json([bad_request_error_pattern('domains', :'has already been taken')])
     end
@@ -64,16 +64,16 @@ module Channel
       create_company_field params
       clear_contact_field_cache
       set_jwt_auth_header('zapier')
-      post :create, construct_params({version: 'private'}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+      post :create, construct_params({version: 'channel'}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                          domains: domain_array)
       cf = CompanyField.find_by_label('required_linetext')
       cf.destroy
       assert_response 201
-      match_json(company_pattern(Company.last))
+      match_json(v2_company_pattern(Company.last))
     end
 
     def test_create_company_without_jwt_header
-      post :create, construct_params({version: 'private'}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
+      post :create, construct_params({version: 'channel'}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                          domains: domain_array, note: Faker::Lorem.characters(10))
       assert_response 401
     end

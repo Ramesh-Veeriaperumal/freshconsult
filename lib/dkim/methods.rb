@@ -2,6 +2,7 @@ module Dkim::Methods
   include Dkim::Constants
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Dkim::UtilityMethods
 
   def handle_dns_action(action, record_type, record_name, record_value)
     Rails.logger.debug("Handle Dns Action ::: action - #{action}, record_type - #{record_type},
@@ -31,11 +32,11 @@ module Dkim::Methods
     }}
   end
 
-  def make_api(req_type, url, data={})
+  def make_api(req_type, url, data={}, key=SENDGRID_CREDENTIALS[:dkim_key][:parent])
     if req_type.to_s == REQUEST_TYPES[:get] or req_type.to_s == REQUEST_TYPES[:delete]
-      response = RestClient.safe_send(req_type, url, SENDGRID_CREDENTIALS)
+      response = RestClient.safe_send(req_type, url, key)
     elsif req_type.to_s == REQUEST_TYPES[:post]
-      response = RestClient.safe_send(req_type, url, data, SENDGRID_CREDENTIALS)
+      response = RestClient.safe_send(req_type, url, data, key)
     end
     response.headers[:content_length].to_i > 2 ? [response.code.to_i, JSON.parse(response)] : [response.code.to_i, response]
   rescue RestClient::RequestFailed, RestClient::ResourceNotFound => e
@@ -77,7 +78,6 @@ module Dkim::Methods
     {
       "domain"=> domain,
       "subdomain"=> SUB_DOMAIN,
-      "username"=> fetch_sendgrid_username(sg_user),
       "ips"=>  [],
       "custom_spf"=> true,
       "default"=> false,
@@ -89,7 +89,6 @@ module Dkim::Methods
     {
       "domain"=> domain,
       "subdomain"=>  SUB_DOMAIN,
-      "username"=> fetch_sendgrid_username(OutgoingEmailDomainCategory::SMTP_CATEGORIES['default']),
       "ips" =>  [],
       "custom_spf" => false,
       "default"=> false,
@@ -135,4 +134,32 @@ module Dkim::Methods
     Rails.logger.debug("previous_category :: #{cat_id}")
     OutgoingEmailDomainCategory::SMTP_CATEGORIES.key(cat_id)
   end
+
+  def is_any_dkim_configuration_in_progress?
+    last_configure_time = get_others_redis_key(DKIM_CONFIGURATION_IN_PROGRESS_KEY)
+    return last_configure_time.blank? ? false : (Time.now.utc.to_i - last_configure_time) < CONFIGURE_EXPIRE_TIME
+  end
+
+  def lock_dkim_configuration_in_progress
+    set_others_redis_key(DKIM_CONFIGURATION_IN_PROGRESS_KEY, Time.now.utc.to_i, CONFIGURE_EXPIRE_TIME.seconds)
+  end
+
+  def unlock_dkim_configuration_in_progress
+    remove_others_redis_key(DKIM_CONFIGURATION_IN_PROGRESS_KEY)
+  end
+
+  def configure_with_retry_timeout
+    Timeout.timeout(DKIM_CONFIGURE_TIMEOUT) do 
+      with_retries(:limit => DKIM_CONFIGURE_RETRIES){ configure } 
+    end
+  end
+
+  def configure
+    unless is_any_dkim_configuration_in_progress?
+      Dkim::ConfigureDkimRecord.new(@domain_category).build_records
+    else
+      raise "Another DKIM Configuration is in progress!"
+    end
+  end
+
 end

@@ -853,6 +853,13 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(custom_field_error_label('test_custom_state'), :not_included, list: 'New South Wales,Queensland')])
   end
 
+  def test_create_with_nested_custom_fields_without_first_with_second_and_third
+    params = ticket_params_hash.merge(custom_fields: { 'test_custom_state' => 'Queensland', 'test_custom_city' => 'Brisbane' })
+    post :create, construct_params({}, params)
+    assert_response 400
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_country'), :conditional_not_blank, child: 'test_custom_city')])
+  end
+
   def test_create_with_nested_custom_fields_with_valid_first_valid_second_invalid_third
     params = ticket_params_hash.merge(custom_fields: { 'test_custom_country' => 'Australia', 'test_custom_state' => 'Queensland', 'test_custom_city' => 'ddd' })
     post :create, construct_params({}, params)
@@ -867,12 +874,6 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(custom_field_error_label('test_custom_city'), :not_included, list: 'Brisbane')])
   end
 
-  def test_create_with_nested_custom_fields_without_first_with_second_and_third
-    params = ticket_params_hash.merge(custom_fields: { 'test_custom_state' => 'Queensland', 'test_custom_city' => 'Brisbane' })
-    post :create, construct_params({}, params)
-    assert_response 400
-    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_country'), :conditional_not_blank, child: 'test_custom_state')])
-  end
 
   def test_create_with_nested_custom_fields_without_first_with_second_only
     params = ticket_params_hash.merge(custom_fields: { 'test_custom_state' => 'Queensland' })
@@ -1327,7 +1328,7 @@ class TicketsControllerTest < ActionController::TestCase
     # fr_due_by in params
     t = ticket
     due_by = 30.days.since.utc.iso8601
-    t.update_column(:due_by, due_by)
+    t.update_column(:due_by, due_by.to_datetime)
     fr_due_by = 31.days.since.utc.iso8601
     params = update_ticket_params_hash.except(:due_by).merge(fr_due_by: fr_due_by)
     put :update, construct_params({ id: t.display_id }, params)
@@ -1338,7 +1339,7 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     due_by = 30.days.since.utc.iso8601
     fr_due_by = 31.days.since.utc.iso8601
-    t.update_column(:frDueBy, fr_due_by)
+    t.update_column(:frDueBy, fr_due_by.to_datetime)
     params = update_ticket_params_hash.except(:fr_due_by).merge(due_by: due_by)
     put :update, construct_params({ id: t.display_id }, params)
     match_json([bad_request_error_pattern('due_by', 'lt_due_by')])

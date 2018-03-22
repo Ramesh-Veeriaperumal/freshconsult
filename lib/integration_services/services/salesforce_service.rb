@@ -144,10 +144,6 @@ module IntegrationServices::Services
       super
     end
 
-    def receive_fetch_user_selected_fields
-      safe_send("#{@payload[:type]}_resource").get_selected_fields(@installed_app.safe_send("configs_#{@payload[:type]}_fields"), @payload[:value])
-    end
-
     def deactivate_ticket_sync!
       remove_sync_option
       @installed_app.va_rules.each do |x| 

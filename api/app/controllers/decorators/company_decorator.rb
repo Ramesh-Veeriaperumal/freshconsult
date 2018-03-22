@@ -14,12 +14,12 @@ class CompanyDecorator < ApiDecorator
   def custom_fields
     # @name_mapping will be nil for READ requests, hence it will computed for the first
     custom_fields_hash = {}
-    record.custom_field.each { |k, v| custom_fields_hash[@name_mapping[k]] = utc_format(v) } if @name_mapping.present?
+    record.custom_field.each { |k, v| custom_fields_hash[@name_mapping[k]] = format_date(v) } if @name_mapping.present?
     custom_fields_hash
   end
 
   def renewal_date
-    utc_format(record.renewal_date)
+    format_date(record.renewal_date, true)
   end
 
   def tam_fields
@@ -29,10 +29,6 @@ class CompanyDecorator < ApiDecorator
       industry:     record.industry,
       renewal_date: record.renewal_date
     }
-  end
-
-  def utc_format(value)
-    value.respond_to?(:utc) ? value.utc : value
   end
 
   def domains
@@ -96,7 +92,7 @@ class CompanyDecorator < ApiDecorator
 
     def widget_fields_hash(obj, fields, name_mapping = false)
       return fields.inject({}) { |a, e| a.merge(e.name => obj.safe_send(e.name)) } unless name_mapping
-      fields.inject({}) { |a, e| a.merge(CustomFieldDecorator.display_name(e.name) => obj.safe_send(e.name)) }
+      fields.inject({}) { |a, e| a.merge(CustomFieldDecorator.display_name(e.name) => format_date(obj.safe_send(e.name))) }
     end
 
     def current_account

@@ -601,6 +601,19 @@ module Ember
       assert_response 200
     end
 
+    def test_show_a_contact_with_custom_field_date
+      contact_field = create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'Requester Date', name: 'cf_requester_date', required_for_agent: true, editable_in_signup: true, field_options: { 'widget_position' => 12 }))
+      time_now = Time.zone.now
+      @account.reload
+      sample_user = add_new_user(@account, { custom_fields: { cf_requester_date: time_now}})
+      get :show, controller_params(version: 'private', id: sample_user.id)
+      assert_response 200
+      res = JSON.parse(response.body)
+      ticket_date_format = time_now.strftime('%F')
+      contact_field.destroy
+      assert_equal ticket_date_format, res['custom_fields']['requester_date']
+    end
+
     def test_show_a_non_existing_contact
       get :show, controller_params(version: 'private', id: 0)
       assert_response :missing

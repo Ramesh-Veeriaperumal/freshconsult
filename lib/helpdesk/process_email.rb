@@ -1039,7 +1039,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
           Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
           Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
-          Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
+          # Temporary comment out due to process looping for large size emails(gem upgradion ussue)
+          # Regexp.new("\\n.*.\d.*." + Regexp.escape(address) ),
           Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
           Regexp.new("On((?!On).)*wrote:"),
           Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
