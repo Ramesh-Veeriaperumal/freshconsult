@@ -79,7 +79,7 @@ class ApiApplicationController < MetalApiController
   before_filter :validate_filter_params, only: [:index]
 
   before_filter :validate_url_params, only: [:show]
-  after_filter :set_root_key, :set_app_data_version
+  after_filter :set_root_key, :set_app_data_version, if: :private_api?
 
   SINGULAR_RESPONSE_FOR = %w(show create update).freeze
   COLLECTION_RESPONSE_FOR = %w(index search).freeze
