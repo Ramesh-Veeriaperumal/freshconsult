@@ -27,7 +27,11 @@ class Auth::MicrosoftTeamsAuthenticator < Auth::Authenticator
   end
 
   def get_redirect_url
-    url = @state_params == 'agent' ? 'integrations/teams/authorize_agent' : 'integrations/teams/install'
-    @falcon_enabled == 'true' ? "#{@portal_url}/a/#{url}" : "#{@portal_url}/#{url}"
+    url = if @state_params == 'agent'
+      'integrations/teams/authorize_agent'
+    else
+      'integrations/teams/install'
+    end
+    "#{@portal_url}/#{url}"
   end
 end

@@ -12,6 +12,7 @@ module Freshcaller
     def migrate_account
       FileUtils.mkdir_p account_migration_location
       return unless has_freshfone_account?
+      raise "Domain occupied" unless check_domain_available?
       response = freshcaller_signup if params[:account_creation]
       save_freshcaller_account(response)
       enable_freshcaller_feature
@@ -20,6 +21,13 @@ module Freshcaller
       expire_freshfone_account
       upload_to_s3
       initiate_migration
+    end
+
+    def check_domain_available?
+      return true if !params[:account_creation]
+      response = freshcaller_request({}, "#{FreshcallerConfig['signup_domain']}/domain_available?domain=#{FreshcallerConfig['domain_prefix']}#{::Account.current.domain}", :get)
+      Rails.logger.info "Domain check :: #{response.symbolize_keys!}"
+      response[:is_available]
     end
 
     def has_freshfone_account?
@@ -109,6 +117,8 @@ module Freshcaller
       freshcaller_request({ helpkit_account: current_account.id,
                             requestor: params[:email],
                             helpkit_domain: current_account.full_domain,
+                            access_token: current_account.roles.account_admin.first.users.first.single_access_token,
+                            plan: params[:plan_name],
                             account_id: current_account.freshcaller_account.freshcaller_account_id },
                             "#{protocol}#{current_account.freshcaller_account.domain}/migrate",
                             :post)

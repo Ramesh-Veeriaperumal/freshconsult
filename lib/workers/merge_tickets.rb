@@ -15,6 +15,7 @@ class Workers::MergeTickets
     
     activities_to_be_discarded = ["activities.tickets.new_ticket.long", "activities.tickets.status_change.long"]
     source_tickets.each do |source_ticket|
+      delete_ticket_summary(source_ticket)
       source_ticket_note_ids << source_ticket.notes.map(&:id)
       source_ticket.notes.update_all( "notable_id = #{args[:target_ticket_id]}", [ "account_id = ?", 
                                                                                 args[:account_id] ] )
@@ -33,6 +34,10 @@ class Workers::MergeTickets
     # notes are added to the target ticket via update_all. This wont trigger callback
     # So sending it manually
     update_target_ticket_notes_to_subscribers(target_ticket, source_ticket_note_ids.flatten, args[:source_ticket_ids])
+  end
+
+  def delete_ticket_summary(source_ticket)
+    source_ticket.summary.destroy if source_ticket.summary
   end
 
   def self.add_note_to_source_ticket(source_ticket, source_note_private, source_info_note)

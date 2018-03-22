@@ -6,7 +6,14 @@ class ContactDelegator < BaseDelegator
     drop_down_choices: proc { Account.current.contact_form.custom_dropdown_field_choices },
     required_attribute: :required_for_agent
   }
+  }, unless: -> { validation_context == :channel_contact_create }
+
+  validates :custom_field, custom_field: { custom_field: {
+    validatable_custom_fields: proc { Account.current.contact_form.custom_drop_down_fields },
+    drop_down_choices: proc { Account.current.contact_form.custom_dropdown_field_choices }
   }
+  }, if: -> { validation_context == :channel_contact_create }
+
 
   validate :user_emails_validation, if: -> { @other_emails }
   validate :default_company_presence, if: -> { @default_company }

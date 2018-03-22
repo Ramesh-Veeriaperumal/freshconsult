@@ -1,0 +1,116 @@
+require_relative '../../test_helper'
+
+module Channel
+  class ApiContactsControllerTest < ActionController::TestCase
+    include UsersTestHelper
+
+    def setup
+      super
+    end
+
+    def wrap_cname(params)
+      { api_contact: params }
+    end
+
+    def get_company
+      company = Company.first
+      return company if company
+      company = Company.create(name: Faker::Name.name, account_id: @account.id)
+      company.save
+      company
+    end
+
+    def test_create_contact
+      set_jwt_auth_header('zapier')
+      post :create, construct_params({ version: 'private' },  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email)
+      assert_response 201
+      match_json(deleted_unique_external_id_contact_pattern(User.last))
+    end
+
+    def test_create_contact_without_any_contact_detail
+      set_jwt_auth_header('zapier')
+      post :create, construct_params({ version: 'private' },  name: Faker::Lorem.characters(10))
+      match_json([bad_request_error_pattern('email', :fill_a_mandatory_field, field_names: 'email, mobile, phone, twitter_id, unique_external_id')])
+      assert_response 400
+    end
+
+    def test_create_contact_with_existing_email
+      set_jwt_auth_header('zapier')
+      email = Faker::Internet.email
+      add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
+      post :create, construct_params({ version: 'private' },  name: Faker::Lorem.characters(15),
+                                        email: email)
+      match_json([bad_request_error_pattern('email', :'Email has already been taken')])
+      assert_response 409
+    end
+
+    def test_create_contact_with_invalid_custom_fields
+      set_jwt_auth_header('zapier')
+      comp = get_company
+      create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Check Me', editable_in_signup: 'true'))
+      create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'DOJ', editable_in_signup: 'true'))
+
+      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
+                                          email: Faker::Internet.email,
+                                          view_all_tickets: true,
+                                          company_id: comp.id,
+                                          language: 'en',
+                                          custom_fields: { 'check_me' => 'aaa', 'doj' => 2010 })
+      assert_response 400
+      match_json([bad_request_error_pattern('check_me', :invalid_field, expected_data_type: 'Boolean'),
+                  bad_request_error_pattern('doj', :invalid_field, accepted: 'yyyy-mm-dd')])
+    end
+
+    def test_create_contact_without_required_custom_fields
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+
+      set_jwt_auth_header('zapier')
+      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
+                                          email: Faker::Internet.email)
+
+      assert_response 201
+      match_json(deleted_unique_external_id_contact_pattern(User.last))
+      ensure
+        cf.update_attribute(:required_for_agent, false)
+    end
+
+    def test_create_contact_with_custom_fields
+      set_jwt_auth_header('zapier')
+      comp = get_company
+      create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'Department', editable_in_signup: 'true'))
+      create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Sample check box', editable_in_signup: 'true'))
+      create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Another check box', editable_in_signup: 'true'))
+      create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'sample_date', editable_in_signup: 'true'))
+      create_contact_field(cf_params(type: 'text', field_type: 'custom_dropdown', label: 'sample_dropdown', editable_in_signup: 'true'))
+
+      ContactFieldChoice.create(value: 'Choice 1', position: 1)
+      ContactFieldChoice.create(value: 'Choice 2', position: 2)
+      ContactFieldChoice.create(value: 'Choice 3', position: 3)
+      ContactFieldChoice.update_all(account_id: @account.id)
+      ContactFieldChoice.update_all(contact_field_id: ContactField.find_by_name('cf_sample_dropdown').id)
+      @account.reload
+
+      post :create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
+                                          email: Faker::Internet.email,
+                                          view_all_tickets: true,
+                                          company_id: comp.id,
+                                          language: 'en',
+                                          custom_fields: { 'department' => 'Sample Dept', 'sample_check_box' => true, 'another_check_box' => false, 'sample_date' => '2010-11-01', 'sample_dropdown' => 'Choice 1' })
+      assert_response 201
+      assert User.last.custom_field['cf_sample_check_box'] == true
+      assert User.last.custom_field['cf_another_check_box'] == false
+      assert User.last.custom_field['cf_department'] == 'Sample Dept'
+      assert User.last.custom_field['cf_sample_date'].to_date == Date.parse('2010-11-01')
+      assert User.last.custom_field['cf_sample_dropdown'] == 'Choice 1'
+      match_json(deleted_unique_external_id_contact_pattern(User.last))
+    end
+
+    def test_create_contact_without_jwt_header
+      post :create, construct_params({ version: 'private' },  name: Faker::Lorem.characters(10),
+                                        email: Faker::Internet.email)
+      assert_response 401
+    end
+
+  end
+end

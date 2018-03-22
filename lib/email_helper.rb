@@ -161,5 +161,9 @@ module EmailHelper
   def freshops_account_url(account)
       "freshopsadmin.freshdesk.com/accounts/#{account.id}"
   end
-  
+
+  # For checking whether the notifications are routed via email services
+  def via_email_service? account, email_config
+    return !(email_config && email_config.smtp_mailbox) && ($redis_others.get("ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE") == "1" || account.launched?(:send_emails_via_fd_email_service_feature))
+  end
 end

@@ -13,9 +13,14 @@
 
 <%= javascript_include_tag :'cdn/marketplace/fa_template_dock_manager' %>
 
-<%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/js/#{MarketplaceConfig::MKP_CONFIGS_JS}" %>
+<!-- TODO: Remove if block once Custom iparam sandbox is ready to ship -->
+<% if true %>
+  <%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/js/#{MarketplaceConfig::MKP_CONFIGS_JS}" %>
+<% else %>
+  <%= javascript_include_tag :"#{MarketplaceConfig::FRESHAPPS_JS_URL}/#{MarketplaceConfig::FRESH_PARENT}" %>
+<% end %>
 
-<% unless AppMetrics::FRESHFONE_METRICS.blank? %>
+<% unless AppMetrics::FRESHFONE_METRICS.blank? || current_account.opt_out_analytics_enabled?%>
   <%= javascript_tag do %>
     jQuery(document).ready(function(){
       if(App.Kissmetrics != undefined){ 
@@ -38,7 +43,9 @@
                           suspended_plan_info: "<%= I18n.t('suspended_plan_info') %>",
                           accapi_poll_interval: "<%= MarketplaceConfig::ACCOUNT_API_POLL_INTERVAL %>"
                         }
-  var platformVersion = '<%= current_account.falcon_ui_enabled?(current_user) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2] : Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>'
+
+  var platformVersion = '<%= current_account.falcon_ui_enabled?(current_user) ? Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
+                              : Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v1] %>'
   var templateDockManager = new TemplateDockManager(extensionsWrapper, customMessages, tabName, platformVersion);
 
   tf_lang = {
@@ -51,6 +58,7 @@
     marketplace_instr   : "<%= t('marketplace.instructions') %>",
     marketplace_VERSION : "<%= t('marketplace.version') %>",
     install_setting     : "<%= t('marketplace.settings') %>",
+    backend_log         : "<%= t('marketplace.backend_log') %>",
     install_txt         : "<%= t('marketplace.install') %>",
     installing_txt      : "<%= t('marketplace.installing_text') %>",
     mkp_terms_of_use    : "<%= t('marketplace.terms_of_use') %>",

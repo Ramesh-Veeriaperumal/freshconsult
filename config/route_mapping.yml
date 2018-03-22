@@ -44,7 +44,7 @@
 /helpdesk/ticket_templates/new: /a/admin/
 /helpdesk/canned_responses/folders: /a/admin/
 /admin/gamification: /a/admin/
-/integrations/applications: /a/admin/
+/integrations/applications: /a/admin/integrations/applications
 /account: /a/admin/
 /subscription: /a/admin/
 /subscription/billing: /a/admin/

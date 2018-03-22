@@ -50,20 +50,18 @@
           }
 
           return false;
-        } 
+        }
 
       });
 
       var form = editor.$oel.get(0).form;
       $(form).on('submit', function () {
-        var textarea = jQuery(this).find('#solution_article_description'),
-            temp_ele = $("<div />").append(textarea.val()),
-            iframe = temp_ele.find('iframe'),
-            opts = textarea.data('froala.editor').opts.SANDBOX_BLACKLIST;
-
+        var textarea = jQuery(this).find('textarea');
+        temp_ele = $("<div />").append(textarea.val());
+        iframe = temp_ele.find('iframe');
+        opts = textarea.data('froala.editor').opts.SANDBOX_BLACKLIST;
         _checkIframeSandbox(iframe, opts);
-
-        jQuery(this).find('#solution_article_description').val(temp_ele.html())
+        textarea.val(temp_ele.html())
       })
     }
 

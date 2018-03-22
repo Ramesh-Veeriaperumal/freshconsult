@@ -133,6 +133,8 @@ class Helpdesk::BulkReplyTickets
 
     def build_cloud_file_attachments note
       attachment_builder(note, [], params[:cloud_file_attachments])
+      # Used by Private API - Will be remove once cloud files are handled in falcon
+      note.cloud_files.build(params[:cloud_files]) if params[:cloud_files]
     end
 
     def email_reply ticket, note

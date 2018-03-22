@@ -6,7 +6,7 @@ class Middleware::BatchApiRateLimiter
 
   def call(env)
     @app.call(env).tap do |r| 
-      RequestStore.store[:extra_credits] += r.length - 1
+      CustomRequestStore.store[:extra_credits] += r.length - 1
     end
     
   end

@@ -43,7 +43,7 @@ class ContactValidation < ApiValidation
                                 field_validations: DEFAULT_FIELD_VALIDATIONS
                               }
 
-  validates :name, data_type: { rules: String, required: true }
+  validates :name, data_type: { rules: String, required: true }, unless: -> { validation_context == :channel_contact_create }
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
   validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
   validates :tags, data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true }
@@ -110,11 +110,17 @@ class ContactValidation < ApiValidation
 
   validates :custom_fields, data_type: { rules: Hash }
   validates :custom_fields, custom_field: { custom_fields: {
-    validatable_custom_fields: proc { Account.current.contact_form.custom_non_dropdown_fields },
-    required_attribute: :required_for_agent,
-    ignore_string: :allow_string_param
-  }
-  }
+      validatable_custom_fields: proc { Account.current.contact_form.custom_non_dropdown_fields },
+      ignore_string: :allow_string_param,
+      required_attribute: :required_for_agent
+    }
+  }, unless: -> { validation_context == :channel_contact_create }
+
+  validates :custom_fields, custom_field: { custom_fields: {
+      validatable_custom_fields: proc { Account.current.contact_form.custom_non_dropdown_fields },
+      ignore_string: :allow_string_param
+    }
+  }, if: -> { validation_context == :channel_contact_create }
 
   validates :avatar, data_type: { rules: ApiConstants::UPLOADED_FILE_TYPE, allow_nil: true }, file_size: {
     max: ContactConstants::ALLOWED_AVATAR_SIZE }
@@ -127,7 +133,7 @@ class ContactValidation < ApiValidation
   end
 
   def required_default_fields
-    Account.current.contact_form.default_contact_fields.select(&:required_for_agent)
+    validation_context == :channel_contact_create ? [] : Account.current.contact_form.default_contact_fields.select(&:required_for_agent)
   end
 
   private

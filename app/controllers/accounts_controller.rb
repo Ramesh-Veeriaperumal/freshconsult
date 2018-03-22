@@ -15,7 +15,7 @@ class AccountsController < ApplicationController
 
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit, :manage_languages, :edit_domain]
   skip_before_filter :set_time_zone, :set_current_account,
-    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages]
+    :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
   skip_before_filter :check_day_pass_usage, 
@@ -104,7 +104,7 @@ class AccountsController < ApplicationController
   def edit_domain
     @user_session = current_account.user_sessions.new(current_user)
     if @user_session.save
-      current_account.schedule_account_activation_email(current_user.id)
+      current_account.schedule_account_activation_email(current_user.id) unless current_account.freshid_enabled?
       render :layout => false
       return
     else

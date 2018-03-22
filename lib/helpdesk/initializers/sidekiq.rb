@@ -62,7 +62,8 @@ Sidekiq.configure_client do |config|
       "BlockAccount",
       "Freshid::ProcessEvents",
       "Social::SmartFilterFeedbackWorker",
-      "Social::SmartFilterInitWorker"
+      "Social::SmartFilterInitWorker",
+      "CentralPublishWorker::AccountDeletionWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -147,7 +148,8 @@ Sidekiq.configure_server do |config|
       "BlockAccount",
       "Freshid::ProcessEvents",
       "Social::SmartFilterFeedbackWorker",
-      "Social::SmartFilterInitWorker"
+      "Social::SmartFilterInitWorker",
+      "CentralPublishWorker::AccountDeletionWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -222,7 +224,8 @@ Sidekiq.configure_server do |config|
       "BlockAccount",
       "Freshid::ProcessEvents",
       "Social::SmartFilterFeedbackWorker",
-      "Social::SmartFilterInitWorker"
+      "Social::SmartFilterInitWorker",
+      "CentralPublishWorker::AccountDeletionWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

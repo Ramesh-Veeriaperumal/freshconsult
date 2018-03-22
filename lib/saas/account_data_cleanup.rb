@@ -48,15 +48,7 @@ def handle_add_watcher_drop_data
 end
 
 def handle_basic_twitter_drop_data
-    #we need to keep one twitter page. So removing everything except the oldest one.
-    twitter_count = 0
-    account.twitter_handles.order("created_at asc").find_each do |twitter|
-      twitter.smart_filter_enabled = 0 if twitter.smart_filter_enabled == true
-      twitter.save!
-      next if twitter_count < 1
-      twitter.destroy
-      twitter_count+=1
-    end
+  Social::TwitterHandle.drop_advanced_twitter_data(account)
 end
 
 def handle_basic_facebook_drop_data
@@ -225,8 +217,7 @@ end
   end
 
   def handle_shared_ownership_toggle_drop_data
-    # account.revoke_feature(:shared_ownership)
-    account.features.shared_ownership.destroy #until the feature moves to bitmap
+    account.revoke_feature(:shared_ownership)
     account.installed_applications.with_name("shared_ownership").destroy_all
     handle_shared_ownership_drop_data
   end
@@ -314,6 +305,12 @@ end
 
   def handle_tam_default_fields_add_data
     populate_tam_fields_data
+  end
+
+  def handle_smart_filter_add_data
+    account.twitter_handles.order("created_at asc").find_each do |twitter|
+      twitter.default_stream.prepare_for_upgrade_from_sprout
+    end
   end
 
   private
