@@ -315,6 +315,7 @@ class Admin::VaRulesController < Admin::AdminController
                            :value => "---------------------"
                            })
         cf.each do |field|
+          next if supervisor_rules_controller? and !Account.current.launched?(:supervisor_multi_line_field) and field.field_type == 'custom_paragraph'
           filter_hash.push({
                              :id => field.id,
                              :name => field.name,
