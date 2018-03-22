@@ -8,7 +8,7 @@ module HelpdeskAttachable
 
     # MAX_ATTACHMENT_SIZE = 1024
     MAX_ATTACHMENT_SIZE         = 15.megabyte
-    MAILGUN_MAX_ATTACHMENT_SIZE = 20.megabyte
+    MAILGUN_MAX_ATTACHMENT_SIZE = 25.megabyte
     FACEBOOK_ATTACHMENTS_SIZE   = 25.megabyte
 
     def self.included(base)

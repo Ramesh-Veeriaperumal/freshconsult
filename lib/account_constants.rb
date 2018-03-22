@@ -74,7 +74,7 @@ module AccountConstants
 
   ATTACHMENT_LIMIT = {
     :trial_or_sprout => 15,
-    :paid => 20
+    :paid => 25
   }
    
   def attachment_limit
