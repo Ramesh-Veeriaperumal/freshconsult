@@ -13,7 +13,6 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			this.onVisit(data);
 		},
 		onVisit: function(data) {
-			this.initConversationView(); //Load the first tab or tickets on pageload
 			App.Contacts.Contacts_merge.initialize();
 			this.checkForInfoMsgs();
 			this.bindEvents();
@@ -88,33 +87,8 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 				$('div.info-highlight').show();
 			}
 		},
-		initConversationView: function() {
-			if ($('.conv-menu .sub-info').length) {
-				this.switchConversationView($("#conv_all-tab"));
-			} else {
-				var element = $("#conv_recent_tickets");
-				var url = $(element).data("url");
-				var target = $(element).data("target");
-				$(target).load(url, function(response, status, xhr) {
-					if (status === "error") {
-						$(target).text("Error loading the items. Please try again.");
-					}
-				});
-			}
-		},
 		switchConversationView: function(element) {
 			$('.conv-menu .sub-info').text(element.text());
-			var url = $(element).data("url");
-			var target = element.attr("href");
-			var pane = $(element);
-			$(target).text("Loading...");
-			$(target).load(url, function(response, status, xhr) {
-				if (status === "error") {
-					$(target).text("Error loading the items. Please try again.");
-					return;
-				}
-				pane.tab('show');
-			});
 		},
 		bindEvents: function() {
 			var self = this;
