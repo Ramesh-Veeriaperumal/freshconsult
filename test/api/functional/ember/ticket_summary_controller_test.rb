@@ -70,7 +70,23 @@ class TicketSummaryControllerTest < ActionController::TestCase
     Account.current.revoke_feature(:ticket_summary)
     end
 
-  def test_create_summary_note_with_invalid_attachment_size
+  def test_create_summary_note_with_invalid_attachment_size_with_launch_25_limit
+    Account.current.add_feature(:ticket_summary)
+    Account.current.launch(:outgoing_attachment_limit_25)
+    ticket = create_ticket
+    # delete :destroy, construct_params(id: ticket.summary.id) if ticket.summary
+    attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+    params_hash = update_ticket_summary_params_hash.merge(attachment_ids: [attachment_id])
+    Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(30_000_000)
+    put :update, construct_params({ version: 'private', ticket_id: ticket.display_id }, params_hash)
+    Helpdesk::Attachment.any_instance.unstub(:content_file_size)
+    match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: '25 MB', current_size: '28.6 MB')])
+    assert_response 400
+    Account.current.rollback(:outgoing_attachment_limit_25)
+    Account.current.revoke_feature(:ticket_summary)
+  end
+
+  def test_create_summary_note_with_invalid_attachment_size_without_launch_25_limit
     Account.current.add_feature(:ticket_summary)
     ticket = create_ticket
     # delete :destroy, construct_params(id: ticket.summary.id) if ticket.summary

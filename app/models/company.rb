@@ -68,6 +68,15 @@ class Company < ActiveRecord::Base
   def to_s
     self.name
   end
+
+  def tam_fields
+    Account.current.tam_default_company_fields_enabled? ? {
+      "health_score" => self.health_score,
+      "account_tier" => self.account_tier,
+      "renewal_date" => self.renewal_date,
+      "industry" => self.industry
+    } : {} 
+  end
   
   def to_xml(options = {})
     options[:indent] ||= 2
@@ -76,6 +85,9 @@ class Company < ActiveRecord::Base
     options[:skip_instruct] ||= true
     options[:except]        ||= [:account_id,:import_id,:delta]
     super options do |builder|
+      tam_fields.each do |name, value|
+        builder.tag!(name,value) unless value.nil?
+      end
       builder.custom_field do
         custom_field.each do |name, value|
           builder.tag!(name,value) unless value.nil?
@@ -86,7 +98,10 @@ class Company < ActiveRecord::Base
 
   def as_json(options = {}) # Any change in to_json or as_json needs a change in elasticsearch as well
     return super(options) unless options[:tailored_json].blank?
-    options[:methods] = options[:methods].blank? ? [:custom_field] : options[:methods].push(:custom_field)
+    options[:methods] = [:health_score, :account_tier,
+                         :renewal_date, :industry] if Account.current.tam_default_company_fields_enabled?
+    options[:methods] = options[:methods].blank? ? [:custom_field] :
+                        options[:methods].push(:custom_field)
     options[:except] = [:account_id,:import_id,:delta]
     super options
   end
@@ -165,7 +180,9 @@ class Company < ActiveRecord::Base
 
   TAM_DEFAULT_FIELD_MAPPINGS.keys.each do |attribute|
     define_method("#{attribute}") do
-      self.flexifield.safe_send(attribute)
+      value = self.flexifield.safe_send(attribute)
+      value = value.utc if attribute == :datetime_cc01 && value.present?
+      value
     end
 
     define_method("#{attribute}?") do
