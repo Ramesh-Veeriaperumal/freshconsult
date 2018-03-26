@@ -225,7 +225,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def email_notification(params)
     begin
-      configure_email_config params[:ticket].reply_email_config
+      configure_email_config params[:ticket].friendly_reply_email_config
       
       bcc_email = params[:disable_bcc_notification] ? "" : validate_emails(account_bcc_email(params[:ticket]),
                                                                            params[:ticket])
@@ -248,7 +248,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         })
 
       headers.merge!(make_header(params[:ticket].display_id, note_id, params[:ticket].account_id, params[:notification_type]))
-      headers.merge!({"X-FD-Email-Category" => params[:ticket].reply_email_config.category}) if params[:ticket].reply_email_config.category.present?
+      headers.merge!({"X-FD-Email-Category" => params[:ticket].friendly_reply_email_config.category}) if params[:ticket].friendly_reply_email_config.category.present?
       inline_attachments   = []
       @ticket              = params[:ticket]
       @body                = params[:email_body_plain]
@@ -281,7 +281,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       if !params[:cc_mails].nil?
          headers[:cc] = params[:cc_mails].join(", ")
       end
-      email_config = params[:ticket].reply_email_config
+      email_config = params[:ticket].friendly_reply_email_config
       if via_email_service?(params[:ticket].account, email_config)
          deliver_email(headers, params[:attachments], "email_notification")
       else
@@ -317,7 +317,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def reply(ticket, note , options={})
     check_spam_email(ticket, note)
-    email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
+    email_config = (note.account.email_configs.find_by_reply_email(extract_email(note.from_email)) || ticket.reply_email_config)
     begin
       configure_email_config email_config
       to_emails = validate_emails(note.to_emails, note)
@@ -390,7 +390,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def forward(ticket, note, options={})
     check_spam_email(ticket, note)
-    email_config = (note.account.email_configs.find_by_id(note.email_config_id) || ticket.reply_email_config)
+    email_config = (note.account.email_configs.find_by_reply_email(extract_email(note.from_email)) || ticket.reply_email_config)
     begin
       remove_email_config
       configure_email_config email_config
@@ -507,7 +507,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def email_to_requester(ticket, content, sub=nil)
     begin
-      configure_email_config ticket.reply_email_config
+      configure_email_config ticket.friendly_reply_email_config
       header_message_id = construct_email_header_message_id(:automation)
       headers   = email_headers(ticket, header_message_id).merge({
         :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
@@ -518,7 +518,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       })
 
       headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, "Email to Requestor"))
-      headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
+      headers.merge!({"X-FD-Email-Category" => ticket.friendly_reply_email_config.category}) if ticket.friendly_reply_email_config.category.present?
       inline_attachments = []
       @body = Helpdesk::HTMLSanitizer.plain(content)
       @body_html = generate_body_html(content)
@@ -540,7 +540,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   
   def internal_email(ticket, receips, content, sub=nil)
     begin
-      configure_email_config ticket.reply_email_config
+      configure_email_config ticket.friendly_reply_email_config
       header_message_id = construct_email_header_message_id(:automation)
       headers = email_headers(ticket, header_message_id).merge({
         :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
@@ -551,7 +551,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       })
 
       headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, "Internal Email"))
-      headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
+      headers.merge!({"X-FD-Email-Category" => ticket.friendly_reply_email_config.category}) if ticket.friendly_reply_email_config.category.present?
       inline_attachments = []
       @body = Helpdesk::HTMLSanitizer.plain(content)
       @body_html = generate_body_html(content)

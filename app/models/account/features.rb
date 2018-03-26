@@ -4,15 +4,16 @@ class Account < ActiveRecord::Base
                    :dkim, :bulk_security, :scheduled_ticket_export, :ticket_contact_export,
                    :email_failures, :disable_emails, :skip_one_hop, :falcon_portal_theme, :freshid, :freshchat_integration,
                    :year_in_review_2017, :facebook_page_redirect, :announcements_tab, :ticket_central_publish,
-                   :solutions_central_publish, :launch_smart_filter]
-  DB_FEATURES   = [:shared_ownership, :custom_survey, :requester_widget, :archive_tickets, :sitemap]
+                   :solutions_central_publish, :launch_smart_filter, :outgoing_attachment_limit_25,
+                   :incoming_attachment_limit_25]
+  DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
       :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields,
       :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
       :multi_product,:multiple_business_hours, :multi_timezone, :customer_slas, :layout_customization,
       :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
-      :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :shared_ownership_toggle, :unique_contact_identifier_toggle,
+      :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :unique_contact_identifier_toggle,
       :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, 

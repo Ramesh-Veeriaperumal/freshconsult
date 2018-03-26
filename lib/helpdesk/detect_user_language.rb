@@ -1,4 +1,5 @@
 require 'google/api_client'
+include Social::Util
 
 class Helpdesk::DetectUserLanguage
 
@@ -39,13 +40,15 @@ class Helpdesk::DetectUserLanguage
       @language_response = client.execute(:api_method => translate.detections.list,
                                           :parameters => {'q' => text})
     }
+    language = nil
     response_body = JSON.parse(@language_response.body)
     if response_body && response_body["data"]
       language = response_body["data"]["detections"].flatten.last["language"]
+    else
+      raise "Response: #{response_body.to_json}"
     end
   rescue Exception => e
-    Rails.logger.info "Error initializing google language detection. #{text}, #{e.message}, #{e.backtrace}"
-    language = nil
+    log_errors("Error detecting language using GoogleAPI:", "Account_ID: #{Account.current.id} Text: #{text}, Error: #{e.message} ", e)
   ensure
     [language, time_taken]
   end
@@ -53,4 +56,10 @@ class Helpdesk::DetectUserLanguage
   def self.log_result(result, email, time, lang=nil)
     Rails.logger.debug "Language detection #{result} #{email} #{time} #{lang}"
   end
+
+  def self.log_errors(title, message, error)
+    Rails.logger.info "#{title} #{message}"
+    notify_social_dev(title, {:msg => message}) 
+    NewRelic::Agent.notice_error(error, {:description => "#{title} #{message}"})
+  end 
 end

@@ -286,6 +286,32 @@ label.overlabel{
    }
 }
 
+.gdpr-permission-change{
+	font-size: 20px;
+	font-weight: 600;
+	line-height: 1.4;
+	margin-bottom: 30px;
+	margin-bottom:15px;
+}
+
+.gdpr-terms{
+	font-size: 15px;
+	line-height: 1.2;
+	color: #666;
+}
+
+.gdpr-color{
+	color: #777;
+}
+
+#gdpr-compliance-cancel{
+	display: none;
+}
+
+#gdpr-compliance-content{
+	padding: 30px;
+}
+
 .header_links{
 	@include float(right);
 	@include text-align(right);

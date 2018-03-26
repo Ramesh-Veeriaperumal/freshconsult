@@ -114,6 +114,13 @@
 		display: inline-block;
 		@include margin-left(5px);
 	}
+	.max-item-error-footer {
+		line-height: 26px;
+		display: inline-block;
+		position: relative;
+		float: left;
+		left: 18px;
+	}
 	span.default-tag {
 		cursor: default;
 		@include margin(10px 0 0 0);

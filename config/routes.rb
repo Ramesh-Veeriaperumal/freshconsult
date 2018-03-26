@@ -721,6 +721,7 @@ Helpkit::Application.routes.draw do
     collection do
       get :revert_identity
       get :assumable_agents
+      put :accept_gdpr_compliance
     end
     member do
       delete :delete_avatar

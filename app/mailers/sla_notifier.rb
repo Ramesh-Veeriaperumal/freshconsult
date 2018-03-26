@@ -39,18 +39,18 @@ class SlaNotifier < ActionMailer::Base
     @_message = Mail.new
     @ticket = ticket
     begin
-      configure_email_config ticket.reply_email_config if ticket.account.features?(:all_notify_by_custom_server)
+      configure_email_config ticket.friendly_reply_email_config if ticket.account.features?(:all_notify_by_custom_server)
       headers = {
         :subject                   => params[:subject],
         :to                        => agent.email,
-        :from                      => ticket.reply_email_config.reply_email,
+        :from                      => ticket.friendly_reply_email_config.reply_email,
         :sent_on                   => Time.now,
-        "Reply-to"                 => "#{ticket.reply_email_config.reply_email}",
+        "Reply-to"                 => "#{ticket.friendly_reply_email_config.reply_email}",
         "Auto-Submitted"           => "auto-generated", 
         "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
       }
       headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, n_type))
-      headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
+      headers.merge!({"X-FD-Email-Category" => ticket.friendly_reply_email_config.category}) if ticket.friendly_reply_email_config.category.present?
       references = generate_email_references(ticket)
       headers["References"] = references unless references.blank?
       mail(headers) do |part|

@@ -77,10 +77,12 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
 
   def link_freshcaller_agents
     @freshcaller_response[:user_details].each do |user_details|
-      user = current_account.users.find_by_email(user_details[:email]) if user_details
+      next if user_details.nil?
+      user_details_hash = user_details.with_indifferent_access
+      user = current_account.users.find_by_email(user_details_hash[:email]) if user_details_hash
       user.agent.create_freshcaller_agent(:agent_id => user.agent.id, 
                                           :fc_enabled => true, 
-                                          :fc_user_id => user_details[:user_id]) if user && user.active?
+                                          :fc_user_id => user_details_hash[:user_id]) if user && user.active?
     end
   end
 
@@ -125,7 +127,8 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
                  app: "Freshdesk",
                  freshdesk_calls_url: "#{protocol}#{current_account.full_domain}/api/channel/freshcaller_calls",
                  domain_url: "#{protocol}#{current_account.full_domain}",
-                 access_token: current_user.single_access_token)
+                 access_token: current_user.single_access_token,
+                 account_region: ShardMapping.fetch_by_account_id(current_account.id).region)
   end
 
 end

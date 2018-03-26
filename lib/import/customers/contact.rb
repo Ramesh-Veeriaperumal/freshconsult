@@ -30,7 +30,7 @@ class Import::Customers::Contact < Import::Customers::Base
     @item.signup!(@params_hash)
   rescue => e
     Rails.logger.debug "Error importing contact : #{Account.current.id} #{@params_hash.inspect}
-                        #{e.message} #{e.backtrace}"
+                        #{e.message} #{e.backtrace}".squish
     false
   end
 

@@ -19,6 +19,10 @@ window.App.Header  = window.App.Header || {};
 			$('#shortcuts_info').on('click', this.loadShortcutInfo.bind(this));
 			$('#available_icon').on('click', this.toggleAvailability.bind(this));
 			$('#assumed_select_id').on('change', this.assumeIdentityUrl.bind(this));
+			if($('#gdpr-compliance').length) {
+				var bindGdpr = this.showGdprPopup.bind(this);
+				bindGdpr();
+			}
 		},
 		loadAssumableAgents: function() {
 			if(!this.assumable_loaded && !this.assumed_identity){
@@ -64,6 +68,30 @@ window.App.Header  = window.App.Header || {};
 	        }
 	      }
 	    });
+		},
+		showGdprPopup: function() {
+			var data = {
+				targetId : '#gdpr-compliance',
+				width:  '573',
+				height: '263',
+				templateHeader: false,
+				backdrop: 'static',
+				keyboard: false,
+				notEscape: true,
+				showClose: false,
+				submitLabel: "Accept",
+				closeOnSubmit: true
+			}
+			jQuery.freshdialog(data);
+			$('#gdpr-compliance-submit').on('click', this.GdprCompliaceAccept.bind(this));
+
+		},
+		GdprCompliaceAccept: function() {
+			jQuery.ajax({
+				type: "PUT",
+				url: "/users/accept_gdpr_compliance",
+				success: function(response) {}
+			});
 		},
 		loadShortcutInfo: function (ev) {
 			ev.preventDefault();

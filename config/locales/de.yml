@@ -5288,8 +5288,6 @@ de:
       login_message: "Melden Sie sich mit den Anmeldedaten eines Administrators an, um Ihren Google Apps Login mit Ihrem Freshdesk Account zu verknüpfen."
       login_button: "Anmelden & Registrieren abschließen"
     canceled_account: "Es tut uns Leid, dass Sie sich entschieden haben uns zu verlassen, Ihr Account wurde gekündigt."
-    edit_domain:
-      getting_started: "Anfagen"
     new:
       create_an_account: "Einen Account anlegen"
       errors_encountered: "Es sind Fehler in Ihren Account Daten aufgetreten."
@@ -5450,6 +5448,7 @@ de:
       submit_button_text: "Zu meinem Konto weiterleiten"
       account_url_defaulted: "Wir haben aufgrund von Inaktivität eine automatisch erstellte URL für Ihr Konto festgelegt. Wir leiten Sie jetzt zu Ihrem Dashboard weiter ..."
       check_activation_email: "Wir haben aufgrund von Inaktivität eine automatisch erstellte URL für Ihr Konto festgelegt. Bitte suchen Sie in Ihrem Posteingang nach unserer Aktivierungs-E-Mail."
+      getting_started: "Anfangen"
   success_msg: "Kontoeinstellungen erfolgreich aktualisiert."
   failure_msg: "Kontoeinstellungen konnten nicht aktualisiert werden."
   account_configuration:

@@ -12,6 +12,7 @@
 			<li><span class="control-label"><%= t("user.email") %> : </span><span class="strong"><%= @profile.user.email %></span></li>
 			<li><span class="control-label"><%= t("user.phone_no") %> #: </span><span class="strong"><%= @profile.user.phone %></span></li>
 			<li><span class="control-label"><%= t("user.mobile") %> #: </span><span class="strong"><%= @profile.user.mobile %></span></li>
+			<li><span class="control-label"><%= t("user.job_title") %> : </span><span class="strong"><%= @profile.user.job_title %></span></li>
 			</ul>
 		</div>
 		<% unless is_assumed_user? %>

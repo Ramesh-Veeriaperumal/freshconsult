@@ -257,6 +257,9 @@ GW:
 GY:
   name: Guyana
   enabled: true
+GG:
+  name: Guernsey
+  enabled: true
 HT: 
   name: Haiti
   enabled: true
@@ -289,6 +292,9 @@ IE:
   enabled: true
 IL:
   name: Israel
+  enabled: true
+IM:
+  name: Isle of Man
   enabled: true
 IT:
   name: Italy
