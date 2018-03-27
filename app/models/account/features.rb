@@ -5,7 +5,7 @@ class Account < ActiveRecord::Base
                    :email_failures, :disable_emails, :skip_one_hop, :falcon_portal_theme, :freshid, :freshchat_integration,
                    :year_in_review_2017, :facebook_page_redirect, :announcements_tab, :ticket_central_publish,
                    :solutions_central_publish, :launch_smart_filter, :outgoing_attachment_limit_25,
-                   :incoming_attachment_limit_25]
+                   :incoming_attachment_limit_25, :whitelist_sso_login]
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
