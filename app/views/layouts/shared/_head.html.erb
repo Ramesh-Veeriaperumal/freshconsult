@@ -49,13 +49,13 @@
 	 };
 	 cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
 	 cloudfront_host_url = "<%= asset_host_url %>";
+	 window.attachment_size = "<%= attachment_size %>";
 	</script>
 
 	<% if logged_in? %>
 	<script type="text/javascript">
 		window.current_account_id = "<%=current_account.id%>";
 		window.current_user_id = "<%= current_user.id %>";
-		window.attachment_size = "<%= attachment_size %>";
 	</script>
 	<% end %>
 

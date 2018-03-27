@@ -2,9 +2,9 @@ module Redis::SortedSetRedis
 
   def multi_actions_sorted_set_redis
     newrelic_begin_rescue do
-      $redis_others.perform_redis_op "multi"
-      yield
-      $redis_others.perform_redis_op "exec"
+      $redis_others.multi do |connection|
+        yield(connection)
+      end
     end
   end
 
@@ -13,16 +13,16 @@ module Redis::SortedSetRedis
   end
 
   def add_in_sorted_set_redis(key, score, member, expires = 86400)
-    multi_actions_sorted_set_redis do
-      $redis_others.perform_redis_op("zadd", key, score, member)
-      $redis_others.perform_redis_op("expire", key, expires) if expires
+    multi_actions_sorted_set_redis do |connection|
+      connection.perform_redis_op("zadd", key, score, member)
+      connection.perform_redis_op("expire", key, expires) if expires
     end
   end
 
   def multi_add_in_sorted_set_redis(key, value, expires = 86400)
-    multi_actions_sorted_set_redis do
-      $redis_others.perform_redis_op("zadd", key, value)
-      $redis_others.perform_redis_op("expire", key, expires)
+    multi_actions_sorted_set_redis do |connection|
+      connection.perform_redis_op("zadd", key, value)
+      connection.perform_redis_op("expire", key, expires)
     end
   end
 

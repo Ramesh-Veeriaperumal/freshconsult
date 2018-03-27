@@ -1042,6 +1042,16 @@ module Ember
       match_json(user_activity_response(objects))
     end
 
+    def test_contact_activities_without_view_contacts_privilege
+      contact = add_new_user(@account, deleted: false, active: true)
+      user_tickets = sample_user_tickets(contact)
+      User.any_instance.stubs(:privilege?).with(:view_contacts).returns(false)
+      get :activities, construct_params({ version: 'private', id: contact.id, type: 'tickets' }, nil)
+      User.any_instance.unstub(:privilege?)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    end
+
     def test_export_csv_with_no_params
       create_n_users(BULK_CONTACT_CREATE_COUNT, @account)
       contact_form = @account.contact_form
