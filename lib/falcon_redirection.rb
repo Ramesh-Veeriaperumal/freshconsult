@@ -13,6 +13,7 @@ class FalconRedirection
 
     DYNAMIC_PATHS = {
                       /^\/helpdesk\/tickets\/(\d+)/ => '/a/tickets/:id',
+                      /^\/helpdesk\/tickets\/archived\/(\d+)/ => '/a/tickets/:id',
                       # /^\/helpdesk\/tickets\/(\d+)\/edit$/ => '/a/tickets/:id',
                       /^\/solution\/articles\/(\d+)/ => '/a/solutions/articles/:id',
                       /^\/discussions\/topics\/(\d+)/ => '/a/forums/topics/:id',
