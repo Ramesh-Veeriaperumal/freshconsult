@@ -9,7 +9,7 @@ module Va::Webhook::HelperMethods
 	end
 
 	def do_percent_encoding content
-		URI::encode content.to_s
+		ERB::Util.url_encode content.to_s
 	end
 
 end

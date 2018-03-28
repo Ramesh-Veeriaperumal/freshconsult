@@ -49,13 +49,14 @@
 	 };
 	 cloudfront_version = "<%= CLOUDFRONT_VERSION %>";
 	 cloudfront_host_url = "<%= asset_host_url %>";
+	 window.attachment_size = "<%= attachment_size %>"; 
+	 // Moved out of logged_in? logic check to handle attachment size in public ticket url
 	</script>
 
 	<% if logged_in? %>
 	<script type="text/javascript">
 		window.current_account_id = "<%=current_account.id%>";
-		window.current_user_id = "<%= current_user.id %>";
-		window.attachment_size = "<%= attachment_size %>";
+		window.current_user_id = "<%= current_user.id %>";		
 	</script>
 	<% end %>
 

@@ -17,15 +17,22 @@ class Import::Customers::Base
     Thread.current["customer_import_#{current_account.id}"] = true
     read_file @customer_params[:file_location]
     mapped_fields
+    Rails.logger.debug "#{@params[:type]} import completed. 
+                        Total records:#{@rows.count}
+                        Created:#{@created} 
+                        Updated:#{@updated}
+                        Time taken:#{Time.now.utc - customer_import.created_at.utc}".squish
     build_csv_file unless @failed_items.blank?
   rescue CSVBridge::MalformedCSVError => e
-    NewRelic::Agent.notice_error(e, {:description => "Error in CSV file format :: #{@params[:type]}_import :: #{current_account.id}"})
+    NewRelic::Agent.notice_error(e, {:description => 
+      "Error in CSV file format :: #{@params[:type]}_import :: #{current_account.id}"})
     @wrong_csv = e.to_s
   rescue => e
-    NewRelic::Agent.notice_error(e, {:description => "Error in #{@params[:type]}_import :: account_id :: #{current_account.id}"})
+    NewRelic::Agent.notice_error(e, {:description => 
+      "Error in #{@params[:type]}_import :: account_id :: #{current_account.id}"})
     puts "Error in #{@params[:type]}_import ::#{e.message}\n#{e.backtrace.join("\n")}"
     Rails.logger.debug "Error during #{@params[:type]} import : 
-          #{Account.current.id} #{e.message} #{e.backtrace}"
+          #{Account.current.id} #{e.message} #{e.backtrace}".squish
     customer_import.failure!(e.message + "\n" + e.backtrace.join("\n"))
     corrupted = true
   ensure
@@ -62,12 +69,13 @@ class Import::Customers::Base
     @item = current_account.safe_send("#{@type.pluralize}").new if @item.blank?
     set_validatable_custom_fields
     construct_company_params if is_user? && Account.current.multiple_user_companies_enabled?
+    set_company_validatable_fields if @type == "company" && Account.current.tam_default_fields_enabled?
     unless @item.new_record?
       begin
         @item.update_attributes(@params_hash[:"#{@type}"]) ? @updated+=1 : failed_item(row)
       rescue Exception => e
         Rails.logger.debug "Error importing contact during update : 
-          #{Account.current.id} #{@params_hash.inspect} #{e.message} #{e.backtrace}"
+          #{Account.current.id} #{@params_hash.inspect} #{e.message} #{e.backtrace}".squish
         failed_item(row)
       end
     else
@@ -249,5 +257,10 @@ class Import::Customers::Base
       "client_manager" => client_manager,
       "default_company" => default_value
     }
+  end
+
+  def set_company_validatable_fields
+    @item.validatable_default_fields = { :fields => current_account.company_form.default_company_fields,
+                                         :error_label => :label }
   end
 end

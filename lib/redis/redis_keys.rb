@@ -390,6 +390,8 @@ module Redis::RedisKeys
   FRESHID_USER_PW_AVAILABILITY = 'FRESHID_USER_PW_AVAILABILITY:%{account_id}:%{email}'.freeze
   FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED = 'FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED'.freeze
 
+  TRIAL_21_DAYS = "TRIAL_21_DAYS"
+
 	def newrelic_begin_rescue
 		begin
 		  yield

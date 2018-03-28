@@ -14,7 +14,7 @@ class CompanyFieldDecorator < ApiDecorator
     @choice_list ||= begin
       case field_type.to_s
       when 'default_health_score', 'default_account_tier', 'default_industry'
-        choices.map { |x| { label: x[:name], value: x[:value] } }
+        choices.map { |x| { label: CGI.unescapeHTML(x[:name]), value: x[:value] } }
       when 'custom_dropdown'
         choices.map { |x| {  id: x[:id], label: x[:value], value: x[:value] } }
       end

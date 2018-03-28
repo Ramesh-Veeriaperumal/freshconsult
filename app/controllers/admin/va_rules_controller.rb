@@ -315,6 +315,7 @@ class Admin::VaRulesController < Admin::AdminController
                            :value => "---------------------"
                            })
         cf.each do |field|
+          next if supervisor_rules_controller? and !Account.current.launched?(:supervisor_multi_line_field) and field.field_type == 'custom_paragraph'
           filter_hash.push({
                              :id => field.id,
                              :name => field.name,
@@ -433,6 +434,6 @@ class Admin::VaRulesController < Admin::AdminController
 
     def company_field_choices field_type
       current_account.company_form.default_drop_down_fields(field_type.to_sym).
-        first.custom_field_choices.collect { |c| [c.value, c.value ] }
+        first.custom_field_choices.collect { |c| [c.value, CGI.unescapeHTML(c.value)] }
     end
 end

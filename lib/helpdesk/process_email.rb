@@ -975,7 +975,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           end
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
-          message = attachment_exceeded_message(HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE)
+          message = attachment_exceeded_message(HelpdeskAttachable.mailgun_max_attachment_size)
           add_notification_text item, message
           break
         rescue Exception => e
