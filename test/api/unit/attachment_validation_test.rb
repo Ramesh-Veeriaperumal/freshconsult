@@ -154,7 +154,23 @@ class AttachmentValidationTest < ActionView::TestCase
   end
 
   PAID_PLANS.each do |plan_name|
-    define_method "test_attachment_size_for_#{plan_name}" do 
+    define_method "test_attachment_size_for_#{plan_name}_with_25_launch_feature" do 
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      Subscription.any_instance.stubs(:subscription_plan_from_cache).returns(SubscriptionPlan.new(:name => "#{plan_name} Jan 17"))
+      account = Account.current
+      account.subscription.state = "active"
+      account.launch(:outgoing_attachment_limit_25)
+      account.instance_variable_set("@attachment_limit", nil)
+      assert_equal account.attachment_limit, 25
+      assert_attachment_limit(28, 23)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      Subscription.any_instance.unstub(:subscription_plan_from_cache)
+      account.rollback(:outgoing_attachment_limit_25)
+    end
+  end
+
+  PAID_PLANS.each do |plan_name|
+    define_method "test_attachment_size_for_#{plan_name}_without_25_launch_feature" do 
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       Subscription.any_instance.stubs(:subscription_plan_from_cache).returns(SubscriptionPlan.new(:name => "#{plan_name} Jan 17"))
       account = Account.current

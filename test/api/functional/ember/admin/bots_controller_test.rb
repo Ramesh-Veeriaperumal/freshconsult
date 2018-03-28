@@ -346,7 +346,9 @@ module Ember
             create_category.id
           end
           bot.portal.solution_category_metum_ids = category_ids
+          Ml::Bot.stubs(:update_ml).returns(true)
           put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: category_ids }, false)
+          Ml::Bot.unstub(:update_ml)
           assert_response 204
           assert_equal category_ids, bot.solution_category_metum_ids
         end

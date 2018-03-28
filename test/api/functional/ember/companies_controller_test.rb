@@ -276,6 +276,17 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     match_json(company_activity_response(items))
   end
 
+  def test_activities_without_view_contacts_privilege
+    company = create_company
+    contact = add_new_user(@account, customer_id: company.id)
+    ticket_ids = create_n_tickets(2, requester_id: contact.id)
+    User.any_instance.stubs(:privilege?).with(:view_contacts).returns(false)
+    get :activities, controller_params(version: 'private', id: company.id, type: 'tickets')
+    User.any_instance.unstub(:privilege?)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  end
+
   def test_activities_default
     company =  create_company
     contact = add_new_user(@account, customer_id: company.id)

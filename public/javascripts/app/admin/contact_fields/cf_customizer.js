@@ -47,7 +47,7 @@
 			},
 			disabledByDefault: [],
 			customFieldType: '', 
-			maxNoOfChoices: '50',
+			maxNoOfChoices: '100',
 			disabledCustomerDataTemplate: {
 				'required_for_agent': false,
 				'visible_in_portal': false,
@@ -218,20 +218,21 @@
 													.addClass('field_maxlength');
 			var dropSpan  = $("<span class='dropchoice' />").append(inputData);
 
-			var fieldSet = $("<fieldset />")
+			var no_choices = dom.find('fieldset:visible').length;
+			if(no_choices >= this.settings.maxNoOfChoices) {
+				$(this.settings.addChoice).hide();
+				$('<div>').addClass('max-item-error-footer error')
+							.text(translate.get('maxItemsReached'))
+							.insertAfter($(this.settings.dialogContainer).find('.add-choice'));
+			}
+			else {
+				var fieldSet = $("<fieldset />")
 					.append("<span class='sort_handle' />")
 					.append("<span class='ficon-minus delete-choice' />")
 					.append(dropSpan)            
 					.appendTo(dom);  
-
-			var no_choices = dom.find('fieldset:visible').length;
-			if(no_choices >= this.settings.maxNoOfChoices) {
-				$(this.settings.addChoice).hide();
-				$('<div>').addClass('max-item-error error')
-							.text(translate.get('maxItemsReached'))
-							.appendTo(fieldSet);
+				inputData.focus();
 			}
-			inputData.focus();
 		},
 
 		getAllChoices: function(dom){      
@@ -267,9 +268,9 @@
 			if($this.parent().siblings(':visible').length !== 0) {
 				var no_choices = (this.dialogDOMMap.admin_choices).find('fieldset:visible').length,
 						choice_id = $this.parent().find('input').attr('data_id');
-				if(no_choices < this.settings.maxNoOfChoices) {
+				if(no_choices <= this.settings.maxNoOfChoices) {
 					$(this.settings.addChoice).show();
-					$(this.dialogDOMMap.admin_choices).find('.max-item-error').remove();
+					$(this.settings.dialogContainer).find('.max-item-error-footer').remove();
 					if(choice_id != 0 && choice_id != "undefined") {
 						$this.parent().hide();
 						$this.parent().data('destroy', '1');
