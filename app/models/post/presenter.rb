@@ -17,6 +17,7 @@ class Post < ActiveRecord::Base
     pt.add :spam
     pt.add :trash
     pt.add :user_votes
+    pt.add proc { |x| x.original_post? }, as: :comment
     DATETIME_FIELDS.each do |key|
       pt.add proc { |x| x.utc_format(x.safe_send(key)) }, as: key
     end
