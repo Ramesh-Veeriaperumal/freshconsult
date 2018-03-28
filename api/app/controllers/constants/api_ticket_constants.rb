@@ -21,6 +21,7 @@ module ApiTicketConstants
   EXECUTE_SCENARIO_FIELDS = BULK_EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include'].freeze
+  PERMITTED_ARCHIVE_FIELDS = SHOW_FIELDS
   UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags skip_close_notification subject description attachment_ids requester_id company_id).freeze | AttachmentConstants::CLOUD_FILE_FIELDS
 
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats survey).freeze

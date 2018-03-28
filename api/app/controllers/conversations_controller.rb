@@ -123,12 +123,38 @@ class ConversationsController < ApiApplicationController
 
     def load_parent_ticket # Needed here in controller to find the item by display_id
       @ticket = tickets_scoper.find_by_param(params[:id], current_account)
-      log_and_render_404 unless @ticket
+      unless @ticket
+        archive_ticket = if current_account.features_included?(:archive_tickets) 
+          archive_tickets_scoper.find_by_display_id(params[:id]) 
+        else
+          nil
+        end
+        (archive_ticket.present?) ? log_and_render_301_archive : log_and_render_404
+      end
       @ticket
+    end
+
+    def log_and_render_301_archive
+      Rails.logger.debug "The ticket is archived. Id: #{params[:id]}, method: #{params[:action]}, controller: #{params[:controller]}"
+      redirect_to archive_ticket_link, status: 301
+      head 301
+    end
+
+    def archive_ticket_link
+      (archive_params.present?) ? "#{conversations_archived_ticket_path}?#{archive_params}": conversations_archived_ticket_path
+    end
+
+    def archive_params
+      include_params = params.select{|k,v| ConversationConstants::PERMITTED_ARCHIVE_FIELDS.include?(k)}
+      include_params.to_query
     end
 
     def tickets_scoper
       current_account.tickets
+    end
+
+    def archive_tickets_scoper
+      current_account.archive_tickets
     end
 
     def load_notable_from_item

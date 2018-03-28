@@ -157,6 +157,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"announcement", :only => [:index, :account_login_url]
     resource :"email_preview"
     resource :"doorkeeper/authorize"
+    resource :"archive/ticket", :only => [:show]
+    resource :"archive/conversation", :only => [:ticket_conversations]
+    resource :"archive/tickets/activity", only: [:index]
   end
 
   export_tickets do

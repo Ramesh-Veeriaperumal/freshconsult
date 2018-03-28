@@ -200,6 +200,13 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :archived_tickets ,  path: 'tickets/archived', controller: 'archive/tickets', only: [:show] do
+      member do
+        get :conversations, to: 'archive/conversations#ticket_conversations'
+        get :activities, to: 'archive/tickets/activities#index'
+      end
+    end
+
     resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
       collection do
         put :bulk_delete, to: 'ember/tickets/delete_spam#bulk_delete'

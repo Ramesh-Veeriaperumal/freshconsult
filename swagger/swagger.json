@@ -1806,6 +1806,128 @@
         }
       }
     },
+    "/tickets/archived/{id}": {
+      "get": {
+        "tags": [
+          "archive_ticket"
+        ],
+        "summary": "Show Archived Ticket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Display ID of the archived ticket",
+            "required": true
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "type": "string",
+            "description": "Comma-separated values",
+            "enum": [
+              "conversations",
+              "requester",
+              "company",
+              "survey"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/archive_ticket_show"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/archived/{id}/conversations": {
+      "get": {
+        "tags": [
+          "archive_ticket"
+        ],
+        "description": "Show conversations",
+        "parameters": [
+          {
+            "name": "since_id",
+            "in": "query",
+            "type": "number",
+            "description": "Conversation ID from which converations have to be fetched"
+          },
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/archive_conversations_show"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/archived/{id}/activities": {
+      "get": {
+        "tags": [
+          "archive_ticket"
+        ],
+        "summary": "Activities",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "before_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "since_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/archive_activities_index"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      }
+    },
     "/conversations/{id}": {
       "put": {
         "tags": [
@@ -8844,6 +8966,83 @@
         }
       ]
     },
+    "extended_archive_ticket": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/ticket"
+        },
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/definitions/extension_generic"
+            },
+            {
+              "properties": {
+                "cc_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "fwd_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "reply_cc_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "fr_escalated": {
+                  "type": "boolean"
+                },
+                "spam": {
+                  "type": "boolean"
+                },
+                "to_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "is_escalated": {
+                  "type": "boolean"
+                },
+                "association_type": {
+                  "type": "integer",
+                  "enum": [
+                    1,
+                    2,
+                    3,
+                    4
+                  ]
+                },
+                "associated_tickets_count": {
+                  "type": "integer"
+                },
+                "email_failure_count": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "description_text": {
+                  "type": "string"
+                },
+                "cloud_files": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/extended_cloud_file"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
     "extended_sla_policy": {
       "allOf": [
         {
@@ -9149,6 +9348,202 @@
           }
         }
       ]
+    },
+    "archive_ticket_show": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/extended_archive_ticket"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "freshfone_call": {
+              "$ref": "#/definitions/freshfone_call"
+            },
+            "fb_post": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/fb_post"
+                },
+                {
+                  "properties": {
+                    "fb_page": {
+                      "$ref": "#/definitions/fb_page"
+                    }
+                  }
+                }
+              ]
+            },
+            "tweet": {
+              "$ref": "#/definitions/tweet_post"
+            },
+            "survey_result": {
+              "$ref": "#/definitions/survey_result"
+            },
+            "ticket_topic": {
+              "$ref": "#/definitions/ticket_topic"
+            },
+            "stats": {
+              "$ref": "#/definitions/ticket_stats"
+            },
+            "collaboration": {
+              "type": "object",
+              "properties": {
+                "convo_token": {
+                  "type": "string"
+                }
+              }
+            },
+            "meta": {
+              "type": "object",
+              "properties": {
+                "user_agent": {
+                  "type": "string"
+                },
+                "referrer": {
+                  "type": "string"
+                },
+                "created_by": {
+                  "type": "integer"
+                },
+                "time": {
+                  "type": "string",
+                  "format": "datetime"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "archive_conversations_show": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/extended_note"
+      }
+    },
+    "archive_activities_index": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "performer": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "user",
+                  "system"
+                ]
+              },
+              "user": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "agent": {
+                    "type": "boolean"
+                  },
+                  "avatar_url": {
+                    "type": "string"
+                  },
+                  "deleted": {
+                    "type": "boolean"
+                  },
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              },
+              "system": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "exists": {
+                    "type": "boolean"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "round_robin",
+                      "business",
+                      "scenario",
+                      "supervisor",
+                      "observer",
+                      "app_business",
+                      "installed_app",
+                      "api_webhook"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "performed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "property_update",
+                    "add_tag",
+                    "remove_tag",
+                    "add_watcher",
+                    "delete_status",
+                    "execute_scenario",
+                    "add_a_cc",
+                    "spam",
+                    "archive",
+                    "deleted",
+                    "email_to_requester",
+                    "email_to_group",
+                    "email_to_agent",
+                    "ticket_merge_source",
+                    "ticket_merge_target",
+                    "ticket_split_source",
+                    "ticket_split_target",
+                    "ticket_import",
+                    "round_robin",
+                    "shared_ownership_reset",
+                    "timesheet_create",
+                    "timesheet_edit",
+                    "timesheet_delete",
+                    "timer_running",
+                    "time_spent"
+                  ]
+                },
+                "content": {
+                  "type": "object",
+                  "description": "Value corresponding to the action type."
+                }
+              }
+            }
+          },
+          "highlight": {
+            "type": "integer",
+            "description": "Shows which action has to be highlighted"
+          }
+        }
+      }
     },
     "canned_response_folder_details": {
       "type": "object",
