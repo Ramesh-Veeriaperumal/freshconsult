@@ -117,7 +117,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def extra_credits
-      CustomRequestStore.store[:extra_credits]
+      CustomRequestStore.store[:extra_credits] || 0
     end
 
     def set_rate_limit_headers # Rate Limit headers are not set when status is 429
