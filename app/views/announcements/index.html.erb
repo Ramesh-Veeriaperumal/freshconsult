@@ -12,7 +12,8 @@ var ssoProtocol = "https://";
 
 var iFrameURLsso = ssoProtocol + window.location.host + "/announcements/account_login_url?redirect_to=https://<%= AnnouncementsController::ACCOUNT_URL %>";
 var homeURL = "/support/home";
-var params = "#old=true&email=<%=@user_email%>&account_id=<%= current_account.id%>&lang=<%= Language.current.try(:code) %>&plan=<%=@plan_name%>&state=<%=@state%>&articles_tag=<%=@announcement_bucket%>,<%=@role%>";
+var isFalconEnabled = getCookie('falcon_enabled');
+var params = "#mint="+ isFalconEnabled +"&email=<%=@user_email%>&account_id=<%= current_account.id%>&lang=<%= Language.current.try(:code) %>&plan=<%=@plan_name%>&state=<%=@state%>&articles_tag=<%=@announcement_bucket%>,<%=@role%>";
 
 var articleHash = (window.location.href).split("#")[1];
 var iFrameURL;
