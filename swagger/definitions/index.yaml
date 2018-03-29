@@ -315,7 +315,8 @@
     $ref: './response/bot_list.yaml'
   bot_product_data:
     $ref: './response/bot_product_data.yaml'
-
+  article_content:
+    $ref: './response/article_content.yaml'
   # Dashboard activities
   dashboard_activities:
     $ref: './response/dashboard/activities.yaml'

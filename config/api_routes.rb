@@ -381,6 +381,7 @@ Helpkit::Application.routes.draw do
 
     # dirty hack - check privilege fails when using 'solutions' namespace although controller action mapping is unaffected
     get 'solutions/articles', to: 'ember/solutions/articles#index'
+    get 'solutions/articles/:id/article_content', to: 'ember/solutions/articles#article_content'
 
     match '/dashboards/leaderboard_agents' => 'ember/leaderboard#agents', via: :get
     match '/dashboards/leaderboard_groups' => 'ember/leaderboard#groups', via: :get

@@ -150,7 +150,7 @@ Authority::Authorization::PrivilegeList.build do
 
   view_solutions do
     resource :"ember/search/solution", only: [:results]
-    resource :"ember/solutions/article", only: [:index]
+    resource :"ember/solutions/article", only: [:index,:article_content]
     resource :"ember/search/multiquery", only: [:search_results]
   end
 
