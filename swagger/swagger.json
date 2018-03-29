@@ -4607,6 +4607,30 @@
         }
       }
     },
+    "/solutions/articles/{id}/article_content": {
+      "get": {
+        "tags": [
+          "solutions"
+        ],
+        "summary": "List article content for an article",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/article_content"
+            }
+          },
+          "404": {
+            "description": "Article not found"
+          }
+        }
+      }
+    },
     "/dashboards/activities": {
       "get": {
         "tags": [
@@ -10590,6 +10614,27 @@
         },
         "bot_id": {
           "type": "integer"
+        }
+      }
+    },
+    "article_content": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "description": {
+          "type": "string"
+        },
+        "description_text": {
+          "type": "string"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
+          }
         }
       }
     },

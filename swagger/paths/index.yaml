@@ -267,6 +267,8 @@
 #Solutions
 /solutions/articles:
   $ref: ./solutions/articles.yaml
+/solutions/articles/{id}/article_content:
+  $ref: ./solutions/article_content.yaml
 
 #Dashboard activities
 /dashboards/activities:
