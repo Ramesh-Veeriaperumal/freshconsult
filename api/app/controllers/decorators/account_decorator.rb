@@ -63,7 +63,8 @@ class AccountDecorator < ApiDecorator
         compose_email_enabled: record.compose_email_enabled?,
         restricted_compose_email_enabled: record.restricted_compose_enabled?,
         include_survey_manually: include_survey_manually?,
-        show_on_boarding: record.account_onboarding_pending?
+        show_on_boarding: record.account_onboarding_pending?,
+        announcement_bucket: record.account_additional_settings.additional_settings[:announcement_bucket].to_s
       }
     end
 
