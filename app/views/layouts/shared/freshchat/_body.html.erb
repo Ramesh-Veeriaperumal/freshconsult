@@ -1,0 +1,13 @@
+<% if current_account.freshchat_account && current_account.freshchat_account.enabled && current_account.freshchat_account.portal_widget_enabled.to_bool %>
+	<script>
+	  window.fcWidget.init({
+	    token: "<%=current_account.freshchat_account.token%>",
+	    host: "https://wchat.freshchat.com"
+	  });
+	  <% unless current_user.nil? %>
+	  	window.fcWidget.setExternalId('<%= current_user.email %>');
+	  	window.fcWidget.user.setFirstName('<%= current_user.name %>');
+	  	window.fcWidget.user.setEmail('<%= current_user.email %>');
+	  <%end%>
+	</script>
+<% end %>

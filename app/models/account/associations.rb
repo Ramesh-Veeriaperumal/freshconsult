@@ -290,6 +290,7 @@ class Account < ActiveRecord::Base
   has_many :freshfone_whitelist_country, :class_name => "Freshfone::WhitelistCountry"
   
   has_one :chat
+  has_one  :freshchat_account, :class_name => 'Freshchat::Account', :dependent => :destroy
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
 
   has_one :chat_setting

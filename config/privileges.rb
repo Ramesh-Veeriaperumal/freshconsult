@@ -614,6 +614,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_role", :only => [:index, :show]
     resource :"api_integrations/cti", :only => [:create, :index]
     resource :"email_preview"
+    resource :"admin/freshchat", :only => [:index, :create, :update, :toggle]
   end
 
   manage_account do

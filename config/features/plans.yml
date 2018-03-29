@@ -5,6 +5,7 @@
       - :basic_twitter
       - :basic_facebook
       - :basic_dkim
+      - :freshchat
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -59,7 +60,6 @@
       - :css_customization
       - :advanced_reporting
       - :dynamic_content
-      - :chat
       - :ticket_templates
       - :custom_survey
       - :parent_child_tickets_toggle

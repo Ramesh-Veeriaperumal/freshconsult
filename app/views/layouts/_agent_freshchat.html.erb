@@ -1,0 +1,36 @@
+<div id="freshchat-icon" class="freshchat-icon hide">
+  <i class="fsize-24 ficon-chat"></i>
+</div>
+
+<%= javascript_tag do %>
+  var widgetOpen = false;
+  jQuery(document).ready(function(){
+    jQuery.getScript('https://web.freshchat.com/js/agent-widget.js', function() {
+      jQuery('#freshchat-icon').removeClass('hide');
+      window.fcAgentWidget.init({
+        token: '<%=current_account.freshchat_account.app_id%>',
+        host: 'https://web.freshchat.com',
+        config: {
+          colorCustomization: {
+            widgetHeaderColor: '#284255',
+            notificationHeaderColor: '#02b875',
+            widgetDropdownColor: '#02b875'
+          },
+          position: {
+            leftOffset: '70'
+          }
+        }
+      });
+    });
+    jQuery('body').on('click.freshchat', '#freshchat-icon', function() {
+      if(widgetOpen) {
+        window.fcAgentWidget.close();
+        widgetOpen = false;
+      } else {
+        window.fcAgentWidget.open();
+        widgetOpen = true;
+      }
+      jQuery(this).toggleClass('active');
+    });
+  });
+<% end %>
