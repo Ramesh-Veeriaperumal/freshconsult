@@ -386,7 +386,7 @@ en:
   attachment: Attachment
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
-  attachment_limit_failed_message: One or more attachments discarded since the %{size} limit was exceeded.
+  attachment_limit_failed_message: Attachment(s) that exceed the %{size} limit have been dropped. Please reach out to the sender.
   attachment_contain_virus: %{size} attachments are discarded since they contain virus.
   cc_dropped_message: The following cc's are dropped due to moderation - %{emails}
   emails_dropped_message: The following emails are dropped due to moderation - %{emails}
@@ -3523,8 +3523,6 @@ en:
       login_message: Login with an account administrator's credentials to associate your Google Apps login to your Freshdesk account.
       login_button: Login & complete registration
     canceled_account: We're sorry to see you go, but your account has been canceled.
-    edit_domain:
-      getting_started: "Getting Started"
     new:
       create_an_account: Create an account
       errors_encountered: "Errors encountered with your account information:"
@@ -3653,7 +3651,7 @@ en:
       setup_progress_misc: Keep going!
       setup_progress_penultimate: Almost there!
       new_account_title: Sign up for Freshdesk
-      new_account_description: Start your free 30-day trial of Freshdesk by signing up from the website.
+      new_account_description: Start your free trial of Freshdesk by signing up from the website.
       account_admin_email_title: Activate your account
       account_admin_email_description: Check your inbox for our activation email and verify your Freshdesk account.
       agents_title: Invite your team
@@ -3685,6 +3683,7 @@ en:
       submit_button_text: Take me to my account
       account_url_defaulted: Due to inactivity, we've defaulted to an auto-generated URL for your account. Redirecting you to your dashboard now...
       check_activation_email: Due to inactivity, we've defaulted to an auto-generated URL for your account. Please check your inbox for our activation email.
+      getting_started: "Getting Started"
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   account_configuration:
@@ -6560,6 +6559,14 @@ en:
     twitter_disabled: Twitter login will be disabled for customers and agents for security purposes.
     important: Important
     includes_contacts_company_domain: (includes existing contacts and company domains)
+    gdpr_admin_details: has changed your user permissions from
+    gdpr_agent: Agent
+    gdpr_admin: Admin.
+    gdpr_terms: By clicking on Accept , you agree to our  
+    gdpr_terms_link:  Terms
+    gdpr_acknowledgement: and acknowledge having read our
+    gdpr_policy: Privacy policy.
+    gdpr_to: to
     permission:
       helpdesk_restrictions: Helpdesk restrictions
       who_can_create: Who can log in (or) sign up (or) create tickets?
@@ -8705,6 +8712,13 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       form:
         app_key: "Registered Application key for your domain"
         app_key_info: "Create an App in the dropbox and provide the app key here."
+    google_drive:
+      label: "Google Drive"
+      desc: "Attach and Share your data/files from Google Drive."
+      helptext: "<h4>Google Drive integration help</h4><br/><p>The Google Drive Integration lets agents and users browse for files from their Google Drive folder and share them when submitting or replying to a ticket in Freshdesk. A direct link to the file is shared in the ticket, removing the need for attachments and email size restrictions.</p><p>Before you setup the integration, go to the <a target='_blank' href='https://console.developers.google.com/'><b>Google Developers page</b></a>.</p><p>1. Select <b>Create Your Project</b> in the <b>API & Services</b> section.</p><p>2. Under <b>Enable APIs and Services</b>, enable <b>Google Drive API and Google Picker API</b>.</p><p>3. Under <b>Credentials section</b> create your OAuth client ID as well as API Key, while generating OAuth client ID, please enter the freshdesk url under Authorised Javascript origins section. </p><p>4. Finally, copy paste the Client ID and API Key into this page, and Save changes. Your Google Drive Chooser should now be ready. You can check it out in the New Ticket form.</p>"
+      form:
+        client_id: "OAuth client ID for your domain"
+        developer_key: "API key obtained from google developers console."
     box:
       change: "Change"
       chooser_title: "Choose a file from Box..."
@@ -9666,7 +9680,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     no_data_to_display_msg: No data to display
     something_went_wrong_msg: 'Something went wrong, please try again'
     disabled_date_range: Disabled for this date range
-    export_tickets_error_msg: We currently allow only 1 concurrent exports. Kindly try again after some time. Apologies for the inconveniences caused.
+    export_tickets_error_msg: You have reached the maximum number of simultaneous export requests allowed. Please try again after some time.
+    export_tickets_account_error_msg: Your account has reached the maximum number of simultaneous export requests allowed. Please try again after some time.
     export_tickets_success_msg: Your ticket data will be sent to your email shortly!
     view_all_tickets: View all tickets
     view_all_compliant_tickets: View all compliant tickets
@@ -10389,6 +10404,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           validation_error: "This field is required"
           authentication_error: "The email or password provided is not valid."
           access_error: "You need to be an admin in both Freshcaller and Freshdesk to link your accounts."
+          pod_error: "Looks like your two accounts are in different data centers. Please create a new Freshcaller account to link to your Freshdesk account."
           api_error: "This Freshcaller account does not exist. Please provide a valid URL or create a new Freshcaller account."
     ticket:
       recording:
@@ -11956,13 +11972,13 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       default_choice2: "Enterprise"
     industry:
       default_choice0: "Automotive"
-      default_choice1: "Consumer Durables & Apparel"
+      default_choice1: "Consumer Durables and Apparel"
       default_choice2: "Diversified Consumer Services"
-      default_choice3: "Hotels, Restaurants & Leisure"
+      default_choice3: "Hotels, Restaurants and Leisure"
       default_choice4: "Consumer Goods"
       default_choice5: "Household Durables"
       default_choice6: "Leisure Products"
-      default_choice7: "Textiles, Apparel & Luxury Goods"
+      default_choice7: "Textiles, Apparel and Luxury Goods"
       default_choice8: "Education Services"
       default_choice9: "Family Services"
       default_choice10: "Specialized Consumer Services"
@@ -11971,7 +11987,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       default_choice13: "Specialty Retail"
       default_choice14: "Beverages"
       default_choice15: "Food Products"
-      default_choice16: "Food & Staples Retailing"
+      default_choice16: "Food and Staples Retailing"
       default_choice17: "Personal Products"
       default_choice18: "Tobacco"
       default_choice19: "Gas Utilities"
@@ -11980,34 +11996,34 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       default_choice22: "Diversified Financial Services"
       default_choice23: "Insurance"
       default_choice24: "Real Estate"
-      default_choice25: "Health Care Equipment & Supplies"
-      default_choice26: "Health Care Providers & Services"
+      default_choice25: "Health Care Equipment and Supplies"
+      default_choice26: "Health Care Providers and Services"
       default_choice27: "Biotechnology"
       default_choice28: "Pharmaceuticals"
       default_choice29: "Professional Services"
-      default_choice30: "Aerospace & Defense"
-      default_choice31: "Air Freight & Logistics"
+      default_choice30: "Aerospace and Defense"
+      default_choice31: "Air Freight and Logistics"
       default_choice32: "Airlines"
-      default_choice33: "Commercial Services & Supplies"
-      default_choice34: "Construction & Engineering"
+      default_choice33: "Commercial Services and Supplies"
+      default_choice34: "Construction and Engineering"
       default_choice35: "Electrical Equipment"
       default_choice36: "Industrial Conglomerates"
       default_choice37: "Machinery"
       default_choice38: "Marine"
-      default_choice39: "Road & Rail"
-      default_choice40: "Trading Companies & Distributors"
+      default_choice39: "Road and Rail"
+      default_choice40: "Trading Companies and Distributors"
       default_choice41: "Transportation"
-      default_choice42: "Internet Software & Services"
+      default_choice42: "Internet Software and Services"
       default_choice43: "IT Services"
       default_choice44: "Software"
       default_choice45: "Communications Equipment"
-      default_choice46: "Electronic Equipment, Instruments & Components"
-      default_choice47: "Technology Hardware, Storage & Peripherals"
+      default_choice46: "Electronic Equipment, Instruments and Components"
+      default_choice47: "Technology Hardware, Storage and Peripherals"
       default_choice48: "Building Materials"
       default_choice49: "Chemicals"
-      default_choice50: "Containers & Packaging"
-      default_choice51: "Metals & Mining"
-      default_choice52: "Paper & Forest Products"
+      default_choice50: "Containers and Packaging"
+      default_choice51: "Metals and Mining"
+      default_choice52: "Paper and Forest Products"
       default_choice53: "Diversified Telecommunication Services"
       default_choice54: "Wireless Telecommunication Services"
       default_choice55: "Renewable Electricity"

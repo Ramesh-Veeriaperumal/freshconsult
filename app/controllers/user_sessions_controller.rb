@@ -16,14 +16,13 @@ class UserSessionsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token  
   skip_before_filter :require_user, :except => [:destroy, :freshid_destroy]
   skip_before_filter :check_account_state
+  before_filter :check_for_sso_login, only: [:sso_login, :jwt_sso_login]
   before_filter :check_sso_params, :only => :sso_login
   skip_before_filter :check_day_pass_usage
   before_filter :set_native_mobile, :only => [:create, :destroy, :freshid_destroy]
   skip_after_filter :set_last_active_time
   before_filter :decode_jwt_payload, :check_jwt_required_fields, :only => [:jwt_sso_login]
-  before_filter :only => :create do |c|
-    redirect_to_freshid_login if params[:user_session].try(:[], :email) && freshid_agent?(params[:user_session][:email])
-  end
+  before_filter :redirect_to_freshid_login, :only =>[:create], :if => :is_freshid_agent_and_not_mobile?
 
   def new
     flash.keep
@@ -355,6 +354,14 @@ class UserSessionsController < ApplicationController
       end
     end
 
+    def check_for_sso_login
+      unless current_account.allow_sso_login?
+        cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
+        flash[:notice] = t(:'flash.login.failed')
+        redirect_to login_normal_url
+      end
+    end
+
     def sso_hash_validated?
       if !current_account.launched?(:enable_old_sso)
         params[:hash] == new_sso_hash
@@ -472,6 +479,10 @@ class UserSessionsController < ApplicationController
 
     def create_user_session user={}
       @user_session = current_account.user_sessions.new(user)
+    end
+
+    def is_freshid_agent_and_not_mobile?
+      !is_native_mobile? && params[:user_session].try(:[], :email) && freshid_agent?(params[:user_session][:email])
     end
 
 end

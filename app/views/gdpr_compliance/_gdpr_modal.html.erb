@@ -1,0 +1,20 @@
+
+<div class="gdpr-permission-change">
+	<p class="modal-styles"> <%= current_user.current_user_gdpr_admin %> <%= t('account.gdpr_admin_details') %>
+		<span class="gdpr-color"><%= t('account.gdpr_agent') %>
+		</span>
+		<span> <%= t('account.gdpr_to')%>
+		</span>
+		<span class="gdpr-color"><%= t('account.gdpr_admin') %>
+		</span>
+	</p>
+</div>
+<p class ="gdpr-terms">
+	<span class="terms-style-gdpr"><%= t('account.gdpr_terms') %></span>
+	<a href="https://www.freshworks.com/terms/" target='_blank'>
+		<u><%= t('account.gdpr_terms_link') %></u>
+	</a>
+	<span><%= t('account.gdpr_acknowledgement') %>
+		<a href = "https://www.freshworks.com/privacy/" target= '_blank'><u> <%= t('account.gdpr_policy')%></u></a>
+	</span>
+</p>

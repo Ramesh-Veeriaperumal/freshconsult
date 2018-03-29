@@ -114,7 +114,7 @@ class Account < ActiveRecord::Base
 
   }
 
-  ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets]
+  ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets, :shared_ownership]
   ADVANCED_FEATURES_TOGGLE = ADVANCED_FEATURES.map{|f| "#{f}_toggle".to_sym}
 
   # Features added temporarily to avoid release for all the customers at one shot
@@ -190,13 +190,15 @@ class Account < ActiveRecord::Base
     :forum_post_spam_whitelist => false, :email_failures => false, :enable_qna => false, :enable_insights => false,
     :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true,
     :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false, 
-    :bulk_security => false, :shared_ownership => false, :service_writes => false, :service_reads => false, :falcon => false, 
+    :bulk_security => false, :service_writes => false, :service_reads => false, :falcon => false, 
     :send_emails_via_fd_email_service_feature => false, :user_notifications => false, :freshplug_enabled => false, :dkim => false, 
     :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, :auto_ticket_export => false, :select_all => false, 
     :facebook_realtime => false, :"Freshfone Call Tracker" => false, :skip_one_hop => false, :ticket_contact_export => false, 
     :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, :skip_portal_cname_chk => false,
     :falcon_signup => false, :falcon_portal_theme => false, :email_actions => false, :ner => false, :disable_freshchat => false, :freshchat_integration => false,
-    :facebook_page_redirect => false, :froala_editor_forums => false, :ticket_central_publish => false, :solutions_central_publish => false, :freshid => false, :launch_smart_filter => true
+    :facebook_page_redirect => false, :froala_editor_forums => false, :ticket_central_publish => false, :solutions_central_publish => false, 
+    :freshid => false, :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, :outgoing_attachment_limit_25 => false,
+    :whitelist_sso_login => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

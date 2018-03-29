@@ -3,11 +3,11 @@ class Account < ActiveRecord::Base
 
   before_create :downcase_full_domain,:set_default_values, :set_shard_mapping, :save_route_info
   before_create :add_features_to_binary_column
-  before_create :create_freshid_account, if: :freshid_signup_allowed?
   before_update :check_default_values, :update_users_time_zone, :backup_changes
   before_destroy :backup_changes, :make_shard_mapping_inactive, :deleted_model_info
 
-  after_create :populate_features, :change_shard_status
+  after_create :populate_features, :change_shard_status, :make_current
+  after_create :create_freshid_account, if: [:freshid_signup_allowed?, :freshid_enabled?]
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain, :update_route_info
   before_update :update_global_pod_domain 
 
@@ -178,7 +178,6 @@ class Account < ActiveRecord::Base
     #      on rollback feature_name => falcon, method_name => def falcon_on_rollback ; end
     def trigger_launchparty_feature_callbacks
       return if @launch_party_features.blank?
-      self.make_current
       args = { :features => @launch_party_features, :account_id => self.id }
       LaunchPartyActionWorker.perform_async(args)
       @launch_party_features = nil
@@ -401,7 +400,7 @@ class Account < ActiveRecord::Base
     end
 
     def enable_collab
-      CollabPreEnableWorker.perform_async
+      CollabPreEnableWorker.perform_async(true)
     end
 
     def set_falcon_preferences

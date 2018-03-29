@@ -1088,7 +1088,7 @@ class User < ActiveRecord::Base
   def create_freshid_user
     return unless freshid_enabled_and_agent?
     reset_freshid_user if email_changed?
-    freshid_user = Freshid::User.create({ first_name: name, email: email, phone: phone, mobile: mobile, domain: account.full_domain })
+    freshid_user = Freshid::User.create(user_attributes_for_freshid)
     if freshid_user.present?
       self.build_freshid_authorization(uid: freshid_user.uuid)
       assign_freshid_attributes_to_user freshid_user
@@ -1122,6 +1122,18 @@ class User < ActiveRecord::Base
     remove_password_flag(email, account_id)
   end
 
+  def gdpr_pending?
+    agent_preferences[:gdpr_acceptance]
+  end
+
+  def current_user_gdpr_admin
+      Account.current.agents_details_from_cache.find{ |n| n.id == agent_preferences[:gdpr_admin_id]}.try(:name) if gdpr_pending?
+  end
+
+  def agent_preferences
+    self.preferences[:agent_preferences]
+  end
+  
   def active_freshid_user?
     active? && freshid_enabled_account?
   end
@@ -1157,8 +1169,21 @@ class User < ActiveRecord::Base
       self.name = [freshid_user.first_name, freshid_user.last_name].join(' ')
       self.phone = freshid_user.phone
       self.mobile = freshid_user.mobile
+      self.job_title = freshid_user.job_title
       self.active = self.primary_email.verified = freshid_user.active?
       self.password_salt = self.crypted_password = nil
+    end
+    
+    def user_attributes_for_freshid
+      { 
+        first_name: first_name.presence,
+        last_name: last_name.presence,
+        email: email,
+        phone: phone.presence,
+        mobile: mobile.presence,
+        job_title: job_title.presence,
+        domain: account.full_domain
+      }
     end
 
     def reset_freshid_user

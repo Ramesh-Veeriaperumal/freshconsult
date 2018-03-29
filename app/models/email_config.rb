@@ -29,7 +29,7 @@ class EmailConfig < ActiveRecord::Base
                                  :message => I18n.t('activerecord.errors.messages.invalid')
   validate :blacklisted_domain?
 
-  xss_sanitize  :only => [:to_email,:reply_email], :html_sanitize => [:name,:to_email,:reply_email]
+  xss_sanitize  :only => [:to_email,:reply_email], :html_sanitize => [:name]
 
   before_save :assign_category
   

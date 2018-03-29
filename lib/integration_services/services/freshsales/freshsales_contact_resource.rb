@@ -5,7 +5,8 @@ module IntegrationServices::Services
       RELATIONAL_FIELDS = { 
                             "lead_source_id" => ["source", "lead_source"], 
                             "owner_id" => ["owner", "users"], 
-                            "campaign_id" => ["campaign", "campaigns"] 
+                            "campaign_id" => ["campaign", "campaigns"],
+                            "sales_account_id" => ["sales_account","sales_accounts"]
                           }
       
       def get_fields

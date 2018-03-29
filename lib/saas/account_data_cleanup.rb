@@ -217,8 +217,7 @@ end
   end
 
   def handle_shared_ownership_toggle_drop_data
-    # account.revoke_feature(:shared_ownership)
-    account.features.shared_ownership.destroy #until the feature moves to bitmap
+    account.revoke_feature(:shared_ownership)
     account.installed_applications.with_name("shared_ownership").destroy_all
     handle_shared_ownership_drop_data
   end
