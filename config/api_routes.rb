@@ -341,7 +341,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :attachments, controller: 'ember/attachments', only: [:create, :destroy] do
+    resources :attachments, controller: 'ember/attachments', only: [:create, :show, :destroy] do
       member do
         put :unlink
       end
@@ -448,7 +448,7 @@ Helpkit::Application.routes.draw do
         end
       end
     end
-    resources :attachments, controller: 'ember/attachments', only: [:create, :destroy] do
+    resources :attachments, controller: 'ember/attachments', only: [:create, :show, :destroy] do
       member do
         put :unlink
       end

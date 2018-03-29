@@ -10,6 +10,8 @@ module Ember
     include AttachmentConcern
     include Utils::Sanitizer
     include AssociateTicketsHelper
+    include AttachmentsValidationConcern
+    include DeleteSpamConcern
     decorate_views(
       decorate_objects: [:ticket_conversations],
       decorate_object: %i(create update reply forward facebook_reply tweet reply_to_forward broadcast)
@@ -18,6 +20,7 @@ module Ember
     before_filter :can_send_user?, only: %i(create reply forward reply_to_forward facebook_reply tweet broadcast)
     before_filter :set_defaults, only: [:forward]
     before_filter :link_tickets_enabled?, only: [:broadcast]
+    before_filter :validate_attachments_permission, only: [:create]
 
     SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply reply_to_forward broadcast).freeze
     SLAVE_ACTIONS = %w(ticket_conversations).freeze
@@ -290,12 +293,19 @@ module Ember
       def parent_attachments
         # query direct and shared attachments of associated ticket
         @parent_attachments ||= begin
+          attachments = []
           if @include_original_attachments
-            @ticket.all_attachments
+            attachments = @ticket.all_attachments
           elsif @attachment_ids
-            (@ticket.all_attachments | conversations_attachments).select { |x| @attachment_ids.include?(x.id) }
+            attachments = (@ticket.all_attachments | conversations_attachments).select { |x| @attachment_ids.include?(x.id) }
           end
+          attachments.push(get_account_attachments(attachments)).flatten
         end
+      end
+
+      def get_account_attachments attachments
+        attachment_ids = @attachment_ids - attachments.flatten.map(&:id)
+        @account_attachments = current_account.attachments.find(attachment_ids)
       end
 
       def conversations_attachments
