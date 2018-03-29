@@ -52,7 +52,12 @@ module IntegrationServices::Services
         result[RESOURCE_MAPPER[resource_type]].push(resource[resource_type])
         relational_fields.each do |relational_field|
           key = resource_relational_fields[relational_field][1]
-          result[RESOURCE_MAPPER[resource_type]].first[relational_field] = resource[key].first["name"] || resource[key].first["display_name"] if resource[key].present?
+          next unless resource[key]
+          resource[key].each do |relational_option|
+            if relational_option["id"] == result[RESOURCE_MAPPER[resource_type]].first[relational_field]
+              result[RESOURCE_MAPPER[resource_type]].first[relational_field] = relational_option["name"] || relational_option["display_name"]
+            end
+          end
         end
         result["type"] = resource_type
         get_custom_fields resource_type, fields, result
