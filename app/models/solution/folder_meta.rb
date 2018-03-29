@@ -110,6 +110,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	def add_visibility(visibility, customer_ids, add_to_existing)
     ActiveRecord::Base.transaction do
+      add_companies(customer_ids, add_to_existing) if visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:company_users]
       self.visibility = visibility
       save
       primary_folder.save # Dummy save to trigger publishable callbacks
