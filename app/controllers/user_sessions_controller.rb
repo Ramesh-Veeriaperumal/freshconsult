@@ -16,8 +16,8 @@ class UserSessionsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token  
   skip_before_filter :require_user, :except => [:destroy, :freshid_destroy]
   skip_before_filter :check_account_state
-  before_filter :check_sso_params, :only => :sso_login
   before_filter :check_for_sso_login, only: [:sso_login, :jwt_sso_login]
+  before_filter :check_sso_params, :only => :sso_login
   skip_before_filter :check_day_pass_usage
   before_filter :set_native_mobile, :only => [:create, :destroy, :freshid_destroy]
   skip_after_filter :set_last_active_time
