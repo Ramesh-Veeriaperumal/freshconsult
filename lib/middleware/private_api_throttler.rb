@@ -26,7 +26,7 @@ class Middleware::PrivateApiThrottler < Middleware::FdApiThrottler
   end
 
   def extra_credits
-    RequestStore.store[:extra_credits] || 0
+    CustomRequestStore.store[:extra_credits] || 0
   end
 
   def default_api_limit_key
