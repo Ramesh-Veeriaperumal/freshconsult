@@ -6,7 +6,9 @@ if Infra['API_LAYER']
     config.middleware.insert_before ActionDispatch::ParamsParser, "Middleware::ApiRequestInterceptor"
 
     # API layer uses new verison API throttler. Hence deleted the above middleware and inserted new.
-    config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000
+    unless Infra['APIGEE_API_LAYER']
+      config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000
+    end
 
     if Infra['PIPE_LAYER']
       config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::ApiPipeAuthenticator'
