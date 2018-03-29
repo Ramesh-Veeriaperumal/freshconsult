@@ -633,6 +633,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     email_config ? email_config : account.primary_email_config
   end
 
+  def friendly_reply_email_config
+    (email_config && email_config.active) ? email_config : account.primary_email_config
+  end
+
   def friendly_reply_email
     email_config ? email_config.friendly_email : account.default_friendly_email
   end

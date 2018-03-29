@@ -87,33 +87,44 @@
                       :value => @agent.user.email, :placeholder => t('user.email')) %>
               </div>
             </li>
-  				<li class="control-group">
-  					<%= label(:user, :job_title, t('user.title'), :class => "control-label" ) %>
-  					<div class="controls">
-  						<%= text_field(:user, :job_title, :class => "text input-xlarge",
-                  :value => "#{@agent.user.job_title}", :placeholder => t('user.title')) %>
-  					</div>
-  				</li>
-          <% if (freshid_enabled? && !@agent.new_record?) || !freshid_enabled? %>
-       			<li class="control-group">
-  					  <%= label(:user, :phone, t('user.phone_no'), :class => "control-label" )%>
-  					  <div class="controls">
-                <% if freshid_enabled? %>
+            <% if freshid_enabled? %>
+              <% if !@agent.new_record? %>
+              <li class="control-group">
+                <%= label(:user, :job_title, t('user.title'), :class => "control-label" ) %>
+                <div class="controls">
+                    <span class="form_value"><%= @agent.user.job_title %></span>
+                </div>
+              </li>
+              <li class="control-group">
+                <%= label(:user, :phone, t('user.phone_no'), :class => "control-label" )%>
+                <div class="controls">
                   <%= label(:user, :phone, t('user.work'), :class => "fid-phone-label" )%>
                   <%= text_field(:user, :phone, :class => "text margin-bottom uneditable-input fid-phone-input",
                      :value => "#{@agent.user.phone}", :placeholder => t('user.work'), :title => t('user.work') ) %>
                   <%= label(:user, :mobile, t('user.mobile'), :class => "fid-phone-label" )%>
                   <%= text_field(:user, :mobile, :class => "text uneditable-input fid-phone-input",
                          :value => "#{@agent.user.mobile}", :placeholder => t('user.mobile'), :title => t('user.mobile')) %>
-                <% else %>
+                </div>
+              </li>
+              <% end %>
+            <% else %>
+              <li class="control-group">
+                <%= label(:user, :job_title, t('user.title'), :class => "control-label" ) %>
+                <div class="controls">
+                  <%= text_field(:user, :job_title, :class => "text input-xlarge",
+                      :value => "#{@agent.user.job_title}", :placeholder => t('user.title')) %>
+                </div>
+              </li>
+              <li class="control-group">
+                <%= label(:user, :phone, t('user.phone_no'), :class => "control-label" )%>
+                <div class="controls">
                   <%= text_field(:user, :phone, :class => "text input-medium margin-bottom",
                      :value => "#{@agent.user.phone}", :placeholder => t('user.work') ) %>
                   <%= text_field(:user, :mobile, :class => "text input-medium ",
                         :value => "#{@agent.user.mobile}", :placeholder => t('user.mobile')) %>
-                <% end %>
-  					  </div>
-  				  </li>
-          <% end %>
+                </div>
+              </li>
+            <% end %>
     			<% if gamification_feature?(current_account) %>
     				<li class="control-group">
     					<%= label(:agent , :scoreboard_level_id, t('level_label'), :class => "control-label")%>

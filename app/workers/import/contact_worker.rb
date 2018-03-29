@@ -13,6 +13,26 @@ class Import::ContactWorker
       acc.contact_import.blocked!
       raise SpamAccountError
     end
+    register_signal_handlers
     Import::Customers::Contact.new(args).import
   end
+
+  private
+
+    def register_signal_handlers
+      trap('TERM') { 
+        p "Inside TERM. Contact import killed."
+        exit
+      }
+      trap('INT')  { 
+        p "Inside INT. Contact import killed."
+        exit
+      }
+      trap('QUIT') { 
+        p "Inside QUIT. Contact import killed."
+        exit
+      }
+    rescue => e
+      p "Error in signal handlers"
+    end
 end

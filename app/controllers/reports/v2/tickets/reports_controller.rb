@@ -20,6 +20,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   before_filter :pdf_params,                                            :only   => [:export_report]
   before_filter :save_report_max_limit?,                                :only   => [:save_reports_filter]
   before_filter :construct_report_filters, :schedule_allowed?,          :only   => [:save_reports_filter,:update_reports_filter]
+  before_filter :check_exports_count,                                   :only   => [:export_tickets]
   
   helper_method :enable_schedule_report?
 
@@ -369,6 +370,12 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
       new_params << "HelpdeskReports::ParamConstructor::#{'Timespent'.to_s.camelcase}".constantize.new(param_hash.symbolize_keys).build_params
     end
     @query_params = new_params
+  end
+
+  def check_exports_count
+    if current_account.data_exports.reports_export.current_exports.count >= EXPORT_REPORT_COUNT
+        render json: "ACCOUNT_REPORT_EXPORT_VIOLATION", status: :unprocessable_entity
+    end
   end
 end
 

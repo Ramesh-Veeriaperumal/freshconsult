@@ -93,41 +93,36 @@ jQuery('.email').on('keyup', function(){
 <%= fields_for "user", @profile do |usr| %>
     <%= error_messages_for :user %>
  	<ul class="ui-form">
- 		<% unless freshid_enabled? %>
-		<li>
-			<%= label(:user, :name, t("user.full_name") ) %>
-				<%= text_field(:user, :name, :class => "text required", :value => user.name )  %>
-		</li>
-		<% end %>
-		<li <% if freshid_enabled? %> class="freshid_field" <% end %>>
-			<%= label(:user, :job_title, t("user.title")) %>
-			<%= text_field(:user, :job_title, :class => "text", :value => user.job_title ) %>
-		</li>
-		<% if freshid_enabled? %>
+    <% if freshid_enabled? %>
 		<li>
 			<div class="upload-avatar">
 				<%= render :partial => "/shared/profile_avatar", :locals => { :user => user } %>
 			</div>
 		</li>
-		<% end %>
-		<% unless freshid_enabled? %>
-		<li class="medium">
-			<%= label(:user, :email, t("user.email")) %>
-			<%= text_field(:user, :email, :class => "text required email disabled", :id => "email_primary" , :value => user.email , :disabled =>true) %>
-		</li>
-		<% end %>
-		<% unless freshid_enabled? %>
-		<li class="small">
-			<%= label(:user, :phone, t("user.phone_no")) %>
-			<div>
-				<label class="overlabel" for="phone_work">Work</label>
-				<%= text_field(:user, :phone, :class => "text", :id => "phone_work", :value => user.phone ) %>
-			</div>
-			<div>
-				<label class="overlabel" for="phone_mobile">Mobile</label>
-				<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ,:value => user.mobile  ) %>
-			</div>
-		</li>
+    <% else %>
+      <li>
+        <%= label(:user, :name, t("user.full_name") ) %>
+          <%= text_field(:user, :name, :class => "text required", :value => user.name )  %>
+      </li>
+      <li>
+        <%= label(:user, :job_title, t("user.title")) %>
+        <%= text_field(:user, :job_title, :class => "text", :value => user.job_title ) %>
+      </li>
+      <li class="medium">
+  			<%= label(:user, :email, t("user.email")) %>
+  			<%= text_field(:user, :email, :class => "text required email disabled", :id => "email_primary" , :value => user.email , :disabled =>true) %>
+  		</li>
+  		<li class="small">
+  			<%= label(:user, :phone, t("user.phone_no")) %>
+  			<div>
+  				<label class="overlabel" for="phone_work">Work</label>
+  				<%= text_field(:user, :phone, :class => "text", :id => "phone_work", :value => user.phone ) %>
+  			</div>
+  			<div>
+  				<label class="overlabel" for="phone_mobile">Mobile</label>
+  				<%= text_field(:user, :mobile, :class => "text", :id => "phone_mobile" ,:value => user.mobile  ) %>
+  			</div>
+  		</li>
 		<% end %>
 
 		<% if current_user.customer?%>

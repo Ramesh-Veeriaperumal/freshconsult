@@ -43,6 +43,10 @@
                 resetLinkingState();
                 showServerErrors(apiError);
               }
+              else if(result['error'] === "Pod Mismatch"){
+                resetLinkingState();
+                showServerErrors(podError);
+              }
               else{
 	          	  window.location.assign('/admin/phone');
 	          	}

@@ -11,7 +11,7 @@
 		<title><%= h(page_title)%></title>
     <% if current_account.freshid_enabled? %>
       <!-- Including Freshid Cache Control Information -->
-      <img src=<%=Freshid::Constants::FRESHID_CACHE_IMAGE_URL%>>
+      <img class="hide" src=<%=Freshid::Constants::FRESHID_CACHE_IMAGE_URL%>>
     <% end %>
 		<% 
 			body_class = []

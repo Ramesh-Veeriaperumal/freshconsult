@@ -393,7 +393,7 @@ en:
   attachment: Attachment
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
-  attachment_limit_failed_message: One or more attachments discarded since the %{size} limit was exceeded.
+  attachment_limit_failed_message: Attachment(s) that exceed the %{size} limit have been dropped. Please reach out to the sender.
   attachment_contain_virus: %{size} attachments are discarded since they contain virus.
   cc_dropped_message: The following cc's are dropped due to moderation - %{emails}
   emails_dropped_message: The following emails are dropped due to moderation - %{emails}
@@ -3530,8 +3530,6 @@ en:
       login_message: Login with an account administrator's credentials to associate your Google Apps login to your Freshdesk account.
       login_button: Login & complete registration
     canceled_account: We're sorry to see you go, but your account has been canceled.
-    edit_domain:
-      getting_started: "Getting Started"
     new:
       create_an_account: Create an account
       errors_encountered: "Errors encountered with your account information:"
@@ -3660,7 +3658,7 @@ en:
       setup_progress_misc: Keep going!
       setup_progress_penultimate: Almost there!
       new_account_title: Sign up for Freshdesk
-      new_account_description: Start your free 30-day trial of Freshdesk by signing up from the website.
+      new_account_description: Start your free trial of Freshdesk by signing up from the website.
       account_admin_email_title: Activate your account
       account_admin_email_description: Check your inbox for our activation email and verify your Freshdesk account.
       agents_title: Invite your team
@@ -3692,6 +3690,7 @@ en:
       submit_button_text: Take me to my account
       account_url_defaulted: Due to inactivity, we've defaulted to an auto-generated URL for your account. Redirecting you to your dashboard now...
       check_activation_email: Due to inactivity, we've defaulted to an auto-generated URL for your account. Please check your inbox for our activation email.
+      getting_started: "Getting Started"
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   account_configuration:
@@ -6567,6 +6566,14 @@ en:
     twitter_disabled: Twitter login will be disabled for customers and agents for security purposes.
     important: Important
     includes_contacts_company_domain: (includes existing contacts and company domains)
+    gdpr_admin_details: has changed your user permissions from
+    gdpr_agent: Agent
+    gdpr_admin: Admin.
+    gdpr_terms: By clicking on Accept , you agree to our  
+    gdpr_terms_link:  Terms
+    gdpr_acknowledgement: and acknowledge having read our
+    gdpr_policy: Privacy policy.
+    gdpr_to: to
     permission:
       helpdesk_restrictions: Helpdesk restrictions
       who_can_create: Who can log in (or) sign up (or) create tickets?
@@ -9681,7 +9688,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     no_data_to_display_msg: No data to display
     something_went_wrong_msg: 'Something went wrong, please try again'
     disabled_date_range: Disabled for this date range
-    export_tickets_error_msg: We currently allow only 1 concurrent exports. Kindly try again after some time. Apologies for the inconveniences caused.
+    export_tickets_error_msg: You have reached the maximum number of simultaneous export requests allowed. Please try again after some time.
+    export_tickets_account_error_msg: Your account has reached the maximum number of simultaneous export requests allowed. Please try again after some time.
     export_tickets_success_msg: Your ticket data will be sent to your email shortly!
     view_all_tickets: View all tickets
     view_all_compliant_tickets: View all compliant tickets
@@ -10404,6 +10412,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           validation_error: "This field is required"
           authentication_error: "The email or password provided is not valid."
           access_error: "You need to be an admin in both Freshcaller and Freshdesk to link your accounts."
+          pod_error: "Looks like your two accounts are in different data centers. Please create a new Freshcaller account to link to your Freshdesk account."
           api_error: "This Freshcaller account does not exist. Please provide a valid URL or create a new Freshcaller account."
     ticket:
       recording:

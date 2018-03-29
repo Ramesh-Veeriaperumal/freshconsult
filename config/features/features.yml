@@ -187,7 +187,7 @@
       :shadow_fax10: 182
       :smart_filter: 91	
       :ticket_summary: 92
-      :autobots_1: 93
+      :shared_ownership: 93
       :autobots_2: 94
       :autobots_3: 95
       :autobots_4: 96
@@ -282,6 +282,7 @@
       :gamification_enable: false
       :parent_child_tickets: false
       :link_tickets: false
+      :shared_ownership: false
       :advanced_search_bulk_actions: false
       :caching: false
       :private_inline: false
