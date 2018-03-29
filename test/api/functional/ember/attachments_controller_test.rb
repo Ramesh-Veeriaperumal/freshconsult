@@ -192,27 +192,4 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     put :unlink, construct_params({ version: 'private', id: attachment.id }, params_hash)
     assert_response 404
   end
-
-  def test_show_attachment
-    ticket = create_ticket
-    attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket.id)
-    get :show, construct_params(version: 'private', id: attachment.id)
-    assert_response 200
-    match_json(attachment_pattern(attachment))
-  end
-
-  def test_show_attachment_with_invalid_id
-    get :show, construct_params(version: 'private', id: 10_000_001)
-    assert_response 404
-    assert_equal ' ', response.body
-  end
-
-  def test_show_attachment_without_ticket_permission
-    ticket_id = create_ticket.display_id
-    attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
-    User.any_instance.stubs(:has_ticket_permission?).returns(false)
-    get :show, construct_params(version: 'private', id: attachment.id)
-    User.any_instance.unstub(:has_ticket_permission?)
-    assert_response 403
-  end
 end

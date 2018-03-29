@@ -20,25 +20,6 @@ post:
       schema:
         $ref: '#/definitions/bad_request_error'
 
-get:
-  tags: [attachment]
-  summary: View Attachment
-  parameters:
-    - name: id
-      in: path
-      type: integer
-      required: true
-      description: ID of attachment
-  responses:
-    200:
-      description: Success
-      schema:
-        $ref: '#/definitions/attachment'
-    404:
-      description: Attachment not found
-    403:
-      description: Access denied
-
 delete:
   tags: [attachment]
   summary: Delete Attachment
