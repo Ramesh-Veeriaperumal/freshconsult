@@ -9939,7 +9939,7 @@
         "data": {
           "type": "object",
           "properties": {
-            "post/ticket/archiveticket": {
+            "post/ticket": {
               "type": "array",
               "items": {
                 "type": "object",
@@ -10014,19 +10014,14 @@
                   "stats": {
                     "$ref": "#/definitions/ticket_stats"
                   },
+                  "archived": {
+                    "description": "Will be present for Archived Activity",
+                    "type": "boolean"
+                  },
                   "created_at": {
                     "description": "Will be present for all activities",
                     "type": "string",
                     "format": "date-time"
-                  },
-                  "updated_at": {
-                    "description": "Will be present for all activities",
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "position": {
-                    "description": "Will be present for all activities",
-                    "type": "integer"
                   }
                 }
               }
@@ -10050,7 +10045,7 @@
         "data": {
           "type": "object",
           "properties": {
-            "ticket/archiveticket": {
+            "ticket": {
               "type": "array",
               "items": {
                 "type": "object",
@@ -10059,11 +10054,11 @@
                     "type": "integer"
                   },
                   "description_text": {
-                    "description": "Will be present for Ticket/Archived Activity",
+                    "description": "Will be present for Ticket Activity",
                     "type": "string"
                   },
                   "tags": {
-                    "description": "Will be present for Ticket/Archived Activity",
+                    "description": "Will be present for Ticket Activity",
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -10074,7 +10069,7 @@
                     "type": "integer"
                   },
                   "due_by": {
-                    "description": "Will be present for Ticket/Archived Activity",
+                    "description": "Will be present for Ticket Activity",
                     "type": "string",
                     "format": "date-time"
                   },
@@ -10091,29 +10086,24 @@
                     "type": "string"
                   },
                   "status": {
-                    "description": "Will be present for Ticket/Archived Activity",
+                    "description": "Will be present for Ticket Activity",
                     "type": "string"
                   },
                   "fr_due_by": {
-                    "description": "Will be present for Ticket/Archived Activity",
+                    "description": "Will be present for Ticket Activity",
                     "type": "string"
                   },
                   "stats": {
                     "$ref": "#/definitions/ticket_stats"
                   },
+                  "archived": {
+                    "description": "Will be present for Archived Activity",
+                    "type": "boolean"
+                  },
                   "created_at": {
                     "description": "Will be present for all activities",
                     "type": "string",
                     "format": "date-time"
-                  },
-                  "updated_at": {
-                    "description": "Will be present for all activities",
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "position": {
-                    "description": "Will be present for all activities",
-                    "type": "integer"
                   }
                 }
               }

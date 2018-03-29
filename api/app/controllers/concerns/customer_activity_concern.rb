@@ -2,10 +2,12 @@ module CustomerActivityConcern
   extend ActiveSupport::Concern
 
   def activities
+    @activities_count = CompanyConstants::MAX_ACTIVITIES_COUNT
     activities = case params[:type]
                  when 'tickets'
                    ticket_activities
                  when 'archived_tickets'
+                   @activities_count = CompanyConstants::MAX_ARCHIVE_TICKETS_ACTIVITIES_COUNT
                    @type = 'archive_tickets'
                    ticket_activities
                  when 'forums'
@@ -18,7 +20,7 @@ module CustomerActivityConcern
       (ret[a.delete(:activity_type).to_sym.downcase] ||= []).push(a)
       ret
     end
-    if @total_tickets && @total_tickets.length > CompanyConstants::MAX_ACTIVITIES_COUNT
+    if @total_tickets && @total_tickets.length > @activities_count
       response.api_meta = { more_tickets: true }
     end
   end
@@ -39,17 +41,16 @@ module CustomerActivityConcern
 
     def ticket_activities
       @type ||= 'tickets'
-      return if @type == 'archive_tickets' &&
-                !current_account.features_included?(:archive_tickets)
+      return if @type == 'archive_tickets' && !current_account.features_included?(:archive_tickets)
       @total_tickets ||= begin
         tickets = current_account.safe_send(@type)
                                  .preload(ticket_preload_options)
                                  .permissible(api_current_user)
                                  .safe_send(ticket_scope, @item.id)
-                                 .newest(CompanyConstants::MAX_ACTIVITIES_COUNT + 1)
+                                 .newest(@activities_count + 1)
         @type == 'tickets' ? tickets.visible : tickets
       end
-      @total_tickets.take(CompanyConstants::MAX_ACTIVITIES_COUNT)
+      @total_tickets.take(@activities_count)
     end
 
     def forum_activities

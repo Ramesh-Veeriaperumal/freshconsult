@@ -3,7 +3,7 @@ properties:
   data: 
     type: object
     properties:
-      ticket/archiveticket:
+      ticket:
         type: array
         items:
           type: object
@@ -11,10 +11,10 @@ properties:
             id:
               type: integer
             description_text:
-              description: Will be present for Ticket/Archived Activity
+              description: Will be present for Ticket Activity
               type: string
             tags:
-              description: Will be present for Ticket/Archived Activity
+              description: Will be present for Ticket Activity
               type: array
               items:
                 type: string
@@ -22,7 +22,7 @@ properties:
               description: Will be present for Ticket/Archived Activity
               type: integer
             due_by:
-              description: Will be present for Ticket/Archived Activity
+              description: Will be present for Ticket Activity
               type: string
               format: date-time
             requester_id:
@@ -35,24 +35,20 @@ properties:
               description: Will be present for Ticket/Archived Activity
               type: string
             status:
-              description: Will be present for Ticket/Archived Activity
+              description: Will be present for Ticket Activity
               type: string
             fr_due_by:
-              description: Will be present for Ticket/Archived Activity
+              description: Will be present for Ticket Activity
               type: string
             stats:
               $ref: '#/definitions/ticket_stats'
+            archived:
+              description: Will be present for Archived Activity
+              type: boolean
             created_at:
               description: Will be present for all activities
               type: string
               format: date-time
-            updated_at:
-              description: Will be present for all activities
-              type: string
-              format: date-time
-            position:
-              description: Will be present for all activities
-              type: integer
   meta: 
     title: meta data
     type: object
