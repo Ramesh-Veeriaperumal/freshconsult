@@ -23,6 +23,7 @@ class AccountDecorator < ApiDecorator
     }
     ret_hash[:collaboration] = collaboration_hash if record.collaboration_enabled?
     ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
+    ret_hash[:freshchat] = freshchat_options_hash if record.freshchat_enabled?
     ret_hash
   end
 
@@ -72,6 +73,14 @@ class AccountDecorator < ApiDecorator
       {
         handles_associated: handles_associated?,
         social_enabled: social_enabled?
+      }
+    end
+
+    def freshchat_options_hash
+      {
+        preferences: record.freshchat_account.try(:preferences),
+        enabled: record.freshchat_account.try(:enabled),
+        app_id: record.freshchat_account.try(:app_id)
       }
     end
 

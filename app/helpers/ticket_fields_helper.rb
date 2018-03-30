@@ -2,7 +2,7 @@ module TicketFieldsHelper
 
   def ticket_field_hash(ticket_fields, account)
     ticket_fields.map do |field|
-      { 
+      { :field_type             => field.field_type,
         :id                     => field.id,
         :name                   => field.name,
         :dom_type               => field.dom_type,

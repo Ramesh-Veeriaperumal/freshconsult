@@ -1193,6 +1193,14 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :freshchat, :only => [:index, :create, :update] do
+      collection do
+        put :toggle
+        post :create
+        put :update
+      end
+    end
+
     resources :skills do
       member do
         get :users

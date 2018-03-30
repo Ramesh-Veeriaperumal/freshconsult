@@ -2094,6 +2094,10 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     Account.current.year_in_review_2017_enabled? && review_available?
   end
 
+  def freshchat_enabled?
+    current_account.freshchat_enabled? && current_account.freshchat_account.try(:enabled)
+  end
+
   def freshcaller_enabled_agent?
     return if current_user.blank? || !current_user.agent?
     agent = current_user.agent

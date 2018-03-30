@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
   before_update :update_global_pod_domain 
 
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
-  after_update :update_livechat_url_time_zone, :if => :freshchat_enabled?
+  after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
 
   before_validation :sync_name_helpdesk_name
@@ -400,7 +400,7 @@ class Account < ActiveRecord::Base
     end
 
     def enable_collab
-      CollabPreEnableWorker.perform_async
+      CollabPreEnableWorker.perform_async(true)
     end
 
     def set_falcon_preferences
