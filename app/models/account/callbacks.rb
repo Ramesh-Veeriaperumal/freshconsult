@@ -401,7 +401,7 @@ class Account < ActiveRecord::Base
     end
 
     def enable_collab
-      CollabPreEnableWorker.perform_async
+      CollabPreEnableWorker.perform_async(true)
     end
 
     def set_falcon_preferences
