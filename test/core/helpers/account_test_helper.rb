@@ -70,7 +70,9 @@ module AccountTestHelper
     MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       @account.add_feature(feature)
       @account.make_current.reload
+    
       yield
+    
       @account.revoke_feature(feature)
       @account.make_current.reload
     MixpanelWrapper.unstub(:send_to_mixpanel)
