@@ -50,7 +50,6 @@ class Admin::Social::StreamsController < Admin::AdminController
     nil
   end
 
-
   def update_dm_rule(social_account)
     dm_stream = social_account.dm_stream
     return if dm_stream.ticket_rules.empty?
