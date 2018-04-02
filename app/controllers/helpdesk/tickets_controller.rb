@@ -418,7 +418,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     set_modes(query_hash)
-    response_hash = current_account.features?(:shared_ownership) ? {:agent_mode => @agent_mode, :group_mode => @group_mode} : {}
+    response_hash = current_account.shared_ownership_enabled? ? {:agent_mode => @agent_mode, :group_mode => @group_mode} : {}
 
     conditions_hash = query_hash.map{|i|{ i["condition"] => i["value"] }}.inject({}){|h, e|h.merge! e}
     meta_data       = filters_meta_data(conditions_hash) if conditions_hash.keys.any? {|k| META_DATA_KEYS.include?(k.to_s)}

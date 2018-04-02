@@ -724,6 +724,7 @@ Helpkit::Application.routes.draw do
     collection do
       get :revert_identity
       get :assumable_agents
+      put :accept_gdpr_compliance
     end
     member do
       delete :delete_avatar
@@ -1189,6 +1190,14 @@ Helpkit::Application.routes.draw do
          post :enable
          post :toggle
          put :update
+      end
+    end
+
+    resources :freshchat, :only => [:index, :create, :update] do
+      collection do
+        put :toggle
+        post :create
+        put :update
       end
     end
 

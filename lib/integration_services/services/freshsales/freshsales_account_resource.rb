@@ -6,7 +6,10 @@ module IntegrationServices::Services
                             "industry_type_id" => ["industry_type", "industry_types"], 
                             "business_type_id" => ["business_type", "business_types"], 
                             "owner_id" => ["owner", "users"], 
-                            "territory_id" => ["territory", "territories"]
+                            "territory_id" => ["territory", "territories"],
+                            "parent_sales_account_id" => ["parent_sales_account", "parent_sales_accounts"],
+                            "creater_id" => ["creater", "users"],
+                            "updater_id" => ["updater", "users"]
                           }
 
       def get_fields

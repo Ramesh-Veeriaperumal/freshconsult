@@ -21,6 +21,16 @@
     $("body").on("click", "#fcall-widget-button", function(){
       if($(this).children('#widget-loader').hasClass('hide')){
         $(this).toggleClass('active');
+        // hari: dirty hack......
+        if($(this).hasClass('active')) {
+          window.fcAgentWidget.move({
+            leftOffset: $('#fc-widget').width()
+          });
+        } else {
+          window.fcAgentWidget.move({
+            leftOffset: '70'
+          });
+        }
       }
     });
   };

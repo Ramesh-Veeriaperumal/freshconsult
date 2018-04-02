@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   # include ActionView::Helpers::AssetTagHelper
   # include ActionView::AssetPaths
 
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:revert_identity, :profile_image, :profile_image_no_blank, :enable_falcon, :disable_falcon]
+  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:revert_identity, :profile_image, :profile_image_no_blank, :enable_falcon, :disable_falcon, :accept_gdpr_compliance]
   before_filter :set_ui_preference, :only => [:show]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit ]
@@ -151,6 +151,12 @@ class UsersController < ApplicationController
     current_user.disable_falcon_ui if (current_user.is_falcon_pref? || current_user.falcon_invite_eligible?)
     cookies[:falcon_enabled] = false
     return head :no_content
+  end
+
+  def accept_gdpr_compliance
+    current_user.remove_gdpr_preference
+    success = current_user.save
+    render :json => {:success => success}
   end
 
   protected

@@ -326,4 +326,38 @@ input[type=text].as-hint {
 	}
 }
 
+.freshchat-edit {
+
+	.mint-bg-box,
+	.chat-content-card {
+		display: block;
+	  min-height: 60px;
+	  border: 1px #ebeef0 solid;
+	  padding: 22px 20px 8px 20px;
+	  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.02);
+	  margin: 20px 0 30px 0;
+	  border-radius: 2px;
+	}
+
+	.chat-content-card {
+		min-height: 36px;
+	}
+	.mint-bg-box {
+		background-image: url("/images/mint-brand-bg.svg");
+		background-size: 70%;
+	  background-repeat: no-repeat;
+	  background-position: 100% 100%;
+	  padding: 30px 20px;
+
+	  h5.lead {
+	  	font-weight: normal;
+	  }
+
+	  .signup-chat {
+	    margin-left: 0;
+	  }
+	}
+}
+
+
 /* Admin Home Page css end */

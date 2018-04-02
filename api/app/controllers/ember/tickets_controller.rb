@@ -152,6 +152,10 @@ module Ember
 
     private
 
+      def archive_scoper
+        current_account.archive_tickets
+      end
+
       def validate_scenario_execution
         @delegator_klass = 'ScenarioDelegator'
         delegator_hash = {
@@ -223,6 +227,33 @@ module Ember
           return
         end
         @items = paginate_items(items)
+      end
+
+      def load_object
+        @item = scoper.find_by_display_id(params[:id])
+        unless @item
+          # If the ticket is archive redirect with 301.
+          archive_ticket = if current_account.features_included?(:archive_tickets)
+            archive_scoper.find_by_display_id(params[:id])
+          else
+            nil
+          end
+          (archive_ticket.present?) ? log_and_render_301_archive : log_and_render_404 
+        end
+      end
+
+      def log_and_render_301_archive
+        Rails.logger.debug "The ticket is archived. Id: #{params[:id]}, method: #{params[:action]}, controller: #{params[:controller]}"
+        redirect_to archive_ticket_link, status: 301
+      end
+
+      def archive_ticket_link
+        (archive_params.present?) ? "#{archived_ticket_path}?#{archive_params}": archived_ticket_path
+      end
+
+      def archive_params
+        include_params = params.select{|k,v| ApiTicketConstants::PERMITTED_ARCHIVE_FIELDS.include?(k)}
+        include_params.to_query
       end
 
       def load_normal_attachments

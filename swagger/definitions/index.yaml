@@ -204,6 +204,10 @@
     allOf:
       - $ref: '#/definitions/ticket'
       - $ref: ./resource/extension/ticket.yaml
+  extended_archive_ticket:
+    allOf:
+      - $ref: '#/definitions/ticket'
+      - $ref: ./resource/extension/archive_ticket.yaml
   extended_sla_policy:
     allOf:
       - $ref: '#/definitions/sla_policy'
@@ -234,6 +238,16 @@
     allOf:
       - $ref: '#/definitions/extended_ticket'
       - $ref: ./resource/extension/ticket/show.yaml
+  archive_ticket_show:
+    allOf:
+      - $ref: '#/definitions/extended_archive_ticket'
+      - $ref: ./resource/extension/archive_ticket/show.yaml
+  archive_conversations_show:
+    type: array
+    items:
+      $ref: '#/definitions/extended_note'
+  archive_activities_index:
+    $ref: './response/tickets/activity.yaml'
 
   canned_response_folder_details:
     $ref: ./response/canned_response/folder_show.yaml
@@ -301,7 +315,8 @@
     $ref: './response/bot_list.yaml'
   bot_product_data:
     $ref: './response/bot_product_data.yaml'
-
+  article_content:
+    $ref: './response/article_content.yaml'
   # Dashboard activities
   dashboard_activities:
     $ref: './response/dashboard/activities.yaml'

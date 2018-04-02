@@ -95,6 +95,12 @@
 /tickets/{id}/summary:
   $ref: ./tickets/summary.yaml
 
+/tickets/archived/{id}:
+  $ref: ./archive_tickets/crud.yaml
+/tickets/archived/{id}/conversations:
+  $ref: ./archive_tickets/conversations.yaml
+/tickets/archived/{id}/activities:
+  $ref: ./archive_tickets/activities.yaml
 
 /conversations/{id}:
   $ref: ./conversations/update.yaml
@@ -261,6 +267,8 @@
 #Solutions
 /solutions/articles:
   $ref: ./solutions/articles.yaml
+/solutions/articles/{id}/article_content:
+  $ref: ./solutions/article_content.yaml
 
 #Dashboard activities
 /dashboards/activities:

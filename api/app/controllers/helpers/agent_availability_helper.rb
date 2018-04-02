@@ -12,7 +12,7 @@ module AgentAvailabilityHelper
   end
 
   def available_chat_agents
-    if Account.current.freshchat_enabled?
+    if Account.current.livechat_enabled?
       path = 'agents/available'
       proxy_response = livechat_request 'available', {}, path, 'GET'
       proxy_response = JSON.parse proxy_response[:text]
@@ -30,7 +30,7 @@ module AgentAvailabilityHelper
   end
 
   def livechat_agent_details
-    return nil unless current_account.freshchat_enabled?
+    return nil unless current_account.livechat_enabled?
     livechat_response = livechat_request('get_agents_availability', {}, 'agents/getLastActivityAt', 'GET')[:text]
     livechat_agents = JSON.parse livechat_response
     raise LiveChatAPIError if livechat_agents['status'] != 'success'

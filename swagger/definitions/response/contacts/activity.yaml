@@ -5,7 +5,7 @@
     data: 
       type: object
       properties:
-        post/ticket/archiveticket:
+        post/ticket:
           type: array
           items:
             type: object
@@ -61,17 +61,13 @@
                 type: string
               stats:
                 $ref: '#/definitions/ticket_stats'
+              archived:
+                description: Will be present for Archived Activity
+                type: boolean
               created_at:
                 description: Will be present for all activities
                 type: string
                 format: date-time
-              updated_at:
-                description: Will be present for all activities
-                type: string
-                format: date-time
-              position:
-                description: Will be present for all activities
-                type: integer
     meta: 
       title: meta data
       type: object

@@ -164,32 +164,39 @@ module CompaniesTestHelper
   def company_activity_response(objects, _meta = false)
     response_pattern = {}
     objects.map do |item|
-      type = item.class.name.gsub('Helpdesk::', '').downcase
+      archived?(item) ? type = "ticket" : type = item.class.name.gsub('Helpdesk::', '').downcase
       to_ret = company_activity_pattern(item)
       (response_pattern[type.to_sym] ||= []).push to_ret
     end
     response_pattern
   end
-
+    
   def company_activity_pattern(obj)
     ret_hash = {
       id: obj.display_id,
-      description_text: obj.description,
-      tags: obj.tag_names,
       responder_id: obj.responder_id,
-      due_by: archived?(obj) ? parse_time(obj.due_by) : obj.due_by.try(:utc),
       subject: obj.subject,
       requester_id: obj.requester_id,
       group_id: obj.group_id,
-      status: obj.status,
-      stats: stats(obj),
       source: obj.source,
-      created_at: obj.created_at.try(:utc),
-      fr_due_by: archived?(obj) ? parse_time(obj.frDueBy) : obj.frDueBy.try(:utc)
+      created_at: obj.created_at.try(:utc)
     }
-    ret_hash[:archived] = archived?(obj) if archived?(obj)
+    ret_hash.merge!(whitelisted_properties_for_activities(obj))
     ret_hash
   end
+  
+  def whitelisted_properties_for_activities(obj)
+    return {archived: true} if archived?(obj)
+    {
+      description_text: obj.description,
+      due_by: obj.due_by.try(:utc),
+      stats: stats(obj),
+      fr_due_by: obj.frDueBy.try(:utc),
+      tags: obj.tag_names,
+      status: obj.status
+    }
+  end
+
 
   def parse_time(attribute)
     attribute ? Time.parse(attribute).utc : nil
