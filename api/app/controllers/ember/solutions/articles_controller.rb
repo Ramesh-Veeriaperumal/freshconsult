@@ -3,6 +3,8 @@ module Ember
     class ArticlesController < ApiSolutions::ArticlesController
       before_filter :filter_ids, only: [:index]
 
+      decorate_views(decorate_object: [:article_content])
+
       MAX_IDS_COUNT = 10
 
       def index
@@ -15,6 +17,11 @@ module Ember
       end
 
       private
+
+        def load_object
+          @item = scoper.find_by_parent_id(params[:id])
+          log_and_render_404 unless @item
+        end
 
         def load_objects
           @items = scoper.preload(conditional_preload_options).where(parent_id: @ids)

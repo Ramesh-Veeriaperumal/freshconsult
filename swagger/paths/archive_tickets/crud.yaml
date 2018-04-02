@@ -1,0 +1,25 @@
+
+  get:
+    tags: [archive_ticket]
+    summary: Show Archived Ticket
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        format: int64
+        description: Display ID of the archived ticket
+        required: true
+      - name: include
+        in: query
+        type: string
+        description: Comma-separated values
+        enum: ["conversations", "requester", "company", "survey"]
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/archive_ticket_show'
+      404:
+        description: Ticket not found
+      403:
+        description: Access denied

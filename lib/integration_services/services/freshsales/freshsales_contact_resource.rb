@@ -5,7 +5,11 @@ module IntegrationServices::Services
       RELATIONAL_FIELDS = { 
                             "lead_source_id" => ["source", "lead_source"], 
                             "owner_id" => ["owner", "users"], 
-                            "campaign_id" => ["campaign", "campaigns"] 
+                            "campaign_id" => ["campaign", "campaigns"],
+                            "sales_account_id" => ["sales_account","sales_accounts"],
+                            "contact_status_id" => ["contact_status","contact_status"],
+                            "creater_id" => ["creater", "users"],
+                            "updater_id" => ["updater", "users"]
                           }
       
       def get_fields

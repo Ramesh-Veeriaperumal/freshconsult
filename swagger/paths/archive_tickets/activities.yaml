@@ -1,0 +1,26 @@
+get:
+  tags: [archive_ticket]
+  summary: Activities
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: limit
+      in: query
+      type: integer
+      format: int64
+    - name: before_id
+      in: query
+      type: integer
+      format: int64
+    - name: since_id
+      in: query
+      type: integer
+      format: int64
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/archive_activities_index'
+    404:
+      description: Ticket not found
+    403:
+      description: Access denied

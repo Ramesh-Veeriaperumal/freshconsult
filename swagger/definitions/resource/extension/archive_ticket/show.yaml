@@ -1,0 +1,36 @@
+  
+  type: object
+  properties:
+    freshfone_call:
+      $ref: '#/definitions/freshfone_call'
+    fb_post:
+      allOf:
+        - $ref: '#/definitions/fb_post'
+        - properties:
+            fb_page: 
+              $ref: '#/definitions/fb_page'
+    tweet:
+      $ref: '#/definitions/tweet_post'
+    survey_result:
+      $ref: '#/definitions/survey_result'
+    ticket_topic:
+      $ref: '#/definitions/ticket_topic'
+    stats:
+      $ref: '#/definitions/ticket_stats'
+    collaboration:
+      type: object
+      properties:
+        convo_token:
+          type: string
+    meta:
+      type: object
+      properties:
+        user_agent:
+          type: string
+        referrer:
+          type: string
+        created_by:
+          type: integer
+        time:
+          type: string
+          format: datetime

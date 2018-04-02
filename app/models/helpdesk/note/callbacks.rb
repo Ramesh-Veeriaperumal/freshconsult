@@ -4,6 +4,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   # Any changes related to note or reply made in this file should be replicated in 
   # send_and_set_helper if required
+  before_create :update_parent_sender_email, :if => :email? 
   before_create :validate_schema_less_note, :update_observer_events
   before_create :create_broadcast_message, :if => :broadcast_note?
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
@@ -127,6 +128,15 @@ class Helpdesk::Note < ActiveRecord::Base
       # For rails 2.3.8 this was the only i found with which we can update an attribute without triggering any after or before callbacks
       #Helpdesk::Note.update_all("note_body.body_html= #{ActiveRecord::Base.connection.quote(body_html)}", ["id=? and account_id=?", id, account_id]) if body_html_changed?
     end
+
+    def update_parent_sender_email
+      return if incoming
+      requester_emails = notable.requester.emails
+      if requester_emails.length == 1 && !requester_emails.include?(notable.sender_email)
+        notable.sender_email = notable.requester.email
+      end 
+    end
+
 
     def update_parent #Maybe after_save?!
       return unless human_note_for_ticket?

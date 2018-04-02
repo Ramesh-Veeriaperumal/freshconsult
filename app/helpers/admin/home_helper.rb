@@ -14,6 +14,11 @@
         :pjax                          =>   true,
         :privilege                     =>   privilege?(:admin_tasks) && current_account.features?(:chat)
       },
+      :freshchat                       =>   {
+        :url                           =>   "/admin/freshchat",
+        :pjax                          =>   true,
+        :privilege                     =>   privilege?(:admin_tasks)
+      },
       :"phone-channel"                   =>   {
         :url                           =>   "/admin/phone",
         :privilege                     =>   privilege?(:admin_tasks)
@@ -26,10 +31,6 @@
       
       :feedback                        =>   {
         :url                           =>   "/admin/widget_config",
-        :privilege                     =>   privilege?(:admin_tasks)
-      },
-      :mobihelp                        =>   {
-        :url                           =>   "/admin/mobihelp/apps",
         :privilege                     =>   privilege?(:admin_tasks)
       },
       :"helpdesk-settings"             =>   {
@@ -210,7 +211,7 @@
   ######### Admin groups & Associated admin items Constant ########
 
     ADMIN_GROUP = {
-      :"support-channels"       =>    ["email", "portals", "livechat", "phone-channel", "twitter", "facebook-setting", "feedback", "mobihelp", "ecommerce"],
+      :"support-channels"       =>    ["email", "portals", "livechat", "freshchat", "phone-channel", "twitter", "facebook-setting", "feedback", "ecommerce"],
       :"general-settings"       =>    ["helpdesk-settings", "ticket-fields", "customer-fields", "agent", "group", "skills", "role", "security", "sla",
                                           "business-hours", "multi-product", "tags"],
       :"helpdesk-productivity"  =>    ["dispatcher", "supervisor", "observer", "scenario", "ticket_template", "email-notifications", "canned-response",
@@ -308,9 +309,6 @@
       :account                    =>      {
           :open_keywords          =>      [:invoice_emails, :export_data],
           :closed_keywords        =>      [:cancel_service]
-      },
-      :mobihelp                   =>      {
-          :open_keywords          =>      [:inapp_support , :ios_sdk , :android_sdk]
       }
     }
 

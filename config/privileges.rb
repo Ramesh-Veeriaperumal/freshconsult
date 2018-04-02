@@ -157,6 +157,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"announcement", :only => [:index, :account_login_url]
     resource :"email_preview"
     resource :"doorkeeper/authorize"
+    resource :"archive/ticket", :only => [:show]
+    resource :"archive/conversation", :only => [:ticket_conversations]
+    resource :"archive/tickets/activity", only: [:index]
   end
 
   export_tickets do
@@ -618,6 +621,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_role", :only => [:index, :show]
     resource :"api_integrations/cti", :only => [:create, :index]
     resource :"email_preview"
+    resource :"admin/freshchat", :only => [:index, :create, :update, :toggle]
   end
 
   manage_account do

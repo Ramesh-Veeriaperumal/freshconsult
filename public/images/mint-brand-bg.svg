@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="712" height="56" viewBox="0 0 712 56" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <rect id="a" width="802" height="117"/>
+    <linearGradient id="b" x1="50%" x2="50%" y1="0%" y2="100%">
+      <stop stop-color="#F8A6FF" offset="0%"/>
+      <stop stop-color="#EE6DFE" offset="100%"/>
+    </linearGradient>
+    <linearGradient id="d" x1="50%" x2="50%" y1="0%" y2="100%">
+      <stop stop-color="#533AF7" offset="0%"/>
+      <stop stop-color="#291BEB" offset="100%"/>
+    </linearGradient>
+    <linearGradient id="e" x1="50%" x2="39.672%" y1="0%" y2="54.967%">
+      <stop stop-color="#EDFFE1" stop-opacity=".348" offset="0%"/>
+      <stop stop-color="#D7FFC0" stop-opacity=".348" offset="100%"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" fill-rule="evenodd" transform="translate(-73 -61)">
+    <mask id="c" fill="white">
+      <use xlink:href="#a"/>
+    </mask>
+    <use fill="#FFFFFF" fill-opacity="0" xlink:href="#a"/>
+    <path fill="url(#b)" d="M271.036904,119.708612 C271.036904,119.708612 265.306135,146.30679 396.67152,87.6700611 C528.036904,29.0333318 461.036904,82.0333318 660.594597,105.04036 C860.152289,128.047388 835.036904,139.008944 835.036904,139.008944" opacity=".11" mask="url(#c)" transform="matrix(-1 0 0 1 1107.053 0)"/>
+    <path fill="url(#d)" d="M162.050634,117.130966 C162.050634,117.130966 156.319865,133.500248 287.68525,97.4135214 C419.050634,61.3267945 444.539996,97.4135214 551.608327,108.103702 C658.676657,118.793883 726.052533,129.008944 726.052533,129.008944" opacity=".11" mask="url(#c)" transform="matrix(-1 0 0 1 888.066 0)"/>
+    <path fill="url(#e)" d="M-121,136.508964 C-189,191 62,124 122,101 C182,78 314,9.50896432 423,136.508964 C532,263.508964 616,224.508964 616,224.508964" mask="url(#c)"/>
+  </g>
+</svg>

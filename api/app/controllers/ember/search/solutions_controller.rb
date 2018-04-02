@@ -27,6 +27,7 @@ module Ember
         def decorator_options
           options = {}
           options[:user] = @user if @user
+          options[:search_context] = @search_context if @search_context
           [::Solutions::ArticleDecorator, options]
         end
 

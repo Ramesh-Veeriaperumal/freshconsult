@@ -197,6 +197,21 @@ class Helpdesk::ArchiveNote < ActiveRecord::Base
     association["schema_less_note"]["from_email"]
   end
 
+  def cc_emails
+    association = archive_note_association.associations_data["helpdesk_notes_association"]
+    association["schema_less_note"]["cc_emails"]["cc_emails"]
+  end
+
+  def to_emails
+    association = archive_note_association.associations_data["helpdesk_notes_association"]
+    association["schema_less_note"]["to_emails"]
+  end
+  
+  def bcc_emails 
+    association = archive_note_association.associations_data["helpdesk_notes_association"]
+    association["schema_less_note"]["bcc_emails"]
+  end
+
   def body
     archive_note_association.body
   end

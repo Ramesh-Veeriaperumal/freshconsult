@@ -153,7 +153,7 @@ Helpkit::Application.routes.draw do
 
     resources :products, controller: 'api_products', only: [:index, :show]
 
-    resources :email_configs, controller: 'api_email_configs', only: [:index, :show]
+    resources :email_configs, controller: 'api_email_configs', only: [:index, :show, :search]
 
     resources :business_hours, controller: 'api_business_hours', only: [:index, :show]
 
@@ -173,7 +173,11 @@ Helpkit::Application.routes.draw do
   ember_routes = proc do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :groups, controller: 'ember/groups', only: [:index, :show]
-    resources :email_configs, controller: 'ember/email_configs', only: [:index, :show]
+    resources :email_configs, controller: 'ember/email_configs' do
+      collection do
+        get :search, to: 'ember/email_configs#search'
+      end
+    end
 
     resources :bootstrap, controller: 'ember/bootstrap', only: :index do
       collection do
@@ -197,6 +201,13 @@ Helpkit::Application.routes.draw do
         post :training_completed
         post :mark_completed_status_seen
         put :enable_on_portal
+      end
+    end
+
+    resources :archived_tickets ,  path: 'tickets/archived', controller: 'archive/tickets', only: [:show] do
+      member do
+        get :conversations, to: 'archive/conversations#ticket_conversations'
+        get :activities, to: 'archive/tickets/activities#index'
       end
     end
 
@@ -374,6 +385,7 @@ Helpkit::Application.routes.draw do
 
     # dirty hack - check privilege fails when using 'solutions' namespace although controller action mapping is unaffected
     get 'solutions/articles', to: 'ember/solutions/articles#index'
+    get 'solutions/articles/:id/article_content', to: 'ember/solutions/articles#article_content'
 
     match '/dashboards/leaderboard_agents' => 'ember/leaderboard#agents', via: :get
     match '/dashboards/leaderboard_groups' => 'ember/leaderboard#groups', via: :get

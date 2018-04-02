@@ -8,7 +8,9 @@ module IntegrationServices::Services
                             "lead_source_id" => ["source", "lead_source"], 
                             "owner_id" => ["owner", "users"], 
                             "campaign_id" => ["campaign", "campaigns"], 
-                            "territory_id" => ["territory", "territories"] 
+                            "territory_id" => ["territory", "territories"],
+                            "creater_id" => ["creater", "users"],
+                            "updater_id" => ["updater", "users"]
                           }
 
       ENTITIES = [ "company", "deal" ]

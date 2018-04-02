@@ -6,7 +6,9 @@ module IntegrationServices::Services
                             "deal_stage_id" =>  "deal_stages", "deal_reason_id" => "deal_reasons", 
                             "deal_type_id" => "deal_types", "owner_id" => "users",
                             "lead_source_id" => "lead_sources", "campaign_id" => "campaigns", 
-                            "deal_product_id" => "deal_products", "deal_payment_status_id" => "deal_payment_statuses"
+                            "deal_product_id" => "deal_products", "deal_payment_status_id" => "deal_payment_statuses",
+                            "sales_account_id" => "sales_accounts", "territory_id" => "territories",
+                            "deal_pipeline_id" => "deal_pipelines"
                           }
 
       def get_fields
