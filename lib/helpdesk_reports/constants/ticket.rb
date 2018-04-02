@@ -147,4 +147,6 @@ module HelpdeskReports::Constants::Ticket
   
   MAX_ALLOWED_DAYS = 735 # Span of 2 years
 
+  EXPORT_REPORT_COUNT = 10
+
 end

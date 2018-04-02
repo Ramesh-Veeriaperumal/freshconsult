@@ -34,8 +34,8 @@ describe Fdadmin::AccountsController do
 		include Fdadmin::FeatureMethods
 
 		FEATURE_NAMES_BY_TYPE = {
-			:bitmap => [:gamification, :requester_widget, :split_tickets],
-			:db => [:gamification, :shared_ownership, :multi_dynamic_sections],
+			:bitmap => [:gamification, :requester_widget, :split_tickets, :shared_ownership],
+			:db => [:gamification, :multi_dynamic_sections],
 			:launchparty => [:requester_widget, :multi_dynamic_sections, :activity_ui_disable ]
 		}
 

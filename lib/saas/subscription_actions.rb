@@ -10,7 +10,7 @@ class SAAS::SubscriptionActions
 
   
   ONLY_BITMAP_FEATURES = (Account::ADVANCED_FEATURES_TOGGLE + [
-    :shared_ownership_toggle, :skill_based_round_robin, :auto_ticket_export, :ticket_activity_export,
+    :skill_based_round_robin, :auto_ticket_export, :ticket_activity_export,
     :multiple_companies_toggle, :multiple_user_companies, :tam_default_fields])
 
   DROP  = "drop"

@@ -13,7 +13,7 @@
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
           <li class="portal-attach">
             <a data-file-id="<%=attach_id%>" href="javascript:void(0)" class="attach-link-wrap">
-                <%= I18n.t('portal.attach_file').html_safe %> <span class="attachment-help-info">( <%= t('total') %> <%= t('attachment_help_info') %> )</span>
+                <%= I18n.t('portal.attach_file').html_safe %> <span class="attachment-help-info"> ( <%= t('total') %> <%= t('attachment_help_info', :attachment_size => attachment_size) %> )</span>
                 <div class="attach-file attach-link-file" id="<%= attach_id %>-attach-container">  
                   <input type="file" name="emptyfile" 
                     id="<%=attach_id%>_file"

@@ -30,19 +30,21 @@ class Va::Handlers::NestedField < Va::RuleHandler
 
   def filter_query
     return '' if value == "--"
-    query_conditions = safe_send("filter_query_#{condition.operator}", condition.key, (query_value value))
+    query_conditions, values = safe_send("filter_query_#{condition.operator}", condition.key, (query_value value))
+    values = [values]
     (nested_rules || []).each do |nested_rule|
-      return ["(#{query_conditions})"] if nested_rule[:value] == "--"
-      query_condition = safe_send("filter_query_#{condition.operator}", nested_rule[:name], (query_value nested_rule[:value]))
-      query_conditions = "#{query_conditions} and #{query_condition}"
+      return ["(#{query_conditions})"].push(*values) if nested_rule[:value] == "--"
+      each_query_condition, each_value = safe_send("filter_query_#{condition.operator}", nested_rule[:name], (query_value nested_rule[:value]))
+      query_conditions = "#{query_conditions} and #{each_query_condition}"
+      values << each_value
     end
-    ["(#{query_conditions})"]
+    ["(#{query_conditions})"].push(*values)
   end
 
   private
 
     def query_value value
-      value.empty? ? 'null' : "'#{value}'"
+      value.empty? ? nil : "#{value}"
     end
 
     def is(evaluate_on_value, field_value)
@@ -54,18 +56,18 @@ class Va::Handlers::NestedField < Va::RuleHandler
     end
    
     def filter_query_is(field_key,field_value)
-      construct_query (field_value != 'null' ? '=' : 'is'), field_key, field_value
+      construct_query (field_value.nil? ? 'is': '='), field_key, field_value
     end
     
     def filter_query_is_not(field_key,field_values)
-      construct_query (field_value != 'null' ? '!=' : 'is not'), field_key, field_value
+      construct_query (field_value.nil? ? 'is not' : '!='), field_key, field_value
     end
 
     def construct_query query_operator, field_key, field_value
-      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} #{query_operator} #{field_value}"
+      ["flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} #{query_operator} ?", field_value]
     end
 
     def filter_query_negation(field_key,field_value)
-      "flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} IS NULL OR flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != #{field_value.to_s}"
+      ["flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} IS NULL OR flexifields.#{FlexifieldDefEntry.ticket_db_column field_key} != ?", field_value]
     end
 end
