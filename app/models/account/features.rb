@@ -5,7 +5,7 @@ class Account < ActiveRecord::Base
                    :email_failures, :disable_emails, :skip_one_hop, :falcon_portal_theme, :freshid, :freshchat_integration,
                    :year_in_review_2017, :facebook_page_redirect, :announcements_tab, :ticket_central_publish,
                    :solutions_central_publish, :launch_smart_filter, :outgoing_attachment_limit_25,
-                   :incoming_attachment_limit_25, :whitelist_sso_login]
+                   :incoming_attachment_limit_25, :whitelist_sso_login, :apigee]
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
@@ -17,14 +17,16 @@ class Account < ActiveRecord::Base
       :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, 
-      :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics
+      :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
+      :freshchat
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
     Helpdesk::TicketField::VERSION_MEMBER_KEY,
     ContactField::VERSION_MEMBER_KEY,
     CompanyField::VERSION_MEMBER_KEY,
-    CustomSurvey::Survey::VERSION_MEMBER_KEY
+    CustomSurvey::Survey::VERSION_MEMBER_KEY,
+    Freshchat::Account::VERSION_MEMBER_KEY
   ]
 
   LP_FEATURES.each do |item|
@@ -121,12 +123,12 @@ class Account < ActiveRecord::Base
     has_feature?(:freshcaller) and freshcaller_account.present?
   end
 
-  def freshchat_enabled?
+  def livechat_enabled?
     features?(:chat) and !chat_setting.site_id.blank?
   end
 
   def freshchat_routing_enabled?
-    freshchat_enabled? and features?(:chat_routing)
+    livechat_enabled? and features?(:chat_routing)
   end
 
   def supervisor_feature_launched?

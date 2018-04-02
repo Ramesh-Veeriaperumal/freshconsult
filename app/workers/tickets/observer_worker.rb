@@ -3,6 +3,7 @@ module Tickets
 
     sidekiq_options :queue => :ticket_observer, :retry => 0, :backtrace => true, :failures => :exhausted
     SYSTEM_DOER_ID = -1
+    OBSERVER_ERROR = 'OBSERVER_EXECUTION_FAILED'.freeze
 
     def perform args 
       begin
@@ -21,8 +22,11 @@ module Tickets
           aggregated_response_time = 0
           account.observer_rules_from_cache.each do |vr|
             Va::Logger::Automation.set_rule_id(vr.id)
-            ticket = vr.check_events doer, evaluate_on, current_events
-            Va::Logger::Automation.log "Rule executed=#{ticket.present?}"
+            ticket = nil
+            time = Benchmark.realtime {
+              ticket = vr.check_events doer, evaluate_on, current_events
+            }
+            Va::Logger::Automation.log_execution_and_time(time, (ticket.present? ? 1 : 0))
             aggregated_response_time += vr.response_time[:matches] || 0
           end
           Rails.logger.debug "Response time :: #{aggregated_response_time}"
@@ -37,10 +41,10 @@ module Tickets
             klass.safe_send(action[:method], action[:args])
           end
         else
-          Va::Logger::Automation.log "Skipping observer worker::ticket present?=#{evaluate_on.present?}::user present?=#{(doer.present? || system_event)}"
+          Va::Logger::Automation.log "Skipping observer worker, ticket present?=#{evaluate_on.present?}, user present?=#{(doer.present? || system_event)}"
         end
       rescue => e
-        Va::Logger::Automation.log "Something is wrong Observer::Exception=#{e.message}::#{e.backtrace.join('\n')}"
+        Va::Logger::Automation.log_error(OBSERVER_ERROR, e, args)
         NewRelic::Agent.notice_error(e, {:custom_params => {:args => args }})
         raise e
       ensure

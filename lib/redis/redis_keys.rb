@@ -260,6 +260,9 @@ module Redis::RedisKeys
   # Key to hold the "From" of various language. This helps in identifying the original sender while agent forward
   AGENT_FORWARD_FROM_REGEX = "AGENT_FORWARD_FROM_REGEX"
 
+  # Key to hold the "To" of various language. This helps in identifying the original recipient while agent forward
+  AGENT_FORWARD_TO_REGEX = "AGENT_FORWARD_TO_REGEX"
+
   # key for enabling fd email service to all the account
 
   ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE = "ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE"

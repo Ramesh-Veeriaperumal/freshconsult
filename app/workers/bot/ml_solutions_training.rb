@@ -50,7 +50,14 @@ class Bot::MlSolutionsTraining < BaseWorker
       {
         account_id: Account.current.id.to_s,
         payload_type: payload_type,
-        payload: object.central_publish_payload(payload_type)
+        payload: training_payload(object, payload_type)
       }.to_json
+    end
+
+    def training_payload(object, payload_type)
+      {
+        account_full_domain: Account.current.full_domain,
+        model_properties: object.central_publish_payload(payload_type)
+      }
     end
 end

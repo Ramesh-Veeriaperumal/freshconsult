@@ -1546,6 +1546,17 @@ ActiveRecord::Schema.define(:version => 20180223055939) do
   add_index "free_account_jobs", ["pod_info"], :name => "index_free_account_jobs_on_pod_info"
   add_index "free_account_jobs", ["account_id"], :name => "index_free_account_jobs_on_account_id"
 
+  create_table "freshchat_accounts", :force => true do |t|
+    t.integer  "account_id",             :limit => 8
+    t.string   "app_id"
+    t.text     :preferences
+    t.boolean  :enabled
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
+  end
+
+  add_index "freshchat_accounts", ["account_id"], :name => "index_freshchat_accounts_on_account_id", :unique => true
+
   create_table "freshcaller_accounts", :force => true do |t|
     t.integer  "account_id",             :limit => 8
     t.integer  "freshcaller_account_id", :limit => 8

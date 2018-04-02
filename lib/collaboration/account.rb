@@ -11,16 +11,45 @@ class Collaboration::Account
     register_account_with_collab
   end
 
+  def pre_collab_disable
+    disable_account_with_collab
+  end
+
   def disable_collab_bitmap_feature
     @current_account.revoke_feature(:collaboration)
   end
 
   private
 
-    def register_account_with_collab
+    def disable_account_with_collab
+      protocol = Rails.env.development? ? 'http://' : 'https://'
       res = RestClient::Request.execute(
-        method: :get,
-        url: "#{CollabConfig['collab_url']}/register",
+        method: :post,
+        url: "#{CollabConfig['collab_url']}/accounts.disable",
+        payload: {
+          account_id: @current_account.id.to_s,
+        },
+        headers: {
+          'Authorization' => collab_request_token,
+          'ClientId' => Collaboration::Ticket::HK_CLIENT_ID
+        }) || {}
+
+      if res.code == 200 || res.code == 201
+        Rails.logger.info "Response: #{res.body}"
+      else
+        Rails.logger.error "Error while disabling Account to ChatApi. Response: #{res.body}, #{res.code}"
+      end
+    end
+
+    def register_account_with_collab
+      protocol = Rails.env.development? ? 'http://' : 'https://'
+      res = RestClient::Request.execute(
+        method: :post,
+        url: "#{CollabConfig['collab_url']}/accounts.enable",
+        payload: {
+          domain_url: "#{protocol}#{Account.current.full_domain}",
+          access_token: account_admin.single_access_token.presence
+        },
         headers: {
           'Authorization' => collab_request_token,
           'ClientId' => Collaboration::Ticket::HK_CLIENT_ID
@@ -41,7 +70,7 @@ class Collaboration::Account
           enable_iris
         end
       else
-        Rails.logger.error "Error while registering to ChatApi. Will disabled collab bitmap feature. Response: #{res.body}, #{res.code}"
+        Rails.logger.error "Error while enabling to ChatApi. Will disabled collab bitmap feature. Response: #{res.body}, #{res.code}"
         disable_collab_bitmap_feature
       end
     end
@@ -93,7 +122,8 @@ class Collaboration::Account
             phone: user.phone,
             created_at: user.created_at,
             deleted: user.deleted,
-            helpdesk_agent: user.helpdesk_agent
+            helpdesk_agent: user.helpdesk_agent,
+            is_admin: user.privilege?(:admin_tasks)
           }
         }
         AwsWrapper::SqsV2.send_message(SQS[:collab_agent_update_queue], message.to_json)
@@ -109,5 +139,9 @@ class Collaboration::Account
           IsServer: '1'
         }, CollabConfig['secret_key']
       )
+    end
+
+    def account_admin
+      @current_account.account_managers.first
     end
 end

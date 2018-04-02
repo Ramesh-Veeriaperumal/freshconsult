@@ -41,7 +41,7 @@ module RabbitMq::Constants
     [  'tag',                 CRUD_KEYS_BY_TOKEN[:all],                 'tag'             ],
     [  'tag_use',             CRUD_KEYS_BY_TOKEN[:create_and_destroy],  'tag_use'         ],
     [  'caller',              CRUD_KEYS_BY_TOKEN[:all],                 'caller'          ],
-    [  'account',             CRUD_KEYS_BY_TOKEN[:destroy],             'account'         ],
+    [  'account',             CRUD_KEYS_BY_TOKEN[:update_and_destroy],  'account'         ],
     [  'cti_call',            CRUD_KEYS_BY_TOKEN[:create],              'cti_call'        ]
   ]
   
@@ -152,7 +152,7 @@ module RabbitMq::Constants
     "priority", "ticket_type", "source", "requester_id", "due_by", "created_at", "is_escalated", "fr_escalated", "company_id", "tag_names",
     "product_id", "updated_at"]
 
-  COLLABORATION_USER_KEYS = ["id", "account_id", "name", "job_title", "email", "mobile", "phone", "created_at", "deleted", "helpdesk_agent"]
+  COLLABORATION_USER_KEYS = ["id", "account_id", "name", "job_title", "email", "mobile", "phone", "created_at", "deleted", "helpdesk_agent", "is_admin"]
   REPORTS_USER_KEYS = ["id", "account_id"]
   
   COLLABORATION_TICKET_KEYS = ["id", "responder_id", "status", "subject", "visible", "account_id", "display_id"]

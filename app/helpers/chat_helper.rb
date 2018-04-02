@@ -457,7 +457,8 @@ module ChatHelper
   end
 
   def is_chat_support_plan?
-    chat_support_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic]]
+    chat_support_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic],
+                           SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17]]
     chat_support_plans.include?(current_account.subscription.subscription_plan.name)
   end
 
