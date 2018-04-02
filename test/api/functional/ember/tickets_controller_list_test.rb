@@ -503,36 +503,33 @@ module Ember
     end
     
     def test_tickets_shared_by_Internal_agent
-      enable_feature(:shared_ownership) do
-        initialize_internal_agent_with_default_internal_group
+      @account.add_feature :shared_ownership
+      initialize_internal_agent_with_default_internal_group
 
-        ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
-                                 :responder_id => @responding_agent.id}, nil, @internal_group)
-        ticket2 = create_ticket({:status => 2, :responder_id => @responding_agent.id})
-        login_as(@responding_agent)
-        get :index, controller_params(version: 'private', filter: 'shared_by_me')
+      ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
+                               :responder_id => @responding_agent.id}, nil, @internal_group)
+      ticket2 = create_ticket({:status => 2, :responder_id => @responding_agent.id})
+      login_as(@responding_agent)
+      get :index, controller_params(version: 'private', filter: 'shared_by_me')
 
-        assert_match /#{ticket1.subject}/, response.body
-        assert_no_match /#{ticket2.subject}/, response.body
-
-      end
+      assert_match /#{ticket1.subject}/, response.body
+      assert_no_match /#{ticket2.subject}/, response.body
     end
 
     def test_tickets_shared_with_Internal_agent
-      enable_feature(:shared_ownership) do
-        initialize_internal_agent_with_default_internal_group
+      @account.add_feature :shared_ownership
+      initialize_internal_agent_with_default_internal_group
 
-        ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
-                                 :responder_id => @responding_agent.id}, nil, @internal_group)
-        ticket2 = create_ticket({:status => 2, :responder_id => @internal_agent.id})
+      ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
+                               :responder_id => @responding_agent.id}, nil, @internal_group)
+      ticket2 = create_ticket({:status => 2, :responder_id => @internal_agent.id})
 
-        login_as(@internal_agent)
+      login_as(@internal_agent)
 
-        get :index, controller_params(version: 'private', filter: 'shared_with_me')
+      get :index, controller_params(version: 'private', filter: 'shared_with_me')
 
-        assert_match /#{ticket1.subject}/, response.body
-        assert_no_match /#{ticket2.subject}/, response.body
-      end
+      assert_match /#{ticket1.subject}/, response.body
+      assert_no_match /#{ticket2.subject}/, response.body
     end
 
     def test_filter_by_internal_agent_with_agent

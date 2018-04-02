@@ -66,6 +66,10 @@ class CompanyDecorator < ApiDecorator
     }
   end
 
+  def utc_format(value)
+    value.respond_to?(:utc) ? value.utc : value
+  end
+
   def company_hash
     construct_hash(requester_widget_company_fields, record)
   end

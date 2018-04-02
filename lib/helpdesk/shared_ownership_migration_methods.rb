@@ -15,20 +15,12 @@ module Helpdesk::SharedOwnershipMigrationMethods
     clear_new_page_cache
   end
 
-  # def remove_launch_party_feature(account = Account.current)
-  #   account.rollback(:shared_ownership) if account.launched?(:shared_ownership)
-  # end
-
-  # def add_launch_party_feature(account = Account.current)
-  #   account.launch(:shared_ownership)
-  # end
-
   def remove_feature(account = Account.current)
-    account.features.shared_ownership.destroy
+    account.revoke_feature(:shared_ownership)
   end
 
   def add_feature(account = Account.current)
-    account.features.shared_ownership.create
+    account.add_feature(:shared_ownership)
   end
 
   def delete_internal_fields(account = Account.current)

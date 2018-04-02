@@ -122,6 +122,10 @@ class Account < ActiveRecord::Base
     # (ES_ENABLED && launched?(:es_v1_enabled))
   end
 
+  def allow_sso_login?
+    sso_enabled? || launched?(:whitelist_sso_login)
+  end
+
   def permissible_domains
     helpdesk_permissible_domains.pluck(:domain).join(",")
   end
