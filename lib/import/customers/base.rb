@@ -68,7 +68,7 @@ class Import::Customers::Base
   def save_item row
     @item = current_account.safe_send("#{@type.pluralize}").new if @item.blank?
     set_validatable_custom_fields
-    construct_company_params if is_user? && Account.current.multiple_user_companies_enabled?
+    construct_company_params if import_multiple_companies?
     set_company_validatable_fields if @type == "company" && Account.current.tam_default_fields_enabled?
     unless @item.new_record?
       begin
@@ -257,6 +257,11 @@ class Import::Customers::Base
       "client_manager" => client_manager,
       "default_company" => default_value
     }
+  end
+
+  def import_multiple_companies?
+    is_user? && Account.current.multiple_user_companies_enabled? &&
+    @params_hash[:"#{@type}"].keys.include?(:company_name)
   end
 
   def set_company_validatable_fields

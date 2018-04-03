@@ -10,7 +10,7 @@ liveChat.admin_short_codes = (function(){
               url: "/livechat/shortcodes"
               //url: "/shortcodes"
           },
-          getCodes : { type: "GET", url: "/shortcodes" },
+          getCodes : { type: "GET", url: "shortcodes" },
           update   : { type: "PUT", url: "/livechat/shortcodes/:id" },
           destroy  : { type: "DELETE", url: "/livechat/shortcodes/:id" }
       },

@@ -40,14 +40,14 @@ class Account < ActiveRecord::Base
 
     :garden => {
       :features => [ :multi_product, :customer_slas, :multi_timezone , :multi_language,
-        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content, :chat,
+        :css_customization, :advanced_reporting, :multiple_business_hours, :dynamic_content,
         :ticket_templates, :custom_survey ],
       :inherits => [ :blossom ]
     },
 
     :estate => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
         :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
       :inherits => [ :garden ]
@@ -76,7 +76,7 @@ class Account < ActiveRecord::Base
 
     :estate_classic => {
       :features => [ :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
         :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
       :inherits => [ :garden_classic ]
@@ -93,7 +93,7 @@ class Account < ActiveRecord::Base
     },
 
     :garden_jan_17 => {
-      :features => [ :forums, :multi_language, :css_customization, :advanced_reporting, :dynamic_content, :chat,
+      :features => [ :forums, :multi_language, :css_customization, :advanced_reporting, :dynamic_content,
         :ticket_templates, :custom_survey ],
       :inherits => [ :blossom_jan_17 ]
     },
@@ -101,7 +101,7 @@ class Account < ActiveRecord::Base
     :estate_jan_17 => {
       :features => [ :multi_product, :customer_slas, :multi_timezone ,
         :collision, :layout_customization, :round_robin, :enterprise_reporting,
-        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :chat_routing, :dynamic_sections,
+        :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
         :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
       :inherits => [ :garden_jan_17 ]
@@ -150,7 +150,7 @@ class Account < ActiveRecord::Base
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
     :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :skill_based_round_robin => false,
-    :salesforce_v2 => false, :advanced_search => false, :advanced_search_bulk_actions => false,:dynamics_v2 => false }
+    :salesforce_v2 => false, :advanced_search => false, :advanced_search_bulk_actions => false,:dynamics_v2 => false, :chat => false, :chat_routing => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true,
@@ -198,7 +198,7 @@ class Account < ActiveRecord::Base
     :falcon_signup => false, :falcon_portal_theme => false, :email_actions => false, :ner => false, :disable_freshchat => false, :freshchat_integration => false,
     :facebook_page_redirect => false, :froala_editor_forums => false, :ticket_central_publish => false, :solutions_central_publish => false, 
     :freshid => false, :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, :outgoing_attachment_limit_25 => false,
-    :whitelist_sso_login => false
+    :whitelist_sso_login => false, :apigee => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

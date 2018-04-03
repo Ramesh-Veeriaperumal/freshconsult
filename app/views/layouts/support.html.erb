@@ -41,6 +41,7 @@
 		<% if current_account.ehawk_spam? || current_account.subscription.trial? %>
 			<meta name="robots" content="noindex, nofollow">
 		<% end %>
+		<%= render :partial => "layouts/shared/freshchat/head" %>
 	</head>
 	<body>
 		<%= assumed_identity_message %>
@@ -72,5 +73,6 @@
      		I18n.defaultLocale = "<%= I18n.default_locale %>";
      		I18n.locale = "<%= I18n.locale %>";
 		</script>
+		<%= render :partial => "layouts/shared/freshchat/body" %>
 	</body>
 </html>

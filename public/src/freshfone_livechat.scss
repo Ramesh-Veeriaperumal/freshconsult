@@ -269,4 +269,23 @@
       color: #e92c2c;
     }
   }
+
+  /* freshchat css....*/
+  .freshchat-icon {
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    background-color: rgba(50, 50, 50, 0.4);
+    text-align: center;
+    color: #fff;
+    border-radius: 2px;
+    left: 10px;
+    line-height: 1.5;
+    margin-top: 34px;
+    position: relative;
+
+    &:hover, &.active {
+      background-color: #333;
+    }
+  }
 }

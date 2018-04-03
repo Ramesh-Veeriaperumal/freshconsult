@@ -247,7 +247,7 @@
 	<input type="hidden" id="collab-account-payload" data-account-payload='<%= Collaboration::Ticket.new.account_payload %>'>
 <% end %>
 
-<% if current_user && current_user.gdpr_pending? %>
+<% if current_user && current_user.gdpr_pending? && !current_account.falcon_ui_enabled?(current_user) %>
    <div id="gdpr-compliance" class="hide">
    <%= render partial: "gdpr_compliance/gdpr_modal" %>
    </div>

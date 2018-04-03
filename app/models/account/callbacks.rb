@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
   before_update :update_global_pod_domain 
 
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
-  after_update :update_livechat_url_time_zone, :if => :freshchat_enabled?
+  after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
 
   before_validation :sync_name_helpdesk_name
@@ -32,6 +32,7 @@ class Account < ActiveRecord::Base
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
 
   after_commit :update_crm_and_map, on: :update, :if => :account_domain_changed?
+  after_commit :update_bot, on: :update, if: :update_bot?
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
   after_commit :trigger_launchparty_feature_callbacks, on: :create
@@ -148,8 +149,21 @@ class Account < ActiveRecord::Base
       @all_changes.key?("reputation") && self.verified?
     end
 
+    def update_bot?
+      return false unless account_domain_changed? || account_ssl_changed?
+      portal = self.main_portal
+      return false unless portal.portal_url.blank?
+      @bot = portal.bot
+      return false unless @bot.present?
+      true
+    end
+
     def account_domain_changed?
       @all_changes.key?("full_domain")
+    end
+
+    def account_ssl_changed?
+      @all_changes.key?("ssl_enabled")
     end
 
     def account_name_changed?
@@ -400,7 +414,7 @@ class Account < ActiveRecord::Base
     end
 
     def enable_collab
-      CollabPreEnableWorker.perform_async
+      CollabPreEnableWorker.perform_async(true)
     end
 
     def set_falcon_preferences
@@ -431,6 +445,16 @@ class Account < ActiveRecord::Base
 
     def freshid_signup_allowed?
       redis_key_exists? FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED
+    end
+
+    def update_bot
+      response, response_code = Freshbots::Bot.update_bot(@bot)
+      raise response unless response_code == Freshbots::Bot::BOT_UPDATION_SUCCESS_STATUS
+    rescue => e
+      error_msg = "FRESHBOTS UPDATE ERROR FOR ACCOUNT DOMAIN/SSL CHANGE :: Bot external id : #{@bot.external_id}
+                         :: Account id : #{@bot.account_id} :: Portal id : #{@bot.portal_id}"
+      NewRelic::Agent.notice_error(e, { description: error_msg })
+      Rails.logger.error("#{error_msg} :: #{e.inspect}")
     end
 
 end

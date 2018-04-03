@@ -107,7 +107,9 @@
         jQuery('#dm_to_ticket_wrapper').hide();
       if(!$captureTweetAsTicket.prop('checked'))
         jQuery('#tweet_to_ticket_wrapper').hide();
+      
       rulesSettingsCheck();
+      toggleSmartFilterText();
     
     });  
     $captureDmAsTicket.on('click.twitterNC', function(){
@@ -117,7 +119,10 @@
       jQuery('#tweet_to_ticket_wrapper').toggle();
     });
 
-    jQuery('.rules_settings .radio').on('click',function() { rulesSettingsCheck(); });      
+    jQuery('.rules_settings .radio').on('click',function() { rulesSettingsCheck(); });    
+    jQuery('.smart_filter_button').on('click',function(){
+      toggleSmartFilterText();
+    });  
     
   }
   
@@ -145,6 +150,16 @@
     $convertWithKeyWords.hide().find('.ticket_deleted').val("true");;
     $convertWithoutKeyWords.show().find('.ticket_deleted').val("false");;
    }
+  }
+
+  function toggleSmartFilterText(){
+     var $smartFilterText = jQuery('#smart_filter_label_with_keywords');
+    if(jQuery('#smart_filter_toggle').prop('checked')){
+      $smartFilterText.html("<%=t('admin.social.smart_filter.enabled_header')%>");
+    }
+    else{
+      $smartFilterText.html("<%=t('admin.social.smart_filter.disabled_header')%>");
+    }
   }
 
 </script>

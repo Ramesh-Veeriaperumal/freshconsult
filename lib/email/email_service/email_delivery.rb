@@ -198,6 +198,18 @@ include Email::EmailService::IpPoolHelper
     else
       bcc.map{|pair| res<<pair if !unique_emails.include?(pair["email"])}
     end
+    return uniq_emails res
+  end
+
+  def uniq_emails email_arr
+    res = []
+    uniqemails= []
+    email_arr.each do |curr_email|
+      if !(uniqemails.include?(curr_email["email"]))
+        res << curr_email
+        uniqemails << curr_email["email"]
+      end
+    end
     return res
   end
 
