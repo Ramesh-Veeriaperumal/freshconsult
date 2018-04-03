@@ -166,7 +166,7 @@ end
       installed_apps_payload = account_payload(
         Marketplace::ApiEndpoint::ENDPOINT_URL[:installed_extensions] %
         { :product_id => Marketplace::Constants::PRODUCT_ID, :account_id => account.id},
-        {}, {:type => Marketplace::Constants::EXTENSION_TYPE[:plug]}
+        {}, {:type => "#{Marketplace::Constants::EXTENSION_TYPE[:plug]},#{Marketplace::Constants::EXTENSION_TYPE[:custom_app]}"}
         )
       installed_apps_response = get_api(installed_apps_payload, MarketplaceConfig::ACC_API_TIMEOUT)
       if error_status?(installed_apps_response)

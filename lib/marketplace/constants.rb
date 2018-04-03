@@ -25,7 +25,7 @@ module Marketplace::Constants
   EXTENSION_TYPE = Hash[*EXTENSION_TYPES.map { |i| [i[0], i[1]] }.flatten]
   VERSIONABLE_EXTENSION = EXTENSION_TYPES.map { |i| i[1] if i[2] }
 
-  # TODO: custom type to removed
+  # TODO: custom type to be removed
   APP_TYPES = [ 
     [:regular,               1],    
     [:custom,                2],
