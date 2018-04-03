@@ -306,6 +306,13 @@ class TicketDecorator < ApiDecorator
     }
   end
 
+  def sender_email
+    record.requester.reload unless record.requester.emails.present?
+    if record.requester.emails.include?(schema_less_ticket.try(:sender_email))
+      schema_less_ticket.try(:sender_email)
+    end 
+  end
+
   private
 
   def handle_timestamps(meta_info)

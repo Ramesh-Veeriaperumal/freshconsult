@@ -1,7 +1,7 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   # rate_limit :rules => lambda{ |obj| Account.current.account_additional_settings_from_cache.resource_rlimit_conf['helpdesk_tickets'] }, :if => lambda{|obj| obj.rl_enabled? }
 
-	before_validation :populate_requester, :load_ticket_status, :set_default_values
+  before_validation :populate_requester, :load_ticket_status, :set_default_values
   before_validation :assign_flexifield, :assign_email_config_and_product, :on => :create
   before_validation :validate_assoc_parent_ticket, :on => :create, :if => :child_ticket?
   before_validation :validate_related_tickets, :on => :create, :if => :tracker_ticket?
@@ -562,7 +562,10 @@ private
   end
 
   def populate_requester
-    return if requester
+    if requester
+      self.requester = requester.parent if requester.parent_id? && requester.parent.present?
+      return
+    end
     self.requester_id = nil
     unless email.blank?
       name_email = parse_email email  #changed parse_email to return a hash

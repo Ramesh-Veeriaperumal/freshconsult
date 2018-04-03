@@ -476,6 +476,7 @@ module TicketsTestHelper
     pattern[:association_type] = ticket.association_type
     pattern[:requester] = Hash if requester
     pattern[:collaboration] = collaboration_pattern if @account.collaboration_enabled?
+    pattern[:sender_email] = ticket.sender_email if ticket.sender_email.present?
     pattern
   end
 
