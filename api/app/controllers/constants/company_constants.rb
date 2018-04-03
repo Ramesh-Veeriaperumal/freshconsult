@@ -37,6 +37,7 @@ module CompanyConstants
   SIDE_LOADING = %w(contacts_count).freeze
   ATTRIBUTES_TO_BE_STRIPPED = %w(name description note domains custom_fields).freeze
   MAX_ACTIVITIES_COUNT = 10
+  MAX_ARCHIVE_TICKETS_ACTIVITIES_COUNT = 30
   ALLOWED_AVATAR_SIZE = 5 * 1024 * 1024
   DELEGATOR_CLASS = 'CompanyDelegator'.freeze
 end.freeze

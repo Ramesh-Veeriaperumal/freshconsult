@@ -1,0 +1,19 @@
+
+get:
+  tags: [archive_ticket]
+  description: Show conversations
+  parameters:
+    - name: since_id
+      in: query
+      type: number
+      description: Conversation ID from which converations have to be fetched
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/archive_conversations_show'
+    404:
+      description: Ticket not found
+    403:
+      description: Access denied

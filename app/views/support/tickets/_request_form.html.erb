@@ -234,7 +234,7 @@
         }
         if(getFromSessionStorage('seenArticlesArray') && getFromSessionStorage('seenArticlesArray').length > 0){
           var _seenArticles = getFromSessionStorage('seenArticlesArray').slice().splice(-50); // only taking last 50 items
-          jQuery('#meta_seen_articles').val(JSON.stringify(_seenArticles));
+          jQuery('#meta_seen_articles').val(_seenArticles);
           removeFromSessionStorage('seenArticlesArray');
         }
         _form.find("button, a.btn").attr('disabled',true);

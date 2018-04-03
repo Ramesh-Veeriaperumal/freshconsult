@@ -29,7 +29,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/survey", only: [:index]
     resource :"ember/dashboard/activity", only: [:index]
     resource :"ember/portal", only: [:index]
-    resource :"ember/email_config", only: [:index]
+    resource :"ember/email_config", only: [:index, :search]
     resource :"ember/dashboard", only: %i(scorecard show survey_info)
     resource :"ember/dashboard/quest", only: %i(index)
     resource :"ember/contact_field", only: [:index]
@@ -150,7 +150,7 @@ Authority::Authorization::PrivilegeList.build do
 
   view_solutions do
     resource :"ember/search/solution", only: [:results]
-    resource :"ember/solutions/article", only: [:index]
+    resource :"ember/solutions/article", only: [:index,:article_content]
     resource :"ember/search/multiquery", only: [:search_results]
   end
 

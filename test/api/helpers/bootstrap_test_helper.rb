@@ -61,6 +61,14 @@ module BootstrapTestHelper
     social_hash
   end
 
+  def freshchat_hash
+    {
+      preferences: Account.current.freshchat_account.try(:preferences),
+      enabled: Account.current.freshchat_account.try(:enabled),
+      app_id: Account.current.freshchat_account.try(:app_id)
+    }
+  end
+
   def account_info_pattern_simple(account)
     pattern = {
       ref_id: account.id,
@@ -77,7 +85,8 @@ module BootstrapTestHelper
         compose_email_enabled: wildcard_matcher,
         restricted_compose_email_enabled: wildcard_matcher,
         include_survey_manually: wildcard_matcher,
-        show_on_boarding: account.account_onboarding_pending?
+        show_on_boarding: account.account_onboarding_pending?,
+        announcement_bucket: account.account_additional_settings.additional_settings[:announcement_bucket].to_s
       },
       verified: account.verified?,
       created_at: account.created_at.try(:utc),
@@ -86,6 +95,7 @@ module BootstrapTestHelper
 
     pattern[:collaboration] = collab_pattern if account.collaboration_enabled?
     pattern[:social_options] = social_options_hash if account.features?(:twitter) || account.basic_twitter_enabled?
+    pattern[:freshchat] = freshchat_hash if account.freshchat_enabled?
     if User.current.privilege?(:manage_users) || User.current.privilege?(:manage_account)
       pattern[:subscription] = {
         agent_limit: account.subscription.agent_limit,

@@ -18,7 +18,25 @@ module Ember
 
         def load_ticket
           @ticket = current_account.tickets.find_by_param(params[:ticket_id], current_account)
-          log_and_render_404 unless @ticket
+          unless @ticket
+            archive_ticket = current_account.archive_tickets.find_by_display_id(params[:ticket_id])
+            (archive_ticket.present?) ? log_and_render_301_archive : log_and_render_404
+          end
+        end
+
+        def log_and_render_301_archive
+          Rails.logger.debug "The ticket is archived. Id: #{params[:ticket_id]}, method: #{params[:action]}, controller: #{params[:controller]}"
+          redirect_to archive_ticket_link, status: 301
+        end
+
+        def archive_ticket_link
+          path = "/api/_/tickets/archived/#{params[:ticket_id]}/activities" # not able to use the default rails_route_path.
+          (archive_params.present?) ? "#{path}?#{archive_params}" : path
+        end
+
+        def archive_params
+          include_params = params.select{|k,v| ActivityFilterConstants::PERMITTED_ARCHIVE_FIELDS.include?(k)}
+          include_params.to_query
         end
 
         def validate_filter_params

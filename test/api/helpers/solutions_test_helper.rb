@@ -90,6 +90,15 @@ module SolutionsTestHelper
     ret_hash
   end
 
+  def article_content_pattern(article, expected_output = {})
+    {
+      id: expected_output[:id] || article.parent.id,
+      description: expected_output[:description] || article.description,
+      description_text: expected_output[:description_text] || article.desc_un_html,
+      attachments: Array
+    }
+  end
+
   def v1_category_payload
     { solution_category: { name: "API V1", description: "API V1 Description" } }.to_json
   end

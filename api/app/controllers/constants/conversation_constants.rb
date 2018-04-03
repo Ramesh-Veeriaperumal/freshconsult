@@ -10,6 +10,7 @@ module ConversationConstants
 
   TICKET_CONVERSATIONS_FIELDS = %w(include order_type since_id).freeze
   SIDE_LOADING = %w(requester).freeze
+  PERMITTED_ARCHIVE_FIELDS = (TICKET_CONVERSATIONS_FIELDS + ApiConstants::PAGINATE_FIELDS).freeze
 
   REPLY_FIELDS = %w(body full_text user_id from_email send_survey last_note_id).freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   BROADCAST_FIELDS = %w(body user_id).freeze

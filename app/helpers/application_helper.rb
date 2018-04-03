@@ -50,7 +50,7 @@ module ApplicationHelper
   #Add the features you want to send to inline manual(for segmenting) to the below array in string format
   #NOTE: The limit for the features is 17 items with up to 24 characters each. 
   # i.e, we can only send first 24 characters of first 17 enabled features for an account. 
-  INLINE_MANUAL_FEATURES = []
+  INLINE_MANUAL_FEATURES = [:freshfone]
 
   INLINE_MANUAL_FEATURE_THRESHOLDS = { char_length: 24, max_count: 17}
 
@@ -2092,6 +2092,10 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   def year_in_review_enabled?
     Account.current.year_in_review_2017_enabled? && review_available?
+  end
+
+  def freshchat_enabled?
+    current_account.freshchat_enabled? && current_account.freshchat_account.try(:enabled)
   end
 
   def freshcaller_enabled_agent?

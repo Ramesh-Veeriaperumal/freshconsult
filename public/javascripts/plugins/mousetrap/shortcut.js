@@ -119,7 +119,9 @@
                 $('#' + id + ' .dialog-btn').trigger("click");
                 $('#' + id + ' .dialog-btn').blur();
             }else if($('.modal:visible').get(0) && $('.modal:visible').find('.never-close').length < 1){
+                if(jQuery(jQuery('.modal:visible').get(0)).data('modal').options.notEscape!=true){
                 $('.modal:visible').modal('hide');
+            }
             }else if($('#redactor_modal:visible').get(0)){
                 $('#redactor_modal').modal('hide');
                 $('redactor_modal_overlay').hide();

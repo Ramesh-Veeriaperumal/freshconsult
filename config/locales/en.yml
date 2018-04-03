@@ -393,7 +393,7 @@ en:
   attachment: Attachment
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
-  attachment_limit_failed_message: One or more attachments discarded since the %{size} limit was exceeded.
+  attachment_limit_failed_message: Attachment(s) that exceed the %{size} limit have been dropped. Please reach out to the sender.
   attachment_contain_virus: %{size} attachments are discarded since they contain virus.
   cc_dropped_message: The following cc's are dropped due to moderation - %{emails}
   emails_dropped_message: The following emails are dropped due to moderation - %{emails}
@@ -3530,8 +3530,6 @@ en:
       login_message: Login with an account administrator's credentials to associate your Google Apps login to your Freshdesk account.
       login_button: Login & complete registration
     canceled_account: We're sorry to see you go, but your account has been canceled.
-    edit_domain:
-      getting_started: "Getting Started"
     new:
       create_an_account: Create an account
       errors_encountered: "Errors encountered with your account information:"
@@ -3660,7 +3658,7 @@ en:
       setup_progress_misc: Keep going!
       setup_progress_penultimate: Almost there!
       new_account_title: Sign up for Freshdesk
-      new_account_description: Start your free 30-day trial of Freshdesk by signing up from the website.
+      new_account_description: Start your free trial of Freshdesk by signing up from the website.
       account_admin_email_title: Activate your account
       account_admin_email_description: Check your inbox for our activation email and verify your Freshdesk account.
       agents_title: Invite your team
@@ -3692,6 +3690,7 @@ en:
       submit_button_text: Take me to my account
       account_url_defaulted: Due to inactivity, we've defaulted to an auto-generated URL for your account. Redirecting you to your dashboard now...
       check_activation_email: Due to inactivity, we've defaulted to an auto-generated URL for your account. Please check your inbox for our activation email.
+      getting_started: "Getting Started"
   success_msg : Account settings updated successfully!
   failure_msg : Failed to update Account Settings!
   account_configuration:
@@ -5497,6 +5496,7 @@ en:
     linked_paren_child_desc: "Linked ticket, parent child ticketing workflows"
     scheduled_reports_desc: "Scheduled reporting"
     custom_survey_desc: "Customized satisfaction surveys"
+    freshchat: "Freshchat integration"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL
@@ -6567,6 +6567,14 @@ en:
     twitter_disabled: Twitter login will be disabled for customers and agents for security purposes.
     important: Important
     includes_contacts_company_domain: (includes existing contacts and company domains)
+    gdpr_admin_details: has changed your user permissions from
+    gdpr_agent: Agent
+    gdpr_admin: Admin.
+    gdpr_terms: By clicking on Accept , you agree to our  
+    gdpr_terms_link:  Terms
+    gdpr_acknowledgement: and acknowledge having read our
+    gdpr_policy: Privacy policy.
+    gdpr_to: to
     permission:
       helpdesk_restrictions: Helpdesk restrictions
       who_can_create: Who can log in (or) sign up (or) create tickets?
@@ -9681,7 +9689,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     no_data_to_display_msg: No data to display
     something_went_wrong_msg: 'Something went wrong, please try again'
     disabled_date_range: Disabled for this date range
-    export_tickets_error_msg: We currently allow only 1 concurrent exports. Kindly try again after some time. Apologies for the inconveniences caused.
+    export_tickets_error_msg: You have reached the maximum number of simultaneous export requests allowed. Please try again after some time.
+    export_tickets_account_error_msg: Your account has reached the maximum number of simultaneous export requests allowed. Please try again after some time.
     export_tickets_success_msg: Your ticket data will be sent to your email shortly!
     view_all_tickets: View all tickets
     view_all_compliant_tickets: View all compliant tickets
@@ -10404,6 +10413,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           validation_error: "This field is required"
           authentication_error: "The email or password provided is not valid."
           access_error: "You need to be an admin in both Freshcaller and Freshdesk to link your accounts."
+          pod_error: "Looks like your two accounts are in different data centers. Please create a new Freshcaller account to link to your Freshdesk account."
           api_error: "This Freshcaller account does not exist. Please provide a valid URL or create a new Freshcaller account."
     ticket:
       recording:
@@ -12122,3 +12132,39 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       satisfaction_survey: 'Includes satisfaction survey.'
       ticket_suverymonkey_survey: 'Includes text/link to survey in Surveymonkey'
       triggered_event: 'Details about the event that triggered the rule'
+  freshchat:
+    admin:
+      title_text: 'Freshchat'
+      sidebar_title: 'Freshchat'
+      enable_chat: 'Link Freshchat with your Freshdesk account'
+      enable_chat_info: 'Bring the experience of modern messaging to your customers. Send proactive messages and get all the customer context to support better. Assign, respond to, and resolve conversations using the messenger inside Freshdesk.'
+      app_id: 'App ID'
+      app_id_placeholder: 'Eg: 09901344-2b17-4d55-b412-2fd41811a83f'
+      widget_token: 'Widget token'
+      did_you_know: Convert Freshchat conversations to tickets
+      copy_from_freshchat: 'Copy from Freshchat'
+      portal_url: 'Portal URL:'
+      admin_apikey: 'API Key:'
+      sign_up_btn: 'Sign up now'
+      sign_up_text: Start chatting with customers on your website, portal or mobile app.
+      save: 'Save'
+      cancel: 'Cancel'
+      action:
+        success_message: 'Settings updated'
+      copy_widget:
+        header: 'Embed the freshchat widget code on your website'
+        step1: 'Step 1: Paste this code within <HEAD>'
+        step2: 'Step 2 : Paste this code snippet before </BODY>'
+      did_you_know_info: To convert Freshchat conversations to tickets, please go to this <a href='%{url}' target='_blank'>page</a>, copy and paste the details listed below. If you need more help, please take a look at <a href='%{article_url}' target='_blank'>this article</a>.
+      signup_link: Don’t have a Freshchat account, yet? <a target="_blank" href="https://www.freshworks.com/live-chat-software?utm_source=Freshdesk-App"> Sign up here </a>
+      widget_token_placeholder: 'Eg: d0bb2ebf-2746-481a-ll64-0bdfb91cb2de'
+      enable_chat_in_portal: 'Enable chat in your support portal'
+      enable_chat_in_portal_info: 'Make it easy for your customers to chat with you, when they land on your support portal.'
+      header_info: Freshdesk’s integrated chat channel is powered by Freshchat. Freshchat is a modern messaging software that helps engage, support, and retain customers on multiple channels - website, mobile, support portal, and in-app.
+      sidebar_content: 
+        para1: Freshdesk’s integrated chat channel, powered by Freshchat, helps you engage in conversations with customers who are you on the website, mobile, support portal, or in-app. You can also send proactive messages to visitors and users and drive them to make a purchase, sign up, or share feedback on your product.
+        para2:
+          header: 'Use the messenger inside Freshdesk to bring your support and messaging workflow together:'
+          point1: 'Assign conversations to a group or team member'
+          point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
+          point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'

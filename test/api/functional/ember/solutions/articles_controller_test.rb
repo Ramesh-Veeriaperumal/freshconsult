@@ -147,6 +147,19 @@ module Ember
         pattern = articles.map { |article| private_api_solution_article_pattern_index(article, {}, true, @agent) }
         match_json(pattern)
       end
+
+      def test_article_content
+        article = @account.solution_articles.last
+        get :article_content, controller_params(version: 'private', id: article.parent_id)
+        assert_response 200
+        match_json(article_content_pattern(article))
+      end
+
+      def test_article_content_with_invalid_id
+        article = @account.solution_articles.last
+        get :article_content, controller_params(version: 'private', id: article.parent_id + 20)
+        assert_response 404
+      end
     end
   end
 end

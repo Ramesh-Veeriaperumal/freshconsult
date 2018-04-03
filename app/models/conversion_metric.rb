@@ -291,4 +291,9 @@ class ConversionMetric < ActiveRecord::Base
    def tld(landing_url)
       TOP_LEVEL_DOMAINS[TLDOMAINS.select { |tld| landing_url.include?(tld) }.to_s]
    end
+
+  def ga_client_id
+    self.try(:[], :session_json).try(:[], :ga_client_id)
+  end
+
 end
