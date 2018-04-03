@@ -181,6 +181,14 @@ class User < ActiveRecord::Base
     end
   end
 
+  def was_agent?
+    preferences[:user_preferences][:was_agent]
+  end
+
+  def agent_deleted_forever?
+    preferences[:user_preferences][:agent_deleted_forever]
+  end
+
   def facebook_avatar( facebook_id, profile_size = "square")
     "https://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
   end
@@ -914,6 +922,9 @@ class User < ActiveRecord::Base
     return true if customer?
     set_company_name
     if update_attributes({:helpdesk_agent => false, :deleted => false})
+      new_pref = { :was_agent => true }
+      self.merge_preferences = { :user_preferences => new_pref }
+      save
       subscriptions.destroy_all
       self.cti_phone = nil
       agent.destroy
