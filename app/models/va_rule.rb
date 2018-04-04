@@ -40,20 +40,14 @@ class VaRule < ActiveRecord::Base
   acts_as_list :scope => 'account_id = #{account_id} AND #{connection.quote_column_name("rule_type")} = #{rule_type}'
 
   JOINS_HASH = {
-    :helpdesk_schema_less_tickets => " inner join helpdesk_schema_less_tickets on 
-          helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id 
-          and helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id",
-    :helpdesk_ticket_states => " inner join helpdesk_ticket_states on 
-          helpdesk_tickets.id = helpdesk_ticket_states.ticket_id 
-          and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id",
-    :customers => " left join customers on helpdesk_tickets.owner_id = 
-          customers.id",
-    :users => " inner join users on 
-          helpdesk_tickets.requester_id = users.id  and users.account_id = 
-          helpdesk_tickets.account_id ",
-    :flexifields => " left join flexifields on helpdesk_tickets.id = 
-          flexifields.flexifield_set_id  and helpdesk_tickets.account_id = 
-          flexifields.account_id and flexifields.flexifield_set_type = 'Helpdesk::Ticket'"
+    :helpdesk_schema_less_tickets => " inner join helpdesk_schema_less_tickets on helpdesk_tickets.id = helpdesk_schema_less_tickets.ticket_id "\
+          "and helpdesk_tickets.account_id = helpdesk_schema_less_tickets.account_id ",
+    :helpdesk_ticket_states => " inner join helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id "\
+          "and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id ",
+    :customers => " left join customers on helpdesk_tickets.owner_id = customers.id",
+    :users => " inner join users on helpdesk_tickets.requester_id = users.id and users.account_id = helpdesk_tickets.account_id ",
+    :flexifields => " left join flexifields on helpdesk_tickets.id = flexifields.flexifield_set_id  and helpdesk_tickets.account_id = "\
+          "flexifields.account_id and flexifields.flexifield_set_type = 'Helpdesk::Ticket' "
   }
 
   def filter_data
@@ -402,7 +396,7 @@ class VaRule < ActiveRecord::Base
 
     def log_rule_change
       Va::Logger::Automation.set_thread_variables(account_id, nil, User.current.try(:id), id)
-      Va::Logger::Automation.log "TYPE=#{VAConfig::RULES_BY_ID[self.rule_type]}::NAME=#{self.name}"
+      Va::Logger::Automation.log "type=#{VAConfig::RULES_BY_ID[self.rule_type]}, name=#{self.name}"
       Va::Logger::Automation.log "********* Changes *********"
       model_changes
     end
@@ -410,7 +404,7 @@ class VaRule < ActiveRecord::Base
     def model_changes
       self.previous_changes.each {|k,v|
         next if k == 'updated_at' || v.first == v.last
-        Va::Logger::Automation.log "ATTR=#{k}::OLD=#{v.first.inspect}::NEW=#{v.last.inspect}"
+        Va::Logger::Automation.log "attr=#{k}, old=#{v.first.inspect}, new=#{v.last.inspect}"
       }
     end
 

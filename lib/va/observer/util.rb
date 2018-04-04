@@ -33,8 +33,8 @@ module Va::Observer::Util
     def filter_observer_events(queue_events=true, inline=false)
       observer_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
                               filter_event filtered, change_key, change_value  end
-      Va::Logger::Automation.log "Triggered object=#{self.class}::id=#{self.id}"
-      Va::Logger::Automation.log "Observer changes not present::model_changes=#{@model_changes.inspect}" if observer_changes.blank?
+      Va::Logger::Automation.log "Triggered object=#{self.class}, id=#{self.id}"
+      Va::Logger::Automation.log "Observer changes not present, model_changes=#{@model_changes.inspect}" if observer_changes.blank?
       Va::Logger::Automation.log "Skipping observer queue_events=true" if !queue_events
       return observer_changes unless queue_events
       if observer_changes.present?
@@ -75,7 +75,7 @@ module Va::Observer::Util
         args[:sbrr_state_attributes] = sbrr_state_attributes if Account.current.skill_based_round_robin_enabled?
       end
 
-      Va::Logger::Automation.log "Triggering Observer::Info=#{args.inspect}"
+      Va::Logger::Automation.log "Triggering Observer, info=#{args.inspect}"
 
       if inline
         User.run_without_current_user { Tickets::ObserverWorker.new.perform(args) }
@@ -90,7 +90,7 @@ module Va::Observer::Util
 
     def send_system_events observer_changes
       args = { ticket_id: fetch_ticket_id, system_event: true, current_events: observer_changes }
-      Va::Logger::Automation.log "Triggering Observer::Info=#{args.inspect}"
+      Va::Logger::Automation.log "Triggering Observer, info=#{args.inspect}"
       Tickets::ObserverWorker.perform_async(args)
     end
 
