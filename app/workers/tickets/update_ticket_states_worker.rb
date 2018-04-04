@@ -10,6 +10,8 @@ module Tickets
                     :backtrace => true,
                     :failures => :exhausted
 
+    NOTE_ERROR = 'SAVE_NOTE_ERROR'.freeze
+
     def perform(args)
       args.symbolize_keys!
       begin
@@ -18,13 +20,12 @@ module Tickets
         @note = account.notes.find_by_id args[:id]
         Va::Logger::Automation.set_thread_variables(account.id, @note.try(:notable_id), args[:current_user_id])
         if @note.blank?
-          Va::Logger::Automation.log "Observer not triggered, since the note is not present::Info=#{args.inspect}"
+          Va::Logger::Automation.log "Observer not triggered, since the note is not present, info=#{args.inspect}"
           return
         end
         @note.save_response_time if should_save_response_time?
       rescue => e
-        Va::Logger::Automation.log "Something is wrong in adding/deleting note::Info=#{args.inspect}::Exception=#{e.message}::#{e.backtrace.join('\n')}"
-        puts e.inspect, args.inspect
+        Va::Logger::Automation.log_error(NOTE_ERROR, e, args)
         NewRelic::Agent.notice_error(e, {:args => args})
         raise
       ensure

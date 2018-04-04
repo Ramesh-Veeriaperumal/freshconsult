@@ -1178,7 +1178,7 @@ class User < ActiveRecord::Base
     end
 
     def assign_freshid_attributes_to_user freshid_user
-      self.name = [freshid_user.first_name, freshid_user.last_name].join(' ')
+      self.name = freshid_user.full_name
       self.phone = freshid_user.phone
       self.mobile = freshid_user.mobile
       self.job_title = freshid_user.job_title
@@ -1187,9 +1187,11 @@ class User < ActiveRecord::Base
     end
     
     def user_attributes_for_freshid
+      freshid_first_name, freshid_middle_name, freshid_last_name = freshid_split_names
       { 
-        first_name: first_name.presence,
-        last_name: last_name.presence,
+        first_name: freshid_first_name.presence,
+        middle_name: freshid_middle_name.presence,
+        last_name: freshid_last_name.presence,
         email: email,
         phone: phone.presence,
         mobile: mobile.presence,
@@ -1298,6 +1300,11 @@ class User < ActiveRecord::Base
 
     def format_name
       (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
+    end
+
+    def freshid_split_names
+      name_splits = self.name.split(" ")
+      [name_splits.first, name_splits[1..-2].join(" "), name_splits[1..-1].last]
     end
 
     def build_or_update_company comp_id
