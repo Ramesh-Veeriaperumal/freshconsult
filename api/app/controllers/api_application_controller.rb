@@ -380,7 +380,7 @@ class ApiApplicationController < MetalApiController
 
     # will take scoper as one argument.
     def load_objects(items = scoper)
-      @items_count = items.count
+      @items_count = items.count if private_api?
       @items = paginate_items(items)
     end
 

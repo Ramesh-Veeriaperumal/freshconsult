@@ -3896,3 +3896,4 @@ class TicketsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
   end
 end
+
