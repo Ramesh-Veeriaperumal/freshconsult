@@ -46,4 +46,19 @@ class User < ActiveRecord::Base
     u.add :parent_id
     u.add :unique_external_id
   end
+
+  api_accessible :central_publish_destroy do |t|
+    t.add :id
+    t.add :name
+    t.add :email
+  end
+
+  def self.central_publish_enabled?
+    true
+  end
+
+  def central_publish_payload
+    @deleted_model_info || as_api_response(:central_publish)
+  end
+
 end

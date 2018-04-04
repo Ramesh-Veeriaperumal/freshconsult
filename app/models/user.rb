@@ -616,6 +616,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def delete_forever!
+    Users::ContactDeleteForeverWorker.perform_async({:user_id => self.id})
+  end
+
   def update_account_info_and_verify(user_params)
     self.account.update_attributes!({:name => user_params[:company_name]}) if user_params.key?(:company_name) 
     self.account.main_portal.update_attributes!({:name => user_params[:company_name]}) if user_params.key?(:company_name)
@@ -1131,6 +1135,10 @@ class User < ActiveRecord::Base
     reset_persistence_token!
     reset_perishable_token!
     remove_password_flag(email, account_id)
+  end
+
+  def model_changes_for_central
+    @deleted_model_info || self.previous_changes
   end
 
   def gdpr_pending?

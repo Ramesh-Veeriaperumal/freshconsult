@@ -31,6 +31,10 @@ class User < ActiveRecord::Base
   before_save :sanitize_contact_name, :backup_customer_id
   before_save :set_falcon_ui_preference, :if => :falcon_ui_applicable?
 
+  before_destroy :save_deleted_user_info
+
+  publishable on: :destroy
+
   after_commit :clear_agent_caches, on: :create, :if => :agent?
   after_commit :update_agent_caches, on: :update
 
@@ -148,6 +152,10 @@ class User < ActiveRecord::Base
 
   def discard_contact_field_data
     self.flexifield.destroy
+  end
+
+  def save_deleted_user_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
   end
 
   protected

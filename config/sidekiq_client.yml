@@ -213,6 +213,7 @@ defaults: &defaults
     - [ml_solutions_training]
     - [mixpanel_queue]
     - [bot_cleanup]
+    - [contact_delete_forever]
 
 development:
   <<: *defaults

@@ -129,6 +129,7 @@
     - natero_worker
     - reports_no_activity
     - bot_cleanup
+    - contact_delete_forever
   :external:
     - code_console_execution
     - integrations
