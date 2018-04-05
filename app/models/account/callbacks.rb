@@ -184,7 +184,9 @@ class Account < ActiveRecord::Base
       feature_name = changes[:launch] || changes[:rollback]
       @launch_party_features ||= []
       @launch_party_features << changes if FeatureClassMapping.get_class(feature_name.to_s)
-      trigger_launchparty_feature_callbacks unless self.new_record?
+      # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
+      # after_commit for new record or modified record. 
+      trigger_launchparty_feature_callbacks unless self.id_changed?
     end
 
     # define your callback method in this format ->
