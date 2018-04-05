@@ -22,16 +22,16 @@ module Ember
       end
 
       def test_index_without_support_bot_feature
-        Ember::Admin::BotsController.any_instance.stubs(:bot_onboarded?).returns(false)
+        Account.any_instance.stubs(:bot_onboarded?).returns(false)
         get :index, controller_params(version: 'private')
         assert_response 403
         match_json(request_error_pattern(:require_feature, feature: 'Support Bot'))
-        Ember::Admin::BotsController.any_instance.unstub(:bot_onboarded?)
+        Account.any_instance.unstub(:bot_onboarded?)
       end
 
       def test_index_as_not_onboarded_multi_product_account
         enable_bot do
-          Ember::Admin::BotsController.any_instance.stubs(:bot_onboarded?).returns(false)
+          Account.any_instance.stubs(:bot_onboarded?).returns(false)
           product1 = create_product(portal_url: Faker::Internet.domain_name)
           product2 = create_product(portal_url: Faker::Internet.domain_name)
           get :index, controller_params(version: 'private')
@@ -39,25 +39,24 @@ module Ember
           match_json(bot_index_not_onboarded_multiproduct_pattern)
           product1
           product2
-          Ember::Admin::BotsController.any_instance.unstub(:bot_onboarded?)
+          Account.any_instance.unstub(:bot_onboarded?)
         end
       end
 
       def test_index_as_not_onboarded_multi_product_disabled_account
         enable_bot do
-          Ember::Admin::BotsController.any_instance.stubs(:bot_onboarded?).returns(false)
-          Ember::Admin::BotsController.any_instance.stubs(:fetch_products).returns([])
+          Account.any_instance.stubs(:bot_onboarded?).returns(false)
+          Account.current.products.destroy_all
           get :index, controller_params(version: 'private')
           assert_response 200
           match_json(bot_index_not_onboarded_main_portal_pattern)
-          Ember::Admin::BotsController.any_instance.unstub(:fetch_products)
-          Ember::Admin::BotsController.any_instance.unstub(:bot_onboarded?)
+          Account.any_instance.unstub(:bot_onboarded?)
         end
       end
 
       def test_index_onboarded_multi_product_account
         enable_bot do
-          Ember::Admin::BotsController.any_instance.stubs(:bot_onboarded?).returns(true)
+          Account.any_instance.stubs(:bot_onboarded?).returns(true)
           product1 = create_product(portal_url: Faker::Internet.domain_name)
           product2 = create_product(portal_url: Faker::Internet.domain_name)
           get :index, controller_params(version: 'private')
@@ -65,19 +64,18 @@ module Ember
           match_json(bot_index_onboarded_multiproduct_pattern)
           product1
           product2
-          Ember::Admin::BotsController.any_instance.unstub(:bot_onboarded?)
+          Account.any_instance.unstub(:bot_onboarded?)
         end
       end
 
       def test_index_onboarded_multi_product_disabled_account
         enable_bot do
-          Ember::Admin::BotsController.any_instance.stubs(:bot_onboarded?).returns(true)
-          Ember::Admin::BotsController.any_instance.stubs(:fetch_products).returns([])
+          Account.any_instance.stubs(:bot_onboarded?).returns(true)
+          Account.current.products.destroy_all
           get :index, controller_params(version: 'private')
           assert_response 200
           match_json(bot_index_onboarded_main_portal_pattern)
-          Ember::Admin::BotsController.any_instance.unstub(:fetch_products)
-          Ember::Admin::BotsController.any_instance.unstub(:bot_onboarded?)
+          Account.any_instance.unstub(:bot_onboarded?)
         end
       end
 
@@ -346,7 +344,9 @@ module Ember
             create_category.id
           end
           bot.portal.solution_category_metum_ids = category_ids
+          Ml::Bot.stubs(:update_ml).returns(true)
           put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: category_ids }, false)
+          Ml::Bot.unstub(:update_ml)
           assert_response 204
           assert_equal category_ids, bot.solution_category_metum_ids
         end

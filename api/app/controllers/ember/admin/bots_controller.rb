@@ -11,11 +11,7 @@ module Ember
       around_filter :handle_exception, only: [:training_completed, :mark_completed_status_seen, :enable_on_portal]
 
       def index
-        @bots = {
-          onboarded: bot_onboarded?
-        }
-        load_products
-        @bots
+        @bots = { onboarded: current_account.bot_onboarded?, products: current_account.bots_from_cache }
       end
 
       def new
@@ -219,24 +215,6 @@ module Ember
           }
         end
 
-        def load_products
-          products_details = []
-          portal = current_account.main_portal
-          logo_url = get_portal_logo_url(portal)
-          bot = portal.bot
-          if bot
-            bot_name = bot.name
-            bot_id = bot.id
-          end
-          products_details << { name: portal.name, portal_enabled: true, portal_id: portal.id, portal_logo: logo_url, bot_name: bot_name, bot_id: bot_id }
-          products = fetch_products
-          products.each do |product|
-            products_details << product.bot_info
-          end
-          @bots[:products] = products_details
-          @bots
-        end
-
         def delegator_hash
           @portal = get_portal(params[:portal_id])
           bot = @portal.bot if @portal
@@ -254,14 +232,6 @@ module Ember
 
         def constants_class
           'BotConstants'.freeze
-        end
-
-        def fetch_products
-          current_account.products.preload({ portal: :logo }, :bot)
-        end
-
-        def bot_onboarded?
-          Account.current.bots.exists?
         end
 
         def get_portal(portal_id)
