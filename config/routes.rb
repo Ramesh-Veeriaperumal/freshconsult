@@ -1699,6 +1699,7 @@ Helpkit::Application.routes.draw do
     end
 
     resources :scheduled_exports, only: [:index, :new, :create, :show, :destroy] do
+      get :clone_schedule, path: '/clone_schedule', on: :member
       get :download_file, path: '/download_file(/:file_name)', on: :member
     end
     #routes for v1 agent and group performance reports
