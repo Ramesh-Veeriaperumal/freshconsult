@@ -1,5 +1,6 @@
 require_relative '../../test_helper'
 require 'sidekiq/testing'
+Sidekiq::Testing.fake!
 
 class Archive::TicketsControllerTest < ActionController::TestCase
   include ArchiveTicketTestHelper
@@ -15,8 +16,8 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     super
     @account.make_current
     @account.enable_ticket_archiving(ARCHIVE_DAYS)
+    Sidekiq::Worker.clear_all
     @account.features.send(:archive_tickets).create
-    
     create_archive_ticket_with_assoc(
       created_at: TICKET_UPDATED_DATE,
       updated_at: TICKET_UPDATED_DATE,
@@ -88,6 +89,26 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     get :show, controller_params(version: 'private', id: 1)
     assert_response 403
   end
+
+  def test_worker_archive_delete_initialise
+    stub_archive_assoc_for_show(@archive_association) do
+      archive_ticket = @account.archive_tickets.find_by_ticket_id(@archive_ticket.id)
+      no_of_jobs = ::Archive::DeleteArchiveTicket.jobs.size
+      delete :destroy, controller_params(version: 'private', id: archive_ticket.display_id)
+      current_jobs = ::Archive::DeleteArchiveTicket.jobs.size
+      assert_equal no_of_jobs + 1, current_jobs
+      assert_response 204
+    end
+  end
+
+  def test_worker_archive_delete_without_ticket
+    no_of_jobs = ::Archive::DeleteArchiveTicket.jobs.size
+    delete :destroy, controller_params(version: 'private',id: 'q')
+    current_jobs = ::Archive::DeleteArchiveTicket.jobs.size
+    assert_equal no_of_jobs, current_jobs
+    assert_response 404
+  end
+
 
   private
 

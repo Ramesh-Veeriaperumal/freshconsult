@@ -215,6 +215,7 @@ defaults: &defaults
     - [ml_solutions_training]
     - [mixpanel_queue]
     - [bot_cleanup]
+    - [delete_archive_ticket]
 
 development:
   <<: *defaults

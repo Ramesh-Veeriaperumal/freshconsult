@@ -204,7 +204,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :archived_tickets ,  path: 'tickets/archived', controller: 'archive/tickets', only: [:show] do
+    resources :archived_tickets ,  path: 'tickets/archived', controller: 'archive/tickets', only: [:show, :destroy] do
       member do
         get :conversations, to: 'archive/conversations#ticket_conversations'
         get :activities, to: 'archive/tickets/activities#index'
