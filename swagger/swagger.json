@@ -3892,6 +3892,25 @@
         }
       }
     },
+    "/agents/accept_gdpr": {
+      "post": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Gdpr Acceptance",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/agents/me": {
       "get": {
         "tags": [

@@ -376,6 +376,7 @@ Helpkit::Application.routes.draw do
       collection do
         post :create_multiple
         get :revert_identity
+        post :complete_gdpr_acceptance
       end
       member do
         get :achievements

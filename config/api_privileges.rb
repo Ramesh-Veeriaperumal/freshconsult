@@ -158,4 +158,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/dashboard", only: %i(unresolved_tickets_data ticket_trends ticket_metrics)
     resource :"ember/year_in_review", only: [:share]
   end
+
+  view_admin do 
+    resource :"ember/agent", only: [:complete_gdpr_acceptance]
+  end
 end
