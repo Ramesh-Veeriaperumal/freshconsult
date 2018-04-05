@@ -4256,7 +4256,7 @@ en:
         email_not_unique: Email has already been taken
         email_invalid: Email is invalid
         user_emails: Please enter at least one contact detail
-        max_user_emails: A contact cannot have more than 5 emails
+        max_user_emails: A contact cannot have more than 10 emails
         max_user_companies: A contact cannot have more than 20 companies
         max_skills_per_account: Cannot create more than %{max_limit} skills
         max_skills_per_user: Cannot have more than %{max_limit} skills per agent
