@@ -238,4 +238,8 @@ class Account < ActiveRecord::Base
   def tam_default_company_fields_enabled?
     Account.current.tam_default_fields_enabled? &&  redis_key_exists?(TAM_FIELDS_ENABLED)
   end
+
+  def support_bot_configured?
+    support_bot_enabled? && bot_onboarded?
+  end
 end
