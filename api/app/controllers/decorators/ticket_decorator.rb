@@ -201,8 +201,6 @@ class TicketDecorator < ApiDecorator
       association_type: association_type,
       associated_tickets_count: associated_tickets_count,
       can_be_associated: can_be_associated?,
-      description: ticket_body.description_html,
-      description_text: ticket_body.description,
       custom_fields: custom_fields,
       tags: tag_names
     }
