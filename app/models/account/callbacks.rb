@@ -184,6 +184,7 @@ class Account < ActiveRecord::Base
       feature_name = changes[:launch] || changes[:rollback]
       @launch_party_features ||= []
       @launch_party_features << changes if FeatureClassMapping.get_class(feature_name.to_s)
+      admin_only_mint_on_launch(changes)
       trigger_launchparty_feature_callbacks unless self.new_record?
     end
 
@@ -200,6 +201,12 @@ class Account < ActiveRecord::Base
     def sync_name_helpdesk_name
       self.name = self.helpdesk_name if helpdesk_name_changed?
       self.helpdesk_name = self.name if name_changed?
+    end
+
+    def admin_only_mint_on_launch(feature_changes)
+      if feature_changes[:launch] && feature_changes[:launch].include?(:admin_only_mint)
+        self.set_falcon_redis_keys
+      end
     end
 
     def add_to_billing

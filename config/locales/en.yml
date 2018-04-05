@@ -11885,6 +11885,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       post_script: "PS: You can switch back any time you like."
       try_new_look: TRY IT OUT
       maybe_later: MAYBE LATER
+      admin_only_invite_msg: "We've crafted a modern experience which is fresher, faster and easier to use.<br/>Go on, take it for spin! Don’t worry, you can switch back any time you like :)"
+      admin_only_post_script: "PS: Only admins in your account can currently try out Mint.<br/>Go to Admin tab to bring your agents onboard."
   pts_plain: " pts"
   cloud_log_mailer:
     logger_email:
@@ -12133,6 +12135,13 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       satisfaction_survey: 'Includes satisfaction survey.'
       ticket_suverymonkey_survey: 'Includes text/link to survey in Surveymonkey'
       triggered_event: 'Details about the event that triggered the rule'
+  admin_upgrade:
+    enable_mint_all: "Enable Mint for agents"
+    enable_mint_title: "Allow agents to try the fresher and faster Mint experience"
+    enable_mint_info: "Agents can switch back to the old freshdesk at any time"
+    enable_mint_success: "Yay! Mint has successfully been enabled for all agents."
+    enable_mint_success_info: To disable the old Freshdesk completely, visit the admin tab in Mint
+    enable_mint_error: Mint has already been enabled for all agents. Refresh to see the latest settings.
   freshchat:
     admin:
       title_text: 'Freshchat'
