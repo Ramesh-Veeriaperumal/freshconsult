@@ -5,7 +5,7 @@ class Account < ActiveRecord::Base
                    :email_failures, :disable_emails, :skip_one_hop, :falcon_portal_theme, :freshid, :freshchat_integration,
                    :year_in_review_2017, :facebook_page_redirect, :announcements_tab, :ticket_central_publish,
                    :solutions_central_publish, :launch_smart_filter, :outgoing_attachment_limit_25,
-                   :incoming_attachment_limit_25, :whitelist_sso_login, :apigee]
+                   :incoming_attachment_limit_25, :whitelist_sso_login, :apigee, :admin_only_mint]
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, 
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
-      :freshchat
+      :freshchat, :disable_old_ui
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -221,7 +221,12 @@ class Account < ActiveRecord::Base
 
   def falcon_ui_enabled?(current_user = :no_user)
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
-    valid_user && (launched?(:falcon) || falcon_enabled?)
+    valid_user && (falcon_enabled? || check_admin_mint? || disable_old_ui_enabled?)
+  end
+
+  def check_admin_mint?
+    return false if User.current.nil?
+    admin_only_mint_enabled? && User.current.privilege?(:admin_tasks)
   end
 
   def falcon_support_portal_theme_enabled?
@@ -230,9 +235,13 @@ class Account < ActiveRecord::Base
 
   #this must be called instead of using launchparty in console or from freshops to set all necessary things needed
   def enable_falcon_ui
+    set_falcon_redis_keys
+    self.add_feature(:falcon)
+  end
+
+  def set_falcon_redis_keys
     hash_set = Hash[COMBINED_VERSION_ENTITY_KEYS.collect { |key| ["#{key}_LIST", Time.now.utc.to_i] }]
     set_others_redis_hash(version_key, hash_set)
-    self.add_feature(:falcon)
   end
 
   def tam_default_company_fields_enabled?
