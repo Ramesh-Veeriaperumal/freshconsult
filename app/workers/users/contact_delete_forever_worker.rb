@@ -35,13 +35,20 @@ class Users::ContactDeleteForeverWorker < BaseWorker
 
     def anonymize_data
       @user.user_emails = []
-      @user.save!
-      anonymizing_data = {
-        :email => nil, :name => "Deleted Agent",
-        :job_title => nil, :second_email => nil, :phone => nil, :mobile => nil, :twitter_id => nil, :description => nil, :time_zone => nil,
-        :fb_profile_id => nil, :address => nil, :string_uc04 => nil, :unique_external_id => "dummyagent#{@user.id}", :import_id => nil
-      }
-      @user.update_attributes!(anonymizing_data)
+      @user.email = nil
+      @user.name = "Deleted Agent"
+      @user.job_title = nil
+      @user.second_email = nil
+      @user.phone = nil
+      @user.mobile = nil
+      @user.twitter_id = nil
+      @user.description = nil
+      @user.time_zone = nil
+      @user.fb_profile_id = nil
+      @user.address = nil
+      @user.string_uc04 = nil
+      @user.unique_external_id = nil
+      @user.import_id = nil
       @user.external_id = nil
       @user.string_uc01 = nil
       @user.text_uc01 = nil
@@ -71,7 +78,8 @@ class Users::ContactDeleteForeverWorker < BaseWorker
     end
 
     def destroy_user_tickets
-      find_in_batches_and_destroy(@user.tickets.includes(:notes => [:attachments, :inline_attachments, :cloud_files, :shared_attachments, :note_old_body, :user]))
+      find_in_batches_and_destroy(@user.tickets.preload(:notes => [:attachments, 
+        :inline_attachments, :cloud_files, :shared_attachments, :note_old_body, :user]))
     end
 
     def destroy_user_notes

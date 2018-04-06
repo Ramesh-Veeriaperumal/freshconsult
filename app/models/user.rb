@@ -925,7 +925,13 @@ class User < ActiveRecord::Base
   def make_customer
     return true if customer?
     set_company_name
-    if update_attributes({:helpdesk_agent => false, :deleted => false})
+
+    self.helpdesk_agent = false
+    self.deleted = false
+    new_pref = { :was_agent => true }
+    self.merge_preferences = { :user_preferences => new_pref }
+
+    if self.save
       new_pref = { :was_agent => true }
       self.merge_preferences = { :user_preferences => new_pref }
       save
