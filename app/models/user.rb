@@ -932,9 +932,6 @@ class User < ActiveRecord::Base
     self.merge_preferences = { :user_preferences => new_pref }
 
     if self.save
-      new_pref = { :was_agent => true }
-      self.merge_preferences = { :user_preferences => new_pref }
-      save
       subscriptions.destroy_all
       self.cti_phone = nil
       agent.destroy
