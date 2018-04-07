@@ -4,7 +4,7 @@ module ImportCsvUtil
 
   ONE_MEGABYTE  = 1000000
   CUSTOMER_TYPE = ["contact", "company", "agent_skill"]
-  COMPANY_DELIMITER = "||"
+  IMPORT_DELIMITER = "||"
   VALID_CLIENT_MANAGER_VALUES = ["yes", "true"]
   AND_SYMBOL = "&"
 
