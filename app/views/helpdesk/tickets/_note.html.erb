@@ -3,6 +3,7 @@
  forward_note_id = "cnt-fwd-#{note.id.to_s()}"
  edit_id = "edit-#{note.id.to_s()}" 
  notable_object = @ticket || @parent
+ has_permission = current_user.has_ticket_permission?(notable_object) if current_user.present?
  %>
 <div id="<%= note_view_id %>" class="description count <%= cycle('stripe', '') %>">  
    	<a name="<%= "note#{note.id}" %>"></a>
@@ -24,7 +25,7 @@
 			<% end %>
 		</div> 
 		<div class="actions">
-	  	<% if privilege?(:manage_tickets) %>
+	  	<% if privilege?(:manage_tickets) && has_permission %>
         <% if privilege?(:edit_note, note) %>
 			    <%= link_to_function(t("edit"), "jQuery('##{notedetails}').hide(); jQuery('##{edit_id}').show().trigger('afterShow');", {:class => "slim-button"}) if(note.note? && note.user && note.user.agent?) %>
         <% end %>
@@ -44,7 +45,7 @@
 		<%= user_avatar(note.user, :thumb, "preview_pic" , { :width => "36px", :height => "36px" }) if note.user %>
     	<%= t(".posted_on", :user_name => link_to_user(note.user), :note_date => formated_date(note.created_at) ).html_safe %>
 		<br>
-		<%  if privilege?(:manage_tickets)
+		<%  if privilege?(:manage_tickets) && has_permission
 			conv_info = conversation_info(note) %>
 			<%= content_tag :span, truncate(conv_info, :length => 100), 
 					:rel => "hover-popover", 

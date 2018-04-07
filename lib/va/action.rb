@@ -10,6 +10,7 @@ class Va::Action
   
   EVENT_PERFORMER = -2
   ASSIGNED_AGENT = ASSIGNED_GROUP = 0
+  ACTION_ERROR = 'ACTION_FAILED'.freeze
 
   attr_accessor :action_key, :act_hash, :doer, :triggered_event, :va_rule, :skip_record_action, :logger_actions
 
@@ -64,9 +65,9 @@ class Va::Action
           return
         end
       end
-      Va::Logger::Automation.log "Unsupported action=#{action_key}"
+      Va::Logger::Automation.log "unsupported action=#{action_key}"
     rescue Exception => e
-      Va::Logger::Automation.log "Something is wrong in action=#{self.inspect}::Exception=#{e.message}::#{e.backtrace.join('\n')}"
+      Va::Logger::Automation.log_error(ACTION_ERROR, self, e)
     end
   end
   

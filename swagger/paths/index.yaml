@@ -213,6 +213,8 @@
   $ref: ./agents/assume_identity.yaml
 /agents/revert_identity:
   $ref: ./agents/revert_identity.yaml
+/agents/accept_gdpr:
+  $ref: ./agents/gdpr_acceptance.yaml  
 
 # Profiles
 /agents/me:

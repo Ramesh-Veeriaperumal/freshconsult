@@ -326,6 +326,26 @@ input[type=text].as-hint {
 	}
 }
 
+.admin-upgrade-banner {
+  background-color: #fff;
+  position: relative;
+  margin-bottom: 30px;
+  padding: 25px;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px 0 #dbdfe3;
+  border: solid 1px #d3dbda;
+
+
+  .admin-mint-upgrade {
+  	margin-top: 20px;
+  }
+
+  .admin-mint-title {
+    font-size: 18px;
+  	font-weight: 600;
+  }
+}
+
 .freshchat-edit {
 
 	.mint-bg-box,

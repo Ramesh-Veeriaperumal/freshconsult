@@ -1,5 +1,7 @@
 class Va::Logger::Automation
 
+  EXECUTION_COMPLETED = 'EXECUTION COMPLETED'
+
   class << self
     def log_path
       "#{Rails.root}/log/automation.log"
@@ -11,9 +13,9 @@ class Va::Logger::Automation
 
     def log content
       return if Thread.current[:automation_log_vars].blank?
-      context_txt = standard_content 
-      log_text = content.split('\n').map{ |c| "#{context_txt} #{c.inspect}" }.join('\n')
-      logger.debug log_text
+      context_txt = standard_content
+      log_text_array = content.split('\n').map{ |c| "#{context_txt}, content=#{c}" }
+      log_text_array.each {|log_text| logger.debug log_text}
     rescue => e
       Rails.logger.debug "Error in writing to automation.log #{content.inspect}"
       Rails.logger.debug e.inspect
@@ -22,9 +24,9 @@ class Va::Logger::Automation
 
     def standard_content
       automation_log_vars = Thread.current[:automation_log_vars]
-      content = "#{Thread.current[:message_uuid].try(:join, ' ')} A=#{automation_log_vars[:account_id]}::T=#{automation_log_vars[:ticket_id]}::U=#{automation_log_vars[:user_id]}"
-      content << "::R=#{automation_log_vars[:rule_id]}" if automation_log_vars[:rule_id]
-      content << "::#{Time.now.utc}"
+      content = "#{Time.now.utc.strftime '%Y-%m-%d %H:%M:%S'} uuid=#{Thread.current[:message_uuid].try(:join, ' ')}, A=#{automation_log_vars[:account_id]}, T=#{automation_log_vars[:ticket_id]}, U=#{automation_log_vars[:user_id]}, R=#{automation_log_vars[:rule_id]}"
+      content << ", Time=#{automation_log_vars[:time]}" if automation_log_vars[:time]
+      content << ", Executed=#{automation_log_vars[:executed]}" if automation_log_vars[:executed]
       content
     end
 
@@ -39,6 +41,23 @@ class Va::Logger::Automation
 
     def set_rule_id rule_id
       Thread.current[:automation_log_vars][:rule_id] = rule_id if rule_id && Thread.current[:automation_log_vars].present?
+    end
+
+    def log_execution_and_time time, executed
+      return if Thread.current[:automation_log_vars].blank?
+      Thread.current[:automation_log_vars][:time] = time.round(5) if time
+      Thread.current[:automation_log_vars][:executed] = executed if executed
+      log EXECUTION_COMPLETED
+      unset_execution_and_time
+    end
+
+    def log_error error, exception, args=nil
+      log "error_message=#{error}, info=#{args.inspect}, exception=#{exception.try(:message)}, backtrace=#{exception.try(:backtrace)}"
+    end
+
+    def unset_execution_and_time
+      Thread.current[:automation_log_vars][:time] = nil
+      Thread.current[:automation_log_vars][:executed] = nil
     end
 
     def unset_thread_variables

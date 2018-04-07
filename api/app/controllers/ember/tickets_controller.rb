@@ -13,7 +13,7 @@ module Ember
 
     SLAVE_ACTIONS = %w(latest_note).freeze
 
-    INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :ticket_old_body, :schema_less_ticket, :flexifield, :ticket_status, { requester: [:avatar, :flexifield, :companies, :user_emails, :tags] }, :custom_survey_results].freeze
+    INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :schema_less_ticket, :flexifield, :ticket_status, { requester: [:avatar, :flexifield, :companies, :user_emails, :tags] }, :custom_survey_results].freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
     SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties execute_scenario).freeze
 
@@ -65,7 +65,7 @@ module Ember
       ticket = @item.to_liquid
       @validation_klass = 'TicketValidation'
       return unless validate_body_params(@item, params)
-      
+
       begin
         @response_text = Liquid::Template.parse(params[:template_text]).render({ ticket: ticket }.stringify_keys)
         render 'ember/tickets/parse_liquid'
@@ -97,7 +97,7 @@ module Ember
           if @item.custom_field && CustomFieldDecorator.custom_field?(hash[:name])
             custom_string = "custom_fields."
             hash[:name] = custom_string << TicketDecorator.display_name(hash[:name])
-          elsif hash[:comment] 
+          elsif hash[:comment]
             hash.delete(:comment)
           end
         end
@@ -111,9 +111,12 @@ module Ember
 
     def latest_note
       @note = @item.conversation.first
-      return head(204) if @note.nil?
-      @user = ContactDecorator.new(@note.user, {})
-      response.api_root_key = :conversation
+      if @note.nil?
+        response.api_root_key = :ticket
+      else
+        @user = ContactDecorator.new(@note.user, {})
+        response.api_root_key = :conversation
+      end
     end
 
     def split_note
@@ -547,4 +550,3 @@ module Ember
       wrap_parameters(*wrap_params)
   end
 end
-

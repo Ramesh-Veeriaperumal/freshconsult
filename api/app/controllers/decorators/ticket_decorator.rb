@@ -201,8 +201,6 @@ class TicketDecorator < ApiDecorator
       association_type: association_type,
       associated_tickets_count: associated_tickets_count,
       can_be_associated: can_be_associated?,
-      description: ticket_body.description_html,
-      description_text: ticket_body.description,
       custom_fields: custom_fields,
       tags: tag_names
     }
@@ -304,6 +302,13 @@ class TicketDecorator < ApiDecorator
     {
       convo_token: Collaboration::Ticket.new.convo_token(display_id)
     }
+  end
+
+  def sender_email
+    record.requester.reload unless record.requester.emails.present?
+    if record.requester.emails.include?(schema_less_ticket.try(:sender_email))
+      schema_less_ticket.try(:sender_email)
+    end 
   end
 
   private

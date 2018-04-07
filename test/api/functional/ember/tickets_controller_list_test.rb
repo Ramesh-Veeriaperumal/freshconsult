@@ -37,6 +37,7 @@ module Ember
 
     def setup
       super
+      @private_api = true
       before_all
     end
 

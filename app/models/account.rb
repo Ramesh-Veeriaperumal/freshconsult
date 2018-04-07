@@ -659,6 +659,14 @@ class Account < ActiveRecord::Base
     'active_suspended'
   end
 
+  def bots_hash
+    [main_portal, products.preload({ portal: [:logo, :bot] })].flatten.map { |bot_parent| bot_parent.bot_info }
+  end
+
+  def bot_onboarded?
+    !bots_count_from_cache.zero?
+  end
+
   protected
   
     def external_url_is_valid?(url) 

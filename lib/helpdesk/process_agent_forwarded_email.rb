@@ -8,7 +8,7 @@ module Helpdesk
     def identify_original_requestor(content)
       if content
         t_content = decode_brackets_in_text(content.gsub("\r\n", "\n"))
-        from_regex = "?:From\s?:|De\s?:|Desde\s?:|Von\s?:|Van\s?:"
+        from_regex = "?:From\s?:|De\s?:|Desde\s?:|Von\s?:|Van\s?:|Fra\s?:"
         from_regex = $redis_others.get(AGENT_FORWARD_FROM_REGEX) || from_regex
         regex_arr = [
           Regexp.new(/^\s*\*?(#{from_regex})\*?\s(.*)\s+\[mailto:(.*)\]/), # From: Sample <mailto:sample@example.com>
@@ -47,7 +47,9 @@ module Helpdesk
           cc_text = "" 
           to_text = ""
           parsed_header_content.sub!(/^((>\s)?\*?Cc:\*?)/, "Cc:") # Cc: Sample <sample@example.com> or > Cc: Sample <sample@example.com>
-          parsed_header_content.sub!(/^((>\s)?\*?(?:To:|Pour:|Para:|Zu:|Aan:)\*?)/, "To:")
+          to_regex = "To|Pour|Para|Zu|Aan|Til"
+          to_regex = $redis_others.get(AGENT_FORWARD_TO_REGEX) || to_regex
+          parsed_header_content.sub!(/^((>\s)?\*?(?:#{to_regex}):\*?)/, "To:")
 
           parsed_header_content.split("\n").each do |line|
             if (line.start_with?("Cc")) 

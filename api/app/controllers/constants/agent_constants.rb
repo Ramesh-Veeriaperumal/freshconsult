@@ -1,5 +1,5 @@
 module AgentConstants
-  LOAD_OBJECT_EXCEPT = %i[create_multiple].freeze
+  LOAD_OBJECT_EXCEPT = %i[create_multiple complete_gdpr_acceptance].freeze
   STATES = %w(occasional fulltime).freeze
   INDEX_FIELDS = %w(state email phone mobile only).freeze
   UPDATE_ARRAY_FIELDS = %w(group_ids role_ids).freeze

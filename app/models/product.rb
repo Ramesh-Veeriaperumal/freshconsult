@@ -92,14 +92,9 @@ class Product < ActiveRecord::Base
   end
 
   def bot_info
-    bot_product_info = if portal
-                         logo = portal.logo
-                         logo_url = logo.content.url if logo.present?
-                         bot_name, bot_id = [bot.name, bot.id] if bot
-                         { name: name, portal_enabled: true, portal_id: portal.id, portal_logo: logo_url, bot_name: bot_name, bot_id: bot_id }
-                       else
-                         { name: name, portal_enabled: false }
-                       end
+    product_bot_info = { name: name, portal_enabled: portal.present? }
+    product_bot_info = portal.bot_info.merge!(product_bot_info) if portal
+    product_bot_info
   end
 
   private
