@@ -157,7 +157,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"announcement", :only => [:index, :account_login_url]
     resource :"email_preview"
     resource :"doorkeeper/authorize"
-    resource :"archive/ticket", :only => [:show]
+    resource :"archive/ticket", :only => [:show, :destroy]
     resource :"archive/conversation", :only => [:ticket_conversations]
     resource :"archive/tickets/activity", only: [:index]
   end
@@ -606,6 +606,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/cloud_elements/crm", :only => [:instances, :edit, :update, :settings, :create]
     resource :"integrations/microsoft_team", :only => [:oauth, :install]
     resource :"integrations/google_hangout_chat", :only => [:oauth, :install]
+    resource :"user", :only => [:enable_falcon_for_all, :disable_old_helpdesk]
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]

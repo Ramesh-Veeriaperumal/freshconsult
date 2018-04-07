@@ -32,6 +32,7 @@ class Account < ActiveRecord::Base
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
 
   after_commit :update_crm_and_map, on: :update, :if => :account_domain_changed?
+  after_commit :update_bot, on: :update, if: :update_bot?
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
   after_commit :trigger_launchparty_feature_callbacks, on: :create
@@ -148,8 +149,21 @@ class Account < ActiveRecord::Base
       @all_changes.key?("reputation") && self.verified?
     end
 
+    def update_bot?
+      return false unless account_domain_changed? || account_ssl_changed?
+      portal = self.main_portal
+      return false unless portal.portal_url.blank?
+      @bot = portal.bot
+      return false unless @bot.present?
+      true
+    end
+
     def account_domain_changed?
       @all_changes.key?("full_domain")
+    end
+
+    def account_ssl_changed?
+      @all_changes.key?("ssl_enabled")
     end
 
     def account_name_changed?
@@ -170,6 +184,7 @@ class Account < ActiveRecord::Base
       feature_name = changes[:launch] || changes[:rollback]
       @launch_party_features ||= []
       @launch_party_features << changes if FeatureClassMapping.get_class(feature_name.to_s)
+      admin_only_mint_on_launch(changes)
       trigger_launchparty_feature_callbacks unless self.new_record?
     end
 
@@ -186,6 +201,12 @@ class Account < ActiveRecord::Base
     def sync_name_helpdesk_name
       self.name = self.helpdesk_name if helpdesk_name_changed?
       self.helpdesk_name = self.name if name_changed?
+    end
+
+    def admin_only_mint_on_launch(feature_changes)
+      if feature_changes[:launch] && feature_changes[:launch].include?(:admin_only_mint)
+        self.set_falcon_redis_keys
+      end
     end
 
     def add_to_billing
@@ -431,6 +452,16 @@ class Account < ActiveRecord::Base
 
     def freshid_signup_allowed?
       redis_key_exists? FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED
+    end
+
+    def update_bot
+      response, response_code = Freshbots::Bot.update_bot(@bot)
+      raise response unless response_code == Freshbots::Bot::BOT_UPDATION_SUCCESS_STATUS
+    rescue => e
+      error_msg = "FRESHBOTS UPDATE ERROR FOR ACCOUNT DOMAIN/SSL CHANGE :: Bot external id : #{@bot.external_id}
+                         :: Account id : #{@bot.account_id} :: Portal id : #{@bot.portal_id}"
+      NewRelic::Agent.notice_error(e, { description: error_msg })
+      Rails.logger.error("#{error_msg} :: #{e.inspect}")
     end
 
 end

@@ -214,6 +214,19 @@ class Portal < ActiveRecord::Base
     account_domains.include?(hostname.downcase) if hostname.present?
   end
 
+  def bot_info
+    logo_url = logo.content.url if logo.present?
+    bot_name, bot_id = [bot.name, bot.id] if bot
+    {
+      name: name,
+      portal_enabled: true,
+      portal_id: id,
+      portal_logo: logo_url,
+      bot_name: bot_name,
+      bot_id: bot_id            
+    }
+  end
+
   private
 
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language

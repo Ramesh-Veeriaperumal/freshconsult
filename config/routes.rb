@@ -737,6 +737,9 @@ Helpkit::Application.routes.draw do
 
   resource :user_session
 
+  match '/enable_falcon_for_all' => 'users#enable_falcon_for_all', :as => :enable_falcon_for_all, via: :post
+  match '/disable_old_helpdesk' => 'users#disable_old_helpdesk', :as => :disable_old_helpdesk, via: :post
+
   match '/enable_falcon' => 'users#enable_falcon', :as => :enable_falcon, via: :post
   match '/disable_falcon' => 'users#disable_falcon', :as => :disable_falcon, via: :post
   match '/register/:activation_code' => 'activations#new', :as => :register

@@ -6,19 +6,19 @@ class Import::Customers::Contact < Import::Customers::Base
 
   def default_validations
     item_param = @params_hash[:"#{@type}"]
-    item_param[:name] = "" if item_param[:name].nil? && item_param[:email].blank?
+    item_param[:time_zone].gsub!(/&amp;/, AND_SYMBOL) unless item_param[:time_zone].blank?
 
     cm_param = clean_client_manager_param item_param[:client_manager]
     company_param = clean_company_param item_param[:company_name]
     first_valid_company = company_param.compact[0]
     item_param[:email].strip! if item_param[:email]
 
-    if is_user? && Account.current.multiple_user_companies_enabled?
+    if import_multiple_companies?
       item_param[:client_manager] = cm_param.join(COMPANY_DELIMITER)
       item_param[:first_company_name] = first_valid_company
       item_param[:company_name] = company_param.join(COMPANY_DELIMITER)
     else
-      item_param[:client_manager] = cm_param[0]
+      item_param[:client_manager] = cm_param[0] if cm_param.present?
       item_param[:company_id] = current_account.companies.
                                 find_or_create_by_name(first_valid_company).id unless
                                 first_valid_company.blank?
@@ -38,8 +38,9 @@ class Import::Customers::Contact < Import::Customers::Base
   private
 
   def load_item item_param
-    search_options = {:email => item_param[:email], :twitter_id => item_param[:twitter_id]}
-    @item = current_account.all_users.find_by_an_unique_id(search_options)
+    @item = current_account.all_users.find_by_an_unique_id({:email => item_param[:email]})
+    @item ||= current_account.all_users.find_by_an_unique_id({:twitter_id => item_param[:twitter_id],
+                :unique_external_id => item_param[:unique_external_id]})
     @params_hash[:user][:deleted] = false unless @item.nil?
   end
 
@@ -51,6 +52,6 @@ class Import::Customers::Contact < Import::Customers::Base
 
   def clean_company_param comp_param
     company_names = comp_param.to_s.strip.split(COMPANY_DELIMITER)
-    company_names.map! { |c_name| c_name.squish unless c_name.blank? }
+    company_names.map! { |c_name| c_name.squish.gsub(/&amp;/, AND_SYMBOL) unless c_name.blank? }
   end
 end

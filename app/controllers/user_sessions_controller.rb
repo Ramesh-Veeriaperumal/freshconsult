@@ -16,11 +16,12 @@ class UserSessionsController < ApplicationController
   skip_before_filter :check_privilege, :verify_authenticity_token  
   skip_before_filter :require_user, :except => [:destroy, :freshid_destroy]
   skip_before_filter :check_account_state
-  before_filter :check_for_sso_login, :check_sso_params, :only => :sso_login
+  before_filter :check_for_sso_login, only: [:sso_login, :jwt_sso_login]
+  before_filter :check_sso_params, :only => :sso_login
   skip_before_filter :check_day_pass_usage
   before_filter :set_native_mobile, :only => [:create, :destroy, :freshid_destroy]
   skip_after_filter :set_last_active_time
-  before_filter :check_for_sso_login, :decode_jwt_payload, :check_jwt_required_fields, :only => [:jwt_sso_login]
+  before_filter :decode_jwt_payload, :check_jwt_required_fields, :only => [:jwt_sso_login]
   before_filter :redirect_to_freshid_login, :only =>[:create], :if => :is_freshid_agent_and_not_mobile?
 
   def new

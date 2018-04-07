@@ -92,7 +92,7 @@ module ArchiveTicketTestHelper
   end
 
   def cleanup_archive_ticket ticket, options={}
-    @account.archive_tickets.find_by_display_id(ticket.id).destroy
+    @account.archive_tickets.where(display_id:ticket.id).destroy_all
   end
 
   def create_archive_association(_ticket, params_hash)

@@ -21,9 +21,9 @@ class Va::Performer
   end
 
   def matches? doer, ticket
-    Va::Logger::Automation.log "performer type=#{type}::AG=#{ticket.responder_id.inspect}::RQ=#{ticket.requester_id.inspect}"
+    Va::Logger::Automation.log "performer type=#{type}, members=#{members.inspect}"
+    Va::Logger::Automation.log "ticket agent=#{ticket.responder_id}, requester=#{ticket.requester_id}"
     return false unless check_type doer, ticket
-    Va::Logger::Automation.log "Agent list in rule=#{members.inspect}"
     members.nil? ? true : (check_members doer, ticket)
   end
 

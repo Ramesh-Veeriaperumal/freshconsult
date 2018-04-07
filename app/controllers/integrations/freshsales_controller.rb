@@ -106,7 +106,9 @@ class Integrations::FreshsalesController < Admin::AdminController
     if config_hash['deal_view'].to_bool
       config_hash['deal_fields'] = params[:deals].join(",") unless params[:deals].nil?
       config_hash['deal_labels'] = params['deal_labels']
-      config_hash['agent_settings'] = params["agent_settings"]["value"]
+      config_hash['agent_settings'] = params["agent_settings"] ? 
+                                      params["agent_settings"]["value"] : 'false'
+
       if config_hash['agent_settings'].to_bool
         config_hash["deal_stage_choices"] = service_obj.receive(:deal_stage_choices)
       else

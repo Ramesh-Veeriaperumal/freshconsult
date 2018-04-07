@@ -15,7 +15,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/tickets/bulk_action", only: %i(bulk_execute_scenario bulk_link)
     resource :"ember/tickets/associate", only: [:link, :unlink, :associated_tickets, :prime_association]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
-    resource :"ember/attachment", only: [:create]
+    resource :"ember/attachment", only: [:create, :show]
     resource :"ember/freshcaller/setting", only: %i[index desktop_notification redirect_url]
     resource :"ember/conversation", only: %i(create ticket_conversations full_text)
     resource :"ember/subscription"
@@ -157,5 +157,9 @@ Authority::Authorization::PrivilegeList.build do
   view_reports do
     resource :"ember/dashboard", only: %i(unresolved_tickets_data ticket_trends ticket_metrics)
     resource :"ember/year_in_review", only: [:share]
+  end
+
+  view_admin do 
+    resource :"ember/agent", only: [:complete_gdpr_acceptance]
   end
 end

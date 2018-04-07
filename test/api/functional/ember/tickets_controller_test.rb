@@ -920,7 +920,9 @@ module Ember
     def test_latest_note_ticket_without_notes
       ticket = create_ticket
       get :latest_note, construct_params({ version: 'private', id: ticket.display_id }, false)
-      assert_response 204
+
+      assert_response 200
+      match_json(latest_note_as_ticket_pattern(ticket))
     end
 
     def test_latest_note_ticket_with_private_note

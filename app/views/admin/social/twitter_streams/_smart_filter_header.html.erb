@@ -6,14 +6,15 @@
     <div class="row-fluid">
       <div class="span1 smart_filter_button">
         <% if keyword_rules %>
-          <%= f.check_box(:private, :checked => @twitter_handle.smart_filter_enabled, :class => 'tooltip',:name => "smart_filter_enabled", "rel" => "toggle",  "data-checked-label" => t("plain_yes"), "data-unchecked-label" => t("plain_no") )  %>
+          <%= f.check_box(:private, :checked => @twitter_handle.smart_filter_enabled, :id => 'smart_filter_toggle', :class => 'tooltip ',:name => "smart_filter_enabled", "rel" => "toggle",  "data-checked-label" => t("plain_yes"), "data-unchecked-label" => t("plain_no") )  %>
         <% else %>
           <%= f.check_box(:private, :checked => true, :disabled => true, :class => 'tooltip',:name => "smart_filter_without_keywords", "rel" => "toggle",  "data-checked-label" => t("plain_yes"), "data-unchecked-label" => t("plain_no") )  %>
         <% end %>
       </div>
+
       <div class="form_data span10">
         <div class="control-group span12">
-          <label class="label-bold"><%= t('admin.social.smart_filter.header') %></label>
+          <label class="label-bold" id="smart_filter_label_<%= filter_val %>" ><%= t('admin.social.smart_filter.enabled_header') %></label>
           <label><%= t('admin.social.smart_filter.desc_'+filter_val) %></label>    
         </div>
         <div class="control-group span6">

@@ -1,5 +1,6 @@
 class ApiAgentsController < ApiApplicationController
   skip_before_filter :check_privilege, only: :revert_identity
+  before_filter :check_gdpr_pending?, only: :complete_gdpr_acceptance
   SLAVE_ACTIONS = %w(index achievements).freeze
 
   def update
@@ -15,6 +16,11 @@ class ApiAgentsController < ApiApplicationController
   def destroy
     @item.user.make_customer
     head 204
+  end
+
+  def complete_gdpr_acceptance
+    User.current.remove_gdpr_preference
+    User.current.save ? (head 204) : render_errors(gdpr_acceptance: :not_allowed_to_accept_gdpr)
   end
 
   private
@@ -88,6 +94,10 @@ class ApiAgentsController < ApiApplicationController
 
     def scoper
       current_account.all_agents
+    end
+
+    def check_gdpr_pending?
+      render_request_error :access_denied, 403 unless User.current.gdpr_pending?
     end
 
     def me?

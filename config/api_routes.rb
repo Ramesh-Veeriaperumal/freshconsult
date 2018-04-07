@@ -204,7 +204,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :archived_tickets ,  path: 'tickets/archived', controller: 'archive/tickets', only: [:show] do
+    resources :archived_tickets ,  path: 'tickets/archived', controller: 'archive/tickets', only: [:show, :destroy] do
       member do
         get :conversations, to: 'archive/conversations#ticket_conversations'
         get :activities, to: 'archive/tickets/activities#index'
@@ -345,7 +345,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :attachments, controller: 'ember/attachments', only: [:create, :destroy] do
+    resources :attachments, controller: 'ember/attachments', only: [:create, :show, :destroy] do
       member do
         put :unlink
       end
@@ -376,6 +376,7 @@ Helpkit::Application.routes.draw do
       collection do
         post :create_multiple
         get :revert_identity
+        post :complete_gdpr_acceptance
       end
       member do
         get :achievements
@@ -453,7 +454,7 @@ Helpkit::Application.routes.draw do
         end
       end
     end
-    resources :attachments, controller: 'ember/attachments', only: [:create, :destroy] do
+    resources :attachments, controller: 'ember/attachments', only: [:create, :show, :destroy] do
       member do
         put :unlink
       end

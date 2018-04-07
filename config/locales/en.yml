@@ -356,7 +356,7 @@ en:
   freshpipe_email_disabled: "All outgoing emails and notifications are currently disabled since the data migration is in progress."
   reauthorize_facebook: "Reauthorize your facebook account."
   twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
-  smart_filter_disabled: "Smart filter is temporarily down. We are working on getting it up and running."
+  smart_filter_disabled: "Social Signals is temporarily down. We are working on getting it up and running."
   reauthorize_twitter: Reauthorize your twitter handle.
   ecommerce_reauth:  "Your Ecommerce account is inaccessible. It looks like your auth token has expired. "
   reauthorize_ecommerce: Reauthorize your ecommerce account.
@@ -974,7 +974,7 @@ en:
         handle_title2: "Converting specific tweets to tickets automatically"
         handle_smart_filter_title: "Converting relevant tweets to tickets automatically"
         handle_info2: "You can convert tweets with certain keywords into tickets automatically using Ticket Rules. For example, every tweet mentioning your twitter handle with the words “not working” or “bug” could be converted into tickets and assigned to the “Bug report” group. And you can create another rule for tweets containing the words “system down” and assign them to your “Dev ops” group. The first rule satisfied will be executed. You can also link these tickets to specific products."
-        handle_smart_filter_info: "Smart filter is powered by a machine learning algorithm ( a system capable of learning and improving with feedback over time). This feature will automatically start converting only relevant tweets that require your attention into tickets. <br>You can provide feedback to the system such that it adopts to your business.<br><br>1. In case a tweet is converted into a ticket; Marking the ticket as spam to teach the system to not convert similar tweets into tickets.<br><br>2. In case a tweet was not converted into a ticket; On the social tab, clicking on Convert into a ticket will teach the system to convert similar tweets into tickets.<br><br>You can choose to simply use the smart filter alone or a combination of keyword based filters and smart filter if you have specific business keywords. <br>When you are using a combination of keyword based filters and smart filter, the keyword based filters are given precedence over the smart filter. Please note that smart filter support only English language for now."
+        handle_smart_filter_info: "Social Signals is powered by a machine learning algorithm ( a system capable of learning and improving with feedback over time). This feature will automatically start converting only relevant tweets that require your attention into tickets. <br>You can provide feedback to the system such that it adopts to your business.<br><br>1. In case a tweet is converted into a ticket; Marking the ticket as spam to teach the system to not convert similar tweets into tickets.<br><br>2. In case a tweet was not converted into a ticket; On the social tab, clicking on Convert into a ticket will teach the system to convert similar tweets into tickets.<br><br>You can choose to simply use the social signals alone or a combination of keyword based filters and social signals if you have specific business keywords. <br>When you are using a combination of keyword based filters and social signals, the keyword based filters are given precedence over the social signals. Please note that social signals support only English language for now."
         stream_title1: "Defining social streams"
         stream_info1: "You can create multiple streams to search for different sets of keywords on Twitter. Enter the main keywords you want to look for, based on your business and even exclude certain keywords, hashtags and handles to narrow your search. For example, you may not want to see tweets by your marketers or executives in the custom stream you created to monitor support queries coming in through your brand and brand acronyms.Each stream can be made visible to one or many agent groups. You can also pick the default reply handle for each stream."
         stream_title2: "Converting specific tweets to tickets automatically"
@@ -1044,7 +1044,8 @@ en:
         include_helptext: "example: support, \"System down\", @insideapple"
         brief_desc: "Tweets will get converted to tickets automatically based on first matching filter"
       smart_filter:
-        header: "Enable Smart Filter"
+        enabled_header: "Social Signals Enabled"
+        disabled_header: "Enable Social Signals"
         desc_with_keywords: "Automatically convert relevant tweets to tickets. Supports only English language for now."
         desc_without_keywords: "Automatically convert only relevant @mentions to tickets. Supports only English language for now." 
         convert_tweet: "Start converting tweets into tickets"
@@ -11884,6 +11885,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       post_script: "PS: You can switch back any time you like."
       try_new_look: TRY IT OUT
       maybe_later: MAYBE LATER
+      admin_only_invite_msg: "We've crafted a modern experience which is fresher, faster and easier to use.<br/>Go on, take it for spin! Don’t worry, you can switch back any time you like :)"
+      admin_only_post_script: "PS: Only admins in your account can currently try out Mint.<br/>Go to Admin tab to bring your agents onboard."
   pts_plain: " pts"
   cloud_log_mailer:
     logger_email:
@@ -12132,6 +12135,13 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       satisfaction_survey: 'Includes satisfaction survey.'
       ticket_suverymonkey_survey: 'Includes text/link to survey in Surveymonkey'
       triggered_event: 'Details about the event that triggered the rule'
+  admin_upgrade:
+    enable_mint_all: "Enable Mint for agents"
+    enable_mint_title: "Allow agents to try the fresher and faster Mint experience"
+    enable_mint_info: "Agents can switch back to the old freshdesk at any time"
+    enable_mint_success: "Yay! Mint has successfully been enabled for all agents."
+    enable_mint_success_info: To disable the old Freshdesk completely, visit the admin tab in Mint
+    enable_mint_error: Mint has already been enabled for all agents. Refresh to see the latest settings.
   freshchat:
     admin:
       title_text: 'Freshchat'
