@@ -78,8 +78,18 @@ class Users::ContactDeleteForeverWorker < BaseWorker
     end
 
     def destroy_user_tickets
-      find_in_batches_and_destroy(@user.tickets.preload(:notes => [:attachments, 
-        :inline_attachments, :cloud_files, :shared_attachments, :note_old_body, :user]))
+      find_in_batches_and_destroy(
+        @user.tickets.preload(:notes => [
+          :attachments, :inline_attachments, :cloud_files, :shared_attachments, 
+          :note_old_body, :user
+        ])) do |ticket|
+          if ticket.associated_ticket? && TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[ticket.association_type] == :assoc_parent
+            child_tickets = @account.tickets.where(id: ticket.associates)
+            child_tickets.each do |child_ticket|
+              child_ticket.destroy
+            end
+          end
+        end
     end
 
     def destroy_user_notes
@@ -109,9 +119,11 @@ class Users::ContactDeleteForeverWorker < BaseWorker
     def find_in_batches_and_destroy(items)
       items.find_in_batches(batch_size: 500) do |objs|
         objs.each do |obj|
+          if block_given?
+            yield(obj)
+          end
           obj.destroy
         end
       end
     end
 end
-
