@@ -2,6 +2,7 @@ require "tempfile"
 require 'zip'
 require 'zip/filesystem'
 require 'fileutils'
+require 'benchmark'
 
 class Helpdesk::ExportDataWorker < Struct.new(:params)
 
@@ -41,6 +42,10 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
     rescue Exception => e
       @data_export.failure!(e.message + "\n" + e.backtrace.join("\n"))
       NewRelic::Agent.notice_error(e)
+      DataExportFailureMailer.data_backup_failure({:email => params[:email],
+                                    :domain => params[:domain],
+                                    :host => @current_account.host}
+                                    )
     end
     Account.reset_current_account
   end
@@ -125,15 +130,22 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
     file_path = File.join(@out_dir , filename) 
     File.open(file_path, 'w') {|f| f.write(res_data) }
   end
-  
-  def export_data   
-      export_forums_data  #Forums data
-      export_solutions_data #Solutions data
-      export_users_data #Users data
-      export_companies_data #Companies data
-      export_tickets_data #Tickets data
-      export_archived_tickets_data #Archived tickets data
-      export_groups_data #Groups data
+
+  def export_data
+    Rails.logger.info "#{@current_account.id} : account export : started : starting forums"
+    total = Benchmark.realtime {
+      benchmark('Forums', 'Solutions') {export_forums_data} #Forums data
+      benchmark('Solutions', 'Users') {export_solutions_data} #Solutions data
+      benchmark('Users ', 'Companies') {export_users_data} #Users data
+      benchmark('Companies', 'Tickets') {export_companies_data} #Companies data
+      benchmark('Tickets', 'Archived Tickets') {export_tickets_data} #Tickets data
+      benchmark('Archived Tickets', 'Groups') {export_archived_tickets_data} #Archived tickets data
+      benchmark('Groups', 'upload : export completed') {export_groups_data} #Groups data
+    }
+    Rails.logger.info "#{@current_account.id} : account export total time : #{total}"
   end
-  
+  def benchmark(current_model, next_model)
+    result = Benchmark.realtime{ yield }
+    Rails.logger.info "#{@current_account.id} : account export : #{current_model} completed time_taken= #{result} : starting #{next_model}"
+  end
 end

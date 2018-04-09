@@ -176,7 +176,8 @@ private
 
       auth_waiting = $redis_integrations.perform_redis_op('get', auth_waiting_key)
       unless auth_waiting
-        flash[:notice] = is_fd_authorized ? t(:'integrations.microsoft_teams.bot_user_not_connected') : t(:'integrations.microsoft_teams.fd_user_not_connected') unless is_teams_active
+        message = is_fd_authorized ? t(:'integrations.microsoft_teams.bot_user_not_connected') : t(:'integrations.microsoft_teams.fd_user_not_connected') unless is_teams_active
+        @ms_teams_content = get_content_tag_for_apps(message) if message
       else
         teams_class_names << 'disabled'
       end

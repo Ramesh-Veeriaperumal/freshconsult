@@ -47,6 +47,7 @@
                         <%= t.name unless current_user.id === t.user.id %>
                       </b>
                       <div class="schedule-actions item_actions pull-right <%= ((current_user.id === t.user.id) ? 'pt7' : 'pt10') %>">
+                        <%= link_to "#{t('clone')}" , clone_schedule_reports_scheduled_export_path(t) , :class => 'btn btn-mini clone-schedule' if current_user.id === t.user.id && @scheduled_exports_account_count < @scheduled_max_count  %>
                         <%= link_to "<i class='ficon-trash-o fsize-22 schedule-icon tooltip' data-original-title= '#{t('delete')}'></i>".html_safe, '',:data => { :controls_modal => "index-delete-modal", :delete_url => "#{reports_scheduled_export_path(t)}"}, :class => 'delete-schedule' if (current_user.id === t.user.id) %>
                         <%= content_tag :span, "Created by #{t.user.name}", class: 'muted' unless (current_user.id === t.user.id)%>
                       </div>

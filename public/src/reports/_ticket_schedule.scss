@@ -18,6 +18,9 @@
 		  &:first-child {
 		    @include border-width(1px 0px 1px 0px);
 		  }
+		  .clone-schedule{
+		  	margin-top: -8px;
+		  }
 		  .scheduled-export-disabled{
 		    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAH0lEQVQIW2NkQAWSjEh8SQYGhucwATAHJAkSgHNAAgBJLgMeVQZnUgAAAABJRU5ErkJggg==);
 		    border-color: #e5e5e5;

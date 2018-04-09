@@ -38,6 +38,9 @@ window.App = window.App || {};
 				case 'reports/scheduled_exports/edit_activity':
 					this.current_module = "EditActivity";
 					break;
+				case 'reports/scheduled_exports/clone_schedule':
+					this.current_module = "CloneSchedule";
+					break;
 			}
 		},
 

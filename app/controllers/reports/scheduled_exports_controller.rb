@@ -11,11 +11,11 @@ class Reports::ScheduledExportsController < ApplicationController
 
   before_filter :set_selected_tab
   before_filter :access_denied, :unless => :require_feature_and_privilege
-  before_filter :access_denied, :unless => :has_properties_export?, :only => [:new, :create, :show, :destroy, :download_file]
-  before_filter :load_object, :only => [:show, :destroy, :download_file]
+  before_filter :access_denied, :unless => :has_properties_export?, :only => [:new, :create, :show, :destroy, :download_file, :clone_schedule]
+  before_filter :load_object, :only => [:show, :destroy, :download_file,:clone_schedule]
   before_filter :check_download_permission, :only => :download_file
-  before_filter :check_schedule_owner_permission, :only => [:show, :destroy]
-  before_filter :load_config, :generate_id, :only => :new
+  before_filter :check_schedule_owner_permission, :only => [:show, :destroy, :clone_schedule]
+  before_filter :load_config, :generate_id, :only => [:new, :clone_schedule]
   before_filter :set_filter_data, :set_fields_data, :set_type_and_email_recipients, :only => :create
   before_filter :access_denied, :unless => :has_activity_export?, :only => [:edit_activity, :update_activity]
   before_filter :load_activity_export, :only => [:edit_activity, :update_activity]
@@ -74,6 +74,12 @@ class Reports::ScheduledExportsController < ApplicationController
 
   def show
     edit_data
+  end
+
+  def clone_schedule
+    edit_data
+    @scheduled_export.name = "#{t('dispatch.copy_of')} #{@scheduled_export.name}"
+    render :action => "new"
   end
 
   def edit_activity
