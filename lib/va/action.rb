@@ -67,7 +67,7 @@ class Va::Action
       end
       Va::Logger::Automation.log "unsupported action=#{action_key}"
     rescue Exception => e
-      Va::Logger::Automation.log_error(ACTION_ERROR, self, e)
+      Va::Logger::Automation.log_error(ACTION_ERROR, e, self)
     end
   end
   
