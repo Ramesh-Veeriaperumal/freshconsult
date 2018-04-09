@@ -350,7 +350,7 @@ input[type=text].as-hint {
 
 	.mint-bg-box,
 	.chat-content-card {
-		display: block;
+	  display: block;
 	  min-height: 60px;
 	  border: 1px #ebeef0 solid;
 	  padding: 22px 20px 8px 20px;
@@ -363,8 +363,8 @@ input[type=text].as-hint {
 		min-height: 36px;
 	}
 	.mint-bg-box {
-		background-image: url("/images/mint-brand-bg.svg");
-		background-size: 70%;
+	  background-image: url("/images/mint-brand-bg.svg");
+	  background-size: 70%;
 	  background-repeat: no-repeat;
 	  background-position: 100% 100%;
 	  padding: 30px 20px;

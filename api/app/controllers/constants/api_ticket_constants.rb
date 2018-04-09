@@ -38,8 +38,8 @@ module ApiTicketConstants
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze
   SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :chat, :mobihelp, :feedback_widget).values.freeze
 
-  PIPE_CREATE_FIELDS = CREATE_FIELDS | %w(pending_since created_at updated_at on_state_time)
-  PIPE_UPDATE_FIELDS = UPDATE_FIELDS | %w(pending_since created_at updated_at)
+  PIPE_CREATE_FIELDS = CREATE_FIELDS | %w(pending_since created_at updated_at on_state_time closed_at)
+  PIPE_UPDATE_FIELDS = UPDATE_FIELDS | %w(pending_since created_at updated_at closed_at)
 
   CREATE_CHILD_WITH_TEMPLATE_FIELDS = %w(parent_template_id child_template_ids)
 
