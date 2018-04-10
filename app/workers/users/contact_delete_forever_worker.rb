@@ -13,8 +13,8 @@ class Users::ContactDeleteForeverWorker < BaseWorker
       return if @user.blank? || @user.agent_deleted_forever?
 
       if @user.was_agent?
-        anonymize_data
         send_event_to_central
+        anonymize_data
       else
         destroy_user_tickets
         destroy_user_notes
