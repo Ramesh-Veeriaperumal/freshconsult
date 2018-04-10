@@ -170,6 +170,7 @@
 		"agents_count" : "<%= subscription.agent_limit.presence || current_account.technicians.count %>",
         'account_state': "<%= subscription.state %>",
         'account_mrr' : "<%= subscription.cmrr %>",
+        'announcement_bucket': "<%=current_account.account_additional_settings.additional_settings[:announcement_bucket].to_s%>",
         'role' : "<%= current_user.privilege?(:admin_tasks) ? 'admin' : 'agent' %>"
       });
   </script>

@@ -1848,6 +1848,33 @@
             "description": "Ticket not found"
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "archive_ticket"
+        ],
+        "summary": "Delete Ticket",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "Display ID of ticket",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
       }
     },
     "/tickets/archived/{id}/conversations": {
@@ -3039,6 +3066,35 @@
           }
         }
       },
+      "get": {
+        "tags": [
+          "attachment"
+        ],
+        "summary": "View Attachment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "required": true,
+            "description": "ID of attachment"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/attachment"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Attachment not found"
+          }
+        }
+      },      
       "delete": {
         "tags": [
           "attachment"
@@ -3859,6 +3915,25 @@
           },
           "404": {
             "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/agents/accept_gdpr": {
+      "post": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Gdpr Acceptance",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
           }
         }
       }

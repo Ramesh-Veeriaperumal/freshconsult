@@ -36,9 +36,10 @@ module TicketsTestHelper
 
   def index_ticket_pattern_with_associations(ticket, requester = true, ticket_states = true, company = true, exclude = [])
     ticket_pattern_with_association(
-      ticket, false, false, requester,
-      company, ticket_states
-    ).except(*([:attachments, :conversations, :tags] - exclude))
+      ticket, false, false, 
+      requester, company, 
+      ticket_states
+    ).except(*([:attachments, :conversations, :tags, :description, :description_text] - exclude))
   end
 
   def index_deleted_ticket_pattern(ticket)
@@ -140,7 +141,7 @@ module TicketsTestHelper
     notes_pattern = notes_pattern.take(limit) if limit
     show_ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
-  
+
  def feedback_pattern(survey_result)
     {
       survey_id: survey_result.survey_id,
@@ -154,7 +155,7 @@ module TicketsTestHelper
     expected_custom_field = (expected_output[:custom_fields] && ignore_extra_keys) ? expected_output[:custom_fields].ignore_extra_keys! : expected_output[:custom_fields]
     custom_field = ticket.custom_field_via_mapping.map { |k, v| [TicketDecorator.display_name(k), v.respond_to?(:utc) ? v.strftime('%F') : v] }.to_h
     ticket_custom_field = (custom_field && ignore_extra_keys) ? custom_field.as_json.ignore_extra_keys! : custom_field.as_json
-    description_html = format_ticket_html(ticket, expected_output[:description]) if expected_output[:description]
+    description_html = format_ticket_html(expected_output[:description]) if expected_output[:description]
 
     ticket_hash = {
       cc_emails: expected_output[:cc_emails] || ticket.cc_email && ticket.cc_email[:cc_emails],
@@ -200,6 +201,15 @@ module TicketsTestHelper
     else
       ticket_hash.except(:associated_tickets_count, :association_type, :can_be_associated, :email_failure_count)
     end
+  end
+
+  def latest_note_as_ticket_pattern(expected_output = {}, ticket)
+    description_html = format_ticket_html(expected_output[:description]) if expected_output[:description]
+    ret_hash = {
+      description:  description_html || ticket.description_html,
+      description_text:  ticket.description,
+      id: expected_output[:display_id] || ticket.display_id,
+    }
   end
 
   def show_ticket_pattern(expected_output = {}, ticket)
@@ -476,6 +486,7 @@ module TicketsTestHelper
     pattern[:association_type] = ticket.association_type
     pattern[:requester] = Hash if requester
     pattern[:collaboration] = collaboration_pattern if @account.collaboration_enabled?
+    pattern[:sender_email] = ticket.sender_email if ticket.sender_email.present?
     pattern
   end
 
@@ -658,7 +669,7 @@ module TicketsTestHelper
     single_note[:freshfone_call] = freshfone_call_pattern(note) if freshfone_call_pattern(note)
     single_note
   end
-  
+
   def create_parent_child_tickets
     @parent_ticket = create_parent_ticket
     @child_ticket  = create_ticket(assoc_parent_id: @parent_ticket.display_id)
@@ -688,7 +699,7 @@ module TicketsTestHelper
   end
 
     def create_related_tickets(related_count = 1)
-    related_count.times.collect {|i| 
+    related_count.times.collect {|i|
       related_ticket = create_ticket
       related_ticket.update_attributes(association_type: 4)
       related_ticket

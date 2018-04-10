@@ -44,8 +44,8 @@ module AgentsTestHelper
       available_since: expected_output[:available_since] || agent.active_since,
       contact: contact_pattern(expected_output[:user] || agent.user),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
-
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      gdpr_admin_name: expected_output[:gdpr_admin_name] || agent.user.current_user_gdpr_admin
     }
   end
 

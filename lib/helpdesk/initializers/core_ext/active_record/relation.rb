@@ -19,10 +19,7 @@ module ActiveRecord
         record_ids = self.where(filter_conditions).limit(batch_size).pluck(:id)  
         if record_ids.present?
           records             = self.where(id: record_ids)
-          publish_record_ids  = records.update_all_record_ids
-          records.update_all(updates_hash)
-
-          UpdateAllPublisher.perform_async(klass_name: update_all_klass_name, ids: publish_record_ids, updates: updates_hash, options: options)
+          records.update_all_without_batching(updates_hash, options)
           count = count + record_ids.count
         end
       end while record_ids.size == batch_size
@@ -48,6 +45,12 @@ module ActiveRecord
       end
     end
 
+    # performs update all with publish without batching of records
+    def update_all_without_batching(updates_hash, options = {})
+      publish_record_ids = self.update_all_record_ids
+      self.update_all(updates_hash)
+      UpdateAllPublisher.perform_async(klass_name: update_all_klass_name, ids: publish_record_ids, updates: updates_hash, options: options)
+    end
 
     private
       

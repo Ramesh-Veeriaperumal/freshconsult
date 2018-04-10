@@ -189,6 +189,33 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     match_json(private_api_agent_pattern(currentuser.agent))
   end
 
+  def test_accept_gdpr_with_admin_and_not_gdpr_pending
+    user = add_test_agent(@account, role: Role.find_by_name('Administrator').id)
+    login_as(user)
+    post :complete_gdpr_acceptance, construct_params(version: 'private')
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+  end
+
+  def test_accept_gdpr_with_admin_and_gdpr_pending
+    user = add_test_agent(@account, role: Role.find_by_name('Administrator').id)
+    user.set_gdpr_preference
+    login_as(user)
+    post :complete_gdpr_acceptance, construct_params(version: 'private')
+    user.reload
+    assert_equal user.gdpr_pending?,false
+    assert_response 204
+  end
+
+  def test_accept_gdpr_with_agent_access
+    
+     user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+     login_as(user)
+     post :complete_gdpr_acceptance, construct_params(version: 'private')
+     assert_response 403
+     match_json(request_error_pattern(:access_denied))
+  end
+
   def test_update_others_with_toggle_shortcuts_for_agent
     user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
     remove_privilege(User.current, :manage_availability)

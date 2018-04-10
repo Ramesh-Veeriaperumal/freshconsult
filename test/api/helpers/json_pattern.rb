@@ -74,7 +74,7 @@ module JsonPattern
     }
   end
 
-  def format_ticket_html(_ticket, body)
+  def format_ticket_html(body)
     html_doc = Nokogiri::HTML(body)
     unless html_doc.at_css('body').blank?
       html_doc.xpath('//del').each { |div|  div.name = 'span'; }

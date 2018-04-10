@@ -3,6 +3,10 @@ class Tickets::SendAndSetWorker < BaseWorker
   include Helpdesk::Ticketfields::TicketStatus
   
   sidekiq_options :queue => :send_and_set_observer, :retry => 0, :backtrace => true, :failures => :exhausted
+  SEND_AND_SET_OBSERVER_ERROR = 'SEND_AND_SET_OBSERVER_EXECUTION_FAILED'.freeze
+  SEND_AND_SET_OBSERVER_TICKET_ERROR = (SEND_AND_SET_OBSERVER_ERROR + '::TICKET').freeze
+  SEND_AND_SET_OBSERVER_NOTE_ERROR = (SEND_AND_SET_OBSERVER_ERROR + '::NOTE').freeze
+  SEND_AND_SET_OBSERVER_NOTIFICATION_ERROR = (SEND_AND_SET_OBSERVER_ERROR + '::NOTIFICATION').freeze
 
   class SendSetObserverError < StandardError
   end
@@ -12,7 +16,7 @@ class Tickets::SendAndSetWorker < BaseWorker
     args[:ticket_changes].try(:symbolize_keys!)
     @account = Account.current
     Va::Logger::Automation.set_thread_variables(@account.id, args[:ticket_changes].try(:[], :ticket_id), args[:ticket_changes].try(:[], :doer_id))
-    Va::Logger::Automation.log "Send and Set Worker::Info=#{args.inspect} "
+    Va::Logger::Automation.log "Send and Set Worker, info=#{args.inspect}"
     fire_ticket_observer(args)
     fire_note_observer(args)
     fire_notifications
@@ -29,7 +33,7 @@ class Tickets::SendAndSetWorker < BaseWorker
     end
   rescue => e
     @errors = true
-    Va::Logger::Automation.log "Something is wrong in send and set as scenario::fire_ticket_observer::Info::#{args.inspect}::Exception=#{e.message}::#{e.backtrace.join('\n')}"
+    Va::Logger::Automation.log_error(SEND_AND_SET_OBSERVER_TICKET_ERROR, e, args)
     NewRelic::Agent.notice_error(e, {:custom_params => {:args => args }})    
   end
 
@@ -37,7 +41,7 @@ class Tickets::SendAndSetWorker < BaseWorker
     Tickets::UpdateTicketStatesWorker.new.perform(args[:note_changes])
   rescue => e
     @errors = true
-    Va::Logger::Automation.log "Something is wrong in send and set as scenario::fire_note_observer::Info::#{args.inspect}::Exception=#{e.message}::#{e.backtrace.join('\n')}"
+    Va::Logger::Automation.log_error(SEND_AND_SET_OBSERVER_NOTE_ERROR, e, args)
     NewRelic::Agent.notice_error(e, {:custom_params => {:args => args }})
   end
 
@@ -53,8 +57,7 @@ class Tickets::SendAndSetWorker < BaseWorker
     end
   rescue => e
     @errors = true
-    Va::Logger::Automation.log "Something is wrong in send and set as scenario::fire_notifications::Info::#{args.inspect}::Exception=#{e.message}::#{e.backtrace.join('\n')}"
-    puts "Something is wrong in Send and Set Observer:fire_notifications : Account id:: #{Account.current.id}, #{e.message}"
+    Va::Logger::Automation.log_error(SEND_AND_SET_OBSERVER_NOTIFICATION_ERROR, e, args)
     NewRelic::Agent.notice_error(e)
   end
 end

@@ -153,7 +153,7 @@ class TicketsControllerTest < ActionController::TestCase
                   },
                   { title: 'section2',
                     value_mapping: ['Incident'],
-                    ticket_fields: %w[test_custom_paragraph test_custom_dropdown] 
+                    ticket_fields: %w[test_custom_paragraph test_custom_dropdown]
                   }]
     else
       sections = [{ title: 'section1',
@@ -162,7 +162,7 @@ class TicketsControllerTest < ActionController::TestCase
                   },
                   { title: 'section2',
                     value_mapping: ['Choice 3'],
-                    ticket_fields: %w[test_custom_paragraph] 
+                    ticket_fields: %w[test_custom_paragraph]
                   }]
     end
     sections
@@ -1435,7 +1435,7 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id}, params_hash)
     Helpdesk::TicketField.where(name: "product").update_all(required: false)
     match_json(update_ticket_pattern({}, t.reload))
-    assert_response 200    
+    assert_response 200
   end
 
   def test_update_with_product_id_and_diff_email_config_id
@@ -1711,7 +1711,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_status_resolved_and_only_due_by
     t = ticket
     time = 12.days.since.iso8601
-    params_hash = { status: 4, due_by: time, custom_fields: { 
+    params_hash = { status: 4, due_by: time, custom_fields: {
         test_custom_paragraph: Faker::Lorem.characters(200)
       } }
     put :update, construct_params({ id: t.display_id }, params_hash)
@@ -2763,7 +2763,7 @@ class TicketsControllerTest < ActionController::TestCase
                             .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_equal tkts.count, response.size
     pattern = tkts.map do |tkt|
-      index_ticket_pattern_with_associations(tkt, true, false, false)
+      index_ticket_pattern_with_associations(tkt, true, false, false, [:description, :description_text])
     end
     match_json(pattern)
   end
@@ -2778,8 +2778,9 @@ class TicketsControllerTest < ActionController::TestCase
                             .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_equal tkts.count, response.size
     pattern = tkts.map do |tkt|
-      index_ticket_pattern_with_associations(tkt, false, true, false)
+      index_ticket_pattern_with_associations(tkt, false, true, false, [:description, :description_text])
     end
+    byebug
     match_json(pattern)
   end
 
@@ -2793,7 +2794,7 @@ class TicketsControllerTest < ActionController::TestCase
                             .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_equal tkts.count, response.size
     pattern = tkts.map do |tkt|
-      index_ticket_pattern_with_associations(tkt, false, false, true)
+      index_ticket_pattern_with_associations(tkt, false, false, true, [:description, :description_text])
     end
     match_json(pattern)
   end
@@ -3380,7 +3381,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_date'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request'), 
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_date'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request'),
                 bad_request_error_pattern(custom_field_error_label('test_custom_number'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')
               ])
   ensure
@@ -3619,7 +3620,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_unique_external_id_and_expect_validation_error
     params = {
-      subject: Faker::Lorem.characters(100), 
+      subject: Faker::Lorem.characters(100),
       description: Faker::Lorem.paragraph,
       unique_external_id: Faker::Lorem.characters(30),
       status: 2, priority: 2,
@@ -3627,7 +3628,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern(
-      'unique_external_id', :require_feature_for_attribute, 
+      'unique_external_id', :require_feature_for_attribute,
       code: :inaccessible_field, feature: :unique_contact_identifier,
         attribute: "unique_external_id")]
     )
@@ -3635,7 +3636,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_unique_external_id
     params = {
-      subject: Faker::Lorem.characters(100), 
+      subject: Faker::Lorem.characters(100),
       description: Faker::Lorem.paragraph,
       unique_external_id: Faker::Lorem.characters(30),
       status: 2, priority: 2,

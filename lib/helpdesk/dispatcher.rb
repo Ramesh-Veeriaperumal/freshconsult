@@ -5,7 +5,9 @@
     #including Redis keys for notify_cc - will be removed later
     include Redis::RedisKeys
     include Redis::OthersRedis
-    
+
+    DISPATCHER_ERROR = 'DISPATCHER_EXECUTION_FAILED'.freeze
+
     def self.enqueue(ticket_id, user_id, freshdesk_webhook)
       #based on account subscription, enqueue into proper queue
       account = Account.current
@@ -47,7 +49,7 @@
         end
       }
     rescue Exception => e
-      Va::Logger::Automation.log "Something is wrong in Disatcher::Exception=#{e.message}::#{e.backtrace.join('\n')}"
+      Va::Logger::Automation.log_error(DISPATCHER_ERROR, e)
       NewRelic::Agent.notice_error(e)
       raise e
     ensure
@@ -68,10 +70,13 @@
       @account.va_rules.each do |vr|
         begin
           Va::Logger::Automation.set_rule_id(vr.id)
-          evaluate_on = vr.pass_through(@ticket,nil,@user)
-          Va::Logger::Automation.log "Rule executed=#{evaluate_on.present?}"
+          evaluate_on = nil
+          time = Benchmark.realtime {
+            evaluate_on = vr.pass_through(@ticket,nil,@user)
+          }
+          Va::Logger::Automation.log_execution_and_time(time, (evaluate_on.present? ? 1 : 0))
         rescue Exception => e
-          Va::Logger::Automation.log "Something is wrong::Exception=#{e.message}::#{e.backtrace.join('\n')}"
+          Va::Logger::Automation.log_error(DISPATCHER_ERROR, e)
         end
         next if @account.features?(:cascade_dispatchr)
         return if evaluate_on.present?

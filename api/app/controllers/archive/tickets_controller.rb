@@ -10,6 +10,18 @@ class Archive::TicketsController < ::ApiApplicationController
     super
   end
 
+  def destroy
+    begin
+      note_ids = notes_available_in_s3? ? @item.archive_notes.pluck(:id) : []
+      Archive::DeleteArchiveTicket.perform_async({:ticket_id => @item.id, :note_ids => note_ids })
+      @item.destroy
+      head 204
+    rescue => e
+      NewRelic::Agent.notice_error(e, description: 'Error occured in deletion of archive ticket #{@item.id} for Account #{current_account.id}')
+      render_base_error(:internal_error, 500)
+    end
+  end
+
   private
 
     def feature_name
@@ -50,5 +62,10 @@ class Archive::TicketsController < ::ApiApplicationController
       params.permit(*ApiTicketConstants::SHOW_FIELDS, *ApiConstants::DEFAULT_PARAMS)
       @include_validation = TicketIncludeValidation.new(params)
       render_errors @include_validation.errors, @include_validation.error_options unless @include_validation.valid?
+    end
+
+    def notes_available_in_s3?
+      current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
+      ArchiveNoteConfig[current_shard] && (@item.id <= ArchiveNoteConfig[current_shard].to_i)
     end
 end

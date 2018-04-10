@@ -5,7 +5,7 @@ module ConversationsTestHelper
   include EmailConfigsHelper
 
   def note_pattern(expected_output, note)
-    body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
+    body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
     {
       body: body_html || note.body_html,
       body_text: note.body,
@@ -18,14 +18,14 @@ module ConversationsTestHelper
       to_emails: expected_output[:notify_emails] || note.to_emails,
       category: note.category,
       attachments: Array,
-      email_failure_count: note.schema_less_note.failure_count,    
+      email_failure_count: note.schema_less_note.failure_count,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
 
   def v2_note_pattern(expected_output, note)
-    body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
+    body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
     {
       body: body_html || note.body_html,
       body_text: note.body,
@@ -123,7 +123,7 @@ module ConversationsTestHelper
   end
 
   def reply_note_pattern(expected_output, note)
-    body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
+    body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
     {
       body: body_html || note.body_html,
       body_text: note.body,
@@ -142,7 +142,7 @@ module ConversationsTestHelper
   end
 
   def v2_reply_note_pattern(expected_output, note)
-    body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
+    body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
     {
       body: body_html || note.body_html,
       body_text: note.body,
@@ -236,7 +236,7 @@ module ConversationsTestHelper
   end
 
   def ticket_summary_pattern(expected_output, note)
-     body_html = format_ticket_html(note, expected_output[:body]) if expected_output[:body]
+     body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
     {
       body: body_html || note.body_html,
       body_text: note.body,

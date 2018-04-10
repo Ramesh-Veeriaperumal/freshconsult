@@ -40,6 +40,10 @@ class PortalObserver < ActiveRecord::Observer
 
     def commit_on_update(portal)
       clear_portal_cache
+      if @all_changes.present? && (@all_changes.has_key?(:portal_url) || @all_changes.has_key?(:ssl_enabled))
+        @bot = portal.bot
+        update_bot if @bot.present?
+      end
     end
 
     def commit_on_destroy(portal)
@@ -111,6 +115,16 @@ class PortalObserver < ActiveRecord::Observer
         :account_id => portal.account_id
       }
       PodDnsUpdate.perform_async(request_parameters)
+    end
+
+    def update_bot
+      response, response_code = Freshbots::Bot.update_bot(@bot)
+      raise response unless response_code == Freshbots::Bot::BOT_UPDATION_SUCCESS_STATUS
+    rescue => e
+      error_msg = "FRESHBOTS UPDATE ERROR FOR PORTAL URL/SSL CHANGE :: Bot external id : #{@bot.external_id}
+                         :: Account id : #{@bot.account_id} :: Portal id : #{@bot.portal_id}"
+      NewRelic::Agent.notice_error(e, { description: error_msg })
+      Rails.logger.error("#{error_msg} :: #{e.inspect}")
     end
 	
 end

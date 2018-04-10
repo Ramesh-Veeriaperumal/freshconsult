@@ -68,8 +68,9 @@ class Import::Customers::Base
   def save_item row
     @item = current_account.safe_send("#{@type.pluralize}").new if @item.blank?
     set_validatable_custom_fields
-    construct_company_params if is_user? && Account.current.multiple_user_companies_enabled?
+    construct_company_params if import_multiple_companies?
     set_company_validatable_fields if @type == "company" && Account.current.tam_default_fields_enabled?
+    construct_user_emails_param if is_user? && @params_hash[:"#{@type}"].keys.include?(:all_emails)
     unless @item.new_record?
       begin
         @item.update_attributes(@params_hash[:"#{@type}"]) ? @updated+=1 : failed_item(row)
@@ -203,9 +204,53 @@ class Import::Customers::Base
     NewRelic::Agent.notice_error(e, {:description => "Error while removing file from s3 :: account_id :: #{current_account.id}"})
   end
 
+  def construct_user_emails_param
+    import_emails = @params_hash[:user][:all_emails]
+
+    user_emails = @item.user_emails.
+                  select(['user_emails.id', 'user_emails.primary_role',
+                          "user_emails.email"]).
+                  inject({}) do |res, em|
+                    res[em.email.downcase] = {
+                                "id" => em.id,
+                                "primary_role" => em.primary_role
+                    }
+                    res
+                  end
+
+    existing_emails = import_emails & user_emails.keys
+    added_emails = import_emails - existing_emails
+    removed_emails = user_emails.keys - existing_emails
+
+
+    user_email_attributes = import_emails.each_with_index.
+                              inject({}) do |email_attrs, (email, index)|
+      is_primary = (index == 0) ? "1" : "0"
+      if added_emails.include?(email)
+        email_attrs[index.to_s] = create_user_emails_details(email,
+                                    is_primary, "false")
+      elsif existing_emails.include?(email)
+        email_attrs[index.to_s] = create_user_emails_details(email,
+                                    is_primary, "false", user_emails[email]["id"])
+      end
+      email_attrs
+    end
+
+    removed_emails.each_with_index do |email, index|
+      indx = (import_emails.length + index).to_s
+      user_email_attributes[indx] = create_user_emails_details(email,
+                                            false, "true",
+                                            user_emails[email]["id"])
+    end
+
+    @params_hash[:user].delete(:email)
+    @params_hash[:user].delete(:all_emails)
+    @params_hash[:user][:user_emails_attributes] = user_email_attributes
+  end
+
   def construct_import_companies_params
-    company_names = @params_hash[:user][:company_name].split(COMPANY_DELIMITER)
-    client_manager_values = @params_hash[:user][:client_manager].split(COMPANY_DELIMITER)
+    company_names = @params_hash[:user][:company_name].split(IMPORT_DELIMITER)
+    client_manager_values = @params_hash[:user][:client_manager].split(IMPORT_DELIMITER)
 
     client_manager_values.map!(&->(c){VALID_CLIENT_MANAGER_VALUES.include?(c) ? 1 : 0})
 
@@ -259,8 +304,22 @@ class Import::Customers::Base
     }
   end
 
+  def import_multiple_companies?
+    is_user? && Account.current.multiple_user_companies_enabled? &&
+    @params_hash[:"#{@type}"].keys.include?(:company_name)
+  end
+
   def set_company_validatable_fields
     @item.validatable_default_fields = { :fields => current_account.company_form.default_company_fields,
                                          :error_label => :label }
+  end
+
+  def create_user_emails_details(email, primary_role, destroy, user_email_id=nil)
+    {
+      "email" => email,
+      "primary_role" => primary_role,
+      "id" => user_email_id,
+      "_destroy" => destroy
+    }
   end
 end

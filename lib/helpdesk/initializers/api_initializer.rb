@@ -13,7 +13,9 @@ if $infra['API_LAYER']
       # Basic auth should be ignored for private API. Cookie & JWT based auth will be allowed
       config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::PrivateBasicAuth'
     else
-      config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000
+      unless $infra['APIGEE_API_LAYER']
+        config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000
+      end
     end
 
     if $infra['PIPE_LAYER']

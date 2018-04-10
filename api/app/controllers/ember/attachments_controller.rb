@@ -4,6 +4,7 @@ module Ember
     include Helpdesk::MultiFileAttachment::Util
     include DeleteSpamConcern
     include HelperConcern
+    include AttachmentsValidationConcern
 
     decorate_views
 
@@ -11,6 +12,7 @@ module Ember
     before_filter :can_send_user?, only: [:create]
     before_filter :check_shared, :load_items, :check_destroy_permission, only: [:destroy]
     before_filter :validate_body_params, :load_ticket, :load_shared, :check_unlink_permission, only: [:unlink]
+    before_filter :check_item_permission, only: [:show]
 
     def create
       return unless validate_delegator(@item, user: @user, api_user: api_current_user)

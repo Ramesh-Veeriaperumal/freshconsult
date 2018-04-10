@@ -1,6 +1,7 @@
 <% if freshid_enabled? %>
   <%= render :partial => "freshid_edit" %>
 <% else %>
+<%= @ms_teams_content if @ms_teams_content %>
 <%= content_tag( :h3, t("profile.edit"), :class => "title itil-hide" ) %>
 <%= form_for @profile , :url => { :action=> "update", :controller => 'profiles'} , :html => { :multipart => true } do |f| %>
   <%= f.error_messages %>
