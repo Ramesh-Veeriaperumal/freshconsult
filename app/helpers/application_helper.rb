@@ -2103,6 +2103,10 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       current_user && current_user.is_falcon_pref?
   end
 
+  def admin_only_falcon_enabled?
+    !current_account.disable_old_ui_enabled? && !current_account.falcon_enabled? && current_account.check_admin_mint?
+  end
+
   def year_in_review_enabled?
     Account.current.year_in_review_2017_enabled? && review_available?
   end

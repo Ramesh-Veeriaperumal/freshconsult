@@ -12,10 +12,11 @@ class DataExport < ActiveRecord::Base
 
   TICKET_EXPORT_LIMIT = 3
 
-  EXPORT_STATUS = { :started => 1, 
-                    :file_created => 2,
-                    :file_uploaded => 3,
-                    :completed => 4 }
+  EXPORT_STATUS = {:started => 1,
+                   :file_created => 2,
+                   :file_uploaded => 3,
+                   :completed => 4,
+                   :failed => 5}
 
 
   scope :ticket_export, :conditions => { :source => EXPORT_TYPE[:ticket] }, :order => "id"
@@ -49,7 +50,7 @@ class DataExport < ActiveRecord::Base
   end
 
   def failure!(error)
-    self.update_attributes(:last_error => error)
+    self.update_attributes(:last_error => error, :status => EXPORT_STATUS[:failed])
   end
 
   def completed?
@@ -58,6 +59,10 @@ class DataExport < ActiveRecord::Base
 
   def save_hash!(hash)
     self.update_attributes(:token => hash)
+  end
+
+  def failed?
+    status == EXPORT_STATUS[:failed]
   end
 
 end

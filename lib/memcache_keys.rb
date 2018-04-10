@@ -199,6 +199,10 @@ module MemcacheKeys
 
   GROUP_AGENTS_LEADERBOARD_MINILIST_REALTIME_FALCON = 'v1/GROUP_AGENTS_LEADERBOARD_MINILIST_REALTIME_FALCON:%{account_id}:%{user_id}:%{group_id}'
 
+  ACCOUNT_BOTS = "BOTS:%{account_id}"
+
+  BOTS_COUNT = "BOTS_COUNT:%{account_id}"
+
   class << self
 
     include MemcacheReadWriteMethods

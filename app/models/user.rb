@@ -424,11 +424,11 @@ class User < ActiveRecord::Base
   end
 
   def is_falcon_pref?
-    self.preferences[:agent_preferences][:falcon_ui]
+    self.preferences[:agent_preferences][:falcon_ui] || Account.current.disable_old_ui_enabled?
   end
 
   def falcon_invite_eligible?
-    (account.falcon_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
+    (account.falcon_ui_enabled? && !account.disable_old_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
   end
 
   def update_attributes(params) # Overriding to normalize params at one place

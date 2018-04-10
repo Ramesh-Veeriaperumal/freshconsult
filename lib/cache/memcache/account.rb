@@ -479,6 +479,26 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache key
   end
 
+  def bots_count_from_cache
+    @bots_count_from_cache ||= begin
+      MemcacheKeys.fetch(bots_count_memcache_key) { bots.count }
+    end
+  end
+
+  def bots_from_cache
+    @bots_from_cache ||= begin
+      MemcacheKeys.fetch(bots_memcache_key) { bots_hash }
+    end
+  end
+
+  def clear_bots_from_cache
+    MemcacheKeys.delete_from_cache(bots_memcache_key)
+  end
+
+  def clear_bots_count_from_cache
+    MemcacheKeys.delete_from_cache(bots_count_memcache_key)
+  end
+
   private
     def permissible_domains_memcache_key id = self.id
       HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
@@ -522,5 +542,13 @@ module Cache::Memcache::Account
 
     def password_policy_memcache_key(user_type)
       ACCOUNT_PASSWORD_POLICY % { :account_id => self.id, :user_type => user_type}
+    end
+
+    def bots_memcache_key
+      ACCOUNT_BOTS % { account_id: self.id }
+    end
+
+    def bots_count_memcache_key
+      BOTS_COUNT % { account_id: self.id }
     end
 end
