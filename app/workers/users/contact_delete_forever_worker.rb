@@ -84,7 +84,7 @@ class Users::ContactDeleteForeverWorker < BaseWorker
           :note_old_body, :user
         ])) do |ticket|
           if ticket.associated_ticket? && TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[ticket.association_type] == :assoc_parent
-            child_tickets = @account.tickets.where(id: ticket.associates)
+            child_tickets = @account.tickets.where(display_id: ticket.associates)
             child_tickets.each do |child_ticket|
               child_ticket.destroy
             end
