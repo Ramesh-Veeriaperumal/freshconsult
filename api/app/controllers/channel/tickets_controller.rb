@@ -3,6 +3,10 @@ module Channel
     CHANNEL_TICKETS_CONSTANTS_CLASS = 'ApiTicketConstants'.freeze
     CHANNEL_TICKETS_VALIDATION_CLASS = 'TicketValidation'.constantize
 
+    include ChannelAuthentication
+    
+    before_filter :channel_client_authentication
+
     private
 
       def constants_class

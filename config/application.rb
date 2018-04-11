@@ -105,8 +105,13 @@ module Helpkit
     # Please check api_initializer.rb, for compatibility with the version 2 APIs, if any middleware related changes are being done.
     # Adding health check from haproxy as the first middleware.
     # If there are more than 2 middlewares with config.middleware.insert_before 0, the last one gets the precedence.
+    # GlobalRequestStore should always before any business logic Middleware.
+    # ApplicationLogger should always follow GlobalRequestStore.
+
     config.middleware.insert_before 0, "Middleware::CorsEnabler"
     config.middleware.insert_before 0, "Middleware::SecurityResponseHeader"
+    config.middleware.insert_before 0, "Middleware::ApplicationLogger" if ENV['MIDDLEWARE_LOG_ENABLE'] == 'true'
+    config.middleware.insert_before 0, "Middleware::GlobalRequestStore"
     config.middleware.insert_before 0, "Middleware::HealthCheck"
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction" if ENV['ENABLE_GLOBAL_RESTRICTION_MIDDLEWARE'] == 'true'

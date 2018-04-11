@@ -2,6 +2,8 @@ module Admin
   class SupervisorWorker < BaseWorker
 
     sidekiq_options :queue => :supervisor, :retry => 0, :backtrace => true, :failures => :exhausted
+    SUPERVISOR_ERROR = 'SUPERVISOR_EXECUTION_FAILED'.freeze
+    TICKET_SAVE_ERROR = 'TICKET_SAVE_FAILED'.freeze
 
     def perform
       execute_on_db {
@@ -18,47 +20,44 @@ module Admin
             next if conditions.empty?
             negate_conditions = [""]
             negate_conditions = rule.negation_query(account_negatable_columns)
-            logger.info "rule name::::::::::#{rule.name}"
-            logger.info "conditions::::::: #{conditions.inspect}"
-            logger.info "negate_conditions::::#{negate_conditions.inspect}"
-            joins = rule.get_joins(["#{conditions[0]} #{negate_conditions[0]}"]) 
+            joins = rule.get_joins(["#{conditions[0]} #{negate_conditions[0]}"])
             tickets = account.tickets.where(negate_conditions).where(conditions).updated_in(1.month.ago).visible.joins(joins).select("helpdesk_tickets.*")
             tickets.each do |ticket|
               begin
                 next if ticket.sent_for_enrichment?
                 execute_on_db("run_on_master") { 
                   rule.trigger_actions ticket
-                  ticket.save_ticket! 
+                  ticket.save_ticket! if ticket.properties_updated?
                 }
               rescue Exception => e
-                logger.info "::::::::::::::::::::error:::::::::::::#{rule.inspect}"
-                logger.info e
-                logger.info ticket.inspect
+                log_info(account.id, rule.id, ticket.id) { Va::Logger::Automation.log_error(TICKET_SAVE_ERROR, e) }
                 NewRelic::Agent.notice_error(e,{:description => "Error while executing supervisor rule for a tkt :: #{ticket.id} :: account :: #{account.id}" })
                 next
               end
             end
             rule_end_time = Time.now.utc
             rule_total_time = (rule_end_time - rule_start_time )
-            log_format = logging_format(account, tickets, rule, rule_total_time, conditions, negate_conditions, joins)
+            ticket_ids = tickets.map(&:display_id)
+            log_format = logging_format(account, ticket_ids, rule, rule_total_time, conditions, negate_conditions, joins)
             custom_logger.info "#{log_format}" unless custom_logger.nil?
-
+            log_info(account.id, rule.id) {
+              Va::Logger::Automation.log "conditions=#{conditions.inspect}, negate_conditons=#{negate_conditions.inspect}, joins=#{joins.inspect}, tickets=#{ticket_ids.inspect}"
+              Va::Logger::Automation.log_execution_and_time(rule_total_time, ticket_ids.size)
+            }
           rescue Exception => e
-            logger.info e.backtrace.join("\n")
-            logger.info "something is wrong: #{e.message}"
+            log_info(account.id, rule.id) { Va::Logger::Automation.log_error(SUPERVISOR_ERROR, e) }
             NewRelic::Agent.notice_error(e)
           rescue
-            logger.info "something went wrong"
+            log_info(account.id, rule.id) { Va::Logger::Automation.log_error(SUPERVISOR_ERROR, nil) }
           end
         end
         end_time = Time.now.utc
-        if((end_time - start_time) > 250)
-          total_time = Time.at(Time.now.utc - start_time).gmtime.strftime('%R:%S')
-          logger.info "Time total time it took to execute the supervisor rules for, #{account.id}, #{account.full_domain}, #{total_time}"
-        end
+        total_time = end_time - start_time
+        log_info(account.id) { Va::Logger::Automation.log_execution_and_time(total_time, supervisor_rules.size) }
       }
       ensure
         Account.reset_current_account
+        Va::Logger::Automation.unset_thread_variables
     end
 
     private
@@ -67,11 +66,16 @@ module Admin
         @log_file_path ||= "#{Rails.root}/log/supervisor.log"
       end
 
-      def logging_format(account,tickets,rule,rule_total_time, conditions, negate_conditions, joins)
-        tickets_id = tickets.map { |ticket| ticket.display_id }
-        "account_id=#{account.id}, account_name=#{account.name}, fullname=#{account.full_domain}, tickets_count=#{tickets_id.length}, " \
+      def logging_format(account,ticket_ids,rule,rule_total_time, conditions, negate_conditions, joins)
+        "account_id=#{account.id}, account_name=#{account.name}, fullname=#{account.full_domain}, tickets_count=#{ticket_ids.length}, " \
         "time_taken=#{rule_total_time}, rule_name=#{rule.name}, rule_id=#{rule.id}, host_name=#{Socket.gethostname}, " \
-        "conditions=#{conditions.inspect}, negate_conditons=#{negate_conditions.inspect}, joins=#{joins.inspect}, tickets=#{tickets_id.inspect}"
+        "conditions=#{conditions.inspect}, negate_conditons=#{negate_conditions.inspect}, joins=#{joins.inspect}, tickets=#{ticket_ids.inspect}"
+      end
+
+      def log_info(account_id, rule_id=nil, ticket_id=nil)
+        Va::Logger::Automation.set_thread_variables(account_id, ticket_id, nil, rule_id)
+        yield if block_given?
+        Va::Logger::Automation.unset_thread_variables
       end
   end
 end

@@ -1,5 +1,5 @@
 class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
-  
+  include LogHelper
   # http://www.paperplanes.de/2012/3/14/on-notifications-logsubscribers-and-bringing-sanity-to-rails-logging.html
 
   def process_action(event)
@@ -11,8 +11,12 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
   def log_details(payload)
     begin
       log_format = logging_format(payload)
-      controller_logger = custom_logger(log_file)
-      controller_logger.info "#{log_format}"
+      if ENV['MIDDLEWARE_LOG_ENABLE'] == 'true'
+        store_log_data(payload)
+      else
+        controller_logger = custom_logger(log_file)
+        controller_logger.info "#{log_format}"
+      end
     rescue Exception => e
       NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occoured while capturing controller logs for #{payload[:path]}"}})
     end
@@ -22,10 +26,9 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
     payload[:db_runtime] = payload[:db_runtime].round(2) if payload[:db_runtime]
     payload[:view_runtime] = payload[:view_runtime].round(2) if payload[:view_runtime]
     payload[:duration] = payload[:duration].round(2)
-    payload[:status] = extract_status_and_error(payload)
-    # Please inform devops when any change is made in the log_file_format
-    # We need to make the corresponding change in sumologic(for indexing data) and in the recipe for UnityMedia (parsed application.log)
-    log_file_format = "uuid=#{payload[:uuid]}, error=#{payload[:error]}, ip=#{payload[:ip]}, a=#{payload[:account_id]}, u=#{payload[:user_id]}, s=#{payload[:shard_name]}, d=#{payload[:domain]}, url=#{payload[:url]}, path=#{payload[:path]}, c=#{payload[:controller]}, action=#{payload[:action]}, host=#{payload[:server_ip]}, status=#{payload[:status]}, format=#{payload[:format]}, db=#{payload[:db_runtime]}, view=#{payload[:view_runtime]}, duration=#{payload[:duration]}"
+    payload[:status] = extract_status(payload)
+    payload[:error] = extract_error(payload) if payload[:exception]
+    log_format(payload)
   end
 
   def log_file
@@ -36,16 +39,20 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
     @@custom_logger ||= CustomLogger.new(path)
   end
 
-  def extract_status_and_error(payload)
-    if (status = payload[:status])
-      status.to_i
-    elsif (error = payload[:exception])
+  def extract_status(payload)
+    if payload[:status]
+      payload[:status].to_i
+    elsif payload[:exception]
       exception, message = error
-      payload[:error] = "#{exception}: #{message.present? ? message.truncate(200) : ''}"
       error_status_code(exception)
     else
       0
     end
+  end
+
+  def extract_error(payload)
+    exception, message = payload[:exception]
+    payload[:error] = "#{exception}:#{message.present? ? message.truncate(30).delete(" ").delete(",") : ''}"
   end
 
   def error_status_code(exception)
@@ -54,6 +61,10 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
     # Any exceptions that are not configured will be mapped to 500 Internal Server Error
     status = ActionDispatch::ExceptionWrapper.rescue_responses[exception]
     Rack::Utils.status_code(status)
+  end
+
+  def store_log_data(payload)
+    CustomRequestStore.store[:controller_log_info] = payload
   end
 
   def track_controller_events(payload)

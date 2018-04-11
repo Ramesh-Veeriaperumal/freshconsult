@@ -49,13 +49,16 @@ class Admin::Social::StreamsController < Admin::AdminController
     NewRelic::Agent.notice_error(e)
     nil
   end
-  
+
+
   def update_dm_rule(social_account)
     dm_stream = social_account.dm_stream
-    unless dm_stream.ticket_rules.empty?
+    return if dm_stream.ticket_rules.empty?
+    if params.key?(:capture_dm_as_ticket) && params[:capture_dm_as_ticket].to_i == 0
+      group_id = 0    
+    else
       group_id = params[:dm_rule][:group_assigned].to_i
-      dm_stream.update_ticket_action_data(social_account.product_id, group_id) 
     end
+    dm_stream.update_ticket_action_data(social_account.product_id, group_id) 
   end
-  
 end

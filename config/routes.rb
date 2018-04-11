@@ -721,6 +721,7 @@ Helpkit::Application.routes.draw do
     collection do
       get :revert_identity
       get :assumable_agents
+      put :accept_gdpr_compliance
     end
     member do
       delete :delete_avatar
@@ -732,6 +733,9 @@ Helpkit::Application.routes.draw do
   end
 
   resource :user_session
+
+  match '/enable_falcon_for_all' => 'users#enable_falcon_for_all', :as => :enable_falcon_for_all, via: :post
+  match '/disable_old_helpdesk' => 'users#disable_old_helpdesk', :as => :disable_old_helpdesk, via: :post
 
   match '/enable_falcon' => 'users#enable_falcon', :as => :enable_falcon, via: :post
   match '/disable_falcon' => 'users#disable_falcon', :as => :disable_falcon, via: :post
@@ -1182,6 +1186,14 @@ Helpkit::Application.routes.draw do
          post :enable
          post :toggle
          put :update
+      end
+    end
+
+    resources :freshchat, :only => [:index, :create, :update] do
+      collection do
+        put :toggle
+        post :create
+        put :update
       end
     end
 
@@ -1690,6 +1702,7 @@ Helpkit::Application.routes.draw do
     end
 
     resources :scheduled_exports, only: [:index, :new, :create, :show, :destroy] do
+      get :clone_schedule, path: '/clone_schedule', on: :member
       get :download_file, path: '/download_file(/:file_name)', on: :member
     end
     #routes for v1 agent and group performance reports

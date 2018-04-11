@@ -14,6 +14,7 @@ class Security::AgentNotificationObserver < ActiveRecord::Observer
     if user.safe_send(:transaction_include_action?, :update)
       if user.agent?
         changed_attributes = user.previous_changes.keys & USER_ATTRIBUTES.keys
+        changed_attributes.select!{|attribute| attribute_changed?(user.previous_changes, attribute)}
         unless changed_attributes.empty?
           return if skip_notification?(user.previous_changes)
           changed_attributes_names = changed_attributes.map{ |i| USER_ATTRIBUTES[i] }
@@ -29,6 +30,10 @@ class Security::AgentNotificationObserver < ActiveRecord::Observer
 
   def skip_notification?(user_changes)
     return true if user_changes.keys.include?("crypted_password") and user_changes["crypted_password"][0].nil?
+  end
+  
+  def attribute_changed?(user_changes, attribute)
+    user_changes.keys.include?(attribute) and !(user_changes[attribute][0].blank? and user_changes[attribute][1].blank?)
   end
 
 end

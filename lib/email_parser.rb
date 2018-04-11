@@ -63,23 +63,43 @@ module EmailParser
     (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name
   end
 
-def encode_non_usascii_q_val(address, charset)
-  return address if address.ascii_only? or charset.nil?
-  # Encode all strings embedded inside of quotes
-  address = address.gsub(/("[^"]*")/) { |s| Mail::Encodings.q_value_encode(unquote(s), charset) }
-  # Then loop through all remaining items and encode as needed
-  tokens = address.split(/\s/)
-  map_with_index(tokens) do |word, i|
-    if word.ascii_only?
-      word
-    else
-      previous_non_ascii = i>0 && tokens[i-1] && !tokens[i-1].ascii_only?
-      if previous_non_ascii
-        word = " #{word}"
+  def encode_non_usascii_q_val(address, charset)
+    return address if address.ascii_only? or charset.nil?
+    # Encode all strings embedded inside of quotes
+    address = address.gsub(/("[^"]*")/) { |s| Mail::Encodings.q_value_encode(unquote(s), charset) }
+    # Then loop through all remaining items and encode as needed
+    tokens = address.split(/\s/)
+    map_with_index(tokens) do |word, i|
+      if word.ascii_only?
+        word
+      else
+        previous_non_ascii = i>0 && tokens[i-1] && !tokens[i-1].ascii_only?
+        if previous_non_ascii
+          word = " #{word}"
+        end
+        Mail::Encodings.q_value_encode(word, charset)
       end
-      Mail::Encodings.q_value_encode(word, charset)
+    end.join(' ')
+  end
+
+  def unquote( str )
+    if str =~ /^"(.*?)"$/
+      unescape($1)
+    else
+      str
     end
-  end.join(' ')
-end
+  end
+
+  def unescape( str )
+    str.gsub(/\\(.)/, '\1')
+  end
+
+  def map_with_index( enum, &block )
+    results = []
+    enum.each_with_index do |token, i|
+      results[i] = yield(token, i)
+    end
+    results
+  end
 
 end

@@ -67,10 +67,10 @@ module AccountTestHelper
   end
 
   def enable_feature(feature)
-    @account.features.send(feature).send(:create)
+    @account.add_feature(feature)
     @account.make_current.reload
     yield
-    @account.features.send(feature).send(:destroy)
+    @account.revoke_feature(:shared_ownership)
     @account.make_current.reload
   end
 

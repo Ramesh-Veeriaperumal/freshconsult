@@ -4,7 +4,7 @@ EmailNotification.seed_many(:account_id, :notification_type, [
   {
     :notification_type => EmailNotification::USER_ACTIVATION, 
     :account_id => account.id, 
-    :requester_notification => true, 
+    :requester_notification => false, 
     :agent_notification => true,
     :agent_template => '<p>Hi {{agent.name}},<br /><br />You have been added as an agent in {{helpdesk_name}}.<br /><br />Click on the URL below to activate your account:<br /><br />{{activation_url}}<br /><br />If the URL does not work, try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.<br /><br />Regards,<br />{{helpdesk_name}}<br /><br />P.S. New to Freshdesk? Learn how to use the helpdesk by enrolling in the <a href="https://freshdesk.com/academy?utm_source=activation-email" target="_blank">Freshdesk Academy.</a></p>',
     :requester_template => '<p>Hi {{contact.name}},<br /><br />A new {{helpdesk_name}} account has been created for you.<br /><br />Click the url below to activate your account and select a password!<br /><br />{{activation_url}}<br /><br />If the above URL does not work try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.<br/><br/>Regards,<br/>{{helpdesk_name}}</p>',

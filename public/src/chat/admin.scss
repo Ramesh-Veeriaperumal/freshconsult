@@ -36,6 +36,12 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 		color: #a90329;
 	}
 }
+.freshchat-sorted-list {
+	line-height: 1.6em;
+  margin: 0 0 14px 0;
+  color: #444;
+  list-style-type: lower-roman;
+}
 .fc-archives{
 	.btn-round{
 		[class*="#{$font-class}"]{
@@ -430,4 +436,8 @@ $font-class: "ficon-"; // Change this when font class changed in glyphs comman
 }
 .lc-info-ip{
 	padding-left: 20px;
+}
+
+.chatlist-item {
+	margin-bottom: 16px;
 }

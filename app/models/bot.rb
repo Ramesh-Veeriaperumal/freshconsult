@@ -29,6 +29,7 @@ class Bot < ActiveRecord::Base
   belongs_to :portal
   belongs_to_account
 
+  has_many :bot_feedbacks, class_name: '::Bot::Feedback'
   has_many :bot_tickets, class_name: 'Bot::Ticket'
   has_many :tickets,
            class_name: 'Helpdesk::Ticket',

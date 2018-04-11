@@ -1,22 +1,25 @@
 class Account < ActiveRecord::Base
+  require 'launch_party/feature_class_mapping'
 
   before_create :downcase_full_domain,:set_default_values, :set_shard_mapping, :save_route_info
   before_create :add_features_to_binary_column
   before_update :check_default_values, :update_users_time_zone, :backup_changes
-  before_destroy :backup_changes, :make_shard_mapping_inactive
+  before_destroy :backup_changes, :make_shard_mapping_inactive, :deleted_model_info
 
-  after_create :populate_features, :change_shard_status
+  after_create :populate_features, :change_shard_status, :make_current
+  after_create :create_freshid_account, if: [:freshid_signup_allowed?, :freshid_enabled?]
   after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain, :update_route_info
   before_update :update_global_pod_domain 
 
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
-  after_update :update_livechat_url_time_zone, :if => :freshchat_enabled?
+  after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
 
   before_validation :sync_name_helpdesk_name
   
   after_destroy :remove_global_shard_mapping, :remove_from_master_queries
   after_destroy :remove_shard_mapping, :destroy_route_info
+  after_destroy :destroy_freshid_account
 
   after_commit :add_to_billing, :enable_elastic_search, on: :create
   after_commit :clear_api_limit_cache, :update_redis_display_id, on: :update
@@ -29,13 +32,21 @@ class Account < ActiveRecord::Base
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
 
   after_commit :update_crm_and_map, on: :update, :if => :account_domain_changed?
+  after_commit :update_bot, on: :update, if: :update_bot?
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
+  after_commit :trigger_launchparty_feature_callbacks, on: :create
+  after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_signup_allowed?
+
+
+  # Need to revisit when we push all the events for an account
+  publishable on: :destroy
+
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
 
-  after_launchparty_change :trigger_launchparty_feature_callbacks
+  after_launchparty_change :collect_launchparty_actions
 
   def downcase_full_domain
     self.full_domain.downcase!
@@ -82,10 +93,33 @@ class Account < ActiveRecord::Base
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
       self.launch(:archive_ghost)           # enabling archive ghost feature
     end
+    self.launch(:freshid) if freshid_signup_allowed?
   end
 
   def update_activity_export
     ScheduledExport::ActivitiesExport.perform_async if time_zone_changed? && activity_export_from_cache.try(:active)
+  end
+  
+  def create_freshid_account
+    freshid_acc = Freshid::Account.create({ name: self.name, domain: self.full_domain })
+    raise(ActiveRecord::Rollback, "FRESHID account not created") unless freshid_acc.present?
+  end
+  
+  def destroy_freshid_account
+    account_params = {
+      name: self.name,
+      account_id: self.id,
+      domain: self.full_domain,
+      destroy: true
+    }
+    Freshid::AccountDetailsUpdate.perform_async(account_params)
+  end
+  
+  alias_method :destroy_freshid_account_on_rollback, :destroy_freshid_account
+
+  # Need to revisit when we push all the events for an account
+  def central_publish_worker_class
+    "CentralPublishWorker::AccountDeletionWorker"
   end
 
   protected
@@ -103,12 +137,33 @@ class Account < ActiveRecord::Base
       @all_changes = self.changes.clone
     end
 
+    def deleted_model_info
+      @deleted_model_info = {
+        id: id,
+        name: name,
+        full_domain: full_domain,
+      }
+    end
+
     def account_verification_changed?
       @all_changes.key?("reputation") && self.verified?
     end
 
+    def update_bot?
+      return false unless account_domain_changed? || account_ssl_changed?
+      portal = self.main_portal
+      return false unless portal.portal_url.blank?
+      @bot = portal.bot
+      return false unless @bot.present?
+      true
+    end
+
     def account_domain_changed?
       @all_changes.key?("full_domain")
+    end
+
+    def account_ssl_changed?
+      @all_changes.key?("ssl_enabled")
     end
 
     def account_name_changed?
@@ -125,18 +180,35 @@ class Account < ActiveRecord::Base
 
   private
 
+    def collect_launchparty_actions(changes)
+      feature_name = changes[:launch] || changes[:rollback]
+      @launch_party_features ||= []
+      @launch_party_features << changes if FeatureClassMapping.get_class(feature_name.to_s)
+      # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
+      # after_commit for new record or modified record. 
+      admin_only_mint_on_launch(changes)
+      trigger_launchparty_feature_callbacks unless self.id_changed?
+    end
+
     # define your callback method in this format ->
     # eg:  on launch  feature_name => falcon, method_name => def falcon_on_launch ; end
     #      on rollback feature_name => falcon, method_name => def falcon_on_rollback ; end
-    def trigger_launchparty_feature_callbacks(changes)
-      self.make_current
-      args = { :feature => changes, :account_id => self.id }
+    def trigger_launchparty_feature_callbacks
+      return if @launch_party_features.blank?
+      args = { :features => @launch_party_features, :account_id => self.id }
       LaunchPartyActionWorker.perform_async(args)
+      @launch_party_features = nil
     end
 
     def sync_name_helpdesk_name
       self.name = self.helpdesk_name if helpdesk_name_changed?
       self.helpdesk_name = self.name if name_changed?
+    end
+
+    def admin_only_mint_on_launch(feature_changes)
+      if feature_changes[:launch] && feature_changes[:launch].include?(:admin_only_mint)
+        self.set_falcon_redis_keys
+      end
     end
 
     def add_to_billing
@@ -351,7 +423,7 @@ class Account < ActiveRecord::Base
     end
 
     def enable_collab
-      CollabPreEnableWorker.perform_async
+      CollabPreEnableWorker.perform_async(true)
     end
 
     def set_falcon_preferences
@@ -378,6 +450,20 @@ class Account < ActiveRecord::Base
 
     def falcon_ui_applicable?
       ismember?(FALCON_ENABLED_LANGUAGES, self.language)
+    end
+
+    def freshid_signup_allowed?
+      redis_key_exists? FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED
+    end
+
+    def update_bot
+      response, response_code = Freshbots::Bot.update_bot(@bot)
+      raise response unless response_code == Freshbots::Bot::BOT_UPDATION_SUCCESS_STATUS
+    rescue => e
+      error_msg = "FRESHBOTS UPDATE ERROR FOR ACCOUNT DOMAIN/SSL CHANGE :: Bot external id : #{@bot.external_id}
+                         :: Account id : #{@bot.account_id} :: Portal id : #{@bot.portal_id}"
+      NewRelic::Agent.notice_error(e, { description: error_msg })
+      Rails.logger.error("#{error_msg} :: #{e.inspect}")
     end
 
 end

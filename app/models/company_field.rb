@@ -106,17 +106,17 @@ class CompanyField < ActiveRecord::Base
   def admin_choices
     case field_type
       when :default_account_tier then
-          custom_field_choices.collect { |choice|
-            admin_choices_field_hash(choice)
-          }
+        custom_field_choices.collect { |choice|
+          admin_choices_field_hash(choice)
+        }
       when :default_industry then
-          custom_field_choices.collect { |choice|
-            admin_choices_field_hash(choice)
-          }
+        custom_field_choices.collect { |choice|
+          admin_choices_field_hash(choice)
+        }
       when :default_health_score then
-          custom_field_choices.collect { |choice|
-            admin_choices_field_hash(choice)
-          }
+        custom_field_choices.collect { |choice|
+          admin_choices_field_hash(choice)
+        }
       else
           super
     end

@@ -21,6 +21,8 @@ class Bot::Cleanup < BaseWorker
     end
 
     def clear_bot_feedbacks(bot_id)
-      # To be done later along with the model changes for bot feedback
+      Account.current.bot_feedbacks.find_each(batch_size: 500, conditions: {bot_id: bot_id}) do |bot_feedback|
+        bot_feedback.destroy
+      end
     end
 end

@@ -290,6 +290,7 @@ class Account < ActiveRecord::Base
   has_many :freshfone_whitelist_country, :class_name => "Freshfone::WhitelistCountry"
   
   has_one :chat
+  has_one  :freshchat_account, :class_name => 'Freshchat::Account', :dependent => :destroy
   has_many :report_filters, :class_name => 'Helpdesk::ReportFilter'
 
   has_one :chat_setting
@@ -351,6 +352,8 @@ class Account < ActiveRecord::Base
 
   has_one :collab_settings, :class_name => 'Collab::Setting'
 
+  has_many :bot_feedbacks, class_name: 'Bot::Feedback'
   has_many :bot_tickets, class_name: 'Bot::Ticket'
   has_many :bots, class_name: 'Bot', dependent: :destroy
+  has_many :bot_feedback_mappings, class_name: 'Bot::FeedbackMapping'
 end

@@ -116,7 +116,7 @@ class ApiApplicationController < MetalApiController
   private
 
     def response_info
-      RequestStore.store[:extra_credits] = 0
+      CustomRequestStore.store[:extra_credits] = 0
     end
 
     def render_500(e)
@@ -626,7 +626,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def increment_api_credit_by(value)
-      RequestStore.store[:extra_credits] += value
+      CustomRequestStore.store[:extra_credits] += value
     end
 
     def log_error_response(errors)

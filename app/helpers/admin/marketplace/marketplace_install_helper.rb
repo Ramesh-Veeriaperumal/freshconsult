@@ -77,7 +77,8 @@ include FalconHelperMethods
       _btn << %(
         <a href="javascript:;" onclick="#{on_click_url}" class="btn btn-default btn-primary install-app #{ni_install_btn_class}">#{install_btn_text}</a>
       )
-    elsif [Integrations::Constants::APP_NAMES[:google_calendar],Integrations::Constants::APP_NAMES[:mailchimp]].include?(@extension['name']) && current_account.falcon_ui_enabled?(current_user)
+    elsif Integrations::Constants::FALCON_ENABLED_OAUTH_APPS.include?(@extension['name']) && 
+      current_account.falcon_ui_enabled?(current_user)
       _btn << link_to(install_btn_text, install_url, :method => :post, :target => '_top',
               :class => "btn btn-default btn-primary install-app #{ni_install_btn_class}").html_safe
     else

@@ -1089,7 +1089,7 @@ select{
 
 div[class$="-toggle"]{
   .btn, .btn:hover{
-    background-color: $app-btn-hover;
+  background-color: $app-btn-hover;
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1), 0 0 1px 0 rgba(24, 50, 71, 0.6);
   text-transform: capitalize;
   padding: 7px $fields-font-size;
@@ -1298,6 +1298,10 @@ div[class$="-toggle"]{
     background: #fff;
 }
 
+.btn {
+  margin-left: 8px;
+}
+
 #body-container{
 /* Style for button */
   color: $app-text-color;
@@ -1331,7 +1335,6 @@ div[class$="-toggle"]{
       text-align: center;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-left: 8px;
       font-family: $font-family-semibold;
 
     color: $app-text-color;
@@ -1808,6 +1811,88 @@ div[class$="-toggle"]{
   }
 }
 /* End of Agent availabilty*/
+
+/* twitter smart filter */
+
+.smart-filter-wrapper {
+  #smart_filter_head {
+    .form_data {
+      @include margin-left(0px);
+    }
+  }
+}
+
+.sidepanel {
+  .lead {
+    font-weight: 600;
+    font-size: 16px;
+  }
+}
+
+
+/*Chat settings*/
+
+.freshchat-edit {
+  width: 70%;
+  margin: 0 auto;
+  color: #183247;
+
+  .muted {
+    color: #6f7c87;
+  }
+  
+  h3.lead{
+    font-family: $font-family-semibold;
+    padding-top: 48px;
+    font-size: 26px;
+    font-weight: 600;
+  }
+
+  .controls {
+    input {
+      height: 25px;
+      color: #183247;
+    }
+  }
+
+  .chat-fields-sontainer {
+    margin-top: 24px;
+  }
+
+  h5.lead, .control-label{
+    font-size: 16px;
+    font-family: $font-family-semibold;
+    font-weight: 600;
+  }
+  
+  .required_star {
+    top: 0;
+    color: #ff5959;
+    font-size: 16px;
+    margin-left: -1px;
+  }
+
+  .chat-key-copy {
+    font-size: 12px;
+    font-weight: normal;
+    position: relative;
+    top: -1px;
+
+    .ficon {
+      color: #6f7c87;
+      padding-left: 2px;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  input::-webkit-input-placeholder,
+  textarea::-webkit-input-placeholder {
+    color: #acb6be;
+  }
+}
 
 @import "falcon-community";
 @import "falcon-reports";

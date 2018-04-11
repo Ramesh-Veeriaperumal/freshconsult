@@ -85,7 +85,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def throttle?
       Rails.logger.error "Inside throttle? method :: Host: #{@host}, SOURCE IP: #{@request.env['HTTP_X_REAL_IP']}"
-      !skipped_domain? && account_id
+      !skipped_domain? && account_id && !Account.current.apigee_enabled?
     end
 
     def increment_redis_key(used)
@@ -101,7 +101,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def extra_credits
-      RequestStore.store[:extra_credits]
+      CustomRequestStore.store[:extra_credits]
     end
 
     def set_rate_limit_headers # Rate Limit headers are not set when status is 429

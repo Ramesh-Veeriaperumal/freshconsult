@@ -121,6 +121,10 @@ class Account < ActiveRecord::Base
     # (ES_ENABLED && launched?(:es_v1_enabled))
   end
 
+  def allow_sso_login?
+    sso_enabled? || launched?(:whitelist_sso_login)
+  end
+
   def permissible_domains
     helpdesk_permissible_domains.pluck(:domain).join(",")
   end
@@ -642,6 +646,14 @@ class Account < ActiveRecord::Base
     #if the account state is suspended.
     return self.subscription.state unless (self.subscription.suspended? && self.active_suspended?)
     'active_suspended'
+  end
+
+  def bots_hash
+    [main_portal, products.preload({ portal: [:logo, :bot] })].flatten.map { |bot_parent| bot_parent.bot_info }
+  end
+
+  def bot_onboarded?
+    !bots_count_from_cache.zero?
   end
 
   protected

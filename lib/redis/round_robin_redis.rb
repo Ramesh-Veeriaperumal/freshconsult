@@ -48,6 +48,10 @@ module Redis::RoundRobinRedis
     $redis_round_robin.perform_redis_op("lpop", key)
   end
 
+  def llen_round_robin_redis key
+    $redis_round_robin.perform_redis_op("llen", key)
+  end
+
   def lrem_round_robin_redis key, value, count=0
     $redis_round_robin.perform_redis_op("lrem", key, count, value)
   end
@@ -67,6 +71,10 @@ module Redis::RoundRobinRedis
 
   def zscore_round_robin_redis key, value
     $redis_round_robin.perform_redis_op("zscore", key, value)
+  end
+
+  def zcount_round_robin_redis key, min, max
+    $redis_round_robin.perform_redis_op("zcount", key, min, max)
   end
 
   def zrem_round_robin_redis key, member

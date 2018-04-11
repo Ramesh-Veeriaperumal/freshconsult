@@ -2,16 +2,16 @@ module SubscriptionsHelper
   include Subscription::Currencies::Constants
 
   PLANS_FEATURES = {
-    "sprout" => [ "email_ticketing", "feedback_widget" ,"knowledge_base", "automations", "phone_integration", "mobile_apps", "integrations" ],
+    "sprout" => [ "email_ticketing", "feedback_widget" ,"knowledge_base", "automations", "phone_integration", "mobile_apps", "integrations", "freshchat" ],
     "blossom" => [ "everything_in_sprout", "multiple_mailboxes", "custom_domain", "social_support", "satisfaction_survey", "forums", "gamification" ],
-    "garden" => [ "everything_in_blossom", "chat", "multiple_languages", "multiple_products", "multiple_timezones", "css_customization" ],
+    "garden" => [ "everything_in_blossom", "multiple_languages", "multiple_products", "multiple_timezones", "css_customization" ],
     "estate" => [ "everything_in_garden", "agent_collision", "custom_roles", "custom_ssl", "enterprise_reports", "portal_customization" ],
     "forest" => [ "everything_in_estate", "custom_mailbox", "ip_restriction" ],
 
-    "sprout jan 17" => [ "email_ticketing", "ticket_dispatch_automation" ,"knowledge_base", "app_gallery", "basic_phone" ],
+    "sprout jan 17" => [ "email_ticketing", "ticket_dispatch_automation" ,"knowledge_base", "app_gallery", "basic_phone", "freshchat" ],
     "blossom jan 17" => [ "everything_in_sprout", "multiple_mailboxes", "time_event_automation", "sla_reminders", "custom_domain", "satisfaction_survey",
       "helpdesk_report", "custom_ticket_fields_and_views"],
-    "garden jan 17" => [ "everything_in_blossom", "m_k_base", "dynamic_email_alert", "chat", "forums", "scheduled_reports",
+    "garden jan 17" => [ "everything_in_blossom", "m_k_base", "dynamic_email_alert", "forums", "scheduled_reports",
        "ticket_templates", "custom_surveys"],
     "estate jan 17" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "agent_collision", "auto_ticket_assignment",
        "role_dashboard", "enterprise_reports"],

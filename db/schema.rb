@@ -1546,6 +1546,17 @@ ActiveRecord::Schema.define(:version => 20180223055939) do
   add_index "free_account_jobs", ["pod_info"], :name => "index_free_account_jobs_on_pod_info"
   add_index "free_account_jobs", ["account_id"], :name => "index_free_account_jobs_on_account_id"
 
+  create_table "freshchat_accounts", :force => true do |t|
+    t.integer  "account_id",             :limit => 8
+    t.string   "app_id"
+    t.text     :preferences
+    t.boolean  :enabled
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
+  end
+
+  add_index "freshchat_accounts", ["account_id"], :name => "index_freshchat_accounts_on_account_id", :unique => true
+
   create_table "freshcaller_accounts", :force => true do |t|
     t.integer  "account_id",             :limit => 8
     t.integer  "freshcaller_account_id", :limit => 8
@@ -4278,4 +4289,32 @@ ActiveRecord::Schema.define(:version => 20180223055939) do
   add_index :failed_central_feeds, :model_id, :name => 'index_failed_central_feeds_on_model_id'
   add_index :failed_central_feeds, :account_id, :name => 'index_failed_central_feeds_on_account_id'
   add_index :failed_central_feeds, :created_at, :name => 'index_failed_central_feeds_on_created_at'
+
+  create_table "bot_feedbacks", :force => true do |t|
+    t.integer  "bot_id",             :limit => 8,                 :null => false
+    t.integer  "account_id",         :limit => 8,                 :null => false
+    t.integer  "category",                         :default => 1
+    t.integer  "useful",                           :default => 1
+    t.datetime "received_at",                                     :null => false
+    t.string   "query_id",           :limit => 45,                :null => false
+    t.text     "query",                                           :null => false
+    t.text     "external_info",                                   :null => false
+    t.integer  "state",                            :default => 1
+    t.text     "suggested_articles"
+    t.datetime "created_at",                                      :null => false
+    t.datetime "updated_at",                                      :null => false
+  end
+
+  add_index "bot_feedbacks", ["account_id", "bot_id", "received_at"], :name => "index_bot_feedbacks_on_account_id_bot_id_received_at"
+  add_index "bot_feedbacks", ["account_id", "query_id"], :name => "index_bot_feedbacks_on_query_id", :unique => true
+
+  create_table "bot_feedback_mappings", :force => true do |t|
+    t.integer  "account_id",  :limit => 8, :null => false
+    t.integer  "feedback_id", :limit => 8, :null => false
+    t.integer  "article_id",  :limit => 8, :null => false
+    t.datetime "created_at",               :null => false
+    t.datetime "updated_at",               :null => false
+  end
+
+  add_index "bot_feedback_mappings", ["account_id", "feedback_id"], :name => "index_bot_feedback_mappings_on_feedback_id"
 end

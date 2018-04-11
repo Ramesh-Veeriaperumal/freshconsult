@@ -71,8 +71,8 @@ module Channel
         enable_bot_feature do
           params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
           post :create, construct_params({ version: 'private' }, params)
-          assert_response 403
-          match_json(request_error_pattern(:access_denied))
+          assert_response 401
+          match_json(request_error_pattern(:invalid_credentials))
         end
       end
 
@@ -172,7 +172,7 @@ module Channel
           assert_response 400
           pattern = []
           VALIDATABLE_CUSTOM_FIELDS.each do |custom_field|
-            pattern << bad_request_error_pattern("test_custom_#{custom_field}", *(ERROR_PARAMS[custom_field]))
+            pattern << bad_request_error_pattern("custom_fields.test_custom_#{custom_field}", *(ERROR_PARAMS[custom_field]))
           end
           match_json(pattern)
         end

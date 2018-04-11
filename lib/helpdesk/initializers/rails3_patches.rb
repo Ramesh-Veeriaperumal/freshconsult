@@ -209,3 +209,23 @@ module ActionController
     end
   end
 end
+
+# http://jira.freshworks.com/browse/INFRA-678
+# https://github.com/rails/rails/issues/1525#issuecomment-1724316
+module AbstractController
+  module Rendering
+
+    module Antifreeze
+      def inspect
+        @view_renderer.lookup_context.find_all(@_request[:action], @_request[:controller]).inspect
+      end
+    end
+
+    def view_context
+      context = view_context_class.new(view_renderer, view_assigns, self)
+      context.extend Antifreeze
+      context
+    end
+
+  end
+end

@@ -27,6 +27,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include BusinessHoursCalculation
   include AccountConstants
   include RoundRobinCapping::Methods
+  include MemcacheKeys
 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
@@ -335,6 +336,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   end
 
+  def properties_updated?
+    self.changed? || self.schema_less_ticket_updated? || self.custom_fields_updated?
+  end
+
   def skill_name
     self.skill.try(:name)
   end
@@ -419,6 +424,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def outbound_email?
     (source == SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?
+  end
+
+  # Fetch NER data from cache.
+  def fetch_ner_data
+    key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.id }
+    MemcacheKeys.get_from_cache(key)
   end
 
   #This method will return the user who initiated the outbound email
@@ -512,19 +523,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def conversation(page = nil, no_of_records = 5, includes=[])
     includes = note_preload_options if includes.blank?
-    notes.visible.exclude_source('meta').newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
+    notes.conversations.newest_first.paginate(:page => page, :per_page => no_of_records, :include => includes)
   end
 
   def conversation_since(since_id)
-    notes.visible.exclude_source('meta').since(since_id).includes(note_preload_options)
+    notes.conversations.since(since_id).includes(note_preload_options)
   end
 
   def conversation_before(before_id)
-    notes.visible.exclude_source('meta').newest_first.before(before_id).includes(note_preload_options)
+    notes.conversations.newest_first.before(before_id).includes(note_preload_options)
   end
 
   def conversation_count(page = nil, no_of_records = 5)
-    notes.visible.exclude_source('meta').size
+    notes.conversations.size
   end
 
   def latest_twitter_comment_user
@@ -615,6 +626,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def reply_email_config
     email_config ? email_config : account.primary_email_config
+  end
+
+  def friendly_reply_email_config
+    (email_config && email_config.active) ? email_config : account.primary_email_config
   end
 
   def friendly_reply_email
@@ -721,11 +736,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def latest_public_comment
-    notes.visible.exclude_source('meta').public.newest_first.first
+    notes.conversations.public.newest_first.first
   end
 
   def latest_private_comment
-    notes.visible.exclude_source('meta').private.newest_first.first
+    notes.conversations.private.newest_first.first
   end
 
   def liquidize_comment(comm, html=true)

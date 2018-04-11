@@ -260,6 +260,9 @@ module Redis::RedisKeys
   # Key to hold the "From" of various language. This helps in identifying the original sender while agent forward
   AGENT_FORWARD_FROM_REGEX = "AGENT_FORWARD_FROM_REGEX"
 
+  # Key to hold the "To" of various language. This helps in identifying the original recipient while agent forward
+  AGENT_FORWARD_TO_REGEX = "AGENT_FORWARD_TO_REGEX"
+
   # key for enabling fd email service to all the account
 
   ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE = "ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE"
@@ -350,6 +353,7 @@ module Redis::RedisKeys
   CROSS_DOMAIN_API_GET_DISABLED = "CROSS_DOMAIN_API_GET_DISABLED" 
   DKIM_CATEGORY_KEY = "DKIM_CATEGORY_CHANGER"
   DKIM_VERIFICATION_KEY = "DKIM_VERIFICATION:%{account_id}:%{email_domain_id}"
+  DKIM_CONFIGURATION_IN_PROGRESS_KEY = "DKIM_CONFIGURATION_IN_PROGRESS"
 
   WHITELISTED_DOMAINS_KEY = "WHITELISTED_DOMAINS_KEY"
 
@@ -369,6 +373,7 @@ module Redis::RedisKeys
 
   FACEBOOK_PREMIUM_ACCOUNTS = "FACEBOOK_PREMIUM_ACCOUNTS"
   TWITTER_PREMIUM_ACCOUNTS = "TWITTER_PREMIUM_ACCOUNTS"
+  TWITTER_SMART_FILTER_REVOKED = "TWITTER_SMART_FILTER_REVOKED"
 
   #JWT api keys
   JWT_API_JTI = "JWT:%{account_id}:%{user_id}:%{jti}"
@@ -386,6 +391,9 @@ module Redis::RedisKeys
 
   FRESHID_CLIENT_CREDS_TOKEN_KEY = 'FRESHID_CLIENT_CREDS_TOKEN'.freeze
   FRESHID_USER_PW_AVAILABILITY = 'FRESHID_USER_PW_AVAILABILITY:%{account_id}:%{email}'.freeze
+  FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED = 'FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED'.freeze
+
+  TRIAL_21_DAYS = "TRIAL_21_DAYS"
 
 	def newrelic_begin_rescue
 		begin

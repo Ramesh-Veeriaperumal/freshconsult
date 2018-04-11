@@ -599,6 +599,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/cloud_elements/crm", :only => [:instances, :edit, :update, :settings, :create]
     resource :"integrations/microsoft_team", :only => [:oauth, :install]
     resource :"integrations/google_hangout_chat", :only => [:oauth, :install]
+    resource :"user", :only => [:enable_falcon_for_all, :disable_old_helpdesk]
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]
@@ -614,6 +615,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_role", :only => [:index, :show]
     resource :"api_integrations/cti", :only => [:create, :index]
     resource :"email_preview"
+    resource :"admin/freshchat", :only => [:index, :create, :update, :toggle]
   end
 
   manage_account do

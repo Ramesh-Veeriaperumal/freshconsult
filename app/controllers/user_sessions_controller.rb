@@ -11,22 +11,24 @@ class UserSessionsController < ApplicationController
   include Redis::OthersRedis
   include SsoUtil
   include Mobile::Actions::Push_Notifier
+  include Freshid::ControllerMethods
 
   skip_before_filter :check_privilege, :verify_authenticity_token  
   skip_before_filter :require_user, :except => [:destroy, :freshid_destroy]
   skip_before_filter :check_account_state
+  before_filter :check_for_sso_login, only: [:sso_login, :jwt_sso_login]
   before_filter :check_sso_params, :only => :sso_login
   skip_before_filter :check_day_pass_usage
   before_filter :set_native_mobile, :only => [:create, :destroy, :freshid_destroy]
   skip_after_filter :set_last_active_time
   before_filter :decode_jwt_payload, :check_jwt_required_fields, :only => [:jwt_sso_login]
+  before_filter :redirect_to_freshid_login, :only =>[:create], :if => :is_freshid_agent_and_not_mobile?
 
   def new
     flash.keep
     # Login normal supersets all login access (can be used by agents)
     if request.path == "/login/normal"
-      @user_session = current_account.user_sessions.new 
-      redirect_to_freshid_login if freshid_enabled?
+      @user_session = current_account.user_sessions.new
     elsif current_account.sso_enabled?
       sso_login_page_redirect
     else
@@ -46,13 +48,24 @@ class UserSessionsController < ApplicationController
       :phone => saml_response.phone,
       :company => saml_response.company,
       :title => saml_response.title,
-      :external_id => saml_response.external_id
+      :external_id => saml_response.external_id,
+      :custom_fields => saml_response.custom_fields
     }
 
-    if saml_response.valid?
-      handle_sso_response(sso_data, relay_state_url)
-    else
-      flash[:notice] = t(:'flash.login.failed') + " -  #{saml_response.error_message}"
+    valid = saml_response.valid?
+    message = saml_response.error_message
+    if valid
+      begin 
+        handle_sso_response(sso_data, relay_state_url)
+      rescue SsoFieldValidationError => e 
+        valid = false
+        message = "Field validation error #{e.message}"
+      end  
+    end
+
+    unless valid
+      flash[:notice] = "#{t(:'flash.login.failed')} - #{message}"
+      Rails.logger.debug("SAML Login failed #{message}")
       redirect_to login_normal_url
     end
   end
@@ -282,9 +295,14 @@ class UserSessionsController < ApplicationController
       flash[:notice] = "Please provide valid login details!!"
       return redirect_to login_url 
     end
-    
+    if @current_user.active_freshid_user?
+      redirect_to support_login_url(params: {new_account_signup: true}) and return
+    elsif freshid_enabled?
+      new_freshid_signup = @current_user.active = true
+    end
     @user_session = current_account.user_sessions.new(@current_user)
     if @user_session.save
+      @current_user.primary_email.update_attributes({verified: false}) if new_freshid_signup
       @current_user.reset_perishable_token!
       @current_user.deliver_admin_activation
       #SubscriptionNotifier.send_later(:deliver_welcome, current_account)
@@ -332,6 +350,14 @@ class UserSessionsController < ApplicationController
         redirect_to login_normal_url
       elsif !params[:timestamp].blank? and !params[:timestamp].to_i.between?((time_in_utc - SSO_ALLOWED_IN_SECS),( time_in_utc + SSO_CLOCK_DRIFT ))
         flash[:notice] = t(:'flash.login.sso.invalid_time_entry')
+        redirect_to login_normal_url
+      end
+    end
+
+    def check_for_sso_login
+      unless current_account.allow_sso_login?
+        cookies["mobile_access_token"] = { :value => 'failed', :http_only => true } if is_native_mobile?
+        flash[:notice] = t(:'flash.login.failed')
         redirect_to login_normal_url
       end
     end
@@ -453,6 +479,10 @@ class UserSessionsController < ApplicationController
 
     def create_user_session user={}
       @user_session = current_account.user_sessions.new(user)
+    end
+
+    def is_freshid_agent_and_not_mobile?
+      !is_native_mobile? && params[:user_session].try(:[], :email) && freshid_agent?(params[:user_session][:email])
     end
 
 end

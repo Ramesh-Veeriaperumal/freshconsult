@@ -9,7 +9,7 @@ module Concerns::DataEnrichmentConcern
       return unless Rails.env.production?
       account = Account.current
       Rails.logger.debug "******* Data Enrichment Concern account: ##{account.id}  ehawk_spam: #{account.ehawk_spam?} verified: #{account.verified?} model: #{self.class.name.underscore} condition: #{safe_send(self.class.name.underscore + "_check")} changes: #{self.previous_changes.inspect}"
-      return if account.ehawk_spam? || account.verified?
+      return if account.ehawk_spam? || account.verified? || account.opt_out_analytics_enabled?
       ContactEnrichment.perform_async({:email_update => @email_update}) if safe_send(self.class.name.underscore + "_check")
     end
 

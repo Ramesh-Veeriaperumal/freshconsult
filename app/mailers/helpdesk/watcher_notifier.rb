@@ -4,7 +4,7 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
   include EmailHelper
   def notify_new_watcher(ticket, subscription, agent_name)
     begin
-      configure_email_config ticket.reply_email_config
+      configure_email_config ticket.friendly_reply_email_config
       headers = {
         :subject   => new_watcher_subject(ticket, agent_name),
         :to        => subscription.user.email,
@@ -15,7 +15,7 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
         "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
       }
       headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, "Notify New Watcher"))
-      headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
+      headers.merge!({"X-FD-Email-Category" => ticket.friendly_reply_email_config.category}) if ticket.friendly_reply_email_config.category.present?
       @ticket = ticket
       @subscription = subscription
       @agent_name = agent_name
@@ -31,7 +31,7 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
 
   def notify_on_reply(ticket, subscription, note)
     begin
-      configure_email_config ticket.reply_email_config
+      configure_email_config ticket.friendly_reply_email_config
       headers = {
         :subject => ticket_monitor_subject(ticket),
         :to      => subscription.user.email,
@@ -42,7 +42,7 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
         "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
       }
       headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, "Notify On Reply"))
-      headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
+      headers.merge!({"X-FD-Email-Category" => ticket.friendly_reply_email_config.category}) if ticket.friendly_reply_email_config.category.present?
       @ticket = ticket 
       @subscription = subscription 
       @note = note
@@ -58,7 +58,7 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
 
   def notify_on_status_change(ticket, subscription, status , agent_name)
     begin
-      configure_email_config ticket.reply_email_config
+      configure_email_config ticket.friendly_reply_email_config
       headers = {
         :subject => ticket_monitor_subject(ticket),
         :to      => subscription.user.email,
@@ -66,7 +66,7 @@ class  Helpdesk::WatcherNotifier < ActionMailer::Base
         :sent_on => Time.now
       }
       headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, "Notify On Status Change"))
-      headers.merge!({"X-FD-Email-Category" => ticket.reply_email_config.category}) if ticket.reply_email_config.category.present?
+      headers.merge!({"X-FD-Email-Category" => ticket.friendly_reply_email_config.category}) if ticket.friendly_reply_email_config.category.present?
       @ticket = ticket
       @subscription = subscription
       @status = status 

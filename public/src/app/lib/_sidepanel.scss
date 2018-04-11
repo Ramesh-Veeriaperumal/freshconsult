@@ -23,6 +23,16 @@
 		font-weight:bold;
 		line-height:1.4em;
 	}
+	
+	.list-decimal {
+		list-style: decimal;
+		padding-left: 15px;
+
+		li{
+			padding-bottom: 10px;
+		}
+	}
+
 	.element{
 		@include padding(4px 16px 16px 16px);
 		margin:0 -20px;

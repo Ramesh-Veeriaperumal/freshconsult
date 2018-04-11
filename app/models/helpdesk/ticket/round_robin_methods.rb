@@ -174,8 +174,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
       
       ticket_count     = agents_ticket_count(old_score)
       new_ticket_count = operation=="decr" ? ticket_count-1 : ticket_count+1
+      timestamp        = last_assigned_timestamp(old_score) if operation == 'decr'
 
-      new_score = generate_new_score(new_ticket_count)
+      new_score = generate_new_score(new_ticket_count, timestamp)
 
       result = group.update_agent_capping_with_lock(user_id, new_score, operation)
 
@@ -213,16 +214,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def update_old_group_capping ticket_changes=self.changes
     if ticket_changes.present? && ticket_changes.key?(:group_id) && 
-      !self.group.try(:round_robin?)
+      !self.group.try(:lbrr_enabled?)
       old_group = Account.current.groups.find_by_id(ticket_changes[:group_id][0])
       return unless old_group.present? && old_group.lbrr_enabled? && 
                     has_valid_status?(ticket_changes)
-      if responder_id.present?
-        change_agents_ticket_count(old_group, responder_id, "decr")
-      else
-        change_agents_ticket_count(old_group, 
-          ticket_changes[:responder_id][0], "decr") if ticket_changes.key?(:responder_id)
+
+      _resp_id = ticket_changes.key?(:responder_id) ? ticket_changes[:responder_id][0] : responder_id
+      if _resp_id.nil?
         old_group.lrem_from_rr_capping_queue(display_id)
+      else
+        change_agents_ticket_count(old_group, _resp_id, "decr")
       end
     end
   end
