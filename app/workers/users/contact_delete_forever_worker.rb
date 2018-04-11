@@ -86,10 +86,17 @@ class Users::ContactDeleteForeverWorker < BaseWorker
           if ticket.associated_ticket? && TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[ticket.association_type] == :assoc_parent
             child_tickets = @account.tickets.where(display_id: ticket.associates)
             child_tickets.each do |child_ticket|
+              ticket_reset_associations(child_ticket)
               child_ticket.destroy
             end
           end
+          ticket_reset_associations(ticket)
         end
+    end
+
+    def ticket_reset_associations(ticket)
+      ticket.reset_associations
+      ticket.update_attributes(:association_type => nil) if ticket.tracker_ticket?
     end
 
     def destroy_user_notes
