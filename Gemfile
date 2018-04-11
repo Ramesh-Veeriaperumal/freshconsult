@@ -61,6 +61,14 @@ group :development, :test do
   gem 'fake_dynamo'
 end
 
+group :development do
+  gem 'pronto'
+  gem 'pronto-rubocop', require: false
+  gem 'pronto-rails_best_practices', require: false
+  gem 'pronto-brakeman', require: false
+  gem 'pronto-reek', require: false
+end
+
 gem "rack-mini-profiler", :group => [:development]
 gem "brakeman", :require => false, :group => [:development]
 gem "bullet", :group => [:development, :test, :staging]
