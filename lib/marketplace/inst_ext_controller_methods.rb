@@ -26,6 +26,7 @@ module Marketplace::InstExtControllerMethods
       iframe_params[:e_id] = params[:extension_id]
       iframe_params[:v_id] = params[:version_id]
       iframe_params[:iat] = Time.zone.now.utc.iso8601
+      iframe_params[:pod] = PodConfig['CURRENT_POD']
     end
   end
 
