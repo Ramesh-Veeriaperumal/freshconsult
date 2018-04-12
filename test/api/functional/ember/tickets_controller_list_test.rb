@@ -162,6 +162,26 @@ module Ember
       params_hash
     end
 
+    def test_skill_filter
+      enable_adv_ticketing([:skill_based_round_robin]) do
+        create_skill_tickets
+        query_hash_params = { '0' => query_hash_param('sl_skill_id', 'is_in', [@account.skills.sample.id]) }
+        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+        assert_response 200
+        match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      end
+    end
+
+    def test_multiple_skills_filter
+      enable_adv_ticketing([:skill_based_round_robin]) do
+        create_skill_tickets
+        query_hash_params = { '0' => query_hash_param('sl_skill_id', 'is_in', @account.skills.map(&:id).sample(rand(1..2))) }
+        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+        assert_response 200
+        match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      end
+    end
+
     def test_agent_me_filter
       query_hash_params = { '0' => query_hash_param('responder_id', 'is_in', [0]) }
       get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
@@ -437,7 +457,7 @@ module Ember
         query_hash_params[counter.to_s] = query_hash_param(k.dup, *v)
         counter += 1
       end
-      enable_adv_ticketing(%i(link_tickets parent_child_tickets)) {
+      enable_adv_ticketing(%i[link_tickets parent_child_tickets skill_based_round_robin]) {
         get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
         assert_response 200
         match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
@@ -447,8 +467,8 @@ module Ember
     30.times.each do |i|
       define_method("test_multiple_filter_case_#{i + 1}") do
         query_hash_params = random_query_hash_params
-        Rails.logger.debug "Method: test_multiple_filter_case_#{i + 1} :: params: #{random_query_hash_params.inspect}"
-        enable_adv_ticketing(%i(link_tickets parent_child_tickets)) {
+        Rails.logger.debug "Method: test_multiple_filter_case_#{i + 1} :: params: #{query_hash_params.inspect}"
+        enable_adv_ticketing(%i[link_tickets parent_child_tickets]) {
           get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
           assert_response 200
           match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))

@@ -52,16 +52,16 @@ module UsersTestHelper
     new_user.reload
   end
 
-  def build_tags(tag_names)
-    tags = []
-    existing_tags = Helpdesk::Tag.where(account_id: @account.id)
-    tag_names_taken = existing_tags.map(&:name)
-    tag_names -= tag_names_taken if tag_names.present?
-    tag_names.each do |tag_name|
-      tags << Helpdesk::Tag.new(name: tag_name)
-    end
-    [*tags, *existing_tags]
-  end
+  # def build_tags(tag_names)
+  #   tags = []
+  #   existing_tags = Helpdesk::Tag.where(account_id: @account.id)
+  #   tag_names_taken = existing_tags.map(&:name)
+  #   tag_names -= tag_names_taken if tag_names.present?
+  #   tag_names.each do |tag_name|
+  #     tags << Helpdesk::Tag.new(name: tag_name)
+  #   end
+  #   [*tags, *existing_tags]
+  # end
 
   def add_new_user(account, options={})
     if options[:email]
@@ -79,7 +79,7 @@ module UsersTestHelper
                                   company_id: options[:customer_id] || nil,
                                   language: 'en',
                                   active: options[:active] || false,
-                                  tags: build_tags(options[:tags]))
+                                  tag_names: options[:tag_names] || "")
     if options[:unique_external_id]
       new_user.unique_external_id = options[:unique_external_id]
     end

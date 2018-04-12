@@ -3,7 +3,7 @@ class TicketDecorator < ApiDecorator
     :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
     :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
     :internal_group_id, :internal_agent_id, :association_type,:associates, :associated_ticket?, :associated_tickets_count, :can_be_associated?,
-    :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, to: :record
+    :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id, to: :record
 
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
 
@@ -159,6 +159,11 @@ class TicketDecorator < ApiDecorator
     }
   end
 
+  def skill_hash
+    return {} unless Account.current.skill_based_round_robin_enabled?
+    { skill_id: skill_id }
+  end
+
   def ticket_topic
     return unless forums_enabled? && record.ticket_topic.present?
     topic = record.topic
@@ -204,7 +209,7 @@ class TicketDecorator < ApiDecorator
       custom_fields: custom_fields,
       tags: tag_names
     }
-    [hash, simple_hash, feedback_hash, shared_ownership_hash].inject(&:merge)
+    [hash, simple_hash, feedback_hash, shared_ownership_hash, skill_hash].inject(&:merge)
   end
 
   def to_search_hash

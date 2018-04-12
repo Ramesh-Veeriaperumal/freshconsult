@@ -109,6 +109,7 @@ api_error_messages:
   fields_limit_exceeded: "Cannot export more than %{max_count} fields"
   no_reply_privilege: "Cannot be set, no reply privilege"
   no_edit_privilege: "Cannot be set, no edit privilege"
+  no_edit_ticket_skill_privilege: "Cannot be set, no edit skill privilege"
   unresolved_child: 'Ticket cannot be closed or resolved since one or more of the child tickets associated with this ticket are unresolved.'
   cannot_set_skip_notification: 'Cannot be set unless status is changed to closed'
   cannot_set_user_id: "Cannot set user_id when content type is inline"

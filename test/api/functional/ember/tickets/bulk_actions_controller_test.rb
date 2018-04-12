@@ -43,6 +43,7 @@ module Ember
           @@ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
           @@custom_field_names << @@ticket_fields.last.name
         end
+        create_skill if @account.skills.empty?
         @@before_all_run = true
       end
 
@@ -1349,6 +1350,72 @@ module Ember
         end
         match_json(partial_success_response_pattern(ticket_ids, {}))
         assert_response 202
+      end
+
+      def test_bulk_update_skill_id_without_feature
+        Account.current.stubs(:skill_based_round_robin_enabled?).returns(false)
+        user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+        login_as(user)
+        group = create_group(@account, ticket_assign_type: 2)
+        ticket = create_ticket({}, group)
+        ticket_ids = [ticket.display_id]
+        params_hash = { ids: ticket_ids, properties: { skill_id: 1 } }
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        ticket.reload
+        assert_equal nil, ticket.skill_id
+        match_json([bad_request_error_pattern(:skill_id, :require_feature_for_attribute, code: :inaccessible_field, attribute: 'skill_id', feature: :skill_based_round_robin)])
+        Account.current.unstub(:skill_based_round_robin_enabled?)
+      end
+
+      def test_bulk_update_skill_id_without_privilege
+        Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+        user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+        login_as(user)
+        group = create_group(@account, ticket_assign_type: 2)
+        ticket = create_ticket({}, group)
+        ticket_ids = [ticket.display_id]
+        params_hash = { ids: ticket_ids, properties: { skill_id: 1 } }
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        ticket.reload
+        assert_equal nil, ticket.skill_id
+        match_json([bad_request_error_pattern(:skill_id, nil, code: :incompatible_field, append_msg: :no_edit_ticket_skill_privilege)])
+        Account.current.unstub(:skill_based_round_robin_enabled?)
+      end
+
+       def test_bulk_update_skill_id_with_invalid_skill
+        Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+        user = add_test_agent(@account, role: Role.find_by_name('Supervisor').id)
+        login_as(user)
+        group = create_group(@account, ticket_assign_type: 2)
+        ticket = create_ticket({}, group)
+        ticket_ids = [ticket.display_id]
+        invalid_skill = @account.skills.length + 1
+        params_hash = { ids: ticket_ids, properties: { skill_id: invalid_skill } }
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        ticket.reload
+        assert_equal nil, ticket.skill_id
+        match_json([bad_request_error_pattern(:skill_id, nil, code: :invalid_value, append_msg: :invalid_skill_id)])
+        Account.current.unstub(:skill_based_round_robin_enabled?)
+      end
+
+      def test_bulk_update_skill_id_with_privilege
+        Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+        user = add_test_agent(@account, role: Role.find_by_name('Supervisor').id)
+        login_as(user)
+        group = create_group(@account, ticket_assign_type: 2)
+        ticket = create_ticket({}, group)
+        ticket_ids = [ticket.display_id]
+        params_hash = { ids: ticket_ids, properties: { skill_id: 1 } }
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        sidekiq_jobs = ::Tickets::BulkTicketActions.jobs
+        assert_equal 1, sidekiq_jobs.size
+        assert_equal 1, sidekiq_jobs.first["args"][0]["helpdesk_ticket"]["skill_id"]
+        ::Tickets::BulkTicketActions.jobs.clear
+        Account.current.unstub(:skill_based_round_robin_enabled?)
       end
     
       private

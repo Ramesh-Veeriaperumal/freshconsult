@@ -25,6 +25,7 @@ module TicketHelper
                                          :custom_field => params[:custom_field],
                                          :tag_names => params[:tag_names],
                                          :product_id => params[:product_id],
+                                         :sl_skill_id => params[:skill_id],
                                          :company_id => params[:company_id])
     test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
     if params[:attachments]

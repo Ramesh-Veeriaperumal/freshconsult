@@ -358,4 +358,68 @@ class TicketValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
+  def test_valid_skill_without_feature
+    Account.stubs(:current).returns(Account.first)
+    Account.any_instance.stubs(:skill_based_round_robin_enabled?).returns(false)
+    User.stubs(:current).returns(User.new)
+    controller_params = { 'ticket_fields' => [], 'skill_id' => 1 }
+    ticket = TicketValidation.new(controller_params, nil)
+    ticket.skip_bulk_validations = true
+    refute ticket.valid?(:bulk_update)
+    errors = ticket.errors.full_messages
+    assert errors.include?('Skill require_feature_for_attribute')
+    User.unstub(:current)
+    Account.any_instance.unstub(:skill_based_round_robin_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_valid_skill_without_privilege
+    Account.stubs(:current).returns(Account.first)
+    Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+    User.stubs(:current).returns(User.new)
+    User.current.stubs(:privilege?).with(:edit_ticket_skill).returns(false)
+    controller_params = { 'ticket_fields' => [], 'skill_id' => 1 }
+    ticket = TicketValidation.new(controller_params, nil)
+    ticket.skip_bulk_validations = true
+    refute ticket.valid?(:bulk_update)
+    errors = ticket.errors.full_messages
+    assert errors.include?('Skill no_edit_ticket_skill_privilege')
+    User.current.unstub(:privilege?)
+    User.unstub(:current)
+    Account.current.unstub(:skill_based_round_robin_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_invalid_skill_with_privilege
+    Account.stubs(:current).returns(Account.first)
+    Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+    User.stubs(:current).returns(User.new)
+    User.current.stubs(:privilege?).with(:edit_ticket_skill).returns(true)
+    controller_params = { 'ticket_fields' => [], 'skill_id' => 'test' }
+    ticket = TicketValidation.new(controller_params, nil)
+    ticket.skip_bulk_validations = true
+    refute ticket.valid?(:bulk_update)
+    errors = ticket.errors.full_messages
+    assert errors.include?('Skill datatype_mismatch')
+    User.current.unstub(:privilege?)
+    User.unstub(:current)
+    Account.current.unstub(:skill_based_round_robin_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_valid_skill_with_privilege
+    Account.stubs(:current).returns(Account.first)
+    Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+    User.stubs(:current).returns(User.new)
+    User.current.stubs(:privilege?).with(:edit_ticket_skill).returns(true)
+    controller_params = { 'ticket_fields' => [], 'skill_id' => 1 }
+    ticket = TicketValidation.new(controller_params, nil)
+    ticket.skip_bulk_validations = true
+    assert ticket.valid?(:bulk_update)
+    User.current.unstub(:privilege?)
+    User.unstub(:current)
+    Account.current.unstub(:skill_based_round_robin_enabled?)
+    Account.unstub(:current)
+  end
+
 end
