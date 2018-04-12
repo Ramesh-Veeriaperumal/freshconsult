@@ -192,7 +192,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       remove_prime_associates("tracker")
       if self.related_tickets_count > 0
         self.misc_changes = {:tracker_unlink_all => self.related_tickets_count}
-        self.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
+        self.manual_publish(["update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY], [:update, { misc_changes: self.misc_changes.dup }])
       end
       remove_all_associates
       delete_broadcast_notes
