@@ -950,6 +950,7 @@ class User < ActiveRecord::Base
       self.set_password_expiry({:password_expiry_date =>
           (Time.now.utc + expiry_period).to_s}, false)
       reset_persistence_token
+      self.active = self.primary_email.verified = false if freshid_enabled_account?
       save ? true : (raise ActiveRecord::Rollback)
     end
   end
