@@ -215,6 +215,7 @@ defaults: &defaults
     - [update_taggables_queue]
     - [mixpanel_queue]
     - [bot_cleanup]
+    - [calculate_sla]
 
 development:
   <<: *defaults
