@@ -12,4 +12,5 @@ module BotConstants
                  training_inprogress: 2,
                  training_completed: 3
                }.freeze
+  WIDGET_CODE_DEFAULT_USER_NAME  = 'Guest'.freeze
 end
