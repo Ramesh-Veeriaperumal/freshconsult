@@ -31,6 +31,8 @@
     - livechat_worker
     - smart_filter_tweet_to_ticket
     - channel_framework_command
+    - update_taggables_queue
+
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
@@ -187,6 +189,7 @@
     - sendgrid_domain_updates
   :archive:
     - manual_publish
+    - delayed_central_publish
     - archive_ticket_splitter
     - archive_build_create_ticket
     - archive_modify_ticket_association

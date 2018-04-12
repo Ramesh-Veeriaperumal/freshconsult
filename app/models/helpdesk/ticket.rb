@@ -1170,8 +1170,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Used update_column instead of touch because touch fires after commit callbacks from RAILS 4 onwards.
   def update_timestamp
     unless @touched || new_record?
-      self.update_column(:updated_at, Time.zone.now) # update_column can't be invoked in new record.
+      prev_updated_at = self.updated_at
+      time_now = Time.zone.now
+      self.update_column(:updated_at, time_now) # update_column can't be invoked in new record.
       self.sqs_manual_publish
+      self.model_changes = { updated_at: [prev_updated_at, time_now] }
+      self.manual_publish_to_central(nil, :update, {}, true)
     end
     @touched ||= true
   end

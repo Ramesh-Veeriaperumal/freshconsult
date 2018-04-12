@@ -43,8 +43,7 @@ gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
-gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.0'
-
+gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :ref => 'ef6f129'
 
 group :development, :test do
   gem 'active_record_query_trace'  
@@ -59,6 +58,14 @@ group :development, :test do
   gem 'meta_request'
   gem 'fake_sqs'
   gem 'fake_dynamo'
+end
+
+group :development do
+  gem 'pronto'
+  gem 'pronto-rubocop', require: false
+  gem 'pronto-rails_best_practices', require: false
+  gem 'pronto-brakeman', require: false
+  gem 'pronto-reek', require: false
 end
 
 gem "rack-mini-profiler", :group => [:development]

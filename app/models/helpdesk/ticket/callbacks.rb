@@ -502,6 +502,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ::Tickets::ResetAssociations.perform_async({:ticket_ids=>[self.display_id]})
   end
 
+  def save_deleted_ticket_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
+  end
+
 private
 
   def model_changes?
@@ -792,7 +796,7 @@ private
 
   def create_assoc_tkt_activity(action, ticket, id) # => tracker/assoc_parent tkt
     ticket.misc_changes = {action => [id]}
-    ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
+    ticket.manual_publish(["update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY], [:update, { misc_changes: ticket.misc_changes.dup }])
   end
 
   def new_outbound_email?
@@ -827,15 +831,5 @@ private
     meta_data.each do |k,v|
       meta_data[k] = RailsFullSanitizer.sanitize v if v.is_a? String
     end
-  end
-
-  def save_deleted_ticket_info
-    @deleted_model_info = {
-      id: id,
-      display_id: display_id,
-      account_id: account_id
-    }
-    @deleted_model_info[:archive] = false
-    @deleted_model_info
   end
 end
