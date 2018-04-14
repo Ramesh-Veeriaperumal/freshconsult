@@ -6,7 +6,7 @@ class TicketValidation < ApiValidation
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
   CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) +
                             %w(fr_due_by due_by subject description skip_close_notification
-                               custom_fields company_id internal_group_id internal_agent_id)
+                               custom_fields company_id internal_group_id internal_agent_id skill_id)
                             ).freeze
 
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :internal_group_id, :internal_agent_id, :priority, :email,
@@ -14,7 +14,7 @@ class TicketValidation < ApiValidation
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :company_id, :scenario_id,
                 :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification,
                 :related_ticket_ids, :assoc_parent_tkt_id, :internal_group_id, :internal_agent_id, :parent_template_id, :child_template_ids, :template_text,
-                :unique_external_id
+                :unique_external_id, :skill_id
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -119,6 +119,17 @@ class TicketValidation < ApiValidation
       feature: :shared_ownership
     }
   }, unless: -> { Account.current.shared_ownership_enabled? }
+
+  validates :skill_id, custom_absence: {
+    message: :require_feature_for_attribute,
+    code: :inaccessible_field,
+    message_options: {
+      attribute: 'skill_id',
+      feature: :skill_based_round_robin
+    }
+  }, unless: -> { Account.current.skill_based_round_robin_enabled? }
+  validates :skill_id, custom_absence: { allow_nil: true, message: :no_edit_ticket_skill_privilege }, if: -> { skill_id && errors[:skill_id].blank? && !User.current.privilege?(:edit_ticket_skill) }
+  validates :skill_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }, if: -> { skill_id && errors[:skill_id].blank? && update_or_update_multiple? }
 
   validate :requester_detail_missing, if: -> { create_or_update? && requester_id_mandatory? }
   # validates :requester_id, required: { allow_nil: false, message: :fill_a_mandatory_field, message_options: { field_names: 'requester_id, phone, email, twitter_id, facebook_id' } }, if: :requester_id_mandatory? # No

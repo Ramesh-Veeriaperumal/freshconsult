@@ -245,10 +245,10 @@ module UsersTestHelper
     Faker::Lorem.words(5).join[0..10]
   end
 
-  def create_tweet_user
+  def create_tweet_user(details = {})
     user = Account.current.users.build(
-      name:       Faker::Name.name,
-      twitter_id: Faker::Lorem.word
+      name:      details[:name] ||  Faker::Name.name,
+      twitter_id: details[:screen_name] || Faker::Lorem.word
     )
     user.save
     user

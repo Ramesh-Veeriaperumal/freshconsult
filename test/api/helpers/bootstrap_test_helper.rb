@@ -132,7 +132,8 @@ module BootstrapTestHelper
     {
       id: group.id,
       name: group.name,
-      agent_ids: group.agents.map(&:id)
+      agent_ids: group.agents.map(&:id),
+      skill_based_round_robin_enabled: group.skill_based_round_robin_enabled?
     }
   end
 

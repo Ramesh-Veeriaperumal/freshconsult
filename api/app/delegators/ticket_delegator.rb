@@ -54,6 +54,8 @@ class TicketDelegator < BaseDelegator
   validate :parent_template_id_permissible?, if: -> { @parent_template_id }
   validate :child_template_ids_permissible?, if: -> { @child_template_ids }
 
+  validate :validate_skill, if: -> { sl_skill_id && attr_changed?('sl_skill_id') }
+
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
@@ -200,6 +202,14 @@ class TicketDelegator < BaseDelegator
     elsif @parent.assoc_parent_ticket? && @parent.child_tkts_count >= TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT
       errors[:parent_id] << :exceeds_limit
       @error_options[:limit] = TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT
+    end
+  end
+
+  def validate_skill
+    skill = Account.current.skills_from_cache.detect { |x| sl_skill_id == x.id }
+    if skill.nil?
+      errors[:skill_id] << :invalid_skill_id
+      @error_options[:skill_id] = { skill_id: skill_id }
     end
   end
 

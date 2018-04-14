@@ -196,6 +196,10 @@ module TicketsTestHelper
                           :internal_agent_id => expected_output[:internal_agent_id] || ticket.internal_agent_id)
     end
 
+    if @account.skill_based_round_robin_enabled?
+      ticket_hash.merge!( :skill_id => expected_output[:skill_id] || ticket.skill_id)
+    end
+
     if @private_api
       ticket_hash
     else
@@ -736,5 +740,27 @@ module TicketsTestHelper
 
   def collaboration_pattern
     { convo_token: wildcard_matcher }
+  end
+
+  def create_skill
+    @group_with_sbrr_enabled = []
+    @skills = []
+    2.times do
+      @group_with_sbrr_enabled << create_group(@account, ticket_assign_type: 2, toggle_availability: 1)
+      @skills << @account.skills.create(
+        :name => Faker::Lorem.words(3).join(' '),
+        :match_type => "all"
+      )
+    end
+  end
+
+  def create_skill_tickets
+    create_skill if @account.skills.empty?
+    group_with_sbrr_enabled = Account.current.groups.where(ticket_assign_type: 2)
+    skills = Account.current.skills
+    3.times do
+      create_ticket({:group => group_with_sbrr_enabled[0], :skill_id => skills[0].id})
+      create_ticket({:group => group_with_sbrr_enabled[1], :skill_id => skills[1].id})
+    end
   end
 end

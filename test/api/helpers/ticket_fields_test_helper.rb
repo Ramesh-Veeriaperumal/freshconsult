@@ -349,6 +349,17 @@ module TicketFieldsTestHelper
     name[3..-1]
   end
 
+  def create_skill
+    skills = []
+    2.times do
+      skills << Account.current.skills.new(
+        :name => Faker::Lorem.words(3).join(' '),
+        :match_type => "all"
+      )
+    end
+    skills
+  end
+
   private
     def unused_ffs_col
       ffs_col = ''

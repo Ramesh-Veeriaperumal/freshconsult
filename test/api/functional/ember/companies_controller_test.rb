@@ -323,7 +323,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_existing_company_domain
-    comp_domain = Faker::Lorem.word
+    comp_domain = Faker::Lorem.words(3).join('')
     company = create_company(domains: [comp_domain])
     other_company = create_company
     post :update, construct_params({ version: 'private', id: other_company.id }, domains: [comp_domain])
