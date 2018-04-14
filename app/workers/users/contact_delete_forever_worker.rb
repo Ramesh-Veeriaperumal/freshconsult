@@ -90,6 +90,7 @@ class Users::ContactDeleteForeverWorker < BaseWorker
               child_ticket.destroy
             end
           end
+          ticket.reload
           ticket_reset_associations(ticket)
         end
     end
@@ -127,6 +128,11 @@ class Users::ContactDeleteForeverWorker < BaseWorker
       items.find_in_batches(batch_size: 500) do |objs|
         objs.each do |obj|
           if block_given?
+            begin
+              obj.reload
+            rescue
+              next
+            end
             yield(obj)
           end
           obj.destroy
