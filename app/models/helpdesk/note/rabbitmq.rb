@@ -1,23 +1,23 @@
 class Helpdesk::Note < ActiveRecord::Base
   
+  include Publish
+
   ACTOR_TYPE = {
     :agent   => 1,
     :contact => 2
   }
 
-  def manual_publish_to_rmq(action, key, options = {})
+  def manual_publish_to_rmq(uuid, action, key, options = {})
     # Manual publish for note model
     # Currently handled for reports and activities subscribers
     # Need to Append RMQ_GENERIC_NOTE_KEY to enable for new subscribers
-    uuid = generate_uuid
     manual_publish_to_xchg(uuid, "note", subscriber_manual_publish("note", action, options, uuid), key)
   end
 
-  def delayed_manual_publish_to_rmq(action, key, options = {})
+  def delayed_manual_publish_to_rmq(uuid, action, key, options = {})
     # Manual publish for note model
     # Currently handled for reports and activities subscribers
     # Need to Append RMQ_GENERIC_NOTE_KEY to enable for new subscribers
-    uuid = generate_uuid
     manual_publish_to_xchg(uuid, "note", subscriber_manual_publish("note", action, options, uuid), key, true)
   end
 

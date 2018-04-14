@@ -175,8 +175,9 @@ module Archive
         ticket.archive = true
         ticket.misc_changes = {:archive => [false, true]}
         key = RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY
-        ticket.delayed_manual_publish_to_rmq("update", key, {:manual_publish => true})
         ticket.count_es_manual_publish("destroy") if Account.current.features?(:countv2_writes)#for count es, its a delete action and we ll remove document from count cluster.
+        ticket.save_deleted_ticket_info
+        ticket.manual_publish(["update", key, {:manual_publish => true}], [:destroy, nil], true)
         if archive_ticket_destroy(ticket)
           Helpdesk::ArchiveTicket.where(:id => archive_ticket.id, :account_id => archive_ticket.account_id, :progress => true).update_all(:progress => false)
           # archive_ticket.sqs_manual_publish

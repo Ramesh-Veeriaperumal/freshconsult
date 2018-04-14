@@ -43,8 +43,7 @@ gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
-gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.0'
-
+gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.3'
 
 group :development, :test do
   gem 'active_record_query_trace'  
@@ -59,6 +58,14 @@ group :development, :test do
   gem 'meta_request'
   gem 'fake_sqs'
   gem 'fake_dynamo'
+end
+
+group :development do
+  gem 'pronto'
+  gem 'pronto-rubocop', require: false
+  gem 'pronto-rails_best_practices', require: false
+  gem 'pronto-brakeman', require: false
+  gem 'pronto-reek', require: false
 end
 
 gem "rack-mini-profiler", :group => [:development]
@@ -193,7 +200,7 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
-gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v1.0.9'
+gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v1.0.10'
 
 gem 'net-http-persistent', '~> 2.9.4'
 

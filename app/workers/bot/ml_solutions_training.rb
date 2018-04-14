@@ -55,9 +55,10 @@ class Bot::MlSolutionsTraining < BaseWorker
     end
 
     def training_payload(object, payload_type)
+      object.central_payload_type = payload_type
       {
         account_full_domain: Account.current.full_domain,
-        model_properties: object.central_publish_payload(payload_type)
+        model_properties: object.central_publish_payload
       }
     end
 end

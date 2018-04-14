@@ -78,7 +78,7 @@ module Helpdesk::TicketActions
     @source_ticket.activity_type = {:type => "ticket_split_source", 
       :source_ticket_id => [@source_ticket.display_id], 
       :target_ticket_id => [@item.display_id]}
-    @source_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
+    @source_ticket.manual_publish(["update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY], [:update, { misc_changes: @source_ticket.activity_type.dup }])
     redirect_to @item
   end
   

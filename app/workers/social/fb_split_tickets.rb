@@ -27,7 +27,7 @@ module Social
       
       @account.facebook_posts.update_all("ancestry = #{comment_fb_post.id}", [ "id IN (?)", child_post_ids ] )
       @child_fb_notes.each do |note|
-        note.postable.manual_publish_to_rmq("create", RabbitMq::Constants::RMQ_ACTIVITIES_NOTE_KEY)
+        note.postable.manual_publish(["create", RabbitMq::Constants::RMQ_ACTIVITIES_NOTE_KEY], [])
       end
     end
 
