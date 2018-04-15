@@ -28,7 +28,11 @@ module Ember
       get :index, controller_params(version: 'private')
       assert_response 200
       response = parse_response @response.body
-      assert_equal @account.ticket_fields.size, response.count
+      actual_size = @account.ticket_fields.size
+      if @account.skill_based_round_robin_enabled?
+        actual_size += 1
+      end
+      assert_equal actual_size, response.count
       agent_field = response.find { |x| x['type'] == 'default_agent' }
       group_field = response.find { |x| x['type'] == 'default_group' }
       refute agent_field['choices'].present?
@@ -45,6 +49,17 @@ module Ember
         # choice[default] should be only true for default statuses
         assert_equal Helpdesk::Ticketfields::TicketStatus::DEFAULT_STATUSES.keys.include?( choice['value']), choice['default']
       end
+    end
+
+    def test_index_with_default_skill_choices
+      Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+      Account.current.stubs(:skills_trimmed_version_from_cache).returns(create_skill)
+      get :index, controller_params(version: 'private')
+      assert_response 200   
+      response = parse_response @response.body
+      skill_field = response.find { |x| x['type'] == 'default_skill' }
+      assert_equal 2, skill_field['choices'].length
+      Account.current.unstub(:skill_based_round_robin_enabled?)
     end
     
     def test_product_for_product_portal
@@ -69,6 +84,6 @@ module Ember
       product_choices = response.find { |x| x['type'] == 'default_product'} 
       assert_equal Account.current.products.count, product_choices['choices'].count
     end
-  
+
   end
 end

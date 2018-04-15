@@ -13,7 +13,7 @@ module ApiTicketConstants
   # removed source since update of ticket source should not be allowed. - Might break API v2
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
                      email phone twitter_id facebook_id requester_id name
-                     responder_id internal_agent_id source status subject type product_id company_id
+                     responder_id internal_agent_id source status subject type product_id company_id skill_id
                      skip_close_notification unique_external_id).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   PARSE_TEMPLATE_FIELDS = [:template_text].freeze
   BULK_REPLY_FIELDS = [reply: ([:body, :from_email, :attachment_ids] | AttachmentConstants::CLOUD_FILE_FIELDS)].freeze
@@ -34,7 +34,7 @@ module ApiTicketConstants
                                         internal_agent_id internal_group_id
                                         email_config_id custom_field requester_id
                                         status facebook_id ticket_type company_id 
-                                        unique_external_id).freeze
+                                        unique_external_id skill_id).freeze
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze
   SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :chat, :mobihelp, :feedback_widget).values.freeze
 

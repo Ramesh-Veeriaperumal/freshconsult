@@ -687,7 +687,7 @@ module Ember
 
     def test_index_with_tags
       tags = Faker::Lorem.words(3).uniq
-      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, tags: tags)
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, tag_names: tags.join(','))
       get :index, controller_params(version: 'private', tag: tags[0])
       assert_response 200
       assert response.api_meta[:count] == contact_ids.size

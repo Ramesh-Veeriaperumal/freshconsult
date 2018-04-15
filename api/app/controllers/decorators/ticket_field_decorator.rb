@@ -9,7 +9,7 @@ class TicketFieldDecorator < ApiDecorator
            :level, :ticket_field_id, :picklist_values, to: :record
 
   # Not including default_agent and default_group because its choices are not needed for private API
-  DEFAULT_FIELDS = %w(default_priority default_source default_status default_ticket_type default_product).freeze
+  DEFAULT_FIELDS = %w[default_priority default_source default_status default_ticket_type default_product default_skill].freeze
 
   def portal_cc
     record.field_options.try(:[], 'portalcc')
@@ -159,6 +159,16 @@ class TicketFieldDecorator < ApiDecorator
           label: type.value,
           value: type.value,
           id: type.id # Needed as it is used in section data.
+        }
+      end
+    end
+
+    def default_skill_choices
+      Account.current.skills_trimmed_version_from_cache.map do |skill|
+        {
+          id: skill.id,
+          label: skill.name,
+          value: skill.id
         }
       end
     end
