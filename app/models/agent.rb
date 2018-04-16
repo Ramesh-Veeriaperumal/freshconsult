@@ -11,6 +11,8 @@ class Agent < ActiveRecord::Base
 
   concerned_with :associations, :constants
 
+  publishable on: [:create, :update, :destroy]
+
   before_destroy :remove_escalation
 
   accepts_nested_attributes_for :user

@@ -1,5 +1,6 @@
 class Subscription < ActiveRecord::Base
   include RepresentationHelper
+
   DATETIME_FIELDS = [:created_at, :updated_at, :next_renewal_at, :discount_expires_at]
 
   acts_as_api

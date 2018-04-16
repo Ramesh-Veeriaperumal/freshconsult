@@ -49,4 +49,20 @@ class User < ActiveRecord::Base
   def agent_or_contact
     helpdesk_agent ? 'agent' : 'contact'
   end
+
+  def self.central_publish_enabled?
+    Account.current.audit_logs_central_publish_enabled?
+  end
+
+  def model_changes_for_central
+    self.previous_changes
+  end
+
+  def relationship_with_account
+    "users"
+  end
+
+  def central_publish_worker_class
+    "CentralPublishWorker::UserWorker"
+  end
 end

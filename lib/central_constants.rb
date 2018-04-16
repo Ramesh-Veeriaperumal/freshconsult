@@ -6,6 +6,9 @@ module CentralConstants
     'Solution::Folder' => '0',
     'Solution::Article' => '0',
     'Bot::FeedbackMapping' => '0',
-    'Subscription' => '0'
+    'Subscription' => '0',
+    'User' => '0',
+    'Agent' => '0',
+    'VaRule' => '0'
   }
 end
