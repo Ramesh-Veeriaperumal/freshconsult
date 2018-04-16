@@ -14,6 +14,7 @@ class Users::ContactDeleteForeverWorker < BaseWorker
 
       if @user.was_agent?
         send_event_to_central
+        remove_user_companies
         anonymize_data
       else
         destroy_user_tickets
@@ -32,6 +33,11 @@ class Users::ContactDeleteForeverWorker < BaseWorker
   end
 
   private
+
+    def remove_user_companies
+      @user.companies = []
+      @user.save!
+    end
 
     def anonymize_data
       @user.user_emails = []
