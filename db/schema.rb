@@ -720,6 +720,34 @@ ActiveRecord::Schema.define(:version => 20180321125314) do
 
   add_index "company_forms", ["account_id", "active", "parent_id"], :name => "index_company_forms_on_account_id_and_active_and_parent_id"
 
+  create_table "company_note_bodies", :id => false, :force => true do |t|
+    t.integer  "id",              :limit => 8,        :null => false
+    t.text     "body",            :limit => 16777215
+    t.integer  "company_note_id", :limit => 8
+    t.integer  "account_id",      :limit => 8,        :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "company_note_bodies", ["account_id", "company_note_id"], :name => "index_company_note_bodies_on_account_id_and_company_note_id"
+  add_index "company_note_bodies", ["id", "account_id"], :name => "index_company_note_bodies_on_id_and_account_id"
+
+  create_table "company_notes", :id => false, :force => true do |t|
+    t.integer  "id",              :limit => 8,                    :null => false
+    t.string   "title"
+    t.integer  "category_id",     :limit => 1
+    t.integer  "account_id",      :limit => 8,                    :null => false
+    t.integer  "created_by",      :limit => 8,                    :null => false
+    t.integer  "last_updated_by", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "s3_key",                       :default => false
+    t.integer  "company_id",      :limit => 8,                    :null => false
+  end
+
+  add_index "company_notes", ["account_id", "company_id", "created_at"], :name => "index_company_notes_on_account_id_and_company_id_and_created_at"
+  add_index "company_notes", ["id", "account_id"], :name => "index_company_notes_on_id_and_account_id"
+
   create_table "contact_field_choices", :force => true do |t|
     t.integer  "account_id",       :limit => 8
     t.integer  "contact_field_id", :limit => 8
@@ -944,6 +972,33 @@ ActiveRecord::Schema.define(:version => 20180321125314) do
   end
 
   add_index "contact_forms", ["account_id", "active", "parent_id"], :name => "index_contact_forms_on_account_id_and_active_and_parent_id"
+
+  create_table "contact_note_bodies", :id => false, :force => true do |t|
+    t.integer  "id",              :limit => 8,        :null => false
+    t.text     "body",            :limit => 16777215
+    t.integer  "contact_note_id", :limit => 8
+    t.integer  "account_id",      :limit => 8,        :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "contact_note_bodies", ["account_id", "contact_note_id"], :name => "index_contact_note_bodies_on_account_id_and_contact_note_id"
+  add_index "contact_note_bodies", ["id", "account_id"], :name => "index_contact_note_bodies_on_id_and_account_id"
+
+  create_table "contact_notes", :id => false, :force => true do |t|
+    t.integer  "id",              :limit => 8,                    :null => false
+    t.string   "title"
+    t.integer  "account_id",      :limit => 8,                    :null => false
+    t.integer  "created_by",      :limit => 8,                    :null => false
+    t.integer  "last_updated_by", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "s3_key",                       :default => false
+    t.integer  "user_id",         :limit => 8,                    :null => false
+  end
+
+  add_index "contact_notes", ["account_id", "user_id", "created_at"], :name => "index_contact_notes_on_account_id_and_user_id_and_created_at"
+  add_index "contact_notes", ["id", "account_id"], :name => "index_contact_notes_on_id_and_account_id"
 
   create_table "conversion_metrics", :force => true do |t|
     t.integer  "account_id",        :limit => 8
