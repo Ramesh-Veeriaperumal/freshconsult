@@ -351,6 +351,8 @@ class Account < ActiveRecord::Base
   has_many :section_parent_fields, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id is NULL AND field_type IN ('default_ticket_type' , 'custom_dropdown') AND field_options LIKE '%section_present: true%'", :include => [:nested_ticket_fields, {:picklist_values => :section}], :limit => Helpdesk::TicketField::SECTION_LIMIT
 
   has_one :collab_settings, :class_name => 'Collab::Setting'
+  has_many :contact_notes
+  has_many :company_notes
 
   has_many :reminders,
     :class_name => 'Helpdesk::Reminder',:dependent => :destroy

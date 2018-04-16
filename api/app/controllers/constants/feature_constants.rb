@@ -10,4 +10,5 @@ module FeatureConstants
   SATISFACTION_RATINGS_WITH_LINK = SATISFACTION_RATINGS | [:survey_links]
   BOT = :support_bot
   TICKET_TEMPLATES = [:ticket_templates]
+  CONTACT_COMPANY_NOTES = :contact_company_notes
 end

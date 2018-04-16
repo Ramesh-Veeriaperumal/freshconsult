@@ -1,6 +1,6 @@
 module Helpdesk::S3
   module Util
-    
+
     private
     # s3_partition will genererate a random partion in s3 so that data is evenly spreaded and
     # a four character hex hash partition set in a bucket or sub-bucket namespace could
@@ -45,7 +45,7 @@ module Helpdesk::S3
     public
     # this takes the entries and save the object in s3 as string
     def push_to_s3(args,bucket)
-      key = generate_file_path(args[:account_id],args[:key_id])
+      key = generate_file_path(args[:account_id], args[:key_id])
       if args[:delete]
         delete(key,bucket)
       else

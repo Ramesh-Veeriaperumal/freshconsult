@@ -1,0 +1,18 @@
+type: object
+properties:
+  title:
+    type: string
+  body:
+    type: string
+    description: available only when there is no s3_url
+  s3_url:
+    type: string
+    description: available only if there is an s3_url
+  created_by:
+    type: string
+  last_updated_by:
+    type: string
+  attachments:
+    type: array
+    items:
+      $ref: '#/definitions/attachment'

@@ -213,7 +213,11 @@ module FreshdeskCore::Model
                         "parent_child_templates",
                         "collab_settings",
                         "bots",
-                        "bot_tickets"
+                        "bot_tickets",
+                        "contact_notes",
+                        "contact_note_bodies",
+                        "company_notes",
+                        "company_note_bodies"
                     ]
 
   STATUS = {
@@ -224,7 +228,7 @@ module FreshdeskCore::Model
     }
 
   ARCHIVE_S3_BUCKET_MAPPING = {
-    :archive_tickets => :archive_ticket_body, 
+    :archive_tickets => :archive_ticket_body,
     :archive_notes => :note_body
   }
 

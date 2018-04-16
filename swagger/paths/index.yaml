@@ -111,6 +111,16 @@
 /conversations/{id}/reply_to_forward_template:
   $ref: ./conversations/reply_to_forward_template.yaml
 
+/contacts/{contact_id}/notes:
+  $ref: ./contact_notes/list_and_create.yaml
+/contacts/{contact_id}/notes/{id}:
+  $ref: ./contact_notes/crud.yaml
+
+/companies/{company_id}/notes:
+  $ref: ./company_notes/list_and_create.yaml
+/companies/{company_id}/notes/{id}:
+  $ref: ./company_notes/crud.yaml
+
 /contacts:
   $ref: ./contacts/list_and_create.yaml
 /contacts/{id}:

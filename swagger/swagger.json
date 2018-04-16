@@ -2080,6 +2080,432 @@
         }
       }
     },
+    "/contacts/{contact_id}/notes": {
+      "get": {
+        "tags": [
+          "contact note"
+        ],
+        "summary": "List all",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "notes": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/contact_note_response"
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/meta"
+                    },
+                    {
+                      "properties": {
+                        "more_items": {
+                          "type": "boolean",
+                          "description": "indicates next page availability"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "contact note"
+        ],
+        "description": "Create contact note",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contact_note_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/contact_note_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/notes/{id}": {
+      "get": {
+        "tags": [
+          "contact note"
+        ],
+        "summary": "Show contact note",
+        "description": "The S3 url of the note content will be given else the content will be given along with other data.",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/contact_note_response"
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "contact note"
+        ],
+        "summary": "Delete contact note",
+        "description": "Destroys the note, will not be able to restore",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "contact note"
+        ],
+        "summary": "Update contact note",
+        "description": "The S3 url of the note content will be given else the content will be given along with other data.",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contact_note_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/contact_note_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      }
+    },
+    "/companies/{company_id}/notes": {
+      "get": {
+        "tags": [
+          "company note"
+        ],
+        "summary": "List all",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "notes": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/company_note_response"
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/meta"
+                    },
+                    {
+                      "properties": {
+                        "more_items": {
+                          "type": "boolean",
+                          "description": "indicates next page availability"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "company note"
+        ],
+        "description": "Create company note",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/company_note_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/company_note_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      }
+    },
+    "/companies/{company_id}/notes/{id}": {
+      "get": {
+        "tags": [
+          "company note"
+        ],
+        "summary": "Show company note",
+        "description": "The S3 url of the note content will be given else the content will be given along with other data.",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/company_note_response"
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "company note"
+        ],
+        "summary": "Delete company note",
+        "description": "Destroys the note, will not be able to restore",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "company note"
+        ],
+        "summary": "Update company note",
+        "description": "The S3 url of the note content will be given else the content will be given along with other data.",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/company_note_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/company_note_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      }
+    },
     "/contacts": {
       "get": {
         "tags": [
@@ -6294,6 +6720,72 @@
         "contact"
       ]
     },
+    "contact_note_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "company_note_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "category_id": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      ]
+    },
     "update_password": {
       "type": "object",
       "properties": {
@@ -7675,6 +8167,78 @@
           }
         }
       }
+    },
+    "customer_note": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string",
+          "description": "available only when there is no s3_url"
+        },
+        "s3_url": {
+          "type": "string",
+          "description": "available only if there is an s3_url"
+        },
+        "created_by": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "last_updated_by": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
+          }
+        }
+      }
+    },
+    "contact_note": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/customer_note"
+        },
+        {
+          "properties": {
+            "user_id": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "company_note": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/customer_note"
+        },
+        {
+          "properties": {
+            "company_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "category_id": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
     },
     "product_feedback": {
       "type": "object",
@@ -9836,6 +10400,76 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/agents_bulk_action_error"
+          }
+        }
+      }
+    },
+    "contact_note_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/customer_note_response"
+        },
+        {
+          "properties": {
+            "user_id": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "company_note_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/customer_note_response"
+        },
+        {
+          "properties": {
+            "company_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "category_id": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "customer_note_response": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string",
+          "description": "available only when there is no s3_url"
+        },
+        "s3_url": {
+          "type": "string",
+          "description": "available only if there is an s3_url"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "last_updated_by": {
+          "type": "string"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
           }
         }
       }

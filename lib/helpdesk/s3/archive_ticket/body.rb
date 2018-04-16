@@ -4,11 +4,11 @@ module Helpdesk::S3::ArchiveTicket
   module Body
     # extending the util methods so that they are inherited into this module
     extend Helpdesk::S3::Util
-    
-    module ClassMethods  
-      
+
+    module ClassMethods
+
       # generates the entire key path that is stored in s3
-      def generate_file_path(account_id,ticket_id)
+      def generate_file_path(account_id, ticket_id)
         generate_key(account_id,ticket_id) + "/archive_ticket_body.json"
       end
 
