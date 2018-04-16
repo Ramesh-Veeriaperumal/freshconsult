@@ -28,9 +28,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    namespace :api_freshfone, path: 'phone' do 
-      resources :call_history, only: [:index] do 
-        collection do 
+    namespace :api_freshfone, path: 'phone' do
+      resources :call_history, only: [:index] do
+        collection do
           post :export
           get '(export/:id)', to: :export_status, as: :export_status
         end
@@ -321,6 +321,7 @@ Helpkit::Application.routes.draw do
         put :bulk_whitelist
         post :merge, to: 'ember/contacts/merge#merge'
         post :export_csv
+        post :quick_create
         get :import, to: 'ember/customer_imports#index'
         post :import, to: 'ember/customer_imports#create'
         post :quick_create
@@ -333,6 +334,7 @@ Helpkit::Application.routes.draw do
         get :activities
         put :assume_identity
       end
+      resources :notes, controller: 'customer_notes', only: [:create, :update, :destroy, :show, :index]
     end
 
     resources :companies, controller: 'ember/companies', only: [:index, :show, :create, :update] do
@@ -343,6 +345,7 @@ Helpkit::Application.routes.draw do
       member do
         get :activities
       end
+      resources :notes, controller: 'customer_notes', only: [:create, :update, :destroy, :show, :index]
     end
 
     resources :attachments, controller: 'ember/attachments', only: [:create, :show, :destroy] do
@@ -414,9 +417,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :contact_password_policy, controller: 'ember/contact_password_policies', 
+    resources :contact_password_policy, controller: 'ember/contact_password_policies',
                                         only: [:index]
-    resources :agent_password_policy, controller: 'ember/agent_password_policies', 
+    resources :agent_password_policy, controller: 'ember/agent_password_policies',
                                         only: [:index]
 
     get '/yearin_review', to: 'ember/year_in_review#index'

@@ -81,6 +81,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/company", only: %i(index show activities)
     resource :"ember/contact/todo", only: [:index]
     resource :"ember/search/customer", only: [:results]
+    resource :customer_note, only: [:show, :index]
     resource :"ember/search/multiquery", only: [:search_results]
   end
 
@@ -92,6 +93,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/search/autocomplete", only: [:companies]
     resource :"ember/tickets/requester", only: [:update]
     resource :"ember/contact/todo", only: [:create, :update, :destroy]
+    resource :customer_note, only: [:create, :update, :destroy]
   end
 
   manage_users do
