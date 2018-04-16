@@ -432,11 +432,11 @@ class User < ActiveRecord::Base
   end
 
   def is_falcon_pref?
-    self.preferences[:agent_preferences][:falcon_ui]
+    self.preferences[:agent_preferences][:falcon_ui] || Account.current.disable_old_ui_enabled?
   end
 
   def falcon_invite_eligible?
-    (account.falcon_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
+    (account.falcon_ui_enabled? && !account.disable_old_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
   end
 
   def update_attributes(params) # Overriding to normalize params at one place
@@ -968,6 +968,7 @@ class User < ActiveRecord::Base
       self.set_password_expiry({:password_expiry_date =>
           (Time.now.utc + expiry_period).to_s}, false)
       reset_persistence_token
+      self.active = self.primary_email.verified = false if freshid_enabled_account?
       save ? true : (raise ActiveRecord::Rollback)
     end
   end

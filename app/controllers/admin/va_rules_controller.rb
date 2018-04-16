@@ -185,7 +185,8 @@ class Admin::VaRulesController < Admin::AdminController
       filter_hash['ticket']   = [
         { :name => -1, :value => t('click_to_select_filter') },
         { :name => "from_email", :value => t('requester_email'), :domtype => "autocompelete", 
-          :data_url => requesters_search_autocomplete_index_path, :operatortype => "email" },
+          :data_url => requesters_search_autocomplete_index_path, :operatortype => "email",
+          :condition => requester_email_enabled?},
         { :name => "to_email", :value => t('to_email'), :domtype => "text",
           :operatortype => "email" },
         { :name => "ticlet_cc", :value => t('ticket_cc'), :domtype => "text",
@@ -224,18 +225,14 @@ class Admin::VaRulesController < Admin::AdminController
           :operatortype => "object_id", :choices => @internal_groups, :condition => allow_shared_ownership_fields? },
         { :name => "tag_ids", :value => t('ticket.tag_condition'), :domtype => "autocomplete_multiple_with_id", 
           :data_url => tags_search_autocomplete_index_path, :operatortype => "object_id_array",
-          :condition => !supervisor_rules_controller?, :autocomplete_choices => @tag_hash }
+          :condition => !supervisor_rules_controller?, :autocomplete_choices => @tag_hash },
+        { :name => -1, :value => "-----------------------",
+          :condition => (contact_field_enabled? || company_field_enabled?) },
+        { :name => "contact_name", :value => t('contact_name'), :domtype => "text",
+          :operatortype => "text", :condition =>  contact_field_enabled?},
+        { :name => "company_name", :value => t('company_name'), :domtype => "text",
+          :operatortype => "text", :condition =>  company_field_enabled?}
       ]
-
-      if supervisor_rules_controller?
-        filter_hash['ticket'].push *[
-          { :name => -1, :value => "-----------------------" },
-          { :name => "contact_name", :value => t('contact_name'), :domtype => "text", 
-            :operatortype => "text" },
-          { :name => "company_name", :value => t('company_name'), :domtype => "text", 
-            :operatortype => "text"}
-        ]
-      end
 
       filter_hash['ticket'] = filter_hash['ticket'].select{ |filter| filter.fetch(:condition, true) }
       add_time_based_filters filter_hash['ticket']
@@ -435,5 +432,17 @@ class Admin::VaRulesController < Admin::AdminController
     def company_field_choices field_type
       current_account.company_form.default_drop_down_fields(field_type.to_sym).
         first.custom_field_choices.collect { |c| [c.value, CGI.unescapeHTML(c.value)] }
+    end
+
+    def requester_email_enabled?
+      !supervisor_rules_controller? || contact_field_enabled?
+    end
+
+    def contact_field_enabled?
+      supervisor_rules_controller? && current_account.launched?(:supervisor_contact_field)
+    end
+
+    def company_field_enabled?
+      supervisor_rules_controller? && current_account.launched?(:supervisor_company_field)
     end
 end

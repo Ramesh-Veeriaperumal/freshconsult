@@ -15,7 +15,9 @@ module Utils
         unless text.at_css("body").blank?
           text.xpath("//del").each { |div|  div.name= "span";}
           text.xpath("//p").each { |div|  div.name= "div";}
-          item.safe_send(:write_attribute , "#{body}_html", FDRinku.auto_link(text.at_css("body").inner_html, { :attr => 'rel="noreferrer"' }))
+          auto_linked_html = FDRinku.auto_link(text.at_css("body").inner_html, { :attr => 'rel="noreferrer"' })
+          item.send(:write_attribute , "#{body}_html", auto_linked_html.gsub('%7B','{').gsub('%7D','}'))
+          #substituting parsed placeholder %7B %7D to {{ }} - the change is done to support canned response, will run for other models as well.  
         end
       end
     end

@@ -92,9 +92,7 @@ module Freshbots
 
         def portal_url(bot)
           portal = bot.portal
-          domain = portal.portal_url
-          domain_url = domain.presence || Account.current.full_domain
-          return "#{portal.url_protocol}://#{domain_url}"
+          "#{portal.url_protocol}://#{portal.host}"
         end
     end
   end

@@ -84,10 +84,10 @@ module TicketsTestHelper
       account_id: ticket.account_id,
       responder_id: ticket.responder_id,
       group_id: ticket.group_id,
-      status: Hash,
-      priority: ticket.priority,
+      status: { id: ticket.status, name: ticket.status_name },
+      priority: { id: ticket.priority, name: TicketConstants::PRIORITY_NAMES_BY_KEY[ticket.priority] },
       ticket_type: ticket.ticket_type,
-      source: ticket.source,
+      source: {id: ticket.source, name: TicketConstants::SOURCE_NAMES_BY_KEY[ticket.source] },
       requester_id: ticket.requester_id,
       due_by: ticket.due_by.try(:utc).try(:iso8601),
       created_at: ticket.created_at.try(:utc).try(:iso8601),
@@ -126,14 +126,9 @@ module TicketsTestHelper
       parent_id: ticket.parent_ticket_id,
       outbound_email: ticket.outbound_email?,
       subject: ticket.subject,
-      requester: Hash,
-      description_text: ticket.truncate_description,
-      description_text_truncated: ticket.description.length > MAX_DESC_LIMIT,
-      description_html: ticket.truncate_description(true),
-      description_html_truncated: ticket.description_html.length > MAX_DESC_LIMIT,
-      responder: (ticket.responder ? Hash : nil),
-      subscribers: ticket.watchers,
-      attachments: ticket.attachments,
+      description_text: ticket.description,
+      description_html: ticket.description_html,
+      watchers: ticket.watchers,
       urgent: ticket.urgent,
       spam: ticket.spam,
       trained: ticket.trained,
@@ -146,16 +141,32 @@ module TicketsTestHelper
       tkt_cc: ticket.cc_email[:tkt_cc],
       email_config_id: ticket.email_config_id,
       deleted:ticket.deleted,
-      group: (ticket.group ? Hash : nil),
       group_users: Array,
       tags: Array
     }
-    ret_hash[:sl_skill_id] = ticket.sl_skill_id if Account.current.skill_based_round_robin_enabled?
+    ret_hash[:skill_id] = ticket.sl_skill_id if Account.current.skill_based_round_robin_enabled?
     ret_hash[:product_id] = ticket.product_id if Account.current.multi_product_enabled?
     ret_hash[:association_type] = ticket.association_type if (Account.current.parent_child_tkts_enabled? || Account.current.link_tkts_enabled?)
     ret_hash[:archive] = ticket.archive if Account.current.features_included?(:archive_tickets)
     ret_hash[:internal_agent_id] = ticket.internal_agent_id if Account.current.shared_ownership_enabled?
     ret_hash[:internal_group_id] = ticket.internal_group_id if Account.current.shared_ownership_enabled?
     ret_hash
+  end
+
+  def cp_assoc_ticket_pattern(expected_output = {}, ticket)
+    {
+      requester: Hash,
+      responder: (ticket.responder ? Hash : nil),
+      group: (ticket.group ? Hash : nil),
+    }
+  end
+
+  def cp_ticket_destroy_pattern(expected_output = {}, ticket)
+    {
+      id: ticket.id,
+      display_id: ticket.display_id,
+      account_id: ticket.account_id,
+      archive: false
+    }
   end
 end

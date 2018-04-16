@@ -31,6 +31,8 @@
     - livechat_worker
     - smart_filter_tweet_to_ticket
     - channel_framework_command
+    - calculate_sla
+    - update_taggables_queue
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
@@ -87,6 +89,7 @@
     - smart_filter_feedback
     - launch_party_actions
     - ml_solutions_training
+    - customer_note_body_queue
   :maintainence:
     - select_all_tickets
     - select_all_batcher
@@ -188,6 +191,7 @@
     - sendgrid_domain_updates
   :archive:
     - manual_publish
+    - delayed_central_publish
     - archive_ticket_splitter
     - archive_build_create_ticket
     - archive_modify_ticket_association

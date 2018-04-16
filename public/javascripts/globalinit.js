@@ -572,7 +572,7 @@ child - class of child checkbox
       return I18n.t('validation.select2_minimum_limit', {char_count : min - input.length});
     },
     formatSelectionTooBig: function (limit) { 
-      return I18n.t('validation.select2_maximum_limit', {limit: limit, container : I18n.t('common_js_translations.item.' + (limit == 1) ? "singular" : "plural")}); },
+      return I18n.t('validation.select2_maximum_limit', {limit: limit, container : I18n.t('common_js_translations.item.' + ((limit == 1) ? "singular" : "plural"))}); },
     formatLoadMore: function (pageNumber) { return I18n.t('common_js_translations.loading_msg'); },
     formatSearching: function () { return I18n.t('common_js_translations.searching_wait'); },
   });

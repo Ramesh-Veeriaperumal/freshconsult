@@ -14,7 +14,8 @@ module HtmlSanitizer
         :plain_sanitizer => (options[:plain_sanitizer] || []),
         :article_sanitizer => (options[:article_sanitizer] || []),
         :post_sanitizer => (options[:post_sanitizer] || []),
-        :decode_calm_sanitizer => (options[:decode_calm_sanitizer] || [])
+        :decode_calm_sanitizer => (options[:decode_calm_sanitizer] || []),
+        :cannedresponse_sanitizer => (options[:cannedresponse_sanitizer] || [])
       }
       
       begin
@@ -39,7 +40,9 @@ module HtmlSanitizer
       elsif xss_terminate_options[:post_sanitizer].include?(column)
         generate_setters_post_sanitizer(column)
       elsif xss_terminate_options[:decode_calm_sanitizer].include?(column)
-        generate_setters_decode_calm_sanitizer(column)
+        generate_setters_decode_calm_sanitizer(column, 'sanitize_article')
+      elsif xss_terminate_options[:cannedresponse_sanitizer].include?(column)
+        generate_setters_decode_calm_sanitizer(column, 'clean')
       else
         generate_setters_plain(column)
       end
@@ -90,10 +93,10 @@ module HtmlSanitizer
       )
     end
 
-    def generate_setters_decode_calm_sanitizer(attr_name)
+    def generate_setters_decode_calm_sanitizer(attr_name, html_sanitizer_method)
       class_eval %Q(
         def #{attr_name.to_s}=(value)
-          value = value.is_a?(String) ? Helpdesk::HTMLSanitizer.sanitize_article(value).gsub('%7B','{').gsub('%7D','}') : value
+          value = value.is_a?(String) ? Helpdesk::HTMLSanitizer.#{html_sanitizer_method}(value).gsub('%7B','{').gsub('%7D','}') : value
           write_attribute("#{attr_name.to_sym}",value)
         end
         )

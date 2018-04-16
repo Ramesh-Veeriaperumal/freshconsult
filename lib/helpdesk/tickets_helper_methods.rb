@@ -74,4 +74,8 @@ module Helpdesk::TicketsHelperMethods
         return {:title => "#{status_name}", :method => "status_updated_at"}
     end
   end
+
+  def due_by_values_present?(ticket)
+    ticket.due_by.present? && ticket.frDueBy.present?
+  end
 end

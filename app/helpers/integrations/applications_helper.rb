@@ -25,7 +25,7 @@ module Integrations
         update_button_class = "update-oauth"
         url = ""
       else
-        update_params = { "type" => "#{EXTENSION_TYPE[:plug]}", "installation_type" => "update", 
+        update_params = { "type" => extension['type'], "installation_type" => "update", 
                          "display_name" => extension['display_name'],
                          "version_id" => extension['version_id'], "installed_version" => installation_details['version_id'] } 
         update_url = admin_marketplace_installed_extensions_new_configs_path(extension['extension_id'], extension['version_id'])
@@ -45,7 +45,7 @@ module Integrations
 
     def generate_mkp_edit_button(extension, installation_details)
       enable_settings = true
-      edit_params = { "type" => "#{EXTENSION_TYPE[:plug]}", "installation_type" => "settings", "display_name" => extension['display_name'] }
+      edit_params = { "type" => extension['type'], "installation_type" => "settings", "display_name" => extension['display_name'] }
       edit_url = admin_marketplace_installed_extensions_edit_configs_path(installation_details['extension_id'], installation_details['version_id'])
       edit_button_class = "update"
       if is_oauth_app?(extension)

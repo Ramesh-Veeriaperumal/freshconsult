@@ -107,5 +107,57 @@ module Pipe
       match_json(ticket_pattern({}, t))
       assert t.on_state_time - on_state_time == 0
     end
+
+    def test_create_with_closed_at
+      created_at = Time.now - 10.days
+      updated_at = Time.now - 10.days
+      closed_at = Time.now - 5.days
+      params = {
+        requester_id: requester.id, status: 5, priority: 2,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+        'created_at' => created_at, 'updated_at' => updated_at, 'closed_at' => closed_at
+      }
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 201
+      t = Helpdesk::Ticket.last
+      match_json(ticket_pattern(params, t))
+      match_json(ticket_pattern({}, t))
+      assert (t.closed_at - closed_at).to_i == 0
+    end
+
+    def test_update_with_closed_at
+      t = create_ticket
+      t.update_attributes(created_at: Time.now - 10.days, updated_at: Time.now - 10.days)
+      closed_at = Time.now - 1.days
+      params = {
+        status: 5, priority: 2, source: 2, type: "Question",
+        closed_at: closed_at
+      }
+      put :update, construct_params({ id: t.display_id, version: 'private' }, params)
+      assert_response 200
+      t = Helpdesk::Ticket.last
+      match_json(update_ticket_pattern(params, t))
+      match_json(update_ticket_pattern({}, t))
+      assert (t.closed_at - closed_at).to_i == 0
+    end
+
+    def test_ticket_close_after_reopened
+      t = create_ticket(status: 5)
+      before_reopen_closed_at = t.closed_at
+      # Reopening a closed ticket
+      put :update, construct_params({ id: t.display_id, version: 'private' }, { status: 2, priority: 2, source: 2 })
+      assert_response 200
+      t = Helpdesk::Ticket.last
+      assert t.status == 2
+      # Closing it again
+      closed_at = Time.now
+      put :update, construct_params({ id: t.display_id, version: 'private' }, { status: 5, priority: 2, source: 2 })
+      assert_response 200
+      t = Helpdesk::Ticket.last
+      after_close_closed_at = t.closed_at
+      assert t.status == 5
+      assert before_reopen_closed_at != after_close_closed_at
+      assert (t.closed_at - closed_at).to_i == 0
+    end
   end
 end

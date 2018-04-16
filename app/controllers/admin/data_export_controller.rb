@@ -9,7 +9,7 @@ class Admin::DataExportController < Admin::AdminController
   def check_export_status
     @data_export = current_account.data_exports.data_backup[0]
     if @data_export 
-      if @data_export.completed?
+      if @data_export.completed? || @data_export.failed?
         @data_export.destroy
       else
         flash[:notice] = t("export_data_running")

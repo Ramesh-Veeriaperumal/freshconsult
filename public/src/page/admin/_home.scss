@@ -326,11 +326,31 @@ input[type=text].as-hint {
 	}
 }
 
+.admin-upgrade-banner {
+  background-color: #fff;
+  position: relative;
+  margin-bottom: 30px;
+  padding: 25px;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px 0 #dbdfe3;
+  border: solid 1px #d3dbda;
+
+
+  .admin-mint-upgrade {
+	margin-top: 20px;
+  }
+
+  .admin-mint-title {
+    font-size: 18px;
+	font-weight: 600;
+  }
+}
+
 .freshchat-edit {
 
 	.mint-bg-box,
 	.chat-content-card {
-		display: block;
+	  display: block;
 	  min-height: 60px;
 	  border: 1px #ebeef0 solid;
 	  padding: 22px 20px 8px 20px;
@@ -343,8 +363,8 @@ input[type=text].as-hint {
 		min-height: 36px;
 	}
 	.mint-bg-box {
-		background-image: url("/images/mint-brand-bg.svg");
-		background-size: 70%;
+	  background-image: url("/images/mint-brand-bg.svg");
+	  background-size: 70%;
 	  background-repeat: no-repeat;
 	  background-position: 100% 100%;
 	  padding: 30px 20px;

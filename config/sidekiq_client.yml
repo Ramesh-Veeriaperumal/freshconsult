@@ -107,6 +107,7 @@ defaults: &defaults
     - [helpdesk_note_body_queue]
     - [helpdesk_update_ticket_body_queue]
     - [helpdesk_update_note_body_queue]
+    - [customer_note_body_queue]
     - [contact_import]
     - [company_import]
     - [contact_export]
@@ -209,11 +210,14 @@ defaults: &defaults
     - [free_ticket_central_publish]
     - [trial_ticket_central_publish]
     - [active_ticket_central_publish]
+    - [delayed_central_publish]
     - [channel_framework_command]
     - [ml_solutions_training]
+    - [update_taggables_queue]
     - [mixpanel_queue]
     - [bot_cleanup]
     - [contact_delete_forever]
+    - [calculate_sla]
 
 development:
   <<: *defaults

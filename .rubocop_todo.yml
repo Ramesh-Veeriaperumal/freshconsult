@@ -30,14 +30,14 @@ Metrics/MethodLength:
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/AccessModifierIndentation:
+Layout/AccessModifierIndentation:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 3
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/AlignParameters:
+Layout/AlignParameters:
   AutoCorrect: true
   Enabled: true
 
@@ -47,6 +47,10 @@ Style/AlignParameters:
 Style/BlockDelimiters:
   AutoCorrect: true
   Enabled: true
+
+Style/SingleLineBlockParams:
+  AutoCorrect: false
+  Enabled: false
 
 # Offense count: 2
 # Cop supports --auto-correct.
@@ -58,18 +62,12 @@ Style/BracesAroundHashParameters:
 # Offense count: 3
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/ClassAndModuleChildren:
-  AutoCorrect: true
-  Enabled: true
+  AutoCorrect: false
+  Enabled: false
 
 # Offense count: 3
 # Cop supports --auto-correct.
-Style/CommentIndentation:
-  AutoCorrect: true
-  Enabled: true
-
-# Offense count: 4
-# Cop supports --auto-correct.
-Style/DeprecatedHashMethods:
+Layout/CommentIndentation:
   AutoCorrect: true
   Enabled: true
 
@@ -79,34 +77,34 @@ Style/Documentation:
 
 # Offense count: 1
 # Cop supports --auto-correct.
-Style/EmptyLines:
+Layout/EmptyLines:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 3
 # Cop supports --auto-correct.
-Style/EmptyLinesAroundAccessModifier:
+Layout/EmptyLinesAroundAccessModifier:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/EmptyLinesAroundClassBody:
+Layout/EmptyLinesAroundClassBody:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/EmptyLinesAroundModuleBody:
+Layout/EmptyLinesAroundModuleBody:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/FirstParameterIndentation:
+Layout/FirstParameterIndentation:
   AutoCorrect: true
   Enabled: true
 
@@ -132,14 +130,14 @@ Style/IfUnlessModifier:
 # Offense count: 4
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/IndentHash:
+Layout/IndentHash:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 54
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/IndentationConsistency:
+Layout/IndentationConsistency:
   AutoCorrect: true
   Enabled: true
   EnforcedStyle: rails
@@ -147,7 +145,7 @@ Style/IndentationConsistency:
 # Offense count: 10
 # Cop supports --auto-correct.
 # Configuration parameters: Width.
-Style/IndentationWidth:
+Layout/IndentationWidth:
   AutoCorrect: true
   Enabled: true
 
@@ -161,7 +159,7 @@ Style/LambdaCall:
 
 # Offense count: 3
 # Cop supports --auto-correct.
-Style/LeadingCommentSpace:
+Layout/LeadingCommentSpace:
   AutoCorrect: true
   Enabled: true
 
@@ -181,14 +179,14 @@ Style/ParenthesesAroundCondition:
 
 # Offense count: 1
 # Configuration parameters: NamePrefix, NamePrefixBlacklist.
-Style/PredicateName:
+Naming/PredicateName:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 3
 # Cop supports --auto-correct.
 Style/RedundantSelf:
-  AutoCorrect: true
+  AutoCorrect: false
   Enabled: true
 
 # Offense count: 1
@@ -204,51 +202,51 @@ Style/RegexpLiteral:
 Style/SignalException:
   AutoCorrect: true
   Enabled: true
-  
+
 # Offense count: 5
 # Cop supports --auto-correct.
-Style/SpaceAfterComma:
+Layout/SpaceAfterComma:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/SpaceAroundEqualsInParameterDefault:
+Layout/SpaceAroundEqualsInParameterDefault:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: MultiSpaceAllowedForOperators.
-Style/SpaceAroundOperators:
+Layout/SpaceAroundOperators:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 8
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/SpaceBeforeBlockBraces:
+Layout/SpaceBeforeBlockBraces:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 16
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
-Style/SpaceInsideBlockBraces:
-  EAutoCorrect: true
+Layout/SpaceInsideBlockBraces:
+  AutoCorrect: true
   Enabled: true
 
 # Offense count: 4
 # Cop supports --auto-correct.
-Style/SpaceInsideBrackets:
+Layout/SpaceInsideParens:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 24
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, EnforcedStyleForEmptyBraces, SupportedStyles.
-Style/SpaceInsideHashLiteralBraces:
+Layout/SpaceInsideHashLiteralBraces:
   AutoCorrect: true
   Enabled: true
 
@@ -261,20 +259,20 @@ Style/StringLiterals:
 
 # Offense count: 12
 # Cop supports --auto-correct.
-Style/Tab:
+Layout/Tab:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 38
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/TrailingBlankLines:
+Layout/TrailingBlankLines:
   AutoCorrect: true
   Enabled: true
 
 # Offense count: 56
 # Cop supports --auto-correct.
-Style/TrailingWhitespace:
+Layout/TrailingWhitespace:
   AutoCorrect: true
   Enabled: true
 
@@ -282,7 +280,16 @@ Style/TrailingWhitespace:
 # Cop supports --auto-correct.
 # Configuration parameters: WordRegex.
 Style/WordArray:
-  MinSize: 2
+  Enabled: false
+  # This is regarding %w()
+
+Style/SymbolArray:
+  Enabled: false
+  # This is regarding %i()
+
+Style/DoubleNegation:
+  Enabled: false
+  # Regarding use !! double bang to convert
 
 Style/RegexpLiteral:
   Enabled: false
@@ -295,6 +302,14 @@ Metrics/PerceivedComplexity:
   Exclude:
    - test/**/*.rb
 
+Metrics/ModuleLength:
+  Max: 150
+  # Test if this works pre-commit hooks
+
+Metrics/ClassLength:
+  Max: 150
+  # Test if this works pre-commit hooks
+
 Lint/UselessAssignment:
   Exclude:
    - test/**/*.rb
@@ -303,7 +318,7 @@ Lint/HandleExceptions:
   Exclude:
    - test/**/*.rb
 
-Style/AccessorMethodName:
+Naming/AccessorMethodName:
   Exclude:
    - test/**/*.rb
 

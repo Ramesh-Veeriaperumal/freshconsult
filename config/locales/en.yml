@@ -4256,7 +4256,7 @@ en:
         email_not_unique: Email has already been taken
         email_invalid: Email is invalid
         user_emails: Please enter at least one contact detail
-        max_user_emails: A contact cannot have more than 5 emails
+        max_user_emails: A contact cannot have more than 10 emails
         max_user_companies: A contact cannot have more than 20 companies
         max_skills_per_account: Cannot create more than %{max_limit} skills
         max_skills_per_user: Cannot have more than %{max_limit} skills per agent
@@ -7434,6 +7434,8 @@ en:
     check_uncheck_title: 'Check/Uncheck all'
     data_backup:
       body: Your data export is ready for download.
+    data_backup_failure:
+      body: Your data export has failed. Can you please initiate the export again?
     no_tickets_mail:
       body: Seems like there are no tickets in the provided date range.
     customer_export:
@@ -11753,7 +11755,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       new_form:
         go_to_portal: "Authorize &amp; Go to %{portal_name} Portal"
         decline: Decline
-        authorize_text3: "Agree to <a target='_blank' href='http://developers.freshdesk.com/docs/terms-of-use/'>Developer Terms of Use </a> and authorize "
+        authorize_text3: "Agree to <a target='_blank' href='https://developers.freshdesk.com/v2/docs/terms-of-use/'>Developer Terms of Use </a> and authorize "
         authorize_text2: to use your account?
         authorize_success: You have allowed this request
         authorize_failure: You are not allowed to access this page
@@ -11877,6 +11879,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       post_script: "PS: You can switch back any time you like."
       try_new_look: TRY IT OUT
       maybe_later: MAYBE LATER
+      admin_only_invite_msg: "We've crafted a modern experience which is fresher, faster and easier to use.<br/>Go on, take it for spin! Don’t worry, you can switch back any time you like :)"
+      admin_only_post_script: "PS: Only admins in your account can currently try out Mint.<br/>Go to Admin tab to bring your agents onboard."
   pts_plain: " pts"
   cloud_log_mailer:
     logger_email:
@@ -12108,6 +12112,13 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       satisfaction_survey: 'Includes satisfaction survey.'
       ticket_suverymonkey_survey: 'Includes text/link to survey in Surveymonkey'
       triggered_event: 'Details about the event that triggered the rule'
+  admin_upgrade:
+    enable_mint_all: "Enable Mint for agents"
+    enable_mint_title: "Allow agents to try the fresher and faster Mint experience"
+    enable_mint_info: "Agents can switch back to the old freshdesk at any time"
+    enable_mint_success: "Yay! Mint has successfully been enabled for all agents."
+    enable_mint_success_info: To disable the old Freshdesk completely, visit the admin tab in Mint
+    enable_mint_error: Mint has already been enabled for all agents. Refresh to see the latest settings.
   freshchat:
     admin:
       title_text: 'Freshchat'

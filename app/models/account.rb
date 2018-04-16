@@ -496,7 +496,7 @@ class Account < ActiveRecord::Base
   end
 
   def skip_dispatcher?
-    marketplace_app_enabled? && launched?(:synchronous_apps)
+    @skip_dispatcher ||= marketplace_app_enabled? && launched?(:synchronous_apps)
   end
 
   def remove_secondary_companies
@@ -646,6 +646,14 @@ class Account < ActiveRecord::Base
     #if the account state is suspended.
     return self.subscription.state unless (self.subscription.suspended? && self.active_suspended?)
     'active_suspended'
+  end
+
+  def bots_hash
+    [main_portal, products.preload({ portal: [:logo, :bot] })].flatten.map { |bot_parent| bot_parent.bot_info }
+  end
+
+  def bot_onboarded?
+    !bots_count_from_cache.zero?
   end
 
   protected

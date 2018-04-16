@@ -53,6 +53,8 @@ class TicketTest < ActiveSupport::TestCase
     t = create_ticket(ticket_params_hash.merge(custom_field: custom_fields_hash))
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
+    assoc_payload = t.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
   end
 
   def test_central_publish_payload_without_custom_fields
@@ -68,13 +70,8 @@ class TicketTest < ActiveSupport::TestCase
     t = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
-  end
-
-  def test_central_publish_payload_with_lengthy_description
-    description = Faker::Lorem.characters(100001)
-    t = create_ticket(ticket_params_hash(description: description, description_html: "<div>#{description}</div>"))
-    payload = t.central_publish_payload.to_json
-    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assoc_payload = t.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
   end
 
   def test_central_publish_payload_with_tags
@@ -103,12 +100,41 @@ class TicketTest < ActiveSupport::TestCase
     tag = Faker::Lorem.word
     t.tags.build(name: tag)
     t.save_ticket
+    t.reload
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
     job = CentralPublishWorker::ActiveTicketWorker.jobs.last
     assert_equal 'ticket_update', job['args'][0]
-    assert_equal({ 'add_tag' => [tag] }, job['args'][1]['model_changes'])
+    assert_equal({ 'tags' => { 'added' => [tag], 'removed' => [] } }, job['args'][1]['model_changes'])
+  end
+
+  def test_central_publish_watcher_event
+    t = create_ticket(ticket_params_hash)
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    User.stubs(:current).returns(@agent)
+    subscription = t.subscriptions.build(:user_id => @agent.id)
+    subscription.save
+    t.reload
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_update', job['args'][0]
+    assert_equal({ 'watchers' => { 'added' => [@agent.id], 'removed' => [] } }, job['args'][1]['model_changes'])
+  ensure
+    User.unstub(:current)
+  end
+
+  def test_prevent_central_publish_watcher_if_actor_is_system
+    t = create_ticket(ticket_params_hash)
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    User.stubs(:current).returns(nil)
+    subscription = t.subscriptions.build(:user_id => @agent.id)
+    subscription.save
+    assert_equal 0, CentralPublishWorker::ActiveTicketWorker.jobs.size
+  ensure
+    User.unstub(:current)
   end
 
   def test_central_publish_description_update
@@ -136,7 +162,20 @@ class TicketTest < ActiveSupport::TestCase
     assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
     job = CentralPublishWorker::ActiveTicketWorker.jobs.last
     assert_equal 'ticket_update', job['args'][0]
-    assert_equal({ 'custom_fields' => {"test_custom_dropdown_#{@account.id}" => [DROPDOWN_CHOICES.first, DROPDOWN_CHOICES.last]} }, job['args'][1]['model_changes'])
+    assert_equal({ "test_custom_dropdown_#{@account.id}" => [DROPDOWN_CHOICES.first, DROPDOWN_CHOICES.last] }, job['args'][1]['model_changes'])
+  end
+
+  def test_central_publish_ticket_destroy
+    t = create_ticket(ticket_params_hash)
+    pattern_to_match = cp_ticket_destroy_pattern(t)
+    CentralPublishWorker::ActiveTicketWorker.jobs.clear
+    t = @account.tickets.find(t.id)
+    t.destroy
+    assert_equal 1, CentralPublishWorker::ActiveTicketWorker.jobs.size
+    job = CentralPublishWorker::ActiveTicketWorker.jobs.last
+    assert_equal 'ticket_destroy', job['args'][0]
+    assert_equal({}, job['args'][1]['model_changes'])
+    job['args'][1]['model_properties'].must_match_json_expression(pattern_to_match)
   end
 
   def test_block_central_publish_for_suspended_accounts

@@ -28,8 +28,9 @@ class Collaboration::Account
         url: "#{CollabConfig['collab_url']}/accounts.disable",
         payload: {
           account_id: @current_account.id.to_s,
-        },
+        }.to_json,
         headers: {
+          'Content-Type' => 'application/json',
           'Authorization' => collab_request_token,
           'ClientId' => Collaboration::Ticket::HK_CLIENT_ID
         }) || {}
@@ -49,8 +50,9 @@ class Collaboration::Account
         payload: {
           domain_url: "#{protocol}#{Account.current.full_domain}",
           access_token: account_admin.single_access_token.presence
-        },
+        }.to_json,
         headers: {
+          'Content-Type' => 'application/json',
           'Authorization' => collab_request_token,
           'ClientId' => Collaboration::Ticket::HK_CLIENT_ID
         }) || {}
