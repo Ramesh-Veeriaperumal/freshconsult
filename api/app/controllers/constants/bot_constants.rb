@@ -15,4 +15,5 @@ module BotConstants
   }.freeze
   DEFAULT_BOT_THEME_COLOUR = '#039a7b'.freeze
   DEFAULT_WIDGET_SIZE = 'STANDARD'.freeze
+  WIDGET_CODE_DEFAULT_USER_NAME  = 'Guest'.freeze
 end

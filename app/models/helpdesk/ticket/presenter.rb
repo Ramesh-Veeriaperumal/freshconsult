@@ -1,10 +1,12 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   include RepresentationHelper
-  MAX_DESC_LIMIT = 10000
-  FLEXIFIELD_PREFIXES = ['ffs_', 'ff_text', 'ff_int', 'ff_date', 'ff_boolean', 'ff_decimal']
-  REPORT_FIELDS = [:first_assign_by_bhrs, :first_response_id, :agent_reassigned_count, :group_reassigned_count, :reopened_count, :private_note_count, :public_note_count, :agent_reply_count, :customer_reply_count, :reopened_count, :agent_assigned_flag, :agent_reassigned_flag, :group_assigned_flag, :group_reassigned_flag, :internal_agent_assigned_flag, :internal_agent_reassigned_flag, :internal_group_assigned_flag, :internal_group_reassigned_flag, :internal_agent_first_assign_in_bhrs, :last_resolved_at]
+  FLEXIFIELD_PREFIXES = ['ffs_', 'ff_text', 'ff_int', 'ff_date', 'ff_boolean', 'ff_decimal', 'dn_slt_']
+  REPORT_FIELDS = [:first_assign_by_bhrs, :first_response_id, :agent_reassigned_count, :group_reassigned_count, :reopened_count, :private_note_count, :public_note_count, :agent_reply_count, :customer_reply_count, :agent_assigned_flag, :agent_reassigned_flag, :group_assigned_flag, :group_reassigned_flag, :internal_agent_assigned_flag, :internal_agent_reassigned_flag, :internal_group_assigned_flag, :internal_group_reassigned_flag, :internal_agent_first_assign_in_bhrs, :last_resolved_at]
   EMAIL_KEYS = [:cc_emails, :fwd_emails, :bcc_emails, :reply_cc, :tkt_cc]
   DATETIME_FIELDS = [:due_by, :closed_at, :resolved_at, :created_at, :updated_at]
+  TAG_KEYS = [:add_tag, :remove_tag]
+  WATCHER_KEYS = [:add_watcher, :remove_watcher]
+  SYSTEM_ACTIONS = [:add_comment, :add_a_cc, :email_to_requester, :email_to_group, :email_to_agent]
   DONT_CARE_VALUE = "*"
 
   acts_as_api
@@ -16,11 +18,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :responder_id
     t.add :group_id
     t.add :status_hash, as: :status
-    t.add :priority
+    t.add :priority_hash, as: :priority
     t.add :ticket_type
-    t.add :source
+    t.add :source_hash, as: :source
     t.add :requester_id
-    t.add :sl_skill_id, :if => proc { Account.current.skill_based_round_robin_enabled? }
+    t.add :skill_id, :if => proc { Account.current.skill_based_round_robin_enabled? }
     t.add :custom_fields_hash, as: :custom_fields
     t.add :product_id, :if => proc { Account.current.multi_product_enabled? }
     t.add :company_id
@@ -35,40 +37,43 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :archive, :if => proc { Account.current.features_included?(:archive_tickets) }
     t.add :internal_agent_id, :if => proc { Account.current.shared_ownership_enabled? }
     t.add :internal_group_id, :if => proc { Account.current.shared_ownership_enabled? }
-    t.add :parent_ticket_id, as: :parent_id
+    t.add :parent_ticket, as: :parent_id
     t.add :outbound_email?, as: :outbound_email
     t.add :subject
-    t.add :requester, template: :central_publish
-    t.add proc { |x| x.truncate_description }, as: :description_text
-    t.add proc { |x| x.description.length > MAX_DESC_LIMIT }, as: :description_text_truncated
-    t.add proc { |x| x.truncate_description(true) }, as: :description_html
-    t.add proc { |x| x.description_html.length > MAX_DESC_LIMIT }, as: :description_html_truncated
-    t.add :responder, template: :central_publish
-    t.add :watchers, as: :subscribers
-    t.add :attachments
+    t.add proc { |x| x.description }, as: :description_text
+    t.add :description_html
+    t.add :watchers
     t.add :urgent
     t.add :spam
     t.add :trained
-    t.add :frDueBy, as: :fr_due_by
+    t.add proc { |x| x.utc_format(x.frDueBy) }, as: :fr_due_by
     t.add :to_emails
     t.add :email_config_id
     t.add :deleted
-    t.add :group, template: :central_publish
     t.add :group_users
     t.add proc { |x| x.tags.collect { |tag| { id: tag.id, name: tag.name } } }, as: :tags
     REPORT_FIELDS.each do |key|
       t.add proc { |x| x.reports_hash[key.to_s] }, as: key
     end
-    EMAIL_KEYS.each do |key|
-      t.add proc { |x| x.cc_email.try(:[], key) }, as: key
-    end
     DATETIME_FIELDS.each do |key|
       t.add proc { |x| x.utc_format(x.safe_send(key)) }, as: key
     end
+    EMAIL_KEYS.each do |key|
+      t.add proc { |x| x.cc_email.try(:[], key) }, as: key
+    end
   end
 
-  def truncate_description(html = false)
-    (html ? description_html : description).truncate(MAX_DESC_LIMIT)
+  api_accessible :central_publish_associations do |t|
+    t.add :requester, template: :central_publish
+    t.add :responder, template: :central_publish
+    t.add :group, template: :central_publish
+  end
+
+  api_accessible :central_publish_destroy do |t|
+    t.add :id
+    t.add :display_id
+    t.add :account_id
+    t.add :archive
   end
 
   def action_in_bhrs?
@@ -77,10 +82,24 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def priority_hash
+    { 
+      id: priority, 
+      name: PRIORITY_NAMES_BY_KEY[priority]
+    }
+  end
+
   def status_hash
-    {
-      id: status,
+    { 
+      id: status, 
       name: status_name
+    }
+  end
+
+  def source_hash
+    { 
+      id: source, 
+      name: SOURCE_NAMES_BY_KEY[source]
     }
   end
 
@@ -118,30 +137,95 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Account.current.ticket_central_publish_enabled?
   end
 
+  def column_attribute_mapping
+    Helpdesk::SchemaLessTicket::COLUMN_TO_ATTRIBUTE_MAPPING.merge({
+      sl_skill_id: :skill_id,
+      owner_id: :company_id
+    })
+  end
+
   def model_changes_for_central
-    changes = (@model_changes || {}).except(:tags).merge(self.misc_changes || {})
-    description_changed = [*ticket_old_body.previous_changes.keys, *changes.keys.map(&:to_s)].include?('description')
-    changes[:description] = [nil, DONT_CARE_VALUE] if description_changed
+    changes = transformed_model_changes.with_indifferent_access
+    # SchemaLessTicket has columns like text_tc01 that need to be renamed
+    column_attribute_mapping.each_pair do |key, val| 
+      changes[val] = changes.delete(key) if changes.key?(key)
+    end
+    changes[:description] = [nil, DONT_CARE_VALUE] if description_content_changed?
+    # Handling changes to custom_fields - flexifield name should be replaced with flexifield alias
     flexifield_changes = changes.select { |k, v| k.to_s.starts_with?(*FLEXIFIELD_PREFIXES) }
     return changes if flexifield_changes.blank?
-    cf_changes = {}
     flexifield_changes.each_pair do |key, val|
-      cf_changes.merge!(custom_field_name_mapping[key.to_s] => val)
+      changes[custom_field_name_mapping[key.to_s]] = val
     end
-    changes.except(*flexifield_changes.keys).merge(custom_fields: cf_changes)
+    changes.except(*flexifield_changes.keys)
   end
 
   def system_changes_for_central
-    changes = []
-    (@system_changes || {}).each do |rule_id, info|
-      changes << {
-        id: rule_id,
-        type: info[:rule][0],
-        name: info[:rule][1],
-        changes: info.except(:rule)
-      }
+    # Tranforming system_changes from
+    # { 
+    #    "20" => { rule: ['observer', 'abc'], priority: [nil, 3], add_tag: 'test' },
+    #    "25" => { rule: ['observer', 'xyz'], add_tag: 'new', add_watcher: [11], send_email_to_agent: [6] }
+    # } to
+    # [
+    #   { id: 20, type: 'observer', name: 'abc', model_changes: { priority: [nil, 3], tags: { added: ['test'], removed: [] } } },
+    #   { id: 25, type: 'observer', name: 'xyz', model_changes: { tags: { added: ['new'], removed: [] } }, actions: { send_email_to_agent: [6] } }
+    # ]
+    Array.new.tap do |changeset|
+      (@system_changes || {}).each do |rule_id, info|
+        changes = info.except(:rule, *SYSTEM_ACTIONS)
+        changeset << {
+          id: rule_id,
+          type: info[:rule][0],
+          name: info[:rule][1],
+          model_changes: changes.merge(transform_array_fields(changes)).except(*TAG_KEYS, *WATCHER_KEYS),
+          actions: info.slice(*SYSTEM_ACTIONS)
+        }
+      end
     end
-    changes
+  end
+
+  def misc_changes_for_central
+    (self.misc_changes || {}).except(*TAG_KEYS, *WATCHER_KEYS, :misc_changes)
+  end
+
+  def transformed_model_changes
+    # misc_changes contain updates to tag if added/removed by user
+    # system_changes contain updates to tag and watcher if added/removed by system
+    changes = @system_changes.present? ? system_changes_to_array_fields : self.misc_changes
+    (@model_changes || {}).merge(transform_array_fields(changes))
+  end
+
+  def system_changes_to_array_fields
+    Hash.new.tap do |merged_set|
+      (@system_changes || {}).each do |rule_id, info|
+        changes = info.slice(*TAG_KEYS, *WATCHER_KEYS)
+        changes.each do |key, arr|
+          merged_set.key?(key) ? merged_set[key] |= arr : merged_set[key] = arr
+        end
+      end
+    end
+  end
+
+  # Transforming tags and watcher fields from
+  # { add_tag: ['abc'], remove_watcher: [5] } to
+  # { tags: { added: ['abc'], removed: [] }, watchers: { added: [], removed: [5] } }
+  def transform_array_fields(changes)
+    transformed_changes = {}
+    if (changes.try(:keys) & TAG_KEYS).present?
+      transformed_changes[:tags] = {}
+      transformed_changes[:tags][:added] = changes[:add_tag] || []
+      transformed_changes[:tags][:removed] = changes[:remove_tag] || []
+    end
+    if (changes.try(:keys) & WATCHER_KEYS).present?
+      transformed_changes[:watchers] = {}
+      transformed_changes[:watchers][:added] = changes[:add_watcher] || []
+      transformed_changes[:watchers][:removed] = changes[:remove_watcher] || []
+    end
+    transformed_changes
+  end
+
+  def description_content_changed?
+    [*ticket_old_body.previous_changes.keys, *(@model_changes || {}).keys.map(&:to_s)].include?('description')
   end
 
   def custom_field_name_mapping

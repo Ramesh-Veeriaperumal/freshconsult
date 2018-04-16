@@ -48,7 +48,7 @@ module RabbitMq::Utils
 
   def publish_to_rabbitmq(exchange, model, action)
     if RABBIT_MQ_ENABLED
-      uuid    =  generate_uuid
+      uuid    = self.event_uuid || generate_uuid
       message = subscriber_basic_message(model, action, uuid)
       key = ""
       RabbitMq::Keys.const_get("#{exchange.upcase}_SUBSCRIBERS").each { |f|

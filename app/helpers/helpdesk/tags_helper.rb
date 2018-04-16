@@ -42,16 +42,12 @@ module Helpdesk::TagsHelper
       negative_conditions = [{ "condition" => "spam", "operator" => "is", "value" => "true" },{ "condition" => "deleted", "operator" => "is", "value" => "true" }]
       Search::Tickets::Docs.new(action_hash, negative_conditions,false).count(Helpdesk::Ticket)
     else
-      tag.tickets.visible.size
+      tags_count(tag, "Helpdesk::Ticket")
     end      
   end
 
   def tags_count tag, association
-    if association == "archive_tickets"
-      tag.archive_tickets.size
-    elsif association == "contacts"
-      tag.contacts.visible.size
-    end
+    Sharding.run_on_slave { Account.current.tag_uses.tags_count(tag.id, association).count }
     rescue => e
       t("many")
   end

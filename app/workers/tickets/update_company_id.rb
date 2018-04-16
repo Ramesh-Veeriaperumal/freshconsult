@@ -29,6 +29,7 @@ class Tickets::UpdateCompanyId < BaseWorker
           execute_on_db("run_on_master") { 
             Account.current.safe_send(tkts).where("id in (?)", ticket_ids).update_all(:owner_id => company_id)
           }
+          @updates_hash = { company_id: ['*', company_id] }
           send_updates_to_rmq(tickets, tickets[0].class.name) if tkts == "archive_tickets"
           subscribers_manual_publish(tickets) if tkts == "tickets"
 
@@ -42,7 +43,7 @@ class Tickets::UpdateCompanyId < BaseWorker
   def subscribers_manual_publish(items)
     key = Account.current.features?(:countv2_writes) ? "RMQ_REPORTS_COUNT_TICKET_KEY" : "RMQ_REPORTS_TICKET_KEY"
     items.each do |item|
-      item.manual_publish_to_rmq("update", RabbitMq::Constants.const_get(key), {:manual_publish => true})
+      item.manual_publish(["update", RabbitMq::Constants.const_get(key), {:manual_publish => true}], [:update, { model_changes: @updates_hash }])
     end
   end
 end

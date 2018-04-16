@@ -1,5 +1,5 @@
 <% user_page ||= false %>
-<% ticket_style = subject_style(ticket,@onhold_and_closed_statuses) %>
+<% ticket_style = due_by_values_present?(ticket) ? subject_style(ticket, @onhold_and_closed_statuses) : '' %>
 <% modal ||= false %>
 
 <tr class="ticket-status-<%= ticket.status %> " data-ticket="<%= ticket.display_id %>"
@@ -69,8 +69,10 @@
 					<div class="emphasize">
 						<%= t("ticket.ticket_user_list_status_" + ticket.ticket_states.current_state(ticket.outbound_email?),
 								:time_ago => time_ago_in_words(ticket.ticket_states.safe_send(ticket.ticket_states.current_state(ticket.outbound_email?)))
-							  ).html_safe %>,
-						<%= sla_status(ticket,@onhold_and_closed_statuses) %>
+							  ).html_safe %>
+							  <% if due_by_values_present?(ticket) %>
+							  	, <%= sla_status(ticket, @onhold_and_closed_statuses) %>
+							  <% end %>
 					</div>
 				</div>
 			<% end %>

@@ -16,7 +16,10 @@ module Admin
         supervisor_rules.each do |rule|
           begin
             rule_start_time = Time.now.utc
-            conditions = rule.filter_query
+            conditions = []
+            log_info(account.id, rule.id) {
+              conditions = rule.filter_query
+            }
             next if conditions.empty?
             negate_conditions = [""]
             negate_conditions = rule.negation_query(account_negatable_columns)

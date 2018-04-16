@@ -8,5 +8,10 @@ github:
   slug: freshdesk/helpkit
   api_endpoint: https://api.github.com/
   web_endpoint: https://github.com/
+<<<<<<< HEAD
+=======
+github_pr:
+  format: "%{runner}:%{level}: %{msg}"
+>>>>>>> origin/staging
 max_warnings: 150
 verbose: false

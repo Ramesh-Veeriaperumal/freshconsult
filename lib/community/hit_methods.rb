@@ -15,6 +15,6 @@ module Community::HitMethods
 	end
 
 	def hits
-		get_others_redis_key(hit_key).to_i + self.read_attribute(:hits)
+		@hits ||= get_others_redis_key(hit_key).to_i + self.read_attribute(:hits)
 	end
 end

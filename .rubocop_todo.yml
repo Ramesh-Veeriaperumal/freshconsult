@@ -243,7 +243,7 @@ Layout/SpaceInsideBlockBraces:
 
 # Offense count: 4
 # Cop supports --auto-correct.
-Layout/SpaceInsideBrackets:
+Layout/SpaceInsideParens:
   AutoCorrect: true
   Enabled: true
 
@@ -322,7 +322,7 @@ Lint/HandleExceptions:
   Exclude:
    - test/**/*.rb
 
-Name/AccessorMethodName:
+Naming/AccessorMethodName:
   Exclude:
    - test/**/*.rb
 

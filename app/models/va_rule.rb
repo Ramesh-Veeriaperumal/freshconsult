@@ -182,7 +182,8 @@ class VaRule < ActiveRecord::Base
         params = params + c_query
       end
     end
-    
+
+    query_strings  = query_strings.map{ |query| "(#{query})" }
     query_strings.empty? ? [] : ([ query_strings.join(c_operator) ] + params)
   end
 

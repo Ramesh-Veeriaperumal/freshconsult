@@ -57,7 +57,8 @@ class PopulateAccountSetupData < BaseWorker
 			api_endpoint = Marketplace::ApiEndpoint::ENDPOINT_URL[:installed_extensions] %
 					{ :product_id => Marketplace::Constants::PRODUCT_ID,
 						:account_id => Account.current.id}
-			api_payload = account_payload(api_endpoint, nil, {type: Marketplace::Constants::EXTENSION_TYPE[:plug]})
+			extension_type = "#{Marketplace::Constants::EXTENSION_TYPE[:plug]},#{Marketplace::Constants::EXTENSION_TYPE[:custom_app]}"
+			api_payload = account_payload(api_endpoint, nil, { type: extension_type })
 			get_api(api_payload, MarketplaceConfig::ACC_API_TIMEOUT)
 		rescue *FRESH_REQUEST_EXP => e
 			exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")

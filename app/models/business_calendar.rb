@@ -16,7 +16,7 @@ class BusinessCalendar < ActiveRecord::Base
   #business_time_data has working days and working hours inside.
   #for now, a sporadically structured hash is used.
   #can revisit this data model later...
-  belongs_to :account
+  belongs_to_account
   before_create :set_default_version, :valid_working_hours?
   after_commit ->(obj) { 
       obj.clear_cache
@@ -44,7 +44,7 @@ class BusinessCalendar < ActiveRecord::Base
   end
   
   # setting correct timezone and business_calendar based on the context of the ticket getting updated
-  def self.execute(groupable)
+  def self.execute(groupable, options = {})
     begin
       zone = current_time_zone(groupable)
       Time.use_zone(zone) {
@@ -52,6 +52,7 @@ class BusinessCalendar < ActiveRecord::Base
         yield
       }
     rescue Exception => e
+      groupable.sla_on_background = true if options[:dueby_calculation] && groupable.respond_to?(:sla_on_background=)
       NewRelic::Agent.notice_error(e)
     ensure
       Thread.current[TicketConstants::BUSINESS_HOUR_CALLER_THREAD] = nil

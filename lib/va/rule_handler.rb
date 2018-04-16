@@ -48,7 +48,14 @@ class Va::RuleHandler
   end
   
   def filter_query
-    safe_send("filter_query_#{condition.operator}")
+    begin
+      # checking whether the field is present in db or not and also whether the field has the called method
+      condition.db_column && safe_send("filter_query_#{condition.operator}")
+    rescue => e
+      message = "Either field is not present or type of field is changed."
+      Va::Logger::Automation.log_error(message, e, rule_hash)
+      ["false"]
+    end
   end
 
   def null_query(value = :null)

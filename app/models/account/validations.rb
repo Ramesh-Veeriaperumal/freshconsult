@@ -8,8 +8,8 @@ class Account < ActiveRecord::Base
   validate :valid_plan?, :valid_payment_info?, :valid_subscription?, on: :create
   validates_uniqueness_of :google_domain ,:allow_blank => true, :allow_nil => true
   validates_numericality_of :ticket_display_id,
-                            :less_than => 10000000,
-                            :message => "Value must be less than seven digits"
+                            :less_than => 100000000,
+                            :message => "Value must be less than eight digits"
 
   def run_domain_validations
     Account.validators_on(:domain).each do |validator|

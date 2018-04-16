@@ -1,7 +1,7 @@
-<% ticket_tags =  ticket_tags_count(tag)
-   customer_tags = tags_count(tag, "contacts")
-   article_tags =  tag.solution_articles.size
-   archive_tags = tags_count(tag, "archive_tickets")
+<% ticket_tags   =  ticket_tags_count(tag)
+   customer_tags =  tags_count(tag, "User")
+   article_tags  =  tags_count(tag, "Solution::Article")
+   archive_tags  =  current_account.features_included?(:archive_tickets) ? tags_count(tag, "Helpdesk::ArchiveTicket") : 0
 %>
 <tr class="<%= cycle('stripe', '') %>" id="<%= dom_id(tag) %>" data-tag-id="<%=tag.id%>" >
   <td class="name">

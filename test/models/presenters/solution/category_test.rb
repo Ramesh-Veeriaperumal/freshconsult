@@ -11,7 +11,8 @@ class CategoryTest < ActiveSupport::TestCase
 
   def test_ml_training_payload
     category = add_new_category
-    payload = category.central_publish_payload(:ml_training).to_json
+    category.central_payload_type = :ml_training
+    payload = category.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_category_pattern(category))
   end
 end
