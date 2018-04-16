@@ -16,6 +16,7 @@ class Users::ContactDeleteForeverWorker < BaseWorker
         send_event_to_central
         remove_user_companies
         destroy_contact_field_data
+        destroy_avatar
         anonymize_data
       else
         destroy_user_tickets
@@ -42,7 +43,11 @@ class Users::ContactDeleteForeverWorker < BaseWorker
 
     def destroy_contact_field_data
       cf = ContactFieldData.where(:account_id => @account, :user_id => @user).first
-      cf.destroy
+      cf.destroy if cf.present?
+    end
+
+    def destroy_avatar
+      @user.avatar.destroy if @user.avatar.present?
     end
 
     def anonymize_data
