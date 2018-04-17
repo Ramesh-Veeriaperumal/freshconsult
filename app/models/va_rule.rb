@@ -12,6 +12,10 @@ class VaRule < ActiveRecord::Base
   
   serialize :filter_data
   serialize :action_data
+
+  concerned_with :presenter
+
+  publishable on: [:create, :update, :destroy]
   
   validates_presence_of :name, :rule_type
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type] , :unless => :automation_rule?
