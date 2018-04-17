@@ -9,7 +9,7 @@ class Agent < ActiveRecord::Base
   include Redis::RoundRobinRedis
   include RoundRobinCapping::Methods
 
-  concerned_with :associations, :constants
+  concerned_with :associations, :constants, :presenter
 
   publishable on: [:create, :update, :destroy]
 
