@@ -57,6 +57,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :send_outbound_email, :update_capping_on_create, :update_count_for_skill,on: :create, :if => :outbound_email?
 
   after_commit :trigger_observer_events, on: :update, :if => :execute_observer?
+  after_commit :enqueue_sla_calculation, :if => :enqueue_sla_calculation?
   after_commit :update_ticket_states, :notify_on_update, :update_activity,
                :stop_timesheet_timers, :fire_update_event, on: :update
   #after_commit :regenerate_reports_data, on: :update, :if => :regenerate_data?
@@ -285,13 +286,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def skip_dispatcher?
-    skip_dispatcher = import_id || outbound_email? || !requester.valid_user?
-    Va::Logger::Automation.log "Skipping dispatcher" if skip_dispatcher
-    skip_dispatcher
+    @skip_dispatcher ||= begin
+      _skip_dispatcher = import_id || outbound_email? || !requester.valid_user?
+      Va::Logger::Automation.log "Skipping dispatcher" if _skip_dispatcher
+      _skip_dispatcher
+    end
   end
 
   def trigger_dispatcher
-    Helpdesk::Dispatcher.enqueue(self.id, (User.current.blank? ? nil : User.current.id), freshdesk_webhook?) unless Account.current.skip_dispatcher?
+    Helpdesk::Dispatcher.enqueue(self, (User.current.blank? ? nil : User.current.id)) unless Account.current.skip_dispatcher?
   end
 
   #To be removed after dispatcher redis check removed
@@ -502,6 +505,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ::Tickets::ResetAssociations.perform_async({:ticket_ids=>[self.display_id]})
   end
 
+  def enqueue_sla_calculation?
+    sla_on_background && ((transaction_include_action?(:create) && (self.skip_dispatcher? || account.skip_dispatcher?)) || (transaction_include_action?(:update) && observer_will_not_be_enqueued?))
+  end
+
+  def enqueue_sla_calculation
+    job_id = Sla::Calculation.perform_async(:ticket_id => self.id, :sla_state_attributes => sla_state_attributes, :sla_calculation_time => sla_calculation_time.to_i)
+    Rails.logger.debug "Sla on background, ticket #{self.id} #{self.display_id} #{sla_state_attributes.inspect} Job Id :: #{job_id}"
+  end
+
+  def save_deleted_ticket_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
+  end
+  
 private
 
   def model_changes?
@@ -754,10 +770,12 @@ private
   end
 
   def execute_observer?
-    execute_observer = user_present? && !disable_observer_rule
-    SBRR.log "Ticket ##{self.display_id} save done. Model_changes #{@model_changes.inspect}"
-    Va::Logger::Automation.log "Skipping observer" unless execute_observer
-    execute_observer
+    @execute_observer ||= begin
+      _execute_observer = user_present? && !disable_observer_rule
+      SBRR.log "Ticket ##{self.display_id} save done. Model_changes #{@model_changes.inspect}"
+      Va::Logger::Automation.log "Skipping observer" unless _execute_observer
+      _execute_observer
+    end
   end
 
   def update_assoc_parent_tkt
@@ -792,7 +810,7 @@ private
 
   def create_assoc_tkt_activity(action, ticket, id) # => tracker/assoc_parent tkt
     ticket.misc_changes = {action => [id]}
-    ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
+    ticket.manual_publish(["update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY], [:update, { misc_changes: ticket.misc_changes.dup }])
   end
 
   def new_outbound_email?
@@ -827,15 +845,5 @@ private
     meta_data.each do |k,v|
       meta_data[k] = RailsFullSanitizer.sanitize v if v.is_a? String
     end
-  end
-
-  def save_deleted_ticket_info
-    @deleted_model_info = {
-      id: id,
-      display_id: display_id,
-      account_id: account_id
-    }
-    @deleted_model_info[:archive] = false
-    @deleted_model_info
   end
 end

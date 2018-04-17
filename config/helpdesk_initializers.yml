@@ -1,5 +1,6 @@
 helpdesk:
   initializers:
+    - githooks
     - mri2.1_patches
     - rails3_patches
     - core_ext/object

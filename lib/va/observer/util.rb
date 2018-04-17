@@ -71,8 +71,9 @@ module Va::Observer::Util
       }
 
       if self.class == Helpdesk::Ticket
-        args[:model_changes] = @model_changes 
+        args[:model_changes] = @model_changes
         args[:sbrr_state_attributes] = sbrr_state_attributes if Account.current.skill_based_round_robin_enabled?
+        args[:sla_args] = {:sla_on_background => sla_on_background, :sla_state_attributes => sla_state_attributes, :sla_calculation_time => sla_calculation_time.to_i}
       end
 
       Va::Logger::Automation.log "Triggering Observer, info=#{args.inspect}"

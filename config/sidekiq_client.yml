@@ -209,10 +209,13 @@ defaults: &defaults
     - [free_ticket_central_publish]
     - [trial_ticket_central_publish]
     - [active_ticket_central_publish]
+    - [delayed_central_publish]
     - [channel_framework_command]
     - [ml_solutions_training]
+    - [update_taggables_queue]
     - [mixpanel_queue]
     - [bot_cleanup]
+    - [calculate_sla]
 
 development:
   <<: *defaults

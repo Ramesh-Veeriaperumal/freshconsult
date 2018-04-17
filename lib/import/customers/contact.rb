@@ -38,11 +38,13 @@ class Import::Customers::Contact < Import::Customers::Base
 
   def load_item item_param
     email_param = item_param[:email]
+    all_emails = []
     unless email_param.blank?
       all_emails = email_param.to_s.downcase.strip.split(IMPORT_DELIMITER)
       all_emails = all_emails.map! { |email| email.squish unless email.blank? }.uniq.compact
     end
-    @item = current_account.all_users.find_by_an_unique_id({:email => all_emails.first(User::MAX_USER_EMAILS)})
+    @item = current_account.all_users.find_by_an_unique_id({:email =>
+              all_emails.first(User::MAX_USER_EMAILS)}) if all_emails.present?
     @item ||= current_account.all_users.find_by_an_unique_id({:twitter_id => item_param[:twitter_id],
                 :unique_external_id => item_param[:unique_external_id]})
 
