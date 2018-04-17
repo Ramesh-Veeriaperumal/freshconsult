@@ -7,7 +7,7 @@ module CustomFilterConstants
   CONDITIONAL_FIELDS = ['responder_id', 'group_id', 'created_at', 'due_by', 'status',
                         'priority', 'ticket_type', 'source', 'association_type', 'helpdesk_tags.name',
                         'owner_id', 'requester_id', 'helpdesk_schema_less_tickets.product_id',
-                        'internal_agent_id', 'internal_group_id', 'any_agent_id', 'any_group_id'].freeze
+                        'internal_agent_id', 'internal_group_id', 'any_agent_id', 'any_group_id', 'sl_skill_id'].freeze
 
   FEATURE_BASED_CONDITIONAL_FIELDS = [
     ['internal_agent_id', :shared_ownership, 'Shared Ownership'],

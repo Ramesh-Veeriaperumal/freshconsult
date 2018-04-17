@@ -17,6 +17,7 @@ module Ember
     include ContactFieldsHelper
     include AccountTestHelper
     include SharedOwnershipTestHelper
+    include UsersTestHelper
     include TicketTemplateHelper
     include AwsTestHelper
     include TicketActivitiesTestHelper
@@ -57,6 +58,7 @@ module Ember
         @@ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
         @@custom_field_names << @@ticket_fields.last.name
       end
+      create_skill if @account.skills.empty?
       @@before_all_run = true
     end
 
@@ -1757,7 +1759,7 @@ module Ember
       user_tags = ['tag1','tags2']
       tag_field = @account.contact_form.default_fields.find_by_name(:tag_names)
       tag_field.update_attributes(field_options: { 'widget_position' => 10 })
-      user = add_new_user(@account, tags: user_tags.join(','))
+      user = add_new_user(@account, tag_names: user_tags.join(','))
       user.reload
       t = create_ticket(requester_id: user.id)
       get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
@@ -2295,6 +2297,60 @@ module Ember
         assert_response 200
         assert_equal true, JSON.parse(response.body)['can_be_associated']
       end
+    end
+
+    def test_update_skill_attribute_without_feature
+      Account.current.stubs(:skill_based_round_robin_enabled?).returns(false)
+      user = add_test_agent(@account, role: Role.find_by_name('Supervisor').id)
+      login_as(user)
+      group = create_group(@account, ticket_assign_type: 2)
+      ticket = create_ticket({}, group)
+      put :update, construct_params({ version: 'private', id: ticket.display_id }, skill_id: 1)
+      assert_response 400
+      match_json([bad_request_error_pattern(:skill_id, :require_feature_for_attribute, code: :inaccessible_field, attribute: 'skill_id', feature: :skill_based_round_robin)])
+      Account.current.unstub(:skill_based_round_robin_enabled?)
+    end
+
+    def test_update_skill_attribute_without_privilege
+      Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+      user = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      login_as(user)
+      group = create_group(@account, ticket_assign_type: 2)
+      ticket = create_ticket({}, group)
+      put :update, construct_params({ version: 'private', id: ticket.display_id }, skill_id: 1)
+      assert_response 400
+      match_json([bad_request_error_pattern(:skill_id, nil, code: :incompatible_field, append_msg: :no_edit_ticket_skill_privilege)])
+      ticket.reload
+      assert_equal nil, ticket.skill_id
+      Account.current.unstub(:skill_based_round_robin_enabled?)
+    end
+
+    def test_update_skill_id_with_invalid_skill
+      Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+      user = add_test_agent(@account, role: Role.find_by_name('Supervisor').id)
+      login_as(user)
+      group = create_group(@account, ticket_assign_type: 2)
+      ticket = create_ticket({}, group)
+      invalid_skill = @account.skills.length + 1
+      put :update, construct_params({ version: 'private', id: ticket.display_id }, skill_id: invalid_skill)
+      assert_response 400
+      match_json([bad_request_error_pattern(:skill_id, nil, code: :invalid_value, append_msg: :invalid_skill_id)])
+      ticket.reload
+      assert_equal nil, ticket.skill_id
+      Account.current.unstub(:skill_based_round_robin_enabled?)
+    end
+
+    def test_update_skill_attribute_with_privilege
+      Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+      user = add_test_agent(@account, role: Role.find_by_name('Supervisor').id)
+      login_as(user)
+      group = create_group(@account, ticket_assign_type: 2)
+      ticket = create_ticket({}, group)
+      put :update, construct_params({ version: 'private', id: ticket.display_id }, skill_id: 1)
+      assert_response 200
+      ticket.reload
+      assert_equal 1, ticket.skill_id
+      Account.current.unstub(:skill_based_round_robin_enabled?)
     end
 
     def test_new_ticket_with_parent_child

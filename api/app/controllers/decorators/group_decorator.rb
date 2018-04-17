@@ -1,5 +1,5 @@
 class GroupDecorator < ApiDecorator
-  delegate :id, :name, :description, :escalate_to, to: :record
+  delegate :id, :name, :description, :escalate_to, :skill_based_round_robin_enabled?, to: :record
 
   def initialize(record, options)
     super(record)
@@ -28,7 +28,8 @@ class GroupDecorator < ApiDecorator
     {
       id: record.id,
       name: record.name,
-      agent_ids: agent_ids
+      agent_ids: agent_ids,
+      skill_based_round_robin_enabled: skill_based_round_robin_enabled?
     }
   end
 
