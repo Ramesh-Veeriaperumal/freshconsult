@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
   end
 
   def model_changes_for_central
-    self.previous_changes
+    @model_changes
   end
 
   def relationship_with_account

@@ -25,6 +25,7 @@ class User < ActiveRecord::Base
   after_update  :send_alert_email, :if => [:email_changed?,:agent?]
   before_save :set_time_zone, :set_default_company
   before_save :set_language, :unless => :detect_language?
+  before_save :trigger_perishable_token_reset, :if => :email_changed?
   before_save :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :set_contractor_privilege, :if => :customer?
   before_save :restrict_domain, :if => :email_changed?
@@ -119,6 +120,13 @@ class User < ActiveRecord::Base
     }}
   end
 
+  def trigger_perishable_token_reset
+    # separate query was being fired to update perishable_token
+    # which inturn pushes 2 messages to central
+    self.perishable_token = self.reset_perishable_token
+    self.perishable_token_reset = true
+  end
+
   def agent_to_admin?
      admin_privilege_updated?
   end
@@ -207,6 +215,11 @@ class User < ActiveRecord::Base
 
   def update_user_related_changes
     @model_changes = self.changes.clone
+    if roles_changed?
+      role_changes = { :added => @added_roles || [], 
+                       :removed => @removed_roles || [] }
+      @model_changes.merge!("roles" => role_changes)
+    end
     # @model_changes.symbolize_keys!
   end
 

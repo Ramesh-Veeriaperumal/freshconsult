@@ -142,8 +142,11 @@ class User < ActiveRecord::Base
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
-                :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, :role_ids_changed, :detect_language # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
-  # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
+                :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, 
+                :role_ids_changed, :detect_language, :perishable_token_reset 
+  # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
+  # As role_ids are not part of user_model(it is an association_reader), 
+  # agent.update_attributes won't trigger user callbacks since user doesn't have any change.
   # Hence user.safe_send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
 
   attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes,
@@ -1269,7 +1272,17 @@ class User < ActiveRecord::Base
       end
     end
 
-    def touch_role_change(role)
+    def touch_add_role_change(role)
+      role_info = { id: role.id, name: role.name }
+      @added_roles.present? ? @added_roles.push(role_info) : 
+                                    @added_roles=[role_info]
+      @role_change_flag = true
+    end
+
+    def touch_remove_role_change(role)
+      role_info = { id: role.id, name: role.name }
+      @removed_roles.present? ? @removed_roles.push(role_info) : 
+                                    @removed_roles=[role_info]
       @role_change_flag = true
     end
 
