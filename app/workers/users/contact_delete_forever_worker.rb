@@ -89,7 +89,6 @@ class Users::ContactDeleteForeverWorker < BaseWorker
     end
 
     def send_event_to_central
-      @user.save_deleted_user_info
       @user.central_publish_action(:destroy)
     end
 
