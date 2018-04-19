@@ -2397,6 +2397,7 @@ en:
         tickets: Tickets
         solutions: Solutions
         forums: Forums
+        bots: Bots
         customers: Customers
         reports: Reports
         administration: Administration
@@ -2445,6 +2446,9 @@ en:
         export_tickets: Export Tickets
         export_customers: Export Customer
         export_reports: Export Reports
+        bots: Bots
+        view_bots: View bots tab
+        manage_bots: Manage Bots
         reports: Reports
         view_reports: View reports tab
         admin: Admin
@@ -4100,6 +4104,7 @@ en:
       all: All
       all_users: All Users
       select_company: Select Companies
+      bot: Bot
       help_text: Select the list of users who will have access to this folder
     types:
       permanent: Permanent

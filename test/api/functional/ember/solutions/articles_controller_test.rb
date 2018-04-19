@@ -122,7 +122,7 @@ module Ember
         article_ids = []
         article_ids = @account.solution_articles.all.collect(&:parent_id)
         get :index, controller_params(version: 'private', ids: article_ids.join(','))
-        articles = @account.solution_articles.find_all_by_parent_id(article_ids)
+        articles = @account.solution_articles.find_all_by_parent_id(article_ids).first(10)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern_index(article) }
         match_json(pattern)
@@ -132,7 +132,7 @@ module Ember
         article_ids = []
         article_ids = @account.solution_articles.all.collect(&:parent_id)
         get :index, controller_params(version: 'private', ids: article_ids)
-        articles = @account.solution_articles.find_all_by_parent_id(article_ids)
+        articles = @account.solution_articles.find_all_by_parent_id(article_ids).first(10)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern_index(article) }
         match_json(pattern)
@@ -142,7 +142,7 @@ module Ember
         article_ids = []
         article_ids = @account.solution_articles.all.collect(&:parent_id)
         get :index, controller_params(version: 'private', ids: article_ids.join(','), user_id: @agent.id)
-        articles = @account.solution_articles.find_all_by_parent_id(article_ids)
+        articles = @account.solution_articles.find_all_by_parent_id(article_ids).first(10)
         assert_response 200
         pattern = articles.map { |article| private_api_solution_article_pattern_index(article, {}, true, @agent) }
         match_json(pattern)

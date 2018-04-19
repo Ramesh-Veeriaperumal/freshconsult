@@ -9,6 +9,7 @@ module Ember
       before_filter :channel_client_authentication, only: [:training_completed]
       before_filter :load_bot_by_external_id, only: [:training_completed]
       around_filter :handle_exception, only: [:training_completed, :mark_completed_status_seen, :enable_on_portal]
+      before_filter :verify_create_bot_folder, only: [:create_bot_folder]
 
       def index
         @bots = { onboarded: current_account.bot_onboarded?, products: current_account.bots_from_cache }
@@ -43,7 +44,10 @@ module Ember
           external_id: @item.external_id,
           enable_on_portal: @item.enable_in_portal,
           all_categories: categories_list(portal),
-          selected_category_ids: @item.solution_category_metum_ids
+          selected_category_ids: @item.category_ids,
+          widget_code_src: BOT_CONFIG[:widget_code_src],
+          product_hash: BOT_CONFIG[:freshdesk_product_id],
+          environment: BOT_CONFIG[:widget_code_env]
         }
         training_status = @item.training_status
         @bot.merge!(status: training_status) if training_status
@@ -62,7 +66,7 @@ module Ember
       def map_categories
         return unless validate_body_params(@item)
         return unless validate_delegator(@item, params)
-        @old_category_ids = @item.solution_category_metum_ids
+        @old_category_ids = @item.category_ids
         begin
           @item.category_ids = params[:category_ids]
           @item.last_updated_by = current_user.id
@@ -101,6 +105,29 @@ module Ember
         return unless validate_body_params
         @item.enable_in_portal = cname_params[:enable_on_portal]
         @item.save ? (head 204) : render_errors(@item.errors)
+      end
+
+      def bot_folders
+        @bot_folder_groups = bot_folder_groups
+      end
+
+      def create_bot_folder
+        @meta = Solution::Builder.folder(solution_folder_meta: params.except(:id))
+        @meta.errors.any? ? render_errors(@meta.errors) : @folder_meta = {
+          id: @meta.id, visibility: @meta.visibility, name: @meta.primary_folder.name}
+      end
+
+      def analytics
+        return unless validate_query_params
+        response, response_code = Freshbots::Bot.analytics(@item.external_id, params[:start_date], params[:end_date])
+        if response_code == 200
+          @analytics = transform_response(JSON.parse(response, symbolize_names: true)[:content][:stats])
+        else
+          error_msg = "BOT :: Analytics failure :: Account id : #{@item.account_id} :: Bot id : #{@item.id} :: Response :: #{response_code} :: #{response}"
+          Rails.logger.error(error_msg)
+          NewRelic::Agent.notice_error(error_msg)
+          render_request_error(:internal_error, 503)
+        end
       end
 
       private
@@ -288,7 +315,7 @@ module Ember
         end
 
         def handle_category_mapping_failure(error_message)
-          @item.category_ids = @old_category_ids if @item.solution_category_metum_ids != @old_category_ids
+          @item.category_ids = @old_category_ids if @item.category_ids != @old_category_ids
           Rails.logger.error("BOT :: Category Mapping Failed :: Account id : #{@item.account_id} :: Bot id : #{@item.id} :: #{error_message}")
         end
 
@@ -298,6 +325,42 @@ module Ember
 
         def save_bot
           (bot = @item.save) ? bot : render_errors(@item.errors)
+        end
+
+        def bot_folder_groups
+          @item.solution_category_meta.includes(:primary_category, {solution_folder_meta: :primary_folder}).collect do |c_meta| 
+            { 
+              :folders       => c_meta.solution_folder_meta,
+              :category_name => c_meta.name,
+              :category_id   => c_meta.id
+            }
+          end
+        end
+
+        def verify_create_bot_folder
+          @validation_klass = BotConstants::SOLUTION_VALIDATION_CLASS
+          @delegator_klass  = BotConstants::SOLUTION_DELEGATOR_CLASS
+          return unless validate_body_params
+          delegator_hash    = params.merge(bot: @item)
+          return unless validate_delegator(nil, delegator_hash)
+        end
+
+        def transform_response(response)
+          response_hash = {}
+          response.each do |r| 
+            response_hash[r[:date]] = r[:vls]
+          end
+          date_range = Range.new(Date.parse(params[:start_date]), Date.parse(params[:end_date]))
+          dates = date_range.to_a.map(&:to_s)
+          analytics_response = []
+          dates.each do |date|
+            analytics_response << { date: date, vls: metrics(response_hash, date) }
+          end
+          analytics_response
+        end
+
+        def metrics(response_hash, date)
+          BotConstants::DEFAULT_ANALYTICS_HASH.merge(response_hash[date] || {})
         end
     end
   end

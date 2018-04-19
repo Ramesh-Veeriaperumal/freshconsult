@@ -118,9 +118,16 @@
     $ref: ./request/tickets/suppression_list.yaml
   bot_enable_on_portal_input:
     $ref: ./request/bots/enable_on_portal_input.yaml
-
   bot_map_categories_input:
     $ref: ./request/bots/map_categories_input.yaml
+  map_article_input:
+    $ref: ./request/bot_feedbacks/map_article.yaml
+  create_article_input:
+    $ref: ./request/bot_feedbacks/create_article.yaml
+  bot_create_req:
+    $ref: ./request/bots/bot_create.yaml
+  bot_update_req:
+    $ref: ./request/bots/bot_update.yaml
 
   # RESOURCE
   conversation_template:
@@ -157,6 +164,8 @@
     $ref: ./resource/draft.yaml
   bot:
     $ref: ./resource/bot.yaml
+  bot_folder:
+    $ref: ./resource/bot_folder.yaml
   canned_response:
     $ref: ./resource/canned_response.yaml
   canned_response_folder:
@@ -197,7 +206,6 @@
     $ref: ./resource/solution_article.yaml
   extension_generic:
     $ref: ./resource/extension/generic.yaml
-    
   extended_contact:
     allOf:
       - $ref: '#/definitions/contact'
@@ -334,8 +342,24 @@
     $ref: './response/bot_list.yaml'
   bot_product_data:
     $ref: './response/bot_product_data.yaml'
+  bot_folders:
+    $ref: './response/bot_folders.yaml'
+  bot_folder_list:
+    $ref: './response/bot_folder_list.yaml'
+  create_bot_folder:
+    $ref: './response/create_bot_folder.yaml'
+  bot_feedback_index:
+     type: array
+     items:
+        $ref: '#/definitions/unanswered_list'
+  unanswered_list:
+    $ref: './response/bot_feedbacks/unanswered_list.yaml'
+  bot_analytics:
+    $ref: './response/bot_analytics.yaml'
+
   article_content:
     $ref: './response/article_content.yaml'
+
   # Dashboard activities
   dashboard_activities:
     $ref: './response/dashboard/activities.yaml'

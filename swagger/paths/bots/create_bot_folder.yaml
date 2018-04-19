@@ -1,0 +1,31 @@
+post:
+  tags: [Bot]
+  summary: Create bot folder
+  description: Create bot folder
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: ID of the bot
+      required: true
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/bot_folder'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/create_bot_folder'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    404:
+      description: Resource not found
+    409:
+      description: Invalid/duplicate folder name

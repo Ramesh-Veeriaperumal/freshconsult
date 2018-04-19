@@ -47,7 +47,8 @@ module ApiConstants
                        DashboardConstants::LOAD_OBJECT_EXCEPT +
                        AgentConstants::LOAD_OBJECT_EXCEPT +
                        IntegratedUserConstants::LOAD_OBJECT_EXCEPT +
-                       BotConstants::LOAD_OBJECT_EXCEPT
+                       BotConstants::LOAD_OBJECT_EXCEPT +
+                       BotFeedbackConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +
@@ -79,7 +80,8 @@ module ApiConstants
   BULK_ACTION_METHODS = ApiTicketConstants::BULK_ACTION_METHODS +
                         ContactConstants::BULK_ACTION_METHODS +
                         CompanyConstants::BULK_ACTION_METHODS +
-                        SubscriptionConstants::BULK_ACTION_METHODS
+                        SubscriptionConstants::BULK_ACTION_METHODS +
+                        BotFeedbackConstants::BULK_ACTION_METHODS
   BULK_ACTION_ASYNC_METHODS = ApiTicketConstants::BULK_ACTION_ASYNC_METHODS
 
   TWITTER_REPLY_TYPES = %w(mention dm).freeze

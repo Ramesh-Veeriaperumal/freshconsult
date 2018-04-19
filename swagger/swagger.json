@@ -3520,7 +3520,7 @@
             "description": "Attachment not found"
           }
         }
-      },      
+      },
       "delete": {
         "tags": [
           "attachment"
@@ -5837,7 +5837,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/bot"
+              "$ref": "#/definitions/bot_create_req"
             }
           }
         ],
@@ -5947,7 +5947,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/bot"
+              "$ref": "#/definitions/bot_update_req"
             }
           }
         ],
@@ -6112,6 +6112,362 @@
           },
           "503": {
             "description": "ML service unavailable"
+          }
+        }
+      }
+    },
+    "/bots/{id}/bot_folders": {
+      "get": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Bot folder list",
+        "description": "Listing down all the categories associated to the bots portal along with the folders for the bot",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bot_folders"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/bots/{id}/create_bot_folder": {
+      "post": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Create bot folder",
+        "description": "Create bot folder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bot_folder"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/create_bot_folder"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          },
+          "409": {
+            "description": "Invalid/duplicate folder name"
+          }
+        }
+      }
+    },
+    "/bots/{id}/bot_feedbacks": {
+      "get": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Unanswered questions list",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "useful",
+            "in": "query",
+            "type": "integer",
+            "description": "global useful value",
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "name": "start_at",
+            "in": "query",
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          },
+          {
+            "name": "end_at",
+            "in": "query",
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bot_feedback_index"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/bots/{id}/bot_feedbacks/bulk_delete": {
+      "put": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Bulk Delete Bot unanswered questions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Bot not found"
+          }
+        }
+      }
+    },
+    "/bots/{id}/bot_feedbacks/bulk_map_article": {
+      "put": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Map an article to multiple unanswered questions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/bulk_action_input"
+                },
+                {
+                  "$ref": "#/definitions/map_article_input"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Bot not found"
+          }
+        }
+      }
+    },
+    "/bots/{id}/bot_feedbacks/create_article": {
+      "post": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Create article for bot feedbacks",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/bulk_action_input"
+                },
+                {
+                  "$ref": "#/definitions/create_article_input"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/bots/{id}/analytics": {
+      "get": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Bot metrics given a time period",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bot_analytics"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
           }
         }
       }
@@ -8075,6 +8431,116 @@
         }
       }
     },
+    "map_article_input": {
+      "type": "object",
+      "required": [
+        "article_id"
+      ],
+      "properties": {
+        "article_id": {
+          "type": "integer",
+          "description": "Article to which the unanswered question must be mapped."
+        }
+      }
+    },
+    "create_article_input": {
+      "type": "object",
+      "required": [
+        "title",
+        "description",
+        "folder_id"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the article"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the article"
+        },
+        "folder_id": {
+          "type": "integer",
+          "description": "Id of the folder under which article has to be created"
+        }
+      }
+    },
+    "bot_create_req": {
+      "type": "object",
+      "required": [
+        "name",
+        "avatar",
+        "portal_id",
+        "header",
+        "theme_colur",
+        "widget_size"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "avatar_id": {
+              "type": "string"
+            },
+            "is_default": {
+              "type": "boolean"
+            }
+          }
+        },
+        "portal_id": {
+          "type": "integer"
+        },
+        "header": {
+          "type": "string"
+        },
+        "theme_colur": {
+          "type": "string"
+        },
+        "widget_size": {
+          "type": "string"
+        }
+      }
+    },
+    "bot_update_req": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "avatar_id": {
+              "type": "string"
+            },
+            "is_default": {
+              "type": "boolean"
+            }
+          }
+        },
+        "portal_id": {
+          "type": "integer"
+        },
+        "header": {
+          "type": "string"
+        },
+        "theme_colur": {
+          "type": "string"
+        },
+        "widget_size": {
+          "type": "string"
+        }
+      }
+    },
     "contact": {
       "type": "object",
       "properties": {
@@ -8811,6 +9277,29 @@
         }
       }
     },
+    "bot_folder": {
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "visibility",
+        "category_id"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "integer"
+        },
+        "category_id": {
+          "type": "integer"
+        }
+      }
+    },
     "canned_response": {
       "type": "object",
       "properties": {
@@ -9287,6 +9776,10 @@
               "format": "int64"
             },
             "folder_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "folder_visibility": {
               "type": "integer",
               "format": "int64"
             },
@@ -11336,6 +11829,18 @@
           "items": {
             "type": "integer"
           }
+        },
+        "widget_code_src": {
+          "type": "string",
+          "description": "Url to get bot widget code"
+        },
+        "product_hash": {
+          "type": "string",
+          "description": "Freshdesk product hash"
+        },
+        "environment": {
+          "type": "string",
+          "description": "Bot environment"
         }
       }
     },
@@ -11373,6 +11878,138 @@
         },
         "bot_id": {
           "type": "integer"
+        }
+      }
+    },
+    "bot_folders": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "folders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bot_folder_list"
+          }
+        }
+      }
+    },
+    "bot_folder_list": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "integer"
+        }
+      }
+    },
+    "create_bot_folder": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "bot_feedback_index": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/unanswered_list"
+      }
+    },
+    "unanswered_list": {
+      "type": "object",
+      "properties": {
+        "bot_id": {
+          "type": "integer"
+        },
+        "category": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "useful": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "query_id": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "state": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "chat_id": {
+          "type": "string"
+        },
+        "customer_id": {
+          "type": "string"
+        }
+      }
+    },
+    "bot_analytics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "vls": {
+            "type": "object",
+            "properties": {
+              "total_questions": {
+                "type": "integer",
+                "description": "Number of questions asked by users"
+              },
+              "not_helpful": {
+                "type": "integer",
+                "description": "Number of suggestions given by the bot that were marked as not useful by the users"
+              },
+              "attempted": {
+                "type": "integer",
+                "description": "Number of questions for which bot suggested articles"
+              },
+              "helpful": {
+                "type": "integer",
+                "description": "Number of suggestions given by the bot that were marked as useful by the users"
+              },
+              "not_attempted": {
+                "type": "integer",
+                "description": "Number of questions that bot did give any suggestions"
+              },
+              "initiated_chats": {
+                "type": "integer",
+                "description": "Number of chats initiated"
+              }
+            }
+          }
         }
       }
     },

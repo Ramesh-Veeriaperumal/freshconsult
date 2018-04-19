@@ -121,6 +121,10 @@ class Solution::FolderMeta < ActiveRecord::Base
     visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]
   end
 	
+  def visible_to_bot?
+    BOT_VISIBILITIES.include?(visibility)
+  end
+
 	def to_liquid
 		@solution_folder_drop ||= Solution::FolderDrop.new self
 	end

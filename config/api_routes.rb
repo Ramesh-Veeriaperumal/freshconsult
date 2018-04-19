@@ -87,7 +87,7 @@ Helpkit::Application.routes.draw do
     match 'agents/me/reset_api_key' => 'api_profiles#reset_api_key', :defaults => { format: 'json', id: 'me' }, via: :post
 
     resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy]
-    
+
     resources :surveys, only: [:index] do
       collection do
         get :satisfaction_ratings, to: 'satisfaction_ratings#index'
@@ -201,6 +201,18 @@ Helpkit::Application.routes.draw do
         post :training_completed
         post :mark_completed_status_seen
         put :enable_on_portal
+        get :bot_folders
+        post :create_bot_folder
+        get :analytics
+      end
+      member do
+        resources :bot_feedbacks, controller: 'ember/admin/bot_feedbacks', only: [:index] do
+          collection do
+            put :bulk_delete
+            put :bulk_map_article
+            post :create_article
+          end
+        end
       end
     end
 
@@ -425,7 +437,7 @@ Helpkit::Application.routes.draw do
     get '/yearin_review', to: 'ember/year_in_review#index'
     post '/yearin_review/share', to: 'ember/year_in_review#share'
     post '/yearin_review/clear', to: 'ember/year_in_review#clear'
-    
+
     # Search routes
     post '/search/tickets/',      to: 'ember/search/tickets#results'
     post '/search/customers/',    to: 'ember/search/customers#results'
