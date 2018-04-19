@@ -9545,6 +9545,14 @@
                 },
                 "survey_result": {
                   "$ref": "#/definitions/survey_result"
+                },
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "ner_data": {
+                      "$ref": "#/definitions/ner_api_data"
+                    }
+                  }
                 }
               }
             }
@@ -10294,6 +10302,48 @@
       "title": "meta",
       "properties": {
         "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "ner_api_data": {
+      "type": "object",
+      "properties": {
+        "datetimes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "end": {
+                    "type": "integer"
+                  },
+                  "datetime": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "start": {
+                    "type": "integer"
+                  },
+                  "time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "timezone": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "note_id": {
           "type": "integer"
         }
       }

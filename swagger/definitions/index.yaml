@@ -267,6 +267,8 @@
   # RESPONSE
   meta:
     $ref: './response/meta.yaml'
+  ner_api_data:
+    $ref: './resource/ner_api_data.yaml'
   conversations_show:
     type: array
     items:
