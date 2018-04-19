@@ -29,6 +29,7 @@ class Dkim::ConfigureDkimRecord
     def request_configure
       #lock in order to avoid multiple configuration calls to sendgrid/1 sec
       lock_dkim_configuration_in_progress
+      Rails.logger.info("Request Sendgrid to Configure DKIM at #{Time.now.utc} for domain ::: #{domain_category.email_domain}")
       response_1 = make_api(SG_URLS[:create_domain][:request], SG_URLS[:create_domain][:url], build_dkim_record(domain_category.email_domain), SENDGRID_CREDENTIALS[:dkim_key][:user1])
       response_2 = make_api(SG_URLS[:create_domain][:request], SG_URLS[:create_domain][:url], build_dkim_record_1(domain_category.email_domain), SENDGRID_CREDENTIALS[:dkim_key][:user2])
       return {:record_1 => response_1, :record_2 => response_2}
@@ -38,14 +39,22 @@ class Dkim::ConfigureDkimRecord
       Rails.logger.debug("save_sg_response ....... #{response_1.inspect} #{response_2.inspect}")
       response_codes = [response_1[0], response_2[0]]
       if response_codes.uniq.count == 1 && response_codes.first == SENDGRID_RESPONSE_CODE[:created]
-        create_dkim_records(response_1[1], RECORD_TYPES[:res_1], domain_category.category)
-        create_dkim_records(response_2[1], RECORD_TYPES[:res_2])
+        record_1 = response_1[1]
+        record_2 = response_2[1]
+      else 
+        domain_category.dkim_records.destroy_all if domain_category.dkim_records.present?
+        subusers = SUB_USERS.keys
+        response = make_api(SG_URLS[:get_domain][:request], SG_URLS[:get_domain][:url]%{:domain => domain_category.email_domain})
+        Rails.logger.info("Fetched DKIM records on error ::: #{response.inspect}")
+        domain_records = JSON.parse(response[1]) if response[0] == SENDGRID_RESPONSE_CODE[:success]
+        record_1 = domain_records.select { |record| record['username'] == subusers[0] }[0]
+        record_2 = domain_records.select { |record| record['username'] == subusers[1] }[0]
+      end
+      if record_1.present? && record_2.present?
+        create_dkim_records(record_1, RECORD_TYPES[:res_1], domain_category.category)
+        create_dkim_records(record_2, RECORD_TYPES[:res_2])
       else
-        if SENDGRID_RESPONSE_CODE[:success].in?(response_codes)
-          succeed_result = response_1[0] == SENDGRID_RESPONSE_CODE[:success] ? response_1[1] : response_2[1]
-          make_api(SG_URLS[:delete_domain][:request], SG_URLS[:delete_domain][:url] + succeed_result[:id].to_s)
-        end
-        raise "DKIM configuration failed" if SENDGRID_RESPONSE_CODE[:too_many_requests].in?(response_codes)
+        raise "DKIM config failed!"
       end
     end
 
