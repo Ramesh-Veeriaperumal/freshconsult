@@ -53,6 +53,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :"channel/freshcaller/account", only: [:destroy]
   end
 
+  manage_email_settings do
+    resource :"ember/admin/onboarding", only: %i[forward_email_confirmation test_email_forwarding]
+  end
+
   reply_ticket do
     resource :"ember/conversation", only: %i(reply facebook_reply tweet reply_template broadcast)
     resource :"ember/tickets/draft", only: %i(save_draft show_draft clear_draft)
@@ -118,7 +122,7 @@ Authority::Authorization::PrivilegeList.build do
   admin_tasks do
     resource :"ember/admin/onboarding", only: %i[update_channel_config]
     resource :"ember/contact", only: [:update_password]
-    resource :'ember/trial_widget', only: %i[index sales_manager]
+    resource :'ember/trial_widget', only: %i[index sales_manager complete_step]
     resource :'ember/contact_password_policy', only: [:index]
     resource :'ember/agent_password_policy', only: [:index] # Not using it now.
   end

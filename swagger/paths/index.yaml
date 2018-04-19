@@ -327,13 +327,18 @@
   $ref: ./onboarding/update_activation_email.yaml
 /onboarding_update_channel_config:
   $ref: ./onboarding/update_channel_config.yaml
-
+/onboarding/forward_email_confirmation:
+  $ref: ./onboarding/forward_email_confirmation.yaml
+/onboarding/test_email_forwarding:
+  $ref: ./onboarding/test_email_forwarding.yaml
 
 # Trial Widget
 /trial_widget:
   $ref: ./trial_widget/index.yaml
 /trial_widget/sales_manager:
   $ref: ./trial_widget/sales_manager.yaml
+/trial_widget/complete_step:
+  $ref: ./trial_widget/complete_step.yaml
 
 #Marketplace
 /marketplace_apps:

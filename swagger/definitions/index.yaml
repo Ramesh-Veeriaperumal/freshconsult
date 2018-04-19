@@ -112,6 +112,8 @@
     $ref: ./request/agents/bulk_agent.yaml
   onboarding_update_activation_email_input:
     $ref: ./request/onboarding/update_activation_email.yaml
+  onboarding_test_email_forwarding_input:
+    $ref: ./request/onboarding/test_email_forwarding.yaml
   update_channels_input:
     $ref: ./request/onboarding/update_channels.yaml
   suppression_list:
@@ -128,6 +130,9 @@
     $ref: ./request/bots/bot_create.yaml
   bot_update_req:
     $ref: ./request/bots/bot_update.yaml
+
+  trial_widget_complete_step:
+    $ref: './request/trial_widget/complete_step.yaml'
 
   # RESOURCE
   conversation_template:
@@ -397,6 +402,12 @@
     $ref: './response/trial_widget/index.yaml'
   trial_widget_sales_manager:
     $ref: './response/trial_widget/sales_manager.yaml'
+
+  #onboarding
+  onboarding_forward_email_confirmation:
+      $ref: './response/onboarding/forward_email_confirmation.yaml'
+  onboarding_test_email_forwarding:
+      $ref: './response/onboarding/test_email_forwarding.yaml'
 
   #Ticket Templates
   ticket_templates_index:

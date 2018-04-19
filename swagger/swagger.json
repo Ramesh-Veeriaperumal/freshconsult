@@ -5738,6 +5738,66 @@
         }
       }
     },
+    "/onboarding/forward_email_confirmation": {
+      "get": {
+        "tags": [
+          "onboarding"
+        ],
+        "description": "Forward Email Confirmation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/onboarding_forward_email_confirmation"
+            }
+          },
+          "204": {
+            "description": "Data Not Found"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/onboarding/test_email_forwarding": {
+      "post": {
+        "tags": [
+          "onboarding"
+        ],
+        "description": "Test email forwarding setup",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "description": "New activation email",
+            "schema": {
+              "$ref": "#/definitions/onboarding_test_email_forwarding_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/onboarding_test_email_forwarding"
+            }
+          },
+          "204": {
+            "description": "Forwarded email not found"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/trial_widget": {
       "post": {
         "summary": "Trial Widget Steps",
@@ -5767,6 +5827,39 @@
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/trial_widget_sales_manager"
+            }
+          }
+        }
+      }
+    },
+    "/trial_widget/complete_step": {
+      "post": {
+        "summary": "Complete Step",
+        "description": "Mark a trial widget step as complete",
+        "tags": [
+          "trial widget"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "step",
+            "description": "step to be marked complete",
+            "schema": {
+              "$ref": "#/definitions/trial_widget_complete_step"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Change"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
             }
           }
         }
@@ -8371,6 +8464,20 @@
         }
       }
     },
+    "onboarding_test_email_forwarding_input": {
+      "type": "object",
+      "description": "Test email poll attempt",
+      "properties": {
+        "attempt": {
+          "type": "integer",
+          "description": "Sends test email if attempt is 1. Else checks for email if attempt < 5. Gives error response if attempt is >= 5."
+        },
+        "send_to": {
+          "type": "string",
+          "description": "Sends test email to this email ID."
+        }
+      }
+    },
     "update_channels_input": {
       "type": "object",
       "description": "Channels Array",
@@ -8428,6 +8535,15 @@
             "type": "integer",
             "uniqueItems": true
           }
+        }
+      }
+    },
+    "trial_widget_complete_step": {
+      "type": "object",
+      "properties": {
+        "step": {
+          "type": "string",
+          "description": "step to be completed"
         }
       }
     },
@@ -12522,6 +12638,28 @@
         "avatar": {
           "type": "string",
           "description": "URL of the sales manager's avatar"
+        }
+      }
+    },
+    "onboarding_forward_email_confirmation": {
+      "type": "object",
+      "properties": {
+        "confirmation_code": {
+          "type": "string",
+          "description": "Verification code sent by email provider"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email Id"
+        }
+      }
+    },
+    "onboarding_test_email_forwarding": {
+      "type": "object",
+      "properties": {
+        "ticket_display_id": {
+          "type": "integer",
+          "description": "Display ID of the test email ticket."
         }
       }
     },

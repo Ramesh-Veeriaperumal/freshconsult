@@ -1,0 +1,8 @@
+  type: object
+  properties:
+    confirmation_code:
+      type: string
+      description: Verification code sent by email provider
+    email:
+      type: string
+      description: Email Id

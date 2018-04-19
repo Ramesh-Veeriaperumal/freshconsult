@@ -1,0 +1,5 @@
+  type: object
+  properties:
+    ticket_display_id:
+      type: integer
+      description: Display ID of the test email ticket.

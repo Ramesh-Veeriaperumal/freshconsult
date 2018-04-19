@@ -667,6 +667,10 @@ class Account < ActiveRecord::Base
     !bots_count_from_cache.zero?
   end
 
+  def email_service_provider
+    @email_service_provider ||= self.account_configuration.try('company_info').try(:[], :email_service_provider)
+  end
+
   protected
   
     def external_url_is_valid?(url) 

@@ -1,0 +1,21 @@
+post:
+  tags: [onboarding]
+  description: Test email forwarding setup
+  parameters:
+      - name: data
+        in: body
+        description: New activation email
+        schema:
+          $ref: '#/definitions/onboarding_test_email_forwarding_input'
+
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/onboarding_test_email_forwarding'
+    204:
+      description: Forwarded email not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

@@ -322,6 +322,7 @@ Helpkit::Application.routes.draw do
     resources :trial_widget, controller: 'ember/trial_widget', only: [:index] do
       collection do
         get :sales_manager
+        post :complete_step
       end
     end
 
@@ -426,6 +427,8 @@ Helpkit::Application.routes.draw do
         put :update_activation_email
         get :resend_activation_email
         post :update_channel_config
+        get :forward_email_confirmation
+        post :test_email_forwarding
       end
     end
 
