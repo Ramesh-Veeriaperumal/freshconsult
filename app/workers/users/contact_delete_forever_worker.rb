@@ -100,11 +100,10 @@ class Users::ContactDeleteForeverWorker < BaseWorker
           :attachments, :inline_attachments, :cloud_files, :shared_attachments, 
           :note_old_body, :user
         ])) do |ticket|
-          if ticket.associated_ticket? && TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[ticket.association_type] == :assoc_parent
+          if ticket.parent_ticket?
             child_tickets = @account.tickets.where(display_id: ticket.associates)
-            child_tickets.each do |child_ticket|
-              ticket_reset_associations(child_ticket)
-              child_ticket.destroy
+            find_in_batches_and_destroy(child_tickets) do |child|
+              ticket_reset_associations(child)
             end
           end
           ticket.reload
