@@ -7,6 +7,7 @@ module ConfigTestHelper
     config_hash = Hash.new
     config_hash[:social] = social_config_pattern
     config_hash[:zendesk_app_id] = zendesk_app_id
+    config_hash[:email]= email_mailbox_config_pattern
 	  config_hash
   end
 
@@ -26,6 +27,18 @@ module ConfigTestHelper
       social_config[:twitter_reauth_required] = false
     end
     social_config
+  end
+
+
+  def email_mailbox_config_pattern
+    email_config = {}
+    if custom_mailbox_error?
+      email_config[:custom_mailbox_error] = true
+      email_config[:email_config_link] = email_config_link
+    else
+      email_config[:custom_mailbox_error] = false
+    end
+    email_config
   end
 
   def zendesk_app_id
