@@ -217,6 +217,7 @@ defaults: &defaults
     - [mixpanel_queue]
     - [bot_cleanup]
     - [delete_archive_ticket]
+    - [freshcaller_account_delete]
 
 development:
   <<: *defaults

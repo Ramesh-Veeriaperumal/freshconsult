@@ -50,6 +50,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_account do
     resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config]
+    resource :"channel/freshcaller/account", only: [:destroy]
   end
 
   reply_ticket do
