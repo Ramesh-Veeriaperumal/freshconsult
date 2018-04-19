@@ -529,4 +529,13 @@ module SolutionHelper
 		}
 	end
 
+	def all_solution_categories_with_bot
+		current_account.solution_category_meta.preload({:portals => :bot}).where(:is_default => false).map do |c| 
+			{
+				:id => c.id, 
+				:bot => c.portals.select{ |portal| portal.bot.present? }.present?
+			}
+		end
+	end
+
 end
