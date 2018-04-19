@@ -6,7 +6,6 @@
       - :basic_facebook
       - :basic_dkim
       - :freshchat
-      - :contact_delete_forever
     :inherits: []
     :exclude: []
   :blossom_jan_17:
