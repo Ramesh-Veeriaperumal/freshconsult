@@ -162,3 +162,14 @@
     }
   }
 }
+
+
+// pt-BR sla toggle issue
+
+:lang(pt-BR) {
+  .va_rule-index, .sla-index, .chat-widget-index {
+    table tr td:first-child { 
+      width: 110px; 
+    }
+  }
+}
