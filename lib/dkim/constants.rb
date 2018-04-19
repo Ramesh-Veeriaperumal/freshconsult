@@ -7,7 +7,8 @@ module Dkim::Constants
     :created => 201,
     :deleted => 204,
     :too_many_requests => 429,
-    :failed => 400
+    :failed => 400,
+    :not_found => 404,
   }
   
   TRUSTED_PERIOD = 30
@@ -30,13 +31,18 @@ module Dkim::Constants
   SG_URLS = {
     :create_domain => {:url => 'https://api.sendgrid.com/v3/whitelabel/domains', :request => 'post'},
     :delete_domain => {:url => 'https://api.sendgrid.com/v3/whitelabel/domains/', :request => 'delete'},
-    :validate_domain => {:url => 'https://api.sendgrid.com/v3/whitelabel/domains/%{id}/validate', :request => 'post'}
+    :validate_domain => {:url => 'https://api.sendgrid.com/v3/whitelabel/domains/%{id}/validate', :request => 'post'},
+    :get_domain => {:url => 'https://api.sendgrid.com/v3/whitelabel/domains?domain=%{domain}', :request => 'get'}
   }
   
+  SUB_USERS = SENDGRID_CONFIG['sendgrid']['dkim']['key']['sub_users']
+
+  SUB_USER_API_KEYS = SUB_USERS.values
+
   SENDGRID_CREDENTIALS = {
-      :dkim_key => {  :user1 => {"Authorization" => "Bearer  #{SENDGRID_CONFIG['sendgrid']['dkim']['key']['user1']}",
+      :dkim_key => {  :user1 => {"Authorization" => "Bearer  #{SUB_USER_API_KEYS[0]}",
                                                       "Content-Type" => 'application/json'},
-                      :user2 => {"Authorization" => "Bearer  #{SENDGRID_CONFIG['sendgrid']['dkim']['key']['user2']}",
+                      :user2 => {"Authorization" => "Bearer  #{SUB_USER_API_KEYS[1]}",
                                                       "Content-Type" => 'application/json'},
                       :parent => {"Authorization" => "Bearer  #{SENDGRID_CONFIG['sendgrid']['dkim']['key']['parent']}",
                                                       "Content-Type" => 'application/json'}    
