@@ -1141,10 +1141,6 @@ class User < ActiveRecord::Base
     remove_password_flag(email, account_id)
   end
 
-  def model_changes_for_central
-    @deleted_model_info || self.previous_changes
-  end
-
   def gdpr_pending?
     agent_preferences[:gdpr_acceptance]
   end

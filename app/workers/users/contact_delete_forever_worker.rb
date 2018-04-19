@@ -38,7 +38,6 @@ class Users::ContactDeleteForeverWorker < BaseWorker
 
     def remove_user_companies
       @user.companies = []
-      @user.save!
     end
 
     def destroy_contact_field_data
