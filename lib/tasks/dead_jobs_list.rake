@@ -11,7 +11,7 @@ namespace :sidekiq_bg do
     FreshdeskErrorsMailer.deliver_sidekiq_dead_job_alert(
       {
         :subject => "Sidekiq Dead jobs list",
-        :to_email => "freshdesk-core-dev@freshdesk.com",
+        :to_email => "freshdesk-core-leads@freshdesk.com",
         :from_email => "venky@freshworks.com",
         :additional_info  => {
           :pod_info => PodConfig['CURRENT_POD'], 
