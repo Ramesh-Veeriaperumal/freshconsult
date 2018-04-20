@@ -26,7 +26,8 @@ module Freshbots
             mtdtPrprts: {
               bckgrndClr: bot.template_data[:theme_colour],
               sz: bot.template_data[:widget_size],
-              prtl: portal_url(bot)
+              prtl: portal_url(bot),
+              acntUrl: account_url(bot)
             }
           }
         }.to_json
@@ -52,7 +53,8 @@ module Freshbots
             mtdtPrprts: {
               bckgrndClr: bot.template_data[:theme_colour],
               sz: bot.template_data[:widget_size],
-              prtl: portal_url(bot)
+              prtl: portal_url(bot),
+              acntUrl: account_url(bot)
             }
           }
         }.to_json
@@ -86,13 +88,17 @@ module Freshbots
           if bot.additional_settings[:is_default]
             bot.additional_settings[:default_avatar_url]
           else
-            bot.cdn_url
+            bot.thumbnail_cdn_url
           end
         end
 
         def portal_url(bot)
           portal = bot.portal
           "#{portal.url_protocol}://#{portal.host}"
+        end
+
+        def account_url(bot)
+          "https://#{bot.account.full_domain}"
         end
     end
   end

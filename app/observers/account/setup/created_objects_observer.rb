@@ -8,7 +8,7 @@ class Account::Setup::CreatedObjectsObserver < ActiveRecord::Observer
 
 	def after_commit(object)
 		if object.safe_send(:transaction_include_action?, :create)
-			if account_signup_completed? && current_flag_unmarked?(object)
+			if account_signup_completed? && current_flag_unmarked?(object) && additional_check(object)
 				mark_current_flag(object)
 			end
 		end
@@ -34,4 +34,8 @@ class Account::Setup::CreatedObjectsObserver < ActiveRecord::Observer
 		!Account.current.background_fixtures_running? && Account.current.new_account_setup?
 	end
 
+	def additional_check(object)
+		current_flag = current_flag(object)
+		respond_to?("additional_check_for_#{current_flag}") ? safe_send("additional_check_for_#{current_flag}", object) : true
+	end
 end

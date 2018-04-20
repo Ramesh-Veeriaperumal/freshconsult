@@ -72,7 +72,7 @@
   :untitled_core_acc_admin_5: 71
   :manage_tags: 72
   :manage_skills: 73
-  :untitled_core_admin_3: 74
+  :manage_bots: 74
   :untitled_core_admin_4: 75
   :untitled_core_admin_5: 76
   :edit_ticket_skill: 77
@@ -81,7 +81,7 @@
   :untitled_core_supervisor_4: 80
   :untitled_core_supervisor_5: 81
   :create_tags: 82
-  :untitled_core_agent_2: 83
+  :view_bots: 83
   :untitled_core_agent_3: 84
   :untitled_core_agent_4: 85
   :untitled_core_agent_5: 86
