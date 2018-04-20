@@ -6,6 +6,7 @@ class ConfigDecorator < ApiDecorator
   def to_hash 
     ret_hash = {}
     ret_hash[:social] = social_config
+    ret_hash[:email] = email_mailbox_config
     ret_hash[:zendesk_app_id] = zendesk_app_id
     ret_hash
   end
@@ -37,6 +38,18 @@ class ConfigDecorator < ApiDecorator
       twitter_config[:twitter_reauth_required] = false
     end
     twitter_config
+  end
+
+  def email_mailbox_config
+    email_config = {}
+    if custom_mailbox_error?
+      email_config[:custom_mailbox_error] = true
+      email_config[:email_config_link] = email_config_link
+    else
+      email_config[:custom_mailbox_error] = false
+    end
+    email_config
+
   end
 
   def zendesk_app_id

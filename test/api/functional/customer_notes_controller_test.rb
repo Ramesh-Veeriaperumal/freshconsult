@@ -114,11 +114,12 @@ class CustomerNotesControllerTest < ActionController::TestCase
   def test_create_contact_note_invalid_attachment_size
     attachment_ids = []
     attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @created_by_contact).id
-    Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(20_000_000)
+    invalid_attachment_limit = @account.attachment_limit + 1
+    Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
     params_hash = create_note_params_hash.merge(attachment_ids: attachment_ids)
     post :create, construct_params(contact_unwrapped_params, params_hash)
     Helpdesk::Attachment.any_instance.unstub(:content_file_size)
-    match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+    match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
     assert_response 400
   end
 
@@ -383,11 +384,12 @@ class CustomerNotesControllerTest < ActionController::TestCase
   def test_create_company_note_invalid_attachment_size
     attachment_ids = []
     attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @created_by_contact).id
-    Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(20_000_000)
+    invalid_attachment_limit = @account.attachment_limit + 1
+    Helpdesk::Attachment.any_instance.stubs(:content_file_size).returns(invalid_attachment_limit.megabytes)
     params_hash = create_note_params_hash.merge(attachment_ids: attachment_ids)
     post :create, construct_params(company_unwrapped_params, params_hash)
     Helpdesk::Attachment.any_instance.unstub(:content_file_size)
-    match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: '15 MB', current_size: '19.1 MB')])
+    match_json([bad_request_error_pattern(:attachment_ids, :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
     assert_response 400
   end
 

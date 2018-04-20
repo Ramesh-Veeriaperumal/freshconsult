@@ -27,7 +27,7 @@ module TicketHelper
                                          :product_id => params[:product_id],
                                          :sl_skill_id => params[:skill_id],
                                          :company_id => params[:company_id])
-    test_ticket.build_ticket_body(:description => Faker::Lorem.paragraph)
+    test_ticket.build_ticket_body(:description => params[:description] || Faker::Lorem.paragraph)
     if params[:attachments]
       test_ticket.attachments.build(content: params[:attachments][:resource],
                                     description: params[:attachments][:description],

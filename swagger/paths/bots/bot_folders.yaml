@@ -1,0 +1,20 @@
+get:
+  tags: [Bot]
+  summary: Bot folder list
+  description: Listing down all the categories associated to the bots portal along with the folders for the bot
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: ID of the bot
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/bot_folders'
+    403:
+      description: Access denied
+    404:
+      description: Resource not found

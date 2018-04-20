@@ -17,4 +17,17 @@ module TrialWidgetTestHelper
       isComplete: Account.current.send("#{setup_key}_setup?")
     }
   end
+
+  def support_email_dependent_info
+    { email_service_provider: Account.current.account_configuration.company_info[:email_service_provider] }
+  end
+
+  def setup_key_info(setup_key)
+    dependent_fname = "#{setup_key}_dependent_info"
+    {
+      name: setup_key,
+      isComplete: Account.current.send("#{setup_key}_setup?")
+    }.merge(respond_to?(dependent_fname, 'private') ? send(dependent_fname) : {})
+  end
+
 end

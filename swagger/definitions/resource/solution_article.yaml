@@ -11,6 +11,9 @@ allOf:
       folder_id:
         type: integer
         format: int64
+      folder_visibility:
+        type: integer
+        format: int64
       thumbs_up:
         type: integer
         format: int64

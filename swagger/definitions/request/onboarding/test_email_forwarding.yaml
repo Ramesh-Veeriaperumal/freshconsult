@@ -1,0 +1,9 @@
+type: object
+description: Test email poll attempt
+properties:
+  attempt:
+    type: integer
+    description: Sends test email if attempt is 1. Else checks for email if attempt < 5. Gives error response if attempt is >= 5.
+  send_to:
+    type: string
+    description: Sends test email to this email ID.

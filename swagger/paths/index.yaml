@@ -4,7 +4,6 @@
   $ref: ./bootstrap/account.yaml
 /bootstrap/agents_groups:
   $ref: ./bootstrap/agents_groups.yaml
-
 /tickets:
   $ref: ./tickets/list_and_create.yaml
 /tickets/{id}:
@@ -328,20 +327,24 @@
   $ref: ./onboarding/update_activation_email.yaml
 /onboarding_update_channel_config:
   $ref: ./onboarding/update_channel_config.yaml
-
+/onboarding/forward_email_confirmation:
+  $ref: ./onboarding/forward_email_confirmation.yaml
+/onboarding/test_email_forwarding:
+  $ref: ./onboarding/test_email_forwarding.yaml
 
 # Trial Widget
 /trial_widget:
   $ref: ./trial_widget/index.yaml
 /trial_widget/sales_manager:
   $ref: ./trial_widget/sales_manager.yaml
+/trial_widget/complete_step:
+  $ref: ./trial_widget/complete_step.yaml
 
 #Marketplace
 /marketplace_apps:
   $ref: ./marketplace_apps/list.yaml
 
 # Frankbot
-
 /bots:
   $ref: ./bots/list_and_create.yaml
 /bots/new:
@@ -356,3 +359,17 @@
   $ref: ./bots/enable_on_portal.yaml
 /bots/{id}/map_categories:
   $ref: ./bots/map_categories.yaml
+/bots/{id}/bot_folders:
+  $ref: ./bots/bot_folders.yaml
+/bots/{id}/create_bot_folder:
+  $ref: ./bots/create_bot_folder.yaml
+/bots/{id}/bot_feedbacks:
+  $ref: ./bot_feedbacks/index.yaml
+/bots/{id}/bot_feedbacks/bulk_delete:
+  $ref: ./bot_feedbacks/bulk_delete.yaml
+/bots/{id}/bot_feedbacks/bulk_map_article:
+  $ref: ./bot_feedbacks/bulk_map_article.yaml
+/bots/{id}/bot_feedbacks/create_article:
+  $ref: ./bot_feedbacks/create_article.yaml
+/bots/{id}/analytics:
+  $ref: ./bots/analytics.yaml

@@ -153,6 +153,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     [ "requester_id=? ",
       user.id ], :order => 'helpdesk_tickets.created_at DESC' } }
 
+  scope :requester_latest_tickets, lambda { |user, duration| { :conditions =>
+     [ "requester_id=? and helpdesk_tickets.created_at > ?",
+       user.id, duration ], :order => 'helpdesk_tickets.created_at DESC' } }
+
   scope :requester_completed, lambda { |user| { :conditions =>
     [ "requester_id=? and status in (#{RESOLVED}, #{CLOSED})",
       user.id ] } }

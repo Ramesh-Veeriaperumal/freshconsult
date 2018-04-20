@@ -1,27 +1,20 @@
 module BotTestHelper
-
   SUPPORT_BOT = 'frankbot'.freeze
   CONFIG = CHANNEL_API_CONFIG[SUPPORT_BOT]
 
   def create_bot(options = {})
-    default_avatar_hash = {}
+    avatar_hash = {
+      is_default: false
+    }
     if options[:default_avatar]
-      test_avatar = {
-        url: Faker::Avatar.image,
+      avatar_hash = {
+        is_default: true,
         avatar_id: Faker::Number.number(10),
-        is_default: true
+        default_avatar_url: Faker::Avatar.image        
       }
-      default_avatar_hash[:is_default] = test_avatar[:avatar_id]
     else
       attachment = create_attachment
-      test_avatar = {
-        url: attachment.content.url,
-        avatar_id: attachment.id,
-        is_default: false
-      }
-      test_avatar
     end
-
     test_template_data = {
       header: Faker::Lorem.sentence,
       theme_colour: '#039a7b',
@@ -46,7 +39,7 @@ module BotTestHelper
                                  external_id: generate_uuid,
                                  additional_settings: {
                                    bot_hash: generate_uuid
-                                 }.merge(default_avatar_hash),
+                                 }.merge(avatar_hash),
                                  last_updated_by: options[:last_updated_by] || 1)
     test_bot.logo = attachment
     test_bot.save(validate: false)
@@ -159,7 +152,7 @@ module BotTestHelper
     template_data = bot.template_data
     portal = bot.portal
     avatar_hash = {
-      url: cdn_url(bot),
+      url: thumbnail_cdn_url(bot),
       avatar_id: avatar_id,
       is_default: default
 
@@ -176,13 +169,17 @@ module BotTestHelper
       external_id: bot.external_id,
       enable_on_portal: bot.enable_in_portal,
       all_categories: categories_list(portal),
-      selected_category_ids: bot.solution_category_metum_ids
+      selected_category_ids: bot.solution_category_metum_ids,
+      widget_code_src: BOT_CONFIG[:widget_code_src],
+      product_hash: BOT_CONFIG[:freshdesk_product_id],
+      environment: BOT_CONFIG[:widget_code_env]
     }
   end
 
-  def cdn_url(bot)
+  def thumbnail_cdn_url(bot)
     return if default_avatar?(bot)
-    cdn_url = bot.logo.content.url.gsub(BOT_CONFIG[:avatar_bucket_url], BOT_CONFIG[:avatar_cdn_url]) if bot.logo && bot.logo.content
+    thumb_cdn_url = bot.logo.content.url(:thumb).gsub(BOT_CONFIG[:avatar_bucket_url], BOT_CONFIG[:avatar_cdn_url]) if bot.logo && bot.logo.content
+    thumb_cdn_url
   end
 
   def default_avatar?(bot)
@@ -236,6 +233,44 @@ module BotTestHelper
     }
   end
 
+  def create_bot_feedback(bot_id, params = {})
+    bot_feedback = FactoryGirl.build(:bot_feedback,
+                            account_id: Account.current.id,
+                            bot_id: bot_id,
+                            category: params[:category] || BotFeedbackConstants::FEEDBACK_CATEGORY_KEYS_BY_TOKEN[:unanswered],
+                            useful: params[:useful] || BotFeedbackConstants::FEEDBACK_USEFUL_KEYS_BY_TOKEN[:default],
+                            received_at: DateTime.now.utc,
+                            query_id: UUIDTools::UUID.timestamp_create.hexdigest,
+                            query: Faker::Lorem.sentence,
+                            external_info: { chat_id: UUIDTools::UUID.timestamp_create.hexdigest, customer_id: UUIDTools::UUID.timestamp_create.hexdigest, client_id: UUIDTools::UUID.timestamp_create.hexdigest},
+                            state: params[:state] || BotFeedbackConstants::FEEDBACK_STATE_KEYS_BY_TOKEN[:default])
+    bot_feedback.save
+    bot_feedback
+  end
+
+  def bot_feedback_index_pattern(bot, start_at, end_at, useful = 1)
+    useful = useful.present? ? [useful] : [1,3]
+    conditions  = { bot_id: bot.id, state: 1, category: 2, useful: useful, created_at: start_at..end_at }
+    unanswered_list = bot.bot_feedbacks.where(conditions).order('received_at DESC')
+    responses = unanswered_list.map do |item|
+      response_hash = {
+        id: item.id,
+        bot_id: item.bot_id,
+        category: item.category,
+        useful: item.useful,
+        received_at: item.received_at,
+        query_id: item.query_id,
+        query: item.query,
+        state: item.state,
+        chat_id: item.chat_id,
+        customer_id: item.customer_id,
+        client_id: item.client_id
+      }
+      response_hash
+    end
+    responses
+  end
+
   def create_params(portal)
     {
       version: 'private',
@@ -250,5 +285,68 @@ module BotTestHelper
 
   def categories_list(portal)
     portal.solution_category_meta.preload(:primary_category).reject(&:is_default?).map { |c| { id: c.id, label: c.name } }
+  end
+
+  def create_n_bot_feedbacks(bot_id, count, params = {})
+    bot_feedback_ids = []
+    count.times do
+      bot_feedback_ids << create_bot_feedback(bot_id, params).id
+    end
+    bot_feedback_ids
+  end
+
+  def article_params(folder_visibility = Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
+    category = create_category
+    {
+      title: "Test",
+      description: "Test",
+      folder_id: create_folder(visibility: folder_visibility, category_id: category.id).id
+    }
+  end
+
+  def invalid_article_params
+    {
+      title: 999,
+      description: 999,
+      folder_id: "Test"
+    }
+  end
+
+  def bot_analytics_hash
+    {
+      content: {
+        stats: [
+          {
+            date: '2018-02-02',
+            vls: {
+              total_questions: 10,
+              not_helpful: 4,
+              attempted: 8,
+              initiated_chats: 3
+            }
+          }
+        ]
+      }
+    }.to_json
+  end
+
+  def analytics_response_pattern
+    [
+      {
+        date: '2018-02-01',
+        vls: BotConstants::DEFAULT_ANALYTICS_HASH
+      },
+      {
+        date: '2018-02-02',
+        vls: {
+          total_questions: 10,
+          not_helpful: 4,
+          attempted: 8,
+          helpful: 0,
+          not_attempted: 0,
+          initiated_chats: 3
+        }
+      }
+    ].to_json
   end
 end

@@ -220,6 +220,7 @@ defaults: &defaults
     - [bot_cleanup]
     - [delete_archive_ticket]
     - [calculate_sla]
+    - [freshcaller_account_delete]
 
 development:
   <<: *defaults

@@ -111,4 +111,5 @@ helpdesk:
     - heap_analytics
     - bot
     - central
+    - onboarding_config
     - sanitize_monkey_patch

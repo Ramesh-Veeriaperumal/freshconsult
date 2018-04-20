@@ -1,0 +1,6 @@
+
+type: object
+properties:
+  step:
+    type: string
+    description: step to be completed

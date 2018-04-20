@@ -1,0 +1,15 @@
+type: object
+required:
+  - title
+  - description
+  - folder_id
+properties:
+  title:
+    type: string
+    description: Title of the article
+  description:
+    type: string
+    description: Description of the article
+  folder_id:
+    type: integer
+    description: Id of the folder under which article has to be created

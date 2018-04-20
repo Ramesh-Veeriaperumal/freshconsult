@@ -857,7 +857,7 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(custom_fields: { 'test_custom_state' => 'Queensland', 'test_custom_city' => 'Brisbane' })
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_country'), :conditional_not_blank, child: 'test_custom_city')])
+    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_country'), :conditional_not_blank, child: 'test_custom_state')])
   end
 
   def test_create_with_nested_custom_fields_with_valid_first_valid_second_invalid_third
@@ -2780,7 +2780,6 @@ class TicketsControllerTest < ActionController::TestCase
     pattern = tkts.map do |tkt|
       index_ticket_pattern_with_associations(tkt, false, true, false, [:description, :description_text])
     end
-    byebug
     match_json(pattern)
   end
 
@@ -3897,3 +3896,4 @@ class TicketsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
   end
 end
+

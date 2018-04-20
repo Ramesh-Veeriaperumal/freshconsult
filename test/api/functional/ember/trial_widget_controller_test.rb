@@ -51,4 +51,19 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     assert_response 200
     match_json(trial_widget_sales_manager_pattern)
   end
+
+  def test_complete_step_with_wrong_step_name
+    step = Faker::Name.name.downcase
+    post :complete_step, construct_params({ step: step, version: 'private' })
+    assert_response 400
+  end
+
+  def test_complete_step_with_correct_step_name
+    count = 0
+    n_steps = Account::SETUP_KEYS.count
+    step = Account::SETUP_KEYS[Random.rand(n_steps)]
+    response = @account.respond_to?("#{step}_setup?") && @account.send("#{step}_setup?") ? 204 : 200
+    post :complete_step, construct_params({ step: step, version: 'private' })
+    assert_response response
+  end
 end

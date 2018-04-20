@@ -352,6 +352,30 @@ en:
   trail_expiry_after_trial: "Your trial will self-destruct in <b>%{no_of_days}</b>. Choose a plan to continue using Freshdesk"
   hard_pressed_for_time: Hard pressed for time? Get advice, tips and best practices from a Freshdesk expert.
   facebook_reauth: "Your Facebook channel is inaccessible. It looks like your username, password, or permission has been changed recently."
+  custom_mailbox_error: "Something went wrong. We are unable to fetch emails from your custom mailbox."
+  custom_mailbox_admin_email_notifications:
+    subject: "System notification: Custom email server is unable to fetch emails"
+    welcome_message: "Dear Admin"
+    unable_to_fetch: "Freshdesk is unable to fetch emails from %{email_mailbox}. Please ensure that the mailbox is reachable or that the configurations are correct.<br/>If you need any further assistance, please contact support@freshdesk.com."
+    regards: "Regards"
+    freshdesk_support": "Freshdesk support"
+  custom_mailbox_error_type:
+    mailbox_suspended: "Email server suspended"
+    unkown_error: "Unable to fetch emails from custom email server. Please contact support@freshdesk.com"
+    invalid_login: 	"Invalid Login Credentials."
+    server_response_invalid: "Server response is in invalid format while connecting to server."
+    email_bad_request: "Email server sent BAD response while connecting to server."
+    mailbox_idle: "Mailbox doesn't support IDLE capability."
+    folder_unavailable: "Folder is unavailable in Mailbox."
+    unable_to_connect: "Unable to connect the folder in Mailbox."
+    unable_fetch_status: "Unable to fetch status of folder."
+    io_error: "I/O connection error."
+    ssl_errror: "SSL error."
+    tcp_connection: "Unable to create TCP connection."
+    tcp_refused: "Email server refused TCP connection."
+    server_no_resp: "Email server sent NO response while connecting to server."
+    bye_response: "Email server sent BYE response while connecting to server."
+    tcp_socket: "Unable to create TCP socket for email server."
   fb_realtime_enable: "Facebook real-time messaging is now live! Reauthorize your existing Facebook Pages to enable the feature for your account. Read more <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/221711'>here</a>"
   freshpipe_email_disabled: "All outgoing emails and notifications are currently disabled since the data migration is in progress."
   reauthorize_facebook: "Reauthorize your facebook account."
@@ -2373,6 +2397,7 @@ en:
         tickets: Tickets
         solutions: Solutions
         forums: Forums
+        bots: Bots
         customers: Customers
         reports: Reports
         administration: Administration
@@ -2421,6 +2446,9 @@ en:
         export_tickets: Export Tickets
         export_customers: Export Customer
         export_reports: Export Reports
+        bots: Bots
+        view_bots: View bots tab
+        manage_bots: Manage Bots
         reports: Reports
         view_reports: View reports tab
         admin: Admin
@@ -4076,6 +4104,7 @@ en:
       all: All
       all_users: All Users
       select_company: Select Companies
+      bot: Bot
       help_text: Select the list of users who will have access to this folder
     types:
       permanent: Permanent
@@ -9305,6 +9334,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   billing_info: "Subscription information"
   forwarded_email: "Forwarded email"
   forwarded_to: "Forwarded to"
+  imap_error: "Email server inaccessible"
   replied_to: "Replied to"
   notified_to: "Notified to"
   reply_to_forward: "replied to forward"

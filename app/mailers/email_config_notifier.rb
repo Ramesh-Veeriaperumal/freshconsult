@@ -24,11 +24,11 @@ class EmailConfigNotifier < ActionMailer::Base
     Rails.logger.info "Sending activation instructions for email_config - #{email_config.reply_email} - #{@activation_url.to_s}"
   end
   
-  def test_email(email_config)
+  def test_email(email_config, send_to = nil)
     headers = {
       :subject => "Woohoo.. Your Freshdesk Test Mail",
       :from    => "#{AppConfig['app_name']} Test <#{Helpdesk::EMAIL[:default_requester_email]}>",
-      :to      => email_config.reply_email,
+      :to      => send_to || email_config.reply_email,
       :sent_on => Time.now,
       "Reply-to" => "#{Helpdesk::EMAIL[:default_requester_email]}", 
       "Auto-Submitted" => "auto-generated", 

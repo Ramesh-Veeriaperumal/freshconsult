@@ -28,11 +28,19 @@ module Concerns::ApplicationViewConcern
     "/a/admin/social/streams";
   end
 
+  def email_config_link
+    "/a/admin/email_configs";
+  end
+
   def facebook_reauth_required?
     Account.current.fb_reauth_check_from_cache
   end
 
   def twitter_reauth_required?
     Account.current.twitter_reauth_check_from_cache
+  end
+
+  def custom_mailbox_error?
+    Account.current.check_custom_mailbox_status
   end
 end

@@ -196,6 +196,13 @@ module Cache::Memcache::Account
     MemcacheKeys.fetch(key) { self.facebook_pages.reauth_required.present? }
   end
 
+  def check_custom_mailbox_status
+    if features_included?('mailbox') && self.imap_error_status_check_enabled?
+    key = CUSTOM_MAILBOX_STATUS_CHECK % {:account_id => self.id }
+    MemcacheKeys.fetch(key) { self.imap_mailboxes.errors.present? }
+    end
+  end
+
   def fb_realtime_msg_from_cache
     key = FB_REALTIME_MSG_ENABLED % {:account_id => self.id }
     MemcacheKeys.fetch(key) { self.facebook_pages.realtime_messaging_disabled.present? }

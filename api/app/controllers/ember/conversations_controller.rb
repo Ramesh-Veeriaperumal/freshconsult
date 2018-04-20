@@ -31,6 +31,8 @@ module Ember
 
       load_conversations
       response.api_meta = { count: @items_count }
+      ner_data = @ticket.fetch_ner_data
+      response.api_meta = response.api_meta.merge(ner_data: ner_data) if ner_data
     end
 
     def create
