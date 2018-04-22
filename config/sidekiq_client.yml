@@ -107,6 +107,7 @@ defaults: &defaults
     - [helpdesk_note_body_queue]
     - [helpdesk_update_ticket_body_queue]
     - [helpdesk_update_note_body_queue]
+    - [customer_note_body_queue]
     - [contact_import]
     - [company_import]
     - [contact_export]
@@ -215,6 +216,7 @@ defaults: &defaults
     - [update_taggables_queue]
     - [mixpanel_queue]
     - [bot_cleanup]
+    - [email_service_provider]
     - [calculate_sla]
 
 development:

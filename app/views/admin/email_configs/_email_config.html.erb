@@ -10,8 +10,8 @@
 
   <td class="support-email">
     <% if email_config.active? %>
-      <%= content_tag(:div, h("#{email_config.name}"), :class => "bold")%>
-      <%= content_tag(:div, h("#{email_config.reply_email}"), :class => "wrap ellipsis" ) %>
+      <%= content_tag(:div, h("#{email_config.name}"), :class => "bold") %>
+      <%= content_tag(:div, h("#{email_config.reply_email}"), :class => "wrap ellipsis") %>
     <% else %>
       <%= content_tag(:div, h("#{email_config.name}"), :class => "bold") unless email_config.name.blank?%>
       <div>
@@ -20,6 +20,12 @@
         <div class="verify-button">
           <%= link_to( t("email_configs.send_verification_email"), deliver_verification_admin_email_config_path(email_config), :class => 'btn btn-mini', :method => :put) unless email_config.active? %>
         </div>
+      </div>
+    <% end %>
+    <% if email_config.imap_mailbox && current_account.imap_error_status_check_enabled? && email_config.imap_mailbox.error_type.to_i > 0  %>
+      <div>
+        <i id="ficon-notice-o" class="ficon-notice-o"></i>
+        <%= link_to t('imap_error'), edit_admin_email_config_path(email_config) %>
       </div>
     <% end %>
   </td>

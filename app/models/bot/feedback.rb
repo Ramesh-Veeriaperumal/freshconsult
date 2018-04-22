@@ -29,4 +29,8 @@ class Bot::Feedback < ActiveRecord::Base
   def client_id
     external_info[:client_id]
   end
+
+  def deleted!
+    self.update_attributes(state: BotFeedbackConstants::FEEDBACK_STATE_KEYS_BY_TOKEN[:deleted])
+  end
 end

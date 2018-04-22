@@ -158,8 +158,10 @@ class User < ActiveRecord::Base
   has_many :ebay_questions, :class_name => 'Ecommerce::EbayQuestion'
 
   has_one :cti_phone, :class_name =>'Integrations::CtiPhone', :foreign_key => 'agent_id', :dependent => :nullify
-  
+
   has_many :scheduled_tasks, :class_name => 'Helpdesk::ScheduledTask'
 
   has_one :qna_insight, :class_name => 'Helpdesk::QnaInsight'
+
+  has_many :contact_notes, :dependent => :destroy
 end

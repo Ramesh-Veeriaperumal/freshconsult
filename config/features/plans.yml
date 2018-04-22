@@ -46,15 +46,16 @@
       - :user_notifications
       - :quick_reply
       - :tam_default_fields
+      - :contact_company_notes
       - :image_annotation
       - :todos_reminder_scheduler
       - :smart_filter
-    :inherits: 
+    :inherits:
       - :sprout_jan_17
     :exclude: []
   :garden_jan_17:
     :name: Garden
-    :features: 
+    :features:
       - :forums
       - :multi_language
       - :css_customization

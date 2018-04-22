@@ -89,6 +89,7 @@ module ActionMailerCallbacks
       end
       @email_confg = nil
       mail.header["X-FD-Email-Category"] = category_id
+      mail.header["X-ACCOUNT-ID"] = account_id
     end
 
     def reset_smtp_settings(mail, use_mailgun = false)
