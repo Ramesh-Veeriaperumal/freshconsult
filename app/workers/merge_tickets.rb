@@ -30,13 +30,6 @@ class MergeTickets < BaseWorker
     # notes are added to the target ticket via update_all. This wont trigger callback
     # So sending it manually
     update_target_ticket_notes_to_subscribers(target_ticket, source_ticket_note_ids.flatten, args[:source_ticket_ids])
-    #race condition when es version conflict happens and a recent update on source ticket is missed. sqs was processing it faster. hack to solve it
-    #need to revisit
-    if account.features?(:countv2_writes)
-      source_tickets.each do |ticket|
-        ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_REPORTS_COUNT_TICKET_KEY, {:manual_publish => true})
-      end
-    end
   end
 
   def delete_ticket_summary(source_ticket)
@@ -105,7 +98,7 @@ class MergeTickets < BaseWorker
       next unless Helpdesk::SchemaLessTicket::COUNT_COLUMNS_FOR_REPORTS.include?(category)
       note.notable.schema_less_ticket.safe_send("update_#{category}_count", "create")
       note.notable.schema_less_ticket.save
-      note.manual_publish_to_rmq("create", RabbitMq::Constants::RMQ_REPORTS_NOTE_KEY)
+      note.manual_publish(["create", RabbitMq::Constants::RMQ_REPORTS_NOTE_KEY], [])
     end
     # ACTIVTIIES: Adding ticket merge activity in target ticket
     target_ticket.activity_type = {:type => "ticket_merge_target", 
@@ -115,6 +108,6 @@ class MergeTickets < BaseWorker
     # reflected in latest row. Doing a manual push for target ticket here so that the latest row of the ticket will 
     # have all the customer reply and agent reply count updated.
     key  = RabbitMq::Constants::RMQ_CLEANUP_TICKET_KEY
-    target_ticket.manual_publish_to_rmq("update", key, {:manual_publish => true})
+    target_ticket.manual_publish(["update", key, {:manual_publish => true}], [:update, { misc_changes: target_ticket.activity_type.dup }])
   end
 end

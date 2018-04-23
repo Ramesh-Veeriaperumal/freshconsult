@@ -507,7 +507,7 @@ class Account < ActiveRecord::Base
   end
 
   def skip_dispatcher?
-    marketplace_app_enabled? && launched?(:synchronous_apps)
+    @skip_dispatcher ||= marketplace_app_enabled? && launched?(:synchronous_apps)
   end
 
   def remove_secondary_companies

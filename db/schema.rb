@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180223055939) do
+ActiveRecord::Schema.define(:version => 20180321125314) do
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -2431,6 +2431,7 @@ ActiveRecord::Schema.define(:version => 20180223055939) do
     t.integer "account_id",    :limit => 8
   end
 
+  add_index "helpdesk_tag_uses", ["account_id", "tag_id", "taggable_type"], :name => "index_tag_use_on_acc_tag_taggable_type", :length => {"account_id"=>nil, "tag_id"=>nil, "taggable_type"=>20}
   add_index "helpdesk_tag_uses", ["tag_id"], :name => "index_helpdesk_tag_uses_on_tag_id"
   add_index "helpdesk_tag_uses", ["taggable_id", "taggable_type"], :name => "helpdesk_tag_uses_taggable", :length => {"taggable_id"=>nil, "taggable_type"=>10}
 

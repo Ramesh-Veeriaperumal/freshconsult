@@ -62,7 +62,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id, :assoc_parent_tkt_id,
     :sbrr_turned_on, :status_sla_toggled_to, :replicated_state, :skip_sbrr_assigner, :bg_jobs_inline,
     :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
-    :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save, :sbrr_state_attributes, :escape_liquid_attributes
+    :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save, :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background, :sla_calculation_time
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
     # - will be clearing these after activity publish.
@@ -356,6 +356,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def model_changes
     @model_changes ||= {}
   end
+
+  def sla_calculation_time
+    @sla_calculation_time ||= Time.zone.now
+  end  
 
   def sbrr_state_attributes
     @sbrr_state_attributes ||= attributes.symbolize_keys.slice(*TicketConstants::NEEDED_SBRR_ATTRIBUTES)
@@ -1179,8 +1183,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Used update_column instead of touch because touch fires after commit callbacks from RAILS 4 onwards.
   def update_timestamp
     unless @touched || new_record?
-      self.update_column(:updated_at, Time.zone.now) # update_column can't be invoked in new record.
+      prev_updated_at = self.updated_at
+      time_now = Time.zone.now
+      self.update_column(:updated_at, time_now) # update_column can't be invoked in new record.
       self.sqs_manual_publish
+      self.model_changes = { updated_at: [prev_updated_at, time_now] }
+      self.manual_publish_to_central(nil, :update, {}, true)
     end
     @touched ||= true
   end

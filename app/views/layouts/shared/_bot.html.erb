@@ -10,6 +10,7 @@
       s.setAttribute("data-prdct-hash", "<%= BOT_CONFIG[:freshdesk_product_id] %>"); 
       s.setAttribute("data-ext-client-id", "<%= current_bot.external_id %>");
       s.setAttribute("data-env", "<%= BOT_CONFIG[:widget_code_env] %>");
+      s.setAttribute("data-customer-name", "<%= current_user ? current_user.name : BotConstants::WIDGET_CODE_DEFAULT_USER_NAME%>");
       if (c) {
         s.onreadystatechange = s.onload = function() {
           if (!loaded) {

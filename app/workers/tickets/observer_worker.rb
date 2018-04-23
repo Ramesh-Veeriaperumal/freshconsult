@@ -10,6 +10,7 @@ module Tickets
         args.symbolize_keys!
         account, ticket_id, doer_id, system_event = Account.current, args[:ticket_id], args[:doer_id], args[:system_event]
         current_events = args[:current_events].symbolize_keys
+        sla_args = args[:sla_args].try(:symbolize_keys)
         Va::Logger::Automation.set_thread_variables(account.id, ticket_id, doer_id)
 
         evaluate_on = account.tickets.find_by_id ticket_id
@@ -35,6 +36,10 @@ module Tickets
           evaluate_on.round_robin_on_ticket_update(ticket_changes) if evaluate_on.rr_allowed_on_update?
           ticket_changes = evaluate_on.merge_changes(ticket_changes, evaluate_on.changes.slice(:responder_id)) 
           evaluate_on.update_old_group_capping(ticket_changes)
+          if sla_args && sla_args[:sla_on_background] && evaluate_on.is_in_same_sla_state?(sla_args[:sla_state_attributes])
+            evaluate_on.update_sla = true
+            evaluate_on.sla_calculation_time = sla_args[:sla_calculation_time]
+          end
           evaluate_on.save!
           evaluate_on.va_rules_after_save_actions.each do |action|
             klass = action[:klass].constantize

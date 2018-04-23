@@ -7,7 +7,7 @@ class Tickets::LinkTickets < BaseWorker
     @tracker_ticket = Account.current.tickets.find_by_display_id(args[:tracker_id])
     @related_tickets = Account.current.tickets.includes(:schema_less_ticket).not_associated.permissible(User.current).readonly(false).where('display_id IN (?)', args[:related_ticket_ids])
     @tracker_ticket.misc_changes = {:tracker_link => @related_tickets.pluck(:display_id)}
-    @tracker_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
+    @tracker_ticket.manual_publish(["update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY], [:update, { misc_changes: @tracker_ticket.misc_changes.dup }])
     return unless @tracker_ticket && @tracker_ticket.tracker_ticket? && @related_tickets.present? && !associations_count_exceeded?
     linked = []
     @related_tickets.each do |t|

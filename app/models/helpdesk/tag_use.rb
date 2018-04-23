@@ -26,6 +26,12 @@ class Helpdesk::TagUse < ActiveRecord::Base
           }
         }
 
+  scope :tags_count, lambda { |tag_id,taggable_type|
+    {
+        :conditions => {:tag_id => tag_id, :taggable_type => taggable_type}
+    }
+  }
+
   private
 
     def to_rmq_json
