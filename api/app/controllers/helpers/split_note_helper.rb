@@ -5,7 +5,7 @@ module SplitNoteHelper
     update_split_activities
     set_source_activity_type
     if Account.current.features?(:activity_revamp)
-      @item.manual_publish_to_rmq('update', RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY)
+      @item.manual_publish(["update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY], [:update, { misc_changes: @item.activity_type.dup }])
     end
   end
 
