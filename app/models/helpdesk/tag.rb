@@ -5,6 +5,8 @@ class Helpdesk::Tag < ActiveRecord::Base
   include Cache::Memcache::Helpdesk::Tag
   include Search::ElasticSearchIndex
 
+  before_save :save_model_changes
+
   after_commit  :clear_cache
   after_commit  :update_taggables, on: :update
   after_commit  :remove_taguses, on: :destroy
@@ -167,10 +169,15 @@ class Helpdesk::Tag < ActiveRecord::Base
   end
   
   private
+
+    def save_model_changes
+      @model_changes = self.changes.to_hash
+    end
     
     def update_taggables
       SearchV2::IndexOperations::UpdateTaggables.perform_async({ :tag_id => self.id }) if Account.current.features_included?(:es_v2_writes)
       CountES::IndexOperations::UpdateTaggables.perform_async({ :tag_id => self.id }) if Account.current.features?(:countv2_writes)
+      CentralPublish::UpdateTaggables.perform_async({ :tag_id => self.id, :changes => @model_changes })
     end
     
     def remove_taguses

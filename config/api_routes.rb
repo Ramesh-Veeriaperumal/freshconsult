@@ -28,9 +28,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    namespace :api_freshfone, path: 'phone' do 
-      resources :call_history, only: [:index] do 
-        collection do 
+    namespace :api_freshfone, path: 'phone' do
+      resources :call_history, only: [:index] do
+        collection do
           post :export
           get '(export/:id)', to: :export_status, as: :export_status
         end
@@ -87,7 +87,7 @@ Helpkit::Application.routes.draw do
     match 'agents/me/reset_api_key' => 'api_profiles#reset_api_key', :defaults => { format: 'json', id: 'me' }, via: :post
 
     resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy]
-    
+
     resources :surveys, only: [:index] do
       collection do
         get :satisfaction_ratings, to: 'satisfaction_ratings#index'
@@ -201,6 +201,18 @@ Helpkit::Application.routes.draw do
         post :training_completed
         post :mark_completed_status_seen
         put :enable_on_portal
+        get :bot_folders
+        post :create_bot_folder
+        get :analytics
+      end
+      member do
+        resources :bot_feedbacks, controller: 'ember/admin/bot_feedbacks', only: [:index] do
+          collection do
+            put :bulk_delete
+            put :bulk_map_article
+            post :create_article
+          end
+        end
       end
     end
 
@@ -310,6 +322,7 @@ Helpkit::Application.routes.draw do
     resources :trial_widget, controller: 'ember/trial_widget', only: [:index] do
       collection do
         get :sales_manager
+        post :complete_step
       end
     end
 
@@ -321,6 +334,7 @@ Helpkit::Application.routes.draw do
         put :bulk_whitelist
         post :merge, to: 'ember/contacts/merge#merge'
         post :export_csv
+        post :quick_create
         get :import, to: 'ember/customer_imports#index'
         post :import, to: 'ember/customer_imports#create'
         post :quick_create
@@ -333,6 +347,7 @@ Helpkit::Application.routes.draw do
         get :activities
         put :assume_identity
       end
+      resources :notes, controller: 'customer_notes', only: [:create, :update, :destroy, :show, :index]
     end
 
     resources :companies, controller: 'ember/companies', only: [:index, :show, :create, :update] do
@@ -343,6 +358,7 @@ Helpkit::Application.routes.draw do
       member do
         get :activities
       end
+      resources :notes, controller: 'customer_notes', only: [:create, :update, :destroy, :show, :index]
     end
 
     resources :attachments, controller: 'ember/attachments', only: [:create, :show, :destroy] do
@@ -411,18 +427,20 @@ Helpkit::Application.routes.draw do
         put :update_activation_email
         get :resend_activation_email
         post :update_channel_config
+        get :forward_email_confirmation
+        post :test_email_forwarding
       end
     end
 
-    resources :contact_password_policy, controller: 'ember/contact_password_policies', 
+    resources :contact_password_policy, controller: 'ember/contact_password_policies',
                                         only: [:index]
-    resources :agent_password_policy, controller: 'ember/agent_password_policies', 
+    resources :agent_password_policy, controller: 'ember/agent_password_policies',
                                         only: [:index]
 
     get '/yearin_review', to: 'ember/year_in_review#index'
     post '/yearin_review/share', to: 'ember/year_in_review#share'
     post '/yearin_review/clear', to: 'ember/year_in_review#clear'
-    
+
     # Search routes
     post '/search/tickets/',      to: 'ember/search/tickets#results'
     post '/search/customers/',    to: 'ember/search/customers#results'
@@ -476,6 +494,7 @@ Helpkit::Application.routes.draw do
 
   channel_routes = proc do
     resources :freshcaller_calls, controller: 'channel/freshcaller/calls', only: %i[create update]
+    delete '/freshcaller/account', to: 'channel/freshcaller/accounts#destroy'
     get '/freshcaller/contacts/:id/activities', to: 'channel/freshcaller/contacts#activities'
     post '/freshcaller/search/customers/', to: 'channel/freshcaller/search/customers#results'
     post '/freshcaller/search/tickets/', to: 'channel/freshcaller/search/tickets#results'

@@ -27,8 +27,10 @@
         <div class="emphasize">
           <%= t("ticket.ticket_user_list_status_" + associated_ticket.ticket_states.current_state(associated_ticket.outbound_email?),
               :time_ago => time_ago_in_words(associated_ticket.ticket_states.safe_send(associated_ticket.ticket_states.current_state(associated_ticket.outbound_email?)))
-              ).html_safe %>,
-          <%= sla_status(associated_ticket, current_account.onhold_and_closed_statuses_from_cache ) %>
+              ).html_safe %>
+          <% if due_by_values_present?(associated_ticket) %>
+            , <%= sla_status(associated_ticket, current_account.onhold_and_closed_statuses_from_cache ) %>
+          <% end %>
         </div>
       </div>
     </div>

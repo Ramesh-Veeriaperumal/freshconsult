@@ -5,6 +5,7 @@ module Channel
     class TicketsControllerTest < ActionController::TestCase
       include TicketsTestHelper
       include BotTicketHelper
+      include ProductsHelper
 
       CUSTOM_FIELDS = %w[number checkbox decimal text paragraph dropdown country state city date].freeze
 
@@ -194,6 +195,22 @@ module Channel
           ticket = @account.tickets.last
           assert_response 201
           validate_bot_ticket_data ticket, params[:bot_external_id], params[:query_id], params[:conversation_id]
+          assert_equal TicketConstants::SOURCE_KEYS_BY_TOKEN[:bot], ticket.source
+        end
+      end
+
+      def test_create_for_product_portal_bot
+        enable_bot_feature do
+          set_auth_header
+          product = create_product(portal_url: Faker::Internet.domain_name)
+          portal_id = product.portal.id
+          bot = create_bot(portal_id)
+          params = { email: Faker::Internet.email, bot_external_id: bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
+          post :create, construct_params({version: 'channel'}, params)
+          ticket = @account.tickets.last
+          assert_response 201
+          validate_bot_ticket_data ticket, params[:bot_external_id], params[:query_id], params[:conversation_id]
+          assert_equal product.id, ticket.product_id
           assert_equal TicketConstants::SOURCE_KEYS_BY_TOKEN[:bot], ticket.source
         end
       end

@@ -161,6 +161,10 @@ class Solution::ArticleMeta < ActiveRecord::Base
 		solution_folder_meta.solution_category_meta.update_mh_solutions_category_time
 	end
 
+  def folder_category_info
+    [solution_folder_meta, solution_category_meta]
+  end
+
 	private
 
 	def clear_cache

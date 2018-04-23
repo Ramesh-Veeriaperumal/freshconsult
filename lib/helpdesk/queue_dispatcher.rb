@@ -45,7 +45,7 @@ class Helpdesk::QueueDispatcher
     
     def pass_through_biz_rules ticket
       Rails.logger.info "Queued dispatcher for the Account :: #{@current_account.id} ticket :: #{@ticket_id}"
-      Helpdesk::Dispatcher.enqueue(ticket.id, dispatcher_current_user.try(:id), ticket.freshdesk_webhook?)
+      Helpdesk::Dispatcher.enqueue(ticket, dispatcher_current_user.try(:id))
     end
 
     def dispatcher_current_user

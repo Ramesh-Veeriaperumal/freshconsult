@@ -1,0 +1,15 @@
+type: object
+required:
+  - name
+  - description
+  - visibility
+  - category_id
+properties:
+  name:
+    type: string
+  description:
+    type: string
+  visibility:
+    type: integer
+  category_id: 
+    type: integer

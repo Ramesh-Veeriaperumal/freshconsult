@@ -393,7 +393,12 @@ class ApiApplicationController < MetalApiController
       # next page exists if scoper is array & next_page is not nil or
       # next page exists if scoper is AR & collection length > per_page
       next_page_exists = paginated_items.length > @per_page || paginated_items.next_page && is_array
-      add_link_header(page: (page + 1)) if next_page_exists
+      if next_page_exists
+        add_link_header(page: (page + 1))
+        @more_items = true
+      else
+        @more_items = false
+      end
       paginated_items[0..(@per_page - 1)] # get paginated_collection of length 'per_page'
     end
 

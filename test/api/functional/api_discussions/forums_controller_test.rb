@@ -111,11 +111,8 @@ module ApiDiscussions
     end
 
     def test_update_invalid_forum_category_id
-      fc = fc_obj
-      fc.update_column(:account_id, 999)
       forum = f_obj
-      put :update, construct_params({ id: forum.id }, forum_category_id: fc.reload.id)
-      fc.update_column(:account_id, @account.id)
+      put :update, construct_params({ id: forum.id }, forum_category_id: 999)
       assert_response 400
       match_json([bad_request_error_pattern('forum_category_id', :absent_in_db, resource: :category, attribute: :forum_category_id)])
     end

@@ -7,11 +7,17 @@ class Solution::Folder < ActiveRecord::Base
     f.add proc { |x| x.parent_id }, as: :id
     f.add :name
     f.add :description
+    f.add :language_id
     f.add :account_id
     f.add proc { |x| x.parent.visibility }, as: :visibility
     f.add proc { |x| x.parent.solution_category_meta_id }, as: :category_id
     f.add proc { |x| x.utc_format([x.created_at, x.parent.created_at].max) }, as: :created_at
     f.add proc { |x| x.utc_format([x.updated_at, x.parent.updated_at].max) }, as: :updated_at
+  end
+
+  api_accessible :central_publish_destroy do |f|
+    f.add :parent_id, as: :id
+    f.add :account_id
   end
 
   def self.central_publish_enabled?

@@ -130,7 +130,8 @@ module AccountCleanup
       key = Account.current.features?(:countv2_writes) ? "RMQ_CLEANUP_TICKET_KEY" : "RMQ_GENERIC_TICKET_KEY"
       Account.current.tickets.where(id:object_ids).find_in_batches(:batch_size => 300) do |tickets|
         tickets.each do |t|
-          t.manual_publish_to_rmq("destroy", RabbitMq::Constants.const_get(key), {:manual_publish => true})
+          t.save_deleted_ticket_info
+          t.manual_publish(["destroy", RabbitMq::Constants.const_get(key), {:manual_publish => true}], [:destroy, nil])
         end
       end
     end

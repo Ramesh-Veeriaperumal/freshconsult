@@ -23,7 +23,7 @@ post:
       in: body
       required: true
       schema:
-        $ref: '#/definitions/bot'
+        $ref: '#/definitions/bot_create_req'
   responses:
     200:
       description: Success

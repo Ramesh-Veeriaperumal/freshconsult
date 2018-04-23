@@ -1,0 +1,28 @@
+type: object
+properties:
+  datetimes:
+    type: array
+    items:
+      type: object
+      properties:
+        value:
+          type: object
+          properties:
+            end:
+              type: integer
+            datetime:
+              type: string
+              format: date-time
+            start:
+              type: integer
+            time:
+              type: string
+              format: date-time
+            date:
+              type: string
+              format: date-time
+            timezone:
+              type: string
+  note_id:
+    type: integer
+

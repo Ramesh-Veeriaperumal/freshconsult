@@ -6,9 +6,9 @@ module Helpdesk::S3::Note
     extend Helpdesk::S3::Util
 
     module ClassMethods
-      
+
       # generates the entire key path that is stored in s3
-      def generate_file_path(account_id,note_id)
+      def generate_file_path(account_id, note_id)
         generate_key(account_id,note_id) + "/note_body.json"
       end
 

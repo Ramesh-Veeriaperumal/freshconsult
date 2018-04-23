@@ -23,8 +23,6 @@ module MarketplaceConfig
   GLOBAL_API_TIMEOUT = { :read => config[:global_api_read_timeout], :conn => config[:global_api_conn_timeout] }
   DATA_PIPE_TIMEOUT = { :read => config[:data_pipe_timeout], :conn => config[:data_pipe_timeout] }
   FRESHAPPS_JS_URL = config[:freshapps_js_url]
-  # TODO: Remove MKP_CONFIGS_JS once Custom iparam sandbox is ready to ship
-  MKP_CONFIGS_JS = config[:marketplace_configs_js]
   FRESH_PARENT = config[:fresh_parent]
   ACCOUNT_API_POLL_INTERVAL = config[:account_api_poll_interval]
   MKP_CB = FreshRequest::RedisUrlCb.new(

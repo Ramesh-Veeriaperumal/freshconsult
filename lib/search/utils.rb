@@ -127,7 +127,8 @@ class Search::Utils
     filteredTicketSearch:             'filteredTicketSearch',
     search_ticket_api:                'searchTicketApi',
     search_contact_api:               'searchContactApi',
-    search_company_api:               'searchCompanyApi'
+    search_company_api:               'searchCompanyApi',
+    filtered_solution_search:         'filteredSolutionSearch'
   }
 
   # _Note_: Parent ID to be used for routing.

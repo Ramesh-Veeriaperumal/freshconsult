@@ -2080,6 +2080,432 @@
         }
       }
     },
+    "/contacts/{contact_id}/notes": {
+      "get": {
+        "tags": [
+          "contact note"
+        ],
+        "summary": "List all",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "notes": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/contact_note_response"
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/meta"
+                    },
+                    {
+                      "properties": {
+                        "more_items": {
+                          "type": "boolean",
+                          "description": "indicates next page availability"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "contact note"
+        ],
+        "description": "Create contact note",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contact_note_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/contact_note_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      }
+    },
+    "/contacts/{contact_id}/notes/{id}": {
+      "get": {
+        "tags": [
+          "contact note"
+        ],
+        "summary": "Show contact note",
+        "description": "The S3 url of the note content will be given else the content will be given along with other data.",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/contact_note_response"
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "contact note"
+        ],
+        "summary": "Delete contact note",
+        "description": "Destroys the note, will not be able to restore",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "contact note"
+        ],
+        "summary": "Update contact note",
+        "description": "The S3 url of the note content will be given else the content will be given along with other data.",
+        "parameters": [
+          {
+            "name": "contact_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/contact_note_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/contact_note_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      }
+    },
+    "/companies/{company_id}/notes": {
+      "get": {
+        "tags": [
+          "company note"
+        ],
+        "summary": "List all",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "notes": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/company_note_response"
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/meta"
+                    },
+                    {
+                      "properties": {
+                        "more_items": {
+                          "type": "boolean",
+                          "description": "indicates next page availability"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "company note"
+        ],
+        "description": "Create company note",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/company_note_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/company_note_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      }
+    },
+    "/companies/{company_id}/notes/{id}": {
+      "get": {
+        "tags": [
+          "company note"
+        ],
+        "summary": "Show company note",
+        "description": "The S3 url of the note content will be given else the content will be given along with other data.",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/company_note_response"
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "company note"
+        ],
+        "summary": "Delete company note",
+        "description": "Destroys the note, will not be able to restore",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "company note"
+        ],
+        "summary": "Update company note",
+        "description": "The S3 url of the note content will be given else the content will be given along with other data.",
+        "parameters": [
+          {
+            "name": "company_id",
+            "in": "path",
+            "required": true,
+            "description": "An unique identifier",
+            "type": "integer",
+            "format": "int64",
+            "minimum": 1,
+            "x-example": 10
+          },
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/company_note_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/company_note_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Note not found"
+          }
+        }
+      }
+    },
     "/contacts": {
       "get": {
         "tags": [
@@ -3094,7 +3520,7 @@
             "description": "Attachment not found"
           }
         }
-      },      
+      },
       "delete": {
         "tags": [
           "attachment"
@@ -5312,6 +5738,66 @@
         }
       }
     },
+    "/onboarding/forward_email_confirmation": {
+      "get": {
+        "tags": [
+          "onboarding"
+        ],
+        "description": "Forward Email Confirmation",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/onboarding_forward_email_confirmation"
+            }
+          },
+          "204": {
+            "description": "Data Not Found"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/onboarding/test_email_forwarding": {
+      "post": {
+        "tags": [
+          "onboarding"
+        ],
+        "description": "Test email forwarding setup",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "description": "New activation email",
+            "schema": {
+              "$ref": "#/definitions/onboarding_test_email_forwarding_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/onboarding_test_email_forwarding"
+            }
+          },
+          "204": {
+            "description": "Forwarded email not found"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/trial_widget": {
       "post": {
         "summary": "Trial Widget Steps",
@@ -5341,6 +5827,39 @@
             "description": "OK",
             "schema": {
               "$ref": "#/definitions/trial_widget_sales_manager"
+            }
+          }
+        }
+      }
+    },
+    "/trial_widget/complete_step": {
+      "post": {
+        "summary": "Complete Step",
+        "description": "Mark a trial widget step as complete",
+        "tags": [
+          "trial widget"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "step",
+            "description": "step to be marked complete",
+            "schema": {
+              "$ref": "#/definitions/trial_widget_complete_step"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Change"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
             }
           }
         }
@@ -5411,7 +5930,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/bot"
+              "$ref": "#/definitions/bot_create_req"
             }
           }
         ],
@@ -5521,7 +6040,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/bot"
+              "$ref": "#/definitions/bot_update_req"
             }
           }
         ],
@@ -5686,6 +6205,362 @@
           },
           "503": {
             "description": "ML service unavailable"
+          }
+        }
+      }
+    },
+    "/bots/{id}/bot_folders": {
+      "get": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Bot folder list",
+        "description": "Listing down all the categories associated to the bots portal along with the folders for the bot",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bot_folders"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/bots/{id}/create_bot_folder": {
+      "post": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Create bot folder",
+        "description": "Create bot folder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bot_folder"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/create_bot_folder"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          },
+          "409": {
+            "description": "Invalid/duplicate folder name"
+          }
+        }
+      }
+    },
+    "/bots/{id}/bot_feedbacks": {
+      "get": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Unanswered questions list",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "useful",
+            "in": "query",
+            "type": "integer",
+            "description": "global useful value",
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "name": "start_at",
+            "in": "query",
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          },
+          {
+            "name": "end_at",
+            "in": "query",
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bot_feedback_index"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/bots/{id}/bot_feedbacks/bulk_delete": {
+      "put": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Bulk Delete Bot unanswered questions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bulk_action_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Bot not found"
+          }
+        }
+      }
+    },
+    "/bots/{id}/bot_feedbacks/bulk_map_article": {
+      "put": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Map an article to multiple unanswered questions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/bulk_action_input"
+                },
+                {
+                  "$ref": "#/definitions/map_article_input"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Bot not found"
+          }
+        }
+      }
+    },
+    "/bots/{id}/bot_feedbacks/create_article": {
+      "post": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Create article for bot feedbacks",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/bulk_action_input"
+                },
+                {
+                  "$ref": "#/definitions/create_article_input"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/bots/{id}/analytics": {
+      "get": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Bot metrics given a time period",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "type": "string",
+            "format": "date-time",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bot_analytics"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
           }
         }
       }
@@ -6292,6 +7167,72 @@
         "primary_id",
         "target_ids",
         "contact"
+      ]
+    },
+    "contact_note_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "company_note_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "category_id": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
       ]
     },
     "update_password": {
@@ -7523,6 +8464,20 @@
         }
       }
     },
+    "onboarding_test_email_forwarding_input": {
+      "type": "object",
+      "description": "Test email poll attempt",
+      "properties": {
+        "attempt": {
+          "type": "integer",
+          "description": "Sends test email if attempt is 1. Else checks for email if attempt < 5. Gives error response if attempt is >= 5."
+        },
+        "send_to": {
+          "type": "string",
+          "description": "Sends test email to this email ID."
+        }
+      }
+    },
     "update_channels_input": {
       "type": "object",
       "description": "Channels Array",
@@ -7580,6 +8535,125 @@
             "type": "integer",
             "uniqueItems": true
           }
+        }
+      }
+    },
+    "trial_widget_complete_step": {
+      "type": "object",
+      "properties": {
+        "step": {
+          "type": "string",
+          "description": "step to be completed"
+        }
+      }
+    },
+    "map_article_input": {
+      "type": "object",
+      "required": [
+        "article_id"
+      ],
+      "properties": {
+        "article_id": {
+          "type": "integer",
+          "description": "Article to which the unanswered question must be mapped."
+        }
+      }
+    },
+    "create_article_input": {
+      "type": "object",
+      "required": [
+        "title",
+        "description",
+        "folder_id"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the article"
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the article"
+        },
+        "folder_id": {
+          "type": "integer",
+          "description": "Id of the folder under which article has to be created"
+        }
+      }
+    },
+    "bot_create_req": {
+      "type": "object",
+      "required": [
+        "name",
+        "avatar",
+        "portal_id",
+        "header",
+        "theme_colur",
+        "widget_size"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "avatar_id": {
+              "type": "string"
+            },
+            "is_default": {
+              "type": "boolean"
+            }
+          }
+        },
+        "portal_id": {
+          "type": "integer"
+        },
+        "header": {
+          "type": "string"
+        },
+        "theme_colur": {
+          "type": "string"
+        },
+        "widget_size": {
+          "type": "string"
+        }
+      }
+    },
+    "bot_update_req": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "avatar_id": {
+              "type": "string"
+            },
+            "is_default": {
+              "type": "boolean"
+            }
+          }
+        },
+        "portal_id": {
+          "type": "integer"
+        },
+        "header": {
+          "type": "string"
+        },
+        "theme_colur": {
+          "type": "string"
+        },
+        "widget_size": {
+          "type": "string"
         }
       }
     },
@@ -7675,6 +8749,78 @@
           }
         }
       }
+    },
+    "customer_note": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string",
+          "description": "available only when there is no s3_url"
+        },
+        "s3_url": {
+          "type": "string",
+          "description": "available only if there is an s3_url"
+        },
+        "created_by": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "last_updated_by": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
+          }
+        }
+      }
+    },
+    "contact_note": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/customer_note"
+        },
+        {
+          "properties": {
+            "user_id": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "company_note": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/customer_note"
+        },
+        {
+          "properties": {
+            "company_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "category_id": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
     },
     "product_feedback": {
       "type": "object",
@@ -8247,6 +9393,29 @@
         }
       }
     },
+    "bot_folder": {
+      "type": "object",
+      "required": [
+        "name",
+        "description",
+        "visibility",
+        "category_id"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "integer"
+        },
+        "category_id": {
+          "type": "integer"
+        }
+      }
+    },
     "canned_response": {
       "type": "object",
       "properties": {
@@ -8726,6 +9895,10 @@
               "type": "integer",
               "format": "int64"
             },
+            "folder_visibility": {
+              "type": "integer",
+              "format": "int64"
+            },
             "thumbs_up": {
               "type": "integer",
               "format": "int64"
@@ -8981,6 +10154,14 @@
                 },
                 "survey_result": {
                   "$ref": "#/definitions/survey_result"
+                },
+                "meta": {
+                  "type": "object",
+                  "properties": {
+                    "ner_data": {
+                      "$ref": "#/definitions/ner_api_data"
+                    }
+                  }
                 }
               }
             }
@@ -9734,6 +10915,48 @@
         }
       }
     },
+    "ner_api_data": {
+      "type": "object",
+      "properties": {
+        "datetimes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "end": {
+                    "type": "integer"
+                  },
+                  "datetime": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "start": {
+                    "type": "integer"
+                  },
+                  "time": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "timezone": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "note_id": {
+          "type": "integer"
+        }
+      }
+    },
     "conversations_show": {
       "type": "array",
       "items": {
@@ -9836,6 +11059,76 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/agents_bulk_action_error"
+          }
+        }
+      }
+    },
+    "contact_note_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/customer_note_response"
+        },
+        {
+          "properties": {
+            "user_id": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "company_note_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/customer_note_response"
+        },
+        {
+          "properties": {
+            "company_id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "category_id": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "customer_note_response": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string",
+          "description": "available only when there is no s3_url"
+        },
+        "s3_url": {
+          "type": "string",
+          "description": "available only if there is an s3_url"
+        },
+        "created_by": {
+          "type": "string"
+        },
+        "last_updated_by": {
+          "type": "string"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/attachment"
           }
         }
       }
@@ -10652,6 +11945,18 @@
           "items": {
             "type": "integer"
           }
+        },
+        "widget_code_src": {
+          "type": "string",
+          "description": "Url to get bot widget code"
+        },
+        "product_hash": {
+          "type": "string",
+          "description": "Freshdesk product hash"
+        },
+        "environment": {
+          "type": "string",
+          "description": "Bot environment"
         }
       }
     },
@@ -10689,6 +11994,138 @@
         },
         "bot_id": {
           "type": "integer"
+        }
+      }
+    },
+    "bot_folders": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "folders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/bot_folder_list"
+          }
+        }
+      }
+    },
+    "bot_folder_list": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "visibility": {
+          "type": "integer"
+        }
+      }
+    },
+    "create_bot_folder": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "bot_feedback_index": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/unanswered_list"
+      }
+    },
+    "unanswered_list": {
+      "type": "object",
+      "properties": {
+        "bot_id": {
+          "type": "integer"
+        },
+        "category": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "useful": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "received_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "query_id": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "state": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3
+          ]
+        },
+        "chat_id": {
+          "type": "string"
+        },
+        "customer_id": {
+          "type": "string"
+        }
+      }
+    },
+    "bot_analytics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "vls": {
+            "type": "object",
+            "properties": {
+              "total_questions": {
+                "type": "integer",
+                "description": "Number of questions asked by users"
+              },
+              "not_helpful": {
+                "type": "integer",
+                "description": "Number of suggestions given by the bot that were marked as not useful by the users"
+              },
+              "attempted": {
+                "type": "integer",
+                "description": "Number of questions for which bot suggested articles"
+              },
+              "helpful": {
+                "type": "integer",
+                "description": "Number of suggestions given by the bot that were marked as useful by the users"
+              },
+              "not_attempted": {
+                "type": "integer",
+                "description": "Number of questions that bot did give any suggestions"
+              },
+              "initiated_chats": {
+                "type": "integer",
+                "description": "Number of chats initiated"
+              }
+            }
+          }
         }
       }
     },
@@ -11201,6 +12638,28 @@
         "avatar": {
           "type": "string",
           "description": "URL of the sales manager's avatar"
+        }
+      }
+    },
+    "onboarding_forward_email_confirmation": {
+      "type": "object",
+      "properties": {
+        "confirmation_code": {
+          "type": "string",
+          "description": "Verification code sent by email provider"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email Id"
+        }
+      }
+    },
+    "onboarding_test_email_forwarding": {
+      "type": "object",
+      "properties": {
+        "ticket_display_id": {
+          "type": "integer",
+          "description": "Display ID of the test email ticket."
         }
       }
     },

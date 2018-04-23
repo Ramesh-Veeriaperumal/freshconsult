@@ -26,7 +26,7 @@ class Integrations::DataPipeController <  ApplicationController
     def app_installed?
       is_install = (params && params[:data] && params[:data][:isInstall]) ? params[:data][:isInstall] : false
       unless is_install
-        extns = installed_extensions({ type: Marketplace::Constants::EXTENSION_TYPE[:plug]})
+        extns = installed_extensions({ type: "#{Marketplace::Constants::EXTENSION_TYPE[:plug]},#{Marketplace::Constants::EXTENSION_TYPE[:custom_app]}" })
         render_error and return if error_status?(extns)
         extns.body.each do |extn|
           if(extn["extension_id"] == request.headers["HTTP_MKP_EXTNID"].to_i && extn["version_id"] == request.headers["HTTP_MKP_VERSIONID"].to_i)
