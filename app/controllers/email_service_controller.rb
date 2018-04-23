@@ -86,7 +86,7 @@ class EmailServiceController < Fdadmin::MetalApiController
       incoming_email_api_key2 = fd_email_service["incoming_email_api_key2"]
       if (!(request.authorization == incoming_email_api_key1 or request.authorization == incoming_email_api_key2))
         Rails.logger.info "Authorization Failed"
-        head :unauthorized, content_type: "text/html"
+        head :forbidden, content_type: "text/html"
       end
   end
 

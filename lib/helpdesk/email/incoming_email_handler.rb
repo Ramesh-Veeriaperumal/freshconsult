@@ -864,7 +864,7 @@ module Helpdesk
 				# work with the code here
 				full_text = params[:quoted_content_text_portion]
 				if(params[:quoted_parse_done].nil? or params[:quoted_parse_done] == false )
-					msg_hash = show_quoted_text(params[:quoted_content_text_portion], ticket.reply_email)
+					msg_hash = show_quoted_text(params[:text], ticket.reply_email)
 					unless msg_hash.blank?
 						body = msg_hash[:body]
 						full_text = msg_hash[:full_text]
@@ -877,7 +877,7 @@ module Helpdesk
 				full_text_html = params[:quoted_content_html_portion]
 
 				if(params[:quoted_parse_done].nil? or params[:quoted_parse_done] == false)
-					msg_hash = show_quoted_text(params[:quoted_content_html_portion], ticket.reply_email,false)
+					msg_hash = show_quoted_text(params[:html], ticket.reply_email,false)
 					unless msg_hash.blank?
 						body_html = msg_hash[:body]
 						full_text_html = msg_hash[:full_text]
