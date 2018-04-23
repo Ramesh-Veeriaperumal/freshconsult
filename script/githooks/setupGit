@@ -1,10 +1,6 @@
 #!/bin/bash
 
-<<<<<<< HEAD
-echo -n "Please enter your JIRA user name(emailId) : "
-=======
 echo -n "Please enter your JIRA user name          : "
->>>>>>> origin/staging
 read email
 echo -n "Please enter your JIRA password           : "
 read password

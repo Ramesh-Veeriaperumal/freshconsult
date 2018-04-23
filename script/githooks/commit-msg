@@ -65,17 +65,6 @@ fi
 
 command -v osascript &> /dev/null  && osascript -e 'display notification "Validating JIRA ID for commit" with title "Hang in there"'
 
-<<<<<<< HEAD
-curl -u "${JIRA_AUTH}" "Content-Type: application/json" -s "http://jira.freshworks.com/rest/api/2/issue/${jiraId}" > /tmp/jiraIssueResult.txt
-
-if [ $? -ne 0  -o `cat /tmp/jiraIssueResult.txt | grep errorMessages | wc -l` -gt 0 ]
-then
-  echo "Error accessing Jira issues status. Could not complete commit."
-  cat /tmp/jiraIssueResult.txt
-  exit 1;
-fi;
-
-=======
 curl -u "${JIRA_AUTH}" "Content-Type: application/json" -s "https://jira.freshworks.com/rest/api/2/issue/${jiraId}" > /tmp/jiraIssueResult.txt
 
 if [ $? -ne 0  -o `cat /tmp/jiraIssueResult.txt | grep errorMessages | wc -l` -gt 0 -o `cat /tmp/jiraIssueResult.txt | grep "<html>" | wc -l` -gt 0 ]
@@ -109,5 +98,4 @@ git config user.email ${jiraAssigneeEmail}"
 exit 1;
 fi;
 
->>>>>>> origin/staging
 exit 0;
