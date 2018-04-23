@@ -31,6 +31,9 @@
   <div class="row-fluid">
     <%= content_tag(:label, t('mailbox.incoming_mail_settings'), :class => "lead") %>
     <div class="control-group">
+      <% if @error_type%>
+        <div class="imap_limit_alert"> <%= t("custom_mailbox_error_type.#{@error_type}").html_safe %> </div>
+      <% end %>
       <%= content_tag(:label, t('mailbox.incoming_mail_server') , :class => "control-label") %>
       <div class="controls">
         <div class="form-inline">

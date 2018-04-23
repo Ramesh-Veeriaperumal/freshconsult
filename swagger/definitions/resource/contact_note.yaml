@@ -1,0 +1,8 @@
+type: object
+allOf:
+  - $ref: '#/definitions/customer_note'
+  - properties:
+      user_id:
+        type: integer
+        format: int64
+  - $ref: '#/definitions/extension_generic'

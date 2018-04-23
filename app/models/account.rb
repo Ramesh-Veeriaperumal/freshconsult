@@ -507,7 +507,7 @@ class Account < ActiveRecord::Base
   end
 
   def skip_dispatcher?
-    marketplace_app_enabled? && launched?(:synchronous_apps)
+    @skip_dispatcher ||= marketplace_app_enabled? && launched?(:synchronous_apps)
   end
 
   def remove_secondary_companies
@@ -665,6 +665,10 @@ class Account < ActiveRecord::Base
 
   def bot_onboarded?
     !bots_count_from_cache.zero?
+  end
+
+  def email_service_provider
+    @email_service_provider ||= self.account_configuration.try('company_info').try(:[], :email_service_provider)
   end
 
   protected

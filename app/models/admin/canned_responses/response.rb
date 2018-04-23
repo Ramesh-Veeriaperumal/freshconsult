@@ -41,7 +41,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   validates_presence_of :folder_id
   before_validation :validate_title
   unhtml_it :content
-  xss_sanitize :only =>[:content_html],  :html_sanitize => [:content_html]
+  xss_sanitize :only =>[:content_html],  :cannedresponse_sanitizer => [:content_html]
 
   scope :accessible_for, lambda { |user|
     {

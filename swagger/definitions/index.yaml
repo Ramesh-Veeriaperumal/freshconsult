@@ -37,6 +37,10 @@
     $ref: ./request/contacts/quick_create.yaml
   contact_merge_input:
     $ref: ./request/contacts/merge.yaml
+  contact_note_input:
+    $ref: ./request/contact_note.yaml
+  company_note_input:
+    $ref: ./request/company_note.yaml
   update_password:
     $ref: ./request/contacts/update_password.yaml
   note_create_input:
@@ -108,21 +112,39 @@
     $ref: ./request/agents/bulk_agent.yaml
   onboarding_update_activation_email_input:
     $ref: ./request/onboarding/update_activation_email.yaml
+  onboarding_test_email_forwarding_input:
+    $ref: ./request/onboarding/test_email_forwarding.yaml
   update_channels_input:
     $ref: ./request/onboarding/update_channels.yaml
   suppression_list:
     $ref: ./request/tickets/suppression_list.yaml
   bot_enable_on_portal_input:
     $ref: ./request/bots/enable_on_portal_input.yaml
-
   bot_map_categories_input:
     $ref: ./request/bots/map_categories_input.yaml
+  map_article_input:
+    $ref: ./request/bot_feedbacks/map_article.yaml
+  create_article_input:
+    $ref: ./request/bot_feedbacks/create_article.yaml
+  bot_create_req:
+    $ref: ./request/bots/bot_create.yaml
+  bot_update_req:
+    $ref: ./request/bots/bot_update.yaml
+
+  trial_widget_complete_step:
+    $ref: './request/trial_widget/complete_step.yaml'
 
   # RESOURCE
   conversation_template:
     $ref: ./resource/conversation_template.yaml
   contact:
     $ref: ./resource/contact.yaml
+  customer_note:
+    $ref: ./resource/customer_note.yaml
+  contact_note:
+    $ref: ./resource/contact_note.yaml
+  company_note:
+    $ref: ./resource/company_note.yaml
   product_feedback:
     $ref: ./resource/product_feedback.yaml
   avatar:
@@ -147,6 +169,8 @@
     $ref: ./resource/draft.yaml
   bot:
     $ref: ./resource/bot.yaml
+  bot_folder:
+    $ref: ./resource/bot_folder.yaml
   canned_response:
     $ref: ./resource/canned_response.yaml
   canned_response_folder:
@@ -187,7 +211,6 @@
     $ref: ./resource/solution_article.yaml
   extension_generic:
     $ref: ./resource/extension/generic.yaml
-    
   extended_contact:
     allOf:
       - $ref: '#/definitions/contact'
@@ -257,6 +280,8 @@
   # RESPONSE
   meta:
     $ref: './response/meta.yaml'
+  ner_api_data:
+    $ref: './resource/ner_api_data.yaml'
   conversations_show:
     type: array
     items:
@@ -268,6 +293,13 @@
     $ref: ./response/make_agent.yaml
   agent_partial_success_response:
     $ref: ./response/agents/create_multiple.yaml
+
+  contact_note_response:
+    $ref: ./response/contact_note.yaml
+  company_note_response:
+    $ref: ./response/company_note.yaml
+  customer_note_response:
+    $ref: ./response/customer_note.yaml
 
   watchers:
     $ref: ./response/tickets/watchers.yaml
@@ -315,8 +347,24 @@
     $ref: './response/bot_list.yaml'
   bot_product_data:
     $ref: './response/bot_product_data.yaml'
+  bot_folders:
+    $ref: './response/bot_folders.yaml'
+  bot_folder_list:
+    $ref: './response/bot_folder_list.yaml'
+  create_bot_folder:
+    $ref: './response/create_bot_folder.yaml'
+  bot_feedback_index:
+     type: array
+     items:
+        $ref: '#/definitions/unanswered_list'
+  unanswered_list:
+    $ref: './response/bot_feedbacks/unanswered_list.yaml'
+  bot_analytics:
+    $ref: './response/bot_analytics.yaml'
+
   article_content:
     $ref: './response/article_content.yaml'
+
   # Dashboard activities
   dashboard_activities:
     $ref: './response/dashboard/activities.yaml'
@@ -354,6 +402,12 @@
     $ref: './response/trial_widget/index.yaml'
   trial_widget_sales_manager:
     $ref: './response/trial_widget/sales_manager.yaml'
+
+  #onboarding
+  onboarding_forward_email_confirmation:
+      $ref: './response/onboarding/forward_email_confirmation.yaml'
+  onboarding_test_email_forwarding:
+      $ref: './response/onboarding/test_email_forwarding.yaml'
 
   #Ticket Templates
   ticket_templates_index:

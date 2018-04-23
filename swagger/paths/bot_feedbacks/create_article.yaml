@@ -1,0 +1,30 @@
+post:
+  tags: [Bot]
+  summary: Create article for bot feedbacks
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: ID of the bot
+      required: true
+    - name: data
+      in: body
+      required: true
+      schema:
+        allOf:
+          - $ref: '#/definitions/bulk_action_input'
+          - $ref: '#/definitions/create_article_input'
+  responses:
+    202:
+      description: Accepted
+      schema:
+        $ref: '#/definitions/partial_success_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    404:
+      description: Resource not found

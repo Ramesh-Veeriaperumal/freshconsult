@@ -25,9 +25,11 @@ class Account::Setup::UpdatedObjectsObserver < ActiveRecord::Observer
 
 	private
 
-	def additional_check_for_support_email(email_config)
-		email_config.previous_changes.keys.include?("reply_email")
-	end
+  def additional_check_for_support_email(email_config)
+    return false unless email_config.previous_changes.keys.include?('reply_email')
+    return true unless email_config.account.falcon_ui_enabled?(User.current)
+    email_config.account.email_service_provider != EmailServiceProvider::EMAIL_SERVICE_PROVIDER_MAPPING['googlemail']
+  end
 
 	def additional_check_for_account_admin_email(account)
 		account.verified?
@@ -42,5 +44,4 @@ class Account::Setup::UpdatedObjectsObserver < ActiveRecord::Observer
 		#This step is related to update email requester notification
 		email_notification.account.verified? && email_notification.requester_notification_updated?
 	end
-
 end

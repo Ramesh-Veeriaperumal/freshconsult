@@ -1,0 +1,27 @@
+type: array
+items:
+  type: object
+  properties:
+    date:
+      type: string
+    vls:
+      type: object
+      properties:
+        total_questions:
+          type: integer
+          description: Number of questions asked by users
+        not_helpful:
+          type: integer
+          description: Number of suggestions given by the bot that were marked as not useful by the users
+        attempted:
+          type: integer
+          description: Number of questions for which bot suggested articles
+        helpful:
+          type: integer
+          description: Number of suggestions given by the bot that were marked as useful by the users
+        not_attempted:
+          type: integer
+          description: Number of questions that bot did give any suggestions
+        initiated_chats:
+          type: integer
+          description: Number of chats initiated

@@ -80,6 +80,8 @@ module DeleteSpamConcern
           can_destroy = true if template_priv? file_attachable
         elsif ['UserDraft'].include? file_type
           can_destroy = true if current_user && file.attachable_id == current_user.id
+        elsif ['ContactNote', 'CompanyNote'].include? file_type
+          can_destroy = true if privilege?(:view_contacts)
         end
         access_denied unless can_destroy
       end

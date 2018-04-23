@@ -4,17 +4,16 @@ require 'digest/md5'
 class Helpdesk::ArchiveTicket < ActiveRecord::Base
   
   include RabbitMq::Publisher
+  include Publish
   
-  def manual_publish_to_rmq(action, key, options = {})
+  def manual_publish_to_rmq(uuid, action, key, options = {})
     # Manual publish for Archive ticket model
     # Currently handled for reports and activities subscribers
     # Need to Append RMQ_GENERIC_ARCHIVE_TICKET_KEY to enable for new subscribers
-    uuid = generate_uuid
     manual_publish_to_xchg(uuid, "archive_ticket", subscriber_manual_publish("archive_ticket", action, options, uuid), key)
   end
 
-  def delayed_manual_publish_to_rmq(action,key, options = {})
-    uuid = generate_uuid
+  def delayed_manual_publish_to_rmq(uuid, action,key, options = {})
     manual_publish_to_xchg(uuid, "archive_ticket", subscriber_manual_publish("archive_ticket", action, options, uuid), key, true)
   end
 

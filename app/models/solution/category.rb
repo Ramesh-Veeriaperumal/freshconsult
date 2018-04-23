@@ -87,10 +87,7 @@ class Solution::Category < ActiveRecord::Base
   end
 
   def save_deleted_category_info
-    @deleted_model_info = {
-      id: parent_id,
-      account_id: account_id
-    }  
+    @deleted_model_info = as_api_response(:central_publish_destroy) 
   end
    
   private

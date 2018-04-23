@@ -1,0 +1,24 @@
+type: object
+properties:
+  bot_id:
+    type: integer
+  category:
+    type: integer
+    enum: [1,2]
+  useful:
+    type: integer
+    enum: [1,2,3]
+  received_at:
+    type: string
+    format: date-time
+  query_id:
+    type: string
+  query:
+    type: string
+  state:
+    type: integer
+    enum: [1,2,3]
+  chat_id:
+    type: string
+  customer_id:
+    type: string

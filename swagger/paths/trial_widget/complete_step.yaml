@@ -1,0 +1,20 @@
+  post:
+    summary: Complete Step
+    description: Mark a trial widget step as complete
+    tags: [trial widget]
+    parameters:
+      - in: body
+        name: step
+        description: step to be marked complete
+        schema:
+          $ref: '#/definitions/trial_widget_complete_step'
+
+    responses:
+      200:
+        description: OK
+      204:
+        description: No Change
+      400:
+        description: Bad Request Error
+        schema:
+          $ref: '#/definitions/bad_request_error'

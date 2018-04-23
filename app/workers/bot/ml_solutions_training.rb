@@ -12,7 +12,7 @@ class Bot::MlSolutionsTraining < BaseWorker
         next if category_meta.is_default?
         push_payload(category_meta.primary_category, :ml_training_category)
         category_meta.solution_folder_meta.each do |folder_meta|
-          next unless folder_meta.visibility == Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:anyone]
+          next unless Solution::Constants::BOT_VISIBILITIES.include?(folder_meta.visibility)
           push_payload(folder_meta.primary_folder, :ml_training_folder)
           folder_meta.solution_article_meta.each do |article_meta|
             primary_article = article_meta.primary_article
@@ -55,9 +55,10 @@ class Bot::MlSolutionsTraining < BaseWorker
     end
 
     def training_payload(object, payload_type)
+      object.central_payload_type = payload_type
       {
         account_full_domain: Account.current.full_domain,
-        model_properties: object.central_publish_payload(payload_type)
+        model_properties: object.central_publish_payload
       }
     end
 end

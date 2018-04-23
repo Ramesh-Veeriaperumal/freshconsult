@@ -1,0 +1,9 @@
+--- 
+onboarding:
+  email_forwarding:
+    from_email:
+      google: 'forwarding-noreply@google.com'
+    confirmation_regex:
+      google: !ruby/regexp /\(#(\d+)\)/
+    email_providers:
+      - google

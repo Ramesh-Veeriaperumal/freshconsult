@@ -26,8 +26,8 @@ class Product < ActiveRecord::Base
   has_many   :facebook_pages       , :class_name => 'Social::FacebookPage' , :dependent => :nullify
   has_many   :ecommerce_accounts   , :class_name => 'Ecommerce::Account', :dependent => :nullify
 
-  has_one    :bot, class_name: 'Bot', dependent: :destroy
-
+  has_one    :bot                  , class_name: 'Bot', dependent: :destroy
+  
   scope :trimmed, :select => [:'products.id', :'products.name']
 
   attr_protected :account_id

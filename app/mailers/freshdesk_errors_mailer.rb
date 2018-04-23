@@ -58,6 +58,21 @@ class FreshdeskErrorsMailer < ActionMailer::Base
       part.html { render "spam_blocked_alert", :formats => [:html] }
     end.deliver
   end
+
+  def sidekiq_dead_job_alert(options={}) 
+    headers = {
+      :to           =>  options[:to_email],
+      :from         =>  options[:from_email],
+      :subject      =>  options[:subject],
+      :sent_on      =>  Time.now
+    }
+    @additional_info = options[:additional_info]
+    mail(headers) do |part|
+      part.html { render "sidekiq_dead_job", :formats => [:html] }
+    end.deliver
+  end
+
+
   
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
   # Keep this include at end

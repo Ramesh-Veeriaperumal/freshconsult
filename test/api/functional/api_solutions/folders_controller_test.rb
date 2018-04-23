@@ -139,7 +139,7 @@ module ApiSolutions
       category_meta = get_category
       post :create, construct_params({ id: category_meta.id },{name: Faker::Name.name, description: Faker::Lorem.paragraph, visibility: '1'})
       assert_response 400
-      match_json([bad_request_error_pattern('visibility', :not_included, list: [1,2,3,4].join(','),code: :datatype_mismatch, given_data_type: 'String', prepend_msg: :input_received)])
+      match_json([bad_request_error_pattern('visibility', :not_included, list: [1,2,3,4,5].join(','),code: :datatype_mismatch, given_data_type: 'String', prepend_msg: :input_received)])
     end
 
     def test_create_folder_with_existing_name
@@ -391,7 +391,7 @@ module ApiSolutions
       params_hash  = { visibility: false }
       put :update, construct_params({ id: sample_folder.parent_id }, params_hash)
       assert_response 400
-      match_json([bad_request_error_pattern('visibility', :not_included, list: [1,2,3,4].join(','))])
+      match_json([bad_request_error_pattern('visibility', :not_included, list: [1,2,3,4,5].join(','))])
     end
 
     def test_update_folder_with_language_query

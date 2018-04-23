@@ -50,7 +50,7 @@ module Admin::RolesHelper
               }]
           },
 
-         # *************************** Forums **************************
+        # *************************** Forums **************************
 
          { :dom_type => "label", :id => "forums",
            :children =>
@@ -68,6 +68,15 @@ module Admin::RolesHelper
                    },
                    { :dom_type => "check_box", :id => "delete_topic" }]
              }]
+         },
+
+         # *************************** Bots *******************************
+
+         { dom_type: "label", id: "bots",
+           children: 
+
+              [{ dom_type: "check_box", id: "view_bots", not_display: !current_account.support_bot_enabled? }]
+
          },
 
          # *************************** Customers **************************
@@ -121,7 +130,8 @@ module Admin::RolesHelper
                     { :dom_type => "check_box", :id => "manage_scenario_automation_rules" },
                     { :dom_type => "check_box", :id => "manage_email_settings" },
                     { :dom_type => "check_box", :id => "manage_dashboard" },
-                    { :dom_type => "check_box", :id => "manage_ticket_templates" }
+                    { :dom_type => "check_box", :id => "manage_ticket_templates" },
+                    { :dom_type => "check_box", :id => "manage_bots", not_display: !current_account.support_bot_enabled? }
                     ]
                },
 
@@ -139,6 +149,7 @@ module Admin::RolesHelper
                     { :dom_type => "hidden_field", :id => "manage_email_settings" },
                     { :dom_type => "hidden_field", :id => "manage_dashboard" },
                     { :dom_type => "hidden_field", :id => "manage_ticket_templates" },
+                    { :dom_type => "hidden_field", :id => "manage_bots", not_display: !current_account.support_bot_enabled? },
                     { :dom_type => "check_box",    :id => "manage_account" }]
 
                }]
@@ -177,7 +188,7 @@ module Admin::RolesHelper
 
   def process_children(children, parent, disabled)
     content_tag(:ul, :class => "nested-ul") do
-      children.map do |child|
+      children.map do |child| 
         unless child[:not_display] 
           content_tag(:li) do
             element =

@@ -8,11 +8,11 @@
 
     DISPATCHER_ERROR = 'DISPATCHER_EXECUTION_FAILED'.freeze
 
-    def self.enqueue(ticket_id, user_id, freshdesk_webhook)
+    def self.enqueue(ticket, user_id)
       #based on account subscription, enqueue into proper queue
       account = Account.current
       job_queues = ["Premium" , "Free", "Trial" , "Active"]
-      args = {:ticket_id => ticket_id, :user_id => user_id, :is_webhook => freshdesk_webhook}
+      args = {:ticket_id => ticket.id, :user_id => user_id, :is_webhook => ticket.freshdesk_webhook?, :sla_args => {:sla_on_background => ticket.sla_on_background, :sla_state_attributes => ticket.sla_state_attributes, :sla_calculation_time => ticket.sla_calculation_time.to_i}}
       job_queue = "spam" if account.spam_email?
       job_queue ||= "premium" if account.premium_email?
       job_queue ||= account.subscription.state
@@ -21,25 +21,32 @@
       #queue 'Spam' and everything else into the dispatcher queue
       job_queue = "Worker" if ( !job_queues.include?(job_queue) || Rails.env.development? || Rails.env.test? )
       ("Admin::Dispatcher::#{job_queue}").constantize.perform_async(args)
-    rescue Exception => e
+    rescue Exception => e   
       NewRelic::Agent.notice_error(e)
     end
 
     def initialize params
-      @account    = Account.current
-      @user       = params['user_id'].blank? ? nil : @account.all_users.find(params['user_id'])
-      @ticket     = @account.tickets.find(params['ticket_id'])
-      @is_webhook = params['is_webhook']
+      @account           = Account.current
+      @user              = params['user_id'].blank? ? nil : @account.all_users.find(params['user_id'])
+      @ticket            = @account.tickets.find(params['ticket_id'])
+      @is_webhook        = params['is_webhook']
+      @sla_on_background = params['sla_args'] && params['sla_args']['sla_on_background']
+      @sla_attributes    = params['sla_args'] && params['sla_args']['sla_state_attributes']
+      @sla_calculation_time = params['sla_args'] && params['sla_args']['sla_calculation_time']
       Va::Logger::Automation.set_thread_variables(@account.id, params['ticket_id'], params['user_id'])
       Va::Logger::Automation.log "user=nil" if @user.nil?
       Va::Logger::Automation.log "ticket=nil" if @ticket.nil?
     end
 
     def execute
-        Time.use_zone(@account.time_zone) {
+      Time.use_zone(@account.time_zone) {
         execute_rules unless @is_webhook
         round_robin unless @ticket.spam? || @ticket.deleted?
         @ticket.sbrr_fresh_ticket = true
+        if @sla_on_background && @ticket.is_in_same_sla_state?(@sla_attributes)
+          @ticket.update_sla = true
+          @ticket.sla_calculation_time = @sla_calculation_time
+        end
         @ticket.save
         notify_cc_recipients
         @ticket.autoreply
