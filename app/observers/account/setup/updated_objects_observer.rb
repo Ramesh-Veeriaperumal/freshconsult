@@ -25,10 +25,6 @@ class Account::Setup::UpdatedObjectsObserver < ActiveRecord::Observer
 
 	private
 
-	def additional_check_for_support_email(email_config)
-		email_config.previous_changes.keys.include?("reply_email")
-	end
-
 	def additional_check_for_account_admin_email(account)
 		account.verified?
 	end
@@ -42,5 +38,4 @@ class Account::Setup::UpdatedObjectsObserver < ActiveRecord::Observer
 		#This step is related to update email requester notification
 		email_notification.account.verified? && email_notification.requester_notification_updated?
 	end
-
 end

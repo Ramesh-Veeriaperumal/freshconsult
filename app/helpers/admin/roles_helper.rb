@@ -50,7 +50,7 @@ module Admin::RolesHelper
               }]
           },
 
-         # *************************** Forums **************************
+        # *************************** Forums **************************
 
          { :dom_type => "label", :id => "forums",
            :children =>
@@ -68,6 +68,15 @@ module Admin::RolesHelper
                    },
                    { :dom_type => "check_box", :id => "delete_topic" }]
              }]
+         },
+
+         # *************************** Bots *******************************
+
+         { dom_type: "label", id: "bots", not_display: !current_account.support_bot_enabled?,
+           children: 
+
+              [{ dom_type: "check_box", id: "view_bots", not_display: !current_account.support_bot_enabled? }]
+
          },
 
          # *************************** Customers **************************
@@ -121,7 +130,8 @@ module Admin::RolesHelper
                     { :dom_type => "check_box", :id => "manage_scenario_automation_rules" },
                     { :dom_type => "check_box", :id => "manage_email_settings" },
                     { :dom_type => "check_box", :id => "manage_dashboard" },
-                    { :dom_type => "check_box", :id => "manage_ticket_templates" }
+                    { :dom_type => "check_box", :id => "manage_ticket_templates" },
+                    { :dom_type => "check_box", :id => "manage_bots", not_display: !current_account.support_bot_enabled? }
                     ]
                },
 
@@ -139,6 +149,7 @@ module Admin::RolesHelper
                     { :dom_type => "hidden_field", :id => "manage_email_settings" },
                     { :dom_type => "hidden_field", :id => "manage_dashboard" },
                     { :dom_type => "hidden_field", :id => "manage_ticket_templates" },
+                    { :dom_type => "hidden_field", :id => "manage_bots", not_display: !current_account.support_bot_enabled? },
                     { :dom_type => "check_box",    :id => "manage_account" }]
 
                }]
@@ -156,20 +167,21 @@ module Admin::RolesHelper
   def build_role_form
     form = ""
     role_sections.each do |section|
-     form +=  content_tag( :div, {:class => "row-fluid margin-bottom", :id => section[:id] }) do
-        content_tag( :div, content_tag( :p, t('admin.roles.privilege.'+ section[:id]).html_safe, :class => "lead-sub"), :class => "span2") +
-        content_tag( :div, :class => "span10 role-section") do
-          value = label(:agent, :signature_html, "<b>#{t('admin.roles.agent_can')}</b>".html_safe)
-          if section[:children]
-            if section[:children].last[:children] and section[:children].last[:children].last[:id] == "manage_account" and !current_user.privilege?(:manage_account)
-              section[:children].last[:children].last.merge!(:class => "permanent_disable")
+      unless section[:not_display]
+       form +=  content_tag( :div, {:class => "row-fluid margin-bottom", :id => section[:id] }) do
+          content_tag( :div, content_tag( :p, t('admin.roles.privilege.'+ section[:id]).html_safe, :class => "lead-sub"), :class => "span2") +
+          content_tag( :div, :class => "span10 role-section") do
+            value = label(:agent, :signature_html, "<b>#{t('admin.roles.agent_can')}</b>".html_safe)
+            if section[:children]
+              if section[:children].last[:children] and section[:children].last[:children].last[:id] == "manage_account" and !current_user.privilege?(:manage_account)
+                section[:children].last[:children].last.merge!(:class => "permanent_disable")
+              end
+              value += process_children(section[:children], section[:id], false)
             end
-            value += process_children(section[:children], section[:id], false)
+            value
           end
-          value
         end
       end
-
     end
     form.html_safe
   end
@@ -177,7 +189,7 @@ module Admin::RolesHelper
 
   def process_children(children, parent, disabled)
     content_tag(:ul, :class => "nested-ul") do
-      children.map do |child|
+      children.map do |child| 
         unless child[:not_display] 
           content_tag(:li) do
             element =

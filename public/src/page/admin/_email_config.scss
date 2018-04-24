@@ -13,6 +13,15 @@
   background: #FEFDEE;
   @include margin(-13px 0px 17px 0px);
 }
+
+.imap_limit_alert{
+  @extend .smtp_limit_alert;
+  @include margin(4px 0px 17px 0px);
+}
+
+.ficon-notice-o {
+	color: #e84444;
+}
 //------------------------------------------------------------------------------------------
                 // Custom Mailbox end
 //------------------------------------------------------------------------------------------

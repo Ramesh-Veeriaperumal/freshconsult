@@ -42,7 +42,8 @@
 						{ 
 							:class => "select2 required input-large", 
 							:name => "solution_folder_meta[solution_category_meta_id]",
-							:"data-original-value" => selected_value
+							:"data-original-value" => selected_value,
+							:"data-category-bot-value" => all_solution_categories_with_bot.to_json
 						}  %>
 				</div>
 				<% if @folder_meta.new_record? %>

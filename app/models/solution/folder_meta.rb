@@ -120,7 +120,11 @@ class Solution::FolderMeta < ActiveRecord::Base
   def has_company_visiblity?
     visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]
   end
-	
+  
+  def visible_to_bot?
+    BOT_VISIBILITIES.include?(visibility)
+  end
+
 	def to_liquid
 		@solution_folder_drop ||= Solution::FolderDrop.new self
 	end
@@ -220,7 +224,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 
 	def self.get_visibility_array(user)
 		if user && user.privilege?(:manage_tickets)
-		  VISIBILITY_NAMES_BY_KEY.keys
+		  VISIBILITY_NAMES_BY_KEY.keys - [Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:bot]]
 		elsif user
 		  [VISIBILITY_KEYS_BY_TOKEN[:anyone],VISIBILITY_KEYS_BY_TOKEN[:logged_users]]
 		else
@@ -229,7 +233,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	end
 
 	def visible_in? portal
-	  solution_category_meta.portal_ids.include?(portal.id)
+	  visibility != Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:bot] && solution_category_meta.portal_ids.include?(portal.id)
 	end
 
 	def backup_folder_changes

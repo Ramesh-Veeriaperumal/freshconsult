@@ -401,9 +401,9 @@ protected
   # Please change the same in api/tickets_controller#ticket_permission?
   def filter_params_ids
     if current_user.group_ticket_permission
-      params[:ids] = current_account.tickets.group_tickets_permission(current_user, params[:ids] || params[:id]).collect(&:display_id)
+      params[:ids] = current_account.tickets.group_tickets_permission(current_user, params[:ids] || params[:id]).collect(&:display_id).collect(&:to_s)
     elsif current_user.assigned_ticket_permission
-      params[:ids] = current_account.tickets.assigned_tickets_permission(current_user, params[:ids] || params[:id]).collect(&:display_id)
+      params[:ids] = current_account.tickets.assigned_tickets_permission(current_user, params[:ids] || params[:id]).collect(&:display_id).collect(&:to_s)
     end
   end
 

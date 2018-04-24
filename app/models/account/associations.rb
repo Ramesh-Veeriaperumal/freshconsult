@@ -326,23 +326,23 @@ class Account < ActiveRecord::Base
   has_many :authorizations, :class_name => '::Authorization'
 
   has_many :ticket_templates, :class_name => "Helpdesk::TicketTemplate"
-  has_many :prime_templates, 
-            :class_name => "Helpdesk::TicketTemplate", 
+  has_many :prime_templates,
+            :class_name => "Helpdesk::TicketTemplate",
             :conditions =>['association_type != ?', Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child]]
   has_many :parent_templates,
-            :class_name => "Helpdesk::TicketTemplate", 
+            :class_name => "Helpdesk::TicketTemplate",
             :conditions => {:association_type => Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent]}
-  has_many :child_templates, 
-            :class_name => "Helpdesk::TicketTemplate", 
+  has_many :child_templates,
+            :class_name => "Helpdesk::TicketTemplate",
             :conditions => {:association_type => Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:child]}
 
   has_many :status_groups
 
   has_many :account_webhook_key, dependent: :destroy
-  
+
   has_many :sandboxes,       :class_name => 'Admin::Sandbox::Account'
   has_many :sandbox_jobs,    :class_name => 'Admin::Sandbox::Job'
-  
+
   has_many :ticket_subscriptions, :class_name => 'Helpdesk::Subscription'
 
   has_many :required_ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id IS null AND required_for_closure IS true AND field_options NOT LIKE '%section: true%' AND field_type NOT IN ('default_subject','default_description','default_company')",
@@ -356,4 +356,7 @@ class Account < ActiveRecord::Base
   has_many :bot_tickets, class_name: 'Bot::Ticket'
   has_many :bots, class_name: 'Bot', dependent: :destroy
   has_many :bot_feedback_mappings, class_name: 'Bot::FeedbackMapping'
+
+  has_many :contact_notes
+  has_many :company_notes
 end

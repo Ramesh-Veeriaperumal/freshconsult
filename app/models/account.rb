@@ -625,6 +625,10 @@ class Account < ActiveRecord::Base
     )
   end
 
+  def email_service_provider
+    @email_service_provider ||= self.account_configuration.try('company_info').try(:[], :email_service_provider)
+  end
+
   def email_signup?
     "email_signup" == self.signup_method.to_s
   end

@@ -18,8 +18,8 @@ module SolutionsHelper
         :name => params[:name],
         :description => params[:description]
       }).merge({
-        :category_id => params[:category_meta_id] || params[:category_id],
-        :visibility => params[:visibility]
+        :category_id => params[:category_meta_id] || params[:category_id] || create_category.id,
+        :visibility => params[:visibility] || Solution::FolderMeta::VISIBILITY_KEYS_BY_TOKEN[:anyone]
       }))
     f_params[:solution_folder_meta][:is_default] = params[:is_default] if params[:is_default].present?
     folder_meta = Solution::Builder.folder(f_params)

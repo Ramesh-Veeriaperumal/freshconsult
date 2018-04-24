@@ -39,6 +39,7 @@ development:
   scheduled_company_export_queue: scheduled_company_export_queue_dev
   channel_framework_services: fd_cf_services_dev
   bot_feedback_queue: bot_feedback_staging
+  custom_mailbox_status: custom_mailbox_status_dev
 staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging

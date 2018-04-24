@@ -5,6 +5,7 @@ module Channel
       skip_before_filter :check_privilege
       before_filter :check_bot_feature
       before_filter :validate_bot
+      before_filter :set_bot_portal_as_current
       before_filter :set_bot_source
       after_filter :create_bot_ticket, only: :create
 
@@ -44,6 +45,10 @@ module Channel
         def create_bot_ticket
           bot_ticket = @ticket.build_bot_ticket(bot_id: @bot.id, query_id: @query_id, conversation_id: @conversation_id)
           bot_ticket.save
+        end
+
+        def set_bot_portal_as_current
+          @current_portal = @bot.portal.make_current
         end
     end
   end

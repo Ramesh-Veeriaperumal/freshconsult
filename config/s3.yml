@@ -15,6 +15,8 @@ development:
   archive_ticket_body: archive-ticketbody-dev
   note_body: notebody-dev
   archive_note_body: archive-notebody-dev
+  contact_note_body: contact-notebody-dev
+  company_note_body: company-notebody-dev
   bi_reports_list_bucket: bi-reports-ticket-list-dev
   archive_email_storage_bucket: cdn.freshpo.com
   primary_email_storage_bucket: cdn.freshpo.com
@@ -28,6 +30,8 @@ staging:
   archive_ticket_body: archive-ticketbody-staging
   note_body: notebody-staging
   archive_note_body: archive-notebody-staging
+  contact_note_body: contact-notebody-staging
+  company_note_body: company-notebody-staging
   bi_reports_list_bucket: bi-reports-ticket-list-staging
   archive_email_storage_bucket: archive-email-data-staging
   primary_email_storage_bucket: primary-email-data-staging
@@ -42,6 +46,8 @@ test:
   archive_ticket_body: archive-ticketbody-test
   note_body: notebody-test
   archive_note_body: archive-notebody-test
+  contact_note_body: contact-notebody-test
+  company_note_body: company-notebody-test
   bi_reports_list_bucket: bi-reports-ticket-list-test
   archive_email_storage_bucket: fd-testbed
   primary_email_storage_bucket: fd-testbed
@@ -58,6 +64,8 @@ production:
   archive_ticket_body: archive-ticketbody-production
   note_body: notebody-production
   archive_note_body: archive-notebody-production
+  contact_note_body: contact-notebody-production
+  company_note_body: company-notebody-production
   bi_reports_list_bucket: bi-reports-ticket-list-production
   archive_email_storage_bucket: cdn.freshdesk.com
   primary_email_storage_bucket: cdn.freshdesk.com

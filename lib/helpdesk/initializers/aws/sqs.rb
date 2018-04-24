@@ -10,6 +10,8 @@ begin
 
   $channel_framework_services =  AWS::SQS.new.queues.named(SQS[:channel_framework_services])
 
+  $custom_mailbox_status =  AWS::SQS.new.queues.named(SQS[:custom_mailbox_status])
+
   $sqs_facebook_messages = AWS::SQS.new.queues.named(SQS[:fb_message_realtime_queue])
 
   ##################### SQS RELATED TO TWITTER STARTS #########################
