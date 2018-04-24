@@ -62,7 +62,8 @@ def self.plan_price
 			"USD" => 0.0,
 			"ZAR" => 0.0,
 			"GBP" => 0.0,
-			"AUD" => 0.0
+			"AUD" => 0.0,
+			"BRL" => 0.0
 		},
 		:blossom_jan_17 => {
 			"EUR" => 24.0,
@@ -70,7 +71,8 @@ def self.plan_price
 			"USD" => 25.0,
 			"ZAR" => 339.0,
 			"GBP" => 19.0,
-			"AUD" => 33.0
+			"AUD" => 33.0,
+			"BRL" => 55.0
 		},
 		:garden_jan_17 => {
 			"EUR" => 42.0,
@@ -78,7 +80,8 @@ def self.plan_price
 			"USD" => 44.0,
 			"ZAR" => 599.0,
 			"GBP" => 35.0,
-			"AUD" => 55.0
+			"AUD" => 55.0,
+			"BRL" => 110.0
 		},
 		:estate_jan_17 => {
 			"EUR" => 58.0,
@@ -86,7 +89,8 @@ def self.plan_price
 			"USD" => 59.0,
 			"ZAR" => 809.0,
 			"GBP" => 46.0,
-			"AUD" => 75.0
+			"AUD" => 75.0,
+			"BRL" => 170.0
 		},
 		:forest_jan_17 => {
 			"EUR" => 96.0,
@@ -94,7 +98,8 @@ def self.plan_price
 			"USD" => 99.0,
 			"ZAR" => 1379.0,
 			"GBP" => 79.0,
-			"AUD" => 125.0
+			"AUD" => 125.0,
+			"BRL" => 270.0
 		}
 	}
 end
@@ -109,10 +114,12 @@ def self.currencies
 			:billing_api_key => "fmjVVijvPTcP0RxwEwWV3aCkk1kxVg8e"},
 		{ :name => "ZAR", :billing_site => "freshpo-zar-test", :exchange_rate => 0.095,
 			:billing_api_key => "test_HXf2ZGhes0Qbv8ckrXpxLVmuhhXSlZ51"},
-		{ :name => "GBP", :billing_site => "freshpo-gbp-test", :exchange_rate => 1.25,
+		{ :name => "GBP", :billing_site => "freshpo-gbp-test", :exchange_rate => 1.42,
 			:billing_api_key => "test_zsyEST93T9PuAcuNZ0Ehcd2cuCUU8FHgIup"},
-		{ :name => "AUD", :billing_site => "freshpo-aud-test", :exchange_rate => 1.29,
-			:billing_api_key => "test_7FdVurIC4fmcuyJrxfr93rdaYA2YSJhwu"}
+		{ :name => "AUD", :billing_site => "freshpo-aud-test", :exchange_rate => 0.78,
+			:billing_api_key => "test_7FdVurIC4fmcuyJrxfr93rdaYA2YSJhwu"},
+		{ :name => "BRL", :billing_site => "freshpo-brl-test", :exchange_rate => 0.29,
+			:billing_api_key => "test_usPCevjp1KFcrWcdHE3fw4pe8MHKzEdFu"}
 	]
 end
 

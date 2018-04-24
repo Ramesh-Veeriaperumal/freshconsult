@@ -10,7 +10,8 @@
       s.setAttribute("data-prdct-hash", "<%= BOT_CONFIG[:freshdesk_product_id] %>"); 
       s.setAttribute("data-ext-client-id", "<%= current_bot.external_id %>");
       s.setAttribute("data-env", "<%= BOT_CONFIG[:widget_code_env] %>");
-      s.setAttribute("data-customer-name", "<%= current_user ? current_user.name : BotConstants::WIDGET_CODE_DEFAULT_USER_NAME%>");
+      s.setAttribute("data-self-init", "<%= BotConstants::WIDGET_CODE_SELF_INIT %>");
+      s.setAttribute("data-init-type", "<%= BotConstants::WIDGET_CODE_INIT_TYPE %>");
       if (c) {
         s.onreadystatechange = s.onload = function() {
           if (!loaded) {
@@ -21,5 +22,14 @@
       }
       n.parentNode.insertBefore(s, n);
     }
-  })(document, window);
+  })(document, window, function () {
+    Freshbots.initiateWidget({
+      getClientParams: function () {
+        return {
+          "cstmr::nm": "<%= current_user.name if current_user%>",
+          "cstmr::eml": "<%= current_user.email if current_user%>"
+        };
+      }
+    });
+  });
 </script>

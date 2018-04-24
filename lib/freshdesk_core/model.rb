@@ -181,7 +181,7 @@ module FreshdeskCore::Model
                         "freshfone_subscriptions",
                         "freshfone_supervisor_controls",
                         "freshfone_caller_ids",
-                        
+
                         "freshcaller_accounts",
                         "freshcaller_agents",
 
@@ -273,7 +273,7 @@ module FreshdeskCore::Model
         end
       end
     end
-    
+
     def delete_dkim_r53_entries(account)
       account.outgoing_email_domain_categories.dkim_configured_domains.order('status ASC').each do |domain_category|
         domain_category.status = OutgoingEmailDomainCategory::STATUS['delete']
@@ -328,23 +328,23 @@ module FreshdeskCore::Model
 
     def delete_cloud_element_instances(account)
       if(installed_apps = cloud_elements_apps_enabled?(account))
-        installed_apps.each do |installed_app|  
+        installed_apps.each do |installed_app|
           app_name = installed_app.application.name
           formula_details = {
-            :freshdesk => { :id => installed_app.configs_helpdesk_to_crm_formula_instance, :template_id => Integrations::HELPDESK_TO_CRM_FORMULA_ID[app_name]}, 
+            :freshdesk => { :id => installed_app.configs_helpdesk_to_crm_formula_instance, :template_id => Integrations::HELPDESK_TO_CRM_FORMULA_ID[app_name]},
             :hubs => {:id => installed_app.configs_crm_to_helpdesk_formula_instance, :template_id => Integrations::CRM_TO_HELPDESK_FORMULA_ID[app_name]}
           }
 
           formula_details.keys.each do |key|
             metadata = {:formula_template_id => formula_details[key][:template_id], :id => formula_details[key][:id]}
             options = {:metadata => metadata, :app_id => installed_app.application_id, :object => Integrations::CloudElements::Constant::NOTATIONS[:formula]}
-            Integrations::CloudElementsDeleteWorker.new.perform(options)  
+            Integrations::CloudElementsDeleteWorker.new.perform(options)
           end
 
           [installed_app.configs_element_instance_id, installed_app.configs_fd_instance_id].each do |element_id|
             options = {:metadata => {:id => element_id}, :app_id => installed_app.application_id, :object => Integrations::CloudElements::Constant::NOTATIONS[:element]}
-            Integrations::CloudElementsDeleteWorker.new.perform(options)     
-          end 
+            Integrations::CloudElementsDeleteWorker.new.perform(options)
+          end
         end
       end
     end
@@ -400,14 +400,14 @@ module FreshdeskCore::Model
     def delete_sitemap(account)
       key = SITEMAP_OUTDATED % { :account_id => account.id }
       remove_portal_redis_key(key)
-      
+
       account.portals.each do |portal|
           portal.clear_sitemap_cache
       end
 
       path = "sitemap/#{account.id}/"
       objects = AwsWrapper::S3Object.find_with_prefix(S3_CONFIG[:bucket],path)
-      objects.each do |object| 
+      objects.each do |object|
         object.delete
       end
       Rails.logger.info ":::::: Sitemap is deleted (redis, cache & S3) for account #{account.id} ::::::"
@@ -454,5 +454,5 @@ module FreshdeskCore::Model
         account.rollback(:spam_detection_service)
       end
     end
-    
+
 end
