@@ -1110,7 +1110,7 @@ module Helpdesk
 				return text if text.blank?
 
 				Timeout.timeout(LARGE_TEXT_TIMEOUT) do
-					regex_arr = get_quoted_text_regex_array
+					regex_arr = get_quoted_text_regex_array address
 					tl = text.length
 
 					#calculates the matching regex closest to top of page
@@ -1155,7 +1155,7 @@ module Helpdesk
 				return {:body => text,:full_text => text}
 			end
 
-			def quoted_text_regex_array
+			def get_quoted_text_regex_array address
 				[
 					Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
 					Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
