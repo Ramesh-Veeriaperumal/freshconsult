@@ -158,14 +158,14 @@ class UsersController < ApplicationController
 
   def enable_falcon_for_all
     current_account.enable_falcon_ui
-    Rails.logger.info("Falcon for all - #{User.current.email}")
+    Rails.logger.info("Falcon for all :: #{User.current.email} :: #{User.current.id} :: #{Account.current.id}")
     return head :no_content
   end
 
   def disable_old_helpdesk
     current_account.add_feature(:disable_old_ui)
     current_account.rollback(:admin_only_mint) if current_account.admin_only_mint_enabled?
-    Rails.logger.info("Disable OLD UI - #{User.current.email}")
+    Rails.logger.info("Disable OLD UI :: #{User.current.email} :: #{User.current.id} :: #{Account.current.id}")
     return head :no_content
   end
 

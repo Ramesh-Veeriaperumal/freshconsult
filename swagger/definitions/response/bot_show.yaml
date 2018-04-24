@@ -49,3 +49,12 @@ properties:
     description: Ids of categories associated to the bot
     items:
       type: integer
+  widget_code_src:
+    type: string
+    description: Url to get bot widget code
+  product_hash:
+    type: string
+    description: Freshdesk product hash
+  environment:
+    type: string
+    description: Bot environment

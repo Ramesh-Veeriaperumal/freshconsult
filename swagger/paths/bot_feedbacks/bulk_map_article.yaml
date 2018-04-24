@@ -1,0 +1,32 @@
+put:
+  tags: [Bot]
+  summary: Map an article to multiple unanswered questions
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: ID of the bot
+      required: true
+    - name: data
+      in: body
+      required: true
+      schema:
+        allOf:
+          - $ref: '#/definitions/bulk_action_input'
+          - $ref: '#/definitions/map_article_input'
+  responses:
+    204:
+      description: Success
+    202:
+      description: Accepted
+      schema:
+        $ref: '#/definitions/partial_success_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    404:
+      description: Bot not found

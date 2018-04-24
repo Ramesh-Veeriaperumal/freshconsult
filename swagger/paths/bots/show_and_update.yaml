@@ -33,7 +33,7 @@ put:
     in: body
     required: true
     schema:
-      $ref: '#/definitions/bot'
+      $ref: '#/definitions/bot_update_req'
   responses:
     204:
       description: Success

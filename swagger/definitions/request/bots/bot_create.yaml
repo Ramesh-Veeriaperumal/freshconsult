@@ -1,0 +1,28 @@
+type: object
+required:
+  - name
+  - avatar
+  - portal_id
+  - header
+  - theme_colur
+  - widget_size
+properties:
+  name:
+    type: string
+  avatar:
+    type: object
+    properties:
+      url:
+        type: string
+      avatar_id:
+        type: string
+      is_default:
+        type: boolean
+  portal_id:
+    type: integer
+  header:
+    type: string
+  theme_colur: 
+    type: string
+  widget_size:
+    type: string

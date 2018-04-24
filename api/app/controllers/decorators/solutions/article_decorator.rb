@@ -2,7 +2,7 @@ class Solutions::ArticleDecorator < ApiDecorator
   delegate :title, :description, :desc_un_html, :user_id, :status, :seo_data, :language_id,
            :parent, :parent_id, :draft, :attachments, :modified_at, :modified_by, :id, to: :record
 
-  SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution]
+  SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search]
 
   def initialize(record, options)
     super(record)
@@ -24,6 +24,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       type: parent.art_type,
       category_id: parent.solution_category_meta.id,
       folder_id: parent.solution_folder_meta.id,
+      folder_visibility: parent.solution_folder_meta.visibility,
       agent_id: user_id,
       path: record.to_param,
       modified_at: modified_at.try(:utc),

@@ -19,10 +19,15 @@ class Solution::Article < ActiveRecord::Base
     a.add proc { |x| x.parent.hits }, as: :hits
     a.add :tags
     a.add :seo_data
-    a.add :attachments
+    a.add :language_id
     a.add :account_id
     a.add proc { |x| x.utc_format([x.created_at, x.parent.created_at].max) }, as: :created_at
     a.add proc { |x| x.utc_format([x.updated_at, x.parent.updated_at].max) }, as: :updated_at
+  end
+
+  api_accessible :central_publish_destroy do |a|
+    a.add :parent_id, as: :id
+    a.add :account_id
   end
 
   api_accessible :votes do |a|

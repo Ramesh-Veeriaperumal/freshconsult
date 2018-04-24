@@ -1,0 +1,63 @@
+get:
+  tags: [contact note]
+  summary: List all
+  parameters:
+    - name: contact_id
+      in: path
+      required: true
+      description: An unique identifier
+      type: integer
+      format: int64
+      minimum: 1
+      x-example: 10
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          notes:
+            type: array
+            items:
+              $ref: '#/definitions/contact_note_response'
+          meta:
+            type: object
+            allOf:
+              - $ref: '#/definitions/meta'
+              - properties:
+                  more_items:
+                    type: boolean
+                    description: indicates next page availability
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+post:
+  tags: [contact note]
+  description: Create contact note
+  parameters:
+    - name: contact_id
+      in: path
+      required: true
+      description: An unique identifier
+      type: integer
+      format: int64
+      minimum: 1
+      x-example: 10
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/contact_note_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/contact_note_response'
+    404:
+      description: Note not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

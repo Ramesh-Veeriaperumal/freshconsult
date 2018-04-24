@@ -98,6 +98,18 @@ module Ember
       params_hash
     end
 
+    def dalli_client_unstub
+      Dalli::Client.any_instance.unstub(:get)
+      Dalli::Client.any_instance.unstub(:delete)
+      Dalli::Client.any_instance.unstub(:set)
+    end
+
+    def dalli_client_stub
+      Dalli::Client.any_instance.stubs(:get).returns(nil)
+      Dalli::Client.any_instance.stubs(:delete).returns(true)
+      Dalli::Client.any_instance.stubs(:set).returns(true)      
+    end
+
     def test_create_with_incorrect_attachment_type
       attachment_ids = %w(A B C)
       params_hash = create_note_params_hash.merge(attachment_ids: attachment_ids)
@@ -1091,6 +1103,40 @@ module Ember
       response = parse_response @response.body
       assert_equal 6, response.size
       Account.unstub(:current)
+    end
+
+    def test_ticket_conversation_with_ner_data
+      dalli_client_unstub
+      enable_cache do
+        Sidekiq::Testing.inline! do
+          customer = add_new_user(@account)
+          ticket = create_ticket({:subject => "TEST_TICKET", :description => "FRESH WORKS Test Ticket"})
+          note = create_note({:user_id => customer.id, :incoming => 1, :private => false, :ticket_id => ticket.id, :source => 0, :body => "Lets meet at 5pm today", :body_html => "<div>Lets meet at 5pm today</div>"})
+          get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id)
+          assert_response 200
+          response = @response.api_meta[:ner_data]
+          assert_not_match response, nil
+        end
+      end
+      ensure
+        dalli_client_stub
+    end
+
+    def test_ticket_conversation_without_ner_data
+      dalli_client_unstub
+      enable_cache do
+        Sidekiq::Testing.inline! do
+          customer = add_new_user(@account)
+          ticket = create_ticket({:subject => "TEST_TICKET", :description => "FRESH WORKS Test Ticket"})
+          note = create_note({:user_id => customer.id, :incoming => 1, :private => false, :ticket_id => ticket.id, :source => 0, :body => "Test note without ner data", :body_html => "<div>Test note without ner data</div>"})
+          get :ticket_conversations, controller_params(version: 'private', id: ticket.display_id)
+          assert_response 200
+          response = @response.api_meta[:ner_data]
+          assert_equal response, nil
+        end
+      end
+      ensure
+        dalli_client_stub
     end
 
     def test_ticket_conversations_with_requester

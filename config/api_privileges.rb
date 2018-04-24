@@ -50,6 +50,11 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_account do
     resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config]
+    resource :"channel/freshcaller/account", only: [:destroy]
+  end
+
+  manage_email_settings do
+    resource :"ember/admin/onboarding", only: %i[forward_email_confirmation test_email_forwarding]
   end
 
   reply_ticket do
@@ -81,6 +86,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/company", only: %i(index show activities)
     resource :"ember/contact/todo", only: [:index]
     resource :"ember/search/customer", only: [:results]
+    resource :customer_note, only: [:show, :index]
     resource :"ember/search/multiquery", only: [:search_results]
   end
 
@@ -92,6 +98,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/search/autocomplete", only: [:companies]
     resource :"ember/tickets/requester", only: [:update]
     resource :"ember/contact/todo", only: [:create, :update, :destroy]
+    resource :customer_note, only: [:create, :update, :destroy]
   end
 
   manage_users do
@@ -115,10 +122,9 @@ Authority::Authorization::PrivilegeList.build do
   admin_tasks do
     resource :"ember/admin/onboarding", only: %i[update_channel_config]
     resource :"ember/contact", only: [:update_password]
-    resource :'ember/trial_widget', only: %i[index sales_manager]
+    resource :'ember/trial_widget', only: %i[index sales_manager complete_step]
     resource :'ember/contact_password_policy', only: [:index]
     resource :'ember/agent_password_policy', only: [:index] # Not using it now.
-    resource :"ember/admin/bot", only: %i[index new create show update map_categories mark_completed_status_seen enable_on_portal]
   end
 
   edit_ticket_properties do
@@ -152,14 +158,30 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/search/solution", only: [:results]
     resource :"ember/solutions/article", only: [:index,:article_content]
     resource :"ember/search/multiquery", only: [:search_results]
+    resource :"ember/admin/bot", only: [:bot_folders]
+  end
+
+  manage_solutions do
+    resource :"ember/admin/bot", only: [:create_bot_folder]
   end
 
   view_reports do
     resource :"ember/dashboard", only: %i(unresolved_tickets_data ticket_trends ticket_metrics)
     resource :"ember/year_in_review", only: [:share]
+    resource :"ember/admin/bot", only: %i[analytics]
   end
 
   view_admin do 
     resource :"ember/agent", only: [:complete_gdpr_acceptance]
   end
+
+  manage_bots do
+    resource :"ember/admin/bot", only: %i[new create show index update map_categories mark_completed_status_seen enable_on_portal]
+  end
+
+  view_bots do
+    resource :"ember/admin/bot_feedback", only: %i[index bulk_delete bulk_map_article create_article] 
+    resource :"ember/admin/bot", only: %i[index show]
+  end
+
 end

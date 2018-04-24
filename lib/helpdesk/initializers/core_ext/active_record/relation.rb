@@ -73,6 +73,15 @@ module ActiveRecord
   end
 
   class Base
+
+    attr_accessor :event_uuid
+
+    after_commit :generate_event_id
+
+    def generate_event_id
+      self.event_uuid = UUIDTools::UUID.timestamp_create.hexdigest
+    end
+
     class << self
       delegate :update_all_with_publish, :to => :scoped
     end

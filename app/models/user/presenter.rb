@@ -1,20 +1,19 @@
 class User < ActiveRecord::Base
   include RepresentationHelper
 
+  DATETIME_FIELDS = [:last_login_at, :current_login_at, :last_seen_at, :blocked_at, :deleted_at, :created_at, :updated_at]
+
   acts_as_api
 
   api_accessible :central_publish do |u|
     u.add :id
     u.add :name
+    u.add :agent_or_contact, as: :type
     u.add :email
-    u.add :last_login_at
-    u.add :current_login_at
     u.add :last_login_ip
     u.add :current_login_ip
     u.add :login_count
     u.add :failed_login_count
-    u.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
-    u.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
     u.add :account_id
     u.add :active
     u.add :customer_id
@@ -26,7 +25,6 @@ class User < ActiveRecord::Base
     u.add :description
     u.add :time_zone
     u.add :posts_count
-    u.add :last_seen_at
     u.add :deleted
     u.add :user_role
     u.add :delta
@@ -34,9 +32,7 @@ class User < ActiveRecord::Base
     u.add :fb_profile_id
     u.add :language
     u.add :blocked
-    u.add proc { |x| x.utc_format(x.blocked_at) }, as: :blocked_at
     u.add :address
-    u.add proc { |x| x.utc_format(x.deleted_at) }, as: :deleted_at
     u.add :whitelisted
     u.add :external_id
     u.add :preferences
@@ -45,5 +41,12 @@ class User < ActiveRecord::Base
     u.add :extn
     u.add :parent_id
     u.add :unique_external_id
+    DATETIME_FIELDS.each do |key|
+      u.add proc { |x| x.utc_format(x.send(key)) }, as: key
+    end
+  end
+
+  def agent_or_contact
+    helpdesk_agent ? 'agent' : 'contact'
   end
 end

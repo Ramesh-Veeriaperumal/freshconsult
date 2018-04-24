@@ -102,7 +102,7 @@ class Workers::MergeTickets
       next unless Helpdesk::SchemaLessTicket::COUNT_COLUMNS_FOR_REPORTS.include?(category)
       note.notable.schema_less_ticket.safe_send("update_#{category}_count", "create")
       note.notable.schema_less_ticket.save
-      note.manual_publish_to_rmq("create", RabbitMq::Constants::RMQ_REPORTS_NOTE_KEY)
+      note.manual_publish(["create", RabbitMq::Constants::RMQ_REPORTS_NOTE_KEY], [])
     end
     # ACTIVTIIES: Adding ticket merge activity in target ticket
     target_ticket.activity_type = {:type => "ticket_merge_target", 
@@ -111,6 +111,6 @@ class Workers::MergeTickets
     # REPORTS: while doing manual publish of note it will take note's created at and hence it will not be
     # reflected in latest row. Doing a manual push for target ticket here so that the latest row of the ticket will 
     # have all the customer reply and agent reply count updated.
-    target_ticket.manual_publish_to_rmq("update", RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY, {:manual_publish => true})
+    target_ticket.manual_publish(["update", RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY, {:manual_publish => true}], [:update, { misc_changes: target_ticket.activity_type.dup }])
   end
 end

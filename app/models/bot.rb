@@ -93,7 +93,7 @@ class Bot < ActiveRecord::Base
     default = default_avatar?
     avatar_id = additional_settings[:avatar_id] if default
     avatar_hash = {
-      url: cdn_url,
+      url: thumbnail_cdn_url,
       avatar_id: avatar_id,
       is_default: default
     }
@@ -107,14 +107,18 @@ class Bot < ActiveRecord::Base
     profile_hash
   end
 
-  def cdn_url
+  def thumbnail_cdn_url
     return if default_avatar?
-    cdn_url = logo.content.url.gsub(BOT_CONFIG[:avatar_bucket_url], BOT_CONFIG[:avatar_cdn_url]) if logo && logo.content
-    cdn_url
+    thumb_cdn_url = logo.content.url(:thumb).gsub(BOT_CONFIG[:avatar_bucket_url], BOT_CONFIG[:avatar_cdn_url]) if logo && logo.content
+    thumb_cdn_url
   end
 
   def category_ids=(category_ids = [])
     self.portal_solution_category_ids = self.portal.portal_solution_categories.where(solution_category_meta_id: category_ids).pluck(:id)
+  end
+
+  def category_ids
+    self.solution_category_metum_ids
   end
 
   private

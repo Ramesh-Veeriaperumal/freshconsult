@@ -1,0 +1,11 @@
+type: object
+allOf:
+  - $ref: '#/definitions/customer_note_response'
+  - properties:
+      company_id:
+        type: integer
+        format: int64
+      category_id:
+        type: integer
+        format: int64
+  - $ref: '#/definitions/extension_generic'

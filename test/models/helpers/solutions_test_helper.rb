@@ -61,6 +61,7 @@ module SolutionsTestHelper
       name: category.name,
       description: category.description,
       portal_ids: category.parent.portal_ids,
+      language_id: category.language_id,
       account_id: category.account_id,
       created_at: category.created_at.try(:utc).try(:iso8601),
       updated_at: category.updated_at.try(:utc).try(:iso8601)
@@ -75,6 +76,7 @@ module SolutionsTestHelper
       description: folder.description,
       visibility: parent.visibility,
       category_id: parent.solution_category_meta_id,
+      language_id: folder.language_id,
       account_id: folder.account_id,
       created_at: folder.created_at.try(:utc).try(:iso8601),
       updated_at: folder.updated_at.try(:utc).try(:iso8601)
@@ -98,7 +100,7 @@ module SolutionsTestHelper
       hits: parent.hits,
       tags: article.tags,
       seo_data: article.seo_data,
-      attachments: article.attachments,
+      language_id: article.language_id,
       account_id: article.account_id,
       created_at: article.created_at.try(:utc).try(:iso8601),
       updated_at: article.updated_at.try(:utc).try(:iso8601)

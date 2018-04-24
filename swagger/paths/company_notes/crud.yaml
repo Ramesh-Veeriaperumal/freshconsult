@@ -1,0 +1,72 @@
+get:
+  tags: ['company note']
+  summary: Show company note
+  description: The S3 url of the note content will be given else the content will be given along with other data.
+  parameters:
+    - name: company_id
+      in: path
+      required: true
+      description: An unique identifier
+      type: integer
+      format: int64
+      minimum: 1
+      x-example: 10
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/company_note_response'
+    404:
+      description: Note not found
+
+delete:
+  tags: ['company note']
+  summary: Delete company note
+  description: Destroys the note, will not be able to restore
+  parameters:
+    - name: company_id
+      in: path
+      required: true
+      description: An unique identifier
+      type: integer
+      format: int64
+      minimum: 1
+      x-example: 10
+    - $ref: '#/parameters/id'
+  responses:
+    204:
+      description: Success
+    404:
+      description: Note not found
+
+put:
+  tags: ['company note']
+  summary: Update company note
+  description: The S3 url of the note content will be given else the content will be given along with other data.
+  parameters:
+    - name: company_id
+      in: path
+      required: true
+      description: An unique identifier
+      type: integer
+      format: int64
+      minimum: 1
+      x-example: 10
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/company_note_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/company_note_response'
+    404:
+      description: Note not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

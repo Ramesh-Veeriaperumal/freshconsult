@@ -1,0 +1,38 @@
+get:
+  tags: [Bot]
+  summary: Unanswered questions list
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: ID of the bot
+      required: true
+    - name: useful
+      in: query
+      type: integer
+      description: global useful value
+      enum: [1, 2, 3]
+    - name: start_at
+      in: query
+      type: string
+      format: date-time
+      required: true
+    - name: end_at
+      in: query
+      type: string
+      format: date-time
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/bot_feedback_index'
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    404:
+      description: Resource not found

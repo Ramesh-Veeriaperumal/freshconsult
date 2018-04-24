@@ -26,7 +26,8 @@ module Freshbots
             mtdtPrprts: {
               bckgrndClr: bot.template_data[:theme_colour],
               sz: bot.template_data[:widget_size],
-              prtl: portal_url(bot)
+              prtl: portal_url(bot),
+              acntUrl: account_url(bot)
             }
           }
         }.to_json
@@ -52,11 +53,22 @@ module Freshbots
             mtdtPrprts: {
               bckgrndClr: bot.template_data[:theme_colour],
               sz: bot.template_data[:widget_size],
-              prtl: portal_url(bot)
+              prtl: portal_url(bot),
+              acntUrl: account_url(bot)
             }
           }
         }.to_json
         response = RestClient.put url, payload, headers
+        [response, response.code]
+      end
+
+      def analytics(bot_external_id, start_date, end_date)
+        begin
+          url = BOT_CONFIG[:analytics_url]
+          response = RestClient.get url, analytics_headers(bot_external_id, start_date, end_date)
+        rescue => e
+          return [e.response, e.response.code.to_i]
+        end
         [response, response.code]
       end
 
@@ -82,17 +94,29 @@ module Freshbots
           }
         end
 
+        def analytics_headers(bot_external_id, start_date, end_date)
+          {
+            'Product-Id' => (BOT_CONFIG[:freshdesk_product_id]).to_s,
+            'External-Client-Id' => bot_external_id,
+            'Params' => { strtDt: start_date, endDt: end_date }
+          }
+        end
+
         def profile_picture_url(bot)
           if bot.additional_settings[:is_default]
             bot.additional_settings[:default_avatar_url]
           else
-            bot.cdn_url
+            bot.thumbnail_cdn_url
           end
         end
 
         def portal_url(bot)
           portal = bot.portal
           "#{portal.url_protocol}://#{portal.host}"
+        end
+
+        def account_url(bot)
+          "https://#{bot.account.full_domain}"
         end
     end
   end

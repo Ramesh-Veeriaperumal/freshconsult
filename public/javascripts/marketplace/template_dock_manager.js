@@ -1,11 +1,12 @@
 var CustomIparamAPI = Class.create({});
 var RequestAPI = Class.create({
-  Initialize: function(bundle) {
+  initialize: function(bundle) {
     this.ajax = jQuery.ajax;
     this.dpUrl = '/mkp/data-pipe.json';
     this.features = bundle.app.features;
     this.isLocalApp = bundle.app.isLocalApp;
-    this.CsrfToken = $('meta[name=csrf-token]').attr('content');
+    this.CsrfToken = jQuery('meta[name=csrf-token]').attr('content');
+    this.bundle = bundle;
   }
 })
 var TemplateDockManager   = Class.create({
@@ -780,7 +781,13 @@ var TemplateDockManager   = Class.create({
           jQuery(that.extensionsWrapper).empty()
                                         .append(JST["marketplace/marketplace_install_base"](install_extension));
           if (install_extension.configs_url) {
-            var app = { 'url': install_extension.configs_url, features: install_extension.features }; // Details about the app
+            var app = {
+              'id': that.extensionId,
+              'versionId': that.versionId,
+              'url': install_extension.configs_url,
+              'features': install_extension.features,
+              'isInstall': true
+            }; // Details about the app
             var bundle = { 'app': app };
             var initializeApp = false;
             // Initialize Parent and render iframe
