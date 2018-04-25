@@ -55,7 +55,11 @@ class User < ActiveRecord::Base
   end
 
   def model_changes_for_central
-    @model_changes
+    changes = @model_changes
+    changes.merge!({
+      "single_access_token" => ["*", "*"]
+    }) if @model_changes.key?("single_access_token")
+    changes
   end
 
   def relationship_with_account
