@@ -1,29 +1,34 @@
 class Bot::FeedbackProcessor
-
-  EXPECTED_FIELDS = [:queryId, :extClientId, :queryDate, :ticketId, :query, :type, :customerId, :clientId]
+  require 'date'
+  EXPECTED_FIELDS = [:domainName, :queryId, :extClientId, :queryDate, :ticketId, :query, :type, :customerId, :clientId]
 
   def initialize(args)
-    @account_id       = args[:account_id]
-    @payload          = args[:payload]
+    @payload = args[:payload]
   end
 
   def process
-    Sharding.select_shard_of(@account_id) do
-      save_bot_feedback if valid_account? && valid_bot?
+    @domain = URI.parse(@payload[:domainName]).host
+    @shard_mapping = ShardMapping.fetch_by_domain(@domain)
+    if @shard_mapping
+      Sharding.select_shard_of(@shard_mapping.account_id) do
+        save_bot_feedback if valid_account? && valid_bot?
+      end
+    else
+      Rails.logger.error "FeedbackProcessorError : Domain : --- #{@domain} does not exist"
     end
   rescue => e
-    Rails.logger.error "FeedbackProcessorError : Account : --- #{@account_id} --- Payload : --- #{@payload} --- Error: --- #{e.inspect}"
+    Rails.logger.error "FeedbackProcessorError : Domain : --- #{@domain} --- Payload : --- #{@payload} --- Error: --- #{e.inspect}"
   end
 
   def valid?
-    return false unless @account_id.present? && @payload.present?
+    return false unless @payload.present?
     EXPECTED_FIELDS.all? { |pay| @payload[pay].present? }
   end
 
   private
 
     def valid_account?
-      return false unless (@account = Account.find_by_id(@account_id))
+      return false unless (@account = Account.find_by_id(@shard_mapping.account_id))
       @account.make_current
       return false unless @account.support_bot_enabled?
       return true
@@ -52,10 +57,10 @@ class Bot::FeedbackProcessor
       populate_category_useful
       {
         bot_id:               @bot.id,
-        account_id:           @account_id,
+        account_id:           @account.id,
         category:             @category,
         useful:               @useful,
-        received_at:          @payload[:queryDate],
+        received_at:          Time.at(Time.strptime(@payload[:queryDate].to_s,'%Q').to_f).utc,
         query_id:             @payload[:queryId],
         query:                @payload[:query],
         external_info:        { chat_id: @payload[:ticketId], customer_id: @payload[:customerId], client_id: @payload[:clientId]},

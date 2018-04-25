@@ -1,13 +1,14 @@
 module Subscription::Currencies::Constants
 
-  BILLING_CURRENCIES = [ "EUR", "INR", "USD", "ZAR", "GBP", "AUD" ]
+  BILLING_CURRENCIES = [ "EUR", "INR", "USD", "ZAR", "GBP", "AUD", "BRL"]
   DEFAULT_CURRENCY = "USD"
 
   COUNTRY_MAPPING = 	{
     "INDIA" => "INR",
     "SOUTH AFRICA" => "ZAR",
     "ENGLAND" => "GBP",
-    "AUSTRALIA" => "AUD"
+    "AUSTRALIA" => "AUD",
+    "BRAZIL" => "BRL"
   }
 
   EUR_COUNTRIES = [ "AUSTRIA", "BELGIUM", "CYPRUS", "ESTONIA", "FINLAND", "FRANCE", "GERMANY", 
@@ -24,7 +25,8 @@ module Subscription::Currencies::Constants
     "USD" => "$",
     "ZAR" => "R",
     "GBP" => "\u00A3",
-    "AUD" => "\u0024"
+    "AUD" => "\u0024",
+    "BRL" => "R$"
   }
 
 end

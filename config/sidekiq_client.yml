@@ -219,6 +219,7 @@ defaults: &defaults
     - [mixpanel_queue]
     - [bot_cleanup]
     - [delete_archive_ticket]
+    - [email_service_provider]
     - [calculate_sla]
     - [freshcaller_account_delete]
 
