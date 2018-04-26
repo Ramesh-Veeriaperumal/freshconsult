@@ -17,8 +17,14 @@ module Dkim::Methods
   end
 
   def new_record?(domainkey, record_type)
-    rrsets = AWS::Route53::HostedZone.new(DNS_CONFIG["hosted_zone"]).rrsets
-    !rrsets[eval(domainkey), record_type].exists?
+    route53_client = AWS::Route53::Client.new(:region => PodConfig["region"])
+    response = route53_client.list_resource_record_sets({
+      hosted_zone_id: PodDnsUpdate::DNS_CONFIG["hosted_zone"],
+      start_record_name: domainkey,
+      start_record_type: record_type,
+      max_items: 1
+    })
+    !(response.resource_record_sets && response.resource_record_sets.first[:name] == domainkey)
   end
 
   def build_record_attributes(action, record_type, record_name, record_value)
