@@ -559,17 +559,6 @@ module Ember
         end
       end
 
-      def test_training_completed_with_invalid_state
-        enable_bot do
-          set_auth_header
-          bot = create_bot({ product: true})
-          bot.training_completed!
-          post :training_completed, controller_params(version: 'private', id: bot.external_id)
-          assert_response 409
-          match_json(request_error_pattern(:invalid_bot_state))
-        end
-      end
-
       def test_clear_status_redis
         enable_bot do
           bot = create_bot({ product: true})
@@ -592,16 +581,6 @@ module Ember
           bot = create_bot({ product: true})
           post :mark_completed_status_seen, controller_params(version: 'private', id: bot.id+20)
           assert_response 404
-        end
-      end
-
-      def test_clear_status_redis_with_invalid_state
-        enable_bot do
-          bot = create_bot({ product: true})
-          bot.training_inprogress!
-          post :mark_completed_status_seen, controller_params(version: 'private', id: bot.id)
-          assert_response 409
-          match_json(request_error_pattern(:invalid_bot_state))
         end
       end
 

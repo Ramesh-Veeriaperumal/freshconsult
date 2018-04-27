@@ -158,7 +158,6 @@ api_error_messages:
   cant_access_summary: "The %{feature} feature is not available for %{assoc_tkt}"
   invalid_category_ids: "Categories should be associated to the portal."
   invalid_category_id: "Category should be associated to the bot."
-  invalid_bot_state: "Cannot perform the action as bot state is invalid"
   invalid_bot_feedback_state: "Cannot perform the action as bot feedback state is invalid"
   invalid_article: "Article id is invalid"
   invalid_feedback: "Feedback id is invalid"
