@@ -54,15 +54,15 @@ class Bot < ActiveRecord::Base
   end
 
   def training_not_started!
-    set_others_redis_key(status_redis_key, BotConstants::BOT_STATUS[:training_not_started])
+    set_others_redis_key(status_redis_key, BotConstants::BOT_STATUS[:training_not_started], nil)
   end
 
   def training_inprogress!
-    set_others_redis_key(status_redis_key, BotConstants::BOT_STATUS[:training_inprogress])
+    set_others_redis_key(status_redis_key, BotConstants::BOT_STATUS[:training_inprogress], nil)
   end
 
   def training_completed!
-    set_others_redis_key(status_redis_key, BotConstants::BOT_STATUS[:training_completed])
+    set_others_redis_key(status_redis_key, BotConstants::BOT_STATUS[:training_completed], nil)
   end
 
   def clear_status
