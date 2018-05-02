@@ -7,7 +7,7 @@ class Account < ActiveRecord::Base
                    :facebook_page_redirect, :announcements_tab, :archive_ghost,
                    :ticket_central_publish, :solutions_central_publish, :es_msearch,
                    :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
-                   :whitelist_sso_login, :apigee, :admin_only_mint, , :customer_notes_s3, 
+                   :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, 
                    :imap_error_status_check, :audit_logs_central_publish]
    DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
