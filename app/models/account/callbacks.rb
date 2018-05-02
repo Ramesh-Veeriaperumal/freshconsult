@@ -36,6 +36,8 @@ class Account < ActiveRecord::Base
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
   after_commit :trigger_launchparty_feature_callbacks, on: :create
+  after_commit :disable_freshid, on: :update, :if => [:sso_enabled_freshid_account?, :freshid_migration_not_in_progress?]
+  after_commit :enable_freshid, on: :update, :if => [:sso_disabled?, :freshid_migration_not_in_progress?]
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_signup_allowed?
 
 
@@ -117,6 +119,16 @@ class Account < ActiveRecord::Base
   
   alias_method :destroy_freshid_account_on_rollback, :destroy_freshid_account
 
+  def enable_freshid
+    Rails.logger.info "FRESHID Enqueuing worker for migration :: a=#{self.id}, d=#{self.full_domain}"
+    Freshid::AgentsMigration.perform_async
+  end
+
+  def disable_freshid
+    Rails.logger.info "FRESHID Enqueuing worker for revert migration :: a=#{self.id}, d=#{self.full_domain}"
+    Freshid::AgentsMigration.perform_async({ revert_migration: true })
+  end
+
   # Need to revisit when we push all the events for an account
   def central_publish_worker_class
     "CentralPublishWorker::AccountDeletionWorker"
@@ -170,8 +182,20 @@ class Account < ActiveRecord::Base
       @all_changes.key?("name")
     end
 
+    def sso_enabled_changed?
+      @all_changes.key?('sso_enabled')
+    end
+
     def update_freshid?
       freshid_enabled? && (account_domain_changed? || account_name_changed?)
+    end
+
+    def sso_enabled_freshid_account?
+      sso_enabled? && sso_enabled_changed? && freshid_enabled?
+    end
+
+    def sso_disabled?
+      !sso_enabled? && sso_enabled_changed? && freshid_signup_allowed?
     end
 
     def remove_email_restrictions
@@ -454,6 +478,10 @@ class Account < ActiveRecord::Base
 
     def freshid_signup_allowed?
       redis_key_exists? FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED
+    end
+
+    def freshid_migration_not_in_progress?
+      !freshid_migration_in_progress?
     end
 
     def update_bot

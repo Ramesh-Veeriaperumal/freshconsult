@@ -219,6 +219,7 @@ defaults: &defaults
     - [contact_delete_forever]
     - [email_service_provider]
     - [calculate_sla]
+    - [freshid_agents_migration]
 
 development:
   <<: *defaults
