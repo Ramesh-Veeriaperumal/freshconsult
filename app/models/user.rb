@@ -181,6 +181,14 @@ class User < ActiveRecord::Base
     end
   end
 
+  def was_agent?
+    preferences[:user_preferences][:was_agent]
+  end
+
+  def agent_deleted_forever?
+    preferences[:user_preferences][:agent_deleted_forever]
+  end
+
   def facebook_avatar( facebook_id, profile_size = "square")
     "https://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
   end
@@ -608,6 +616,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def delete_forever!
+    Users::ContactDeleteForeverWorker.perform_async({:user_id => self.id})
+  end
+
   def update_account_info_and_verify(user_params)
     self.account.update_attributes!({:name => user_params[:company_name]}) if user_params.key?(:company_name) 
     self.account.main_portal.update_attributes!({:name => user_params[:company_name]}) if user_params.key?(:company_name)
@@ -913,7 +925,13 @@ class User < ActiveRecord::Base
   def make_customer
     return true if customer?
     set_company_name
-    if update_attributes({:helpdesk_agent => false, :deleted => false})
+
+    self.helpdesk_agent = false
+    self.deleted = false
+    new_pref = { :was_agent => true }
+    self.merge_preferences = { :user_preferences => new_pref }
+
+    if self.save
       subscriptions.destroy_all
       self.cti_phone = nil
       agent.destroy
