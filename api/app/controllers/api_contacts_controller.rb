@@ -66,10 +66,22 @@ class ApiContactsController < ApiApplicationController
   end
 
   def restore
-    if @item.deleted && @item.parent_id != 0
+    if (@item.deleted && @item.parent_id != 0) || @item.agent_deleted_forever?
       head 404
     else
       @item.update_attribute(:deleted, false)
+      head 204
+    end
+  end
+
+  def hard_delete
+    if params[:force] == "true"
+      @item.update_attribute(:deleted, true)
+    end
+    if !@item.deleted
+      head 400
+    else
+      @item.delete_forever!
       head 204
     end
   end

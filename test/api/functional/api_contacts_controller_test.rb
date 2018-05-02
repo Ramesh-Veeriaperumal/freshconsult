@@ -72,7 +72,8 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_show_a_contact
     sample_user = add_new_user(@account)
     get :show, construct_params(id: sample_user.id)
-    match_json(contact_pattern(sample_user.reload))
+    ignore_keys = [:was_agent, :agent_deleted_forever]
+    match_json(contact_pattern(sample_user.reload).except(*ignore_keys))
     assert_response 200
   end
 
@@ -81,7 +82,8 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = add_new_user(@account)
     sample_user.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
     get :show, construct_params(id: sample_user.id)
-    match_json(contact_pattern(sample_user.reload))
+    ignore_keys = [:was_agent, :agent_deleted_forever]
+    match_json(contact_pattern(sample_user.reload).except(*ignore_keys))
     assert_response 200
   end
 
@@ -783,6 +785,27 @@ class ApiContactsControllerTest < ActionController::TestCase
     get :show, construct_params(id: sample_user.id)
     match_json(deleted_contact_pattern(sample_user.reload))
     assert_response 200
+  end
+
+  #hard delete user
+  def test_hard_delete_a_normal_user
+    sample_user = add_new_user(@account)
+    delete :hard_delete, construct_params(id: sample_user.id)
+    assert_response 400
+  end
+
+  def test_hard_delete_a_deleted_user
+    sample_user = add_new_user(@account)
+    sample_user.update_column(:deleted, true)
+    delete :hard_delete, construct_params(id: sample_user.id)
+    assert_response 204
+  end
+
+  def test_hard_delete_a_non_existing_user
+    sample_user = add_new_user(@account)
+    sample_user.update_column(:deleted, true)
+    delete :hard_delete, construct_params(id: sample_user.id + 100)
+    assert_response 404
   end
 
   # User Index and Filters

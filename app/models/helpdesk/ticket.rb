@@ -439,6 +439,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     (source == SOURCE_KEYS_BY_TOKEN[:outbound_email]) && Account.current.compose_email_enabled?
   end
 
+  def parent_ticket?
+    self.associated_ticket? && TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[self.association_type] == :assoc_parent
+  end
+
   # Fetch NER data from cache.
   def fetch_ner_data
     key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.id }
