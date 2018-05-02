@@ -141,7 +141,10 @@ class User < ActiveRecord::Base
   end
 
   def set_language
-    self.language = account.language if language.nil? || validate_language(language)
+    self.language = account.language if language.nil? ||
+                                        validate_language(language) ||
+                                        !Account.current.has_feature?(:multi_language)
+
   end
 
   def detect_language?
