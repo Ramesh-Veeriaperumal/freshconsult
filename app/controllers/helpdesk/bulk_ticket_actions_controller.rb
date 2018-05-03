@@ -54,7 +54,6 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
         rescue Exception => e
           NewRelic::Agent.notice_error(e,{:description => "error occured while adding key in redis"})
         end
-        #Resque.enqueue(Workers::BulkReplyTickets, params_for_queue)
         args = params_for_queue
         Tickets::BulkTicketReply.perform_async(args)
       end

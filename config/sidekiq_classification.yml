@@ -31,8 +31,9 @@
     - livechat_worker
     - smart_filter_tweet_to_ticket
     - channel_framework_command
+    - toggle_agent_from_all_roundrobin_groups
+    - add_agent_to_round_robin
     - calculate_sla
-    - update_taggables_queue
 
   :central_realtime:
     - central_publish
@@ -97,6 +98,7 @@
     - launch_party_actions
     - ml_solutions_training
     - customer_note_body_queue
+    - update_taggables_queue
   :maintainence:
     - select_all_tickets
     - select_all_batcher
@@ -139,6 +141,9 @@
     - natero_worker
     - reports_no_activity
     - bot_cleanup
+    - restore_spam_tickets
+    - nullify_deleted_custom_field_data
+    - contact_delete_forever
   :external:
     - code_console_execution
     - integrations
@@ -219,3 +224,22 @@
     - premium_supervisor
     - premium_sla_reminders
     - sla_reminders
+  :gamification:
+    - gamification_user_score
+    - gamification_ticket_score
+    - gamification_solution_quests
+    - gamification_post_quests
+    - gamification_topic_quests
+    - gamification_ticket_quests
+  :community:
+    - jira_acc_config_updates
+    - merge_topics
+    - report_post_worker
+    - spam_digest_mailer
+    - forum_post_spam_marker
+    - forum_ban_user
+  :subscriptions:
+    - marketo_queue
+    - subscription_events_queue
+    - track_customer_in_freshsales
+    

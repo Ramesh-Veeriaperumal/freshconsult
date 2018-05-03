@@ -4,6 +4,8 @@ class ContactsController < ApplicationController
    include HelpdeskControllerMethods
    include ExportCsvUtil
    include UserHelperMethods
+   include Redis::RedisKeys
+   include Redis::OthersRedis
 
    before_filter :redirect_to_mobile_url
    before_filter :set_ui_preference, :only => [:show]
@@ -137,7 +139,11 @@ class ContactsController < ApplicationController
       .where('deleted_at IS NULL OR deleted_at <= ?', (Time.now+5.days).to_s(:db))
       .update_all_with_publish({ blocked: false, whitelisted: true, deleted: false, blocked_at: nil }, {})
       begin
-        Resque.enqueue(Workers::RestoreSpamTickets, :user_ids => ids)
+        if redis_key_exists?(SIDEKIQ_RESTORE_SPAM_TICKETS)
+          Tickets::RestoreSpamTickets.perform_async(:user_ids => ids)
+        else
+          Resque.enqueue(Workers::RestoreSpamTickets, :user_ids => ids)
+        end
       rescue Exception => e
         NewRelic::Agent.notice_error(e)
       end

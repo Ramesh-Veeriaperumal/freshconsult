@@ -1,6 +1,8 @@
 class Discussions::MergeTopicController < ApplicationController
 
 	helper TopicMergeHelper
+	include Redis::RedisKeys
+	include Redis::OthersRedis
 	
 	before_filter :load_topics
 
@@ -29,11 +31,16 @@ class Discussions::MergeTopicController < ApplicationController
 		end
 
 		def handle_merge
-			@source_topics.each do |source_topic|
-				source_topic.update_attributes(:locked => 1, :merged_topic_id => @target_topic.id)
-			end
-			Resque.enqueue(Workers::Community::MergeTopics,{ :source_topic_ids => @source_topics.map(&:id), 
-																											 :target_topic_id => @target_topic.id, 
-																											 :source_note => params[:source_note] })
+		  @source_topics.each do |source_topic|
+		    source_topic.update_attributes(:locked => 1, :merged_topic_id => @target_topic.id)
+		  end
+		  args = { :source_topic_ids => @source_topics.map(&:id), 
+				   :target_topic_id => @target_topic.id, 
+				   :source_note => params[:source_note] }
+		  if redis_key_exists?(SIDEKIQ_MERGE_TOPICS)
+		  	Community::MergeTopicsWorker.perform_async(args)
+		  else
+            Resque.enqueue(Workers::Community::MergeTopics,args)
+          end
 		end
 end

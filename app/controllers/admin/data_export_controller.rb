@@ -29,11 +29,7 @@ class Admin::DataExportController < Admin::AdminController
   def export
     params[:domain] =  current_account.full_domain
     params[:email] = current_user.email
-    if redis_key_exists?(ACCOUNT_EXPORT_SIDEKIQ_ENABLED)
-      Export::DataExport.perform_async(params)
-    else
-      Resque.enqueue(Helpdesk::ExportData, params)
-    end
+    Export::DataExport.perform_async(params)
     flash[:notice] = t("export_data_successfull")
     redirect_to account_url #admin_data_export_index_url
   end

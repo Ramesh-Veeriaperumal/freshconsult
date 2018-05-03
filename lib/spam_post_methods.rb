@@ -1,4 +1,6 @@
 module SpamPostMethods
+	include Redis::RedisKeys
+	include Redis::OthersRedis
 
 	def create_dynamo_post(post, params = {})
 		# We show only last one month data in the moderation queue. 
@@ -49,12 +51,16 @@ module SpamPostMethods
 	end
 
 	def report_post(post, type)
-		Resque.enqueue(Workers::Community::ReportPost, {
-				:id => post.class.eql?(Post) ? post.id : post.timestamp,
-				:account_id => post.account_id,
-				:report_type => type,
-				:klass_name => post.class.name
-		})
+		params = { :id => post.class.eql?(Post) ? post.id : post.timestamp,
+				   :account_id => post.account_id,
+				   :report_type => type,
+				   :klass_name => post.class.name
+				}
+		if redis_key_exists?(REPORT_POST_SIDEKIQ_ENABLED)
+	        Community::ReportPostWorker.perform_async(params)
+	    else
+	        Resque.enqueue(Workers::Community::ReportPost, params)
+        end
 	end
 
 	def portal_id(post) 
