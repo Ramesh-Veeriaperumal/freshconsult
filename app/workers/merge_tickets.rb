@@ -12,6 +12,8 @@ class MergeTickets < BaseWorker
     source_ticket_note_ids = []
     source_tickets.each do |source_ticket|
       delete_ticket_summary(source_ticket)
+      move_source_time_sheets_to_target(source_ticket,args[:target_ticket_id])
+      move_source_description_to_target(source_ticket,target_ticket,args[:target_note_private])
       source_ticket_note_ids << source_ticket.notes.pluck(:id)
       source_ticket.notes.update_all_with_publish({ notable_id: args[:target_ticket_id] },
                                     [ "account_id = ? and notable_id != ?", account.id, args[:target_ticket_id] ])
@@ -109,5 +111,32 @@ class MergeTickets < BaseWorker
     # have all the customer reply and agent reply count updated.
     key  = RabbitMq::Constants::RMQ_CLEANUP_TICKET_KEY
     target_ticket.manual_publish(["update", key, {:manual_publish => true}], [:update, { misc_changes: target_ticket.activity_type.dup }])
+  end
+
+  def move_source_time_sheets_to_target(source_ticket,target_ticket_id)
+    source_ticket.time_sheets.each do |time_sheet|
+      time_sheet.update_attribute(:workable_id, target_ticket_id)
+    end
+  end
+
+  def move_source_description_to_target(source_ticket,target_ticket,target_note_private)
+    source_description_note = target_ticket.notes.build(
+      :note_body_attributes => {:body_html => build_source_description_body_html(source_ticket)},
+      :private => target_note_private || false,
+      :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
+      :account_id => Account.current.id,
+      :user_id => User.current && User.current.id
+    )
+    source_description_note.save_note
+    MergeTicketsAttachments.perform_async({ :source_ticket_id => source_ticket.id,
+                                            :target_ticket_id => target_ticket.id, 
+                                            :source_description_note_id => source_description_note.id })
+  end
+
+  def build_source_description_body_html source_ticket
+    %{#{I18n.t('helpdesk.merge.bulk_merge.target_merge_description1', :ticket_id => source_ticket.display_id, 
+                                                      :full_domain => source_ticket.portal.host)}<br/><br/>
+      <b>#{I18n.t('Subject')}:</b> #{source_ticket.subject}<br/><br/>
+      <b>#{I18n.t('description')}:</b><br/>#{source_ticket.description_html}}
   end
 end

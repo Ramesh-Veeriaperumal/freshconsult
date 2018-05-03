@@ -116,6 +116,7 @@ class Social::Gnip::TwitterFeed
     
       convert_args = apply_ticket_rules(account, args)
       if self_tweeted?
+        Rails.logger.debug "Tweet id : #{@tweet_id} : Resetting current user : #{User.current.try(:id)}"
         User.reset_current_user
         Account.reset_current_account
         return
@@ -132,6 +133,7 @@ class Social::Gnip::TwitterFeed
       else 
         process_tweet_to_ticket(account, args, convert_args)
       end
+      Rails.logger.debug "Tweet id : #{@tweet_id} : Resetting current user : #{User.current.try(:id)}"
       User.reset_current_user
       Account.reset_current_account
     end
@@ -148,6 +150,7 @@ class Social::Gnip::TwitterFeed
 
   def set_user
     user = get_twitter_user(@sender, @profile_image_url,  @name)
+    Rails.logger.debug "Tweet id #{@tweet_id}, User id #{user.id}"
     user.make_current
   end
 end

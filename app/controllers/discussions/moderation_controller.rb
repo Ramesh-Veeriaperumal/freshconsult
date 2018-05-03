@@ -4,6 +4,8 @@ class Discussions::ModerationController < ApplicationController
 	helper DiscussionsHelper
 
 	include Community::ModerationCount
+	include Redis::RedisKeys
+	include Redis::OthersRedis
 
 	before_filter :set_selected_tab
 
@@ -113,11 +115,15 @@ class Discussions::ModerationController < ApplicationController
 		end
 
 		def report_post(post, type)
-			Resque.enqueue(Workers::Community::ReportPost, {
-					:id => post.id,
-					:account_id => post.account_id,
-					:report_type => type
-			})
+			params = { :id => post.id,
+					   :account_id => post.account_id,
+					   :report_type => type
+					}
+			if redis_key_exists?(REPORT_POST_SIDEKIQ_ENABLED)
+		        Community::ReportPostWorker.perform_async(params)
+		    else
+		        Resque.enqueue(Workers::Community::ReportPost, params)
+	        end
 		end
 
 		def dynamo_redirect

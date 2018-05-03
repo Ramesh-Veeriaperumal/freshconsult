@@ -53,9 +53,12 @@ class GamificationQuestsObserver < ActiveRecord::Observer
         Gamification::ProcessTicketQuests.perform_in(5.minute.from_now, { :id => ticket.id, :account_id => ticket.account_id, :rollback => true, :resolved_time_was => ticket.ticket_states.resolved_time_was })
       else
         # if not proceed as usual
-        Resque.enqueue(Gamification::Quests::ProcessTicketQuests, {
-          :id => ticket.id,:account_id => ticket.account_id, :rollback => true,
-          :resolved_time_was => ticket.ticket_states.resolved_time_was })
+        args = {:id => ticket.id, :account_id => ticket.account_id, :rollback => true, :resolved_time_was => ticket.ticket_states.resolved_time_was }
+        if redis_key_exists?(SIDEKIQ_GAMIFICATION_PROCESS_TICKET_QUESTS)
+        	Gamification::ProcessTicketQuests.perform_async(args)
+        else
+        	Resque.enqueue(Gamification::Quests::ProcessTicketQuests, args)
+        end
       end
     end
   end
@@ -63,32 +66,48 @@ class GamificationQuestsObserver < ActiveRecord::Observer
   def process_article_quests(article)
   	changed_article_attributes = article.article_changes.keys & SOLUTION_UPDATE_ATTRIBUTES
   	if changed_article_attributes.any? and article.published?
-  		Resque.enqueue(Gamification::Quests::ProcessSolutionQuests, { :id => article.id, 
-				:account_id => article.account_id })
+  		args = { :id => article.id, :account_id => article.account_id }
+  		if redis_key_exists?(SIDEKIQ_GAMIFICATION_PROCESS_SOLUTION_QUESTS)
+  			Gamification::ProcessSolutionQuests.perform_async(args)
+  		else
+  			Resque.enqueue(Gamification::Quests::ProcessSolutionQuests, args)
+  		end
   	end
   end
 	
   def process_article_meta_quests(article_meta)
   	if article_meta.previous_changes.keys & SOLUTION_META_UPDATE_ATTRIBUTES
-			article_meta.solution_articles.visible.each do |article|
-	  		Resque.enqueue(Gamification::Quests::ProcessSolutionQuests, { :id => article.id, 
-					:account_id => article.account_id })
-			end
+  		article_meta.solution_articles.visible.each do |article|
+  			args = { :id => article.id, :account_id => article.account_id }
+  			if redis_key_exists?(SIDEKIQ_GAMIFICATION_PROCESS_SOLUTION_QUESTS)
+  				Gamification::ProcessSolutionQuests.perform_async(args)
+  			else
+  				Resque.enqueue(Gamification::Quests::ProcessSolutionQuests, args)
+  			end
+  		end
   	end
   end
 
   def process_topic_quests(topic)
   	changed_topic_attributes = topic.topic_changes.keys & TOPIC_UPDATE_ATTRIBUTES
   	if changed_topic_attributes.any? and !topic.user.customer?
-  		Resque.enqueue(Gamification::Quests::ProcessTopicQuests, { :id => topic.id, 
-						:account_id => topic.account_id })
+  		args = {:id => topic.id, :account_id => topic.account_id }
+  		if redis_key_exists?(SIDEKIQ_GAMIFICATION_PROCESS_TOPIC_QUESTS)
+  			Gamification::ProcessTopicQuests.perform_async(args)
+  		else
+  			Resque.enqueue(Gamification::Quests::ProcessTopicQuests, args)
+  		end
   	end
   end
 
   def process_post_quests(post)
   	return if (post.user.customer? or post.user_id == post.topic.user_id)
-			Resque.enqueue(Gamification::Quests::ProcessPostQuests, { :id => post.id, 
-							:account_id => post.account_id }) 
+  	args = { :id => post.id, :account_id => post.account_id }
+  	if redis_key_exists?(SIDEKIQ_GAMIFICATION_PROCESS_POST_QUESTS)
+  		Gamification::ProcessPostQuests.perform_async(args)
+  	else
+  		Resque.enqueue(Gamification::Quests::ProcessPostQuests, args) 
+  	end
   end
 
   def process_surveyresult_quests(sr)
@@ -107,8 +126,12 @@ class GamificationQuestsObserver < ActiveRecord::Observer
   	  end
   	else
   	  # If not enabled proceed as usual
-  	  Resque.enqueue(Gamification::Quests::ProcessTicketQuests, {
-  	    :id => scorable.id,:account_id => scorable.account_id })
+  	  args = { :id => scorable.id, :user_id => scorable.responder.id, :account_id => scorable.account_id }
+  	  if redis_key_exists?(SIDEKIQ_GAMIFICATION_PROCESS_TICKET_QUESTS)
+  	  	Gamification::ProcessTicketQuests.perform_async(args)
+  	  else
+  	  	Resque.enqueue(Gamification::Quests::ProcessTicketQuests, args)
+  	  end
   	end
   end
 

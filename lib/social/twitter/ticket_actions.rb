@@ -36,7 +36,7 @@ module Social::Twitter::TicketActions
     ticket.requester = user
     ticket.build_archive_child(:archive_ticket_id => archived_ticket.id) if archived_ticket
     if ticket.save_ticket
-      Rails.logger.debug "This ticket has been saved - #{tkt_hash[:tweet_id]}"
+      Rails.logger.debug "This ticket has been saved - #{tkt_hash[:tweet_id]}, user : #{user.id}"
     else
       NewRelic::Agent.notice_error("Error in converting a tweet to ticket", :custom_params =>
                                    {:error_params => ticket.errors.to_json})
@@ -69,7 +69,7 @@ module Social::Twitter::TicketActions
     }
 
     if note.save_note
-      Rails.logger.debug "This note has been added - #{note_hash[:tweet_id]}"
+      Rails.logger.debug "This note has been added - #{note_hash[:tweet_id]}, user : #{user.id}"
     else
       NewRelic::Agent.notice_error("Error in converting a tweet to ticket", :custom_params =>
                                    {:error_params => note.errors.to_json})
