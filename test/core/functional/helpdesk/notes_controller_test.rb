@@ -149,12 +149,14 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
     Sidekiq::Testing.inline! do
       # Create a ticket and add an incoming note with datetime information
       # memcache will store the datatimeinfo & note id.
+      if ! @account.launched?(:ner)
+        @account.launch(:ner)
+      end
 
       ticket = create_ticket({:subject => "TEST_TICKET", :description => "FRESH WORKS Test Ticket"})
       note = create_note({:incoming => 1, :private => false, :body => "Lets meet at 5pm today", :body => "<div>Lets meet at 5pm today</div>"})
-
       keys = MemcacheKeys::NER_ENRICHED_NOTE % { :account_id => @account.id , :ticket_id => ticket.id }
-      stored_data =  MemcacheKeys.fetch(keys)
+      stored_data =  MemcacheKeys.get_from_cache(keys)
 
       assert_equal stored_data["datetimes"][0]["value"]["time"], "17:00:00"
       assert_equal stored_data["note_id"], note.id
@@ -163,6 +165,11 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
 
   def test_public_note_without_datetime_info
     Sidekiq::Testing.inline! do
+
+      if ! @account.launched?(:ner)
+        @account.launch(:ner)
+      end
+
       ticket = create_ticket({:subject => "TEST_TICKET", :description => "FRESH WORKS Test Ticket"})
 
       keys = MemcacheKeys::NER_ENRICHED_NOTE % { :account_id => @account.id , :ticket_id => ticket.id }
@@ -180,6 +187,10 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
   def test_agent_note_with_datetime_info
     Sidekiq::Testing.inline! do
       user = add_test_agent
+
+      if ! @account.launched?(:ner)
+        @account.launch(:ner)
+      end
 
       # create ticket as agent
 
@@ -200,8 +211,11 @@ class Helpdesk::NotesControllerTest < ActionController::TestCase
     Sidekiq::Testing.inline! do
       user = add_new_user(@account)
 
-      # create ticket as customer
+      if ! @account.launched?(:ner)
+        @account.launch(:ner)
+      end
 
+      # create ticket as customer
       ticket = create_ticket({:subject => "TEST_TICKET", :description => "FRESH WORKS Test Ticket", :requester_id => user.id})
       keys = MemcacheKeys::NER_ENRICHED_NOTE % { :account_id => @account.id , :ticket_id => ticket.id }
       MemcacheKeys.delete_from_cache keys

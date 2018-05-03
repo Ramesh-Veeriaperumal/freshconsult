@@ -126,6 +126,19 @@ module Ember
         match_json(merge_reply_cc_error_pattern)
       end
 
+      def test_merge_reply_cc_format_when_convert_recepients_to_cc
+        primary_ticket = create_ticket
+        source_ticket = create_ticket 
+        add_reply_cc_emails_to_ticket([source_ticket] + [primary_ticket], 1..5)
+        request_params = sample_merge_request_params(primary_ticket.display_id, [source_ticket.display_id])
+        request_params[:convert_recepients_to_cc] = true
+        put :merge, construct_params({ version: 'private' }, request_params)
+        primary_ticket.reload
+        assert_response 204
+        assert_equal primary_ticket.cc_email[:reply_cc].include?(source_ticket.requester.email),true
+        assert_equal primary_ticket.cc_email[:reply_cc].include?(%(#{source_ticket.requester.name} <#{source_ticket.requester.email}>)),false
+      end
+
       def test_merge_incompletion
         primary_ticket = create_ticket
         source_tickets_ids = create_n_tickets(BULK_TICKET_CREATE_COUNT)
@@ -150,9 +163,11 @@ module Ember
 
         request_params = sample_merge_request_params(primary_ticket.display_id, source_tickets.map(&:display_id))
         request_params[:convert_recepients_to_cc] = true
-        put :merge, construct_params({ version: 'private' }, request_params)
-        assert_response 204
-        validate_merge_action(primary_ticket, source_tickets)
+        Sidekiq::Testing.inline! do
+          put :merge, construct_params({ version: 'private' }, request_params)
+          assert_response 204
+          validate_merge_action(primary_ticket, source_tickets)
+        end
       end
 
       def test_merge_spammed_ticket
@@ -167,9 +182,11 @@ module Ember
         primary_twitter_ticket = create_twitter_ticket
         email_ticket = create_ticket(source: 1)
         request_params = sample_merge_request_params(primary_twitter_ticket.display_id, [email_ticket.display_id])
-        put :merge, construct_params({ version: 'private' }, request_params)
-        assert_response 204
-        validate_merge_action(primary_twitter_ticket, [email_ticket], false)
+        Sidekiq::Testing.inline! do
+          put :merge, construct_params({ version: 'private' }, request_params)
+          assert_response 204
+          validate_merge_action(primary_twitter_ticket, [email_ticket], false)
+        end
       end
 
       def test_merge_assoc_tkt_as_primary_tkt

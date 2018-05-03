@@ -11,7 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180321125314) do
+ActiveRecord::Schema.define(:version => 20180420133414) do
+
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -719,6 +720,34 @@ ActiveRecord::Schema.define(:version => 20180321125314) do
   end
 
   add_index "company_forms", ["account_id", "active", "parent_id"], :name => "index_company_forms_on_account_id_and_active_and_parent_id"
+
+  create_table "company_note_bodies", :id => false, :force => true do |t|
+    t.integer  "id",              :limit => 8,        :null => false
+    t.text     "body",            :limit => 16777215
+    t.integer  "company_note_id", :limit => 8
+    t.integer  "account_id",      :limit => 8,        :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "company_note_bodies", ["account_id", "company_note_id"], :name => "index_company_note_bodies_on_account_id_and_company_note_id"
+  add_index "company_note_bodies", ["id", "account_id"], :name => "index_company_note_bodies_on_id_and_account_id"
+
+  create_table "company_notes", :id => false, :force => true do |t|
+    t.integer  "id",              :limit => 8,                    :null => false
+    t.string   "title"
+    t.integer  "category_id",     :limit => 1
+    t.integer  "account_id",      :limit => 8,                    :null => false
+    t.integer  "created_by",      :limit => 8,                    :null => false
+    t.integer  "last_updated_by", :limit => 8
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "s3_key",                       :default => false
+    t.integer  "company_id",      :limit => 8,                    :null => false
+  end
+
+  add_index "company_notes", ["account_id", "company_id", "created_at"], :name => "index_company_notes_on_account_id_and_company_id_and_created_at"
+  add_index "company_notes", ["id", "account_id"], :name => "index_company_notes_on_id_and_account_id"
 
   create_table "contact_field_choices", :force => true do |t|
     t.integer  "account_id",       :limit => 8
@@ -2918,7 +2947,7 @@ ActiveRecord::Schema.define(:version => 20180321125314) do
     t.integer "account_id",           :limit => 8
     t.integer "position"
     t.integer "solution_category_meta_id", :limit => 8
-    t.integer "bot_id"
+    t.integer "bot_id", limit: 8
   end
 
   add_index "portal_solution_categories", ["account_id", "portal_id"], :name => "index_portal_solution_categories_on_account_id_and_portal_id"

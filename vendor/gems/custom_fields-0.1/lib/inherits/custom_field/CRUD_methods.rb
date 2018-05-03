@@ -2,6 +2,9 @@ module Inherits
   module CustomField
     module CRUDMethods
 
+      include Redis::RedisKeys
+      include Redis::OthersRedis
+
       module ClassMethods
 
         def create_field(field_details, account = Account.current)
@@ -58,8 +61,12 @@ module Inherits
             self.deleted = true #since deleted is a protected atrtibute
             if self.save
               self.remove_from_list
-              Resque.enqueue( CustomFields::Workers::NullifyDeletedCustomFieldData, 
-                { :custom_field => { :id => self.id, :class => self.class.name } }) if self.custom_field?
+              args = { :custom_field => { :id => self.id, :class => self.class.name } }
+              if redis_key_exists?(SIDEKIQ_NULLIFY_DELETED_CUSTOMFIELD_DATA)
+                CustomFields::Workers::NullifyDeletedCustomFieldDataWorker.perform_async(args)
+              else
+                Resque.enqueue( CustomFields::Workers::NullifyDeletedCustomFieldData, args)
+              end
               return nil
             else
               update_error :delete

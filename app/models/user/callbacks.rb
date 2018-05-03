@@ -31,6 +31,8 @@ class User < ActiveRecord::Base
   before_save :sanitize_contact_name, :backup_customer_id
   before_save :set_falcon_ui_preference, :if => :falcon_ui_applicable?
 
+  publishable on: :destroy
+
   after_commit :clear_agent_caches, on: :create, :if => :agent?
   after_commit :update_agent_caches, on: :update
 
@@ -139,7 +141,10 @@ class User < ActiveRecord::Base
   end
 
   def set_language
-    self.language = account.language if language.nil? || validate_language(language)
+    self.language = account.language if language.nil? ||
+                                        validate_language(language) ||
+                                        !Account.current.has_feature?(:multi_language)
+
   end
 
   def detect_language?

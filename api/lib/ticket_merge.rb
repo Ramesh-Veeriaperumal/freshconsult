@@ -5,6 +5,7 @@ class TicketMerge
   include Redis::OthersRedis
 
   attr_accessor :target, :source_tickets, :params, :convert_to_cc, :header, :target_reply_cc
+  SOURCE_KEY_EXPIRY = 86_400 * 7
 
   def initialize(target, source_tickets, params)
     @target = target
@@ -17,7 +18,7 @@ class TicketMerge
 
   def perform
     update_source_tickets
-    move_source_notes
+    move_source_description_and_notes
     target.header_info = header unless header.blank?
     move_requesters if convert_to_cc
     target.save
@@ -33,8 +34,6 @@ class TicketMerge
 
     def update_source_tickets
       source_tickets.each do |source_ticket|
-        move_time_sheets(source_ticket)
-        move_description(source_ticket)
         # setting an attr accessor variable for activities
         source_ticket.activity_type = {
           type: 'ticket_merge_source',
@@ -44,34 +43,6 @@ class TicketMerge
         close_source_ticket(source_ticket)
         update_header_info(source_ticket.header_info) if source_ticket.header_info
       end
-    end
-
-    def move_time_sheets(source_ticket)
-      source_ticket.time_sheets.each do |time_sheet|
-        time_sheet.update_attribute(:workable_id, target.id)
-      end
-    end
-
-    def move_description(source_ticket)
-      source_description_note = target.notes.build(description_note_attribs(source_ticket))
-      source_description_note.save_note
-      MergeTicketsAttachments.perform_async(
-        source_ticket_id: source_ticket.id,
-        target_ticket_id: target.id,
-        source_description_note_id: source_description_note.id
-      )
-    end
-
-    def description_note_attribs(source_ticket)
-      {
-        note_body_attributes: {
-          body_html: source_description_body_html(source_ticket)
-        },
-        private: @params[:note_in_primary][:private] || false,
-        source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'],
-        account_id: Account.current.id,
-        user_id: User.current.id
-      }
     end
 
     def close_source_ticket(source_ticket)
@@ -91,15 +62,16 @@ class TicketMerge
     def update_source_header(source)
       (header[:message_ids] ||= []) << source
       source_key = EMAIL_TICKET_ID % { account_id: Account.current.id, message_id: source }
-      set_others_redis_key(source_key, "#{target.display_id}:#{source}", 86_400 * 7)
+      set_others_redis_key(source_key, "#{target.display_id}:#{source}", SOURCE_KEY_EXPIRY)
     end
 
-    def move_source_notes
+    def move_source_description_and_notes
       MergeTickets.perform_async(
         source_ticket_ids: source_tickets.map(&:display_id),
         target_ticket_id: target.id,
         source_note_private: @params[:note_in_secondary][:private] || false,
-        source_note: @params[:note_in_secondary][:body]
+        source_note: @params[:note_in_secondary][:body],
+        target_note_private: @params[:note_in_primary][:private] || false
       )
     end
 
@@ -163,19 +135,6 @@ class TicketMerge
       end
     end
 
-    def source_description_body_html(source_ticket)
-      %(
-        #{I18n.t(
-          'helpdesk.merge.bulk_merge.target_merge_description1',
-          ticket_id: source_ticket.display_id,
-          full_domain: source_ticket.portal.host
-        )}
-        <br/><br/>
-        <b>#{I18n.t('Subject')}:</b> #{source_ticket.subject}<br/><br/>
-        <b>#{I18n.t('description')}:</b><br/>#{source_ticket.description_html}
-      )
-    end
-
     def all_emails_for_target
       emails_list = remove_duplicates(emails_from_sources)
       emails_list.delete_if { |e| reject_email?(parse_email_text(e)[:email]) }
@@ -200,7 +159,7 @@ class TicketMerge
     end
 
     def add_source_requester(ticket)
-      %(#{ticket.requester.name} <#{ticket.requester.email}>)
+      ticket.requester.email
     end
 
     def get_cc_email(ticket)

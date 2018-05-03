@@ -9,7 +9,6 @@
   <% end %>
   <%= select_tag("email[system]", options_for_select(serverProfileoptions.to_s.html_safe, "other"), :class => "select2 input-xlarge") %>
 </div>
-
 <label class="control-label mt20" ><%=t('mailbox.use_mail_server_for').html_safe%></label>
 <% @new_imap_record =  @email_config.imap_mailbox.new_record? 
    @new_smtp_record = @email_config.smtp_mailbox.new_record? %>
@@ -29,7 +28,6 @@
 
 <div class="control-group" id ="incoming_mailbox_settings">
   <div class="row-fluid">
-    <%= content_tag(:label, t('mailbox.incoming_mail_settings'), :class => "lead") %>
     <div class="control-group">
       <% if @error_type%>
         <div class="imap_limit_alert"> <%= t("custom_mailbox_error_type.#{@error_type}").html_safe %> </div>

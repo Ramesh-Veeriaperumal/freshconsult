@@ -77,7 +77,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   delete_contact do
-    resource :"ember/contact", only: [:bulk_delete, :destroy, :bulk_restore, :restore, :whitelist, :bulk_whitelist]
+    resource :"ember/contact", only: [:bulk_delete, :destroy, :bulk_restore, :restore, :whitelist, :bulk_whitelist, :hard_delete]
     resource :"ember/company", only: [:bulk_delete, :destroy]
   end
 

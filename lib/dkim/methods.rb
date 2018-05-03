@@ -137,7 +137,7 @@ module Dkim::Methods
 
   def is_any_dkim_configuration_in_progress?
     last_configure_time = get_others_redis_key(DKIM_CONFIGURATION_IN_PROGRESS_KEY)
-    return last_configure_time.blank? ? false : (Time.now.utc.to_i - last_configure_time) < CONFIGURE_EXPIRE_TIME
+    return last_configure_time.blank? ? false : (Time.now.utc.to_i - last_configure_time.to_i) < CONFIGURE_EXPIRE_TIME
   end
 
   def lock_dkim_configuration_in_progress

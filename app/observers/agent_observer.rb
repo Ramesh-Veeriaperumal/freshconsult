@@ -13,9 +13,6 @@ class AgentObserver < ActiveRecord::Observer
   end
   
   def after_commit(agent)
-    if agent.safe_send(:transaction_include_action?, :create)
-      update_crm(agent)
-    end
     create_update_fc_agent(agent) if save_fc_agent?(agent)
     true
   end
@@ -50,13 +47,6 @@ class AgentObserver < ActiveRecord::Observer
       if agent.level and ((agent.points ? agent.points : 0) < new_point)
         SupportScore.add_agent_levelup_score(agent.user, new_point)
       end 
-    end
-
-      
-    def update_crm(agent)
-      if agent.account.full_time_agents.count > 1
-        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateTrialAccounts, { :account_id => agent.account_id })
-      end
     end
 
     def handle_capping(agent)

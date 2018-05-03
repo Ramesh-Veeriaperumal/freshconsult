@@ -79,6 +79,7 @@ Helpkit::Application.routes.draw do
       member do
         put :make_agent
         put :restore
+        delete :hard_delete
       end
     end
 
@@ -346,6 +347,7 @@ Helpkit::Application.routes.draw do
         put :update_password
         get :activities
         put :assume_identity
+        delete :hard_delete
       end
       resources :notes, controller: 'customer_notes', only: [:create, :update, :destroy, :show, :index]
     end

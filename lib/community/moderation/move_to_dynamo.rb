@@ -1,15 +1,22 @@
 # Copyright 2014 © Freshdesk Inc. All Rights Reserved.
 module Community::Moderation::MoveToDynamo
 
+	include Redis::RedisKeys
+  include Redis::OthersRedis
+
 	def ban
 		@spam_post.user.update_attribute(:deleted, true)
 
-		Resque.enqueue(Workers::Community::BanUser,
-							{
-								:account_id => current_account.id,
-								:user_id => current_user.id,
-								:spam_user_id => @spam_post.user.id
-							})
+    if redis_key_exists?(SIDEKIQ_BAN_USER)
+      Community::ForumBanUser.perform_async({ :spam_user_id => @spam_post.user.id })
+    else
+  		Resque.enqueue(Workers::Community::BanUser,
+  							{
+  								:account_id => current_account.id,
+  								:user_id => current_user.id,
+  								:spam_user_id => @spam_post.user.id
+  							})
+    end
 
 
 		respond_back
@@ -46,12 +53,16 @@ module Community::Moderation::MoveToDynamo
 		end
 
 		def move_posts(ids)
-			Resque.enqueue(Workers::Community::BulkSpam, 
-							{
-								:account_id => current_account.id,
-								:topic_ids => ids
-							}
-			)
+			if redis_key_exists?(FORUM_POSTS_SPAM_MARKER)
+				Community::ForumPostSpamMarker.perform_async({ topic_ids: ids })
+			else
+				Resque.enqueue(Workers::Community::BulkSpam, 
+								{
+									:account_id => current_account.id,
+									:topic_ids => ids
+								}
+				)
+			end
 		end
 
 end
