@@ -848,6 +848,7 @@ en:
     any_status: Any Status
     any_ticket_type: Any Type
     any_group: Any Group
+    excluding_none: Any Value (excluding none)
   portal_pages:
     groups:
       general: "General pages"
