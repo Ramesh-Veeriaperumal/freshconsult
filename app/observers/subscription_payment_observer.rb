@@ -11,13 +11,6 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
     #add_to_crm(payment)
   end
 
-  def after_commit(payment)
-    if payment.safe_send(:transaction_include_action?, :create) 
-      add_to_crm(payment)
-    end
-    true
-  end
-
   private
 
     def set_info_from_subscription(payment)
@@ -65,8 +58,5 @@ class SubscriptionPaymentObserver < ActiveRecord::Observer
       end
     end
 
-    def add_to_crm(payment)
-      Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::PaidCustomer, {:account_id => payment.account_id, :item_id => payment.id})
-    end
 end
 

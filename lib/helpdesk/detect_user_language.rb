@@ -44,13 +44,14 @@ class Helpdesk::DetectUserLanguage
     response_body = JSON.parse(@language_response.body)
     if response_body && response_body["data"]
       language = response_body["data"]["detections"].flatten.last["language"]
+      Rails.logger.info "google::language_detection language : #{language} for text : #{text}"
     else
       raise "Response: #{response_body.to_json}"
     end
   rescue Exception => e
     log_errors("Error detecting language using GoogleAPI:", "Account_ID: #{Account.current.id} Text: #{text}, Error: #{e.message} ", e)
   ensure
-    [language, time_taken]
+    return [language, time_taken]
   end
 
   def self.log_result(result, email, time, lang=nil)
