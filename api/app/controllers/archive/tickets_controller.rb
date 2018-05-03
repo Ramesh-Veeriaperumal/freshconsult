@@ -5,6 +5,8 @@ class Archive::TicketsController < ::ApiApplicationController
   decorate_views(decorate_objects: [:index])
   PRELOAD_OPTIONS = [:company, { requester: [:avatar] }].freeze
 
+  before_filter :verify_ticket_permission, only: [:show, :destroy]
+
   def show
     sideload_associations if @include_validation.include_array.present?
     super
@@ -68,4 +70,19 @@ class Archive::TicketsController < ::ApiApplicationController
       current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
       ArchiveNoteConfig[current_shard] && (@item.id <= ArchiveNoteConfig[current_shard].to_i)
     end
+
+    def verify_ticket_permission(user = api_current_user, ticket = @item)
+      unless user.has_ticket_permission?(ticket) && destroy_privilege?(user)
+        Rails.logger.error "Params: #{params.inspect} User: #{user.id}, #{user.email} doesn't have permission to ticket display_id: #{ticket.display_id}"
+        render_request_error :access_denied, 403
+        return false
+      end
+      true
+    end
+
+    def destroy_privilege?(user)
+      return true unless params["action"] === "destroy"
+      user.privilege?(:delete_ticket)
+    end
+    
 end

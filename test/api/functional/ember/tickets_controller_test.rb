@@ -412,6 +412,17 @@ module Ember
       match_json(ticket_show_pattern(ticket.reload))
     end
 
+    def test_ticket_show_with_archive_child
+      ticket = create_ticket
+      archive_ticket = create_archive_and_child(ticket)
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      Account.current.features.archive_tickets.destroy
+      pattern = ticket_show_pattern(ticket)
+      pattern[:archive_ticket] = { :subject => archive_ticket.subject, :id => archive_ticket.display_id }
+      assert_response 200
+      match_json(pattern)
+    end
+
     def test_create_with_incorrect_attachment_type
       attachment_ids = %w(A B C)
       params_hash = ticket_params_hash.merge(attachment_ids: attachment_ids)
