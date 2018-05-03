@@ -1240,6 +1240,7 @@ class User < ActiveRecord::Base
     def backup_user_changes
       @all_changes = self.changes.clone.to_hash
       @all_changes.merge!(flexifield.changes)
+      @all_changes.merge!(tag_names: self.tags.map(&:name)) if self.tags_updated
       @all_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
       @all_changes.symbolize_keys!
     end
