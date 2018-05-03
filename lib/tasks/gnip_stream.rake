@@ -127,7 +127,12 @@ namespace :gnip_stream do
       gnip_msg = Social::Gnip::TwitterFeed.new(tweet, queue)
       unless gnip_msg.nil?
         begin
-          gnip_msg.process
+          start_time = Time.now.utc
+          time_taken = Benchmark.realtime {
+            gnip_msg.process
+          }
+          end_time = start_time + time_taken
+          Rails.logger.debug "social::twitter process tweet id : #{gnip_msg.tweet_id} : started : #{start_time} : finished : #{end_time} : time taken : #{time_taken}"
         rescue Exception => e
           Rails.logger.debug "Exception in processing tweet"
           Rails.logger.debug "#{e.class} #{e.message} #{e.backtrace}"

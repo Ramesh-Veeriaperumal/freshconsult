@@ -8,14 +8,11 @@ class Social::SmartFilterInitWorker < BaseWorker
 
   def perform(args)   
     args.symbolize_keys!
-    Sharding.select_shard_of(args[:account_id]) do
-      @account = Account.find(args[:account_id]).make_current
-      begin
-        response = smart_filter_initialize(args[:smart_filter_init_params])
-      rescue Exception => e
-        handle_failure(e, args)
-      end      
-    end
+    begin
+      response = smart_filter_initialize(args[:smart_filter_init_params])
+    rescue Exception => e
+      handle_failure(e, args)
+    end      
   end
 
   def handle_failure(response, args)

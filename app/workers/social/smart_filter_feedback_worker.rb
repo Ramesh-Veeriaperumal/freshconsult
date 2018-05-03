@@ -12,20 +12,18 @@ class Social::SmartFilterFeedbackWorker < BaseWorker
   
   def perform(args)   
     args.symbolize_keys!
-    Sharding.select_shard_of(args[:account_id]) do
-      @account = Account.find(args[:account_id]).make_current
-      @ticket = @account.tickets.find_by_id args[:ticket_id]
-      @twitter_handle = @ticket.tweet.twitter_handle
-      @dynamo_helper = Social::Dynamo::Twitter.new
+    @account = Account.current
+    @ticket = @account.tickets.find_by_id args[:ticket_id]
+    @twitter_handle = @ticket.tweet.twitter_handle
+    @dynamo_helper = Social::Dynamo::Twitter.new
 
-      if should_give_feedback_to_smart_filter?(args[:type_of_feedback])
-        begin
-          response = smart_filter_feedback(generate_feedback_request_body(args[:type_of_feedback]))
-          record_smart_filter_feedback
-        rescue Exception => e
-          handle_failure(e, args)
-        end 
-      end
+    if should_give_feedback_to_smart_filter?(args[:type_of_feedback])
+      begin
+        response = smart_filter_feedback(generate_feedback_request_body(args[:type_of_feedback]))
+        record_smart_filter_feedback
+      rescue Exception => e
+        handle_failure(e, args)
+      end 
     end
   end
 
@@ -70,7 +68,7 @@ class Social::SmartFilterFeedbackWorker < BaseWorker
 
    def generate_feedback_request_body(type_of_feedback)
     {
-      :entity_id => @ticket.tweet.tweet_id.to_s,
+      :entity_id => smart_filter_enitytID(:twitter,@account.id,@ticket.tweet.tweet_id),
       :account_id => smart_filter_accountID(:twitter, @account.id, @twitter_handle.twitter_user_id),
       :text => @ticket.subject,
       :screen_name => [],

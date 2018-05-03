@@ -32,12 +32,7 @@ module ContactsCompaniesConcern
     args = { :csv_hash => export_field_mappings,
              :user => api_current_user.id,
              :portal_url => portal_url }
-    if !redis_key_exists?(COMPANIES_EXPORT_SIDEKIQ_ENABLED) &&
-        export_type == EXPORT_WORKERS.keys[1]
-      Resque.enqueue(Workers::ExportCompany, args)
-    else
-      EXPORT_WORKERS[export_type].perform_async(args)
-    end
+    EXPORT_WORKERS[export_type].perform_async(args)
   end
 
   def assign_avatar
