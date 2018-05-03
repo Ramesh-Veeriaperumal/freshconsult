@@ -6,11 +6,15 @@ class Integrations::IntegratedResource < ActiveRecord::Base
   scope :first_integrated_resource, ->(remote_integratable_id) { where("remote_integratable_id = ?", remote_integratable_id).order(:created_at).limit(1) }
   before_create :set_integratable_type
 
-  def self.createResource(params)
-    irParams = params[:integrated_resource]
+  def self.createResource(params, installed_appln = nil)
+    irParams = params[:integrated_resource].dup
     irParams.delete(:error)
     unless irParams.blank?
-      irParams[:installed_application] = irParams[:account].installed_applications.find_by_application_id(params['application_id'])
+      irParams[:installed_application] = if installed_appln.nil?
+        irParams[:account].installed_applications.find_by_application_id(params['application_id'])
+      else
+        installed_appln
+      end
       ir = self.new(irParams)
       ir.save!
       return ir

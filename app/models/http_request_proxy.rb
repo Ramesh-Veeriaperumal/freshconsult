@@ -110,8 +110,8 @@ class HttpRequestProxy
 
           proxy_response.body = Hash.from_xml(proxy_response.body).to_json if (proxy_response.body.include? 'xml') # always returns JSON
           response_type = content_type
-          #Rails.logger.debug "Response Body: #{proxy_response.body}"
-          #Rails.logger.debug "Response Code: #{proxy_response.code}"
+          Rails.logger.debug "Response Body: #{proxy_response.body}"
+          Rails.logger.debug "Response Code: #{proxy_response.code}"
         else
           if !Rails.env.development? && Integrations::PROXY_SERVER["host"].present? #host will not be present for layers other than integration layer.
             options[:http_proxyaddr] = Integrations::PROXY_SERVER["host"]
@@ -122,8 +122,8 @@ class HttpRequestProxy
           proxy_request   = HTTParty::Request.new(net_http_method, final_url, options)
           Rails.logger.debug "Sending request: #{proxy_request.inspect}"
           proxy_response = proxy_request.perform
-          #Rails.logger.debug "Response Body: #{proxy_response.body}"
-          #Rails.logger.debug "Response Code: #{proxy_response.code}"
+          Rails.logger.debug "Response Body: #{proxy_response.body}"
+          Rails.logger.debug "Response Code: #{proxy_response.code}"
           Rails.logger.debug "Response Headers: #{proxy_response.headers.inspect}"
         end
         # TODO Need to audit all the request and response calls to 3rd party api.
@@ -157,7 +157,7 @@ class HttpRequestProxy
         response_body = '{"result":"timeout"}'
         response_code = 504  # Timeout
       rescue => e
-        Rails.logger.error("Error during #{method.to_s}ing #{remote_url.to_s}. \n#{e.message}\n#{e.backtrace.join("\n")}")  # TODO make sure any password/apikey sent in the url is not printed here.
+        Rails.logger.error("Error during #{method.to_s}ing #{remote_url.to_s}. \n#{e.message}\n#{e.backtrace.join("\n")} #{params.inspect}.")  # TODO make sure any password/apikey sent in the url is not printed here.
         response_body = '{"result":"error"}'
         response_code = 502  # Bad Gateway
       end

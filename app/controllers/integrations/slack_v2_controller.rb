@@ -109,6 +109,7 @@ class Integrations::SlackV2Controller < Admin::AdminController
   end
 
   def tkt_create_v3
+    Rails.logger.debug "integrations::slack ticket create v3 for Account id: #{@installed_app.account_id}"
     options = slack_params("create_ticket_v3")
     enqueue_worker(options)
     render_response

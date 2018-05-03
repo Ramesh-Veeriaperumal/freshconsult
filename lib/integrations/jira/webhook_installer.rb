@@ -1,5 +1,7 @@
 module Integrations::Jira::WebhookInstaller
   include Integrations::Constants
+  include Redis::RedisKeys
+  include Redis::OthersRedis
   
   def self.included(klass)
     klass.send :attr_accessor, :disable_observer
@@ -16,8 +18,13 @@ module Integrations::Jira::WebhookInstaller
       :operation => "create_webhooks",
       :app_id => self.id
     }
-    Resque.enqueue(Workers::Integrations::JiraAccountUpdates,options)
-    
+    if redis_key_exists?(JIRA_ACC_UPDATES_SIDEKIQ_ENABLED)
+      Integrations::JiraAccountConfig.perform_async(options)
+    else
+      Resque.enqueue(Workers::Integrations::JiraAccountUpdates,options)
+    end
+  rescue => error
+    Rails.logger.error "Error while creating webhook - #{Account.current.id} - #{error}"
   end
 
   def unregister_webhook
@@ -27,7 +34,13 @@ module Integrations::Jira::WebhookInstaller
         :domain => self.configs_domain,
         :operation => "delete_webhooks"
       }
-      Resque.enqueue(Workers::Integrations::JiraAccountUpdates, options)
+    if redis_key_exists?(JIRA_ACC_UPDATES_SIDEKIQ_ENABLED)
+      Integrations::JiraAccountConfig.perform_async(options)
+    else
+      Resque.enqueue(Workers::Integrations::JiraAccountUpdates,options)
+    end
+  rescue => error
+    Rails.logger.error "Error while deleting webhook - #{Account.current.id} - #{error}"
   end
 
   def background_task_register

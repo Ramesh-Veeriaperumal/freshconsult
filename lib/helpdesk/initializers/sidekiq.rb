@@ -16,7 +16,7 @@ $sidekiq_redis_timeout = sidekiq_config[:timeout]
 
 
 Sidekiq.configure_client do |config|
-  config.redis = ConnectionPool.new(:size => 1, :timeoout => $sidekiq_redis_timeout, &$sidekiq_datastore)
+  config.redis = ConnectionPool.new(:size => 1, :timeout => $sidekiq_redis_timeout, &$sidekiq_datastore)
   config.client_middleware do |chain|
     chain.add Middleware::Sidekiq::Client::BelongsToAccount, :ignore => [
       "FreshopsToolsWorker",
@@ -61,9 +61,10 @@ Sidekiq.configure_client do |config|
       "Tickets::Dump",
       "BlockAccount",
       "Freshid::ProcessEvents",
-      "Social::SmartFilterFeedbackWorker",
-      "Social::SmartFilterInitWorker",
-      "CentralPublishWorker::AccountDeletionWorker"
+      "CentralPublishWorker::AccountDeletionWorker",
+      "CRMApp::Freshsales::Signup",
+      "CRMApp::Freshsales::AdminUpdate",
+      "CRMApp::Freshsales::TrackSubscription"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -89,7 +90,8 @@ Sidekiq.configure_client do |config|
       "ExportAgents",
       "CollabNotificationWorker",
       "ProductFeedbackWorker",
-      "Freshid::ProcessEvents"
+      "Freshid::ProcessEvents",
+      "Community::MergeTopicsWorker"
     ]
   end
 end
@@ -98,7 +100,7 @@ Sidekiq.configure_server do |config|
   # ActiveRecord::Base.logger = Logger.new(STDOUT)
   # Sidekiq::Logging.logger = ActiveRecord::Base.logger
   # Sidekiq::Logging.logger.level = ActiveRecord::Base.logger.level
-  config.redis = ConnectionPool.new(:size => $sidekiq_redis_pool_size, :timeoout => $sidekiq_redis_timeout, &$sidekiq_datastore)
+  config.redis = ConnectionPool.new(:size => $sidekiq_redis_pool_size, :timeout => $sidekiq_redis_timeout, &$sidekiq_datastore)
   config.reliable_fetch!
   #https://forums.aws.amazon.com/thread.jspa?messageID=290781#290781
   #Making AWS as thread safe
@@ -147,9 +149,10 @@ Sidekiq.configure_server do |config|
       "Tickets::Dump",
       "BlockAccount",
       "Freshid::ProcessEvents",
-      "Social::SmartFilterFeedbackWorker",
-      "Social::SmartFilterInitWorker",
-      "CentralPublishWorker::AccountDeletionWorker"
+      "CentralPublishWorker::AccountDeletionWorker",
+      "CRMApp::Freshsales::Signup",
+      "CRMApp::Freshsales::AdminUpdate",
+      "CRMApp::Freshsales::TrackSubscription"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -173,7 +176,8 @@ Sidekiq.configure_server do |config|
       "Import::SkillWorker",
       "ExportAgents",
       "CollabNotificationWorker",
-      "ProductFeedbackWorker"
+      "ProductFeedbackWorker",
+      "Community::MergeTopicsWorker"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -223,9 +227,10 @@ Sidekiq.configure_server do |config|
       "Tickets::Dump",
       "BlockAccount",
       "Freshid::ProcessEvents",
-      "Social::SmartFilterFeedbackWorker",
-      "Social::SmartFilterInitWorker",
-      "CentralPublishWorker::AccountDeletionWorker"
+      "CentralPublishWorker::AccountDeletionWorker",
+      "CRMApp::Freshsales::Signup",
+      "CRMApp::Freshsales::AdminUpdate",
+      "CRMApp::Freshsales::TrackSubscription"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",
@@ -248,7 +253,8 @@ Sidekiq.configure_server do |config|
       "Import::SkillWorker",
       "ExportAgents",
       "CollabNotificationWorker",
-      "ProductFeedbackWorker"
+      "ProductFeedbackWorker",
+      "Community::MergeTopicsWorker"
     ]
   end
 end
