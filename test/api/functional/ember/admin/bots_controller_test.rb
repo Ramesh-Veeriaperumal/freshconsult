@@ -559,17 +559,6 @@ module Ember
         end
       end
 
-      def test_training_completed_with_invalid_state
-        enable_bot do
-          set_auth_header
-          bot = create_bot({ product: true})
-          bot.training_completed!
-          post :training_completed, controller_params(version: 'private', id: bot.external_id)
-          assert_response 409
-          match_json(request_error_pattern(:invalid_bot_state))
-        end
-      end
-
       def test_clear_status_redis
         enable_bot do
           bot = create_bot({ product: true})
@@ -592,16 +581,6 @@ module Ember
           bot = create_bot({ product: true})
           post :mark_completed_status_seen, controller_params(version: 'private', id: bot.id+20)
           assert_response 404
-        end
-      end
-
-      def test_clear_status_redis_with_invalid_state
-        enable_bot do
-          bot = create_bot({ product: true})
-          bot.training_inprogress!
-          post :mark_completed_status_seen, controller_params(version: 'private', id: bot.id)
-          assert_response 409
-          match_json(request_error_pattern(:invalid_bot_state))
         end
       end
 
@@ -712,7 +691,7 @@ module Ember
           bot = create_bot({ product: true})
           category = create_category
           bot.portal.solution_category_metum_ids = [category.id]
-          put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: [category.id] }, false)
+          bot.category_ids = [category.id]
           params = { name: Faker::Name.name, visibility: 1, category_id: category.id }
           post :create_bot_folder, construct_params(params.merge(version: 'private' , id: bot.id), false)
           assert_response 200
@@ -726,7 +705,7 @@ module Ember
         disable_bot do
           category = create_category
           bot.portal.solution_category_metum_ids = [category.id]
-          put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: [category.id] }, false)
+          bot.category_ids = [category.id]
           params = { name: Faker::Name.name, visibility: 1, category_id: category.id }
           post :create_bot_folder, construct_params(params.merge(version: 'private' , id: bot.id), false)
           assert_response 403
@@ -739,7 +718,7 @@ module Ember
           bot = create_bot({ product: true})
           category = create_category
           bot.portal.solution_category_metum_ids = [category.id]
-          put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: [category.id] }, false)
+          bot.category_ids = [category.id]
           bot.reload
           params = { name: Faker::Name.name, category_id: category.id }
           post :create_bot_folder, construct_params(params.merge(version: 'private' , id: bot.id), false)
@@ -752,9 +731,8 @@ module Ember
           bot = create_bot({ product: true})
           category = create_category
           bot.portal.solution_category_metum_ids = [category.id]
-          put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: [category.id] }, false)
+          bot.category_ids = [category.id]
           User.any_instance.stubs(:privilege?).with(:manage_solutions).returns(false).at_most_once
-          User.any_instance.stubs(:privilege?).with(:manage_bots).returns(false).at_most_once
           params = { name: Faker::Name.name, visibility: 1, category_id: category.id }
           post :create_bot_folder, construct_params(params.merge(version: 'private' , id: bot.id), false)
           assert_response 403
@@ -768,7 +746,7 @@ module Ember
           bot = create_bot({ product: true})
           category = create_category
           bot.portal.solution_category_metum_ids = [category.id]
-          put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: [category.id] }, false)
+          bot.category_ids = [category.id]
           params = { name: Faker::Name.name, visibility: 1, category_id: category.id }
           post :create_bot_folder, construct_params(params.merge(version: 'private' , id: 0), false)
           assert_response 404
@@ -780,7 +758,7 @@ module Ember
           bot = create_bot({ product: true})
           folder = create_folder
           bot.portal.solution_category_metum_ids = [folder.solution_category_meta.id]
-          put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: [folder.solution_category_meta.id] }, false)
+          bot.category_ids = [folder.solution_category_meta.id]
           params = { name: folder.name, visibility: 1, category_id: folder.solution_category_meta.id }
           post :create_bot_folder, construct_params(params.merge(version: 'private' , id: bot.id), false)
           assert_response 409

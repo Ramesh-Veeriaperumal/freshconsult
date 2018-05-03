@@ -474,7 +474,7 @@ class Social::TwitterController < Social::BaseController
 
   def new_ticket_feedback_to_smart_filter(ticket_id)
     Social::SmartFilterFeedbackWorker.perform_async({ :ticket_id => ticket_id,
-      :type_of_feedback => SMART_FILTER_FEEDBACK_TYPE[:new_ticket], :account_id => Account.current.id}) 
+      :type_of_feedback => SMART_FILTER_FEEDBACK_TYPE[:new_ticket]}) 
   end
   
 end

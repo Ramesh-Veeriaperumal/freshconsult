@@ -207,7 +207,8 @@ class Account < ActiveRecord::Base
     :ticket_central_publish => false, :solutions_central_publish => false, :freshid => false, 
     :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, 
     :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false, 
-    :imap_error_status_check => false, :audit_logs_central_publish => false
+    :imap_error_status_check => false, :contact_delete_forever => false, 
+    :audit_logs_central_publish => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

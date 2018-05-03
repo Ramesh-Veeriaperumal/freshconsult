@@ -926,6 +926,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         if params[:text]
           text = text_for_detection(params[:text])
           if language.nil? and signup_status
+            Rails.logger.info "language_detection => tkt_source:email, acc_id:#{Account.current.id}, req_id:#{user.id}, text:#{text}"
             language_detection(user.id, Account.current.id, text)
           end
         end

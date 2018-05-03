@@ -286,6 +286,13 @@ module Ember
         item.save
       end
 
+      def restore_item(item)
+        return false unless item.deleted
+        return false if item.agent_deleted_forever?
+        item.deleted = false
+        item.save
+      end
+
       def constants_class
         :ContactConstants.to_s.freeze
       end

@@ -13,6 +13,8 @@ module Users
       }, 
       :user_preferences => {
         # Add new pref for users here
+        :was_agent => false,
+        :agent_deleted_forever => false
       }
 
     }

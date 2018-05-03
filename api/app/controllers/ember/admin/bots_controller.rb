@@ -73,6 +73,7 @@ module Ember
           ml_response = Ml::Bot.update_ml(@item)
           if ml_response == true
             @item.save!
+            Rails.logger.info("Map categories action:: #{bot_info(@item)}")
             train_bot if @item.training_status.to_i == BotConstants::BOT_STATUS[:training_not_started]
             head 204
           else
@@ -86,7 +87,7 @@ module Ember
       end
 
       def training_completed
-        return unless validate_state(BotConstants::BOT_STATUS[:training_inprogress])
+        validate_state(BotConstants::BOT_STATUS[:training_inprogress])
         @bot.training_completed!
         @bot_user = current_account.users.find_by_id(@bot.last_updated_by)
         categories = @bot.solution_category_meta.includes(:primary_category).map(&:name)
@@ -96,7 +97,7 @@ module Ember
       end
 
       def mark_completed_status_seen
-        return unless validate_state(BotConstants::BOT_STATUS[:training_completed])
+        validate_state(BotConstants::BOT_STATUS[:training_completed])
         @item.clear_status
         head 204
       end
@@ -189,8 +190,10 @@ module Ember
         end
 
         def validate_state(state)
-          render_request_error(:invalid_bot_state, 409) && return unless (@item || @bot).training_status.to_i == state
-          true
+          bot = @item || @bot
+          if bot.training_status.to_i != state
+            Rails.logger.error "Bot state error:: Action: #{action_name}, #{bot_info(bot)}"
+          end
         end
 
         def handle_exception
@@ -310,8 +313,13 @@ module Ember
         end
 
         def train_bot
+          bot_info = bot_info(@item)
+          Rails.logger.info("Enqueueing for overall learning:: #{bot_info}")
           Bot::MlSolutionsTraining.perform_async(bot_id: @item.id)
           @item.training_inprogress!
+        rescue => e
+          Rails.logger.error "Exception while enqueueing to ml overall learning: #{e.message}, #{bot_info}"
+          NewRelic::Agent.notice_error(e)
         end
 
         def handle_category_mapping_failure(error_message)
@@ -361,6 +369,10 @@ module Ember
 
         def metrics(response_hash, date)
           BotConstants::DEFAULT_ANALYTICS_HASH.merge(response_hash[date] || {})
+        end
+
+        def bot_info(bot)
+          "Bot training status:: #{bot.training_status}, Bot Id : #{bot.id}, Account Id : #{current_account.id}, Portal Id : #{bot.portal_id}, External Id : #{bot.external_id}" if bot
         end
     end
   end

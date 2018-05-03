@@ -37,7 +37,7 @@ class User < ActiveRecord::Base
   end
 
   def send_activation_email
-    self.deliver_activation_instructions!(account.main_portal,false) if self.email.present? && !self.primary_email.verified? && freshid_disabled_and_customer?
+    self.deliver_activation_instructions!(account.main_portal,false) if self.email.present? && !self.primary_email.verified? && freshid_disabled_and_customer? && !self.agent_deleted_forever?
   end
 
   private

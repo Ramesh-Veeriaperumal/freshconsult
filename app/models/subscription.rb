@@ -528,25 +528,30 @@ class Subscription < ActiveRecord::Base
     end
 
     def add_to_crm
-      if next_renewal_at_changed? and (trial? or suspended?)
-        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateTrialAccounts, { :account_id => account_id })
-      elsif free_customer?
-        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::FreeCustomer, { :item_id => id, :account_id => account_id })
+      if redis_key_exists?(FRESHSALES_TRACK_SUBSCRIPTION)
+        CRMApp::Freshsales::TrackSubscription.perform_at(5.minutes.from_now, { 
+          account_id: account_id, 
+          old_subscription: @old_subscription.attributes, 
+          old_cmrr: @old_subscription.cmrr, 
+          subscription: self.attributes, 
+          cmrr: self.cmrr, 
+          payments_count: self.subscription_payments.count 
+        }) if changes.any?
+      else
+        Resque.enqueue_at(5.minutes.from_now, CRM::Freshsales::TrackSubscription, 
+                        { account_id: account_id, old_subscription: @old_subscription.attributes, 
+                          old_cmrr: @old_subscription.cmrr, subscription: self.attributes, 
+                          cmrr: self.cmrr, payments_count: self.subscription_payments.count }) if changes.any?
       end
-
-      if state_changed?
-        Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateCustomerStatus, { :item_id => id, :account_id => account_id })
-      end
-    ensure
-      Resque.enqueue_at(5.minutes.from_now, CRM::Freshsales::TrackSubscription, 
-                            { account_id: account_id, old_subscription: @old_subscription.attributes, 
-                              old_cmrr: @old_subscription.cmrr, subscription: self.attributes, 
-                              cmrr: self.cmrr, payments_count: self.subscription_payments.count }) if changes.any?
     end
 
     def update_crm
       if autopilot_fields_changed? and (Rails.env.staging? or Rails.env.production?)
-        Resque.enqueue(Marketo::UpdateLeadToAutopilot, {})
+        if redis_key_exists?(SIDEKIQ_MARKETO_QUEUE)
+          Subscriptions::UpdateLeadToAutopilot.perform_async
+        else
+          Resque.enqueue(Marketo::UpdateLeadToAutopilot, {})
+        end
       end
     end
 

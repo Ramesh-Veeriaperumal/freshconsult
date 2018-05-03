@@ -845,7 +845,7 @@ private
   end
   
   def spam_feedback_to_smart_filter
-    Social::SmartFilterFeedbackWorker.perform_async({ :ticket_id => id, :type_of_feedback => Social::Constants::SMART_FILTER_FEEDBACK_TYPE[:spam], :account_id => Account.current.id }) 
+    Social::SmartFilterFeedbackWorker.perform_async({ :ticket_id => id, :type_of_feedback => Social::Constants::SMART_FILTER_FEEDBACK_TYPE[:spam]}) 
   end
 
   def sanitize_meta_data

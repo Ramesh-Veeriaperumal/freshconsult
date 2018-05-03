@@ -8,6 +8,8 @@ class Agent < ActiveRecord::Base
   include Chat::Constants
   include Redis::RoundRobinRedis
   include RoundRobinCapping::Methods
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   concerned_with :associations, :constants, :presenter
 
@@ -150,9 +152,13 @@ class Agent < ActiveRecord::Base
 
   def enqueue_round_robin_process
     return unless @model_changes.key?(:available)
-    Resque.enqueue(Helpdesk::ToggleAgentFromGroups,
+    if redis_key_exists?(SIDEKIQ_TOGGLE_AGENT_FROM_GROUPS)
+      Groups::ToggleAgentFromGroups.perform_async({:user_id => self.user_id})
+    else
+      Resque.enqueue(Helpdesk::ToggleAgentFromGroups,
                    { :account_id => account.id,
                      :user_id => self.user_id })
+    end
   end
 
   def sync_skill_based_queues
