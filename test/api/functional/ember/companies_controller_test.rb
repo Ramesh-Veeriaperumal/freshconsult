@@ -460,7 +460,6 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     default_fields = @account.company_form.default_company_fields
     custom_fields = @account.company_form.custom_company_fields
     Export::CompanyWorker.jobs.clear
-    set_others_redis_key(COMPANIES_EXPORT_SIDEKIQ_ENABLED, true)
     params_hash = { default_fields: default_fields.map(&:name), custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } }
     post :export_csv, construct_params({version: 'private'}, params_hash)
     assert_response 204
@@ -470,7 +469,6 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     assert_equal csv_hash, sidekiq_jobs.first["args"][0]["csv_hash"]
     assert_equal User.current.id, sidekiq_jobs.first["args"][0]["user"]
     Export::CompanyWorker.jobs.clear
-    remove_others_redis_key(COMPANIES_EXPORT_SIDEKIQ_ENABLED)
   end
 
   def test_export_csv_resque

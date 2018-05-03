@@ -215,6 +215,7 @@ namespace :scheduler do
   
   def enqueue_premium_twitter(delay = nil)
     premium_twitter_accounts.each do |account_id|
+      Rails.logger.info "Enqueuing Premium Twitter Worker for account id #{account_id}"
       if delay.nil?
         Social::PremiumTwitterWorker.perform_async({:account_id => account_id})
       else
@@ -225,6 +226,7 @@ namespace :scheduler do
   
   def enqueue_premium_facebook(delay = nil)
     premium_facebook_accounts.each do |account_id|
+      Rails.logger.info "Enqueuing Premium Facebook Worker for account id #{account_id}"
       if delay.nil?
         Social::PremiumFacebookWorker.perform_async({:account_id => account_id})
       else

@@ -7,6 +7,7 @@ require 'net/http/post/multipart'
 class Integrations::JiraIssue
   include Integrations::Jira::Api
   include Redis::RedisKeys
+  include Redis::OthersRedis
   include Redis::IntegrationsRedis
   include Integrations::Jira::Helper
 
@@ -34,18 +35,23 @@ class Integrations::JiraIssue
     if(!res_data[:exception] && res_data[:json_data]  && res_data[:json_data]["key"])
       params['integrated_resource']={}
       params['integrated_resource']['remote_integratable_id'] = res_data[:json_data]["key"]
-      params['integrated_resource']['account'] = @installed_app.account
       params['integrated_resource']['local_integratable_id'] = params[:local_integratable_id]
       params['integrated_resource']['local_integratable_type'] = params[:local_integratable_type]
       params[:remote_key] = params['integrated_resource']['remote_integratable_id']
-      newIntegratedResource = Integrations::IntegratedResource.createResource(params)
+      newIntegratedResource = Integrations::IntegratedResource.createResource(params, @installed_app)
       params[:operation] = "update"
       params[:app_id] = @installed_app.id
-      Resque.enqueue(Workers::Integrations::JiraAccountUpdates,params)
+      if redis_key_exists?(JIRA_ACC_UPDATES_SIDEKIQ_ENABLED)
+        ::Integrations::JiraAccountConfig.perform_async(params)
+      else
+        Resque.enqueue(Workers::Integrations::JiraAccountUpdates,params)
+      end
       return newIntegratedResource
     else
       return res_data
     end
+  rescue => e
+    Rails.logger.error "Error while creating jira issue - #{e}\n#{e.message}\n#{e.backtrace.join("\n")}"
   end
 
   def link_issue(params)
@@ -54,18 +60,23 @@ class Integrations::JiraIssue
       custom_field_id = @installed_app.configs[:inputs]['customFieldId']
       params['integrated_resource']={}
       params['integrated_resource']['remote_integratable_id'] = params[:remote_key]
-      params['integrated_resource']['account'] = @installed_app.account
       params['integrated_resource']['local_integratable_id'] = params[:local_integratable_id]
       params['integrated_resource']['local_integratable_type'] = params[:local_integratable_type]
-      newIntegratedResource = Integrations::IntegratedResource.createResource(params)
+      newIntegratedResource = Integrations::IntegratedResource.createResource(params, @installed_app)
       newIntegratedResource["custom_field"]=custom_field_id unless custom_field_id.blank?
       params[:operation] = "link_issue"
       params[:app_id] = @installed_app.id
-      Resque.enqueue(Workers::Integrations::JiraAccountUpdates,params)
+      if redis_key_exists?(JIRA_ACC_UPDATES_SIDEKIQ_ENABLED)
+        ::Integrations::JiraAccountConfig.perform_async(params)
+      else
+        Resque.enqueue(Workers::Integrations::JiraAccountUpdates,params)
+      end
       return newIntegratedResource
     else
       res_data
     end
+  rescue => e
+    Rails.logger.error "Error while linking jira issue - #{e}\n#{e.message}\n#{e.backtrace.join("\n")}"
   end
 
   def unlink_issue(params)

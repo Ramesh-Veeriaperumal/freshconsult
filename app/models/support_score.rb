@@ -4,6 +4,7 @@ class SupportScore < ActiveRecord::Base
   include Gamification::Scoreboard::Constants
   include Redis::RedisKeys
   include Redis::SortedSetRedis
+  include Redis::OthersRedis
 
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
   after_commit ->(obj) { obj.update_agents_score; obj.update_redis_leaderboard }, on: :create
@@ -236,8 +237,8 @@ protected
       # Continue with the old method for changing agent score
       acc = user.account
       args = { :id => user.id, :account_id => acc.id }
-      if acc.premium_gamification_account?
-        Resque.enqueue(Gamification::Scoreboard::UpdateUserScore::PremiumQueue, args)
+      if redis_key_exists?(SIDEKIQ_GAMIFICATION_UPDATE_USER_SCORE)
+        Gamification::UpdateUserScore.perform_async(args)
       else
         Resque.enqueue(Gamification::Scoreboard::UpdateUserScore, args)
       end

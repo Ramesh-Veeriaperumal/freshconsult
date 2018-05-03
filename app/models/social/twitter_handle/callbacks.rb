@@ -124,7 +124,7 @@ class Social::TwitterHandle < ActiveRecord::Base
     end
 
     def initialise_smart_filter
-      Social::SmartFilterInitWorker.perform_async({:smart_filter_init_params => smart_filter_init_params, :account_id => self.account_id})
+      Social::SmartFilterInitWorker.perform_async({:smart_filter_init_params => smart_filter_init_params})
     end
 
     def new_smart_filter_enabled?

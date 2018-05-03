@@ -182,6 +182,7 @@ module Helpdesk::Email::ParseEmailData
   def detect_user_language signup_status, email_body
     text = text_for_detection(email_body)
     if user.language.nil? and signup_status
+      Rails.logger.info "language_detection => tkt_source:email, acc_id:#{Account.current.id}, req_id:#{user.id}, text:#{text}"
       language_detection(user.id, Account.current.id, text)
     end
   end

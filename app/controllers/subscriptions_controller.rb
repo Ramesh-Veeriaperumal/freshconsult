@@ -329,9 +329,13 @@ class SubscriptionsController < ApplicationController
     end
 
     def add_event
-      Resque.enqueue(Subscription::Events::AddEvent,
-        { :account_id => @subscription.account_id, :subscription_id => @subscription.id,
-          :subscription_hash => subscription_info(@cached_subscription) } )
+      args = { :account_id => @subscription.account_id, :subscription_id => @subscription.id,
+            :subscription_hash => subscription_info(@cached_subscription) }
+      if redis_key_exists?(SIDEKIQ_ADD_SUBSCRIPTION_EVENTS)
+        Subscriptions::SubscriptionAddEvents.perform_async(args)
+      else
+        Resque.enqueue(Subscription::Events::AddEvent, args)
+      end
     end
 
     def key

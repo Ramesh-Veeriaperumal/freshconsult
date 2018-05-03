@@ -108,7 +108,7 @@ class GroupsController < Admin::AdminController
   end
 
   def enable_roundrobin_v2
-    success = show_roundrobin_v2_notification? and Role.add_manage_availability_privilege
+    success = show_roundrobin_v2_notification? && Role.add_manage_availability_privilege
     flash_text = success ? t('group.enable_success_message') : t('group.enable_failure_message')
     render :json => {:flash_text => flash_text}
   end

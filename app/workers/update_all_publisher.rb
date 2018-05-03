@@ -16,23 +16,24 @@ class UpdateAllPublisher
     args[:options]  ||= {}
     options           = args[:options].deep_symbolize_keys
     # Move feature check inside if multiple subscribers added
-    manual_publish = esv2_enabled || count_es_enabled || options[:manual_publish].present?
-    args[:klass_name].constantize.where(account_id: Account.current.id, id: args[:ids]).each do |record|
-      if manual_publish
+    if esv2_enabled || count_es_enabled || options[:manual_publish].present?
+      args[:klass_name].constantize.where(account_id: Account.current.id, id: args[:ids]).each do |record|
         #=> For search v2
         record.sqs_manual_publish_without_feature_check if esv2_enabled and subscribers.include?('search')
         record.count_es_manual_publish if count_es_enabled and record.respond_to?(:count_es_manual_publish)
-        key = RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY
-        if options[:reason].present?
-          record.misc_changes = options[:reason]
-          key = RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY
+        if options[:manual_publish]
+          key = RabbitMq::Constants::RMQ_REPORTS_TICKET_KEY
+          if options[:reason].present?
+            record.misc_changes = options[:reason]
+            key = RabbitMq::Constants::RMQ_GENERIC_TICKET_KEY
+          end
+          rmq_options = ["update", key, {:manual_publish => true}]
+          central_publish_options = { model_changes: (args[:updates] || {}).inject({}) {|h, (k, v)| h[k] = ["*", v]; h} }
+          central_publish_options.merge!(misc_changes: options[:reason]) if options[:reason].present?
+          record.manual_publish(rmq_options, [:update, central_publish_options], true)
         end
-        # Add other subscribers here if needed like reports, etc.
+        # Add other subscribers here if needed like reports, etc./
       end
-      rmq_options = options[:manual_publish] ? ["update", key, {:manual_publish => true}] : []
-      central_publish_options = { model_changes: (args[:updates] || {}).inject({}) {|h, (k, v)| h[k] = ["*", v]; h} }
-      central_publish_options.merge!(misc_changes: options[:reason]) if options[:reason].present?
-      record.manual_publish(rmq_options, [:update, central_publish_options], true)
     end
   end
 

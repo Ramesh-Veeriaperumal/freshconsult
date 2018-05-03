@@ -1,5 +1,6 @@
 module Gamification
   class ProcessTicketQuests < BaseWorker
+    sidekiq_options :queue => "gamification_ticket_quests" , :retry => 0, :dead => true, :failures => :exhausted
 
     def perform(args)
       args.symbolize_keys!
