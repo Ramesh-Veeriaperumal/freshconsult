@@ -12131,9 +12131,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     ticket_product_description: Product description
     ticket_satisfaction_survey: Satisfaction survey
     ticket_suverymonkey_survey: Surveymonkey survey
-    ticket_group_name: Internal Group name
-    ticket_agent_name: Internal Agent name
-    ticket_agent_email: Internal Agent email
+    ticket_internal_group_name: Internal Group name
+    ticket_internal_agent_name: Internal Agent name
+    ticket_internal_agent_email: Internal Agent email
     unique_external_id: Requester Unique External Id
     triggered_event: 'Triggered Event'
     tooltip:
