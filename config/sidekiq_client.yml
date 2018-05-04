@@ -216,6 +216,7 @@ defaults: &defaults
     - [update_taggables_queue]
     - [mixpanel_queue]
     - [bot_cleanup]
+    - [apigee_api]
     - [delete_archive_ticket]
     - [restore_spam_tickets]
     - [email_service_provider]
