@@ -203,6 +203,11 @@ module Cache::Memcache::Account
     end
   end
 
+  def custom_mailbox_errors_present
+    key = CUSTOM_MAILBOX_STATUS_CHECK % {:account_id => self.id }
+    MemcacheKeys.fetch(key) { self.imap_mailboxes.errors.present? }
+  end
+
   def fb_realtime_msg_from_cache
     key = FB_REALTIME_MSG_ENABLED % {:account_id => self.id }
     MemcacheKeys.fetch(key) { self.facebook_pages.realtime_messaging_disabled.present? }

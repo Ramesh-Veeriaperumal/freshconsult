@@ -45,6 +45,7 @@ module RabbitMq::Subscribers::Users::Iris
     def iris_user_create_changes
        changes = self.previous_changes.dup
        changes.merge!(flexifield.previous_changes.dup) if flexifield.previous_changes.present?
+       changes.merge!(tag_names: self.tags.map(&:name))
        changes.dup.select{|k,v| PROPERTIES_TO_CONSIDER.include?(k.to_sym) || ff_fields.include?(k) }
     end
 

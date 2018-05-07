@@ -2915,6 +2915,41 @@
         }
       }
     },
+    "/contacts/{id}/hard_delete": {
+      "delete": {
+        "summary": "Hard Delete Contact",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "format": "int64",
+            "in": "path",
+            "required": true
+          },
+          {
+            "name": "force",
+            "type": "boolean",
+            "in": "query",
+            "required": false,
+            "description": "Set to true if you want to force hard delete even if the contact is not soft deleted"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "User invalid"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
     "/contacts/bulk_delete": {
       "put": {
         "tags": [

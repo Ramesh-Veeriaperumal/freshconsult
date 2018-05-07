@@ -49,4 +49,9 @@ class User < ActiveRecord::Base
   def agent_or_contact
     helpdesk_agent ? 'agent' : 'contact'
   end
+
+  def self.central_publish_enabled?
+    true
+  end
+
 end

@@ -218,6 +218,7 @@ defaults: &defaults
     - [update_taggables_queue]
     - [mixpanel_queue]
     - [bot_cleanup]
+    - [contact_delete_forever]
     - [delete_archive_ticket]
     - [restore_spam_tickets]
     - [toggle_agent_from_all_roundrobin_groups]

@@ -420,7 +420,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :user, :only => [:destroy, :block]
 
     # Used by V2 API
-    resource :"api_contact", :only => [:destroy, :restore]
+    resource :"api_contact", :only => [:destroy, :restore, :hard_delete]
     resource :"api_company", :only => [:destroy]
   end
 

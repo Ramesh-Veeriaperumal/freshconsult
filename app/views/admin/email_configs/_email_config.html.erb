@@ -10,8 +10,8 @@
 
   <td class="support-email">
     <% if email_config.active? %>
-      <%= content_tag(:div, h("#{email_config.name}"), :class => "bold")%>
-      <%= content_tag(:div, h("#{email_config.reply_email}"), :class => "wrap ellipsis" ) %>
+      <%= content_tag(:div, h("#{email_config.name}"), :class => "bold") %>
+      <%= content_tag(:div, h("#{email_config.reply_email}"), :class => "wrap ellipsis") %>
     <% else %>
       <%= content_tag(:div, h("#{email_config.name}"), :class => "bold") unless email_config.name.blank?%>
       <div>

@@ -251,7 +251,8 @@ module Ember
       end
 
       def archive_ticket_link
-        (archive_params.present?) ? "#{archived_ticket_path}?#{archive_params}": archived_ticket_path
+        redirect_link = "/api/_/tickets/archived/#{params[:id]}"
+        (archive_params.present?) ? "#{redirect_link}?#{archive_params}": redirect_link
       end
 
       def archive_params

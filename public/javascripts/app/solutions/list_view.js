@@ -219,6 +219,50 @@ window.App = window.App || {};
       });
     },
 
+    eventsForCategorySelect: function () {
+      var $this = this;
+      var $botOption = null;
+
+      // init event
+      $('#solution_folder_meta_solution_category_meta_id').livequery(function () {
+        $botOption = (!$botOption) 
+          ? $('#solution_folder_meta_visibility').children('option[value="5"]').clone() 
+          : $botOption;
+
+        $this.handleVisibilityOptions($(this), $botOption);
+      });
+
+      // category change event
+      $('body').on('change', '#solution_folder_meta_solution_category_meta_id', function () {
+        $this.handleVisibilityOptions($(this), $botOption);
+      });
+    },
+
+    handleVisibilityOptions: function ($ele, $botOption) {
+      var $solutionFolderMetaVisibility = $('#solution_folder_meta_visibility');
+      var categoryBotValues = $ele.data('categoryBotValue');
+      var selectedCategoryId = Number($ele.val());
+      var $existingBotOption = $solutionFolderMetaVisibility.children('option[value="5"]');
+      var selectedCategory = null;
+
+      categoryBotValues.forEach(function (value) {
+        if (Boolean(value.id === selectedCategoryId)) {
+          return selectedCategory = value;
+        }
+      });
+
+      // add option
+      if (selectedCategory.bot && !($existingBotOption.length)) {
+        $solutionFolderMetaVisibility.append($botOption);
+      }
+
+      // remove option
+      if (!selectedCategory.bot && ($existingBotOption.length)) {
+        $existingBotOption.remove();
+        $solutionFolderMetaVisibility.trigger('change')
+      }
+    },
+
     hideFdMenu: function () {
       this.toggleCompanyClass(false);
       $("#visible_to").hide();

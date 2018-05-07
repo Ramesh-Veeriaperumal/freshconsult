@@ -23,6 +23,7 @@ module Dkim::UtilityMethods
     begin
       yield
     rescue *exceptions => e
+      Rails.logger.info "Exception while configuring DKIM and Going to Retry::: #{e} ::: retry count #{retried}"
       if retried + 1 < options[:limit]
         retried += 1
         sleep options[:sleep].seconds

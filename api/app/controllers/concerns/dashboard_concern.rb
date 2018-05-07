@@ -195,8 +195,8 @@ module DashboardConcern
     # Marking freshfone and chat as false because the widgets arent ready. When it is ready, it can be uncommented and deployed
     chat_feature = current_account.chat_activated? && current_account.chat_setting.active
     {
-      chat: false, # non_sprout_plan && chat_feature,
-      agent_status: non_sprout_plan && (round_robin? || current_account.freshfone_active? || chat_feature)
+      chat: false, # non_sprout_plan && chat_feature
+      agent_status: non_sprout_plan && (round_robin?)
     }
   end
 

@@ -156,6 +156,8 @@ class ContactDecorator < ApiDecorator
                                        blocked: record.blocked?,
                                        spam: record.spam?,
                                        deleted: record.deleted,
+                                       was_agent: record.was_agent?,
+                                       agent_deleted_forever: record.agent_deleted_forever?,
                                        parent_id: record.parent_id)
       response_hash[:custom_fields] = custom_fields if custom_fields.present?
       response_hash.merge(company_info)
