@@ -145,7 +145,7 @@ module RabbitMq::Utils
   end
   
   def sns_notification(subj, message, topic = nil)
-    notification_topic = topic || SNS["reports_notification_topic"]
+    notification_topic = topic || SNS["dev_ops_notification_topic"]
     DevNotification.publish(notification_topic, subj, message.to_json)
   end
 

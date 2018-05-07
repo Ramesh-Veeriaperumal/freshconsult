@@ -112,3 +112,4 @@ helpdesk:
     - bot
     - central
     - sanitize_monkey_patch
+    - apigee_config

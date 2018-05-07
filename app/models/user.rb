@@ -139,8 +139,12 @@ class User < ActiveRecord::Base
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
-                :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, :role_ids_changed, :detect_language # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
-  # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
+                :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, 
+                :role_ids_changed, :detect_language, :tag_use_updated 
+                # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
+  # As role_ids are not part of user_model(it is an association_reader), 
+  #   agent.update_attributes won't trigger user callbacks since user doesn't have any change.
+
   # Hence user.safe_send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
 
   attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes,
@@ -179,6 +183,14 @@ class User < ActiveRecord::Base
     else
       "/assets/misc/profile_blank_#{profile_size}.gif"
     end
+  end
+
+  def was_agent?
+    preferences[:user_preferences][:was_agent]
+  end
+
+  def agent_deleted_forever?
+    preferences[:user_preferences][:agent_deleted_forever]
   end
 
   def facebook_avatar( facebook_id, profile_size = "square")
@@ -385,6 +397,8 @@ class User < ActiveRecord::Base
   def tag_names= updated_tag_names
     unless updated_tag_names.nil? # Check only nil so that empty string will remove all the tags.
       updated_tag_names = updated_tag_names.split(",").map(&:strip).reject(&:empty?)
+      existing_tag_names = tags.collect(&:name)
+      self.tag_use_updated = true if updated_tag_names.sort != existing_tag_names.sort
       self.tags = account.tags.assign_tags(updated_tag_names)
     end
   end
@@ -606,6 +620,10 @@ class User < ActiveRecord::Base
       #self.openid_identifier = params[:user][:openid_identifier]
       save!
     end
+  end
+
+  def delete_forever!
+    Users::ContactDeleteForeverWorker.perform_async({:user_id => self.id})
   end
 
   def update_account_info_and_verify(user_params)
@@ -913,7 +931,13 @@ class User < ActiveRecord::Base
   def make_customer
     return true if customer?
     set_company_name
-    if update_attributes({:helpdesk_agent => false, :deleted => false})
+
+    self.helpdesk_agent = false
+    self.deleted = false
+    new_pref = { :was_agent => true }
+    self.merge_preferences = { :user_preferences => new_pref }
+
+    if self.save
       subscriptions.destroy_all
       self.cti_phone = nil
       agent.destroy
@@ -1088,12 +1112,20 @@ class User < ActiveRecord::Base
 
   def create_freshid_user
     return unless freshid_enabled_and_agent?
+    Rails.logger.info "FRESHID Creating user :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}"
     reset_freshid_user if email_changed?
     freshid_user = Freshid::User.create(user_attributes_for_freshid)
     if freshid_user.present?
-      self.build_freshid_authorization(uid: freshid_user.uuid)
+      self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
       assign_freshid_attributes_to_user freshid_user
+      Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
     end
+  end
+
+  def create_freshid_user!
+    create_freshid_user
+    save!
+    enqueue_activation_email
   end
 
   def destroy_freshid_user
@@ -1210,6 +1242,7 @@ class User < ActiveRecord::Base
     def backup_user_changes
       @all_changes = self.changes.clone.to_hash
       @all_changes.merge!(flexifield.changes)
+      @all_changes.merge!(tag_names: self.tags.map(&:name)) if self.tags_updated
       @all_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
       @all_changes.symbolize_keys!
     end

@@ -606,9 +606,9 @@ module ApplicationHelper
     #Shared ownership placeholders
     if current_account.shared_ownership_enabled?
       place_holders[:tickets] +=
-        [['{{ticket.internal_group.name}}',      t('placeholder.ticket_group_name'),       "",         'ticket_group_name'],
-        ['{{ticket.internal_agent.name}}',       t('placeholder.ticket_agent_name'),       "",         'ticket_agent_name'],
-        ['{{ticket.internal_agent.email}}',      t('placeholder.ticket_agent_email'),      "",         'ticket_agent_email']]
+        [['{{ticket.internal_group.name}}',      t('placeholder.ticket_internal_group_name'),       "",         'ticket_internal_group_name'],
+        ['{{ticket.internal_agent.name}}',       t('placeholder.ticket_internal_agent_name'),       "",         'ticket_internal_agent_name'],
+        ['{{ticket.internal_agent.email}}',      t('placeholder.ticket_internal_agent_email'),      "",         'ticket_internal_agent_email']]
     end
 
     if current_account.unique_contact_identifier_enabled?

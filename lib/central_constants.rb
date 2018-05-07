@@ -5,6 +5,7 @@ module CentralConstants
     'Solution::Category' => '0',
     'Solution::Folder' => '0',
     'Solution::Article' => '0',
-    'Bot::FeedbackMapping' => '0'
+    'Bot::FeedbackMapping' => '0',
+    'User' => '0'
   }
 end
