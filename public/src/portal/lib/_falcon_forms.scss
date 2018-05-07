@@ -802,11 +802,6 @@ width:90%;
 }
 .select2-container{ width:90%; }
 .select2-container .select2-choices{ @include border-left-color(#efefef); @include border-left-radius(0); }
-.cc-emails {
-  .select2-input { height: 26px;}
-   .select2-search-field input {
-        height: 26px;
-    }
 }
 
 .attachments-form{

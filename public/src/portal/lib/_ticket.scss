@@ -3,11 +3,6 @@
 	@include left(2px);
 }
 
-
-.ticket-filter .caret {
-		vertical-align: baseline;
-	}
-
 .c-ticket-row{ 
 	@include padding(8px 5px 8px 45px);
 	.status-source{ 

@@ -12,7 +12,7 @@
       </a>
     {% endif %}
   </div>
-  <div id="ticket-filter-container" class="ticket-filter">
+  <div id="ticket-filter-container">
     {% snippet ticket_filters %}
   </div>
   

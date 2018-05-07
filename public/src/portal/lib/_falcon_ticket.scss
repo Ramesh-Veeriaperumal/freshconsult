@@ -2,11 +2,8 @@
 	margin-top:3px;
 	@include left(2px);
 }
-.ticket-filter{
+div#ticket-filter-container{
 	margin-top: 20px;
-	.caret {
-		vertical-align: baseline;
-	}
 }
 .c-row.c-ticket-row{ 
 	@include padding(16px 0);

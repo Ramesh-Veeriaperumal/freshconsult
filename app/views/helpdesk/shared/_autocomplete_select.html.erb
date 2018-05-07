@@ -9,7 +9,6 @@ if bulk_action
   name = "helpdesk_ticket[company_id]"
 end
 include_none ||= false
-customer_portal ||= false
 none = I18n.t("filter_options.none")
 none_value = -1
 
@@ -71,11 +70,8 @@ jQuery(document).ready(function() {
             searchText = term;
             toRet = { q: term };
             var company_id = jQuery("#company-list-dropdown .dropdown-toggle").data("company-id") || jQuery("#helpdesk_ticket_company_id").find(":selected").val();
-            customer_portal = <%=customer_portal%>
             if(company_id !== undefined)
               toRet = { q: term, customer_id: company_id };
-            if(customer_portal)
-              toRet["customer_portal"] = customer_portal;
             return toRet;
         },
         results: function (data) {

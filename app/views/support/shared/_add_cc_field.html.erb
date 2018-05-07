@@ -5,8 +5,7 @@
 			if current_user.contractor? %>
 				<%= render_autocomplete({ :selected_values => [], 
 															:type => :cc_emails, 
-															:include_none => true,
-															:customer_portal => true }) %>
+															:include_none => true }) %>
 			<% else %>
 				<%= select_tag(:cc_emails, 
 							options_for_select(current_user.company.users.collect{ |c| [c.email, c.email] }),

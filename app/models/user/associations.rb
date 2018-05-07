@@ -2,8 +2,6 @@ class User < ActiveRecord::Base
 
   belongs_to :company, :foreign_key => 'customer_id'
   has_many :user_companies, :class_name => 'UserCompany', 
-                            :before_remove => :update_user_companies,
-                            :before_add => :update_user_companies,
                             :dependent => :destroy
   accepts_nested_attributes_for :user_companies, :allow_destroy => true
   has_one :default_user_company, :class_name => 'UserCompany', :conditions => { :default => true }, :autosave => true
