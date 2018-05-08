@@ -25,7 +25,7 @@ module TicketFiltersHelper
 
   def default_visible_filters
     TicketsFilter.default_views.collect do |filter|
-      CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter[:id]) ? filter :
+      CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter) ? filter :
         filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter[:id]))
     end
   end
