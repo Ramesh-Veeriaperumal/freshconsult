@@ -184,8 +184,6 @@ en:
   any: Any
   or: or
   go_to_new_ui: "Switch to the Mint experience"
-  go_to_new_ui_star_wars: "Join the Resistance"
-  go_to_new_ui_hover_test_star_wars: "On Star Wars day, try the forces that can make you a Jedi at Support"
   email_failure:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
