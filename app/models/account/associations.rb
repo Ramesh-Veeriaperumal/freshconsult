@@ -361,4 +361,7 @@ class Account < ActiveRecord::Base
   has_many :bot_tickets, class_name: 'Bot::Ticket'
   has_many :bots, class_name: 'Bot', dependent: :destroy
   has_many :bot_feedback_mappings, class_name: 'Bot::FeedbackMapping'
+
+  has_many :contact_notes
+  has_many :company_notes
 end

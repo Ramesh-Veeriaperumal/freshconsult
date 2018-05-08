@@ -23,10 +23,14 @@ module Ember
     include TicketActivitiesTestHelper
     include TicketTemplateHelper
     include CustomFieldsTestHelper
+    include ArchiveTicketTestHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
     CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
     CUSTOM_FIELDS_VALUES = { 'country' => 'USA', 'state' => 'California', 'city' => 'Burlingame', 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' => Faker::Lorem.paragraph, 'dropdown' => CUSTOM_FIELDS_CHOICES[0], 'date' => '2015-09-09' }.freeze
+
+    ARCHIVE_DAYS = 120
+    TICKET_UPDATED_DATE = 150.days.ago
 
     def setup
       super
@@ -410,6 +414,17 @@ module Ember
       get :show, construct_params(version: 'private', id: ticket.display_id)
       assert_response 200
       match_json(ticket_show_pattern(ticket.reload))
+    end
+
+    def test_ticket_show_with_archive_child
+      ticket = create_ticket
+      archive_ticket = create_archive_and_child(ticket)
+      get :show, controller_params(version: 'private', id: ticket.display_id)
+      Account.current.features.archive_tickets.destroy
+      pattern = ticket_show_pattern(ticket)
+      pattern[:archive_ticket] = { :subject => archive_ticket.subject, :id => archive_ticket.display_id }
+      assert_response 200
+      match_json(pattern)
     end
 
     def test_create_with_incorrect_attachment_type
@@ -2808,6 +2823,25 @@ module Ember
       match_json(request_error_pattern(:recipient_limit_exceeded))
     ensure
       @controller.unstub(:recipients_limit_exceeded?)
+    end
+
+    def test_archive_show_ticket_redirection
+      @account.make_current
+      @account.enable_ticket_archiving(ARCHIVE_DAYS)
+      @account.features.send(:archive_tickets).create
+      create_archive_ticket_with_assoc(
+        created_at: TICKET_UPDATED_DATE,
+        updated_at: TICKET_UPDATED_DATE,
+        create_association: true
+      )
+      stub_archive_assoc_for_show(@archive_association) do
+        archive_ticket = @account.archive_tickets.find_by_ticket_id(@archive_ticket.id)
+        get :show, controller_params(version: 'private', id: archive_ticket.display_id)
+        assert_response 301
+        assert_match "/api/_/tickets/archived/#{archive_ticket.display_id}", response.body
+      end
+    ensure
+      cleanup_archive_ticket(@archive_ticket)
     end
   end
 end

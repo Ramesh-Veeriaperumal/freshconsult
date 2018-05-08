@@ -79,6 +79,7 @@ Helpkit::Application.routes.draw do
       member do
         put :make_agent
         put :restore
+        delete :hard_delete
       end
     end
 
@@ -168,6 +169,12 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update]
+
+    resources :archived_tickets ,  path: 'tickets/archived', controller: 'archive/tickets', only: [:show, :destroy] do
+      member do
+        get :conversations, to: 'archive/conversations#ticket_conversations'
+      end
+    end
   end
 
   ember_routes = proc do
@@ -216,12 +223,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :archived_tickets ,  path: 'tickets/archived', controller: 'archive/tickets', only: [:show, :destroy] do
-      member do
-        get :conversations, to: 'archive/conversations#ticket_conversations'
-        get :activities, to: 'archive/tickets/activities#index'
-      end
-    end
+    match 'tickets/archived/:id/activities' => 'archive/tickets/activities#index', via: :get
 
     resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
       collection do
@@ -346,6 +348,7 @@ Helpkit::Application.routes.draw do
         put :update_password
         get :activities
         put :assume_identity
+        delete :hard_delete
       end
       resources :notes, controller: 'customer_notes', only: [:create, :update, :destroy, :show, :index]
     end

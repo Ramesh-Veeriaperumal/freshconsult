@@ -40,6 +40,7 @@ development:
   channel_framework_services: fd_cf_services_dev
   fd_scheduler_reminder_todo_queue: fd_scheduler_reminder_todo_queue_dev
   bot_feedback_queue: bot_feedback_staging
+  custom_mailbox_status: custom_mailbox_status_dev
 
 staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging

@@ -89,6 +89,7 @@ module LeaderboardConcern
   end
 
   def generate_leaderboard(group_id = nil)
+    Rails.logger.debug("In generate_leaderboard #{group_id} #{params.inspect} #{current_user.id} ")
     initialize_leaderboard(group_id)
     custom_range_selected = params[:date_range] == 'select_range' && params[:date_range_selected].present?
     custom_range_selected ? date_range_leaderboard : monthly_leaderboard
@@ -109,6 +110,7 @@ module LeaderboardConcern
     category_list.each_with_index do |category, ind|
       @leaderboard << category_score_for_custom_range(category, ind)
     end
+     Rails.logger.debug("Result in date_range_leaderboard #{@leaderboard.inspect}")
   end
 
   def category_score_for_custom_range(category, ind)
@@ -117,6 +119,7 @@ module LeaderboardConcern
     scoper = scoper.includes(:group) if @group_action
     scoper_result = category == :mvp ? scoper.limit(50).all : scoper.safe_send(category).limit(50).all
     result = scoper_result.map { |ss| [ss.safe_send(leader_module).id, ss.tot_score] }
+    Rails.logger.debug("Result in date_range_leaderboard #{category} #{ind} #{result.inspect}")
     category_hash(result, category, ind + 1)
   end
 
@@ -124,8 +127,10 @@ module LeaderboardConcern
     current_time = Time.zone.now
     category_list.each_with_index do |category, ind|
       leader_module_ids = months_ago_value ? @support_score.get_leader_ids(current_account, @board_category, category, months_ago_value.month.ago(current_time.end_of_month), 50) : []
+      Rails.logger.debug("In monthly_leaderboard :: #{leader_module_ids.inspect} :: #{category} :: #{months_ago_value}")
       @leaderboard << category_hash(leader_module_ids, category, ind + 1)
     end
+    Rails.logger.debug("Result in monthly_leaderboard #{@leaderboard.inspect}")
   end
 
   def category_hash(res_array, category_name, category_id)
@@ -134,24 +139,30 @@ module LeaderboardConcern
       name: category_name.to_s,
       rank_holders: []
     }
+    Rails.logger.debug("Inside category_hash :: #{res_array} :: #{res_array.blank?} :: #{category_name} :: #{category_id}")
     category_hash[:rank_holders] = leader_module_rank_holders(res_array.to_a, category_name) unless res_array.blank?
     category_hash
   end
 
   def leader_module_rank_holders(leader_modules, category)
     module_scores = leader_module_scores(leader_modules)
+    Rails.logger.debug("Inside leader_module_rank_holders :: #{leader_modules.inspect} :: #{module_scores.inspect} :: #{category}")
     rank_holders = []
     leader_modules.each_with_index do |leader_module, counter|
       leader_profile = leader_module_profile(module_scores[module_scores.map(&:id).index(leader_module[0].to_i)])
+      Rails.logger.debug("Inside leader_module_rank_holders :: #{leader_profile}")
       rank_holders << rank_holder_hash(leader_module, category, counter + 1).merge(leader_profile)
     end
+    Rails.logger.debug("Inside leader_module_rank_holders :: #{rank_holders.inspect}")
     rank_holders
   end
 
   def leader_module_scores(leader_modules)
     conditions = { id: leader_modules.map(&:first) }
+    Rails.logger.debug("Inside leader_module_scores #{leader_modules.inspect} #{@module_association} :: #{conditions.inspect} ::  #{@group_action}")
     conditions.merge!({ helpdesk_agent: true, deleted: false }) unless @group_action
     result = current_account.safe_send(@module_association).where(conditions).order("FIELD(id, #{conditions[:id]})")
+    Rails.logger.debug("In leader_module_scores  #{result.inspect}")
     @group_action ? result : result.includes(:avatar)
   end
 

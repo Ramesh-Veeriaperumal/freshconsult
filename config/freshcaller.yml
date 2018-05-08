@@ -4,6 +4,7 @@ development:
   jwt_default_expiry: 100000
   signup_domain: 'http://d2badcff.ngrok.io:3000'
   s3_bucket: 'helpkit-freshcaller-migration'
+  region: 'us-east-1'
   domain_prefix: ''
   domain_suffix: ''
   widget_loader_url: '//localhost:8002/fc-widget.js'

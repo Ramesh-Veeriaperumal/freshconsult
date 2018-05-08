@@ -763,4 +763,17 @@ module TicketsTestHelper
       create_ticket({:group => group_with_sbrr_enabled[1], :skill_id => skills[1].id})
     end
   end
+
+  def create_archive_and_child ticket
+    Account.current.features.archive_tickets.create
+    archive_ticket = Helpdesk::ArchiveTicket.new
+    archive_ticket.subject = "Test archive ticket"
+    archive_ticket.save
+    archive_child = Helpdesk::ArchiveChild.new
+    archive_child.ticket_id = ticket.id
+    archive_child.archive_ticket_id = archive_ticket.id
+    archive_child.save
+    archive_ticket
+  end
+
 end

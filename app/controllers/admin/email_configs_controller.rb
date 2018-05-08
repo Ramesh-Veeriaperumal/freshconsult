@@ -7,6 +7,7 @@ class Admin::EmailConfigsController < Admin::AdminController
   include MailboxValidator
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Admin::EmailConfig
 
   before_filter :only => [:new] do |c|
     c.requires_this_feature :multiple_emails

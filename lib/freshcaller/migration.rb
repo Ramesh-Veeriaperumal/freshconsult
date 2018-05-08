@@ -100,13 +100,17 @@ module Freshcaller
 
     def upload_to_s3
       Rails.logger.info "S3 Upload :: Account :: #{current_account.id}"
+      s3_client = Aws::S3::Client.new(region: FreshcallerConfig['region'])
+      bucket = Aws::S3::Bucket.new(FreshcallerConfig['s3_bucket'], { client: s3_client })
       Dir.foreach(account_migration_location) do |file|
         next if ['.', '..'].include?(file)
         data = File.read(account_migration_location + file)
-        AwsWrapper::S3Object.store(S3_LOCATION + "/#{current_account.freshcaller_account.freshcaller_account_id}/#{file}", 
-                                   data, FreshcallerConfig['s3_bucket'],
-                                   { content_type: 'json',
-                                    acl: 'bucket-owner-full-control' })
+        bucket.put_object({ key: S3_LOCATION + "/#{current_account.freshcaller_account.freshcaller_account_id}/#{file}", 
+                            body: data, 
+                            server_side_encryption: 'AES256', 
+                            content_type: 'json', 
+                            acl: 'bucket-owner-full-control'
+                          })
       end
       FileUtils.rm_rf(account_migration_location)
     end

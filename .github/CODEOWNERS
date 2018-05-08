@@ -8,6 +8,9 @@ config/sidekiq*.yml @venkatesanmurali @hrishikesh-p
 
 lib/rabbit_mq/* @sram2020
 
+swagger/* @thanashyam @venkatesanmurali @abinaya21 @ksashikumar
+
+public/* @rajasegar-c @parsurv @vishnubalajikm
 config/locales/en.yml @shankar-ganesh
 api/lib/error_messages.yml @shankar-ganesh
 

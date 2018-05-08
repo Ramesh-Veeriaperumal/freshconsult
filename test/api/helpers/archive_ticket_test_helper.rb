@@ -66,7 +66,7 @@ module ArchiveTicketTestHelper
   end
 
   def create_archive_ticket_with_assoc(params = {})
-    params_hash = ticket_params_hash(params)
+    params_hash = archive_ticket_params_hash(params)
     ticket = create_ticket(params_hash)
     build_conversations(ticket, params) if params[:create_conversations]
     ticket.updated_at = params[:updated_at] if params[:updated_at].present?
@@ -100,7 +100,7 @@ module ArchiveTicketTestHelper
     Helpdesk::ArchiveTicketAssociation.new(associations['archive_ticket_association'])
   end
 
-  def ticket_params_hash(params = {})
+  def archive_ticket_params_hash(params = {})
     cc_emails = [Faker::Internet.email, Faker::Internet.email]
     subject = Faker::Lorem.words(10).join(' ')
     email = Faker::Internet.email

@@ -26,5 +26,6 @@ aws:
   - <%= SQS[:scheduled_export_payload_enricher_queue] %>
   - <%= SQS[:channel_framework_services] %>
   - <%= SQS[:fd_scheduler_reminder_todo_queue] %>
+  - <%= SQS[:custom_mailbox_status] %>
   - <%= SQS[:bot_feedback_queue] %>
 
