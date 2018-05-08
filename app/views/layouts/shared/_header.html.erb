@@ -38,8 +38,7 @@
 		<div class="header-wrapper">
 
 	    <% if current_user && current_account.falcon_ui_enabled? && account_and_user_in_mint_supported_langs? %>
-	    	<%= link_to t('go_to_new_ui_star_wars'), enable_falcon_path,
-						 :method => :post, :class => "tooltip resistance", :"data-placement" => "below", :"title" => t('go_to_new_ui_hover_test_star_wars')%>
+	    	<%= link_to t('go_to_new_ui'), enable_falcon_path, :id=>"ui_toggle", :method => :post %>
 	    <% end %>
 
 			<% if current_user then %>
@@ -145,7 +144,7 @@
 			 <% unless Rails.env.development? %>
 						<% if current_account.announcements_tab_enabled? %>
 							<a href="/announcements" id="announcements_notify_header" title="<%= t('notification.explore_notifications_header') %>" data-placement="below" class="header-notification-wrapper tooltip announcements-notification-link">
-								<i class="death_star"></i>
+								<%= font_icon "help", { :size => 30 } %>
 							</a>
 	          			<% else %>
 							<div id="product_notify_header" class="header-notification-wrapper" rel="remote-load" 
