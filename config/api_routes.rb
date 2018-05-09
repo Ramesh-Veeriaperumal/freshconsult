@@ -502,7 +502,7 @@ Helpkit::Application.routes.draw do
     post '/freshcaller/search/customers/', to: 'channel/freshcaller/search/customers#results'
     post '/freshcaller/search/tickets/', to: 'channel/freshcaller/search/tickets#results'
     resources :tickets, controller: 'channel/tickets', only: [:create]
-    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create]
+    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show]
     resources :companies, controller: 'channel/api_companies', only: [:create]
     scope '/bot' do
       resources :tickets, controller: 'channel/bot/tickets', only: [:create]

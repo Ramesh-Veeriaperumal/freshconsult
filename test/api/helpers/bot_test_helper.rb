@@ -1,7 +1,4 @@
 module BotTestHelper
-  SUPPORT_BOT = 'frankbot'.freeze
-  CONFIG = CHANNEL_API_CONFIG[SUPPORT_BOT]
-
   def create_bot(options = {})
     avatar_hash = {
       is_default: false
@@ -49,17 +46,6 @@ module BotTestHelper
 
   def generate_uuid
     UUIDTools::UUID.timestamp_create.hexdigest
-  end
-
-  def sign_payload(payload = {}, expiration = CONFIG[:jwt_default_expiry])
-    payload = payload.dup
-    payload['exp'] = Time.now.to_i + expiration.to_i if expiration
-    jwt = JWT.encode(payload, CONFIG[:jwt_secret])
-    JWE.encrypt(jwt, CONFIG[:secret_key], alg: 'dir', source: SUPPORT_BOT)
-  end
-
-  def set_auth_header
-    request.env['X-Channel-Auth'] = sign_payload({})
   end
 
   def bot_index_not_onboarded_main_portal_pattern
