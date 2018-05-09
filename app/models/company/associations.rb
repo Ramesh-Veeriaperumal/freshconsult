@@ -36,4 +36,6 @@ class Company < ActiveRecord::Base
 
   delegate :string_cc01, :string_cc02, :string_cc03, :datetime_cc01, :to => :company_field_data
 
+  has_many :notes, :class_name => 'CompanyNote', :dependent => :destroy
+
 end

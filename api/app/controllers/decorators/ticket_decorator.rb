@@ -128,6 +128,14 @@ class TicketDecorator < ApiDecorator
     cloud_files.map { |cf| CloudFileDecorator.new(cf).to_hash }
   end
 
+  def archive_hash
+    return nil unless private_api? && Account.current.features_included?(:archive_tickets) && record.archive_child
+    {
+      id: record.archive_ticket.display_id,
+      subject: record.archive_ticket.subject
+    }
+  end
+
   def meta
     meta_info = record.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
     return {} unless meta_info

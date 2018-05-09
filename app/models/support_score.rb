@@ -99,7 +99,7 @@ class SupportScore < ActiveRecord::Base
     key = safe_send("#{board_category}_leaderboard_key", category, search_time.month)
 
     response = get_largest_members_of_sorted_set_redis key, result_count
-
+    Rails.logger.debug("Inside memcache result #{account.inspect} #{key} #{category} result_count: #{result_count} response: #{response.inspect}")
     if response.blank?
       return MemcacheKeys.fetch(key, 3600) { store_leaderboard_in_redis key, account, board_category, category, search_time, result_count }
     else
@@ -286,11 +286,11 @@ protected
 
   def store_leaderboard_in_redis key, account, board_category, category, end_time, result_count = nil
     result = category == :mvp ? safe_send("#{board_category}_scoper", account, end_time.beginning_of_month, end_time).all : safe_send("#{board_category}_scoper", account, end_time.beginning_of_month, end_time).safe_send(category).all
-
+    Rails.logger.debug("Inside store_leaderboard_in_redis #{result.inspect}")
     if result.present?
       attribute = board_category == "groups" ? "group_id" : "user_id"
       leader_list = result.inject([]) {|list, item| list << [item.tot_score, item.safe_send(attribute)] }
-
+       Rails.logger.debug("Inside store_leaderboard_in_redis #{leader_list.inspect}")
       multi_add_in_sorted_set_redis(key, leader_list, 3.months.from_now(end_time).end_of_month.to_i - end_time.to_i)
 
       return leader_list.first(result_count).collect{ |details| details.reverse } if result_count

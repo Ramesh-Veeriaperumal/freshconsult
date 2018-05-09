@@ -29,12 +29,12 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     cleanup_archive_ticket(@archive_ticket, {conversations: true})
   end
 
-  def test_show_private_api
+  def test_show
     stub_archive_assoc_for_show(@archive_association) do
       archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
       return if archive_ticket.blank?
 
-      get :show, controller_params(version: 'private', id: archive_ticket.display_id, include: 'stats')
+      get :show, controller_params(id: archive_ticket.display_id, include: 'stats')
       assert_response 200
 
       ticket_pattern = ticket_pattern_for_show(archive_ticket)
@@ -42,12 +42,12 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     end
   end
 
-  def test_show_private_api_with_empty_conversations
+  def test_show_with_empty_conversations
     stub_archive_assoc_for_show(@archive_association) do
       archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
       return if archive_ticket.blank?
 
-      get :show, controller_params(version: 'private', id: archive_ticket.display_id, include: 'stats,conversations')
+      get :show, controller_params(id: archive_ticket.display_id, include: 'stats,conversations')
       assert_response 200
 
       ticket_pattern = ticket_pattern_for_show(archive_ticket)
@@ -56,12 +56,12 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     end
   end
 
-  def test_show_private_api_with_requester
+  def test_show_with_requester
     stub_archive_assoc_for_show(@archive_association) do
       archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
       return if archive_ticket.blank?
 
-      get :show, controller_params(version: 'private', id: archive_ticket.display_id, include: 'stats,requester')
+      get :show, controller_params(id: archive_ticket.display_id, include: 'stats,requester')
       assert_response 200
 
       ticket_pattern = ticket_pattern_for_show(archive_ticket, [:requester])
@@ -70,23 +70,34 @@ class Archive::TicketsControllerTest < ActionController::TestCase
   end
 
   def test_show_without_ticket
-    get :show, controller_params(version: 'private', id: 'x')
+    get :show, controller_params(id: 'x')
     assert_response 404
   end
 
-  def test_show_private_api_with_invalid_params
+  def test_show_without_permission
+    stub_archive_assoc_for_show(@archive_association) do
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
+      get :show, controller_params(id: archive_ticket.display_id)
+      User.any_instance.unstub(:has_ticket_permission?)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    end
+  end
+
+  def test_show_with_invalid_params
     stub_archive_assoc_for_show(@archive_association) do
       archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
       return if archive_ticket.blank?
 
-      get :show, controller_params(version: 'private', id: archive_ticket.display_id, include: 'invalid')
+      get :show, controller_params(id: archive_ticket.display_id, include: 'invalid')
       assert_response 400
     end
   end
 
   def test_without_archive_feature
     @account.features.archive_tickets.destroy
-    get :show, controller_params(version: 'private', id: 1)
+    get :show, controller_params(id: 1)
     assert_response 403
   end
 
@@ -94,7 +105,7 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     stub_archive_assoc_for_show(@archive_association) do
       archive_ticket = @account.archive_tickets.find_by_ticket_id(@archive_ticket.id)
       no_of_jobs = ::Archive::DeleteArchiveTicket.jobs.size
-      delete :destroy, controller_params(version: 'private', id: archive_ticket.display_id)
+      delete :destroy, controller_params(id: archive_ticket.display_id)
       current_jobs = ::Archive::DeleteArchiveTicket.jobs.size
       assert_equal no_of_jobs + 1, current_jobs
       assert_response 204
@@ -103,10 +114,24 @@ class Archive::TicketsControllerTest < ActionController::TestCase
 
   def test_worker_archive_delete_without_ticket
     no_of_jobs = ::Archive::DeleteArchiveTicket.jobs.size
-    delete :destroy, controller_params(version: 'private',id: 'q')
+    delete :destroy, controller_params(id: 'q')
     current_jobs = ::Archive::DeleteArchiveTicket.jobs.size
     assert_equal no_of_jobs, current_jobs
     assert_response 404
+  end
+
+  def test_delete_without_permission
+    stub_archive_assoc_for_show(@archive_association) do
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      no_of_jobs = ::Archive::DeleteArchiveTicket.jobs.size
+      archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
+      get :destroy, controller_params(id: archive_ticket.display_id)
+      current_jobs = ::Archive::DeleteArchiveTicket.jobs.size
+      User.any_instance.unstub(:has_ticket_permission?)
+      assert_equal no_of_jobs, current_jobs
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    end
   end
 
 

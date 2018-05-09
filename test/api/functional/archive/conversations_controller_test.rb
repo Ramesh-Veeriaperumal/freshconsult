@@ -36,7 +36,7 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
       archive_note_payload(note, payload)
     end
 
-    get :ticket_conversations, controller_params(version: 'private', id: archive_ticket.display_id)
+    get :ticket_conversations, controller_params(id: archive_ticket.display_id)
     assert_response 200
     match_json(note_json)
   end
@@ -44,7 +44,7 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
   def test_ticket_conversations_with_pagination
     archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
 
-    get :ticket_conversations, controller_params(version: 'private', id: archive_ticket.display_id, page: '1', per_page: 1)
+    get :ticket_conversations, controller_params(id: archive_ticket.display_id, page: '1', per_page: 1)
     assert_response 200
     assert JSON.parse(response.body).count == 1
   end
@@ -52,7 +52,7 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
   def test_ticket_conversations_with_pagination_exceeds_limit
     archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
 
-    get :ticket_conversations, controller_params(version: 'private', id: archive_ticket.display_id, per_page: 101)
+    get :ticket_conversations, controller_params(id: archive_ticket.display_id, per_page: 101)
     assert_response 400
     match_json([bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
   end
@@ -60,7 +60,7 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
   def test_without_archive_feature
     archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
     @account.features.archive_tickets.destroy
-    get :ticket_conversations, controller_params(version: 'private', id: archive_ticket.display_id)
+    get :ticket_conversations, controller_params(id: archive_ticket.display_id)
     assert_response 403
   end
 

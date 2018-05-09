@@ -38,3 +38,4 @@ module BotFeedbackConstants
   FEEDBACK_STATE_KEYS_BY_TOKEN = Hash[*FEEDBACK_STATE.map { |i| [i[0], i[1]] }.flatten].freeze
   FEEDBACK_STATE_TOKEN_BY_KEY = Hash[*FEEDBACK_STATE.map { |i| [i[1], i[0]] }.flatten].freeze
 end
+

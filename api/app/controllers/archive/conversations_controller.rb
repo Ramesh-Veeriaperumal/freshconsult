@@ -70,9 +70,9 @@ class Archive::ConversationsController < ::ConversationsController
       current_account.archive_tickets
     end
 
-    def check_privilege # Overriding so that verify_ticket_permission is called with current scope.
-      return false unless super
-
+    def check_privilege
+      # Overriding so that verify_ticket_permission is called with current scope(erroring out with schemaless in archive).
+      return false unless check_api_privilege # duping api controllers privilege checks.
       return false if ticket_required? && !load_parent_ticket
       verify_ticket_permission(api_current_user, @ticket) if @ticket
     end
@@ -85,6 +85,18 @@ class Archive::ConversationsController < ::ConversationsController
       unless user.has_ticket_permission?(ticket) # Overriding to remove schema_less_check.
         Rails.logger.error "Params: #{params.inspect} User: #{user.id}, #{user.email} doesn't have permission to ticket display_id: #{ticket.display_id}"
         render_request_error :access_denied, 403
+        return false
+      end
+      true
+    end
+
+    def check_api_privilege
+      if api_current_user.nil? || api_current_user.customer? || !allowed_to_access?
+        access_denied
+        return false
+      elsif verify_password_expired?
+        Rails.logger.debug 'API V2 Password expired error'
+        render_request_error :password_expired, 403
         return false
       end
       true
