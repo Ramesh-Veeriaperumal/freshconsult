@@ -30,6 +30,9 @@ class User < ActiveRecord::Base
   before_save :restrict_domain, :if => :email_changed?
   before_save :sanitize_contact_name, :backup_customer_id
   before_save :set_falcon_ui_preference, :if => :falcon_ui_applicable?
+  before_save :persist_updated_at, :unless => :valid_user_update?
+
+  publishable on: :destroy
 
   after_commit :clear_agent_caches, on: :create, :if => :agent?
   after_commit :update_agent_caches, on: :update
@@ -47,7 +50,7 @@ class User < ActiveRecord::Base
 
   after_commit :send_activation_mail_on_create, on: :create, if: :freshid_enabled_and_agent?
   after_commit :enqueue_activation_email, on: :update, if: [:freshid_enabled_and_agent?, :converted_to_agent_or_email_updated?]
-
+  after_commit :push_contact_deleted_info, on: :update, :if => :deleted?
   after_rollback :remove_freshid_user, on: :create, if: :freshid_enabled_and_agent?
   after_rollback :remove_freshid_user, on: :update, if: [:freshid_enabled_account?, :converted_to_agent?]
 
@@ -104,6 +107,17 @@ class User < ActiveRecord::Base
   def set_falcon_ui_preference
     new_pref = {:falcon_ui => get_all_members_in_a_redis_set(FALCON_ENABLED_LANGUAGES).include?(language)}
     self.merge_preferences = { :agent_preferences => new_pref }
+  end
+
+  def valid_user_update?
+    return true if (self.changes.keys.map(&:to_sym) & PROFILE_UPDATE_ATTRIBUTES).any?
+    return true if (self.flexifield.changes.keys & self.flexifield.ff_fields).any?
+    self.tag_use_updated
+  end
+
+  def persist_updated_at
+    self.record_timestamps = false
+    true
   end
 
   def set_gdpr_preference
@@ -245,6 +259,12 @@ class User < ActiveRecord::Base
   def clear_agent_caches
     clear_agent_list_cache 
     clear_agent_name_cache if @model_changes.key?(:name)
+  end
+
+  def push_contact_deleted_info
+    if User.current
+      UserNotifier.send_later(:push_contact_deleted_info, self.account, self, User.current, Time.now )
+    end
   end
 
   private

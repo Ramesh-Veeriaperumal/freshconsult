@@ -6,6 +6,9 @@ common: &common
   access_key_id_euc: access_key_id_euc
   secret_access_key_euc: secret_access_key_euc
   region_euc: 'eu-central-1'
+  http_open_timeout: 10,
+  http_read_timeout: 15,
+  max_retries: 1
 
 development:
   <<: *common

@@ -62,7 +62,8 @@ class User < ActiveRecord::Base
   has_many :tags, 
     :class_name => 'Helpdesk::Tag',
     :through => :tag_uses,
-    :after_remove => :update_user_tags
+    :after_remove => :update_user_tags,
+    :after_add => :update_user_tags
 
   has_many :google_contacts, :dependent => :destroy
 
@@ -89,6 +90,9 @@ class User < ActiveRecord::Base
 
   has_many :reminders, 
     :class_name => 'Helpdesk::Reminder',:dependent => :destroy
+
+  has_many :contact_reminders, class_name: 'Helpdesk::Reminder',
+    dependent: :destroy, foreign_key: 'contact_id', inverse_of: :contact
     
   has_many :tickets , :class_name => 'Helpdesk::Ticket' ,:foreign_key => "requester_id" 
   has_many :archive_tickets , :class_name => 'Helpdesk::ArchiveTicket' ,:foreign_key => "requester_id" 

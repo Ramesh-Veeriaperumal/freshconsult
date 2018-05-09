@@ -205,10 +205,12 @@
           }
           initFeed['nested_rules'] = initFeed[nested_fields_name]
           initFeed['value'] = initFeed[value]
+          var anyExceptNoneFeature = <%= Account.current.va_any_field_without_none_enabled? %>
           _opts = { category_name: filter.name, 
                     nested_fields: filter.nested_fields,
                     type: compName, 
-                    initData: initFeed };
+                    initData: initFeed,
+                    anyExceptNoneFeature: anyExceptNoneFeature };
           if (compName == 'event')
             { _class_name = 'event_nested_field'; }
           else

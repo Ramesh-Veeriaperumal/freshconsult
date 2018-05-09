@@ -103,11 +103,6 @@ class Portal < ActiveRecord::Base
     account.topics.topics_for_portal(self).visible(user).published.popular(days_before).limit(10)
   end
 
-  def recent_articles
-    main_portal ? account.published_articles.newest(10) :
-      account.solution_articles.articles_for_portal(self).visible.newest(10)
-  end
-
   def recent_portal_topics user, limit = 6
     limit = 100 if limit.to_i > 100
     account.

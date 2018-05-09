@@ -1,7 +1,7 @@
 require 'timeout'
 module Integrations
   class JiraAccountConfig < ::BaseWorker
-    extend Integrations::Jira::Helper
+    include Integrations::Jira::Helper
     include Integrations::Jira::Constant 
 
     sidekiq_options :queue => :jira_acc_config_updates, :retry => 0, :backtrace => true, :failures => :exhausted

@@ -362,6 +362,29 @@ class UserNotifier < ActionMailer::Base
     end.deliver
   end
 
+  def push_contact_deleted_info(account, contact, deleted_by, deleted_at)
+    headers = {
+      :subject       => "Contact #{contact.id} deleted from account #{account.id}",
+      :to            => AppConfig['reports_email'],
+      :from          => AppConfig['from_email'],
+      :sent_on       => Time.now,
+      "Reply-to" => "",
+      "Auto-Submitted" => "auto-generated",
+      "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+    }
+
+    @account = account
+    @contact = contact
+    @deleted_by = deleted_by
+    @deleted_at = deleted_at
+
+    headers.merge!(make_header(nil, nil, account.id, "Contact deleted info"))
+    mail(headers) do |part|
+      part.text { render "push_contact_deleted_info.text.plain" }
+      part.html { render "push_contact_deleted_info.text.html" }
+    end.deliver
+  end
+
   private
 
     def send_the_mail(user_or_email, subject, email_body, reply_email =nil, type)

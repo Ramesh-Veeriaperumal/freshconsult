@@ -184,8 +184,6 @@ en:
   any: Any
   or: or
   go_to_new_ui: "Switch to the Mint experience"
-  go_to_new_ui_star_wars: "Join the Resistance"
-  go_to_new_ui_hover_test_star_wars: "On Star Wars day, try the forces that can make you a Jedi at Support"
   email_failure:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
@@ -848,6 +846,7 @@ en:
     any_status: Any Status
     any_ticket_type: Any Type
     any_group: Any Group
+    excluding_none: Any Value (excluding none)
   portal_pages:
     groups:
       general: "General pages"
@@ -3798,7 +3797,8 @@ en:
       priority: "the priority to <b>%{priority}</b>"
       status: "the status to <b>%{status}</b>"
       ticket_type: "the ticket type to <b>%{ticket_type}</b>"
-      product: "product as <b>%{product_name}</b>"
+      product_success: "product as <b>%{product_name}</b>"
+      product_failure: "<b>Unable to set the product, consider updating this scenario if the product has been deleted recently.</b>"
       group_success: "group as <b>%{group_name}</b>"
       group_failure: "<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>"
       internal_group_success: "internal group as <b>%{internal_group_name}</b>"
@@ -9224,6 +9224,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   always: Always
   maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/subscription'>purchase additional agents</a> for your account. You can also choose to add occasional agents below. "
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents. "
+  contact_agent_deleted_forever: "This contact has been deleted forever"
   contact_without_email_id: "Contact with email id can only be converted to agent"
   no_date_to_display: "No data to display"
   email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimiter."
@@ -12130,9 +12131,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     ticket_product_description: Product description
     ticket_satisfaction_survey: Satisfaction survey
     ticket_suverymonkey_survey: Surveymonkey survey
-    ticket_group_name: Internal Group name
-    ticket_agent_name: Internal Agent name
-    ticket_agent_email: Internal Agent email
+    ticket_internal_group_name: Internal Group name
+    ticket_internal_agent_name: Internal Agent name
+    ticket_internal_agent_email: Internal Agent email
     unique_external_id: Requester Unique External Id
     triggered_event: 'Triggered Event'
     tooltip:

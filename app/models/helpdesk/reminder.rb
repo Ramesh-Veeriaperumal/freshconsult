@@ -8,6 +8,8 @@ class Helpdesk::Reminder < ActiveRecord::Base
 
   belongs_to :ticket,
     :class_name => 'Helpdesk::Ticket'
+  belongs_to :contact, class_name: 'User', foreign_key: 'contact_id',
+    inverse_of: :contact_reminders
 
   scope :visible, :conditions => [ "deleted = ?", false ], :order => 'updated_at ASC, created_at ASC'
   scope :logged, lambda { |time|
