@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
 
   before_validation :discard_blank_email, :unless => :email_available?
-  before_validation :set_password, :if => [:active?, :email_available?, :no_password?, :freshid_disabled_and_customer?]
+  before_validation :set_password, :if => [:active?, :email_available?, :no_password?, :freshid_disabled_or_customer?]
   before_validation :remove_white_space
   
   before_create :set_company_name, :unless => :helpdesk_agent?
