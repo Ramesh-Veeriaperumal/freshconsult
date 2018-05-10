@@ -12,6 +12,7 @@ class Support::TicketsController < SupportController
   end
 
   before_filter :clean_params, :only => [:update]
+  before_filter :remove_non_editable_fields, :only => [:create, :update]
 
   skip_before_filter :verify_authenticity_token
   before_filter :verify_authenticity_token, :unless => :public_request?, :except => :check_email
@@ -227,7 +228,7 @@ class Support::TicketsController < SupportController
         cc_hash[:cc_emails] = cc_hash[:reply_cc]
       end
     end
-  
+
     def clean_params
       params[:helpdesk_ticket].keep_if{ |k,v| TicketConstants::SUPPORT_PROTECTED_ATTRIBUTES.exclude? k }
     end
