@@ -41,7 +41,7 @@ module Ember
       return render_request_error(:recipient_limit_exceeded, 429) if recipients_limit_exceeded?
       delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
                          attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
-                         parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params }
+                         parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params, tags: cname_params[:tags] }
 
       return unless validate_delegator(@item, delegator_hash)
       save_ticket_and_respond
@@ -132,10 +132,11 @@ module Ember
 
     def update_properties
       return unless validate_update_property_params
-      sanitize_params
+      sanitize_params 
       assign_ticket_status
       @item.assign_attributes(validatable_delegator_attributes)
-      return unless validate_delegator(@item, ticket_fields: @ticket_fields, attachment_ids: @attachment_ids)
+      delegator_hash = { ticket_fields: @ticket_fields, attachment_ids: @attachment_ids, tags: cname_params[:tags] }
+      return unless validate_delegator(@item, delegator_hash)
       @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
       build_cloud_files(@item, @cloud_files)
       if @item.update_ticket_attributes(cname_params)

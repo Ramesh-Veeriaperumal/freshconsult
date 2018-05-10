@@ -653,6 +653,64 @@ module Ember
       Account.any_instance.unstub(:multiple_user_companies_enabled?)
     end
 
+    def test_create_with_new_tag_without_privilege
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag| 
+      #Timestamp added to make sure tag names are new
+        tag = "#{tag}#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false
+        tag 
+      end
+      User.current.reload
+      remove_privilege(User.current, :create_tags)
+      params = {
+        requester_id: User.current.id,
+        status: 2, priority: 2, tags: tags,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph
+      }
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 400
+      add_privilege(User.current, :create_tags)
+    end
+
+    def test_create_with_existing_tag_without_privilege
+      tag = Faker::Lorem.word
+      @account.tags.create(:name => tag) unless @account.tags.map(&:name).include?(tag)
+      User.current.reload
+      remove_privilege(User.current, :create_tags)
+      params = {
+        requester_id: User.current.id,
+        status: 2, priority: 2, tags: [tag],
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph
+      }
+      post :create, construct_params({ version: 'private' }, params)
+      t = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(t))
+      assert_equal t.tags.count, 1
+      assert_response 201
+      add_privilege(User.current, :create_tags)
+    end
+
+    def test_create_with_tag_with_privilege
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag| 
+      #Timestamp added to make sure tag names are new
+        tag = "#{tag}#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false
+        tag 
+      end
+      params = {
+        requester_id: User.current.id,
+        status: 2, priority: 2, tags: tags,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph
+      }
+      post :create, construct_params({ version: 'private' }, params)
+      t = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(t))
+      assert_equal t.tags.count, tags.count
+      assert_response 201
+    end
+
     def test_parse_template
       t = create_ticket
       params = {
@@ -1680,6 +1738,52 @@ module Ember
       ticket.reload
       assert_equal 2, ticket.cloud_files.count
       assert_equal attachment_ids, ticket.attachment_ids
+    end
+
+    def test_update_properties_with_new_tag_without_privilege
+      ticket = create_ticket
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag| 
+      #Timestamp added to make sure tag names are new
+        tag = "#{tag}#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false
+        tag 
+      end
+      User.current.reload
+      remove_privilege(User.current, :create_tags)
+      params_hash = { tags: tags }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash) 
+      assert_response 400
+      assert_equal ticket.tags.count, 0
+      add_privilege(User.current, :create_tags)
+    end
+
+    def test_update_properties_with_existing_tag_without_privilege
+      ticket = create_ticket
+      tag = Faker::Lorem.word
+      @account.tags.create(:name => tag) unless @account.tags.map(&:name).include?(tag)
+      User.current.reload
+      remove_privilege(User.current, :create_tags)
+      params_hash = { tags: [tag] }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash) 
+      assert_response 200
+      assert_equal ticket.tags.count, 1
+      add_privilege(User.current, :create_tags)
+    end
+
+    def test_update_properties_with_tag_with_privilege
+      ticket = create_ticket
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag| 
+      #Timestamp added to make sure tag names are new
+        tag = "#{tag}#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false 
+        tag
+      end
+      params_hash = { tags: tags }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      assert_equal tags.count, ticket.tags.count
     end
 
     def test_show_with_facebook_post
