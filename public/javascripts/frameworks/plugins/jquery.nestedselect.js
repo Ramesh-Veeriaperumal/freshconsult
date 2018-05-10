@@ -24,8 +24,10 @@
 
              rule_type = $("<input type='hidden' name='rule_type' value='nested_rule' />"),
              nested_rules = $("<input type='hidden' name='"+nested_rules_name+"' value='' />");
-
-             if (_dataAttr){ 
+            if (options.anyExceptNoneFeature) {
+               special_cases['##'] = 'Any Value (excluding none)';
+            }
+             if (_dataAttr){
               category.data( _dataAttr);
               subcategory.data( _dataAttr);
               items.data( _dataAttr);
@@ -157,7 +159,7 @@
      hideEmptySelectBoxes : function(select_box){
         options = $.map(select_box.options, function(opt){ return opt.value})
         // Below used ''+[] for converting arrays to strings n comapring
-        if(select_box.options.length == 0 || ''+options == ''+["--"] || ''+options == ''+[""]){
+        if(select_box.options.length == 0 || ''+options == ''+["--"] || ''+options == ''+[""] || ''+options == ''+["##"]){
           $(select_box).prev().css('display','none');
         }else{
           $(select_box).prev().css('display','block');

@@ -36,7 +36,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:spam_details] = ehawk_spam_details
     account_summary[:disable_emails] = account.launched?(:disable_emails)
     account_summary[:saml_sso_enabled] = account.is_saml_sso?
-    account_summary[:falcon_enabled] = account.has_feature?(:falcon) || account.launched?(:falcon)
+    account_summary[:falcon_enabled] = account.has_feature?(:falcon)
     respond_to do |format|
       format.json do
         render :json => account_summary
@@ -63,7 +63,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:freshfone] = account.features?(:freshfone)
     feature_info[:domain_restricted_access] = account.features?(:domain_restricted_access)
     feature_info[:restricted_helpdesk] = account.restricted_helpdesk?
-    feature_info[:falcon] = account.has_feature?(:falcon) || account.launched?(:falcon)
+    feature_info[:falcon] = account.has_feature?(:falcon)
+    feature_info[:launch_party] = account.all_launched_features
+    feature_info[:bitmap_list] = account.features_list
+    feature_info[:db_feature_list] = account.features.map(&:to_sym)
+    
     respond_to do |format|
       format.json do
         render :json => feature_info

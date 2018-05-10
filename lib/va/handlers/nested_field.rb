@@ -6,14 +6,20 @@ class Va::Handlers::NestedField < Va::RuleHandler
     return to_ret if condition.operator.nil? || va_operator_list[condition.operator.to_sym].nil?
     if evaluate_on.respond_to?(condition.key)
       #return evaluate_on.safe_send(filter.key).safe_send(operator_fn(@operator), @values)
-      to_ret = safe_send(condition.operator, evaluate_on.safe_send(condition.key), value)
-      return true if value == '--'
+      evaluate_on_value = evaluate_on.safe_send(condition.key)
+      to_ret = safe_send(condition.operator, evaluate_on_value, value)
+      return true if has_any_value? value
+      return false if has_any_field_excluding_none_value_without_lp_feature? value
+      return evaluate_on_value.present? if has_any_value_excluding_none? value
       return to_ret unless to_ret
       
       (nested_rules || []).each do |nested_rule|
-        return true if nested_rule[:value] == '--'
+        return true if has_any_value? nested_rule[:value]
         if evaluate_on.respond_to?(nested_rule[:name])
-          to_ret = safe_send(condition.operator, evaluate_on.safe_send(nested_rule[:name]),nested_rule[:value])
+          evaluate_on_nested_value = evaluate_on.safe_send(nested_rule[:name])
+          return false if has_any_field_excluding_none_value_without_lp_feature? nested_rule[:value]
+          return evaluate_on_nested_value.present? if has_any_value_excluding_none? nested_rule[:value]
+          to_ret = safe_send(condition.operator, evaluate_on_nested_value, nested_rule[:value])
           return to_ret unless to_ret
         else
           Rails.logger.debug "############### The ticket did not respond to #{nested_rule[:name]} property"
@@ -29,16 +35,25 @@ class Va::Handlers::NestedField < Va::RuleHandler
   end
 
   def filter_query
-    return '' if value == "--"
+    return ["(False)"] if has_any_field_excluding_none_value_without_lp_feature? value
+    any_value_query = has_any_value_excluding_none?(value) ? ["(#{not_null_query(condition.key)[0]})", nil] : ''
+    return any_value_query if has_any_value?(value) || has_any_value_excluding_none?(value)
+
     query_conditions, values = safe_send("filter_query_#{condition.operator}", condition.key, (query_value value))
     values = [values]
     (nested_rules || []).each do |nested_rule|
-      return ["(#{query_conditions})"].push(*values) if nested_rule[:value] == "--"
+      return ["(False)"] if has_any_field_excluding_none_value_without_lp_feature? nested_rule[:value]
+      any_value_query = (has_any_value_excluding_none?(nested_rule[:value]) ? " and #{not_null_query(nested_rule[:name])[0]}" : '')
+      return ["(#{query_conditions}#{any_value_query})"].push(*(values << nil)) if has_any_value?(nested_rule[:value]) || has_any_value_excluding_none?(nested_rule[:value])
       each_query_condition, each_value = safe_send("filter_query_#{condition.operator}", nested_rule[:name], (query_value nested_rule[:value]))
       query_conditions = "#{query_conditions} and #{each_query_condition}"
       values << each_value
     end
     ["(#{query_conditions})"].push(*values)
+  end
+
+  def not_null_query(field_key)
+    filter_query_is_not field_key, nil
   end
 
   private
@@ -56,11 +71,11 @@ class Va::Handlers::NestedField < Va::RuleHandler
     end
    
     def filter_query_is(field_key,field_value)
-      construct_query (field_value.nil? ? 'is': '='), field_key, field_value
+      construct_query (field_value.nil? ? QUERY_OPERATOR[:is] : QUERY_OPERATOR[:equal]), field_key, field_value
     end
     
-    def filter_query_is_not(field_key,field_values)
-      construct_query (field_value.nil? ? 'is not' : '!='), field_key, field_value
+    def filter_query_is_not(field_key,field_value)
+      construct_query (field_value.nil? ? QUERY_OPERATOR[:is_not] : QUERY_OPERATOR[:not_equal]), field_key, field_value
     end
 
     def construct_query query_operator, field_key, field_value

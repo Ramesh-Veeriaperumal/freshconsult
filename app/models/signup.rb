@@ -91,20 +91,8 @@ class Signup < ActivePresenter::Base
     end
 
     def build_password_policy
-     account.build_agent_password_policy(
-       :user_type =>2,
-       :policies => FDPasswordPolicy::Constants::DEFAULT_PASSWORD_POLICIES,
-       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS,
-       :signup => true
-       )
-
-      account.build_contact_password_policy(
-       :user_type =>1,
-       :policies => FDPasswordPolicy::Constants::DEFAULT_PASSWORD_POLICIES,
-       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS,
-       :signup => true
-       )
-
+    account.build_default_password_policy(PasswordPolicy::USER_TYPE[:agent]) unless account.freshid_enabled?
+    account.build_default_password_policy(PasswordPolicy::USER_TYPE[:contact])
    end
 
     def default_preferences

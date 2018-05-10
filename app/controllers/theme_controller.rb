@@ -20,10 +20,10 @@ class ThemeController < ApplicationController
 	private
 
 		def scoper_cache_key
-			if current_account.falcon_support_portal_theme_enabled? && defined?(self.class::THEME_TIMESTAMP_FALCON).present?
-				[self.class::THEME_TIMESTAMP_FALCON, scoper.id, scoper.updated_at.to_i].join("/") if(scoper.respond_to?(:updated_at))
+			if defined?(self.class::THEME_VERSION_FALCON).present? && current_account.falcon_support_portal_theme_enabled? 
+				[self.class::THEME_VERSION_FALCON, scoper.id, scoper.updated_at.to_i].join("/") if(scoper.respond_to?(:updated_at))
 			else
-			[self.class::THEME_TIMESTAMP, scoper.id, scoper.updated_at.to_i].join("/") if(scoper.respond_to?(:updated_at))
+        [self.class::THEME_VERSION, scoper.id, scoper.updated_at.to_i].join("/") if(scoper.respond_to?(:updated_at))
 			end
 		end
 

@@ -48,7 +48,7 @@
           <span class="required_star">*</span>
 
           <span class="pl5 chat-key-copy">
-            <a href="https://web.freshchat.com/settings/apisdk" target="_blank"><%= t('freshchat.admin.copy_from_freshchat')%></a>
+            <a href="<%=Freshchat::Account::CONFIG[:agentWidgetHostUrl]%>/settings/appdata#integration" target="_blank"><%= t('freshchat.admin.copy_from_freshchat')%></a>
             <i class="ficon ficon-open-in-portal fsize-12"></i>
           </span>
 
@@ -63,7 +63,7 @@
           <%= t('freshchat.admin.widget_token') %>
           <span class="required_star">*</span>
           <span class="pl5 chat-key-copy">
-            <a href="https://web.freshchat.com/settings/widget" target="_blank"><%= t('freshchat.admin.copy_from_freshchat')%></a>
+            <a href="<%=Freshchat::Account::CONFIG[:agentWidgetHostUrl]%>/settings/appdata#integration" target="_blank"><%= t('freshchat.admin.copy_from_freshchat')%></a>
             <i class="ficon ficon-open-in-portal fsize-12"></i>
           </span>
         </label>

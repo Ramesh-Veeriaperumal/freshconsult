@@ -11,7 +11,7 @@ class TicketMerge
     @target = target
     @source_tickets = source_tickets
     @params = params
-    @convert_to_cc = params[:convert_recepients_to_cc]
+    @convert_to_cc = params[:add_recipients]
     @header = target.header_info || {}
     @target_reply_cc = get_reply_cc_email(target)
   end
@@ -107,10 +107,10 @@ class TicketMerge
     end
 
     def target_note_attributes
-      private_note = target.requester_has_email? ? @params[:note_in_primary][:private] : true
+      private_note = target.requester_has_email? ? @params[:target][:is_private] : true
       {
         note_body_attributes: {
-          body_html: @params[:note_in_primary][:body]
+          body_html: @params[:target][:note]
         },
         private: private_note,
         source: target_note_source(private_note),

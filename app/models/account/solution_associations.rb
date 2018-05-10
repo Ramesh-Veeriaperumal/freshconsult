@@ -20,17 +20,23 @@ class Account < ActiveRecord::Base
 
   has_many :solution_folders, :class_name =>'Solution::Folder', :order => "solution_folders.parent_id"
 
-  has_many :public_folders, :through => :solution_categories, :order => "solution_folders.category_id, solution_folders.position"
-
-  has_many :published_articles, :through => :public_folders,
-    :conditions => [" solution_folders.visibility = ? ", Solution::Folder::VISIBILITY_KEYS_BY_TOKEN[:anyone]],
-    :order => ["solution_folders.id", "solution_articles.position"]
-
   has_many :mobihelp_app_solutions, :class_name => 'Mobihelp::AppSolution'
 
   has_many :solution_customer_folders, :class_name => "Solution::CustomerFolder"
     
   has_many :solution_article_bodies, :class_name =>'Solution::ArticleBody'
+
+  has_many :public_category_meta,
+    class_name: 'Solution::CategoryMeta',
+    conditions: { is_default: false }
+
+  has_many :public_folder_meta,
+    class_name: 'Solution::FolderMeta',
+    through: :public_category_meta
+
+  has_many :published_article_meta,
+    class_name: 'Solution::ArticleMeta',
+    through: :public_folder_meta
 
   # Alias
 

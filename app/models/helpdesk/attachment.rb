@@ -31,6 +31,13 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :url => "/:s3_alias_url",
     :s3_host_alias => S3_CONFIG[:bucket_name],
     :s3_host_name => S3_CONFIG[:s3_host_name],
+    :s3_options => {
+      :http_open_timeout => S3_CONFIG[:http_open_timeout],
+      :max_retries => S3_CONFIG[:max_retries],
+      # trace & logger helps to debug.
+      # :http_wire_trace => true, :logger => CustomLogger.new("#{Rails.root}/log/application.log"),
+      :http_read_timeout => S3_CONFIG[:http_read_timeout]
+    },
     :s3_server_side_encryption => 'AES256',
     :whiny => false,
     :validate_media_type => false,
