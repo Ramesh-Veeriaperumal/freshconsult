@@ -25,4 +25,12 @@ module JwtTestHelper
     request.env['X-Channel-Auth'] = generate_custom_jwt_token(source)
   end
 
+  def get_mobile_jwt_token_of_user(user)
+    user.mobile_auth_token
+  end
+
+  def set_custom_jwt_header(token)
+    request.env["HTTP_AUTHORIZATION"] = token
+  end
+
 end
