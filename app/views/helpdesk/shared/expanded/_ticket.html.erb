@@ -26,7 +26,7 @@
   <td class="name td-ticket-details <%= 'user-page' if user_page %>">
 		<div class="ticket_subject">
 			<span class="sc-item-cursor priority-border  priority-<%=ticket.priority_key%> shorcuts-info"></span>
-			<h3 class="ticket-description-tip <%= ticket_style %>_ticket break-word" data-tip-url="<%= collab_filter_with_group_collab_for?(@current_view) ? latest_note_collab_ticket_url(ticket.display_id) : latest_note_helpdesk_ticket_url(ticket.display_id) %>">
+			<h3 class="ticket-description-tip <%= ticket_style %>_ticket break-word" data-tip-url="<%= collab_filter_with_group_collab_for?(@current_view) ? latest_note_collab_ticket_url(ticket.display_id) : latest_note_helpdesk_ticket_path(ticket.display_id) %>">
 
 				<% if collab_filter_with_group_collab_for?(@current_view) %>
 					<%= link_to( h(ticket.subject) + content_tag(:span, " ##{h(ticket.display_id)}", :class => "ticket_id"), collab_ticket_url(ticket.display_id), "data-pjax" => "#body-container" ) %>
