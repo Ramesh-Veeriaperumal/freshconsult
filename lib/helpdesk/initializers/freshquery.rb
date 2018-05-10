@@ -128,6 +128,22 @@ module Freshquery
       # custom_date mappings: :custom_date_mappings
     end
 
+
+    fq_schema 'archiveticket', FqTicketHelper.instance do
+      attribute :priority, choices: :priorities
+      attribute :status, choices: :status_ids
+      attribute :group_id, type: :positive_integer
+      attribute :agent_id, transform: :responder_id, type: :positive_integer
+      attribute :display_id, type: :positive_integer
+      attribute :created_at, type: :date
+      attribute :requester_id, transform: :requester_id, type: :positive_integer
+      attribute :type, transform: :ticket_type, choices: :ticket_types
+      attribute :tag, transform: :tag_names, type: :string
+      attribute :source, type: :positive_integer
+      attribute :company_id, type: :positive_integer
+      attribute :product_id, type: :positive_integer
+    end
+
     fq_schema 'user', FqContactHelper.instance do
       attribute :company_id, transform: :company_ids, type: :positive_integer
       attribute :twitter_id, :mobile, :phone, type: :string

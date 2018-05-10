@@ -107,16 +107,16 @@ module Helpdesk::TicketActions
   
   def export_csv
     # params[:later] = false
-
     #Handle export in Resque and send a mail to the current user, if the duration selected is more than DATE_RANGE_CSV (in days)
     # if(csv_date_range_in_days > TicketConstants::DATE_RANGE_CSV)
       # params[:later] = true
-      remove_tickets_redis_key(export_redis_key)
-      create_ticket_export_fields_list(params[:export_fields].keys)
-      params[:portal_url] = main_portal? ? current_account.host : current_portal.portal_url
-      Export::Ticket.enqueue(params)
-      flash[:notice] = t("export_data.ticket_export.info")
-      redirect_to helpdesk_tickets_path
+    remove_tickets_redis_key(export_redis_key)
+    create_ticket_export_fields_list(params[:export_fields].keys)
+    params[:portal_url] = main_portal? ? current_account.host : current_portal.portal_url
+    Export::Ticket.enqueue(params)
+    flash[:notice] = t("export_data.ticket_export.info")
+    redirect_to helpdesk_tickets_path
+
     # else
     #   csv_tickets_string = Helpdesk::TicketsExport.perform(params)
     #   send_data csv_tickets_string, 

@@ -5,14 +5,16 @@ class Export::Ticket < Struct.new(:export_params)
   include Export::Util
   include Redis::RedisKeys
   include Helpdesk::TicketModelExtension
-  
+  include ArchiveTicketEs
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
 
   def perform
     begin
       initialize_params
       set_current_user
-      check_and_create_export "ticket"
+      data_export_type = export_params[:archived_tickets]? 'archive_ticket' : 'ticket'
+      create_export data_export_type
+      add_url_to_export_fields if export_params[:add_url]
       file_string =  Sharding.run_on_slave{ export_file }
       if @no_tickets 
         send_no_ticket_email
@@ -23,7 +25,7 @@ class Export::Ticket < Struct.new(:export_params)
                                                 :url => hash_url(export_params[:portal_url]),
                                                 :export_params => export_params})
       end
-    rescue => e
+    rescue Exception => e
       NewRelic::Agent.notice_error(e)
       puts "Error  ::#{e.message}\n#{e.backtrace.join("\n")}"
       @data_export.failure!(e.message + "\n" + e.backtrace.join("\n"))
@@ -59,6 +61,11 @@ class Export::Ticket < Struct.new(:export_params)
     format_contact_company_params
   end
 
+  def add_url_to_export_fields
+    export_params[:export_fields].merge!('support_ticket_path' => 'URL')
+    @headers << "support_ticket_path"
+  end
+
   def set_current_user
     unless User.current 
       user = Account.current.users.find(export_params[:current_user_id])
@@ -81,7 +88,7 @@ class Export::Ticket < Struct.new(:export_params)
       csv << csv_headers.flatten
       ticket_data(csv)
     end
-    csv_string 
+    csv_string
   end
 
   def xls_export
@@ -100,10 +107,17 @@ class Export::Ticket < Struct.new(:export_params)
     @no_tickets = true
     # Initializing for CSV with Record headers.
     @records = records
-
-    if export_params[:archived_tickets]
+    if export_params[:archived_tickets].present? && export_params[:use_es].present?
+      archive_tickets_from_es(export_params) do |error, records|
+        if error.present?
+          raise Exception.new("export::archivetickets Querying Elasticsearch failed: #{error.messages}")
+        else
+          add_to_records(records)
+        end
+      end
+    elsif export_params[:archived_tickets]
       Account.current.archive_tickets.permissible(User.current).find_in_batches(archive_export_query) do |items|
-        add_to_records(items)  
+        add_to_records(items)
       end
     else
       Account.current.tickets.permissible(User.current).find_in_batches(export_query) do |items|

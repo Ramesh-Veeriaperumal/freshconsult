@@ -3,6 +3,10 @@ module Export::Util
 
   def check_and_create_export type
     limit_data_exports type
+    create_export type
+  end
+
+  def create_export type
     @data_export = Account.current.data_exports.new(
                                   :source => DataExport::EXPORT_TYPE[type.to_sym], 
                                   :user => User.current,
