@@ -24,7 +24,10 @@ class User < ActiveRecord::Base
   # V2 columns to be observed for changes
   #
   def esv2_columns
-    @@esv2_columns ||= [:account_id, :active, :address, :blocked, :deleted, :description, :email, :fb_profile_id, :helpdesk_agent, :job_title, :language, :mobile, :name, :phone, :string_uc04, :time_zone, :twitter_id, :tags, :unique_external_id].concat(esv2_contact_field_data_columns)
+    @@esv2_columns ||= [:account_id, :active, :address, :blocked, :deleted, :description, :email,
+                        :fb_profile_id, :helpdesk_agent, :job_title, :language, :mobile, :name,
+                        :phone, :string_uc04, :time_zone, :twitter_id, :tags,
+                        :unique_external_id, :customer_id, :company_ids].concat(esv2_contact_field_data_columns)
   end
   
   # V2 custom field columns
@@ -59,7 +62,9 @@ class User < ActiveRecord::Base
   def update_user_tags(obj)
     self.tags_updated = true
   end
-
+  def update_user_companies(obj)
+    self.user_companies_updated = true
+  end
   ##########################
   ### V1 Cluster methods ###
   ##########################
