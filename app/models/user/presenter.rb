@@ -55,6 +55,10 @@ class User < ActiveRecord::Base
       Account.current.launched?(:contact_delete_forever)
   end
 
+  def event_info action
+    { :ip_address => Thread.current[:current_ip] }
+  end
+
   def model_changes_for_central
     changes = @model_changes
     changes.merge!({

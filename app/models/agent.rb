@@ -15,7 +15,7 @@ class Agent < ActiveRecord::Base
 
   publishable on: [:create, :update, :destroy]
 
-  before_destroy :remove_escalation
+  before_destroy :remove_escalation, :save_deleted_agent_info
 
   accepts_nested_attributes_for :user
   before_update :create_model_changes
@@ -128,6 +128,10 @@ class Agent < ActiveRecord::Base
   def remove_escalation
     Group.update_all({:escalate_to => nil, :assign_time => nil},{:account_id => account_id, :escalate_to => user_id})
     clear_group_cache
+  end
+
+  def save_deleted_agent_info
+    @deleted_model_info = central_publish_payload
   end
 
   def clear_group_cache

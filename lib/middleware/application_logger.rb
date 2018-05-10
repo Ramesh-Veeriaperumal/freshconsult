@@ -15,6 +15,7 @@ class Middleware::ApplicationLogger
 
   def call(env)
      env[:start_time] = Time.now
+     Thread.current[:current_ip] = request.env['CLIENT_IP'] || env["CLIENT_IP"]
      @app.call(env).tap do |response|
         status, headers, body = *response
         duration = (Time.now - env[:start_time]) * 1000

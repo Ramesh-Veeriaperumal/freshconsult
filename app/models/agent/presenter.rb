@@ -26,6 +26,10 @@ class Agent < ActiveRecord::Base
     Account.current.audit_logs_central_publish_enabled?
   end
 
+  def event_info action
+    { :ip_address => Thread.current[:current_ip] }
+  end
+
   def model_changes_for_central
     self.previous_changes
   end
