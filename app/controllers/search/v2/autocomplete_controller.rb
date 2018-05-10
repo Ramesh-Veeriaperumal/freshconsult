@@ -6,6 +6,8 @@ class Search::V2::AutocompleteController < ApplicationController
 
   attr_accessor :search_results
 
+  skip_before_filter :check_privilege, if: :customer_portal?
+
   def requesters
     @klasses        = ['User']
     @search_context = :requester_autocomplete
@@ -48,11 +50,19 @@ class Search::V2::AutocompleteController < ApplicationController
     end
   end
 
-  # Temporary
-  #
   def company_users
-    self.search_results[:results] = []
-    handle_rendering
+    if customer_portal? && !check_user_permission
+      self.search_results[:results] = []
+      handle_rendering
+    else
+      @klasses        = ['User']
+      @search_context = :portal_company_users
+      search(esv2_autocomplete_models) do |results|
+        results.each do |result|
+          self.search_results[:results].push(*result.search_data)
+        end
+      end
+    end
   end
 
   def tags
@@ -71,7 +81,9 @@ class Search::V2::AutocompleteController < ApplicationController
   private
 
     def construct_es_params
-      super.merge(ES_V2_BOOST_VALUES[@search_context] || {})
+      default_es_params = super.merge(ES_V2_BOOST_VALUES[@search_context] || {})
+      default_es_params.merge!({company_ids: [params[:customer_id].to_i]}) if @search_context == :portal_company_users
+      default_es_params
     end
 
     def handle_rendering
@@ -94,5 +106,13 @@ class Search::V2::AutocompleteController < ApplicationController
         'company' => { model: 'Company',        associations: [] },
         'tag'     => { model: 'Helpdesk::Tag',  associations: [] }
       }
+    end
+
+    def check_user_permission
+      current_user && current_user.contractor? && current_user.company_ids.include?(params[:customer_id].to_i)
+    end
+
+    def customer_portal?
+      action == :company_users && params[:customer_portal].to_bool 
     end
 end
