@@ -66,6 +66,12 @@ class Support::Solutions::ArticlesController < SupportController
 
   private
 
+    def filter_params
+      if params[:helpdesk_ticket].present?
+        current_user ? params.except!(:helpdesk_ticket) : params[:helpdesk_ticket].slice!(*CREATE_TICKET_VALID_FIELDS)
+      end
+    end
+
     def check_permissibility
       if(params[:helpdesk_ticket].present? && params[:helpdesk_ticket][:email].present?)
         unless can_create_ticket? params[:helpdesk_ticket][:email]
