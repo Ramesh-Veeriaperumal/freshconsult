@@ -112,7 +112,7 @@ class Export::Ticket < Struct.new(:export_params)
         if error.present?
           raise Exception.new("export::archivetickets Querying Elasticsearch failed: #{error.messages}")
         else
-          add_to_records(records)
+          add_to_records(records) if records.count > 0
         end
       end
     elsif export_params[:archived_tickets]

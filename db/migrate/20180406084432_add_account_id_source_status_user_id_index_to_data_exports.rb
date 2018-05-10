@@ -5,11 +5,11 @@ class AddAccountIdSourceStatusUserIdIndexToDataExports < ActiveRecord::Migration
     self.send(direction)
   end
 
-  def self.up
+  def up
     add_index :data_exports, [:account_id, :source, :status, :user_id], :name => 'index_data_exports_on_account_id_source_status_and_user_id'
   end
 
-  def self.down
+  def down
     remove_index :data_exports, :name => 'index_data_exports_on_account_id_source_status_and_user_id'
   end
 end
