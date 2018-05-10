@@ -24,11 +24,14 @@ class Support::Solutions::ArticlesController < SupportController
 
   before_filter :verify_authenticity_token, :only => [:thumbs_up, :thumbs_down, :create_ticket], :unless => :public_request?
   
+  before_filter :filter_params, :only => :create_ticket
   before_filter :check_permissibility, :only => :create_ticket
   before_filter :generate_ticket_params, :only => :create_ticket
   after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket, :if => :no_error
 
   before_filter :cleanup_params_for_title, :only => [:show]
+
+   CREATE_TICKET_VALID_FIELDS = ["email"]
 
 
   def handle_unknown
