@@ -1090,6 +1090,36 @@ module Ember
       Export::ContactWorker.jobs.clear
     end
 
+    # tests for persisting updated_at when its not a contact profile update
+
+    def test_updated_at_for_profile_update
+      updated_at = Time.now.utc - 2.days
+      contact = add_new_user(@account, updated_at: updated_at)
+      put :update, construct_params({ version: 'private', id: contact.id }, name: Time.now.to_s)
+      assert_response 200
+      assert contact.reload.updated_at != updated_at
+    end
+
+    def test_updated_at_when_tags_are_modified
+      updated_at = Time.now.utc - 2.days
+      tags = Faker::Lorem.words(3).uniq
+      contact = add_new_user(@account, {updated_at: updated_at, 
+                                        tag_names: tags.join(',')})
+      put :update, construct_params({ version: 'private', id: contact.id }, 
+                                      tags: [random_password])
+      assert_response 200
+      assert contact.reload.updated_at != updated_at
+    end
+
+    def test_updated_at_for_password_update
+      contact = Account.current.contacts.first
+      updated_at = contact.updated_at
+      put :update_password, construct_params({ version: 'private', id: contact.id }, 
+                                              password: Time.now.to_s)
+      assert_response 204
+      assert_equal contact.reload.updated_at.to_time.to_i, updated_at.to_i
+    end
+
     # Show User jwt auth
     def test_show_a_contact_with_valid_jwt_token
       sample_user = add_new_user(@account)
