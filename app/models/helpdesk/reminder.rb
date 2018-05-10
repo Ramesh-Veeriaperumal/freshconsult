@@ -17,7 +17,7 @@ class Helpdesk::Reminder < ActiveRecord::Base
             :conditions => ["deleted = ? AND updated_at > ?", true, time], 
             :order => 'deleted ASC, updated_at DESC, created_at DESC'  
           }
-
+  }
   belongs_to :contact, class_name: 'User', foreign_key: 'contact_id',
     inverse_of: :contact_reminders
 
