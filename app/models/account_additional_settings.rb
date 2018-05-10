@@ -59,6 +59,14 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings[:max_template_limit] unless additional_settings.blank?
   end
 
+  def ticket_exports_limit
+    additional_settings[:ticket_export_per_user_limit] unless additional_settings.blank?
+  end
+
+  def archive_ticket_exports_limit
+    additional_settings[:archive_ticket_export_per_account_limit] unless additional_settings.blank?
+  end
+
   private
 
   def clear_cache
