@@ -48,7 +48,7 @@ module ApiConstants
                        AgentConstants::LOAD_OBJECT_EXCEPT +
                        IntegratedUserConstants::LOAD_OBJECT_EXCEPT +
                        BotConstants::LOAD_OBJECT_EXCEPT +
-                       ApiArchiveTicketConstants::LOAD_OBJECT_EXCEPT
+                       ApiArchiveTicketConstants::LOAD_OBJECT_EXCEPT +
                        BotFeedbackConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
