@@ -1,15 +1,39 @@
 class Archive::TicketsController < ::ApiApplicationController
   include Support::TicketsHelper
   include HelperConcern
-
+  include ExportHelper
+  
   decorate_views(decorate_objects: [:index])
   PRELOAD_OPTIONS = [:company, { requester: [:avatar] }].freeze
+  
+  before_filter :export_limit_reached?, only: [:export]
+
+  before_filter :verify_ticket_permission, only: [:show, :destroy]
 
   def show
     sideload_associations if @include_validation.include_array.present?
     super
   end
 
+  def export_limit_reached?
+    if DataExport.archive_ticket_export_limit_reached?
+      export_limit = DataExport.archive_ticket_export_limit
+      return render_request_error_with_info(:export_archive_ticket_limit_reached, 429, {max_limit: export_limit}, {:max_simultaneous_export => export_limit }) 
+    end
+  end
+
+  def export
+    @validation_klass = 'ArchiveTicketExportValidation'
+    return unless validate_body_params(@item, validate_export_params(cname_params))
+    sanitize_custom_fields(cname_params)
+    Export::Ticket.enqueue(build_export_hash)
+    head 204
+  end
+
+  def constants_class
+    :ApiArchiveTicketConstants.to_s.freeze
+  end
+  
   def destroy
     begin
       note_ids = notes_available_in_s3? ? @item.archive_notes.pluck(:id) : []
@@ -64,8 +88,33 @@ class Archive::TicketsController < ::ApiApplicationController
       render_errors @include_validation.errors, @include_validation.error_options unless @include_validation.valid?
     end
 
+    def build_export_hash
+      cname_params.merge!(export_fields: cname_params[:ticket_fields],
+                          current_user_id: api_current_user.id,
+                          portal_url: portal_url,
+                          archived_tickets: 1,
+                          use_es: 1,
+                          add_url: 1)
+      cname_params
+    end
+    
     def notes_available_in_s3?
       current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
       ArchiveNoteConfig[current_shard] && (@item.id <= ArchiveNoteConfig[current_shard].to_i)
     end
+
+    def verify_ticket_permission(user = api_current_user, ticket = @item)
+      unless user.has_ticket_permission?(ticket) && destroy_privilege?(user)
+        Rails.logger.error "Params: #{params.inspect} User: #{user.id}, #{user.email} doesn't have permission to ticket display_id: #{ticket.display_id}"
+        render_request_error :access_denied, 403
+        return false
+      end
+      true
+    end
+
+    def destroy_privilege?(user)
+      return true unless params["action"] === "destroy"
+      user.privilege?(:delete_ticket)
+    end
+    
 end

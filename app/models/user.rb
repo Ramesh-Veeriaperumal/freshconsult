@@ -140,8 +140,11 @@ class User < ActiveRecord::Base
   end
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
-                :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, :role_ids_changed, :detect_language # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
-  # As role_ids are not part of user_model(it is an association_reader), agent.update_attributes won't trigger user callbacks since user doesn't have any change.
+                :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, 
+                :role_ids_changed, :detect_language, :user_companies_updated, :tag_use_updated 
+                # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
+  # As role_ids are not part of user_model(it is an association_reader), 
+  #   agent.update_attributes won't trigger user callbacks since user doesn't have any change.
   # Hence user.safe_send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
 
   attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes,
@@ -394,6 +397,8 @@ class User < ActiveRecord::Base
   def tag_names= updated_tag_names
     unless updated_tag_names.nil? # Check only nil so that empty string will remove all the tags.
       updated_tag_names = updated_tag_names.split(",").map(&:strip).reject(&:empty?)
+      existing_tag_names = tags.collect(&:name)
+      self.tag_use_updated = true if updated_tag_names.sort != existing_tag_names.sort
       self.tags = account.tags.assign_tags(updated_tag_names)
     end
   end
@@ -1240,6 +1245,7 @@ class User < ActiveRecord::Base
     def backup_user_changes
       @all_changes = self.changes.clone.to_hash
       @all_changes.merge!(flexifield.changes)
+      @all_changes.merge!(tag_names: self.tags.map(&:name)) if self.tags_updated
       @all_changes.merge!({ tags: [] }) if self.tags_updated #=> Hack for when only tags are updated to trigger ES publish
       @all_changes.symbolize_keys!
     end

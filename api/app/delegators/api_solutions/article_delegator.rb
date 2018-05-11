@@ -6,6 +6,7 @@ module ApiSolutions
     validates :category_name, custom_absence: { message: :translation_available_already }, if: -> { secondary_language? && category_exists? }
     validates :folder_name, required: { message: :translation_not_available }, if: -> { secondary_language? && !folder_exists? }
     validates :category_name, required: { message: :translation_not_available }, if: -> { secondary_language? && !category_exists? }
+    validate :create_tag_permission, if: -> { @tags }
 
     def initialize(params)
       @agent_id = params[:user_id]
@@ -13,6 +14,7 @@ module ApiSolutions
       @category_name = params[:category_name]
       @article_meta = params[:article_meta]
       @language_id = params[:language_id]
+      @tags = params[:tags]
       super(params)
       check_params_set(params.slice(:folder_name, :category_name))
     end
@@ -33,6 +35,14 @@ module ApiSolutions
 
     def secondary_language?
       @language_id != Account.current.language_object.id
+    end
+
+    def create_tag_permission
+      new_tag = @tags.find{ |tag| tag.new_record? }
+      if new_tag && !User.current.privilege?(:create_tags)
+        errors[:tags] << "cannot_create_new_tag"
+        @error_options[:tags] = { tags: new_tag.name }
+      end 
     end
   end
 end

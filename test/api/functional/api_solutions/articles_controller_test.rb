@@ -3,6 +3,7 @@ module ApiSolutions
   class ArticlesControllerTest < ActionController::TestCase
     include SolutionsTestHelper
     include AttachmentsTestHelper
+    include PrivilegesHelper
 
     def setup
       super
@@ -268,6 +269,56 @@ module ApiSolutions
       assert article.seo_data[:meta_title] == seo_title
       assert article.seo_data[:meta_keywords] == ['tag3','tag4'].join(",")
       assert article.tags.map(&:name) == ['tag1', 'tag2']
+    end
+
+    def test_create_article_with_new_tags_without_privilege
+      folder_meta = get_folder_meta
+      title = Faker::Name.name
+      paragraph = Faker::Lorem.paragraph
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag|
+      #Timestamp added to make sure tag names are new 
+        tag = "#{tag}#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false
+        tag 
+      end
+      User.current.reload
+      remove_privilege(User.current, :create_tags)
+      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2, tags: tags })
+      assert_response 400
+      add_privilege(User.current, :create_tags)
+    end
+
+    def test_create_article_with_existing_tags_without_privilege
+      folder_meta = get_folder_meta
+      title = Faker::Name.name
+      paragraph = Faker::Lorem.paragraph
+      tag = Faker::Lorem.word
+      @account.tags.create(:name => tag) unless @account.tags.map(&:name).include?(tag)
+      User.current.reload
+      remove_privilege(User.current, :create_tags)
+      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2, tags: [tag] })
+      assert_response 201
+      article = Solution::Article.last
+      assert_equal article.tags.count, 1
+      add_privilege(User.current, :create_tags)
+    end
+
+    def test_create_article_with_tags_with_privilege
+      folder_meta = get_folder_meta
+      title = Faker::Name.name
+      paragraph = Faker::Lorem.paragraph
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag| 
+      #Timestamp added to make sure tag names are new
+        tag = "#{tag}#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false 
+        tag
+      end
+      post :create, construct_params({ id: folder_meta.id }, {title: title, description: paragraph, status: 1, type: 2, tags: tags })
+      assert_response 201
+      article = Solution::Article.last
+      assert_equal article.tags.count, tags.count
     end
 
     def test_create_article_without_params
@@ -737,6 +788,51 @@ module ApiSolutions
       assert sample_article.title == title
       assert sample_article.description == paragraph
       assert sample_article.parent.reload.user_id == @agent.id
+    end
+
+    def test_update_article_with_tags_with_privilege
+      sample_article = get_article
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag| 
+      #Timestamp added to make sure tag names are new
+        tag = "#{tag}#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false 
+        tag
+      end
+      put :update, construct_params({ id: sample_article.parent_id }, tags: tags)
+      assert_response 200
+      assert_equal sample_article.reload.tags.count, tags.count
+      put :update, construct_params({ id: sample_article.parent_id }, tags: [])
+    end
+
+    def test_update_article_with_new_tags_without_privilege
+      sample_article = get_article
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag| 
+      #Timestamp added to make sure tag names are new
+        tag = "#{tag}#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false 
+        tag
+      end
+      User.current.reload
+      remove_privilege(User.current, :create_tags)
+      put :update, construct_params({ id: sample_article.parent_id }, tags: tags)
+      assert_response 400
+      assert_equal sample_article.reload.tags.count, 0
+      add_privilege(User.current, :create_tags)
+    end
+
+    def test_update_article_with_existing_tags_without_privilege
+      sample_article = get_article
+      tag = Faker::Lorem.word
+      @account.tags.create(:name => tag) unless @account.tags.map(&:name).include?(tag)
+      User.current.reload
+      remove_privilege(User.current, :create_tags)
+      put :update, construct_params({ id: sample_article.parent_id }, tags: [tag])
+      assert_response 200
+      assert_equal sample_article.reload.tags.count, 1
+      add_privilege(User.current, :create_tags)
+      put :update, construct_params({ id: sample_article.parent_id }, tags: [])
     end
 
   end

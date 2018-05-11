@@ -153,6 +153,10 @@ class ApiApplicationController < MetalApiController
       render_path ? render(render_path, status: 202) : render('/partial_success', status: 202)
     end
 
+    def portal_url
+      main_portal? ? current_account.host : current_portal.portal_url
+    end
+
   private
 
     def response_info
@@ -274,6 +278,12 @@ class ApiApplicationController < MetalApiController
       @error = RequestError.new(code, params_hash)
       log_error_response @error
       render '/request_error', status: status
+    end
+
+    def render_request_error_with_info(code, status, params_hash = {}, info = {})
+      @error = RequestErrorWithInfo.new(code, params_hash, info)
+      log_error_response @error
+      render '/request_error_with_info', status: status
     end
 
     def render_base_error(code, status, params_hash = {})

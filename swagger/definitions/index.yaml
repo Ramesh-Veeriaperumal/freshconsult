@@ -21,6 +21,8 @@
     $ref: ./error/request.yaml
   agents_bulk_action_error:
     $ref: ./response/agents/bulk_error.yaml
+  request_error_with_data:
+    $ref: ./error/request_error_with_info.yaml
 
   # REQUEST
   bulk_action_input:
@@ -80,6 +82,8 @@
     $ref: ./request/tickets/update_properties.yaml
   ticket_export_csv_input:
     $ref: ./request/tickets/export_csv.yaml
+  ticket_export_input:
+    $ref: ./request/archive_tickets/export.yaml
   add_watcher_input:
     $ref: ./request/subscriptions/add_watcher.yaml
   draft_create_input:

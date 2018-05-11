@@ -12,7 +12,6 @@ class Bot::MlSolutionsTraining < BaseWorker
         next if category_meta.is_default?
         push_payload(category_meta.primary_category, :ml_training_category)
         category_meta.solution_folder_meta.each do |folder_meta|
-          next unless Solution::Constants::BOT_VISIBILITIES.include?(folder_meta.visibility)
           push_payload(folder_meta.primary_folder, :ml_training_folder)
           folder_meta.solution_article_meta.each do |article_meta|
             primary_article = article_meta.primary_article

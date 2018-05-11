@@ -18,7 +18,7 @@ class TicketsController < ApiApplicationController
   def create
     assign_protected
     return render_request_error(:recipient_limit_exceeded, 429) if recipients_limit_exceeded?
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field])
+    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field], tags: cname_params[:tags])
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     elsif @item.save_ticket
@@ -36,7 +36,7 @@ class TicketsController < ApiApplicationController
     custom_fields = params[cname][:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
     @item.assign_attributes(validatable_delegator_attributes)
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: custom_fields)
+    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: custom_fields, tags: cname_params[:tags])
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     else
