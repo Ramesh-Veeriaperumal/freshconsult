@@ -94,6 +94,12 @@ class Topic < ActiveRecord::Base
     }
   } # Used by monitorship APIs
 
+  scope :participated_by, lambda { |user_id|
+    {
+      :conditions => ["topics.id IN (select topic_id from posts where posts.user_id = ? )", user_id]
+    }
+  }
+
   scope :following, lambda { |ids|
     {
       :conditions => following_conditions(ids),

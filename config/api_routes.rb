@@ -63,6 +63,7 @@ Helpkit::Application.routes.draw do
         end
         collection do
           get :followed_by
+          get :participated_by
         end
       end
       resources :comments, as: 'api_comments', controller: 'api_comments', only: [:destroy, :update]
