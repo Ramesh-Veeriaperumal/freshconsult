@@ -61,5 +61,5 @@ class User < ActiveRecord::Base
 
   PROFILE_UPDATE_ATTRIBUTES = [:name, :email, :customer_id, :job_title, :second_email, :phone, 
     :mobile, :twitter_id, :description, :time_zone, :deleted, :deleted_at, :fb_profile_id, 
-    :language, :address, :external_id, :unique_external_id]
+    :language, :address, :external_id, :unique_external_id, :perishable_token]
 end
