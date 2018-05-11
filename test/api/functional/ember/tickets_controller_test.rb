@@ -2154,6 +2154,88 @@ module Ember
       @account.rollback(:ticket_contact_export)
     end
 
+    def test_export_csv_with_limit_reach
+      export_ids = [] 
+      DataExport.ticket_export_limit.times do
+        export_entry = @account.data_exports.new(
+                            :source => DataExport::EXPORT_TYPE["ticket".to_sym], 
+                            :user => User.current,
+                            :status => DataExport::EXPORT_STATUS[:started]
+                            )
+        export_entry.save
+        export_ids << export_entry.id  
+      end
+      params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
+                      company_fields:{"name":"Company Name"},
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 429
+      DataExport.where(:id => export_ids).destroy_all
+
+    end
+
+    def test_export_csv_without_privilege
+      User.any_instance.stubs(:privilege?).with(:export_tickets).returns(false)
+      params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
+                      company_fields:{"name":"Company Name"},
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
+
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 403
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_export_csv_with_archive_export_limit_reached
+      export_ids = []
+      @account.make_current
+      DataExport.archive_ticket_export_limit.times do
+        export_entry = @account.data_exports.new(
+                            :source => DataExport::EXPORT_TYPE["archive_ticket".to_sym], 
+                            :user => User.current,
+                            :status => DataExport::EXPORT_STATUS[:started]
+                            )
+        export_entry.save
+        export_ids << export_entry.id
+      end
+      params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
+                      company_fields:{"name":"Company Name"},
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
+
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 204
+      DataExport.where(:id => export_ids).destroy_all
+    end
+
+    def test_export_csv_with_limit_reach_per_user
+      export_ids = [] 
+      agent1 = add_test_agent(@account)
+      DataExport.ticket_export_limit.times do
+        export_entry = @account.data_exports.new(
+                            :source => DataExport::EXPORT_TYPE["ticket".to_sym], 
+                            :user => agent1,
+                            :status => DataExport::EXPORT_STATUS[:started]
+                            )
+        export_entry.save
+        export_ids << export_entry.id  
+      end
+      agent2 = add_test_agent(@account).make_current
+      params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
+                      company_fields:{"name":"Company Name"},
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 204
+      DataExport.where(:id => export_ids).destroy_all
+
+    end
+
     def test_update_with_company_id
       Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
       t = create_ticket

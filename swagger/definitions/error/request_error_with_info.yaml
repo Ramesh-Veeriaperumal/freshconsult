@@ -1,0 +1,9 @@
+
+type: object
+properties:
+  message:
+    type: string
+  code:
+    type: string
+  additional_info:
+    type: object

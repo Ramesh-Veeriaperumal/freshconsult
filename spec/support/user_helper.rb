@@ -43,12 +43,14 @@ module UsersHelper
     new_user.reload
   end
 
-  def add_new_user(account, options={})
+  def 
+    add_new_user(account, options={})
 
     if options[:email]
       user = User.find_by_email(options[:email])
       return user if user
     end
+    tag_names = options[:tags].is_a?(Array) ? options[:tags].join(",") : options[:tags]
     new_user = FactoryGirl.build(:user, :account => account,
                                     :name => options[:name] || Faker::Name.name,
                                     :email => options[:email] || Faker::Internet.email,
@@ -59,12 +61,13 @@ module UsersHelper
                                     :active => options.key?(:active) ? options[:active] : 1,
                                     :company_id => options[:customer_id] || nil,
                                     :language => "en",
-                                    :tag_names => options[:tags])
+                                    :tag_names => tag_names)
     if options[:unique_external_id]
       new_user.unique_external_id = options[:unique_external_id]
     end
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
     new_user.avatar = options[:avatar] if options[:avatar]
+    new_user.updated_at = options[:updated_at] if options[:updated_at]
     new_user.save!
     new_user.reload
   end

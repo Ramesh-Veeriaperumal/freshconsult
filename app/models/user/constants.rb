@@ -61,7 +61,7 @@ class User < ActiveRecord::Base
 
   MAX_NO_OF_SKILLS_PER_USER = 35
 
-  ACTIVATION_ATTRIBUTES = [:name, :mobile, :phone, :job_title, :password, :password_confirmation]
+  ACTIVATION_ATTRIBUTES = [:name, :mobile, :phone, :job_title, :password, :password_confirmation].freeze
   ADMIN_PRIVILEGES = [:view_admin]
 
   PROFILE_UPDATE_ATTRIBUTES = [:name, :email, :customer_id, :job_title, :second_email, :phone, 

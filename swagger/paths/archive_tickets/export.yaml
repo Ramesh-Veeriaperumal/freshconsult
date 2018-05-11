@@ -1,12 +1,12 @@
 post:
-  summary: Export ticket fields
-  tags: [ticket]
+  summary: Export archive ticket fields
+  tags: [archive_ticket]
   parameters:
     - name: data
       in: body
       required: true
       schema:
-        $ref: '#/definitions/ticket_export_csv_input'
+        $ref: '#/definitions/ticket_export_input'
   responses:
     204:
       description: Success
@@ -18,3 +18,7 @@ post:
       description: Bad Request Error
       schema:
         $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied 
+   
+           

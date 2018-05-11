@@ -20,6 +20,7 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   before_filter :set_date_filter, :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
   before_filter :set_selected_tab  
+  before_filter :export_limit_reached? , :only => [:export_csv]
 
   after_filter  :set_adjacent_list, :only => [:index, :custom_search]
   layout :choose_layout
@@ -248,6 +249,13 @@ class Helpdesk::ArchiveTicketsController < ApplicationController
   def check_feature
     unless current_account.features_included?(:archive_tickets)
       redirect_to helpdesk_tickets_url
+    end
+  end
+
+  def export_limit_reached?
+    if DataExport.archive_ticket_export_limit_reached?
+      flash[:notice] = I18n.t('export_data.archive_ticket_export.limit_reached', :max_limit => DataExport.archive_ticket_export_limit)
+      return redirect_to helpdesk_archive_tickets_path
     end
   end
 

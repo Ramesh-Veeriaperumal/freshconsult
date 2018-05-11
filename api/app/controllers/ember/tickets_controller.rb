@@ -8,7 +8,7 @@ module Ember
     include Redis::RedisKeys
     include Redis::OthersRedis
     include Helpdesk::Activities::ActivityMethods
-
+    include ExportHelper
     decorate_views(decorate_object: [:update_properties, :execute_scenario], decorate_objects: [:index, :search])
 
     SLAVE_ACTIONS = %w(latest_note).freeze
@@ -22,6 +22,7 @@ module Ember
     before_filter :load_note, only: [:split_note]
     before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
     after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
+    before_filter :export_limit_reached?, only: [:export_csv]
 
     around_filter :run_on_db, only: :index
     around_filter :use_time_zone, only: [:index, :export_csv]
@@ -146,9 +147,16 @@ module Ember
       end
     end
 
+    def export_limit_reached?
+      if DataExport.ticket_export_limit_reached?(User.current)
+        export_limit = DataExport.ticket_export_limit
+        return render_request_error_with_info(:export_ticket_limit_reached, 429, {max_limit: export_limit}, {:max_simultaneous_export => export_limit }) 
+      end
+    end
+
     def export_csv
       @validation_klass = 'TicketExportValidation'
-      return unless validate_body_params(@item, validate_export_params)
+      return unless validate_body_params(@item, validate_export_params(cname_params))
       sanitize_export_params
       Export::Ticket.enqueue(build_export_hash)
       head 204
@@ -474,12 +482,6 @@ module Ember
         EMPTY_TRASH_TICKETS % { account_id: current_account.id }
       end
 
-      def validate_export_params
-        cname_params.merge(ticket_fields: (merge_custom_fields(:ticket_fields) || {}).keys,
-                           contact_fields: (merge_custom_fields(:contact_fields) || {}).keys,
-                           company_fields: (merge_custom_fields(:company_fields) || {}).keys)
-      end
-
       def sanitize_export_params
         # set_date_filter
         if !(cname_params[:date_filter].to_i == TicketConstants::CREATED_BY_KEYS_BY_TOKEN[:custom_filter])
@@ -494,9 +496,7 @@ module Ember
         cname_params[:filter_name] = 'all_tickets' if cname_params[:filter_name].blank? && cname_params[:filter_key].blank? && cname_params[:data_hash].blank?
         # When there is no data hash sent selecting all_tickets instead of new_and_my_open
 
-        cname_params[:ticket_fields] = merge_custom_fields(:ticket_fields, true)
-        cname_params[:contact_fields] = merge_custom_fields(:contact_fields, true)
-        cname_params[:company_fields] = merge_custom_fields(:company_fields, true)
+        sanitize_custom_fields(cname_params)
       end
 
       def build_export_hash
@@ -504,28 +504,6 @@ module Ember
                             data_hash: QueryHash.new(cname_params[:query_hash]).to_system_format,
                             current_user_id: api_current_user.id,
                             portal_url: portal_url)
-      end
-
-      def merge_custom_fields(field_type, prefix = nil)
-        if cname_params[field_type]
-          request_params = cname_params[field_type].except(:custom_fields)
-          return request_params.merge(custom_field_name(field_type)) if prefix
-          request_params.merge(cname_params[field_type][:custom_fields] || {})
-        end
-      end
-
-      def custom_field_name(field_type)
-        fields = []
-        if cname_params[field_type][:custom_fields]
-          cname_params[field_type][:custom_fields].each do |key, value|
-            fields << if field_type == :ticket_fields
-                        { "#{key}_#{Account.current.id}" => value }
-                      else
-                        { "cf_#{key}" => value }
-                      end
-          end
-        end
-        fields.inject(:merge) || {}
       end
 
       def parent_child_params
@@ -548,7 +526,6 @@ module Ember
       def portal_url
         main_portal? ? current_account.host : current_portal.portal_url
       end
-
       wrap_parameters(*wrap_params)
   end
 end

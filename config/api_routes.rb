@@ -223,6 +223,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    match 'tickets/archived/export' => 'archive/tickets#export', via: :post
     match 'tickets/archived/:id/activities' => 'archive/tickets/activities#index', via: :get
 
     resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
