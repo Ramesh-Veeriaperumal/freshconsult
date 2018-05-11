@@ -453,6 +453,72 @@ module ApiDiscussions
       match_json result_pattern
     end
 
+    def test_participated_by
+      user = User.first
+      create_test_topic(forum_obj, user)
+      @controller.stubs(:privilege?).with(:view_forums).returns(true)
+      get :participated_by, controller_params(user_id: user.id)
+      assert_response 200
+      result_pattern = []
+      Topic.participated_by(user.id).each do |t|
+        result_pattern << topic_pattern(t)
+      end
+      match_json result_pattern
+    end
+
+    def test_participated_by_pagination
+      user = User.first
+      create_test_topic(forum_obj, user)
+      @controller.stubs(:privilege?).with(:view_forums).returns(true)
+      get :participated_by, controller_params(user_id: user.id, page: 1, per_page: 1)
+      assert_response 200
+      assert JSON.parse(response.body).count == 1
+    end
+
+    def test_participated_by_invalid_id
+      get :participated_by, controller_params(user_id: (1000 + Random.rand(11)))
+      assert_response 200
+      result_pattern = []
+      match_json result_pattern
+    end
+
+    def test_participated_by_non_numeric_id
+      get :participated_by, controller_params(user_id: 'test')
+      assert_response 400
+      match_json([bad_request_error_pattern('user_id', :datatype_mismatch, expected_data_type: 'Positive Integer')])
+    end
+
+    def test_participated_by_without_user_id
+      create_test_topic(forum_obj, @agent)
+      get :participated_by, controller_params
+      assert_response 200
+      result_pattern = []
+      Topic.participated_by(@agent.id).each do |t|
+        result_pattern << topic_pattern(t)
+      end
+      match_json result_pattern
+    end
+
+    def test_participated_by_without_privilege_invalid
+      @controller.stubs(:privilege?).with(:view_forums).returns(false)
+      user = User.last
+      create_test_topic(forum_obj, user)
+      get :participated_by, controller_params(user_id: user.id)
+      assert_response 403
+    end
+
+    def test_participated_by_without_privilege_valid
+      @controller.stubs(:privilege?).with(:view_forums).returns(false)
+      create_test_topic(forum_obj, @agent)
+      get :participated_by, controller_params
+      assert_response 200
+      result_pattern = []
+      Topic.participated_by(@agent.id).each do |t|
+        result_pattern << topic_pattern(t)
+      end
+      match_json result_pattern
+    end
+
     def test_is_following_without_user_id
       topic = create_test_topic(forum_obj)
       monitor_topic(topic, @agent, 1)
