@@ -57,7 +57,7 @@ module AuthenticationSystem
     end
 
     def handle_mobile_authentication(request,params)
-      user_credentials = decode_auth_credentials
+      user_credentials = decode_mobile_auth_credentials
       if user_credentials.present?
         token = user_credentials[0] 
         payload = token.split(".")[1] 
@@ -141,6 +141,21 @@ module AuthenticationSystem
       return nil if basic_auth_match.blank? || basic_auth_match.length <= 1
       api_key_with_x = Base64.decode64(basic_auth_match[1])
       return api_key_with_x.split(":")
+    end
+
+    def decode_jwt_auth_credentials
+      #Expected header format: 'Bearer  <Token>"
+      http_auth_header = request.headers['HTTP_AUTHORIZATION']
+      return nil if http_auth_header.blank?
+      bearer_auth_match = http_auth_header.present? ? /Bearer (.*)/.match(http_auth_header) : nil
+      return nil if bearer_auth_match.blank? || bearer_auth_match.length <= 1      
+      [bearer_auth_match[1]]
+    end
+
+    def decode_mobile_auth_credentials
+      auth_token = decode_jwt_auth_credentials
+      auth_token = decode_auth_credentials if auth_token.blank?
+      auth_token
     end
 
     def handle_assume_identity_for_api(assume_agent_email)

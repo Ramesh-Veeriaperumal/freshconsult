@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
 
   before_validation :discard_blank_email, :unless => :email_available?
-  before_validation :set_password, :if => [:active?, :email_available?, :no_password?, :freshid_disabled_and_customer?]
+  before_validation :set_password, :if => [:active?, :email_available?, :no_password?, :freshid_disabled_or_customer?]
   before_validation :remove_white_space
   
   before_create :set_company_name, :unless => :helpdesk_agent?
@@ -21,6 +21,7 @@ class User < ActiveRecord::Base
   before_update :remove_gdpr_preference, :if => [:privileges_changed?, :admin_to_agent?]
 
   after_update  :destroy_scheduled_ticket_exports, :if => :privileges_changed?
+  after_update :set_user_companies_changes
 
   after_update  :send_alert_email, :if => [:email_changed?,:agent?]
   before_save :set_time_zone, :set_default_company
@@ -222,6 +223,10 @@ class User < ActiveRecord::Base
   def update_user_related_changes
     @model_changes = self.changes.clone
     # @model_changes.symbolize_keys!
+  end
+
+  def set_user_companies_changes
+    @all_changes.merge!({ company_ids: company_ids }) if self.user_companies_updated && @all_changes
   end
 
   def set_company_name
