@@ -28,8 +28,10 @@ class Helpdesk::MergeTicketsController < ApplicationController
 
 	def complete_merge
 		if @source_tickets.present? && @target_ticket.present?
-			handle_merge
-			respond_to do |format|
+			merge_ticket = TicketMerge.new(@target_ticket, @source_tickets, params)
+			merge_ticket.perform
+          	
+          	respond_to do |format|
 				format.html do
 					flash[:notice] = t("helpdesk.merge.bulk_merge.target_note_description3",
 											:count => @source_tickets.length,

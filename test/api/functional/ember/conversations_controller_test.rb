@@ -15,9 +15,12 @@ module Ember
     include DynamoHelper
     include SurveysTestHelper
     include AwsTestHelper
+    include ArchiveTicketTestHelper
 
     BULK_ATTACHMENT_CREATE_COUNT = 2
     BULK_NOTE_CREATE_COUNT       = 2
+    ARCHIVE_DAYS = 120
+    TICKET_UPDATED_DATE = 150.days.ago
 
     def setup
       super
@@ -1917,6 +1920,27 @@ module Ember
       @account.revoke_feature(:traffic_cop)
     end
 
+    def test_archive_note_with_redirection
+      @account.make_current
+      @account.enable_ticket_archiving(ARCHIVE_DAYS)
+      @account.features.send(:archive_tickets).create
+      create_archive_ticket_with_assoc(
+        created_at: TICKET_UPDATED_DATE,
+        updated_at: TICKET_UPDATED_DATE,
+        create_conversations: true
+      )
+      archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
+      note_json = archive_ticket.notes.conversations.map do |note|
+        payload = note_pattern({}, note)
+        archive_note_payload(note, payload)
+      end
+
+      get :ticket_conversations, controller_params(version: 'private',id: archive_ticket.display_id)
+      assert_response 301
+    ensure
+      cleanup_archive_ticket(@archive_ticket)
+    end
+
     private
 
       def with_twitter_update_stubbed
@@ -1950,6 +1974,17 @@ module Ember
           Social::DynamoHelper.unstub(:insert)
           Social::DynamoHelper.unstub(:update)
         end
+      end
+
+      def archive_note_payload(note, payload)
+        payload.merge!({
+          source: note.source,
+          from_email: note.from_email,
+          cc_emails: note.cc_emails,
+          bcc_emails: note.bcc_emails,
+          cloud_files: []
+        })
+        payload
       end
   end
 end

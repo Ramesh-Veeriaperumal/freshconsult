@@ -857,7 +857,11 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge(custom_fields: { 'test_custom_state' => 'Queensland', 'test_custom_city' => 'Brisbane' })
     post :create, construct_params({}, params)
     assert_response 400
-    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_country'), :conditional_not_blank, child: 'test_custom_state')])
+    assert_includes([
+      bad_request_error_pattern(custom_field_error_label('test_custom_country'), :conditional_not_blank, child: 'test_custom_state'),
+      bad_request_error_pattern(custom_field_error_label('test_custom_country'), :conditional_not_blank, child: 'test_custom_city')
+      ].map(&:with_indifferent_access),
+      JSON.parse(response.body)["errors"].first)
   end
 
   def test_create_with_nested_custom_fields_with_valid_first_valid_second_invalid_third

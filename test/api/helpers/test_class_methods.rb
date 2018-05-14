@@ -36,6 +36,11 @@ module TestClassMethods
     end
   end
 
+  def log_out
+    UserSession.find.try(:destroy)
+    User.reset_current_user
+  end
+
   def set_request_params
     @request.host = @account.full_domain
     @request.env['HTTP_REFERER'] = '/sessions/new'

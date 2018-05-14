@@ -63,6 +63,7 @@ Helpkit::Application.routes.draw do
         end
         collection do
           get :followed_by
+          get :participated_by
         end
       end
       resources :comments, as: 'api_comments', controller: 'api_comments', only: [:destroy, :update]
@@ -169,6 +170,12 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update]
+
+    resources :archived_tickets ,  path: 'tickets/archived', controller: 'archive/tickets', only: [:show, :destroy] do
+      member do
+        get :conversations, to: 'archive/conversations#ticket_conversations'
+      end
+    end
   end
 
   ember_routes = proc do
@@ -217,12 +224,8 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :archived_tickets ,  path: 'tickets/archived', controller: 'archive/tickets', only: [:show, :destroy] do
-      member do
-        get :conversations, to: 'archive/conversations#ticket_conversations'
-        get :activities, to: 'archive/tickets/activities#index'
-      end
-    end
+    match 'tickets/archived/export' => 'archive/tickets#export', via: :post
+    match 'tickets/archived/:id/activities' => 'archive/tickets/activities#index', via: :get
 
     resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
       collection do
@@ -501,7 +504,7 @@ Helpkit::Application.routes.draw do
     post '/freshcaller/search/customers/', to: 'channel/freshcaller/search/customers#results'
     post '/freshcaller/search/tickets/', to: 'channel/freshcaller/search/tickets#results'
     resources :tickets, controller: 'channel/tickets', only: [:create]
-    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create]
+    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show]
     resources :companies, controller: 'channel/api_companies', only: [:create]
     scope '/bot' do
       resources :tickets, controller: 'channel/bot/tickets', only: [:create]

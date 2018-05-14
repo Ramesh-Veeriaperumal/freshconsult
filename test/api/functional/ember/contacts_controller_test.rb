@@ -1089,5 +1089,113 @@ module Ember
       assert_equal User.current.id, sidekiq_jobs.first['args'][0]['user']
       Export::ContactWorker.jobs.clear
     end
+
+    # tests for persisting updated_at when its not a contact profile update
+
+    def test_updated_at_for_profile_update
+      updated_at = Time.now.utc - 2.days
+      contact = add_new_user(@account, updated_at: updated_at)
+      put :update, construct_params({ version: 'private', id: contact.id }, name: Time.now.to_s)
+      assert_response 200
+      assert contact.reload.updated_at != updated_at
+    end
+
+    def test_updated_at_when_tags_are_modified
+      updated_at = Time.now.utc - 2.days
+      tags = Faker::Lorem.words(3).uniq
+      contact = add_new_user(@account, {updated_at: updated_at, 
+                                        tag_names: tags.join(',')})
+      put :update, construct_params({ version: 'private', id: contact.id }, 
+                                      tags: [random_password])
+      assert_response 200
+      assert contact.reload.updated_at != updated_at
+    end
+
+    def test_updated_at_for_password_update
+      contact = Account.current.contacts.first
+      updated_at = contact.updated_at
+      put :update_password, construct_params({ version: 'private', id: contact.id }, 
+                                              password: Time.now.to_s)
+      assert_response 204
+      assert_equal contact.reload.updated_at.to_time.to_i, updated_at.to_i
+    end
+
+    # Show User jwt auth
+    def test_show_a_contact_with_valid_jwt_token
+      sample_user = add_new_user(@account)
+      user = User.current
+      UserSession.any_instance.unstub(:cookie_credentials)
+      log_out
+      token = get_mobile_jwt_token_of_user(@agent)
+      bearer_token = "Bearer #{token}"
+      current_header = request.env["HTTP_AUTHORIZATION"]
+      request.env["HTTP_USER_AGENT"] = "Freshdesk_Native"
+      set_custom_jwt_header(bearer_token)
+      get :show, controller_params(version: 'private', id: sample_user.id)
+      match_json(private_api_contact_pattern(sample_user.reload))
+      assert_response 200
+      request.env["HTTP_AUTHORIZATION"] = current_header
+      UserSession.any_instance.stubs(:cookie_credentials).returns([user.persistence_token, user.id])
+      login_as(user)
+      user.make_current
+    end
+
+    def test_show_a_contact_with_invalid_jwt_token
+      sample_user = add_new_user(@account)
+      user = User.current
+      UserSession.any_instance.unstub(:cookie_credentials)
+      log_out
+      bearer_token = "Bearer AAAAAAA"
+      current_header = request.env["HTTP_AUTHORIZATION"]
+      request.env["HTTP_USER_AGENT"] = "Freshdesk_Native"
+      set_custom_jwt_header(bearer_token)
+      get :show, controller_params(version: 'private', id: sample_user.id)
+      assert_response 401
+      request.env["HTTP_AUTHORIZATION"] = current_header
+      UserSession.any_instance.stubs(:cookie_credentials).returns([user.persistence_token, user.id])
+      login_as(user)
+      user.make_current
+    end
+
+    #Test post action with jwt token
+    def test_quick_create_contact_with_company_name_valid_jwt
+      user = User.current
+      UserSession.any_instance.unstub(:cookie_credentials)
+      log_out
+      token = get_mobile_jwt_token_of_user(@agent)
+      bearer_token = "Bearer #{token}"
+      current_header = request.env["HTTP_AUTHORIZATION"]
+      request.env["HTTP_USER_AGENT"] = "Freshdesk_Native"
+      set_custom_jwt_header(bearer_token)
+      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
+                                          email: Faker::Internet.email,
+                                          company_name: Faker::Lorem.characters(10))
+      assert_response 201
+      match_json(private_api_contact_pattern(User.last))
+      request.env["HTTP_AUTHORIZATION"] = current_header
+      UserSession.any_instance.stubs(:cookie_credentials).returns([user.persistence_token, user.id])
+      login_as(user)
+      user.make_current
+    end
+
+
+    def test_quick_create_contact_with_company_name_invalid_jwt
+      user = User.current
+      UserSession.any_instance.unstub(:cookie_credentials)
+      log_out
+      bearer_token = "Bearer AAAAAAA"
+      current_header = request.env["HTTP_AUTHORIZATION"]
+      request.env["HTTP_USER_AGENT"] = "Freshdesk_Native"
+      set_custom_jwt_header(bearer_token)
+      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(15),
+                                          email: Faker::Internet.email,
+                                          company_name: Faker::Lorem.characters(10))
+      assert_response 401
+      request.env["HTTP_AUTHORIZATION"] = current_header
+      UserSession.any_instance.stubs(:cookie_credentials).returns([user.persistence_token, user.id])
+      login_as(user)
+      user.make_current
+    end
+
   end
 end

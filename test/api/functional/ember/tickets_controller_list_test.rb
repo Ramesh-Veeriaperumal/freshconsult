@@ -716,5 +716,43 @@ module Ember
       match_json(private_api_ticket_index_spam_deleted_pattern(true))
       assert !response.api_meta[:emptying_on_background]
     end
+
+    def test_access_tickets_controller_with_jwt_token
+      user = User.current
+      custom_filter = create_filter
+      UserSession.any_instance.unstub(:cookie_credentials)
+      log_out
+      token = get_mobile_jwt_token_of_user(@agent)
+      bearer_token = "Bearer #{token}"
+      current_header = request.env["HTTP_AUTHORIZATION"]
+      request.env["HTTP_USER_AGENT"] = "Freshdesk_Native"
+      set_custom_jwt_header(bearer_token)
+      get :index, controller_params(version: 'private', filter: custom_filter.id)
+      # get :index, controller_params(version: 'private', per_page: 50)
+      assert_response 200
+      request.env["HTTP_AUTHORIZATION"] = current_header
+      UserSession.any_instance.stubs(:cookie_credentials).returns([user.persistence_token, user.id])
+      login_as(user)
+      user.make_current
+    end
+
+    def test_access_tickets_controller_with_invalid_jwt_token
+      user = User.current
+      custom_filter = create_filter
+      UserSession.any_instance.unstub(:cookie_credentials)
+      log_out
+      bearer_token = "Bearer AAAAAAA"
+      current_header = request.env["HTTP_AUTHORIZATION"]
+      request.env["HTTP_USER_AGENT"] = "Freshdesk_Native"
+      set_custom_jwt_header(bearer_token)
+      get :index, controller_params(version: 'private', filter: custom_filter.id)
+      # get :index, controller_params(version: 'private', per_page: 50)
+      assert_response 401
+      UserSession.any_instance.stubs(:cookie_credentials).returns([user.persistence_token, user.id])
+      request.env["HTTP_AUTHORIZATION"] = current_header
+      login_as(user)
+      user.make_current
+    end
+
   end
 end

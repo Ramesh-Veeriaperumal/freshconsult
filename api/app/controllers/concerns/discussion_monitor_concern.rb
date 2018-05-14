@@ -5,11 +5,11 @@ module DiscussionMonitorConcern
 
     # followed_by and is_following would not follow the before_load_object, load_object, after_load_object flow,
     # as both methods do not require the topic/forum object to be loaded. Hence privileged_to_send_user? is not part of before_laod_object.
-    before_filter :privileged_to_send_user?, only: [:followed_by, :is_following]
+    before_filter :privileged_to_send_user?, only: [:followed_by, :is_following, :participated_by]
 
     # For same reason above validate_follow_params is not part of after_load_object.
     before_filter :validate_follow_params, only: [:is_following, :unfollow]
-    before_filter :validate_user_id, only: :followed_by
+    before_filter :validate_user_id, only: [:followed_by, :participated_by]
 
     # find_monitorship is not aprt of after_load_object as that would necessitate a unfollow? check in after_load_object.
     before_filter :find_monitorship, only: [:unfollow]
@@ -100,7 +100,8 @@ module DiscussionMonitorConcern
     end
 
     def privileged_to_send_user?
-      if params[:user_id].present? && not_current_user_id? && !privilege?(:manage_forums)
+      privilege = (action == :participated_by) ? :view_forums : :manage_forums
+      if params[:user_id].present? && not_current_user_id? && !privilege?(privilege)
         render_request_error(:access_denied, 403, id: params[:user_id])
       end
     end

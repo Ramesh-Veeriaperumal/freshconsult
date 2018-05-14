@@ -80,6 +80,7 @@ class Admin::PagesController < Admin::AdminController
             data = current_user.safe_send(cname).visible.first if !cname.blank? && current_user.respond_to?(cname)
             id = data.display_id unless data.blank?
           else
+            Language.for_current_account.make_current # Setting this for published_articles association to work without including primary article
             data = current_account.safe_send(cname).first if !cname.blank? && current_account.respond_to?(cname)
             id = data.id unless data.blank?
           end

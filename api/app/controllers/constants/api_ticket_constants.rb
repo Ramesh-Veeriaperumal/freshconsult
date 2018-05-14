@@ -33,7 +33,7 @@ module ApiTicketConstants
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(group_id responder_id product_id 
                                         internal_agent_id internal_group_id
                                         email_config_id custom_field requester_id
-                                        status facebook_id ticket_type company_id 
+                                        status facebook_id ticket_type
                                         unique_external_id skill_id).freeze
   PRIORITIES = TicketConstants::PRIORITY_TOKEN_BY_KEY.keys.freeze
   SOURCES = TicketConstants::SOURCE_KEYS_BY_TOKEN.slice(:email, :portal, :phone, :chat, :mobihelp, :feedback_widget).values.freeze

@@ -31,9 +31,10 @@
     - livechat_worker
     - smart_filter_tweet_to_ticket
     - channel_framework_command
-    - toggle_agent_from_all_roundrobin_groups
-    - add_agent_to_round_robin
+    - apigee_api
     - calculate_sla
+    - add_agent_to_round_robin
+    - toggle_agent_from_all_roundrobin_groups
 
   :central_realtime:
     - central_publish
@@ -170,6 +171,7 @@
     - freshid_events
     - freshid_account_details_update
     - mixpanel_queue
+    - freshid_agents_migration
   :free:
     - free_sla
     - free_supervisor
@@ -243,4 +245,3 @@
     - marketo_queue
     - subscription_events_queue
     - track_customer_in_freshsales
-    

@@ -38,8 +38,7 @@
 		<div class="header-wrapper">
 
 	    <% if current_user && current_account.falcon_ui_enabled? && account_and_user_in_mint_supported_langs? %>
-	    	<%= link_to t('go_to_new_ui'), enable_falcon_path,
-						:id=>"ui_toggle", :method => :post %>
+	    	<%= link_to t('go_to_new_ui'), enable_falcon_path, :id=>"ui_toggle", :method => :post %>
 	    <% end %>
 
 			<% if current_user then %>
@@ -142,11 +141,9 @@
 						</div>
 					<% end %>
 
-
 			 <% unless Rails.env.development? %>
 						<% if current_account.announcements_tab_enabled? %>
-							<a href="/announcements" id="announcements_notify_header" data-original-title="<%= t('notification.explore_notifications_header') %>" data-placement="below" class="header-notification-wrapper tooltip announcements-notification-link">
-
+							<a href="/announcements" id="announcements_notify_header" title="<%= t('notification.explore_notifications_header') %>" data-placement="below" class="header-notification-wrapper tooltip announcements-notification-link">
 								<%= font_icon "help", { :size => 30 } %>
 							</a>
 	          			<% else %>
@@ -172,7 +169,7 @@
 	  					</div>
 	  				</div>
   				<%end%>
-		    <% end %>
+  			<%end%>	
 			<% end %>
 		</div>
 	</div>

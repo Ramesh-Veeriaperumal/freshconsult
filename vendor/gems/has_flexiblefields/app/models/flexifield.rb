@@ -18,7 +18,7 @@ class Flexifield < ActiveRecord::Base
 
   after_initialize :initialize_denormalized_flexifield
 
-  delegate :to_ff_alias, :to_ff_field,
+  delegate :to_ff_alias, :to_ff_field, :to_ff_def_entry,
            :ff_aliases, :non_text_ff_aliases,
            :ff_fields, :non_text_ff_fields, :text_and_number_ff_fields, :text_ff_fields, :to => :flexifield_def
 
@@ -43,9 +43,9 @@ class Flexifield < ActiveRecord::Base
   end
   
   def get_ff_value ff_alias
-    ff_field = to_ff_field ff_alias
-    if ff_field
-      read_ff_attribute ff_field
+    ff_def_entry = to_ff_def_entry ff_alias
+    if ff_def_entry
+      process_while_reading ff_def_entry.flexifield_name, ff_def_entry.flexifield_coltype
     else
       raise ArgumentError, "Flexifield alias: #{ff_alias} not found in flexifeld def mapping"
     end
@@ -80,8 +80,8 @@ class Flexifield < ActiveRecord::Base
   end
 
   def retrieve_ff_values_via_mapping
-    Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) do |(aliass, column_name), ff_values|
-      ff_values[aliass] = read_ff_attribute(column_name)
+    Account.current.ticket_field_def.ff_alias_column_type_mapping.each_with_object({}) do |(aliass, column_name_and_field_type), ff_values|
+      ff_values[aliass] = process_while_reading(*column_name_and_field_type)
     end
   end
 
@@ -119,6 +119,12 @@ class Flexifield < ActiveRecord::Base
   end
 
   alias_method_chain :attributes, :denormalized_flexifield
+
+  private
+
+    def process_while_reading column_name, field_type
+      Time.use_zone("UTC") { read_ff_attribute(column_name) }
+    end
 
 end
 

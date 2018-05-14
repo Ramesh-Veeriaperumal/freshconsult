@@ -41,7 +41,7 @@ class TicketDelegator < BaseDelegator
 
   validate :validate_closure, if: -> { status_set_to_closed? && !bulk_update? }
 
-  validate :company_presence, if: -> { company_id }
+  validate :company_presence, if: -> { @company_id }
 
   validate :validate_internal_agent_group_mapping, if: -> { internal_agent_id && attr_changed?('internal_agent_id') && Account.current.shared_ownership_enabled? }
   validate :validate_status_group_mapping, if: -> { internal_group_id && attr_changed?('internal_group_id') && Account.current.shared_ownership_enabled? }
@@ -55,6 +55,8 @@ class TicketDelegator < BaseDelegator
   validate :child_template_ids_permissible?, if: -> { @child_template_ids }
 
   validate :validate_skill, if: -> { sl_skill_id && attr_changed?('sl_skill_id') }
+                                  
+  validate :create_tag_permission, if: -> { @tags }
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
@@ -69,6 +71,8 @@ class TicketDelegator < BaseDelegator
       @parent_template_id = options[:parent_child_params][:parent_template_id]
       @child_template_ids = options[:parent_child_params][:child_template_ids]
     end
+    @company_id = options[:company_id]
+    @tags = options[:tags]
     super(record, options)
     @ticket = record
   end
@@ -112,10 +116,10 @@ class TicketDelegator < BaseDelegator
   end
 
   def company_presence
-    company = Account.current.companies.find_by_id(company_id)
+    company = Account.current.companies.find_by_id(@company_id)
     if company.nil?
       errors[:company_id] << :invalid_company_id
-      @error_options[:company_id] = { company_id: company_id }
+      @error_options[:company_id] = { company_id: @company_id }
     end
   end
 
@@ -124,7 +128,7 @@ class TicketDelegator < BaseDelegator
       if requester.blocked?
         errors[:requester_id] << :user_blocked
       elsif requester.email.present?
-          @ticket.email = requester.email
+        @ticket.email = requester.email
       end
     end
   end
@@ -133,7 +137,7 @@ class TicketDelegator < BaseDelegator
     @parent_template = Account.current.prime_templates.find_by_id(@parent_template_id)
     if @parent_template.blank? || !@parent_template.visible_to_me?
       errors[:parent_template_id] << :"is invalid"
-    end    
+    end
   end
 
   def child_template_ids_permissible?
@@ -141,7 +145,7 @@ class TicketDelegator < BaseDelegator
       valid_child_template_ids = @parent_template.child_templates.pluck(:id)
       invalid_child_template_ids = @child_template_ids.to_a - valid_child_template_ids
       if invalid_child_template_ids.length > 0
-        errors[:child_template_ids] << :child_template_list 
+        errors[:child_template_ids] << :child_template_list
         (self.error_options ||= {}).merge!({ child_template_ids: { invalid_ids: "#{invalid_child_template_ids.join(', ')}" } })
       end
     end
@@ -212,6 +216,14 @@ class TicketDelegator < BaseDelegator
       @error_options[:skill_id] = { skill_id: skill_id }
     end
   end
+                                  
+  def create_tag_permission 
+    new_tag = @tags.find{ |tag| tag.new_record? }
+    if new_tag && !User.current.privilege?(:create_tags)
+      errors[:tags] << "cannot_create_new_tag"
+      @error_options[:tags] = { tags: new_tag.name }
+    end
+  end                                
 
   private
 
