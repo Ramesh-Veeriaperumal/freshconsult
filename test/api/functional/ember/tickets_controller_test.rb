@@ -653,6 +653,64 @@ module Ember
       Account.any_instance.unstub(:multiple_user_companies_enabled?)
     end
 
+    def test_create_with_new_tag_without_privilege
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag| 
+      #Timestamp added to make sure tag names are new
+        tag = "#{tag}#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false
+        tag 
+      end
+      User.current.reload
+      remove_privilege(User.current, :create_tags)
+      params = {
+        requester_id: User.current.id,
+        status: 2, priority: 2, tags: tags,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph
+      }
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 400
+      add_privilege(User.current, :create_tags)
+    end
+
+    def test_create_with_existing_tag_without_privilege
+      tag = Faker::Lorem.word
+      @account.tags.create(:name => tag) unless @account.tags.map(&:name).include?(tag)
+      User.current.reload
+      remove_privilege(User.current, :create_tags)
+      params = {
+        requester_id: User.current.id,
+        status: 2, priority: 2, tags: [tag],
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph
+      }
+      post :create, construct_params({ version: 'private' }, params)
+      t = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(t))
+      assert_equal t.tags.count, 1
+      assert_response 201
+      add_privilege(User.current, :create_tags)
+    end
+
+    def test_create_with_tag_with_privilege
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag| 
+      #Timestamp added to make sure tag names are new
+        tag = "#{tag}#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false
+        tag 
+      end
+      params = {
+        requester_id: User.current.id,
+        status: 2, priority: 2, tags: tags,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph
+      }
+      post :create, construct_params({ version: 'private' }, params)
+      t = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(t))
+      assert_equal t.tags.count, tags.count
+      assert_response 201
+    end
+
     def test_parse_template
       t = create_ticket
       params = {
@@ -1682,6 +1740,52 @@ module Ember
       assert_equal attachment_ids, ticket.attachment_ids
     end
 
+    def test_update_properties_with_new_tag_without_privilege
+      ticket = create_ticket
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag| 
+      #Timestamp added to make sure tag names are new
+        tag = "#{tag}#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false
+        tag 
+      end
+      User.current.reload
+      remove_privilege(User.current, :create_tags)
+      params_hash = { tags: tags }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash) 
+      assert_response 400
+      assert_equal ticket.tags.count, 0
+      add_privilege(User.current, :create_tags)
+    end
+
+    def test_update_properties_with_existing_tag_without_privilege
+      ticket = create_ticket
+      tag = Faker::Lorem.word
+      @account.tags.create(:name => tag) unless @account.tags.map(&:name).include?(tag)
+      User.current.reload
+      remove_privilege(User.current, :create_tags)
+      params_hash = { tags: [tag] }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash) 
+      assert_response 200
+      assert_equal ticket.tags.count, 1
+      add_privilege(User.current, :create_tags)
+    end
+
+    def test_update_properties_with_tag_with_privilege
+      ticket = create_ticket
+      tags = Faker::Lorem.words(3).uniq
+      tags = tags.map do |tag| 
+      #Timestamp added to make sure tag names are new
+        tag = "#{tag}#{Time.now.to_i}"
+        assert_equal @account.tags.map(&:name).include?(tag), false 
+        tag
+      end
+      params_hash = { tags: tags }
+      put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      assert_equal tags.count, ticket.tags.count
+    end
+
     def test_show_with_facebook_post
       Account.stubs(:current).returns(Account.first)
       ticket = create_ticket_from_fb_post
@@ -2048,6 +2152,88 @@ module Ember
       assert_response 204
       User.any_instance.unstub(:privilege?)
       @account.rollback(:ticket_contact_export)
+    end
+
+    def test_export_csv_with_limit_reach
+      export_ids = [] 
+      DataExport.ticket_export_limit.times do
+        export_entry = @account.data_exports.new(
+                            :source => DataExport::EXPORT_TYPE["ticket".to_sym], 
+                            :user => User.current,
+                            :status => DataExport::EXPORT_STATUS[:started]
+                            )
+        export_entry.save
+        export_ids << export_entry.id  
+      end
+      params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
+                      company_fields:{"name":"Company Name"},
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 429
+      DataExport.where(:id => export_ids).destroy_all
+
+    end
+
+    def test_export_csv_without_privilege
+      User.any_instance.stubs(:privilege?).with(:export_tickets).returns(false)
+      params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
+                      company_fields:{"name":"Company Name"},
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
+
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 403
+      User.any_instance.unstub(:privilege?)
+    end
+
+    def test_export_csv_with_archive_export_limit_reached
+      export_ids = []
+      @account.make_current
+      DataExport.archive_ticket_export_limit.times do
+        export_entry = @account.data_exports.new(
+                            :source => DataExport::EXPORT_TYPE["archive_ticket".to_sym], 
+                            :user => User.current,
+                            :status => DataExport::EXPORT_STATUS[:started]
+                            )
+        export_entry.save
+        export_ids << export_entry.id
+      end
+      params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
+                      company_fields:{"name":"Company Name"},
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
+
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 204
+      DataExport.where(:id => export_ids).destroy_all
+    end
+
+    def test_export_csv_with_limit_reach_per_user
+      export_ids = [] 
+      agent1 = add_test_agent(@account)
+      DataExport.ticket_export_limit.times do
+        export_entry = @account.data_exports.new(
+                            :source => DataExport::EXPORT_TYPE["ticket".to_sym], 
+                            :user => agent1,
+                            :status => DataExport::EXPORT_STATUS[:started]
+                            )
+        export_entry.save
+        export_ids << export_entry.id  
+      end
+      agent2 = add_test_agent(@account).make_current
+      params_hash = { ticket_fields: {"display_id": "id" }, contact_fields: {"name":"Requester Name","mobile":"Mobile Phone" },
+                      company_fields:{"name":"Company Name"},
+                      format: 'csv', date_filter: '30',
+                      ticket_state_filter: 'resolved_at', start_date: 6.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+                      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] }
+      post :export_csv, construct_params({ version: 'private' }, params_hash)
+      assert_response 204
+      DataExport.where(:id => export_ids).destroy_all
+
     end
 
     def test_update_with_company_id

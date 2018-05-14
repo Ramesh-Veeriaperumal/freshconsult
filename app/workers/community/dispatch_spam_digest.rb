@@ -2,7 +2,8 @@ class Community::DispatchSpamDigest < BaseWorker
 
   sidekiq_options :queue => :spam_digest_mailer, :retry => 0, :backtrace => true, :failures => :exhausted
 
-  def perform(args)
+  def perform
+    current_account = Account.current
     moderation_digest = HashWithIndifferentAccess.new({
                 :unpublished_count => SpamCounter.elaborate_count("unpublished"),
                 :spam_count => SpamCounter.elaborate_count("spam")
@@ -11,21 +12,21 @@ class Community::DispatchSpamDigest < BaseWorker
     moderation_digest.delete(:unpublished_count) unless can_send_approval_digest?(moderation_digest)
 
     unless counters_blank(moderation_digest)
-      Time.zone = Account.current.time_zone
-      Account.current.forum_moderators.each do |moderator|
+      Time.zone = current_account.time_zone
+      current_account.forum_moderators.each do |moderator|
         SpamDigestMailer.spam_digest({
-            :account => Account.current,
+            :account => current_account,
             :recipients => moderator.email,
             :moderator => moderator.user,
-            :subject => %(Topics waiting for approval in #{Account.current.name} - #{Time.zone.now.strftime(Timezone::Constants::MAIL_FORMAT)}),
+            :subject => %(Topics waiting for approval in #{current_account.name} - #{Time.zone.now.strftime(Timezone::Constants::MAIL_FORMAT)}),
             :moderation_digest => moderation_digest,
-            :host => Account.current.full_url
+            :host => current_account.full_url
           }) unless moderator.email.blank?
       end
     end
   rescue Exception => e
-      puts e.inspect, args.inspect
-      NewRelic::Agent.notice_error(e, {:args => args})
+    Rails.logger.error "DispatchSpamDigest :: Error occured for the Account #{current_account.id} #{e.message}"
+    NewRelic::Agent.notice_error(e, description: 'DispatchSpamDigest :: Error occured for the Account #{current_account.id}')
   end
 
   def can_send_approval_digest?(moderation_digest)
