@@ -51,7 +51,8 @@ module Ember
     def update
       assign_protected
       delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
-                         attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+                         attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
+                         company_id: cname_params[:company_id] }
       assign_attributes_for_update
       return unless validate_delegator(@item, delegator_hash)
       @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments

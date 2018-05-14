@@ -2042,6 +2042,38 @@ module Ember
       clear_field_options
     end
 
+    def test_update_with_associated_company_deleted
+      new_user = add_new_user(@account)
+      company = Company.create(name: Faker::Name.name, account_id: @account.id)
+      company.save
+      new_user.user_companies.create(company_id: company.id, default: true)
+      sample_requester = new_user.reload
+      company_id = sample_requester.company_id
+      ticket = create_ticket({ requester_id: sample_requester.id, company_id: company_id })
+      @account.companies.find_by_id(company_id).destroy
+      params_hash = { status: 5 }
+      put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+      match_json(ticket_show_pattern(ticket.reload))
+      assert_equal 5, ticket.status
+    end
+
+    def test_update_requester_having_multiple_companies
+      new_user = add_new_user(@account)
+      company = Company.create(name: Faker::Name.name, account_id: @account.id)
+      company.save
+      new_user.user_companies.create(company_id: company.id, default: true)
+      other_company = create_company
+      new_user.user_companies.create(company_id: other_company.id)
+      sample_requester = new_user.reload
+      company_id = sample_requester.company_id
+      ticket = create_ticket({ requester_id: sample_requester.id, company_id: company_id })
+      @account.companies.find_by_id(company_id).destroy
+      params_hash = { status: 5 }
+      put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 200
+    end
+
     def test_update_with_section_fields_custom_dropdown_as_parent
       dd_field_id = create_custom_field_dropdown_with_sections.id
       sections = construct_sections('section_custom_dropdown')
