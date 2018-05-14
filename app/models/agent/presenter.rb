@@ -2,6 +2,13 @@ class Agent < ActiveRecord::Base
   include RepresentationHelper
 
   DATETIME_FIELDS = [:created_at, :updated_at, :active_since, :last_active_at]
+  USER_FIELDS = [:name, :email, :last_login_ip, :current_login_ip, :login_count, 
+    :failed_login_count, :active, :customer_id, :job_title, :second_email, 
+    :phone, :mobile, :twitter_id, :description, :time_zone, :posts_count, :deleted, 
+    :user_role, :delta, :import_id, :fb_profile_id, :language, :blocked, :address, 
+    :whitelisted, :external_id, :preferences, :helpdesk_agent, :privileges, :extn, 
+    :parent_id, :unique_external_id, :last_login_at, :current_login_at, :last_seen_at, 
+    :blocked_at, :deleted_at]
 
   acts_as_api
 
@@ -17,6 +24,9 @@ class Agent < ActiveRecord::Base
     s.add :scoreboard_level_id
     s.add :account_id
     s.add :available
+    USER_FIELDS.each do |key|
+      s.add proc { |d| d.user.safe_send(key) }, as: key
+    end
     DATETIME_FIELDS.each do |key|
       s.add proc { |d| d.utc_format(d.safe_send(key)) }, as: key
     end
@@ -31,7 +41,7 @@ class Agent < ActiveRecord::Base
   end
 
   def model_changes_for_central
-    self.previous_changes
+    @model_changes.merge(self.user_changes || {})
   end
 
   def relationship_with_account
