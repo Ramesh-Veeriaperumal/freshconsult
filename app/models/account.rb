@@ -192,6 +192,16 @@ class Account < ActiveRecord::Base
     # (features.map(&:to_sym) + features_list).uniq
   end
 
+  def build_default_password_policy user_type
+    self.build_agent_password_policy(
+      user_type: user_type,
+      policies: FDPasswordPolicy::Constants::DEFAULT_PASSWORD_POLICIES,
+      configs: FDPasswordPolicy::Constants::DEFAULT_CONFIGS,
+      signup: true
+      )
+  end
+ 
+
   class << self # class methods
 
     def reset_current_account
@@ -671,8 +681,16 @@ class Account < ActiveRecord::Base
     !bots_count_from_cache.zero?
   end
 
-  def email_service_provider
-    @email_service_provider ||= self.account_configuration.try('company_info').try(:[], :email_service_provider)
+  def initiate_freshid_migration
+    set_others_redis_key(freshid_migration_in_progress_key, Time.now.to_i)
+  end
+
+  def freshid_migration_complete
+    remove_others_redis_key(freshid_migration_in_progress_key)
+  end
+
+  def freshid_migration_in_progress?
+    redis_key_exists? freshid_migration_in_progress_key
   end
 
   protected
@@ -742,5 +760,9 @@ class Account < ActiveRecord::Base
         :reply_email => support_email_name + "@#{full_domain}",
         :name => name
       })
+    end
+    
+    def freshid_migration_in_progress_key
+      FRESHID_MIGRATION_IN_PROGRESS_KEY % {account_id: self.id}
     end
 end

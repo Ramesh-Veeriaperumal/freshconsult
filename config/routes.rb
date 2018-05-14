@@ -2591,7 +2591,6 @@ Helpkit::Application.routes.draw do
   match '/support/theme_rtl.:format' => 'theme/support_rtl#index'
   match '/helpdesk/theme.:format' => 'theme/helpdesk#index'
   match "/facebook/theme.:format", :controller => 'theme/facebook', :action => :index
-  match "/facebook/theme_rtl.:format", :controller => 'theme/facebook_rtl', :action => :index
 
   get 'discussions/:object/:id/subscriptions/is_following(.:format)',
     :controller => 'monitorships', :action => 'is_following',
