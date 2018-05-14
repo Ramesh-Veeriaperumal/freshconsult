@@ -22,7 +22,7 @@ class Support::Solutions::ArticlesController < SupportController
   before_filter :load_vote, :only => [:thumbs_up,:thumbs_down]
   skip_before_filter :verify_authenticity_token, :only => [:thumbs_up,:thumbs_down]
 
-  before_filter :verify_authenticity_token, :only => [:thumbs_up, :thumbs_down], :unless => :public_request?
+  before_filter :verify_authenticity_token, :only => [:thumbs_up, :thumbs_down, :create_ticket], :unless => :public_request?
   
   before_filter :check_permissibility, :only => :create_ticket
   before_filter :generate_ticket_params, :only => :create_ticket

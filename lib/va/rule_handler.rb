@@ -25,10 +25,12 @@ class Va::RuleHandler
   end
 
   def event_matches? check_value, check_var
-    return true if rule_hash[check_var]=="--"
+    return true if has_any_value?(rule_hash[check_var])
+    return false if has_any_field_excluding_none_value_without_lp_feature? rule_hash[check_var]
+    return check_value.present? if has_any_value_excluding_none?(rule_hash[check_var])
     return false if rule_hash[check_var].nil?
     @value_key = check_var
-    return(is check_value)
+    (is check_value)
   end
 
   def matches(evaluate_on)
@@ -61,6 +63,18 @@ class Va::RuleHandler
   def null_query(value = :null)
     column_name = condition.db_column
     value == :null ? NULL_QUERY % {db_column:column_name} : NOT_NULL_QUERY % {db_column:column_name}
+  end
+
+  def has_any_field_excluding_none_value_without_lp_feature?(value)
+    has_any_value_excluding_none?(value) && !Account.current.va_any_field_without_none_enabled?
+  end
+
+  def has_any_value?(value)
+    ANY_VALUE[:with_none] == value
+  end
+
+  def has_any_value_excluding_none?(value)
+    ANY_VALUE[:without_none] == value
   end
 
 end

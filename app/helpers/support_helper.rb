@@ -345,10 +345,13 @@ module SupportHelper
 
   def nested_field_prefilled_value field
     form_value = {}
+    custom_fields = params[:helpdesk_ticket][:custom_field]
     field.nested_levels.each do |ff|
-      form_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = URI.unescape(params[:helpdesk_ticket][:custom_field][ff[:name]] || "")
+      value = URI.unescape(custom_fields[ff[:name]] || "")
+      form_value[(ff[:level] == 2) ? :subcategory_val : :item_val] = RailsSanitizer.full_sanitizer.sanitize(value)
     end
-    form_value.merge!({:category_val => URI.unescape(params[:helpdesk_ticket][:custom_field][field.name] || "") })
+    category_val = URI.unescape(custom_fields[field.name] || "")
+    form_value.merge!({:category_val => RailsSanitizer.full_sanitizer.sanitize(category_val) })
   end
 
   def ticket_field_container form_builder,object_name, field, field_value = "", pl_value_id=nil, html_opts_hash = {}
