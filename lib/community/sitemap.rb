@@ -49,12 +49,8 @@ class Community::Sitemap
     discussion_urls
   end
 
-  def multilingual?
-    Account.current.multilingual?
-  end
-
   def static_url_for(structure_key, lang = nil, param = nil)
-    "#{@domain}#{'/' + lang if (multilingual? && lang.present?)}#{structure_key}#{'/' + param.to_s if param.present?}"
+    "#{@domain}#{'/' + lang if (@portal.multilingual? && lang.present?)}#{structure_key}#{'/' + param.to_s if param.present?}"
   end
 
   def url_opt(loc, priority, lastmod, alternates = nil)

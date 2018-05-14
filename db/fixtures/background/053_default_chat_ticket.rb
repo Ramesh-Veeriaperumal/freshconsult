@@ -1,1 +1,0 @@
-Fixtures::DefaultChatTicket.new.create

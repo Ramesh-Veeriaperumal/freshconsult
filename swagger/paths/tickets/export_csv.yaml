@@ -10,6 +10,10 @@ post:
   responses:
     204:
       description: Success
+    429:
+      description: Simultaneous export limit reached
+      schema:
+        $ref: '#/definitions/request_error_with_data'
     400:
       description: Bad Request Error
       schema:

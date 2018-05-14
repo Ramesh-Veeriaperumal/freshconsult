@@ -64,6 +64,7 @@ Sidekiq.configure_client do |config|
       "Freshid::ProcessEvents",
       "Scheduler::PostMessage",
       "CentralPublishWorker::AccountDeletionWorker",
+      "Apigee::KVMActionWorker",
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
       "CRMApp::Freshsales::TrackSubscription"
@@ -154,6 +155,7 @@ Sidekiq.configure_server do |config|
       "Freshid::ProcessEvents",
       "Scheduler::PostMessage",
       "CentralPublishWorker::AccountDeletionWorker",
+      "Apigee::KVMActionWorker",
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
       "CRMApp::Freshsales::TrackSubscription"

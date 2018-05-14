@@ -97,6 +97,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   before_filter :set_date_filter ,    :only => [:export_csv]
   before_filter :csv_date_range_in_days , :only => [:export_csv]
+  before_filter :export_limit_reached? , :only => [:export_csv]
   before_filter :check_ticket_status, :only => [:update, :update_ticket_properties]
   before_filter :handle_send_and_set, :only => [:update_ticket_properties]
   before_filter :validate_manual_dueby, :only => :update
@@ -2447,6 +2448,13 @@ class Helpdesk::TicketsController < ApplicationController
             :failed_tickets => "<%= link_to( t('helpdesk.flash.tickets_failed', :failed_count => 1), '',  id: 'failed-tickets', 'data-tickets' => @item_id_and_subject.to_json, 'data-title' => t('helpdesk.flash.title_on_quick_close_fail'), 'data-description' => t('helpdesk.flash.description_on_quick_close_fail')) %>" ))}.to_json
     end
     valid_ticket
+  end
+
+  def export_limit_reached?
+    if DataExport.ticket_export_limit_reached?(User.current)
+      flash[:notice] = I18n.t('export_data.ticket_export.limit_reached', :max_limit => DataExport.ticket_export_limit)
+      return redirect_to helpdesk_tickets_path 
+    end
   end
 
   def validate_ticket?

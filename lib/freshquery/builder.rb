@@ -27,6 +27,11 @@ module Freshquery
       self
     end
 
+    def check_query_validity(args)
+      response = Freshquery::Runner.instance.construct_es_query(args[:types].first, args[:query])
+      return response
+    end
+
     def response
       if @error_response.blank?
         begin

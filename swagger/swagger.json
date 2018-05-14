@@ -1231,6 +1231,12 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          },
+          "429": {
+            "description": "Simultaneous export limit reached",
+            "schema": {
+              "$ref": "#/definitions/request_error_with_data"
+            }
           }
         }
       }
@@ -1951,6 +1957,44 @@
           },
           "404": {
             "description": "Ticket not found"
+          }
+        }
+      }
+    },
+    "/tickets/archived/export": {
+      "post": {
+        "summary": "Export archive ticket fields",
+        "tags": [
+          "archive_ticket"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ticket_export_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "429": {
+            "description": "Simultaneous export limit reached",
+            "schema": {
+              "$ref": "#/definitions/request_error_with_data"
+            }
           }
         }
       }
@@ -2908,41 +2952,6 @@
           },
           "403": {
             "description": "Access denied"
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      }
-    },
-    "/contacts/{id}/hard_delete": {
-      "delete": {
-        "summary": "Hard Delete Contact",
-        "tags": [
-          "contact"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "type": "integer",
-            "format": "int64",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "force",
-            "type": "boolean",
-            "in": "query",
-            "required": false,
-            "description": "Set to true if you want to force hard delete even if the contact is not soft deleted"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "User invalid"
           },
           "404": {
             "description": "User not found"
@@ -7010,6 +7019,20 @@
         }
       }
     },
+    "request_error_with_data": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "additional_info": {
+          "type": "object"
+        }
+      }
+    },
     "bulk_action_input": {
       "title": "data",
       "type": "object",
@@ -8103,6 +8126,192 @@
         }
       }
     },
+    "ticket_export_input": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string"
+        },
+        "export_name": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "csv",
+            "xls"
+          ]
+        },
+        "ticket_fields": {
+          "type": "object",
+          "properties": {
+            "display_id": {
+              "type": "string"
+            },
+            "subject": {
+              "type": "string"
+            },
+            "status_name": {
+              "type": "string"
+            },
+            "priority_name": {
+              "type": "string"
+            },
+            "source_name": {
+              "type": "string"
+            },
+            "ticket_type": {
+              "type": "string"
+            },
+            "responder_name": {
+              "type": "string"
+            },
+            "group_name": {
+              "type": "string"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "resolved_at": {
+              "type": "string"
+            },
+            "closed_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            },
+            "time_tracked_hours": {
+              "type": "string"
+            },
+            "outbound_count": {
+              "type": "string"
+            },
+            "inbound_count": {
+              "type": "string"
+            },
+            "ticket_tags": {
+              "type": "string"
+            },
+            "ticket_survey_results": {
+              "type": "string"
+            },
+            "skill_name": {
+              "type": "string"
+            },
+            "due_by": {
+              "type": "string"
+            },
+            "first_response_time": {
+              "type": "string"
+            },
+            "first_res_time_bhrs": {
+              "type": "string"
+            },
+            "resolution_time_bhrs": {
+              "type": "string"
+            },
+            "resolution_status": {
+              "type": "string"
+            },
+            "first_response_status": {
+              "type": "string"
+            },
+            "internal_agent_name": {
+              "type": "string"
+            },
+            "internal_group_name": {
+              "type": "string"
+            },
+            "custom_fields": {
+              "$ref": "#/definitions/custom_field"
+            }
+          }
+        },
+        "contact_fields": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "contact_id": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "mobile": {
+              "type": "string"
+            },
+            "fb_profile_id": {
+              "type": "string"
+            },
+            "job_title": {
+              "type": "string"
+            },
+            "twitter_id": {
+              "type": "string"
+            },
+            "company_name": {
+              "type": "string"
+            },
+            "client_manager": {
+              "type": "string"
+            },
+            "address": {
+              "type": "string"
+            },
+            "time_zone": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "custom_fields": {
+              "$ref": "#/definitions/custom_field"
+            }
+          }
+        },
+        "company_fields": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "domains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "note": {
+              "type": "string"
+            },
+            "health_score": {
+              "type": "string"
+            },
+            "account_tier": {
+              "type": "string"
+            },
+            "industry": {
+              "type": "string"
+            },
+            "renewal_date": {
+              "type": "string"
+            },
+            "custom_fields": {
+              "$ref": "#/definitions/custom_field"
+            }
+          }
+        }
+      }
+    },
     "add_watcher_input": {
       "type": "object",
       "properties": {
@@ -8567,15 +8776,6 @@
         }
       }
     },
-    "trial_widget_complete_step": {
-      "type": "object",
-      "properties": {
-        "step": {
-          "type": "string",
-          "description": "step to be completed"
-        }
-      }
-    },
     "map_article_input": {
       "type": "object",
       "required": [
@@ -8683,6 +8883,15 @@
         },
         "widget_size": {
           "type": "string"
+        }
+      }
+    },
+    "trial_widget_complete_step": {
+      "type": "object",
+      "properties": {
+        "step": {
+          "type": "string",
+          "description": "step to be completed"
         }
       }
     },

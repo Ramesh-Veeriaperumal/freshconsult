@@ -165,6 +165,7 @@ Authority::Authorization::PrivilegeList.build do
   export_tickets do
     resource :"helpdesk/ticket", :only => [:configure_export, :export_csv]
     resource :"helpdesk/archive_ticket", :only => [:configure_export, :export_csv]
+    resource :"archive/ticket", :only => [:export]
   end
 
   reply_ticket do
@@ -312,7 +313,7 @@ Authority::Authorization::PrivilegeList.build do
     # Used for API V2
     resource :"api_discussions/category", :only => [:index, :show]
     resource :"api_discussions/forum", :only => [:show, :category_forums, :follow, :unfollow, :is_following]
-    resource :"api_discussions/topic", :only => [:show, :forum_topics, :follow, :unfollow, :is_following, :followed_by]
+    resource :"api_discussions/topic", :only => [:show, :forum_topics, :follow, :unfollow, :is_following, :followed_by, :participated_by]
     resource :"api_discussions/api_comment", :only => [:create, :topic_comments]
   end
 

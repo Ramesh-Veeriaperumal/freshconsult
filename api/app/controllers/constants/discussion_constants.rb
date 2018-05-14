@@ -26,6 +26,7 @@ module DiscussionConstants
   IS_FOLLOWING_FIELDS = ['user_id', 'id'].freeze
   FOLLOW_FIELDS = UNFOLLOW_FIELDS = ['user_id'].freeze
   FOLLOWED_BY_FIELDS = FOLLOW_FIELDS + ApiConstants::PAGINATE_FIELDS
+  PARTICIPATED_BY_FIELDS = ['user_id'].freeze + ApiConstants::PAGINATE_FIELDS
 
   # Pipe constants
   PIPE_CREATE_COMMENT_FIELDS = { all: CREATE_COMMENT_FIELDS[:all] | %w(created_at updated_at user_id) }.freeze
@@ -35,7 +36,7 @@ module DiscussionConstants
   FORUM_VISIBILITY_KEYS_BY_TOKEN = Forum::VISIBILITY_KEYS_BY_TOKEN
   FORUM_VISIBILITY = Forum::VISIBILITY_KEYS_BY_TOKEN.values
   FORUM_TYPE = Forum::TYPE_KEYS_BY_TOKEN.values
-  LOAD_OBJECT_EXCEPT = [:followed_by, :is_following, :category_forums, :forum_topics, :topic_comments].freeze
+  LOAD_OBJECT_EXCEPT = [:followed_by, :is_following, :category_forums, :forum_topics, :topic_comments, :participated_by].freeze
 
   CATEGORY_ATTRIBUTES_TO_BE_STRIPPED = %w(name).freeze
   FORUM_ATTRIBUTES_TO_BE_STRIPPED = %w(name description).freeze

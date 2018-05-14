@@ -183,6 +183,14 @@ class EmailNotification < ActiveRecord::Base
     requester_notification && allowed_in_thread_local?(:requester_notification)
   end
 
+  def toggle_requester_notification enable
+    self.update_attribute(:requester_notification, enable)
+  end
+
+  def toggle_agent_notification enable
+    self.update_attribute(:agent_notification, enable)
+  end
+
   def requester_notification_updated?
     previous_changes.has_key?(:requester_notification)
   end

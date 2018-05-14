@@ -100,6 +100,8 @@
   $ref: ./archive_tickets/conversations.yaml
 /tickets/archived/{id}/activities:
   $ref: ./archive_tickets/activities.yaml
+/tickets/archived/export:
+  $ref: ./archive_tickets/export.yaml
 
 /conversations/{id}:
   $ref: ./conversations/update.yaml

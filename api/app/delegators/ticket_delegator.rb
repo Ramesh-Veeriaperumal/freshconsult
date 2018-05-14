@@ -55,6 +55,8 @@ class TicketDelegator < BaseDelegator
   validate :child_template_ids_permissible?, if: -> { @child_template_ids }
 
   validate :validate_skill, if: -> { sl_skill_id && attr_changed?('sl_skill_id') }
+                                  
+  validate :create_tag_permission, if: -> { @tags }
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
@@ -69,6 +71,7 @@ class TicketDelegator < BaseDelegator
       @parent_template_id = options[:parent_child_params][:parent_template_id]
       @child_template_ids = options[:parent_child_params][:child_template_ids]
     end
+    @tags = options[:tags]
     super(record, options)
     @ticket = record
   end
@@ -212,6 +215,14 @@ class TicketDelegator < BaseDelegator
       @error_options[:skill_id] = { skill_id: skill_id }
     end
   end
+                                  
+  def create_tag_permission 
+    new_tag = @tags.find{ |tag| tag.new_record? }
+    if new_tag && !User.current.privilege?(:create_tags)
+      errors[:tags] << "cannot_create_new_tag"
+      @error_options[:tags] = { tags: new_tag.name }
+    end
+  end                                
 
   private
 
