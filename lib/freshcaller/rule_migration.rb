@@ -3,8 +3,8 @@ module Freshcaller
     def fetch_freshfone_objects
       @numbers = []
       account = ::Account.current
-      if account.all_freshfone_numbers.present?
-        account.freshfone_numbers.each do |number|
+      account.freshfone_numbers.find_in_batches(batch_size: 10) do |number_batch|
+        number_batch.each do |number|
           @messages = []
           voice_type = number.female_voice? ? 0 : 1
           fetch_message_type(number, voice_type)
