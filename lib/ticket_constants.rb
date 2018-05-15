@@ -19,8 +19,6 @@ module TicketConstants
   # For preventing non-agents from updating inaccessible ticket attibutes
   SUPPORT_PROTECTED_ATTRIBUTES = [ "email", "requester_id", "source", "spam", "deleted",
                                     "tweet_attributes", "fb_post_attributes" ]
-
-  NESTED_TICKET_ATTRIBUTES = ["custom_field","ticket_body_attributes"]
    
   # DATE_RANGE_CSV = 31
 

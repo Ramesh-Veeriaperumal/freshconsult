@@ -8,9 +8,7 @@ class Widgets::FeedbackWidgetsController < SupportController
 
   before_filter :build_item, :only => :new
   before_filter :set_native_mobile, :only => [:create]
-  before_filter :remove_non_editable_fields, :only => [:create]
   before_filter :check_ticket_permission, :only => [:create]
-  before_filter :set_ticket_source, :only => [:create, :jsonp_create]
 
   include SupportTicketControllerMethods
   include Helpdesk::Permission::Ticket
@@ -107,13 +105,10 @@ class Widgets::FeedbackWidgetsController < SupportController
       end
     end
 
-    def sanitize_referrer(url)
-      URI.parse(url.to_s).to_s
-    rescue
-      nil
-    end
+  def sanitize_referrer(url)
+    URI.parse(url.to_s).to_s
+  rescue
+    nil
+  end
 
-    def set_ticket_source
-      params[:helpdesk_ticket][:source] = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:feedback_widget]
-    end
 end
