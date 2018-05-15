@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   prepend_before_filter :determine_pod
   before_filter :unset_current_account, :unset_current_portal, :unset_shard_for_payload, :unset_thread_variables, :set_current_account, :reset_language
   before_filter :set_shard_for_payload
-  before_filter :set_default_locale, :set_locale, :set_msg_id
+  before_filter :set_default_locale, :set_locale, :set_msg_id, :set_current_ip
   # before_filter :set_ui_preference
   include SslRequirement
   include Authority::FreshdeskRails::ControllerHelpers
@@ -67,6 +67,10 @@ class ApplicationController < ActionController::Base
 
   def set_locale
     I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 
+  end
+
+  def set_current_ip
+    Thread.current[:current_ip] = request.remote_ip
   end
  
   def check_account_state
