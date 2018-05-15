@@ -4,6 +4,9 @@ module Channel
   class ApiContactsControllerTest < ActionController::TestCase
     include UsersTestHelper
     include CustomFieldsTestHelper
+    include JweTestHelper
+
+    SUPPORT_BOT = 'frankbot'.freeze
 
     def setup
       super
@@ -112,5 +115,58 @@ module Channel
       assert_response 401
     end
 
+    def test_show_a_contact
+      set_jwe_auth_header(SUPPORT_BOT)
+      sample_user = add_new_user(@account)
+      get :show, controller_params(version: 'channel', id: sample_user.id)
+      ignore_keys = [:was_agent, :agent_deleted_forever]
+      match_json(contact_pattern(sample_user.reload).except(*ignore_keys))
+      assert_response 200
+    end
+
+    def test_show_a_contact_with_avatar
+      set_jwe_auth_header(SUPPORT_BOT)
+      file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+      sample_user = add_new_user(@account)
+      sample_user.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
+      get :show, controller_params(version: 'channel', id: sample_user.id)
+      ignore_keys = [:was_agent, :agent_deleted_forever]
+      match_json(contact_pattern(sample_user.reload).except(*ignore_keys))
+      assert_response 200
+    end
+
+    def test_show_a_non_existing_contact
+      set_jwe_auth_header(SUPPORT_BOT)
+      sample_user = add_new_user(@account)
+      get :show, controller_params(version: 'channel', id: 0)
+      assert_response 404
+    end
+
+    def test_show_a_deleted_contact
+      set_jwe_auth_header(SUPPORT_BOT)
+      sample_user = add_new_user(@account)
+      sample_user.update_column(:deleted, true)
+      get :show, controller_params(version: 'channel', id: sample_user.id)
+      match_json(deleted_contact_pattern(sample_user.reload))
+      assert_response 200
+    end
+
+    def test_show_a_contact_with_unique_external_id
+      set_jwe_auth_header(SUPPORT_BOT)
+      @account.add_feature(:unique_contact_identifier)
+      sample_user = add_new_user(@account)
+      get :show, controller_params(version: 'channel', id: sample_user.id)
+      match_json(unique_external_id_contact_pattern(sample_user.reload))
+      assert_response 200
+    ensure
+      @account.revoke_feature(:unique_contact_identifier)
+    end
+
+    def test_show_a_contact_without_authentication_header
+      sample_user = add_new_user(@account)
+      get :show, controller_params(version: 'channel', id: sample_user.id)
+      assert_response 401
+      match_json(request_error_pattern(:invalid_credentials))
+    end
   end
 end

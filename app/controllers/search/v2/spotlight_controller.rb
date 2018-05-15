@@ -11,9 +11,6 @@ class Search::V2::SpotlightController < ApplicationController
   helper AutocompleteHelper
   
   before_filter :set_search_sort_cookie
-  before_filter :only => [:solutions] do |c|
-    c.requires_this_feature :allow_auto_suggest_solutions
-  end
   before_filter :detect_multilingual_search, only: [:solutions]
   before_filter :fetch_fields, only: [:tickets]
 

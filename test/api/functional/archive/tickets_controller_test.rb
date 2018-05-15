@@ -6,6 +6,7 @@ class Archive::TicketsControllerTest < ActionController::TestCase
   include ArchiveTicketTestHelper
   include TicketsTestHelper
   include TicketHelper
+  include ContactFieldsHelper
 
   ARCHIVE_DAYS = 120
   TICKET_UPDATED_DATE = 150.days.ago
@@ -27,6 +28,10 @@ class Archive::TicketsControllerTest < ActionController::TestCase
 
   def teardown
     cleanup_archive_ticket(@archive_ticket, {conversations: true})
+  end
+
+  def wrap_cname(params)
+    { ticket: params }
   end
 
   def test_show
@@ -101,6 +106,121 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     assert_response 403
   end
 
+  def test_export_with_no_params
+    post :export, construct_params({ version: 'private' }, {})
+    assert_response 400
+    match_json([bad_request_error_pattern('format', :missing_field),
+                bad_request_error_pattern('query', :missing_field),
+                bad_request_error_pattern('export_name', :missing_field)])
+  end
+
+  def test_export_with_invalid_params
+    contact_fields = @account.contact_form.fields
+    company_fields = @account.company_form.fields
+    User.any_instance.stubs(:privilege?).with(:export_tickets).returns(true)
+    User.any_instance.stubs(:privilege?).with(:export_customers).returns(false)      
+    params_hash = { format: Faker::Lorem.word, ticket_fields: { id: rand(2..10) },
+                  contact_fields: { id: rand(2..10) },
+                  company_fields: { id: rand(2..10) },
+                  query: [123],
+                  export_name: [22] }
+    post :export, construct_params({ version: 'private' }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern(:format, :not_included, list: %w(csv xls).join(',')),
+                bad_request_error_pattern(:query, :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Array', prepend_msg: :input_received),
+                bad_request_error_pattern(:export_name, :datatype_mismatch, expected_data_type: 'String', given_data_type: 'Array', prepend_msg: :input_received),
+                bad_request_error_pattern(:ticket_fields, :not_included, list: ticket_export_fields.join(',')),
+                bad_request_error_pattern(:contact_fields, :not_included, list: %i(name phone mobile fb_profile_id contact_id).join(',')),
+                bad_request_error_pattern(:company_fields, :not_included, list: %i(name).join(','))])            
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_export_with_valid_params
+    params_hash = { ticket_fields: {"display_id":"Ticket ID","subject":"Subject"},
+                    contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                    company_fields: { 'name' => 'Company Name' },
+                    format: 'csv',
+                    query: "priority:1",
+                    export_name: "Test export" }
+    post :export, construct_params({ version: 'private' }, params_hash)
+    assert_response 204
+  end
+
+
+  def test_export_with_invalid_query
+    params_hash = { ticket_fields: {"display_id":"Ticket ID","subject":"Subject"},
+                    contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                    company_fields: { 'name' => 'Company Name' },
+                    format: 'csv',
+                    query: "priority:0",
+                    export_name: "Test export" }
+    post :export, construct_params({ version: 'private' }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern(:query, "", {:prepend_msg => "priority:It should be one of these values: '1,2,3,4'"})])
+
+  end
+
+  def test_export_with_query_more_than_limit
+    query = 'a' * (ExportHelper::MAX_QUERY_LIMIT + 1)
+    params_hash = { ticket_fields: {"display_id":"Ticket ID","subject":"Subject"},
+                    contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                    company_fields: { 'name' => 'Company Name' },
+                    format: 'csv',
+                    query: query,
+                    export_name: "Test export" }
+    post :export, construct_params({ version: 'private' }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('query', :too_long, max_count: ExportHelper::MAX_QUERY_LIMIT, current_count: query.length, element_type: "long query")])
+  end
+
+  def test_export_with_empty_query
+    params_hash = { ticket_fields: {"display_id":"Ticket ID","subject":"Subject"},
+                    contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                    company_fields: { 'name' => 'Company Name' },
+                    format: 'csv',
+                    query: "",
+                    export_name: "Test export" }
+    post :export, construct_params({ version: 'private' }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern(:query, :blank)])
+  end
+
+  def test_export_with_limit_reach
+    export_ids = []
+    @account.make_current
+    DataExport.archive_ticket_export_limit.times do
+      export_entry = @account.data_exports.new(
+                            :source => DataExport::EXPORT_TYPE["archive_ticket".to_sym], 
+                            :user => User.current,
+                            :status => DataExport::EXPORT_STATUS[:started]
+                            )
+      export_entry.save
+      export_ids << export_entry.id
+    end
+    params_hash = { ticket_fields: {"display_id":"Ticket ID","subject":"Subject"},
+                    contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                    company_fields: { 'name' => 'Company Name' },
+                    format: 'csv',
+                    query: "priority:1",
+                    export_name: "Test export" }
+    post :export, construct_params({ version: 'private' }, params_hash)
+    assert_response 429
+    DataExport.where(:id => export_ids).destroy_all
+  end
+
+  def test_export_without_privilege
+    User.any_instance.stubs(:privilege?).with(:export_tickets).returns(false)
+    params_hash = { ticket_fields: {"display_id":"Ticket ID","subject":"Subject"},
+                    contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                    company_fields: { 'name' => 'Company Name' },
+                    format: 'csv',
+                    query: "priority:1",
+                    export_name: "Test export" }
+    post :export, construct_params({ version: 'private' }, params_hash)
+    assert_response 403
+    User.any_instance.unstub(:privilege?)
+  end
+
   def test_worker_archive_delete_initialise
     stub_archive_assoc_for_show(@archive_association) do
       archive_ticket = @account.archive_tickets.find_by_ticket_id(@archive_ticket.id)
@@ -133,7 +253,6 @@ class Archive::TicketsControllerTest < ActionController::TestCase
       match_json(request_error_pattern(:access_denied))
     end
   end
-
 
   private
 

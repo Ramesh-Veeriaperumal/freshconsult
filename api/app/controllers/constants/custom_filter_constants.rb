@@ -19,7 +19,7 @@ module CustomFilterConstants
   FEATURES_KEYS_BY_FIELD   = Hash[*FEATURE_BASED_CONDITIONAL_FIELDS.map { |i| [i[0], i[1]] }.flatten]
   FEATURES_NAMES_BY_FILED  = Hash[*FEATURE_BASED_CONDITIONAL_FIELDS.map { |i| [i[0], i[2]] }.flatten]
 
-  REMOVE_QUERY_HASH = ['spam', 'deleted', 'monitored_by', 'archived'].freeze
+  REMOVE_QUERY_HASH = ['spam', 'deleted', 'monitored_by'].freeze
   REMOVE_QUERY_CONDITIONS = ['spam', 'deleted'].freeze
 
   WF_PREFIX_PARAM_MAPPING = {

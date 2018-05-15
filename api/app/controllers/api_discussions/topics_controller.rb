@@ -2,7 +2,7 @@ module ApiDiscussions
   class TopicsController < ApiApplicationController
     include DiscussionMonitorConcern
     SLAVE_ACTIONS = %w(index forum_topics).freeze
-    decorate_views(decorate_objects: [:followed_by, :forum_topics])
+    decorate_views(decorate_objects: [:followed_by, :participated_by, :forum_topics])
 
     before_filter :forum_exists?, only: [:forum_topics]
     COLLECTION_RESPONSE_FOR = ['forum_topics'].freeze
@@ -32,6 +32,12 @@ module ApiDiscussions
       render '/api_discussions/topics/topic_list'
     end
 
+    def participated_by
+      return if validate_filter_params(DiscussionConstants::PARTICIPATED_BY_FIELDS)
+      @items = paginate_items(current_account.topics.participated_by(params[:user_id]).newest)
+      render '/api_discussions/topics/topic_list'
+    end
+   
     private
 
       def forum_exists?

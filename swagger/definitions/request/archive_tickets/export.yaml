@@ -1,0 +1,121 @@
+type: object
+properties:
+  query:
+    type: string
+  export_name:
+    type: string
+  format:
+    type: string
+    enum: ["csv","xls"]
+  ticket_fields:
+    type: object
+    properties:
+      display_id:
+        type: string
+      subject:
+        type: string
+      status_name:
+        type: string
+      priority_name:
+        type: string
+      source_name:
+        type: string
+      ticket_type:
+        type: string
+      responder_name:
+        type: string
+      group_name:
+        type: string
+      created_at:
+        type: string
+      resolved_at:
+        type: string
+      closed_at:
+        type: string
+      updated_at:
+        type: string
+      time_tracked_hours:
+        type: string
+      outbound_count:
+        type: string
+      inbound_count:
+        type: string
+      ticket_tags:
+        type: string
+      ticket_survey_results:
+        type: string
+      skill_name:
+        type: string
+      due_by:
+        type: string
+      first_response_time:
+        type: string
+      first_res_time_bhrs:
+        type: string
+      resolution_time_bhrs:
+        type: string
+      resolution_status:
+        type: string
+      first_response_status:
+        type: string
+      internal_agent_name:
+        type: string
+      internal_group_name:
+        type: string
+      custom_fields:
+        $ref: '#/definitions/custom_field'
+  contact_fields:
+    type: object
+    properties:
+      name:
+        type: string
+      contact_id:
+        type: string
+      phone:
+        type: string
+      mobile:
+        type: string
+      fb_profile_id:
+        type: string
+      job_title:
+        type: string
+      twitter_id:
+        type: string
+      company_name:
+        type: string
+      client_manager:
+        type: string
+      address:
+        type: string
+      time_zone:
+        type: string
+      language:
+        type: string
+      description:
+        type: string
+      custom_fields:
+        $ref: '#/definitions/custom_field'
+  company_fields:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      domains:
+        type: array
+        items:
+          type: string
+      note:
+        type: string
+      health_score:
+        type: string
+      account_tier:
+        type: string
+      industry:
+        type: string
+      renewal_date:
+        type: string
+      custom_fields:
+        $ref: '#/definitions/custom_field'
+    

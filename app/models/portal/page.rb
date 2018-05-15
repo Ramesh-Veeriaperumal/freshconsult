@@ -26,15 +26,15 @@ class Portal::Page < ActiveRecord::Base
 
 		# Solution pages
 		[:solution_home,      	6,   "support/solutions/index.portal", "support_solutions_path"],
-		[:solution_category,    18,  "support/solutions/show.portal", "support_solutions_path"],
+		[:solution_category,    18,  "support/solutions/show.portal", "support_solution_path", "public_category_meta"],
 		[:article_list,       	7,   "support/solutions/folders/show.portal", 
-			"support_solutions_folder_path", "public_folders"],
+			"support_solutions_folder_path", "public_folder_meta"],
 		[:article_view,       	8,   "support/solutions/articles/show.portal", 
-			"support_solutions_article_path", "published_articles"],
+			"support_solutions_article_path", "published_article_meta"],
 
 		# Discussion or Forum pages
 		[:discussions_home,   	9,   "support/discussions/index.portal", "support_discussions_path"],
-		[:discussions_category,  20,  "support/discussions/show.portal", "support_discussions_path"],
+		[:discussions_category,  20,  "support/discussions/show.portal", "support_discussion_path", "forum_categories"],
 		[:topic_list,         	10,  "support/discussions/forums/show.portal", 
 			"support_discussions_forum_path", "portal_forums"],
 		[:topic_view,         	11,  "support/discussions/topics/show.portal", 

@@ -2,6 +2,7 @@ module Channel
   class ApiContactsController < ::ApiContactsController
     include ChannelAuthentication
 
+    skip_before_filter :check_privilege, only: :show
     before_filter :channel_client_authentication
 
     def create

@@ -97,13 +97,13 @@ module ApiSolutions
       def construct_article_object
         @meta = Solution::Builder.article(solution_article_meta: @article_params, language_id: @lang_id)
         @item = @meta.safe_send(language_scoper)
-        @item.tags = construct_tags(@tags) if @tags
+        @item.tags = @tags if @tags
         @item.create_draft_from_article if @status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft] && create?
         !(@item.errors.any? || @item.parent.errors.any?)
       end
 
       def build_article_delegator
-        delegator_params = { language_id: @lang_id, article_meta: @meta }
+        delegator_params = { language_id: @lang_id, article_meta: @meta, tags: @tags }
         delegator_params[:folder_name] = params[cname]['folder_name'] if params[cname].key?('folder_name')
         delegator_params[:category_name] = params[cname]['category_name'] if params[cname].key?('category_name')
         delegator_params[:user_id] = @article_params[language_scoper][:user_id] if @article_params[language_scoper] && @article_params[language_scoper][:user_id]
@@ -162,7 +162,7 @@ module ApiSolutions
         sanitize_language_params
         sanitize_attachment_params
         params[cname][folder] = params[:id]
-        @tags = params[cname][:tags]
+        @tags = construct_tags(params[cname][:tags]) if params[cname] && params[cname][:tags]
         # To ensure if both title and description are present in params
         if language_params_hash && @draft
           language_params_hash[:title] ||= @draft.title

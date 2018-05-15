@@ -7,7 +7,8 @@ class BadRequestError < BaseError
     :inaccessible_value => :inaccessible_value,
     :translation_available_already => :translation_available_already,
     :translation_not_available => :translation_not_available,
-    :"is invalid" => :absent_in_db
+    :"is invalid" => :absent_in_db,
+    :"cannot_create_new_tag" => :"cannot_create_new_tag: %{tags}"
   }.freeze
 
   ATTRIBUTE_RESOURCE_MAP = {
@@ -37,7 +38,8 @@ class BadRequestError < BaseError
     product_ids: :product,
     status_ids: :status,
     parent_template_id: :parent_template,
-    child_template_ids: :child_template
+    child_template_ids: :child_template,
+    tags: :tags
   }.freeze
 
   def initialize(attribute, value, params_hash = {})

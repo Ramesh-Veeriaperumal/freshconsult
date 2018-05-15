@@ -31,6 +31,7 @@ class ContactsController < ApplicationController
    before_filter :set_required_fields, :only => [:create_contact, :update_contact]
    before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_contact, :update_contact]
    before_filter :restrict_user_primary_email_delete, :only => :update_contact
+   before_filter :check_agent_deleted_forever, :only => [:restore]
   
   def index
     respond_to do |format|
@@ -193,6 +194,18 @@ class ContactsController < ApplicationController
     @user = nil # reset the user object.
     @user = current_account.user_emails.user_for_email(email) unless email.blank?
     @user = current_account.all_users.find(params[:id]) if @user.blank?
+
+    if @user.agent_deleted_forever?
+      error_message = { :errors => { :message => t('contact_agent_deleted_forever') }}
+      flash[:error] = t('contact_agent_deleted_forever')
+      respond_to do |format|
+        format.html { redirect_to contacts_path }
+        format.json { render :json => error_message, :status => :bad_request}
+        format.xml { render :xml => error_message.to_xml , :status => :bad_request}
+      end
+      return
+    end
+
     load_companies
     Rails.logger.info "$$$$$$$$ -> #{@user.inspect}"
 
@@ -382,6 +395,19 @@ protected
           flash[:notice] = t('maximum_agents_msg') 
           redirect_to :back 
         }
+        format.json { render :json => error_message, :status => :bad_request}
+        format.xml { render :xml => error_message.to_xml , :status => :bad_request}
+      end
+    end
+  end
+
+  def check_agent_deleted_forever
+    agent_deleted_forever = @items.any? { |c| c.agent_deleted_forever? }
+    if agent_deleted_forever
+      error_message = { :errors => { :message => t('contact_agent_deleted_forever') }}
+      flash[:error] = t('contact_agent_deleted_forever')
+      respond_to do |format|
+        format.html { redirect_to contacts_path }
         format.json { render :json => error_message, :status => :bad_request}
         format.xml { render :xml => error_message.to_xml , :status => :bad_request}
       end

@@ -6,6 +6,7 @@ module Channel
       include TicketsTestHelper
       include BotTicketHelper
       include ProductsHelper
+      include JweTestHelper
 
       CUSTOM_FIELDS = %w[number checkbox decimal text paragraph dropdown country state city date].freeze
 
@@ -21,6 +22,8 @@ module Channel
         'paragraph' => [:datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer],
         'date' => [:invalid_date, accepted: 'yyyy-mm-dd']
       }.freeze
+
+      SUPPORT_BOT = 'frankbot'.freeze
 
       def setup
         super
@@ -79,7 +82,7 @@ module Channel
 
       def test_create_without_default_fields_required_except_requester_and_bot_data
         enable_bot_feature do
-          set_auth_header
+          set_jwe_auth_header(SUPPORT_BOT)
           params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
           post :create, construct_params({version: 'channel'}, params)
           ticket = @account.tickets.last
@@ -96,7 +99,7 @@ module Channel
 
       def test_create_without_default_fields_required
         enable_bot_feature do
-          set_auth_header
+          set_jwe_auth_header(SUPPORT_BOT)
           post :create, construct_params({version: 'channel'}, {})
           assert_response 400
           match_json([bad_request_error_pattern('requester_id', :fill_a_mandatory_field, field_names: 'requester_id, phone, email, twitter_id, facebook_id'),
@@ -108,7 +111,7 @@ module Channel
 
       def test_create_with_all_default_fields_required_invalid
         enable_bot_feature do
-          set_auth_header
+          set_jwe_auth_header(SUPPORT_BOT)
           default_non_required_fields = Helpdesk::TicketField.where(required: false, default: 1)
           toggle_required_attribute(default_non_required_fields)
           params_hash = {
@@ -144,7 +147,7 @@ module Channel
 
       def test_create_without_custom_fields_required
         enable_bot_feature do
-          set_auth_header
+          set_jwe_auth_header(SUPPORT_BOT)
           params_hash = ticket_params_hash
           custom_fields = Helpdesk::TicketField.where(name: [@custom_field_names])
           toggle_required_attribute(custom_fields)
@@ -164,7 +167,7 @@ module Channel
 
       def test_create_with_custom_fields_required_invalid
         enable_bot_feature do
-          set_auth_header
+          set_jwe_auth_header(SUPPORT_BOT)
           params = ticket_params_hash.merge(custom_fields: {})
           VALIDATABLE_CUSTOM_FIELDS.each do |custom_field|
             params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES_INVALID[custom_field]
@@ -180,7 +183,7 @@ module Channel
       end
 
       def test_create_without_support_bot_feature
-        set_auth_header
+        set_jwe_auth_header(SUPPORT_BOT)
         params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
         post :create, construct_params({version: 'channel'}, params)
         assert_response 403
@@ -189,7 +192,7 @@ module Channel
 
       def test_create_without_source
         enable_bot_feature do
-          set_auth_header
+          set_jwe_auth_header(SUPPORT_BOT)
           params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
           post :create, construct_params({version: 'channel'}, params)
           ticket = @account.tickets.last
@@ -201,7 +204,7 @@ module Channel
 
       def test_create_for_product_portal_bot
         enable_bot_feature do
-          set_auth_header
+          set_jwe_auth_header(SUPPORT_BOT)
           product = create_product(portal_url: Faker::Internet.domain_name)
           portal_id = product.portal.id
           bot = create_bot(portal_id)
@@ -217,7 +220,7 @@ module Channel
 
       def test_create_with_source
         enable_bot_feature do
-          set_auth_header
+          set_jwe_auth_header(SUPPORT_BOT)
           params = { email: Faker::Internet.email, bot_external_id: @bot.external_id, query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b', source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:bot] }
           post :create, construct_params({version: 'channel'}, params)
           assert_response 400
@@ -227,7 +230,7 @@ module Channel
 
       def test_create_with_invalid_bot_id
         enable_bot_feature do
-          set_auth_header
+          set_jwe_auth_header(SUPPORT_BOT)
           params = { email: Faker::Internet.email, bot_external_id: '1', query_id: '3b04a7cd-2cb8-4d71-9aa9-1ac6dfce1c2b', conversation_id: 'c3aab027-6aa8-4383-9b85-82ed47dc366b' }
           post :create, construct_params({version: 'channel'}, params)
           assert_response 400

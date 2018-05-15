@@ -21,8 +21,9 @@ class DataExportMailer < ActionMailer::Base
   end 
 
   def ticket_export(options={})
+    subject = (options[:export_params][:archived_tickets] && options[:export_params][:use_es]) ? options[:export_params][:export_name] : formatted_export_subject(options)
     headers = {
-      :subject   => formatted_export_subject(options),
+      :subject   => subject,
       :to        => options[:user].email,
       :from      => AppConfig['from_email'],
       :bcc       => AppConfig['reports_email'],
