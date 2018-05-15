@@ -78,9 +78,7 @@ module Freshcaller
     end
 
     def account_admin
-      roles ||= current_account.roles.where(name: 'Account Administrator').first
-      users ||= current_account.users.where(privileges: roles.privileges).reorder('id asc')
-      user ||= users.first
+      current_account.account_managers.first
     end
 
     def account_migration_location
