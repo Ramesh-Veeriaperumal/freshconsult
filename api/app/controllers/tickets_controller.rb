@@ -34,7 +34,9 @@ class TicketsController < ApiApplicationController
     custom_fields = params[cname][:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
     @item.assign_attributes(validatable_delegator_attributes)
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: custom_fields)
+    delegator_hash = { ticket_fields: @ticket_fields, custom_fields: custom_fields,
+                       company_id: params[cname][:company_id] }
+    ticket_delegator = TicketDelegator.new(@item, delegator_hash)
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     else
