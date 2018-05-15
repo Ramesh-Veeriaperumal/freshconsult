@@ -161,6 +161,7 @@ Authority::Authorization::PrivilegeList.build do
   export_tickets do
     resource :"helpdesk/ticket", :only => [:configure_export, :export_csv]
     resource :"helpdesk/archive_ticket", :only => [:configure_export, :export_csv]
+    resource :"archive/ticket", :only => [:export]
   end
 
   reply_ticket do

@@ -8,9 +8,11 @@ class DataExport < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
   
-  EXPORT_TYPE = { :backup => 1, :ticket => 2, :contact => 3, :company => 4, :call_history => 5, :agent => 6, :reports => 7 }
+  EXPORT_TYPE = { :backup => 1, :ticket => 2, :contact => 3, :company => 4, :call_history => 5, :agent => 6, :reports => 7, :archive_ticket => 8 }
 
   TICKET_EXPORT_LIMIT = 3
+  TICKET_EXPORT_LIMIT_PER_USER = 1
+  ARCHIVE_TICKET_EXPORT_LIMIT_PER_ACCOUNT = 1
 
   EXPORT_STATUS = {:started => 1,
                    :file_created => 2,
@@ -27,6 +29,8 @@ class DataExport < ActiveRecord::Base
   scope :agent_export, :conditions => { :source => EXPORT_TYPE[:agent] }, :order => "id"
   scope :reports_export, :conditions => { :source => EXPORT_TYPE[:reports] }, :order => "id"
   scope :current_exports, :conditions => ["status = #{EXPORT_STATUS[:started]} and last_error is null"]
+  scope :running_ticket_exports, :conditions => ["source = #{EXPORT_TYPE[:ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
+  scope :running_archive_ticket_exports, :conditions => ["source = #{EXPORT_TYPE[:archive_ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
 
 
   def owner?(downloader)
@@ -57,12 +61,27 @@ class DataExport < ActiveRecord::Base
     [EXPORT_STATUS[:completed], 0].include? status
   end
 
-  def save_hash!(hash)
-    self.update_attributes(:token => hash)
-  end
-
   def failed?
     status == EXPORT_STATUS[:failed]
   end
 
+  def save_hash!(hash)
+    self.update_attributes(:token => hash)
+  end
+
+  def self.ticket_export_limit
+    Account.current.account_additional_settings.ticket_exports_limit || TICKET_EXPORT_LIMIT_PER_USER
+  end
+
+  def self.archive_ticket_export_limit
+    Account.current.account_additional_settings.archive_ticket_exports_limit || ARCHIVE_TICKET_EXPORT_LIMIT_PER_ACCOUNT
+  end
+
+  def self.ticket_export_limit_reached?(user)
+    user.data_exports.running_ticket_exports.count >= self.ticket_export_limit
+  end
+
+  def self.archive_ticket_export_limit_reached?
+    Account.current.data_exports.running_archive_ticket_exports.count >= self.archive_ticket_export_limit
+  end
 end
