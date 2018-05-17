@@ -11965,6 +11965,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     help: What's this?
     feed_back_survery: Help us with some feedback?
   collaboration:
+    collab_deleted_user: "Deleted Agent"
     highlight_mode_on: "Highlight mode on"
     highlight_mode_off: "Highlight mode off"
     follow_discussion: "Follow this discussion"
