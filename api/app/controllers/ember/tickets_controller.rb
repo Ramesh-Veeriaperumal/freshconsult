@@ -18,7 +18,6 @@ module Ember
     SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties execute_scenario).freeze
 
     before_filter :ticket_permission?, only: [:latest_note, :split_note]
-    before_filter :parent_permission, only: [:create]
     before_filter :load_note, only: [:split_note]
     before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
     after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
@@ -282,14 +281,6 @@ module Ember
         cname_params[:attachments] = attachments_array
       end
 
-      def parent_attachments
-        @parent_attachments ||=  if @attachment_ids.present? && parent_ticket.present?
-          @parent_ticket.all_attachments.select { |x| @attachment_ids.include?(x.id) }
-        else
-          []
-        end
-      end
-
       def parent_template_attachments
         @template_attachments ||= if @attachment_ids.present? && parent_template.present?
           parent_template.attachments.select { |x| @attachment_ids.include?(x.id) }
@@ -300,10 +291,6 @@ module Ember
 
       def parent_template
         @parent_template ||= current_account.prime_templates.find_by_id(@parent_template_id) if @parent_template_id.present?
-      end
-
-      def parent_ticket
-        @parent_ticket ||= current_account.tickets.find_by_display_id(cname_params[:assoc_parent_tkt_id])
       end
 
       def count_included?
@@ -450,12 +437,6 @@ module Ember
       def load_note
         @note = @item.notes.find_by_id(params[:note_id])
         log_and_render_404 unless @note
-      end
-
-      def parent_permission
-        if cname_params[:assoc_parent_tkt_id].present?
-          render_request_error :access_denied, 403 if !parent_ticket || !current_user.has_ticket_permission?(parent_ticket)
-        end
       end
 
       def notification_not_required?

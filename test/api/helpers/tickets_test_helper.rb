@@ -233,6 +233,12 @@ module TicketsTestHelper
     pattern = private_note_pattern({}, note).merge!(user: Hash)
   end
 
+  def ticket_association_pattern(ticket)
+    {
+      association_type: ticket.association_type,
+      associated_tickets_list: ticket.associates
+    }
+  end
   # draft_exists denotes whether the draft was saved using old UI code
   def reply_draft_pattern(expected_output, draft_exists = false)
     ret_hash = {

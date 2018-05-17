@@ -6,15 +6,15 @@ class TicketValidation < ApiValidation
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
   CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) +
                             %w(fr_due_by due_by subject description skip_close_notification
-                               custom_fields company_id internal_group_id internal_agent_id skill_id)
+                               custom_fields company_id internal_group_id internal_agent_id skill_id related_ticket_ids parent_id)
                             ).freeze
 
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :internal_group_id, :internal_agent_id, :priority, :email,
                 :phone, :twitter_id, :facebook_id, :requester_id, :name, :agent, :source, :status, :subject, :ticket_type,
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :company_id, :scenario_id,
                 :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification,
-                :related_ticket_ids, :assoc_parent_tkt_id, :internal_group_id, :internal_agent_id, :parent_template_id, :child_template_ids, :template_text,
-                :unique_external_id, :skill_id
+                :related_ticket_ids, :internal_group_id, :internal_agent_id, :parent_template_id, :child_template_ids, :template_text,
+                :unique_external_id, :skill_id, :parent_id
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -68,14 +68,14 @@ class TicketValidation < ApiValidation
     }
   }, unless: -> { Account.current.link_tkts_enabled? }
 
-  validates :assoc_parent_tkt_id, custom_absence: {
+  validates :parent_id, custom_absence: {
     message: :require_feature_for_attribute,
     code: :inaccessible_field,
     message_options: {
-      attribute: 'assoc_parent_tkt_id',
+      attribute: 'parent_id',
       feature: :parent_child_tickets
     }
-  }, unless: -> { Account.current.parent_child_tkts_enabled? }
+  }, unless: -> { parent_child_enabled? }
 
   validates :parent_template_id, custom_absence: {
     message: :require_feature_for_attribute,
@@ -157,6 +157,12 @@ class TicketValidation < ApiValidation
   validates :attachments, file_size:  {
     max: proc { |x| x.attachment_limit },
     base_size: proc { |x| ValidationHelper.attachment_size(x.item) }
+  }
+
+  validates :parent_id, custom_numericality: {
+    only_integer: true,
+    greater_than: 0,
+    ignore_string: :allow_string_param
   }
 
   # Email related validations

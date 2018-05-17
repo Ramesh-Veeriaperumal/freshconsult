@@ -2396,6 +2396,29 @@ module Ember
       end
     end
 
+    def test_tracker_create_without_feature
+      create_ticket
+      agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      ticket = Helpdesk::Ticket.last
+      params_hash = ticket_params_hash.merge(email: agent.email, related_ticket_ids: [ticket.display_id])
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('related_ticket_ids', :require_feature_for_attribute, {
+      code: :inaccessible_field, feature: :link_tickets, attribute: 'related_ticket_ids'
+      })])
+    end
+
+    def test_child_create_without_feature
+      create_parent_ticket
+      parent_ticket = Account.current.tickets.last
+      params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('parent_id', :require_feature_for_attribute, {
+      code: :inaccessible_field, feature: :parent_child_tickets, attribute: 'parent_id'
+      })])
+    end
+
     def test_child_create
       enable_adv_ticketing([:parent_child_tickets]) do
         Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)

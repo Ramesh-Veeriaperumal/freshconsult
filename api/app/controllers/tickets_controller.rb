@@ -9,18 +9,20 @@ class TicketsController < ApiApplicationController
   include Helpdesk::SpamAccountConstants
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include AssociateTicketsHelper
 
   decorate_views(decorate_objects: [:index, :search])
 
   before_filter :ticket_permission?, only: [:destroy]
   before_filter :check_search_feature, :validate_search_params, only: [:search]
+  before_filter :parent_permission, only: [:create]
 
   def create
     assign_protected
     return render_request_error(:recipient_limit_exceeded, 429) if recipients_limit_exceeded?
     ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields,
       custom_fields: params[cname][:custom_field], tags: cname_params[:tags],
-      company_id: params[cname][:company_id])
+      company_id: params[cname][:company_id], parent_attachment_params: parent_attachment_params)
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     elsif @item.save_ticket
@@ -204,7 +206,7 @@ class TicketsController < ApiApplicationController
     end
 
     def remove_ignore_params
-      params[cname].except!(ApiTicketConstants::IGNORE_PARAMS)
+      params[cname].except!(*ApiTicketConstants::IGNORE_PARAMS)
     end
 
     def validate_url_params
@@ -237,7 +239,7 @@ class TicketsController < ApiApplicationController
 
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
-                                             type: :ticket_type }, params[cname])
+                                             type: :ticket_type, parent_id: :assoc_parent_tkt_id }, params[cname])
       ParamsHelper.save_and_remove_params(self, [:cloud_files], params[cname]) if private_api?
 
       # Sanitizing is required to avoid duplicate records, we are sanitizing here instead of validating in model to avoid extra query.
@@ -287,6 +289,7 @@ class TicketsController < ApiApplicationController
       @item.build_schema_less_ticket unless @item.schema_less_ticket
       @item.account = current_account
       @item.cc_email = @cc_emails unless @cc_emails.nil?
+      assign_association_type
       build_attachments
       if create? # assign attachments so that it will not be queried again in model callbacks
         @item.attachments = @item.attachments
@@ -319,6 +322,19 @@ class TicketsController < ApiApplicationController
     def load_object
       @item = scoper.find_by_display_id(params[:id])
       log_and_render_404 unless @item
+    end
+
+    def parent_attachment_params
+      {
+        parent_ticket:       parent_ticket,
+        parent_attachments:  parent_attachments
+      }
+    end
+
+    def assign_association_type
+      if cname_params[:assoc_parent_tkt_id].present? && parent_ticket.present?
+        @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
+      end
     end
 
     def assign_ticket_status
