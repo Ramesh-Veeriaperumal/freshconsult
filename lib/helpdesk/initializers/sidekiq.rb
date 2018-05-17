@@ -63,7 +63,6 @@ Sidekiq.configure_client do |config|
       "BlockAccount",
       "Freshid::ProcessEvents",
       "Scheduler::PostMessage",
-      "CentralPublishWorker::AccountDeletionWorker",
       "Apigee::KVMActionWorker",
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
@@ -154,7 +153,6 @@ Sidekiq.configure_server do |config|
       "BlockAccount",
       "Freshid::ProcessEvents",
       "Scheduler::PostMessage",
-      "CentralPublishWorker::AccountDeletionWorker",
       "Apigee::KVMActionWorker",
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
@@ -235,7 +233,6 @@ Sidekiq.configure_server do |config|
       "BlockAccount",
       "Freshid::ProcessEvents",
       "Scheduler::PostMessage",
-      "CentralPublishWorker::AccountDeletionWorker",
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
       "CRMApp::Freshsales::TrackSubscription"
