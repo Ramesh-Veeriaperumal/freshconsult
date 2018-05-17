@@ -309,7 +309,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def randomize?
-    return false unless self.content_file_name_changed? && self.attachable_type
+    return false unless content_file_name_changed? && self.attachable_type
     inline_image? || user_avatar? || logo_or_favicon?
   end
 
@@ -317,4 +317,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     self.content_file_name = SecureRandom.urlsafe_base64(25) + File.extname(self.content_file_name)
   end
 
+  def content_file_name_changed?
+    return false unless self.changes.keys.include?('content_file_name')
+    self.changes["content_file_name"][0] != self.changes["content_file_name"][1]
+  end
 end

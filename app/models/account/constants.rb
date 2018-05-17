@@ -204,4 +204,10 @@ class Account < ActiveRecord::Base
 
   BLOCK_GRACE_PERIOD = 90.days
 
+  ACCOUNT_TYPES = {
+      :production_without_sandbox => 0,
+      :production_with_sandbox => 1,
+      :sandbox => 2
+  }
+
 end

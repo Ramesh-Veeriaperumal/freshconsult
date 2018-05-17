@@ -12192,3 +12192,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
+  sandbox:
+    email: 'This email is generated from a sandbox account'
+    banner:
+      production_info: Your sandbox account is curently active. We do not recommend you make any changes to your freshdesk account. <a href='http://%{url}' target=_blank rel="noreferrer noopener">Take me there.</a>
