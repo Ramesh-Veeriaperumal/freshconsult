@@ -2,7 +2,7 @@
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
 
-<%= form_for @agent, :html => { :id => "agent_form", :rel => "validate", :multipart => true, 
+<%= form_for @agent, :html => { :id => "agent_form", :multipart => true,
     "data-focus-invalid" => false,  "data-ignore" => "", :class => "form-unsaved-changes-trigger" } do |f| %>
   <%= f.error_messages %>
   <h3 class="lead">
@@ -19,4 +19,26 @@
       <%= f.submit t('save'), { :class => "btn  btn-primary", 'data-loading-text' => t('saving') } %>
     </div>
 <%end%>
- 
+
+<% if current_account.falcon_ui_enabled?(current_user) %>
+<script type="text/javascript">
+(function ($) {
+  $('#agent_form').submit(function(e){
+    e.preventDefault();
+    var form = $(this);
+    if (form.valid()) {
+      form.ajaxSubmit({
+        success: function(data){
+          form.data('formChanged', false);
+          top.location.reload();
+        },
+        error: function(data){
+          window.location.reload();
+        }
+      })
+    }
+  });
+}(window.jQuery));
+</script>
+<% end %>
+
