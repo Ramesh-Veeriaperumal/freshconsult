@@ -131,6 +131,7 @@ class Search::Utils
     search_contact_api:               'searchContactApi',
     search_company_api:               'searchCompanyApi',
     filtered_solution_search:         'filteredSolutionSearch'
+    portal_company_users:             'portalCompanyUsers'
   }
 
   # _Note_: Parent ID to be used for routing.

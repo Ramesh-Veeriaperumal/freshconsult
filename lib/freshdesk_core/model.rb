@@ -233,6 +233,7 @@ module FreshdeskCore::Model
   }
 
   def perform_destroy(account)
+    publish_account_destroy_to_central(account)
     delete_gnip_twitter_rules(account)
     delete_dkim_r53_entries(account)
     delete_social_redis_keys(account)
@@ -457,6 +458,11 @@ module FreshdeskCore::Model
         Rails.logger.info "Response for deleting tenant in SDS: #{result}"
         account.rollback(:spam_detection_service)
       end
+    end
+
+    def publish_account_destroy_to_central(account)
+      account.save_deleted_model_info
+      account.manual_publish_to_central(nil,:destroy,nil,false)
     end
 
 end

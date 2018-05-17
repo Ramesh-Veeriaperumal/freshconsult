@@ -116,7 +116,6 @@ module Helpdesk::TicketActions
     Export::Ticket.enqueue(params)
     flash[:notice] = t("export_data.ticket_export.info")
     redirect_to helpdesk_tickets_path
-    
     # else
     #   csv_tickets_string = Helpdesk::TicketsExport.perform(params)
     #   send_data csv_tickets_string, 

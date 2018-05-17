@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
 
   before_validation :discard_blank_email, :unless => :email_available?
-  before_validation :set_password, :if => [:active?, :email_available?, :no_password?, :freshid_disabled_and_customer?]
+  before_validation :set_password, :if => [:active?, :email_available?, :no_password?, :freshid_disabled_or_customer?]
   before_validation :remove_white_space
   
   before_create :set_company_name, :unless => :helpdesk_agent?
@@ -31,7 +31,7 @@ class User < ActiveRecord::Base
   before_save :restrict_domain, :if => :email_changed?
   before_save :sanitize_contact_name, :backup_customer_id
   before_save :set_falcon_ui_preference, :if => :falcon_ui_applicable?
-  before_save :persist_updated_at, :unless => :valid_user_update?
+  before_save :persist_updated_at
 
 
   publishable on: :destroy
@@ -113,14 +113,14 @@ class User < ActiveRecord::Base
     self.merge_preferences = { :agent_preferences => new_pref }
   end
 
-  def valid_user_update?
-    return true if (self.changes.keys.map(&:to_sym) & PROFILE_UPDATE_ATTRIBUTES).any?
-    return true if (self.flexifield.changes.keys & self.flexifield.ff_fields).any?
-    self.tag_use_updated
-  end
-
   def persist_updated_at
-    self.record_timestamps = false
+    if (self.changes.keys.map(&:to_sym) & PROFILE_UPDATE_ATTRIBUTES).any? || 
+      (self.flexifield.changes.keys & self.flexifield.ff_fields).any? || 
+      self.tag_use_updated
+        self.record_timestamps = true
+    else
+      self.record_timestamps = false
+    end
     true
   end
 
