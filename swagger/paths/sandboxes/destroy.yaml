@@ -1,0 +1,13 @@
+post:
+  tags: [sandbox]
+  description: Sandbox Delete
+  summary: Sandbox Delete
+  responses:
+    204:
+      description: No Content
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

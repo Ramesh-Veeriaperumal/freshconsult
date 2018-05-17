@@ -1,10 +1,8 @@
 module Sync::Constants
 
   FILE_EXTENSION       =  ".txt"
-  IGNORE_ASSOCIATIONS  =  ["id", "account_id", "updated_at", "tag_uses_count"]
+  IGNORE_ASSOCIATIONS  =  ["id", "account_id", "updated_at", "tag_uses_count", "ticket_form_id"] # Will remove ticket_form_id after adding association
   UPDATE_ASSOCIATIONS  =  ["updated_at"]
-
-  BRANCH_PREFIX        = "d-"
 
   RELATIONS            = [
     # ["account_additional_settings", []],
@@ -15,7 +13,7 @@ module Sync::Constants
     ["all_va_rules",                 []],
     ["all_supervisor_rules",         []],
     ["all_observer_rules",           []],
-    ["ticket_templates",             [{:accessible => [:group_accesses, :user_accesses]}, {:shared_attachments => [:attachment]}, :attachments, :cloud_files]],
+    ["ticket_templates",             [{:accessible => [:group_accesses, :user_accesses]}, {:shared_attachments => [:attachment]}, :attachments, :cloud_files, :parents, :children]],
     ["canned_response_folders",      [{:canned_responses => [{:helpdesk_accessible => [:group_accesses, :user_accesses]}, {:shared_attachments => [:attachment]}]}]],
     ["scn_automations",              [{:accessible => [:group_accesses, :user_accesses]}]],
     ["ticket_field_def",             []],
@@ -40,6 +38,14 @@ module Sync::Constants
     "canned_responses",
     "ticket_templates"
   ]
+
+  MODEL_INSERT_ORDER = MODEL_DEPENDENCIES.keys
+
+  account_association = [["Account"], "account_id"]
+  # Adding account association to all the models apart from features model.
+  (MODEL_DEPENDENCIES.keys - ['Features::Feature']).each do |model|
+    MODEL_DEPENDENCIES[model] << account_association
+  end
 
   #TODO: Move to a class which does all Post migration activities
   POST_MIGRATION_ACTIVITIES = {

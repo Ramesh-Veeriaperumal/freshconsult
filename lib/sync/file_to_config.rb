@@ -3,15 +3,16 @@ module Sync
     include SqlUtil
     include Sync::Constants
 
-    attr_accessor :root_path, :master_account_id, :account, :model_directories, :mapping_table, :model_dependencies, :model_insert_order, :self_associations
+    attr_accessor :root_path, :master_account_id, :account, :model_directories, :mapping_table, :model_dependencies, :model_insert_order, :self_associations, :retain_id
 
-    def initialize(root_path, master_account_id, account=Account.current)
+    def initialize(root_path, master_account_id, retain_id, account=Account.current)
       # raise IncorrectConfigError unless Account.current.respond_to?(config)
 
       @account         = account
       @root_path       = root_path
       @master_account_id = master_account_id
-      @self_associations = [] 
+      @retain_id = retain_id
+      @self_associations = []
       @sorter = Sync::TopologicalSorter.new
       @transformer = Sync::Transformer.new(@master_account_id)
       populate_directories_for_models
@@ -44,7 +45,14 @@ module Sync
         end
       end
       post_data_migration_activities
-      # puts "Mapping Table : #{@mapping_table.inspect}"
+      #push mapping table
+      persist_mapping_table
+    end
+
+    def persist_mapping_table
+      path = "#{root_path}/mapping_table#{FILE_EXTENSION}"
+      content = YAML.dump(mapping_table)
+      File.open(path, "w"){ |f| f.puts content}
     end
 
     def affected_tables
@@ -102,29 +110,15 @@ module Sync
     end
 
     def build_dependency_list
-      @model_dependencies = {}
-      accepted_models = [@model_directories.keys, "Account"].flatten
-      @model_directories.keys.each do |model|
-        @model_dependencies[model] = Sync::DependencyList.new(model,accepted_models).construct_dependencies
-      end
+      @model_dependencies = MODEL_DEPENDENCIES
     end
 
     def find_model_insert_order
-      @model_dependencies.keys.each do |model|
-        @sorter.add(model, @model_dependencies[model].map{|m| m[:classes]}.flatten)
-        #Automated Rule's serialized columns refer flexifields, ticket fields and nested fields
-        if ["VaRule", "Helpdesk::TicketTemplate", "SlaPolicy"].include?(model)
-          @sorter.add(model, ["FlexifieldDefEntry", "Helpdesk::TicketField", "Helpdesk::NestedTicketField", "User", "Group", "Helpdesk::Tag", "BusinessCalendar", "Product"])
-        end
-      end
-      @model_insert_order = @sorter.sort
-      #removing Account from models to be migrated. It will always be the first model
-      #as all the tables migrated depends on it!
-      @model_insert_order.shift
+      @model_insert_order = MODEL_INSERT_ORDER
     end
 
     def push_data_to_sql(model, path)
-      #puts "#{path} #{base_object.class} #{base_object.inspect} #{association} 
+      Rails.logger.info "Push data to sql Model: #{model} Path:#{path} "
       @mapping_table[model] ||= {}
       @mapping_table[model][:id] ||= {}
       return unless File.directory?(path)
@@ -160,28 +154,32 @@ module Sync
           
           arel_values = apply_mapping(column_values, model, table, serialized_columns)
           arel_values << [table[:updated_at], Time.now] if object.respond_to?("updated_at")
-          #arel_values << [table[:id], item.to_i] unless item.to_i.zero? #for tables which dont have id column
           arel_values << [table[:account_id], account.id]
-
+          arel_values << [table[:id], item.to_i] if retain_id?(item, model)
           ret_val = delete_and_insert(table_name, item.to_i, arel_values)
           @mapping_table[model][:id][item.to_i] = ret_val if ret_val.present?
         end
       end
     end
 
+    def retain_id?(item, model)
+      retain_id && !item.to_i.zero? && ['Helpdesk::Attachment'].exclude?(model) # Add into the list if not to retain_id
+    end
+
     def apply_mapping(column_values, model, table, serialized_columns)
-      p "Model : #{model} Column Values : #{column_values.inspect} Mapping Table : #{@mapping_table.inspect}}"
+      Rails.logger.info "Apply Mapping  Model : #{model} Column Values : #{column_values.inspect} Mapping Table : #{@mapping_table.inspect}}"
       ret_val = []
       column_values.each do |column, data|
-        association = @model_dependencies[model].detect {|x| x[:foreign_key].to_s == column.to_s}
+        association = @model_dependencies[model].detect {|x| x[1].to_s == column.to_s}
         if association.present?
-          associated_model = column_values[association[:polymorphic_type_column]] || association[:classes].first
+          associated_model = column_values[association[2]] || association[0].first
           next unless associated_model
+          associated_model = 'VaRule' if associated_model == 'VARule'
           if associated_model.to_s == model.to_s
-            @self_associations.push([model, column, association[:polymorphic_type_column]])
+            @self_associations.push([model, column, association[2]])
           else
-            p "Associated Model : #{associated_model} ** Column : #{column} ** Model : #{model}"
-            column_values[column] = @mapping_table[associated_model][:id][data]
+            Rails.logger.info "Associated Model : #{associated_model} ** Column : #{column} ** Model : #{model}"
+            column_values[column] = @mapping_table[associated_model][:id][data] if data
           end
         elsif column_values[column].present? && @transformer.available?(model, column)
           transformed_column_value = @transformer.safe_send("transform_#{model.gsub("::","").snakecase}_#{column}", column_values[column], @mapping_table)
@@ -220,19 +218,10 @@ module Sync
           end
         end
       end
-      #Enqueue ES Reindexing for models
-      reindex_sandbox_account
-
+      sync_launch_party_features
+      disable_private_inline
     end
 
-    def reindex_sandbox_account
-      ASSOCIATIONS_TO_REINDEX.each do |assocition_to_index|
-        account.safe_send(assocition_to_index).find_each do |item|
-          item.safe_send(:add_to_es_count) if item.respond_to?(:add_to_es_count, true)
-        end
-      end
-      account.safe_send(:enable_searchv2)
-    end
 
     def clear_account_cache
       ACCOUNT_MEMCACHE_KEYS.each do |clear_cache_method|
@@ -240,6 +229,16 @@ module Sync
       end
     end
 
+    def sync_launch_party_features
+      # Need to revisit.
+      $redis_others.del("launchparty:#{account.id}:features")
+      $redis_others.sadd("launchparty:#{account.id}:features", $redis_others.smembers("launchparty:#{master_account_id}:features"))
+    end
+
+    # disable private inline feature for attachments
+    def disable_private_inline
+      account.revoke_feature(:private_inline) if account.private_inline_enabled?
+    end
 
     ######### Unused functions. Will be used in phase2 ######### 
 

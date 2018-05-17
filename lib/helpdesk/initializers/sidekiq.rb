@@ -66,7 +66,9 @@ Sidekiq.configure_client do |config|
       "Apigee::KVMActionWorker",
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
-      "CRMApp::Freshsales::TrackSubscription"
+      "CRMApp::Freshsales::TrackSubscription",
+      "Admin::Sandbox::CreateAccountWorker",
+      "Admin::CloneWorker"
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -84,7 +86,6 @@ Sidekiq.configure_client do |config|
       "Reports::ScheduledReports",
       "Reports::Export",
       "LivechatWorker",
-      "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent",
@@ -93,7 +94,9 @@ Sidekiq.configure_client do |config|
       "CollabNotificationWorker",
       "ProductFeedbackWorker",
       "Freshid::ProcessEvents",
-      "Community::MergeTopicsWorker"
+      "Community::MergeTopicsWorker",
+      "Admin::Sandbox::FileToConfigWorker",
+      "Admin::Sandbox::ConfigToFileWorker"
     ]
   end
 end
@@ -156,7 +159,9 @@ Sidekiq.configure_server do |config|
       "Apigee::KVMActionWorker",
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
-      "CRMApp::Freshsales::TrackSubscription"
+      "CRMApp::Freshsales::TrackSubscription",
+      "Admin::Sandbox::CreateAccountWorker",
+      "Admin::CloneWorker"
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -173,7 +178,6 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
       "LivechatWorker",
-      "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent",
@@ -181,7 +185,9 @@ Sidekiq.configure_server do |config|
       "ExportAgents",
       "CollabNotificationWorker",
       "ProductFeedbackWorker",
-      "Community::MergeTopicsWorker"
+      "Community::MergeTopicsWorker",
+      "Admin::Sandbox::ConfigToFileWorker",
+      "Admin::Sandbox::FileToConfigWorker"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -251,7 +257,6 @@ Sidekiq.configure_server do |config|
       "Tickets::Export::PremiumTicketsExport",
       "Reports::Export",
       "LivechatWorker",
-      "Admin::ProvisionSandbox",
       "Tickets::LinkTickets",
       "BroadcastMessages::NotifyBroadcastMessages",
       "BroadcastMessages::NotifyAgent",
@@ -259,7 +264,9 @@ Sidekiq.configure_server do |config|
       "ExportAgents",
       "CollabNotificationWorker",
       "ProductFeedbackWorker",
-      "Community::MergeTopicsWorker"
+      "Community::MergeTopicsWorker",
+      "Admin::Sandbox::ConfigToFileWorker",
+      "Admin::Sandbox::FileToConfigWorker"
     ]
   end
 end
