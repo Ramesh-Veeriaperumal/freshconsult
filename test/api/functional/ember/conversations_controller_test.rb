@@ -1645,6 +1645,66 @@ module Ember
       @account.revoke_feature(:traffic_cop)
     end
 
+    def test_public_note_requester
+      e_req_notification = @account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
+      e_cc_notification = @account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
+      req_response = e_req_notification.update_attribute(:requester_notification, true) unless e_req_notification.requester_notification?
+      cc_response = e_cc_notification.update_attribute(:requester_notification, false) if e_cc_notification.requester_notification?
+      ticket = create_ticket
+      last_note_id = Helpdesk::Note.last.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
+      count_of_delayed_jobs_before = Delayed::Job.count
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_equal count_of_delayed_jobs_before+3, Delayed::Job.count
+      e_req_notification.update_attribute(:requester_notification, false) if req_response
+      e_cc_notification.update_attribute(:requester_notification, true) if cc_response
+    end
+
+    def test_public_note_cc
+      e_req_notification = @account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
+      e_cc_notification = @account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
+      req_response = e_req_notification.update_attribute(:requester_notification, false) if e_req_notification.requester_notification?
+      cc_response = e_cc_notification.update_attribute(:requester_notification, true)  unless e_cc_notification.requester_notification?
+      ticket = create_ticket
+      last_note_id = Helpdesk::Note.last.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
+      count_of_delayed_jobs_before = Delayed::Job.count
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_equal count_of_delayed_jobs_before+3, Delayed::Job.count
+      e_req_notification.update_attribute(:requester_notification, true) if req_response
+      e_cc_notification.update_attribute(:requester_notification, false) if cc_response
+    end
+
+    def test_public_note_both_requester_and_cc
+      e_req_notification = @account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
+      e_cc_notification = @account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
+      req_response = e_req_notification.update_attribute(:requester_notification, true) unless e_req_notification.requester_notification?
+      cc_response = e_cc_notification.update_attribute(:requester_notification, true)  unless e_cc_notification.requester_notification?
+      ticket = create_ticket
+      last_note_id = Helpdesk::Note.last.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
+      count_of_delayed_jobs_before = Delayed::Job.count
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_equal count_of_delayed_jobs_before+4, Delayed::Job.count
+      e_req_notification.update_attribute(:requester_notification, false) if req_response
+      e_cc_notification.update_attribute(:requester_notification, false) if cc_response
+    end
+
+    def test_public_note_no_both_requester_and_cc
+      e_req_notification = @account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
+      e_cc_notification = @account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
+      req_response = e_req_notification.update_attribute(:requester_notification, false) if e_req_notification.requester_notification?
+      cc_response = e_cc_notification.update_attribute(:requester_notification, false)  if e_cc_notification.requester_notification?
+      ticket = create_ticket
+      last_note_id = Helpdesk::Note.last.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
+      count_of_delayed_jobs_before = Delayed::Job.count
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_equal count_of_delayed_jobs_before+2, Delayed::Job.count
+      e_req_notification.update_attribute(:requester_notification, true) if req_response
+      e_cc_notification.update_attribute(:requester_notification, true) if cc_response
+    end
+
     def test_reply_with_traffic_cop_valid
       @account.add_feature(:traffic_cop)
       Account.current.reload
