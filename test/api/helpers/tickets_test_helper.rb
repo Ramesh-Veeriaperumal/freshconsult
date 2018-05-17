@@ -292,6 +292,47 @@ module TicketsTestHelper
     v2_ticket_params.except(:due_by, :fr_due_by, :cc_emails, :email).to_json
   end
 
+  def count_es_response(t_id1, t_id2 = nil)
+    response = {
+      took: 5,
+      timed_out: false,
+      _shards:
+      {
+        total: 1,
+        successful: 1,
+        failed: 0
+      },
+      hits:
+      {
+        total: 2,
+        max_score: nil,
+        hits:
+        [
+          {
+            _index: 'es_filters_count',
+            _type: 'ticket',
+            _id: t_id1,
+            _score: nil,
+            _routing: '1',
+            sort: [1522824906000]
+          }
+        ]
+      }
+    }
+    if t_id2
+      obj = {
+        _index: 'es_filters_count',
+        _type: 'ticket',
+        _id: t_id2,
+        _score: nil,
+        _routing: '1',
+        sort: [1522746234000]
+      }
+      response[:hits][:hits].push(obj)
+    end
+    response
+  end
+
   # private
   def v2_ticket_params
     @integrate_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
