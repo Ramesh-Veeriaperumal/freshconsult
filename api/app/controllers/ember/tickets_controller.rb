@@ -42,7 +42,8 @@ module Ember
       return render_request_error(:recipient_limit_exceeded, 429) if recipients_limit_exceeded?
       delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
                          attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
-                         parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params, tags: cname_params[:tags] }
+                         parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params,
+                         tags: cname_params[:tags], company_id: cname_params[:company_id] }
 
       return unless validate_delegator(@item, delegator_hash)
       save_ticket_and_respond
