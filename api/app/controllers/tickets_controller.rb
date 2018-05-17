@@ -9,9 +9,15 @@ class TicketsController < ApiApplicationController
   include Helpdesk::SpamAccountConstants
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Helpdesk::TicketFilterMethods
+  include Support::ArchiveTicketsHelper
+  include HelperConcern
+  include Redis::TicketsRedis
   include AssociateTicketsHelper
 
+
   decorate_views(decorate_objects: [:index, :search])
+  DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
 
   before_filter :ticket_permission?, only: [:destroy]
   before_filter :check_search_feature, :validate_search_params, only: [:search]
@@ -135,9 +141,53 @@ class TicketsController < ApiApplicationController
     end
 
     def load_objects
-      Rails.logger.info ":::Loading objects started:::"
-      super tickets_filter.preload(conditional_preload_options)
-      Rails.logger.info ":::Loading objects done:::"
+      if current_account.count_es_api_enabled?
+        tickets_from_es
+      else
+        Rails.logger.info ":::Loading objects started:::"
+        super tickets_filter.preload(conditional_preload_options)
+        Rails.logger.info ":::Loading objects done:::"
+      end
+    end
+
+    def tickets_from_es
+      es_options = {
+        page:         params[:page] || 1,
+        order_entity: params[:order_by] || ApiTicketConstants::DEFAULT_ORDER_BY,
+        order_sort:   params[:order_type] || ApiTicketConstants::DEFAULT_ORDER_TYPE
+      }
+      @items = Search::Tickets::Docs.new(d_query_hash).records('Helpdesk::Ticket', es_options)
+    end
+
+    def d_query_hash
+      @action_hash = []
+      TicketConstants::LIST_FILTER_MAPPING.each do |key, val| # constructs hash for custom_filters
+        @action_hash.push('condition' => val, 'operator' => 'is_in', 'value' => params[key].to_s) if params[key].present?
+      end
+      predefined_filters_hash # constructs hash for predefined_filters
+      @action_hash
+    end
+
+    def predefined_filters_hash
+      if sanitize_filter_params # sanitize filter name
+        assign_filter_params # assign filter_name param
+        custom_tkt_filter = Helpdesk::Filters::CustomTicketFilter.new
+        @action_hash.push(custom_tkt_filter.default_filter(params[:filter_name])).flatten!
+      end
+    end
+
+    def sanitize_filter_params
+      if TicketFilterConstants::RENAME_FILTER_NAMES.keys.include?(params[:filter])
+        params[:filter] = TicketFilterConstants::RENAME_FILTER_NAMES[params[:filter]]
+      elsif @action_hash.empty?
+        params[:filter] ||= DEFAULT_TICKET_FILTER
+      end
+      params[:filter]
+    end
+
+    def assign_filter_params
+      params_hash = { 'filter_name' => params[:filter] }
+      params.merge!(params_hash)
     end
 
     def conditional_preload_options
@@ -250,7 +300,7 @@ class TicketsController < ApiApplicationController
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
 
       # During update set requester_id to nil if it is not a part of params and if any of the contact detail is given in the params
-      if update? && !params[cname].key?(:requester_id) && (params[cname].keys & 
+      if update? && !params[cname].key?(:requester_id) && (params[cname].keys &
           ApiTicketConstants::VERIFY_REQUESTER_ON_PROPERTY_VALUE_CHANGES).present?
         params[cname][:requester_id] = nil
       end
@@ -403,6 +453,8 @@ class TicketsController < ApiApplicationController
     def field_mappings
       (custom_field_error_mappings || {}).merge(ApiTicketConstants::FIELD_MAPPINGS)
     end
+
+
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
     wrap_parameters(*wrap_params)
 end
