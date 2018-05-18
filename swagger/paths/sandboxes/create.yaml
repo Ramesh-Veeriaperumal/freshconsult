@@ -1,0 +1,15 @@
+post:
+  tags: [sandbox]
+  description: Sandbox account creation
+  summary: Sandbox account creation
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/sandboxes_create'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

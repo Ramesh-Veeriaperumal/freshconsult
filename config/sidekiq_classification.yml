@@ -145,6 +145,11 @@
     - restore_spam_tickets
     - nullify_deleted_custom_field_data
     - contact_delete_forever
+    - create_sandbox_account
+    - delete_sandbox
+    - sandbox_file_to_config
+    - sandbox_config_to_file
+    - clone
   :external:
     - code_console_execution
     - integrations

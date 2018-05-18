@@ -422,3 +422,9 @@
   #Marketplace
   marketplace_apps:
     $ref: ./resource/marketplace_apps.yaml
+
+  #sandbox
+  sandboxes_index:
+    $ref: ./response/sandboxes/index.yaml
+  sandboxes_create:
+    $ref: ./response/sandboxes/create.yaml

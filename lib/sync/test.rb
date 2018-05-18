@@ -20,7 +20,9 @@ Bugs::
 reload!
 Account.first.make_current
 Agent.first.user.make_current
-job = Account.current.sandbox_jobs.create(:sandbox_account_id => Account.current.sandboxes.first.sandbox_account_id)
+Account.current.creat_sandbox_account
+Admin::CreateSandboxAccount.new.perform({:account_id => Account.current.id, :user_id => User.current.id})
+job = Account.current.sandbox_jobs.create(:sandbox_account_id => Account.current.sandbox_account.sandbox_account_id)
 Admin::ProvisionSandbox.new.perform({:job_id => job.id})
 
 ------------------------------------------------------------
@@ -44,10 +46,50 @@ sa.in_config
 
 CONFIGS  = ["observer_rules", "ticket_field_def"]
 Account.first.make_current
-Account.current.sandboxes
+Account.current.sandbox_account
 Account.current.sandbox_jobs
 
-#Account.current.sandboxes.create(:staging_account_id => 3, :status => Admin::Sandbox::Account::STATUS_KEYS_BY_TOKEN[:stopped])
-#Admin::ProvisionSandbox.new.perform_async({:sandbox_account_id => Account.current.sandboxes.first.id})
+#Account.current.creat_sandbox_account
+#Admin::CreateSandboxAccount.new.perform({:account_id => Account.current.id, :user_id => User.current.id})
+#Admin::ProvisionSandbox.new.perform_async({:sandbox_account_id => Account.current.sandbox_account.id})
 
 =end
+
+
+
+
+#Model Insert Order Logic
+
+# @model_dependencies.keys.each do |model|
+#   @sorter.add(model, @model_dependencies[model].map{|m| m[:classes]}.flatten)
+#   #Automated Rule's serialized columns refer flexifields, ticket fields and nested fields
+#   if ["VaRule", "Helpdesk::TicketTemplate", "SlaPolicy"].include?(model)
+#     @sorter.add(model, ["FlexifieldDefEntry", "Helpdesk::TicketField", "Helpdesk::NestedTicketField", "User", "Group", "Helpdesk::Tag", "BusinessCalendar", "Product"])
+#   end
+# end
+# @model_insert_order = @sorter.sort
+# #removing Account from models to be migrated. It will always be the first model
+# #as all the tables migrated depends on it!
+# @model_insert_order.delete("Account")
+
+#Build depency list
+
+# @model_dependencies = {}
+# accepted_models = [@model_directories.keys, "Account"].flatten
+# @model_directories.keys.each do |model|
+#   @model_dependencies[model] = Sync::DependencyList.new(model,accepted_models).construct_dependencies
+# end
+
+
+#table_directory_hash
+
+# def table_directory_hash(account_id, repo_path)
+#   tables = {}
+#   tdir = {}
+#     account = Account.find(account_id).make_current
+#     RELATIONS.each do |relation|
+#       ftoc = Sync::FileToConfig.new("teting", relation[0], account)
+#       tdir[relations[0]]  = ftoc.table_directories
+#     end
+#     p "#{tdir.inspect}"
+#end

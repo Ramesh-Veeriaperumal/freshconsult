@@ -180,13 +180,16 @@ class Helpdesk::Note < ActiveRecord::Base
         integrations_private_note_notifications unless replied_by_customer?
 
       else
-        e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)  
         #notify the agents only for notes
         notifying_agents
         #notify the customer if it is public note
-        if note? && !private && e_notification.requester_notification?
-          Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self)
-          Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if notable.cc_email.present? and !notable.spam?
+        if note? && !self.private?
+          e_notification = account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
+          Helpdesk::TicketNotifier.send_later(:notify_by_email, EmailNotification::COMMENTED_BY_AGENT, notable, self) if e_notification.requester_notification?
+          if notable.cc_email.present?
+            e_cc_notification = account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
+            Helpdesk::TicketNotifier.send_later(:send_cc_email, notable , self, {}) if e_cc_notification.requester_notification? and !notable.spam?
+          end
         #handle the email conversion either fwd email or reply
         elsif email_conversation?
           send_reply_email

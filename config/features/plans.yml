@@ -106,6 +106,7 @@
       - :mailbox
       - :whitelisted_ips
       - :skill_based_round_robin
+      - :sandbox
     :inherits:
       - :estate_jan_17
     :exclude: []

@@ -6602,6 +6602,81 @@
           }
         }
       }
+    },
+    "/sandboxes": {
+      "get": {
+        "tags": [
+          "sandbox"
+        ],
+        "description": "Sandbox account details",
+        "summary": "Sandbox account details",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/sandboxes_index"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/sandboxes/create": {
+      "post": {
+        "tags": [
+          "sandbox"
+        ],
+        "description": "Sandbox account creation",
+        "summary": "Sandbox account creation",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/sandboxes_create"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/sandboxes/destroy": {
+      "post": {
+        "tags": [
+          "sandbox"
+        ],
+        "description": "Sandbox Delete",
+        "summary": "Sandbox Delete",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -13027,6 +13102,52 @@
         "extension_type": {
           "type": "integer",
           "description": "App Type - Plug/Native Integration"
+        }
+      }
+    },
+    "sandboxes_index": {
+      "type": "object",
+      "properties": {
+        "sandboxes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "status": {
+                "type": "string"
+              },
+              "sandbox_url": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "sandboxes_create": {
+      "type": "object",
+      "properties": {
+        "sandbox": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "status": {
+              "type": "string"
+            }
+          }
         }
       }
     }

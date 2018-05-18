@@ -21,6 +21,11 @@ module SeedFu
       perform(background_jobs_fixture_path)
     end
 
+    def self.populate_sandbox
+      sandbox_jobs_fixture_path = "db/fixtures/sandbox"
+      perform(sandbox_jobs_fixture_path)
+    end
+
     def self.perform fixture_path  
 
       seed_files = (

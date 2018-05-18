@@ -11,4 +11,5 @@ module FeatureConstants
   BOT = :support_bot
   TICKET_TEMPLATES = [:ticket_templates]
   CONTACT_COMPANY_NOTES = :contact_company_notes
+  SANDBOX = :sandbox
 end

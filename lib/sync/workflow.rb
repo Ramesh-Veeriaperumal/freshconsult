@@ -3,26 +3,28 @@ module Sync
 
     include Util
 
-    attr_accessor :master_account_id, :repo_path, :staging_account_id    
+    attr_accessor :master_account_id, :repo_path, :staging_account_id, :retain_id
 
-    def initialize(staging_account_id=nil, master_account_id=Account.current.id)
+    def initialize(staging_account_id=nil, retain_id=true, master_account_id=Account.current.id)
+      @retain_id          = retain_id
       @master_account_id  = master_account_id
       @staging_account_id = staging_account_id
       @repo_path          = "#{GIT_ROOT_PATH}/#{master_account_id}"
     end
     
-    def sync_config_from_production(committer, message, configs)
+    def sync_config_from_production(committer, message)
       FileUtils.rm_rf(repo_path)
       sync_config_to_local(@master_account_id, repo_path)
-      commit_config_to_git(@master_account_id, repo_path, configs)
+      commit_config_to_git(@master_account_id, repo_path)
       sync_config_to_remote(@master_account_id, repo_path, message, committer[:name], committer[:email])
     end
 
-    def provision_staging_instance
+    def provision_staging_instance(committer, message)
       shard = ShardMapping.find_by_account_id(staging_account_id).shard_name
       Sharding.run_on_shard(shard) do
         create_staging_branch
-        restore_config_from_git(master_account_id, staging_account_id, repo_path)
+        restore_config_from_git(master_account_id, staging_account_id, repo_path, retain_id)
+        sync_config_to_remote(staging_account_id, repo_path, message, committer[:name], committer[:email])
       end
     end
 
