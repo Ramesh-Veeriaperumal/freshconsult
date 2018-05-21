@@ -495,7 +495,7 @@ Helpdesk = Helpdesk || {};
                 render_type: "existing",
                 type: "attachment",
                 files: data,
-                softdelete:false,
+                softdelete:true,
                 template:false,
             }).appendTo(".multiple-filelist-" + count);
         },
@@ -506,7 +506,7 @@ Helpdesk = Helpdesk || {};
                 type: "cloud",
                 sol_cloud: true,
                 files: data,
-                softdelete:false,
+                softdelete:true,
                 template:false,
             }).appendTo(".multiple-filelist-" + count);
         },

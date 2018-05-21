@@ -10,7 +10,7 @@
     </div>
   </div>
   
-  <div id="ticket-filter-container">
+  <div id="ticket-filter-container" class="ticket-filter">
     {% snippet archive_ticket_filters %}
   </div>
 

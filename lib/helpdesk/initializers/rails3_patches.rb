@@ -62,6 +62,25 @@ module ActiveRecord
   end
 end
 
+# Monkey Patch AR Update method to include account_id for tables that have account_id column.
+# Raw method override of - https://github.com/rails/rails/blob/3-2-stable/activerecord/lib/active_record/persistence.rb#L354
+module ActiveRecord
+  module Persistence
+    def update(attribute_names = @attributes.keys)
+      attributes_with_values = arel_attributes_values(false, false, attribute_names)
+      return 0 if attributes_with_values.empty?
+      klass = self.class
+      stmt = nil
+      if klass.column_names.include? "account_id"
+        stmt = klass.unscoped.where(klass.arel_table[klass.primary_key].eq(id)).where(klass.arel_table["account_id"].eq(account_id)).arel.compile_update(attributes_with_values)
+      else
+        stmt = klass.unscoped.where(klass.arel_table[klass.primary_key].eq(id)).arel.compile_update(attributes_with_values)
+      end
+      klass.connection.update stmt
+    end
+  end
+end
+
 #https://github.com/rails/rails/issues/3205, showing exception trace for transacational callbacks
 module Foo
   module CommittedWithExceptions

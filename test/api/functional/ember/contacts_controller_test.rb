@@ -1117,7 +1117,7 @@ module Ember
       put :update_password, construct_params({ version: 'private', id: contact.id }, 
                                               password: Time.now.to_s)
       assert_response 204
-      assert_equal contact.reload.updated_at.to_time.to_i, updated_at.to_i
+      assert_not_equal contact.reload.updated_at.to_time.to_i, updated_at.to_i
     end
 
     # Show User jwt auth

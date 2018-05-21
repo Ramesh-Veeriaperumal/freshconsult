@@ -44,7 +44,6 @@ class Import::Customers::Contact < Import::Customers::Base
       all_emails = email_param.to_s.downcase.strip.split(IMPORT_DELIMITER)
       all_emails = all_emails.map! { |email| email.squish unless email.blank? }.uniq.compact
     end
-    
     identifiers = {
       twitter_id: item_param[:twitter_id],
       unique_external_id: item_param[:unique_external_id]
