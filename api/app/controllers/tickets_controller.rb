@@ -427,10 +427,16 @@ class TicketsController < ApiApplicationController
     end
 
     def trial_outbound_limit_exceeded?
+      outbound_per_day_key = OUTBOUND_EMAIL_COUNT_PER_DAY % {:account_id => current_account.id }
+      total_outbound_per_day = get_others_redis_key(outbound_per_day_key).to_i
       if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
-        outbound_per_day_key = OUTBOUND_EMAIL_COUNT_PER_DAY % {:account_id => current_account.id }
-        total_outbound_per_day = get_others_redis_key(outbound_per_day_key).to_i
         return total_outbound_per_day >= 5
+      elsif current_account.subscription.free?
+        if current_account.created_at >= (Time.zone.now - 30.days)
+          return total_outbound_per_day >= get_free_account_30_days_threshold
+        else
+          return total_outbound_per_day >= get_free_account_outbound_threshold
+        end
       end
       return false
     end
