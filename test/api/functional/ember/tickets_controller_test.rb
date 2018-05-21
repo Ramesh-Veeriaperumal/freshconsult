@@ -3017,6 +3017,20 @@ module Ember
       match_json([bad_request_error_pattern('feature', :require_feature, feature: 'Parent Child Tickets')])
     end
 
+    def test_compose_email_for_free_account_with_limit
+      email_config = create_email_config
+      Account.any_instance.stubs(:compose_email_enabled?).returns(true)
+      change_subscription_state("free")
+      @controller.stubs(:trial_outbound_limit_exceeded?).returns(true)
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(email_config_id: email_config.id)
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 429
+      match_json(request_error_pattern(:outbound_limit_exceeded))
+    ensure
+      Account.any_instance.unstub(:compose_email_enabled?)
+      @controller.unstub(:trial_outbound_limit_exceeded?)
+    end
+
     def test_compose_email_with_trial_limit
       email_config = create_email_config
       Account.any_instance.stubs(:compose_email_enabled?).returns(true)
