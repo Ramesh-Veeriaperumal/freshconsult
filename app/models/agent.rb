@@ -11,9 +11,11 @@ class Agent < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  concerned_with :associations, :constants
+  concerned_with :associations, :constants, :presenter
 
-  before_destroy :remove_escalation
+  publishable on: [:create, :update, :destroy]
+
+  before_destroy :remove_escalation, :save_deleted_agent_info
 
   accepts_nested_attributes_for :user
   before_update :create_model_changes
@@ -32,7 +34,7 @@ class Agent < ActiveRecord::Base
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
     :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token
 
-  attr_accessor :agent_role_ids, :freshcaller_enabled
+  attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
@@ -123,6 +125,10 @@ class Agent < ActiveRecord::Base
   def remove_escalation
     Group.update_all({:escalate_to => nil, :assign_time => nil},{:account_id => account_id, :escalate_to => user_id})
     clear_group_cache
+  end
+
+  def save_deleted_agent_info
+    @deleted_model_info = central_publish_payload
   end
 
   def clear_group_cache

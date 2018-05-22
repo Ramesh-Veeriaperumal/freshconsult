@@ -268,6 +268,8 @@ defaults: &defaults
     - [email_service_provider]
     - [calculate_sla]
     - [freshid_agents_migration]
+    - [freshcaller_account_delete]
+    - [user_central_publish]
 
 development:
   <<: *defaults
