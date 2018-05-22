@@ -17,13 +17,14 @@ class ApiApplicationControllerTest < ActionController::TestCase
   end
 
   def test_api_current_user_failed_login_count_on_valid_pwd
-    auth = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.email, 'test')
+    agent = add_test_agent(@account)
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials(agent.email, 'test')
     params = ActionController::Parameters.new('format' => 'json')
     controller.params = params
     @controller.request.env['HTTP_AUTHORIZATION'] = auth
     @agent.update_attribute(:failed_login_count, 1)
     @controller.send(:api_current_user)
-    assert_equal 0, @agent.reload.failed_login_count
+    assert_equal 0, agent.reload.failed_login_count
   end
 
   def test_api_current_user_failed_login_count_on_valid_api_key

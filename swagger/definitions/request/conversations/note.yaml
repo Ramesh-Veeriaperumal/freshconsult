@@ -23,3 +23,7 @@ allOf:
         type: boolean
       last_note_id:
         type: number
+      inline_attachment_ids:
+        type: array
+        items:
+          type: integer

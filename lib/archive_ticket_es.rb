@@ -1,12 +1,11 @@
 module ArchiveTicketEs
 
   def archive_tickets_from_es(params)
-    
     should_fetch_tickets = true
     total_records = []
     params[:original_query] = params[:query]
     add_display_id_filter_to_query!(params, 1)
-    
+ 
     while should_fetch_tickets
       error, records_from_es = results(params)
       yield error, records_from_es

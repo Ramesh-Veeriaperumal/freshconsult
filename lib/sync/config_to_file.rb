@@ -23,8 +23,6 @@ module Sync
       columns = object.class.columns.collect(&:name) - IGNORE_ASSOCIATIONS
       obj_id  = ((object.id.nil? and counter != -1) ? "#{association}_#{counter}" : object.id)
       
-      #puts "#{path} --- #{association} #{object.inspect} #{counter} #{obj_id}"
-      
       columns.each do |column|        
         file_path = "#{path}/#{association}/#{obj_id}/#{column}#{FILE_EXTENSION}"
         content   = YAML.dump(object.read_attribute(column)) #using read attribute to read the value in mysql in case method override(custom_form)
@@ -40,7 +38,6 @@ module Sync
       objects = [*base_object.safe_send(config)]
       objects.each do |object|
         dump_object(path, config, object)
-        # puts "Object : #{objects.inspect} Association : #{associations.inspect}"
         associations.each do |association|
           if association.is_a?(Hash)
             #recursion
@@ -89,10 +86,10 @@ module Sync
             end
           end
           #Always pruning habtm associations
-          if !item.gsub(/.*_([^_]+)$/, '\1').to_i.zero? || (!item.to_i.zero? and !record_present?(table_name, item.to_i))
-            puts "*"*100+"  ---- Deleting #{table_name} #{item}"
+          if (!item.gsub(/.*_([^_]+)$/, '\1').to_i.zero? && item.to_i.zero?) || (!item.to_i.zero? and !record_present?(table_name,  account.id , item.to_i  ))
+            Rails.logger.debug "*"*100+"  ---- Deleting #{table_name} #{item} #{object_path}"
             FileUtils.rm_r(object_path)
-            #delete_record(table_name, item.to_i) 
+            #delete_record(table_name,  item.to_i)
           end
         end
       end  

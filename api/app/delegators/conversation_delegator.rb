@@ -11,6 +11,8 @@ class ConversationDelegator < ConversationBaseDelegator
 
   validate :validate_cloud_file_ids, if: -> { @cloud_file_ids }
 
+  validate :validate_inline_attachment_ids, if: -> { @inline_attachment_ids }
+
   validate :validate_application_id, if: -> { cloud_files.present? }
 
   validate :validate_send_survey, unless: -> { send_survey.nil? }
@@ -24,7 +26,9 @@ class ConversationDelegator < ConversationBaseDelegator
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
     @cloud_file_ids = options[:cloud_file_ids]
+    @inline_attachment_ids = options[:inline_attachment_ids]
     retrieve_cloud_files if @cloud_file_ids
+    @conversation = record
   end
 
   def validate_agent_emails
@@ -59,6 +63,16 @@ class ConversationDelegator < ConversationBaseDelegator
     if invalid_file_ids.any?
       errors[:cloud_file_ids] << :invalid_list
       (self.error_options ||= {}).merge!(cloud_file_ids: { list: invalid_file_ids.join(', ').to_s })
+    end
+  end
+
+  def validate_inline_attachment_ids
+    valid_ids = Account.current.attachments.where(id: @inline_attachment_ids, attachable_type: 'Tickets Image Upload').pluck(:id)
+    valid_ids = valid_ids + @conversation.inline_attachment_ids unless @conversation.new_record? # Skip existing inline attachments while validating
+    invalid_ids = @inline_attachment_ids - valid_ids
+    if invalid_ids.present?
+      errors[:inline_attachment_ids] << :invalid_inline_attachments_list
+      (self.error_options ||= {}).merge!({ inline_attachment_ids: { invalid_ids: "#{invalid_ids.join(', ')}" } })
     end
   end
 

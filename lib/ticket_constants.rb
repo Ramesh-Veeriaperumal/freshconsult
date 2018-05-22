@@ -300,6 +300,12 @@ module TicketConstants
     :internal_group => INTERNAL_GROUP_ID
   }
 
+  LIST_FILTER_MAPPING ={
+    :requester_id => "requester_id",
+    :company_id => "owner_id",
+    :updated_since => "updated_at"
+  }
+
   DEFAULT_FIELDS_ORDER = [
     "default_priority", "default_status",
     "default_source",   "default_ticket_type",

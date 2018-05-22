@@ -6602,6 +6602,81 @@
           }
         }
       }
+    },
+    "/sandboxes": {
+      "get": {
+        "tags": [
+          "sandbox"
+        ],
+        "description": "Sandbox account details",
+        "summary": "Sandbox account details",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/sandboxes_index"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/sandboxes/create": {
+      "post": {
+        "tags": [
+          "sandbox"
+        ],
+        "description": "Sandbox account creation",
+        "summary": "Sandbox account creation",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/sandboxes_create"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/sandboxes/destroy": {
+      "post": {
+        "tags": [
+          "sandbox"
+        ],
+        "description": "Sandbox Delete",
+        "summary": "Sandbox Delete",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -7337,6 +7412,12 @@
             },
             "last_note_id": {
               "type": "number"
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7367,6 +7448,12 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/cloud_file_input"
+              }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
               }
             }
           }
@@ -7420,6 +7507,12 @@
             },
             "last_note_id": {
               "type": "number"
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7484,6 +7577,12 @@
               "items": {
                 "type": "string"
               }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7499,6 +7598,12 @@
           "properties": {
             "user_id": {
               "type": "integer"
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7644,6 +7749,12 @@
               "items": {
                 "type": "string"
               }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7677,6 +7788,12 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/cloud_file_input"
+              }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
               }
             }
           }
@@ -7744,6 +7861,12 @@
               "items": {
                 "$ref": "#/definitions/cloud_file_input"
               }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7774,6 +7897,13 @@
             "attachment_ids": {
               "type": "array",
               "description": "Draft attachment/Shared attachment IDs",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "description": "Represents the IDs of the attachments corresponding to inline images",
               "items": {
                 "type": "integer"
               }
@@ -7907,6 +8037,12 @@
           "type": "string"
         },
         "attachment_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "inline_attachment_ids": {
           "type": "array",
           "items": {
             "type": "integer"
@@ -8354,6 +8490,12 @@
           "type": "string"
         },
         "attachment_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "inline_attachment_ids": {
           "type": "array",
           "items": {
             "type": "integer"
@@ -9259,6 +9401,13 @@
           "items": {
             "type": "integer"
           }
+        },
+        "inline_attachment_ids": {
+          "type": "array",
+          "description": "Represents the IDs of the attachments corresponding to inline images",
+          "items": {
+            "type": "integer"
+          }
         }
       }
     },
@@ -9586,6 +9735,13 @@
           "type": "string",
           "format": "date-time",
           "description": "Represents the time at which the draft is saved"
+        },
+        "inline_attachment_ids": {
+          "type": "array",
+          "description": "Represents the IDs of the attachments corresponding to inline images",
+          "items": {
+            "type": "integer"
+          }
         }
       }
     },
@@ -13027,6 +13183,52 @@
         "extension_type": {
           "type": "integer",
           "description": "App Type - Plug/Native Integration"
+        }
+      }
+    },
+    "sandboxes_index": {
+      "type": "object",
+      "properties": {
+        "sandboxes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "status": {
+                "type": "string"
+              },
+              "sandbox_url": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "sandboxes_create": {
+      "type": "object",
+      "properties": {
+        "sandbox": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "status": {
+              "type": "string"
+            }
+          }
         }
       }
     }

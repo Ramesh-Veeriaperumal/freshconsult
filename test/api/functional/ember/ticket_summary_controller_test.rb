@@ -116,6 +116,41 @@ class TicketSummaryControllerTest < ActionController::TestCase
     Account.current.revoke_feature(:ticket_summary)
   end
 
+  def test_create_summary_note_with_inline_attachment_ids
+    Account.current.add_feature(:ticket_summary)
+    ticket = create_ticket
+    inline_attachment_ids = []
+    BULK_ATTACHMENT_CREATE_COUNT.times do
+      inline_attachment_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+    end
+    params_hash = update_ticket_summary_params_hash.merge(inline_attachment_ids: inline_attachment_ids)
+    put :update, construct_params({ version: 'private', ticket_id: ticket.display_id }, params_hash)
+    assert_response 200
+    match_json(private_ticket_summary_pattern(params_hash, Helpdesk::Note.last))
+    match_json(private_ticket_summary_pattern({}, Helpdesk::Note.last))
+    assert Helpdesk::Note.last.inline_attachments.size == inline_attachment_ids.size
+    assert Helpdesk::Note.last.inline_attachment_ids.sort == inline_attachment_ids.sort
+    Account.current.revoke_feature(:ticket_summary)
+  end
+
+  def test_create_summary_note_with_invalid_inline_attachment_ids
+    Account.current.add_feature(:ticket_summary)
+    ticket = create_ticket
+    inline_attachment_ids, valid_ids, invalid_ids = [], [], []
+    BULK_ATTACHMENT_CREATE_COUNT.times do
+      invalid_ids << create_attachment(attachable_type: 'Forums Image Upload').id
+    end
+    invalid_ids << 0
+    BULK_ATTACHMENT_CREATE_COUNT.times do
+      valid_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+    end
+    inline_attachment_ids = invalid_ids + valid_ids
+    params_hash = update_ticket_summary_params_hash.merge(inline_attachment_ids: inline_attachment_ids)
+    put :update, construct_params({ version: 'private', ticket_id: ticket.display_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: invalid_ids.join(', '))])
+  end
+
   def test_create_summary_note_with_attachment_and_attachment_ids
     Account.current.add_feature(:ticket_summary)
     ticket = create_ticket
@@ -290,6 +325,43 @@ class TicketSummaryControllerTest < ActionController::TestCase
     match_json(update_private_ticket_summary_pattern({}, note))
     assert_equal 3, note.attachments.count
     Account.current.revoke_feature(:ticket_summary)
+  end
+
+  def test_update_with_inline_attachment_ids
+    Account.current.add_feature(:ticket_summary)
+    inline_attachment_ids = []
+    BULK_ATTACHMENT_CREATE_COUNT.times do
+      inline_attachment_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+    end
+    params_hash = update_ticket_summary_params_hash.merge(inline_attachment_ids: inline_attachment_ids)
+    t = create_ticket
+    note = create_ticket_summary(t)
+    put :update, construct_params({ version: 'private', ticket_id: note.notable_id }, params_hash)
+    assert_response 200
+    note = Helpdesk::Note.find(note.id)
+    match_json(update_private_ticket_summary_pattern(params_hash, note))
+    match_json(update_private_ticket_summary_pattern({}, note))
+    assert_equal inline_attachment_ids.sort, note.inline_attachment_ids.sort
+    Account.current.revoke_feature(:ticket_summary)
+  end
+
+  def test_update_with_invalid_inline_attachment_ids
+    Account.current.add_feature(:ticket_summary)
+    inline_attachment_ids, valid_ids, invalid_ids = [], [], []
+    BULK_ATTACHMENT_CREATE_COUNT.times do
+      invalid_ids << create_attachment(attachable_type: 'Forums Image Upload').id
+    end
+    invalid_ids << 0
+    BULK_ATTACHMENT_CREATE_COUNT.times do
+      valid_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+    end
+    inline_attachment_ids = invalid_ids + valid_ids
+    params_hash = update_ticket_summary_params_hash.merge(inline_attachment_ids: inline_attachment_ids)
+    t = create_ticket
+    note = create_ticket_summary(t)
+    put :update, construct_params({ version: 'private', ticket_id: note.notable_id }, params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: invalid_ids.join(', '))])
   end
 
   # def test_update_with_cloud_files

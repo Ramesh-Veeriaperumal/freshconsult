@@ -5,6 +5,7 @@ response_hash = {
   bcc_emails: @item.bcc_emails,
   from_email: @item.from_email,
   attachments: @attachments.map { |att| AttachmentDecorator.new(att).to_hash },
+  inline_attachment_ids: @item.inline_attachment_ids,
   saved_at: @item.saved_at
 } if @item
 

@@ -233,6 +233,12 @@ module TicketsTestHelper
     pattern = private_note_pattern({}, note).merge!(user: Hash)
   end
 
+  def ticket_association_pattern(ticket)
+    {
+      association_type: ticket.association_type,
+      associated_tickets_list: ticket.associates
+    }
+  end
   # draft_exists denotes whether the draft was saved using old UI code
   def reply_draft_pattern(expected_output, draft_exists = false)
     ret_hash = {
@@ -242,6 +248,7 @@ module TicketsTestHelper
       bcc_emails: expected_output[:bcc_emails] || [],
       from_email: expected_output[:from_email] || '',
       attachments: Array,
+      inline_attachment_ids: Array,
       saved_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
     if draft_exists
@@ -284,6 +291,47 @@ module TicketsTestHelper
 
   def v2_ticket_update_payload
     v2_ticket_params.except(:due_by, :fr_due_by, :cc_emails, :email).to_json
+  end
+
+  def count_es_response(t_id1, t_id2 = nil)
+    response = {
+      took: 5,
+      timed_out: false,
+      _shards:
+      {
+        total: 1,
+        successful: 1,
+        failed: 0
+      },
+      hits:
+      {
+        total: 2,
+        max_score: nil,
+        hits:
+        [
+          {
+            _index: 'es_filters_count',
+            _type: 'ticket',
+            _id: t_id1,
+            _score: nil,
+            _routing: '1',
+            sort: [1522824906000]
+          }
+        ]
+      }
+    }
+    if t_id2
+      obj = {
+        _index: 'es_filters_count',
+        _type: 'ticket',
+        _id: t_id2,
+        _score: nil,
+        _routing: '1',
+        sort: [1522746234000]
+      }
+      response[:hits][:hits].push(obj)
+    end
+    response
   end
 
   # private

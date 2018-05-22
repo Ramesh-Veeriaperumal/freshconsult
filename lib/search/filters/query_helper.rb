@@ -268,6 +268,12 @@ module Search::Filters::QueryHelper
       end
     end
 
+    def updated_at_es_filter(field_name, value)
+      value = value.first
+      filter_cond = Array.new
+      filter_cond.push(range_filter(field_name, :gte => Time.zone.parse(value).utc.iso8601))
+    end
+
     # Multiple values can be chosen
     def due_by_es_filter(field_name, values)
       filter_cond = Array.new

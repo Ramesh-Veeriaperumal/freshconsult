@@ -436,6 +436,8 @@ Helpkit::Application.routes.draw do
         post :test_email_forwarding
       end
     end
+    
+    resources :sandboxes, controller: 'admin/sandboxes', only: [:index, :create, :destroy]
 
     resources :contact_password_policy, controller: 'ember/contact_password_policies',
                                         only: [:index]

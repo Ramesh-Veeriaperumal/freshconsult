@@ -225,7 +225,7 @@
 /agents/revert_identity:
   $ref: ./agents/revert_identity.yaml
 /agents/accept_gdpr:
-  $ref: ./agents/gdpr_acceptance.yaml  
+  $ref: ./agents/gdpr_acceptance.yaml
 
 # Profiles
 /agents/me:
@@ -375,3 +375,11 @@
   $ref: ./bot_feedbacks/create_article.yaml
 /bots/{id}/analytics:
   $ref: ./bots/analytics.yaml
+
+# Sandbox
+/sandboxes:
+  $ref: ./sandboxes/index.yaml
+/sandboxes/create:
+  $ref: ./sandboxes/create.yaml
+/sandboxes/destroy:
+  $ref: ./sandboxes/destroy.yaml

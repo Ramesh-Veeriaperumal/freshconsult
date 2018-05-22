@@ -120,7 +120,7 @@ class Users::ContactDeleteForeverWorker < BaseWorker
     end
 
     def destroy_user_archive_tickets
-      find_in_batches_and_destroy(@user.archive_tickets)
+      find_in_batches_and_destroy(@user.archive_tickets) {|arch_tkt| arch_tkt.shred_inline_images }
     end
 
     def destroy_user_replies
@@ -128,7 +128,30 @@ class Users::ContactDeleteForeverWorker < BaseWorker
     end
 
     def destroy_user_topics
+      destroy_unpublished_spam
       find_in_batches_and_destroy(@user.topics)
+    end
+
+    def destroy_unpublished_spam
+      Post::SPAM_SCOPES_DYNAMO.values.each do |scope|
+        results = scope.by_user(@user.id, next_user_timestamp)
+        while(results.present?)
+          last = results.last.user_timestamp
+          destroy_post(results)
+          results = scope.by_user(@user.id, last)
+        end
+      end
+    end
+
+    def next_user_timestamp
+      @user.id * (10 ** 17) + (Time.now - ForumSpam::UPTO).utc.to_f * (10 ** 7)
+    end
+
+    def destroy_post(posts)
+      posts.each do |post|
+        post.destroy_attachments
+        post.destroy
+      end
     end
 
     def destroy_user_calls

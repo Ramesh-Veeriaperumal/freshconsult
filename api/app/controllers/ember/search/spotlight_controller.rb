@@ -36,6 +36,18 @@ module Ember
             'user' => { model: 'User', associations: [{ account: :features }, :company, :user_emails] }
           }
         end
+
+        def esv2_contact_search_models
+          @@esv2_contact_search_models ||= {
+            'user' => { model: 'User', associations: [{ account: :features }, :company, :user_emails] }
+          }
+        end
+
+        def esv2_company_search_models
+          @@esv2_company_search_models ||= {
+            'company' => { model: 'Company', associations: [] }
+          }
+        end
     end
   end
 end

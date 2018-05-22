@@ -155,6 +155,36 @@ module Ember
       assert Helpdesk::Note.last.attachments.size == attachment_ids.size
     end
 
+    def test_create_with_inline_attachment_ids
+      inline_attachment_ids = []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        inline_attachment_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      params_hash = create_note_params_hash.merge(inline_attachment_ids: inline_attachment_ids)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, note))
+      match_json(private_note_pattern({}, note))
+      assert_equal inline_attachment_ids.size, note.inline_attachments.size
+    end
+
+    def test_create_with_invalid_inline_attachment_ids
+      inline_attachment_ids, valid_ids, invalid_ids = [], [], []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        invalid_ids << create_attachment(attachable_type: 'Forums Image Upload').id
+      end
+      invalid_ids << 0
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        valid_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      inline_attachment_ids = invalid_ids + valid_ids
+      params_hash = create_note_params_hash.merge(inline_attachment_ids: inline_attachment_ids)
+      post :create, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: invalid_ids.join(', '))])
+    end
+
     def test_create_with_attachment_and_attachment_ids
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
       file1 = fixture_file_upload('files/attachment.txt', 'text/plain', :binary)
@@ -283,6 +313,36 @@ module Ember
       match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
       match_json(private_note_pattern({}, Helpdesk::Note.last))
       assert Helpdesk::Note.last.attachments.size == attachment_ids.size
+    end
+
+    def test_reply_with_inline_attachment_ids
+      inline_attachment_ids = []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        inline_attachment_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      params_hash = reply_note_params_hash.merge(inline_attachment_ids: inline_attachment_ids, user_id: @agent.id)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, note))
+      match_json(private_note_pattern({}, note))
+      assert_equal inline_attachment_ids.size, note.inline_attachments.size 
+    end
+
+    def test_reply_with_invalid_inline_attachment_ids
+      inline_attachment_ids, valid_ids, invalid_ids = [], [], []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        invalid_ids << create_attachment(attachable_type: 'Forums Image Upload').id
+      end
+      invalid_ids << 0
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        valid_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      inline_attachment_ids = invalid_ids + valid_ids
+      params_hash = reply_note_params_hash.merge(inline_attachment_ids: inline_attachment_ids, user_id: @agent.id)
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: invalid_ids.join(', '))])
     end
 
     def test_reply_with_attachment_and_attachment_ids
@@ -730,6 +790,38 @@ module Ember
       match_json(private_note_pattern(params_hash, latest_note))
       match_json(private_note_pattern({}, latest_note))
       assert latest_note.attachments.size == (attachments.size + 1)
+    end
+
+    def test_forward_with_inline_attachment_ids
+      t = create_ticket
+      inline_attachment_ids = []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        inline_attachment_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      params_hash = forward_note_params_hash.merge(inline_attachment_ids: inline_attachment_ids, agent_id: @agent.id)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, note))
+      match_json(private_note_pattern({}, note))
+      assert_equal inline_attachment_ids.size, note.inline_attachments.size 
+    end
+
+    def test_forward_with_invalid_inline_attachment_ids
+      t = create_ticket
+      inline_attachment_ids, valid_ids, invalid_ids = [], [], []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        invalid_ids << create_attachment(attachable_type: 'Forums Image Upload').id
+      end
+      invalid_ids << 0
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        valid_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      inline_attachment_ids = invalid_ids + valid_ids
+      params_hash = forward_note_params_hash.merge(inline_attachment_ids: inline_attachment_ids, agent_id: @agent.id)
+      post :forward, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: invalid_ids.join(', '))])
     end
 
     def test_forward_with_cloud_file_ids_error
@@ -1252,6 +1344,40 @@ module Ember
       assert_equal 3, note.attachments.count
     end
 
+    def test_update_with_inline_attachment_ids
+      t = create_ticket
+      note = create_private_note(t)
+      inline_attachment_ids = []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        inline_attachment_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      params_hash = update_note_params_hash.merge(inline_attachment_ids: inline_attachment_ids)
+      put :update, construct_params({ version: 'private', id: note.id }, params_hash)
+      assert_response 200
+      note = Helpdesk::Note.find(note.id)
+      match_json(private_update_note_pattern(params_hash, note))
+      match_json(private_update_note_pattern({}, note))
+      assert_equal inline_attachment_ids.size, note.inline_attachments.size
+    end
+
+    def test_update_with_invalid_inline_attachment_ids
+      t = create_ticket
+      note = create_private_note(t)
+      inline_attachment_ids, valid_ids, invalid_ids = [], [], []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        invalid_ids << create_attachment(attachable_type: 'Forums Image Upload').id
+      end
+      invalid_ids << 0
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        valid_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      inline_attachment_ids = invalid_ids + valid_ids
+      params_hash = update_note_params_hash.merge(inline_attachment_ids: inline_attachment_ids)
+      put :update, construct_params({ version: 'private', id: note.id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: invalid_ids.join(', '))])
+    end
+
     def test_update_with_cloud_files
       cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params_hash = update_note_params_hash.merge(cloud_files: cloud_file_params)
@@ -1612,11 +1738,46 @@ module Ember
     end
 
     def test_add_broadcast_note_without_feature
-      disable_adv_ticketing([:link_tickets]) if Account.current.launched?(:link_tickets)
+      disable_adv_ticketing([:link_tickets]) if Account.current.link_tickets_enabled?
       tracker_id = create_tracker_ticket.display_id
       post :broadcast, construct_params({ version: 'private', id: tracker_id }, broadcast_note_params)
       assert_response 403
       match_json(request_error_pattern(:require_feature, feature: 'Link Tickets'))
+    end
+
+    def test_add_broadcast_note_with_inline_attachments
+      enable_adv_ticketing([:link_tickets]) do
+        tracker_id = create_tracker_ticket.display_id
+        inline_attachment_ids = []
+        BULK_ATTACHMENT_CREATE_COUNT.times do
+          inline_attachment_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+        end
+        params_hash = broadcast_note_params.merge(inline_attachment_ids: inline_attachment_ids)
+        post :broadcast, construct_params({ version: 'private', id: tracker_id }, params_hash)
+        assert_response 201
+        note = Helpdesk::Note.last
+        match_json(private_note_pattern({}, note))
+        assert_equal inline_attachment_ids.size, note.inline_attachments.size 
+      end
+    end
+
+    def test_add_broadcast_note_with_invalid_inline_attachment_ids
+      enable_adv_ticketing([:link_tickets]) do
+        tracker_id = create_tracker_ticket.display_id
+        inline_attachment_ids, valid_ids, invalid_ids = [], [], []
+        BULK_ATTACHMENT_CREATE_COUNT.times do
+          invalid_ids << create_attachment(attachable_type: 'Forums Image Upload').id
+        end
+        invalid_ids << 0
+        BULK_ATTACHMENT_CREATE_COUNT.times do
+          valid_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+        end
+        inline_attachment_ids = invalid_ids + valid_ids
+        params_hash = broadcast_note_params.merge(inline_attachment_ids: inline_attachment_ids)
+        post :broadcast, construct_params({ version: 'private', id: tracker_id }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: invalid_ids.join(', '))])
+      end
     end
 
     def test_reply_with_traffic_cop_invalid
@@ -1643,6 +1804,66 @@ module Ember
       assert_response 400
       match_json([bad_request_error_pattern(:conversation, :traffic_cop_alert)])
       @account.revoke_feature(:traffic_cop)
+    end
+
+    def test_public_note_requester
+      e_req_notification = @account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
+      e_cc_notification = @account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
+      req_response = e_req_notification.update_attribute(:requester_notification, true) unless e_req_notification.requester_notification?
+      cc_response = e_cc_notification.update_attribute(:requester_notification, false) if e_cc_notification.requester_notification?
+      ticket = create_ticket
+      last_note_id = Helpdesk::Note.last.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
+      count_of_delayed_jobs_before = Delayed::Job.count
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_equal count_of_delayed_jobs_before+3, Delayed::Job.count
+      e_req_notification.update_attribute(:requester_notification, false) if req_response
+      e_cc_notification.update_attribute(:requester_notification, true) if cc_response
+    end
+
+    def test_public_note_cc
+      e_req_notification = @account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
+      e_cc_notification = @account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
+      req_response = e_req_notification.update_attribute(:requester_notification, false) if e_req_notification.requester_notification?
+      cc_response = e_cc_notification.update_attribute(:requester_notification, true)  unless e_cc_notification.requester_notification?
+      ticket = create_ticket
+      last_note_id = Helpdesk::Note.last.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
+      count_of_delayed_jobs_before = Delayed::Job.count
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_equal count_of_delayed_jobs_before+3, Delayed::Job.count
+      e_req_notification.update_attribute(:requester_notification, true) if req_response
+      e_cc_notification.update_attribute(:requester_notification, false) if cc_response
+    end
+
+    def test_public_note_both_requester_and_cc
+      e_req_notification = @account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
+      e_cc_notification = @account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
+      req_response = e_req_notification.update_attribute(:requester_notification, true) unless e_req_notification.requester_notification?
+      cc_response = e_cc_notification.update_attribute(:requester_notification, true)  unless e_cc_notification.requester_notification?
+      ticket = create_ticket
+      last_note_id = Helpdesk::Note.last.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
+      count_of_delayed_jobs_before = Delayed::Job.count
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_equal count_of_delayed_jobs_before+4, Delayed::Job.count
+      e_req_notification.update_attribute(:requester_notification, false) if req_response
+      e_cc_notification.update_attribute(:requester_notification, false) if cc_response
+    end
+
+    def test_public_note_no_both_requester_and_cc
+      e_req_notification = @account.email_notifications.find_by_notification_type(EmailNotification::COMMENTED_BY_AGENT)
+      e_cc_notification = @account.email_notifications.find_by_notification_type(EmailNotification::PUBLIC_NOTE_CC)
+      req_response = e_req_notification.update_attribute(:requester_notification, false) if e_req_notification.requester_notification?
+      cc_response = e_cc_notification.update_attribute(:requester_notification, false)  if e_cc_notification.requester_notification?
+      ticket = create_ticket
+      last_note_id = Helpdesk::Note.last.id
+      params_hash = create_note_params_hash.merge(last_note_id: last_note_id, private: false)
+      count_of_delayed_jobs_before = Delayed::Job.count
+      post :create, construct_params({version: 'private', id: ticket.display_id }, params_hash)
+      assert_equal count_of_delayed_jobs_before+2, Delayed::Job.count
+      e_req_notification.update_attribute(:requester_notification, true) if req_response
+      e_cc_notification.update_attribute(:requester_notification, true) if cc_response
     end
 
     def test_reply_with_traffic_cop_valid
