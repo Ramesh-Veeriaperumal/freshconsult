@@ -194,7 +194,9 @@ class AgentsController < ApplicationController
     params[:user].each do |k, v|
       @agent.user.safe_send("#{k}=", v)
     end
-    @agent.user_changes = @agent.user.changes
+
+    @agent.user_changes = @agent.user.agent.user_changes || {}
+    @agent.user_changes.merge!(@agent.user.changes)
     if @agent.update_attributes(params[nscname])
       begin
         if @user.role_ids.include?(current_account.roles.find_by_name("Account Administrator").id)

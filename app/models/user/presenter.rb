@@ -78,11 +78,7 @@ class User < ActiveRecord::Base
     payload_type = central_payload_type
     return {} if CONTACT_CREATE_DESTROY.include?(payload_type) || 
                  payload_type == AGENT_UPDATE
-    changes = @model_changes
-    changes.merge!({
-      "single_access_token" => ["*", "*"]
-    }) if @model_changes.key?("single_access_token")
-    changes
+    @model_changes
   end
 
   def misc_changes_for_central

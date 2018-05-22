@@ -12,7 +12,8 @@ class ApiAgentsController < ApiApplicationController
       params[cname][:user_attributes].each do |k, v|
         @item.user.safe_send("#{k}=", v)
       end
-      @item.user_changes = @item.user.changes
+      @item.user_changes = @item.user.agent.user_changes || {}
+      @item.user_changes.merge!(@item.user.changes)
       return if @item.update_attributes(params[cname].except(:user_attributes))
       render_custom_errors
     end

@@ -1303,15 +1303,19 @@ class User < ActiveRecord::Base
 
     def touch_add_role_change(role)
       role_info = { id: role.id, name: role.name }
-      @added_roles.present? ? @added_roles.push(role_info) : 
-                                    @added_roles=[role_info]
+      self.agent.user_changes ||= {"roles" => {added: [], removed: []}}
+      self.agent.user_changes["roles"].present? ? 
+        self.agent.user_changes["roles"][:added].push(role_info) :
+        self.agent.user_changes["roles"] = {added: [role_info]}
       @role_change_flag = true
     end
 
     def touch_remove_role_change(role)
       role_info = { id: role.id, name: role.name }
-      @removed_roles.present? ? @removed_roles.push(role_info) : 
-                                    @removed_roles=[role_info]
+      self.agent.user_changes ||= {"roles" => {added: [], removed: []}}
+      self.agent.user_changes["roles"].present? ? 
+        self.agent.user_changes["roles"][:removed].push(role_info) :
+        self.agent.user_changes["roles"] = {removed: [role_info]}
       @role_change_flag = true
     end
 
