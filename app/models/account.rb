@@ -16,6 +16,7 @@ class Account < ActiveRecord::Base
   include FreshdeskFeatures::Feature
   include Helpdesk::SharedOwnershipMigrationMethods
   include ParserUtil
+  include InlineImagesUtil
 
   has_many_attachments
   
@@ -690,6 +691,14 @@ class Account < ActiveRecord::Base
 
   def freshid_migration_in_progress?
     redis_key_exists? freshid_migration_in_progress_key
+  end
+
+  def canned_responses_inline_images
+    attachment_ids = []
+    canned_responses.find_each(batch_size: 100) do |canned_response|
+      attachment_ids << get_attachment_ids(canned_response.content_html)
+    end
+    attachment_ids.flatten.uniq
   end
 
   protected

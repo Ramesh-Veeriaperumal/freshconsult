@@ -138,6 +138,7 @@
     - nullify_deleted_custom_field_data
     - restore_spam_tickets
     - contact_delete_forever
+    - inline_image_shredder
   :external:
     - code_console_execution
     - integrations

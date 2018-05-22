@@ -9,7 +9,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   has_many :inline_attachments, :class_name => "Helpdesk::Attachment", 
                                 :conditions => { :attachable_type => "Ticket::Inline" },
                                 :foreign_key => "attachable_id",
-                                :dependent => :destroy
+                                :dependent => :destroy,
+                                :before_add => :set_inline_attachable_type
 
   has_many_cloud_files
 
@@ -122,4 +123,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
            :source => :installed_application
 
   has_one :bot_ticket, class_name: 'Bot::Ticket', dependent: :destroy
+
+  private
+
+  def set_inline_attachable_type(inline_attachment)
+    raise "Not an inline image" if inline_attachment.attachable_type != "Tickets Image Upload"
+    inline_attachment.attachable_type = "Ticket::Inline"
+  end
 end
