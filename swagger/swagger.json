@@ -7412,6 +7412,12 @@
             },
             "last_note_id": {
               "type": "number"
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7442,6 +7448,12 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/cloud_file_input"
+              }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
               }
             }
           }
@@ -7495,6 +7507,12 @@
             },
             "last_note_id": {
               "type": "number"
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7559,6 +7577,12 @@
               "items": {
                 "type": "string"
               }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7574,6 +7598,12 @@
           "properties": {
             "user_id": {
               "type": "integer"
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7719,6 +7749,12 @@
               "items": {
                 "type": "string"
               }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7752,6 +7788,12 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/cloud_file_input"
+              }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
               }
             }
           }
@@ -7819,6 +7861,12 @@
               "items": {
                 "$ref": "#/definitions/cloud_file_input"
               }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7849,6 +7897,13 @@
             "attachment_ids": {
               "type": "array",
               "description": "Draft attachment/Shared attachment IDs",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "description": "Represents the IDs of the attachments corresponding to inline images",
               "items": {
                 "type": "integer"
               }
@@ -7982,6 +8037,12 @@
           "type": "string"
         },
         "attachment_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "inline_attachment_ids": {
           "type": "array",
           "items": {
             "type": "integer"
@@ -8429,6 +8490,12 @@
           "type": "string"
         },
         "attachment_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "inline_attachment_ids": {
           "type": "array",
           "items": {
             "type": "integer"
@@ -9334,6 +9401,13 @@
           "items": {
             "type": "integer"
           }
+        },
+        "inline_attachment_ids": {
+          "type": "array",
+          "description": "Represents the IDs of the attachments corresponding to inline images",
+          "items": {
+            "type": "integer"
+          }
         }
       }
     },
@@ -9661,6 +9735,13 @@
           "type": "string",
           "format": "date-time",
           "description": "Represents the time at which the draft is saved"
+        },
+        "inline_attachment_ids": {
+          "type": "array",
+          "description": "Represents the IDs of the attachments corresponding to inline images",
+          "items": {
+            "type": "integer"
+          }
         }
       }
     },

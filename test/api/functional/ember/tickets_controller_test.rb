@@ -32,6 +32,8 @@ module Ember
     ARCHIVE_DAYS = 120
     TICKET_UPDATED_DATE = 150.days.ago
 
+    BULK_ATTACHMENT_CREATE_COUNT = 2
+
     def setup
       super
       @private_api = true
@@ -597,6 +599,35 @@ module Ember
       match_json(ticket_show_pattern(Helpdesk::Ticket.last))
       assert Helpdesk::Ticket.last.attachments.count == 3
       assert Helpdesk::Ticket.last.cloud_files.count == 1
+    end
+
+    def test_create_with_inline_attachment_ids
+      inline_attachment_ids = []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        inline_attachment_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      params_hash = ticket_params_hash.merge(inline_attachment_ids: inline_attachment_ids)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      ticket = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(ticket))
+      assert_equal inline_attachment_ids.size, ticket.inline_attachments.size 
+    end
+
+    def test_create_with_invalid_inline_attachment_ids
+      inline_attachment_ids, valid_ids, invalid_ids = [], [], []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        invalid_ids << create_attachment(attachable_type: 'Forums Image Upload').id
+      end
+      invalid_ids << 0
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        valid_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      inline_attachment_ids = invalid_ids + valid_ids
+      params_hash = ticket_params_hash.merge(inline_attachment_ids: inline_attachment_ids)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: invalid_ids.join(', '))])
     end
 
     def test_create_without_company_id
@@ -1784,6 +1815,36 @@ module Ember
       put :update_properties, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 200
       assert_equal tags.count, ticket.tags.count
+    end
+
+    def test_update_properties_with_inline_attachment_ids
+      t = create_ticket
+      inline_attachment_ids = []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        inline_attachment_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      params_hash = { inline_attachment_ids: inline_attachment_ids }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+      t = Account.current.tickets.find_by_display_id(t.display_id)
+      assert_equal inline_attachment_ids.size, t.inline_attachments.size 
+    end
+
+    def test_update_properties_with_invalid_inline_attachment_ids
+      t = create_ticket
+      inline_attachment_ids, valid_ids, invalid_ids = [], [], []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        invalid_ids << create_attachment(attachable_type: 'Forums Image Upload').id
+      end
+      invalid_ids << 0
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        valid_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      inline_attachment_ids = invalid_ids + valid_ids
+      params_hash = { inline_attachment_ids: inline_attachment_ids }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: invalid_ids.join(', '))])
     end
 
     def test_show_with_facebook_post

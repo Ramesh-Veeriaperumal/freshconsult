@@ -50,3 +50,8 @@
       type: array
       items:
         type: integer
+    inline_attachment_ids:
+      type: array
+      description: Represents the IDs of the attachments corresponding to inline images
+      items:
+        type: integer

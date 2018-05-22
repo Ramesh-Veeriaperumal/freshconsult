@@ -211,6 +211,8 @@ module MemcacheKeys
 
   BOTS_COUNT = "BOTS_COUNT:%{account_id}"
 
+  CANNED_RESPONSES_INLINE_IMAGES = "CANNED_RESPONSES_INLINE_IMAGES:%{account_id}"
+
   class << self
 
     include MemcacheReadWriteMethods

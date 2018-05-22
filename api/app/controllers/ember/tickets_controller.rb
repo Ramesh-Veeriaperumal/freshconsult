@@ -42,8 +42,7 @@ module Ember
       delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
                          attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
                          parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params,
-                         tags: cname_params[:tags], company_id: cname_params[:company_id] }
-
+                         tags: cname_params[:tags], company_id: cname_params[:company_id], inline_attachment_ids: @inline_attachment_ids }
       return unless validate_delegator(@item, delegator_hash)
       save_ticket_and_respond
     end
@@ -137,9 +136,10 @@ module Ember
       sanitize_params 
       assign_ticket_status
       @item.assign_attributes(validatable_delegator_attributes)
-      delegator_hash = { ticket_fields: @ticket_fields, attachment_ids: @attachment_ids, tags: cname_params[:tags] }
+      delegator_hash = { ticket_fields: @ticket_fields, attachment_ids: @attachment_ids, tags: cname_params[:tags], inline_attachment_ids: @inline_attachment_ids }
       return unless validate_delegator(@item, delegator_hash)
       @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
+      @item.inline_attachment_ids = @inline_attachment_ids
       build_cloud_files(@item, @cloud_files)
       if @item.update_ticket_attributes(cname_params)
         render 'ember/tickets/show'
@@ -316,6 +316,7 @@ module Ember
 
       def create_ticket
         @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
+        @item.inline_attachment_ids = @inline_attachment_ids
         @item.save_ticket
       end
 

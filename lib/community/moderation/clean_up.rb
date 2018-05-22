@@ -19,10 +19,8 @@ module Community::Moderation::CleanUp
 
 	def delete_unpublished
 		@topic = current_account.topics.find(params[:topic_id]) if params[:topic_id]
-
+		@spam_post.destroy_attachments
 		@spam_post.destroy
-
 		respond_back
 	end
-
 end

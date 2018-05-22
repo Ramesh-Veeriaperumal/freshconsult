@@ -58,6 +58,8 @@ class TicketDelegator < BaseDelegator
                                   
   validate :create_tag_permission, if: -> { @tags }
 
+  validate :validate_inline_attachment_ids, if: -> { @inline_attachment_ids }
+
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
@@ -67,6 +69,7 @@ class TicketDelegator < BaseDelegator
       @parent_template_attachments = options[:parent_attachment_params][:parent_template_attachments]
     end
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
+    @inline_attachment_ids = options[:inline_attachment_ids]
     if options[:parent_child_params].present?
       @parent_template_id = options[:parent_child_params][:parent_template_id]
       @child_template_ids = options[:parent_child_params][:child_template_ids]
@@ -224,6 +227,16 @@ class TicketDelegator < BaseDelegator
       @error_options[:tags] = { tags: new_tag.name }
     end
   end                                
+
+  def validate_inline_attachment_ids
+    valid_ids = Account.current.attachments.where(id: @inline_attachment_ids, attachable_type: 'Tickets Image Upload').pluck(:id)
+    valid_ids = valid_ids + @ticket.inline_attachment_ids unless @ticket.new_record? # Skip existing inline attachments while validating
+    invalid_ids = @inline_attachment_ids - valid_ids
+    if invalid_ids.present?
+      errors[:inline_attachment_ids] << :invalid_inline_attachments_list
+      (self.error_options ||= {}).merge!({ inline_attachment_ids: { invalid_ids: "#{invalid_ids.join(', ')}" } })
+    end
+  end
 
   private
 

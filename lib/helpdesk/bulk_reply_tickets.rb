@@ -5,12 +5,13 @@ class Helpdesk::BulkReplyTickets
   include Facebook::Constants
   include Facebook::TicketActions::Util
   include Social::Util
-  attr_accessor :params, :tickets, :attachments
+  attr_accessor :params, :tickets, :attachments, :inline_images_clone
 
   def initialize(args)
     self.params = args
-    self.attachments = {:new => [], :shared => []}
+    self.attachments = {:new => [], :shared => [], :inline => []}
     self.tickets = []
+    self.inline_images_clone = {}
     
     
     load_tickets
@@ -32,7 +33,9 @@ class Helpdesk::BulkReplyTickets
   end
 
   def cleanup!
-    Helpdesk::Attachment.destroy(params[:helpdesk_note]["attachments"]) if new_attachments?
+    # doing this to destroy the global attachments after we clone it
+    attachments_to_be_destroyed = load_new_attachments.collect(&:id) + fetch_inline_attachment_records.collect(&:id)
+    Helpdesk::Attachment.destroy(attachments_to_be_destroyed) if attachments_to_be_destroyed.present?
     User.reset_current_user
   end
 
@@ -45,6 +48,7 @@ class Helpdesk::BulkReplyTickets
     def load_attachments
       self.attachments[:new] = load_new_attachments if new_attachments?
       self.attachments[:shared] = load_shared_attachments if shared_attachments?
+      self.attachments[:inline] = load_inline_attachments if inline_attachments?
     end
 
     def new_attachments?
@@ -55,12 +59,30 @@ class Helpdesk::BulkReplyTickets
       params[:shared_attachments].present?
     end
 
+    def inline_attachments?
+      params[:helpdesk_note]["inline_attachment_ids"].present?
+    end
+
     def load_new_attachments
-      Helpdesk::Attachment.find_all_by_id_and_account_id(params[:helpdesk_note]["attachments"], params[:account_id])
+      @attachment_records ||= Account.current.attachments.where(id: params[:helpdesk_note]["attachments"])
     end
 
     def load_shared_attachments
-      Helpdesk::Attachment.find_all_by_id_and_account_id(params[:shared_attachments], params[:account_id])
+      Account.current.attachments.where(id: params[:shared_attachments])
+    end
+
+    def load_inline_attachments
+      (fetch_inline_attachment_records || []).map do |attachment_obj|
+        io  = open attachment_obj.authenticated_s3_get_url
+        if io
+          def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
+        end
+        {:id => attachment_obj.id , :content => io}
+      end
+    end
+
+    def fetch_inline_attachment_records
+      @inline_att_records ||= Account.current.attachments.where(id: params[:helpdesk_note]["inline_attachment_ids"])
     end
 
     def set_current_user
@@ -72,6 +94,7 @@ class Helpdesk::BulkReplyTickets
 
     def add_reply ticket
       note = ticket.notes.build note_params(ticket)
+      note.inline_attachment_ids = inline_images_clone[ticket.id].map do |k,image| image.id end if inline_attachments?
       note.from_email = get_from_email if params[:email_config] and params[:email_config]["reply_email"]
       note.cc_emails = note.notable.cc_email_hash[:reply_cc] if note.notable.cc_email_hash.present?
       # Injecting '@skip_resource_rate_limit' instance variable to skip spam watcher
@@ -93,10 +116,41 @@ class Helpdesk::BulkReplyTickets
 
     def reply_content ticket
       {
-        :body_html => Liquid::Template.parse(body_html).render(
+        :body_html => Liquid::Template.parse(clone_inline_attachment_and_replace_img(body_html,ticket.id)).render(
           'ticket' => ticket, 
           'helpdesk_name' => ticket.account.helpdesk_name
       )}
+    end
+
+    def clone_inline_attachment_and_replace_img html, ticket_id
+      return body_html unless inline_attachments?
+      clone_inline_attachments(ticket_id)
+      replace_img_tag_src_and_data_id(html,ticket_id)
+    end
+
+    def clone_inline_attachments ticket_id
+      inline_images_clone[ticket_id] = {}
+      (attachments[:inline] || []).each do |a|
+        image = Account.current.attachments.build({
+          :description      => 'Inline_attachment',
+          :content          => a[:content],
+          :attachable_type  => "Account"
+        })
+        image.save
+        inline_images_clone[ticket_id][a[:id]] = image
+      end
+    end
+
+    def replace_img_tag_src_and_data_id html, ticket_id
+      html_part = Nokogiri::HTML(html)
+      html_part.xpath("//img[contains(@class,'inline-image')]").each do |inline|
+        inline_attachment = inline_images_clone[ticket_id][inline['data-id'].to_i]
+        if inline_attachment
+          inline.set_attribute('src', inline_attachment.inline_url)
+          inline.set_attribute('data-id', inline_attachment.id) 
+        end
+      end
+      html_part.at_css('body').inner_html.to_s
     end
 
     def body_html

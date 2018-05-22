@@ -145,6 +145,7 @@
     - restore_spam_tickets
     - nullify_deleted_custom_field_data
     - contact_delete_forever
+    - inline_image_shredder
     - create_sandbox_account
     - delete_sandbox
     - sandbox_file_to_config

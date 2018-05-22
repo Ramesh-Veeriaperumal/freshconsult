@@ -28,7 +28,8 @@ class TicketsController < ApiApplicationController
     return render_request_error(:recipient_limit_exceeded, 429) if recipients_limit_exceeded?
     ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields,
       custom_fields: params[cname][:custom_field], tags: cname_params[:tags],
-      company_id: params[cname][:company_id], parent_attachment_params: parent_attachment_params)
+      company_id: params[cname][:company_id], parent_attachment_params: parent_attachment_params, 
+      inline_attachment_ids: @inline_attachment_ids)
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     elsif @item.save_ticket
@@ -290,7 +291,7 @@ class TicketsController < ApiApplicationController
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
                                              type: :ticket_type, parent_id: :assoc_parent_tkt_id }, params[cname])
-      ParamsHelper.save_and_remove_params(self, [:cloud_files], params[cname]) if private_api?
+      ParamsHelper.save_and_remove_params(self, [:cloud_files, :inline_attachment_ids], params[cname]) if private_api?
 
       # Sanitizing is required to avoid duplicate records, we are sanitizing here instead of validating in model to avoid extra query.
       prepare_tags
@@ -339,6 +340,7 @@ class TicketsController < ApiApplicationController
       @item.build_schema_less_ticket unless @item.schema_less_ticket
       @item.account = current_account
       @item.cc_email = @cc_emails unless @cc_emails.nil?
+      @item.inline_attachment_ids = @inline_attachment_ids
       assign_association_type
       build_attachments
       if create? # assign attachments so that it will not be queried again in model callbacks
