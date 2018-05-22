@@ -372,7 +372,7 @@ en:
   fb_realtime_enable: "Facebook real-time messaging is now live! Reauthorize your existing Facebook Pages to enable the feature for your account. Read more <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/221711'>here</a>"
   freshpipe_email_disabled: "All outgoing emails and notifications are currently disabled since the data migration is in progress."
   reauthorize_facebook: "Reauthorize your facebook account."
-  imap_mailbox_error: " Please click here to view details"
+  imap_mailbox_error: "View details"
   twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
   smart_filter_disabled: "Social Signals is temporarily down. We are working on getting it up and running."
   reauthorize_twitter: Reauthorize your twitter handle.
@@ -11965,6 +11965,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     help: What's this?
     feed_back_survery: Help us with some feedback?
   collaboration:
+    collab_deleted_user: "Deleted Agent"
     highlight_mode_on: "Highlight mode on"
     highlight_mode_off: "Highlight mode off"
     follow_discussion: "Follow this discussion"
@@ -12191,3 +12192,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
+  sandbox:
+    email: 'This email is generated from a sandbox account'
+    banner:
+      production_info: Your sandbox account is curently active. We do not recommend you make any changes to your freshdesk account. <a href='http://%{url}' target=_blank rel="noreferrer noopener">Take me there.</a>

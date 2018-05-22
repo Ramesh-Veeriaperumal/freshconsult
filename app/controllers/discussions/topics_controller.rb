@@ -284,7 +284,7 @@ class Discussions::TopicsController < ApplicationController
 		end
 
 		def topic_param
-			@topic_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:body_html,:forum_id,:display_id,:user_id].include? k }
+			@topic_params ||= params[:topic].symbolize_keys.delete_if{|k, v| [:body_html,:forum_id,:display_id,:user_id,:inline_attachment_ids].include? k }
 		end
 
 		def post_param
