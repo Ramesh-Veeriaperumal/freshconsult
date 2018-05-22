@@ -14,6 +14,7 @@ class TicketSummaryController < ApiApplicationController
     end
     assign_summary_attributes
     return unless validate_delegator(@item, delegator_hash)
+    @item.inline_attachment_ids = @inline_attachment_ids
     @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
     save_summary = @item.save_note
     render_custom_errors(@item) unless save_summary
@@ -164,7 +165,7 @@ class TicketSummaryController < ApiApplicationController
     end
 
     def delegator_hash
-      { parent_attachments: parent_attachments, attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+      { parent_attachments: parent_attachments, attachment_ids: @attachment_ids, shared_attachments: shared_attachments, inline_attachment_ids: @inline_attachment_ids }
     end
 
     def scoper

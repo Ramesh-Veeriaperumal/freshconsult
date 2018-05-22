@@ -160,6 +160,9 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 .help-text{	font-size: 12px;  }
 .company-users-filter{
 	display: inline-block;
+	.select2-input {
+		line-height: 1.2;
+	}
 }
 .p-info strong{ color: $grayDark; }
 .list-noinfo{ @include text-align(center); }
@@ -332,7 +335,7 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 
 .c-list{
 	margin-bottom: 12px;
-	margin-top: 5px;
+	margin-top: 10px;
 	margin-bottom: 1em;
 }
 

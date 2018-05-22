@@ -65,8 +65,8 @@ module Freshcaller
       business_calendars = []
       duplicates = {}
       account = ::Account.current
-      if account.business_calendar.present?
-        account.business_calendar.each do |business_calendar|
+      account.business_calendar.find_in_batches(batch_size: 10) do |calendar_batch|
+        calendar_batch.each do |business_calendar|
           business_calendar_name = business_calendar.name.downcase
           if duplicates[business_calendar_name].nil?
             duplicates[business_calendar_name] = 0

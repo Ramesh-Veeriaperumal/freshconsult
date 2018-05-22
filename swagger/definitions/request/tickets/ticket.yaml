@@ -30,3 +30,7 @@ allOf:
         type: array
         items:
           $ref: '#/definitions/cloud_file_input'
+      inline_attachment_ids:
+        type: array
+        items:
+          type: integer

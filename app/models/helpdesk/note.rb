@@ -416,6 +416,13 @@ class Helpdesk::Note < ActiveRecord::Base
   #   self.account.features?(:resource_rate_limit) && !self.instance_variable_get(:@skip_resource_rate_limit)
   # end
 
+  def inline_attachment_ids=(attachment_ids)
+    attachment_ids ||= []
+    attachment_ids = attachment_ids.split(",") if attachment_ids.is_a? String
+    attachment_ids = (inline_attachment_ids + attachment_ids).map(&:to_i).uniq
+    super(attachment_ids)
+  end
+
   protected
 
     def send_reply_email  

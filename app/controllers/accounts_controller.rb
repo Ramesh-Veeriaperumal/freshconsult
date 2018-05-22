@@ -425,7 +425,7 @@ class AccountsController < ApplicationController
 
     def select_latest_shard(&block)
       Sharding.select_latest_shard(&block)
-    end   
+    end
 
     def build_signup_param
       params[:signup] = {}
@@ -435,7 +435,6 @@ class AccountsController < ApplicationController
           params[:signup]["#{param}_#{key}"] = value
         end
       end
-      
       params[:signup][:locale] = assign_language || http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
       metrics_obj, account_obj = build_metrics

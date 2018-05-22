@@ -3,7 +3,7 @@ module ExportHelper
   DEFAULT_CONTACT_EXPORT_FIELDS = %w(name phone mobile).freeze
   DEFAULT_COMPANY_EXPORT_FIELDS = %w(name).freeze
   MAX_QUERY_LIMIT = 480 #FQL has a query limit of 512. We are adding display_id condition to the query we get to the API. So setting the API query limit at 480
-  
+
   def validate_export_params(cname_params)
     cname_params.merge(ticket_fields: (merge_custom_fields(cname_params, :ticket_fields) || {}).keys,
                            contact_fields: (merge_custom_fields(cname_params, :contact_fields) || {}).keys,

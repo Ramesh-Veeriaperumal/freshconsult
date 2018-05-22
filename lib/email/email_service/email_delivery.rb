@@ -46,7 +46,7 @@ include Email::EmailService::IpPoolHelper
     to_email = construct_email_json_array params[:to]
     cc = params[:cc].present? ? (construct_email_json_array params[:cc] ): nil
     bcc = params[:bcc].present? ? (construct_email_json_array params[:bcc]) : nil
-    reply_to = construct_email_json params["Reply-To"] if params["Reply-To"].present?
+    reply_to = ((!(params["Reply-To"]).nil? && (params["Reply-To"]).kind_of?(Array)) ? construct_email_json(params["Reply-To"][0] ): construct_email_json(params["Reply-To"])) if params["Reply-To"].present?
     account_id = params["X-FD-Account-Id"].present? ? params["X-FD-Account-Id"] : -1
     type = (params["X-FD-Type"].present?) ? params["X-FD-Type"] : "empty"
     category_id = get_notification_category_id(params, type) || check_spam_category(params, type)

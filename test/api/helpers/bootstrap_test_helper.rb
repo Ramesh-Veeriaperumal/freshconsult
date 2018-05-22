@@ -96,6 +96,7 @@ module BootstrapTestHelper
     pattern[:collaboration] = collab_pattern if account.collaboration_enabled?
     pattern[:social_options] = social_options_hash if account.features?(:twitter) || account.basic_twitter_enabled?
     pattern[:freshchat] = freshchat_hash if account.freshchat_enabled?
+    pattern.merge!(sandbox_info(account))
     if User.current.privilege?(:manage_users) || User.current.privilege?(:manage_account)
       pattern[:subscription] = {
         agent_limit: account.subscription.agent_limit,
@@ -115,6 +116,14 @@ module BootstrapTestHelper
         groups: Array,
       }
     )
+  end
+
+  def sandbox_info(account)
+    sandbox_info = {}
+    sandbox_info[:sandbox] = {}
+    sandbox_info[:sandbox][:account_type] = account.account_type if account.sandbox_job || account.sandbox?
+    sandbox_info[:sandbox][:production_url] = account.account_additional_settings.additional_settings[:sandbox].try(:[], :production_url) if account.sandbox?
+    sandbox_info
   end
 
   def agent_simple_pattern(agent)

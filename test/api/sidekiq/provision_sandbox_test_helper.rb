@@ -1,0 +1,103 @@
+require Rails.root.join('test', 'api', 'helpers', 'ticket_fields_test_helper.rb')
+CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
+['ticket_template_helper.rb', 'group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+Dir["#{Rails.root}/test/core/helpers/*.rb"].each { |file| require file }
+module ProvisionSandboxTestHelper
+  include GroupHelper
+  include ::TicketFieldsTestHelper
+  include TicketTemplateHelper
+  include TicketsTestHelper
+
+  IGNORE_TABLES = ["helpdesk_shared_attachments", "helpdesk_attachments", "users", "agents", "user_emails", "helpdesk_tags", "helpdesk_accesses"]
+
+  def model_table_mapping
+    @model_table_maping = Hash[ActiveRecord::Base.send(:descendants).collect {|c| [c.name, c.table_name]}]
+  end
+
+  def table_model_mapping
+    @table_model_mapping = Hash[MODEL_DEPENDENCIES.keys.collect {|table| [model_table_mapping[table], table]}]
+  end
+
+  def sandbox_affected_tables
+    @sandbox_affected_tables ||= MODEL_DEPENDENCIES.keys.map {|table| model_table_mapping[table]}.compact - IGNORE_TABLES
+  end
+
+  def account_list_data(account_id)
+    shard_name = ShardMapping.find_by_account_id(account_id).try(:[], :shard_name)
+    account_data = {}
+    Sharding.run_on_shard(shard_name) do
+      sandbox_affected_tables.each do |table|
+        account_data[table] = column_exists?(table, 'id') ? sql_list_query(account_id, table) : [sql_count_query(account_id, table)]
+      end
+    end
+    account_data
+  end
+
+  def column_exists?(table, column_name)
+    table_model_mapping[table].constantize.columns.map(&:name).include?(column_name)
+  end
+
+  def match_data(master_account_id, sandbox_account_id)
+    master_account_data = account_list_data(master_account_id)
+    sandbox_account_data = account_list_data(sandbox_account_id)
+    Rails.logger.info " Master account data #{master_account_data.inspect} Sandbox account data#{sandbox_account_data.inspect}"
+    master_account_data.each do |table, ids|
+      assert_equal ids.sort, sandbox_account_data[table].sort
+    end
+  end
+
+  def sql_list_query(account_id, table_name)
+    sql = "select id from #{table_name} where account_id = #{account_id}"
+    ActiveRecord::Base.connection.execute(sql).collect {|record| record[0]}
+  end
+
+  def sql_count_query(account_id, table_name)
+    sql = "select count(*) from #{table_name} where account_id = #{account_id}"
+    ActiveRecord::Base.connection.execute(sql).first.try(:[], 0).to_i
+  end
+
+  def create_ticket_templates(account)
+    enable_adv_ticketing(:parent_child_tickets) do
+      @groups = []
+      @agent = get_admin
+      3.times { @groups << create_group(account) }
+      10.times do
+        create_tkt_template(name: Faker::Name.name,
+                            association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general],
+                            account_id: @account.id,
+                            accessible_attributes: {
+                                access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+                            })
+      end
+    end
+  end
+
+  def create_ticket_fields(account)
+    account.ticket_fields.custom_fields.each(&:destroy)
+    create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+    create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+    CUSTOM_FIELDS.each do |custom_field|
+      next if %w(dropdown country state city).include?(custom_field)
+      create_custom_field("test_custom_#{custom_field}", custom_field)
+    end
+    create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+    create_custom_field_dropdown('test_custom_dropdown', ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'])
+  end
+
+
+  def create_sample_data(account)
+    # Add extra data before sync to sandbox if required
+    create_ticket_fields(account)
+    create_ticket_templates(account)
+  end
+
+  def delete_sandbox_references(account)
+    sandbox_job = account.sandbox_job
+    sandbox_job.destroy if sandbox_job
+  end
+
+  def sandbox_account_exists(sandbox_account_id)
+    assert_equal ShardMapping.find_by_account_id(sandbox_account_id), nil
+  end
+
+end

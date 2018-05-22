@@ -381,7 +381,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
           part.html{ render "reply.text.html"}
         end.deliver
       rescue => e
-        deliver_email headers, note.all_attachments, "reply"
+        if (e.to_s.downcase.include?("line length exceeded") && (email_config.smtp_mailbox.nil?))
+          deliver_email headers, note.all_attachments, "reply"
+        else
+          raise e
+        end
       end
     ensure
       remove_email_config
@@ -441,7 +445,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
           part.html{ render "forward.text.html"}
         end.deliver
       rescue => e
-        deliver_email headers, note.all_attachments, "forward"
+        if (e.to_s.downcase.include?("line length exceeded") && (email_config.smtp_mailbox.nil?))
+          deliver_email headers, note.all_attachments, "forward"
+        else
+          raise e
+        end
       end
     ensure
       remove_email_config
@@ -498,7 +506,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
           part.html{ render "reply_to_forward.text.html"}
         end.deliver
       rescue => e
-        deliver_email headers, note.all_attachments, "reply_to_forward"
+        if (e.to_s.downcase.include?("line length exceeded") && (email_config.smtp_mailbox.nil?))
+          deliver_email headers, note.all_attachments, "reply_to_forward"
+        else
+          raise e
+        end
       end
     ensure
       remove_email_config
@@ -506,8 +518,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
   
   def email_to_requester(ticket, content, sub=nil)
+    email_config = ticket.friendly_reply_email_config
     begin
-      configure_email_config ticket.friendly_reply_email_config
+      configure_email_config email_config
       header_message_id = construct_email_header_message_id(:automation)
       headers   = email_headers(ticket, header_message_id).merge({
         :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
@@ -528,19 +541,27 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       if attachments.present? && attachments.inline.present?
         handle_inline_attachments(attachments, content, ticket.account)
       end
-
-      mail(headers) do |part|
-        part.text { render "email_to_requester.text.plain" }
-        part.html { render "email_to_requester.text.html" }
-      end.deliver
+      begin
+        mail(headers) do |part|
+          part.text { render "email_to_requester.text.plain" }
+          part.html { render "email_to_requester.text.html" }
+        end.deliver
+      rescue => e
+        if (e.to_s.downcase.include?("line length exceeded") && (email_config.smtp_mailbox.nil?))
+          deliver_email headers, attachments, "email_to_requester"
+        else
+          raise e
+        end
+      end
     ensure
         remove_email_config
     end
   end
   
   def internal_email(ticket, receips, content, sub=nil)
+    email_config = ticket.friendly_reply_email_config
     begin
-      configure_email_config ticket.friendly_reply_email_config
+      configure_email_config email_config
       header_message_id = construct_email_header_message_id(:automation)
       headers = email_headers(ticket, header_message_id).merge({
         :subject    =>  (sub.blank? ? formatted_subject(ticket) : sub),
@@ -562,10 +583,18 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         handle_inline_attachments(attachments, content, ticket.account)
       end
 
-      mail(headers) do |part|
-        part.text { render "internal_email.text.plain" }
-        part.html { render "internal_email.text.html" }
-      end.deliver
+      begin
+        mail(headers) do |part|
+          part.text { render "internal_email.text.plain" }
+          part.html { render "internal_email.text.html" }
+        end.deliver
+      rescue => e
+        if (e.to_s.downcase.include?("line length exceeded") && (email_config.smtp_mailbox.nil?))
+          deliver_email headers, attachments, "internal_email"
+        else
+          raise e
+        end
+      end
     ensure
       remove_email_config
     end
@@ -626,7 +655,11 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
           part.html{ render "notify_outbound_email.text.html"}
         end.deliver
       rescue => e
-        deliver_email headers, ticket.all_attachments, "notify_outbound_email"
+        if (e.to_s.downcase.include?("line length exceeded") && (ticket.reply_email_config.smtp_mailbox.nil?))
+          deliver_email headers, ticket.all_attachments, "notify_outbound_email"
+        else
+          raise e
+        end
       end
     ensure
       remove_email_config

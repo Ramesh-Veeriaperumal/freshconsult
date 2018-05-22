@@ -21,6 +21,7 @@ class AccountDecorator < ApiDecorator
       verified: record.verified?,
       created_at: record.created_at.try(:utc)
     }
+    ret_hash.merge!(sandbox_info)
     ret_hash[:collaboration] = collaboration_hash if record.collaboration_enabled?
     ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
     ret_hash[:freshchat] = freshchat_options_hash if record.freshchat_enabled?
@@ -114,5 +115,13 @@ class AccountDecorator < ApiDecorator
 
     def collaboration_hash
       Collaboration::Payloads.new.account_payload
+    end
+
+    def sandbox_info
+      sandbox_info = {}
+      sandbox_info[:sandbox] = {}
+      sandbox_info[:sandbox][:account_type] = record.account_type if record.sandbox_job || record.sandbox?
+      sandbox_info[:sandbox][:production_url] = record.account_additional_settings.additional_settings[:sandbox].try(:[], :production_url) if record.sandbox?
+      sandbox_info
     end
 end
