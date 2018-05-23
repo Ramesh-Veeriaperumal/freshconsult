@@ -511,6 +511,18 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(bots_count_memcache_key)
   end
 
+  def canned_responses_inline_images_from_cache
+    @canned_responses_inline_images_from_cache ||= begin
+      MemcacheKeys.fetch(canned_responses_inline_images_key) do
+        Account.current.canned_responses_inline_images
+      end
+    end
+  end
+
+  def clear_canned_responses_inline_images_from_cache
+    MemcacheKeys.delete_from_cache(canned_responses_inline_images_key)
+  end
+
   private
     def permissible_domains_memcache_key id = self.id
       HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
@@ -562,5 +574,9 @@ module Cache::Memcache::Account
 
     def bots_count_memcache_key
       BOTS_COUNT % { account_id: self.id }
+    end
+
+    def canned_responses_inline_images_key
+      CANNED_RESPONSES_INLINE_IMAGES % { account_id: self.id }
     end
 end

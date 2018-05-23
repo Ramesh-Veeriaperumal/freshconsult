@@ -6603,7 +6603,7 @@ en:
     gdpr_admin_details: has changed your user permissions from
     gdpr_agent: Agent
     gdpr_admin: Admin.
-    gdpr_terms: By clicking on Accept , you agree to our  
+    gdpr_terms: By clicking on Accept , you agree to our
     gdpr_terms_link:  Terms
     gdpr_acknowledgement: and acknowledge having read our
     gdpr_policy: Privacy policy.
@@ -12210,10 +12210,14 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       enable_chat_in_portal: 'Enable chat in your support portal'
       enable_chat_in_portal_info: 'Make it easy for your customers to chat with you, when they land on your support portal.'
       header_info: Freshdesk’s integrated chat channel is powered by Freshchat. Freshchat is a modern messaging software that helps engage, support, and retain customers on multiple channels - website, mobile, support portal, and in-app.
-      sidebar_content: 
+      sidebar_content:
         para1: Freshdesk’s integrated chat channel, powered by Freshchat, helps you engage in conversations with customers who are you on the website, mobile, support portal, or in-app. You can also send proactive messages to visitors and users and drive them to make a purchase, sign up, or share feedback on your product.
         para2:
           header: 'Use the messenger inside Freshdesk to bring your support and messaging workflow together:'
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
+  sandbox:
+    live: Sandbox is live
+    error:
+      create: sandbox account already exist

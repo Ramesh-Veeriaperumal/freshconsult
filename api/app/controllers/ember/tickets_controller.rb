@@ -18,7 +18,6 @@ module Ember
     SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties execute_scenario).freeze
 
     before_filter :ticket_permission?, only: [:latest_note, :split_note]
-    before_filter :parent_permission, only: [:create]
     before_filter :load_note, only: [:split_note]
     before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
     after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
@@ -42,8 +41,8 @@ module Ember
       return render_request_error(:recipient_limit_exceeded, 429) if recipients_limit_exceeded?
       delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
                          attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
-                         parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params, tags: cname_params[:tags] }
-
+                         parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params,
+                         tags: cname_params[:tags], company_id: cname_params[:company_id], inline_attachment_ids: @inline_attachment_ids }
       return unless validate_delegator(@item, delegator_hash)
       save_ticket_and_respond
     end
@@ -51,7 +50,8 @@ module Ember
     def update
       assign_protected
       delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
-                         attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+                         attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
+                         company_id: cname_params[:company_id] }
       assign_attributes_for_update
       return unless validate_delegator(@item, delegator_hash)
       @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
@@ -136,9 +136,10 @@ module Ember
       sanitize_params 
       assign_ticket_status
       @item.assign_attributes(validatable_delegator_attributes)
-      delegator_hash = { ticket_fields: @ticket_fields, attachment_ids: @attachment_ids, tags: cname_params[:tags] }
+      delegator_hash = { ticket_fields: @ticket_fields, attachment_ids: @attachment_ids, tags: cname_params[:tags], inline_attachment_ids: @inline_attachment_ids }
       return unless validate_delegator(@item, delegator_hash)
       @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
+      @item.inline_attachment_ids = @inline_attachment_ids
       build_cloud_files(@item, @cloud_files)
       if @item.update_ticket_attributes(cname_params)
         render 'ember/tickets/show'
@@ -280,14 +281,6 @@ module Ember
         cname_params[:attachments] = attachments_array
       end
 
-      def parent_attachments
-        @parent_attachments ||=  if @attachment_ids.present? && parent_ticket.present?
-          @parent_ticket.all_attachments.select { |x| @attachment_ids.include?(x.id) }
-        else
-          []
-        end
-      end
-
       def parent_template_attachments
         @template_attachments ||= if @attachment_ids.present? && parent_template.present?
           parent_template.attachments.select { |x| @attachment_ids.include?(x.id) }
@@ -298,10 +291,6 @@ module Ember
 
       def parent_template
         @parent_template ||= current_account.prime_templates.find_by_id(@parent_template_id) if @parent_template_id.present?
-      end
-
-      def parent_ticket
-        @parent_ticket ||= current_account.tickets.find_by_display_id(cname_params[:assoc_parent_tkt_id])
       end
 
       def count_included?
@@ -327,6 +316,7 @@ module Ember
 
       def create_ticket
         @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
+        @item.inline_attachment_ids = @inline_attachment_ids
         @item.save_ticket
       end
 
@@ -448,12 +438,6 @@ module Ember
       def load_note
         @note = @item.notes.find_by_id(params[:note_id])
         log_and_render_404 unless @note
-      end
-
-      def parent_permission
-        if cname_params[:assoc_parent_tkt_id].present?
-          render_request_error :access_denied, 403 if !parent_ticket || !current_user.has_ticket_permission?(parent_ticket)
-        end
       end
 
       def notification_not_required?

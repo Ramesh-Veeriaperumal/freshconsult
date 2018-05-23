@@ -28,8 +28,8 @@ module Sync::SqlUtil
     ActiveRecord::Base.connection.execute(sql)
   end
 
-  def record_present?(table_name, id)
-    sql = "select (1) from #{table_name} where id = #{id}"
+  def record_present?(table_name, account_id, id)
+    sql = "select (1) from #{table_name} where id = #{id} and account_id = #{account_id}"
     #puts sql
     !ActiveRecord::Base.connection.execute(sql).to_a.blank?
   end

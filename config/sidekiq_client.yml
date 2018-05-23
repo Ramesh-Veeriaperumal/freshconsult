@@ -271,6 +271,12 @@ defaults: &defaults
     - [email_service_provider]
     - [calculate_sla]
     - [freshid_agents_migration]
+    - [inline_image_shredder]
+    - [create_sandbox_account]
+    - [delete_sandbox]
+    - [sandbox_file_to_config]
+    - [sandbox_config_to_file]
+    - [clone]
 
 development:
   <<: *defaults

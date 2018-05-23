@@ -145,6 +145,7 @@ module TicketConcern
     def process_saved_params
       # following fields must be handled separately, should not be passed to build_object method
       @attachment_ids = @attachment_ids.map(&:to_i) if @attachment_ids
+      @inline_attachment_ids = @inline_attachment_ids.map(&:to_i) if @inline_attachment_ids
     end
 
     def process_custom_fields

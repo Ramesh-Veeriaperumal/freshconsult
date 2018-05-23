@@ -569,6 +569,52 @@ module Ember
         end
       end
 
+      def test_bulk_reply_without_inline_attachments
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
+        email_config = create_email_config
+        reply_hash = { from_email: email_config.reply_email, body: Faker::Lorem.paragraph }
+        params_hash = { ids: ticket_ids, reply: reply_hash }
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+      end
+
+      def test_bulk_reply_with_invalid_inline_attachments
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
+        email_config = create_email_config
+        reply_hash = {  from_email: email_config.reply_email, 
+                        body: Faker::Lorem.paragraph,
+                        inline_attachment_ids: [99999999] }
+        params_hash = { ids: ticket_ids, reply: reply_hash }
+        post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        assert_response 400
+        match_json([bad_request_error_pattern('inline_attachment_ids', :invalid_inline_attachments_list, invalid_ids: 99999999)])
+      end
+
+      def test_bulk_reply_with_valid_inline_attachment
+        Helpdesk::Attachment.any_instance.stubs(:authenticated_s3_get_url).returns('spec/fixtures/files/attachment.txt')
+        ticket_ids = create_n_tickets(5)
+        email_config = create_email_config
+        inline_attachment_id = create_attachment(attachable_type: 'Tickets Image Upload', attachable_id: @agent.id).id
+        attachment = Helpdesk::Attachment.find_by_id(inline_attachment_id)
+        inline_url = attachment.inline_url
+        reply_hash = {  from_email: email_config.reply_email, 
+                        body: Faker::Lorem.paragraph+"<img class=\"inline-image\" src=\""+attachment.inline_url+"\" data-id="+attachment.id.to_s+"></img>",
+                        inline_attachment_ids: [inline_attachment_id] }
+        params_hash = { ids: ticket_ids, reply: reply_hash }
+        stub_attachment_to_io do
+          Sidekiq::Testing.inline! do
+            post :bulk_update, construct_params({ version: 'private' }, params_hash)
+          end
+        end
+        Helpdesk::Attachment.any_instance.unstub(:authenticated_s3_get_url)
+        assert_response 202
+        Helpdesk::Note.last(ticket_ids.size).each do |note|
+          data_id = "data-id="+attachment.id.to_s
+          assert_equal note.body_html.include?(data_id),false
+        end
+      end
+
       def test_bulk_update_queued_jobs
         ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_dropdown_#{@account.id}" }
         ticket_ids = create_n_tickets(5)

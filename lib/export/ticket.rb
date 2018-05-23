@@ -56,6 +56,11 @@ class Export::Ticket < Struct.new(:export_params)
     @headers << "support_ticket_path"
   end
 
+  def add_url_to_export_fields
+    export_params[:export_fields].merge!('support_ticket_path' => 'URL')
+    @headers << "support_ticket_path"
+  end
+
   def set_current_user
     unless User.current 
       user = Account.current.users.find(export_params[:current_user_id])

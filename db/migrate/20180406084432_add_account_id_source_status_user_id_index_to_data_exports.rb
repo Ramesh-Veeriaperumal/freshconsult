@@ -1,6 +1,6 @@
 class AddAccountIdSourceStatusUserIdIndexToDataExports < ActiveRecord::Migration
   shard :all
-  
+
   def migrate(direction)
     self.send(direction)
   end

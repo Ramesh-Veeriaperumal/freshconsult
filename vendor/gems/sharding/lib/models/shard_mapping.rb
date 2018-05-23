@@ -39,7 +39,7 @@ class ShardMapping < ActiveRecord::Base
  end
 
  def self.latest_shard
-  if Rails.env.development? or Rails.env.test? 
+  if Rails.env.development? or Rails.env.test?
     "shard_1"
   else
     AppConfig['latest_shard']

@@ -47,6 +47,15 @@ module Ember
         assert_response 204
       end
 
+      def test_save_draft_with_inline_attachment_ids
+        ticket = create_ticket
+        email_config = create_email_config
+        params_hash = { body: 'Sample text', quoted_text: 'Sample Quoted Text', cc_emails: [Faker::Internet.email], bcc_emails: [Faker::Internet.email], 
+          from_email: email_config.reply_email, inline_attachment_ids: [1,2,3] }
+        post :save_draft, construct_params({version: 'private', id: ticket.display_id}, params_hash)
+        assert_response 204
+      end
+
       def test_show_draft_without_save
         ticket = create_ticket
         get :show_draft, controller_params(version: 'private', id: ticket.display_id)

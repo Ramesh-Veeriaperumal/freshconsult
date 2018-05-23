@@ -111,11 +111,12 @@ module Ember
         def validate_reply_params
           return true unless @reply_hash.present?
           @attachment_ids = @reply_hash[:attachment_ids]
+          @inline_attachment_ids = @reply_hash[:inline_attachment_ids]
           reply_note = @item.notes.build(@reply_hash.slice(:body, :from_email))
           reply_note.cloud_files.build(@reply_hash[:cloud_files]) if @reply_hash[:cloud_files]
           @dklass_computed = nil
           @delegator_klass = 'ConversationDelegator'
-          delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+          delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments, inline_attachment_ids: @inline_attachment_ids }
           validate_delegator(reply_note, delegator_hash)
         end
 
@@ -260,7 +261,8 @@ module Ember
             source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'],
             note_body_attributes: {
               body_html: @reply_hash[:body]
-            }
+            },
+            inline_attachment_ids: @inline_attachment_ids ? @inline_attachment_ids : [],
           }.merge(attachment_params)
         end
 

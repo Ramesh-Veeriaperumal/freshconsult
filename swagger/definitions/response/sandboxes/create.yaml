@@ -1,0 +1,9 @@
+type: object
+properties:
+  sandbox:
+    type: object
+    properties:
+      id:
+        type: number
+      status:
+        type: string

@@ -25,7 +25,13 @@ module Sync
 
     def polymorphic_dependencies
       return [] unless polymorphic?
-      all_models.select { |model| polymorphic_match? model }.map(&:model_name)
+      dependency_models= []
+      all_models.each do |model|
+        if polymorphic_match? model
+          dependency_models << model.new.class.superclass.to_s != "ActiveRecord::Base" ? model.new.class.superclass.to_s : model.class.to_s
+        end
+      end
+      dependency_models
     end
 
     def polymorphic_match?(model)

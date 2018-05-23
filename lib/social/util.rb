@@ -110,6 +110,7 @@ module Social::Util
 
   def construct_media_url_hash(account, item, tweet, oauth_credential)
     media_url_hash = {}
+    inline_attachments = []
     begin
       media_array = tweet.media
       photo_url_hash = {}
@@ -128,6 +129,7 @@ module Social::Util
           image_attachment = Helpdesk::Attachment.create_for_3rd_party(account,item, options, 1, 1, false)
           if image_attachment.present? && image_attachment.content.present?
             photo_url_hash[media.url.to_s] = image_attachment.inline_url
+            inline_attachments.push(image_attachment)
           end
         end
       end
@@ -135,6 +137,7 @@ module Social::Util
     rescue => e
       Rails.logger.error("Exception while attaching media content to ticket Exception: #{e.class} Exception Message: #{e.message}")
     end
+    item.inline_attachments = inline_attachments.compact
     media_url_hash
   end
 

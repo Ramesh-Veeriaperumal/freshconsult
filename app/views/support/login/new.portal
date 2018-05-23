@@ -1,5 +1,5 @@
 <div id="login-page-wrapper">
-	<section id="login-container" class="content-form rounded-6 main {% if portal.freshid_feature? %} freshid_login{% endif %}">
+	<section id="login-container" class="content-form rounded-6 main">
 		<div class="login-form">
 			<div id="login-form">
 				<h2 class="heading">{% translate portal.login_portal %}</h2>

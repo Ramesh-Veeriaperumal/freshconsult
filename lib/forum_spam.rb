@@ -36,4 +36,5 @@ class ForumSpam < Dynamo
 	def type
 		:spam
 	end
+	
 end

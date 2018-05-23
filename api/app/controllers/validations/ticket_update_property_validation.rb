@@ -5,7 +5,7 @@ class TicketUpdatePropertyValidation < ApiValidation
   REQUEST_PARAM_MAPPING = { agent: :responder_id, group: :group_id }.freeze
 
   attr_accessor :due_by, :fr_due_by, :agent, :group, :product, :status, :priority, :item, :ticket_type, :request_params, :status_ids, :statuses, :ticket_fields,
-                :custom_fields, :tags, :skip_close_notification, :description, :subject
+                :custom_fields, :tags, :skip_close_notification, :description, :subject, :inline_attachment_ids
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -46,6 +46,7 @@ class TicketUpdatePropertyValidation < ApiValidation
 
   validates :skip_close_notification, custom_absence: { allow_nil: false, message: :cannot_set_skip_notification }, unless: -> { request_params.key?(:status) && closure_status? }
   validates :skip_close_notification, data_type: { rules: 'Boolean', ignore_string: :allow_string_param }, if: -> { errors[:skip_close_notification].blank? }
+  validates :inline_attachment_ids, data_type: { rules: Array }
 
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params

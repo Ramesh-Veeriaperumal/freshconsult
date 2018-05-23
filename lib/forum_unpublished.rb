@@ -16,15 +16,6 @@ class ForumUnpublished < Dynamo
 		ForumUnpublishedNext
 	end
 
-	def self.by_user(user, user_timestamp)
-		query(
-			:account_id => Account.current.id,
-			:user_timestamp => 
-			[:between, user_timestamp, next_user_timestamp(user)],
-			:ascending => true
-			)
-	end
-
 	def next
 		ForumUnpublishedNext.find(:account_id => self[:account_id], :timestamp => self[:timestamp])
 	end
@@ -32,10 +23,5 @@ class ForumUnpublished < Dynamo
 	def type
 		:unpublished
 	end
-
-	def self.next_user_timestamp(user)
-		(user + 1) * (10 ** 17) + Time.now.utc.to_f * (10 ** 7)
-	end
-
 
 end

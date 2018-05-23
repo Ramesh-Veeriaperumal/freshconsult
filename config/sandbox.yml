@@ -1,8 +1,8 @@
 defaults: &defaults
-  repo_url: 'ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/fd-sandbox'
-  public_key: '/Users/arvind/.ssh/aws_codecommit.pub'
-  private_key: '/Users/arvind/.ssh/aws_codecommit'
-  username: 'APKAJ3234SZUVVN5HTKQ'
+  repo_url: 'file:///Users/user/FD_repo/sandbox_local_repo/.git/'
+  public_key: '/Users/user/.ssh/codecommit_rsa.pub'
+  private_key: '/Users/user/.ssh/codecommit_rsa'
+  username: 'APKAJIQUDK2NRJNJF62Q'
 
 development:
   <<: *defaults

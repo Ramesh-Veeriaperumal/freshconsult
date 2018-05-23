@@ -29,3 +29,7 @@ allOf:
         type: array
         items:
           type: string
+      inline_attachment_ids:
+        type: array
+        items:
+          type: integer

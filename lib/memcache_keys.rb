@@ -36,11 +36,11 @@ module MemcacheKeys
 
   ACCOUNT_STATUS_GROUPS = "v1/ACCOUNT_STATUS_GROUPS:%{account_id}"
 
-  PORTAL_BY_URL = "v3/PORTAL_BY_URL:%{portal_url}"
+  PORTAL_BY_URL = "v4/PORTAL_BY_URL:%{portal_url}"
 
-  ACCOUNT_BY_FULL_DOMAIN = "v5/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
+  ACCOUNT_BY_FULL_DOMAIN = "v6/ACCOUNT_BY_FULL_DOMAIN:%{full_domain}"
 
-  ACCOUNT_MAIN_PORTAL = "v4/ACCOUNT_MAIN_PORTAL:%{account_id}"
+  ACCOUNT_MAIN_PORTAL = "v5/ACCOUNT_MAIN_PORTAL:%{account_id}"
 
   ACCOUNT_CUSTOM_DROPDOWN_FIELDS = "v3/ACCOUNT_CUSTOM_DROPDOWN_FIELDS:%{account_id}"
 
@@ -97,9 +97,9 @@ module MemcacheKeys
 
   FEATURES_LIST = "v4/FEATURES_LIST:%{account_id}"
 
-  SHARD_BY_DOMAIN = "v5/SHARD_BY_DOMAIN:%{domain}"
+  SHARD_BY_DOMAIN = "v6/SHARD_BY_DOMAIN:%{domain}"
 
-  SHARD_BY_ACCOUNT_ID = "v5/SHARD_BY_ACCOUNT_ID:%{account_id}"
+  SHARD_BY_ACCOUNT_ID = "v6/SHARD_BY_ACCOUNT_ID:%{account_id}"
 
   DEFAULT_BUSINESS_CALENDAR = "v1/DEFAULT_BUSINESS_CALENDAR:%{account_id}"
 
@@ -210,6 +210,8 @@ module MemcacheKeys
   ACCOUNT_BOTS = "BOTS:%{account_id}"
 
   BOTS_COUNT = "BOTS_COUNT:%{account_id}"
+
+  CANNED_RESPONSES_INLINE_IMAGES = "CANNED_RESPONSES_INLINE_IMAGES:%{account_id}"
 
   class << self
 

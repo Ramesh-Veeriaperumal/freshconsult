@@ -32,7 +32,7 @@ namespace :db do
       File.open(config_file_name, 'w') do |file|
         file.write(config_file_data.sub('9cb7f8ec7e560956b38e35e5e3005adf68acaf1f64600950e2f7dc9e6485d6d9c65566d193204316936b924d7cc72f54cad84b10a70a0257c3fd16e732152565', new_secret))
       end
-      
+
       puts "All done!  You can now login to the test account at the localhost domain with the login #{Helpdesk::EMAIL[:sample_email]} and password test1234.\n\n"
     end
   end
@@ -50,6 +50,23 @@ namespace :db do
       puts "Populating the default record for global_blacklisted_ips table"
       PopulateGlobalBlacklistIpsTable.create_default_record
     end    
+  end
+
+  task :new_shard_setup =>  :environment do
+
+    unless Rails.env.production?
+      ActiveRecord::Base.connection.execute('CREATE DATABASE helpkit_test2_rails3')
+      Sharding.run_on_shard('sandbox_shard_1') do
+        puts 'Creating tables...'
+        Rake::Task["db:schema:load"].invoke
+        #    Rake::Task["db:migrate"].invoke
+        Rake::Task["db:create_reporting_tables"].invoke unless Rails.env.production?
+
+        Rake::Task["db:create_trigger"].invoke #To do.. Need to make sure the db account has super privs.
+        Rake::Task["db:perform_table_partition"].invoke
+        create_es_indices
+      end
+    end
   end
 
   task :create_reporting_tables => :environment do

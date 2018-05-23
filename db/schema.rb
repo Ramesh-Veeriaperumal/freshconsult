@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
     t.boolean  "premium",                        :default => false
     t.integer  "reputation",        :limit => 1, :default => 0
     t.string   "plan_features"
+    t.integer  "account_type",                     :limit => 4, :default => 0
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
@@ -143,10 +144,9 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
     t.integer  "account_id",         :limit => 8
     t.integer  "sandbox_account_id", :limit => 8
     t.integer  "status",                          :default => 0
-    t.string   "config"
     t.string   "git_tag"
-    t.datetime "created_at",                                     :null => false
-    t.datetime "updated_at",                                     :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
   end
 
   add_index "admin_sandbox_accounts", ["account_id"], :name => "index_admin_sandbox_accounts_on_account_id"
@@ -155,9 +155,11 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
     t.integer  "sandbox_account_id", :limit => 8
     t.integer  "initiated_by",       :limit => 8
     t.integer  "status",                          :null => false
+    t.string   "git_tag"
     t.integer  "account_id",         :limit => 8
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
+    t.text     "last_error"
   end
 
   add_index "admin_sandbox_jobs", ["account_id"], :name => "index_admin_sandbox_jobs_on_account_id"
