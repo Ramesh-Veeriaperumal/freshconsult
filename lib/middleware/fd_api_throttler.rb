@@ -42,7 +42,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
           set_redis_expiry(key, THROTTLE_PERIOD) if !expiry_set && (@count <= used_limit)
         end
         set_rate_limit_headers if @count
-        Rails.logger.debug("Throttled :: Host: #{@host}, Time: #{Time.now}, Count: (#{@count})")
+        Rails.logger.debug("Throttled :: Host: #{@host}, Time: #{Time.now}, Count: (#{@count}), AccountId: #{ Account.current.nil? ? "nil" :  Account.current.id }")
       else
         retry_value = handle_expiry_not_set
         @status, @headers, @response = [429, { 'Retry-After' => retry_value.to_s, 'Content-Type' => 'application/json' },
