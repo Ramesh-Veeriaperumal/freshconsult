@@ -12,7 +12,8 @@ class Account < ActiveRecord::Base
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab
                           productdemo resources static static0 static1 static2 static3 static4 static5
                           static6 static7 static8 static9 static10 dev apps freshapps fone
-                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 attachment euattachment eucattachment ausattachment indattachment agent-hermes) + FreshopsSubdomains + PartnerSubdomains
+                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 agent-hermes
+                          attachment euattachment eucattachment ausattachment indattachment) + FreshopsSubdomains + PartnerSubdomains
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
@@ -198,9 +199,15 @@ class Account < ActiveRecord::Base
     :falcon_signup => false, :falcon_portal_theme => false, :email_actions => false, :ner => false, :disable_freshchat => false, :freshchat_integration => false,
     :facebook_page_redirect => false, :froala_editor_forums => false, :ticket_central_publish => false, :solutions_central_publish => false, 
     :freshid => false, :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, :outgoing_attachment_limit_25 => false,
-    :whitelist_sso_login => false, :apigee => false, :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false
+    :whitelist_sso_login => false, :apigee => false, :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false, :auto_complete_off => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days
+
+  ACCOUNT_TYPES = {
+      :production_without_sandbox => 0,
+      :production_with_sandbox => 1,
+      :sandbox => 2
+  }
 
 end

@@ -12,6 +12,6 @@ production:
  account_url: 
  shared_secret: 
 
-testing:
+test:
  account_url: 
  shared_secret:   

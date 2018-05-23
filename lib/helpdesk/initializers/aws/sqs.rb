@@ -2,100 +2,95 @@ sqs_config = YAML::load(ERB.new(File.read("#{Rails.root}/config/sqs.yml")).resul
 
 SQS = (sqs_config[Rails.env] || sqs_config).symbolize_keys
 
+# Global SQS client
 begin
-  #Global SQS client
   $sqs_client = AWS::SQS.new.client
+rescue => e
+  puts "AWS::SQS connection establishment failed. - #{e.message}"
+end
 
-  $sqs_facebook =  AWS::SQS.new.queues.named(SQS[:facebook_realtime_queue])
+# List of SQS QUEUES for which, want access url as global variables
+# keys => name in yml, values => global variable to access SQS Queue url.
+GLOBAL_SQS_QUEUE_URLS = {
+  :facebook_realtime_queue        => 'sqs_facebook',
+  :channel_framework_services     => 'channel_framework_services',
+  :custom_mailbox_status          => 'custom_mailbox_status',
+  :fb_message_realtime_queue      => 'sqs_facebook_messages',
+  :custom_mailbox_realtime_queue  => 'sqs_mailbox',
+  :cti_call_queue                 => 'sqs_cti',
+  :reports_service_export_queue   => 'sqs_reports_service_export',
+  :helpdesk_reports_export_queue  => 'sqs_reports_helpkit_export',
+  :freshfone_call_notifier_queue  => 'freshfone_call_notifier',
+  :freshfone_call_tracker         => 'sqs_freshfone_tracker',
+  :scheduled_ticket_export_config => 'sqs_scheduled_ticket_export',
+  :fd_email_failure_reference     => 'sqs_email_failure_reference'
+}
 
-  $channel_framework_services =  AWS::SQS.new.queues.named(SQS[:channel_framework_services])
+GLOBAL_SQS_QUEUE_URLS.each do |queue_name, variable_name|
+  begin
+    if SQS[queue_name].present?
+      eval "$#{variable_name} = AWS::SQS.new.queues.named(SQS[queue_name])"
+    else
+      puts "yml value not found for #{queue_name}"
+    end
+  rescue => e
+    puts "Error in fetching URL for SQS Queue #{SQS[queue_name]} - error #{e.message}"
+    NewRelic::Agent.notice_error(e, {:description => "Error in fetching URL for SQS Queue #{SQS[queue_name]} - error #{e.message}"})
+  end
+end
 
-  $custom_mailbox_status =  AWS::SQS.new.queues.named(SQS[:custom_mailbox_status])
+# SQS v2 Queues list
+ SQS_V2_QUEUES =  [
+  :search_etl_queue, :count_etl_queue, :reports_etl_msg_queue, :iris_etl_msg_queue,
+  :activity_queue, :sqs_es_index_queue, :cti_screen_pop, :auto_refresh_queue,
+  :auto_refresh_alb_queue, :agent_collision_alb_queue, :marketplace_app_queue,
+  :free_customer_email_queue, :active_customer_email_queue, :trial_customer_email_queue,
+  :default_email_queue, :email_dead_letter_queue, :agent_collision_queue,
+  :collab_agent_update_queue, :collab_ticket_update_queue, :fd_email_failure_reference,
+  :scheduled_ticket_export_queue, :scheduled_user_export_queue, :scheduled_company_export_queue,
+  :scheduled_export_payload_enricher_queue, :bot_feedback_queue
+]
 
-  $sqs_facebook_messages = AWS::SQS.new.queues.named(SQS[:fb_message_realtime_queue])
+SQS_V2_QUEUE_URLS = {}
+SQS_V2_QUEUES.each do |queue_name|
+  begin
+    if SQS[queue_name].present?
+      SQS_V2_QUEUE_URLS[SQS[queue_name]] = AwsWrapper::SqsV2.queue_url(SQS[queue_name])
+    else
+      puts "yml value not found for #{queue_name}"
+    end
+  rescue => e
+    puts "Error in fetching URL for SQS Queue #{SQS[queue_name]} - error #{e.message}"
+    NewRelic::Agent.notice_error(e, {:description => "Error in fetching URL for SQS Queue #{SQS[queue_name]} - error #{e.message}"})
+  end
+end
+SQS_V2_QUEUE_URLS.freeze
 
-  ##################### SQS RELATED TO TWITTER STARTS #########################
-    
-  #EUC polls from the region specifuc queue pushed from EU
+# TWITTER RELATED SQS QUEUES
+begin
+
+  # EUC polls from the region specifuc queue pushed from EU
   if S3_CONFIG[:region] == 'eu-central-1'
     $sqs_twitter  = AWS::SQS.new.queues.named( S3_CONFIG[:region] + '_' + SQS[:twitter_realtime_queue])
-    
-  #EU polls from the global queue, pushes it to region specific queues EU/EUC
+
+  # EU polls from the global queue, pushes it to region specific queues EU/EUC
   elsif S3_CONFIG[:region] == 'eu-west-1'
     $sqs_euc = AWS::SQS.new(
       :access_key_id => S3_CONFIG[:access_key_id_euc],
       :secret_access_key => S3_CONFIG[:secret_access_key_euc],
       :region => S3_CONFIG[:region_euc],
       :s3_signature_version => :v4)
-   
-    # Initializing global variable polling the tweets from sqs - pod specific    
+
+    # Initializing global variable polling the tweets from sqs - pod specific
     $sqs_twitter_global = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
     $sqs_twitter        = AWS::SQS.new.queues.named( S3_CONFIG[:region] + '_' + SQS[:twitter_realtime_queue])
     $sqs_twitter_euc    = $sqs_euc.queues.named(S3_CONFIG[:region_euc] + '_' + SQS[:twitter_realtime_queue])
   else
-    #US & AU Polls dircetly from the global queue - No region specific queues
+    # US & AU Polls dircetly from the global queue - No region specific queues
     $sqs_twitter  = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
   end
-  
-  ##################### SQS RELATED TO TWITTER ENDS #########################
- 
-  # custom mailbox sqs queue
-  $sqs_mailbox = AWS::SQS.new.queues.named(SQS[:custom_mailbox_realtime_queue])
-
-  # cti ticket creation queue
-  $sqs_cti = AWS::SQS.new.queues.named(SQS[:cti_call_queue])
-
-
-  # Reports Service Export
-  $sqs_reports_service_export = AWS::SQS.new.queues.named(SQS[:reports_service_export_queue])
-
-  # Reports helpkit Export
-  $sqs_reports_helpkit_export = AWS::SQS.new.queues.named(SQS[:helpdesk_reports_export_queue])  
-  
-  # Freshfone Call Notifier
-  $freshfone_call_notifier = AWS::SQS.new.queues.named(SQS[:freshfone_call_notifier_queue])
-  
-  $sqs_es_migration_queue = AWS::SQS.new.queues.named("es_etl_migration_queue_#{Rails.env}") 
-  
-  #Freshfone Call Tracker
-  $sqs_freshfone_tracker = AWS::SQS.new.queues.named(SQS[:freshfone_call_tracker])
-
-  # Scheduled Ticket Export
-  $sqs_scheduled_ticket_export = AWS::SQS.new.queues.named(SQS[:scheduled_ticket_export_config])
-
-  #Email failure reference from activities service
-  $sqs_email_failure_reference = AWS::SQS.new.queues.named(SQS[:fd_email_failure_reference])
-  
-  # Add loop if more queues
-  #
-  SQS_V2_QUEUE_URLS = {
-    SQS[:search_etl_queue]            => AwsWrapper::SqsV2.queue_url(SQS[:search_etl_queue]),
-    SQS[:count_etl_queue]             => AwsWrapper::SqsV2.queue_url(SQS[:count_etl_queue]),
-    SQS[:reports_etl_msg_queue]       => AwsWrapper::SqsV2.queue_url(SQS[:reports_etl_msg_queue]),
-    SQS[:iris_etl_msg_queue]          => AwsWrapper::SqsV2.queue_url(SQS[:iris_etl_msg_queue]),
-    SQS[:activity_queue]              => AwsWrapper::SqsV2.queue_url(SQS[:activity_queue]),
-    SQS[:sqs_es_index_queue]          => AwsWrapper::SqsV2.queue_url(SQS[:sqs_es_index_queue]),
-    SQS[:cti_screen_pop]              => AwsWrapper::SqsV2.queue_url(SQS[:cti_screen_pop]),
-    SQS[:auto_refresh_queue]          => AwsWrapper::SqsV2.queue_url(SQS[:auto_refresh_queue]),
-    SQS[:auto_refresh_alb_queue]    => AwsWrapper::SqsV2.queue_url(SQS[:auto_refresh_alb_queue]),
-    SQS[:agent_collision_alb_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_alb_queue]),
-    SQS[:marketplace_app_queue]     => AwsWrapper::SqsV2.queue_url(SQS[:marketplace_app_queue]),
-    SQS[:free_customer_email_queue]   => AwsWrapper::SqsV2.queue_url(SQS[:free_customer_email_queue]),
-    SQS[:active_customer_email_queue] => AwsWrapper::SqsV2.queue_url(SQS[:active_customer_email_queue]),
-    SQS[:trial_customer_email_queue]  => AwsWrapper::SqsV2.queue_url(SQS[:trial_customer_email_queue]),
-    SQS[:default_email_queue]         => AwsWrapper::SqsV2.queue_url(SQS[:default_email_queue]),
-    SQS[:email_dead_letter_queue]     => AwsWrapper::SqsV2.queue_url(SQS[:email_dead_letter_queue]),
-    SQS[:agent_collision_queue] => AwsWrapper::SqsV2.queue_url(SQS[:agent_collision_queue]),
-    SQS[:collab_agent_update_queue] => AwsWrapper::SqsV2.queue_url(SQS[:collab_agent_update_queue]),
-    SQS[:collab_ticket_update_queue] => AwsWrapper::SqsV2.queue_url(SQS[:collab_ticket_update_queue]),
-    SQS[:fd_email_failure_reference] => AwsWrapper::SqsV2.queue_url(SQS[:fd_email_failure_reference]),
-    SQS[:scheduled_ticket_export_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_ticket_export_queue]),
-    SQS[:scheduled_user_export_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_user_export_queue]),
-    SQS[:scheduled_company_export_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_company_export_queue]),
-    SQS[:scheduled_export_payload_enricher_queue] => AwsWrapper::SqsV2.queue_url(SQS[:scheduled_export_payload_enricher_queue]),
-    SQS[:bot_feedback_queue] => AwsWrapper::SqsV2.queue_url(SQS[:bot_feedback_queue])
-  }.freeze
 
 rescue => e
-  puts "AWS::SQS connection establishment failed. - #{e.message}"
+  puts "Error in fetching URL for twitter queues - #{e.message}"
+  NewRelic::Agent.notice_error(e, {:description => "Error in fetching URL for twitter queues - #{e.message}"})
 end

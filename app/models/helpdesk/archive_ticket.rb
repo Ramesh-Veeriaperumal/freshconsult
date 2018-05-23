@@ -578,6 +578,11 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
     end
   end
 
+  def shred_inline_images
+    DeletedBodyObserver.write_to_s3(self.description_html, 'Helpdesk::ArchiveTicket', self.id)
+    InlineImageShredder.perform_async({model_name: 'Helpdesk::ArchiveTicket', model_id: self.id})
+  end
+
   private
 
     def note_preload_options

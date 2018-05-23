@@ -44,7 +44,8 @@ class Va::Handlers::NestedField < Va::RuleHandler
     (nested_rules || []).each do |nested_rule|
       return ["(False)"] if has_any_field_excluding_none_value_without_lp_feature? nested_rule[:value]
       any_value_query = (has_any_value_excluding_none?(nested_rule[:value]) ? " and #{not_null_query(nested_rule[:name])[0]}" : '')
-      return ["(#{query_conditions}#{any_value_query})"].push(*(values << nil)) if has_any_value?(nested_rule[:value]) || has_any_value_excluding_none?(nested_rule[:value])
+      values << nil if has_any_value_excluding_none?(nested_rule[:value])
+      return ["(#{query_conditions}#{any_value_query})"].push(*(values)) if has_any_value?(nested_rule[:value]) || has_any_value_excluding_none?(nested_rule[:value])
       each_query_condition, each_value = safe_send("filter_query_#{condition.operator}", nested_rule[:name], (query_value nested_rule[:value]))
       query_conditions = "#{query_conditions} and #{each_query_condition}"
       values << each_value

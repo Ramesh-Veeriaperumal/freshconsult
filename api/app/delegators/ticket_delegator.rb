@@ -18,12 +18,13 @@ class TicketDelegator < BaseDelegator
                               }
                             }
   validate :facebook_id_exists?, if: -> { facebook_id }
-  validate :company_presence, if: -> { company_id }
+  validate :company_presence, if: -> { @company_id }
   validate :validate_internal_agent_group_mapping, if: -> {internal_agent_id && attr_changed?('internal_agent_id') && Account.current.shared_ownership_enabled?}
   validate :validate_status_group_mapping, if: -> {internal_group_id && attr_changed?('internal_group_id') && Account.current.shared_ownership_enabled?}
 
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
+    @company_id = options[:company_id]
     @ticket = record
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     super record
@@ -68,10 +69,10 @@ class TicketDelegator < BaseDelegator
   end
 
   def company_presence
-    company = Account.current.companies.find_by_id(company_id)
+    company = Account.current.companies.find_by_id(@company_id)
     if company.nil?
       errors[:company_id] << :invalid_company_id
-      @error_options[:company_id] = { company_id: company_id }
+      @error_options[:company_id] = { company_id: @company_id }
     end
   end
 

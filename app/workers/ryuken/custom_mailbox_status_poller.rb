@@ -15,8 +15,8 @@ class CustomMailboxStatusPoller
 
   def process(message)
     email_config = Account.current.email_configs.where(to_email: message[:to_email]).first
-    if email_config.blank?
-      log_error(message, 'custom mailbox status : Email config missing')
+    if email_config.blank? || email_config.imap_mailbox.blank?
+      log_error(message, 'custom mailbox status : Email config or IMAP mailbox missing')
       return
     end
     if message[:status] == 'failed'
@@ -58,6 +58,7 @@ class CustomMailboxStatusPoller
       if imap_mailbox.error_type != error_type
         imap_mailbox.error_type = error_type
         imap_mailbox.save
+        Rails.logger.info("custom mailbox status : updating the error_type for account : #{Account.current.id}, mailbox_id : #{imap_mailbox.id}, value : #{error_type}")
       else
         Rails.logger.info("custom mailbox status : Same error type as before #{message.inspect}")
       end
