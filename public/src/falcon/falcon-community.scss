@@ -231,14 +231,14 @@ body.community{
 		border-left-color: #dadfe3;
 	}
 	.sort-active .reorder-icon {
-    	margin-left:-55px;
+      @include margin-left(-55px);
 	}
 	.solution-list .odd, .solution-list .even {
 		font-family: $font-family-semibold;
 		.cat-title-border {
 			font-size: 13px;
 			.cat-title-icon {
-	    		margin-right: 10px;
+	    		@include margin-right(10px);
 	    	}
 	    	a{
 		    	color: $text-color;
@@ -247,8 +247,8 @@ body.community{
 	    ul li{
 	    	font-size: 20px;
 	    	a{
-    		    font-size: 13px;
-    			margin-left: -28px;
+    		   font-size: 13px;
+    			 @include margin-left(-28px);
 	    	}
 	    	a:hover ~ .muted {
 			    color: $link-hover;
@@ -534,7 +534,7 @@ body.community.solutions {
 		  color: $app-icon-color;
 			padding-bottom: 8px;
 		}
-	      
+
 	  .heading:hover {
 	    border-bottom : 3px solid $app-primary-color;
 	  }
@@ -548,7 +548,7 @@ body.community.solutions {
 		.fr-toolbar {
 			left: 12px;
 		}
-	}  
+	}
 
 	.is_stuck #sticky_redactor_toolbar{
 			.fr-toolbar {
@@ -632,13 +632,13 @@ body.community.solutions {
 		.title-wrapper .leads {
 		    font-size: 16px;
 		}
-	} 
+	}
 	/*break crumbs*/
 	/* modals */
 	.modal {
 		.modal-body {
 	    padding: 25px 10px 20px 20px;
-      
+
       input#solution_folder_meta_primary_folder_name {
 				font-size: 12px;
 			}
@@ -702,7 +702,7 @@ body.community {
 				color: $app-icon-color;
 				padding-bottom: 17px;
 			}
-	      
+
 	  	a:hover {
 	    	border-bottom : 3px solid $app-primary-color;
 	  	}
@@ -728,5 +728,5 @@ body.community {
 	.select2-result-with-children > .select2-result-label:hover {
 		color: $bread-crumbs-active;
 	}
-	  
+
 }
