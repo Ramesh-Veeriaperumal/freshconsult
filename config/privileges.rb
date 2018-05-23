@@ -639,7 +639,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
-    resource :"rake_task", :only => [:run_rake_task]
   end
 
   manage_skills do
