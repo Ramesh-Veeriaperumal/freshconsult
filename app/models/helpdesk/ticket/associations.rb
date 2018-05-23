@@ -127,7 +127,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   private
 
   def set_inline_attachable_type(inline_attachment)
-    raise "Not an inline image" if inline_attachment.attachable_type != "Tickets Image Upload"
     inline_attachment.attachable_type = "Ticket::Inline"
   end
 end
