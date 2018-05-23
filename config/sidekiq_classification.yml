@@ -101,6 +101,7 @@
     - ml_solutions_training
     - customer_note_body_queue
     - update_taggables_queue
+    - run_rake_task
   :maintainence:
     - select_all_tickets
     - select_all_batcher

@@ -49,7 +49,8 @@ module ApiConstants
                        IntegratedUserConstants::LOAD_OBJECT_EXCEPT +
                        BotConstants::LOAD_OBJECT_EXCEPT +
                        ApiArchiveTicketConstants::LOAD_OBJECT_EXCEPT +
-                       BotFeedbackConstants::LOAD_OBJECT_EXCEPT
+                       BotFeedbackConstants::LOAD_OBJECT_EXCEPT +
+                       RakeTaskConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +

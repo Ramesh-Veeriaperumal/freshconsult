@@ -273,6 +273,7 @@ defaults: &defaults
     - [freshcaller_account_delete]
     - [freshid_agents_migration]
     - [user_central_publish]
+    - [run_rake_task]
 
 development:
   <<: *defaults
