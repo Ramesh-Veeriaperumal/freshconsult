@@ -865,7 +865,7 @@ module Helpdesk
 				body = params[:body_content_text_portion]
 				# work with the code here
 				full_text = params[:quoted_content_text_portion]
-				if(!(($redis_others.get("QUOTED_TEXT_PARSING_NOT_REQUIRED") == "1") or Account.current.launched?(:quoted_text_parsing_feature))  or params[:quoted_parse_done].nil? or params[:quoted_parse_done] == false )
+				if(!((get_email_parsing_redis_flag == "1") or Account.current.launched?(:quoted_text_parsing_feature))  or params[:quoted_parse_done].nil? or params[:quoted_parse_done] == false )
 					msg_hash = show_quoted_text(params[:text], ticket.reply_email)
 					unless msg_hash.blank?
 						body = msg_hash[:body]
@@ -1169,6 +1169,13 @@ module Helpdesk
 
 			def encoded_display_id_regex account
 				Regexp.new("\\[#{account.ticket_id_delimiter}([0-9]*)\\]")
+			end
+			def get_email_parsing_redis_flag
+				if $last_time_checked.blank? || $last_time_checked < 5.minutes.ago
+					$email_parsing_redis_flag = get_others_redis_key(QUOTED_TEXT_PARSING_NOT_REQUIRED)
+					$last_time_checked = Time.now
+				end
+				return $email_parsing_redis_flag
 			end
 
 		end
