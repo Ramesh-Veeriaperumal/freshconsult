@@ -249,6 +249,12 @@ module Cache::Memcache::Account
     end
   end
 
+  def nested_ticket_fields_from_cache
+    key = ACCOUNT_NESTED_TICKET_FIELDS % { :account_id => self.id }
+    MemcacheKeys.fetch(key) do
+      nested_ticket_fields_with_childs.all
+    end
+  end
 
   def section_fields_with_field_values_mapping_cache
     key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.id }
