@@ -1,4 +1,7 @@
 class Users::ContactDeleteForeverWorker < BaseWorker
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
   sidekiq_options :queue => :contact_delete_forever, :retry => 0, :backtrace => true, :failures => :exhausted
   
   attr_accessor :args
@@ -8,8 +11,18 @@ class Users::ContactDeleteForeverWorker < BaseWorker
       args.symbolize_keys!
       @args     = args
       @account  = Account.current
-      @user     = @account.all_contacts.where(:deleted => true).find_by_id args[:user_id]
+      key       = CONTACT_DELETE_FOREVER_KEY % {:shard => ActiveRecord::Base.current_shard_selection.shard.to_s}
 
+      redis_sidekiq_concurrency = get_contact_delete_forever_concurrency
+      redis_val = get_others_redis_key(key)
+      if redis_val.present? && redis_val.to_i >= redis_sidekiq_concurrency
+        Users::ContactDeleteForeverWorker.perform_in(get_next_time, {:user_id => args[:user_id]})
+        increment_others_redis(key) # Because of ensure decrement
+        return
+      end
+      increment_others_redis(key)
+
+      @user = @account.all_contacts.where(:deleted => true).find_by_id args[:user_id]
       return if @user.blank? || @user.agent_deleted_forever?
 
       if @user.was_agent?
@@ -31,6 +44,8 @@ class Users::ContactDeleteForeverWorker < BaseWorker
       puts e.inspect, args.inspect
       NewRelic::Agent.notice_error(e, {:args => args})
       raise e
+    ensure
+      decrement_others_redis(key)
     end
   end
 
@@ -176,5 +191,20 @@ class Users::ContactDeleteForeverWorker < BaseWorker
           obj.destroy
         end
       end
+    end
+
+    def get_next_time
+      max_time = (get_others_redis_key(CONTACT_DELETE_FOREVER_MAX_TIME) || 10).to_i
+      min_time = (get_others_redis_key(CONTACT_DELETE_FOREVER_MIN_TIME) || 2).to_i
+      if max_time < min_time
+        max_time = 2
+        min_time = 2
+      end
+      from_now = rand(min_time..max_time)
+      from_now.minutes.since
+    end
+
+    def get_contact_delete_forever_concurrency
+      (get_others_redis_key(CONTACT_DELETE_FOREVER_CONCURRENCY) || 1).to_i
     end
 end
