@@ -6,7 +6,7 @@ class Account < ActiveRecord::Base
                    :year_in_review_2017, :facebook_page_redirect, :announcements_tab, :ticket_central_publish,
                    :solutions_central_publish, :launch_smart_filter, :outgoing_attachment_limit_25,
                    :incoming_attachment_limit_25, :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3,
-                   :imap_error_status_check, :va_any_field_without_none, :auto_complete_off, :sanbox_lp]
+                   :imap_error_status_check, :va_any_field_without_none, :auto_complete_off, :sanbox_lp, :encode_emoji]
 
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   BITMAP_FEATURES = [
