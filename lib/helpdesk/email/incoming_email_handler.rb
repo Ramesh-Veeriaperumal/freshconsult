@@ -21,6 +21,7 @@ module Helpdesk
 			include Helpdesk::Permission::Ticket
 			include Helpdesk::EmailParser::Constants
 			include Helpdesk::Email::NoteMethods
+			include Helpdesk::LanguageDetection
 
 			class UserCreationError < StandardError
 			end
@@ -91,7 +92,7 @@ module Helpdesk
 					account = Account.find_by_full_domain(to_email[:domain])
 					if account && account.allow_incoming_emails?
 						account.make_current
-						email_spam_watcher_counter(account) if params[:spamCheckDone] == true
+						email_spam_watcher_counter(account) if params[:spamCheckDone] == false
 						TimeZone.set_time_zone
 						from_email = parse_from_email(account)
 						if from_email.nil?
@@ -213,10 +214,11 @@ module Helpdesk
 			def parse_from_email account
 				f_email = parse_email(params[:from])
 				reply_to_email = parse_email(params[:reply_to])
-				if account.features?(:reply_to_based_tickets) or invalid_from_email?(f_email, reply_to_email, reply_to_feature)
-					return reply_to_email
+				reply_to_feature = account.features?(:reply_to_based_tickets)
+				if reply_to_feature or invalid_from_email?(f_email, reply_to_email, reply_to_feature)
+					return (reply_to_email[:email].nil? ? f_email : reply_to_email)
 				else
-					return from_email
+					return f_email
 				end
 			end
 			def invalid_from_email? f_email, reply_to_email, reply_to_feature
@@ -863,7 +865,7 @@ module Helpdesk
 				body = params[:body_content_text_portion]
 				# work with the code here
 				full_text = params[:quoted_content_text_portion]
-				if(params[:quoted_parse_done].nil? or params[:quoted_parse_done] == false )
+				if((!$redis_others.get("QUOTED_TEXT_PARSING_NOT_REQUIRED") == "1") or (!Account.current.launched?(:quoted_text_parsing_feature))  or params[:quoted_parse_done].nil? or params[:quoted_parse_done] == false )
 					msg_hash = show_quoted_text(params[:text], ticket.reply_email)
 					unless msg_hash.blank?
 						body = msg_hash[:body]
@@ -1167,13 +1169,15 @@ module Helpdesk
 				]
 			end
 
+			def encoded_display_id_regex account
+				Regexp.new("\\[#{account.ticket_id_delimiter}([0-9]*)\\]")
+			end
 
 		end
+
+
+
 		add_method_tracer :check_for_spam, 'Custom/EmailServiceController/spam_check'
 
-private
-		def encoded_display_id_regex account
-			Regexp.new("\\[#{account.ticket_id_delimiter}([0-9]*)\\]")
-		end
 	end
 end
