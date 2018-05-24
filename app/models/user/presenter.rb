@@ -54,4 +54,8 @@ class User < ActiveRecord::Base
     true
   end
 
+  def central_payload_type
+    "contact_destroy"
+  end
+
 end
