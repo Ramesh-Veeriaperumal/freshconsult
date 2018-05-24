@@ -6,6 +6,7 @@ class Helpdesk::Note < ActiveRecord::Base
   def create_in_mysql
     # creating a new record
     note_old_body = self.build_note_old_body(construct_note_old_body_hash) 
+    UnicodeSanitizer.encode_emoji(note_old_body, 'body', 'full_text')
     note_old_body.save
   end
 
@@ -19,6 +20,7 @@ class Helpdesk::Note < ActiveRecord::Base
     # updating the attributes
     note_old_body.attributes = construct_note_old_body_hash
     # saving the record
+    UnicodeSanitizer.encode_emoji(note_old_body, 'body', 'full_text')
     note_old_body.save
   end
 

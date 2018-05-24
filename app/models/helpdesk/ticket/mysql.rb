@@ -3,6 +3,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def create_in_mysql
     # creating a new record
     ticket_old_body = self.build_ticket_old_body(construct_ticket_old_body_hash) 
+    UnicodeSanitizer.encode_emoji(ticket_old_body, "description")
     ticket_old_body.save
   end
 
@@ -14,6 +15,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     # case were a ticket without ticket_body is updated
     ticket_old_body = self.ticket_old_body || self.build_ticket_old_body 
     ticket_old_body.attributes = construct_ticket_old_body_hash
+    UnicodeSanitizer.encode_emoji(ticket_old_body, "description")
     ticket_old_body.save
   end
 

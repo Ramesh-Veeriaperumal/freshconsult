@@ -5,7 +5,7 @@ class Account < ActiveRecord::Base
                    :email_failures, :disable_emails, :skip_one_hop, :falcon_portal_theme, :freshid, :freshchat_integration,
                    :year_in_review_2017, :facebook_page_redirect, :announcements_tab, :archive_ghost, :ticket_central_publish,
                    :solutions_central_publish, :es_msearch, :launch_smart_filter, :outgoing_attachment_limit_25,
-                   :incoming_attachment_limit_25, :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, :imap_error_status_check, :va_any_field_without_none, :api_es, :sandbox_lp]
+                   :incoming_attachment_limit_25, :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, :imap_error_status_check, :va_any_field_without_none, :api_es, :sandbox_lp, :encode_emoji]
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
   BITMAP_FEATURES = [

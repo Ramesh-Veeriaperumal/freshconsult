@@ -37,8 +37,6 @@ module Facebook
           message.symbolize_keys!
           next if ((@fan_page.created_at > Time.zone.parse(message[:created_time])) || @account.facebook_posts.exists?(:post_id => message[:id]))
           user = facebook_user(message[:from])
-          message[:message] = tokenize(message[:message])
-
           @note = ticket.notes.build(
             :private    =>  true ,
             :incoming   =>  true,
@@ -88,10 +86,9 @@ module Facebook
                     message[:from]
                   end
         requester = facebook_user(profile)
-        first_message_from_customer[:message] = tokenize(first_message_from_customer[:message])
 
         @ticket = @account.tickets.build(
-          :subject      =>  truncate_subject(first_message_from_customer[:message], 100),
+          :subject      =>  truncate_subject(tokenize(first_message_from_customer[:message]), 100),
           :requester    =>  requester,
           :product_id   =>  @fan_page.product_id,
           :group_id     =>  group_id,
