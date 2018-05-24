@@ -96,7 +96,7 @@ class Account < ActiveRecord::Base
   end
 
   def link_tkts_or_parent_child_enabled?
-    link_tkts_enabled? || parent_child_tkts_enabled?
+    link_tkts_enabled? || parent_child_tickets_enabled?
   end
 
   def survey_enabled?
@@ -204,12 +204,8 @@ class Account < ActiveRecord::Base
     launched?(:dashboard_new_alias)
   end
 
-  def parent_child_tkts_enabled?
-    @pc ||= (launched?(:parent_child_tickets) || parent_child_tickets_enabled?)
-  end
-
   def tkt_templates_enabled?
-    @templates ||= (features?(:ticket_templates) || parent_child_tkts_enabled?)
+    @templates ||= (features?(:ticket_templates) || parent_child_tickets_enabled?)
   end
 
   def auto_ticket_export_enabled?
