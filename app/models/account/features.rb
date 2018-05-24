@@ -2,7 +2,7 @@ class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
                    :dkim, :bulk_security, :scheduled_ticket_export, :ticket_contact_export,
-                   :email_failures, :disable_emails, :skip_one_hop, :falcon_portal_theme, :freshid, :freshchat_integration,
+                   :disable_emails, :skip_one_hop, :falcon_portal_theme, :freshid, :freshchat_integration,
                    :year_in_review_2017, :facebook_page_redirect, :announcements_tab, :ticket_central_publish,
                    :solutions_central_publish, :launch_smart_filter, :outgoing_attachment_limit_25,
                    :incoming_attachment_limit_25, :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3,

@@ -159,7 +159,6 @@ end
 
 
 
-      <% if current_account.email_failures_enabled?%>
         <div class="failed_emails">
           <% if to_email_failures.present? || cc_email_failures.present? %>
             <%= render :partial => "/helpdesk/tickets/show/note_email_failure.html.erb", :locals => {:current_note => note, :to_email_failures => to_email_failures, :cc_email_failures => cc_email_failures} %>
@@ -167,7 +166,6 @@ end
             <%= render :partial => "/helpdesk/tickets/show/email_failure_count.html.erb", :locals => {:item => note, :display_id => note.notable.display_id, :note_id => note.id} %>
           <% end %>
         </div>
-      <% end %>
 
 			<%= content_tag :div, "", :id => "#{edit_id}", :class => "request_panel email-edit-form hide", :rel => "remote", 
 									"data-remote-url" => edit_helpdesk_ticket_note_path(notable_object.display_id, note.id) %>

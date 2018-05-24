@@ -188,7 +188,7 @@ class Account < ActiveRecord::Base
     :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
     :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :skip_ticket_threading => false,
     :multi_dynamic_sections => true, :dashboard_new_alias => false, :attachments_scope => false, :kbase_spam_whitelist => false, 
-    :forum_post_spam_whitelist => false, :email_failures => false, :enable_qna => false, :enable_insights => false,
+    :forum_post_spam_whitelist => false, :enable_qna => false, :enable_insights => false,
     :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true,
     :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false, 
     :bulk_security => false, :service_writes => false, :service_reads => false, :admin_only_mint => false,
