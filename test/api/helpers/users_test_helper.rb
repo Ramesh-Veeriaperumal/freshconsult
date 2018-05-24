@@ -34,7 +34,8 @@ module UsersTestHelper
       avatar: expected_output[:avatar] || get_contact_avatar(contact),
       facebook_id: expected_output[:facebook_id] || contact.fb_profile_id,
       was_agent: expected_output[:was_agent] || contact.was_agent?,
-      agent_deleted_forever: expected_output[:agent_deleted_forever] || contact.agent_deleted_forever?
+      agent_deleted_forever: expected_output[:agent_deleted_forever] || contact.agent_deleted_forever?,
+      marked_for_hard_delete: expected_output[:marked_for_hard_delete] || contact.marked_for_hard_delete?
     }
     result[:other_emails] = expected_output[:other_emails] ||
                             contact.user_emails.where(primary_role: false).map(&:email)
@@ -84,12 +85,12 @@ module UsersTestHelper
   end
 
   def deleted_contact_pattern(expected_output = {}, contact)
-    ignore_keys = [:was_agent, :agent_deleted_forever]
+    ignore_keys = [:was_agent, :agent_deleted_forever, :marked_for_hard_delete]
     contact_pattern(expected_output, contact).merge(deleted: (expected_output[:deleted] || contact.deleted).to_s.to_bool).except(*ignore_keys)
   end
 
   def unique_external_id_contact_pattern(expected_output = {}, contact)
-    ignore_keys = [:was_agent, :agent_deleted_forever]
+    ignore_keys = [:was_agent, :agent_deleted_forever, :marked_for_hard_delete]
     contact_pattern(expected_output, contact).merge!(unique_external_id: expected_output[:unique_external_id] || contact.unique_external_id).except(*ignore_keys)
   end
 
@@ -147,7 +148,7 @@ module UsersTestHelper
   def index_contact_pattern(contact)
     keys = [
       :avatar, :tags, :other_emails, :deleted,
-      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever
+      :other_companies, :view_all_tickets, :was_agent, :agent_deleted_forever, :marked_for_hard_delete
     ]
     keys -= [:deleted] if contact.deleted
     contact_pattern(contact).except(*keys)

@@ -51,6 +51,10 @@ class ApiContactsController < ApiApplicationController
     end
   end
 
+  def show
+    return head 404 if @item.marked_for_hard_delete? || @item.agent_deleted_forever?
+  end
+
   def destroy
     @item.update_attribute(:deleted, true)
     head 204
@@ -75,6 +79,7 @@ class ApiContactsController < ApiApplicationController
   end
 
   def hard_delete
+    return head 400 unless Account.current.launched?(:contact_delete_forever)
     if params[:force] == "true"
       @item.update_attribute(:deleted, true)
     end
