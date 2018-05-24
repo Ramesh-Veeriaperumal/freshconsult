@@ -865,14 +865,13 @@ module Helpdesk
 				body = params[:body_content_text_portion]
 				# work with the code here
 				full_text = params[:quoted_content_text_portion]
-				if((!$redis_others.get("QUOTED_TEXT_PARSING_NOT_REQUIRED") == "1") or (!Account.current.launched?(:quoted_text_parsing_feature))  or params[:quoted_parse_done].nil? or params[:quoted_parse_done] == false )
+				if(!(($redis_others.get("QUOTED_TEXT_PARSING_NOT_REQUIRED") == "1") or Account.current.launched?(:quoted_text_parsing_feature))  or params[:quoted_parse_done].nil? or params[:quoted_parse_done] == false )
 					msg_hash = show_quoted_text(params[:text], ticket.reply_email)
 					unless msg_hash.blank?
 						body = msg_hash[:body]
 						full_text = msg_hash[:full_text]
 					end
 				end
-
 
 				# for html text
 				body_html = params[:body_content_html_portion]
@@ -1025,7 +1024,6 @@ module Helpdesk
 				end
 
 				article_params[:attachments] = attachments
-
 				article = Helpdesk::KbaseArticles.create_article_from_email(article_params)
 				if article.present?
 					return processed_email_data(PROCESSED_EMAIL_STATUS[:success], account.id, article) 
