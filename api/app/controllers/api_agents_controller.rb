@@ -14,6 +14,8 @@ class ApiAgentsController < ApiApplicationController
       end
       @item.user_changes = @item.user.agent.user_changes || {}
       @item.user_changes.merge!(@item.user.changes)
+      group_ids = params[cname].delete(:group_ids)
+      @item.build_agent_groups_attributes(group_ids)
       return if @item.update_attributes(params[cname].except(:user_attributes))
       render_custom_errors
     end

@@ -24,6 +24,7 @@ class Agent < ActiveRecord::Base
     s.add :scoreboard_level_id
     s.add :account_id
     s.add :available
+    s.add proc { |x| x.groups.map { |ag| {name: ag.name, id: ag.id }}}, as: :groups
     USER_FIELDS.each do |key|
       s.add proc { |d| d.user.safe_send(key) }, as: key
     end
@@ -45,6 +46,18 @@ class Agent < ActiveRecord::Base
     changes.merge!({
       "single_access_token" => ["*", "*"]
     }) if @model_changes.key?("single_access_token")
+    if Thread.current[:group_changes].present?
+      groups = agent_groups.pluck :group_id
+      group_changes = {added: [], removed: []}
+      Thread.current[:group_changes].uniq.each do |ag|
+        groups.include?(ag[:id]) ? group_changes[:added].push(ag) : 
+                                   group_changes[:removed].push(ag)
+      end
+      if group_changes[:added].any? || group_changes[:removed].any?
+        changes.merge!({"groups" => group_changes})
+      end
+      Thread.current[:group_changes] = nil
+    end
     changes
   end
 

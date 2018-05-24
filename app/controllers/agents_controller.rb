@@ -124,6 +124,7 @@ class AgentsController < ApplicationController
 
   def create    
     @user  = current_account.users.new #by Shan need to check later        
+    group_ids = params[nscname].delete(:group_ids)
     @agent = current_account.agents.new(params[nscname]) 
 
     #for live chat sync
@@ -133,6 +134,7 @@ class AgentsController < ApplicationController
       @agent.user_id = @user.id
       @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id]
       @agent.freshcaller_enabled = (params[:freshcaller_agent].try(:to_bool) || false)
+      @agent.build_agent_groups_attributes(group_ids)
       if @agent.save
         flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
         freshcaller_alerts
@@ -197,6 +199,8 @@ class AgentsController < ApplicationController
 
     @agent.user_changes = @agent.user.agent.user_changes || {}
     @agent.user_changes.merge!(@agent.user.changes)
+    group_ids = params[nscname].delete(:group_ids)
+    @agent.build_agent_groups_attributes(group_ids)
     if @agent.update_attributes(params[nscname])
       begin
         if @user.role_ids.include?(current_account.roles.find_by_name("Account Administrator").id)
