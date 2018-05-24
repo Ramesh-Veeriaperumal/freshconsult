@@ -5,6 +5,7 @@ class AnnouncementsController < ApplicationController
   ACCOUNT_SHARED_SECRET = PRODUCT_UPDATES['shared_secret']
   
   before_filter :check_feature, :load_variables
+  before_filter :validate_params, only: [:account_login_url]
 
   def account_login_url
     redirect_to generate_account_login_url(params[:redirect_to])
@@ -26,6 +27,23 @@ class AnnouncementsController < ApplicationController
     def load_variables
       @user_name  = current_user.try(:name).to_s
       @user_email = current_user.try(:email).to_s
+    end
+
+    def validate_params
+      portal_urls = current_account.portals.pluck(:portal_url).compact.uniq
+      portal_domains = portal_urls.map { |url| get_host_without_www(url) }
+      redirect_to_domain = get_host_without_www(params[:redirect_to])
+      unless(ACCOUNT_URL == redirect_to_domain || request.domain == redirect_to_domain || portal_domains.include?(redirect_to_domain))
+        Rails.logger.error "Invalid redirect_to param : #{params.inspect}"
+        render_404
+      end
+    end
+
+    def get_host_without_www(url)
+      uri  = URI.parse(url)
+      uri  = URI.parse("http://#{url}") if uri.scheme.nil?
+      host = uri.host.downcase
+      host.start_with?('www.') ? host[4..-1] : host
     end
    
     def generate_account_login_url redirect_to
