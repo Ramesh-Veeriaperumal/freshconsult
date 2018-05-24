@@ -4377,11 +4377,12 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
   create_table :failed_central_feeds, :force => true do |t|
     t.integer :account_id, limit: 8, null: false
     t.integer :model_id, limit: 8, null: false
+    t.string  :worker_name, limit: 255
     t.string  :uuid, limit: 255
     t.string  :payload_type, limit: 255
     t.text    :model_changes
     t.text    :additional_info
-    t.string  :exception, limit: 255
+    t.text    :exception
     t.timestamps null: false
   end
 
