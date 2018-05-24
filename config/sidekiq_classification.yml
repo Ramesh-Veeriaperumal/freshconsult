@@ -142,6 +142,7 @@
     - restore_spam_tickets
     - contact_delete_forever
     - inline_image_shredder
+    - deactivate_product_widgets
   :external:
     - code_console_execution
     - integrations

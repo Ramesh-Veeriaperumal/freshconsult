@@ -460,6 +460,10 @@ Authority::Authorization::PrivilegeList.build do
       resource :"year_in_review", :only => [:share]
   end
 
+  manage_dashboard do
+    resource :"reports/v2/tickets/report", :only => [:fetch_threshold_value]
+  end
+
   # NOTE: Resource(controller action) related to scheduling is not added here because save reports and scheduling reports use the same action
   # Currently schedule reports uses this privilege as user.privilege and not as owns_object
   export_reports do

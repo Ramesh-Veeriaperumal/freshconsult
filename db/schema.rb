@@ -4328,7 +4328,7 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
       t.text        :recent_questions
       t.text        :insights_config_data
       t.timestamps
-    end
+  end
   add_index :qna_insights_reports , [:account_id, :user_id], :name => 'index_qna_insights_reports_on_account_id_and_user_id'
  
   create_table :failed_central_feeds, :force => true do |t|
@@ -4375,4 +4375,11 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
   end
 
   add_index "bot_feedback_mappings", ["account_id", "feedback_id"], :name => "index_bot_feedback_mappings_on_feedback_id"
+
+  create_table :helpdesk_reports_config, :force => true do |t|
+      t.text        :name
+      t.text        :config_json
+      t.timestamps
+  end
+
 end

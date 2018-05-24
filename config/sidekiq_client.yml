@@ -270,6 +270,7 @@ defaults: &defaults
     - [calculate_sla]
     - [freshid_agents_migration]
     - [inline_image_shredder]
+    - [deactivate_product_widgets]
     - [run_rake_task]
     - [freshcaller_account_delete]
     - [user_central_publish]
