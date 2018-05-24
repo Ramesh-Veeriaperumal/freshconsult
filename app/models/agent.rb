@@ -244,7 +244,8 @@ class Agent < ActiveRecord::Base
     false
   end
 
-  def build_agent_groups_attributes(group_list)
+  def build_agent_groups_attributes group_list
+    group_list ||= []
     old_group_ids    = self.new_record? ? [] : self.agent_groups.pluck(:group_id)
     group_list      = group_list.map(&:to_i)
     add_group_ids    = Account.current.groups.where(:id => group_list - old_group_ids).pluck(:id)
