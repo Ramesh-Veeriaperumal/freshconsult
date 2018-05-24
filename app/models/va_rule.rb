@@ -12,6 +12,10 @@ class VaRule < ActiveRecord::Base
   
   serialize :filter_data
   serialize :action_data
+
+  concerned_with :presenter
+
+  publishable on: [:create, :update, :destroy]
   
   validates_presence_of :name, :rule_type
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type] , :unless => :automation_rule?
@@ -19,6 +23,7 @@ class VaRule < ActiveRecord::Base
   validate :any_restricted_actions?
 
   before_save :set_encrypted_password
+  before_destroy :save_deleted_rule_info
   after_commit :clear_observer_rules_cache, :if => :observer_rule?
   after_commit :clear_api_webhook_rules_from_cache, :if => :api_webhook_rule?
   after_commit :clear_installed_app_business_rules_from_cache, :if => :installed_app_business_rule?
@@ -247,6 +252,10 @@ class VaRule < ActiveRecord::Base
         end
       end
     end
+  end
+
+  def save_deleted_rule_info
+    @deleted_model_info = central_publish_payload
   end
 
   def observer_rule?
