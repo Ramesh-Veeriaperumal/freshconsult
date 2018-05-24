@@ -250,3 +250,5 @@
     - marketo_queue
     - subscription_events_queue
     - track_customer_in_freshsales
+  :hard_delete:
+    - contact_delete_forever

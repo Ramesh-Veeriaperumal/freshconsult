@@ -278,7 +278,7 @@ class User < ActiveRecord::Base
 
   def push_contact_deleted_info
     if User.current
-      UserNotifier.send_later(:push_contact_deleted_info, self.account, self, User.current, Time.now )
+      # UserNotifier.send_later(:push_contact_deleted_info, self.account, self, User.current, Time.now )
     end
   end
 

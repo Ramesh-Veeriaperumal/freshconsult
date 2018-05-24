@@ -193,6 +193,10 @@ class User < ActiveRecord::Base
     preferences[:user_preferences][:agent_deleted_forever]
   end
 
+  def marked_for_hard_delete?
+    preferences[:user_preferences][:marked_for_hard_delete]
+  end
+
   def facebook_avatar( facebook_id, profile_size = "square")
     "https://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
   end
@@ -629,6 +633,9 @@ class User < ActiveRecord::Base
   end
 
   def delete_forever!
+    new_pref = { :marked_for_hard_delete => true }
+    self.merge_preferences = { :user_preferences => new_pref }
+    self.save!
     Users::ContactDeleteForeverWorker.perform_async({:user_id => self.id})
   end
 
