@@ -11,11 +11,14 @@ class Agent < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
 
-  concerned_with :associations, :constants
+  concerned_with :associations, :constants, :presenter
 
-  before_destroy :remove_escalation
+  publishable on: [:create, :update, :destroy]
+
+  before_destroy :remove_escalation, :save_deleted_agent_info
 
   accepts_nested_attributes_for :user
+  accepts_nested_attributes_for :agent_groups, :allow_destroy => true
   before_update :create_model_changes
   before_create :mark_unavailable
   after_commit :enqueue_round_robin_process, on: :update
@@ -31,7 +34,7 @@ class Agent < ActiveRecord::Base
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
     :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token
-  attr_accessor :agent_role_ids, :freshcaller_enabled
+  attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
@@ -126,6 +129,10 @@ class Agent < ActiveRecord::Base
   def remove_escalation
     Group.update_all({:escalate_to => nil, :assign_time => nil},{:account_id => account_id, :escalate_to => user_id})
     clear_group_cache
+  end
+
+  def save_deleted_agent_info
+    @deleted_model_info = central_publish_payload
   end
 
   def clear_group_cache
@@ -237,6 +244,27 @@ class Agent < ActiveRecord::Base
     false
   end
 
+  def build_agent_groups_attributes(group_list)
+    old_group_ids    = self.new_record? ? [] : self.agent_groups.pluck(:group_id)
+    group_list      = group_list.map(&:to_i)
+    add_group_ids    = Account.current.groups.where(:id => group_list - old_group_ids).pluck(:id)
+    delete_group_ids = old_group_ids - group_list
+
+    agent_groups_array = []
+    if delete_group_ids.present?
+      agent_groups.where(:group_id => delete_group_ids).map { |agent_group|
+        agent_groups_array << build_agent_groups_hash(agent_group.group_id, agent_group.id)
+      }
+    end
+    if add_group_ids.present?
+      multiple_agents_added = add_group_ids.count > 1
+      add_group_ids.map { |group_id|
+        agent_groups_array << build_agent_groups_hash(group_id)
+      }
+    end
+    self.agent_groups_attributes = agent_groups_array if agent_groups_array.present?
+  end
+
   protected
     # adding the agent role ids through virtual attr agent_role_ids.
     # reason is this callback is getting executed before user roles update.
@@ -311,4 +339,14 @@ class Agent < ActiveRecord::Base
     !(self.available = false)
   end
 
+  def build_agent_groups_hash(group_id, id = nil)
+    {:id => id, :group_id => group_id, :_destroy => id.present?}
+  end
+
+  def touch_add_group_change agent_group
+    agent_info = { id: agent_group.group_id, name: agent_group.group.name }
+    Thread.current[:group_changes].present? ? 
+      Thread.current[:group_changes].push(agent_info) : 
+      Thread.current[:group_changes]=[agent_info]
+  end
 end
