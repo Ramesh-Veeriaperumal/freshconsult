@@ -10,7 +10,6 @@ class Account < ActiveRecord::Base
   include Redis::OthersRedis
   include Redis::DisplayIdRedis
   include Redis::OthersRedis
-  include ErrorHandle
   include AccountConstants
   include Helpdesk::SharedOwnershipMigrationMethods
   include Onboarding::OnboardingRedisMethods
@@ -18,6 +17,7 @@ class Account < ActiveRecord::Base
   include Helpdesk::SharedOwnershipMigrationMethods
   include Account::ChannelUtils
   include ParserUtil
+  include InlineImagesUtil
 
   has_many_attachments
   
@@ -36,7 +36,7 @@ class Account < ActiveRecord::Base
   attr_accessible :name, :domain, :user, :plan, :plan_start, :creditcard, :address,
                   :logo_attributes,:fav_icon_attributes,:ticket_display_id,:google_domain ,
                   :language, :ssl_enabled, :whitelisted_ip_attributes, :account_additional_settings_attributes,
-                  :primary_email_config_attributes, :main_portal_attributes
+                  :primary_email_config_attributes, :main_portal_attributes, :account_type, :time_zone
 
   attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
 
@@ -80,6 +80,18 @@ class Account < ActiveRecord::Base
       v[:features].each { |f_n| feature f_n, :requires => [] } unless v[:features].nil?
       (SELECTABLE_FEATURES.keys + TEMPORARY_FEATURES.keys + 
         ADMIN_CUSTOMER_PORTAL_FEATURES.keys).each { |f_n| feature f_n }
+    end
+  end
+
+  def mark_as!(state)
+    raise StandardError unless ACCOUNT_TYPES.key?(state)
+    self.account_type = ACCOUNT_TYPES[state]
+    self.save!
+  end
+
+  ACCOUNT_TYPES.keys.each do |name|
+    define_method "#{name}?" do
+      self.account_type == ACCOUNT_TYPES[name.to_sym]
     end
   end
 
@@ -691,6 +703,14 @@ class Account < ActiveRecord::Base
 
   def freshid_migration_in_progress?
     redis_key_exists? freshid_migration_in_progress_key
+  end
+
+  def canned_responses_inline_images
+    attachment_ids = []
+    canned_responses.find_each(batch_size: 100) do |canned_response|
+      attachment_ids << get_attachment_ids(canned_response.content_html)
+    end
+    attachment_ids.flatten.uniq
   end
 
   protected

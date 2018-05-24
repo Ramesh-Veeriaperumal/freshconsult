@@ -1,0 +1,15 @@
+get:
+  tags: [sandbox]
+  description: Sandbox account details
+  summary: Sandbox account details
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/sandboxes_index'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

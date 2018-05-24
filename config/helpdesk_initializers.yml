@@ -113,4 +113,5 @@ helpdesk:
     - central
     - onboarding_config
     - sanitize_monkey_patch
+    - paperclip_ssrf_patch
     - apigee_config

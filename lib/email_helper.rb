@@ -75,7 +75,7 @@ module EmailHelper
   end
 
   def tokenize_emojis(msg_text)
-    (msg_text.present? and Account.current.features?(:tokenize_emoji)) ? msg_text.tokenize_emoji : msg_text
+    (msg_text.present? and !Account.current.launched?(:encode_emoji) and Account.current.features?(:tokenize_emoji)) ? msg_text.tokenize_emoji : msg_text
   end
 
   def reply_to_private_note?(all_keys)

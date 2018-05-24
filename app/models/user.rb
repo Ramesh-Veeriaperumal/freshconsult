@@ -196,6 +196,10 @@ class User < ActiveRecord::Base
     preferences[:user_preferences][:agent_deleted_forever]
   end
 
+  def marked_for_hard_delete?
+    preferences[:user_preferences][:marked_for_hard_delete]
+  end
+
   def facebook_avatar( facebook_id, profile_size = "square")
     "https://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
   end
@@ -632,6 +636,9 @@ class User < ActiveRecord::Base
   end
 
   def delete_forever!
+    new_pref = { :marked_for_hard_delete => true }
+    self.merge_preferences = { :user_preferences => new_pref }
+    self.save!
     Users::ContactDeleteForeverWorker.perform_async({:user_id => self.id})
   end
 
@@ -1125,7 +1132,7 @@ class User < ActiveRecord::Base
   end
 
   def create_freshid_user
-    return unless freshid_enabled_and_agent?
+    return if freshid_disabled_or_customer?
     Rails.logger.info "FRESHID Creating user :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}"
     reset_freshid_user if email_changed?
     freshid_user = Freshid::User.create(user_attributes_for_freshid)
@@ -1143,7 +1150,7 @@ class User < ActiveRecord::Base
   end
 
   def destroy_freshid_user
-    if freshid_enabled_account? && freshid_authorization.present?
+    if freshid_enabled_account? && email_allowed_in_freshid? && freshid_authorization.present?
       remove_freshid_user
       freshid_authorization.destroy
       self.password_salt = self.crypted_password = nil
@@ -1192,11 +1199,15 @@ class User < ActiveRecord::Base
     end
 
     def freshid_enabled_and_agent?
-      agent? && freshid_enabled_account?
+      agent? && freshid_enabled_account? && email_allowed_in_freshid?
     end
 
-    def freshid_disabled_and_customer?
+    def freshid_disabled_or_customer?
       !freshid_enabled_and_agent?
+    end
+
+    def email_allowed_in_freshid?
+      !FRESHID_IGNORED_EMAIL_IDS.include?(self.email)
     end
 
     def valid_freshid_login?(incoming_password)

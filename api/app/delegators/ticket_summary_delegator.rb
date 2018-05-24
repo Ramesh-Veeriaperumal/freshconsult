@@ -3,9 +3,12 @@ class TicketSummaryDelegator < BaseDelegator
   validate :validate_ticket_summary
   validate :validate_agent_id
   validate :validate_last_modified_user_id, if: -> {last_modified_user_id.present?}
+  validate :validate_inline_attachment_ids, if: -> { @inline_attachment_ids }
   def initialize(record, options = {})
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
+    @inline_attachment_ids = options[:inline_attachment_ids]
+    @summary = record
   end
 
  def validate_application_id
@@ -30,6 +33,16 @@ class TicketSummaryDelegator < BaseDelegator
   def validate_last_modified_user_id
     agent =  Account.current.technicians.where(id: last_modified_user_id)
     errors[:last_edited_user_id] << :"is invalid" unless agent.present?
+  end
+
+  def validate_inline_attachment_ids
+    valid_ids = Account.current.attachments.where(id: @inline_attachment_ids, attachable_type: 'Tickets Image Upload').pluck(:id)
+    valid_ids = valid_ids + @summary.inline_attachment_ids unless @summary.new_record? # Skip existing inline attachments while validating
+    invalid_ids = @inline_attachment_ids - valid_ids
+    if invalid_ids.present?
+      errors[:inline_attachment_ids] << :invalid_inline_attachments_list
+      (self.error_options ||= {}).merge!({ inline_attachment_ids: { invalid_ids: "#{invalid_ids.join(', ')}" } })
+    end
   end
 
   private

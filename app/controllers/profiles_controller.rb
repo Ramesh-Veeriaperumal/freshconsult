@@ -4,6 +4,10 @@ class ProfilesController < ApplicationController
   include UserHelperMethods  
   include FalconHelperMethods
   include Integrations::ProfileHelper
+
+  USER_UPDATEABLE_ATTRIBUTES =  [:name, :job_title, :phone, :mobile, :time_zone, :language, :avatar_attributes => [:content]].freeze
+  USER_UPDATEABLE_ATTRIBUTES_FRESHID = [ :time_zone, :language, :avatar_attributes => [:content]].freeze
+
    before_filter :require_user 
    before_filter :load_profile, :only => [:edit, :change_password]
    before_filter :set_profile, :filter_params, :only => [:update]
@@ -215,6 +219,18 @@ protected
       params[:agent].delete(:user_id)
       params[:agent].delete(:occasional)
       params[:agent].delete(:ticket_permission)
+    end
+  end
+
+  def agent_params
+    params[:agent].permit(:signature_html)
+  end
+
+  def user_params
+    if freshid_enabled?
+      params[:user].permit(*USER_UPDATEABLE_ATTRIBUTES_FRESHID)
+    else
+      params[:user].permit(*USER_UPDATEABLE_ATTRIBUTES)
     end
   end
 end

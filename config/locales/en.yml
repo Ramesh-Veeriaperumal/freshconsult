@@ -6603,7 +6603,7 @@ en:
     gdpr_admin_details: has changed your user permissions from
     gdpr_agent: Agent
     gdpr_admin: Admin.
-    gdpr_terms: By clicking on Accept , you agree to our  
+    gdpr_terms: By clicking on Accept , you agree to our
     gdpr_terms_link:  Terms
     gdpr_acknowledgement: and acknowledge having read our
     gdpr_policy: Privacy policy.
@@ -9236,6 +9236,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/subscription'>purchase additional agents</a> for your account. You can also choose to add occasional agents below. "
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents. "
   contact_agent_deleted_forever: "This contact has been deleted forever"
+  contact_marked_for_hard_delete: "This contact has been scheduled for permanent delete"
   contact_without_email_id: "Contact with email id can only be converted to agent"
   no_date_to_display: "No data to display"
   email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimiter."
@@ -12210,10 +12211,14 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       enable_chat_in_portal: 'Enable chat in your support portal'
       enable_chat_in_portal_info: 'Make it easy for your customers to chat with you, when they land on your support portal.'
       header_info: Freshdesk’s integrated chat channel is powered by Freshchat. Freshchat is a modern messaging software that helps engage, support, and retain customers on multiple channels - website, mobile, support portal, and in-app.
-      sidebar_content: 
+      sidebar_content:
         para1: Freshdesk’s integrated chat channel, powered by Freshchat, helps you engage in conversations with customers who are you on the website, mobile, support portal, or in-app. You can also send proactive messages to visitors and users and drive them to make a purchase, sign up, or share feedback on your product.
         para2:
           header: 'Use the messenger inside Freshdesk to bring your support and messaging workflow together:'
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
+  sandbox:
+    live: Sandbox is live
+    error:
+      create: sandbox account already exist

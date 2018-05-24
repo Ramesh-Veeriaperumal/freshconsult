@@ -12,9 +12,8 @@ module Sync::Util
     gitClient.checkout_branch
   end
 
-  def commit_config_to_git(account_id, repo_path, configs)
+  def commit_config_to_git(account_id, repo_path)
     RELATIONS.each do |relation|
-      next unless configs.include?(relation[0])
       Sync::ConfigToFile.new(repo_path, relation[0], relation[1]).write_config
     end
   end
@@ -30,14 +29,14 @@ module Sync::Util
     puts "Clearing Staging Data : #{tables.inspect}"
     tables.each do |table|
       sql = "DELETE from #{table} where account_id = #{account_id}"
-      puts "******** Deleting data with query #{sql}" 
+      puts "******** Deleting data with query #{sql}"
       ActiveRecord::Base.connection.execute(sql)
     end
   end
 
-  def restore_config_from_git(master_account_id, staging_account_id, repo_path)
+  def restore_config_from_git(master_account_id, staging_account_id, repo_path, retain_id)
     account = Account.find(staging_account_id).make_current
-    s = Sync::FileToConfig.new(repo_path, master_account_id, account)
+    s = Sync::FileToConfig.new(repo_path, master_account_id, retain_id, account)
     clear_staging_data(s.affected_tables, account.id)
     s.update_all_config
   ensure
@@ -80,20 +79,9 @@ module Sync::Util
     Account.reset_current_account
   end
 
-  private 
-  
-  # def table_directory_hash(account_id, repo_path)
-  #   tables = {}
-  #   tdir = {}
-  #     account = Account.find(account_id).make_current
-  #     RELATIONS.each do |relation|
-  #       ftoc = Sync::FileToConfig.new("teting", relation[0], account)
-  #       tdir[relations[0]]  = ftoc.table_directories
-  #     end
-  #     p "#{tdir.inspect}"
-  # end
+  private
 
   def branch_name(account_id)
-    "#{BRANCH_PREFIX}#{account_id}"
+    "#{account_id}"
   end
 end

@@ -1,9 +1,9 @@
 module ApiTicketConstants
   # ControllerConstants
-  ARRAY_FIELDS = %w(tags cc_emails attachments attachment_ids related_ticket_ids).freeze
+  ARRAY_FIELDS = %w(tags cc_emails attachments attachment_ids related_ticket_ids inline_attachment_ids).freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  IGNORE_PARAMS = %w(skip_close_notification parent_id parent_template_id child_template_ids related_ticket_ids).freeze | AttachmentConstants::CLOUD_FILE_FIELDS
+  IGNORE_PARAMS = %w(skip_close_notification parent_template_id child_template_ids related_ticket_ids).freeze | AttachmentConstants::CLOUD_FILE_FIELDS
 
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
                      email phone twitter_id facebook_id requester_id name
@@ -16,13 +16,13 @@ module ApiTicketConstants
                      responder_id internal_agent_id source status subject type product_id company_id skill_id
                      skip_close_notification unique_external_id).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   PARSE_TEMPLATE_FIELDS = [:template_text].freeze
-  BULK_REPLY_FIELDS = [reply: ([:body, :from_email, :attachment_ids] | AttachmentConstants::CLOUD_FILE_FIELDS)].freeze
+  BULK_REPLY_FIELDS = [reply: ([:body, :from_email, :attachment_ids, :inline_attachment_ids] | AttachmentConstants::CLOUD_FILE_FIELDS)].freeze
   BULK_UPDATE_FIELDS = (UPDATE_FIELDS - ['attachments']).freeze
   EXECUTE_SCENARIO_FIELDS = BULK_EXECUTE_SCENARIO_FIELDS = %w(scenario_id).freeze
   COMPOSE_EMAIL_FIELDS = (CREATE_FIELDS - %w(source product_id responder_id requester_id phone twitter_id facebook_id)).freeze
   SHOW_FIELDS = ['include'].freeze
   PERMITTED_ARCHIVE_FIELDS = SHOW_FIELDS
-  UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags skip_close_notification subject description attachment_ids requester_id company_id).freeze | AttachmentConstants::CLOUD_FILE_FIELDS
+  UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags skip_close_notification subject description attachment_ids requester_id company_id inline_attachment_ids).freeze | AttachmentConstants::CLOUD_FILE_FIELDS
 
   ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats survey).freeze
   SIDE_LOADING = %w(requester stats company survey).freeze
@@ -120,7 +120,7 @@ module ApiTicketConstants
 
   PARAMS_TO_REMOVE = [:cc_emails, :description, :parent_id].freeze
   PARAMS_MAPPINGS = { custom_fields: :custom_field, fr_due_by: :frDueBy, type: :ticket_type }.freeze
-  PARAMS_TO_SAVE_AND_REMOVE = [:status, :cloud_files, :attachment_ids, :skip_close_notification, :parent_template_id, :child_template_ids].freeze
+  PARAMS_TO_SAVE_AND_REMOVE = [:status, :cloud_files, :attachment_ids, :skip_close_notification, :parent_template_id, :child_template_ids, :inline_attachment_ids].freeze
 
   ALLOWED_ONLY_PARAMS = %w(count).freeze
   VERIFY_REQUESTER_ON_PROPERTY_VALUE_CHANGES = %w(email phone twitter_id 

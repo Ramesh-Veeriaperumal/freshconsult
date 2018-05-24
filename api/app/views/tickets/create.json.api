@@ -38,5 +38,6 @@
                                           end
                }
               response_hash.merge!(internal_agent_id: @item.internal_agent_id, internal_group_id: @item.internal_group_id) if Account.current.shared_ownership_enabled?
+              response_hash.merge!(association_type: @item.association_type, associated_tickets_list: @item.associates) if @item.associated_ticket?
               JSON.generate(response_hash)
 

@@ -53,6 +53,7 @@ class User < ActiveRecord::Base
   def central_payload_type
     action = [:create, :update, :destroy].find{ |action| 
       transaction_include_action? action }
+    return "contact_destroy" unless action.present?
     user_type = agent_or_contact
     if @model_changes.present? && @model_changes.key?("helpdesk_agent")
       action = @model_changes["helpdesk_agent"][0] ? "create" : "destroy"

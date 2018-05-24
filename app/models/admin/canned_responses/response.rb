@@ -43,6 +43,9 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
   unhtml_it :content
   xss_sanitize :only =>[:content_html],  :cannedresponse_sanitizer => [:content_html]
 
+  after_commit :clear_inline_images_cache, on: :create
+  after_commit :clear_inline_images_cache, on: :update
+
   scope :accessible_for, lambda { |user|
     {
       :joins => %(JOIN admin_user_accesses acc ON
@@ -125,4 +128,7 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
     self.helpdesk_accessible.access_type == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
   end
 
+  def clear_inline_images_cache
+    Account.current.clear_canned_responses_inline_images_from_cache
+  end
 end

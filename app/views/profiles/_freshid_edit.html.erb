@@ -28,7 +28,10 @@
 			<%= f.error_messages %>
 			<%= render :partial => "form" %>
 			<div class="button-container">
-				<%= link_to t('cancel'), root_path, :class => "btn" %>
+				<%if  current_account.verified? &&  current_user.active? %>
+				  <a href="#email-preview" class="email-preview" ><%= t("preview")%></a>
+				<% end %>
+				<%= link_to t('cancel'), root_path, :class => "btn", :target => "_top" %>
 		   		<%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
 				
 			</div>

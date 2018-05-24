@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab
                           productdemo resources static static0 static1 static2 static3 static4 static5
                           static6 static7 static8 static9 static10 dev apps freshapps fone
-                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 attachment euattachment eucattachment ausattachment agent-hermes) + FreshopsSubdomains + PartnerSubdomains
+                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 attachment euattachment eucattachment ausattachment indattachment agent-hermes) + FreshopsSubdomains + PartnerSubdomains
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
@@ -212,5 +212,11 @@ class Account < ActiveRecord::Base
   }
 
   BLOCK_GRACE_PERIOD = 90.days
+
+  ACCOUNT_TYPES = {
+    :production_without_sandbox => 0,
+    :production_with_sandbox => 1,
+    :sandbox => 2
+  }
 
 end

@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
   before_create :downcase_full_domain,:set_default_values, :set_shard_mapping, :save_route_info
   before_create :add_features_to_binary_column
   before_update :check_default_values, :update_users_time_zone, :backup_changes
-  before_destroy :backup_changes, :make_shard_mapping_inactive, :deleted_model_info
+  before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status, :make_current
   after_create :create_freshid_account, if: [:freshid_signup_allowed?, :freshid_enabled?]
@@ -40,9 +40,6 @@ class Account < ActiveRecord::Base
   after_commit :enable_freshid, on: :update, :if => [:sso_disabled?, :freshid_migration_not_in_progress?]
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_signup_allowed?
 
-
-  # Need to revisit when we push all the events for an account
-  publishable on: :destroy
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -149,6 +146,14 @@ class Account < ActiveRecord::Base
     Apigee::KVMActionWorker.perform_async(params)
   end
 
+  def save_deleted_model_info
+    @deleted_model_info = {
+      id: id,
+      name: name,
+      full_domain: full_domain,
+    }
+  end
+
   protected
 
     def set_default_values
@@ -162,14 +167,6 @@ class Account < ActiveRecord::Base
     def backup_changes
       @old_object = Account.find(id)
       @all_changes = self.changes.clone
-    end
-
-    def deleted_model_info
-      @deleted_model_info = {
-        id: id,
-        name: name,
-        full_domain: full_domain,
-      }
     end
 
     def account_verification_changed?
@@ -259,7 +256,8 @@ class Account < ActiveRecord::Base
         self.id = domain_mapping.account_id
         populate_google_domain(domain_mapping.shard) if google_account?
       else
-        shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard,:status => ShardMapping::STATUS_CODE[:not_found],
+        shard = self.sandbox? ? ActiveRecord::Base.current_shard_selection.shard.to_s : ShardMapping.latest_shard
+        shard_mapping = ShardMapping.new({:shard_name => shard, :status => ShardMapping::STATUS_CODE[:not_found],
                                                :pod_info => PodConfig['CURRENT_POD']})
         shard_mapping.domains.build({:domain => full_domain})  
         populate_google_domain(shard_mapping) if google_account? #remove this when the new google marketplace is stable.

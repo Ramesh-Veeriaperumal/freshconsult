@@ -9,7 +9,7 @@
   <% end %>
   <%= render :partial => "layouts/chat" %>
   <% if current_account.freshchat_account.try(:enabled) %>
-  	<%= render :partial => "layouts/agent_freshchat" if !current_user.is_falcon_pref? %>
+  	<%= render :partial => "layouts/agent_freshchat" if current_user && !current_user.is_falcon_pref? %>
   <% end %>
   <%= render :partial => "layouts/shared/chat/chat_support" if in_app_support? && !current_user.is_falcon_pref? %>
 </div>
