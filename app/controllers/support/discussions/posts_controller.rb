@@ -53,6 +53,7 @@ class Support::Discussions::PostsController < SupportController
 		sqs_post = SQSPost.new(post_params)
 		sqs_post[:attachments] = processed_attachments
 		sqs_post[:cloud_file_attachments] = params["cloud_file_attachments"] || []
+		sqs_post[:inline_attachment_ids] = params["post"]["inline_attachment_ids"] || []
 		sqs_post[:portal] = current_portal.id
 		sqs_post_saved = sqs_post.save
 
