@@ -76,23 +76,20 @@ module UsersTestHelper
     new_user.save
     new_user.reload
   end
-
-  def update_user
-    user = Account.current.technicians.first
-    user.name = Faker::Name.name
-    user.save
-  end
   
   def central_publish_user_pattern(user)
     {
       id: user.id,
       name: user.name,
-      type: user.helpdesk_agent ? 'agent' : 'contact',
       email: user.email,
+      last_login_at: user.last_login_at,
+      current_login_at: user.current_login_at,
       last_login_ip: user.last_login_ip,
       current_login_ip: user.current_login_ip,
       login_count: user.login_count,
       failed_login_count: user.failed_login_count,
+      created_at: user.created_at.try(:utc).try(:iso8601),
+      updated_at: user.updated_at.try(:utc).try(:iso8601),
       account_id: user.account_id,
       active: user.active,
       customer_id: user.customer_id,
@@ -104,6 +101,7 @@ module UsersTestHelper
       description: user.description,
       time_zone: user.time_zone,
       posts_count: user.posts_count,
+      last_seen_at: user.last_seen_at,
       deleted: user.deleted,
       user_role: user.user_role,
       delta: user.delta,
@@ -111,22 +109,21 @@ module UsersTestHelper
       fb_profile_id: user.fb_profile_id,
       language: user.language,
       blocked: user.blocked,
+      blocked_at: user.blocked_at.try(:utc).try(:iso8601),
       address: user.address,
+      deleted_at: user.deleted_at.try(:utc).try(:iso8601),
       whitelisted: user.whitelisted,
       external_id: user.external_id,
-      preferences: user.preferences,
+      string_uc01: user.string_uc01,
+      text_uc01: user.text_uc01,
       helpdesk_agent: user.helpdesk_agent,
       privileges: user.privileges,
-      extn: user.extn,
-      parent_id: user.parent_id,
-      unique_external_id: user.unique_external_id,
-      last_login_at: user.last_login_at.try(:utc).try(:iso8601), 
-      current_login_at: user.current_login_at.try(:utc).try(:iso8601), 
-      last_seen_at: user.last_seen_at.try(:utc).try(:iso8601), 
-      blocked_at: user.blocked_at.try(:utc).try(:iso8601), 
-      deleted_at: user.deleted_at.try(:utc).try(:iso8601), 
-      created_at: user.created_at.try(:utc).try(:iso8601), 
-      updated_at: user.updated_at.try(:utc).try(:iso8601)
+      string_uc02: user.string_uc02,
+      string_uc03: user.string_uc03,
+      string_uc04: user.string_uc04,
+      string_uc05: user.string_uc05,
+      string_uc06: user.string_uc06,
+      unique_external_id: user.unique_external_id
     }
   end
 end

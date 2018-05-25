@@ -26,8 +26,4 @@ module CentralPublishWorker
     end
     
   end
-
-  class UserWorker < CentralPublisher::Worker
-    sidekiq_options :queue => "user_central_publish", :retry => 5, :dead => true, :failures => :exhausted
-  end
 end
