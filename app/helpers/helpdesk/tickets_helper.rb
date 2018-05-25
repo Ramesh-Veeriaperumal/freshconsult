@@ -247,7 +247,7 @@ module Helpdesk::TicketsHelper
       {"draft_text" => last_reply_info["draft_data"],
        "draft_cc" =>  last_reply_info["draft_cc"].split(";"),
        "draft_bcc" => last_reply_info["draft_bcc"].split(";"),
-       "draft_inline_attachment_ids" => last_reply_info["draft_inline_attachment_ids"].split(",")}
+       "draft_inline_attachment_ids" => last_reply_info["draft_inline_attachment_ids"].to_s.split(",")}
     end
   end
 
