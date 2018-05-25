@@ -12,9 +12,14 @@ class Search::V2::AutocompleteController < ApplicationController
     @klasses        = ['User']
     @search_context = :requester_autocomplete
 
-    search(esv2_autocomplete_models) do |results|
-      results.each do |result|
-        self.search_results[:results].push(*result.search_data)
+    if skip_auto_complete? and !@search_key.match(AccountConstants::EMAIL_REGEX).present?
+      handle_rendering
+    else
+      @exact_match = true if skip_auto_complete?
+      search(esv2_autocomplete_models) do |results|
+        results.each do |result|
+          self.search_results[:results].push(*result.search_data)
+       end
       end
     end
   end
@@ -80,6 +85,10 @@ class Search::V2::AutocompleteController < ApplicationController
 
   private
 
+    def skip_auto_complete?
+      current_account.auto_complete_off_enabled? and !current_user.privilege?(:view_contacts)
+    end
+
     def construct_es_params
       default_es_params = super.merge(ES_V2_BOOST_VALUES[@search_context] || {})
       default_es_params.merge!({company_ids: [params[:customer_id].to_i]}) if @search_context == :portal_company_users
@@ -94,7 +103,7 @@ class Search::V2::AutocompleteController < ApplicationController
 
     def initialize_search_parameters
       super
-      self.search_results = { results: [] }
+      self.search_results = {results: []}
     end
 
     # ESType - [model, associations] mapping

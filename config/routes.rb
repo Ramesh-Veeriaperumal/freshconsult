@@ -2993,6 +2993,7 @@ Helpkit::Application.routes.draw do
           put :add_day_passes
           put :change_api_limit
           put :change_v2_api_limit
+          put :change_webhook_limit
           put :add_feature
           put :change_url
           get :single_sign_on
