@@ -51,7 +51,7 @@ module Community::Moderation::MoveToDB
 			{
 				:body_html => @spam_post.body_html,
 				:portal => (@spam_post.attributes.has_key?('portal') ? @spam_post.portal : nil),
-				:inline_attachment_ids => (@spam_post.attributes.has_key?('inline_attachment_ids') ? JSON.parse(@spam_post.inline_attachment_ids) : [])
+				:inline_attachment_ids => @spam_post.inline_attach_ids
 			}.merge(common_attributes || {})
 		end
 
