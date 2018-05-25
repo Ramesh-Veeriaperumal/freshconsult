@@ -2,7 +2,7 @@ class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets,
                    :customer_sentiment_ui, :dkim, :bulk_security, :scheduled_ticket_export, 
-                   :ticket_contact_export, :email_failures, :disable_emails, :skip_one_hop,
+                   :ticket_contact_export, :disable_emails, :skip_one_hop,
                    :falcon_portal_theme, :freshid, :freshchat_integration,:year_in_review_2017,
                    :facebook_page_redirect, :announcements_tab, :archive_ghost,
                    :ticket_central_publish, :solutions_central_publish, :es_msearch,
