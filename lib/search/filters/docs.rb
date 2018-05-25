@@ -36,11 +36,11 @@ class Search::Filters::Docs
     parsed_response['hits']['total']
   end
 
-  def bulk_count
+  def bulk_count(aggs = false)
     response = bulk_es_request('_msearch', { search_type: 'count'})
     parsed_response = JSON.parse(response)['responses']
     Rails.logger.info "ES count response:: Account -> #{Account.current.id}, Queries: #{parsed_response.length}, Took:: #{parsed_response.map { |r| r['took'] }.join(',')}"
-    parsed_response.map { |r| r['hits']['total'] }
+    count_response(parsed_response, aggs)
   end
 
   # Fetch docs from Elasticsearch based on filters and load from ActiveRecord
@@ -136,7 +136,7 @@ class Search::Filters::Docs
       error_handle do
         request = Typhoeus::Request.new(full_path,
                                           method: :get,
-                                          body: params,
+                                          body: @params,
                                           headers: {content_type: "application/x-ndjson"})
         Rails.logger.debug("#Request => #{request.original_options}")
         response = request.run
@@ -149,6 +149,11 @@ class Search::Filters::Docs
       query_params.merge!(query_string)
       path = [host, alias_name, end_point].join('/')
       "#{path}?#{query_params.to_query}"
+    end
+
+    def count_response(parsed_response, aggs = false)
+      return parsed_response.map { |r| r['hits']['total'] } unless aggs
+      parsed_response.map { |r| {'total': r['hits']['total'], 'doc_counts': r['aggregations']} }
     end
 
     #_Note_: Include type if not doing only for ticket

@@ -1,6 +1,8 @@
 module Cache::Memcache::Account
 
   include MemcacheKeys
+  include Dashboard::Custom::CacheKeys
+
   module ClassMethods
     include MemcacheKeys
     def fetch_by_full_domain(full_domain)
@@ -489,6 +491,12 @@ module Cache::Memcache::Account
   def clear_requester_widget_fields_from_cache
     key = REQUESTER_WIDGET_FIELDS % { :account_id => current_account.id }
     MemcacheKeys.delete_from_cache key
+  end
+
+  def clear_dashboards_cache
+    self.dashboards.each do |dashboard|
+      MemcacheKeys.delete_from_cache(dashboard_cache_key(dashboard.id))
+    end
   end
 
   def bots_count_from_cache

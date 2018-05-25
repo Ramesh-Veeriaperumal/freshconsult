@@ -1,6 +1,6 @@
 module Ember
   class LeaderboardController < ApiApplicationController
-    include LeaderboardConcern
+    include ::Dashboard::LeaderboardMethods
 
     around_filter :run_on_slave
     around_filter :use_time_zone

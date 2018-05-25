@@ -284,7 +284,7 @@ module HelpdeskReports::Helper::Ticket
   
   def validate_max_multi_selects param
     (param[:filter] || []).inject([]) do |errors, filter|
-      value_count = filter["value"].split(",").length
+      value_count = filter["value"].to_s.split(",").length
       if value_count == 0
         errors << "Multi select 0 for #{filter["condition"]}"
       elsif value_count > MULTI_SELECT_LIMIT

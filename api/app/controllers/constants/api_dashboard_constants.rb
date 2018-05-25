@@ -71,7 +71,7 @@ module ApiDashboardConstants
   CSAT_FIELDS = { positive: { label: 'positive', value: 0 }, neutral: { label: 'neutral', value: 0 }, negative: { label: 'negative', value: 0 } }.freeze
 
   ROOT_KEY = { scorecard: :ticket_summary,
-               show: :dashboards,
+               show: :default_dashboards,
                survey_info: :satisfaction_surveys,
                moderation_count: :moderation_counts,
                unresolved_tickets_data: :unresolved_tickets }.freeze

@@ -1,4 +1,4 @@
-class Dashboard::Todo < Dashboard
+class Dashboard::Todo < Dashboards
   attr_accessor :tasks
 
   def initialize

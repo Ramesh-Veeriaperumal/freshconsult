@@ -409,12 +409,24 @@ Helpkit::Application.routes.draw do
     get 'solutions/articles', to: 'ember/solutions/articles#index'
     get 'solutions/articles/:id/article_content', to: 'ember/solutions/articles#article_content'
 
-    match '/dashboards/leaderboard_agents' => 'ember/leaderboard#agents', via: :get
-    match '/dashboards/leaderboard_groups' => 'ember/leaderboard#groups', via: :get
-
     resources :marketplace_apps, controller: 'ember/marketplace_apps', only: [:index]
 
-    resources :dashboards, controller: 'ember/dashboard', only: [:show] do
+    # match '/dashboards/widget_data_preview'=> 'ember/custom_dashboard#widget_data_preview', via: :get
+
+    resources :dashboards, controller: 'ember/custom_dashboard' do
+      member do
+        get :widgets_data, to: 'ember/custom_dashboard#widgets_data'
+        get :bar_chart_data, to: 'ember/custom_dashboard#bar_chart_data'
+      end
+
+      collection do
+        get :widget_data_preview, to: 'ember/custom_dashboard#widget_data_preview'
+        get :leaderboard_agents, to: 'ember/leaderboard#agents'
+        get :leaderboard_groups, to: 'ember/leaderboard#groups'
+      end
+    end
+    
+    resources :default_dashboards, controller: 'ember/dashboard', only: [:show] do
       collection do
         get :satisfaction_survey, to: 'ember/dashboard#survey_info'
         get :moderation_count, to: 'ember/dashboard#moderation_count'
