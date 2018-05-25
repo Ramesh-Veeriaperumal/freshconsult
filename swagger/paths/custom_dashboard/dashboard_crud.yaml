@@ -1,0 +1,66 @@
+
+  get:
+    tags: [custom dashboard]
+    description: Dashboard configuration details
+    parameters:
+        - name: id
+          in: path
+          type: integer
+          description: Id of Dashboard
+          required: true
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/dashboard_show'
+      403:
+        description: Access denied
+      400:
+        description: Bad Request Error
+        schema:
+          $ref: '#/definitions/bad_request_error'
+
+  delete:
+      tags: [custom dashboard]
+      description: Delete dashboard
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          description: Id of dashboard
+          required: true
+      responses:
+        204:
+          description: Success
+        404:
+          description: Dashboard not found
+        403:
+          description: Access denied
+
+  put:
+    tags: [custom dashboard]
+    description: Update a dashboard
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        description: Id of dashboard
+        required: true
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/dashboard_update'
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/dashboard_show'
+      403:
+        description: Access denied
+      404:
+        description: Dashboard not found
+      400:
+        description: Bad Request Error
+        schema:
+          $ref: '#/definitions/bad_request_error'

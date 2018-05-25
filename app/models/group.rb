@@ -14,18 +14,24 @@ class Group < ActiveRecord::Base
   TICKET_ASSIGN_TYPE = {:default => 0, :round_robin => 1, :skill_based => 2} #move other constants after merge - hari
 
   concerned_with :round_robin_methods, :skill_based_round_robin, :presenter
+
+  publishable on: [:create, :update, :destroy]
   
   before_save :reset_toggle_availability, :create_model_changes
   before_destroy :backup_user_ids
 
   after_commit :round_robin_actions, :clear_cache
-  after_commit :nullify_tickets, :destroy_group_in_liveChat, on: :destroy
+  after_commit :nullify_tickets_and_widgets, :destroy_group_in_liveChat, on: :destroy
   after_commit :sync_sbrr_queues
 
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id
 
-  has_many :agent_groups , :class_name => "AgentGroup", :foreign_key => "group_id"
+  has_many :agent_groups , 
+    :class_name => "AgentGroup", 
+    :foreign_key => "group_id",
+    :after_add => :touch_add_group_change
+
   has_many :agents, :through => :agent_groups, :source => :user, :order => :name,
             :conditions => ["users.deleted=?", false], :dependent => :destroy
 
@@ -228,8 +234,15 @@ class Group < ActiveRecord::Base
       end
     end
 
-    def nullify_tickets
+    def nullify_tickets_and_widgets
+      # Nullifies tickets and also clears group related filters on dashboard widgets
       Helpdesk::ResetGroup.perform_async({:group_id => self.id, :reason => {:delete_group => [self.name]}})
     end
 
+    def touch_add_group_change agent_group
+      agent_info = { id: agent_group.user_id, name: agent_group.user.name }
+      Thread.current[:agent_changes].present? ? 
+        Thread.current[:agent_changes].push(agent_info) : 
+        Thread.current[:agent_changes]=[agent_info]
+    end
 end

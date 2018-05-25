@@ -24,10 +24,11 @@ module HelpdeskReports::Constants::Ticket
     [:AVG_RESPONSE_TIME,           "Avg",         "Avg Response Time"],
     [:AVG_RESOLUTION_TIME,         "Avg",         "Avg Resolution Time"],
     [:AVG_FIRST_ASSIGN_TIME,       "Avg",         "Avg 1st Assign Time"],
-    [:RESPONSE_SLA_QNA,           "Count",       "Response Compliance"],#Already preprocessed and returning complaince % 
-    [:RESOLUTION_SLA_QNA,         "Count",       "Resolution Compliance"],
-    [:AVG_FIRST_RESPONSE_TIME_QNA,     "Count",         "Avg 1st Response Time"],
-    [:AVG_RESOLUTION_TIME_QNA,         "Count",         "Avg Resolution Time"],
+    [:RESPONSE_SLA_QNA,            "Count",       "Response Compliance"],#Already preprocessed and returning complaince % 
+    [:RESOLUTION_SLA_QNA,          "Count",       "Resolution Compliance"],
+    [:AVG_FIRST_RESPONSE_TIME_QNA, "Count",       "Avg 1st Response Time"],
+    [:AVG_RESOLUTION_TIME_QNA,     "Count",       "Avg Resolution Time"],
+    [:TICKETS_VIEW_THRESHOLD,  "Count",    "Ticket Count in the view"],
   ]
   
   TEMPLATE_METRICS_AND_QUERY = [ :RECEIVED_RESOLVED_TICKETS, :UNRESOLVED_PREVIOUS_BENCHMARK, :UNRESOLVED_CURRENT_BENCHMARK,

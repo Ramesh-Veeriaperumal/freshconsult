@@ -39,6 +39,7 @@
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
+    - user_central_publish
 
   :falcon_occasional:
     - scheduler_post_message
@@ -100,6 +101,7 @@
     - ml_solutions_training
     - customer_note_body_queue
     - update_taggables_queue
+    - suspended_ticket_central_publish
   :maintainence:
     - select_all_tickets
     - select_all_batcher
@@ -145,6 +147,7 @@
     - restore_spam_tickets
     - nullify_deleted_custom_field_data
     - contact_delete_forever
+    - deactivate_product_widgets
     - inline_image_shredder
     - create_sandbox_account
     - delete_sandbox
@@ -250,3 +253,5 @@
     - marketo_queue
     - subscription_events_queue
     - track_customer_in_freshsales
+  :hard_delete:
+    - contact_delete_forever

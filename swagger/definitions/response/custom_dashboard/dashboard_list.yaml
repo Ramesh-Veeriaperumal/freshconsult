@@ -1,0 +1,21 @@
+type: object
+properties:
+  dashboards:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Id of the dashboard
+        name:
+          type: string
+          description: Name of the dashboard
+        type:
+          type: integer
+          description: Type of the dashboard
+        group_ids:
+          description: groups that have access to the dashboard
+          type: array
+          items:
+            type: integer

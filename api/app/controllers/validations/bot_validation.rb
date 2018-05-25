@@ -11,6 +11,7 @@ class BotValidation < ApiValidation
   validates :enable_on_portal, required: true, data_type: { rules: 'Boolean' }, on: :enable_on_portal
   validates :start_date, :end_date, date_time: { allow_nil: false }, required: true, on: :analytics
   validate  :validate_time_period, if: -> { errors[:start_date].blank? && errors[:end_date].blank? }, on: :analytics
+  validate  :validate_avatar, if: -> { errors[:avatar].blank? && create_or_update }
 
   PORTAL_ID_DEPENDENT_ACTIONS = %i[new create].freeze
   CREATE_AND_UPDATE_ACTIONS = %i[create update].freeze
@@ -40,5 +41,10 @@ class BotValidation < ApiValidation
 
   def validate_time_period
     errors[:end_date] << :analytics_time_period_invalid if @end_date < @start_date
+  end
+
+  def validate_avatar
+    return unless @avatar
+    errors[:avatar] << :invalid_avatar unless @avatar[:avatar_id] && @avatar[:url] 
   end
 end

@@ -17,4 +17,6 @@ module Cache::Memcache::Dashboard::MemcacheKeys
 
   DASHBOARD_V2_TRENDS                             = "v1/DASHBOARD_V2_TRENDS:%{account_id}:%{cache_identifier}"
   DASHBOARD_V2_METRICS                            = "v1/DASHBOARD_V2_METRICS:%{account_id}:%{cache_identifier}"
+
+  CUSTOM_DASHBOARD_METRIC                         = "v1/CUSTOM_DASHBOARD_METRIC:%{account_id}:%{cache_identifier}"
 end

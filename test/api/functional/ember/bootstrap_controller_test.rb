@@ -73,4 +73,19 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
 
     Account.current.reload
   end
+
+  def test_custom_dashboard_limits_without_feature
+    Account.current.stubs(:custom_dashboard_enabled?).returns(false)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+  end
+
+  def test_custom_dashboard_limits_with_feature
+    Account.current.stubs(:custom_dashboard_enabled?).returns(true)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+  end
+
 end

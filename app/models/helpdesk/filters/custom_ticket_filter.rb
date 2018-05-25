@@ -6,6 +6,12 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   include Collaboration::TicketFilter
 
   attr_accessor :query_hash
+
+  has_many :dashboard_widgets, class_name: 'DashboardWidget', foreign_key: 'ticket_filter_id'
+
+  after_commit :update_widgets, on: :update, :if => :dynamic_filter?
+
+  before_destroy :update_widgets
   
   MODEL_NAME = "Helpdesk::Ticket"
 
@@ -107,6 +113,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       "helpdesk_schema_less_tickets.boolean_tc02",
       "helpdesk_schema_less_tickets.product_id"
     ]
+
+  DYNAMIC_FIELDS = ["responder_id", "group_id", "internal_group_id", "internal_agent_id"]
 
   after_create :create_accesible
   after_update :save_accessible
@@ -561,6 +569,21 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       conditions[agent_index].container.values = val
     end
     conditions
+  end
+
+  def dynamic_filter?
+    # Checking if the filter condition contains me or my groups
+    @dashboard_widgets = self.dashboard_widgets
+    @dashboard_widgets && ( accessible.only_me? || self.data[:data_hash].any? { |cond| DYNAMIC_FIELDS.include?(cond['condition']) && cond['value'] && cond['value'].split(',').include?('0') })
+  end
+
+  def update_widgets
+    @dashboard_widgets ||= self.dashboard_widgets
+    @dashboard_widgets.each do |widget|
+      widget.active = false
+      widget.save
+    end
+    Account.current.clear_dashboards_cache
   end
 
   class << self

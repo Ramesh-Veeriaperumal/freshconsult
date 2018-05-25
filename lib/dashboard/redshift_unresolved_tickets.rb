@@ -1,4 +1,4 @@
-class Dashboard::RedshiftUnresolvedTickets < Dashboard
+class Dashboard::RedshiftUnresolvedTickets < Dashboards
   include Cache::Memcache::Dashboard::CacheData
   include MemcacheKeys
 

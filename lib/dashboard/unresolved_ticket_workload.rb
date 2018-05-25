@@ -1,4 +1,4 @@
-class Dashboard::UnresolvedTicketWorkload < Dashboard
+class Dashboard::UnresolvedTicketWorkload < Dashboards
 include Helpdesk::Ticketfields::TicketStatus
 include Cache::Memcache::Dashboard::CacheData
 
