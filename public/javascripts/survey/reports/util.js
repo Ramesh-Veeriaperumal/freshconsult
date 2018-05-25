@@ -72,7 +72,6 @@ var SurveyUtil = {
             var urlData = {};
             //coming to reports page from csat widget
             var widget_queries_present = window.location.href.split("?")[1];
-            var widget_queries = (widget_queries_present) ? widget_queries_present.split("&") : false;
 
             var surveyObj = jQuery("#survey_report_survey_list");
              var groupObj = jQuery("#survey_report_group_list");
@@ -89,10 +88,12 @@ var SurveyUtil = {
             urlData['date'] = {};
             urlData['date']['presetRange'] = false;
 
-            if (SurveyUtil.widget_queries_flag && !!widget_queries_present) {
+            if (!widget_queries_present) {
                 urlData['group_id'] = groupObj.val();
                 urlData['date']['date_range'] = SurveyDateRange.convertDateToTimestamp(jQuery("#survey_date_range").val());                
             } else {
+                var widget_queries =  widget_queries_present.split("&");
+
                 urlData['group_id'] = widget_queries[0].split("=")[1];
                 jQuery("#survey_report_group_list").val(widget_queries[0].split("=")[1]);
                 urlData['date']['date_range'] = widget_queries[1].split("=")[1];
