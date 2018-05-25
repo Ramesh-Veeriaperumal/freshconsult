@@ -30,6 +30,7 @@ class AnnouncementsController < ApplicationController
     end
 
     def validate_params
+      return if params[:redirect_to].nil?
       portal_urls = current_account.portals.pluck(:portal_url).compact.uniq
       portal_domains = portal_urls.map { |url| get_host_without_www(url) }
       redirect_to_domain = get_host_without_www(params[:redirect_to])
@@ -40,6 +41,7 @@ class AnnouncementsController < ApplicationController
     end
 
     def get_host_without_www(url)
+      return nil unless url.present?
       uri  = URI.parse(url)
       uri  = URI.parse("http://#{url}") if uri.scheme.nil?
       host = uri.host.downcase
