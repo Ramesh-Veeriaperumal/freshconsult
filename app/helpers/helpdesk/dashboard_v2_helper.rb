@@ -4,14 +4,14 @@ module Helpdesk::DashboardV2Helper
     widgets = []
     widget_type = if dashboardv2_available?
       if current_user.privilege?(:admin_tasks)
-        (snapshot == 'admin') ? Dashboard::ADMIN_DASHBOARD : Dashboard::STANDARD_DASHBOARD
+        (snapshot == 'admin') ? Dashboards::ADMIN_DASHBOARD : Dashboards::STANDARD_DASHBOARD
       elsif current_user.privilege?(:view_reports)
-        (snapshot == 'supervisor') ? Dashboard::SUPERVISOR_DASHBOARD : Dashboard::STANDARD_DASHBOARD
+        (snapshot == 'supervisor') ? Dashboards::SUPERVISOR_DASHBOARD : Dashboards::STANDARD_DASHBOARD
       else
-        (snapshot == 'agent') ? Dashboard::AGENT_DASHBOARD : Dashboard::STANDARD_DASHBOARD
+        (snapshot == 'agent') ? Dashboards::AGENT_DASHBOARD : Dashboards::STANDARD_DASHBOARD
       end
     else
-      Dashboard::STANDARD_DASHBOARD
+      Dashboards::STANDARD_DASHBOARD
     end
 
     widget_type.each do |widget|

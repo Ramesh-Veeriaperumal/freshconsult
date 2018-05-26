@@ -43,7 +43,7 @@ module Users
                       (portal.main_portal ? account.default_friendly_email : portal.friendly_email)
       email_config = email_config ? email_config : 
                       (portal.main_portal ? account.primary_email_config : portal.primary_email_config)                      
-      reset_perishable_token! unless perishable_token_reset
+      reset_perishable_token!
 
       e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
       if customer?

@@ -1739,6 +1739,7 @@ Helpkit::Application.routes.draw do
         post :save_insights_config
         post :fetch_recent_questions
         post :fetch_insights_config
+        post :fetch_threshold_value
       end
     end
 

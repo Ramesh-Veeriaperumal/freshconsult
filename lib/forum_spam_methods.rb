@@ -102,7 +102,15 @@ module ForumSpamMethods
 		DeletedBodyObserver.write_to_s3(self.body_html, 'Post', self.timestamp)
 		InlineImageShredder.perform_async({model_name: 'Post', model_id: self.timestamp})
 		#Destroy inline attachments
-		Account.current.attachments.where(:id => JSON.parse(self.inline_attachment_ids)).destroy_all if self.attributes.has_key?('inline_attachment_ids') && self.inline_attachment_ids.present?
+		Account.current.attachments.where(:id => inline_attach_ids).destroy_all
+	end
+
+	def inline_attach_ids
+		begin
+			self.attributes.has_key?('inline_attachment_ids') ? JSON.parse(self.inline_attachment_ids) : []
+		rescue JSON::ParserError => e
+			[]
+		end
 	end
 
 	def attachments

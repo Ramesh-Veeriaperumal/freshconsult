@@ -13,9 +13,10 @@ module HelpdeskReports::Constants::Common
     :satisfaction_survey           => 1010,
     :timespent                     => 1011,
     :qna                           => 1012,
-    :insights                      => 1013}.freeze
+    :insights                      => 1013,
+    :threshold                     => 1014}.freeze
 
-  DEFAULT_REPORTS     = [ :agent_summary, :group_summary ]
+  DEFAULT_REPORTS     = [ :agent_summary, :group_summary, :threshold ]
   ADVANCED_REPORTS    = DEFAULT_REPORTS + [ :glance  ]
   ENTERPRISE_REPORTS  = ADVANCED_REPORTS + [ :ticket_volume, :performance_distribution, :customer_report, :timespent, :qna, :insights] 
 

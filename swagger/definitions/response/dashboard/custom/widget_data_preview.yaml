@@ -1,0 +1,5 @@
+type: object
+description: Widget preview data for the given type
+properties:
+  preview_data:
+    type: object
