@@ -29,9 +29,10 @@ module SBRR
         @object = _object
         SBRR.log "Enqueueing member #{member} to #{key}" 
         MAX_RETRIES.times do
-          result = zadd_multi_exec
-          return true  if result.is_a?(Array) && result[1].present?
+          return true if redis_push_success? :zadd_multi_exec
         end
+        SBRR.log "Enqueueing member fail #{member} #{key}"
+        nil
       end
 
       def refresh_object_with_lock _object, score = nil
@@ -39,23 +40,25 @@ module SBRR
         @old_score = score || zscore
         SBRR.log "Refresh member #{member} to #{key} with score #{@old_score}"
         MAX_RETRIES.times do
-          result = zadd_multi_exec
-          return true  if result.is_a?(Array) && result[1].present?
+          return true if redis_push_success? :zadd_multi_exec
         end
+        SBRR.log "Refresh member fail #{member} #{key}"
+        nil
       end
 
       def dequeue_object_with_lock _object
         @object = _object
         SBRR.log "Dequeueing member #{member} from #{key}" 
         MAX_RETRIES.times do
-          result = zrem_multi_exec
-          return true if result.is_a?(Array) && result[1].present?
+          return true if redis_push_success? :zrem_multi_exec
         end
+        SBRR.log "Dequeueing member fail #{member} #{key}"
+        nil
       end
 
       def increment_object_with_lock _object
         check_and_set _object, :incr
-        SBRR.log "In #{key} : Incrementing User : #{member} Score : #{"%016d" % score.to_i}" 
+        SBRR.log "In #{key} : Incrementing User : #{member} Score : #{"%016d" % score.to_i}"
       end
 
       def decrement_object_with_lock _object
@@ -72,6 +75,8 @@ module SBRR
           result     = zadd_multi_exec
           return true if result.is_a?(Array) && result[1].present?
         end
+        SBRR.log "check_and_set fail #{@object} #{@operation}"
+        nil
       end
 
       def check_and_set_via_multi m, _object, _old_score, _operation
@@ -106,6 +111,7 @@ module SBRR
           end
         rescue Exception => e
           NewRelic::Agent.notice_error(e)
+          SBRR.log "zadd_multi_exec exception #{e.message}"
           return
         end
 
@@ -116,6 +122,7 @@ module SBRR
           end
         rescue Exception => e
           NewRelic::Agent.notice_error(e)
+          SBRR.log "zrem_multi_exec exception #{e.message}"
           return
         end
 
@@ -145,6 +152,11 @@ module SBRR
 
         def lock_key_value
           score
+        end
+
+        def redis_push_success? method
+          result = safe_send(method)
+          return true if result.is_a?(Array) && result[1].present?
         end
 
     end

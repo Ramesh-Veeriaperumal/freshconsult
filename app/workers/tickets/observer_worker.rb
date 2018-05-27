@@ -73,7 +73,7 @@ module Tickets
           end
         end
         Thread.current[:observer_doer_id] = nil
-        return {:sbrr_exec => evaluate_on.sbrr_exec_obj}
+        return {:sbrr_exec => evaluate_on.try(:sbrr_exec_obj)}
       end
     end
   end
