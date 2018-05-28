@@ -1300,7 +1300,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def mint_url
     "#{url_protocol}://#{portal_host}/a/tickets/#{display_id}"
   end
-  
+
   # overridden default setter method to take care of existing inline attachments
   def inline_attachment_ids=(attachment_ids)
     attachment_ids ||= []

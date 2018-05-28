@@ -248,9 +248,10 @@ module Helpdesk::TicketsHelper
        "draft_cc" =>  last_reply_info.cc_emails,
        "draft_bcc" => last_reply_info.bcc_emails }
     else
-      {"draft_text" => bind_last_conv(item, signature, false, false),
-       "draft_cc" => @to_cc_emails,
-       "draft_bcc" => bcc_drop_box_email }
+      {"draft_text" => last_reply_info["draft_data"],
+       "draft_cc" =>  last_reply_info["draft_cc"].split(";"),
+       "draft_bcc" => last_reply_info["draft_bcc"].split(";"),
+       "draft_inline_attachment_ids" => last_reply_info["draft_inline_attachment_ids"].to_s.split(",")}
     end
   end
 

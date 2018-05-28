@@ -263,7 +263,7 @@ class Support::Discussions::TopicsController < SupportController
 
     def topic_param
       param = params[:topic].symbolize_keys
-      param.delete_if{|k, v| [:body_html].include? k }
+      param.delete_if{|k, v| [:body_html, :inline_attachment_ids].include? k }
       return param
     end
 
@@ -288,6 +288,7 @@ class Support::Discussions::TopicsController < SupportController
         :topic => { :title => topic_param[:title], :forum_id => @forum.id },
         :attachments => processed_attachments,
         :cloud_file_attachments => params["cloud_file_attachments"] || [],
+        :inline_attachment_ids => params["inline_attachment_ids"] || [],
         :portal => current_portal.id
       }.merge(post_param.clone.delete_if { |k,v| k == :forum_id }).merge(post_request_params)
     end
