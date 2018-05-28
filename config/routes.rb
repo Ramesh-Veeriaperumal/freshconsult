@@ -3264,6 +3264,10 @@ mount Sidekiq::Web => '/sidekiq'
     end
   end
 
+  match "/admin/bot", to: redirect('/helpdesk')
+  match "/admin/bot/*letter", to: redirect('/helpdesk')
+  match "/bot/*letter", to: redirect('/helpdesk')
+
   match '/freshid/authorize_callback', :controller => 'freshid', :action => 'authorize_callback', :method => :get
   match '/freshid/event_callback', :controller => 'freshid', :action => 'event_callback', :method => :post
   match '/freshid/logout', :controller => 'user_sessions', :action => 'freshid_destroy', :method => :get 
