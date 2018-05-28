@@ -41,7 +41,7 @@ module Ember
 
     def test_simple_index_for_primary_templates_without_feature
       Account.any_instance.stubs(:tkt_templates_enabled?).returns(false)
-      Account.any_instance.stubs(:parent_child_tkts_enabled?).returns(false)
+      Account.any_instance.stubs(:parent_child_tickets_enabled?).returns(false)
       10.times do
         create_tkt_template(name: Faker::Name.name,
                             association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general],
@@ -54,12 +54,12 @@ module Ember
       assert_response 403
       match_json(request_error_pattern(:require_feature, feature: 'Ticket Templates'))
       Account.any_instance.unstub(:tkt_templates_enabled?)
-      Account.any_instance.unstub(:parent_child_tkts_enabled?)
+      Account.any_instance.unstub(:parent_child_tickets_enabled?)
     end
 
     def test_show_without_parent_child_feature
       Account.any_instance.stubs(:tkt_templates_enabled?).returns(false)
-      Account.any_instance.stubs(:parent_child_tkts_enabled?).returns(false)
+      Account.any_instance.stubs(:parent_child_tickets_enabled?).returns(false)
       @template = create_tkt_template(name: Faker::Name.name,
                                       association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general],
                                       account_id: @account.id,
@@ -70,7 +70,7 @@ module Ember
       assert_response 403
       match_json(request_error_pattern(:require_feature, feature: 'Ticket Templates'))
       Account.any_instance.unstub(:tkt_templates_enabled?)
-      Account.any_instance.unstub(:parent_child_tkts_enabled?)
+      Account.any_instance.unstub(:parent_child_tickets_enabled?)
     end
 
     def test_show_with_valid_params_for_parent_template

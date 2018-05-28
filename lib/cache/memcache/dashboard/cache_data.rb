@@ -86,6 +86,14 @@ module Cache::Memcache::Dashboard::CacheData
     User.current.assigned_ticket_permission ? "#{cache_identifier}:USER:#{User.current.id}" : cache_identifier
   end
 
+  def redshift_custom_dashboard_cache_identifier
+    cache_identifier = ""
+    cache_identifier << ":METRIC:#{@req_params[:metric]}" if @req_params && @req_params[:metric]
+    cache_identifier << ":GROUP:#{@req_params[:group_id]}" if @req_params && @req_params[:group_id]
+    cache_identifier << ":PRODUCT:#{@req_params[:product_id]}" if @req_params && @req_params[:product_id]
+    cache_identifier
+  end
+
   def widgets_redis_key(cache_type, method)
     if cache_type == "admin"
       if method == "set"

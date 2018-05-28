@@ -126,7 +126,7 @@ class SupportScore < ActiveRecord::Base
 
   end
 
-  def get_mini_list_for_all_category account, user, category_list, version = "v1"
+  def get_mini_list_for_all_category account, user, category_list, version = "v1", with_current_user_position = true
     leaderboard_type = group_id.nil? ? 'agents' : 'group_agents'
     search_time = Time.now.in_time_zone account.time_zone
     redis_keys = get_leaderboard_redis_keys(category_list, leaderboard_type, search_time)
@@ -141,7 +141,7 @@ class SupportScore < ActiveRecord::Base
     return [] if categories_with_leaderboard.blank?
     rank = pipelined_get_rank_from_sorted_set_redis redis_keys, user.id, categories_with_leaderboard
     # return nil if (rank.nil? && version == "v1")
-    get_mini_leaderboard_for_all_category rank, size, redis_keys, version, categories_with_leaderboard
+    get_mini_leaderboard_for_all_category rank, size, redis_keys, version, categories_with_leaderboard, with_current_user_position
   end
 
 
@@ -178,12 +178,12 @@ class SupportScore < ActiveRecord::Base
 		return largest
   end
 
-  def get_mini_leaderboard_for_all_category(rank, size, redis_keys, version, category_list)
+  def get_mini_leaderboard_for_all_category(rank, size, redis_keys, version, category_list, with_current_user_position)
     # Getting the rank holder for each category
     largest = pipelined_get_largest_member_of_sorted_set_redis redis_keys, category_list
     # getting other ranked users only if current user has a rank
     user_ranked_category_list = category_list.reject { |category| rank[category].nil? }
-    return largest if user_ranked_category_list.blank?
+    return largest if user_ranked_category_list.blank? || !with_current_user_position
     start, stop = get_mini_leaderboard_range(rank, size, version, user_ranked_category_list)
 
     others = pipelined_get_members_of_sorted_set_redis redis_keys, user_ranked_category_list, stop, start

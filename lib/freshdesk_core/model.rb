@@ -24,6 +24,8 @@ module FreshdeskCore::Model
                         "contact_field_choices",
                         "contact_field_data",
                         "data_exports",
+                        "dashboards",
+                        "dashboard_widgets",
                         "day_pass_configs",
                         "day_pass_usages",
                         "email_configs",

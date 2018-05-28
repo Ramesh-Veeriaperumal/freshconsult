@@ -11,7 +11,7 @@ module Ember
     def show
       @result = TicketTemplateDecorator.new(@item, {})
       handle_type_params
-      @result = if current_account.parent_child_tkts_enabled? && params[:only_parent]
+      @result = if current_account.parent_child_tickets_enabled? && params[:only_parent]
                   @result.to_hash_and_child_templates
                 else
                   @result.to_full_hash

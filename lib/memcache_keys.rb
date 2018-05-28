@@ -6,6 +6,8 @@ module MemcacheKeys
 
   USER_TICKET_FILTERS = "v1/TICKET_VIEWS:%{user_id}:%{account_id}"
 
+  ACCOUNT_TICKET_FILTERS = "v1/TICKET_VIEWS:%{account_id}"
+
   ACCOUNT_CUSTOM_SURVEY = "v3/ACCOUNT_CUSTOM_SURVEY:%{account_id}"
 
   ACCOUNT_TICKET_TYPES = "v4/ACCOUNT_TICKET_TYPES:%{account_id}"

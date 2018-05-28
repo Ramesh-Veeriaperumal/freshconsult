@@ -1,5 +1,4 @@
-module LeaderboardConcern
-  extend ActiveSupport::Concern
+module Dashboard::LeaderboardMethods
   include ApiLeaderboardConstants
   include Redis::RedisKeys
   include Redis::SortedSetRedis
@@ -23,11 +22,15 @@ module LeaderboardConcern
     ApiLeaderboardConstants::LEADERBOARD_AGENTS_FIELDS
   end
 
-  def mini_list(group_id)
+  def mini_list(group_id, with_current_user_position = true)
     leaderboard = MemcacheKeys.fetch(leaderboard_widget_cache_key(group_id), 1.hour.to_i) do
-      form_leaderboard(category_list, group_id)
+      form_leaderboard(category_list, group_id, with_current_user_position)
     end
     @leaderboard = leaderboard || []
+  end
+
+  def mini_list_without_cache(group_id, with_current_user_position = true)
+    form_leaderboard(category_list, group_id, with_current_user_position) || []
   end
 
   def leaderboard_widget_cache_key(group_id)
@@ -42,10 +45,10 @@ module LeaderboardConcern
     LEADERBOARD_MINILIST_REALTIME_FALCON % { account_id: Account.current.id, user_id: User.current.id }
   end
 
-  def form_leaderboard(category_list, group_id)
+  def form_leaderboard(category_list, group_id, with_current_user_position)
     support_score = SupportScore.new(group_id: group_id)
     mini_list = []
-    mini_list_for_all_category = support_score.get_mini_list_for_all_category current_account, current_user, category_list, 'v2'
+    mini_list_for_all_category = support_score.get_mini_list_for_all_category Account.current, User.current, category_list, 'v2', with_current_user_position
     mini_list_for_all_category.each do |category, leaderboard_minilist|
       form_category_hash(category, leaderboard_minilist, mini_list)
     end
@@ -54,7 +57,7 @@ module LeaderboardConcern
 
   def form_category_hash(category, leaderboard_minilist, mini_list)
     category_hash = {}
-    user = current_account.technicians.includes(:avatar).find(leaderboard_minilist.first.first)
+    user = Account.current.technicians.includes(:avatar).find(leaderboard_minilist.first.first)
     category_hash[:name] = category.to_s
     category_hash[:id]   = mini_list.length + 1
     leader_hash = leader_hash_object category, leaderboard_minilist.first.second, user
@@ -66,7 +69,7 @@ module LeaderboardConcern
   end
 
   def other_rank_holders_objects(leaderboard_agents, category_rank_list, category)
-    users_objects = current_account.technicians.includes(:avatar).where(id: leaderboard_agents.map(&:first))
+    users_objects = Account.current.technicians.includes(:avatar).where(id: leaderboard_agents.map(&:first))
     users_hash = users_objects.inject({}) { |users, user_object|
       users[user_object.id] = user_object
       users
@@ -115,7 +118,7 @@ module LeaderboardConcern
 
   def category_score_for_custom_range(category, ind)
     leader_module = @group_action ? 'group' : 'user'
-    scoper = @support_score.safe_send("#{@board_category}_scoper", current_account, @start_time, @end_time)
+    scoper = @support_score.safe_send("#{@board_category}_scoper", Account.current, @start_time, @end_time)
     scoper = scoper.includes(:group) if @group_action
     scoper_result = category == :mvp ? scoper.limit(50).all : scoper.safe_send(category).limit(50).all
     result = scoper_result.map { |ss| [ss.safe_send(leader_module).id, ss.tot_score] }
@@ -126,7 +129,7 @@ module LeaderboardConcern
   def monthly_leaderboard
     current_time = Time.zone.now
     category_list.each_with_index do |category, ind|
-      leader_module_ids = months_ago_value ? @support_score.get_leader_ids(current_account, @board_category, category, months_ago_value.month.ago(current_time.end_of_month), 50) : []
+      leader_module_ids = months_ago_value ? @support_score.get_leader_ids(Account.current, @board_category, category, months_ago_value.month.ago(current_time.end_of_month), 50) : []
       Rails.logger.debug("In monthly_leaderboard :: #{leader_module_ids.inspect} :: #{category} :: #{months_ago_value}")
       @leaderboard << category_hash(leader_module_ids, category, ind + 1)
     end
@@ -161,7 +164,7 @@ module LeaderboardConcern
     conditions = { id: leader_modules.map(&:first) }
     Rails.logger.debug("Inside leader_module_scores #{leader_modules.inspect} #{@module_association} :: #{conditions.inspect} ::  #{@group_action}")
     conditions.merge!({ helpdesk_agent: true, deleted: false }) unless @group_action
-    result = current_account.safe_send(@module_association).where(conditions).order("FIELD(id, #{conditions[:id]})")
+    result = Account.current.safe_send(@module_association).where(conditions).order("FIELD(id, #{conditions[:id]})")
     Rails.logger.debug("In leader_module_scores  #{result.inspect}")
     @group_action ? result : result.includes(:avatar)
   end
@@ -176,7 +179,7 @@ module LeaderboardConcern
 
   def category_list
     categories = CATEGORY_LIST.dup
-    categories.insert(1, :love) if current_account.any_survey_feature_enabled_and_active?
+    categories.insert(1, :love) if Account.current.any_survey_feature_enabled_and_active?
     categories
   end
 

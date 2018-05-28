@@ -88,7 +88,7 @@
 						</div>
 					</div>
 				<% } %>
-				<% if (field_type == 'custom_dropdown' || tamDropdownFields.includes(field_type)) { %>
+				<% if (field_type == 'custom_dropdown' ||(tamDropdownFields.indexOf(field_type) != -1)) { %>
 					<div class="section colsets">
 						<h3 class='title'> <%= translate.get('dropdownChoice') %> </h3>
 						<input type="hidden" name="choicelist" value="" />
@@ -119,7 +119,7 @@
 	</div>
 	<span class="seperator"></span> 
 	<div class="alignright modal-footer">
-		<% if (field_type == 'custom_dropdown' || tamDropdownFields.includes(field_type)) { %>
+		<% if (field_type == 'custom_dropdown' || (tamDropdownFields.indexOf(field_type) != -1)) { %>
 			<a class="add-choice" id="addchoice" href="#"> 
 				<span class='ficon-plus'></span> 
 				<span><%= translate.get('addNewChoice') %> </span>
