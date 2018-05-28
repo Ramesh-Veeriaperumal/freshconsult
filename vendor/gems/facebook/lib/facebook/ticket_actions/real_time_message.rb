@@ -35,7 +35,6 @@ module Facebook
 			  message.symbolize_keys!
 			  return if @account.facebook_posts.exists?(:post_id => message[:id])
 			  user = facebook_user(message[:from])
-			  message[:message] = tokenize(message[:message])
 			  
 			  @note = ticket.notes.build(
 			    :private    =>  true,
@@ -75,10 +74,9 @@ module Facebook
 			  return if !message or @account.facebook_posts.exists?(:post_id => message[:id])
 
 			  requester         = facebook_user(message[:from])
-			  message[:message] = tokenize(message[:message])
 
 			  @ticket = @account.tickets.build(
-			    :subject      =>  truncate_subject(message[:message], 100),
+			    :subject      =>  truncate_subject(tokenize(message[:message]), 100),
 			    :requester    =>  requester,
 			    :product_id   =>  @fan_page.product_id,
 			    :group_id     =>  group_id,

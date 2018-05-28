@@ -2464,6 +2464,7 @@ en:
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
         manage_dashboard: Manage ticket list views
+        # manage_dashboard_feature: Manage ticket list views and team dashboards
         manage_ticket_templates: Manage Ticket Templates
         admin_tasks: Play God with Super Admin controls
         manage_account: Include account management

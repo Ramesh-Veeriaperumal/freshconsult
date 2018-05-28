@@ -2238,7 +2238,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def child_tkt_post_persist
-    if current_account.parent_child_tkts_enabled?
+    if current_account.parent_child_tickets_enabled?
       if @item.child_ticket?
         params[:redirect_to] = params[:save_and_create] ?
         new_helpdesk_ticket_child_path(@item.assoc_parent_tkt_id) : helpdesk_ticket_path(@item.assoc_parent_tkt_id)

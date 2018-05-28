@@ -1,5 +1,5 @@
 <div id="bulk-update-ticket-modal">
-<% if current_account.parent_child_tkts_enabled? %>
+<% if current_account.parent_child_tickets_enabled? %>
   <div class="parent_error_alert hide">
   </div>
 <% end %>
@@ -111,7 +111,7 @@
 </div>
 <% end %>
 <%= javascript_tag do %>
-  var parentChildFeatureEnabled = <%= current_account.parent_child_tkts_enabled? %>;
+  var parentChildFeatureEnabled = <%= current_account.parent_child_tickets_enabled? %>;
   var groupToStatusText = "<%= I18n.t('internal_group_actions') %>";
   var agentToGroupText = "<%= I18n.t('internal_agent_actions') %>";
   var MAX_TAG_LENGTH_MSG = "<%= I18n.t('helpdesk.tickets.show.max_tag_length_msg') %>";

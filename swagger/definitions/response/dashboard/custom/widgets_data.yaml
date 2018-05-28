@@ -1,0 +1,17 @@
+type: object
+description: Widget data for the given type
+properties:
+  widgets:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: number
+        widget_data:
+          type: object
+  meta:
+    type: object
+    properties:
+      last_dump_time:
+        type: number

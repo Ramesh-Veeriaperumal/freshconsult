@@ -1,0 +1,35 @@
+  get:
+    tags: [custom dashboard]
+    description: List of all dashboards accessible to the user
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/dashboard_list'
+      403:
+        description: Access denied
+      400:
+        description: Bad Request Error
+        schema:
+          $ref: '#/definitions/bad_request_error'
+
+  post:
+    tags: [custom dashboard]
+    description: create dashboard
+    parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/dashboard_create'
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/dashboard_show'
+      403:
+        description: Access denied
+      400:
+        description: Bad Request Error
+        schema:
+          $ref: '#/definitions/bad_request_error'

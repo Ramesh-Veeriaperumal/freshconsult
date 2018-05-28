@@ -11,7 +11,8 @@ module ErrorConstants
     unable_to_perform: ['unable_to_perform'],
     access_denied: ['access_denied'],
     traffic_cop_alert: ['traffic_cop_alert'],
-    unresolved_child: ['unresolved_child']
+    unresolved_child: ['unresolved_child'],
+    max_limit_reached: ['dashboard_limit_exceeded']
 
   }.freeze
 

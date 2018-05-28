@@ -1,4 +1,4 @@
-class Dashboard::GlanceCurrent < Dashboard
+class Dashboard::GlanceCurrent < Dashboards
 
   METRIC = "DASHBOARD_GLANCE_TIME_TREND"
 

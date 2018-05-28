@@ -1,0 +1,833 @@
+require_relative '../../test_helper'
+['dashboard_object.rb', 'widget_object.rb'].each { |filename| require_relative "#{Rails.root}/test/api/helpers/custom_dashboard/#{filename}"}
+require "#{Rails.root}/test/api/helpers/custom_dashboard_test_helper.rb"
+module Ember
+  class CustomDashboardControllerTest < ActionController::TestCase
+    include ::Dashboard::Custom::CustomDashboardConstants
+    include GroupsTestHelper
+    include CustomDashboardTestHelper
+    include QueryHashHelper
+    include TicketFieldsTestHelper
+    include SurveysTestHelper
+    include LeaderboardTestHelper
+    include Redis::RedisKeys
+    include Redis::SortedSetRedis
+    include TicketsTestHelper
+    include ProductsTestHelper
+
+    def setup
+      super
+      before_all
+    end
+
+    @@before_all_run = false
+
+    def before_all
+      return if @@before_all_run
+      @account.add_dashboard_creation_limits({ dashboard: 25, widgets: { scorecard: 25, bar_chart: 25, csat: 25, leaderboard: 25, forum_moderation: 25, ticket_trend_card: 25, time_trend_card: 25, sla_trend_card: 25 } })
+      @account.add_feature(:custom_dashboard)
+      @account.dashboards.destroy_all
+      create_dashboard_with_widgets(nil, 0, 0)
+      create_dashboard_with_widgets(nil, 0, 0)
+      @@group = create_group(@account)
+      create_dashboard_with_widgets({group_ids: @@group.id}, 0, 0)
+      @@scorecard_dashboard = create_dashboard_with_widgets(nil, 2, 0)
+      @@bar_chart_dashboard = create_dashboard_with_widgets(nil, 3, 1)
+      @@forum_moderation_dashboard = create_dashboard_with_widgets(nil, 1, 4)
+      setup_for_csat_widget
+      @@product = create_product
+      @@trend_card_dashboard = create_dashboard_with_widgets(nil, 2, 5)
+      @@before_all_run = true
+    end
+
+    def setup_for_csat_widget
+      @account.custom_survey_results.destroy_all
+      survey_count_without_group = 4
+      positive_survey_without_group = 4
+      ticket = create_ticket
+      positive_survey_without_group.times do
+        create_survey_result(ticket, 103)
+      end
+      @@positive_survey_with_group = 4
+      @@survey_count_with_group = 4
+      @@csat_group = create_group(@account)
+      ticket = create_ticket({}, @@csat_group)
+      @@positive_survey_with_group.times do
+        create_survey_result(ticket, 103)
+      end
+
+      @@total_survey_count = @@survey_count_with_group + survey_count_without_group
+      @@total_positive_survey_count = @@positive_survey_with_group + positive_survey_without_group
+    end
+
+    def dashboard_list
+      @@dashboard_list ||= []
+    end
+
+    def update_dashboard_list(dashboard_object)
+      self.dashboard_list << dashboard_object
+    end
+
+    def test_dashboard_index_403
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+      get :index, controller_params({ version: 'private' }, false)
+      assert_response 403
+    end
+
+    def test_dashboard_index_200
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :index, controller_params({ version: 'private' }, false)
+      response_hash = JSON.parse(response.body).map(&:deep_symbolize_keys)
+      assert_response 200
+      match_dashboard_index_payload(response_hash, @@dashboard_list)
+    end
+
+    def test_dashboard_create_403
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(0)
+      dashboard_object.add_widget(0)
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      assert_response 403
+    end
+
+    def test_dashboard_create_201_global_access
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(0)
+      dashboard_object.add_widget(0)
+      update_dashboard_list(dashboard_object)
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 201
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+    end
+
+    def test_dashboard_create_201_group_access
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      group = @account.groups.first
+      dashboard_object = DashboardObject.new(2, [group.id])
+      dashboard_object.add_widget(0)
+      dashboard_object.add_widget(0)
+      update_dashboard_list(dashboard_object)
+      post :create, controller_params(wrap_cname(dashboard_object.get_dashboard_payload).merge!(version: 'private'), false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 201
+      match_dashboard_response(response_hash, dashboard_object.get_dashboard_payload)
+    end
+
+    def test_dashboard_create_400_global_access_with_group_ids
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      group = create_group(@account)
+      dashboard_object = DashboardObject.new(0)
+      dashboard_object.add_widget(0)
+      dashboard_object.add_widget(0)
+      dashboard_payload = dashboard_object.get_dashboard_payload
+      dashboard_payload[:group_ids] = [group.id, group.id + rand(50..100)]
+      post :create, controller_params(wrap_cname(dashboard_payload).merge!(version: 'private'), false)
+      assert_response 400
+    end
+
+    def test_dashboard_create_400_group_access_without_group_ids
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      dashboard_object = DashboardObject.new(2)
+      dashboard_object.add_widget(0)
+      dashboard_object.add_widget(0)
+      dashboard_payload = dashboard_object.get_dashboard_payload
+      post :create, controller_params(wrap_cname(dashboard_payload).merge!(version: 'private'), false)
+      assert_response 400
+    end
+
+    def test_dashboard_create_400_group_access_with_incorrect_group_ids
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      group = create_group(@account)
+      dashboard_object = DashboardObject.new(2)
+      dashboard_object.add_widget(0)
+      dashboard_object.add_widget(0)
+      dashboard_payload = dashboard_object.get_dashboard_payload
+      dashboard_payload[:group_ids] = [group.id, group.id + rand(50..100)]
+      post :create, controller_params(wrap_cname(dashboard_payload).merge!(version: 'private'), false)
+      assert_response 400
+    end
+
+    def test_dashboard_show_403
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+      get :show, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
+      assert_response 403
+    end
+
+    def test_dashboard_show_200_by_dashboard_admin
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :show, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 200
+      match_dashboard_response(response_hash, @@dashboard_list.first.get_dashboard_payload)
+    end
+
+    def test_dashboard_show_200_by_agents
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :show, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
+      response_hash = JSON.parse(response.body).deep_symbolize_keys
+      assert_response 200
+      match_dashboard_response(response_hash, @@dashboard_list.first.get_dashboard_payload)
+    end
+
+    def test_dashboard_show_404
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :show, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id + rand(1000..100_00) }, false)
+      assert_response 404
+    end
+
+    def test_dashboard_update_403
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+      put :update, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
+      assert_response 403
+    end
+
+    def test_dashboard_update_403_by_agents
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      put :update, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
+      assert_response 403
+    end
+
+    def test_dashboard_update_200_with_accessible_attributes
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      updated_atributes = { type: 2, group_ids: [@@group.id] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: @@dashboard_list.first.db_record.id, version: 'private'), false)
+      assert_response 200
+    end
+
+    def test_dashboard_update_200_with_incorrect_accessible_attributes
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      updated_atributes = { type: 0, group_ids: [@@group.id] }
+      put :update, controller_params(wrap_cname(updated_atributes).merge(id: @@dashboard_list.first.db_record.id, version: 'private'), false)
+      assert_response 400
+    end    
+
+    def test_dashboard_destroy_403_by_agents
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      delete :destroy, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
+      assert_response 403
+    end
+
+    def test_dashboard_destroy_204_by_dashboard_admin
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      delete :destroy, controller_params({ version: 'private', id: @@dashboard_list.delete(@@dashboard_list.first).db_record.id }, false)
+      assert_response 204
+    end
+
+    def test_dashboard_destroy_404_by_dashboard_admin
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      delete :destroy, controller_params({ version: 'private', id: rand(1000..100_00) }, false)
+      assert_response 404
+    end
+    # Basic preview API tests
+
+    def test_widget_data_preview_without_access
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      get :widget_data_preview, controller_params(version: 'private')
+      assert_response 403
+    end
+
+    def test_widget_data_preview_with_invalid_type
+      get :widget_data_preview, controller_params(version: 'private', type: 'random_type')
+      assert_response 400
+    end
+
+    def test_widget_data_preview_without_type
+      get :widget_data_preview, controller_params(version: 'private')
+      assert_response 400
+    end
+    # Scorecard preview tests
+
+    def test_widget_data_preview_for_scorecard_with_invalid_config
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: 'invalid')
+      assert_response 400
+    end
+
+    # def test_widget_data_preview_for_scorecard_with_count_cluster_down
+    #   get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: 'unresolved')
+    #   assert_response 500
+    # end
+
+    def test_widget_data_preview_for_scorecard_with_only_me_filter
+      ticket_filter = create_filter(nil, only_me_accessibility)
+      field = Account.current.ticket_fields.find_by_field_type('default_status')
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_scorecard_without_filter
+      field = Account.current.ticket_fields.find_by_field_type('default_status')
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard')
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_scorecard_with_default_filter
+      ::Dashboard::TrendCount.any_instance.stubs(:fetch_count).returns({ unresolved: 55 })
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: 'unresolved')
+      assert_response 200
+      match_json({ 'count' => 55 })
+    end
+
+    def test_widget_data_preview_for_scorecard_with_custom_filter
+      ticket_filter = create_filter
+      ::Dashboard::TrendCount.any_instance.stubs(:fetch_count).returns({ :"#{ticket_filter.id}" => 87 })
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
+      assert_response 200
+      match_json({ 'count' => 87 })
+    end
+
+    # Bar chart preview tests
+
+    def test_widget_data_preview_for_bar_chart_with_invalid_filter
+      field = Account.current.ticket_fields.find_by_field_type('default_status')
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'invalid', categorised_by: field.id, representation: NUMBER)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_bar_chart_without_filter
+      field = Account.current.ticket_fields.find_by_field_type('default_status')
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', categorised_by: field.id, representation: NUMBER)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_bar_chart_without_field
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'all_tickets', representation: NUMBER)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_bar_chart_without_representation
+      field = Account.current.ticket_fields.find_by_field_type('default_source')
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_invalid_ticket_field
+      field_id = Helpdesk::TicketField.maximum("id") + 100
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'all_tickets', categorised_by: field_id, representation: PERCENTAGE)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_invalid_representation
+      field = Account.current.ticket_fields.find_by_field_type('default_priority')
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'all_tickets', categorised_by: field.id, representation: 3)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_only_me_filter
+      ticket_filter = create_filter(nil, only_me_accessibility)
+      field = Account.current.ticket_fields.find_by_field_type('default_status')
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field.id, representation: NUMBER)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_text_field
+      field = Account.current.ticket_fields.find_by_field_type('default_subject')
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_requester_field
+      field = Account.current.ticket_fields.find_by_field_type('default_requester')
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_company_field
+      field = Account.current.ticket_fields.find_by_field_type('default_company')
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_custom_filter
+      ticket_filter = create_filter
+      field = Account.current.ticket_fields.find_by_field_type('default_status')
+      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field.id, representation: NUMBER)
+      assert_response 200
+      match_json(bar_chart_preview_response_pattern(field.id))
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_default_filter
+      field = Account.current.ticket_fields.find_by_field_type('default_group')
+      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
+      assert_response 200
+      match_json(bar_chart_preview_response_pattern(field.id))
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_default_field
+      field = Account.current.ticket_fields.find_by_field_type('default_agent')
+      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
+      assert_response 200
+      match_json(bar_chart_preview_response_pattern(field.id))
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_custom_field
+      choices = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
+      field = create_custom_field_dropdown('test_custom_dropdown_bar_chart', choices)
+      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id, choices))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
+      assert_response 200
+      match_json(bar_chart_preview_response_pattern(field.id, choices))
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_number_field
+      field = Account.current.ticket_fields.find_by_field_type('default_agent')
+      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
+      assert_response 200
+      match_json(bar_chart_preview_response_pattern(field.id))
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_percentage_representation
+      field = Account.current.ticket_fields.find_by_field_type('default_status')
+      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: PERCENTAGE)
+      assert_response 200
+      match_json(bar_chart_preview_response_percentage_pattern(field.id))
+    end
+
+    def test_widget_data_preview_for_trend_card_with_invalid_metric
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 'invalid')
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_trend_card_with_invalid_date_range
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 2, date_range: 5)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_trend_card_with_invalid_group_id
+      invalid_group_id = (Account.current.groups.maximum(:id) || 0) + 20
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 5, date_range: 1, group_ids: [invalid_group_id])
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_trend_card_with_invalid_product_id
+      Account.any_instance.stubs(:multi_product_enabled?).returns(true)
+      invalid_product_id = (Account.current.products.maximum(:id) || 0) + 20
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 5, date_range: 1, product_id: invalid_product_id)
+      assert_response 400
+    ensure
+      Account.any_instance.unstub(:multi_product_enabled?)
+    end
+
+    def test_widget_data_preview_for_trend_card_with_invalid_metric_type
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 5, date_range: 1, metric_type: 4)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_trend_card_with_product_id_multiproduct_not_enabled
+      invalid_product_id = (Account.current.products.maximum(:id) || 0) + 20
+      Account.any_instance.stubs(:multi_product_enabled?).returns(false)
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 5, date_range: 1, product_id: invalid_product_id)
+      assert_response 400
+    ensure
+      Account.any_instance.unstub(:multi_product_enabled?)
+    end
+
+    def test_widget_data_preview_for_trend_card_without_metric
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', date_range: 1)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_trend_card_without_metric_type
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 1, date_range: 1)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_trend_card_without_date_range
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 1)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_trend_card_without_group_ids
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 3, metric_type: 1, date_range: 3)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    end
+
+    def test_widget_data_preview_for_trend_card_without_product_id
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 3, metric_type: 1, date_range: 3)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_trend_card_with_all_products
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 3, metric_type: 1, date_range: 3, product_id: 0)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_trend_card_with_multiple_groups
+      valid_group_ids = Account.current.groups_from_cache.map(&:id).slice(0..3)
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 3, metric_type: 1, date_range: 3, group_ids: valid_group_ids)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_trend_card_with_product_id
+      stub_data = trend_card_reports_response_stub
+      Account.any_instance.stubs(:multi_product_enabled?).returns(true)
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 3, metric_type: 1, date_range: 3, product_id: @@product.id)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+      Account.any_instance.unstub(:multi_product_enabled?)
+    end
+
+    def test_widget_data_preview_for_trend_card_with_valid_config
+      valid_group_ids = Account.current.groups_from_cache.map(&:id).slice(0..2)
+      stub_data = trend_card_reports_response_stub
+      Account.any_instance.stubs(:multi_product_enabled?).returns(true)
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 3, metric_type: 1, date_range: 3, group_ids: valid_group_ids, product_id: @@product.id)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+      Account.any_instance.unstub(:multi_product_enabled?)
+    end
+
+    def test_widgets_data_with_invalid_type
+      dashboard = create_dashboard_with_widgets(nil, 1, 0)
+      get :widgets_data, controller_params(version: 'private', id: dashboard.id, type: 'bar_graph')
+      assert_response 400
+    end
+
+    def test_widgets_data_for_scorecard_in_dashboard_without_scorecard
+      get :widgets_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, type: 'scorecard')
+      assert_response 200
+      match_json([])
+    end
+
+    def test_widgets_data_for_bar_chart_in_dashboard_without_bar_chart
+      get :widgets_data, controller_params(version: 'private', id: @@scorecard_dashboard.id, type: 'bar_chart')
+      assert_response 200
+      match_json([])
+    end
+
+    def test_widgets_data_for_trend_card_in_dashboard_without_trend_card
+      get :widgets_data, controller_params(version: 'private', id: @@scorecard_dashboard.id, type: 'trend_card')
+      assert_response 200
+      match_json([])
+    end
+
+    def test_bar_chart_data_for_invalid_widget
+      widget = @@bar_chart_dashboard.widgets.last
+      invalid_widget_id = widget.id + 40
+      get :bar_chart_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, widget_id: invalid_widget_id)
+      assert_response 404
+    end
+
+    def test_widgets_data_for_scorecard_widgets
+      stub_data = fetch_scorecard_stub(@@scorecard_dashboard.widgets)
+      ::Dashboard::TrendCount.any_instance.stubs(:fetch_count).returns(stub_data)
+      get :widgets_data, controller_params(version: 'private', id: @@scorecard_dashboard.id, type: 'scorecard')
+      assert_response 200
+      match_json(scorecard_response_pattern(@@scorecard_dashboard.widgets, stub_data))
+    ensure
+      ::Dashboard::TrendCount.any_instance.unstub(:fetch_count)
+    end
+
+    def test_widgets_data_for_bar_chart_widgets
+      stub_data = fetch_bar_chart_stub(@@bar_chart_dashboard.widgets)
+      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(stub_data)
+      get :widgets_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, type: 'bar_chart')
+      assert_response 200
+      match_json(bar_chart_response_pattern(@@bar_chart_dashboard.widgets, stub_data))
+    ensure
+      ::Search::Dashboard::Custom::Count.any_instance.unstub(:fetch_count)
+    end
+
+    def test_bar_chart_data_for_bar_chart_widget
+      widget = @@bar_chart_dashboard.widgets.first
+      stub_data = bar_chart_data_es_response_stub(widget)
+      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(stub_data)
+      get :bar_chart_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, widget_id: widget.id)
+      assert_response 200
+      match_json(bar_chart_data_response_pattern(widget))
+    end
+
+    def test_widgets_data_for_trend_card_widgets
+      stub_data = fetch_trend_card_stub(@@trend_card_dashboard.widgets)
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widgets_data, controller_params(version: 'private', id: @@trend_card_dashboard.id, type: 'trend_card')
+      assert_response 200
+      match_json(trend_card_response_pattern(@@trend_card_dashboard.widgets, stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_forum_moderation_403_by_agent
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'forum_moderation')
+      assert_response 403
+    end
+
+    def test_widget_data_preview_for_forum_moderation_200_by_dashboard_admin
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'forum_moderation')
+      assert_response 200
+    end
+
+    def test_widgets_data_for_forum_moderation_widgets
+      get :widgets_data, controller_params(version: 'private', id: @@forum_moderation_dashboard.id, type: 'forum_moderation')
+      assert_response 200
+    end
+
+    def test_widget_data_preview_for_csat_403_by_agent
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat')
+      assert_response 403
+    end
+
+    def test_widget_data_preview_for_csat_400_without_feature_by_dashboard_admin
+      Account.any_instance.stubs(:new_survey_enabled?).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '3')
+      assert_response 403
+    end
+
+    def test_widget_data_preview_for_csat_200_without_groups_monthly_filter
+      Account.any_instance.stubs(:new_survey_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '3')
+      assert_response 200
+      match_json({ survey_responded: @@total_survey_count, results: [{ label: 'positive', value: (@@total_positive_survey_count * 100) / (@@total_survey_count)}, { label: 'negative', value: 0 }, { label: 'neutral', value: 0 }]})
+    end
+
+    def test_widget_data_preview_for_csat_200_without_groups_weekly_filter
+      Account.any_instance.stubs(:new_survey_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '2')
+      assert_response 200
+      match_json({ survey_responded: @@total_survey_count, results: [{ label: 'positive', value: (@@total_positive_survey_count * 100) / (@@total_survey_count) }, { label: 'negative', value: 0 }, { label: 'neutral', value: 0 }]})
+    end
+
+    def test_widget_data_preview_for_csat_200_without_groups_daily_filter
+      Account.any_instance.stubs(:new_survey_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '1')
+      assert_response 200
+      match_json({ survey_responded: @@total_survey_count, results: [{ label: 'positive', value: (@@total_positive_survey_count * 100) / (@@total_survey_count) }, { label: 'negative', value: 0 }, { label: 'neutral', value: 0 }]})
+    end
+
+    def test_widget_data_preview_for_csat_200_with_group_monthly_filter
+      Account.any_instance.stubs(:new_survey_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '3', group_ids: [@@csat_group.id])
+      assert_response 200
+      match_json({ survey_responded: @@survey_count_with_group, results: [{ label: 'positive', value: (@@positive_survey_with_group * 100) / (@@survey_count_with_group) }, { label: 'negative', value: 0 }, { label: 'neutral', value: 0 }]})
+    end
+
+    def test_widget_data_preview_for_csat_400_with_invalid_group
+      Account.any_instance.stubs(:new_survey_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '3', group_ids: [@@csat_group.id + rand(10_00..100_00)])
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_csat_400_with_invalid_timerange
+      Account.any_instance.stubs(:new_survey_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '4')
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_csat_200_with_group_daily_filter
+      Account.any_instance.stubs(:new_survey_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '1', group_ids: [@@csat_group.id])
+      assert_response 200
+      match_json({ survey_responded: @@survey_count_with_group, results: [{ label: 'positive', value: (@@positive_survey_with_group * 100) / (@@survey_count_with_group) }, { label: 'negative', value: 0 }, { label: 'neutral', value: 0 }]})
+    end
+
+    def test_widget_data_preview_for_csat_200_with_group_weekly_filter
+      Account.any_instance.stubs(:new_survey_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '2', group_ids: [@@csat_group.id])
+      assert_response 200
+      match_json({ survey_responded: @@survey_count_with_group, results: [{ label: 'positive', value: (@@positive_survey_with_group * 100) / (@@survey_count_with_group) }, { label: 'negative', value: 0 }, { label: 'neutral', value: 0 }]})
+    end
+
+    def test_widgets_data_for_csat_widgets_with_time_range_and_groups
+      @account.custom_survey_results.destroy_all
+      positive_survey = 4
+      survey_count = positive_survey
+      group = create_group(@account)
+      options = { time_range: 3, group_ids: [group.id] }
+      csat_dashboard = create_dashboard_with_widgets(nil, 1, 2, [options])
+      ticket = create_ticket({}, group)
+      positive_survey.times do
+        create_survey_result(ticket, 103)
+      end
+      get :widgets_data, controller_params(version: 'private', id: csat_dashboard.id, type: 'csat')
+      response_data = JSON.parse(response.body)
+      match_custom_json(response_data.first['widget_data'], { survey_responded: survey_count, results: [{ label: 'positive', value: (positive_survey * 100) / survey_count }, { label: 'negative', value: 0 }, { label: 'neutral', value: 0 }]})
+      assert_response 200
+    end
+
+    def test_widgets_data_for_csat_widgets_with_time_range_only
+      @account.custom_survey_results.destroy_all
+      options = { time_range: 3 }
+      positive_survey = 4
+      survey_count = positive_survey
+      csat_dashboard = create_dashboard_with_widgets(nil, 1, 2, [options])
+      ticket = create_ticket
+      positive_survey.times do
+        create_survey_result(ticket, 103)
+      end
+      get :widgets_data, controller_params(version: 'private', id: csat_dashboard.id, type: 'csat')
+      response_data = JSON.parse(response.body)
+      match_custom_json(response_data.first['widget_data'], { survey_responded: survey_count, results: [{ label: 'positive', value: (positive_survey * 100) / survey_count }, { label: 'negative', value: 0 }, { label: 'neutral', value: 0 }] })
+      assert_response 200
+    end
+
+    def test_widget_data_preview_for_leaderboard_403_without_feature
+      Account.any_instance.stubs(:gamification_enabled?).returns(false)
+      Account.any_instance.stubs(:gamification_enable_enabled?).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'leaderboard')
+      assert_response 403
+    end
+
+    def test_widget_data_preview_for_leaderboard_403_by_agent
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      get :widget_data_preview, controller_params(version: 'private', type: 'leaderboard')
+      assert_response 403
+    end
+
+    # Has test case with and without group filter
+    def test_widget_data_preview_for_leaderboard
+      @current_month = Time.zone.now.month
+      Account.any_instance.stubs(:gamification_enabled?).returns(true)
+      Account.any_instance.stubs(:gamification_enable_enabled?).returns(true)
+      categories = CATEGORY_LIST.dup
+      categories.insert(1, :love)
+
+      create_group_agents
+
+      odd_score = {}
+      even_score = {}
+      score = {}
+
+      clear_redis_data
+      clear_group_agents_redis_data(@group_odd, @group_even)
+
+      categories.each do |category|
+        # building group odd leaderboard in redis
+        redis_key = group_agents_leaderboard_key category.to_s, @group_odd
+        odd_score [category] = [Random.rand(1000), Random.rand(1000), Random.rand(1000)]
+        create_group_leaderboard(redis_key, category, [@agent_one.id, @agent_three.id, @agent_five.id], odd_score)
+        # building group even leaderboard in redis
+        redis_key = group_agents_leaderboard_key category.to_s, @group_even
+        even_score[category] = [Random.rand(1000), Random.rand(1000), Random.rand(1000)]
+        create_group_leaderboard(redis_key, category, [@agent_two.id, @agent_four.id, @agent_six.id], even_score)
+
+        # building account level leaderboard in redis
+        redis_key = agents_leaderboard_key category.to_s
+        create_account_leaderboard(redis_key, category, [@agent_one.id, @agent_three.id, @agent_five.id], odd_score)
+        create_account_leaderboard(redis_key, category, [@agent_two.id, @agent_four.id, @agent_six.id], even_score)
+        score[category] = even_score[category] + odd_score[category]
+      end
+      assert_widget_data_preview_leaderboard_response score, { test_endpoint: :widget_data_preview } # account level leaderboard assertion
+      assert_widget_data_preview_leaderboard_response odd_score, { group_id: @group_odd.id, test_endpoint: :widget_data_preview } # group level leaderboard assertion
+      assert_widget_data_preview_leaderboard_response even_score, { group_id: @group_even.id, test_endpoint: :widget_data_preview } # group level leaderboard assertion
+
+      clear_redis_data
+      clear_group_agents_redis_data(@group_odd)
+      clear_group_agents_redis_data(@group_even)
+    end
+
+    def test_widgets_data_for_leaderboard
+      @current_month = Time.zone.now.month
+      Account.any_instance.stubs(:gamification_enabled?).returns(true)
+      Account.any_instance.stubs(:gamification_enable_enabled?).returns(true)
+      categories = CATEGORY_LIST.dup
+      categories.insert(1, :love)
+
+      create_group_agents
+
+      odd_score = {}
+      even_score = {}
+      score = {}
+
+      clear_redis_data
+      clear_group_agents_redis_data(@group_odd, @group_even)
+
+      categories.each do |category|
+        # building group odd leaderboard in redis
+        redis_key = group_agents_leaderboard_key category.to_s, @group_odd
+        odd_score [category] = [Random.rand(1000), Random.rand(1000), Random.rand(1000)]
+        create_group_leaderboard(redis_key, category, [@agent_one.id, @agent_three.id, @agent_five.id], odd_score)
+        # building group even leaderboard in redis
+        redis_key = group_agents_leaderboard_key category.to_s, @group_even
+        even_score[category] = [Random.rand(1000), Random.rand(1000), Random.rand(1000)]
+        create_group_leaderboard(redis_key, category, [@agent_two.id, @agent_four.id, @agent_six.id], even_score)
+
+        # building account level leaderboard in redis
+        redis_key = agents_leaderboard_key category.to_s
+        create_account_leaderboard(redis_key, category, [@agent_one.id, @agent_three.id, @agent_five.id], odd_score)
+        create_account_leaderboard(redis_key, category, [@agent_two.id, @agent_four.id, @agent_six.id], even_score)
+        score[category] = even_score[category] + odd_score[category]
+      end
+      account_leaderboard = create_dashboard_with_widgets(nil, 1, 3)
+      odd_group_leaderboard = create_dashboard_with_widgets(nil, 1, 3, [{ group_id: @group_odd.id }])
+      even_group_leaderboard = create_dashboard_with_widgets(nil, 1, 3, [{ group_id: @group_even.id }])
+      assert_widget_data_preview_leaderboard_response score, { dashboard_id: account_leaderboard.id, test_endpoint: :widgets_data } # account level leaderboard assertion
+      assert_widget_data_preview_leaderboard_response odd_score, { dashboard_id: odd_group_leaderboard.id, group_id: @group_odd.id, test_endpoint: :widgets_data } # group level leaderboard assertion
+      assert_widget_data_preview_leaderboard_response even_score, { dashboard_id: even_group_leaderboard.id, group_id: @group_even.id, test_endpoint: :widgets_data }# group level leaderboard assertion
+
+      clear_redis_data
+      clear_group_agents_redis_data(@group_odd)
+      clear_group_agents_redis_data(@group_even)
+    end
+  end
+end

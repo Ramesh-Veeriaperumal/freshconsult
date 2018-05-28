@@ -1,4 +1,4 @@
-class Dashboard::Overdue < Dashboard
+class Dashboard::Overdue < Dashboards
   
   include Helpdesk::TicketFilterMethods
 

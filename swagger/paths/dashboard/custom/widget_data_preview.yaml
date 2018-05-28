@@ -1,0 +1,73 @@
+get:
+  tags: [custom dashboard]
+  summary: Widget data preview for the given type
+  parameters:
+    - name: type
+      in: query
+      type: number
+      required: true
+      description: Type of the widget to be previewed
+    - name: ticket_filter_id
+      description: Present for scorecard and bar chart types
+      in: query
+      type: number
+    - name: threshold_min
+      in: query
+      type: number
+      description: Present in scorecard and trend card widgets
+    - name: threshold_max
+      in: query
+      type: number
+      description: Present in scorecard and trend card widgets
+    - name: categorised_by
+      in: query
+      type: number
+      description: ID of ticket field. Present for bar chart widget
+    - name: representation
+      in: query
+      type: number
+      description: Number or percentage. Present in bar chart widget
+      enum: [0,1]
+    - name: metric
+      in: query
+      type: number
+      description: Present for trend card widget
+      enum: [1,2,3,4,5,6,7,8,9,10]
+    - name: time_range
+      in: query
+      type: number
+      description: Present in leaderboard widget
+      enum: [1,2,3]
+    - name: metric_type
+      in: query
+      type: number
+      description: Present for trend card widget
+      enum: [1,2,3]
+    - name: group_ids
+      in: query
+      type: array
+      description: Present in trend card and CSAT widgets
+      items:
+        type: number
+    - name: product_id
+      in: query
+      type: number
+      description: Present in trend cards
+    - name: group_id
+      in: query
+      type: number
+      description: Present in leaderboard widget
+    - name: date_range
+      in: query
+      type: number
+      description: Present in trend card widget
+      enum: [1,2,3]
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/dashboard_custom_widget_data_preview'
+    403:
+      description: Access denied
+    400:
+      description: Bad request error
