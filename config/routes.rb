@@ -3264,6 +3264,7 @@ mount Sidekiq::Web => '/sidekiq'
     end
   end
 
+  match "/admin/bot", to: redirect('/helpdesk')
   match "/admin/bot/*letter", to: redirect('/helpdesk')
   match "/bot/*letter", to: redirect('/helpdesk')
 
