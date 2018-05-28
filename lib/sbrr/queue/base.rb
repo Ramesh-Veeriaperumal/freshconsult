@@ -27,33 +27,18 @@ module SBRR
 
       def enqueue_object_with_lock _object
         @object = _object
-        SBRR.log "Enqueueing member #{member} to #{key}" 
-        MAX_RETRIES.times do
-          return true if redis_push_success? :zadd_multi_exec
-        end
-        SBRR.log "Enqueueing member fail #{member} #{key}"
-        nil
+        push_to_redis :zadd_multi_exec, __method__
       end
 
       def refresh_object_with_lock _object, score = nil
         @object = _object
         @old_score = score || zscore
-        SBRR.log "Refresh member #{member} to #{key} with score #{@old_score}"
-        MAX_RETRIES.times do
-          return true if redis_push_success? :zadd_multi_exec
-        end
-        SBRR.log "Refresh member fail #{member} #{key}"
-        nil
+        push_to_redis :zadd_multi_exec, __method__
       end
 
       def dequeue_object_with_lock _object
         @object = _object
-        SBRR.log "Dequeueing member #{member} from #{key}" 
-        MAX_RETRIES.times do
-          return true if redis_push_success? :zrem_multi_exec
-        end
-        SBRR.log "Dequeueing member fail #{member} #{key}"
-        nil
+        push_to_redis :zrem_multi_exec, __method__
       end
 
       def increment_object_with_lock _object
@@ -157,6 +142,16 @@ module SBRR
         def redis_push_success? method
           result = safe_send(method)
           return true if result.is_a?(Array) && result[1].present?
+        end
+
+        def push_to_redis method, source
+          SBRR.log "#{source} #{member} to #{key} with score #{@old_score}"
+          MAX_RETRIES.times do
+            result = safe_send(method)
+            return true if result.is_a?(Array) && result[1].present?
+          end
+          SBRR.log "#{source} fail #{member} to #{key}"
+          nil
         end
 
     end
