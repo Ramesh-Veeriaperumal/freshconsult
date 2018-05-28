@@ -11739,6 +11739,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
       generic_notification: "%{type}"
+      bot_training_completion: "Bot training completed"
     preferences_text:
       private_note_created: Private note sent to me
       public_note_created: Public note added to ticket
@@ -11753,6 +11754,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     desktop_notifications_disabled: You've disabled desktop notifications
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
+    bot_training_completion: "%{title} Bot trained successfully!Please switch to mint ui to test and train the bot."
     muted: Muted
     mute: Mute
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"

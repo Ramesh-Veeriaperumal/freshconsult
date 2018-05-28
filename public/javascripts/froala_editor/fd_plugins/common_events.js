@@ -56,7 +56,7 @@
 
       var form = editor.$oel.get(0).form;
       $(form).on('submit', function () {
-        var textarea = jQuery(this).find('textarea');
+        var textarea = jQuery(this).find('textarea.required_redactor');
         temp_ele = $("<div />").append(textarea.val());
         iframe = temp_ele.find('iframe');
         opts = textarea.data('froala.editor').opts.SANDBOX_BLACKLIST;

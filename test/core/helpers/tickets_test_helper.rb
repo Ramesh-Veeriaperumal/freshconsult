@@ -80,7 +80,7 @@ module TicketsTestHelper
     if @account.link_tkts_enabled? && params[:display_ids].present?
       test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
       test_ticket.related_ticket_ids = params[:display_ids]
-    elsif @account.parent_child_tkts_enabled? and params[:assoc_parent_id].present?
+    elsif @account.parent_child_tickets_enabled? and params[:assoc_parent_id].present?
       test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
       test_ticket.assoc_parent_tkt_id = params[:assoc_parent_id]
     end

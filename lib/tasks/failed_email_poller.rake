@@ -41,11 +41,7 @@ end
 def valid_message?
   return false unless (@account = Account.find_by_id(@args[:account_id]))
   @account.make_current
-  email_failure_feature_enabled? && valid_failure_category? && email_in_to_or_cc?
-end
-
-def email_failure_feature_enabled?
-  @account.email_failures_enabled?
+  valid_failure_category? && email_in_to_or_cc?
 end
 
 def note?

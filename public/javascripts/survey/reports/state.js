@@ -8,6 +8,7 @@ var SurveyState = {
     isRating:false,
     RemarksOnly:false,
     saved_report_used:false,
+    dashboard_widget_request:true,
     TYPE:{1:"OVERVIEW",2:"RESPONSE"},
     OVERVIEW:{type:1,tab:"survey_overview_link",container:"survey_overview",disable:"survey_responses_link"},
     RESPONSE:{type:2,tab:"survey_responses_link",container:"survey_responses",disable:"survey_overview_link"},
@@ -98,6 +99,8 @@ var SurveyState = {
       return data;
     },
     fetch:function(savedData){
+
+      if (!SurveyState.dashboard_widget_request) {
         if(savedData){
           SurveyState.saved_report_used = true;
         }
@@ -111,6 +114,7 @@ var SurveyState = {
         }
         url = url+"/"+urlData.date.date_range;
         jQuery.bbq.pushState(url,2);
+      }
     },
     makeRequest:function(state){
         if(state == 'overview'){

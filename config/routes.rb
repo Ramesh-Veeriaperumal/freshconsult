@@ -1,4 +1,6 @@
 Helpkit::Application.routes.draw do
+require 'sidekiq/web'
+mount Sidekiq::Web => '/sidekiq'
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -757,6 +759,7 @@ Helpkit::Application.routes.draw do
   end
   resources :email, :only => [:new, :create]
   resources :mime, :only => [:new, :create]
+  resources :email_service, :only =>[:new, :create]
   resources :mailgun, :only => :create
   post '/mailgun/create', to: "mailgun#create"
   resources :password_resets, :except => [:index, :show, :destroy]
@@ -1732,6 +1735,7 @@ Helpkit::Application.routes.draw do
         post :save_insights_config
         post :fetch_recent_questions
         post :fetch_insights_config
+        post :fetch_threshold_value
       end
     end
 

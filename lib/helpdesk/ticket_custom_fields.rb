@@ -19,7 +19,7 @@ module Helpdesk::TicketCustomFields
         
       field = attribute.to_s.chomp("=")
       args = args.first if !args.blank? && args.is_a?(Array) 
-      self.ff_def = FlexifieldDef.find_by_account_id_and_name(self.account_id, "Ticket_#{self.account_id}").id
+      self.ff_def ||= fetch_flexifield_def_id
       set_ff_value field, args
     end
 
@@ -27,6 +27,14 @@ module Helpdesk::TicketCustomFields
 
       def custom_field_aliases
         return flexifield ? ff_aliases : account.ticket_field_def.ff_aliases
+      end
+
+      def fetch_flexifield_def_id
+        if self.flexifield.present? && self.flexifield.flexifield_def_id.present?
+          self.flexifield.flexifield_def_id
+        else
+          FlexifieldDef.find_by_account_id_and_name(self.account_id, "Ticket_#{self.account_id}").id
+        end
       end
 
   end

@@ -105,7 +105,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     else
       [{:condition_key => "flexifields.#{flexifield_def_entry.flexifield_name}"}]
     end
-    Helpdesk::TicketFields::UpdateTicketFilter.perform_async({:conditions => conditions})
+    Helpdesk::TicketFields::UpdateTicketFilter.perform_async({ field_id: self.id, :conditions => conditions })
   end
 
   def dropdown_field?

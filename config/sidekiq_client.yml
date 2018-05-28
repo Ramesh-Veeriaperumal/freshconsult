@@ -211,6 +211,7 @@ defaults: &defaults
     - [trial_ticket_central_publish]
     - [active_ticket_central_publish]
     - [delayed_central_publish]
+    - [suspended_ticket_central_publish]
     - [channel_framework_command]
     - [ml_solutions_training]
     - [update_taggables_queue]
@@ -269,6 +270,10 @@ defaults: &defaults
     - [calculate_sla]
     - [freshid_agents_migration]
     - [inline_image_shredder]
+    - [deactivate_product_widgets]
+    - [run_rake_task]
+    - [freshcaller_account_delete]
+    - [user_central_publish]
 
 development:
   <<: *defaults

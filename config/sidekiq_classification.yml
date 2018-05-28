@@ -38,6 +38,8 @@
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
+    - user_central_publish
+
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup
@@ -93,6 +95,7 @@
     - ml_solutions_training
     - customer_note_body_queue
     - update_taggables_queue
+    - suspended_ticket_central_publish
   :maintainence:
     - select_all_tickets
     - select_all_batcher
@@ -139,6 +142,7 @@
     - restore_spam_tickets
     - contact_delete_forever
     - inline_image_shredder
+    - deactivate_product_widgets
   :external:
     - code_console_execution
     - integrations
