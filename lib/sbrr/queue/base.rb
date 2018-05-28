@@ -139,11 +139,6 @@ module SBRR
           score
         end
 
-        def redis_push_success? method
-          result = safe_send(method)
-          return true if result.is_a?(Array) && result[1].present?
-        end
-
         def push_to_redis method, source
           SBRR.log "#{source} #{member} to #{key} with score #{@old_score}"
           MAX_RETRIES.times do
