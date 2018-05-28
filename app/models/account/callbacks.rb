@@ -93,7 +93,6 @@ class Account < ActiveRecord::Base
       self.launch(:archive_ghost)           # enabling archive ghost feature
     end
     self.launch(:freshid) if freshid_signup_allowed?
-    self.launch(:freshworks_omnibar) if freshid_signup_allowed? and omnibar_signup_allowed?
   end
 
   def update_activity_export
@@ -504,10 +503,6 @@ class Account < ActiveRecord::Base
 
     def freshid_migration_not_in_progress?
       !freshid_migration_in_progress?
-    end
-    
-    def omnibar_signup_allowed?
-      redis_key_exists? FRESHWORKS_OMNIBAR_SIGNUP_ENABLED
     end
 
     def update_bot

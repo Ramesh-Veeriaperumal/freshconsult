@@ -189,23 +189,16 @@ class Account < ActiveRecord::Base
     :multi_dynamic_sections => true, :dashboard_new_alias => false, :attachments_scope => false, :kbase_spam_whitelist => false, 
     :forum_post_spam_whitelist => false, :email_failures => false, :enable_qna => false, :enable_insights => false,
     :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true,
-    :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false,
-    :bulk_security => false, :service_writes => false, :service_reads => false, 
-    :admin_only_mint => false, :send_emails_via_fd_email_service_feature => false, 
-    :user_notifications => false,  :freshplug_enabled => false, :dkim => false, 
-    :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, 
-    :auto_ticket_export => false, :select_all => false, :facebook_realtime => false, 
-    :"Freshfone Call Tracker" => false, :skip_one_hop => false, :ticket_contact_export => false, 
-    :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, 
-    :skip_portal_cname_chk => false, :falcon_signup => false, :falcon_portal_theme => false, 
-    :image_annotation => false, :email_actions => false, :ner => false, :disable_freshchat => false, 
-    :freshchat_integration => false, :facebook_page_redirect => false, :froala_editor_forums => false, 
-    :ticket_central_publish => false, :solutions_central_publish => false, :freshid => false, 
-    :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, 
-    :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false, 
-    :contact_delete_forever => false, :imap_error_status_check => false, 
-    :va_any_field_without_none => false, 
-    :freshworks_omnibar => false
+    :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false, 
+    :bulk_security => false, :service_writes => false, :service_reads => false, :admin_only_mint => false, 
+    :send_emails_via_fd_email_service_feature => false, :user_notifications => false, :freshplug_enabled => false, :dkim => false, 
+    :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, :auto_ticket_export => false, :select_all => false, 
+    :facebook_realtime => false, :"Freshfone Call Tracker" => false, :skip_one_hop => false, :ticket_contact_export => false, 
+    :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, :skip_portal_cname_chk => false,
+    :falcon_signup => false, :falcon_portal_theme => false, :image_annotation => false, :email_actions => false, :ner => false, :disable_freshchat => false, :freshchat_integration => false,
+    :facebook_page_redirect => false, :froala_editor_forums => false, :ticket_central_publish => false, :solutions_central_publish => false, 
+    :freshid => false, :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, :outgoing_attachment_limit_25 => false,
+    :whitelist_sso_login => false, :apigee => false, :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days
