@@ -1296,6 +1296,15 @@ class Helpdesk::TicketsController < ApplicationController
           retry
       end
     end
+   respond_to do |format|
+         format.html {
+            render :nothing => true
+         }
+         format.nmobile{
+            render :json => {:success => success}
+         }
+     end
+  end
 
   def clear_draft
     @ticket.draft.clear
@@ -2325,7 +2334,6 @@ class Helpdesk::TicketsController < ApplicationController
                     :tickets => get_updated_ticket_count,
                     :undo => "") }.to_json }
     end
-
   end
 
   def display_unspam_flash

@@ -168,11 +168,10 @@ class Account < ActiveRecord::Base
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
   LAUNCHPARTY_FEATURES = {
     :admin_dashboard => false, :agent_conference => false, :agent_dashboard => false,
-    :agent_new_ticket_cache => false, :api_search_beta => false, :autopilot_headsup => false, 
-    :autoplay => false, :bi_reports => false, :cache_new_tkt_comps_forms => false, 
-    :delayed_dispatchr_feature => false, :disable_old_sso => false, :enable_old_sso => false, 
-    :es_count_reads => false, :es_count_writes => false, :es_down => false, :es_tickets => false, 
-    :es_v1_enabled => false, :es_v2_reads => false, :fb_msg_realtime => false, 
+    :agent_new_ticket_cache => false, :api_search_beta => false, :autopilot_headsup => false, :autoplay => false,
+    :bi_reports => false, :cache_new_tkt_comps_forms => false, :delayed_dispatchr_feature => false,
+    :disable_old_sso => false, :enable_old_sso => false, :es_count_reads => false, :es_count_writes => false,
+    :es_down => false, :es_tickets => false, :es_v1_enabled => false, :es_v2_reads => false, :fb_msg_realtime => false,
     :force_index_tickets => false, :freshfone_call_tracker => false, :freshfone_caller_id_masking => false,
     :freshfone_new_notifications => false, :freshfone_onboarding => false, :gamification_perf => false,
     :gamification_quest_perf => false, :lambda_exchange => false, :link_tickets => false,
@@ -182,19 +181,16 @@ class Account < ActiveRecord::Base
     :round_robin_capping => false, :sidekiq_dispatchr_feature => false,
     :solutions_meta_read => false, :supervisor_dashboard => false, :support_new_ticket_cache => false,
     :synchronous_apps => false, :ticket_list_page_filters_cache => false, :translate_solutions => false,
-    :spam_detection_service => false, :skip_hidden_tkt_identifier => false, 
-    :agent_collision_alb => false, :auto_refresh_alb => false, :countv2_template_read => false, 
-    :customer_sentiment_ui => false, :portal_solution_cache_fetch => false, :activity_ui => false,
-    :customer_sentiment => false, :countv2_template_write => false, :logout_logs => false, 
-    :gnip_2_0 => false, :froala_editor => false, :es_v2_splqueries => false, 
-    :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false,
+    :spam_detection_service => false, :skip_hidden_tkt_identifier => false, :agent_collision_alb => false, :auto_refresh_alb => false,
+    :countv2_template_read => false, :customer_sentiment_ui => false, :portal_solution_cache_fetch => false, :activity_ui => false,
+    :customer_sentiment => false, :countv2_template_write => false, :logout_logs => false, :gnip_2_0 => false, :froala_editor => false,
+    :es_v2_splqueries => false, :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false,
     :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
-    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, 
-    :skip_ticket_threading => false, :multi_dynamic_sections => true, :dashboard_new_alias => false, 
-    :attachments_scope => false, :kbase_spam_whitelist => false, :forum_post_spam_whitelist => false, 
-    :email_failures => false, :enable_qna => false, :enable_insights => false, 
+    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, :skip_ticket_threading => false,
+    :multi_dynamic_sections => true, :dashboard_new_alias => false, :attachments_scope => false, :kbase_spam_whitelist => false, 
+    :forum_post_spam_whitelist => false, :email_failures => false, :enable_qna => false, :enable_insights => false,
     :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true,
-    :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false, 
+    :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false,
     :bulk_security => false, :service_writes => false, :service_reads => false, 
     :admin_only_mint => false, :send_emails_via_fd_email_service_feature => false, 
     :user_notifications => false,  :freshplug_enabled => false, :dkim => false, 
@@ -209,7 +205,7 @@ class Account < ActiveRecord::Base
     :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, 
     :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false, 
     :contact_delete_forever => false, :imap_error_status_check => false, 
-    :va_any_field_without_none => false, :audit_logs_central_publish => false, :auto_complete_off => false
+    :va_any_field_without_none => false, :audit_logs_central_publish => false, :auto_complete_off => false,:freshworks_omnibar => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

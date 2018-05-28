@@ -37,7 +37,7 @@ class ApiApplicationController < MetalApiController
   before_filter :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_shard_for_payload
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol, unless: :private_api?
   include Authority::FreshdeskRails::ControllerHelpers
-  before_filter :check_account_state, :set_default_locale, :set_current_ip
+  before_filter :check_account_state, :set_default_locale
   before_filter :set_locale, if: :private_api?
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone, :set_msg_id
   before_filter :force_utf8_params
@@ -834,10 +834,6 @@ class ApiApplicationController < MetalApiController
 
     def set_default_locale
       I18n.locale = I18n.default_locale
-    end
-
-    def set_current_ip
-      Thread.current[:current_ip] = request.remote_ip
     end
 
     def set_locale

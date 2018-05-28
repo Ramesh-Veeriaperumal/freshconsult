@@ -39,7 +39,6 @@
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
-    - user_central_publish
 
   :falcon_occasional:
     - scheduler_post_message

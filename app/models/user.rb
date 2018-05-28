@@ -28,8 +28,6 @@ class User < ActiveRecord::Base
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods, :presenter
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
-  publishable on: :update
-
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :case_sensitive => false
@@ -143,11 +141,10 @@ class User < ActiveRecord::Base
 
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
                 :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, 
-                :role_ids_changed, :detect_language, :user_companies_updated, :tag_use_updated, 
-                :perishable_token_reset 
-  # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
+                :role_ids_changed, :detect_language, :user_companies_updated, :tag_use_updated 
+                # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), 
-  # agent.update_attributes won't trigger user callbacks since user doesn't have any change.
+  #   agent.update_attributes won't trigger user callbacks since user doesn't have any change.
   # Hence user.safe_send(:attribute_will_change!, :role_ids_changed) is being called in api_agents_controller.)
 
   attr_accessible :name, :email, :password, :password_confirmation, :primary_email_attributes,
@@ -1313,25 +1310,7 @@ class User < ActiveRecord::Base
       end
     end
 
-    def touch_add_role_change(role)
-      if self.agent.present?
-        role_info = { id: role.id, name: role.name }
-        self.agent.user_changes ||= {"roles" => {added: [], removed: []}}
-        self.agent.user_changes["roles"].present? ? 
-          self.agent.user_changes["roles"][:added].push(role_info) :
-          self.agent.user_changes["roles"] = {added: [role_info]}
-      end
-      @role_change_flag = true
-    end
-
-    def touch_remove_role_change(role)
-      if self.agent.present?
-        role_info = { id: role.id, name: role.name }
-        self.agent.user_changes ||= {"roles" => {added: [], removed: []}}
-        self.agent.user_changes["roles"].present? ? 
-          self.agent.user_changes["roles"][:removed].push(role_info) :
-          self.agent.user_changes["roles"] = {removed: [role_info]}
-      end
+    def touch_role_change(role)
       @role_change_flag = true
     end
 
