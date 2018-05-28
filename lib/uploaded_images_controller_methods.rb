@@ -11,7 +11,8 @@ module UploadedImagesControllerMethods
     @image = current_account.attachments.build({
       :description      => public_upload? || skip_one_hop? ? "public" : "private",
       :content          => params[:image][:uploaded_data],
-      :attachable_type  => "#{cname} Upload"
+      :attachable_type  => "#{cname} Upload",
+      :attachable_id    => current_user.id
     })
 
     respond_to do |format|

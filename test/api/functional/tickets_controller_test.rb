@@ -1213,6 +1213,55 @@ class TicketsControllerTest < ActionController::TestCase
     portal.update_column(:product_id, nil)
   end
 
+  def test_update_with_associated_company_deleted
+    new_user = add_new_user(@account)
+    company = Company.create(name: Faker::Name.name, account_id: @account.id)
+    company.save
+    new_user.user_companies.create(company_id: company.id, default: true)
+    sample_requester = new_user.reload
+    company_id = sample_requester.company_id
+    ticket = create_ticket({ requester_id: sample_requester.id, company_id: company_id })
+    @account.companies.find_by_id(company_id).destroy
+    params_hash = { status: 5 }
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 200
+    match_json(update_ticket_pattern({}, ticket.reload))
+    assert_equal 5, ticket.status
+  end
+
+  def test_update_requester_having_multiple_companies
+    new_user = add_new_user(@account)
+    company = Company.create(name: Faker::Name.name, account_id: @account.id)
+    company.save
+    new_user.user_companies.create(company_id: company.id, default: true)
+    other_company = create_company
+    new_user.user_companies.create(company_id: other_company.id)
+    sample_requester = new_user.reload
+    company_id = sample_requester.company_id
+    ticket = create_ticket({ requester_id: sample_requester.id, company_id: company_id })
+    @account.companies.find_by_id(company_id).destroy
+    params_hash = { status: 5 }
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 200
+  end
+
+  def test_update_company
+    new_user = add_new_user(@account)
+    company = Company.create(name: Faker::Name.name, account_id: @account.id)
+    company.save
+    new_user.user_companies.create(company_id: company.id, default: true)
+    other_company = create_company
+    new_user.user_companies.create(company_id: other_company.id)
+    sample_requester = new_user.reload
+    company_id = sample_requester.company_id
+    ticket = create_ticket({ requester_id: sample_requester.id, company_id: company_id })
+    params_hash = { status: 5, company_id: other_company.id }
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 200
+    match_json(update_ticket_pattern({}, ticket.reload))
+    assert_equal other_company.id, ticket.company_id
+  end
+
   def test_update_closed_with_nil_due_by_without_fr_due_by
     t = ticket
     params = update_ticket_params_hash.except(:fr_due_by).merge(status: 5, due_by: nil)
