@@ -10,7 +10,7 @@ window.App.Tickets = window.App.Tickets || {};
 var activeForm, savingDraft, draftClearedFlag, draftSavedTime,dontSaveDraft, replyEditor, draftInterval, currentStatus;
 var MAX_EMAILS = 50;
 // ----- SAVING REPLIES AS DRAFTS -------- //
-var save_draft = function(content, cc_email_list, bcc_email_list) {
+var save_draft = function(content, cc_email_list, bcc_email_list, inlineAttachmentIds) {
 	if ($.trim(content) != '') {
 		$(".ticket_show #reply-draft").show().addClass('saving');
 		// $(".ticket_show #reply-draft").parent().addClass('draft_saved');
@@ -22,7 +22,9 @@ var save_draft = function(content, cc_email_list, bcc_email_list) {
 			type: 'POST',
 			data: {draft_data: content,
 			       draft_cc: cc_email_list,
-			       draft_bcc: bcc_email_list},
+			       draft_bcc: bcc_email_list,
+			       inline_attachment_ids: inlineAttachmentIds
+			   },
 			success: function(response) {
 				$(".ticket_show #draft-save")
 					.text(TICKET_DETAILS_DATA['draft']['saved_text'])
@@ -38,6 +40,10 @@ var save_draft = function(content, cc_email_list, bcc_email_list) {
 var autosaveDraft = function() {
 	if(dontSaveDraft == 0 && TICKET_DETAILS_DATA['draft']['hasChanged']) {
 		var content = $('#cnt-reply-body').getCode();
+		var inlineAttachmentIds = [];
+		$('#cnt-reply-body').parents('form').find('.inline-attachment-input').each(function(){
+			inlineAttachmentIds.push($(this).val());
+		})
 
 		var cc_email_list = "";
 		$("#cc-form-container-cnt-reply input[name='helpdesk_note[cc_emails][]']").each(function(idx,elem){
@@ -53,7 +59,7 @@ var autosaveDraft = function() {
 		if(bcc_email_list.length > 0)
 		  bcc_email_list = bcc_email_list.substr(0,bcc_email_list.length - 1);
 		if ($.trim(content) != '' || cc_email_list.length > 0 || bcc_email_list.length > 0)
-			save_draft(content, cc_email_list, bcc_email_list);
+			save_draft(content, cc_email_list, bcc_email_list, inlineAttachmentIds);
 
 		// When the reply draft is saved, turn the formChanged flag off on the reply
 		jQuery('#cnt-reply-body').parents('form').data('formChanged',false);
@@ -91,6 +97,7 @@ var clearSavedDraft = function(editorId){
 	}
 	TICKET_DETAILS_DATA['draft']['hasChanged'] = false;
 	TICKET_DETAILS_DATA['draft']['saved'] = false;
+	resetInlineAttachments($("#"+editorId).parents("form"));
 	_clearDraftDom();
 }
 
@@ -1362,6 +1369,8 @@ var scrollToError = function(){
 					getTweetTypeAndBind();
 				}
 
+				resetInlineAttachments(_form);
+
 				_form.data("formChanged",false)
 
 				Helpdesk.TicketStickyBar.check();
@@ -2315,6 +2324,10 @@ App.Tickets.LimitEmails = {
 				var $submitBtn = $form.find('.submit_btn');
 				$submitBtn.find('[rel=text]').text($submitBtn.data('defaultText'));
     }
+
+	function resetInlineAttachments(_form){
+		_form.find(".inline-attachment-input").remove();
+	}
 
 }(window.jQuery));
 

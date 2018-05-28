@@ -134,7 +134,7 @@ class Account < ActiveRecord::Base
   def crud_apigee_kvm(action, plan_name, domain = nil, map_identifier = "default")
     if ApigeeConfig::ALLOWED_ACTIONS.exclude?(action)
       Rails.logger.info "#{action} is not a valid action"
-      return false 
+      return false
     end
     params = {
       action: action.to_sym,
@@ -221,7 +221,7 @@ class Account < ActiveRecord::Base
       @launch_party_features ||= []
       @launch_party_features << changes if FeatureClassMapping.get_class(feature_name.to_s)
       # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
-      # after_commit for new record or modified record. 
+      # after_commit for new record or modified record.
       admin_only_mint_on_launch(changes)
       trigger_launchparty_feature_callbacks unless self.id_changed?
     end
@@ -471,13 +471,13 @@ class Account < ActiveRecord::Base
     end
 
     def update_crm_and_map
-      if (Rails.env.production? or Rails.env.staging?)
+      if (Rails.env.production? or Rails.env.staging?) && !self.sandbox?
         if redis_key_exists?(FRESHSALES_ADMIN_UPDATE)
           CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {:account_id => self.id})
         else
           Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateAdmin, {:account_id => self.id})
         end
-        if redis_key_exists?(SIDEKIQ_MARKETO_QUEUE) 
+        if redis_key_exists?(SIDEKIQ_MARKETO_QUEUE)
           Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => self.id})
         else
           Resque.enqueue_at(15.minutes.from_now, Marketo::AddLead, {:account_id => self.id})
