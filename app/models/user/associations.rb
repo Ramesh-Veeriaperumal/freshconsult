@@ -52,8 +52,8 @@ class User < ActiveRecord::Base
         ("#{self.account_id}", "#{self.id}", "#{ActiveRecord::Base.sanitize(record.id)}")
      }
     },
-    :after_add => :touch_add_role_change,
-    :after_remove => :touch_remove_role_change,
+    :after_add => :touch_role_change,
+    :after_remove => :touch_role_change,
     :autosave => true
 
   has_many :tag_uses,
