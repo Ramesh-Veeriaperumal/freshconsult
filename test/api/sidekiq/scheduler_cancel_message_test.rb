@@ -22,6 +22,20 @@ class SchedulerCancelMessageTest < ActionView::TestCase
     Account.current.launch(:todos_reminder_scheduler)
     @ticket = create_test_ticket(email: 'sample@freshdesk.com')
     @reminder = get_new_reminder('test delete', @ticket.id, nil, nil, @user.id)
+    responses = ::Scheduler::CancelMessage.new.perform('job_ids' => Array(job_id), 'group_name' => group_name)
+    refute responses.blank?
+    responses.each do |response|
+      assert_includes SUCCESS, response.to_i, "Expected one of #{SUCCESS}, got #{response}"
+    end
+  end
+
+  def test_cancel_message_todos_reminder_with_symbolized_args
+    Account.stubs(:current).returns(Account.first)
+    @user = create_test_account
+    @account = Account.current
+    Account.current.launch(:todos_reminder_scheduler)
+    @ticket = create_test_ticket(email: 'sample@freshdesk.com')
+    @reminder = get_new_reminder('test delete', @ticket.id, nil, nil, @user.id)
     responses = ::Scheduler::CancelMessage.new.perform(job_ids: Array(job_id), group_name: group_name)
     responses.each do |response|
       assert_includes SUCCESS, response.to_i, "Expected one of #{SUCCESS}, got #{response}"
