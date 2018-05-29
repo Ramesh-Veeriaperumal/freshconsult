@@ -4,6 +4,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
   self.primary_key = :id
 
   include AccountAdditionalSettings::AdditionalSettings
+  include AccountConstants
 
   belongs_to :account
   serialize :supported_languages, Array
@@ -45,6 +46,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def archive_days
     additional_settings[:archive_days] unless additional_settings.blank?
+  end
+
+  def dashboard_creation_limits
+    additional_settings.present? && additional_settings[:dashboard_limits].present? ? additional_settings[:dashboard_limits] : DASHBOARD_LIMITS[:min]
   end
 
   def delete_spam_tickets_days

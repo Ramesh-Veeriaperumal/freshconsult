@@ -19,7 +19,10 @@ module TicketConstants
   # For preventing non-agents from updating inaccessible ticket attibutes
   SUPPORT_PROTECTED_ATTRIBUTES = [ "email", "requester_id", "source", "spam", "deleted",
                                     "tweet_attributes", "fb_post_attributes" ]
-   
+
+  NESTED_TICKET_ATTRIBUTES = ["custom_field","ticket_body_attributes"]
+  
+  SUPPORT_WHITELISTED_ATTRIBUTES = ["name", "attachments"]
   # DATE_RANGE_CSV = 31
 
   SKIPPED_TICKET_CHANGE_ATTRIBUTES = [ :description_html ] #desc_html skipped just to avoid Deprecation Warning
@@ -394,7 +397,7 @@ module TicketConstants
   end
 
   def self.feature_based_association_type
-    assoc_parent_child_feature = Account.current.parent_child_tkts_enabled?
+    assoc_parent_child_feature = Account.current.parent_child_tickets_enabled?
     link_tickets_feature = Account.current.link_tkts_enabled?
     return [] unless assoc_parent_child_feature || link_tickets_feature
     list = [TICKET_ASSOCIATION_FILTER[0]]

@@ -1739,6 +1739,7 @@ Helpkit::Application.routes.draw do
         post :save_insights_config
         post :fetch_recent_questions
         post :fetch_insights_config
+        post :fetch_threshold_value
       end
     end
 
@@ -2992,6 +2993,7 @@ Helpkit::Application.routes.draw do
           put :add_day_passes
           put :change_api_limit
           put :change_v2_api_limit
+          put :change_webhook_limit
           put :add_feature
           put :change_url
           get :single_sign_on

@@ -248,9 +248,10 @@ module Helpdesk::TicketsHelper
        "draft_cc" =>  last_reply_info.cc_emails,
        "draft_bcc" => last_reply_info.bcc_emails }
     else
-      {"draft_text" => bind_last_conv(item, signature, false, false),
-       "draft_cc" => @to_cc_emails,
-       "draft_bcc" => bcc_drop_box_email }
+      {"draft_text" => last_reply_info["draft_data"],
+       "draft_cc" =>  last_reply_info["draft_cc"].split(";"),
+       "draft_bcc" => last_reply_info["draft_bcc"].split(";"),
+       "draft_inline_attachment_ids" => last_reply_info["draft_inline_attachment_ids"].to_s.split(",")}
     end
   end
 
@@ -638,7 +639,7 @@ module Helpdesk::TicketsHelper
     links = []
     links << %(<span class="mr12">
                   <b><a href="#" data-placement = "bottomLeft" data-trigger="add_child" class="lnk_tkt_tracker_show_dropdown" id="add_child_tkt"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}"><span class="tooltip" data-placement= "belowRight" twipsy-content-set="true" data-html="true" data-original-title="#{t('ticket.parent_child.add_child_btn_tooltip')}">#{t('ticket.parent_child.add_child')}</span> </a></b>
-                </span>) if Account.current.parent_child_tkts_enabled?
+                </span>) if Account.current.parent_child_tickets_enabled?
     links << %(<span class="ml12">
                   <b><a href="#" data-placement = "bottomLeft" data-trigger="link_tracker" class="lnk_tkt_tracker_show_dropdown" id="lnk_tkt_tracker"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}"><span class="tooltip" data-placement= "belowRight" twipsy-content-set="true" data-original-title="#{t('ticket.link_tracker.link_to_tracker_tooltip')}">#{t('ticket.link_tracker.link_to_tracker')}</span> </a></b>
                 </span>) if current_account.link_tkts_enabled?
