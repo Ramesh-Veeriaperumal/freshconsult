@@ -4,7 +4,7 @@ module Helpdesk::HTMLSanitizer
    
   def self.clean(html)
     if html
-      tokenized_html = (Account.current.present? and Account.current.features?(:tokenize_emoji)) ? html.tokenize_emoji : html
+      tokenized_html = (!Account.current.launched?(:encode_emoji) and Account.current.features?(:tokenize_emoji)) ? html.tokenize_emoji : html
       begin
         Sanitize.fragment(tokenized_html, Sanitize::Config::IMAGE_RELAXED)
       rescue Exception => e

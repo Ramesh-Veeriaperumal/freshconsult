@@ -187,7 +187,7 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
   private
 
   def set_default_type
-    if self.association_type.nil? || !Account.current.parent_child_tkts_enabled?
+    if self.association_type.nil? || !Account.current.parent_child_tickets_enabled?
       self.association_type = ASSOCIATION_TYPES_KEYS_BY_TOKEN[:general]
     end
   end

@@ -29,7 +29,7 @@ module Social::Twitter::TicketActions
       }
     )
     body_content = construct_item_body(account, ticket, twt, options)
-    ticket.subject = Helpdesk::HTMLSanitizer.plain(body_content)
+    ticket.subject = Helpdesk::HTMLSanitizer.plain(tokenize(body_content))
     ticket.ticket_body_attributes = {
       :description_html => body_content
     }
@@ -125,6 +125,6 @@ module Social::Twitter::TicketActions
           end
         end
       end
-      tokenize(tweet_body)
+      tweet_body
     end
 end
