@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
                    :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
                    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, 
                    :imap_error_status_check, :va_any_field_without_none, :api_es, :sandbox_lp, 
-                   :encode_emoji, :audit_logs_central_publish]
+                   :encode_emoji, :audit_logs_central_publish, :auto_complete_off]
    DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
   BITMAP_FEATURES = [
@@ -21,7 +21,7 @@ class Account < ActiveRecord::Base
       :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :unique_contact_identifier_toggle,
       :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
-      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields,
+      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
       :freshchat, :disable_old_ui, :contact_company_notes, :sandbox
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
@@ -96,7 +96,7 @@ class Account < ActiveRecord::Base
   end
 
   def link_tkts_or_parent_child_enabled?
-    link_tkts_enabled? || parent_child_tkts_enabled?
+    link_tkts_enabled? || parent_child_tickets_enabled?
   end
 
   def survey_enabled?
@@ -204,12 +204,8 @@ class Account < ActiveRecord::Base
     launched?(:dashboard_new_alias)
   end
 
-  def parent_child_tkts_enabled?
-    @pc ||= (launched?(:parent_child_tickets) || parent_child_tickets_enabled?)
-  end
-
   def tkt_templates_enabled?
-    @templates ||= (features?(:ticket_templates) || parent_child_tkts_enabled?)
+    @templates ||= (features?(:ticket_templates) || parent_child_tickets_enabled?)
   end
 
   def auto_ticket_export_enabled?

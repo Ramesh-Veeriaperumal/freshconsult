@@ -352,7 +352,7 @@ class TicketValidation < ApiValidation
   end
 
   def parent_child_enabled?
-    Account.current.parent_child_tkts_enabled?
+    Account.current.parent_child_tickets_enabled?
   end
 
   def validate_cloud_files

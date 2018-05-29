@@ -3,6 +3,7 @@ class Product < ActiveRecord::Base
   self.primary_key = :id
   include Cache::Memcache::Product
   include Cache::FragmentCache::Base
+  include Cache::Memcache::Dashboard::Custom::CacheData
 
   before_destroy :remove_primary_email_config_role
   validates_uniqueness_of :name , :case_sensitive => false, :scope => :account_id
@@ -15,7 +16,7 @@ class Product < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_fragment_caches } , on: :create
   after_commit ->(obj) { obj.clear_fragment_caches } , on: :destroy
   after_commit :clear_fragment_caches, on: :update, :if => :pdt_name_changed?
-  after_commit :unset_product_field, on: :destroy 
+  after_commit :unset_product_field, :update_dashboard_widgets, on: :destroy 
 
   belongs_to_account
   has_one    :portal               , :dependent => :destroy
@@ -103,6 +104,11 @@ class Product < ActiveRecord::Base
       primary_email_config.update_attribute(:primary_role, false)
     end
 
+    def update_dashboard_widgets
+      # Updates dashboard widgets with product binding
+      Helpdesk::DeactivateProductWidgets.perform_async({ product_id: id })
+      Rails.logger.info("Enqueuing job to DeactivateProductWidgets worker")
+    end
 
    def widget_update
 

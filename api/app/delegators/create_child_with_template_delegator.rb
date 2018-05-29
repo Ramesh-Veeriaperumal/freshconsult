@@ -12,7 +12,7 @@ class CreateChildWithTemplateDelegator < BaseDelegator
   end
 
   def parent_child_enabled
-    unless Account.current.parent_child_tkts_enabled?
+    unless Account.current.parent_child_tickets_enabled?
       errors[:feature] << :require_feature 
       @error_options[:feature] = { feature: 'Parent Child Tickets' }
     end

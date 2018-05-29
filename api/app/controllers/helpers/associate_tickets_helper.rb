@@ -4,7 +4,7 @@ module AssociateTicketsHelper
   end
 
   def parent_child_tickets_enabled?
-    render_request_error(:require_feature, 403, feature: 'Parent Child Tickets') unless Account.current.parent_child_tkts_enabled?
+    render_request_error(:require_feature, 403, feature: 'Parent Child Tickets') unless Account.current.parent_child_tickets_enabled?
   end
 
   def feature_enabled?

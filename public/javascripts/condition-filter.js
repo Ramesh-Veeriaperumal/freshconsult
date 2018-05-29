@@ -387,7 +387,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
                   }else{
                     dom = conditional_dom(hg_data.get(rule.name), data_id, name, rule, "value", 'select2', {'minimumResultsForSearch':'10'});
                     inner.append(dom);
-                    //invokeRedactor("paragraph-redactor","cnt-fwd","class");
+                    //invokeRedactor("paragraph-redactor","automation","class");
                   }
 
           var filterList = [];
@@ -702,7 +702,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
                     }
                   }
                   //New Action
-                  invokeRedactor("paragraph-redactor","cnt-fwd","class");
+                  invokeRedactor("paragraph-redactor","automation","class");
                 }
                 postProcessCondition(hg_item, data_id);
               }
@@ -848,7 +848,7 @@ rules_filter = function(_name, filter_data, parentDom, options){
               domUtil.refresh_item($this);
             });
       domUtil.init();
-      invokeRedactor("paragraph-redactor","cnt-fwd","class");
+      invokeRedactor("paragraph-redactor","automation","class");
     }init();
 
     return pub_Methods;

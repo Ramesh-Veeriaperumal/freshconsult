@@ -142,8 +142,11 @@
   var default_labels = <%= raw @element_config["default_labels"].to_json %>;
   <%if @element_config["objects"].include? "opportunity"%>
     var opportunity_default =  default_labels["opportunity"];
+    var isDynamicsV2 = <%= @element_config['element'] === "dynamics_v2"%>;
     jQuery("#opportunity_view_value").itoggle({buttonClass:"toggle-button toggle_opportunity_on_click"});
-    jQuery("#opportunities").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+    jQuery("#opportunities").select2({maximumSelectionSize: (isDynamicsV2 ? 25 : 10),removeOptionOnBackspace:false})
+
+
     //setting Name, Stage and Close Date as default opportunity fields(can't be removed.)
     jQuery("#sfopportunities ul .select2-search-choice div").each(function(index,element){
       value = jQuery(element).text();
@@ -163,7 +166,7 @@
   <%if @element_config["objects"].include? "contract"%>
     var contract_default =  default_labels["contract"];
     jQuery("#contract_view_value").itoggle({buttonClass:"toggle-button toggle_contract_on_click"});
-    jQuery("#contracts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+    jQuery("#contracts").select2({maximumSelectionSize: (isDynamicsV2 ? 25 : 10),removeOptionOnBackspace:false})
     //setting "Contract Start Date", "Contract Term", "Status" as default contract fields(can't be removed.)
     jQuery("#sfcontracts ul .select2-search-choice div").each(function(index,element){
       value = jQuery(element).text();
@@ -182,7 +185,7 @@
   <%if @element_config["objects"].include? "order"%>
     var order_default =  default_labels["order"];
     jQuery("#order_view_value").itoggle({buttonClass:"toggle-button toggle_order_on_click"});
-    jQuery("#orders").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false})
+    jQuery("#orders").select2({maximumSelectionSize: (isDynamicsV2 ? 25: 10),removeOptionOnBackspace:false})
     //setting "Order Start Date", "Status" as default order fields(can't be removed.)
     jQuery("#sforders ul .select2-search-choice div").each(function(index,element){
       value = jQuery(element).text();

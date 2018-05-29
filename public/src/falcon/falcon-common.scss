@@ -1973,3 +1973,14 @@ div[class$="-toggle"]{
 @import "falcon-reports";
 @import "falcon-livechat";
 @import "falcon-social";
+
+.sandbox-notification-content {
+  background: #fffade;
+  margin: 30px 40px 0;
+
+  a:hover {
+    text-decoration: underline;
+    color: #448ee1;
+    opacity: 1;
+  }
+}

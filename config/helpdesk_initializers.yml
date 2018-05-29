@@ -59,6 +59,7 @@ helpdesk:
     - secret_token
     - session_store
     - sidekiq
+    - marginalia
     - site_cloudfront_asset_host
     - site_keys
     - spam_watcher

@@ -72,8 +72,19 @@ module QueryHashHelper
   end
 
   def is_flexi_field?(query)
-      query['ff_name'] != 'default' && query['condition'].include?('flexifields.')
-    end
+    query['ff_name'] != 'default' && query['condition'].include?('flexifields.')
+  end
+
+  def only_me_accessibility
+    {
+      custom_ticket_filter: {
+        visibility: {
+          visibility: 3,
+          user_id: User.current.id 
+        }
+      }
+    }
+  end
 
   def sample_created_at_input_condition(options = {})
     [

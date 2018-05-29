@@ -151,7 +151,7 @@
   <%= render(:partial => "helpdesk/tickets/show/link_tracker_template") %>
 <% end %>
 
-<% if Account.current.parent_child_tkts_enabled? %>
+<% if Account.current.parent_child_tickets_enabled? %>
   <input type="hidden" id="template_previlage" value="<%= privilege?(:manage_ticket_templates) %>" />
   <input type="hidden" id="template_count" value="<%= prime_templates_count_from_cache < Helpdesk::TicketTemplate.max_limit %>" />
 
