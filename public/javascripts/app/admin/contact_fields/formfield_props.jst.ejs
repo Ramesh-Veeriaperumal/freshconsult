@@ -2,10 +2,10 @@
 	var isDefault = /^default/.test(field_type) ? true : false,
 		isEmail = (field_type=='default_email') ? true : false,
 		isUniqueExternalId = (field_type=='default_unique_external_id') ? true : false,
-		spanClass = (isEmail || isUniqueExternalId) ? 'span12' : 'span6', 
-		isEmailOrExternalId = (isEmail || isUniqueExternalId) ? 'hide' : '';
+		spanClass = (isEmail) ? 'span12' : 'span6', 
+		hideClass = (isEmail) ? 'hide' : '';
 %>
-<div class="contact_fields_dialog custom-fields-props-dialog modal hide fade <%= isEmailOrExternalId? 'single-column' : '' %>" id='CustomPropsModal'>
+<div class="contact_fields_dialog custom-fields-props-dialog modal hide fade <%= hideClass? 'single-column' : '' %>" id='CustomPropsModal'>
 	<div class='modal-header clearfix'>
 		<h3 class="ellipsis modal-title pull-left">
 			<% icon = 'ficon-'+((dom_type=='email') ? 'mail' : dom_type) %>
@@ -26,7 +26,7 @@
 				<div class="section">
 					<h3 class="title"><%= translate.get('behavior') %></h3>
 					<div class="row-fluid">
-						<div class="span6 <%= isEmailOrExternalId %>">
+						<div class="span6 <%= hideClass %>">
 							<label class='caption'> <%= translate.get('forAgent') %> </label>
 							<div>
 								<fieldset> 
@@ -45,12 +45,12 @@
 							</div>
 						</div>
 						<div class='<%= spanClass %>'>
-							<label class='caption <%= isEmailOrExternalId %>'> <%= translate.get('forCustomer') %> </label>
+							<label class='caption <%= hideClass %>'> <%= translate.get('forCustomer') %> </label>
 							<div>
 								<fieldset id="customNestedConfig">
 									<% isDisabled = disabled_customer_data['visible_in_portal'] ? 'disabled' : ''  %>
 									<label class="checkbox <%= isDisabled %>">
-										<% if(isEmailOrExternalId) { %>
+										<% if(hideClass) { %>
 											<span class='ficon-checkmark-thick chkbox-img'></span>
 										<% } else { %> 
 											<input type="checkbox" 
@@ -63,7 +63,7 @@
 									</label>
 									<fieldset data-nested-value="nestedlvl2" class="nestedChoices" data-disabled-by-default="<%= disabled_customer_data['editable_in_portal'] %>">
 										<% isDisabled = disabled_customer_data['editable_in_portal'] ||!visible_in_portal ? ' disabled' : ' '  %>
-										<label class="checkbox <%= isDisabled %> <%= isEmailOrExternalId %>">
+										<label class="checkbox <%= isDisabled %> <%= hideClass %>">
 											<input type="checkbox" 
 															toggle_ele="nestedlvl3" 
 															name="customer-editable" 
@@ -74,7 +74,7 @@
 										<fieldset data-nested-value="nestedlvl3" class="nestedChoices" data-disabled-by-default="<%= disabled_customer_data['editable_in_signup'] %>">
 											<% isDisabled = disabled_customer_data['editable_in_signup'] || !(visible_in_portal && editable_in_portal) ? ' disabled' : ' '  %>
 											<label class="checkbox <%= isDisabled %>">
-												<% if(isEmailOrExternalId) { %>
+												<% if(hideClass) { %>
 													<span class='ficon-checkmark-thick chkbox-img'></span>
 												<% } else { %> 
 													<input type="checkbox" 
@@ -85,7 +85,7 @@
 												<%= translate.get('customerEditSignup') %> 
 											</label>
 										</fieldset>
-										<fieldset data-nested-value="nestedlvl3" class="nestedChoices <%= isEmailOrExternalId %>" data-disabled-by-default="<%= disabled_customer_data['required_in_portal'] %>">
+										<fieldset data-nested-value="nestedlvl3" class="nestedChoices <%= hideClass %>" data-disabled-by-default="<%= disabled_customer_data['required_in_portal'] %>">
 											<% isDisabled = disabled_customer_data['required_in_portal'] || !(visible_in_portal && editable_in_portal) ? ' disabled' : ' '  %>
 											<label class="checkbox <%= isDisabled %>">
 												<input type="checkbox" 
@@ -115,7 +115,7 @@
 											class="<%= isDisabled %>" 
 											<%= isDisabled %>/>
 						</fieldset>
-						<fieldset class="span6 <%= isEmailOrExternalId %>">
+						<fieldset class="span6 <%= hideClass %>">
 
 							<input type="text" 
 											placeholder="<%= translate.get('labelCustomer') %>" 
