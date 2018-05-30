@@ -37,4 +37,5 @@ class PostTest < ActiveSupport::TestCase
     payload = test_post.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_post_pattern(test_post))
   end
+
 end
