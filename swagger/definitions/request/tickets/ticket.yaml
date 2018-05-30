@@ -18,6 +18,8 @@ allOf:
           type: integer
       parent_id:
         type: integer
+      tracker_id:
+        type: integer
       related_ticket_ids:
         type: array
         items:
