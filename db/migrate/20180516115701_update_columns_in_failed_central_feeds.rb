@@ -7,14 +7,14 @@ class UpdateColumnsInFailedCentralFeeds < ActiveRecord::Migration
 
   def up
     Lhm.change_table :failed_central_feeds, :atomic_switch => true do |t|
-      t.change :exception, :text
+      t.change_column :exception, :text
       t.add_column :worker_name, "varchar(255)"
     end
   end
 
   def down
     Lhm.change_table :failed_central_feeds, :atomic_switch => true do |t|
-      t.change :exception, :string, limit: 255
+      t.change_column :exception, :string, limit: 255
       t.remove_column :worker_name
     end
   end
