@@ -38,8 +38,6 @@
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
-    - user_central_publish
-
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup

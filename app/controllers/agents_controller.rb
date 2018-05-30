@@ -124,7 +124,6 @@ class AgentsController < ApplicationController
 
   def create    
     @user  = current_account.users.new #by Shan need to check later        
-    group_ids = params[nscname].delete(:group_ids)
     @agent = current_account.agents.new(params[nscname]) 
 
     #for live chat sync
@@ -134,7 +133,6 @@ class AgentsController < ApplicationController
       @agent.user_id = @user.id
       @agent.scoreboard_level_id = params[:agent][:scoreboard_level_id]
       @agent.freshcaller_enabled = (params[:freshcaller_agent].try(:to_bool) || false)
-      @agent.build_agent_groups_attributes(group_ids)
       if @agent.save
         flash[:notice] = t(:'flash.agents.create.success', :email => @user.email)
         freshcaller_alerts
@@ -193,38 +191,41 @@ class AgentsController < ApplicationController
     # @agent.user.attributes = params[:user]
     #for live chat sync
     # @agent.agent_role_ids = params[:user][:role_ids]
-    params[:user].each do |k, v|
-      @agent.user.safe_send("#{k}=", v)
-    end
-
-    @agent.user_changes = @agent.user.agent.user_changes || {}
-    @agent.user_changes.merge!(@agent.user.changes)
-    group_ids = params[nscname].delete(:group_ids)
-    @agent.build_agent_groups_attributes(group_ids)
     if @agent.update_attributes(params[nscname])
-      begin
-        if @user.role_ids.include?(current_account.roles.find_by_name("Account Administrator").id)
-          call_location = "Agent Update"
-          SpamDetection::SignupRestrictedDomainValidation.perform_async({:account_id=>current_account.id, :email=>@user.email, :call_location=>call_location})
-        end
-      rescue Exception => e
-        Rails.logger.info "SignupRestrictedDomainValidation failed. #{current_account.id}, #{e.message}, #{e.backtrace}"
-      end
-      respond_to do |format|
-        format.html do
-          flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
-          freshcaller_alerts
-          redirect_to :action => 'index'
-        end
-        format.json {head :ok}
-        format.xml {head :ok } 
-      end  
+        if @user.update_attributes(params[:user])
+          begin
+            if @user.role_ids.include?(current_account.roles.find_by_name("Account Administrator").id)
+              call_location = "Agent Update"
+              SpamDetection::SignupRestrictedDomainValidation.perform_async({:account_id=>current_account.id, :email=>@user.email, :call_location=>call_location})
+            end
+          rescue Exception => e
+            Rails.logger.info "SignupRestrictedDomainValidation failed. #{current_account.id}, #{e.message}, #{e.backtrace}"
+          end
+          respond_to do |format|
+            format.html do
+              flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
+              freshcaller_alerts
+              redirect_to :action => 'index'
+            end
+            format.json {head :ok}
+            format.xml {head :ok } 
+          end  
+        else
+          check_email_exist
+          @agent.user =@user       
+          result = {:errors=>@user.errors.full_messages }    
+          respond_to do |format|
+            format.html {
+              set_skill_data
+              render :action => :edit
+             }
+            format.json { render :json => result.to_json, :status => :bad_request }
+            format.xml {render :xml => result.to_xml, :status => :bad_request } 
+          end    
+       end
     else
-      check_email_exist @agent.user
       @agent.user = @user       
-      errors = @agent.user.errors.present? ? @agent.user.errors.full_messages : 
-                @agent.errors.full_messages
-      result = { errors: errors }
+      result = {:errors=>@agent.errors.full_messages }    
       respond_to do |format|
         format.html {
           set_skill_data
@@ -232,8 +233,8 @@ class AgentsController < ApplicationController
          }
         format.json { render :json => result.to_json, :status => :bad_request }
         format.xml {render :xml => result.to_xml, :status => :bad_request } 
-      end
-    end
+      end    
+    end 
   end
 
   def convert_to_contact
@@ -354,8 +355,8 @@ class AgentsController < ApplicationController
     @nscname ||= controller_path.gsub('/', '_').singularize
   end
   
-  def check_email_exist object=@user
-    if Array.wrap(object.errors.messages[:"primary_email.email"]).include? "has already been taken"
+  def check_email_exist
+    if Array.wrap(@user.errors.messages[:"primary_email.email"]).include? "has already been taken"
       @existing_user = current_account.user_emails.user_for_email(params[:user][:email])
     end
   end

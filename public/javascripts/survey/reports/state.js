@@ -99,8 +99,7 @@ var SurveyState = {
       return data;
     },
     fetch:function(savedData){
-
-      if (!SurveyState.dashboard_widget_request) {
+      // if (!SurveyState.dashboard_widget_request) {
         if(savedData){
           SurveyState.saved_report_used = true;
         }
@@ -114,7 +113,8 @@ var SurveyState = {
         }
         url = url+"/"+urlData.date.date_range;
         jQuery.bbq.pushState(url,2);
-      }
+      // }
+
     },
     makeRequest:function(state){
         if(state == 'overview'){
