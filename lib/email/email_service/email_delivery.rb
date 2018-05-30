@@ -49,7 +49,10 @@ include Email::EmailService::IpPoolHelper
     reply_to = ((!(params["Reply-To"]).nil? && (params["Reply-To"]).kind_of?(Array)) ? construct_email_json(params["Reply-To"][0] ): construct_email_json(params["Reply-To"])) if params["Reply-To"].present?
     account_id = params["X-FD-Account-Id"].present? ? params["X-FD-Account-Id"] : -1
     type = (params["X-FD-Type"].present?) ? params["X-FD-Type"] : "empty"
-    category_id = get_notification_category_id(params, type) || check_spam_category(params, type)
+    notification_type = is_num?(type) ? type : get_notification_type_id(type) 
+    category_id = get_notification_category_id(params, notification_type) 
+    spam = check_spam_category(params, notification_type)
+    category_id = spam unless spam.nil?
     if category_id.blank?
         mailgun_traffic = get_mailgun_percentage
         if mailgun_traffic > 0 && Random::DEFAULT.rand(100) < mailgun_traffic
@@ -122,9 +125,8 @@ include Email::EmailService::IpPoolHelper
     return result_hash
   end
 
-  def check_spam_category(mail, type)
-    category = nil
-    notification_type = is_num?(type) ? type : get_notification_type_id(type) 
+  def check_spam_category(mail, notification_type)
+    category = nil    
     if account_created_recently? && spam_filtered_notifications.include?(notification_type)
       response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], mail.to_s).check_spam
       category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] if response.spam?
@@ -179,10 +181,9 @@ include Email::EmailService::IpPoolHelper
   def get_pod
     PodConfig['CURRENT_POD']
   end
-  def get_notification_category_id(headers, type)
+  def get_notification_category_id(headers, notification_type)
     category_id = get_category_header(headers)
     return category_id if category_id.present?
-    notification_type = is_num?(type) ? type : get_notification_type_id(type)
     if custom_category_enabled_notifications.include?(notification_type.to_i)
       state = get_subscription
       key = (state == "active" || state == "premium") ? 'paid' : 'free'
