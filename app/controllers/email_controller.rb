@@ -34,6 +34,7 @@ class EmailController < ApplicationController
       request_url_hash = {:request_url => request_url}
     end
     params.merge!(request_url_hash)
+    params[:html] = Nokogiri::HTML(params[:html]).to_html if (!params[:html].nil? && !params[:html].blank?)
     if envelope.present? && multiple_envelope_to_address?( envelope_to = get_to_address_from_envelope(envelope))
      status = process_email_for_each_to_email_address(envelope_to)
     else
