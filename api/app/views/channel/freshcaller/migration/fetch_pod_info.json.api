@@ -1,0 +1,5 @@
+if @result.present?
+  JSON.generate({'pod_info': @result}.to_hash)
+else
+  JSON.generate({}.to_hash)
+end

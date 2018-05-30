@@ -97,7 +97,12 @@ module FormBuilders::Redactor
                         if (window['redactors'] === undefined) window.redactors = {}
                         !function( $ ) {
                           $(function() {
-                            window.redactors['#{id}'] = $('##{id}').redactor(#{_javascript_options})
+                            var imageUploadTypes = ["ticket", "forum"];
+                            var redactorOptions = #{_javascript_options};
+                            if(imageUploadTypes.includes("#{options['editor-type'].to_s}")){
+                              redactorOptions = Object.assign({}, redactorOptions, { imageUploadCallback: inlineImageUploadCallback });
+                            }
+                            window.redactors['#{id}'] = $('##{id}').redactor(redactorOptions);
                           })  
                         }(window.jQuery);
                       }

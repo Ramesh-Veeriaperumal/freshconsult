@@ -54,6 +54,28 @@ module ApplicationHelper
 
   INLINE_MANUAL_FEATURE_THRESHOLDS = { char_length: 24, max_count: 17}
 
+  SANDBOX_URL_PATHS = [
+      '/admin/va_rules',
+      '/admin/supervisor_rules',
+      '/admin/observer_rules',
+      '/helpdesk/scenario_automations',
+      '/admin/email_notifications',
+      '/admin/business_calendars',
+      '/helpdesk/tags',
+      '/helpdesk/ticket_templates',
+      '/ticket_fields',
+      '/admin/contact_fields',
+      '/admin/company_fields',
+      '/agents',
+      '/groups',
+      '/admin/roles',
+      '/helpdesk/canned_responses/folders',
+      '/helpdesk/sla_policies',
+      '/admin/custom_surveys',
+      '/admin/products',
+      '/admin/security'
+    ]
+
   def open_html_tag
     html_conditions = [ ["lt IE 7", "ie6"],
                         ["IE 7", "ie7"],
@@ -2123,5 +2145,18 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       current_account.freshcaller_enabled? &&
       current_account.has_feature?(:freshcaller_widget) &&
       agent.present? && freshcaller_agent.present? && freshcaller_agent.fc_enabled?
+  end
+
+  def sandbox_production_notification
+    current_path = request.env['PATH_INFO']
+
+    if (!current_account.sandbox? && current_account.sandbox_job.try(:[], :sandbox_account_id) && SANDBOX_URL_PATHS.select{ |i| current_path.include?(i)}.any?)
+      sandbox_url = DomainMapping.find_by_account_id(current_account.sandbox_job.sandbox_account_id).domain
+      return content_tag('div', "<span class='sandbox-info'>
+            <span class='ficon-notice-o fsize-24 muted'></span>
+          </span>
+        #{t('sandbox.banner.production_info', :url => sandbox_url)}".html_safe, :class =>
+        "sandbox-notification-content")
+    end
   end
 end

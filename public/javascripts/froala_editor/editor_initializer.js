@@ -97,6 +97,16 @@ function invokeEditor(element_id,type,attr) {
 			}
 
 			jQuery(element_id).froalaEditor(jQuery.extend({}, froala_common_options, froala_forum_options))
+			// enabling image uploaded event for inline images
+			jQuery(element_id).on('froalaEditor.image.uploaded', function (e, editor, data) {
+				var currentForm = editor.$el.parents('form');
+				var inlineAttachmentScoper = editor.$oel.attr('name').replace(/\[.*\]/g, "");
+				var inlineAttachmentInput = jQuery('<input type="hidden">').attr({
+					name: inlineAttachmentScoper + '[inline_attachment_ids][]',
+					value: JSON.parse(data).fileid
+				});
+				currentForm.append(inlineAttachmentInput);
+			});
 
 		default:
 	}

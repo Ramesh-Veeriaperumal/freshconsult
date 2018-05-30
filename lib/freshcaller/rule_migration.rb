@@ -133,6 +133,7 @@ module Freshcaller
         if group_id
           return nil if group_id.zero?
           group = account.groups.where(id: number.ivr.group_id).first
+          return nil unless group
           group.name
         end
       end

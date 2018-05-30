@@ -1270,25 +1270,40 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def save_draft
-    params[:draft_data] = Helpdesk::HTMLSanitizer.clean(params[:draft_data])
-    draft_cc = fetch_valid_emails(params[:draft_cc])
-    draft_bcc = fetch_valid_emails(params[:draft_bcc])
-    draft_hash_data = {
-      "body" => params[:draft_data],
-      "cc_emails" => draft_cc,
-      "bcc_emails" => draft_bcc
-    }
-    @ticket.draft.build(draft_hash_data)
-    @ticket.draft.save
-
-    respond_to do |format|
-      format.html {
-        render :nothing => true
+    count = 0
+    tries = 3
+    success = true
+    begin
+      params[:draft_data] = Helpdesk::HTMLSanitizer.clean(params[:draft_data])
+      draft_cc = fetch_valid_emails(params[:draft_cc]).map {|e| "#{e};"}.to_s.sub(/;$/,"")
+      draft_bcc = fetch_valid_emails(params[:draft_bcc]).map {|e| "#{e};"}.to_s.sub(/;$/,"")
+      draft_inline_attachment_ids = params["inline_attachment_ids"].is_a?(Array) ? params["inline_attachment_ids"] : []
+      draft_hash_data = {
+        "draft_data" => params[:draft_data],
+        "draft_cc" => draft_cc,
+        "draft_bcc" => draft_bcc,
+        "draft_inline_attachment_ids" => draft_inline_attachment_ids.join(",")
       }
-      format.nmobile{
-        render :json => {:success => success}
-      }
+      set_tickets_redis_hash_key(draft_key, draft_hash_data)
+    rescue Exception => e
+      success = false
+      NewRelic::Agent.notice_error(e,{:key => draft_key,
+        :value => params[:draft_data],
+        :description => "Redis issue",
+        :count => count})
+      if count<tries
+          count += 1
+          retry
+      end
     end
+   respond_to do |format|
+         format.html {
+            render :nothing => true
+         }
+         format.nmobile{
+            render :json => {:success => success}
+         }
+     end
   end
 
   def clear_draft
@@ -2319,7 +2334,6 @@ class Helpdesk::TicketsController < ApplicationController
                     :tickets => get_updated_ticket_count,
                     :undo => "") }.to_json }
     end
-
   end
 
   def display_unspam_flash

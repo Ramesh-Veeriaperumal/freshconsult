@@ -73,6 +73,10 @@
           </div>
           <input type="checkbox" class="hide" id="include_cc" name="include_cc"  <%=saved_draft["draft_cc"].blank? ? "" : "checked" %>  />
           <input type="checkbox" class="hide" id="include_bcc" name="include_bcc" <%=saved_draft["draft_bcc"].blank? ? "" : "checked" %> />
+
+          <% saved_draft["draft_inline_attachment_ids"].each do |inline_attachment_id| %>
+            <%= hidden_field_tag "helpdesk_note[inline_attachment_ids][]", inline_attachment_id, :class => "inline-attachment-input" %>
+          <% end %>
           
           <%#= select :reply_email, :id, options_for_select(@reply_emails, @selected_reply_email),{}, {:class => 'select2 responder_field'} %>
           <span class="default-value"><%= @ticket.from_email %></span>

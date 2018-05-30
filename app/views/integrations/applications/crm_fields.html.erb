@@ -95,7 +95,8 @@
     $("#ticket_sync_option_value").itoggle();
     var default_labels = <%= raw @element_config["default_labels"].to_json %>;
     var contact_default =  default_labels["contact"];
-    $("#contacts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+    var isDynamicsV2 = <%= @element_config['element'] === "dynamics_v2"%>;
+     $("#contacts").select2({maximumSelectionSize: (isDynamicsV2 ? 25 : 10),removeOptionOnBackspace:false});
     //setting the Name as default field(can't be removed.)
     $("#sfcontacts ul .select2-search-choice div").each(function(index,element){
       var value = $(element).text();
@@ -104,7 +105,7 @@
       }
     });
     var account_default = default_labels["account"];
-    $("#accounts").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+    $("#accounts").select2({maximumSelectionSize: (isDynamicsV2 ? 25 : 10),removeOptionOnBackspace:false});
     //setting the Name as default field(can't be removed.)
     $("#sfaccounts ul .select2-search-choice div").each(function(index,element){
       var value = $(element).text();
@@ -114,7 +115,7 @@
     });
     <%if @element_config["objects"].include? "lead"%>
       var lead_default = default_labels["lead"];
-      $("#leads").select2({maximumSelectionSize: 10,removeOptionOnBackspace:false});
+      $("#leads").select2({maximumSelectionSize: (isDynamicsV2 ? 25 : 10),removeOptionOnBackspace:false});
       //setting the Name as default field(can't be removed.)
       $("#sfleads ul .select2-search-choice div").each(function(index,element){
         var value = $(element).text();

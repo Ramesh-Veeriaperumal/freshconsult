@@ -60,7 +60,7 @@ module ContactConstants
                        ['phone', 1, 'work phone']].freeze
   # [Attribute, limit, message] ["phone", 1, "Phone User"]
   # Routes that doesn't accept any params
-  MERGE_KEYS = [:phone, :mobile, :twitter_id, :fb_profile_id, :external_id].freeze
+  MERGE_KEYS = [:phone, :mobile, :twitter_id, :fb_profile_id, :external_id, :unique_external_id].freeze
   MERGE_ARRAY_KEYS = [:other_emails, :company_ids].freeze
   MERGE_CONTACT_FIELDS = MERGE_KEYS | MERGE_ARRAY_KEYS | [:email]
 
