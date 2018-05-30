@@ -469,7 +469,6 @@ protected
       end
     end
 
-    # TODO: FOR ARCHIVE NEED TO AJAXIFY
     def define_contact_properties
       @merged_user = @user.parent unless @user.parent.nil?
       define_contact_tickets
