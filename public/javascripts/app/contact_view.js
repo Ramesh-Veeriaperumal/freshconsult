@@ -16,7 +16,12 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			App.Contacts.Contacts_merge.initialize();
 			this.checkForInfoMsgs();
 			this.bindEvents();
-			this.switchConversationView($("#conv_all-tab")); //Load the first tab on pageload
+			//Load the first tab on pageload
+			if($("#conv_all-tab").length === 0) {
+				this.switchConversationView($(".conv-title .sub-info"));
+			} else {
+				this.switchConversationView($("#conv_all-tab"));
+			}
 
 			// To show the tooltip in the tickets list
 			App.Customers.Tickets.init();
