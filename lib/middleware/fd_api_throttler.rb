@@ -66,7 +66,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
         @status = 429
         @headers = { 'Retry-After' => retry_value.to_s, 'Content-Type' => 'application/json' }
         @response = LIMIT_EXCEEDED_MESSAGE
-        log_data("429 Error :: Host: #{@host}, Time: #{Time.zone.now}, Count: #{@count}}", 'error')
+        log_data("429 Error :: Host: #{@host}, Time: #{Time.zone.now}, Count: #{@count}}, AccountId: #{account_id}", 'error')
       end
     end
 
@@ -81,7 +81,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
         set_redis_expiry(key, api_expiry) if !expiry_set && (@count <= used_limit)
       end
       set_rate_limit_headers if @count
-      log_data("Throttled :: Host: #{@host}, Time: #{Time.zone.now}, Count: (#{@count})", 'debug')
+      log_data("Throttled :: Host: #{@host}, Time: #{Time.zone.now}, Count: (#{@count}), AccountId: #{account_id}", 'debug')
     end
 
     def account_id

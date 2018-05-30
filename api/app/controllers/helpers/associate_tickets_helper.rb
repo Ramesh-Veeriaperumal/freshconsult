@@ -29,4 +29,25 @@ module AssociateTicketsHelper
       render_request_error :access_denied, 403 if !parent_ticket || !current_user.has_ticket_permission?(parent_ticket)
     end
   end
+
+  def modify_ticket_associations
+    if unlink?
+      cname_params[:tracker_ticket_id] = @item.associates.first
+      @item.association_type = nil
+    elsif link?
+      @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
+    end
+  end
+
+  def link_or_unlink?
+    cname_params.key?(:tracker_ticket_id)
+  end
+
+  def link?
+    cname_params[:tracker_ticket_id].present?
+  end
+
+  def unlink?
+    [:tracker_id, :tracker_ticket_id].any? { |tracker_param| cname_params.key?(tracker_param) && cname_params[tracker_param].nil? }
+  end
 end

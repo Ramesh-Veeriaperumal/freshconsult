@@ -10,6 +10,7 @@ module CentralConstants
     'User' => '0',
     'Agent' => '0',
     'VaRule' => '0',
-    'Group' => '0'
+    'Group' => '0',
+    'Post' => '0'
   }
 end

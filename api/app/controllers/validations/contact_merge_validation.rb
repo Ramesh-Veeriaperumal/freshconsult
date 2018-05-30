@@ -27,15 +27,15 @@ class ContactMergeValidation < ApiValidation
         message_options: { element_type: :integer }
       }
     }
-  }.merge!(ContactValidation::DEFAULT_FIELD_VALIDATIONS.slice(:phone, :mobile, :twitter_id, :email)).freeze
+  }.merge!(ContactValidation::DEFAULT_FIELD_VALIDATIONS.slice(:phone, :mobile, :twitter_id, :email, :unique_external_id)).freeze
 
   attr_accessor :primary_id, :target_ids, :contact, :company_ids, :phone, :mobile,
-                :twitter_id, :fb_profile_id, :external_id, :email, :other_emails
+                :twitter_id, :fb_profile_id, :external_id, :email, :other_emails, :unique_external_id
 
   validates :primary_id, required: true, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false }
   validates :target_ids, required: true, data_type: { rules: Array, allow_nil: false }, array: { custom_numericality: { only_integer: true, greater_than: 0, allow_nil: false } }
   validates :contact, data_type: { rules: Hash }, hash: { validatable_fields_hash: proc { |x| x.merge_fields } }
-  validates :phone, :mobile, :twitter_id, :fb_profile_id, :external_id, :email, :other_emails, :company_ids, default_field:
+  validates :phone, :mobile, :twitter_id, :fb_profile_id, :external_id, :email, :other_emails, :company_ids, :unique_external_id, default_field:
                               {
                                 required_fields: [],
                                 field_validations: MERGE_FIELD_VALIDATIONS
@@ -66,7 +66,8 @@ class ContactMergeValidation < ApiValidation
       fb_profile_id: {},
       external_id: {},
       other_emails: {},
-      company_ids: {}
+      company_ids: {},
+      unique_external_id: {}
     }
   end
 
