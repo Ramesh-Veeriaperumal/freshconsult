@@ -14,7 +14,7 @@ module ApiTicketConstants
   UPDATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
                      email phone twitter_id facebook_id requester_id name
                      responder_id internal_agent_id source status subject type product_id company_id skill_id
-                     skip_close_notification unique_external_id).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+                     skip_close_notification unique_external_id tracker_id).freeze | (ARRAY_FIELDS - ['cc_emails']) | HASH_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   PARSE_TEMPLATE_FIELDS = [:template_text].freeze
   BULK_REPLY_FIELDS = [reply: ([:body, :from_email, :attachment_ids, :inline_attachment_ids] | AttachmentConstants::CLOUD_FILE_FIELDS)].freeze
   BULK_UPDATE_FIELDS = (UPDATE_FIELDS - ['attachments']).freeze
@@ -120,10 +120,11 @@ module ApiTicketConstants
   }.freeze
 
   PARAMS_TO_REMOVE = [:cc_emails, :description, :parent_id].freeze
-  PARAMS_MAPPINGS = { custom_fields: :custom_field, fr_due_by: :frDueBy, type: :ticket_type }.freeze
+  PARAMS_MAPPINGS = { custom_fields: :custom_field, fr_due_by: :frDueBy, type: :ticket_type, tracker_id: :tracker_ticket_id }.freeze
   PARAMS_TO_SAVE_AND_REMOVE = [:status, :cloud_files, :attachment_ids, :skip_close_notification, :parent_template_id, :child_template_ids, :inline_attachment_ids].freeze
 
   ALLOWED_ONLY_PARAMS = %w(count).freeze
   VERIFY_REQUESTER_ON_PROPERTY_VALUE_CHANGES = %w(email phone twitter_id 
                                           facebook_id unique_external_id).freeze
+  SECONDARY_TICKET_PARAMS = %w(tracker_id).freeze
 end.freeze

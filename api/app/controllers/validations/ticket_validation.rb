@@ -6,7 +6,7 @@ class TicketValidation < ApiValidation
   MANDATORY_FIELD_STRING = MANDATORY_FIELD_ARRAY.join(', ').freeze
   CHECK_PARAMS_SET_FIELDS = (MANDATORY_FIELD_ARRAY.map(&:to_s) +
                             %w(fr_due_by due_by subject description skip_close_notification
-                               custom_fields company_id internal_group_id internal_agent_id skill_id related_ticket_ids parent_id)
+                               custom_fields company_id internal_group_id internal_agent_id skill_id related_ticket_ids parent_id tracker_id)
                             ).freeze
 
   attr_accessor :id, :cc_emails, :description, :due_by, :email_config_id, :fr_due_by, :group, :internal_group_id, :internal_agent_id, :priority, :email,
@@ -14,7 +14,7 @@ class TicketValidation < ApiValidation
                 :product, :tags, :custom_fields, :attachments, :request_params, :item, :statuses, :status_ids, :ticket_fields, :company_id, :scenario_id,
                 :primary_id, :ticket_ids, :note_in_primary, :note_in_secondary, :convert_recepients_to_cc, :cloud_files, :skip_close_notification,
                 :related_ticket_ids, :internal_group_id, :internal_agent_id, :parent_template_id, :child_template_ids, :template_text,
-                :unique_external_id, :skill_id, :parent_id, :inline_attachment_ids
+                :unique_external_id, :skill_id, :parent_id, :inline_attachment_ids, :tracker_id
 
   alias_attribute :type, :ticket_type
   alias_attribute :product_id, :product
@@ -64,6 +64,15 @@ class TicketValidation < ApiValidation
     code: :inaccessible_field,
     message_options: {
       attribute: 'related_ticket_ids',
+      feature: :link_tickets
+    }
+  }, unless: -> { Account.current.link_tkts_enabled? }
+
+  validates :tracker_id, custom_absence: {
+    message: :require_feature_for_attribute,
+    code: :inaccessible_field,
+    message_options: {
+      attribute: 'tracker_id',
       feature: :link_tickets
     }
   }, unless: -> { Account.current.link_tkts_enabled? }
@@ -162,6 +171,13 @@ class TicketValidation < ApiValidation
   validates :parent_id, custom_numericality: {
     only_integer: true,
     greater_than: 0,
+    ignore_string: :allow_string_param
+  }
+
+  validates :tracker_id, custom_numericality: {
+    only_integer: true,
+    greater_than: 0,
+    allow_nil: true,
     ignore_string: :allow_string_param
   }
 

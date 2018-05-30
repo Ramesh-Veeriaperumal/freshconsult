@@ -3159,5 +3159,247 @@ module Ember
     ensure
       cleanup_archive_ticket(@archive_ticket)
     end
+
+    def test_link_ticket_to_tracker
+      enable_adv_ticketing([:link_tickets]) do
+        tracker_id = create_tracker_ticket.display_id
+        ticket_id = create_ticket.display_id
+        put :update, construct_params({ version: 'private', id: ticket_id, tracker_id: tracker_id }, false)
+        assert_response 200
+        ticket = Helpdesk::Ticket.find_by_display_id(ticket_id)
+        assert ticket.related_ticket?
+      end
+    end
+
+    def test_link_to_invalid_tracker
+      enable_adv_ticketing([:link_tickets]) do
+        tracker_id = create_ticket.display_id
+        ticket_id = create_ticket.display_id
+        put :update, construct_params({ version: 'private', id: ticket_id, tracker_id: tracker_id }, false)
+        pattern = ['tracker_id', :invalid_tracker]
+        assert_link_failure(ticket_id, pattern)
+      end
+    end
+
+    def test_link_to_spammed_tracker
+      enable_adv_ticketing([:link_tickets]) do
+        tracker = create_tracker_ticket
+        tracker.update_attributes(spam: true)
+        ticket_id = create_ticket.display_id
+        put :update, construct_params({ version: 'private', id: ticket_id, tracker_id: tracker.display_id }, false)
+        pattern = ['tracker_id', :invalid_tracker]
+        assert_link_failure(ticket_id, pattern)
+      end
+    end
+
+    def test_link_to_deleted_tracker
+      enable_adv_ticketing([:link_tickets]) do
+        tracker = create_tracker_ticket
+        tracker.update_attributes(deleted: true)
+        ticket_id = create_ticket.display_id
+        put :update, construct_params({ version: 'private', id: ticket_id, tracker_id: tracker.display_id }, false)
+        pattern = ['tracker_id', :invalid_tracker]
+        assert_link_failure(ticket_id, pattern)
+      end
+    end
+
+    def test_link_ticket_without_related_permission
+      enable_adv_ticketing([:link_tickets]) do
+        ticket_id = create_ticket.display_id
+        tracker_id = create_tracker_ticket.display_id
+        user_stub_ticket_permission
+        put :update, construct_params({ version: 'private', id: ticket_id, tracker_id: tracker_id }, false)
+        assert_response 403
+        ticket = Helpdesk::Ticket.find_by_display_id(ticket_id)
+        assert !ticket.related_ticket?
+        user_unstub_ticket_permission
+      end
+    end
+
+    def test_link_ticket_without_tracker_permission
+      enable_adv_ticketing([:link_tickets]) do
+        ticket_restricted_agent = add_agent_to_group(nil,
+                                                   ticket_permission = 3, role_id = @account.roles.agent.first.id)
+        ticket = create_ticket(responder_id: ticket_restricted_agent.id)
+        tracker_ticket = create_tracker_ticket
+        login_as(ticket_restricted_agent)
+        put :update, construct_params({ version: 'private', id: ticket.display_id, tracker_id: tracker_ticket.display_id }, false)
+        assert_response 200
+        ticket = Helpdesk::Ticket.find_by_display_id(ticket.display_id)
+        assert ticket.related_ticket?
+      end
+    end
+
+    def test_link_a_deleted_ticket
+      enable_adv_ticketing([:link_tickets]) do
+        ticket = create_ticket
+        ticket.update_attributes(deleted: true)
+        ticket_id = ticket.display_id
+        tracker_id = create_tracker_ticket.display_id
+        put :update, construct_params({ version: 'private', id: ticket_id, tracker_id: tracker_id }, false)
+        assert_response 405
+      end
+    end
+
+    def test_link_a_spammed_ticket
+      enable_adv_ticketing([:link_tickets]) do
+        ticket = create_ticket
+        ticket.update_attributes(spam: true)
+        tracker_id = create_tracker_ticket.display_id
+        put :update, construct_params({ version: 'private', id: ticket.display_id, tracker_id: tracker_id }, false)
+        assert_response 405
+      end
+    end
+
+    def test_link_an_associated_ticket_to_tracker
+      enable_adv_ticketing([:link_tickets]) do
+        ticket = create_ticket
+        ticket.update_attributes(association_type: 4)
+        tracker_id = create_tracker_ticket.display_id
+        put :update, construct_params({ version: 'private', id: ticket.display_id, tracker_id: tracker_id }, false)
+        assert_link_failure(nil, [:id, :unable_to_perform])
+      end
+    end
+
+    def test_link_non_existant_ticket_to_tracker
+      enable_adv_ticketing([:link_tickets]) do
+        tracker_id = create_tracker_ticket.display_id
+        put :update, construct_params({ version: 'private', id: tracker_id + 100, tracker_id: tracker_id }, false)
+        assert_response 404
+      end
+    end
+
+    def test_link_without_link_tickets_feature
+      disable_adv_ticketing([:link_tickets]) if Account.current.launched?(:link_tickets)
+      ticket = create_ticket
+      ticket_id = ticket.display_id
+      tracker_id = create_tracker_ticket.display_id
+      put :update, construct_params({ version: 'private', id: ticket_id, tracker_id: tracker_id }, false)
+      assert_response 400
+      assert !ticket.related_ticket?
+      match_json([bad_request_error_pattern('tracker_id', :require_feature_for_attribute, {
+      code: :inaccessible_field, feature: :link_tickets, attribute: 'tracker_id'
+      })])
+    end
+
+    def test_unlink_related_ticket_from_tracker
+      enable_adv_ticketing([:link_tickets]) do
+        create_linked_tickets
+        Helpdesk::Ticket.any_instance.stubs(:associates).returns([@tracker_id])
+        put :update, construct_params({ version: 'private', id: @ticket_id, tracker_id: nil }, false)
+        Helpdesk::Ticket.any_instance.unstub(:associates)
+        assert_response 200
+        ticket = Helpdesk::Ticket.where(display_id: @ticket_id).first
+        assert !ticket.related_ticket?
+      end
+    end
+
+    def test_unlink_non_related_ticket_from_tracker
+      enable_adv_ticketing([:link_tickets]) do
+        create_linked_tickets
+        non_related_ticket_id = create_ticket.display_id
+        Helpdesk::Ticket.any_instance.stubs(:associates).returns([@tracker_id])
+        put :update, construct_params({ version: 'private', id: non_related_ticket_id, tracker_id: nil }, false)
+        Helpdesk::Ticket.any_instance.unstub(:associates)
+        assert_response 400
+        match_json([bad_request_error_pattern('id', :not_a_related_ticket)])
+      end
+    end
+
+    def test_unlink_ticket_without_permission
+      enable_adv_ticketing([:link_tickets]) do
+        create_linked_tickets
+        user_stub_ticket_permission
+        put :update, construct_params({ version: 'private', id: @ticket_id, tracker_id: nil }, false)
+        assert_unlink_failure(@ticket, 403)
+        user_unstub_ticket_permission
+      end
+    end
+
+    def test_unlink_non_existant_ticket_from_tracker
+      enable_adv_ticketing([:link_tickets]) do
+        create_linked_tickets
+        Helpdesk::Ticket.where(display_id: @ticket_id).first.destroy
+        put :update, construct_params({ version: 'private', id: @ticket_id, tracker_id: nil }, false)
+        assert_response 404
+      end
+    end
+
+    def test_unlink_without_link_tickets_feature
+      enable_adv_ticketing([:link_tickets]) { create_linked_tickets }
+      disable_adv_ticketing([:link_tickets]) if Account.current.launched?(:link_tickets)
+      put :update, construct_params({ version: 'private', id: @ticket_id, tracker_id: nil }, false)
+      assert_unlink_failure(@ticket, 400)
+      match_json([bad_request_error_pattern('tracker_id', :require_feature_for_attribute, {
+      code: :inaccessible_field, feature: :link_tickets, attribute: 'tracker_id'
+      })])
+    end
+
+    def test_unlink_related_ticket_from_non_tracker
+      enable_adv_ticketing([:link_tickets]) do
+        create_linked_tickets
+        non_tracker_id = create_ticket.display_id
+        Helpdesk::Ticket.any_instance.stubs(:associates).returns([non_tracker_id])
+        put :update, construct_params({ version: 'private', id: @ticket_id, tracker_id: nil }, false)
+        Helpdesk::Ticket.any_instance.unstub(:associates)
+        assert_unlink_failure(@ticket, 400, ['tracker_id', :invalid_tracker])
+      end
+    end
+
+    def test_unlink_without_both_tracker_and_related_permission
+      enable_adv_ticketing([:link_tickets]) do
+        ticket_restricted_agent = add_agent_to_group(nil,
+                                                   ticket_permission = 3, role_id = @account.roles.agent.first.id)
+        ticket = create_ticket
+        tracker_ticket = create_tracker_ticket
+        link_to_tracker(ticket, tracker_ticket)
+        login_as(ticket_restricted_agent)
+        put :update, construct_params({ version: 'private', id: ticket.display_id, tracker_id: nil }, false)
+        assert_response 403
+      end
+    end
+
+    def test_unlink_with_related_permission_and_without_tracker_permission
+      enable_adv_ticketing([:link_tickets]) do
+        ticket_restricted_agent = add_agent_to_group(nil,
+                                                   ticket_permission = 3, role_id = @account.roles.agent.first.id)
+        ticket = create_ticket(responder_id: ticket_restricted_agent.id)
+        tracker_ticket = create_tracker_ticket
+        link_to_tracker(ticket, tracker_ticket)
+        login_as(ticket_restricted_agent)
+        put :update, construct_params({ version: 'private', id: ticket.display_id, tracker_id: nil }, false)
+        assert_response 200
+        ticket = Helpdesk::Ticket.where(display_id: ticket.display_id).first
+        assert !ticket.related_ticket?
+      end
+    end
+
+    def test_unlink_without_related_ticket_permission
+      enable_adv_ticketing([:link_tickets]) do
+        ticket_restricted_agent = add_agent_to_group(nil,
+                                                   ticket_permission = 3, role_id = @account.roles.agent.first.id)
+        ticket = create_ticket
+        tracker_ticket = create_tracker_ticket(responder_id: ticket_restricted_agent.id)
+        link_to_tracker(ticket, tracker_ticket)
+        login_as(ticket_restricted_agent)
+        put :update, construct_params({ version: 'private', id: ticket.display_id, tracker_id: nil }, false)
+        assert_response 200
+        ticket = Helpdesk::Ticket.where(display_id: ticket.display_id).first
+        assert !ticket.related_ticket?
+      end
+    end
+
+    def test_unlink_with_other_params
+      enable_adv_ticketing([:link_tickets]) do
+        ticket_restricted_agent = add_agent_to_group(nil,
+                                                   ticket_permission = 3, role_id = @account.roles.agent.first.id)
+        ticket = create_ticket
+        tracker_ticket = create_tracker_ticket(responder_id: ticket_restricted_agent.id)
+        link_to_tracker(ticket, tracker_ticket)
+        login_as(ticket_restricted_agent)
+        put :update, construct_params({ version: 'private', id: ticket.display_id, tracker_id: nil, status: 5 }, false)
+        assert_response 403
+      end
+    end
   end
 end
