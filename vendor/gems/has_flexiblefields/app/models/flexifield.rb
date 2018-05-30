@@ -24,6 +24,8 @@ class Flexifield < ActiveRecord::Base
 
   zero_downtime_migration_methods :methods => {:remove_columns => ["ff_boolean11","ff_boolean12","ff_boolean13","ff_boolean14","ff_boolean15","ff_boolean16","ff_boolean17","ff_boolean18","ff_boolean19","ff_boolean20"] }
 
+  before_validation :nested_field_correction
+
   def initialize_denormalized_flexifield
     if Account.current.denormalized_flexifields_enabled? && denormalized_flexifield.nil?
       build_denormalized_flexifield 
@@ -116,6 +118,10 @@ class Flexifield < ActiveRecord::Base
   def attributes_with_denormalized_flexifield
     denormalized_attributes = denormalized_flexifield.present? ? denormalized_flexifield.deserialized_attributes : {}
     attributes_without_denormalized_flexifield.dup.reverse_merge(denormalized_attributes)
+  end
+
+  def nested_field_correction
+    NestedFieldCorrection.new(self).clear_child_levels if Account.current.dependent_field_validation_enabled?
   end
 
   alias_method_chain :attributes, :denormalized_flexifield
