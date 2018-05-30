@@ -55,7 +55,7 @@ module Tickets
       ensure
         Va::Logger::Automation.log "********* END OF OBSERVER *********"
         Va::Logger::Automation.unset_thread_variables
-        if Account.current.skill_based_round_robin_enabled?
+        if evaluate_on.present? && Account.current.skill_based_round_robin_enabled?
           if args[:enqueued_class] == 'Helpdesk::Ticket'
             #merges the diff between previous save transaction & observer save transaction
             previous_changes = args[:model_changes]
