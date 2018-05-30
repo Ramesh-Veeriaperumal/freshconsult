@@ -34,6 +34,7 @@ class EmailController < ApplicationController
       request_url_hash = {:request_url => request_url}
     end
     params.merge!(request_url_hash)
+    params[:html] = Nokogiri::HTML(params[:html]).to_html if (!params[:html].nil? && !params[:html].blank?)
     if envelope.present? && multiple_envelope_to_address?( envelope_to = get_to_address_from_envelope(envelope))
      status = process_email_for_each_to_email_address(envelope_to)
     else
@@ -48,7 +49,7 @@ class EmailController < ApplicationController
     domain = params[:domain]
     domain_mapping = DomainMapping.find_by_domain(domain)
     if domain_mapping.blank?
-      render :json => {:domain_status => 404, :user_status => :not_found, :created_at => nil, :account_type => nil}
+      render :json => {:domain_status => 404, :user_status => :not_found, :created_at => nil, :account_type => nil, :account_id => nil}
     else
       shard = ShardMapping.lookup_with_domain(domain)
       shard_status = shard.status
@@ -58,7 +59,7 @@ class EmailController < ApplicationController
             account = Account.find_by_full_domain(domain).make_current
             account_type = account.email_subscription_state
             user = account.all_users.find_by_email(params[:email])
-            basic_hash = {:created_at => account.created_at, :account_type => account_type}
+            basic_hash = {:created_at => account.created_at, :account_type => account_type, :account_id => account.id}
             if user.nil?
               render :json => {:domain_status => shard_status, :user_status => :not_found}.merge(basic_hash)
             elsif user.valid_user?
@@ -73,7 +74,42 @@ class EmailController < ApplicationController
           end
         end
       else
-        render :json => { :domain_status => shard_status, :user_status => :not_found, :created_at => nil, :account_type => nil }
+        render :json => { :domain_status => shard_status, :user_status => :not_found, :created_at => nil, :account_type => nil, :account_id => nil }
+      end
+    end
+  end
+
+
+  def validate_account
+    account_id = params[:account_id]
+    domain_mapping = DomainMapping.find_by_account_id(account_id)
+    if domain_mapping.blank?
+      render :json => {:domain_status => 404, :user_status => :not_found, :created_at => nil, :account_type => nil, :domain => nil}
+    else
+      shard = ShardMapping.lookup_with_account_id(account_id)
+      shard_status = shard.status
+      if shard.ok?
+        Sharding.select_shard_of(account_id) do
+          Sharding.run_on_slave do
+            account = Account.find_by_id(account_id).make_current
+            account_type = account.email_subscription_state
+            user = account.all_users.find_by_email(params[:email])
+            basic_hash = {:created_at => account.created_at, :account_type => account_type, :domain => account.full_domain}
+            if user.nil?
+              render :json => {:domain_status => shard_status, :user_status => :not_found}.merge(basic_hash)
+            elsif user.valid_user?
+              render :json => {:domain_status => shard_status, :user_status => :active}.merge(basic_hash)
+            elsif user.deleted?
+              render :json => {:domain_status => shard_status, :user_status => :deleted}.merge(basic_hash)
+            elsif user.blocked?
+              render :json => {:domain_status => shard_status, :user_status => :blocked}.merge(basic_hash)
+            else
+              render :json => {:domain_status => shard_status, :user_status => :not_active}.merge(basic_hash)
+            end
+          end
+        end
+      else
+        render :json => { :domain_status => shard_status, :user_status => :not_found, :created_at => nil, :account_type => nil, :domain => nil }
       end
     end
   end

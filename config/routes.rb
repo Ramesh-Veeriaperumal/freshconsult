@@ -1921,6 +1921,7 @@ mount Sidekiq::Web => '/sidekiq'
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
   match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
   match '/email/validate_domain' => 'email#validate_domain', :as => :validate_domain
+  match '/email/validate_account' => 'email#validate_account', :as => :validate_account
   match '/email/account_details' => 'email#account_details', :as => :account_details
   match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
   match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
