@@ -174,7 +174,7 @@ gem "omniauth-box2", '~> 0.0.1'
 gem "static_model", "~> 1.0.4"
 
 gem 'clockwork', '0.4.1'
-# gem 'wkhtmltopdf-binary', :git => "git://github.com/freshdesk/wkhtmltopdf_binary_gem.git"
+gem 'wkhtmltopdf-binary', :git => "git://github.com/freshdesk/wkhtmltopdf_binary_gem.git"
 gem "wicked_pdf", "~> 0.9.10"
 gem "pg"
 gem "routing-filter", "~> 0.3.1"
