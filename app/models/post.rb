@@ -16,7 +16,7 @@ class Post < ActiveRecord::Base
 
   concerned_with :esv2_methods, :presenter
 
-  publishable on: [:create, :destroy]
+  publishable on: :create
 
   belongs_to_account
 
