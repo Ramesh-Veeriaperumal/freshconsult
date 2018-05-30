@@ -1275,10 +1275,12 @@ class Helpdesk::TicketsController < ApplicationController
       params[:draft_data] = Helpdesk::HTMLSanitizer.clean(params[:draft_data])
       draft_cc = fetch_valid_emails(params[:draft_cc]).map {|e| "#{e};"}.to_s.sub(/;$/,"")
       draft_bcc = fetch_valid_emails(params[:draft_bcc]).map {|e| "#{e};"}.to_s.sub(/;$/,"")
+      draft_inline_attachment_ids = params["inline_attachment_ids"].is_a?(Array) ? params["inline_attachment_ids"] : []
       draft_hash_data = {
         "draft_data" => params[:draft_data],
         "draft_cc" => draft_cc,
-        "draft_bcc" => draft_bcc
+        "draft_bcc" => draft_bcc,
+        "draft_inline_attachment_ids" => draft_inline_attachment_ids.join(",")
       }
       set_tickets_redis_hash_key(draft_key, draft_hash_data)
     rescue Exception => e
@@ -2251,7 +2253,7 @@ class Helpdesk::TicketsController < ApplicationController
   end
 
   def child_tkt_post_persist
-    if current_account.parent_child_tkts_enabled?
+    if current_account.parent_child_tickets_enabled?
       if @item.child_ticket?
         params[:redirect_to] = params[:save_and_create] ?
         new_helpdesk_ticket_child_path(@item.assoc_parent_tkt_id) : helpdesk_ticket_path(@item.assoc_parent_tkt_id)

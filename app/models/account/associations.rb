@@ -339,16 +339,17 @@ class Account < ActiveRecord::Base
   has_many :status_groups
 
   has_many :account_webhook_key, dependent: :destroy
-
-  has_many :sandboxes,       :class_name => 'Admin::Sandbox::Account'
-  has_many :sandbox_jobs,    :class_name => 'Admin::Sandbox::Job'
-
+  
+  has_one  :sandbox_job,    :class_name => 'Admin::Sandbox::Job'
+  
   has_many :ticket_subscriptions, :class_name => 'Helpdesk::Subscription'
 
   has_many :required_ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id IS null AND required_for_closure IS true AND field_options NOT LIKE '%section: true%' AND field_type NOT IN ('default_subject','default_description','default_company')",
     :include => [:nested_ticket_fields, :picklist_values], :order => "helpdesk_ticket_fields.position"
 
   has_many :section_parent_fields, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id is NULL AND field_type IN ('default_ticket_type' , 'custom_dropdown') AND field_options LIKE '%section_present: true%'", :include => [:nested_ticket_fields, {:picklist_values => :section}], :limit => Helpdesk::TicketField::SECTION_LIMIT
+
+  has_many :nested_ticket_fields_with_childs, :class_name => 'Helpdesk::TicketField', :conditions => "parent_id is NULL AND field_type = 'nested_field'", :include => [:child_levels]
 
   has_one :collab_settings, :class_name => 'Collab::Setting'
 

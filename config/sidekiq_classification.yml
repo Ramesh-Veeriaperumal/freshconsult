@@ -95,6 +95,7 @@
     - ml_solutions_training
     - customer_note_body_queue
     - update_taggables_queue
+    - suspended_ticket_central_publish
   :maintainence:
     - select_all_tickets
     - select_all_batcher
@@ -140,6 +141,8 @@
     - nullify_deleted_custom_field_data
     - restore_spam_tickets
     - contact_delete_forever
+    - inline_image_shredder
+    - deactivate_product_widgets
   :external:
     - code_console_execution
     - integrations

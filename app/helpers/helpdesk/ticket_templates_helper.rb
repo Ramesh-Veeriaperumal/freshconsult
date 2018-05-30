@@ -13,6 +13,6 @@ include Cache::Memcache::Helpdesk::TicketTemplate
   end
 
   def check_for_parent_child_feature?
-    @pc ||= Account.current.parent_child_tkts_enabled?
+    @pc ||= Account.current.parent_child_tickets_enabled?
   end
 end

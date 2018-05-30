@@ -372,7 +372,7 @@ en:
   fb_realtime_enable: "Facebook real-time messaging is now live! Reauthorize your existing Facebook Pages to enable the feature for your account. Read more <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/221711'>here</a>"
   freshpipe_email_disabled: "All outgoing emails and notifications are currently disabled since the data migration is in progress."
   reauthorize_facebook: "Reauthorize your facebook account."
-  imap_mailbox_error: " Please click here to view details"
+  imap_mailbox_error: "View details"
   twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
   smart_filter_disabled: "Social Signals is temporarily down. We are working on getting it up and running."
   reauthorize_twitter: Reauthorize your twitter handle.
@@ -9210,7 +9210,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   contact_field:
     helpcard:
       title2: "Customizing your contact fields"
-      info2: "The contact form in Freshdesk lets you capture important data from your customers so that you can support them better. You can help your team get additional context about customers quickly by including custom fields based on your type of business. For example, you can collect information with custom fields for pricing plan, department etc. and prioritize tickets accordingly in your helpdesk."
+      info2: "The contact form lets you capture additional context about customers quickly by including custom fields based on your type of business. For example, you can collect information with custom fields for pricing plan, department etc. and prioritize tickets."
       info3: "Just like your ticket fields, you can add new fields to the customer sign up form and make them mandatory. You can also have private fields that are visible just to your agents."
   company_field:
     helpcard:
@@ -11739,6 +11739,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       ticket_assigned_to_group: "Ticket Assigned to Group"
       ticket_created: "New Ticket"
       generic_notification: "%{type}"
+      bot_training_completion: "Bot training completed"
     preferences_text:
       private_note_created: Private note sent to me
       public_note_created: Public note added to ticket
@@ -11753,6 +11754,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     desktop_notifications_disabled: You've disabled desktop notifications
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
+    bot_training_completion: "%{title} Bot trained successfully!Please switch to mint ui to test and train the bot."
     muted: Muted
     mute: Mute
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
@@ -11858,6 +11860,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       validation:
         invalid_name: "Invalid company name"
         required_name: "Enter company name"
+  unique_external_id:
+    helpcard: 
+      title: "Unique External Id"
+      info: Use a single ID across all your systems to identify a customer, makes it easier to track and find the right customer information when you need it. <br><a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank">Help me set up an external ID</a>
+
   requester_fields_updated: The requester widget has been updated.
   select_requester: "Please select requester"
   associate_n_companies: "Associate a contact with multiple companies?"
@@ -11965,6 +11972,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     help: What's this?
     feed_back_survery: Help us with some feedback?
   collaboration:
+    collab_deleted_user: "Deleted Agent"
     highlight_mode_on: "Highlight mode on"
     highlight_mode_off: "Highlight mode off"
     follow_discussion: "Follow this discussion"
@@ -12191,3 +12199,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
+  sandbox:
+    email: 'This email is generated from a sandbox account'
+    banner:
+      production_info: Your sandbox account is curently active. We do not recommend you make any changes to your freshdesk account. <a href='http://%{url}' target=_blank rel="noreferrer noopener">Take me there.</a>

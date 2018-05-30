@@ -125,6 +125,10 @@ class HttpRequestProxy
           Rails.logger.debug "Response Body: #{proxy_response.body}"
           Rails.logger.debug "Response Code: #{proxy_response.code}"
           Rails.logger.debug "Response Headers: #{proxy_response.headers.inspect}"
+          if params[:app_name] == 'mailchimp'
+            apikey_regex = params[:rest_url][/apikey(.*)/]
+            proxy_response.body.gsub!(apikey_regex, '') if apikey_regex
+          end
         end
         # TODO Need to audit all the request and response calls to 3rd party api.
         response_body = proxy_response.body

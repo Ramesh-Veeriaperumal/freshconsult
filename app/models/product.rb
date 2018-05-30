@@ -15,7 +15,7 @@ class Product < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_fragment_caches } , on: :create
   after_commit ->(obj) { obj.clear_fragment_caches } , on: :destroy
   after_commit :clear_fragment_caches, on: :update, :if => :pdt_name_changed?
-  after_commit :unset_product_field, on: :destroy 
+  after_commit :unset_product_field, :update_dashboard_widgets, on: :destroy 
 
   belongs_to_account
   has_one    :portal               , :dependent => :destroy
@@ -104,6 +104,11 @@ class Product < ActiveRecord::Base
                                             })
       end
    end
+
+    def update_dashboard_widgets
+      # Updates dashboard widgets with product binding
+      Helpdesk::DeactivateProductWidgets.perform_async({ product_id: id })
+    end
 
     def create_chat_widget
       if account.features?(:chat)

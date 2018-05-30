@@ -11,7 +11,8 @@ class Helpdesk::Note < ActiveRecord::Base
   has_many :inline_attachments, :class_name => "Helpdesk::Attachment", 
                                 :conditions => { :attachable_type => "Note::Inline" },
                                 :foreign_key => "attachable_id", 
-                                :dependent => :destroy
+                                :dependent => :destroy,
+                                :before_add => :set_inline_attachable_type
 
   has_many_cloud_files
     
@@ -51,4 +52,9 @@ class Helpdesk::Note < ActiveRecord::Base
   has_one :broadcast_message, :class_name => 'Helpdesk::BroadcastMessage', :foreign_key =>'note_id',
           :dependent => :destroy
 
+  private
+
+  def set_inline_attachable_type(inline_attachment)
+    inline_attachment.attachable_type = "Note::Inline"
+  end
 end

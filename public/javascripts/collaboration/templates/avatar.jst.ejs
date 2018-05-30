@@ -1,6 +1,13 @@
-<div class="<%= data.class_list %> preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator( data.name )) %>" > 
-	<%= data.name[0] %>
-	<% if (!!data.id) { %> 
-		<img alt="<%= data.name %>" class="thumb_img thumb hide <%= data.class_list %>" src="/users/<%= data.id %>/profile_image_no_blank" data-user-id="<%= data.id %>" onload="App.CollaborationUi.dpLoadComplete(this)">
-	<% }%>
-</div>
+<% if (data.deleted != "0") { %>
+<div class="<%= data.class_list %> preview_pic circle avatar-text text-center thumb">
+<img alt="<%= I18n.t('collaboration.collab_deleted_user') %>" class="collab-deleted thumb_img thumb hide <%= data.class_list %>"
+  src="/assets/collab/deleted-user.svg" onload="App.CollaborationUi.dpLoadComplete(this)">
+	</div>
+<% } else { %>
+	<div class="<%= data.class_list %> preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator( data.name )) %>">
+		<%= data.name[0] %>
+		<% if (!!data.id) { %>
+			<img alt="<%= data.name %>" class="thumb_img thumb hide <%= data.class_list %>" src="/users/<%= data.id %>/profile_image_no_blank" data-user-id="<%= data.id %>" onload="App.CollaborationUi.dpLoadComplete(this)">
+		<% }%>
+	</div>
+<% } %>

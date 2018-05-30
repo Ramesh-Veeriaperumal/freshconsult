@@ -36,6 +36,8 @@ class User < ActiveRecord::Base
 
   publishable on: :destroy
 
+  before_destroy :save_deleted_user_info
+
   after_commit :clear_agent_caches, on: :create, :if => :agent?
   after_commit :update_agent_caches, on: :update
 
@@ -171,6 +173,10 @@ class User < ActiveRecord::Base
 
   def discard_contact_field_data
     self.flexifield.destroy
+  end
+
+  def save_deleted_user_info
+    @deleted_model_info = as_api_response(:central_publish)
   end
 
   protected

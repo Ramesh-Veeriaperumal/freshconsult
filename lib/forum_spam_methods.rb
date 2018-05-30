@@ -94,6 +94,25 @@ module ForumSpamMethods
 		end
 	end
 
+	def destroy_attachments
+		#Destroy normal attachments
+		bucket = AWS::S3::Bucket.new(S3_CONFIG[:bucket])
+		bucket.objects.with_prefix(self.attachments['folder']).delete_all if self.attachments.present?
+		#Destroy inline attachments without attachable_id
+		DeletedBodyObserver.write_to_s3(self.body_html, 'Post', self.timestamp)
+		InlineImageShredder.perform_async({model_name: 'Post', model_id: self.timestamp})
+		#Destroy inline attachments
+		Account.current.attachments.where(:id => inline_attach_ids).destroy_all
+	end
+
+	def inline_attach_ids
+		begin
+			self.attributes.has_key?('inline_attachment_ids') ? JSON.parse(self.inline_attachment_ids) : []
+		rescue JSON::ParserError => e
+			[]
+		end
+	end
+
 	def attachments
 		JSON.parse(self[:attachments]) unless self[:attachments].blank?
 	end
@@ -145,5 +164,19 @@ module ForumSpamMethods
 				results = topic_spam(topic_id, last)
 			end
 		end
+
+		def by_user(user, user_timestamp)
+			query(
+				:account_id => Account.current.id,
+				:user_timestamp => 
+				[:between, user_timestamp, next_user_timestamp(user)],
+				:ascending => true
+				)
+		end
+
+		def next_user_timestamp(user)
+			(user + 1) * (10 ** 17) + Time.now.utc.to_f * (10 ** 7)
+		end
+
 	end
 end

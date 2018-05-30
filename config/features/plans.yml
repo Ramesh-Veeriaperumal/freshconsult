@@ -95,7 +95,8 @@
       - :multi_dynamic_sections
       - :auto_ticket_export
       - :ticket_activity_export
-    :inherits: 
+      - :unique_contact_identifier
+    :inherits:
       - :garden_jan_17
     :exclude: []
   :forest_jan_17:
@@ -104,6 +105,7 @@
       - :mailbox
       - :whitelisted_ips
       - :skill_based_round_robin
+      - :sandbox
     :inherits: 
       - :estate_jan_17
     :exclude: []

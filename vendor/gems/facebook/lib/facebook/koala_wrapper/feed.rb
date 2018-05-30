@@ -22,9 +22,9 @@ module Facebook
         @feed_id         =  @feed[:id]
         @requester       =  @feed[:from].symbolize_keys! if @feed[:from]
         @created_at      =  Time.zone.parse(@feed[:created_time])
-        @feed[:message]  =  @feed[:message].to_s.tokenize_emoji
+        @feed[:message]  =  @feed[:message].to_s
         @description     =  @feed[:message].to_s
-        @subject         =  truncate_subject(@description, 100)
+        @subject         =  truncate_subject(@description.tokenize_emoji, 100)
         @comments        =  @feed[:comments][:data] if @feed[:comments] && @feed[:comments][:data]
       end
       

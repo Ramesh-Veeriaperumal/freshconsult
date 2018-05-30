@@ -365,6 +365,7 @@ mount Sidekiq::Web => '/sidekiq'
       post :create_contact
       put :update_contact
       put :update_description_and_tags
+      get :view_conversations
     end
   end
 
@@ -759,6 +760,7 @@ mount Sidekiq::Web => '/sidekiq'
   end
   resources :email, :only => [:new, :create]
   resources :mime, :only => [:new, :create]
+  resources :email_service, :only =>[:new, :create]
   resources :mailgun, :only => :create
   post '/mailgun/create', to: "mailgun#create"
   resources :password_resets, :except => [:index, :show, :destroy]
@@ -1734,6 +1736,7 @@ mount Sidekiq::Web => '/sidekiq'
         post :save_insights_config
         post :fetch_recent_questions
         post :fetch_insights_config
+        post :fetch_threshold_value
       end
     end
 
@@ -1919,6 +1922,7 @@ mount Sidekiq::Web => '/sidekiq'
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
   match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
   match '/email/validate_domain' => 'email#validate_domain', :as => :validate_domain
+  match '/email/validate_account' => 'email#validate_account', :as => :validate_account
   match '/email/account_details' => 'email#account_details', :as => :account_details
   match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
   match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
@@ -2986,6 +2990,7 @@ mount Sidekiq::Web => '/sidekiq'
           put :add_day_passes
           put :change_api_limit
           put :change_v2_api_limit
+          put :change_webhook_limit
           put :add_feature
           put :change_url
           get :single_sign_on
@@ -3260,6 +3265,10 @@ mount Sidekiq::Web => '/sidekiq'
       end
     end
   end
+
+  match "/admin/bot", to: redirect('/helpdesk')
+  match "/admin/bot/*letter", to: redirect('/helpdesk')
+  match "/bot/*letter", to: redirect('/helpdesk')
 
   match '/freshid/authorize_callback', :controller => 'freshid', :action => 'authorize_callback', :method => :get
   match '/freshid/event_callback', :controller => 'freshid', :action => 'event_callback', :method => :post

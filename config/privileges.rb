@@ -359,7 +359,7 @@ Authority::Authorization::PrivilegeList.build do
   # ************** CONTACTS **************************
 
   view_contacts do
-    resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :contact_details_for_ticket]
+    resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :contact_details_for_ticket, :view_conversations]
     resource :customer, :only => [:index, :show] #should deprecate
     resource :company,  :only => [:index, :show]
     resource :agent, :only => [:show]
@@ -458,6 +458,10 @@ Authority::Authorization::PrivilegeList.build do
       resource :"reports/scheduled_export"
       resource :export, :only => [:ticket_activities]
       resource :"year_in_review", :only => [:share]
+  end
+
+  manage_dashboard do
+    resource :"reports/v2/tickets/report", :only => [:fetch_threshold_value]
   end
 
   # NOTE: Resource(controller action) related to scheduling is not added here because save reports and scheduling reports use the same action

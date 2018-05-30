@@ -5,7 +5,12 @@ module Helpdesk::EmailParser::Constants
                        "KS_C_5601-1987" => "CP949",
                        "MS949"          => "CP949",
                        "ISO-8859-8-I"   => "ISO-8859-8",
-                       "ISO-8859-8-E"   => "ISO-8859-8"
+                       "ISO-8859-8-E"   => "ISO-8859-8",
+                       "UNICODE-1-1-UTF-7"  =>"UTF-7",
+                       "_ISO-2022-JP$ESC"   => "ISO-2022-JP",
+                       "CHARSET=US-ASCII"   => "US-ASCII",
+                       "UNICODE"            => "UTF-8",
+                       "CP-850"             => "CP850"
                        }
 
   #Mime type constants

@@ -201,10 +201,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: cb2d62a6ff9fb82467756951ce64dc307aae62c4
-  tag: v1.0.4
+  revision: 16ec5b0aa2f7734b180913ffa9ec974e97ccc106
+  tag: v1.0.6
   specs:
-    central-publisher (1.0.4)
+    central-publisher (1.0.6)
       active_record_shards (~> 3.2.0)
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
@@ -560,6 +560,8 @@ GEM
       erubis (>= 2.6.6)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    bootsnap (1.3.0)
+      msgpack (~> 1.0)
     braintree (2.10.0)
       builder
     brakeman (3.3.0)
@@ -929,6 +931,9 @@ GEM
     mail (2.5.5)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    marginalia (1.5.0)
+      actionpack (>= 2.3)
+      activerecord (>= 2.3)
     memoizable (0.4.2)
       thread_safe (~> 0.3, >= 0.3.1)
     meta_request (0.4.0)
@@ -1401,6 +1406,7 @@ DEPENDENCIES
   better_errors (~> 1.1.0)
   binarize (= 0.1.1)!
   binding_of_caller
+  bootsnap
   braintree (= 2.10.0)
   brakeman
   bullet
@@ -1487,6 +1493,7 @@ DEPENDENCIES
   lockfile (= 1.4.3)
   log_filter!
   mail (= 2.5.5)
+  marginalia
   marketo!
   meta_request
   minitest (= 4.7.5)

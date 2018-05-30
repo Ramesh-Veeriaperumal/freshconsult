@@ -1284,6 +1284,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     valid_internal_group? && (internal_group.try(:agent_ids) || []).include?(ia_id)
   end
 
+  # overridden default setter method to take care of existing inline attachments
+  def inline_attachment_ids=(attachment_ids)
+    attachment_ids ||= []
+    attachment_ids = attachment_ids.split(",") if attachment_ids.is_a? String
+    attachment_ids = (inline_attachment_ids + attachment_ids).map(&:to_i).uniq
+    super(attachment_ids)
+  end
 
   private
     def sphinx_data_changed?

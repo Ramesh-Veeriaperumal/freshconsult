@@ -415,7 +415,7 @@
 		deletePostData: function(data) {
 			data.custom_field_choices_attributes = data.admin_choices;
 			delete data.admin_choices;
-			if(!tamDropdownFields.includes(data.field_type)
+			if((tamDropdownFields.indexOf(data.field_type) == -1)
 						&& /^default/.test(data.field_type)) {
 				delete data.custom_field_choices_attributes;
 			 }
@@ -473,7 +473,7 @@
 					$.each(this.settings.fieldMap, function(key, value) {
 						fieldType = self.settings.currentData.get('field_type');
 						if(key == 'admin_choices') {
-							if (/^custom/.test(fieldType) || tamDropdownFields.includes(fieldType)) {
+							if (/^custom/.test(fieldType) || (tamDropdownFields.indexOf(fieldType) != -1)) {
 								self.settings.currentData.set(key, self.getAllChoices(self.dialogDOMMap[key]));
 							}
 						}

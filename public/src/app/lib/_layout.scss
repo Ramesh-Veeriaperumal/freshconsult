@@ -832,3 +832,21 @@ a.new_ticket_button, .nav_search, .nav_settings{
 }
 
 
+.sandbox-info {
+  margin-right: 6px;
+  float: left;
+  position: relative;
+  top: -4px;
+
+  .ficon-notice-o {
+    color: #fead00;
+  }
+}
+
+.sandbox-notification-content {
+  background: #F9F6CF;
+  padding: 14px;
+  border-left: 3px #fead00 solid;
+  border-radius: 2px;
+  margin: 32px 20px 0;
+}
