@@ -45,9 +45,8 @@ module AwsWrapper
       def self.queue_url(queue_name)
         begin
           $sqs_v2_client.get_queue_url(queue_name: queue_name).queue_url
-        rescue
-          puts "Queue has not been created for #{queue_name}"
-          # Need dev-notification?
+        rescue => e
+          puts "Queue has not been created for #{queue_name} - error #{e.message}"
         end
       end
 

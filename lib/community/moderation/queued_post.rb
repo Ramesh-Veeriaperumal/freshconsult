@@ -60,7 +60,8 @@ class Community::Moderation::QueuedPost
       {
         :body_html => Helpdesk::HTMLSanitizer.clean(params['body_html']),
         :topic => topic,
-        :portal => params['portal']
+        :portal => params['portal'],
+        :inline_attachment_ids => params['inline_attachment_ids'] || []
       }.merge(common_attributes)
     end
 
@@ -124,6 +125,7 @@ class Community::Moderation::QueuedPost
         'body_html' => Helpdesk::HTMLSanitizer.sanitize_post(params['body_html']),
         'attachments' => params['attachments'].to_json,
         'cloud_file_attachments' => params['cloud_file_attachments'].to_json,
+        'inline_attachment_ids' => params['inline_attachment_ids'].to_json,
         'portal' => params['portal']
       }.merge(unpublished_topic_params || {})
     end

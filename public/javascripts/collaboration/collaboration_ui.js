@@ -753,7 +753,8 @@ App.CollaborationUi = (function ($) {
             var avatarHtml = JST[CONST.AVATAR_TEMPLATE]({data: {
                     name: usersMap[userId] ? usersMap[userId].name : CONST.DUMMY_USER.name,
                     id: userId,
-                    class_list: class_list
+                    class_list: class_list,
+                    deleted: usersMap[userId].deleted
                 }});
 	        return avatarHtml;
 	    },
@@ -967,7 +968,7 @@ App.CollaborationUi = (function ($) {
                     var hovercardUserId = $(event.currentTarget).attr("data-sender-id");
                     var collabModel = App.CollaborationModel;
 
-                    if(collabModel.usersMap[hovercardUserId]) {
+                    if (collabModel.usersMap[hovercardUserId] && collabModel.usersMap[hovercardUserId].deleted !== '1') {
                         $("#hovercard").empty();
                         $("#collab-hovercard-cover").attr("style", "");
                         $("#collab-hovercard-cover").attr("data-mention-text", "@" + App.CollaborationModel.usersMap[hovercardUserId].email.split("@")[0]);
@@ -1219,8 +1220,17 @@ App.CollaborationUi = (function ($) {
 
         setCollaboratorsCount: function () {
             var collabModel = App.CollaborationModel;
+            var collabUsers = collabModel.usersMap;
             var convo = collabModel.conversationsMap[collabModel.currentConversation.co_id];
-            var collaborators_count = !!convo ? Object.keys(convo.members).length : 0;
+            var collaborators_count = 0;
+            if (!!convo && convo.members) {
+                convoMembers = convo.members;
+                for (var id in convoMembers) {
+                    if (convoMembers.hasOwnProperty(id) && collabUsers[id].deleted !== '1') {
+                        collaborators_count++;
+                    }
+                }
+            }
             $("#collaborators-count").text(collaborators_count);
             if(collaborators_count) {
                 $("#collaborators-tab-btn").removeClass("disabled");
@@ -1941,7 +1951,7 @@ App.CollaborationUi = (function ($) {
 
             var userId = !!msg.s_id ? msg.s_id : (render_type === CONST.TYPE_SENT ? collabModel.currentUser.uid : "");
             var add_method = msg.forcePrepend ? "prepend" : "append";
-            var sender_name = collabModel.usersMap[msg.s_id] ? collabModel.usersMap[msg.s_id].name : CONST.DUMMY_USER.name;
+            var sender_name = collabModel.usersMap[msg.s_id] ? (collabModel.usersMap[msg.s_id].deleted !== "1" ? collabModel.usersMap[msg.s_id].name : I18n.translate('collaboration.collab_deleted_user')) : CONST.DUMMY_USER.name;
 
             function renderMsg(msg_body, msg_type) {
                 $("#collab-sidebar #scroll-box")[add_method](JST[CONST.COLLABORATION_MESSAGE_TEMPLATE]({

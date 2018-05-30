@@ -281,6 +281,7 @@ defaults: &defaults
     - [sandbox_file_to_config]
     - [sandbox_config_to_file]
     - [clone]
+    - [inline_image_shredder]
 
 development:
   <<: *defaults

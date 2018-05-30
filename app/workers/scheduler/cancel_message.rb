@@ -3,7 +3,7 @@ module Scheduler
     sidekiq_options queue: :scheduler_cancel_message, retry: 5, backtrace: true, failures: :exhausted
 
     def perform(args)
-      args.deep_symbolize_keys
+      args.deep_symbolize_keys!
       group_name = args[:group_name]
       job_id_list = args[:job_ids] || []
       responses = job_id_list.map do |job_id|

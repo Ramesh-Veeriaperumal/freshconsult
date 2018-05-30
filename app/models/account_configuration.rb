@@ -12,7 +12,7 @@ class AccountConfiguration < ActiveRecord::Base
   validate :ensure_values
 
   after_update :update_billing, :update_reseller_subscription
-  after_commit :update_crm_and_map, on: :update
+  after_commit :update_crm_and_map, on: :update, :unless => :sandbox?
   include Concerns::DataEnrichmentConcern
 
   CONTACT_INFO_KEYS = [:full_name, :first_name, :last_name, :email, :notification_emails,  :job_title, :phone]
@@ -105,6 +105,10 @@ class AccountConfiguration < ActiveRecord::Base
     def update_reseller_subscription
       Subscription::UpdatePartnersSubscription.perform_async({ :account_id => account_id,
         :event_type => :contact_updated })
+    end
+
+    def sandbox?
+      self.account.sandbox?
     end
 
 end

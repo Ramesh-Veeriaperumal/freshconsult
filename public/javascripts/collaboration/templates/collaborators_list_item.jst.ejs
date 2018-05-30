@@ -1,31 +1,44 @@
-<div class="collaborators-list-item <%= data.is_deleted ? 'deleted' : '' %> <%= data.is_self ? 'self' : '' %>" id="collaborator-icon-<%=data.id%><%= !!data.id_post_fix ? '-' + data.id_post_fix : '' %>" data-mention-text="@<%= data.username %>">
-	<% if (!!data.id) { %>
-		<div class="preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator( data.name )) %>" > 
-			<% if (data.is_self) { %> <%= data.name[4] %> <% } else { %> <%= data.name[0] %> <% } %>
-			<img alt="<%= data.name %>" data-user-id="<%= data.id %>" class="thumb hide" src="/users/<%= data.id %>/profile_image_no_blank" onload="App.CollaborationUi.dpLoadComplete(this)">
-		</div>
-	<% } else if (!!data.group) { %>
-		<div class="preview_pic circle text-center huddle-group-icon" >
-			<i class="ficon-huddle-group fsize-32 thumb"></i>
-		</div>
-	<% } else {%>
-		<div class="preview_pic circle text-center huddle-circle-icon" >
-			<img class="thumb" src="/assets/collab/huddle-everyone.svg">
-		</div>
-	<%}%>
+<% if (!data.is_deleted) { %>
+	<div class="collaborators-list-item <%= data.is_deleted ? 'deleted' : '' %> <%= data.is_self ? 'self' : '' %>" id="collaborator-icon-<%=data.id%><%= !!data.id_post_fix ? '-' + data.id_post_fix : '' %>"
+		data-mention-text="@<%= data.username %>">
+		<% if (!!data.id) { %>
+			<div class="preview_pic circle avatar-text text-center thumb bg-<%= Math.abs(uniqueCodeGenerator( data.name )) %>">
+			<% if (data.is_self) { %>
+				<%= data.name[4] %>
+			<% } else { %>
+				<%= data.name[0] %>
+			<% } %>
+				<img alt="<%= data.name %>" data-user-id="<%= data.id %>" class="thumb hide" src="/users/<%= data.id %>/profile_image_no_blank" onload="App.CollaborationUi.dpLoadComplete(this)">
+			</div>
+			<% } else if (!!data.group) { %>
+				<div class="preview_pic circle text-center huddle-group-icon">
+					<i class="ficon-huddle-group fsize-32 thumb"></i>
+				</div>
+			<% } else {%>
+				<div class="preview_pic circle text-center huddle-circle-icon">
+					<img class="thumb" src="/assets/collab/huddle-everyone.svg">
+				</div>
+			<%}%>
 
-	<% if (data.is_online || data.is_self) { %>
-		<i class="co-user-online"></i>
-	<% } %>
-	<div class="nametag <%= !data.job_title ? 'one-line' : ''%>">
-		<% if (!!data.name) { %>
-			<span class="name line-item ellipsis" title="<%- data.name %>"><%= data.name %></span>
-		<% } %>
-		<% if (!data.is_self && !data.is_deleted) { %>
-			<span data-mention-text="@<%- data.username %>" class="line-item tag-handle <%= (data.name) ? 'prepend-separator' : '' %> ellipsis" title="@<%- data.username %>"> @<%- data.username %> </span>
-		<% } %>
+			<% if (data.is_online || data.is_self) { %>
+				<i class="co-user-online"></i>
+			<% } %>
+			<div class="nametag <%= !data.job_title ? 'one-line' : ''%>">
+			<% if (!!data.name) { %>
+				<span class="name line-item ellipsis" title="<%- data.name %>">
+					<%= data.name %>
+				</span>
+			<% } %>
+			<% if (!data.is_self) { %>
+				<span data-mention-text="@<%- data.username %>" class="line-item tag-handle <%= (data.name) ? 'prepend-separator' : '' %> ellipsis"
+					title="@<%- data.username %>"> @<%- data.username %>
+				</span>
+			<% } %>
+			</div>
+			<% if (data.job_title) { %>
+			<div class="job-profile ellipsis" title="<%= data.job_title %>">
+				<%- data.job_title %>
+			</div>
+			<% } %>
 	</div>
-	<% if (data.job_title) { %>
-		<div class="job-profile ellipsis" title="<%= data.job_title %>"><%- data.job_title %></div>
-	<% } %>
-</div>
+<% } %>
