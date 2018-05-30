@@ -1,0 +1,5 @@
+if @errors.length > 0
+ JSON.generate({"errors": @errors, "freshcaller_account_id": @freshcaller_account_id}.to_hash)
+else
+ JSON.generate({"success": "Verified migration", "freshcaller_account_id": @freshcaller_account_id}.to_hash)
+end 
