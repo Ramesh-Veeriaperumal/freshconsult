@@ -202,7 +202,7 @@
     view_tracker = '<%= t('ticket.link_tracker.view_tracker') %>';
     recently_created = '<%= t('ticket.link_tracker.recently_created') %>';
     asscociation_type = <%= TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]%>;
-    parentChildEnabled = <%= current_account.parent_child_tkts_enabled? %>;
+    parentChildEnabled = <%= current_account.parent_child_tickets_enabled? %>;
     var action = "";
     var association = [];
 

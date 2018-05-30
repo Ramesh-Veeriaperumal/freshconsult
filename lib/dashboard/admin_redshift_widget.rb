@@ -1,4 +1,4 @@
-class Dashboard::AdminRedshiftWidget < Dashboard
+class Dashboard::AdminRedshiftWidget < Dashboards
   include Cache::Memcache::Dashboard::CacheData
   include MemcacheKeys
 

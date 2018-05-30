@@ -4,7 +4,7 @@ class ConversationValidation < ApiValidation
   attr_accessor :body, :full_text, :private, :user_id, :agent_id, :incoming, :notify_emails,
                 :attachments, :to_emails, :cc_emails, :bcc_emails, :item, :from_email,
                 :include_quoted_text, :include_original_attachments, :cloud_file_ids,
-                :cloud_files, :send_survey, :last_note_id
+                :cloud_files, :send_survey, :last_note_id, :inline_attachment_ids
 
   validates :body, data_type: { rules: String, required: true }, if: -> { !forward? }
   validates :body, data_type: { rules: String }, on: :forward
@@ -35,6 +35,8 @@ class ConversationValidation < ApiValidation
 
   validate :validate_cloud_files, if: -> { cloud_files.present? && errors[:cloud_files].blank? }
   validate :validate_full_text_length, if: -> { body.present? && full_text.present? }
+
+  validates :inline_attachment_ids, data_type: { rules: Array }
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)

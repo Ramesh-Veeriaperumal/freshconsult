@@ -1,6 +1,6 @@
 class TicketSummaryValidation < ApiValidation
 
-  attr_accessor :body, :user_id, :attachments, :cloud_files, :item
+  attr_accessor :body, :user_id, :attachments, :cloud_files, :item, :inline_attachment_ids
 
   validates :body, data_type: { rules: String}
   validates :user_id, custom_numericality: { only_integer: true, greater_than: 0,
@@ -14,6 +14,7 @@ class TicketSummaryValidation < ApiValidation
   validates :cloud_files, data_type: { rules: Array, allow_nil: false }
   validates :cloud_files, array: { data_type: { rules: Hash, allow_nil: false } }
   validate :validate_cloud_files, if: -> { cloud_files.present? && errors[:cloud_files].blank? }
+  validates :inline_attachment_ids, data_type: { rules: Array }
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)

@@ -22,13 +22,16 @@ class Support::Solutions::ArticlesController < SupportController
   before_filter :load_vote, :only => [:thumbs_up,:thumbs_down]
   skip_before_filter :verify_authenticity_token, :only => [:thumbs_up,:thumbs_down]
 
-  before_filter :verify_authenticity_token, :only => [:thumbs_up, :thumbs_down], :unless => :public_request?
+  before_filter :verify_authenticity_token, :only => [:thumbs_up, :thumbs_down, :create_ticket], :unless => :public_request?
   
+  before_filter :filter_params, :only => :create_ticket
   before_filter :check_permissibility, :only => :create_ticket
   before_filter :generate_ticket_params, :only => :create_ticket
   after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket, :if => :no_error
 
   before_filter :cleanup_params_for_title, :only => [:show]
+
+   CREATE_TICKET_VALID_FIELDS = ["email"]
 
 
   def handle_unknown
@@ -65,6 +68,12 @@ class Support::Solutions::ArticlesController < SupportController
   end
 
   private
+
+    def filter_params
+      if params[:helpdesk_ticket].present?
+        current_user ? params.except!(:helpdesk_ticket) : params[:helpdesk_ticket].slice!(*CREATE_TICKET_VALID_FIELDS)
+      end
+    end
 
     def check_permissibility
       if(params[:helpdesk_ticket].present? && params[:helpdesk_ticket][:email].present?)

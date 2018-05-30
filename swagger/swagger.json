@@ -5256,14 +5256,47 @@
     "/dashboards": {
       "get": {
         "tags": [
-          "dashboard"
+          "custom dashboard"
         ],
-        "description": "Config of all the widgets in dashboard",
+        "description": "List of all dashboards accessible to the user",
         "responses": {
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/dashboard_widget_config"
+              "$ref": "#/definitions/dashboard_list"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "custom dashboard"
+        ],
+        "description": "create dashboard",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dashboard_create"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/dashboard_show"
             }
           },
           "400": {
@@ -5937,6 +5970,285 @@
         }
       }
     },
+    "/dashboards/{id}/widgets_data": {
+      "get": {
+        "tags": [
+          "custom dashboard"
+        ],
+        "summary": "Widget data for the given type",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "format": "int64",
+            "description": "Dashboard ID",
+            "required": true
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "required": true,
+            "description": "Type of widget for which data is requested"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/dashboard_custom_widgets_data"
+            }
+          },
+          "400": {
+            "description": "Bad request error"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/dashboards/widget_data_preview": {
+      "get": {
+        "tags": [
+          "custom dashboard"
+        ],
+        "summary": "Widget data preview for the given type",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "type": "number",
+            "required": true,
+            "description": "Type of the widget to be previewed"
+          },
+          {
+            "name": "ticket_filter_id",
+            "description": "Present for scorecard and bar chart types",
+            "in": "query",
+            "type": "number"
+          },
+          {
+            "name": "threshold_min",
+            "in": "query",
+            "type": "number",
+            "description": "Present in scorecard and trend card widgets"
+          },
+          {
+            "name": "threshold_max",
+            "in": "query",
+            "type": "number",
+            "description": "Present in scorecard and trend card widgets"
+          },
+          {
+            "name": "categorised_by",
+            "in": "query",
+            "type": "number",
+            "description": "ID of ticket field. Present for bar chart widget"
+          },
+          {
+            "name": "representation",
+            "in": "query",
+            "type": "number",
+            "description": "Number or percentage. Present in bar chart widget",
+            "enum": [
+              0,
+              1
+            ]
+          },
+          {
+            "name": "metric",
+            "in": "query",
+            "type": "number",
+            "description": "Present for trend card widget",
+            "enum": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ]
+          },
+          {
+            "name": "time_range",
+            "in": "query",
+            "type": "number",
+            "description": "Present in leaderboard widget",
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "name": "metric_type",
+            "in": "query",
+            "type": "number",
+            "description": "Present for trend card widget",
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          },
+          {
+            "name": "group_ids",
+            "in": "query",
+            "type": "array",
+            "description": "Present in trend card and CSAT widgets",
+            "items": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "product_id",
+            "in": "query",
+            "type": "number",
+            "description": "Present in trend cards"
+          },
+          {
+            "name": "group_id",
+            "in": "query",
+            "type": "number",
+            "description": "Present in leaderboard widget"
+          },
+          {
+            "name": "date_range",
+            "in": "query",
+            "type": "number",
+            "description": "Present in trend card widget",
+            "enum": [
+              1,
+              2,
+              3
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/dashboard_custom_widget_data_preview"
+            }
+          },
+          "400": {
+            "description": "Bad request error"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/dashboards/{id}": {
+      "get": {
+        "tags": [
+          "custom dashboard"
+        ],
+        "description": "Dashboard configuration details",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "description": "Id of Dashboard",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/dashboard_show"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "custom dashboard"
+        ],
+        "description": "Delete dashboard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "description": "Id of dashboard",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Dashboard not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "custom dashboard"
+        ],
+        "description": "Update a dashboard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "description": "Id of dashboard",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/dashboard_update"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/dashboard_show"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Dashboard not found"
+          }
+        }
+      }
+    },
     "/bots": {
       "get": {
         "tags": [
@@ -6599,6 +6911,81 @@
           },
           "404": {
             "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/sandboxes": {
+      "get": {
+        "tags": [
+          "sandbox"
+        ],
+        "description": "Sandbox account details",
+        "summary": "Sandbox account details",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/sandboxes_index"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/sandboxes/create": {
+      "post": {
+        "tags": [
+          "sandbox"
+        ],
+        "description": "Sandbox account creation",
+        "summary": "Sandbox account creation",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/sandboxes_create"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/sandboxes/destroy": {
+      "post": {
+        "tags": [
+          "sandbox"
+        ],
+        "description": "Sandbox Delete",
+        "summary": "Sandbox Delete",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
       }
@@ -7337,6 +7724,12 @@
             },
             "last_note_id": {
               "type": "number"
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7367,6 +7760,12 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/cloud_file_input"
+              }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
               }
             }
           }
@@ -7420,6 +7819,12 @@
             },
             "last_note_id": {
               "type": "number"
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7484,6 +7889,12 @@
               "items": {
                 "type": "string"
               }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7499,6 +7910,12 @@
           "properties": {
             "user_id": {
               "type": "integer"
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7644,6 +8061,12 @@
               "items": {
                 "type": "string"
               }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7677,6 +8100,12 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/cloud_file_input"
+              }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
               }
             }
           }
@@ -7744,6 +8173,12 @@
               "items": {
                 "$ref": "#/definitions/cloud_file_input"
               }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
             }
           }
         }
@@ -7774,6 +8209,13 @@
             "attachment_ids": {
               "type": "array",
               "description": "Draft attachment/Shared attachment IDs",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "inline_attachment_ids": {
+              "type": "array",
+              "description": "Represents the IDs of the attachments corresponding to inline images",
               "items": {
                 "type": "integer"
               }
@@ -7907,6 +8349,12 @@
           "type": "string"
         },
         "attachment_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "inline_attachment_ids": {
           "type": "array",
           "items": {
             "type": "integer"
@@ -8354,6 +8802,12 @@
           "type": "string"
         },
         "attachment_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "inline_attachment_ids": {
           "type": "array",
           "items": {
             "type": "integer"
@@ -9259,6 +9713,13 @@
           "items": {
             "type": "integer"
           }
+        },
+        "inline_attachment_ids": {
+          "type": "array",
+          "description": "Represents the IDs of the attachments corresponding to inline images",
+          "items": {
+            "type": "integer"
+          }
         }
       }
     },
@@ -9586,6 +10047,13 @@
           "type": "string",
           "format": "date-time",
           "description": "Represents the time at which the draft is saved"
+        },
+        "inline_attachment_ids": {
+          "type": "array",
+          "description": "Represents the IDs of the attachments corresponding to inline images",
+          "items": {
+            "type": "integer"
+          }
         }
       }
     },
@@ -13027,6 +13495,577 @@
         "extension_type": {
           "type": "integer",
           "description": "App Type - Plug/Native Integration"
+        }
+      }
+    },
+    "dashboard_custom_widgets_data": {
+      "type": "object",
+      "description": "Widget data for the given type",
+      "properties": {
+        "widgets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "widget_data": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "last_dump_time": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "dashboard_custom_widget_data_preview": {
+      "type": "object",
+      "description": "Widget preview data for the given type",
+      "properties": {
+        "preview_data": {
+          "type": "object"
+        }
+      }
+    },
+    "dashboard_list": {
+      "type": "object",
+      "properties": {
+        "dashboards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "Id of the dashboard"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the dashboard"
+              },
+              "type": {
+                "type": "integer",
+                "description": "Type of the dashboard"
+              },
+              "group_ids": {
+                "description": "groups that have access to the dashboard",
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "dashboard_show": {
+      "type": "object",
+      "properties": {
+        "dashboard": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Id of the dashboard"
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the dashboard"
+            },
+            "type": {
+              "type": "integer",
+              "description": "Type of the dashboard"
+            },
+            "group_ids": {
+              "description": "Groups that have access to the dashboard",
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "widgets": {
+              "description": "List of widgets present in the dashboard with configuration",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "description": "Id of the widget"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the widget"
+                  },
+                  "active": {
+                    "type": "boolean",
+                    "description": "State of widget (active/inactive)"
+                  },
+                  "width": {
+                    "type": "integer",
+                    "description": "Width of the widget"
+                  },
+                  "height": {
+                    "type": "integer",
+                    "description": "Height of the widget"
+                  },
+                  "x": {
+                    "type": "integer",
+                    "description": "x-coordinate of the widget"
+                  },
+                  "y": {
+                    "type": "integer",
+                    "description": "y-coordinate of the widget"
+                  },
+                  "type": {
+                    "type": "integer",
+                    "description": "type of the widget"
+                  },
+                  "refresh_interval": {
+                    "type": "integer",
+                    "description": "refresh interval of the widget"
+                  },
+                  "config_data": {
+                    "description": "Configuration details of widget",
+                    "type": "object",
+                    "properties": {
+                      "ticket_filter_id": {
+                        "description": "Ticket view id to be associated. Present for scorecard and bar chart types",
+                        "type": "number"
+                      },
+                      "threshold_min": {
+                        "type": "number",
+                        "description": "Min threshold for the view associated with the widget. Present in scorecard and trend card widgets"
+                      },
+                      "threshold_max": {
+                        "type": "number",
+                        "description": "Max threshold for the view associated with the widget. Present in scorecard and trend card widgets"
+                      },
+                      "categorised_by": {
+                        "type": "number",
+                        "description": "ID of ticket field. Present for bar chart widget"
+                      },
+                      "representation": {
+                        "type": "number",
+                        "description": "Number or percentage. Present in bar chart widget",
+                        "enum": [
+                          0,
+                          1
+                        ]
+                      },
+                      "metric": {
+                        "type": "number",
+                        "description": "Present for trend card widget",
+                        "enum": [
+                          1,
+                          2,
+                          3,
+                          4,
+                          5,
+                          6,
+                          7,
+                          8,
+                          9,
+                          10
+                        ]
+                      },
+                      "date_range": {
+                        "type": "number",
+                        "description": "Present in trend card widget",
+                        "enum": [
+                          1,
+                          2,
+                          3
+                        ]
+                      },
+                      "metric_type": {
+                        "type": "number",
+                        "description": "Present for trend card widget",
+                        "enum": [
+                          1,
+                          2,
+                          3
+                        ]
+                      },
+                      "group_ids": {
+                        "type": "array",
+                        "description": "Present in trend card and CSAT widgets",
+                        "items": {
+                          "type": "number"
+                        }
+                      },
+                      "product_id": {
+                        "type": "number",
+                        "description": "Present in trend cards"
+                      },
+                      "group_id": {
+                        "type": "number",
+                        "description": "Present in leaderboard widget"
+                      },
+                      "time_range": {
+                        "type": "number",
+                        "description": "Present in leaderboard widget",
+                        "enum": [
+                          1,
+                          2,
+                          3
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "dashboard_update": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the dashboard"
+        },
+        "type": {
+          "type": "integer",
+          "description": "Type of the dashboard"
+        },
+        "group_ids": {
+          "type": "array",
+          "description": "Groups that have access to dashboard",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "widgets": {
+          "type": "array",
+          "description": "List of widgets that are present in dashboard with configuration",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Id of the widget"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the widget"
+              },
+              "type": {
+                "type": "string",
+                "description": "type of the widget"
+              },
+              "w": {
+                "type": "integer",
+                "description": "Width of the widget"
+              },
+              "h": {
+                "type": "integer",
+                "description": "Height of the widget"
+              },
+              "x": {
+                "type": "integer",
+                "description": "x-coordinate of the widget"
+              },
+              "y": {
+                "type": "integer",
+                "description": "y-coordinate of the widget"
+              },
+              "refresh_interval": {
+                "type": "integer",
+                "description": "refresh interval of the widget"
+              },
+              "config_data": {
+                "description": "Configuration details of widget",
+                "type": "object",
+                "properties": {
+                  "ticket_filter_id": {
+                    "description": "Ticket view id to be associated. Present for scorecard and bar chart types",
+                    "type": "number"
+                  },
+                  "threshold_min": {
+                    "type": "number",
+                    "description": "Min threshold for the view associated with the widget. Present in scorecard and trend card widgets"
+                  },
+                  "threshold_max": {
+                    "type": "number",
+                    "description": "Max threshold for the view associated with the widget. Present in scorecard and trend card widgets"
+                  },
+                  "categorised_by": {
+                    "type": "number",
+                    "description": "ID of ticket field. Present for bar chart widget"
+                  },
+                  "representation": {
+                    "type": "number",
+                    "description": "Number or percentage. Present in bar chart widget",
+                    "enum": [
+                      0,
+                      1
+                    ]
+                  },
+                  "metric": {
+                    "type": "number",
+                    "description": "Present for trend card widget",
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      4,
+                      5,
+                      6,
+                      7,
+                      8,
+                      9,
+                      10
+                    ]
+                  },
+                  "date_range": {
+                    "type": "number",
+                    "description": "Present in trend card widget",
+                    "enum": [
+                      1,
+                      2,
+                      3
+                    ]
+                  },
+                  "metric_type": {
+                    "type": "number",
+                    "description": "Present for trend card widget",
+                    "enum": [
+                      1,
+                      2,
+                      3
+                    ]
+                  },
+                  "group_ids": {
+                    "type": "array",
+                    "description": "Present in trend card and CSAT widgets",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "product_id": {
+                    "type": "number",
+                    "description": "Present in trend cards"
+                  },
+                  "group_id": {
+                    "type": "number",
+                    "description": "Present in leaderboard widget"
+                  },
+                  "time_range": {
+                    "type": "number",
+                    "description": "Present in leaderboard widget",
+                    "enum": [
+                      1,
+                      2,
+                      3
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "dashboard_create": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the dashboard"
+        },
+        "type": {
+          "type": "integer",
+          "description": "Type of the dashboard"
+        },
+        "group_ids": {
+          "type": "array",
+          "description": "Groups that have access to dashboard",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "widgets": {
+          "type": "array",
+          "description": "List of widgets that are present in dashboard with configuration",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the widget"
+              },
+              "type": {
+                "type": "string",
+                "description": "type of the widget"
+              },
+              "width": {
+                "type": "integer",
+                "description": "Width of the widget"
+              },
+              "height": {
+                "type": "integer",
+                "description": "Height of the widget"
+              },
+              "x": {
+                "type": "integer",
+                "description": "x-coordinate of the widget"
+              },
+              "y": {
+                "type": "integer",
+                "description": "y-coordinate of the widget"
+              },
+              "refresh_interval": {
+                "type": "integer",
+                "description": "refresh interval of the widget"
+              },
+              "config_data": {
+                "description": "Configuration details of widget",
+                "type": "object",
+                "properties": {
+                  "ticket_filter_id": {
+                    "description": "Ticket view id to be associated. Present for scorecard and bar chart types",
+                    "type": "number"
+                  },
+                  "threshold_min": {
+                    "type": "number",
+                    "description": "Min threshold for the view associated with the widget. Present in scorecard and trend card widgets"
+                  },
+                  "threshold_max": {
+                    "type": "number",
+                    "description": "Max threshold for the view associated with the widget. Present in scorecard and trend card widgets"
+                  },
+                  "categorised_by": {
+                    "type": "number",
+                    "description": "ID of ticket field. Present for bar chart widget"
+                  },
+                  "representation": {
+                    "type": "number",
+                    "description": "Number or percentage. Present in bar chart widget",
+                    "enum": [
+                      0,
+                      1
+                    ]
+                  },
+                  "metric": {
+                    "type": "number",
+                    "description": "Present for trend card widget",
+                    "enum": [
+                      1,
+                      2,
+                      3,
+                      4,
+                      5,
+                      6,
+                      7,
+                      8,
+                      9,
+                      10
+                    ]
+                  },
+                  "date_range": {
+                    "type": "number",
+                    "description": "Present in trend card widget",
+                    "enum": [
+                      1,
+                      2,
+                      3
+                    ]
+                  },
+                  "metric_type": {
+                    "type": "number",
+                    "description": "Present for trend card widget",
+                    "enum": [
+                      1,
+                      2,
+                      3
+                    ]
+                  },
+                  "group_ids": {
+                    "type": "array",
+                    "description": "Present in trend card and CSAT widgets",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "product_id": {
+                    "type": "number",
+                    "description": "Present in trend cards"
+                  },
+                  "group_id": {
+                    "type": "number",
+                    "description": "Present in leaderboard widget"
+                  },
+                  "time_range": {
+                    "type": "number",
+                    "description": "Present in leaderboard widget",
+                    "enum": [
+                      1,
+                      2,
+                      3
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sandboxes_index": {
+      "type": "object",
+      "properties": {
+        "sandboxes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "status": {
+                "type": "string"
+              },
+              "sandbox_url": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "sandboxes_create": {
+      "type": "object",
+      "properties": {
+        "sandbox": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "status": {
+              "type": "string"
+            }
+          }
         }
       }
     }

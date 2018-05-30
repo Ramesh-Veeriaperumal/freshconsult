@@ -125,10 +125,13 @@ class Search::Utils
     hstickets_dispid:                 'hsTicketsByDisplayId',
     hstickets_subject:                'hsTicketsBySubject',
     filteredTicketSearch:             'filteredTicketSearch',
+    filtered_contact_search:          'filteredContactSearch',
+    filtered_company_search:          'filteredCompanySearch',
     search_ticket_api:                'searchTicketApi',
     search_contact_api:               'searchContactApi',
     search_company_api:               'searchCompanyApi',
-    filtered_solution_search:         'filteredSolutionSearch'
+    filtered_solution_search:         'filteredSolutionSearch',
+    portal_company_users:             'portalCompanyUsers'
   }
 
   # _Note_: Parent ID to be used for routing.
@@ -170,7 +173,7 @@ class Search::Utils
 
     # Load each type's results via its model
     #
-    (es_results['hits']['hits'].presence || {}).group_by { |item| item['_type'] }.each do |type, items| 
+    (es_results['hits']['hits'].presence || {}).group_by { |item| item['_type'] }.each do |type, items|
       if items.empty?
         records[type] = []
       else
@@ -217,7 +220,7 @@ class Search::Utils
   #
   def self.template_context(context, exact_match, locale=nil)
     template_key = (exact_match ? "#{context}_exact" : context).to_sym
-    
+
     lang_template_key = [locale.underscore, template_key].join('_').to_sym if locale.present?
     template_key = lang_template_key if TEMPLATE_BY_CONTEXT.has_key?(lang_template_key)
 
@@ -237,9 +240,9 @@ class Search::Utils
   def self.context_mapping(context)
     context.gsub('Exact','')
   end
-  
+
   private
-    
+
     def self.wrap_paginate(result_set, page_number, es_offset, total_entries)
       Search::V2::PaginationWrapper.new(result_set, { page: page_number,
                                           from: es_offset,

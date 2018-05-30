@@ -46,6 +46,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/ticket_template", only: %i(show index)
     resource :"ember/search/multiquery", only: [:search_results]
     resource :"ember/year_in_review", only: %i(index clear)
+    resource :"ember/custom_dashboard", only: %i(widgets_data show index bar_chart_data)
   end
 
   manage_account do
@@ -120,6 +121,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   admin_tasks do
+    resource :"admin/sandbox", only: [:create, :index, :destroy]
     resource :"ember/admin/onboarding", only: %i[update_channel_config]
     resource :"ember/contact", only: [:update_password]
     resource :'ember/trial_widget', only: %i[index sales_manager complete_step]
@@ -173,6 +175,10 @@ Authority::Authorization::PrivilegeList.build do
 
   view_admin do 
     resource :"ember/agent", only: [:complete_gdpr_acceptance]
+  end
+
+  manage_dashboard do 
+    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview]
   end
 
   manage_bots do

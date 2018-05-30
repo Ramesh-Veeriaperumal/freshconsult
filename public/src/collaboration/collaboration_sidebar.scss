@@ -854,6 +854,13 @@ $typing_font_size: 12px;
                 border-left-color: $received_msg_border_color;
             }
         }
+
+        .collab-deleted {
+            height: 15px;
+            width: 15px;
+            left: 9px;
+            top: 9px;
+        }
     }
 }
 

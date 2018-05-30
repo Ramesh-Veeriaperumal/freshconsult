@@ -37,6 +37,7 @@ class Archive::TicketsController < ::ApiApplicationController
   def destroy
     begin
       note_ids = notes_available_in_s3? ? @item.archive_notes.pluck(:id) : []
+      @item.shred_inline_images
       Archive::DeleteArchiveTicket.perform_async({:ticket_id => @item.id, :note_ids => note_ids })
       @item.destroy
       head 204
@@ -116,5 +117,4 @@ class Archive::TicketsController < ::ApiApplicationController
       return true unless params["action"] === "destroy"
       user.privilege?(:delete_ticket)
     end
-    
 end

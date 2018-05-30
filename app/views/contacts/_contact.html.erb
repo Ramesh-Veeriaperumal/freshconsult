@@ -10,7 +10,13 @@
 			<%= user_avatar(contact)%> <!-- class="img-circle" have to add in img tag for circle-->
 		</div>
 		<div class="text-info">
-			<strong><%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info custom-tip-bottom contact-name", :'data-pjax' => "#body-container") %></strong>
+			<strong>
+				<% if !contact.agent_deleted_forever? %>
+					<%= link_to(h(contact.display_name), {:controller => "contacts", :action => "show", :id => contact}, :class => "item_info custom-tip-bottom contact-name", :'data-pjax' => "#body-container") %>
+				<% else %>
+					<%= h(contact.display_name) %>
+				<% end %>
+			</strong>
 			<% unless contact.job_title.blank? %>
 				<p class="muted mb0"><%= h contact.job_title %></p>
 			<% end %>
@@ -46,7 +52,7 @@
 		<div class="user_actions hide" align="right">
 			<% if privilege?(:delete_contact) %>
 			   <%= link_to(content_tag(:i, "", :class => "ficon-restore fsize-16 contact-action"), {:controller => "contacts", :action => "unblock", :id => contact} , :method => 'get', :class => "btn p7 tooltip", :title => t('unblock').html_safe) if contact.spam? || contact.blocked?%>
-			   <%= link_to(content_tag(:i, "", :class => "ficon-restore fsize-16 contact-action"), {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn p7 tooltip", :title => t('contacts.restore').html_safe) if contact.deleted? and !contact.spam? and !contact.blocked? and contact.parent.nil? %>
+			   <%= link_to(content_tag(:i, "", :class => "ficon-restore fsize-16 contact-action"), {:controller => "contacts", :action => "restore", :id => contact, :redirect_back => true} , :method => 'put', :class => "btn p7 tooltip", :title => t('contacts.restore').html_safe) if contact.deleted? and !contact.spam? and !contact.blocked? and contact.parent.nil? and !contact.agent_deleted_forever? %>
 			<% end %>
 			<% if privilege?(:view_contacts) %>
 			  <%= link_to(content_tag(:i, "", :class => "ficon-mail fsize-20 contact-action"), send_invite_activation_path(contact), 

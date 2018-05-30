@@ -39,7 +39,7 @@ module ParentChildHelper
   def set_assn_types
     @types ||= begin
       association_types = Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN
-      is_pc_enabled = current_account.parent_child_tkts_enabled?
+      is_pc_enabled = current_account.parent_child_tickets_enabled?
       if params[:only_parent] and is_pc_enabled
         [association_types[:parent]]
       elsif params[:prime] and is_pc_enabled
@@ -52,19 +52,19 @@ module ParentChildHelper
 
   def set_ticket_association
     assoc_parent_id = @params.nil? ? params[:assoc_parent_id] : @params[:assoc_parent_tkt_id]
-    if Account.current.parent_child_tkts_enabled? and assoc_parent_id.present?
+    if Account.current.parent_child_tickets_enabled? and assoc_parent_id.present?
       @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
       @item.assoc_parent_tkt_id = assoc_parent_id
     end
   end
 
   def can_be_assoc_parent?
-    Account.current.parent_child_tkts_enabled? && @assoc_parent_ticket &&
+    Account.current.parent_child_tickets_enabled? && @assoc_parent_ticket &&
       @assoc_parent_ticket.can_be_associated? && @assoc_parent_ticket.child_tkt_limit_reached?
   end
 
   def load_assoc_parent
-    @assoc_parent_ticket ||= load_by_param(params[:ticket_id] || params[:assoc_parent_id] || params[:id]) if Account.current.parent_child_tkts_enabled?
+    @assoc_parent_ticket ||= load_by_param(params[:ticket_id] || params[:assoc_parent_id] || params[:id]) if Account.current.parent_child_tickets_enabled?
   end
 
   def load_parent_template

@@ -94,4 +94,32 @@ module SupportTicketControllerMethods
       return params
     end
 
+    def remove_non_editable_fields
+      return unless params[:helpdesk_ticket].present?
+      field_params = params[:helpdesk_ticket]
+      invisible_fields = []
+      field_params.keys.each do |key|
+        if TicketConstants::NESTED_TICKET_ATTRIBUTES.include?(key)
+          field_params[key].delete_if { |key, value| 
+            invisible_fields << key unless editable_ticket_fields.include?(key) }
+        elsif editable_ticket_fields.exclude?(key)
+          invisible_fields << key
+          field_params.delete(key)
+        end
+      end
+      Rails.logger.info "invisible_fields for the account :: #{current_account.id} 
+        :: #{invisible_fields}" if invisible_fields.present?
+    end
+
+    def editable_ticket_fields
+      @visible_fields ||= begin
+        visible_fields      = current_portal.customer_editable_ticket_fields
+        visible_fields_name = visible_fields.map(&:field_name)
+        visible_fields.each do |field|
+          visible_fields_name << field.nested_levels.map{|lvl| lvl[:name]} if field.nested_field?
+        end
+        visible_fields_name << TicketConstants::SUPPORT_WHITELISTED_ATTRIBUTES
+        visible_fields_name.flatten
+      end
+    end
 end

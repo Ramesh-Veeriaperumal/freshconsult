@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class Search::V2::AutocompleteControllerTest < ActionController::TestCase
-
+include PrivilegesHelper
   ########################
   # Requester test cases #
   ########################
@@ -14,6 +14,76 @@ class Search::V2::AutocompleteControllerTest < ActionController::TestCase
 
     res_body = parsed_attr(response.body, 'id')
     assert_includes res_body, user.id
+  end
+
+def test_requester_with_name_auto_complete_disabled
+    user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
+
+    disable_auto_complete
+    
+    get :requesters, { q: user.name}
+
+    res_body = parsed_attr(response.body, 'id')
+    assert_empty res_body
+
+    rollback_auto_complete
+  end
+
+def test_requester_with_name_auto_complete_off_view_contacts_privilege_on
+    user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
+
+    @account.launch(:auto_complete_off)
+    
+    get :requesters, { q: user.name}
+
+    res_body = parsed_attr(response.body, 'id')
+    assert_includes res_body, user.id
+
+    @account.rollback(:auto_complete_off)
+  end
+
+  def test_requester_with_email_auto_complete_disabled
+    user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
+
+    disable_auto_complete
+    
+    get :requesters, { q: user.email}
+
+    res_body = parsed_attr(response.body, 'id')
+    assert_includes res_body, user.id
+
+    rollback_auto_complete
+  end
+
+  def test_requester_with_partial_email_auto_complete_disabled
+    user = add_new_user(@account, { email: 'test-requester.for_es@freshpo.com' })
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
+
+    disable_auto_complete
+    
+    get :requesters, :q => user.email.split('@').first
+
+    res_body = parsed_attr(response.body, 'id')
+    assert_empty res_body
+
+    rollback_auto_complete
+  end
+
+  def test_requester_with_phone_number_auto_complete_disabled
+    user = add_new_user_without_email(@account)
+    sleep Searchv2::SearchHelper::ES_DELAY_TIME # Delaying for sidekiq to send to ES
+    
+    disable_auto_complete
+
+    get :requesters, :q => user.phone
+
+    res_body = parsed_attr(response.body, 'id')
+    assert_empty res_body
+
+    rollback_auto_complete
   end
 
   def test_requester_with_partial_name
@@ -167,4 +237,16 @@ class Search::V2::AutocompleteControllerTest < ActionController::TestCase
     res_body = parsed_attr(response.body, 'value')
     assert_includes res_body, tag.name
   end
+
+  private 
+    def disable_auto_complete
+      remove_privilege(User.current,:view_contacts)
+      @account.launch(:auto_complete_off)
+    end
+
+    def rollback_auto_complete
+      add_privilege(User.current, :view_contacts)
+      @account.rollback(:auto_complete_off)
+    end
+
 end

@@ -8,8 +8,8 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
-  around_filter :select_master_shard , :only => [:collab_feature,:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account]
-  before_filter :validate_params, :only => [ :change_api_limit ]
+  around_filter :select_master_shard , :only => [:collab_feature,:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit]
+  before_filter :validate_params, :only => [ :change_api_limit, :change_webhook_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
   before_filter :symbolize_feature_name, :only => [:add_feature, :remove_feature]
@@ -36,7 +36,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:spam_details] = ehawk_spam_details
     account_summary[:disable_emails] = account.launched?(:disable_emails)
     account_summary[:saml_sso_enabled] = account.is_saml_sso?
-    account_summary[:falcon_enabled] = account.has_feature?(:falcon) || account.launched?(:falcon)
+    account_summary[:falcon_enabled] = account.has_feature?(:falcon)
     respond_to do |format|
       format.json do
         render :json => account_summary
@@ -63,7 +63,11 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     feature_info[:freshfone] = account.features?(:freshfone)
     feature_info[:domain_restricted_access] = account.features?(:domain_restricted_access)
     feature_info[:restricted_helpdesk] = account.restricted_helpdesk?
-    feature_info[:falcon] = account.has_feature?(:falcon) || account.launched?(:falcon)
+    feature_info[:falcon] = account.has_feature?(:falcon)
+    feature_info[:launch_party] = account.all_launched_features
+    feature_info[:bitmap_list] = account.features_list
+    feature_info[:db_feature_list] = account.features.map(&:to_sym)
+    
     respond_to do |format|
       format.json do
         render :json => feature_info
@@ -151,6 +155,25 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   def change_v2_api_limit
     $rate_limit.perform_redis_op("set", Redis::RedisKeys::ACCOUNT_API_LIMIT % {account_id: params[:account_id]},params[:new_limit])
     render :json => {:status => "success"}
+  end
+
+  def change_webhook_limit
+    result = {}
+    account = Account.find_by_id(params[:account_id])
+    account.make_current
+    if account.account_additional_settings.update_attributes(:webhook_limit => params[:new_limit].to_i)
+      result[:status] = "success"
+    else
+      result[:status] = "notice"
+    end
+    result[:account_id] = account.id 
+    result[:account_name] = account.name
+    Account.reset_current_account
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
   end
 
   def add_feature

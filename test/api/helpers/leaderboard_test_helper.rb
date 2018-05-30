@@ -31,6 +31,29 @@ module LeaderboardTestHelper
       assert_response 200
     end
 
+    def build_controller_params(options)
+      controller_parameters = { version: 'private', type: 'leaderboard' }
+      controller_parameters[:group_id] = options[:group_id] if options[:test_endpoint] == :widget_data_preview && !options[:group_id].nil?
+      controller_parameters[:id] = options[:dashboard_id] if options[:test_endpoint] == :widgets_data
+      controller_parameters
+    end
+
+    def assert_widget_data_preview_leaderboard_response(score, options = {})
+      controller_parameters = build_controller_params(options)
+      get options[:test_endpoint], controller_params(controller_parameters)
+      responses = ActiveSupport::JSON.decode(response.body)
+      response_data = options[:test_endpoint] == :widget_data_preview ? responses['data'] : data = responses.first['widget_data']
+      response_data.each do |r|
+        type = r['name'].to_sym
+        r['rank_holders'].each do |holder|
+          if holder['rank'] == 1
+            assert holder['score'].to_i == score[type].max
+          end
+        end
+      end
+      assert_response 200
+    end
+
     def create_support_score(params = {})
       new_ss = FactoryGirl.build(:support_score, user_id: params[:user_id],
                                                  score_trigger: params[:score_trigger],
@@ -102,9 +125,9 @@ module LeaderboardTestHelper
       @agent_four = add_test_agent(@account)
       @agent_five = add_test_agent(@account)
       @agent_six = add_test_agent(@account)
-
-      @group_odd = create_group_with_agents(@account, agent_list: [@agent_one.id, @agent_three.id, @agent_five.id])
-      @group_even = create_group_with_agents(@account, agent_list: [@agent_two.id, @agent_four.id, @agent_six.id])
+      group_names = @account.groups.pluck(:name)
+      @group_odd = create_group_with_agents(@account, { agent_list: [@agent_one.id, @agent_three.id, @agent_five.id], name: group_names[0]})
+      @group_even = create_group_with_agents(@account, { agent_list: [@agent_two.id, @agent_four.id, @agent_six.id], name: group_names[1]})
     end
 
     def redis_add_group_agents_score(score_stub, group_id, month = @current_month)

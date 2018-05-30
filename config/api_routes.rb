@@ -409,12 +409,24 @@ Helpkit::Application.routes.draw do
     get 'solutions/articles', to: 'ember/solutions/articles#index'
     get 'solutions/articles/:id/article_content', to: 'ember/solutions/articles#article_content'
 
-    match '/dashboards/leaderboard_agents' => 'ember/leaderboard#agents', via: :get
-    match '/dashboards/leaderboard_groups' => 'ember/leaderboard#groups', via: :get
-
     resources :marketplace_apps, controller: 'ember/marketplace_apps', only: [:index]
 
-    resources :dashboards, controller: 'ember/dashboard', only: [:show] do
+    # match '/dashboards/widget_data_preview'=> 'ember/custom_dashboard#widget_data_preview', via: :get
+
+    resources :dashboards, controller: 'ember/custom_dashboard' do
+      member do
+        get :widgets_data, to: 'ember/custom_dashboard#widgets_data'
+        get :bar_chart_data, to: 'ember/custom_dashboard#bar_chart_data'
+      end
+
+      collection do
+        get :widget_data_preview, to: 'ember/custom_dashboard#widget_data_preview'
+        get :leaderboard_agents, to: 'ember/leaderboard#agents'
+        get :leaderboard_groups, to: 'ember/leaderboard#groups'
+      end
+    end
+    
+    resources :default_dashboards, controller: 'ember/dashboard', only: [:show] do
       collection do
         get :satisfaction_survey, to: 'ember/dashboard#survey_info'
         get :moderation_count, to: 'ember/dashboard#moderation_count'
@@ -436,6 +448,8 @@ Helpkit::Application.routes.draw do
         post :test_email_forwarding
       end
     end
+    
+    resources :sandboxes, controller: 'admin/sandboxes', only: [:index, :create, :destroy]
 
     resources :contact_password_policy, controller: 'ember/contact_password_policies',
                                         only: [:index]
@@ -503,6 +517,13 @@ Helpkit::Application.routes.draw do
     get '/freshcaller/contacts/:id/activities', to: 'channel/freshcaller/contacts#activities'
     post '/freshcaller/search/customers/', to: 'channel/freshcaller/search/customers#results'
     post '/freshcaller/search/tickets/', to: 'channel/freshcaller/search/tickets#results'
+    post '/freshcaller/migration/validate', to: 'channel/freshcaller/migration#validate'
+    post '/freshcaller/migration/initiate', to: 'channel/freshcaller/migration#initiate'
+    post '/freshcaller/migration/cross_verify', to: 'channel/freshcaller/migration#cross_verify'
+    post '/freshcaller/migration/revert', to: 'channel/freshcaller/migration#revert'
+    post '/freshcaller/migration/reset_freshfone', to: 'channel/freshcaller/migration#reset_freshfone'
+    post '/freshcaller/migration/fetch_pod_info', to: 'channel/freshcaller/migration#fetch_pod_info'
+
     resources :tickets, controller: 'channel/tickets', only: [:create]
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show]
     resources :companies, controller: 'channel/api_companies', only: [:create]

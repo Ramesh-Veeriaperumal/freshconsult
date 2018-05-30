@@ -422,3 +422,23 @@
   #Marketplace
   marketplace_apps:
     $ref: ./resource/marketplace_apps.yaml
+
+  #Custom dashboard
+  dashboard_custom_widgets_data:
+    $ref: ./response/dashboard/custom/widgets_data.yaml
+  dashboard_custom_widget_data_preview:
+    $ref: ./response/dashboard/custom/widget_data_preview.yaml
+  dashboard_list:
+    $ref: './response/custom_dashboard/dashboard_list.yaml'
+  dashboard_show:
+    $ref: './response/custom_dashboard/dashboard_show.yaml'
+  dashboard_update:
+    $ref: './request/custom_dashboard/dashboard_update.yaml'
+  dashboard_create:
+    $ref: './request/custom_dashboard/dashboard_create.yaml'
+
+  #sandbox
+  sandboxes_index:
+    $ref: ./response/sandboxes/index.yaml
+  sandboxes_create:
+    $ref: ./response/sandboxes/create.yaml

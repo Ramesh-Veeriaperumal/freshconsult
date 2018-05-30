@@ -1301,6 +1301,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     "#{url_protocol}://#{portal_host}/a/tickets/#{display_id}"
   end
 
+  # overridden default setter method to take care of existing inline attachments
+  def inline_attachment_ids=(attachment_ids)
+    attachment_ids ||= []
+    attachment_ids = attachment_ids.split(",") if attachment_ids.is_a? String
+    attachment_ids = (inline_attachment_ids + attachment_ids).map(&:to_i).uniq
+    super(attachment_ids)
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?

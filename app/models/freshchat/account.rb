@@ -2,6 +2,8 @@ class Freshchat::Account < ActiveRecord::Base
   
   include DataVersioning::Model
 
+  CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'freshchat.yml')).symbolize_keys
+
   VERSION_MEMBER_KEY = 'FRESHCHAT_ACCOUNT'.freeze
 
   self.table_name =  :freshchat_accounts

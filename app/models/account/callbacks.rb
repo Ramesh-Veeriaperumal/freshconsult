@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
   before_create :downcase_full_domain,:set_default_values, :set_shard_mapping, :save_route_info
   before_create :add_features_to_binary_column
   before_update :check_default_values, :update_users_time_zone, :backup_changes
-  before_destroy :backup_changes, :make_shard_mapping_inactive, :deleted_model_info
+  before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status, :make_current
   after_create :create_freshid_account, if: [:freshid_signup_allowed?, :freshid_enabled?]
@@ -36,11 +36,10 @@ class Account < ActiveRecord::Base
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
   after_commit :trigger_launchparty_feature_callbacks, on: :create
+  after_commit :disable_freshid, on: :update, :if => [:sso_enabled_freshid_account?, :freshid_migration_not_in_progress?]
+  after_commit :enable_freshid, on: :update, :if => [:sso_disabled?, :freshid_migration_not_in_progress?]
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_signup_allowed?
 
-
-  # Need to revisit when we push all the events for an account
-  publishable on: :destroy
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -117,9 +116,42 @@ class Account < ActiveRecord::Base
   
   alias_method :destroy_freshid_account_on_rollback, :destroy_freshid_account
 
+  def enable_freshid
+    Rails.logger.info "FRESHID Enqueuing worker for migration :: a=#{self.id}, d=#{self.full_domain}"
+    Freshid::AgentsMigration.perform_async
+  end
+
+  def disable_freshid
+    Rails.logger.info "FRESHID Enqueuing worker for revert migration :: a=#{self.id}, d=#{self.full_domain}"
+    Freshid::AgentsMigration.perform_async({ revert_migration: true })
+  end
+
   # Need to revisit when we push all the events for an account
   def central_publish_worker_class
     "CentralPublishWorker::AccountDeletionWorker"
+  end
+
+  def crud_apigee_kvm(action, plan_name, domain = nil, map_identifier = "default")
+    if ApigeeConfig::ALLOWED_ACTIONS.exclude?(action)
+      Rails.logger.info "#{action} is not a valid action"
+      return false
+    end
+    params = {
+      action: action.to_sym,
+      account_id: self.id,
+      domain: (domain || self.full_domain),
+      plan: plan_name,
+      map_identifier: map_identifier
+    }
+    Apigee::KVMActionWorker.perform_async(params)
+  end
+
+  def save_deleted_model_info
+    @deleted_model_info = {
+      id: id,
+      name: name,
+      full_domain: full_domain,
+    }
   end
 
   protected
@@ -135,14 +167,6 @@ class Account < ActiveRecord::Base
     def backup_changes
       @old_object = Account.find(id)
       @all_changes = self.changes.clone
-    end
-
-    def deleted_model_info
-      @deleted_model_info = {
-        id: id,
-        name: name,
-        full_domain: full_domain,
-      }
     end
 
     def account_verification_changed?
@@ -170,8 +194,20 @@ class Account < ActiveRecord::Base
       @all_changes.key?("name")
     end
 
+    def sso_enabled_changed?
+      @all_changes.key?('sso_enabled')
+    end
+
     def update_freshid?
       freshid_enabled? && (account_domain_changed? || account_name_changed?)
+    end
+
+    def sso_enabled_freshid_account?
+      sso_enabled? && sso_enabled_changed? && freshid_enabled?
+    end
+
+    def sso_disabled?
+      !sso_enabled? && sso_enabled_changed? && freshid_signup_allowed?
     end
 
     def remove_email_restrictions
@@ -185,7 +221,7 @@ class Account < ActiveRecord::Base
       @launch_party_features ||= []
       @launch_party_features << changes if FeatureClassMapping.get_class(feature_name.to_s)
       # self.new_record? is false in after create hook so using id_changed? method which will be true in all the hook except
-      # after_commit for new record or modified record. 
+      # after_commit for new record or modified record.
       admin_only_mint_on_launch(changes)
       trigger_launchparty_feature_callbacks unless self.id_changed?
     end
@@ -220,7 +256,8 @@ class Account < ActiveRecord::Base
         self.id = domain_mapping.account_id
         populate_google_domain(domain_mapping.shard) if google_account?
       else
-        shard_mapping = ShardMapping.new({:shard_name => ShardMapping.latest_shard,:status => ShardMapping::STATUS_CODE[:not_found],
+        shard = self.sandbox? ? ActiveRecord::Base.current_shard_selection.shard.to_s : ShardMapping.latest_shard
+        shard_mapping = ShardMapping.new({:shard_name => shard, :status => ShardMapping::STATUS_CODE[:not_found],
                                                :pod_info => PodConfig['CURRENT_POD']})
         shard_mapping.domains.build({:domain => full_domain})  
         populate_google_domain(shard_mapping) if google_account? #remove this when the new google marketplace is stable.
@@ -434,13 +471,13 @@ class Account < ActiveRecord::Base
     end
 
     def update_crm_and_map
-      if (Rails.env.production? or Rails.env.staging?)
+      if (Rails.env.production? or Rails.env.staging?) && !self.sandbox?
         if redis_key_exists?(FRESHSALES_ADMIN_UPDATE)
           CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {:account_id => self.id})
         else
           Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateAdmin, {:account_id => self.id})
         end
-        if redis_key_exists?(SIDEKIQ_MARKETO_QUEUE) 
+        if redis_key_exists?(SIDEKIQ_MARKETO_QUEUE)
           Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => self.id})
         else
           Resque.enqueue_at(15.minutes.from_now, Marketo::AddLead, {:account_id => self.id})
@@ -462,6 +499,10 @@ class Account < ActiveRecord::Base
 
     def freshid_signup_allowed?
       redis_key_exists? FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED
+    end
+
+    def freshid_migration_not_in_progress?
+      !freshid_migration_in_progress?
     end
 
     def update_bot

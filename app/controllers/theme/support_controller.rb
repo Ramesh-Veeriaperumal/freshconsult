@@ -4,11 +4,11 @@ class Theme::SupportController < ThemeController
 
 	# Cache key for helpdesk file detecting change in file updated time
 	
-	THEME_URL 			= "#{Rails.root}/public/src/portal/portal.scss"
-	THEME_TIMESTAMP 	= (File.exists?(THEME_URL) && File.mtime(THEME_URL).to_i)
+  THEME_URL       = "#{Rails.root}/public/src/portal/portal.scss"
+  THEME_VERSION   = 'theme/sp/1'
 
-	THEME_URL_FALCON 		= "#{Rails.root}/public/src/portal/falcon_portal.scss"
-	THEME_TIMESTAMP_FALCON 	= (File.exists?(THEME_URL_FALCON) && File.mtime(THEME_URL_FALCON).to_i)
+  THEME_URL_FALCON       = "#{Rails.root}/public/src/portal/falcon_portal.scss"
+  THEME_VERSION_FALCON   = 'theme/fsp/1'
 
 	# Precautionary settings override
 	THEME_ALLOWED_OPTS = %w( 	bg_color header_color tab_color tab_hover_color

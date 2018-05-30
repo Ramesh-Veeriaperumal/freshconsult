@@ -1,4 +1,4 @@
-class Dashboard::DataLayer < Dashboard
+class Dashboard::DataLayer < Dashboards
   include MemcacheKeys
   include Cache::Memcache::Dashboard::CacheData
 

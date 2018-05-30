@@ -28,6 +28,12 @@ class Post < ActiveRecord::Base
     :class_name => 'Helpdesk::Activity',
     :as => 'notable'
 
+  has_many :inline_attachments, :class_name   => 'Helpdesk::Attachment',
+                                :conditions   => { :attachable_type => 'Post::Inline' },
+                                :foreign_key  => 'attachable_id',
+                                :dependent    => :destroy,
+                                :before_add   => :set_inline_attachable_type
+
   scope :answered_posts, :conditions => { :answer => true }
   has_many :support_scores, :as => :scorable, :dependent => :destroy
   
@@ -189,6 +195,19 @@ class Post < ActiveRecord::Base
       "published"   =>  published,
       "answer"      =>  answer,
     }
+  end
+
+  def set_inline_attachable_type(inline_attachment)
+    raise "Not an inline image" if inline_attachment.attachable_type != "Forums Image Upload"
+    inline_attachment.attachable_type = 'Post::Inline'
+  end
+
+  # overridden default setter method to take care of existing inline attachments
+  def inline_attachment_ids=(attachment_ids)
+    attachment_ids ||= []
+    attachment_ids = attachment_ids.split(',') if attachment_ids.is_a? String
+    attachment_ids = (inline_attachment_ids + attachment_ids).map(&:to_i).uniq
+    super(attachment_ids)
   end
 
 end

@@ -59,6 +59,7 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
     t.boolean  "premium",                        :default => false
     t.integer  "reputation",        :limit => 1, :default => 0
     t.string   "plan_features"
+    t.integer  "account_type",                     :limit => 4, :default => 0
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true
@@ -143,10 +144,9 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
     t.integer  "account_id",         :limit => 8
     t.integer  "sandbox_account_id", :limit => 8
     t.integer  "status",                          :default => 0
-    t.string   "config"
     t.string   "git_tag"
-    t.datetime "created_at",                                     :null => false
-    t.datetime "updated_at",                                     :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
   end
 
   add_index "admin_sandbox_accounts", ["account_id"], :name => "index_admin_sandbox_accounts_on_account_id"
@@ -155,9 +155,11 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
     t.integer  "sandbox_account_id", :limit => 8
     t.integer  "initiated_by",       :limit => 8
     t.integer  "status",                          :null => false
+    t.string   "git_tag"
     t.integer  "account_id",         :limit => 8
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
+    t.text     "last_error"
   end
 
   add_index "admin_sandbox_jobs", ["account_id"], :name => "index_admin_sandbox_jobs_on_account_id"
@@ -1112,6 +1114,28 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
 
   add_index "customers", ["account_id", "name"], :name => "index_customers_on_account_id_and_name", :unique => true
   add_index "customers", ["account_id", "updated_at"], :name => "index_customers_on_account_id_and_updated_at"
+
+  create_table "dashboards", :force => true do |t|
+    t.integer "account_id", :limit => 8
+    t.string "name"
+    t.boolean "deleted",                :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "dashboard_widgets", :force => true do |t|
+    t.integer "account_id", :limit => 8
+    t.string "name"
+    t.integer "widget_type"
+    t.text "grid_config"
+    t.integer "dashboard_id", :limit => 8
+    t.integer "ticket_filter_id", :limit => 8
+    t.text "config_data"
+    t.integer "refresh_interval"
+    t.boolean "active",                       :default => true, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "data_exports", :force => true do |t|
     t.integer  "account_id", :limit => 8
@@ -4369,17 +4393,18 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
       t.text        :recent_questions
       t.text        :insights_config_data
       t.timestamps
-    end
+  end
   add_index :qna_insights_reports , [:account_id, :user_id], :name => 'index_qna_insights_reports_on_account_id_and_user_id'
 
   create_table :failed_central_feeds, :force => true do |t|
     t.integer :account_id, limit: 8, null: false
     t.integer :model_id, limit: 8, null: false
+    t.string  :worker_name, limit: 255
     t.string  :uuid, limit: 255
     t.string  :payload_type, limit: 255
     t.text    :model_changes
     t.text    :additional_info
-    t.string  :exception, limit: 255
+    t.text    :exception
     t.timestamps null: false
   end
 
@@ -4415,4 +4440,10 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
   end
 
   add_index "bot_feedback_mappings", ["account_id", "feedback_id"], :name => "index_bot_feedback_mappings_on_feedback_id"
+  
+  create_table :helpdesk_reports_config, :force => true do |t|
+      t.text        :name
+      t.text        :config_json
+      t.timestamps
+  end
 end

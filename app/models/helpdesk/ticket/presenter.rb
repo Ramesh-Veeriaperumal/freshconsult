@@ -27,7 +27,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :product_id, :if => proc { Account.current.multi_product_enabled? }
     t.add :company_id
     t.add :sla_policy_id
-    t.add :association_type, :if => proc { Account.current.parent_child_tkts_enabled? || Account.current.link_tkts_enabled? }
+    t.add :association_type, :if => proc { Account.current.parent_child_tickets_enabled? || Account.current.link_tkts_enabled? }
     t.add :isescalated, as: :is_escalated
     t.add :fr_escalated
     t.add :resolution_time_by_bhrs, as: :time_to_resolution_in_bhrs
@@ -59,7 +59,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       t.add proc { |x| x.utc_format(x.safe_send(key)) }, as: key
     end
     EMAIL_KEYS.each do |key|
-      t.add proc { |x| x.cc_email.try(:[], key) }, as: key
+      t.add proc { |x| x.cc_email_hash.try(:[], key) }, as: key
     end
   end
 
@@ -105,13 +105,18 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def custom_fields_hash
     custom_ticket_fields.inject([]) do |arr, field|
-      field_value = safe_send(field.name)
-      arr.push({
-        ff_alias: field.flexifield_def_entry.flexifield_alias,
-        ff_name: field.flexifield_def_entry.flexifield_name,
-        ff_coltype: field.flexifield_def_entry.flexifield_coltype,
-        field_value: field.field_type == 'custom_date' ? utc_format(field_value) : field_value
-      })
+      begin
+        field_value = safe_send(field.name)
+        arr.push({
+          ff_alias: field.flexifield_def_entry.flexifield_alias,
+          ff_name: field.flexifield_def_entry.flexifield_name,
+          ff_coltype: field.flexifield_def_entry.flexifield_coltype,
+          field_value: field.field_type == 'custom_date' ? utc_format(field_value) : field_value
+        })
+      rescue Exception => e
+        Rails.logger.error "Error while fetching ticket custom field value - #{e}\n#{e.message}\n#{e.backtrace.join("\n")}"
+        NewRelic::Agent.notice_error(e)
+      end
     end
   end
 

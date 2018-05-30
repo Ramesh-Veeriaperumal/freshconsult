@@ -66,7 +66,7 @@ module Ember
     def broadcast
       return unless validate_params
       sanitize_and_build
-      return unless validate_delegator(@item)
+      return unless validate_delegator(@item, { inline_attachment_ids: @inline_attachment_ids })
       save_note_and_respond
     end
 
@@ -74,7 +74,7 @@ module Ember
       sanitize_body_text
       assign_note_attributes
       @item.assign_attributes(cname_params)
-      delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+      delegator_hash = { attachment_ids: @attachment_ids, shared_attachments: shared_attachments, inline_attachment_ids: @inline_attachment_ids }
       return unless validate_delegator(@item, delegator_hash)
       render_custom_errors(@item) unless save_note
     end
@@ -258,6 +258,7 @@ module Ember
       def save_note
         # assign attributes post delegator validation
         @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
+        @item.inline_attachment_ids = @inline_attachment_ids if @inline_attachment_ids
         assign_from_email
         assign_attributes_for_forward if forward?
         @item.save_note
@@ -372,7 +373,7 @@ module Ember
       end
 
       def delegator_hash
-        { parent_attachments: parent_attachments, attachment_ids: @attachment_ids, shared_attachments: shared_attachments }
+        { parent_attachments: parent_attachments, attachment_ids: @attachment_ids, shared_attachments: shared_attachments, inline_attachment_ids: @inline_attachment_ids }
       end
 
       def ember_redirect?

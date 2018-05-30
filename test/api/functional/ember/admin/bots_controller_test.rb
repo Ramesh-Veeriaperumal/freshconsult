@@ -285,6 +285,19 @@ module Ember
         end
       end
 
+      def test_create_with_invalid_avatar_params
+        enable_bot do
+          Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
+          portal = create_portal
+          params = create_params(portal).merge({ avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com" }})
+          post :create, params
+          assert_response 400
+          match_json([bad_request_error_pattern('avatar', :invalid_avatar)])
+          Account.current.bots = []
+          Freshbots::Bot.unstub(:create_bot)
+        end
+      end
+
       def test_create_with_bot_already_created_for_the_portal
         enable_bot do
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
@@ -446,6 +459,17 @@ module Ember
           assert_response 400
           pattern = [:avatar, :invalid_attachment, {code: "invalid_value"}]
           assert_bot_failure pattern
+        end
+      end
+
+      def test_update_with_invalid_avatar_params
+        enable_bot do
+          Freshbots::Bot.stubs(:update_bot).returns([Freshbots, 200])
+          bot = create_bot({ product: true})
+          put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com" } )
+          Freshbots::Bot.unstub(:update_bot)
+          assert_response 400
+          match_json([bad_request_error_pattern('avatar', :invalid_avatar)])
         end
       end
 

@@ -201,10 +201,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: 2002e29592e1e00fa3b9cae980df28017622acdd
-  tag: v1.0.3
+  revision: 16ec5b0aa2f7734b180913ffa9ec974e97ccc106
+  tag: v1.0.6
   specs:
-    central-publisher (1.0.2)
+    central-publisher (1.0.6)
       active_record_shards (~> 3.2.0)
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
@@ -619,6 +619,8 @@ GEM
       compass (>= 0.12.2)
     concurrent-ruby (1.0.4)
     connection_pool (2.2.1)
+    crack (0.4.3)
+      safe_yaml (~> 1.0.0)
     crass (1.0.3)
     css_parser (1.4.5)
       addressable
@@ -859,6 +861,7 @@ GEM
       tilt
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
+    hashdiff (0.3.7)
     hashie (3.5.7)
     hashr (0.0.22)
     hike (1.2.3)
@@ -929,6 +932,9 @@ GEM
     mail (2.5.5)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    marginalia (1.5.0)
+      actionpack (>= 2.3)
+      activerecord (>= 2.3)
     memoizable (0.4.2)
       thread_safe (~> 0.3, >= 0.3.1)
     meta_request (0.4.0)
@@ -1075,7 +1081,9 @@ GEM
       git-version-bump (~> 0.15)
       rack (~> 1.4)
     rack-cors (0.3.1)
-    rack-protection (1.5.3)
+    rack-mini-profiler (0.10.1)
+      rack (>= 1.2.0)
+    rack-protection (1.5.4)
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -1212,6 +1220,7 @@ GEM
     rufus-scheduler (2.0.24)
       tzinfo (>= 0.3.22)
     rugged (0.24.0)
+    safe_yaml (1.0.4)
     sanitize (4.5.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.4.4)
@@ -1356,6 +1365,10 @@ GEM
       coercible (~> 1.0)
       descendants_tracker (~> 0.0, >= 0.0.3)
       equalizer (~> 0.0, >= 0.0.9)
+    webmock (3.3.0)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
+      hashdiff
     webrick (1.3.1)
     wicked_pdf (0.9.10)
       rails
@@ -1485,6 +1498,7 @@ DEPENDENCIES
   lockfile (= 1.4.3)
   log_filter!
   mail (= 2.5.5)
+  marginalia
   marketo!
   meta_request
   minitest (= 4.7.5)
@@ -1602,6 +1616,7 @@ DEPENDENCIES
   tzinfo (~> 0.3.29)
   uglifier (~> 2.7.2)
   useragent (~> 0.16.3)
+  webmock
   webrick (= 1.3.1)
   white_list!
   wicked_pdf (~> 0.9.10)

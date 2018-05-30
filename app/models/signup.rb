@@ -91,20 +91,8 @@ class Signup < ActivePresenter::Base
     end
 
     def build_password_policy
-     account.build_agent_password_policy(
-       :user_type =>2,
-       :policies => FDPasswordPolicy::Constants::DEFAULT_PASSWORD_POLICIES,
-       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS,
-       :signup => true
-       )
-
-      account.build_contact_password_policy(
-       :user_type =>1,
-       :policies => FDPasswordPolicy::Constants::DEFAULT_PASSWORD_POLICIES,
-       :configs => FDPasswordPolicy::Constants::DEFAULT_CONFIGS,
-       :signup => true
-       )
-
+    account.build_default_password_policy(PasswordPolicy::USER_TYPE[:agent]) unless account.freshid_enabled?
+    account.build_default_password_policy(PasswordPolicy::USER_TYPE[:contact])
    end
 
     def default_preferences
@@ -146,7 +134,7 @@ class Signup < ActivePresenter::Base
     end
 
     # * * * POD Operation Methods Begin * * *
-    def create_global_shard 
+    def create_global_shard
       if Fdadmin::APICalls.non_global_pods? && account.valid?
         shard_record = construct_shard_parameters 
         begin
@@ -173,7 +161,7 @@ class Signup < ActivePresenter::Base
 
     def build_shard
       {
-        :shard_name => ShardMapping.latest_shard,
+        :shard_name => self.account.sandbox? ? ActiveRecord::Base.current_shard_selection.shard.to_s : ShardMapping.latest_shard,
         :status => ShardMapping::STATUS_CODE[:ok], 
         :pod_info => PodConfig['CURRENT_POD'],
         :region => PodConfig['CURRENT_REGION']

@@ -16,6 +16,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.features.multiple_user_companies.create
     @account.add_feature(:falcon)
     @account.add_feature(:multiple_user_companies)
+    @account.launch(:contact_delete_forever)
     @account.reload
 
     20.times do
@@ -72,7 +73,7 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_show_a_contact
     sample_user = add_new_user(@account)
     get :show, construct_params(id: sample_user.id)
-    ignore_keys = [:was_agent, :agent_deleted_forever]
+    ignore_keys = [:was_agent, :agent_deleted_forever, :marked_for_hard_delete]
     match_json(contact_pattern(sample_user.reload).except(*ignore_keys))
     assert_response 200
   end
@@ -82,7 +83,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     sample_user = add_new_user(@account)
     sample_user.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
     get :show, construct_params(id: sample_user.id)
-    ignore_keys = [:was_agent, :agent_deleted_forever]
+    ignore_keys = [:was_agent, :agent_deleted_forever, :marked_for_hard_delete]
     match_json(contact_pattern(sample_user.reload).except(*ignore_keys))
     assert_response 200
   end

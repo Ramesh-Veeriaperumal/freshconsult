@@ -42,6 +42,7 @@ class AccountsController < ApplicationController
   before_filter :build_metrics, :only => [ :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
   before_filter :build_plan, :only => [:new, :create]
+  before_filter :check_sandbox?, :only => [:cancel]
   before_filter :admin_selected_tab, :only => [:show, :edit, :cancel, :manage_languages  ]
   before_filter :validate_custom_domain_feature, :only => [:update]
   before_filter :build_signup_param, :build_signup_contact, :only => [:new_signup_free, :email_signup]
@@ -416,6 +417,10 @@ class AccountsController < ApplicationController
 
   private
 
+    def check_sandbox?
+      access_denied if current_account.sandbox?
+    end
+
     def get_account_for_sub_domain
       base_domain = AppConfig['base_domain'][Rails.env]    
       @sub_domain = params[:account][:sub_domain]
@@ -425,7 +430,7 @@ class AccountsController < ApplicationController
 
     def select_latest_shard(&block)
       Sharding.select_latest_shard(&block)
-    end   
+    end
 
     def build_signup_param
       params[:signup] = {}
@@ -435,7 +440,6 @@ class AccountsController < ApplicationController
           params[:signup]["#{param}_#{key}"] = value
         end
       end
-      
       params[:signup][:locale] = assign_language || http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
       metrics_obj, account_obj = build_metrics

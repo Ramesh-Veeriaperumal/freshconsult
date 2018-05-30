@@ -31,9 +31,10 @@
     - livechat_worker
     - smart_filter_tweet_to_ticket
     - channel_framework_command
-    - toggle_agent_from_all_roundrobin_groups
-    - add_agent_to_round_robin
+    - apigee_api
     - calculate_sla
+    - add_agent_to_round_robin
+    - toggle_agent_from_all_roundrobin_groups
 
   :central_realtime:
     - central_publish
@@ -99,6 +100,7 @@
     - ml_solutions_training
     - customer_note_body_queue
     - update_taggables_queue
+    - suspended_ticket_central_publish
   :maintainence:
     - select_all_tickets
     - select_all_batcher
@@ -144,6 +146,14 @@
     - restore_spam_tickets
     - nullify_deleted_custom_field_data
     - contact_delete_forever
+    - deactivate_product_widgets
+    - inline_image_shredder
+    - create_sandbox_account
+    - delete_sandbox
+    - sandbox_file_to_config
+    - sandbox_config_to_file
+    - clone
+    - inline_image_shredder
   :external:
     - code_console_execution
     - integrations
@@ -169,6 +179,7 @@
     - freshid_events
     - freshid_account_details_update
     - mixpanel_queue
+    - freshid_agents_migration
   :free:
     - free_sla
     - free_supervisor
@@ -242,4 +253,5 @@
     - marketo_queue
     - subscription_events_queue
     - track_customer_in_freshsales
-    
+  :hard_delete:
+    - contact_delete_forever

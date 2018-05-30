@@ -150,6 +150,8 @@ api_error_messages:
   no_freshcaller_account: "No Freshcaller account exists"
   outbound_limit_exceeded: "You can send a maximum of 5 outbound emails a day per account during the trial period"
   recipient_limit_exceeded: "You cannot email more than five people at once when you're on trial"
+  dashboard_limit_exceeded: "Has exceeded maximum limit"
+  invalid_values: "Invalid value(s) for field(s): %{fields}"
   unanswered_time_period_invalid: "End at should be greater than Start at"
   invalid_bot: "There is no bot with the external id %{id}"
 
@@ -172,3 +174,5 @@ api_error_messages:
   export_archive_ticket_limit_reached: Cannot run more than %{max_limit} archived ticket exports per account at a time. Please try again later.
   invalid_bot: "There is no bot with the external id %{id}"
   cannot_set_closed_at: "It cannot be set, when created_at and updated_at are not set or status is not closed"
+  invalid_inline_attachments_list: "Invalid inline attachment ids : %{invalid_ids}"
+  invalid_avatar: "Avatar is invalid"

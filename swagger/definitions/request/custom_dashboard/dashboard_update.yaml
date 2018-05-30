@@ -1,0 +1,90 @@
+type: object
+properties: 
+  name:
+    type: string
+    description: Name of the dashboard
+  type:
+    type: integer
+    description: Type of the dashboard
+  group_ids:
+    type: array
+    description: Groups that have access to dashboard
+    items:
+      type: integer
+  widgets:
+    type: array
+    description: List of widgets that are present in dashboard with configuration
+    items:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the widget
+        name:
+          type: string
+          description: Name of the widget
+        type:
+          type: string
+          description: type of the widget 
+        w:
+          type: integer
+          description: Width of the widget
+        h:
+          type: integer
+          description: Height of the widget
+        x:
+          type: integer
+          description: x-coordinate of the widget
+        y:
+          type: integer
+          description: y-coordinate of the widget
+        refresh_interval:
+          type: integer
+          description: refresh interval of the widget
+        config_data:
+          description: Configuration details of widget
+          type: object
+          properties:
+            ticket_filter_id:
+              description: Ticket view id to be associated. Present for scorecard and bar chart types
+              type: number
+            threshold_min:
+              type: number
+              description: Min threshold for the view associated with the widget. Present in scorecard and trend card widgets
+            threshold_max:
+              type: number
+              description: Max threshold for the view associated with the widget. Present in scorecard and trend card widgets
+            categorised_by:
+              type: number
+              description: ID of ticket field. Present for bar chart widget
+            representation:
+              type: number
+              description: Number or percentage. Present in bar chart widget
+              enum: [0,1]
+            metric:
+              type: number
+              description: Present for trend card widget
+              enum: [1,2,3,4,5,6,7,8,9,10]
+            date_range:
+              type: number
+              description: Present in trend card widget
+              enum: [1,2,3]
+            metric_type:
+              type: number
+              description: Present for trend card widget
+              enum: [1,2,3]
+            group_ids:
+              type: array
+              description: Present in trend card and CSAT widgets
+              items:
+                type: number
+            product_id:
+              type: number
+              description: Present in trend cards
+            group_id:
+              type: number
+              description: Present in leaderboard widget
+            time_range:
+              type: number
+              description: Present in leaderboard widget
+              enum: [1,2,3]

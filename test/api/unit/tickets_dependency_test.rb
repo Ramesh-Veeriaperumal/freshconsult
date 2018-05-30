@@ -5,7 +5,7 @@ class TicketsDependencyTest < ActionView::TestCase
     expected_filters = [
       :determine_pod, :activate_authlogic, :clean_temp_files, :select_shard, :unset_thread_variables,
       :unset_current_account, :unset_current_portal, :unset_shard_for_payload,
-      :set_current_account, :reset_language, :set_shard_for_payload, :set_default_locale,
+      :set_current_account , :reset_language, :set_shard_for_payload, :set_default_locale,
       :set_locale, :set_msg_id, :set_ui_preference, :ensure_proper_protocol, :check_privilege, :freshdesk_form_builder,
       :remove_rails_2_flash_before, :check_account_state, :set_time_zone, :check_day_pass_usage,
       :force_utf8_params, :persist_user_agent, :set_cache_buster, :remove_pjax_param,
@@ -29,7 +29,7 @@ class TicketsDependencyTest < ActionView::TestCase
       :show_password_expiry_warning, :load_assoc_parent, :load_tracker_ticket, :set_adjacent_list, :fetch_item_attachments,
       :load_tkt_and_templates, :check_ml_feature, :load_parent_template, :load_associated_tickets, :outbound_email_allowed?,
       :requester_widget_filter_params, :check_custom_view_feature, :ensure_proper_sts_header, :remove_skill_param,
-      :export_limit_reached?
+      :export_limit_reached?, :record_query_comment
     ]
 
     actual_filters = Helpdesk::TicketsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact

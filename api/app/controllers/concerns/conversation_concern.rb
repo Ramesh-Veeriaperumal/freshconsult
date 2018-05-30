@@ -53,6 +53,7 @@ module ConversationConcern
       # following fields must be handled separately, should not be passed to build_object method
       @attachment_ids = @attachment_ids.map(&:to_i) if @attachment_ids
       @cloud_file_ids = @cloud_file_ids.map(&:to_i) if @cloud_file_ids
+      @inline_attachment_ids = @inline_attachment_ids.map(&:to_i) if @inline_attachment_ids
       @note_id        = @note_id.to_i if @note_id
       @include_quoted_text = @include_quoted_text.to_bool if @include_quoted_text.try(:is_a?, String)
       @include_original_attachments = @include_original_attachments.to_bool if @include_original_attachments.try(:is_a?, String)

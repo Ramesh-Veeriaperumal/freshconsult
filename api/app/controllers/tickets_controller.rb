@@ -9,16 +9,27 @@ class TicketsController < ApiApplicationController
   include Helpdesk::SpamAccountConstants
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Helpdesk::TicketFilterMethods
+  include Support::ArchiveTicketsHelper
+  include HelperConcern
+  include Redis::TicketsRedis
+  include AssociateTicketsHelper
+
 
   decorate_views(decorate_objects: [:index, :search])
+  DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
 
   before_filter :ticket_permission?, only: [:destroy]
   before_filter :check_search_feature, :validate_search_params, only: [:search]
+  before_filter :parent_permission, only: [:create]
 
   def create
     assign_protected
     return render_request_error(:recipient_limit_exceeded, 429) if recipients_limit_exceeded?
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: params[cname][:custom_field], tags: cname_params[:tags])
+    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields,
+      custom_fields: params[cname][:custom_field], tags: cname_params[:tags],
+      company_id: params[cname][:company_id], parent_attachment_params: parent_attachment_params, 
+      inline_attachment_ids: @inline_attachment_ids)
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
     elsif @item.save_ticket
@@ -36,7 +47,9 @@ class TicketsController < ApiApplicationController
     custom_fields = params[cname][:custom_field] # Assigning it here as it would be deleted in the next statement while assigning.
     @item.assign_attributes(validatable_delegator_attributes)
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields, custom_fields: custom_fields, tags: cname_params[:tags])
+    delegator_hash = { ticket_fields: @ticket_fields, custom_fields: custom_fields,
+                       company_id: params[cname][:company_id], tags: cname_params[:tags] }
+    ticket_delegator = TicketDelegator.new(@item, delegator_hash)
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     else
@@ -129,9 +142,53 @@ class TicketsController < ApiApplicationController
     end
 
     def load_objects
-      Rails.logger.info ":::Loading objects started:::"
-      super tickets_filter.preload(conditional_preload_options)
-      Rails.logger.info ":::Loading objects done:::"
+      if current_account.count_es_api_enabled?
+        tickets_from_es
+      else
+        Rails.logger.info ":::Loading objects started:::"
+        super tickets_filter.preload(conditional_preload_options)
+        Rails.logger.info ":::Loading objects done:::"
+      end
+    end
+
+    def tickets_from_es
+      es_options = {
+        page:         params[:page] || 1,
+        order_entity: params[:order_by] || ApiTicketConstants::DEFAULT_ORDER_BY,
+        order_sort:   params[:order_type] || ApiTicketConstants::DEFAULT_ORDER_TYPE
+      }
+      @items = Search::Tickets::Docs.new(d_query_hash).records('Helpdesk::Ticket', es_options)
+    end
+
+    def d_query_hash
+      @action_hash = []
+      TicketConstants::LIST_FILTER_MAPPING.each do |key, val| # constructs hash for custom_filters
+        @action_hash.push('condition' => val, 'operator' => 'is_in', 'value' => params[key].to_s) if params[key].present?
+      end
+      predefined_filters_hash # constructs hash for predefined_filters
+      @action_hash
+    end
+
+    def predefined_filters_hash
+      if sanitize_filter_params # sanitize filter name
+        assign_filter_params # assign filter_name param
+        custom_tkt_filter = Helpdesk::Filters::CustomTicketFilter.new
+        @action_hash.push(custom_tkt_filter.default_filter(params[:filter_name])).flatten!
+      end
+    end
+
+    def sanitize_filter_params
+      if TicketFilterConstants::RENAME_FILTER_NAMES.keys.include?(params[:filter])
+        params[:filter] = TicketFilterConstants::RENAME_FILTER_NAMES[params[:filter]]
+      elsif @action_hash.empty?
+        params[:filter] ||= DEFAULT_TICKET_FILTER
+      end
+      params[:filter]
+    end
+
+    def assign_filter_params
+      params_hash = { 'filter_name' => params[:filter] }
+      params.merge!(params_hash)
     end
 
     def conditional_preload_options
@@ -200,7 +257,7 @@ class TicketsController < ApiApplicationController
     end
 
     def remove_ignore_params
-      params[cname].except!(ApiTicketConstants::IGNORE_PARAMS)
+      params[cname].except!(*ApiTicketConstants::IGNORE_PARAMS)
     end
 
     def validate_url_params
@@ -233,8 +290,8 @@ class TicketsController < ApiApplicationController
 
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
-                                             type: :ticket_type }, params[cname])
-      ParamsHelper.save_and_remove_params(self, [:cloud_files], params[cname]) if private_api?
+                                             type: :ticket_type, parent_id: :assoc_parent_tkt_id }, params[cname])
+      ParamsHelper.save_and_remove_params(self, [:cloud_files, :inline_attachment_ids], params[cname]) if private_api?
 
       # Sanitizing is required to avoid duplicate records, we are sanitizing here instead of validating in model to avoid extra query.
       prepare_tags
@@ -244,7 +301,7 @@ class TicketsController < ApiApplicationController
       params[cname][:attachments] = params[cname][:attachments].map { |att| { resource: att } } if params[cname][:attachments]
 
       # During update set requester_id to nil if it is not a part of params and if any of the contact detail is given in the params
-      if update? && !params[cname].key?(:requester_id) && (params[cname].keys & 
+      if update? && !params[cname].key?(:requester_id) && (params[cname].keys &
           ApiTicketConstants::VERIFY_REQUESTER_ON_PROPERTY_VALUE_CHANGES).present?
         params[cname][:requester_id] = nil
       end
@@ -283,6 +340,8 @@ class TicketsController < ApiApplicationController
       @item.build_schema_less_ticket unless @item.schema_less_ticket
       @item.account = current_account
       @item.cc_email = @cc_emails unless @cc_emails.nil?
+      @item.inline_attachment_ids = @inline_attachment_ids
+      assign_association_type
       build_attachments
       if create? # assign attachments so that it will not be queried again in model callbacks
         @item.attachments = @item.attachments
@@ -315,6 +374,19 @@ class TicketsController < ApiApplicationController
     def load_object
       @item = scoper.find_by_display_id(params[:id])
       log_and_render_404 unless @item
+    end
+
+    def parent_attachment_params
+      {
+        parent_ticket:       parent_ticket,
+        parent_attachments:  parent_attachments
+      }
+    end
+
+    def assign_association_type
+      if cname_params[:assoc_parent_tkt_id].present? && parent_ticket.present?
+        @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
+      end
     end
 
     def assign_ticket_status
@@ -357,10 +429,16 @@ class TicketsController < ApiApplicationController
     end
 
     def trial_outbound_limit_exceeded?
+      outbound_per_day_key = OUTBOUND_EMAIL_COUNT_PER_DAY % {:account_id => current_account.id }
+      total_outbound_per_day = get_others_redis_key(outbound_per_day_key).to_i
       if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
-        outbound_per_day_key = OUTBOUND_EMAIL_COUNT_PER_DAY % {:account_id => current_account.id }
-        total_outbound_per_day = get_others_redis_key(outbound_per_day_key).to_i
         return total_outbound_per_day >= 5
+      elsif current_account.subscription.free?
+        if current_account.created_at >= (Time.zone.now - 30.days)
+          return total_outbound_per_day >= get_free_account_30_days_threshold
+        else
+          return total_outbound_per_day >= get_free_account_outbound_threshold
+        end
       end
       return false
     end
@@ -383,6 +461,8 @@ class TicketsController < ApiApplicationController
     def field_mappings
       (custom_field_error_mappings || {}).merge(ApiTicketConstants::FIELD_MAPPINGS)
     end
+
+
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.
     wrap_parameters(*wrap_params)
 end

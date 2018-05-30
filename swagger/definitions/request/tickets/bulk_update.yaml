@@ -19,6 +19,11 @@ properties:
         description: Draft attachment/Shared attachment IDs
         items:
           type: integer
+      inline_attachment_ids:
+        type: array
+        description: Represents the IDs of the attachments corresponding to inline images
+        items:
+          type: integer
       cloud_files:
         type: array
         items:

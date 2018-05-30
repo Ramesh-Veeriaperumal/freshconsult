@@ -1,0 +1,18 @@
+type: object
+properties:
+  sandboxes:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: number
+        status:
+          type: string
+        sandbox_url:
+          type: string
+  meta:
+    type: object
+    properties:
+      status:
+        type: string

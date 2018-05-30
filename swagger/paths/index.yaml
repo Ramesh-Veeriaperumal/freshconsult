@@ -225,7 +225,7 @@
 /agents/revert_identity:
   $ref: ./agents/revert_identity.yaml
 /agents/accept_gdpr:
-  $ref: ./agents/gdpr_acceptance.yaml  
+  $ref: ./agents/gdpr_acceptance.yaml
 
 # Profiles
 /agents/me:
@@ -346,6 +346,16 @@
 /marketplace_apps:
   $ref: ./marketplace_apps/list.yaml
 
+# Custom dashboard
+/dashboards/{id}/widgets_data:
+  $ref: ./dashboard/custom/widgets_data.yaml
+/dashboards/widget_data_preview:
+  $ref: ./dashboard/custom/widget_data_preview.yaml
+/dashboards:
+  $ref: ./custom_dashboard/dashboard_index_and_create.yaml
+/dashboards/{id}:
+  $ref: ./custom_dashboard/dashboard_crud.yaml
+
 # Frankbot
 /bots:
   $ref: ./bots/list_and_create.yaml
@@ -375,3 +385,11 @@
   $ref: ./bot_feedbacks/create_article.yaml
 /bots/{id}/analytics:
   $ref: ./bots/analytics.yaml
+
+# Sandbox
+/sandboxes:
+  $ref: ./sandboxes/index.yaml
+/sandboxes/create:
+  $ref: ./sandboxes/create.yaml
+/sandboxes/destroy:
+  $ref: ./sandboxes/destroy.yaml

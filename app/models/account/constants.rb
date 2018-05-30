@@ -12,7 +12,8 @@ class Account < ActiveRecord::Base
                           contact admin #{AppConfig['admin_subdomain']} girish shan vijay parsu kiran shihab
                           productdemo resources static static0 static1 static2 static3 static4 static5
                           static6 static7 static8 static9 static10 dev apps freshapps fone
-                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 attachment euattachment eucattachment ausattachment agent-hermes) + FreshopsSubdomains + PartnerSubdomains
+                          elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 agent-hermes
+                          attachment euattachment eucattachment ausattachment indattachment) + FreshopsSubdomains + PartnerSubdomains
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
@@ -176,7 +177,7 @@ class Account < ActiveRecord::Base
     :gamification_quest_perf => false, :lambda_exchange => false, :link_tickets => false,
     :list_page_new_cluster => false, :meta_read => false, :most_viewed_articles => false,
     :multifile_attachments => true, :new_footer_feedback_box => false, :new_leaderboard => false,
-    :parent_child_tickets => false, :periodic_login_feature => false, :restricted_helpdesk => false,
+    :periodic_login_feature => false, :restricted_helpdesk => false,
     :round_robin_capping => false, :sidekiq_dispatchr_feature => false,
     :solutions_meta_read => false, :supervisor_dashboard => false, :support_new_ticket_cache => false,
     :synchronous_apps => false, :ticket_list_page_filters_cache => false, :translate_solutions => false,
@@ -189,19 +190,31 @@ class Account < ActiveRecord::Base
     :multi_dynamic_sections => true, :dashboard_new_alias => false, :attachments_scope => false, :kbase_spam_whitelist => false, 
     :forum_post_spam_whitelist => false, :email_failures => false, :enable_qna => false, :enable_insights => false,
     :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true,
-    :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false, 
-    :bulk_security => false, :service_writes => false, :service_reads => false, :admin_only_mint => false, 
-    :send_emails_via_fd_email_service_feature => false, :user_notifications => false, :freshplug_enabled => false, :dkim => false, 
-    :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, :auto_ticket_export => false, :select_all => false, 
-    :facebook_realtime => false, :"Freshfone Call Tracker" => false, :skip_one_hop => false, :ticket_contact_export => false, 
-    :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, :skip_portal_cname_chk => false,
-    :falcon_signup => false, :falcon_portal_theme => false, :image_annotation => false, :email_actions => false, :ner => false, :disable_freshchat => false, :freshchat_integration => false,
-    :facebook_page_redirect => false, :froala_editor_forums => false, :ticket_central_publish => false, :solutions_central_publish => false, 
-    :freshid => false, :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, :outgoing_attachment_limit_25 => false,
-    :whitelist_sso_login => false, :apigee => false, :contact_delete_forever => false, :imap_error_status_check => false,
+    :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false,
+    :bulk_security => false, :service_writes => false, :service_reads => false, 
+    :admin_only_mint => false, :send_emails_via_fd_email_service_feature => false, 
+    :user_notifications => false,  :freshplug_enabled => false, :dkim => false, 
+    :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, 
+    :auto_ticket_export => false, :select_all => false, :facebook_realtime => false, 
+    :"Freshfone Call Tracker" => false, :skip_one_hop => false, :ticket_contact_export => false, 
+    :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, 
+    :skip_portal_cname_chk => false, :falcon_signup => false, :falcon_portal_theme => false, 
+    :image_annotation => false, :email_actions => false, :ner => false, :disable_freshchat => false, 
+    :freshchat_integration => false, :facebook_page_redirect => false, :froala_editor_forums => false, 
+    :ticket_central_publish => false, :solutions_central_publish => false, :freshid => false, 
+    :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, 
+    :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false, 
+    :contact_delete_forever => false, :imap_error_status_check => false, 
+    :va_any_field_without_none => false, :audit_logs_central_publish => false, :auto_complete_off => false,
     :post_central_publish => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days
+
+  ACCOUNT_TYPES = {
+    :production_without_sandbox => 0,
+    :production_with_sandbox => 1,
+    :sandbox => 2
+  }
 
 end

@@ -1,6 +1,8 @@
 module Cache::Memcache::Account
 
   include MemcacheKeys
+  include Dashboard::Custom::CacheKeys
+
   module ClassMethods
     include MemcacheKeys
     def fetch_by_full_domain(full_domain)
@@ -491,6 +493,12 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache key
   end
 
+  def clear_dashboards_cache
+    self.dashboards.each do |dashboard|
+      MemcacheKeys.delete_from_cache(dashboard_cache_key(dashboard.id))
+    end
+  end
+
   def bots_count_from_cache
     @bots_count_from_cache ||= begin
       MemcacheKeys.fetch(bots_count_memcache_key) { bots.count }
@@ -509,6 +517,18 @@ module Cache::Memcache::Account
 
   def clear_bots_count_from_cache
     MemcacheKeys.delete_from_cache(bots_count_memcache_key)
+  end
+
+  def canned_responses_inline_images_from_cache
+    @canned_responses_inline_images_from_cache ||= begin
+      MemcacheKeys.fetch(canned_responses_inline_images_key) do
+        Account.current.canned_responses_inline_images
+      end
+    end
+  end
+
+  def clear_canned_responses_inline_images_from_cache
+    MemcacheKeys.delete_from_cache(canned_responses_inline_images_key)
   end
 
   private
@@ -562,5 +582,9 @@ module Cache::Memcache::Account
 
     def bots_count_memcache_key
       BOTS_COUNT % { account_id: self.id }
+    end
+
+    def canned_responses_inline_images_key
+      CANNED_RESPONSES_INLINE_IMAGES % { account_id: self.id }
     end
 end

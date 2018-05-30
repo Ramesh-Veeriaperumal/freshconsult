@@ -31,6 +31,13 @@ class Helpdesk::Attachment < ActiveRecord::Base
     :url => "/:s3_alias_url",
     :s3_host_alias => S3_CONFIG[:bucket_name],
     :s3_host_name => S3_CONFIG[:s3_host_name],
+    :s3_options => {
+      :http_open_timeout => S3_CONFIG[:http_open_timeout],
+      :max_retries => S3_CONFIG[:max_retries],
+      # trace & logger helps to debug.
+      # :http_wire_trace => true, :logger => CustomLogger.new("#{Rails.root}/log/application.log"),
+      :http_read_timeout => S3_CONFIG[:http_read_timeout]
+    },
     :s3_server_side_encryption => 'AES256',
     :whiny => false,
     :validate_media_type => false,
@@ -314,7 +321,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def randomize?
-    return false unless self.content_file_name_changed? && self.attachable_type
+    return false unless content_file_name_changed? && self.attachable_type
     inline_image? || user_avatar? || logo_or_favicon?
   end
 
@@ -322,4 +329,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     self.content_file_name = SecureRandom.urlsafe_base64(25) + File.extname(self.content_file_name)
   end
 
+  def content_file_name_changed?
+    return false unless self.changes.keys.include?('content_file_name')
+    self.changes["content_file_name"][0] != self.changes["content_file_name"][1]
+  end
 end

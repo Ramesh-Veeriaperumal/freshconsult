@@ -1,12 +1,14 @@
 
 require_relative '../test_helper'
 require 'sidekiq/testing'
+require 'webmock/minitest'
 Sidekiq::Testing.fake!
 
 class TicketsControllerTest < ActionController::TestCase
   include TicketsTestHelper
   include CustomFieldsTestHelper
   include AttachmentsTestHelper
+  include AwsTestHelper
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
@@ -167,7 +169,6 @@ class TicketsControllerTest < ActionController::TestCase
     end
     sections
   end
-
 
   def test_search_with_feature_enabled_and_invalid_params
     @account.launch :es_count_writes
@@ -1210,6 +1211,55 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     assert_nil t.product_id
     portal.update_column(:product_id, nil)
+  end
+
+  def test_update_with_associated_company_deleted
+    new_user = add_new_user(@account)
+    company = Company.create(name: Faker::Name.name, account_id: @account.id)
+    company.save
+    new_user.user_companies.create(company_id: company.id, default: true)
+    sample_requester = new_user.reload
+    company_id = sample_requester.company_id
+    ticket = create_ticket({ requester_id: sample_requester.id, company_id: company_id })
+    @account.companies.find_by_id(company_id).destroy
+    params_hash = { status: 5 }
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 200
+    match_json(update_ticket_pattern({}, ticket.reload))
+    assert_equal 5, ticket.status
+  end
+
+  def test_update_requester_having_multiple_companies
+    new_user = add_new_user(@account)
+    company = Company.create(name: Faker::Name.name, account_id: @account.id)
+    company.save
+    new_user.user_companies.create(company_id: company.id, default: true)
+    other_company = create_company
+    new_user.user_companies.create(company_id: other_company.id)
+    sample_requester = new_user.reload
+    company_id = sample_requester.company_id
+    ticket = create_ticket({ requester_id: sample_requester.id, company_id: company_id })
+    @account.companies.find_by_id(company_id).destroy
+    params_hash = { status: 5 }
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 200
+  end
+
+  def test_update_company
+    new_user = add_new_user(@account)
+    company = Company.create(name: Faker::Name.name, account_id: @account.id)
+    company.save
+    new_user.user_companies.create(company_id: company.id, default: true)
+    other_company = create_company
+    new_user.user_companies.create(company_id: other_company.id)
+    sample_requester = new_user.reload
+    company_id = sample_requester.company_id
+    ticket = create_ticket({ requester_id: sample_requester.id, company_id: company_id })
+    params_hash = { status: 5, company_id: other_company.id }
+    put :update, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 200
+    match_json(update_ticket_pattern({}, ticket.reload))
+    assert_equal other_company.id, ticket.company_id
   end
 
   def test_update_closed_with_nil_due_by_without_fr_due_by
@@ -2826,6 +2876,145 @@ class TicketsControllerTest < ActionController::TestCase
     )
   end
 
+  def test_index_with_spam_count_es_enabled
+    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+    t = create_ticket(spam: true)
+    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+    get :index, controller_params(filter: 'spam')
+    assert_response 200
+    pattern = []
+    pattern.push(index_ticket_pattern_with_associations(t, false, false, false, [:description, :description_text]))
+    match_json(pattern)
+    Account.any_instance.unstub(:count_es_enabled?)
+    Account.any_instance.unstub(:dashboard_new_alias?)
+    Account.any_instance.unstub(:api_es_enabled?)
+  end
+
+  def test_index_with_new_and_my_open_count_es_enabled
+    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+    t = create_ticket(status: 2)
+    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+    get :index, controller_params(filter: 'new_and_my_open')
+    assert_response 200
+    pattern = []
+    pattern.push(index_ticket_pattern_with_associations(t, false, false, false, [:description, :description_text]))
+    match_json(pattern)
+    Account.any_instance.unstub(:count_es_enabled?)
+    Account.any_instance.unstub(:api_es_enabled?)
+    Account.any_instance.unstub(:dashboard_new_alias?)
+  end
+
+  def test_index_with_stats_with_count_es_enabled
+    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+    t = create_ticket
+    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+    get :index, controller_params(include: 'stats')
+    assert_response 200
+    pattern = []
+    pattern.push(index_ticket_pattern_with_associations(t, false, true, false, [:description, :description_text]))
+    match_json(pattern)
+    Account.any_instance.unstub(:count_es_enabled?)
+    Account.any_instance.unstub(:api_es_enabled?)
+    Account.any_instance.unstub(:dashboard_new_alias?)
+  end
+
+  def test_index_with_requester_with_count_es_enabled
+    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+    user = add_new_user(@account)
+    t = create_ticket(requester_id: user.id)
+    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+    get :index, controller_params(requester_id: user.id)
+    assert_response 200
+    pattern = []
+    pattern.push(index_ticket_pattern_with_associations(t, false, false, false, [:description, :description_text]))
+    match_json(pattern)
+    Account.any_instance.unstub(:count_es_enabled?)
+    Account.any_instance.unstub(:api_es_enabled?)
+    Account.any_instance.unstub(:dashboard_new_alias?)
+  end
+
+  def test_index_with_filter_order_by_with_count_es_enabled
+    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+    t_1 = create_ticket(status: 2, created_at: 10.days.ago)
+    t_2 = create_ticket(status: 3, created_at: 11.days.ago)
+    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_1.id, t_2.id).to_json, status: 200)
+    get :index, controller_params(order_by: 'status')
+    assert_response 200
+    pattern = []
+    pattern.push(index_ticket_pattern_with_associations(t_2, false, false, false, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t_1, false, false, false, [:description, :description_text]))
+    match_json(pattern)
+    Account.any_instance.unstub(:count_es_enabled?)
+    Account.any_instance.unstub(:api_es_enabled?)
+    Account.any_instance.unstub(:dashboard_new_alias?)
+  end
+
+  def test_index_with_default_filter_order_type_count_es_enabled
+    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+    t_1 = create_ticket(created_at: 10.days.ago)
+    t_2 = create_ticket(created_at: 11.days.ago)
+    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_2.id, t_1.id).to_json, status: 200)
+    get :index, controller_params(order_type: 'asc')
+    assert_response 200
+    pattern = []
+    pattern.push(index_ticket_pattern_with_associations(t_1, false, false, false, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t_2, false, false, false, [:description, :description_text]))
+    match_json(pattern)
+    Account.any_instance.unstub(:count_es_enabled?)
+    Account.any_instance.unstub(:api_es_enabled?)
+    Account.any_instance.unstub(:dashboard_new_alias?)
+  end
+
+  def test_index_updated_since_count_es_enabled
+    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+    t = create_ticket(updated_at: 2.days.from_now)
+    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+    get :index, controller_params(updated_since: Time.zone.now.iso8601)
+    assert_response 200
+    pattern = []
+    pattern.push(index_ticket_pattern_with_associations(t, false, false, false, [:description, :description_text]))
+    match_json(pattern)
+    Account.any_instance.unstub(:count_es_enabled?)
+    Account.any_instance.unstub(:api_es_enabled?)
+    Account.any_instance.unstub(:dashboard_new_alias?)
+  end
+
+  def test_index_with_company_count_es_enabled
+    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+    Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+    company = create_company
+    user = add_new_user(@account)
+    sidekiq_inline {
+      user.company_id = company.id
+      user.save!
+    }
+    t = create_ticket(requester_id: user.id)
+    stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+    get :index, controller_params(company_id: "#{company.id}")
+    assert_response 200
+    pattern = []
+    pattern.push(index_ticket_pattern_with_associations(t, false, false, false, [:description, :description_text]))
+    match_json(pattern)
+    Account.any_instance.unstub(:count_es_enabled?)
+    Account.any_instance.unstub(:api_es_enabled?)
+    Account.any_instance.unstub(:dashboard_new_alias?)
+  end
+
   def test_show_with_conversations_exceeding_limit
     ticket.update_column(:deleted, false)
     4.times do
@@ -3898,6 +4087,142 @@ class TicketsControllerTest < ActionController::TestCase
     )
   ensure
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
+  end
+
+  def test_update_with_private_api_params
+    t = ticket
+    params_hash = update_ticket_params_hash.except(:fr_due_by, :due_by).merge(status: 5, skip_close_notification: true) # skip_close_notification available only in private api
+    delayed_job_count_before = Delayed::Job.count
+    put :update, construct_params({ id: t.display_id }, params_hash)
+    assert_response 200
+    match_json(update_ticket_pattern(params_hash, t.reload))
+    match_json(update_ticket_pattern({}, t))
+    assert_equal delayed_job_count_before+1, Delayed::Job.count
+  end
+
+  def test_create_child
+    enable_adv_ticketing([:parent_child_tickets]) do
+      Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+      parent_ticket = create_parent_ticket
+      params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+      post :create, construct_params(params_hash)
+      assert_response 201
+      latest_ticket = Account.current.tickets.last
+      match_json(ticket_pattern(latest_ticket).merge!(ticket_association_pattern(latest_ticket)))
+    end
+  end
+
+  def test_create_child_without_feature
+    parent_ticket = create_parent_ticket
+    params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('parent_id', :require_feature_for_attribute, {
+      code: :inaccessible_field, feature: :parent_child_tickets, attribute: 'parent_id'
+      })])
+  end
+
+  def test_create_child_to_inaccessible_parent
+    enable_adv_ticketing([:parent_child_tickets]) do
+      Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+      parent_ticket = create_parent_ticket
+      User.any_instance.stubs(:has_ticket_permission?).returns(false)
+      params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+      post :create, construct_params(params_hash)
+      assert_response 403
+      User.any_instance.unstub(:has_ticket_permission?)
+    end
+  end
+
+  def test_create_child_to_parent_with_max_children
+    enable_adv_ticketing([:parent_child_tickets]) do
+      Helpdesk::Ticket.any_instance.stubs(:associates).returns((10..21).to_a)
+      parent_ticket = create_parent_ticket
+      params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+      post :create, construct_params(params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('parent_id', :exceeds_limit, limit: TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT)])
+    end
+  end
+
+  def test_create_child_to_a_spam_parent
+    enable_adv_ticketing([:parent_child_tickets]) do
+      parent_ticket = create_parent_ticket
+      parent_ticket.update_attributes(spam: true)
+      params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+      post :create, construct_params(params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('parent_id', :invalid_parent)])
+      parent_ticket.update_attributes(spam: false)
+    end
+  end
+
+  def test_create_child_to_a_invalid_parent
+    enable_adv_ticketing([:parent_child_tickets]) do
+      parent_ticket = create_parent_ticket
+      parent_ticket.update_attributes(association_type: 4) #Related
+      params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+      post :create, construct_params(params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('parent_id', :invalid_parent)])
+    end
+  end
+
+  def test_create_child_with_parent_attachments
+    enable_adv_ticketing([:parent_child_tickets]) do
+      parent = create_ticket_with_attachments
+      params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: parent.attachments.map(&:id))
+      stub_attachment_to_io do
+        post :create, construct_params(params)
+      end
+      child = Account.current.tickets.last
+      match_json(ticket_pattern(child).merge!(ticket_association_pattern(child)))
+      assert child.attachments.size == parent.attachments.size
+    end
+  end
+
+  def test_create_child_with_some_parent_attachments
+    enable_adv_ticketing([:parent_child_tickets]) do
+      parent = create_ticket_with_attachments(1, 5)
+      params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: parent.attachments.map(&:id).first(1))
+      stub_attachment_to_io do
+        post :create, construct_params(params)
+      end
+      child = Account.current.tickets.last
+      match_json(ticket_pattern(child).merge!(ticket_association_pattern(child)))
+      assert child.attachments.count == 1
+    end
+  end
+
+  def test_create_child_with_some_parent_attachments_some_new_attachments
+    enable_adv_ticketing([:parent_child_tickets]) do
+      parent = create_ticket_with_attachments(1, 5)
+      parent_attachment_ids = parent.attachments.map(&:id).first(1)
+      child_attachment_ids = []
+      child_attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: parent_attachment_ids + child_attachment_ids)
+      stub_attachment_to_io do
+        post :create, construct_params(params)
+      end
+      child = Account.current.tickets.last
+      match_json(ticket_pattern(child).merge!(ticket_association_pattern(child)))
+      assert child.attachments.count == 2
+    end
+  end
+
+  def test_create_child_with_no_parent_attachments_only_new_attachments
+    enable_adv_ticketing([:parent_child_tickets]) do
+      parent = create_ticket_with_attachments
+      child_attachment_ids = []
+      child_attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: child_attachment_ids)
+      stub_attachment_to_io do
+        post :create, construct_params(params)  
+      end
+      child = Account.current.tickets.last
+      match_json(ticket_pattern(child).merge!(ticket_association_pattern(child)))
+      assert child.attachments.count == 1
+    end
   end
 end
 

@@ -1739,6 +1739,7 @@ Helpkit::Application.routes.draw do
         post :save_insights_config
         post :fetch_recent_questions
         post :fetch_insights_config
+        post :fetch_threshold_value
       end
     end
 
@@ -2591,7 +2592,6 @@ Helpkit::Application.routes.draw do
   match '/support/theme_rtl.:format' => 'theme/support_rtl#index'
   match '/helpdesk/theme.:format' => 'theme/helpdesk#index'
   match "/facebook/theme.:format", :controller => 'theme/facebook', :action => :index
-  match "/facebook/theme_rtl.:format", :controller => 'theme/facebook_rtl', :action => :index
 
   get 'discussions/:object/:id/subscriptions/is_following(.:format)',
     :controller => 'monitorships', :action => 'is_following',
@@ -2993,6 +2993,7 @@ Helpkit::Application.routes.draw do
           put :add_day_passes
           put :change_api_limit
           put :change_v2_api_limit
+          put :change_webhook_limit
           put :add_feature
           put :change_url
           get :single_sign_on

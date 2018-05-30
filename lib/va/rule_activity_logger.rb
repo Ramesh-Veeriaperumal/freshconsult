@@ -85,14 +85,16 @@ class Va::RuleActivityLogger
     end
 
     def product_id(product = nil)
-      if product.nil?
-        pr_id = value.to_i
-        product = Account.current.products.find(pr_id)
+      product ||= Account.current.products.find_by_id(value.to_i)
+      if product.present? || value.blank?
+        product_name = (value.blank? ? I18n.t('automations.activity.none') : product.name)
+        add_system_changes({:product_id => (value.blank? ? [DONT_CARE, nil] : [nil, product.name])})
+        params = {:product_name => product_name }
+        msg_log = "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.product_success', params)}"
+      else
+        msg_log = I18n.t('automations.activity.product_failure')
       end
-      product_name = (value.blank? ? I18n.t('automations.activity.none') : product.name)
-      add_system_changes({:product_id => (value.blank? ? [DONT_CARE, nil] : [nil, product.name])})
-      params = {:product_name => product_name }
-      {:product_id => "#{fetch_activity_prefix('set')} #{I18n.t('automations.activity.product', params)}".html_safe}
+      {:product_id => msg_log.html_safe}
     end
 
     def ticket_type

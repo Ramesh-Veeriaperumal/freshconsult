@@ -1,0 +1,96 @@
+
+fixtures:
+  data:
+    - subject: Defective boomerangs getting lost
+      description: Hello team, Over the past 6 months, you’ve been our sole manufacturing partner for boomerangs of various sizes and materials. We’ve been packaging and selling them to our customers as Acme certified products, with the tagline “a guaranteed return on your investment”. Recently, we’ve had our customers tell us that their boomerangs don’t return to them as expected. This is quite embarrassing for a company like Acme Corporation known for it’s highly reliable products. Can you please explain how this is possible? Our team is concerned that the Prodigal Child tracking chip in these boomerangs may not be working properly. But there’s no way to be sure because the boomerangs have disappeared and we cannot get them returned for inspection.  Can you please help us identify the problem and advise us on how to proceed?Regards,Rachel Doe,Vendor Management,Acme Inc.
+      description_html: "<div dir='ltr' style='font-size: 13px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;'><pre style='color: rgb(0, 0, 0); font-family: Menlo, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9pt;'>Hello team, Over the past 6 months, you’ve been our sole manufacturing partner for boomerangs of various sizes and materials. We’ve been packaging and selling them to our customers as Acme certified products, with the tagline “a guaranteed return on your investment”. Recently, we’ve had our customers tell us that their boomerangs don’t return to them as expected. This is quite embarrassing for a company like Acme Corporation known for it’s highly reliable products. Can you please explain how this is possible? Our team is concerned that the Prodigal Child tracking chip in these boomerangs may not be working properly. But there’s no way to be sure because the boomerangs have disappeared and we cannot get them returned for inspection.  Can you please help us identify the problem and advise us on how to proceed?Regards,Rachel Doe,Vendor Management,Acme Inc.</pre></div>"
+      status: open
+      priority: medium
+      source: email
+      name: Rachel Doe
+      email: rachel@freshdesk.com
+      phone: 1 866 832 3090
+      company_name: Acme Inc
+      company_url: acmecorp.com
+
+    - subject: I'm always being charged twice
+      description: Hello there, Whenever I try to make a payment with my credit card, I'm being charged twice. Though I get a refund from your team after two days, it does not seem to be the right way. Recently, I purchased for $130,  and I was charged twice. I'm yet to get a refund this time. It has been three days since I made my purchase. I'm really concerned about this and it's really tedious to keep following up. I do know that I will get the refund, but I'm bothered that this is happening every single time. My recent order number is - AC789BGKindly resolve this issues from your end and keep me posted about the refund.Thanks,Amy Thomas
+      description_html: "<div dir='ltr' style='font-size: 13px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;'><pre style='color: rgb(0, 0, 0); font-family: Menlo, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9pt;'>Hello there, Whenever I try to make a payment with my credit card, I'm being charged twice. Though I get a refund from your team after two days, it does not seem to be the right way. Recently, I purchased for $130,  and I was charged twice. I'm yet to get a refund this time. It has been three days since I made my purchase. I'm really concerned about this and it's really tedious to keep following up. I do know that I will get the refund, but I'm bothered that this is happening every single time. My recent order number is - AC789BGKindly resolve this issues from your end and keep me posted about the refund.Thanks,Amy Thomas</pre></div>"
+      status: open
+      priority: high
+      source: email
+      name: Amy Thomas
+      email: amy@simplicity.com
+      phone: 1 869 673 5678
+      company_name: Simplicity
+      company_url: simplicity.au
+
+    - subject: Please help us with more information for OUT OF STOCK items
+      description: Hi,As a vendor for Acme commerce, I would like to know if your customers are asking for items that are not in stock. Most of the times we try to re-stock the requested ones. In the recent days, I have not been getting the exact product specifications for the items are not in stock. Please note that it gets very chaotic when I keep rasing a ticket for every item that has to be stocked again. Would be great if your sellers team can follow a specific guide to let us know the information. Regards,Joe Mathew
+      description_html: "<div dir='ltr' style='font-size: 13px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;'><pre style='color: rgb(0, 0, 0); font-family: Menlo, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9pt;'>Hi,As a vendor for Acme commerce, I would like to know if your customers are asking for items that are not in stock. Most of the times we try to re-stock the requested ones. In the recent days, I have not been getting the exact product specifications for the items are not in stock. Please note that it gets very chaotic when I keep rasing a ticket for every item that has to be stocked again. Would be great if your sellers team can follow a specific guide to let us know the information. Regards,Joe Mathew</pre></div>"
+      status: open
+      priority: urgent
+      source: email
+      name: Joe Mathew
+      email: joe@artsytees.com
+      phone: 1 789 563 3670
+      company_name: Ann arbor garments
+      company_url: annarborgarments.com
+
+    - subject: About the recent flash sale - My coupons did not work
+      description: Hello,I have been your customer for a very long time I have never faced a problem like this before. Firstly, thank you so much for handling it very well.I did get the the discount credits back, but I'm really bothered is that - due this is my order never got confirmed which resulted in the delayed delivery. I really missed my cousins brithday gift because of this. It'd be great if in the future, you could handle it quickly or atleast confirm my order before you take any other action.Regards,Anne Richard
+      description_html: "<div dir='ltr' style='font-size: 13px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;'><pre style='color: rgb(0, 0, 0); font-family: Menlo, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9pt;'>Hello,I have been your customer for a very long time I have never faced a problem like this before. Firstly, thank you so much for handling it very well.I did get the the discount credits back, but I'm really bothered is that - due this is my order never got confirmed which resulted in the delayed delivery. I really missed my cousins brithday gift because of this. It'd be great if in the future, you could handle it quickly or atleast confirm my order before you take any other action.Regards,Anne Richard</pre></div>"
+      status: open
+      priority: low
+      source: email
+      name: Anne Richard
+      email: anne@gmail.com
+      phone: 1 889 533 035
+      company_name: Artsy tees
+      company_url: artsytees.uk
+
+    - subject: Reagarding Partner Programs
+      description: Hi Jose,Would you like to be a part of the partner programs? Partner Programs are designed to support the unique business models of ARBOR GARMENTS members by providing them with increased prominence and additional support from ARBOR GARMENTS partner teams. In addition, partners can apply to attain ARBOR GARMENTS Competencies based on their specialization in key ACME solution areas.In order to apply for Partner Programs, Partners must be in good standing with ARBOR GARMENTS and meet specific program criteria. In order to give you more clarity, we'll set some time this week with our sales rep to walk you through the program. Please choose one of the days (Monday, Wednesday and Friday) and our team will get in touch with you. Regards,Sara James
+      description_html: "<div dir='ltr' style='font-size: 13px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;'><pre style='color: rgb(0, 0, 0); font-family: Menlo, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9pt;'>Hi Jose,Would you like to be a part of the partner programs? Partner Programs are designed to support the unique business models of ARBOR GARMENTS members by providing them with increased prominence and additional support from ARBOR GARMENTS partner teams. In addition, partners can apply to attain ARBOR GARMENTS Competencies based on their specialization in key ACME solution areas.In order to apply for Partner Programs, Partners must be in good standing with ARBOR GARMENTS and meet specific program criteria. In order to give you more clarity, we'll set some time this week with our sales rep to walk you through the program. Please choose one of the days (Monday, Wednesday and Friday) and our team will get in touch with you. Regards,Sara James</pre></div>"
+      status: open
+      priority: high
+      source: email
+      name: Sara James
+      email: sara@arborgarments.com
+      phone: 896 5668 9780
+      company_name: Colorful clothes
+      company_url: colorfulclothers.com
+
+    - subject: Someone else is using my account
+      description: Hi Acme commerceI'm writing to you because I feel suspicious about someone else using my account. Can you assist from your end to prevent any fraudulent activity? Please help me remove my Credit card details from my account and then help me change my password. Thanks,James Edwin
+      description_html: "<div dir='ltr' style='font-size: 13px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;'><pre style='color: rgb(0, 0, 0); font-family: Menlo, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9pt;'>Hi Acme commerceI'm writing to you because I feel suspicious about someone else using my account. Can you assist from your end to prevent any fraudulent activity? Please help me remove my Credit card details from my account and then help me change my password. Thanks,James Edwin</pre></div>"
+      status: open
+      priority: high
+      source: email
+      name: James Edwin
+      email: james@colorfulclothes.com
+      phone: 768 890 4952
+
+    - subject: Incorrect shoe sizes
+      description: Hello there,Whenever I try to make a payment with my credit card, I'm being charged twice. Though I get a refund from your team after two days, it does not seem to be the right way. Recently, I purchased for $130,  and I was charged twice. I'm yet to get a refund this time. It has been three days since I made my purchase. I'm really concerned about this and it's really tedious to keep following up. I do know that I will get the refund, but I'm bothered that this is happening every single time. My recent order number is - AC789BG Kindly resolve this issues from your end and keep me posted about the refund.Thanks,Amy Thomas
+      description_html: "<div dir='ltr' style='font-size: 13px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;'><pre style='color: rgb(0, 0, 0); font-family: Menlo, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9pt;'>Hello there,Whenever I try to make a payment with my credit card, I'm being charged twice. Though I get a refund from your team after two days, it does not seem to be the right way. Recently, I purchased for $130,  and I was charged twice. I'm yet to get a refund this time. It has been three days since I made my purchase. I'm really concerned about this and it's really tedious to keep following up. I do know that I will get the refund, but I'm bothered that this is happening every single time. My recent order number is - AC789BG Kindly resolve this issues from your end and keep me posted about the refund.Thanks,Amy Thomas</pre> </div>"
+      status: open
+      priority: high
+      source: email
+      name: Mary Sheril
+      email: mary.sheril@solepartner.com
+      phone: 784 6757 3789
+      company_name: Sole Partner
+      company_url: solepartner.com
+
+    - subject: Your tarts are always shattered
+      description: Hello Pantry box,My customer always complaining about your custard tarts and salted caramel tarts. We know that no one can compete against Pantry box but when ever someone orders a tart it's always shattered. Recently a customer called us and he mentioned that they received your tarts inverted and the custard was spilled all over the box. Also, a couple of them were shattered. Can you identify the issues in packaging? Our customer rely on us when we sell items from others. Thanks,Adrain Jensen
+      description_html: "<div dir='ltr' style='font-size: 13px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;'><pre style='color: rgb(0, 0, 0); font-family: Menlo, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9pt;'>Hello Pantry box,My customer always complaining about your custard tarts and salted caramel tarts. We know that no one can compete against Pantry box but when ever someone orders a tart it's always shattered. Recently a customer called us and he mentioned that they received your tarts inverted and the custard was spilled all over the box. Also, a couple of them were shattered. Can you identify the issues in packaging? Our customer rely on us when we sell items from others. Thanks,Adrain Jensen</pre></div>"
+      status: open
+      priority: high
+      source: email
+      name: Adrian Jensen
+      email: a.jensen@pantryboxfoods.com
+      phone: 546 890 3975
+      company_name: Pantry Box
+      company_url: pantryboxfoods.com

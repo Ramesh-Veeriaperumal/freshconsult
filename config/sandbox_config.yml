@@ -1,0 +1,154 @@
+MODEL_DEPENDENCIES:
+  PasswordPolicy: []
+  Features::Feature: []
+  FlexifieldDef: []
+  FlexifieldDefEntry:
+  - - - FlexifieldDef
+    - flexifield_def_id
+  Helpdesk::TicketField:
+  - - - FlexifieldDefEntry
+    - flexifield_def_entry_id
+  - - - Helpdesk::TicketField
+    - parent_id
+  Helpdesk::NestedTicketField:
+  - - - Helpdesk::TicketField
+    - ticket_field_id
+  - - - FlexifieldDefEntry
+    - flexifield_def_entry_id
+  User:
+  - - - User
+    - string_uc04
+  BusinessCalendar: []
+  Group:
+  - - - User
+    - escalate_to
+  - - - BusinessCalendar
+    - business_calendar_id
+  Helpdesk::Tag: []
+  Product: []
+  VaRule: []
+  Helpdesk::TicketTemplate: []
+  Helpdesk::ParentChildTemplate:
+  - - -  Helpdesk::TicketTemplate
+    - parent_template_id
+  - - -  Helpdesk::TicketTemplate
+    - child_template_id
+  ScenarioAutomation: []
+  Admin::CannedResponses::Folder: []
+  Admin::CannedResponses::Response:
+  - - - Admin::CannedResponses::Folder
+    - folder_id
+  Helpdesk::Access:
+  - - - Helpdesk::TicketTemplate
+      - ScenarioAutomation
+      - Admin::CannedResponses::Response
+      - VaRule
+    - accessible_id
+    - accessible_type
+  Helpdesk::Attachment:
+  - - - User
+      - Account
+      - Helpdesk::TicketTemplate
+    - attachable_id
+    - attachable_type
+  Helpdesk::CloudFile:
+  - - - Helpdesk::TicketTemplate
+    - droppable_id
+    - droppable_type
+  Helpdesk::GroupAccess:
+  - - - Helpdesk::Access
+    - access_id
+  - - - Group
+    - group_id
+  Helpdesk::UserAccess:
+  - - - Helpdesk::Access
+    - access_id
+  - - - User
+    - user_id
+  Helpdesk::SharedAttachment:
+  - - - Helpdesk::Attachment
+    - attachment_id
+  - - - Helpdesk::TicketTemplate
+      - Admin::CannedResponses::Response
+    - shared_attachable_id
+    - shared_attachable_type
+  Helpdesk::TicketStatus:
+  - - - Helpdesk::TicketField
+    - ticket_field_id
+  Helpdesk::PicklistValue:
+  - - - Helpdesk::TicketField
+      - Helpdesk::PicklistValue
+    - pickable_id
+    - pickable_type
+  Helpdesk::Section: []
+  Helpdesk::SectionField:
+  - - - Helpdesk::TicketField
+    - ticket_field_id
+  - - - Helpdesk::TicketField
+    - parent_ticket_field_id
+  - - - Helpdesk::Section
+    - section_id
+  - - - Helpdesk::TicketField
+    - ticket_field_id
+  Helpdesk::SectionPicklistValueMapping:
+  - - - Helpdesk::Section
+    - section_id
+  - - - Helpdesk::PicklistValue
+    - picklist_value_id
+  Agent:
+  - - - User
+    - user_id
+  Role: []
+  UserRole:
+  - - - User
+    - user_id
+  - - - Role
+    - role_id
+  UserEmail:
+  - - - User
+    - user_id
+  AgentGroup:
+  - - - User
+    - user_id
+  - - - Group
+    - group_id
+  Helpdesk::SlaPolicy: []
+  Helpdesk::SlaDetail:
+  - - - Helpdesk::SlaPolicy
+    - sla_policy_id
+  EmailNotification: []
+  DynamicNotificationTemplate:
+  - - - EmailNotification
+    - email_notification_id
+  EmailNotificationAgent:
+  - - - EmailNotification
+    - email_notification_id
+  - - - User
+    - user_id
+  ContactForm: []
+  ContactField:
+  - - - ContactForm
+    - contact_form_id
+  ContactFieldChoice:
+  - - - ContactField
+    - contact_field_id
+  CompanyForm: []
+  CompanyField:
+  - - - CompanyForm
+    - company_form_id
+  CompanyFieldChoice:
+  - - - CompanyField
+    - company_field_id
+  CustomSurvey::Survey: []
+  CustomSurvey::SurveyQuestion:
+  - - - CustomSurvey::Survey
+    - survey_id
+  CustomSurvey::SurveyQuestionChoice:
+  - - - CustomSurvey::SurveyQuestion
+    - survey_question_id
+  StatusGroup:
+  - - - Helpdesk::TicketStatus
+    - status_id
+  - - - Group
+    - group_id
+  HelpdeskPermissibleDomain: []

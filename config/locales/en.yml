@@ -379,7 +379,7 @@ en:
   fb_realtime_enable: "Facebook real-time messaging is now live! Reauthorize your existing Facebook Pages to enable the feature for your account. Read more <a target='_blank' href='https://support.freshdesk.com/support/solutions/articles/221711'>here</a>"
   freshpipe_email_disabled: "All outgoing emails and notifications are currently disabled since the data migration is in progress."
   reauthorize_facebook: "Reauthorize your facebook account."
-  imap_mailbox_error: " Please click here to view details"
+  imap_mailbox_error: "View details"
   twitter_reauth:  "Your Twitter channel is inaccessible. It looks like your username or password has been changed recently. "
   smart_filter_disabled: "Social Signals is temporarily down. We are working on getting it up and running."
   reauthorize_twitter: Reauthorize your twitter handle.
@@ -853,6 +853,7 @@ en:
     any_status: Any Status
     any_ticket_type: Any Type
     any_group: Any Group
+    excluding_none: Any Value (excluding none)
   portal_pages:
     groups:
       general: "General pages"
@@ -2463,6 +2464,7 @@ en:
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
         manage_dashboard: Manage ticket list views
+        # manage_dashboard_feature: Manage ticket list views and team dashboards
         manage_ticket_templates: Manage Ticket Templates
         admin_tasks: Play God with Super Admin controls
         manage_account: Include account management
@@ -3803,7 +3805,8 @@ en:
       priority: "the priority to <b>%{priority}</b>"
       status: "the status to <b>%{status}</b>"
       ticket_type: "the ticket type to <b>%{ticket_type}</b>"
-      product: "product as <b>%{product_name}</b>"
+      product_success: "product as <b>%{product_name}</b>"
+      product_failure: "<b>Unable to set the product, consider updating this scenario if the product has been deleted recently.</b>"
       group_success: "group as <b>%{group_name}</b>"
       group_failure: "<b>Unable to set the group, consider updating this scenario if the group has been deleted recently.</b>"
       internal_group_success: "internal group as <b>%{internal_group_name}</b>"
@@ -6601,7 +6604,7 @@ en:
     gdpr_admin_details: has changed your user permissions from
     gdpr_agent: Agent
     gdpr_admin: Admin.
-    gdpr_terms: By clicking on Accept , you agree to our  
+    gdpr_terms: By clicking on Accept , you agree to our
     gdpr_terms_link:  Terms
     gdpr_acknowledgement: and acknowledge having read our
     gdpr_policy: Privacy policy.
@@ -9233,6 +9236,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   always: Always
   maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/subscription'>purchase additional agents</a> for your account. You can also choose to add occasional agents below. "
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents. "
+  contact_agent_deleted_forever: "This contact has been deleted forever"
+  contact_marked_for_hard_delete: "This contact has been scheduled for permanent delete"
   contact_without_email_id: "Contact with email id can only be converted to agent"
   no_date_to_display: "No data to display"
   email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimiter."
@@ -11971,6 +11976,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     help: What's this?
     feed_back_survery: Help us with some feedback?
   collaboration:
+    collab_deleted_user: "Deleted Agent"
     highlight_mode_on: "Highlight mode on"
     highlight_mode_off: "Highlight mode off"
     follow_discussion: "Follow this discussion"
@@ -12157,9 +12163,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     ticket_product_description: Product description
     ticket_satisfaction_survey: Satisfaction survey
     ticket_suverymonkey_survey: Surveymonkey survey
-    ticket_group_name: Internal Group name
-    ticket_agent_name: Internal Agent name
-    ticket_agent_email: Internal Agent email
+    ticket_internal_group_name: Internal Group name
+    ticket_internal_agent_name: Internal Agent name
+    ticket_internal_agent_email: Internal Agent email
     unique_external_id: Requester Unique External Id
     triggered_event: 'Triggered Event'
     tooltip:
@@ -12207,10 +12213,18 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       enable_chat_in_portal: 'Enable chat in your support portal'
       enable_chat_in_portal_info: 'Make it easy for your customers to chat with you, when they land on your support portal.'
       header_info: Freshdesk’s integrated chat channel is powered by Freshchat. Freshchat is a modern messaging software that helps engage, support, and retain customers on multiple channels - website, mobile, support portal, and in-app.
-      sidebar_content: 
+      sidebar_content:
         para1: Freshdesk’s integrated chat channel, powered by Freshchat, helps you engage in conversations with customers who are you on the website, mobile, support portal, or in-app. You can also send proactive messages to visitors and users and drive them to make a purchase, sign up, or share feedback on your product.
         para2:
           header: 'Use the messenger inside Freshdesk to bring your support and messaging workflow together:'
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
+  sandbox:
+    live: Sandbox is live
+    error:
+      create: sandbox account already exist
+    email: 'This email is generated from a sandbox account'
+    banner:
+      production_info: Your sandbox account is curently active. We do not recommend you make any changes to your freshdesk account. <a href='http://%{url}' target=_blank rel="noreferrer noopener">Take me there.</a>
+

@@ -1,0 +1,15 @@
+Hi <%= @additional_info[:admin_name] %>,
+<div style="padding:10px 0;">
+  A sandbox instance has been created for <%= @additional_info[:account_name] %> by <%= @additional_info[:admin_name] %>.
+</div>
+<div style="padding:10px 0;">
+  <%= link_to "Take me to my sandbox", "#{@additional_info[:sandbox_url]}", {:style => "background-color:#208465;color:white;text-decoration: none;padding: 10px 30px;display: inline-block;border-radius: 5px;box-shadow: 0 4px 0px 0px #005539;"} %>
+</div>
+<div style="padding:10px 0;">
+  If the button above doesn’t work, paste this link into your web browser :
+  <a href=<%= "#{@additional_info[:sandbox_url]}" %>><%= @additional_info[:sandbox_url] %></a>
+</div>
+<div>
+  Regards,<br>
+  <%= @additional_info[:account_name] %>
+</div>
