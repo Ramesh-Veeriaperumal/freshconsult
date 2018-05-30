@@ -56,7 +56,7 @@ module OmniAuth
       end
       
       def raw_info
-        @raw_info ||= access_token.get('/v2.6/me?fields=id,email,name,first_name,last_name,about,link,location,website').parsed
+        @raw_info ||= access_token.get("/#{::Facebook::Constants::GRAPH_API_VERSION}/me?fields=id,email,name,first_name,last_name,about,link,location,website").parsed
       end
 
       def build_access_token

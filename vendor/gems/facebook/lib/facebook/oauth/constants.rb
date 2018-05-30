@@ -17,7 +17,7 @@ module Facebook
         "email"
       ]
 
-      FB_API_VERSION       = "v2.6"      
+      FB_API_VERSION       = Facebook::Constants::GRAPH_API_VERSION
 
       FB_AUTH_DIALOG_URL   = "https://www.facebook.com/#{FB_API_VERSION}/dialog/oauth"
       
