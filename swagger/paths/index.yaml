@@ -18,10 +18,6 @@
   $ref: ./tickets/execute_scenario.yaml
 /tickets/{id}/create_child_with_template:
   $ref: ./tickets/create_child_with_template.yaml
-/tickets/{id}/link:
-  $ref: ./tickets/link.yaml
-/tickets/{id}/unlink:
-  $ref: ./tickets/unlink.yaml
 /tickets/bulk_link:
   $ref: ./tickets/bulk_link.yaml
 /tickets/bulk_delete:
