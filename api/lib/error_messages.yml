@@ -176,3 +176,4 @@ api_error_messages:
   cannot_set_closed_at: "It cannot be set, when created_at and updated_at are not set or status is not closed"
   invalid_inline_attachments_list: "Invalid inline attachment ids : %{invalid_ids}"
   invalid_avatar: "Avatar is invalid"
+  invalid_tracker: "Tracker is invalid"

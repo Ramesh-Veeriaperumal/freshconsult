@@ -22,7 +22,6 @@ module Ember
     before_filter :disable_notification, only: [:update, :update_properties], if: :notification_not_required?
     after_filter  :enable_notification, only: [:update, :update_properties], if: :notification_not_required?
     before_filter :export_limit_reached?, only: [:export_csv]
-
     around_filter :run_on_db, only: :index
     around_filter :use_time_zone, only: [:index, :export_csv]
 
@@ -52,8 +51,10 @@ module Ember
       delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
                          attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
                          company_id: cname_params[:company_id] }
+      delegator_hash[:tracker_ticket_id] = cname_params[:tracker_ticket_id] if link_or_unlink?
       assign_attributes_for_update
       return unless validate_delegator(@item, delegator_hash)
+      modify_ticket_associations if link_or_unlink?
       @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
       if @item.update_ticket_attributes(cname_params)
         render 'ember/tickets/show'
