@@ -743,8 +743,8 @@ module TicketsTestHelper
     parent_ticket
   end
 
-  def create_tracker_ticket
-    create_ticket
+  def create_tracker_ticket(params = {})
+    create_ticket(params)
     tracker_ticket = Helpdesk::Ticket.last
     tracker_ticket.update_attributes(association_type: 3)
     tracker_ticket
@@ -768,13 +768,17 @@ module TicketsTestHelper
   end
 
   def create_linked_tickets
-    @ticket_id = create_ticket.display_id
-    @tracker_id = create_tracker_ticket.display_id
-    link_to_tracker(@tracker_id, @ticket_id)
+    ticket = create_ticket
+    tracker_ticket = create_tracker_ticket
+    @ticket_id = ticket.display_id
+    @tracker_id = tracker_ticket.display_id
+    link_to_tracker(ticket, tracker_ticket)
   end
 
-  def link_to_tracker(tracker_id, ticket_id)
-    put :link, construct_params({ version: 'private', id: ticket_id, tracker_id: tracker_id }, false)
+  def link_to_tracker(ticket, tracker_ticket)
+    ticket.association_type = 4
+    ticket.tracker_ticket_id = tracker_ticket.display_id
+    ticket.save!
   end
 
   def assert_unlink_failure(ticket_id, error_code, pattern = nil)
