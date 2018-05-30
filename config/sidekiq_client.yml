@@ -271,6 +271,7 @@ defaults: &defaults
     - [freshid_agents_migration]
     - [inline_image_shredder]
     - [deactivate_product_widgets]
+    - [user_central_publish]
 
 development:
   <<: *defaults

@@ -9,7 +9,8 @@ class Account < ActiveRecord::Base
                    :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
                    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, 
                    :imap_error_status_check, :va_any_field_without_none, :auto_complete_off, 
-                   :sanbox_lp, :encode_emoji, :dependent_field_validation, :post_central_publish]
+                   :sanbox_lp, :encode_emoji, :dependent_field_validation, :post_central_publish,
+                   :audit_logs_central_publish]
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
