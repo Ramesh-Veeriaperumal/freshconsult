@@ -43,7 +43,7 @@ gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
-gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.6'
+gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.7'
 
 group :development, :test do
   gem 'active_record_query_trace'
@@ -174,7 +174,7 @@ gem "omniauth-box2", '~> 0.0.1'
 gem "static_model", "~> 1.0.4"
 
 gem 'clockwork', '0.4.1'
-gem 'wkhtmltopdf-binary', :git => "git://github.com/freshdesk/wkhtmltopdf_binary_gem.git"
+# gem 'wkhtmltopdf-binary', :git => "git://github.com/freshdesk/wkhtmltopdf_binary_gem.git"
 gem "wicked_pdf", "~> 0.9.10"
 gem "pg"
 gem "routing-filter", "~> 0.3.1"
