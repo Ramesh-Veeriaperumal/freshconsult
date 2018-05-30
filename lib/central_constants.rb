@@ -6,6 +6,7 @@ module CentralConstants
     'Solution::Folder' => '0',
     'Solution::Article' => '0',
     'Bot::FeedbackMapping' => '0',
-    'User' => '0'
+    'User' => '0',
+    'Post' => '0'
   }
 end
