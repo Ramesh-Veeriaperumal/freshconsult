@@ -240,6 +240,7 @@ class Group < ActiveRecord::Base
     end
 
     def touch_add_group_change agent_group
+      return unless agent_group.user_id.present?
       agent_info = { id: agent_group.user_id, name: agent_group.user.name }
       Thread.current[:agent_changes].present? ? 
         Thread.current[:agent_changes].push(agent_info) : 
