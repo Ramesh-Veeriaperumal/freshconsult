@@ -7,15 +7,17 @@ class Groups::ToggleAgentFromGroups < BaseWorker
 
   def perform(args)
     account = Account.current
-    user_id = args[:user_id]
-    agent = account.agents.where(:user_id => user_id).first
+    params  = args.symbolize_keys
+    user_id = params[:user_id]
+    agent   = account.agents.where(:user_id => user_id).first
     return if agent.nil?
-    agent.agent_groups.each do |agent_group|
+    agent.agent_groups.preload(:group).each do |agent_group|
       group = agent_group.group
-      group.add_or_remove_agent(user_id,agent.available?) if group.round_robin_enabled?
+      next if group.nil? || !group.round_robin_enabled?
+      group.add_or_remove_agent(user_id, agent.available?)
     end
   rescue Exception => e
-    puts e.inspect, args.inspect
-    NewRelic::Agent.notice_error(e, {:args => args})
+    Rails.logger.error e.inspect, params.inspect
+    NewRelic::Agent.notice_error(e, {:args => params})
   end
 end

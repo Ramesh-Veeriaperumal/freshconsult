@@ -18,5 +18,34 @@ class Group < ActiveRecord::Base
     g.add :business_calendar_id
     g.add :toggle_availability
     g.add :capping_limit
+    g.add proc { |x| x.agents.map { |ag| {name: ag.name, id: ag.id }}}, as: :agents
+  end
+
+  def self.central_publish_enabled?
+    Account.current.audit_logs_central_publish_enabled?
+  end
+
+  def event_info action
+    { :ip_address => Thread.current[:current_ip] }
+  end
+
+  def model_changes_for_central
+    if Thread.current[:agent_changes].present?
+      agents = agent_groups.pluck :user_id
+      agent_changes = {added: [], removed: []}
+      Thread.current[:agent_changes].uniq.each do |ag|
+        agents.include?(ag[:id]) ? agent_changes[:added].push(ag) : 
+                                   agent_changes[:removed].push(ag)
+      end
+      if agent_changes[:added].any? || agent_changes[:removed].any?
+        @model_changes.merge!({"agents" => agent_changes})
+      end
+      Thread.current[:agent_changes] = nil
+    end
+    @model_changes
+  end
+
+  def relationship_with_account
+    "groups"
   end
 end

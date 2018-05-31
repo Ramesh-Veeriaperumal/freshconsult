@@ -27,6 +27,10 @@ class Subscription < ActiveRecord::Base
   TRIAL = "trial"
   FREE = "free"
   SUSPENDED = "suspended"
+
+  concerned_with :presenter
+
+  publishable on: [:update]
   
   belongs_to :account
   belongs_to :subscription_plan

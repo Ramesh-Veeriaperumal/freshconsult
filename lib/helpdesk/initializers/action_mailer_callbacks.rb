@@ -66,8 +66,11 @@ module ActionMailerCallbacks
         mail.delivery_method(:smtp, read_smtp_settings(category_id))
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email, ip_pool)
       else
-        params = { :account_id => account_id, :ticket_id => ticket_id, :type => mail_type, :note_id => note_id }
-        category_id = get_notification_category_id(mail_type) || check_spam_category(mail, params)
+        notification_type = is_num?(mail_type) ? mail_type : get_notification_type_id(mail_type) 
+        params = { :account_id => account_id, :ticket_id => ticket_id, :type => notification_type, :note_id => note_id }
+        category_id = get_notification_category_id(mail, notification_type)
+        spam = check_spam_category(mail, params)
+        category_id = spam unless spam.nil?
         sender_config = get_sender_config(account_id, category_id, mail_type)
         unless sender_config.nil?
           category_id = sender_config["categoryId"]
@@ -207,10 +210,9 @@ module ActionMailerCallbacks
     end
 
 
-    def get_notification_category_id(type)
+    def get_notification_category_id(mail, notification_type)
       category_id = get_category_header(mail)
       return category_id if category_id.present?
-      notification_type = is_num?(type) ? type : get_notification_type_id(type)
       if custom_category_enabled_notifications.include?(notification_type.to_i)
         state = get_subscription
         key = (state == "active" || state == "premium") ? 'paid' : 'free'
@@ -250,8 +252,7 @@ module ActionMailerCallbacks
 
     def check_spam_category(mail, params)
       category = nil
-      notification_type = is_num?(params[:type]) ? params[:type] : get_notification_type_id(params[:type]) 
-      if account_created_recently? && spam_filtered_notifications.include?(notification_type)
+      if account_created_recently? && spam_filtered_notifications.include?(params[:type])
         spam_params = {:headers => mail.header.to_s, :text => mail.text_part.to_s, :html => mail.html_part.to_s }
         email = Helpdesk::Email::SpamDetector.construct_raw_mail(spam_params)
         response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], email).check_spam
