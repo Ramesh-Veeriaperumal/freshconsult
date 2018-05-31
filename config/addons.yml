@@ -56,8 +56,6 @@ Call Center Advanced:
   - :freshfone_caller_id_masking
   - :agent_conference
   - :freshfone_warm_transfer
-Unique External Id:
-  - :unique_contact_identifier
 Helpdesk Restriction:
   - :helpdesk_restriction_toggle
 Ticket Templates:
