@@ -23,11 +23,11 @@ module SBRR
       def can_assign?
         if user && user.sbrr_fresh_user
           SBRR.log "Fresh user #{user.id}" 
-          user_has_not_reached_capping_limit?
+          user.no_of_assigned_tickets(group) < group.capping_limit
         else 
           !ticket.sbrr_fresh_ticket &&
             ticket.can_account_for_user_score? && group.skill_based_round_robin_enabled? &&
-              user_has_not_reached_capping_limit?
+              (user.no_of_assigned_tickets(group) < group.capping_limit)
         end
       end
 
@@ -66,13 +66,6 @@ module SBRR
 
       def user_queue_aggregator
         QueueAggregator::User.new user, :group => group
-      end
-
-      private
-
-      def user_has_not_reached_capping_limit?
-        tickets_count = user.no_of_assigned_tickets(group)
-        tickets_count && tickets_count < group.capping_limit
       end
 
     end
