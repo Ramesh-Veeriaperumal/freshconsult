@@ -72,6 +72,7 @@ module SBRR
         tickets_count = user.no_of_assigned_tickets(group)
         tickets_count && tickets_count < group.capping_limit    
       end
-      
+
+    end      
   end
 end
