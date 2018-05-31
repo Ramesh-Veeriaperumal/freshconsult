@@ -95,8 +95,7 @@
       - :multi_dynamic_sections
       - :auto_ticket_export
       - :ticket_activity_export
-      - :unique_contact_identifier
-    :inherits:
+    :inherits: 
       - :garden_jan_17
     :exclude: []
   :forest_jan_17:

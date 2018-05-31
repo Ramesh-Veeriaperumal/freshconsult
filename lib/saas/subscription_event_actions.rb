@@ -7,10 +7,10 @@ class SAAS::SubscriptionEventActions
                            :basic_twitter, :basic_facebook, :rebranding, :customer_slas, :multiple_business_hours,
                            :multi_product, :multiple_emails, :link_tickets_toggle, :parent_child_tickets_toggle,
                            :shared_ownership_toggle, :skill_based_round_robin, :ticket_activity_export,
-                           :auto_ticket_export, :multiple_companies_toggle, :unique_contact_identifier]
+                           :auto_ticket_export, :multiple_companies_toggle]
 
-  ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle, 
-                           :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier].freeze
+  ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle,
+                           :multiple_companies_toggle, :tam_default_fields, :smart_filter, :contact_company_notes].freeze
 
   DROP  = "drop"
   ADD   = "add"
