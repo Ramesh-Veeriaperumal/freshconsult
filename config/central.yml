@@ -1,6 +1,6 @@
 development:
   api_endpoint: https://central-staging.freshworksapi.com/collector
-  service_token: dummy
+  service_token: ZmlnOmh5cGVydHJhaWwtY2k=
 test:
   api_endpoint: https://central-staging.freshworksapi.com/collector
   service_token: dummy

@@ -62,6 +62,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_save :randomize_filename, :if => :randomize?
     before_post_process :image?, :valid_image?
     before_create :set_content_type
+    after_commit :clear_user_avatar_cache
     before_save :set_account_id
 
   alias_attribute :parent_type, :attachable_type
@@ -320,5 +321,14 @@ class Helpdesk::Attachment < ActiveRecord::Base
   def content_file_name_changed?
     return false unless self.changes.keys.include?('content_file_name')
     self.changes["content_file_name"][0] != self.changes["content_file_name"][1]
+  end
+
+  def clear_user_avatar_cache
+    if attachable && attachable.class.name == "User"
+      attachment_sizes.keys.push(:original).each do |profile_size|
+        key = ActiveSupport::Cache.expand_cache_key(['v16', 'avatar', profile_size, attachable])
+        MemcacheKeys.delete_from_cache(key)
+      end
+    end
   end
 end

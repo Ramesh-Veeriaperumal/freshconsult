@@ -363,6 +363,7 @@ Helpkit::Application.routes.draw do
       post :create_contact
       put :update_contact
       put :update_description_and_tags
+      get :view_conversations
     end
   end
 
@@ -1919,6 +1920,7 @@ Helpkit::Application.routes.draw do
   match '/account/reset/:token' => 'user_sessions#reset', :as => :reset_password
   match '/search_user_domain' => 'domain_search#locate_domain', :as => :search_domain
   match '/email/validate_domain' => 'email#validate_domain', :as => :validate_domain
+  match '/email/validate_account' => 'email#validate_account', :as => :validate_account
   match '/email/account_details' => 'email#account_details', :as => :account_details
   match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
   match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
@@ -3261,6 +3263,10 @@ Helpkit::Application.routes.draw do
       end
     end
   end
+
+  match "/admin/bot", to: redirect('/helpdesk')
+  match "/admin/bot/*letter", to: redirect('/helpdesk')
+  match "/bot/*letter", to: redirect('/helpdesk')
 
   match '/freshid/authorize_callback', :controller => 'freshid', :action => 'authorize_callback', :method => :get
   match '/freshid/event_callback', :controller => 'freshid', :action => 'event_callback', :method => :post

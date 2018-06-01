@@ -201,10 +201,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: 16ec5b0aa2f7734b180913ffa9ec974e97ccc106
-  tag: v1.0.6
+  revision: b3ad049c13e1e07ae0c54fd649d86f862f4a07a8
+  tag: v1.0.7
   specs:
-    central-publisher (1.0.6)
+    central-publisher (1.0.7)
       active_record_shards (~> 3.2.0)
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
@@ -560,6 +560,8 @@ GEM
       erubis (>= 2.6.6)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    bootsnap (1.3.0)
+      msgpack (~> 1.0)
     braintree (2.10.0)
       builder
     brakeman (3.3.0)
@@ -1404,6 +1406,7 @@ DEPENDENCIES
   better_errors (~> 1.1.0)
   binarize (= 0.1.1)!
   binding_of_caller
+  bootsnap
   braintree (= 2.10.0)
   brakeman
   bullet

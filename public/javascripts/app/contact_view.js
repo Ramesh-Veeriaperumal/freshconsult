@@ -16,6 +16,12 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			App.Contacts.Contacts_merge.initialize();
 			this.checkForInfoMsgs();
 			this.bindEvents();
+			//Load the first tab on pageload
+			if($("#conv_all-tab").length === 0) {
+				this.switchConversationView($(".conv-title .sub-info"));
+			} else {
+				this.switchConversationView($("#conv_all-tab"));
+			}
 
 			// To show the tooltip in the tickets list
 			App.Customers.Tickets.init();
@@ -89,6 +95,15 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 		},
 		switchConversationView: function(element) {
 			$('.conv-menu .sub-info').text(element.text());
+
+      //Load content through ajax
+      var url = $(element).data("url");
+      var href = element.attr("href");
+      var pane = $(element);
+      $(href).text("Loading...");
+      $(href).load(url, function(result) {
+        pane.tab('show');
+      });
 		},
 		bindEvents: function() {
 			var self = this;
