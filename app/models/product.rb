@@ -126,6 +126,26 @@ class Product < ActiveRecord::Base
       end
    end
 
+    def update_dashboard_widgets
+      # Updates dashboard widgets with product binding
+      Helpdesk::DeactivateProductWidgets.perform_async({ product_id: id })
+    end
+
+    def create_chat_widget
+      if account.features?(:chat)
+        chat_setting = account.chat_setting
+        build_chat_widget
+        chat_widget.account_id = account_id
+        chat_widget.chat_setting_id = chat_setting.id
+        chat_widget.main_widget = false
+        chat_widget.active = false
+        chat_widget.show_on_portal = false
+        chat_widget.portal_login_required = false
+        chat_widget.name = name
+        chat_widget.save
+      end
+    end
+
     def pdt_name_changed?
       self.previous_changes.keys.include?('name')
     end

@@ -7,21 +7,9 @@ module Ember
 
       before_filter :ticket_permission?
       before_filter :load_object
-      before_filter :link_tickets_enabled?, only: [:link, :unlink]
       before_filter :feature_enabled?, only: [:prime_association, :associated_tickets]
 
       TICKET_ASSOCIATE_CONSTANTS_CLASS = :TicketAssociateConstants.to_s.freeze
-
-      def link
-        return unless validate_body_params(@item)
-        return unless validate_delegator(@item)
-        set_associations
-        if @item.save
-          head 204
-        else
-          render_errors(@item.errors)
-        end
-      end
 
       def associated_tickets
         return log_and_render_404 unless @item.tracker_ticket? || @item.assoc_parent_ticket?
@@ -37,15 +25,6 @@ module Ember
                                                         last_broadcast_message: @last_broadcast_message)
       end
 
-      def unlink
-        return unless validate_body_params(@item) && validate_delegator(@item)
-        if @item.remove_associations!
-          head 204
-        else
-          render_errors(@item.errors)
-        end
-      end
-
       private
 
         def scoper
@@ -59,11 +38,6 @@ module Ember
 
         def constants_class
           TICKET_ASSOCIATE_CONSTANTS_CLASS
-        end
-
-        def set_associations
-          @item.association_type  = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related]
-          @item.tracker_ticket_id = params[:tracker_id]
         end
 
         def load_associations

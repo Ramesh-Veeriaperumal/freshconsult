@@ -39,6 +39,7 @@
   :central_realtime:
     - central_publish
     - active_ticket_central_publish
+    - user_central_publish
 
   :falcon_occasional:
     - scheduler_post_message
@@ -154,6 +155,7 @@
     - sandbox_config_to_file
     - clone
     - inline_image_shredder
+    - deactivate_product_widgets
   :external:
     - code_console_execution
     - integrations

@@ -8,7 +8,17 @@ class ApiAgentsController < ApiApplicationController
     agent_delegator = AgentDelegator.new(params[cname].slice(:role_ids, :group_ids))
     if agent_delegator.invalid?
       render_custom_errors(agent_delegator, true)
-    elsif !@item.update_attributes(params[cname])
+    else
+      params[cname][:user_attributes].each do |k, v|
+        @item.user.safe_send("#{k}=", v)
+      end
+      @item.user_changes = @item.user.agent.user_changes || {}
+      @item.user_changes.merge!(@item.user.changes)
+      if params[cname].key?(:group_ids)
+        group_ids = params[cname].delete(:group_ids)
+        @item.build_agent_groups_attributes(group_ids)
+      end
+      return if @item.update_attributes(params[cname].except(:user_attributes))
       render_custom_errors
     end
   end

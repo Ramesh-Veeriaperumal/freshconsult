@@ -56,7 +56,7 @@ module Tickets
         Va::Logger::Automation.log "********* END OF OBSERVER *********"
         Va::Logger::Automation.unset_thread_variables
         if Account.current.skill_based_round_robin_enabled?
-          if args[:enqueued_class] == 'Helpdesk::Ticket'
+          if evaluate_on.present? && args[:enqueued_class] == 'Helpdesk::Ticket'
             #merges the diff between previous save transaction & observer save transaction
             previous_changes = args[:model_changes]
             if evaluate_on.errors.any?
@@ -73,7 +73,7 @@ module Tickets
           end
         end
         Thread.current[:observer_doer_id] = nil
-        return {:sbrr_exec => evaluate_on.sbrr_exec_obj}
+        return {:sbrr_exec => evaluate_on.try(:sbrr_exec_obj)}
       end
     end
   end

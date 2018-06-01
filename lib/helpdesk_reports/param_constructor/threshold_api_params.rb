@@ -26,6 +26,7 @@ class HelpdeskReports::ParamConstructor::ThresholdApiParams < HelpdeskReports::P
     else
       request_arr = [];
       req_template = threshold_count_request(basic_params)
+      Rails.logger.info " Contructing Threshold Request for #{@n_days}"
       @n_days.times do |x|
         newreq =  req_template.clone
         set_request_date_time(newreq,x)
@@ -68,8 +69,8 @@ class HelpdeskReports::ParamConstructor::ThresholdApiParams < HelpdeskReports::P
   def set_request_date_time(request, interval)
     time_now = current_account_time
     end_date , start_date = nil
-    end_date = time_now - (LAST_N_DAYS - interval).days
-    start_date = end_date - 30.days
+    end_date = time_now - interval.days
+    start_date = end_date - LAST_N_DAYS.days
     request[:date_range] = set_date_range(start_date, end_date)
     request[:start_time] = "#{@busy_hr}:00"
     request[:end_time] = "#{@busy_hr}:00"

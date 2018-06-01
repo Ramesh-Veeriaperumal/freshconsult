@@ -1,0 +1,5 @@
+if @errors.length > 0
+ JSON.generate({"errors": @errors}.to_hash)
+else
+ JSON.generate({"success": "Validated, Can proceed with initiation", "credits": @account.freshfone_credit.available_credit.to_i}.to_hash)
+end

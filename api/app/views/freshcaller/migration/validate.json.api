@@ -1,0 +1,1 @@
+JSON.generate({}.to_hash)
