@@ -111,8 +111,11 @@ private
 
   def update_agent
     respond_to do |format|      
-      if @profile.update_attributes(agent_params)
-          @user.update_attributes(user_params)
+      params[:user].each do |k, v|
+        @profile.user.safe_send("#{k}=", v)
+      end
+      @profile.user_changes = @profile.user.changes
+      if @profile.update_attributes(params[:agent])
           format.html { 
             flash[:notice] = 'Your profile has been updated successfully.'
             if request.xhr? || current_account.falcon_ui_enabled?(current_user)

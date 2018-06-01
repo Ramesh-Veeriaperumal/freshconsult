@@ -46,10 +46,10 @@ class TicketDelegator < BaseDelegator
   validate :validate_internal_agent_group_mapping, if: -> { internal_agent_id && attr_changed?('internal_agent_id') && Account.current.shared_ownership_enabled? }
   validate :validate_status_group_mapping, if: -> { internal_group_id && attr_changed?('internal_group_id') && Account.current.shared_ownership_enabled? }
 
-  validate :parent_template_id_permissible?, if: -> { @parent_template_id }
-
-  validate :child_template_ids_permissible?, if: -> { @child_template_ids }
   validate :validate_parent_ticket, if: -> { child_ticket? && @parent.present? }
+  validate :validate_ticket_for_association, if: -> { @tracker_ticket_id }
+  validate :validate_tracker_ticket, if: -> { @tracker_ticket_id || @unlink}
+  validate :validate_related_ticket, if: -> { @unlink }
 
   validate :parent_template_id_permissible?, if: -> { @parent_template_id }
   validate :child_template_ids_permissible?, if: -> { @child_template_ids }
@@ -76,6 +76,9 @@ class TicketDelegator < BaseDelegator
     end
     @company_id = options[:company_id]
     @tags = options[:tags]
+    if options.key?(:tracker_ticket_id)
+      options[:tracker_ticket_id].present? ? @tracker_ticket_id = options[:tracker_ticket_id] : @unlink = true
+    end
     super(record, options)
     @ticket = record
   end
@@ -236,6 +239,27 @@ class TicketDelegator < BaseDelegator
       errors[:inline_attachment_ids] << :invalid_inline_attachments_list
       (self.error_options ||= {}).merge!({ inline_attachment_ids: { invalid_ids: "#{invalid_ids.join(', ')}" } })
     end
+  end
+
+  def validate_ticket_for_association
+    errors[:id] << :unable_to_perform if association_type.present? || !can_be_associated?
+  end
+
+  def validate_tracker_ticket
+    tracker_ticket = Account.current.tickets.find_by_display_id(@tracker_ticket_id || @ticket.associates.first)
+    unless tracker_ticket && tracker_ticket.tracker_ticket? && tracker_ticket.can_be_associated?
+      errors[:tracker_id] << :invalid_tracker
+      return
+    end
+    errors[:tracker_id] << :access_denied if @unlink && !User.current.has_ticket_permission?(@ticket) && !User.current.has_ticket_permission?(tracker_ticket)
+    if @tracker_ticket_id && tracker_ticket.associates.count >= TicketConstants::MAX_RELATED_TICKETS
+      errors[:tracker_id] << :exceeds_limit
+      @error_options[:limit] = TicketConstants::MAX_RELATED_TICKETS
+    end
+  end
+
+  def validate_related_ticket
+    errors[:id] << :not_a_related_ticket unless related_ticket?
   end
 
   private

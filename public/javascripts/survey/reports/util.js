@@ -2,6 +2,7 @@
     Utilities that can be used across different modules.
 */
 var SurveyUtil = {
+        widget_queries_flag:false,
         smiley: {
              "HAPPY" : "ficon-survey-happy",
              "NEUTRAL" : "ficon-survey-neutral",
@@ -69,8 +70,11 @@ var SurveyUtil = {
         },
         getUrlData:function(){
             var urlData = {};
+            //coming to reports page from csat widget
+            var widget_queries_present = window.location.href.split("?")[1];
+
             var surveyObj = jQuery("#survey_report_survey_list");
-            var groupObj = jQuery("#survey_report_group_list");
+             var groupObj = jQuery("#survey_report_group_list");
             if(SurveyReport.agentReporting){
                 var agentObj = jQuery("#survey_report_agent_list");
                 urlData['agent_id'] = agentObj.val();
@@ -78,15 +82,23 @@ var SurveyUtil = {
             else{
                 urlData['agent_id'] = SurveyReportData.defaultAllValues.agent;
             }
-            
 
             urlData['survey_id'] = surveyObj.val();
-            urlData['group_id'] = groupObj.val();
-            
             urlData['survey_question_id'] = SurveyUtil.findQuestionId();
             urlData['date'] = {};
             urlData['date']['presetRange'] = false;
-            urlData['date']['date_range'] = SurveyDateRange.convertDateToTimestamp(jQuery("#survey_date_range").val());
+
+            if (!widget_queries_present) {
+                urlData['group_id'] = groupObj.val();
+                urlData['date']['date_range'] = SurveyDateRange.convertDateToTimestamp(jQuery("#survey_date_range").val());                
+            } else {
+                var widget_queries =  widget_queries_present.split("&");
+
+                urlData['group_id'] = widget_queries[0].split("=")[1];
+                jQuery("#survey_report_group_list").val(widget_queries[0].split("=")[1]);
+                urlData['date']['date_range'] = widget_queries[1].split("=")[1];
+                SurveyUtil.widget_queries_flag = true;
+            }
             return urlData;
         },
         getDataName:function(id,type){
