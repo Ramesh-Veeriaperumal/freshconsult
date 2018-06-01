@@ -48,6 +48,8 @@ module Helpdesk::Email::Constants
 
 	TRUNCATE_CONTENT = [:text, :html]
 	TRUNCATE_SIZE = 500.kilobyte
+	MAXIMUM_CONTENT_LIMIT = 300.kilobytes
+	LARGE_TEXT_TIMEOUT = 60
 
 	RETRY_FAILED_MESSAGE_PATH = "retry_failed_messages"
 	PERMANENT_FAILED_MESSAGE_PATH = "dead_failed_messages"

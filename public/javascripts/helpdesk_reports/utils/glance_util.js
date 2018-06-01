@@ -227,29 +227,27 @@ HelpdeskReports.ReportUtil.Glance = (function () {
         actions: {
             submitReports: function () {
                 var metric = HelpdeskReports.locals.active_metric;
-                var widget_queries_present = window.location.href.split("?")[1];
-                var widget_queries = (widget_queries_present) ? widget_queries_present.split("&") : false;
-
+                var widget_queries_present = window.localStorage.getItem('storage:dashboard/reports-query-params');
+                var widget_queries = (widget_queries_present) ? JSON.parse(widget_queries_present) : false;
                 //when coming to reports via dashboard widgets
-                if (widget_queries) {
-                
-                var date,metric,product_id,groups;
-                widget_queries.forEach(function(item){
-                    date = ((item.indexOf("date=")) >= 0) ? item.split('=')[1] : date;
-                    metric = ((item.indexOf("metric=")) >= 0) ? item.split('=')[1] : metric;
-                    product_id = ((item.indexOf("product=")) >= 0) ? item.split('=')[1] : product_id;
-                    groups = ((item.indexOf("groups=")) >= 0) ? item.split('=')[1] : groups;
-                })                    
-                    if(groups){
-                       var groupsList =  (groups.split(",").length > 1 ) ?   groups.split(",") : groups
+                if (widget_queries.queryFlag) {
+                    var date = widget_queries.dateRange;
+                    metric = widget_queries.metric;
+                    var product_id = widget_queries.productId;
+                    var groups = widget_queries.groupIds;
+           
+                    if (groups) {
+                        var groupsList =  (groups.split(",").length > 1 ) ?   groups.split(",") : groups;
+                        jQuery('#group_id').val(groupsList).trigger('change');
                     }
-
-                    if(product_id) {
-                        jQuery('#product_id').val(product_id).trigger("change");
+                    if (product_id) {
+                        jQuery('#product_id').val(product_id).trigger('change');
                     }
-                    jQuery("#date_range").val(decodeURI(date));
+                    jQuery("#date_range").val(date);
                     jQuery('#sprout-datepicker').val(date);
-                    jQuery('#group_id').val(groupsList).trigger("change");
+                    _FD.core.constructDateRangePicker();
+                    widget_queries.queryFlag = false;
+                    window.localStorage.setItem('storage:dashboard/reports-query-params', JSON.stringify(widget_queries));
                 }
                 
                 HelpdeskReports.locals.params = HelpdeskReports.locals.default_params.slice();
@@ -663,28 +661,25 @@ HelpdeskReports.ReportUtil.Glance = (function () {
         setDefaultValues: function () {
 
             var current_params = [];
-            var widget_queries_present = window.location.href.split("?")[1];
-            var widget_queries = (widget_queries_present) ? widget_queries_present.split("&") : false;
-
             //when coming to reports via dashboard widgets
-            if (widget_queries) {
-                var date,metric,product_id;
+            var widget_queries_present = window.localStorage.getItem('storage:dashboard/reports-query-params');
+            var widget_queries = (widget_queries_present) ? JSON.parse(widget_queries_present) : false;
 
-                widget_queries.forEach(function(item){
-                    date = ((item.indexOf("date=")) >= 0) ? item.split('=')[1] : date;
-                    metric = ((item.indexOf("metric=")) >= 0) ? item.split('=')[1] : metric;
-                    product_id = ((item.indexOf("product=")) >= 0) ? item.split('=')[1] : product_id;
-                })
+            if (widget_queries.queryFlag) {
+                var date = widget_queries.dateRange;
+                var active_metric = widget_queries.metric;
+                var product_id = widget_queries.productId;
 
                 if(product_id) {
                     HelpdeskReports.CoreUtil.default_available_filter.push("product_id");
                 }
-                var active_metric = metric;
-                var date = decodeURI(date);
+
                 _FD.core.setReportFilters();
             }else{
                 var date = _FD.core.setReportFilters();
                 var active_metric = _FD.constants.default_metric;
+
+                HelpdeskReports.SavedReportUtil.applyLastCachedReport();
             }
             _FD.setActiveMetric(active_metric);
            jQuery.each(_FD.constants.template_metrics, function (index, value) {
@@ -700,7 +695,6 @@ HelpdeskReports.ReportUtil.Glance = (function () {
 
             HelpdeskReports.locals.default_params = current_params.slice();
             HelpdeskReports.locals.visited_metrics = [];
-            HelpdeskReports.SavedReportUtil.applyLastCachedReport();
             _FD.actions.submitReports();
 
         },

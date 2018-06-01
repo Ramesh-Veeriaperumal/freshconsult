@@ -4440,7 +4440,7 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
   end
 
   add_index "bot_feedback_mappings", ["account_id", "feedback_id"], :name => "index_bot_feedback_mappings_on_feedback_id"
-  
+
   create_table :helpdesk_reports_config, :force => true do |t|
       t.text        :name
       t.text        :config_json

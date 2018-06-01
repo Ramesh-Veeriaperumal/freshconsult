@@ -18,7 +18,8 @@ class Group < ActiveRecord::Base
     g.add :business_calendar_id
     g.add :toggle_availability
     g.add :capping_limit
-    g.add proc { |x| x.agents.map { |ag| {name: ag.name, id: ag.id }}}, as: :agents
+    g.add proc { |x| x.agents.map { |ag| { 
+      name: ag.name, id: ag.id, email: ag.email }}}, as: :agents
   end
 
   def self.central_publish_enabled?

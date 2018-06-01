@@ -13,7 +13,7 @@ class Helpdesk::Email::FailedEmailMsg
   end
 
   def save! is_note
-    object_owner = is_note ? @object.user : @object.requester
+    object_owner = is_note ? @object.user : @object.outbound_initiator
     @recipient  = object_owner.email
     @agent_name = object_owner.name
     @failed_content = is_note ? @object.body : @object.ticket_body.description

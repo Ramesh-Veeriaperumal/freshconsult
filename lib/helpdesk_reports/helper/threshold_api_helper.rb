@@ -90,7 +90,7 @@ module HelpdeskReports::Helper::ThresholdApiHelper
 
   def get_busiest_hour(recieved_tkts)
     hourly_arr = recieved_tkts.first["result"]
-
+    Rails.logger.info(" Busy hour : #{hourly_arr.inspect}")
     if hourly_arr.any?
       hourly_arr.sort! { |a, b| b["count"].to_i <=> a["count"].to_i }
       hourly_arr[0]["h"]
@@ -102,9 +102,11 @@ module HelpdeskReports::Helper::ThresholdApiHelper
 
   def define_threshold(day_wise_result , request_arr)
     metric = request_arr[0][:metric]
+    Rails.logger.info(" Threshold Request  : #{request_arr[0].inspect}")
     is_increase = INCREASE_BAD_METRICS.include? (metric)
     metric_type = COUNT_METRICS.include?(metric)? METRIC_TYPES[:count] : PERCENTAGE_METRICS.include?(metric)? METRIC_TYPES[:percentage] : METRIC_TYPES[:avg]
     day_wise_ticket_count = 0
+    Rails.logger.info(" Daily Trends : #{day_wise_result.inspect}")
     day_wise_result.each do | day|
       begin
         day_wise_ticket_count += day[:general][:metric_result]
@@ -112,13 +114,17 @@ module HelpdeskReports::Helper::ThresholdApiHelper
         Rails.logger.info(" Data Missing for #{day.to_s}")
       end
     end
+    lvl2pc = get_danger_pc(metric_type)
+    lvl1pc = get_warning_pc(metric_type)
+    Rails.logger.info("Threshold metric Type #{metric_type} , Lvl1 : #{lvl1pc}, Lvl2:#{lvl2pc} ")
+    Rails.logger.info(" Total count: #{day_wise_ticket_count} \n Length: #{day_wise_result.length}")
     avg = day_wise_ticket_count / day_wise_result.length
     {
       metric: metric,
       metric_type:metric_type,
       avg:avg.round,
-      level2: is_increase ?  (avg *  (1+(0.01*get_danger_pc(metric_type)))).round :  (avg *  (1-(0.01*get_danger_pc(metric_type)))).round ,
-      level1: is_increase ? (avg * (1+(0.01*get_warning_pc(metric_type)))).round : (avg * (1-(0.01*get_warning_pc(metric_type)))).round
+      level2: is_increase ?  (avg *  (1+(0.01*lvl2pc))).round :  (avg *  (1-(0.01*lvl2pc))).round ,
+      level1: is_increase ? (avg * (1+(0.01*lvl1pc))).round : (avg * (1-(0.01*lvl1pc))).round
     }
   end
 
@@ -126,13 +132,11 @@ module HelpdeskReports::Helper::ThresholdApiHelper
     build_and_execute
     parse_result
     @processed_result
-    # @no_data ? (@data = nil) : format_result
-    # @results
   end
 
 
   def cache_feature_config
-    config = HelpdeskReportsConfig.find(1).get_config;
+    config = HelpdeskReportsConfig.find(1).get_config
     MemcacheKeys.cache(THRESHOLD_DAYS_LIMIT_KEY, config[:days_limit], CACHE_TIMEOUT_24_HRS)
     MemcacheKeys.cache(THRESHOLD_WARNING_PC_KEY, config[:warning_pc], CACHE_TIMEOUT_24_HRS)
     MemcacheKeys.cache(THRESHOLD_DANGER_PC_KEY, config[:danger_pc], CACHE_TIMEOUT_24_HRS)
@@ -146,12 +150,13 @@ module HelpdeskReports::Helper::ThresholdApiHelper
 
   def get_warning_pc(type)
     cache_feature_config unless  MemcacheKeys.get_from_cache(THRESHOLD_WARNING_PC_KEY)
-    (MemcacheKeys.get_from_cache(THRESHOLD_WARNING_PC_KEY)|| DEFAULT_CONFIG[THRESHOLD_WARNING_PC_KEY])[type.to_sym].to_i
+
+    (MemcacheKeys.get_from_cache(THRESHOLD_WARNING_PC_KEY)|| DEFAULT_CONFIG[THRESHOLD_WARNING_PC_KEY]).symbolize_keys[type.to_sym].to_i
   end
 
   def get_danger_pc(type)
     cache_feature_config unless  MemcacheKeys.get_from_cache(THRESHOLD_DANGER_PC_KEY)
-    (MemcacheKeys.get_from_cache(THRESHOLD_DANGER_PC_KEY) || DEFAULT_CONFIG[THRESHOLD_DANGER_PC_KEY])[type.to_sym].to_i
+    (MemcacheKeys.get_from_cache(THRESHOLD_DANGER_PC_KEY)|| DEFAULT_CONFIG[THRESHOLD_DANGER_PC_KEY]).symbolize_keys[type.to_sym].to_i
   end
 
   def get_request_bacth_size
