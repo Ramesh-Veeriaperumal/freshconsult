@@ -89,7 +89,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       # block all email related to collab based on subject
       return processed_email_data(PROCESSED_EMAIL_STATUS[:noop_collab_email_reply])
     end
-
     # from_email = parse_from_email
     result = {}
     encode_stuffs unless skip_encoding
@@ -180,7 +179,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
            params[:html] = body_html_with_formatting(params[:text],email_cmds_regex) 
           end
         end
-
         result = add_to_or_create_ticket(account, from_email, to_email, user, email_config)
       end
 
@@ -499,8 +497,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         Rails.logger.info "Found existing ticket by display id present in subject"
         return ticket 
       end
-      ticket = ticket_from_headers(from_email, account, email_config)
-      if can_be_added_to_ticket?(ticket, user, from_email)
+      ticket = ticket_from_headers(from_email, account, email_config, user)
+      if ticket.present?
         Rails.logger.info "Found existing ticket by references(reference, in-reply-to) present in header"
         return ticket 
       end
@@ -520,7 +518,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
       archive_ticket = account.archive_tickets.find_by_display_id(display_id) if display_id
       return archive_ticket if can_be_added_to_ticket?(archive_ticket, user, from_email)
-      archive_ticket = archive_ticket_from_headers(from_email, account, email_config)
+      archive_ticket = archive_ticket_from_headers(from_email, account, email_config, user)
       return archive_ticket if can_be_added_to_ticket?(archive_ticket, user, from_email)
       return self.actual_archive_ticket if can_be_added_to_ticket?(self.actual_archive_ticket, user, from_email)
     end
@@ -855,21 +853,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
     def rsvp_to_fwd?(ticket, from_email, user)
       @rsvp_to_fwd ||= ((Account.current.features?(:threading_without_user_check) || (!ticket.cc_email.nil? && !ticket.cc_email[:cc_emails].nil? && ticket.cc_email[:cc_emails].include?(from_email[:email])) || user.agent?) && reply_to_forward(all_message_ids))
-    end
-
-    def can_be_added_to_ticket?(ticket, user, from_email={})
-      ticket and
-      ((user && user.agent? && !user.deleted?) or
-      (ticket.requester.email and user and ticket.requester.email.include?(user.email)) or 
-      (user && ticket.included_in_cc?(user.email)) or
-      (from_email[:email] == ticket.sender_email) or
-      ticket.included_in_cc?(from_email[:email]) or
-      belong_to_same_company?(ticket,user) or
-      Account.current.features?(:threading_without_user_check))
-    end
-    
-    def belong_to_same_company?(ticket,user)
-      user and user.company_id and (user.company_id == ticket.company_id)
     end
 
     def text_part

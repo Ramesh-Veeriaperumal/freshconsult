@@ -485,78 +485,6 @@
         }
       }
     },
-    "/tickets/{id}/link": {
-      "put": {
-        "tags": [
-          "ticket"
-        ],
-        "summary": "Link Ticket",
-        "parameters": [
-          {
-            "$ref": "#/parameters/id"
-          },
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "allOf": [
-                {
-                  "$ref": "#/definitions/link_input"
-                }
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          },
-          "404": {
-            "description": "Ticket not found"
-          }
-        }
-      }
-    },
-    "/tickets/{id}/unlink": {
-      "put": {
-        "tags": [
-          "ticket"
-        ],
-        "summary": "Unlink Ticket",
-        "parameters": [
-          {
-            "$ref": "#/parameters/id"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          },
-          "404": {
-            "description": "Ticket not found"
-          }
-        }
-      }
-    },
     "/tickets/bulk_link": {
       "put": {
         "summary": "Bulk Link",
@@ -8154,6 +8082,9 @@
               }
             },
             "parent_id": {
+              "type": "integer"
+            },
+            "tracker_id": {
               "type": "integer"
             },
             "related_ticket_ids": {

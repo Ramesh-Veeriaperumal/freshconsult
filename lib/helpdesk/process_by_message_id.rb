@@ -4,12 +4,12 @@ module Helpdesk::ProcessByMessageId
 
   MESSAGE_ID_REGEX = /<+([^>]+)/
 
-  def ticket_from_headers from_email, account, email_config
-    ticket = parent_ticket(from_email, account, email_config)
+  def ticket_from_headers from_email, account, email_config, user
+    ticket = parent_ticket(from_email, account, email_config, false, user)
   end
 
-  def archive_ticket_from_headers from_email, account, email_config
-    ticket = parent_ticket(from_email, account, email_config, true)
+  def archive_ticket_from_headers from_email, account, email_config, user
+    ticket = parent_ticket(from_email, account, email_config, true, user)
   end
 
   def message_key(account, message_id)
@@ -60,14 +60,29 @@ module Helpdesk::ProcessByMessageId
     all_keys.reverse
   end
 
+  def can_be_added_to_ticket?(ticket, user, from_email={})
+    ticket and
+    ((user && user.agent? && !user.deleted?) or
+      (ticket.requester.email and user and ticket.requester.email.include?(user.email)) or 
+      (user && ticket.included_in_cc?(user.email)) or
+      (from_email[:email] == ticket.sender_email) or
+      ticket.included_in_cc?(from_email[:email]) or
+      belong_to_same_company?(ticket,user) or
+      Account.current.features?(:threading_without_user_check))
+  end
+
+  def belong_to_same_company?(ticket,user)
+    user and user.company_id and (user.company_id == ticket.company_id)
+  end
+
   private
 
-    def parent_ticket from_email, account, email_config, is_archive = false
+    def parent_ticket from_email, account, email_config, is_archive = false, user
       all_keys = all_message_ids
       Rails.logger.debug "List of message_ids : #{all_keys.join(", ")}"
       return nil if all_keys.blank?
       all_keys.each do |message_id|
-        ticket = find_ticket_by_msg_id(account, message_id, email_config, is_archive)
+        ticket = find_ticket_by_msg_id(from_email, account, message_id, email_config, is_archive, user)
         if ticket.present?
           Rails.logger.debug "Found ticket from message_id : #{message_id}. Ticket id : #{ticket.id}, display_id : #{ticket.display_id}"
           return ticket 
@@ -79,7 +94,7 @@ module Helpdesk::ProcessByMessageId
     #Will return the ticket which matches the given message id. 
     #If multiple tickets matches with the given message id ,then the one which has the same emailconfig
     # as the current one is selected. If no emailconfig matches, the first ticket is taken by default.
-    def find_ticket_by_msg_id(account, message_id, email_config, is_archive = false)
+    def find_ticket_by_msg_id(from_email, account, message_id, email_config, is_archive = false, user)
       matched_ticket = nil
       related_ticket_info = get_ticket_info_from_redis(account, message_id)
       if related_ticket_info
@@ -88,7 +103,7 @@ module Helpdesk::ProcessByMessageId
 
         if ticket_id_list.present?
           ticket_display_id_list = ticket_id_list.split(",")
-          matched_ticket = find_ticket_thread(account, ticket_display_id_list, email_config, is_archive)
+          matched_ticket = find_ticket_thread(from_email, account, ticket_display_id_list, email_config, is_archive, user)
         end
 
         if matched_ticket.present?
@@ -99,25 +114,26 @@ module Helpdesk::ProcessByMessageId
     end
 
 
-    def find_ticket_thread(account, ticket_display_id_list, email_config, is_archive = false)
+    def find_ticket_thread(from_email, account, ticket_display_id_list, email_config, is_archive = false, user)
       matched_ticket = nil
       #if more than one ticket id matches workaround to skip unncessary parsing
       if ticket_display_id_list.count > 1
         ticket = find_ticket_from_email_body_or_id_span(account)
-        matched_ticket = ticket if ticket.present?
+        matched_ticket = ticket if can_be_added_to_ticket?(ticket, user, from_email)
       end
 
       unless matched_ticket.present?
         #find ticket based on each display id
         if ticket_display_id_list.count == 1
-          matched_ticket = find_ticket(account, ticket_display_id_list[0], is_archive)
+           ticket = find_ticket(account, ticket_display_id_list[0], is_archive)
+           matched_ticket = ticket if can_be_added_to_ticket?(ticket, user, from_email)
         else
           ticket_display_id_list.each do |ticket_id|
             ticket = find_ticket(account, ticket_id, is_archive)
-            matched_ticket ||= ticket #will be used if none of the ticket's email config matches with current email config
-            ticket_email_config = ticket.email_config if ticket.present? && ticket.respond_to?(:email_config) #email config check for archive tickets
-            if email_config.present? && ticket_email_config.present?
-              if email_config.id == ticket_email_config.id
+            if can_be_added_to_ticket?(ticket, user, from_email)
+              matched_ticket ||= ticket #will be used if none of the ticket's email config matches with current email config
+              ticket_email_config = ticket.email_config if ticket.present? && ticket.respond_to?(:email_config) #email config check for archive tickets
+              if email_config.present? && ticket_email_config.present? && email_config.id == ticket_email_config.id 
                 matched_ticket = ticket 
                 break
               end

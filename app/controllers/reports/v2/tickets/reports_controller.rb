@@ -24,6 +24,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   before_filter :construct_report_filters, :schedule_allowed?,          :only   => [:save_reports_filter,:update_reports_filter]
   before_filter :check_exports_count,                                   :only   => [:export_tickets]
   
+
   helper_method :enable_schedule_report?
 
   wrap_parameters false

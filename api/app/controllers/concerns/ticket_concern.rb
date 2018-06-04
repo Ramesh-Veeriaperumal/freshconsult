@@ -1,8 +1,9 @@
 module TicketConcern
   extend ActiveSupport::Concern
+
   def verify_ticket_permission(user = api_current_user, ticket = @item)
     # Should not allow to update/show/restore/add(or)edit(or)delete(or)show conversations or time_entries to a ticket if ticket is deleted forever or user doesn't have permission
-    if !user.has_ticket_permission?(ticket) || ticket.schema_less_ticket.try(:trashed)
+    if (!user.has_ticket_permission?(ticket) && !allow_without_ticket_permission?) || ticket.schema_less_ticket.try(:trashed)
       Rails.logger.error "Params: #{params.inspect} User: #{user.id}, #{user.email} doesn't have permission to ticket display_id: #{ticket.display_id}"
       render_request_error :access_denied, 403
       return false
@@ -73,6 +74,18 @@ module TicketConcern
 
     def ticket_permission_required?
       ApiTicketConstants::PERMISSION_REQUIRED.include?(action_name.to_sym)
+    end
+
+    def allow_without_ticket_permission?
+      # If there are params other than secondary_ticket_params we should not allow the action as those params don't have access to primary ticket
+      # Validations for secondary tickets are done in delegator
+      return unless cname_params.present? && secondary_ticket_permission_required?
+      secondary_ticket_params = cname_params.keys & ApiTicketConstants::SECONDARY_TICKET_PARAMS
+      secondary_ticket_params.present? && secondary_ticket_params.length == cname_params.length
+    end
+
+    def secondary_ticket_permission_required?
+      cname_params.key?(:tracker_id) && cname_params[:tracker_id].nil?
     end
 
     def verify_ticket_state_and_permission(user = api_current_user, ticket = @item)
