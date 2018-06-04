@@ -7,7 +7,7 @@
     <% end %>
 
     <div class="report-head report">
-      <% if feature?(:enterprise_reporting) %>
+      <% if feature?(:enterprise_reporting) && enable_qna? %>
         <div class="qna-search-bar">
             <div class="search-field-holder">
                 <div class="selected-queries"></div>
@@ -185,7 +185,7 @@
         </div>
   </div>
   </div> <!-- left section -->
-  <% if feature?(:enterprise_reporting) %>
+  <% if feature?(:enterprise_reporting) && enable_insights? %>
     <div class="insights">
           <div class="insights-title">
               <div class="pull-left">

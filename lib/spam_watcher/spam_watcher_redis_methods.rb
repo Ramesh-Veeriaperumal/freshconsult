@@ -28,7 +28,7 @@ class SpamWatcherRedisMethods
     def spam_url(account,user,table)
       shard_mapping = ShardMapping.lookup_with_account_id(account.id)
       type = table.split("_").last
-      "freshopsadmin.freshdesk.com/#{shard_mapping.pod_info}/#{shard_mapping.shard_name}/spam_watch/#{user.id}/#{type}"
+      "https://freshopsadmin.freshdesk.com/#{shard_mapping.pod_info}/#{shard_mapping.shard_name}/spam_watch/#{user.id}/#{type}"
     end
 
     def spam_alert(account,user,table_name,operation,subject,deleted_flag)

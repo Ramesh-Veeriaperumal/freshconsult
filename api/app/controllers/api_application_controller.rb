@@ -26,7 +26,7 @@ class ApiApplicationController < MetalApiController
   before_filter :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_shard_for_payload
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol
   include Authority::FreshdeskRails::ControllerHelpers
-  before_filter :check_account_state
+  before_filter :check_account_state, :set_current_ip
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone, :set_msg_id
   before_filter :force_utf8_params
   before_filter :set_cache_buster
@@ -665,5 +665,9 @@ class ApiApplicationController < MetalApiController
 
     def custom_field_error_mappings
       @custom_field_error_mapping ||= Hash[@name_mapping.map{|k,v| [k, "custom_fields.#{v}"]}] if @name_mapping.present?
+    end
+
+    def set_current_ip
+      Thread.current[:current_ip] = request.remote_ip
     end
 end
