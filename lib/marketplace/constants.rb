@@ -1,6 +1,6 @@
 module Marketplace::Constants
 
-  PRODUCT_ID = 1
+  PRODUCT_ID = MarketplaceConfig::TENANT_ID
   PRODUCT_NAME = 'freshdesk'
   DEV_PORTAL_NAME = 'Freshdesk Marketplace'
   ADMIN_PORTAL_NAME = 'Marketplace Admin Portal'
