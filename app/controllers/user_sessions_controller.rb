@@ -24,13 +24,14 @@ class UserSessionsController < ApplicationController
   before_filter :decode_jwt_payload, :check_jwt_required_fields, :only => [:jwt_sso_login]
   before_filter :redirect_to_freshid_login, :only =>[:create], :if => :is_freshid_agent_and_not_mobile?
   before_filter :redirect_to_agent_sso_freshid_authorize, only: :agent_login, if: :agent_oauth2_enabled_and_not_logged_in?
+  before_filter :redirect_to_customer_sso_freshid_authorize, only: :customer_login, if: :customer_oauth2_enabled_and_not_logged_in?
 
   def new
     flash.keep
     # Login normal supersets all login access (can be used by agents)
     if request.path == "/login/normal"
       @user_session = current_account.user_sessions.new
-    elsif current_account.sso_enabled?
+    elsif current_account.sso_enabled? && !current_account.oauth2_sso_enabled?
       sso_login_page_redirect
     else
       #Redirect to portal login by default
@@ -183,6 +184,10 @@ class UserSessionsController < ApplicationController
     redirect_to support_login_path
   end
 
+  def customer_login
+    redirect_to support_login_path
+  end
+
   def show
     redirect_to :action => :new
   end
@@ -249,9 +254,11 @@ class UserSessionsController < ApplicationController
     return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
     if current_user.present? && freshid_agent?(current_user.email)
       Rails.logger.info "FRESHID destroy :: a=#{current_account.try(:id)}, u=#{current_user.try(:id)}"
-      url = current_account.agent_oauth2_logout_redirect_url if agent_oauth2_enabled?
-      url = support_home_url if url.blank?
+      url = current_account.agent_oauth2_logout_redirect_url || support_home_url if agent_oauth2_enabled?
       redirect_to freshid_logout(url) and return
+    elsif current_user.present? && !current_user.agent? && customer_oauth2_enabled?
+      url = current_account.customer_oauth2_logout_redirect_url || support_home_url
+      redirect_to freshid_end_user_logout(url) and return
     end
     respond_to do |format|
       format.html  {
