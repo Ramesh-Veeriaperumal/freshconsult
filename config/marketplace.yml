@@ -25,6 +25,7 @@ defaults: &defaults
   freshapps_js_url: "https://s3.amazonaws.com/static.freshcloud.io"
   fresh_parent: "fdk/2.0/assets/fresh_parent.js"
   account_api_poll_interval: 3000 ### In milliseconds
+  tenant_id: 4
 
 development:
   <<: *defaults
