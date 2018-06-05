@@ -12133,7 +12133,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     ticket_requester_firstname: Requester first name
     ticket_requester_lastname: Requester last name
     ticket_requester_email: Requester email
-    ticket_requester_phone: Contact Primary email
+    ticket_requester_phone: Requester phone number
     ticket_requester_address: Requester address
     ticket_company_name: Company name
     ticket_company_description: Company description

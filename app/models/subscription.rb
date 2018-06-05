@@ -365,7 +365,9 @@ class Subscription < ActiveRecord::Base
   def is_chat_plan?
     freshchat_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
                         SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
-                        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], SubscriptionPlan::SUBSCRIPTION_PLANS[:premium] ]
+                        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], SubscriptionPlan::SUBSCRIPTION_PLANS[:premium],
+                        SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_jan_17], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
+                        SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17]]
     freshchat_plans.include?(subscription_plan_from_cache.name)
   end
 
