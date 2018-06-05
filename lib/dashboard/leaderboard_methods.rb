@@ -15,7 +15,7 @@ module Dashboard::LeaderboardMethods
   end
 
   def feature_name
-    :gamification
+    Account.current.gamification_enabled? ? :gamification_enable : :gamification
   end
 
   def fields_to_validate
@@ -212,6 +212,7 @@ module Dashboard::LeaderboardMethods
 
   def months_ago_value
     @date_range_val = params[:date_range] && params[:date_range] != 'select_range' ? params[:date_range] : 'current_month'
+
     range_vs_months = {
       '3_months_ago' => 3,
       '2_months_ago' => 2,
