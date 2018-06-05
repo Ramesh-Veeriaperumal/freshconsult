@@ -9219,7 +9219,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   contact_field:
     helpcard:
       title2: "Customizing your contact fields"
-      info2: "The contact form in Freshdesk lets you capture important data from your customers so that you can support them better. You can help your team get additional context about customers quickly by including custom fields based on your type of business. For example, you can collect information with custom fields for pricing plan, department etc. and prioritize tickets accordingly in your helpdesk."
+      info2: "The contact form lets you capture additional context about customers quickly by including custom fields based on your type of business. For example, you can collect information with custom fields for pricing plan, department etc. and prioritize tickets."
       info3: "Just like your ticket fields, you can add new fields to the customer sign up form and make them mandatory. You can also have private fields that are visible just to your agents."
   company_field:
     helpcard:
@@ -11871,6 +11871,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       validation:
         invalid_name: "Invalid company name"
         required_name: "Enter company name"
+  unique_external_id:
+    helpcard: 
+      title: "Unique External Id"
+      info: Use a single ID across all your systems to identify a customer, makes it easier to track and find the right customer information when you need it. <br><a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank">Help me set up an external ID</a>
+
   requester_fields_updated: The requester widget has been updated.
   select_requester: "Please select requester"
   associate_n_companies: "Associate a contact with multiple companies?"
