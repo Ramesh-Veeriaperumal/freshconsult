@@ -23,6 +23,7 @@ class UserSessionsController < ApplicationController
   skip_after_filter :set_last_active_time
   before_filter :decode_jwt_payload, :check_jwt_required_fields, :only => [:jwt_sso_login]
   before_filter :redirect_to_freshid_login, :only =>[:create], :if => :is_freshid_agent_and_not_mobile?
+  before_filter :redirect_to_agent_sso_freshid_authorize, only: :agent_login, if: :agent_oauth2_enabled_and_not_logged_in?
 
   def new
     flash.keep
@@ -176,7 +177,11 @@ class UserSessionsController < ApplicationController
       flash[:notice] = t(:'flash.login.jwt_sso.wrong_param_type')
       redirect_to login_normal_url
     end
-  end  
+  end
+
+  def agent_login
+    redirect_to support_login_path
+  end
 
   def show
     redirect_to :action => :new
@@ -244,7 +249,9 @@ class UserSessionsController < ApplicationController
     return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
     if current_user.present? && freshid_agent?(current_user.email)
       Rails.logger.info "FRESHID destroy :: a=#{current_account.try(:id)}, u=#{current_user.try(:id)}"
-      redirect_to freshid_logout(support_home_url) and return
+      url = current_account.agent_oauth2_logout_redirect_url if agent_oauth2_enabled?
+      url = support_home_url if url.blank?
+      redirect_to freshid_logout(url) and return
     end
     respond_to do |format|
       format.html  {

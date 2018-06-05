@@ -9,13 +9,11 @@ class FreshidController < ApplicationController
                      :set_locale, only: :event_callback
 
   def authorize_callback
-    user = fetch_user_by_code(params[:code], freshid_authorize_callback_url, current_account)
-    Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
-    freshid_auth_failure_redirect_back and return if user.nil? && session[:authorize]
-    freshid_auth_failure_redirect_back(FLASH_USER_NOT_EXIST, support_login_path) and return if user.nil? && authorize_via_freshworks_login_page?
-    freshid_auth_failure_redirect_back(FLASH_INVALID_USER) and return if !user.valid_user?
-    activate_user user
-    create_user_session user
+   authorize_and_create_session
+  end
+
+  def oauth_agent_authorize_callback
+    authorize_and_create_session(freshid_oauth_agent_authorize_callback_url)
   end
 
   private
@@ -32,6 +30,16 @@ class FreshidController < ApplicationController
       else
         redirect_to login_url
       end
+    end
+
+    def authorize_and_create_session(callback_url=freshid_authorize_callback_url)
+      user = fetch_user_by_code(params[:code], callback_url, current_account)
+      Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
+      freshid_auth_failure_redirect_back and return if user.nil? && session[:authorize]
+      freshid_auth_failure_redirect_back(FLASH_USER_NOT_EXIST, support_login_path) and return if user.nil? && authorize_via_freshworks_login_page?
+      freshid_auth_failure_redirect_back(FLASH_INVALID_USER) and return if !user.valid_user?
+      activate_user user
+      create_user_session user
     end
 
     def perform_after_login
