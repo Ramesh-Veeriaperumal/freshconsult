@@ -1,4 +1,4 @@
-class Dashboard::Survey < Dashboard
+class Dashboard::Survey < Dashboards
 
   SURVEY_ID_NAME_MAPPING = {
     1 => "Positive",

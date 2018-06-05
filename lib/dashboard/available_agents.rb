@@ -1,4 +1,4 @@
-class Dashboard::AvailableAgents < Dashboard
+class Dashboard::AvailableAgents < Dashboards
 
   def initialize
   end

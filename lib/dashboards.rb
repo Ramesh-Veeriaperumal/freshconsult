@@ -1,4 +1,4 @@
-class Dashboard
+class Dashboards
 
   include Dashboard::UtilMethods
   include Helpdesk::Ticketfields::TicketStatus

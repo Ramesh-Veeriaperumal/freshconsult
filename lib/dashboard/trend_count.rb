@@ -1,4 +1,4 @@
-class Dashboard::TrendCount < Dashboard
+class Dashboard::TrendCount < Dashboards
   include Helpdesk::TicketFilterMethods
 
   attr_accessor :es_enabled, :filter_options, :trends

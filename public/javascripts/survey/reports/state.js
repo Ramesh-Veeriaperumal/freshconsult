@@ -14,7 +14,13 @@ var SurveyState = {
     RESPONSE:{type:2,tab:"survey_responses_link",container:"survey_responses",disable:"survey_overview_link"},
     init:function(){
         SurveyState.save_util.init();
-        SurveyState.save_util.applyLastCachedReport();
+         // checking for query params in the url, this is done to check whether the user is coming from 
+        if (SurveyState.checkQueryParams()) {
+          SurveyState.applyQueryParams();
+        } else {
+          // If coming from dashboard widgets loading the widget config instead of the previously saved filter values. 
+          SurveyState.save_util.applyLastCachedReport();
+        }
         SurveyState.bindSavedReportEvents();
         jQuery(window).bind( "hashchange", function(e) {
             SurveyReport.hideLayout();
@@ -274,4 +280,28 @@ var SurveyState = {
           };
           SurveyState.save_util.updateHelper(opts);
     },
+
+    checkQueryParams: function(){
+    // Checking if there are query params in the URL
+    var query_params = window.location.search.split('?')[1] || '';
+
+    return (query_params) ? true : false;
+  },
+
+  applyQueryParams: function(){
+      // overwritting the default values with query params
+      var query_params = window.location.search.split('?')[1] || '';
+
+      var urlData = SurveyUtil.getUrlData();
+      query_params = query_params.split("&");
+
+      var data = {
+        'group_id' : query_params[0].split("=")[1],
+        'date_range' : query_params[1].split("=")[1],
+        'survey_id' : urlData.survey_id,
+        'agent_id' : urlData.agent_id
+      };
+
+      SurveyState.setValues(data);
+  }
 }

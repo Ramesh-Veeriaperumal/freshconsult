@@ -1,4 +1,4 @@
-class Dashboard::GroupPerformance < Dashboard
+class Dashboard::GroupPerformance < Dashboards
   include Cache::Memcache::Dashboard::CacheData
   include MemcacheKeys
 
