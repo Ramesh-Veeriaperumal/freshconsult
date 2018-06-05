@@ -86,12 +86,14 @@ class Dashboard::Custom::BarChart < Dashboards
     end
 
     def trend_count_options
-      {
+      options = {
         trends: @widget_trends.map(&:second),
         with_permissible: false,
         agg_options: @agg_options,
         limit: (@view_all ? VIEW_ALL_LIMIT : WIDGET_LIMIT)
       }
+      options.merge!({ dashboard_id: @dashboard.id }) if @dashboard
+      options
     end
 
     def parse_count_result(count_result)

@@ -274,6 +274,7 @@ defaults: &defaults
     - [freshcaller_account_delete]
     - [freshid_agents_migration]
     - [deactivate_product_widgets]
+    - [deactivate_filter_widgets]
     - [user_central_publish]
     - [inline_image_shredder]
     - [create_sandbox_account]

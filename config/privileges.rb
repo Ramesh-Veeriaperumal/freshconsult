@@ -434,41 +434,38 @@ Authority::Authorization::PrivilegeList.build do
   # ************** REPORTS **************************
 
   view_reports do
-      resource :report
-      resource :"reports/agent_glance_report"
-      resource :"reports/agents_analysi"
-      resource :"reports/agents_comparison"
-      resource :"reports/customer_glance_report"
-      resource :"reports/customer_report"
-      resource :"reports/customers_analysi"
-      resource :"reports/gamification_report"
-      resource :"reports/group_glance_report"
-      resource :"reports/groups_analysi"
-      resource :"reports/groups_comparison"
-      resource :"reports/helpdesk_glance_report"
-      resource :"reports/helpdesk_load_analysi"
-      resource :"reports/helpdesk_performance_analysi"
-      resource :"reports/helpdesk_report"
-      resource :"reports/survey_report"
-      resource :"reports/custom_survey_report"
-      resource :"reports/freshfone/summary_report"
-      resource :"reports/freshchat/summary_report"
-      resource :"reports/timesheet_report", :only => [:index, :report_filter, :save_reports_filter, :update_reports_filter, :delete_reports_filter, :time_entries_list]
-      resource :"reports/report_filter"
-      resource :"reports/v2/tickets/report", :only =>[ :index, :fetch_metrics, :fetch_ticket_list, :fetch_active_metric,
-                                                        :save_reports_filter, :update_reports_filter, :delete_reports_filter,
-                                                        :fetch_qna_metric, :fetch_insights_metric, :save_insights_config,
-                                                        :fetch_recent_questions, :fetch_insights_config]
+    resource :report
+    resource :"reports/agent_glance_report"
+    resource :"reports/agents_analysi"
+    resource :"reports/agents_comparison"
+    resource :"reports/customer_glance_report"
+    resource :"reports/customer_report"
+    resource :"reports/customers_analysi"
+    resource :"reports/gamification_report"
+    resource :"reports/group_glance_report"
+    resource :"reports/groups_analysi"
+    resource :"reports/groups_comparison"
+    resource :"reports/helpdesk_glance_report"
+    resource :"reports/helpdesk_load_analysi"
+    resource :"reports/helpdesk_performance_analysi"
+    resource :"reports/helpdesk_report"
+    resource :"reports/survey_report"
+    resource :"reports/custom_survey_report"
+    resource :"reports/freshfone/summary_report"
+    resource :"reports/freshchat/summary_report"
+    resource :"reports/timesheet_report", :only => [:index, :report_filter, :save_reports_filter, :update_reports_filter, :delete_reports_filter, :time_entries_list]
+    resource :"reports/report_filter"
+    resource :"reports/v2/tickets/report", :only =>[ :index, :fetch_metrics, :fetch_ticket_list, :fetch_active_metric,
+                                                      :save_reports_filter, :update_reports_filter, :delete_reports_filter,
+                                                      :fetch_qna_metric, :fetch_insights_metric, :save_insights_config,
+                                                      :fetch_recent_questions, :fetch_insights_config]
 
-      resource :"helpdesk/dashboard", :only => [:unresolved_tickets, :unresolved_tickets_data]
-      resource :"api_product", :only => [:index]
-      resource :"reports/scheduled_export"
-      resource :export, :only => [:ticket_activities]
-      resource :"year_in_review", :only => [:share]
-  end
-
-  manage_dashboard do
+    resource :"helpdesk/dashboard", :only => [:unresolved_tickets, :unresolved_tickets_data]
+    resource :"api_product", :only => [:index]
+    resource :"reports/scheduled_export"
+    resource :export, :only => [:ticket_activities]
     resource :"reports/v2/tickets/report", :only => [:fetch_threshold_value]
+    resource :"year_in_review", :only => [:share]
   end
 
   # NOTE: Resource(controller action) related to scheduling is not added here because save reports and scheduling reports use the same action

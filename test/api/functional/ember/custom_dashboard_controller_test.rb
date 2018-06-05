@@ -24,19 +24,21 @@ module Ember
 
     def before_all
       return if @@before_all_run
-      @account.add_dashboard_creation_limits({ dashboard: 25, widgets: { scorecard: 25, bar_chart: 25, csat: 25, leaderboard: 25, forum_moderation: 25, ticket_trend_card: 25, time_trend_card: 25, sla_trend_card: 25 } })
+      @account.set_custom_dashboard_limit({ dashboard: 25, widgets: { scorecard: 25, bar_chart: 25, csat: 25, leaderboard: 25, ticket_trend_card: 25, time_trend_card: 25, sla_trend_card: 25 } })
       @account.add_feature(:custom_dashboard)
       @account.dashboards.destroy_all
       create_dashboard_with_widgets(nil, 0, 0)
       create_dashboard_with_widgets(nil, 0, 0)
-      @@group = create_group(@account)
+      @@group = create_group_with_agents(@account, { agent_list: [@agent.id] })
       create_dashboard_with_widgets({group_ids: @@group.id}, 0, 0)
       @@scorecard_dashboard = create_dashboard_with_widgets(nil, 2, 0)
       @@bar_chart_dashboard = create_dashboard_with_widgets(nil, 3, 1)
-      @@forum_moderation_dashboard = create_dashboard_with_widgets(nil, 1, 4)
+      # @@forum_moderation_dashboard = create_dashboard_with_widgets(nil, 1, 4)
       setup_for_csat_widget
       @@product = create_product
-      @@trend_card_dashboard = create_dashboard_with_widgets(nil, 2, 5)
+      @@ticket_trend_card_dashboard = create_dashboard_with_widgets(nil, 2, 5)
+      @@time_trend_card_dashboard = create_dashboard_with_widgets(nil, 2, 6)
+      @@sla_trend_card_dashboard = create_dashboard_with_widgets(nil, 2, 7)
       @@before_all_run = true
     end
 
@@ -50,7 +52,7 @@ module Ember
       end
       @@positive_survey_with_group = 4
       @@survey_count_with_group = 4
-      @@csat_group = create_group(@account)
+      @@csat_group = create_group_with_agents(@account, { agent_list: [@agent.id]})
       ticket = create_ticket({}, @@csat_group)
       @@positive_survey_with_group.times do
         create_survey_result(ticket, 103)
@@ -69,14 +71,14 @@ module Ember
     end
 
     def test_dashboard_index_403
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
       get :index, controller_params({ version: 'private' }, false)
       assert_response 403
     end
 
     def test_dashboard_index_200
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :index, controller_params({ version: 'private' }, false)
       response_hash = JSON.parse(response.body).map(&:deep_symbolize_keys)
@@ -85,7 +87,7 @@ module Ember
     end
 
     def test_dashboard_create_403
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(0)
       dashboard_object.add_widget(0)
@@ -94,7 +96,7 @@ module Ember
     end
 
     def test_dashboard_create_201_global_access
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(0)
       dashboard_object.add_widget(0)
@@ -106,7 +108,7 @@ module Ember
     end
 
     def test_dashboard_create_201_group_access
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       group = @account.groups.first
       dashboard_object = DashboardObject.new(2, [group.id])
       dashboard_object.add_widget(0)
@@ -119,8 +121,8 @@ module Ember
     end
 
     def test_dashboard_create_400_global_access_with_group_ids
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
-      group = create_group(@account)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      group = create_group_with_agents(@account, { agent_list: [@agent.id]})
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(0)
       dashboard_object.add_widget(0)
@@ -131,7 +133,7 @@ module Ember
     end
 
     def test_dashboard_create_400_group_access_without_group_ids
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       dashboard_object = DashboardObject.new(2)
       dashboard_object.add_widget(0)
       dashboard_object.add_widget(0)
@@ -141,8 +143,8 @@ module Ember
     end
 
     def test_dashboard_create_400_group_access_with_incorrect_group_ids
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
-      group = create_group(@account)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      group = create_group_with_agents(@account, { agent_list: [@agent.id]})
       dashboard_object = DashboardObject.new(2)
       dashboard_object.add_widget(0)
       dashboard_object.add_widget(0)
@@ -153,14 +155,14 @@ module Ember
     end
 
     def test_dashboard_show_403
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
       get :show, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
       assert_response 403
     end
 
     def test_dashboard_show_200_by_dashboard_admin
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :show, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
       response_hash = JSON.parse(response.body).deep_symbolize_keys
@@ -169,7 +171,7 @@ module Ember
     end
 
     def test_dashboard_show_200_by_agents
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :show, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
       response_hash = JSON.parse(response.body).deep_symbolize_keys
@@ -178,28 +180,28 @@ module Ember
     end
 
     def test_dashboard_show_404
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :show, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id + rand(1000..100_00) }, false)
       assert_response 404
     end
 
     def test_dashboard_update_403
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
       put :update, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
       assert_response 403
     end
 
     def test_dashboard_update_403_by_agents
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       put :update, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
       assert_response 403
     end
 
     def test_dashboard_update_200_with_accessible_attributes
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       updated_atributes = { type: 2, group_ids: [@@group.id] }
       put :update, controller_params(wrap_cname(updated_atributes).merge(id: @@dashboard_list.first.db_record.id, version: 'private'), false)
@@ -207,7 +209,7 @@ module Ember
     end
 
     def test_dashboard_update_200_with_incorrect_accessible_attributes
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       updated_atributes = { type: 0, group_ids: [@@group.id] }
       put :update, controller_params(wrap_cname(updated_atributes).merge(id: @@dashboard_list.first.db_record.id, version: 'private'), false)
@@ -215,29 +217,41 @@ module Ember
     end    
 
     def test_dashboard_destroy_403_by_agents
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       delete :destroy, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
       assert_response 403
     end
 
     def test_dashboard_destroy_204_by_dashboard_admin
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       delete :destroy, controller_params({ version: 'private', id: @@dashboard_list.delete(@@dashboard_list.first).db_record.id }, false)
       assert_response 204
     end
 
     def test_dashboard_destroy_404_by_dashboard_admin
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       delete :destroy, controller_params({ version: 'private', id: rand(1000..100_00) }, false)
       assert_response 404
     end
+
+    # widgets_data response meta test case
+    def test_widgets_data_api_meta
+      stub_data = fetch_scorecard_stub(@@scorecard_dashboard.widgets)
+      ::Dashboard::TrendCount.any_instance.stubs(:fetch_count).returns(stub_data)
+      get :widgets_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, type: 'scorecard')
+      assert_response 200
+      assert_not_nil response.api_meta[:last_dump_time]
+      assert_not_nil response.api_meta[:dashboard][:last_modified_since]
+    ensure
+      ::Dashboard::TrendCount.any_instance.unstub(:fetch_count)
+    end
     # Basic preview API tests
 
     def test_widget_data_preview_without_access
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
       get :widget_data_preview, controller_params(version: 'private')
       assert_response 403
     end
@@ -403,104 +417,104 @@ module Ember
       match_json(bar_chart_preview_response_percentage_pattern(field.id))
     end
 
-    def test_widget_data_preview_for_trend_card_with_invalid_metric
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 'invalid')
+    def test_widget_data_preview_for_ticket_trend_card_with_invalid_metric
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 'invalid')
       assert_response 400
     end
 
-    def test_widget_data_preview_for_trend_card_with_invalid_date_range
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 2, date_range: 5)
+    def test_widget_data_preview_for_ticket_trend_card_with_invalid_date_range
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 2, date_range: 6)
       assert_response 400
     end
 
-    def test_widget_data_preview_for_trend_card_with_invalid_group_id
+    def test_widget_data_preview_for_ticket_trend_card_with_invalid_group_id
       invalid_group_id = (Account.current.groups.maximum(:id) || 0) + 20
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 5, date_range: 1, group_ids: [invalid_group_id])
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 3, date_range: 1, group_ids: [invalid_group_id])
       assert_response 400
     end
 
-    def test_widget_data_preview_for_trend_card_with_invalid_product_id
+    def test_widget_data_preview_for_ticket_trend_card_with_invalid_product_id
       Account.any_instance.stubs(:multi_product_enabled?).returns(true)
       invalid_product_id = (Account.current.products.maximum(:id) || 0) + 20
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 5, date_range: 1, product_id: invalid_product_id)
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 2, date_range: 1, product_id: invalid_product_id)
       assert_response 400
     ensure
       Account.any_instance.unstub(:multi_product_enabled?)
     end
 
-    def test_widget_data_preview_for_trend_card_with_invalid_metric_type
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 5, date_range: 1, metric_type: 4)
-      assert_response 400
-    end
-
-    def test_widget_data_preview_for_trend_card_with_product_id_multiproduct_not_enabled
+    def test_widget_data_preview_for_ticket_trend_card_with_product_id_multiproduct_not_enabled
       invalid_product_id = (Account.current.products.maximum(:id) || 0) + 20
       Account.any_instance.stubs(:multi_product_enabled?).returns(false)
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 5, date_range: 1, product_id: invalid_product_id)
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 3, date_range: 1, product_id: invalid_product_id)
       assert_response 400
     ensure
       Account.any_instance.unstub(:multi_product_enabled?)
     end
 
-    def test_widget_data_preview_for_trend_card_without_metric
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', date_range: 1)
+    def test_widget_data_preview_for_ticket_trend_card_without_metric
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', date_range: 1)
       assert_response 400
     end
 
-    def test_widget_data_preview_for_trend_card_without_metric_type
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 1, date_range: 1)
+    def test_widget_data_preview_for_ticket_trend_card_without_date_range
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 1)
       assert_response 400
     end
 
-    def test_widget_data_preview_for_trend_card_without_date_range
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 1)
-      assert_response 400
-    end
-
-    def test_widget_data_preview_for_trend_card_without_group_ids
+    def test_widget_data_preview_for_ticket_trend_card_without_group_ids
       stub_data = trend_card_reports_response_stub
       ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 3, metric_type: 1, date_range: 3)
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 3, date_range: 3)
       assert_response 200
       match_json(trend_card_preview_response_pattern(stub_data))
     end
 
-    def test_widget_data_preview_for_trend_card_without_product_id
+    def test_widget_data_preview_for_ticket_trend_card_without_product_id
       stub_data = trend_card_reports_response_stub
       ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 3, metric_type: 1, date_range: 3)
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 3, date_range: 3)
       assert_response 200
       match_json(trend_card_preview_response_pattern(stub_data))
     ensure
       ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
     end
 
-    def test_widget_data_preview_for_trend_card_with_all_products
+    def test_widget_data_preview_for_ticket_trend_card_with_all_products
       stub_data = trend_card_reports_response_stub
       ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 3, metric_type: 1, date_range: 3, product_id: 0)
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 3, date_range: 3, product_id: 0)
       assert_response 200
       match_json(trend_card_preview_response_pattern(stub_data))
     ensure
       ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
     end
 
-    def test_widget_data_preview_for_trend_card_with_multiple_groups
+    def test_widget_data_preview_for_ticket_trend_card_with_multiple_groups
       valid_group_ids = Account.current.groups_from_cache.map(&:id).slice(0..3)
       stub_data = trend_card_reports_response_stub
       ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 3, metric_type: 1, date_range: 3, group_ids: valid_group_ids)
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 3, date_range: 3, group_ids: valid_group_ids)
       assert_response 200
       match_json(trend_card_preview_response_pattern(stub_data))
     ensure
       ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
     end
 
-    def test_widget_data_preview_for_trend_card_with_product_id
+    def test_widget_data_preview_for_ticket_trend_card_with_all_groups
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 3, date_range: 3, group_ids: [0])
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_ticket_trend_card_with_product_id
       stub_data = trend_card_reports_response_stub
       Account.any_instance.stubs(:multi_product_enabled?).returns(true)
       ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 3, metric_type: 1, date_range: 3, product_id: @@product.id)
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 3, date_range: 3, product_id: @@product.id)
       assert_response 200
       match_json(trend_card_preview_response_pattern(stub_data))
     ensure
@@ -508,12 +522,248 @@ module Ember
       Account.any_instance.unstub(:multi_product_enabled?)
     end
 
-    def test_widget_data_preview_for_trend_card_with_valid_config
+    def test_widget_data_preview_for_ticket_trend_card_with_valid_config
       valid_group_ids = Account.current.groups_from_cache.map(&:id).slice(0..2)
       stub_data = trend_card_reports_response_stub
       Account.any_instance.stubs(:multi_product_enabled?).returns(true)
       ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
-      get :widget_data_preview, controller_params(version: 'private', type: 'trend_card', metric: 3, metric_type: 1, date_range: 3, group_ids: valid_group_ids, product_id: @@product.id)
+      get :widget_data_preview, controller_params(version: 'private', type: 'ticket_trend_card', metric: 3, date_range: 3, group_ids: valid_group_ids, product_id: @@product.id)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+      Account.any_instance.unstub(:multi_product_enabled?)
+    end
+
+    def test_widget_data_preview_for_time_trend_card_with_invalid_metric
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 'invalid')
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_time_trend_card_with_invalid_date_range
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 5, date_range: 6)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_time_trend_card_with_invalid_group_id
+      invalid_group_id = (Account.current.groups.maximum(:id) || 0) + 20
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 5, date_range: 1, group_ids: [invalid_group_id])
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_time_trend_card_with_invalid_product_id
+      Account.any_instance.stubs(:multi_product_enabled?).returns(true)
+      invalid_product_id = (Account.current.products.maximum(:id) || 0) + 20
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 6, date_range: 1, product_id: invalid_product_id)
+      assert_response 400
+    ensure
+      Account.any_instance.unstub(:multi_product_enabled?)
+    end
+
+    def test_widget_data_preview_for_time_trend_card_with_product_id_multiproduct_not_enabled
+      invalid_product_id = (Account.current.products.maximum(:id) || 0) + 20
+      Account.any_instance.stubs(:multi_product_enabled?).returns(false)
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 7, date_range: 1, product_id: invalid_product_id)
+      assert_response 400
+    ensure
+      Account.any_instance.unstub(:multi_product_enabled?)
+    end
+
+    def test_widget_data_preview_for_time_trend_card_without_metric
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', date_range: 1)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_time_trend_card_without_date_range
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 5)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_time_trend_card_without_group_ids
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 7, date_range: 3)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    end
+
+    def test_widget_data_preview_for_time_trend_card_without_product_id
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 4, date_range: 3)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_time_trend_card_with_all_products
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 5, date_range: 3, product_id: 0)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_time_trend_card_with_all_groups
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 5, date_range: 3, group_ids: [0])
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_time_trend_card_with_multiple_groups
+      valid_group_ids = Account.current.groups_from_cache.map(&:id).slice(0..3)
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 4, date_range: 3, group_ids: valid_group_ids)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_time_trend_card_with_product_id
+      stub_data = trend_card_reports_response_stub
+      Account.any_instance.stubs(:multi_product_enabled?).returns(true)
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 6, date_range: 3, product_id: @@product.id)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+      Account.any_instance.unstub(:multi_product_enabled?)
+    end
+
+    def test_widget_data_preview_for_time_trend_card_with_valid_config
+      valid_group_ids = Account.current.groups_from_cache.map(&:id).slice(0..2)
+      stub_data = trend_card_reports_response_stub
+      Account.any_instance.stubs(:multi_product_enabled?).returns(true)
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'time_trend_card', metric: 5, date_range: 3, group_ids: valid_group_ids, product_id: @@product.id)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+      Account.any_instance.unstub(:multi_product_enabled?)
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_with_invalid_metric
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 'invalid')
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_with_invalid_date_range
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 8, date_range: 7)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_with_invalid_group_id
+      invalid_group_id = (Account.current.groups.maximum(:id) || 0) + 20
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 9, date_range: 1, group_ids: [invalid_group_id])
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_with_invalid_product_id
+      Account.any_instance.stubs(:multi_product_enabled?).returns(true)
+      invalid_product_id = (Account.current.products.maximum(:id) || 0) + 20
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 10, date_range: 1, product_id: invalid_product_id)
+      assert_response 400
+    ensure
+      Account.any_instance.unstub(:multi_product_enabled?)
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_with_product_id_multiproduct_not_enabled
+      invalid_product_id = (Account.current.products.maximum(:id) || 0) + 20
+      Account.any_instance.stubs(:multi_product_enabled?).returns(false)
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 9, date_range: 1, product_id: invalid_product_id)
+      assert_response 400
+    ensure
+      Account.any_instance.unstub(:multi_product_enabled?)
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_without_metric
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', date_range: 1)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_without_date_range
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 10)
+      assert_response 400
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_without_group_ids
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 8, date_range: 3)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_without_product_id
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 9, date_range: 3)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_with_all_products
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 9, date_range: 3, product_id: 0)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_with_all_groups
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 8, date_range: 3, group_ids: [0])
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_with_multiple_groups
+      valid_group_ids = Account.current.groups_from_cache.map(&:id).slice(0..3)
+      stub_data = trend_card_reports_response_stub
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 8, date_range: 3, group_ids: valid_group_ids)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_with_product_id
+      stub_data = trend_card_reports_response_stub
+      Account.any_instance.stubs(:multi_product_enabled?).returns(true)
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 9, date_range: 3, product_id: @@product.id)
+      assert_response 200
+      match_json(trend_card_preview_response_pattern(stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+      Account.any_instance.unstub(:multi_product_enabled?)
+    end
+
+    def test_widget_data_preview_for_sla_trend_card_with_valid_config
+      valid_group_ids = Account.current.groups_from_cache.map(&:id).slice(0..2)
+      stub_data = trend_card_reports_response_stub
+      Account.any_instance.stubs(:multi_product_enabled?).returns(true)
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widget_data_preview, controller_params(version: 'private', type: 'sla_trend_card', metric: 9, date_range: 3, group_ids: valid_group_ids, product_id: @@product.id)
       assert_response 200
       match_json(trend_card_preview_response_pattern(stub_data))
     ensure
@@ -539,8 +789,20 @@ module Ember
       match_json([])
     end
 
-    def test_widgets_data_for_trend_card_in_dashboard_without_trend_card
-      get :widgets_data, controller_params(version: 'private', id: @@scorecard_dashboard.id, type: 'trend_card')
+    def test_widgets_data_for_ticket_trend_card_in_dashboard_without_trend_card
+      get :widgets_data, controller_params(version: 'private', id: @@scorecard_dashboard.id, type: 'ticket_trend_card')
+      assert_response 200
+      match_json([])
+    end
+
+    def test_widgets_data_for_time_trend_card_in_dashboard_without_trend_card
+      get :widgets_data, controller_params(version: 'private', id: @@scorecard_dashboard.id, type: 'time_trend_card')
+      assert_response 200
+      match_json([])
+    end
+
+    def test_widgets_data_for_sla_trend_card_in_dashboard_without_trend_card
+      get :widgets_data, controller_params(version: 'private', id: @@scorecard_dashboard.id, type: 'sla_trend_card')
       assert_response 200
       match_json([])
     end
@@ -581,37 +843,57 @@ module Ember
       match_json(bar_chart_data_response_pattern(widget))
     end
 
-    def test_widgets_data_for_trend_card_widgets
-      stub_data = fetch_trend_card_stub(@@trend_card_dashboard.widgets)
+    def test_widgets_data_for_ticket_trend_card_widgets
+      stub_data = fetch_trend_card_stub(@@ticket_trend_card_dashboard.widgets)
       ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
-      get :widgets_data, controller_params(version: 'private', id: @@trend_card_dashboard.id, type: 'trend_card')
+      get :widgets_data, controller_params(version: 'private', id: @@ticket_trend_card_dashboard.id, type: 'ticket_trend_card')
       assert_response 200
-      match_json(trend_card_response_pattern(@@trend_card_dashboard.widgets, stub_data))
+      match_json(trend_card_response_pattern(@@ticket_trend_card_dashboard.widgets, stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widgets_data_for_time_trend_card_widgets
+      stub_data = fetch_trend_card_stub(@@time_trend_card_dashboard.widgets)
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widgets_data, controller_params(version: 'private', id: @@time_trend_card_dashboard.id, type: 'time_trend_card')
+      assert_response 200
+      match_json(trend_card_response_pattern(@@time_trend_card_dashboard.widgets, stub_data))
+    ensure
+      ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
+    end
+
+    def test_widgets_data_for_sla_trend_card_widgets
+      stub_data = fetch_trend_card_stub(@@sla_trend_card_dashboard.widgets)
+      ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
+      get :widgets_data, controller_params(version: 'private', id: @@sla_trend_card_dashboard.id, type: 'sla_trend_card')
+      assert_response 200
+      match_json(trend_card_response_pattern(@@sla_trend_card_dashboard.widgets, stub_data))
     ensure
       ::Dashboard::RedshiftRequester.any_instance.unstub(:fetch_records)
     end
 
     def test_widget_data_preview_for_forum_moderation_403_by_agent
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'forum_moderation')
       assert_response 403
     end
 
     def test_widget_data_preview_for_forum_moderation_200_by_dashboard_admin
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'forum_moderation')
-      assert_response 200
+      assert_response 400
     end
 
     def test_widgets_data_for_forum_moderation_widgets
-      get :widgets_data, controller_params(version: 'private', id: @@forum_moderation_dashboard.id, type: 'forum_moderation')
-      assert_response 200
+      get :widgets_data, controller_params(version: 'private', id: @@scorecard_dashboard.id, type: 'forum_moderation')
+      assert_response 400
     end
 
     def test_widget_data_preview_for_csat_403_by_agent
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat')
       assert_response 403
@@ -619,7 +901,7 @@ module Ember
 
     def test_widget_data_preview_for_csat_400_without_feature_by_dashboard_admin
       Account.any_instance.stubs(:new_survey_enabled?).returns(false)
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '3')
       assert_response 403
@@ -627,7 +909,7 @@ module Ember
 
     def test_widget_data_preview_for_csat_200_without_groups_monthly_filter
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '3')
       assert_response 200
@@ -636,7 +918,7 @@ module Ember
 
     def test_widget_data_preview_for_csat_200_without_groups_weekly_filter
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '2')
       assert_response 200
@@ -645,7 +927,7 @@ module Ember
 
     def test_widget_data_preview_for_csat_200_without_groups_daily_filter
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '1')
       assert_response 200
@@ -654,16 +936,16 @@ module Ember
 
     def test_widget_data_preview_for_csat_200_with_group_monthly_filter
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
-      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '3', group_ids: [@@csat_group.id])
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '5', group_ids: [@@csat_group.id])
       assert_response 200
       match_json({ survey_responded: @@survey_count_with_group, results: [{ label: 'positive', value: (@@positive_survey_with_group * 100) / (@@survey_count_with_group) }, { label: 'negative', value: 0 }, { label: 'neutral', value: 0 }]})
     end
 
     def test_widget_data_preview_for_csat_400_with_invalid_group
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '3', group_ids: [@@csat_group.id + rand(10_00..100_00)])
       assert_response 400
@@ -671,24 +953,24 @@ module Ember
 
     def test_widget_data_preview_for_csat_400_with_invalid_timerange
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
-      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '4')
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '6')
       assert_response 400
     end
 
     def test_widget_data_preview_for_csat_200_with_group_daily_filter
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
-      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '1', group_ids: [@@csat_group.id])
+      get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '4', group_ids: [@@csat_group.id])
       assert_response 200
       match_json({ survey_responded: @@survey_count_with_group, results: [{ label: 'positive', value: (@@positive_survey_with_group * 100) / (@@survey_count_with_group) }, { label: 'negative', value: 0 }, { label: 'neutral', value: 0 }]})
     end
 
     def test_widget_data_preview_for_csat_200_with_group_weekly_filter
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '2', group_ids: [@@csat_group.id])
       assert_response 200
@@ -699,7 +981,7 @@ module Ember
       @account.custom_survey_results.destroy_all
       positive_survey = 4
       survey_count = positive_survey
-      group = create_group(@account)
+      group = create_group_with_agents(@account, { agent_list: [@agent.id]})
       options = { time_range: 3, group_ids: [group.id] }
       csat_dashboard = create_dashboard_with_widgets(nil, 1, 2, [options])
       ticket = create_ticket({}, group)
@@ -731,14 +1013,14 @@ module Ember
     def test_widget_data_preview_for_leaderboard_403_without_feature
       Account.any_instance.stubs(:gamification_enabled?).returns(false)
       Account.any_instance.stubs(:gamification_enable_enabled?).returns(false)
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'leaderboard')
       assert_response 403
     end
 
     def test_widget_data_preview_for_leaderboard_403_by_agent
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'leaderboard')
       assert_response 403

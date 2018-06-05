@@ -21,7 +21,6 @@ class Dashboard < ActiveRecord::Base
 
   validates_presence_of :name
 
-  # come again for module cache
   after_commit :clear_custom_dashboard_widgets_cache, except: :destroy
   before_destroy :clear_custom_dashboard_widgets_cache
 

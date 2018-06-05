@@ -171,15 +171,13 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/dashboard", only: %i(unresolved_tickets_data ticket_trends ticket_metrics)
     resource :"ember/year_in_review", only: [:share]
     resource :"ember/admin/bot", only: %i[analytics]
+    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview]
   end
 
   view_admin do 
     resource :"ember/agent", only: [:complete_gdpr_acceptance]
   end
 
-  manage_dashboard do 
-    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview]
-  end
 
   manage_bots do
     resource :"ember/admin/bot", only: %i[new create show index update map_categories mark_completed_status_seen enable_on_portal]
