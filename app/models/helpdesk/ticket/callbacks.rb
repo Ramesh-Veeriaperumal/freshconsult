@@ -269,7 +269,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
           :user => self.requester,
           :source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'],
           :account_id => self.account.id,
-          :user_id => self.requester.id
+          :user_id => self.requester.id,
+          :disable_observer => true,
+          :s3_create => false
         )
         meta_note.attachments = meta_note.inline_attachments = []
         meta_note.save_note

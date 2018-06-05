@@ -295,6 +295,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def update_ticket_states
+      return if meta?
       user_id = User.current.id if User.current
       ::Tickets::UpdateTicketStatesWorker.perform_async(
             { :id => id, :model_changes => @model_changes,
