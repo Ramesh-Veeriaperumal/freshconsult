@@ -429,12 +429,7 @@ class Subscription < ActiveRecord::Base
   
     def set_renewal_at
       return if self.subscription_plan.nil? || self.next_renewal_at
-
-      if redis_key_exists? TRIAL_21_DAYS 
-        self.next_renewal_at = Time.now.advance(:days => TRIAL_DAYS)
-      else
-        self.next_renewal_at = Time.now.advance(:months => self.renewal_period)
-      end
+      self.next_renewal_at = Time.now.advance(:days => TRIAL_DAYS)
     end
 
     def update_gnip_subscription(twitter_method_name)
