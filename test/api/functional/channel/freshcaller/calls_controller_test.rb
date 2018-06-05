@@ -149,7 +149,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     call_id = get_call_id
     create_call(fc_call_id: call_id)
     put :update, construct_params(update_invalid_params(call_id))
-    match_json([bad_request_error_pattern(:call_status, :not_included, list: 'voicemail,no-answer,completed,in-progress'),
+    match_json([bad_request_error_pattern(:call_status, :not_included, list: 'voicemail,no-answer,completed,in-progress,on-hold'),
                 bad_request_error_pattern(:call_created_at, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
                 bad_request_error_pattern(:customer_number, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
                 bad_request_error_pattern(:agent_number, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),

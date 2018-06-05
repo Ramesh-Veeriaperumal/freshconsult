@@ -35,5 +35,15 @@ module Freshcaller
     def note_id
       notable_id if notable_id.present? && notable_type.eql?('Helpdesk::Note')
     end
+
+    def associated_ticket
+      return if notable_type.blank?
+      return ticket if ticket_notable?
+      note.notable
+    end
+
+    def ticket_notable?
+      notable_type == "Helpdesk::Ticket"
+    end
   end
 end
