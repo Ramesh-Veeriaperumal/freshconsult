@@ -12027,6 +12027,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     ticket:
       completed_title: "Call with %{customer} on %{date} at %{time}"
       inprogress_title: "Call with %{customer} on %{date} at %{time}"
+      onhold_title: "Call with %{customer} on %{date} at %{time}"
       voicemail_title: "Voicemail from %{customer}"
       outgoing_noanswer_title: "Missed Call to %{customer}"
       incoming_noanswer_title: "Missed Call from %{customer}"
@@ -12036,6 +12037,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       incoming_noanswer_description: "Missed Call from %{customer} to %{agent}"
       outgoing_noanswer_description: "Missed Call from %{agent} to %{customer}"
       inprogress_description: "Conversation with %{customer} and %{agent}"
+      onhold_description: "Conversation with %{customer} and %{agent}"
 
     info:
       follow_flash: "Hey there!<br>You are now following this Team Huddle and will be notified of all new messages in-app and via email."
