@@ -29,6 +29,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
 
+  before_save :sanitise_subject, :if => :should_sanitise_subject? 
+
   before_update :update_sender_email
 
   before_update :stop_recording_timestamps, :unless => :model_changes?
@@ -532,6 +534,10 @@ private
     Account.current.auto_refresh_enabled?
   end
 
+  def should_sanitise_subject?
+     model_changes[:subject] && Account.current.encode_emoji_subject_enabled?
+  end
+
   #RAILS3 Hack. TODO - @model_changes is a HashWithIndifferentAccess so we dont need symbolize_keys!,
   #but observer excpects all keys to be symbols and not strings. So doing a workaround now.
   #After Rails3, we will cleanup this part
@@ -564,6 +570,10 @@ private
     Account.current.ticket_field_def.boolean_ff_aliases.each do |f|
       set_ff_value(f, 0) unless self.safe_send(f)
     end
+  end
+
+  def sanitise_subject 
+    self.subject = UnicodeSanitizer.remove_4byte_chars(self.subject)
   end
 
   def update_company_id
