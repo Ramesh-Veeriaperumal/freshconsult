@@ -16,6 +16,7 @@ gem 'jbuilder', "2.2.13"
 gem 'strong_parameters', "0.2.3" # Used for API params validation
 
 gem "mysql2", "~> 0.3.0"
+gem "bootsnap", :require => false
 
 gem "connection_pool"
 gem "clamav-client", "3.1.0", require: "clamav/client"
