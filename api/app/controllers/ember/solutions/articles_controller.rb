@@ -1,6 +1,8 @@
 module Ember
   module Solutions
     class ArticlesController < ApiSolutions::ArticlesController
+      include HelperConcern
+
       before_filter :filter_ids, only: [:index]
 
       decorate_views(decorate_object: [:article_content])
@@ -12,19 +14,28 @@ module Ember
         super
       end
 
+      def article_content
+        @constants_klass = 'SolutionConstants'.freeze
+        @validation_klass = 'SolutionArticleFilterValidation'.freeze
+        return unless validate_query_params
+        load_article
+      end
+
       def self.wrap_params
         ::SolutionConstants::ARTICLE_WRAP_PARAMS
       end
 
       private
 
-        def load_object
-          @item = scoper.find_by_parent_id(params[:id])
+        def load_article
+          language_id = params[:language_id] || Language.for_current_account.id
+          @item = scoper.where(parent_id: params[:id], language_id: language_id).first
           log_and_render_404 unless @item
         end
 
         def load_objects
-          @items = scoper.preload(conditional_preload_options).where(parent_id: @ids)
+          language_id = params[:language_id] || Language.for_current_account.id
+          @items = scoper.preload(conditional_preload_options).where(parent_id: @ids, language_id: language_id)
           # Instead of using validation to give 4xx response for bad ids,
           # we are going to tolerate and send response for the good ones alone.
           # Because the primary use case for this is Recently used Solution articles
