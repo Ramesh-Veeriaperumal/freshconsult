@@ -35,9 +35,6 @@ allOf:
       agent_id:
         type: integer
         format: int64
-      language_id:
-        type: integer
-        format: int64
       title:
         type: string
       description:

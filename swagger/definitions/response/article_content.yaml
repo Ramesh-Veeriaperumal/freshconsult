@@ -3,9 +3,6 @@ properties:
   id:
     type: integer
     format: int64
-  language_id:
-    type: integer
-    format: int64
   description:
     type: string
   description_text:

@@ -16,7 +16,6 @@ class AccountDecorator < ApiDecorator
       features: record.enabled_features_list,
       launched: record.all_launched_features,
       subscription: subscription_hash,
-      portal_languages: record.all_portal_language_objects,
       settings: settings_hash,
       ssl_enabled: record.ssl_enabled?,
       verified: record.verified?,

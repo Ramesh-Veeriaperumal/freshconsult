@@ -33,9 +33,8 @@ module SolutionConstants
 
   INDEX_PRELOAD_OPTIONS = [{ solution_article_meta: [:solution_folder_meta, :solution_category_meta] }, :article_body, :draft, draft: :draft_body].freeze
 
-  LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content].freeze
+  LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles].freeze
 
   INDEX_FIELDS = %w(language).freeze
-  RECENT_ARTICLES_FIELDS = %w(ids user_id language_id).freeze
-  ARTICLE_CONTENT_FIELDS = %w(language_id).freeze
+  RECENT_ARTICLES_FIELDS = %w(ids user_id).freeze
 end

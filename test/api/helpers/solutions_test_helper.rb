@@ -88,7 +88,6 @@ module SolutionsTestHelper
     ret_hash[:modified_by] = article.modified_by
     ret_hash[:visibility] = { user.id => article.parent.visible?(user) || false } if user
     ret_hash[:folder_visibility] = article.solution_folder_meta.visibility
-    ret_hash[:language_id] = article.language_id
     ret_hash
   end
 
@@ -97,7 +96,6 @@ module SolutionsTestHelper
       id: expected_output[:id] || article.parent.id,
       description: expected_output[:description] || article.description,
       description_text: expected_output[:description_text] || article.desc_un_html,
-      language_id: expected_output[:language_id] || article.language_id,
       attachments: Array
     }
   end
