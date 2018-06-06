@@ -167,7 +167,7 @@ module HelpdeskReports::Helper::Ticket
       csv << csv_headers.collect{|i| csv_headers_hash[i] } # CSV Headers
       @data.each do |row|
         res = []
-        csv_headers.each { |i| res << (row[i] == NA_PLACEHOLDER_SUMMARY ? nil : presentable_format(row[i], i))}
+        csv_headers.each { |i| res << (row[i] == NA_PLACEHOLDER_SUMMARY ? nil : (i=="agent_name" || i=="group_name" ? (presentable_format("'#{row[i]}'", i)):(presentable_format(row[i], i))))}
         csv << res
       end
       csv << t('helpdesk_reports.export_exceeds_row_limit_msg', :row_max_limit => csv_row_limit) if exceeds_limit
