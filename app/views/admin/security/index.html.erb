@@ -73,16 +73,6 @@
               </ul>
             </div>
           </li>
-
-          <% if sso_type == SsoUtil::SSO_TYPES[:oauth2].to_sym %>
-            <li>
-              <%= radio_button_tag("account[sso_options][sso_type]", "oauth2", (sso_type == SsoUtil::SSO_TYPES[:oauth2].to_sym)) %>
-              <span class="enable_heading"> <%=t(".enable_oauth_sso")%> </span>
-              <%= content_tag( :div, t(".enable_sso_info"), :class => "info-data mt5" ) %>
-              <div class="info-data"  id="oauth2_sso_form" style="display:<%= sso_type == SsoUtil::SSO_TYPES[:oauth2].to_sym ? "block": "none" %>;">
-              </div>
-            </li>
-          <% end %>
         </ul>
         <!-- SSO END -->
       </div>

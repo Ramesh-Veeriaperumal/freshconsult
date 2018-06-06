@@ -11,31 +11,11 @@ class FreshidController < ApplicationController
   def authorize_callback
     user = fetch_user_by_code(params[:code], freshid_authorize_callback_url, current_account)
     Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
-    freshid_auth_failure_redirect_back and return if user.nil? && !authorize_via_freshworks_login_page?
-    show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
+    freshid_auth_failure_redirect_back and return if user.nil? && session[:authorize]
+    freshid_auth_failure_redirect_back(FLASH_USER_NOT_EXIST, support_login_path) and return if user.nil? && authorize_via_freshworks_login_page?
+    freshid_auth_failure_redirect_back(FLASH_INVALID_USER) and return if !user.valid_user?
     activate_user user
     create_user_session user
-  end
-
-  def oauth_agent_authorize_callback
-    user = fetch_user_by_code(params[:code], freshid_oauth_agent_authorize_callback_url, current_account)
-    Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
-    show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
-    create_user_session(user)
-  end
-
-  def oauth_customer_authorize_callback
-    freshid_user_data = fetch_freshid_end_user_by_code(params[:code], freshid_oauth_customer_authorize_callback_url, current_account)
-    email = freshid_user_data.try(:[], :email)
-    user = nil
-    if email.present?
-      user = current_account.user_emails.user_for_email(email) || current_account.users.new(email: email)
-      Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
-      user.assign_freshid_attributes_to_contact(freshid_user_data)
-      user.save if user.changed?
-    end
-    show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
-    create_user_session(user)
   end
 
   private
@@ -47,16 +27,11 @@ class FreshidController < ApplicationController
         @current_user_session = @user_session
         @current_user = @user_session.record
         Rails.logger.info "FRESHID create_user_session :: a=#{current_account.try(:id)}, u=#{@current_user.try(:id)}"
-        perform_after_login if @current_user.agent?
+        perform_after_login
         redirect_back_or_default('/') if grant_day_pass
       else
         redirect_to login_url
       end
-    end
-
-    def show_login_error(user_not_present, invalid_user=false)
-      error_message = (user_not_present ? FLASH_USER_NOT_EXIST : (invalid_user ? FLASH_INVALID_USER : nil))
-      freshid_auth_failure_redirect_back(error_message, support_login_path) if error_message.present?
     end
 
     def perform_after_login

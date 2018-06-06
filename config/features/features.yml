@@ -95,7 +95,7 @@
       :smart_filter: 91	
       :ticket_summary: 92
       :shared_ownership: 93
-      :oauth2: 94
+      :autobots_2: 94
       :autobots_3: 95
       :autobots_4: 96
       :autobots_5: 97
@@ -200,4 +200,3 @@
       :support_bot: false
       :opt_out_analytics: false
       :disable_old_ui: false
-      oauth2: false

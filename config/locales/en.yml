@@ -2178,7 +2178,6 @@ en:
         enable_sso_info: Single Sign On allows you to use your own application or a centralized Server (like MS Active Directory) to authenticate agents and customers so that they can access Freshdesk without entering a separate username and password.
         enable_sso: Single Sign On (SSO)
         enable_simple_sso: Simple SSO
-        enable_oauth_sso: Oauth2 SSO
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
         enable_SSL: "Secure Connection using SSL"
@@ -2232,12 +2231,6 @@ en:
         for_contacts: For Contacts
         password_policy_info3: Changes you make to the password policy will be applicable within 8 hours. Your agents will be prompted to update their passwords during this time. If they fail to conform, they will be logged out of the support portal and will be forced to change their passwords the next time they try to log in.
         password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
-      errors:
-        simple_sso: 
-          invalid_login_url: Please provide a valid login url
-        saml_sso:
-          invalid_login_url: Please provide a valid SAML login url
-          invalid_fingerprint: Please provide a valid SAML Certificate Fingerprint
       helpnote:
         title: Security Settings
         info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
@@ -4931,7 +4924,7 @@ en:
     login_portal: "Login to the support portal"
     login_details: "Enter the details below"
     agent_login_info: "Are you an agent?"
-    customer_login_info: "Are you a customer?"
+    customer_signin: "Sign in as customer?"
     agent_signin: "Login here"
     helpdesk_login_portal: "Welcome back Agent"
     agent_login_details: "Enter the details below"
