@@ -1,0 +1,35 @@
+node('backend_file_test') {
+      try {
+          stage('Checkout') {
+            checkout([$class: 'GitSCM', branches: [[name: '*/pipeline-code']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])
+          }
+
+          stage('Prepare') {
+            sh 'yes | cp -rf /home/jenkins/s3.yml /home/jenkins/workspace/${JOB_NAME}/config/s3.yml'
+            sh 'yes | cp -rf /home/jenkins/redis.yml /home/jenkins/workspace/${JOB_NAME}/config/redis.yml'
+            sh 'yes | cp -rf /home/jenkins/elasticsearch.yml /home/jenkins/workspace/${JOB_NAME}/config/elasticsearch.yml'
+            sh 'yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/${JOB_NAME}/config/channel_api_keys.yml'
+            sh 'sudo service mysql start'
+            sh 'sudo service elasticsearch start'
+            sh 'sudo service postgresql start'
+            sh 'redis-server --daemonize yes'
+            sh 'bundle install'
+            sh 'echo "create database helpkit${BUILD_NUMBER}" | mysql -uroot'
+            sh 'sed -i "s/helpkit_test_rails3/helpkit${BUILD_NUMBER}/g" config/database.yml'
+            sh 'bundle exec rake db:bootstrap RAILS_ENV=test'
+          }
+
+          stage('Test') {
+            sh 'bundle exec ruby test/api/suites/public_api_test_suite.rb'
+          }
+
+      }
+      catch (e) {
+          echo 'Failed'
+      } finally {
+          stage('Publish Reports') {
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html', reportName: 'HTML report', reportTitles: ''])
+            junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'
+          }
+      }
+}
