@@ -1,5 +1,4 @@
 class Helpdesk::DeactivateFilterWidgets < BaseWorker
-  include Dashboard::Custom::CacheKeys
   include Cache::Memcache::Dashboard::Custom::CacheData
 
   sidekiq_options queue: :deactivate_filter_widgets, retry: 0, backtrace: true, failures: :exhausted
