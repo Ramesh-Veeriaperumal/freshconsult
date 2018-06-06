@@ -59,7 +59,7 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
     t.boolean  "premium",                        :default => false
     t.integer  "reputation",        :limit => 1, :default => 0
     t.string   "plan_features"
-    t.integer  "account_type",                     :limit => 4, :default => 0
+    t.integer  "account_type",      :limit => 4, :default => 0
   end
 
   add_index "accounts", ["full_domain"], :name => "index_accounts_on_full_domain", :unique => true

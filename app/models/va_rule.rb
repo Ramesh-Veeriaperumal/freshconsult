@@ -10,6 +10,9 @@ class VaRule < ActiveRecord::Base
     [ :all,   "dispatch.cascade",        1 ] 
   ]
   
+
+  xss_sanitize  :only => [:name, :description], :plain_sanitizer => [:name, :description]
+
   serialize :filter_data
   serialize :action_data
 
