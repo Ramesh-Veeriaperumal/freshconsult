@@ -16,6 +16,7 @@ class AccountDecorator < ApiDecorator
       features: record.enabled_features_list,
       launched: record.all_launched_features,
       subscription: subscription_hash,
+      portal_languages: record.all_portal_language_objects,
       settings: settings_hash,
       ssl_enabled: record.ssl_enabled?,
       verified: record.verified?,
@@ -24,7 +25,7 @@ class AccountDecorator < ApiDecorator
     ret_hash.merge!(sandbox_info)
     ret_hash[:collaboration] = collaboration_hash if record.collaboration_enabled?
     ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
-    ret_hash[:dashboard_limits] = record.account_additional_settings.dashboard_creation_limits if record.custom_dashboard_enabled?
+    ret_hash[:dashboard_limits] = record.account_additional_settings.custom_dashboard_limits if record.custom_dashboard_enabled?
     ret_hash[:freshchat] = freshchat_options_hash if record.freshchat_enabled?
     ret_hash
   end

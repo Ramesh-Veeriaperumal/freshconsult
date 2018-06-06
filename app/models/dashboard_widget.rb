@@ -37,9 +37,13 @@ class DashboardWidget < ActiveRecord::Base
 
   scope :leaderboards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:leaderboard.to_s], active: true }
 
-  scope :forum_moderations, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:forum_moderation.to_s], active: true }
+  # scope :forum_moderations, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:forum_moderation.to_s], active: true }
 
-  scope :trend_cards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:trend_card.to_s], active: true }
+  scope :ticket_trend_cards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:ticket_trend_card.to_s], active: true }
+
+  scope :time_trend_cards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:time_trend_card.to_s], active: true }
+
+  scope :sla_trend_cards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:sla_trend_card.to_s], active: true }
 
   def inactive_widget_updated?
     # Checking for changes not active because setting active to false cannot be should not be reverted.

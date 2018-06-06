@@ -88,7 +88,7 @@ module Ember
             }
           end
           @widgets_result = result[:widgets]
-          response.api_meta = { last_dump_time: result[:last_dump_time] }
+          response.api_meta = { last_dump_time: result[:last_dump_time], dashboard: { last_modified_since: @item.updated_at.to_i } }
         end
 
         define_method "#{module_name}_preview" do

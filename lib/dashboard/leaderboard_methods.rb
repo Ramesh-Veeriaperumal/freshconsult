@@ -127,7 +127,7 @@ module Dashboard::LeaderboardMethods
   end
 
   def monthly_leaderboard
-    current_time = Time.zone.now
+    current_time = Time.now.in_time_zone Account.current.time_zone
     category_list.each_with_index do |category, ind|
       leader_module_ids = months_ago_value ? @support_score.get_leader_ids(Account.current, @board_category, category, months_ago_value.month.ago(current_time.end_of_month), 50) : []
       Rails.logger.debug("In monthly_leaderboard :: #{leader_module_ids.inspect} :: #{category} :: #{months_ago_value}")

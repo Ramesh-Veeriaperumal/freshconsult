@@ -18,23 +18,18 @@ class CustomDashboardDelegator < BaseDelegator
       @widget_by_id = Hash[widgets.map { |w| [w[:id], w] }]
       count_existing_widgets(widgets)
     end
-    @dashboard_limits = Account.current.account_additional_settings.dashboard_creation_limits
+    @dashboard_limits = Account.current.account_additional_settings.custom_dashboard_limits
     super(record, options)
   end
 
   def count_existing_widgets(widgets)
     widgets.each do |widget|
-      widget_type = trend_card_widget?(widget) ? REPORT_WIDGET_MODULES_BY_TOKEN[widget.config_data[:metric_type]] : WIDGET_MODULES_BY_NAME[widget.widget_type]
-      @widget_count[widget_type] += 1
+      @widget_count[WIDGET_MODULES_BY_NAME[widget.widget_type]] += 1
     end
   end
 
   def initialise_widget_counts_to_zero
-    @widget_count = (WIDGET_MODULE_TOKEN_BY_NAME.keys + REPORT_WIDGET_MODULES_BY_NAME.keys - ['trend_card']).inject({}) { |h, k| h.merge(k => 0) }
-  end
-
-  def trend_card_widget?(widget)
-    widget.widget_type == WIDGET_MODULE_TOKEN_BY_NAME[:trend_card.to_s]
+    @widget_count = (WIDGET_MODULE_TOKEN_BY_NAME.keys).inject({}) { |h, k| h.merge(k => 0) }
   end
 
   def dashboard_creation_limit
@@ -44,21 +39,19 @@ class CustomDashboardDelegator < BaseDelegator
   end
 
   def validate_access_type
-    unless DASHBOARD_ACCESS_TYPE.values.include?(@accessible_attributes[:access_type])
+    if !DASHBOARD_ACCESS_TYPE.values.include?(@accessible_attributes[:access_type]) || all_access_dashboard?(@accessible_attributes[:access_type]) && !User.current.agent.all_ticket_permission
       errors[:type] << 'is invalid'
     end
   end
 
   def validate_accessible_groups
     group_ids = @accessible_attributes[:group_ids]
-    access_type = @accessible_attributes[:access_type]
-    valid_groups = Account.current.groups_from_cache.collect(&:id)
-    unless access_type == DASHBOARD_ACCESS_TYPE[:groups]
+    if @accessible_attributes[:access_type] != DASHBOARD_ACCESS_TYPE[:groups]
       errors[:group_ids] << 'incompatible_field'
       return
-    end
-    unless group_ids.all? { |group_id| valid_groups.include?(group_id) }
-      errors[:group_ids] << 'inaccessible_value'
+    else
+      valid_groups = fetch_accessible_groups
+      errors[:group_ids] << 'inaccessible_value' unless group_ids.all? { |group_id| valid_groups.include?(group_id) }
     end
   end
 
@@ -75,7 +68,6 @@ class CustomDashboardDelegator < BaseDelegator
   def update_widget_count(widget)
     return unless widget_created_or_destoryed?(widget) # Rejecting widget updates from counting.
     widget_type = WIDGET_MODULES_BY_NAME[widget[:widget_type] || @widget_by_id[widget[:id]].widget_type]
-    widget_type = REPORT_WIDGET_MODULES_BY_TOKEN[widget[:metric_type] || @widget_by_id[widget[:id]].config_data[:metric_type]] if widget_type == :trend_card.to_s
     @widget_count[widget_type] += widget[:_destroy].present? ? -1 : 1
   end
 
@@ -97,5 +89,13 @@ class CustomDashboardDelegator < BaseDelegator
     widget_to_be_updated = @widget_by_id[widget[:id]]
     widget_changes = widget_to_be_updated.config_data.merge(ticket_filter_id: widget_to_be_updated.ticket_filter_id).merge(widget)
     valid_widget_config?(widget_changes, widget_to_be_updated['widget_type'])
+  end
+
+  def all_access_dashboard?(access_type)
+    access_type == DASHBOARD_ACCESS_TYPE[:all]
+  end
+
+  def fetch_accessible_groups
+    User.current.agent.all_ticket_permission ? Account.current.groups_from_cache.map(&:id) : User.current.agent_groups.pluck(:group_id)
   end
 end

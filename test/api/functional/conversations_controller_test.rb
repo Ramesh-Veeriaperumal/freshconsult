@@ -611,7 +611,8 @@ class ConversationsControllerTest < ActionController::TestCase
     params = update_note_params_hash
     n = note
     put :update, construct_params({ id: n.id }, params)
-    User.any_instance.unstub(:privilege?, :owns_object?)
+    User.any_instance.unstub(:privilege?)
+    User.any_instance.unstub(:owns_object?) 
     assert_response 403
     match_json(request_error_pattern(:access_denied))
   end
@@ -624,7 +625,6 @@ class ConversationsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: n.id }, params)
     User.any_instance.unstub(:privilege?)
     assert_response 200
-    
     match_json(v2_update_note_pattern(params, n.reload))
     match_json(v2_update_note_pattern({}, n.reload))
   end

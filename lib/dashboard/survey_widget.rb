@@ -12,6 +12,11 @@ class Dashboard::SurveyWidget < Dashboards
     1 => 'day'
   }.freeze
 
+  TIME_RANGE = {
+    4 => 6,       # Last 7 days
+    5 => 29       # Last 30 days
+  }
+
   def initialize
     
   end
@@ -58,6 +63,11 @@ class Dashboard::SurveyWidget < Dashboards
     end
 
     def time_range_condition(time_range)
-      { condition: 'created_at > ?', value: Time.zone.now.send('beginning_of_' + TIME_PERIODS[time_range.to_i]).utc }
+      time_range = time_range.to_i
+      if TIME_PERIODS[time_range]
+        { condition: 'created_at > ?', value: Time.zone.now.send('beginning_of_' + TIME_PERIODS[time_range]).utc }
+      elsif TIME_RANGE[time_range]
+        { condition: 'created_at > ?', value: TIME_RANGE[time_range].days.ago.utc }
+      end
     end
 end

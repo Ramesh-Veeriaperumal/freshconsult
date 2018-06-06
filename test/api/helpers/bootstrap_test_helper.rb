@@ -78,6 +78,7 @@ module BootstrapTestHelper
       time_zone: account.time_zone,
       date_format: account.account_additional_settings.date_format,
       language: account.language,
+      portal_languages: JSON.parse(account.all_portal_language_objects.to_json),
       features: Array,
       launched: Array,
       settings: {
@@ -95,7 +96,7 @@ module BootstrapTestHelper
 
     pattern[:collaboration] = collab_pattern if account.collaboration_enabled?
     pattern[:social_options] = social_options_hash if account.features?(:twitter) || account.basic_twitter_enabled?
-    pattern[:dashboard_limits] = account.account_additional_settings.dashboard_creation_limits if account.custom_dashboard_enabled?
+    pattern[:dashboard_limits] = account.account_additional_settings.custom_dashboard_limits if account.custom_dashboard_enabled?
     pattern[:freshchat] = freshchat_hash if account.freshchat_enabled?
     pattern.merge!(sandbox_info(account))
     if User.current.privilege?(:manage_users) || User.current.privilege?(:manage_account)

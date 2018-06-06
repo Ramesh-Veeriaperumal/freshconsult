@@ -16,6 +16,15 @@ properties:
             type: string
           language:
             type: string
+          portal_languages:
+            type: object
+            properties:
+              code:
+                type: string
+              id:
+                type: integer
+              name: 
+                type: string
           date_format:
             type: object
             properties:
@@ -66,7 +75,7 @@ properties:
             type: boolean
           collaboration:
             type: object
-            properties: 
+            properties:
               client_account_id:
                 type: string
               client_id:
