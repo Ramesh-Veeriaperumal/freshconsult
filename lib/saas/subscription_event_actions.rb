@@ -7,10 +7,10 @@ class SAAS::SubscriptionEventActions
                            :basic_twitter, :basic_facebook, :rebranding, :customer_slas, :multiple_business_hours,
                            :multi_product, :multiple_emails, :link_tickets_toggle, :parent_child_tickets_toggle,
                            :shared_ownership_toggle, :skill_based_round_robin, :ticket_activity_export,
-                           :auto_ticket_export, :multiple_companies_toggle]
+                           :auto_ticket_export, :multiple_companies_toggle, :unique_contact_identifier]
 
-  ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle,
-                           :multiple_companies_toggle, :tam_default_fields, :smart_filter, :contact_company_notes].freeze
+  ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle, 
+                           :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier].freeze
 
   DROP  = "drop"
   ADD   = "add"
@@ -42,6 +42,7 @@ class SAAS::SubscriptionEventActions
       account.save
       handle_custom_dasboard_launch
       handle_collab_feature
+      add_chat_feature
       #disable_chat_routing unless account.has_feature?(:chat_routing)
     end
 
@@ -88,6 +89,11 @@ class SAAS::SubscriptionEventActions
 
     def remove_chat_feature
       account.revoke_feature(:chat) if !account.subscription.is_chat_plan? && account.has_feature?(:chat)
+    end
+
+    # Need to be removed once we won't support live chat
+    def add_chat_feature
+      account.add_feature(:chat) if account.subscription.is_chat_plan? && !account.has_feature?(:chat) &&  account.chat_setting.site_id.present?
     end
 
     def disable_chat_routing

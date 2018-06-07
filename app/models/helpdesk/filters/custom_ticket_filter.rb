@@ -6,7 +6,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   include Collaboration::TicketFilter
 
   attr_accessor :query_hash
-  
+
+  has_many :dashboard_widgets, class_name: 'DashboardWidget', foreign_key: 'ticket_filter_id'
+
+  after_commit :update_widgets, on: :update, :if => :dynamic_filter?
+
+  before_destroy :update_widgets
+
   MODEL_NAME = "Helpdesk::Ticket"
 
   def self.deleted_condition(input)
@@ -551,6 +557,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       conditions[agent_index].container.values = val
     end
     conditions
+  end
+
+  def dynamic_filter?
+    # Checking if the filter condition contains me or my groups
+    accessible.only_me? || self.data[:data_hash].any? { |cond| DYNAMIC_FIELDS.include?(cond['condition']) && cond['value'] && cond['value'].split(',').include?('0') }
+  end
+
+  def update_widgets
+    Helpdesk::DeactivateFilterWidgets.perform_async({ filter_id: self.id })
   end
 
   class << self

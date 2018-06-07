@@ -152,10 +152,10 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
     match_json(request_error_pattern(:require_feature, feature: 'surveys'.titleize))
   end
 
-  def test_create_without_manage_tickets_privilege
-    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false).at_most_once
-    post :create, construct_params({ id: ticket.display_id }, rating: 103)
-    User.any_instance.unstub(:privilege?)
+  def test_create_without_admin_tasks_privilege
+    t = ticket
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+    post :create, construct_params({ id: t.display_id }, ratings: 103)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
     ensure

@@ -668,6 +668,6 @@ class ApiApplicationController < MetalApiController
     end
 
     def set_current_ip
-      Thread.current[:current_ip] = request.remote_ip
+      # Thread.current[:current_ip] = request.remote_ip
     end
 end

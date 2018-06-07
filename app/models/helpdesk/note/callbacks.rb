@@ -295,6 +295,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def update_ticket_states
+      return if meta?
       user_id = User.current.id if User.current
       ::Tickets::UpdateTicketStatesWorker.perform_async(
             { :id => id, :model_changes => @model_changes,
@@ -435,9 +436,13 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def validate_for_ner_api
-      self.incoming? && self.user.customer?
+      self.account.falcon_enabled? && self.incoming? && self.user.customer? && google_calendar_enabled?
     end
 
+    def google_calendar_enabled?
+      self.account.installed_applications.with_name("google_calendar").present?
+    end
+    
     # Trigger background job for NER API on creation of incoming notes
 
     def enqueue_for_NER

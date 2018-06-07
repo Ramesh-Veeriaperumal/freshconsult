@@ -1,4 +1,4 @@
-class Dashboard::DueToday < Dashboard
+class Dashboard::DueToday < Dashboards
   
   include Helpdesk::TicketFilterMethods
 

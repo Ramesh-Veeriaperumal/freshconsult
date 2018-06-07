@@ -30,8 +30,11 @@ def self.contact_fields_data
 
     { :name               => "client_manager", 
       :label              => "Can see all tickets from his company",
-      :position           => 13 }
-      
+      :position           => 13 },
+
+    { :name               => "unique_external_id", 
+      :label              => "Unique External Id",
+      :position           => 14 }
   ]
 end
 
