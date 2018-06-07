@@ -70,7 +70,7 @@ class ApplicationController < ActionController::Base
   end
 
   def set_current_ip
-    Thread.current[:current_ip] = request.remote_ip
+    # Thread.current[:current_ip] = request.remote_ip
   end
  
   def check_account_state
