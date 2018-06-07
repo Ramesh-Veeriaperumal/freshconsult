@@ -503,7 +503,7 @@ class Account < ActiveRecord::Base
     end
   end
 
-  def add_dashboard_creation_limits(dashboard_limits, type = :min)
+  def set_custom_dashboard_limit(dashboard_limits, type = :min)
     dashboard_limits ||= DASHBOARD_LIMITS[type]
     account_additional_settings.additional_settings = (account_additional_settings.additional_settings || {}).merge(dashboard_limits: dashboard_limits)
     account_additional_settings.save

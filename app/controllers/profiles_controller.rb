@@ -5,8 +5,8 @@ class ProfilesController < ApplicationController
   include FalconHelperMethods
   include Integrations::ProfileHelper
 
-  USER_UPDATEABLE_ATTRIBUTES =  [:name, :job_title, :phone, :mobile, :time_zone, :language, :avatar_attributes => [:content]].freeze
-  USER_UPDATEABLE_ATTRIBUTES_FRESHID = [ :time_zone, :language, :avatar_attributes => [:content]].freeze
+  USER_UPDATABLE_ATTRIBUTES =  [:name, :job_title, :phone, :mobile, :time_zone, :language, :avatar_attributes => [:content, :id, :_destroy]].freeze
+  USER_UPDATABLE_ATTRIBUTES_FRESHID = [ :time_zone, :language, :avatar_attributes => [:content, :id, :_destroy]].freeze
 
    before_filter :require_user 
    before_filter :load_profile, :only => [:edit, :change_password]
@@ -110,22 +110,22 @@ private
   end
 
   def update_agent
-    respond_to do |format|      
+    respond_to do |format|
       params[:user].each do |k, v|
         @profile.user.safe_send("#{k}=", v)
       end
       @profile.user_changes = @profile.user.changes
       if @profile.update_attributes(params[:agent])
-          format.html { 
-            flash[:notice] = 'Your profile has been updated successfully.'
-            if request.xhr? || current_account.falcon_ui_enabled?(current_user)
-              render :nothing => true
-            else
-              redirect_to(edit_profile_url)
-            end
-          }
-          format.xml  { head :ok }
-          format.nmobile {render :json => { :success => true }}
+        format.html { 
+          flash[:notice] = 'Your profile has been updated successfully.'
+          if request.xhr? || current_account.falcon_ui_enabled?(current_user)
+            render :nothing => true
+          else
+            redirect_to(edit_profile_url)
+          end
+        }
+        format.xml  { head :ok }
+        format.nmobile {render :json => { :success => true }}
       else
         format.html { 
           if request.xhr? || current_account.falcon_ui_enabled?(current_user)
@@ -228,9 +228,9 @@ protected
 
   def user_params
     if freshid_enabled?
-      params[:user].permit(*USER_UPDATEABLE_ATTRIBUTES_FRESHID)
+      params[:user].permit(*USER_UPDATABLE_ATTRIBUTES_FRESHID)
     else
-      params[:user].permit(*USER_UPDATEABLE_ATTRIBUTES)
+      params[:user].permit(*USER_UPDATABLE_ATTRIBUTES)
     end
   end
 end

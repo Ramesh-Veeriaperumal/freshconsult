@@ -17,7 +17,7 @@ module CustomDashboardTestHelper
 
   def sanitize_dashboard_index_response(response_hash)
     formatted_dashboard_response = []
-    response_hash.each { |dashboard_item| formatted_dashboard_response << sanitize_response(dashboard_item) }
+    response_hash.each { |dashboard_item| formatted_dashboard_response << dashboard_item.slice(:name, :type, :group_ids) }
     formatted_dashboard_response
   end
 
@@ -31,12 +31,16 @@ module CustomDashboardTestHelper
 
 
   def sanitize_response(response_hash)
-    response_hash.delete(:id)
-    response_hash[:widgets].each do |widget|
-      widget.delete(:id)
-      widget.delete(:active)
-    end
+    assert_not_nil_and_delete(response_hash, [:id, :last_modified_since])
+    response_hash[:widgets].map { |widget| assert_not_nil_and_delete(widget, [:id, :active]) }
     response_hash
+  end
+
+  def assert_not_nil_and_delete(response_hash, keys)
+    keys.each do |key|
+      assert_not_nil response_hash[key]
+      response_hash.delete(key)
+    end
   end
 
   def bar_chart_preview_es_response_stub(field_id, choices = [2, 8, 4])

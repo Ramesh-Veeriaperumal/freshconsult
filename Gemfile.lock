@@ -560,6 +560,8 @@ GEM
       erubis (>= 2.6.6)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    bootsnap (1.3.0)
+      msgpack (~> 1.0)
     braintree (2.10.0)
       builder
     brakeman (3.3.0)
@@ -1412,6 +1414,7 @@ DEPENDENCIES
   better_errors (~> 1.1.0)
   binarize (= 0.1.1)!
   binding_of_caller
+  bootsnap
   braintree (= 2.10.0)
   brakeman
   bullet

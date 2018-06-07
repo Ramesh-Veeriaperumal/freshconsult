@@ -10,6 +10,9 @@ class VaRule < ActiveRecord::Base
     [ :all,   "dispatch.cascade",        1 ] 
   ]
   
+
+  xss_sanitize  :only => [:name, :description], :plain_sanitizer => [:name, :description]
+
   serialize :filter_data
   serialize :action_data
 
@@ -342,6 +345,12 @@ class VaRule < ActiveRecord::Base
 
   def contains_send_email_action?
     actions.any? {|action| action.contains? 'send_email'}
+  end
+  
+  def contains_add_watcher_action?
+    actions.any? do |action|
+      action.contains? 'add_watcher'
+    end
   end
 
   def response_time

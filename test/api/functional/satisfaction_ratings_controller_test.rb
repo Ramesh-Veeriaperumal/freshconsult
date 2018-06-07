@@ -156,9 +156,9 @@ class SatisfactionRatingsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:enabled_features_list)
   end
 
-  def test_create_without_manage_tickets_privilege
+  def test_create_without_admin_tasks_privilege
     t = ticket
-    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
     post :create, construct_params({ id: t.display_id }, ratings: 103)
     assert_response 403
     match_json(request_error_pattern(:access_denied))

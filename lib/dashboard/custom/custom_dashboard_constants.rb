@@ -10,7 +10,9 @@ module Dashboard::Custom::CustomDashboardConstants
   LEADERBOARD_ATTRIBUTES = [:group_id]
   CSAT_ATTRIBUTES = [:group_ids, :time_range]
   FORUM_MODERATION_ATTRIBUTES = []
-  TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :metric, :metric_type, :date_range, :threshold_max, :threshold_min].freeze
+  TICKET_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :metric, :date_range, :threshold_max, :threshold_min].freeze
+  TIME_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :metric, :date_range, :threshold_max, :threshold_min].freeze
+  SLA_TREND_CARD_ATTRIBUTES = [:group_ids, :product_id, :metric, :date_range, :threshold_max, :threshold_min].freeze
 
   WIDGETS_ATTRIBUTES_FIELDS = [widgets_attributes:
     [:widget_type, :name, :x, :y, :width, :height, :refresh_interval, :config_data] |
@@ -18,7 +20,9 @@ module Dashboard::Custom::CustomDashboardConstants
       BAR_CHART_ATTRIBUTES |
       CSAT_ATTRIBUTES |
       LEADERBOARD_ATTRIBUTES |
-      TREND_CARD_ATTRIBUTES].freeze
+      TICKET_TREND_CARD_ATTRIBUTES |
+      TIME_TREND_CARD_ATTRIBUTES |
+      SLA_TREND_CARD_ATTRIBUTES].freeze
 
   CREATE_FIELDS = %w(name) | ACCESSIBLE_ATTRIBUTES_FIELDS | WIDGETS_ATTRIBUTES_FIELDS
   UPDATE_FIELDS = %w(name accessible_attributes widgets_attributes)
@@ -28,8 +32,11 @@ module Dashboard::Custom::CustomDashboardConstants
   LEADERBOARD_PREVIEW_FIELDS = %w(group_id)
   CSAT_PREVIEW_FIELDS = %w(group_ids time_range)
   FORUM_MODERATION_PREVIEW_FIELDS = %w().freeze
-  TREND_CARD_PREVIEW_FIELDS = %w(group_ids product_id metric metric_type date_range)
+  TICKET_TREND_CARD_PREVIEW_FIELDS = %w(group_ids product_id metric date_range)
+  TIME_TREND_CARD_PREVIEW_FIELDS = %w(group_ids product_id metric date_range)
+  SLA_TREND_CARD_PREVIEW_FIELDS = %w(group_ids product_id metric date_range)
   BAR_CHART_DATA_FIELDS = %w(widget_id)
+
   VALIDATION_CLASS = 'CustomDashboardValidation'.freeze
   DELEGATOR_CLASS = 'CustomDashboardDelegator'.freeze
 
@@ -48,25 +55,24 @@ module Dashboard::Custom::CustomDashboardConstants
     ['bar_chart', 1, 'Dashboard::Custom::BarChart'],
     ['csat', 2, 'Dashboard::Custom::Csat'],
     ['leaderboard', 3, 'Dashboard::Custom::Leaderboard'],
-    ['forum_moderation', 4, 'Dashboard::Custom::ForumModerationWidget'],
-    ['trend_card', 5, 'Dashboard::Custom::TrendCard']
+    # ['forum_moderation', 4, 'Dashboard::Custom::ForumModerationWidget'],
+    ['ticket_trend_card', 5, 'Dashboard::Custom::TicketTrendCard'],
+    ['time_trend_card', 6, 'Dashboard::Custom::TimeTrendCard'],
+    ['sla_trend_card', 7, 'Dashboard::Custom::SlaTrendCard']
   ].freeze
 
-  REPORT_WIDGET_MODULES = [
-    ['ticket_trend_card', 1],
-    ['time_trend_card', 2],
-    ['sla_trend_card', 3]
-  ].freeze
+  GROUP_WIDGETS = ['csat', 'leaderboard', 'ticket_trend_card', 'time_trend_card', 'sla_trend_card'].freeze
+  PRODUCT_WIDGETS = ['tickets_trend_card', 'time_trend_card', 'sla_trend_card'].freeze
+  TICKET_FILTER_WIDGETS = ['scorecard', 'bar_chart'].freeze
 
-  REPORT_WIDGET_MODULES_BY_NAME = Hash[*REPORT_WIDGET_MODULES.map { |i| [i[0], i[1]] }.flatten]
-  REPORT_WIDGET_MODULES_BY_TOKEN = Hash[*REPORT_WIDGET_MODULES.map { |i| [i[1], i[0]] }.flatten]
   WIDGET_MODULES_BY_TOKEN = Hash[*WIDGET_MODULES.map { |i| [i[1], i[2]] }.flatten]
   WIDGET_MODULES_BY_NAME = Hash[*WIDGET_MODULES.map { |i| [i[1], i[0]] }.flatten]
   WIDGET_MODULES_BY_KLASS = Hash[*WIDGET_MODULES.map { |i| [i[0], i[2]] }.flatten]
   WIDGET_MODULE_NAMES = WIDGET_MODULES.map(&:first)
   WIDGET_MODULE_TOKEN_BY_NAME = Hash[*WIDGET_MODULES.map { |i| [i[0], i[1]] }.flatten]
 
-  DASHBOARD_ACCESS_TYPE = { all: 0, users: 1, groups: 2 }.freeze
+  # User access type doesn't apply to custom dashboards    users: 1, 
+  DASHBOARD_ACCESS_TYPE = { all: 0, groups: 2 }.freeze
 
   NUMBER = 0
   PERCENTAGE = 1

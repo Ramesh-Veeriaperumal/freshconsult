@@ -2,7 +2,7 @@ module Dashboard::Custom
   module ConfigData
     include ::Dashboard::Custom::CustomDashboardConstants
 
-    CONFIG_ATTRIBUTES = SCORECARD_ATTRIBUTES | BAR_CHART_ATTRIBUTES | TREND_CARD_ATTRIBUTES | CSAT_ATTRIBUTES | LEADERBOARD_ATTRIBUTES
+    CONFIG_ATTRIBUTES = SCORECARD_ATTRIBUTES | BAR_CHART_ATTRIBUTES | TICKET_TREND_CARD_ATTRIBUTES | TIME_TREND_CARD_ATTRIBUTES | SLA_TREND_CARD_ATTRIBUTES | CSAT_ATTRIBUTES | LEADERBOARD_ATTRIBUTES
 
     CONFIG_ATTRIBUTES.each do |attribute|
       define_method("#{attribute}=") do |updated_value|
@@ -26,6 +26,7 @@ module Dashboard::Custom
 
       def merge_config_data(updated_config)
         self.config_data = HashWithIndifferentAccess.new(config_data.merge(updated_config))
+        ticket_filter_id
       end
   end
 end

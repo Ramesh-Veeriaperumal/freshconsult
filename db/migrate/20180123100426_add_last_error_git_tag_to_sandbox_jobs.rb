@@ -19,6 +19,5 @@ class AddLastErrorGitTagToSandboxJobs < ActiveRecord::Migration
       m.remove_column  :git_tag
     end
   end
-
-
 end
+

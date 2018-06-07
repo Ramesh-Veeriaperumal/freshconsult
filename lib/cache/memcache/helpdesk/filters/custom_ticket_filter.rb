@@ -33,5 +33,5 @@ module Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
   def account_filters_memcache_key
     ACCOUNT_TICKET_FILTERS % { :account_id => Account.current.id }
   end
-  
+
 end

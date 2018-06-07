@@ -99,8 +99,8 @@ module FormBuilders::Redactor
                           $(function() {
                             var imageUploadTypes = ["ticket", "forum"];
                             var redactorOptions = #{_javascript_options};
-                            if(imageUploadTypes.includes("#{options['editor-type'].to_s}")){
-                              redactorOptions = Object.assign({}, redactorOptions, { imageUploadCallback: inlineImageUploadCallback });
+                            if(imageUploadTypes.indexOf("#{options['editor-type'].to_s}") !== -1){
+                              redactorOptions = jQuery.extend({}, redactorOptions, { imageUploadCallback: inlineImageUploadCallback });
                             }
                             window.redactors['#{id}'] = $('##{id}').redactor(redactorOptions);
                           })  

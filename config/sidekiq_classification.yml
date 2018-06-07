@@ -148,6 +148,7 @@
     - nullify_deleted_custom_field_data
     - contact_delete_forever
     - deactivate_product_widgets
+    - deactivate_filter_widgets
     - inline_image_shredder
     - create_sandbox_account
     - delete_sandbox
