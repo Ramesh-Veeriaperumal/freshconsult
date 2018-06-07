@@ -16,5 +16,5 @@ class AddAccountTypeToAccounts < ActiveRecord::Migration
       m.remove_column :account_type
     end
   end
-
 end
+

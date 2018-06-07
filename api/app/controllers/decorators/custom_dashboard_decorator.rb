@@ -17,7 +17,8 @@ class CustomDashboardDecorator < ApiDecorator
     {
       id: record.id,
       name: record.name,
-      widgets: dashboard_widgets
+      widgets: dashboard_widgets,
+      last_modified_since: record.updated_at.to_i
     }.merge!(dashboard_access_details)
   end
 

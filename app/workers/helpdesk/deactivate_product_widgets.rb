@@ -1,7 +1,7 @@
 class Helpdesk::DeactivateProductWidgets < BaseWorker
-  sidekiq_options queue: :deactivate_product_widgets, retry: 2, backtrace: true, failures: :exhausted
+  sidekiq_options queue: :deactivate_product_widgets, retry: 0, backtrace: true, failures: :exhausted
 
-  include Dashboard::Custom::CacheKeys
+  include Cache::Memcache::Dashboard::Custom::CacheData
 
   def perform(args)
     args.symbolize_keys!
@@ -15,6 +15,7 @@ class Helpdesk::DeactivateProductWidgets < BaseWorker
     end
   rescue Exception => e
     Rails.logger.info("Error in DeactivateProductWidgets worker :: #{acc.id} :: #{e.inspect}, #{args.inspect}")
+    NewRelic::Agent.notice_error(e, { args: args })
   end
 
   private
@@ -29,6 +30,6 @@ class Helpdesk::DeactivateProductWidgets < BaseWorker
         dirty = true
         Rails.logger.info("Updated widget :: #{Account.current.id} :: #{dashboard.id} :: #{widget.id}")
       end
-      MemcacheKeys.delete_from_cache(dashboard_cache_key(dashboard.id)) if dirty
+      clear_product_widgets_from_cache(dashboard.id) if dirty
     end
 end

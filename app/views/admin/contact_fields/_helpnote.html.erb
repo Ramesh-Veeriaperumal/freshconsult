@@ -1,4 +1,10 @@
 <div class="sidepanel wordwrap">
+  <% if current_account.unique_contact_identifier_enabled? %>
+    <div class="unique-externalid">
+      <h3 class="title externalid-title"><%=t('unique_external_id.helpcard.title').html_safe %></h3>
+      <p class="externalid-content"><%= t('unique_external_id.helpcard.info').html_safe %></p>
+    </div>
+  <% end %>
 	<h3 class="title"><%=t('contact_field.helpcard.title2').html_safe %></h3>
 	<p><%= t('contact_field.helpcard.info2').html_safe %></p>
 	<p><%= t('contact_field.helpcard.info3').html_safe %></p> 

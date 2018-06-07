@@ -1,6 +1,7 @@
 module Dashboard::TrendCountMethods
   include Helpdesk::TicketFilterMethods
   include Search::Dashboard::AggregationMethods
+  include Cache::Memcache::Dashboard::Custom::CacheData
 
   DEFAULT_TREND = ["unresolved", "overdue", "due_today", "on_hold", "open", "new"]
   SCHEMA_LESS_COLUMNS = {
@@ -26,7 +27,7 @@ module Dashboard::TrendCountMethods
     end
 
     def build_action_hash(filter_type)
-      action_hash = default_filter?(filter_type) ? default_filter_data(filter_type) : custom_filter_data(filter_type)
+      action_hash = default_filter?(filter_type) ? default_filter_data(filter_type) : custom_filter_data(filter_type.to_i)
       filter_condition.each do |filter_key, filter_value|
         action_hash.push({ 'condition' => filter_key.eql?(:product_id) ? SCHEMA_LESS_COLUMNS[filter_key] : filter_key, 'operator' => 'is_in', 'value' => filter_value.join(',') }) if filter_value.present?
       end
@@ -36,7 +37,6 @@ module Dashboard::TrendCountMethods
 
     def construct_query_body
       query_body = ""
-      @ticket_filters = Account.current.ticket_filters.account_filters
       trends.each_with_index do |filter_type, i|
         query_params = filter_query(filter_type.to_s)
         query_params.merge!(aggregation_with_missing_field(@aggregation_options[i]['group_by_field'][1], @limit, true, @aggregation_options[i]['sort'] || 'desc')) if @aggregation_options
@@ -61,9 +61,13 @@ module Dashboard::TrendCountMethods
     end
 
     def custom_filter_data(filter_type)
-      @ticket_filters ||= Account.current.ticket_filters.account_filters
-      ticket_filter = @ticket_filters.select { |tf| tf.id == filter_type.to_i }[0]
+      ticket_filter = @dashboard_id ? load_filter_from_cache(filter_type) : Account.current.ticket_filters.find_by_id(filter_type)
       ticket_filter ? ticket_filter.data[:data_hash] : []
+    end
+
+    def load_filter_from_cache(filter_type)
+      @ticket_filters ||= dashboard_filters_from_cache(@dashboard_id)
+      @ticket_filters.select { |tf| tf.id == filter_type }[0]
     end
 
     def default_filter_data(filter_type)

@@ -14,7 +14,6 @@ $sidekiq_datastore = proc { Redis::Namespace.new(config["namespace"], :redis => 
 $sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
 $sidekiq_redis_timeout = sidekiq_config[:timeout]
 
-
 Sidekiq.configure_client do |config|
   config.redis = ConnectionPool.new(:size => 1, :timeout => $sidekiq_redis_timeout, &$sidekiq_datastore)
   config.client_middleware do |chain|
@@ -68,7 +67,8 @@ Sidekiq.configure_client do |config|
       "CRMApp::Freshsales::AdminUpdate",
       "CRMApp::Freshsales::TrackSubscription",
       "Admin::Sandbox::CreateAccountWorker",
-      "Admin::CloneWorker"
+      'Admin::CloneWorker',
+      'Freshid::AccountDetailsUpdate'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -161,7 +161,8 @@ Sidekiq.configure_server do |config|
       "CRMApp::Freshsales::AdminUpdate",
       "CRMApp::Freshsales::TrackSubscription",
       "Admin::Sandbox::CreateAccountWorker",
-      "Admin::CloneWorker"
+      'Admin::CloneWorker',
+      'Freshid::AccountDetailsUpdate'
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -241,7 +242,8 @@ Sidekiq.configure_server do |config|
       "Scheduler::PostMessage",
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
-      "CRMApp::Freshsales::TrackSubscription"
+      'CRMApp::Freshsales::TrackSubscription',
+      'Freshid::AccountDetailsUpdate'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

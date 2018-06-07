@@ -15,7 +15,7 @@ module Dashboard::LeaderboardMethods
   end
 
   def feature_name
-    :gamification
+    Account.current.gamification_enabled? ? :gamification_enable : :gamification
   end
 
   def fields_to_validate
@@ -127,7 +127,7 @@ module Dashboard::LeaderboardMethods
   end
 
   def monthly_leaderboard
-    current_time = Time.zone.now
+    current_time = Time.now.in_time_zone Account.current.time_zone
     category_list.each_with_index do |category, ind|
       leader_module_ids = months_ago_value ? @support_score.get_leader_ids(Account.current, @board_category, category, months_ago_value.month.ago(current_time.end_of_month), 50) : []
       Rails.logger.debug("In monthly_leaderboard :: #{leader_module_ids.inspect} :: #{category} :: #{months_ago_value}")
@@ -212,6 +212,7 @@ module Dashboard::LeaderboardMethods
 
   def months_ago_value
     @date_range_val = params[:date_range] && params[:date_range] != 'select_range' ? params[:date_range] : 'current_month'
+
     range_vs_months = {
       '3_months_ago' => 3,
       '2_months_ago' => 2,

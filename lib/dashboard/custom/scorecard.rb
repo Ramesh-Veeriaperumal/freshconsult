@@ -49,10 +49,12 @@ class Dashboard::Custom::Scorecard < Dashboards
     end
 
     def trend_count_options
-      {
+      options = {
         trends: @trends,
         with_permissible: false
       }
+      options.merge!({ dashboard_id: @dashboard.id }) if @dashboard
+      options
     end
 
     def parse_count(count_result)

@@ -28,10 +28,18 @@ module Admin
             tickets.each do |ticket|
               begin
                 next if ticket.sent_for_enrichment?
-                execute_on_db("run_on_master") { 
+                execute_on_db("run_on_master") do
                   rule.trigger_actions ticket
-                  ticket.save_ticket! if ticket.properties_updated?
-                }
+                  subscription_changed = (rule.contains_add_watcher_action? && ticket.subscriptions.present?)
+                  properties_changed = ticket.properties_updated?
+                  Va::Logger::Automation.log "Ticket property changed=#{properties_changed}, Ticket subscriptions changed=#{subscription_changed}"
+                  # Note: if ticket has watcher and rule contains add watcher action, it will execute below method.
+                  properties_changed ||= subscription_changed
+                  ticket.save_ticket! if properties_changed
+                  if !properties_changed && rule.contains_send_email_action?
+                    ticket.manual_publish(['update', RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY], [:update, { system_changes: ticket.system_changes.dup }])
+                  end
+                end
               rescue Exception => e
                 log_info(account.id, rule.id, ticket.id) { Va::Logger::Automation.log_error(TICKET_SAVE_ERROR, e) }
                 NewRelic::Agent.notice_error(e,{:description => "Error while executing supervisor rule for a tkt :: #{ticket.id} :: account :: #{account.id}" })

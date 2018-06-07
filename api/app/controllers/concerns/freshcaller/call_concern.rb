@@ -1,6 +1,13 @@
 module Freshcaller::CallConcern
   extend ActiveSupport::Concern
 
+  RECORDING_STATUS_HASH = {
+    invalid: 0,
+    'in-progress': 1,
+    completed: 2,
+    deleted: 3
+  }
+
   include Search::V2::AbstractController
 
   def ticket_params
@@ -67,6 +74,10 @@ module Freshcaller::CallConcern
     @options[:call_status] == 'in-progress'
   end
 
+  def on_hold?
+    @options[:call_status] == 'on-hold'
+  end
+
   def ticket_title
     call_date = DateTime.parse(@options[:call_created_at]).in_time_zone(current_account.time_zone)
     return I18n.t("call.ticket.#{@options[:call_type]}_#{call_status_string}_title", customer: customer_title) if missed_call?
@@ -100,10 +111,15 @@ module Freshcaller::CallConcern
   end
 
   def duration
-    I18n.t('call.duration_html', call_duration: Time.at(@options[:duration]).utc.strftime('%M:%S')) if @options[:duration].present?
+    I18n.t('call.duration_html', call_duration: formatted_duration) if @options[:duration].present?
   end
 
   def call_status_string
     @options[:call_status].delete('-')
+  end
+
+  def formatted_duration
+    format = (@options[:duration] < 3600) ? '%M:%S' : '%H:%M:%S'
+    Time.at(@options[:duration]).utc.strftime(format)
   end
 end

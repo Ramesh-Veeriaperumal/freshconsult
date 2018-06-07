@@ -48,7 +48,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings[:archive_days] unless additional_settings.blank?
   end
 
-  def dashboard_creation_limits
+  def custom_dashboard_limits
     additional_settings.present? && additional_settings[:dashboard_limits].present? ? additional_settings[:dashboard_limits] : DASHBOARD_LIMITS[:min]
   end
 
