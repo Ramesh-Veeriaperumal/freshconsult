@@ -126,12 +126,14 @@ end
     MemcacheKeys.delete_from_cache key
   end
 
-  def handle_unique_contact_identifier_toggle_data
+  def handle_unique_contact_identifier_drop_data
     account.revoke_feature(:unique_contact_identifier)
     external_id_field = account.contact_form.default_fields.where(:name => "unique_external_id").first
     if(external_id_field.present?)
       external_id_field.visible_in_portal = false
-      external_id_field.field_options.delete("widget_position") if external_id_field.field_options["widget_position"].present?
+      if external_id_field.field_options && external_id_field.field_options['widget_position'].present?
+        external_id_field.field_options.delete('widget_position')
+      end
       external_id_field.save
     end
     clear_contact_fields_cache
@@ -310,6 +312,34 @@ end
   def handle_smart_filter_add_data
     account.twitter_handles.order("created_at asc").find_each do |twitter|
       twitter.default_stream.prepare_for_upgrade_from_sprout
+    end
+  end
+
+  def handle_unique_contact_identifier_add_data
+    unless account.contact_form.default_fields.find { |tf| tf.name == 'unique_external_id' }.present?
+      contact_fields = {
+                        :account_id => account.id,
+                        :contact_form_id => account.contact_form.id,
+                        :name => "unique_external_id",
+                        :column_name => 'default',
+                        :label => "Unique External Id",
+                        :label_in_portal => "Unique External Id",
+                        :deleted => 0,
+                        :field_type => ContactField::DEFAULT_FIELD_PROPS[:default_unique_external_id][:type],
+                        :position => account.contact_form.contact_fields.length,
+                        :required_for_agent => 0,
+                        :visible_in_portal => 0,
+                        :editable_in_portal => 0,
+                        :editable_in_signup => 0,
+                        :required_in_portal => 0,
+                        :created_at => Time.now.to_s(:db),
+                        :updated_at => Time.now.to_s(:db)
+                       }
+        ActiveRecord::Base.connection.execute(%(
+        INSERT INTO contact_fields (#{contact_fields.keys.join(",")}) VALUES
+        (#{contact_fields.values.map{|f| "'#{f}'"}.join(",")})
+        ))
+      clear_contact_fields_cache
     end
   end
 

@@ -223,7 +223,7 @@ private
 		else
 			fetch_text_html_attachment_for_single_part
 		end
-		self.html = Nokogiri::HTML(self.html).to_html # formatting HTML
+		self.html = Nokogiri::HTML(self.html).to_html if(!self.html.nil? && !self.html.blank?) # formatting HTML
 	end
 
 	def fetch_text_html_attachment_for_all_parts

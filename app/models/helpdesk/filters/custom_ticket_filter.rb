@@ -573,17 +573,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def dynamic_filter?
     # Checking if the filter condition contains me or my groups
-    @dashboard_widgets = self.dashboard_widgets
-    @dashboard_widgets && ( accessible.only_me? || self.data[:data_hash].any? { |cond| DYNAMIC_FIELDS.include?(cond['condition']) && cond['value'] && cond['value'].split(',').include?('0') })
+    accessible.only_me? || self.data[:data_hash].any? { |cond| DYNAMIC_FIELDS.include?(cond['condition']) && cond['value'] && cond['value'].split(',').include?('0') }
   end
 
   def update_widgets
-    @dashboard_widgets ||= self.dashboard_widgets
-    @dashboard_widgets.each do |widget|
-      widget.active = false
-      widget.save
-    end
-    Account.current.clear_dashboards_cache
+    Helpdesk::DeactivateFilterWidgets.perform_async({ filter_id: self.id })
   end
 
   class << self

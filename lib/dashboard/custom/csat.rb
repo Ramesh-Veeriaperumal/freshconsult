@@ -1,7 +1,11 @@
 class Dashboard::Custom::Csat < Dashboards
   CONFIG_FIELDS = [:group_ids, :time_range].freeze
   CACHE_EXPIRY = 3600
-  CSAT_RESPONSE_FIELDS = { positive: { label: 'positive', value: 0 }, neutral: { label: 'neutral', value: 0 }, negative: { label: 'negative', value: 0 } }.freeze
+  CSAT_RESPONSE_FIELDS = {
+                           positive: { label: 'positive', value: 0 },
+                           neutral: { label: 'neutral', value: 0 },
+                           negative: { label: 'negative', value: 0 }
+                         }.freeze
   ALL_GROUPS = 0
 
   attr_accessor :options

@@ -10,6 +10,7 @@ class Dashboard::TrendCount < Dashboards
     @trends = options[:trends] || DEFAULT_TREND
     @is_agent = options[:is_agent]
     @with_permissible = options[:with_permissible]
+    @dashboard_id = options[:dashboard_id]
   end
 
   #this handles both es and db methods internally. Existing methods.

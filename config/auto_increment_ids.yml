@@ -40,6 +40,7 @@ defaults: &defaults
     shard_29_1: 42000000000
     shard_29_2: 43000000000
     shard_29_3: 44000000000
+    shard_30: 45000000000
 
   podeuwest1:
     eu_shard_1: 7000000000
@@ -47,6 +48,7 @@ defaults: &defaults
     eu_shard_3: 75000000000
   podeucentral1:
     euc_shard_1: 15000000000
+    euc_shard_2: 76000000000
   podapsoutheast2:
     aus_shard_1: 51000000000  
 

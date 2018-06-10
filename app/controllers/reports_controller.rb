@@ -38,11 +38,11 @@ class ReportsController < ApplicationController
   end
 
   def enable_qna?
-    Account.current.launched?(:enable_qna) && enable_qna_insights?
+    Account.current.launched?(:enable_qna)
   end
 
   def enable_insights?
-    Account.current.launched?(:enable_insights) && enable_qna_insights?
+    Account.current.launched?(:enable_insights)
   end
 
  protected

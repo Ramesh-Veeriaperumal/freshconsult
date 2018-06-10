@@ -19,6 +19,8 @@ module Ember
     end
 
     def initial_setup
+      @account.features.gamification_enable.create
+      @account.add_feature(:gamification_enable)
       @account.reload
       SupportScore.delete_all
       @limit = 1
@@ -45,6 +47,17 @@ module Ember
     ensure
       @account.features.gamification.create
       @account.add_feature(:gamification)
+    end
+
+    def test_mini_list_without_gamification_enable_feature
+      @account.features.gamification_enable.destroy
+      @account.revoke_feature(:gamification_enable)
+      @account.reload
+      get :agents, controller_params(mini_list: true, version: 'private')
+      assert_response 403
+    ensure
+      @account.features.gamification_enable.create
+      @account.add_feature(:gamification_enable)
     end
 
     def test_mini_list_with_new_leaderboard_feature_for_mvp_without_current_user_values
