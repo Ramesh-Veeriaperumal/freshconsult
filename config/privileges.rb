@@ -144,7 +144,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"conversation", only: [:create, :ticket_conversations]
     resource :"ticket", :only => [:show, :create, :index, :search]
 
-    resource :"satisfaction_rating", :only => [:create, :survey_results]
+    resource :"satisfaction_rating", :only => [:survey_results]
 
     resource :"year_in_review", :only => [:clear]
 
@@ -616,7 +616,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_product", :only => [:index, :show]
     resource :"settings/helpdesk", :only => [:index]
     resource :survey, :only => [:index]
-    resource :"satisfaction_rating", :only => [:index]
+    resource :"satisfaction_rating", :only => [:create, :index]
     resource :"api_role", :only => [:index, :show]
     resource :"api_integrations/cti", :only => [:create, :index]
     resource :"email_preview"

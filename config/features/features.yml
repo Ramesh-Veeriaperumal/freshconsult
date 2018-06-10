@@ -71,7 +71,6 @@
       :link_tickets_toggle: 66
       :parent_child_tickets: 67
       :parent_child_tickets_toggle: 68
-      :unique_contact_identifier_toggle: 69
       :unique_contact_identifier: 70
       :advanced_search: 71
       :advanced_search_bulk_actions: 72
@@ -135,7 +134,7 @@
       :a_team_8: 130
       :a_team_9: 131
       :a_team_10: 132
-      :infinity_1: 133
+      :custom_dashboard: 133
       :infinity_2: 134
       :infinity_3: 135
       :infinity_4: 136
@@ -156,6 +155,7 @@
       :wild_cards_9: 151
       :wild_cards_10: 152
       :contact_company_notes: 153
+      :g10_1: 69
       :g10_2: 154
       :g10_3: 155
       :g10_4: 156

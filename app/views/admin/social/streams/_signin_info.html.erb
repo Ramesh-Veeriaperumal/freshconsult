@@ -10,7 +10,7 @@
         <p class="info-data">
           <%= t('social.twitter_handles.signin_info.associate_account', :product_name => (product ? product.name : current_account.portal_name)).html_safe %>
         </p>
-        <a onclick="<%= onclick_strategy(@auth_redirect_url) %>" class="btn btn-primary btn-large <%= @auth_redirect_url ? '' : 'disabled' %>"><%= t('social.twitter_handles.signin_info.add_twitter') %></a>
+        <a onclick="<%= set_twitter_url_in_redis(@auth_redirect_url, @account_url, @state) %>" class="btn btn-primary btn-large <%= @auth_redirect_url ? '' : 'disabled' %>"><%= t('social.twitter_handles.signin_info.add_twitter') %></a>
       </div>
     </div>
   </li>

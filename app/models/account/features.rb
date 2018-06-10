@@ -10,7 +10,7 @@ class Account < ActiveRecord::Base
                    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, 
                    :imap_error_status_check, :va_any_field_without_none, :auto_complete_off, 
                    :sanbox_lp, :encode_emoji, :dependent_field_validation, :post_central_publish,
-                   :audit_logs_central_publish]
+                   :audit_logs_central_publish, :encode_emoji_subject, :twitter_common_redirect]
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
@@ -18,10 +18,10 @@ class Account < ActiveRecord::Base
       :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
       :multi_product,:multiple_business_hours, :multi_timezone, :customer_slas, :layout_customization,
       :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
-      :auto_refresh, :branding, :advanced_dkim, :basic_dkim, :unique_contact_identifier_toggle,
-      :system_observer_events, :unique_contact_identifier, :ticket_activity_export, :caching, :private_inline, :collaboration,
+      :auto_refresh, :branding, :advanced_dkim, :basic_dkim,:system_observer_events, :unique_contact_identifier,
+       :ticket_activity_export, :caching, :private_inline, :collaboration,
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
-      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields,
+      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
       :freshchat, :disable_old_ui, :contact_company_notes, :sandbox
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)

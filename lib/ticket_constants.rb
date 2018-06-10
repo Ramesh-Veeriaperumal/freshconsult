@@ -22,7 +22,7 @@ module TicketConstants
 
   NESTED_TICKET_ATTRIBUTES = ["custom_field","ticket_body_attributes"]
   
-  SUPPORT_WHITELISTED_ATTRIBUTES = ["name", "attachments"]
+  SUPPORT_WHITELISTED_ATTRIBUTES = ["name", "attachments", "inline_attachment_ids"]
   # DATE_RANGE_CSV = 31
 
   SKIPPED_TICKET_CHANGE_ATTRIBUTES = [ :description_html ] #desc_html skipped just to avoid Deprecation Warning

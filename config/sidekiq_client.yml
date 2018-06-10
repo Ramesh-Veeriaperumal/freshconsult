@@ -272,6 +272,7 @@ defaults: &defaults
     - [inline_image_shredder]
     - [deactivate_product_widgets]
     - [user_central_publish]
+    - [deactivate_filter_widgets]
 
 development:
   <<: *defaults

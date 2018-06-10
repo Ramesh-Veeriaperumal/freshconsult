@@ -1,4 +1,4 @@
-class Dashboard::AdminTicketsWorkload < Dashboard
+class Dashboard::AdminTicketsWorkload < Dashboards
   include Cache::Memcache::Dashboard::CacheData
   include MemcacheKeys
 

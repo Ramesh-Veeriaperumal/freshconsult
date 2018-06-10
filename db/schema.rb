@@ -1088,6 +1088,33 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
   add_index "customers", ["account_id", "name"], :name => "index_customers_on_account_id_and_name", :unique => true
   add_index "customers", ["account_id", "updated_at"], :name => "index_customers_on_account_id_and_updated_at"
 
+  create_table "dashboards", :force => true do |t|
+    t.integer "account_id", :limit => 8
+    t.string "name"
+    t.boolean "deleted",                :default => false, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "dashboards", ["account_id"], :name => "index_account_id"
+
+  create_table "dashboard_widgets", :force => true do |t|
+    t.integer "account_id", :limit => 8
+    t.string "name"
+    t.integer "widget_type"
+    t.text "grid_config"
+    t.integer "dashboard_id", :limit => 8
+    t.integer "ticket_filter_id", :limit => 8
+    t.text "config_data"
+    t.integer "refresh_interval"
+    t.boolean "active",                       :default => true, :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "dashboard_widgets", [:account_id, :dashboard_id], :name => "index_account_id_dashboard_id"
+  add_index "dashboard_widgets", [:account_id, :ticket_filter_id], :name => "index_account_id_ticket_filter_id"
+
   create_table "data_exports", :force => true do |t|
     t.integer  "account_id", :limit => 8
     t.integer  "status"

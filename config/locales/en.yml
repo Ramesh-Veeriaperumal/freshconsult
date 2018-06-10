@@ -7848,6 +7848,8 @@ en:
     api_error: "We could not process your request. Please try after sometime."
     results: results
     field_blank: Please fill the required fields.
+    validation_failed: "Validation failed."
+    error_calling_method: "Error occurred while calling method: "
     installed: Installed
     helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get More Apps” button."
     helpnote_custom_apps_html: "Can't find an app that fits your needs? With our Custom Apps (earlier called Freshplugs), you can bring in contextual information from any third party solution, legacy system or database. These Custom Apps can also be used to make visual changes to your helpdesk and boost productivity. Click <a href='https://support.freshdesk.com/support/solutions/articles/121846' target='_blank'>here</a> to learn more!"
@@ -9210,7 +9212,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   contact_field:
     helpcard:
       title2: "Customizing your contact fields"
-      info2: "The contact form in Freshdesk lets you capture important data from your customers so that you can support them better. You can help your team get additional context about customers quickly by including custom fields based on your type of business. For example, you can collect information with custom fields for pricing plan, department etc. and prioritize tickets accordingly in your helpdesk."
+      info2: "The contact form lets you capture additional context about customers quickly by including custom fields based on your type of business. For example, you can collect information with custom fields for pricing plan, department etc. and prioritize tickets."
       info3: "Just like your ticket fields, you can add new fields to the customer sign up form and make them mandatory. You can also have private fields that are visible just to your agents."
   company_field:
     helpcard:
@@ -11860,6 +11862,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       validation:
         invalid_name: "Invalid company name"
         required_name: "Enter company name"
+  unique_external_id:
+    helpcard: 
+      title: "Unique External Id"
+      info: Use a single ID across all your systems to identify a customer, makes it easier to track and find the right customer information when you need it. <br><a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank">Help me set up an external ID</a>
+
   requester_fields_updated: The requester widget has been updated.
   select_requester: "Please select requester"
   associate_n_companies: "Associate a contact with multiple companies?"
@@ -12126,7 +12133,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     ticket_requester_firstname: Requester first name
     ticket_requester_lastname: Requester last name
     ticket_requester_email: Requester email
-    ticket_requester_phone: Contact Primary email
+    ticket_requester_phone: Requester phone number
     ticket_requester_address: Requester address
     ticket_company_name: Company name
     ticket_company_description: Company description

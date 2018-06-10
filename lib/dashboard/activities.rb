@@ -1,4 +1,4 @@
-class Dashboard::Activities < Dashboard
+class Dashboard::Activities < Dashboards
 
   attr_accessor :user, :page, :per_page
 

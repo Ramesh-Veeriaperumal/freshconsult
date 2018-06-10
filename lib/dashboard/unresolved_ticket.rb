@@ -1,4 +1,4 @@
-class Dashboard::UnresolvedTicket < Dashboard
+class Dashboard::UnresolvedTicket < Dashboards
   
   attr_accessor :es_enabled, :filter_condition, :group_by, :order_by, :widget_name
 
