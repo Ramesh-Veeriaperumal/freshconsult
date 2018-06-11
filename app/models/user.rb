@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods, :presenter
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
-  publishable on: :update
+  # publishable on: :update
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true

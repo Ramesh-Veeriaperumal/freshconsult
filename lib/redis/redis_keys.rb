@@ -401,6 +401,9 @@ module Redis::RedisKeys
   # Key for enabling TAM company fields
   TAM_FIELDS_ENABLED = "TAM_FIELDS_ENABLED"
 
+  TRIAL_21_DAYS = "TRIAL_21_DAYS"
+  UPDATE_TIME_ZONE = "UPDATE_TIME_ZONE:%{account_id}"
+
   # Key for disabling collab bell
   COLLAB_BELL_DISABLED = 'COLLAB_BELL_DISABLED'.freeze
 

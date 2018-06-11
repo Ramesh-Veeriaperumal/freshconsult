@@ -6580,6 +6580,7 @@ en:
     language: Language
     primary_language: Primary Language
     additional_languages: Supported Languages
+    time_zone_updation: The time zone is getting updated for all agents and contacts. Please try after some time.
     supported_portal_languages: "Languages visible to users"
     supported_languages: "Supported Languages (%{count})"
     portal_languages: "Languages Visible on Portal (%{count})"

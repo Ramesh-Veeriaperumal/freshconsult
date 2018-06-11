@@ -220,6 +220,7 @@ defaults: &defaults
     - [mixpanel_queue]
     - [bot_cleanup]
     - [freshcaller_account_delete]
+    - [update_time_zone]
     - [delete_archive_ticket]
     - [restore_spam_tickets]
     - [email_service_provider]
