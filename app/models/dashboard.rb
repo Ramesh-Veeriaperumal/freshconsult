@@ -5,6 +5,7 @@ class Dashboard < ActiveRecord::Base
   include Dashboard::Custom::DashboardDecorationMethods
   include Redis::HashMethods
   include Dashboard::Custom::CacheKeys
+
   attr_accessible :name, :deleted, :accessible_attributes, :widgets_attributes
 
   belongs_to_account

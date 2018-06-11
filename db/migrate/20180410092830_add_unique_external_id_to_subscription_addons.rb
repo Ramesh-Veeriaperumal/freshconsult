@@ -30,10 +30,11 @@ class AddUniqueExternalIdToSubscriptionAddons < ActiveRecord::Migration
   def down
     execute <<-SQL
       DELETE FROM subscription_plan_addons WHERE subscription_addon_id 
-        IN (SELECT id FROM subscription_addons WHERE name IN ('Unique External Id'))
+        IN (SELECT id FROM subscription_addons WHERE name IN ('Unique External Id')) 
     SQL
     execute <<-SQL
-      DELETE FROM subscription_addons WHERE name IN ('Unique External Id')
+      DELETE FROM subscription_addons WHERE name IN ('Unique External Id') 
     SQL
   end
 end
+

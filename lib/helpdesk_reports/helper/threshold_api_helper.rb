@@ -188,7 +188,6 @@ module HelpdeskReports::Helper::ThresholdApiHelper
       when "responder_id"
         csv_split = values.split(",")
         csv_split[csv_split.index("0")] = User.current.id  if csv_split.include?"0"
-        csv_split.delete_at(csv_split.index("-1")) if csv_split.include?"-1"
         final_filters.push({key: "agent_id",  value: csv_split.join(',')})
       when "status"
         csv_split = values.split(",")

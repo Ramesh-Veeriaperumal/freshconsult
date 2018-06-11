@@ -1,4 +1,5 @@
 class Dashboard::TrendCount < Dashboards
+  include Helpdesk::TicketFilterMethods
 
   include Dashboard::TrendCountMethods
 

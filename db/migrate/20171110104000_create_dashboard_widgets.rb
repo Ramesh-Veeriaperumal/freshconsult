@@ -20,6 +20,9 @@ class CreateDashboardWidgets < ActiveRecord::Migration
 
       t.timestamps
     end
+
+    add_index :dashboard_widgets, [:account_id, :dashboard_id], name: 'index_account_id_dashboard_id'
+    add_index :dashboard_widgets, [:account_id, :ticket_filter_id], name: 'index_account_id_ticket_filter_id'
   end
 
   def down
