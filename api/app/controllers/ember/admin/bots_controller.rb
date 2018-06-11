@@ -162,6 +162,7 @@ module Ember
           end
           @item.additional_settings[:bot_hash] = response['content']['botHsh']
           if @item.save
+            @item.training_not_started!
             @bot = {
               id: @item.id
             }
