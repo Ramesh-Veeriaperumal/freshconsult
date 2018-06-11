@@ -142,7 +142,7 @@ class Support::TicketsController < SupportController
     end
 
     def redirect_url
-      params[:redirect_url].presence || (current_user ? support_ticket_url(@ticket) : root_path(:language => Language.current.code))
+      params[:redirect_url].presence || (current_user ? support_ticket_url(@ticket) : root_path(:language => (Language.current.code if current_portal.multilingual?)))
     end
   
     def build_tickets
