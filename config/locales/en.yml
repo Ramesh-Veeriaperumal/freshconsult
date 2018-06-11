@@ -12211,7 +12211,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           header: 'Use the messenger inside Freshdesk to bring your support and messaging workflow together:'
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
-          point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.
+          point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
   sandbox:
     email: 'This email is generated from a sandbox account'
     banner:
