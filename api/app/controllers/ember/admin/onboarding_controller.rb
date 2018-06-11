@@ -38,7 +38,7 @@ module Ember
       end
 
       def resend_activation_email
-        @item.send_activation_email
+        @item.enqueue_activation_email
         head 204
       end
 

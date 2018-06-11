@@ -20,7 +20,7 @@ class Admin::OnboardingController < Admin::AdminController
   end
 
   def resend_activation_email
-    current_user.send_activation_email
+    current_user.enqueue_activation_email
     render json: {result: true}
   end
 
