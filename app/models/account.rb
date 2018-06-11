@@ -26,7 +26,7 @@ class Account < ActiveRecord::Base
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual
+  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods
 
   include CustomerDeprecationMethods
   
@@ -131,10 +131,6 @@ class Account < ActiveRecord::Base
   def esv1_enabled?
     false
     # (ES_ENABLED && launched?(:es_v1_enabled))
-  end
-
-  def allow_sso_login?
-    sso_enabled? || launched?(:whitelist_sso_login)
   end
 
   def permissible_domains
@@ -454,31 +450,6 @@ class Account < ActiveRecord::Base
   def default_form
     ticket_field_def
   end
-  
-  def is_saml_sso?
-    self.sso_options.key? :sso_type and self.sso_options[:sso_type] == SsoUtil::SAML;
-  end
-
-  def sso_login_url
-    if self.is_saml_sso?
-      self.sso_options[:saml_login_url]
-    else
-      self.sso_options[:login_url]
-    end
-  end
-
-  #Simplified login and logout url helper methods for saml and simple SSO.
-  def sso_logout_url
-    if self.is_saml_sso?
-      self.sso_options[:saml_logout_url]
-    else
-      self.sso_options[:logout_url]
-    end
-  end
-
-  def reset_sso_options
-    self.sso_options = set_sso_options_hash
-  end
 
   def enable_ticket_archiving(archive_days = 120)
     add_features(:archive_tickets)
@@ -724,22 +695,6 @@ class Account < ActiveRecord::Base
     def generate_secret_token
       Digest::MD5.hexdigest(Helpdesk::SHARED_SECRET + self.full_domain + Time.now.to_f.to_s).downcase
     end
-    
-    def set_sso_options_hash
-      HashWithIndifferentAccess.new({:login_url => "",:logout_url => "", :sso_type => ""})
-    end
-    
-    # def create_admin
-    #   self.user.active = true  
-    #   self.user.account = self
-    #   self.user.user_emails.first.account = self
-    #   self.user.user_emails.first.verified = true
-    #   self.user.user_role = User::USER_ROLES_KEYS_BY_TOKEN[:account_admin]  
-    #   self.user.build_agent()
-    #   self.user.agent.account = self
-    #   self.user.save
-    #   User.current = self.user
-    # end
 
     def subscription_next_renewal_at
       subscription.next_renewal_at
