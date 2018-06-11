@@ -147,7 +147,8 @@ module Users
     def generate_activation_url(portal)
       url = ""
       if agent? && Account.current.freshid_enabled?
-        redirect_url = helpdesk_dashboard_url({ host: host(portal), protocol: url_protocol })
+        host_info = { host: host(portal), protocol: url_protocol }
+        redirect_url = (Account.current.agent_oauth2_sso_enabled? ? agent_login_url(host_info) : helpdesk_dashboard_url(host_info))
         url = Freshid::User.generate_activation_url(redirect_url, self.freshid_authorization.uid) if self.freshid_authorization.present?
         Rails.logger.error "FRESHID Activation url is empty :: uid = #{self.id}, auth = #{self.freshid_authorization.inspect}" if url.blank?
       else
