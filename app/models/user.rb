@@ -1102,6 +1102,13 @@ class User < ActiveRecord::Base
     end
   end
 
+  def assign_external_id ext_id
+    if Account.current.unique_contact_identifier_enabled?
+      user_with_ext_id = Account.current.all_users.where("id != ? AND unique_external_id = ?", id, ext_id).first if ext_id.present?
+      self.unique_external_id = ext_id if user_with_ext_id.nil?
+    end
+  end
+
   def sync_to_export_service
     scheduled_ticket_exports.each do |schedule|
       schedule.sync_to_service("update")
@@ -1119,7 +1126,7 @@ class User < ActiveRecord::Base
     freshid_user = Freshid::User.create(user_attributes_for_freshid)
     if freshid_user.present?
       self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
-      assign_freshid_attributes_to_user freshid_user
+      assign_freshid_attributes_to_agent freshid_user
       Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
     end
   end
@@ -1157,6 +1164,21 @@ class User < ActiveRecord::Base
     remove_password_flag(email, account_id)
   end
 
+  def assign_freshid_attributes_to_contact freshid_user_data
+    custom_user_info = freshid_user_data[:custom_user_info] || {}
+    self.name = "#{freshid_user_data[:first_name]} #{freshid_user_data[:last_name]}".strip if freshid_user_data.key?(:first_name) || freshid_user_data.key?(:last_name)
+    self.phone = freshid_user_data[:phone] if freshid_user_data.key?(:phone)
+    self.mobile = freshid_user_data[:mobile] if freshid_user_data.key?(:mobile)
+    self.job_title = freshid_user_data[:job_title] if freshid_user_data.key?(:job_title)
+    self.assign_company(company) if freshid_user_data.key?(:company)
+    self.assign_external_id(custom_user_info[:external_id]) if custom_user_info.key?(:external_id)
+    self.active = true
+  end
+
+  def active_freshid_user?
+    active? && freshid_enabled_account?
+  end
+
   def gdpr_pending?
     agent_preferences[:gdpr_acceptance]
   end
@@ -1167,10 +1189,6 @@ class User < ActiveRecord::Base
 
   def agent_preferences
     self.preferences[:agent_preferences]
-  end
-  
-  def active_freshid_user?
-    active? && freshid_enabled_account?
   end
 
   private
@@ -1204,7 +1222,7 @@ class User < ActiveRecord::Base
       set_password_flag(email)
     end
 
-    def assign_freshid_attributes_to_user freshid_user
+    def assign_freshid_attributes_to_agent freshid_user
       self.name = freshid_user.full_name
       self.phone = freshid_user.phone
       self.mobile = freshid_user.mobile
@@ -1212,7 +1230,7 @@ class User < ActiveRecord::Base
       self.active = self.primary_email.verified = freshid_user.active?
       self.password_salt = self.crypted_password = nil
     end
-    
+
     def user_attributes_for_freshid
       freshid_first_name, freshid_middle_name, freshid_last_name = freshid_split_names
       { 
