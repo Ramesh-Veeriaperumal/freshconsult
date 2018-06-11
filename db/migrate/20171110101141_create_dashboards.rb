@@ -13,7 +13,8 @@ class CreateDashboards < ActiveRecord::Migration
       t.boolean :deleted, :default => false, :null => false
 
       t.timestamps
-    end
+    end   
+    add_index :dashboards, [:account_id], name: 'index_account_id'
   end
 
   def down

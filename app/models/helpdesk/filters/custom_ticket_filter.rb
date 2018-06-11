@@ -12,7 +12,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   after_commit :update_widgets, on: :update, :if => :dynamic_filter?
 
   before_destroy :update_widgets
-  
+
   MODEL_NAME = "Helpdesk::Ticket"
 
   def self.deleted_condition(input)

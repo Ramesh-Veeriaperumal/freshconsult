@@ -17,8 +17,8 @@ class TwitterWrapper
     @twitter_handle = twitter_handle
   end
 
-  def request_tokens   
-    rtoken = @consumer.get_request_token(:oauth_callback => @callback_url)       
+  def request_tokens(state)
+    rtoken = @consumer.get_request_token(:oauth_callback => "#{@callback_url}?state=#{state}")       
   end
 
   #Need to consider re-authorize where we dont need to add the same twitter handle again

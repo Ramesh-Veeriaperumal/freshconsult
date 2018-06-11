@@ -24,7 +24,7 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   accepts_nested_attributes_for :sub_picklist_values, :allow_destroy => true
   
-  before_create :set_account_id
+  before_validation :trim_spaces, :if => :value_changed?
 
   after_commit :clear_cache
 
@@ -75,12 +75,13 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   end
   
   private
-    def set_account_id
-      self.account_id = pickable.account_id
-    end
 
     def filter_fields fields
       fields.select {|field| field.required_for_closure? }
+    end
+
+    def trim_spaces
+      value.to_s.strip!
     end
 
 end

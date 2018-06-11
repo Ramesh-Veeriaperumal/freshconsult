@@ -19,6 +19,7 @@ class Helpdesk::DeactivateFilterWidgets < BaseWorker
 
     Rails.logger.info("In DeactivateFilterWidgets worker :: Dashboards :: #{dashboard_ids.inspect}")
     dashboard_ids.each { |dashboard_id| clear_ticket_filter_widgets_from_cache(dashboard_id) }
+
   rescue Exception => e
     Rails.logger.info("Error in DeactivateFilterWidgets worker :: #{args.inspect} :: #{e.message} :: #{e.backtrace}")
     NewRelic::Agent.notice_error(e, { args: args })
