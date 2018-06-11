@@ -138,6 +138,7 @@
     - natero_worker
     - reports_no_activity
     - bot_cleanup
+    - update_time_zone
     - nullify_deleted_custom_field_data
     - restore_spam_tickets
     - contact_delete_forever
