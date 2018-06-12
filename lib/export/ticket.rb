@@ -7,6 +7,8 @@ class Export::Ticket < Struct.new(:export_params)
   include Helpdesk::TicketModelExtension
   include ArchiveTicketEs
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
+  ERB_PATH = Rails.root.join('app/views/support/tickets/export/%<file_name>s.xls.erb').to_path
+  FILE_FORMAT = ['csv', 'xls'].freeze
 
   def perform
     begin
@@ -14,12 +16,13 @@ class Export::Ticket < Struct.new(:export_params)
       set_current_user
       data_export_type = export_params[:archived_tickets]? 'archive_ticket' : 'ticket'
       create_export data_export_type
+      @file_path = generate_file_path(data_export_type, export_params[:format])
       add_url_to_export_fields if export_params[:add_url]
-      file_string =  Sharding.run_on_slave{ export_file }
-      if @no_tickets 
+      Sharding.run_on_slave { export_file }
+      if @no_tickets
         send_no_ticket_email
       else
-        build_file(file_string, "ticket", export_params[:format]) 
+        upload_file(@file_path)
         DataExportMailer.ticket_export({:user => User.current, 
                                                 :domain => export_params[:portal_url],
                                                 :url => hash_url(export_params[:portal_url]),
@@ -29,6 +32,12 @@ class Export::Ticket < Struct.new(:export_params)
       NewRelic::Agent.notice_error(e)
       puts "Error  ::#{e.message}\n#{e.backtrace.join("\n")}"
       @data_export.failure!(e.message + "\n" + e.backtrace.join("\n"))
+    end
+  ensure
+    # Moving data exports entry to failed status in case of any failures
+    if !@no_tickets && @data_export.status == DataExport::EXPORT_STATUS[:started]
+      Rails.logger.error "Data export status at the end of export job :: #{@data_export.status}"
+      @data_export.update_attributes(status: DataExport::EXPORT_STATUS[:failed], last_error: 'Sidekiq::Shutdown')
     end
   end
 
@@ -43,21 +52,15 @@ class Export::Ticket < Struct.new(:export_params)
 
   def initialize_params
     export_params.symbolize_keys!
-    file_formats = ['csv', 'xls']
     export_fields = export_params[:export_fields]
     export_params[:export_fields] = reorder_export_params export_fields
-    export_params[:format] = file_formats[0] unless file_formats.include? export_params[:format]
+    export_params[:format] = FILE_FORMAT[0] unless FILE_FORMAT.include? export_params[:format]
     delete_invisible_fields
     format_contact_company_params 
   end
 
   def add_url_to_export_fields
     export_params[:export_fields].merge!('support_ticket_path' => 'URL') 
-    @headers << "support_ticket_path"
-  end
-
-  def add_url_to_export_fields
-    export_params[:export_fields].merge!('support_ticket_path' => 'URL')
     @headers << "support_ticket_path"
   end
 
@@ -70,53 +73,55 @@ class Export::Ticket < Struct.new(:export_params)
   end
 
   def export_file
-    safe_send("#{export_params[:format]}_export")
-  end
-
-  def csv_export
-    csv_string = CSVBridge.generate do |csv|
-      csv_headers = @headers.collect { |header| export_params[:export_fields][header] }
-      csv_headers << @contact_headers.collect { |header|
-        export_params[:contact_fields][header] } if @contact_headers.present?
-      csv_headers << @company_headers.collect { |header|
-        export_params[:company_fields][header] } if @company_headers.present?
-      csv << csv_headers.flatten
-      ticket_data(csv)
+    write_export_file(@file_path) do |file|
+      safe_send("#{export_params[:format]}_export", file)
     end
-    csv_string
   end
 
-  def xls_export
+  def csv_export(file)
+    csv_headers = @headers.collect { |header| export_params[:export_fields][header] }
+    csv_headers << @contact_headers.collect { |header| export_params[:contact_fields][header] } if @contact_headers.present?
+    csv_headers << @company_headers.collect { |header| export_params[:company_fields][header] } if @company_headers.present?
+    csv_headers.flatten!
+    write_csv(file, csv_headers)
+    ticket_data(file)
+  end
+
+  def xls_export(file)
     require 'erb'
     @xls_hash = export_params[:export_fields]
     @contact_hash = export_params[:contact_fields] || {}
     @company_hash = export_params[:company_fields] || {}
     @contact_headers ||= []
     @company_headers ||= []
-    ticket_data
-    path =  "#{Rails.root}/app/views/support/tickets/export_csv.xls.erb"
-    ERB.new(File.read(path)).result(binding)
+    write_xls(file, xls_erb('header'))
+    @data_xls_erb = xls_erb('data')
+    ticket_data(file)
+    write_xls(file, xls_erb('footer'))
   end
 
-  def ticket_data(records=[])
+  def xls_erb(file_name)
+    erb_file_path = format(ERB_PATH, file_name: file_name)
+    ERB.new(File.read(erb_file_path))
+  end
+
+  def ticket_data(file)
     @no_tickets = true
-    # Initializing for CSV with Record headers.
-    @records = records
     if export_params[:archived_tickets].present? && export_params[:use_es].present?
       archive_tickets_from_es(export_params) do |error, records|
         if error.present?
           raise Exception.new("export::archivetickets Querying Elasticsearch failed: #{error.messages}")
-        else
-          add_to_records(records) if records.count > 0
+        elsif records.count > 0
+          build_file(records, file)
         end
       end
     elsif export_params[:archived_tickets]
       Account.current.archive_tickets.permissible(User.current).find_in_batches(archive_export_query) do |items|
-        add_to_records(items) 
+        build_file(items, file)
       end
     else 
       Account.current.tickets.permissible(User.current).find_in_batches(export_query) do |items|
-        add_to_records(items)  
+        build_file(items, file)
       end
     end
   end
@@ -129,7 +134,7 @@ class Export::Ticket < Struct.new(:export_params)
     }
   end
 
-  def add_to_records(items)
+  def build_file(items, file)
     @no_tickets = false
     @custom_field_names = Account.current.ticket_fields.custom_fields.pluck(:name)
     ActiveRecord::Associations::Preloader.new(items, preload_associations).run
@@ -153,8 +158,20 @@ class Export::Ticket < Struct.new(:export_params)
         NewRelic::Agent.notice_error(e,{:custom_params => {:ticket_id => item.id }})
         Rails.logger.info "Exception in tickets export::: Ticket:: #{item}, data:: #{data}"
       end
-      @records << record
+      export_params[:format] == FILE_FORMAT[0] ? write_csv(file, record) : write_xls(file, @data_xls_erb, record)
     end
+  end
+
+  def write_csv(file, record)
+    csv_string = CSVBridge.generate do |csv|
+      csv << record
+    end
+    file.write(csv_string)
+  end
+
+  def write_xls(file, erb, record = [])
+    @record = record
+    file.write(erb.result(binding))
   end
 
   def format_data(val, data)

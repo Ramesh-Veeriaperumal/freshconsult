@@ -125,6 +125,7 @@ window.App.Header  = window.App.Header || {};
             													.addClass('header-icons-agent-roundrobin-on');
             element.attr('title', element.data('assignOff'));
           }
+          element.twipsy('show');
 	      }
 	    });
 		},

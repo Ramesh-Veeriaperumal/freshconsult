@@ -18,7 +18,6 @@ class Bot < ActiveRecord::Base
   validates :portal_id, uniqueness: true
 
   before_create :set_external_id
-  after_create :training_not_started!
   before_update :check_constant_fields
   before_destroy :cleanup # Destroy bot ticket mappings, feedbacks and feedback mappings.
 

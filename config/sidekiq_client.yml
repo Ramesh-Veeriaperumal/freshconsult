@@ -220,6 +220,7 @@ defaults: &defaults
     - [mixpanel_queue]
     - [bot_cleanup]
     - [freshcaller_account_delete]
+    - [update_time_zone]
     - [delete_archive_ticket]
     - [restore_spam_tickets]
     - [email_service_provider]
@@ -285,6 +286,7 @@ defaults: &defaults
     - [inline_image_shredder]
     - [deactivate_product_widgets]
     - [user_central_publish]
+    - [deactivate_filter_widgets]
 
 development:
   <<: *defaults

@@ -52,7 +52,13 @@ class Admin::Social::TwitterHandlesController < ApplicationController
   def twitter_wrapper
     @wrapper = TwitterWrapper.new(@item, { :product => @current_product,
                                            :current_account => current_account,
-                                           :callback_url => url_for(:action => 'authdone')})
+                                           :callback_url => callback_url})
+  end
+
+  def callback_url
+    current_account.launched?(:twitter_common_redirect) ?
+      Social::Twitter::Constants::COMMON_REDIRECT_URL :
+      url_for(:action => 'authdone')
   end
 
   def scoper
