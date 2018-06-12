@@ -29,6 +29,7 @@ module ActionMailerCallbacks
       mail.header["X-FD-Ticket-Id"] = nil if ticket_id_field.present?
       mail.header["X-FD-Type"] = nil if (mail_type_field.present? && mail_type_field.value.present?)
       mail.header["X-FD-Note-Id"] = nil if note_id_field.present?
+      mail.header["X-ACCOUNT-ID"] = account_id
       if (!mail.header[:from].nil? && !mail.header[:from].value.nil?)
         from_email = mail.header[:from].value
         from_email = from_email.kind_of?(Array) ? from_email.first : from_email
@@ -89,7 +90,6 @@ module ActionMailerCallbacks
       end
       @email_confg = nil
       mail.header["X-FD-Email-Category"] = category_id
-      mail.header["X-ACCOUNT-ID"] = account_id
     end
 
     def reset_smtp_settings(mail, use_mailgun = false)
