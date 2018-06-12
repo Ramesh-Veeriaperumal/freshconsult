@@ -1191,10 +1191,6 @@ class User < ActiveRecord::Base
     self.preferences[:agent_preferences]
   end
 
-  def active_freshid_user?
-    active? && primary_email.verified? && freshid_enabled_account?
-  end
-
   private
 
     def freshid_enabled_account?
