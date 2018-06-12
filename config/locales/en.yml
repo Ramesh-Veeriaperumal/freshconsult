@@ -6580,6 +6580,7 @@ en:
     language: Language
     primary_language: Primary Language
     additional_languages: Supported Languages
+    time_zone_updation: The time zone is getting updated for all agents and contacts. Please try after some time.
     supported_portal_languages: "Languages visible to users"
     supported_languages: "Supported Languages (%{count})"
     portal_languages: "Languages Visible on Portal (%{count})"
@@ -7857,6 +7858,8 @@ en:
     api_error: "We could not process your request. Please try after sometime."
     results: results
     field_blank: Please fill the required fields.
+    validation_failed: "Validation failed."
+    error_calling_method: "Error occurred while calling method: "
     installed: Installed
     helpnote1: "Apps in Freshdesk let you share data with third party solutions and services that you use regularly. They also enable you to add additional features to the ticket and contact details page. Freshdesk offers several apps out-of-the-box. To browse our selection of apps, click on the “Get More Apps” button."
     helpnote_custom_apps_html: "Can't find an app that fits your needs? With our Custom Apps (earlier called Freshplugs), you can bring in contextual information from any third party solution, legacy system or database. These Custom Apps can also be used to make visual changes to your helpdesk and boost productivity. Click <a href='https://support.freshdesk.com/support/solutions/articles/121846' target='_blank'>here</a> to learn more!"
@@ -12161,7 +12164,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     ticket_requester_firstname: Requester first name
     ticket_requester_lastname: Requester last name
     ticket_requester_email: Requester email
-    ticket_requester_phone: Contact Primary email
+    ticket_requester_phone: Requester phone number
     ticket_requester_address: Requester address
     ticket_company_name: Company name
     ticket_company_description: Company description

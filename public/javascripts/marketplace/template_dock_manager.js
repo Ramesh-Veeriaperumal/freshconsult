@@ -1,15 +1,4 @@
-var CustomIparamAPI = Class.create({});
-var RequestAPI = Class.create({
-  initialize: function(bundle) {
-    this.ajax = jQuery.ajax;
-    this.dpUrl = '/mkp/data-pipe.json';
-    this.features = bundle.app.features;
-    this.isLocalApp = bundle.app.isLocalApp;
-    this.CsrfToken = jQuery('meta[name=csrf-token]').attr('content');
-    this.bundle = bundle;
-  }
-})
-var TemplateDockManager   = Class.create({
+var TemplateDockManager = Class.create({
   initialize: function(extensionsEl, customMsgs, tabName, platformVersion) {
     this.extensionsWrapper = extensionsEl;
     this.customMessages = customMsgs;
@@ -24,7 +13,9 @@ var TemplateDockManager   = Class.create({
     this.isAppBrowserOpened = false;
     this.accApiPollInterval = customMsgs.accapi_poll_interval;
     this.platformVersion = platformVersion;
-    this.frshParent;
+    this.marketplaceAdapter = this.marketplaceAdapter || new MarketplaceAdapter();
+    this.marketplaceManager = this.marketplaceManager || new MarketplaceManager(this.marketplaceAdapter.getAdapter());
+    this.appInstance;
 
     this.loggerOptions = {
       status: {
@@ -360,8 +351,8 @@ var TemplateDockManager   = Class.create({
     });
   },
 
-  displayFormFieldError: function() {
-    jQuery("#install-error").show().text(this.customMessages.field_blank);
+  displayError: function(error) {
+    jQuery("#install-error").show().text(error);
     jQuery(".install-form").css("height", "calc(100vh - 230px)");
   },
 
@@ -387,35 +378,28 @@ var TemplateDockManager   = Class.create({
     });
   },
 
-  // Get the iparam values to save.
-  getIparamsValue: function() {
-    if(this.platformVersion == '2.0') {
-      if (this.frshParent) {
-        return this.frshParent.executeCustomIparam('postConfigs');
+  getIparams: function() {
+    if (this.platformVersion === '2.0') {
+      if (this.appInstance) {
+        return this.appInstance.trigger({ type: 'custom_iparam.submit' });
       }
-      return Promise.resolve({ configs: (typeof postConfigs == 'function') ? postConfigs() : '' });
+      return Promise.resolve({ configs: '' });
     }
+    var that = this;
+    // validation for V1 apps
+    jQuery(".installer-form input.fa-textip.required").each(function(index, value) {
+      if (jQuery.trim(jQuery(value).val()).length == 0) {
+        // Display V1 form validation error
+        that.displayError(that.customMessages.field_blank);
+        return Promise.reject();
+      }
+    });
+
+    // validation succeeds - return installation parameters.
     return Promise.resolve(jQuery('#install-form').serialize());
   },
 
-  isValidForm: function() {
-    if (this.platformVersion == '2.0') {
-      if (this.frshParent) {
-        return this.frshParent.executeCustomIparam('validate', {});
-      }
-      return Promise.resolve({ isValid: ((typeof validate == 'function')) ? validate() : true });
-    }
-    // validation for V1 apps
-    var isFormValid = true;
-    jQuery(".installer-form input.fa-textip.required").each(function(index, value){
-      if (jQuery.trim(jQuery(value).val()).length == 0){
-        isFormValid = false;
-      }
-    });
-    return Promise.resolve({ isValid: isFormValid });
-  },
-
-  getIparamsSuccessCbk: function(el, configs) {
+  submitIparams: function(el, configs) {
     var that = this;
     var initialCount = 0;
     jQuery.ajax({
@@ -449,22 +433,17 @@ var TemplateDockManager   = Class.create({
     e.stopPropagation();
     var that = this;
     var el = jQuery(e.currentTarget);
-    var isFormValid = this.isValidForm(that.platformVersion);;
 
-    isFormValid.then(function(response) {
-      if(response.isValid === true) {
-        that.getIparamsValue().then(function(configs) {
-          that.getIparamsSuccessCbk(el, configs)
-        }, function(error) {
-          that.handleInstallFailure();
-        });
-      } else{
-        if (that.platformVersion == '1.0'){
-          that.displayFormFieldError();
-        }
+    this.getIparams().then(function(configs) {
+      that.submitIparams(el, configs)
+    }, function(e) {
+      if (e.hasOwnProperty('isValid') || !e.isValid) {
+        return that.displayError(that.customMessages.validation_failed);
       }
-    }, function(error) {
-      that.handleInstallFailure();
+      if (e.hasOwnProperty('method')) {
+        return that.displayError(that.customMessages.error_calling_method + e.method + ' - ' + (e.error.message || JSON.stringify(e)));
+      }
+      return that.handleInstallFailure();
     });
   },
   handleInstallProgress: function() {
@@ -731,12 +710,6 @@ var TemplateDockManager   = Class.create({
     }, self.extensionId);;
     poll(self.extensionId, self.versionId);
   },
-  getServices: function() {
-    return {
-      'CustomIparamAPI': CustomIparamAPI,
-      'RequestAPI' : RequestAPI
-    }
-  },
 
   // Custom installation page set iframe container height
   setFormHeight: function() {
@@ -784,25 +757,19 @@ var TemplateDockManager   = Class.create({
             var app = {
               'id': that.extensionId,
               'versionId': that.versionId,
-              'url': install_extension.configs_url,
+              'locations': {
+                'custom_iparam': {
+                  'url': install_extension.configs_url,
+                }
+              },
               'features': install_extension.features,
-              'isInstall': true
-            }; // Details about the app
-            var bundle = { 'app': app };
-            var initializeApp = false;
-            // Initialize Parent and render iframe
-            that.frshParent = window.appf(app, bundle, that.getServices(), initializeApp);
+              'configs': install_extension.configs
+            }
+            that.appInstance = that.marketplaceManager.createInstance(app);
             var appContainer = jQuery(".app-container", that.extensionsWrapper);
             jQuery('.button-container').addClass('button-container-v2');
             that.setFormHeight();
-            jQuery(appContainer).html(that.frshParent.iframe); // Embed Configs IFrame
-
-            if(install_extension.configs != null ) {
-              // Invoke getConfigs method once channel is initialized 
-              that.frshParent.initialized().then(function() {
-                that.frshParent.executeCustomIparam('getConfigs', { configs: install_extension.configs });
-              });
-            }
+            jQuery(appContainer).html(that.appInstance.element); // Embed Configs IFrame
           }
           if ( install_extension.configs_page && install_extension.configs != null ){
             that.whenAvailable('getConfigs', install_extension.configs);

@@ -574,6 +574,17 @@ module Ember
         end
       end
 
+      def test_training_completed_with_invalid_state
+        enable_bot do
+          set_jwe_auth_header(SUPPORT_BOT)
+          bot = create_bot({ product: true})
+          bot.training_completed!
+          post :training_completed, controller_params(version: 'private', id: bot.external_id)
+          assert_response 409
+          match_json(request_error_pattern(:invalid_bot_state))
+        end
+      end
+
       def test_training_completed
         enable_bot do
           set_jwe_auth_header(SUPPORT_BOT)
@@ -618,6 +629,16 @@ module Ember
           assert_response 403
           match_json(request_error_pattern(:access_denied))
           User.any_instance.unstub(:privilege?)
+        end
+      end
+
+      def test_clear_status_redis_with_invalid_state
+        enable_bot do
+          bot = create_bot({ product: true})
+          bot.training_inprogress!
+          post :mark_completed_status_seen, controller_params(version: 'private', id: bot.id)
+          assert_response 409
+          match_json(request_error_pattern(:invalid_bot_state))
         end
       end
 

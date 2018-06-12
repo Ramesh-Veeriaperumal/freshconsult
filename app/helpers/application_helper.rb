@@ -1685,6 +1685,12 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
       current_account.features_included?(:forums) && allowed_in_portal?(:open_forums) && privilege?(:view_forums)
     end
 
+    def set_twitter_url_in_redis(auth_redirect_url, account_url, state)
+      key = "#{Social::Twitter::Constants::COMMON_REDIRECT_REDIS_PREFIX}:#{state}"
+      set_others_redis_key(key, "#{account_url}", 180)
+      onclick_strategy(auth_redirect_url)
+    end
+
     def onclick_strategy(auth_redirect_url)
       if current_account.falcon_ui_enabled?(current_user)
         "parent.location.href='#{auth_redirect_url}'"
