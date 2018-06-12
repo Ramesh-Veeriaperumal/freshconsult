@@ -1176,10 +1176,6 @@ class User < ActiveRecord::Base
     self.active = true
   end
 
-  def active_freshid_user?
-    active? && freshid_enabled_account?
-  end
-
   def gdpr_pending?
     agent_preferences[:gdpr_acceptance]
   end
