@@ -1191,7 +1191,7 @@ class User < ActiveRecord::Base
   def agent_preferences
     self.preferences[:agent_preferences]
   end
-  
+
   def active_freshid_user?
     active? && primary_email.verified? && freshid_enabled_account?
   end
