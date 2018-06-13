@@ -16,12 +16,42 @@ module SpamWatcherCallbacks
         :threshold => SpamConstants::SPAM_WATCHER[self.table_name]["threshold"],
         :sec_expire => SpamConstants::SPAM_WATCHER[self.table_name]["sec_expire"],
       }
+      init_spam_watcher_redis_script
       generate_spam_watcher_methods
+    end
+
+    def init_spam_watcher_redis_script
+      class_attribute :spam_check_redis_script
+      self.spam_check_redis_script = %Q(
+        local acc_key = KEYS[1]
+        local spam_watch_key = KEYS[2]
+        local spam_ban_key = KEYS[3]
+        local now = tonumber(ARGV[1])
+        local expire_time = tonumber(ARGV[2])
+        local threshold = tonumber(ARGV[3])
+        if redis.call("get", acc_key) then
+          return
+        end
+        local count = redis.call("rpush", spam_watch_key, now)
+        redis.call("expire", spam_watch_key, expire_time)
+        if count >= threshold then
+          local head = redis.call("lpop", spam_watch_key)
+          if (now-head) <= expire_time then
+            redis.call("rpush", spam_ban_key, spam_watch_key)
+          end
+        end
+      return
+      ).freeze
+
+      $spam_watcher.perform_redis_op('script', :load, self.spam_check_redis_script)
+      class_attribute :spam_check_redis_script_sha
+      self.spam_check_redis_script_sha = Digest::SHA1.hexdigest(self.spam_check_redis_script).freeze
     end
 
     def generate_spam_watcher_methods
       user_column, key  = self.spam_watcher_options[:user_column],self.spam_watcher_options[:key]
       threshold,sec_expire =  self.spam_watcher_options[:threshold], self.spam_watcher_options[:sec_expire]
+
       class_eval %Q(
         after_commit :spam_watcher_counter, on: :create
         def spam_watcher_counter
@@ -38,19 +68,17 @@ module SpamWatcherCallbacks
               final_key = key + ":" + account_id.to_s + ":" + user_id.to_s
               # this case is added for the sake of skipping imports
               return true if (((key == "sw_helpdesk_tickets") or (key == "sw_helpdesk_notes")) && ((Time.now.to_i - self.created_at.to_i) > 1.day))
-              return true if $spam_watcher.perform_redis_op("get", account_id.to_s + "-" + user_id.to_s)
-              count = $spam_watcher.perform_redis_op("rpush", final_key, Time.now.to_i)
-              sec_expire = "#{sec_expire}".to_i 
-              $spam_watcher.perform_redis_op("expire", final_key, sec_expire+1.minute)
-              if count >= max_count
-                head = $spam_watcher.perform_redis_op("lpop", final_key).to_i
-                time_diff = Time.now.to_i - head
-                if time_diff <= sec_expire
-                  # ban_expiry = sec_expire - time_diff
-                  $spam_watcher.perform_redis_op("rpush", SpamConstants::SPAM_WATCHER_BAN_KEY,final_key)
+              begin
+                $spam_watcher.evalsha(self.spam_check_redis_script_sha, [account_id.to_s + "-" + user_id.to_s, final_key, SpamConstants::SPAM_WATCHER_BAN_KEY], [Time.now.to_i, "#{sec_expire}".to_i+1.minute, max_count])
+              rescue Redis::BaseError => e
+                Rails.logger.error e.backtrace
+                NewRelic::Agent.notice_error(e, description: "Error occured in running of spam_watcher redis script")
+                if e.message =~ /NOSCRIPT No matching script/
+                  self.class.init_spam_watcher_redis_script
+                  $spam_watcher.evalsha(self.spam_check_redis_script_sha, [account_id.to_s + "-" + user_id.to_s, final_key, SpamConstants::SPAM_WATCHER_BAN_KEY], [Time.now.to_i, "#{sec_expire}".to_i+1.minute, max_count])
                 end
               end
-            }
+          }
           rescue Exception => e
             Rails.logger.error e.backtrace
             NewRelic::Agent.notice_error(e,{:description => "error occured in updating spam_watcher_counter"})

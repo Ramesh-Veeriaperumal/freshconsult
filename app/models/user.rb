@@ -543,13 +543,14 @@ class User < ActiveRecord::Base
 
   def enqueue_activation_email(email_config = nil, portal = nil)
     portal.make_current if portal
+    active_freshid_agent = agent? && active_freshid_user?
     if self.language.nil?
-      email_type = active_freshid_user? ? :deliver_agent_invitation! : :deliver_activation_instructions!
-      args = active_freshid_user? ? [portal] : [ portal, false, email_config]
+      email_type = active_freshid_agent ? :deliver_agent_invitation! : :deliver_activation_instructions!
+      args = active_freshid_agent ? [portal] : [ portal, false, email_config]
       Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, email_type, args),
         nil, 5.minutes.from_now)
     else
-      active_freshid_user? ? deliver_agent_invitation!(portal) : deliver_activation_instructions!(portal, false, email_config)
+      active_freshid_agent ? deliver_agent_invitation!(portal) : deliver_activation_instructions!(portal, false, email_config)
     end
   end
 
@@ -1175,10 +1176,6 @@ class User < ActiveRecord::Base
     self.active = true
   end
 
-  def active_freshid_user?
-    active? && freshid_enabled_account?
-  end
-
   def gdpr_pending?
     agent_preferences[:gdpr_acceptance]
   end
@@ -1189,6 +1186,10 @@ class User < ActiveRecord::Base
 
   def agent_preferences
     self.preferences[:agent_preferences]
+  end
+
+  def active_freshid_user?
+    active? && primary_email.verified? && freshid_enabled_account?
   end
 
   private

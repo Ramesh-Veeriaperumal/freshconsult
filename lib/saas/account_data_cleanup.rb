@@ -199,13 +199,8 @@ end
     }
   end
 
-  def handle_multiple_business_hours_drop_data
-    update_all_in_batches({ :time_zone => account.time_zone }){ |cond|
-      records = account.all_users.where(@conditions).limit(@batch_size)
-      count   = records.update_all(cond)
-      records.map(&:sqs_manual_publish)
-      count
-    }
+  def handle_multi_timezone_drop_data
+    UpdateTimeZone.perform_async({:time_zone => account.time_zone})
   end
 
   def handle_multiple_emails_drop_data

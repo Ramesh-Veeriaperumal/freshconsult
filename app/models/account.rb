@@ -198,6 +198,23 @@ class Account < ActiveRecord::Base
     default_in_op_fields.stringify_keys!
   end
 
+  def time_zone_updation_running?
+    key = time_zone_redis_key
+    (redis_key_exists? key) ? true : false
+  end
+
+  def set_time_zone_updation_redis
+    set_others_redis_key(time_zone_redis_key,true)
+  end
+
+  def remove_time_zone_updation_redis
+    remove_others_redis_key time_zone_redis_key
+  end
+
+  def time_zone_redis_key
+    UPDATE_TIME_ZONE % { :account_id => self.id}
+  end
+
   def build_default_password_policy user_type
     self.build_agent_password_policy(
       user_type: user_type,

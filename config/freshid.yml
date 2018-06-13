@@ -5,9 +5,9 @@ defaults: &defaults
   ui_url:  http://freshid.local.dev
   client_id: fa7c5f1b-6975-4a78-9bbb-73017cf5c09a
   client_secret: ewyBBuu7PofvRnHvfV43XbZd27O0EyhL
-  product: 1
   callback_api_secret: 7ceea591dc0a9c9797606cb684d796105197a0cdbd29c654e18750a5c337f9f7
   central_url: ""
+  product: freshdesk
   customer_base_url:  ""
   customer_client_id: ""
   customer_client_secret: ""
