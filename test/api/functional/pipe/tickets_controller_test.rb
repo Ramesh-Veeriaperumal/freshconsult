@@ -67,6 +67,7 @@ module Pipe
         subject: Faker::Name.name, description: Faker::Lorem.paragraph,
         'created_at' => created_at, 'updated_at' => updated_at
       }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 201
       t = Helpdesk::Ticket.last
@@ -85,6 +86,7 @@ module Pipe
         pending_since: pending_since, 'created_at' => created_at,
         'updated_at' => updated_at
       }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 201
       t = Helpdesk::Ticket.last
@@ -100,10 +102,28 @@ module Pipe
         subject: Faker::Name.name, description: Faker::Lorem.paragraph,
         on_state_time: on_state_time
       }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 201
       t = Helpdesk::Ticket.last
       match_json(ticket_pattern(params, t))
+      match_json(ticket_pattern({}, t))
+      assert t.on_state_time - on_state_time == 0
+    end
+
+    def test_create_with_on_state_time_as_string
+      on_state_time = 100
+      params = {
+        requester_id: requester.id.to_s, status: '2', priority: '2',
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+        on_state_time: on_state_time.to_s
+      }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 201
+      t = Helpdesk::Ticket.last
+      match_json(ticket_pattern(params.merge(status: 2, priority: 2, requester_id: t.requester_id), t))
       match_json(ticket_pattern({}, t))
       assert t.on_state_time - on_state_time == 0
     end
@@ -117,6 +137,7 @@ module Pipe
         subject: Faker::Name.name, description: Faker::Lorem.paragraph,
         'created_at' => created_at, 'updated_at' => updated_at, 'closed_at' => closed_at
       }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
       post :create, construct_params({ version: 'private' }, params)
       assert_response 201
       t = Helpdesk::Ticket.last
@@ -133,6 +154,7 @@ module Pipe
         status: 5, priority: 2, source: 2, type: "Question",
         closed_at: closed_at
       }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
       put :update, construct_params({ id: t.display_id, version: 'private' }, params)
       assert_response 200
       t = Helpdesk::Ticket.last
