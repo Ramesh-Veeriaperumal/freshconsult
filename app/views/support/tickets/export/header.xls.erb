@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ss:Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:o="urn:schemas-microsoft-com:office:office"
+  xmlns:x="urn:schemas-microsoft-com:office:excel"
+  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  xmlns:html="http://www.w3.org/TR/REC-html40">
+  <ss:Worksheet ss:Name="Sheet1">
+    <ss:Table>
+      <ss:Row>
+        <% @headers.each do |header| %>
+            <ss:Cell><ss:Data ss:Type="String"><%= @xls_hash[header] %></ss:Data></ss:Cell>
+        <% end %>
+        <% if @contact_headers.present? %>
+          <% @contact_headers.each do |header| %>
+            <ss:Cell><ss:Data ss:Type="String"><%= @contact_hash[header] %></ss:Data></ss:Cell>
+          <% end %>
+        <% end %>
+        <% if @company_headers.present? %>
+          <% @company_headers.each do |header| %>
+            <ss:Cell><ss:Data ss:Type="String"><%= @company_hash[header] %></ss:Data></ss:Cell>
+          <% end %>
+        <% end %>
+      </ss:Row>

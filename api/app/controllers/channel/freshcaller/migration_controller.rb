@@ -7,6 +7,7 @@ class Channel::Freshcaller::MigrationController < ApiApplicationController
   before_filter :custom_authenticate_request
   around_filter :run_on_all_shardings, only: :fetch_pod_info
   around_filter :select_slave_shard, only: [:validate, :cross_verify]
+  around_filter :select_master_shard, only: [:initiate, :revert, :reset_freshfone]
   before_filter :load_account, only: [:validate, :initiate, :cross_verify, :revert, :reset_freshfone]
   
   def validate
@@ -97,6 +98,13 @@ class Channel::Freshcaller::MigrationController < ApiApplicationController
       Sharding.run_on_slave do
         yield
       end
+    end
+  end
+
+  def select_master_shard
+    Rails.logger.debug 'Selecting via MASTER SHARD'
+    Sharding.admin_select_shard_of(params[:id]) do
+      yield
     end
   end
 

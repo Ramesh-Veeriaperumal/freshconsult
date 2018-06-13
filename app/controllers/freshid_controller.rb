@@ -10,6 +10,7 @@ class FreshidController < ApplicationController
 
   def authorize_callback
     user = fetch_user_by_code(params[:code], freshid_authorize_callback_url, current_account)
+    Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
     freshid_auth_failure_redirect_back and return if user.nil? && session[:authorize]
     freshid_auth_failure_redirect_back(FLASH_USER_NOT_EXIST, support_login_path) and return if user.nil? && authorize_via_freshworks_login_page?
     freshid_auth_failure_redirect_back(FLASH_INVALID_USER) and return if !user.valid_user?
@@ -25,6 +26,7 @@ class FreshidController < ApplicationController
       if @user_session.save
         @current_user_session = @user_session
         @current_user = @user_session.record
+        Rails.logger.info "FRESHID create_user_session :: a=#{current_account.try(:id)}, u=#{@current_user.try(:id)}"
         perform_after_login
         redirect_back_or_default('/') if grant_day_pass
       else

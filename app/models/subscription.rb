@@ -365,7 +365,9 @@ class Subscription < ActiveRecord::Base
   def is_chat_plan?
     freshchat_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
                         SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
-                        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], SubscriptionPlan::SUBSCRIPTION_PLANS[:premium] ]
+                        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], SubscriptionPlan::SUBSCRIPTION_PLANS[:premium],
+                        SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_jan_17], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
+                        SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17]]
     freshchat_plans.include?(subscription_plan_from_cache.name)
   end
 
@@ -429,12 +431,7 @@ class Subscription < ActiveRecord::Base
   
     def set_renewal_at
       return if self.subscription_plan.nil? || self.next_renewal_at
-
-      if redis_key_exists? TRIAL_21_DAYS 
-        self.next_renewal_at = Time.now.advance(:days => TRIAL_DAYS)
-      else
-        self.next_renewal_at = Time.now.advance(:months => self.renewal_period)
-      end
+      self.next_renewal_at = Time.now.advance(:days => TRIAL_DAYS)
     end
 
     def update_gnip_subscription(twitter_method_name)

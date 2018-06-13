@@ -45,6 +45,10 @@ class DashboardWidget < ActiveRecord::Base
 
   scope :sla_trend_cards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:sla_trend_card.to_s], active: true }
 
+  scope :forum_moderations, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:forum_moderation.to_s], active: true }
+
+  scope :trend_cards, conditions: { widget_type: WIDGET_MODULE_TOKEN_BY_NAME[:trend_card.to_s], active: true }
+
   def inactive_widget_updated?
     # Checking for changes not active because setting active to false cannot be should not be reverted.
     !changes.keys.include?("active") && active == false

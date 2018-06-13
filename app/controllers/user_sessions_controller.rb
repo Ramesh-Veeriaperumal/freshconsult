@@ -242,7 +242,10 @@ class UserSessionsController < ApplicationController
   def destroy
     logout_user
     return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
-    redirect_to freshid_logout(support_home_url) and return if current_user.present? && freshid_agent?(current_user.email)
+    if current_user.present? && freshid_agent?(current_user.email)
+      Rails.logger.info "FRESHID destroy :: a=#{current_account.try(:id)}, u=#{current_user.try(:id)}"
+      redirect_to freshid_logout(support_home_url) and return
+    end
     respond_to do |format|
       format.html  {
         redirect_to root_url
@@ -258,11 +261,14 @@ class UserSessionsController < ApplicationController
     create_user_session and return unless freshid_login.credentials_provided?
 
     uuid = freshid_login.authenticate_user
+    Rails.logger.info "FRESHID freshid_user_authentication :: uuid=#{uuid}"
     user = uuid.present? ? current_account.all_technicians.find_by_freshid_uuid(uuid) : nil
+    Rails.logger.info "FRESHID freshid_user_authentication :: u=#{user.try(:id)}"
     !freshid_login.invalid_credentials? && user.present? ? create_user_session(user) : render_failed_login_template
   end
 
   def freshid_destroy
+    Rails.logger.info "FRESHID freshid_destroy :: a=#{current_account.try(:id)}, u=#{current_user.try(:id)}"
     logout_user
     return if current_account.sso_enabled? and current_account.sso_logout_url.present? and !is_native_mobile?
     redirect_to params[:redirect_uri]

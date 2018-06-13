@@ -3,13 +3,15 @@ class Account < ActiveRecord::Base
 
   before_create :downcase_full_domain,:set_default_values, :set_shard_mapping, :save_route_info
   before_create :add_features_to_binary_column
-  before_update :check_default_values, :update_users_time_zone, :backup_changes
+  validates_inclusion_of :time_zone, :in => TIME_ZONES, :unless => :time_zone_updation_running?
+  before_update :check_default_values, :backup_changes, :check_timezone_update
+  before_update :update_global_pod_domain
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status, :make_current
   after_create :create_freshid_account, if: [:freshid_signup_allowed?, :freshid_enabled?]
-  after_update :change_shard_mapping, :update_default_business_hours_time_zone,:update_google_domain, :update_route_info
-  before_update :update_global_pod_domain 
+  after_update :change_shard_mapping, :update_default_business_hours_time_zone, 
+               :update_google_domain, :update_route_info, :update_users_time_zone
 
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
@@ -69,9 +71,10 @@ class Account < ActiveRecord::Base
     end
   end
 
-  def update_users_time_zone #Ideally this should be called in after_update
-    if time_zone_changed? && !features.multi_timezone?
-      all_users.update_all_with_publish({ :time_zone => time_zone })
+  def update_users_time_zone
+    if time_zone_changed? && !multi_timezone_enabled?
+      self.set_time_zone_updation_redis
+      UpdateTimeZone.perform_async({:time_zone => time_zone})
     end
   end
 
@@ -168,6 +171,11 @@ class Account < ActiveRecord::Base
     def backup_changes
       @old_object = Account.find(id)
       @all_changes = self.changes.clone
+    end
+
+    def check_timezone_update
+      self.time_zone = @old_object.time_zone if @all_changes.key?("time_zone") && 
+                                                self.time_zone_updation_running?
     end
 
     def account_verification_changed?
