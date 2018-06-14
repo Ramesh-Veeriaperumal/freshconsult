@@ -4,6 +4,7 @@
 module Archive
   module Core
     class Base
+      include Publisher
 
       ASSOCIATIONS_TO_SERIALIZE = {
         :helpdesk_tickets => [:flexifield, :ticket_old_body, :schema_less_ticket, :ticket_states, :mobihelp_ticket_info, :reminders,:subscriptions],  #:subscriptions
@@ -19,6 +20,12 @@ module Archive
                               "inline_attachments" => "attachable", "helpdesk_notes" => "notable", :cti_calls => "recordable"]
         # :helpdesk_notes => ["social_tweets" => "tweetable", "social_fb_posts" => "postable", "freshfone_calls" => "notable", "helpdesk_attachments" => "attachable", "helpdesk_dropboxes" => "droppable", "helpdesk_shared_attachments" => "shared_attachable" ,"inline_attachments" => "attachable", :cti_calls => "recordable"]
       }
+
+      MODIFY_ASSOCIATIONS_TO_CENTRAL = {
+        helpdesk_tickets: {
+          helpdesk_time_sheets: { account_association: :time_sheets }
+        }
+      }.freeze
 
       RAW_MYSQL_TICKET_ASSOCIATION = ["helpdesk_ticket_bodies","helpdesk_schema_less_tickets","helpdesk_ticket_states","mobihelp_ticket_infos","helpdesk_reminders","helpdesk_subscriptions"]  #helpdesk_subscriptions
       RAW_MYSQL_TICKET_POLYMORPHIC_ASSOCIATION = {
@@ -246,7 +253,19 @@ module Archive
               ActiveRecord::Base.connection.execute("update helpdesk_attachments set #{value}_id=#{archive.id}, #{value}_type='#{attach_to_polymorphic_type}' where id in (#{ids.join(',')}) and account_id=#{responder.account_id}") unless ids.empty?
             else
               ids = ActiveRecord::Base.connection.select_values("select id from #{key} where account_id=#{responder.account_id} and  #{value}_id=#{poly_id} and #{value}_type= '#{from_polymorphic_type}'")
-              ActiveRecord::Base.connection.execute("update #{key} set #{value}_id=#{archive.id}, #{value}_type='#{to_polymorphic_type}' where id in (#{ids.join(',')}) and account_id=#{responder.account_id}") unless ids.empty?
+              unless ids.empty?
+                key = key.to_sym
+                if MODIFY_ASSOCIATIONS_TO_CENTRAL[symbol].key?(key)
+                  options = {
+                    ids:            ids,
+                    table_name:     symbol,
+                    rel_table:      key,
+                    rel_table_args: MODIFY_ASSOCIATIONS_TO_CENTRAL[symbol][key]
+                  }
+                  publish_to_central(options)
+                end
+                ActiveRecord::Base.connection.execute("update #{key} set #{value}_id=#{archive.id}, #{value}_type='#{to_polymorphic_type}' where id in (#{ids.join(',')}) and account_id=#{responder.account_id}")
+              end
               
               if(key.to_sym == :helpdesk_notes)
                 SearchV2::IndexOperations::PostArchiveProcess.perform_async({ 
@@ -260,6 +279,10 @@ module Archive
 
       def modify_inline_attachments(symbol)
         polymorphic_type =  (symbol == :helpdesk_tickets) ? "ArchiveTicket::Inline" : "ArchiveNote::Inline"
+      end
+
+      def helpdesk_time_sheets_publish_args(time_sheet, _options)
+        [[], [:update, { archive_changes: { archive_ticket_id: [nil, time_sheet.archive_ticket_id], ticket_id: [time_sheet.ticket_id, nil] } }]]
       end
     end
   end

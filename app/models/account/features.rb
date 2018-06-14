@@ -10,7 +10,7 @@ class Account < ActiveRecord::Base
                    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, 
                    :imap_error_status_check, :va_any_field_without_none, :auto_complete_off, 
                    :sanbox_lp, :encode_emoji, :dependent_field_validation, :post_central_publish,
-                   :audit_logs_central_publish, :encode_emoji_subject, :twitter_common_redirect]
+                   :audit_logs_central_publish, :encode_emoji_subject, :twitter_common_redirect, :time_sheets_central_publish]
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
