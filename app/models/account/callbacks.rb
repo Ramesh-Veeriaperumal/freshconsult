@@ -216,7 +216,7 @@ class Account < ActiveRecord::Base
     end
 
     def sso_disabled_not_freshid_account?
-      !sso_enabled? && !freshid_enabled? && freshid_signup_allowed?
+      !sso_enabled? && sso_enabled_changed? && !freshid_enabled? && freshid_signup_allowed?
     end
 
     def remove_email_restrictions

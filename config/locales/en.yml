@@ -2179,6 +2179,7 @@ en:
         enable_sso: Single Sign On (SSO)
         enable_simple_sso: Simple SSO
         enable_oauth_sso: Oauth2 SSO
+        enable_oauth2_sso: OAuth 2.0
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
         enable_SSL: "Secure Connection using SSL"
@@ -2196,6 +2197,7 @@ en:
         saml_cert_fingerprint: "Security Certificate Fingerprint"
         saml_cert_fingerprint_info: "Fingerprint (SHA1)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
         saml_cert_fingerprint_info_sha256: "Fingerprint (SHA256)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
+        enable_oauth2_info: "The industry standard OAuth protocol allows you to delegate agent and customer authentication to the service that hosts their user accounts."
         click_to_enable: Click to enable SSL
         click_to_disable: Click to disable SSL
         security_title: Security
