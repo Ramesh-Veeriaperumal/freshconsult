@@ -17,7 +17,7 @@
           <li class="field">
             <% if @installed_application.sync_accounts.blank? %>
               <%= t("integrations.#{app_name}.form.account_not_configured").html_safe %>
-              <div class="center"><%= link_to(t("integrations.#{app_name}.edit_form.add_more"), oauth_url, :class => "uiButton special") %></div><br/>
+              <div class="center"><%= link_to(t("integrations.#{app_name}.edit_form.add_more"), oauth_url, :class => "uiButton special", :target => "_top") %></div><br/>
             <% else %>
               <div class="google_accounts">
                 <table borer="0" width="100%">

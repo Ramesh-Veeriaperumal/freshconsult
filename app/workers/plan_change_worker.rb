@@ -26,6 +26,10 @@ class PlanChangeWorker
     Role.add_manage_availability_privilege account
   end
 
+  def drop_multi_timezone_data(account)
+    UpdateTimeZone.perform_async({:time_zone => account.time_zone})
+  end
+
   def drop_round_robin_data(account)
     Role.remove_manage_availability_privilege account
   end

@@ -141,6 +141,7 @@ module ChatHelper
             :chat_with => t("livechat.chat_with"),
             :ticket_success_msg => t("livechat.ticket_success_msg").html_safe,
             :ticket_error_msg => t("livechat.ticket_error_msg"),
+            :ticket_domain_restricted_error_msg => t("livechat.ticket_domain_restricted_error_msg"),
             :in_conversation => t("livechat.in_conversation"),
             :available_agents => t("livechat.available_agents"),
             :returning_visitors => t("livechat.returning_visitors"),

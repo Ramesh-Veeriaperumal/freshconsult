@@ -3,6 +3,7 @@
   install_action = @installing_application.options[:install_action] # If the form needs different install action, then this can be used.
   url = { :controller=> "installed_applications", :action => "install" }  # default url for installing an app.
   html = {:id => "InstallApplication" } # default html for installing an app.
+  html[:target] = "_top" if @installing_application.name == 'google_contacts'
   if install_action.present?
 	  url = url.merge(install_action[:url]) if install_action[:url].present?
 	  html = html.merge(install_action[:html]) if install_action[:html].present?
