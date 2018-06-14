@@ -48,8 +48,8 @@ class TicketDelegator < BaseDelegator
 
   validate :validate_parent_ticket, if: -> { child_ticket? && @parent.present? }
   validate :validate_ticket_for_association, if: -> { @tracker_ticket_id }
-  validate :validate_tracker_ticket, if: -> { @tracker_ticket_id || @unlink}
   validate :validate_related_ticket, if: -> { @unlink }
+  validate :validate_tracker_ticket, if: -> { errors[:id].blank? && (@tracker_ticket_id || @unlink)}
 
   validate :parent_template_id_permissible?, if: -> { @parent_template_id }
   validate :child_template_ids_permissible?, if: -> { @child_template_ids }
