@@ -28,4 +28,5 @@ aws:
   - <%= SQS[:fd_scheduler_reminder_todo_queue] %>
   - <%= SQS[:custom_mailbox_status] %>
   - <%= SQS[:bot_feedback_queue] %>
+  - <%= SQS[:twitter_realtime_queue] %>
 
