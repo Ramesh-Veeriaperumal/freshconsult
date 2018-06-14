@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods, :presenter
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
-  publishable on: :update
+  # publishable on: :update
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
@@ -548,13 +548,14 @@ class User < ActiveRecord::Base
 
   def enqueue_activation_email(email_config = nil, portal = nil)
     portal.make_current if portal
+    active_freshid_agent = agent? && active_freshid_user?
     if self.language.nil?
-      email_type = active_freshid_user? ? :deliver_agent_invitation! : :deliver_activation_instructions!
-      args = active_freshid_user? ? [portal] : [ portal, false, email_config]
+      email_type = active_freshid_agent ? :deliver_agent_invitation! : :deliver_activation_instructions!
+      args = active_freshid_agent ? [portal] : [portal, false, email_config]
       Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, email_type, args),
         nil, 5.minutes.from_now)
     else
-      active_freshid_user? ? deliver_agent_invitation!(portal) : deliver_activation_instructions!(portal, false, email_config)
+      active_freshid_agent ? deliver_agent_invitation!(portal) : deliver_activation_instructions!(portal, false, email_config)
     end
   end
 
@@ -1189,7 +1190,7 @@ class User < ActiveRecord::Base
   end
   
   def active_freshid_user?
-    active? && freshid_enabled_account?
+    active? && primary_email.verified? && freshid_enabled_account?
   end
 
   private

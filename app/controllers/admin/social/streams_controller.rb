@@ -10,6 +10,7 @@ class Admin::Social::StreamsController < Admin::AdminController
     @auth_redirect_url = twitter_authorize_url
     @twitter_handles   = current_account.twitter_handles
     @twitter_streams   = current_account.all_twitter_streams
+    @account_url = authdone_admin_social_twitters_url
   end
   
   def authorize_url
@@ -20,8 +21,12 @@ class Admin::Social::StreamsController < Admin::AdminController
   def twitter_wrapper
     @wrapper = TwitterWrapper.new(nil, {
                                     :current_account => current_account,
-                                    :callback_url => authdone_admin_social_twitters_url
+                                    :callback_url => callback_url
     })
+  end
+
+  def callback_url
+    current_account.launched?(:twitter_common_redirect) ? COMMON_REDIRECT_URL : authdone_admin_social_twitters_url
   end
   
   def stream_accessible_params(social_stream)
@@ -39,7 +44,8 @@ class Admin::Social::StreamsController < Admin::AdminController
   end
 
   def twitter_authorize_url
-    request_token            = @wrapper.request_tokens
+    state = generate_auth_state
+    request_token            = @wrapper.request_tokens(state)
     session[:request_token]  = request_token.token
     session[:request_secret] = request_token.secret
     request_token.authorize_url
@@ -48,6 +54,10 @@ class Admin::Social::StreamsController < Admin::AdminController
     Rails.logger.error e.backtrace
     NewRelic::Agent.notice_error(e)
     nil
+  end
+
+  def generate_auth_state
+    @state ||= Digest::MD5.hexdigest("#{Helpdesk::SECRET_3}#{Time.now.to_f}#{current_account.id}")
   end
 
   def update_dm_rule(social_account)

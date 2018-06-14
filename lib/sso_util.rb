@@ -237,6 +237,7 @@ module SsoUtil
   end
 
   def set_user_companies_for_jwt_sso(account, user, user_companies, overwrite)
+    user_companies = user_companies.compact.map(&:squish!)
     companies = user.companies
     company_names = companies.map(&:name)
     if overwrite

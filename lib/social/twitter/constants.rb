@@ -61,4 +61,8 @@ module Social::Twitter::Constants
 
   SMART_FILTER_ON = "1"
 
+  COMMON_REDIRECT_URL = "#{AppConfig['integrations_url'][Rails.env]}/twitter/handle/callback"
+
+  COMMON_REDIRECT_REDIS_PREFIX = "TWITTER_COMMON_AUTH"
+
 end

@@ -1123,6 +1123,8 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
     t.datetime "updated_at"
   end
 
+  add_index "dashboards", ["account_id"], :name => "index_account_id"
+
   create_table "dashboard_widgets", :force => true do |t|
     t.integer "account_id", :limit => 8
     t.string "name"
@@ -1136,6 +1138,9 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "dashboard_widgets", [:account_id, :dashboard_id], :name => "index_account_id_dashboard_id"
+  add_index "dashboard_widgets", [:account_id, :ticket_filter_id], :name => "index_account_id_ticket_filter_id"
 
   create_table "data_exports", :force => true do |t|
     t.integer  "account_id", :limit => 8

@@ -6,11 +6,12 @@ class Integrations::DataPipeController <  ApplicationController
 
   def router
     begin 
-      account_id = Account.current.id
-      shard = ShardMapping.lookup_with_account_id(account_id)
+      account = Account.current
+      shard = ShardMapping.lookup_with_account_id(account.id)
       additional_params = { extensionId: request.headers["HTTP_MKP_EXTNID"], versionId: request.headers["HTTP_MKP_VERSIONID"],
-        accountId: account_id, accountPod: shard.pod_info, 
-        installedExtnId: @installed_extn_id, mkpRoute: request.headers["HTTP_MKP_ROUTE"]
+        accountId: account.id, accountPod: shard.pod_info, 
+        installedExtnId: @installed_extn_id, mkpRoute: request.headers["HTTP_MKP_ROUTE"],
+        domain: account.full_domain
       }
       request_body = params[:data_pipe].merge(additional_params)
       resp = make_request(request_body) 

@@ -112,6 +112,11 @@
 							<%= f.label :time_zone, t('account.time_zone'), :class => "control-label"  %>
 							<div class="controls">
 								<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
+						 		<% if current_account.time_zone_updation_running? %> 
+							 		<span class="help-block">
+											<%= t(:'account.time_zone_updation') %>
+									</span>
+								<% end %>
 					 		</div>
 						</div>
 						<div class="control-group">
@@ -322,6 +327,10 @@
     })
 
 		
+	<% end %>
+
+	<% if current_account.time_zone_updation_running? %>
+	   jQuery("#account_time_zone").prop("disabled", true)
 	<% end %>
 
 

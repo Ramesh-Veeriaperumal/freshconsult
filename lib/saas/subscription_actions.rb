@@ -4,7 +4,7 @@ class SAAS::SubscriptionActions
     :facebook, :twitter, :custom_domain, :css_customization,
     :custom_roles, :dynamic_content, :mailbox, :dynamic_sections, :custom_survey,
     :round_robin, :multi_language, :helpdesk_restriction_toggle, :ticket_templates,
-    :round_robin_load_balancing]
+    :round_robin_load_balancing, :multi_timezone]
 
   ADD_DATA_FEATURES   = [ :round_robin ]
 

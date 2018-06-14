@@ -144,6 +144,7 @@
     - natero_worker
     - reports_no_activity
     - bot_cleanup
+    - update_time_zone
     - restore_spam_tickets
     - nullify_deleted_custom_field_data
     - contact_delete_forever
@@ -157,6 +158,7 @@
     - clone
     - inline_image_shredder
     - deactivate_product_widgets
+    - deactivate_filter_widgets
   :external:
     - code_console_execution
     - integrations

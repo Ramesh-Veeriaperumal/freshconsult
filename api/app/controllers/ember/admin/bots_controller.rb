@@ -87,7 +87,7 @@ module Ember
       end
 
       def training_completed
-        validate_state(BotConstants::BOT_STATUS[:training_inprogress])
+        return unless validate_state(BotConstants::BOT_STATUS[:training_inprogress])
         @bot.training_completed!
         @bot_user = current_account.users.find_by_id(@bot.last_updated_by)
         categories = @bot.solution_category_meta.includes(:primary_category).map(&:name)
@@ -97,7 +97,7 @@ module Ember
       end
 
       def mark_completed_status_seen
-        validate_state(BotConstants::BOT_STATUS[:training_completed])
+        return unless validate_state(BotConstants::BOT_STATUS[:training_completed])
         @item.clear_status
         head 204
       end
@@ -162,6 +162,7 @@ module Ember
           end
           @item.additional_settings[:bot_hash] = response['content']['botHsh']
           if @item.save
+            @item.training_not_started!
             @bot = {
               id: @item.id
             }
@@ -193,7 +194,10 @@ module Ember
           bot = @item || @bot
           if bot.training_status.to_i != state
             Rails.logger.error "Bot state error:: Action: #{action_name}, #{bot_info(bot)}"
+            render_request_error(:invalid_bot_state, 409)
+            return
           end
+          true
         end
 
         def handle_exception

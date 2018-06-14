@@ -6368,6 +6368,9 @@
           },
           "404": {
             "description": "Resource not found"
+          },
+          "409": {
+            "description": "Invalid Bot state"
           }
         }
       }
@@ -6396,6 +6399,9 @@
           },
           "404": {
             "description": "Resource not found"
+          },
+          "409": {
+            "description": "Invalid Bot state"
           }
         }
       }

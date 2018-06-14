@@ -11,7 +11,7 @@
   <% unless @twitter_handles.empty? %>
       <div class="floatr">
         <% if @add_new_handle %>
-            <a onclick="<%= onclick_strategy(@auth_redirect_url) %>" class="btn btn-primary mrt"><%= t('.new_account') %></a>
+            <a onclick="<%= set_twitter_url_in_redis(@auth_redirect_url, @account_url, @state) %>" class="btn btn-primary mrt"><%= t('.new_account') %></a>
         <% end %>
         <% if @add_new_stream %>
             <%= link_to t('.new_stream'), new_admin_social_twitter_stream_url, :class => "btn btn-primary" %>
