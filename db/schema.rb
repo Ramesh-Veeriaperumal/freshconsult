@@ -1363,6 +1363,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
   add_index "flexifield_def_entries", ["account_id", "flexifield_alias"], :name => "index_FFDef_entries_on_account_id_and_flexifield_alias"
   add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_name"], :name => "idx_ffde_onceperdef", :unique => true
   add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_order"], :name => "idx_ffde_ordering"
+  add_index 'flexifield_def_entries', ['account_id', 'flexifield_def_id', 'flexifield_coltype'], name: 'index_ffde_on_account_id_and_ff_def_id_and_ff_coltype'
 
   create_table "flexifield_defs", :force => true do |t|
     t.string   "name",                                      :null => false

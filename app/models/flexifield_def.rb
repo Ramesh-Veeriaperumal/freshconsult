@@ -39,12 +39,20 @@ class FlexifieldDef < ActiveRecord::Base
     idx ? flexifield_def_entries[idx].to_ff_alias : nil
   end
   
+  def to_ff_def_entry ff_alias
+    (flexifield_def_entries || []).find { |f| f.flexifield_alias == ff_alias.to_s }
+  end
+
   def ff_aliases
     flexifield_def_entries.nil? ? [] : flexifield_def_entries.map(&:flexifield_alias)
   end
 
   def ff_alias_column_mapping
     @mapping ||= flexifield_def_entries.each_with_object({}) { |ff_def_entry, hash| hash[ff_def_entry.flexifield_alias] = ff_def_entry.flexifield_name }
+  end
+
+  def ff_alias_column_type_mapping
+    @ff_alias_column_type_mapping ||= flexifield_def_entries.each_with_object({}) { |ff_def_entry, hash| hash[ff_def_entry.flexifield_alias] = [ff_def_entry.flexifield_name, ff_def_entry.flexifield_coltype] }
   end
 
   def boolean_ff_aliases

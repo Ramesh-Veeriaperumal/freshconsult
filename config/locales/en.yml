@@ -2942,6 +2942,7 @@ en:
         string: You have exceeded the maximum limit for this type of field.
         string_with_dn: You are not allowed to create more than 400 text fields.
         text: You are not allowed to create more than 10 paragraph fields.
+        text_with_dn: You are not allowed to create more than 50 paragraph fields.
         number: You are not allowed to create more than 20 number fields.
         decimal: You are not allowed to create more than 10 decimal fields.
         boolean: You are not allowed to create more than 10 checkbox fields.
