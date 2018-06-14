@@ -197,7 +197,6 @@
       :freshcaller: false
       :freshcaller_widget: false
       :falcon: false
-      :support_bot: false
       :opt_out_analytics: false
       :disable_old_ui: false
       oauth2: false

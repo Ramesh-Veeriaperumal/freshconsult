@@ -292,10 +292,13 @@ class Account < ActiveRecord::Base
         #This || condition is to handle special case during deployment
         #until new signup is enabled, we need to have older list.
         plan_features_list =  if PLANS[:subscription_plans][self.plan_name].nil?
-                                FEATURES_DATA[:plan_features][:feature_list]
+                                FEATURES_DATA[:plan_features][:feature_list].dup
                               else
-                                PLANS[:subscription_plans][self.plan_name][:features]
+                                PLANS[:subscription_plans][self.plan_name][:features].dup
                               end
+
+        plan_features_list.delete(:support_bot) if revoke_support_bot?
+
         plan_features_list.each do |key, value|
           bitmap_value = self.set_feature(key)
         end

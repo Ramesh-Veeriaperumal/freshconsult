@@ -34,6 +34,8 @@ class Account < ActiveRecord::Base
     Freshchat::Account::VERSION_MEMBER_KEY
   ]
 
+  PODS_FOR_BOT = ['poduseast1'].freeze
+
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       launched?(item)
@@ -251,5 +253,9 @@ class Account < ActiveRecord::Base
 
   def support_bot_configured?
     support_bot_enabled? && bot_onboarded?
+  end
+
+  def revoke_support_bot?
+    redis_key_exists?(REVOKE_SUPPORT_BOT) || (Rails.env.production? && PODS_FOR_BOT.exclude?(PodConfig['CURRENT_POD']))
   end
 end
