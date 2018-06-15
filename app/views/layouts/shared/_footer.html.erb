@@ -1,10 +1,10 @@
-<div id="footer" class="wrapper">  
+<div id="footer" class="wrapper">
 	<div class="wrapper-shadow">
 			<% if current_account.launched?(:new_footer_feedback_box) %>
 				<%= render "layouts/shared/footer_feedback_box" %>
 			<% else %>
 				<%= render "layouts/shared/footer_no_feedback_box" %>
-			<% end %>		  			 
+			<% end %>
 	</div>
 </div>
 <%if current_user and current_account.node_feature_list.present?  %>
@@ -16,7 +16,7 @@
 
 <%= render :partial => 'shared/shortcuts_help_chart' %>
 
-<% if current_user && current_user.agent? %>
+<% if current_user && current_user.agent? && !falcon_ui_enabled(current_user) %>
 	<% cti_app = current_account.cti_installed_app_from_cache %>
 	<% if cti_app.present? %>
     <% if current_account.features?(:cti) && cti_app.application.name == 'cti' %>
@@ -54,20 +54,20 @@
 <% end %>
 	 <script type="text/javascript" src="<%= @LoadAsset %>/widget/freshwidget.js"></script>
 <style type="text/css" media="screen, projection">
-	@import url(<%= @LoadAsset %>/widget/freshwidget.css); 
-</style> 
+	@import url(<%= @LoadAsset %>/widget/freshwidget.css);
+</style>
 	<script type="text/javascript">
 		FreshWidget.init("", {"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>","assetUrl":"<%= @LoadAsset1 %>"} );
-		
+
 		jQuery("body").on("click",'#footer_feedback_widget', function(ev){
 	    	ev.preventDefault();
 	    	if(window.widget_updated){
 	    		FreshWidget.update({"queryString": "&widgetType=popup&screenshot=no&helpdesk_ticket[requester]=<%= current_user.email.presence %>", "widgetType": "popup", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "backgroundImage": "", "alignment": "4", "offset": "-500px", "formHeight": "550px", "url": "<%= AppConfig['support_url'] %>","assetUrl":"<%= @LoadAsset1 %>"} );
 	    	}
 	    	window.widget_updated = false;
-	    	FreshWidget.show();	
+	    	FreshWidget.show();
 	    });
-	    
+
 		jQuery("body").on("click",'.chat-support-link', function(ev){
 			ev.preventDefault();
 			try{
@@ -77,7 +77,7 @@
 				console.log('Livechat error: support chat has not loaded');
 			}
 		});
-		
+
 	  var APP_ENV = "<%= Rails.env %>";
 	</script>
 
@@ -95,7 +95,7 @@
 		<script type="text/javascript" >
 			window.inlineManualTracking = <%= inline_manual_people_tracing.to_json.html_safe %>
 			window.im_option = {
-				to_activate : <%= show_onboarding? %>,	
+				to_activate : <%= show_onboarding? %>,
 				topic_id : <%= inlinemanual_topic_id %>
 			}
 		</script>
@@ -117,7 +117,7 @@
 	window.current_account_full_domain = "<%= current_account.full_domain %>"
 	window.is_current_user_admin = "<%= current_user.privilege?(:view_admin) %>"
 </script>
-			
+
 <% if current_account.launched?(:new_footer_feedback_box) %>
 	<%= javascript_include_tag :'cdn/footer_feedback' %>
 <% end %>
