@@ -1,0 +1,8 @@
+type: object
+properties:
+  tickets_count:
+    type: integer
+    description: Number of tickets in the account
+  articles_count:
+    type: integer
+    description: Number of published articles in the portal that are visible to the bot

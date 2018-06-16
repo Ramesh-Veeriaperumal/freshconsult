@@ -127,7 +127,7 @@ class CustomFieldsController < Admin::AdminController
     def delete_field(field_details)
       f_to_del = scoper.find field_details[:id]
       f_to_del.destroy if f_to_del
-      Rails.logger.debug "A :: #{Account.current.id} TF :: #{f_to_del.id} TF name :: #{f_to_del.label} #{f_to_del.name} U :: #{User.current.id}"
+      Rails.logger.debug "Ticket field deletion :: A :: #{Account.current.id} TF :: #{f_to_del.id} TF name :: #{f_to_del.label} #{f_to_del.name} U :: #{User.current.id} :: #{f_to_del}"
     end
 
     def flash_message(err_str)
@@ -324,6 +324,6 @@ class CustomFieldsController < Admin::AdminController
     # Section related changes - end
 
     def denormalized_flexifields_enabled?
-      Account.current.denormalized_flexifields_enabled?
+      @denormalized_flexifields_enabled ||= Account.current.denormalized_flexifields_enabled?
     end
 end

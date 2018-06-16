@@ -7,9 +7,8 @@ class Social::Gnip::SmartFilterTweetToTicketWorker < BaseWorker
 
   def perform(args)
     args = args.deep_symbolize_keys
-    queue = $sqs_twitter
     unless args[:tweet].blank?
-      gnip_msg = Social::Gnip::TwitterFeed.new(args[:tweet], queue)
+      gnip_msg = Social::Gnip::TwitterFeed.new(args[:tweet])
       begin
         gnip_msg.check_smart_filter(Account.current, args[:data])
       rescue Exception => e

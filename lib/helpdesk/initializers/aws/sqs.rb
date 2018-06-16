@@ -68,11 +68,9 @@ SQS_V2_QUEUE_URLS.freeze
 
 # TWITTER RELATED SQS QUEUES
 begin
-
   # EUC polls from the region specifuc queue pushed from EU
   if S3_CONFIG[:region] == 'eu-central-1'
-    $sqs_twitter  = AWS::SQS.new.queues.named( S3_CONFIG[:region] + '_' + SQS[:twitter_realtime_queue])
-
+    $sqs_twitter = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
   # EU polls from the global queue, pushes it to region specific queues EU/EUC
   elsif S3_CONFIG[:region] == 'eu-west-1'
     $sqs_euc = AWS::SQS.new(
@@ -82,9 +80,10 @@ begin
       :s3_signature_version => :v4)
 
     # Initializing global variable polling the tweets from sqs - pod specific
-    $sqs_twitter_global = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
-    $sqs_twitter        = AWS::SQS.new.queues.named(S3_CONFIG[:region] + '_' + SQS[:twitter_realtime_queue])
-    $sqs_twitter_euc    = $sqs_euc.queues.named(S3_CONFIG[:region_euc] + '_' + SQS[:twitter_realtime_queue])
+    $sqs_twitter_global = AWS::SQS.new.queues.named(SQS[:global_twitter_realtime_queue])
+    $sqs_twitter        = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])
+    $sqs_twitter_eu     = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue_eu])
+    $sqs_twitter_euc    = $sqs_euc.queues.named(SQS[:twitter_realtime_queue_euc])
   else
     # US & AU Polls dircetly from the global queue - No region specific queues
     $sqs_twitter  = AWS::SQS.new.queues.named(SQS[:twitter_realtime_queue])

@@ -127,6 +127,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/trial_widget', only: %i[index sales_manager complete_step]
     resource :'ember/contact_password_policy', only: [:index]
     resource :'ember/agent_password_policy', only: [:index] # Not using it now.
+    resource :"ember/portal", only: [:show]
   end
 
   edit_ticket_properties do
@@ -181,11 +182,11 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_bots do
     resource :"ember/admin/bot", only: %i[new create show index update map_categories mark_completed_status_seen enable_on_portal]
+    resource :"ember/portal", only: %i[show bot_prerequisites]
   end
 
   view_bots do
-    resource :"ember/admin/bot_feedback", only: %i[index bulk_delete bulk_map_article create_article] 
+    resource :"ember/admin/bot_feedback", only: %i[index bulk_delete bulk_map_article create_article]
     resource :"ember/admin/bot", only: %i[index show]
   end
-
 end

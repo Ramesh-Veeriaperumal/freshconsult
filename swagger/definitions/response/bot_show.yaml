@@ -44,6 +44,8 @@ properties:
           type: integer
         label:
           type: string
+        articles_count:
+          type: integer
   selected_category_ids:
     type: array
     description: Ids of categories associated to the bot

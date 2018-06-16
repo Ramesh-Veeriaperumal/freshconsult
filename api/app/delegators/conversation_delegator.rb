@@ -17,6 +17,8 @@ class ConversationDelegator < ConversationBaseDelegator
 
   validate :validate_send_survey, unless: -> { send_survey.nil? }
 
+  validate :validate_survey_monkey, unless: -> { include_surveymonkey_link.nil? }
+
   validate :validate_unseen_replies, on: :reply, if: :traffic_cop_required?
   validate :validate_unseen_replies_for_public_notes, on: :create, if: -> { public_note? && traffic_cop_required? }
 
@@ -83,6 +85,13 @@ class ConversationDelegator < ConversationBaseDelegator
     self.send_survey = self.send_survey ? '1' : '0'
   end
 
+  def validate_survey_monkey
+    survey_monkey = Account.current.installed_applications.with_name(Integrations::Constants::APP_NAMES[:surveymonkey]).first
+    unless survey_monkey && can_send_survey_monkey?(survey_monkey)
+      errors[:include_surveymonkey_link] << :should_be_blank
+    end
+  end
+
   def validate_application_id
     application_ids = cloud_files.map(&:application_id)
     applications = Integrations::Application.where('id IN (?)', application_ids)
@@ -101,6 +110,11 @@ class ConversationDelegator < ConversationBaseDelegator
   # We need an alias method here, because a custom validator method can be used only for one action
 
   private
+    # Replicating the old UI behaviour, surveymonkey link is active if requester is an agent,unlike in-app survey
+    def can_send_survey_monkey?(survey_monkey)
+      send_while = survey_monkey.configs[:inputs]['send_while']
+      @conversation.user.agent? && [Survey::PLACE_HOLDER, Survey::SPECIFIC_EMAIL_RESPONSE].include?(send_while.to_i)
+    end
 
     # skip parent and shared attachments
     def skip_existing_attachments(options)

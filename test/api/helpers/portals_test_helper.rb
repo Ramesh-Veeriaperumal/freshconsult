@@ -13,6 +13,13 @@ module PortalsTestHelper
     }.merge(forums_enabled? ? { discussion_category_ids: portal.portal_forum_categories.pluck(:forum_category_id) } : {})
   end
 
+  def bot_prerequisites_pattern(portal)
+    {
+      tickets_count: portal.account.tickets.count(:id),
+      articles_count: portal.bot_article_meta.count(:id)
+    }
+  end
+
   def forums_enabled?
     Account.current.features?(:forums) && !Account.current.features?(:hide_portal_forums)
   end
