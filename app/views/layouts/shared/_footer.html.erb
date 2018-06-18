@@ -16,7 +16,7 @@
 
 <%= render :partial => 'shared/shortcuts_help_chart' %>
 
-<% if current_user && current_user.agent? && !falcon_ui_enabled(current_user) %>
+<% if current_user && current_user.agent? && !current_account.falcon_ui_enabled?(current_user) %>
 	<% cti_app = current_account.cti_installed_app_from_cache %>
 	<% if cti_app.present? %>
     <% if current_account.features?(:cti) && cti_app.application.name == 'cti' %>
