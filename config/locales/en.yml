@@ -2185,6 +2185,7 @@ en:
         enable_sso_info: Single Sign On allows you to use your own application or a centralized Server (like MS Active Directory) to authenticate agents and customers so that they can access Freshdesk without entering a separate username and password.
         enable_sso: Single Sign On (SSO)
         enable_simple_sso: Simple SSO
+        enable_oauth_sso: Oauth2 SSO
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
         enable_SSL: "Secure Connection using SSL"
@@ -2238,6 +2239,12 @@ en:
         for_contacts: For Contacts
         password_policy_info3: Changes you make to the password policy will be applicable within 8 hours. Your agents will be prompted to update their passwords during this time. If they fail to conform, they will be logged out of the support portal and will be forced to change their passwords the next time they try to log in.
         password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
+      errors:
+        simple_sso: 
+          invalid_login_url: Please provide a valid login url
+        saml_sso:
+          invalid_login_url: Please provide a valid SAML login url
+          invalid_fingerprint: Please provide a valid SAML Certificate Fingerprint
       helpnote:
         title: Security Settings
         info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
@@ -4933,7 +4940,7 @@ en:
     login_portal: "Login to the support portal"
     login_details: "Enter the details below"
     agent_login_info: "Are you an agent?"
-    customer_signin: "Sign in as customer?"
+    customer_login_info: "Are you a customer?"
     agent_signin: "Login here"
     helpdesk_login_portal: "Welcome back Agent"
     agent_login_details: "Enter the details below"
@@ -5703,6 +5710,9 @@ en:
       agent_template_23:
         topic: Resolution Time SLA Reminder
         info1: "This notification is sent out to an agent when the resolution due by time of a ticket is nearing violation. This email could contain the ticket URL making it easier for the agent to check the ticket.<br/><br/>If you’ve setup multiple supported languages in your helpdesk, you can create this notification specific to each language. The <i class=\"common-icon-outdated\"></i> icon indicates that the notification translations in other languages may be outdated."
+      agent_template_25:
+        topic: Agent Invitation Email
+        info1: "The Agent Invitation Email is sent when an existing Freshworks agent (Agent is already active in any of the other Freshdesk accounts or in any of the other Freshworks products - Freshchat, Freshchaller, Freshsales, Freshservice, Freshmarketer) is added in your helpdesk.<br/><br/>\"User Activation Email\" is sent to a new Freshworks agent. And \"Agent Invitation Email\" is sent to an Agent who is already an active Freshworks agent."
       cc_notification_19:
         topic: New Ticket cc
         info1: "This notification will be sent out to the cc-ed persons if the Requester has included email addresses under cc while submitting a ticket to your helpdesk. This email should ideally contain the Requester’s name {{ticket.requester.name}} and ticket description {{ticket.description}}."
@@ -11113,6 +11123,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     chat_with_us: "Connect with us"
     ticket_success_msg: "New ticket has been created."
     ticket_error_msg: "Error while creating ticket"
+    ticket_domain_restricted_error_msg: "User email does not belong to a supported domain."
     website_visitors: "Visitors"
     connection_error_msg: "Can't connect to chat server. Retrying..."
     connection_success_msg: "Connection established"
