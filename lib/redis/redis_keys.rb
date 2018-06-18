@@ -364,6 +364,8 @@ module Redis::RedisKeys
   TRIAL_21_DAYS = "TRIAL_21_DAYS"
   UPDATE_TIME_ZONE = "UPDATE_TIME_ZONE:%{account_id}"
 
+  #Temp Redis keys for resque to sidekiq migration start
+
   # Key for disabling collab bell
   COLLAB_BELL_DISABLED = 'COLLAB_BELL_DISABLED'.freeze
 

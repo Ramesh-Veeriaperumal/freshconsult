@@ -439,6 +439,8 @@ Helpkit::Application.routes.draw do
   match '/login/sso_v2' => 'user_sessions#jwt_sso_login', :as => :jwt_sso_login
   match '/login/saml' => 'user_sessions#saml_login', :as => :saml_login
   match '/login/normal' => 'user_sessions#new', :as => :login_normal
+  match 'agent/login' => 'user_sessions#agent_login', :as => :agent_login
+  match 'customer/login' => 'user_sessions#customer_login', :as => :customer_login
   match '/signup_complete/:token' => 'user_sessions#signup_complete', :as => :signup_complete
   match '/zendesk/import' => 'admin/zen_import#index', :as => :zendesk_import
   match '/twitter/authdone' => 'social/twitter_handles#authdone', :as => :tauth
@@ -3282,6 +3284,8 @@ Helpkit::Application.routes.draw do
   match "/bot/*letter", to: redirect('/helpdesk')
 
   match '/freshid/authorize_callback', :controller => 'freshid', :action => 'authorize_callback', :method => :get
+  match '/freshid/oauth_agent_authorize_callback', :controller => 'freshid', :action => 'oauth_agent_authorize_callback', :method => :get
+  match '/freshid/oauth_customer_authorize_callback', :controller => 'freshid', :action => 'oauth_customer_authorize_callback', :method => :get
   match '/freshid/event_callback', :controller => 'freshid', :action => 'event_callback', :method => :post
   match '/freshid/logout', :controller => 'user_sessions', :action => 'freshid_destroy', :method => :get 
 

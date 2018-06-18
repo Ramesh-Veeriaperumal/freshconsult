@@ -145,6 +145,7 @@
     - reports_no_activity
     - bot_cleanup
     - update_time_zone
+    - nullify_deleted_custom_field_data
     - restore_spam_tickets
     - nullify_deleted_custom_field_data
     - contact_delete_forever

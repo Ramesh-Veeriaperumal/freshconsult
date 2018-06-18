@@ -1,6 +1,6 @@
 # encoding: utf-8
 module SsoUtil
-  SAML = 'saml'.freeze
+  SSO_TYPES = { saml: 'saml', simple_sso: 'simple', oauth2: 'oauth2'}.freeze
   SAML_NAME_ID_FORMAT = 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'.freeze
   SAML_NAME_ID_UNSPECIFIED = 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified'.freeze
   SSO_ALLOWED_IN_SECS = 1800
@@ -55,11 +55,11 @@ module SsoUtil
   def sso_login_page_redirect
     # redirect to SSO login page
     sso_url = nil
-    if current_account.is_saml_sso?
+    sso_url = if current_account.is_saml_sso?
       settings = get_saml_settings(current_account)
-      sso_url = OneLogin::RubySaml::Authrequest.new.create(settings)
+      OneLogin::RubySaml::Authrequest.new.create(settings)
     else
-      sso_url = generate_sso_url(current_account.sso_login_url)
+      generate_sso_url(current_account.sso_login_url)
     end
     redirect_to sso_url
   end
@@ -223,7 +223,7 @@ module SsoUtil
   end
 
   def generate_sso_url(url)
-    return url if current_account.sso_options[:sso_type] == SAML
+    return url if current_account.sso_options[:sso_type] == SSO_TYPES[:saml]
     host_url = "host_url=#{request.host}"
     url += (url.include? '?') ? "&#{host_url}" : "?#{host_url}"
     url
