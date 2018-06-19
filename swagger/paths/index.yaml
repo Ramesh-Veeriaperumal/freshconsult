@@ -236,6 +236,10 @@
 # Portals
 /portals:
   $ref: ./portals/list.yaml
+/portals/{id}:
+  $ref: ./portals/show.yaml
+/portals/{id}/bot_prerequisites:
+  $ref: ./portals/bot_prerequisites.yaml
 
 # Todo
 /todos:

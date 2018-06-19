@@ -226,7 +226,9 @@ module TicketsTestHelper
 
   def update_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
     description = expected_output[:description] || ticket.description_html
-    ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(description: description)
+    update_ticket_pattern = ticket_pattern(expected_output, ignore_extra_keys, ticket).merge(description: description)
+    update_ticket_pattern.merge!(ticket_association_pattern(ticket)) if ticket.associated_ticket?
+    update_ticket_pattern
   end
 
   def latest_note_response_pattern(note)

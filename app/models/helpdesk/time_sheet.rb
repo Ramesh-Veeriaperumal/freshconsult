@@ -6,6 +6,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   self.table_name =  "helpdesk_time_sheets"
 
+  concerned_with :presenter
+
   default_scope :order => "executed_at DESC"
 
   belongs_to :workable, :polymorphic => true
@@ -20,6 +22,7 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   after_create :create_new_activity
   after_update :update_timer_activity , :if => :timer_running_changed?
   before_save :update_observer_events
+  before_destroy :save_deleted_time_sheet_info
   after_commit :filter_observer_events, :if => :user_present?
 
   has_many :integrated_resources,
@@ -28,6 +31,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   has_many :linked_applications, :through => :integrated_resources,
            :source => :installed_application
+
+  attr_accessor :archive_changes
 
   scope :timer_active , :conditions =>["timer_running=?" , true]
 
@@ -103,8 +108,11 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     } unless products.blank?
   }
 
-  include RabbitMq::Publisher
   #************************** Archive scope ends here *****************************#
+
+  include RabbitMq::Publisher
+
+  publishable
 
   FILTER_OPTIONS = { :group_id => [], :company_id => [], :user_id => [], :billable => true, :executed_after => 0 }
 
@@ -291,6 +299,10 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     time = time_spent.to_i
     time += (Time.zone.now.to_time - start_time.to_time).abs.round if start_time
     time
+  end
+
+  def save_deleted_time_sheet_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
   end
 
   private

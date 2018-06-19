@@ -18,7 +18,8 @@ if SH_ENABLED
         "Email::MailFetchWorker",
         "Email::EmailDeadLetterWorker",
         "Ryuken::ChannelMessagePoller",
-        "Bot::FeedbackPoller"
+        "Bot::FeedbackPoller",
+        'Ryuken::TwitterTweetToTicket'
       ]
       
     end

@@ -71,7 +71,7 @@ module BotTestHelper
   def bot_new_pattern(portal)
     new_hash = {
       product: product_hash(portal),
-      all_categories: categories_list(portal)
+      all_categories: categories_list_pattern(portal)
     }
     new_hash = new_hash.merge(joehukum_default_profile)
     new_hash
@@ -154,7 +154,7 @@ module BotTestHelper
       product: product_hash(portal),
       external_id: bot.external_id,
       enable_on_portal: bot.enable_in_portal,
-      all_categories: categories_list(portal),
+      all_categories: categories_list_pattern(portal),
       selected_category_ids: bot.solution_category_metum_ids,
       widget_code_src: BOT_CONFIG[:widget_code_src],
       product_hash: BOT_CONFIG[:freshdesk_product_id],
@@ -269,8 +269,14 @@ module BotTestHelper
     }
   end
 
-  def categories_list(portal)
-    portal.solution_category_meta.preload(:primary_category).reject(&:is_default?).map { |c| { id: c.id, label: c.name } }
+  def categories_list_pattern(portal)
+    Language.for_current_account.make_current
+    public_category_meta = portal.public_category_meta
+    articles_count = Solution::CategoryMeta.bot_articles_count_hash(public_category_meta.map(&:id))
+    Language.reset_current
+    public_category_meta.map do |category|
+      { id: category.id, label: category.name, articles_count: articles_count[category.id] || 0 }
+    end
   end
 
   def create_n_bot_feedbacks(bot_id, count, params = {})

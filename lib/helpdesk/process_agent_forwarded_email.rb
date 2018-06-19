@@ -51,15 +51,10 @@ module Helpdesk
           to_regex = $redis_others.get(AGENT_FORWARD_TO_REGEX) || to_regex
           parsed_header_content.sub!(/^((>\s)?\*?(?:#{to_regex}):\*?)/, "To:")
 
-          parsed_header_content.split("\n").each do |line|
-            if (line.start_with?("Cc")) 
-              cc_text << line 
-            elsif (line.start_with?("To"))
-              to_text << line 
-            end
-          end
+          # fetches the full cc and to list
+          headers = header_parser(parsed_header_content)
         end
-        merge_to_and_cc_emails(cc_text, to_text)
+        merge_to_and_cc_emails(headers["cc"], headers["to"])
       end
 
       def merge_to_and_cc_emails(cc_text, to_text)
@@ -89,5 +84,24 @@ module Helpdesk
         return [from_index, ret_value].flatten
       end
 
+      def header_parser(header)
+        res = {}
+        field= ""
+        val = ""
+        itr = 1
+        # considering only the first 20 lines in case the header sting endline is ideintified wrongly.
+        header.split("\n").each do |line|
+          break if itr >= 20
+          if (line =~/(.+):(.+)/)
+            field = $1
+            val = $2 
+          else
+            val = val + line
+          end
+          res.merge!("#{field.downcase}" => "#{val}")
+          itr= itr +1
+        end
+        res
+      end
   end
 end

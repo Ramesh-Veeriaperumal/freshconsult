@@ -26,7 +26,7 @@ class FlexifieldDef < ActiveRecord::Base
   CUSTOM_FF_ALIAS_TYPES.each do |type|
     define_method "#{type}_ff_aliases" do
       flexifield_column_hash =  self.account.flexifields.columns_hash
-      ff_alias_column_mapping.map { |key, value| key if flexifield_column_hash[value].type == type }.compact
+      ff_alias_column_mapping.map { |key, value| key if flexifield_column_hash[value] && flexifield_column_hash[value].type == type }.compact
     end
   end
 

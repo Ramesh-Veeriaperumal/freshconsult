@@ -4456,6 +4456,82 @@
         }
       }
     },
+    "/portals/{id}": {
+      "get": {
+        "tags": [
+          "Portal"
+        ],
+        "summary": "Show",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the portal",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/portal"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/portals/{id}/bot_prerequisites": {
+      "get": {
+        "tags": [
+          "Portal"
+        ],
+        "summary": "Bot prerequisites",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the portal",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bot_prerequisites"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
     "/todos": {
       "get": {
         "tags": [
@@ -10378,6 +10454,19 @@
         }
       ]
     },
+    "bot_prerequisites": {
+      "type": "object",
+      "properties": {
+        "tickets_count": {
+          "type": "integer",
+          "description": "Number of tickets in the account"
+        },
+        "articles_count": {
+          "type": "integer",
+          "description": "Number of published articles in the portal that are visible to the bot"
+        }
+      }
+    },
     "installed_applications": {
       "type": "object",
       "allOf": [
@@ -12498,6 +12587,9 @@
               },
               "label": {
                 "type": "string"
+              },
+              "articles_count": {
+                "type": "integer"
               }
             }
           }
@@ -12578,6 +12670,9 @@
               },
               "label": {
                 "type": "string"
+              },
+              "articles_count": {
+                "type": "integer"
               }
             }
           }

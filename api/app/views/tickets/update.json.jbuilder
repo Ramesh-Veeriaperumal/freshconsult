@@ -12,6 +12,10 @@ if Account.current.shared_ownership_enabled?
   json.set! :internal_group_id, @item.internal_group_id
   json.set! :internal_agent_id, @item.internal_agent_id
 end
+if @item.associated_ticket?
+  json.set! :association_type, @item.association_type
+  json.set! :associated_tickets_list, @item.associates
+end
 json.set! :attachments do
   json.array! @item.attachments do |att|
     json.set! :id, att.id

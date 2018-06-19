@@ -2,6 +2,7 @@ class ChatsController < ApplicationController
 
   include ApplicationHelper
   include ChatHelper
+  include Helpdesk::Permission::Ticket
 
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [ :enable, :toggle, :trigger]
   before_filter  :verify_chat_token, :only => [:trigger]
@@ -58,6 +59,9 @@ class ChatsController < ApplicationController
   alias_method :update_availability, :request_proxy
 
   def create_ticket
+    if (params[:ticket].present? && params[:ticket][:email].present?)
+      return if !check_permissibility(params[:ticket][:email])
+    end
     ticket_params = {
                       :source => TicketConstants::SOURCE_KEYS_BY_TOKEN[:chat],
                       :email  => params[:ticket][:email],
@@ -312,6 +316,9 @@ class ChatsController < ApplicationController
 
   # NOTE - this is triggered from livechat.
   def missed_chat params
+    if (params[:email].present?)
+      return if !check_permissibility(params[:email])
+    end
     subject = t("livechat.offline_chat_subject", :visitor_name => params[:name],
                   :date => formated_date(Time.now(), {:format => :short_day_with_week, :include_year => true}))
     if params[:type] == "offline"
@@ -353,5 +360,14 @@ class ChatsController < ApplicationController
   end
 
   # *******  End of livechat trigger events *******
+
+  def check_permissibility(email)
+    if can_create_ticket? email
+      return true
+    else
+      render :json => { status: "error", message: "User email does not belong to a supported domain."}
+      return false
+    end
+  end
 
 end

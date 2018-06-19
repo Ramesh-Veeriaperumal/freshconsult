@@ -107,6 +107,7 @@ class Support::SearchV2::SpotlightController < SupportController
         if current_user
           visiblity.push(visiblity_class[:logged_users])
           visiblity.push(visiblity_class[:company_users]) if current_user.has_company?
+          visiblity.push(visiblity_class[:agents]) if current_user.agent?
         end
       end
     end

@@ -3,7 +3,7 @@ module ApiTicketConstants
   ARRAY_FIELDS = %w(tags cc_emails attachments attachment_ids related_ticket_ids inline_attachment_ids).freeze
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
-  IGNORE_PARAMS = %w(skip_close_notification parent_template_id child_template_ids related_ticket_ids).freeze | AttachmentConstants::CLOUD_FILE_FIELDS
+  IGNORE_PARAMS = %w[skip_close_notification parent_template_id child_template_ids].freeze | AttachmentConstants::CLOUD_FILE_FIELDS
 
   CREATE_FIELDS = %w(description due_by email_config_id fr_due_by group_id internal_group_id priority
                      email phone twitter_id facebook_id requester_id name

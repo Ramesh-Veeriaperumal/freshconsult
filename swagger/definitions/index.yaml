@@ -201,6 +201,8 @@
     $ref: ./resource/extension/ticket/stats.yaml
   portal:
     $ref: ./resource/portal.yaml
+  bot_prerequisites:
+    $ref: ./response/bot_prerequisites.yaml
   installed_applications:
     $ref: ./resource/installed_applications.yaml
   installed_application_fetch:

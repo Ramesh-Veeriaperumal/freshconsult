@@ -39,7 +39,7 @@ class Account < ActiveRecord::Base
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
   after_commit :trigger_launchparty_feature_callbacks, on: :create
   after_commit :disable_freshid, on: :update, :if => [:sso_enabled_freshid_account?, :freshid_migration_not_in_progress?]
-  after_commit :enable_freshid, on: :update, :if => [:sso_disabled?, :freshid_migration_not_in_progress?]
+  after_commit :enable_freshid, on: :update, :if => [:sso_disabled_not_freshid_account?, :freshid_migration_not_in_progress?]
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_signup_allowed?
 
 
@@ -212,11 +212,11 @@ class Account < ActiveRecord::Base
     end
 
     def sso_enabled_freshid_account?
-      sso_enabled? && sso_enabled_changed? && freshid_enabled?
+      sso_enabled? && freshid_enabled? && !oauth2_sso_enabled?
     end
 
-    def sso_disabled?
-      !sso_enabled? && sso_enabled_changed? && freshid_signup_allowed?
+    def sso_disabled_not_freshid_account?
+      !sso_enabled? && !freshid_enabled? && freshid_signup_allowed?
     end
 
     def remove_email_restrictions

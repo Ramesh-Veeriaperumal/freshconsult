@@ -220,14 +220,6 @@ module Ember
         @item.source = TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone] if @item.source === 0
       end
 
-      def assign_association_type
-        if cname_params[:related_ticket_ids].present?
-          @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
-        elsif cname_params[:assoc_parent_tkt_id].present?
-          @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
-        end
-      end
-
       def assign_attributes_for_update
         @item.assign_attributes(validatable_delegator_attributes)
         @item.assign_description_html(cname_params[:ticket_body_attributes]) if cname_params[:ticket_body_attributes]
