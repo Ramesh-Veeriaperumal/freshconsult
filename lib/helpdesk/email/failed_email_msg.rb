@@ -13,9 +13,11 @@ class Helpdesk::Email::FailedEmailMsg
   end
 
   def save! is_note
-    object_owner = is_note ? @object.user : @object.outbound_initiator
-    @recipient  = object_owner.email
-    @agent_name = object_owner.name
+    object_owner = is_note ? @object.user : outbound_initiator_or_agent(@object)
+    if object_owner
+      @recipient  = object_owner.email
+      @agent_name = object_owner.name
+    end
     @failed_content = is_note ? @object.body : @object.ticket_body.description
     @object.dynamodb_range_key = @dynamodb_key
     @object.failure_count = @object.failure_count.present? ? @object.failure_count+1 : 1
@@ -24,6 +26,7 @@ class Helpdesk::Email::FailedEmailMsg
   end
 
   def notify
+    return unless @recipient
     ticket_url = "#{Account.current.url_protocol}://#{Account.current.full_domain}/helpdesk/tickets/#{@ticket.display_id}"
     type    = Helpdesk::Email::Constants::FAILURE_CATEGORY[@failure_category]
     error   = I18n.t("email_failure.#{type}.summary_error_text")
@@ -36,6 +39,13 @@ class Helpdesk::Email::FailedEmailMsg
   def trigger_observer_system_events
     event = @ticket.requester.emails.include?(@failed_email) ? REQUESTER_EMAIL_FAILED : OTHER_EMAIL_FAILED
     @object.trigger_observer(event,false,true)
+  end
+
+  private
+
+  def outbound_initiator_or_agent ticket
+    outbound_initiator = ticket.outbound_initiator
+    outbound_initiator.agent? ? outbound_initiator : ticket.agent
   end
 
 end

@@ -126,6 +126,14 @@ module Marketplace::ApiUtil
           :platform_version => platform_version
         }
         MemcacheKeys.delete_from_cache page_key
+
+        # delete installed version details from cache
+        page_key = MemcacheKeys::INSTALLED_VERSIONS % { 
+          :page => id, 
+          :account_id => Account.current.id,
+          :platform_version => platform_version
+        }
+        MemcacheKeys.delete_from_cache page_key
       end
       if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
         mkp_memcache_key = MemcacheKeys::INSTALLED_APPS_V2 % { :account_id => Account.current.id }

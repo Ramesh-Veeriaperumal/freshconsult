@@ -338,3 +338,6 @@ Style/LambdaCall:
 Lint/ParenthesesAsGroupedExpression:
   Exclude:
    - test/**/*.rb
+
+Rails/ApplicationRecord:
+  Enabled: false

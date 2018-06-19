@@ -338,6 +338,11 @@ end
     end
   end
 
+  def handle_support_bot_drop_data
+    account.bots.destroy_all
+    account.clear_bots_from_cache
+  end
+
   private
 
   def default_portal_preferences

@@ -75,6 +75,13 @@ class SsoController < ApplicationController
     redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/facebook?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}%26portal_type%3D#{params[:portal_type]}%26token=#{token}"
   end
 
+  def twitter
+    session["_csrf_token"] ||= SecureRandom.base64(32)
+    token = Base64.encode64(session["_csrf_token"])
+    portal_domain = current_portal.host || current_account.full_domain
+    redirect_to "#{AppConfig['integrations_url'][Rails.env]}/auth/twitter?origin=id%3D#{current_account.id}%26portal_id%3D#{current_portal.id}%26portal_type%3D#{params[:portal_type]}&state=portal_domain%3D#{portal_domain}%26at%3D#{token}"
+  end
+
   def portal_google_sso
     protocol = (current_account.ssl_enabled? || is_native_mobile?) ? "https" : "http"
     login_using_google(protocol)
