@@ -23,3 +23,5 @@ properties:
           type: integer
         label:
           type: string
+        articles_count:
+          type: integer

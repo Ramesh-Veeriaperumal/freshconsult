@@ -9,7 +9,8 @@ class Account < ActiveRecord::Base
                    :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
                    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, 
                    :imap_error_status_check, :va_any_field_without_none, :api_es, :sandbox_lp, 
-                   :encode_emoji, :audit_logs_central_publish, :auto_complete_off, :dependent_field_validation, :post_central_publish, :encode_emoji_subject, :twitter_common_redirect]
+                   :encode_emoji, :audit_logs_central_publish, :auto_complete_off, :dependent_field_validation,
+                   :post_central_publish, :encode_emoji_subject, :time_sheets_central_publish, :twitter_common_redirect]
    DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
   BITMAP_FEATURES = [
@@ -23,7 +24,7 @@ class Account < ActiveRecord::Base
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
-      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox
+      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [

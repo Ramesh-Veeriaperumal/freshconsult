@@ -168,11 +168,15 @@ class TicketValidation < ApiValidation
     base_size: proc { |x| ValidationHelper.attachment_size(x.item) }
   }
 
+  # Parent child and linked ticket validations
+  validates :related_ticket_ids, custom_absence: { message: :cannot_set_ticket_association_fields }, if: :disallow_associations?
+  validates :parent_id, custom_absence: { message: :cannot_set_ticket_association_fields }, if: :disallow_associations?
+  validates :related_ticket_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }, custom_length: { maximum: TicketConstants::MAX_RELATED_TICKETS, message_options: { element_type: :values } }, if: -> { errors[:related_ticket_ids].blank? && errors[:parent_id].blank? }
   validates :parent_id, custom_numericality: {
     only_integer: true,
     greater_than: 0,
     ignore_string: :allow_string_param
-  }
+  }, if: -> { errors[:related_ticket_ids].blank? && errors[:parent_id].blank? }
 
   validates :tracker_id, custom_numericality: {
     only_integer: true,
@@ -299,6 +303,10 @@ class TicketValidation < ApiValidation
 
   def disallowed_status?
     errors[:status].blank? && statuses.detect { |x| x.status_id == status.to_i }.stop_sla_timer
+  end
+
+  def disallow_associations?
+    request_params[:parent_id] && request_params[:related_ticket_ids]
   end
 
   def attributes_to_be_stripped

@@ -10,3 +10,6 @@ AllCops:
 
 Metrics/LineLength:
   Enabled: false
+  
+Rails/DynamicFindBy:
+  Enabled: false

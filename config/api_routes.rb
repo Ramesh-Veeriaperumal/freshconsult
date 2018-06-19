@@ -391,7 +391,12 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :surveys, controller: 'ember/surveys', only: [:index]
-    resources :portals, controller: 'ember/portals', only: [:index]
+    resources :portals, controller: 'ember/portals', only: [:index] do
+      member do
+        get :show
+        get :bot_prerequisites
+      end
+    end
 
     resources :agents, controller: 'ember/agents', only: [:index, :show, :update], id: /\d+/ do
       collection do

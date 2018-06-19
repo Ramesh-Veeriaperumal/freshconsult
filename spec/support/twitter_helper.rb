@@ -30,7 +30,7 @@ module TwitterHelper
     sample_gnip_feed = sample_gnip_feed(rule, reply, time)
     sample_gnip_feed["id"] = "tag:search.twitter.com,2005:#{tweet_id}"
     tweet = sample_gnip_feed.to_json
-    tweet_feed = Social::Gnip::TwitterFeed.new(tweet, $sqs_twitter)
+    tweet_feed = Social::Gnip::TwitterFeed.new(tweet)
     tweet_id = tweet_feed.tweet_id
     tweet_feed.twitter_user_id = sender_id if sender_id
     sender_id = tweet_feed.twitter_user_id
@@ -301,7 +301,7 @@ module TwitterHelper
 
   def send_tweet(feed, fd_counter = nil)
     feed["fd_counter"] = fd_counter unless fd_counter.nil?
-    gnip_msg = Social::Gnip::TwitterFeed.new(feed.to_json, $sqs_twitter) 
+    gnip_msg = Social::Gnip::TwitterFeed.new(feed.to_json) 
     gnip_msg.process
   end
   

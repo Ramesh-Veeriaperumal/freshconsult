@@ -37,10 +37,10 @@ module VAConfig
   end
 
   def self.negatable_columns(account)
-    filter_multi_line_field = proc {|field|
-      field unless !Account.current.launched?(:supervisor_multi_line_field) and field.field_type == 'custom_paragraph'
+    filter_negatable_fields = proc { |field|
+      field if field.flexifield_def_entry.flexifield_name.starts_with?('ff') && (field.field_type != 'custom_paragraph' || Account.current.launched?(:supervisor_multi_line_field))
     }
-    custom_fields = account.ticket_fields.custom_fields.select(&filter_multi_line_field).collect { |field| field.name }
+    custom_fields = account.ticket_fields.custom_fields.select(&filter_negatable_fields).collect(&:name)
     custom_fields + DEFAULT_NEGATABLE_COLUMS
   end
 

@@ -14,13 +14,12 @@ class Social::Gnip::TwitterFeed
 
   alias :feed_id :tweet_id
 
-  def initialize(tweet, queue)
+  def initialize(tweet)
 
     begin
       @tweet_json = tweet
       @tweet_obj       = JSON.parse(tweet).symbolize_keys!
       @dynamo_helper   = Social::Dynamo::Twitter.new
-      @queue  = queue
       @source = SOURCE[:twitter]
       unless @tweet_obj.nil?
         matching_rules =  @tweet_obj[:gnip] ? @tweet_obj[:gnip]["matching_rules"] : []
@@ -97,14 +96,14 @@ class Social::Gnip::TwitterFeed
     if !tweet_requeued
       dynamo_feed_attr = fd_info(notable, user)
       dynamo_feed_attr.merge!(smart_filter_info(convert_args[:smart_filter_response]))
-      update_tweet_time_in_redis(@posted_time) #unless @queue.approximate_number_of_messages > MSG_COUNT_FOR_UPDATING_REDIS
+      update_tweet_time_in_redis(@posted_time)
       update_dynamo(args, convert_args, dynamo_feed_attr, @tweet_obj)
     end
   end
 
   def check_smart_filter(account, args)
-     convert_hash = apply_smart_filter(account, args)
-     process_tweet_to_ticket(account, args, convert_hash)
+    convert_hash = apply_smart_filter(account, args)
+    process_tweet_to_ticket(account, args, convert_hash)
   end
 
   private

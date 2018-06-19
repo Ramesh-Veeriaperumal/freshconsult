@@ -24,9 +24,28 @@ module AssociateTicketsHelper
     end
   end
 
-  def parent_permission
+  def validate_associated_tickets
     if cname_params[:assoc_parent_tkt_id].present?
       render_request_error :access_denied, 403 if !parent_ticket || !current_user.has_ticket_permission?(parent_ticket)
+    elsif cname_params[:related_ticket_ids].present?
+      valid_related_tickets = valid_related_tickets(@item.related_ticket_ids)
+      if valid_related_tickets.count.zero?
+        return render_request_error(:cannot_create_tracker, 400)
+      end
+      @failed_related_ticket_ids = @item.related_ticket_ids - valid_related_tickets.map(&:display_id)
+    end
+  end
+
+  def valid_related_tickets(related_ticket_ids)
+    tickets = Account.current.tickets.preload(:schema_less_ticket).not_associated.permissible(User.current).where('display_id IN (?)', related_ticket_ids)
+    tickets.select(&:can_be_associated?)
+  end
+
+  def assign_association_type
+    if cname_params[:related_ticket_ids].present?
+      @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
+    elsif cname_params[:assoc_parent_tkt_id].present? && parent_ticket.present?
+      @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
     end
   end
 
