@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180607124540) do
+ActiveRecord::Schema.define(version: 20180616064951) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1669,7 +1669,18 @@ ActiveRecord::Schema.define(version: 20180607124540) do
     t.datetime "updated_at",                          :null => false
   end
 
-  add_index "freshchat_accounts", ["account_id"], :name => "index_freshchat_accounts_on_account_id", :unique => true
+  add_index 'freshchat_accounts', ['account_id'], name: "index_freshchat_accounts_on_account_id", unique: true
+
+  create_table 'freshconnect_accounts', force: true do |t|
+    t.integer  'account_id',          limit: 8
+    t.string   'product_account_id'
+    t.boolean  'enabled'
+    t.string   'freshconnect_domain'
+    t.datetime 'created_at',                       null: false
+    t.datetime 'updated_at',                       null: false
+  end
+
+  add_index 'freshconnect_accounts', ['account_id'], name: "index_freshconnect_accounts_on_account_id", unique: true
 
   create_table "freshcaller_accounts", :force => true do |t|
     t.integer  "account_id",             :limit => 8

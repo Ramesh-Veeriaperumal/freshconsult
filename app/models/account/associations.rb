@@ -369,4 +369,5 @@ class Account < ActiveRecord::Base
 
   has_many :contact_notes
   has_many :company_notes
+  has_one  :freshconnect_account, class_name: 'Freshconnect::Account', dependent: :destroy
 end

@@ -45,6 +45,7 @@ module Concerns::ApplicationConcern
 
   def unset_thread_variables
     Va::Logger::Automation.unset_thread_variables
+    Thread.current[:app_integration] = nil
   end
 
   # See http://stackoverflow.com/questions/8268778/rails-2-3-9-encoding-of-query-parameters
