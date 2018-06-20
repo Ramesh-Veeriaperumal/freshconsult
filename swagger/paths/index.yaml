@@ -385,6 +385,8 @@
   $ref: ./bot_feedbacks/create_article.yaml
 /bots/{id}/analytics:
   $ref: ./bots/analytics.yaml
+/bots/{id}/remove_analytics_mock_data:
+  $ref: ./bots/remove_analytics_mock_data.yaml
 
 # Sandbox
 /sandboxes:

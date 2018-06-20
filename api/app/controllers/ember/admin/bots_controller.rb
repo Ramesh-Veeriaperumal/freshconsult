@@ -49,6 +49,7 @@ module Ember
           product_hash: BOT_CONFIG[:freshdesk_product_id],
           environment: BOT_CONFIG[:widget_code_env]
         }
+        @bot[:analytics_mock_data] = true if @item.additional_settings[:analytics_mock_data]
         training_status = @item.training_status
         @bot.merge!(status: training_status) if training_status
         @bot.merge!(@item.profile)
@@ -131,13 +132,23 @@ module Ember
         end
       end
 
+      def remove_analytics_mock_data
+        return unless validate_body_params
+        return unless validate_delegator(@item)
+        @item.additional_settings.delete(:analytics_mock_data)
+        if @item.save
+          head 204
+        else
+          render_errors(@item.errors)
+        end
+      end
+
       private
 
         def construct_attributes
           @item.last_updated_by = current_user.id
           product = @portal.product
           @item.product_id = product.id if product
-          @item.additional_settings = {}
           @avatar = params['avatar']
           if @avatar['is_default']
             # Additional settings column contains info about default avatar

@@ -17,9 +17,17 @@ module BotTicketHelper
                             portal_id: portal_id,
                             last_updated_by: get_admin.id,
                             enable_in_portal: true,
-                            external_id: UUIDTools::UUID.timestamp_create.hexdigest)
+                            external_id: generate_uuid,
+                            additional_settings: {
+                              bot_hash: generate_uuid,
+                              is_default: false
+                            })
     bot.save
     bot
+  end
+
+  def generate_uuid
+    UUIDTools::UUID.timestamp_create.hexdigest
   end
 
   def toggle_required_attribute(fields)

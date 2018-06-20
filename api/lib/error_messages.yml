@@ -155,6 +155,7 @@ api_error_messages:
   unanswered_time_period_invalid: "End at should be greater than Start at"
   invalid_bot: "There is no bot with the external id %{id}"
   invalid_bot_state: "Cannot perform the action as bot state is invalid"
+  not_mock_data: 'Cannot perform the action as bot already shows original analytics data'
 
   not_allowed_to_accept_gdpr: "Not able to accept Gdpr Terms"
   app_unavailable: "The %{feature} feature is not enabled. Please make sure to install %{app} app"

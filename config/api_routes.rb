@@ -212,6 +212,7 @@ Helpkit::Application.routes.draw do
         get :bot_folders
         post :create_bot_folder
         get :analytics
+        put :remove_analytics_mock_data
       end
       member do
         resources :bot_feedbacks, controller: 'ember/admin/bot_feedbacks', only: [:index] do
