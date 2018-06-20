@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180607124540) do
+ActiveRecord::Schema.define(:version => 20180616064951) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -267,7 +267,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
     t.integer  "ticketable_id",   :limit => 8
     t.string   "ticketable_type"
   end
-  
+
   add_index "article_tickets", ["account_id"], :name => "index_article_tickets_on_account_id"
   add_index "article_tickets", ["article_id"], :name => "index_article_tickets_on_article_id"
   add_index "article_tickets", ["account_id", "ticketable_id", "ticketable_type"], :name => "index_article_tickets_on_account_id_and_ticketetable"
@@ -283,7 +283,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
   add_index "archive_childs", ["account_id", "ticket_id"], :name => "index_on_account_id_and_ticket_id"
   add_index "archive_childs", ["id"], :name => "index_on_id"
   execute "ALTER TABLE archive_childs ADD PRIMARY KEY (account_id,id)"
-  
+
   create_table "archive_note_associations", :id => false, :force => true do |t|
     t.integer "id",                :limit => 8,                         :null => false
     t.integer "account_id",        :limit => 8,                         :null => false
@@ -708,7 +708,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-  
+
   add_index "company_fields", ["account_id", "company_form_id", "field_type"], :name => "idx_company_field_account_id_and_company_form_id_and_field_type"
   add_index "company_fields", ["account_id", "company_form_id", "name"], :name => "index_company_fields_on_account_id_and_company_form_id_and_name", :length => {"account_id"=>nil, "company_form_id"=>nil, "name"=>20}
   add_index "company_fields", ["account_id", "company_form_id", "position"], :name => "idx_company_field_account_id_and_company_form_id_and_position"
@@ -1221,7 +1221,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
 
   create_table "ebay_questions", :force => true do |t|
     t.integer  "user_id",     :limit => 8
-    t.string   "message_id" 
+    t.string   "message_id"
     t.string   "item_id"
     t.integer  "questionable_id",   :limit => 8
     t.string   "questionable_type"
@@ -1254,8 +1254,8 @@ ActiveRecord::Schema.define(version: 20180607124540) do
   add_index "ecommerce_accounts", ["account_id", "external_account_id"], :name => "index_ecommerce_accounts_on_account_id_and_external_account_id"
 
   create_table "ecommerce_users", :force => true do |t|
-    t.integer  "user_id", :limit => 8   
-    t.integer  "ecommerce_account_id", :limit => 8    
+    t.integer  "user_id", :limit => 8
+    t.integer  "ecommerce_account_id", :limit => 8
     t.integer  "account_id", :limit => 8
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -1644,6 +1644,17 @@ ActiveRecord::Schema.define(version: 20180607124540) do
 
   add_index "freshchat_accounts", ["account_id"], :name => "index_freshchat_accounts_on_account_id", :unique => true
 
+  create_table "freshconnect_accounts", :force => true do |t|
+    t.integer  "account_id",          :limit => 8
+    t.string   "product_account_id"
+    t.boolean  "enabled"
+    t.string   "freshconnect_domain"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+  end
+
+  add_index "freshconnect_accounts", ["account_id"], :name => "index_freshconnect_accounts_on_account_id", :unique => true
+
   create_table "freshcaller_accounts", :force => true do |t|
     t.integer  "account_id",             :limit => 8
     t.integer  "freshcaller_account_id", :limit => 8
@@ -1717,7 +1728,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
   end
 
   add_index "freshfone_call_metrics", ["account_id", "call_id"], :name => "index_freshfone_call_metrics_on_account_id_and_call_id"
-  
+
   create_table "freshfone_caller_ids", :force => true do |t|
     t.integer  "account_id", :limit => 8,  :null => false
     t.string   "name",       :limit => 20
@@ -1726,7 +1737,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
     t.datetime "created_at",               :null => false
     t.datetime "updated_at",               :null => false
   end
-  
+
   create_table "freshcaller_agents", :force => true do |t|
     t.integer  "account_id",  :limit => 8
     t.integer  "agent_id",    :limit => 8
@@ -1781,7 +1792,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
     t.text     "recording_deleted_info"
     t.string   "conference_sid",      :limit => 50
     t.string   "hold_queue",          :limit => 50
-    t.integer  "hold_duration",       :limit => 11     
+    t.integer  "hold_duration",       :limit => 11
     t.integer  "total_duration",      :limit => 11
     t.boolean  "business_hour_call",                    :default => false
     t.integer  "abandon_state",          :limit => 8
@@ -1952,7 +1963,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
 
   add_index "freshfone_subscriptions", ["account_id"], :name => "index_on_freshfone_subscriptions_on_account_id", :unique => true
   add_index "freshfone_subscriptions", ["freshfone_account_id"], :name => "index_on_freshfone_subscriptions_on_freshfone_account_id", :unique => true
-  
+
   create_table "freshfone_usage_triggers", :force => true do |t|
     t.integer  "account_id",           :limit => 8
     t.integer  "freshfone_account_id", :limit => 8
@@ -2258,9 +2269,9 @@ ActiveRecord::Schema.define(version: 20180607124540) do
     t.datetime "reminder_at"
   end
 
-  add_index "helpdesk_reminders", ["account_id", "company_id"], 
+  add_index "helpdesk_reminders", ["account_id", "company_id"],
     :name => "index_helpdesk_reminders_on_account_id_company_id"
-  add_index "helpdesk_reminders", ["account_id", "contact_id"], 
+  add_index "helpdesk_reminders", ["account_id", "contact_id"],
     :name => "index_helpdesk_reminders_on_account_id_contact_id"
   add_index "helpdesk_reminders", ["ticket_id"], :name => "index_helpdesk_reminders_on_ticket_id"
   add_index "helpdesk_reminders", ["user_id"], :name => "index_helpdesk_reminders_on_user_id"
@@ -2503,8 +2514,8 @@ ActiveRecord::Schema.define(version: 20180607124540) do
     t.integer  "parent_id",               :limit => 8
     t.string   "prefered_ff_col"
     t.integer  "import_id",               :limit => 8
-    t.integer  "ticket_form_id",       :limit => 8                   
-    t.string   "column_name"                                        
+    t.integer  "ticket_form_id",       :limit => 8
+    t.string   "column_name"
     t.string   "flexifield_coltype"
   end
 
@@ -2700,7 +2711,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
 
   add_index "integrated_resources", ["account_id","installed_application_id","local_integratable_id","local_integratable_type"], :name => "index_on_account_and_inst_app_and_local_int_id_and_type"
   add_index "integrated_resources", ["account_id","installed_application_id","remote_integratable_id","remote_integratable_type"], :name => "index_on_account_and_inst_app_and_remote_int_id_and_type"
-  
+
   create_table "integrations_user_credentials", :force => true do |t|
     t.integer  "installed_application_id", :limit => 8
     t.integer  "user_id",                  :limit => 8
@@ -2733,7 +2744,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
   add_index "mailbox_jobs", ["locked_by"], :name => "index_mailbox_jobs_on_locked_by"
   add_index "mailbox_jobs", ["pod_info"], :name => "index_mailbox_jobs_on_pod_info"
   add_index "mailbox_jobs", ["account_id"], :name => "index_mailbox_jobs_on_account_id"
-  
+
 
   create_table "mobihelp_apps", :force => true do |t|
     t.integer  "account_id", :limit => 8,                    :null => false
@@ -3460,8 +3471,8 @@ ActiveRecord::Schema.define(version: 20180607124540) do
   add_index "solution_customer_folders", ["account_id", "customer_id"], :name => "index_customer_folder_on_account_id_and_customer_id"
   add_index "solution_customer_folders", ["account_id", "folder_id"], :name => "index_customer_folder_on_account_id_and_folder_id"
   add_index "solution_customer_folders", ["account_id", "folder_meta_id"], :name => "index_solution_customer_folders_on_account_id_folder_meta_id"
-  
-  
+
+
   create_table "solution_draft_bodies", :force => true do |t|
     t.integer  "account_id",  :limit => 8,          :null => false
     t.integer  "draft_id",    :limit => 8
@@ -3619,7 +3630,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-  
+
   add_index "subscription_events", ["created_at"], :name => "index_subscription_events_on_created_at"
 
   create_table :subscription_invoices, :force => true do |t|
@@ -3630,12 +3641,12 @@ ActiveRecord::Schema.define(version: 20180607124540) do
       t.decimal  :amount, :precision => 10, :scale => 2
       t.decimal  :sub_total, :precision => 10, :scale => 2
       t.string   :currency
-      t.column   :account_id, "bigint unsigned", :null => false 
-      t.column   :subscription_id, "bigint unsigned", :null => false 
+      t.column   :account_id, "bigint unsigned", :null => false
+      t.column   :subscription_id, "bigint unsigned", :null => false
       t.timestamps
     end
-    
-  add_index :subscription_invoices, [:account_id, :subscription_id, :generated_on], 
+
+  add_index :subscription_invoices, [:account_id, :subscription_id, :generated_on],
           :name => 'index_subscription_invoices_on_account_subscription_generated_on'
 
   create_table "subscription_payments", :force => true do |t|
@@ -4070,11 +4081,11 @@ ActiveRecord::Schema.define(version: 20180607124540) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
-  
+
   add_index "user_companies", ["account_id", "user_id", "company_id"],
-            :name => "index_user_companies_on_acc_id_user_id_company_id", 
+            :name => "index_user_companies_on_acc_id_user_id_company_id",
             :unique => true
-  add_index "user_companies", ["account_id", "company_id"], 
+  add_index "user_companies", ["account_id", "company_id"],
             :name => "index_user_companies_on_account_id_company_id"
 
   create_table "user_emails", :id => false, :force => true do |t|
@@ -4186,7 +4197,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
   add_index "users", ["account_id", "updated_at"], :name => "index_users_on_account_id_and_updated_at"
   execute "ALTER TABLE users ADD PRIMARY KEY (id,account_id)"
 
-  
+
   create_table "va_rules", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -4249,7 +4260,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
   end
 
   add_index "widgets", ["application_id"], :name => "index_widgets_on_application_id"
-  
+
   create_table "whitelist_users", :force => true do |t|
     t.integer "user_id",    :limit => 8
     t.integer "account_id", :limit => 8
@@ -4308,7 +4319,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
   end
 
   add_index "email_hourly_updates", ["hourly_path"], :name => "index_email_hourly_updates_on_hourly_path", :unique => true
-  
+
   create_table "dkim_records", :force => true do |t|
     t.integer  :sg_id
     t.integer  :sg_user_id
@@ -4320,23 +4331,23 @@ ActiveRecord::Schema.define(version: 20180607124540) do
     t.string   :fd_cname
     t.boolean  :customer_record, :default => false
     t.boolean  :status, :default => false
-    t.column   :outgoing_email_domain_category_id, "bigint unsigned", :null => false 
-    t.column   :account_id, "bigint unsigned", :null => false 
+    t.column   :outgoing_email_domain_category_id, "bigint unsigned", :null => false
+    t.column   :account_id, "bigint unsigned", :null => false
     t.timestamps
   end
 
-  add_index "dkim_records", [:outgoing_email_domain_category_id, :status], 
+  add_index "dkim_records", [:outgoing_email_domain_category_id, :status],
             :name => 'index_dkim_records_on_email_domain_status'
-            
+
   create_table "dkim_category_change_activities", :force => true do |t|
-    t.column   :account_id, "bigint unsigned", :null => false 
-    t.column   :outgoing_email_domain_category_id, "bigint unsigned", :null => false 
+    t.column   :account_id, "bigint unsigned", :null => false
+    t.column   :outgoing_email_domain_category_id, "bigint unsigned", :null => false
     t.text     :details
     t.datetime :changed_on
     t.timestamps
-  end           
-  
-  add_index :dkim_category_change_activities, [:account_id, :outgoing_email_domain_category_id, :changed_on], 
+  end
+
+  add_index :dkim_category_change_activities, [:account_id, :outgoing_email_domain_category_id, :changed_on],
             :name => 'index_dkim_activities_on_account_email_domain_changed_on'
 
   create_table :scheduled_exports do |t|
@@ -4346,7 +4357,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
     t.text    :filter_data
     t.text    :fields_data
     t.text    :schedule_details
-    t.column  :account_id, "bigint unsigned", :null => false 
+    t.column  :account_id, "bigint unsigned", :null => false
     t.string  :latest_file
     t.integer :schedule_type, :limit => 2
     t.boolean :active, :default => false
@@ -4362,7 +4373,7 @@ ActiveRecord::Schema.define(version: 20180607124540) do
       t.timestamps
   end
   add_index :qna_insights_reports , [:account_id, :user_id], :name => 'index_qna_insights_reports_on_account_id_and_user_id'
- 
+
   create_table :failed_central_feeds, :force => true do |t|
     t.integer :account_id, limit: 8, null: false
     t.integer :model_id, limit: 8, null: false
