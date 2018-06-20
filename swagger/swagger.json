@@ -5141,6 +5141,13 @@
             "in": "query",
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "language_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "required": true
           }
         ],
         "responses": {
@@ -5165,6 +5172,13 @@
         "parameters": [
           {
             "$ref": "#/parameters/id"
+          },
+          {
+            "name": "language_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "required": true
           }
         ],
         "responses": {
@@ -7213,6 +7227,20 @@
                 },
                 "language": {
                   "type": "string"
+                },
+                "portal_languages": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
                 },
                 "date_format": {
                   "type": "object",
@@ -10695,6 +10723,10 @@
               "type": "integer",
               "format": "int64"
             },
+            "language_id": {
+              "type": "integer",
+              "format": "int64"
+            },
             "title": {
               "type": "string"
             },
@@ -12908,6 +12940,10 @@
       "type": "object",
       "properties": {
         "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "language_id": {
           "type": "integer",
           "format": "int64"
         },
