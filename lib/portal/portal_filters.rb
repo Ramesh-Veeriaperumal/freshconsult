@@ -101,7 +101,7 @@ module Portal::PortalFilters
 	end
 
 	def login_via_twitter label
-		link_to(label, "/auth/twitter", :class => "btn btn-twitter") if allow_login_via_twitter?
+		link_to(label, "/sso/twitter", :class => "btn btn-twitter") if allow_login_via_twitter?
 	end
 
 	def login_via_facebook label

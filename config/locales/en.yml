@@ -2179,6 +2179,7 @@ en:
         enable_sso: Single Sign On (SSO)
         enable_simple_sso: Simple SSO
         enable_oauth_sso: Oauth2 SSO
+        enable_oauth2_sso: OAuth 2.0
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
         enable_SSL: "Secure Connection using SSL"
@@ -2196,6 +2197,7 @@ en:
         saml_cert_fingerprint: "Security Certificate Fingerprint"
         saml_cert_fingerprint_info: "Fingerprint (SHA1)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
         saml_cert_fingerprint_info_sha256: "Fingerprint (SHA256)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
+        enable_oauth2_info: "The industry standard OAuth protocol allows you to delegate agent and customer authentication to the service that hosts their user accounts."
         click_to_enable: Click to enable SSL
         click_to_disable: Click to disable SSL
         security_title: Security
@@ -2942,6 +2944,7 @@ en:
         string: You have exceeded the maximum limit for this type of field.
         string_with_dn: You are not allowed to create more than 400 text fields.
         text: You are not allowed to create more than 10 paragraph fields.
+        text_with_dn: You are not allowed to create more than 50 paragraph fields.
         number: You are not allowed to create more than 20 number fields.
         decimal: You are not allowed to create more than 10 decimal fields.
         boolean: You are not allowed to create more than 10 checkbox fields.
@@ -5530,6 +5533,7 @@ en:
     scheduled_reports_desc: "Scheduled reporting"
     custom_survey_desc: "Customized satisfaction surveys"
     freshchat: "Freshchat integration"
+    bot: "Bot"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL

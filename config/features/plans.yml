@@ -65,6 +65,7 @@
       - :custom_survey
       - :parent_child_tickets_toggle
       - :link_tickets_toggle
+      - :support_bot
     :inherits:
       - :blossom_jan_17
     :exclude: []

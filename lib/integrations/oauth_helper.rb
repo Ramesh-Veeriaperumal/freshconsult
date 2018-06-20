@@ -56,14 +56,6 @@ module Integrations::OauthHelper
       @config = File.join(Rails.root, 'config', 'oauth_config.yml')
       key_hash = (YAML::load_file @config)[Rails.env]
 
-      #### Twitter OAuth Keys ####
-      config = File.join(Rails.root, 'config', 'twitter.yml')
-      tokens = (YAML::load_file config)
-      consumer_key = tokens['consumer_token'][Rails.env]
-      consumer_secret = tokens['consumer_secret'][Rails.env]
-      key_hash[:twitter] = {}
-      key_hash[:twitter] = {"consumer_token" => consumer_key, "consumer_secret" => consumer_secret}
-
       if provider.blank?
         key_hash
       else

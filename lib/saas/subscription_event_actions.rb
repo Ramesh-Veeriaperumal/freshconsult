@@ -7,7 +7,7 @@ class SAAS::SubscriptionEventActions
                            :basic_twitter, :basic_facebook, :rebranding, :customer_slas, :multi_timezone,
                            :multi_product, :multiple_emails, :link_tickets_toggle, :parent_child_tickets_toggle,
                            :shared_ownership_toggle, :skill_based_round_robin, :ticket_activity_export,
-                           :auto_ticket_export, :multiple_companies_toggle, :unique_contact_identifier]
+                           :auto_ticket_export, :multiple_companies_toggle, :unique_contact_identifier, :support_bot]
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle, 
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier].freeze
@@ -28,7 +28,7 @@ class SAAS::SubscriptionEventActions
   end
 
   def change_plan
-    plan_features = ::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym][:features]
+    plan_features = ::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym][:features].dup
 
     if plan_changed?
       account.features_list.each do |feature|
@@ -36,6 +36,7 @@ class SAAS::SubscriptionEventActions
       end
       account.save
       #remove_chat_feature
+      plan_features.delete(:support_bot) if account.revoke_support_bot?
       plan_features.each do |feature|
         account.set_feature(feature)
       end

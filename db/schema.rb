@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180420133414) do
+ActiveRecord::Schema.define(version: 20180607124540) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1363,6 +1363,7 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
   add_index "flexifield_def_entries", ["account_id", "flexifield_alias"], :name => "index_FFDef_entries_on_account_id_and_flexifield_alias"
   add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_name"], :name => "idx_ffde_onceperdef", :unique => true
   add_index "flexifield_def_entries", ["flexifield_def_id", "flexifield_order"], :name => "idx_ffde_ordering"
+  add_index 'flexifield_def_entries', ['account_id', 'flexifield_def_id', 'flexifield_coltype'], name: 'index_ffde_on_account_id_and_ff_def_id_and_ff_coltype'
 
   create_table "flexifield_defs", :force => true do |t|
     t.string   "name",                                      :null => false
@@ -2939,6 +2940,7 @@ ActiveRecord::Schema.define(:version => 20180420133414) do
     t.integer "bot_id", limit: 8
   end
 
+  add_index 'portal_solution_categories', ['account_id', 'portal_id', 'solution_category_meta_id'], name: 'index_psc_on_acc_id_and_portal_id_and_sol_cat_meta_id'
   add_index "portal_solution_categories", ["account_id", "portal_id"], :name => "index_portal_solution_categories_on_account_id_and_portal_id"
   add_index "portal_solution_categories", ["account_id", "solution_category_meta_id"], :name => "portal_solution_categories_on_account_id_category_meta_id"
   add_index "portal_solution_categories", ["portal_id", "solution_category_id"], :name => "index_on_portal_and_soln_categ_id"
