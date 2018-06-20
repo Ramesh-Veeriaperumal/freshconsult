@@ -4,6 +4,7 @@ module AccountCleanup
     sidekiq_options :queue => :delete_spam_tickets, :retry => 0, :backtrace => true, :failures => :exhausted
 
     include AccountCleanup::Common
+    include Publisher
     
     # :tag_uses => "taggable", :tags, :parent
     POLYMORPHIC_ASSOCATION = {
@@ -13,6 +14,17 @@ module AccountCleanup
                               :flexifields => "flexifield_set", :ebay_questions =>  "questionable"},
       :helpdesk_notes => {:social_tweets => "tweetable", :social_fb_posts => "postable", :freshfone_calls => "notable", :helpdesk_dropboxes => "droppable", :helpdesk_shared_attachments => "shared_attachable", :ebay_questions => "questionable" }
     }
+
+    POLYMORPHIC_ASSOCATION_TO_CENTRAL = {
+      helpdesk_tickets: {
+        helpdesk_time_sheets: {
+          account_association:     :all_tickets_time_sheets,
+          presenter_method:        :save_deleted_time_sheet_info,
+          destroy:                 true
+        }
+      },
+      helpdesk_notes: {}
+    }.freeze
     
     # Having ticket_id or note_id column as foreign keys
     ASSOCIATIONS = {
@@ -96,7 +108,16 @@ module AccountCleanup
           ids = instance_variable_get('@' + ASSOCIATIONS_FOREIGN_KEY[table_name] + 's') # @ticket_ids, @note_ids
           ids.in_groups_of(100, false).each do |ids_in_batch|
             condition = "account_id = #{account_id} and #{polymorphic}_id in (#{ids_in_batch.join(',')}) and #{polymorphic}_type in ('#{types.join("','")}')"
-            associated_ids = select_values(rel_table, condition) 
+            associated_ids = select_values(rel_table, condition)
+            if POLYMORPHIC_ASSOCATION_TO_CENTRAL[table_name].key?(rel_table)
+              options = {
+                ids:            associated_ids,
+                table_name:     table_name,
+                rel_table:      rel_table,
+                rel_table_args: POLYMORPHIC_ASSOCATION_TO_CENTRAL[table_name][rel_table]
+              }
+              publish_to_central(options)
+            end
             execute_delete(rel_table, associated_ids, account_id)       
           end
         end
@@ -135,6 +156,11 @@ module AccountCleanup
         end
       end
     end
-    
+
+    private
+
+      def helpdesk_time_sheets_publish_args(*)
+        [[], [:destroy, nil]]
+      end
   end
 end

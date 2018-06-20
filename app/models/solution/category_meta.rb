@@ -140,4 +140,39 @@ class Solution::CategoryMeta < ActiveRecord::Base
 		super
 	end
 
+  def self.bot_articles_count_hash(category_ids)
+    @bot_articles_count_hash ||= begin
+      count_hash = {}
+      result = Sharding.run_on_slave { ActiveRecord::Base.connection.execute(bot_articles_count_query(category_ids)) }
+      result.each do |category_id, articles_count|
+        count_hash[category_id] = articles_count
+      end
+      count_hash
+    end
+  end
+
+  def self.bot_articles_count_query(category_ids)
+    "SELECT
+      `solution_category_meta`.`id`,
+      COUNT(`solution_article_meta`.`id`)
+    FROM
+      `solution_category_meta`
+      INNER JOIN `solution_folder_meta` ON `solution_folder_meta`.`solution_category_meta_id` = `solution_category_meta`.`id`
+        AND `solution_folder_meta`.`account_id` = `solution_category_meta`.`account_id`
+      INNER JOIN `solution_article_meta` ON `solution_article_meta`.`solution_folder_meta_id` = `solution_folder_meta`.`id`
+        AND `solution_article_meta`.`account_id` = `solution_folder_meta`.`account_id`
+      INNER JOIN `solution_articles` ON `solution_articles`.`parent_id` = `solution_article_meta`.`id`
+        AND `solution_articles`.`language_id` = #{Language.current.id}
+        AND `solution_articles`.`account_id` = `solution_article_meta`.`account_id`
+      WHERE
+        (`solution_articles`.`status` = #{Solution::Constants::STATUS_KEYS_BY_TOKEN[:published]})
+        AND (
+          `solution_folder_meta`.`visibility` IN (#{Solution::Constants::BOT_VISIBILITIES.join(',')})
+        )
+        AND (
+          `solution_category_meta`.`id` IN (#{category_ids.join(',')}))
+        AND `solution_category_meta`.`account_id` = #{Account.current.id}
+    GROUP BY
+      `solution_category_meta`.`id`"
+  end
 end

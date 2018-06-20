@@ -21,7 +21,7 @@ class TicketsController < ApiApplicationController
 
   before_filter :ticket_permission?, only: [:destroy]
   before_filter :check_search_feature, :validate_search_params, only: [:search]
-  before_filter :parent_permission, only: [:create]
+  before_filter :validate_associated_tickets, only: [:create]
 
   def create
     assign_protected
@@ -49,10 +49,12 @@ class TicketsController < ApiApplicationController
     @item.assign_description_html(params[cname][:ticket_body_attributes]) if params[cname][:ticket_body_attributes]
     delegator_hash = { ticket_fields: @ticket_fields, custom_fields: custom_fields,
                        company_id: params[cname][:company_id], tags: cname_params[:tags] }
+    delegator_hash[:tracker_ticket_id] = cname_params[:tracker_ticket_id] if link_or_unlink?
     ticket_delegator = TicketDelegator.new(@item, delegator_hash)
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     else
+      modify_ticket_associations if link_or_unlink?
       render_errors(@item.errors) unless @item.update_ticket_attributes(params[cname])
     end
   end
@@ -290,7 +292,7 @@ class TicketsController < ApiApplicationController
 
       # Assign original fields from api params and clean api params.
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, fr_due_by: :frDueBy,
-                                             type: :ticket_type, parent_id: :assoc_parent_tkt_id }, params[cname])
+                                             type: :ticket_type, parent_id: :assoc_parent_tkt_id, tracker_id: :tracker_ticket_id }, params[cname])
       ParamsHelper.save_and_remove_params(self, [:cloud_files, :inline_attachment_ids], params[cname]) if private_api?
 
       # Sanitizing is required to avoid duplicate records, we are sanitizing here instead of validating in model to avoid extra query.
@@ -381,12 +383,6 @@ class TicketsController < ApiApplicationController
         parent_ticket:       parent_ticket,
         parent_attachments:  parent_attachments
       }
-    end
-
-    def assign_association_type
-      if cname_params[:assoc_parent_tkt_id].present? && parent_ticket.present?
-        @item.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
-      end
     end
 
     def assign_ticket_status

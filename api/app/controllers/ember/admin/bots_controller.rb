@@ -319,6 +319,7 @@ module Ember
         def train_bot
           bot_info = bot_info(@item)
           Rails.logger.info("Enqueueing for overall learning:: #{bot_info}")
+          current_account.launch(:solutions_central_publish) unless current_account.solutions_central_publish_enabled?
           Bot::MlSolutionsTraining.perform_async(bot_id: @item.id)
           @item.training_inprogress!
         rescue => e
@@ -332,7 +333,14 @@ module Ember
         end
 
         def categories_list(portal)
-          portal.solution_category_meta.preload(:primary_category).customer_categories.map { |c| { id: c.id, label: c.name } }
+          Language.for_current_account.make_current
+          public_category_meta = portal.public_category_meta
+          return [] unless public_category_meta
+          articles_count = Solution::CategoryMeta.bot_articles_count_hash(public_category_meta.map(&:id))
+          Language.reset_current
+          public_category_meta.map do |category|
+            { id: category.id, label: category.name, articles_count: articles_count[category.id] || 0 }
+          end
         end
 
         def save_bot
@@ -359,7 +367,7 @@ module Ember
 
         def transform_response(response)
           response_hash = {}
-          response.each do |r| 
+          response.each do |r|
             response_hash[r[:date]] = r[:vls]
           end
           date_range = Range.new(Date.parse(params[:start_date]), Date.parse(params[:end_date]))

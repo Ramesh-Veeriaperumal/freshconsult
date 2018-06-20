@@ -29,24 +29,13 @@ class Account < ActiveRecord::Base
     
     def valid_sso_options?
       if self.sso_enabled?
-        if self.sso_options[:sso_type].blank? # assume simple and update
-          self.sso_options[:sso_type] = "simple";
+        self.sso_options[:sso_type] = SsoUtil::SSO_TYPES[:simple_sso] if self.sso_options[:sso_type].blank?
+        if self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:simple_sso] && self.sso_options[:login_url].blank?
+          self.errors.add(:sso_options, ", #{I18n.t('admin.security.errors.simple_sso.invalid_login_url')}")
+        elsif self.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:saml]
+          self.errors.add(:sso_options, ", #{I18n.t('admin.security.errors.saml_sso.invalid_login_url')}") if self.sso_options[:saml_login_url].blank?
+          self.errors.add(:sso_options, ", #{I18n.t('admin.security.errors.saml_sso.invalid_fingerprint')}") if self.sso_options[:saml_cert_fingerprint].blank?
         end
-        if self.sso_options[:sso_type] == "simple"
-          if self.sso_options[:login_url].blank?
-            self.errors.add(:sso_options, ', Please provide a valid login url')
-          #else
-            #self.errors.add(:sso_options, ', Please provide a valid login url') if !external_url_is_valid?(self.sso_options[:login_url])
-          end
-        elsif  self.sso_options[:sso_type] == "saml"
-          if self.sso_options[:saml_login_url].blank?
-            self.errors.add(:sso_options, ', Please provide a valid SAML login url')
-          end
-          if self.sso_options[:saml_cert_fingerprint].blank?
-            self.errors.add(:sso_options, ', Please provide a valid SAML Certificate Fingerprint')
-          end
-        end
-
       end
     end
 
