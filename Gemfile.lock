@@ -222,6 +222,15 @@ GIT
     fd_rate_limiter (0.0.1)
 
 GIT
+  remote: git@github.com:freshdesk/formserv-gem.git
+  revision: 0fa2da0e9c9eaf06eb7f419dd2e6a46027f03f5f
+  specs:
+    formserv-gem (0.9.0)
+      faraday
+      net-http-persistent (= 2.9.4)
+      rails
+
+GIT
   remote: git@github.com:freshdesk/fresh_request.git
   revision: 7c521607a3fda8b2976ad5b5b8684ea2b32c635b
   branch: v20
@@ -1465,6 +1474,7 @@ DEPENDENCIES
   features!
   fontcustom (= 1.3.3)
   forgery (= 0.5.0)
+  formserv-gem (= 0.9.0)!
   freemail (= 0.2.0)
   fresh_request!
   freshdesk_authority!

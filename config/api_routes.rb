@@ -176,6 +176,12 @@ Helpkit::Application.routes.draw do
         get :conversations, to: 'archive/conversations#ticket_conversations'
       end
     end
+
+    resources :canned_forms, controller: 'admin/canned_forms', path: '/canned_forms' do
+      member do
+        post :handle, to: 'admin/canned_forms#create_handle'
+      end
+    end
   end
 
   ember_routes = proc do

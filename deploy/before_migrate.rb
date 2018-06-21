@@ -90,6 +90,7 @@ run "ln -nfs #{shared_path}/config/scheduler_client_keys.yml #{node[:rel_path]}/
 run "ln -nfs #{shared_path}/config/channel_api_keys.yml #{node[:rel_path]}/config/channel_api_keys.yml"
 run "ln -nfs #{shared_path}/config/apigee.yml #{node[:rel_path]}/config/apigee.yml"
 run "ln -nfs #{shared_path}/config/freshchat.yml #{node[:rel_path]}/config/freshchat.yml"
+run "ln -nfs #{shared_path}/config/formserv.yml #{node[:rel_path]}/config/formserv.yml"
 run "ln -nfs #{shared_path}/config/app_integration.yml #{node[:rel_path]}/config/app_integration.yml"
 
 #supreme-code-console

@@ -774,6 +774,11 @@ en:
         unhappy_info: We will ensure that we will take extra care the next time around.
         additional_info: Additionally, you could also share your experience working with us.
         submit: Submit
+    canned_form:
+      welcome_text: Providing these details will help us resolve your question faster
+      thankyou_text: Thank you for the feedback!
+      ticket_subject: <TICKET_SUBJECT>
+      no_info: No information was provided
   gamification:
     levels:
       beginner: Beginner
@@ -7293,6 +7298,7 @@ en:
           reply_to_forward: "%{user_name} replied to forward <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           broadcast_note: "%{user_name} added a broadcast message <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           broadcast_message: "Broadcasted Message"
+          canned_form: "%{user_name} filled out the canned form you sent <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         last_edited_info: "Last edited by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         last_deleted_info: "Deleted by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note

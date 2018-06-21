@@ -1,0 +1,14 @@
+<link href="<%= support_theme_url %>" media="screen" rel="stylesheet" type="text/css">
+<%= stylesheet_link_tag_with_rtl :'cdn/canned_form' %>
+<%= javascript_include_tag :'cdn/canned_form' %>
+<script type="text/javascript">
+  "use strict";
+  (function($) {
+    $(document).ready(function() {
+      $('.canned-form-dropdown').select2();
+      $(".canned-form-checkbox .btn").click(function() {
+        $(this).parent().children().removeClass("active");
+      });
+    });
+  })(jQuery);
+</script>

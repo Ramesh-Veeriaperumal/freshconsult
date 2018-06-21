@@ -180,6 +180,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"social/twitter",
       :only => [:create_fd_item, :reply, :retweet, :post_tweet, :favorite, :unfavorite, :followers, :follow, :unfollow]
 
+    resource :"support/canned_form", only: [:preview]
+
     # Used for API V2
     resource :"conversation", :only => [:reply]
   end

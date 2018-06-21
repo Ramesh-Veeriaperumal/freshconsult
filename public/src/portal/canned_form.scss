@@ -1,0 +1,205 @@
+// Base settings for portal styles
+@import "falcon_portal";
+
+// Page related styles
+@import "../plugins/select2";
+
+$drakgreen: #023a44 !default;
+
+body {
+  margin: 0;
+  line-height: 2;
+  color: $widgetHeaderTextColor;
+  background-color: $white;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: $black;
+  font-size: 16px;
+}
+
+label, button, select, textarea {
+  font-size: 16px;
+  display: block;
+}
+
+.form-field-list {
+  list-style: none;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  @include margin-left(0);
+  @include margin-right(0);
+  @include padding-left(40px);
+}
+
+.canned-form-text, .canned-form-paragraph, .canned-form-number {
+  width: 400px;
+  display: block !important;
+  background-color: $white;
+} 
+
+.select2-container {
+  width: 400px !important;
+  z-index: 0;
+
+  .select2-choice {
+    height: 40px;
+  }
+}
+
+.select2-drop-mask {
+  z-index: 0;
+}
+
+.select2-container .select2-choice .select2-arrow b::after {
+  top: 17px;
+}
+
+.select2-drop-active {
+  z-index: 0;  
+}
+
+.canned-form-number, .canned-form-text {
+  overflow: hidden;
+}
+
+.canned-form-field {
+  counter-increment: item;
+  margin-bottom: 40px;
+}
+
+.pull-left {
+  @include float(left !important);
+}
+
+.canned-form-field .btn-group-toggle {
+  display: block;
+}
+
+.canned-form-checkbox {
+  width: 180px;
+  z-index: 0;
+}
+
+.canned-form-checkbox input {
+  opacity: 0;
+}
+
+.canned-form-checkbox label {
+  width: 50%;
+}
+
+.canned-form-checkbox .active {
+  background-color: $drakgreen;
+  color: $white;
+}
+
+.canned-form-field > label{
+  font-size: 16px;
+  font-weight: 500
+}
+
+.canned-form-field .focus {
+  box-shadow: none !important;
+}
+
+.header{
+  top: 0px;
+  background-color: $drakgreen;
+  padding: 0 75px;
+}
+
+#header-content {
+  padding-top: 10px;
+}
+
+#header-title {
+  font-size: 26px;
+  color: $white;
+}
+
+#form-content {
+  margin: 0 auto;
+  width: 525;
+  padding-bottom: 50px;
+  position: relative;
+  line-height: 1.5;
+  @include text-align(left);
+  color: $black;
+}
+
+.welcome-note {
+  font-size: 16px;
+  text-align: center;
+  margin-top: 95px;
+}
+
+.thankyou-note {
+  margin-top: 100px;
+  text-align: center;
+  font-size: 28px;
+}
+
+.fixed {
+  position: fixed;
+  height: 70px;
+  width: 100%;
+  border: solid 1px rgba(212, 212, 212, 0.73);
+  margin: 0 auto;
+  z-index: 2;
+}
+
+.form-footer {
+  bottom: 0px;
+  background-color: $white !important;
+}
+
+.form-footer input {
+  @include float(left);
+}
+
+#footer-content {
+  width: 235px;
+  height: 100%;
+  margin: 0 auto;
+  padding-top: 15px;
+}
+
+#footer-content .btn {
+  font-size: 14px;
+  margin: 5px 5px;
+  padding: 5px 30px;
+  border: solid 1px rgba(24, 50, 71, 0.24);
+  border-radius: 3px;
+  background-image: none;
+  box-shadow: none;
+  text-shadow: none;
+}
+
+#footer-content .btn-light {
+  padding: 5px 19px;
+}
+
+.ticket_id {
+  color: #049cdb;
+}
+
+.ticket_id:hover {
+  color: #049cdb;
+  text-decoration: none;
+}
+
+#submit:hover {
+  background-color: $green;
+}
+
+.cancel{
+  background-color: $white;
+  background-image: none;
+}
+
+.cancel:hover{
+  background-color: $grey_hover;
+}
+
+.disable-action {
+  pointer-events: none;
+}

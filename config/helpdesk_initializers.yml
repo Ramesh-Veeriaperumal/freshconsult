@@ -112,6 +112,7 @@ helpdesk:
     - heap_analytics
     - bot
     - central
+    - formserv_config
     - onboarding_config
     - sanitize_monkey_patch
     - paperclip_ssrf_patch
