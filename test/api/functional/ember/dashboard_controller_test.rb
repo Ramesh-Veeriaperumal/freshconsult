@@ -135,6 +135,13 @@ module Ember
 
     # satisfaction_survey
 
+    def test_satisfaction_survey_without_active_survey
+      Account.any_instance.stubs(:any_survey_feature_enabled_and_active?).returns(false)
+      get :survey_info, controller_params(version: 'private')
+      assert_response 403
+      Account.any_instance.unstub(:any_survey_feature_enabled_and_active?)
+    end
+
     def test_satisfaction_survey
       User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
