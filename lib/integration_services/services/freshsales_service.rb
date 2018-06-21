@@ -25,6 +25,10 @@ module IntegrationServices::Services
       deal_resource.stage_dropdown_values
     end
 
+    def receive_fetch_form_fields
+      common_resource.fetch_form_fields
+    end
+
     def account_resource
       @account_resource ||= IntegrationServices::Services::Freshsales::FreshsalesAccountResource.new(self)
     end
@@ -39,6 +43,26 @@ module IntegrationServices::Services
 
     def deal_resource
       @deal_resource ||= IntegrationServices::Services::Freshsales::FreshsalesDealResource.new(self)
+    end
+
+    def common_resource
+      @common_resource ||= IntegrationServices::Services::Freshsales::FreshsalesCommonResource.new(self)
+    end
+
+    def receive_create_contact
+      contact_resource.create(@payload, @web_meta)
+    end
+
+    def receive_create_lead
+      lead_resource.create(@payload, @web_meta)
+    end
+
+    def receive_fetch_dropdown_choices
+      common_resource.fetch_dropdown_choices(@payload)
+    end
+
+    def receive_fetch_autocomplete_results
+      common_resource.fetch_autocomplete_results(@payload)
     end
 
     def receive_create_deal

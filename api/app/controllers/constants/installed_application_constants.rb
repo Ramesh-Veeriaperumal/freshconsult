@@ -9,7 +9,12 @@ module InstalledApplicationConstants
     freshsales: "freshsales"
   }.freeze
   EVENTS_REQUIRES_TYPE_VALUE = ['fetch_user_selected_fields'].freeze
-  EVENTS = ['fetch_user_selected_fields', 'integrated_resource'].freeze
+  EVENTS_REQUIRES_PAYLOAD = ['fetch_user_selected_fields', 'integrated_resource',
+                             'create_contact', 'fetch_dropdown_choices', 'fetch_autocomplete_results', 'create_lead'].freeze
+  EVENTS = ['fetch_user_selected_fields', 'integrated_resource', 'fetch_form_fields',
+            'create_contact', 'fetch_dropdown_choices', 'fetch_autocomplete_results', 'create_lead'].freeze
   INTEGRATED_RESOURCE = 'integrated_resource'.freeze
   ENTITY_TYPES = ['contact', 'lead', 'account', 'opportunity', 'deal'].freeze
+  FRESHSALES_ONLY_EVENTS = ['fetch_form_fields', 'create_contact', 'fetch_dropdown_choices',
+                            'fetch_autocomplete_results', 'create_lead'].freeze
 end.freeze
