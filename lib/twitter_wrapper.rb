@@ -1,7 +1,8 @@
 class TwitterWrapper
   
   require 'twitter'  
- 
+  include Social::Util 
+
   attr_reader :tokens
 
   def initialize(twitter_handle , options = {} )
@@ -13,7 +14,8 @@ class TwitterWrapper
     @account = options[:current_account]  || twitter_handle.account
     @callback_url = "#{options[:callback_url]}"
     @callback_url = "#{@callback_url}?product_id=#{@product.id}" if @product
-    @consumer ||= OAuth::Consumer.new TwitterConfig::CLIENT_ID, TwitterConfig::CLIENT_SECRET, {:site => "https://api.twitter.com"}
+    client_id, client_secret = consumer_app_details(twitter_handle)
+    @consumer ||= OAuth::Consumer.new client_id, client_secret, {:site => "https://api.twitter.com"}
     @twitter_handle = twitter_handle
   end
 
@@ -44,18 +46,23 @@ class TwitterWrapper
   end
   
   def set_configuration
+    client_id, client_secret = consumer_app_details(@twitter_handle)
     client = Twitter::REST::Client.new do |config|
-      config.consumer_key = TwitterConfig::CLIENT_ID
-      config.consumer_secret = TwitterConfig::CLIENT_SECRET
+      config.consumer_key = client_id
+      config.consumer_secret = client_secret
       config.access_token = @twitter_handle.access_token
       config.access_token_secret = @twitter_handle.access_secret
     end
   end
   
   def get_oauth_credential
-    { consumer_key: TwitterConfig::CLIENT_ID,
-      consumer_secret: TwitterConfig::CLIENT_SECRET,
+    client_id, client_secret = consumer_app_details(@twitter_handle)
+    
+    { 
+      consumer_key: client_id,
+      consumer_secret: client_secret,
       token: @twitter_handle.access_token,  
-      token_secret: @twitter_handle.access_secret }
+      token_secret: @twitter_handle.access_secret 
+    }
   end
 end
