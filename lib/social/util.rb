@@ -2,6 +2,7 @@ module Social::Util
 
   include Gnip::Constants
   include Social::Constants
+  include Redis::OthersRedis
 
   def select_shard_and_account(account_id, &block)
     begin
@@ -171,5 +172,16 @@ module Social::Util
 
   def tweet_body(tweet)
     tweet[:long_object].try(:[], "body") || tweet[:body]
+  end
+
+  def consumer_app_details(handle)
+    handle.present? && !handle.new_record? && euc_migrated_handle?(handle) ?
+      [TwitterConfig::CLIENT_ID_FALLBACK, TwitterConfig::CLIENT_SECRET_FALLBACK] :
+      [TwitterConfig::CLIENT_ID, TwitterConfig::CLIENT_SECRET]
+  end
+
+  def euc_migrated_handle?(handle)
+    # EUC POD with the handle migrated from the EU data center.
+    Account.current.launched?(:euc_migrated_twitter) && ismember?(EU_TWITTER_HANDLES, "#{Account.current.id}:#{handle.twitter_user_id}")
   end
 end
