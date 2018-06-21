@@ -280,11 +280,14 @@ module Ember
     def test_ticket_trends_valid_request
       Timecop.freeze(dashboard_redshift_current_time) do
         stub_data = dashboard_trends_data
+        User.any_instance.stubs(:time_zone).returns(dashboard_timezone)
         ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
         get :ticket_trends, controller_params(version: 'private')
         assert_response 200
         match_json(dashboard_trends_parsed_response)
       end
+    ensure
+      User.any_instance.unstub(:time_zone)
     end
 
     def test_ticket_metrics_valid_request
@@ -378,11 +381,14 @@ module Ember
     def test_ticket_trends_with_valid_product_id
       Timecop.freeze(dashboard_redshift_current_time) do
         stub_data = dashboard_trends_data
+        User.any_instance.stubs(:time_zone).returns(dashboard_timezone)
         ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
         product = create_product
         get :ticket_trends, controller_params(version: 'private', product_ids: [product.id])
         assert_response 200
       end
+    ensure
+      User.any_instance.unstub(:time_zone)
     end
 
     def test_ticket_metrics_with_valid_product_id
@@ -398,11 +404,14 @@ module Ember
     def test_ticket_trends_with_valid_group_id
       Timecop.freeze(dashboard_redshift_current_time) do
         stub_data = dashboard_trends_data
+        User.any_instance.stubs(:time_zone).returns(dashboard_timezone)
         ::Dashboard::RedshiftRequester.any_instance.stubs(:fetch_records).returns(stub_data)
         group = create_group(@account)
         get :ticket_trends, controller_params(version: 'private', group_ids: [group.id])
         assert_response 200
       end
+    ensure
+      User.any_instance.unstub(:time_zone)
     end
 
     def test_tticket_metrics_with_valid_group_id
