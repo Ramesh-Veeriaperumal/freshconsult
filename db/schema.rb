@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180616064951) do
+ActiveRecord::Schema.define(:version => 20180620195011) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -4419,10 +4419,37 @@ ActiveRecord::Schema.define(:version => 20180616064951) do
 
   add_index "bot_feedback_mappings", ["account_id", "feedback_id"], :name => "index_bot_feedback_mappings_on_feedback_id"
 
+  create_table 'canned_form_handles', force: true do |t|
+    t.integer  'ticket_id', limit: 8, null: false
+    t.integer  'account_id', limit: 8, null: false
+    t.string   'id_token'
+    t.integer  'canned_form_id', limit: 8, null: false
+    t.integer  'response_note_id', limit: 8
+    t.text     'response_data'
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+  end
+
+  add_index 'canned_form_handles', ['account_id', 'id_token'], name: 'index_canned_form_handles_on_account_id_and_id_token', length: { 'account_id' => nil, 'id_token' => 20 }
+
+  create_table 'canned_forms', force: true do |t|
+    t.integer  'account_id', limit: 8, null: false
+    t.string   'name'
+    t.string   'description'
+    t.text     'message'
+    t.integer  'version'
+    t.boolean  'deleted', default: false
+    t.string   'service_form_id'
+    t.text     'serialized_form', limit: 16_777_215
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+  end
+
+  add_index 'canned_forms', :account_id, name: 'index_canned_forms_on_account_id'
+
   create_table :helpdesk_reports_config, :force => true do |t|
       t.text        :name
       t.text        :config_json
       t.timestamps
   end
-
 end
