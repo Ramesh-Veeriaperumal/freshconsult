@@ -115,3 +115,4 @@ helpdesk:
     - sanitize_monkey_patch
     - paperclip_ssrf_patch
     - apigee_config
+    - facebook_eu_accounts_config
