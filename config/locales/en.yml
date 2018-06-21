@@ -10149,6 +10149,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       avg_first_res_time: Average 1st response time
       avg_res_time: Average response time
       avg_resolution_time: Average resolution time
+      received_tickets: Tickets Received 
+      tickets_enagaged: Tickets Engaged
       agent: Agent
     timespent:
       title : Ticket Lifecycle
