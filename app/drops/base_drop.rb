@@ -119,12 +119,7 @@ class BaseDrop < Liquid::Drop
 
     # Escape liquid attributes by default for portal and based on attribute in other places
     def escape_liquid_attributes?
-      escape_for_customer_portal? || @source.escape_liquid_attributes
-    end
-
-    def escape_for_customer_portal?
-      return @escape_portal if instance_variable_defined?("@escape_portal")
-      @escape_portal = ( customer_portal? && Account.current.launched?(:escape_liquid_for_portal) )
+      customer_portal? || @source.escape_liquid_attributes
     end
 
     def formatted_field_value(field_type, field_value)
