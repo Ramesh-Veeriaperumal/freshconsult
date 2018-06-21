@@ -92,6 +92,15 @@ module Ember
       subscription.save
     end
 
+    def fetch_email_config
+      @account.email_configs.where('active = true').first || create_email_config
+    end
+
+    def ticket
+      ticket = Helpdesk::Ticket.where('source != ?', 10).last || create_ticket(ticket_params_hash)
+      ticket
+    end
+
     def get_user_with_multiple_companies
       user_company = @account.user_companies.group(:user_id).having(
         'count(user_id) > 1 '
@@ -556,7 +565,7 @@ module Ember
       assert Helpdesk::Ticket.last.cloud_files.count == 1
     end
 
-    def test_create_with_shared_attachments
+    def test_create_with_shared_attachments_using_canned_response
       canned_response = create_response(
         title: Faker::Lorem.sentence,
         content_html: Faker::Lorem.paragraph,
@@ -569,6 +578,36 @@ module Ember
       end
       assert_response 201
       match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+      assert canned_response.shared_attachments.count == 1
+      assert_not_equal canned_response.shared_attachments.first.id, Helpdesk::Ticket.last.attachments.first.id
+      assert Helpdesk::Ticket.last.attachments.count == 1
+    end
+
+    def test_create_with_shared_attachments_using_ticket_templates
+      @account = Account.first.make_current
+      @agent = get_admin
+      @groups = []
+      @groups << create_group(@account)
+      @current_user = User.current
+      ticket_template = create_tkt_template(
+        name: Faker::Name.name,
+        association_type: Helpdesk::TicketTemplate::ASSOCIATION_TYPES_KEYS_BY_TOKEN[:parent],
+        account_id: @account.id,
+        accessible_attributes: {
+          access_type: Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+        },
+        attachments: [{ resource: fixture_file_upload('files/attachment.txt', 'text/plain', :binary) }]
+      )
+      assert ticket_template.attachments.first.attachable_type == 'Helpdesk::TicketTemplate'
+      params_hash = ticket_params_hash.merge(attachment_ids: ticket_template.attachments.map(&:id))
+      stub_attachment_to_io do
+        post :create, construct_params({ version: 'private' }, params_hash)
+      end
+      assert_response 201
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+      assert ticket_template.attachments.count == 1
+      assert ticket_template.attachments.first.attachable_type == 'Helpdesk::TicketTemplate'
+      assert_not_equal ticket_template.attachments.first.id, Helpdesk::Ticket.last.attachments.first.id
       assert Helpdesk::Ticket.last.attachments.count == 1
     end
 
@@ -3400,6 +3439,235 @@ module Ember
         put :update, construct_params({ version: 'private', id: ticket.display_id, tracker_id: nil, status: 5 }, false)
         assert_response 403
       end
+    end
+
+    def test_compose_email_without_feature
+      Account.any_instance.stubs(:compose_email_enabled?).returns(false)
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {})
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 403
+      match_json(request_error_pattern(:require_feature, feature: 'compose_email'.titleize))
+    ensure
+      Account.any_instance.unstub(:compose_email_enabled?)
+    end
+
+    def test_compose_email_with_invalid_params
+      params = ticket_params_hash.merge(custom_fields: {}, product_id: 2, requester_id: 3, phone: 7, twitter_id: '67', facebook_id: 'ui')
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern('source',  :invalid_field),
+                  bad_request_error_pattern('product_id',  :invalid_field),
+                  bad_request_error_pattern('responder_id',  :invalid_field),
+                  bad_request_error_pattern('requester_id',  :invalid_field),
+                  bad_request_error_pattern('twitter_id',  :invalid_field),
+                  bad_request_error_pattern('facebook_id',  :invalid_field),
+                  bad_request_error_pattern('phone',  :invalid_field)])
+    ensure
+      Account.any_instance.unstub(:compose_email_enabled?)
+    end
+
+    def test_compose_email
+      email_config = fetch_email_config
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      t = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(t))
+      assert t.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+      assert_response 201
+    end
+
+    def test_compose_with_all_default_fields_required_valid
+      default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
+      default_non_required_fiels.map { |x| x.toggle!(:required) }
+      default_non_required_fiels.select { |x| x.name == 'product' }.map { |x| x.toggle!(:required) }
+      email_config = fetch_email_config
+      params = { email: Faker::Internet.email, email_config_id: email_config.id, priority: 2, type: 'Feature Request', description: Faker::Lorem.characters(15), group_id: ticket_params_hash[:group_id], subject: Faker::Lorem.characters(15) }
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+      assert_response 201
+    ensure
+      default_non_required_fiels.map { |x| x.toggle!(:required) }
+      default_non_required_fiels.select { |x| x.name == 'product' }.map { |x| x.toggle!(:required) }
+    end
+
+    def test_compose_with_attachment
+      file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+      file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge('attachments' => [file, file2], status: '2', priority: '2', email_config_id: "#{fetch_email_config.id}")
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      response_params = params.except(:tags, :attachments)
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+      assert_response 201
+      assert Helpdesk::Ticket.last.attachments.count == 2
+    end
+
+    def test_compose_email_without_status
+      email_config = fetch_email_config
+      params = ticket_params_hash.except(:source, :status, :fr_due_by, :due_by, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+      result = parse_response(@response.body)
+      assert_equal 5, result['status']
+      assert_response 201
+    end
+
+    def test_compose_email_without_responder_id
+      email_config = fetch_email_config
+      params = ticket_params_hash.except(:source, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+      result = parse_response(@response.body)
+      assert_equal @agent.id, result['responder_id']
+      assert_response 201
+    end
+
+    def test_compose_email_without_status_with_fr_due_by
+      email_config = fetch_email_config
+      params = ticket_params_hash.except(:source, :status, :due_by, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern('fr_due_by',  :cannot_set_due_by_fields, code: :incompatible_field)])
+    end
+
+    def test_compose_email_without_status_with_due_by
+      email_config = fetch_email_config
+      params = ticket_params_hash.except(:source, :status, :fr_due_by, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern('due_by',  :cannot_set_due_by_fields, code: :incompatible_field)])
+    end
+
+    def test_compose_email_without_mandatory_params
+      params = ticket_params_hash.except(:source, :product_id, :responder_id, :email, :subject).merge(custom_fields: {})
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern('email_config_id',  :field_validation_for_outbound, code: :missing_field),
+                  bad_request_error_pattern('subject',  :field_validation_for_outbound, code: :missing_field),
+                  bad_request_error_pattern('email',  :field_validation_for_outbound, code: :missing_field)])
+    end
+
+    def test_compose_email_with_invalid_email_config_id
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: 1234)
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern('email_config_id',  :absent_in_db, resource: :email_config, attribute: :email_config_id)])
+    end
+
+    def test_compose_email_with_group_ticket_permission_valid
+      Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
+      User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+      User.any_instance.stubs(:group_ticket_permission).returns(true)
+      email_config = create_email_config(group_id: ticket_params_hash[:group_id])
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+    ensure
+      Account.any_instance.unstub(:restricted_compose_enabled?)
+      User.any_instance.unstub(:can_view_all_tickets?)
+      User.any_instance.unstub(:group_ticket_permission)
+    end
+
+    def test_compose_email_with_group_ticket_permission_invalid
+      Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
+      User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+      User.any_instance.stubs(:group_ticket_permission).returns(true)
+      email_config = create_email_config(group_id: create_group(@account).id)
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern('email_config_id',  :inaccessible_value, resource: :email_config, attribute: :email_config_id)])
+    ensure
+      Account.any_instance.unstub(:restricted_compose_enabled?)
+      User.any_instance.unstub(:can_view_all_tickets?)
+      User.any_instance.unstub(:group_ticket_permission)
+    end
+
+    def test_compose_email_with_assign_ticket_permission_valid
+      Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
+      User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+      User.any_instance.stubs(:group_ticket_permission).returns(false)
+      User.any_instance.stubs(:assigned_ticket_permission).returns(true)
+      email_config = create_email_config
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      match_json(ticket_show_pattern(Helpdesk::Ticket.last))
+    ensure
+      Account.any_instance.unstub(:restricted_compose_enabled?)
+      User.any_instance.unstub(:can_view_all_tickets?)
+      User.any_instance.unstub(:group_ticket_permission)
+      User.any_instance.unstub(:assigned_ticket_permission)
+    end
+
+    def test_compose_email_with_assign_ticket_permission_invalid
+      Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
+      User.any_instance.stubs(:can_view_all_tickets?).returns(false)
+      User.any_instance.stubs(:group_ticket_permission).returns(false)
+      User.any_instance.stubs(:assigned_ticket_permission).returns(true)
+      email_config = create_email_config(group_id: create_group(@account).id)
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(custom_fields: {}, email_config_id: email_config.id)
+      CUSTOM_FIELDS.each do |custom_field|
+        params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+      end
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 400
+      match_json([bad_request_error_pattern('email_config_id',  :inaccessible_value, resource: :email_config, attribute: :email_config_id)])
+    ensure
+      Account.any_instance.unstub(:restricted_compose_enabled?)
+      User.any_instance.unstub(:can_view_all_tickets?)
+      User.any_instance.unstub(:group_ticket_permission)
+      User.any_instance.unstub(:assigned_ticket_permission)
+    end
+
+    def test_update_compose_email_with_subject_and_description
+      Account.any_instance.stubs(:compose_email_enabled?).returns(true)
+      t = ticket
+      t.update_attributes(source: 10, email_config_id: fetch_email_config.id)
+      params_hash = update_ticket_params_hash.except(:email, :source).merge(subject: Faker::Lorem.paragraph, description: Faker::Lorem.paragraph)
+      put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('subject', :outbound_email_field_restriction, code: :incompatible_field),
+                  bad_request_error_pattern('description', :outbound_email_field_restriction, code: :incompatible_field)])
+    ensure
+      Account.any_instance.unstub(:compose_email_enabled?)
     end
   end
 end

@@ -230,6 +230,7 @@ Helpkit::Application.routes.draw do
 
     resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
       collection do
+        post :outbound_email, to: 'ember/tickets#create', defaults: { _action: 'compose_email' }
         put :bulk_delete, to: 'ember/tickets/delete_spam#bulk_delete'
         put :bulk_spam, to: 'ember/tickets/delete_spam#bulk_spam'
         put :bulk_restore, to: 'ember/tickets/delete_spam#bulk_restore'
