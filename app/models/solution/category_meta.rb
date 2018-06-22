@@ -141,14 +141,12 @@ class Solution::CategoryMeta < ActiveRecord::Base
 	end
 
   def self.bot_articles_count_hash(category_ids)
-    @bot_articles_count_hash ||= begin
-      count_hash = {}
-      result = Sharding.run_on_slave { ActiveRecord::Base.connection.execute(bot_articles_count_query(category_ids)) }
-      result.each do |category_id, articles_count|
-        count_hash[category_id] = articles_count
-      end
-      count_hash
+    count_hash = {}
+    result = Sharding.run_on_slave { ActiveRecord::Base.connection.execute(bot_articles_count_query(category_ids)) }
+    result.each do |category_id, articles_count|
+      count_hash[category_id] = articles_count
     end
+    count_hash
   end
 
   def self.bot_articles_count_query(category_ids)
