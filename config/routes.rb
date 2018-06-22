@@ -772,6 +772,7 @@ Helpkit::Application.routes.draw do
     collection do
       get :login
       get :facebook
+      get :twitter
       get :portal_google_sso
       get :marketplace_google_sso
       post :mobile_sso_login
