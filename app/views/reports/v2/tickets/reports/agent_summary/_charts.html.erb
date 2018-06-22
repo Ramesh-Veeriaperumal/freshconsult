@@ -8,11 +8,19 @@
                                 <%=t( 'helpdesk_reports.agent_summary.agent') %>
                             </span>
                         </th>
-                        <th>
-                            <span data-metric-title="AGENT_ASSIGNED_TICKETS">
-                                <%=t( 'helpdesk_reports.agent_summary.ticket_assigned') %>
-                            </span>
-                        </th>
+                        <% if enable_new_ticket_recieved_metric? %>
+                            <th>
+                                <span data-metric-title="AGENT_RECEIVED_TICKETS"> 
+                                    <%=t( 'helpdesk_reports.agent_summary.received_tickets')  %>
+                                </span>
+                            </th>
+                        <% else %>
+                            <th>
+                                <span data-metric-title="AGENT_ASSIGNED_TICKETS">
+                                    <%=t( 'helpdesk_reports.agent_summary.ticket_assigned') %>
+                                </span>
+                            </th>
+                        <% end %>
                         <th>
                             <span data-metric-title="RESOLVED_TICKETS">
                                 <%=t( 'helpdesk_reports.agent_summary.ticket_resolved') %>
@@ -70,6 +78,12 @@
                                 <%=t( 'helpdesk_reports.agent_summary.avg_resolution_time') %>
                             </span>
                         </th>
+                        
+                        <!-- <th>
+                            <span data-metric-title="TICKETS_ENGAGED"> 
+                                
+                            </span>
+                        </th> -->
                     </tr>
                     <!--<tr class="metric-average-header title"></tr>-->
                 </thead>
@@ -83,8 +97,8 @@
         var locals = HelpdeskReports.locals;
         locals.chart_hash = <%= @data.to_json.html_safe %> ;
         locals.is_sla_management_enabled = <%= current_account.sla_management_enabled? %>;
+        locals.is_new_ticket_recieved_metric_enabled = <%= enable_new_ticket_recieved_metric? %>;
         var last_dump_time = <%= @last_dump_time ? t('helpdesk_reports.last_updated',{last_dump_time: @last_dump_time}).to_json.html_safe : false %>
-        
         if (!err && locals.chart_hash.length !== 0) {
             HelpdeskReports.ChartsInitializer.AgentSummary.init(locals.chart_hash);
         } else if (!err && locals.chart_hash.length === 0) {

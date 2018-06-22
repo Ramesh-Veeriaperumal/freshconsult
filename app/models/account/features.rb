@@ -11,7 +11,7 @@ class Account < ActiveRecord::Base
                    :imap_error_status_check, :va_any_field_without_none, :api_es, :sandbox_lp, 
                    :encode_emoji, :audit_logs_central_publish, :auto_complete_off, :dependent_field_validation,
                    :post_central_publish, :encode_emoji_subject, :time_sheets_central_publish, :twitter_common_redirect,
-                   :canned_forms, :euc_migrated_twitter]
+                   :canned_forms, :euc_migrated_twitter, :new_ticket_recieved_metric]
    DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
   BITMAP_FEATURES = [

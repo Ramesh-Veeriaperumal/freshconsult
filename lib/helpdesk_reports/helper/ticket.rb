@@ -9,14 +9,14 @@ module HelpdeskReports::Helper::Ticket
   include HelpdeskReports::Helper::PlanConstraints
 
   VALIDATIONS = ["presence_of_params", "validate_inclusion", "validate_bucketing","validate_dates", "validate_time_trend",
-                  "validate_max_filters", "validate_max_multi_selects", "validate_group_by", "validate_agent_filter"]
+                 "validate_max_filters", "validate_max_multi_selects", "validate_group_by", "validate_agent_filter"]
 
   def filter_data
     show_options(DEFAULT_COLUMNS_ORDER, DEFAULT_COLUMNS_KEYS_BY_TOKEN, DEFAULT_COLUMNS_OPTIONS)
     @label_hash = column_id_label_hash
     @lifecycle_group_by_options = lifecycle_group_by_options_hash if report_type == :timespent
   end
-  
+
   def column_id_label_hash
     labels = {}
     @show_options.each do|id, field|
@@ -39,11 +39,11 @@ module HelpdeskReports::Helper::Ticket
     labels[:group_id] = DEFAULT_COLUMNS_OPTIONS[:group_id] unless hide_agent_reporting?
     labels.except(*LIFECYCLE_GROUP_BY_SKIP_COLUMNS)
   end
-  
+
   def report_export_fields
     @csv_headers = export_fields.select{ |field| required_in_reports?(field) }
   end
-  
+
   def required_in_reports? field
     field[:type] == "nested_field" || field[:type] == "custom_dropdown" || TICKET_EXPORT_FIELDS.include?(field[:value])
   end
@@ -51,7 +51,7 @@ module HelpdeskReports::Helper::Ticket
   def set_selected_tab
     @selected_tab = :reports
   end
-  
+
   def plan_constraints
     @account_time_zone   = ActiveSupport::TimeZone::MAPPING[Account.current.time_zone]# Used to restrict date range in UI according to subscription plan
     @user_time_zone_abbr = Time.zone.now.zone
@@ -63,25 +63,25 @@ module HelpdeskReports::Helper::Ticket
     res = {report_type: report_type}
 
     if [:agent_summary, :group_summary].include?(report_type)
-        res.merge!(csv_export: pdf_export)
-        group_ids, agent_ids = []
-        param = @query_params[0]
-        param[:filter].each do |f|
-          if report_type == :agent_summary
-            agent_ids = f["value"].split(",") if f["condition"] == "agent_id"
-            group_ids = f["value"] == "-1" ? nil : f["value"].split(",").select{|elem| elem != "-1"} if f["condition"] == "group_id"
-          else
-            group_ids = f["value"].split(",") if f["condition"] == "group_id"
-            agent_ids = f["value"] == "-1" ? nil : f["value"].split(",").select{|elem| elem != "-1"} if f["condition"] == "agent_id"
-          end
+      res.merge!(csv_export: pdf_export)
+      group_ids, agent_ids = []
+      param = @query_params[0]
+      param[:filter].each do |f|
+        if report_type == :agent_summary
+          agent_ids = f["value"].split(",") if f["condition"] == "agent_id"
+          group_ids = f["value"] == "-1" ? nil : f["value"].split(",").select{|elem| elem != "-1"} if f["condition"] == "group_id"
+        else
+          group_ids = f["value"].split(",") if f["condition"] == "group_id"
+          agent_ids = f["value"] == "-1" ? nil : f["value"].split(",").select{|elem| elem != "-1"} if f["condition"] == "agent_id"
         end
-        res.merge!(group_ids: group_ids.map{|grp_id| grp_id.to_i }) if !group_ids.nil?
-        res.merge!(agent_ids: agent_ids.map{|agt_id| agt_id.to_i }) if !agent_ids.nil?
+      end
+      res.merge!(group_ids: group_ids.map{|grp_id| grp_id.to_i }) if !group_ids.nil?
+      res.merge!(agent_ids: agent_ids.map{|agt_id| agt_id.to_i }) if !agent_ids.nil?
     elsif report_type == :glance
       res.merge!(pdf_export: pdf_export)
     elsif report_type == :ticket_volume
       res.merge!(date_range: @query_params[0][:date_range])
-	elsif report_type == :timespent
+    elsif report_type == :timespent
       grp_by = @query_params[0][:group_by]
       nested_filter = params[:filter].select{|filter_hash| filter_hash.has_key?(:drill_down_filter) } if params[:filter].present?
       if nested_filter.present?
@@ -94,8 +94,8 @@ module HelpdeskReports::Helper::Ticket
         end
       else
         res.merge!(group_by: grp_by)
-	  end
-	elsif :qna == report_type
+      end
+    elsif :qna == report_type
       query_param = @query_params[0]
       res[:date_range] = query_param[:date_range]
       res[:q_type] = query_param[:q_type]
@@ -105,32 +105,32 @@ module HelpdeskReports::Helper::Ticket
     elsif :insights == report_type
       res.merge!(query_params: @query_params)
     end
-    
-    res   
+
+    res
   end
-  
+
   def pdf_params
     args = JSON.parse(params[:pdf_args]).symbolize_keys!
     @query_params = args[:query_hash].each{|k| k.symbolize_keys!}
     @custom_fields_group_by = args[:custom_field]
-    @date_range = @query_params.first[:date_range] 
+    @date_range = @query_params.first[:date_range]
     @filters = args[:select_hash]
     @trend = args[:trend].symbolize_keys
     @pdf_export = true
     @pdf_cf = pdf_custom_field || "none" if report_type == :glance
   end
-  
+
   def pdf_custom_field
     @query_params.first[:group_by].find{|gp_by| gp_by.start_with?("ffs")} if @query_params.first[:group_by].present?
   end
-  
+
   def email_report_params
     @query_params = params[:query_hash]
     validate_scope
     params.merge!(query_hash: @query_params)
     params.merge!({label_hash: @label_hash,nf_hash: @nf_hash}) if report_type == :glance
   end
-  
+
   def pdf_locals
     locals = {
       report_type: report_type,
@@ -144,14 +144,19 @@ module HelpdeskReports::Helper::Ticket
       filter_name: params[:filter_name],
       last_dump_time: @last_dump_time
     }
-    
+
     case report_type
-      when :ticket_volume
-        locals.merge!(trend: @trend[:trend])
-      when :performance_distribution
-        locals.merge!(trend: @trend[:trend],resolution_trend: @trend[:resolution_trend],response_trend: @trend[:response_trend])
+    when :ticket_volume
+      locals.merge!(trend: @trend[:trend])
+    when :performance_distribution
+      locals.merge!(trend: @trend[:trend],resolution_trend: @trend[:resolution_trend],response_trend: @trend[:response_trend])
     end
     locals
+  end
+
+
+  def enable_new_ticket_recieved_metric?
+    Account.current.new_ticket_recieved_metric_enabled?
   end
 
   def export_summary_report
@@ -161,8 +166,18 @@ module HelpdeskReports::Helper::Ticket
     if (csv_size > csv_row_limit)
       @data.slice!(csv_row_limit..(csv_size - 1))
       exceeds_limit = true
-    end 
+    end
     csv_headers = ["#{report_type.to_s.split("_").first}_name"] + (@data.first.keys & METRIC_DISPLAY_NAME.keys)
+
+    if enable_new_ticket_recieved_metric?
+      csv_headers.delete("AGENT_ASSIGNED_TICKETS")
+      csv_headers.delete("GROUP_ASSIGNED_TICKETS")
+    elsif
+      csv_headers.delete("AGENT_RECEIVED_TICKETS")
+      csv_headers.delete("GROUP_RECEIVED_TICKETS")
+    end
+
+
     csv_string = CSVBridge.generate do |csv|
       csv << csv_headers.collect{|i| csv_headers_hash[i] } # CSV Headers
       @data.each do |row|
@@ -189,12 +204,12 @@ module HelpdeskReports::Helper::Ticket
     end
     csv_string
   end
-  
+
   def send_csv csv
     send_data csv,
-            :type => 'text/csv; charset=utf-8; header=present',
-            :disposition => "attachment; filename=#{report_type}.csv"
-  end
+      :type => 'text/csv; charset=utf-8; header=present',
+      :disposition => "attachment; filename=#{report_type}.csv"
+      end
 
   # VALIDATION of all params before triggering any QUERY
   def validate_params
@@ -215,7 +230,7 @@ module HelpdeskReports::Helper::Ticket
   private
 
   def presence_of_params param
-    REQUIRED_PARAMS.inject([]) do |errors, n_p|      
+    REQUIRED_PARAMS.inject([]) do |errors, n_p|
       #blank check for nil values. Extra false check because false.blank? is true
       errors << "#{n_p} absent" if param[n_p].blank? and param[n_p] != false
       errors
@@ -240,15 +255,15 @@ module HelpdeskReports::Helper::Ticket
       errors
     end
   end
-  
+
   def validate_dates param
     begin
       range         = param[:date_range].split("-")
       start_date    = Date.parse(range.first)
-      end_date      = range.length > 1 ? Date.parse(range.second) : start_date 
+      end_date      = range.length > 1 ? Date.parse(range.second) : start_date
       allowed_range = (end_date - start_date) < MAX_ALLOWED_DAYS
       if allowed_range
-        account_today = Time.now.in_time_zone(Account.current.time_zone).to_date      
+        account_today = Time.now.in_time_zone(Account.current.time_zone).to_date
         end_date == account_today and @date_lag_by_plan > 0 ? ["No data to display"] : [] # Restrict date_range acc to subscription plan
       else
         ["Maximum allowed days limit exceeded"]
@@ -260,19 +275,19 @@ module HelpdeskReports::Helper::Ticket
 
   def validate_time_trend param
     report_duration = date_range_diff(param[:date_range])
-    
+
     if report_duration.present? && report_type == :ticket_volume
       allowed_time_trend = param[:time_trend_conditions]
       TIME_TREND.each{ |trend| allowed_time_trend.delete(trend) if report_duration > MAX_DATE_RANGE_FOR_TREND[trend]}
       param[:time_trend_conditions] = allowed_time_trend
     end
-    
+
     (param[:time_trend_conditions] || []).inject([]) do |errors, tt|
       errors << "Invalid time_trend #{tt}" unless TIME_TREND.include?(tt)
       errors
     end
   end
-  
+
   def date_range_diff range
     return nil if range.nil?
     begin
@@ -282,12 +297,12 @@ module HelpdeskReports::Helper::Ticket
       nil
     end
   end
-  
+
   def valid? key, value
     value = value.upcase if value.class == String
     PARAM_INCLUSION_VALUES[key].present? ? PARAM_INCLUSION_VALUES[key].include?(value) : true
   end
-  
+
   def validate_max_filters param
     # hack begins
     # Temporary code to display proper error message in case of filter limit exceeded
@@ -296,7 +311,7 @@ module HelpdeskReports::Helper::Ticket
     # hack ends
     param[:filter].length > TICKET_FILTER_LIMIT ? ["Filter limit exceeded"] : []
   end
-  
+
   def validate_max_multi_selects param
     (param[:filter] || []).inject([]) do |errors, filter|
       value_count = filter["value"].to_s.split(",").length
@@ -318,7 +333,7 @@ module HelpdeskReports::Helper::Ticket
     when :group_tickets
       scoped_group_ids = User.current.agent.agent_groups.collect(&:group_id)
       scoped_group_ids.present? ? validate_filter("group_id", scoped_group_ids)
-                                : validate_filter("agent_id", [User.current.id])
+      : validate_filter("agent_id", [User.current.id])
     when :assigned_tickets
       validate_filter "agent_id", [User.current.id]
     end
@@ -362,7 +377,7 @@ module HelpdeskReports::Helper::Ticket
       "value"     => scoped_values.join(",")
     }
   end
-  
+
   def validate_group_by param
     return ["Invalid group_by"] unless param[:group_by].is_a?(Array)||param[:group_by].nil?
     param[:group_by] = [] if (param[:bucket] or param[:list] or param[:time_trend])
@@ -371,7 +386,7 @@ module HelpdeskReports::Helper::Ticket
       errors
     end
   end
-  
+
   def valid_group_by? column
     if column.to_sym == :agent_id
       !hide_agent_reporting?
@@ -379,29 +394,29 @@ module HelpdeskReports::Helper::Ticket
       column.starts_with?("ff") or TICKET_FIELD_NAMES.include?(column.to_sym)
     end
   end
-  
+
   def pdf_export_config
     @real_time_export = REAL_TIME_REPORTS_EXPORT
   end
-  
+
   def bulk_request(req_params, web_request = false)
     begin
       # response = RestClient.post url, req_params.to_json, :content_type => :json, :accept => :json
       url = get_reports_service_url web_request
       timeout = web_request ? ReportsAppConfig::WEB_REQ_TIMEOUT : ReportsAppConfig::BG_REQ_TIMEOUT
       response = RestClient::Request.new(
-        method: :post, 
-        url: url, 
-        payload: req_params.to_json, 
+        method: :post,
+        url: url,
+        payload: req_params.to_json,
         timeout: timeout,
-        headers: {:content_type => :json, :accept => :json}).execute
+      headers: {:content_type => :json, :accept => :json}).execute
 
       JSON.parse(response.body)
     rescue => e
       [{"errors" => e.inspect}]
     end
   end
-  
+
   def set_last_dump_time time, export=false
     # return (Time.now.in_time_zone(Account.current.time_zone) - 1.days).end_of_day if !disable_date_lag?
     export ? Time.at(time.to_i).in_time_zone(Account.current.time_zone) : time.to_i
@@ -422,7 +437,7 @@ module HelpdeskReports::Helper::Ticket
       when "insights"
         @data = {error: { code: 451,  message:I18n.t('helpdesk_reports.insights.scope_error')} }
         send_json_result
-      else 
+      else
         render_charts
       end
     end
@@ -431,15 +446,15 @@ module HelpdeskReports::Helper::Ticket
   def get_reports_service_url web_request
     plan = account_plan_name.to_sym
     plan_priority = case
-                    when (Account.current.subscription.trial? || REPORTS_PLAN_PRIORITY[:medium].include?(plan))
-                      :medium
-                    when REPORTS_PLAN_PRIORITY[:high].include?(plan)
-                      :high
-                    when REPORTS_PLAN_PRIORITY[:low].include?(plan)
-                      :low
-                    else
-                      :medium
-                    end
+    when (Account.current.subscription.trial? || REPORTS_PLAN_PRIORITY[:medium].include?(plan))
+      :medium
+    when REPORTS_PLAN_PRIORITY[:high].include?(plan)
+      :high
+    when REPORTS_PLAN_PRIORITY[:low].include?(plan)
+      :low
+    else
+      :medium
+    end
     suffix = web_request ? REPORTS_URL_SUFFIX[plan_priority] : REPORTS_BG_URL_SUFFIX[plan_priority]
     ReportsAppConfig::TICKET_REPORTS_URL % {priority: suffix}
   end
@@ -463,7 +478,9 @@ module HelpdeskReports::Helper::Ticket
       "RESPONSES":I18n.t('helpdesk_reports.agent_summary.responses'),
       "AVG_FIRST_RESPONSE_TIME":I18n.t('helpdesk_reports.agent_summary.avg_first_res_time'),
       "AVG_RESPONSE_TIME":I18n.t('helpdesk_reports.agent_summary.avg_res_time'),
-      "AVG_RESOLUTION_TIME":I18n.t('helpdesk_reports.agent_summary.avg_resolution_time')
+      "AVG_RESOLUTION_TIME":I18n.t('helpdesk_reports.agent_summary.avg_resolution_time'),
+      "AGENT_RECEIVED_TICKETS":I18n.t('helpdesk_reports.agent_summary.received_tickets'),
+      "GROUP_RECEIVED_TICKETS":I18n.t('helpdesk_reports.agent_summary.received_tickets')
     }.with_indifferent_access
   end
 
