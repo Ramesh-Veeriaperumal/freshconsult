@@ -8,11 +8,19 @@
                                 <%=t( 'helpdesk_reports.group_summary.group') %>
                             </span>
                         </th>
-                        <th>
-                            <span data-metric-title="GROUP_ASSIGNED_TICKETS">
-                                <%=t( 'helpdesk_reports.agent_summary.ticket_assigned') %>
-                            </span>
-                        </th>
+                         <% unless enable_new_ticket_recieved_metric? %>
+                            <th>
+                                <span data-metric-title="GROUP_ASSIGNED_TICKETS">
+                                    <%=t( 'helpdesk_reports.agent_summary.ticket_assigned') %>
+                                </span>
+                            </th>
+                        <% else %>
+                            <th>
+                                <span data-metric-title="GROUP_RECEIVED_TICKETS"> 
+                                    <%=t( 'helpdesk_reports.agent_summary.received_tickets')  %>
+                                </span>
+                            </th>
+                        <% end %> 
                         <th>
                             <span data-metric-title="RESOLVED_TICKETS">
                                 <%=t( 'helpdesk_reports.agent_summary.ticket_resolved') %>
@@ -34,11 +42,11 @@
                                     <%=t( 'helpdesk_reports.agent_summary.reports_sla') %>
                                 </span>
                             </th>
-                        <th>
-                            <span data-metric-title="RESOLUTION_SLA">
-                                <%=t( 'helpdesk_reports.agent_summary.res_sla') %>
-                            </span>
-                        </th>
+                            <th>
+                                <span data-metric-title="RESOLUTION_SLA">
+                                    <%=t( 'helpdesk_reports.agent_summary.res_sla') %>
+                                </span>
+                            </th>
                         <% end %>
                         <th>
                             <span data-metric-title="FCR_TICKETS">
@@ -82,6 +90,7 @@
         var err = <%= @filter_err ? @filter_err.to_json.html_safe : false %> ;
         var locals = HelpdeskReports.locals;
         locals.is_sla_management_enabled = <%= current_account.sla_management_enabled? %>;
+        locals.is_new_ticket_recieved_metric_enabled = <%= enable_new_ticket_recieved_metric? %>;
         locals.chart_hash = <%= @data.to_json.html_safe %> ;
         var last_dump_time = <%= @last_dump_time ? t('helpdesk_reports.last_updated',{last_dump_time: @last_dump_time}).to_json.html_safe : false %>
         

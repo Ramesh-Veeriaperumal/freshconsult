@@ -137,7 +137,7 @@ gem 'faraday_middleware', '~> 0.10.0'
 gem "twitter", "~> 5.16.0"
 gem "gnip-rule", "1.0.0"
 gem "curb", "~> 0.8.5"
-gem "sanitize", "4.5.0"
+gem "sanitize", "4.6.5"
 gem "koala", "1.10.1"
 gem "spreadsheet", "0.6.8"
 
@@ -252,6 +252,7 @@ gem "rack-openid", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/rack-o
 gem "open_id_authentication", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/open_id_authentication"
 gem "ebayr", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ebayr"
 gem 'fd_spam_detection_service', :path => "#{File.expand_path(__FILE__)}/../vendor/gems/fd_spam_detection_service"
+gem 'formserv-gem', '0.9.0', git: 'git@github.com:freshdesk/formserv-gem.git'
 
 
 group :development, :test do

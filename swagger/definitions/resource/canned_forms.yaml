@@ -1,0 +1,89 @@
+type: object
+properties:
+  id:
+    type: number
+  name:
+    type: string
+  version:
+    type: number
+  welcome_text: 
+    type: string
+  thankyou_text:
+    type: string
+  fields:
+    type: array
+    items:
+      type: object
+      properties:
+        parent_id:
+          type: string
+        custom:
+          type: boolean
+        editable:
+          type: boolean
+        position:
+          type: number
+        deleted:
+          type: boolean
+        required:
+          type: boolean
+        visible:
+          type: boolean
+        validatable:
+          type: boolean
+        builder:
+          type: boolean
+        internal:
+          type: boolean
+        field_class:
+          type: string
+        link:
+          type: string
+        placeholder:
+          type: string
+        id:
+          type: string
+        account_id:
+          type: number
+        form_id:
+          type: number
+        name:
+          type: string
+        column_name:
+          type: string
+        label:
+          type: string
+        type:
+          type: integer
+          enum: [1,2,5,6]
+        option_value_path: 
+          type: string
+        field_options:
+          type: object
+        choices:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              account_id:
+                type: number
+              type:
+                type: number
+              value:
+                type: string
+              position:
+                type: number
+              editable:
+                type: boolean
+              custom:
+                type: boolean
+              field_id:
+                type: string
+        fields:
+          type: array
+          items:
+            type: object
+        regex:
+          type: object

@@ -105,6 +105,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'export/ticket_activities' => 'export#ticket_activities', :defaults => { format: 'json' }, :as => :ticket_activities, via: :get
+    match 'rake_task/run_rake_task' => 'rake_task#run_rake_task', :defaults => { format: 'json' }, :as => :run_rake_task, via: :get
 
     # Feedbacks about the product
     resources :product_feedback, controller: 'ember/product_feedback', only: [:create]
@@ -176,6 +177,12 @@ Helpkit::Application.routes.draw do
         get :conversations, to: 'archive/conversations#ticket_conversations'
       end
     end
+
+    resources :canned_forms, controller: 'admin/canned_forms', path: '/canned_forms' do
+      member do
+        post :handle, to: 'admin/canned_forms#create_handle'
+      end
+    end
   end
 
   ember_routes = proc do
@@ -230,6 +237,7 @@ Helpkit::Application.routes.draw do
 
     resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
       collection do
+        post :outbound_email, to: 'ember/tickets#create', defaults: { _action: 'compose_email' }
         put :bulk_delete, to: 'ember/tickets/delete_spam#bulk_delete'
         put :bulk_spam, to: 'ember/tickets/delete_spam#bulk_spam'
         put :bulk_restore, to: 'ember/tickets/delete_spam#bulk_restore'

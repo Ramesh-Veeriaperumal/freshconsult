@@ -57,6 +57,7 @@ class ApiApplicationController < MetalApiController
   include DecoratorConcern
 
   before_filter { |c| c.requires_feature(*feature_name) if feature_name }
+  before_filter { |c| c.requires_feature(*launch_party_name) if launch_party_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
 
   # before_load_object and after_load_object are used to stop the execution exactly before and after the load_object call.
@@ -148,7 +149,7 @@ class ApiApplicationController < MetalApiController
   protected
 
     def requires_feature(*f) # Should be from cache. Need to revisit.
-      features_list = Account.current.enabled_features_list
+      features_list = feature_name.present? ? Account.current.enabled_features_list : Account.current.all_launched_features
       return if f.all? { |x| features_list.include?(x) }
       render_request_error(:require_feature, 403, feature: f.join(',').titleize)
     end
@@ -322,6 +323,10 @@ class ApiApplicationController < MetalApiController
 
     def feature_name
       # Template method - Redefine if the controller needs requires_feature before_filter
+    end
+
+    def launch_party_name
+      # Template method - Redefine if the controller needs requires_launch_party before_filter
     end
 
     def validate_content_type

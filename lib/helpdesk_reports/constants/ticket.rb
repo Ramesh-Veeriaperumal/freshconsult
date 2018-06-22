@@ -28,13 +28,15 @@ module HelpdeskReports::Constants::Ticket
     [:RESOLUTION_SLA_QNA,          "Count",       "Resolution Compliance"],
     [:AVG_FIRST_RESPONSE_TIME_QNA, "Count",       "Avg 1st Response Time"],
     [:AVG_RESOLUTION_TIME_QNA,     "Count",       "Avg Resolution Time"],
-    [:TICKETS_VIEW_THRESHOLD,  "Count",    "Ticket Count in the view"],
+    [:TICKETS_VIEW_THRESHOLD,      "Count",       "Ticket Count in the view"],
+    [:AGENT_RECEIVED_TICKETS,      "Count",       "Tickets Received"],
+    [:GROUP_RECEIVED_TICKETS,      "Count",       "Tickets Received"]
   ]
   
   TEMPLATE_METRICS_AND_QUERY = [ :RECEIVED_RESOLVED_TICKETS, :UNRESOLVED_PREVIOUS_BENCHMARK, :UNRESOLVED_CURRENT_BENCHMARK,
                                  :RECEIVED_RESOLVED_BENCHMARK, :AGENT_SUMMARY_HISTORIC, 
-                                 :AGENT_SUMMARY_CURRENT, :GROUP_SUMMARY_HISTORIC, 
-                                 :GROUP_SUMMARY_CURRENT, :CUSTOMER_CURRENT_HISTORIC, 
+                                 :AGENT_SUMMARY_CURRENT, :AGENT_SUMMARY_TICKETS_RECIEVED, :GROUP_SUMMARY_HISTORIC, 
+                                 :GROUP_SUMMARY_CURRENT, :GROUP_SUMMARY_TICKETS_RECIEVED, :CUSTOMER_CURRENT_HISTORIC, 
                                  :GLANCE_CURRENT, :GLANCE_HISTORIC, :LIFECYCLE_GROUPBY, :LIFECYCLE_STATUS ]
   
   OTHER_METRICS = [:LIFECYCLE_TICKET_LIST]

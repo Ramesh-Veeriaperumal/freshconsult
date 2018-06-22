@@ -1,0 +1,62 @@
+get:
+  tags: [canned_forms]
+  summary: Show Canned Form
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: ID of Canned form
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/canned_form_show'
+    404:
+      description: Canned form not found
+    403:
+      description: Access denied
+
+delete:
+  tags: [canned_forms]
+  summary: Delete Canned form
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description:  ID of Canned form
+      required: true
+  responses:
+    204:
+      description: Success
+    404:
+      description: Ticket not found
+    403:
+      description: Access denied
+
+put:
+  tags: [canned_forms]
+  description: Update a Canned form
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/canned_form_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/canned_form_show'
+    403:
+      description: Access denied
+    404:
+      description: Canned form not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+

@@ -112,8 +112,10 @@ helpdesk:
     - heap_analytics
     - bot
     - central
+    - formserv_config
     - onboarding_config
     - sanitize_monkey_patch
     - paperclip_ssrf_patch
     - apigee_config
     - app_integration
+    - facebook_eu_accounts_config

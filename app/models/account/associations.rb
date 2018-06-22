@@ -361,11 +361,14 @@ class Account < ActiveRecord::Base
 
   has_many :reminders,
     :class_name => 'Helpdesk::Reminder',:dependent => :destroy
-    
+
   has_many :bot_feedbacks, class_name: 'Bot::Feedback'
   has_many :bot_tickets, class_name: 'Bot::Ticket'
   has_many :bots, class_name: 'Bot', dependent: :destroy
   has_many :bot_feedback_mappings, class_name: 'Bot::FeedbackMapping'
+
+  has_many :canned_forms, class_name: 'Admin::CannedForm', order: 'updated_at desc'
+  has_many :canned_form_handles, through: :canned_forms, class_name: 'Admin::CannedFormHandle'
 
   has_many :contact_notes
   has_many :company_notes

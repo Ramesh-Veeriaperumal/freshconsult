@@ -7,6 +7,7 @@ module Ember
     include HelperConcern
 
     before_filter :set_dashboard_type
+    before_filter :survey_active?, only: [:survey_info]
     around_filter :run_on_slave
     around_filter :use_time_zone, only: [:scorecard, :ticket_trends]
     
@@ -91,5 +92,11 @@ module Ember
       render_base_error(:internal_error, 503) if @result[:errors].present?
       # end
     end
+
+    private
+
+      def survey_active?
+        return access_denied unless current_account.any_survey_feature_enabled_and_active?
+      end
   end
 end

@@ -1,35 +1,74 @@
-node('backend_file_test') {
+node(params.NODE) {
       try {
           stage('Checkout') {
-            checkout([$class: 'GitSCM', branches: [[name: '*/pipeline-code']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])
+                def branch = params.BRANCH
+                if(env.JOB_NAME == 'prestaging-pronto-codereview-pipeline' ){
+                  checkout([$class: 'GitSCM', branches: [[name: branch]], 
+                            doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
+                            userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])      
+                }
+                
+                else {
+                  checkout([$class: 'GitSCM', branches: [[name: branch]], 
+                            doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
+                            userRemoteConfigs: [[name: 'origin',refspec: '+refs/pull/*:refs/remotes/origin/pr/*', 
+                            url: 'git@github.com:freshdesk/helpkit.git']]])
+                }
           }
 
-          stage('Prepare') {
-            sh 'yes | cp -rf /home/jenkins/s3.yml /home/jenkins/workspace/${JOB_NAME}/config/s3.yml'
-            sh 'yes | cp -rf /home/jenkins/redis.yml /home/jenkins/workspace/${JOB_NAME}/config/redis.yml'
-            sh 'yes | cp -rf /home/jenkins/elasticsearch.yml /home/jenkins/workspace/${JOB_NAME}/config/elasticsearch.yml'
-            sh 'yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/${JOB_NAME}/config/channel_api_keys.yml'
-            sh 'sudo service mysql start'
-            sh 'sudo service elasticsearch start'
-            sh 'sudo service postgresql start'
-            sh 'redis-server --daemonize yes'
-            sh 'bundle install'
-            sh 'echo "create database helpkit${BUILD_NUMBER}" | mysql -uroot'
-            sh 'sed -i "s/helpkit_test_rails3/helpkit${BUILD_NUMBER}/g" config/database.yml'
-            sh 'bundle exec rake db:bootstrap RAILS_ENV=test'
+          stage('Build') {
+                if(env.JOB_NAME == 'prestaging-pronto-codereview-pipeline' ){
+                      def pullID = params.PULLID
+                      sh """#!/bin/bash
+                            source /etc/profile.d/rvm.sh
+                            PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$pullID pronto run -f github_status github_pr -c origin/falcon-prestaging      
+                         """
+                }
+                else {
+                      sh '''#!/bin/bash
+                            source /etc/profile.d/rvm.sh
+                            yes | cp -rf /home/jenkins/s3.yml /home/jenkins/workspace/${JOB_NAME}/config/s3.yml
+                            yes | cp -rf /home/jenkins/redis.yml /home/jenkins/workspace/${JOB_NAME}/config/redis.yml
+                            yes | cp -rf /home/jenkins/elasticsearch.yml /home/jenkins/workspace/${JOB_NAME}/config/elasticsearch.yml
+                            yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/${JOB_NAME}/config/channel_api_keys.yml
+                            sudo service mysql start
+                            sudo service elasticsearch start
+                            sudo service postgresql start
+                            redis-server --daemonize yes
+                            bundle install
+                            echo "create database helpkit${BUILD_NUMBER}" | mysql -uroot
+                            sed -i "s/helpkit_test_rails3/helpkit${BUILD_NUMBER}/g" config/database.yml
+                            bundle exec rake db:bootstrap RAILS_ENV=test
+                         '''
+                }
           }
 
           stage('Test') {
-            sh 'bundle exec ruby test/api/suites/public_api_test_suite.rb'
+                if(env.JOB_NAME == 'prestaging-falcon-public-api-unit-integration-acceptance-tests-backend-pipeline' ){
+                      sh '''#!/bin/bash
+                            source /etc/profile.d/rvm.sh
+                            bundle exec ruby test/api/suites/public_api_test_suite.rb
+                         '''
+                } else if(env.JOB_NAME == 'prestaging-falcon-unit-integration-acceptance-tests-backend-pipeline'){
+                      sh '''#!/bin/bash
+                            source /etc/profile.d/rvm.sh
+                            bundle exec ruby test/api/suites/falcon_test_suite.rb
+                         '''
+                } else {
+                      echo 'Pronto job'
+                }        
           }
-
       }
       catch (e) {
           echo 'Failed'
       } finally {
           stage('Publish Reports') {
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html', reportName: 'HTML report', reportTitles: ''])
-            junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'
+                if(env.JOB_NAME != 'prestaging-pronto-codereview-pipeline' ){
+                  publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, 
+                             reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html', 
+                             reportName: 'HTML report', reportTitles: ''])
+                  junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'
+                }
           }
       }
 }

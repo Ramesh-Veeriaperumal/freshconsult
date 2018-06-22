@@ -332,6 +332,8 @@ module Ember
           Rails.logger.info("Enqueueing for overall learning:: #{bot_info}")
           current_account.launch(:solutions_central_publish) unless current_account.solutions_central_publish_enabled?
           Bot::MlSolutionsTraining.perform_async(bot_id: @item.id)
+          Rails.logger.info("Enqueueing for training status check:: #{bot_info}")
+          Bot::CheckTrainingStatus.perform_in(1.hour.from_now, bot_id: @item.id)
           @item.training_inprogress!
         rescue => e
           Rails.logger.error "Exception while enqueueing to ml overall learning: #{e.message}, #{bot_info}"

@@ -1,0 +1,22 @@
+<div class="welcome-note">
+  <%= @ticket.try(:class) == String ? @ticket : @ticket.subject %>
+  <%= link_to("(##{@ticket.display_id})", helpdesk_ticket_path(@ticket.display_id), :class => 'ticket_id', :target => "_blank") unless @ticket.try(:class) == String %>
+  <p>
+    <%= "#{@form.welcome_text}"%>
+  </p>
+</div>
+<div id="form-content">
+  <ul class='form-field-list'>
+    <%@fields.each do |field|%>
+      <li class='canned-form-field'>
+        <!-- field[:deleted] check is for preview -->
+        <%unless field[:deleted] %>
+          <%= construct_canned_form(
+            :canned_forms,
+            field
+            ) %>
+        <%end%>
+      </li>
+    <%end%>
+  </ul>
+</div>

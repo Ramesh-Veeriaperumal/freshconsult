@@ -1,0 +1,28 @@
+default: &default
+  allowed_tasks:
+    - "scheduler:sla"
+    - "scheduler:sla_reminder"
+    - "scheduler:supervisor"
+    - "google_contacts:sync"
+    - "facebook:realtime"
+    - "facebook:push_likes"
+    - "scheduler:facebook"
+    - "facebook:realtime_fb_message"
+    - "scheduler:premium_facebook"
+    - "populate:spam_watcher_limits"
+    - "spam_watcher:ticket_load"
+    - "scheduler:twitter"
+    - "scheduler:custom_stream_twitter"
+    - "forum_moderation:scan"
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+staging:
+  <<: *default
+
+production:
+  
