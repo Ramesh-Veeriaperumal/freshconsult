@@ -105,6 +105,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'export/ticket_activities' => 'export#ticket_activities', :defaults => { format: 'json' }, :as => :ticket_activities, via: :get
+    match 'rake_task/run_rake_task' => 'rake_task#run_rake_task', :defaults => { format: 'json' }, :as => :run_rake_task, via: :get
 
     # Feedbacks about the product
     resources :product_feedback, controller: 'ember/product_feedback', only: [:create]
