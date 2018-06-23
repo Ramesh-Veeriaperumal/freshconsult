@@ -211,15 +211,15 @@ class Account < ActiveRecord::Base
     :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false, 
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
     :post_central_publish => false, :audit_logs_central_publish => false, :twitter_common_redirect => false,
-    :euc_migrated_twitter => false, :new_onboarding => false, :new_ticket_recieved_metric => false
+    :euc_migrated_twitter => false, :new_ticket_recieved_metric => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days
 
   ACCOUNT_TYPES = {
-    :production_without_sandbox => 0,
-    :production_with_sandbox => 1,
-    :sandbox => 2
+      :production_without_sandbox => 0,
+      :production_with_sandbox => 1,
+      :sandbox => 2
   }
 
 end

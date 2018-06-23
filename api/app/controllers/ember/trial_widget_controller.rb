@@ -8,9 +8,8 @@ class Ember::TrialWidgetController < ApiApplicationController
   before_filter :validate_body_params, only: [:complete_step]
 
   def index
-    setup_keys = current_account.launched?(:new_onboarding) ? current_account.all_setup_keys : current_account.current_setup_keys
     @account_setup = {
-      tasks: setup_keys.map { |setup_key| setup_key_info(setup_key) }
+      tasks: current_account.current_setup_keys.map { |setup_key| setup_key_info(setup_key) }
     }
     response.api_root_key = :account_setup
   end
@@ -25,8 +24,10 @@ class Ember::TrialWidgetController < ApiApplicationController
     step_name = params[cname][:step]
     if current_account.respond_to?("#{step_name}_setup?") && !current_account.send("#{step_name}_setup?")
       current_account.try("mark_#{step_name}_setup_and_save")
+      head 200
+    else
+      head 204
     end
-    head 204
   end
 
   private
