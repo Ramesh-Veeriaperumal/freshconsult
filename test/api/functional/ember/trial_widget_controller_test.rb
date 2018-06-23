@@ -19,16 +19,9 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
   end
 
   def test_index
-    # new onboarding.
-    Account.current.launch(:new_onboarding)
     get :index, controller_params({ version: 'private' }, false)
     assert_response 200
-    match_json(new_trial_widget_index_pattern)
-    # old onboarding.
-    Account.current.rollback(:new_onboarding)
-    get :index, controller_params({ version: 'private' }, false)
-    assert_response 200
-    match_json(old_trial_widget_index_pattern)
+    match_json(trial_widget_index_pattern)
   end
 
   def test_index_with_forums_enabled
@@ -37,7 +30,7 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     get :index, controller_params({ version: 'private' }, false)
     assert_response 200
     assert_equal parse_response(response.body)["tasks"].include?({"name"=>"forums", "isComplete"=>false}), true
-    match_json(old_trial_widget_index_pattern)
+    match_json(trial_widget_index_pattern)
     Account.any_instance.unstub(:forums_setup?)
     Account.any_instance.unstub(:forums_eligible?)
   end
@@ -48,7 +41,7 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     get :index, controller_params({ version: 'private' }, false)
     assert_response 200
     assert_equal parse_response(response.body)["tasks"].include?({"name"=>"email_notification", "isComplete"=>true}), true
-    match_json(old_trial_widget_index_pattern)
+    match_json(trial_widget_index_pattern)
     Account.any_instance.unstub(:email_notification_setup?)
     Account.any_instance.unstub(:email_notification_eligible?)
   end
@@ -69,7 +62,8 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
     count = 0
     n_steps = Account::SETUP_KEYS.count
     step = Account::SETUP_KEYS[Random.rand(n_steps)]
+    response = @account.respond_to?("#{step}_setup?") && @account.send("#{step}_setup?") ? 204 : 200
     post :complete_step, construct_params({ step: step, version: 'private' })
-    assert_response 204
+    assert_response response
   end
 end
