@@ -47,6 +47,18 @@
 
 	var consts = jQuery.extend({}, HelpdeskReports.Constants.AgentSummary);
 	var agent_metrics = consts.metrics;
+
+	if(HelpdeskReports.locals.is_new_ticket_recieved_metric_enabled){
+		var index = agent_metrics.indexOf('AGENT_ASSIGNED_TICKETS');
+	    if (index > -1) {
+	       agent_metrics.splice(index, 1);
+	    }
+	}else{
+		var index = agent_metrics.indexOf('AGENT_RECEIVED_TICKETS');
+	    if (index > -1) {
+	       agent_metrics.splice(index, 1);
+	    }
+	}
 %>
 
 <%if (data && data.length>0) { %>

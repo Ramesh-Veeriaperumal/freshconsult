@@ -44,6 +44,17 @@
 
 	var consts = jQuery.extend({}, HelpdeskReports.Constants.GroupSummary);
 	var group_metrics = HelpdeskReports.Constants.GroupSummary.metrics;
+	if(HelpdeskReports.locals.is_new_ticket_recieved_metric_enabled){
+		var index = group_metrics.indexOf('GROUP_ASSIGNED_TICKETS');
+	    if (index > -1) {
+	       group_metrics.splice(index, 1);
+	    }
+	}else{
+		var index = group_metrics.indexOf('GROUP_RECEIVED_TICKETS');
+	    if (index > -1) {
+	       group_metrics.splice(index, 1);
+	    }
+	}
 %>
 
 <%if (data && data.length>0) { %>

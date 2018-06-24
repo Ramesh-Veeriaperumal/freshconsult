@@ -175,6 +175,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/note", :only => [:create]
     resource :"social/twitter",
       :only => [:create_fd_item, :reply, :retweet, :post_tweet, :favorite, :unfavorite, :followers, :follow, :unfollow]
+    resource :"support/canned_form", only: [:preview]
 
     # Used for API V2
     resource :"conversation", :only => [:reply]
@@ -485,7 +486,7 @@ Authority::Authorization::PrivilegeList.build do
     # NOTE: The agent show action is also allowed in view_contacts privilege
     resource :agent, :only => [:new, :create, :edit, :update, :index, :destroy, :show, :delete_avatar,
                                :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact,
-                               :configure_export, :export_csv, :reset_score]
+                               :configure_export, :export_csv, :reset_score, :search_in_freshworks]
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
@@ -636,6 +637,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
+    resource :"rake_task", :only => [:run_rake_task]
   end
 
   manage_skills do

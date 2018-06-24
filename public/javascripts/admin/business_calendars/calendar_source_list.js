@@ -80,7 +80,7 @@ var calendar_arr = [
   ["Holidays in Ireland", "en-gb.irish#holiday@group.v.calendar.google.com"],
   ["Holidays in Iceland", "en-gb.is#holiday@group.v.calendar.google.com"],
   ["Muslim Holidays", "en-gb.islamic#holiday@group.v.calendar.google.com"],
-  ["Hebrew Calendar", "#hebrew@group.v.calendar.google.com"],
+  ["Hebrew Calendar", "en.jewish#holiday@group.v.calendar.google.com"],
   ["Holidays in Italy", "en-gb.italian#holiday@group.v.calendar.google.com"],
   ["Holidays in Japan", "en-gb.japanese#holiday@group.v.calendar.google.com"],
   ["Holidays in Israel", "en-gb.jewish#holiday@group.v.calendar.google.com"],

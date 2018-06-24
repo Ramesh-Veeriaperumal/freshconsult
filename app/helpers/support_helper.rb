@@ -449,6 +449,14 @@ module SupportHelper
       end
   end
 
+  def construct_canned_form(object_name, field, disabled = false)
+    dom_type = field[:name].split('_')[0]
+    return unless Admin::CannedForm::CUSTOM_FIELDS_SUPPORTED.include? dom_type.to_sym
+    form_builder = Admin::CannedForm::Constructor.new(field: field, object_name: object_name, disabled: disabled)
+    element = form_builder.safe_send("#{dom_type}_element")
+    safe_join(element)
+  end
+
   def render_add_cc_field  field, condition
           render(:partial => "/support/shared/add_cc_field", :locals => { :field => field, :_cc_condition => condition })
   end

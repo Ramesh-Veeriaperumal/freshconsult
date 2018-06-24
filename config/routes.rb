@@ -416,6 +416,7 @@ Helpkit::Application.routes.draw do
       get :configure_export
       post :export_csv
       post :export_skill_csv
+      get :search_in_freshworks
     end
     member do
       put :toggle_shortcuts
@@ -2795,6 +2796,13 @@ Helpkit::Application.routes.draw do
       :controller => 'integrations/user_credentials', :action => 'oauth_install', :as => :user_oauth_install
     match '/http_request_proxy/fetch',
       :controller => 'integrations/http_request_proxy', :action => 'fetch', :as => :http_proxy
+    
+    namespace :canned_forms do
+      get :agent_preview, action: 'preview'
+      post :preview, action: 'preview'
+      get '/:token', action: 'show', as: :response
+      post '/:token/new', action: 'new'
+    end
   end
 
   namespace :anonymous do

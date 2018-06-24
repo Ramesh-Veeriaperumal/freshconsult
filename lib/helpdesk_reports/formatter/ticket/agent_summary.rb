@@ -1,19 +1,19 @@
 class HelpdeskReports::Formatter::Ticket::AgentSummary
-
   include HelpdeskReports::Util::Ticket
 
   attr_accessor :result
 
-  METRICS = ["AGENT_ASSIGNED_TICKETS","RESOLVED_TICKETS","REOPENED_TICKETS",
+  METRICS = ["AGENT_ASSIGNED_TICKETS", "AGENT_RECEIVED_TICKETS" , "RESOLVED_TICKETS","REOPENED_TICKETS",
              "AGENT_REASSIGNED_TICKETS","RESPONSE_SLA","RESOLUTION_SLA",
              "FCR_TICKETS","PRIVATE_NOTES","RESPONSES","AVG_FIRST_RESPONSE_TIME",
-             "AVG_RESPONSE_TIME","AVG_RESOLUTION_TIME"]
+             "AVG_RESPONSE_TIME","AVG_RESOLUTION_TIME","TICKETS_ENGAGED" ]
 
   def initialize data, args = {}
     @result   = data
     @args     = args
     @current  = @result['AGENT_SUMMARY_CURRENT']
     @historic = @result['AGENT_SUMMARY_HISTORIC']
+    @received_tickets = @result['AGENT_SUMMARY_TICKETS_RECIEVED']
     @csv_export = args[:csv_export]
   end
 
@@ -26,7 +26,8 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
   def merging_current_historic_data
     @current  = [] if (@current.is_a?(Hash) && @current["errors"])   || @current.empty? #Handling the edge cases
     @historic = [] if (@historic.is_a?(Hash) && @historic["errors"]) || @historic.empty?
-    @result = (@current + @historic).group_by{|h| h["agent_id"]}.map{ |k,v| v.reduce(:merge)}
+    @received_tickets = [] if (@received_tickets.is_a?(Hash) && @received_tickets["errors"]) || @received_tickets.empty?
+    @result = (@current + @historic + @received_tickets).group_by{|h| h["agent_id"]}.map{ |k,v| v.reduce(:merge)}
   end
 
   def removing_unscoped_agent
@@ -36,14 +37,14 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
 
     @agent_ids = @agent_ids.flatten.uniq.compact
     all_ids    = @agent_ids
-    
+
     scope_agents_with_agent_and_group_filter
 
     @agent_hash = agent_id_name_hash @agent_ids if @agent_ids.present?
     @agent_ids &= @agent_hash.keys
 
     @deleted_agent_ids  = all_ids - @agent_ids
-    
+
     @deleted_agent_hash = deleted_agent_id_name_hash @deleted_agent_ids if @deleted_agent_ids.present?
     @deleted_agent_ids  = @deleted_agent_hash.keys
   end
@@ -69,36 +70,50 @@ class HelpdeskReports::Formatter::Ticket::AgentSummary
     Account.current.users.where(helpdesk_agent: true).find_all_by_id(ids, :select => "id, name").collect{ |a| [a.id, a.name]}.to_h
   end
 
-  def deleted_agent_id_name_hash ids 
-     Account.current.users.unscoped.where(helpdesk_agent: false).find_all_by_id(ids, :select => "id, name").collect{ |a| [a.id, a.name]}.to_h
+  def deleted_agent_id_name_hash ids
+    Account.current.users.unscoped.where(helpdesk_agent: false).find_all_by_id(ids, :select => "id, name").collect{ |a| [a.id, a.name]}.to_h
   end
 
   def populate_result_in_summary
+
+    # to_delete = []#["TICKETS_ENGAGED"]
+    # if enable_new_ticket_recieved_metric?
+    #   to_delete << "AGENT_ASSIGNED_TICKETS"
+    # else
+    #   to_delete << "ALL_RECEIVED_TICKETS"
+    # end
+    # unless Account.current.sla_management_enabled?
+    #   to_delete << "RESOLUTION_SLA"
+    #   to_delete << "RESPONSE_SLA"
+    # end
     @summary = @result.select do |row|
-        id = row["agent_id"].to_i
-        if(@agent_ids.include?(id) || @deleted_agent_ids.include?(id))
-          agent_name = @agent_ids.include?(id) ? @agent_hash[id] : (@csv_export ? "#{@deleted_agent_hash[id]} (deleted)" : "#{@deleted_agent_hash[id]}")
-          is_deleted_agent = @deleted_agent_ids.include?(id)
-          if is_deleted_agent && discard_contacts_with_only_private_note(row)
-            next
-          else
-            row.merge!("agent_name" => agent_name, "deleted" => is_deleted_agent )
-            METRICS.each do |key|
+      id = row["agent_id"].to_i
+      if(@agent_ids.include?(id) || @deleted_agent_ids.include?(id))
+        agent_name = @agent_ids.include?(id) ? @agent_hash[id] : (@csv_export ? "#{@deleted_agent_hash[id]} (deleted)" : "#{@deleted_agent_hash[id]}")
+        is_deleted_agent = @deleted_agent_ids.include?(id)
+        if is_deleted_agent && discard_contacts_with_only_private_note(row)
+          next
+        else
+          row.merge!("agent_name" => agent_name, "deleted" => is_deleted_agent )
+          METRICS.each do |key|
+            # unless to_delete.include?(key)
               value    = row[key.downcase]
               row[key] = value ? value.to_i : NA_PLACEHOLDER_SUMMARY
-              row.delete(key.downcase)
-            end
+            # end
+            row.delete(key.downcase)
           end
         end
       end
-      formatted_summary = []
-      unless Account.current.sla_management_enabled?
-        @summary.each do |s_hash|
-          formatted_summary << s_hash.except(*["RESPONSE_SLA", "RESOLUTION_SLA"])
-        end
-        @summary = formatted_summary
+    end
+
+    formatted_summary = []
+    unless Account.current.sla_management_enabled?
+      @summary.each do |s_hash|
+        formatted_summary << s_hash.except(*["RESPONSE_SLA", "RESOLUTION_SLA"])
       end
-      @summary.sort_by{|a| a["agent_name"].downcase}
+      @summary = formatted_summary
+    end
+    @summary.sort_by{|a| a["agent_name"].downcase}
   end
 
   def discard_contacts_with_only_private_note(agent_details)

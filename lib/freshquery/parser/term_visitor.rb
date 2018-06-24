@@ -65,7 +65,7 @@ module Freshquery
       end
 
       def not_exists_filter(field_name)
-        { not: { exists: { field: field_name } } }
+        bool_filter(must_not: [ { exists: { field: field_name } } ])
       end
 
       def bool_filter(cond_block)

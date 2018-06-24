@@ -157,6 +157,10 @@ class ApplicationController < ActionController::Base
     render :file => "#{Rails.root}/public/AccountBlocked.html", :status => 403, :layout => false
   end
 
+  def render_403
+    render file: Rails.root.join('public/403.html').to_path, status: 403, layout: false
+  end
+
   def render_404
      # NewRelic::Agent.notice_error(ActionController::RoutingError,{:uri => request.url,
      #                                                              :referer => request.referer,

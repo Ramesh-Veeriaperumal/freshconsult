@@ -31,7 +31,8 @@ module ApiConstants
                        SurveyConstants::LOAD_OBJECT_EXCEPT +
                        AttachmentConstants::LOAD_OBJECT_EXCEPT +
                        Pipe::HelpdeskConstants::LOAD_OBJECT_EXCEPT +
-                       ExportConstants::LOAD_OBJECT_EXCEPT
+                       ExportConstants::LOAD_OBJECT_EXCEPT +
+                       RakeTaskConstants::LOAD_OBJECT_EXCEPT
 
   ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
   MAX_LENGTH_STRING = 255

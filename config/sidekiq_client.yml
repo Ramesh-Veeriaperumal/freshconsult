@@ -274,6 +274,7 @@ defaults: &defaults
     - [deactivate_product_widgets]
     - [user_central_publish]
     - [deactivate_filter_widgets]
+    - [run_rake_task]
 
 development:
   <<: *defaults
