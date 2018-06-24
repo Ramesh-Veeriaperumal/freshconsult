@@ -1,6 +1,6 @@
 class HelpdeskReports::ParamConstructor::GroupSummary < HelpdeskReports::ParamConstructor::Base
 
-  GROUP_SUMMARY_METRICS = ["GROUP_SUMMARY_CURRENT", "GROUP_SUMMARY_HISTORIC"]
+  GROUP_SUMMARY_METRICS = ["GROUP_SUMMARY_CURRENT", "GROUP_SUMMARY_HISTORIC","GROUP_SUMMARY_TICKETS_RECIEVED"]
 
   def initialize options
     @report_type = :group_summary

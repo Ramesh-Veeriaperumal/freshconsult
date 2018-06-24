@@ -385,6 +385,16 @@
   $ref: ./bot_feedbacks/create_article.yaml
 /bots/{id}/analytics:
   $ref: ./bots/analytics.yaml
+/bots/{id}/remove_analytics_mock_data:
+  $ref: ./bots/remove_analytics_mock_data.yaml
+
+#Canned Form
+/canned_forms:
+  $ref: ./canned_forms/list_and_create.yaml
+/canned_forms/{id}:
+  $ref: ./canned_forms/crud.yaml
+/canned_forms/{id}/handle:
+  $ref: ./canned_forms/handle.yaml
 
 # Sandbox
 /sandboxes:

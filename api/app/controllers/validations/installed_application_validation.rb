@@ -12,7 +12,13 @@ class InstalledApplicationValidation < FilterValidation
       rules: Hash, allow_nil: false, required: true
     }, hash: {
       validatable_fields_hash: proc { |x| x.construct_hash_field_validations }
-    }, if: :fetch?
+    }, if: :payload_required?
+  validate :validate_freshsales_only_events, if: -> { FRESHSALES_ONLY_EVENTS.include?(event) }
+
+  def initialize(request_params, item, allow_string_param = false)
+    super(request_params, item, allow_string_param)
+    @item = item
+  end
 
   def construct_hash_field_validations
     hash = {}
@@ -25,9 +31,19 @@ class InstalledApplicationValidation < FilterValidation
     hash
   end
 
+  def validate_freshsales_only_events
+    unless @item.application.name == 'freshsales'
+      errors[:event] << :"is invalid"
+    end
+  end
+
   private
 
-  def fetch?
-    validation_context == :fetch
-  end
+    def payload_required?
+      fetch? && EVENTS_REQUIRES_PAYLOAD.include?(event)
+    end
+
+    def fetch?
+      validation_context == :fetch
+    end
 end

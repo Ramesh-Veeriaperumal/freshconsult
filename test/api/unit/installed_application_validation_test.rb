@@ -1,4 +1,5 @@
 require_relative '../unit_test_helper'
+
 class InstalledApplicationValidationTest < ActionView::TestCase
 
   def get_request_payload(event = nil, payload_type = nil)

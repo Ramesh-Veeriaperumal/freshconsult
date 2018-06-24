@@ -28,4 +28,7 @@ module DashboardRedshiftTestHelper
    Time.zone.parse( "Wed, 31 May 2017 21:38:04 IST +05:30")
   end
 
+  def dashboard_timezone
+    "Chennai"
+  end
 end

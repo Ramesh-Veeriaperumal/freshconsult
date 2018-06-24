@@ -23,4 +23,8 @@ class ApiDecorator
     return utc_format ? value.utc : value.strftime('%F') if value.respond_to?(:utc)
     value
   end
+
+  def app_current?
+    Thread.current[:app_integration].present?
+  end
 end

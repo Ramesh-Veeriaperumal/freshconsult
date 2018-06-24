@@ -60,7 +60,7 @@ class ContactDecorator < ApiDecorator
   end
 
   def to_hash
-    (User.current.privilege?(:view_contacts) || User.current.id == id) ? to_full_hash : to_restricted_hash
+    (app_current? || User.current.privilege?(:view_contacts) || User.current.id == id) ? to_full_hash : to_restricted_hash
   end
 
   def other_company_items

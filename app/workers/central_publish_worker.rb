@@ -13,6 +13,14 @@ module CentralPublishWorker
 
   class SuspendedTicketWorker < CentralPublisher::Worker
     sidekiq_options :queue => "suspended_ticket_central_publish", :retry => 5, :dead => true, :backtrace => true, :failures => :exhausted
+
+    def perform(payload_type, args = {})
+      begin
+        Rails.logger.debug "Account:: #{Account.current.try(:id)}, Args:: #{args}, Payload type:: #{payload_type}, Subscription:: #{Account.current.try(:subscription).try(:state)}"
+      rescue => exception
+        Rails.logger.error("Central Publish Suspended Account Error: #{exception.message}\n#{exception.backtrace.join("\n")}")
+      end
+    end
   end
 
   class AccountDeletionWorker < CentralPublisher::Worker

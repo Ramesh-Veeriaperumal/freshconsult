@@ -4,9 +4,9 @@ class Bot::MlSolutionsTraining < BaseWorker
 
   def perform(args)
     args.symbolize_keys!
-    bot = Account.current.bots.where(id: args[:bot_id]).first
-    @portal = Account.current.portals.where(id: bot.portal_id).first
-    push_payload(bot, :ml_training_start)
+    @bot = Account.current.bots.where(id: args[:bot_id]).first
+    @portal = Account.current.portals.where(id: @bot.portal_id).first
+    push_payload(@bot, :ml_training_start)
     begin
       portal_categories.each do |category_meta|
         next if category_meta.is_default?
@@ -20,17 +20,16 @@ class Bot::MlSolutionsTraining < BaseWorker
           end
         end
       end
-      bot.training_completed = true
+      @bot.training_completed = true
     rescue => e
-      bot.training_completed = false
+      @bot.training_completed = false
       raise e
     ensure
-      push_payload(bot, :ml_training_end)
+      push_payload(@bot, :ml_training_end)
     end
   rescue => e
     NewRelic::Agent.notice_error(e)
-    Rails.logger.error("ML Solutions Training Failure :: Account id : #{Account.current.id} :: Portal id : #{@portal.id} :: Bot id : #{bot.id}")
-    Rails.logger.error("\n#{e.message}\n#{e.backtrace.join("\n\t")}")
+    Rails.logger.error("ML Solutions Training Failure :: Account id : #{Account.current.id} :: Portal id : #{@portal.id} :: Bot id : #{@bot.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}")
   end
 
   private
@@ -38,7 +37,11 @@ class Bot::MlSolutionsTraining < BaseWorker
     def push_payload(object, payload_type)
       conn = CentralPublisher.configuration.central_connection
       response = conn.post { |r| r.body = request_body(object, payload_type) }
-      raise "Central publish failed with response code : #{response.status} :: Response : #{response.inspect}" unless response.status == 202
+      if response.status == 202
+        Rails.logger.info("ML Solutions Training Central Publish Success :: Account id : #{Account.current.id} :: Portal id : #{@portal.id} :: Bot id : #{@bot.id} #{response.body}")
+      else
+        raise "Central publish failed with response code : #{response.status} :: Response : #{response.inspect}"
+      end
     end
 
     def portal_categories

@@ -11,7 +11,7 @@ module Ember
         @folder_id = params[:folder_id].to_i if params[:folder_id].present?
         @sort_direction = 'desc'
         @search_sort  = params[:search_sort] if params[:search_sort].present?
-        @language_id  = params[:language] if params[:language].present? && current_account.es_multilang_soln?
+        @language_id  = params[:language] if params[:language].present?
         @user = User.find_by_id(params[:user_id]) if params[:user_id].present?
 
         if params[:context] == 'spotlight'

@@ -1,0 +1,8 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      type: number
+    handle_url:
+      type: string

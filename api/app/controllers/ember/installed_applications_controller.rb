@@ -8,7 +8,7 @@ module Ember
     before_filter :load_service_object, only: [:fetch]
 
     def fetch
-      return unless validate_body_params
+      return unless validate_body_params(@item)
       service_object = @service_class.new(@item, params[:payload])
       @data = service_object.receive(params[:event])
       render :fetch, status: service_object.web_meta[:status]

@@ -369,6 +369,8 @@ module Redis::RedisKeys
   # Key for disabling collab bell
   COLLAB_BELL_DISABLED = 'COLLAB_BELL_DISABLED'.freeze
 
+  CANNED_FORMS = 'CANNED_FORMS:%<account_id>s'.freeze
+
   TRIAL_21_DAYS = "TRIAL_21_DAYS"
   #Temp Redis keys for resque to sidekiq migration start
   SIDEKIQ_TOGGLE_AGENT_FROM_GROUPS = "SIDEKIQ_TOGGLE_AGENT_FROM_GROUPS"

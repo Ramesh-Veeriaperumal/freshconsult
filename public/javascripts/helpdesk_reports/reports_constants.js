@@ -174,15 +174,15 @@ HelpdeskReports.Constants = {
         }
     } ,
      AgentSummary: {
-        metrics: ["AGENT_ASSIGNED_TICKETS","RESOLVED_TICKETS","REOPENED_TICKETS", "AGENT_REASSIGNED_TICKETS", "RESPONSE_SLA", 
+        metrics: ["AGENT_ASSIGNED_TICKETS","AGENT_RECEIVED_TICKETS","RESOLVED_TICKETS","REOPENED_TICKETS", "AGENT_REASSIGNED_TICKETS", "RESPONSE_SLA", 
             "RESOLUTION_SLA", "FCR_TICKETS", "PRIVATE_NOTES", "RESPONSES", "AVG_FIRST_RESPONSE_TIME", 
-            "AVG_RESPONSE_TIME", "AVG_RESOLUTION_TIME"],
+            "AVG_RESPONSE_TIME", "AVG_RESOLUTION_TIME" ],
         sla_metrics : ["RESPONSE_SLA","RESOLUTION_SLA"],
         repeat: [],
         percentage_metrics: ["RESPONSE_SLA", "RESOLUTION_SLA", "FCR_TICKETS"],
         ticket_list_metrics: ["fr_escalated","is_escalated","fcr_violation"],
         time_metrics: ["AVG_FIRST_RESPONSE_TIME", "AVG_RESPONSE_TIME", "AVG_RESOLUTION_TIME"],
-        template_metrics: ["AGENT_SUMMARY_CURRENT","AGENT_SUMMARY_HISTORIC"],
+        template_metrics: ["AGENT_SUMMARY_CURRENT","AGENT_SUMMARY_HISTORIC","AGENT_SUMMARY_TICKETS_RECIEVED"],
         group_by: "agent_id",
         params: {
             bucket                : false, 
@@ -197,15 +197,15 @@ HelpdeskReports.Constants = {
         }
     },
     GroupSummary: {
-        metrics: ["GROUP_ASSIGNED_TICKETS","RESOLVED_TICKETS","REOPENED_TICKETS", "GROUP_REASSIGNED_TICKETS", "RESPONSE_SLA", 
+        metrics: ["GROUP_ASSIGNED_TICKETS","GROUP_RECEIVED_TICKETS", "RESOLVED_TICKETS","REOPENED_TICKETS", "GROUP_REASSIGNED_TICKETS", "RESPONSE_SLA", 
             "RESOLUTION_SLA", "FCR_TICKETS", "PRIVATE_NOTES", "RESPONSES", "AVG_FIRST_RESPONSE_TIME", 
-            "AVG_RESPONSE_TIME", "AVG_RESOLUTION_TIME"],
+            "AVG_RESPONSE_TIME", "AVG_RESOLUTION_TIME" ],
         sla_metrics : ["RESPONSE_SLA","RESOLUTION_SLA"],
         repeat: [], 
         percentage_metrics: ["RESPONSE_SLA", "RESOLUTION_SLA", "FCR_TICKETS"],
         ticket_list_metrics: ["fr_escalated","is_escalated","fcr_violation"],
         time_metrics: ["AVG_FIRST_RESPONSE_TIME", "AVG_RESPONSE_TIME", "AVG_RESOLUTION_TIME"],
-        template_metrics: ["GROUP_SUMMARY_CURRENT","GROUP_SUMMARY_HISTORIC"],
+        template_metrics: ["GROUP_SUMMARY_CURRENT","GROUP_SUMMARY_HISTORIC" , "GROUP_SUMMARY_TICKETS_RECIEVED"],
         group_by: 'group_id',
         params: {
             bucket                : false, 

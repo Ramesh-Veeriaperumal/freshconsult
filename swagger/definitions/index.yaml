@@ -425,6 +425,16 @@
   marketplace_apps:
     $ref: ./resource/marketplace_apps.yaml
 
+  #Canned forms
+  canned_form_index:
+    $ref: ./resource/extension/canned_forms/list.yaml
+  canned_form_input:
+    $ref: ./request/canned_forms/input.yaml
+  canned_form_show:
+    $ref: ./resource/canned_forms.yaml
+  canned_form_show_handle:
+    $ref: ./resource/extension/canned_forms/handle.yaml
+
   #Custom dashboard
   dashboard_custom_widgets_data:
     $ref: ./response/dashboard/custom/widgets_data.yaml

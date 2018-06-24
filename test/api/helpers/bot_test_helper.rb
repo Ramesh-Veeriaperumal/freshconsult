@@ -143,7 +143,7 @@ module BotTestHelper
       is_default: default
 
     }
-    {
+    show_pattern = {
       id: bot.id,
       status: '1',
       name: bot.name,
@@ -160,6 +160,8 @@ module BotTestHelper
       product_hash: BOT_CONFIG[:freshdesk_product_id],
       environment: BOT_CONFIG[:widget_code_env]
     }
+    show_pattern[:analytics_mock_data] = true if bot.additional_settings[:analytics_mock_data]
+    show_pattern
   end
 
   def thumbnail_cdn_url(bot)

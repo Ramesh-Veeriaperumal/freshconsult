@@ -5141,6 +5141,13 @@
             "in": "query",
             "type": "integer",
             "format": "int64"
+          },
+          {
+            "name": "language_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "required": true
           }
         ],
         "responses": {
@@ -5165,6 +5172,13 @@
         "parameters": [
           {
             "$ref": "#/parameters/id"
+          },
+          {
+            "name": "language_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "required": true
           }
         ],
         "responses": {
@@ -6925,6 +6939,248 @@
         }
       }
     },
+    "/bots/{id}/remove_analytics_mock_data": {
+      "put": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Stop showing analytics mock data for the bot",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "description": "ID of the bot",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
+    "/canned_forms": {
+      "get": {
+        "tags": [
+          "canned_forms"
+        ],
+        "description": "Listing all form with pagination & applied filter",
+        "summary": "List all Canned forms",
+        "parameters": [
+          {
+            "name": "per_page",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "description": "per page limit"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "description": "page number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/canned_form_index"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "canned_forms"
+        ],
+        "description": "Create a form",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/canned_form_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/canned_form_show"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/canned_forms/{id}": {
+      "get": {
+        "tags": [
+          "canned_forms"
+        ],
+        "summary": "Show Canned Form",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of Canned form",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/canned_form_show"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Canned form not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "canned_forms"
+        ],
+        "summary": "Delete Canned form",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of Canned form",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "canned_forms"
+        ],
+        "description": "Update a Canned form",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/canned_form_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/canned_form_show"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Canned form not found"
+          }
+        }
+      }
+    },
+    "/canned_forms/{id}/handle": {
+      "post": {
+        "tags": [
+          "canned_forms"
+        ],
+        "description": "Create a Canned form handle",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ticket_id": {
+                  "type": "string",
+                  "description": "ID of the ticket"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/canned_form_show_handle"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/sandboxes": {
       "get": {
         "tags": [
@@ -7179,6 +7435,20 @@
                 },
                 "language": {
                   "type": "string"
+                },
+                "portal_languages": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
                 },
                 "date_format": {
                   "type": "object",
@@ -10661,6 +10931,10 @@
               "type": "integer",
               "format": "int64"
             },
+            "language_id": {
+              "type": "integer",
+              "format": "int64"
+            },
             "title": {
               "type": "string"
             },
@@ -12695,6 +12969,9 @@
         "environment": {
           "type": "string",
           "description": "Bot environment"
+        },
+        "analytics_mock_data": {
+          "type": "boolean"
         }
       }
     },
@@ -12871,6 +13148,10 @@
       "type": "object",
       "properties": {
         "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "language_id": {
           "type": "integer",
           "format": "int64"
         },
@@ -13527,6 +13808,251 @@
         "extension_type": {
           "type": "integer",
           "description": "App Type - Plug/Native Integration"
+        }
+      }
+    },
+    "canned_form_index": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "canned_form_input": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number"
+        },
+        "welcome_text": {
+          "type": "string"
+        },
+        "thankyou_text": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "custom": {
+                "type": "boolean"
+              },
+              "position": {
+                "type": "number"
+              },
+              "deleted": {
+                "type": "boolean"
+              },
+              "placeholder": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "type1": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2,
+                  5,
+                  6
+                ]
+              },
+              "choices": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "value": {
+                      "type": "string"
+                    },
+                    "position": {
+                      "type": "number"
+                    },
+                    "custom": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "canned_form_show": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "number"
+        },
+        "welcome_text": {
+          "type": "string"
+        },
+        "thankyou_text": {
+          "type": "string"
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "parent_id": {
+                "type": "string"
+              },
+              "custom": {
+                "type": "boolean"
+              },
+              "editable": {
+                "type": "boolean"
+              },
+              "position": {
+                "type": "number"
+              },
+              "deleted": {
+                "type": "boolean"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "visible": {
+                "type": "boolean"
+              },
+              "validatable": {
+                "type": "boolean"
+              },
+              "builder": {
+                "type": "boolean"
+              },
+              "internal": {
+                "type": "boolean"
+              },
+              "field_class": {
+                "type": "string"
+              },
+              "link": {
+                "type": "string"
+              },
+              "placeholder": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "account_id": {
+                "type": "number"
+              },
+              "form_id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "column_name": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "type": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2,
+                  5,
+                  6
+                ]
+              },
+              "option_value_path": {
+                "type": "string"
+              },
+              "field_options": {
+                "type": "object"
+              },
+              "choices": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number"
+                    },
+                    "account_id": {
+                      "type": "number"
+                    },
+                    "type": {
+                      "type": "number"
+                    },
+                    "value": {
+                      "type": "string"
+                    },
+                    "position": {
+                      "type": "number"
+                    },
+                    "editable": {
+                      "type": "boolean"
+                    },
+                    "custom": {
+                      "type": "boolean"
+                    },
+                    "field_id": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "regex": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "canned_form_show_handle": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "handle_url": {
+            "type": "string"
+          }
         }
       }
     },

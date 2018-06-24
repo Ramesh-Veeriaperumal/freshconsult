@@ -49,6 +49,7 @@ module Ember
           product_hash: BOT_CONFIG[:freshdesk_product_id],
           environment: BOT_CONFIG[:widget_code_env]
         }
+        @bot[:analytics_mock_data] = true if @item.additional_settings[:analytics_mock_data]
         training_status = @item.training_status
         @bot.merge!(status: training_status) if training_status
         @bot.merge!(@item.profile)
@@ -131,13 +132,23 @@ module Ember
         end
       end
 
+      def remove_analytics_mock_data
+        return unless validate_body_params
+        return unless validate_delegator(@item)
+        @item.additional_settings.delete(:analytics_mock_data)
+        if @item.save
+          head 204
+        else
+          render_errors(@item.errors)
+        end
+      end
+
       private
 
         def construct_attributes
           @item.last_updated_by = current_user.id
           product = @portal.product
           @item.product_id = product.id if product
-          @item.additional_settings = {}
           @avatar = params['avatar']
           if @avatar['is_default']
             # Additional settings column contains info about default avatar
@@ -321,6 +332,8 @@ module Ember
           Rails.logger.info("Enqueueing for overall learning:: #{bot_info}")
           current_account.launch(:solutions_central_publish) unless current_account.solutions_central_publish_enabled?
           Bot::MlSolutionsTraining.perform_async(bot_id: @item.id)
+          Rails.logger.info("Enqueueing for training status check:: #{bot_info}")
+          Bot::CheckTrainingStatus.perform_in(1.hour.from_now, bot_id: @item.id)
           @item.training_inprogress!
         rescue => e
           Rails.logger.error "Exception while enqueueing to ml overall learning: #{e.message}, #{bot_info}"

@@ -1,13 +1,29 @@
 consumer_token: 
-  production: dr1GMNCkYqUqjPTvWoY4nQ
-  staging: dr1GMNCkYqUqjPTvWoY4nQ
-  development: dr1GMNCkYqUqjPTvWoY4nQ
-  test: dr1GMNCkYqUqjPTvWoY4nQ
+  production:
+    default: dr1GMNCkYqUqjPTvWoY4nQ
+    fallback: dummy
+  staging:
+    default: dr1GMNCkYqUqjPTvWoY4nQ
+    fallback: dummy
+  development:
+    default: dr1GMNCkYqUqjPTvWoY4nQ
+    fallback: dummy
+  test:
+    default: dr1GMNCkYqUqjPTvWoY4nQ
+    fallback: dummy
 consumer_secret: 
-  production: QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc
-  staging: QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc
-  development: QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc
-  test: QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc
+  production:
+    default: QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc
+    fallback: dummy
+  staging:
+    default: QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc
+    fallback: dummy
+  development:
+    default: QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc
+    fallback: dummy
+  test:
+    default: QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc
+    fallback: dummy
 callback_url:
   production: http://localhost:3000/twitter/authdone
   staging: http://localhost:3000/twitter/authdone
