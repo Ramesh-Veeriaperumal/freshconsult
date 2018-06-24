@@ -67,9 +67,10 @@ module CustomDashboardConcern
     dashboard_list
   end
 
+  # Loads all account dashboards in redis with accesses
   def load_dashboard_index_in_redis(dashboard_list)
     dashboard_by_id = dashboard_list.map { |dashboard| [dashboard[:id], dashboard.to_json] }.to_h
-    multi_set_redis_hash(dashboard_index_redis_key, dashboard_by_id.flatten)
+    multi_set_redis_hash(dashboard_index_redis_key, dashboard_by_id.flatten) if dashboard_by_id.present? # hmset doesn't accept empty args
   end
 
   def get_accessible_dashboards(dashboard_object_list)

@@ -13,7 +13,9 @@ class ApiApplicationController < MetalApiController
 
   protect_from_forgery
   skip_before_filter :verify_authenticity_token
+  before_filter :unset_thread_variables
   before_filter :verify_authenticity_token, if: :csrf_check_reqd?
+  before_filter :authenticate_jwt_request, if: :app_authorization?
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
   # rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
@@ -55,6 +57,7 @@ class ApiApplicationController < MetalApiController
   include DecoratorConcern
 
   before_filter { |c| c.requires_feature(*feature_name) if feature_name }
+  before_filter { |c| c.requires_feature(*launch_party_name) if launch_party_name }
   skip_before_filter :check_privilege, only: [:route_not_found]
 
   # before_load_object and after_load_object are used to stop the execution exactly before and after the load_object call.
@@ -134,10 +137,19 @@ class ApiApplicationController < MetalApiController
     params[cname]
   end
 
+  def app_authorization?
+    # exposing private api(to allow get method only) for internal apps
+    request.headers['X-App-Header'].present? && request.method == 'GET'
+  end
+
+  def app_current?
+    Thread.current[:app_integration].present?
+  end
+
   protected
 
     def requires_feature(*f) # Should be from cache. Need to revisit.
-      features_list = Account.current.enabled_features_list
+      features_list = feature_name.present? ? Account.current.enabled_features_list : Account.current.all_launched_features
       return if f.all? { |x| features_list.include?(x) }
       render_request_error(:require_feature, 403, feature: f.join(',').titleize)
     end
@@ -311,6 +323,10 @@ class ApiApplicationController < MetalApiController
 
     def feature_name
       # Template method - Redefine if the controller needs requires_feature before_filter
+    end
+
+    def launch_party_name
+      # Template method - Redefine if the controller needs requires_launch_party before_filter
     end
 
     def validate_content_type
@@ -560,6 +576,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_privilege # this method is redefined because of api_current_user
+      return true if app_current?
       if api_current_user.nil? || api_current_user.customer? || !allowed_to_access?
         access_denied
         return false
@@ -844,5 +861,28 @@ class ApiApplicationController < MetalApiController
       I18n.locale =  (api_current_user && api_current_user.language) ? api_current_user.language : (current_portal ? current_portal.language : I18n.default_locale)
     rescue
       I18n.default_locale
+    end
+
+    def authenticate_jwt_request
+      jwt_auth = AppJWTAuth.new(request.headers['X-App-Header'])
+      jwt_auth.decode_jwt_token
+      if jwt_auth.verify_auth? && valid_app_payload?(jwt_auth.payload)
+        assign_current_app(jwt_auth.payload[:app_name])
+      else
+        render_request_error :invalid_credentials, Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
+      end
+    end
+
+    def valid_app_payload?(payload)
+      case payload[:app_name]
+      when 'freshconnect'
+        payload[:product_account_id].present? && Account.current.freshconnect_account.product_account_id == payload[:product_account_id]
+      else
+        true
+      end
+    end
+
+    def assign_current_app(app_name)
+      Thread.current[:app_integration] = app_name
     end
 end

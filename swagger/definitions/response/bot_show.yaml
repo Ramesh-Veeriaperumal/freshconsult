@@ -60,3 +60,5 @@ properties:
   environment:
     type: string
     description: Bot environment
+  analytics_mock_data:
+    type: boolean

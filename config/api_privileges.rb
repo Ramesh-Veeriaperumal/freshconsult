@@ -127,6 +127,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/trial_widget', only: %i[index sales_manager complete_step]
     resource :'ember/contact_password_policy', only: [:index]
     resource :'ember/agent_password_policy', only: [:index] # Not using it now.
+    resource :'admin/canned_form'
     resource :"ember/portal", only: [:show]
   end
 
@@ -171,7 +172,7 @@ Authority::Authorization::PrivilegeList.build do
   view_reports do
     resource :"ember/dashboard", only: %i(unresolved_tickets_data ticket_trends ticket_metrics)
     resource :"ember/year_in_review", only: [:share]
-    resource :"ember/admin/bot", only: %i[analytics]
+    resource :"ember/admin/bot", only: [:analytics, :remove_analytics_mock_data]
     resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview]
   end
 

@@ -57,6 +57,29 @@ module IntegrationServices::Services
       def resource_relational_fields
         RELATIONAL_FIELDS
       end
+
+      def create(payload, web_meta)
+        request_url = "#{server_url}/contacts"
+        request_body = { contact: payload[:entity] }
+        response = http_post request_url, request_body.to_json
+        process_create_response(response, web_meta, 200, 201) do |contact|
+          return contact
+        end
+      end
+
+      def process_create_response(response, web_meta, *success_codes, &block)
+        if success_codes.include?(response.status)
+          parse(response.body)
+        elsif response.status.between?(400, 499)
+          raise RemoteError, "Error: #{response.body}", response.status.to_s
+        elsif response.status == 500
+          error = parse(response.body)['errors']
+          web_meta[:status] = 500
+          { :errors => error['message'] }
+        else
+          raise RemoteError, "Unhandled error: STATUS=#{response.status} BODY=#{response.body}"
+        end
+      end
     end
   end
 end 

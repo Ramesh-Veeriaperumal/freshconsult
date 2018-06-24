@@ -51,7 +51,9 @@ class TicketDecorator < ApiDecorator
     return unless @sideload_options.include?('requester')
     options = { name_mapping: @contact_name_mapping }
     options[:sideload_options] = ['company'] if multiple_user_companies_enabled?
-    ContactDecorator.new(record.requester, options).requester_hash
+    requester_hash = ContactDecorator.new(record.requester, options).requester_hash
+    requester_hash[:language] = record.requester.language
+    requester_hash
   end
 
   def freshfone_call

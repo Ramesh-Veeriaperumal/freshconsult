@@ -1,6 +1,6 @@
 class HelpdeskReports::ParamConstructor::AgentSummary < HelpdeskReports::ParamConstructor::Base
 
-  AGENT_SUMMARY_METRICS = ["AGENT_SUMMARY_CURRENT", "AGENT_SUMMARY_HISTORIC"]
+  AGENT_SUMMARY_METRICS = ["AGENT_SUMMARY_CURRENT", "AGENT_SUMMARY_HISTORIC","AGENT_SUMMARY_TICKETS_RECIEVED"]
 
   def initialize options
     @report_type = :agent_summary

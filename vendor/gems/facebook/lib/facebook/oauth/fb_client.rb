@@ -16,14 +16,8 @@ module Facebook
       # call_back_url is the url where facebook would redirect back with code after it authorizes
       def initialize(call_back_url, page_tab = false,account_url = nil)
         @call_back_url = call_back_url
-        @account_url = account_url
-        if page_tab
-          @fb_app_id     = FacebookConfig::PAGE_TAB_APP_ID
-          secret_key     = FacebookConfig::PAGE_TAB_SECRET_KEY
-        else
-          @fb_app_id     = FacebookConfig::APP_ID
-          secret_key     = FacebookConfig::SECRET_KEY
-        end
+        @account_url   = account_url
+        @fb_app_id, secret_key = Facebook::Tokens.new(page_tab).tokens.values
         @oauth = Koala::Facebook::OAuth.new(@fb_app_id, secret_key, @call_back_url)
       end
       
@@ -64,7 +58,8 @@ module Facebook
       end
 
       def access_token code
-        query_params = ACCESS_TOKEN_PARAMS % {:client_id => FacebookConfig::APP_ID, :client_secret => FacebookConfig::SECRET_KEY, :redirect_uri => call_back_url, :code => code}
+        client_id, client_secret = Facebook::Tokens.new(false).tokens.values
+        query_params = ACCESS_TOKEN_PARAMS % {:client_id => client_id, :client_secret => client_secret, :redirect_uri => call_back_url, :code => code}
         access_token_request = "#{FACEBOOK_GRAPH_URL}/#{GRAPH_API_VERSION}/#{ACCESS_TOKEN_PATH}?#{query_params}"
         message = RestClient.get access_token_request, {:accept => :json}
         message = JSON.parse(message)

@@ -17,7 +17,7 @@ class Bot < ActiveRecord::Base
   validates :external_id, uniqueness: true
   validates :portal_id, uniqueness: true
 
-  before_create :set_external_id
+  before_create :set_external_id, :set_analytics_mock_data
   before_update :check_constant_fields
   before_destroy :cleanup # Destroy bot ticket mappings, feedbacks and feedback mappings.
 
@@ -128,6 +128,10 @@ class Bot < ActiveRecord::Base
 
     def set_external_id
       self.external_id = UUIDTools::UUID.timestamp_create.hexdigest
+    end
+
+    def set_analytics_mock_data
+      additional_settings[:analytics_mock_data] = true
     end
 
     def cleanup

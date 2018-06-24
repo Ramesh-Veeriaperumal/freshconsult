@@ -33,7 +33,7 @@ module AttachmentConstants
   }.freeze
 
   CLONEABLE_ATTACHMENT_TYPES = [
-    'Account', 'Admin::CannedResponses::Response', 'Solution::Article'
+    'Account', 'Admin::CannedResponses::Response', 'Solution::Article', 'Helpdesk::TicketTemplate'
   ].freeze
 
   # Only xxx.jpg and xxx.png are allowed to upload

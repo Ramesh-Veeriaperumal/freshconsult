@@ -28,7 +28,8 @@ class Solutions::ArticleDecorator < ApiDecorator
       agent_id: user_id,
       path: record.to_param,
       modified_at: modified_at.try(:utc),
-      modified_by: modified_by
+      modified_by: modified_by,
+      language_id: language_id
     }
     ret_hash.merge!(draft_info(draft || record))
     ret_hash.merge!(visibility_hash)
@@ -72,6 +73,7 @@ class Solutions::ArticleDecorator < ApiDecorator
   def content_hash
     ret_hash = {
         id: parent_id,
+        language_id: language_id,
         attachments: attachments_hash
       }
     ret_hash.merge!(description_hash(draft || record))
