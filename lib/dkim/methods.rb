@@ -17,6 +17,7 @@ module Dkim::Methods
   end
 
   def new_record?(domainkey, record_type)
+    domainkey = eval(domainkey)
     route53_client = AWS::Route53::Client.new(:region => PodConfig["region"])
     response = route53_client.list_resource_record_sets({
       hosted_zone_id: PodDnsUpdate::DNS_CONFIG["hosted_zone"],
