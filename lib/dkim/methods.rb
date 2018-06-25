@@ -88,7 +88,8 @@ module Dkim::Methods
       "ips"=>  [],
       "custom_spf"=> true,
       "default"=> false,
-      "automatic_security"=> false
+      "automatic_security"=> false,
+      "custom_dkim_selector"=> DKIM_SELECTOR[:mrecord]
     }.to_json 
   end
 
@@ -99,7 +100,8 @@ module Dkim::Methods
       "ips" =>  [],
       "custom_spf" => false,
       "default"=> false,
-      "automatic_security"=> true
+      "automatic_security"=> true,
+      "custom_dkim_selector"=> DKIM_SELECTOR[:srecord]
     }.to_json
   end
 
