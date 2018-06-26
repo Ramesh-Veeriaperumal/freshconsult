@@ -1,6 +1,8 @@
 class Admin::BotMailer < ActionMailer::Base
   include EmailHelper
 
+  RECIPIENTS = ['fd-suicide-squad@freshworks.com'].freeze
+
   def bot_training_completion_email(bot, to_email, user_name, categories)
     headers = {
       to: to_email,
@@ -13,6 +15,18 @@ class Admin::BotMailer < ActionMailer::Base
     mail(headers) do |part|
       part.text { render 'bot_training_completed.text.plain.erb', locals: { user_name: user_name, bot_name: bot.name, categories: categories, url: url } }
       part.html { render 'bot_training_completed.text.html.erb', locals: { user_name: user_name, bot_name: bot.name, categories: categories, url: url } }
+    end.deliver
+  end
+
+  def bot_training_incomplete_email(bot_id)
+    headers = {
+      to: RECIPIENTS,
+      from: AppConfig['from_email'],
+      subject: "#{Rails.env} :: #{PodConfig['CURRENT_POD']} :: Bot Training Incomplete",
+      sent_on: Time.zone.now
+    }
+    mail(headers) do |part|
+      part.html { render 'bot_training_incomplete', locals: { account_id: Account.current.id, bot_id: bot_id } }
     end.deliver
   end
 end

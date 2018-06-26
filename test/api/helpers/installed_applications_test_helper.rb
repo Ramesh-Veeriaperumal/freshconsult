@@ -114,6 +114,25 @@ module InstalledApplicationsTestHelper
     }}
   end
 
+  def freshsales_config
+    { inputs:
+      {
+        "contact_fields"=> "display_name,mobile_number,contact_status_id,has_authority,do_not_disturb,time_zone,address,city,state,zipcode",
+        "account_fields"=> "name,parent_sales_account_id,owner_id,number_of_employees,annual_revenue,website,phone,industry_type_id,business_type_id,territory_id",
+        "lead_fields" => "display_name,first_name,last_name,owner_id,lead_stage_id,lead_reason_id,job_title,department,email,work_number",
+        "contact_labels" => "Full name,Mobile,Status,Has authority,Do not disturb,Time zone,Address,City,State,Zipcode",
+        "account_labels"=> "Name,Parent account,Owner,Number of employees,Annual revenue,Website,Phone,Industry type,Business type,Territory",
+        "lead_labels" =>"Full name,First name,Last name,Owner,Lead stage,Unqualified reason,Job title,Department,Email,Work",
+        "deal_view" => "1",
+        "domain" => "https://sample.freshsales.io",
+        "auth_token" => "dTetw4iu9JbVBsBfxeJ6xQ",
+        "deal_fields" => "name,amount,deal_stage_id,owner_id,deal_pipeline_id,deal_reason_id,sales_account_id,contacts,deal_product_id,deal_payment_status_id",
+        "deal_labels" => "Name,Deal value,Deal stage,Owner,Deal pipeline,Lost reason,Account name,Related contacts,Product,Payment status",
+        "agent_settings" => "0"
+      }
+    }
+  end
+
   def create_integ_user_credentials(options = {})
     app = Integrations::Application.find_by_name(options[:app_name])
     installed_app = @account.installed_applications.find_by_application_id(app.id)
@@ -149,5 +168,17 @@ module InstalledApplicationsTestHelper
     mock.expect :status, status
     mock.expect :env, {}
     mock
+  end
+
+  def form_fields_result
+    {"Lead"=>{"id"=>2000022766, "name"=>"DefaultLeadForm", "field_class"=>"Lead",
+           "fields"=>[{"id"=>"56f639ac", "name"=>"basic_information", "label"=>"Basicinformation",
+           "fields"=>[{"id"=>"eda895ec", "name"=>"first_name", "label"=>"Firstname", "fields"=>[],
+           "form_id"=>2000022766, "field_class"=>"Lead"}], "form_id"=>2000022766, "field_class"=>"Lead"}]},
+           "Contact"=>{"id"=>2000022765, "name"=>"DefaultContactForm", "field_class"=>"Contact",
+           "fields"=>[{"id"=>"ead353bc-031b-4012-86b1-cd055f807c99", "name"=>"basic_information",
+           "label"=>"Basicinformation", "fields"=>[{"id"=>"7e0b636d", "name"=>"first_name", "label"=>"Firstname",
+           "fields"=>[], "form_id"=>2000022765, "field_class"=>"Contact", "field_options"=>{"show_in_import"=>true}}],
+           "form_id"=>2000022765, "field_class"=>"Contact"}]}}
   end
 end

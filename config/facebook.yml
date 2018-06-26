@@ -11,6 +11,10 @@ development:
   callback_url: http://localhost.freshdesk-dev.com:3000/social/facebook
   page_tab_app_id: 532141443602251
   page_tab_app_secret: 674a8844ca40fc2dd528ae1a58f67725
+  app_id_fallback: dummy
+  secret_key_fallback: dummy
+  page_tab_app_id_fallback: dummy
+  page_tab_app_secret_fallback: dummy
 
 staging:
   app_id: 725120837575289
@@ -18,6 +22,10 @@ staging:
   callback_url: http://localhost.freshdesk-dev.com:3000/social/facebook
   page_tab_app_id: 532141443602251
   page_tab_app_secret: 674a8844ca40fc2dd528ae1a58f67725
+  app_id_fallback: dummy
+  secret_key_fallback: dummy
+  page_tab_app_id_fallback: dummy
+  page_tab_app_secret_fallback: dummy
 
 slave:
  <<: *defaults
@@ -30,3 +38,7 @@ production:
   callback_url: http://localhost.freshdesk-dev.com:3000/social/facebook
   page_tab_app_id: 532141443602251
   page_tab_app_secret: 674a8844ca40fc2dd528ae1a58f67725
+  app_id_fallback: dummy
+  secret_key_fallback: dummy
+  page_tab_app_id_fallback: dummy
+  page_tab_app_secret_fallback: dummy

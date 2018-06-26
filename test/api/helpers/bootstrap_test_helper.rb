@@ -78,6 +78,7 @@ module BootstrapTestHelper
       time_zone: account.time_zone,
       date_format: account.account_additional_settings.date_format,
       language: account.language,
+      portal_languages: JSON.parse(account.all_portal_language_objects.to_json),
       features: Array,
       launched: Array,
       settings: {

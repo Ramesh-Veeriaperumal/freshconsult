@@ -894,6 +894,72 @@ module Ember
           assert_equal analytics_response_pattern, response.body
         end
       end
+
+      def test_remove_analytics_mock_data
+        enable_bot do
+          bot = create_bot(product: true)
+          put :remove_analytics_mock_data, construct_params(version: 'private', id: bot.id)
+          bot.reload
+          assert_response 204
+          assert_equal nil, bot.additional_settings[:analytics_mock_data]
+        end
+      end
+
+      def test_remove_analytics_mock_data_with_incorrect_credentials
+        enable_bot do
+          @controller.stubs(:api_current_user).raises(ActiveSupport::MessageVerifier::InvalidSignature)
+          bot = create_bot(product: true)
+          put :remove_analytics_mock_data, construct_params(version: 'private', id: bot.id)
+          assert_response 401
+          assert_equal request_error_pattern(:credentials_required).to_json, response.body
+          @controller.unstub(:api_current_user)
+        end
+      end
+
+      def test_remove_analytics_mock_data_without_view_reports_privilege
+        enable_bot do
+          User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+          bot = create_bot(product: true)
+          put :remove_analytics_mock_data, construct_params(version: 'private', id: bot.id)
+          assert_response 403
+          match_json(request_error_pattern(:access_denied))
+          User.any_instance.unstub(:privilege?)
+        end
+      end
+
+      def test_remove_analytics_mock_data_with_invalid_bot_id
+        enable_bot do
+          put :remove_analytics_mock_data, construct_params(version: 'private', id: 0)
+          assert_response 404
+        end
+      end
+
+      def test_remove_analytics_mock_data_without_support_bot_feature
+        bot = create_bot(product: true)
+        put :remove_analytics_mock_data, construct_params(version: 'private', id: bot.id)
+        assert_response 403
+        match_json(request_error_pattern(:require_feature, feature: 'Support Bot'))
+      end
+
+      def test_remove_analytics_mock_data_for_bot_without_analytics_mock_data
+        enable_bot do
+          bot = create_bot(product: true)
+          bot.additional_settings.delete(:analytics_mock_data)
+          bot.save
+          put :remove_analytics_mock_data, construct_params(version: 'private', id: bot.id)
+          assert_response 400
+          match_json([bad_request_error_pattern('id', :not_mock_data)])
+        end
+      end
+
+      def test_remove_analytics_mock_data_with_invalid_field
+        enable_bot do
+          bot = create_bot(product: true)
+          put :remove_analytics_mock_data, construct_params(version: 'private', id: bot.id, test: 'test')
+          assert_response 400
+          match_json([bad_request_error_pattern('test', :invalid_field)])
+        end
+      end
     end
   end
 end

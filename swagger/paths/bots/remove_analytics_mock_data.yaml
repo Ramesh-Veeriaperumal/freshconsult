@@ -1,0 +1,20 @@
+put:
+  tags: [Bot]
+  summary: Stop showing analytics mock data for the bot
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      description: ID of the bot
+      required: true
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    404:
+      description: Resource not found
