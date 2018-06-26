@@ -202,6 +202,10 @@ class Helpdesk::Note < ActiveRecord::Base
   def ecommerce?
     source == SOURCE_KEYS_BY_TOKEN["ecommerce"] && self.ebay_question.present?
   end
+
+  def canned_form?
+    source == SOURCE_KEYS_BY_TOKEN['canned_form']
+  end
   
   def inbound_email?
     email? && incoming
@@ -349,6 +353,7 @@ class Helpdesk::Note < ActiveRecord::Base
     return "forward" if fwd_email?
     return "phone_note" if phone_note?
     return "broadcast_note" if broadcast_note?
+    return 'canned_form' if canned_form?
     return "summary" if summary_note?
     "reply"
   end

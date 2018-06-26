@@ -193,7 +193,7 @@ class Account < ActiveRecord::Base
     :skip_ticket_threading => false, :multi_dynamic_sections => true, :dashboard_new_alias => false, 
     :attachments_scope => false, :kbase_spam_whitelist => false, :forum_post_spam_whitelist => false, 
     :enable_qna => false, :enable_insights => false, 
-    :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true,
+    :escape_liquid_attributes => true, :escape_liquid_for_reply => true,
     :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false, 
     :bulk_security => false, :service_writes => false, :service_reads => false, 
     :admin_only_mint => false, :send_emails_via_fd_email_service_feature => false, 
@@ -210,7 +210,8 @@ class Account < ActiveRecord::Base
     :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false, 
     :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false, 
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
-    :post_central_publish => false, :audit_logs_central_publish => false, :twitter_common_redirect => false
+    :post_central_publish => false, :audit_logs_central_publish => false, :twitter_common_redirect => false,
+    :new_ticket_recieved_metric => false, :euc_migrated_twitter => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

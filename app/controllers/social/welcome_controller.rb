@@ -119,6 +119,6 @@ class Social::WelcomeController < ApplicationController
     params = {'grant_type' => 'client_credentials', "client_id" => TwitterConfig::CLIENT_ID, "client_secret" => TwitterConfig::CLIENT_SECRET}
     opts   = {'refresh_token' => nil}
     client.get_token(params, opts)
-  end  
+  end 
   
 end

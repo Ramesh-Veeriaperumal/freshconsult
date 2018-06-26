@@ -5,6 +5,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   include Social::Constants
   include Social::Util
   include Social::SmartFilter
+  include Redis::OthersRedis
 
   before_save :add_default_search, :set_default_state, :persist_previous_changes
   before_create :set_default_threaded_time
@@ -15,6 +16,12 @@ class Social::TwitterHandle < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_handles_cache }, on: :create
   after_commit ->(obj) { obj.clear_handles_cache }, on: :destroy  
   after_commit :initialise_smart_filter, :on => :update, :if => :new_smart_filter_enabled?
+  after_commit :remove_euc_redis_key, :on => :update, :if => :destroy_euc_redis_key?
+  after_commit :remove_from_eu_redis_set_on_destroy, :on => :destroy, :if => :euc_migrated_account?
+
+  def remove_from_eu_redis_set_on_destroy
+    remove_euc_redis_key
+  end
 
   def construct_avatar
     args = {
@@ -129,6 +136,23 @@ class Social::TwitterHandle < ActiveRecord::Base
 
     def new_smart_filter_enabled?
       @custom_previous_changes[:smart_filter_enabled] && @custom_previous_changes[:smart_filter_enabled][0].nil? && @custom_previous_changes[:smart_filter_enabled][1]
+    end
+
+    def destroy_euc_redis_key?
+      # When the consumer authorizes the new app access_token will change and when they re-authorize the state will change.
+      euc_migrated_account? && (self.previous_changes["state"].present? || self.previous_changes["access_token"].present?)
+    end
+
+    def euc_migrated_account?
+      Account.current.euc_migrated_twitter_enabled?
+    end
+
+    def remove_euc_redis_key
+      twitter_handle_id = self.twitter_user_id
+
+      if remove_member_from_redis_set(EU_TWITTER_HANDLES, "#{Account.current.id}:#{twitter_handle_id}")
+        Rails.logger.debug "Removed the twitter handle ID from the EU redis key, Account ID: #{Account.current.id}, Handle ID: #{twitter_handle_id}"
+      end
     end
 
 end

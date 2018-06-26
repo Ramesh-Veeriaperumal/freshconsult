@@ -493,6 +493,8 @@ en:
     remove_profile_image: "Profile image successfully removed"
     remove_profile_image_confirm: "Are you sure you want to delete this Profile Picture?"
     ie9_file_change_msg: "%{filename} Save to update profile image"
+    user_exist_in_freshid: "Existing freshworks user! Admins cannot edit Agent' profile information."
+    edit_profile_in_freshid: "Agents can edit their profile information in their Freshworks profile."
     errors:
       required_field: cannot be blank
       custom_text : is not valid
@@ -767,6 +769,11 @@ en:
         unhappy_info: We will ensure that we will take extra care the next time around.
         additional_info: Additionally, you could also share your experience working with us.
         submit: Submit
+    canned_form:
+      welcome_text: We require additional information for troubleshooting the issue for the Ticket.
+      thankyou_text: Thank you for the feedback!!!
+      ticket_subject: <TICKET_SUBJECT>
+      no_info: No information was provided
   gamification:
     levels:
       beginner: Beginner
@@ -7288,6 +7295,7 @@ en:
           reply_to_forward: "%{user_name} replied to forward <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           broadcast_note: "%{user_name} added a broadcast message <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           broadcast_message: "Broadcasted Message"
+          canned_form: "%{user_name} filled out the canned form you sent <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         last_edited_info: "Last edited by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         last_deleted_info: "Deleted by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
@@ -10149,6 +10157,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       avg_first_res_time: Average 1st response time
       avg_res_time: Average response time
       avg_resolution_time: Average resolution time
+      received_tickets: Tickets Received 
+      tickets_enagaged: Tickets Engaged
       agent: Agent
     timespent:
       title : Ticket Lifecycle

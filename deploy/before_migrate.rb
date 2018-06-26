@@ -89,6 +89,7 @@ run "ln -nfs #{shared_path}/config/channel_framework.yml #{node[:rel_path]}/conf
 run "ln -nfs #{shared_path}/config/channel_api_keys.yml #{node[:rel_path]}/config/channel_api_keys.yml"
 run "ln -nfs #{shared_path}/config/apigee.yml #{node[:rel_path]}/config/apigee.yml"
 run "ln -nfs #{shared_path}/config/freshchat.yml #{node[:rel_path]}/config/freshchat.yml"
+run "ln -nfs #{shared_path}/config/formserv.yml #{node[:rel_path]}/config/formserv.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

@@ -56,7 +56,8 @@ stylesheets:
   :ui_daterangepicker => ["ui.daterangepicker"],
   :remote_configurations  => [ "page/remote-configurations"],
   :cti => ["cti/cti"],
-  :freshfone_livechat => ["freshfone_livechat"]
+  :freshfone_livechat => ["freshfone_livechat"],
+  :canned_form => ["portal/canned_form"]
 } %>
 
 <%  @stylesheets_list = []
@@ -655,6 +656,10 @@ javascripts:
     - public/javascripts/cti/ameyo/click2Dial.js
     - public/javascripts/cti/ameyo/ameyo_logout.js
     - public/javascripts/cti/ameyo/drishti.js
+
+  canned_form:
+    - public/javascripts/bootstrap.js
+    - public/javascripts/frameworks/plugins/select2.js
 
 <% 
   # Adding specific javascript assets to the package list
