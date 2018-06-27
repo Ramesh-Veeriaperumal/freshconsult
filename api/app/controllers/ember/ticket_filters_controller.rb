@@ -138,7 +138,7 @@ module Ember
       def has_permission?
         # privilege for custom dashboard and ticket filters
         unless @item.is_a?(Helpdesk::Filters::CustomTicketFilter) &&
-            (privilege?(:manage_dashboard) || @item.accessible.user_id == api_current_user.id)
+            (privilege?(:manage_ticket_list_views) || @item.accessible.user_id == api_current_user.id)
           render_request_error :access_denied, 403
         end
       end
@@ -173,7 +173,7 @@ module Ember
 
       def default_visibility
         params[:ticket_filter][:visibility][:user_id] = api_current_user.id
-        unless privilege?(:manage_dashboard)
+        unless privilege?(:manage_ticket_list_views)
           params[:ticket_filter][:visibility][:visibility] = ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
           params[:ticket_filter][:visibility][:group_id] = nil
         end

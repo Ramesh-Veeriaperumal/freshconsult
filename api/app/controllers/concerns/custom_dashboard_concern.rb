@@ -104,6 +104,6 @@ module CustomDashboardConcern
   end
 
   def dashboard_admin?
-    current_user.privilege?(:view_reports)
+    current_user.privilege?(:manage_dashboard)
   end
 end
