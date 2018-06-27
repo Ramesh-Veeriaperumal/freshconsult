@@ -418,6 +418,7 @@ Helpkit::Application.routes.draw do
       get :configure_export
       post :export_csv
       post :export_skill_csv
+      get :search_in_freshworks
     end
     member do
       put :toggle_shortcuts

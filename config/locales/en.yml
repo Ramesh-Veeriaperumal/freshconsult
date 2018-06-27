@@ -500,6 +500,8 @@ en:
     remove_profile_image: "Profile image successfully removed"
     remove_profile_image_confirm: "Are you sure you want to delete this Profile Picture?"
     ie9_file_change_msg: "%{filename} Save to update profile image"
+    user_exist_in_freshid: "Existing freshworks user! Admins cannot edit Agent' profile information."
+    edit_profile_in_freshid: "Agents can edit their profile information in their Freshworks profile."
     errors:
       required_field: cannot be blank
       custom_text : is not valid

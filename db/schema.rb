@@ -1682,6 +1682,17 @@ ActiveRecord::Schema.define(version: 20180620195011) do
 
   add_index 'freshconnect_accounts', ['account_id'], name: "index_freshconnect_accounts_on_account_id", unique: true
 
+  create_table "freshconnect_accounts", :force => true do |t|
+    t.integer  "account_id",          :limit => 8
+    t.string   "product_account_id"
+    t.boolean  "enabled"
+    t.string   "freshconnect_domain"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+  end
+
+  add_index "freshconnect_accounts", ["account_id"], :name => "index_freshconnect_accounts_on_account_id", :unique => true
+
   create_table "freshcaller_accounts", :force => true do |t|
     t.integer  "account_id",             :limit => 8
     t.integer  "freshcaller_account_id", :limit => 8
