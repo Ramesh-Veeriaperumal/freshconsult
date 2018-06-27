@@ -11,11 +11,7 @@ module Integrations::FDTextFilter
   end
 
   def asset_url(input)
-    if plug_asset.present?
-      s3_asset_id = plug_asset.to_s.reverse
-      bucket = MarketplaceConfig::CDN_STATIC_ASSETS
-    end
-    "//#{bucket}/#{s3_asset_id}/assets/#{input}"
+    "#{plug_asset.split(Marketplace::Constants::PLG_FILENAME)[0]}/assets/#{input}" if plug_asset.present?
   end
 
   def make_vaild_javascript(input)

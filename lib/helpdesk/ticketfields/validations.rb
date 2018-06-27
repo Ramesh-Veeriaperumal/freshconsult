@@ -22,7 +22,7 @@ module Helpdesk::Ticketfields::Validations
     end
 
     unless error_str.blank?
-      flash[:error] = error_str.to_s.html_safe 
+      flash[:error] = error_str.to_s.html_safe
       redirect_to :back and return
     end
   end

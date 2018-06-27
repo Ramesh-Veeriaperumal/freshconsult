@@ -137,6 +137,20 @@ module Marketplace::ApiMethods
       end
     end
 
+    # API to fetch version details for list of installed versions for any platform_versions
+    def v2_versions(version_ids = [])
+      begin
+        api_payload = payload(
+          Marketplace::ApiEndpoint::ENDPOINT_URL[:v2_versions] %
+                { :product_id => PRODUCT_ID },
+          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:v2_versions],
+                { :version_ids => version_ids })
+        get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
+
     def all_categories
       begin
         api_payload = payload(

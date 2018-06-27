@@ -1,7 +1,7 @@
 class TwitterWrapper
   
   require 'twitter'  
-  include Social::Util
+  include Social::Util 
 
   attr_reader :tokens
 
@@ -57,7 +57,6 @@ class TwitterWrapper
   
   def get_oauth_credential
     client_id, client_secret = consumer_app_details(@twitter_handle)
-
     {
       consumer_key: client_id,
       consumer_secret: client_secret,

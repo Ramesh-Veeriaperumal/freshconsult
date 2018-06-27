@@ -160,13 +160,6 @@ GIT
     country_select (1.1.2)
 
 GIT
-  remote: git://github.com/sumakumardey/statsd-ruby
-  revision: 8b2334bd2cadaa612a51de849dd4ae0a581821ee
-  branch: custom_stats
-  specs:
-    statsd-ruby (1.0.0)
-
-GIT
   remote: git://github.com/thedarkone/rails-dev-boost.git
   revision: a709a10b06b7d9fc4a9846bc613c60c86af9dd7c
   specs:
@@ -1613,7 +1606,6 @@ DEPENDENCIES
   sprockets (= 2.2.3)
   ssl_requirement!
   static_model (~> 1.0.4)
-  statsd-ruby!
   stopwords-filter (= 0.4.1)
   strong_parameters (= 0.2.3)
   susy (= 2.1.3)

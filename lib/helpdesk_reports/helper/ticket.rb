@@ -154,7 +154,6 @@ module HelpdeskReports::Helper::Ticket
     locals
   end
 
-
   def enable_new_ticket_recieved_metric?
     Account.current.new_ticket_recieved_metric_enabled?
   end

@@ -8,7 +8,7 @@ class Sanitize
         'iframe' => ['src', 'width', 'height', 'frameborder', 'allowfullscreen', 'align', 'sandbox'],
         'audio' => HTML_RELAXED[:attributes]['audio'] + ['src', 'crossorigin', 'preload', 'autoplay', 'mediagroup', 'loop', 'muted'],
         'source' => HTML_RELAXED[:attributes]['source'] + ['media'],
-        'object' => ['type', 'data', 'height', 'width', 'typemustmatch', 'form', 'classid', 'codebase'],
+        'object' => ['type', 'height', 'width', 'typemustmatch', 'form', 'classid', 'codebase'],
         'param' => ['value'],
         'embed' => [
                     'src', 'type', 'width', 'height',
@@ -34,9 +34,9 @@ class Sanitize
       :remove_contents => HTML_RELAXED[:remove_contents],
       :transformers => lambda do |env|
         node      = env[:node]
-        
+
         return if env[:is_whitelisted] || !node.element? || ARTICLE_WHITELIST[:elements].exclude?(node.name)
-        
+
         if node.name == 'iframe'
           uri = URI.parse(node['src'])
           if uri.host.blank? || uri.host == Account.current.full_domain || Account.current.portals.map(&:portal_url).compact.include?(uri.host)
@@ -49,16 +49,16 @@ class Sanitize
         end
 
         data_attrs = node.attribute_nodes.select{|a_n| a_n.name =~ /^data-/ }
-        
+
         return if data_attrs.empty?
-        
+
         Sanitize.node!(node, {
           :elements => ARTICLE_WHITELIST[:elements],
           :attributes => ARTICLE_WHITELIST[:attributes].merge({node.name => (ARTICLE_WHITELIST[:attributes][node.name] || []) + data_attrs.collect(&:name) }),
           :protocols => ARTICLE_WHITELIST[:protocols],
           :remove_contents => ARTICLE_WHITELIST[:remove_contents]
         })
-        
+
         {:node_whitelist => [node]}
       end
     }

@@ -57,3 +57,4 @@ class Admin::CannedForm < ActiveRecord::Base
     true
   end
 end
+

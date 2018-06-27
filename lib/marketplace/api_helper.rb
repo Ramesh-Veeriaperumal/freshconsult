@@ -26,6 +26,38 @@ module Marketplace::ApiHelper
       @installed_list ||= mkp_memcache_fetch(key, cache_invalidation) do
         installed_extensions(installed_params(page))
       end
+      page == Marketplace::Constants::DISPLAY_PAGE[:integrations_list] ? @installed_list : installed_mkp_apps_urls(page)
+    end
+
+    def get_version_details(page)
+      key = MemcacheKeys::INSTALLED_VERSIONS % {
+            :page => page, :account_id => current_account.id, :platform_version => platform_version  }
+      cache_invalidation = (page == Marketplace::Constants::DISPLAY_PAGE[:integrations_list]) ? 
+                           MarketplaceConfig::INTEGRATIONS_CACHE_INVD_TIME : 
+                           MarketplaceConfig::CACHE_INVALIDATION_TIME
+      @v2_versions ||= mkp_memcache_fetch(key, cache_invalidation) do
+        version_ids = @installed_list.body.map { |x| x['version_id']}
+        v2_versions(version_ids)
+      end
+    end
+
+    def set_app_urls
+      @installed_list.body.try(:each) do |installed_mkp_app|
+        version_details = @v2_versions.body['versions'].detect { |x| x['id'] == installed_mkp_app['version_id'] }
+        unless version_details.nil?
+          installed_mkp_app['app_url'] = version_details['app_url']
+        end
+      end
+    end
+
+    # Get details for installed versions to get the app URL. 
+    def installed_mkp_apps_urls(page)
+      # return error response or empty response.
+      return @installed_list if @installed_list.body.blank?
+
+      get_version_details(page)
+      return error_message if error_status?(@v2_versions) && @v2_versions.body.nil?
+      set_app_urls
     end
 
     def installed_mkp_app_details
@@ -70,30 +102,29 @@ module Marketplace::ApiHelper
       installed_params
     end
 
-    def plug_code_from_cache(version_id)
+    def plug_code_from_cache(version_id, app_url)
       key = MemcacheKeys::FRESHPLUG_CODE % { :version_id => version_id }
       MemcacheKeys.fetch(key, MarketplaceConfig::CACHE_INVALIDATION_TIME) do
-        plug_code_from_s3(version_id)
+        plug_code_from_s3(app_url)
       end
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
     end
 
-    def plug_code_from_s3(version_id)
-      s3_id = version_id.to_s.reverse
-      open("https://#{MarketplaceConfig::CDN_STATIC_ASSETS}/#{s3_id}/#{Marketplace::Constants::PLG_FILENAME}").read
+    def plug_code_from_s3(app_url)
+      open(app_url).read
     rescue Exception => e
       NewRelic::Agent.notice_error(e)
     end
 
     def freshplug_script(installed_plug)
-      script = plug_code_from_cache(installed_plug[:version_id])
+      script = plug_code_from_cache(installed_plug[:version_id], installed_plug[:app_url])
 
       unless script.blank?
         liquid_objs = freshplug_liquids(installed_plug)
         Liquid::Template.parse(script.gsub("}}", " | encode_html}}")).render(liquid_objs, 
             :filters => [Integrations::FDTextFilter],
-            :registers => { :plug_asset => installed_plug[:version_id]}).html_safe
+            :registers => { :plug_asset => installed_plug[:app_url]}).html_safe
       else
         error = []
         error << %(<div class='alert alert-error'>)
