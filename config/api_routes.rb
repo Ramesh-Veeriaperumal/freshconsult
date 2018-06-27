@@ -406,9 +406,8 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :surveys, controller: 'ember/surveys', only: [:index]
-    resources :portals, controller: 'ember/portals', only: [:index] do
+    resources :portals, controller: 'ember/portals', only: [:index, :update, :show] do
       member do
-        get :show
         get :bot_prerequisites
       end
     end
@@ -445,7 +444,7 @@ Helpkit::Application.routes.draw do
         get :leaderboard_groups, to: 'ember/leaderboard#groups'
       end
     end
-    
+
     resources :default_dashboards, controller: 'ember/dashboard', only: [:show] do
       collection do
         get :satisfaction_survey, to: 'ember/dashboard#survey_info'
@@ -468,7 +467,7 @@ Helpkit::Application.routes.draw do
         post :test_email_forwarding
       end
     end
-    
+
     resources :sandboxes, controller: 'admin/sandboxes', only: [:index, :create, :destroy]
 
     resources :contact_password_policy, controller: 'ember/contact_password_policies',

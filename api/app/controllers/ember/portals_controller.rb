@@ -4,7 +4,7 @@ module Ember
 
     decorate_views
 
-    around_filter :run_on_slave, only: [:bot_prerequisites]
+    around_filter :run_on_slave, only: [:index, :bot_prerequisites]
 
     def index
       super
@@ -13,6 +13,16 @@ module Ember
 
     def show
       return unless validate_query_params
+    end
+
+    def update
+      if params[cname]['helpdesk_logo'].present?
+        assign_protected
+        update_logo
+      else
+        reset_preference
+      end
+      @item.save ? render(:show) : render_errors(@item.errors)
     end
 
     def bot_prerequisites
@@ -36,6 +46,47 @@ module Ember
 
       def load_objects
         @items = current_account.portals.all
+      end
+
+      def preload_options
+        [:helpdesk_logo]
+      end
+
+      def update_logo
+        logo_data = { id: params[cname]['helpdesk_logo']['id'] }
+        portal_delegator = PortalDelegator.new(@item, logo_data)
+        if !portal_delegator.valid?
+          render_custom_errors(portal_delegator, true)
+        else
+          portal_logo = portal_delegator.draft_logo
+          @attachment = portal_logo if portal_logo
+          build_helpdesk_logo
+        end
+      end
+
+      def validate_params
+        params[cname].permit(*PortalConstants::UPDATE_FIELDS)
+        portal = PortalValidation.new(params[cname], @item, string_request_params?)
+        render_custom_errors(agent, true) unless portal.valid?
+      end
+
+      def reset_preference
+        (@item[:preferences]).merge!(params[cname][:preferences])
+        @item.helpdesk_logo.destroy if @item.helpdesk_logo.present?
+      end
+
+      def assign_protected
+        (@item[:preferences]).merge!(params[cname][:preferences])
+      end
+
+      def build_helpdesk_logo
+        @attachment.save!
+        @item.helpdesk_logo = @attachment
+      end
+
+      def load_object
+        @item = scoper.preload(preload_options).find_by_id(params[:id])
+        log_and_render_404 unless @item
       end
 
       def tickets_count

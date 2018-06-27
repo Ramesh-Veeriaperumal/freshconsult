@@ -1,0 +1,12 @@
+type: object
+allOf:
+  - $ref: '#/definitions/extension_generic'
+  - properties:
+      helpdesk: 
+        type: object
+          items:
+          type: string
+    discussion_category_ids:
+      type: array
+      items:
+        type: integer

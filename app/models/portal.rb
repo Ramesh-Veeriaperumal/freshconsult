@@ -49,6 +49,13 @@ class Portal < ActiveRecord::Base
     :conditions => [' description = ?', 'fav_icon' ],
     :dependent => :destroy
 
+  has_one :helpdesk_logo,
+          as: :attachable,
+          class_name: 'Helpdesk::Attachment',
+          conditions: { attachable_type: AttachmentConstants::ATTACHABLE_TYPES['portal'] },
+          foreign_key: 'attachable_id',
+          dependent: :destroy
+
   has_one :template, :class_name => 'Portal::Template'
 
   has_many :portal_forum_categories,
@@ -94,7 +101,7 @@ class Portal < ActiveRecord::Base
   def has_solution_category? category_meta_id
     portal_solution_categories.find_by_solution_category_meta_id(category_meta_id).present?
   end
-  
+
   def has_forum_category? category
     portal_forum_categories.map(&:forum_category_id).include?(category.id)
   end
@@ -218,7 +225,7 @@ class Portal < ActiveRecord::Base
       portal_id: id,
       portal_logo: logo_url,
       bot_name: bot_name,
-      bot_id: bot_id            
+      bot_id: bot_id
     }
   end
 
@@ -266,7 +273,7 @@ class Portal < ActiveRecord::Base
     end
 
     def ticket_field_conditions
-      { 'product' => (main_portal && !account.products.empty?), 
+      { 'product' => (main_portal && !account.products.empty?),
         'company' => account.multiple_user_companies_enabled? && User.current.present? &&
                       (User.current.agent? || User.current.contractor?) }
     end
@@ -288,14 +295,13 @@ class Portal < ActiveRecord::Base
         if product && (portal_url_changed? || language_changed?)
           site_id = account.chat_setting.site_id
           chat_widget = product.chat_widget
-          if chat_widget && chat_widget.widget_id
+          chat_widget.id = chat_widget.widget_id
+          if chat_widget && chat_widget.id
             LivechatWorker.perform_async(
-              {
-                :worker_method => "update_widget", 
-                :widget_id => chat_widget.widget_id, 
-                :siteId => site_id, 
-                :attributes => { :site_url => portal_url, :language => language }
-              }
+              worker_method: 'update_widget',
+              widget_id: chat_widget.id,
+              siteId: site_id,
+              attributes: { site_url: portal_url, language: language }
             )
           end
         end
@@ -306,14 +312,13 @@ class Portal < ActiveRecord::Base
       if account.features?(:chat)
         site_id = account.chat_setting.site_id
         chat_widget = account.main_chat_widget
-        if chat_widget && chat_widget.widget_id
-          LivechatWorker.perform_async( 
-            {
-              :worker_method => "update_site", 
-              :widget_id => chat_widget.widget_id, 
-              :siteId => site_id, 
-              :attributes => {:language => language}
-            }
+        chat_widget.id = chat_widget.widget_id
+        if chat_widget && chat_widget.id
+          LivechatWorker.perform_async(
+            worker_method: 'update_site',
+            widget_id: chat_widget.id,
+            siteId: site_id,
+            attributes: { language: language }
           )
         end
       end
@@ -339,11 +344,11 @@ class Portal < ActiveRecord::Base
       Rails.logger.info "Deleting #{old_portal_url} route."
       Redis::RoutesRedis.delete_route_info(old_portal_url) unless old_portal_url.blank?
     end
-    
+
     def add_default_solution_category
       return if account.solution_category_meta.empty?
       #The above line is needed, as we created portals before soln categories, while creating an account.
-      
+
       default_category_meta = account.solution_category_meta.find_by_is_default(true)
       self.solution_category_metum_ids = self.solution_category_metum_ids | [default_category_meta.id] if default_category_meta.present?
     end
@@ -377,7 +382,7 @@ class Portal < ActiveRecord::Base
     end
   # * * * POD Operation Methods End * * *
 
-    # As a security measure, we expect the CNAME entry to match the freshdesk account's domain 
+    # As a security measure, we expect the CNAME entry to match the freshdesk account's domain
     # This can match either the Freshdesk full domain or the elb domain for SSL enabled accounts
 
     def cname_owner

@@ -237,7 +237,7 @@
 /portals:
   $ref: ./portals/list.yaml
 /portals/{id}:
-  $ref: ./portals/show.yaml
+  $ref: ./portals/get_and_update.yaml
 /portals/{id}/bot_prerequisites:
   $ref: ./portals/bot_prerequisites.yaml
 

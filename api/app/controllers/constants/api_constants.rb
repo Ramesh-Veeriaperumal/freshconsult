@@ -22,6 +22,7 @@ module ApiConstants
   DEMOSITE_URL = AppConfig['demo_site'][Rails.env]
 
   # ValidationConstants
+  COLOR_CODE_VALIDATOR = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
   EMAIL_REGEX = AccountConstants::EMAIL_REGEX
   EMAIL_VALIDATOR = AccountConstants::EMAIL_VALIDATOR
   ALLOWED_ATTACHMENT_SIZE = 15 * 1024 * 1024
