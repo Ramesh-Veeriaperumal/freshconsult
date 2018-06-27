@@ -2316,7 +2316,9 @@ en:
         default_portal_language: Default Portal Language
         portal_language_info: This will be the default language when customers visits your portal
         portal_customization: Portal Customization
-        portal_settings: Portal Settings
+        portal_settings: Portal settings
+        agent_portal: Agent Portal
+        edit_branding: Edit Branding        
         edit_portal: Edit Portal
         customize_portal: "Customize portal"
         save_and_customize: "Save & Customize portal"
@@ -2327,7 +2329,6 @@ en:
         contact_us: Contact us
         logo_and_favicon: "Logo & Favicon"
         customer_portal: Customer Portal
-        portal_settings: Portal Settings
         categories_visible: Portal Categories
         product_label: "Product: %{product_name}"
         enable_multilingual: "Setup Multilingual Support"

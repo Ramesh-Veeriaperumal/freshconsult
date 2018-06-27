@@ -1,0 +1,8 @@
+type: object
+properties:
+  primary_background:
+    type: string
+    description: Backgroung color for logo holder
+  nav_background:
+    type: string
+    description: backgroung color for navigation bar
