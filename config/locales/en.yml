@@ -2469,6 +2469,7 @@ en:
         view_bots: View bots tab
         manage_bots: Manage Bots
         reports: Reports
+        analytics: Analytics
         view_reports: View reports tab
         admin: Admin
         not_administrator: Not view any Administrator options
@@ -2480,8 +2481,8 @@ en:
         manage_supervisor_rules: Manage Supervisor rules
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
-        manage_dashboard: Manage ticket list views
-        # manage_dashboard_feature: Manage ticket list views and team dashboards
+        manage_ticket_list_views: Manage ticket list views
+        manage_dashboard: Manage team dashboards
         manage_ticket_templates: Manage Ticket Templates
         admin_tasks: Play God with Super Admin controls
         manage_account: Include account management
