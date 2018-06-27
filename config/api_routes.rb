@@ -350,6 +350,8 @@ Helpkit::Application.routes.draw do
         post :quick_create
         get :import, to: 'ember/customer_imports#index'
         post :import, to: 'ember/customer_imports#create'
+        delete :import, to: 'ember/customer_imports#destroy'
+        get :import_status, to: 'ember/customer_imports#status'
         post :quick_create
       end
       member do
@@ -368,6 +370,10 @@ Helpkit::Application.routes.draw do
       collection do
         put :bulk_delete
         post :export_csv
+        get :import, to: 'ember/customer_imports#index'
+        post :import, to: 'ember/customer_imports#create'
+        get :import_status, to: 'ember/customer_imports#status'
+        delete :import, to: 'ember/customer_imports#destroy'
       end
       member do
         get :activities

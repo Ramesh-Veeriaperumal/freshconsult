@@ -5,7 +5,11 @@ Hi <%= @user.name%>,
 <% elsif @wrong_csv %>
     <%= "#{t('flash.import.info7', :type => @type.singularize.capitalize, :solution_link => 'https://support.freshdesk.com/support/solutions/articles/199329')}" %>
 <% else %>
-	<%= "#{t('flash.import.info2', :type => @type)}"%>
+	<% if @import_stopped %>
+		<p><%= "#{t('flash.import.info20', :type => @type, :domain => @account_domain)}" %></p>
+	<% else %>
+		<p><%= "#{t('flash.import.info2', :type => @type)}" %></p>
+	<%end%>
 
 	<%= "#{t(:'flash.import.created', :count => @created)}" %>
 	<%= "#{t(:'flash.import.updated', :count => @updated)}" %>

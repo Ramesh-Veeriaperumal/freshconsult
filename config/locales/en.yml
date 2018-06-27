@@ -2868,29 +2868,30 @@ en:
       no_file: Please upload a file
       success: Your csv import has started and you will receive an email when it is completed. The import process may take several minutes depending on the volume of your data
       info1: "Your import has been successfully completed. You can open your helpdesk and go to Customer->%{uc_type} to view the newly added %{type}. "
-      info2: "We were unable to import all the %{type} in the csv file that you submitted. Please find the summary below:"
+      info2: "We were unable to import all the %{type} in the CSV file that you submitted. Please find the summary below:"
       created: "Created: %{count}"
       updated: "Updated: %{count}"
-      failed:  "Failed : %{count}"
+      failed:  "Failed: %{count}"
       info3: "The successfully imported %{type}, can be viewed under Customer->%{uc_type}."
-      info4: "Failed %{type}(s) and their corresponding errors can be found in the attachment."
+      info4: "Reasons why %{type}(s) failed to import can be found in the attachment."
       info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file"
       info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
-      info7: "%{type} import could not be initiated for csv that you submitted as the file format was incorrect. Please resubmit the file after reformatting it according to the guidelines mentioned in this solution article <a href = '%{solution_link}'>link</a>."
+      info7: "%{type} import could not be initiated for CSV that you submitted as the file format was incorrect. Please resubmit the file after reformatting it according to the guidelines mentioned in this solution article <a href = '%{solution_link}'>link</a>."
       info8: "Agents for whom skill update failed can be found in the attachment along with the reason for the failure."
       info9: "The successfully imported skills and mapping can be viewed under Admin->Skills. Kindly ensure that you add conditions to the new skills in order to map the skill to the right tickets. The new skills can be found at the bottom of the skill list."
-      info10: "The agent to skill mapping csv file that you uploaded has been imported. Please find the summary below:"
+      info10: "The agent to skill mapping CSV file that you uploaded has been imported. Please find the summary below:"
       info11: "Please check the formatting of the CSV file and upload it again."
       info12: "The value 'Email' or 'Skills' was not present in the first row."
-      info13: "The columns Email or Skills was missing is the csv."
+      info13: "The columns Email or Skills was missing is the CSV."
       info14: "We could not import skills from the file %{file_name} due to one of the following reasons:"
       info15: "No. of new skills that were created: %{create_count}"
       info16: "No. of agents whose skills were updated: %{update_count}"
       info17: "No. of new skills that could not be created: %{create_failed_count}"
       info18: "No. of agents whose skills could not be updated: %{update_failed_count}"
       info19: "Skills Import for %{portal_url}"
+      info20: "The %{type} import running on %{domain} was stopped. Please find the summary below:"
       invalid_file: "Please upload proper csv file"
-      help_desk: Please feel free to get in touch with us if you need anything else.
+      help_desk: Please feel free to get in touch with us if you need help.
       regards: Regards
       freshdesk: Freshdesk Team
     business_hours:
