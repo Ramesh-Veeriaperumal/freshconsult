@@ -28,7 +28,8 @@ module AttachmentConstants
     'post'             => 'Post',
     'user'             => 'User',
     'user_draft'       => 'UserDraft',
-    'account'          => 'Account'
+    'account'          => 'Account',
+    'portal'           => 'Portal'
   }.freeze
 
   CLONEABLE_ATTACHMENT_TYPES = [
