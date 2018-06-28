@@ -122,7 +122,7 @@ class Account < ActiveRecord::Base
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
     :bi_reports => false, :contact_merge_ui => false, :social_revamp => true, :multiple_user_emails => false,
-    :round_robin_revamp => false, :solutions_meta_read => false,
+    round_robin_revamp: false,
     :facebook_realtime => false, :autorefresh_node => false, :tokenize_emoji => false,
     :custom_dashboard => false, :updated_twilio_client => false,
     :report_field_regenerate => false, :reports_regenerate_data => false,
@@ -180,8 +180,8 @@ class Account < ActiveRecord::Base
     :multifile_attachments => true, :new_footer_feedback_box => false, :new_leaderboard => false,
     :periodic_login_feature => false, :restricted_helpdesk => false,
     :round_robin_capping => false, :sidekiq_dispatchr_feature => false,
-    :solutions_meta_read => false, :supervisor_dashboard => false, :support_new_ticket_cache => false,
-    :synchronous_apps => false, :ticket_list_page_filters_cache => false, :translate_solutions => false,
+    :supervisor_dashboard => false, :support_new_ticket_cache => false,
+    :synchronous_apps => false, :ticket_list_page_filters_cache => false,
     :spam_detection_service => false, :skip_hidden_tkt_identifier => false, 
     :agent_collision_alb => false, :auto_refresh_alb => false, :countv2_template_read => false, 
     :customer_sentiment_ui => false, :portal_solution_cache_fetch => false, :activity_ui => false,
@@ -200,7 +200,7 @@ class Account < ActiveRecord::Base
     :user_notifications => false,  :freshplug_enabled => false, :dkim => false, 
     :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, 
     :auto_ticket_export => false, :select_all => false, :facebook_realtime => false, 
-    :"Freshfone Call Tracker" => false, :skip_one_hop => false, :ticket_contact_export => false, 
+    :"Freshfone Call Tracker" => false, :ticket_contact_export => false,
     :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, 
     :skip_portal_cname_chk => false, :falcon_signup => false, :falcon_portal_theme => false, 
     :image_annotation => false, :email_actions => false, :ner => false, :disable_freshchat => false, 

@@ -102,8 +102,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
         if content_id
           model = item.is_a?(Helpdesk::Ticket) ? "Ticket" : "Note"
           attributes.merge!({:description => "content_id", :attachable_type => "#{model}::Inline"})
-          attachment_permissions = Account.current.skip_one_hop_enabled? ? "public-read" : "private"
-          write_options.merge!({ :acl => attachment_permissions })
+          write_options[:acl] = 'private'
         end
 
         att = account.attachments.new(attributes)
@@ -263,11 +262,11 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def inline_url
-    unless public_image? || Account.current.skip_one_hop_enabled?
+    if public_image?
+      content.url
+    else
       config_env = AppConfig[:attachment][Rails.env]
       "#{config_env[:protocol]}://#{config_env[:domain][PodConfig['CURRENT_POD']]}#{config_env[:port]}#{inline_url_path}"
-    else
-      self.content.url
     end
   end
 

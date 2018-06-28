@@ -163,7 +163,6 @@ module AccountHelper
   end
 
   def enable_multilingual
-    @account.launch(:translate_solutions)
     create_enable_multilingual_feature
     @account.features.multi_language.create
     @account.reload
