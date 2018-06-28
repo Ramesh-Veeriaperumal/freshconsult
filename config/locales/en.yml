@@ -5882,7 +5882,7 @@ en:
     reply_to_tickets: Use "Reply-to" email address to create requester contacts
     reply_to_tickets_info: "Note: If disabled, requester will be created using 'From' address in email."
     disable_agent_forward: "For forwarded emails, use original sender as requester"
-    disable_agent_forward_info: "When an agent forwards an email from his mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
+    disable_agent_forward_info: "When an agent forwards an email from their mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
     primary_email_delete_alert: "Can't delete primary email"
     using_custom_mailbox: "Using custom mail server"
     enable_compose: "Allow agents to initiate conversation with customers?"
