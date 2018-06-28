@@ -160,6 +160,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"archive/ticket", :only => [:show, :destroy]
     resource :"archive/conversation", :only => [:ticket_conversations]
     resource :"archive/tickets/activity", only: [:index]
+    resource :"admin/freshmarketer", only: %i[sessions session_info]
   end
 
   export_tickets do
@@ -628,6 +629,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_integrations/cti", :only => [:create, :index]
     resource :"email_preview"
     resource :"admin/freshchat", :only => [:index, :create, :update, :toggle]
+    resource :"admin/freshmarketer", only: %i[index link unlink enable_integration disable_integration]
   end
 
   manage_account do

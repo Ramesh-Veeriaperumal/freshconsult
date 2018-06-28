@@ -13,6 +13,7 @@ Helpkit::Application.routes.draw do
         post :reply, to: 'conversations#reply'
         post :notes, to: 'conversations#create'
         post :time_entries, to: 'time_entries#create'
+        get :sessions, to: 'admin/freshmarketer#sessions'
       end
     end
 
@@ -181,6 +182,16 @@ Helpkit::Application.routes.draw do
     resources :canned_forms, controller: 'admin/canned_forms', path: '/canned_forms' do
       member do
         post :handle, to: 'admin/canned_forms#create_handle'
+      end
+    end
+
+    resources :freshmarketer, controller: 'admin/freshmarketer', only: :index do
+      collection do
+        put :link
+        delete :unlink
+        put :enable_integration
+        put :disable_integration
+        get :session_info
       end
     end
   end

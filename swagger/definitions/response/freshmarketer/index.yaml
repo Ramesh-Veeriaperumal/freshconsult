@@ -1,0 +1,19 @@
+type: object
+properties:
+  linked:
+    type: boolean
+  experiment:
+    type: object
+    properties:
+      name: 
+        type: string
+      url:
+        type: string
+      status:
+        type: string
+      cdn_script:
+        type: string
+      app_url:
+        type: string
+      integrate_url:
+        type: string

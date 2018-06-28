@@ -238,6 +238,13 @@
           removeFromSessionStorage('seenArticlesArray');
         }
         _form.find("button, a.btn").attr('disabled',true);
+        <% if current_account.session_replay_enabled? && current_account.account_additional_settings.freshmarketer_linked? %>
+          if(typeof window.FM !== 'undefined') {
+            var requester_email = jQuery('#helpdesk_ticket_email').val();
+            window.FM.identify(requester_email);
+            console.log('Session identified: ' + requester_email);
+          }
+        <% end %>
       }
     });
 

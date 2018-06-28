@@ -1,0 +1,20 @@
+# only bitmap features supported here
+common: &common
+  poduseast:
+    - :session_replay
+  podeucentral: []
+  podapsoutheast: []
+  podapsouth: []
+
+development:
+  <<: *common
+staging:
+  <<: *common
+test:
+  <<: *common
+production:
+  poduseast1: []
+  podeucentral1:
+    - :session_replay
+  podapsoutheast2: []
+  podapsouth1: []

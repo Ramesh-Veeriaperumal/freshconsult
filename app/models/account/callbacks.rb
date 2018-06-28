@@ -299,6 +299,7 @@ class Account < ActiveRecord::Base
                               end
 
         plan_features_list.delete(:support_bot) if revoke_support_bot?
+        plan_features_list = plan_features_list - (UnsupportedFeaturesList || [])
 
         plan_features_list.each do |key, value|
           bitmap_value = self.set_feature(key)
