@@ -82,6 +82,10 @@ Helpkit::Application.routes.draw do
         put :make_agent
         put :restore
         delete :hard_delete
+        put :send_invite, to: 'contacts/misc#send_invite'
+      end
+      collection do
+        post :merge, to: 'contacts/merge#merge'
       end
     end
 
@@ -356,9 +360,7 @@ Helpkit::Application.routes.draw do
         put :bulk_restore
         put :bulk_send_invite
         put :bulk_whitelist
-        post :merge, to: 'ember/contacts/merge#merge'
         post :export_csv
-        post :quick_create
         get :import, to: 'ember/customer_imports#index'
         post :import, to: 'ember/customer_imports#create'
         delete :import, to: 'ember/customer_imports#destroy'
@@ -368,7 +370,6 @@ Helpkit::Application.routes.draw do
       member do
         put :restore
         put :whitelist
-        put :send_invite
         put :update_password
         get :activities
         put :assume_identity

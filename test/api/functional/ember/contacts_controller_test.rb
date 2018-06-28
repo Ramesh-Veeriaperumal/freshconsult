@@ -665,26 +665,6 @@ module Ember
       assert_response 404
     end
 
-    def test_send_invite
-      contact = add_new_user(@account, active: false)
-      put :send_invite, controller_params(version: 'private', id: contact.id)
-      assert_response 204
-    end
-
-    def test_send_invite_to_active_contact
-      contact = add_new_user(@account, active: true)
-      put :send_invite, controller_params(version: 'private', id: contact.id)
-      match_json([bad_request_error_pattern('id', :unable_to_perform)])
-      assert_response 400
-    end
-
-    def test_send_invite_to_deleted_contact
-      contact = add_new_user(@account, deleted: true, active: false)
-      put :send_invite, controller_params(version: 'private', id: contact.id)
-      match_json([bad_request_error_pattern('id', :unable_to_perform)])
-      assert_response 400
-    end
-
     def test_index_with_tags
       tags = Faker::Lorem.words(3).uniq
       contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, tag_names: tags.join(','))

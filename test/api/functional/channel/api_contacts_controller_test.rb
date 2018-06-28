@@ -66,7 +66,7 @@ module Channel
     end
 
     def test_create_contact_without_required_custom_fields
-      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'code', editable_in_signup: 'true', required_for_agent: 'true'))
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'another_city', editable_in_signup: 'true', required_for_agent: 'true'))
 
       set_jwt_auth_header('zapier')
       post :create, construct_params({version: 'channel'},  name: Faker::Lorem.characters(15),

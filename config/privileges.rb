@@ -381,6 +381,7 @@ Authority::Authorization::PrivilegeList.build do
     # Used by V2 API
     resource :"api_contact", :only => [:index, :show]
     resource :"api_company", :only => [:index, :show]
+    resource :"contacts/misc", only: [:send_invite]
   end
 
   # add_or_edit_contact
@@ -415,6 +416,7 @@ Authority::Authorization::PrivilegeList.build do
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as contact/company create.
     resource :api_contact_field, :only => [:index]
     resource :api_company_field , :only => [:index]
+    resource :"contacts/merge", only: [:merge]
   end
 
   delete_contact do
