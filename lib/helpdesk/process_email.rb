@@ -869,8 +869,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
         return params[:text]
       rescue SystemStackError => e
-        result = handle_system_stack_error e
-        return result
+        params[:text] = ""
+        return params[:text]
       rescue => e
         Rails.logger.info "Exception while getting text_part , message :#{e.message} - #{e.backtrace}"
       end
