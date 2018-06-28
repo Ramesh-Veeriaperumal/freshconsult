@@ -204,13 +204,13 @@ class Account < ActiveRecord::Base
     :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, 
     :skip_portal_cname_chk => false, :falcon_signup => false, :falcon_portal_theme => false, 
     :image_annotation => false, :email_actions => false, :ner => false, :disable_freshchat => false, 
-    :freshchat_integration => false, :facebook_page_redirect => false, :froala_editor_forums => false, 
-    :ticket_central_publish => false, :solutions_central_publish => false, :freshid => false, 
+    :freshchat_integration => false, :froala_editor_forums => false,
+    :ticket_central_publish => false, :solutions_central_publish => false, :freshid => false,
     :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, 
     :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false, 
     :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false, 
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
-    :post_central_publish => false, :audit_logs_central_publish => false, :twitter_common_redirect => false,
+    :post_central_publish => false, :audit_logs_central_publish => false,
     :new_ticket_recieved_metric => false, :euc_migrated_twitter => false, :canned_forms => false
   }
 
