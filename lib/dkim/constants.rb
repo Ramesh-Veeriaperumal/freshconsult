@@ -56,6 +56,8 @@ module Dkim::Constants
 
   REQ_FIELDS = ['id', 'user_id', 'username', 'dns']
 
+  DKIM_SELECTOR = { mrecord: 'fdm', srecord: 'fd' }.freeze
+
   DKIM_CONFIGURE_TIMEOUT = SENDGRID_CONFIG['sendgrid']['dkim']['configure']['timeout']
   DKIM_CONFIGURE_RETRIES = SENDGRID_CONFIG['sendgrid']['dkim']['configure']['retries']
 
@@ -69,15 +71,13 @@ module Dkim::Constants
   # 7 - category change required? or simply say custom records
 
   R53_ACTIONS = [
-    ['CREATE',   'TXT',     "build_domain_key(OutgoingEmailDomainCategory::SMTP_CATEGORIES.key(domain_category.category)+'dkim')",        "FILTERED_DKIM_RECORDS['dkim'].to_json",                                                                     false, false,  true,           true],
-    ['CREATE',   'CNAME',   "build_domain_key('acc'+Account.current.id.to_s)",                                                            "build_domain_key(OutgoingEmailDomainCategory::SMTP_CATEGORIES.key(domain_category.category)+'dkim')",       true,  true,   'dkim',         true],
-    ['CREATE',   'TXT',     "build_domain_key('spfmx')",                                                                                  "FILTERED_DKIM_RECORDS['subdomain_spf'].to_json",                                                            false, false,  true,           true],
-    ['CREATE',   'MX',      "build_domain_key('spfmx')",                                                                                  "'10 ' + FILTERED_DKIM_RECORDS['mail_server']",                                                              true,  false,  'mail_server',  true],
-
-    ['CREATE',   'CNAME',   "build_domain_key('s1freshdeskdkim')",                                                                        "FILTERED_DKIM_RECORDS['dkim1']",                                                                            false, false,  false,          false],
-    ['CREATE',   'CNAME',   "build_domain_key('s1acc'+Account.current.id.to_s)",                                                          "build_domain_key('s1freshdeskdkim')",                                                                       true,  true,   'dkim1',        false],
-
-    ['CREATE',   'CNAME',   "build_domain_key('s2freshdeskdkim')",                                                                        "FILTERED_DKIM_RECORDS['dkim2']",                                                                            false, false,  false,          false],
-    ['CREATE',   'CNAME',   "build_domain_key('s2acc'+Account.current.id.to_s)",                                                          "build_domain_key('s2freshdeskdkim')",                                                                       true,  true,   'dkim2',        false],  
+    ['CREATE',   'TXT',     "build_domain_key('fdmdkim')",                       "FILTERED_DKIM_RECORDS['dkim'].to_json",          false, false,  true,           true],
+    ['CREATE',   'CNAME',   "build_domain_key('acc'+Account.current.id.to_s)",    "build_domain_key('fdmdkim')",                   true,  true,   'dkim',         true],
+    ['CREATE',   'TXT',     "build_domain_key('spfmx')",                          "FILTERED_DKIM_RECORDS['subdomain_spf'].to_json", false, false,  true,           true],
+    ['CREATE',   'MX',      "build_domain_key('spfmx')",                          "'10 ' + FILTERED_DKIM_RECORDS['mail_server']",   true,  false,  'mail_server',  true],
+    ['CREATE',   'CNAME',   "build_domain_key('fdfreshdeskdkim')",                "FILTERED_DKIM_RECORDS['dkim1']",                 false, false,  false,         false],
+    ['CREATE',   'CNAME',   "build_domain_key('fdacc'+Account.current.id.to_s)",  "build_domain_key('fdfreshdeskdkim')",            true,  true,  'dkim1',        false],
+    ['CREATE',   'CNAME',   "build_domain_key('fd2freshdeskdkim')",               "FILTERED_DKIM_RECORDS['dkim2']",                 false, false,  false,         false],
+    ['CREATE',   'CNAME',   "build_domain_key('fd2acc'+Account.current.id.to_s)", "build_domain_key('fd2freshdeskdkim')",           true,  true,  'dkim2',        false] 
   ]
 end
