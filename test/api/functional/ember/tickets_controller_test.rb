@@ -2365,7 +2365,55 @@ module Ember
       post :export_csv, construct_params({ version: 'private' }, params_hash)
       assert_response 204
       DataExport.where(:id => export_ids).destroy_all
+    end
 
+    def test_export_inline_sidekiq_csv_with_no_tickets
+      @account.launch(:ticket_contact_export)
+      2.times do
+        create_ticket
+      end
+      initial_count = @account.data_exports.where(user_id: User.current.id).count
+      params_hash = ticket_export_param.merge(start_date: 6.days.ago.iso8601, end_date: 5.days.ago.iso8601)
+      Sidekiq::Testing.inline! do
+        post :export_csv, construct_params({ version: 'private' }, params_hash)
+      end
+      current_data_exports = @account.data_exports.where(user_id: User.current.id)
+      assert_equal initial_count, current_data_exports.length
+      @account.rollback(:ticket_contact_export)
+    end
+
+    def test_export_inline_sidekiq_csv_with_privilege
+      @account.launch(:ticket_contact_export)
+      2.times do
+        create_ticket
+      end
+      initial_count = @account.data_exports.where(user_id: User.current.id).count
+      params_hash = ticket_export_param
+      Sidekiq::Testing.inline! do
+        post :export_csv, construct_params({ version: 'private' }, params_hash)
+      end
+      current_data_exports = @account.data_exports.where(user_id: User.current.id)
+      assert_equal initial_count, current_data_exports.length - 1
+      assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
+      assert current_data_exports.last.attachment.content_file_name.ends_with?('.csv')
+      @account.rollback(:ticket_contact_export)
+    end
+
+    def test_export_inline_sidekiq_xls_with_privilege
+      @account.launch(:ticket_contact_export)
+      2.times do
+        create_ticket
+      end
+      initial_count = @account.data_exports.where(user_id: User.current.id).count
+      params_hash = ticket_export_param.merge(format: 'xls')
+      Sidekiq::Testing.inline! do
+        post :export_csv, construct_params({ version: 'private' }, params_hash)
+      end
+      current_data_exports = @account.data_exports.where(user_id: User.current.id)
+      assert_equal initial_count, current_data_exports.length - 1
+      assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
+      assert current_data_exports.last.attachment.content_file_name.ends_with?('.xls')
+      @account.rollback(:ticket_contact_export)
     end
 
     def test_update_with_company_id

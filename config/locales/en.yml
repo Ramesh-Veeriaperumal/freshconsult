@@ -7499,6 +7499,7 @@ en:
     additional_fields_help: Description fields are moved into additional fields
     view_all_tickets : Export as CSV
     check_uncheck_title: 'Check/Uncheck all'
+    failure_message: "An error occurred while exporting data. Please try again or contact Freshdesk support."
     data_backup:
       body: Your data export is ready for download.
     data_backup_failure:
