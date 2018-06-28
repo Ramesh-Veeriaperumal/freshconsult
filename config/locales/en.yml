@@ -12261,9 +12261,29 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
   sandbox:
     live: Sandbox is live
+    sync_complete: Sandbox sync complete!
     error:
-      create: sandbox account already exist
-    email: 'This email is generated from a sandbox account'
+      create: Sandbox already exists
+    sandbox_mail: This email is generated from a sandbox account
+    mail:
+      greeting: Hi
+      live_message: Your sandbox has <br> been created
+      sandbox_button: TAKE ME TO SANDBOX
+      button_error: If the button above doesn't work, paste this link <br> into your web browser
+      freshdesk_recommends: Freshdesk recommends
+      recommended_point_1: Notify all helpdesk admins about the creation of the sandbox account and the expected time of testing.
+      recommended_point_2: Share the list of changes you will be making with other admins and collate changes from them as well to avoid confusion.
+      recommended_point_3: Request all admins to avoid making changes to your Freshdesk account while the sandbox account is live.
+      recommended_point_4: Plan your testing carefully and keep the sandbox account live for only short periods of time to avoid changes from accumulating.
+      recommended_point_5: Make sure all admins have completed testing in the sandbox account before initiating a sync.
+      recommended_point_6: Review all changes carefully before syncing back to your Freshdesk account.
+      recommended_point_7: Sync the sandbox account to your Freshdesk account during non-peak hours as it might take time if you have a lot of changes.
+      footer:
+        cheers: Cheers!
+        info_line: Questions? The Freshdesk team is always here to help. Contact <br/><span>support@freshdesk.com</span> and we'll get back to you soon.
+      diff_success: The following changes were synced from your Sandbox account to your Freshdesk account
+      diff_failure: Some changes in the Sandbox were not copied to your Freshdesk account.
+      diff_is_edited: Edited Properties
     banner:
-      production_info: Your sandbox account is curently active. We do not recommend you make any changes to your freshdesk account. <a href='http://%{url}' target=_blank rel="noreferrer noopener">Take me there.</a>
+      production_info: Your sandbox account is currently active. We do not recommend you make any changes to your Freshdesk account. <a href='http://%{url}' target=_blank rel="noreferrer noopener">Take me there.</a>
 
