@@ -86,8 +86,9 @@ module Reports::CustomSurveyReport
 
         rating_text_for_custom_questions survey_result, question, method_chain.last
       else
-        result = method_chain.inject(survey_result) do |evaluate_on, method_name|
-          evaluate_on.try(method_name)
+        result  = method_chain.inject(survey_result) do |evaluate_on, method_name|
+          value = evaluate_on.try(method_name)
+          value = (value && [:name,:body].include?(method_name)) ? value.gsub(/^(\s*[=+\-@])+/, "") : value
         end
         result = result.strftime("%F %T") if result.is_a?(Time)
         return '' if result.nil?
