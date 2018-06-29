@@ -87,7 +87,7 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 				$('div.info-highlight').show();
 			}
 		},
-        switchConversationView: function (element, tab = true) {
+        switchConversationView: function (element, tab) {
             $('.conv-menu .sub-info').text(element.text());
 
             //Load content through ajax
@@ -120,7 +120,7 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			});
 			$('body').on('click.contact-view', '.dropdown-menu .item', function(e) {
 				e.preventDefault();
-				self.switchConversationView($(this));
+				self.switchConversationView($(this), true);
 			});
 			$('body').on('click.contact-view', '#customer-delete-confirmation-submit', function(e) {
 				e.preventDefault();
