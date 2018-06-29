@@ -32,9 +32,11 @@ module ImportCsvUtil
   def store_file type
     file_field = params[:file]
     file_path  = "import/#{Account.current.id}/#{type}/#{Time.now.to_i}/#{file_field.original_filename}"
-    row_count = `wc -l "#{file_field.path}"`.strip.split(' ')[0].to_i
-    save_row_count row_count, type
-
+    if type == 'contact' || type == 'company'
+      row_count = `wc -l "#{file_field.path}"`.strip.split(' ')[0].to_i
+      save_row_count row_count, type
+    end
+    
     AwsWrapper::S3Object.store(file_path, file_field.tempfile, S3_CONFIG[:bucket], :content_type => file_field.content_type)
 
     session[:map_fields] = {}
