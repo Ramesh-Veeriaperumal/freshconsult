@@ -87,20 +87,9 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 				$('div.info-highlight').show();
 			}
 		},
-        switchConversationView: function (element, tab) {
-            $('.conv-menu .sub-info').text(element.text());
-
-            //Load content through ajax
-            var url = element.data("url");
-            var href = element.attr("href");
-            var pane = element;
-            $(href).text("Loading...");
-            $(href).load(url, function (result) {
-                if (tab) {
-                    pane.tab('show');
-                }
-            });
-        },
+		switchConversationView: function(element) {
+			$('.conv-menu .sub-info').text(element.text());
+		},
 		bindEvents: function() {
 			var self = this;
 			$('body').on('click.contact-view', '.add-new-tag', function(e){
@@ -120,7 +109,7 @@ window.App.Contacts.Contact_show = window.App.Contacts.Contact_show || {};
 			});
 			$('body').on('click.contact-view', '.dropdown-menu .item', function(e) {
 				e.preventDefault();
-				self.switchConversationView($(this), true);
+				self.switchConversationView($(this));
 			});
 			$('body').on('click.contact-view', '#customer-delete-confirmation-submit', function(e) {
 				e.preventDefault();
