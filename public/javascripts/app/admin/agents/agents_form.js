@@ -5,7 +5,7 @@ window.App.Agents = window.App.Agents || {};
 
 (function($) {
   'use strict';
-
+  var freshid_info_fields = $('.name,#user_phone,#user_mobile,#user_job_title');
   App.Agents.Form = {
 	onFirstVisit: function(data) {
 		this.onVisit(data);
@@ -20,6 +20,7 @@ window.App.Agents = window.App.Agents || {};
 	role_details: {},
 	groups: {},
 	group_details: {},
+	freshid_enabled: {},
   initializeData: function(data) {
     this.userName = data.userName;
     this.SkillBasedRRFlag = data.SkillBasedRRFlag;
@@ -27,6 +28,7 @@ window.App.Agents = window.App.Agents || {};
     this.role_details = data.role_details;
     this.groups = data.groups;
     this.group_details = data.group_details;
+    this.freshid_enabled = data.freshid_enabled;
     this.bindHandlers();
   },
 	repaintSkills: function() {
@@ -91,6 +93,38 @@ window.App.Agents = window.App.Agents || {};
 			this.initializeAgentSkills();
 		}
 	},
+
+	showInfoFields: function(data) {
+		$('.loading-box').addClass('hide');
+		$('#searching-agent-email').removeClass('pt16');
+		$('.freshworks-info').removeClass('hide');
+		if(data.user_info){
+		  this.disableTabForFreshidFields();
+		  this.setAgentInfo(data);
+		}
+		else{
+		  this.enableInfoFields();
+		}
+	},
+
+	setAgentInfo: function(data){
+		$('.name').val(data.user_info.name).addClass('uneditable-input');
+		$('#user_phone').val(data.user_info.phone).addClass('uneditable-input');
+		$('#user_mobile').val(data.user_info.mobile).addClass('uneditable-input');
+		$('#user_job_title').val(data.user_info.job_title).addClass('uneditable-input');
+	},
+
+	disableTabForFreshidFields: function(){
+		$('.freshworks-message').removeClass('hide');
+		freshid_info_fields.attr('tabindex','-1');
+	},
+
+	enableInfoFields: function(){
+		$('.freshworks-message').addClass('hide');
+		freshid_info_fields.val('').removeClass('uneditable-input');
+		freshid_info_fields.removeAttr('tabindex');
+	},
+
 	initializeAgentForm: function() {
 		var $doc = $(document);
 		var _this = this;
@@ -176,6 +210,34 @@ window.App.Agents = window.App.Agents || {};
 			});
 
 			$("#agent_form").valid();
+    });
+
+	if(jQuery("#user_email").val() && jQuery("#user_email").valid()) {
+	  $('.freshworks-info').removeClass('hide');
+	};
+
+    $("#user_email").on( "change", function(event) {
+      if(_this.freshid_enabled){	
+        var email = jQuery("#user_email").val() ;
+        if(jQuery("#user_email").valid()) {
+	      	$('.freshworks-info.control-group').addClass('pb16 hide');
+	        $('.loading-box').removeClass('hide');
+	        $('#searching-agent-email').addClass('pt16');
+	  	    var response = jQuery.ajax({
+	            url: '/agents/search_in_freshworks',
+	            method: "GET",
+	            data: {"email": email},
+	            dataType: "json",
+	            success: function(data) {
+	      		  _this.showInfoFields(data);
+	    	    }
+	        });
+        }
+        else{
+  	  	    $('.freshworks-info').addClass('hide');
+  	  	    $('.freshworks-info.control-group').removeClass('pb16');
+  	    }
+  	 }
     });
 
     $('#agent_form').submit(function(ev) {

@@ -2,8 +2,9 @@ class Export::TicketDump < Export::TicketSchedule
   
   def perform
     initialize_params
-    file_string =  Sharding.run_on_slave{ export_file }
-    upload_file(file_string)
+    @file_path = generate_file_path('ticket', 'csv')
+    Sharding.run_on_slave { export_tickets }
+    upload_file
     save_file_name file_name
     DataExportMailer.send(
       @no_tickets ? :scheduled_ticket_export_no_data : :scheduled_ticket_export,
@@ -43,8 +44,9 @@ class Export::TicketDump < Export::TicketSchedule
       @schedule.initial_export.to_s.to_bool
     end
 
-    def upload_file file_string
-      AwsWrapper::S3Object.store(s3_file_path, file_string, S3_CONFIG[:bucket])
+    def upload_file
+      file = File.open(@file_path)
+      AwsWrapper::S3Object.store(s3_file_path, file, S3_CONFIG[:bucket])
     end
 
     def s3_file_path
@@ -63,6 +65,7 @@ class Export::TicketDump < Export::TicketSchedule
 
     def destroy_task
       @task.destroy
+      FileUtils.rm_f(@file_path)
     end
 
 end

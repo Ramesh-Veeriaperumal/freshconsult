@@ -13,6 +13,7 @@ Helpkit::Application.routes.draw do
         post :reply, to: 'conversations#reply'
         post :notes, to: 'conversations#create'
         post :time_entries, to: 'time_entries#create'
+        get :sessions, to: 'admin/freshmarketer#sessions'
       end
     end
 
@@ -81,6 +82,10 @@ Helpkit::Application.routes.draw do
         put :make_agent
         put :restore
         delete :hard_delete
+        put :send_invite, to: 'contacts/misc#send_invite'
+      end
+      collection do
+        post :merge, to: 'contacts/merge#merge'
       end
     end
 
@@ -181,6 +186,16 @@ Helpkit::Application.routes.draw do
     resources :canned_forms, controller: 'admin/canned_forms', path: '/canned_forms' do
       member do
         post :handle, to: 'admin/canned_forms#create_handle'
+      end
+    end
+
+    resources :freshmarketer, controller: 'admin/freshmarketer', only: :index do
+      collection do
+        put :link
+        delete :unlink
+        put :enable_integration
+        put :disable_integration
+        get :session_info
       end
     end
   end
@@ -345,17 +360,16 @@ Helpkit::Application.routes.draw do
         put :bulk_restore
         put :bulk_send_invite
         put :bulk_whitelist
-        post :merge, to: 'ember/contacts/merge#merge'
         post :export_csv
-        post :quick_create
         get :import, to: 'ember/customer_imports#index'
         post :import, to: 'ember/customer_imports#create'
+        delete :import, to: 'ember/customer_imports#destroy'
+        get :import_status, to: 'ember/customer_imports#status'
         post :quick_create
       end
       member do
         put :restore
         put :whitelist
-        put :send_invite
         put :update_password
         get :activities
         put :assume_identity
@@ -368,6 +382,10 @@ Helpkit::Application.routes.draw do
       collection do
         put :bulk_delete
         post :export_csv
+        get :import, to: 'ember/customer_imports#index'
+        post :import, to: 'ember/customer_imports#create'
+        get :import_status, to: 'ember/customer_imports#status'
+        delete :import, to: 'ember/customer_imports#destroy'
       end
       member do
         get :activities
@@ -400,9 +418,8 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :surveys, controller: 'ember/surveys', only: [:index]
-    resources :portals, controller: 'ember/portals', only: [:index] do
+    resources :portals, controller: 'ember/portals', only: [:index, :update, :show] do
       member do
-        get :show
         get :bot_prerequisites
       end
     end
@@ -439,7 +456,7 @@ Helpkit::Application.routes.draw do
         get :leaderboard_groups, to: 'ember/leaderboard#groups'
       end
     end
-    
+
     resources :default_dashboards, controller: 'ember/dashboard', only: [:show] do
       collection do
         get :satisfaction_survey, to: 'ember/dashboard#survey_info'
@@ -462,7 +479,7 @@ Helpkit::Application.routes.draw do
         post :test_email_forwarding
       end
     end
-    
+
     resources :sandboxes, controller: 'admin/sandboxes', only: [:index, :create, :destroy]
 
     resources :contact_password_policy, controller: 'ember/contact_password_policies',

@@ -143,9 +143,11 @@ module MemcacheKeys
 
   INSTALLED_FRESHPLUGS = "v3/FA:%{page}:PLUGS:%{account_id}:%{platform_version}"
 
+  INSTALLED_VERSIONS = "v1/FA:%{page}:VERSIONS:%{account_id}:%{platform_version}"
+
   INSTALLED_APPS_V2 = "v1/FA:APPS:%{account_id}"
 
-  FRESHPLUG_CODE = "v1/FA:PLUG:%{version_id}"
+  FRESHPLUG_CODE = "v2/FA:PLUG:%{version_id}"
 
   EXTENSION_CATEGORIES = "v1/FA:EXTENSION_CATEGORIES"
 

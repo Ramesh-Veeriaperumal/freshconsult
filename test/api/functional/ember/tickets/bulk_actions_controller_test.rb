@@ -542,6 +542,27 @@ module Ember
         User.unstub(:current)
       end
 
+      def test_bulk_reply_for_bot_ticket
+        Account.any_instance.stubs(:support_bot_configured?).returns(true)
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
+        ticket = @account.tickets.where(display_id: ticket_ids.first).first
+        ticket.source = TicketConstants::BOT_SOURCE
+        ticket.save
+        notes_count = ticket.notes.count
+        reply_hash = { body: Faker::Lorem.paragraph }
+        params_hash = { ids: ticket_ids, reply: reply_hash }
+        stub_attachment_to_io do
+          Sidekiq::Testing.inline! do
+            post :bulk_update, construct_params({ version: 'private' }, params_hash)
+          end
+        end
+        assert_response 202
+        match_json(partial_success_response_pattern(ticket_ids, {}))
+        ticket.reload
+        assert_equal (notes_count + 1), ticket.notes.count
+        Account.any_instance.unstub(:support_bot_configured?)
+      end
+
       def test_bulk_reply_with_attachments
         ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
         attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id

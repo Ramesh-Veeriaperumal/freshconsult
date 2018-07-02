@@ -19,7 +19,7 @@ class Bot < ActiveRecord::Base
 
   before_create :set_external_id, :set_analytics_mock_data
   before_update :check_constant_fields
-  before_destroy :cleanup # Destroy bot ticket mappings, feedbacks and feedback mappings.
+  before_destroy :clear_status, :cleanup
 
   has_one :logo,
           as: :attachable,
@@ -135,6 +135,7 @@ class Bot < ActiveRecord::Base
     end
 
     def cleanup
+      # Destroy bot ticket mappings, feedbacks and feedback mappings.
       ::Bot::Cleanup.perform_async(bot_id: self.id)
     end
 

@@ -1,7 +1,7 @@
 module AttachmentConstants
   # Controller constants
   CREATE_FIELDS = %w[user_id content inline inline_type description].freeze
-  UNLINK_FIELDS = %w(attachable_id attachable_type).freeze
+  UNLINK_FIELDS = %w[attachable_id attachable_type].freeze
 
   CLOUD_FILE_FIELDS = [cloud_files: [:url, :name, :application_id]].freeze
 
@@ -29,17 +29,22 @@ module AttachmentConstants
     'user'             => 'User',
     'company'          => 'Company',
     'user_draft'       => 'UserDraft',
-    'account'          => 'Account'
+    'account'          => 'Account',
+    'portal'           => 'Portal'
+  }.freeze
+
+  ATTACHMENT_DESCRIPTION = {
+    'helpdesk_logo' => 'helpdesk_logo'
   }.freeze
 
   CLONEABLE_ATTACHMENT_TYPES = [
-    'Account', 'Admin::CannedResponses::Response', 'Solution::Article'
+    'Account', 'Admin::CannedResponses::Response', 'Solution::Article', 'Helpdesk::TicketTemplate'
   ].freeze
 
   # Only xxx.jpg and xxx.png are allowed to upload
-  INLINE_IMAGE_EXT = %w(.jpg .jpeg .jpe .png .gif .tiff).freeze
+  INLINE_IMAGE_EXT = %w[.jpg .jpeg .jpe .png .gif .tiff].freeze
 
-  LOAD_OBJECT_EXCEPT = %w(unlink).freeze
+  LOAD_OBJECT_EXCEPT = %w[unlink].freeze
 
   # Wrap parameters args
   WRAP_PARAMS = [:attachment, exclude: [], format: [:json, :multipart_form]].freeze

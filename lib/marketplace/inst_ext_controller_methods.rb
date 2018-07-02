@@ -46,14 +46,11 @@ module Marketplace::InstExtControllerMethods
   end
 
   def configs_page_v2
-    s3_id = params[:version_id].to_s.reverse
-    @configs_url = "https://#{MarketplaceConfig::CDN_STATIC_ASSETS}/#{s3_id}/#{Marketplace::Constants::IPARAM_IFRAME}"
+    @configs_url = @extension['configs_url']
   end
 
   def oauth_iparams_page
-    s3_id = params[:version_id].to_s.reverse
-    oauth_iparams_url = "https://#{MarketplaceConfig::CDN_STATIC_ASSETS}/#{s3_id}/#{Marketplace::Constants::OAUTH_IPARAM}"
-    @configs_page = open(oauth_iparams_url).read
+    @configs_page = open(@extension['oauth_iparams_url']).read
   end
 
   def extension_has_config?

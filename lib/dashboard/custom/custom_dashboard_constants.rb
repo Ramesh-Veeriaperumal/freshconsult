@@ -62,7 +62,7 @@ module Dashboard::Custom::CustomDashboardConstants
   ].freeze
 
   GROUP_WIDGETS = ['csat', 'leaderboard', 'ticket_trend_card', 'time_trend_card', 'sla_trend_card'].freeze
-  PRODUCT_WIDGETS = ['tickets_trend_card', 'time_trend_card', 'sla_trend_card'].freeze
+  PRODUCT_WIDGETS = ['ticket_trend_card', 'time_trend_card', 'sla_trend_card'].freeze
   TICKET_FILTER_WIDGETS = ['scorecard', 'bar_chart'].freeze
 
   WIDGET_MODULES_BY_TOKEN = Hash[*WIDGET_MODULES.map { |i| [i[1], i[2]] }.flatten]

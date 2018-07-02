@@ -1,0 +1,46 @@
+get:
+  tags: [Portal]
+  summary: Show portal
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: ID of the portal
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/portal'
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    404:
+      description: Resource not found
+
+put:
+  tags: [Portal]
+  summary: Update
+  description: Update portal
+  parameters:
+  - name: id
+    in: path
+    type: string
+    description: Identifier of the portal
+    required: true
+  - name: data
+    in: body
+    required: true
+    schema:
+      $ref: '#/definitions/portal'
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad request error
+    403:
+      description: Access denied

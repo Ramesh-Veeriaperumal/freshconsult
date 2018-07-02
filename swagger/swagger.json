@@ -1240,6 +1240,56 @@
         }
       }
     },
+    "/tickets/{id}/sessions": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "description": "Get recent sessions",
+        "summary": "Recent sessions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/freshmarketer_sessions"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
+          }
+        }
+      }
+    },
     "/tickets/{id}/activities": {
       "get": {
         "tags": [
@@ -1672,11 +1722,14 @@
               "$ref": "#/definitions/summary"
             }
           },
+          "204": {
+            "description": "Summary not found"
+          },
           "403": {
             "description": "Access denied"
           },
           "404": {
-            "description": "Not found"
+            "description": "Ticket Not found"
           }
         }
       },
@@ -4461,7 +4514,7 @@
         "tags": [
           "Portal"
         ],
-        "summary": "Show",
+        "summary": "Show portal",
         "parameters": [
           {
             "name": "id",
@@ -4480,7 +4533,7 @@
             }
           },
           "400": {
-            "description": "Bad Request Error",
+            "description": "Bad request error",
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
@@ -4490,6 +4543,41 @@
           },
           "404": {
             "description": "Resource not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Portal"
+        ],
+        "summary": "Update",
+        "description": "Update portal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Identifier of the portal",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/portal"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request error"
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
       }
@@ -7255,6 +7343,235 @@
           }
         }
       }
+    },
+    "/freshmarketer": {
+      "get": {
+        "tags": [
+          "freshmarketer"
+        ],
+        "description": "Get experiment info",
+        "summary": "Experiment",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/freshmarketer_experiment"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
+          }
+        }
+      }
+    },
+    "/freshmarketer/link": {
+      "put": {
+        "tags": [
+          "freshmarketer"
+        ],
+        "summary": "Link",
+        "description": "Link to freshmarketer account",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "create",
+              "associate"
+            ]
+          },
+          {
+            "name": "value",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "409": {
+            "description": "Resource conflict Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
+          }
+        }
+      }
+    },
+    "/freshmarketer/unlink": {
+      "delete": {
+        "tags": [
+          "freshmarketer"
+        ],
+        "summary": "Unlink",
+        "description": "Disconnect freshmarketer account",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
+          }
+        }
+      }
+    },
+    "/freshmarketer/session_info": {
+      "get": {
+        "tags": [
+          "freshmarketer"
+        ],
+        "summary": "Session",
+        "description": "Retrieves session information based on session ID",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "query",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/freshmarketer_session"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
+          }
+        }
+      }
+    },
+    "/freshmarketer/enable_integration": {
+      "put": {
+        "tags": [
+          "freshmarketer"
+        ],
+        "summary": "Enable Integration",
+        "description": "Enable Integration",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
+          }
+        }
+      }
+    },
+    "/freshmarketer/disable_integration": {
+      "put": {
+        "tags": [
+          "freshmarketer"
+        ],
+        "summary": "Disable Integration",
+        "description": "Disable Integration",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/internal_server_error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -7658,6 +7975,14 @@
         }
       }
     },
+    "internal_server_error": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "request_error": {
       "type": "object",
       "properties": {
@@ -7831,11 +8156,11 @@
     "contact_merge_input": {
       "type": "object",
       "properties": {
-        "primary_id": {
+        "primary_contact_id": {
           "description": "ID of the primary contact",
           "type": "integer"
         },
-        "target_ids": {
+        "secondary_contact_ids": {
           "description": "Ids of contacts that will be merged into the Primary contact",
           "type": "array",
           "items": {
@@ -7878,13 +8203,16 @@
                 "type": "integer",
                 "minimum": 1
               }
+            },
+            "unique_external_id": {
+              "type": "string"
             }
           }
         }
       },
       "required": [
-        "primary_id",
-        "target_ids",
+        "primary_contact_id",
+        "secondary_contact_ids",
         "contact"
       ]
     },
@@ -10714,6 +11042,52 @@
                 "type": "integer"
               }
             },
+            "preferences": {
+              "type": "object",
+              "properties": {
+                "helpdesk": {
+                  "type": "object",
+                  "properties": {
+                    "primary_background": {
+                      "type": "string",
+                      "description": "Backgroung color for logo holder"
+                    },
+                    "nav_background": {
+                      "type": "string",
+                      "description": "backgroung color for navigation bar"
+                    }
+                  }
+                }
+              }
+            },
+            "helpdesk_logo": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "description": "id of the attachment"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "name of the file"
+                },
+                "content_type": {
+                  "type": "string"
+                },
+                "size": {
+                  "type": "integer"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                },
+                "attachment_url": {
+                  "type": "string"
+                }
+              }
+            },
             "discussion_category_ids": {
               "type": "array",
               "items": {
@@ -13169,6 +13543,24 @@
         }
       }
     },
+    "freshmarketer_sessions": {
+      "title": "sessions",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "recorded_on": {
+            "type": "string"
+          },
+          "duration": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "dashboard_activities": {
       "type": "array",
       "description": "Dashboard activities",
@@ -14624,6 +15016,46 @@
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "freshmarketer_experiment": {
+      "type": "object",
+      "properties": {
+        "linked": {
+          "type": "boolean"
+        },
+        "experiment": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "cdn_script": {
+              "type": "string"
+            },
+            "app_url": {
+              "type": "string"
+            },
+            "integrate_url": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "freshmarketer_session": {
+      "title": "session",
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
         }
       }
     }

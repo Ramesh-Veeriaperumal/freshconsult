@@ -1135,7 +1135,7 @@ class User < ActiveRecord::Base
   def create_freshid_user
     return if freshid_disabled_or_customer?
     Rails.logger.info "FRESHID Creating user :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}"
-    reset_freshid_user if email_changed?
+    self.name = name_from_email if !self.name.present?
     freshid_user = Freshid::User.create(user_attributes_for_freshid)
     if freshid_user.present?
       self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
@@ -1245,11 +1245,6 @@ class User < ActiveRecord::Base
         job_title: job_title.presence,
         domain: account.full_domain
       }
-    end
-
-    def reset_freshid_user
-      self.name = name_from_email
-      self.phone = self.mobile = nil
     end
 
     def name_part(part)

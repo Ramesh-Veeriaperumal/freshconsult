@@ -48,7 +48,21 @@ class ContactDelegator < BaseDelegator
   end
 
   def validate_user_activation
-    errors[:id] << :unable_to_perform if deleted || blocked || active
+    if deleted || blocked || active
+      errors[:id] << :invalid_user_for_activation
+      reason = if parent_id?
+                 'merged'
+               elsif deleted
+                 'deleted'
+               elsif blocked
+                 'blocked'
+               else
+                 'active'
+               end
+      error_options[:id] = { reason: reason }
+    elsif !has_email?
+      errors[:id] << :no_email_for_user
+    end
   end
 
   def validate_avatar_ext

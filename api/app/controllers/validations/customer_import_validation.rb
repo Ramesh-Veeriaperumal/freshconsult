@@ -1,11 +1,8 @@
 class CustomerImportValidation < ApiValidation
   include CustomerImportConstants
 
-  attr_accessor :type, :file, :fields
+  attr_accessor :file, :fields
 
-  validates :type, required: true, custom_inclusion: {
-    in: CustomerImportConstants::CUSTOMER_IMPORT_TYPES, allow_nil: false
-  }
   validates :fields, data_type: { rules: Hash, allow_nil: false },
                      required: true
   validates :file, required: true

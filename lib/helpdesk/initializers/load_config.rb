@@ -59,3 +59,7 @@ KafkaCollectorConfig = YAML.load_file(File.join(Rails.root, 'config', 'kafka_col
 ChannelFrameworkConfig = YAML.load_file(File.join(Rails.root, 'config', 'channel_framework.yml'))[Rails.env]
 
 SchedulerClientKeys = YAML.load_file(File.join(Rails.root, 'config', 'scheduler_client_keys.yml'))[Rails.env]
+
+FreshmarketerConfig = YAML.load_file(Rails.root.join('config', 'freshmarketer.yml'))[Rails.env]
+
+UnsupportedFeaturesList = YAML.load_file(Rails.root.join('config', 'features', 'unsupported_features.yml'))[Rails.env][PodConfig["CURRENT_POD"]]

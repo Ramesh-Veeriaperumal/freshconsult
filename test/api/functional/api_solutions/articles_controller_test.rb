@@ -14,7 +14,6 @@ module ApiSolutions
 
     def initial_setup
       return if @@initial_setup_run
-      @account.launch(:translate_solutions)
       additional = @account.account_additional_settings
       additional.supported_languages = ["es","ru-RU"]
       additional.save

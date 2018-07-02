@@ -17,6 +17,8 @@
     $ref: ./error/bulk.yaml
   bad_request_error:
     $ref: ./error/bad_request.yaml
+  internal_server_error:
+    $ref: ./error/internal_server_error.yaml
   request_error:
     $ref: ./error/request.yaml
   agents_bulk_action_error:
@@ -371,6 +373,9 @@
   article_content:
     $ref: './response/article_content.yaml'
 
+  freshmarketer_sessions:
+    $ref: './response/tickets/freshmarketer_sessions.yaml'
+
   # Dashboard activities
   dashboard_activities:
     $ref: './response/dashboard/activities.yaml'
@@ -454,3 +459,9 @@
     $ref: ./response/sandboxes/index.yaml
   sandboxes_create:
     $ref: ./response/sandboxes/create.yaml
+
+  #Freshmarketer
+  freshmarketer_experiment:
+    $ref: ./response/freshmarketer/index.yaml
+  freshmarketer_session:
+    $ref: ./response/freshmarketer/session.yaml

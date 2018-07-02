@@ -15,7 +15,9 @@
       403:
         description: Access denied 
       404:
-        description: Not found
+        description: Ticket Not found
+      204:
+        description: Summary not found
 
   put:
     tags: ['ticket summary']

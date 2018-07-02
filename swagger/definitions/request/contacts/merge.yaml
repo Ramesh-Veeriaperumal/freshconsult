@@ -1,9 +1,9 @@
 type: object
 properties:
-  primary_id:
+  primary_contact_id:
     description: ID of the primary contact
     type: integer
-  target_ids:
+  secondary_contact_ids:
     description: Ids of contacts that will be merged into the Primary contact
     type: array
     items:
@@ -35,7 +35,9 @@ properties:
           items:
             type: integer
             minimum: 1
+        unique_external_id:
+          type: string
 required:
-  - primary_id
-  - target_ids
+  - primary_contact_id
+  - secondary_contact_ids
   - contact
