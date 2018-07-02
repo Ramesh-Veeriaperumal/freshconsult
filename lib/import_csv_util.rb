@@ -2,17 +2,21 @@
 require 'csv'
 module ImportCsvUtil
 
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
   ONE_MEGABYTE  = 1000000
   CUSTOMER_TYPE = ["contact", "company", "agent_skill"]
   IMPORT_DELIMITER = "||"
   VALID_CLIENT_MANAGER_VALUES = ["yes", "true"]
   AND_SYMBOL = "&"
+  IMPORT_BATCH_SIZE = 25
 
   #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
   def import_fields
     Rails.logger.debug("Import File uploaded :: #{params[:file]} Type: #{params[:type]} File size #{params[:file].size}")
-    store_file
+    store_file params[:type]
     read_file session[:map_fields][:file_path],true
     @fields = current_account.safe_send("#{params[:type]}_form").safe_send("#{params[:type]}_fields").map{|f| {
       :name  => f.name, 
@@ -25,15 +29,25 @@ module ImportCsvUtil
     end
   end
 
-  def store_file
+  def store_file type
     file_field = params[:file]
-    file_path  = "import/#{Account.current.id}/#{params[:type]}/#{Time.now.to_i}/#{file_field.original_filename}"
-
+    file_path  = "import/#{Account.current.id}/#{type}/#{Time.now.to_i}/#{file_field.original_filename}"
+    if type == 'contact' || type == 'company'
+      row_count = `wc -l "#{file_field.path}"`.strip.split(' ')[0].to_i
+      save_row_count row_count, type
+    end
+    
     AwsWrapper::S3Object.store(file_path, file_field.tempfile, S3_CONFIG[:bucket], :content_type => file_field.content_type)
 
     session[:map_fields] = {}
     session[:map_fields][:file_name] = file_field.original_filename
     session[:map_fields][:file_path] = file_path
+  end
+
+  def save_row_count count, type
+    key = Object.const_get("#{type.upcase}_IMPORT_TOTAL_RECORDS") % {:account_id => 
+                                                                          Account.current.id}
+    set_others_redis_with_expiry(key, count, {})
   end
 
   def read_file file_location, header = false

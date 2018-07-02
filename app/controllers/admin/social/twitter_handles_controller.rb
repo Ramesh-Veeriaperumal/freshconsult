@@ -56,9 +56,7 @@ class Admin::Social::TwitterHandlesController < ApplicationController
   end
 
   def callback_url
-    current_account.launched?(:twitter_common_redirect) ?
-      Social::Twitter::Constants::COMMON_REDIRECT_URL :
-      url_for(:action => 'authdone')
+    Social::Twitter::Constants::COMMON_REDIRECT_URL
   end
 
   def scoper

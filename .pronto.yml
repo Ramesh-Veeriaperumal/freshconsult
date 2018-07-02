@@ -1,7 +1,6 @@
 all:
   exclude:
     - 'spec/**/*'
-    - 'test/**/*'
 eslint:
   exclude:
     - 'app/assets/**/*'

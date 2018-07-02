@@ -224,7 +224,7 @@ module Facebook
     end
 
     def attachment_url attachment, default_url, type = :original
-      attachment_present?(attachment) ? (Account.current.skip_one_hop_enabled? ? attachment.content(type) : attachment.inline_url) : default_url
+      attachment_present?(attachment) ? attachment.inline_url : default_url
     end
 
     def filter_messages_from_data_set(data_set)

@@ -1,6 +1,8 @@
 class Import::Customers::Base
   include Helpdesk::ToggleEmailNotification
   include ImportCsvUtil
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
@@ -15,21 +17,16 @@ class Import::Customers::Base
 
   def import
     Thread.current["customer_import_#{current_account.id}"] = true
-    read_file @customer_params[:file_location]
-    mapped_fields
-    Rails.logger.debug "#{@params[:type]} import completed. 
-                        Total records:#{@rows.count}
-                        Created:#{@created} 
-                        Updated:#{@updated}
-                        Time taken:#{Time.now.utc - customer_import.created_at.utc}".squish
-    build_csv_file unless @failed_items.blank?
+    customer_import.update_attribute(:created_at, Time.now.utc)
+    parse_csv_file
+    build_error_csv_file unless @failed_items.blank?
   rescue CSVBridge::MalformedCSVError => e
-    NewRelic::Agent.notice_error(e, {:description => 
-      "Error in CSV file format :: #{@params[:type]}_import :: #{current_account.id}"})
+    NewRelic::Agent.notice_error(e, {:description => "Error in CSV file format :: 
+      #{@params[:type]}_import :: #{current_account.id}"})
     @wrong_csv = e.to_s
   rescue => e
-    NewRelic::Agent.notice_error(e, {:description => 
-      "Error in #{@params[:type]}_import :: account_id :: #{current_account.id}"})
+    NewRelic::Agent.notice_error(e, {:description => "Error in #{@params[:type]}_import :: 
+      account_id :: #{current_account.id}"})
     puts "Error in #{@params[:type]}_import ::#{e.message}\n#{e.backtrace.join("\n")}"
     Rails.logger.debug "Error during #{@params[:type]} import : 
           #{Account.current.id} #{e.message} #{e.backtrace}".squish
@@ -44,13 +41,30 @@ class Import::Customers::Base
 
   private
 
-  def mapped_fields
-    @csv_headers = @rows.shift
-    @rows.each do |row|
-      assign_field_values row
-      next if is_user? && !@item.nil? && @item.helpdesk_agent?     
-      save_item row
-    end    
+  def parse_csv_file
+    csv_file = AwsWrapper::S3Object.find(@customer_params[:file_location], S3_CONFIG[:bucket])
+
+    CSVBridge.parse(content_of(csv_file)).each_slice(IMPORT_BATCH_SIZE).with_index do |rows, index|
+      rows.each_with_index do |row, inner_index|
+        row = row.collect{|r| Helpdesk::HTMLSanitizer.clean(r.to_s)}
+        (@csv_headers = row) && next if index==0 && inner_index==0
+        assign_field_values row
+        next if is_user? && !@item.nil? && @item.helpdesk_agent?
+        save_item row
+      end
+      update_completed_rows
+    end
+  rescue => e
+    Rails.logger.error "Error while reading csv data ::#{e.message}\n#{e.backtrace.join("\n")}"
+    NewRelic::Agent.notice_error(e, {:description => 
+      "The file format is not supported. Please check the CSV file format!"})
+    raise e
+  end
+
+  def update_completed_rows
+    key = Object.const_get("#{@params[:type].upcase}_IMPORT_FINISHED_RECORDS") % {:account_id => 
+                                                                          Account.current.id}
+    increment_others_redis(key, IMPORT_BATCH_SIZE)
   end
 
   def assign_field_values row
@@ -134,7 +148,7 @@ class Import::Customers::Base
 
   # Building csv file for failed items.
 
-  def build_csv_file
+  def build_error_csv_file
     customer_import.file_creation!
     csv_string = CSVBridge.generate do |csv|
       csv << @csv_headers.push("errors")
@@ -169,7 +183,16 @@ class Import::Customers::Base
 
   def notify_and_cleanup(corrupted = false)
     customer_import && customer_import.destroy
+    remove_progress_keys
     notify_mailer corrupted
+  end
+
+  def remove_progress_keys
+    ["IMPORT_TOTAL_RECORDS", "IMPORT_FINISHED_RECORDS"].each do |key_type|
+      key = Object.const_get("#{@params[:type].upcase}_#{key_type}") % {:account_id => 
+                                                                       Account.current.id}
+      remove_others_redis_key key
+    end
   end
 
   def notify_mailer param = false

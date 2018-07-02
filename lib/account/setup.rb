@@ -11,9 +11,13 @@ module Account::Setup
 
 	CONDITION_BASED_SETUP_KEYS = ACCOUNT_SETUP_FEATURES_LIST[:condition_based_setup_keys]
 
-	SETUP_KEYS = INDEPENDENT_SETUP_KEYS.merge(CONDITION_BASED_SETUP_KEYS).sort_by { |key,value| value }.to_h.keys
+	NON_CHECKLIST_KEYS = ACCOUNT_SETUP_FEATURES_LIST[:non_checklist_keys]
+
+	SETUP_KEYS = INDEPENDENT_SETUP_KEYS.merge(CONDITION_BASED_SETUP_KEYS).merge(NON_CHECKLIST_KEYS).sort_by { |key,value| value }.to_h.keys
 
 	SETUP_KEYS_DISPLAY_ORDER = ACCOUNT_SETUP_FEATURES_LIST[:setup_keys_display_order]
+
+	ALL_SETUP_KEYS = SETUP_KEYS_DISPLAY_ORDER
 
 	SETUP_EXPIRY = 60.days
 
@@ -50,13 +54,17 @@ module Account::Setup
 		@current_setup_keys ||= sort_setup_keys(INDEPENDENT_SETUP_KEYS.keys + current_condition_based_keys)
 	end
 
+	def all_setup_keys
+		ALL_SETUP_KEYS
+	end
+
 	# For each feature listed in CONDITION_BASED_SETUP_KEYS, add a method that has the corresponding
 	# condition checks. The naming convention for the method would be "#{setup_key}_eligible?".
 	# For eg., freshfone_number_eligible?
 
-  def current_condition_based_keys
-    CONDITION_BASED_SETUP_KEYS.keys.select { |setup_key| safe_send("#{setup_key}_eligible?") }
-  end
+	def current_condition_based_keys
+		CONDITION_BASED_SETUP_KEYS.keys.select { |setup_key| safe_send("#{setup_key}_eligible?") }
+	end
 
 	def freshfone_number_eligible?
 	  self.features_included?(:freshfone)
