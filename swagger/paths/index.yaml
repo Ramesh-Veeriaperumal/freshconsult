@@ -60,6 +60,8 @@
   $ref: ./tickets/failed_email_details.yaml
 /tickets/{id}/suppression_list_alert:
   $ref: ./tickets/suppression_list_alert.yaml
+/tickets/{id}/sessions:
+  $ref: ./tickets/freshmarketer_sessions.yaml
 
 /tickets/{id}/activities:
   $ref: ./tickets/activities.yaml
@@ -237,7 +239,7 @@
 /portals:
   $ref: ./portals/list.yaml
 /portals/{id}:
-  $ref: ./portals/show.yaml
+  $ref: ./portals/get_and_update.yaml
 /portals/{id}/bot_prerequisites:
   $ref: ./portals/bot_prerequisites.yaml
 
@@ -403,3 +405,17 @@
   $ref: ./sandboxes/create.yaml
 /sandboxes/destroy:
   $ref: ./sandboxes/destroy.yaml
+
+#Freshmarketer
+/freshmarketer:
+  $ref: ./freshmarketer/index.yaml
+/freshmarketer/link:
+  $ref: ./freshmarketer/link.yaml
+/freshmarketer/unlink:
+  $ref: ./freshmarketer/unlink.yaml
+/freshmarketer/session_info:
+  $ref: ./freshmarketer/session_info.yaml
+/freshmarketer/enable_integration:
+  $ref: ./freshmarketer/enable_integration.yaml
+/freshmarketer/disable_integration:
+  $ref: ./freshmarketer/disable_integration.yaml

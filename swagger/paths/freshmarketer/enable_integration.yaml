@@ -1,0 +1,19 @@
+put:
+  tags: [freshmarketer]
+  summary: Enable Integration
+  description: Enable Integration
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    500:
+      description: Internal server error
+      schema:
+        $ref: '#/definitions/internal_server_error'

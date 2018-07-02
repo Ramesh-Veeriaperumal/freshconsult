@@ -92,6 +92,8 @@ run "ln -nfs #{shared_path}/config/apigee.yml #{node[:rel_path]}/config/apigee.y
 run "ln -nfs #{shared_path}/config/freshchat.yml #{node[:rel_path]}/config/freshchat.yml"
 run "ln -nfs #{shared_path}/config/formserv.yml #{node[:rel_path]}/config/formserv.yml"
 run "ln -nfs #{shared_path}/config/app_integration.yml #{node[:rel_path]}/config/app_integration.yml"
+run "ln -nfs #{shared_path}/config/freshmarketer.yml #{node[:rel_path]}/config/freshmarketer.yml"
+run "ln -nfs #{shared_path}/config/unsupported_features.yml #{node[:rel_path]}/config/features/unsupported_features.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

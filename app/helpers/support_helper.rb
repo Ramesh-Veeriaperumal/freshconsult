@@ -622,6 +622,23 @@ module SupportHelper
     output.join("").html_safe
   end
 
+  def portal_session_replay
+    output = current_account.account_additional_settings.freshmarketer_cdn_script
+    output.html_safe
+  end
+
+  def identify_user
+    %(
+      <script>
+        if(typeof window.FM !== 'undefined') {
+          var current_user_email = "#{current_user.try(:email)}";
+          window.FM.identify(current_user_email);
+          console.log('Session identified: ' + current_user_email)
+        }
+      </script>
+    ).html_safe
+  end
+
   def portal_javascript_object
     { :language => @portal['language'],
       :name => h(@portal['name']),

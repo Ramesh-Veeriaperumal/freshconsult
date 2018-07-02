@@ -62,13 +62,15 @@ class AccountDecorator < ApiDecorator
     end
 
     def settings_hash
+      acct_additional_settings = record.account_additional_settings
       {
         personalized_email_replies: record.features.personalized_email_replies?,
         compose_email_enabled: record.compose_email_enabled?,
         restricted_compose_email_enabled: record.restricted_compose_enabled?,
         include_survey_manually: include_survey_manually?,
         show_on_boarding: record.account_onboarding_pending?,
-        announcement_bucket: record.account_additional_settings.additional_settings[:announcement_bucket].to_s
+        announcement_bucket: acct_additional_settings.additional_settings[:announcement_bucket].to_s,
+        freshmarketer_linked: acct_additional_settings.freshmarketer_linked?
       }
     end
 

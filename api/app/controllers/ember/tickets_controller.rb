@@ -291,8 +291,9 @@ module Ember
       end
 
       def shared_attachments
+        shared_attachment_ids = @attachment_ids ? @attachment_ids - parent_template_attachments.map(&:id) : @attachments_ids
         @shared_attachments ||= begin
-          current_account.attachments.where('id IN (?) AND attachable_type IN (?)', @attachment_ids, AttachmentConstants::CLONEABLE_ATTACHMENT_TYPES)
+          current_account.attachments.where('id IN (?) AND attachable_type IN (?)', shared_attachment_ids, AttachmentConstants::CLONEABLE_ATTACHMENT_TYPES)
         end
       end
 

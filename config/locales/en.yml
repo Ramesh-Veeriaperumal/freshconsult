@@ -500,6 +500,8 @@ en:
     remove_profile_image: "Profile image successfully removed"
     remove_profile_image_confirm: "Are you sure you want to delete this Profile Picture?"
     ie9_file_change_msg: "%{filename} Save to update profile image"
+    user_exist_in_freshid: "Existing freshworks user! Admins cannot edit Agent' profile information."
+    edit_profile_in_freshid: "Agents can edit their profile information in their Freshworks profile."
     errors:
       required_field: cannot be blank
       custom_text : is not valid
@@ -2191,6 +2193,7 @@ en:
         enable_sso: Single Sign On (SSO)
         enable_simple_sso: Simple SSO
         enable_oauth_sso: Oauth2 SSO
+        enable_oauth2_sso: OAuth 2.0
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
         enable_SSL: "Secure Connection using SSL"
@@ -2208,6 +2211,7 @@ en:
         saml_cert_fingerprint: "Security Certificate Fingerprint"
         saml_cert_fingerprint_info: "Fingerprint (SHA1)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
         saml_cert_fingerprint_info_sha256: "Fingerprint (SHA256)  of the SAML certificate provided by your SAML Provider. This will be used for encryption / validation"
+        enable_oauth2_info: "The industry standard OAuth protocol allows you to delegate agent and customer authentication to the service that hosts their user accounts."
         click_to_enable: Click to enable SSL
         click_to_disable: Click to disable SSL
         security_title: Security
@@ -2312,7 +2316,9 @@ en:
         default_portal_language: Default Portal Language
         portal_language_info: This will be the default language when customers visits your portal
         portal_customization: Portal Customization
-        portal_settings: Portal Settings
+        portal_settings: Portal settings
+        agent_portal: Agent Portal
+        edit_branding: Edit Branding        
         edit_portal: Edit Portal
         customize_portal: "Customize portal"
         save_and_customize: "Save & Customize portal"
@@ -2323,7 +2329,6 @@ en:
         contact_us: Contact us
         logo_and_favicon: "Logo & Favicon"
         customer_portal: Customer Portal
-        portal_settings: Portal Settings
         categories_visible: Portal Categories
         product_label: "Product: %{product_name}"
         enable_multilingual: "Setup Multilingual Support"
@@ -2475,8 +2480,9 @@ en:
         manage_supervisor_rules: Manage Supervisor rules
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
-        manage_dashboard: Manage ticket list views
-        # manage_dashboard_feature: Manage ticket list views and team dashboards
+        manage_ticket_list_views: Manage ticket list views
+        manage_dashboard: Manage team dashboards
+        # manage_ticket_list_views_feature: Manage ticket list views and team dashboards
         manage_ticket_templates: Manage Ticket Templates
         admin_tasks: Play God with Super Admin controls
         manage_account: Include account management
@@ -2866,29 +2872,30 @@ en:
       no_file: Please upload a file
       success: Your csv import has started and you will receive an email when it is completed. The import process may take several minutes depending on the volume of your data
       info1: "Your import has been successfully completed. You can open your helpdesk and go to Customer->%{uc_type} to view the newly added %{type}. "
-      info2: "We were unable to import all the %{type} in the csv file that you submitted. Please find the summary below:"
+      info2: "We were unable to import all the %{type} in the CSV file that you submitted. Please find the summary below:"
       created: "Created: %{count}"
       updated: "Updated: %{count}"
-      failed:  "Failed : %{count}"
+      failed:  "Failed: %{count}"
       info3: "The successfully imported %{type}, can be viewed under Customer->%{uc_type}."
-      info4: "Failed %{type}(s) and their corresponding errors can be found in the attachment."
+      info4: "Reasons why %{type}(s) failed to import can be found in the attachment."
       info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file"
       info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
-      info7: "%{type} import could not be initiated for csv that you submitted as the file format was incorrect. Please resubmit the file after reformatting it according to the guidelines mentioned in this solution article <a href = '%{solution_link}'>link</a>."
+      info7: "%{type} import could not be initiated for CSV that you submitted as the file format was incorrect. Please resubmit the file after reformatting it according to the guidelines mentioned in this solution article <a href = '%{solution_link}'>link</a>."
       info8: "Agents for whom skill update failed can be found in the attachment along with the reason for the failure."
       info9: "The successfully imported skills and mapping can be viewed under Admin->Skills. Kindly ensure that you add conditions to the new skills in order to map the skill to the right tickets. The new skills can be found at the bottom of the skill list."
-      info10: "The agent to skill mapping csv file that you uploaded has been imported. Please find the summary below:"
+      info10: "The agent to skill mapping CSV file that you uploaded has been imported. Please find the summary below:"
       info11: "Please check the formatting of the CSV file and upload it again."
       info12: "The value 'Email' or 'Skills' was not present in the first row."
-      info13: "The columns Email or Skills was missing is the csv."
+      info13: "The columns Email or Skills was missing is the CSV."
       info14: "We could not import skills from the file %{file_name} due to one of the following reasons:"
       info15: "No. of new skills that were created: %{create_count}"
       info16: "No. of agents whose skills were updated: %{update_count}"
       info17: "No. of new skills that could not be created: %{create_failed_count}"
       info18: "No. of agents whose skills could not be updated: %{update_failed_count}"
       info19: "Skills Import for %{portal_url}"
+      info20: "The %{type} import running on %{domain} was stopped. Please find the summary below:"
       invalid_file: "Please upload proper csv file"
-      help_desk: Please feel free to get in touch with us if you need anything else.
+      help_desk: Please feel free to get in touch with us if you need help.
       regards: Regards
       freshdesk: Freshdesk Team
     business_hours:
@@ -5544,6 +5551,7 @@ en:
     scheduled_reports_desc: "Scheduled reporting"
     custom_survey_desc: "Customized satisfaction surveys"
     freshchat: "Freshchat integration"
+    bot: "Bot"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL
@@ -7491,6 +7499,7 @@ en:
     additional_fields_help: Description fields are moved into additional fields
     view_all_tickets : Export as CSV
     check_uncheck_title: 'Check/Uncheck all'
+    failure_message: "An error occurred while exporting data. Please try again or contact Freshdesk support."
     data_backup:
       body: Your data export is ready for download.
     data_backup_failure:

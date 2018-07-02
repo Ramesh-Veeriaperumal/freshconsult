@@ -1,9 +1,16 @@
 module TrialWidgetTestHelper
-  def trial_widget_index_pattern
+  def old_trial_widget_index_pattern
     {
       tasks: Account.current.current_setup_keys.map { |setup_key| setup_key_info(setup_key) }
     }
   end
+
+  def new_trial_widget_index_pattern
+    {
+      tasks: Account.current.all_setup_keys.map { |setup_key| setup_key_info(setup_key) }
+    }
+  end
+
 
   def trial_widget_sales_manager_pattern
     {

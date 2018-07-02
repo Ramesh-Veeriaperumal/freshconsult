@@ -1,6 +1,8 @@
 class Import::Customers::Base
   include Helpdesk::ToggleEmailNotification
   include ImportCsvUtil
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
@@ -15,21 +17,22 @@ class Import::Customers::Base
 
   def import
     Thread.current["customer_import_#{current_account.id}"] = true
-    read_file @customer_params[:file_location]
-    mapped_fields
+    customer_import.update_attribute(:created_at, Time.now.utc)
+    parse_csv_file
+    build_error_csv_file unless @failed_items.blank?
+    Rails.logger.debug "Customer stopped the #{@params[:type]} import" if redis_key_exists?(stop_redis_key)
     Rails.logger.debug "#{@params[:type]} import completed. 
-                        Total records:#{@rows.count}
+                        Total records:#{total_rows_to_be_imported}
                         Created:#{@created} 
                         Updated:#{@updated}
                         Time taken:#{Time.now.utc - customer_import.created_at.utc}".squish
-    build_csv_file unless @failed_items.blank?
   rescue CSVBridge::MalformedCSVError => e
-    NewRelic::Agent.notice_error(e, {:description => 
-      "Error in CSV file format :: #{@params[:type]}_import :: #{current_account.id}"})
+    NewRelic::Agent.notice_error(e, {:description => "Error in CSV file format :: 
+      #{@params[:type]}_import :: #{current_account.id}"})
     @wrong_csv = e.to_s
   rescue => e
-    NewRelic::Agent.notice_error(e, {:description => 
-      "Error in #{@params[:type]}_import :: account_id :: #{current_account.id}"})
+    NewRelic::Agent.notice_error(e, {:description => "Error in #{@params[:type]}_import :: 
+      account_id :: #{current_account.id}"})
     puts "Error in #{@params[:type]}_import ::#{e.message}\n#{e.backtrace.join("\n")}"
     Rails.logger.debug "Error during #{@params[:type]} import : 
           #{Account.current.id} #{e.message} #{e.backtrace}".squish
@@ -44,13 +47,46 @@ class Import::Customers::Base
 
   private
 
-  def mapped_fields
-    @csv_headers = @rows.shift
-    @rows.each do |row|
-      assign_field_values row
-      next if is_user? && !@item.nil? && @item.helpdesk_agent?     
-      save_item row
-    end    
+  def parse_csv_file
+    csv_file = AwsWrapper::S3Object.find(@customer_params[:file_location], S3_CONFIG[:bucket])
+    total_rows = total_rows_to_be_imported
+    completed_rows = 0
+
+    CSVBridge.parse(content_of(csv_file)).each_slice(IMPORT_BATCH_SIZE).with_index do |rows, index|
+      rows.each_with_index do |row, inner_index|
+        row = row.collect{|r| Helpdesk::HTMLSanitizer.clean(r.to_s)}
+        (@csv_headers = row) && next if index==0 && inner_index==0
+        assign_field_values row
+        next if is_user? && !@item.nil? && @item.helpdesk_agent?
+        save_item row
+      end
+      completed_rows += IMPORT_BATCH_SIZE
+      processed_count = completed_rows > total_rows ? total_rows - (completed_rows - IMPORT_BATCH_SIZE) : IMPORT_BATCH_SIZE
+      update_completed_rows processed_count
+      break if redis_key_exists?(stop_redis_key)
+    end
+  rescue => e
+    Rails.logger.error "Error while reading csv data ::#{e.message}\n#{e.backtrace.join("\n")}"
+    NewRelic::Agent.notice_error(e, {:description => 
+      "The file format is not supported. Please check the CSV file format!"})
+    raise e
+  end
+  
+  def stop_redis_key
+    @stop_redis_key ||= Object.const_get("STOP_#{@params[:type].upcase}_IMPORT") %
+                        { :account_id => Account.current.id }
+  end
+
+  def update_completed_rows processed_count
+    key = Object.const_get("#{@params[:type].upcase}_IMPORT_FINISHED_RECORDS") % {:account_id => 
+                                                                          Account.current.id}
+    increment_others_redis(key, processed_count)
+  end
+  
+  def total_rows_to_be_imported
+    key = Object.const_get("#{@params[:type].upcase}_IMPORT_TOTAL_RECORDS") % {:account_id => 
+                                                                    Account.current.id}
+    get_others_redis_key(key).to_i
   end
 
   def assign_field_values row
@@ -134,14 +170,14 @@ class Import::Customers::Base
 
   # Building csv file for failed items.
 
-  def build_csv_file
-    customer_import.file_creation!
+  def build_error_csv_file
+    customer_import && customer_import.file_creation!
     csv_string = CSVBridge.generate do |csv|
       csv << @csv_headers.push("errors")
       @failed_items.map {|item| csv << item}
     end
     write_file(csv_string)
-    customer_import.completed!
+    customer_import && customer_import.completed!
   end
 
   def write_file file_string
@@ -169,7 +205,21 @@ class Import::Customers::Base
 
   def notify_and_cleanup(corrupted = false)
     customer_import && customer_import.destroy
+    remove_progress_keys
     notify_mailer corrupted
+    remove_stop_import_key
+  end
+
+  def remove_progress_keys
+    ["IMPORT_TOTAL_RECORDS", "IMPORT_FINISHED_RECORDS"].each do |key_type|
+      key = Object.const_get("#{@params[:type].upcase}_#{key_type}") % {:account_id => 
+                                                                       Account.current.id}
+      remove_others_redis_key key
+    end
+  end
+
+  def remove_stop_import_key
+    remove_others_redis_key stop_redis_key
   end
 
   def notify_mailer param = false
@@ -192,7 +242,8 @@ class Import::Customers::Base
     else
       # Attachment(csv file) will not be send, if the file is more than 1MB
       hash.merge!(:file_path => failed_file_path, :file_name => failed_file_name) unless @failed_items.blank? || failed_file_size > ONE_MEGABYTE 
-      hash.merge!(:import_success => true) if @failed_items.blank?
+      hash.merge!(:import_success => true) if @failed_items.blank? && !redis_key_exists?(stop_redis_key)
+      hash.merge!(:import_stopped => true) if redis_key_exists?(stop_redis_key)
     end
     hash
   end

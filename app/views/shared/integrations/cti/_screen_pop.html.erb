@@ -36,7 +36,7 @@
     <% if softfone_enabled? %>
       <div id="cti_soft_phone" class="cti-softfone-container">
         <% iframe_url = Liquid::Template.parse(cti_configs[:inputs]["cti_iframe_url"]).render('agent_id' => current_user.id) %>
-        <iframe src="<%= iframe_url %>" width=<%= cti_configs[:inputs]["cti_iframe_width"]%> height=<%= cti_configs[:inputs]["cti_iframe_height"]%> ></iframe>
+        <iframe src="<%= iframe_url %>" allow="microphone;" width=<%= cti_configs[:inputs]["cti_iframe_width"]%> height=<%= cti_configs[:inputs]["cti_iframe_height"]%> ></iframe>
       </div>
     <% end %>
   </div>

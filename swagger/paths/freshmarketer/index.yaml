@@ -1,0 +1,21 @@
+get:
+  tags: [freshmarketer]
+  description: Get experiment info
+  summary: Experiment
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/freshmarketer_experiment'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    500:
+      description: Internal server error
+      schema:
+        $ref: '#/definitions/internal_server_error'
