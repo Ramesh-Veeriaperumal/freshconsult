@@ -3,7 +3,7 @@
 functional_tests = Dir.glob('test/api/functional/ember/**/*_test.rb')
 
 # unit
-unit_tests = Dir.glob('test/api/unit/**/*_test.rb')
+unit_tests = Dir.glob('test/api/unit/*_test.rb') | Dir.glob('test/api/unit/*/*_test.rb')
 
 # freshcaller channel test
 freshcaller_channel_tests = Dir.glob('test/api/functional/channel/freshcaller/**/*_test.rb')
