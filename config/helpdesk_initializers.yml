@@ -116,3 +116,4 @@ helpdesk:
     - paperclip_ssrf_patch
     - apigee_config
     - facebook_eu_accounts_config
+    - disposable_email_domains
