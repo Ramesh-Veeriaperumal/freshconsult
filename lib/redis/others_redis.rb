@@ -36,17 +36,15 @@ module Redis::OthersRedis
 		newrelic_begin_rescue { $redis_others.perform_redis_op("ttl", key) }
 	end
 
-	def increment_others_redis(key)
-		newrelic_begin_rescue { return $redis_others.perform_redis_op("INCR", key) }
+	def increment_others_redis(key, value=1)
+		newrelic_begin_rescue do
+      $redis_others.perform_redis_op("INCRBY", key, value)
+    end
 	end
 
 	def decrement_others_redis(key, value=1)
 		newrelic_begin_rescue do
-			if value == 1
-				$redis_others.perform_redis_op("DECR", key)
-			else
-				$redis_others.perform_redis_op("DECRBY", key, value)
-			end
+			$redis_others.perform_redis_op("DECRBY", key, value)
 		end
 	end
 

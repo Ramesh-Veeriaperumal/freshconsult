@@ -61,7 +61,7 @@ class Dkim::ConfigureDkimRecord
     def add_dns_records_to_aws
       R53_ACTIONS.each do |content|
         Rails.logger.debug "content[0] :: #{content[0]}, content[1] :: #{content[1]}, content[2] :: #{ eval(content[2])}, content[3] :: #{ eval(content[3])}, content[4] :: #{content[4]}"
-        if new_record?(eval(content[2]), content[1])
+        if new_record?(content[2], content[1])
           handle_dns_action(content[0], content[1], eval(content[2]), eval(content[3]))
         elsif content[5] # account specific records
           handle_dns_action("UPSERT", content[1], eval(content[2]), eval(content[3]))
