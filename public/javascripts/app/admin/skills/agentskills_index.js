@@ -231,7 +231,7 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
           $query = $(this).data();
           template = { id: $query.rowid, skill_id: $query.skillid, rank: i + 1, rank_handled_in_ui: true };
           _this.addAndUpdateItems.push(template);
-          _this.finalAgentArray.push($query.name);
+          _this.finalAgentArray.push(decodeURIComponent($query.name));
         });
       }
     },
