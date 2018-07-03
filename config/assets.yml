@@ -57,7 +57,7 @@ stylesheets:
   :remote_configurations  => [ "page/remote-configurations"],
   :cti => ["cti/cti"],
   :freshfone_livechat => ["freshfone_livechat"],
-  :canned_form => ["portal/canned_form"],
+  :canned_form => ["portal/canned_form"]
 } %>
 
 <%  @stylesheets_list = []

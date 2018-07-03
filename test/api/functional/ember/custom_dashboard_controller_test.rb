@@ -71,14 +71,14 @@ module Ember
     end
 
     def test_dashboard_index_403
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
       get :index, controller_params({ version: 'private' }, false)
       assert_response 403
     end
 
     def test_dashboard_index_200
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :index, controller_params({ version: 'private' }, false)
       response_hash = JSON.parse(response.body).map(&:deep_symbolize_keys)
@@ -87,7 +87,7 @@ module Ember
     end
 
     def test_dashboard_create_403
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(0)
       dashboard_object.add_widget(0)
@@ -96,7 +96,7 @@ module Ember
     end
 
     def test_dashboard_create_201_global_access
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(0)
       dashboard_object.add_widget(0)
@@ -108,7 +108,7 @@ module Ember
     end
 
     def test_dashboard_create_201_group_access
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       group = @account.groups.first
       dashboard_object = DashboardObject.new(2, [group.id])
       dashboard_object.add_widget(0)
@@ -121,7 +121,7 @@ module Ember
     end
 
     def test_dashboard_create_400_global_access_with_group_ids
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       group = create_group_with_agents(@account, { agent_list: [@agent.id]})
       dashboard_object = DashboardObject.new(0)
       dashboard_object.add_widget(0)
@@ -133,7 +133,7 @@ module Ember
     end
 
     def test_dashboard_create_400_group_access_without_group_ids
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       dashboard_object = DashboardObject.new(2)
       dashboard_object.add_widget(0)
       dashboard_object.add_widget(0)
@@ -143,7 +143,7 @@ module Ember
     end
 
     def test_dashboard_create_400_group_access_with_incorrect_group_ids
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       group = create_group_with_agents(@account, { agent_list: [@agent.id]})
       dashboard_object = DashboardObject.new(2)
       dashboard_object.add_widget(0)
@@ -155,14 +155,14 @@ module Ember
     end
 
     def test_dashboard_show_403
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
       get :show, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
       assert_response 403
     end
 
     def test_dashboard_show_200_by_dashboard_admin
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :show, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
       response_hash = JSON.parse(response.body).deep_symbolize_keys
@@ -171,7 +171,7 @@ module Ember
     end
 
     def test_dashboard_show_200_by_agents
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :show, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
       response_hash = JSON.parse(response.body).deep_symbolize_keys
@@ -180,28 +180,28 @@ module Ember
     end
 
     def test_dashboard_show_404
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :show, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id + rand(1000..100_00) }, false)
       assert_response 404
     end
 
     def test_dashboard_update_403
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
       put :update, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
       assert_response 403
     end
 
     def test_dashboard_update_403_by_agents
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       put :update, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
       assert_response 403
     end
 
     def test_dashboard_update_200_with_accessible_attributes
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       updated_atributes = { type: 2, group_ids: [@@group.id] }
       put :update, controller_params(wrap_cname(updated_atributes).merge(id: @@dashboard_list.first.db_record.id, version: 'private'), false)
@@ -209,7 +209,7 @@ module Ember
     end
 
     def test_dashboard_update_200_with_incorrect_accessible_attributes
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       updated_atributes = { type: 0, group_ids: [@@group.id] }
       put :update, controller_params(wrap_cname(updated_atributes).merge(id: @@dashboard_list.first.db_record.id, version: 'private'), false)
@@ -217,21 +217,21 @@ module Ember
     end    
 
     def test_dashboard_destroy_403_by_agents
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       delete :destroy, controller_params({ version: 'private', id: @@dashboard_list.first.db_record.id }, false)
       assert_response 403
     end
 
     def test_dashboard_destroy_204_by_dashboard_admin
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       delete :destroy, controller_params({ version: 'private', id: @@dashboard_list.delete(@@dashboard_list.first).db_record.id }, false)
       assert_response 204
     end
 
     def test_dashboard_destroy_404_by_dashboard_admin
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       delete :destroy, controller_params({ version: 'private', id: rand(1000..100_00) }, false)
       assert_response 404
@@ -251,7 +251,7 @@ module Ember
     # Basic preview API tests
 
     def test_widget_data_preview_without_access
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
       get :widget_data_preview, controller_params(version: 'private')
       assert_response 403
     end
@@ -874,14 +874,14 @@ module Ember
     end
 
     def test_widget_data_preview_for_forum_moderation_403_by_agent
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'forum_moderation')
       assert_response 403
     end
 
     def test_widget_data_preview_for_forum_moderation_200_by_dashboard_admin
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'forum_moderation')
       assert_response 400
@@ -893,7 +893,7 @@ module Ember
     end
 
     def test_widget_data_preview_for_csat_403_by_agent
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat')
       assert_response 403
@@ -902,6 +902,7 @@ module Ember
     def test_widget_data_preview_for_csat_400_without_feature_by_dashboard_admin
       Account.any_instance.stubs(:new_survey_enabled?).returns(false)
       User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '3')
       assert_response 403
@@ -910,6 +911,7 @@ module Ember
     def test_widget_data_preview_for_csat_200_without_groups_monthly_filter
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
       User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '3')
       assert_response 200
@@ -919,6 +921,7 @@ module Ember
     def test_widget_data_preview_for_csat_200_without_groups_weekly_filter
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
       User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '2')
       assert_response 200
@@ -928,6 +931,7 @@ module Ember
     def test_widget_data_preview_for_csat_200_without_groups_daily_filter
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
       User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '1')
       assert_response 200
@@ -937,6 +941,7 @@ module Ember
     def test_widget_data_preview_for_csat_200_with_group_monthly_filter
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
       User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '5', group_ids: [@@csat_group.id])
       assert_response 200
@@ -946,6 +951,7 @@ module Ember
     def test_widget_data_preview_for_csat_400_with_invalid_group
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
       User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '3', group_ids: [@@csat_group.id + rand(10_00..100_00)])
       assert_response 400
@@ -954,6 +960,7 @@ module Ember
     def test_widget_data_preview_for_csat_400_with_invalid_timerange
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
       User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '6')
       assert_response 400
@@ -961,8 +968,9 @@ module Ember
 
     def test_widget_data_preview_for_csat_200_with_group_daily_filter
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '4', group_ids: [@@csat_group.id])
       assert_response 200
       match_json({ survey_responded: @@survey_count_with_group, results: [{ label: 'positive', value: (@@positive_survey_with_group * 100) / (@@survey_count_with_group) }, { label: 'negative', value: 0 }, { label: 'neutral', value: 0 }]})
@@ -971,6 +979,7 @@ module Ember
     def test_widget_data_preview_for_csat_200_with_group_weekly_filter
       Account.any_instance.stubs(:new_survey_enabled?).returns(true)
       User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'csat', time_range: '2', group_ids: [@@csat_group.id])
       assert_response 200
@@ -1013,14 +1022,14 @@ module Ember
     def test_widget_data_preview_for_leaderboard_403_without_feature
       Account.any_instance.stubs(:gamification_enabled?).returns(false)
       Account.any_instance.stubs(:gamification_enable_enabled?).returns(false)
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'leaderboard')
       assert_response 403
     end
 
     def test_widget_data_preview_for_leaderboard_403_by_agent
-      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
       User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
       get :widget_data_preview, controller_params(version: 'private', type: 'leaderboard')
       assert_response 403

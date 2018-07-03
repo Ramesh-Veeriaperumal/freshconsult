@@ -16,8 +16,8 @@ module ContactConstants
 
   INDEX_FIELDS = %w(state email phone mobile company_id tag _updated_since unique_external_id include).freeze
   SHOW_FIELDS = %w(include).freeze
-  MERGE_ARRAY_FIELDS = ['target_ids'].freeze
-  MERGE_FIELDS = %w(primary_id contact).freeze | MERGE_ARRAY_FIELDS
+  MERGE_ARRAY_FIELDS = ['secondary_contact_ids'].freeze
+  MERGE_FIELDS = %w[primary_contact_id contact].freeze | MERGE_ARRAY_FIELDS
   EXPORT_CSV_ARRAY_FIELDS = %w(default_fields custom_fields).freeze
   EXPORT_CSV_FIELDS = EXPORT_CSV_ARRAY_FIELDS
 
@@ -63,7 +63,7 @@ module ContactConstants
   MERGE_KEYS = [:phone, :mobile, :twitter_id, :fb_profile_id, :external_id, :unique_external_id].freeze
   MERGE_ARRAY_KEYS = [:other_emails, :company_ids].freeze
   MERGE_CONTACT_FIELDS = MERGE_KEYS | MERGE_ARRAY_KEYS | [:email]
-
+  MERGE_MANDATORY_FIELDS = MERGE_KEYS | [:email]
   NO_PARAM_ROUTES = %w(restore).freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(address email job_title language name mobile phone time_zone tags twitter_id custom_fields other_emails unique_external_id).freeze
@@ -71,7 +71,6 @@ module ContactConstants
   # Wrap parameters args
   WRAP_PARAMS = [:api_contact, exclude: [], format: [:json, :multipart_form]].freeze
   EMBER_WRAP_PARAMS = [:contact, exclude: [], format: [:json, :multipart_form]].freeze
-
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {
     create: [:json, :multipart_form],
     update: [:json, :multipart_form],

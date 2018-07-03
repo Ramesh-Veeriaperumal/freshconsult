@@ -21,9 +21,8 @@ class DataExportMailer < ActionMailer::Base
   end 
 
   def ticket_export(options={})
-    subject = (options[:export_params][:archived_tickets] && options[:export_params][:use_es]) ? options[:export_params][:export_name] : formatted_export_subject(options)
     headers = {
-      :subject   => subject,
+      :subject   => safe_send("#{options[:type]}_export_subject", options),
       :to        => options[:user].email,
       :from      => AppConfig['from_email'],
       :bcc       => AppConfig['reports_email'],
@@ -95,6 +94,24 @@ class DataExportMailer < ActionMailer::Base
     @account = @user.account
     mail(headers) do |part|
       part.html { render "no_tickets", :formats => [:html] }
+    end.deliver
+  end
+
+  def export_failure(options = {})
+    @user = options[:user]
+    headers = {
+      subject: safe_send("#{options[:type]}_export_subject", options),
+      to: @user.email,
+      from: AppConfig['from_email'],
+      bcc: AppConfig['reports_email'],
+      sent_on: Time.now,
+      'Reply-to' => ''
+    }
+    header_type = options[:header_type] || 'Export'
+    @message = options[:message] || I18n.t('export_data.failure_message')
+    headers.merge!(make_header(nil, nil, @user.account_id, header_type))
+    mail(headers) do |part|
+      part.html { render 'default_template', formats: [:html] }
     end.deliver
   end
 
@@ -182,6 +199,10 @@ class DataExportMailer < ActionMailer::Base
   end
 
   private
+    def ticket_export_subject(options)
+      options[:export_params][:archived_tickets] && options[:export_params][:use_es] ? options[:export_params][:export_name] : formatted_export_subject(options)
+    end
+
     def formatted_export_subject(options)
       filter = I18n.t("export_data.#{options[:export_params][:ticket_state_filter]}")
       I18n.t('export_data.ticket_export.subject',

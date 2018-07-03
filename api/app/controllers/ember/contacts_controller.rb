@@ -65,9 +65,6 @@ module Ember
       end
     end
 
-    def send_invite
-      send_activation_mail(@item) ? (head 204) : render_errors(@contact_delegator.errors, @contact_delegator.error_options)
-    end
 
     def bulk_send_invite
       bulk_action do

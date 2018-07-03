@@ -83,7 +83,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_contacts do
-    resource :"ember/contact", only: %i[index show send_invite activities bulk_send_invite]
+    resource :"ember/contact", only: %i[index show activities bulk_send_invite]
     resource :"ember/company", only: %i(index show activities)
     resource :"ember/contact/todo", only: [:index]
     resource :"ember/search/customer", only: [:results]
@@ -94,8 +94,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_contacts do
     resource :"ember/contact", only: [:create, :update, :quick_create]
     resource :"ember/company", only: [:create, :update]
-    resource :"ember/contacts/merge", only: [:merge]
-    resource :"ember/customer_import", only: [:index, :create]
+    resource :"ember/customer_import", only: [:index, :create, :status, :destroy]
     resource :"ember/search/autocomplete", only: [:companies]
     resource :"ember/tickets/requester", only: [:update]
     resource :"ember/contact/todo", only: [:create, :update, :destroy]
@@ -128,7 +127,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/contact_password_policy', only: [:index]
     resource :'ember/agent_password_policy', only: [:index] # Not using it now.
     resource :'admin/canned_form'
-    resource :"ember/portal", only: [:show]
+    resource :"ember/portal", only: [:show, :update]
   end
 
   edit_ticket_properties do
@@ -173,7 +172,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/dashboard", only: %i(unresolved_tickets_data ticket_trends ticket_metrics)
     resource :"ember/year_in_review", only: [:share]
     resource :"ember/admin/bot", only: [:analytics, :remove_analytics_mock_data]
-    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview]
   end
 
   view_admin do 
@@ -190,4 +188,9 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/admin/bot_feedback", only: %i[index bulk_delete bulk_map_article create_article]
     resource :"ember/admin/bot", only: %i[index show]
   end
+
+  manage_dashboard do
+    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview]
+  end
+
 end

@@ -13,7 +13,11 @@ module Ember
       @data = service_object.receive(params[:event])
       render :fetch, status: service_object.web_meta[:status]
     rescue TimeoutError => error
-      render_base_error(:integration_timeout, 503)
+      render_base_error(:integration_timeout, 504)
+    rescue StandardError => error
+      Rails.logger.error "Exception while fetching data from integrated
+      application, message: #{error.message}, exception: #{error.inspect}"
+      render_base_error(:bad_gateway, 502)
     end
 
     private

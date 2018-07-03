@@ -17,6 +17,7 @@ class Helpdesk::Note < ActiveRecord::Base
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:twitter] => SOURCE_KEYS_BY_TOKEN["twitter"] , 
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook] => SOURCE_KEYS_BY_TOKEN["facebook"] , 
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:chat] => SOURCE_KEYS_BY_TOKEN["email"],
+    Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:bot] => SOURCE_KEYS_BY_TOKEN['email'],
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:mobihelp] => SOURCE_KEYS_BY_TOKEN["mobihelp"],
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:feedback_widget] => SOURCE_KEYS_BY_TOKEN["email"],
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:outbound_email] => SOURCE_KEYS_BY_TOKEN["email"],

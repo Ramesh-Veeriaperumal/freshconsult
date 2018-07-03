@@ -22,6 +22,7 @@ module ApiConstants
   DEMOSITE_URL = AppConfig['demo_site'][Rails.env]
 
   # ValidationConstants
+  COLOR_CODE_VALIDATOR = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/
   EMAIL_REGEX = AccountConstants::EMAIL_REGEX
   EMAIL_VALIDATOR = AccountConstants::EMAIL_VALIDATOR
   ALLOWED_ATTACHMENT_SIZE = 15 * 1024 * 1024
@@ -50,7 +51,9 @@ module ApiConstants
                        BotConstants::LOAD_OBJECT_EXCEPT +
                        ApiArchiveTicketConstants::LOAD_OBJECT_EXCEPT +
                        BotFeedbackConstants::LOAD_OBJECT_EXCEPT +
-                       RakeTaskConstants::LOAD_OBJECT_EXCEPT
+                       RakeTaskConstants::LOAD_OBJECT_EXCEPT +
+                       CustomerImportConstants::LOAD_OBJECT_EXCEPT +
+                       FreshmarketerConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +

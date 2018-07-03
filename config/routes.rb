@@ -418,6 +418,7 @@ Helpkit::Application.routes.draw do
       get :configure_export
       post :export_csv
       post :export_skill_csv
+      get :search_in_freshworks
     end
     member do
       put :toggle_shortcuts
@@ -772,6 +773,7 @@ Helpkit::Application.routes.draw do
     collection do
       get :login
       get :facebook
+      get :twitter
       get :portal_google_sso
       get :marketplace_google_sso
       post :mobile_sso_login

@@ -4,7 +4,7 @@ module Marketplace::Constants
   PRODUCT_NAME = 'freshdesk'
   DEV_PORTAL_NAME = 'Freshdesk Marketplace'
   ADMIN_PORTAL_NAME = 'Marketplace Admin Portal'
-  PLG_FILENAME = 'build/index.html'
+  PLG_FILENAME = '/build/index.html'
   DEVELOPED_BY_FRESHDESK = 'freshdesk'
   EXTENSION_SORT_TYPES = ['latest','popular']
   ADDON_ID_PREFIX = 'marketplaceapp_'

@@ -35,10 +35,13 @@ class Middleware::TrustedIp
         # Proceed only if user_credentials_id is present(i.e., authenticated user) or api request.
         if !env['rack.session']['user_credentials_id'].nil? || api_request?(req_path)
           if trusted_ips_enabled?
-            unless valid_ip(env['CLIENT_IP'], env['rack.session']['user_credentials_id'], req_path)
+            # HTTP_ACTUAL_CLIENT_IP will be sent from apigee for apigee enabled account
+            current_ip = @current_account.try(:apigee_enabled?) && api_v2_request?(req_path) ? env['HTTP_ACTUAL_CLIENT_IP'] : env['CLIENT_IP']
+            Rails.logger.debug "Whitelisted IPS enabled: #{env['HTTP_ACTUAL_CLIENT_IP']} :: #{env['CLIENT_IP']}"
+            unless valid_ip(current_ip, env['rack.session']['user_credentials_id'], req_path)
               @status, @headers, @response = set_response(req_path, 403, "/unauthorized.html",
                                                           'Your IPAddress is blocked by the administrator')
-              Rails.logger.error "Request from invalid ip for ip whitelisting enabled account. Account Id: #{@current_account.id}, IP: #{env['CLIENT_IP']}"
+              Rails.logger.error "Request from invalid ip for ip whitelisting enabled account. Account Id: #{@current_account.id}, IP: #{current_ip}"
               return [@status, @headers, @response]
             end
           end
@@ -113,6 +116,10 @@ class Middleware::TrustedIp
   def api_request?(req_path)
     return @api_request if defined?(@api_request) # To avoid getting manipulated again if api_request returns false
     @api_request ||= req_path.starts_with?('/api/')
+  end
+
+  def api_v2_request?(req_path)
+    req_path.starts_with?('/api/v2')
   end
 
   def execute_request(env)

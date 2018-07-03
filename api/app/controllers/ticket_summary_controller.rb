@@ -138,7 +138,7 @@ class TicketSummaryController < ApiApplicationController
       end
       return if update? && !@ticket.summary
       @item = @ticket.summary
-      log_and_render_404 unless @item
+      head 204 unless @item
     end
 
     def load_parent_ticket # Needed here in controller to find the item by display_id

@@ -52,6 +52,7 @@
       - :contact_company_notes 
       - :todos_reminder_scheduler
       - :smart_filter
+      - :session_replay
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -67,6 +68,7 @@
       - :custom_survey
       - :parent_child_tickets_toggle
       - :link_tickets_toggle
+      - :support_bot
     :inherits:
       - :blossom_jan_17
     :exclude: []

@@ -14,7 +14,7 @@ class Import::Customers::Company < Import::Customers::Base
     @item.save
   rescue => e
     Rails.logger.debug "Error importing company : #{Account.current.id} #{@params_hash.inspect}
-                        #{e.message} #{e.backtrace}"
+                        #{e.message} #{e.backtrace}".squish
     false
   end
 

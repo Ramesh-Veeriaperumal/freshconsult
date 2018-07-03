@@ -8,7 +8,7 @@
         <%= text_field_tag( :filter_name, (local_assigns.has_key? :filter_name) ? filter_name : "", :class => "input-xlarge required text", :size => 30) %>
       </div>
     </div>
-    <% if privilege?(:manage_dashboard) %>
+    <% if privilege?(:manage_ticket_list_views) %>
       <div class="control-group">
         <label class="control-label"><%= t('.view_visibility') %>:</label>
         <div class="controls">

@@ -42,6 +42,12 @@ module Export::Util
       f.write(file_string)
     end
   end
+
+  def write_export_file(file_path)
+    File.open(file_path, 'wb') do |f|
+      yield(f)
+    end
+  end
   
   def append_file(file_string, file_path)
     File.open(file_path, "a") do |f|

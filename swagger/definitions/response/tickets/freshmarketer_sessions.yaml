@@ -1,0 +1,11 @@
+title: sessions
+type: array
+items:
+  type: object
+  properties:
+    id:
+      type: string
+    recorded_on:
+      type: string
+    duration:
+      type: string

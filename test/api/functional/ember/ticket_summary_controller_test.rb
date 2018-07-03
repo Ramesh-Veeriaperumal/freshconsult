@@ -401,4 +401,36 @@ class TicketSummaryControllerTest < ActionController::TestCase
     assert_response 400
     Account.current.revoke_feature(:ticket_summary)
   end
+
+  def test_show_summary_note
+    Account.current.add_feature(:ticket_summary)
+    ticket = create_ticket
+    note = create_ticket_summary(ticket)
+    get :show, construct_params(version: 'private', ticket_id: note.notable_id)
+    assert_response 200
+    Account.current.revoke_feature(:ticket_summary)
+  end
+
+  def test_show_uncreated_summary_note
+    Account.current.add_feature(:ticket_summary)
+    ticket = create_ticket
+    get :show, construct_params(version: 'private', ticket_id: ticket.display_id)
+    assert_response 204
+    Account.current.revoke_feature(:ticket_summary)
+  end
+
+  def test_show_summary_note_without_feature
+    ticket = create_ticket
+    get :show, construct_params(version: 'private', ticket_id: ticket.display_id)
+    match_json('code' => 'app_unavailable',
+               'message' => 'The Ticket summary feature is not enabled. Please make sure to install Summary app')
+    assert_response 403
+  end
+
+  def test_show_summary_note_without_parent_ticket
+    Account.current.add_feature(:ticket_summary)
+    get :show, construct_params(version: 'private', ticket_id: 100_000)
+    assert_response 404
+    Account.current.revoke_feature(:ticket_summary)
+  end
 end

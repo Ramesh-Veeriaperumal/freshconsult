@@ -2,7 +2,7 @@ class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets,
                    :customer_sentiment_ui, :dkim, :bulk_security, :scheduled_ticket_export, 
-                   :ticket_contact_export, :email_failures, :disable_emails, :skip_one_hop,
+                   :ticket_contact_export, :email_failures, :disable_emails,
                    :falcon_portal_theme, :freshid, :freshchat_integration,:year_in_review_2017,
                    :facebook_page_redirect, :announcements_tab, :archive_ghost,
                    :ticket_central_publish, :solutions_central_publish, :es_msearch,
@@ -25,7 +25,7 @@ class Account < ActiveRecord::Base
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
-      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2
+      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -35,6 +35,8 @@ class Account < ActiveRecord::Base
     CustomSurvey::Survey::VERSION_MEMBER_KEY,
     Freshchat::Account::VERSION_MEMBER_KEY
   ]
+
+  PODS_FOR_BOT = ['poduseast1'].freeze
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
@@ -265,5 +267,9 @@ class Account < ActiveRecord::Base
 
   def support_bot_configured?
     support_bot_enabled? && bot_onboarded?
+  end
+
+  def revoke_support_bot?
+    redis_key_exists?(REVOKE_SUPPORT_BOT) || (Rails.env.production? && PODS_FOR_BOT.exclude?(PodConfig['CURRENT_POD']))
   end
 end

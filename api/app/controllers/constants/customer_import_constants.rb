@@ -1,13 +1,11 @@
 module CustomerImportConstants
-  CREATE_FIELDS = %w(type fields file).freeze
+  CREATE_FIELDS = %w(fields file).freeze
 
   # validation class
   VALIDATION_CLASS = 'CustomerImportValidation'.freeze
 
-  CUSTOMER_IMPORT_TYPES = %w(contact company).freeze
-  TYPE = 'type'.freeze
-  VALID_INDEX_PARAMS = %w(type).freeze
   WRAP_PARAMS = [:customer_import, exclude: [], format: [:json, :multipart_form]].freeze
+  LOAD_OBJECT_EXCEPT = [:status]
 
   INVALID_CSV_FILE_ERROR = { file: :invalid_csv_file }.freeze
   IMPORT_STARTED = { import_status: Admin::DataImport::IMPORT_STATUS[:started] }.freeze

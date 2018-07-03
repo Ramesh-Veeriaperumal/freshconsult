@@ -64,6 +64,16 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings[:max_template_limit] unless additional_settings.blank?
   end
 
+  def freshmarketer_linked?
+    freshmarketer_hash.present? && freshmarketer_hash[:acc_id].present?
+  end
+
+  [:acc_id, :auth_token, :cdn_script, :app_url, :integrate_url].each do |item|
+    define_method "freshmarketer_#{item}" do
+      freshmarketer_hash[item] if freshmarketer_hash.present?
+    end
+  end
+
   def ticket_exports_limit
     additional_settings[:ticket_export_per_user_limit] unless additional_settings.blank?
   end
@@ -103,4 +113,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
     return true
   end
 
+  def freshmarketer_hash
+    additional_settings[:freshmarketer] || {}
+  end
 end

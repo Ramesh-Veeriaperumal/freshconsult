@@ -30,7 +30,6 @@ class SitemapMultilingualTest < ActiveSupport::TestCase
   end
 
   def enable_multilingual
-    @account.launch(:translate_solutions) unless @account.launched?(:translate_solutions)
     @account.add_features(:enable_multilingual) unless @account.features_included?(:enable_multilingual)
     @account.add_features(:multi_language) unless @account.features_included?(:multi_language)
     @account.account_additional_settings.supported_languages = @lang_list_codes

@@ -206,8 +206,13 @@ class UserNotifier < ActionMailer::Base
       # to be sent via custom mail server, simply switching the primary email config will do
       email_config = options[:user].account.primary_email_config
       configure_email_config email_config
+      @import_stopped = options[:import_stopped]
+      import_stopped_subject = @import_stopped ? 'stopped' : nil 
+      
+      @account_domain = options[:user].account.full_domain
       headers = {
-        :subject                    => "#{options[:type].capitalize} Import for #{options[:user].account.full_domain}",
+        :subject                    => "#{options[:type].capitalize} Import for "\
+                                       "#{@account_domain} #{import_stopped_subject}",
         :to                         => options[:user].email,
         :from                       => options[:user].account.default_friendly_email,
         :bcc                        => AppConfig['reports_email'],

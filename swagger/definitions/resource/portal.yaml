@@ -16,6 +16,37 @@ allOf:
         type: array
         items:
           type: integer
+      preferences:
+        type: object
+        properties:
+          helpdesk: 
+            type: object
+            properties:
+              primary_background:
+                type: string
+                description: Backgroung color for logo holder
+              nav_background:
+                type: string
+                description: backgroung color for navigation bar
+      helpdesk_logo:  
+        type: object
+        properties:
+          id:
+            type: integer
+            description: id of the attachment
+          name:
+            type: string
+            description: name of the file
+          content_type: 
+            type: string
+          size:
+            type: integer
+          created_at:
+            type: string
+          updated_at:
+            type: string
+          attachment_url:
+            type: string
       discussion_category_ids:
         type: array
         items:

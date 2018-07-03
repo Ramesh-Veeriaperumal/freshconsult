@@ -160,6 +160,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"archive/ticket", :only => [:show, :destroy]
     resource :"archive/conversation", :only => [:ticket_conversations]
     resource :"archive/tickets/activity", only: [:index]
+    resource :"admin/freshmarketer", only: %i[sessions session_info]
   end
 
   export_tickets do
@@ -179,6 +180,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/note", :only => [:create]
     resource :"social/twitter",
       :only => [:create_fd_item, :reply, :retweet, :post_tweet, :favorite, :unfavorite, :followers, :follow, :unfollow]
+    resource :"support/canned_form", only: [:preview]
 
     resource :"support/canned_form", only: [:preview]
 
@@ -379,6 +381,7 @@ Authority::Authorization::PrivilegeList.build do
     # Used by V2 API
     resource :"api_contact", :only => [:index, :show]
     resource :"api_company", :only => [:index, :show]
+    resource :"contacts/misc", only: [:send_invite]
   end
 
   # add_or_edit_contact
@@ -413,6 +416,7 @@ Authority::Authorization::PrivilegeList.build do
     # So access to read the list of custom fields for an account through API should also be given at the same level of privilege as contact/company create.
     resource :api_contact_field, :only => [:index]
     resource :api_company_field , :only => [:index]
+    resource :"contacts/merge", only: [:merge]
   end
 
   delete_contact do
@@ -491,7 +495,7 @@ Authority::Authorization::PrivilegeList.build do
     # NOTE: The agent show action is also allowed in view_contacts privilege
     resource :agent, :only => [:new, :create, :edit, :update, :index, :destroy, :show, :delete_avatar,
                                :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact,
-                               :configure_export, :export_csv, :reset_score]
+                               :configure_export, :export_csv, :reset_score, :search_in_freshworks]
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
@@ -627,6 +631,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_integrations/cti", :only => [:create, :index]
     resource :"email_preview"
     resource :"admin/freshchat", :only => [:index, :create, :update, :toggle]
+    resource :"admin/freshmarketer", only: %i[index link unlink enable_integration disable_integration]
   end
 
   manage_account do

@@ -22,7 +22,29 @@ class Helpdesk::AttachmentsControllerTest < ActionController::TestCase
     FakeWeb::StubSocket.any_instance.stubs(:continue_timeout=).returns(true)
     FakeWeb::StubSocket.any_instance.stubs(:request_with_fakeweb).returns(true)
   end
-  
+
+  def test_attachment_redirect_url_contains_content_disposition_when_download_true
+    create_ticket_with_attachments
+    login_admin
+    ticket = Helpdesk::Ticket.last
+    attachment = ticket.attachments.first
+    xhr :get, :show, {:id => attachment.id, download: true}
+    assert_response :redirect
+    assert_match Regexp.new(Helpdesk::Attachment.s3_path(attachment.id, "attachment.txt")), @response.redirect_url
+    assert_match Regexp.new('response-content-disposition=attachment'), @response.redirect_url
+  end
+
+  def test_attachment_redirect_url_contains_no_content_disposition_when_no_download
+    create_ticket_with_attachments
+    login_admin
+    ticket = Helpdesk::Ticket.last
+    attachment = ticket.attachments.first
+    xhr :get, :show, {:id => attachment.id}
+    assert_response :redirect
+    assert_match Regexp.new(Helpdesk::Attachment.s3_path(attachment.id, "attachment.txt")), @response.redirect_url
+    refute_match Regexp.new('response-content-disposition=attachment'), @response.redirect_url
+  end
+
   def teardown
     super
     FakeWeb.clean_registry

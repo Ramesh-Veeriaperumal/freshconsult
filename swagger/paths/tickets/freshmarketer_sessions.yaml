@@ -1,0 +1,31 @@
+get:
+  tags: [ticket]
+  description: Get recent sessions
+  summary: Recent sessions
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+    - name: filter
+      in: query
+      type: string
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/freshmarketer_sessions'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    500:
+      description: Internal server error
+      schema:
+        $ref: '#/definitions/internal_server_error'
