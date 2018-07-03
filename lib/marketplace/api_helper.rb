@@ -29,8 +29,7 @@ module Marketplace::ApiHelper
       page == Marketplace::Constants::DISPLAY_PAGE[:integrations_list] ? @installed_list : installed_mkp_apps_urls(page)
     end
 
-    # Get details for installed versions to get the app URL. 
-    def installed_mkp_apps_urls(page)
+    def get_version_details(page)
       key = MemcacheKeys::INSTALLED_VERSIONS % {
             :page => page, :account_id => current_account.id, :platform_version => platform_version  }
       cache_invalidation = (page == Marketplace::Constants::DISPLAY_PAGE[:integrations_list]) ? 
@@ -40,13 +39,25 @@ module Marketplace::ApiHelper
         version_ids = @installed_list.body.map { |x| x['version_id']}
         v2_versions(version_ids)
       end
-      return error_message if error_status?(@v2_versions) && @v2_versions.body.nil?
+    end
+
+    def set_app_urls
       @installed_list.body.try(:each) do |installed_mkp_app|
         version_details = @v2_versions.body['versions'].detect { |x| x['id'] == installed_mkp_app['version_id'] }
         unless version_details.nil?
           installed_mkp_app['app_url'] = version_details['app_url']
         end
       end
+    end
+
+    # Get details for installed versions to get the app URL. 
+    def installed_mkp_apps_urls(page)
+      # return error response or empty response.
+      return @installed_list if @installed_list.body.blank?
+
+      get_version_details(page)
+      return error_message if error_status?(@v2_versions) && @v2_versions.body.nil?
+      set_app_urls
     end
 
     def installed_mkp_app_details

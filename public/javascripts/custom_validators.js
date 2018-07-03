@@ -333,7 +333,7 @@
   $.validator.addMethod( //override email to sync ruby's email validation
       'email',
       function(value, element){
-          return this.optional(element) || /^[a-zA-Z0-9.'-_~!$&()*+;=:%+]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test( value );
+          return this.optional(element) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(\.\w{2,})+$/.test( value );
       },
       I18n.t('validation.email', { defaultValue: validationDefaults.email })
   );
@@ -342,7 +342,7 @@
   $.validator.addMethod( //override email to sync ruby's email validation
       'useremail',
       function(value, element){
-          var result = this.optional(element) || /^[a-zA-Z0-9.'-_~!$&()*+;=:%+]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test( value );
+          var result = this.optional(element) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(\.\w{2,})+$/.test( value );
           if(!result)
             $(element).addClass("email-error");
           else

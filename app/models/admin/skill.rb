@@ -40,6 +40,8 @@ class Admin::Skill < ActiveRecord::Base
   accepts_nested_attributes_for :user_skills, :allow_destroy => true
   attr_accessible :name, :description, :match_type, :filter_data, :position, :user_ids, :user_skills_attributes
 
+  xss_sanitize :only => [:name, :description], :html_sanitizer => [:name, :description]
+
   class << self
 
     def map_to ticket 

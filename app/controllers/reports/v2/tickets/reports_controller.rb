@@ -25,7 +25,7 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   before_filter :check_exports_count,                                   :only   => [:export_tickets]
   
 
-  helper_method :enable_schedule_report?
+  helper_method :enable_schedule_report?, :enable_new_ticket_recieved_metric? 
 
   wrap_parameters false
 

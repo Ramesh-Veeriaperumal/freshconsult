@@ -116,7 +116,7 @@ en:
     restore_notice:
       singular: "%{type} was restored"
       plural: "%{type} were restored"
-    delete_notice: 
+    delete_notice:
       singular: "%{type} was deleted"
       plural: "%{type} were deleted"
     others: "Others"
@@ -225,6 +225,13 @@ en:
       add_note_to_admin : "Notify admin of blocked address"
       hide_details: "Hide details"
       show_details: "Show details"
+  todos_reminder:
+    email:
+      user: "Hi %{user_name},"
+      message: "You have a reminder on the ticket"
+      due: "due now:"
+      at: "at"
+      association: "Here is the associated ticket:"
   bot_training_completed:
     email:
       subject: "Bot Training Completed! I can help your customers find answers now."
@@ -493,6 +500,8 @@ en:
     remove_profile_image: "Profile image successfully removed"
     remove_profile_image_confirm: "Are you sure you want to delete this Profile Picture?"
     ie9_file_change_msg: "%{filename} Save to update profile image"
+    user_exist_in_freshid: "Existing freshworks user! Admins cannot edit Agent' profile information."
+    edit_profile_in_freshid: "Agents can edit their profile information in their Freshworks profile."
     errors:
       required_field: cannot be blank
       custom_text : is not valid
@@ -767,6 +776,11 @@ en:
         unhappy_info: We will ensure that we will take extra care the next time around.
         additional_info: Additionally, you could also share your experience working with us.
         submit: Submit
+    canned_form:
+      welcome_text: We require additional information for troubleshooting the issue for the Ticket.
+      thankyou_text: Thank you for the feedback!!!
+      ticket_subject: <TICKET_SUBJECT>
+      no_info: No information was provided
   gamification:
     levels:
       beginner: Beginner
@@ -1066,7 +1080,7 @@ en:
         enabled_header: "Social Signals Enabled"
         disabled_header: "Enable Social Signals"
         desc_with_keywords: "Automatically convert relevant tweets to tickets. Supports only English language for now."
-        desc_without_keywords: "Automatically convert only relevant @mentions to tickets. Supports only English language for now." 
+        desc_without_keywords: "Automatically convert only relevant @mentions to tickets. Supports only English language for now."
         convert_tweet: "Start converting tweets into tickets"
         convert_dm: "Start converting direct messages into tickets"
         convert_all: "Convert relevant @mentions into tickets"
@@ -2302,7 +2316,9 @@ en:
         default_portal_language: Default Portal Language
         portal_language_info: This will be the default language when customers visits your portal
         portal_customization: Portal Customization
-        portal_settings: Portal Settings
+        portal_settings: Portal settings
+        agent_portal: Agent Portal
+        edit_branding: Edit Branding
         edit_portal: Edit Portal
         customize_portal: "Customize portal"
         save_and_customize: "Save & Customize portal"
@@ -2313,7 +2329,6 @@ en:
         contact_us: Contact us
         logo_and_favicon: "Logo & Favicon"
         customer_portal: Customer Portal
-        portal_settings: Portal Settings
         categories_visible: Portal Categories
         product_label: "Product: %{product_name}"
         enable_multilingual: "Setup Multilingual Support"
@@ -2454,6 +2469,7 @@ en:
         view_bots: View bots tab
         manage_bots: Manage Bots
         reports: Reports
+        analytics: Analytics
         view_reports: View reports tab
         admin: Admin
         not_administrator: Not view any Administrator options
@@ -2465,7 +2481,8 @@ en:
         manage_supervisor_rules: Manage Supervisor rules
         manage_scenario_automation_rules: Manage Scenario automation rules
         manage_email_settings: Manage Email Commands
-        manage_dashboard: Manage ticket list views
+        manage_ticket_list_views: Manage ticket list views
+        manage_dashboard: Manage team dashboards
         manage_ticket_templates: Manage Ticket Templates
         admin_tasks: Play God with Super Admin controls
         manage_account: Include account management
@@ -4297,6 +4314,7 @@ en:
         agent_email: An agent must have exactly one valid email
         email_not_unique: Email has already been taken
         email_invalid: Email is invalid
+        exceeded_email: Sorry, you cannot sign up for any more accounts
         user_emails: Please enter at least one contact detail
         max_user_emails: A contact cannot have more than 10 emails
         max_user_companies: A contact cannot have more than 20 companies
@@ -4306,6 +4324,7 @@ en:
         edit_broadcast_note: "Broadcast message can't be edited"
         max_scheduled_exports_per_account: Cannot have more than %{max_limit} scheduled exports
         skill_name: Should not contain comma
+        email_disposable: Register using your work email
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -5865,7 +5884,7 @@ en:
     reply_to_tickets: Use "Reply-to" email address to create requester contacts
     reply_to_tickets_info: "Note: If disabled, requester will be created using 'From' address in email."
     disable_agent_forward: "For forwarded emails, use original sender as requester"
-    disable_agent_forward_info: "When an agent forwards an email from his mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
+    disable_agent_forward_info: "When an agent forwards an email from their mailbox to the helpdesk, create the ticket under the original sender. If disabled, the requester is the agent."
     primary_email_delete_alert: "Can't delete primary email"
     using_custom_mailbox: "Using custom mail server"
     enable_compose: "Allow agents to initiate conversation with customers?"
@@ -6611,7 +6630,7 @@ en:
     gdpr_admin_details: has changed your user permissions from
     gdpr_agent: Agent
     gdpr_admin: Admin.
-    gdpr_terms: By clicking on Accept , you agree to our  
+    gdpr_terms: By clicking on Accept , you agree to our
     gdpr_terms_link:  Terms
     gdpr_acknowledgement: and acknowledge having read our
     gdpr_policy: Privacy policy.
@@ -7288,6 +7307,7 @@ en:
           reply_to_forward: "%{user_name} replied to forward <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           broadcast_note: "%{user_name} added a broadcast message <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
           broadcast_message: "Broadcasted Message"
+          canned_form: "%{user_name} filled out the canned form you sent <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         last_edited_info: "Last edited by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         last_deleted_info: "Deleted by: %{user_name} <abbr data-livestamp='%{timestamp}'></abbr> (%{note_date})"
         edit_note: Edit Note
@@ -7464,6 +7484,7 @@ en:
     seven_days: "Last 7 Days"
     twenty_four: "From yesterday"
     custom_filter: "Set date"
+    today: "Today"
     no_fields_selected: "Please check atleast one of the below fields to proceed."
     created_time: Created time
     resolved_time: Resolved time
@@ -7491,9 +7512,9 @@ en:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
       body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
-      limit_reached: We are still working hard on your previous export. Please retry once that is complete.
+      limit_reached: Cannot run more than %{max_limit} ticket exports per agent at a time. Please try again later.
     archive_ticket_export:
-      limit_reached: We are still working hard on your previous export. Please retry once that is complete.
+      limit_reached: Cannot run more than %{max_limit} archived ticket exports per account at a time. Please try again later.
     scheduled_ticket_export:
       subject: "%{title} for %{date}"
       body: "Hello there,<br><br>The export scheduled by %{user_name} is now ready. This report has the details of tickets that were created and updated from %{latest_schedule_range}.<br><br><a href=%{url}>Download Report</a><br><br>Please download this report within 30 days, after which the link will expire.<br><br>Happy number crunching!<br>%{helpdesk_name}"
@@ -8770,8 +8791,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         app_key_info: "Create an App in the dropbox and provide the app key here."
     google_drive:
       label: "Google Drive"
-      desc: "Attach and Share your data/files from Google Drive."
-      helptext: "<h4>Google Drive integration help</h4><br/><p>The Google Drive Integration lets agents and users browse for files from their Google Drive folder and share them when submitting or replying to a ticket in Freshdesk. A direct link to the file is shared in the ticket, removing the need for attachments and email size restrictions.</p><p>Before you setup the integration, go to the <a target='_blank' href='https://console.developers.google.com/'><b>Google Developers page</b></a>.</p><p>1. Select <b>Create Your Project</b> in the <b>API & Services</b> section.</p><p>2. Under <b>Enable APIs and Services</b>, enable <b>Google Drive API and Google Picker API</b>.</p><p>3. Under <b>Credentials section</b> create your OAuth client ID as well as API Key, while generating OAuth client ID, please enter the freshdesk url under Authorised Javascript origins section. </p><p>4. Finally, copy paste the Client ID and API Key into this page, and Save changes. Your Google Drive Chooser should now be ready. You can check it out in the New Ticket form.</p>"
+      desc: "Attach and Share your data/files from GoogleDrive."
+      helptext: "<h4>Google Drive integration help</h4><br/><p>The Google Drive Integration lets agents and users browse for files from their Google Drive folder and share them when submitting or replying to a ticket in Freshdesk. A direct link to the file is shared in the ticket, removing the need for attachments and email size restrictions.</p><p>Before you setup the integration, go to the <a target='_blank' href='https://console.developers.google.com/'><b>Google Developers page</b></a>.</p><p>1. Select <b>Create Your Project</b> in the <b>API & Services</b> section.</p><p>2. Under <b>Enable APIs and Services</b>, enable <b>Google Drive API and Google Picker API</b>.</p><p>3. Under <b>Credentials section</b> create your OAuth client ID as well as API Key, while generating OAuth client ID, please enter the freshdesk url under Authorised Javascript origins section. </p><p>4. <p>Finally, copy paste the Client ID and API Key into this page, and Save changes. Your Google Drive Chooser should now be ready. You can check it out in the New Ticket form.</p>"
       form:
         client_id: "OAuth client ID for your domain"
         developer_key: "API key obtained from google developers console."
@@ -8817,7 +8838,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     shared_ownership:
       label: "Shared Ownership"
       desc: "Get improved agent visibility over tickets that require assistance from specialised teams with the ability to share tickets between agents."
-    ticket_summary: 
+    ticket_summary:
       label: "Summary"
       desc: "Create and share a summary of problems faced by customers when you're working on tickets."
     marketplace_login:
@@ -9245,6 +9266,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   maximum_agents_admin_msg: "You have reached the maximum number of full time agents your subscription allows. You need to delete an existing full time agent or <a href='/subscription'>purchase additional agents</a> for your account. You can also choose to add occasional agents below. "
   maximum_agents_msg: "You have reached the maximum number of agents your subscription allows. You need to delete an existing agent or contact your account administrator to purchase additional agents. "
   contact_agent_deleted_forever: "This contact has been deleted forever"
+  contact_marked_for_hard_delete: "This contact has been scheduled for permanent delete"
   contact_without_email_id: "Contact with email id can only be converted to agent"
   no_date_to_display: "No data to display"
   email_command_delimeter_length_error_msg: " Please provide atleast three characters for the delimiter."
@@ -10149,6 +10171,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       avg_first_res_time: Average 1st response time
       avg_res_time: Average response time
       avg_resolution_time: Average resolution time
+      received_tickets: Tickets Received 
+      tickets_enagaged: Tickets Engaged
       agent: Agent
     timespent:
       title : Ticket Lifecycle
@@ -11738,6 +11762,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     collab_reply_multi: "replied to your message on ticket %{object}"
     collab_follower: "1 new message on ticket %{object}"
     collab_follower_many: "%{count} new messages on ticket %{object}"
+    collab_follower_multi: "{{count}} new messages on ticket %{object}"
     generic_notification: "%{title}"
     types:
       private_note_created: "Private Note Created"
@@ -11830,8 +11855,8 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     special_characters: "Password must have special characters"
     mixed_case: "Password must have both uppercase and lowercase alphabets"
     username: "Password cannot contain username"
-    history: "New password should be different from last %{history_depth} password"
-    history_plural: "New password should be different from last %{history_depth} passwords"
+    history: "Cannot be same as the last password"
+    history_plural: "Cannot be same as the last %{history_depth} passwords"
     min_length: "Password must have atleast %{min_length} characters"
     wrong_password_length: Please enter a valid minimum no of characters.
     wrong_no_of_past_password: Please enter a valid number of past passwords.
@@ -12027,6 +12052,25 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       wrong_file_format: "Unsupported file format!"
       unexpected: "Something went wrong!"
       highlight_missing: "Highlight missing"
+
+  call:
+    duration_html: "<br><br> <b>Call Duration:</b> %{call_duration}"
+    note_html: "<br><br> <b>Call Notes:</b> <br> %{call_note}"
+    ticket:
+      completed_title: "Call with %{customer} on %{date} at %{time}"
+      inprogress_title: "Call with %{customer} on %{date} at %{time}"
+      onhold_title: "Call with %{customer} on %{date} at %{time}"
+      voicemail_title: "Voicemail from %{customer}"
+      outgoing_noanswer_title: "Missed Call to %{customer}"
+      incoming_noanswer_title: "Missed Call from %{customer}"
+
+      completed_description: "Conversation with %{customer} and %{agent}"
+      voicemail_description: "Voicemail from %{customer} to %{agent}"
+      incoming_noanswer_description: "Missed Call from %{customer} to %{agent}"
+      outgoing_noanswer_description: "Missed Call from %{agent} to %{customer}"
+      inprogress_description: "Conversation with %{customer} and %{agent}"
+      onhold_description: "Conversation with %{customer} and %{agent}"
+
     info:
       follow_flash: "Hey there!<br>You are now following this Team Huddle and will be notified of all new messages in-app and via email."
       unfollow_flash: "See you later 'gator!<br>You will still be notified when a teammate mentions you and groups that you are a part of and when someone replies to your message."
@@ -12210,7 +12254,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       enable_chat_in_portal: 'Enable chat in your support portal'
       enable_chat_in_portal_info: 'Make it easy for your customers to chat with you, when they land on your support portal.'
       header_info: Freshdesk’s integrated chat channel is powered by Freshchat. Freshchat is a modern messaging software that helps engage, support, and retain customers on multiple channels - website, mobile, support portal, and in-app.
-      sidebar_content: 
+      sidebar_content:
         para1: Freshdesk’s integrated chat channel, powered by Freshchat, helps you engage in conversations with customers who are you on the website, mobile, support portal, or in-app. You can also send proactive messages to visitors and users and drive them to make a purchase, sign up, or share feedback on your product.
         para2:
           header: 'Use the messenger inside Freshdesk to bring your support and messaging workflow together:'
@@ -12218,7 +12262,30 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
   sandbox:
-    email: 'This email is generated from a sandbox account'
+    live: Sandbox is live
+    sync_complete: Sandbox sync complete!
+    error:
+      create: Sandbox already exists
+    sandbox_mail: This email is generated from a sandbox account
+    mail:
+      greeting: Hi
+      live_message: Your sandbox has <br> been created
+      sandbox_button: TAKE ME TO SANDBOX
+      button_error: If the button above doesn't work, paste this link <br> into your web browser
+      freshdesk_recommends: Freshdesk recommends
+      recommended_point_1: Notify all helpdesk admins about the creation of the sandbox account and the expected time of testing.
+      recommended_point_2: Share the list of changes you will be making with other admins and collate changes from them as well to avoid confusion.
+      recommended_point_3: Request all admins to avoid making changes to your Freshdesk account while the sandbox account is live.
+      recommended_point_4: Plan your testing carefully and keep the sandbox account live for only short periods of time to avoid changes from accumulating.
+      recommended_point_5: Make sure all admins have completed testing in the sandbox account before initiating a sync.
+      recommended_point_6: Review all changes carefully before syncing back to your Freshdesk account.
+      recommended_point_7: Sync the sandbox account to your Freshdesk account during non-peak hours as it might take time if you have a lot of changes.
+      footer:
+        cheers: Cheers!
+        info_line: Questions? The Freshdesk team is always here to help. Contact <br/><span>support@freshdesk.com</span> and we'll get back to you soon.
+      diff_success: The following changes were synced from your Sandbox account to your Freshdesk account
+      diff_failure: Some changes in the Sandbox were not copied to your Freshdesk account.
+      diff_is_edited: Edited Properties
     banner:
-      production_info: Your sandbox account is curently active. We do not recommend you make any changes to your freshdesk account. <a href='http://%{url}' target=_blank rel="noreferrer noopener">Take me there.</a>
+      production_info: Your sandbox account is currently active. We do not recommend you make any changes to your Freshdesk account. <a href='http://%{url}' target=_blank rel="noreferrer noopener">Take me there.</a>
 

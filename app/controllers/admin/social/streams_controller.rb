@@ -26,7 +26,7 @@ class Admin::Social::StreamsController < Admin::AdminController
   end
 
   def callback_url
-    current_account.launched?(:twitter_common_redirect) ? COMMON_REDIRECT_URL : authdone_admin_social_twitters_url
+   COMMON_REDIRECT_URL
   end
   
   def stream_accessible_params(social_stream)

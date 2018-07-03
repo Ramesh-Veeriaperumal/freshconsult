@@ -449,6 +449,14 @@ module SupportHelper
       end
   end
 
+  def construct_canned_form(object_name, field, disabled = false)
+    dom_type = field[:name].split('_')[0]
+    return unless Admin::CannedForm::CUSTOM_FIELDS_SUPPORTED.include? dom_type.to_sym
+    form_builder = Admin::CannedForm::Constructor.new(field: field, object_name: object_name, disabled: disabled)
+    element = form_builder.safe_send("#{dom_type}_element")
+    safe_join(element)
+  end
+
   def render_add_cc_field  field, condition
           render(:partial => "/support/shared/add_cc_field", :locals => { :field => field, :_cc_condition => condition })
   end
@@ -612,6 +620,23 @@ module SupportHelper
     output << %(    var attachment_size = #{attachment_size}; )
     output << %( </script> )
     output.join("").html_safe
+  end
+
+  def portal_session_replay
+    output = current_account.account_additional_settings.freshmarketer_cdn_script
+    output.html_safe
+  end
+
+  def identify_user
+    %(
+      <script>
+        if(typeof window.FM !== 'undefined') {
+          var current_user_email = "#{current_user.try(:email)}";
+          window.FM.identify(current_user_email);
+          console.log('Session identified: ' + current_user_email)
+        }
+      </script>
+    ).html_safe
   end
 
   def portal_javascript_object

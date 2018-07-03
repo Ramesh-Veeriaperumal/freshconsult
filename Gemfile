@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 gem "rake", "~> 10.4.0"
 gem "rails","3.2.22.5"
 
-gem "freemail", "0.2.0", :require => false 
+gem "freemail", "0.2.3", :require => false 
 gem 'stopwords-filter', "0.4.1", require: 'stopwords'
 
 gem 'rack-cors', '~> 0.3.1'
@@ -34,7 +34,6 @@ gem "dynamic_form"
 gem "prototype_legacy_helper", '0.0.0', :git => "git://github.com/rails/prototype_legacy_helper.git"
 gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/freshdesk/rack-ssl',:branch => 'ssl'
 gem "rack-cache", "~> 1.2"
-gem "statsd-ruby", :git => 'git://github.com/sumakumardey/statsd-ruby', :branch =>'custom_stats', :require => 'statsd'
 
 gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
 gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'v20'
@@ -136,7 +135,7 @@ gem 'faraday_middleware', '~> 0.10.0'
 gem "twitter", "~> 5.16.0"
 gem "gnip-rule", "1.0.0"
 gem "curb", "~> 0.8.5"
-gem "sanitize", "4.5.0"
+gem "sanitize", "4.6.5"
 gem "koala", "1.10.1"
 gem "spreadsheet", "0.6.8"
 
@@ -251,6 +250,7 @@ gem "rack-openid", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/rack-o
 gem "open_id_authentication", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/open_id_authentication"
 gem "ebayr", :path => "#{File.expand_path(__FILE__)}/../vendor/gems/ebayr"
 gem 'fd_spam_detection_service', :path => "#{File.expand_path(__FILE__)}/../vendor/gems/fd_spam_detection_service"
+gem 'formserv-gem', '0.9.0', git: 'git@github.com:freshdesk/formserv-gem.git'
 
 
 group :development, :test do

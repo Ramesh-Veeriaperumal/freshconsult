@@ -32,7 +32,9 @@ class AccountsController < ApplicationController
 
   around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages, :edit_domain, :validate_domain, :update_domain]
 
-  before_filter :validate_signup_email, :check_for_existing_accounts, :only => [:email_signup]
+  before_filter :validate_signup_email, :only => [:email_signup, :new_signup_free]
+  before_filter :check_for_existing_accounts, :only => [:email_signup]
+
   before_filter :account_unverified?, :only => [:edit_domain, :validate_domain, :update_domain]
   before_filter :ensure_proper_user, :only => [:edit_domain]
   before_filter :check_activation_mail_job_status, :only => [:edit_domain, :update_domain]
@@ -53,7 +55,6 @@ class AccountsController < ApplicationController
   before_filter :update_language_attributes, :only => [:update_languages]
   before_filter :validate_portal_language_inclusion, :only => [:update_languages]
   before_filter(:only => [:manage_languages]) { |c| c.requires_feature :multi_language }
-  before_filter :multilingual_available?, :only => [:manage_languages]
   
   def show
   end   
@@ -171,7 +172,7 @@ class AccountsController < ApplicationController
         }
       end
     else
-      render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).fd_json }, :callback => params[:callback] 
+      render :json => { :success => false, :errors => @signup.all_errors }, :callback => params[:callback]
     end    
   end
 
@@ -195,7 +196,6 @@ class AccountsController < ApplicationController
 
   def update
     redirect_url = params[:redirect_url].presence || admin_home_index_path
-    @account.account_additional_settings[:supported_languages] = params[:account][:account_additional_settings_attributes][:supported_languages] if @account.features?(:multi_language) && !@account.launched?(:translate_solutions)
     @account.account_additional_settings[:date_format] = params[:account][:account_additional_settings_attributes][:date_format] 
     @account.time_zone = params[:account][:time_zone]
     @account.helpdesk_name = params[:account][:helpdesk_name]
@@ -601,10 +601,6 @@ class AccountsController < ApplicationController
       @account.account_additional_settings.additional_settings[:portal_languages] = portal_languages
     end
 
-    def multilingual_available?
-      render :template => "/errors/non_covered_feature.html", :locals => {:feature => :multi_language} unless @account.launched?(:translate_solutions)
-    end
-
     def validate_feature_params
       allowed_features = @account.subscription.non_sprout_plan? ? ["forums"] : []
       if params[:account] && params[:account][:features]
@@ -631,8 +627,8 @@ class AccountsController < ApplicationController
     end
 
     def set_additional_signup_params
-      params["signup"]["account_name"] =  @domain_generator.domain_name
-      params["signup"]["account_domain"] =  @domain_generator.subdomain
+      params["signup"]["account_name"] = @domain_generator.domain_name
+      params["signup"]["account_domain"] = @domain_generator.subdomain
       params["signup"]["contact_first_name"] = @domain_generator.email_name
       params["signup"]["contact_last_name"] = @domain_generator.email_name
     end
@@ -641,7 +637,7 @@ class AccountsController < ApplicationController
       accounts_count = AdminEmail::AssociatedAccounts.find(params["user"]["email"]).length
       return if (@domain_generator.email_company_name == AppConfig["app_name"].downcase) || accounts_count == 0 || (accounts_count < Signup::MAX_ACCOUNTS_COUNT && params["force"] == "true")
       status_code = accounts_count >= Signup::MAX_ACCOUNTS_COUNT ?  Signup::SIGNUP_RESPONSE_STATUS_CODES[:too_many_requests] : Signup::SIGNUP_RESPONSE_STATUS_CODES[:precondition_failed]
-      render :json => {:success => false, :accounts_count => accounts_count}, :callback => params[:callback], :status => status_code
+      render :json => {:success => false, :accounts_count => accounts_count, :errors => [I18n.t("activerecord.errors.messages.exceeded_email")]}, :callback => params[:callback], :status => status_code
     end
 
     def validate_signup_email
@@ -651,7 +647,7 @@ class AccountsController < ApplicationController
         respond_to do |format|
           format.json {
             render :json => { :success => false, 
-              :errors => @domain_generator.errors}, 
+              :errors => @domain_generator.errors[:email]}, 
               :status => :unprocessable_entity  
           }
         end

@@ -50,6 +50,7 @@
       - :image_annotation
       - :todos_reminder_scheduler
       - :smart_filter
+      - :session_replay
     :inherits:
       - :sprout_jan_17
     :exclude: []
