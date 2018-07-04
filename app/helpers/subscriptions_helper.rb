@@ -14,7 +14,7 @@ module SubscriptionsHelper
     "garden jan 17" => [ "everything_in_blossom", "m_k_base", "dynamic_email_alert", "forums", "scheduled_reports",
        "ticket_templates", "custom_surveys"],
     "estate jan 17" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "agent_collision", "auto_ticket_assignment",
-       "role_dashboard", "enterprise_reports"],
+       "role_dashboard", "enterprise_reports", "custom_dashboard"],
     "forest jan 17" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "custom_mailbox", "advanced_phone_integration",  "custom_data_center" ]
   }
 
@@ -26,7 +26,7 @@ module SubscriptionsHelper
 
     "blossom jan 17" => ["time_event_automation_desc", "sla_reminders", "custom_fields_desc", "multiple_mailbox_desc", "adv_social_desc"],
     "garden jan 17" => ["multilingual_kbase_desc", "live_chat_desc", "forums_desc", "custom_survey_desc", "ticket_templates"],
-    "estate jan 17" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc", "custom_ssl_desc", "enterprise_reports_desc"],
+    "estate jan 17" => ["multiple_products_desc", "multiple_sla_business_desc", "portal_customization_desc", "custom_ssl_desc", "enterprise_reports_desc", "custom_dashboard"],
     "forest jan 17" => ["whitelisted_ip_desc", "skill_based_assignment_desc", "custom_mailbox_desc", "advanced_phone_desc"]
   }
 
