@@ -9,9 +9,10 @@ class Account < ActiveRecord::Base
                    :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
                    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, 
                    :imap_error_status_check, :va_any_field_without_none, :api_es, :sandbox_lp, 
-                   :encode_emoji, :audit_logs_central_publish, :auto_complete_off, :dependent_field_validation,
-                   :post_central_publish, :encode_emoji_subject, :time_sheets_central_publish, :twitter_common_redirect,
-                   :canned_forms, :euc_migrated_twitter, :new_ticket_recieved_metric]
+                   :encode_emoji, :audit_logs_central_publish, :auto_complete_off,
+                   :dependent_field_validation, :post_central_publish, :encode_emoji_subject,
+                   :time_sheets_central_publish, :twitter_common_redirect, :canned_forms,
+                   :euc_migrated_twitter, :new_ticket_recieved_metric, :audit_log_ui]
    DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
   BITMAP_FEATURES = [

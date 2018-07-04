@@ -854,7 +854,9 @@ class ApiApplicationController < MetalApiController
     end
 
     def set_current_ip
-      # Thread.current[:current_ip] = request.remote_ip
+      Thread.current[:current_ip] = request.env['CLIENT_IP']
+    rescue Exception => e
+      Rails.logger.debug "Error getting currernt IP : #{e.message}"
     end
 
     def set_locale

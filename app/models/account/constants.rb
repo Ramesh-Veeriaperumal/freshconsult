@@ -207,11 +207,12 @@ class Account < ActiveRecord::Base
     :freshchat_integration => false, :facebook_page_redirect => false, :froala_editor_forums => false, 
     :ticket_central_publish => false, :solutions_central_publish => false, :freshid => false, 
     :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, 
-    :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false, 
-    :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false, 
+    :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false,
+    :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false,
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
     :post_central_publish => false, :audit_logs_central_publish => false, :twitter_common_redirect => false,
-    :euc_migrated_twitter => false, :new_onboarding => false, :new_ticket_recieved_metric => false, :es_msearch => true
+    :euc_migrated_twitter => false, :new_onboarding => false, :new_ticket_recieved_metric => false,
+    :audit_log_ui => false, :es_msearch => true
   }
 
   BLOCK_GRACE_PERIOD = 90.days

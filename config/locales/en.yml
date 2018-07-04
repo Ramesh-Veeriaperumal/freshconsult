@@ -2653,6 +2653,61 @@ en:
       helpdesk: Helpdesk
       events: Events
       survey: Survey
+    audit_log:
+      column:
+        event_type: "Event Type"
+        time: "Time"
+        event_performer: "Event Performer"
+        ip_address: "IP Address"
+        event_name: "Name"
+        action: "Action"
+        description: "Description"
+      action:
+        update: "Updated"
+        create: "Created"
+        destroy: "Deleted"
+      event_type:
+        agent: "Agent"
+        dispatcher: "Dispatch’r"
+        observer: "Observer"
+        supervisor: "Supervisor"
+        subscription: "Subscription"
+      subscription:
+        next_renewal_at: "Next Renewal at"
+        card_number: "Card Number"
+        card_expiration: "Card Expiration"
+        renewal_period: "Renewal Period"
+        amount: "Subscription Charge"
+        agent_limit: "Agent Limit"
+        state: "Subscription State"
+        subscription_currency_id: "Subscription Currency"
+        subscription_plan_id: "Subscription Plan"
+      agent:
+        available: "Availability"
+        name: "Name"
+        email: "Email"
+        occasional: "Occasional"
+        ticket_permission: "Ticket Permission"
+        time_zone: "Time Zone"
+        scoreboard_level_id: "Scoreboard Level"
+        roles: "Roles"
+        added: "Added"
+        removed: "Removed"
+        global: "Global Access"
+        group: "Group Access"
+        individual: "Restricted Access"
+        is_available: "On"
+        not_available: "Off"
+      automation_rule:
+        name: "Name"
+        description: "Description"
+        match_type: "Match any/all conditions"
+        filter_data: "Conditions"
+        action_data: "Actions"
+        active: "Rule on/off"
+        position: "Position"
+        rule_on: "On"
+        rule_off: "Off"
   ends_with: Ends with
   last_name: Last Name
   forum:

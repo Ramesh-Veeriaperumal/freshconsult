@@ -128,6 +128,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/agent_password_policy', only: [:index] # Not using it now.
     resource :'admin/canned_form'
     resource :"ember/portal", only: [:show, :update]
+    resource :'audit_log', only: [:filter, :export, :event_name]
   end
 
   edit_ticket_properties do
