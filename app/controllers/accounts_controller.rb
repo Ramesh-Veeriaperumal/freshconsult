@@ -92,7 +92,7 @@ class AccountsController < ApplicationController
     else
       respond_to do |format|
         format.json {
-          render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).fd_json }, :callback => params[:callback]
+          render :json => { :success => false, :errors => @signup.all_errors }, :callback => params[:callback]
         }
       end
     end
