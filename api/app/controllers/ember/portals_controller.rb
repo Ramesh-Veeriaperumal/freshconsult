@@ -80,6 +80,7 @@ module Ember
       end
 
       def build_helpdesk_logo
+        @attachment.description = 'mint_logo'
         @attachment.save!
         @item.helpdesk_logo = @attachment
       end
