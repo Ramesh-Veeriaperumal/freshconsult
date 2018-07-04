@@ -36,7 +36,7 @@ class RabbitmqWorker
       unless Rails.env.development?
         sqs_msg_obj = (Ryuken::SearchSplitter.perform_async(message) rescue nil)
       else
-        sqs_msg_obj = (Ryuken::SearchPoller.new.perform(nil, JSON.parse(message)) rescue nil)
+        sqs_msg_obj = (Ryuken::SearchSplitter.new.perform(nil, JSON.parse(message)) rescue nil)
       end
       puts "Searchv2 SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
