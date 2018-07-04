@@ -66,7 +66,7 @@ class TicketValidation < ApiValidation
       attribute: 'related_ticket_ids',
       feature: :link_tickets
     }
-  }, unless: -> { Account.current.link_tkts_enabled? }
+  }, unless: -> { Account.current.link_tickets_enabled? }
 
   validates :tracker_id, custom_absence: {
     message: :require_feature_for_attribute,
@@ -75,7 +75,7 @@ class TicketValidation < ApiValidation
       attribute: 'tracker_id',
       feature: :link_tickets
     }
-  }, unless: -> { Account.current.link_tkts_enabled? }
+  }, unless: -> { Account.current.link_tickets_enabled? }
 
   validates :parent_id, custom_absence: {
     message: :require_feature_for_attribute,

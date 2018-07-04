@@ -52,7 +52,7 @@
                 <%=t('ticket.merge_btn')%>
             </a>
           <% end %>
-          <% if current_account.link_tkts_enabled? %>
+          <% if current_account.link_tickets_enabled? %>
             <a href="#" data-placement = "partialLeft" disabled="disabled" class="btn btn-collapse lnk_tkt_tracker_open_dropdown" role="button" data-toggle="popover" ><%=t('ticket.link_tracker.btn')%></a>
             <%= render(:partial => "helpdesk/tickets/show/link_tracker_template") %>
           <% end %>

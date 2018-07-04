@@ -195,7 +195,7 @@ RSpec.describe Helpdesk::MergeTicketsController do
   end
 
   it "should not merge if the target ticket is a tracker" do 
-    @account.launch(:link_tickets) 
+    @account.add_feature(:link_tickets) 
     Sidekiq::Testing.inline!
     related_ticket = create_ticket
     tracker = create_ticket({:display_ids => [related_ticket.display_id]})
@@ -211,11 +211,11 @@ RSpec.describe Helpdesk::MergeTicketsController do
     response.should redirect_to(helpdesk_ticket_path(tracker.display_id))
     session[:flash][:error].should eql "Failure during merging of tickets."
     Sidekiq::Testing.disable!
-    @account.rollback(:link_tickets)
+    @account.revoke_feature(:link_tickets)
   end
 
   it "should not merge if the target ticket is a related ticket" do 
-    @account.launch(:link_tickets) 
+    @account.add_feature(:link_tickets) 
     Sidekiq::Testing.inline!
     related_ticket = create_ticket
     tracker = create_ticket({:display_ids => [related_ticket.display_id]})
@@ -231,11 +231,11 @@ RSpec.describe Helpdesk::MergeTicketsController do
     response.should redirect_to(helpdesk_ticket_path(related_ticket.display_id))
     session[:flash][:error].should eql "Failure during merging of tickets."
     Sidekiq::Testing.disable!
-    @account.rollback(:link_tickets)
+    @account.revoke_feature(:link_tickets)
   end
 
   it "should not merge if the source ticket is a tracker" do 
-    @account.launch(:link_tickets) 
+    @account.add_feature(:link_tickets) 
     Sidekiq::Testing.inline!
     related_ticket = create_ticket
     tracker = create_ticket({:display_ids => [related_ticket.display_id]})
@@ -251,11 +251,11 @@ RSpec.describe Helpdesk::MergeTicketsController do
     response.should redirect_to(helpdesk_ticket_path(@target_ticket.display_id))
     session[:flash][:error].should eql "Failure during merging of tickets."
     Sidekiq::Testing.disable!
-    @account.rollback(:link_tickets)
+    @account.revoke_feature(:link_tickets)
   end
 
   it "should not merge if the source ticket is a related ticket" do 
-    @account.launch(:link_tickets) 
+    @account.add_feature(:link_tickets) 
     Sidekiq::Testing.inline!
     related_ticket = create_ticket
     tracker = create_ticket({:display_ids => [related_ticket.display_id]})
@@ -271,7 +271,7 @@ RSpec.describe Helpdesk::MergeTicketsController do
     response.should redirect_to(helpdesk_ticket_path(@target_ticket.display_id))
     session[:flash][:error].should eql "Failure during merging of tickets."
     Sidekiq::Testing.disable!
-    @account.rollback(:link_tickets)
+    @account.revoke_feature(:link_tickets)
   end
 
 end

@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
-  LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets,
-                   :customer_sentiment_ui, :dkim, :bulk_security, :scheduled_ticket_export, 
+  LP_FEATURES   = [:select_all, :round_robin_capping, :suggest_tickets,
+                   :customer_sentiment_ui, :dkim, :scheduled_ticket_export, 
                    :ticket_contact_export, :email_failures, :disable_emails,
                    :falcon_portal_theme, :freshid, :freshchat_integration,:year_in_review_2017,
                    :facebook_page_redirect, :announcements_tab, :archive_ghost,
@@ -100,7 +100,7 @@ class Account < ActiveRecord::Base
   end
 
   def link_tkts_or_parent_child_enabled?
-    link_tkts_enabled? || parent_child_tickets_enabled?
+    link_tickets_enabled? || parent_child_tickets_enabled?
   end
 
   def survey_enabled?
@@ -198,10 +198,6 @@ class Account < ActiveRecord::Base
 
   def tags_filter_reporting_enabled?
     features?(:tags_filter_reporting)
-  end
-
-  def link_tkts_enabled?
-    launched?(:link_tickets) || link_tickets_enabled?
   end
 
   def dashboard_new_alias?
