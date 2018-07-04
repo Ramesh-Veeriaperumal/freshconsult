@@ -181,11 +181,13 @@ class UserSessionsController < ApplicationController
   end
 
   def agent_login
-    redirect_to support_login_path
+    redirect_url = logged_in? ? helpdesk_dashboard_url : support_login_path
+    redirect_to redirect_url
   end
 
   def customer_login
-    redirect_to support_login_path
+    redirect_url = logged_in? ? support_home_url : support_login_path
+    redirect_to redirect_url
   end
 
   def show
