@@ -8,6 +8,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   include Helpdesk::Utils::Attachment
   include Helpdesk::Permission::Attachment
+  include EmailServRequest::Validator
 
   BINARY_TYPE = "application/octet-stream"
 
@@ -64,6 +65,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_create :set_content_type
     after_commit :clear_user_avatar_cache
     before_save :set_account_id
+    validate :virus_in_attachment?, :if => :attachment_virus_detection_enabled?
 
   alias_attribute :parent_type, :attachable_type
 
@@ -343,4 +345,20 @@ class Helpdesk::Attachment < ActiveRecord::Base
       end
     end
   end
+
+  def virus_in_attachment?
+    if self.content && self.content.queued_for_write && self.content.queued_for_write[:original].path
+      files = {}
+      files[self.content_file_name] = Faraday::UploadIO.new(self.content.queued_for_write[:original].path, self.content.content_type)
+      results = is_attachment_has_virus?(files)
+      virus_files = results.select { |file| file['Result'] == "VIRUS_FOUND" }
+      self.errors.add(:base, "VIRUS_FOUND") if virus_files.present?
+    end
+  end
+
+  def attachment_virus_detection_enabled?
+    Account.current.launched?(:attachment_virus_detection)
+  end
+
+
 end
