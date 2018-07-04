@@ -35,15 +35,15 @@ module TicketsTestHelper
   end
 
   def enable_adv_ticketing(feature, &block)
-    Account.current.launch feature
+    Account.current.add_feature feature
     if block_given?
       yield
-      Account.current.rollback feature
+      Account.current.revoke_feature feature
     end
   end
 
   def disable_adv_ticketing feature
-    Account.current.rollback feature
+    Account.current.revoke_feature feature
   end
 
   def create_ticket(params = {}, group = nil, internal_group = nil)
@@ -77,7 +77,7 @@ module TicketsTestHelper
       end
     end
 
-    if @account.link_tkts_enabled? && params[:display_ids].present?
+    if @account.link_tickets_enabled? && params[:display_ids].present?
       test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
       test_ticket.related_ticket_ids = params[:display_ids]
     elsif @account.parent_child_tickets_enabled? and params[:assoc_parent_id].present?

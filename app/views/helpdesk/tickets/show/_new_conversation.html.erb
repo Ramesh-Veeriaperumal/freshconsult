@@ -68,7 +68,7 @@
 										:note => [@ticket, Helpdesk::Note.new(:private => true)]
 									}) %>
 
-			<% if privilege?(:reply_ticket) && current_account.link_tkts_enabled? && @ticket.tracker_ticket? %>
+			<% if privilege?(:reply_ticket) && current_account.link_tickets_enabled? && @ticket.tracker_ticket? %>
 				<%= render(:partial => '/helpdesk/tickets/show/broadcast_form',
 				 :locals => {
 				 	  :id => 'broadcast-request',
@@ -90,7 +90,7 @@
 					<span class="discuss-cta-separator">/</span>
 					<a href="javascript:void(0);" id="DiscussButton"><%= t('collaboration.discuss') %></a>
 				<% end %>
-				<% if privilege?(:reply_ticket) && current_account.link_tkts_enabled? && @ticket.tracker_ticket? && @ticket.related_tickets_count > 0 %>
+				<% if privilege?(:reply_ticket) && current_account.link_tickets_enabled? && @ticket.tracker_ticket? && @ticket.related_tickets_count > 0 %>
 					/ <a href="#" id="BroadcastBtn"  rel="note-button" data-note-type="broadcast" data-domhelper-name="broadcast-button"><%= t('ticket.broadcast') %></a>
 				<% end -%>
         <% if @ticket.mobihelp? %>

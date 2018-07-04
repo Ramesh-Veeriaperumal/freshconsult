@@ -1,6 +1,6 @@
 <%
   acc = Account.current
-  tracker_ticket = acc.link_tkts_enabled? && params[:display_ids].present?
+  tracker_ticket = acc.link_tickets_enabled? && params[:display_ids].present?
   is_child_form  = acc.parent_child_tickets_enabled? && params[:ticket_id] && @assoc_parent_ticket
   skip_frag_cache =  (tracker_ticket || is_child_form || params[:topic_id].present?)
   ticket_title = if tracker_ticket
