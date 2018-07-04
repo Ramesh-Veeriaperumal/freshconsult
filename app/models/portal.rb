@@ -52,7 +52,7 @@ class Portal < ActiveRecord::Base
   has_one :helpdesk_logo,
           as: :attachable,
           class_name: 'Helpdesk::Attachment',
-          conditions: { attachable_type: AttachmentConstants::ATTACHABLE_TYPES['portal'] },
+          conditions: { attachable_type: AttachmentConstants::ATTACHABLE_TYPES['portal'], description: 'mint_logo' },
           foreign_key: 'attachable_id',
           dependent: :destroy
 
