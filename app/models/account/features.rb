@@ -11,7 +11,7 @@ class Account < ActiveRecord::Base
                  :sanbox_lp, :encode_emoji, :dependent_field_validation, :post_central_publish,
                  :audit_logs_central_publish, :encode_emoji_subject,
                  :time_sheets_central_publish, :new_ticket_recieved_metric, :canned_forms,
-                 :euc_migrated_twitter]
+                 :euc_migrated_twitter, :csat_email_scan_compatibility]
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
