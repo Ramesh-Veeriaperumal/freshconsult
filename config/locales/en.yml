@@ -5553,6 +5553,7 @@ en:
     custom_survey_desc: "Customized satisfaction surveys"
     freshchat: "Freshchat integration"
     bot: "Bot"
+    custom_dashboard: "Manage team dashboards"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL
