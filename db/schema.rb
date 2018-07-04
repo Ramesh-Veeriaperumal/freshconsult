@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180620195011) do
+ActiveRecord::Schema.define(:version => 20180703170336) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -3748,6 +3748,7 @@ ActiveRecord::Schema.define(:version => 20180620195011) do
   end
 
   add_index "survey_handles", ["account_id", "id_token"], :name => "index_survey_handles_on_account_id_and_id_token", :length => {"account_id"=>nil, "id_token"=>20}
+  add_index "survey_handles", ["account_id", "survey_id", "created_at"], :name => "index_survey_handles_on_account_id_and_survey_id_and_created_at"
   add_index "survey_handles", ["account_id", "surveyable_id", "surveyable_type"], :name => "index_on_account_id_and_surveyable_id_and_surveyable_type"
 
   execute "ALTER TABLE survey_handles ADD PRIMARY KEY (id,account_id)"
