@@ -178,6 +178,12 @@ api_error_messages:
   cannot_set_closed_at: "It cannot be set, when created_at and updated_at are not set or status is not closed"
   invalid_inline_attachments_list: "Invalid inline attachment ids : %{invalid_ids}"
   invalid_avatar: "Avatar is invalid"
+
+  invalid_rule_type: "Event type is invalid"
+  invalid_agent_id: "Invalid agent id"
+  invalid_time_period: 'Both from and to should be present'
+  invalid_time_range: 'From should be less than to when picking time period'
+
   invalid_tracker: "Tracker is invalid"
   max_limit: "Has exceeded maximum %{name} limit of %{max_value}"
   cannot_set_ticket_association_fields: "It should contain either related_ticket_ids or parent_id and not both"

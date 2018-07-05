@@ -104,7 +104,7 @@ class Account < ActiveRecord::Base
         :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
+        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections, :custom_dashboard],
       :inherits => [ :garden_jan_17 ]
     },
 
@@ -175,7 +175,7 @@ class Account < ActiveRecord::Base
     :es_v1_enabled => false, :es_v2_reads => false, :fb_msg_realtime => false, 
     :force_index_tickets => false, :freshfone_call_tracker => false, :freshfone_caller_id_masking => false,
     :freshfone_new_notifications => false, :freshfone_onboarding => false, :gamification_perf => false,
-    :gamification_quest_perf => false, :lambda_exchange => false, :link_tickets => false,
+    :gamification_quest_perf => false, :lambda_exchange => false,
     :list_page_new_cluster => false, :meta_read => false, :most_viewed_articles => false,
     :multifile_attachments => true, :new_footer_feedback_box => false, :new_leaderboard => false,
     :periodic_login_feature => false, :restricted_helpdesk => false,
@@ -195,7 +195,7 @@ class Account < ActiveRecord::Base
     :enable_qna => false, :enable_insights => false, 
     :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true,
     :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false,
-    :bulk_security => false, :service_writes => false, :service_reads => false, 
+    :service_writes => false, :service_reads => false, 
     :admin_only_mint => false, :send_emails_via_fd_email_service_feature => false, 
     :user_notifications => false,  :freshplug_enabled => false, :dkim => false, 
     :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, 
@@ -204,14 +204,15 @@ class Account < ActiveRecord::Base
     :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, 
     :skip_portal_cname_chk => false, :falcon_signup => false, :falcon_portal_theme => false, 
     :image_annotation => false, :email_actions => false, :ner => false, :disable_freshchat => false, 
-    :freshchat_integration => false, :facebook_page_redirect => false, :froala_editor_forums => false, 
-    :ticket_central_publish => false, :solutions_central_publish => false, :freshid => false, 
+    :freshchat_integration => false, :froala_editor_forums => false,
+    :ticket_central_publish => false, :solutions_central_publish => false, :freshid => false,
     :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, 
-    :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false, 
-    :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false, 
+    :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false,
+    :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false,
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
     :post_central_publish => false, :audit_logs_central_publish => false, :twitter_common_redirect => false,
-    :euc_migrated_twitter => false, :new_onboarding => false, :new_ticket_recieved_metric => false
+    :euc_migrated_twitter => false, :new_onboarding => false, :new_ticket_recieved_metric => false,
+    :audit_log_ui => false, :es_msearch => true, :canned_forms => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

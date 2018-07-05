@@ -1,6 +1,6 @@
 module AssociateTicketsHelper
   def link_tickets_enabled?
-    render_request_error(:require_feature, 403, feature: 'Link Tickets') unless Account.current.link_tkts_enabled?
+    render_request_error(:require_feature, 403, feature: 'Link Tickets') unless Account.current.link_tickets_enabled?
   end
 
   def parent_child_tickets_enabled?

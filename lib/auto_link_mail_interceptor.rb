@@ -12,7 +12,7 @@ class AutoLinkMailInterceptor
 
   private
     def self.sandbox_footer(content)
-      content.raw_source.replace(content.raw_source+ "<br><div style= 'color: #696969;'>#{I18n.t('sandbox.email')} </div>".html_safe) if Account.current.try(:sandbox?)
+      content.raw_source.replace(content.raw_source+ "<br><div style= 'color: #696969;'>#{I18n.t('sandbox.sandbox_mail')} </div>".html_safe) if Account.current.try(:sandbox?)
       content
     end
 

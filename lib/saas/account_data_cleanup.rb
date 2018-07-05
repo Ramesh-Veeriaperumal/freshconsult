@@ -343,6 +343,14 @@ end
     account.clear_bots_from_cache
   end
 
+  def handle_custom_dashboard_drop_data
+    account.dashboards.destroy_all
+  end
+
+  def handle_custom_dashboard_add_data
+    account.launch(:es_msearch)
+  end
+
   private
 
   def default_portal_preferences
