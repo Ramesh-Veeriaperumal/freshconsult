@@ -78,7 +78,7 @@ class Admin::SkillsController < Admin::AdminController
 
   def process_csv
     current_account.create_agent_skill_import({:import_status => Admin::DataImport::IMPORT_STATUS[:started]})
-    store_file
+    store_file params[:type]
     Import::SkillWorker.perform_async({:data => session[:map_fields]})
     session.delete(:map_fields)
     redirect_to admin_skills_path, :flash =>{ :notice => t(:'flash.import.success')}

@@ -37,7 +37,7 @@ class Wf::FilterController < ApplicationController
     @edit_filters = []
     view_filters = scoper.my_ticket_filters(current_user)
     view_filters.each do |filter|
-      if (filter.accessible.user_id == current_user.id) or privilege?(:manage_dashboard)
+      if (filter.accessible.user_id == current_user.id) or privilege?(:manage_ticket_list_views)
         @edit_filters.push(filter)
       end
     end
@@ -46,7 +46,7 @@ class Wf::FilterController < ApplicationController
  
   def chk_usr_permission
      @wf_filter = current_account.ticket_filters.find_by_id(params[:id])
-     if @wf_filter and @wf_filter.accessible.user_id != current_user.id and !privilege?(:manage_dashboard)
+     if @wf_filter and @wf_filter.accessible.user_id != current_user.id and !privilege?(:manage_ticket_list_views)
       flash[:notice] =  t(:'flash.general.access_denied')
       redirect_to safe_send(Helpdesk::ACCESS_DENIED_ROUTE)
      end
@@ -118,7 +118,7 @@ class Wf::FilterController < ApplicationController
     visibility = params[:custom_ticket_filter][:visibility]
     visibility = {} unless visibility.is_a?(Hash) # This being sent from HTML forms, there is a chance it could be a string.
 
-    unless privilege?(:manage_dashboard)
+    unless privilege?(:manage_ticket_list_views)
       visibility[:visibility] = Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me]
       visibility[:group_id] = nil
     end

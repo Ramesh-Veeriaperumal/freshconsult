@@ -413,6 +413,11 @@ module Redis::RedisKeys
 
   #Temp Redis keys for resque to sidekiq migration end
 
+  # CUSTOMER IMPORT KEYS
+  CONTACT_IMPORT_TOTAL_RECORDS = "CONTACT_IMPORT_TOTAL_RECORDS:%{account_id}"
+  CONTACT_IMPORT_FINISHED_RECORDS = "CONTACT_IMPORT_FINISHED_RECORDS:%{account_id}"
+  COMPANY_IMPORT_TOTAL_RECORDS = "COMPANY_IMPORT_TOTAL_RECORDS:%{account_id}"
+  COMPANY_IMPORT_FINISHED_RECORDS = "COMPANY_IMPORT_FINISHED_RECORDS:%{account_id}"
   ################### END OF REDIS KEYS ###################
 
   #########################################################################################################

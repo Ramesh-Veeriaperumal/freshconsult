@@ -279,6 +279,7 @@ module Helpdesk
 				result = ((params[:text].nil? || params[:text].empty?) ? "" : body_html_with_formatting(params[:text],email_cmds_regex)) 
 				result = "<br><p style=\"color:#FF2625;\"><b> *** Warning: This email might have some content missing. Please open the attached file original_email.html to see the entire message. *** </b></p><br>" + result
 				original_email_content = StringIO.new(params[:html])
+				original_email_content.class.class_eval { attr_accessor :original_filename, :content_type }
 				original_email_content.content_type = "text/html"
 				original_email_content.original_filename = "original_email.html"
 				params[:attachments] = params[:attachments] + 1
@@ -784,7 +785,7 @@ module Helpdesk
 						end
 					rescue HelpdeskExceptions::AttachmentLimitException => ex
 						Rails.logger.error("ERROR ::: #{ex.message}")
-						message = attachment_exceeded_message(HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE)
+						message = attachment_exceeded_message(HelpdeskAttachable.mailgun_max_attachment_size)
 						add_notification_text item, message
 						break
 					rescue Exception => e
