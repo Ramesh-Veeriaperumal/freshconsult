@@ -1,7 +1,6 @@
 # only bitmap features supported here
 common: &common
-  poduseast:
-    - :session_replay
+  poduseast: []
   podeucentral: []
   podapsoutheast: []
   podapsouth: []

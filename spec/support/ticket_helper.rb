@@ -35,7 +35,7 @@ module TicketHelper
     end
     test_ticket.cloud_files = params[:cloud_files] if params[:cloud_files]
 
-    if @account.link_tkts_enabled? && params[:display_ids].present?
+    if @account.link_tickets_enabled? && params[:display_ids].present?
       test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
       test_ticket.related_ticket_ids = params[:display_ids]
     elsif @account.parent_child_tickets_enabled? && params[:assoc_parent_id].present?

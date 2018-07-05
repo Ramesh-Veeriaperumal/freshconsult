@@ -1,24 +1,33 @@
+  build = env.BUILD_NUMBER
+  buildno = build.toInteger()
+  label = "label"
+  if ( buildno%2 == 0 ){
+    label = params.LABEL1
+  }else {
+    label = params.LABEL2
+  }
+               
 node(params.LABEL1) {
 
       def tasks = [:]
 
       tasks["Backend Falcon Unit Tests"] = {
-        stage ("Trigger Job"){ 
+        stage ("Private API Tests"){ 
           build job: 'prestaging-falcon-unit-integration-acceptance-tests-backend-pipeline', 
-          parameters: [string(name: 'NODE', value: params.LABEL2),string(name: 'BRANCH',value: "$params.sha1")]
+          parameters: [string(name: 'NODE', value: label),string(name: 'BRANCH',value: "$params.sha1")]
         }
       }
       tasks["Backend Falcon Public API Tests"] = {
-        stage ("Trigger Job"){
+        stage ("Public API Tests"){
           build job: 'prestaging-falcon-public-api-unit-integration-acceptance-tests-backend-pipeline', 
-          parameters: [string(name: 'NODE', value: params.LABEL3),string(name: 'BRANCH',value: "$params.sha1")]
+          parameters: [string(name: 'NODE', value: label),string(name: 'BRANCH',value: "$params.sha1")]
         }
       }
         
       tasks["Pronto Code Review"] = {
-        stage ("Trigger Job"){
+        stage ("Pronto Code Review"){
           build job: 'prestaging-pronto-codereview-pipeline', 
-          parameters: [string(name: 'NODE', value: params.LABEL4),string(name: 'BRANCH',value: "$params.ghprbSourceBranch"),string(name: 'PULLID',value: "$params.ghprbPullId")]
+          parameters: [string(name: 'NODE', value: params.LABEL3),string(name: 'BRANCH',value: "$params.ghprbSourceBranch"),string(name: 'PULLID',value: "$params.ghprbPullId")]
         }
       }
      parallel tasks
