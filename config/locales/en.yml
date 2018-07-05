@@ -2256,10 +2256,10 @@ en:
           invalid_fingerprint: Please provide a valid SAML Certificate Fingerprint
       helpnote:
         title: Security Settings
-        info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
-        info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the freshdesk.com domain. <b>SSL option for custom domains are available from Blossom Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new">request for a custom SSL certificate for your vanity support URL here</a>.
-        trusted_ip: <b>Restricting access by IP address</b><br>You can restrict access to your support portal to IP addresses from your company or organization. You can add unlimited number of IP ranges that have access, as well as define whether you want to control access for customers as well, or only for your agents. <a href="https://support.freshdesk.com/support/solutions/articles/195168"> Learn more.</a>
-        info4: <b>Password Policy</b><br>You can set up different password policies for agents and customers. The advanced settings allow you to configure custom password policies such as password expiry time and minimum password length. The changes you make will apply to new and existing agents and customers. Learn more about password policy <a href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy"> here</a>.
+        info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk" target="_top"> here</a>.
+        info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the freshdesk.com domain. <b>SSL option for custom domains are available from Blossom Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new" target="_top">request for a custom SSL certificate for your vanity support URL here</a>.
+        trusted_ip: <b>Restricting access by IP address</b><br>You can restrict access to your support portal to IP addresses from your company or organization. You can add unlimited number of IP ranges that have access, as well as define whether you want to control access for customers as well, or only for your agents. <a href="https://support.freshdesk.com/support/solutions/articles/195168" target="_top"> Learn more.</a>
+        info4: <b>Password Policy</b><br>You can set up different password policies for agents and customers. The advanced settings allow you to configure custom password policies such as password expiry time and minimum password length. The changes you make will apply to new and existing agents and customers. Learn more about password policy <a href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy" target="_top"> here</a>.
       password_security:
         default: Default
         advanced: Advanced
@@ -4314,6 +4314,7 @@ en:
         agent_email: An agent must have exactly one valid email
         email_not_unique: Email has already been taken
         email_invalid: Email is invalid
+        exceeded_email: Sorry, you cannot sign up for any more accounts
         user_emails: Please enter at least one contact detail
         max_user_emails: A contact cannot have more than 10 emails
         max_user_companies: A contact cannot have more than 20 companies
@@ -4323,6 +4324,7 @@ en:
         edit_broadcast_note: "Broadcast message can't be edited"
         max_scheduled_exports_per_account: Cannot have more than %{max_limit} scheduled exports
         skill_name: Should not contain comma
+        email_disposable: Register using your work email
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -5551,6 +5553,7 @@ en:
     custom_survey_desc: "Customized satisfaction surveys"
     freshchat: "Freshchat integration"
     bot: "Bot"
+    custom_dashboard: "Manage team dashboards"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL

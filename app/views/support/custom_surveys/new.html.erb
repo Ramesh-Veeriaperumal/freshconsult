@@ -29,19 +29,22 @@
 	<%= engine.render %>
 	</style>
 <% end %>
+
+<% csat_email_scan_compatibile = @survey_handle.account.csat_email_scan_compatibility_enabled? %>
+
 <script type="text/javascript">
 	if(document.referrer.length>0){
 		Feedback.refreshTab();
 	}
-	<% if @rating_via_handle %>
-		Feedback.surveySaveHit("<%= @rating %>","<%= @survey_code%>");
+	<% if @rating_via_handle && !csat_email_scan_compatibile %>
+		Feedback.surveySaveHit(null, "<%= @rating %>","<%= @survey_code %>");
 	<% end %>
 </script>
 
 <body class="single">
 	<div class="cust-survey-wrapper content rounded-6">
-		<%= form_for :survey_handle, :url  => @survey_handle.feedback_url(@rating), :html => {
-							:method => :post, :id => "survey_form", :onsubmit => "javascript:Feedback.submit(event);" } do |f| -%>
+		<%= form_for :survey_handle, html: {
+					id: 'survey_form', method: :post, onsubmit: csat_email_scan_compatibile ? "javascript:Feedback.surveySaveHit(event, '#{@rating}', '#{@survey_code}')" : "javascript:Feedback.submit(event)", 'data-email-scan-compatible': csat_email_scan_compatibile } do |f| -%>
 			<div class="highlighter">
 				<h2><%=@survey_handle.survey.thanks_text%></h2>
 				<div class="survey-overlay center" style="display:none;"></div>
@@ -70,7 +73,7 @@
 					<textarea autocomplete="off" class="input-comment required" id="survey_feedback" name="feedback" rel="ghostwriter" type="text" width="100%"
 						placeholder= "<%= @survey_handle.survey.comments_text %>" ></textarea>
 				<% end %>
-				<% if !@survey_handle.survey.feedback_questions.blank? || @survey_handle.survey.can_comment? %>
+				<% if csat_email_scan_compatibile || (!@survey_handle.survey.feedback_questions.blank? || @survey_handle.survey.can_comment?) %>
 					<%= f.submit t('support.surveys.new.submit'), :class => "btn btn-primary btn-comment" %>
 				<% end %>
 			</div>

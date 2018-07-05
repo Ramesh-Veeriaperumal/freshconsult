@@ -61,7 +61,7 @@ module TicketsTestHelper
       end
     end
 
-    if @account.link_tkts_enabled? && params[:display_ids].present?
+    if @account.link_tickets_enabled? && params[:display_ids].present?
       test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
       test_ticket.related_ticket_ids = params[:display_ids]
     elsif @account.parent_child_tickets_enabled? and params[:assoc_parent_id].present?
@@ -146,7 +146,7 @@ module TicketsTestHelper
     }
     ret_hash[:skill_id] = ticket.sl_skill_id if Account.current.skill_based_round_robin_enabled?
     ret_hash[:product_id] = ticket.product_id if Account.current.multi_product_enabled?
-    ret_hash[:association_type] = ticket.association_type if (Account.current.parent_child_tickets_enabled? || Account.current.link_tkts_enabled?)
+    ret_hash[:association_type] = ticket.association_type if (Account.current.parent_child_tickets_enabled? || Account.current.link_tickets_enabled?)
     ret_hash[:archive] = ticket.archive if Account.current.features_included?(:archive_tickets)
     ret_hash[:internal_agent_id] = ticket.internal_agent_id if Account.current.shared_ownership_enabled?
     ret_hash[:internal_group_id] = ticket.internal_group_id if Account.current.shared_ownership_enabled?

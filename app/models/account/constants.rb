@@ -104,7 +104,7 @@ class Account < ActiveRecord::Base
         :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
+        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections, :custom_dashboard ],
       :inherits => [ :garden_jan_17 ]
     },
 
@@ -175,7 +175,7 @@ class Account < ActiveRecord::Base
     :es_v1_enabled => false, :es_v2_reads => false, :fb_msg_realtime => false, 
     :force_index_tickets => false, :freshfone_call_tracker => false, :freshfone_caller_id_masking => false,
     :freshfone_new_notifications => false, :freshfone_onboarding => false, :gamification_perf => false,
-    :gamification_quest_perf => false, :lambda_exchange => false, :link_tickets => false,
+    :gamification_quest_perf => false, :lambda_exchange => false,
     :list_page_new_cluster => false, :meta_read => false, :most_viewed_articles => false,
     :multifile_attachments => true, :new_footer_feedback_box => false, :new_leaderboard => false,
     :periodic_login_feature => false, :restricted_helpdesk => false,
@@ -195,7 +195,7 @@ class Account < ActiveRecord::Base
     :enable_qna => false, :enable_insights => false, 
     :escape_liquid_attributes => true, :escape_liquid_for_reply => true,
     :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false, 
-    :bulk_security => false, :service_writes => false, :service_reads => false, 
+    :service_writes => false, :service_reads => false, 
     :admin_only_mint => false, :send_emails_via_fd_email_service_feature => false, 
     :user_notifications => false,  :freshplug_enabled => false, :dkim => false, 
     :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, 
@@ -211,7 +211,8 @@ class Account < ActiveRecord::Base
     :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false, 
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
     :post_central_publish => false, :audit_logs_central_publish => false,
-    :new_ticket_recieved_metric => false, :euc_migrated_twitter => false, :canned_forms => false
+    :new_ticket_recieved_metric => false, :euc_migrated_twitter => false, :canned_forms => false, :es_msearch => true,
+    csat_email_scan_compatibility: false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

@@ -25,6 +25,12 @@ module SearchService
       delete_request.response
     end
 
+    def delete_by_query(type, params)
+      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
+      delete_request = SearchService::Request.new(delete_by_query_path(type), :delete, uuid, {filters: params}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
+      delete_request.response
+    end
+
     def tenant_bootstrap
       uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
       tenant_request = SearchService::Request.new(tenants_path, :post, uuid, { id: @account_id }.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
@@ -88,6 +94,11 @@ module SearchService
 
       def delete_path(document_name, id)
         path = SearchService::Constants::DELETE_PATH % { product_name: ES_V2_CONFIG[:product_name], account_id: @account_id, document_name: document_name, id: id }
+        "#{service_host}/#{path}"
+      end
+
+      def delete_by_query_path(document_name)
+        path = SearchService::Constants::DELETE_BY_QUERY_PATH % { product_name: ES_V2_CONFIG[:product_name], account_id: @account_id, document_name: document_name }
         "#{service_host}/#{path}"
       end
   end

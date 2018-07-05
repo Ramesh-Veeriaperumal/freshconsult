@@ -6,22 +6,24 @@ module Integrations
       operation_event = options[:operation_event]
       act_hash = options[:act_hash].symbolize_keys
       installed_app = Account.current.installed_applications.with_name("slack_v2").first
-      if operation_event.present? && installed_app.present?
-        if operation_event == "execute_rule" # Freshdesk To Slack
-          triggered_event = options[:triggered_event]
-          act_obj = options[:act_on_class].constantize.find(options[:act_on_id])
-          payload = { :act_on_object => act_obj, :act_hash => act_hash, :triggered_event => triggered_event }
-          call_service_object(installed_app, payload, "push_to_slack")
-        elsif operation_event == "create_ticket" # Slack to Freshdesk
-          payload = { :act_hash => act_hash }
-          call_service_object(installed_app, payload, "slash_command")
-        elsif operation_event == "create_ticket_v3"
-          payload = { :act_hash => act_hash }
-          act_hash[:channel_name] == "directmessage" ? call_service_object(installed_app, payload, "slash_command_v3") : call_service_object(installed_app, payload, "slash_command")
+      if installed_app.present?
+        if operation_event.present?
+          if operation_event == "execute_rule" # Freshdesk To Slack
+            triggered_event = options[:triggered_event]
+            act_obj = options[:act_on_class].constantize.find(options[:act_on_id])
+            payload = { :act_on_object => act_obj, :act_hash => act_hash, :triggered_event => triggered_event }
+            call_service_object(installed_app, payload, "push_to_slack")
+          elsif operation_event == "create_ticket" # Slack to Freshdesk
+            payload = { :act_hash => act_hash }
+            call_service_object(installed_app, payload, "slash_command")
+          elsif operation_event == "create_ticket_v3"
+            payload = { :act_hash => act_hash }
+            act_hash[:channel_name] == "directmessage" ? call_service_object(installed_app, payload, "slash_command_v3") : call_service_object(installed_app, payload, "slash_command")
+          end
+        else
+          raise StandardError, "IntegrationOperationsHandler else block raise error! Account id is #{Account.current.id} "
         end
-      else
-        raise StandardError, "IntegrationOperationsHandler else block raise error! Account id is #{Account.current.id} "
-      end
+      end 
     end
 
     def office365 options

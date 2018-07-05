@@ -1276,7 +1276,7 @@ RSpec.describe Helpdesk::TicketsController do
     end
 
     it "should create tracker ticket with association if link tickets feature is available - single ticket" do
-      @account.launch(:link_tickets)
+      @account.add_feature(:link_tickets)
       related_ticket = create_ticket
       agent_requester = @account.technicians.first
       now = (Time.now.to_f*1000).to_i
@@ -1297,12 +1297,12 @@ RSpec.describe Helpdesk::TicketsController do
       tracker.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker])
       related_ticket.reload
       related_ticket.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:related])
-      @account.rollback(:link_tickets)
+      @account.revoke_feature(:link_tickets)
     end
 
 
     it "should create tracker ticket with association if link tickets feature is available - multiple tickets" do
-      @account.launch(:link_tickets)
+      @account.add_feature(:link_tickets)
       Sidekiq::Testing.inline!
       related_tickets = []
       3.times do |i|
@@ -1332,11 +1332,11 @@ RSpec.describe Helpdesk::TicketsController do
       end
       tracker.associates.should =~ related_tickets.map(&:display_id)
       Sidekiq::Testing.disable!
-      @account.rollback(:link_tickets)
+      @account.revoke_feature(:link_tickets)
     end
 
     it "should throw error when requester of the tracker is not an agent" do
-      @account.launch(:link_tickets)
+      @account.add_feature(:link_tickets)
       tickets = []
       3.times do |i|
         tickets << create_ticket
@@ -1358,12 +1358,12 @@ RSpec.describe Helpdesk::TicketsController do
       ticket = @account.tickets.find_by_subject("New Ticket #{now}")
       ticket.should be_nil
       response.body.should =~ /Please make sure to add an agent as a requester/
-      @account.rollback(:link_tickets)
+      @account.revoke_feature(:link_tickets)
     end
 
 
     it "should link the ticket to the tracker - single" do
-      @account.launch(:link_tickets) 
+      @account.add_feature(:link_tickets) 
       ticket = create_ticket
       tracker = create_ticket({:display_ids => [ticket.display_id]})
       related_ticket = create_ticket
@@ -1373,12 +1373,12 @@ RSpec.describe Helpdesk::TicketsController do
       related_ticket.associates.should =~ [tracker.display_id]
       tracker.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker])
       tracker.associates.should =~ [ticket.display_id, related_ticket.display_id]
-      @account.rollback(:link_tickets)
+      @account.revoke_feature(:link_tickets)
     end
 
 
     it "should link the ticket to the tracker - multiple" do
-      @account.launch(:link_tickets) 
+      @account.add_feature(:link_tickets) 
       Sidekiq::Testing.inline!
       ticket = create_ticket
       tracker = create_ticket({:display_ids => [ticket.display_id]})
@@ -1397,11 +1397,11 @@ RSpec.describe Helpdesk::TicketsController do
       tracker.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker])
       tracker.associates.should =~ related_tickets.map(&:display_id) + [ticket.display_id]
       Sidekiq::Testing.disable!
-      @account.rollback(:link_tickets)
+      @account.revoke_feature(:link_tickets)
     end
 
     it "should remove the association if the tracker is deleted" do
-      @account.launch(:link_tickets) 
+      @account.add_feature(:link_tickets) 
       Sidekiq::Testing.inline!
       ticket = create_ticket
       related_tickets = []
@@ -1419,11 +1419,11 @@ RSpec.describe Helpdesk::TicketsController do
       tracker.association_type.should be_nil
       tracker.associates.should be_nil
       Sidekiq::Testing.disable!
-      @account.rollback(:link_tickets)
+      @account.revoke_feature(:link_tickets)
     end
 
     it "should remove the association if the related_ticket is deleted" do
-      @account.launch(:link_tickets) 
+      @account.add_feature(:link_tickets) 
       Sidekiq::Testing.inline!
       ticket = create_ticket
       related_tickets = []
@@ -1444,11 +1444,11 @@ RSpec.describe Helpdesk::TicketsController do
       tracker.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker])
       tracker.associates.should =~ related_tickets.map(&:display_id)
       Sidekiq::Testing.disable!
-      @account.rollback(:link_tickets)
+      @account.revoke_feature(:link_tickets)
     end
 
     it "should remove the association if the tracker is marked as spam" do
-      @account.launch(:link_tickets) 
+      @account.add_feature(:link_tickets) 
       Sidekiq::Testing.inline!
       ticket = create_ticket
       related_tickets = []
@@ -1466,11 +1466,11 @@ RSpec.describe Helpdesk::TicketsController do
       tracker.association_type.should be_nil
       tracker.associates.should be_nil
       Sidekiq::Testing.disable!
-      @account.rollback(:link_tickets)
+      @account.revoke_feature(:link_tickets)
     end
 
     it "should remove the association if the related_ticket is marked as spam" do
-      @account.launch(:link_tickets) 
+      @account.add_feature(:link_tickets) 
       Sidekiq::Testing.inline!
       ticket = create_ticket
       related_tickets = []
@@ -1491,7 +1491,7 @@ RSpec.describe Helpdesk::TicketsController do
       tracker.association_type.should eql(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker])
       tracker.associates.should =~ related_tickets.map(&:display_id)
       Sidekiq::Testing.disable!
-      @account.rollback(:link_tickets)
+      @account.revoke_feature(:link_tickets)
     end
   end
 end
