@@ -4375,6 +4375,22 @@ ActiveRecord::Schema.define(:version => 20180703170336) do
   end
   add_index :qna_insights_reports , [:account_id, :user_id], :name => 'index_qna_insights_reports_on_account_id_and_user_id'
 
+  create_table :contact_filters, force: true do |t|
+    t.string   :name
+    t.text     :data
+    t.column   :account_id, 'bigint unsigned', null: false
+    t.timestamps
+  end
+  add_index :contact_filters, [:account_id], name: 'index_contact_filter_on_account'
+
+  create_table :company_filters, force: true do |t|
+    t.string   :name
+    t.text     :data
+    t.column   :account_id, 'bigint unsigned', null: false
+    t.timestamps
+  end
+  add_index :company_filters, [:account_id], name: 'index_company_filter_on_account'
+ 
   create_table :failed_central_feeds, :force => true do |t|
     t.integer :account_id, limit: 8, null: false
     t.integer :model_id, limit: 8, null: false

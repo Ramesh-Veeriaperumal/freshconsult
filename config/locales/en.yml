@@ -2460,6 +2460,7 @@ en:
         delete_topic: Delete and Moderate forum topic
         customers: Customers
         view_contacts: View customers tab
+        manage_segments: Create or edit new contact segment or company segment
         manage_contacts: Create or edit new contact or company
         delete_contact: Delete contact or company
         export_tickets: Export Tickets
@@ -5559,6 +5560,8 @@ en:
   file_url: Full XML Export URL
   how_to: Question
   customers: Customers
+  segment_notice: "To filter and group customers based on priority, subscription or any other attribute,"
+  mint: "Switch to Mint"
   enter_valid_domains: "is invalid. Enter valid domains"
   companies:
     no_contacts: '%{no_contacts} contacts'
