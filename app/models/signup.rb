@@ -33,8 +33,8 @@ class Signup < ActivePresenter::Base
 
   def all_errors
     error_messages = account.errors.messages
-    base_errors = error_messages.delete(:base) || []
-    non_base_errors = error_messages.collect{|key, values| error_messages = values.collect{|value| "#{key.to_s} #{value}" }} || []
+    base_errors = error_messages.delete(:base)
+    non_base_errors = error_messages.collect{|key, values| error_messages = values.collect{|value| "#{key.to_s} #{value}" }}
     (base_errors + non_base_errors).flatten
   end
 
