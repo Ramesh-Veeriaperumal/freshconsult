@@ -8,6 +8,7 @@ class CompanyFilterValidation < FilterValidation
   validate :validate_include, if: -> { errors[:include].blank? && include }
 
   def initialize(request_params, item = nil, allow_string_param = true)
+    self.skip_hash_params_set = true
     super(request_params, item, allow_string_param)
   end
 

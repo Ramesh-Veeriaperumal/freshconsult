@@ -288,6 +288,7 @@ defaults: &defaults
     - [deactivate_product_widgets]
     - [deactivate_filter_widgets]
     - [check_bot_training]
+    - [update_segment_filter]
 
 development:
   <<: *defaults

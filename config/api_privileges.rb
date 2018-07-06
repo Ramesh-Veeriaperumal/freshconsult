@@ -89,6 +89,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/search/customer", only: [:results]
     resource :customer_note, only: [:show, :index]
     resource :"ember/search/multiquery", only: [:search_results]
+    resource :"ember/segments/contact_filter", only: [:index]
+    resource :"ember/segments/company_filter", only: [:index]
   end
 
   manage_contacts do
@@ -192,6 +194,11 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_dashboard do
     resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview]
+  end
+
+  manage_segments do
+    resource :"ember/segments/contact_filter"
+    resource :"ember/segments/company_filter"
   end
 
 end

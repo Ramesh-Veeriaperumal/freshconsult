@@ -11,6 +11,9 @@ class CompanyField < ActiveRecord::Base
 
   validates_uniqueness_of :name, :scope => [:account_id, :company_form_id]
 
+  after_save   :prepare_to_update_segment_filter
+  after_commit :update_segment_filter, on: :update
+
   DEFAULT_FIELD_PROPS = {
     :default_name           => { type: 1, dom_type: :text,
                                  label: 'company.name'
@@ -140,5 +143,15 @@ class CompanyField < ActiveRecord::Base
       else
         super
      end
+  end
+
+  def prepare_to_update_segment_filter
+    @marked_as_deleted = deleted_changed? && deleted?
+  end
+
+  def update_segment_filter
+    if @marked_as_deleted
+      UpdateSegmentFilter.perform_async({ custom_field: attributes, type: self.class.name })
+    end
   end
 end

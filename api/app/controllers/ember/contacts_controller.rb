@@ -5,10 +5,13 @@ module Ember
     include CustomerActivityConcern
     include AgentContactConcern
     include ContactsCompaniesConcern
+    include SegmentConcern
+
     decorate_views(decorate_object: [:quick_create])
 
     SLAVE_ACTIONS = %w(index activities).freeze
     before_filter :can_change_password?, :validate_password_change, only: [:update_password]
+    before_filter :validate_and_process_query_hash, only: [:index], if: :segments_enabled?
 
     def create
       assign_protected
@@ -46,8 +49,12 @@ module Ember
     end
 
     def index
-      super
-      response.api_meta = { count: @items_count }
+      if filter_api?
+        handle_segments
+      else
+        super
+        response.api_meta = { count: @items_count }
+      end
     end
 
     def quick_create
@@ -129,7 +136,6 @@ module Ember
       def deleted_agent
         @deleted_agent ||= current_account.all_users.where(deleted: true, helpdesk_agent:true).find_by_id(params[:id])
       end
-
 
       def construct_delegator_params
         {
@@ -255,6 +261,14 @@ module Ember
         ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
         contact = Ember::ContactValidation.new(params[cname], @item, string_request_params?)
         render_custom_errors(contact, true) unless contact.valid?(action_name.to_sym)
+      end
+
+      def current_segment
+        @current_segment ||= contact_filters.find_by_id(params[:filter])
+      end
+
+      def contact_filters
+        current_account.contact_filters
       end
 
       def validate_url_params

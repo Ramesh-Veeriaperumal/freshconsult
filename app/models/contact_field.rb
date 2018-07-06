@@ -9,7 +9,8 @@ class ContactField < ActiveRecord::Base
 
   before_save   :set_portal_edit
   before_create :populate_label
-  after_commit :toggle_multiple_companies_feature, on: :update
+  after_save    :prepare_to_update_segment_filter
+  after_commit :toggle_multiple_companies_feature, :update_segment_filter, on: :update
 
   validates_uniqueness_of :name, :scope => [:account_id, :contact_form_id]
 
@@ -87,5 +88,15 @@ class ContactField < ActiveRecord::Base
 
   def label_in_portal
     self.default_field? ? I18n.t("#{self.default_field_label}") : read_attribute(:label_in_portal)
+  end
+
+  def prepare_to_update_segment_filter
+    @marked_as_deleted = deleted_changed? && deleted?
+  end
+
+  def update_segment_filter
+    if @marked_as_deleted
+      UpdateSegmentFilter.perform_async({ custom_field: attributes, type: self.class.name })
+    end
   end
 end
