@@ -98,6 +98,7 @@
       - :auto_ticket_export
       - :ticket_activity_export
       - :unique_contact_identifier
+      - :custom_dashboard
     :inherits:
       - :garden_jan_17
     :exclude: []

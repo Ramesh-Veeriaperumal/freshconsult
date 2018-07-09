@@ -1,5 +1,5 @@
 class Support::CannedFormsController < SupportController
-  skip_before_filter :verify_authenticity_token
+  skip_before_filter :verify_authenticity_token, :redirect_to_locale
   before_filter :check_feature, :check_privilege, only: [:preview]
   before_filter :validate_current_user, only: [:show]
   before_filter :load_form_object

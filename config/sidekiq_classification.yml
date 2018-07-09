@@ -145,6 +145,7 @@
     - inline_image_shredder
     - deactivate_product_widgets
     - deactivate_filter_widgets
+    - update_segment_filter
   :external:
     - code_console_execution
     - integrations

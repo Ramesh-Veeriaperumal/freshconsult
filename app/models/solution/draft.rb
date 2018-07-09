@@ -170,6 +170,7 @@ class Solution::Draft < ActiveRecord::Base
     def move_attachments
       [:attachments, :cloud_files].each do |assoc|
         article.safe_send(assoc).where( :id => self.deleted_attachments(assoc) ).destroy_all
+        article.draft.safe_send(assoc).where( :id => self.deleted_attachments(assoc) ).destroy_all
         self.safe_send(assoc).each do |item|
           item.update_attributes(item.object_type => article)
         end

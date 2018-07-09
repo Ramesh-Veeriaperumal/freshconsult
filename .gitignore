@@ -74,3 +74,6 @@ features/cucumber_statistics
 
 #ctags
 tags
+
+brakeman-output.html
+brakeman-output.tabs
