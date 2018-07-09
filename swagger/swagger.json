@@ -7344,6 +7344,93 @@
         }
       }
     },
+    "/sandboxes/{id}/diff": {
+      "get": {
+        "tags": [
+          "sandbox"
+        ],
+        "description": "Sandbox Diff",
+        "summary": "Sandbox Diff",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the sandbox job",
+            "required": true
+          },
+          {
+            "name": "force",
+            "in": "query",
+            "description": "To force regeneration of diff - true/false",
+            "type": "string",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/sandboxes_diff"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/sandboxes/{id}/merge": {
+      "post": {
+        "tags": [
+          "sandbox"
+        ],
+        "description": "Sandbox Merge",
+        "summary": "Sandbox Merge",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the sandbox job",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "merge",
+            "description": "feedback content and meta information",
+            "schema": {
+              "$ref": "#/definitions/sandbox_merge_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/sandboxes_merge"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/freshmarketer": {
       "get": {
         "tags": [
@@ -9959,6 +10046,52 @@
           "description": "step to be completed"
         }
       }
+    },
+    "sandbox_merge_input": {
+      "type": "object",
+      "properties": {
+        "sandbox": {
+          "description": "translation keys of diff changes",
+          "type": "object",
+          "properties": {
+            "model_name": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "translation": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "meta": {
+          "description": "translation keys of model names",
+          "type": "object",
+          "properties": {
+            "model_name": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "sandbox",
+        "meta"
+      ]
     },
     "contact": {
       "type": "object",
@@ -14987,6 +15120,12 @@
               "status": {
                 "type": "string"
               },
+              "updated_at": {
+                "type": "string"
+              },
+              "created_at": {
+                "type": "string"
+              },
               "sandbox_url": {
                 "type": "string"
               }
@@ -14997,6 +15136,15 @@
           "type": "object",
           "properties": {
             "status": {
+              "type": "string"
+            },
+            "last_sync": {
+              "type": "string"
+            },
+            "sync_by": {
+              "type": "number"
+            },
+            "last_diff": {
               "type": "string"
             }
           }
@@ -15012,6 +15160,79 @@
             "id": {
               "type": "number"
             },
+            "status": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "sandboxes_diff": {
+      "type": "object",
+      "properties": {
+        "sandboxes": {
+          "type": "object",
+          "properties": {
+            "model_name": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "changes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "production_value": {
+                          "type": "string"
+                        },
+                        "sandbox_value": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "meta": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "conflict": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "sandboxes_merge": {
+      "type": "object",
+      "properties": {
+        "sandboxes": {
+          "type": "object",
+          "properties": {
             "status": {
               "type": "string"
             }

@@ -154,9 +154,11 @@
     - inline_image_shredder
     - create_sandbox_account
     - delete_sandbox
-    - sandbox_file_to_config
-    - sandbox_config_to_file
+    - sandbox_file_to_data
+    - sandbox_data_to_file
     - clone
+    - sandbox_diff
+    - sandbox_merge
     - inline_image_shredder
     - deactivate_product_widgets
     - deactivate_filter_widgets

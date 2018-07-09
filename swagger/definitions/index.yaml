@@ -140,6 +140,9 @@
   trial_widget_complete_step:
     $ref: './request/trial_widget/complete_step.yaml'
 
+  sandbox_merge_input:
+    $ref: './request/sandboxes/merge.yaml'
+
   # RESOURCE
   conversation_template:
     $ref: ./resource/conversation_template.yaml
@@ -459,6 +462,10 @@
     $ref: ./response/sandboxes/index.yaml
   sandboxes_create:
     $ref: ./response/sandboxes/create.yaml
+  sandboxes_diff:
+    $ref: ./response/sandboxes/diff.yaml
+  sandboxes_merge:
+    $ref: ./response/sandboxes/merge.yaml
 
   #Freshmarketer
   freshmarketer_experiment:

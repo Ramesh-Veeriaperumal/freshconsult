@@ -39,6 +39,9 @@ node(params.NODE) {
                             echo "create database helpkit${BUILD_NUMBER}" | mysql -uroot
                             sed -i "s/helpkit_test_rails3/helpkit${BUILD_NUMBER}/g" config/database.yml
                             bundle exec rake db:bootstrap RAILS_ENV=test
+                            echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
+                            sed -i "s/sandbox_test/sandbox{BUILD_NUMBER}/g" config/database.yml
+                            bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
                          '''
                 }
           }

@@ -1,0 +1,27 @@
+post:
+  tags: [sandbox]
+  description: Sandbox Merge
+  summary: Sandbox Merge
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: ID of the sandbox job
+      required: true
+    - in: body
+      name: merge
+      description: feedback content and meta information
+      schema:
+        $ref: '#/definitions/sandbox_merge_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/sandboxes_merge'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

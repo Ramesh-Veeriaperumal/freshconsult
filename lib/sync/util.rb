@@ -1,8 +1,7 @@
 module Sync::Util
-
   include Sync::Constants
 
-  #XXX TODO - remove all Sync:: since they r under the same namespace
+  # XXX TODO - remove all Sync:: since they r under the same namespace
 
   def sync_config_to_local(account_id, repo_path)
     FileUtils.rm_rf(repo_path)
@@ -12,9 +11,9 @@ module Sync::Util
     gitClient.checkout_branch
   end
 
-  def commit_config_to_git(account_id, repo_path)
+  def commit_config_to_git(repo_path, sandbox = false)
     RELATIONS.each do |relation|
-      Sync::ConfigToFile.new(repo_path, relation[0], relation[1]).write_config
+      Sync::DataToFile::Manager.new(repo_path, relation[0], relation[1], sandbox).write_config
     end
   end
 
@@ -36,52 +35,83 @@ module Sync::Util
 
   def restore_config_from_git(master_account_id, staging_account_id, repo_path, retain_id)
     account = Account.find(staging_account_id).make_current
-    s = Sync::FileToConfig.new(repo_path, master_account_id, retain_id, account)
+    s = Sync::FileToData::Manager.new(repo_path, master_account_id, retain_id)
     clear_staging_data(s.affected_tables, account.id)
     s.update_all_config
+    s.post_config
   ensure
     Account.reset_current_account
   end
 
-  def merge_branches(master_account_id, staging_account_id, repo_path, message, author, email)
+  def get_diff(master_account_id, staging_account_id, repo_path)
     master_branch  = branch_name(master_account_id)
     staging_branch = branch_name(staging_account_id)
 
-    gitClient = Sync::GitClient.new(repo_path, master_branch)
-    success, conflicts = gitClient.merge_branches(master_branch, staging_branch, message, author, email)
-    if success
-      gitClient.push_changes_to_remote
-    else
-      puts "Merge Failed. Please check the conflicting files"
-    end
-    [success, conflicts]
+    git_client = Sync::GitClient.new(repo_path, master_branch)
+    git_client.get_changes(master_branch, staging_branch)
   end
 
-  #TODO : Handling Reverse Mapping. eg., Ticket fields. What if ticket field column is already been taken
-  def apply_staging_config_to_prod(account_id, repo_path, new_files, modified_files, deleted_files)
+  def apply_staging_config_to_prod(account_id, staging_account_id, repo_path, resync, retain_id, merge_changes)
     Sharding.select_shard_of(account_id) do
-      account = Account.find(account_id).make_current
-      RELATIONS.each do |relation|
-        Sync::FileToConfig.new(repo_path, relation[0], account).update_config(modified_files)
-        Sync::FileToConfig.new(repo_path, relation[0], account).delete_config(deleted_files)
+      Account.find(account_id).make_current
+      @repo_client = Rugged::Repository.new("#{repo_path}/.git")
+      @file_to_data = Sync::FileToData::Manager.new("#{RESYNC_ROOT_PATH}/#{account_id}", staging_account_id, retain_id, resync)
+      MERGE_FILES_TYPES.each do |type|
+        next unless merge_changes[type]
+        files_config(repo_path, account_id, merge_changes[type], type)
       end
+      # Post config
+      @file_to_data.post_config
     end
   ensure
     Account.reset_current_account
   end
 
-  def backup_single_object(account_id, repo_path, association, object)
-    Sharding.select_shard_of(account_id) do
-      account = Account.find(account_id).make_current
-      Sync::ConfigToFile.new(repo_path, association, [], account).dump_object(repo_path, association, object)
+  def files_config(repo_path, account_id, files, action)
+    create_config_files(files, repo_path, account_id)
+    @file_to_data.update_all_config(action)
+  end
+
+  def create_file(path, content)
+    FileUtils.mkdir_p(File.dirname(path))
+    File.open(path, 'w') { |f| f.puts content }
+  end
+
+  def traverse_directory(dir_path)
+    Dir.foreach(dir_path) do |item|
+      next if (item == '.') || (item == '..')
+      yield(item)
     end
-  ensure
-    Account.reset_current_account
+  end
+
+  def load_mapping_table(path)
+    YAML.load(File.read("#{path}/#{MAPPING_TABLE_NAME}.txt"))
   end
 
   private
 
-  def branch_name(account_id)
-    "#{account_id}"
-  end
+    def create_config_files(files, repo_path, account_id)
+      FileUtils.rm_rf(RESYNC_ROOT_PATH + '/' + account_id.to_s)
+      files.each do|file, content|
+        next unless file
+        file_path =  repo_path + '/' + file
+        new_file = file_path.gsub(GIT_ROOT_PATH, RESYNC_ROOT_PATH)
+        FileUtils.mkdir_p(File.dirname(new_file))
+        # copy file
+        if File.exist?(file_path)
+          FileUtils.cp(file_path, File.dirname(new_file))
+        else
+          create_file(new_file, load_content_from_hash(content[0]))
+        end
+      end
+    end
+
+    def load_content_from_hash(hash_id)
+      return unless hash_id
+      @repo_client.lookup(hash_id).content
+    end
+
+    def branch_name(account_id)
+      account_id.to_s
+    end
 end

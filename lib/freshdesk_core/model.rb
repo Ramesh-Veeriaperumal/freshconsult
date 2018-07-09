@@ -222,7 +222,9 @@ module FreshdeskCore::Model
                         "contact_notes",
                         "contact_note_bodies",
                         "company_notes",
-                        "company_note_bodies"
+                        "company_note_bodies",
+	                "skills",
+	  		"admin_sandbox_jobs"
                     ]
 
   STATUS = {

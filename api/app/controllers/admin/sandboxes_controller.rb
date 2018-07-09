@@ -1,11 +1,17 @@
 class Admin::SandboxesController < ApiApplicationController
   include HelperConcern
   include SandboxConstants
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
   decorate_views(decorate_objects: [:index])
 
   before_filter :check_feature
+  before_filter :validate_merge_params, only: [:merge]
+  before_filter :load_object, only: [:destroy, :diff, :merge]
   before_filter :destroy?, only: [:destroy]
+  before_filter :diff?, only: [:diff]
+  before_filter :merge?, only: [:merge]
 
   def create
     current_account.mark_as!(:production_with_sandbox)
@@ -14,7 +20,30 @@ class Admin::SandboxesController < ApiApplicationController
 
   def index
     super
-    response.api_meta =  current_account.account_additional_settings.additional_settings[:sandbox]
+    sandbox_details = current_account.account_additional_settings.additional_settings[:sandbox]
+    response.api_meta = sandbox_details.merge!(:last_diff => @items.first.try(:last_diff)) if sandbox_details
+  end
+
+  def diff
+    if recent_diff? && (@item.sandbox_complete? || (@item.diff_complete? && params[:force]))
+      @item.mark_as!(:diff_in_progress)
+      ::Admin::Sandbox::DiffWorker.perform_async
+      @items = {status: PROGRESS_KEYS_BY_TOKEN[@item.status]}
+    elsif @item.diff_complete?
+      @items = @item.diff
+    else
+      @items = {status: PROGRESS_KEYS_BY_TOKEN[@item.status]}
+    end
+    response.api_root_key = :sandbox
+    response.api_meta = {conflict: @item.conflict?}
+  end
+
+  def merge
+    upload_diff_template(params[:sandbox], params[:meta])
+    @item.mark_as!(:merge_in_progress)
+    ::Admin::Sandbox::MergeWorker.perform_async
+    @data = {status: PROGRESS_KEYS_BY_TOKEN[@item.status]}
+    response.api_root_key = :sandbox
   end
 
   def destroy
@@ -53,10 +82,17 @@ class Admin::SandboxesController < ApiApplicationController
   def load_object
     @item = current_account.sandbox_job
     log_and_render_404 unless @item
-
   end
 
-  def build_object  
+  def diff?
+    restricted_error if @item.status < STATUS_KEYS_BY_TOKEN[:sandbox_complete]
+  end
+
+  def merge?
+    render_request_error(:access_restricted, 403) if @item.conflict? || !@item.diff_complete?
+  end
+
+  def build_object
     @item = current_account.create_sandbox_job
   end
 
@@ -64,5 +100,20 @@ class Admin::SandboxesController < ApiApplicationController
     return restricted_error_sandbox_account if current_account.sandbox?
     restricted_error if current_account.sandbox_job.present?
   end
+
+  def recent_diff?
+    !(@item.last_diff.present? && (@item.last_diff > (Time.now.utc - get_others_redis_key(SANDBOX_DIFF_RATE_LIMIT).to_i.minutes)))
+  end
+
+  private
+    def validate_merge_params
+      params.permit(*SandboxConstants::MERGE_FIELDS, *ApiConstants::DEFAULT_PARAMS)
+    end
+
+    def upload_diff_template(diff_data, meta)
+      template_data = {diff: diff_data, meta: meta}
+      path = "sandbox/#{current_account.id}/#{@item.sandbox_account_id}_diff_template.json"
+      AwsWrapper::S3Object.store(path,template_data.to_json,S3_CONFIG[:bucket])
+    end
 
 end
