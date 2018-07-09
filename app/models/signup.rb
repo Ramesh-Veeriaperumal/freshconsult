@@ -31,13 +31,6 @@ class Signup < ActivePresenter::Base
     account.conversion_metric_attributes = metrics_obj if metrics_obj
   end
 
-  def all_errors
-    error_messages = account.errors.messages
-    base_errors = error_messages.delete(:base) || []
-    non_base_errors = error_messages.collect{|key, values| error_messages = values.collect{|value| "#{key.to_s} #{value}" }} || []
-    (base_errors + non_base_errors).flatten
-  end
-
   private
     def build_primary_email
       account.build_primary_email_config(
