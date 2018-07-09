@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180703170336) do
+ActiveRecord::Schema.define(:version => 20180705070830) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -161,6 +161,7 @@ ActiveRecord::Schema.define(:version => 20180703170336) do
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
     t.text     "last_error"
+    t.text     "additional_data",    :limit => 2147483647
   end
 
   add_index "admin_sandbox_jobs", ["account_id"], :name => "index_admin_sandbox_jobs_on_account_id"
