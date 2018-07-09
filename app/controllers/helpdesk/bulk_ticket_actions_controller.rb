@@ -168,7 +168,7 @@ class Helpdesk::BulkTicketActionsController < ApplicationController
 
     def delete_invisible_fields
       @field_params = params[:helpdesk_ticket] ? params[:helpdesk_ticket].dup : params[:helpdesk_ticket]
-      if @field_params.present? and current_account.bulk_security_enabled?
+      if @field_params.present?
         @field_params.keys.each do |key|
           if key == "custom_field"
             @field_params[key].delete_if {|key, value| !visible_custom_fields.include?(key)}

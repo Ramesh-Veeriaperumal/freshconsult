@@ -70,18 +70,26 @@ var Feedback = {
 			}, 3000);
 		}
 	},
-	surveySaveHit: function(rating,survey_code){
-		var hitUrl = "/support/custom_surveys/"+survey_code + "/"+rating+"/hit";
-		jQuery.ajax({
-			url: hitUrl,
-			type: "GET",
-			success:function(data){
-				jQuery("#survey_form").attr("action",data.submit_url);
-             		},
-			error: function (error) {
-	                	console.log(error);
-	                }
-		});
-
-	}
+  surveySaveHit: function(event, rating, surveyCode){
+    var submitData = jQuery('#survey_form').data();
+    var emailScanCompatible = (submitData && submitData.emailScanCompatible);
+    if(emailScanCompatible && event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    var hitUrl = '/support/custom_surveys/' + surveyCode + '/' + rating + '/hit';
+    jQuery.ajax({
+      url: hitUrl,
+      type: 'GET',
+      success: function(data) {
+        jQuery('#survey_form').attr('action', data.submit_url);
+        if(emailScanCompatible && event) {
+          Feedback.submit(event);
+        }
+      },
+      error: function (error) {
+        console.log(error);
+      }
+    });
+  }
 }

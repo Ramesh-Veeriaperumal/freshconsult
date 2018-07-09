@@ -35,7 +35,7 @@ module Freshid
       def migrate_agents
         Rails.logger.info "FRESHID Enabling and Migrating Agents :: a=#{@account.try(:id)}, d=#{@account.try(:full_domain)}"
         @account.create_freshid_account
-        @account.launch(:freshid)
+        @account.launch_freshid_with_omnibar
         perform_migration_changes
         @account.all_technicians.find_each { |user| migrate_user_to_freshid(user) if user.freshid_authorization.blank? }
       rescue Exception => e

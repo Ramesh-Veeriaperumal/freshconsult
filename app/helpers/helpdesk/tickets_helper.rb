@@ -768,7 +768,7 @@ module Helpdesk::TicketsHelper
                 </span>) if Account.current.parent_child_tickets_enabled?
     links << %(<span class="ml12">
                   <b><a href="#" data-placement = "bottomLeft" data-trigger="link_tracker" class="lnk_tkt_tracker_show_dropdown" id="lnk_tkt_tracker"  role="button" data-toggle="popover" data-dropdown="close" data-ticket-id="#{@ticket.display_id}"><span class="tooltip" data-placement= "belowRight" twipsy-content-set="true" data-original-title="#{t('ticket.link_tracker.link_to_tracker_tooltip')}">#{t('ticket.link_tracker.link_to_tracker')}</span> </a></b>
-                </span>) if current_account.link_tkts_enabled?
+                </span>) if current_account.link_tickets_enabled?
     links.join(links.size > 1 ? '<span class="separator">OR</span>' : '')
     content_tag(:span,
                 links.join(links.size > 1 ? '<span class="separator">OR</span>' : '').html_safe,
@@ -776,7 +776,7 @@ module Helpdesk::TicketsHelper
   end
 
   def tracker_ticket_requester? dom_type
-    dom_type.eql?("requester") and (params[:display_ids].present? || @item.tracker_ticket?) and current_account.link_tkts_enabled?
+    dom_type.eql?("requester") and (params[:display_ids].present? || @item.tracker_ticket?) and current_account.link_tickets_enabled?
   end
 
   def show_insert_into_reply?
