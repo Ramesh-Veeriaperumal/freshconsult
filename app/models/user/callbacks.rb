@@ -240,11 +240,6 @@ class User < ActiveRecord::Base
 
   def update_user_related_changes
     @model_changes = self.changes.clone
-    if roles_changed?
-      role_changes = { :added => @added_roles || [], 
-                       :removed => @removed_roles || [] }
-      @model_changes.merge!("roles" => role_changes)
-    end
     # @model_changes.symbolize_keys!
   end
 

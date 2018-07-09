@@ -88,12 +88,12 @@ module RabbitMq::Constants
   RMQ_SEARCH_CALLER_KEY         = "1"
 
   # Manual publish keys - common for both activities and reports
-  RMQ_GENERIC_TICKET_KEY      = '*.1.1.*.1.#'.freeze # Position 0 -> auto_refresh, 2 -> reports 4 -> search 6-> es count 8-> activities
+  RMQ_GENERIC_TICKET_KEY      = '*.1.*.*.1.#'.freeze  # Position 0 -> auto_refresh, 2 -> reports 4 -> search 6-> es count 8-> activities
   RMQ_GENERIC_NOTE_KEY        = "*.1.*.1.#"  # Position 0 -> auto_refresh, 2 -> reports 4 -> activities
   RMQ_GENERIC_ARCHIVE_TKT_KEY = "1.*.*.#"    # Position 0 -> reports
 
   #when a spam or trash ticket is deleted after 30 days, we are firing a raw query. So deleting from all subscribers by manual publish
-  RMQ_CLEANUP_TICKET_KEY      = '*.1.1.1.1.#'.freeze
+  RMQ_CLEANUP_TICKET_KEY      = '*.1.*.1.1.#'.freeze
   
   #used for reports and count cluster tickets alone. 
   RMQ_REPORTS_COUNT_TICKET_KEY = "*.1.*.1.*.#"

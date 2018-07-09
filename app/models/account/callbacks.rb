@@ -95,8 +95,7 @@ class Account < ActiveRecord::Base
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
       self.launch(:archive_ghost)           # enabling archive ghost feature
     end
-    self.launch(:freshid) if freshid_signup_allowed?
-    self.launch(:freshworks_omnibar) if freshid_signup_allowed? and omnibar_signup_allowed?
+    launch_freshid_with_omnibar if freshid_signup_allowed?
   end
 
   def update_activity_export
@@ -156,6 +155,11 @@ class Account < ActiveRecord::Base
       name: name,
       full_domain: full_domain,
     }
+  end
+
+  def launch_freshid_with_omnibar
+    launch(:freshid)
+    launch(:freshworks_omnibar) if omnibar_signup_allowed?
   end
 
   protected

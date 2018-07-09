@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
 
-  LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets,
-                   :customer_sentiment_ui, :dkim, :bulk_security, :scheduled_ticket_export, 
+  LP_FEATURES   = [:select_all, :round_robin_capping, :suggest_tickets,
+                   :customer_sentiment_ui, :dkim, :scheduled_ticket_export, 
                    :ticket_contact_export, :email_failures, :disable_emails,
                    :falcon_portal_theme, :freshid, :freshchat_integration,:year_in_review_2017,
                    :facebook_page_redirect, :announcements_tab, :archive_ghost,
@@ -9,9 +9,10 @@ class Account < ActiveRecord::Base
                    :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
                    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, 
                    :imap_error_status_check, :va_any_field_without_none, :api_es, :sandbox_lp, 
-                   :encode_emoji, :audit_logs_central_publish, :auto_complete_off, :dependent_field_validation,
-                   :post_central_publish, :encode_emoji_subject, :time_sheets_central_publish, :twitter_common_redirect,
-                   :canned_forms, :euc_migrated_twitter, :new_ticket_recieved_metric]
+                   :encode_emoji, :audit_logs_central_publish, :auto_complete_off,
+                   :dependent_field_validation, :post_central_publish, :encode_emoji_subject,
+                   :time_sheets_central_publish, :twitter_common_redirect, :canned_forms,
+                   :euc_migrated_twitter, :new_ticket_recieved_metric, :audit_log_ui]
    DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
   BITMAP_FEATURES = [
@@ -100,7 +101,7 @@ class Account < ActiveRecord::Base
   end
 
   def link_tkts_or_parent_child_enabled?
-    link_tkts_enabled? || parent_child_tickets_enabled?
+    link_tickets_enabled? || parent_child_tickets_enabled?
   end
 
   def survey_enabled?
@@ -198,10 +199,6 @@ class Account < ActiveRecord::Base
 
   def tags_filter_reporting_enabled?
     features?(:tags_filter_reporting)
-  end
-
-  def link_tkts_enabled?
-    launched?(:link_tickets) || link_tickets_enabled?
   end
 
   def dashboard_new_alias?

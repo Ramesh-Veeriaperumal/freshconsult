@@ -35,8 +35,9 @@ class Helpdesk::InlineAttachmentsController < ApplicationController
       @global_host ||= env_config[:domain][PodConfig['CURRENT_POD']]
     end
 
+    #Hack done to avoid inline attachment regression during EU -> EUC migration
     def global_host?
-      request.host == global_host
+      request.host == global_host || (request.host == "euattachment.freshdesk.com" && PodConfig['CURRENT_POD'].include?("podeucentral"))
     end
 
     def request_host
