@@ -113,7 +113,7 @@ test:
         dryrun: false
     sandbox_shard_1:
       host: 127.0.0.1
-      database: helpkit_test2_rails3
+      database: sandbox_test
       not_a_shard: false
       semian:
         enable: false

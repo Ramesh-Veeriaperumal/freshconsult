@@ -13,20 +13,20 @@ node(params.LABEL1) {
 
       tasks["Backend Falcon Unit Tests"] = {
         stage ("Private API Tests"){ 
-          build job: 'prestaging-falcon-unit-integration-acceptance-tests-backend-pipeline', 
+          build job: 'prestaging-falcon-unit-integration-acceptance-tests-backend-pipeline-fix', 
           parameters: [string(name: 'NODE', value: label),string(name: 'BRANCH',value: "$params.sha1")]
         }
       }
       tasks["Backend Falcon Public API Tests"] = {
         stage ("Public API Tests"){
-          build job: 'prestaging-falcon-public-api-unit-integration-acceptance-tests-backend-pipeline', 
+          build job: 'prestaging-falcon-public-api-unit-integration-acceptance-tests-backend-pipeline-fix', 
           parameters: [string(name: 'NODE', value: label),string(name: 'BRANCH',value: "$params.sha1")]
         }
       }
 
       tasks["Pronto Code Review"] = {
         stage ("Pronto Code Review"){
-          build job: 'prestaging-pronto-codereview-pipeline', 
+          build job: 'prestaging-pronto-codereview-pipeline-fix', 
           parameters: [string(name: 'NODE', value: params.LABEL3),string(name: 'BRANCH',value: "$params.ghprbSourceBranch"),string(name: 'PULLID',value: "$params.ghprbPullId")]
         }
       }
