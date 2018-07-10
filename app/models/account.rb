@@ -707,6 +707,10 @@ class Account < ActiveRecord::Base
     attachment_ids.flatten.uniq
   end
 
+  def sandbox_domain
+    DomainMapping.where(account_id: sandbox_job.try(:sandbox_account_id)).first.try(:domain)
+  end
+
   protected
   
     def external_url_is_valid?(url) 

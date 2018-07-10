@@ -34,7 +34,30 @@
 		}, 10);
 	})
 <% end %>
+<%= javascript_tag do%>
+jQuery(document).ready(function(){
+  jQuery("#segment-flash-close").click(function(ev){
+    jQuery("#segment-notice").fadeOut(600);
+    sessionStorage.setItem("segment-notice", "closed");
+  });
+
+  if(sessionStorage.getItem("segment-notice") == "closed")
+  {
+    jQuery("#segment-notice").remove();
+  }
+  else
+  {
+    jQuery("#segment-notice").fadeIn(600);
+  }
+});
+<% end %>
 <div class="list-page-header">
+  <%if current_account.segments_enabled?%>
+    <div id = "segment-notice" class="info-highlight fs-notify notice alert-with-close alert-text hide segment-flash">
+      <span><%=t('segment_notice')%> <a href = "/enable_falcon" data-method='post' rel='nofollow'><%=t('mint')%></a></span>
+      <a id = "segment-flash-close" class = "close"></a>
+    </div>
+  <%end%>
 	<div class="row-fluid">
 		<div class="span4"><h3 class="lead"><%= @page_title = t('customers') %></h3></div>
 		 <div class="span8 pull-right pagination-right header_buttons align-right" >

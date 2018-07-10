@@ -1,6 +1,6 @@
 class ContactFilterValidation < FilterValidation
   attr_accessor :state, :phone, :mobile, :email, :company_id, :conditions, :tag, :_updated_since, :unique_external_id,
-                :include, :include_array
+                :include, :include_array, :query_hash
 
   validates :state, custom_inclusion: { in: ContactConstants::STATES }
   validates :email, data_type: { rules: String }
@@ -19,6 +19,7 @@ class ContactFilterValidation < FilterValidation
     @conditions = (request_params.keys & ContactConstants::INDEX_FIELDS)
     filter_name = request_params.fetch('state', 'default')
     @conditions = @conditions - ['tag'] - ['state'] + [filter_name].compact
+    self.skip_hash_params_set = true
     super(request_params, item, allow_string_param)
   end
 

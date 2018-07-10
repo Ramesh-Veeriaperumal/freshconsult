@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180620195011) do
+ActiveRecord::Schema.define(version: 20180705070830) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -160,6 +160,7 @@ ActiveRecord::Schema.define(version: 20180620195011) do
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
     t.text     "last_error"
+    t.text     "additional_data",    :limit => 2147483647
   end
 
   add_index "admin_sandbox_jobs", ["account_id"], :name => "index_admin_sandbox_jobs_on_account_id"
@@ -4414,6 +4415,22 @@ ActiveRecord::Schema.define(version: 20180620195011) do
   end
   add_index :qna_insights_reports , [:account_id, :user_id], :name => 'index_qna_insights_reports_on_account_id_and_user_id'
 
+  create_table :contact_filters, force: true do |t|
+    t.string   :name
+    t.text     :data
+    t.column   :account_id, 'bigint unsigned', null: false
+    t.timestamps
+  end
+  add_index :contact_filters, [:account_id], name: 'index_contact_filter_on_account'
+
+  create_table :company_filters, force: true do |t|
+    t.string   :name
+    t.text     :data
+    t.column   :account_id, 'bigint unsigned', null: false
+    t.timestamps
+  end
+  add_index :company_filters, [:account_id], name: 'index_company_filter_on_account'
+ 
   create_table :failed_central_feeds, :force => true do |t|
     t.integer :account_id, limit: 8, null: false
     t.integer :model_id, limit: 8, null: false

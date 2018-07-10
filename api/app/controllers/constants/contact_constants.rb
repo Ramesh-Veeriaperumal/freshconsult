@@ -14,7 +14,8 @@ module ContactConstants
 
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(custom_field).freeze
 
-  INDEX_FIELDS = %w(state email phone mobile company_id tag _updated_since unique_external_id include).freeze
+  # INDEX_FIELDS = %w(state email phone mobile company_id tag _updated_since unique_external_id query_hash include filter).freeze
+  INDEX_FIELDS = ['state', 'email', 'phone', 'mobile', 'company_id', 'tag', '_updated_since', 'unique_external_id', 'query_hash', 'include', 'filter'].freeze
   SHOW_FIELDS = %w(include).freeze
   MERGE_ARRAY_FIELDS = ['secondary_contact_ids'].freeze
   MERGE_FIELDS = %w[primary_contact_id contact].freeze | MERGE_ARRAY_FIELDS

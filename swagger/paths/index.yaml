@@ -405,6 +405,10 @@
   $ref: ./sandboxes/create.yaml
 /sandboxes/destroy:
   $ref: ./sandboxes/destroy.yaml
+/sandboxes/{id}/diff:
+  $ref: ./sandboxes/diff.yaml
+/sandboxes/{id}/merge:
+  $ref: ./sandboxes/merge.yaml
 
 #Freshmarketer
 /freshmarketer:

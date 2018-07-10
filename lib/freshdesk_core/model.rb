@@ -18,11 +18,13 @@ module FreshdeskCore::Model
                         "company_fields",
                         "company_field_choices",
                         "company_field_data",
+                        'company_filters',
                         "conversion_metrics",
                         "contact_forms",
                         "contact_fields",
                         "contact_field_choices",
                         "contact_field_data",
+                        'contact_filters',
                         "data_exports",
                         "dashboards",
                         "dashboard_widgets",
@@ -220,7 +222,9 @@ module FreshdeskCore::Model
                         "contact_notes",
                         "contact_note_bodies",
                         "company_notes",
-                        "company_note_bodies"
+                        "company_note_bodies",
+	                "skills",
+	  		"admin_sandbox_jobs"
                     ]
 
   STATUS = {

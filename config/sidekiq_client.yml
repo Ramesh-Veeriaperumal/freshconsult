@@ -280,14 +280,17 @@ defaults: &defaults
     - [inline_image_shredder]
     - [create_sandbox_account]
     - [delete_sandbox]
-    - [sandbox_file_to_config]
-    - [sandbox_config_to_file]
+    - [sandbox_file_to_data]
+    - [sandbox_data_to_file]
     - [clone]
+    - [sandbox_diff]
+    - [sandbox_merge]
     - [inline_image_shredder]
     - [run_rake_task]
     - [deactivate_product_widgets]
     - [deactivate_filter_widgets]
     - [check_bot_training]
+    - [update_segment_filter]
 
 development:
   <<: *defaults

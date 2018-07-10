@@ -2,7 +2,7 @@ node(params.NODE) {
       try {
           stage('Checkout') {
                 def branch = params.BRANCH
-                if(env.JOB_NAME == 'prestaging-pronto-codereview-pipeline' ){
+                if(env.JOB_NAME == 'prestaging-pronto-codereview-pipeline-fix' ){
                   checkout([$class: 'GitSCM', branches: [[name: branch]], 
                             doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
                             userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])      
@@ -13,18 +13,17 @@ node(params.NODE) {
                             doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
                             userRemoteConfigs: [[name: 'origin',refspec: '+refs/pull/*:refs/remotes/origin/pr/*', 
                             url: 'git@github.com:freshdesk/helpkit.git']]])
-                }
+               } 
           }
 
           stage('Build') {
-                if(env.JOB_NAME == 'prestaging-pronto-codereview-pipeline' ){
+                if(env.JOB_NAME == 'prestaging-pronto-codereview-pipeline-fix' ){
                       def pullID = params.PULLID
                       sh """#!/bin/bash
                             source /etc/profile.d/rvm.sh
                             PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$pullID pronto run -f github_status github_pr -c origin/falcon-prestaging      
                          """
-                }
-                else {
+                }else {
                       sh '''#!/bin/bash
                             source /etc/profile.d/rvm.sh
                             yes | cp -rf /home/jenkins/s3.yml /home/jenkins/workspace/${JOB_NAME}/config/s3.yml
@@ -39,17 +38,21 @@ node(params.NODE) {
                             echo "create database helpkit${BUILD_NUMBER}" | mysql -uroot
                             sed -i "s/helpkit_test_rails3/helpkit${BUILD_NUMBER}/g" config/database.yml
                             bundle exec rake db:bootstrap RAILS_ENV=test
+                            echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
+                            sed -i "s/sandbox_test/sandbox${BUILD_NUMBER}/g" config/database.yml                            
+                            bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
                          '''
                 }
           }
+          
 
           stage('Test') {
-                if(env.JOB_NAME == 'prestaging-falcon-public-api-unit-integration-acceptance-tests-backend-pipeline' ){
+                if(env.JOB_NAME == 'prestaging-falcon-public-api-unit-integration-acceptance-tests-backend-pipeline-fix' ){
                       sh '''#!/bin/bash
                             source /etc/profile.d/rvm.sh
                             bundle exec ruby test/api/suites/public_api_test_suite.rb
                          '''
-                } else if(env.JOB_NAME == 'prestaging-falcon-unit-integration-acceptance-tests-backend-pipeline'){
+                } else if(env.JOB_NAME == 'prestaging-falcon-unit-integration-acceptance-tests-backend-pipeline-fix'){
                       sh '''#!/bin/bash
                             source /etc/profile.d/rvm.sh
                             bundle exec ruby test/api/suites/falcon_test_suite.rb
@@ -63,7 +66,7 @@ node(params.NODE) {
           echo 'Failed'
       } finally {
           stage('Publish Reports') {
-                if(env.JOB_NAME != 'prestaging-pronto-codereview-pipeline' ){
+                if(env.JOB_NAME != 'prestaging-pronto-codereview-pipeline-fix' ){
                   publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, 
                              reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html', 
                              reportName: 'HTML report', reportTitles: ''])

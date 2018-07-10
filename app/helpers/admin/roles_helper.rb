@@ -88,6 +88,7 @@ module Admin::RolesHelper
                 :children =>
 
                  [{ :dom_type => "check_box", :id => "manage_contacts" },
+                  { dom_type: 'check_box', id: 'manage_segments' },
                   { :dom_type => "check_box", :id => "delete_contact" },
                   {:dom_type => "check_box", :id => "export_customers"}]
                 

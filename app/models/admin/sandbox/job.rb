@@ -2,6 +2,7 @@ class Admin::Sandbox::Job < ActiveRecord::Base
   self.table_name = "admin_sandbox_jobs"
 
   belongs_to_account
+  serialize :additional_data, Hash
   include SandboxConstants
   
   before_create :set_default_values
@@ -25,9 +26,21 @@ class Admin::Sandbox::Job < ActiveRecord::Base
     shard.save!
   end
 
-  def update_last_error(e)
+  def update_last_error(e, state)
     self.last_error =  e.to_s
-    mark_as!(:error)
+    mark_as!(state)
+  end
+
+  def diff
+    self.additional_data[:diff] || {}
+  end
+
+  def conflict?
+    self.additional_data[:conflict]
+  end
+
+  def last_diff
+    self.additional_data[:last_diff]
   end
 
   private

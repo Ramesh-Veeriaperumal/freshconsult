@@ -4,8 +4,11 @@ module Ember
     include CustomerActivityConcern
     include BulkActionConcern
     include ContactsCompaniesConcern
+    include SegmentConcern
 
     SLAVE_ACTIONS = %w(index activities).freeze
+    before_filter :validate_and_process_query_hash, only: [:index], if: :segments_enabled?
+
     def create
       delegator_params = construct_delegator_params
       return unless validate_delegator(@item, delegator_params)
@@ -33,9 +36,13 @@ module Ember
     end
 
     def index
-      super
-      @sideload_options = @validator.include_array || []
-      response.api_meta = { count: @items_count }
+      if filter_api?
+        handle_segments
+      else
+        super
+        @sideload_options = @validator.include_array || []
+        response.api_meta = { count: @items_count }
+      end
     end
 
     def show
@@ -106,6 +113,14 @@ module Ember
 
       def decorator_options_hash
         super.merge(sla: @sla_policies || {})
+      end
+
+      def company_filters
+        current_account.company_filters
+      end
+
+      def current_segment
+        @current_segment ||= company_filters.find_by_id(params[:filter])
       end
   end
 end
