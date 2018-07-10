@@ -1,0 +1,27 @@
+get:
+  tags: [sandbox]
+  description: Sandbox Diff
+  summary: Sandbox Diff
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: ID of the sandbox job
+      required: true
+    - name: force
+      in: query
+      description: To force regeneration of diff - true/false
+      type: string
+      required: false
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/sandboxes_diff'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

@@ -23,7 +23,7 @@ node(params.LABEL1) {
           parameters: [string(name: 'NODE', value: label),string(name: 'BRANCH',value: "$params.sha1")]
         }
       }
-        
+
       tasks["Pronto Code Review"] = {
         stage ("Pronto Code Review"){
           build job: 'prestaging-pronto-codereview-pipeline', 

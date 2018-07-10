@@ -52,11 +52,11 @@ namespace :db do
     end    
   end
 
-  task :new_shard_setup =>  :environment do
+  task :sandbox_shard_setup =>  :environment do
 
     unless Rails.env.production?
-      ActiveRecord::Base.connection.execute('CREATE DATABASE helpkit_test2_rails3')
-      Sharding.run_on_shard('sandbox_shard_1') do
+      shard_name = 'sandbox_shard_1'
+      Sharding.run_on_shard(shard_name) do
         puts 'Creating tables...'
         Rake::Task["db:schema:load"].invoke
         #    Rake::Task["db:migrate"].invoke
@@ -65,6 +65,7 @@ namespace :db do
         Rake::Task["db:create_trigger"].invoke #To do.. Need to make sure the db account has super privs.
         Rake::Task["db:perform_table_partition"].invoke
         create_es_indices
+        set_auto_increment_id(shard_name, 10000000000)
       end
     end
   end
@@ -97,4 +98,49 @@ def create_es_indices
   puts 'Creating Elasticsearch indices...'
   Search::EsIndexDefinition.create_es_index
 end
+
+def set_auto_increment_id(shard_name,auto_increment)
+  error_tables = []
+
+# include application tables in global_tables???? as application.account_id = 0 is a valid entry
+
+  global_tables = [ "affiliate_discount_mappings", "facebook_page_mappings", "affiliate_discounts", "shard_mappings","domain_mappings", "google_domains", "subscription_affiliates", "subscription_announcements", "delayed_jobs","features", "wf_filters", "global_blacklisted_ips", "accounts", "subscription_plans", "schema_migrations","subscription_currencies", "itil_asset_plans", "subscription_payments", "mailbox_jobs", "service_api_keys", "pod_shard_conditions","remote_integrations_mappings" ]
+  Sharding.run_on_shard(shard_name) do
+    ActiveRecord::Base.connection.tables.each do |table_name|
+      begin
+        puts table_name
+
+        unless global_tables.include?(table_name)
+          column_names = []
+          column_values = []
+
+          ActiveRecord::Base.connection.columns(table_name).each do |column|
+            if !column.null and column.default.nil?
+              column_names.push(column.name)
+
+              if column.name == "id"
+                column_values.push(auto_increment)
+              elsif column.name == "account_id"
+                table_name == "applications" ? column_values.push(-1) : column_values.push(0)
+              elsif (column.type.to_s == "string") or (column.type.to_s == "text")
+                column_values.push("'Freshdesk'")
+              elsif column.type.to_s == "integer"
+                column_values.push(1)
+              elsif column.type.to_s == "datetime"
+                column_values.push("'#{Time.now.to_s(:db)}'")
+              end
+            end
+          end
+          names_stuff =  column_names.join(",")
+          values_stuff =  column_values.join(",")
+          ActiveRecord::Base.connection.execute("insert into #{table_name}(#{names_stuff}) values(#{values_stuff})")
+        end
+      rescue
+        error_tables.push(table_name)
+      end
+    end
+    puts "Error Tables : #{error_tables.join(',')}"
+  end
+end
+
 #SAAS ends here

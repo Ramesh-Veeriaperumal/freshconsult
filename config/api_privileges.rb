@@ -122,7 +122,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   admin_tasks do
-    resource :"admin/sandbox", only: [:create, :index, :destroy]
+    resource :"admin/sandbox", only: [:create, :index, :destroy, :diff, :merge]
     resource :"ember/admin/onboarding", only: %i[update_channel_config]
     resource :"ember/contact", only: [:update_password]
     resource :'ember/trial_widget', only: %i[index sales_manager complete_step]

@@ -1,0 +1,67 @@
+<div style="width: 640px;
+            text-align: left;
+            display: inline-block;">
+  <div style="letter-spacing: 0.5px;
+              line-height: 1.5;
+              font-weight: 500;
+              font-size: 16px;
+              display: flex;
+              align-items: center;">
+    <%= image_tag "#{SANDBOX_ASSETS}/#{svg}.png", { :style=>"height:20px;padding:10px 10px 0px 0px;"} %>
+    <div>
+      <%= t('sandbox.mail.diff_success') %>
+    </div>
+  </div>
+  <% @additional_info[:email_data][diff].each do |association, records|
+    if records.present? %>
+    <section style="margin: 24px auto;">
+      <div style="font-size: 14px;
+                  color: #6f7c87;
+                  text-transform: uppercase;
+                  font-weight: 500;
+                  margin: 0;
+                  letter-spacing: 1px;">
+        <%= image_tag "#{SANDBOX_ASSETS}/#{@logo[association.to_sym] || association}.png", { :style=>"vertical-align: middle;width:24px;" } %>
+        <span style="vertical-align: middle;">
+          <%= @additional_info[:meta][association] %>
+        </span>
+      </div>
+      <ul style="list-style: none; margin: 8px auto;padding-left: 16px;">
+        <li style="letter-spacing: 0.5px;">
+          <% records.each do |item| %>
+            <div style="margin-top: 10px;">
+              <div style="font-size: 14px;
+                          color: #183247;
+                          line-height: 1.57;
+                          font-weight: 600;
+                          display: inline-block;">
+                          <%= item['translation']['name'] %>
+              </div>
+              <div style="font-size: 14px;
+                          display: inline-block;
+                          color: #6f7c87;
+                          line-height: 1.57;">
+                          <%= item['translation']['status'] %>
+              </div>
+            </div>
+            <% if item['translation']['changed_properties'].present? %>
+              <div>
+                <div style="font-size: 13px;
+                            line-height: 1.69;
+                            color: #183247;">
+                  <%= t('sandbox.mail.diff_is_edited').html_safe %><span>:</span>
+                </div>
+                <div style="color: #6f7c87;
+                            line-height: 1.69;
+                            font-size: 13px;">
+                  <%= item['translation']['changed_properties'].join(", ") %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </li>
+      </ul>
+    </section>
+    <% end %>
+  <% end %>
+</div>

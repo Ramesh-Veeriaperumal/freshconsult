@@ -42,6 +42,27 @@ class ConversationValidationTest < ActionView::TestCase
     conversation = ConversationValidation.new(controller_params, item, false)
     refute conversation.valid?(:forward)
     assert conversation.errors.full_messages.include?('To emails missing_field')
+
+    controller_params = { user_id: 1, attachment_ids: [], body: '' }
+    item = Helpdesk::Note.new
+    conversation = ConversationValidation.new(controller_params, item)
+    refute conversation.valid?(:reply)
+    assert conversation.errors.full_messages.include?('Body blank')
+
+    controller_params = { user_id: 1, attachment_ids: [1], body: '' }
+    item = Helpdesk::Note.new
+    conversation = ConversationValidation.new(controller_params, item)
+    assert conversation.valid?(:reply)
+
+    controller_params = { user_id: 1, attachment_ids: [1], body: '' }
+    item = Helpdesk::Note.new
+    conversation = ConversationValidation.new(controller_params, item)
+    assert conversation.valid?(:create)
+
+    controller_params = { user_id: 1, attachment_ids: [], body: 'Test' }
+    item = Helpdesk::Note.new
+    conversation = ConversationValidation.new(controller_params, item)
+    assert conversation.valid?(:reply)
   end
 
   def test_emails_validation_invalid
@@ -165,5 +186,4 @@ class ConversationValidationTest < ActionView::TestCase
     errors = conversation.errors.full_messages
     assert errors.include?('Cloud files is invalid')
   end
-
 end

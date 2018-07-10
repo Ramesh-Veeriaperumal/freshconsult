@@ -486,7 +486,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :sandboxes, controller: 'admin/sandboxes', only: [:index, :create, :destroy]
+    resources :sandboxes, controller: 'admin/sandboxes', only: [:index, :create, :destroy] do
+      member do
+        get  :diff
+        post :merge
+      end
+    end
 
     resources :contact_password_policy, controller: 'ember/contact_password_policies',
                                         only: [:index]
