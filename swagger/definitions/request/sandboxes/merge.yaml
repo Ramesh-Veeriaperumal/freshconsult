@@ -1,0 +1,29 @@
+type: object
+properties:
+  sandbox:
+    description: translation keys of diff changes
+    type: object
+    properties:
+      model_name:
+        type: array
+        items:
+          type: object 
+          properties:
+            id:
+              type: string
+            translation:
+              type: object
+              properties:
+                name:
+                  type: string
+                status:
+                  type: string
+  meta:
+    description: translation keys of model names
+    type: object
+    properties:
+      model_name:
+        type: string
+required:
+  - sandbox
+  - meta

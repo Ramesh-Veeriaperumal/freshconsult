@@ -1,15 +1,25 @@
-Hi <%= @additional_info[:admin_name] %>,
-<div style="padding:10px 0;">
-  A sandbox instance has been created for <%= @additional_info[:account_name] %> by <%= @additional_info[:admin_name] %>.
-</div>
-<div style="padding:10px 0;">
-  <%= link_to "Take me to my sandbox", "#{@additional_info[:sandbox_url]}", {:style => "background-color:#208465;color:white;text-decoration: none;padding: 10px 30px;display: inline-block;border-radius: 5px;box-shadow: 0 4px 0px 0px #005539;"} %>
-</div>
-<div style="padding:10px 0;">
-  If the button above doesn’t work, paste this link into your web browser :
-  <a href=<%= "#{@additional_info[:sandbox_url]}" %>><%= @additional_info[:sandbox_url] %></a>
-</div>
 <div>
-  Regards,<br>
-  <%= @additional_info[:account_name] %>
+  <%= render :partial => "email_header" %>
+  <div style='text-align: center;
+              padding-top: 52px;'>
+    <%= render :partial => "sandbox_greeting", :locals => {:message => t('sandbox.mail.live_message').html_safe } %>
+    <div style="margin-top: 20px;">
+      <%= link_to t('sandbox.mail.sandbox_button'), "#{@additional_info[:sandbox_url]}",
+        { :style => "background-color:#02b875;border:solid 0.6px #018554;color:white;text-decoration:none;padding: 14px 20px;display:inline-block;border-radius:2px;letter-spacing:1px;" } %>
+    </div>
+    <div style="margin-top: 50px;
+                line-height: 1.6;
+                color:#6f7c86;">
+        <%= t('sandbox.mail.button_error').html_safe %>
+    </div>
+    <div style="padding: 20px;">
+       <a style="color: #15c;
+                text-decoration:none;"
+          href=<%= "#{@additional_info[:sandbox_url]}" %>>
+          <%= @additional_info[:sandbox_url] %>
+        </a>
+    </div>
+  </div>
+  <%= render :partial => "sandbox_recommendations" %>
+  <%= render :partial => "email_footer" %>
 </div>

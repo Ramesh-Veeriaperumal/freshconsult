@@ -91,11 +91,44 @@ module Channel
       assert_response 201
     end
 
-    def test_create_without_default_fields_required
+    def test_create_without_requester_info
       params = {}
       post :create, construct_params({version: 'channel'}, params)
       assert_response 400
       match_json([bad_request_error_pattern('requester_id', :fill_a_mandatory_field, field_names: 'requester_id, phone, email, twitter_id, facebook_id')])
+    end
+
+    def test_create_with_illegal_value_for_custom_number_field_with_jwt_header
+      params = ticket_params_hash.merge(custom_fields: {})
+      params[:custom_fields]['test_custom_number'] = '123abcl33t'
+      set_jwt_auth_header('zapier')
+      create_custom_field('test_custom_number', 'number')
+      post :create, construct_params({ version: 'channel' }, params)
+      assert_response 400
+    end
+
+    def test_create_with_stringified_number_value_for_custom_number_field_with_jwt_header
+      params = ticket_params_hash.merge(custom_fields: {})
+      params[:custom_fields]['test_custom_number'] = '123'
+      set_jwt_auth_header('zapier')
+      create_custom_field('test_custom_number', 'number')
+      post :create, construct_params({ version: 'channel' }, params)
+      result = parse_response(@response.body)
+      assert_equal true, response.headers.include?('Location')
+      assert_equal "http://#{@request.host}/api/v2/tickets/#{result['id']}", response.headers['Location']
+      assert_response 201
+    end
+
+    def test_create_with_integer_value_for_custom_number_field_with_jwt_header
+      params = ticket_params_hash.merge(custom_fields: {})
+      params[:custom_fields]['test_custom_number'] = 123
+      set_jwt_auth_header('zapier')
+      create_custom_field('test_custom_number', 'number')
+      post :create, construct_params({ version: 'channel' }, params)
+      result = parse_response(@response.body)
+      assert_equal true, response.headers.include?('Location')
+      assert_equal "http://#{@request.host}/api/v2/tickets/#{result['id']}", response.headers['Location']
+      assert_response 201
     end
 
     def test_create_with_all_default_fields_required_invalid

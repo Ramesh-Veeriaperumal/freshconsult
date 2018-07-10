@@ -1,0 +1,28 @@
+<div>
+  <%= render :partial => "email_header" %>
+  <div style='text-align: center;
+              padding-top: 52px;'>
+    <%= render :partial => "sandbox_greeting", :locals => {:message => t('sandbox.sync_complete').html_safe } %>
+    <hr style="border: none;
+               border-top: 1px dashed #e5e5e5;
+               color: #fff;
+               background-color: #fff;
+               width: 684px;
+               margin: 24px auto;"/>
+    <div style="text-align: center;">
+      <%if @additional_info[:email_data][:success_diff].present? %>
+        <%= render :partial => "diff_content", :locals => {:diff => :success_diff, svg: 'success' } %>
+      <% end %>
+      <%if @additional_info[:email_data][:failure_diff].present? %>
+        <hr style="border: none;
+                  border-top: 1px dashed #e5e5e5;
+                  color: #fff;
+                  margin: 0;
+                  background-color: #fff;
+                  width: 684px;
+                  margin: 32px auto;">
+        <%= render :partial => "diff_content", :locals => {:diff => :failure_diff, svg: 'error' } %>
+      <% end %>
+    </div>
+  </div>
+</div>

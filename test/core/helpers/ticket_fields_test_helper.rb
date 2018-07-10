@@ -22,7 +22,7 @@ module TicketFieldsTestHelper
     "decimal"      => ["decimal", DECIMAL_FIELDS]
   }
 
-  def create_custom_field(name, type)
+  def create_custom_field(name, type, required = false, required_for_closure = false)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
     return ticket_field_exists if ticket_field_exists
     flexifield_mapping = flexifield_mapping(type)

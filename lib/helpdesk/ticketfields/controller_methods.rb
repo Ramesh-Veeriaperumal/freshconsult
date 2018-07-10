@@ -51,6 +51,10 @@ module Helpdesk::Ticketfields::ControllerMethods
     is_saved
   end
 
+  def available_columns(type)
+    (FIELD_COLUMN_MAPPING[type.to_sym][1] - used_columns(type))
+  end
+
   private
 
     def scoper(account = current_account)
@@ -67,7 +71,7 @@ module Helpdesk::Ticketfields::ControllerMethods
 
     def ff_meta_data(field_details, account = current_account)
       type = field_details.delete(:type)
-      column_name = (FIELD_COLUMN_MAPPING[type.to_sym][1] - used_columns(type)).first
+      column_name = available_columns(type).first
       add_to_used_columns(type, column_name)
 
       {
@@ -100,7 +104,7 @@ module Helpdesk::Ticketfields::ControllerMethods
       @used_columns ||= {}
       @used_columns[type] ||= begin
         Sharding.run_on_slave do
-          current_account.ticket_field_def.flexifield_def_entries.select(:flexifield_name).where(flexifield_coltype: FIELD_COLUMN_MAPPING[type.to_sym][0]).map(&:flexifield_name)
+          Account.current.ticket_field_def.flexifield_def_entries.select(:flexifield_name).where(flexifield_coltype: FIELD_COLUMN_MAPPING[type.to_sym][0]).map(&:flexifield_name)
         end
       end
     end

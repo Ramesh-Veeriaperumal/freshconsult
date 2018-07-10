@@ -7,7 +7,8 @@ module CompanyConstants
   EXPORT_CSV_FIELDS = EXPORT_CSV_ARRAY_FIELDS
   FIELDS = %w(name description note avatar_id avatar health_score
               account_tier renewal_date industry).freeze | ARRAY_FIELDS | HASH_FIELDS
-  INDEX_FIELDS = %w(include letter).freeze
+  # INDEX_FIELDS = %w(query_hash include letter filter).freeze
+  INDEX_FIELDS = ['query_hash', 'include', 'letter', 'filter'].freeze
   ACTIVITIES_FIELDS = %w(type).freeze
   BULK_ACTION_METHODS = [:bulk_delete].freeze
   DEFAULT_DROPDOWN_FIELDS = %i(health_score account_tier industry)

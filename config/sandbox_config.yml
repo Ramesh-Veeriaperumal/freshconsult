@@ -15,6 +15,7 @@ MODEL_DEPENDENCIES:
     - ticket_field_id
   - - - FlexifieldDefEntry
     - flexifield_def_entry_id
+  Role: []
   User:
   - - - User
     - string_uc04
@@ -24,6 +25,9 @@ MODEL_DEPENDENCIES:
     - escalate_to
   - - - BusinessCalendar
     - business_calendar_id
+  Agent:
+  - - - User
+    - user_id
   Helpdesk::Tag: []
   Product: []
   VaRule: []
@@ -95,10 +99,7 @@ MODEL_DEPENDENCIES:
     - section_id
   - - - Helpdesk::PicklistValue
     - picklist_value_id
-  Agent:
-  - - - User
-    - user_id
-  Role: []
+
   UserRole:
   - - - User
     - user_id
@@ -112,6 +113,12 @@ MODEL_DEPENDENCIES:
     - user_id
   - - - Group
     - group_id
+  Admin::Skill: []
+  UserSkill:
+  - - - User
+    - user_id
+  - - - Admin::Skill
+    - skill_id
   Helpdesk::SlaPolicy: []
   Helpdesk::SlaDetail:
   - - - Helpdesk::SlaPolicy

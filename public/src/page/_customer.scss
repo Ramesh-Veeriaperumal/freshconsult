@@ -920,3 +920,32 @@ ul.user_list{
 .ui-tooltip-ticket.ui-tooltip-ticket-customers .ui-tooltip-content{
 	padding: 10px 15px !important;
 }
+
+
+//------------------------------------------------------------------------------------
+//								Segment changes start
+//------------------------------------------------------------------------------------
+
+.segment-flash{
+  &.info-highlight {
+  	margin-bottom: 10px;
+  }
+  a.close{
+    position: absolute;
+    top: 27px;
+    right: 28px;
+    line-height: 18px;
+    cursor: pointer;
+    
+    &:before{
+      content: "\00d7";
+      font-size: 18px;
+      font-weight: bold;
+      color: #888;
+    }
+  }
+}
+
+//------------------------------------------------------------------------------------
+//								Segment changes end
+//------------------------------------------------------------------------------------

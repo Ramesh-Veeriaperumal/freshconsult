@@ -101,7 +101,8 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :roles, controller: 'api_roles', only: [:index, :show]
+    resources :contact_filters, controller: 'ember/segments/contact_filters', only: [:index, :create, :update, :destroy]
+    resources :company_filters, controller: 'ember/segments/company_filters', only: [:index, :create, :update, :destroy]
 
     resources :roles, controller: 'api_roles', only: [:index, :show]
 
@@ -485,7 +486,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :sandboxes, controller: 'admin/sandboxes', only: [:index, :create, :destroy]
+    resources :sandboxes, controller: 'admin/sandboxes', only: [:index, :create, :destroy] do
+      member do
+        get  :diff
+        post :merge
+      end
+    end
 
     resources :contact_password_policy, controller: 'ember/contact_password_policies',
                                         only: [:index]

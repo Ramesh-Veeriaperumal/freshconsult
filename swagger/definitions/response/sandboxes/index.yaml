@@ -9,10 +9,20 @@ properties:
           type: number
         status:
           type: string
+        updated_at:
+          type: string
+        created_at:
+          type: string
         sandbox_url:
           type: string
   meta:
     type: object
     properties:
       status:
+        type: string
+      last_sync:
+        type: string
+      sync_by:
+        type: number
+      last_diff:
         type: string
