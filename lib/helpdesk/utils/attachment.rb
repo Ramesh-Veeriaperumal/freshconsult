@@ -26,7 +26,7 @@ module Helpdesk
         is_virus = false
         if !skip_virus_detection && content.queued_for_write && content.queued_for_write[:original] && content.queued_for_write[:original].path
           files = {}
-          files[content_file_name] = Faraday::UploadIO.new(content.queued_for_write[:original].path, content.content_type).read
+          files[content_file_name] = Faraday::UploadIO.new(content.queued_for_write[:original].path, content.content_type)
           results = is_attachment_has_virus?(files)
           is_virus = results.select { |file| file['Result'] == 'VIRUS_FOUND' }.present?
         end
