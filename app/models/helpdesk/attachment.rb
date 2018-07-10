@@ -8,7 +8,6 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   include Helpdesk::Utils::Attachment
   include Helpdesk::Permission::Attachment
-  include EmailServRequest::Validator
 
   attr_accessor :skip_virus_detection
 
