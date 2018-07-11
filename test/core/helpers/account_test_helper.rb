@@ -24,6 +24,7 @@ module AccountTestHelper
       :account_name => 'Test Account',
       :account_domain => domain,
       :locale => I18n.default_locale,
+      :time_zone => 'Chennai',
       :user_name => 'Support',
       :user_password => 'test1234',
       :user_password_confirmation => 'test1234', 
