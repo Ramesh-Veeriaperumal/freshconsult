@@ -1,6 +1,6 @@
 class HelpdeskReports::ParamConstructor::GroupSummary < HelpdeskReports::ParamConstructor::Base
 
-  GROUP_SUMMARY_METRICS = ["GROUP_SUMMARY_CURRENT", "GROUP_SUMMARY_HISTORIC","GROUP_SUMMARY_TICKETS_RECIEVED"]
+  GROUP_SUMMARY_METRICS = ["GROUP_SUMMARY_CURRENT", "GROUP_SUMMARY_HISTORIC"]
 
   def initialize options
     @report_type = :group_summary
@@ -13,8 +13,9 @@ class HelpdeskReports::ParamConstructor::GroupSummary < HelpdeskReports::ParamCo
 
   def query_params
     summary_params = { group_by: ["group_id"] }
-
-    GROUP_SUMMARY_METRICS.inject([]) do |params, metric|
+    metric_arr = GROUP_SUMMARY_METRICS.dup
+    metric_arr << "GROUP_SUMMARY_TICKETS_RECIEVED" if Account.current.new_ticket_recieved_metric_enabled? 
+    metric_arr.inject([]) do |params, metric|
       query = basic_param_structure.merge(summary_params)
       query[:metric] = metric
       params << query

@@ -12,7 +12,7 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
     @args     = args
     @current  = @result['GROUP_SUMMARY_CURRENT']
     @historic = @result['GROUP_SUMMARY_HISTORIC']
-    @received_tickets = @result['GROUP_SUMMARY_TICKETS_RECIEVED']
+    @received_tickets = @result['GROUP_SUMMARY_TICKETS_RECIEVED'] || []
   end
 
   def perform
@@ -24,7 +24,7 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
   def merging_current_historic_data
     @current  = [] if (@current.is_a?(Hash) && @current["errors"])   || @current.empty? #Handling the edge cases
     @historic = [] if (@historic.is_a?(Hash) && @historic["errors"]) || @historic.empty?
-    @received_tickets = [] if (@received_tickets.is_a?(Hash) && @received_tickets["errors"]) || @received_tickets.empty?
+    @received_tickets = [] if (@received_tickets.is_a?(Hash) && @received_tickets["errors"])
     @result = (@current + @historic + @received_tickets).group_by{|h| h["group_id"]}.map{ |k,v| v.reduce(:merge)}
   end
 
