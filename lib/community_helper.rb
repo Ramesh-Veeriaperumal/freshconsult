@@ -30,7 +30,9 @@ module CommunityHelper
 
     (article.safe_send(att_type).reject do |a|
       (draft.deleted_attachments(att_type) || []).include?(a.id)
-    end) + draft.safe_send(att_type)
+    end) + (draft.safe_send(att_type).reject do |a|
+      (draft.deleted_attachments(att_type) || []).include?(a.id)
+    end)
   end
 
   def inline_manual_classes_for_multilingual

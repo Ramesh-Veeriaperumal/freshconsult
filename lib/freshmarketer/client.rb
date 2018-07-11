@@ -192,8 +192,8 @@ class Freshmarketer::Client
 
     # return base domain if account has custom domain enabled
     def account_domain
-      full_domain = Account.current.full_domain
-      full_domain.include?(AppConfig['base_domain'][Rails.env]) ? full_domain : full_domain.partition('.').last
+      domain_name = Account.current.host
+      domain_name.include?(AppConfig['base_domain'][Rails.env]) ? domain_name : domain_name.partition('.').last
     end
 
     class BadRequestException < StandardError

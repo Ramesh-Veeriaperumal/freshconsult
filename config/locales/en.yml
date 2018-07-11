@@ -2460,6 +2460,7 @@ en:
         delete_topic: Delete and Moderate forum topic
         customers: Customers
         view_contacts: View customers tab
+        manage_segments: Create or edit new contact segment or company segment
         manage_contacts: Create or edit new contact or company
         delete_contact: Delete contact or company
         export_tickets: Export Tickets
@@ -4314,6 +4315,7 @@ en:
         agent_email: An agent must have exactly one valid email
         email_not_unique: Email has already been taken
         email_invalid: Email is invalid
+        exceeded_email: Sorry, you cannot sign up for any more accounts
         user_emails: Please enter at least one contact detail
         max_user_emails: A contact cannot have more than 10 emails
         max_user_companies: A contact cannot have more than 20 companies
@@ -4323,6 +4325,7 @@ en:
         edit_broadcast_note: "Broadcast message can't be edited"
         max_scheduled_exports_per_account: Cannot have more than %{max_limit} scheduled exports
         skill_name: Should not contain comma
+        email_disposable: Register using your work email
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -5557,6 +5560,8 @@ en:
   file_url: Full XML Export URL
   how_to: Question
   customers: Customers
+  segment_notice: "To filter and group customers based on priority, subscription or any other attribute,"
+  mint: "Switch to Mint"
   enter_valid_domains: "is invalid. Enter valid domains"
   companies:
     no_contacts: '%{no_contacts} contacts'

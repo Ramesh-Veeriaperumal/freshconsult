@@ -19,7 +19,7 @@ class Agent < ActiveRecord::Base
 
   accepts_nested_attributes_for :user
   accepts_nested_attributes_for :agent_groups, :allow_destroy => true
-  before_update :create_model_changes
+  before_update :update_active_since, :create_model_changes
   before_create :mark_unavailable
   after_commit :enqueue_round_robin_process, on: :update
   after_commit :sync_skill_based_queues, on: :update
@@ -182,6 +182,10 @@ class Agent < ActiveRecord::Base
 
   def update_last_active(force=false)
     touch(:last_active_at) if force or last_active_at.nil? or ((Time.now - last_active_at) > 4.hours)
+  end
+
+  def update_active_since
+    self.active_since = Time.now.utc if available_changed?
   end
 
   def current_load group
