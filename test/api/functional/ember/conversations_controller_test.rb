@@ -2162,6 +2162,21 @@ module Ember
       cleanup_archive_ticket(@archive_ticket)
     end
 
+    def test_reply_template_cc
+      cc_emails = [Faker::Internet.email, Faker::Internet.email]
+      t = create_ticket(cc_emails: cc_emails)
+      get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
+      assert_response 200
+      assert(JSON.parse(response.body)['cc_emails'] == cc_emails)
+      assert(JSON.parse(response.body)['cc_emails'] == t.cc_email[:cc_emails])
+      cc_emails.pop
+      @note = t.notes.build(private: false, user_id: @agent.id, account_id: @account.id, source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email'], cc_emails: cc_emails)
+      @note.save
+      get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
+      assert_response 200
+      assert(JSON.parse(response.body)['cc_emails'] == cc_emails)
+    end
+
     private
 
       def with_twitter_update_stubbed
