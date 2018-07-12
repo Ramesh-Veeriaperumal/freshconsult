@@ -86,7 +86,7 @@ module Integrations
     end
 
     def twitter_id
-      @omniauth["extra"]["raw_info"]["id_str"]
+      @omniauth["extra"]["raw_info"]["screen_name"]
     end
 
     def provider

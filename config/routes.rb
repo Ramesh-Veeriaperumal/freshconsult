@@ -364,6 +364,7 @@ Helpkit::Application.routes.draw do
       post :create_contact
       put :update_contact
       put :update_description_and_tags
+      get :view_conversations
     end
   end
 

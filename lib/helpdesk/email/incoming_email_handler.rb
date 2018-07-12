@@ -88,6 +88,8 @@ module Helpdesk
 						return processed_email_data(PROCESSED_EMAIL_STATUS[:inactive_account])
 					end
 				end
+				Account.reset_current_account
+				Portal.reset_current_portal
 				Sharding.select_shard_of(to_email[:domain]) do
 					account = Account.find_by_full_domain(to_email[:domain])
 					if account && account.allow_incoming_emails?

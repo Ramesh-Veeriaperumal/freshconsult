@@ -10,6 +10,7 @@ class AccountConfiguration < ActiveRecord::Base
   serialize :company_info, Hash
 
   validate :ensure_values
+  validate :admin_notification_emails, on: :update, if: :notification_email_changed?
 
   after_update :update_billing, :update_reseller_subscription
   after_commit :update_crm_and_map, on: :update, :unless => :sandbox?
@@ -48,7 +49,10 @@ class AccountConfiguration < ActiveRecord::Base
 
 
   def notification_emails
-    contact_info[:notification_emails] || [admin_email]
+    all_admin_emails = account.account_managers.collect(&:email)
+    admin_notification_emails = all_admin_emails & contact_info[:notification_emails].to_a
+    admin_notification_emails = all_admin_emails & [admin_email] if admin_notification_emails.blank?
+    admin_notification_emails.presence || all_admin_emails
   end
 
   def invoice_emails
@@ -70,11 +74,22 @@ class AccountConfiguration < ActiveRecord::Base
 
   private
 
-  	def ensure_values
+    def ensure_values
       if (contact_info[:first_name].blank? or contact_info[:email].blank? or billing_emails[:invoice_emails].blank?)
         errors.add(:base,I18n.t("activerecord.errors.messages.blank"))
       end
-  	end
+    end
+
+    def notification_email_changed?
+      contact_info_changed? && changes['contact_info'][0][:notification_emails].to_a.sort != changes['contact_info'][1][:notification_emails].to_a.sort
+    end
+
+    def admin_notification_emails
+      admin_emails = account.account_managers.map(&:email) & contact_info[:notification_emails].to_a
+      if admin_emails.empty?
+        account.errors.add(:base, I18n.t('validation.email'))
+      end
+    end
 
   	def update_crm_and_map
       if (Rails.env.production? or Rails.env.staging?) && company_contact_info_updated?

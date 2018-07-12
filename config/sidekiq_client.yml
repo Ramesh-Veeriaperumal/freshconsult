@@ -275,6 +275,8 @@ defaults: &defaults
     - [user_central_publish]
     - [deactivate_filter_widgets]
     - [run_rake_task]
+    - [check_bot_training]
+    - [update_segment_filter]
 
 development:
   <<: *defaults

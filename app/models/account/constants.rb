@@ -170,7 +170,7 @@ class Account < ActiveRecord::Base
     :admin_dashboard => false, :agent_conference => false, :agent_dashboard => false,
     :agent_new_ticket_cache => false, :api_search_beta => false, :autopilot_headsup => false, 
     :autoplay => false, :bi_reports => false, :cache_new_tkt_comps_forms => false, 
-    :delayed_dispatchr_feature => false, :disable_old_sso => false, :enable_old_sso => false, 
+    :delayed_dispatchr_feature => false, :enable_old_sso => false, 
     :es_count_reads => false, :es_count_writes => false, :es_down => false, :es_tickets => false, 
     :es_v1_enabled => false, :es_v2_reads => false, :fb_msg_realtime => false, 
     :force_index_tickets => false, :freshfone_call_tracker => false, :freshfone_caller_id_masking => false,
@@ -212,7 +212,7 @@ class Account < ActiveRecord::Base
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
     :post_central_publish => false, :audit_logs_central_publish => false,
     :new_ticket_recieved_metric => false, :euc_migrated_twitter => false, :canned_forms => false, :es_msearch => true,
-    csat_email_scan_compatibility: false, :attachment_virus_detection => false
+    csat_email_scan_compatibility: false, sso_login_expiry_limitation: false, :attachment_virus_detection => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

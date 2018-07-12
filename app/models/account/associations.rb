@@ -33,6 +33,8 @@ class Account < ActiveRecord::Base
     :conditions => {:user_type => PasswordPolicy::USER_TYPE[:agent]}, :dependent => :destroy
   has_many :dynamic_notification_templates
   has_many :google_accounts, :class_name => 'Integrations::GoogleAccount'
+  has_many :contact_filters, dependent: :destroy
+  has_many :company_filters, dependent: :destroy
 
 
   accepts_nested_attributes_for :primary_email_config

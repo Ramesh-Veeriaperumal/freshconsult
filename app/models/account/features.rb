@@ -11,7 +11,7 @@ class Account < ActiveRecord::Base
                  :sanbox_lp, :encode_emoji, :dependent_field_validation, :post_central_publish,
                  :audit_logs_central_publish, :encode_emoji_subject,
                  :time_sheets_central_publish, :new_ticket_recieved_metric, :canned_forms,
-                 :euc_migrated_twitter, :csat_email_scan_compatibility]
+                 :euc_migrated_twitter, :csat_email_scan_compatibility, :sso_login_expiry_limitation]
   
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
@@ -26,7 +26,7 @@ class Account < ActiveRecord::Base
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
-      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay
+      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [

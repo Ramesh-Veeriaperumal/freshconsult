@@ -7,7 +7,8 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
   before_filter :only => [:new, :create] do |c|
     c.requires_this_feature :customer_slas
   end
-  before_filter :load_sla_policy, :only => [ :update, :destroy, :activate ]
+  before_filter :load_sla_policy, :only => [ :update, :activate ]
+  before_filter :load_sla_policy_for_destruction, :only => [:destroy]
   before_filter :load_item, :validate_params, :only => [:company_sla]
   before_filter :initialize_escalation_level_details, :only => [:edit]
   before_filter :validate_sla_params , :only => [:update, :create] 
@@ -210,4 +211,7 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
       api_json_responder(errors, 400) if errors[:errors].any? 
     end
   
+    def load_sla_policy_for_destruction
+      @sla_policy = scoper.rule_based.find(params[:id])
+    end
 end

@@ -71,6 +71,8 @@ module ApplicationHelper
       '/admin/security'
     ]
 
+  SANDBOX_NOTIFICATION_STATUS = [6, 8, 9, 10, 98].freeze
+
   def open_html_tag
     html_conditions = [ ["lt IE 7", "ie6"],
                         ["IE 7", "ie7"],
@@ -2168,8 +2170,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   def sandbox_production_notification
     current_path = request.env['PATH_INFO']
-
-    if (!current_account.sandbox? && current_account.sandbox_job.try(:[], :sandbox_account_id) && SANDBOX_URL_PATHS.select{ |i| current_path.include?(i)}.any?)
+    if (!current_account.sandbox? && SANDBOX_NOTIFICATION_STATUS.include?(current_account.sandbox_job.try(:status)) && SANDBOX_URL_PATHS.select{ |i| current_path.include?(i)}.any?)
       sandbox_url = DomainMapping.find_by_account_id(current_account.sandbox_job.sandbox_account_id).domain
       return content_tag('div', "<span class='sandbox-info'>
             <span class='ficon-notice-o fsize-24 muted'></span>

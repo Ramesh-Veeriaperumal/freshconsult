@@ -92,7 +92,7 @@ class AccountsController < ApplicationController
     else
       respond_to do |format|
         format.json {
-          render :json => { :success => false, :errors => (@signup.account.errors || @signup.errors).fd_json }, :callback => params[:callback]
+          render :json => { :success => false, :errors => @signup.all_errors }, :callback => params[:callback]
         }
       end
     end
@@ -155,6 +155,13 @@ class AccountsController < ApplicationController
    if @signup.save
       finish_signup
       respond_to do |format|
+        format.json {
+          render :json => { :success => true,
+                            :url => signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain),
+                            :account_id => @signup.account.id  },
+                            :callback => params[:callback],
+                            :content_type=> 'application/javascript'
+        }
         format.html {
           render :json => { :success => true,
                             :url => signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain),
@@ -637,20 +644,19 @@ class AccountsController < ApplicationController
       accounts_count = AdminEmail::AssociatedAccounts.find(params["user"]["email"]).length
       return if (@domain_generator.email_company_name == AppConfig["app_name"].downcase) || accounts_count == 0 || (accounts_count < Signup::MAX_ACCOUNTS_COUNT && params["force"] == "true")
       status_code = accounts_count >= Signup::MAX_ACCOUNTS_COUNT ?  Signup::SIGNUP_RESPONSE_STATUS_CODES[:too_many_requests] : Signup::SIGNUP_RESPONSE_STATUS_CODES[:precondition_failed]
-      render :json => {:success => false, :accounts_count => accounts_count, :errors => [I18n.t("activerecord.errors.messages.exceeded_email")]}, :callback => params[:callback], :status => status_code
+      render :json => {:success => false,
+        :accounts_count => accounts_count,
+        :errors => [I18n.t("activerecord.errors.messages.exceeded_email")]},
+        :callback => params[:callback], :status => status_code
     end
 
     def validate_signup_email
       params["user"]["email"].downcase!
       @domain_generator = DomainGenerator.new(params["user"]["email"])
       unless @domain_generator.valid?
-        respond_to do |format|
-          format.json {
-            render :json => { :success => false, 
-              :errors => @domain_generator.errors[:email]}, 
-              :status => :unprocessable_entity  
-          }
-        end
+        render :json => { :success => false,
+          :errors => @domain_generator.errors[:email]},
+          :status => :unprocessable_entity
       end
     end
 
