@@ -4,12 +4,12 @@ module SharedPersonalMethods
 
   def self.included(base)
     base.class_eval {
+      before_filter :reset_access_type,         :only => [:create, :update]
       around_filter :run_on_slave,              :only => [:index]
       before_filter :manage_personal_tab,       :only => [:index]
       before_filter :set_selected_tab
       before_filter :build_item,                :only => [:new, :new_child, :create, :apply_existing_child, :verify_template_name]
       before_filter :load_item,                 :only => [:edit, :edit_child, :update, :clone, :destroy, :unlink_parent]
-      before_filter :reset_access_type,         :only => [:create, :update]
       before_filter :reset_user_and_group_ids,  :only => :update
     }
   end
@@ -91,8 +91,7 @@ module SharedPersonalMethods
   def reset_access_type
     unless has_privilege?
       params[module_type][:accessible_attributes] = {
-        "access_type" => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
-      }
+        "access_type" => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]}
     end
     accesses = params[module_type][:accessible_attributes]
     if (accesses[:access_type].to_i == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users])

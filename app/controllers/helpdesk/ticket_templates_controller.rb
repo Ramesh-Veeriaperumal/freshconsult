@@ -37,6 +37,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
   end
 
   def update
+    params[:helpdesk_ticket_template]['accessible_attributes']['id'] = @item.accessible.id if params[:helpdesk_ticket_template]['accessible_attributes']
     if @item.update_attributes(params[:helpdesk_ticket_template])
       after_upsert("update")
     else
@@ -263,7 +264,6 @@ class Helpdesk::TicketTemplatesController < ApplicationController
       params[module_type][:accessible_attributes] = {
         "access_type" => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
       }
-      params[module_type][:accessible_attributes].merge!({ "id" =>  @item.accessible.id }) if @item.accessible.try(:id)
     else
       super
     end
