@@ -12,21 +12,29 @@ class WebhookV1Worker < ::BaseWorker
 
   def perform(args)
     args.symbolize_keys!
+    Va::Logger::Automation.set_thread_variables(args[:account_id], args[:ticket_id], nil, args[:rule_id])
+    Va::Logger::Automation.log "WEBHOOK: TRIGGERED, info=#{args.inspect}"
     @response = HttpRequestProxy.new.fetch_using_req_params(
       args[:params].symbolize_keys,
       args[:auth_header].symbolize_keys,
       args[:custom_headers]
     )
-    case @response[:status]
+    Va::Logger::Automation.log "WEBHOOK: response=#{@response.inspect}"
+    response_status = @response[:status]
+    case response_status
     when SUCCESS
     when REDIRECTION
-      Rails.logger.debug "Redirected : Won't be re-enqueued and pursued"
+      Va::Logger::Automation.log 'WEBHOOK: REDIRECTED, will not be re-enqueued and pursued'
     else
-      if args[:webhook_retry_count].to_i < RETRY_LIMIT
-        args[:webhook_retry_count] = args[:webhook_retry_count].to_i + 1
-        delay = next_retry_in(args[:webhook_retry_count]) 
+      webhook_retry_count = args[:webhook_retry_count].to_i
+      if webhook_retry_count < RETRY_LIMIT
+        webhook_retry_count += 1
+        delay = next_retry_in(webhook_retry_count)
+        Va::Logger::Automation.log "WEBHOOK: RETRY, perform_in=#{delay}, retry_count=#{webhook_retry_count}"
+        args[:webhook_retry_count] = webhook_retry_count
         self.class.perform_in(delay, args)
       else
+        Va::Logger::Automation.log "WEBHOOK: FAILED, response_status=#{response_status}, response_text=#{@response[:text]}, created_time=#{Time.at(args[:webhook_created_at]).utc}"
         notify_failure(args)
       end
     end
@@ -36,6 +44,8 @@ class WebhookV1Worker < ::BaseWorker
         :description =>"Sidekiq Observer Webhook execution error",
         :args => args
       }})
+  ensure
+    Va::Logger::Automation.unset_thread_variables
   end
 
   private
@@ -83,7 +93,6 @@ class WebhookV1Worker < ::BaseWorker
             rule_details(executing_rule), 
             args[:params]["domain"]
           )
-          Rails.logger.info "Webhook retry failure for account id - #{args[:account_id]} ::: Rule - #{rule_details(executing_rule).inspect} ::: Error - #{@response[:status]}: #{@response[:text]}"
         elsif executing_rule.api_webhook_rule?
           executing_rule.active = false
           executing_rule.save!
