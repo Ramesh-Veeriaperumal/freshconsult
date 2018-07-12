@@ -119,4 +119,5 @@ helpdesk:
     - app_integration
     - facebook_eu_accounts_config
     - hyper_trail
+    - disposable_email_domains
     - emailserv_request
