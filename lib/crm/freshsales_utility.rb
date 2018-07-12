@@ -55,7 +55,7 @@ class CRM::FreshsalesUtility
     # user_domain = @account.admin_email.gsub(/.+@([^.]+).+/, '\1')
 
     farming_account = get_farming_account(@account.admin_email)
-    
+
     if farming_account
       # Updating the sales account's owner ID to leads if its the farming account, irrespective of the account's updated_at value.
       updated_at = Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z") # To reuse the create_lead_with_same_owner method, Adding updated_at value as current datatime. 
@@ -255,12 +255,14 @@ class CRM::FreshsalesUtility
     end
 
     def new_lead_params
+      conversion_metric = @account.conversion_metric
       lead_attrs = admin_basic_info.merge({
         custom_field: {
           cf_account_id:  @account.id, 
           cf_domain_name: @account.full_domain, 
           cf_reputation_score: @account.ehawk_reputation_score,
-          cf_google_analytics_client_id: @account.conversion_metric.try(:ga_client_id)
+          cf_google_analytics_client_id: conversion_metric.try(:ga_client_id),
+          cf_signup_type: conversion_metric.try(:signup_method)
         }
       })
       acc_metrics = account_metrics
