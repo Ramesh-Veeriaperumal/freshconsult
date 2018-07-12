@@ -9,6 +9,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
   include Helpdesk::Utils::Attachment
   include Helpdesk::Permission::Attachment
 
+  attr_accessor :skip_virus_detection
+
   BINARY_TYPE = "application/octet-stream"
 
   MAX_DIMENSIONS = 16000000
@@ -64,7 +66,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_create :set_content_type
     after_commit :clear_user_avatar_cache
     before_save :set_account_id
-
+    validate :virus_in_attachment?, if: :attachment_virus_detection_enabled?
+    
   alias_attribute :parent_type, :attachable_type
 
   class << self
@@ -343,4 +346,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
       end
     end
   end
+
+  def virus_in_attachment?
+    errors.add(:base, "VIRUS_FOUND") if attachment_has_virus?
+  end
+
 end

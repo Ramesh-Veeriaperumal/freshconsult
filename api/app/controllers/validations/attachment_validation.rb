@@ -1,5 +1,6 @@
 class AttachmentValidation < ApiValidation
   CHECK_PARAMS_SET_FIELDS = %w(user_id inline_type).freeze
+  include EmailServRequest::Validator
 
   attr_accessor :user_id, :content, :inline, :inline_type, :attachable_id, :attachable_type
 
@@ -13,6 +14,7 @@ class AttachmentValidation < ApiValidation
   validates :inline_type, required: true, if: -> { inline? }
 
   validate :validate_file_type, if: -> { errors[:content].blank? && inline? }
+  validate :virus_in_attachment?, if: -> { attachment_virus_detection_enabled? && errors[:content].blank? }
 
   validates :attachable_id, required: true, custom_numericality: {
     only_integer: true, greater_than: 0,
@@ -37,6 +39,20 @@ class AttachmentValidation < ApiValidation
   end
 
   private
+
+    def attachment_virus_detection_enabled?
+      Account.current.launched?(:attachment_virus_detection)
+    end
+
+    def virus_in_attachment?
+      if content && content.original_filename && content.tempfile
+        files = {}
+        files[content.original_filename] = Faraday::UploadIO.new(content.tempfile, content.content_type)
+        results = is_attachment_has_virus?(files)
+        virus_files = results.select { |file| file['Result'] == "VIRUS_FOUND" }
+        errors[:content] << :virus_found_in_file if virus_files.present?
+      end
+    end
 
     def extension_valid?(file)
       ext = File.extname(file.respond_to?(:original_filename) ? file.original_filename : file.content_file_name).downcase

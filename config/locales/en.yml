@@ -12061,6 +12061,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     attached: "Added to response"
     remove: "Remove"
     mb: " MB "
+    virus_found_warning: "Anti-Virus warning: Attachment blocked. The file contains a virus"
   ml:
     similat_tickets_found: Similar Tickets found
     no_suggestions: Oops! No suggestions.
