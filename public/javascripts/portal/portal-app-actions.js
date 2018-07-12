@@ -6,7 +6,9 @@
 !function( $ ) {
 
 	if ((portal['preferences']['nonResponsive'] == "true") || Modernizr.mq('only screen and (min-width: 980px)')) {
-		layoutResize(".main", ".sidebar")
+	    window.onload = function() {
+	  	  layoutResize(".main", ".sidebar")
+	    };
 	}
 
 	$(function () {
