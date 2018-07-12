@@ -195,7 +195,7 @@ gem "therubyracer"
 gem "premailer", "~> 1.8.0"
 
 # Email Related Gems
-gem "emailserv_request", :git => "git@github.com:freshdesk/emailserv_request.git", :tag => 'v1.0'
+gem "emailserv_request", :git => "git@github.com:freshdesk/emailserv_request.git", :tag => 'v1.1'
 gem 'html_to_plain_text', '1.0.5'
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true

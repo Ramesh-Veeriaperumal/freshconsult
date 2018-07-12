@@ -209,8 +209,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/emailserv_request.git
-  revision: 636b6958eafe2a27434ec1f547f15ff32ef9aec9
-  tag: v1.0
+  revision: 84996af205809c8a0cc143e1c37fe02405759818
+  tag: v1.1
   specs:
     emailserv_request (0.0.1)
       connection_pool (~> 2.2)
