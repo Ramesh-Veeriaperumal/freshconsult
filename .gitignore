@@ -81,3 +81,6 @@ tags
 
 #ctags
 tags
+
+brakeman-output.html
+brakeman-output.tabs

@@ -1,16 +1,21 @@
 "use strict";
-
-//Following code is used in Zapier.com and not in helpkit . 
+ 
+//Following code is used in Zapier.com and not in helpkit .
 //This is a backup of the version hosted on Zapier.com
-//-- Hrishikesh
+//-- Hrishikesh 
 
 var Zap = {
     new_ticket_poller_trigger_post_poll: function (bundle) {
         var responseObj = z.JSON.parse(bundle.response.content);
         if (responseObj.require_login) {
-            throw new ErrorException('Your login credentials did not work!');
+            throw new ErrorException("Your login credentials did not work!");
         }
         return responseObj;
+    },
+
+    sanitise_newline_char: function(bundle_request_data) {
+        // replacing escaped newline char. with break tag
+        return bundle_request_data.replace(/\\n/g, "<br/>");
     },
 
     get_forum_categories_trigger_post_poll: function (bundle) {
@@ -21,12 +26,65 @@ var Zap = {
         var newResponse = [],
             responseObj = z.JSON.parse(bundle.response.content);
         responseObj.forEach(function (forumCategory) {
-            newResponse.push({ forum_category: forumCategory });
+            newResponse.push({
+                forum_category: forumCategory
+            });
         });
         return newResponse;
     },
 
+    generateJWT: function (bundle) {
+        var crypto = require("crypto");
+        var currentTime = new Date().toISOString();
+        var api_key = bundle.auth_fields.api_key;
+        var domain_name = bundle.auth_fields.domain_name;
+        // actual keys masked for helpkit copy xxxxxxxxxxxxxxxx
+        // make sure to update keys while comitting to zapier
+        var jwt_secret = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+        var ENCRYPTION_KEY = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+        var IV = "xxxxxxxxxxxxxxxx";
+
+        function encryptPayload(val) {
+            // encrypting jwt payload as jwe implementation not possible out of the box in zapier
+            // tokens being added only to create tickets/contacts/companies action
+            var cipher = crypto.createCipheriv("aes-256-cbc", ENCRYPTION_KEY, IV);
+            var encrypted = cipher.update(val, "utf8", "base64");
+            encrypted += cipher.final("base64");
+            return encrypted;
+        }
+
+        //      function decrypt(encryptPayload){
+        //        var decipher = crypto.createDecipheriv("aes-256-cbc", ENCRYPTION_KEY, IV);
+        //        var decrypted = decipher.update(encryptPayload, "base64", "utf8");
+        //        return (decrypted + decipher.final("utf8"));
+        //     }
+
+        var base64Header = btoa(JSON.stringify({
+            alg: "HS256",
+            typ: "JWT",
+            source: "zapier"
+        }));
+
+        var payload = JSON.stringify({
+            domain_name: domain_name,
+            timestamp: currentTime
+        });
+
+        var encryptedPayload = JSON.stringify({
+            "enc_payload": encryptPayload(payload)
+        });
+
+        var base64Payload = btoa(encryptedPayload);
+        var encryptedData = base64Header + "." + base64Payload;
+        var hmac_hash = z.hmac("sha256", jwt_secret, encryptedData, "base64");
+        return encryptedData + "." + hmac_hash;
+    },
+
     create_ticket_action_pre_write: function (bundle) {
+
+        var jwtToken = this.generateJWT(bundle);
+        bundle.request.headers["X-Channel-Auth"] = jwtToken;
+
         /**
          * Modified as-per API V2 req. format
          * @param array cc_emails
@@ -36,23 +94,67 @@ var Zap = {
          * @param integer status
          *  -defaults to open status(2)
          */
+        bundle.request.data = this.sanitise_newline_char(bundle.request.data);
         var helpdesk_ticket = z.JSON.parse(bundle.request.data),
             cc_emails_array = [];
         if (helpdesk_ticket.cc_emails) {
             cc_emails_array = helpdesk_ticket.cc_emails.split(",");
         }
         helpdesk_ticket = helpdesk_ticket.helpdesk_ticket;
+
+        // truncating subject to API v2 spec. limit of 255
+        if (helpdesk_ticket.subject.length > 255) {
+            helpdesk_ticket.subject = helpdesk_ticket.subject.substring(0, 252) + '...';
+        }
+
         if (helpdesk_ticket.priority) {
             helpdesk_ticket.priority = parseInt(helpdesk_ticket.priority, 10);
-        }
-        else {
+        } else {
             helpdesk_ticket.priority = 2;
         }
         helpdesk_ticket.custom_fields = helpdesk_ticket.custom_field;
+        console.log(helpdesk_ticket.custom_fields);
+
         // this is needed because of v1 -> v2 migration
         delete helpdesk_ticket.custom_field;
         helpdesk_ticket.status = 2;
         helpdesk_ticket.cc_emails = cc_emails_array;
+
+
+        /**
+         * fix for removing acc_id suffixed custom field names coming from old zaps
+         * Cases handled :
+         * * multiple cf with same `_[0-9]` suffix => suffix is stripped
+         * * multiple cf with different `_[0-9]` suffix => nothing is stripped
+         * * single cf with `_[0-9]` suffix => suffix stripped
+         * * NOTE: we're only renaming keys, not values (for v2 api compatibility)
+         */
+         
+        if (helpdesk_ticket.custom_fields) {
+        var cfCount = Object.keys(helpdesk_ticket.custom_fields).length;
+
+        if (cfCount) {
+          var cfEndingWithId = 0;
+          var accIdSuffix = Object.keys(helpdesk_ticket.custom_fields)[0].match(/_[0-9]+$/g);
+          if (accIdSuffix) {
+            accIdSuffix = accIdSuffix[0];
+            Object.keys(helpdesk_ticket.custom_fields).forEach(function(key) {
+              if (key.match(accIdSuffix)) cfEndingWithId++;
+            });
+          }
+          if (cfCount === cfEndingWithId) {
+            var customFieldClone = new Object();
+            console.log("applying stripped data");
+            Object.keys(helpdesk_ticket.custom_fields).forEach(function (key) {
+              var newKey = key.replace(/_[0-9]+$/, "");
+              customFieldClone[newKey] = helpdesk_ticket.custom_fields[key];
+            });
+            helpdesk_ticket.custom_fields = customFieldClone;
+          }
+        }
+        }
+
+
         bundle.request.data = JSON.stringify(helpdesk_ticket);
         return bundle.request;
     },
@@ -78,6 +180,10 @@ var Zap = {
     },
 
     create_user_action_pre_write: function (bundle) {
+
+        var jwtToken = this.generateJWT(bundle);
+        bundle.request.headers["X-Channel-Auth"] = jwtToken;
+
         /**
          * Modified as-per API V2 req. format
          * @param array tags
@@ -91,6 +197,10 @@ var Zap = {
     },
 
     create_company_action_pre_write: function (bundle) {
+
+        var jwtToken = this.generateJWT(bundle);
+        bundle.request.headers["X-Channel-Auth"] = jwtToken;
+
         /**
          * Modified as-per API V2 req. format
          * @param array domains
@@ -109,6 +219,7 @@ var Zap = {
          * @param bool incoming
          *  -set to true if a particular conversation should appear as being created from outside of freshdesk app
          */
+        bundle.request.data = this.sanitise_newline_char(bundle.request.data);
         var helpdesk_note = (z.JSON.parse(bundle.request.data)).helpdesk_note;
         helpdesk_note.incoming = true;
         bundle.request.data = JSON.stringify(helpdesk_note);
@@ -164,16 +275,13 @@ var Zap = {
             if (field_type.search("custom") != -1) {
                 if (zap_type == "trigger") {
                     return field_name.replace(/_[0-9]+$/, "");
-                }
-                else {
+                } else {
                     return "helpdesk_ticket__custom_field__" + field_name;
                 }
-            }
-            else {
+            } else {
                 if (zap_type == "trigger") {
                     return field_name;
-                }
-                else {
+                } else {
                     return "helpdesk_ticket__" + field_name;
                 }
             }
@@ -204,7 +312,9 @@ var Zap = {
         ticketFieldArray.forEach(function (ticketField) {
             ticketField.field_type = ticketField.type;
             delete ticketField.type;
-            customfields_input.push({ ticket_field: ticketField });
+            customfields_input.push({
+                ticket_field: ticketField
+            });
         });
 
         if (customfields_input.access_denied) {
@@ -219,7 +329,7 @@ var Zap = {
             if (fieldType == "custom_dropdown") {
                 choices = [];
                 cField.choices.forEach(function (val) {
-                    choices.push(val[0]);
+                      choices.push(val);
                 });
             }
             return {
@@ -239,7 +349,8 @@ var Zap = {
     },
     get_event_data: function (event_name, trigger_fields) {
         console.log("event_name " + event_name);
-        var name = "", value = "";
+        var name = "",
+            value = "";
         if (event_name == "new_ticket") {
             name = "ticket_action";
             value = "create";
@@ -264,22 +375,24 @@ var Zap = {
             name = "note_action";
             value = "create";
         }
-        return [{ "name": name, "value": value }];
+        return [{
+            "name": name,
+            "value": value
+        }];
     },
     get_subscription_name: function (bundle) {
         var zap_name = "Freshdesk Zapier Zap";
 
         try {
             zap_name = bundle.zap.action.service.name + " -> " + bundle.zap.name;
-        }
-        catch (e) {
+        } catch (e) {
             zap_name = bundle.zap.name;
         }
         return zap_name;
     },
     pre_subscribe: function (bundle) {
         bundle.request.url = "https://" + bundle.auth_fields.domain_name + ".freshdesk.com/webhooks/subscription.json";
-        // bundle.request.url="http://zapiertest.ngrok.com/webhooks/subscription.json";
+        //bundle.request.url="https://wildcards1.freshpo.com/webhooks/subscription.json";
 
         bundle.request.method = "POST";
 
@@ -289,11 +402,11 @@ var Zap = {
             "description": this.get_subscription_name(bundle),
             "event_data": this.get_event_data(bundle.event, bundle.trigger_fields)
             //,
-            //"performer_data":{"type":"3"} 
+            //"performer_data":{"type":"3"}
         };
 
         //var fields = this.get_fields_for_trigger(bundle.event, bundle.trigger_fields);
-        //if( fields ) 
+        //if( fields )
         //    request_data.fields = fields;
         bundle.request.data = JSON.stringify(request_data);
         return bundle.request;
@@ -305,7 +418,7 @@ var Zap = {
     },
     pre_unsubscribe: function (bundle) {
         bundle.request.url = "https://" + bundle.auth_fields.domain_name + ".freshdesk.com/webhooks/subscription/";
-        // bundle.request.url="http://zapiertest.ngrok.com/webhooks/subscription/";
+        //bundle.request.url="https://wildcards1.freshpo.com/webhooks/subscription/";
         bundle.request.url = bundle.request.url + bundle.subscribe_data.id + ".json";
         bundle.request.method = "DELETE";
         bundle.request.data = JSON.stringify({
@@ -352,15 +465,15 @@ var Zap = {
     },
     get_ticket_data: function (bundle) {
         var data = z.JSON.parse(bundle.request.content);
-        return this.beautify(data.freshdesk_webhook, 'ticket_');
+        return this.beautify(data.freshdesk_webhook, "ticket_");
     },
     get_user_data: function (bundle) {
         var data = z.JSON.parse(bundle.request.content);
-        return this.beautify(data.freshdesk_webhook, 'user_');
+        return this.beautify(data.freshdesk_webhook, "user_");
     },
     beautify: function (input, name_str, conversion_data) {
         var output = {};
-        var replace_str = '';
+        var replace_str = "";
         for (var attr in input) {
             var oattr = attr;
             var value = input[attr];
