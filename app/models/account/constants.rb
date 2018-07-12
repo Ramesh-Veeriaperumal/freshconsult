@@ -170,7 +170,7 @@ class Account < ActiveRecord::Base
     :admin_dashboard => false, :agent_conference => false, :agent_dashboard => false,
     :agent_new_ticket_cache => false, :api_search_beta => false, :autopilot_headsup => false, 
     :autoplay => false, :bi_reports => false, :cache_new_tkt_comps_forms => false, 
-    :delayed_dispatchr_feature => false, :disable_old_sso => false, :enable_old_sso => false, 
+    :delayed_dispatchr_feature => false, :enable_old_sso => false, 
     :es_count_reads => false, :es_count_writes => false, :es_down => false, :es_tickets => false, 
     :es_v1_enabled => false, :es_v2_reads => false, :fb_msg_realtime => false, 
     :force_index_tickets => false, :freshfone_call_tracker => false, :freshfone_caller_id_masking => false,
