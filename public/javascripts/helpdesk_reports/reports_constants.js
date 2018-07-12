@@ -182,7 +182,7 @@ HelpdeskReports.Constants = {
         percentage_metrics: ["RESPONSE_SLA", "RESOLUTION_SLA", "FCR_TICKETS"],
         ticket_list_metrics: ["fr_escalated","is_escalated","fcr_violation"],
         time_metrics: ["AVG_FIRST_RESPONSE_TIME", "AVG_RESPONSE_TIME", "AVG_RESOLUTION_TIME"],
-        template_metrics: ["AGENT_SUMMARY_CURRENT","AGENT_SUMMARY_HISTORIC","AGENT_SUMMARY_TICKETS_RECIEVED"],
+        template_metrics: ["AGENT_SUMMARY_CURRENT","AGENT_SUMMARY_HISTORIC"],
         group_by: "agent_id",
         params: {
             bucket                : false, 
@@ -205,7 +205,7 @@ HelpdeskReports.Constants = {
         percentage_metrics: ["RESPONSE_SLA", "RESOLUTION_SLA", "FCR_TICKETS"],
         ticket_list_metrics: ["fr_escalated","is_escalated","fcr_violation"],
         time_metrics: ["AVG_FIRST_RESPONSE_TIME", "AVG_RESPONSE_TIME", "AVG_RESOLUTION_TIME"],
-        template_metrics: ["GROUP_SUMMARY_CURRENT","GROUP_SUMMARY_HISTORIC" , "GROUP_SUMMARY_TICKETS_RECIEVED"],
+        template_metrics: ["GROUP_SUMMARY_CURRENT","GROUP_SUMMARY_HISTORIC"],
         group_by: 'group_id',
         params: {
             bucket                : false, 
