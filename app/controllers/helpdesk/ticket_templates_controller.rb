@@ -261,9 +261,9 @@ class Helpdesk::TicketTemplatesController < ApplicationController
   def reset_access_type
     if parent_id?
       params[module_type][:accessible_attributes] = {
-        "access_type" => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all],
-        "id" => @item.accessible.try(:id)
+        "access_type" => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
       }
+      params[module_type][:accessible_attributes].merge!({ "id" =>  @item.accessible.id }) if @item.accessible.try(:id)
     else
       super
     end
