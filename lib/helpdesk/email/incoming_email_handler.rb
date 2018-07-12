@@ -784,6 +784,7 @@ module Helpdesk
 							else
 								attachments.push att
 							end
+							att.skip_virus_detection = true
 						end
 					rescue HelpdeskExceptions::AttachmentLimitException => ex
 						Rails.logger.error("ERROR ::: #{ex.message}")

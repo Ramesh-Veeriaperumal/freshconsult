@@ -80,7 +80,14 @@ Helpdesk = Helpdesk || {};
             });
             // upload failed - network error
             $("body").on("fileuploadfailed", "#fileupload-form-" + count, function(e, data) {
-                errorFile(data, 'Attachment failed due to network error', $(this).data('multifileCount'));
+                var error = 'Attachment failed due to network error';
+                if (data.jqXHR && data.jqXHR.status == 422 && data.jqXHR.responseText) {
+                    var errors = $.parseJSON(data.jqXHR.responseText).errors;
+                    if (errors) {
+                        error = errors.join();
+                    }
+                }
+                errorFile(data, error, $(this).data('multifileCount'));
             });
             // upload failed file size
             $("body").on("fileuploadprocessfail", "#fileupload-form-" + count, function(e, data) {
