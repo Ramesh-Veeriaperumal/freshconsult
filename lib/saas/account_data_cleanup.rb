@@ -351,6 +351,14 @@ end
     account.launch(:es_msearch)
   end
 
+  def handle_freshconnect_drop_data
+    ::Freshconnect::UpdateFreshconnect.perform_async(false)
+  end
+
+  def handle_freshconnect_add_data
+    ::Freshconnect::UpdateFreshconnect.perform_async(true)
+  end
+
   private
 
   def default_portal_preferences
