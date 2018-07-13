@@ -8,8 +8,7 @@ module HelpdeskReports
       
       def non_archive_tickets(ticket_ids)
         tickets = []
-        ticket_ids.each_slice(300) do |batch_tkt_ids|
-          tkts = Account.current.tickets.permissible(User.current).preload(ticket_associations_include).where(id: batch_tkt_ids)
+        Account.current.tickets.permissible(User.current).preload(ticket_associations_include).where(id: ticket_ids).find_in_batches(:batch_size => 300) do |tkts|
           tickets << tkts
         end
         tickets.flatten
@@ -17,8 +16,7 @@ module HelpdeskReports
       
       def archive_tickets(ticket_ids)
         tickets = []
-        ticket_ids.each_slice(300) do |batch_tkt_ids|
-          tkts = Account.current.tickets.permissible(User.current).preload(ticket_associations_include).where(id: batch_tkt_ids)
+        Account.current.archive_tickets.permissible(User.current).includes(archive_associations_include).where(ticket_id: ticket_ids).find_in_batches(:batch_size => 300) do |tkts|
           tickets << tkts
         end
         tickets.flatten
