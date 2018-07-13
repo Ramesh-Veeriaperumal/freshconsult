@@ -173,6 +173,8 @@
     - mixpanel_queue
     - freshid_agents_migration
     - run_rake_task
+    - register_freshconnect
+    - update_freshconnect
   :free:
     - free_sla
     - free_supervisor
