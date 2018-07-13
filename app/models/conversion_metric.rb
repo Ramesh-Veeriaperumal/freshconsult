@@ -296,4 +296,7 @@ class ConversionMetric < ActiveRecord::Base
     self.try(:[], :session_json).try(:[], :ga_client_id)
   end
 
+  def signup_method
+    try(:[], :session_json).try(:[], :signup_method)
+  end
 end
