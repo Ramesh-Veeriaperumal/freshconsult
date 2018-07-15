@@ -1,7 +1,10 @@
 defaults: &defaults
     collab_url: "http://localhost:8888"
+    freshconnect_url: "http://localhost:8888"
     rts_url: "http://localhost:8000"
     secret_key: "VnY56Bf7_-8FuX8m6i20y5VuziheYcSD8wBKvm_1cxV7B-MWi9Pv4c8y2lLymsKrEX230381a_5BFvtFRrtsHg=="
+    product_name: "freshdesk"
+    freshconnect_endpoint: "https://freshconnect-api.fdcollab.io/product_account"
 
 development:
   <<: *defaults
@@ -11,8 +14,12 @@ slave:
 
 test:
   <<: *defaults
+  freshconnect_endpoint: "http://localhost:8888"
 
 staging:
     collab_url: "https://api.fdcollab.io"
+    freshconnect_url: "https://api.fdcollab.io"
     rts_url: "https://pubsub.rtschannel.io/"
     secret_key: "VnY56Bf7_-8FuX8m6i20y5VuziheYcSD8wBKvm_1cxV7B-MWi9Pv4c8y2lLymsKrEX230381a_5BFvtFRrtsHg=="
+    product_name: "freshdesk"
+    freshconnect_endpoint: "https://freshconnect-api.fdcollab.io/product_account"
