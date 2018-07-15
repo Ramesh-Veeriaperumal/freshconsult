@@ -92,7 +92,7 @@
       :image_annotation: 88
       :tam_default_fields: 89
       :todos_reminder_scheduler: 90
-      :smart_filter: 91	
+      :smart_filter: 91
       :ticket_summary: 92
       :shared_ownership: 93
       :oauth2: 94
@@ -106,7 +106,7 @@
       :autobots_10: 102
       :freshchat: 103
       :session_replay: 104
-      :falcons_3: 105
+      :freshconnect: 105
       :falcons_4: 106
       :falcons_5: 107
       :falcons_6: 108

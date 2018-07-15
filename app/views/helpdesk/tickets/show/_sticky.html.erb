@@ -48,7 +48,7 @@
 				<% end %>
 
 				
-				<% if current_account.collaboration_enabled? %>
+				<% if current_account.collaboration_enabled? && !current_account.freshconnect_enabled? %>
 					<li class="ticket-btns">
 						<div id="collab-btn" class="collab-btn btn tooltip" data-placement = "below"
 							title='<%= "#{t('helpdesk.start_collab')}" %>' 

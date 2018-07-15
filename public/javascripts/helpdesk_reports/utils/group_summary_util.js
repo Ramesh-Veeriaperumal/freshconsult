@@ -86,7 +86,11 @@ HelpdeskReports.ReportUtil.GroupSummary = (function () {
         setDefaultValues: function () {
             var current_params = [];
             var date = _FD.core.setReportFilters();
-            jQuery.each(_FD.constants.template_metrics, function (index, value) {
+            var metrics = _FD.constants.template_metrics ;
+            if(HelpdeskReports.locals.is_new_ticket_recieved_metric_enabled){
+                metrics.push("GROUP_SUMMARY_TICKETS_RECIEVED");
+            }
+            jQuery.each(metrics, function (index, value) {
                 var merge_hash = {
                     metric: value,
                     filter: [],

@@ -1,7 +1,7 @@
 module TicketsFilter
   include TicketConstants
   include Helpdesk::Ticketfields::TicketStatus
-  
+
   DEFAULT_FILTER = "new_and_my_open"
   DEFAULT_VISIBLE_FILTERS = %w( new_and_my_open ongoing_collab shared_by_me shared_with_me unresolved all_tickets raised_by_me monitored_by archived spam deleted)
   DEFAULT_FILTERS_FEATURES = {
@@ -10,6 +10,9 @@ module TicketsFilter
     :shared_with_me => :shared_ownership,
     :ongoing_collab => :collaboration
   }
+  IGNORE_FILTER_ON_FEATURE = {
+    'ongoing_collab' => :freshconnect
+  }.freeze
 
   SELECTORS = [
     [:new_and_my_open,      I18n.t('helpdesk.tickets.views.new_and_my_open'), [:visible]  ],
@@ -31,7 +34,7 @@ module TicketsFilter
     [ :my_groups_new,       I18n.t('helpdesk.tickets.views.my_groups_new'), [:visible, :my_groups, :new] ],
     [ :my_groups_pending,   I18n.t('helpdesk.tickets.views.my_groups_pending'), [:visible, :my_groups, :on_hold] ],
     [ :my_groups_all,       I18n.t('helpdesk.tickets.views.my_groups_all'), [:visible, :my_groups] ],
-    
+
     [:untitled_view,        I18n.t('tickets_filter.unsaved_view'), [:visible] ],
     [:new,                  I18n.t('helpdesk.tickets.views.new'), [:visible]  ],
     [:open,                 I18n.t('helpdesk.tickets.views.open'), [:visible]  ],
@@ -41,37 +44,37 @@ module TicketsFilter
     [:overdue,              I18n.t('helpdesk.tickets.views.overdue'), [:visible]  ],
     [:on_hold,              I18n.t('helpdesk.tickets.views.on_hold'), [:visible]  ],
     [:all,                  I18n.t('helpdesk.tickets.views.all_tickets'), [:visible]  ],
-    
+
     [:unresolved,           I18n.t('helpdesk.tickets.views.unresolved'), [:visible]  ],
     [:spam,                 I18n.t('helpdesk.tickets.views.spam')  ],
     [:deleted,              I18n.t('helpdesk.tickets.views.trash')  ],
     [:tags,                 I18n.t('helpdesk.tickets.views.tags') ],
     [:twitter,              I18n.t('helpdesk.tickets.views.tickets_twitter')],
-    [:mobihelp,             I18n.t('helpdesk.tickets.views.mobihelp')],  
+    [:mobihelp,             I18n.t('helpdesk.tickets.views.mobihelp')],
   ]
 
   JOINS = {
-    :on_hold => "INNER JOIN helpdesk_ticket_statuses ON 
-          helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
+    :on_hold => "INNER JOIN helpdesk_ticket_statuses ON
+          helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND
           helpdesk_tickets.status = helpdesk_ticket_statuses.status_id",
-    :overdue => "INNER JOIN helpdesk_ticket_statuses ON 
-          helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
+    :overdue => "INNER JOIN helpdesk_ticket_statuses ON
+          helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND
           helpdesk_tickets.status = helpdesk_ticket_statuses.status_id",
-    :due_today => "INNER JOIN helpdesk_ticket_statuses ON 
-          helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND 
+    :due_today => "INNER JOIN helpdesk_ticket_statuses ON
+          helpdesk_tickets.account_id = helpdesk_ticket_statuses.account_id AND
           helpdesk_tickets.status = helpdesk_ticket_statuses.status_id",
   }
-  
+
   SELECTOR_NAMES = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
   ADDITIONAL_FILTERS = Hash[*SELECTORS.inject([]){ |a, v| a += [v[0], v[2]] }]
-  
+
   CUSTOMER_SELECTORS = [ [:all,              I18n.t('helpdesk.tickets.views.all'), [:visible]  ],
                          [:open_or_pending, I18n.t('helpdesk.tickets.views.open_or_pending') ],
                          [:resolved_or_closed,  I18n.t('helpdesk.tickets.views.resolved_or_closed')]
                        ]
   CUSTOMER_SELECTOR_NAMES = Hash[*CUSTOMER_SELECTORS.inject([]){ |a, v| a += [v[0], v[1]] }]
   CUSTOMER_ADDITIONAL_FILTERS = Hash[*CUSTOMER_SELECTORS.inject([]){ |a, v| a += [v[0], v[2]] }]
-  
+
   SEARCH_FIELDS = [
     [ :display_id,    'Ticket ID'           ],
     [ :subject,       'Subject'             ],
@@ -162,43 +165,47 @@ module TicketsFilter
     sort_fields = self.sort_fields_options
 
     sort_fields.map { |i| {
-        :id       =>  i[1], 
-        :name     =>  i[0], 
+        :id       =>  i[1],
+        :name     =>  i[0],
       } }
   end
 
   def self.mobile_sort_order_fields_options
     sort_order_fields = self.sort_order_fields_options
     sort_order_fields.map { |i| {
-        :id       =>  i[1], 
-        :name     =>  i[0], 
+        :id       =>  i[1],
+        :name     =>  i[0],
       } }
   end
 
   def self.default_views
     filters = DEFAULT_VISIBLE_FILTERS.select {|filter|
       feature = DEFAULT_FILTERS_FEATURES[filter.to_sym]
-      Account.current && (feature.nil? or Account.current.send("#{feature}_enabled?"))
+      if ignore_filter_feature(filter)
+        false
+      else
+        Account.current && (feature.nil? or Account.current.safe_send("#{feature}_enabled?"))
+      end
     }
-    filters.map { |i| 
-      { 
-        :id       =>  i, 
-        :name     =>  I18n.t("helpdesk.tickets.views.#{i}"), 
-        :default  =>  true 
-      } 
+    filters.map { |i|
+      {
+        :id       =>  i,
+        :name     =>  I18n.t("helpdesk.tickets.views.#{i}"),
+        :default  =>  true
+      }
     }
   end
 
   def self.filter(filter, user = nil, scope = nil)
     to_ret = (scope ||= default_scope)
-    
+
     conditions = load_conditions(user,filter)
     if user && filter == :monitored_by
       to_ret = user.subscribed_tickets.where({:spam => false, :deleted => false})
     else
       to_ret = to_ret.where(conditions[filter]) unless conditions[filter].nil?
     end
-    
+
     ADDITIONAL_FILTERS[filter].each do |af|
       to_ret = to_ret.where(conditions[af])
     end unless ADDITIONAL_FILTERS[filter].nil?
@@ -214,7 +221,7 @@ module TicketsFilter
     custom_filter       = Helpdesk::Filters::CustomTicketFilter.new
     action_hash         = custom_filter.default_filter(selector.to_s) || []
     negative_conditions = (unresolved ? [{ "condition" => "status", "operator" => "is_not", "value" => "#{RESOLVED},#{CLOSED}" }] : [])
-    
+
     action_hash.push({ "condition" => "responder_id", "operator" => "is_in", "value" => "0" }) if agent_filter
 
     Search::Filters::Docs.new(action_hash, negative_conditions).count(Helpdesk::Ticket)
@@ -252,49 +259,53 @@ module TicketsFilter
 
     scope.where(conditions)
   end
-  
+
   protected
     def self.load_conditions(user,filter)
-      donot_stop_sla_status_query = "select status_id from helpdesk_ticket_statuses where 
+      donot_stop_sla_status_query = "select status_id from helpdesk_ticket_statuses where
                   (stop_sla_timer is false and account_id = #{user.account.id} and deleted is false)"
-      onhold_statuses_query = "select status_id from helpdesk_ticket_statuses where 
+      onhold_statuses_query = "select status_id from helpdesk_ticket_statuses where
       (stop_sla_timer is true and account_id = #{user.account.id} and deleted is false and status_id not in (#{RESOLVED},#{CLOSED}))"
       group_ids = user.agent_groups.find(:all, :select => 'group_id').map(&:group_id) if filter.nil? || filter.eql?(:my_groups)
       group_ids = [-1] if group_ids.nil? || group_ids.empty? #The whole group thing is a hack till new views come..
-      
+
       {
         :spam         =>    { :spam => true, :deleted => false },
         :deleted      =>    { :deleted => true },
         :visible      =>    { :deleted => false, :spam => false },
         :responded_by =>    { :responder_id => (user && user.id) || -1 },
         :my_groups    =>    { :group_id => group_ids },
-        
+
         :new_and_my_open  => ["status = ? and (responder_id is NULL or responder_id = ?)", OPEN, user.id],
-        
+
         :new              => ["status = ? and responder_id is NULL", OPEN],
         :open             => ["status = ?", OPEN],
         #:new_and_open     => ["status in (?, ?)", STATUS_KEYS_BY_TOKEN[:new], STATUS_KEYS_BY_TOKEN[:open]],
         :resolved         => ["status = ?", RESOLVED],
         :closed           => ["status = ?", CLOSED],
-        # :due_today        => ["due_by >= ? and due_by <= ? and status in (#{donot_stop_sla_status_query})", Time.zone.now.beginning_of_day.to_s(:db), 
+        # :due_today        => ["due_by >= ? and due_by <= ? and status in (#{donot_stop_sla_status_query})", Time.zone.now.beginning_of_day.to_s(:db),
         #                          Time.zone.now.end_of_day.to_s(:db)],
-        :due_today        => ["due_by >= ? and due_by <= ? 
-                                AND helpdesk_ticket_statuses.stop_sla_timer IS FALSE 
-                                AND helpdesk_ticket_statuses.deleted IS FALSE", 
+        :due_today        => ["due_by >= ? and due_by <= ?
+                                AND helpdesk_ticket_statuses.stop_sla_timer IS FALSE
+                                AND helpdesk_ticket_statuses.deleted IS FALSE",
                                 Time.zone.now.beginning_of_day.to_s(:db), Time.zone.now.end_of_day.to_s(:db)],
         # :overdue          => ["due_by <= ? and status in (#{donot_stop_sla_status_query})", Time.zone.now.to_s(:db)],
-        :overdue          => ["due_by <= ? AND helpdesk_ticket_statuses.stop_sla_timer IS FALSE 
+        :overdue          => ["due_by <= ? AND helpdesk_ticket_statuses.stop_sla_timer IS FALSE
                                 AND helpdesk_ticket_statuses.deleted IS FALSE", Time.zone.now.to_s(:db)],
         :pending          => ["status = ?", PENDING],
         # :on_hold          => ["status in (#{onhold_statuses_query})"],
-        :on_hold          => ["helpdesk_ticket_statuses.stop_sla_timer IS TRUE 
+        :on_hold          => ["helpdesk_ticket_statuses.stop_sla_timer IS TRUE
                                 AND helpdesk_ticket_statuses.deleted IS FALSE
-                                and helpdesk_ticket_statuses.status_id NOT IN 
+                                and helpdesk_ticket_statuses.status_id NOT IN
                                 (#{RESOLVED},#{CLOSED})"],
         :twitter          => ["source = ?", SOURCE_KEYS_BY_TOKEN[:twitter]],
         :mobihelp          => ["source = ?", TicketConstants::SOURCE_KEYS_BY_TOKEN[:mobihelp]],
         :open_or_pending  => ["status not in (?, ?) and helpdesk_tickets.deleted=? and spam=?" , RESOLVED, CLOSED , false, false],
         :resolved_or_closed  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED,false]
       }
+    end
+
+    def self.ignore_filter_feature(filter)
+      IGNORE_FILTER_ON_FEATURE[filter] && Account.current.safe_send("#{IGNORE_FILTER_ON_FEATURE[filter]}_enabled?")
     end
 end

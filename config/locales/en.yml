@@ -2184,6 +2184,7 @@ en:
       failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator
     security:
       index:
+        not_admin_email: "Please enter a valid admin email" 
         shared_secret: Shared Secret
         remote_login_url: Remote login URL
         shared_secret_info: Please copy this token and keep it safe. You need this to enable Remote authentication. This is a shared secret between you and Freshdesk.
@@ -12005,6 +12006,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     attached: "Added to response"
     remove: "Remove"
     mb: " MB "
+    virus_found_warning: "Anti-Virus warning: Attachment blocked. The file contains a virus"
   ml:
     similat_tickets_found: Similar Tickets found
     no_suggestions: Oops! No suggestions.

@@ -32,8 +32,8 @@ class AccountsController < ApplicationController
 
   around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages, :edit_domain, :validate_domain, :update_domain]
 
-  before_filter :validate_signup_email, :only => [:email_signup, :new_signup_free]
-  before_filter :check_for_existing_accounts, :only => [:email_signup]
+  before_filter :validate_signup_email, only: [:email_signup, :new_signup_free]
+  before_filter :check_for_existing_accounts, only: [:email_signup, :new_signup_free]
 
   before_filter :account_unverified?, :only => [:edit_domain, :validate_domain, :update_domain]
   before_filter :ensure_proper_user, :only => [:edit_domain]
@@ -47,10 +47,10 @@ class AccountsController < ApplicationController
   before_filter :check_sandbox?, :only => [:cancel]
   before_filter :admin_selected_tab, :only => [:show, :edit, :cancel, :manage_languages  ]
   before_filter :validate_custom_domain_feature, :only => [:update]
-  before_filter :build_signup_param, :build_signup_contact, :only => [:new_signup_free, :email_signup]
+  before_filter :build_signup_param, :build_signup_contact, only: [:new_signup_free, :email_signup]
   before_filter :check_supported_languages, :only =>[:update], :if => :multi_language_available?
-  before_filter :set_native_mobile, :only => [:new_signup_free ]
-  before_filter :set_additional_signup_params, :only => [:email_signup]
+  before_filter :set_native_mobile, only: :new_signup_free
+  before_filter :set_additional_signup_params, only: [:email_signup, :new_signup_free]
   before_filter :validate_feature_params, :only => [:update]
   before_filter :update_language_attributes, :only => [:update_languages]
   before_filter :validate_portal_language_inclusion, :only => [:update_languages]
@@ -407,7 +407,7 @@ class AccountsController < ApplicationController
           metrics_obj[:os] = metrics["browser"]["os"]
           metrics_obj[:offset] = metrics["time"]["tz_offset"]
           metrics_obj[:is_dst] = metrics["time"]["observes_dst"]
-          metrics[:signup_method] = action
+          metrics[:signup_method] = signup_type_from_action(metrics_obj)
           metrics_obj[:session_json] = metrics
         else
           metrics_obj = nil
@@ -634,15 +634,19 @@ class AccountsController < ApplicationController
     end
 
     def set_additional_signup_params
-      params["signup"]["account_name"] = @domain_generator.domain_name
-      params["signup"]["account_domain"] = @domain_generator.subdomain
-      params["signup"]["contact_first_name"] = @domain_generator.email_name
-      params["signup"]["contact_last_name"] = @domain_generator.email_name
+      signup_params = params['signup']
+      email_name = @domain_generator.email_name
+      signup_params['account_name']        ||= @domain_generator.domain_name
+      signup_params['account_domain']      ||= @domain_generator.subdomain
+      signup_params['contact_first_name']  ||= email_name
+      signup_params['contact_last_name']   ||= email_name
     end
 
     def check_for_existing_accounts
+      return if normal_full_signup?
+      params[:force] = 'true' if params[:action] != 'email_signup'
       accounts_count = AdminEmail::AssociatedAccounts.find(params["user"]["email"]).length
-      return if (@domain_generator.email_company_name == AppConfig["app_name"].downcase) || accounts_count == 0 || (accounts_count < Signup::MAX_ACCOUNTS_COUNT && params["force"] == "true")
+      return if (@domain_generator.email_company_name == AppConfig['app_name'].downcase) || accounts_count.zero? || (accounts_count < Signup::MAX_ACCOUNTS_COUNT && params['force'] == 'true')
       status_code = accounts_count >= Signup::MAX_ACCOUNTS_COUNT ?  Signup::SIGNUP_RESPONSE_STATUS_CODES[:too_many_requests] : Signup::SIGNUP_RESPONSE_STATUS_CODES[:precondition_failed]
       render :json => {:success => false,
         :accounts_count => accounts_count,
@@ -658,6 +662,22 @@ class AccountsController < ApplicationController
           :errors => @domain_generator.errors[:email]},
           :status => :unprocessable_entity
       end
+    end
+
+    def signup_type_from_action(metrics_obj)
+      current_action = params[:action]
+      if metrics_obj[:device] != 'C'
+        'mobile'
+      elsif current_action == 'new_signup_free' && !normal_full_signup?
+        'domain_less_signup'
+      else
+        current_action
+      end
+    end
+
+    def normal_full_signup?
+      account_params = params['account']
+      account_params && account_params.key?(:domain)
     end
 
     # Do not allow users to perform edit/validate/update domain if account is verified

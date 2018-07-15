@@ -277,7 +277,8 @@ defaults: &defaults
     - [run_rake_task]
     - [check_bot_training]
     - [update_segment_filter]
-
+    - [register_freshconnect]
+    - [update_freshconnect]
 development:
   <<: *defaults
 

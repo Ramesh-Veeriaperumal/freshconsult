@@ -368,10 +368,12 @@ class UserSessionsController < ApplicationController
 
     def check_sso_params
       time_in_utc = get_time_in_utc
+      sso_login_allowed_time, sso_clock_drift = current_account.sso_login_expiry_limitation_enabled? ? [SSO_ALLOWED_IN_SECS_LIMITATION, SSO_ALLOWED_IN_SECS_LIMITATION] : [SSO_ALLOWED_IN_SECS, SSO_CLOCK_DRIFT]
       if ![:name, :email, :hash].all? {|key| params[key].present?}
         flash[:notice] = t(:'flash.login.sso.expected_params')
         redirect_to login_normal_url
-      elsif !params[:timestamp].blank? and !params[:timestamp].to_i.between?((time_in_utc - SSO_ALLOWED_IN_SECS),( time_in_utc + SSO_CLOCK_DRIFT ))
+      elsif !params[:timestamp].blank? and !params[:timestamp].to_i.between?((time_in_utc - sso_login_allowed_time),( time_in_utc + sso_clock_drift))
+        Rails.logger.debug "SSO LOGIN EXPIRED, account_id=#{current_account.id}, timestamp=#{params[:timestamp]}, current_time=#{time_in_utc}, time_interval=#{sso_login_allowed_time + sso_clock_drift}"
         flash[:notice] = t(:'flash.login.sso.invalid_time_entry')
         redirect_to login_normal_url
       end
