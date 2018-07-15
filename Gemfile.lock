@@ -208,6 +208,16 @@ GIT
       uuidtools
 
 GIT
+  remote: git@github.com:freshdesk/emailserv_request.git
+  revision: 84996af205809c8a0cc143e1c37fe02405759818
+  tag: v1.1
+  specs:
+    emailserv_request (0.0.1)
+      connection_pool (~> 2.2)
+      faraday (~> 0.9.0)
+      faraday_middleware (~> 0.10.0)
+
+GIT
   remote: git@github.com:freshdesk/fd_rate_limiter.git
   revision: 94ebd47857e65ed3de0c4e1fd8b81d5666aabde1
   branch: dynamic_rules
@@ -832,7 +842,7 @@ GEM
       thor (~> 0.14)
     forgery (0.5.0)
     formatador (0.2.5)
-    freemail (0.2.0)
+    freemail (0.2.3)
     fuubar (2.1.1)
       rspec (~> 3.0)
       ruby-progressbar (~> 1.4)
@@ -1453,6 +1463,7 @@ DEPENDENCIES
   dynamics_crm!
   ebayr!
   ejs (= 1.1.1)
+  emailserv_request!
   encryptor (= 1.1.3)
   facebook!
   factory_girl_rails (= 4.4.0)
@@ -1468,7 +1479,7 @@ DEPENDENCIES
   fontcustom (= 1.3.3)
   forgery (= 0.5.0)
   formserv-gem (= 0.9.0)!
-  freemail (= 0.2.0)
+  freemail (= 0.2.3)
   fresh_request!
   freshdesk_authority!
   freshdesk_features!

@@ -131,6 +131,48 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
     remove_key(account_api_limit_key)
   end
 
+  def test_private_api_with_proper_app_jwt_auth
+    token = generate_app_jwt_token(fc_account.product_account_id, Time.now.to_i, Time.now.to_i, 'freshconnect')
+    auth = ['JWTAuth token=', token].join(' ')
+    get "api/_/tickets/#{ticket.display_id}", nil, @headers.merge('X-App-Header' => auth)
+    assert_response 200
+    @account.freshconnect_account.destroy if @account.freshconnect_account.present?
+  end
+
+  def test_private_api_without_jwt_auth
+    get "api/_/tickets/#{ticket.display_id}", nil, @headers.merge('X-App-Header' => 'nil')
+    assert_response 401
+    assert_equal request_error_pattern(:invalid_credentials).to_json, response.body
+    @account.freshconnect_account.destroy if @account.freshconnect_account.present?
+  end
+
+  def test_private_api_app_auth_with_incorrect_app_name
+    token = generate_app_jwt_token(fc_account.product_account_id, Time.now.to_i, Time.now.to_i, 'abc')
+    auth = ['JWTAuth token=', token].join(' ')
+    get "api/_/tickets/#{ticket.display_id}", nil, @headers.merge('X-App-Header' => auth)
+    assert_response 401
+    assert_equal request_error_pattern(:invalid_credentials).to_json, response.body
+    @account.freshconnect_account.destroy if @account.freshconnect_account.present?
+  end
+
+  def test_private_api_app_auth_with_incorrect_product_acc_id
+    token = generate_app_jwt_token('test', Time.now.to_i, Time.now.to_i, 'freshconnect')
+    auth = ['JWTAuth token=', token].join(' ')
+    get "api/_/tickets/#{ticket.display_id}", nil, @headers.merge('X-App-Header' => auth)
+    assert_response 401
+    assert_equal request_error_pattern(:invalid_credentials).to_json, response.body
+    @account.freshconnect_account.destroy if @account.freshconnect_account.present?
+  end
+
+  def test_private_api_app_auth_with_expired_token
+    token = generate_app_jwt_token(fc_account.product_account_id, Time.now.to_i, Time.now.to_i - 100, 'freshconnect')
+    auth = ['JWTAuth token=', token].join(' ')
+    get "api/_/tickets/#{ticket.display_id}", nil, @headers.merge('X-App-Header' => auth)
+    assert_response 401
+    assert_equal request_error_pattern(:invalid_credentials).to_json, response.body
+    @account.freshconnect_account.destroy if @account.freshconnect_account.present?
+  end
+
   def private_api_key(account_id = @account.id)
     "PRIVATE_API_THROTTLER:#{account_id}"
   end
@@ -141,5 +183,24 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
 
   def version_redis_key
     DATA_VERSIONING_SET % { account_id: @account.id }
+  end
+
+  def ticket
+    Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+  end
+
+  def fc_account
+    create_freshconnect_account
+  end
+
+  def create_freshconnect_account
+    product_account_id = Random.rand(11).to_s
+    domain = [Faker::Lorem.characters(10), 'freshconnect', 'com'].join('.')
+    acc = Freshconnect::Account.new(account_id: @account.id,
+                                    product_account_id: product_account_id,
+                                    enabled: true,
+                                    freshconnect_domain: domain)
+    acc.save!
+    acc
   end
 end

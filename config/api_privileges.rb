@@ -23,6 +23,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/todo", only: [:index, :create, :update, :destroy]
     resource :"ember/twitter_handles", only: %i(index check_following)
     resource :"ember/marketplace_app", only: [:index]
+    resource :'admin/canned_form', only: [:index, :show, :create_handle]
 
     resource :"ember/agent", only: %i(index me achievements update)
     resource :"ember/group", only: [:index]

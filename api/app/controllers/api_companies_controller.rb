@@ -43,7 +43,7 @@ class ApiCompaniesController < ApiApplicationController
     end
 
     def preload_options
-      [:flexifield, :company_domains]
+      [:flexifield, :company_domains, :avatar]
     end
 
     def scoper

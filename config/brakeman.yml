@@ -1,0 +1,7 @@
+---
+:output_files:
+- brakeman-output.html
+- brakeman-output.tabs
+:skip_checks:
+- CheckModelAttrAccessible
+:skip_files:

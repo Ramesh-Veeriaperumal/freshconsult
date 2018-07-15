@@ -36,11 +36,15 @@ module Middleware
         end
 
         def get_count
-          count = increment_others_redis(key)
+          count = throttler_count
           if count == 1
             set_others_redis_expiry(key, 3600)
           end
           count
+        end
+
+        def throttler_count
+          @throttler_count ||= increment_others_redis(key)
         end
         
         def threshold

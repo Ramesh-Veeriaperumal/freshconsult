@@ -257,12 +257,14 @@ class CRM::FreshsalesUtility
     end
 
     def new_lead_params
+      conversion_metric = @account.conversion_metric
       lead_attrs = admin_basic_info.merge({
         custom_field: {
           cf_account_id:  @account.id, 
           cf_domain_name: @account.full_domain, 
           cf_reputation_score: @account.ehawk_reputation_score,
-          cf_google_analytics_client_id: @account.conversion_metric.try(:ga_client_id)
+          cf_google_analytics_client_id: conversion_metric.try(:ga_client_id),
+          cf_signup_type: conversion_metric.try(:signup_method)
         }
       })
       acc_metrics = account_metrics

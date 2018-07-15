@@ -32,6 +32,16 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
     match_json(canned_form_handle_pattern(Admin::CannedFormHandle.last))
   end
 
+  def test_create_handle_without_admin_task_manage_ticket_privilege
+    stub_privilege
+    canned_form = create_canned_form
+    ticket = Helpdesk::Ticket.last || create_ticket
+    post :create_handle, construct_params({ id: canned_form.id, version: 'private' }, ticket_id: ticket.display_id)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+    unstub_privilege
+  end
+
   def test_create_handle_with_invalid_params
     canned_form = create_canned_form
     ticket = Helpdesk::Ticket.last || create_ticket
@@ -61,6 +71,34 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
       pattern << canned_form_index_pattern(c_form)
     end
     match_json(pattern.ordered!)
+  end
+
+  def test_index_canned_form_without_manage_tickets_privilege
+    stub_privilege
+    3.times do
+      create_canned_form
+    end
+    get :index, controller_params(version: 'private')
+    canned_forms = Account.current.canned_forms.active_forms.limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+    unstub_privilege
+  end
+
+  def test_index_canned_form_without_admin_tasks_privilege
+    stub_privilege(true)
+    3.times do
+      create_canned_form
+    end
+    get :index, controller_params(version: 'private')
+    canned_forms = Account.current.canned_forms.active_forms.limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+    assert_response 200
+    pattern = []
+    canned_forms.each do |c_form|
+      pattern << canned_form_index_pattern(c_form)
+    end
+    match_json(pattern.ordered!)
+    unstub_privilege
   end
 
   def test_index_canned_form_without_feature
@@ -199,6 +237,18 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
     parsed_response = JSON.parse(response.body)
     assert_equal canned_form.fields.length + 1, parsed_response['fields'].length
     assert_not_nil parsed_response['fields'].detect{ |x| x['name'] === field['name'] }
+  end
+
+  def test_update_canned_form_without_privilege
+    stub_privilege
+    canned_form = create_canned_form
+    request_param = { 'name' => Faker::Name.name, 'version' => canned_form.version, 'fields' => JSON.parse(canned_form.fields.to_json) }
+    field = checkbox_payload.merge(position: canned_form.fields.length + 1)
+    request_param['fields'] << field
+    put :update, construct_params(version: 'private', id: canned_form.id, canned_form: request_param)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+    unstub_privilege
   end
 
   def test_update_canned_form_add_text_field
@@ -447,6 +497,24 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
     match_json(canned_form_pattern(canned_form))
   end
 
+  def test_show_canned_form_without_manage_tickets_privilege
+    stub_privilege
+    canned_form = create_canned_form
+    get :show, controller_params(version: 'private', id: canned_form.id)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+    unstub_privilege
+  end
+
+  def test_show_canned_form_without_manage_admin_privilege
+    stub_privilege(true)
+    canned_form = create_canned_form
+    get :show, controller_params(version: 'private', id: canned_form.id)
+    assert_response 200
+    match_json(canned_form_pattern(canned_form))
+    unstub_privilege
+  end
+
   def test_show_canned_form_with_invalid_id
     canned_form = create_canned_form
     get :show, controller_params(version: 'private', id: 999)
@@ -470,4 +538,15 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
     assert_response 404
     assert_equal ' ', @response.body
   end
+
+  private
+
+    def stub_privilege(manage_tickets = false)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(manage_tickets)
+    end
+
+    def unstub_privilege
+      User.any_instance.unstub(:privilege?)
+    end
 end

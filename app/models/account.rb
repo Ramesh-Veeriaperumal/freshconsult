@@ -648,7 +648,7 @@ class Account < ActiveRecord::Base
     @signup_method ||= (
       key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => self.id}
       json_response = get_others_redis_key(key)
-      json_response.present? ? JSON.parse(json_response)["signup_method"] : self.conversion_metric.try(:[], :session_json).try(:[], :signup_method)
+      json_response.present? ? JSON.parse(json_response)['signup_method'] : self.conversion_metric.signup_method
     )
   end
 

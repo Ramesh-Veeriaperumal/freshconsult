@@ -212,7 +212,7 @@ class Account < ActiveRecord::Base
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
     :post_central_publish => false, :audit_logs_central_publish => false, :twitter_common_redirect => false,
     :euc_migrated_twitter => false, :new_onboarding => false, :new_ticket_recieved_metric => false,
-    :audit_log_ui => false, :es_msearch => true, :canned_forms => false
+    :audit_log_ui => false, :es_msearch => true, :canned_forms => false, :attachment_virus_detection => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

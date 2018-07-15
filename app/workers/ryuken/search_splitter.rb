@@ -11,19 +11,25 @@ class Ryuken::SearchSplitter
 
   def perform(sqs_msg, args)
     begin
+      search_payload = args["#{args['object']}_properties"].merge({
+        'version' => (args['action_epoch'] * 1000000).ceil
+      })
+
       if args["subscriber_properties"]["search"] && args["subscriber_properties"]["search"]["timestamps"]
         if sqs_msg.attributes["SentTimestamp"]
           args["subscriber_properties"]["search"]["timestamps"] << sqs_msg.attributes["SentTimestamp"].to_i
         end
         args["subscriber_properties"]["search"]["timestamps"] << Search::Job.es_version/1000
+        search_payload.merge!({'timestamps' => args["subscriber_properties"]["search"]})
       end
-      cluster = Search::V2::Tenant.new(Account.current.id).home_cluster
-      if args["#{args['object']}_properties"]['archive'].presence
-        Ryuken::SearchPoller.perform_async(args.to_json, queue: ES_V2_QUEUE_KEY % { cluster: (cluster + '-archive') })
+
+      case search_payload['action']
+      when 'destroy'
+        Search::V2::Operations::DocumentRemove.new(search_payload).perform
       else
-        Ryuken::SearchPoller.perform_async(args.to_json, queue: ES_V2_QUEUE_KEY % { cluster: cluster })
+        Search::V2::Operations::DocumentAdd.new(search_payload).perform
       end
-      sqs_msg.delete
+      sqs_msg.try :delete
     rescue Exception => e
       Rails.logger.error "Searchv2 exception - #{e.message} - #{e.backtrace.first}"
       NewRelic::Agent.notice_error(e, { arguments: args })

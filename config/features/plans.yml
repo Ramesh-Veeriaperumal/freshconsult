@@ -53,6 +53,7 @@
       - :todos_reminder_scheduler
       - :smart_filter
       - :session_replay
+      - :freshconnect
     :inherits:
       - :sprout_jan_17
     :exclude: []
