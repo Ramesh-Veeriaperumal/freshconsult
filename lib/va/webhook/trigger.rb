@@ -18,14 +18,15 @@ module Va::Webhook::Trigger
     end
 
     throttler_args = {
-      :params => params,
-      :retry_count => 0,
-      :auth_header => auth_header,
-      :custom_headers => custom_headers,
-      :rule_id => self.va_rule.id,
-      :account_id => Account.current.id,
-      :webhook_created_at => Time.now.utc.to_f,
-      :webhook_limit => Account.current.account_additional_settings_from_cache.webhook_limit
+      params: params,
+      retry_count: 0,
+      auth_header: auth_header,
+      custom_headers: custom_headers,
+      rule_id: va_rule.id,
+      ticket_id: act_on.id,
+      account_id: Account.current.id,
+      webhook_created_at: Time.now.utc.to_f,
+      webhook_limit: Account.current.account_additional_settings_from_cache.webhook_limit
     }
     
     ::WebhookV1Worker.perform_async(throttler_args)

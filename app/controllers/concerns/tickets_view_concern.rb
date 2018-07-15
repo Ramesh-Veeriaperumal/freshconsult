@@ -130,7 +130,7 @@ module Concerns
       end
 
       def reply_cc_emails(ticket)
-        ticket.notes.visible.public.exists? ? ticket.reply_to_all_emails : ticket.current_cc_emails
+        ticket.notes.visible.public.exists? ? ticket.current_cc_emails : ticket.reply_to_all_emails
       end
   end
 end

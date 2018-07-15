@@ -14,6 +14,10 @@ module TicketsFilter
     ["watching",       :add_watcher,      "Add watcher"]
   ]
 
+  IGNORE_FILTER_ON_FEATURE = {
+    'ongoing_collab' => :freshconnect
+  }.freeze
+
   FEATURES_KEYS_BY_FILTER_KEY   = Hash[*DEFAULT_FILTERS_FEATURES.map { |i| [i[0], i[1]] }.flatten]
   FEATURES_NAMES_BY_FILTER_KEY  = Hash[*DEFAULT_FILTERS_FEATURES.map { |i| [i[0], i[2]] }.flatten]
 
@@ -200,6 +204,7 @@ module TicketsFilter
 
   def self.accessible_filter?(filter, feature_keys = FEATURES_KEYS_BY_FILTER_KEY)
     feature = feature_keys[filter]
+    return false if ignore_filter_feature(filter)
     Account.current and (feature.nil? or Account.current.safe_send("#{feature}_enabled?"))
   end
 
@@ -310,5 +315,9 @@ module TicketsFilter
         :open_or_pending  => ["status not in (?, ?) and helpdesk_tickets.deleted=? and spam=?" , RESOLVED, CLOSED , false, false],
         :resolved_or_closed  => ["status in (?, ?) and helpdesk_tickets.deleted=?" , RESOLVED, CLOSED,false]
       }
+    end
+
+    def self.ignore_filter_feature(filter)
+      IGNORE_FILTER_ON_FEATURE[filter] && Account.current.safe_send("#{IGNORE_FILTER_ON_FEATURE[filter]}_enabled?")
     end
 end

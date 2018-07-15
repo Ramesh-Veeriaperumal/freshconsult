@@ -48,13 +48,23 @@ class Collaboration::Ticket
 		collab_filter_with_group_collab_for?(filter_name)
 	end
 
-  def convo_token(ticket_id)
-  	JWT.encode({
-  		:ConvoId => ticket_id.to_s, 
-  		:UserId => User.current.id.to_s, 
-  		:exp => (Time.now.to_i + TOKEN_EXPIRY_TIME)
-	}, Account.current.collab_settings.key)
-  end
+	def convo_token(ticket_id)
+	   	JWT.encode(convo_payload(ticket_id), CollabConfig['secret_key']) if User.current
+	end
+
+	def convo_payload(ticket_id)
+		current_user = User.current
+	    payload = {
+	        ConvoId: ticket_id.to_s,
+	        UserId: current_user.id.to_s,
+	        exp: (Time.now.to_i + TOKEN_EXPIRY_TIME)
+	    }
+	    if freshid_authorization
+		    uuid = { UserUUID: current_user.freshid_authorization.uid }
+		    payload.merge!(uuid)
+		end
+		payload
+	end
 
 	def acc_auth_token
 		generate_acc_auth_token
@@ -166,5 +176,9 @@ class Collaboration::Ticket
 			:UserId => User.current.id.to_s, 
 			:exp => (Time.now.to_i + TOKEN_EXPIRY_TIME)
 		}, Account.current.collab_settings.key)
+	end
+
+	def freshid_authorization
+		Account.current.freshid_enabled? && User.current.freshid_authorization
 	end
 end

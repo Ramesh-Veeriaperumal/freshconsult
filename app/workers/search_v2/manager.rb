@@ -6,8 +6,6 @@ class SearchV2::Manager
   
   class EnableSearch < SearchV2::Manager
     def perform
-      Search::V2::Tenant.new(Account.current.id).bootstrap unless Rails.env.development?
-
       SearchService::Client.new(Account.current.id).tenant_bootstrap
       
       # Push initially bootstrapped data to ES
@@ -49,14 +47,6 @@ class SearchV2::Manager
   class DisableSearch < SearchV2::Manager
     def perform(args)
       args.symbolize_keys!
-
-      ES_V2_SUPPORTED_TYPES.keys.each do |es_type|
-        Search::V2::IndexRequestHandler.new(es_type, args[:account_id], nil).remove_by_query({ account_id: args[:account_id] })
-      end
-      
-      Search::V2::Tenant.new(args[:account_id]).rollback unless Rails.env.development?
-
-      # Since Account.current is unavailable we shall use LaunchParty to check for service_reads
       SearchService::Client.new(args[:account_id]).tenant_destroy
     end
   end

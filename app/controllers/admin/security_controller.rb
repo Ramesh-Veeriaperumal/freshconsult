@@ -16,7 +16,9 @@ class Admin::SecurityController <  Admin::AdminController
     @account = current_account
     @account.sso_enabled = params[:account][:sso_enabled]
     @account.ssl_enabled = params[:account][:ssl_enabled]
-    @account.account_configuration.contact_info[:notification_emails] = params[:account][:account_configuration_attributes]
+    new_account_configuration = @account.account_configuration.contact_info.dup
+    new_account_configuration[:notification_emails] = params[:account][:account_configuration_attributes]
+    @account.account_configuration.contact_info = new_account_configuration
 
     if current_account.features_included?(:whitelisted_ips)
       if params[:account][:whitelisted_ip_attributes][:enabled].to_bool

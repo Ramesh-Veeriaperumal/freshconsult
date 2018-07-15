@@ -5,7 +5,7 @@ source 'https://rubygems.org'
 gem "rake", "~> 10.4.0"
 gem "rails","3.2.22.5"
 
-gem "freemail", "0.2.0", :require => false
+gem "freemail", "0.2.3", :require => false 
 gem 'stopwords-filter', "0.4.1", require: 'stopwords'
 
 gem 'rack-cors', '~> 0.3.1'
@@ -196,6 +196,7 @@ gem "therubyracer"
 gem "premailer", "~> 1.8.0"
 
 # Email Related Gems
+gem "emailserv_request", :git => "git@github.com:freshdesk/emailserv_request.git", :tag => 'v1.1'
 gem 'html_to_plain_text', '1.0.5'
 gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true

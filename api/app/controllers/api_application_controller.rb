@@ -878,7 +878,7 @@ class ApiApplicationController < MetalApiController
     def valid_app_payload?(payload)
       case payload[:app_name]
       when 'freshconnect'
-        payload[:product_account_id].present? && Account.current.freshconnect_account.product_account_id == payload[:product_account_id]
+        payload[:product_account_id].present? && current_account.freshconnect_account.try(:product_account_id) == payload[:product_account_id]
       else
         true
       end

@@ -33,4 +33,12 @@ module JwtTestHelper
     request.env["HTTP_AUTHORIZATION"] = token
   end
 
+  def generate_app_jwt_token(product_account_id, jti, iat, app_name, algorithm = 'HS256')
+    payload = { jti: jti,
+                iat: iat,
+                product_account_id: product_account_id,
+                app_name: app_name }
+    single_access_token = APP_INTEGRATION_CONFIG['freshconnect']['token']
+    JWT.encode payload, single_access_token, algorithm
+  end
 end

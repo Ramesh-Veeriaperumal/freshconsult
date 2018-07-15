@@ -6,5 +6,6 @@ module SearchService
     WRITE_PATH = 'v1/%{product_name}/%{account_id}/%{document_name}/%{id}'.freeze
     DELETE_PATH = 'v1/%{product_name}/%{account_id}/%{document_name}/%{id}'.freeze
     MULTI_QUERY_PATH = 'v1/%{product_name}/%{account_id}/multi_query'.freeze
+    DELETE_BY_QUERY_PATH = 'v1/%{product_name}/%{account_id}/%{document_name}'.freeze
   end.freeze
 end.freeze

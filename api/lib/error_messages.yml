@@ -115,6 +115,7 @@ api_error_messages:
   cannot_set_user_id: "Cannot set user_id when content type is inline"
   incorrect_image_dimensions: "Image dimensions are larger than expected"
   invalid_image_file: "Invalid file type(%{current_extension}). Please upload a jpg or png or gif or svg file"
+  virus_found_in_file: "Anti-Virus warning: Attachment blocked. The file contains a virus"
   shorter_full_text: "Content of full text should be greater than that of body"
   invalid_full_text: "Content of full text is different from that of body"
   query_format_invalid: "Given query is invalid, expected format \"keyword:value  OPERATOR keyword:'string' OPERATOR keyword:>'yyyy-mm-dd' OPERATOR keyword:<integer\". Space is mandatory between key/value pair and operator. Please check the paranthesis if there are any."
