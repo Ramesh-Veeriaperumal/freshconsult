@@ -86,6 +86,14 @@ module EmailHelper
     all_keys.present? && all_keys.any? { |key| key.to_s.include?("forward.freshdesk.com") }
   end
 
+  def customer_removed_in_reply?(ticket, user, parse_to_emails, cc_emails)
+    (parse_to_emails << cc_emails).flatten!
+    if(user.agent? && parse_to_emails.include?(ticket.requester.email))
+      return false
+    end
+    return true
+  end
+
   def email_processing_log(msg, envelope_to_address = nil)
     log_msg = msg
     if Account.current.present?
