@@ -1,0 +1,22 @@
+<% content_for :sidebar do %>
+  <div class="sidepanel">
+    <i class="common-icon-help"></i>
+    <h3 class="lead"></h3>
+  </div>
+<% end %>
+
+<div class="list-page-body shp-wrapper">
+  <h3 class="lead"><%= t('integrations.'+@installing_application.name+'.label').html_safe + " " + t("settings") %></h3>
+  <ul class="ui-form row-fluid">
+    <li>
+      <div class="row-fluid">
+        <div class="span1">
+          <img alt="Shopify-admin-page" class="shp-logo" src="/assets/helpimages/integration-shopify.svg" width="52">
+        </div>
+        <div class="span11" style="margin-top:12px;">
+          <%= t('integrations.shopify.edit.helpkit_cannot_edit').html_safe %>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

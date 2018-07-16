@@ -2797,10 +2797,12 @@ en:
         cloud_element_success: "Integration has been enabled with default configuration."
         cloud_element_settings_failure: "check your configuration and enable again."
         no_feature_error: "Please contact support and enable the crm sync feature first"
+        shopify_primary_store_reconnected: "Please reinstall app to manage stores."
       update:
         success: "App updated successfully."
         error: "Error while updating the app."
         cloud_elements_fetch_error: "Unable to fetch the Details."
+        shopify_remove_store_error: "Unable to remove the store"
       not_installed: "This app is not yet installed."
       setting_saved: "App settings have been saved successfully."
       invalid_url: "The url entered is invalid."
@@ -7851,6 +7853,7 @@ en:
     enabled: Enabled
     configure: Configure
     enable: Enable
+    connect: Connect
     click_to_disable: Disable app
     click_to_enable: Enable app
     confirm_disable: "Are you sure you want to disable this app?"
@@ -8587,11 +8590,24 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           default_content: "Please take this survey to help us serve you better. It won't take more than 2 mins."
     shopify:
       label: "Shopify"
-      desc: "View recent orders and order details of the customer in Freshdesk while resolving tickets"
-      helptext: "<h4>Shopify Integration</h4><br/><p>Configure your shopname to display customer's recent orders in Freshdesk. You will be directed to your Shopify shop to authorize Freshdesk. Once authorized, You will be able to view the Customer's recent Orders and Order details on the Ticket details and Contact Details pages. You can quickly access the details in Shopify with one click from the Widget.</p>"
+      title: "Connect your Shopify store"
+      desc: "Once you connect a store, you'll be able to see your customers' recent orders when you're working on tickets."
+      helptext: "<h4>Shopify for Freshdesk</h4><br/><p>Connect multiple Shopify stores and start seeing your customers' order details inside Freshdesk. You can even refund or cancel orders, right from inside Freshdesk.<br /><br />If you're on the older version of Freshdesk, only orders from the first store you connect will be accessible. On Freshdesk Mint, you can see order details from any store when you're working on tickets.</p><p><a href=\"https://support.freshdesk.com/support/solutions/articles/195382-the-shopify-app\" target=\"_blank\">Learn more</a></p>"
       form:
-        shop_name: "Shop Name"
-        shop_name_info: "For example, if your Shopify URL is <strong>https://my_shop_name.shopify.com</strong>, please enter <strong>my_shop_name</strong>."
+        shop_name: "Store URL"
+        shop_name_info: "If it's <b>yourstore.myshopify.com</b>, just type in <b>yourstore</b> here."
+      edit:
+        label: "Shopify - connected stores"
+        sidebar_label: "Shopify for Freshdesk"
+        sidebar: "<p>Connect multiple Shopify stores and start seeing your customers' order details inside Freshdesk. You can even refund or cancel orders, right from inside Freshdesk.<br /><br />If you're on the older version of Freshdesk, only orders from the first store you connect will be accessible. On Freshdesk Mint, you can see order details from any store when you're working on tickets.</p><p><a href=\"https://support.freshdesk.com/support/solutions/articles/195382-the-shopify-app\" target=\"_blank\">Learn more</a></p>"
+        desc: "Connect your Shopify store, easily view orders and process refunds from Freshdesk"
+        disconnect: "Disconnect"
+        connect: "Connect another store"
+        confirm_remove_store: "Are you sure you want to disconnect this store?"
+        helpkit_cannot_edit: "If you'd like to disconnect your existing store, please uninstall and install the Shopify app from the marketplace. If you'd like to manage multiple stores, please switch to the Mint experience."
+      errors:
+        cannot_refund_full_order: "Cannot refund order. It's already been cancelled, partially fulfilled or partially refunded"
+        cannot_refund_line_item: "Cannot refund this item. It's already refunded"
     outlook_contacts:
       label: "Outlook Contacts Sync"
       desc: "Periodically synchronize contacts between Outlook and Freshdesk."
