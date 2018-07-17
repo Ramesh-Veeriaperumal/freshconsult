@@ -186,6 +186,7 @@
 								.replace(/<br>/g,"\n")
 								.replace(/&lt;/g,'<')
 								.replace(/&gt;/g,'>')
+								.replace(/&amp;/g,'&')
 								.replace(new RegExp("&nbsp;", 'g')," ");
 
 			$('#insert_text_area').val(htmlText);

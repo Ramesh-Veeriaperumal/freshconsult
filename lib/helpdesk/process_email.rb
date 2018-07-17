@@ -956,6 +956,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             else
               attachments.push att
             end
+            att.skip_virus_detection = true
           end
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
@@ -1019,8 +1020,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return text if text.blank?
 
       Timeout.timeout(LARGE_TEXT_TIMEOUT) do
+        from_all_regex = "from"     # will be replaced in redis like "(from|von)"
+        from_all_regex = $redis_others.get(QUOTED_TEXT_PARSE_FROM_REGEX) || from_all_regex
+
         regex_arr = [
-          Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
+          Regexp.new("#{from_all_regex}:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
           Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
           Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
           # Temporary comment out due to process looping for large size emails(gem upgradion ussue)
@@ -1028,7 +1032,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
           Regexp.new("On((?!On).)*wrote:"),
           Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
-          Regexp.new("from:\s*", Regexp::IGNORECASE)
+          Regexp.new("#{from_all_regex}:\s*", Regexp::IGNORECASE)
         ]
         tl = text.length
 

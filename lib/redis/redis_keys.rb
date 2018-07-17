@@ -263,6 +263,9 @@ module Redis::RedisKeys
   # Key to hold the "To" of various language. This helps in identifying the original recipient while agent forward
   AGENT_FORWARD_TO_REGEX = "AGENT_FORWARD_TO_REGEX"
 
+  #From regex of different languages used in quoted text parsing
+  QUOTED_TEXT_PARSE_FROM_REGEX = "QUOTED_TEXT_PARSE_FROM_REGEX"
+
   # key for enabling fd email service to all the account
 
   ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE = "ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE"
@@ -357,6 +360,8 @@ module Redis::RedisKeys
   FRESHWORKS_OMNIBAR_SIGNUP_ENABLED = 'FRESHWORKS_OMNIBAR_SIGNUP_ENABLED'.freeze
   FRESHID_MIGRATION_IN_PROGRESS_KEY = 'FRESHID_MIGRATION_IN_PROGRESS:%{account_id}'.freeze
 
+  FRESHCONNECT_NEW_ACCOUNT_SIGNUP_ENABLED = 'FRESHCONNECT_NEW_ACCOUNT_SIGNUP_ENABLED'.freeze
+
   TRIAL_21_DAYS = "TRIAL_21_DAYS"
   UPDATE_TIME_ZONE = "UPDATE_TIME_ZONE:%{account_id}"
 
@@ -385,6 +390,7 @@ module Redis::RedisKeys
   REPORT_POST_SIDEKIQ_ENABLED              = "REPORT_POST_SIDEKIQ_ENABLED"
   SIDEKIQ_TOGGLE_AGENT_FROM_GROUPS = "SIDEKIQ_TOGGLE_AGENT_FROM_GROUPS"
   SIDEKIQ_DISPATCH_SPAM_DIGEST = "SIDEKIQ_DISPATCH_SPAM_DIGEST"
+  SEGMENT_LIMIT = 'SEGMENT_LIMIT:%{account_id}'.freeze
 
   #Temp Redis keys for resque to sidekiq migration end
 
