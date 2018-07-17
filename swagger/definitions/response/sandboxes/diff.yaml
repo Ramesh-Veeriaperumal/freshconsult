@@ -1,0 +1,37 @@
+type: object
+properties:
+  sandboxes:
+    type: object
+    properties:
+      model_name:
+        type: array
+        items:
+          type: object 
+          properties:
+            id:
+              type: string
+            status:
+              type: string 
+            changes:
+              type: array
+              items:
+                type: object
+                properties:
+                  key:
+                    type: string
+                  production_value:
+                    type: string
+                  sandbox_value:
+                    type: string
+                  status:
+                    type: string
+                  meta:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+  meta:
+    type: object
+    properties:
+      conflict:
+        type: boolean

@@ -95,8 +95,10 @@ Sidekiq.configure_client do |config|
       "ProductFeedbackWorker",
       "Freshid::ProcessEvents",
       "Community::MergeTopicsWorker",
-      "Admin::Sandbox::FileToConfigWorker",
-      "Admin::Sandbox::ConfigToFileWorker"
+      "Admin::Sandbox::FileToDataWorker",
+      "Admin::Sandbox::DataToFileWorker",
+      "Admin::Sandbox::DiffWorker",
+      "Admin::Sandbox::MergeWorker"
     ]
   end
 end
@@ -187,8 +189,10 @@ Sidekiq.configure_server do |config|
       "CollabNotificationWorker",
       "ProductFeedbackWorker",
       "Community::MergeTopicsWorker",
-      "Admin::Sandbox::ConfigToFileWorker",
-      "Admin::Sandbox::FileToConfigWorker"
+      "Admin::Sandbox::DataToFileWorker",
+      "Admin::Sandbox::FileToDataWorker",
+      "Admin::Sandbox::DiffWorker",
+      "Admin::Sandbox::MergeWorker"
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -267,8 +271,10 @@ Sidekiq.configure_server do |config|
       "CollabNotificationWorker",
       "ProductFeedbackWorker",
       "Community::MergeTopicsWorker",
-      "Admin::Sandbox::ConfigToFileWorker",
-      "Admin::Sandbox::FileToConfigWorker"
+      "Admin::Sandbox::DataToFileWorker",
+      "Admin::Sandbox::FileToDataWorker",
+      "Admin::Sandbox::DiffWorker",
+      "Admin::Sandbox::MergeWorker"
     ]
   end
 end

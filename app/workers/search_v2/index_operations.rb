@@ -37,14 +37,7 @@ class SearchV2::IndexOperations
   class RemoveForumTopics < SearchV2::IndexOperations
     def perform(args)
       args.symbolize_keys!
-      Search::V2::IndexRequestHandler.new(
-                                          'topic', 
-                                          Account.current.id, 
-                                          nil
-                                        ).remove_by_query({ 
-                                                            account_id: Account.current.id, 
-                                                            forum_id: args[:forum_id] 
-                                                          })
+      SearchService::Client.new(Account.current.id).delete_by_query('topic', { forum_id: args[:forum_id] })
     end
   end
 

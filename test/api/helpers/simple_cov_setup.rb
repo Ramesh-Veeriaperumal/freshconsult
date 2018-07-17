@@ -67,6 +67,7 @@ module SimpleCovSetup
     add_group 'apicontrollers', 'api/app/controllers'
     add_group 'apilib', 'api/lib'
     add_group 'lib', 'lib'
+    add_group 'sandbox', 'lib/sync/'
     add_group 'appmodels', 'app/models'
     add_group 'webadmin', 'app/controllers/admin'
     add_group 'webcontrollers', 'app/controllers'

@@ -106,7 +106,7 @@
       :autobots_10: 102
       :freshchat: 103
       :session_replay: 104
-      :falcons_3: 105
+      :freshconnect: 105
       :falcons_4: 106
       :falcons_5: 107
       :falcons_6: 108
@@ -168,7 +168,7 @@
       :opt_out_analytics: 163
       :disable_old_ui: 164
       :ninjas_3: 165
-      :ninjas_4: 166
+      :segments: 166
       :ninjas_5: 167
       :ninjas_6: 168
       :ninjas_7: 169
@@ -201,4 +201,5 @@
       :freshcaller_widget: false
       :opt_out_analytics: false
       :disable_old_ui: false
-      oauth2: false
+      :oauth2: false
+      :segments: false

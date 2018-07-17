@@ -7,18 +7,32 @@ module SandboxConstants
     [:provision_staging, 5],
     [:sandbox_complete, 6],
     [:destroy_sandbox, 7],
-    [:error, 99]
+    [:diff_in_progress,  8],
+    [:diff_complete,     9],
+    [:merge_in_progress, 10],
+    [:merge_complete,    11],
+    [:error, 98],
+    [:build_error, 99]
   ].freeze
 
   PROGRESS_STATUS = [
     [[1, 2, 3, 4, 5], :build_in_progress],
-    [[6], :build_complete],
-    [[7], :destroy_sandbox],
-    [[99], :error]
+    [[6],             :build_complete],
+    [[7],             :destroy_sandbox],
+    [[98],            :error],
+    [[99],            :build_error],
+    [[8],             :diff_in_progress],
+    [[9],             :diff_complete],
+    [[10],            :merge_in_progress],
+    [[11],            :merge_complete],
   ].freeze
 
   PROGRESS_KEYS_BY_TOKEN = Hash[*PROGRESS_STATUS.map { |i| i[0].map { |j| [j, i[1]] } }.flatten].freeze
 
   STATUS_KEYS_BY_TOKEN = Hash[*STATUSES.map { |i| [i[0], i[1]] }.flatten].freeze
   STATUS_TOKEN_BY_KEYS = Hash[*STATUSES.map { |i| [i[1], i[0]] }.flatten].freeze
+
+  MERGE_FIELDS = %w(sandbox meta).freeze
+
+  SANDBOX_NOTIFICATION_STATUS = [6, 8, 9, 10, 98].freeze
 end.freeze

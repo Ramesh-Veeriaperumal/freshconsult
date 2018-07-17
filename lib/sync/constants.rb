@@ -1,8 +1,11 @@
 module Sync::Constants
 
   FILE_EXTENSION       =  ".txt"
-  IGNORE_ASSOCIATIONS  =  ["id", "account_id", "updated_at", "tag_uses_count", "ticket_form_id"] # Will remove ticket_form_id after adding association
+  IGNORE_ASSOCIATIONS  =  ["id", "account_id", "updated_at", "tag_uses_count", "ticket_form_id", "content_updated_at"] # Will remove ticket_form_id after adding association
   UPDATE_ASSOCIATIONS  =  ["updated_at"]
+  MAPPING_TABLE_NAME = 'mapping_table'
+
+  IGNORE_RELATIONS_TO_PRODUCTION = ["agents"].freeze
 
   RELATIONS            = [
     # ["account_additional_settings", []],
@@ -13,12 +16,13 @@ module Sync::Constants
     ["all_va_rules",                 []],
     ["all_supervisor_rules",         []],
     ["all_observer_rules",           []],
-    ["ticket_templates",             [{:accessible => [:group_accesses, :user_accesses]}, {:shared_attachments => [:attachment]}, :attachments, :cloud_files, :parents, :children]],
-    ["canned_response_folders",      [{:canned_responses => [{:helpdesk_accessible => [:group_accesses, :user_accesses]}, {:shared_attachments => [:attachment]}]}]],
+    ["ticket_templates",             [{:accessible => [:group_accesses, :user_accesses]}, {:shared_attachments => [:attachment]}, :attachments, :cloud_files, :parents, :children, :child_templates, :parent_templates]],
+    ["canned_response_folders",      []],
+    ["canned_responses",             [{:helpdesk_accessible => [:group_accesses, :user_accesses]}, {:shared_attachments => [:attachment]}]],
     ["scn_automations",              [{:accessible => [:group_accesses, :user_accesses]}]],
     ["ticket_field_def",             []],
-    ["ticket_fields",                [:ticket_statuses, :child_levels, :flexifield_def_entry, {:section_fields => [{:section => [{:section_picklist_mappings => [:picklist_value]}]}]},  {:picklist_values => [{:sub_picklist_values => [{:sub_picklist_values => []}]}]}, {:nested_ticket_fields => [:flexifield_def_entry]}]],
-    ["agents",                       [:agent_groups, {:user => [:user_emails, :user_roles, :avatar]}]],
+    ["ticket_fields",                [:ticket_statuses, :child_levels, :flexifield_def_entry, {:section_fields => [{:section => [{:section_picklist_mappings => [:picklist_value]}]},  { :parent_ticket_field => [:flexifield_def_entry]}]},  {:picklist_values => [{:sub_picklist_values => [{:sub_picklist_values => []}]}]}, {:nested_ticket_fields => [:flexifield_def_entry]}]],
+    ["agents",                       [:agent_groups, {:user => [:user_emails, :user_roles, :avatar, :user_skills, :forum_moderator]}]],
     ["groups",                       []],
     ["roles",                        []],
     ["tags",                         []],
@@ -29,6 +33,7 @@ module Sync::Constants
     ["company_form",                 [{:all_fields => [:custom_field_choices]}]],
     ["custom_surveys",               [{:all_fields => [:custom_field_choices]}]],
     ["status_groups",                []],
+    ["skills",                       []],
     ["helpdesk_permissible_domains", []],
     ["products",                     []]
   ]
@@ -49,9 +54,9 @@ module Sync::Constants
 
   #TODO: Move to a class which does all Post migration activities
   POST_MIGRATION_ACTIVITIES = {
-    "Helpdesk::Attachment" => lambda { |master_account_id, mapping_data = {}|
+    "Helpdesk::Attachment" => lambda { |master_account_id, mapping_table = {}, resync = false|
+      mapping_data = mapping_table["Helpdesk::Attachment"][:id]
       account = Account.current
-
       account.attachments.where({:id  => mapping_data.values}).each do |attachment|
         source_attachment_path      = Helpdesk::Attachment.s3_path(mapping_data.key(attachment.id), attachment.content_file_name)
         destination_attachment_path = Helpdesk::Attachment.s3_path(attachment.id, attachment.content_file_name)
@@ -65,9 +70,14 @@ module Sync::Constants
           puts "Error - #{e}"
         end
       end
-      Helpdesk::SharedAttachment.where(["attachment_id in (?)", mapping_data.keys]).each do |att|
-        att.attachment_id = mapping_data[att.attachment_id]
-        att.save
+    },
+    "Group"  => lambda { |master_account_id, mapping_table = {}, resync = false|
+      return if resync
+      account = Account.current
+      users_mapping_data = mapping_table["User"][:id]
+      account.groups.where('escalate_to IS NOT  ?', nil).each do|group|
+        group.escalate_to = users_mapping_data[group.escalate_to]
+        group.save
       end
     }
   }
@@ -85,6 +95,23 @@ module Sync::Constants
     "clear_account_status_groups_cache"
   ]
 
-  GIT_ROOT_PATH        = "#{Rails.root}/tmp/sandbox"  
-  
+  # Merge will follow this order. Modified files will use added files id. So, we insert added first.
+  MERGE_FILES_TYPES = [
+      :added,
+      :modified,
+      :deleted
+  ].freeze
+
+  GIT_ROOT_PATH        = "#{Rails.root}/tmp/sandbox"
+  RESYNC_ROOT_PATH    = "#{Rails.root}/tmp/resync"
+
+  LOGO_MAP = {
+    "agent_password_policy"        => "security",
+    "contact_password_policy"      => "security",
+    "ticket_field_def"             => "ticket_fields",
+    "canned_response_folders"      => "canned_responses",
+    "status_groups"                => "groups",
+    "company_form"                 => "contact_form",
+    "helpdesk_permissible_domains" => "helpdesk"
+  }
 end

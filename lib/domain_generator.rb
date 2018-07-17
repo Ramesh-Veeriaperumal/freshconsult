@@ -11,7 +11,7 @@ class DomainGenerator
 
 	validates_presence_of :email
 	validate :email_validity
-
+	validate :disposable_email?
 
 	def initialize(email)
 		self.email = Mail::Address.new(email)
@@ -63,11 +63,11 @@ class DomainGenerator
 	end
 
 	def domain_prefix_type
-		@domain_prefix_type ||= (email_free_or_disposable? ? "name" : "company_name")
+		@domain_prefix_type ||= (email_free? ? "name" : "company_name")
 	end
 
-	def email_free_or_disposable?
-		(Freemail.free?(email_address) || Freemail.disposable?(email_address))
+	def email_free?
+		Freemail.free?(email_address)
 	end
 
 	def email_address
@@ -84,9 +84,14 @@ class DomainGenerator
 		SecureRandom.random_number.to_s[2..4]
 	end
 
+	# validations
 	def email_validity
 		unless email_address.match(AccountConstants::EMAIL_VALIDATOR)
 			self.errors.add(:email, I18n.t("activerecord.errors.messages.email_invalid"))
 		end
+	end
+
+	def disposable_email?
+		self.errors.add(:email, I18n.t("activerecord.errors.messages.email_disposable")) if Freemail.disposable?(email_address)
 	end
 end

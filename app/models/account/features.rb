@@ -1,14 +1,14 @@
 class Account < ActiveRecord::Base
 
   LP_FEATURES   = [:select_all, :round_robin_capping, :suggest_tickets,
-                   :customer_sentiment_ui, :dkim, :scheduled_ticket_export, 
+                   :customer_sentiment_ui, :dkim, :scheduled_ticket_export,
                    :ticket_contact_export, :email_failures, :disable_emails,
                    :falcon_portal_theme, :freshid, :freshchat_integration,:year_in_review_2017,
                    :facebook_page_redirect, :announcements_tab, :archive_ghost,
                    :ticket_central_publish, :solutions_central_publish, :es_msearch,
                    :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
-                   :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, 
-                   :imap_error_status_check, :va_any_field_without_none, :api_es, :sandbox_lp, 
+                   :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3,
+                   :imap_error_status_check, :va_any_field_without_none, :api_es, :sandbox_lp,
                    :encode_emoji, :audit_logs_central_publish, :auto_complete_off,
                    :dependent_field_validation, :post_central_publish, :encode_emoji_subject,
                    :time_sheets_central_publish, :twitter_common_redirect, :canned_forms,
@@ -26,7 +26,7 @@ class Account < ActiveRecord::Base
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
-      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay
+      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments, :freshconnect
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -227,6 +227,10 @@ class Account < ActiveRecord::Base
 
   def collaboration_enabled?
     @collboration ||= has_feature?(:collaboration) && self.collab_settings.present?
+  end
+
+  def freshconnect_enabled?
+    has_feature?(:freshconnect) && freshconnect_account.present? && freshconnect_account.enabled
   end
 
   def archive_tickets_feature_enabled?

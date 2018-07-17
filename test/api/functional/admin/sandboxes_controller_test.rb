@@ -21,6 +21,7 @@ class Admin::SandboxesControllerTest < ActionController::TestCase
   end
 
   def test_index
+    @account.create_sandbox_job
     get :index, controller_params({ version: 'private' })
     assert_response 200
   end
@@ -39,7 +40,7 @@ class Admin::SandboxesControllerTest < ActionController::TestCase
   end
 
   def test_destroy_with_sandbox_account
-    sandbox_job = @account.create_sandbox_job(:sandbox_account_id => rand(30..40))
+    sandbox_job = create_sandbox_job
     delete :destroy, controller_params({ version: 'private',id: sandbox_job.id } )
     assert_response 204
     destroy_sandbox_job
@@ -61,16 +62,93 @@ class Admin::SandboxesControllerTest < ActionController::TestCase
 
   def test_index_without_feature
     @account.revoke_feature(:sandbox)
+    @account.rollback(:sandbox_lp)
     get :index, controller_params({ version: 'private' })
     assert_response 403
     @account.add_feature(:sandbox)
+    @account.launch(:sandbox_lp)
   end
 
   def test_index_with_sandbox_account
-    sandbox_job = @account.create_sandbox_job(:sandbox_account_id => rand(30..40))
+    sandbox_job = create_sandbox_job
     get :index, controller_params({ version: 'private' })
     assert_response 200
-    match_json(sandbox_index_pattern(sandbox_job))
+    # match_json(sandbox_index_pattern(sandbox_job))
+    destroy_sandbox_job
+  end
+
+  #phase2
+
+  def test_diff_without_sandbox_complete
+    sandbox_job = create_sandbox_job
+    sandbox_job.update_attribute(:status, rand(1..5))
+    get :diff, controller_params({ version: 'private',id: sandbox_job.id })
+    assert_response 403
+    destroy_sandbox_job
+  end
+
+  def test_diff_with_sandbox_complete
+    sandbox_job = create_sandbox_job
+    sandbox_job.update_attribute(:status, 6)
+    get :diff, controller_params({ version: 'private',id: sandbox_job.id })
+    assert_response 200
+    destroy_sandbox_job
+  end
+
+  def test_diff_with_diff_in_progress
+    sandbox_job = create_sandbox_job
+    sandbox_job.update_attribute(:status, 8)
+    get :diff, controller_params({ version: 'private',id: sandbox_job.id })
+    assert_response 200
+    destroy_sandbox_job
+  end
+
+  def test_diff_with_diff_complete
+    sandbox_job = create_sandbox_job
+    sandbox_job.update_attribute(:status, 9)
+    get :diff, controller_params({ version: 'private',id: sandbox_job.id })
+    assert_response 200
+    destroy_sandbox_job
+  end
+
+  def test_diff_with_force_diff
+    sandbox_job = create_sandbox_job
+    sandbox_job.update_attribute(:status, 9)
+    get :diff, controller_params({ version: 'private',id: sandbox_job.id, force: true })
+    assert_response 200
+    destroy_sandbox_job
+  end
+
+  def test_diff_with_force_diff_in_progress
+    sandbox_job = create_sandbox_job
+    sandbox_job.update_attribute(:status, 5)
+    get :diff, controller_params({ version: 'private',id: sandbox_job.id, force: true })
+    assert_response 403
+    destroy_sandbox_job
+  end
+
+  def test_merge_without_diff_complete
+    sandbox_job = create_sandbox_job
+    sandbox_job.update_attribute(:status, rand(1..8))
+    post :merge, controller_params({ version: 'private',id: sandbox_job.id })
+    assert_response 403
+    destroy_sandbox_job
+  end
+
+  def test_merge_with_conflicts
+    sandbox_job = create_sandbox_job
+    sandbox_job.update_attribute(:status, 9)
+    sandbox_job.additional_data[:conflict] = true
+    post :merge, controller_params({ version: 'private',id: sandbox_job.id })
+    assert_response 403
+    destroy_sandbox_job
+  end
+
+  def test_merge
+    sandbox_job = create_sandbox_job
+    sandbox_job.update_attribute(:status, 9)
+    post :merge, controller_params({ version: 'private',id: sandbox_job.id })
+    assert_response 200
     destroy_sandbox_job
   end
 

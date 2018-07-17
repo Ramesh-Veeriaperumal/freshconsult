@@ -6,7 +6,7 @@ class ConversationValidation < ApiValidation
                 :include_quoted_text, :include_original_attachments, :cloud_file_ids,
                 :cloud_files, :send_survey, :last_note_id, :include_surveymonkey_link, :inline_attachment_ids
 
-  validates :body, data_type: { rules: String, required: true }, if: -> { !forward? }
+  validates :body, data_type: { rules: String, required: true }, if: -> { !forward? && attachment_ids.blank? && cloud_files.blank? }
   validates :body, data_type: { rules: String }, on: :forward
   validates :body, required: true, if: -> { include_quoted_text.to_s == 'false' || full_text.present? }, on: :forward
   validates :full_text, data_type: { rules: String }

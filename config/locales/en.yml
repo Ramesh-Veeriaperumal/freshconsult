@@ -2184,6 +2184,7 @@ en:
       failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator
     security:
       index:
+        not_admin_email: "Please enter a valid admin email" 
         shared_secret: Shared Secret
         remote_login_url: Remote login URL
         shared_secret_info: Please copy this token and keep it safe. You need this to enable Remote authentication. This is a shared secret between you and Freshdesk.
@@ -2256,10 +2257,10 @@ en:
           invalid_fingerprint: Please provide a valid SAML Certificate Fingerprint
       helpnote:
         title: Security Settings
-        info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk"> here</a>.
-        info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the freshdesk.com domain. <b>SSL option for custom domains are available from Blossom Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new">request for a custom SSL certificate for your vanity support URL here</a>.
-        trusted_ip: <b>Restricting access by IP address</b><br>You can restrict access to your support portal to IP addresses from your company or organization. You can add unlimited number of IP ranges that have access, as well as define whether you want to control access for customers as well, or only for your agents. <a href="https://support.freshdesk.com/support/solutions/articles/195168"> Learn more.</a>
-        info4: <b>Password Policy</b><br>You can set up different password policies for agents and customers. The advanced settings allow you to configure custom password policies such as password expiry time and minimum password length. The changes you make will apply to new and existing agents and customers. Learn more about password policy <a href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy"> here</a>.
+        info1: <b>Allowing Single Sign On access </b><br>If your users already have login credentials with you, such as through Active Directory or your own web applications, you can allow them to login to your support portal with these credentials using Single Sign On (SSO). Learn more about SSO<a href="https://support.freshdesk.com/support/solutions/articles/31166-single-sign-on-remote-authentication-in-freshdesk" target="_top"> here</a>.
+        info2: <b>Enabling SSL security </b><br>If you are not using a custom domain for your support portal, Freshdesk offers a default wildcard SSL certificate to accounts on the freshdesk.com domain. <b>SSL option for custom domains are available from Blossom Plan.</b> You can <a href="https://support.freshdesk.com/support/tickets/new" target="_top">request for a custom SSL certificate for your vanity support URL here</a>.
+        trusted_ip: <b>Restricting access by IP address</b><br>You can restrict access to your support portal to IP addresses from your company or organization. You can add unlimited number of IP ranges that have access, as well as define whether you want to control access for customers as well, or only for your agents. <a href="https://support.freshdesk.com/support/solutions/articles/195168" target="_top"> Learn more.</a>
+        info4: <b>Password Policy</b><br>You can set up different password policies for agents and customers. The advanced settings allow you to configure custom password policies such as password expiry time and minimum password length. The changes you make will apply to new and existing agents and customers. Learn more about password policy <a href="https://support.freshdesk.com/support/solutions/articles/213865-password-policy" target="_top"> here</a>.
       password_security:
         default: Default
         advanced: Advanced
@@ -2460,6 +2461,7 @@ en:
         delete_topic: Delete and Moderate forum topic
         customers: Customers
         view_contacts: View customers tab
+        manage_segments: Create or edit new contact segment or company segment
         manage_contacts: Create or edit new contact or company
         delete_contact: Delete contact or company
         export_tickets: Export Tickets
@@ -4370,6 +4372,7 @@ en:
         agent_email: An agent must have exactly one valid email
         email_not_unique: Email has already been taken
         email_invalid: Email is invalid
+        exceeded_email: Sorry, you cannot sign up for any more accounts
         user_emails: Please enter at least one contact detail
         max_user_emails: A contact cannot have more than 10 emails
         max_user_companies: A contact cannot have more than 20 companies
@@ -4379,6 +4382,7 @@ en:
         edit_broadcast_note: "Broadcast message can't be edited"
         max_scheduled_exports_per_account: Cannot have more than %{max_limit} scheduled exports
         skill_name: Should not contain comma
+        email_disposable: Register using your work email
       full_messages:
         format: "%{attribute} %{message}"
       template:
@@ -5613,6 +5617,8 @@ en:
   file_url: Full XML Export URL
   how_to: Question
   customers: Customers
+  segment_notice: "To filter and group customers based on priority, subscription or any other attribute,"
+  mint: "Switch to Mint"
   enter_valid_domains: "is invalid. Enter valid domains"
   companies:
     no_contacts: '%{no_contacts} contacts'
@@ -12057,6 +12063,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     attached: "Added to response"
     remove: "Remove"
     mb: " MB "
+    virus_found_warning: "Anti-Virus warning: Attachment blocked. The file contains a virus"
   ml:
     similat_tickets_found: Similar Tickets found
     no_suggestions: Oops! No suggestions.
@@ -12319,9 +12326,29 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
   sandbox:
     live: Sandbox is live
+    sync_complete: Sandbox sync complete!
     error:
-      create: sandbox account already exist
-    email: 'This email is generated from a sandbox account'
+      create: Sandbox already exists
+    sandbox_mail: This email is generated from a sandbox account
+    mail:
+      greeting: Hi
+      live_message: Your sandbox has <br> been created
+      sandbox_button: TAKE ME TO SANDBOX
+      button_error: If the button above doesn't work, paste this link <br> into your web browser
+      freshdesk_recommends: Freshdesk recommends
+      recommended_point_1: Notify all helpdesk admins about the creation of the sandbox account and the expected time of testing.
+      recommended_point_2: Share the list of changes you will be making with other admins and collate changes from them as well to avoid confusion.
+      recommended_point_3: Request all admins to avoid making changes to your Freshdesk account while the sandbox account is live.
+      recommended_point_4: Plan your testing carefully and keep the sandbox account live for only short periods of time to avoid changes from accumulating.
+      recommended_point_5: Make sure all admins have completed testing in the sandbox account before initiating a sync.
+      recommended_point_6: Review all changes carefully before syncing back to your Freshdesk account.
+      recommended_point_7: Sync the sandbox account to your Freshdesk account during non-peak hours as it might take time if you have a lot of changes.
+      footer:
+        cheers: Cheers!
+        info_line: Questions? The Freshdesk team is always here to help. Contact <br/><span>support@freshdesk.com</span> and we'll get back to you soon.
+      diff_success: The following changes were synced from your Sandbox account to your Freshdesk account
+      diff_failure: Some changes in the Sandbox were not copied to your Freshdesk account.
+      diff_is_edited: Edited Properties
     banner:
       production_info: Your sandbox account is curently active. We do not recommend you make any changes to your freshdesk account. <a href='http://%{url}' target=_blank rel="noreferrer noopener">Take me there.</a>
-
+      

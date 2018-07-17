@@ -648,7 +648,7 @@ class Account < ActiveRecord::Base
     @signup_method ||= (
       key = ACCOUNT_SIGN_UP_PARAMS % {:account_id => self.id}
       json_response = get_others_redis_key(key)
-      json_response.present? ? JSON.parse(json_response)["signup_method"] : self.conversion_metric.try(:[], :session_json).try(:[], :signup_method)
+      json_response.present? ? JSON.parse(json_response)['signup_method'] : self.conversion_metric.signup_method
     )
   end
 
@@ -705,6 +705,10 @@ class Account < ActiveRecord::Base
       attachment_ids << get_attachment_ids(canned_response.content_html)
     end
     attachment_ids.flatten.uniq
+  end
+
+  def sandbox_domain
+    DomainMapping.where(account_id: sandbox_job.try(:sandbox_account_id)).first.try(:domain)
   end
 
   protected
