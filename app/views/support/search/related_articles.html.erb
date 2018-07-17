@@ -9,6 +9,8 @@
 <% else %>
 <script type="text/javascript">
 	jQuery("#<%= @container %>").remove();
-	layoutResize(".main", ".sidebar");
+	window.onload = function() {
+		layoutResize(".main", ".sidebar");
+	};
 </script>
 <% end %>

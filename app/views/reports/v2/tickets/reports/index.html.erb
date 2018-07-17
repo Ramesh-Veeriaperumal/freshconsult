@@ -133,6 +133,7 @@
 	HelpdeskReports.locals.date_lag = <%= @date_lag_by_plan %>;
 	HelpdeskReports.locals.account_time_zone = '<%= @account_time_zone %>';
 	HelpdeskReports.locals.enable_ticket_list = <%= @enable_ticket_list %>;
+	HelpdeskReports.locals.is_new_ticket_recieved_metric_enabled = <%= enable_new_ticket_recieved_metric? %>;
 	HelpdeskReports.locals.enable_schedule_report = <%= enable_schedule_report? %>;
 	HelpdeskReports.locals.report_options_hash = <%= @nf_hash.to_json.html_safe %>;
 	HelpdeskReports.locals.base_task_list_title = "<%=t('helpdesk_reports.tickets') %>";
