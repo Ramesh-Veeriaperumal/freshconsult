@@ -16,6 +16,7 @@ window.App = window.App || {};
 			this.Sidebar.hide();
 			this.setSubModule();
 			this.bindHandlers();
+			this.recalcSticky();
 			$('.pagination a').attr('data-pjax', '#body-container');
 
 			if (this.current_module !== '') {
@@ -52,6 +53,23 @@ window.App = window.App || {};
 
 		bindHandlers: function () {
 			this.bindDeleteConfirm();
+		},
+
+		recalcSticky: function (ele) {
+			var elements = ['#sticky_header', '#cm-discussion-wrapper'];
+			
+			$(document).on("scroll.discussions.sticky.recalc", function () {
+				elements.forEach(function(element) {
+					if($(element).length) { 
+						var top = $(element).css('top');
+						if (top !== 'auto' && top !== '0px')
+						{
+							var sticky = $(element).data('sticky');
+							 sticky.recalc();
+						}
+					}
+				});
+			});
 		},
 
 		bindDeleteConfirm: function () {
@@ -102,6 +120,7 @@ window.App = window.App || {};
 
 		onLeave: function (data) {
 			this.Sidebar.leave();
+			$(document).off('.discussions.sticky.recalc');
 			if (this.current_module !== '') {
 				this[this.current_module].onLeave();
 				this.current_module = '';

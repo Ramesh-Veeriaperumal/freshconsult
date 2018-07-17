@@ -83,7 +83,11 @@ class Helpdesk::AttachmentsController < ApplicationController
         end
       end
     else
-      render :json => [{:error => "custom_failure"}], :status => 304
+      if @attachment.errors && @attachment.errors.full_messages.present? && @attachment.errors.full_messages.first == "VIRUS_FOUND"
+        render :json => { :errors => [t(:'multifile_attachments.virus_found_warning')] }, :status => 422
+      else
+        render :json => [{:error => "custom_failure"}], :status => 304
+      end
     end
   end
 
