@@ -177,16 +177,26 @@ module Ember
       end
 
       def sanitize_params
-        construct_primary_company
+        construct_or_delete_primary_company
         super
       end
 
-      def construct_primary_company
-        return unless params[cname][:company].present?
-        @company_param = params[cname].delete(:company)
-        @def_company = find_or_create_company(@company_param)
-        return unless @def_company
-        build_primary_company
+      def construct_or_delete_primary_company
+        if params[cname][:company].present?
+          @company_param = params[cname].delete(:company)
+          @def_company = find_or_create_company(@company_param)
+          return unless @def_company
+          build_primary_company
+        elsif delete_primary_company?
+          company_attributes = []
+          @item.user_companies.each do |user_company|
+            company_attributes << {
+              'id' => user_company.id,
+              '_destroy' => 1
+            }
+          end
+          @item.user_companies_attributes = Hash[(0...company_attributes.size).zip company_attributes]
+        end
       end
 
       def build_primary_company
@@ -196,6 +206,11 @@ module Ember
           params[cname][:company_id] = @def_company.id
           params[cname][:client_manager] = @company_param[:view_all_tickets]
         end
+      end
+
+      def delete_primary_company?
+        !current_account.multiple_user_companies_enabled? && update? &&
+          params[cname].key?(:company) && params[cname][:company].blank?
       end
 
       def construct_all_companies
