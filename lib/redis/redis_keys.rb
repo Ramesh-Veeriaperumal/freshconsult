@@ -346,6 +346,11 @@ module Redis::RedisKeys
   CONTACT_DELETE_FOREVER_MAX_TIME = "CONTACT_DELETE_FOREVER_MAX_TIME"
   CONTACT_DELETE_FOREVER_CONCURRENCY = "CONTACT_DELETE_FOREVER_CONCURRENCY"
 
+  # Undo Send Keys
+  UNDO_SEND_BODY_KEY = "UNDO_SEND_BODY_KEY:%{account_id}:%{user_id}:%{ticket_id}:%{created_at}"
+  UNDO_SEND_KEY = "UNDO_SEND_KEY:%{account_id}:%{user_id}:%{ticket_id}:%{created_at}:SEND"
+  UNDO_SEND_REPLY_ENQUEUE = "UNDO_SEND_REPLY_ENQUEUE:%{account_id}:%{ticket_id}"
+
   #JWT api keys
   JWT_API_JTI = "JWT:%{account_id}:%{user_id}:%{jti}"
   ZENDESK_IMPORT_APP_KEY = "ZENDESK_IMPORT_APP"

@@ -12,6 +12,8 @@ module Ember
     include AssociateTicketsHelper
     include AttachmentsValidationConcern
     include DeleteSpamConcern
+    include Redis::UndoSendRedis
+
     decorate_views(
       decorate_objects: [:ticket_conversations],
       decorate_object: %i(create update reply forward facebook_reply tweet reply_to_forward broadcast)
@@ -21,6 +23,7 @@ module Ember
     before_filter :set_defaults, only: [:forward]
     before_filter :link_tickets_enabled?, only: [:broadcast]
     before_filter :validate_attachments_permission, only: [:create, :update]
+    before_filter :check_enabled_undo_send, only: [:undo_send]
 
     SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply reply_to_forward broadcast).freeze
     SLAVE_ACTIONS = %w(ticket_conversations).freeze
@@ -43,10 +46,22 @@ module Ember
     end
 
     def reply
+      @last_note_id = params[:last_note_id].to_i
+      @last_note_id = @ticket.notes.last.try(:id) if @last_note_id == 1
       return unless validate_params
       sanitize_and_build
       return unless validate_delegator(@item, delegator_hash)
-      save_note_and_respond
+      if current_user.enabled_undo_send?
+        save_note_and_respond_later
+      else
+        save_note_and_respond
+      end
+    end
+
+    def undo_send
+      set_worker_choice_false(current_user.id, params[:id], params['created_at'].to_time.iso8601)
+      remove_undo_reply_enqueued(params[:id])
+      head 204
     end
 
     def reply_to_forward
@@ -111,10 +126,28 @@ module Ember
 
     def reply_forward_template
       @item = last_forwardable_note if action_name.to_sym == :latest_note_forward_template
-      @agent_signature = signature
-      @content = template_content
-      @quoted_text = quoted_text(@item || @ticket, forward_template?)
-      fetch_to_cc_bcc_emails
+      if params.key?(:body)
+        time = params[:time]
+        body_html = get_reply_template_content(current_user.id, @ticket.display_id, time)
+        full_text_html = get_quoted_content(current_user.id, @ticket.display_id, time)
+        attachments = (params[:attachments].map do |att|
+          current_account.attachments.where(id: att['id']).first
+        end).compact
+        @inline_attachment_ids = params[:inline].map(&:to_i)
+        @attachments = attachments
+        @content = body_html
+        @quoted_text = compute_quoted_text(body_html, full_text_html)
+        @quoted_text = nil if @quoted_text.blank?
+        @cc_emails = params[:cc]
+        @bcc_emails = params[:bcc]
+        @agent_signature = ''
+        delete_body_data(current_user.id, @ticket.display_id, time)
+      else
+        @agent_signature = signature
+        @content = template_content
+        @quoted_text = quoted_text(@item || @ticket, forward_template?)
+        fetch_to_cc_bcc_emails
+      end
       @cc_emails.clear if forward_template?
       fetch_attachments
       render action: :template
@@ -190,6 +223,13 @@ module Ember
         preload_options
       end
 
+      def save_note_and_respond_later
+        is_success = save_note_later
+        @ticket.draft.clear if reply?
+        set_dummy_note_id
+        render_response(is_success)
+      end
+
       def save_note_and_respond
         is_success = save_note
         # publish solution is being set in kbase_email_included based on privilege and email params
@@ -256,12 +296,13 @@ module Ember
       end
 
       def save_note
-        # assign attributes post delegator validation
-        @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
-        @item.inline_attachment_ids = @inline_attachment_ids if @inline_attachment_ids
-        assign_from_email
-        assign_attributes_for_forward if forward?
+        assign_extras
         @item.save_note
+      end
+
+      def save_note_later
+        assign_extras
+        @item.save_note_later(@publish_solution)
       end
 
       def assign_from_email
@@ -488,7 +529,30 @@ module Ember
         super.where(ApiTicketConstants::CONDITIONS_FOR_TICKET_ACTIONS)
       end
 
+      def assign_extras
+        draft_attachments = @delegator.draft_attachments
+        @item.attachments = @item.attachments + draft_attachments if draft_attachments
+        @item.inline_attachment_ids = @inline_attachment_ids if @inline_attachment_ids
+        assign_from_email
+        assign_attributes_for_forward if forward?
+      end
+
+      def compute_quoted_text(body_html, full_text_html)
+        if full_text_html.present?
+          full_text_html.slice! body_html
+          full_text_html
+        end
+      end
+
+      def check_enabled_undo_send
+        render_request_error(:access_denied, 403) unless current_user.enabled_undo_send?
+      end
+
+      def set_dummy_note_id
+        # for undo_send, since we don't have a note id for 10 seconds, we are rendering a note with dummy note id
+        @item.id = @last_note_id + 1 if @item.new_record?
+      end
+
       wrap_parameters(*wrap_params)
   end
-
 end

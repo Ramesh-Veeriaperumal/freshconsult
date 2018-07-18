@@ -1,0 +1,17 @@
+post:
+  tags: [conversation]
+  description: Undo a Reply
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/undo_reply_input'
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+    403:
+      description: Access denied

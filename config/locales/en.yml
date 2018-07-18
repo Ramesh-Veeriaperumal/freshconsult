@@ -414,6 +414,9 @@ en:
   not_supported: "is not supported"
   logmein_source: LogMeIn Rescue
   working: Working
+  undo_toggle: "Undo send"
+  undo_toggle_tip: "Please refresh the page for this setting to take effect"
+  undo_send_solution_error: "Ticket %{ticket_display_id} subject is too short to be an article title"
   attach: Attach
   attachment: Attachment
   attachments: Attachments

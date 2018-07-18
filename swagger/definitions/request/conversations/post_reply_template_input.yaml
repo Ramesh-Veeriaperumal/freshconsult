@@ -1,0 +1,24 @@
+type: object
+allOf:
+  - properties:
+      attachments:
+        type: array
+        items:
+          type: string
+          format: byte
+      bcc:
+        type: array
+        items:
+          type: string
+      body:
+        type: string
+      cc:
+        type: array
+        items:
+          type: string
+      inline:
+        type: array
+        items:
+          type: integer
+      time:
+        type: string

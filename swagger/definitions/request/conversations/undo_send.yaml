@@ -1,0 +1,5 @@
+type: object
+allOf:
+  - properties:
+      created_at:
+        type: string
