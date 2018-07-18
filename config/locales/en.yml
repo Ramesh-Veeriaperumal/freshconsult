@@ -414,6 +414,10 @@ en:
   not_supported: "is not supported"
   logmein_source: LogMeIn Rescue
   working: Working
+  undo_toggle: "Undo send"
+  undo_toggle_tip: "Please refresh the page for this setting to take effect."
+  undo_toggle_error: "Sorry, something went wrong!"
+  undo_toggle_success: "Please refresh for this setting to take effect."
   attach: Attach
   attachment: Attachment
   attachments: Attachments
