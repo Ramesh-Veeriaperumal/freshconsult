@@ -90,9 +90,9 @@ module EmailHelper
     all_keys.present? && all_keys.any? { |key| key.to_s.include?("forward.freshdesk.com") }
   end
 
-  def customer_removed_in_reply?(ticket, user, parse_to_emails, cc_emails)
+  def customer_removed_in_reply?(ticket, in_reply_to, parse_to_emails, cc_emails)
     (parse_to_emails << cc_emails).flatten!
-    if((!reply_to_notification?(key)) && !parse_to_emails.include?(ticket.requester.email))
+    if((!reply_to_notification?(in_reply_to)) && !parse_to_emails.include?(ticket.requester.email))
       return true
     end
     return false
