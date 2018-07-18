@@ -1322,7 +1322,6 @@ div[class$="-toggle"]{
     }
   }
 
-
   .btn {
     font-size: 12px;
       border: none;
@@ -1406,6 +1405,10 @@ div[class$="-toggle"]{
         background-color: $app-primary-btn-disabled;
         color: $app-btn-text-light;
         border: 1px solid $app-primary-btn-disabled;
+      }
+
+      &--uppercase {
+        text-transform: uppercase;
       }
 
       input {
