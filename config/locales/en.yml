@@ -430,7 +430,7 @@ en:
   dropbox_choose_file: Choose file
   dropbox_choose_file_from: Choose file from Dropbox
   dropbox_plaintext: Dropbox Attachments
-  onedrive_attach_from_text: Attach from <b>Onedrive</b>
+  onedrive_attach_from_text: Attach from <b>OneDrive (deprecated)</b>
   cloudfile_plaintext: Attachments on Cloud
   box_attach_label: Attach from
   box_attach_from: Attach from <b>Box</b>
@@ -8845,6 +8845,13 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       desc: "Attach and Share your data/files from onedrive."
       denied_scope: "You denied access to this app. Please select yes to grant access to this app. Close this window and click 'Attach from onedrive' again."
       error: "A problem has occured in opening your Onedrive files. Please try again."
+      deprecated_title: "OneDrive app deprecated"
+      deprecated_message: "OneDrive is no longer supported in the classic version of Freshdesk. Switch to <a href='https://support.freshdesk.com/support/solutions/articles/229464' target='_blank'>the Mint experience</a> and install the new app to continue using OneDrive."
+    onedrive_mint:
+      label: "OneDrive"
+      desc: "Attach and Share your data/files from OneDrive."
+      form:
+        application_id: "OneDrive application ID for your Freshdesk account"
     pivotal_tracker:
       label: "Pivotal Tracker"
       desc: "Create Stories in Pivotal Tracker and track them from within freshdesk"

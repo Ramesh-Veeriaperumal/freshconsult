@@ -134,7 +134,7 @@
 				vertical-align: middle;
 				background: inline-image('cdn-ignored/inline-images/box.png') no-repeat #ffffff;
 			}
-			.file-types-onedrive{
+			.file-types-onedrive, .file-types-onedrive_mint{
 				margin: 0;
 				@include padding(3px 0px 3px 25px);
 				width: auto;
@@ -142,6 +142,15 @@
 				display: inline-block;
 				vertical-align: middle;
 				background: inline-image('cdn-ignored/inline-images/onedrive.png') no-repeat #ffffff;
+			}
+			.file-types-google_drive{
+				margin: 0;
+				@include padding(3px 0px 3px 25px);
+				width: auto;
+				height: 13px;
+				display: inline-block;
+				vertical-align: middle;
+				background: inline-image('cdn-ignored/inline-images/google_drive.png') no-repeat #ffffff;
 			}
 		}
 	}
