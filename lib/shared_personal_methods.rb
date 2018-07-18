@@ -91,7 +91,8 @@ module SharedPersonalMethods
   def reset_access_type
     unless has_privilege?
       params[module_type][:accessible_attributes] = {
-        "access_type" => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]}
+        "access_type" => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
+      }
     end
     accesses = params[module_type][:accessible_attributes]
     if (accesses[:access_type].to_i == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users])
