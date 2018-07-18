@@ -82,16 +82,20 @@ module EmailHelper
     all_keys.present? and all_keys.any? { |key| key.to_s.include? "private-notification.freshdesk.com" }
   end
 
+  def reply_to_notification?(key)
+    key.to_s.include? "notification.freshdesk.com"
+  end
+
   def reply_to_forward(all_keys)
     all_keys.present? && all_keys.any? { |key| key.to_s.include?("forward.freshdesk.com") }
   end
 
   def customer_removed_in_reply?(ticket, user, parse_to_emails, cc_emails)
     (parse_to_emails << cc_emails).flatten!
-    if(user.agent? && parse_to_emails.include?(ticket.requester.email))
-      return false
+    if((!reply_to_notification?(key)) && !parse_to_emails.include?(ticket.requester.email))
+      return true
     end
-    return true
+    return false
   end
 
   def email_processing_log(msg, envelope_to_address = nil)
