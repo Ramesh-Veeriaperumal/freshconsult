@@ -4890,3 +4890,23 @@ div[class*='checkbox-ticket']{
 		color: #aaa;
 	}
 }
+
+/*---------- Twitter Images CSS -------*/
+.twitter_media_content {
+  padding-top: 18px;  
+  .twitter_image {
+    overflow: hidden;
+    cursor: pointer;
+    width: 180px;
+    height: 180px;
+    display: inline-block;
+    @include margin-right(10px);
+    border: 1px solid #dadfe3;
+    img { 
+      object-fit: cover;
+      height: 100% !important;
+      width: 100%;
+    }
+  }
+}
+
