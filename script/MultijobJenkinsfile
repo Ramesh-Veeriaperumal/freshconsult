@@ -27,5 +27,11 @@ node(params.LABEL1) {
           parameters: [string(name: 'NODE', value: params.LABEL3),string(name: 'BRANCH',value: "$params.ghprbSourceBranch"),string(name: 'PULLID',value: "$params.ghprbPullId"),string(name: 'PIPELINE_BRANCH',value: "$ghprbSourceBranch")]
         }
       }
+      tasks["Backend Falcon Sandbox Unit Tests"] = {
+        stage ("Trigger Job"){
+          build job: 'prestaging-falcon-sandbox-tests-backend-pipeline',
+          parameters: [string(name: 'NODE', value: label),string(name: 'BRANCH',value: "$params.sha1"),string(name: 'PIPELINE_BRANCH',value: "$params.ghprbSourceBranch")]
+        }
+      }
      parallel tasks
 }

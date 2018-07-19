@@ -83,10 +83,11 @@ module Sync::Constants
   }
 
   MODEL_MEMCACHE_KEYS = {
-    "Features::Feature"         => ["clear_features_from_cache"],
-    "HelpdeskPermissibleDomain" => ["clear_helpdesk_permissible_domains_from_cache"],
-    "Product"                   => ["clear_fragment_caches", "clear_cache"]
-  }
+    'Features::Feature'         => ['clear_features_from_cache'],
+    'HelpdeskPermissibleDomain' => ['clear_helpdesk_permissible_domains_from_cache'],
+    'Product'                   => ['clear_fragment_caches', 'clear_cache'],
+    'Admin::Skill'              => ['clear_skills_cache']
+  }.freeze
 
   ACCOUNT_MEMCACHE_KEYS = [
     "clear_contact_password_policy_from_cache", 
