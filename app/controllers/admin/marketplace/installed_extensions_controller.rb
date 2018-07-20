@@ -9,7 +9,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   before_filter :extension, :only => [:install, :reinstall, :uninstall, :oauth_callback, :new_configs, :edit_configs, :new_oauth_iparams, :edit_oauth_iparams]
   before_filter :extension_has_config?, :only => [:new_configs, :edit_configs]
   before_filter :verify_billing_info, :only => [:install, :reinstall], :if => :paid_app?
-  after_filter  :update_timestamp, only: [:install, :reinstall, :uninstall, :enable, :disable]
+  after_filter  :update_timestamp, only: [:install, :reinstall, :uninstall, :enable, :disable, :update_config]
 
   rescue_from Exception, :with => :mkp_exception
 
