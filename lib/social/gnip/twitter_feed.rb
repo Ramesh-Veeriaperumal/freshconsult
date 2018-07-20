@@ -71,13 +71,13 @@ class Social::Gnip::TwitterFeed
   end
 
   def process_tweet_to_ticket(account, args, convert_args)
-    user = set_user if convert_args[:convert]     
+    user = set_user if convert_args[:convert]
+    convert_args[:oauth_credential] = get_oauth_credential(@twitter_handle) if @twitter_handle
     if reply?
       db_stream = args[:stream_id].gsub(TAG_PREFIX, "")
       tweet = account.tweets.find(:all, :conditions => ["tweet_id = ? AND stream_id =?", @in_reply_to, db_stream]).first
       unless tweet.blank?
         ticket  = tweet.get_ticket
-        user = set_user unless user
         if ticket
           notable = add_as_note(@tweet_obj, @twitter_handle, :mention, ticket, user, convert_args) if @twitter_handle
         else 

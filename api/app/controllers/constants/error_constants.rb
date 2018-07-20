@@ -12,7 +12,9 @@ module ErrorConstants
     access_denied: ['access_denied'],
     traffic_cop_alert: ['traffic_cop_alert'],
     unresolved_child: ['unresolved_child'],
-    max_limit_reached: ['dashboard_limit_exceeded']
+    max_limit_reached: ['dashboard_limit_exceeded'],
+    undo_send_enqueued_alert: ['undo_send_enqueued_alert'],
+    undo_send_enqueued_agent_alert: ['undo_send_enqueued_agent_alert']
 
   }.freeze
 

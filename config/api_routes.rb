@@ -277,7 +277,9 @@ Helpkit::Application.routes.draw do
         put :execute_scenario
         post :notes, to: 'ember/conversations#create'
         post :reply, to: 'ember/conversations#reply'
+        put :undo_send, to: 'ember/conversations#undo_send'
         get :reply_template, to: 'ember/conversations#reply_template'
+        post :reply_template, to: 'ember/conversations#reply_template'
         post :forward, to: 'ember/conversations#forward'
         get :forward_template, to: 'ember/conversations#forward_template'
         post :broadcast, to: 'ember/conversations#broadcast'
@@ -430,6 +432,8 @@ Helpkit::Application.routes.draw do
         post :create_multiple
         get :revert_identity
         post :complete_gdpr_acceptance
+        post :enable_undo_send
+        post :disable_undo_send
       end
       member do
         get :achievements

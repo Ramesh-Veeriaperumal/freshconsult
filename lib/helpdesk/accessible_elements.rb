@@ -1,5 +1,4 @@
 module Helpdesk::AccessibleElements
-
   include HelpdeskAccessMethods
   include Redis::RedisKeys
   include Redis::OthersRedis
@@ -34,18 +33,24 @@ module Helpdesk::AccessibleElements
     visible_elmts
   end
 
-  def visible_records ops, enclose, sort, db_limit
-    if read_from_countv2?(ops)
-      elements = accessible_from_esv2(ops[:model_hash][:name], enclose, default_visiblity, sort, nil,
-        ops[:id_data], ops[:excluded_ids], ops[:assn_types])
-    else
-      elements = accessible_from_es(ops[:model_hash][:name].constantize, enclose, default_visiblity, sort, nil,
-        ops[:id_data], ops[:excluded_ids], ops[:assn_types])
+    def visible_records(ops, enclose, sort, db_limit)
+      if current_account.sandbox?
+        return fetch_from_db ops, db_limit
+      elsif read_from_countv2?(ops)
+        elements = accessible_from_esv2(ops[:model_hash][:name], enclose, default_visiblity, sort, nil,
+                                        ops[:id_data], ops[:excluded_ids], ops[:assn_types])
+      else
+        elements = accessible_from_es(ops[:model_hash][:name].constantize, enclose, default_visiblity, sort, nil,
+                                      ops[:id_data], ops[:excluded_ids], ops[:assn_types])
+      end
+      elements = fetch_from_db ops, db_limit if elements.nil?
+      elements
     end
-    elements = accessible_elements(current_account.safe_send(ops[:model_hash][:asstn]),
-      query_hash(ops[:model_hash][:model], ops[:model_hash][:table], ops[:query], @include_options || [], db_limit)) if elements.nil?
-    elements
-  end
+
+    def fetch_from_db(ops, db_limit)
+      accessible_elements(current_account.safe_send(ops[:model_hash][:asstn]),
+                          query_hash(ops[:model_hash][:model], ops[:model_hash][:table], ops[:query], @include_options || [], db_limit))
+    end
 
   def sort_records vis_elmts, model, recent
     vis_elmts.compact!

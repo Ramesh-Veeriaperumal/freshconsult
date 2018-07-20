@@ -59,6 +59,7 @@
     - block_account
     - check_bot_training
   :occasional:
+    - undo_send
     - plan_change_workerv2
     - merge_contacts
     - plan_change

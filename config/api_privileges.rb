@@ -60,9 +60,10 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   reply_ticket do
-    resource :"ember/conversation", only: %i(reply facebook_reply tweet reply_template broadcast)
+    resource :"ember/conversation", only: %i(reply facebook_reply tweet reply_template broadcast undo_send)
     resource :"ember/tickets/draft", only: %i(save_draft show_draft clear_draft)
     resource :"ember/tickets/bulk_action", only: [:bulk_update]
+    resource :"ember/agent", only: [:enable_undo_send, :disable_undo_send]
   end
 
   forward_ticket do

@@ -169,6 +169,7 @@ module UsersHelper
   def other_user
     u = User.find { |x| @agent.can_assume?(x) } || create_dummy_customer
     u.update_column(:email, Faker::Internet.email)
+    u.preferences[:agent_preferences][:undo_send] = false
     u.reload
   end
 

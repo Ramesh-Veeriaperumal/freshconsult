@@ -10,10 +10,19 @@ class DiffSandboxTest < ActionView::TestCase
   include AccountTestHelper
   include ProvisionSandboxTestHelper
   include DiffHelper
-
+  METHODS = ['added', 'modified', 'deleted', 'conflict']
   SUCCESS = 200..299
 
+  @@diff_data = {}
   def setup
+    unless @@diff_data.present?
+      @production_account = Account.first
+      if @production_account
+        @sandbox_account_id = @production_account.sandbox_job.try(:sandbox_account_id)
+        delete_sandbox_data
+      end
+      @@diff_data = changes_data
+    end
     super
   end
 
@@ -46,11 +55,12 @@ class DiffSandboxTest < ActionView::TestCase
     diff_changes = s.sandbox_config_changes
     @job.additional_data[:conflict] = diff_changes[:conflict].present?
     @job.additional_data[:diff] = ::Sync::Templatization.new(diff_changes, @sandbox_account_id).build_delta
-    compare_ids(diff, @job.additional_data[:diff])
+    diff_data = compare_ids(diff, @job.additional_data[:diff])
     @job.mark_as!(:diff_complete)
+    diff_data
   end
 
-  def test_diff_sandbox
+  def changes_data
     Sharding.run_on_shard('shard_1') do
       @user = AccountTestHelper.create_test_account
       @production_account = @user.account.make_current
@@ -63,12 +73,22 @@ class DiffSandboxTest < ActionView::TestCase
       @production_account.make_current
       @user.make_current
       diff = create_sample_data_sandbox(@sandbox_account_id)
-      match_diff_json(diff)
+      @diff_data = match_diff_json(diff)
     end
-  ensure
-    update_data_for_delete_sandbox(@sandbox_account_id)
-    @production_account.make_current
-    Admin::Sandbox::DeleteWorker.new.perform
-    delete_sandbox_data(@sandbox_account_id)
+    @diff_data
+  rescue => e
+    puts "sandbox error #{e}"
+    {"error" => e}
+  end
+
+  METHODS.each do|action|
+    MODELS.each do|model|
+      define_method "test_#{action}_#{model}_diff" do
+        data =  @@diff_data[action][model]
+        for each in data
+            assert_equal each[0], each[1]
+        end
+      end
+    end
   end
 end

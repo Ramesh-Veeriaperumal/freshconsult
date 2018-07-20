@@ -685,7 +685,7 @@ module TicketActivitiesTestHelper
       result << result_common_hash(tkt_data, content).merge(actions: [
                                                               {
                                                                 type: :delete_status,
-                                                                content: { deleted_value: content_hash[0], current_value: 'Closed' }
+                                                                content: { deleted_value: content_hash[0], current_value: content_hash[1].to_i }
                                                               }
                                                             ])
     end

@@ -18,6 +18,7 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def note
+    @agent.preferences[:agent_preferences][:undo_send] = false
     Helpdesk::Note.where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note'], deleted: false).first || create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
   end
 

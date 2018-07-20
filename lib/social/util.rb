@@ -111,37 +111,69 @@ module Social::Util
     }
   end
 
-  def construct_media_url_hash(account, item, tweet, oauth_credential)
-    media_url_hash = {}
-    inline_attachments = []
-    begin
-      media_array = tweet.media
-      photo_url_hash = {}
-      media_array.each do |media|
-        if(media.class.name == TWITTER_MEDIA_PHOTO || media.class.name == TWITTER_MEDIA_ANIMATEDGIF)
-          url = media.media_url_https.to_s
-          headers = SimpleOAuth::Header.new(:GET, url, {}, oauth_credential)
-          file_name = url[url.rindex('/')+1, url.length]
-          options = {
-            :file_content => open(url, "Authorization" => headers.to_s),
-            :filename => file_name,
-            :content_type => get_content_type(file_name),
-            :content_size => 1000
-          }
+  def fetch_media_url(account, item, twt, options)
+    @inline_attachments = []
+    @photo_url_hash = {}
+    if twt.respond_to?('media?') && twt.media?
+      construct_media_url_hash_direct_message(account, item, twt, options[:oauth_credential])
+    elsif (twt.is_a? Hash) && tweet_media_content_exists?(twt)
+      construct_media_url_hash_tweets(account, item, twt, options[:oauth_credential])
+    end
+  end
 
-          image_attachment = Helpdesk::Attachment.create_for_3rd_party(account,item, options, 1, 1, false)
-          if image_attachment.present? && image_attachment.content.present?
-            photo_url_hash[media.url.to_s] = image_attachment.inline_url
-            inline_attachments.push(image_attachment)
-          end
+  def construct_media_url_hash_direct_message(account, item, tweet, oauth_credential)
+    media_url_hash = {}
+    media = tweet.media[0]
+    begin
+      if media.class.name == TWITTER_MEDIA_PHOTO || media.class.name == TWITTER_MEDIA_ANIMATED_GIF
+        url = media.media_url_https.to_s
+        create_attachments(account, item, url, oauth_credential)
+        if @photo_url_hash.present?
+          media_url_hash[:photo] = @photo_url_hash
+          media_url_hash[:twitter_url] = media.url.to_s
         end
       end
-      media_url_hash[:photo] = photo_url_hash if photo_url_hash.present?
-    rescue => e
-      Rails.logger.error("Exception while attaching media content to ticket Exception: #{e.class} Exception Message: #{e.message}")
+    rescue StandardError => e
+      Rails.logger.error("Error attaching media from twitter feed, tweet : #{tweet.id} : Exception: #{e.class} : Exception Message: #{e.message}")
     end
-    item.inline_attachments = inline_attachments.compact
+    item.inline_attachments = @inline_attachments.compact
     media_url_hash
+  end
+
+  def construct_media_url_hash_tweets(account, item, tweet, oauth_credential)
+    media_url_hash = {}
+    media_array = tweet[:twitter_extended_entities]['media']
+    begin
+      media_array.each do |media|
+        next unless media['type'] == TWEET_MEDIA_PHOTO || media['type'] == TWEET_MEDIA_ANIMATED_GIF
+        url = media['media_url_https']
+        create_attachments(account, item, url, oauth_credential)
+      end
+      if @photo_url_hash.present?
+        media_url_hash[:photo] = @photo_url_hash
+        media_url_hash[:twitter_url] = media_array[0]['url']
+      end
+    rescue StandardError => e
+      Rails.logger.error("Error attaching media from twitter feed, tweet : #{tweet.id} : Exception: #{e.class} : Exception Message: #{e.message}")
+    end
+    item.inline_attachments = @inline_attachments.compact
+    media_url_hash
+  end
+
+  def create_attachments(account, item, url, oauth_credential)
+    headers = SimpleOAuth::Header.new(:GET, url, {}, oauth_credential)
+    file_name = url[url.rindex('/') + 1, url.length]
+    options = {
+      file_content: open(url, 'Authorization' => headers.to_s),
+      filename: file_name,
+      content_type: get_content_type(file_name),
+      content_size: 1000
+    }
+    image_attachment = Helpdesk::Attachment.create_for_3rd_party(account, item, options, 1, 1, false)
+    if image_attachment.present? && image_attachment.content.present?
+      @photo_url_hash[url] = image_attachment.inline_url
+      @inline_attachments.push(image_attachment)
+    end
   end
 
   def get_content_type(basename)
@@ -185,5 +217,17 @@ module Social::Util
   def euc_migrated_handle?(handle)
     # EUC POD with the handle migrated from the EU data center.
     Account.current.launched?(:euc_migrated_twitter) && ismember?(EU_TWITTER_HANDLES, "#{Account.current.id}:#{handle.twitter_user_id}")
+  end
+
+  def get_oauth_credential(twt_handle)
+    client_id, client_secret = consumer_app_details(twt_handle)
+    { consumer_key: client_id,
+      consumer_secret: client_secret,
+      token: twt_handle.access_token,
+      token_secret: twt_handle.access_secret }
+  end
+
+  def tweet_media_content_exists?(twt)
+    twt[:twitter_extended_entities].present? && twt[:twitter_extended_entities]['media'].present?
   end
 end

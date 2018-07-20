@@ -3,6 +3,7 @@ defaults: &defaults
   port: 6379
   namespace: sidekiqbj
   keepalive: 10
+  scheduled_poll_interval: 1
 
 development:
   <<: *defaults

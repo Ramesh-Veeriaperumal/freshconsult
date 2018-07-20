@@ -54,5 +54,17 @@
 			<%= render :partial => "integrations" %>
 
 		<% end %>
+		<% if current_account.launched?(:undo_send) && current_user.is_falcon_pref? %>
+			<hr>
+			<div class="row-fluid undo-send-option">
+				<div class="span10 align-left undo-toggle-freshid"><%= t("undo_toggle") %></div>
+				<div class="span2 align-right undo-toggle-button-freshid">
+					<input rel="toggle" type="checkbox" id="undo_reply" name="undo_send_toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_user.preferences[:agent_preferences][:undo_send]%>checked="true"<%end%> />
+				</div>
+			</div>
+			<div class="row-fluid">
+				<div class=" span12 align-left undo-send-tip-freshid"><%= t("undo_toggle_tip") %></div>
+			</div>
+		<% end %>
 	</div>
 </div>

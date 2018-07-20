@@ -452,6 +452,16 @@ class User < ActiveRecord::Base
     (account.falcon_ui_enabled? && !account.disable_old_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
   end
 
+  def enabled_undo_send?
+    Account.current.launched?(:undo_send) && preferences[:agent_preferences][:undo_send]
+  end
+
+  def toggle_undo_send(pref)
+    new_pref = { undo_send: pref }
+    self.merge_preferences = { agent_preferences: new_pref }
+    save
+  end
+
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
     self.active = params["active"] if params["active"]

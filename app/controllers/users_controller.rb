@@ -7,7 +7,11 @@ class UsersController < ApplicationController
   # include ActionView::Helpers::AssetTagHelper
   # include ActionView::AssetPaths
 
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:revert_identity, :profile_image, :profile_image_no_blank, :enable_falcon, :disable_falcon, :accept_gdpr_compliance]
+  skip_before_filter :check_privilege, :verify_authenticity_token,
+                     :only => [:revert_identity, :profile_image,
+                               :profile_image_no_blank, :enable_falcon, :disable_falcon,
+                               :accept_gdpr_compliance, :enable_undo_send,
+                               :disable_undo_send]
   before_filter :set_ui_preference, :only => [:show]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit ]
@@ -173,6 +177,18 @@ class UsersController < ApplicationController
     current_user.remove_gdpr_preference
     success = current_user.save
     render :json => {:success => success}
+  end
+
+  def enable_undo_send
+    head 400 unless current_account.launched?(:undo_send)
+    current_user.toggle_undo_send(true) unless current_user.enabled_undo_send?
+    head :no_content
+  end
+
+  def disable_undo_send
+    head 400 unless current_account.launched?(:undo_send)
+    current_user.toggle_undo_send(false) if current_user.enabled_undo_send?
+    head :no_content
   end
 
   protected

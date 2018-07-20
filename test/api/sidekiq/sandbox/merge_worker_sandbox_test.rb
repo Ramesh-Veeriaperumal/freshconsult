@@ -17,31 +17,29 @@ class MergeWorkerSandboxTest < ActionView::TestCase
   include ProvisionSandboxTestHelper
   include DiffHelper
   include MergeHelper
-  # include TicketFieldsSandboxHelper
-  # include TicketTemplatesSandboxHelper
-  include TagsSandboxHelper
-  include RolesSandboxHelper
-  include SlaPoliciesSandboxHelper
-  include EmailNotificationsSandboxHelper
-  include CompanyFormSandboxHelper
-  include ContactFormSandboxHelper
-  include CustomSurveysSandboxHelper
-  include StatusGroupsSandboxHelper
-  include GroupsSandboxHelper
-  include VaRulesSandboxHelper
-  include SkillsSandboxHelper
-  include CannedResponsesSandboxHelper
   include AccountTestHelper
 
   SUCCESS = 200..299
-
+  @@merge_data = {}
   def setup
+    unless @@merge_data.present?
+      @production_account = Account.first
+      if @production_account
+        @sandbox_account_id = @production_account.sandbox_job.try(:sandbox_account_id)
+        delete_sandbox_data
+      end
+      @@merge_data = changes_data
+    end
     super
   end
 
   def tear_down
     Account.unstub(:current)
     super
+  end
+
+  def self.fixture_path(path = File.join(Rails.root, 'test/api/fixtures/'))
+    path
   end
 
   def create_sandbox(account, user)
@@ -63,11 +61,8 @@ class MergeWorkerSandboxTest < ActionView::TestCase
         :name  => User.current.name,
         :email => User.current.email
     }
-    @production_account.reload
-    s = ::Sync::Workflow.new(@sandbox_account_id)
-    s.sync_config_from_production(committer)
-    s.sync_config_from_sandbox(committer)
-    @job.mark_as!(:diff_complete)
+    @production_account.make_current.reload
+    ::Admin::Sandbox::DiffWorker.new.perform
   end
 
   def merge_with_sandbox
@@ -76,11 +71,10 @@ class MergeWorkerSandboxTest < ActionView::TestCase
         :email => User.current.email
     }
     @production_account.make_current
-    ::Sync::Workflow.new(@sandbox_account_id, false).move_sandbox_config_to_prod(committer)
-    @job.mark_as!(:merge_complete)
+    ::Admin::Sandbox::MergeWorker.new.perform
   end
 
-  def test_merge_sandbox
+  def changes_data
     Sharding.run_on_shard('shard_1') do
       @user = AccountTestHelper.create_test_account
       @production_account = @user.account.make_current
@@ -96,12 +90,28 @@ class MergeWorkerSandboxTest < ActionView::TestCase
       @production_account.make_current
       calculate_diff
       merge_with_sandbox
-      compare_data(diff_data, @production_account)
+      @merge_data = merge_data(diff_data, @production_account)
     end
-  ensure
-    update_data_for_delete_sandbox(@sandbox_account_id)
-    @production_account.make_current
-    Admin::Sandbox::DeleteWorker.new.perform
-    delete_sandbox_data(@sandbox_account_id)
+    @merge_data
+  rescue => e
+      puts "sandbox error #{e}"
+      {"error" => e}
+  end
+
+  ACTIONS.each do|action|
+    MODELS.each do|model|
+      define_method "test_#{action}_#{model}_merge" do
+        data =  @@merge_data[action][model]
+        if action == "delete"
+          for each in data
+            assert_equal each[0], each[1]
+          end
+        else
+          for each in data
+            match_json(each[0], each[1], each[2])
+          end
+        end
+      end
+    end
   end
 end

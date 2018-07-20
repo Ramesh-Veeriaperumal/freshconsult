@@ -1,4 +1,5 @@
 require Rails.root.join('test', 'api', 'helpers', 'ticket_fields_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'note_test_helper.rb')
 CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
 ['ticket_template_helper.rb', 'group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 Dir["#{Rails.root}/test/core/helpers/*.rb"].each { |file| require file }
@@ -27,8 +28,8 @@ module ProvisionSandboxTestHelper
   include CannedResponsesSandboxHelper
 
   IGNORE_TABLES = ["helpdesk_shared_attachments", "helpdesk_attachments", "users", "agents", "user_emails", "helpdesk_tags", "helpdesk_accesses"]
-  MODELS = ['canned_responses', 'agents', 'ticket_fields', 'skills', 'password_policies', 'va_rules', 'sla_policies', 'email_notifications', 'company_form', 'contact_form', 'custom_surveys', 'status_groups', 'roles', 'tags', 'ticket_templates']
-
+  MODELS = ['canned_responses', 'agents', 'ticket_fields', 'skills', 'password_policies', 'va_rules', 'sla_policies', 'email_notifications', 'company_form', 'contact_form', 'custom_surveys', 'status_groups', 'roles', 'tags']
+  MODEL_TABLE_MAPPING = Hash[ActiveRecord::Base.send(:descendants).collect {|c| [c.name, c.table_name]}]
   def model_table_mapping
     @model_table_mapping = Hash[ActiveRecord::Base.send(:descendants).collect {|c| [c.name, c.table_name]}]
   end
@@ -54,6 +55,12 @@ module ProvisionSandboxTestHelper
 
   def column_exists?(table, column_name)
     table_model_mapping[table].constantize.columns.map(&:name).include?(column_name)
+  end
+
+  def models_data(master_account_id, sandbox_account_id)
+    master_account_data = account_list_data(master_account_id)
+    sandbox_account_data = account_list_data(sandbox_account_id)
+    {:master_account_data => master_account_data, :sandbox_account_data => sandbox_account_data}
   end
 
   def match_data(master_account_id, sandbox_account_id)
@@ -160,15 +167,20 @@ module ProvisionSandboxTestHelper
     Integrations::Application.stubs(:find_by_name).with('jira').returns(Integrations::Application.new)
   end
 
-  def delete_sandbox_data(account_id)
-    return unless ShardMapping.find_by_account_id(account_id)
-    Sharding.admin_select_shard_of(account_id) do
+  def delete_sandbox_data
+    return unless @sandbox_account_id
+    update_data_for_delete_sandbox(@sandbox_account_id)
+    @production_account.make_current
+    Admin::Sandbox::DeleteWorker.new.perform
+    return unless ShardMapping.find_by_account_id(@sandbox_account_id)
+    Sharding.admin_select_shard_of(@sandbox_account_id) do
       MODEL_DEPENDENCIES.keys.map {|table| model_table_mapping[table]}.compact.each do |table|
-        sql = "DELETE from #{table} where account_id = #{account_id}"
+        sql = "DELETE from #{table} where account_id = #{@sandbox_account_id}"
         ActiveRecord::Base.connection.execute(sql)
       end
     end
   end
+
 
   def update_sandbox_account_currency(sandbox_account_id)
     Sharding.admin_select_shard_of(sandbox_account_id) do

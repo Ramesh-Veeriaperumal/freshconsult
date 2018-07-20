@@ -353,7 +353,7 @@ module Tickets
       def delete_status(value)
         {
           deleted_value: value[0],
-          current_value: @query_data_hash[:status_name][value[1].to_i]
+          current_value: value[1].to_i
         }
       end
 

@@ -14,6 +14,8 @@ $sidekiq_datastore = proc { Redis::Namespace.new(config["namespace"], :redis => 
 $sidekiq_redis_pool_size = sidekiq_config[:redis_pool_size] || sidekiq_config[:concurrency]
 $sidekiq_redis_timeout = sidekiq_config[:timeout]
 
+poll_interval = config['scheduled_poll_interval']
+
 Sidekiq.configure_client do |config|
   config.redis = ConnectionPool.new(:size => 1, :timeout => $sidekiq_redis_timeout, &$sidekiq_datastore)
   config.client_middleware do |chain|
@@ -98,7 +100,8 @@ Sidekiq.configure_client do |config|
       "Admin::Sandbox::FileToDataWorker",
       "Admin::Sandbox::DataToFileWorker",
       "Admin::Sandbox::DiffWorker",
-      "Admin::Sandbox::MergeWorker"
+      'Admin::Sandbox::MergeWorker',
+      'Tickets::UndoSendWorker'
     ]
   end
 end
@@ -109,6 +112,7 @@ Sidekiq.configure_server do |config|
   # Sidekiq::Logging.logger.level = ActiveRecord::Base.logger.level
   config.redis = ConnectionPool.new(:size => $sidekiq_redis_pool_size, :timeout => $sidekiq_redis_timeout, &$sidekiq_datastore)
   config.reliable_fetch!
+  config.average_scheduled_poll_interval = poll_interval if poll_interval.present?
   #https://forums.aws.amazon.com/thread.jspa?messageID=290781#290781
   #Making AWS as thread safe
   AWS.eager_autoload!
@@ -192,7 +196,8 @@ Sidekiq.configure_server do |config|
       "Admin::Sandbox::DataToFileWorker",
       "Admin::Sandbox::FileToDataWorker",
       "Admin::Sandbox::DiffWorker",
-      "Admin::Sandbox::MergeWorker"
+      "Admin::Sandbox::MergeWorker",
+      'Tickets::UndoSendWorker'
     ]
 
     chain.add Middleware::Sidekiq::Server::JobDetailsLogger
@@ -274,7 +279,8 @@ Sidekiq.configure_server do |config|
       "Admin::Sandbox::DataToFileWorker",
       "Admin::Sandbox::FileToDataWorker",
       "Admin::Sandbox::DiffWorker",
-      "Admin::Sandbox::MergeWorker"
+      "Admin::Sandbox::MergeWorker",
+      'Tickets::UndoSendWorker'
     ]
   end
 end
