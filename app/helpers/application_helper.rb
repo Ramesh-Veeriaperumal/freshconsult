@@ -77,6 +77,8 @@ module ApplicationHelper
       '/admin/security'
     ]
 
+  SANDBOX_NOTIFICATION_STATUS = [6, 8, 9, 10, 98].freeze
+
   def open_html_tag
     html_conditions = [ ["lt IE 7", "ie6"],
                         ["IE 7", "ie7"],

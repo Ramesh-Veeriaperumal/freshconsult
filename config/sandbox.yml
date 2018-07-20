@@ -4,12 +4,12 @@ defaults: &defaults
   private_key: '/Users/user/.ssh/codecommit_rsa'
   username: 'APKAJIQUDK2NRJNJF62Q'
   sandbox_assets: "https://localhost:3000/sandbox_static_assets"
-
 development:
   <<: *defaults
 slave:
   <<: *defaults
 test:
   <<: *defaults
+  repo_url: 'tmp/sandbox_test/.git/'
 staging:
   <<: *defaults

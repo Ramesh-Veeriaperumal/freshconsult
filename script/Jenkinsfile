@@ -41,6 +41,10 @@ node(params.NODE) {
                             echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
                             sed -i "s/sandbox_test/sandbox${BUILD_NUMBER}/g" config/database.yml                            
                             bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
+                            mkdir tmp/sandbox_test
+                            git init tmp/sandbox_test/
+                            git config --global user.email "sample@freshdesk.com"
+                            git config --global user.name "Sample"
                          '''
                 }
           }
@@ -56,6 +60,12 @@ node(params.NODE) {
                       sh '''#!/bin/bash
                             source /etc/profile.d/rvm.sh
                             bundle exec ruby test/api/suites/falcon_test_suite.rb
+                         '''
+                } else if(env.JOB_NAME == 'prestaging-falcon-sandbox-tests-backend-pipeline'){
+                      echo 'prestaging-falcon-sandbox-tests-backend-pipeline'
+                      sh '''#!/bin/bash
+                            source /etc/profile.d/rvm.sh
+                            bundle exec ruby test/api/suites/sandbox_test_suite.rb
                          '''
                 } else {
                       echo 'Pronto job'

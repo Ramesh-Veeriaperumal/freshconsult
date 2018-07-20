@@ -8,16 +8,20 @@ module MergeHelper
   }
   IGNORE_ASSOCIATIONS = ["agents"]
   IGNORE_COLUMNS = ["id", "updated_at" , "created_at", "account_id", "content_updated_at", "attachment_id", "model", "action", "position"]
-  def compare_data(data, account)
+  def merge_data(data, account)
     @model_table_mapping = model_table_mapping
+    @merge_data = {}
     ["create", "update", "delete"].each do|action|
-      send("compare_#{action}d_data", data, account)
+      @merge_data[action] = send("compare_#{action}d_data", data, account)
     end
+    @merge_data
   end
 
   def  compare_created_data( data, account)
     mapping_table = load_mapping_table(account.id)
+    merge_added_data = {}
     data.each do|association, records|
+      merge_added_data[association] = []
       next if IGNORE_ASSOCIATIONS.include?(association)
       added_records = records.select{|x| x["action"] == "added"}
       added_records.each do|record|
@@ -26,9 +30,10 @@ module MergeHelper
         id = mapping_table[model][:id][record["id"]]
         next unless id.present?
         production_data = find_object(model, id)
-        match_json(production_data , record, model)
+        merge_added_data[association] << [production_data , record, model]
       end
     end
+    merge_added_data
   end
 
   def match_json(json1, json2, model)
@@ -61,26 +66,32 @@ module MergeHelper
   end
 
   def compare_deleted_data( data, account)
+    merge_deleted_data = {}
     data.each do|association,records |
+      merge_deleted_data[association] = []
       deleted_records = records.select{|x| x["action"] == "deleted"}
       deleted_records.each do|record|
         table_name = @model_table_mapping[record["model"]]
         model = record["model"]
         data = sql_select_query(account.id, table_name, model.constantize, record["id"])
-        assert_equal data, []
+        merge_deleted_data[association] << [data, []]
       end
     end
+    merge_deleted_data
   end
 
   def compare_updated_data( data, account)
+    merge_updated_data = {}
     data.each do|association, records|
+      merge_updated_data[association] = []
       updated_records = records.select{|x| x["action"] == "modified"}
       updated_records.each do|record|
         model = record["model"]
         data = find_object(model, record["id"])
-        match_json(record,data,  model)
+        merge_updated_data[association]   << [record,data,  model]
       end
     end
+    merge_updated_data
   end
 
   def load_mapping_table(account_id)

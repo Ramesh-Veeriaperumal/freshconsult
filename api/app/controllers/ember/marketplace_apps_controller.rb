@@ -1,5 +1,7 @@
 module Ember
   class MarketplaceAppsController < ApiApplicationController
+    CURRENT_VERSION = 'private-v1'.freeze
+    send_etags_along('MARKETPLACE_APPS_LIST')
     include Marketplace::ApiMethods
 
     def index

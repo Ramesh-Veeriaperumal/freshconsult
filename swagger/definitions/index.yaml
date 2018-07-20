@@ -67,6 +67,10 @@
     $ref: ./resource/conversation_forward_template.yaml
   note_reply_to_forward_input:
     $ref: ./request/conversations/reply_to_forward.yaml
+  post_reply_template_input:
+    $ref: ./request/conversations/post_reply_template_input.yaml
+  undo_reply_input:
+    $ref: ./request/conversations/undo_send.yaml
 
   summary_input:
     $ref: ./request/tickets/summary_input.yaml

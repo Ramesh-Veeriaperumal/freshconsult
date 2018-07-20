@@ -161,6 +161,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"archive/conversation", :only => [:ticket_conversations]
     resource :"archive/tickets/activity", only: [:index]
     resource :"admin/freshmarketer", only: %i[sessions session_info]
+    resource :"support/canned_form", only: [:preview]
   end
 
   export_tickets do
@@ -180,7 +181,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"helpdesk/note", :only => [:create]
     resource :"social/twitter",
       :only => [:create_fd_item, :reply, :retweet, :post_tweet, :favorite, :unfavorite, :followers, :follow, :unfollow]
-    resource :"support/canned_form", only: [:preview]
 
     resource :"support/canned_form", only: [:preview]
 
@@ -566,7 +566,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/google_account"
     resource :"integrations/remote_configuration"
     resource :"integrations/dynamicscrm", :only => [:settings, :edit, :settings_update, :fields_update]
-    resource :"integrations/marketplace/shopify", :only => [:install, :create, :landing]
+    resource :"integrations/marketplace/shopify", :only => [:install, :create, :landing, :remove_store, :edit]
     resource :"integrations/infusionsoft", :only => [:install, :edit, :fields_update]
     resource :"integrations/sugarcrm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"integrations/magento", :only => [:new, :edit, :update]

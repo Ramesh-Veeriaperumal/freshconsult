@@ -16,6 +16,7 @@ module Ember
     include SurveysTestHelper
     include AwsTestHelper
     include ArchiveTicketTestHelper
+    include Redis::UndoSendRedis
 
     BULK_ATTACHMENT_CREATE_COUNT = 2
     BULK_NOTE_CREATE_COUNT       = 2
@@ -245,6 +246,82 @@ module Ember
       latest_note = Helpdesk::Note.last
       match_json(private_note_pattern(params_hash, latest_note))
       match_json(private_note_pattern({}, latest_note))
+    end
+
+    def test_reply_with_undo_send
+      @account.launch(:undo_send)
+      user = other_user
+      user.preferences[:agent_preferences][:undo_send] = true
+      params_hash = reply_note_params_hash
+      params_hash[:user_id] = user.id
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 201
+      user.preferences[:agent_preferences][:undo_send] = false
+      @account.rollback(:undo_send)
+    end
+
+    def test_reply_with_undo_send_with_previous_note
+      @account.launch(:undo_send)
+      user = other_user
+      user.preferences[:agent_preferences][:undo_send] = true
+      params_hash = reply_note_params_hash
+      params_hash[:user_id] = user.id
+      post :reply, construct_params({ version: 'private', id: ticket.display_id, last_note_id: 15 }, params_hash)
+      assert_response 201
+      user.preferences[:agent_preferences][:undo_send] = false
+      @account.rollback(:undo_send)
+    end
+
+    def test_reply_being_undone
+      @account.launch(:undo_send)
+      user = other_user
+      user.preferences[:agent_preferences][:undo_send] = true
+      put :undo_send, version: 'private', id: ticket.display_id, created_at: Time.now.utc
+      assert_response 204
+      user.preferences[:agent_preferences][:undo_send] = false
+      @account.rollback(:undo_send)
+    end
+
+    def test_reply_template_after_undo
+      @account.launch(:undo_send)
+      remove_wrap_params
+      t = create_ticket
+      t.display_id = 15
+      time = Time.now.utc
+      note_body = {}
+      note_body['body_html'] = 'Body html'
+      note_body['full_text_html'] = 'Body html plus full text html'
+      set_body_data(1, t.display_id, time, note_body)
+      notification_template = '<div>{{ticket.id}}</div>'
+      Agent.any_instance.stubs(:signature_value).returns('')
+      EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      bcc_emails = "#{Faker::Internet.email};#{Faker::Internet.email}"
+      Account.any_instance.stubs(:bcc_email).returns(bcc_emails)
+      post :reply_template, construct_params({ version: 'private', id: t.display_id, body: 'Undo', attachments: [], inline: [], time: time }, false)
+      assert_response 200
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_reply_template)
+    ensure
+      Account.any_instance.unstub(:bcc_email)
+      @account.rollback(:undo_send)
+    end
+
+    def test_reply_template_after_undo_with_attachments
+      @account.launch(:undo_send)
+      remove_wrap_params
+      t = create_ticket
+      notification_template = '<div>{{ticket.id}}</div>'
+      Agent.any_instance.stubs(:signature_value).returns('')
+      EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      bcc_emails = "#{Faker::Internet.email};#{Faker::Internet.email}"
+      Account.any_instance.stubs(:bcc_email).returns(bcc_emails)
+      post :reply_template, construct_params({ version: 'private', id: t.display_id, body: 'Undo', attachments: [{ id: '44' }, { id: '55' }], inline: [1, 2] }, false)
+      assert_response 200
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_reply_template)
+    ensure
+      Account.any_instance.unstub(:bcc_email)
+      @account.rollback(:undo_send)
     end
 
     def test_reply_without_from_email

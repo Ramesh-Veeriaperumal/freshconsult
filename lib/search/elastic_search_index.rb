@@ -30,7 +30,7 @@ module Search::ElasticSearchIndex
       end
 
       def add_to_count_esv2?
-        (self.is_a?(Helpdesk::TicketTemplate)) || (es_v2_models? && redis_key_exists?(COUNT_ESV2_WRITE_ENABLED))
+        !Account.current.sandbox? && ((self.is_a?(Helpdesk::TicketTemplate)) || (es_v2_models? && redis_key_exists?(COUNT_ESV2_WRITE_ENABLED)))
       end
 
       def es_v2_models? 

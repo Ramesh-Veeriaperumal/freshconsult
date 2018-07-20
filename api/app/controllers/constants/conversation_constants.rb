@@ -36,7 +36,9 @@ module ConversationConstants
   CATEGORY = {
     'reply_to_forward' => 6, # Used for conversation with third party
   }.freeze
-  LOAD_OBJECT_EXCEPT = %i(ticket_conversations create reply forward broadcast reply_to_forward facebook_reply tweet reply_template forward_template latest_note_forward_template).freeze
+  LOAD_OBJECT_EXCEPT = %i(ticket_conversations create reply forward broadcast
+                          reply_to_forward facebook_reply tweet reply_template forward_template
+                          latest_note_forward_template undo_send).freeze
 
   ATTRIBUTES_TO_BE_STRIPPED = %w(notify_emails to_emails cc_emails bcc_emails).freeze
 

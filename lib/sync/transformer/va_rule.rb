@@ -13,6 +13,7 @@ module Sync::Transformer::VaRule
     'add_watcher' => 'User',
     'send_email_to_group' => 'Group',
     'send_email_to_agent' => 'User',
+    'send_email_to_requester' => '',
     'internal_group_id' => 'Group',
     'internal_agent_id' => 'User',
     'product_id' => 'Product'
@@ -53,7 +54,8 @@ module Sync::Transformer::VaRule
         end
       elsif ACTION_DATA_NAME_MAPPINGS.keys.include?(it[:name])
         value_key = ['send_email_to_group', 'send_email_to_agent'].include?(it[:name]) ? :email_to : :value
-        it[value_key] = apply_id_mapping(it[value_key], get_mapping_data(ACTION_DATA_NAME_MAPPINGS[it[:name]], mapping_table))
+        it[value_key] = apply_id_mapping(it[value_key], get_mapping_data(ACTION_DATA_NAME_MAPPINGS[it[:name]], mapping_table)) if ACTION_DATA_NAME_MAPPINGS[it[:name]].present?
+        it[:email_body] = transform_inline_attachment(it[:email_body], mapping_table) if it[:email_body].present?
       else
         it[:name] = change_custom_field_name(it[:name])
       end

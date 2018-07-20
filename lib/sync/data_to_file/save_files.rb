@@ -14,7 +14,7 @@ class Sync::DataToFile::SaveFiles
 
     objects = [*base_object.safe_send(config)]
     objects.each do |object|
-      next if object.respond_to?('deleted') && object.deleted #soft delete ignore
+      next if ignore_object?(object)
       dump_object(path, config, object)
       associations.each do |association|
         if association.is_a?(Hash)
@@ -64,5 +64,18 @@ class Sync::DataToFile::SaveFiles
         data = @transformer.transfor_helpdesk_attachment_attachable_id(data, object)
       end
       data
+    end
+
+    def ignore_object?(object)
+      return true if object.respond_to?('deleted') && object.deleted #soft delete ignore
+      sandbox && Account.current.freshid_enabled? && (agent_policy?(object) && agent_invitation?(object))
+    end
+
+    def agent_policy?(object)
+      object.class.name == 'PasswordPolicy' && object.user_type == PasswordPolicy::USER_TYPE[:agent]
+    end
+
+    def agent_invitation?(object)
+      object.class.name == 'EmailNotification' && object.notification_type == EmailNotification::AGENT_INVITATION
     end
 end

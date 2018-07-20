@@ -4,12 +4,13 @@ class Social::Twitter::Feed
   include Social::Constants
   include Social::Twitter::Constants
   include Social::Twitter::Util
+  include Social::Util
   include Social::Twitter::ErrorHandler
   include Social::Twitter::TicketActions
 
   attr_accessor :feed_id, :posted_time, :user, :body, :is_replied, :ticket_id, :user_in_db, :dynamo_posted_time,
-    :in_reply_to, :stream_id, :in_conv, :agent_name,:source, :parent_feed_id, :user_mentions, :dynamo_helper
-
+                :in_reply_to, :stream_id, :in_conv, :agent_name, :source, :parent_feed_id, :user_mentions, :dynamo_helper,
+                :media_content
 
   def initialize(feed_obj)
     @stream_id      = feed_obj[:stream_id]
@@ -27,6 +28,7 @@ class Social::Twitter::Feed
     }
     @user_mentions = process_twitter_entities(feed_obj[:entities])
     @body        = feed_obj[:text]
+    @media_content = feed_obj[:extended_entities].with_indifferent_access if feed_obj[:extended_entities].present?
     @source      = SOURCE[:twitter]
     @in_reply_to = feed_obj[:in_reply_to_status_id_str]
     @ticket_id   = feed_obj[:ticket_id]
@@ -45,10 +47,12 @@ class Social::Twitter::Feed
     feed_obj = {
       :body       => self.body,
       :id         => self.feed_id,
-      :postedTime => self.posted_time
+      :postedTime => self.posted_time,
+      :twitter_extended_entities => self.media_content
     }
     action_data.merge!(:stream_id => stream.id) if stream
     tweet = account.tweets.find_by_tweet_id(self.in_reply_to)
+    action_data[:oauth_credential] = get_oauth_credential(handle) if handle.present?
     unless tweet.blank?
       ticket  = tweet.get_ticket
       user    = get_twitter_user(self.user[:screen_name], self.user[:image]["normal"], self.user[:name])

@@ -32,17 +32,16 @@ class DeleteSandboxTest < ActionView::TestCase
       @account.make_current
       @user.make_current
       job = @account.sandbox_job
-      sandbox_account_id = job.sandbox_account_id
+      @sandbox_account_id = job.sandbox_account_id
       Admin::Sandbox::DataToFileWorker.new.perform({})
       Admin::Sandbox::FileToDataWorker.new.perform
-      update_data_for_delete_sandbox(sandbox_account_id)
+      update_data_for_delete_sandbox(@sandbox_account_id)
       @account.make_current
       Admin::Sandbox::DeleteWorker.new.perform
       @account.reload
       assert_equal @account.sandbox_job, nil
-      sandbox_account_exists(sandbox_account_id)
+      sandbox_account_exists(@sandbox_account_id)
       disable_background_fixtures
-      delete_sandbox_data(sandbox_account_id)
     end
   end
 end

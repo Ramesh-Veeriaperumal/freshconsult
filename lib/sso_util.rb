@@ -5,6 +5,7 @@ module SsoUtil
   SAML_NAME_ID_UNSPECIFIED = 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified'.freeze
   SSO_ALLOWED_IN_SECS = 1800
   SSO_CLOCK_DRIFT = 60 # No of secs the response time can be before the server time .. Keep this very low for security
+  SSO_ALLOWED_IN_SECS_LIMITATION = 30 # No of seconds interval after which the sso login expires
   FIRST_NAME_STRS = ['givenname', 'FirstName', 'User.FirstName', 'username',
                      'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'].map &:to_sym
   LAST_NAME_STRS = ['surname', 'LastName', 'User.LastName',

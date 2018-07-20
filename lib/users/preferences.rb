@@ -8,7 +8,8 @@ module Users
         :notification_timestamp => nil,
         :show_onBoarding => true, 
         :falcon_ui => false,
-        :freshchat_token => nil
+        freshchat_token: nil,
+        undo_send: false
         # Add new pref for agents here
       }, 
       :user_preferences => {

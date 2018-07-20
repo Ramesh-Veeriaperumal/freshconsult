@@ -1466,6 +1466,39 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Reply Template After Undo",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/post_reply_template_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/conversation_template"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
       }
     },
     "/tickets/{id}/forward": {
@@ -1789,6 +1822,38 @@
           },
           "404": {
             "description": "Not found"
+          }
+        }
+      }
+    },
+    "/tickets/{id}/undo_send": {
+      "post": {
+        "tags": [
+          "conversation"
+        ],
+        "description": "Undo a Reply",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/undo_reply_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error"
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
       }
@@ -4385,6 +4450,44 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          }
+        }
+      }
+    },
+    "/agents/enable_undo_send": {
+      "post": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Enable Undo Send",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/agents/disable_undo_send": {
+      "post": {
+        "tags": [
+          "agent"
+        ],
+        "summary": "Disable Undo Send",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error"
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
       }
@@ -8762,6 +8865,58 @@
               "items": {
                 "type": "integer"
               }
+            }
+          }
+        }
+      ]
+    },
+    "post_reply_template_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "properties": {
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "bcc": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "body": {
+              "type": "string"
+            },
+            "cc": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "inline": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "time": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "undo_reply_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "properties": {
+            "created_at": {
+              "type": "string"
             }
           }
         }

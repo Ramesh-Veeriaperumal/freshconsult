@@ -13,6 +13,13 @@ class Sync::DataToFile::Transformer
     'VaRule'                      => ['filter_data', 'action_data'],
     'Helpdesk::SharedAttachment'  => ['attachment_id'],
     'Admin::Skill'                => ['filter_data'],
+    'Admin::CannedResponses::Response' => ['content_html'],
+    'EmailNotification' => ['requester_template', 'agent_template']
+  }.freeze
+
+  INLINE_ATTACHMENT_TRANSFORMATION_COLUMNS = {
+    'EmailNotification'                => ['requester_template', 'agent_template'],
+    'Helpdesk::TicketTemplate'         => ['data_description_html'],
     'Admin::CannedResponses::Response' => ['content_html']
   }.freeze
 
@@ -88,12 +95,15 @@ class Sync::DataToFile::Transformer
     data
   end
 
-  def transform_helpdesk_ticket_template_data_description_html(data)
-    attachment_ids, old_inline_urls = inline_attachment_data(data, @account)
-    replace_existing_inline_url(data, attachment_ids, old_inline_urls)
+  INLINE_ATTACHMENT_TRANSFORMATION_COLUMNS.each do |model, columns|
+    columns.each do |column|
+      define_method "transform_#{model.gsub('::', '').snakecase}_#{column}" do |data|
+        transform_inline_attachment(data)
+      end
+    end
   end
 
-  def transform_admin_canned_responses_response_content_html(data)
+  def transform_inline_attachment(data, _mapping_table = {})
     attachment_ids, old_inline_urls = inline_attachment_data(data, @account)
     replace_existing_inline_url(data, attachment_ids, old_inline_urls)
   end
