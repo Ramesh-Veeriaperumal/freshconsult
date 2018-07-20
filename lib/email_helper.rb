@@ -93,7 +93,7 @@ module EmailHelper
   def customer_removed_in_reply?(ticket, in_reply_to, parse_to_emails, cc_emails)
     to_emails_arr = []
     parse_to_emails.each do |to_email|
-      to_emails_arr << parse_email to_email
+      to_emails_arr << (parse_email to_email)[:email]
     end
     (to_emails_arr << cc_emails).flatten!
     if((!reply_to_notification?(in_reply_to)) && !to_emails_arr.include?(ticket.requester.email))
