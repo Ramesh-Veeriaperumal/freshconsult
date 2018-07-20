@@ -1,5 +1,5 @@
 class UpdateShopifyConfig < ActiveRecord::Migration
-  shard :none
+  shard :all
 
   def up
     shopify_app = Integrations::Application.find_by_name 'shopify'
