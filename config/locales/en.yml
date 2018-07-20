@@ -3036,6 +3036,7 @@ en:
       sso:
         expected_params: "One or more of the expected parameters name, email, and hash are missing."
         invalid_time_entry: "Invalid time entry"
+        url_limitation_error: "Session has expired. Please login again."
       jwt_sso:
         expected_time_params: "Issued at time(iat) and Expire at time(iat) are missing"
         exceeded_max_expire_time: "Max expiry time of 30 minutes is allowed"
