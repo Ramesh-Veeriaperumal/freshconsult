@@ -15,7 +15,6 @@ class ApiApplicationController < MetalApiController
   skip_before_filter :verify_authenticity_token
   before_filter :unset_thread_variables
   before_filter :verify_authenticity_token, if: :csrf_check_reqd?
-  before_filter :authenticate_jwt_request, if: :app_authorization?
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
   # rescue_from ActiveRecord::RecordNotUnique, with: :duplicate_value_error
@@ -38,6 +37,7 @@ class ApiApplicationController < MetalApiController
 
   before_filter :unset_current_portal, :unset_shard_for_payload, :set_current_account, :set_shard_for_payload
   before_filter :ensure_proper_fd_domain, :ensure_proper_protocol, unless: :private_api?
+  before_filter :authenticate_jwt_request, if: :app_authorization?
   include Authority::FreshdeskRails::ControllerHelpers
   before_filter :check_account_state, :set_default_locale, :set_current_ip
   before_filter :set_locale, if: :private_api?
