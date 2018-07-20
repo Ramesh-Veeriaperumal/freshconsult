@@ -92,7 +92,7 @@ module Integrations::Constants
 
   FRESHPLUG = 'freshplug'
 
-  NON_EDITABLE_APPS = ["mailchimp", "constantcontact", "nimble", "google_calendar", "shopify", "box", "onedrive", "microsoft_teams", "google_hangout_chat"]
+  NON_EDITABLE_APPS = ["mailchimp", "constantcontact", "nimble", "google_calendar", "box", "onedrive", "microsoft_teams", "google_hangout_chat"]
 
   CONTACTS_SYNC_APPS = [APP_NAMES[:outlook_contacts]]
 
@@ -139,7 +139,8 @@ module Integrations::Constants
     APP_NAMES[:box] => 16,
     APP_NAMES[:onedrive] => 16,
     APP_NAMES[:surveymonkey] => 16,
-    APP_NAMES[:google_calendar] => 4
+    APP_NAMES[:google_calendar] => 4,
+    APP_NAMES[:shopify] => 6
   }.freeze
 
   ATTACHMENT_APPS = [APP_NAMES[:dropbox],APP_NAMES[:box],APP_NAMES[:onedrive]].freeze

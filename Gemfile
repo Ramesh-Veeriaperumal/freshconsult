@@ -8,7 +8,7 @@ gem "rails","3.2.22.5"
 gem "freemail", "0.2.3", :require => false 
 gem 'stopwords-filter', "0.4.1", require: 'stopwords'
 
-gem 'rack-cors', '~> 0.3.1'
+gem 'rack-cors', '~> 0.4.1'
 gem "syck",'1.0.5'
 
 gem "json", "1.8.3"

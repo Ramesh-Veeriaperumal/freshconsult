@@ -13,7 +13,7 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
 
   def install
     shop_name = params[:configs][:shop_name].include?(".myshopify.com") ? params[:configs][:shop_name] : params[:configs][:shop_name] + ".myshopify.com"
-    redirect_to AppConfig['global_integration_url'][Rails.env] + "/auth/shopify?shop=#{shop_name}&origin=id%3D#{current_account.id}"
+    redirect_to AppConfig['integrations_url'][Rails.env] + "/auth/shopify?shop=#{shop_name}&origin=id%3D#{current_account.id}"
   end
 
   def receive_webhook
@@ -30,7 +30,10 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
   def create
     begin
       load_installed_application
-      raise "Can't edit" if @installed_application.persisted?
+      if primary_store_reconnected?
+        flash[:error] = t('flash.application.install.shopify_primary_store_reconnected')
+        redirect_to integrations_applications_path and return
+      end
       webhook_verifier = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA256.new, @installed_application.configs_shop_name, Time.now.to_i.to_s)
       @installed_application.configs[:inputs]["webhook_verifier"] = webhook_verifier
       if @installed_application.save!
@@ -43,6 +46,11 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
       flash[:error] = t(:'flash.application.install.error')
     end
     redirect_to integrations_applications_path
+  end
+
+  def edit
+    installed_app = current_account.installed_applications.with_name(Integrations::Constants::APP_NAMES[:shopify]).first
+    redirect_to edit_integrations_installed_application_path(installed_app)
   end
 
   def signup
@@ -63,6 +71,19 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
     else
       redirect_to AppConfig['integrations_url'][Rails.env] + "/auth/shopify?shop=#{shop}&origin=id%3D#{current_account.id.to_s}"
     end
+  end
+
+  def remove_store
+    begin
+      shop_name = params[:shop_name]
+      installed_app = current_account.installed_applications.with_name(Integrations::Constants::APP_NAMES[:shopify]).first
+      installed_app.configs[:inputs]["additional_stores"] = installed_app.configs[:inputs]["additional_stores"].except(shop_name)
+      installed_app.save!
+    rescue => e
+      Rails.logger.error "Problem in removing a store from shopify. \n#{e.message}\n#{e.backtrace.join("\n\t")}"
+      flash[:error] = t(:'flash.application.uninstall.shopify_remove_store_error')
+    end
+    redirect_to edit_integrations_installed_application_path(installed_app)
   end
 
   private
@@ -116,7 +137,14 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
         @installed_application = current_account.installed_applications.build(:application => @installing_application)
         @installed_application.configs = { :inputs => {} }
       end
-      @installed_application.configs[:inputs] = get_app_configs
+      if @installed_application.configs[:inputs].present?
+        configs = get_app_configs
+        shop_name = configs["shop_name"]
+        @installed_application.configs[:inputs]["additional_stores"] ||= {}
+        @installed_application.configs[:inputs]["additional_stores"][shop_name] = configs
+      else
+        @installed_application.configs[:inputs] = get_app_configs
+      end
     end
 
     def get_app_configs
@@ -125,6 +153,12 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
       kv_store.group = :integration
       app_config = JSON.parse(kv_store.get_key)
       raise "OAuth Token is nil" if app_config["oauth_token"].nil?
+
+      shopify_service = IntegrationServices::Services::ShopifyService.new @installed_application
+      store = { :shop_name => app_config["shop_name"] }
+      shopify_shop_resource = IntegrationServices::Services::Shopify::ShopifyShopResource.new(shopify_service, store, app_config["oauth_token"])
+      app_config["shop_display_name"] = shopify_shop_resource.get_shop_info[:name]
+
       app_config
     end
 
@@ -135,6 +169,10 @@ class Integrations::Marketplace::ShopifyController < Integrations::Marketplace::
       unless Rack::Utils.secure_compare(calculated_signature, signature)
         render :status => 200, :json => { :message => "HMAC verification failed" } and return
       end
+    end
+
+    def primary_store_reconnected?
+      @installed_application.configs[:inputs]["additional_stores"] && @installed_application.configs[:inputs]["additional_stores"].include?(@installed_application.configs[:inputs]["shop_name"])
     end
 
 end
