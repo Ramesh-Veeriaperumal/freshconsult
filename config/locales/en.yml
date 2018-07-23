@@ -2659,6 +2659,8 @@ en:
       events: Events
       survey: Survey
     audit_log:
+      toggle_on: "On"
+      toggle_off: "Off"
       column:
         event_type: "Event Type"
         time: "Time"
@@ -2698,11 +2700,6 @@ en:
         roles: "Roles"
         added: "Added"
         removed: "Removed"
-        global: "Global Access"
-        group: "Group Access"
-        individual: "Restricted Access"
-        is_available: "On"
-        not_available: "Off"
       automation_rule:
         name: "Name"
         description: "Description"
@@ -4676,6 +4673,7 @@ en:
     supervisor: Supervisor
     global: Global Access
     group: Group Access
+    group_access: Group Access
     individual: Restricted Access
     admin_info: Can perform all Admin tasks
     supervisor_info: Can view all Tickets in the Helpdesk and access Reports (no admin privileges)
