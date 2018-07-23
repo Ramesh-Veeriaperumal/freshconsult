@@ -4,6 +4,36 @@
     	padding-top: 0px;
 	}
 }
+
+.undo-send-option {
+	padding-top: 4px;
+}
+.undo-toggle {
+	font-size: 16px;
+	font-weight: 600;
+}
+.undo-toggle-freshid {
+	font-size: 16px;
+	font-weight: 600;
+	padding-left: 20px;
+}
+.undo-send-tip {
+	color: $grayLight;
+	margin-top: -4px;
+	line-height: 1.4;
+	font-size: 12px;
+}
+.undo-send-tip-freshid {
+	color: $grayLight;
+	padding-left: 20px;
+	margin-top: -4px;
+	line-height: 1.4;
+	font-size: 12px;
+}
+.undo-toggle-button-freshid {
+	padding-right: 20px;
+}
+
 .profile-edit {
     margin: 0 -20px -40px -20px;
     display: table;

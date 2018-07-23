@@ -744,6 +744,8 @@ Helpkit::Application.routes.draw do
 
   match '/enable_falcon' => 'users#enable_falcon', :as => :enable_falcon, via: :post
   match '/disable_falcon' => 'users#disable_falcon', :as => :disable_falcon, via: :post
+  match '/enable_undo_send' => 'users#enable_undo_send', :as => :enable_undo_send, via: :post
+  match '/disable_undo_send' => 'users#disable_undo_send', :as => :disable_undo_send, via: :post
   match '/register/:activation_code' => 'activations#new', :as => :register
   match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email
   match '/activate/:perishable_token' => 'activations#create', :as => :activate
@@ -995,7 +997,9 @@ Helpkit::Application.routes.draw do
         get :landing
         put :install
         get :create
+        get :edit
         post :receive_webhook
+        delete :remove_store
       end
 
       namespace :google do

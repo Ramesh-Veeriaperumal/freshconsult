@@ -86,6 +86,22 @@ class Integrations::InstalledApplicationsController < Admin::AdminController
     elsif @installed_application.application.system_app?
       @installing_application = @installed_application.application
       @installed_application.configs_password = '' unless @installed_application.configs_password.blank?
+
+      if @installing_application.name == Integrations::Constants::APP_NAMES[:shopify]
+        if current_account.falcon_ui_enabled?(current_user)
+          primary_store = { shop_name: @installed_application.configs[:inputs]['shop_name'], shop_display_name: @installed_application.configs[:inputs]['shop_display_name'] || @installed_application.configs[:inputs]['shop_name'] }
+          additional_stores = []
+          if @installed_application.configs[:inputs]['additional_stores'].present?
+            @installed_application.configs[:inputs]['additional_stores'].keys.each do |key|
+              additional_stores << { shop_name: key, shop_display_name: @installed_application.configs[:inputs]['additional_stores'][key]['shop_display_name'] || key }
+            end
+          end
+          @stores = [ primary_store, additional_stores ].flatten
+          render "integrations/installed_applications/shopify/falcon_edit"
+        else
+          render "integrations/installed_applications/shopify/helpkit_edit"
+        end
+      end
     else
       render "integrations/applications/edit"
     end

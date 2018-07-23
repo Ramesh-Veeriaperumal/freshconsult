@@ -115,6 +115,7 @@ helpdesk:
     - sanitize_monkey_patch
     - paperclip_ssrf_patch
     - apigee_config
+    - sprockets_monkey_patch
     - facebook_eu_accounts_config
     - disposable_email_domains
     - emailserv_request

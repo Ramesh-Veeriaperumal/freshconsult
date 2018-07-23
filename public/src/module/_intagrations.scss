@@ -1598,3 +1598,49 @@ span.beta {
 #no-display{
   	display: none;
 }
+
+/* Shopify */
+.shp-wrapper {
+	.shp-text-light {
+		color: #6f7c87;
+	}
+	.shp-logo {
+		float: left;
+		margin-right: 20px;
+	}
+	.store-wrapper {
+		background: #fff;
+		border-radius: 2px;
+		margin-bottom: 1rem;
+		background-color: #f9f9f9;
+		border: solid 1px #dadfe3;
+		padding: 20px;
+	}
+	.left-pane {
+		display: inline-block;
+		width: 50%;
+		.shp-title {
+			font-weight: 700;
+			margin-bottom: 5px;
+		}
+	}
+	.right-pane {
+		display: inline-block;
+		width: 49%;
+	}
+	a {
+		color: #0080eb;
+		font-weight: 500;
+	}
+	.btn {
+		font-weight: 500;
+		&:hover {
+			background-color: #ebedf0;
+			border-color: #dadfe3;
+		}
+	}
+	.ui-form .inline-field {
+		padding-top: 16px;
+		min-height: 300px;
+	}
+}

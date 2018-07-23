@@ -1,0 +1,42 @@
+<style>
+.shp-wrapper .heading {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.shp-wrapper .description {
+  letter-spacing: 0.3px;
+  text-align: center;
+  color: #6f7c87;
+}
+</style>
+
+<% content_for :helpcard do -%>
+  <div class=" helpcard">
+    <%= t("integrations."+@installing_application.name+".helptext", :full_domain => current_account.full_domain).html_safe %>
+  </div>
+<%- end %>
+
+<div class="list-page-body shp-wrapper">
+  <h3 class="lead">Shopify App</h3>
+  <div class="errorExplanation hide" id="errorExplanation">
+    
+  </div>
+  <ul class="ui-form row-fluid">
+    <li class="inline-field">
+      <div class="row-fluid">
+        <div class="span12">
+          <h2 class="heading">Connect your Shopify account</h2>
+          <p class="description">You’ll now be taken to Shopify. Please login to your store and allow Freshdesk to access recent orders.</p>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <div class="mt10 pull-right">
+    <%= link_to "#{t('account.cancel')}".html_safe, "/admin/home", :class => "btn" %>
+    <%= link_to "Connect", integrations_application_path(@installing_application, :page => 'add_store'), :class => "btn btn-primary" %>
+  </div>
+</div>
