@@ -56,6 +56,32 @@ module ForumHelper
 		topic.reload
 	end
 
+
+	def create_test_topic_with_pubslished_post(forum, published = false, user = @customer )
+		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
+		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys[1]
+		topic = FactoryGirl.build(
+							:topic, 
+							:account_id => @account.id, 
+							:forum_id => forum.id,
+							:user_id => user.id,
+							:stamp_type => stamp_type,
+							:user_votes => 0
+							)
+		topic.save
+		post = FactoryGirl.build(:post,
+							:account_id => @account.id,
+							:topic_id => topic.id,
+							:user_id => user.id,
+							:user_votes => 0,
+							:published => published
+							)
+		post.save!
+		topic.last_post_id = post.id
+		publish_post(post)
+		topic.reload
+	end
+
 	def create_test_topic_with_attachments(forum, user = @customer )
 		forum_type_symbol = Forum::TYPE_KEYS_BY_TOKEN[Forum::TYPE_SYMBOL_BY_KEY[forum.forum_type]]
 		stamp_type = Topic::ALL_TOKENS_FOR_FILTER[forum_type_symbol].keys[1]

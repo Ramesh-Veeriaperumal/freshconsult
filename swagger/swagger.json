@@ -3288,6 +3288,34 @@
         }
       }
     },
+    "/contacts/{id}/timeline": {
+      "get": {
+        "summary": "Contact timeline",
+        "description": "Recent Activities of the User based on Tickets & Forums.",
+        "tags": [
+          "contact"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/timeline_activity"
+            }
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "503": {
+            "description": "Service unavailable"
+          }
+        }
+      }
+    },
     "/companies": {
       "get": {
         "tags": [
@@ -13183,6 +13211,114 @@
     },
     "company_activities_with_meta": {
       "$ref": "#/definitions/company_activity"
+    },
+    "timeline_activity": {
+      "title": "data",
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "post": {
+              "$ref": "#/definitions/contact_post_activity"
+            },
+            "ticket": {
+              "$ref": "#/definitions/contact_ticket_activity"
+            }
+          }
+        }
+      }
+    },
+    "contact_post_activity": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "topic_id": {
+            "description": "Topic id",
+            "type": "integer"
+          },
+          "title": {
+            "description": "Title of the topic",
+            "type": "string"
+          },
+          "comment": {
+            "description": "Topic's post or Reply to a topic",
+            "type": "boolean"
+          },
+          "forum": {
+            "description": "Forum category of the topic/post",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "contact_ticket_activity": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description_text": {
+            "description": "Ticket description",
+            "type": "string"
+          },
+          "tags": {
+            "description": "Ticket tags",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "responder_id": {
+            "description": "Ticket's responder id",
+            "type": "integer"
+          },
+          "due_by": {
+            "description": "Ticket's due by time",
+            "type": "string",
+            "format": "date-time"
+          },
+          "requester_id": {
+            "description": "Ticket's requester id",
+            "type": "string"
+          },
+          "subject": {
+            "description": "Ticket subject",
+            "type": "string"
+          },
+          "group_id": {
+            "description": "Ticket's group id",
+            "type": "string"
+          },
+          "status": {
+            "description": "Ticket's status",
+            "type": "string"
+          },
+          "fr_due_by": {
+            "description": "Ticket's first response due by",
+            "type": "string"
+          },
+          "stats": {
+            "$ref": "#/definitions/ticket_stats"
+          },
+          "created_at": {
+            "description": "Ticket's created time",
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
     },
     "twitter_handle": {
       "type": "object",

@@ -45,6 +45,7 @@ class Post < ActiveRecord::Base
   scope :unpublished_spam,:conditions => {:published => false, :spam => true, :trash => false}, :order => "posts.created_at DESC", :joins => [ :topic ]
   scope :waiting_for_approval,:conditions => {:published => false, :spam => false, :trash => false}, :order => "posts.created_at DESC", :joins => [ :topic ]
   scope :unpublished,:conditions => {:published => false, :trash => false}, :order => "posts.created_at DESC", :joins => [ :topic ]
+  scope :pick_published, lambda { |ids| {:conditions => ['id in (?) and published is true', ids] } }
 
 
   scope :by_user, lambda { |user|

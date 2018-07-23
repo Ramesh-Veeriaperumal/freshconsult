@@ -85,7 +85,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_contacts do
-    resource :"ember/contact", only: %i[index show activities bulk_send_invite]
+    resource :"ember/contact", only: %i[index show activities bulk_send_invite timeline]
     resource :"ember/company", only: %i(index show activities)
     resource :"ember/contact/todo", only: [:index]
     resource :"ember/search/customer", only: [:results]

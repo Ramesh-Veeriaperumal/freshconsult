@@ -112,6 +112,21 @@ module Ember
       head 204 if contact_company_export_csv(cname)
     end
 
+    def timeline
+      items = HyperTrail::Timeline.new(params.merge!(type: cname).to_h).fetch
+      activities = construct_timeline_activities(items)
+      activities = decorate_activities(activities)
+      @activities = activities.each_with_object({}) do |act, ret|
+        (ret[act.delete(:activity_type).to_sym.downcase] ||= []).push(act)
+        ret
+      end
+      if activities.count >= CompanyConstants::MAX_ACTIVITIES_COUNT
+        response.api_meta = { more_tickets: true }
+      end
+    rescue
+      render_request_error(:internal_error, 503)
+    end
+
     def self.wrap_params
       Ember::ContactConstants::EMBER_WRAP_PARAMS
     end
@@ -179,6 +194,10 @@ module Ember
       def sanitize_params
         construct_or_delete_primary_company
         super
+      end
+
+      def launch_party_name
+        FeatureConstants::TIMELINE if action_name == 'timeline'
       end
 
       def construct_or_delete_primary_company

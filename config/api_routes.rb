@@ -377,6 +377,7 @@ Helpkit::Application.routes.draw do
         get :activities
         put :assume_identity
         delete :hard_delete
+        get :timeline
       end
       resources :notes, controller: 'customer_notes', only: [:create, :update, :destroy, :show, :index]
     end
