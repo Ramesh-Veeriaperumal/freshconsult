@@ -45,6 +45,7 @@
     - scheduler_post_message
     - scheduler_cancel_message
     - delete_archive_ticket
+    - freshcaller_account_delete
 
   :scheduled:
     - scheduled_reports
