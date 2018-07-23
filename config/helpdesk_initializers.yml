@@ -118,4 +118,5 @@ helpdesk:
     - sprockets_monkey_patch
     - facebook_eu_accounts_config
     - disposable_email_domains
+    - default_data_config
     - emailserv_request

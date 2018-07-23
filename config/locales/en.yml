@@ -362,7 +362,7 @@ en:
   custom_mailbox_error_type:
     mailbox_suspended: "Email server suspended"
     unkown_error: "Unable to fetch emails from custom email server. Please contact support@freshdesk.com"
-    invalid_login: 	"Invalid Login Credentials."
+    invalid_login:  "Invalid Login Credentials."
     server_response_invalid: "Server response is in invalid format while connecting to server."
     email_bad_request: "Email server sent BAD response while connecting to server."
     mailbox_idle: "Mailbox doesn't support IDLE capability."
@@ -2056,6 +2056,8 @@ en:
         feedbackwidget_submit_title_maxlength: "Maximum 16 characters"
     supervisor_rules:
       new_info_help: For <b>each ticket</b> updated within 30 days, execute all matching rules.
+      default_rule_name: Remind agents when a customer has responded an hour ago
+      default_rule_desc: Remind an agent when a customer has responded an hour ago and they haven’t responded back to them
       index:
         human_name: Supervisor Rule
         title: Supervisor - Rules
@@ -2075,6 +2077,8 @@ en:
         title: Supervisor - Clone Rule
     observer_rules:
       info_help_1: "For any event performed in a ticket, the Observer rules let you trigger specific actions."
+      default_rule_name: Notify the team lead when a customer is unhappy
+      default_rule_desc: When a customer gives an unhappy satisfaction rating on a ticket, notify the team lead
       index:
         human_name: Observer Rule
         title: Observer - Rules
@@ -4089,10 +4093,10 @@ en:
     title: Dispatch'r
     copy_of: Copy of
     inactive_rules: Inactive Rules
-    info1: Subscription related tickets
     rule_name: Rule Name
     description: Description
-    info2: All Subscription related tickets will be assigned to Susan
+    default_rule_name: All subscription related tickets go to Billing
+    default_rule_desc: All subscription related tickets will be assigned to the Billing team
     new_rule: New Rule
     new_scenario: New Scenario
     event_note: When <b>Any</b> of these events occur
@@ -11628,6 +11632,26 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         para2: "Freshdesk lets you create four types of forums: announcements, ideas, questions and problems. Each of these types represent a collection of topics falling under the same umbrella."
         para3: "For example, an idea forum called &ldquo;Feature Requests&rdquo; can have users suggesting new ideas and voting on them, and a problem forum called &ldquo;Bug Reports&rdquo; can have issues and people indicating that they are are facing the problem. You can learn more about forum types <a href='https://support.freshdesk.com/support/articles/37607' target='_blank'>here</a>."
         para4: "By default, new forums will be accessible to all of your customers. But if you want to, you can choose to restrict it to just agents, logged in users, or a particular company of users."
+      default_forum:
+        - subject: Preferred customer program
+          content: "We're excited to announce our Preferred customer program - this of this as an exclusive Platinum club of our customers.\n \nSome benefits are:<br>Priority shipping - 2 days from when you place your order to when you get your item. Or shipping free!\n
+Free gift wrapping and exchanges to make Christmas gifting super easy.\n
+1 year warranties on items in Cooking and Home furniture.\n
+Do let us know if you are interested!"
+        - subject: User studies
+          content: "Hey there,\nHow many of you would be interested in participating in a market study with us? Do respond back here!\n\nThanks, \nAcme Support"
+        - subject: Recurring purchase discounts
+          content: "Hi there, \nCan we get recurring purchase discounts? We order a lot from your site, so we wondered about that.\n\nThanks,\nHermoine"
+        - subject: Cost of the premium plan?
+          content: "What's the cost of the premium plan? Is it really worthwhile? \nPhileas"
+          replies:
+            - "Hello Phileas, \n We signed up last year and it has worked out very well - we got an annual contract which works out to $300/year. But its been the best investment. The small recurring charges do add up! \n Oliver Twist"
+        - subject: How do I setup my account?
+          content: "Hi there, I'm new to Acme, can someone help me setup my account? \n\nThanks, \nMatt"
+        - subject: User manuals for Gadgets
+          content: "Here are links to our Gadgets user manuals incase you lost them!\n1. iPhone 6S (http://google.com)\n2. Samsung 5R series (http://google.com)"
+        - subject: Is there a problem with your site??
+          content: "Hi there,\nIs your site down? I'm not able to log in.\n\nPlease help!\nHermoine Granger"
     moderation:
       page_title: Forum Moderation
       after_ban:
@@ -12184,7 +12208,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   default:
     ticket:
       email:
-        subject: Mary Jane shoes - Shipping rates
+        subject: Mary Jane shoes in Size 8?
         body: "<p>Hello there,</p><br /><p>I’m looking to buy a pair of Mary Jane shoes and I noticed that you have a local store in Aldovia. Could you let me know if the Mary Jane shoes are available in Size 8? I can pick it up from there.</p><br /><p>Thanks,\n<br />Emily.</p>"
         reply: "<p>Hey Emily,</p><br /><p>Thanks for writing to us!\n<br />I can confirm that our Aldovia store does have the Mary Jane shoes in size 8. I’ve asked them to block a pair for you. Feel free to pick them up anytime :)</p><br /><p>Cheers,\n<br />Rebecca.</p><br /><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk. <a href = https://support.freshdesk.com/support/solutions/articles/37541-forward-and-convert-your-support-emails-to-tickets-in-freshdesk target= _blank>See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"
       feedback_widget:
@@ -12326,4 +12350,17 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       diff_is_edited: Edited Properties
     banner:
       production_info: Your sandbox account is currently active. We do not recommend you make any changes to your Freshdesk account. <a href='http://%{url}' target=_blank rel="noreferrer noopener">Take me there.</a>
-
+  fixtures:
+    ticket_templates:
+      name: "Initiate a Refund"
+      desc: "To initiate a refund for all cancellation requests"
+      subject: "Refund for customer"
+      content: "<div><p>Initiating refund for a customer who has called us on our phone line. <br> <br>
+Name: <br>
+Email address: <br>
+Order ID: <br>
+Date of purchase: <br><br>
+Regards,<br>
+&lt;company name&gt; support.</p></div>"
+    canned_response:
+      title: Refund Template Canned Response
