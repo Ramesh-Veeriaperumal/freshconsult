@@ -1,0 +1,1 @@
+Fixtures::DefaultForumTopics.new.create

@@ -136,7 +136,7 @@ module Channel
                       bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'String'),
                       bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                       bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
-                      bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request'),
+                      bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Refund'),
                       bad_request_error_pattern('bot_external_id', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
                       bad_request_error_pattern('query_id', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer'),
                       bad_request_error_pattern('conversation_id', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Integer')])

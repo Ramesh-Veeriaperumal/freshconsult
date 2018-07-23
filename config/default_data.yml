@@ -1,0 +1,56 @@
+default_forum:
+  - category: Announcements
+    data: 0
+    email: soundofmusic@freshdesk.com
+    name: Maria Von Trapp
+    views: 10
+    likes: 5
+    sticky: true
+  - category: Announcements
+    data: 1
+    email: Oliver.Twist@freshdesk.com
+    name: Oliver Twist
+    views: 6
+    likes: 3
+    sticky: false
+  - category: Feature requests
+    data: 2
+    email: hermoine.granger@freshdesk.com
+    name: Hermione Granger
+    views: 7
+    likes: 8
+    sticky: true
+    status: 1
+  - category: Feature requests
+    data: 3
+    email: aroundtheworld80@freshdesk.com
+    name: Phileas Fogg
+    views: 14
+    likes: 4
+    sticky: false
+    status: 2
+    replies:
+      - data: 0
+        email: oliver.twist@freshdesk.com
+        name: Oliver Twist
+  - category: Tips and Tricks
+    data: 4
+    email: matt.rogers@freshdesk.com
+    name: Matt Rogers
+    views: 10
+    likes: 4
+    sticky: false
+  - category: Tips and Tricks
+    data: 5
+    email: norman.jones@freshdesk.com
+    name: Norman Jones
+    views: 15
+    likes: 10
+    sticky: true
+  - category: Report a problem
+    data: 6
+    email: hermoine.granger@freshdesk.com
+    name: Hermione Granger
+    views: 3
+    likes: 0
+    sticky: false
