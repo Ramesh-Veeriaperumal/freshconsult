@@ -212,7 +212,7 @@ Helpkit::Application.routes.draw do
 
     resources :bootstrap, controller: 'ember/bootstrap', only: :index do
       collection do
-        get :agents_groups, to: 'ember/bootstrap#agents_groups'
+        get :agents_groups, to: 'ember/bootstrap/agents_groups#index'
         get :me, to: 'ember/bootstrap#me'
         get :account, to: 'ember/bootstrap#account'
       end

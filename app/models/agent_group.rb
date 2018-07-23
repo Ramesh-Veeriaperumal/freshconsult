@@ -4,6 +4,9 @@ class AgentGroup < ActiveRecord::Base
   include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
   include RoundRobinCapping::Methods
   include MemcacheKeys
+  include DataVersioning::Model
+
+  VERSION_MEMBER_KEY = 'AGENTS_GROUPS'.freeze
 
   belongs_to_account
   belongs_to :user

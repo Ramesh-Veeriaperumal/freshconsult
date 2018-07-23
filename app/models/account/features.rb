@@ -35,7 +35,8 @@ class Account < ActiveRecord::Base
     ContactField::VERSION_MEMBER_KEY,
     CompanyField::VERSION_MEMBER_KEY,
     CustomSurvey::Survey::VERSION_MEMBER_KEY,
-    Freshchat::Account::VERSION_MEMBER_KEY
+    Freshchat::Account::VERSION_MEMBER_KEY,
+    AgentGroup::VERSION_MEMBER_KEY
   ]
 
   PODS_FOR_BOT = ['poduseast1'].freeze

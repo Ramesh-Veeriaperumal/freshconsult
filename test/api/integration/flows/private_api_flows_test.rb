@@ -119,7 +119,8 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
       'CONTACT_FIELD_LIST' => redis_timestamp,
       'COMPANY_FIELD_LIST' => redis_timestamp,
       'SURVEY_LIST' => redis_timestamp,
-      'MARKETPLACE_APPS_LIST' => redis_timestamp
+      'MARKETPLACE_APPS_LIST' => redis_timestamp,
+      'AGENTS_GROUPS_LIST' => redis_timestamp
     }
     set_others_redis_hash(version_redis_key, version_set)
     acc_version = Digest::MD5.hexdigest(version_set.values.join)
