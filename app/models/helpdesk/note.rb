@@ -131,6 +131,11 @@ class Helpdesk::Note < ActiveRecord::Base
   validates :user, presence: true, if: -> {user_id.present?}
   validate :edit_broadcast_note, on: :update, :if => :broadcast_note?
 
+  def assign_values(notehash)
+    notehash.each_key do |k|
+      safe_send("#{k}=", notehash[k])
+    end
+  end
 
   def edit_broadcast_note
     self.errors.add(:base, I18n.t('activerecord.errors.messages.edit_broadcast_note'))
@@ -549,4 +554,10 @@ class Helpdesk::Note < ActiveRecord::Base
       self.notable.to_email.to_a + self.account.email_configs.pluck(:reply_email)
     end
 
+    def save_att_as_user_draft(att)
+      att.attachable_id = User.current.id
+      att.attachable_type = 'UserDraft'
+      att.save
+      att
+    end
 end

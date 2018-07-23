@@ -12,3 +12,23 @@ get:
       description: Bad Request Error
       schema:
         $ref: '#/definitions/bad_request_error'
+        
+post:
+  tags: [conversation]
+  description: Reply Template After Undo
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/post_reply_template_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/conversation_template'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

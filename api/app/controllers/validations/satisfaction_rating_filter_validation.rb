@@ -14,7 +14,7 @@ class SatisfactionRatingFilterValidation < FilterValidation
   end
 
   def verify_user
-    user = Account.current.all_users.detect { |u| u.id == @user_id.to_i }
+    user = Account.current.all_users.find_by_id(@user_id.to_i)
     errors[:user_id] << :"can't be blank" unless user
   end
 end

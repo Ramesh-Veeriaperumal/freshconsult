@@ -37,7 +37,7 @@ class Sanitize
         'col'        => ['span', 'width'],
         'colgroup'   => ['span', 'width'],
         'del'        => ['cite', 'datetime'],
-        'img'        => ['align', 'alt', 'height', 'src', 'width', 'class', 'data-id', 'data-height'],
+        'img'        => ['align', 'alt', 'height', 'src', 'width', 'class', 'data-id', 'data-height', 'data-test-src'],
         'ins'        => ['cite', 'datetime'],
         'ol'         => ['start', 'reversed', 'type'],
         'q'          => ['cite'],

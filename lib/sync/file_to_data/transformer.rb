@@ -15,7 +15,8 @@ class Sync::FileToData::Transformer
     'Helpdesk::TicketTemplate'    => ['template_data', 'data_description_html'],
     'Helpdesk::TicketStatus'      => ['status_id'],
     'Admin::Skill'                => ['filter_data'],
-    'Admin::CannedResponses::Response' => ['content_html']
+    'Admin::CannedResponses::Response' => ['content_html'],
+    'EmailNotification' => ['requester_template', 'agent_template']
   }.freeze
 
   CUSTOM_TEXT_FIELDS_TYPES = {

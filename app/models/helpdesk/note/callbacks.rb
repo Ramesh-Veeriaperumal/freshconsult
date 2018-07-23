@@ -306,11 +306,18 @@ class Helpdesk::Note < ActiveRecord::Base
     def update_ticket_states
       return if meta?
       user_id = User.current.id if User.current
-      ::Tickets::UpdateTicketStatesWorker.perform_async(
-            { :id => id, :model_changes => @model_changes,
-              :freshdesk_webhook => freshdesk_webhook?,
-              :current_user_id =>  user_id }
-            ) unless zendesk_import?
+      unless zendesk_import?
+        args = {
+          id: id,
+          model_changes: @model_changes,
+          freshdesk_webhook: freshdesk_webhook?,
+          current_user_id: user_id
+        }
+        job_id = ::Tickets::UpdateTicketStatesWorker.perform_async(args)
+        Va::Logger::Automation.set_thread_variables(account_id, notable_id, user_id)
+        Va::Logger::Automation.log "Triggering UpdateTicketStatesWorker, job_id=#{job_id}, info=#{args.inspect}"
+        Va::Logger::Automation.unset_thread_variables
+      end
     end
 
     def notify_ticket_monitor

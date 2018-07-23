@@ -82,7 +82,7 @@ module Helpdesk::Accessible::ElasticSearchMethods
     end
 
     def ca_folders_from_esv2(model_name, options, visible_options)
-      Search::V2::Count::AccessibleMethods.new(model_name, options, visible_options).ca_folders_es_request()
+      Search::V2::Count::AccessibleMethods.new(model_name, options, visible_options).ca_folders_es_request() unless current_account.sandbox?
     end
 
     def accessible_from_es(model_name,options,visible_options={}, sort_option = nil, folder_id = nil, id_data = nil, excluded_ids = nil, type_ids = [])

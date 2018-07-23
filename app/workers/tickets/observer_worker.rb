@@ -19,18 +19,24 @@ module Tickets
         Va::Logger::Automation.log "system_event=true" if system_event
         Va::Logger::Automation.log "user=nil" if doer.nil?
         if evaluate_on.present? and (doer.present? || system_event)
+          start_time = Time.now.utc
+          rule_type = VAConfig::RULES_BY_ID[VAConfig::RULES[:observer]]
           Thread.current[:observer_doer_id] = doer_id || SYSTEM_DOER_ID
           aggregated_response_time = 0
-          account.observer_rules_from_cache.each do |vr|
+          observer_rules = account.observer_rules_from_cache
+          observer_rules.each do |vr|
             Va::Logger::Automation.set_rule_id(vr.id)
             ticket = nil
             time = Benchmark.realtime {
               ticket = vr.check_events doer, evaluate_on, current_events
             }
-            Va::Logger::Automation.log_execution_and_time(time, (ticket.present? ? 1 : 0))
+            Va::Logger::Automation.log_execution_and_time(time, (ticket.present? ? 1 : 0), rule_type)
             aggregated_response_time += vr.response_time[:matches] || 0
           end
-          Rails.logger.debug "Response time :: #{aggregated_response_time}"
+          end_time = Time.now.utc
+          total_time = end_time - start_time
+          Va::Logger::Automation.unset_rule_id
+          Va::Logger::Automation.log_execution_and_time(total_time, observer_rules.size, rule_type, start_time, end_time)
           ticket_changes = evaluate_on.merge_changes(current_events, 
                             evaluate_on.changes) if current_events.present?
           evaluate_on.round_robin_on_ticket_update(ticket_changes) if evaluate_on.rr_allowed_on_update?

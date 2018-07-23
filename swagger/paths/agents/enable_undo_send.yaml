@@ -1,0 +1,10 @@
+post:
+  tags: [agent]
+  summary: Enable Undo Send
+  responses:
+    204:
+      description: Success
+    403:
+      description: Access denied
+    400:
+      description: Bad Request Error

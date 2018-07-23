@@ -20,7 +20,8 @@
 
       #queue 'Spam' and everything else into the dispatcher queue
       job_queue = "Worker" if ( !job_queues.include?(job_queue) || Rails.env.development? || Rails.env.test? )
-      ("Admin::Dispatcher::#{job_queue}").constantize.perform_async(args)
+      job_id = "Admin::Dispatcher::#{job_queue}".constantize.perform_async(args)
+      Va::Logger::Automation.log "Triggering Dispatcher, job_id=#{job_id}, job_queue=#{job_queue}"
     rescue Exception => e   
       NewRelic::Agent.notice_error(e)
     end
@@ -73,7 +74,10 @@
     end
 
     def execute_rules
+      start_time = Time.now.utc
+      rule_type = VAConfig::RULES_BY_ID[VAConfig::RULES[:dispatcher]]
       evaluate_on = @ticket
+      total_rules = 0 # used if cascade_dispatcher feature not present
       @account.va_rules.each do |vr|
         begin
           Va::Logger::Automation.set_rule_id(vr.id)
@@ -81,13 +85,18 @@
           time = Benchmark.realtime {
             evaluate_on = vr.pass_through(@ticket,nil,@user)
           }
-          Va::Logger::Automation.log_execution_and_time(time, (evaluate_on.present? ? 1 : 0))
+          Va::Logger::Automation.log_execution_and_time(time, (evaluate_on.present? ? 1 : 0), rule_type)
         rescue Exception => e
           Va::Logger::Automation.log_error(DISPATCHER_ERROR, e)
         end
+        total_rules += 1
         next if @account.features?(:cascade_dispatchr)
-        return if evaluate_on.present?
+        if evaluate_on.present?
+          log_total_execution_info(total_rules, rule_type, start_time, Time.now.utc)
+          return
+        end
       end
+      log_total_execution_info(total_rules, rule_type, start_time, Time.now.utc)
     end
 
     def round_robin
@@ -101,5 +110,11 @@
       if group.round_robin_enabled?
         @ticket.assign_agent_via_round_robin
       end
+    end
+
+    def log_total_execution_info(total_tickets, rule_type, start_time, end_time)
+      total_time = end_time - start_time
+      Va::Logger::Automation.unset_rule_id
+      Va::Logger::Automation.log_execution_and_time(total_time, total_tickets, rule_type, start_time, end_time)
     end
 end

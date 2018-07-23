@@ -87,7 +87,12 @@ module Helpdesk::SendAndSetHelper
       :ticket_changes => @ticket.observer_args,
       :note_changes => note_params
     }
-    ::Tickets::SendAndSetWorker.perform_async(args) if @ticket.schedule_observer
+    if @ticket.schedule_observer
+      job_id = ::Tickets::SendAndSetWorker.perform_async(args)
+      Va::Logger::Automation.set_thread_variables(current_account.id, @note.notable_id, @note.user_id)
+      Va::Logger::Automation.log "Triggering SendAndSetWorker, job_id=#{job_id}, info=#{args.inspect}"
+      Va::Logger::Automation.unset_thread_variables
+    end
   end
 
   def set_default_source

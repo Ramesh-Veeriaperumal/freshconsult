@@ -91,6 +91,8 @@
   $ref: ./conversations/reply_to_forward.yaml
 /tickets/{id}/summary:
   $ref: ./tickets/summary.yaml
+/tickets/{id}/undo_send:
+  $ref: ./conversations/undo_send.yaml
 
 /tickets/archived/{id}:
   $ref: ./archive_tickets/crud.yaml
@@ -224,6 +226,10 @@
   $ref: ./agents/revert_identity.yaml
 /agents/accept_gdpr:
   $ref: ./agents/gdpr_acceptance.yaml
+/agents/enable_undo_send:
+  $ref: ./agents/enable_undo_send.yaml
+/agents/disable_undo_send:
+  $ref: ./agents/disable_undo_send.yaml
 
 # Profiles
 /agents/me:

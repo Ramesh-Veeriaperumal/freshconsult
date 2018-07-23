@@ -115,15 +115,15 @@ module Social::Twitter::TicketActions
     end
 
     def construct_item_body(account, item, twt, options)
+      media_url_hash = fetch_media_url(account, item, twt, options)
       tweet_body = options[:tweet] ? tweet_body(twt) : twt.text
-      if twt.respond_to?("media?") && twt.media?
-        media_url_hash = construct_media_url_hash(account, item, twt, options[:oauth_credential])
-        if media_url_hash.present?
-          media_url_hash[:photo].each do |photo_url_hash_key, photo_url_hash_val|
-              img_element = INLINE_IMAGE_HTML_ELEMENT % photo_url_hash_val
-              tweet_body = tweet_body.gsub(photo_url_hash_key, img_element)
-          end
+      if media_url_hash.present?
+        img_content = ''
+        media_url_hash[:photo].each do |photo_url_hash_key, photo_url_hash_val|
+          img_content << INLINE_IMAGE_HTML_ELEMENT % { url: photo_url_hash_val, data_test_url: photo_url_hash_key }
         end
+        img_element = TWITTER_IMAGES % { img_content: img_content }
+        tweet_body = tweet_body.gsub(media_url_hash[:twitter_url], img_element)
       end
       tweet_body
     end

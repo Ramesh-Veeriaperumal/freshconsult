@@ -477,7 +477,7 @@ module Ember
       assert sample_user.user_companies.find_by_default(false).client_manager == false
     end
 
-    def test_update_contact_by_removing_companies
+    def test_update_contact_by_removing_secondary_companies
       company_ids = [create_company, create_company].map(&:id)
       sample_user = create_contact_with_other_companies(@account, company_ids)
 
@@ -495,6 +495,43 @@ module Ember
       assert sample_user.user_companies.find_by_default(true).client_manager == false
       assert sample_user.user_companies.find_by_default(false).nil?
       assert sample_user.user_companies.find_by_company_id(company_ids[1]).nil?
+    end
+
+    def test_update_contact_by_removing_primary_company
+      company_ids = [create_company, create_company].map(&:id)
+      sample_user = create_contact_with_other_companies(@account, company_ids)
+
+      put :update, construct_params({ version: 'private', id: sample_user.id },
+                                    company: nil,
+                                    other_companies: [
+                                      {
+                                        id: company_ids[1],
+                                        view_all_tickets: true
+                                      }
+                                    ])
+      assert_response 200
+      pattern = private_api_contact_pattern(sample_user.reload)
+      pattern.delete(:other_companies)
+      match_json(pattern)
+      assert sample_user.user_companies.find_by_default(true).company_id == company_ids[1]
+      assert sample_user.user_companies.find_by_default(true).client_manager == true
+      assert sample_user.user_companies.find_by_default(false).nil?
+      assert sample_user.user_companies.find_by_company_id(company_ids[0]).nil?
+    end
+
+    def test_update_contact_by_removing_primary_company_without_multiple_companies_feature
+      company_id = create_company.id
+      @account.revoke_feature(:multiple_user_companies)
+      sample_user = add_new_user(@account, customer_id: company_id)
+
+      put :update, construct_params({ version: 'private', id: sample_user.id },
+                                    company: nil)
+      assert_response 200
+      pattern = private_api_contact_pattern(sample_user.reload)
+      match_json(pattern)
+      assert sample_user.user_companies.find_by_company_id(company_id).nil?
+      @account.add_feature(:multiple_user_companies)
+      @account.reload
     end
 
     def test_quick_create_contact_with_company_name

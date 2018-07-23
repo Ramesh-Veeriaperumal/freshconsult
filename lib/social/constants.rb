@@ -132,11 +132,14 @@ module Social::Constants
   #Length+1 used in nobelcount.js for the manipulation of character count in UI
   TWITTER_URL_LENGTH = " " * 23
 
-  INLINE_IMAGE_HTML_ELEMENT = "<img src=\"%s\" class=\"inline-image\"/>"
+  INLINE_IMAGE_HTML_ELEMENT = '<div class="image-enlarge-link twitter_image">
+                                <img src="%{url}" data-test-src="%{data_test_url}" class="inline-image"></div>'
 
-  TWITTER_MEDIA_PHOTO = "Twitter::Media::Photo"
+  TWITTER_IMAGES = '<div class="twitter_media_content"> %{img_content} <div>'
 
-  TWITTER_MEDIA_ANIMATEDGIF = "Twitter::Media::AnimatedGif"
+  TWITTER_MEDIA_PHOTO = 'Twitter::Media::Photo'.freeze
+
+  TWITTER_MEDIA_ANIMATED_GIF = 'Twitter::Media::AnimatedGif'.freeze
 
   WHITELISTED_SPECIAL_CHARS_REGEX = /[,.():;=\-\<\>\/&!?%+"']/
 
@@ -156,5 +159,6 @@ module Social::Constants
   SMART_FILTER_MANUAL_DONT_CONVERT_TO_TICKET = 3;
   SMART_FILTER_FEEDBACK_GIVEN = -1;
   TWITTER_MENTION = "@"
-  EU_TWITTER_HANDLES = "eu_twitter_handles"
+  TWEET_MEDIA_PHOTO = 'photo'.freeze
+  TWEET_MEDIA_ANIMATED_GIF = 'animated_gif'.freeze
 end

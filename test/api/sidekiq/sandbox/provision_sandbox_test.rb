@@ -8,8 +8,18 @@ class ProvisionSandboxTest < ActionView::TestCase
   include AccountTestHelper
   include ProvisionSandboxTestHelper
   SUCCESS = 200..299
+  @@count_data = {}
 
   def setup
+    unless @@count_data.present?
+      @production_account = Account.first
+      if @production_account
+        @sandbox_account_id = @production_account.sandbox_job.try(:sandbox_account_id)
+        delete_sandbox_data
+      end
+      @@count_data = count_data
+    end
+
     super
   end
 
@@ -18,8 +28,7 @@ class ProvisionSandboxTest < ActionView::TestCase
     super
   end
 
-  ## TODO Need to write error test cases and add more sample data before ProvisionSandbox worker
-  def test_provision_sandbox
+  def count_data
     Sharding.run_on_shard('shard_1') do
       @user = AccountTestHelper.create_test_account
       @production_account = @user.account.make_current
@@ -37,12 +46,17 @@ class ProvisionSandboxTest < ActionView::TestCase
       @sandbox_account_id = @production_account.sandbox_job.sandbox_account_id
       Admin::Sandbox::DataToFileWorker.new.perform({})
       Admin::Sandbox::FileToDataWorker.new.perform
-      match_data(@production_account.id, job.sandbox_account_id)
+      @production_account.make_current
+      @models_data = models_data(@production_account.id, job.sandbox_account_id)
     end
-  ensure
-    update_data_for_delete_sandbox(@sandbox_account_id)
-    @production_account.make_current
-    Admin::Sandbox::DeleteWorker.new.perform
-    delete_sandbox_data(@sandbox_account_id)
+    @models_data
+  rescue => e
+    {"error" => e}
+  end
+
+  (MODEL_DEPENDENCIES.keys.map {|table| MODEL_TABLE_MAPPING[table]}.compact - IGNORE_TABLES).each do |table|
+    define_method "test_create_sandbox_#{table}" do
+      assert_equal @@count_data[:master_account_data][table].sort, @@count_data[:sandbox_account_data][table].sort
+    end
   end
 end

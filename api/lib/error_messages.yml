@@ -128,6 +128,8 @@ api_error_messages:
   wrong_internal_agent: "Internal Agent does not belong to the specified Group"
   wrong_internal_group: "Internal group does not belong to the given status of the ticket"
   traffic_cop_alert: "Ticket has been updated with new conversations"
+  undo_send_enqueued_alert: "Someone may have responded to this ticket. Please refresh in a while and review your response."
+  undo_send_enqueued_agent_alert: "Your previous response is being sent."
   not_a_related_ticket: "cannot unlink because ticket is not a related ticket"
   installed_application_id_required: "Installed application id required"
   user_id_required: "User Id required"
