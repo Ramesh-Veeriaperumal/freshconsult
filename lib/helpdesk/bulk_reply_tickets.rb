@@ -75,11 +75,7 @@ class Helpdesk::BulkReplyTickets
 
     def load_inline_attachments
       (fetch_inline_attachment_records || []).map do |attachment_obj|
-        io  = open attachment_obj.authenticated_s3_get_url
-        if io
-          def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
-        end
-        {:id => attachment_obj.id , :content => io}
+        { id: attachment_obj.id, content: attachment_obj.to_io }
       end
     end
 

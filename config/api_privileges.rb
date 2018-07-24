@@ -5,6 +5,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_tickets do
     resource :"ember/bootstrap"
+    resource :"ember/bootstrap/agents_group"
     resource :"ember/tickets/collab", only: [:notify]
     resource :"ember/tickets/delete_spam", only: %i(spam bulk_spam unspam bulk_unspam)
     resource :"ember/tickets/activity"
@@ -85,7 +86,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_contacts do
-    resource :"ember/contact", only: %i[index show activities bulk_send_invite]
+    resource :"ember/contact", only: %i[index show activities bulk_send_invite timeline]
     resource :"ember/company", only: %i(index show activities)
     resource :"ember/contact/todo", only: [:index]
     resource :"ember/search/customer", only: [:results]

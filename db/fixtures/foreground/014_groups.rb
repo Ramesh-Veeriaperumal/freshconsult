@@ -1,7 +1,9 @@
 Group.seed_many(:account_id, :name, [
     ['Product Management', 'Product Management group'],
     ['QA', 'Members of the QA team belong to this group'],
-    ['Sales', 'People in the Sales team are members of this group']
+    ['Sales', 'People in the Sales team are members of this group'],
+    ['Billing', 'Members of the Billing team belong to this group'],
+    ['Escalations','Team to handle Customer escalations']
   ].map do |f|
     {
       :account_id => Account.current.id,

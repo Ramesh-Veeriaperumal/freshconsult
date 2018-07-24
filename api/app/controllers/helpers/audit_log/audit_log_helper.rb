@@ -7,7 +7,7 @@ module AuditLog::AuditLogHelper
       options ||= {}
       modified_value = value.present? ? default_value(value) : nil
       modified_value = value if options[:type] == :array
-      options.merge(type: :default, field: key, value: modified_value)
+      { type: :default, field: key, value: modified_value }.merge(options)
     end
 
     def nested_data(nested_value, options)

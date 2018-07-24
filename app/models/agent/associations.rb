@@ -4,6 +4,8 @@ class Agent < ActiveRecord::Base
   
   belongs_to :user, :class_name =>'User', :foreign_key =>'user_id'
 
+  delegate :name, to: :user
+
   belongs_to :level, :class_name => 'ScoreboardLevel', :foreign_key => 'scoreboard_level_id'
 
   # ActiveRecord::HasManyThroughCantAssociateThroughHasOneOrManyReflection: 

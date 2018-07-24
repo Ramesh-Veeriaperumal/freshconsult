@@ -1,0 +1,10 @@
+title: data
+type: object
+properties:
+  data: 
+    type: object
+    properties:
+      post:
+        $ref: '#/definitions/contact_post_activity'
+      ticket:
+        $ref: '#/definitions/contact_ticket_activity'

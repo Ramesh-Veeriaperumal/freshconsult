@@ -294,12 +294,14 @@ module Ember
           visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
         )
       end
+      ids_passed = ca_responses.collect(&:id)
       get :search, controller_params(version: 'private', ticket_id: @@sample_ticket.display_id, search_string: 'Canned Response')
       assert_response 200
       pattern = []
       ca_responses.first(5).each do |ca|
         pattern << ca_response_search_pattern(ca.id)
       end
+      get :index, controller_params(version: 'private', ids: ids_passed.join(',') )
       match_json(pattern)
     end
   end
