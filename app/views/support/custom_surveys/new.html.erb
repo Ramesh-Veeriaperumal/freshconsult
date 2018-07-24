@@ -9,6 +9,7 @@
   surveyFeedbackI18n.thanksFeedback =  "<%= t('admin.surveys.new_thanks.thanks_feedback')%>";
   surveyFeedbackI18n.surveyFeedback = "<%=t('admin.surveys.index.survey_feedback')%>";
   surveyFeedbackI18n.portalMsg = "<%= t('admin.surveys.index.portal_msg') %>";
+  surveyFeedbackI18n.thanksMessage = "<%= @survey_handle.survey.thanks_text %>";
 <% end %>
 
 <script>
@@ -32,21 +33,28 @@
 
 <% csat_email_scan_compatibile = @survey_handle.account.csat_email_scan_compatibility_enabled? %>
 
-<script type="text/javascript">
-	if(document.referrer.length>0){
-		Feedback.refreshTab();
-	}
-	<% if @rating_via_handle && !csat_email_scan_compatibile %>
-		Feedback.surveySaveHit(null, "<%= @rating %>","<%= @survey_code %>");
-	<% end %>
-</script>
+<% unless csat_email_scan_compatibile %>
+	<script type="text/javascript">
+		if(document.referrer.length > 0){
+			Feedback.refreshTab();
+		}
+		<% if @rating_via_handle %>
+			Feedback.surveySaveHit(null, "<%= @rating %>","<%= @survey_code %>");
+		<% end %>
+	</script>
+<% end %>
 
 <body class="single">
 	<div class="cust-survey-wrapper content rounded-6">
 		<%= form_for :survey_handle, html: {
-					id: 'survey_form', method: :post, onsubmit: csat_email_scan_compatibile ? "javascript:Feedback.surveySaveHit(event, '#{@rating}', '#{@survey_code}')" : "javascript:Feedback.submit(event)", 'data-email-scan-compatible': csat_email_scan_compatibile } do |f| -%>
+					id: 'survey_form', method: :post, onsubmit: csat_email_scan_compatibile ? "javascript:Feedback.surveySaveHit(event, '#{@rating}', '#{@survey_code}')" : "javascript:Feedback.submit(event)", 'data-email-scan-compatible': csat_email_scan_compatibile, 'data-handle': @survey_handle.id_token } do |f| -%>
 			<div class="highlighter">
-				<h2><%=@survey_handle.survey.thanks_text%></h2>
+				<% if csat_email_scan_compatibile %>
+					<h2></h2>
+					<%= render partial: 'layouts/shared/survey', locals: { survey_handle: @survey_handle, rating: @rating } %>
+				<% else %>
+					<h2><%=@survey_handle.survey.thanks_text%></h2>
+				<% end %>
 				<div class="survey-overlay center" style="display:none;"></div>
 				<div class="loading">
 					<span class='loading-text'> <%=t('admin.surveys.index.portal_msg')%> </span>
