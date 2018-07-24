@@ -403,7 +403,7 @@ module Ember
         post :bulk_update, construct_params({ version: 'private' }, params_hash)
         match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                     bad_request_error_pattern('status', :not_included, list: statuses.join(',')),
-                    bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request')])
+                    bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Refund')])
         assert_response 400
       end
 

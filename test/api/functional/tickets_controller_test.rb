@@ -357,7 +357,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request'),
+                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Refund'),
                 bad_request_error_pattern('source', :not_included, list: sources_list)])
     assert_response 400
   end
@@ -1845,7 +1845,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request'),
+                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Refund'),
                 bad_request_error_pattern('source', :not_included, list: '1,2,3,7,8,9,10')])
   end
 
@@ -3135,7 +3135,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('product_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer'),
                 bad_request_error_pattern('priority', :not_included, code: :missing_field, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, code: :missing_field, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request')])
+                bad_request_error_pattern('type', :not_included, code: :missing_field, list: 'Question,Incident,Problem,Feature Request,Refund')])
     assert_response 400
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required) }
@@ -3182,7 +3182,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
-                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request'),
+                bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Refund'),
                 bad_request_error_pattern('source', :not_included, list: '1,2,3,7,8,9,10')])
     assert_response 400
   ensure

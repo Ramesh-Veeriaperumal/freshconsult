@@ -158,6 +158,8 @@
   $ref: ./contacts/import_crud.yaml
 /contacts/quick_create:
   $ref: ./contacts/quick_create.yaml
+/contacts/{id}/timeline:
+  $ref: ./contacts/timeline.yaml
 
 /companies:
   $ref: ./companies/list_and_create.yaml

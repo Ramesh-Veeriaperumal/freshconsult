@@ -155,7 +155,7 @@ class Account < ActiveRecord::Base
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true,
-                            :open_forums => true, :google_signin => true, :twitter_signin => true, :facebook_signin => true,
+                            :open_forums => false, :google_signin => true, :twitter_signin => true, :facebook_signin => true,
                             :signup_link => true, :captcha => false,
                             :moderate_all_posts => false, :moderate_posts_with_links => true, :hide_portal_forums => false,
                             :forum_captcha_disable => false, :public_ticket_url => false }
@@ -213,7 +213,7 @@ class Account < ActiveRecord::Base
     :post_central_publish => false, :audit_logs_central_publish => false, :twitter_common_redirect => false,
     :euc_migrated_twitter => false, :new_onboarding => false, :new_ticket_recieved_metric => false,
     :audit_log_ui => false, :es_msearch => true, :canned_forms => false, :attachment_virus_detection => false,
-    :undo_send => false
+    :undo_send => false, :timeline => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

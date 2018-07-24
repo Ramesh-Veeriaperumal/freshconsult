@@ -11,9 +11,14 @@ module AuditLog::AutomationHelper
       next unless ALLOWED_MODEL_CHANGES.include?(key)
       trans_key = translated_key(key, model_name)
       response << case key
-                  when :active
-                    description_properties(trans_key,
-                      translated_value(:AUTOMATION_RULE_TOGGLE, toggle_status(value)))
+                  when :filter_data
+                    result = filter_action_changes(trans_key, value)
+                    next unless result.present?
+                    result
+                  when :action_data
+                    result = filter_action_changes(trans_key, value)
+                    next unless result.present?
+                    result
                   else
                     description_properties(trans_key, value)
                   end
@@ -34,5 +39,23 @@ module AuditLog::AutomationHelper
 
   def automation_rule?(rule_type)
     AuditLogConstants::AUTOMATION_RULE_TYPES.include?(rule_type)
+  end
+
+  def filter_action_changes(key, value)
+    changed_value = []
+    return [] if !(value.first - value.last).present? && !(value.last - value.first).present?
+    changed_value << condition_changes((value.first - value.last), "Removed")
+    changed_value << condition_changes((value.last - value.first), "Added")
+    description_properties(key, changed_value, type: :array)
+  rescue Exception => e
+    nil
+  end
+
+  def condition_changes(changes, action)
+    conditions = []
+    changes.each do |condition|
+      conditions << description_properties(condition.values.join(" - "))
+    end
+    description_properties(action, conditions, type: :array)
   end
 end

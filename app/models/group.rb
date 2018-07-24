@@ -10,8 +10,10 @@ class Group < ActiveRecord::Base
   include BusinessCalendarExt::Association
   include AccountOverrider
   include RoundRobinCapping::Methods
+  include DataVersioning::Model
 
   TICKET_ASSIGN_TYPE = {:default => 0, :round_robin => 1, :skill_based => 2} #move other constants after merge - hari
+  VERSION_MEMBER_KEY = 'AGENTS_GROUPS'.freeze
 
   concerned_with :round_robin_methods, :skill_based_round_robin, :presenter
 

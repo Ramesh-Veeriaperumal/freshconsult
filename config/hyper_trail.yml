@@ -3,9 +3,17 @@ development:
     api_endpoint: "http://hypertrail-dev.freshworksapi.com/api/v1/audit/account/%{account_id}"
     username: hypertrail-ci
     password: hypertrail-ci
+  timeline:
+    api_endpoint: "http://hypertrail-dev.freshworksapi.com/api/v2/activities/account/%{account_id}"
+    username: hypertrail-ci
+    password: hypertrail-ci
 test:
   audit_log:
     api_endpoint: "http://hypertrail-dev.freshworksapi.com/api/v1/audit/account/%{account_id}"
+    username: hypertrail-ci
+    password: hypertrail-ci
+  timeline:
+    api_endpoint: "http://hypertrail-dev.freshworksapi.com/api/v2/activities/account/%{account_id}"
     username: hypertrail-ci
     password: hypertrail-ci
 staging:
@@ -13,8 +21,16 @@ staging:
     api_endpoint: "http://hypertrail-dev.freshworksapi.com/api/v1/audit/account/%{account_id}"
     username: hypertrail-ci
     password: hypertrail-ci
+  timeline:
+    api_endpoint: "http://hypertrail-staging.freshworksapi.com/api/v2/activities/account/%{account_id}"
+    username: dummy
+    password: dummy
 production:
   audit_log:
     api_endpoint: "http://hypertrail-dev.freshworksapi.com/api/v1/audit/account/%{account_id}"
     username: hypertrail-ci
     password: hypertrail-ci
+  timeline:
+    api_endpoint: "http://hypertrail-us.freshworksapi.com/api/v2/activities/account/%{account_id}"
+    username: dummy
+    password: dummy

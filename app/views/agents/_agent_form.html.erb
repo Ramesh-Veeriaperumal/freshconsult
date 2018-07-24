@@ -218,7 +218,7 @@
               <li>
                 <label class="radio">
                  <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets", :class => "radio"}) %>
-                 <%=t('agent.group')%>
+                 <%=t('agent.group_access')%>
                   <%= content_tag( :span, t('agent.group_info'), :class => "muted info_data" ) %>
                </label>
 

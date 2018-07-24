@@ -334,6 +334,13 @@
     $ref: './response/companies/activity.yaml'
   company_activities_with_meta:
     $ref: './response/companies/activities_with_meta.yaml'
+  timeline_activity:
+    $ref: './response/contacts/timeline.yaml'
+  contact_post_activity:
+    $ref: './response/contacts/post.yaml'
+  contact_ticket_activity:
+    $ref: './response/contacts/ticket.yaml'
+
   twitter_handle:
     $ref: './resource/twitter_handle.yaml'
   ticket_activity:

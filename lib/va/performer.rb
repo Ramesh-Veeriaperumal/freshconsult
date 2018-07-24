@@ -9,10 +9,26 @@ class Va::Performer
   ASSIGNED_AGENT = -1
 
   TYPE_CHECK = {
-    AGENT     => {:doer_check => 'agent_performed?', :translation_key => "agent"},
-    CUSTOMER  => {:doer_check => 'customer_performed?', :translation_key => "customer"},
-    ANYONE    => {:doer_check => 'present?', :translation_key => "new_anyone"},
-    SYSTEM    => {:doer_check => 'nil?', :translation_key =>  "system"}
+    AGENT     => {
+      :doer_check => 'agent_performed?', 
+      :translation_key => "agent",
+      :english_key => "Agent"
+    },
+    CUSTOMER  => {
+      :doer_check => 'customer_performed?', 
+      :translation_key => "customer",
+      :english_key => "Requester"
+    },
+    ANYONE    => {
+      :doer_check => 'present?', 
+      :translation_key => "new_anyone",
+      :english_key => "Agent or Requester"
+    },
+    SYSTEM    => {
+      :doer_check => 'nil?', 
+      :translation_key =>  "system",
+      :english_key => "System"
+    }
   }
 
   def initialize args

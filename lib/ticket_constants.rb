@@ -74,6 +74,7 @@ module TicketConstants
   PRIORITY_KEYS_BY_NAME = Hash[*PRIORITIES.map { |i| [i[1], i[2]] }.flatten]
   PRIORITY_TOKEN_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[0]] }.flatten]
   PRIORITY_COLOR_BY_KEY = Hash[*PRIORITIES.map { |i| [i[2], i[3]] }.flatten]
+  PRIORITY_NAMES_BY_STR = Hash[*PRIORITIES.map { |i| [i[2].to_s, i[1]] }.flatten]
 
   TYPE = [
     [ :how_to,    I18n.t('how_to'),          1, 'Question'],
@@ -435,6 +436,10 @@ module TicketConstants
 
   def self.states_options
     STATES_HASH.map {|k,v| [I18n.t(v),k]}
+  end
+
+  def self.readable_source_names_by_key
+    Hash[*SOURCES.map { |i| [i[2].to_s, I18n.t(i[1])] }.flatten]
   end
 
   def self.archive_date_options

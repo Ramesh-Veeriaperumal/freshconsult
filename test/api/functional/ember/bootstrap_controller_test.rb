@@ -21,13 +21,6 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     match_json(account_pattern(Account.current, Account.current.main_portal))
   end
 
-  def test_agents_groups
-    get :agents_groups, controller_params(version: 'private')
-    assert_response 200
-
-    match_json(agent_group_pattern(Account.current))
-  end
-
   def test_collision_autorefresh_freshid_keys
     Account.current.features.collision.create
     Account.current.add_feature(:auto_refresh)

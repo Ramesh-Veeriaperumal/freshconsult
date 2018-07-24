@@ -98,6 +98,10 @@ module Cache::Memcache::Account
     end
   end
 
+  def active_custom_survey_choices
+    active_custom_survey_from_cache.default_question.custom_field_choices
+  end
+
   def ticket_types_from_cache
     @ticket_types_from_cache ||= begin
       key = ticket_types_memcache_key
