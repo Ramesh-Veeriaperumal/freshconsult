@@ -7,5 +7,5 @@
 <% if @restricted_helpdesk_launched %>
   <h5 class="lead mt15"> <p> <%=t('account.permission.helpdesk_restrictions')%> </p> </h5>
   <p> <%= t('accounts.helpcard.info5') %>
-  <%= link_to t('accounts.helpcard.info6'), "https://support.freshdesk.com/solution/articles/218385-helpdesk-restriction" %></p>
+  <%= link_to t('accounts.helpcard.info6'), "https://support.freshdesk.com/solution/articles/218385-helpdesk-restriction", target: "_top" %></p>
 <% end %>

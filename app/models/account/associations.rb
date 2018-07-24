@@ -33,6 +33,8 @@ class Account < ActiveRecord::Base
     :conditions => {:user_type => PasswordPolicy::USER_TYPE[:agent]}, :dependent => :destroy
   has_many :dynamic_notification_templates
   has_many :google_accounts, :class_name => 'Integrations::GoogleAccount'
+  has_many :contact_filters, dependent: :destroy
+  has_many :company_filters, dependent: :destroy
 
 
   accepts_nested_attributes_for :primary_email_config
@@ -253,6 +255,10 @@ class Account < ActiveRecord::Base
 
   has_many :time_sheets , :class_name =>'Helpdesk::TimeSheet' , :through =>:tickets , :conditions =>['helpdesk_tickets.deleted =?', false]
 
+  has_many :all_tickets_time_sheets, class_name: 'Helpdesk::TimeSheet', through: :tickets, source: :time_sheets
+
+  has_many :all_time_sheets, class_name: 'Helpdesk::TimeSheet'
+
   has_many :support_scores, :class_name => 'SupportScore'
 
   has_one  :es_enabled_account, :class_name => 'EsEnabledAccount', :dependent => :destroy
@@ -361,6 +367,10 @@ class Account < ActiveRecord::Base
   has_many :bots, class_name: 'Bot', dependent: :destroy
   has_many :bot_feedback_mappings, class_name: 'Bot::FeedbackMapping'
 
+  has_many :canned_forms, class_name: 'Admin::CannedForm', order: 'updated_at desc'
+  has_many :canned_form_handles, through: :canned_forms, class_name: 'Admin::CannedFormHandle'
+
   has_many :contact_notes
   has_many :company_notes
+  has_one  :freshconnect_account, class_name: 'Freshconnect::Account', dependent: :destroy
 end

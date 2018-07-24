@@ -26,6 +26,9 @@ class Va::Logger::Automation
       automation_log_vars = Thread.current[:automation_log_vars]
       content = "#{Time.now.utc.strftime '%Y-%m-%d %H:%M:%S'} uuid=#{Thread.current[:message_uuid].try(:join, ' ')}, A=#{automation_log_vars[:account_id]}, T=#{automation_log_vars[:ticket_id]}, U=#{automation_log_vars[:user_id]}, R=#{automation_log_vars[:rule_id]}"
       content << ", Time=#{automation_log_vars[:time]}" if automation_log_vars[:time]
+      content << ", Type=#{automation_log_vars[:rule_type]}" if automation_log_vars[:rule_type]
+      content << ", Start time=#{automation_log_vars[:start_time]}" if automation_log_vars[:start_time]
+      content << ", End time=#{automation_log_vars[:end_time]}" if automation_log_vars[:end_time]
       content << ", Executed=#{automation_log_vars[:executed]}" if automation_log_vars[:executed]
       content
     end
@@ -43,10 +46,17 @@ class Va::Logger::Automation
       Thread.current[:automation_log_vars][:rule_id] = rule_id if rule_id && Thread.current[:automation_log_vars].present?
     end
 
-    def log_execution_and_time time, executed
+    def unset_rule_id
+      Thread.current[:automation_log_vars][:rule_id] = nil
+    end
+
+    def log_execution_and_time(time, executed, rule_type=nil, start_time=nil, end_time=nil)
       return if Thread.current[:automation_log_vars].blank?
       Thread.current[:automation_log_vars][:time] = time.round(5) if time
       Thread.current[:automation_log_vars][:executed] = executed if executed
+      Thread.current[:automation_log_vars][:rule_type] = rule_type if rule_type
+      Thread.current[:automation_log_vars][:start_time] = Time.at(start_time).utc if start_time
+      Thread.current[:automation_log_vars][:end_time] = Time.at(end_time).utc if end_time
       log EXECUTION_COMPLETED
       unset_execution_and_time
     end
@@ -58,6 +68,9 @@ class Va::Logger::Automation
     def unset_execution_and_time
       Thread.current[:automation_log_vars][:time] = nil
       Thread.current[:automation_log_vars][:executed] = nil
+      Thread.current[:automation_log_vars][:rule_type] = nil
+      Thread.current[:automation_log_vars][:start_time] = nil
+      Thread.current[:automation_log_vars][:end_time] = nil
     end
 
     def unset_thread_variables

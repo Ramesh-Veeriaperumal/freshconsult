@@ -47,7 +47,7 @@ module Helpdesk
       :edit_ticket_skill,
       :export_reports,
       :create_solution_draft,
-      :manage_dashboard,
+      :manage_ticket_list_views,
       :compose_email,
       :manage_customer_list,
       :solution_view_reports,
@@ -67,7 +67,7 @@ module Helpdesk
       :untitled_core_acc_admin_5,
       :manage_tags,
       :manage_bots,
-      :untitled_core_admin_4,
+      :manage_segments,
       :untitled_core_admin_5,
       :untitled_core_supervisor_1,
       :untitled_core_supervisor_2,
@@ -111,7 +111,8 @@ module Helpdesk
       :livechat_shadow_chat,
       :livechat_export_transcripts,
       :livechat_manage_shortcodes,
-      :livechat_view_reports
+      :livechat_view_reports,
+      :manage_dashboard
     ]
     
     ADMINISTRATOR = [
@@ -159,7 +160,7 @@ module Helpdesk
       :edit_ticket_skill,
       :export_reports,
       :create_solution_draft,
-      :manage_dashboard,
+      :manage_ticket_list_views,
       :compose_email,
       :manage_customer_list,
       :solution_view_reports,
@@ -174,7 +175,7 @@ module Helpdesk
       :forum_basic_moderator,
       :manage_tags,
       :manage_bots,
-      :untitled_core_admin_4,
+      :manage_segments,
       :untitled_core_admin_5,
       :untitled_core_supervisor_1,
       :untitled_core_supervisor_2,
@@ -218,7 +219,8 @@ module Helpdesk
       :livechat_shadow_chat,
       :livechat_export_transcripts,
       :livechat_manage_shortcodes,
-      :livechat_view_reports
+      :livechat_view_reports,
+      :manage_dashboard
     ]
     
     SUPERVISOR = [
@@ -257,7 +259,7 @@ module Helpdesk
       :export_reports,
       :edit_ticket_skill,
       :create_solution_draft,
-      :manage_dashboard,
+      :manage_ticket_list_views,
       :compose_email,
       :manage_customer_list,
       :solution_delete_versions,
@@ -304,7 +306,8 @@ module Helpdesk
       :livechat_shadow_chat,
       :livechat_export_transcripts,
       :livechat_manage_shortcodes,
-      :livechat_view_reports
+      :livechat_view_reports,
+      :manage_dashboard
     ]
     
     AGENT = [

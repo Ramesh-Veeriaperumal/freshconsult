@@ -88,6 +88,7 @@ module Admin::RolesHelper
                 :children =>
 
                  [{ :dom_type => "check_box", :id => "manage_contacts" },
+                  { dom_type: 'check_box', id: 'manage_segments' },
                   { :dom_type => "check_box", :id => "delete_contact" },
                   {:dom_type => "check_box", :id => "export_customers"}]
                 
@@ -97,12 +98,13 @@ module Admin::RolesHelper
 
          # *************************** Reports **************************
 
-         { :dom_type => "label", :id => "reports", :children =>
+         { :dom_type => "label", :id => "analytics", :children =>
 
              [{ :dom_type => "check_box", :id => "view_reports", :class => "nested",
                 :children => 
                 
-                [{ :dom_type => "check_box", :id => "export_reports"}]
+                [{ :dom_type => "check_box", :id => "export_reports"},
+                 { :dom_type => "check_box", :id => "manage_dashboard"}]
                 
              }]
              
@@ -129,7 +131,7 @@ module Admin::RolesHelper
                     { :dom_type => "check_box", :id => "manage_supervisor_rules" },
                     { :dom_type => "check_box", :id => "manage_scenario_automation_rules" },
                     { :dom_type => "check_box", :id => "manage_email_settings" },
-                    { :dom_type => "check_box", :id => "manage_dashboard" },
+                    { :dom_type => "check_box", :id => "manage_ticket_list_views" },
                     { :dom_type => "check_box", :id => "manage_ticket_templates" },
                     { :dom_type => "check_box", :id => "manage_bots", not_display: !current_account.support_bot_enabled? }
                     ]
@@ -147,9 +149,10 @@ module Admin::RolesHelper
                     { :dom_type => "hidden_field", :id => "manage_supervisor_rules" },
                     { :dom_type => "hidden_field", :id => "manage_scenario_automation_rules" },
                     { :dom_type => "hidden_field", :id => "manage_email_settings" },
-                    { :dom_type => "hidden_field", :id => "manage_dashboard" },
+                    { :dom_type => "hidden_field", :id => "manage_ticket_list_views" },
                     { :dom_type => "hidden_field", :id => "manage_ticket_templates" },
                     { :dom_type => "hidden_field", :id => "manage_bots", not_display: !current_account.support_bot_enabled? },
+                    { :dom_type => "hidden_field", :id => "manage_tags" },
                     { :dom_type => "check_box",    :id => "manage_account" }]
 
                }]

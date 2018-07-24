@@ -57,3 +57,7 @@ PartnerSubdomains =  AppConfig['partner_subdomain'].map { |k,v| v }.flatten
 KafkaCollectorConfig = YAML.load_file(File.join(Rails.root, 'config', 'kafka_collector.yml'))[Rails.env]
 
 ChannelFrameworkConfig = YAML.load_file(File.join(Rails.root, 'config', 'channel_framework.yml'))[Rails.env]
+
+FreshmarketerConfig = YAML.load_file(Rails.root.join('config', 'freshmarketer.yml'))[Rails.env]
+
+UnsupportedFeaturesList = YAML.load_file(Rails.root.join('config', 'features', 'unsupported_features.yml'))[Rails.env][PodConfig["CURRENT_POD"]]

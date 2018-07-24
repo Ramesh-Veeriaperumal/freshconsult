@@ -364,6 +364,7 @@ Helpkit::Application.routes.draw do
       post :create_contact
       put :update_contact
       put :update_description_and_tags
+      get :view_conversations
     end
   end
 
@@ -416,6 +417,7 @@ Helpkit::Application.routes.draw do
       get :configure_export
       post :export_csv
       post :export_skill_csv
+      get :search_in_freshworks
     end
     member do
       put :toggle_shortcuts
@@ -742,6 +744,8 @@ Helpkit::Application.routes.draw do
 
   match '/enable_falcon' => 'users#enable_falcon', :as => :enable_falcon, via: :post
   match '/disable_falcon' => 'users#disable_falcon', :as => :disable_falcon, via: :post
+  match '/enable_undo_send' => 'users#enable_undo_send', :as => :enable_undo_send, via: :post
+  match '/disable_undo_send' => 'users#disable_undo_send', :as => :disable_undo_send, via: :post
   match '/register/:activation_code' => 'activations#new', :as => :register
   match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email
   match '/activate/:perishable_token' => 'activations#create', :as => :activate
@@ -769,6 +773,7 @@ Helpkit::Application.routes.draw do
     collection do
       get :login
       get :facebook
+      get :twitter
       get :portal_google_sso
       get :marketplace_google_sso
       post :mobile_sso_login
@@ -992,7 +997,9 @@ Helpkit::Application.routes.draw do
         get :landing
         put :install
         get :create
+        get :edit
         post :receive_webhook
+        delete :remove_store
       end
 
       namespace :google do
@@ -2794,6 +2801,13 @@ Helpkit::Application.routes.draw do
       :controller => 'integrations/user_credentials', :action => 'oauth_install', :as => :user_oauth_install
     match '/http_request_proxy/fetch',
       :controller => 'integrations/http_request_proxy', :action => 'fetch', :as => :http_proxy
+    
+    namespace :canned_forms do
+      get :agent_preview, action: 'preview'
+      post :preview, action: 'preview'
+      get '/:token', action: 'show', as: :response
+      post '/:token/new', action: 'new'
+    end
   end
 
   namespace :anonymous do

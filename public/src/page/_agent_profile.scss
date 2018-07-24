@@ -4,6 +4,36 @@
     	padding-top: 0px;
 	}
 }
+
+.undo-send-option {
+	padding-top: 4px;
+}
+.undo-toggle {
+	font-size: 16px;
+	font-weight: 600;
+}
+.undo-toggle-freshid {
+	font-size: 16px;
+	font-weight: 600;
+	padding-left: 20px;
+}
+.undo-send-tip {
+	color: $grayLight;
+	margin-top: -4px;
+	line-height: 1.4;
+	font-size: 12px;
+}
+.undo-send-tip-freshid {
+	color: $grayLight;
+	padding-left: 20px;
+	margin-top: -4px;
+	line-height: 1.4;
+	font-size: 12px;
+}
+.undo-toggle-button-freshid {
+	padding-right: 20px;
+}
+
 .profile-edit {
     margin: 0 -20px -40px -20px;
     display: table;
@@ -112,4 +142,91 @@
     @include float(none);
     background-color: #fcfcfc;
     border-left: 1px solid #eee;
+}
+
+.fresh_id_info {
+  padding: 16px 16px 1px 16px
+}
+
+.freshworks-message{
+  border-top: 1px solid $border-freshid-info;
+}
+
+.freshworks-info.control-group{
+	overflow: visible;
+}
+
+.freshworks-info .uneditable-input{
+	color: $freshid-fields-uneditable;
+}
+
+.fresh_id_fields{
+  width: 495px;
+  border: 1px solid $border-freshid-info;
+  background: $freshid-field-background;
+}
+
+.control-group .freshid_controls{
+  margin-left: 165px ;
+}
+
+.display_message {
+    padding-bottom: 16px;
+    font-size: 12px;
+    color: $freshid-fields-uneditable;
+}
+
+.pt16{
+  padding-top: 16px;
+}
+
+.display_message{
+	display: inline-block;
+}
+
+.icontest{
+  float: left;
+}
+
+.text-message{
+  padding-left: 24px;
+}
+
+#searching-agent-email .loading-box{
+	top: 250px;
+    width: 110px; 
+    height: 2%;
+    position: absolute ;
+    background-color: $content-color;
+    left: auto;
+    text-align: center;
+    font-size : 11px;
+}
+
+.arrow_box::after, .arrow_box:before {
+	bottom: 100%;
+	left: 4%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.arrow_box {
+	position: relative;
+}
+
+.arrow_box:after {
+	border-color: rgba(136, 183, 213, 0);
+	border-bottom-color: $freshid-field-background;
+	border-width: 7px;
+	margin-left: -11px;
+}
+.arrow_box:before {
+	border-color: rgba(194, 225, 245, 0);
+	border-bottom-color: $border-freshid-info;
+	border-width: 8px;
+	margin-left: -12px;
 }

@@ -13,7 +13,7 @@ class Account < ActiveRecord::Base
                           productdemo resources static static0 static1 static2 static3 static4 static5
                           static6 static7 static8 static9 static10 dev apps freshapps fone
                           elb elb1 elb2 elb3 elb4 elb5 elb6 elb7 elb8 elb9 elb10 agent-hermes
-                          attachment euattachment eucattachment ausattachment indattachment) + FreshopsSubdomains + PartnerSubdomains
+                          attachment euattachment eucattachment ausattachment indattachment cobrowsing) + FreshopsSubdomains + PartnerSubdomains
 
   PLANS_AND_FEATURES = {
     :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
@@ -104,7 +104,7 @@ class Account < ActiveRecord::Base
         :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections ],
+        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections, :custom_dashboard ],
       :inherits => [ :garden_jan_17 ]
     },
 
@@ -122,7 +122,7 @@ class Account < ActiveRecord::Base
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
     :bi_reports => false, :contact_merge_ui => false, :social_revamp => true, :multiple_user_emails => false,
-    :round_robin_revamp => false, :solutions_meta_read => false,
+    round_robin_revamp: false,
     :facebook_realtime => false, :autorefresh_node => false, :tokenize_emoji => false,
     :custom_dashboard => false, :updated_twilio_client => false,
     :report_field_regenerate => false, :reports_regenerate_data => false,
@@ -155,7 +155,7 @@ class Account < ActiveRecord::Base
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true,
-                            :open_forums => true, :google_signin => true, :twitter_signin => true, :facebook_signin => true,
+                            :open_forums => false, :google_signin => true, :twitter_signin => true, :facebook_signin => true,
                             :signup_link => true, :captcha => false,
                             :moderate_all_posts => false, :moderate_posts_with_links => true, :hide_portal_forums => false,
                             :forum_captcha_disable => false, :public_ticket_url => false }
@@ -170,18 +170,18 @@ class Account < ActiveRecord::Base
     :admin_dashboard => false, :agent_conference => false, :agent_dashboard => false,
     :agent_new_ticket_cache => false, :api_search_beta => false, :autopilot_headsup => false, 
     :autoplay => false, :bi_reports => false, :cache_new_tkt_comps_forms => false, 
-    :delayed_dispatchr_feature => false, :disable_old_sso => false, :enable_old_sso => false, 
+    :delayed_dispatchr_feature => false, :enable_old_sso => false, 
     :es_count_reads => false, :es_count_writes => false, :es_down => false, :es_tickets => false, 
     :es_v1_enabled => false, :es_v2_reads => false, :fb_msg_realtime => false, 
     :force_index_tickets => false, :freshfone_call_tracker => false, :freshfone_caller_id_masking => false,
     :freshfone_new_notifications => false, :freshfone_onboarding => false, :gamification_perf => false,
-    :gamification_quest_perf => false, :lambda_exchange => false, :link_tickets => false,
+    :gamification_quest_perf => false, :lambda_exchange => false,
     :list_page_new_cluster => false, :meta_read => false, :most_viewed_articles => false,
     :multifile_attachments => true, :new_footer_feedback_box => false, :new_leaderboard => false,
     :periodic_login_feature => false, :restricted_helpdesk => false,
     :round_robin_capping => false, :sidekiq_dispatchr_feature => false,
-    :solutions_meta_read => false, :supervisor_dashboard => false, :support_new_ticket_cache => false,
-    :synchronous_apps => false, :ticket_list_page_filters_cache => false, :translate_solutions => false,
+    :supervisor_dashboard => false, :support_new_ticket_cache => false,
+    :synchronous_apps => false, :ticket_list_page_filters_cache => false,
     :spam_detection_service => false, :skip_hidden_tkt_identifier => false, 
     :agent_collision_alb => false, :auto_refresh_alb => false, :countv2_template_read => false, 
     :customer_sentiment_ui => false, :portal_solution_cache_fetch => false, :activity_ui => false,
@@ -193,32 +193,34 @@ class Account < ActiveRecord::Base
     :skip_ticket_threading => false, :multi_dynamic_sections => true, :dashboard_new_alias => false, 
     :attachments_scope => false, :kbase_spam_whitelist => false, :forum_post_spam_whitelist => false, 
     :enable_qna => false, :enable_insights => false, 
-    :escape_liquid_attributes => true, :escape_liquid_for_reply => true, :escape_liquid_for_portal => true,
+    :escape_liquid_attributes => true, :escape_liquid_for_reply => true,
     :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false, 
-    :bulk_security => false, :service_writes => false, :service_reads => false, 
+    :service_writes => false, :service_reads => false, 
     :admin_only_mint => false, :send_emails_via_fd_email_service_feature => false, 
     :user_notifications => false,  :freshplug_enabled => false, :dkim => false, 
     :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, 
     :auto_ticket_export => false, :select_all => false, :facebook_realtime => false, 
-    :"Freshfone Call Tracker" => false, :skip_one_hop => false, :ticket_contact_export => false, 
+    :"Freshfone Call Tracker" => false, :ticket_contact_export => false, 
     :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, 
     :skip_portal_cname_chk => false, :falcon_signup => false, :falcon_portal_theme => false, 
     :image_annotation => false, :email_actions => false, :ner => false, :disable_freshchat => false, 
-    :freshchat_integration => false, :facebook_page_redirect => false, :froala_editor_forums => false, 
-    :ticket_central_publish => false, :solutions_central_publish => false, :freshid => false, 
+    :freshchat_integration => false, :froala_editor_forums => false,
+    :ticket_central_publish => false, :solutions_central_publish => false, :freshid => false,
     :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, 
     :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false, 
     :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false, 
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
-    :post_central_publish => false, :audit_logs_central_publish => false, :twitter_common_redirect => false
+    :post_central_publish => false, :audit_logs_central_publish => false,
+    :new_ticket_recieved_metric => false, :euc_migrated_twitter => false, :canned_forms => false, :es_msearch => true,
+    csat_email_scan_compatibility: false, sso_login_expiry_limitation: false, :attachment_virus_detection => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days
 
   ACCOUNT_TYPES = {
-      :production_without_sandbox => 0,
-      :production_with_sandbox => 1,
-      :sandbox => 2
+    :production_without_sandbox => 0,
+    :production_with_sandbox => 1,
+    :sandbox => 2
   }
 
 end

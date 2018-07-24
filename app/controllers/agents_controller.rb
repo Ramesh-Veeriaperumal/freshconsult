@@ -10,6 +10,7 @@ class AgentsController < ApplicationController
   include MemcacheKeys
   include EmailHelper
   include Freshcaller::AgentHelper
+  include Freshid::CallbackMethods
 
   skip_before_filter :check_account_state, :only => :destroy
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:info_for_node]
@@ -42,8 +43,14 @@ class AgentsController < ApplicationController
       error_responder(t(:'flash.not_allowed_in_demo_site'), 'forbidden')
     end
   end
+
+  def search_in_freshworks
+    user = Freshid::User.find_by_email(params[:email].to_s) if params[:email].present?
+    user_hash = user.present? ? user_info_hash(User.new, user.as_json.symbolize_keys)[:user] : nil
+    render :json => { :user_info => user_hash }
+  end
     
-  def index    
+  def index
     unless params[:query].blank?
       #for using query string in api calls
       @agents = scoper.with_conditions(convert_query_to_conditions(params[:query])) 

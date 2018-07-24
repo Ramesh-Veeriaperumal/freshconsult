@@ -338,6 +338,27 @@ end
     end
   end
 
+  def handle_support_bot_drop_data
+    account.bots.destroy_all
+    account.clear_bots_from_cache
+  end
+
+  def handle_custom_dashboard_drop_data
+    account.dashboards.destroy_all
+  end
+
+  def handle_custom_dashboard_add_data
+    account.launch(:es_msearch)
+  end
+
+  def handle_freshconnect_drop_data
+    ::Freshconnect::UpdateFreshconnect.perform_async(false)
+  end
+
+  def handle_freshconnect_add_data
+    ::Freshconnect::UpdateFreshconnect.perform_async(true)
+  end
+
   private
 
   def default_portal_preferences

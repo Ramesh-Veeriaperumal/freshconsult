@@ -11,7 +11,7 @@ class Signup < ActivePresenter::Base
   
   before_validation :create_global_shard
 
-  after_save :make_user_current, :populate_seed_data
+  after_save :make_user_current, :set_i18n_locale, :populate_seed_data
 
   MAX_ACCOUNTS_COUNT = 10
   #Using this as the version of Rack::Utils we are using doesn't have support for 429
@@ -29,6 +29,13 @@ class Signup < ActivePresenter::Base
     
   def metrics=(metrics_obj)
     account.conversion_metric_attributes = metrics_obj if metrics_obj
+  end
+
+  def all_errors
+    error_messages = account.errors.messages
+    base_errors = error_messages.delete(:base) || []
+    non_base_errors = error_messages.collect{|key, values| error_messages = values.collect{|value| "#{key.to_s} #{value}" }} || []
+    (base_errors + non_base_errors).flatten
   end
 
   private
@@ -123,6 +130,10 @@ class Signup < ActivePresenter::Base
 
     def make_user_current
       User.current = user
+    end
+
+    def set_i18n_locale
+      I18n.locale = account.language.to_sym
     end
 
     def populate_seed_data

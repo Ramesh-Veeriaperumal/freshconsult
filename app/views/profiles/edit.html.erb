@@ -10,16 +10,16 @@
     <%if  Account.current.verified? &&  User.current.active? %>
       <a href="#email-preview" class="email-preview" ><%= t("preview")%></a>
     <% end %>
-   	<%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
+    <%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
       <a href="<%= current_account.falcon_ui_enabled?(current_user) ? '/a/' : '/' %>" target="_top" class="btn"><%= t('cancel') %></a>
-	</div>	  
+  </div>    
 <%end%>
 
 
 <% content_for :sidebar do %>
-  <% unless current_account.sso_enabled? %>	
-	<div class="sidepanel">
-		<%= content_tag( :h3, t("profile.change_password"), :class => "title" ) %>
+  <% unless current_account.sso_enabled? %> 
+  <div class="sidepanel">
+    <%= content_tag( :h3, t("profile.change_password"), :class => "title" ) %>
     <% if current_account.falcon_ui_enabled?(current_user) %>
       <%= form_for "not_resource", :remote => true, :url => { :action => :change_password, :controller => 'profiles', :method => :put} do |f| %>
         <%= render :partial => "change_password_form", :locals => { :f => f } %>
@@ -28,6 +28,19 @@
     <%= form_tag :action => :change_password, :controller => 'profiles', :method => :put do |f| %>
         <%= render :partial => "change_password_form", :locals => { :f => f } %>
     <% end %>
+  <% end %>
+
+  <% if current_account.launched?(:undo_send) && current_user.is_falcon_pref? %>
+  <hr>
+    <div class="row-fluid undo-send-option">
+      <div class="span10 align-left undo-toggle"><%= t("undo_toggle") %></div>
+      <div class="span2 align-right">
+        <input rel="toggle" type="checkbox" id="undo_reply" name="undo_send_toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_user.preferences[:agent_preferences][:undo_send]%>checked="true"<%end%> />
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class=" span12 align-left undo-send-tip"><%= t("undo_toggle_tip") %></div>
+    </div>
   <% end %>
 </div>
 <% end %> 
@@ -47,7 +60,6 @@
     <%= render :partial => "integrations" %>
   <% end %>
 <% end%>
-
 <script type="text/javascript">
 jQuery(document).ready(function() { 
 
@@ -73,3 +85,26 @@ jQuery(document).ready(function() {
 });
 </script>
 <% end %>
+<script type="text/javascript">
+  function update_preferences(status_url){
+    jQuery.ajax({
+      url: status_url,
+      type: "post"  
+    }).then(()=>{
+      jQuery("#noticeajax").html("<%=t("undo_toggle_success")%>").show();
+      closeableFlash('#noticeajax');
+      jQuery(document).scrollTop(0);
+    }, ()=>{
+      jQuery("#noticeajax").html("<%=t("undo_toggle_error")%>").show();
+      closeableFlash('#noticeajax');
+    })
+  }
+  jQuery("#undo_reply").on('change', function(){
+    if(this.checked){
+      update_preferences("<%= enable_undo_send_path%>");
+    }
+    else{
+      update_preferences("<%= disable_undo_send_path%>");
+    }
+  });
+</script>

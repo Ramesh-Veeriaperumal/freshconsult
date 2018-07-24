@@ -276,6 +276,7 @@
     }
     HelpdeskReports.locals.qna_feature_enabled = <%= enable_qna? %>;
     HelpdeskReports.locals.insights_feature_enabled = <%= enable_insights? %>;
+    HelpdeskReports.locals.is_new_ticket_recieved_metric_enabled = <%= enable_new_ticket_recieved_metric? %>;
     HelpdeskReports.locals.is_trail_account = <%= @is_trial_account %>;
 
     HelpdeskReports.Reports_home.init();

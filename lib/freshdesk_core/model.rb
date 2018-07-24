@@ -18,11 +18,13 @@ module FreshdeskCore::Model
                         "company_fields",
                         "company_field_choices",
                         "company_field_data",
+                        'company_filters',
                         "conversion_metrics",
                         "contact_forms",
                         "contact_fields",
                         "contact_field_choices",
                         "contact_field_data",
+                        'contact_filters',
                         "data_exports",
                         "dashboards",
                         "dashboard_widgets",
@@ -216,6 +218,7 @@ module FreshdeskCore::Model
                         "collab_settings",
                         "bots",
                         "bot_tickets",
+                        'canned_form_handles',
                         "contact_notes",
                         "contact_note_bodies",
                         "company_notes",
@@ -252,6 +255,7 @@ module FreshdeskCore::Model
     remove_round_robin_redis_info(account)
     delete_sitemap(account)
     remove_from_spam_detection_service(account)
+    delete_canned_forms(account)
     delete_data_from_tables(account.id)
     account.destroy
   end
@@ -467,4 +471,8 @@ module FreshdeskCore::Model
       account.manual_publish_to_central(nil,:destroy,nil,false)
     end
 
+    # This method will trigger destroy callback and delete forms in service side.
+    def delete_canned_forms(account)
+      account.canned_forms.each(&:destroy) if account.canned_forms_enabled?
+    end
 end

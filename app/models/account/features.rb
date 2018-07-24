@@ -1,17 +1,20 @@
 class Account < ActiveRecord::Base
 
-  LP_FEATURES   = [:link_tickets, :select_all, :round_robin_capping, :suggest_tickets,
-                   :customer_sentiment_ui, :dkim, :bulk_security, :scheduled_ticket_export, 
-                   :ticket_contact_export, :disable_emails, :skip_one_hop,
-                   :falcon_portal_theme, :freshid, :freshchat_integration,:year_in_review_2017,
-                   :facebook_page_redirect, :announcements_tab, :archive_ghost,
-                   :ticket_central_publish, :solutions_central_publish, :es_msearch,
-                   :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
-                   :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, 
-                   :imap_error_status_check, :va_any_field_without_none, :auto_complete_off, 
-                   :sanbox_lp, :encode_emoji, :dependent_field_validation, :post_central_publish,
-                   :audit_logs_central_publish, :encode_emoji_subject, :twitter_common_redirect]
+  LP_FEATURES = [:select_all, :round_robin_capping, :suggest_tickets,
+                 :customer_sentiment_ui, :dkim, :scheduled_ticket_export,
+                 :ticket_contact_export, :disable_emails,
+                 :falcon_portal_theme, :freshid, :freshchat_integration, :year_in_review_2017, :announcements_tab, :archive_ghost,
+                 :ticket_central_publish, :solutions_central_publish, :es_msearch,
+                 :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
+                 :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3,
+                 :imap_error_status_check, :va_any_field_without_none, :auto_complete_off,
+                 :sanbox_lp, :encode_emoji, :dependent_field_validation, :post_central_publish,
+                 :audit_logs_central_publish, :encode_emoji_subject,
+                 :time_sheets_central_publish, :new_ticket_recieved_metric, :canned_forms,
+                 :euc_migrated_twitter, :csat_email_scan_compatibility, :sso_login_expiry_limitation]
+  
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
+
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
       :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields,
@@ -23,7 +26,8 @@ class Account < ActiveRecord::Base
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
-      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2
+      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments, :freshconnect
+
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -31,8 +35,11 @@ class Account < ActiveRecord::Base
     ContactField::VERSION_MEMBER_KEY,
     CompanyField::VERSION_MEMBER_KEY,
     CustomSurvey::Survey::VERSION_MEMBER_KEY,
-    Freshchat::Account::VERSION_MEMBER_KEY
+    Freshchat::Account::VERSION_MEMBER_KEY,
+    AgentGroup::VERSION_MEMBER_KEY
   ]
+
+  PODS_FOR_BOT = ['poduseast1'].freeze
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
@@ -96,7 +103,7 @@ class Account < ActiveRecord::Base
   end
 
   def link_tkts_or_parent_child_enabled?
-    link_tkts_enabled? || parent_child_tickets_enabled?
+    link_tickets_enabled? || parent_child_tickets_enabled?
   end
 
   def survey_enabled?
@@ -192,10 +199,6 @@ class Account < ActiveRecord::Base
     features?(:tags_filter_reporting)
   end
 
-  def link_tkts_enabled?
-    launched?(:link_tickets) || link_tickets_enabled?
-  end
-
   def dashboard_new_alias?
     launched?(:dashboard_new_alias)
   end
@@ -218,6 +221,10 @@ class Account < ActiveRecord::Base
 
   def collaboration_enabled?
    @collboration ||= has_feature?(:collaboration) && self.collab_settings.present?
+  end
+
+  def freshconnect_enabled?
+    has_feature?(:freshconnect) && freshconnect_account.present? && freshconnect_account.enabled
   end
 
   def falcon_ui_enabled?(current_user = :no_user)
@@ -251,5 +258,9 @@ class Account < ActiveRecord::Base
 
   def support_bot_configured?
     support_bot_enabled? && bot_onboarded?
+  end
+
+  def revoke_support_bot?
+    redis_key_exists?(REVOKE_SUPPORT_BOT) || (Rails.env.production? && PODS_FOR_BOT.exclude?(PodConfig['CURRENT_POD']))
   end
 end

@@ -26,7 +26,7 @@ module Pipe
     validate :validate_pending_since, if: -> { pending_since && errors[:pending_since].blank? }
     validate :validate_closed_at, if: -> { closed_at && errors[:closed_at].blank? }
 
-    validates :on_state_time, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true }
+    validates :on_state_time, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
 
     def pending_since_allowed?
       created_at && updated_at && status.respond_to?(:to_i) && status.to_i == ApiTicketConstants::PENDING

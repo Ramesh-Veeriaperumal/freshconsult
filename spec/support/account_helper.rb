@@ -33,6 +33,7 @@ module AccountHelper
       :account_name => 'Test Account',
       :account_domain => domain,
       :locale => I18n.default_locale,
+      :time_zone => 'Chennai',
       :user_name => 'Support',
       :user_password => 'test',
       :user_password_confirmation => 'test', 
@@ -162,7 +163,6 @@ module AccountHelper
   end
 
   def enable_multilingual
-    @account.launch(:translate_solutions)
     create_enable_multilingual_feature
     @account.features.multi_language.create
     @account.reload

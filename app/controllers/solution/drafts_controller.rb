@@ -103,7 +103,8 @@ class Solution::DraftsController < ApplicationController
 
     def load_attachment
       @assoc = (ATTACHMENT_TYPES.include?(params[:attachment_type]) && params[:attachment_type]) || ATTACHMENT_TYPES.first
-      @attachment = @article.safe_send(@assoc.pluralize.to_sym).find(params[:attachment_id])
+      @attachment = @article.safe_send(@assoc.pluralize.to_sym).find_by_id(params[:attachment_id])
+      @attachment = @article.draft.safe_send(@assoc.pluralize.to_sym).find_by_id(params[:attachment_id]) if @attachment.nil?
     end
 
     def autosave_validate

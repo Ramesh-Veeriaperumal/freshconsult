@@ -1,0 +1,16 @@
+defaults: &defaults
+  api_endpoint: 'http://localhost:8889/ab/api/v1'
+  access_key: 'tokensr'
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+
+test:
+  <<: *defaults
+

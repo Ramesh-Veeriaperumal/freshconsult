@@ -828,8 +828,9 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     end
 
     def build_note_params ticket, from_email, user, from_fwd_recipients, body, body_html, full_text, full_text_html, cc_emails
+      hide_response_from_customer = ticket.account.launched?(:hide_response_from_customer_feature)? (customer_removed_in_reply?(ticket, in_reply_to, parse_to_emails, cc_emails)): false
       note_params = {
-        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user)),
+        :private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user) or hide_response_from_customer),
         :incoming => true,
         :note_body_attributes => {
           :body => tokenize_emojis(body) || "",
@@ -869,8 +870,8 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
         end
         return params[:text]
       rescue SystemStackError => e
-        result = handle_system_stack_error e
-        return result
+        params[:text] = ""
+        return params[:text]
       rescue => e
         Rails.logger.info "Exception while getting text_part , message :#{e.message} - #{e.backtrace}"
       end
@@ -956,6 +957,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
             else
               attachments.push att
             end
+            att.skip_virus_detection = true
           end
         rescue HelpdeskExceptions::AttachmentLimitException => ex
           Rails.logger.error("ERROR ::: #{ex.message}")
@@ -1019,8 +1021,11 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
       return text if text.blank?
 
       Timeout.timeout(LARGE_TEXT_TIMEOUT) do
+        from_all_regex = "from"     # will be replaced in redis like "(from|von)"
+        from_all_regex = $redis_others.get(QUOTED_TEXT_PARSE_FROM_REGEX) || from_all_regex
+
         regex_arr = [
-          Regexp.new("From:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
+          Regexp.new("#{from_all_regex}:\s*" + Regexp.escape(address), Regexp::IGNORECASE),
           Regexp.new("<" + Regexp.escape(address) + ">", Regexp::IGNORECASE),
           Regexp.new(Regexp.escape(address) + "\s+wrote:", Regexp::IGNORECASE),
           # Temporary comment out due to process looping for large size emails(gem upgradion ussue)
@@ -1028,7 +1033,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
           Regexp.new("<div>\n<br>On.*?wrote:"), #iphone
           Regexp.new("On((?!On).)*wrote:"),
           Regexp.new("-+original\s+message-+\s*", Regexp::IGNORECASE),
-          Regexp.new("from:\s*", Regexp::IGNORECASE)
+          Regexp.new("#{from_all_regex}:\s*", Regexp::IGNORECASE)
         ]
         tl = text.length
 
@@ -1259,6 +1264,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     result = ((params[:text].nil? || params[:text].empty?) ? "" : body_html_with_formatting(params[:text],email_cmds_regex)) 
     result = "<br><p style=\"color:#FF2625;\"><b> *** Warning: This email might have some content missing. Please open the attached file original_email.html to see the entire message. *** </b></p><br>" + result
     original_email_content = StringIO.new(params[:html])
+    original_email_content.class.class_eval { attr_accessor :original_filename, :content_type }
     original_email_content.content_type = "text/html"
     original_email_content.original_filename = "original_email.html"
     params[:attachments] = params[:attachments] + 1

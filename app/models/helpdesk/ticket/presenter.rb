@@ -1,13 +1,13 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   include RepresentationHelper
-  FLEXIFIELD_PREFIXES = ['ffs_', 'ff_text', 'ff_int', 'ff_date', 'ff_boolean', 'ff_decimal', 'dn_slt_']
-  REPORT_FIELDS = [:first_assign_by_bhrs, :first_response_id, :agent_reassigned_count, :group_reassigned_count, :reopened_count, :private_note_count, :public_note_count, :agent_reply_count, :customer_reply_count, :agent_assigned_flag, :agent_reassigned_flag, :group_assigned_flag, :group_reassigned_flag, :internal_agent_assigned_flag, :internal_agent_reassigned_flag, :internal_group_assigned_flag, :internal_group_reassigned_flag, :internal_agent_first_assign_in_bhrs, :last_resolved_at]
-  EMAIL_KEYS = [:cc_emails, :fwd_emails, :bcc_emails, :reply_cc, :tkt_cc]
-  DATETIME_FIELDS = [:due_by, :closed_at, :resolved_at, :created_at, :updated_at]
-  TAG_KEYS = [:add_tag, :remove_tag]
-  WATCHER_KEYS = [:add_watcher, :remove_watcher]
-  SYSTEM_ACTIONS = [:add_comment, :add_a_cc, :email_to_requester, :email_to_group, :email_to_agent]
-  DONT_CARE_VALUE = "*"
+  FLEXIFIELD_PREFIXES = ['ffs_', 'ff_text', 'ff_int', 'ff_date', 'ff_boolean', 'ff_decimal', 'dn_slt_', 'dn_mlt_'].freeze
+  REPORT_FIELDS = [:first_assign_by_bhrs, :first_response_id, :agent_reassigned_count, :group_reassigned_count, :reopened_count, :private_note_count, :public_note_count, :agent_reply_count, :customer_reply_count, :agent_assigned_flag, :agent_reassigned_flag, :group_assigned_flag, :group_reassigned_flag, :internal_agent_assigned_flag, :internal_agent_reassigned_flag, :internal_group_assigned_flag, :internal_group_reassigned_flag, :internal_agent_first_assign_in_bhrs, :last_resolved_at].freeze
+  EMAIL_KEYS = [:cc_emails, :fwd_emails, :bcc_emails, :reply_cc, :tkt_cc].freeze
+  DATETIME_FIELDS = [:due_by, :closed_at, :resolved_at, :created_at, :updated_at].freeze
+  TAG_KEYS = [:add_tag, :remove_tag].freeze
+  WATCHER_KEYS = [:add_watcher, :remove_watcher].freeze
+  SYSTEM_ACTIONS = [:add_comment, :add_a_cc, :email_to_requester, :email_to_group, :email_to_agent].freeze
+  DONT_CARE_VALUE = '*'.freeze
 
   acts_as_api
 
@@ -27,7 +27,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :product_id, :if => proc { Account.current.multi_product_enabled? }
     t.add :company_id
     t.add :sla_policy_id
-    t.add :association_type, :if => proc { Account.current.parent_child_tickets_enabled? || Account.current.link_tkts_enabled? }
+    t.add :association_type, :if => proc { Account.current.parent_child_tickets_enabled? || Account.current.link_tickets_enabled? }
     t.add :isescalated, as: :is_escalated
     t.add :fr_escalated
     t.add :resolution_time_by_bhrs, as: :time_to_resolution_in_bhrs

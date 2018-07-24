@@ -1,0 +1,64 @@
+# List of account IDS that are migrated from EU to EUC. Replace with your account IDs in local/staging to test.
+
+common: &common
+  poduseast1: []
+  podeuwest1: []
+  podeucentral1: []
+  podapsoutheast2: []
+
+development:
+  <<: *common
+staging:
+  <<: *common
+test:
+  <<: *common
+production:
+  poduseast1: []
+  podeuwest1: []
+  podeucentral1:
+    - 203218
+    - 215976
+    - 306776
+    - 324957
+    - 324958
+    - 381984
+    - 384493
+    - 387741
+    - 391043
+    - 391085
+    - 391883
+    - 409193
+    - 409980
+    - 410093
+    - 411871
+    - 467704
+    - 493804
+    - 508972
+    - 534166
+    - 546266
+    - 550604
+    - 566924
+    - 574819
+    - 584360
+    - 596805
+    - 599811
+    - 622086
+    - 625323
+    - 689124
+    - 694159
+    - 730923
+    - 772972
+    - 785548
+    - 794709
+    - 800830
+    - 811998
+    - 823603
+    - 826722
+    - 831586
+    - 834258
+    - 835851
+    - 837122
+    - 839176
+    - 853574
+    - 860372
+  podapsoutheast2: []

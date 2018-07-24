@@ -50,6 +50,8 @@
       - :image_annotation
       - :todos_reminder_scheduler
       - :smart_filter
+      - :session_replay
+      - :freshconnect
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -65,6 +67,7 @@
       - :custom_survey
       - :parent_child_tickets_toggle
       - :link_tickets_toggle
+      - :support_bot
     :inherits:
       - :blossom_jan_17
     :exclude: []
@@ -96,6 +99,7 @@
       - :auto_ticket_export
       - :ticket_activity_export
       - :unique_contact_identifier
+      - :custom_dashboard
     :inherits:
       - :garden_jan_17
     :exclude: []

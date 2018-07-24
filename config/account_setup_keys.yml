@@ -12,6 +12,8 @@
   email_notification: 9
   reports: 10
   forums: 11
+:non_checklist_keys:
+  sample_dashboard: 12
 :setup_keys_display_order:
   - new_account
   - account_admin_email
@@ -25,3 +27,4 @@
   - custom_app
   - reports
   - forums
+  - sample_dashboard

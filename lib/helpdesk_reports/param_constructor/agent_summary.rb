@@ -13,8 +13,9 @@ class HelpdeskReports::ParamConstructor::AgentSummary < HelpdeskReports::ParamCo
 
   def query_params
     summary_params = { group_by: ["agent_id"] }
-
-    AGENT_SUMMARY_METRICS.inject([]) do |params, metric|
+    metric_arr = AGENT_SUMMARY_METRICS.dup
+    metric_arr << "AGENT_SUMMARY_TICKETS_RECIEVED" if Account.current.new_ticket_recieved_metric_enabled? 
+    metric_arr.inject([]) do |params, metric|
       query = basic_param_structure.merge(summary_params)
       query[:metric] = metric
       params << query

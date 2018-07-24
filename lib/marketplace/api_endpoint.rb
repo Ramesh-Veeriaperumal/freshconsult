@@ -13,11 +13,11 @@ module Marketplace::ApiEndpoint
     [:ni_latest_details,        "product/%{product_id}/extensions/latest/%{app_name}.json", []],
     [:version_details,          "product/%{product_id}/versions/%{version_id}.json", []],
     [:iframe_settings,          "product/%{product_id}/extensions/%{version_id}/iframe_setting.json", []],
+    [:v2_versions,              "product/%{product_id}/versions.json", [:version_ids]],
     
     # Account API's
     [:install_status,           "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}/status.json", []],
-    [:account_configs,          "product/%{product_id}/account/%{account_id}/extensions/%{version_id}/configurations.json", []],
-    [:account_oauth_iparams,    "product/%{product_id}/account/%{account_id}/extensions/%{version_id}/configurations.json?include=oauth_iparams", []],
+    [:account_configs,          "product/%{product_id}/account/%{account_id}/extensions/%{version_id}/configurations.json", [:include]],
     [:install_extension,        "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:update_extension,         "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],
     [:uninstall_extension,      "product/%{product_id}/account/%{account_id}/extensions/%{extension_id}.json", []],

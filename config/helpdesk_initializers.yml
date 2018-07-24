@@ -73,7 +73,6 @@ helpdesk:
     - white_list_formatted_content
     - will_paginate
     - wrap_parameters
-    - statsd_config
     - big_brother
     - integrations
     - autopilot_config
@@ -112,6 +111,12 @@ helpdesk:
     - heap_analytics
     - bot
     - central
+    - formserv_config
     - sanitize_monkey_patch
     - paperclip_ssrf_patch
     - apigee_config
+    - sprockets_monkey_patch
+    - facebook_eu_accounts_config
+    - disposable_email_domains
+    - default_data_config
+    - emailserv_request

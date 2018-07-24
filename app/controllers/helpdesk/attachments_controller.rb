@@ -9,10 +9,15 @@ class Helpdesk::AttachmentsController < ApplicationController
   before_filter :check_destroy_permission, :only => [:destroy, :delete_attachment]
   before_filter :set_native_mobile, :only => [:show]
   before_filter :load_shared, :only => [:unlink_shared]
+
   def show
     style = params[:style] || "original"
-    redir_url = AwsWrapper::S3Object.url_for(@attachment.content.path(style.to_sym),@attachment.content.bucket_name,
-                                          :expires => 300.seconds, :secure => true, :response_content_type => @attachment.content_content_type)
+
+    options = { expires: 300.seconds, secure: true, response_content_type: @attachment.content_content_type }
+    options.merge!({ response_content_disposition: 'attachment' }) if params[:download]
+
+    attachment_content = @attachment.content
+    redir_url = AwsWrapper::S3Object.url_for(attachment_content.path(style.to_sym), attachment_content.bucket_name, options)
     respond_to do |format|
       
       format.html do
@@ -78,7 +83,11 @@ class Helpdesk::AttachmentsController < ApplicationController
         end
       end
     else
-      render :json => [{:error => "custom_failure"}], :status => 304
+      if @attachment.errors && @attachment.errors.full_messages.present? && @attachment.errors.full_messages.first == "VIRUS_FOUND"
+        render :json => { :errors => [t(:'multifile_attachments.virus_found_warning')] }, :status => 422
+      else
+        render :json => [{:error => "custom_failure"}], :status => 304
+      end
     end
   end
 

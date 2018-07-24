@@ -4,7 +4,7 @@ module Marketplace::Constants
   PRODUCT_NAME = 'freshdesk'
   DEV_PORTAL_NAME = 'Freshdesk Marketplace'
   ADMIN_PORTAL_NAME = 'Marketplace Admin Portal'
-  PLG_FILENAME = 'build/index.html'
+  PLG_FILENAME = '/build/index.html'
   DEVELOPED_BY_FRESHDESK = 'freshdesk'
   EXTENSION_SORT_TYPES = ['latest','popular']
   ADDON_ID_PREFIX = 'marketplaceapp_'
@@ -13,6 +13,9 @@ module Marketplace::Constants
   OAUTH_IPARAM = 'config/oauth_iparams.html'.freeze
   INTERNAL_SERVER_ERROR = 'Internal server error'
   PLATFORM_SOURCE = 'PLATFORM'
+  MARKETPLACE_VERSION_MEMBER_KEY = 'MARKETPLACE_APPS_LIST'.freeze
+  SECURE_IPARAMS = 'secure_iparams'.freeze
+  OAUTH_IPARAMS = 'oauth_iparams'.freeze
   
   EXTENSION_TYPES = [
     # Extension Type, Extension Type ID, versionable?

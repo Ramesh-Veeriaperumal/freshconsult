@@ -1276,7 +1276,6 @@ div[class$="-toggle"]{
   .modal-body{
     border-bottom: 1px solid #eee;
     margin-bottom: 0px;
-    padding: 10px 20px 0px;
     p{
       color: #6f7c87;
     }
@@ -1322,7 +1321,6 @@ div[class$="-toggle"]{
       }
     }
   }
-
 
   .btn {
     font-size: 12px;
@@ -1407,6 +1405,10 @@ div[class$="-toggle"]{
         background-color: $app-primary-btn-disabled;
         color: $app-btn-text-light;
         border: 1px solid $app-primary-btn-disabled;
+      }
+
+      &--uppercase {
+        text-transform: uppercase;
       }
 
       input {
@@ -1894,6 +1896,9 @@ div[class$="-toggle"]{
   }
 }
 
+#onedrivejs {
+  display: none;
+}
 @import "falcon-community";
 @import "falcon-reports";
 @import "falcon-livechat";

@@ -137,6 +137,20 @@ module Marketplace::ApiMethods
       end
     end
 
+    # API to fetch version details for list of installed versions for any platform_versions
+    def v2_versions(version_ids = [])
+      begin
+        api_payload = payload(
+          Marketplace::ApiEndpoint::ENDPOINT_URL[:v2_versions] %
+                { :product_id => PRODUCT_ID },
+          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:v2_versions],
+                { :version_ids => version_ids })
+        get_api(api_payload, MarketplaceConfig::GLOBAL_API_TIMEOUT)
+      rescue *FRESH_REQUEST_EXP => e
+        exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
+      end
+    end
+
     def all_categories
       begin
         api_payload = payload(
@@ -222,13 +236,15 @@ module Marketplace::ApiMethods
 
     def account_configs
       begin
-        endpoint_name = params[:page] == "oauth_iparams" ? "account_oauth_iparams" : "account_configs"
+        include_params = [SECURE_IPARAMS]
+        include_params << OAUTH_IPARAMS if params[:page] == OAUTH_IPARAMS
+        params[:include] = include_params.join(',')
         api_payload = account_payload(
-          Marketplace::ApiEndpoint::ENDPOINT_URL[endpoint_name.to_sym] %
+          Marketplace::ApiEndpoint::ENDPOINT_URL[:account_configs] %
                 { :product_id => PRODUCT_ID,
                   :account_id => Account.current.id,
                   :version_id => params[:version_id] },
-          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[endpoint_name.to_sym] )
+          Marketplace::ApiEndpoint::ENDPOINT_PARAMS[:account_configs] )
         @account_configs ||= get_api(api_payload, MarketplaceConfig::ACC_API_TIMEOUT)
       rescue *FRESH_REQUEST_EXP => e
         exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")

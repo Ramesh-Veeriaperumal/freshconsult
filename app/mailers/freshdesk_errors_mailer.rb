@@ -67,12 +67,12 @@ class FreshdeskErrorsMailer < ActionMailer::Base
       :sent_on      =>  Time.now
     }
     @additional_info = options[:additional_info]
+    @dead_jobs_size = @additional_info[:dead_jobs_size]
+    
     mail(headers) do |part|
       part.html { render "sidekiq_dead_job", :formats => [:html] }
     end.deliver
   end
-
-
   
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
   # Keep this include at end

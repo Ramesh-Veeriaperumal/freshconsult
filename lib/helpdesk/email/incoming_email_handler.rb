@@ -88,6 +88,8 @@ module Helpdesk
 						return processed_email_data(PROCESSED_EMAIL_STATUS[:inactive_account])
 					end
 				end
+				Account.reset_current_account
+				Portal.reset_current_portal
 				Sharding.select_shard_of(to_email[:domain]) do
 					account = Account.find_by_full_domain(to_email[:domain])
 					if account && account.allow_incoming_emails?
@@ -279,6 +281,7 @@ module Helpdesk
 				result = ((params[:text].nil? || params[:text].empty?) ? "" : body_html_with_formatting(params[:text],email_cmds_regex)) 
 				result = "<br><p style=\"color:#FF2625;\"><b> *** Warning: This email might have some content missing. Please open the attached file original_email.html to see the entire message. *** </b></p><br>" + result
 				original_email_content = StringIO.new(params[:html])
+				original_email_content.class.class_eval { attr_accessor :original_filename, :content_type }
 				original_email_content.content_type = "text/html"
 				original_email_content.original_filename = "original_email.html"
 				params[:attachments] = params[:attachments] + 1
@@ -781,10 +784,11 @@ module Helpdesk
 							else
 								attachments.push att
 							end
+							att.skip_virus_detection = true
 						end
 					rescue HelpdeskExceptions::AttachmentLimitException => ex
 						Rails.logger.error("ERROR ::: #{ex.message}")
-						message = attachment_exceeded_message(HelpdeskAttachable::MAILGUN_MAX_ATTACHMENT_SIZE)
+						message = attachment_exceeded_message(HelpdeskAttachable.mailgun_max_attachment_size)
 						add_notification_text item, message
 						break
 					rescue Exception => e
@@ -957,8 +961,9 @@ module Helpdesk
 
 
 			def build_note_params ticket, from_email, user, from_fwd_recipients, body, body_html, full_text, full_text_html, cc_emails
+				hide_response_from_customer = ticket.account.launched?(:hide_response_from_customer_feature)? (customer_removed_in_reply?(ticket, in_reply_to, parse_to_emails, cc_emails)): false
 				note_params = {
-					:private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user)),
+					:private => (from_fwd_recipients or reply_to_private_note?(all_message_ids) or rsvp_to_fwd?(ticket, from_email, user) or hide_response_from_customer),
 					:incoming => true,
 					:note_body_attributes => {
 						:body => tokenize_emojis(body) || "",

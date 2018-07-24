@@ -68,12 +68,7 @@ class TopicObserver < ActiveRecord::Observer
 
   def copy_attachment(topic, ticket)
     topic.first_post.attachments.each do |attachment|      
-      url = attachment.authenticated_s3_get_url
-      io = open(url) 
-      if io
-        def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
-      end
-      ticket.attachments.build(:content => io, :description => attachment.description, :account_id => ticket.account_id)
+      ticket.attachments.build(content: attachment.to_io, description: attachment.description, account_id: ticket.account_id)
     end
     
     topic.first_post.cloud_files.each do |cloud_file|

@@ -75,9 +75,6 @@ module Va::Observer::Util
         args[:sbrr_state_attributes] = sbrr_state_attributes if Account.current.skill_based_round_robin_enabled?
         args[:sla_args] = {:sla_on_background => sla_on_background, :sla_state_attributes => sla_state_attributes, :sla_calculation_time => sla_calculation_time.to_i}
       end
-
-      Va::Logger::Automation.log "Triggering Observer, info=#{args.inspect}"
-
       if inline
         User.run_without_current_user { Tickets::ObserverWorker.new.perform(args) }
       elsif self.class == Helpdesk::Ticket and self.schedule_observer
@@ -85,14 +82,13 @@ module Va::Observer::Util
         Va::Logger::Automation.log "Skipping observer schedule_observer=true"
         self.observer_args = args
       else
-        Tickets::ObserverWorker.perform_async(args)
+        evaluate_on.try(:invoke_ticket_observer_worker, args)
       end
     end
 
     def send_system_events observer_changes
       args = { ticket_id: fetch_ticket_id, system_event: true, current_events: observer_changes }
-      Va::Logger::Automation.log "Triggering Observer, info=#{args.inspect}"
-      Tickets::ObserverWorker.perform_async(args)
+      evaluate_on.try(:invoke_ticket_observer_worker, args)
     end
 
     def ticket_event current_events
@@ -115,6 +111,10 @@ module Va::Observer::Util
 
     def fetch_ticket_id
       @evaluate_on_id ||= self.send FETCH_EVALUATE_ON_ID[self.class.name]
+    end
+
+    def evaluate_on
+      @evaluate_on ||= Account.current.tickets.find_by_id fetch_ticket_id
     end
 
     def set_automation_thread_variables

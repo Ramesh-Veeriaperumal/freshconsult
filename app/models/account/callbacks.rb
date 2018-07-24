@@ -28,7 +28,7 @@ class Account < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_cache }, on: :update
   after_commit ->(obj) { obj.clear_cache }, on: :destroy
   
-  after_commit :enable_searchv2, :enable_count_es, :enable_collab, :set_falcon_preferences, on: :create
+  after_commit :enable_searchv2, :enable_count_es, :enable_collab, :set_falcon_preferences, :enable_fresh_connect, on: :create
   after_commit :disable_searchv2, :disable_count_es, on: :destroy
   after_commit :update_sendgrid, on: :create
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
@@ -82,6 +82,10 @@ class Account < ActiveRecord::Base
     SearchSidekiq::CreateAlias.perform_async({ :sign_up => true }) if self.esv1_enabled?
   end
 
+  def enable_fresh_connect
+    ::Freshconnect::RegisterFreshconnect.perform_async if freshconnect_signup_allowed?
+  end
+
   def populate_features
     add_features_of self.plan_name
     SELECTABLE_FEATURES.each { |key,value| features.safe_send(key).create  if value}
@@ -95,8 +99,7 @@ class Account < ActiveRecord::Base
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
       self.launch(:archive_ghost)           # enabling archive ghost feature
     end
-    self.launch(:freshid) if freshid_signup_allowed?
-    self.launch(:freshworks_omnibar) if freshid_signup_allowed? and omnibar_signup_allowed?
+    launch_freshid_with_omnibar if freshid_signup_allowed?
   end
 
   def update_activity_export
@@ -158,6 +161,11 @@ class Account < ActiveRecord::Base
     }
   end
 
+  def launch_freshid_with_omnibar
+    launch(:freshid)
+    launch(:freshworks_omnibar) if omnibar_signup_allowed?
+  end
+
   protected
 
     def set_default_values
@@ -216,7 +224,7 @@ class Account < ActiveRecord::Base
     end
 
     def sso_disabled_not_freshid_account?
-      !sso_enabled? && !freshid_enabled? && freshid_signup_allowed?
+      !sso_enabled? && sso_enabled_changed? && !freshid_enabled? && freshid_signup_allowed?
     end
 
     def remove_email_restrictions
@@ -292,10 +300,14 @@ class Account < ActiveRecord::Base
         #This || condition is to handle special case during deployment
         #until new signup is enabled, we need to have older list.
         plan_features_list =  if PLANS[:subscription_plans][self.plan_name].nil?
-                                FEATURES_DATA[:plan_features][:feature_list]
+                                FEATURES_DATA[:plan_features][:feature_list].dup
                               else
-                                PLANS[:subscription_plans][self.plan_name][:features]
+                                PLANS[:subscription_plans][self.plan_name][:features].dup
                               end
+
+        plan_features_list.delete(:support_bot) if revoke_support_bot?
+        plan_features_list = plan_features_list - (UnsupportedFeaturesList || [])
+
         plan_features_list.each do |key, value|
           bitmap_value = self.set_feature(key)
         end
@@ -515,6 +527,10 @@ class Account < ActiveRecord::Base
 
     def freshid_migration_not_in_progress?
       !freshid_migration_in_progress?
+    end
+
+    def freshconnect_signup_allowed?
+      redis_key_exists? FRESHCONNECT_NEW_ACCOUNT_SIGNUP_ENABLED
     end
 
     def update_bot

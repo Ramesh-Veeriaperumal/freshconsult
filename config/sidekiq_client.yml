@@ -274,7 +274,11 @@ defaults: &defaults
     - [deactivate_product_widgets]
     - [user_central_publish]
     - [deactivate_filter_widgets]
-
+    - [run_rake_task]
+    - [check_bot_training]
+    - [update_segment_filter]
+    - [register_freshconnect]
+    - [update_freshconnect]
 development:
   <<: *defaults
 

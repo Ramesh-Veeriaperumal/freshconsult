@@ -12,6 +12,7 @@ module Admin
         supervisor_rules = account.supervisor_rules
         return unless supervisor_rules.count > 0 
         start_time = Time.now.utc
+        rule_type = VAConfig::RULES_BY_ID[VAConfig::RULES[:supervisor]]
         account_negatable_columns = ::VAConfig.negatable_columns(account)
         supervisor_rules.each do |rule|
           begin
@@ -45,7 +46,7 @@ module Admin
             custom_logger.info "#{log_format}" unless custom_logger.nil?
             log_info(account.id, rule.id) {
               Va::Logger::Automation.log "conditions=#{conditions.inspect}, negate_conditons=#{negate_conditions.inspect}, joins=#{joins.inspect}, tickets=#{ticket_ids.inspect}"
-              Va::Logger::Automation.log_execution_and_time(rule_total_time, ticket_ids.size)
+              Va::Logger::Automation.log_execution_and_time(rule_total_time, ticket_ids.size, rule_type, rule_start_time, rule_end_time)
             }
           rescue Exception => e
             log_info(account.id, rule.id) { Va::Logger::Automation.log_error(SUPERVISOR_ERROR, e) }
@@ -56,7 +57,7 @@ module Admin
         end
         end_time = Time.now.utc
         total_time = end_time - start_time
-        log_info(account.id) { Va::Logger::Automation.log_execution_and_time(total_time, supervisor_rules.size) }
+        log_info(account.id) { Va::Logger::Automation.log_execution_and_time(total_time, supervisor_rules.size, rule_type, start_time, end_time) }
       }
       ensure
         Account.reset_current_account

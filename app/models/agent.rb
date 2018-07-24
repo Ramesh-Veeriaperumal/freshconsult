@@ -10,6 +10,9 @@ class Agent < ActiveRecord::Base
   include RoundRobinCapping::Methods
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include DataVersioning::Model
+
+  VERSION_MEMBER_KEY = 'AGENTS_GROUPS'.freeze
 
   concerned_with :associations, :constants, :presenter
 
@@ -19,7 +22,7 @@ class Agent < ActiveRecord::Base
 
   accepts_nested_attributes_for :user
   accepts_nested_attributes_for :agent_groups, :allow_destroy => true
-  before_update :create_model_changes
+  before_update :update_active_since, :create_model_changes
   before_create :mark_unavailable
   after_commit :enqueue_round_robin_process, on: :update
   after_commit :sync_skill_based_queues, on: :update
@@ -184,6 +187,10 @@ class Agent < ActiveRecord::Base
     touch(:last_active_at) if force or last_active_at.nil? or ((Time.now - last_active_at) > 4.hours)
   end
 
+  def update_active_since
+    self.active_since = Time.now.utc if available_changed?
+  end
+
   def current_load group
     agent_key = group.round_robin_agent_capping_key(user_id)
     count = get_round_robin_redis(agent_key)
@@ -242,6 +249,7 @@ class Agent < ActiveRecord::Base
   end
 
   def build_agent_groups_attributes(group_list)
+    return unless group_list.is_a?(Array)
     old_group_ids    = self.new_record? ? [] : self.agent_groups.pluck(:group_id)
     group_list      = group_list.map(&:to_i)
     add_group_ids    = Account.current.groups.where(:id => group_list - old_group_ids).pluck(:id)

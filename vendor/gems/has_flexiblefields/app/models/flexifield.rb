@@ -16,9 +16,7 @@ class Flexifield < ActiveRecord::Base
   accepts_nested_attributes_for :denormalized_flexifield
   # xss_terminate
 
-  after_initialize :initialize_denormalized_flexifield
-
-  delegate :to_ff_alias, :to_ff_field,
+  delegate :to_ff_alias, :to_ff_field, :to_ff_def_entry,
            :ff_aliases, :non_text_ff_aliases,
            :ff_fields, :non_text_ff_fields, :text_and_number_ff_fields, :text_ff_fields, :to => :flexifield_def
 
@@ -26,12 +24,6 @@ class Flexifield < ActiveRecord::Base
 
   before_validation :nested_field_correction
 
-  def initialize_denormalized_flexifield
-    if Account.current.denormalized_flexifields_enabled? && denormalized_flexifield.nil?
-      build_denormalized_flexifield 
-    end
-  end
-  
   def self.flexiblefield_names
     column_names.grep(/ff.+/)
   end
@@ -45,9 +37,9 @@ class Flexifield < ActiveRecord::Base
   end
   
   def get_ff_value ff_alias
-    ff_field = to_ff_field ff_alias
-    if ff_field
-      read_ff_attribute ff_field
+    ff_def_entry = to_ff_def_entry ff_alias
+    if ff_def_entry
+      process_while_reading ff_def_entry.flexifield_name, ff_def_entry.flexifield_coltype
     else
       raise ArgumentError, "Flexifield alias: #{ff_alias} not found in flexifeld def mapping"
     end
@@ -82,16 +74,16 @@ class Flexifield < ActiveRecord::Base
   end
 
   def retrieve_ff_values_via_mapping
-    Account.current.ticket_field_def.ff_alias_column_mapping.each_with_object({}) do |(aliass, column_name), ff_values|
-      ff_values[aliass] = read_ff_attribute(column_name)
+    Account.current.ticket_field_def.ff_alias_column_type_mapping.each_with_object({}) do |(aliass, column_name_and_field_type), ff_values|
+      ff_values[aliass] = process_while_reading(*column_name_and_field_type)
     end
   end
 
   def write_ff_attribute attribute, value
     if self.class.flexiblefield_names.include?(attribute.to_s)
       write_attribute(attribute, value)
-    elsif SERIALIZED_ATTRIBUTES.include?(attribute) && denormalized_flexifield.present?
-      denormalized_flexifield.send "#{attribute}=", value
+    elsif SERIALIZED_ATTRIBUTES.include?(attribute)
+      denormalized_flexifield.safe_send "#{attribute}=", value
     else
       raise ArgumentError, "Trying to write #{attribute} with value #{value}; Field doesnt exist"
     end
@@ -100,31 +92,40 @@ class Flexifield < ActiveRecord::Base
   def read_ff_attribute attribute
     if self.class.flexiblefield_names.include?(attribute.to_s)
       read_attribute(attribute)
-    elsif SERIALIZED_ATTRIBUTES.include?(attribute) && denormalized_flexifield.present?
+    elsif SERIALIZED_ATTRIBUTES.include?(attribute)
       denormalized_flexifield.safe_send(attribute)
     else
       raise ArgumentError, "Trying to read #{attribute}; Field doesnt exist"
     end
   end
 
-  def before_save_changes #to avoid changes being recalculated
-    @before_save_changes ||= changes_incl_serialized_attributes 
+  def before_save_changes
+    # to avoid changes being recalculated
+    @before_save_changes ||= changes_incl_serialized_attributes
   end
 
   def changes_incl_serialized_attributes
-    denormalized_flexifield.present? ? changes.merge!(denormalized_flexifield.changes_of_serialized_attributes) : changes
+    @denormalized_flexifield.present? ? changes.merge!(denormalized_flexifield.attribute_changes) : changes
   end
 
   def attributes_with_denormalized_flexifield
-    denormalized_attributes = denormalized_flexifield.present? ? denormalized_flexifield.deserialized_attributes : {}
+    denormalized_attributes = @denormalized_flexifield.present? ? denormalized_flexifield.deserialized_attributes : {}
     attributes_without_denormalized_flexifield.dup.reverse_merge(denormalized_attributes)
+  end
+  alias_method_chain :attributes, :denormalized_flexifield
+
+  def denormalized_flexifield
+    @denormalized_flexifield ||= (super || build_denormalized_flexifield)
   end
 
   def nested_field_correction
     NestedFieldCorrection.new(self).clear_child_levels if Account.current.dependent_field_validation_enabled?
   end
 
-  alias_method_chain :attributes, :denormalized_flexifield
+  private
+
+    def process_while_reading column_name, field_type
+      Time.use_zone('UTC') { read_ff_attribute(column_name) }
+    end
 
 end
-

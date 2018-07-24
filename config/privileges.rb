@@ -156,6 +156,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"announcement", :only => [:index, :account_login_url]
     resource :"email_preview"
     resource :"doorkeeper/authorize"
+    resource :"admin/freshmarketer", only: %i[sessions session_info]
+    resource :"support/canned_form", only: [:preview]
   end
 
   export_tickets do
@@ -359,7 +361,7 @@ Authority::Authorization::PrivilegeList.build do
   # ************** CONTACTS **************************
 
   view_contacts do
-    resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :contact_details_for_ticket]
+    resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :contact_details_for_ticket, :view_conversations]
     resource :customer, :only => [:index, :show] #should deprecate
     resource :company,  :only => [:index, :show]
     resource :agent, :only => [:show]
@@ -485,7 +487,7 @@ Authority::Authorization::PrivilegeList.build do
     # NOTE: The agent show action is also allowed in view_contacts privilege
     resource :agent, :only => [:new, :create, :edit, :update, :index, :destroy, :show, :delete_avatar,
                                :restore, :convert_to_user, :reset_password, :create_multiple_items, :convert_to_contact,
-                               :configure_export, :export_csv, :reset_score]
+                               :configure_export, :export_csv, :reset_score, :search_in_freshworks]
     resource :agent, :only => [:toggle_shortcuts], :owned_by => { :scoper => :agents }
     resource :contact, :only => [:make_agent, :make_occasional_agent]
     resource :activation, :only => [:send_invite]
@@ -556,7 +558,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/google_account"
     resource :"integrations/remote_configuration"
     resource :"integrations/dynamicscrm", :only => [:settings, :edit, :settings_update, :fields_update]
-    resource :"integrations/marketplace/shopify", :only => [:install, :create, :landing]
+    resource :"integrations/marketplace/shopify", :only => [:install, :create, :landing, :remove_store, :edit]
     resource :"integrations/infusionsoft", :only => [:install, :edit, :fields_update]
     resource :"integrations/sugarcrm", :only => [:settings, :edit, :settings_update, :fields_update]
     resource :"integrations/magento", :only => [:new, :edit, :update]
@@ -621,6 +623,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_integrations/cti", :only => [:create, :index]
     resource :"email_preview"
     resource :"admin/freshchat", :only => [:index, :create, :update, :toggle]
+    resource :"admin/freshmarketer", only: %i[index link unlink enable_integration disable_integration]
   end
 
   manage_account do
@@ -636,6 +639,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
+    resource :"rake_task", :only => [:run_rake_task]
   end
 
   manage_skills do

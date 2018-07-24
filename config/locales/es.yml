@@ -2795,7 +2795,7 @@ es:
     no_topics_in_this_view: "~ No hay temas en esta vista ~"
     reported: declarado
     said: dicho
-    solutions_home: "Inicio / Prestatarios / General"
+    solutions_home: "Inicio"
     print_title: "Imprimir este articulo"
     attach_file: "Adjunto a <b>archivo</b>"
     header:

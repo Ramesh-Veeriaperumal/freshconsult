@@ -446,6 +446,16 @@ class User < ActiveRecord::Base
   def falcon_invite_eligible?
     (account.falcon_ui_enabled? && !account.disable_old_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
   end
+  
+  def enabled_undo_send?
+    Account.current.launched?(:undo_send) && preferences[:agent_preferences][:undo_send]
+  end
+
+  def toggle_undo_send(pref)
+    new_pref = { undo_send: pref }
+    self.merge_preferences = { agent_preferences: new_pref }
+    save
+  end
 
   def update_attributes(params) # Overriding to normalize params at one place
     normalize_params(params) # hack to facilitate contact_fields & deprecate customer
@@ -1123,7 +1133,7 @@ class User < ActiveRecord::Base
   def create_freshid_user
     return if freshid_disabled_or_customer?
     Rails.logger.info "FRESHID Creating user :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}"
-    reset_freshid_user if email_changed?
+    self.name = name_from_email if !self.name.present?
     freshid_user = Freshid::User.create(user_attributes_for_freshid)
     if freshid_user.present?
       self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
@@ -1244,11 +1254,6 @@ class User < ActiveRecord::Base
         job_title: job_title.presence,
         domain: account.full_domain
       }
-    end
-
-    def reset_freshid_user
-      self.name = name_from_email
-      self.phone = self.mobile = nil
     end
 
     def name_part(part)

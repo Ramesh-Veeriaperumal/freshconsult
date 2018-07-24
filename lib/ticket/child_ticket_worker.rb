@@ -164,15 +164,10 @@ class Ticket::ChildTicketWorker < BaseWorker
 
   def fetch_attachments assoc_parent_item
     assoc_parent_item.all_attachments.each do |attachment|
-      url = attachment.authenticated_s3_get_url
-      io  = open(url)
-      if io
-        def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
-      end
-      @item.attachments.build(:content => io, :description => "", :account_id => @account)
+      @item.attachments.build(content: attachment.to_io, description: '', account_id: @account)
     end
     assoc_parent_item.cloud_files.each do |cloud_file|
-      @item.cloud_files.build({:url => cloud_file.url, :application_id => cloud_file.application_id, :filename => cloud_file.filename })
+      @item.cloud_files.build(url: cloud_file.url, application_id: cloud_file.application_id, filename: cloud_file.filename)
     end
   end
 

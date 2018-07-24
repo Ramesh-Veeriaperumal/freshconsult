@@ -70,7 +70,9 @@ class ApplicationController < ActionController::Base
   end
 
   def set_current_ip
-    # Thread.current[:current_ip] = request.remote_ip
+    Thread.current[:current_ip] = request.env['CLIENT_IP']
+  rescue Exception => e
+    Rails.logger.debug "Error getting currernt IP : #{e.message}"
   end
  
   def check_account_state
@@ -155,6 +157,10 @@ class ApplicationController < ActionController::Base
   
   def render_account_blocked
     render :file => "#{Rails.root}/public/AccountBlocked.html", :status => 403, :layout => false
+  end
+
+  def render_403
+    render file: Rails.root.join('public/403.html').to_path, status: 403, layout: false
   end
 
   def render_404

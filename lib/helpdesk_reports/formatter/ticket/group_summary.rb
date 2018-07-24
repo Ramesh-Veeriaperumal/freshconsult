@@ -4,15 +4,15 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
 
   attr_accessor :result
 
-  METRICS = ["GROUP_ASSIGNED_TICKETS","RESOLVED_TICKETS","REOPENED_TICKETS",
+  METRICS = ["GROUP_ASSIGNED_TICKETS","GROUP_RECEIVED_TICKETS","RESOLVED_TICKETS","REOPENED_TICKETS",
              "GROUP_REASSIGNED_TICKETS","RESPONSE_SLA","RESOLUTION_SLA","FCR_TICKETS","PRIVATE_NOTES",
-             "RESPONSES","AVG_FIRST_RESPONSE_TIME","AVG_RESPONSE_TIME","AVG_RESOLUTION_TIME"]
-             
+             "RESPONSES","AVG_FIRST_RESPONSE_TIME","AVG_RESPONSE_TIME","AVG_RESOLUTION_TIME","TICKETS_ENGAGED" ]
   def initialize data, args = {}
     @result   = data
     @args     = args
     @current  = @result['GROUP_SUMMARY_CURRENT']
     @historic = @result['GROUP_SUMMARY_HISTORIC']
+    @received_tickets = @result['GROUP_SUMMARY_TICKETS_RECIEVED'] || []
   end
 
   def perform
@@ -24,7 +24,8 @@ class HelpdeskReports::Formatter::Ticket::GroupSummary
   def merging_current_historic_data
     @current  = [] if (@current.is_a?(Hash) && @current["errors"])   || @current.empty? #Handling the edge cases
     @historic = [] if (@historic.is_a?(Hash) && @historic["errors"]) || @historic.empty?
-    @result = (@current + @historic).group_by{|h| h["group_id"]}.map{ |k,v| v.reduce(:merge)}
+    @received_tickets = [] if (@received_tickets.is_a?(Hash) && @received_tickets["errors"])
+    @result = (@current + @historic + @received_tickets).group_by{|h| h["group_id"]}.map{ |k,v| v.reduce(:merge)}
   end
 
   def removing_unscoped_and_deleted_group

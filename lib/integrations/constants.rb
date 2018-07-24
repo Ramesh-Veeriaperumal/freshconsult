@@ -49,7 +49,8 @@ module Integrations::Constants
     :shared_ownership => "shared_ownership",
     :microsoft_teams => "microsoft_teams",
     :google_hangout_chat => "google_hangout_chat",
-    :ticket_summary => "ticket_summary"
+    :ticket_summary => "ticket_summary",
+    :twitter => "twitter"
   }
 
   DISPLAY_IN_PAGES = { 'ticket_show' => 2, 'contact_show' => 1, 'company_show' => 0, 'time_sheet_show' => 3, 'editor_show' => 4 }.freeze
@@ -58,7 +59,7 @@ module Integrations::Constants
 
   SERVICE_APPS = %w(github slack_v2 salesforce_v2 dynamics_v2 microsoft_teams google_hangout_chat).freeze
 
-  INTEGRATION_ROUTES = %w(github salesforce magento shopify slack infusionsoft google_calendar google_login google_marketplace_sso google_contacts google_gadget outlook_contacts salesforce_v2 facebook microsoft_teams google_hangout_chat).freeze
+  INTEGRATION_ROUTES = %w(github salesforce magento shopify slack infusionsoft google_calendar google_login google_marketplace_sso google_contacts google_gadget outlook_contacts salesforce_v2 facebook microsoft_teams google_hangout_chat twitter).freeze
 
   APP_CATEGORY_ID_TO_NAME = {
     10 => :custom,
@@ -91,7 +92,7 @@ module Integrations::Constants
 
   FRESHPLUG = 'freshplug'
 
-  NON_EDITABLE_APPS = ["mailchimp", "constantcontact", "nimble", "google_calendar", "shopify", "box", "onedrive", "microsoft_teams", "google_hangout_chat"]
+  NON_EDITABLE_APPS = ["mailchimp", "constantcontact", "nimble", "google_calendar", "box", "onedrive", "microsoft_teams", "google_hangout_chat"]
 
   CONTACTS_SYNC_APPS = [APP_NAMES[:outlook_contacts]]
 
@@ -138,7 +139,8 @@ module Integrations::Constants
     APP_NAMES[:box] => 16,
     APP_NAMES[:onedrive] => 16,
     APP_NAMES[:surveymonkey] => 16,
-    APP_NAMES[:google_calendar] => 4
+    APP_NAMES[:google_calendar] => 4,
+    APP_NAMES[:shopify] => 6
   }.freeze
 
   ATTACHMENT_APPS = [APP_NAMES[:dropbox],APP_NAMES[:box],APP_NAMES[:onedrive]].freeze
@@ -148,6 +150,7 @@ module Integrations::Constants
 
   OAUTH_STRATEGIES_TO_SKIP = %w(github salesforce shopify slack infusionsoft google_oauth2 google_contacts google_gadget_oauth2 outlook_contacts salesforce_v2 microsoft_teams google_hangout_chat).freeze
 
-  FALCON_ENABLED_OAUTH_APPS = [APP_NAMES[:google_calendar], 
-    APP_NAMES[:salesforce], APP_NAMES[:mailchimp]].freeze
+  FALCON_ENABLED_OAUTH_APPS = [APP_NAMES[:google_calendar],
+    APP_NAMES[:salesforce], APP_NAMES[:mailchimp], APP_NAMES[:surveymonkey],
+    APP_NAMES[:outlook_contacts]].freeze
 end

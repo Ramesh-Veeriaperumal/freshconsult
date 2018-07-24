@@ -9,6 +9,7 @@
   surveyFeedbackI18n.thanksFeedback =  "<%= t('admin.surveys.new_thanks.thanks_feedback')%>";
   surveyFeedbackI18n.surveyFeedback = "<%=t('admin.surveys.index.survey_feedback')%>";
   surveyFeedbackI18n.portalMsg = "<%= t('admin.surveys.index.portal_msg') %>";
+  surveyFeedbackI18n.thanksMessage = "<%= @survey_handle.survey.thanks_text %>";
 <% end %>
 
 <script>
@@ -29,21 +30,31 @@
 	<%= engine.render %>
 	</style>
 <% end %>
-<script type="text/javascript">
-	if(document.referrer.length>0){
-		Feedback.refreshTab();
-	}
-	<% if @rating_via_handle %>
-		Feedback.surveySaveHit("<%= @rating %>","<%= @survey_code%>");
-	<% end %>
-</script>
+
+<% csat_email_scan_compatibile = @survey_handle.account.csat_email_scan_compatibility_enabled? %>
+
+<% unless csat_email_scan_compatibile %>
+	<script type="text/javascript">
+		if(document.referrer.length > 0){
+			Feedback.refreshTab();
+		}
+		<% if @rating_via_handle %>
+			Feedback.surveySaveHit(null, "<%= @rating %>","<%= @survey_code %>");
+		<% end %>
+	</script>
+<% end %>
 
 <body class="single">
 	<div class="cust-survey-wrapper content rounded-6">
-		<%= form_for :survey_handle, :url  => @survey_handle.feedback_url(@rating), :html => {
-							:method => :post, :id => "survey_form", :onsubmit => "javascript:Feedback.submit(event);" } do |f| -%>
+		<%= form_for :survey_handle, html: {
+					id: 'survey_form', method: :post, onsubmit: csat_email_scan_compatibile ? "javascript:Feedback.surveySaveHit(event, '#{@rating}', '#{@survey_code}')" : "javascript:Feedback.submit(event)", 'data-email-scan-compatible': csat_email_scan_compatibile, 'data-handle': @survey_handle.id_token } do |f| -%>
 			<div class="highlighter">
-				<h2><%=@survey_handle.survey.thanks_text%></h2>
+				<% if csat_email_scan_compatibile %>
+					<h2></h2>
+					<%= render partial: 'layouts/shared/survey', locals: { survey_handle: @survey_handle, rating: @rating } %>
+				<% else %>
+					<h2><%=@survey_handle.survey.thanks_text%></h2>
+				<% end %>
 				<div class="survey-overlay center" style="display:none;"></div>
 				<div class="loading">
 					<span class='loading-text'> <%=t('admin.surveys.index.portal_msg')%> </span>
@@ -70,7 +81,7 @@
 					<textarea autocomplete="off" class="input-comment required" id="survey_feedback" name="feedback" rel="ghostwriter" type="text" width="100%"
 						placeholder= "<%= @survey_handle.survey.comments_text %>" ></textarea>
 				<% end %>
-				<% if !@survey_handle.survey.feedback_questions.blank? || @survey_handle.survey.can_comment? %>
+				<% if csat_email_scan_compatibile || (!@survey_handle.survey.feedback_questions.blank? || @survey_handle.survey.can_comment?) %>
 					<%= f.submit t('support.surveys.new.submit'), :class => "btn btn-primary btn-comment" %>
 				<% end %>
 			</div>

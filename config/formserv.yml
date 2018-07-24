@@ -1,0 +1,17 @@
+defaults: &defaults
+  formserv_url: http://localhost:27586/api/v1/forms
+  product_name: sample_app_dev
+  api_token: test123
+  keep_connection_alive: true
+  fallback : true
+  connection_timeout: 5
+  open_connection_timeout: 5
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults

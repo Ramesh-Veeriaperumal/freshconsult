@@ -13,6 +13,7 @@ Helpkit::Application.routes.draw do
         post :reply, to: 'conversations#reply'
         post :notes, to: 'conversations#create'
         post :time_entries, to: 'time_entries#create'
+        get :sessions, to: 'admin/freshmarketer#sessions'
       end
     end
 
@@ -102,6 +103,7 @@ Helpkit::Application.routes.draw do
     end
 
     match 'export/ticket_activities' => 'export#ticket_activities', :defaults => { format: 'json' }, :as => :ticket_activities, via: :get
+    match 'rake_task/run_rake_task' => 'rake_task#run_rake_task', :defaults => { format: 'json' }, :as => :run_rake_task, via: :get
 
     # Solution endpoints
     namespace :api_solutions, path: 'solutions' do
@@ -164,6 +166,16 @@ Helpkit::Application.routes.draw do
       end
     end
     resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update]
+
+    resources :freshmarketer, controller: 'admin/freshmarketer', only: :index do
+      collection do
+        put :link
+        delete :unlink
+        put :enable_integration
+        put :disable_integration
+        get :session_info
+      end
+    end
   end
 
   pipe_routes = proc do 

@@ -9,11 +9,13 @@ class Helpdesk::Attachment < ActiveRecord::Base
   include Helpdesk::Utils::Attachment
   include Helpdesk::Permission::Attachment
 
+  attr_accessor :skip_virus_detection
+
   BINARY_TYPE = "application/octet-stream"
 
   MAX_DIMENSIONS = 16000000
 
-  NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account", 
+  NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account",
     "Helpdesk::ArchiveTicket", "Helpdesk::ArchiveNote"]
 
   self.table_name =  "helpdesk_attachments"
@@ -64,7 +66,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_create :set_content_type
     after_commit :clear_user_avatar_cache
     before_save :set_account_id
-
+    validate :virus_in_attachment?, if: :attachment_virus_detection_enabled?
+    
   alias_attribute :parent_type, :attachable_type
 
   class << self
@@ -74,14 +77,14 @@ class Helpdesk::Attachment < ActiveRecord::Base
     end
 
     def create_for_3rd_party account, item, attached, i, content_id, mailgun=false
-      limit = mailgun ? HelpdeskAttachable.mailgun_max_attachment_size : 
+      limit = mailgun ? HelpdeskAttachable.mailgun_max_attachment_size :
                         HelpdeskAttachable::MAX_ATTACHMENT_SIZE
       if attached.is_a?(Hash)
-        file_content = attached[:file_content] 
+        file_content = attached[:file_content]
         original_filename = attached[:filename]
-        content_type = attached[:content_type] 
-        content_size = attached[:content_size] 
-        verify_attachment_size = false 
+        content_type = attached[:content_type]
+        content_size = attached[:content_size]
+        verify_attachment_size = false
       else
         file_content = (attached.is_a? StringIO) ? attached : attached.tempfile
         original_filename = attached.original_filename
@@ -102,16 +105,15 @@ class Helpdesk::Attachment < ActiveRecord::Base
         if content_id
           model = item.is_a?(Helpdesk::Ticket) ? "Ticket" : "Note"
           attributes.merge!({:description => "content_id", :attachable_type => "#{model}::Inline"})
-          attachment_permissions = Account.current.skip_one_hop_enabled? ? "public-read" : "private"
-          write_options.merge!({ :acl => attachment_permissions })
+          write_options[:acl] = 'private'
         end
 
         att = account.attachments.new(attributes)
         if att.save
           path = s3_path(att.id, att.content_file_name)
-          AwsWrapper::S3Object.store(path, 
-                                     file_content, 
-                                     S3_CONFIG[:bucket], 
+          AwsWrapper::S3Object.store(path,
+                                     file_content,
+                                     S3_CONFIG[:bucket],
                                      write_options)
           att
         end
@@ -173,16 +175,16 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def attachment_sizes
     if self.description == "logo"
-      return { 
-        :logo => { :geometry => "x50>", :animated => false } 
+      return {
+        :logo => { :geometry => "x50>", :animated => false }
       }
     elsif  self.description == "fav_icon"
-      return { 
-        :fav_icon  => { :geometry => "32x32>", :animated => false } 
+      return {
+        :fav_icon  => { :geometry => "32x32>", :animated => false }
       }
     else
       return {
-        :medium => { :geometry => "127x177>", :animated => false }, 
+        :medium => { :geometry => "127x177>", :animated => false },
         :thumb  => { :geometry => "50x50#", :animated => false }
       }
     end
@@ -192,8 +194,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
     [:account_id, :description, :content_updated_at, :attachable_id, :attachable_type]
   end
 
-  def attachment_url_for_api(secure=true)
-    AwsWrapper::S3Object.url_for(content.path, content.bucket_name, { :expires => 1.days, :secure => true })
+  def attachment_url_for_api(secure = true, type = :original, expires = 1.day)
+    expiry_secure_data = { expires: expires, secure: secure }
+    AwsWrapper::S3Object.url_for(content.path(valid_size_type(type)), content.bucket_name, expiry_secure_data)
   end
 
   def as_json(options = {})
@@ -247,16 +250,26 @@ class Helpdesk::Attachment < ActiveRecord::Base
       "size"        => content_file_size,
       "url"         => Rails.application.routes.url_helpers.helpdesk_attachment_path(self),
       "delete_url"  => Rails.application.routes.url_helpers.delete_attachment_helpdesk_attachment_path(self),
-      "delete_type" => "DELETE" 
+      "delete_type" => "DELETE"
     }
   end
 
+  def to_io
+    io  = open(authenticated_s3_get_url)
+    if io
+      def io.original_filename
+        CGI.unescape(base_uri.path.split('/').last.gsub('%20', ' '))
+      end
+    end
+    io
+  end
+
   def inline_url
-    unless public_image? || Account.current.skip_one_hop_enabled?
+    if public_image?
+      content.url
+    else
       config_env = AppConfig[:attachment][Rails.env]
       "#{config_env[:protocol]}://#{config_env[:domain][PodConfig['CURRENT_POD']]}#{config_env[:port]}#{inline_url_path}"
-    else
-      self.content.url
     end
   end
 
@@ -272,11 +285,11 @@ class Helpdesk::Attachment < ActiveRecord::Base
     attachment.instance.content_file_name
   end
 
-  def inline_image?    
-    # Inline image will have attachable type as one of these :    
-    # ArchiveNote::Inline, ArchiveTicket::Inline, Ticket::Inline, Note::Inline    
-    # Image Upload, Email Notification Image Upload, Forums Image Upload, Templates Image Upload, Tickets Image Upload    
-    self.attachable_type.include?("Inline") || self.attachable_type.include?("Image Upload")    
+  def inline_image?
+    # Inline image will have attachable type as one of these :
+    # ArchiveNote::Inline, ArchiveTicket::Inline, Ticket::Inline, Note::Inline
+    # Image Upload, Email Notification Image Upload, Forums Image Upload, Templates Image Upload, Tickets Image Upload
+    self.attachable_type.include?("Inline") || self.attachable_type.include?("Image Upload")
   end
 
   private
@@ -295,11 +308,13 @@ class Helpdesk::Attachment < ActiveRecord::Base
     end
   end
 
+  def valid_size_type(type)
+    attachment_sizes.keys.include?(type) ? type : :original
+  end
+
   def public_image?
     self.attachable_type == "Image Upload" || self.attachable_type == "Forums Image Upload"
   end
-
-  
 
   def user_avatar?
     self.attachable_type == "User"
@@ -331,4 +346,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
       end
     end
   end
+
+  def virus_in_attachment?
+    errors.add(:base, "VIRUS_FOUND") if attachment_has_virus?
+  end
+
 end

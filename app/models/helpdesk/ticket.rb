@@ -1292,6 +1292,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     super(attachment_ids)
   end
 
+  def invoke_ticket_observer_worker(args)
+    job_id = ::Tickets::ObserverWorker.perform_async(args)
+    Va::Logger::Automation.set_thread_variables(Account.current.id, id, args[:doer_id], nil)
+    Va::Logger::Automation.log "Triggering Observer, job_id=#{job_id}, info=#{args.inspect}"
+    Va::Logger::Automation.unset_thread_variables
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?

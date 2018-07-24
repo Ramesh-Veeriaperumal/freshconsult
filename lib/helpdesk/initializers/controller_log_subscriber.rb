@@ -5,7 +5,6 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
   def process_action(event)
     event.payload[:duration] = event.duration
     log_details(event.payload)
-    track_controller_events(event.payload)
   end
 
   def log_details(payload)
@@ -65,15 +64,6 @@ class ControllerLogSubscriber <  ActiveSupport::LogSubscriber
 
   def store_log_data(payload)
     CustomRequestStore.store[:controller_log_info] = payload
-  end
-
-  def track_controller_events(payload)
-    if TRACKED_RESPONSE_TIME.has_key?(payload[:controller]) && TRACKED_RESPONSE_TIME[payload[:controller]].include?(payload[:action].to_sym)
-      statsd_timing(payload[:shard_name],"ticket_#{payload[:action]}_time",payload[:duration].round)
-    end
-    if TRACKED_CONTROLLERS.has_key?(payload[:controller]) && TRACKED_CONTROLLERS[payload[:controller]] == (payload[:action].to_sym)
-      statsd_increment(payload[:shard_name],"#{payload[:controller].demodulize}_#{payload[:action]}_counter")
-    end 
   end
 end
 
