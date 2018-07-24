@@ -5,5 +5,5 @@
 <h3 class="lead"><%=t('dispatch.clone')%></h3> 
 <hr>
 <%= form_for @va_rule, :url => { :action => "create" }, :html => { :method => :post , :id => "VirtualAgent" } do |f| %>
-  <%= render :partial => "/admin/shared/rule_form", :locals => { :f => f } %>
+  <%= render :partial => "/admin/shared/rule_form", :locals => { :f => f , :rule_type => "dispatch"} %>
 <% end %>

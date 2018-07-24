@@ -12,7 +12,7 @@ module AccountCreation
     end
     
 
-    def perform
+    def perform(args={})
       begin
         account = Account.current
         account.set_background_fixtures_started

@@ -78,7 +78,10 @@ module SeedFu
               end
             end
           end
-  
+        rescue Exception => e
+          p e
+          Rails.logger.debug "Exception #{e.inspect} occurred while processing fixtures file - #{file.inspect}"
+          raise e
         ensure
           ActiveRecord::Base.logger.level = old_level
         end
