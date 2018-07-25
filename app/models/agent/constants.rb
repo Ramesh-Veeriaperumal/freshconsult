@@ -13,13 +13,14 @@ class Agent < ActiveRecord::Base
   }
 
   TICKET_PERMISSION = [
-    [ :all_tickets, 1 ], 
-    [ :group_tickets,  2 ], 
-    [ :assigned_tickets, 3 ]
+    [ :all_tickets, 1, I18n.t("agent.global")], 
+    [ :group_tickets,  2, I18n.t("agent.group_access")], 
+    [ :assigned_tickets, 3, I18n.t("agent.individual")]
   ]
  
   PERMISSION_TOKENS_BY_KEY = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[0]] }.flatten]
   PERMISSION_KEYS_BY_TOKEN = Hash[*TICKET_PERMISSION.map { |i| [i[0], i[1]] }.flatten]
+  PERMISSION_KEYS_OPTIONS = Hash[*TICKET_PERMISSION.map { |i| [i[1], i[2]] }.flatten]
 
   EXPORT_FIELDS = [
     {:label => "export_data.agents.fields.name",         :value => "agent_name",      :selected => true,  :feature => nil,                                 :association => :user               },

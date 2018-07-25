@@ -12,7 +12,8 @@ class Account < ActiveRecord::Base
                    :encode_emoji, :audit_logs_central_publish, :auto_complete_off,
                    :dependent_field_validation, :post_central_publish, :encode_emoji_subject,
                    :time_sheets_central_publish, :twitter_common_redirect, :canned_forms,
-                   :euc_migrated_twitter, :new_ticket_recieved_metric, :audit_log_ui, :undo_send]
+                   :euc_migrated_twitter, :new_ticket_recieved_metric, :audit_log_ui, :undo_send,
+                   :timeline]
    DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
   BITMAP_FEATURES = [
@@ -34,7 +35,8 @@ class Account < ActiveRecord::Base
     ContactField::VERSION_MEMBER_KEY,
     CompanyField::VERSION_MEMBER_KEY,
     CustomSurvey::Survey::VERSION_MEMBER_KEY,
-    Freshchat::Account::VERSION_MEMBER_KEY
+    Freshchat::Account::VERSION_MEMBER_KEY,
+    AgentGroup::VERSION_MEMBER_KEY
   ]
 
   PODS_FOR_BOT = ['poduseast1'].freeze

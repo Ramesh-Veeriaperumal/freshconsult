@@ -1,4 +1,6 @@
 require_relative '../../test_helper'
+require 'webmock/minitest'
+WebMock.allow_net_connect!
 
 module Ember
   class ContactsControllerTest < ActionController::TestCase
@@ -8,8 +10,10 @@ module Ember
     include TicketsTestHelper
     include ArchiveTicketTestHelper
     include CustomFieldsTestHelper
+    include TimelineTestHelper
 
     BULK_CONTACT_CREATE_COUNT = 2
+    BASE_URL_CONTACT_TIMELINE = 'http://hypertrail-dev.freshworksapi.com/api/v2/activities/account'
 
     def setup
       super
@@ -23,9 +27,16 @@ module Ember
       return if @@initial_setup_run
 
       @account.add_feature(:multiple_user_companies)
+      @account.launch(:timeline)
       @account.reload
+      WebMock.disable_net_connect!
 
       @@initial_setup_run = true
+    end
+
+    def teardown
+      super
+      WebMock.allow_net_connect!
     end
 
     def wrap_cname(params)
@@ -1214,5 +1225,64 @@ module Ember
       user.make_current
     end
 
+    # Contact timeline testcases
+
+    def test_contact_timeline_without_view_contacts_privilege
+      sample_user = add_new_user(@account)
+      User.any_instance.stubs(:privilege?).with(:view_contacts).returns(false)
+      get :timeline, controller_params(version: 'private', id: sample_user.id)
+      User.any_instance.unstub(:privilege?)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    end
+
+    def test_contact_timeline_with_features_missing
+      sample_user = add_new_user(@account)
+      @account.rollback(:timeline)
+      get :timeline, controller_params(version: 'private', id: sample_user.id)
+      assert_response 403
+      match_json(request_error_pattern(:require_feature, feature: 'Timeline'))
+    ensure
+      @account.launch(:timeline)
+    end
+
+    def test_contact_timeline_with_hypertrail_fail
+      sample_user = add_new_user(@account)
+      result_data = create_timeline_sample_data(sample_user, 0)
+      url = "#{BASE_URL_CONTACT_TIMELINE}/#{@account.id}/contacttimeline/#{sample_user.id}"
+      stub_request(:get, url).to_return(body: result_data[1].to_json, status: 503)
+      get :timeline, controller_params(version: 'private', id: sample_user.id)
+      assert_response 503
+    end
+
+    def test_contact_timeline_with_no_activities
+      sample_user = add_new_user(@account)
+      result_data = create_timeline_sample_data(sample_user, 0)
+      url = "#{BASE_URL_CONTACT_TIMELINE}/#{@account.id}/contacttimeline/#{sample_user.id}"
+      stub_request(:get, url).to_return(body: result_data[1].to_json, status: 200)
+      get :timeline, controller_params(version: 'private', id: sample_user.id)
+      assert_response 200
+      match_json({})
+    end
+
+    def test_contact_timeline
+      sample_user = add_new_user(@account)
+      result_data = create_timeline_sample_data(sample_user)
+      url = "#{BASE_URL_CONTACT_TIMELINE}/#{@account.id}/contacttimeline/#{sample_user.id}"
+      stub_request(:get, url).to_return(body: result_data[1].to_json, status: 200)
+      get :timeline, controller_params(version: 'private', id: sample_user.id)
+      assert_response 200
+      match_json(user_activity_response(result_data[0]))
+    end
+
+    def test_contact_timeline_with_more_than_max_activities
+      sample_user = add_new_user(@account)
+      result_data = create_timeline_sample_data(sample_user, 5)
+      url = "#{BASE_URL_CONTACT_TIMELINE}/#{@account.id}/contacttimeline/#{sample_user.id}"
+      stub_request(:get, url).to_return(body: result_data[1].to_json, status: 200)
+      get :timeline, controller_params(version: 'private', id: sample_user.id)
+      assert_response 200
+      match_json(user_activity_response(result_data[0].first(CompanyConstants::MAX_ACTIVITIES_COUNT)))
+    end
   end
 end

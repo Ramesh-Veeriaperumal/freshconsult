@@ -15,7 +15,7 @@ module CustomerActivityConcern
                  else
                    combined_activities
                  end
-    activities = decorate_activites(activities)
+    activities = decorate_activities(activities)
     @activities = activities.each_with_object({}) do |a, ret|
       (ret[a.delete(:activity_type).to_sym.downcase] ||= []).push(a)
       ret
@@ -53,17 +53,43 @@ module CustomerActivityConcern
       @total_tickets.take(@activities_count)
     end
 
+    def load_tickets(ids)
+      current_account.tickets.where(display_id: ids)
+                     .preload(ticket_preload_options)
+                     .permissible(api_current_user)
+                     .visible
+    end
+
     def forum_activities
       return [] unless @item.is_a?(User)
       @forum_activities ||=
         (current_account.features?(:forums) ? @item.recent_posts.preload(topic: :forum) : [])
     end
 
+    def load_posts(ids)
+      current_account.posts.pick_published(ids).preload(topic: :forum)
+    end
+
     def combined_activities
       ticket_activities + forum_activities
     end
 
-    def decorate_activites(activities)
+    def construct_timeline_activities(items)
+      items_data = items[:data]
+      return [] if items_data.blank? 
+      all_activities = []
+      items_data.keys.each do |item_data|
+        case item_data
+        when :ticket_ids
+          all_activities += load_tickets(items_data[:ticket_ids])
+        when :post_ids
+          all_activities += load_posts(items_data[:post_ids])
+        end
+      end
+      all_activities
+    end
+
+    def decorate_activities(activities)
       activities.map do |act|
         case act.class.name
         when 'Helpdesk::Ticket', 'Helpdesk::ArchiveTicket'

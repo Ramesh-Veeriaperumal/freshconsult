@@ -258,7 +258,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     io  = open(authenticated_s3_get_url)
     if io
       def io.original_filename
-        base_uri.path.split('/').last.gsub('%20', ' ')
+        CGI.unescape(base_uri.path.split('/').last.gsub('%20', ' '))
       end
     end
     io

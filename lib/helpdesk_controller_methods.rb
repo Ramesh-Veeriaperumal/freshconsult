@@ -369,12 +369,7 @@ protected
       if attachment[:resource].is_a?(String) and Integer(attachment[:resource]) # In case of forward, we are passing existing Attachment ID's to upload the file via URL's
         attachment_obj = current_account.attachments.find_by_id(attachment[:resource])
         return unless attachment_obj.present? && attachment_permissions(attachment_obj)
-        url = attachment_obj.authenticated_s3_get_url
-        io  = open(url)
-        if io
-          def io.original_filename; base_uri.path.split('/').last.gsub("%20"," "); end
-        end
-        attachment[:resource] = io
+        attachment[:resource] = attachment_obj.to_io
       end
     rescue Exception => e
       NewRelic::Agent.notice_error(e)

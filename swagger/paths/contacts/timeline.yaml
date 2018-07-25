@@ -1,0 +1,15 @@
+get:
+  summary: Contact timeline
+  description: "Recent Activities of the User based on Tickets & Forums."
+  tags: [contact]
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/timeline_activity'
+    404:
+      description: User not found
+    503:
+      description: Service unavailable

@@ -378,7 +378,7 @@ module UsersTestHelper
       requester_id: obj.requester_id,
       group_id: obj.group_id,
       source: obj.source,
-      created_at: obj.created_at.try(:utc)
+      created_at: obj.created_at.try(:utc).try(:iso8601)
     }
     ret_hash.merge!(whitelisted_properties_for_activities(obj))
     ret_hash
@@ -388,10 +388,10 @@ module UsersTestHelper
     return {archived: true} if archived?(obj)
     {
       description_text: obj.description,
-      due_by: obj.due_by.try(:utc),
+      due_by: obj.due_by.try(:utc).try(:iso8601),
       stats: stats(obj),
       tags: obj.tag_names,
-      fr_due_by: obj.frDueBy.try(:utc),
+      fr_due_by: obj.frDueBy.try(:utc).try(:iso8601),
       status: obj.status
     }
   end
@@ -410,8 +410,8 @@ module UsersTestHelper
       topic_id: obj.topic.id,
       title: obj.topic.title,
       comment: !obj.original_post?,
-      created_at: obj.created_at.try(:utc),
-      updated_at: obj.updated_at.try(:utc),
+      created_at: obj.created_at.try(:utc).try(:iso8601),
+      updated_at: obj.updated_at.try(:utc).try(:iso8601),
       forum: {
         id: obj.forum.id,
         name: obj.forum.name
@@ -435,14 +435,14 @@ module UsersTestHelper
   def stats(obj)
     ticket_states = obj.ticket_states
     {
-      agent_responded_at: ticket_states.agent_responded_at.try(:utc),
-      requester_responded_at: ticket_states.requester_responded_at.try(:utc),
-      resolved_at: ticket_states.resolved_at.try(:utc),
-      first_responded_at: ticket_states.first_response_time.try(:utc),
-      closed_at: ticket_states.closed_at.try(:utc),
-      status_updated_at: ticket_states.status_updated_at.try(:utc),
-      pending_since: ticket_states.pending_since.try(:utc),
-      reopened_at: ticket_states.opened_at.try(:utc)
+      agent_responded_at: ticket_states.agent_responded_at.try(:utc).try(:iso8601),
+      requester_responded_at: ticket_states.requester_responded_at.try(:utc).try(:iso8601),
+      resolved_at: ticket_states.resolved_at.try(:utc).try(:iso8601),
+      first_responded_at: ticket_states.first_response_time.try(:utc).try(:iso8601),
+      closed_at: ticket_states.closed_at.try(:utc).try(:iso8601),
+      status_updated_at: ticket_states.status_updated_at.try(:utc).try(:iso8601),
+      pending_since: ticket_states.pending_since.try(:utc).try(:iso8601),
+      reopened_at: ticket_states.opened_at.try(:utc).try(:iso8601)
     }
   end
 
