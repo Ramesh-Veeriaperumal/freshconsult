@@ -12,9 +12,9 @@
           <% choice_face_value = option["survey_question_choice"]["face_value"] %>
           <% choice_bg_color = CustomSurvey::Survey::CUSTOMER_RATINGS_COLOR[choice_face_value] %>
           <% if rating %>
-            <td id="<%= "survey_option_header_#{choice_face_value}" %>" style="width: 14.28%; border-right: 2px #fff solid; padding:0; height:8px; background-color:<%= rating == choice_face_value ? choice_bg_color : 'grey' %>;" data-bg-color=<%= choice_bg_color %></td>
+            <td id="<%= "survey_option_header_#{choice_face_value}" %>" style="width: 14.28%; border-right: 2px #fff solid; padding:0; height:8px; background-color:<%= rating == choice_face_value ? choice_bg_color : 'grey' %>;" data-bg-color=<%= choice_bg_color %>></td>
           <% else %>
-            <td style="width: 14.28%; border-right: 2px #fff solid; padding:0; height:8px; background-color:<%= choice_bg_color %>;"</td>
+            <td style="width: 14.28%; border-right: 2px #fff solid; padding:0; height:8px; background-color:<%= choice_bg_color %>;"></td>
           <% end %>
       <% end %>
     </tr>
