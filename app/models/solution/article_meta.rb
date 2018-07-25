@@ -87,7 +87,6 @@ class Solution::ArticleMeta < ActiveRecord::Base
 	scope :newest, lambda { |num|
 		{
 			:joins => :current_article,
-			:conditions => ["`solution_articles`.language_id = ?", Language.for_current_account.id],
 			:order => ["`solution_articles`.modified_at DESC"],
 			:limit => num
 		}

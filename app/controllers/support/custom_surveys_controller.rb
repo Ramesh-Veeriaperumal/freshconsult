@@ -7,6 +7,7 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
   before_filter :load_survey_result,  :only => :create
   
   include SupportTicketControllerMethods
+  helper Admin::CustomSurveysHelper
 
   def new_via_handle
     respond_to do |format|

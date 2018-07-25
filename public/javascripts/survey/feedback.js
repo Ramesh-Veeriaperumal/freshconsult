@@ -6,15 +6,22 @@ var Feedback = {
 	submit:function(event){
 		Feedback.showOverlay(surveyFeedbackI18n.surveyFeedback);
 		var action = jQuery("#survey_form").attr("action");
+    var submitData = jQuery('#survey_form').data();
+    var emailScanCompatible = (submitData && submitData.emailScanCompatible);
 		var data = Feedback.fetch();
+    var handle = submitData ? submitData.handle : null;
 		if(!isPreview || hasQuestandComments){
 			jQuery.ajax({
 				url: action,
 				type: "POST",
 				data: data
 			}).done(function(data){
-				Feedback.hide(data);
-				if(document.referrer.length>0){
+        if(emailScanCompatible && hasQuestandComments) {
+          Feedback.hide({ thanks_message: surveyFeedbackI18n.thanksMessage });
+        } else {
+          Feedback.hide(data);
+        }
+				if(document.referrer.length > 0 && document.referrer.indexOf(handle) === -1){
 					hasQuestandComments = true;
 					Feedback.refreshTab();
 				}
@@ -54,6 +61,7 @@ var Feedback = {
 	},
 	hide: function(data){
 		jQuery(".question").remove();
+    jQuery('.freshdesk_satisfaction_survey').remove();
 		Feedback.hideOverlay();
 		var msgObj = jQuery(".highlighter").find("h2");
 		var msg = data && data.thanks_message.length > 0 ? 
