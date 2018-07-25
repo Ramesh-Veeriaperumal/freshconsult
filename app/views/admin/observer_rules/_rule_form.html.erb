@@ -9,7 +9,7 @@
 		<div class="row-fluid">
 			<%= f.label :name, (t('dispatch.rule_name') + "<span class='required_star'>*</span>").html_safe, :class => "span2" %>
 			<div class="span8">
-				<label class="overlabel" for="va_rule_name"><%= t("example") %>: <em>"<%=t('dispatch.info1')%>"</em> </label>
+				<label class="overlabel" for="va_rule_name"><%= t("example") %>: <em>"<%=t('admin.observer_rules.default_rule_name')%>"</em> </label>
 				<%= f.text_field :name, :class => "required text" %>
 			</div>
 		</div>
@@ -17,7 +17,7 @@
 			<%= f.label :description, t('dispatch.description'), :class => "span2" %>
 			<div class="span8">
 				<label class="overlabel" for="va_rule_description">
-					<%= t("example") %>: <em>"<%=t('dispatch.info2')%>"</em>
+					<%= t("example") %>: <em>"<%=t('admin.observer_rules.default_rule_desc')%>"</em>
 				</label>
 				<%= f.text_area :description, :class => "smallpara" %>
 			</div>

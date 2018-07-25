@@ -10,6 +10,9 @@ class Agent < ActiveRecord::Base
   include RoundRobinCapping::Methods
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include DataVersioning::Model
+
+  VERSION_MEMBER_KEY = 'AGENTS_GROUPS'.freeze
 
   concerned_with :associations, :constants, :presenter
 

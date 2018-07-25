@@ -8,15 +8,15 @@
 	<div class="control-group">
 		<%= f.label :name, (t('dispatch.rule_name')+"<span class='required_star'>*</span>").html_safe, :class => "control-label" %>
 		<div class="controls">
-			<label class="overlabel" for="va_rule_name"><%= t("example") %>: <em>"<%=t('dispatch.info1')%>"</em> </label>
+			<label class="overlabel input-xxlarge" for="va_rule_name"><%= t("example") %>: <em>"<%=t("#{rule_type}.default_rule_name")%>"</em> </label>
 			<%= f.text_field :name, :class => "required text input-xxlarge" %>
 		</div>
 	</div>
 	<div class="control-group">
 		<%= f.label :description, t('dispatch.description'), :class => "control-label" %>
 		<div class="controls">
-			<label class="overlabel" for="va_rule_description">
-				<%= t("example") %>: <em>"<%=t('dispatch.info2')%>"</em>
+			<label class="overlabel input-xxlarge" for="va_rule_description">
+				<%= t("example") %>: <em>"<%=t("#{rule_type}.default_rule_desc")%>"</em>
 			</label>
 			<%= f.text_area :description, :class => "smallpara input-xxlarge" %>
 		</div>
