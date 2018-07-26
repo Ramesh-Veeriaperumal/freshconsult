@@ -80,7 +80,8 @@
         else{
           $('.cc-emails, #add-cc-button').remove();
         }
-        var repaint_store_data = <%= get_store_data.html_safe %>
+        
+        var repaint_store_data = <%= get_portal_store_data.html_safe %>
         var repaint_map = {'group': '#helpdesk_ticket_group_id', 'agent': '#helpdesk_ticket_responder_id'};
         for( var key in repaint_map){
           var element = $(repaint_map[key]);
