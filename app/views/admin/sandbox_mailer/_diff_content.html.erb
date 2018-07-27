@@ -21,7 +21,7 @@
                   font-weight: 500;
                   margin: 0;
                   letter-spacing: 1px;">
-        <%= image_tag "#{SANDBOX_ASSETS}/#{@logo[association.to_sym] || association}.png", { :style=>"vertical-align: middle;width:24px;" } %>
+        <%= image_tag "#{SANDBOX_ASSETS}/#{@logo[association] || association}.png", { :style=>"vertical-align: middle;width:24px;" } %>
         <span style="vertical-align: middle;">
           <%= @additional_info[:meta][association] %>
         </span>
