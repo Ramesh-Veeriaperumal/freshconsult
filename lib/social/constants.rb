@@ -159,6 +159,7 @@ module Social::Constants
   SMART_FILTER_MANUAL_DONT_CONVERT_TO_TICKET = 3;
   SMART_FILTER_FEEDBACK_GIVEN = -1;
   TWITTER_MENTION = "@"
+  EU_TWITTER_HANDLES = "eu_twitter_handles"
   TWEET_MEDIA_PHOTO = 'photo'.freeze
   TWEET_MEDIA_ANIMATED_GIF = 'animated_gif'.freeze
 end
