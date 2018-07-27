@@ -368,15 +368,21 @@ class UserSessionsController < ApplicationController
 
     def check_sso_params
       time_in_utc = get_time_in_utc
-      sso_login_allowed_time, sso_clock_drift = current_account.sso_login_expiry_limitation_enabled? ? [SSO_ALLOWED_IN_SECS_LIMITATION, SSO_ALLOWED_IN_SECS_LIMITATION] : [SSO_ALLOWED_IN_SECS, SSO_CLOCK_DRIFT]
-      if ![:name, :email, :hash].all? {|key| params[key].present?}
+      sso_login_allowed_time, sso_clock_drift = current_account.sso_login_expiry_limitation_enabled? ? [SSO_ALLOWED_IN_SECS, SSO_CLOCK_DRIFT] : [SSO_ALLOWED_IN_SECS_LIMITATION, SSO_ALLOWED_IN_SECS_LIMITATION]
+      time_interval = sso_login_allowed_time + sso_clock_drift
+      if params[:timestamp].present? and redis_key_exists?(params[:hash])
+        Rails.logger.debug "SSO LOGIN EXPIRED: URL USED, account_id=#{current_account.id}"
+        flash[:notice] = t(:'flash.login.sso.url_limitation_error')
+      elsif ![:name, :email, :hash].all? {|key| params[key].present?}
         flash[:notice] = t(:'flash.login.sso.expected_params')
-        redirect_to login_normal_url
-      elsif !params[:timestamp].blank? and !params[:timestamp].to_i.between?((time_in_utc - sso_login_allowed_time),( time_in_utc + sso_clock_drift))
-        Rails.logger.debug "SSO LOGIN EXPIRED, account_id=#{current_account.id}, timestamp=#{params[:timestamp]}, current_time=#{time_in_utc}, time_interval=#{sso_login_allowed_time + sso_clock_drift}"
+      elsif params[:timestamp].present? and !params[:timestamp].to_i.between?((time_in_utc - sso_login_allowed_time),( time_in_utc + sso_clock_drift))
+        Rails.logger.debug "SSO LOGIN EXPIRED: TIME EXCEEDED, account_id=#{current_account.id}, timestamp=#{params[:timestamp]}, current_time=#{time_in_utc}, time_interval=#{time_interval}"
         flash[:notice] = t(:'flash.login.sso.invalid_time_entry')
-        redirect_to login_normal_url
+      else
+        set_others_redis_key(params[:hash], true, time_interval)
+        return
       end
+      redirect_to login_normal_url
     end
 
     def check_for_sso_login
