@@ -89,6 +89,7 @@ class Sync::FileToData::Transformer
   def transform_helpdesk_ticket_template_template_data(data, mapping_table)
     @mapping_table = mapping_table
     data = Hash[data.map { |k, v| [change_custom_field_name(k), v] }]
+    data[:inherit_parent] = data[:inherit_parent].map { |k| change_custom_field_name(k) } if data[:inherit_parent]
     TICKET_TEMPLATE_KEY_MODEL_MAPPING.each do |key, model|
       if data[key].present?
         data[key] = apply_id_mapping(data[key], get_mapping_data(model, mapping_table))

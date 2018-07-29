@@ -68,7 +68,7 @@ class Sync::DataToFile::SaveFiles
 
     def ignore_object?(object)
       return true if object.respond_to?('deleted') && object.deleted #soft delete ignore
-      sandbox && Account.current.freshid_enabled? && (agent_policy?(object) && agent_invitation?(object))
+      Account.current.freshid_enabled? && (agent_policy?(object) || agent_invitation?(object))
     end
 
     def agent_policy?(object)

@@ -67,6 +67,7 @@ class Sync::DataToFile::Transformer
 
   def transform_helpdesk_ticket_template_template_data(data)
     data = Hash[data.map { |k, v| [change_custom_field_name(k), v] }]
+    data[:inherit_parent] = data[:inherit_parent].map { |k| change_custom_field_name(k) } if data[:inherit_parent]
     ActionController::Parameters.new(data)
   end
 
