@@ -38,7 +38,7 @@ module SandboxHelper
     template_diff.each do |association, records|
       object = Account.reflections[association.to_sym].klass.new
       model_name = object.class.name
-      if failed_records[model_name].present?
+      if failed_records.present? && failed_records[model_name].present?
         records.delete_if do |item| 
           (failed_diff[association] ||= []) << item  if failed_records[model_name].include? item['id'].to_i
         end

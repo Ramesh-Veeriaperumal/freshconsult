@@ -20,8 +20,8 @@ class Admin::SandboxesController < ApiApplicationController
 
   def index
     super
-    sandbox_details = current_account.account_additional_settings.additional_settings[:sandbox]
-    response.api_meta = sandbox_details.merge!(:last_diff => @items.first.try(:last_diff)) if sandbox_details
+    sandbox_details = current_account.account_additional_settings.additional_settings[:sandbox] || {}
+    response.api_meta = sandbox_details.merge!(last_diff: @items.first.try(:last_diff))
   end
 
   def diff

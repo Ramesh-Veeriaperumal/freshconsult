@@ -15,13 +15,11 @@ account.canned_responses.create(
             Name: {{ticket.requester.firstname}} {{ticket.requester.lastname}} <br>
             Email:{{ticket.from_email}}<br>
             Address: {{ticket.requester.address}}<br>
-            OrderID: &lt;Fill in the Order ID here&gt; <br>
-            <br><br>
+            OrderID: &lt;Fill in the Order ID here&gt; <br><br><br>
             Regards,
             {{ticket.agent.name}}<br>
-            {{helpdesk_name}} Support
-            <br><br>
-            Please check this link for ticket status: {{ticket.url}} 
+            {{helpdesk_name}} Support<br><br>
+            Please check this link for ticket status: {{ticket.url}}
         </div>
     </div>
   )

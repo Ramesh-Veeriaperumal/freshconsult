@@ -28,7 +28,7 @@ node(params.LABEL1) {
         }
       }
       tasks["Backend Falcon Sandbox Unit Tests"] = {
-        stage ("Trigger Job"){
+        stage ("Sandbox Unit Tests"){
           build job: 'prestaging-falcon-sandbox-tests-backend-pipeline',
           parameters: [string(name: 'NODE', value: label),string(name: 'BRANCH',value: "$params.sha1"),string(name: 'PIPELINE_BRANCH',value: "$params.ghprbSourceBranch")]
         }

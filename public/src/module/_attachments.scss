@@ -84,7 +84,7 @@ $attachment-viewer-toolbar-height: 50px;
 			vertical-align: middle;
 			background: inline-image('cdn-ignored/inline-images/box.png') no-repeat #ffffff;
 		}
-		.file-types-onedrive{
+		.file-types-onedrive, .file-types-onedrive_mint{
 			margin: 0;
 			@include padding(3px 0px 3px 25px);
 			width: auto;

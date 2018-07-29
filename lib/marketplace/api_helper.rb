@@ -94,12 +94,15 @@ module Marketplace::ApiHelper
 
     def installed_params(page)
       installed_params = { type: Marketplace::Constants::INSTALLED_LIST_EXTENSION_TYPES}
+      return installed_params.merge!( {
+          include: Marketplace::Constants::SECURE_IPARAMS
+      }) if page == Marketplace::Constants::DISPLAY_PAGE[:integrations_list]
+
       installed_params.merge!(
-        { 
-          display_page: page,
-          enabled: true 
-        }) unless page == Marketplace::Constants::DISPLAY_PAGE[:integrations_list]
-      installed_params
+      { 
+        display_page: page,
+        enabled: true 
+      })
     end
 
     def plug_code_from_cache(version_id, app_url)

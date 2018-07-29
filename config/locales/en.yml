@@ -12104,7 +12104,7 @@ Do let us know if you are interested!"
     attached: "Added to response"
     remove: "Remove"
     mb: " MB "
-    virus_found_warning: "Anti-Virus warning: Attachment blocked. The file contains a virus"
+    virus_found_warning: "Warning: the attachment contains a virus, the file will not be sent."
   ml:
     similat_tickets_found: Similar Tickets found
     no_suggestions: Oops! No suggestions.
