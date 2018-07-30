@@ -1,12 +1,14 @@
 require 'net/http'
 require 'uri'
 require 'spam/spam_result'
+require 'json'
 
 module Spam
   class SpamCheck
     
     include Redis::RedisKeys
     include Redis::OthersRedis  
+    include EmailHelper
 
     # Type of content to be passed for akismet
     COMMENT_TYPE = 'comment'
@@ -14,8 +16,12 @@ module Spam
     #Default User Agent 
     USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6'
 
-    def check_spam_content(content, options)
-      content = CGI.unescapeHTML(content)
+    def build_content(subject, message)
+      "Subject : #{subject}  Message :  #{message}"
+    end
+
+    def check_spam_content(subject, message, options)
+      content = CGI.unescapeHTML(build_content(subject, message))
       result  = SpamResult::NO_SPAM
       return result if account_whitelisted?
       urls    = parse_urls(content)
@@ -25,7 +31,6 @@ module Spam
       if spam_index && !is_spam?(result)
         result = SpamResult::SPAM_CONTENT
       end
-
       # result  = is_spam_content(
       #             content,  
       #             options[:user_id], 
@@ -33,6 +38,15 @@ module Spam
       #             options[:user_agent], 
       #             options[:referrer]
       #           ) unless is_spam?(result)
+
+      unless is_spam?(result)
+        spam_service_result = check_spam_service(subject, message) 
+        Rails.logger.debug "Spam check service result is #{spam_service_result} for subject #{subject}"
+        notify_spam_template(Account.current, subject, message) if is_spam?(spam_service_result) || spam_service_result == SpamResult::PROBABLE_SPAM
+        disable_outgoing_email if is_spam?(spam_service_result)
+      end
+      
+
       options.merge!({:account_id => Account.current.id, :spam_result => result, :content => content})
       Rails.logger.debug "Spam check result is #{result} for params #{options}"
       notify_spam(result, options)
@@ -41,11 +55,11 @@ module Spam
     end
 
     def is_spam?(result)
-      ((result == SpamResult::ERROR) || (result == SpamResult::NO_SPAM)) ? false : true
+      ((result == SpamResult::ERROR) || (result == SpamResult::NO_SPAM) || (result == SpamResult::PROBABLE_SPAM)) ? false : true
     end
 
-    def has_more_redirection_links?(content, limit)
-      content = CGI.unescapeHTML(content)
+    def has_more_redirection_links?(subject, message, limit)
+      content = CGI.unescapeHTML(build_content(subject, message))
       urls    = parse_urls(content)
       urls.each do |url|
         result = check_spam_url(url, limit, false)
@@ -55,6 +69,82 @@ module Spam
     end
     
     private
+
+
+    def construct_template(subject, message)
+      "Subject: #{subject}\n\n#{message}\n"
+    end
+
+    def notify_spam_template(account, subject, message)
+      Rails.logger.info "Spam template found for account: #{account.id} subject: #{subject} message: #{message}"
+      FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
+        :subject => "Spam template found for account: #{account.id}", 
+        :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com","helpdesk@noc-alerts.freshservice.com"],
+        :additional_info => {:info => "Spam template found in an account"}
+      })
+    end
+
+    def build_http_post(uri, message)
+      http_post = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/x-www-form-urlencoded')
+      http_post.set_form_data({
+        username: Account.current.id,
+        account_creation_date: Account.current.created_at.strftime('%Y-%m-%d'),
+        message: message
+      })
+      return http_post
+    end
+
+    def check_spam_from_response(resp)
+      Rails.logger.info("spam check service result #{resp.body}")
+      if resp.kind_of? Net::HTTPSuccess
+        result = JSON.parse(resp.body)
+        if result["is_spam"]
+          # We can flag cetain rules, if any one of such flag exist in the spam result, we will return as SpamResult::SPAM_CONTENT
+          # Else we will return SpamResult::PROBABLE_SPAM 
+          rules = result["rules"]
+          flagged_rules = $redis_others.lrange(SPAM_CHECK_TEMPLATE_FLAGGED_RULES, 0, -1)
+          if rules.kind_of?(Array) && flagged_rules.kind_of?(Array)
+            return SpamResult::SPAM_CONTENT if (rules & flagged_rules).size > 0
+          end
+          return SpamResult::PROBABLE_SPAM 
+        end
+        return SpamResult::NO_SPAM
+      end
+      return SpamResult::ERROR
+    end
+
+    def check_spam_service(subject, message)
+      http = Net::HTTP::Persistent.new 'spam_check_service'
+      begin
+        spam_server_uri = URI "#{FdSpamDetectionService.config.service_url}/"
+
+        # We are making two types of spam check request
+        # 1st priority - We have to return SpamResult::SPAM_CONTENT if one of the request returns SpamResult::SPAM_CONTENT
+        # 2nd priority - we have to return SpamResult::PROBABLE_SPAM if one of the request returns SpamResult::PROBABLE_SPAM
+        # Else we return SpamResult::NO_SPAM
+
+        template_check_uri = spam_server_uri + "get_template_score"
+        resp = http.request template_check_uri, build_http_post(template_check_uri, construct_template(subject, message))
+        spam_result = check_spam_from_response resp
+        return spam_result if spam_result == SpamResult::SPAM_CONTENT
+
+        content_check_uri = spam_server_uri + "get_content_score"
+        plain_text_message = Helpdesk::HTMLSanitizer.html_to_plain_text message
+        resp = http.request content_check_uri, build_http_post(content_check_uri, "#{subject} #{plain_text_message}")
+        content_spam_result = check_spam_from_response resp
+        return content_spam_result if content_spam_result == SpamResult::SPAM_CONTENT
+
+        return spam_result if spam_result == SpamResult::PROBABLE_SPAM
+        return content_spam_result
+
+      rescue Exception => e
+        Rails.logger.info("Error while spam check service request #{e}")
+      ensure
+        http.shutdown
+      end
+
+      return SpamResult::NO_SPAM
+    end
     
     def is_spam_domain? domain
       domain.present? ? ismember?(EMAIL_TEMPLATE_SPAM_DOMAINS, domain) : false
@@ -80,6 +170,21 @@ module Spam
 
     def notification_whitelisted_key(account)
       SPAM_NOTIFICATION_WHITELISTED_DOMAINS_EXPIRY % {:account_id => account}
+    end
+
+    def disable_outgoing_email()
+      Rails.logger.info("disabling Outgoing email")
+      if (Account.current.subscription.cmrr < FdSpamDetectionService.config.outgoing_block_mrr_threshold)
+        notify_outgoing_block(Account.current) if block_outgoing_email(Account.current.id)
+      end
+    end
+
+    def notify_outgoing_block(account)
+      subject = "Blocked outgoing email due to suspicious spam template :#{account.id}"
+      additional_info = "Emails template saved by the account has suspicious content."
+      additional_info << "Outgoing emails blocked!!"
+      notify_account_blocks(account, subject, additional_info)
+      update_freshops_activity(account, "Outgoing emails blocked due to spam email template", "block_outgoing_email")
     end
 
     def check_and_disable_notification(result, params)

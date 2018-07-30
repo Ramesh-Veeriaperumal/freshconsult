@@ -182,4 +182,8 @@ module EmailHelper
   def via_email_service? account, email_config
     return !(email_config && email_config.smtp_mailbox) && ($redis_others.get("ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE") == "1" || account.launched?(:send_emails_via_fd_email_service_feature))
   end
+
+  def block_outgoing_email(account_id)
+    return add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, account_id) 
+  end
 end

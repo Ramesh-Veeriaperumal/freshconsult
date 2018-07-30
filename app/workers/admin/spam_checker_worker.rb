@@ -9,7 +9,8 @@ module Admin
                     :failures => :exhausted
     def perform args
       begin
-        content = args["content"]
+        subject = args["subject"]
+        message = args["message"]
         request_params = {
            :user_id => args["user_id"],
            :remote_ip => args["remote_ip"],
@@ -18,7 +19,7 @@ module Admin
            :email_notification_type => args["notification_type"]
         }
         spam_checker = Spam::SpamCheck.new
-        result = spam_checker.check_spam_content(content, request_params)
+        result = spam_checker.check_spam_content(subject, message, request_params)
         resolve_spam if spam_checker.is_spam?(result)
       rescue Exception => e
         msg = "Exception in checking spam : "+
