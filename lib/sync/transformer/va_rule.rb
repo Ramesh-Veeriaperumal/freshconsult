@@ -6,7 +6,9 @@ module Sync::Transformer::VaRule
     'tag_ids' => 'Helpdesk::Tag',
     'product_id' => 'Product'
   }.freeze
-
+  STATUS_DATA_NAME_MAPPINGS = {
+    'status' => 'Helpdesk::TicketStatus'
+  }.freeze
   ACTION_DATA_NAME_MAPPINGS = {
     'responder_id' => 'User',
     'group_id' => 'Group',
@@ -27,6 +29,8 @@ module Sync::Transformer::VaRule
         tranform_filter_data_nested_rules(it)
       elsif FITER_DATA_NAME_MAPPINGS.keys.include?(it[:name])
         it[:value] = apply_id_mapping(it[:value], get_mapping_data(FITER_DATA_NAME_MAPPINGS[it[:name]], mapping_table))
+      elsif STATUS_DATA_NAME_MAPPINGS.keys.include?(it[:name])
+        it[:value] = apply_id_mapping(it[:value], get_mapping_data(STATUS_DATA_NAME_MAPPINGS[it[:name]], mapping_table, 'status_id'))
       elsif it[:name] == 'created_at' && it[:business_hours_id].present?
         it[:business_hours_id] = apply_id_mapping(it[:business_hours_id], get_mapping_data('BusinessCalendar', mapping_table))
       else
@@ -52,6 +56,8 @@ module Sync::Transformer::VaRule
         it[:nested_rules].each do |nested_rule|
           nested_rule[:name] = change_custom_field_name(nested_rule[:name])
         end
+      elsif STATUS_DATA_NAME_MAPPINGS.keys.include?(it[:name])
+        it[:value] = apply_id_mapping(it[:value], get_mapping_data(STATUS_DATA_NAME_MAPPINGS[it[:name]], mapping_table, 'status_id'))
       elsif ACTION_DATA_NAME_MAPPINGS.keys.include?(it[:name])
         value_key = ['send_email_to_group', 'send_email_to_agent'].include?(it[:name]) ? :email_to : :value
         it[value_key] = apply_id_mapping(it[value_key], get_mapping_data(ACTION_DATA_NAME_MAPPINGS[it[:name]], mapping_table)) if ACTION_DATA_NAME_MAPPINGS[it[:name]].present?
@@ -68,9 +74,13 @@ module Sync::Transformer::VaRule
     def tranform_filter_data_events(data, mapping_table)
       data.each do |it|
         it.symbolize_keys!
-        next unless FITER_DATA_NAME_MAPPINGS.keys.include?(it[:name])
+        next unless (FITER_DATA_NAME_MAPPINGS.keys + STATUS_DATA_NAME_MAPPINGS.keys).include?(it[:name])
         [:from, :to].each do |value_key|
-          it[value_key] = apply_id_mapping(it[value_key], get_mapping_data(FITER_DATA_NAME_MAPPINGS[it[:name]], mapping_table))
+          if FITER_DATA_NAME_MAPPINGS.keys.include?(it[:name])
+            it[value_key]  = apply_id_mapping(it[value_key], get_mapping_data(FITER_DATA_NAME_MAPPINGS[it[:name]], mapping_table))
+          else
+            it[value_key]  = apply_id_mapping(it[value_key], get_mapping_data(STATUS_DATA_NAME_MAPPINGS[it[:name]], mapping_table, 'status_id'))
+          end
         end
       end
     end

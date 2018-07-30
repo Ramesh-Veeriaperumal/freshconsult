@@ -37,6 +37,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
   end
 
   def update
+    params[:helpdesk_ticket_template]['accessible_attributes']['id'] = @item.accessible.id if params[:helpdesk_ticket_template]['accessible_attributes']
     if @item.update_attributes(params[:helpdesk_ticket_template])
       after_upsert("update")
     else
@@ -261,7 +262,7 @@ class Helpdesk::TicketTemplatesController < ApplicationController
   def reset_access_type
     if parent_id?
       params[module_type][:accessible_attributes] = {
-        "access_type" => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all] }
+        "access_type" => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]}
     else
       super
     end

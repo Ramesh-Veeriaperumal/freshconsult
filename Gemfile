@@ -8,7 +8,7 @@ gem "rails","3.2.22.5"
 gem "freemail", "0.2.3", :require => false 
 gem 'stopwords-filter', "0.4.1", require: 'stopwords'
 
-gem 'rack-cors', '~> 0.3.1'
+gem 'rack-cors', '~> 0.4.1'
 gem "syck",'1.0.5'
 
 gem "json", "1.8.3"
@@ -202,7 +202,7 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
-gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v2.0.1'
+gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v2.0.3'
 
 gem 'net-http-persistent', '~> 2.9.4'
 
