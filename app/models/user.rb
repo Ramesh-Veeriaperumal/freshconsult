@@ -1181,11 +1181,11 @@ class User < ActiveRecord::Base
   def valid_freshid_password?(incoming_password)
     password_available = password_flag_exists?(email) || false
     valid = password_available && valid_password?(incoming_password)
-    Rails.logger.info "FRESHID API auth :: Before FRESHID login :: a=#{account_id} u=#{id} password_available=#{password_available} valid=#{valid}"
+    ApiAuthLogger.log "FRESHID API auth Before FRESHID login a=#{account_id}, u=#{id}, password_available=#{password_available}, valid=#{valid}"
     unless valid
       remove_password_flag(email, account_id)
       valid = valid_freshid_login?(incoming_password)
-      Rails.logger.info "FRESHID API auth :: After FRESHID login :: a=#{account_id} u=#{id} valid=#{valid}"
+      ApiAuthLogger.log "FRESHID API auth After FRESHID login a=#{account_id}, u=#{id}, valid=#{valid}"
       update_with_fid_password(incoming_password) if valid
     end
     valid
