@@ -10,7 +10,7 @@ module StoreHelper
 
     @features_list ||= current_account.features_list
 
-    {:current_user => current_user, :agent => @agents_list, :group => @groups_list, :product => @products_list, :features_list => @features_list, :agents_count => @agents_list.count}.to_json
+    {:current_user => current_user, :agent => @agent_list, :group => @groups_list, :product => @products_list, :features_list => @features_list, :agents_count => @agent_list.count}.to_json
   end
 
 
@@ -20,13 +20,13 @@ module StoreHelper
     end
     ticket_fields.each { |fd| safe_send("get_#{fd.name}_list") }
 
-    { agent: @agents_list || [], group: @groups_list || [] }.to_json
+    { agent: @agent_list || [], group: @groups_list || [] }.to_json
   end
 
 
   def get_agent_list
     agentslist = current_account.agents_details_from_cache
-    @agents_list ||= agentslist.inject([]) do |res,agent|
+    @agent_list ||= agentslist.inject([]) do |res,agent|
       res << { id: agent.id, name: agent.name, is_account_admin: agent.email == current_account.admin_email}
     end
   end
