@@ -1167,7 +1167,7 @@ class User < ActiveRecord::Base
   def create_freshid_user!
     create_freshid_user
     save!
-    enqueue_activation_email
+    enqueue_activation_email unless Account.current.try(:sandbox?)
   end
 
   def destroy_freshid_user
