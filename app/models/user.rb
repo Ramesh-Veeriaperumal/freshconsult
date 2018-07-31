@@ -1213,6 +1213,10 @@ class User < ActiveRecord::Base
     active? && primary_email.verified? && freshid_enabled_account?
   end
 
+  def email_id_changed?
+    email_changed? && case_insensitive_value_changed?(email_change)
+  end
+
   private
 
     def freshid_enabled_account?
@@ -1301,9 +1305,13 @@ class User < ActiveRecord::Base
     end
 
     def email_updated?
-       @all_changes.has_key?(:email)
+      @all_changes.key?(:email) && case_insensitive_value_changed?(@all_changes[:email])
     end
-    
+
+    def case_insensitive_value_changed?(change_values)
+      change_values.include?(nil) || change_values[0].casecmp(change_values[1]) != 0
+    end
+
     def converted_to_agent_or_email_updated?
       converted_to_agent? || email_updated?
     end
