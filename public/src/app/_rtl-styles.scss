@@ -1,6 +1,9 @@
 @if $rtl {
 	.redactor_editor{
 		direction:rtl !important;
+		* {
+			direction:rtl !important;
+		}
 	}
 	.redactor_toolbar li,.redactor_toolbar li.redactor_separator{
 		float: right;
