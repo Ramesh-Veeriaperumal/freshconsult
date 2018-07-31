@@ -580,6 +580,7 @@ Helpkit::Application.routes.draw do
     scope '/bot' do
       resources :tickets, controller: 'channel/bot/tickets', only: [:create]
     end
+    match '/bots/:id/training_completed', to: 'channel/bot/services#training_completed', via: :post
   end
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
