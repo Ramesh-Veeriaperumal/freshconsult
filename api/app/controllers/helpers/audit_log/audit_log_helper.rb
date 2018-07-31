@@ -65,7 +65,8 @@ module AuditLog::AuditLogHelper
       agent = activity[:actor]
       {
         id: agent[:id],
-        name: agent[:name]
+        name: agent[:name],
+        url_type: 'agent'
       }
     end
 
@@ -92,6 +93,16 @@ module AuditLog::AuditLogHelper
       meta
     end
 
+    def event_name_route(name, type, object)
+      user_id = object[:user_id]
+      id = object[:id]
+      type = type.join('_')
+      name ||= type
+      {
+        name: name, url_type: type, id: (type == :agent ? user_id : id)
+      }
+    end
+
     def enrich_response(response)
       response.symbolize_keys!
       enriched_data = {
@@ -101,8 +112,8 @@ module AuditLog::AuditLogHelper
           action = action.to_sym
           custom_response = {
             time: activity[:timestamp],
-            ip_address: activity[:ip_address],
-            name: activity[:object][:name],
+            ip_address: activity[:ip_address] ? activity[:ip_address].gsub('.', '. ') : nil,
+            name: event_name_route(activity[:object][:name], event_type, activity[:object]),
             event_performer: performer(activity)
           }
           custom_response.merge! event_type_and_description(activity, action, event_type)
