@@ -148,7 +148,7 @@ module SsoUtil
       if external_id.present?
         @current_user.unique_external_id = external_id
         @current_user.email = user_email_id
-        @current_user.keep_user_active = true if @current_user.email_changed?
+        @current_user.keep_user_active = true if @current_user.email_id_changed?
       end
     end
     populate_sso_user_fields(current_account, @current_user, {}, sso_data[:custom_fields], true) if sso_data[:custom_fields]
@@ -233,7 +233,7 @@ module SsoUtil
   def update_user_for_jwt_sso(account, user, user_fields, user_custom_fields, override)
     user = populate_sso_user_fields(account, user, user_fields, user_custom_fields, override)
     user.active = true
-    user.keep_user_active = true if user.email_changed?
+    user.keep_user_active = true if user.email_id_changed?
     user.save
   end
 
