@@ -459,6 +459,9 @@ Helpkit::Application.routes.draw do
       member do
         get :widgets_data, to: 'ember/custom_dashboard#widgets_data'
         get :bar_chart_data, to: 'ember/custom_dashboard#bar_chart_data'
+        post :announcements, to: 'ember/custom_dashboard#create_announcement'
+        put :announcements, to: 'ember/custom_dashboard#end_announcement'
+        get :announcements, to: 'ember/custom_dashboard#get_announcements'
       end
 
       collection do

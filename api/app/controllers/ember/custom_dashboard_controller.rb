@@ -10,6 +10,7 @@ module Ember
     include ::Dashboard::Custom::CacheKeys
 
     SLAVE_ACTIONS = %w(index, widgets_data bar_chart_data)
+
     skip_before_filter :load_object, only: [:widget_data_preview, :show]
 
     before_filter :load_dashboard_from_cache, only: :show
@@ -30,11 +31,10 @@ module Ember
         log_and_render_404
       elsif !dashboard_accessible?
         access_denied
-      end 
+      end
     end
 
-    def index
-    end
+    def index; end
 
     def widgets_data
       safe_send(params['type']) if validate_type
@@ -48,8 +48,8 @@ module Ember
       @bar_chart_result = {}
       widget = @item.bar_chart_widgets_from_cache.select { |w| w.id == params['widget_id'].to_i }[0]
       head 404 and return unless widget
-      config = widget.config_data.merge({ view_all: true })
-      config.merge!({ ticket_filter_id: widget.ticket_filter_id }) unless widget.config_data['ticket_filter_id']
+      config = widget.config_data.merge(view_all: true)
+      config[:ticket_filter_id] = widget.ticket_filter_id unless widget.config_data['ticket_filter_id']
       Rails.logger.info("Bar chart data for config :: #{config.inspect}")
       @bar_chart_result = ::Dashboard::Custom::BarChart.new(nil, config).preview
     end
@@ -62,7 +62,7 @@ module Ember
       @item.touch unless @item.changed?
       if @item.save
         @item = dashboard_details_hash(@item)
-         Rails.logger.info "Dashboard updated: Account:#{current_account.id}:dashboard:#{@item[:id]} User:#{current_user.id}"
+        Rails.logger.info "Dashboard updated: Account:#{current_account.id}:dashboard:#{@item[:id]} User:#{current_user.id}"
         render 'ember/custom_dashboard/show'
       else
         render_errors(@item.errors)
@@ -73,6 +73,25 @@ module Ember
       @item.destroy
       Rails.logger.info "Dashboard deleted: Account:#{current_account.id}:dashboard:#{@item.id} User:#{current_user.id}"
       head 204
+    end
+
+    def create_announcement
+      check_announcement_feature
+      return unless validate_req_params(@item, announcement_text: params[:announcement_text])
+      build_announcement
+      @dashboard_announcement.save ? @announcement = fetch_announcement : render_errors(@dashboard_announcement.errors)
+    end
+
+    def end_announcement
+      check_announcement_feature
+      @announcement = @item.announcements.active.first
+      head 404 and return unless @announcement
+      @result = @announcement.deactivate ? { success: true } : render_errors(@announcement.errors)
+    end
+
+    def get_announcements
+      check_announcement_feature
+      @announcements = @item.announcements.as_json.map { |an| an['dashboard_announcement'] }
     end
 
     private
@@ -127,6 +146,10 @@ module Ember
 
       def feature_name
         :custom_dashboard
+      end
+
+      def check_announcement_feature
+        render_request_error(:require_feature, 403, feature: 'Dashboard Announcements') unless Account.current.launched? :dashboard_announcements
       end
 
       def scoper

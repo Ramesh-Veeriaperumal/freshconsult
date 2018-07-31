@@ -26,6 +26,7 @@ module Ember
       return if @@before_all_run
       @account.set_custom_dashboard_limit({ dashboard: 25, widgets: { scorecard: 25, bar_chart: 25, csat: 25, leaderboard: 25, ticket_trend_card: 25, time_trend_card: 25, sla_trend_card: 25 } })
       @account.add_feature(:custom_dashboard)
+      @account.launch(:dashboard_announcements)
       @account.dashboards.destroy_all
       create_dashboard_with_widgets(nil, 0, 0)
       create_dashboard_with_widgets(nil, 0, 0)
@@ -1119,6 +1120,77 @@ module Ember
       clear_redis_data
       clear_group_agents_redis_data(@group_odd)
       clear_group_agents_redis_data(@group_even)
+    end
+
+    def test_create_announcement_without_privilege
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      post :create_announcement, controller_params(wrap_cname(announcement_text: 'Sample text').merge!(id: @@bar_chart_dashboard.id, version: 'private'), false)
+      assert_response 403
+    end
+
+    def test_create_announcement_with_invalid_field
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      post :create_announcement, controller_params(wrap_cname(active: 'Sample text').merge!(id: @@bar_chart_dashboard.id, version: 'private'), false)
+      assert_response 400
+    end
+
+    def test_create_announcement_for_invalid_dashboard
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      post :create_announcement, controller_params(wrap_cname(announcement_text: 'Sample text').merge!(id: @@dashboard_list.first.db_record.id + rand(1000..100_00), version: 'private'), false)
+      assert_response 404
+    end
+
+    def test_create_announcement_without_announcement_text
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      post :create_announcement, controller_params(wrap_cname({}).merge!(id: @@dashboard_list.first.db_record.id, version: 'private'), false)
+      assert_response 400
+    end
+
+    def test_create_announcement_with_invalid_length
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      invalid_text = 'This is a text which has more than 150 characters, which has to invalidate annoucement create. kja skcn askcnsckas cksn sacn kiscn skanc sakcsakcna scksanc skcnsa cksn csaknc skcnsa kcnasc ksncsakcnsa c'
+      post :create_announcement, controller_params(wrap_cname(announcement_text: invalid_text).merge!(id: @@scorecard_dashboard.id, version: 'private'), false)
+      assert_response 400
+    end
+
+    def test_create_announcement
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      announcement_text = 'Hey, a new annoucement'
+      dashboard_id = @@scorecard_dashboard.id
+      post :create_announcement, controller_params(wrap_cname(announcement_text: announcement_text).merge!(id: dashboard_id, version: 'private', announcement_text: announcement_text), false)
+      assert_response 200
+      match_announcement_response(JSON.parse(response.body), announcement_text, dashboard_id)
+    end
+
+    def test_end_announcement_without_privilege
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      put :end_announcement, controller_params(wrap_cname(deactivate: true).merge!(id: @@bar_chart_dashboard.id, version: 'private'), false)
+      assert_response 403
+    end
+
+    def test_end_announcement_without_any_announcement
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      put :end_announcement, controller_params(wrap_cname(deactivate: true).merge!(id: @@bar_chart_dashboard.id, version: 'private'), false)
+      assert_response 404
+    end
+
+    def test_end_announcement
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      put :end_announcement, controller_params(wrap_cname(deactivate: true).merge!(id: @@scorecard_dashboard.id, version: 'private'), false)
+      assert_response 200
+    end
+
+    def test_get_announcements_without_privilege
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
+      get :get_announcements, controller_params(id: @@scorecard_dashboard.id, version: 'private')
+      assert_response 403
+    end
+
+    def test_get_announcements
+      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
+      get :get_announcements, controller_params(id: @@scorecard_dashboard.id, version: 'private')
+      assert_response 200
+      match_announcements_index(JSON.parse(response.body))
     end
   end
 end

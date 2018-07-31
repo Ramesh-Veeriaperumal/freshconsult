@@ -6486,6 +6486,111 @@
         }
       }
     },
+    "/dashboards/{id}/announcements": {
+      "post": {
+        "tags": [
+          "custom dashboard"
+        ],
+        "summary": "Create an announcement on the dashboard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "format": "int64",
+            "description": "Dashboard ID",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/announcement_create"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/create_announcement"
+            }
+          },
+          "400": {
+            "description": "Bad request error"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "custom dashboard"
+        ],
+        "summary": "End an announcement on the dashboard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "format": "int64",
+            "description": "Dashboard ID",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/announcement_end"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/end_announcement"
+            }
+          },
+          "400": {
+            "description": "Bad request error"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "custom dashboard"
+        ],
+        "summary": "Get all announcements for the dashboard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "format": "int64",
+            "description": "Dashboard ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/get_announcements"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/bots": {
       "get": {
         "tags": [
@@ -15394,6 +15499,106 @@
               }
             }
           }
+        }
+      }
+    },
+    "create_announcement": {
+      "type": "object",
+      "description": "Create an announcement for the dashboard",
+      "properties": {
+        "announcement": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "announcement_text": {
+              "type": "string"
+            },
+            "dashboard_id": {
+              "type": "number"
+            },
+            "user_id": {
+              "type": "number"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "get_announcements": {
+      "type": "array",
+      "description": "Get all announcements for the dashboard",
+      "items": {
+        "type": "object",
+        "description": "Create an announcement for the dashboard",
+        "properties": {
+          "announcement": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "announcement_text": {
+                "type": "string"
+              },
+              "dashboard_id": {
+                "type": "number"
+              },
+              "user_id": {
+                "type": "number"
+              },
+              "active": {
+                "type": "boolean"
+              },
+              "created_at": {
+                "type": "string"
+              },
+              "updated_at": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "end_announcement": {
+      "type": "object",
+      "description": "End an announcement for the dashboard",
+      "properties": {
+        "result": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "announcement_create": {
+      "type": "object",
+      "properties": {
+        "announcement_text": {
+          "type": "string",
+          "description": "Actual content of the announcement"
+        }
+      }
+    },
+    "announcement_end": {
+      "type": "object",
+      "properties": {
+        "deactivate": {
+          "type": "boolean",
+          "description": "Deactivates an announcement for the dashboard"
         }
       }
     },

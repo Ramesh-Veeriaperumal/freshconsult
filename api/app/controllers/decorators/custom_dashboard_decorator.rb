@@ -1,5 +1,4 @@
 class CustomDashboardDecorator < ApiDecorator
-
   def initialize(record, options)
     super(record)
   end
@@ -12,14 +11,16 @@ class CustomDashboardDecorator < ApiDecorator
       group_ids: record.group_accesses.map(&:group_id).presence
     }
   end
-  
+
   def to_detail_hash
-    {
+    detail_hash = {
       id: record.id,
       name: record.name,
       widgets: dashboard_widgets,
       last_modified_since: record.updated_at.to_i
     }.merge!(dashboard_access_details)
+    detail_hash = add_announcements(detail_hash) if Account.current.dashboard_announcements_enabled?
+    detail_hash
   end
 
   def dashboard_widgets
@@ -40,6 +41,12 @@ class CustomDashboardDecorator < ApiDecorator
       refresh_interval: widget.refresh_interval,
       active: widget.active
     }.merge!(widget.grid_config.symbolize_keys)
+  end
+
+  def add_announcements(detail_hash)
+    announcement = record.announcements.active.first
+    detail_hash[:announcements] = [announcement.as_json['dashboard_announcement']] if announcement
+    detail_hash
   end
 
   def dashboard_access_details
