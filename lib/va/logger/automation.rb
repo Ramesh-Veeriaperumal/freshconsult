@@ -25,11 +25,11 @@ class Va::Logger::Automation
     def standard_content
       automation_log_vars = Thread.current[:automation_log_vars]
       content = "#{Time.now.utc.strftime '%Y-%m-%d %H:%M:%S'} uuid=#{Thread.current[:message_uuid].try(:join, ' ')}, A=#{automation_log_vars[:account_id]}, T=#{automation_log_vars[:ticket_id]}, U=#{automation_log_vars[:user_id]}, R=#{automation_log_vars[:rule_id]}"
-      content << ", Time=#{automation_log_vars[:time]}" if automation_log_vars[:time]
-      content << ", Type=#{automation_log_vars[:rule_type]}" if automation_log_vars[:rule_type]
-      content << ", Start time=#{automation_log_vars[:start_time]}" if automation_log_vars[:start_time]
-      content << ", End time=#{automation_log_vars[:end_time]}" if automation_log_vars[:end_time]
-      content << ", Executed=#{automation_log_vars[:executed]}" if automation_log_vars[:executed]
+      content << ", time=#{automation_log_vars[:time]}" if automation_log_vars[:time]
+      content << ", type=#{automation_log_vars[:rule_type]}" if automation_log_vars[:rule_type]
+      content << ", start_time=#{automation_log_vars[:start_time]}" if automation_log_vars[:start_time]
+      content << ", end_time=#{automation_log_vars[:end_time]}" if automation_log_vars[:end_time]
+      content << ", executed=#{automation_log_vars[:executed]}" if automation_log_vars[:executed]
       content
     end
 

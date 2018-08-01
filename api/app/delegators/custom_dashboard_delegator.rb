@@ -6,6 +6,7 @@ class CustomDashboardDelegator < BaseDelegator
   validate :validate_access_type, if: -> { @accessible_attributes && @accessible_attributes.key?(:access_type) }
   validate :validate_accessible_groups, if: -> { @accessible_attributes && @accessible_attributes.key?(:group_ids) }
   validate :validate_widgets, if: -> { @widgets_attributes }
+  validate :validate_announcement, if: -> { @announcement_text }
   
   def initialize(record, options)
     options.each do |key, value|
@@ -14,6 +15,7 @@ class CustomDashboardDelegator < BaseDelegator
     @dashboards = Account.current.dashboards
     initialise_widget_counts_to_zero
     if record.present?
+      @dashboard = record
       widgets = record.widgets
       @widget_by_id = Hash[widgets.map { |w| [w[:id], w] }]
       count_existing_widgets(widgets)
@@ -97,5 +99,9 @@ class CustomDashboardDelegator < BaseDelegator
 
   def fetch_accessible_groups
     User.current.agent.all_ticket_permission ? Account.current.groups_from_cache.map(&:id) : User.current.agent_groups.pluck(:group_id)
+  end
+
+  def validate_announcement
+    errors[:announcement] = :announcement_limit_exceeded unless @dashboard.present? && @dashboard.announcements.active.empty?
   end
 end

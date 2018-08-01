@@ -32,6 +32,7 @@ class Middleware::TrustedIp
           @current_account = Account.find(account_id)
           @current_account.make_current
         end
+        return execute_request(env) if channel_api?(req_path)
         # Proceed only if user_credentials_id is present(i.e., authenticated user) or api request.
         if !env['rack.session']['user_credentials_id'].nil? || api_request?(req_path)
           if trusted_ips_enabled?
@@ -129,6 +130,10 @@ class Middleware::TrustedIp
 
   def skipped_subdomain?(env)
     SKIPPED_SUBDOMAINS.include?(env["HTTP_HOST"].split(".")[0]) 
+  end
+
+  def channel_api?(req_path)
+    req_path.starts_with?('/api/channel/')
   end
 end
 

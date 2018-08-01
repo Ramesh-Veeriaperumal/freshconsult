@@ -22,6 +22,16 @@ class Group < ActiveRecord::Base
       name: ag.name, id: ag.id, email: ag.email }}}, as: :agents
   end
 
+  api_accessible :dashboard_group_central_publish do |g|
+    g.add :id
+    g.add :account_id
+    g.add :name
+    g.add :description
+    g.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
+    g.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
+    g.add proc { |x| x.agents.map(&:id) }, as: :agent_ids
+  end
+
   def self.central_publish_enabled?
     Account.current.audit_logs_central_publish_enabled?
   end
