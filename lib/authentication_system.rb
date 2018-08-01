@@ -295,7 +295,7 @@ module AuthenticationSystem
     #Differentiate API Key and Email Authentication
     def log_authentication_type(auth_token, format)
       auth_type = auth_token.include?('@') ? "UN_PASS" : "API_KEY"
-      Rails.logger.info "FRESHID API V1 auth_type :: #{auth_type}, format :: #{format}, a=#{current_account.id}"
+      ApiAuthLogger.log "FRESHID API version=V1, auth_type=#{auth_type}, format=#{format}, a=#{current_account.id}"
     end
 
     SUPPORTED_API_KEY_FORMATS = ['xml', 'json', 'widget']

@@ -30,6 +30,8 @@ module SupportHelper
 					  # "Helvetica Neue" => "Helvetica+Neue:regular,italic,700,700italic"
 					}
 
+  PORTAL_PREFERENCES_ESCAPE_ATTRIBUTES = ['baseFont', 'headingsFont']
+
 	def time_ago(date_time)
 		%( <span class='timeago' title='#{short_day_with_time(date_time)}' data-timeago='#{date_time}' data-livestamp='#{date_time}'>
 			#{distance_of_time_in_words_to_now date_time} #{I18n.t('date.ago')}
@@ -645,7 +647,7 @@ module SupportHelper
       :contact_info => h(@portal['contact_info']),
       :current_page_name => @current_page_token,
       :current_tab => @current_tab,
-      :preferences => portal_preferences,
+      :preferences => preview? ? escaped_portal_preferences : portal_preferences,
       :image_placeholders => { :spacer => spacer_image_url,
                               :profile_thumb => image_path("misc/profile_blank_thumb.jpg"),
                                :profile_medium => image_path("misc/profile_blank_medium.jpg") }
@@ -926,13 +928,19 @@ module SupportHelper
         preferences || []
     end
 
+    def escaped_portal_preferences
+      preferences = portal_preferences
+      PORTAL_PREFERENCES_ESCAPE_ATTRIBUTES.each { |attribute| preferences[attribute] = h(preferences[attribute]) }
+      preferences
+    end
+
     def preview?
-      if User.current
-            is_preview = IS_PREVIEW % { :account_id => current_account.id,
-            :user_id => User.current.id, :portal_id => @portal.id}
-            !get_portal_redis_key(is_preview).blank? && !current_user.blank? && current_user.agent?
-        end
-      end
+      @preview ||= if User.current
+                     is_preview = IS_PREVIEW % { :account_id => current_account.id,
+                     :user_id => User.current.id, :portal_id => @portal.id}
+                     !get_portal_redis_key(is_preview).blank? && !current_user.blank? && current_user.agent?
+                   end
+    end
 
     def link_args_to_options(args)
         link_opts = {}
