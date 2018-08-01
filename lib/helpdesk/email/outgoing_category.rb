@@ -113,7 +113,7 @@ module Helpdesk::Email::OutgoingCategory
     end 
     spam_response.rules.each do |rule|
       if blacklisted_rules.include?(rule)
-        if Account.current.present?
+        if Account.current.present? && !ismember?(SPAM_EMAIL_ACCOUNTS, Account.current.id)
           add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, Account.current.id) if !(Account.current.subscription.active?)
           notify_outgoing_block(Account.current, rule) 
           break
