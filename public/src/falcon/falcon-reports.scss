@@ -428,6 +428,10 @@ $ticket-lifecycle-color: #183247;
 }
 
 .dataTables_paginate {
+  .paginate_button.next,
+  .paginate_button.previous {
+    transform: rotate(180deg);
+  }
   a.paginate_button {
     border-color: $table-border-color;
     background: white;
@@ -894,9 +898,3 @@ $admin-colors: // background hover  icon-fill
 .pagearea {
   padding: 20px 40px;
 }
-
-
-
-
-
-
