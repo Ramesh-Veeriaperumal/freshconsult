@@ -1,0 +1,8 @@
+type: object
+description: End an announcement for the dashboard
+properties:
+  result:
+    type: object
+    properties:
+      success:
+        type: boolean

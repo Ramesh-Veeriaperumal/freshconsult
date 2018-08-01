@@ -196,12 +196,11 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_dashboard do
-    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview]
+    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview, :create_announcement, :end_announcement, :get_announcements]
   end
 
   manage_segments do
     resource :"ember/segments/contact_filter"
     resource :"ember/segments/company_filter"
   end
-
 end

@@ -1,0 +1,5 @@
+type: object
+properties:
+  deactivate:
+    type: boolean
+    description: Deactivates an announcement for the dashboard

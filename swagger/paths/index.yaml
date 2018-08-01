@@ -365,6 +365,8 @@
   $ref: ./custom_dashboard/dashboard_index_and_create.yaml
 /dashboards/{id}:
   $ref: ./custom_dashboard/dashboard_crud.yaml
+/dashboards/{id}/announcements:
+  $ref: ./custom_dashboard/announcements_ops.yaml
 
 # Frankbot
 /bots:
