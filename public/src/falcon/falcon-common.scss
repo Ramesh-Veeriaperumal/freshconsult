@@ -809,14 +809,12 @@ input[type='radio']
       padding: 2px;
       outline: none;
        &:before {
-      border: 2px solid #fff;
-      position: relative;
-      left: -4px;
-      top: -4px;
+          border: 2px solid #fff;
+          position: relative;
+          @include left(-4px);
+          top: -4px;
        }
-
     }
-
 }
 
 .scl-welcome input[type="text"]{
