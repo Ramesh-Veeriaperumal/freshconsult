@@ -459,6 +459,9 @@ Helpkit::Application.routes.draw do
       member do
         get :widgets_data, to: 'ember/custom_dashboard#widgets_data'
         get :bar_chart_data, to: 'ember/custom_dashboard#bar_chart_data'
+        post :announcements, to: 'ember/custom_dashboard#create_announcement'
+        put :announcements, to: 'ember/custom_dashboard#end_announcement'
+        get :announcements, to: 'ember/custom_dashboard#get_announcements'
       end
 
       collection do
@@ -577,6 +580,7 @@ Helpkit::Application.routes.draw do
     scope '/bot' do
       resources :tickets, controller: 'channel/bot/tickets', only: [:create]
     end
+    match '/bots/:id/training_completed', to: 'channel/bot/services#training_completed', via: :post
   end
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do

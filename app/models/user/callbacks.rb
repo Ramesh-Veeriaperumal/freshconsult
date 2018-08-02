@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
 
   before_validation :discard_blank_email, :unless => :email_available?
+  before_validation :downcase_email, on: :create, if: :email_available?
   before_validation :set_password, :if => [:active?, :email_available?, :no_password?, :freshid_disabled_or_customer?]
   before_validation :remove_white_space
   
@@ -16,20 +17,20 @@ class User < ActiveRecord::Base
 
   before_update :create_freshid_user, if: :converted_to_agent?
   before_update :destroy_freshid_user, if: :converted_to_contact?
-  before_update :update_freshid_user, if: [:freshid_enabled_and_agent?, :email_changed?]
+  before_update :update_freshid_user, if: [:freshid_enabled_and_agent?, :email_id_changed?]
   before_update :set_gdpr_preference, :if => [:privileges_changed?, :agent_to_admin?]
   before_update :remove_gdpr_preference, :if => [:privileges_changed?, :admin_to_agent?]
 
   after_update  :destroy_scheduled_ticket_exports, :if => :privileges_changed?
   after_update :set_user_companies_changes
 
-  after_update  :send_alert_email, :if => [:email_changed?,:agent?]
+  after_update :send_alert_email, if: [:email_id_changed?, :agent?]
   before_save :set_time_zone, :set_default_company
   before_save :set_language, :unless => :detect_language?
-  before_save :trigger_perishable_token_reset, :if => :email_changed?
+  before_save :trigger_perishable_token_reset, if: :email_id_changed?
   before_save :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :set_contractor_privilege, :if => :customer?
-  before_save :restrict_domain, :if => :email_changed?
+  before_save :restrict_domain, if: :email_id_changed?
   before_save :sanitize_contact_name, :backup_customer_id
   before_save :set_falcon_ui_preference, :if => :falcon_ui_applicable?
   before_save :persist_updated_at
@@ -189,6 +190,10 @@ class User < ActiveRecord::Base
     self[:email] = nil
   end
 
+  def downcase_email
+    self[:email].downcase!
+  end
+
 # admin_flag is to know whether this method has been called in the context 
 # of admin to agent or agent to admin check
   def admin_privilege_updated? admin_to_agent = false
@@ -325,7 +330,7 @@ class User < ActiveRecord::Base
   end
 
   def send_alert_email
-    if self.agent? && self.email_was.downcase != self.email.downcase
+    if agent?
       changed_attributes_names = ["primary email "]
       subject = "System notification: Agent email address changed"
       SecurityEmailNotification.send_later(:deliver_agent_email_change, self, self.email_was,subject,

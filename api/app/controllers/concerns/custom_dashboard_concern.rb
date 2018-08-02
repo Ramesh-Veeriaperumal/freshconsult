@@ -30,13 +30,15 @@ module CustomDashboardConcern
   end
 
   def before_build_object
-    return unless validate_body_params
-    delegator_params = build_delegator_hash
-    return unless validate_delegator(nil, delegator_params)
+    validate_req_params
   end
 
   def build_object
     @item = scoper.new(cname_params)
+  end
+
+  def validate_req_params(record = nil, delegator_params = build_delegator_hash)
+    validate_body_params && validate_delegator(record, delegator_params)
   end
 
   def load_objects
@@ -105,5 +107,14 @@ module CustomDashboardConcern
 
   def dashboard_admin?
     current_user.privilege?(:manage_dashboard)
+  end
+
+  def build_announcement
+    @dashboard_announcement = @item.announcements.build(user_id: User.current.id, announcement_text: params[:announcement_text], active: true)
+  end
+
+  def fetch_announcement
+    announcement_item = @item.announcements.active.first
+    announcement_item ? announcement_item.as_json['dashboard_announcement'] : {}
   end
 end

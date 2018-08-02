@@ -8,9 +8,13 @@ class Dashboard < ActiveRecord::Base
 
   attr_accessible :name, :deleted, :accessible_attributes, :widgets_attributes
 
+  concerned_with :presenter
+
   belongs_to_account
 
   has_many :widgets, class_name: 'DashboardWidget', dependent: :destroy
+
+  has_many :announcements, class_name: 'DashboardAnnouncement', dependent: :destroy
 
   has_one :accessible, class_name: 'Helpdesk::Access', as: 'accessible', dependent: :destroy
 
@@ -18,7 +22,7 @@ class Dashboard < ActiveRecord::Base
 
   alias_attribute :helpdesk_accessible, :accessible
 
-  delegate :group_accesses, :users, :access_type, to: :accessible
+  delegate :group_accesses, :users, :access_type, :groups, to: :accessible
 
   validates_presence_of :name
 

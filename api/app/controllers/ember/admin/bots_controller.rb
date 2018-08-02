@@ -4,6 +4,7 @@ module Ember
       include HelperConcern
       include Helpdesk::IrisNotifications
       include ChannelAuthentication
+      include BotHelper
 
       skip_before_filter :check_privilege, :verify_authenticity_token, only: [:training_completed]
       before_filter :channel_client_authentication, only: [:training_completed]
@@ -201,24 +202,6 @@ module Ember
           render_base_error(:internal_error, 500)
         end
 
-        def validate_state(state)
-          bot = @item || @bot
-          if bot.training_status.to_i != state
-            Rails.logger.error "Bot state error:: Action: #{action_name}, #{bot_info(bot)}"
-            render_request_error(:invalid_bot_state, 409)
-            return
-          end
-          true
-        end
-
-        def handle_exception
-          yield
-        rescue => e
-          Rails.logger.error "Action name: #{action_name},Message: #{e.message}"
-          logger.error e.backtrace.join("\n")
-          render_base_error(:internal_error, 500)
-        end
-
         def load_bot_by_external_id
           @bot = current_account.bots.find_by_external_id(params[:id])
           log_and_render_404 unless @bot
@@ -265,14 +248,6 @@ module Ember
           bot = @portal.bot if @portal
           delegator_hash = params.merge(portal: @portal, support_bot: bot)
           delegator_hash
-        end
-
-        def feature_name
-          FeatureConstants::BOT
-        end
-
-        def scoper
-          current_account.bots
         end
 
         def constants_class
@@ -394,10 +369,6 @@ module Ember
 
         def metrics(response_hash, date)
           BotConstants::DEFAULT_ANALYTICS_HASH.merge(response_hash[date] || {})
-        end
-
-        def bot_info(bot)
-          "Bot training status:: #{bot.training_status}, Bot Id : #{bot.id}, Account Id : #{current_account.id}, Portal Id : #{bot.portal_id}, External Id : #{bot.external_id}" if bot
         end
     end
   end

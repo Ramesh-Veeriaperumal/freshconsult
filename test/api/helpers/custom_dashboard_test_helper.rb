@@ -29,7 +29,6 @@ module CustomDashboardTestHelper
     formatted_dashboard_list
   end
 
-
   def sanitize_response(response_hash)
     assert_not_nil_and_delete(response_hash, [:id, :last_modified_since])
     response_hash[:widgets].map { |widget| assert_not_nil_and_delete(widget, [:id, :active]) }
@@ -213,5 +212,25 @@ module CustomDashboardTestHelper
         widget_data: stub_data[0][i]['result']
       }
     end
+  end
+
+  def match_announcement_response(response_hash, announcement_text, dashboard_id)
+    response_hash = response_hash.deep_symbolize_keys
+    assert_not_nil_and_delete(response_hash, [:id, :created_at, :updated_at])
+    match_custom_json(response_hash, announcement_hash(announcement_text, dashboard_id))
+  end
+
+  def match_announcements_index(response_hash)
+    response_hash.length == 1
+  end
+
+  def announcement_hash(announcement_text, dashboard_id)
+    {
+      announcement_text: announcement_text,
+      user_id: User.current.id,
+      dashboard_id: dashboard_id,
+      active: true,
+      account_id: Account.current.id
+    }
   end
 end

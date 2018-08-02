@@ -1,0 +1,23 @@
+type: array
+description: Get all announcements for the dashboard
+items:
+  type: object
+  description: Create an announcement for the dashboard
+  properties:
+    announcement:
+      type: object
+      properties:
+        id:
+          type: number
+        announcement_text:
+          type: string
+        dashboard_id:
+          type: number
+        user_id:
+          type: number
+        active:
+          type: boolean
+        created_at:
+          type: string
+        updated_at:
+          type: string

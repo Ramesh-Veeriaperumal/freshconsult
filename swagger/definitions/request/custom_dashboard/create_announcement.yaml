@@ -1,0 +1,5 @@
+type: object
+properties:
+  announcement_text:
+    type: string
+    description: Actual content of the announcement

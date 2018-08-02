@@ -1,5 +1,8 @@
 class CustomDashboardValidation < ApiValidation
-  attr_accessor :name, :accessible_attributes, :widgets_attributes, :id, :group_ids, :access_type
+  attr_accessor :name, :accessible_attributes, :widgets_attributes, :id, :group_ids, :access_type, :announcement_text
+
+  # MIN_ANNOUNCEMENT_LENGTH = 10
+  MAX_ANNOUNCEMENT_LENGTH = 150
   
   validates :name, :accessible_attributes, :access_type, :widgets_attributes, presence: true, on: :create
   validates :group_ids, required: true, on: :create, if: -> { group_access_dashboard }
@@ -8,6 +11,7 @@ class CustomDashboardValidation < ApiValidation
   validates :access_type, data_type: { rules: Integer }, custom_inclusion: { in: Dashboard::Custom::CustomDashboardConstants::DASHBOARD_ACCESS_TYPE.values }
   validates :group_ids, data_type: { rules: Array }, array: { custom_numericality: { only_integer: true, greater_than: 0 } }
   validates :widgets_attributes, data_type: { rules: Array }
+  validates :announcement_text, required: true, data_type: { rules: String }, length: { maximum: MAX_ANNOUNCEMENT_LENGTH }, on: :create_announcement
   validate :validate_widgets, if: -> { widgets_attributes && errors[:widgets_attributes].blank? }
 
   def initialize(request_params, item = nil, allow_string_param = false)
