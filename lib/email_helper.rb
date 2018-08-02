@@ -184,6 +184,7 @@ module EmailHelper
   end
 
   def block_outgoing_email(account_id)
-    return add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, account_id) 
+    Rails.logger.info("disabling Outgoing email for #{account_id}")
+    add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, account_id)
   end
 end

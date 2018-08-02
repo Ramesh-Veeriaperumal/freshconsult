@@ -9,8 +9,8 @@ module Admin
                     :failures => :exhausted
     def perform args
       begin
-        subject = args["subject"]
-        message = args["message"]
+        subject = args['subject']
+        message = args['message']
         request_params = {
            :user_id => args["user_id"],
            :remote_ip => args["remote_ip"],

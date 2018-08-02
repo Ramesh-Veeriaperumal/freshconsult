@@ -39,15 +39,16 @@ module Spam
       #             options[:referrer]
       #           ) unless is_spam?(result)
 
+      curr_account = Account.current
       unless is_spam?(result)
-        spam_service_result = check_spam_service(subject, message) 
+        spam_service_result = check_spam_service(subject, message)
+        is_spam_positive = is_spam?(spam_service_result)
         Rails.logger.debug "Spam check service result is #{spam_service_result} for subject #{subject}"
-        notify_spam_template(Account.current, subject, message) if is_spam?(spam_service_result) || spam_service_result == SpamResult::PROBABLE_SPAM
-        disable_outgoing_email if is_spam?(spam_service_result)
+        notify_spam_template(curr_account, subject, message) if is_spam_positive || spam_service_result == SpamResult::PROBABLE_SPAM
+        disable_outgoing_email if is_spam_positive
       end
-      
 
-      options.merge!({:account_id => Account.current.id, :spam_result => result, :content => content})
+      options.merge!({:account_id => curr_account.id, :spam_result => result, :content => content})
       Rails.logger.debug "Spam check result is #{result} for params #{options}"
       notify_spam(result, options)
       check_and_disable_notification(result, options)
@@ -70,47 +71,49 @@ module Spam
     
     private
 
-
     def construct_template(subject, message)
       "Subject: #{subject}\n\n#{message}\n"
     end
 
     def notify_spam_template(account, subject, message)
-      Rails.logger.info "Spam template found for account: #{account.id} subject: #{subject} message: #{message}"
-      FreshdeskErrorsMailer.error_email(nil, {:domain_name => account.full_domain}, nil, {
-        :subject => "Spam template found for account: #{account.id}", 
-        :recipients => ["mail-alerts@freshdesk.com", "noc@freshdesk.com","helpdesk@noc-alerts.freshservice.com"],
-        :additional_info => {:info => "Spam template found in an account"}
+      account_id = account.id
+      Rails.logger.info "Spam template found for account: #{account_id} subject: #{subject} message: #{message}"
+      FreshdeskErrorsMailer.error_email(nil, { domain_name: account.full_domain }, nil, {
+        subject: "Spam template found for account: #{account_id}", 
+        recipients: [ 'mail-alerts@freshdesk.com', 'noc@freshdesk.com', 'helpdesk@noc-alerts.freshservice.com' ],
+        additional_info: { info: 'Spam template found in an account' }
       })
     end
 
     def build_http_post(uri, message)
       http_post = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/x-www-form-urlencoded')
+      curr_account = Account.current
       http_post.set_form_data({
-        username: Account.current.id,
-        account_creation_date: Account.current.created_at.strftime('%Y-%m-%d'),
+        username: curr_account.id,
+        account_creation_date: curr_account.created_at.strftime('%Y-%m-%d'),
         message: message
       })
-      return http_post
+      http_post
     end
 
     def check_spam_from_response(resp)
-      Rails.logger.info("spam check service result #{resp.body}")
-      if resp.kind_of? Net::HTTPSuccess
-        result = JSON.parse(resp.body)
-        if result["is_spam"]
+      resp_body = resp.body
+      Rails.logger.info("spam check service result #{resp_body}")
+      if resp.is_a? Net::HTTPSuccess
+        result = JSON.parse(resp_body)
+        if result['is_spam']
           # We can flag cetain rules, if any one of such flag exist in the spam result, we will return as SpamResult::SPAM_CONTENT
-          # Else we will return SpamResult::PROBABLE_SPAM 
-          rules = result["rules"]
+          # Else we will return SpamResult::PROBABLE_SPAM
+          rules = result['rules']
           flagged_rules = $redis_others.lrange(SPAM_CHECK_TEMPLATE_FLAGGED_RULES, 0, -1)
-          if rules.kind_of?(Array) && flagged_rules.kind_of?(Array)
-            return SpamResult::SPAM_CONTENT if (rules & flagged_rules).size > 0
+          if rules.is_a?(Array) && flagged_rules.is_a?(Array)
+            return SpamResult::SPAM_CONTENT unless (rules & flagged_rules).empty?
           end
-          return SpamResult::PROBABLE_SPAM 
+          return SpamResult::PROBABLE_SPAM
         end
         return SpamResult::NO_SPAM
       end
-      return SpamResult::ERROR
+      SpamResult::ERROR
     end
 
     def check_spam_service(subject, message)
@@ -123,12 +126,12 @@ module Spam
         # 2nd priority - we have to return SpamResult::PROBABLE_SPAM if one of the request returns SpamResult::PROBABLE_SPAM
         # Else we return SpamResult::NO_SPAM
 
-        template_check_uri = spam_server_uri + "get_template_score"
+        template_check_uri = spam_server_uri + 'get_template_score'
         resp = http.request template_check_uri, build_http_post(template_check_uri, construct_template(subject, message))
         spam_result = check_spam_from_response resp
         return spam_result if spam_result == SpamResult::SPAM_CONTENT
 
-        content_check_uri = spam_server_uri + "get_content_score"
+        content_check_uri = spam_server_uri + 'get_content_score'
         plain_text_message = Helpdesk::HTMLSanitizer.html_to_plain_text message
         resp = http.request content_check_uri, build_http_post(content_check_uri, "#{subject} #{plain_text_message}")
         content_spam_result = check_spam_from_response resp
@@ -136,14 +139,13 @@ module Spam
 
         return spam_result if spam_result == SpamResult::PROBABLE_SPAM
         return content_spam_result
-
-      rescue Exception => e
-        Rails.logger.info("Error while spam check service request #{e}")
+      rescue StandardError => exp
+        Rails.logger.info("Error while spam check service request #{exp}")
       ensure
         http.shutdown
       end
 
-      return SpamResult::NO_SPAM
+      SpamResult::NO_SPAM
     end
     
     def is_spam_domain? domain
@@ -172,19 +174,19 @@ module Spam
       SPAM_NOTIFICATION_WHITELISTED_DOMAINS_EXPIRY % {:account_id => account}
     end
 
-    def disable_outgoing_email()
-      Rails.logger.info("disabling Outgoing email")
-      if (Account.current.subscription.cmrr < FdSpamDetectionService.config.outgoing_block_mrr_threshold)
-        notify_outgoing_block(Account.current) if block_outgoing_email(Account.current.id)
+    def disable_outgoing_email
+      curr_account = Account.current
+      if curr_account.subscription.cmrr < FdSpamDetectionService.config.outgoing_block_mrr_threshold
+        notify_outgoing_block(curr_account) if block_outgoing_email(curr_account.id)
       end
     end
 
     def notify_outgoing_block(account)
       subject = "Blocked outgoing email due to suspicious spam template :#{account.id}"
-      additional_info = "Emails template saved by the account has suspicious content."
-      additional_info << "Outgoing emails blocked!!"
+      additional_info = 'Emails template saved by the account has suspicious content.'
+      additional_info << 'Outgoing emails blocked!!'
       notify_account_blocks(account, subject, additional_info)
-      update_freshops_activity(account, "Outgoing emails blocked due to spam email template", "block_outgoing_email")
+      update_freshops_activity(account, 'Outgoing emails blocked due to spam email template', 'block_outgoing_email')
     end
 
     def check_and_disable_notification(result, params)

@@ -3,7 +3,6 @@ module Spam::SpamAction
   include Redis::OthersRedis  
 
 
-
   def validate_template_content(subject, message, notification_type)
     Admin::SpamCheckerWorker.perform_async({
       :subject           => subject,
