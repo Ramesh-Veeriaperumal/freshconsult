@@ -14,7 +14,7 @@
         <i class="symbols-tag-remove"></i>
         </a>
       <%end%>
-      <% if dom_type == "Articles" %>
+      <% if dom_type == "Articles" || (falcon_enabled? && Helpdesk::TagsHelper::MINT_DISABLED_TAG_LINKS.include?(dom_type)) %>
           <span class="oval-border tooltip" title="<%= tooltip %>">
           <%= font_icon(image, :size => 16,
                                         :class => "",
@@ -24,10 +24,10 @@
           </span>
       <% else %>
           <span class="oval-border tooltip" data-delayIn="2000" title="<%= tooltip %>">
-            <% unless falcon_enabled? %> <a href="<%= link %>"> <% end %>
+            <a onclick=<%="window.parent.location='#{link}'"%>>
             <%= font_icon(image, :size => 16, :class => "", :id => "cm-sb-toggle").html_safe %>
             <span class="cnt-label"><%= count %></span>
-            <% unless falcon_enabled? %> </a> <% end %>
+            </a>
           <span>
       <% end %>
   <% else %>

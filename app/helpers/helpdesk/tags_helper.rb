@@ -1,5 +1,7 @@
 module Helpdesk::TagsHelper
 
+  MINT_DISABLED_TAG_LINKS = ["Archive", "Customers"]
+
   def sort_menu
     %(
       <div class="fd-menu" id="SortMenu" style="display:none; margin-left:-5px; margin-top:18px;">
@@ -62,6 +64,14 @@ module Helpdesk::TagsHelper
     params[:name] || ""
   end
 
+  def ticket_tags_filter_link(tag)
+    if falcon_enabled?
+      link = %{/a/tickets/filters/search?q[]=tags:[#{CGI.escape(tag.name.dump)}]&q[]=created:"last_month"}
+    else
+      link = "/helpdesk/tickets/filter/tags/#{tag.id}"
+    end
+  end
+
   def tagged_module tag, dom_type, mod_count
     case dom_type
     when "Tickets"
@@ -72,7 +82,7 @@ module Helpdesk::TagsHelper
           :type => "Helpdesk::Ticket",
           :tooltip => @archive_feature ? t('.recent_tickets') : t('.tickets'),
           :dom_type => dom_type,
-          :link =>  "/helpdesk/tickets/filter/tags/#{tag.id}",
+          :link =>  ticket_tags_filter_link(tag),
           :image => "ticket"
       }
     when "Customers"
