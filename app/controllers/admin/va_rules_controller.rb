@@ -343,9 +343,12 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => "time_zone", :value => t('requester_time_zone'), :domtype => dropdown_domtype, 
           :choices => AVAILABLE_TIMEZONES, :operatortype => "choicelist",
           :condition => multi_timezone_account? },
-        { :name => "language", :value => t('requester_language'), :domtype => dropdown_domtype, 
-          :choices => AVAILABLE_LOCALES, :operatortype => "choicelist",
-          :condition => multi_language_account? }
+        { name: 'language', value: t('requester_language'), domtype: dropdown_domtype,
+          choices: AVAILABLE_LOCALES, operatortype: 'choicelist',
+          condition: multi_language_account? },
+        { name: 'segments', value: t('requester_segment'), domtype: dropdown_domtype,
+          choices: segments(:contact_filters), operatortype: 'choicelist',
+          condition: current_account.segments_enabled? }
       ]
       add_customer_custom_fields filter_hash['requester'], "contact"
     end
@@ -355,11 +358,20 @@ class Admin::VaRulesController < Admin::AdminController
         { :name => -1, :value => t('click_to_select_filter') },
         { :name => "name", :value => t('company_name'), :domtype => "autocomplete_multiple", 
           :data_url => companies_search_autocomplete_index_path, :operatortype => "choicelist" },
-        { :name => "domains", :value => t('company_domain'), :domtype => "text", 
-          :operatortype => "choicelist" }
+        { name: 'domains', value: t('company_domain'), domtype: 'text',
+          operatortype: 'choicelist' },
+        { name: 'segments', value: t('company_segment'), domtype: dropdown_domtype,
+          choices: segments(:company_filters), operatortype: 'choicelist',
+          condition: current_account.segments_enabled? }
       ]
       add_tam_company_fields filter_hash['company'] if current_account.tam_default_company_fields_enabled?
       add_customer_custom_fields filter_hash['company'], "company"
+    end
+
+    def segments(type)
+      current_account.safe_send(type).map do |segment|
+        [segment.id, segment.name]
+      end
     end
 
     def add_customer_custom_fields filter_hash, type
