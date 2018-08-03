@@ -170,4 +170,6 @@ class User < ActiveRecord::Base
   has_one :qna_insight, :class_name => 'Helpdesk::QnaInsight'
 
   has_many :contact_notes, :dependent => :destroy
+
+  has_many :announcements, class_name: 'DashboardAnnouncement', dependent: :destroy
 end

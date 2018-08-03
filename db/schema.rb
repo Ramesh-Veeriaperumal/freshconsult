@@ -1143,6 +1143,19 @@ ActiveRecord::Schema.define(version: 20180705070830) do
   add_index "dashboard_widgets", [:account_id, :dashboard_id], :name => "index_account_id_dashboard_id"
   add_index "dashboard_widgets", [:account_id, :ticket_filter_id], :name => "index_account_id_ticket_filter_id"
 
+  create_table 'dashboard_announcements', force: true do |t|
+    t.integer 'account_id', limit: 8
+    t.integer 'dashboard_id', limit: 8
+    t.integer 'user_id', limit: 8
+    t.text 'announcement_text'
+    t.boolean 'active', default: true
+
+    t.datetime 'created_at'
+    t.datetime 'updated_at'
+  end
+
+  add_index :dashboard_announcements, [:account_id, :dashboard_id], name: 'index_account_id_dashboard_id'
+
   create_table "data_exports", :force => true do |t|
     t.integer  "account_id", :limit => 8
     t.integer  "status"

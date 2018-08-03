@@ -12,7 +12,8 @@ class Account < ActiveRecord::Base
                    :encode_emoji, :audit_logs_central_publish, :auto_complete_off,
                    :dependent_field_validation, :post_central_publish, :encode_emoji_subject,
                    :time_sheets_central_publish, :twitter_common_redirect, :canned_forms,
-                   :euc_migrated_twitter, :new_ticket_recieved_metric, :audit_log_ui, :undo_send,
+                   :euc_migrated_twitter, :new_ticket_recieved_metric, :audit_log_ui,
+                   :dashboard_announcement_central_publish, :dashboard_announcements, :undo_send,
                    :timeline]
    DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 

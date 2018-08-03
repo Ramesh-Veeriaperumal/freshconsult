@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
 
   #If email is updated for user through API or google or if the agent email is updated
   #user_email should be updated
-  before_validation :update_user_email, on: :update, :if => [:email_changed?]
+  before_validation :update_user_email, on: :update, if: [:email_id_changed?]
 
   #To update the verified in user_email, when the active is changed
   after_update :update_verified, :if => [:email_available?, :active_changed?]
@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
   before_validation :update_user_table_email, on: :create, :unless => [:email_available?]
 
   #To update the primary email on user's update through contact form with multiple emails
-  before_validation :set_primary_email, on: :update, :unless => [:email_changed?]
+  before_validation :set_primary_email, on: :update, unless: [:email_id_changed?]
 
   #To remove duplicate emails. needed only for contact form with multiple emails
   before_validation :remove_duplicate_emails
@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
 
   #------User email callbacks ends here------------------------------
 
-  before_update :make_inactive, if: -> { self.email_changed? && !@keep_user_active }
+  before_update :make_inactive, if: -> { email_id_changed? && !@keep_user_active }
   after_commit :send_activation_email, on: :update, :if => [:email_updated?]
 
   def drop_authorization

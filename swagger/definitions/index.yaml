@@ -467,6 +467,16 @@
     $ref: './request/custom_dashboard/dashboard_update.yaml'
   dashboard_create:
     $ref: './request/custom_dashboard/dashboard_create.yaml'
+  create_announcement:
+    $ref: ./response/dashboard/custom/create_announcement.yaml
+  get_announcements:
+    $ref: ./response/dashboard/custom/get_announcements.yaml
+  end_announcement:
+    $ref: ./response/dashboard/custom/end_announcement.yaml
+  announcement_create:
+    $ref: './request/custom_dashboard/create_announcement.yaml'
+  announcement_end:
+    $ref: './request/custom_dashboard/end_announcement.yaml'
 
   #sandbox
   sandboxes_index:

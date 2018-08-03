@@ -12,6 +12,7 @@ module CentralConstants
     'VaRule' => '0',
     'Group' => '0',
     'Post' => '0',
-    'Helpdesk::TimeSheet' => '0'
+    'Helpdesk::TimeSheet' => '0',
+    'DashboardAnnouncement' => '0'
   }
 end

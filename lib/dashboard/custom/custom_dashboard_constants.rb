@@ -36,6 +36,8 @@ module Dashboard::Custom::CustomDashboardConstants
   TIME_TREND_CARD_PREVIEW_FIELDS = %w(group_ids product_id metric date_range)
   SLA_TREND_CARD_PREVIEW_FIELDS = %w(group_ids product_id metric date_range)
   BAR_CHART_DATA_FIELDS = %w(widget_id)
+  CREATE_ANNOUNCEMENT_FIELDS = %w(announcement_text)
+  END_ANNOUNCEMENT_FIELDS = %w(deactivate)
 
   VALIDATION_CLASS = 'CustomDashboardValidation'.freeze
   DELEGATOR_CLASS = 'CustomDashboardDelegator'.freeze
@@ -47,7 +49,10 @@ module Dashboard::Custom::CustomDashboardConstants
     create: :dashboard,
     update: :dashboard,
     show: :dashboard,
-    bar_chart_data: :chart_data
+    bar_chart_data: :chart_data,
+    create_announcement: :announcement,
+    end_announcement: :result,
+    get_announcements: :announcements
   }.freeze
 
   WIDGET_MODULES = [
