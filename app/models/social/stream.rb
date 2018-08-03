@@ -48,18 +48,18 @@ class Social::Stream < ActiveRecord::Base
       :product_id => product_id,
       :group_id   => group(group_id)
     }
-    unless (self.ticket_rules.first.action_data == action_data)
+    unless self.ticket_rules.first.action_data == action_data
       self.ticket_rules.first.update_attributes(:action_data => action_data)
     end
   end
-
+  
   def user_access?(user)
     return true if accessible.global_access_type?
     
     agent_groups = self.groups.map { |group| group.agent_groups }.flatten
     accessible_user_ids_in_groups = agent_groups.map {|agent_group| agent_group.user_id }
     
-    (accessible.group_access_type? &&  accessible_user_ids_in_groups.include?(user.id))
+    (accessible.group_access_type? && accessible_user_ids_in_groups.include?(user.id))
   end
   
   def dynamo_stream_id
