@@ -20,44 +20,17 @@ class Company < ActiveRecord::Base
 
   validate :format_of_default_fields, :if => :validatable_default_fields
 
-  DEFAULT_DROPDOWN_FIELDS = [:default_health_score, :default_account_tier, :default_industry]
-  TAM_DEFAULT_FIELDS = [:default_health_score, :default_account_tier, :default_industry, :default_renewal_date]
-
-
-  DEFAULT_DROPDOWN_FIELD_MAPPINGS = {
-    :health_score => :default_health_score,
-    :account_tier => :default_account_tier,
-    :industry => :default_industry
-  }
-
-  TAM_DEFAULT_FIELD_MAPPINGS = {
-    :string_cc01        =>    :health_score,
-    :string_cc02        =>    :account_tier,
-    :string_cc03        =>    :industry,
-    :datetime_cc01      =>    :renewal_date
-  }
+  concerned_with :associations, :callbacks, :esv2_methods, :rabbitmq, :constants
 
   TAM_DEFAULT_FIELD_MAPPINGS.keys.each do |key|
     alias_attribute(TAM_DEFAULT_FIELD_MAPPINGS[key], key)
   end
   
-  concerned_with :associations, :callbacks, :esv2_methods, :rabbitmq
-
   scope :custom_search, lambda { |search_string| 
     { :conditions => ["name like ?" ,"%#{search_string}%"],
       :select => "name, id, account_id",
       :limit => 1000  }
   }  
-  
-  CUST_TYPES = [
-    [ :customer,    "Customer",      1 ], 
-    [ :prospect,    "Prospect",      2 ], 
-    [ :partner,     "Partner",       3 ], 
-  ]
-
-  CUST_TYPE_OPTIONS = CUST_TYPES.map { |i| [i[1], i[2]] }
-  CUST_TYPE_BY_KEY = Hash[*CUST_TYPES.map { |i| [i[2], i[1]] }.flatten]
-  CUST_TYPE_BY_TOKEN = Hash[*CUST_TYPES.map { |i| [i[0], i[2]] }.flatten]
 
   def self.filter(letter, page, per_page = 50)
     paginate :per_page => per_page, :page => page,
@@ -193,6 +166,11 @@ class Company < ActiveRecord::Base
       value = value.to_time if attribute == :datetime_cc01
       self.flexifield.safe_send("#{attribute}=", value)
     end
+  end
+
+  def segments(segment_ids = nil)
+    @company_segment ||= Segments::Match::Company.new self
+    @company_segment.ids(segment_ids: segment_ids)
   end
 
   private
