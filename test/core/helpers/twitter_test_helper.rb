@@ -64,4 +64,95 @@ module TwitterTestHelper
     end
     feed_hash
   end
+
+  def sample_twitter_create_ticket_command(account, handle, stream, options = {})
+    context = get_command_context(handle, stream, options)
+    data = {
+      "subject": options[:subject] || 'Sample Subject',
+      "requester_id": options[:requester_id],
+      "description": options[:description],
+      "source": 5,
+      "created_at": options[:created_at] || '2015-07-09T13:08:06Z'
+    }
+    options = {
+      owner: 'twitter',
+      client: 'helpkit',
+      pod: ChannelFrameworkConfig['pod'],
+      command_name: 'create_ticket'
+    }
+
+    channel_payload('helpkit_command', account, options, context, data)
+  end
+
+  def sample_twitter_create_note_command(account, handle, stream, options = {})
+    context = get_command_context(handle, stream, options)
+    data = {
+      "user_id": options[:user_id],
+      "ticket_id": options[:ticket_id],
+      "body": options[:body],
+      "source": 5,
+      "private": true,
+      "created_at": options[:created_at] || '2015-07-09T13:08:06Z'
+    }
+    options = {
+      owner: 'twitter',
+      client: 'helpkit',
+      pod: ChannelFrameworkConfig['pod'],
+      command_name: 'create_note'
+    }
+
+    channel_payload('helpkit_command', account, options, context, data)
+  end
+
+  def sample_twitter_dm_acknowledgement(account, handle, stream, options = {})
+    context = get_command_context(handle, stream, options)
+    context[:note_id] = options[:note_id]
+
+    data = {}
+    data[:status_code] = options[:status_code]
+    data[:tweet_id] = options[:tweet_id] if options[:tweet_id].present?
+
+    options = {
+      owner: 'twitter',
+      client: 'helpkit',
+      pod: ChannelFrameworkConfig['pod'],
+      command_name: 'update_twitter_message'
+    }
+
+    channel_payload('helpkit_command', account, options, context, data)
+  end
+
+  def get_command_context(handle, stream, options = {})
+    {
+      "stream_id": stream.id,
+      "tweet_id": options[:tweet_id] || '1005',
+      "tweet_type": options[:type] || 'dm',
+      "twitter_handle_id": handle.twitter_user_id
+    }
+  end
+
+  def channel_payload(type, account, options, context, data)
+    {
+      "msg_id": SecureRandom.uuid,
+      "payload_type": type,
+      "account_id": account.id,
+      "payload": {
+        "owner": options[:owner],
+        "client": options[:client],
+        "account_id": account.id,
+        "domain": "https://#{account.full_domain}",
+        "pod": options[:pod],
+        "context": context,
+        "data": data,
+        "meta": {
+          "fallbackToReplyQueue": false,
+          "timeout": 30_000,
+          "waitForReply": false
+        },
+        "command_name": options[:command_name],
+        "command_id": SecureRandom.uuid,
+        "schema_version": 1
+      }
+    }
+  end
 end

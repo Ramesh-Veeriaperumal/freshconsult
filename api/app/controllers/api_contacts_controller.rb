@@ -265,8 +265,12 @@ class ApiContactsController < ApiApplicationController
       [:flexifield, :default_user_company]
     end
 
+    def contacts_filter_conditions
+      @contact_filter.conditions
+    end
+
     def contacts_filter(contacts)
-      @contact_filter.conditions.each do |key|
+      contacts_filter_conditions.each do |key|
         clause = contacts.contact_filter(@contact_filter)[key.to_sym] || {}
         contacts = contacts.where(clause[:conditions]).joins(clause[:joins])
       end
