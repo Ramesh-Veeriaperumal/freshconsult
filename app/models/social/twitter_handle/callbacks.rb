@@ -18,6 +18,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   after_commit :initialise_smart_filter, :on => :update, :if => :new_smart_filter_enabled?
   after_commit :remove_euc_redis_key, :on => :update, :if => :destroy_euc_redis_key?
   after_commit :remove_from_eu_redis_set_on_destroy, :on => :destroy, :if => :euc_migrated_account?
+  before_destroy :save_deleted_handle_info
 
   def remove_from_eu_redis_set_on_destroy
     remove_euc_redis_key
@@ -52,7 +53,7 @@ class Social::TwitterHandle < ActiveRecord::Base
       notify_social_dev("Default Stream already present for the handle", error_params)
     end
   end
-  
+
   def cleanup
     streams = twitter_streams
     streams.each do |stream|
@@ -104,7 +105,7 @@ class Social::TwitterHandle < ActiveRecord::Base
     def persist_previous_changes
       @custom_previous_changes = changes
     end
-    
+
      def construct_stream_params(name, type, subscription, search_keys)
       stream_params = {
         :name     => name,
@@ -120,11 +121,11 @@ class Social::TwitterHandle < ActiveRecord::Base
       }
       stream_params.merge!({:accessible_attributes => {
           :access_type => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
-        }}) if type == TWITTER_STREAM_TYPE[:default]    
+        }}) if type == TWITTER_STREAM_TYPE[:default]
       stream_params
     end
 
-    def smart_filter_init_params 
+    def smart_filter_init_params
       {
         "account_id" => smart_filter_accountID(:twitter, self.account_id, self.twitter_user_id)
       }.to_json
@@ -155,4 +156,7 @@ class Social::TwitterHandle < ActiveRecord::Base
       end
     end
 
+    def save_deleted_handle_info
+      @deleted_model_info = as_api_response(:central_publish)
+    end
 end

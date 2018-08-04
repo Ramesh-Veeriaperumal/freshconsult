@@ -8,7 +8,7 @@ module TwitterTestHelper
   end
 
   def cleanup_twitter_handles(account)
-    account.twitter_handles.destroy_all
+    account.twitter_handles.delete_all
     account.tickets.where(source: 5).destroy_all
   end
 
