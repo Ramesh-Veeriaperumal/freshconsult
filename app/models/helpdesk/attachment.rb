@@ -199,6 +199,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
     AwsWrapper::S3Object.url_for(content.path(valid_size_type(type)), content.bucket_name, expiry_secure_data)
   end
 
+  def attachment_url_for_export(secure = true, type = :original, expires = 7.days.to_i)
+    attachment_url_for_api(secure, type, expires)
+  end
+
   def as_json(options = {})
     options[:except] = exclude
     options[:methods] = [:attachment_url_for_api]
@@ -210,13 +214,13 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def to_xml(options = {})
-     options[:indent] ||= 2
-      xml = options[:builder] ||= ::Builder::XmlMarkup.new(:indent => options[:indent])
-      xml.instruct! unless options[:skip_instruct]
-      super(:builder => xml, :skip_instruct => true,:except => exclude) do |xml|
-         xml.tag!("attachment_url", attachment_url_for_api)
-     end
-   end
+    options[:indent] ||= 2
+    xml = options[:builder] ||= ::Builder::XmlMarkup.new(indent: options[:indent])
+    xml.instruct! unless options[:skip_instruct]
+    super(builder: xml, skip_instruct: true, except: exclude) do |xml|
+      xml.tag!('attachment_url', attachment_url_for_export)
+    end
+  end
 
   def expiring_url(style = "original",expiry = 300)
     AwsWrapper::S3Object.url_for(content.path(style.to_sym),content.bucket_name,

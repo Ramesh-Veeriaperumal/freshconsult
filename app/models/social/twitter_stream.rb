@@ -6,7 +6,7 @@ class Social::TwitterStream < Social::Stream
   include Redis::RedisKeys
   include Social::SmartFilter
 
-  concerned_with :callbacks
+  concerned_with :callbacks, :presenter
 
   belongs_to :twitter_handle,
     :foreign_key => :social_id,
@@ -22,7 +22,8 @@ class Social::TwitterStream < Social::Stream
     :class_name  => 'Social::TicketRule',
     :foreign_key => :stream_id,
     :dependent   => :destroy,
-    :conditions  => {:rule_type => nil }
+    :conditions  => {:rule_type => nil} ,
+    :autosave => true
 
 
   validates_presence_of :includes
@@ -206,6 +207,24 @@ class Social::TwitterStream < Social::Stream
     }
   end
 
+  def update_ticket_action_data(product_id, group_id = nil)
+    twitter_handle = try(:twitter_handle)
+    dm_thread_time = twitter_handle.try(:dm_thread_time)
+    capture_dm_as_ticket = twitter_handle.try(:capture_dm_as_ticket)
+    action_data = {
+        product_id: product_id,
+        group_id: group(group_id),
+        dm_thread_time: dm_thread_time,
+        capture_dm_as_ticket: capture_dm_as_ticket
+    }
+    unless keyword_rules.first.action_data == action_data
+      dm_rule = keyword_rules.first
+      dm_rule.action_data = action_data
+      keyword_rules[0] = dm_rule
+      save
+    end
+  end
+
   private
     def can_create_rule?
       can_create_mention_rule? or can_create_dm_rule?
@@ -246,4 +265,5 @@ class Social::TwitterStream < Social::Stream
     def stream_volume_redis_key
       STREAM_VOLUME % { :account_id => Account.current.id, :stream_id => self.id }
     end
+
 end

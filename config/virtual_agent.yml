@@ -25,6 +25,7 @@ fields:
         ticlet_cc: email
         domains: text_array
         renewal_date: date
+        segments: object_id_array
 
         created_at: date_time
         opened_at: date_time

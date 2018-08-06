@@ -11,8 +11,8 @@ class DataExport < ActiveRecord::Base
   EXPORT_TYPE = { :backup => 1, :ticket => 2, :contact => 3, :company => 4, :call_history => 5, :agent => 6, :reports => 7, :archive_ticket => 8 }
 
   TICKET_EXPORT_LIMIT = 3
-  TICKET_EXPORT_LIMIT_PER_USER = 1
-  ARCHIVE_TICKET_EXPORT_LIMIT_PER_ACCOUNT = 1
+  PAID_TICKET_EXPORT_LIMIT = 10
+
 
   EXPORT_STATUS = {:started => 1,
                    :file_created => 2,
@@ -69,12 +69,16 @@ class DataExport < ActiveRecord::Base
     self.update_attributes(:token => hash)
   end
 
+  def self.default_export_limit
+    Account.current.subscription.paid_account? ? PAID_TICKET_EXPORT_LIMIT : TICKET_EXPORT_LIMIT
+  end
+
   def self.ticket_export_limit
-    Account.current.account_additional_settings.ticket_exports_limit || TICKET_EXPORT_LIMIT_PER_USER
+    Account.current.account_additional_settings.ticket_exports_limit || default_export_limit
   end
 
   def self.archive_ticket_export_limit
-    Account.current.account_additional_settings.archive_ticket_exports_limit || ARCHIVE_TICKET_EXPORT_LIMIT_PER_ACCOUNT
+    Account.current.account_additional_settings.archive_ticket_exports_limit || default_export_limit
   end
 
   def self.ticket_export_limit_reached?(user)

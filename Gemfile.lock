@@ -290,6 +290,13 @@ GIT
     jwe (0.3.0)
 
 GIT
+  remote: git@github.com:freshdesk/rule_engine.git
+  revision: 4af2e80295ebd9dca954adaa8b2c91d8cf075f8d
+  tag: hv0.0.1
+  specs:
+    rule_engine (0.0.1)
+
+GIT
   remote: git@github.com:freshdesk/xeroizer.git
   revision: db93979351dc8047d6aeeeab63d697f8c4517f7b
   specs:
@@ -334,7 +341,7 @@ PATH
 PATH
   remote: vendor/gems/custom_fields-0.1
   specs:
-    custom_fields (0.1-x86_64-darwin-16)
+    custom_fields (0.1)
       acts_as_list (= 0.1.4)
       rails (~> 3.2.18)
 
@@ -1585,6 +1592,7 @@ DEPENDENCIES
   rubytree
   rubyzip (= 1.2.1)
   rugged
+  rule_engine!
   sanitize (= 4.6.5)
   sass-rails (= 3.2.6)
   sax-machine (~> 0.1.0)

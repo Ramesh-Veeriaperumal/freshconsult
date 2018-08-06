@@ -524,6 +524,34 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(canned_responses_inline_images_key)
   end
 
+  def contact_filters_from_cache
+    @contact_filters_from_cache ||= begin
+      key = format(CONTACT_FILTERS, account_id: id)
+      MemcacheKeys.fetch(key) do
+        contact_filters.all
+      end
+    end
+  end
+
+  def clear_contact_filters_cache
+    key = format(CONTACT_FILTERS, account_id: id)
+    MemcacheKeys.delete_from_cache(key)
+  end
+
+  def company_filters_from_cache
+    @company_filters_from_cache ||= begin
+      key = format(COMPANY_FILTERS, account_id: id)
+      MemcacheKeys.fetch(key) do
+        company_filters.all
+      end
+    end
+  end
+
+  def clear_company_filters_cache
+    key = format(COMPANY_FILTERS, account_id: id)
+    MemcacheKeys.delete_from_cache(key)
+  end
+
   private
     def permissible_domains_memcache_key id = self.id
       HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
