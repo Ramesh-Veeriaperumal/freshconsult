@@ -213,7 +213,8 @@ class Account < ActiveRecord::Base
     :post_central_publish => false, :audit_logs_central_publish => false,
     :new_ticket_recieved_metric => false, :euc_migrated_twitter => false, :canned_forms => false, :es_msearch => true,
     csat_email_scan_compatibility: false, sso_login_expiry_limitation: false, :attachment_virus_detection => false,
-    email_deprecated_style_parsing: false
+    :twitter_microservice => false, :twitter_handle_publisher => false, :undo_send => false,
+    :email_deprecated_style_parsing => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

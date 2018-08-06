@@ -68,6 +68,6 @@ class Admin::Social::StreamsController < Admin::AdminController
     else
       group_id = params[:dm_rule][:group_assigned].to_i
     end
-    dm_stream.update_ticket_action_data(social_account.product_id, group_id) 
+    dm_stream.update_ticket_action_data(social_account.product_id, group_id)
   end
 end

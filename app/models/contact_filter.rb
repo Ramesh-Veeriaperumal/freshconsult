@@ -10,9 +10,17 @@ class ContactFilter < ActiveRecord::Base
 
   validate :query_hash_data
 
+  after_commit :clear_cache
+
   def query_hash_data
     unless Segments::FilterDataValidation.new(data).valid?
       errors.add(:data, 'Invalid Query Hash')
     end
   end
+
+  private
+
+    def clear_cache
+      account.clear_contact_filters_cache
+    end
 end
