@@ -33,10 +33,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   VIRUS_CHECK_ENABLED = false
   LARGE_TEXT_TIMEOUT = 60
 
-  COLLAB_STR_ARRAY = ['Invited to Team Huddle - [#', 'Mentioned in Team Huddle - [#',
-                      'mentioned in Team Huddle - [#', 'Reply in Team Huddle - [#',
-                      'Team Huddle - New Messages in [#', 'Team Huddle - New Message in [#'].freeze
-
   attr_accessor :reply_to_email, :additional_emails,:archived_ticket, :start_time, :actual_archive_ticket
 
   def email_spam_watcher_counter(account)
@@ -85,7 +81,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
 
 
   def perform(parsed_to_email = Hash.new, skip_encoding = false)
-    if collab_email_reply?
+    if collab_email_reply? params[:subject]
       # block all email related to collab based on subject
       return processed_email_data(PROCESSED_EMAIL_STATUS[:noop_collab_email_reply])
     end
@@ -306,11 +302,6 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
   end
 
   private
-
-    def collab_email_reply?
-      email_subject = params[:subject]
-      COLLAB_STR_ARRAY.any? { |s| email_subject.include?(s) } ? true : false
-    end
 
     def encode_stuffs
       charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])
