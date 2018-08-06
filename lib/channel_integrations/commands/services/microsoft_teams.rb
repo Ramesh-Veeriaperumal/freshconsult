@@ -4,7 +4,7 @@ module ChannelIntegrations::Commands::Services
     include ChannelIntegrations::Constants
     include ChannelIntegrations::CommonActions::Note
 
-    def update_agents_list(payload)
+    def receive_update_agents_list(payload)
       data = payload[:data]
 
       active_users_key = get_redis_key(:active_users, payload[:account_id])
@@ -12,21 +12,19 @@ module ChannelIntegrations::Commands::Services
       update_redis_keys(active_users_key, data[:active_agent_ids])
       update_redis_keys(authorized_users_key, data[:authorized_agent_ids])
 
-      DEFAULT_SUCCESS_FORMAT
+      default_success_format
     rescue => e
       construct_error_message("Error in updating agents list, #{e.message}")
     end
 
-    def create_note(payload)
-      raise 'Error in Creating note' unless post_note(payload)
-      DEFAULT_SUCCESS_FORMAT
+    def receive_create_note(payload)
+      create_note(payload)
     rescue => e
       construct_error_message("Error in Creating note, #{e.message}")
     end
 
-    def create_reply(payload)
-      raise 'Error in Creating reply' unless post_reply(payload)
-      DEFAULT_SUCCESS_FORMAT
+    def receive_create_reply(payload)
+      create_reply(payload)
     rescue => e
       construct_error_message("Error in Creating reply, #{e.message}")
     end
@@ -48,7 +46,7 @@ module ChannelIntegrations::Commands::Services
       end
 
       def construct_error_message(message)
-        error = DEFAULT_ERROR_FORMAT
+        error = default_error_format
         error[:data] = { message: message }
         error
       end

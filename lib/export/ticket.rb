@@ -9,6 +9,7 @@ class Export::Ticket < Struct.new(:export_params)
   DATE_TIME_PARSE = [ :created_at, :due_by, :resolved_at, :updated_at, :first_response_time, :closed_at]
   ERB_PATH = Rails.root.join('app/views/support/tickets/export/%<file_name>s.xls.erb').to_path
   FILE_FORMAT = ['csv', 'xls'].freeze
+  BATCH_SIZE = 100
 
   def perform
     begin
@@ -16,7 +17,7 @@ class Export::Ticket < Struct.new(:export_params)
       set_current_user
       data_export_type = export_params[:archived_tickets]? 'archive_ticket' : 'ticket'
       create_export data_export_type
-      @file_path = generate_file_path(data_export_type, export_params[:format])
+      @file_path = generate_file_path("#{@data_export.id}_#{data_export_type}", export_params[:format])
       add_url_to_export_fields if export_params[:add_url]
       Sharding.run_on_slave { export_tickets }
       if @no_tickets
@@ -106,6 +107,7 @@ class Export::Ticket < Struct.new(:export_params)
 
   def ticket_export_data(file)
     @no_tickets = true
+    @batch_no = 0
     if export_params[:archived_tickets].present? && export_params[:use_es].present?
       archive_tickets_from_es(export_params) do |error, records|
         if error.present?
@@ -118,7 +120,7 @@ class Export::Ticket < Struct.new(:export_params)
       Account.current.archive_tickets.permissible(User.current).find_in_batches(archive_export_query) do |items|
         build_file(items, file)
       end
-    else 
+    else
       Account.current.tickets.permissible(User.current).find_in_batches(export_query) do |items|
         build_file(items, file)
       end
@@ -127,15 +129,17 @@ class Export::Ticket < Struct.new(:export_params)
 
   def export_query
     {
-      :select => select_query,
-      :conditions => sql_conditions, 
-      :joins => joins
+      select: select_query,
+      conditions: sql_conditions,
+      joins: joins,
+      batch_size: BATCH_SIZE
     }
   end
 
   def build_file(items, file)
+    Rails.logger.debug "Processing ticket export batch :: #{@batch_no += 1}"
     @no_tickets = false
-    @custom_field_names = Account.current.ticket_fields.custom_fields.pluck(:name)
+    @custom_field_names ||= Account.current.ticket_fields.custom_fields.pluck(:name)
     ActiveRecord::Associations::Preloader.new(items, preload_associations).run
 
     items.each do |item|
@@ -186,21 +190,24 @@ class Export::Ticket < Struct.new(:export_params)
   end
 
   def preload_associations
-    associations = []
-    @headers.each do |val|
-      if @custom_field_names.include?(val)
-        associations << { :flexifield => { :flexifield_def => :flexifield_def_entries } }
-      elsif val.eql?("ticket_survey_results") && Account.current.new_survey_enabled?
-        associations << { :custom_survey_results => [:survey_result_data, {:survey => {:survey_default_question => [:survey, :custom_field_choices_asc, :custom_field_choices_desc]}}] }
-      elsif val.eql?("product_name") && !export_params[:archived_tickets]
-        associations << { :schema_less_ticket => :product }
-      elsif Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
-        associations << Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
+    @preload_associations ||= begin
+      associations = []
+      @headers.each do |val|
+        if @custom_field_names.include?(val)
+          associations << { flexifield: { flexifield_def: :flexifield_def_entries } }
+          associations << { flexifield: :denormalized_flexifield } if Account.current.denormalized_flexifields_enabled?
+        elsif val.eql?('ticket_survey_results') && Account.current.new_survey_enabled?
+          associations << { custom_survey_results: [:survey_result_data, { survey: { survey_default_question: [:survey, :custom_field_choices_asc, :custom_field_choices_desc] }}] }
+        elsif val.eql?('product_name') && !export_params[:archived_tickets]
+          associations << { schema_less_ticket: :product }
+        elsif Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
+          associations << Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
+        end
       end
+      associations << :requester if @contact_headers.present?
+      associations << :company if @company_headers.present?
+      associations.uniq
     end
-    associations << :requester if @contact_headers.present?
-    associations << :company if @company_headers.present?
-    associations.uniq
   end
 
   def fetch_field_value(item, field)
@@ -297,9 +304,10 @@ class Export::Ticket < Struct.new(:export_params)
   # Archive queries
   def archive_export_query
     {
-      :select =>  archive_select_query,
-      :conditions => archive_sql_conditions, 
-      :joins => archive_joins
+      select: archive_select_query,
+      conditions: archive_sql_conditions,
+      joins: archive_joins,
+      batch_size: BATCH_SIZE
     }
   end
 

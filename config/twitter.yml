@@ -6,7 +6,7 @@ consumer_token:
     default: dr1GMNCkYqUqjPTvWoY4nQ
     fallback: dummy
   development:
-    default: dr1GMNCkYqUqjPTvWoY4nQ
+    default: Jo442LLE1NOnH8TyrFRpEP90s
     fallback: dummy
   test:
     default: dr1GMNCkYqUqjPTvWoY4nQ
@@ -19,7 +19,7 @@ consumer_secret:
     default: QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc
     fallback: dummy
   development:
-    default: QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc
+    default: aQ4DJ1LtK8h6KKLzyBA6Oumbgkdw87cUmIzHlGEKPXRp7drelN
     fallback: dummy
   test:
     default: QUbXWcl5dOAdylf3eSCjD0XnFRpUOErUVId3RKMc
@@ -28,6 +28,23 @@ callback_url:
   production: http://localhost:3000/twitter/authdone
   staging: http://localhost:3000/twitter/authdone
   development: http://localhost:3000/twitter/authdone
+central_secret:
+  production:
+    label:
+    key:
+    iv:
+  staging:
+    label:
+    key:
+    iv:
+  test:
+    label: "twitter"
+    key: "bf3c199c2470cb477d907b1e0917c17b"
+    iv: "1324659871023654"
+  development:
+    label: "twitter"
+    key: "bf3c199c2470cb477d907b1e0917c17b"
+    iv: "1324659871023654"
 twitter_timeout:
   production: 2
   staging: 2

@@ -575,8 +575,9 @@ Helpkit::Application.routes.draw do
     post '/freshcaller/migration/fetch_pod_info', to: 'channel/freshcaller/migration#fetch_pod_info'
 
     resources :tickets, controller: 'channel/tickets', only: [:create]
-    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show]
+    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]
     resources :companies, controller: 'channel/api_companies', only: [:create]
+    resources :attachments, controller: 'channel/attachments', only: [:create]
     scope '/bot' do
       resources :tickets, controller: 'channel/bot/tickets', only: [:create]
     end
