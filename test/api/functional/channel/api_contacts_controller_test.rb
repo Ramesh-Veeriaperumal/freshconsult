@@ -168,5 +168,37 @@ module Channel
       assert_response 401
       match_json(request_error_pattern(:invalid_credentials))
     end
+
+    def test_create_a_twitter_contact
+      set_jwt_auth_header('twitter')
+      post :create, construct_params({ version: 'channel' }, name: Faker::Lorem.characters(10),
+                                                             twitter_id: Faker::Internet.email) # for now using email as twitter_id.
+      assert_response 201
+      match_json(deleted_contact_pattern(User.last))
+    end
+
+    def test_create_contact_without_twitter_id
+      set_jwt_auth_header('twitter')
+      post :create, construct_params({ version: 'channel' }, name: Faker::Lorem.characters(10))
+      match_json([bad_request_error_pattern('email', :missing_contact_detail)])
+      assert_response 400
+    end
+
+    def test_create_a_twitter_contact_without_auth
+      post :create, construct_params({ version: 'channel' }, name: Faker::Lorem.characters(10),
+                                                             twitter_id: Faker::Internet.email)
+      assert_response 401
+    end
+
+    def test_get_a_twitter_contact_by_twitter_id
+      set_jwt_auth_header('twitter')
+      twitter_contact = @account.users.where('twitter_id is not null').limit(1).first
+      get :index, controller_params(version: 'channel', twitter_id: twitter_contact.twitter_id)
+
+      users = @account.all_contacts.order('users.name').select { |x|  x.twitter_id == twitter_contact.twitter_id }
+      pattern = users.map { |user| index_contact_pattern(user) }
+      match_json(pattern.ordered!)
+      assert_response 200
+    end
   end
 end

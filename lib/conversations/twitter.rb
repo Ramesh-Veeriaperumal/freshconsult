@@ -55,10 +55,10 @@ module Conversations::Twitter
       error_msg, return_value = twt_sandbox(@reply_handle, TWITTER_TIMEOUT[:reply]) {
         twitter  = TwitterWrapper.new(@reply_handle).get_twitter
         msg_body = tweet_body
-        resp = twitter.create_direct_message(req_twt_id, msg_body)
+        resp = twitter.create_direct_message(req_twt_id, msg_body) unless Account.current.twitter_microservice_enabled?
 
         #update dynamo
-        unless latest_tweet.stream_id.nil?
+        unless latest_tweet.stream_id.nil? || Account.current.twitter_microservice_enabled?
           dynamo_helper = Social::Dynamo::Twitter.new
           stream_id = "#{current_account.id}_#{latest_tweet.stream_id}"
           reply_params = {
@@ -70,7 +70,7 @@ module Conversations::Twitter
           dynamo_helper.update_dm(stream_id, reply_params)
         end
 
-        process_tweet note, resp, reply_handle_id, :dm
+        Account.current.twitter_microservice_enabled? ? process_tweet(note, nil, reply_handle_id, :dm) : process_tweet(note, resp, reply_handle_id, :dm)
       }
     end
     [error_msg, resp]
@@ -115,12 +115,9 @@ module Conversations::Twitter
 
     def process_tweet note, twt, handle_id, twt_type
       stream_id = @reply_handle.default_stream_id
-      note.create_tweet({
-        :tweet_id => twt.id,
-        :tweet_type => twt_type.to_s,
-        :twitter_handle_id => handle_id,
-        :stream_id => stream_id
-       })
+      tweet_id = twt.present? ? twt.id : nil
+
+      note.create_tweet(tweet_id: tweet_id, tweet_type: twt_type.to_s, twitter_handle_id: handle_id, stream_id: stream_id)
     end
 
 end

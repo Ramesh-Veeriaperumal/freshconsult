@@ -212,6 +212,13 @@ class User < ActiveRecord::Base
     account.agent_groups.permissible_user(self.accessible_groups.pluck(:id), user_id).exists?
   end
 
+  # Make sure we keep the key in va_rules as segments, (evaluate_on.send(condition.dispatcher_key))
+  def segments(segment_ids = nil)
+    return [] if agent?
+    @contact_segment ||= Segments::Match::Contact.new self
+    @contact_segment.ids(segment_ids: segment_ids)
+  end
+
   class << self # Class Methods
     #Search display
     def search_display(user)
@@ -343,6 +350,9 @@ class User < ActiveRecord::Base
         },
         unique_external_id: {
           conditions: { unique_external_id: contact_filter.unique_external_id}
+        },
+        twitter_id: {
+          conditions: { twitter_id: contact_filter.twitter_id }
         }
       }
     end
@@ -412,6 +422,10 @@ class User < ActiveRecord::Base
 
   def tag_names
     tags.collect{|tag| tag.name}.join(', ')
+  end
+
+  def tags_array
+    tags.collect(&:name)
   end
 
   def tagged?(tag_id)

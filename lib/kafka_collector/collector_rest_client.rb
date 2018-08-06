@@ -12,7 +12,6 @@ module KafkaCollector
         req.headers['x-request-id'] = msg_id if msg_id
         req.body = data
       end
-      Rails.logger.info "Response from kafka collector: #{Account.current.id} #{data} #{response.body}"
       response.status
     rescue Exception => e
       Rails.logger.info "Error in connecting to collector. #{Account.current.id} #{data}, #{e.message}, #{e.backtrace}"

@@ -16,7 +16,7 @@ module ChannelIntegrations
       private
 
         def construct_klass(payload)
-          klass_name = construct_owner_class(payload, :reply)
+          klass_name = service_klass_name(payload, :reply)
           klass = Module.const_get(klass_name)
           klass.is_a?(Class) ? klass : nil
         rescue => e

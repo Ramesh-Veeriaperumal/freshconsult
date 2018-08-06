@@ -51,7 +51,8 @@ module ContactsCompaniesHelper
 
   def show_field field, field_value
     field_value = I18n.name_for_locale(field_value) if field.field_type == :default_language
-    field_value = CGI.unescapeHTML(field_value) if Company::DEFAULT_DROPDOWN_FIELDS.push(:custom_dropdown).include?(field.field_type)
+    company_default_dropdown_fields = Company::DEFAULT_DROPDOWN_FIELDS.dup
+    field_value = CGI.unescapeHTML(field_value) if company_default_dropdown_fields.push(:custom_dropdown).include?(field.field_type)
     field_value = field_value ? I18n.t('plain_yes') : I18n.t('plain_no') if field.dom_type == :checkbox
     field_value = formatted_date(field_value) if field.dom_type == :date
     field_value = h(field_value).gsub(/\n/, '<br />').html_safe if field.dom_type == :paragraph

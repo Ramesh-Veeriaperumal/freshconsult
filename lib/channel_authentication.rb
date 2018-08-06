@@ -1,14 +1,17 @@
 module ChannelAuthentication
   TYPE_JWE = 'jwe'.freeze
   TYPE_JWT = 'jwt'.freeze
-  SOURCE_ZAPIER = 'zapier'.freeze  
+  CHANNELS = {
+    twitter: 'twitter'.freeze,
+    zapier: 'zapier'.freeze
+  }.freeze
 
   def channel_client_authentication
     auth_token = header_token
     if auth_token
       config = auth_token[:config]
       payload = verify_token(auth_token,config)
-      decrypt_payload(payload, config) if payload.present? && auth_token[:source] == SOURCE_ZAPIER
+      decrypt_payload(payload, config) if payload.present? && auth_token[:source] == CHANNELS[:zapier]
     else
       invalid_credentials_error unless params[:controller] == 'channel/tickets'
     end
@@ -44,12 +47,16 @@ module ChannelAuthentication
       end
     end
 
+    def channel_twitter?
+      source(request.headers['X-Channel-Auth']) == CHANNELS[:twitter]
+    rescue StandardError => e
+      invalid_credentials_error
+    end
+
     def header_token
       # expected header format => X-Channel-Auth: <enc_type xx.xx.xx>
       token = request.headers['X-Channel-Auth']
-      return unless token.present?
-      jwt_header = token.split('.')[0]
-      source_name = JSON.parse(Base64.decode64(jwt_header))['source'] if jwt_header
+      source_name = source(token)
       config = CHANNEL_API_CONFIG.fetch(source_name, {}) if source_name.present?
       return { token: token, source: source_name, config: config } if config
     rescue
@@ -65,4 +72,11 @@ module ChannelAuthentication
       nil
     end
 
+    def source(token)
+      return @source if @source.present?
+
+      return if token.blank?
+      jwt_header = token.split('.')[0]
+      @source = JSON.parse(Base64.decode64(jwt_header))['source'] if jwt_header
+    end
 end

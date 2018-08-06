@@ -1798,21 +1798,11 @@ class ApiContactsControllerTest < ActionController::TestCase
   def test_create_contact_with_existing_uppercase_email
     email = Faker::Internet.email.upcase
     contact_a = add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
-    assert contact_a.reload.email == email
+    assert contact_a.reload.email == email.downcase
     contact_b = add_new_user(@account)
     put :update, construct_params({ id: contact_b.id }, email: email.downcase)
     match_json([bad_request_error_pattern('email', :'Email has already been taken')])
     assert_response 409
-  end
-
-  def test_update_contact_with_downcase_email_fires_a_query
-    email = Faker::Internet.email.upcase
-    sample_user = add_new_user(@account, name: Faker::Lorem.characters(15), email: email)
-    pattern = /UPDATE `users` SET/
-    from = 'SET'
-    to = 'WHERE'
-    query = trace_query_condition(pattern, from, to) { put :update, construct_params({ id: sample_user.id }, email: email.downcase) }
-    assert_match(/.* `email` = '#{email.downcase}', .*/, query)
   end
 
   def test_update_email_and_pass_other_emails_without_change

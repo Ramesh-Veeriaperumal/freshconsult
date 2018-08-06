@@ -1,5 +1,4 @@
 class Account < ActiveRecord::Base
-
   LP_FEATURES   = [:select_all, :round_robin_capping, :suggest_tickets,
                    :customer_sentiment_ui, :dkim, :scheduled_ticket_export,
                    :ticket_contact_export, :email_failures, :disable_emails,
@@ -14,7 +13,7 @@ class Account < ActiveRecord::Base
                    :time_sheets_central_publish, :twitter_common_redirect, :canned_forms,
                    :euc_migrated_twitter, :new_ticket_recieved_metric, :audit_log_ui,
                    :dashboard_announcement_central_publish, :dashboard_announcements, :undo_send,
-                   :timeline]
+                   :timeline, :twitter_microservice, :twitter_handle_publisher]
    DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
   BITMAP_FEATURES = [

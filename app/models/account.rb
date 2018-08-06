@@ -707,6 +707,22 @@ class Account < ActiveRecord::Base
     attachment_ids.flatten.uniq
   end
 
+  def contact_custom_field_types
+    @contact_field_types ||= begin
+      contact_form.custom_fields_cache.each_with_object({}) do |field, type|
+        type[field.name.to_sym] = field.field_type
+      end
+    end
+  end
+
+  def company_custom_field_types
+    @company_field_types ||= begin
+      company_form.custom_fields_cache.each_with_object({}) do |field, type|
+        type[field.name.to_sym] = field.field_type
+      end
+    end
+  end
+
   def sandbox_domain
     DomainMapping.where(account_id: sandbox_job.try(:sandbox_account_id)).first.try(:domain)
   end

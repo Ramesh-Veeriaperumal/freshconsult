@@ -1,6 +1,6 @@
 class ContactFilterValidation < FilterValidation
   attr_accessor :state, :phone, :mobile, :email, :company_id, :conditions, :tag, :_updated_since, :unique_external_id,
-                :include, :include_array, :query_hash
+                :include, :include_array, :query_hash, :twitter_id
 
   validates :state, custom_inclusion: { in: ContactConstants::STATES }
   validates :email, data_type: { rules: String }
@@ -14,6 +14,7 @@ class ContactFilterValidation < FilterValidation
   validate :check_unique_external_id, if: -> { unique_external_id && errors[:unique_external_id].blank? }
   validates :include, data_type: { rules: String }, on: [:index, :show]
   validate :validate_include, if: -> { errors[:include].blank? && include }
+  validates :twitter_id, data_type: { rules: String }
 
   def initialize(request_params, item = nil, allow_string_param = true)
     @conditions = (request_params.keys & ContactConstants::INDEX_FIELDS)
