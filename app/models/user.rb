@@ -350,6 +350,9 @@ class User < ActiveRecord::Base
         },
         unique_external_id: {
           conditions: { unique_external_id: contact_filter.unique_external_id}
+        },
+        twitter_id: {
+          conditions: { twitter_id: contact_filter.twitter_id }
         }
       }
     end

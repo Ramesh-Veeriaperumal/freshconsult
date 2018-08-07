@@ -3,6 +3,7 @@ module Channel
     include ChannelAuthentication
 
     skip_before_filter :check_privilege, only: :show
+    skip_before_filter :check_privilege, if: :channel_twitter?
     before_filter :channel_client_authentication
 
     def create
@@ -39,6 +40,20 @@ module Channel
         ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
         contact = ContactValidation.new(params[cname], @item, string_request_params?)
         render_custom_errors(contact, true) unless contact.valid?(:channel_contact_create)
+      end
+
+      def validate_filter_params
+        if channel_twitter?
+          params.permit(*ContactConstants::CHANNEL_INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
+          @contact_filter = ContactFilterValidation.new(params, nil, string_request_params?)
+          render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
+        else
+          super
+        end
+      end
+
+      def contacts_filter_conditions
+        params[:twitter_id].present? ? @contact_filter.conditions.push(:twitter_id) : super
       end
   end
 end

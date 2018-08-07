@@ -1,16 +1,15 @@
 class Ryuken::ChannelMessagePoller
   include Shoryuken::Worker
-  shoryuken_options queue: SQS[:channel_framework_services], auto_delete: true, body_parser: :json, batch: true
+  shoryuken_options queue: SQS[:channel_framework_services], auto_delete: true, body_parser: :json
 
-  def perform(sqs_msgs, args)
-    sqs_msgs.each do |sqs_msg|
-      args = JSON.parse(sqs_msg.body)['data']
-      payload_type = args['payload_type']
-      worker_obj = create_worker_object(payload_type)
-      worker_obj.process(args) if worker_obj && !duplicate_message?(args)
-    end
-  rescue => e
+  def perform(sqs_msg)
+    args = JSON.parse(sqs_msg.body)['data']
+    payload_type = args['payload_type']
+    worker_obj = create_worker_object(payload_type)
+    worker_obj.process(args) if worker_obj && !duplicate_message?(args)
+  rescue StandardError => e
     NewRelic::Agent.notice_error(e, description: 'Error while processing sqs request')
+    raise e
   end
 
   private

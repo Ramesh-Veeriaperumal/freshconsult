@@ -4,16 +4,19 @@ class Social::TwitterStream < Social::Stream
   include Gnip::Constants
   include Social::Constants
   include Social::Util
-
   before_create :set_default_values
+  publishable on: [:create, :update, :destroy], if: :dm_stream?
   before_validation :valid_rule?, :if => :gnip_subscription?
   before_save :update_rule_value, :unless => :gnip_subscription?
   before_save :persist_previous_changes
+  before_update :rule_snapshot_before_update
   after_commit :subscribe_to_gnip, on: :create, :if => :gnip_subscription?
   after_commit :populate_ticket_rule, on: :create
   after_commit :update_gnip_subscription, on: :update, :if => :gnip_subscription?
   after_commit :unsubscribe_from_gnip, on: :destroy, :if =>  :gnip_subscription?
   after_commit :clear_volume_in_redis, on: :destroy
+  after_update :rule_snapshot_after_update
+  before_destroy :save_deleted_stream_info
 
 
   def gnip_rule
@@ -133,4 +136,20 @@ class Social::TwitterStream < Social::Stream
       end
       streams
     end
+
+    def save_deleted_stream_info
+      @deleted_model_info = as_api_response(:central_publish)
+    end
+
+    def rule_snapshot_before_update
+      @model_changes ||= {}
+      @model_changes[:rules] = []
+      @model_changes[:rules][0] = Account.current.twitter_streams.find_by_id(self.id).rules
+    end
+
+    def rule_snapshot_after_update
+      @model_changes[:rules][1] = rules
+    end
+
+
 end
