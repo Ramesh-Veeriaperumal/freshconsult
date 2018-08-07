@@ -61,8 +61,11 @@ $ticket-lifecycle-color: #183247;
   background-color: $grid-section-background;
 }
 
-.reports-main .reports-header .reports-title .generate-pdf-button {
-  color: #239cff;
+.reports-main .reports-header .reports-title {
+  .generate-pdf-button {
+    color: #239cff;
+  }
+  padding: 12px 5px;
 }
 
 .reports-main .reports-header .reports-filter .edit-filter .btn.btn-primary {
