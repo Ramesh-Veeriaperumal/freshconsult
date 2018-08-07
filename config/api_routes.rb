@@ -94,6 +94,10 @@ Helpkit::Application.routes.draw do
     match 'agents/me/reset_api_key' => 'api_profiles#reset_api_key', :defaults => { format: 'json', id: 'me' }, via: :post
 
     resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy]
+    
+    resources :canned_response_folders, controller: 'canned_response_folders', only: [:index, :show]
+    resources :canned_responses, controller: 'canned_responses', only: [:index, :show]
+    resources :scenario_automations, controller: 'scenario_automations', only: :index
 
     resources :surveys, only: [:index] do
       collection do
@@ -406,14 +410,6 @@ Helpkit::Application.routes.draw do
     resources :ticket_filters, controller: 'ember/ticket_filters', only: [:index, :show, :create, :update, :destroy]
     resources :contact_fields, controller: 'ember/contact_fields', only: :index
     resources :company_fields, controller: 'ember/company_fields', only: :index
-    resources :scenario_automations, controller: 'ember/scenario_automations', only: :index
-    resources :canned_response_folders, controller: 'ember/canned_response_folders', only: [:index, :show]
-    resources :canned_responses, controller: 'ember/canned_responses', only: [:show, :index] do
-      collection do
-        get :search
-      end
-    end
-
     resources :ticket_templates, controller: 'ember/ticket_templates', only: [:show, :index]
 
     resources :twitter_handles, controller: 'ember/twitter_handles', only: [:index] do
@@ -442,6 +438,8 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    get 'canned_responses/search', to: 'ember/canned_responses#search'
+    
     # audit log path
     post '/audit_log', to: 'audit_logs#filter'
     post '/audit_log/export', to: 'audit_logs#export'

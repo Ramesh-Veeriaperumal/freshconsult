@@ -1,5 +1,5 @@
 require_relative '../../test_helper'
-class Ember::ScenarioAutomationsControllerTest < ActionController::TestCase
+class ScenarioAutomationsControllerTest < ActionController::TestCase
   include ScenarioAutomationsTestHelper
 
   def wrap_cname(params)
@@ -10,7 +10,7 @@ class Ember::ScenarioAutomationsControllerTest < ActionController::TestCase
     2.times do
       create_scn_automation_rule(scenario_automation_params)
     end
-    get :index, controller_params(version: 'private')
+    get :index, controller_params(version: 'v2')
     assert_response 200
     match_json(private_api_index_pattern)
   end
