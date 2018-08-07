@@ -215,12 +215,11 @@ namespace :scheduler do
   
   def enqueue_premium_twitter(delay = nil)
     premium_twitter_accounts.each do |account_id|
-      Sharding.select_shard_of(account_id) do
-
-        Account.reset_current_account
+      Sharding.select_shard_of(account_id) do  
         account = Account.find(account_id).make_current
         if account.launched?(:twitter_microservice)
           Rails.logger.info "Skipping Premium Twitter Worker for account id #{account_id} because of twitter_microservice"
+          Account.reset_current_account
           next
         end
 
@@ -230,6 +229,8 @@ namespace :scheduler do
         else
           Social::PremiumTwitterWorker.perform_in(delay, {:account_id => account_id})
         end
+
+        Account.reset_current_account
       end
     end
   end
