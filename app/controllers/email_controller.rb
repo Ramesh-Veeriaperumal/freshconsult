@@ -131,7 +131,7 @@ class EmailController < ApplicationController
   private
 
   def authenticate_request
-    render_404 unless (params[:username] == "freshdesk" and params[:api_key] == Helpdesk::EMAIL[:domain_validation_key])
+    render_404 unless ((params[:username] == "freshdesk" and params[:api_key] == Helpdesk::EMAIL[:domain_validation_key]) || authenticated_email_service_equest?(request.authorization))
   end
 
   def determine_pod

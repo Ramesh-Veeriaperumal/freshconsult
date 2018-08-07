@@ -178,6 +178,14 @@ module EmailHelper
       "freshopsadmin.freshdesk.com/accounts/#{account.id}"
   end
 
+  # This method tells whether the request from email service is authenticated or not.
+  def authenticated_email_service_equest? key
+    fd_email_service = (YAML::load_file(File.join(Rails.root, 'config', 'fd_email_service.yml')))[Rails.env]
+    incoming_email_api_key1 = fd_email_service["incoming_email_api_key1"]
+    incoming_email_api_key2 = fd_email_service["incoming_email_api_key2"]
+    return (key == incoming_email_api_key1 or key == incoming_email_api_key2)
+  end
+
   # For checking whether the notifications are routed via email services
   def via_email_service? account, email_config
     return !(email_config && email_config.smtp_mailbox) && ($redis_others.get("ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE") == "1" || account.launched?(:send_emails_via_fd_email_service_feature))
