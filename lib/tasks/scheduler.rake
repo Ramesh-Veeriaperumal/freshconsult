@@ -223,6 +223,8 @@ namespace :scheduler do
           next
         end
 
+        Account.reset_current_account
+
         Rails.logger.info "Enqueuing Premium Twitter Worker for account id #{account_id}"
         if delay.nil?
           Social::PremiumTwitterWorker.perform_async({:account_id => account_id})
@@ -230,7 +232,6 @@ namespace :scheduler do
           Social::PremiumTwitterWorker.perform_in(delay, {:account_id => account_id})
         end
 
-        Account.reset_current_account
       end
     end
   end
