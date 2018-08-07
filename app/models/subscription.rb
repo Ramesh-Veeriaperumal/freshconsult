@@ -614,7 +614,7 @@ class Subscription < ActiveRecord::Base
         set_others_redis_key(key, true, Account::BLOCK_GRACE_PERIOD)
         Rails.logger.debug("Added trial suspended redis key for account_id: #{self.account.id}")
       end
-      BlockAccount.perform_in(Account::BLOCK_GRACE_PERIOD.from_now, {:account_id => self.account.id})
+      #BlockAccount.perform_in(Account::BLOCK_GRACE_PERIOD.from_now, {:account_id => self.account.id})
     end
 
  end
