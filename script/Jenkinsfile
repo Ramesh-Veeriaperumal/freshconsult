@@ -129,31 +129,27 @@ def distributed_run(category) {
 		 node(label) {
 		 
 		    //Checkout stage
-		    	stage("checkout for "+category) {
+		    	stage(category + " Tests") {
+				    
+				    //Branch checkout
 				    branch_checkout(category)
+				    
+				    //Build setup
+				    if(category != 'pronto') {		
+		    			//Intialization process
+		            	build_setup(category)
+		    		}
+		    		
+		    		//Executing testcases
+		    		execute_test_cases(category)
+		    		
+		    		if(category != 'pronto') {
+             			//Publish Report    
+			            publish_report(category)                        
+                    }
+		    		   
 				}
-				
-		   if(category != 'pronto') {		
-		    //Intialization process
-		        stage("Build for "+category) {
-		            build_setup(category)
-		        }
-		    }     
-				
-			//Execute Testcases 
-			    stage("Execute Testcases for "+category) {
-		             execute_test_cases(category)
-			    }
-			    
-			if(category != 'pronto') {
-             //Publish Report    
-			    stage("Publish Report for "+category) {
-			          publish_report(category)                        
-			    }           
-
-		    }
- 
-        }	
+		 }	
    }	 
 }
 
