@@ -1122,6 +1122,7 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
        cleansed_html = run_with_timeout(HtmlSanitizerTimeoutError) { 
          begin
            result = nil
+           format_html if params[:html].present?
            result = Helpdesk::HTMLSanitizer.clean params[:html]
          rescue SystemStackError => e
           result = handle_system_stack_error e
@@ -1271,6 +1272,55 @@ class Helpdesk::ProcessEmail < Struct.new(:params)
     params["attachment#{params[:attachments]}"] = original_email_content
     result
   end
+
+  # parse html to nokogiri
+  # to faster execution => to reduce no of lines in html
+  # remove deprecated styles if any(can be customizable specific to account)
+  def format_html
+      formatted = deprecated_css_parsing_enabled? ? deprecated_css_parsing : parse_html
+      params[:html] = formatted.to_html if formatted.present?
+  end
+
+  def parse_html
+    #HTML FORMAT was removed in the sanitize gem version("4.6.5").
+    #So HTML content has huge line size which leads to high memory consumption and CPU utilization for the process.
+    #So doing HTML FORMAT through Nokogiri before passing to sanitize.
+    run_with_timeout(NokogiriTimeoutError) { Nokogiri::HTML(params[:html]) }
+  end
+
+  #deprecated css parsing
+
+  def email_deprecated_style_parsing_key
+    DEPRECATED_STYLE_PARSING % {:account_id => Account.current.id}
+  end
+
+  def deprecated_css_parsing_enabled?
+    Account.current.launched?(:email_deprecated_style_parsing)
+  end
+
+  def deprecated_css_parsing
+    dep_parse_html = parse_html
+    styles_to_change = get_others_redis_key(email_deprecated_style_parsing_key)
+    if styles_to_change.present? && dep_parse_html.present?
+      styles_to_change = JSON.parse(styles_to_change)
+      styles_to_change.each do |tag, property|
+        dep_parse_html.css(tag).each do |node| 
+          property.each do |oldproperty, newproperty|
+            if node.attributes.keys.include?(oldproperty)
+              old_attr_value = node.attributes[oldproperty].value
+              node.attributes.map do |k, v| 
+                v.name = newproperty if v.name == oldproperty
+                v.value = v.value << newproperty.to_s + ": " + old_attr_value + ";" if v.name == "style" && old_attr_value.present?  # overrite inline  style
+              end 
+            end
+          end
+        end
+      end
+    end
+    return dep_parse_html 
+  end
+
+  #deprecated css parsing//
  
   alias_method :parse_cc_email, :parse_cc_email_new
   alias_method :parse_to_emails, :parse_to_emails_new
