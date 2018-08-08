@@ -57,6 +57,7 @@ def build_setup(category) {
 	    if(category == 'public' || category == 'private')  {
 	
 	     sh '''#!/bin/bash
+	        source /etc/profile.d/rvm.sh 
             bundle exec rake db:bootstrap RAILS_ENV=test
             '''   
 	     }
@@ -64,6 +65,8 @@ def build_setup(category) {
 	    if(category == 'sandbox')  {
 	
 	     sh '''#!/bin/bash
+	        source /etc/profile.d/rvm.sh 
+	        bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
             mkdir tmp/sandbox_test
             git init tmp/sandbox_test/
             git config --global user.email "sample@freshdesk.com"
