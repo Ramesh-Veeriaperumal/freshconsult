@@ -3,13 +3,13 @@
 //def sourceBranch = params.ghprbSourceBranch
 //def targetBranch = params.ghprbTargetBranch
 
-def pullId       = "2477"
-def sourceBranch = "pipeline-enchancement"
-def targetBranch = "falcon-prestaging"
+ pullId       = "2477"
+ sourceBranch = "pipeline-enchancement"
+ targetBranch = "falcon-prestaging"
 
 
-def build   = env.BUILD_NUMBER
-def buildno = build.toInteger()
+ build   = env.BUILD_NUMBER
+ buildno = build.toInteger()
   
 if( buildno % 2 == 0 ){
     def label = "backend_spot_1"
@@ -22,7 +22,7 @@ if( buildno % 2 == 0 ){
 def branch_checkout(category) {
         
      if(category=='pronto') {
-            checkout([$class: 'GitSCM', branches: [[name: branch]],
+            checkout([$class: 'GitSCM', branches: [[name: sourceBranch]],
                             doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
                             userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])
      }else {
