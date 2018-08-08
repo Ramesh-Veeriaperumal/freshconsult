@@ -1,17 +1,20 @@
 //Assinging neccessary variables
-def pullId       = params.ghprbPullId
-def sourceBranch = params.ghprbSourceBranch
-def targetBranch = params.ghprbTargetBranch
+//def pullId       = params.ghprbPullId
+//def sourceBranch = params.ghprbSourceBranch
+//def targetBranch = params.ghprbTargetBranch
+
+def pullId       = "2477"
+def sourceBranch = "pipeline-enchancement"
+def targetBranch = "falcon-prestaging"
 
 
-
-def build = env.BUILD_NUMBER
+def build   = env.BUILD_NUMBER
 def buildno = build.toInteger()
   
-if( buildno%2 == 0 ){
-    def label = params.LABEL1
+if( buildno % 2 == 0 ){
+    def label = "backend_spot_1"
 }else {
-    def label = params.LABEL2
+    def label = "backend_spot_2"
 }
 
 
