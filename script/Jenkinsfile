@@ -66,6 +66,8 @@ def build_setup(category) {
 	
 	     sh '''#!/bin/bash
 	        source /etc/profile.d/rvm.sh 
+	        echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
+            sed -i "s/sandbox_test/sandbox${BUILD_NUMBER}/g" config/database.yml
 	        bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
             mkdir tmp/sandbox_test
             git init tmp/sandbox_test/
