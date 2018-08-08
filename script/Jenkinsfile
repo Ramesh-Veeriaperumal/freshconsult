@@ -114,12 +114,11 @@ def execute_test_cases(category) {
 }
 
 //Publish Reports
-def publish_report() {
+def publish_report(category) {
         
         publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false,
                              reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html',
-                             reportName: 'HTML report', reportTitles: ''])
-        junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'
+                             reportName: "coverage $category", reportTitles: ''])
 }
 
 
@@ -149,7 +148,7 @@ def distributed_run(category) {
 			if(category != 'pronto') {
              //Publish Report    
 			    stage("Publish Report for "+category) {
-			          publish_report()                        
+			          publish_report(category)                        
 			    }           
 
 		    }
@@ -169,6 +168,14 @@ parallel Public: {
        distributed_run("pronto");
 }
 
+
+//Ends results published here
+timestamps {     
+	     //Machine label where this jobs needs to run
+		 node("master") {
+		 	junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'		    
+		 }	
+}	 
 
 
 
