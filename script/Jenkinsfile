@@ -126,7 +126,7 @@ def distributed_run(category) {
         
    timestamps {     
 	     //Machine label where this jobs needs to run
-		 node(label) {
+		 node("backend_spot_1") {
 		 
 		    //Checkout stage
 		    	stage("checkout for "+category) {
