@@ -134,6 +134,25 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
   end
 
+  def test_update_with_convert_call_to_ticket_with_subject_and_description_params
+    ::Freshcaller::Call.destroy_all
+    set_auth_header
+    call_id = get_call_id
+    user = @account.technicians.first
+    create_call(fc_call_id: call_id, account_id: @account.id)
+    subject = 'Call with Test and +919789814486'
+    description = 'Call description'
+    params = convert_call_params(call_id, 'completed').merge(agent_email: user.email, subject: subject, description: description)
+    put :update, construct_params(params)
+    call = ::Freshcaller::Call.where(fc_call_id: call_id).all.first
+    call_notable = call.notable.notable
+    assert_equal user.id, call_notable.responder_id
+    assert_equal subject, call_notable.subject
+    assert_equal description, call_notable.description
+    match_json(ticket_with_note_pattern(call))
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  end
+
   def test_update_with_convert_call_to_note_params
     set_auth_header
     call_id = get_call_id
