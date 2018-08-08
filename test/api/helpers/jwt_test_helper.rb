@@ -1,4 +1,5 @@
 module JwtTestHelper
+  TWITTER = 'twitter'.freeze
 
   def generate_jwt_token(user_id, account_id, jti, iat, algorithm = 'HS256')
     payload = {:jti => jti, :iat => iat,
@@ -8,6 +9,7 @@ module JwtTestHelper
   end
 
   def generate_custom_jwt_token(source_name)
+    return generate_twitter_jwt(source_name) if source_name == TWITTER
     domain = @account.full_domain.split('.')[0]
     account_details = {"domain_name": domain,
                      "timestamp":Time.now.iso8601
@@ -19,6 +21,11 @@ module JwtTestHelper
     payload = {:enc_payload =>encoded_payload}
     custom_jwt = JWT.encode payload, CHANNEL_API_CONFIG[source_name]['jwt_secret'], 'HS256', {:source=>source_name}
     custom_jwt
+  end
+
+  def generate_twitter_jwt(source_name)
+    payload = { enc_payload: { 'account_id' => @account.id, "timestamp": Time.now.iso8601 } }
+    JWT.encode payload, CHANNEL_API_CONFIG[source_name]['jwt_secret'], 'HS256', source: source_name
   end
 
   def set_jwt_auth_header(source)

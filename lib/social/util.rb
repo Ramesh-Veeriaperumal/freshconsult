@@ -218,7 +218,7 @@ module Social::Util
     # EUC POD with the handle migrated from the EU data center.
     Account.current.launched?(:euc_migrated_twitter) && ismember?(EU_TWITTER_HANDLES, "#{Account.current.id}:#{handle.twitter_user_id}")
   end
-
+  
   def get_oauth_credential(twt_handle)
     client_id, client_secret = consumer_app_details(twt_handle)
     { consumer_key: client_id,
@@ -229,5 +229,13 @@ module Social::Util
 
   def tweet_media_content_exists?(twt)
     twt[:twitter_extended_entities].present? && twt[:twitter_extended_entities]['media'].present?
+  end
+
+  def encrypt(data)
+    aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+    aes.encrypt
+    aes.key = TwitterConfig::CENTRAL_SECRET_KEY
+    aes.iv  = TwitterConfig::CENTRAL_SECRET_IV
+    Base64.encode64(aes.update(data) + aes.final)
   end
 end

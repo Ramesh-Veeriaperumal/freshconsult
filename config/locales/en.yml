@@ -399,7 +399,9 @@ en:
   requester_title: Requester Title
   requester_time_zone: Requester Timezone
   requester_language: Requester Language
+  requester_segment: Requester Segment
   company_domain: Company Domain
+  company_segment: Company Segment
   eight: 8 Hours
   security_code: Security code
   example: example

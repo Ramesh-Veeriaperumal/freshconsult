@@ -6,26 +6,32 @@ module ChannelIntegrations
 
       def process(payload)
         command = get_command(payload)
-        klass = construct_klass(payload)
+        klass_instance, perform = service_klass_instance(payload, command)
+        raise 'Could not find matching class for command: #{command}' if klass_instance.blank?
 
-        if klass
-          klass.new.safe_send(command, payload)
-        else
-          invalid_action_message
-        end
-      rescue => e
+        klass_instance.safe_send(perform, payload)
+      rescue StandardError => e
         Rails.logger.debug "Exception in ChannelIntegrationsCmds, #{e.message}"
-        default_exception_message
+        # The individual services has to catch their errors. If not we will raise and retry again in SQS.
+        raise e
       end
 
       private
 
-        def construct_klass(payload)
-          klass_name = construct_owner_class(payload, :command)
-          klass = Module.const_get(klass_name)
-          klass.is_a?(Class) ? klass : nil
-        rescue => e
-          nil
+        def service_klass_instance(payload, command)
+          common_module_name = COMMON_COMMANDS_MODULES_MAPPING[command]
+          klass_name = service_klass_name(payload, :command)
+          klass = klass_name.constantize
+
+          if service_klass_exists?(klass, command)
+            [klass.new, klass_method_format(command).to_sym]
+          elsif common_module_name.present?
+            [common_module_name.constantize, command]
+          end
+        end
+
+        def service_klass_exists?(klass, command)
+          klass && klass.is_a?(Class) && klass.method_defined?(klass_method_format(command).to_sym)
         end
     end
   end

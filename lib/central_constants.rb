@@ -13,6 +13,8 @@ module CentralConstants
     'Group' => '0',
     'Post' => '0',
     'Helpdesk::TimeSheet' => '0',
-    'DashboardAnnouncement' => '0'
+    'DashboardAnnouncement' => '0',
+    'Social::TwitterHandle' => '0',
+    'Social::TwitterStream' => '0'
   }
 end

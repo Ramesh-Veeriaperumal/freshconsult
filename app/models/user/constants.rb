@@ -76,4 +76,6 @@ class User < ActiveRecord::Base
     :language, :address, :external_id, :unique_external_id, :perishable_token]
 
   FRESHID_IGNORED_EMAIL_IDS = ["custserv@freshdesk.com"]
+
+  VA_LAZY_EVALUATIONS = [:segments].freeze
 end
