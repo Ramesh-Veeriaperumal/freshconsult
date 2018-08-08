@@ -26,11 +26,11 @@ def branch_checkout(category) {
                             doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
                             userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])
      }else {
-          checkout ([$class: 'GitSCM', branches: [[name: sourceBranch]], 
-                       browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/freshdesk/helpkit.git'], 
-                       doGenerateSubmoduleConfigurations: false,extensions: [[$class: 'PreBuildMerge', 
-                       options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'default', mergeTarget: targetBranch]]], 
-                       submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]]) 
+                     
+          checkout([$class: 'GitSCM', branches: [[name: sourceBranch]],
+                            doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
+                            userRemoteConfigs: [[name: 'origin',refspec: '+refs/pull/*:refs/remotes/origin/pr/*',
+                            url: 'git@github.com:freshdesk/helpkit.git']]])             
      }
 
 }
@@ -52,7 +52,7 @@ def build_setup(category) {
 	        bundle install
 	      	'''
 	      	
-	    if(buildType == 'public' || buildType == 'private')  {
+	    if(category == 'public' || category == 'private')  {
 	
 	     sh '''#!/bin/bash
             echo "create database helpkit${BUILD_NUMBER}" | mysql -uroot
@@ -61,7 +61,7 @@ def build_setup(category) {
             '''   
 	     }
 	     
-	    if(buildType == 'sandbox')  {
+	    if(category == 'sandbox')  {
 	
 	     sh '''#!/bin/bash
             echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
@@ -85,6 +85,7 @@ def execute_test_cases(category) {
         if(category == 'pronto') {
             sh """#!/bin/bash
                source /etc/profile.d/rvm.sh
+               bundle install
                PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$pullId pronto run -f github_status github_pr -c origin/$targetBranch
                """
         }
