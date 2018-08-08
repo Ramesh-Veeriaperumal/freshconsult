@@ -8,13 +8,15 @@
  targetBranch = "falcon-prestaging"
 
 
+ jobName = env.JOB_NAME 
  build   = env.BUILD_NUMBER
  buildno = build.toInteger()
+ label = "";
   
 if( buildno % 2 == 0 ){
-    def label = "backend_spot_1"
+     label = "backend_spot_1"
 }else {
-    def label = "backend_spot_2"
+     label = "backend_spot_2"
 }
 
 
@@ -39,24 +41,22 @@ def branch_checkout(category) {
 //Build setup based on category 
 def build_setup(category) {
         
-        sh  '''#!/bin/bash
+        sh  """#!/bin/bash
 	        source /etc/profile.d/rvm.sh
-	        yes | cp -rf /home/jenkins/s3.yml /home/jenkins/workspace/${JOB_NAME}/config/s3.yml
-	        yes | cp -rf /home/jenkins/redis.yml /home/jenkins/workspace/${JOB_NAME}/config/redis.yml
-	        yes | cp -rf /home/jenkins/elasticsearch.yml /home/jenkins/workspace/${JOB_NAME}/config/elasticsearch.yml
-	        yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/${JOB_NAME}/config/channel_api_keys.yml
+	        yes | cp -rf /home/jenkins/s3.yml /home/jenkins/workspace/$jobName/config/s3.yml
+	        yes | cp -rf /home/jenkins/redis.yml /home/jenkins/workspace/$jobName/config/redis.yml
+	        yes | cp -rf /home/jenkins/elasticsearch.yml /home/jenkins/workspace/$jobName/config/elasticsearch.yml
+	        yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/$jobName/config/channel_api_keys.yml
 	        sudo service mysql start
 	        sudo service elasticsearch start
 	        sudo service postgresql start
 	        redis-server --daemonize yes
 	        bundle install
-	      	'''
+	      	"""
 	      	
 	    if(category == 'public' || category == 'private')  {
 	
 	     sh '''#!/bin/bash
-            echo "create database helpkit${BUILD_NUMBER}" | mysql -uroot
-            sed -i "s/helpkit_test_rails3/helpkit${BUILD_NUMBER}/g" config/database.yml
             bundle exec rake db:bootstrap RAILS_ENV=test
             '''   
 	     }
@@ -64,9 +64,6 @@ def build_setup(category) {
 	    if(category == 'sandbox')  {
 	
 	     sh '''#!/bin/bash
-            echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
-            sed -i "s/sandbox_test/sandbox${BUILD_NUMBER}/g" config/database.yml
-            bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
             mkdir tmp/sandbox_test
             git init tmp/sandbox_test/
             git config --global user.email "sample@freshdesk.com"
@@ -127,7 +124,7 @@ def distributed_run(category) {
         
    timestamps {     
 	     //Machine label where this jobs needs to run
-		 node("backend_spot_1") {
+		 node(label) {
 		 
 		    //Checkout stage
 		    	stage("checkout for "+category) {
