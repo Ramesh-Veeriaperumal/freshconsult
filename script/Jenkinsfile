@@ -118,7 +118,7 @@ def execute_test_cases(category) {
 //Publish Reports
 def publish_report(category) {
         
-        publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false,
+        publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
                              reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html',
                              reportName: "coverage $category", reportTitles: ''])
 }
