@@ -11,4 +11,13 @@
 	#tickets-expanded .subject_style{
 		margin-left:8px;
 	}
+	.ticket-view-saveas:after {
+		left: 12px !important;
+	}
+	#view_manage_links {
+		text-align: left;
+	}
+	.ticket-view-save:before {
+		right: 13px;
+	}
 }
