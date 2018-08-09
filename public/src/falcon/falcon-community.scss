@@ -248,11 +248,10 @@ body.community{
 	    	font-size: 20px;
 	    	a{
     		   font-size: 13px;
-    			 @include margin-left(-28px);
-	    	}
+    		}
 	    	a:hover ~ .muted {
 			    color: $link-hover;
-			}
+			  }
 	    	.muted{
 	    		font-size: 13px;
     			color: $link-color;
