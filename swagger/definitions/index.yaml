@@ -477,6 +477,8 @@
     $ref: './request/custom_dashboard/create_announcement.yaml'
   announcement_end:
     $ref: './request/custom_dashboard/end_announcement.yaml'
+  fetch_announcement:
+    $ref: './response/dashboard/custom/fetch_announcement.yaml'
 
   #sandbox
   sandboxes_index:
