@@ -153,6 +153,13 @@
               "asc",
               "desc"
             ]
+          },
+          {
+            "name": "article_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "description": "Article ID for which feedbacks have to be displayed"
           }
         ],
         "responses": {

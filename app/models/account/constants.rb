@@ -213,7 +213,7 @@ class Account < ActiveRecord::Base
     :post_central_publish => false, :audit_logs_central_publish => false, :twitter_common_redirect => false,
     :euc_migrated_twitter => false, :new_onboarding => false, :new_ticket_recieved_metric => false,
     :audit_log_ui => false, :es_msearch => true, :canned_forms => false, :attachment_virus_detection => false,
-    undo_send: false, timeline: false, twitter_microservice: false, twitter_handle_publisher: false
+    undo_send: false, timeline: false, twitter_microservice: true, twitter_handle_publisher: true
   }
 
   BLOCK_GRACE_PERIOD = 90.days

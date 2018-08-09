@@ -95,12 +95,17 @@ window.App.Discussions = window.App.Discussions || {};
 
     setFirstEmail: function() {
       if (this.firstEmail.empty()) {
-        this.firstEmail = $('#topic_body_html').text(); 
+        this.firstEmail = $('#topic_forums_description').text(); 
       }
     },
 
     setTopicBody: function(content) {
-      $('#topic_body_html').setCode(content);
+      var forum_topic_description = $('#topic_forums_description');
+      if(forum_topic_description.data('newEditor')) {
+        forum_topic_description.data('froala.editor').html.insert(content)
+      } else {
+        forum_topic_description.setCode(content);
+      }
     },
 
     removeAttachment: function() {
