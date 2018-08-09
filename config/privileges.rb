@@ -140,6 +140,13 @@ Authority::Authorization::PrivilegeList.build do
     resource :"wf/filter", :only => [:index, :update_filter, :save_filter, :delete_filter]
     resource :"profile"
 
+    # Used for API V2 canned_response
+    resource :"canned_response_folder", only: [:index, :show]
+    resource :"canned_response", only: [:index, :show]
+
+    # Used for API V2 scenario_automations
+    resource :"scenario_automation", only: [:index]
+
     # Used for API V2
     resource :"conversation", only: [:create, :ticket_conversations]
     resource :"ticket", :only => [:show, :create, :index, :search]
