@@ -1,45 +1,45 @@
 development:
-  twitter_realtime_queue: social_gnip_2_0_tweet_dev
-  facebook_realtime_queue: social_fb_feed_dev
-  search_etl_queue: search_etl_queue_dev
-  count_etl_queue: count_etl_queue_dev
-  sqs_es_index_queue: sqs_es_index_queue_dev
-  custom_mailbox_realtime_queue: custom_mailbox_dev
-  forums_moderation_queue: forum_moderation_dev
-  helpdesk_reports_export_queue: helpdesk_reports_export_dev
-  reports_etl_msg_queue: reports_etl_msgs_dev
-  iris_etl_msg_queue: iris_etl_msgs_dev
-  cti_call_queue: cti_call_dev
-  activity_queue: fd_activities_dev
-  activity_export_queue: fd_activities_export_dev
-  reports_service_export_queue: reports_service_export_dev
-  freshfone_call_tracker: freshfone_call_tracker_development
-  cti_screen_pop: cti_screen_pop_dev
-  fb_message_realtime_queue: social_fb_messenger_dev
-  freshfone_call_notifier_queue: freshfone_call_notifier_development
-  collab_agent_update_queue: collab_dev
-  collab_ticket_update_queue: collab_dev
-  auto_refresh_queue: auto_refresh_new_dev
-  auto_refresh_alb_queue: auto_refresh_alb_dev
-  agent_collision_queue: agent_collision_new_dev
-  agent_collision_alb_queue: agent_collision_alb_dev
-  marketplace_app_queue: marketplace_app_dev
-  free_customer_email_queue: free_customer_email_queue_dev
-  active_customer_email_queue: active_customer_email_queue_dev
-  trial_customer_email_queue: trial_customer_email_queue_dev
-  default_email_queue: default_email_queue_dev
-  email_dead_letter_queue: failed_emails_queue_dev
-  fd_email_failure_reference: fd_email_failure_reference_dev
-  email_events_queue: fd_email_spam
-  scheduled_ticket_export_config: scheduled_ticket_export_config_dev
-  scheduled_ticket_export_complete: scheduled_ticket_export_complete_dev
-  scheduled_export_payload_enricher_queue: scheduled_export_payload_enricher_queue_dev
-  scheduled_ticket_export_queue: scheduled_ticket_export_queue_dev 
-  scheduled_user_export_queue: scheduled_user_export_queue_dev 
-  scheduled_company_export_queue: scheduled_company_export_queue_dev
-  channel_framework_services: fd_cf_services_dev
-  bot_feedback_queue: bot_feedback_staging
-  custom_mailbox_status: custom_mailbox_status_dev
+  # twitter_realtime_queue: social_gnip_2_0_tweet_dev
+  # facebook_realtime_queue: social_fb_feed_dev
+  # search_etl_queue: search_etl_queue_dev
+  # count_etl_queue: count_etl_queue_dev
+  # sqs_es_index_queue: sqs_es_index_queue_dev
+  # custom_mailbox_realtime_queue: custom_mailbox_dev
+  # forums_moderation_queue: forum_moderation_dev
+  # helpdesk_reports_export_queue: helpdesk_reports_export_dev
+  # reports_etl_msg_queue: reports_etl_msgs_dev
+  # iris_etl_msg_queue: iris_etl_msgs_dev
+  # cti_call_queue: cti_call_dev
+  # activity_queue: fd_activities_dev
+  # activity_export_queue: fd_activities_export_dev
+  # reports_service_export_queue: reports_service_export_dev
+  # freshfone_call_tracker: freshfone_call_tracker_development
+  # cti_screen_pop: cti_screen_pop_dev
+  # fb_message_realtime_queue: social_fb_messenger_dev
+  # freshfone_call_notifier_queue: freshfone_call_notifier_development
+  # collab_agent_update_queue: collab_dev
+  # collab_ticket_update_queue: collab_dev
+  # auto_refresh_queue: auto_refresh_new_dev
+  # auto_refresh_alb_queue: auto_refresh_alb_dev
+  # agent_collision_queue: agent_collision_new_dev
+  # agent_collision_alb_queue: agent_collision_alb_dev
+  # marketplace_app_queue: marketplace_app_dev
+  # free_customer_email_queue: free_customer_email_queue_dev
+  # active_customer_email_queue: active_customer_email_queue_dev
+  # trial_customer_email_queue: trial_customer_email_queue_dev
+  # default_email_queue: default_email_queue_dev
+  # email_dead_letter_queue: failed_emails_queue_dev
+  # fd_email_failure_reference: fd_email_failure_reference_dev
+  # email_events_queue: fd_email_spam
+  # scheduled_ticket_export_config: scheduled_ticket_export_config_dev
+  # scheduled_ticket_export_complete: scheduled_ticket_export_complete_dev
+  # scheduled_export_payload_enricher_queue: scheduled_export_payload_enricher_queue_dev
+  # scheduled_ticket_export_queue: scheduled_ticket_export_queue_dev 
+  # scheduled_user_export_queue: scheduled_user_export_queue_dev 
+  # scheduled_company_export_queue: scheduled_company_export_queue_dev
+  # channel_framework_services: fd_cf_services_dev
+  # bot_feedback_queue: bot_feedback_staging
+  # custom_mailbox_status: custom_mailbox_status_dev
 staging:
   twitter_realtime_queue: social_gnip_2_0_tweet_staging
   facebook_realtime_queue: social_fb_feed_staging

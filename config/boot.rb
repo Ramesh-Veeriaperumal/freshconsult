@@ -12,15 +12,15 @@ env = ENV['RAILS_ENV'] || "development"
 
 ENV['ENABLE_BOOTSNAP'] = "true" if env == 'development'
 
-if ENV['ENABLE_BOOTSNAP'] == "true"
-  require 'bootsnap'
-  Bootsnap.setup(
-    cache_dir:            'tmp/cache',
-    development_mode:     env == 'development',
-    load_path_cache:      true,  # Optimize the LOAD_PATH with a cache
-    autoload_paths_cache: false, # Optimize ActiveSupport autoloads with cache
-    disable_trace:        true,  # (Alpha) Set `RubyVM::InstructionSequence.compile_option = { trace_instruction: false }`
-    compile_cache_iseq:   false,  # Compile Ruby code into ISeq cache, breaks coverage reporting.
-    compile_cache_yaml:   false   # Compile YAML into a cache
-  )
-end
+# if ENV['ENABLE_BOOTSNAP'] == "true"
+#   require 'bootsnap'
+#   Bootsnap.setup(
+#     cache_dir:            'tmp/cache',
+#     development_mode:     env == 'development',
+#     load_path_cache:      true,  # Optimize the LOAD_PATH with a cache
+#     autoload_paths_cache: false, # Optimize ActiveSupport autoloads with cache
+#     disable_trace:        true,  # (Alpha) Set `RubyVM::InstructionSequence.compile_option = { trace_instruction: false }`
+#     compile_cache_iseq:   false,  # Compile Ruby code into ISeq cache, breaks coverage reporting.
+#     compile_cache_yaml:   false   # Compile YAML into a cache
+#   )
+# end
