@@ -460,9 +460,6 @@ Helpkit::Application.routes.draw do
         post :announcements, to: 'ember/custom_dashboard#create_announcement'
         put :announcements, to: 'ember/custom_dashboard#end_announcement'
         get :announcements, to: 'ember/custom_dashboard#get_announcements'
-        resources :announcements do
-          get '', to: 'ember/custom_dashboard#fetch_announcement'
-        end
       end
 
       collection do

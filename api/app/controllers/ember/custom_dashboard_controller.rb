@@ -15,7 +15,6 @@ module Ember
 
     before_filter :load_dashboard_from_cache, only: :show
     before_filter :load_objects, only: :index
-    before_filter :load_announcement, only: :fetch_announcement
 
     def create
       if @item.save
@@ -80,7 +79,7 @@ module Ember
       check_announcement_feature
       return unless validate_req_params(@item, announcement_text: params[:announcement_text])
       build_announcement
-      @dashboard_announcement.save ? @announcement = announcement_for_dashboard : render_errors(@dashboard_announcement.errors)
+      @dashboard_announcement.save ? @announcement = fetch_announcement : render_errors(@dashboard_announcement.errors)
     end
 
     def end_announcement
@@ -92,12 +91,7 @@ module Ember
 
     def get_announcements
       check_announcement_feature
-      @announcements, response.api_meta = fetch_announcements_with_count(params['page'])
-    end
-
-    def fetch_announcement
-      check_announcement_feature
-      @announcement = fetch_announcement_with_viewers
+      @announcements = @item.announcements.as_json.map { |an| an['dashboard_announcement'] }
     end
 
     private

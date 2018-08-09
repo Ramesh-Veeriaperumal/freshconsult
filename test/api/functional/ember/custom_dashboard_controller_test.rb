@@ -1192,21 +1192,5 @@ module Ember
       assert_response 200
       match_announcements_index(JSON.parse(response.body))
     end
-
-    def test_fetch_announcement_without_privilege
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(false)
-      get :fetch_announcement, controller_params(id: @@scorecard_dashboard.id, version: 'private')
-      assert_response 403
-    end
-
-    def test_fetch_announcement
-      User.any_instance.stubs(:privilege?).with(:manage_dashboard).returns(true)
-      user_ids = [21, 4234, 4342]
-      Ember::CustomDashboardController.any_instance.stubs(:fetch_data_from_service).returns(iris_stub(user_ids))
-      announcement = @@scorecard_dashboard.announcements.first
-      get :fetch_announcement, controller_params(id: @@scorecard_dashboard.id, announcement_id: announcement.id, version: 'private')
-      assert_response 200
-      match_announcement_show(JSON.parse(response.body), announcement, user_ids)
-    end
   end
 end
