@@ -10,6 +10,9 @@
 }
 .sidepanel{
 	border-bottom:1px solid $common-border-color;
+	word-break: break-word;
+  -ms-word-wrap: break-word;
+  word-wrap: break-word;
 	&:last-child{
 		border-bottom:0;
 	}
@@ -23,7 +26,7 @@
 		font-weight:bold;
 		line-height:1.4em;
 	}
-	
+
 	.list-decimal {
 		list-style: decimal;
 		padding-left: 15px;
@@ -395,7 +398,7 @@ div.addReminder{
 	.externalid-title {
 	  font-weight: bold;
 	}
-	.externalid-content { 
+	.externalid-content {
 		margin-bottom: 8px;
 		line-height: 1.4
 	 }
