@@ -1909,3 +1909,9 @@ div[class$="-toggle"]{
     opacity: 1;
   }
 }
+
+.list-page.group-management .table .item_info:after,
+.pagearea .edit_role .lead:after,
+.modal-header .modal-roles-header:after{
+   content: "\200E";
+}
