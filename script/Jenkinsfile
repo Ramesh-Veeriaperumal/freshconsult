@@ -139,24 +139,31 @@ def distributed_run(category) {
 		    //Checkout stage
 		    	stage(category + " Tests") {
 				    
-				    //Branch checkout
-				    branch_checkout(category)
-				    
-				    //Build setup
-				    if(category != 'pronto') {		
-		    			//Intialization process
-		            	build_setup(category)
-		    		}
-		    		
-		    		//Executing testcases
-		    		execute_test_cases(category)
-		    		
-		    		if(category != 'pronto') {
-		    		     //Publish Report    
-				            publish_report(category)                        
-		    		   }
+					    //Branch checkout
+					    branch_checkout(category)
+					    
+					    //Build setup
+					    if(category != 'pronto') {		
+			    			//Intialization process
+			            	build_setup(category)
+			    		}
+			    	
+			    	     //Executing test cases
+	                     try{
+				               execute_test_cases(category)
+				         }
+				         catch (e) {
+				               "issue with test execution" + e          
+				         } 
+			    		
+			    		 finally {
+				    		if(category != 'pronto') {
+				    		     //Publish Report    
+						            publish_report(category)                        
+				    		   }
+				         }		   
 		    		  
-                    }
+                  }
 		    		   
 				}
 		 }	
