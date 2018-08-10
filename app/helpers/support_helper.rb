@@ -211,14 +211,16 @@ module SupportHelper
 
   # User image page
   def profile_image user, more_classes = "", width = "50px", height = "50px", profile_size = 'thumb'
+    return Rails.logger.error "User is coming as empty..." if user.blank?
     output = []
     output << %(  <div class="user-pic-thumb image-lazy-load #{more_classes}"> )
     if user['profile_url']
       output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" rel="lazyloadimage"  data-src="#{user['profile_url']}" /> )
     else
-      username = user['name'].lstrip
-
-      if isalpha(username[0])
+      username = user['name'] 
+      return Rails.logger.error('@@User name is coming as Empty') if username.blank?
+      username = username.lstrip
+      if username[0] && isalpha(username[0])
         output << %(<div class="#{profile_size} avatar-text circle text-center bg-#{unique_code(username)}">)
         output << %( #{username[0]} )
         output << %( </div>)
