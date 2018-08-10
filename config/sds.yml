@@ -1,6 +1,7 @@
 defaults: &defaults
   global_enable: true
   service_url: "http://localhost:8080"
+  outgoing_block_mrr_threshold: 300
   timeout: 2.0
 
 development:
