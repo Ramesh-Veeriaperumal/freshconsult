@@ -52,16 +52,9 @@ def build_setup(category) {
 	        sudo service postgresql start
 	        redis-server --daemonize yes
 	        bundle install
+            bundle exec rake db:bootstrap RAILS_ENV=test
 	      	"""
 	      	
-	    if(category == 'public' || category == 'private')  {
-	
-	     sh '''#!/bin/bash
-	        source /etc/profile.d/rvm.sh 
-            bundle exec rake db:bootstrap RAILS_ENV=test
-            '''   
-	     }
-	     
 	    if(category == 'sandbox')  {
 	
 	     sh '''#!/bin/bash
@@ -76,8 +69,6 @@ def build_setup(category) {
             '''   
 	     }
  	
-	      	
-        
 }
 
 
