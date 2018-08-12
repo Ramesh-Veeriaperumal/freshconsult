@@ -266,6 +266,9 @@ module Redis::RedisKeys
   #From regex of different languages used in quoted text parsing
   QUOTED_TEXT_PARSE_FROM_REGEX = "QUOTED_TEXT_PARSE_FROM_REGEX"
 
+  #deprecated style parsing in email html content
+  DEPRECATED_STYLE_PARSING = "DEPRECATED_STYLE_PARSING:%{account_id}"
+
   # key for enabling fd email service to all the account
 
   ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE = "ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE"
