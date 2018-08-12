@@ -19,7 +19,7 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
     call_delegator = CallDelegator.new(@item, @options.slice(:ticket_display_id, :agent_email, :contact_id))
     if call_delegator.valid?
       load_call_attributes call_delegator
-      handle_call_status_flows unless skip_ticket_actions?
+      handle_call_status_flows
       @item.recording_status = params[:recording_status] if params[:recording_status].present?
       if @item.save
         response.api_root_key = 'freshcaller_call'
@@ -104,10 +104,6 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
 
     def reset_current_user
       User.reset_current_user
-    end
-
-    def skip_ticket_actions?
-      @ticket.blank? && (@item.recording_status == RECORDING_STATUS_HASH[:completed])
     end
 
     def update_existing_note?

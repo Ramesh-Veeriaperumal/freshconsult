@@ -9,9 +9,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/tickets/collab", only: [:notify]
     resource :"ember/tickets/delete_spam", only: %i(spam bulk_spam unspam bulk_unspam)
     resource :"ember/tickets/activity"
-    resource :"ember/scenario_automation", only: [:index]
-    resource :"ember/canned_response_folder", only: %i(index show)
-    resource :"ember/canned_response", only: %i(show index search)
+    resource :"ember/canned_response", only: %i(search)
     resource :"ember/ticket", only: %i(index show create execute_scenario spam latest_note create_child_with_template parse_template fetch_errored_email_details suppression_list_alert)
     resource :"ember/tickets/bulk_action", only: %i(bulk_execute_scenario bulk_link)
     resource :"ember/tickets/associate", only: [:link, :unlink, :associated_tickets, :prime_association]

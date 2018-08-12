@@ -152,6 +152,7 @@ module Admin::RolesHelper
                     { :dom_type => "hidden_field", :id => "manage_ticket_list_views" },
                     { :dom_type => "hidden_field", :id => "manage_ticket_templates" },
                     { :dom_type => "hidden_field", :id => "manage_bots", not_display: !current_account.support_bot_enabled? },
+                    { :dom_type => "hidden_field", :id => "manage_tags" },
                     { :dom_type => "check_box",    :id => "manage_account" }]
 
                }]

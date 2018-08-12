@@ -121,4 +121,5 @@ helpdesk:
     - hyper_trail
     - default_data_config
     - disposable_email_domains
+    - default_data_config
     - emailserv_request
