@@ -12,6 +12,12 @@
       }
     }
   }
+  .edit_helpdesk_ticket_field, .edit_company_field{
+    .custom-field-form {
+      margin-right: 60px;
+      margin-left: 10px;
+    }
+  }
   .survey_rating_order {
     .rating_order_select {
       .bad_to_good, .good_to_bad {
@@ -26,22 +32,6 @@
           }
         }
       }
-    }
-  }
-
-  .form-horizontal select {
-    content: "\200E‎";
-  }
-
-  input[type="radio"]:checked {
-    &::after {
-      top: -24px;
-      right: inherit;
-      left: -3px;
-    }
-    &::before {
-      left: inherit;
-      right: -1px;
     }
   }
 }
