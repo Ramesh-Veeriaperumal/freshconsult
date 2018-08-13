@@ -12,6 +12,6 @@ class Dashboard < ActiveRecord::Base
     d.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
     d.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
     d.add :groups, template: :dashboard_group_central_publish
-    d.add proc { |x| x.access_type == ALL_AGENTS }, as: :all_agents
+    d.add proc { |x| x.access_type == ALL_AGENTS ? 1 : 0 }, as: :all_agents
   end
 end
