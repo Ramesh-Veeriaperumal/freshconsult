@@ -2,7 +2,10 @@ module Portal::Helpers::DiscussionsHelper
 
 	# Default topic filter that shows up in the topic list
 	def default_topic_filters forum
-		return Rails.logger.error "Forum is coming as empty. Account:#{Account.current.inspect}" unless forum
+		if !forum
+		  Rails.logger.error "Forum is empty::Account:#{Account.current.inspect}"
+		  return
+		end
 		output = []
 		output << %(<ul class="nav nav-pills nav-filter">)
 			forum.allowed_filters.each do |f|
