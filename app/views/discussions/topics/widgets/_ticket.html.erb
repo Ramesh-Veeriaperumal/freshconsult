@@ -1,7 +1,7 @@
 <div class="widget break-word">
   <% if topic.ticket.nil? || topic.ticket.deleted %>
     <% if falcon_enabled? %>
-      <strong><%= link_to t('discussions.topics.convert_to_ticket'), '/a/tickets/new', target: '_top', id: 'new-topic-ticket' %></strong>
+      <strong><%= link_to t('discussions.topics.convert_to_ticket'), "/a/tickets/new?topicId=#{topic.id}", target: '_top', id: 'new-topic-ticket' %></strong>
     <% else %>
       <strong><%= link_to t('discussions.topics.convert_to_ticket'), new_helpdesk_ticket_path(:topic_id => topic.id) %></strong>
     <% end %>
