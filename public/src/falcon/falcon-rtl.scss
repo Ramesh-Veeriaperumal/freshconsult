@@ -4,7 +4,7 @@
     margin-right: 350px;
     margin-left: 0;
   }
-  .select2-container .select2-choice .select2-arrow {
+  .select2-container .select2-choice .select2-arrow{
     b {
       transform: rotate(180deg);
       &::after {
@@ -12,10 +12,20 @@
       }
     }
   }
-  .edit_helpdesk_ticket_field, .edit_company_field{
-    .custom-field-form {
-      margin-right: 60px;
-      margin-left: 10px;
+  .survey_rating_order {
+    .rating_order_select {
+      .bad_to_good, .good_to_bad {
+        padding-right: 50px;
+        b.caret {
+          transform: rotate(360deg);
+          &:before {
+            right:46px;
+          }
+          &:after {
+            right:50px;
+          }
+        }
+      }
     }
   }
 }
