@@ -28,4 +28,20 @@
       }
     }
   }
+
+  .form-horizontal select {
+    content: "\200E‎";
+  }
+
+  input[type="radio"]:checked {
+    &::after {
+      top: -24px;
+      right: inherit;
+      left: -3px;
+    }
+    &::before {
+      left: inherit;
+      right: -1px;
+    }
+  }
 }
