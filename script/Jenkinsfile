@@ -1,11 +1,14 @@
  jobName = env.JOB_NAME 
+ pullId = ""
+ sourceBranch = ""
+ targetBranch = ""
  
  if(jobName.contains("pullrequest")) {
 
      //Assinging neccessary variables
-     echo pullId       = env.ghprbPullId
-     echo sourceBranch = env.ghprbSourceBranch
-     echo targetBranch = env.ghprbTargetBranch
+     echo pullId       = "$params.ghprbPullId"
+     echo sourceBranch = "$params.ghprbSourceBranch"
+     echo targetBranch = "$params.ghprbTargetBranch"
  }
 
  
@@ -21,16 +24,16 @@
 def branch_checkout(category) {
         
      if(category=='pronto') {
-            checkout([$class: 'GitSCM', branches: [[name: sourceBranch]],
+            checkout([$class: 'GitSCM', branches: [[name: "$params.ghprbSourceBranch"]],
                             doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
                             userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])
      }else {
                      
                try {
-	                    checkout ([$class: 'GitSCM', branches: [[name: sourceBranch]], 
+	                    checkout ([$class: 'GitSCM', branches: [[name: "$params.ghprbSourceBranch"]], 
 	                     browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/freshdesk/helpkit.git'], 
 	                     doGenerateSubmoduleConfigurations: false,extensions: [[$class: 'PreBuildMerge', 
-	                     options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'default', mergeTarget: targetBranch]]], 
+	                     options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'default', mergeTarget: "$params.ghprbTargetBranch"]]], 
 	                     submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]]) 
 	            }//If Merge Conflict Occurs build will fail with below message
 		       
@@ -84,7 +87,7 @@ def execute_test_cases(category) {
             sh """#!/bin/bash
                source /etc/profile.d/rvm.sh
                bundle install
-               PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$pullId pronto run -f github_status github_pr -c origin/$targetBranch
+               PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/$params.ghprbTargetBranch
                """
         }
         
