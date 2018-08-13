@@ -201,4 +201,3 @@
       :disable_old_ui: false
       :oauth2: false
       :segments: false
-      :forums : true
