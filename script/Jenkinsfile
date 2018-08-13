@@ -8,7 +8,7 @@
  label   = "backend_spot_$no" 
 
 
-//Specfiy the branch to checkout based on condition
+//Specfiy the branch to checkout based on PR condition
 def branch_checkout() {
         
            try {
