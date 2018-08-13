@@ -5,31 +5,23 @@
  
  //Label name based on build no
  no      = buildno % 2
- label   = "backend_spot_0" 
+ label   = "backend_spot_$no" 
 
 
 //Specfiy the branch to checkout based on condition
-def branch_checkout(category) {
+def branch_checkout() {
         
-     if(category=='pronto') {
-            checkout([$class: 'GitSCM', branches: [[name: "$params.ghprbSourceBranch"]],
+           try {
+	                      checkout([$class: 'GitSCM', branches: [[name: "$params.ghprbSourceBranch"]],
                             doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
                             userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])
-     }else {
-                     
-               try {
-	                    checkout ([$class: 'GitSCM', branches: [[name: "$params.ghprbSourceBranch"]], 
-	                     browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/freshdesk/helpkit.git'], 
-	                     doGenerateSubmoduleConfigurations: false,extensions: [[$class: 'PreBuildMerge', 
-	                     options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'default', mergeTarget: "$params.ghprbTargetBranch"]]], 
-	                     submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]]) 
+
 	            }//If Merge Conflict Occurs build will fail with below message
 		       
 		       catch (e) {
 		                 echo 'This branch is out-of-date with the base branch' + e
 		                 sh 'exit 1'
 		        }          
-     }
 
 }
 
@@ -125,7 +117,7 @@ def distributed_run(category) {
 				    
 					    //Branch checkout
 					  if(jobName.contains("pullrequest")) {
-                         branch_checkout(category)
+                         branch_checkout()
 					   }else{
 					       checkout scm
 					   }
