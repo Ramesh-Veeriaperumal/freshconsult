@@ -11,6 +11,7 @@
  jobName = env.JOB_NAME 
  build   = env.BUILD_NUMBER
  buildno = build.toInteger()
+ no      = buildno % 2
  label   = "backend_spot_$no" 
 
 
