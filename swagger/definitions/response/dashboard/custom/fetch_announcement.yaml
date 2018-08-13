@@ -1,0 +1,24 @@
+type: object
+description: Get an announcement and list of viewers
+properties:
+  announcement:
+    type: object
+    properties:
+      id:
+        type: number
+      announcement_text:
+        type: string
+      dashboard_id:
+        type: number
+      user_id:
+        type: number
+      active:
+        type: boolean
+      created_at:
+        type: string
+      updated_at:
+        type: string
+      viewers:
+        type: array
+        items:
+          type: number

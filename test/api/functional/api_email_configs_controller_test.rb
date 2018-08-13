@@ -9,7 +9,7 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
   def test_index
     get :index, controller_params
     pattern = []
-    Account.current.all_email_configs.reorder(:to_email).all.each do |ec|
+    Account.current.all_email_configs.reorder('primary_role DESC').all.each do |ec|
       pattern << email_config_pattern(ec)
     end
     assert_response 200
@@ -47,7 +47,7 @@ class ApiEmailConfigsControllerTest < ActionController::TestCase
     3.times do
       create_email_config
     end
-    email_configs = Account.current.all_email_configs.reorder(:to_email)
+    email_configs = Account.current.all_email_configs.reorder('primary_role DESC')
     per_page =   email_configs.all.count - 1
     get :index, controller_params(per_page: per_page)
     assert_response 200

@@ -153,6 +153,13 @@
               "asc",
               "desc"
             ]
+          },
+          {
+            "name": "article_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64",
+            "description": "Article ID for which feedbacks have to be displayed"
           }
         ],
         "responses": {
@@ -6583,6 +6590,43 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/get_announcements"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/dashboards/{id}/announcements/{announcement_id}": {
+      "get": {
+        "tags": [
+          "custom dashboard"
+        ],
+        "summary": "Get an announcement and viewers for the announcement",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "number",
+            "format": "int64",
+            "description": "Dashboard ID",
+            "required": true
+          },
+          {
+            "name": "announcement_id",
+            "in": "path",
+            "type": "number",
+            "format": "int64",
+            "description": "Announcement ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/fetch_announcement"
             }
           },
           "403": {
@@ -15599,6 +15643,44 @@
         "deactivate": {
           "type": "boolean",
           "description": "Deactivates an announcement for the dashboard"
+        }
+      }
+    },
+    "fetch_announcement": {
+      "type": "object",
+      "description": "Get an announcement and list of viewers",
+      "properties": {
+        "announcement": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "number"
+            },
+            "announcement_text": {
+              "type": "string"
+            },
+            "dashboard_id": {
+              "type": "number"
+            },
+            "user_id": {
+              "type": "number"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "created_at": {
+              "type": "string"
+            },
+            "updated_at": {
+              "type": "string"
+            },
+            "viewers": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          }
         }
       }
     },

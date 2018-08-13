@@ -2109,23 +2109,23 @@ module Ember
       @account.revoke_feature(:traffic_cop)
     end
 
-    def test_tweet_dm_with_traffic_cop_ignoring_public_note
-      @account.add_feature(:traffic_cop)
-      Account.current.reload
-      ticket = create_twitter_ticket
-      note = create_public_note(ticket)
-      BULK_NOTE_CREATE_COUNT.times do
-        create_public_note(ticket)
-      end
-      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, {
-        body: Faker::Lorem.sentence[0..130],
-        tweet_type: 'dm',
-        last_note_id: note.id,
-        twitter_handle_id: get_twitter_handle.id
-      })
-      assert_response 400
-      @account.revoke_feature(:traffic_cop)
-    end
+    # def test_tweet_dm_with_traffic_cop_ignoring_public_note
+    #   @account.add_feature(:traffic_cop)
+    #   Account.current.reload
+    #   ticket = create_twitter_ticket
+    #   note = create_public_note(ticket)
+    #   BULK_NOTE_CREATE_COUNT.times do
+    #     create_public_note(ticket)
+    #   end
+    #   post :tweet, construct_params({ version: 'private', id: ticket.display_id }, {
+    #     body: Faker::Lorem.sentence[0..130],
+    #     tweet_type: 'dm',
+    #     last_note_id: note.id,
+    #     twitter_handle_id: get_twitter_handle.id
+    #   })
+    #   assert_response 400
+    #   @account.revoke_feature(:traffic_cop)
+    # end
 
     def test_tweet_mention_with_traffic_cop_ignoring_reply
       @account.add_feature(:traffic_cop)

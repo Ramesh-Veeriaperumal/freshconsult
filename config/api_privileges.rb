@@ -194,7 +194,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_dashboard do
-    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview, :create_announcement, :end_announcement, :get_announcements]
+    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview, :create_announcement, :end_announcement, :get_announcements, :fetch_announcement]
   end
 
   manage_segments do
