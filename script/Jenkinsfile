@@ -5,7 +5,8 @@
  
  //Label name based on build no
  no      = buildno % 2
- label   = "backend_spot_$no" 
+ //label   = "backend_spot_$no" 
+ label   = "backend_spot_0" 
 
 
 //Specfiy the branch to checkout based on PR condition
