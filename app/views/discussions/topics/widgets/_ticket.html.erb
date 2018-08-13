@@ -1,27 +1,44 @@
 <div class="widget break-word">
-
-	<% if @topic.ticket.nil? || @topic.ticket.deleted %>
-		<strong><%= link_to t('discussions.topics.convert_to_ticket'), new_helpdesk_ticket_path(:topic_id => @topic.id) %></strong>
-
-	<% else %>
-
-		<div class="muted"><%= t('.title') %></div>
-		<% if falcon_enabled? %>
-			<strong><%= @topic.ticket %></strong>
-		<% else %>
-			<strong><%= link_to @topic.ticket, @topic.ticket %></strong>
-		<% end %>
-		<div>
-			<% if @topic.ticket.responder_id? %>
-			<div><%= t('.agent') %>: <%= @topic.ticket.responder.name %></div>
-			<% end %>
-			<% changed_time = @topic.ticket.ticket_states.safe_send(status_changed_time_value_hash(@topic.ticket)[:method]) %>
-			<div>
-				<%= @topic.ticket.status_name %>,
-				<abbr data-livestamp="<%= changed_time.to_i %>"><%= distance_of_time_in_words(Time.now(), changed_time) %></abbr>
-			</div>
-		</div>
-
-	<% end %>
-
+  <% if topic.ticket.nil? || topic.ticket.deleted %>
+    <% if falcon_enabled? %>
+      <strong><%= link_to t('discussions.topics.convert_to_ticket'), '/a/tickets/new', target: '_top', id: 'new-topic-ticket' %></strong>
+    <% else %>
+      <strong><%= link_to t('discussions.topics.convert_to_ticket'), new_helpdesk_ticket_path(:topic_id => topic.id) %></strong>
+    <% end %>
+  <% else %>
+    <div class="muted"><%= t('.title') %></div>
+      <% if falcon_enabled? %>
+        <strong><%= link_to topic.ticket, "/a/tickets/#{topic.ticket.display_id}", target: '_top', id: 'topic-ticket-link' %></strong>
+      <% else %>
+        <strong><%= link_to topic.ticket, topic.ticket %></strong>
+      <% end %>
+    <div>
+      <% if topic.ticket.responder_id? %>
+        <div><%= t('.agent') %>: <%= topic.ticket.responder.name %></div>
+      <% end %>
+      <% changed_time = topic.ticket.ticket_states.safe_send(status_changed_time_value_hash(topic.ticket)[:method]) %>
+      <div>
+        <%= topic.ticket.status_name %>,
+        <abbr data-livestamp="<%= changed_time.to_i %>"><%= distance_of_time_in_words(Time.now(), changed_time) %></abbr>
+      </div>
+    </div>
+  <% end %>
 </div>
+
+<% content_for :onload_script do %>
+  <% if topic.ticket.nil? || topic.ticket.deleted %>
+    topicToTicket('#new-topic-ticket', { action: 'new_topic_ticket', topicId: <%= topic.id %> })
+  <% else %>
+    topicToTicket('#topic-ticket-link', { action: 'topic_ticket', ticketId: <%= topic.ticket.display_id %> })
+  <% end %>
+
+  function topicToTicket(element, data) {
+    jQuery(element).on('click', function (event) {
+      var isIe = document.documentMode || /Edge/.test(navigator.userAgent);
+      if (!isIe) {
+        event.preventDefault();
+        window.parent.postMessage(data, window.location.origin);
+      }
+    });
+  }
+<% end %>
