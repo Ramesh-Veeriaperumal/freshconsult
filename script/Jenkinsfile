@@ -3,9 +3,9 @@
  if(jobName.contains("pullrequest")) {
 
      //Assinging neccessary variables
-     pullId       = params.ghprbPullId
-     sourceBranch = params.ghprbSourceBranch
-     targetBranch = params.ghprbTargetBranch
+     echo pullId       = params.ghprbPullId
+     echo sourceBranch = params.ghprbSourceBranch
+     echo targetBranch = params.ghprbTargetBranch
  }
 
  
