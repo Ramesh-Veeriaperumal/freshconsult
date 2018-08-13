@@ -1,23 +1,10 @@
  jobName = env.JOB_NAME 
- pullId = ""
- sourceBranch = ""
- targetBranch = ""
- 
- if(jobName.contains("pullrequest")) {
-
-     //Assinging neccessary variables
-     echo pullId       = "$params.ghprbPullId"
-     echo sourceBranch = "$params.ghprbSourceBranch"
-     echo targetBranch = "$params.ghprbTargetBranch"
- }
-
- 
  build   = env.BUILD_NUMBER
  buildno = build.toInteger()
  
  //Label name based on build no
  no      = buildno % 2
- label   = "backend_spot_$no" 
+ label   = "backend_spot_0" 
 
 
 //Specfiy the branch to checkout based on condition
@@ -38,7 +25,7 @@ def branch_checkout(category) {
 	            }//If Merge Conflict Occurs build will fail with below message
 		       
 		       catch (e) {
-		                 echo 'This branch is out-of-date with the base branch'
+		                 echo 'This branch is out-of-date with the base branch' + e
 		                 sh 'exit 1'
 		        }          
      }
