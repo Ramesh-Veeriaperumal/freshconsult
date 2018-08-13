@@ -27,6 +27,7 @@ module ApplicationHelper
   include YearInReviewMethods
   include Redis::OthersRedis
   include Redis::RedisKeys
+  include Social::Util
 
   require "twitter"
 
