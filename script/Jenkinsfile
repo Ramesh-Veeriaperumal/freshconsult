@@ -11,13 +11,7 @@
  jobName = env.JOB_NAME 
  build   = env.BUILD_NUMBER
  buildno = build.toInteger()
- label = "";
-  
-if( buildno % 2 == 0 ){
-     label = "backend_spot_1"
-}else {
-     label = "backend_spot_2"
-}
+ label   = "backend_spot_$no" 
 
 
 //Specfiy the branch to checkout based on condition
@@ -160,7 +154,7 @@ def distributed_run(category) {
 				    		if(category != 'pronto') {
 				    		     //Publish Report    
 						            publish_report(category)                        
-				    		   }
+				    		}
 				         }		   
 		    		  
                   }
