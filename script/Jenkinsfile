@@ -2,6 +2,7 @@
  build   = env.BUILD_NUMBER
  buildno = build.toInteger()
  
+ 
  //Label name based on build no
  no      = buildno % 2
  label   = "backend_spot_0" 
