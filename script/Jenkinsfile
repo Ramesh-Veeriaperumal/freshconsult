@@ -1,14 +1,14 @@
-//Assinging neccessary variables
-//def pullId       = params.ghprbPullId
-//def sourceBranch = params.ghprbSourceBranch
-//def targetBranch = params.ghprbTargetBranch
-
- pullId       = "2477"
- sourceBranch = "pipeline-enchancement"
- targetBranch = "falcon-prestaging"
-
-
  jobName = env.JOB_NAME 
+ 
+ if(jobName.contains("pullrequest")) {
+
+     //Assinging neccessary variables
+     pullId       = params.ghprbPullId
+     sourceBranch = params.ghprbSourceBranch
+     targetBranch = params.ghprbTargetBranch
+ }
+
+ 
  build   = env.BUILD_NUMBER
  buildno = build.toInteger()
  no      = buildno % 2
@@ -24,10 +24,18 @@ def branch_checkout(category) {
                             userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])
      }else {
                      
-          checkout([$class: 'GitSCM', branches: [[name: sourceBranch]],
-                            doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
-                            userRemoteConfigs: [[name: 'origin',refspec: '+refs/pull/*:refs/remotes/origin/pr/*',
-                            url: 'git@github.com:freshdesk/helpkit.git']]])             
+               try {
+	                    checkout ([$class: 'GitSCM', branches: [[name: sourceBranch]], 
+	                     browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/freshdesk/helpkit.git'], 
+	                     doGenerateSubmoduleConfigurations: false,extensions: [[$class: 'PreBuildMerge', 
+	                     options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'default', mergeTarget: targetBranch]]], 
+	                     submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]]) 
+	            }//If Merge Conflict Occurs build will fail with below message
+		       
+		       catch (e) {
+		                 echo 'This branch is out-of-date with the base branch'
+		                 sh 'exit 1'
+		        }          
      }
 
 }
@@ -135,8 +143,13 @@ def distributed_run(category) {
 		    	stage(category + " Tests") {
 				    
 					    //Branch checkout
-					    branch_checkout(category)
-					    
+					  if(jobName.contains("pullrequest")) {
+                         branch_checkout(category)
+					   }else{
+					       checkout scm
+					   }
+
+  
 					    //Build setup
 					    if(category != 'pronto') {		
 			    			//Intialization process
@@ -160,7 +173,7 @@ def distributed_run(category) {
 		    		  
                   }
 		    		   
-				}
+			}
 		 }	
    }	 
 
