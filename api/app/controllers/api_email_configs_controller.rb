@@ -2,7 +2,7 @@ class ApiEmailConfigsController < ApiApplicationController
   private
 
     def scoper
-      # Web follows customized order and default order by is name(which is not indexed). Hence falling back to to_emails which is indexed.
-      current_account.all_email_configs.reorder(:to_email)
+      # sorting by primary role so that the max_count_const-EMAIL_CONFIG_PER_PAGE emails contain the primary role emails first
+      current_account.all_email_configs.reorder('primary_role DESC')
     end
 end
