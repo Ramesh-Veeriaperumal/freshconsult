@@ -347,10 +347,22 @@ module Delayed
 
     # Moved into its own method so that new_relic can trace it.
     def invoke_job
-      Thread.current[:attempts] = self.attempts
-      Account.reset_current_account
-      payload_object.perform
-      Thread.current[:attempts] = nil
+      begin
+        Thread.current[:attempts] = self.attempts
+        Account.reset_current_account
+        payload_object.perform
+        Thread.current[:attempts] = nil
+      rescue => e
+        if (e.to_s.downcase.include?("line length exceeded"))
+          Thread.current[:line_length_exceeded] = true
+          payload_object.perform
+          Thread.current[:line_length_exceeded] = nil
+          Thread.current[:attempts] = nil
+          Rails.logger.info "Line Length Exceeded. Mail Parts are converted to Base64"
+        else
+          raise e
+        end
+      end
     end
 
   private
