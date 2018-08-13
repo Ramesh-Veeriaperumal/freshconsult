@@ -1,0 +1,15 @@
+:lang(ar),
+:lang(he) {
+  .customer-portal .portal-section .controls {
+    margin-right: 350px;
+    margin-left: 0;
+  }
+  .select2-container .select2-choice .select2-arrow{
+    b {
+      transform: rotate(180deg);
+      &::after {
+        right: 6px;
+      }
+    }
+  }
+}
