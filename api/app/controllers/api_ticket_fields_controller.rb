@@ -14,7 +14,7 @@ class ApiTicketFieldsController < ApiApplicationController
     end
 
     def scoper
-      @ticket_fields_full_mem_key =TICKET_FIELDS_FULL % { :account_id => current_account.id }
+      @ticket_fields_full_mem_key = TICKET_FIELDS_FULL % { :account_id => current_account.id }
       @ticket_fields_full_cache_data = MemcacheKeys.get_from_cache(@ticket_fields_full_mem_key)
       return [] if !@ticket_fields_full_cache_data.nil?
       @ticket_fields_full_cache_data = nil
