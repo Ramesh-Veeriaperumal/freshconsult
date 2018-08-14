@@ -63,7 +63,7 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   def choices
     sub_picklist_values.collect { |c| [c.value, c.value]}
-  end
+  end 
 
   def self.with_exclusive_scope(method_scoping = {}, &block) # for account_id in sub_picklist_values query
     with_scope(method_scoping, :overwrite, &block)

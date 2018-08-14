@@ -10,6 +10,7 @@ module Cache::Memcache::Helpdesk::TicketField
 	end
 
 	def clear_cache
+    acc_id_hash = { :account_id => self.account_id }
 		key = ACCOUNT_CUSTOM_DROPDOWN_FIELDS % { :account_id => self.account_id }
 		MemcacheKeys.delete_from_cache key
 		key = ACCOUNT_NESTED_FIELDS % { :account_id => self.account_id }
@@ -26,8 +27,7 @@ module Cache::Memcache::Helpdesk::TicketField
 		MemcacheKeys.delete_from_cache(key) if product_field_set_reqd_false
 		key = ACCOUNT_TICKET_TYPES % { :account_id => self.account_id }
 		MemcacheKeys.delete_from_cache(key)
-		key = TICKET_FIELDS_FULL % { :account_id => self.account_id }
-		MemcacheKeys.delete_from_cache(key)
+    MemcacheKeys.delete_from_cache TICKET_FIELDS_FULL % acc_id_hash
 		# In Scripts, clear_all_section_ticket_fields_cache in Cache::Memcache::Helpdesk::Section
 	end
 

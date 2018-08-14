@@ -223,7 +223,7 @@ module MemcacheKeys
 
   COMPANY_FILTERS = 'COMPANY_FILTERS:%{account_id}'.freeze
 
-  TICKET_FIELDS_FULL = 'TICKET_FIELDS_FULL_JSON:%{account_id}'
+  TICKET_FIELDS_FULL = 'TICKET_FIELDS_FULL_JSON:%{account_id}'.freeze
 
   class << self
 
