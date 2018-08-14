@@ -222,6 +222,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :topics, controller: 'ember/discussions/topics', only: [:show] do
+      member do
+        get :first_post
+      end
+    end
+
     resources :chatsetting, controller: 'ember/livechat_setting', only: :index
     resources 'freshcaller_desktop_notification_settings', path: 'freshcaller/settings', controller: 'ember/freshcaller/settings', only: [:index] do
       collection do
@@ -254,6 +260,7 @@ Helpkit::Application.routes.draw do
 
     match 'tickets/archived/export' => 'archive/tickets#export', via: :post
     match 'tickets/archived/:id/activities' => 'archive/tickets/activities#index', via: :get
+    match 'freshconnect_account' => 'ember/freshconnect#update', via: :put
 
     resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
       collection do

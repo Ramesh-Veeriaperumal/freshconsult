@@ -2,8 +2,9 @@ class TicketDecorator < ApiDecorator
   delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
     :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
     :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
-    :internal_group_id, :internal_agent_id, :association_type,:associates, :associated_ticket?, :associated_tickets_count, :can_be_associated?,
-    :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id, to: :record
+    :internal_group_id, :internal_agent_id, :association_type, :associates, :associated_ticket?, :can_be_associated?,
+    :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id, 
+    :subsidiary_tkts_count, to: :record
 
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
 
@@ -213,7 +214,7 @@ class TicketDecorator < ApiDecorator
       status: status,
       to_emails: schema_less_ticket.try(:to_emails),
       association_type: association_type,
-      associated_tickets_count: associated_tickets_count,
+      associated_tickets_count: subsidiary_tkts_count,
       can_be_associated: can_be_associated?,
       custom_fields: custom_fields,
       tags: tag_names

@@ -402,6 +402,12 @@
 /bots/{id}/remove_analytics_mock_data:
   $ref: ./bots/remove_analytics_mock_data.yaml
 
+# Discussions
+/topics/{id}:
+  $ref: ./discussions/topics/show.yaml
+/topics/{id}/first_post:
+  $ref: ./discussions/topics/first_post.yaml
+
 #Canned Form
 /canned_forms:
   $ref: ./canned_forms/list_and_create.yaml
