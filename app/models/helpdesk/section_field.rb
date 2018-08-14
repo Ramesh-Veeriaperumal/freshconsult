@@ -22,5 +22,7 @@ class Helpdesk::SectionField < ActiveRecord::Base
   def clear_cache
     key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.account_id }
     MemcacheKeys.delete_from_cache key
+    key = TICKET_FIELDS_FULL % { :account_id => self.account_id }
+		MemcacheKeys.delete_from_cache(key)
   end
 end
