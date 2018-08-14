@@ -260,6 +260,7 @@ Helpkit::Application.routes.draw do
 
     match 'tickets/archived/export' => 'archive/tickets#export', via: :post
     match 'tickets/archived/:id/activities' => 'archive/tickets/activities#index', via: :get
+    match 'freshconnect_account' => 'ember/freshconnect#update', via: :put
 
     resources :tickets, controller: 'ember/tickets', only: [:index, :create, :update, :show] do
       collection do

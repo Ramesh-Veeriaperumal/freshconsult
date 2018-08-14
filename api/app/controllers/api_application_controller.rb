@@ -139,7 +139,11 @@ class ApiApplicationController < MetalApiController
 
   def app_authorization?
     # exposing private api(to allow get method only) for internal apps
-    request.headers['X-App-Header'].present? && request.method == 'GET'
+    request.headers['X-App-Header'].present? && ( request.method == 'GET' || white_listed_for_app_auth? )
+  end
+
+  def white_listed_for_app_auth?
+    ApiConstants::APP_AUTHORIZATION_WHITELIST[controller_path].include?(action_name.to_sym)
   end
 
   def app_current?

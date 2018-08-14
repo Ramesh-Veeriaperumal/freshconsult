@@ -112,7 +112,7 @@ class TicketFilterValidation < FilterValidation
         errors[:filter] << :datatype_mismatch
         (self.error_options ||= {}).merge!(filter: { expected_data_type: 'Positive Integer' })
       end
-    elsif TicketFilterConstants::FILTER.exclude?(filter) # Filter name
+    elsif !filter_exist?(filter)# Filter name
       errors[:filter] << :not_included
       (self.error_options ||= {}).merge!(filter: { list: TicketFilterConstants::FILTER.join(', ') })
     elsif !TicketsFilter.accessible_filter?(filter)
@@ -120,6 +120,10 @@ class TicketFilterValidation < FilterValidation
       error_options.merge!(filter:
         { feature: TicketsFilter::FEATURES_NAMES_BY_FILTER_KEY[filter], code: :access_denied })
     end
+  end
+
+  def filter_exist?(filter)
+    !filter.eql?('ongoing_collab') ? TicketFilterConstants::FILTER.include?(filter) : (Account.current.collaboration_enabled? && !Account.current.freshconnect_enabled?)
   end
 
   def validate_query_hash

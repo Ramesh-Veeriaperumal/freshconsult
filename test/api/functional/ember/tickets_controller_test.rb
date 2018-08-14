@@ -174,6 +174,7 @@ module Ember
     end
 
     def test_index_with_invalid_filter_names
+      Account.current.stubs(:freshconnect_enabled?).returns(true)
       get :index, controller_params(version: 'private', filter: Faker::Lorem.word)
       assert_response 400
       valid_filters = %w(
@@ -181,9 +182,10 @@ module Ember
         monitored_by new_and_my_open all_tickets unresolved
         article_feedback my_article_feedback
         watching on_hold
-        raised_by_me shared_by_me shared_with_me ongoing_collab
+        raised_by_me shared_by_me shared_with_me
       )
       match_json([bad_request_error_pattern(:filter, :not_included, list: valid_filters.join(', '))])
+      Account.current.unstub(:freshconnect_enabled?)
     end
 
     def test_index_with_invalid_only_param
