@@ -41,7 +41,8 @@ module Ember
       delegator_hash = { ticket_fields: @ticket_fields, custom_fields: cname_params[:custom_field],
                          attachment_ids: @attachment_ids, shared_attachments: shared_attachments,
                          parent_child_params: parent_child_params, parent_attachment_params: parent_attachment_params,
-                         tags: cname_params[:tags], company_id: cname_params[:company_id], inline_attachment_ids: @inline_attachment_ids }
+                         tags: cname_params[:tags], company_id: cname_params[:company_id], inline_attachment_ids: @inline_attachment_ids,
+                         topic_id: @topic_id }
       return unless validate_delegator(@item, delegator_hash)
       save_ticket_and_respond
     end
@@ -311,7 +312,13 @@ module Ember
       def create_ticket
         @item.attachments = @item.attachments + @delegator.draft_attachments if @delegator.draft_attachments
         @item.inline_attachment_ids = @inline_attachment_ids
+        build_topic_ticket if @topic_id
         @item.save_ticket
+      end
+
+      def build_topic_ticket
+        @item.source = Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:forum]
+        @item.build_ticket_topic(topic_id: @topic_id)
       end
 
       def create_child_template_tickets

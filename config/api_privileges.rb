@@ -159,6 +159,7 @@ Authority::Authorization::PrivilegeList.build do
   view_forums do
     resource :"ember/search/topic", only: [:results]
     resource :"ember/search/multiquery", only: [:search_results]
+    resource :'ember/discussions/topic', only: [:show, :first_post]
   end
 
   view_solutions do

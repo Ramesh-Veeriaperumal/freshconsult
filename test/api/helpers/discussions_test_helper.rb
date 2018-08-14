@@ -167,4 +167,21 @@ module DiscussionsTestHelper
   rescue ArgumentError => ex
     value
   end
+
+  def enable_forums
+    @account.features.forums.create
+    @account.add_feature(:forums)
+    yield
+  ensure
+    disable_forums
+  end
+
+  def disable_forums
+    @account.features.forums.destroy
+    @account.revoke_feature(:forums)
+  end
+
+  def first_post_pattern(topic)
+    { description: topic.first_post.body_html }
+  end
 end

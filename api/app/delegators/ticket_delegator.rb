@@ -60,6 +60,8 @@ class TicketDelegator < BaseDelegator
 
   validate :validate_inline_attachment_ids, if: -> { @inline_attachment_ids }
 
+  validate :validate_topic, if: -> { @topic_id }
+
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
@@ -70,6 +72,7 @@ class TicketDelegator < BaseDelegator
     end
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     @inline_attachment_ids = options[:inline_attachment_ids]
+    @topic_id = options[:topic_id]
     if options[:parent_child_params].present?
       @parent_template_id = options[:parent_child_params][:parent_template_id]
       @child_template_ids = options[:parent_child_params][:child_template_ids]
@@ -262,6 +265,15 @@ class TicketDelegator < BaseDelegator
     errors[:id] << :not_a_related_ticket unless related_ticket?
   end
 
+  def validate_topic
+    load_topic
+    errors[:topic_id] << :invalid_topic && return unless @topic
+    if @topic_ticket.present? && !@topic_ticket.deleted
+      errors[:topic_id] << :cannot_convert_topic_to_ticket
+      error_options[:ticket_id] = @topic_ticket.display_id
+    end
+  end
+
   private
 
     def property_update?
@@ -277,5 +289,10 @@ class TicketDelegator < BaseDelegator
       attachment_ids_list = (options[:attachment_ids] - (options[:shared_attachments] || []).map(&:id) - (@parent_attachments.present? ? @parent_attachments : []).map(&:id))
       attachment_ids_list = attachment_ids_list - @parent_template_attachments.map(&:id) if @parent_template_attachments.present?
       attachment_ids_list
+    end
+
+    def load_topic
+      @topic = Account.current.topics.where(id: @topic_id).first
+      @topic_ticket = @topic.ticket if @topic
     end
 end

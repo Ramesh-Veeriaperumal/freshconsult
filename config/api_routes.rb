@@ -222,6 +222,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :topics, controller: 'ember/discussions/topics', only: [:show] do
+      member do
+        get :first_post
+      end
+    end
+
     resources :chatsetting, controller: 'ember/livechat_setting', only: :index
     resources 'freshcaller_desktop_notification_settings', path: 'freshcaller/settings', controller: 'ember/freshcaller/settings', only: [:index] do
       collection do

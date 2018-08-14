@@ -387,6 +387,11 @@
   article_content:
     $ref: './response/article_content.yaml'
 
+  topic_show:
+    $ref: './response/discussions/topics/show.yaml'
+  topic_first_post:
+    $ref: './response/discussions/topics/first_post.yaml'
+
   freshmarketer_sessions:
     $ref: './response/tickets/freshmarketer_sessions.yaml'
 
