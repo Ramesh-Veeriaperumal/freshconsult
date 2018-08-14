@@ -229,6 +229,7 @@ module SupportHelper
         output << %( </div>)
       else
         output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" />)
+        Rails.logger.error("Showing blank profile thumbnail for User: #{username}")
       end
     end
     output << %( </div> )
