@@ -19,7 +19,7 @@
      margin-left: 10px;
    }
  }
- 
+
   .survey_rating_order {
     .rating_order_select {
       .bad_to_good, .good_to_bad {
@@ -36,7 +36,11 @@
       }
     }
   }
-
+  .fr-modal-title {
+    .fr-modal-title-line h4 {
+      float: right !important;
+    }
+  }
   .form-horizontal select {
     content: "\200E‎";
   }
