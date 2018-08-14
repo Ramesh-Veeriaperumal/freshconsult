@@ -1,6 +1,6 @@
 class ApiTicketFieldsController < ApiApplicationController
   decorate_views
-  
+
   include MemcacheKeys
 
   PRELOAD_ASSOC = [:nested_ticket_fields].freeze
