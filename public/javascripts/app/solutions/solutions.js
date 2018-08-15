@@ -57,6 +57,7 @@ window.App = window.App || {};
     bindHandlers: function () {
       $('body').on('change.solutionHome', '#solution_folder_meta_visibility', App.Solutions.Folder.setCompanyVisibility);
       $('body').on('click.solutionHome', '.modal-footer [data-dismiss="modal"]', this.resetFormOnCancel);
+      $('body').on('click.solutionHome', '.article-feedback-list', this.sendPostMessage.bind(this));
       this.Folder.bindCreateNew();
       this.Folder.eventsForCategorySelect();
     },
@@ -80,6 +81,21 @@ window.App = window.App || {};
     resetFormOnCancel: function (e) {
       var form = $('#' + e.target.id).parents('.modal').find('form');
       App.Solutions.resetModalForm(form);
+    },
+
+    sendPostMessage: function (e) {
+      if (!this.isIe()) {
+        e.preventDefault();
+        var filter = $('.feedbacks-filter-me') && $('.feedbacks-filter-me').parent().hasClass('active') ? 'my_article_feedback' : 'article_feedback';
+        var article_id = $(e.currentTarget).data('articleId');
+        window.parent.postMessage({action: "ticket_filter", filter: filter, article_id: article_id}, window.location.origin);
+      } else {
+        $(e.currentTarget).attr('target','_top');
+      }
+    },
+
+    isIe: function () {
+      return document.documentMode || /Edge/.test(navigator.userAgent)
     },
 
     resetModalForm: function (form) {

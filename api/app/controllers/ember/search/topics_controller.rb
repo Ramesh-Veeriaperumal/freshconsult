@@ -22,7 +22,7 @@ module Ember
       private
 
         def decorator_options
-          [Discussions::TopicDecorator, {}]
+          [::Discussions::TopicDecorator, {}]
         end
 
         def construct_es_params

@@ -126,7 +126,7 @@ module Ember
         end
 
         def decorate_topic_objects(objects)
-          objects.map { |object| Discussions::TopicDecorator.new(object, {}) }
+          objects.map { |object| ::Discussions::TopicDecorator.new(object, {}) }
         end
 
         def decorate_solution_objects(objects)

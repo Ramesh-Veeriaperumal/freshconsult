@@ -94,4 +94,6 @@ module ApiConstants
   TWEET_MAX_LENGTH = 280
   TWITTER_DM_MAX_LENGTH = 10000
   MAX_CUSTOMER_EXPORT_FIELDS = 100
+
+  APP_AUTHORIZATION_WHITELIST = { 'ember/freshconnect' => [:update] }.freeze
 end.freeze

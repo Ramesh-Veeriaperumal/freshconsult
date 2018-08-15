@@ -1320,6 +1320,7 @@ ActiveRecord::Schema.define(version: 20180705070830) do
 
   add_index "email_configs", ["account_id", "product_id"], :name => "index_email_configs_on_account_id_and_product_id"
   add_index "email_configs", ["account_id", "to_email"], :name => "index_email_configs_on_account_id_and_to_email", :unique => true
+  add_index 'email_configs', ['account_id', 'active', 'primary_role'], name: 'index_email_configs_on_account_id_active_and_primary_role'
 
   create_table "email_notification_agents", :force => true do |t|
     t.integer  "email_notification_id", :limit => 8

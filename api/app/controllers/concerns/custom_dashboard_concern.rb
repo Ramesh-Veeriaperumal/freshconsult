@@ -3,6 +3,7 @@ module CustomDashboardConcern
 
   include ::Dashboard::Custom::CustomDashboardConstants
   include Dashboard::Custom::DashboardDecorationMethods
+  include Helpdesk::IrisNotifications
 
   def sanitize_params
     ParamsHelper.assign_and_clean_params({ widgets: :widgets_attributes, type: :access_type }, cname_params)
@@ -113,8 +114,27 @@ module CustomDashboardConcern
     @dashboard_announcement = @item.announcements.build(user_id: User.current.id, announcement_text: params[:announcement_text], active: true)
   end
 
-  def fetch_announcement
+  def load_announcement
+    @dashboard_announcement = @item.announcements.find_by_id(params[:announcement_id])
+    log_and_render_404 unless @dashboard_announcement
+  end
+
+  def announcement_for_dashboard
     announcement_item = @item.announcements.active.first
     announcement_item ? announcement_item.as_json['dashboard_announcement'] : {}
+  end
+
+  def fetch_announcements_with_count(page)
+    options = page ? { page: page } : {}
+    iris_response = fetch_data_from_service(announcements_collect_path(@item.id), options)
+    announcement_counts = iris_response['announcements'].map { |an| [an['announcement_id'], an['counts']['read_by']] }.to_h
+    dashboard_announcements = @item.announcements.where(id: announcement_counts.keys)
+    [dashboard_announcements.as_json.map { |an| an['dashboard_announcement'].merge(count: announcement_counts[an['dashboard_announcement']['id'].to_s]) }, { next_page: iris_response['next_page'] }]
+  end
+
+  def fetch_announcement_with_viewers
+    iris_response = fetch_data_from_service(announcement_viewers_path(@item.id, @dashboard_announcement.id), {})
+    viewers = iris_response.map { |r| r['identifier'] }
+    @dashboard_announcement.as_json['dashboard_announcement'].merge(viewers: viewers)
   end
 end

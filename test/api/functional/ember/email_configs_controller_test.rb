@@ -15,7 +15,7 @@ class Ember::EmailConfigsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal maxCount, response.size
     pattern = []
-    Account.current.all_email_configs.reorder(:to_email).where(active: true).limit(maxCount).each do |ec|
+    Account.current.all_email_configs.reorder('primary_role DESC').where(active: true).limit(maxCount).each do |ec|
       pattern << email_config_pattern(ec)
     end
     match_json(pattern.ordered!)

@@ -4108,12 +4108,60 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_child
     enable_adv_ticketing([:parent_child_tickets]) do
       Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
-      parent_ticket = create_parent_ticket
+      parent_ticket = create_ticket
       params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
       post :create, construct_params(params_hash)
       assert_response 201
       latest_ticket = Account.current.tickets.last
       match_json(ticket_pattern(latest_ticket).merge!(ticket_association_pattern(latest_ticket)))
+      parent_ticket.reload
+      assert_equal nil, latest_ticket.subsidiary_tkts_count
+      assert_equal 1, parent_ticket.subsidiary_tkts_count
+    end
+  end
+
+  def test_create_child_with_existing_parent
+    enable_adv_ticketing([:parent_child_tickets]) do
+      parent_ticket = create_parent_ticket
+      Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
+      Helpdesk::Ticket.any_instance.stubs(:associates).returns([1])
+      params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+      post :create, construct_params(params_hash)
+      assert_response 201
+      latest_ticket = Account.current.tickets.last
+      match_json(ticket_pattern(latest_ticket).merge!(ticket_association_pattern(latest_ticket)))
+      assert_equal nil, latest_ticket.subsidiary_tkts_count
+      assert_equal 1, parent_ticket.subsidiary_tkts_count
+    end
+  end
+
+  def test_destroy_child_ticket
+    enable_adv_ticketing([:parent_child_tickets]) do
+      create_parent_child_tickets
+      @child_ticket.update_column(:deleted, false)
+      sidekiq_inline {
+        delete :destroy, construct_params(id: @child_ticket.display_id)
+      }
+      assert_response 204
+      assert Helpdesk::Ticket.find_by_display_id(@child_ticket.display_id).deleted == true
+      parent_ticket = Helpdesk::Ticket.find_by_display_id(@parent_ticket.display_id)
+      assert_equal nil, parent_ticket.association_type
+      assert_equal nil, parent_ticket.subsidiary_tkts_count
+    end
+  end
+
+  def test_destroy_parent_ticket
+    enable_adv_ticketing([:parent_child_tickets]) do
+      create_parent_child_tickets
+      @parent_ticket.update_column(:deleted, false)
+      sidekiq_inline { delete :destroy, construct_params(id: @parent_ticket.display_id) }
+      assert_response 204
+      assert Helpdesk::Ticket.find_by_display_id(@parent_ticket.display_id).deleted == true
+      parent_ticket = Helpdesk::Ticket.find_by_display_id(@parent_ticket.display_id)
+      assert_equal nil, parent_ticket.association_type
+      assert_equal nil, parent_ticket.subsidiary_tkts_count
+      child_ticket = Helpdesk::Ticket.find_by_display_id(@parent_ticket.display_id)
+      assert_equal nil, child_ticket.association_type
     end
   end
 
@@ -4242,7 +4290,24 @@ class TicketsControllerTest < ActionController::TestCase
       ticket.reload
       match_json(ticket_pattern(latest_ticket).merge!(ticket_association_pattern(latest_ticket)))
       assert ticket.related_ticket?
+      assert_equal nil, ticket.subsidiary_tkts_count
       assert latest_ticket.tracker_ticket?
+      assert_equal 1, latest_ticket.subsidiary_tkts_count
+    end
+  end
+
+  def test_destroy_related_ticket
+    enable_adv_ticketing([:link_tickets]) do
+      create_linked_tickets
+      sidekiq_inline { delete :destroy, construct_params(id: @ticket_id) }
+      assert_response 204
+      assert Helpdesk::Ticket.find_by_display_id(@ticket_id).deleted == true
+      tracker_ticket = Helpdesk::Ticket.find_by_display_id(@tracker_id)
+      assert_equal 3, tracker_ticket.association_type
+      assert_equal 0, tracker_ticket.subsidiary_tkts_count
+      related_ticket = Helpdesk::Ticket.find_by_display_id(@ticket_id)
+      assert_equal nil, related_ticket.association_type
+      assert_equal nil, related_ticket.subsidiary_tkts_count
     end
   end
 
@@ -4321,7 +4386,9 @@ class TicketsControllerTest < ActionController::TestCase
       put :update, construct_params({ id: ticket_id, tracker_id: tracker_id }, false)
       assert_response 200
       ticket = Helpdesk::Ticket.find_by_display_id(ticket_id)
+      tracker_ticket = Helpdesk::Ticket.find_by_display_id(tracker_id)
       assert ticket.related_ticket?
+      assert_equal 1, tracker_ticket.subsidiary_tkts_count
     end
   end
 
@@ -4444,6 +4511,18 @@ class TicketsControllerTest < ActionController::TestCase
       assert_response 200
       ticket = Helpdesk::Ticket.where(display_id: @ticket_id).first
       assert !ticket.related_ticket?
+    end
+  end
+
+  def test_unlink_and_check_for_subsidiary_tkts_count
+    enable_adv_ticketing([:link_tickets]) do
+      create_linked_tickets
+      put :update, construct_params({ id: @ticket_id, tracker_id: nil }, false)
+      assert_response 200
+      ticket = Helpdesk::Ticket.where(display_id: @ticket_id).first
+      tracker_ticket = Helpdesk::Ticket.where(display_id: @tracker_id).first
+      assert tracker_ticket.tracker_ticket?
+      assert_equal 0, tracker_ticket.subsidiary_tkts_count
     end
   end
 

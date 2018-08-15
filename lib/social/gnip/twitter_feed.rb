@@ -78,6 +78,7 @@ class Social::Gnip::TwitterFeed
       tweet = account.tweets.find(:all, :conditions => ["tweet_id = ? AND stream_id =?", @in_reply_to, db_stream]).first
       unless tweet.blank?
         ticket  = tweet.get_ticket
+        user = set_user unless user
         if ticket
           notable = add_as_note(@tweet_obj, @twitter_handle, :mention, ticket, user, convert_args) if @twitter_handle
         else 
@@ -115,7 +116,7 @@ class Social::Gnip::TwitterFeed
     
       convert_args = apply_ticket_rules(account, args)
       if self_tweeted?
-        Rails.logger.debug "Tweet id : #{@tweet_id} : Resetting current user : #{User.current.try(:id)}"
+        Rails.logger.debug "Self Tweeted : Tweet id : #{@tweet_id} : Resetting current user : #{User.current.try(:id)}"
         User.reset_current_user
         Account.reset_current_account
         return
@@ -149,7 +150,7 @@ class Social::Gnip::TwitterFeed
 
   def set_user
     user = get_twitter_user(@sender, @profile_image_url,  @name)
-    Rails.logger.debug "Tweet id #{@tweet_id}, User id #{user.id}"
+    Rails.logger.debug "Tweet id : #{@tweet_id}, User id : #{user.id}"
     user.make_current
   end
 end

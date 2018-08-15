@@ -1,87 +1,176 @@
-node(params.NODE) {
-      try {
-          stage('Checkout') {
-                def branch = params.BRANCH
-                echo branch
-                if(env.JOB_NAME == 'prestaging-pronto-codereview-pipeline' ){
-                  checkout([$class: 'GitSCM', branches: [[name: branch]], 
-                            doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
-                            userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])      
-                }else{
-                  checkout([$class: 'GitSCM', branches: [[name: branch]], 
-                            doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
-                            userRemoteConfigs: [[name: 'origin',refspec: '+refs/pull/*:refs/remotes/origin/pr/*', 
-                            url: 'git@github.com:freshdesk/helpkit.git']]])
-               } 
-          }
+ jobName = env.JOB_NAME 
+ build   = env.BUILD_NUMBER
+ buildno = build.toInteger()
+ 
+ 
+ //Label name based on build no
+ no      = buildno % 2
+label  = "backend_spot_$no" 
+//label    = "backend_spot_0" 
 
-          stage('Build') {
-                if(env.JOB_NAME == 'prestaging-pronto-codereview-pipeline' ){
-                      def pullID = params.PULLID
-                      sh """#!/bin/bash
-                            source /etc/profile.d/rvm.sh
-                            PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$pullID pronto run -f github_status github_pr -c origin/falcon-prestaging      
-                         """
-                }else {
-                      echo 'testing'
-                      sh '''#!/bin/bash
-                            source /etc/profile.d/rvm.sh
-                            yes | cp -rf /home/jenkins/s3.yml /home/jenkins/workspace/${JOB_NAME}/config/s3.yml
-                            yes | cp -rf /home/jenkins/redis.yml /home/jenkins/workspace/${JOB_NAME}/config/redis.yml
-                            yes | cp -rf /home/jenkins/elasticsearch.yml /home/jenkins/workspace/${JOB_NAME}/config/elasticsearch.yml
-                            yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/${JOB_NAME}/config/channel_api_keys.yml
-                            sudo service mysql start
-                            sudo service elasticsearch start
-                            sudo service postgresql start
-                            redis-server --daemonize yes
-                            bundle install
-                            echo "create database helpkit${BUILD_NUMBER}" | mysql -uroot
-                            sed -i "s/helpkit_test_rails3/helpkit${BUILD_NUMBER}/g" config/database.yml
-                            bundle exec rake db:bootstrap RAILS_ENV=test
-                            echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
-                            sed -i "s/sandbox_test/sandbox${BUILD_NUMBER}/g" config/database.yml                            
-                            bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
-                            mkdir tmp/sandbox_test
-                            git init tmp/sandbox_test/
-                            git config --global user.email "sample@freshdesk.com"
-                            git config --global user.name "Sample"
-                         '''
-                }
-          }
-          
 
-          stage('Test') {
-                if(env.JOB_NAME == 'prestaging-falcon-public-api-unit-integration-acceptance-tests-backend-pipeline' ){
-                      sh '''#!/bin/bash
-                            source /etc/profile.d/rvm.sh
-                            bundle exec ruby test/api/suites/public_api_test_suite.rb
-                         '''
-                } else if(env.JOB_NAME == 'prestaging-falcon-unit-integration-acceptance-tests-backend-pipeline'){
-                      sh '''#!/bin/bash
-                            source /etc/profile.d/rvm.sh
-                            bundle exec ruby test/api/suites/falcon_test_suite.rb
-                         '''
-                } else if(env.JOB_NAME == 'prestaging-falcon-sandbox-tests-backend-pipeline'){
-                      echo 'prestaging-falcon-sandbox-tests-backend-pipeline'
-                      sh '''#!/bin/bash
-                            source /etc/profile.d/rvm.sh
-                            bundle exec ruby test/api/suites/sandbox_test_suite.rb
-                         '''
-                } else {
-                      echo 'Pronto job'
-                }        
-          }
-      }
-      catch (e) {
-          echo 'Failed'
-      } finally {
-          stage('Publish Reports') {
-                if(env.JOB_NAME != 'prestaging-pronto-codereview-pipeline' ){
-                  publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, 
-                             reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html', 
-                             reportName: 'HTML report', reportTitles: ''])
-                  junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'
-                }
-          }
-      }
+//Specfiy the branch to checkout based on PR condition
+def branch_checkout() {
+        
+           try {
+	                      checkout([$class: 'GitSCM', branches: [[name: "$params.ghprbSourceBranch"]],
+                            doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
+                            userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])
+
+	            }//If Merge Conflict Occurs build will fail with below message
+		       
+		       catch (e) {
+		                 echo 'This branch is out-of-date with the base br anch' + e
+		                 sh 'exit 1'
+		        }          
+
 }
+
+
+//Build setup based on category 
+def build_setup(category) {
+        
+        sh  """#!/bin/bash
+	        source /etc/profile.d/rvm.sh
+	        yes | cp -rf /home/jenkins/s3.yml /home/jenkins/workspace/$jobName/config/s3.yml
+	        yes | cp -rf /home/jenkins/redis.yml /home/jenkins/workspace/$jobName/config/redis.yml
+	        yes | cp -rf /home/jenkins/elasticsearch.yml /home/jenkins/workspace/$jobName/config/elasticsearch.yml
+	        yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/$jobName/config/channel_api_keys.yml
+	        sudo service mysql start
+	        sudo service elasticsearch start
+	        sudo service postgresql start
+	        redis-server --daemonize yes
+	        bundle install
+            bundle exec rake db:bootstrap RAILS_ENV=test
+	      	"""
+	      	
+	    if(category == 'sandbox')  {
+	
+	     sh '''#!/bin/bash
+	        source /etc/profile.d/rvm.sh 
+	        echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
+            sed -i "s/sandbox_test/sandbox${BUILD_NUMBER}/g" config/database.yml
+	        bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
+            mkdir tmp/sandbox_test
+            git init tmp/sandbox_test/
+            git config --global user.email "sample@freshdesk.com"
+            git config --global user.name "Sample"
+            '''   
+	     }
+ 	
+}
+
+
+//Execute testCases 
+def execute_test_cases(category) {
+        
+        if(category == 'pronto') {
+            sh """#!/bin/bash
+               source /etc/profile.d/rvm.sh
+               bundle install
+               PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/$params.ghprbTargetBranch
+               """
+        }
+        
+        if(category == 'public') {
+           sh '''#!/bin/bash
+              source /etc/profile.d/rvm.sh
+              bundle exec ruby test/api/suites/public_api_test_suite.rb
+              '''
+        }
+        
+        if(category == 'private') {
+           sh '''#!/bin/bash
+              source /etc/profile.d/rvm.sh
+              bundle exec ruby test/api/suites/falcon_test_suite.rb
+              '''
+        }
+        
+        if(category == 'sandbox') {
+           sh '''#!/bin/bash
+              source /etc/profile.d/rvm.sh
+              bundle exec ruby test/api/suites/sandbox_test_suite.rb
+              '''
+        }
+        
+}
+
+//Publish Reports
+def publish_report(category) {
+         
+                 publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
+		                             reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html',
+		                             reportName: "coverage $category", reportTitles: ''])
+		         
+		         junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'                      
+         
+}
+
+//Distribted run based on category
+def distributed_run(category) {
+        
+   timestamps {     
+	     //Machine label where this jobs needs to run
+		 node(label) {
+		 
+		    //Checkout stage
+		    	stage(category + " Tests") {
+				    
+					    //Branch checkout
+					  if(jobName.contains("pullrequest")) {
+                         branch_checkout()
+					   }else{
+					       checkout scm
+					   }
+
+  
+					    //Build setup
+					    if(category != 'pronto') {		
+			    			//Intialization process
+			            	build_setup(category)
+			    		}
+			    	
+			    	     //Executing test cases
+	                     try{
+				               execute_test_cases(category)
+				         }
+				         catch (e) {
+				               "issue with test execution" + e          
+				         } 
+			    		
+			    		 finally {
+				    		if(category != 'pronto') {
+				    		     //Publish Report    
+						            publish_report(category)                        
+				    		}
+				         }		   
+		    		  
+                  }
+		    		   
+			}
+		 }	
+   }	 
+
+
+//Parallel Test starts here
+parallel Public: {
+       distributed_run("public");
+},Private: {
+       distributed_run("private");
+},Sandbox: {
+       distributed_run("sandbox");
+},Pronto: {
+       distributed_run("pronto");
+}
+
+
+//Ends results published here
+timestamps {     
+	     //Machine label where this jobs needs to run
+		 node("master") {
+		 	junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'		    
+		 }	
+}	 
+
+
+
