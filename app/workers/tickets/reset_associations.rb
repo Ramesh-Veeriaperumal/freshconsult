@@ -10,8 +10,9 @@ class Tickets::ResetAssociations < BaseWorker
         tickets  = load_tickets
         tickets.find_each(batch_size: 500) do |ticket|
           execute_on_db("run_on_master") {
+            ticket[:link_feature_disable] = @params[:link_feature_disable] if (ticket.tracker_ticket? &&
+              @params[:link_feature_disable])
             ticket.reset_associations
-            ticket.update_attributes(:association_type => nil) if ticket.tracker_ticket? and @params[:link_feature_disable]
           }
         end
       rescue Exception => e

@@ -24,7 +24,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     :boolean_tc04     =>    :sla_response_reminded,
     :boolean_tc05     =>    :sla_resolution_reminded,
     :text_tc03        =>    :dirty_attributes,
-    :text_tc04        =>    :tkt_email_failures
+    :text_tc04        =>    :additional_info
   }
 
   COLUMN_TO_ATTRIBUTE_MAPPING.keys.each do |key|
@@ -67,7 +67,7 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	alias_attribute :sds_spam, :int_tc05
 
 	alias_attribute :sentiment, :int_tc04
-  alias_attribute :tkt_email_failures, :text_tc04
+  alias_attribute :additional_info, :text_tc04
 
 	# Attributes used in Freshservice
 	alias_attribute :department_id, :long_tc10
@@ -227,10 +227,19 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
     schema_less_ticket_replica  	
   end
 
+  # count from DB(Related/Child tickets count)
+  def subsidiary_tkts_count
+    additional_info[:subsidiary_tkts_count]
+  end
+
+  def subsidiary_tkts_count=(value)
+    additional_info[:subsidiary_tkts_count] = value
+  end
+
   private
 
   def email_failures
-    tkt_email_failures
+    @failures ||= additional_info.slice(:dynamodb_range_key, :failure_count)
   end
   
 end

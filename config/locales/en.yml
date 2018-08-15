@@ -3042,7 +3042,7 @@ en:
       sso:
         expected_params: "One or more of the expected parameters name, email, and hash are missing."
         invalid_time_entry: "Invalid time entry"
-        url_limitation_error: "Session has expired. Please login again."
+        url_limitation_error: "Session expired. Please login again."
       jwt_sso:
         expected_time_params: "Issued at time(iat) and Expire at time(iat) are missing"
         exceeded_max_expire_time: "Max expiry time of 30 minutes is allowed"
@@ -11846,6 +11846,7 @@ Do let us know if you are interested!"
       ticket_created: "New Ticket"
       generic_notification: "%{type}"
       bot_training_completion: "Bot training completed"
+      dashboard_announcement_create: "Dashboard announcement"
     preferences_text:
       private_note_created: Private note sent to me
       public_note_created: Public note added to ticket
@@ -11861,6 +11862,7 @@ Do let us know if you are interested!"
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
     bot_training_completion: "%{title} Bot trained successfully!Please switch to mint ui to test and train the bot."
+    dashboard_announcement_create: "has posted '%{title}'"
     muted: Muted
     mute: Mute
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
