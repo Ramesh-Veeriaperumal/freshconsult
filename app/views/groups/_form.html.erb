@@ -121,7 +121,7 @@
                      
                     <%= f.select :capping_limit, Group::CAPPING_LIMIT_OPTIONS,
                         { :selected => @group.capping_limit || 5 },
-                        { :class => "select_load select2 capping-limit #{'hide' unless @group.capping_enabled?}",
+                        { :class => "select_load select2 capping-limit",
                           :id => "capping_count_load" } %>
                     <%= t('group.per_agent') %>
                   </p>
@@ -149,7 +149,7 @@
                     <%= t('group.maximum') %>
                     <%= f.select :capping_limit, Group::CAPPING_LIMIT_OPTIONS,    
                        { :selected => @group.capping_limit || 5 },   
-                       { :class => "select2 select_skill capping-limit #{'hide' unless @group.capping_enabled?}",    
+                       { :class => "select2 select_skill capping-limit",    
                          :id => "capping_count_skill" } %>  
                     <%= t('group.per_agent') %>
                     <br>   

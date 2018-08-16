@@ -5626,8 +5626,8 @@ en:
   file_url: Full XML Export URL
   how_to: Question
   customers: Customers
-  segment_notice: "To filter and group customers based on priority, subscription or any other attribute,"
-  mint: "Switch to Mint"
+  segment_notice: "To segment customers based on priority, subscription and other attributes,"
+  mint: "switch to Mint."
   enter_valid_domains: "is invalid. Enter valid domains"
   companies:
     no_contacts: '%{no_contacts} contacts'
