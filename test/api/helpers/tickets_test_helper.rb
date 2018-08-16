@@ -167,7 +167,7 @@ module TicketsTestHelper
       fr_escalated:  (expected_output[:fr_escalated] || ticket.fr_escalated).to_s.to_bool,
       is_escalated:  (expected_output[:is_escalated] || ticket.isescalated).to_s.to_bool,
       association_type: expected_output[:association_type] || ticket.association_type,
-      associated_tickets_count: expected_output[:associated_tickets_count] || ticket.associated_tickets_count,
+      associated_tickets_count: expected_output[:associated_tickets_count] || ticket.subsidiary_tkts_count,
       can_be_associated: expected_output[:can_be_associated] || ticket.can_be_associated?,
       spam:  (expected_output[:spam] || ticket.spam).to_s.to_bool,
       email_config_id:  expected_output[:email_config_id] || ticket.email_config_id,
@@ -741,14 +741,14 @@ module TicketsTestHelper
   def create_parent_ticket
     create_ticket
     parent_ticket = Helpdesk::Ticket.last
-    parent_ticket.update_attributes(association_type: 1)
+    parent_ticket.update_attributes(association_type: 1, subsidiary_tkts_count: 1)
     parent_ticket
   end
 
   def create_tracker_ticket(params = {})
     create_ticket(params)
     tracker_ticket = Helpdesk::Ticket.last
-    tracker_ticket.update_attributes(association_type: 3)
+    tracker_ticket.update_attributes(association_type: 3, subsidiary_tkts_count: 1)
     tracker_ticket
   end
 

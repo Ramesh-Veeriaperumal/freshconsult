@@ -24,6 +24,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.assoc_parent_ticket? || self.child_ticket?
   end
 
+  def prime_ticket?
+    self.tracker_ticket? || self.assoc_parent_ticket?
+  end
+
   def associated_ticket?
     self.association_type.present? && TICKET_ASSOCIATION_TOKEN_BY_KEY.key?(self.association_type)
   end
@@ -60,8 +64,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
     asstn_obj_count if assoc_parent_ticket?
   end
 
+  # count from dynamo(Related & Child tickets count)
   def associated_tickets_count
-    (tracker_ticket? || assoc_parent_ticket?) ? asstn_obj_count : 0
+    prime_ticket? ? asstn_obj_count : 0
   end
 
   def validate_assoc_parent_tkt_status
@@ -135,7 +140,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     resp = Helpdesk::Tickets::Dynamo::DynamoHelper.update_set_attributes(
                 table_name,
                 hash, nil,
-                {ASSOCIATES => val}, action)
+                { ASSOCIATES => val}, action)
+    update_associates_count(self) if action == 'ADD'
     return resp.data.attributes[ASSOCIATES].map {|e| e.to_i} if resp_data?(resp)
     nil
   end
@@ -155,8 +161,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def associates_from_db
-    if self.tracker_ticket? || self.assoc_parent_ticket?
-      associated_tickets =  Account.current.tickets.where(:associates_rdb => self.display_id).pluck(:display_id)
+    if self.prime_ticket?
+      associated_tickets = Sharding.run_on_slave {
+        Account.current.tickets.where(:associates_rdb => self.display_id).pluck(:display_id) }
+      update_associates_count(self, associated_tickets.count) if associated_tickets.present?
     elsif self.related_ticket? || self.child_ticket?
       associated_tickets = [self.associates_rdb]
     end
@@ -202,8 +210,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         self.misc_changes = {:tracker_unlink_all => self.related_tickets_count}
         self.manual_publish(["update", RabbitMq::Constants::RMQ_ACTIVITIES_TICKET_KEY], [:update, { misc_changes: self.misc_changes.dup }])
       end
-      remove_all_associates
-      delete_broadcast_notes
+      nullify_tracker_associates
     end
 
     def reset_related
@@ -236,22 +243,39 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     def prime_tkt_activity type
+      @prime_tkt.remove_associates([self.display_id])
       case type
       when "child"
-        @prime_tkt.associates.count > 1 ? (@create_activity = :assoc_parent_tkt_unlink) : nullify_assoc_type(@prime_tkt)
+        asstn_obj_count(@prime_tkt).zero? ? nullify_assoc_type(@prime_tkt) : (@create_activity = :assoc_parent_tkt_unlink)
       when "related"
         @create_activity = :tracker_unlink
       end
-      create_assoc_tkt_activity(@create_activity, @prime_tkt, self.display_id) if @create_activity.present?
-      @prime_tkt.remove_associates([self.display_id])
+      if @create_activity.present?
+        create_assoc_tkt_activity(@create_activity, @prime_tkt, self.display_id)
+        update_associates_count(@prime_tkt)
+      end
     end
 
     def nullify_assoc_type item = self
-      item.update_attributes(:association_type => nil, :associates_rdb => nil)
+      update_hash = { :association_type => nil, :associates_rdb => nil }
+      item.schema_less_ticket.additional_info.delete(:subsidiary_tkts_count) if item.prime_ticket?
+      item.update_attributes(update_hash)
     end
 
-    def asstn_obj_count
-      @asstn_obj_count ||= associates.present? ? associates.count : 0
+    def asstn_obj_count item = self # count from dynamo
+      item.associates.present? ? item.associates.count : 0
+    end
+
+    def nullify_tracker_associates
+      remove_all_associates
+      update_hash = if self[:link_feature_disable]
+        self.schema_less_ticket.additional_info.delete(:subsidiary_tkts_count)
+        { :association_type => nil }
+      else
+        { :subsidiary_tkts_count => self.related_tickets_count }
+      end
+      self.update_attributes(update_hash)
+      delete_broadcast_notes
     end
 
     def notify_associates_fallback(associated_tickets)

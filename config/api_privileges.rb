@@ -159,6 +159,7 @@ Authority::Authorization::PrivilegeList.build do
   view_forums do
     resource :"ember/search/topic", only: [:results]
     resource :"ember/search/multiquery", only: [:search_results]
+    resource :'ember/discussions/topic', only: [:show, :first_post]
   end
 
   view_solutions do
@@ -194,7 +195,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_dashboard do
-    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview, :create_announcement, :end_announcement, :get_announcements]
+    resource :"ember/custom_dashboard", only: [:create, :update, :destroy, :widget_data_preview, :create_announcement, :end_announcement, :get_announcements, :fetch_announcement]
   end
 
   manage_segments do

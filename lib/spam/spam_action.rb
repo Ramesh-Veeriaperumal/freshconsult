@@ -2,14 +2,11 @@ module Spam::SpamAction
   include Redis::RedisKeys
   include Redis::OthersRedis  
 
-  def build_content(subject, message)
-    "Subject : #{subject}  Message :  #{message}"
-  end
 
   def validate_template_content(subject, message, notification_type)
-    content = build_content(subject, message)
     Admin::SpamCheckerWorker.perform_async({
-      :content           => content,
+      :subject           => subject,
+      :message           => message,
       :user_id           => User.current.id,
       :remote_ip         => request.remote_ip,
       :user_agent        => request.env['HTTP_USER_AGENT'],
@@ -44,8 +41,7 @@ module Spam::SpamAction
   
   def detect_auto_redirect_links(subject, message, limit)
     @errors ||= []
-    content = build_content(subject, message)
-    if ::Spam::SpamCheck.new.has_more_redirection_links?(content, limit)
+    if ::Spam::SpamCheck.new.has_more_redirection_links?(subject, message, limit)
       Rails.logger.debug "Account #{current_account} has more redirect links found in the content #{content}. DB update won't work"
       @errors << t("email_notification.spam_error")
     end

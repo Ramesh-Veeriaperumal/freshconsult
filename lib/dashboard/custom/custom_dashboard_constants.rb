@@ -52,7 +52,8 @@ module Dashboard::Custom::CustomDashboardConstants
     bar_chart_data: :chart_data,
     create_announcement: :announcement,
     end_announcement: :result,
-    get_announcements: :announcements
+    get_announcements: :announcements,
+    fetch_announcement: :announcement
   }.freeze
 
   WIDGET_MODULES = [

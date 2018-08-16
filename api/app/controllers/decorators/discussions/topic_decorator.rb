@@ -1,6 +1,6 @@
 class Discussions::TopicDecorator < ApiDecorator
   delegate :id, :title, :forum_id, :user_id, :locked, :published, :stamp_type, :forum, :topic_desc,
-           :replied_by, :hits, :user_votes, :merged_topic_id, :replied_at, :created_at, :updated_at, to: :record
+           :replied_by, :hits, :user_votes, :merged_topic_id, :replied_at, :created_at, :updated_at, :first_post, to: :record
 
   def comments_count
     record.posts_count

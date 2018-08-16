@@ -1,0 +1,37 @@
+type: object
+properties:
+  id:
+    type: integer
+  title:
+    type: string
+  forum_id:
+    type: integer
+  user_id:
+    type: integer
+  locked:
+    type: boolean
+  published:
+    type: boolean
+  stamp_type:
+    type: integer
+  replied_by:
+    type: integer
+  user_votes:
+    type: integer
+  merged_topic_id:
+    type: integer
+  comments_count:
+    type: integer
+  sticky:
+    type: integer
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time
+  replied_at:
+    type: string
+    format: date-time
+  hits:
+    type: integer

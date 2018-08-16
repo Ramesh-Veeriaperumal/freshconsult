@@ -202,7 +202,7 @@ namespace :scheduler do
         Social::TwitterHandle.current_pod.safe_send(TWITTER_TASKS[task_name][:account_method]).each do |twitter_handle|
           Account.reset_current_account
           account = twitter_handle.account
-          next unless account
+          next if account.blank? || account.launched?(:twitter_microservice)
           account.make_current
           next if (!twitter_handle.capture_dm_as_ticket || check_if_premium_twitter_account?(account.id))
           class_constant.perform_async({:twt_handle_id => twitter_handle.id}) 
@@ -215,11 +215,23 @@ namespace :scheduler do
   
   def enqueue_premium_twitter(delay = nil)
     premium_twitter_accounts.each do |account_id|
-      Rails.logger.info "Enqueuing Premium Twitter Worker for account id #{account_id}"
-      if delay.nil?
-        Social::PremiumTwitterWorker.perform_async({:account_id => account_id})
-      else
-        Social::PremiumTwitterWorker.perform_in(delay, {:account_id => account_id})
+      Sharding.select_shard_of(account_id) do  
+        account = Account.find(account_id).make_current
+        if account.launched?(:twitter_microservice)
+          Rails.logger.info "Skipping Premium Twitter Worker for account id #{account_id} because of twitter_microservice"
+          Account.reset_current_account
+          next
+        end
+
+        Account.reset_current_account
+
+        Rails.logger.info "Enqueuing Premium Twitter Worker for account id #{account_id}"
+        if delay.nil?
+          Social::PremiumTwitterWorker.perform_async({:account_id => account_id})
+        else
+          Social::PremiumTwitterWorker.perform_in(delay, {:account_id => account_id})
+        end
+
       end
     end
   end

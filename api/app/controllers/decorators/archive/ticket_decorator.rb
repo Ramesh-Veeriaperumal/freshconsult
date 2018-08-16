@@ -2,7 +2,7 @@ class Archive::TicketDecorator < TicketDecorator
   delegate :ticket_body, :custom_field, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
            :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
            :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
-           :internal_group_id, :internal_agent_id, :association_type, :associated_tickets_count, :can_be_associated?,
+           :internal_group_id, :internal_agent_id, :association_type, :subsidiary_tkts_count, :can_be_associated?,
            :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, :to_emails, :product_id, :company, to: :record
 
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
