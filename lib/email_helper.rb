@@ -179,7 +179,7 @@ module EmailHelper
   end
 
   # This method tells whether the request from email service is authenticated or not.
-  def authenticated_email_service_equest? key
+  def authenticated_email_service_request? key
     fd_email_service = (YAML::load_file(File.join(Rails.root, 'config', 'fd_email_service.yml')))[Rails.env]
     incoming_email_api_key1 = fd_email_service["incoming_email_api_key1"]
     incoming_email_api_key2 = fd_email_service["incoming_email_api_key2"]

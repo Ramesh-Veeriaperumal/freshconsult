@@ -82,7 +82,7 @@ class EmailServiceController < Fdadmin::MetalApiController
   end
 
   def http_authenticate
-      if (!authenticated_email_service_equest?(request.authorization))
+      if (!authenticated_email_service_request?(request.authorization))
         Rails.logger.info "Authorization Failed"
         head :forbidden, content_type: "text/html"
       end
