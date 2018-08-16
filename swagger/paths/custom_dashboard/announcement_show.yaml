@@ -1,0 +1,24 @@
+get:
+  tags: [custom dashboard]
+  summary: Get an announcement and viewers for the announcement
+  parameters:
+    - name: id
+      in: path
+      type: number
+      format: int64
+      description: Dashboard ID
+      required: true
+    - name: announcement_id
+      in: path
+      type: number
+      format: int64
+      description: Announcement ID
+      required: true
+
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/fetch_announcement'
+    403:
+      description: Access denied

@@ -24,6 +24,7 @@ module Ember
     include TicketTemplateHelper
     include CustomFieldsTestHelper
     include ArchiveTicketTestHelper
+    include DiscussionsTestHelper
 
     CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
     CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
@@ -173,6 +174,7 @@ module Ember
     end
 
     def test_index_with_invalid_filter_names
+      Account.current.stubs(:freshconnect_enabled?).returns(true)
       get :index, controller_params(version: 'private', filter: Faker::Lorem.word)
       assert_response 400
       valid_filters = %w(
@@ -180,9 +182,10 @@ module Ember
         monitored_by new_and_my_open all_tickets unresolved
         article_feedback my_article_feedback
         watching on_hold
-        raised_by_me shared_by_me shared_with_me ongoing_collab
+        raised_by_me shared_by_me shared_with_me
       )
       match_json([bad_request_error_pattern(:filter, :not_included, list: valid_filters.join(', '))])
+      Account.current.unstub(:freshconnect_enabled?)
     end
 
     def test_index_with_invalid_only_param
@@ -780,6 +783,43 @@ module Ember
       match_json(ticket_show_pattern(t))
       assert_equal t.tags.count, tags.count
       assert_response 201
+    end
+
+    def test_create_with_topic_id
+      topic = @account.topics.first || create_test_topic(@account.forums.first, User.current)
+      params_hash = ticket_params_hash.merge(topic_id: topic.id)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      ticket = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(ticket))
+      assert_equal topic, ticket.topic
+    end
+
+    def test_create_with_invalid_topic_id
+      params_hash = ticket_params_hash.merge(topic_id: 0)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('topic_id', :invalid_topic)])
+    end
+
+    def test_create_with_topic_with_ticket_already_created
+      ticket = new_ticket_from_forum_topic
+      params_hash = ticket_params_hash.merge(topic_id: ticket.topic.id)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('topic_id', :cannot_convert_topic_to_ticket, ticket_id: ticket.display_id)])
+    end
+
+    def test_create_with_topic_with_deleted_ticket
+      deleted_ticket = new_ticket_from_forum_topic
+      topic = deleted_ticket.topic
+      deleted_ticket.update_attributes(deleted: true)
+      params_hash = ticket_params_hash.merge(topic_id: topic.id)
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+      ticket = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(ticket))
+      assert_equal topic, ticket.topic
     end
 
     def test_parse_template

@@ -102,4 +102,5 @@ class Social::TicketRule < ActiveRecord::Base
       }
       keywords
     end
+
 end

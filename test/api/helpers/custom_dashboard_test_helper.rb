@@ -224,6 +224,15 @@ module CustomDashboardTestHelper
     response_hash.length == 1
   end
 
+  def match_announcement_show(response_hash, announcement, user_ids)
+    response_hash = response_hash.deep_symbolize_keys
+    match_custom_json(response_hash, announcement_show_response_hash(announcement, user_ids))
+  end
+
+  def iris_stub(user_ids)
+    user_ids.map { |user_id| { 'identifier' => user_id } }
+  end
+
   def announcement_hash(announcement_text, dashboard_id)
     {
       announcement_text: announcement_text,
@@ -232,5 +241,9 @@ module CustomDashboardTestHelper
       active: true,
       account_id: Account.current.id
     }
+  end
+
+  def announcement_show_response_hash(announcement, user_ids)
+    announcement.as_json['dashboard_announcement'].merge(viewers: user_ids)
   end
 end
