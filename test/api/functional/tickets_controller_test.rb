@@ -2778,6 +2778,16 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.size
   end
 
+  def test_index_with_requester_nil
+    ticket = create_ticket
+    ticket.requester.destroy
+    get :index, controller_params(include: 'requester')
+    assert_response 200
+    requester_hash = JSON.parse(response.body).select { |x| x['id'] == ticket.id }.first['requester']
+    ticket.destroy
+    assert requester_hash.nil?
+  end
+
   def test_index_with_dates
     get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200

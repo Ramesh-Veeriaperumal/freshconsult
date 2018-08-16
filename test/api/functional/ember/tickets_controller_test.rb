@@ -336,6 +336,16 @@ module Ember
     #   match_json(private_api_ticket_index_pattern(false, true))
     # end
 
+    def test_index_with_requester_nil
+      ticket = create_ticket
+      ticket.requester.destroy
+      get :index, controller_params(version: 'private', include: 'requester')
+      assert_response 200
+      requester_hash = JSON.parse(response.body).select { |x| x['id'] == ticket.id }.first['requester']
+      ticket.destroy
+      assert requester_hash.nil?
+    end
+
     def test_index_with_company_side_load
       get :index, controller_params(version: 'private', include: 'company')
       assert_response 200
