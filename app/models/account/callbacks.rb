@@ -458,6 +458,7 @@ class Account < ActiveRecord::Base
     end
 
     def enable_count_es
+      self.launch(:count_service_es_writes) if redis_key_exists?(SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED)
       if redis_key_exists?(DASHBOARD_FEATURE_ENABLED_KEY)
         CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) 
       end

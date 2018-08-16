@@ -18,12 +18,28 @@ class Helpdesk::Ticket < ActiveRecord::Base
       },false).merge(count_es_ff_fields).merge(schema_less_fields).to_json
   end
 
+  def to_search_count_es_json
+    as_json({
+      :root => false,
+      :tailored_json => true,
+      :methods => [
+                    :company_id, :tag_names, :tag_ids, :watchers, :status_stop_sla_timer, 
+                    :status_deleted, :product_id, :trashed
+                  ].concat(ticket_states_columns),
+      :only => ticket_indexed_fields.concat([:updated_at])
+      },false).merge(count_es_ffs_fields).merge(schema_less_fields).map{ |k, v| [k, v] }.to_h.to_json
+  end
+
   def count_es_columns
     @@count_es_columns ||= ticket_indexed_fields.concat(ticket_states_columns).concat(count_es_ff_columns).concat(schema_less_columns).concat([:tags])
   end
 
   def count_es_ff_columns
     @@count_es_ff_columns ||= Flexifield.column_names.select {|v| v =~ /^ff(s|_date|_int|_decimal|_boolean)/}.map(&:to_sym)
+  end
+
+  def count_es_ffs_columns
+    @@count_es_ffs_columns ||= Flexifield.column_names.select { |v| v =~ /^ffs/ }.map(&:to_sym)
   end
 
   def ticket_states_columns
@@ -55,6 +71,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def count_es_ff_fields
     flexifield.as_json(root: false, only: count_es_ff_columns)
+  end
+
+  def count_es_ffs_fields
+    flexifield.as_json(root: false, only: count_es_ffs_columns)
   end
 
 

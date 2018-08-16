@@ -21,7 +21,8 @@ module Search
             :version_type => 'external',
             :version      => payload[:version].to_i
           }
-          Search::Dashboard::CountClient.new("put",document_path(model_class, document_id, version), model_object.to_count_es_json)
+          Search::Dashboard::CountClient.new('put', document_path(model_class, document_id, version), model_object.to_count_es_json) if Account.current.features?(:countv2_writes)
+          SearchService::Client.new(@account_id).write_count_object(model_object) if Account.current.launched?(:count_service_es_writes)
         end
       end
 
@@ -29,7 +30,8 @@ module Search
         payload.symbolize_keys!
         model_class = payload[:klass_name]
         document_id = payload[:document_id]
-        Search::Dashboard::CountClient.new(:delete, document_path(model_class, document_id), nil, Search::Utils::SEARCH_LOGGING[:response]).response
+        Search::Dashboard::CountClient.new(:delete, document_path(model_class, document_id), nil, Search::Utils::SEARCH_LOGGING[:response]).response if Account.current.features?(:countv2_writes)
+        SearchService::Client.new(@account_id).delete_object("ticketanalytics", document_id) if Account.current.launched?(:count_service_es_writes)
       end
 
       def create_alias

@@ -9,7 +9,7 @@ class Ryuken::CountPerformer
   
   def perform(sqs_msg, args)
     begin
-      return unless Account.current.features?(:countv2_writes)
+      return unless Account.current.count_es_writes_enabled?
       search_payload = args["#{args['object']}_properties"].merge({
         'version' => (args['action_epoch'] * 1000000).ceil
       })
