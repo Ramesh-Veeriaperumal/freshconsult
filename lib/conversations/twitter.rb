@@ -115,9 +115,13 @@ module Conversations::Twitter
 
     def process_tweet note, twt, handle_id, twt_type
       stream_id = @reply_handle.default_stream_id
-      tweet_id = twt.present? ? twt.id : nil
+      tweet_id = twt.present? ? twt.id : random_tweet_id
 
       note.create_tweet(tweet_id: tweet_id, tweet_type: twt_type.to_s, twitter_handle_id: handle_id, stream_id: stream_id)
+    end
+
+    def random_tweet_id
+      -"#{Time.now.utc.to_i}#{rand(100...999)}".to_i
     end
 
 end
