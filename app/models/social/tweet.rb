@@ -9,8 +9,8 @@ class Social::Tweet < ActiveRecord::Base
   belongs_to :stream
   attr_protected :tweetable_id
 
-  validates_presence_of    :account_id, :twitter_handle_id
-  validates_uniqueness_of :tweet_id, :scope => :account_id,:allow_nil => true, :message => Social::Constants::TWEET_ALREADY_EXISTS
+  validates_presence_of :tweet_id, :account_id, :twitter_handle_id
+  validates_uniqueness_of :tweet_id, :scope => :account_id, :message => Social::Constants::TWEET_ALREADY_EXISTS
   
   after_destroy :remove_fd_link_in_dynamo
 
