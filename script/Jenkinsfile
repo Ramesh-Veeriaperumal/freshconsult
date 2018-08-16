@@ -4,9 +4,8 @@
  
  
  //Label name based on build no
- no      = buildno % 2
-label  = "backend_spot_$no" 
-//label    = "backend_spot_0" 
+no      = buildno % 8
+label  = "backend_label_$no" 
 
 
 //Specfiy the branch to checkout based on PR condition
@@ -38,11 +37,18 @@ def build_setup(category) {
 	        yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/$jobName/config/channel_api_keys.yml
 	        sudo service mysql start
 	        sudo service elasticsearch start
-	        sudo service postgresql start
-	        redis-server --daemonize yes
-	        bundle install
-            bundle exec rake db:bootstrap RAILS_ENV=test
 	      	"""
+	      	
+	    if(category != 'private') {
+ 	
+	      sh  """#!/bin/bash
+		      source /etc/profile.d/rvm.sh
+		      redis-server --daemonize yes
+		      bundle install
+	          bundle exec rake db:bootstrap RAILS_ENV=test
+	      	  """
+	      }
+  	
 	      	
 	    if(category == 'sandbox')  {
 	
@@ -82,7 +88,7 @@ def execute_test_cases(category) {
         if(category == 'private') {
            sh '''#!/bin/bash
               source /etc/profile.d/rvm.sh
-              bundle exec ruby test/api/suites/falcon_test_suite.rb
+              ruby test/parallel_test.rb 8
               '''
         }
         
