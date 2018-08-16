@@ -58,14 +58,6 @@ class Helpdesk::SchemaLessNote < ActiveRecord::Base
 		note_properties[:last_modified_timestamp] = curr_time.to_s
 	end
 
-	def custom_errors
-		note_properties[:errors] if note_properties.is_a?(Hash)
-	end
-
-	def custom_errors=(error)
-		note_properties[:errors] = error.to_s
-	end
-
 	def cc_emails
 		emails = read_attribute(:cc_emails)
 		if (emails.is_a? Array) || (emails.is_a? String)

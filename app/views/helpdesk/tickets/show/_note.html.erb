@@ -12,12 +12,6 @@ end
 timestamp_id ||=false
 to_email_failures ||= nil
 cc_email_failures ||= nil
-custom_error = nil
-
-if note.custom_errors.present? && note.custom_errors.is_a?(Hash)
-	error_hash = note.custom_errors['twitter'] if note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"]
-	custom_error = error_hash['error_message'] if (error_hash.present? && error_hash.is_a?(Hash))
-end
 
 if current_account.new_survey_enabled?
   kind = note.custom_survey_remark.nil? ? note.kind : 'survey'
@@ -163,11 +157,7 @@ end
       <% end %>
       </div>
 
-      <% if custom_error.present? %>
-	      <div class="note_failure">
-	      	<span class="failure_message"> <%= custom_error %> </span>
-	      </div>
-      <% end %>
+
 
         <div class="failed_emails">
           <% if to_email_failures.present? || cc_email_failures.present? %>
