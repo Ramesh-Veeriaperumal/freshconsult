@@ -349,6 +349,8 @@ module Delayed
     def invoke_job
       begin
         Thread.current[:attempts] = self.attempts
+        # reset the line_length_exceeded flag set previously 
+        Thread.current[:line_length_exceeded] = nil
         Account.reset_current_account
         payload_object.perform
         Thread.current[:attempts] = nil
@@ -356,7 +358,6 @@ module Delayed
         if (e.to_s.downcase.include?("line length exceeded"))
           Thread.current[:line_length_exceeded] = true
           payload_object.perform
-          Thread.current[:line_length_exceeded] = nil
           Thread.current[:attempts] = nil
           Rails.logger.info "Line Length Exceeded. Mail Parts are converted to Base64"
         else
