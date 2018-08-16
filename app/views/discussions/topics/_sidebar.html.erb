@@ -16,7 +16,7 @@
 		<% end 
 	end %>
 
-	<%= render :partial => "discussions/topics/widgets/ticket" if !current_account.falcon_ui_enabled?(current_user) && privilege?(:manage_tickets) && !@topic.merged_topic_id.present? %>
+	<%= render :partial => "discussions/topics/widgets/ticket", locals: { topic: @topic } if privilege?(:manage_tickets) && !@topic.merged_topic_id.present? %>
 
 	<% voices_count = @topic.voices.count %>
 	<%= render :partial => "discussions/topics/widgets/user_list", :locals => {

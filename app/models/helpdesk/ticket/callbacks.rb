@@ -17,6 +17,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_create :set_boolean_custom_fields
 
+  before_create :set_subsidiary_count, :if => :tracker_ticket?
+
 	before_update :assign_email_config
 
   before_update :update_message_id, :if => :deleted_changed?
@@ -429,10 +431,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.associates_rdb = related_ticket? ? @tracker_ticket.display_id : nil
   end
 
+  def set_subsidiary_count
+    self.subsidiary_tkts_count = related_ticket_ids.count
+  end
+
   def set_links
     Rails.logger.debug "Linking Related tickets [#{related_ticket_ids}] to tracker_ticket #{self.display_id}"
-    if @related_ticket.present? && set_tkt_assn_type(@related_ticket, :related)
-      self.associates = [ @related_ticket.display_id ]
+    if related_ticket_ids.count == 1
+      if @related_ticket.present?
+        set_tkt_assn_type(@related_ticket, :related) ? (self.associates = [@related_ticket.display_id]) : 
+          update_associates_count(self)
+      end
     elsif related_ticket_ids.count > 1
       ::Tickets::LinkTickets.perform_async({:tracker_id => self.display_id, :related_ticket_ids => related_ticket_ids})
     end
@@ -459,6 +468,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Rails.logger.debug "Uninking Related tickets [#{self.id}] from tracker_ticket #{@tracker_ticket.display_id}"
     self.remove_all_associates
     @tracker_ticket.remove_associates([self.display_id])
+    update_associates_count(@tracker_ticket)
     create_assoc_tkt_activity(:tracker_unlink, @tracker_ticket, self.display_id)
   end
 
@@ -803,7 +813,11 @@ private
   def set_tkt_assn_type item, value
     item.associates = [self.display_id]
     update_hash = { :association_type => TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[value] }
-    update_hash.merge!(:associates_rdb => self.display_id) if value == :related
+    if value == :related
+      update_hash[:associates_rdb] = self.display_id
+    elsif value == :assoc_parent
+      update_hash[:subsidiary_tkts_count] = item.child_tkts_count
+    end
     item.update_attributes(update_hash)
   end
 

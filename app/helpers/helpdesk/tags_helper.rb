@@ -66,7 +66,7 @@ module Helpdesk::TagsHelper
 
   def ticket_tags_filter_link(tag)
     if falcon_enabled?
-      link = %{/a/tickets/filters/search?q[]=tags:[#{CGI.escape(tag.name.dump)}]&q[]=created:"last_month"}
+      link = %{/a/tickets/filters/search?q[]=tags:[#{CGI.escape(tag.name.dump)}]}
     else
       link = "/helpdesk/tickets/filter/tags/#{tag.id}"
     end
