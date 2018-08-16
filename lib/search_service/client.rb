@@ -24,6 +24,14 @@ module SearchService
       write_request.response
     end
 
+    def write_count_object(entity)
+     uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
+     type = 'ticketanalytics'
+     payload = { payload: entity.to_search_count_es_json, version: Search::Job.es_version }
+     write_request = SearchService::Request.new(write_path(type, entity.id), :post, uuid, payload.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), Account.current.id)
+     write_request.response
+    end
+
     def delete_object(type, id)
       uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
       delete_request = SearchService::Request.new(delete_path(type, id), :delete, uuid, {}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
