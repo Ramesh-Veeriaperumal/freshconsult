@@ -1,7 +1,7 @@
 module RabbitMq::Subscribers::Subscriptions::Count
 
   def mq_count_subscription_valid(action, model)
-    Account.current.features?(:countv2_writes)
+    Account.current.count_es_writes_enabled?
   end
 
   def mq_count_subscriber_properties(action)
