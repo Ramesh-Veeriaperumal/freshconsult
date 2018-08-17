@@ -106,7 +106,9 @@ class TicketDelegator < BaseDelegator
   end
 
   def responder_presence #
-    responder = Account.current.agents_details_from_cache.detect { |x| x.id == responder_id }
+    responder = Sharding.run_on_slave do
+      Account.current.users.where(:helpdesk_agent => true, :id => responder_id).select("id,name,email").first
+    end
     if responder.nil?
       errors[:responder] << :"can't be blank"
     else
