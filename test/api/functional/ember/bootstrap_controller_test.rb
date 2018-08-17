@@ -2,6 +2,7 @@ require_relative '../../test_helper'
 class Ember::BootstrapControllerTest < ActionController::TestCase
   include BootstrapTestHelper
   include AgentsTestHelper
+  include AttachmentsTestHelper
 
   def test_index
     get :index, controller_params(version: 'private')
@@ -19,6 +20,15 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     get :account, controller_params(version: 'private')
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
+  end
+
+  def test_account_with_fav_icon_for_portal
+    portal = Account.current.main_portal
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+    fav_icon = create_attachment(content: file, attachable_type: 'Portal', attachable_id: portal.id, description: 'fav_icon')
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, portal))
   end
 
   def test_collision_autorefresh_freshid_keys

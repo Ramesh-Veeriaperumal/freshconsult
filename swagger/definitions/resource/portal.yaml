@@ -51,3 +51,5 @@ allOf:
         type: array
         items:
           type: integer
+      fav_icon_url:
+        type: string
