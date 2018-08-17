@@ -15,7 +15,7 @@ module Freshcaller
                         voicemail_active: number.voicemail_active, hunt_type: number.hunt_type, rr_timeout: number.rr_timeout,
                         ringing_time: number.ringing_time, queue_position_preference: number.queue_position_preference,
                         queue_position_message: number.queue_position_message, message_type: number.ivr.message_type,
-                        business_calendar_name: business_calendar_name, group_name: group_name(account, number), messages: @messages }
+                        business_calendar_name: business_calendar_name, group_name: group_name(account, number), messages: @messages, direct_dial_limit: number.direct_dial_limit }
 
           number.update_column(:deleted, true)
         end
