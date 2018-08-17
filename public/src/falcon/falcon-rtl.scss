@@ -41,6 +41,15 @@
       float: right !important;
     }
   }
+  .modal {
+    &.fade.in {
+      .modal-header {
+        .close {
+          float: left;
+        }
+      }
+    }
+  }
   .form-horizontal select {
     content: "\200E‎";
   }

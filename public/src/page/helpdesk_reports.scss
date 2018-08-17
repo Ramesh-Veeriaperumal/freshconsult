@@ -25,9 +25,9 @@
 		border-radius: 8px;
 		.reports-title{
 			padding: 12px 0;
-			
+
 			&.updated-time{
-				padding: 12px 0 28px 0;	
+				padding: 12px 0 28px 0;
 			}
 			.report-icon{
 				padding: 0 15px 0 20px;
@@ -78,7 +78,7 @@
 				@include float(right);
 				color: #06c;
 				background:none!important;
-				border:none; 
+				border:none;
 				font: inherit;
 				cursor: pointer;
 				@include margin-right(8px);
@@ -311,7 +311,7 @@
 				margin: 20px 0 0 0;
 			}
 		}
-		
+
 
 		.export-csv{
 			display: inline-block;
@@ -324,7 +324,7 @@
 			width: 29px;
 			@include float(right);
 			cursor: pointer;
-			margin : 20px 0;	
+			margin : 20px 0;
 		}
 
 		&:after{
@@ -332,9 +332,9 @@
 			content : '';
 			clear : both;
 		}
-		
+
 	}
-	
+
 	@extend .ticket-list;
 
 	.tickets-footer{
@@ -352,7 +352,7 @@
 	.sla-toggle-tab{
 		text-align: center;
 		margin: 12px;
-		
+
 		.link1{
 			padding : 0px 12px;
 			@include border-right(1px solid #333);
@@ -363,7 +363,7 @@
 			padding: 0px 12px;
 			display: inline-block;
 		}
-		
+
 		span.toggle{
 			color: #0066CC;
 		   	cursor: pointer;
@@ -447,7 +447,7 @@
  		}
   	}
   	.generate-reports{
-		margin: 20px 0;  	
+		margin: 20px 0;
   	}
 	.metric-header{
 		h3{
@@ -771,7 +771,7 @@
 	height: 100%;
 	z-index:10;
 	position:absolute;
-	background-color:#fff; 
+	background-color:#fff;
 	@include left(0px);
 	text-align: center;
 	.spinner{
@@ -826,7 +826,7 @@
 						  margin-left: 4px;
 					}
 					.volume-percent{
-						color: #A2A2A2;	
+						color: #A2A2A2;
 						font-size: 12px;
 						font-weight: 500;
 					}
@@ -840,10 +840,10 @@
 				&.active{
 					background: #fff;
 					.active-indicator{
-						background-color: #171717;	
+						background-color: #171717;
 					}
 					.metrics-content{
-						@include border-right(0);	
+						@include border-right(0);
 					}
 				}
 				&.disable{
@@ -870,7 +870,7 @@
 				}
 			}
 		}
-		
+
 	}
 	.glance-chart-wrapper{
 		position: relative;
@@ -913,7 +913,7 @@
 						&:hover{
 							color : #004080;
 						}
-				    }	
+				    }
 				    &.violated{
 				    	color: #CFA495;
 				    }
@@ -924,7 +924,7 @@
 	    				border-left-style: solid;
 	    				font-size: 0;
 	    				line-height: 0;
-	    				display: inline-block; 
+	    				display: inline-block;
 	    				margin-left: 6px;
 	    				cursor: pointer;
 				    }
@@ -953,7 +953,7 @@
 				}
 				.current_status{
 			    	color: #0066CC;
-			    }	
+			    }
 			    .historic_status{
 			    	color: #999999;
 			    }
@@ -989,7 +989,7 @@
 			 }
 		}
 	}
-	
+
 	.pdf-metric-lablel{
 		float: left;
 		width: 98%;
@@ -1024,10 +1024,10 @@
 	}
 }
 
-// Class to override backgroud color property on helpkit-glance glance in PDFs, 
+// Class to override backgroud color property on helpkit-glance glance in PDFs,
 // to avoid webkit memory spike issue: https://github.com/wkhtmltopdf/wkhtmltopdf/issues/1510
 .glance-pdf{
-		background-color: transparent; 
+		background-color: transparent;
 }
 
 .distribution-chart{
@@ -1108,7 +1108,7 @@
 	   		cursor: default;
 	   	}
 	}
-}	
+}
 	/* Summary table*/
 	.summary-table{
 		margin: 40px auto;
@@ -1117,7 +1117,7 @@
 			min-height: 100px;
 			position: relative;
 			border-top-left-radius: 8px;
-			overflow: hidden;	 	 
+			overflow: hidden;
 		}
 	}
 	table.dataTable{
@@ -1127,7 +1127,7 @@
 		border-collapse : separate;
 
 		td ,th {
-			text-align: center;	
+			text-align: center;
 			vertical-align: middle;
 			font-weight: 500;
 			font-size: 12px;
@@ -1136,7 +1136,7 @@
 			@include border-left(1px solid #e5e4e4);
 			color: #676767;
 			border-bottom: 1px solid #E5E4E4;
-			
+
 			p{
 				margin: 0;
 			}
@@ -1158,7 +1158,7 @@
 			font-style: oblique;
 			background: #fff !important;
 		}
-		
+
 		th{
 			border-top: 1px solid #E5E4E4;
 		}
@@ -1188,7 +1188,7 @@
 			}
 			&:not(.disable):hover{
 				color: #1272de;
-				text-decoration: underline; 
+				text-decoration: underline;
 			}
 		}
 		.odd td{
@@ -1199,7 +1199,7 @@
 			}
 			&:not(.disable):hover{
 				color: #1272de;
-				text-decoration: underline; 
+				text-decoration: underline;
 			}
 		}
 	}
@@ -1244,7 +1244,7 @@
 	.dataTables_scrollBody{
 		overflow: hidden !important;
 	}
-	
+
 	/* Pagination Button */
 	.dataTables_filter {
 		position: absolute;
@@ -1327,7 +1327,7 @@
 	        }
 	    }
 	    span .paginate_button {
-	        
+
 	        border-left: 0 !important;
 	        color: #333;
 	        background: #fff;
@@ -1442,45 +1442,45 @@
 }
 
 /*Animation specific CSS for Reports*/
-.animated { 
-    @include animation-duration(0.20s); 
-    @include animation-fill-mode(both); 
-} 
+.animated {
+    @include animation-duration(0.20s);
+    @include animation-fill-mode(both);
+}
 
 @include keyframes(fadeInLeft) {
-  0% { 
-        opacity: 0; 
-        @include transform(translateX(-20px)); 
-    } 
-    100% { 
-        opacity: 1; 
-         @include transform(translateX(0)); 
-    } 
+  0% {
+        opacity: 0;
+        @include transform(translateX(-20px));
+    }
+    100% {
+        opacity: 1;
+         @include transform(translateX(0));
+    }
 }
 
 .fadeInLeft {
-       @include animation-name(fadeInLeft); 
+       @include animation-name(fadeInLeft);
 }
 
 @include keyframes(fadeOutLeft) {
-  0% { 
-        opacity: 1; 
-         @include transform(translateX(-20px)); 
-    } 
-    100% { 
-        opacity: 0; 
-        @include transform(translateX(0)); 
+  0% {
+        opacity: 1;
+         @include transform(translateX(-20px));
+    }
+    100% {
+        opacity: 0;
+        @include transform(translateX(0));
         display: none;
-    } 
+    }
 }
-.fadeOutLeft { 
-    @include animation-name(fadeOutLeft); 
+.fadeOutLeft {
+    @include animation-name(fadeOutLeft);
 }
 
 .openedit{
 	.report-filters-container{
 		display: block;
-		@include animation-name(fadeInLeft); 
+		@include animation-name(fadeInLeft);
 
 	}
 }
@@ -1853,7 +1853,7 @@
 		clear : both;
 		content : '';
 	}
-	
+
 }
 
 .success_message{
@@ -1954,6 +1954,7 @@ html[dir="rtl"]{
 	color : #b94a48;
 }
 .field_title{
+	@include float(left);
 	font-weight: 600;
 }
 p.visibility,p.disabled {
@@ -1969,7 +1970,7 @@ p.default_report_name {
 
 #report-dialog-save-content{
 	max-height: 520px;
-	
+
 	.dialog_container{
 		max-height: 450px;
 		overflow-y : auto;
@@ -1978,7 +1979,7 @@ p.default_report_name {
 
 .schedule{
 	margin-top : 15px;
-	
+
 	.title{
 		font-weight: bold;
 		color: #333;
@@ -1991,30 +1992,30 @@ p.default_report_name {
 		.message{
 			padding: 12px 8px;
 			background: #f9f6cf;
-			margin-bottom: 8px; 
+			margin-bottom: 8px;
 		}
 
 		.form-row{
 			display: block;
 			width: 100%;
 			margin: 8px 8px 2px;
-			
+
 			&.hide{
 				display: none;
 			}
 
 			label{
 				width: 20%;
-				text-align: left;
+				@include text-align(left);
 				font-size: 13px;
 				color: #333;
 				font-weight: bold;
 				vertical-align: middle;
-				float:left;
+				@include float(left);
 				margin-top: 5px;
 			}
 			.field{
-				float : left;
+				@include float(left);
 				width: 75%;
 			}
 
@@ -2031,18 +2032,18 @@ p.default_report_name {
 				display: none;
 			}
 			.inner-label{
-				float: left;
-    			margin: 6px 10px;
-    			font-weight: 500;
+				@include float(left);
+  			margin: 6px 10px;
+  			font-weight: 500;
 			}
 
 			.tzone{
-				float: left;
-    			margin: 6px 10px;
+				@include float(left);
+    		margin: 6px 10px;
 			}
 
 			.weekly {
-			    margin-top: 6px;
+			   margin-top: 6px;
 			}
 		}
 
@@ -2080,9 +2081,9 @@ p.default_report_name {
 /* Timespent report */
 .timespent_container {
 	width : 100%;
-	
+
 	.context_info {
-	    
+
 	    display: flex;
 	    align-items: center;
 	    flex-direction: row;
@@ -2177,7 +2178,7 @@ p.default_report_name {
 			margin-top: 30%;
 		}
 	}
-	
+
 
 	.back-nav {
 	    float: left;
