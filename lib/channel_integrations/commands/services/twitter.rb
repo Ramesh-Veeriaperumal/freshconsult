@@ -23,6 +23,8 @@ module ChannelIntegrations::Commands::Services
       reply
     rescue StandardError => e
       Rails.logger.error "Something wrong in Twitter::CreateTicket account_id: #{current_account.id}, context: #{context.inspect} #{e.message}"
+
+      return conflict_error(context) if e.message.include? Social::Constants::TWEET_ALREADY_EXISTS
       error_message("Error in creating ticket, account_id: #{current_account.id}, context: #{context.inspect}")
     end
 
@@ -44,6 +46,8 @@ module ChannelIntegrations::Commands::Services
       reply
     rescue StandardError => e
       Rails.logger.error "Something wrong in Twitter::CreateNote account_id: #{current_account.id}, context: #{context.inspect} #{e.message}"
+
+      return conflict_error(context) if e.message.include? Social::Constants::TWEET_ALREADY_EXISTS
       error_message("Error in Creating note, account_id: #{current_account.id}, context: #{context.inspect}")
     end
 
@@ -51,15 +55,20 @@ module ChannelIntegrations::Commands::Services
       context = payload[:context]
       data = payload[:data]
 
-      # Not handling the error on ticket create for now.
-      return default_success_format if data[:status_code] != 200
       return error_message('Invalid request') unless check_note_params?(payload)
 
-      social_tweet = current_account.tweets.find_by_tweetable_id(context[:note_id])
-      return error_message('Social::Tweet not found') if social_tweet.blank?
+      if data[:status_code] >= 400
+        note_id = context[:note_id]
+        schema_less_notes = current_account.schema_less_notes.find_by_note_id(note_id)
+        return error_message('SchemaLessNote not found') if schema_less_notes.blank?
 
-      social_tweet.tweet_id = data[:tweet_id]
-      social_tweet.save!
+        update_errors_in_schema_less_notes(schema_less_notes, data)
+      else
+        social_tweet = current_account.tweets.find_by_tweetable_id(context[:note_id])
+        return error_message('Social::Tweet not found') if social_tweet.blank?
+
+        update_tweet_in_social_tweets(social_tweet, data)
+      end
 
       default_success_format
     rescue StandardError => e
@@ -92,6 +101,13 @@ module ChannelIntegrations::Commands::Services
         error
       end
 
+      def conflict_error(context)
+        error = default_error_format
+        error[:status_code] = 409
+        error[:data] = { message: "Conflict: Tweet ID: #{context[:tweet_id]} already converted." }
+        error
+      end
+
       def check_ticket_params?(payload)
         context = payload[:context]
         context[:tweet_id].present? && base_validation?(context)
@@ -115,6 +131,19 @@ module ChannelIntegrations::Commands::Services
       rescue StandardError => e
         Rails.logger.error "Twitter::update_last_dm_id failed, account_id: #{current_account.id}, context: #{context.inspect} #{e.message}"
         false
+      end
+
+      def update_errors_in_schema_less_notes(schema_less_notes, data)
+        schema_less_notes.note_properties[:errors] = {} if schema_less_notes.note_properties[:errors].nil?
+        twitter_errors = { twitter: { error_code: data[:status_code], error_message: data[:message] } }
+        schema_less_notes.note_properties[:errors].merge!(twitter_errors)
+
+        schema_less_notes.save!
+      end
+
+      def update_tweet_in_social_tweets(social_tweet, data)
+        social_tweet.tweet_id = data[:tweet_id]
+        social_tweet.save!
       end
 
       def get_tweet_attributes(context)
