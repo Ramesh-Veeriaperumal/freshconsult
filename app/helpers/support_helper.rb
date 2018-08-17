@@ -213,17 +213,21 @@ module SupportHelper
   def profile_image user, more_classes = "", width = "50px", height = "50px", profile_size = 'thumb'
     output = []
     output << %(  <div class="user-pic-thumb image-lazy-load #{more_classes}"> )
-    if user['profile_url']
+    if user.blank?
+      output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" />)
+      Rails.logger.error("User is empty::Account:#{Account.current.inspect}")      
+    elsif user['profile_url']
       output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" rel="lazyloadimage"  data-src="#{user['profile_url']}" /> )
     else
-      username = user['name'].lstrip
-
-      if isalpha(username[0])
+      username = user['name'] 
+      username = username.lstrip if username
+      if username && username[0] && isalpha(username[0])
         output << %(<div class="#{profile_size} avatar-text circle text-center bg-#{unique_code(username)}">)
         output << %( #{username[0]} )
         output << %( </div>)
       else
         output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" />)
+        Rails.logger.error("Showing blank profile thumbnail for User: #{username} Account:#{Account.current.id}")
       end
     end
     output << %( </div> )
