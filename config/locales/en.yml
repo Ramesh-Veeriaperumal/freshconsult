@@ -2203,7 +2203,7 @@ en:
         enable_sso_info: Single Sign On allows you to use your own application or a centralized Server (like MS Active Directory) to authenticate agents and customers so that they can access Freshdesk without entering a separate username and password.
         enable_sso: Single Sign On (SSO)
         enable_simple_sso: Simple SSO
-        enable_oauth_sso: Oauth2 SSO
+        enable_oauth_sso: OAuth2 SSO
         enable_oauth2_sso: OAuth 2.0
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
@@ -2261,9 +2261,9 @@ en:
         password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
       errors:
         simple_sso: 
-          invalid_login_url: Please provide a valid login url
+          invalid_login_url: Please provide a valid login URL
         saml_sso:
-          invalid_login_url: Please provide a valid SAML login url
+          invalid_login_url: Please provide a valid SAML login URL
           invalid_fingerprint: Please provide a valid SAML Certificate Fingerprint
       helpnote:
         title: Security Settings
