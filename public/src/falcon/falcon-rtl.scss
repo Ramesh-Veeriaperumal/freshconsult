@@ -50,6 +50,15 @@
       }
     }
   }
+  .ticket-view-saveas::after{
+    content: "\f120";
+    font-weight: bold;
+    top: -1px;
+  }
+  .ticket-view-saveas::before{
+    content: "\f138";
+    top: 3px;
+  }
   .form-horizontal select {
     content: "\200E‎";
   }
