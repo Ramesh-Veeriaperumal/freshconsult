@@ -26,7 +26,7 @@ module TicketsTestHelper
   end
 
   def index_ticket_pattern(ticket, exclude = [])
-    ticket_pattern(ticket).except(*([:attachments, :conversations, :tags] - exclude))
+    ticket_pattern(ticket).merge(ticket_association_pattern(ticket,true)).except(*([:attachments, :conversations] - exclude))
   end
 
   def so_ticket_pattern(expected_output = {}, ticket)
@@ -39,7 +39,7 @@ module TicketsTestHelper
       ticket, false, false, 
       requester, company, 
       ticket_states
-    ).except(*([:attachments, :conversations, :tags, :description, :description_text] - exclude))
+    ).merge(ticket_association_pattern(ticket,true)).except(*([:attachments, :conversations, :description, :description_text] - exclude))
   end
 
   def index_deleted_ticket_pattern(ticket)
@@ -235,11 +235,10 @@ module TicketsTestHelper
     pattern = private_note_pattern({}, note).merge!(user: Hash)
   end
 
-  def ticket_association_pattern(ticket)
-    {
-      association_type: ticket.association_type,
-      associated_tickets_list: ticket.associates
-    }
+  def ticket_association_pattern(ticket, associated_tickets_count = false)
+    response = { association_type: ticket.association_type }
+    associated_tickets_count ? response.merge( associated_tickets_count: ticket.subsidiary_tkts_count )
+                             : response.merge( associated_tickets_list: ticket.associates )
   end
   # draft_exists denotes whether the draft was saved using old UI code
   def reply_draft_pattern(expected_output, draft_exists = false)
