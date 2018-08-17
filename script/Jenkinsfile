@@ -14,7 +14,7 @@ result = "";
  
 	try {
 		result = ["curl", "-k", "-X", "GET", "-H", "Content-Type: application/json","-H", "Authorization: Bearer c535a01828c0a4c5c2fb7c18d72ae087b379d5e63ba9cbe2f17c45649f16300c", "https://api.spotinst.io/aws/ec2/group/sig-86dd0ad7?accountId=act-f9698e90"].execute().text
-	    echo result
+	    println(result)
 	    
 	    data = jsonSlurper.parseText(result)
 		instance_no =  data.response.items.capacity.target[0].toString()
@@ -23,7 +23,7 @@ result = "";
 	
 	catch (e) {
 		instance_no = "6"
-		echo e.toString()
+		println(e.toString())
 	}
 	
 	return instance_no
