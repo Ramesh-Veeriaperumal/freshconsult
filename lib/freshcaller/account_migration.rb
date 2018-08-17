@@ -44,6 +44,7 @@ module Freshcaller
         auto_recharge: credit.auto_recharge,
         recharge_quantity: recharge_quantity
       }
+      credit.update_column(:auto_recharge, false)
       credit.update_attributes(available_credit: 0)
       File.open("#{account_migration_location}/freshfone_credit.json", 'w') do |f|
         f.write(freshfone_credit.to_json)
