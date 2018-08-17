@@ -4,6 +4,25 @@
  build   = env.BUILD_NUMBER
  
  
+ //Getting total number of instances 
+def get_number_instances() {
+
+	try {
+		result = ["curl", "-k", "-X", "GET", "-H", "Content-Type: application/json","-H", "Authorization: Bearer c535a01828c0a4c5c2fb7c18d72ae087b379d5e63ba9cbe2f17c45649f16300c", "https://api.spotinst.io/aws/ec2/group/sig-86dd0ad7?accountId=act-f9698e90"].execute().text
+	    echo result
+	    jsonSlurper = new JsonSlurper();
+	    data = jsonSlurper.parseText(result)
+		instance_no =  data.response.items.capacity.target[0]
+	}
+	
+	catch (e) {
+		instance_no = "6"
+	}
+	
+	        
+}
+ 
+ 
  //Label name based on build no
 no    = get_number_instances();
 echo no + "- Total number of instances are running"
@@ -26,26 +45,6 @@ def branch_checkout() {
 		        }          
 
 }
-
-
-//Getting total number of instances 
-def get_number_instances() {
-
-	try {
-		result = ["curl", "-k", "-X", "GET", "-H", "Content-Type: application/json","-H", "Authorization: Bearer c535a01828c0a4c5c2fb7c18d72ae087b379d5e63ba9cbe2f17c45649f16300c", "https://api.spotinst.io/aws/ec2/group/sig-86dd0ad7?accountId=act-f9698e90"].execute().text
-	    echo result
-	    jsonSlurper = new JsonSlurper();
-	    data = jsonSlurper.parseText(result)
-		instance_no =  data.response.items.capacity.target[0]
-	}
-	
-	catch (e) {
-		instance_no = "6"
-	}
-	
-	        
-	}
-
 
 
 //Build setup based on category 
