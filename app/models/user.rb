@@ -1145,18 +1145,21 @@ class User < ActiveRecord::Base
     return if freshid_disabled_or_customer?
     Rails.logger.info "FRESHID Creating user :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}"
     self.name = name_from_email if !self.name.present?
-    freshid_user = Freshid::User.create(user_attributes_for_freshid)
-    if freshid_user.present?
-      self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
-      assign_freshid_attributes_to_agent freshid_user
-      Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
-    end
+    freshid_user = Freshid::User.create(freshid_attributes)
+    sync_profile_from_freshid(freshid_user)
   end
 
   def create_freshid_user!
     create_freshid_user
     save!
     enqueue_activation_email
+  end
+
+  def sync_profile_from_freshid(freshid_user)
+    return if freshid_user.nil?
+    self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
+    assign_freshid_attributes_to_agent(freshid_user)
+    Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
   end
 
   def destroy_freshid_user
@@ -1197,6 +1200,20 @@ class User < ActiveRecord::Base
     self.active = true
   end
 
+  def freshid_attributes
+    freshid_first_name, freshid_middle_name, freshid_last_name = freshid_split_names
+    { 
+      first_name: freshid_first_name.presence,
+      middle_name: freshid_middle_name.presence,
+      last_name: freshid_last_name.presence,
+      email: email,
+      phone: phone.presence,
+      mobile: mobile.presence,
+      job_title: job_title.presence,
+      domain: account.full_domain
+    }
+  end
+
   def gdpr_pending?
     agent_preferences[:gdpr_acceptance]
   end
@@ -1231,6 +1248,14 @@ class User < ActiveRecord::Base
       !freshid_enabled_and_agent?
     end
 
+    def freshid_agent_not_signed_up_admin?
+      freshid_enabled_and_agent? && !signed_up_admin?
+    end
+
+    def signed_up_admin?
+      account.admin_email == email
+    end
+
     def email_allowed_in_freshid?
       !FRESHID_IGNORED_EMAIL_IDS.include?(self.email)
     end
@@ -1255,20 +1280,6 @@ class User < ActiveRecord::Base
       self.job_title = freshid_user.job_title
       self.active = self.primary_email.verified = freshid_user.active?
       self.password_salt = self.crypted_password = nil
-    end
-
-    def user_attributes_for_freshid
-      freshid_first_name, freshid_middle_name, freshid_last_name = freshid_split_names
-      { 
-        first_name: freshid_first_name.presence,
-        middle_name: freshid_middle_name.presence,
-        last_name: freshid_last_name.presence,
-        email: email,
-        phone: phone.presence,
-        mobile: mobile.presence,
-        job_title: job_title.presence,
-        domain: account.full_domain
-      }
     end
 
     def name_part(part)
