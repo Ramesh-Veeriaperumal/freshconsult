@@ -334,6 +334,7 @@ html[dir="rtl"]{
 	    top: 25px;
     	@include right(-2px);
 
+
 		.lists{
 			width : 200px;
 			height : 200px;
@@ -1279,7 +1280,7 @@ p.visibility {
 
 .report-link-block {
     width: 100%;
-    text-align: left;
+    @include text-align(left);
     border-top: 1px solid #ccc;
     padding-top: 8px;
 
