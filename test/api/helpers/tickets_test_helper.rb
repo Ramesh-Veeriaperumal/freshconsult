@@ -829,4 +829,23 @@ module TicketsTestHelper
     archive_ticket
   end
 
+  # export methods
+  def ticket_data_export(source)
+    @account.data_exports.where(user_id: User.current.id, source: source)
+  end
+
+  def export_ticket_fields
+    Hash[*Helpdesk::TicketModelExtension.allowed_ticket_export_fields.map {|i| [i, i]}.flatten].symbolize_keys
+  end
+
+  def ticket_export_param
+    { 
+      ticket_fields: export_ticket_fields,
+      contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+      company_fields: { 'name' => 'Company Name' },
+      format: 'csv', date_filter: '4',
+      ticket_state_filter: 'created_at', start_date: 1.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] 
+    }
+  end
 end
