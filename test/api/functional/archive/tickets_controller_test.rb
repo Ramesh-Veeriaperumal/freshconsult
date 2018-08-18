@@ -146,6 +146,23 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     assert_response 204
   end
 
+  def test_export_inline_with_valid_params
+    params_hash = { ticket_fields: export_ticket_fields,
+                    contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+                    company_fields: { 'name' => 'Company Name' },
+                    format: 'csv',
+                    query: "priority:2",
+                    export_name: "Test export" }
+    archive_tickets = @account.archive_tickets
+    initial_count = ticket_data_export(DataExport::EXPORT_TYPE[:archive_ticket]).count
+    search_stub_archive_tickets(archive_tickets) do
+      Sidekiq::Testing.inline! do
+        post :export, construct_params({ version: 'private' }, params_hash)
+      end
+    end
+    current_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:archive_ticket])
+    assert_equal initial_count, current_data_exports.length - 1
+  end
 
   def test_export_with_invalid_query
     params_hash = { ticket_fields: {"display_id":"Ticket ID","subject":"Subject"},

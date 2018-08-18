@@ -10,6 +10,9 @@ class Export::Ticket < Struct.new(:export_params)
   ERB_PATH = Rails.root.join('app/views/support/tickets/export/%<file_name>s.xls.erb').to_path
   FILE_FORMAT = ['csv', 'xls'].freeze
   BATCH_SIZE = 100
+  DISASSOCIATED_MODELS = {
+    archive_tickets: [:ticket_states]
+  }.freeze
 
   def perform
     begin
@@ -201,7 +204,9 @@ class Export::Ticket < Struct.new(:export_params)
         elsif val.eql?('product_name') && !export_params[:archived_tickets]
           associations << { schema_less_ticket: :product }
         elsif Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
-          associations << Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
+          association_model = Helpdesk::TicketModelExtension::ASSOCIATION_BY_VALUE[val]
+          # skip ticket_states preload for archive tickets
+          associations << association_model unless skip_association_preload(association_model)
         end
       end
       associations << :requester if @contact_headers.present?
@@ -350,5 +355,9 @@ class Export::Ticket < Struct.new(:export_params)
       export_params: export_params,
       type: 'ticket'
     }
+  end
+
+  def skip_association_preload(association_model)
+    export_params[:archived_tickets].present? && DISASSOCIATED_MODELS[:archive_tickets].include?(association_model)
   end
 end

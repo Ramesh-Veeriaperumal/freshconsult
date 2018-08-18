@@ -26,7 +26,7 @@ module TicketsTestHelper
   end
 
   def index_ticket_pattern(ticket, exclude = [])
-    ticket_pattern(ticket).except(*([:attachments, :conversations, :tags] - exclude))
+    ticket_pattern(ticket).merge(ticket_association_pattern(ticket,true)).except(*([:attachments, :conversations] - exclude))
   end
 
   def so_ticket_pattern(expected_output = {}, ticket)
@@ -39,7 +39,7 @@ module TicketsTestHelper
       ticket, false, false, 
       requester, company, 
       ticket_states
-    ).except(*([:attachments, :conversations, :tags, :description, :description_text] - exclude))
+    ).merge(ticket_association_pattern(ticket,true)).except(*([:attachments, :conversations, :description, :description_text] - exclude))
   end
 
   def index_deleted_ticket_pattern(ticket)
@@ -235,11 +235,10 @@ module TicketsTestHelper
     pattern = private_note_pattern({}, note).merge!(user: Hash)
   end
 
-  def ticket_association_pattern(ticket)
-    {
-      association_type: ticket.association_type,
-      associated_tickets_list: ticket.associates
-    }
+  def ticket_association_pattern(ticket, associated_tickets_count = false)
+    response = { association_type: ticket.association_type }
+    associated_tickets_count ? response.merge( associated_tickets_count: ticket.subsidiary_tkts_count )
+                             : response.merge( associated_tickets_list: ticket.associates )
   end
   # draft_exists denotes whether the draft was saved using old UI code
   def reply_draft_pattern(expected_output, draft_exists = false)
@@ -830,4 +829,23 @@ module TicketsTestHelper
     archive_ticket
   end
 
+  # export methods
+  def ticket_data_export(source)
+    @account.data_exports.where(user_id: User.current.id, source: source)
+  end
+
+  def export_ticket_fields
+    Hash[*Helpdesk::TicketModelExtension.allowed_ticket_export_fields.map {|i| [i, i]}.flatten].symbolize_keys
+  end
+
+  def ticket_export_param
+    { 
+      ticket_fields: export_ticket_fields,
+      contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+      company_fields: { 'name' => 'Company Name' },
+      format: 'csv', date_filter: '4',
+      ticket_state_filter: 'created_at', start_date: 1.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] 
+    }
+  end
 end
