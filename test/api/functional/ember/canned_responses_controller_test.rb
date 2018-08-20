@@ -35,7 +35,7 @@ module Ember
 
       @@before_all_run = true
     end
-    
+
     def test_search_with_invalid_ticket_id
       invalid_id = create_ticket.display_id + 20
       get :search, controller_params(version: 'private', ticket_id: invalid_id, search_string: 'Test')

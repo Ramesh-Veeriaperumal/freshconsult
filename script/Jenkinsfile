@@ -68,11 +68,18 @@ def build_setup(category) {
 	        yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/$jobName/config/channel_api_keys.yml
 	        sudo service mysql start
 	        sudo service elasticsearch start
-	        sudo service postgresql start
-	        redis-server --daemonize yes
-	        bundle install
-            bundle exec rake db:bootstrap RAILS_ENV=test
 	      	"""
+	      	
+	    if(category != 'private' && category != 'public') {
+ 	
+	      sh  """#!/bin/bash
+		      source /etc/profile.d/rvm.sh
+		      redis-server --daemonize yes
+		      bundle install
+	          bundle exec rake db:bootstrap RAILS_ENV=test
+	      	  """
+	      }
+  	
 	      	
 	    if(category == 'sandbox')  {
 	
@@ -105,14 +112,14 @@ def execute_test_cases(category) {
         if(category == 'public') {
            sh '''#!/bin/bash
               source /etc/profile.d/rvm.sh
-              bundle exec ruby test/api/suites/public_api_test_suite.rb
+              ruby test/parallel_test.rb 3 public
               '''
         }
         
         if(category == 'private') {
            sh '''#!/bin/bash
               source /etc/profile.d/rvm.sh
-              bundle exec ruby test/api/suites/falcon_test_suite.rb
+              ruby test/parallel_test.rb 5 private
               '''
         }
         
