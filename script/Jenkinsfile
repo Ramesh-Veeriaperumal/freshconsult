@@ -7,8 +7,16 @@
  //Label name based on build no
 instance_no    = get_number_instances();
 no = buildno % instance_no
-echo no + "- Total number of instances are running"
-label  = "backend_label_$no" 
+echo instance_no + "- Total number of instances are running"
+
+try {
+    label  = "backend_label_$no" 
+}
+catch (e) {
+     echo "error " + e     
+}
+
+
 
 
 
@@ -16,7 +24,6 @@ label  = "backend_label_$no"
 def get_number_instances() {
 
         result = ["curl", "-k", "-X", "GET", "-H", "Content-Type: application/json","-H", "Authorization: Bearer c535a01828c0a4c5c2fb7c18d72ae087b379d5e63ba9cbe2f17c45649f16300c", "https://api.spotinst.io/aws/ec2/group/sig-86dd0ad7?accountId=act-f9698e90"].execute().text
-	    echo result
 	    jsonSlurper = new JsonSlurper()
 	    data = jsonSlurper.parseText(result)
 		instance_no =  data.response.items
