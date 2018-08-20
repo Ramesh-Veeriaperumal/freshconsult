@@ -1,25 +1,34 @@
- import groovy.json.JsonSlurper
- 
+import groovy.json.JsonSlurper
+
+ //Assinging variable
  jobName = env.JOB_NAME 
  build   = env.BUILD_NUMBER
  buildno = build.toInteger()
+ label = ""
  
  //Label name based on build no
-instance_no    = get_number_instances();
-no = buildno % instance_no
+
 echo instance_no + "- Total number of instances are running"
 
 try {
+
+	instance_no    = get_number_instances()
+	no = (buildno % instance_no).toString()
     label  = "backend_label_$no" 
+
 }
 catch (e) {
-     echo "error " + e     
+
+     echo "error with label name" + e  
+     no = (buildno % 8).toString()
+     label  = "backend_label_$no"    
+
 }
 
 
-
-
-
+//Label name
+echo label + " label name"
+ 
 //Getting total number of instances 
 def get_number_instances() {
 
