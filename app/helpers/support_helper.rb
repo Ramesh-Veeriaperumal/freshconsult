@@ -271,12 +271,7 @@ module SupportHelper
   end
 
   def portal_fav_ico
-    fav_icon = MemcacheKeys.fetch(["v8","portal","fav_ico",current_portal],7.days.to_i) do
-          current_portal.fav_icon.nil? ? '/assets/misc/favicon.ico?702017' :
-                AwsWrapper::S3Object.public_url_for(current_portal.fav_icon.content.path,
-                  current_portal.fav_icon.content.bucket_name,
-                        :secure => true)
-            end
+    fav_icon = current_portal.fetch_fav_icon_url
     "<link rel='shortcut icon' href='#{fav_icon}' />".html_safe
   end
 

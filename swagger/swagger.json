@@ -8358,6 +8358,9 @@
                   "items": {
                     "type": "integer"
                   }
+                },
+                "fav_icon_url": {
+                  "type": "string"
                 }
               }
             },
@@ -11632,6 +11635,9 @@
               "items": {
                 "type": "integer"
               }
+            },
+            "fav_icon_url": {
+              "type": "string"
             }
           }
         }
