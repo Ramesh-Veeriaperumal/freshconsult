@@ -1790,7 +1790,7 @@
 
 /* Export csv styles */
 .export_title{
-	padding: 28px 15px 0 0;
+	@include padding(28px 15px 0 0);
 	.title{
 		font-weight : bold;
 		font-size: 12px

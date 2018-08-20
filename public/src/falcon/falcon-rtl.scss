@@ -59,6 +59,13 @@
     content: "\f138";
     top: 3px;
   }
+  #filter_text{
+    float: right;
+    li strong{
+      float: left;
+      direction: ltr;
+    }
+  }
   .form-horizontal select {
     content: "\200E‎";
   }
