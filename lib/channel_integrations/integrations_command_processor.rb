@@ -16,6 +16,7 @@ module ChannelIntegrations
       return unless is_valid_request?(payload_type, payload) && args[:account_id]
       Sharding.select_shard_of(args[:account_id]) do
         Account.find(args[:account_id]).make_current
+        log_params(payload)
         reply_payload = @cmds.process(payload)
         send_integrations_reply(reply_payload, args) unless reply_payload.blank?
         perform_dedup_logic(args)
@@ -44,6 +45,10 @@ module ChannelIntegrations
         }.to_json
 
         reply_json
+      end
+
+      def log_params(payload)
+        Rails.logger.debug "channel framework command, owner: #{payload[:owner]}, command: #{payload[:command_name]}, command_id: #{payload[:command_id]}, meta: #{payload[:meta].inspect}"
       end
   end
 end

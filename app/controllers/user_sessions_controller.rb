@@ -377,7 +377,7 @@ class UserSessionsController < ApplicationController
         flash[:notice] = t(:'flash.login.sso.expected_params')
       elsif params[:timestamp].present? and !params[:timestamp].to_i.between?((time_in_utc - sso_login_allowed_time),( time_in_utc + sso_clock_drift))
         Rails.logger.debug "SSO LOGIN EXPIRED: TIME EXCEEDED, account_id=#{current_account.id}, timestamp=#{params[:timestamp]}, current_time=#{time_in_utc}, time_interval=#{time_interval}"
-        flash[:notice] = t(:'flash.login.sso.invalid_time_entry')
+        flash[:notice] = t(:'flash.login.sso.url_limitation_error')
       else
         set_others_redis_key(params[:hash], true, time_interval)
         return
