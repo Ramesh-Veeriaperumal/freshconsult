@@ -186,6 +186,9 @@ body.community{
 		a{
 			border: none;
 			color: $text-color;
+      &::after{
+        content: "\200E‎";
+      }
 		}
 		li{
 			&.toggle-open .forum_expand:before, &.toggle-open .forum_expand:hover:before {
@@ -267,8 +270,9 @@ body.community{
 				font-size: 14px;
 				font-weight: 500;
 				padding-bottom: 0px;
-			    .muted{
+			    .muted::after{
 			    	color: $link-color;
+            content: "\200E";
 			    }
 			    a:hover ~ .muted {
 				    color: $link-hover;
