@@ -5,10 +5,7 @@ import groovy.json.JsonSlurperClassic
  build   = env.BUILD_NUMBER
  buildno = build.toInteger()
  label = ""
- 
- //Label name based on build no
-
-echo instance_no + "- Total number of instances are running"
+ instance_no = 0
 
 try {
 
@@ -27,6 +24,7 @@ catch (e) {
 
 
 //Label name
+echo instance_no + "- Total number of instances are running"
 echo label + " label name"
  
 //Getting total number of instances 
