@@ -1,6 +1,10 @@
 class Helpdesk::NestedTicketField < ActiveRecord::Base
-  include MemcacheKeys
   
+  include MemcacheCleaner
+  include MemcacheKeys
+
+  DELETE_CACHE_KEYS =[TICKET_FIELDS_FULL]
+    
   self.primary_key = :id
 
   self.table_name =  "helpdesk_nested_ticket_fields"
@@ -15,12 +19,6 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :account_id
     
   before_create :populate_label
-
-  after_commit :clear_cache
-
-  def clear_cache
-    MemcacheKeys.delete_from_cache TICKET_FIELDS_FULL % { :account_id => self.account_id }
-  end
 
   def dom_type
   	"dropdown_blank"

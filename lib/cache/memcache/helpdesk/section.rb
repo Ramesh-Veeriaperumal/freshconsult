@@ -14,9 +14,8 @@ module Cache::Memcache::Helpdesk::Section
   end
 
   def clear_cache
-    acc_id_hash = { account_id: self.account_id }
-    MemcacheKeys.delete_from_cache ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % acc_id_hash
-    MemcacheKeys.delete_from_cache TICKET_FIELDS_FULL % acc_id_hash
+    key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.account_id }
+    MemcacheKeys.delete_from_cache key
   end
 
   def required_ticket_fields_key

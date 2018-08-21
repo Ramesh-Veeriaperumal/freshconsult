@@ -1,6 +1,10 @@
 class Helpdesk::SectionPicklistValueMapping < ActiveRecord::Base
-  include MemcacheKeys
   
+  include MemcacheKeys
+  include MemcacheCleaner
+
+  DELETE_CACHE_KEYS =[TICKET_FIELDS_FULL]
+
   self.primary_key = :id  
   attr_protected  :account_id
   
@@ -10,9 +14,4 @@ class Helpdesk::SectionPicklistValueMapping < ActiveRecord::Base
 
   validates_uniqueness_of :picklist_value_id, :scope => :account_id
 
-  after_commit :clear_cache
-
-  def clear_cache
-    MemcacheKeys.delete_from_cache TICKET_FIELDS_FULL % { :account_id => self.account_id }
-  end
 end

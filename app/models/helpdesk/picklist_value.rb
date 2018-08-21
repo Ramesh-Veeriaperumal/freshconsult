@@ -1,6 +1,9 @@
 class Helpdesk::PicklistValue < ActiveRecord::Base
   
+  include MemcacheCleaner
   include MemcacheKeys
+
+  DELETE_CACHE_KEYS =[ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING,TICKET_FIELDS_FULL]
 
   belongs_to_account
   self.table_name =  "helpdesk_picklist_values"
@@ -26,7 +29,6 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   
   before_validation :trim_spaces, :if => :value_changed?
 
-  after_commit :clear_cache
 
   CACHEABLE_ATTRIBUTES = ["id", "account_id", "pickable_id", "pickable_type", "value", "position", "created_at", "updated_at"]
   
@@ -69,11 +71,6 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
     with_scope(method_scoping, :overwrite, &block)
   end
 
-  def clear_cache
-    acc_id_hash = { account_id: account_id }
-    MemcacheKeys.delete_from_cache ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % acc_id_hash
-    MemcacheKeys.delete_from_cache TICKET_FIELDS_FULL % acc_id_hash
-  end
 
   private
 
