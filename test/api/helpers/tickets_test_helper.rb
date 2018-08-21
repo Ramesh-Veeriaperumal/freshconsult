@@ -16,6 +16,78 @@ module TicketsTestHelper
   include AttachmentsTestHelper
   include Helpdesk::Email::Constants
 
+  CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
+  DROPDOWN_OPTIONS = Faker::Lorem.words(5).freeze
+  CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
+  DEPENDENT_FIELD_VALUES = {
+    Faker::Address.country => {
+      Faker::Address.state => [Faker::Address.city],
+      Faker::Address.state => [Faker::Address.city]
+    },
+    Faker::Address.country => {
+      Faker::Address.state => [Faker::Address.city],
+      Faker::Address.state => [],
+      Faker::Address.state => [Faker::Address.city, Faker::Address.city]
+    }
+  }.freeze
+  TAG_NAMES = Faker::Lorem.words(10).freeze
+  CUSTOM_FIELDS_VALUES = { 'country' => 'USA', 'state' => 'California', 'city' => 'Burlingame', 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' => Faker::Lorem.paragraph, 'dropdown' => CUSTOM_FIELDS_CHOICES[0], 'date' => '2015-09-09' }.freeze
+
+
+  def tickets_controller_before_all before_all_run
+    return if before_all_run
+    @account.features.freshfone.create
+    @account.features.forums.create
+    @account.ticket_fields.custom_fields.each(&:destroy)
+    @account.tickets.destroy_all
+    Helpdesk::TicketStatus.find_by_status_id(2).update_column(:stop_sla_timer, false)
+    @@ticket_fields = []
+    @@custom_field_names = []
+    @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+    @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', CUSTOM_FIELDS_CHOICES)
+    @@choices_custom_field_names = @@ticket_fields.map(&:name)
+    CUSTOM_FIELDS.each do |custom_field|
+      next if %w(dropdown country state city).include?(custom_field)
+      @@ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
+      @@custom_field_names << @@ticket_fields.last.name
+    end
+    create_skill if @account.skills.empty?
+
+    @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', DROPDOWN_OPTIONS)
+    10.times.each do |i|
+      create_product
+    end
+    10.times.each do |i|
+      create_company
+    end
+    10.times.each do |i|
+      add_test_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    10.times.each do |i|
+      create_group_with_agents(@account, agent_list: [@account.agents.sample.id])
+    end
+
+    50.times.each do |i|
+       country = DEPENDENT_FIELD_VALUES.keys.sample
+       state   = DEPENDENT_FIELD_VALUES[country].keys.sample
+       city    = DEPENDENT_FIELD_VALUES[country][state].sample
+       params = ticket_params_hash.except(:description).merge(custom_field: {})
+       params[:custom_field]["test_custom_dropdown_#{@account.id}"] = [DROPDOWN_OPTIONS.sample, nil].sample
+       params[:custom_field]["test_custom_country_#{@account.id}"]  = country
+       params[:custom_field]["test_custom_state_#{@account.id}"]    = state
+       params[:custom_field]["test_custom_city_#{@account.id}"]     = city
+       params[:tag_names] = [TAG_NAMES.sample(rand(1..3)).join(','), nil].sample
+       params[:responder_id] = [@account.agents.sample.id, nil].sample
+       ticket = create_ticket(params)
+       ticket.product = [@account.products.sample, nil].sample
+       requester = [ticket.requester, nil].sample
+       company_id = [@account.companies.sample.id, nil].sample
+       requester.user_companies.create(company_id: company_id) if requester && company_id
+       ticket.company_id = company_id
+       ticket.save
+    end
+  end
+
   # Patterns
   def deleted_ticket_pattern(expected_output = {}, ticket)
     ticket_pattern(expected_output, ticket).merge(deleted: (expected_output[:deleted] || ticket.deleted).to_s.to_bool)
@@ -26,7 +98,7 @@ module TicketsTestHelper
   end
 
   def index_ticket_pattern(ticket, exclude = [])
-    ticket_pattern(ticket).except(*([:attachments, :conversations, :tags] - exclude))
+    ticket_pattern(ticket).merge(ticket_association_pattern(ticket,true)).except(*([:attachments, :conversations] - exclude))
   end
 
   def so_ticket_pattern(expected_output = {}, ticket)
@@ -39,7 +111,7 @@ module TicketsTestHelper
       ticket, false, false, 
       requester, company, 
       ticket_states
-    ).except(*([:attachments, :conversations, :tags, :description, :description_text] - exclude))
+    ).merge(ticket_association_pattern(ticket,true)).except(*([:attachments, :conversations, :description, :description_text] - exclude))
   end
 
   def index_deleted_ticket_pattern(ticket)
@@ -235,11 +307,10 @@ module TicketsTestHelper
     pattern = private_note_pattern({}, note).merge!(user: Hash)
   end
 
-  def ticket_association_pattern(ticket)
-    {
-      association_type: ticket.association_type,
-      associated_tickets_list: ticket.associates
-    }
+  def ticket_association_pattern(ticket, associated_tickets_count = false)
+    response = { association_type: ticket.association_type }
+    associated_tickets_count ? response.merge( associated_tickets_count: ticket.subsidiary_tkts_count )
+                             : response.merge( associated_tickets_list: ticket.associates )
   end
   # draft_exists denotes whether the draft was saved using old UI code
   def reply_draft_pattern(expected_output, draft_exists = false)
@@ -483,7 +554,7 @@ module TicketsTestHelper
   end
 
   def private_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false)
-    filter_clause = all_tickets ? ['spam = ? AND deleted = ?', false, false] : ['created_at > ?', 30.days.ago]
+    filter_clause = all_tickets ? ['spam = ? AND deleted = ?', false, false] : ['created_at > ?', 30.days.ago.in_time_zone(User.current.time_zone)]
 
     preload_options = [:tags, :ticket_states, :ticket_old_body, :schema_less_ticket, :flexifield]
     preload_options << :requester if requester
@@ -830,4 +901,23 @@ module TicketsTestHelper
     archive_ticket
   end
 
+  # export methods
+  def ticket_data_export(source)
+    @account.data_exports.where(user_id: User.current.id, source: source)
+  end
+
+  def export_ticket_fields
+    Hash[*Helpdesk::TicketModelExtension.allowed_ticket_export_fields.map {|i| [i, i]}.flatten].symbolize_keys
+  end
+
+  def ticket_export_param
+    { 
+      ticket_fields: export_ticket_fields,
+      contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
+      company_fields: { 'name' => 'Company Name' },
+      format: 'csv', date_filter: '4',
+      ticket_state_filter: 'created_at', start_date: 1.days.ago.iso8601, end_date: Time.zone.now.iso8601,
+      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] 
+    }
+  end
 end

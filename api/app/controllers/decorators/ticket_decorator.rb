@@ -33,6 +33,9 @@ class TicketDecorator < ApiDecorator
 
   def requester
     private_api? ? requester_info : requester_v2
+  rescue StandardError => e
+    Rails.logger.error("Error while fetching requester for Ticket Id: #{record.id}: #{e.message}")
+    NewRelic::Agent.notice_error(e, description: "Error while fetching requester for Ticket #{record.id} for Account #{Account.current.id}")
   end
 
   def requester_v2

@@ -120,6 +120,18 @@ module ArchiveTicketTestHelper
     params_hash
   end
 
+  def search_stub_archive_tickets(archive_tickets)
+    Freshquery::Response.any_instance.stubs(:errors).returns(nil)
+    Freshquery::Response.any_instance.stubs(:items).returns(Search::V2::PaginationWrapper.new(archive_tickets))
+    Search::V2::PaginationWrapper.any_instance.stubs(:records).returns(archive_tickets)
+    Search::V2::PaginationWrapper.any_instance.stubs(:total_entries).returns(archive_tickets.length)
+    yield
+    Freshquery::Response.any_instance.unstub(:errors)
+    Freshquery::Response.any_instance.unstub(:items)
+    Search::V2::PaginationWrapper.any_instance.unstub(:records)
+    Search::V2::PaginationWrapper.any_instance.unstub(:total_entries)
+  end
+
   def archive_ticket_association_payload(params = {})
     {
       'archive_ticket_association' => {

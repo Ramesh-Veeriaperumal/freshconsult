@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+['scenario_automations_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 class ScenarioAutomationsControllerTest < ActionController::TestCase
   include ScenarioAutomationsTestHelper
 

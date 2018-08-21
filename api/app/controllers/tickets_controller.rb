@@ -194,7 +194,7 @@ class TicketsController < ApiApplicationController
     end
 
     def conditional_preload_options
-      preload_options = [:ticket_old_body, :schema_less_ticket, :flexifield]
+      preload_options = [:ticket_old_body, :schema_less_ticket, :flexifield, :tags]
       @ticket_filter.include_array.each do |assoc|
         preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc] || assoc)
         increment_api_credit_by(2)

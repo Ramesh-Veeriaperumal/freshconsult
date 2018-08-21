@@ -68,6 +68,7 @@ class TicketsControllerTest < ActionController::TestCase
       @@custom_field_names << @@ticket_fields.last.name
     end
     @account.launch :add_watcher
+    @account.time_zone = Time.zone.name
     @account.save
     @account.revoke_feature :unique_contact_identifier
     @@before_all_run = true
@@ -2778,6 +2779,16 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 1, response.size
   end
 
+  def test_index_with_requester_nil
+    ticket = create_ticket
+    ticket.requester.destroy
+    get :index, controller_params(include: 'requester')
+    assert_response 200
+    requester_hash = JSON.parse(response.body).select { |x| x['id'] == ticket.id }.first['requester']
+    ticket.destroy
+    assert requester_hash.nil?
+  end
+
   def test_index_with_dates
     get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200
@@ -3165,7 +3176,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_all_default_fields_required_invalid
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
     default_non_required_fiels.map { |x| x.toggle!(:required) }
-    put :update, construct_params({ id: ticket.id },  subject: nil,
+    put :update, construct_params({ id: ticket.display_id },  subject: nil,
                                                       description: nil,
                                                       group_id: nil,
                                                       product_id: nil,

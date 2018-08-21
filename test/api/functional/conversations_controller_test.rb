@@ -618,17 +618,17 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json(request_error_pattern(:access_denied))
   end
 
-  def test_update_with_owns_object_privilege
-    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
-    User.any_instance.stubs(:privilege?).with(:edit_note).returns(false).at_most_once
-    params = update_note_params_hash
-    n = note
-    put :update, construct_params({ id: n.id }, params)
-    User.any_instance.unstub(:privilege?)
-    assert_response 200
-    match_json(v2_update_note_pattern(params, n.reload))
-    match_json(v2_update_note_pattern({}, n.reload))
-  end
+  #def test_update_with_owns_object_privilege
+  #  User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+  #  User.any_instance.stubs(:privilege?).with(:edit_note).returns(false).at_most_once
+  #  params = update_note_params_hash
+  #  n = note
+  #  put :update, construct_params({ id: n.id }, params)
+  #  User.any_instance.unstub(:privilege?)
+  #  assert_response 200
+  #  match_json(v2_update_note_pattern(params, n.reload))
+  #  match_json(v2_update_note_pattern({}, n.reload))
+  #end
 
   def test_update_reply
     n = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 0)
