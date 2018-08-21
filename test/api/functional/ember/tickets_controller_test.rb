@@ -3658,6 +3658,23 @@ module Ember
       match_json([bad_request_error_pattern('email_config_id',  :absent_in_db, resource: :email_config, attribute: :email_config_id)])
     end
 
+    def test_compose_email_with_deleted_email_config_id_on_update
+      email_config = create_email_config
+      agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
+      @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
+      params = ticket_params_hash.except(:source, :product_id, :responder_id, :email, :group_id).merge(custom_fields: {}, email_config_id: email_config.id, email: agent.email)
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      t = Helpdesk::Ticket.last
+      match_json(ticket_show_pattern(t))
+      assert t.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+      assert_response 201
+      @account.email_configs.find(email_config.id).destroy
+      update_params = { status: 5, email: agent.email }
+      params_hash = update_ticket_params_hash.except(:due_by, :fr_due_by, :email, :responder_id).merge(update_params)
+      put :update, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+    end
+
     def test_compose_email_with_group_ticket_permission_valid
       Account.any_instance.stubs(:restricted_compose_enabled?).returns(:true)
       User.any_instance.stubs(:can_view_all_tickets?).returns(false)
