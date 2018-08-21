@@ -34,7 +34,7 @@ class Ember::TicketFieldsController < ::ApiTicketFieldsController
 
     def load_objects(items = scoper)
       # This method has been overridden to avoid pagination 
-      if @has_cacheee
+      if !@has_cache.nil? && @has_cache
         @items =  []
       else
         @items = items
