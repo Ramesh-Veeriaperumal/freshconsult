@@ -36,3 +36,6 @@ Sidekiq.configure_server do |config|
     chain.add Marginalia::SidekiqInstrumentation
   end
 end
+
+# Add Marginalia support for Ember and public API. For non metal the hook is already present in Marginalia Gem Railtie.
+ActionController::Metal.send(:include, Marginalia::ActionControllerInstrumentation)
