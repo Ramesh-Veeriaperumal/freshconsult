@@ -13,7 +13,6 @@ module Ember
     include AccountTestHelper
     include SharedOwnershipTestHelper
 
-    TAG_NAMES = Faker::Lorem.words(10).freeze
 
     CREATED_AT_OPTIONS = %w(
       any_time 5 15 30 60 240 720 1440
@@ -21,67 +20,24 @@ module Ember
       month last_month two_months six_months set_date
     ).freeze
 
-    DROPDOWN_OPTIONS = Faker::Lorem.words(5).freeze
-
-    DEPENDENT_FIELD_VALUES = {
-      Faker::Address.country => {
-        Faker::Address.state => [Faker::Address.city],
-        Faker::Address.state => [Faker::Address.city]
-      },
-      Faker::Address.country => {
-        Faker::Address.state => [Faker::Address.city],
-        Faker::Address.state => [],
-        Faker::Address.state => [Faker::Address.city, Faker::Address.city]
-      }
-    }.freeze
 
     def setup
       super
       @private_api = true
-      before_all
+      Sidekiq::Worker.clear_all
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+      Account.current.features.es_v2_writes.destroy
+      Account.current.time_zone = Time.zone.name
+      Account.current.save
+      User.current.time_zone = Time.zone.name
+      User.current.save
+      Account.current.reload
+      @account.sections.map(&:destroy)
+      tickets_controller_before_all(@@before_all_run)
+      @@before_all_run=true unless @@before_all_run
     end
 
-    @@before_all_run = false
-
-    def before_all
-      return if @@before_all_run
-      @account.ticket_fields.custom_fields.each(&:destroy)
-      create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
-      create_custom_field_dropdown('test_custom_dropdown', DROPDOWN_OPTIONS)
-      10.times.each do |i|
-        create_product
-      end
-      10.times.each do |i|
-        create_company
-      end
-      10.times.each do |i|
-        add_test_agent(@account, role: Role.find_by_name('Agent').id)
-      end
-      10.times.each do |i|
-        create_group_with_agents(@account, agent_list: [@account.agents.sample.id])
-      end
-
-      50.times.each do |i|
-        country = DEPENDENT_FIELD_VALUES.keys.sample
-        state   = DEPENDENT_FIELD_VALUES[country].keys.sample
-        city    = DEPENDENT_FIELD_VALUES[country][state].sample
-        params = ticket_params_hash.except(:description).merge(custom_field: {})
-        params[:custom_field]["test_custom_dropdown_#{@account.id}"] = [DROPDOWN_OPTIONS.sample, nil].sample
-        params[:custom_field]["test_custom_country_#{@account.id}"]  = country
-        params[:custom_field]["test_custom_state_#{@account.id}"]    = state
-        params[:custom_field]["test_custom_city_#{@account.id}"]     = city
-        params[:tag_names] = [TAG_NAMES.sample(rand(1..3)).join(','), nil].sample
-        params[:responder_id] = [@account.agents.sample.id, nil].sample
-        ticket = create_ticket(params)
-        ticket.product = [@account.products.sample, nil].sample
-        requester = [ticket.requester, nil].sample
-        company_id = [@account.companies.sample.id, nil].sample
-        requester.user_companies.create(company_id: company_id) if requester && company_id
-        ticket.company_id = company_id
-        ticket.save
-      end
-      @@before_all_run = true
-    end
+    @@before_all_run=false
 
     def sample_arr(max = 4)
       (1..max).to_a.sample(rand(1..max))

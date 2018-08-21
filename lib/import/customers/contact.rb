@@ -22,6 +22,7 @@ class Import::Customers::Contact < Import::Customers::Base
       item_param[:company_id] = current_account.companies.
                                 find_or_create_by_name(first_valid_company).id unless
                                 first_valid_company.blank?
+      item_param.delete(:company_name)
     end
     load_item item_param
   end

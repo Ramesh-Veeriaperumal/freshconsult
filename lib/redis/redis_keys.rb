@@ -426,6 +426,9 @@ module Redis::RedisKeys
 
   #Temp Redis keys for resque to sidekiq migration end
 
+  # count cluster to search service keys
+  SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED = "SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED"
+
   # CUSTOMER IMPORT KEYS
   CONTACT_IMPORT_TOTAL_RECORDS = "CONTACT_IMPORT_TOTAL_RECORDS:%{account_id}"
   CONTACT_IMPORT_FINISHED_RECORDS = "CONTACT_IMPORT_FINISHED_RECORDS:%{account_id}"

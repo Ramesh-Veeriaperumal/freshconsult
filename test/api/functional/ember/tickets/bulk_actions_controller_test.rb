@@ -14,7 +14,6 @@ module Ember
       include CustomFieldsTestHelper
 
       CUSTOM_FIELDS             = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
-      CUSTOM_FIELDS_CHOICES     = Faker::Lorem.words(5).uniq.freeze
       BULK_CREATE_TICKET_COUNT  = 2
 
       def setup

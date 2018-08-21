@@ -141,7 +141,7 @@ class Social::TwitterHandle < ActiveRecord::Base
 
     def destroy_euc_redis_key?
       # When the consumer authorizes the new app access_token will change and when they re-authorize the state will change.
-      euc_migrated_account? && (self.previous_changes["state"].present? || self.previous_changes["access_token"].present?)
+      euc_migrated_account? && self.previous_changes["access_token"].present?
     end
 
     def euc_migrated_account?

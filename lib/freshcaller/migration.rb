@@ -78,7 +78,9 @@ module Freshcaller
     end
 
     def account_admin
-      current_account.account_managers.first
+      return account.account_managers.detect { |manager| !manager.occasional_agent? } if params[:fc_user_email].blank?
+      admin_users = current_account.account_managers.select { |manager| manager.email == params[:fc_user_email] }
+      admin_users.first
     end
 
     def account_migration_location
@@ -121,7 +123,8 @@ module Freshcaller
                             helpkit_domain: current_account.full_domain,
                             access_token: current_account.roles.account_admin.first.users.first.single_access_token,
                             plan: params[:plan_name],
-                            account_id: current_account.freshcaller_account.freshcaller_account_id },
+                            account_id: current_account.freshcaller_account.freshcaller_account_id ,
+                            custom_forwarding: current_account.features?(:freshfone_custom_forwarding)},
                             "#{protocol}#{current_account.freshcaller_account.domain}/migrate",
                             :post)
     end

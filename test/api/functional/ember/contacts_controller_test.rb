@@ -657,7 +657,7 @@ module Ember
       get :show, controller_params(version: 'private', id: sample_user.id)
       assert_response 200
       res = JSON.parse(response.body)
-      ticket_date_format = time_now.strftime('%F')
+      ticket_date_format = Time.now.in_time_zone(@account.time_zone).strftime('%F')
       contact_field.destroy
       assert_equal ticket_date_format, res['custom_fields']['requester_date']
     end
@@ -715,7 +715,7 @@ module Ember
 
     def test_index_with_tags
       tags = Faker::Lorem.words(3).uniq
-      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, tag_names: tags.join(','))
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, tag_names: tags.join(','), tags: tags.join(','))
       get :index, controller_params(version: 'private', tag: tags[0])
       assert_response 200
       assert response.api_meta[:count] == contact_ids.size
