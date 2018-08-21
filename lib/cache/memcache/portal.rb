@@ -48,6 +48,16 @@ module Cache::Memcache::Portal
     MemcacheKeys.delete_from_cache key
   end
 
+  def fetch_fav_icon_url
+    MemcacheKeys.fetch(['v8', 'portal', 'fav_ico', self]) do
+      fav_icon ? public_fav_icon_url : '/assets/misc/favicon.ico?702017'
+    end
+  end
+
+  def public_fav_icon_url
+    AwsWrapper::S3Object.public_url_for(fav_icon.content.path(:fav_icon), fav_icon.content.bucket_name, expires: 7.days, secure: true)
+  end
+
   def solution_categories_from_cache
     CustomMemcacheKeys.fetch(current_solution_cache_key, 0, "SOLUTION PORTAL CACHE FETCH for account ##{Account.current.id}") do
       Solution::CategoryMeta.joins(

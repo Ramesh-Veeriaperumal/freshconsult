@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
                  :audit_logs_central_publish, :encode_emoji_subject,
                  :time_sheets_central_publish, :new_ticket_recieved_metric, :canned_forms,
                  :euc_migrated_twitter, :twitter_microservice, :twitter_handle_publisher, :csat_email_scan_compatibility,
-                 :sso_login_expiry_limitation, :undo_send]
+                 :sso_login_expiry_limitation, :undo_send, :count_service_es_writes]
   
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
@@ -123,6 +123,10 @@ class Account < ActiveRecord::Base
     (launched?(:es_count_reads) || launched?(:list_page_new_cluster)) && features?(:countv2_reads)
   end
 
+  def count_es_writes_enabled?
+    features?(:countv2_writes) || launched?(:count_service_es_writes)
+  end
+  
   def customer_sentiment_enabled?
     Rails.logger.info "customer_sentiment : #{launched?(:customer_sentiment)}"
     launched?(:customer_sentiment)
