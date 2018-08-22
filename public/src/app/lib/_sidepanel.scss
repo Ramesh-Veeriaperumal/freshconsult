@@ -288,24 +288,19 @@ div.addReminder{
 // -----------------------------------------------------------
 //							Gamification
 // -----------------------------------------------------------
-.sidepanel .action-right{
+.sidepanel .action-right {
 	@include float(right);
 	font-size: 13px;
 	line-height: 24px;
 	margin-top: 4px;
 }
-.common-icon-help{
+.common-icon-help {
 	position:absolute;
  	@include right(0);
 	top:$common-padding / 2;
-	@if $rtl{
-		-moz-transform: scaleX(-1);
-        -o-transform: scaleX(-1);
-        -webkit-transform: scaleX(-1);
-        transform: scaleX(-1);
-        filter: FlipH;
-        -ms-filter: "FlipH";
-    }
+	@if $rtl {
+		display: none;
+  }
 }
 // -----------------------------------------------------------
 //				Trial Account Salesperson details
