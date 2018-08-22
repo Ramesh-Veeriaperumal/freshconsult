@@ -317,6 +317,7 @@ Helpkit::Application.routes.draw do
       post :create_company
       put :update_company
       put :update_notes
+      get :component
     end
     collection do
       delete :destroy
