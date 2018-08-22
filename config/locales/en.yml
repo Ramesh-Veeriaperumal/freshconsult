@@ -11816,6 +11816,7 @@ Do let us know if you are interested!"
       freshdesk_dot_com: ".freshdesk.com"
       submit: Submit
     signup_google_error:
+      token_unavailable: "Something went wrong. Try logging in again. If this problem persists, please contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>."
       token_mismatch_error: "Token mismatch error. Please contact support@freshdesk.com."
       error_message: "<center><p class='big-text aligncenter'>Sorry! You do not have enough permission to access this page.<br> Please contact your Account administrator or </p></center><center><a href='http://freshdesk.com/signup'>Signup from Freshdesk Home page </a></center>"
     thank_you:
