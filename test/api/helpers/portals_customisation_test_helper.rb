@@ -27,7 +27,10 @@ module PortalsCustomisationTestHelper
       helpdesk_logo: get_helpdesk_logo(portal),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
-    }.merge(forums_enabled? ? { discussion_category_ids: portal.portal_forum_categories.pluck(:forum_category_id) } : {})
+    }
+    portal_hash[:discussion_category_ids] = portal.portal_forum_categories.pluck(:forum_category_id) if forums_enabled?
+    portal_hash[:fav_icon_url] = portal.fetch_fav_icon_url if portal.fav_icon
+    portal_hash
   end
 
   def portal_show_pattern(portal, _expected_output = {})

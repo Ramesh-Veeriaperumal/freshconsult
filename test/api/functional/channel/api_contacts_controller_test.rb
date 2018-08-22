@@ -10,6 +10,7 @@ module Channel
 
     def setup
       super
+      @account.reload
     end
 
     def wrap_cname(params)

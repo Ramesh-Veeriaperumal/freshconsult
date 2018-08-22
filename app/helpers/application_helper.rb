@@ -148,11 +148,7 @@ module ApplicationHelper
   end
 
   def fav_icon_url(portal = current_portal)
-    MemcacheKeys.fetch(["v8","portal","fav_ico",portal]) do
-      portal.fav_icon.nil? ? '/assets/misc/favicon.ico?702017' :
-            AwsWrapper::S3Object.public_url_for(portal.fav_icon.content.path(:fav_icon),portal.fav_icon.content.bucket_name,
-                                          :expires => 7.days, :secure => true)
-    end
+    portal.fetch_fav_icon_url
   end
 
   def ticket_status_hash

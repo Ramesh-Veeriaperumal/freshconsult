@@ -2,7 +2,7 @@ require_relative '../../unit_test_helper'
 require "#{Rails.root}/test/api/helpers/custom_field_validator_test_helper.rb"
 
 module Pipe
-  class ConversationValidationTest < ::ConversationValidationTest
+  class ConversationValidationTest < ActionView::TestCase
     def test_create_with_created_at_updated_at
       Account.stubs(:current).returns(Account.first)
       time_now = Time.now

@@ -12,7 +12,7 @@ class UpdateAllPublisher
     subscribers   = (RabbitMq::Keys.const_get("#{exchange_name.upcase}_SUBSCRIBERS") rescue [])
     
     esv2_enabled      = Account.current.features_included?(:es_v2_writes)
-    count_es_enabled  = Account.current.features?(:countv2_writes)
+    count_es_enabled  = Account.current.count_es_writes_enabled?
     args[:options]  ||= {}
     options           = args[:options].deep_symbolize_keys
     # Move feature check inside if multiple subscribers added

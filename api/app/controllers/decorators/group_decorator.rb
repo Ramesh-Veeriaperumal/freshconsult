@@ -4,6 +4,7 @@ class GroupDecorator < ApiDecorator
   def initialize(record, options)
     super(record)
     @agent_mapping_ids = options[:agent_mapping_ids]
+    @agent_groups_ids = options[:agent_groups_ids]
   end
 
   def to_hash
@@ -50,7 +51,7 @@ class GroupDecorator < ApiDecorator
   end
 
   def agent_ids
-    (@agent_mapping_ids || record.agent_groups.map(&:user_id) || []).compact.uniq
+    (@agent_mapping_ids || (@agent_groups_ids && @agent_groups_ids[record.id]) || record.agent_groups.map(&:user_id) || []).compact.uniq
   end
 
   def business_hour_id

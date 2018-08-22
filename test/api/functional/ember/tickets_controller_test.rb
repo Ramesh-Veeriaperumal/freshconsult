@@ -26,10 +26,6 @@ module Ember
     include ArchiveTicketTestHelper
     include DiscussionsTestHelper
 
-    CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
-    CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
-    CUSTOM_FIELDS_VALUES = { 'country' => 'USA', 'state' => 'California', 'city' => 'Burlingame', 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' => Faker::Lorem.paragraph, 'dropdown' => CUSTOM_FIELDS_CHOICES[0], 'date' => '2015-09-09' }.freeze
-
     ARCHIVE_DAYS = 120
     TICKET_UPDATED_DATE = 150.days.ago
 
@@ -42,32 +38,12 @@ module Ember
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       Account.current.features.es_v2_writes.destroy
       Account.current.reload
-
-      before_all
-    end
-
-    @@before_all_run = false
-
-    def before_all
       @account.sections.map(&:destroy)
-      return if @@before_all_run
-      @account.features.freshfone.create
-      @account.features.forums.create
-      @account.ticket_fields.custom_fields.each(&:destroy)
-      Helpdesk::TicketStatus.find_by_status_id(2).update_column(:stop_sla_timer, false)
-      @@ticket_fields = []
-      @@custom_field_names = []
-      @@ticket_fields << create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
-      @@ticket_fields << create_custom_field_dropdown('test_custom_dropdown', CUSTOM_FIELDS_CHOICES)
-      @@choices_custom_field_names = @@ticket_fields.map(&:name)
-      CUSTOM_FIELDS.each do |custom_field|
-        next if %w(dropdown country state city).include?(custom_field)
-        @@ticket_fields << create_custom_field("test_custom_#{custom_field}", custom_field)
-        @@custom_field_names << @@ticket_fields.last.name
-      end
-      create_skill if @account.skills.empty?
-      @@before_all_run = true
+      tickets_controller_before_all(@@before_all_run)
+      @@before_all_run=true unless @@before_all_run
     end
+
+    @@before_all_run=false
 
     def wrap_cname(params)
       { ticket: params }
@@ -291,7 +267,7 @@ module Ember
       end
       get :index, controller_params(version: 'private', include: 'survey')
       assert_response 200
-      match_json(private_api_ticket_index_pattern(true))
+      match_json(private_api_ticket_index_pattern(true, false, false, 'created_at', 'desc', true))
     end
 
     def test_index_without_survey_enabled
@@ -335,6 +311,16 @@ module Ember
     #   assert_response 200
     #   match_json(private_api_ticket_index_pattern(false, true))
     # end
+
+    def test_index_with_requester_nil
+      ticket = create_ticket
+      ticket.requester.destroy
+      get :index, controller_params(version: 'private', include: 'requester')
+      assert_response 200
+      requester_hash = JSON.parse(response.body).select { |x| x['id'] == ticket.display_id }.first['requester']
+      ticket.destroy
+      assert requester_hash.nil?
+    end
 
     def test_index_with_company_side_load
       get :index, controller_params(version: 'private', include: 'company')
@@ -867,7 +853,7 @@ module Ember
       }
       post :parse_template, construct_params(params, false)
       assert_response 200
-      str = "test # #{t.id} Sample Text"
+      str = "test # #{t.display_id} Sample Text"
       match_json({ evaluated_text: str })
     end
 
@@ -2008,7 +1994,7 @@ module Ember
       get :show, controller_params(version: 'private', id: ticket.display_id, include: 'requester,company')
       assert_response 200
       res = JSON.parse(response.body)
-      ticket_date_format = time_now.strftime('%F')
+      ticket_date_format = Time.now.in_time_zone(@account.time_zone).strftime('%F')
       contact_field.destroy
       company_field.destroy
       assert_equal ticket_date_format, res['requester']['custom_fields']['requester_date']
@@ -2019,7 +2005,7 @@ module Ember
       user_tags = ['tag1','tags2']
       tag_field = @account.contact_form.default_fields.find_by_name(:tag_names)
       tag_field.update_attributes(field_options: { 'widget_position' => 10 })
-      user = add_new_user(@account, tag_names: user_tags.join(','))
+      user = add_new_user(@account, tag_names: user_tags.join(','), tags: user_tags.join(','))
       user.reload
       t = create_ticket(requester_id: user.id)
       get :show, controller_params(version: 'private', id: t.display_id, include: 'requester')
@@ -2413,12 +2399,12 @@ module Ember
       2.times do
         create_ticket
       end
-      initial_count = @account.data_exports.where(user_id: User.current.id).count
+      initial_count = ticket_data_export(DataExport::EXPORT_TYPE[:ticket]).count
       params_hash = ticket_export_param.merge(start_date: 6.days.ago.iso8601, end_date: 5.days.ago.iso8601)
       Sidekiq::Testing.inline! do
         post :export_csv, construct_params({ version: 'private' }, params_hash)
       end
-      current_data_exports = @account.data_exports.where(user_id: User.current.id)
+      current_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:ticket])
       assert_equal initial_count, current_data_exports.length
       @account.rollback(:ticket_contact_export)
     end
@@ -2428,12 +2414,12 @@ module Ember
       2.times do
         create_ticket
       end
-      initial_count = @account.data_exports.where(user_id: User.current.id).count
+      initial_count = ticket_data_export(DataExport::EXPORT_TYPE[:ticket]).count
       params_hash = ticket_export_param
       Sidekiq::Testing.inline! do
         post :export_csv, construct_params({ version: 'private' }, params_hash)
       end
-      current_data_exports = @account.data_exports.where(user_id: User.current.id)
+      current_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:ticket])
       assert_equal initial_count, current_data_exports.length - 1
       assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.csv')
@@ -2445,12 +2431,12 @@ module Ember
       2.times do
         create_ticket
       end
-      initial_count = @account.data_exports.where(user_id: User.current.id).count
+      initial_count = ticket_data_export(DataExport::EXPORT_TYPE[:ticket]).count
       params_hash = ticket_export_param.merge(format: 'xls')
       Sidekiq::Testing.inline! do
         post :export_csv, construct_params({ version: 'private' }, params_hash)
       end
-      current_data_exports = @account.data_exports.where(user_id: User.current.id)
+      current_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:ticket])
       assert_equal initial_count, current_data_exports.length - 1
       assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.xls')
@@ -2501,7 +2487,7 @@ module Ember
       time_now = Time.zone.now
       t = create_ticket(custom_field: { ticket_field.name => time_now })
       put :show, controller_params({ version: 'private', id: t.display_id })
-      ticket_date_format = time_now.strftime('%F')
+      ticket_date_format = Time.now.in_time_zone(@account.time_zone).strftime('%F')
       assert_response 200
       assert_equal ticket_date_format, JSON.parse(response.body)['custom_fields']['test_custom_date']
     end
@@ -3128,7 +3114,7 @@ module Ember
         create_parent_child_template(1)
         child_template_ids = @child_templates.map(&:id)
         Sidekiq::Testing.inline! do
-          put :create_child_with_template, construct_params({ version: 'private', id: ticket.id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
+          put :create_child_with_template, construct_params({ version: 'private', id: ticket.display_id, parent_template_id: @parent_template.id, child_template_ids: child_template_ids }, false)
         end
         assert_response 400
         match_json([bad_request_error_pattern('parent_id', :invalid_parent)])
