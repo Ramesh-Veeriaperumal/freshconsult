@@ -7,6 +7,6 @@ module Freshcaller
     EXCLUDE_FIELDS = %i[call_status call_created_at customer_number agent_number
                         customer_location ticket_display_id note agent_email duration contact_id].freeze
 
-    ALLOWED_CALL_STATUS_PARAMS = %w[voicemail no-answer completed in-progress on-hold].freeze
+    ALLOWED_CALL_STATUS_PARAMS = %w[voicemail no-answer completed in-progress on-hold default].freeze
   end
 end

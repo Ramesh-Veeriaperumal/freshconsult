@@ -70,12 +70,8 @@ module Freshcaller::CallConcern
     @options[:call_status] == 'completed'
   end
 
-  def inprogress?
-    @options[:call_status] == 'in-progress'
-  end
-
-  def on_hold?
-    @options[:call_status] == 'on-hold'
+  def ongoing?
+    ['in-progress', 'on-hold', 'default'].include?(@options[:call_status])
   end
 
   def ticket_title
