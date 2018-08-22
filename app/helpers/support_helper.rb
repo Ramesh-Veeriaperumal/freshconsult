@@ -213,17 +213,21 @@ module SupportHelper
   def profile_image user, more_classes = "", width = "50px", height = "50px", profile_size = 'thumb'
     output = []
     output << %(  <div class="user-pic-thumb image-lazy-load #{more_classes}"> )
-    if user['profile_url']
+    if user.blank?
+      output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" />)
+      Rails.logger.error("User is empty::Account:#{Account.current.inspect}")      
+    elsif user['profile_url']
       output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" rel="lazyloadimage"  data-src="#{user['profile_url']}" /> )
     else
-      username = user['name'].lstrip
-
-      if isalpha(username[0])
+      username = user['name'] 
+      username = username.lstrip if username
+      if username && username[0] && isalpha(username[0])
         output << %(<div class="#{profile_size} avatar-text circle text-center bg-#{unique_code(username)}">)
         output << %( #{username[0]} )
         output << %( </div>)
       else
         output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" />)
+        Rails.logger.error("Showing blank profile thumbnail for User: #{username} Account:#{Account.current.id}")
       end
     end
     output << %( </div> )
@@ -271,12 +275,7 @@ module SupportHelper
   end
 
   def portal_fav_ico
-    fav_icon = MemcacheKeys.fetch(["v8","portal","fav_ico",current_portal],7.days.to_i) do
-          current_portal.fav_icon.nil? ? '/assets/misc/favicon.ico?702017' :
-                AwsWrapper::S3Object.public_url_for(current_portal.fav_icon.content.path,
-                  current_portal.fav_icon.content.bucket_name,
-                        :secure => true)
-            end
+    fav_icon = current_portal.fetch_fav_icon_url
     "<link rel='shortcut icon' href='#{fav_icon}' />".html_safe
   end
 

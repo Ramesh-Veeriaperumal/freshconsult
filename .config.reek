@@ -5,3 +5,10 @@ IrresponsibleModule:
 InstanceVariableAssumption:
   enabled: false
 
+# disable check on private utility function
+UtilityFunction:
+  public_methods_only: true
+
+# disable warning on attr_accessor, attr, attr_writer declared variable
+Attribute:
+  enabled: false
