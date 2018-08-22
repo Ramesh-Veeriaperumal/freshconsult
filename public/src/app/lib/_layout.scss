@@ -777,6 +777,53 @@ a.new_ticket_button, .nav_search, .nav_settings{
 	@include text-align(right);
 	@include padding-right(20px);
 }
+// --------------------------------------------------------------------------------------------
+//                        portal customisation list page
+// --------------------------------------------------------------------------------------------
+
+.notification-box{
+	background-color: #fffade;
+    padding: 16px 26px;
+    border: 1px solid #ffebb7;
+    font-size: 14px;
+    border-left: 3px solid #ffad1e;
+    margin-bottom: 30px;
+    border-radius: 2px;
+    font-weight: 500;
+	&:before{
+		content: 'i';
+	    display: inline-block;
+	    width: 15px;
+	    height: 15px;
+	    position: relative;
+	    right: 5px;
+	    top: 1px;
+	    clear: both;
+	    color: #ffad1e;
+	    border: 1px solid #ffad1e;
+	    padding: 1px;
+	    text-align: center;
+	    border-radius: 50%;
+	}
+}
+
+.portal-url-box{
+	border: 1px solid rgba(255, 173, 30, 0.2);
+    background-color: #fffade;
+    padding: 6px 16px 6px 12px;
+    border-radius: 2px;
+    margin-bottom: 12px;
+}
+
+.freshdesk-portal-link{
+	font-size: 14px;
+    line-height: 1;
+    font-weight: 500;
+}
+
+.preview-new-link{
+    font-weight: bold;
+}
 
 // --------------------------------------------------------------------------------------------
 // 										Header icons loading

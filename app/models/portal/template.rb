@@ -1,11 +1,12 @@
 class Portal::Template < ActiveRecord::Base
 
-	self.table_name =  "portal_templates"
+  self.table_name =  "portal_templates"
   self.primary_key = :id
 
   include Redis::RedisKeys
   include Redis::PortalRedis
   include Cache::Memcache::Portal::Template
+  include Redis::OthersRedis
 
   belongs_to_account
   belongs_to :portal
@@ -48,14 +49,14 @@ class Portal::Template < ActiveRecord::Base
   ]
 
   TEMPLATE_MAPPING_FILE_BY_TOKEN = Hash[*TEMPLATE_MAPPING.map { |i| [i[0], i[1]] }.flatten]
-  TEMPLATE_OPTIONS = Portal::Template::TEMPLATE_MAPPING.map { |i| i[0] }
+  TEMPLATE_OPTIONS = TEMPLATE_MAPPING.map { |i| i[0] }
 
   TEMPLATE_MAPPING_FILE_BY_TOKEN_FALCON = Hash[*TEMPLATE_MAPPING_FALCON.map { |i| [i[0], i[1]] }.flatten]
-  TEMPLATE_OPTIONS_FALCON = Portal::Template::TEMPLATE_MAPPING_FALCON.map { |i| i[0] }
+  TEMPLATE_OPTIONS_FALCON = TEMPLATE_MAPPING_FALCON.map { |i| i[0] }
 
   # Set of prefrences data that will be used during template creation
   def default_preferences
-    if Account.current and Account.current.falcon_support_portal_theme_enabled?
+    if Account.current and (Account.current.falcon_support_portal_theme_enabled? || self.portal.falcon_portal_enable?)
       {
         :bg_color => "#f3f5f7",
         :header_color => "#ffffff",
@@ -98,7 +99,7 @@ class Portal::Template < ActiveRecord::Base
 
   # Merge with default params for specific portal
   def get_portal_pref
-      if Account.current && Account.current.falcon_support_portal_theme_enabled?
+      if Account.current and (Account.current.falcon_support_portal_theme_enabled? || self.portal.falcon_portal_enable?)
         pref = {:bg_color=>"#f3f5f7", :header_color=>"#ffffff", :tab_color=>"#ffffff", :personalized_articles=>true}
       else
         pref = self.portal.preferences.presence || self.account.main_portal.preferences
@@ -123,8 +124,8 @@ class Portal::Template < ActiveRecord::Base
     end
   end
 
-  def draft!
-    set_portal_redis_key(draft_key, Marshal.dump(self))
+  def draft! 
+      set_portal_redis_key(draft_key, Marshal.dump(self))
   end
 
   def get_draft
@@ -170,6 +171,11 @@ class Portal::Template < ActiveRecord::Base
   def clear_cache!
     remove_portal_redis_key(draft_key)
   end
+  
+  def clear_preview
+      remove_others_redis_key(is_preview)
+      remove_others_redis_key(mint_preview_key)
+  end
 
   def cache_page(page_label, page)
     key = draft_key(page_label)
@@ -190,6 +196,7 @@ class Portal::Template < ActiveRecord::Base
   end
 
   private
+
     def draft_key(label = "cosmetic")
       PORTAL_PREVIEW % {:account_id => self.account_id,
                         :template_id => self.id,
@@ -197,8 +204,19 @@ class Portal::Template < ActiveRecord::Base
                         :user_id => User.current.id }
     end
 
+    def mint_preview_key
+        MINT_PREVIEW_KEY % { :account_id => self.account_id, 
+                            :user_id => User.current.id, :portal_id => self.portal_id}
+    end
+
+    def is_preview
+        IS_PREVIEW % { :account_id => self.account_id, 
+                            :user_id => User.current.id, :portal_id => self.portal_id}
+    end
+
     def set_defaults
       self.preferences = default_preferences
       self.account = self.portal.account
     end
+
 end

@@ -401,3 +401,19 @@ div.addReminder{
 	 }
 	margin-bottom: 12px;
 }
+
+.portal_helpnote {
+    border: 1px solid rgba(255, 173, 30, 0.2);
+    padding: 4px 17px 14px 12px;
+	background-color: #fffade;
+	border-radius: 2px;
+	.externalid-title{
+		font-weight: bold;
+		font-size: 14px;
+	}
+	.externalid-content{ 
+		margin-bottom: 8px;
+		line-height: 1.4
+	}
+	margin-bottom: 12px;
+}
