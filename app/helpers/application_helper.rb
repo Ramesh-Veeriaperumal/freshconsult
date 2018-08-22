@@ -2186,6 +2186,16 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
   end
 
+  def is_sandbox_production_active
+    !current_account.sandbox? &&
+    SANDBOX_NOTIFICATION_STATUS.include?(current_account.sandbox_job.try(:status)) &&
+    SANDBOX_URL_PATHS.select{ |i| request.env['PATH_INFO'].include?(i)}.any?
+  end
+
+  def show_sandbox_notification
+    !(Account.current.account_type == 2) && !is_sandbox_production_active && Account.current.sandbox_enabled? && current_user.is_falcon_pref?
+  end
+
   def support_mint_applicable?
     if !current_account.falcon_portal_theme_enabled? && current_account.launched?(:mint_portal_applicable)
       portals = current_account.portals
