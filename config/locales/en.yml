@@ -1349,6 +1349,9 @@ en:
       helpnote:
         title: Setting up your portals
         tour: Help me configure my portal
+        portal_freshdesk_title: Looking for ideas?
+        portal_info: We've handpicked a few customized portals for you.
+        portal_freshdesk_link: Take a look
         info1: "If you would like your customers and support agents ​to ​access your support portal in your own domain, you can point your support URL ​<b>yourcompany.freshdesk.com​</b> to your own domain like​ ​<b>support.yourcompany.com</b>"
         info2: "You can also choose specific solution and forum categories to be listed in the main portal and other portals​.​"
         info3: "Additionally, you can rebrand the look and feel of your helpdesk by uploading your logo and favicon, giv​e​ your helpdesk a name, and customiz​e​ your portal colors."
@@ -9554,6 +9557,16 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     mark_as_primary: "Mark as primary"
     merge_progress: "Please wait while the contacts are being merged. This might take a few minutes."
   portalcss:
+    mint_info_portals: Your customer portals now have a refreshing, new look. Preview it by clicking on the links below.
+    mint_info_portal: Your customer portal now has a refreshing, new look. Preview it by clicking on the link below.
+    mint_info_template: "\"%{portal}\" portal now has a refreshing, new look."
+    mint_info_portal_settings: Your customer portals now have a refreshing, new look.
+    mint_info_portal_setting: Your customer portal now has a refreshing, new look.
+    mint_preview: Preview new look
+    apply_mint: Apply
+    classic: Classic
+    mint: Mint
+    confirm: "Are you sure you want to apply the new look? All your CSS customizations will be lost. \n\nTip: Create a copy of CSS customizations you currently have and add them after applying the new look."
     reset_all_changes: Reset ALL changes
     reset_all_confirm_message: This action will reset all your customizations to freshdesk default. Are you sure you want to continue?
     publish_changes: Save and Publish

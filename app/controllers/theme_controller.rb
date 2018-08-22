@@ -1,5 +1,5 @@
 class ThemeController < ApplicationController
-
+	include Portal::PreviewKeyTemplate
 	prepend_before_filter :set_http_cache_headers
 
 	skip_before_filter :set_cache_buster
@@ -20,10 +20,10 @@ class ThemeController < ApplicationController
 	private
 
 		def scoper_cache_key
-			if defined?(self.class::THEME_VERSION_FALCON).present? && current_account.falcon_support_portal_theme_enabled? 
+			if defined?(self.class::THEME_VERSION_FALCON).present? && (current_account.falcon_support_portal_theme_enabled? ||  current_portal.falcon_portal_enable?)
 				[self.class::THEME_VERSION_FALCON, scoper.id, scoper.updated_at.to_i].join("/") if(scoper.respond_to?(:updated_at))
 			else
-        [self.class::THEME_VERSION, scoper.id, scoper.updated_at.to_i].join("/") if(scoper.respond_to?(:updated_at))
+        		[self.class::THEME_VERSION, scoper.id, scoper.updated_at.to_i].join("/") if(scoper.respond_to?(:updated_at))
 			end
 		end
 
@@ -43,10 +43,10 @@ class ThemeController < ApplicationController
 			# will be from the root src dir when reading from a file
 			_opts[:load_paths] << theme_load_path
 			_opts[:load_paths] << "#{Rails.root}/public/images"
-      _opts[:load_paths] << "#{Rails.root}/public/assets"	
+     		_opts[:load_paths] << "#{Rails.root}/public/assets"	
 
 			Sass::Engine.new(scss, _opts).render
-		end
+	end
 		
 	protected
 
@@ -64,20 +64,19 @@ class ThemeController < ApplicationController
 
 		def scss_template
 			
-			_output = []
 
+			_output = []
 			# Getting settings from model pref
 			_output << theme_settings(scoper.preferences) if(scoper.respond_to?(:preferences))
-
 			# Appending Data from base css file 
-			if current_account.falcon_support_portal_theme_enabled? && defined?(self.class::THEME_URL_FALCON).present?
+			if (current_portal.falcon_portal_enable? || current_account.falcon_support_portal_theme_enabled? || on_mint_preview ) && defined?(self.class::THEME_URL_FALCON).present?
 				_output << read_scss_file(self.class::THEME_URL_FALCON) if(File.exists?(self.class::THEME_URL_FALCON))
 			else
 				_output << read_scss_file(self.class::THEME_URL) if(File.exists?(self.class::THEME_URL))
 			end
 
 			# Appending custom css if it is a portal theme
-			_output << custom_css
+			_output << custom_css if !on_mint_preview
 
 			_output.join("")
 		end	
@@ -95,5 +94,4 @@ class ThemeController < ApplicationController
 		def custom_css
 			scoper.custom_css if(feature?(:css_customization) && scoper.respond_to?(:custom_css))
 		end
-		
-end
+	end

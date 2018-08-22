@@ -15,7 +15,7 @@
   </script>
 
   <%= stylesheet_link_tag_with_rtl :'cdn/common' %>
-  <% if current_account.falcon_support_portal_theme_enabled?%>
+  <% if current_account.falcon_support_portal_theme_enabled? || @portal.falcon_portal_enable? || get_others_redis_key(mint_preview_key)%>
     <%= stylesheet_link_tag_with_rtl :'cdn/falcon_activations' %>
     <% else %>
     <%= stylesheet_link_tag_with_rtl :'cdn/activations' %>
@@ -29,7 +29,6 @@
     .body-wrapper{
       background:<%=  current_portal["preferences"]["bg_color"] %>;
     }
-
     .banner{
       background:<%=  current_portal["preferences"]["header_color"] %>;
     }

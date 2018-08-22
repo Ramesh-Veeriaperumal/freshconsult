@@ -17,6 +17,8 @@ class SupportController < ApplicationController
   include Redis::PortalRedis
   include Portal::Helpers::SolutionsHelper
   include Portal::Multilingual
+  include Redis::OthersRedis
+  include Portal::PreviewKeyTemplate
 
   caches_action :show, :index, :new, :robots,
   :if => proc { |controller|
@@ -122,7 +124,7 @@ class SupportController < ApplicationController
       if User.current
         is_preview = IS_PREVIEW % { :account_id => current_account.id, 
           :user_id => current_user.id, :portal_id => @portal.id}
-        !get_portal_redis_key(is_preview).blank? && !current_user.blank? && current_user.agent?
+        (!(get_portal_redis_key(is_preview).blank?  && on_mint_preview.blank?)) && !current_user.blank? && current_user.agent?
       end
     end
 
@@ -183,7 +185,7 @@ class SupportController < ApplicationController
     def process_page_liquid(page_token)      
       partial = Portal::Page::PAGE_FILE_BY_TOKEN[ page_token ]
       dynamic_template = nil
-      dynamic_template = page_data(page_token) if current_account.layout_customization_enabled?
+      dynamic_template = page_data(page_token) if current_account.layout_customization_enabled? && !on_mint_preview
       _content = render_to_string file: partial, layout: false,
                   locals: { dynamic_template: dynamic_template, request_domain: request.protocol+request.host } if dynamic_template.nil? || !dynamic_template.blank?
                   
@@ -195,9 +197,9 @@ class SupportController < ApplicationController
       page_type ||= Portal::Page::PAGE_TYPE_KEY_BY_TOKEN[ page_token ]
       @current_page = @portal_template.fetch_page_by_type( page_type )
       page_template = @current_page.content unless @current_page.blank?
-      if preview?
-        draft_page = @portal_template.page_from_cache(page_token)
-        page_template = draft_page[:content] unless draft_page.nil?
+      if preview? && !on_mint_preview
+        draft_page = @portal_template.page_from_cache(page_token) 
+        page_template = draft_page[:content] unless draft_page.nil?   
       end
       page_template
     end
@@ -217,12 +219,12 @@ class SupportController < ApplicationController
     end
 
     def process_template_liquid
-      if current_account.falcon_support_portal_theme_enabled?
+      if current_portal.falcon_portal_enable? || current_account.falcon_support_portal_theme_enabled? || on_mint_preview
         Portal::Template::TEMPLATE_MAPPING_RAILS3_FALCON
       else
         Portal::Template::TEMPLATE_MAPPING_RAILS3
       end.each do |t|
-        dynamic_template = template_data(t[0]) if current_account.layout_customization_enabled?
+        dynamic_template = template_data(t[0]) if current_account.layout_customization_enabled? || on_mint_preview
         _content = render_to_string(:partial => t[1], :layout => false, :handlers => [t[2]],
                     :locals => { :dynamic_template => dynamic_template }) if dynamic_template.nil? || !dynamic_template.blank?
         instance_variable_set "@#{t[0]}", _content
@@ -232,7 +234,7 @@ class SupportController < ApplicationController
     def template_data(sym)
       begin
         data = @portal_template[sym] 
-        data = @portal_template.get_draft[sym] if preview? && @portal_template.get_draft
+        data = @portal_template.get_draft[sym] if preview? && @portal_template.get_draft && !on_mint_preview
       rescue Exception => e
         Rails.logger.info "Exception on head customization :::: #{e.backtrace}"
         NewRelic::Agent.notice_error(e,{:description => "Error on head customization"})
