@@ -70,7 +70,7 @@ class User < ActiveRecord::Base
   end
 
   def send_activation_mail_on_create
-    enqueue_activation_email if @all_changes.nil? # new record saved successfully
+    enqueue_activation_email if @all_changes.nil? && !Thread.current[:create_sandbox_account] # new record saved successfully
   end
 
   def remove_freshid_user
