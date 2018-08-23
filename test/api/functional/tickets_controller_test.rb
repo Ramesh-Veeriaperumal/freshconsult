@@ -2608,7 +2608,8 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    Helpdesk::Ticket.first.update_attributes(spam: true, created_at: 2.months.ago)
+    ticket = @account.tickets.where(deleted: false).first
+    ticket.update_attributes(spam: true, created_at: 2.months.ago)
     get :index, controller_params(filter: 'spam')
     assert_response 200
     response = parse_response @response.body

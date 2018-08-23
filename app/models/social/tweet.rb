@@ -10,7 +10,7 @@ class Social::Tweet < ActiveRecord::Base
   attr_protected :tweetable_id
 
   validates_presence_of :tweet_id, :account_id, :twitter_handle_id
-  validates_uniqueness_of :tweet_id, :scope => :account_id, :message => "Tweet already converted as a ticket"
+  validates_uniqueness_of :tweet_id, :scope => :account_id, :message => Social::Constants::TWEET_ALREADY_EXISTS
   
   after_destroy :remove_fd_link_in_dynamo
 

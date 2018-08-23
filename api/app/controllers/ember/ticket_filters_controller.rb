@@ -70,9 +70,9 @@ module Ember
           @item = scoper.find_by_id(params[:id])
           @item = nil unless @item.try(:has_permission?, api_current_user)
         else
-          @item = (default_visible_filters | default_hidden_filters).select { |filter| filter[:id] == params[:id] }.first
+          @item = (TicketsFilter.default_visible_filters(params[:id]).presence || TicketsFilter.default_hidden_filters(params[:id])).first
         end
-        log_and_render_404 unless @item
+        log_and_render_404 if @item.nil?
       end
 
       def scoper
@@ -113,26 +113,7 @@ module Ember
       end
 
       def append_default_filters
-        @items |= default_visible_filters | default_hidden_filters
-      end
-
-      def default_visible_filters
-        TicketsFilter.default_views.collect do |filter|
-          CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter[:id]) ? filter :
-              filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter[:id]))
-        end
-      end
-
-      def default_hidden_filters
-        TicketsFilter.accessible_filters(TicketFilterConstants::HIDDEN_FILTERS).collect do |filter|
-          {
-            id: filter,
-            name: I18n.t("helpdesk.tickets.views.#{filter}"),
-            default: true,
-            hidden: true,
-            query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter)
-          }
-        end
+        @items |= TicketsFilter.default_visible_filters | TicketsFilter.default_hidden_filters
       end
 
       def has_permission?

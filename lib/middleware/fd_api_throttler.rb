@@ -6,6 +6,7 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
   FRESHDESK_DOMAIN = 'freshdesk'.freeze
   SKIPPED_SUBDOMAINS =  %w(admin billing signup freshsignup email login emailparser mailboxparser freshops) + FreshopsSubdomains + PartnerSubdomains 
+  EXCLUDED_API_PATHS = %w(/api/channel/v2).freeze
   THROTTLE_PERIOD    =  1.hour
   API_LIMIT = 3000
   DEFAULT_USED_LIMIT = 1
@@ -18,10 +19,20 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     @app = app
   end
 
+  # Should resolve to true for public APIs
+  def correct_namespace?(path_info)
+    !EXCLUDED_API_PATHS.any? {|path| path_info.include? path}
+  end
+
   def call(env)
     @request      = Rack::Request.new(env)
     @host         = env['HTTP_HOST']
     @shard        = fetch_shard(env)
+
+    unless correct_namespace?(@request.env["PATH_INFO"])
+      @status, @headers, @response = @app.call(@request.env)
+      return [@status, @headers, @response]
+    end
 
     if shard_not_found?
       Rails.logger.debug "Domain Not Found while throttling :: Host: #{@host}"

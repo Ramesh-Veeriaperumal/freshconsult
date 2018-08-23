@@ -162,4 +162,5 @@ module Social::Constants
   EU_TWITTER_HANDLES = "eu_twitter_handles"
   TWEET_MEDIA_PHOTO = 'photo'.freeze
   TWEET_MEDIA_ANIMATED_GIF = 'animated_gif'.freeze
+  TWEET_ALREADY_EXISTS = "Tweet already converted as a ticket".freeze
 end

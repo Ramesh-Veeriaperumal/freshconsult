@@ -15,6 +15,7 @@ if $infra['API_LAYER']
     else
       unless $infra['APIGEE_API_LAYER']
         config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::FdApiThrottler', max: 1000
+        config.middleware.insert_before 'Middleware::ApiRequestInterceptor', 'Middleware::ChannelApiThrottler'
       end
     end
 
