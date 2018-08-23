@@ -576,7 +576,7 @@ class User < ActiveRecord::Base
   def signup!(params, portal = nil, send_activation = true, build_user_attributes = true)
     build_user_attributes(params) if build_user_attributes
     return false unless save_without_session_maintenance
-    enqueue_activation_email(params[:email_config], portal) if !deleted and !email.blank? and send_activation
+    enqueue_activation_email(params[:email_config], portal) if !deleted and !email.blank? and send_activation and !Thread.current[:create_sandbox_account]
     true
   end
 

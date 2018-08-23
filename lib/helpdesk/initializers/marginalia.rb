@@ -38,4 +38,6 @@ Sidekiq.configure_server do |config|
 end
 
 # Add Marginalia support for Ember and public API. For non metal the hook is already present in Marginalia Gem Railtie.
+# AbstractController::Callbacks is needed as before_filter, around_filter callbacks are not available till we manually include it. This include is particularly required for non API servers like Sidekiq.
+ActionController::Metal.send(:include, AbstractController::Callbacks)
 ActionController::Metal.send(:include, Marginalia::ActionControllerInstrumentation)
