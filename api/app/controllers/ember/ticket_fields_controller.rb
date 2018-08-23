@@ -21,7 +21,7 @@ class Ember::TicketFieldsController < ::ApiTicketFieldsController
   def index
     @ticket_fields_full_mem_key = TICKET_FIELDS_FULL % { :account_id => current_account.id }
     @ticket_fields_full_cache_data = MemcacheKeys.get_from_cache(@ticket_fields_full_mem_key)
-    @has_cache =!@ticket_fields_full_cache_data.nil ? true : false
+    @has_cache =!@ticket_fields_full_cache_data.nil? ? true : false
     load_objects
   end
   
