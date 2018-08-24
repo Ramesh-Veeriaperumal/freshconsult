@@ -14,7 +14,6 @@ module DataVersioning
     end
 
     def update_version_timestamp
-      puts "\n\n\ndata version update #{self.class.name}\n\n\n"
       set_others_redis_hash_set(version_key, version_entity_key, Time.now.utc.to_i)
     end
   end

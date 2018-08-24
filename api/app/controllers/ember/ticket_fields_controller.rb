@@ -21,8 +21,11 @@ class Ember::TicketFieldsController < ::ApiTicketFieldsController
   def index
     @ticket_fields_full_mem_key = TICKET_FIELDS_FULL % { :account_id => current_account.id }
     @ticket_fields_full_cache_data = MemcacheKeys.get_from_cache(@ticket_fields_full_mem_key)
-    @has_cache =!@ticket_fields_full_cache_data.nil? ? true : false
-    load_objects
+    if @ticket_fields_full_cache_data.nil?
+      load_objects
+    else
+      @items = []
+    end
   end
   
   def exclude_products
@@ -34,11 +37,7 @@ class Ember::TicketFieldsController < ::ApiTicketFieldsController
 
     def load_objects(items = scoper)
       # This method has been overridden to avoid pagination 
-      if !@has_cache.nil? && @has_cache
-        @items =  []
-      else
-        @items = items
-      end
+      @items = items
 
       # non_db_ticket_fields are added in order to avoid heavy logic in helpkit-ember
       # During CRUD operation, these fields should be excluded by default
