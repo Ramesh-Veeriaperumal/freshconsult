@@ -27,11 +27,10 @@ class Ember::TicketFieldsController < ::ApiTicketFieldsController
       @items = []
     end
   end
-  
+
   def exclude_products
     current_account.products_from_cache.empty?
   end
-  
 
   private
 
