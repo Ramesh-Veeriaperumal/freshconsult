@@ -264,7 +264,7 @@ module SupportHelper
   # Logo for the portal
   def logo portal, link_flag = false
     _output = []
-    _output << %(<a href= '#{ link_flag ?  "javascript:void(0)" : "#{portal['linkback_url']}" }')
+    _output << %(<a href="#{ link_flag ?  "javascript:void(0)" : "#{portal['linkback_url']}" }")
     _output << %(class='portal-logo'>)
     # Showing the customer uploaded logo or default logo within an image tag
     _output << %(<span class="portal-img"><i></i>
