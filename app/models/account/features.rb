@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
                  :audit_logs_central_publish, :encode_emoji_subject,
                  :time_sheets_central_publish, :new_ticket_recieved_metric, :canned_forms,
                  :euc_migrated_twitter, :twitter_microservice, :twitter_handle_publisher, :csat_email_scan_compatibility,
-                 :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :mint_portal_applicable, :old_link_back_url_validation]
+                 :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :mint_portal_applicable, :old_link_back_url_validation, :shopify_actions]
   
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
