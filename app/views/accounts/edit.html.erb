@@ -22,6 +22,11 @@
 			    jQuery('#account_main_portal_attributes_portal_url').val(result_url);
 			}
 		});
+
+		jQuery("#account_forum_enabled").change(function() {
+		    jQuery('#accounts_bitmap_forums').val(+this.checked);
+		});
+
 		jQuery("#account_submit").bind('click', function(ev){
 				var language_flag = jQuery.inArray(jQuery("#account_main_portal_attributes_language").val() , jQuery("#account_account_additional_settings_attributes_supported_languages").val() );
 				if(language_flag != -1 ){
@@ -103,6 +108,7 @@
 								<div class="controls">
 		              <%= f.feature_check_box :forums, { :id => 'account_forum_enabled', :checked => current_account.features_included?(:forums) }, 1, 0 %>
 		              <div class="help-block"><%= t('account.forums_toggle.helpnote') %></div>
+		              <input type="hidden" name="account[bitmap_features][forums]" id="accounts_bitmap_forums" class="text disabled" />
 		            </div>
 	            </div>
             <% end %>

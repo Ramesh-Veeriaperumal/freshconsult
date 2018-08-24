@@ -107,6 +107,21 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_equal User.current, nil
   end
 
+  def test_update_with_default_call_status_params
+    User.current = @account.users.first
+    set_auth_header
+    call_id = get_call_id
+    create_call(fc_call_id: call_id)
+    put :update, construct_params(convert_call_params(call_id, 'default'))
+    result = parse_response(@response.body)
+    call = ::Freshcaller::Call.last
+    match_json(ticket_only_pattern(call))
+    assert_equal call.notable.description.present?, true # for default call status, the call will be directly assocaited to ticket
+    assert_equal call.notable.description_html.present?, true
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+    assert_equal User.current, nil
+  end
+
   def test_update_with_voicemail_params
     set_auth_header
     call_id = get_call_id
@@ -168,7 +183,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     call_id = get_call_id
     create_call(fc_call_id: call_id)
     put :update, construct_params(update_invalid_params(call_id))
-    match_json([bad_request_error_pattern(:call_status, :not_included, list: 'voicemail,no-answer,completed,in-progress,on-hold'),
+    match_json([bad_request_error_pattern(:call_status, :not_included, list: 'voicemail,no-answer,completed,in-progress,on-hold,default'),
                 bad_request_error_pattern(:call_created_at, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
                 bad_request_error_pattern(:customer_number, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),
                 bad_request_error_pattern(:agent_number, :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer),

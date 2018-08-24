@@ -586,6 +586,10 @@ Helpkit::Application.routes.draw do
     resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]
     resources :companies, controller: 'channel/api_companies', only: [:create]
     resources :attachments, controller: 'channel/attachments', only: [:create]
+    scope '/v2' do
+      resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :index]
+      resources :attachments, controller: 'channel/attachments', only: [:create]
+    end
     scope '/bot' do
       resources :tickets, controller: 'channel/bot/tickets', only: [:create]
     end

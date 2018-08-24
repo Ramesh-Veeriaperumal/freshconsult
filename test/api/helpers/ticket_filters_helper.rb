@@ -23,25 +23,6 @@ module TicketFiltersHelper
     QueryHash.new(sample_filter_conditions[:data_hash]).to_json
   end
 
-  def default_visible_filters
-    TicketsFilter.default_views.collect do |filter|
-      CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter[:id]) ? filter :
-        filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter[:id]))
-    end
-  end
-
-  def default_hidden_filters
-    TicketsFilter.accessible_filters(TicketFilterConstants::HIDDEN_FILTERS).collect do |filter|
-      {
-        id: filter,
-        name: I18n.t("helpdesk.tickets.views.#{filter}"),
-        default: true,
-        hidden: true,
-        query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter)
-      }
-    end
-  end
-
   def ticket_filter_show_pattern(filter)
     basic_pattern = {
       id: filter[:id],
@@ -77,7 +58,7 @@ module TicketFiltersHelper
   end
 
   def default_filter_pattern(filter_name)
-    filter = (default_visible_filters + default_hidden_filters).select { |f| f[:id] == filter_name.to_s }.first
+    filter = (TicketsFilter.default_visible_filters(filter_name).presence || TicketsFilter.default_hidden_filters(filter_name)).select { |f| f[:id] == filter_name.to_s }.first
     ticket_filter_show_pattern(filter)
   end
 
@@ -91,7 +72,7 @@ module TicketFiltersHelper
 
   def ticket_filter_index_pattern(user = User.current)
     all_filters = []
-    (all_custom_ticket_filters(user) + default_visible_filters + default_hidden_filters).compact.each do |filter|
+    (all_custom_ticket_filters(user) + TicketsFilter.default_visible_filters + TicketsFilter.default_hidden_filters).compact.each do |filter|
       all_filters << ticket_filter_show_pattern(filter)
     end
     all_filters

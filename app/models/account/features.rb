@@ -13,7 +13,8 @@ class Account < ActiveRecord::Base
                    :time_sheets_central_publish, :twitter_common_redirect, :canned_forms,
                    :euc_migrated_twitter, :new_ticket_recieved_metric, :audit_log_ui,
                    :dashboard_announcement_central_publish, :dashboard_announcements, :undo_send,
-                   :timeline, :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes]
+                   :timeline, :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes,
+                   :sso_login_expiry_limitation, :undo_send, :count_service_es_writes]
    DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
   BITMAP_FEATURES = [
@@ -121,7 +122,7 @@ class Account < ActiveRecord::Base
   def count_es_enabled?
     (launched?(:es_count_reads) || launched?(:list_page_new_cluster)) && features?(:countv2_reads)
   end
-
+  
   def count_es_api_enabled?
     count_es_enabled? && api_es_enabled?
   end
