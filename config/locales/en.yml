@@ -2202,7 +2202,7 @@ en:
         enable_sso_info: Single Sign On allows you to use your own application or a centralized Server (like MS Active Directory) to authenticate agents and customers so that they can access Freshdesk without entering a separate username and password.
         enable_sso: Single Sign On (SSO)
         enable_simple_sso: Simple SSO
-        enable_oauth_sso: Oauth2 SSO
+        enable_oauth_sso: OAuth2 SSO
         enable_oauth2_sso: OAuth 2.0
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
@@ -2260,9 +2260,9 @@ en:
         password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
       errors:
         simple_sso: 
-          invalid_login_url: Please provide a valid login url
+          invalid_login_url: Please provide a valid login URL
         saml_sso:
-          invalid_login_url: Please provide a valid SAML login url
+          invalid_login_url: Please provide a valid SAML login URL
           invalid_fingerprint: Please provide a valid SAML Certificate Fingerprint
       helpnote:
         title: Security Settings
@@ -7403,6 +7403,7 @@ en:
         survey_response_to: to %{agent}
         survey_satisfaction: How would you rate your overall satisfaction for the resolution provided by the agent?
         comments: Comments
+        outgoing_failure: Reply not sent. Please try again after some time.
     merge:
       merge:
         merge_into: Merge into?
@@ -11816,6 +11817,7 @@ Do let us know if you are interested!"
       freshdesk_dot_com: ".freshdesk.com"
       submit: Submit
     signup_google_error:
+      token_unavailable: "Something went wrong. Try logging in again. If this problem persists, please contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>."
       token_mismatch_error: "Token mismatch error. Please contact support@freshdesk.com."
       error_message: "<center><p class='big-text aligncenter'>Sorry! You do not have enough permission to access this page.<br> Please contact your Account administrator or </p></center><center><a href='http://freshdesk.com/signup'>Signup from Freshdesk Home page </a></center>"
     thank_you:
@@ -12169,6 +12171,7 @@ Do let us know if you are interested!"
       voicemail_title: "Voicemail from %{customer}"
       outgoing_noanswer_title: "Missed Call to %{customer}"
       incoming_noanswer_title: "Missed Call from %{customer}"
+      default_title: "Call with %{customer} on %{date} at %{time}"
 
       completed_description: "Conversation with %{customer} and %{agent}"
       voicemail_description: "Voicemail from %{customer} to %{agent}"
@@ -12176,6 +12179,7 @@ Do let us know if you are interested!"
       outgoing_noanswer_description: "Missed Call from %{agent} to %{customer}"
       inprogress_description: "Conversation with %{customer} and %{agent}"
       onhold_description: "Conversation with %{customer} and %{agent}"
+      default_description: "Conversation with %{customer} and %{agent}"
 
     info:
       follow_flash: "Hey there!<br>You are now following this Team Huddle and will be notified of all new messages in-app and via email."

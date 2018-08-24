@@ -79,6 +79,8 @@ module SimpleCovSetup
   end
 
   SimpleCov.coverage_dir 'tmp/coverage'
+  SimpleCov.command_name "rails_app_#{$$}"
+  SimpleCov.merge_timeout 3600 # 1 hour
 
   SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
     SimpleCov::Formatter::HTMLFormatter,

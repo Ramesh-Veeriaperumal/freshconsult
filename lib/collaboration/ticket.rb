@@ -9,6 +9,7 @@ class Collaboration::Ticket
 	ONGOING_COLLAB_ROUTE = "helpkit/users.ongoingcollab.get" # Todo (Mayank): move this to collab.yml
 	GET_COLLAB_COUNT_ROUTE = "helpkit/users.ongoingcollab.getcount" # Todo (Mayank): move this to collab.yml
 	SUB_FEATURES = ["group_collab"]
+    COLLAB_TIMEOUT = 2
 
 	def initialize(ticket_id=nil)
 		@ticket = Account.current.tickets.find_by_display_id(ticket_id) if ticket_id
@@ -33,7 +34,19 @@ class Collaboration::Ticket
 			false
 		end
 	end
-	
+
+    def fetch_collab_tickets
+      return_value = []
+      begin
+        Timeout.timeout(COLLAB_TIMEOUT) do
+          return_value = fetch_tickets
+        end	
+      rescue Timeout::Error => exception
+        Rails.logger.info("Collab Timeout Exception - #{exception.message}")
+      end
+      return_value
+    end
+
 	def fetch_tickets
 		# not using sent params for now will update later.
 		# returns an array of objects of class Collaboration::Ticket

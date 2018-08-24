@@ -18,7 +18,8 @@ module ApiDashboardConstants
     # key, widget name, h,w, group by, order by, limit,
     [:todo,         'todo',                                 2, 2],
     [:gamification, 'gamification',                         2, 2],
-    [:csat,         'csat',                                 2, 2]
+    [:csat,         'csat',                                 2, 2],
+    [:agent_status, 'agent-status',                         2, 2]
   ].freeze
 
   SUPERVISOR_DASHBOARD = [

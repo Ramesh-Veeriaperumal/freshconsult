@@ -68,6 +68,7 @@ class TicketsControllerTest < ActionController::TestCase
       @@custom_field_names << @@ticket_fields.last.name
     end
     @account.launch :add_watcher
+    @account.time_zone = Time.zone.name
     @account.save
     @account.revoke_feature :unique_contact_identifier
     @@before_all_run = true
@@ -2607,7 +2608,8 @@ class TicketsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal 0, response.size
 
-    Helpdesk::Ticket.first.update_attributes(spam: true, created_at: 2.months.ago)
+    ticket = @account.tickets.where(deleted: false).first
+    ticket.update_attributes(spam: true, created_at: 2.months.ago)
     get :index, controller_params(filter: 'spam')
     assert_response 200
     response = parse_response @response.body
@@ -3175,7 +3177,7 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_with_all_default_fields_required_invalid
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
     default_non_required_fiels.map { |x| x.toggle!(:required) }
-    put :update, construct_params({ id: ticket.id },  subject: nil,
+    put :update, construct_params({ id: ticket.display_id },  subject: nil,
                                                       description: nil,
                                                       group_id: nil,
                                                       product_id: nil,

@@ -576,7 +576,7 @@ class User < ActiveRecord::Base
   def signup!(params, portal = nil, send_activation = true, build_user_attributes = true)
     build_user_attributes(params) if build_user_attributes
     return false unless save_without_session_maintenance
-    enqueue_activation_email(params[:email_config], portal) if !deleted and !email.blank? and send_activation
+    enqueue_activation_email(params[:email_config], portal) if !deleted and !email.blank? and send_activation and !Thread.current[:create_sandbox_account]
     true
   end
 
@@ -1156,6 +1156,13 @@ class User < ActiveRecord::Base
     end
   end
 
+  def assign_external_id ext_id
+    if Account.current.unique_contact_identifier_enabled?
+      user_with_ext_id = Account.current.all_users.where("id != ? AND unique_external_id = ?", id, ext_id).first if ext_id.present?
+      self.unique_external_id = ext_id if user_with_ext_id.nil?
+    end
+  end
+
   def sync_to_export_service
     scheduled_ticket_exports.each do |schedule|
       schedule.sync_to_service("update")
@@ -1170,18 +1177,28 @@ class User < ActiveRecord::Base
     return if freshid_disabled_or_customer?
     Rails.logger.info "FRESHID Creating user :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}"
     self.name = name_from_email if !self.name.present?
-    freshid_user = Freshid::User.create(user_attributes_for_freshid)
-    if freshid_user.present?
-      self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
-      assign_freshid_attributes_to_user freshid_user
-      Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
-    end
+    freshid_user = Freshid::User.create(freshid_attributes)
+    sync_profile_from_freshid(freshid_user)
   end
 
   def create_freshid_user!
     create_freshid_user
     save!
     enqueue_activation_email unless Account.current.try(:sandbox?)
+  end
+
+  def sync_profile_from_freshid(freshid_user)
+    return if freshid_user.nil?
+    self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
+    assign_freshid_attributes_to_agent(freshid_user)
+    Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
+  end
+
+  def sync_profile_from_freshid(freshid_user)
+    return if freshid_user.nil?
+    self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
+    assign_freshid_attributes_to_agent(freshid_user)
+    Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
   end
 
   def destroy_freshid_user
@@ -1209,6 +1226,31 @@ class User < ActiveRecord::Base
     reset_persistence_token!
     reset_perishable_token!
     remove_password_flag(email, account_id)
+  end
+
+  def assign_freshid_attributes_to_contact freshid_user_data
+    custom_user_info = freshid_user_data[:custom_user_info] || {}
+    self.name = "#{freshid_user_data[:first_name]} #{freshid_user_data[:last_name]}".strip if freshid_user_data.key?(:first_name) || freshid_user_data.key?(:last_name)
+    self.phone = freshid_user_data[:phone] if freshid_user_data.key?(:phone)
+    self.mobile = freshid_user_data[:mobile] if freshid_user_data.key?(:mobile)
+    self.job_title = freshid_user_data[:job_title] if freshid_user_data.key?(:job_title)
+    self.assign_company(company) if freshid_user_data.key?(:company)
+    self.assign_external_id(custom_user_info[:external_id]) if custom_user_info.key?(:external_id)
+    self.active = true
+  end
+
+  def freshid_attributes
+    freshid_first_name, freshid_middle_name, freshid_last_name = freshid_split_names
+    { 
+      first_name: freshid_first_name.presence,
+      middle_name: freshid_middle_name.presence,
+      last_name: freshid_last_name.presence,
+      email: email,
+      phone: phone.presence,
+      mobile: mobile.presence,
+      job_title: job_title.presence,
+      domain: account.full_domain
+    }
   end
 
   def gdpr_pending?
@@ -1245,6 +1287,14 @@ class User < ActiveRecord::Base
       !freshid_enabled_and_agent?
     end
 
+    def freshid_agent_not_signed_up_admin?
+      freshid_enabled_and_agent? && !signed_up_admin?
+    end
+
+    def signed_up_admin?
+      account.admin_email == email
+    end
+
     def email_allowed_in_freshid?
       !FRESHID_IGNORED_EMAIL_IDS.include?(self.email)
     end
@@ -1262,27 +1312,13 @@ class User < ActiveRecord::Base
       set_password_flag(email)
     end
 
-    def assign_freshid_attributes_to_user freshid_user
+    def assign_freshid_attributes_to_agent freshid_user
       self.name = freshid_user.full_name
       self.phone = freshid_user.phone
       self.mobile = freshid_user.mobile
       self.job_title = freshid_user.job_title
       self.active = self.primary_email.verified = freshid_user.active?
       self.password_salt = self.crypted_password = nil
-    end
-    
-    def user_attributes_for_freshid
-      freshid_first_name, freshid_middle_name, freshid_last_name = freshid_split_names
-      { 
-        first_name: freshid_first_name.presence,
-        middle_name: freshid_middle_name.presence,
-        last_name: freshid_last_name.presence,
-        email: email,
-        phone: phone.presence,
-        mobile: mobile.presence,
-        job_title: job_title.presence,
-        domain: account.full_domain
-      }
     end
 
     def name_part(part)

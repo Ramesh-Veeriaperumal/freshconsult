@@ -3,7 +3,7 @@ class PortalDecorator < ApiDecorator
            :created_at, :updated_at, :preferences, :helpdesk_logo, to: :record
 
   def to_hash
-    {
+    portal_hash = {
       id: id,
       name: name,
       host: host,
@@ -15,7 +15,10 @@ class PortalDecorator < ApiDecorator
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
       helpdesk_logo: logo
-    }.merge(forums_enabled? ? { discussion_category_ids: record.portal_forum_categories.pluck(:forum_category_id) } : {})
+    }
+    portal_hash[:discussion_category_ids] = record.portal_forum_categories.pluck(:forum_category_id) if forums_enabled?
+    portal_hash[:fav_icon_url] = record.fetch_fav_icon_url if record.fav_icon
+    portal_hash
   end
 
   private

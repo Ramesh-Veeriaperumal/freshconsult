@@ -34,6 +34,8 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
       Rails.logger.error "Error in creating sandbox account #{e.backtrace.join("\n\t")}"
       NewRelic::Agent.notice_error(e, 'Sandbox signup error')
       @job.update_last_error(e, :build_error) if @job
+    ensure
+      Thread.current[:create_sandbox_account] = nil
     end
 
     def post_account_creation_activites
@@ -59,6 +61,7 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
         account_account_type: Account::ACCOUNT_TYPES[:sandbox],
         time_zone: @account.time_zone
       }
+      Thread.current[:create_sandbox_account] = true
       current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
       Sharding.run_on_shard "sandbox_#{current_shard}" do
         signup = Signup.new(params)

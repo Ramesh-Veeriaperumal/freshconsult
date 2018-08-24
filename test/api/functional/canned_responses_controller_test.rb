@@ -147,6 +147,7 @@ class CannedResponsesControllerTest < ActionController::TestCase
   end
 
   def test_show_with_xss_payload
+    Account.current.launch(:escape_liquid_for_reply)
     ticket = create_ticket(:subject => '<img src=x onerror=prompt("Subject");>')
     ca_response = create_response(
       title: Faker::Lorem.sentence,

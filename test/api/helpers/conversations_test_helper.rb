@@ -6,6 +6,7 @@ module ConversationsTestHelper
 
   def note_pattern(expected_output, note)
     body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
+    schema_less_properties = note.schema_less_note.try(:note_properties) || {}
     {
       body: body_html || note.body_html,
       body_text: note.body,
@@ -19,6 +20,7 @@ module ConversationsTestHelper
       category: note.category,
       attachments: Array,
       email_failure_count: note.schema_less_note.failure_count,
+      outgoing_failures: schema_less_properties[:errors],
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }

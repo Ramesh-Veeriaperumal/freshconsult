@@ -12,13 +12,14 @@ class Channel::Freshcaller::MigrationController < ApiApplicationController
   
   def validate
     @errors = []
-    @errors << "Freshdesk account not active" unless @account.subscription.active?
+    @errors << "Freshdesk account not active" unless (@account.subscription.active? || (@account.subscription.sprout? && @account.subscription.free?))
     @errors << "Freshfone Account not active" unless freshfone_account_active?
     @errors << "Twilio Account not active" unless (twilio_subaccount.status == 'active')
     @errors << "No Freshfone numbers" unless (@account.freshfone_numbers.present?)
     @errors << "Freshcaller account present" if @account.freshcaller_account
-    @errors << "No common admin email" if params[:admin_email] && (account_admin.email != params[:admin_email])
+    @errors << "No common admin email" if common_account_admin.blank? && params[:admin_email].present?
     @errors << number_sid_mismatch_error unless number_mismatches.blank?
+    @agent_limit = @account.subscription.agent_limit
   end
 
   def initiate
@@ -48,12 +49,11 @@ class Channel::Freshcaller::MigrationController < ApiApplicationController
 
   def revert
     @errors = []
-    return @errors << "Account has no freshcaller feature" unless @account.has_feature?(:freshcaller)
-    @account.revoke_feature(:freshcaller)
-    @account.revoke_feature(:freshcaller_widget)
+    @account.revoke_feature(:freshcaller) if @account.has_feature?(:freshcaller)
+    @account.revoke_feature(:freshcaller_widget) if @account.has_feature?(:freshcaller_widget)
     revert_account
     revert_users
-    revert_numbers(params[:numbers])
+    revert_numbers
     revert_credits(params[:credits])
   end
 
@@ -70,19 +70,26 @@ class Channel::Freshcaller::MigrationController < ApiApplicationController
   end
 
   def revert_account
-    @account.freshcaller_account.destroy
+    @account.freshcaller_account.destroy if @account.freshcaller_account
     @account.freshfone_account.update_column(:state, Freshfone::Account::STATE_HASH[:active])
+    @account.features.freshfone.create unless @account.features?(:freshfone)
     puts "Account restored :: #{@account.freshfone_account.inspect}"
   end
 
-  def revert_numbers(numbers)
+  def revert_numbers
     app_sid = twilio_subaccount.applications.get(@account.freshfone_account.twilio_application_id).sid
-    @account.all_freshfone_numbers.where(number: numbers).each do |number|
-      number.update_column(:deleted, false)
+    @account.all_freshfone_numbers.each do |number|
       fnumber = twilio_subaccount.incoming_phone_numbers.get(number.number_sid)
-      fnumber.update(voice_application_sid: app_sid)
-      puts "Number restored :: #{number.inspect}"
-      puts "app sid :: #{fnumber.voice_application_sid}"
+      begin
+        if fnumber.phone_number.present?
+          fnumber.update(voice_application_sid: app_sid)
+          number.update_column(:deleted, false)
+          Rails.logger.info "Number restored :: #{number.inspect}"
+          Rails.logger.info "app sid :: #{fnumber.voice_application_sid}"
+        end
+      rescue Twilio::REST::RequestError => error
+        Rails.logger.info "Deleted Number \n#{error.message}\n#{error.backtrace.join("\n\t")}"
+      end
     end
   end
 
@@ -120,9 +127,9 @@ class Channel::Freshcaller::MigrationController < ApiApplicationController
     @account.make_current
   end
 
-  def account_admin
+  def common_account_admin
     roles ||= @account.roles.where(name: 'Account Administrator').first
-    users ||= @account.users.where(privileges: roles.privileges).reorder('id asc')
+    users ||= @account.users.where(privileges: roles.privileges, email: params[:admin_email]).reorder('id asc')
     user ||= users.first
   end
 
