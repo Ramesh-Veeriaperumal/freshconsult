@@ -1,4 +1,14 @@
-<% content_for :helpcard do %>
+<%if support_mint_applicable?%>
+	<div class="notification-box">
+		<%if current_account.portals.count>1%>
+			<%=t("portalcss.mint_info_portals")%><br>
+		<%else%>
+			<%=t("portalcss.mint_info_portal")%><br>
+		<%end%>
+	</div>
+<%end%>
+	
+<% content_for :sidebar do %>
   <%= render :partial => "helpnote" %>
 <% end %>
 <div class="list-page product-page" id="multi-product-index">
@@ -10,3 +20,4 @@
 		</table>
 	</div>
 </div>
+

@@ -32,6 +32,7 @@
     // Localizing ticket fields js elements
     customFields = <%= @fields_json.html_safe %>;
     tamDropdownFields = <%= Company::DEFAULT_DROPDOWN_FIELDS.map do |x| x.to_s end.to_json.html_safe %>;
+    show_sandbox_notification = <%= show_sandbox_notification %>;
     tf_lang = {
       untitled:           '<%= t("ticket_fields.untitled") %>',
       firstChoice:       '<%= t("ticket_fields.first_choice") %>',
@@ -70,7 +71,8 @@
       learnMore:     '<%= t("group.learn_more") %>',
       cancel:     '<%= t("cancel") %>',
       done:     '<%= t("done") %>',
-      maxItemsReached: '<%= t("admin.contact_fields.formfield_props.max_choices") %>'
+      maxItemsReached: '<%= t("admin.contact_fields.formfield_props.max_choices") %>',
+      sandbox_notification_for_ticketfields: '<%= t("sandbox.sandbox_notification_for_ticketfields").html_safe %>'
     };
 
     window['translate'] = {}; 
