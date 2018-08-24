@@ -226,6 +226,33 @@ module TicketsFilter
     to_ret
   end
 
+  def self.default_visible_filters(param_filter_id = nil)
+    visible_filters = default_accessible_filters(param_filter_id)
+    visible_filters.collect do |filter|
+      CustomFilterConstants::REMOVE_QUERY_HASH.include?(filter[:id]) ? filter :
+          filter.merge(query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter[:id]))
+    end
+  end
+
+  def self.default_hidden_filters(param_filter_id = nil)
+    hidden_filters = default_accessible_filters(param_filter_id, false)
+    hidden_filters.collect do |filter|
+      {
+        id: filter,
+        name: I18n.t("helpdesk.tickets.views.#{filter}"),
+        default: true,
+        hidden: true,
+        query_hash: Helpdesk::Filters::CustomTicketFilter.new.default_filter_query_hash(filter)
+      }
+    end
+  end
+
+  def self.default_accessible_filters(param_filter_id, visible = true)
+    filters = visible ? default_views : accessible_filters(TicketFilterConstants::HIDDEN_FILTERS)
+    return filters if param_filter_id.blank?
+    filters.select { |filter| (filter_id = visible ? filter[:id] : filter) && filter_id == param_filter_id }
+  end
+
   ### ES Count query related hacks : START ###
 
   ### Hack for dashboard/API summary count fetching from ES

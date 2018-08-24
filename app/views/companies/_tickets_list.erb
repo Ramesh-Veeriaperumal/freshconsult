@@ -1,0 +1,26 @@
+<div class='timeline' id='timeline'>
+    <ul class='timeline-list'>
+      <% no_tickets_shown = 0 %>
+      <% company_tickets.each do |item| %>
+        <li class='timeline-item'>
+          <% no_tickets_shown = no_tickets_shown + 1 %>
+          <%= ticket_activity(item, true) %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <% if total_company_tickets.length > Company::MAX_DISPLAY_COMPANY_TICKETS %>
+    <div class='contact_tickets'>
+      <div class="more_results">
+        <% if type == 'archive' %>
+          <%= link_to t('contacts.view_all_archived').html_safe, helpdesk_archive_company_filter_path(:company_id => company.id) , :id => "show_more" %>
+        <% else %>
+          <%= link_to t('contacts.view_all').html_safe, helpdesk_company_filter_path(:company_id => company.id) , :id => "show_more" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  <% if company_tickets.empty? %>
+    <p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
+  <% end %>

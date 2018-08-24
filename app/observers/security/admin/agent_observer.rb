@@ -28,7 +28,7 @@ class Security::Admin::AgentObserver < ActiveRecord::Observer
   end
 
   def skip_notification?(agent)
-    return !Account.current.verified? || ( agent.account.contact_info[:email] == agent.user.email ? true : false )
+    !Account.current.verified? || ( agent.account.contact_info[:email] == agent.user.email ? true : false ) || Thread.current[:create_sandbox_account]
   end
 
 end

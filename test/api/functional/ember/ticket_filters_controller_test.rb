@@ -74,6 +74,27 @@ module Ember
       match_custom_json(response.body, default_filter_pattern(default_filter_id))
     end
 
+    def test_show_with_default_visible_ongoing_collab_filter
+      Account.current.stubs(:collaboration_enabled?).returns(true)
+      # stubbed called twice - one for function and other one to form expected json
+      Collaboration::Ticket.any_instance.stubs(:fetch_collab_tickets).returns([])
+      get :show, construct_params({ version: 'private' }, false).merge(id: 'ongoing_collab')
+      Collaboration::Ticket.any_instance.expects(:fetch_collab_tickets).once
+      assert_response 200
+      Collaboration::Ticket.any_instance.stubs(:fetch_collab_tickets).returns([])
+      match_custom_json(response.body, default_filter_pattern('ongoing_collab'))
+      Account.current.unstub(:collaboration_enabled?)
+      Collaboration::Ticket.any_instance.unstub(:fetch_collab_tickets)
+    end
+
+    def test_show_with_default_visible_non_ongoing_collab_filter
+      Account.current.stubs(:collaboration_enabled?).returns(true)
+      default_filter_id = TicketsFilter.default_views.map { |a| a[:id] }.first
+      get :show, construct_params({ version: 'private' }, false).merge(id: default_filter_id)
+      Collaboration::Ticket.any_instance.expects(:fetch_collab_tickets).never
+      Account.current.unstub(:collaboration_enabled?)
+    end
+
     def test_show_with_default_hidden_filter
       default_filter_id = TicketsFilter.accessible_filters(TicketFilterConstants::HIDDEN_FILTERS).sample
       get :show, construct_params({ version: 'private' }, false).merge(id: default_filter_id)

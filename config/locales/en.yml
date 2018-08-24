@@ -7403,6 +7403,7 @@ en:
         survey_response_to: to %{agent}
         survey_satisfaction: How would you rate your overall satisfaction for the resolution provided by the agent?
         comments: Comments
+        outgoing_failure: Reply not sent. Please try again after some time.
     merge:
       merge:
         merge_into: Merge into?
@@ -12169,6 +12170,7 @@ Do let us know if you are interested!"
       voicemail_title: "Voicemail from %{customer}"
       outgoing_noanswer_title: "Missed Call to %{customer}"
       incoming_noanswer_title: "Missed Call from %{customer}"
+      default_title: "Call with %{customer} on %{date} at %{time}"
 
       completed_description: "Conversation with %{customer} and %{agent}"
       voicemail_description: "Voicemail from %{customer} to %{agent}"
@@ -12176,6 +12178,7 @@ Do let us know if you are interested!"
       outgoing_noanswer_description: "Missed Call from %{agent} to %{customer}"
       inprogress_description: "Conversation with %{customer} and %{agent}"
       onhold_description: "Conversation with %{customer} and %{agent}"
+      default_description: "Conversation with %{customer} and %{agent}"
 
     info:
       follow_flash: "Hey there!<br>You are now following this Team Huddle and will be notified of all new messages in-app and via email."

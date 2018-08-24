@@ -378,7 +378,7 @@ Authority::Authorization::PrivilegeList.build do
   view_contacts do
     resource :contact, :only => [:index, :show, :hover_card, :hover_card_in_new_tab, :contact_details_for_ticket, :view_conversations]
     resource :customer, :only => [:index, :show] #should deprecate
-    resource :company,  :only => [:index, :show]
+    resource :company,  :only => [:index, :show, :component]
     resource :agent, :only => [:show]
     resource :user, :only => [:index, :show]
     resource :"search/customer", :only => [:index]
