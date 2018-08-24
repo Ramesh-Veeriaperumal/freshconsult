@@ -1194,6 +1194,13 @@ class User < ActiveRecord::Base
     Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
   end
 
+  def sync_profile_from_freshid(freshid_user)
+    return if freshid_user.nil?
+    self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
+    assign_freshid_attributes_to_agent(freshid_user)
+    Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
+  end
+
   def destroy_freshid_user
     if freshid_enabled_account? && email_allowed_in_freshid? && freshid_authorization.present?
       remove_freshid_user
