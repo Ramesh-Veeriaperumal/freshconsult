@@ -18,7 +18,11 @@ module IntegrationServices
         super(message)
       end
     end
-    
+
+    # Raised when trying to access functionalities without having the feature enabled
+    class AccessDeniedError < Error
+    end
+
     # Raised when a service hook fails due to bad configuration. Services that
     # fail with this exception may be automatically disabled.
     class ConfigurationError < Error
@@ -40,6 +44,5 @@ module IntegrationServices
 
     class TimeoutError < Timeout::Error
     end
-    
   end
 end

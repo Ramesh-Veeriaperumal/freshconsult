@@ -46,7 +46,7 @@ module IntegrationServices::Services
 
       def refund_line_item(order_id, line_item_id)
         return {} if order_id.blank?
-        order_resource = order_resource = IntegrationServices::Services::Shopify::ShopifyOrderResource.new(@service, @store, @token)
+        order_resource = IntegrationServices::Services::Shopify::ShopifyOrderResource.new(@service, @store, @token)
         order = order_resource.get_order(order_id)
         return {} if order.blank?
         quantity = 0

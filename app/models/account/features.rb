@@ -12,10 +12,12 @@ class Account < ActiveRecord::Base
                    :dependent_field_validation, :post_central_publish, :encode_emoji_subject,
                    :time_sheets_central_publish, :twitter_common_redirect, :canned_forms,
                    :euc_migrated_twitter, :new_ticket_recieved_metric, :audit_log_ui,
-                   :dashboard_announcement_central_publish, :dashboard_announcements, :undo_send,
+                   :dashboard_announcement_central_publish, :dashboard_announcements,
                    :timeline, :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes,
-                   :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :old_link_back_url_validation]
+                   :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :old_link_back_url_validation, :shopify_actions]
+
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
+  
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
       :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields,
