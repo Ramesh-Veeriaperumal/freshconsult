@@ -14,6 +14,7 @@ class ConversationDecorator < ApiDecorator
   end
 
   def construct_json
+    schema_less_properties = schema_less_note.try(:note_properties) || {}
     {
       body: body_html,
       body_text: body,
@@ -30,7 +31,7 @@ class ConversationDecorator < ApiDecorator
       cc_emails: cc_emails,
       bcc_emails: bcc_emails,
       email_failure_count: schema_less_note.failure_count,
-      outgoing_failures: schema_less_note.note_properties[:errors],
+      outgoing_failures: schema_less_properties[:errors],
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
       attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash }
