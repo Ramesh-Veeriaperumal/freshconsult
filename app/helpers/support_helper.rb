@@ -955,15 +955,4 @@ module SupportHelper
       ticket.class.eql?(Helpdesk::ArchiveTicket) ? ticket.custom_field_value(field_name) :
         ticket.get_ff_value(field_name)
     end
-
-    def hidden_lang_alert_for_agent
-      output = []
-      if Account.current.agent_only_language?(Language.current)
-        output << %( <div class="alert-assume-agent alert-solid"><span class="ficon-unverified"></span> )
-        output << %( #{t('header.agent_only_language',:language => Language.current.name)} )
-        output << ' - ' + link_to(t('enable').upcase, '/admin/manage_languages', :class => "link") if current_user && current_user.privilege?(:admin_tasks)
-        output << %( </div> )
-      end
-      output.join("").html_safe
-    end
 end
