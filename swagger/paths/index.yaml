@@ -20,6 +20,8 @@
   $ref: ./tickets/create_child_with_template.yaml
 /tickets/bulk_link:
   $ref: ./tickets/bulk_link.yaml
+/tickets/bulk_unlink:
+  $ref: ./tickets/bulk_unlink.yaml
 /tickets/bulk_delete:
   $ref: ./tickets/bulk_delete.yaml
 /tickets/bulk_restore:

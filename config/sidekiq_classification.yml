@@ -105,6 +105,7 @@
     - customer_note_body_queue
     - update_taggables_queue
     - suspended_ticket_central_publish
+    - unlink_tickets
   :maintainence:
     - select_all_tickets
     - select_all_batcher
