@@ -63,8 +63,10 @@
     },
     // Getting from jsonData
     feedJsonForm: function (existingFields) {
+      var customFieldCount = 0;
       $(existingFields).each($.proxy(function(index, dataItem){
-
+        if((dataItem.field_type).split("_")[0] == "custom")
+           customFieldCount++;
         if ((multi_sections_enabled && dataItem.has_section &&
                 dataItem.field_options.section_present) || (dataItem.has_section && 
                                                      !multi_sections_enabled)) {
@@ -74,6 +76,10 @@
           this.builder_data[dataItem.id] = this.domCreation(dataItem);
         }
       }, this));
+      if(show_sandbox_notification && customFieldCount >= 10){
+         jQuery("#noticeajax").html(translate.get('sandbox_notification_for_ticketfields')).show();
+         closeableFlash('#noticeajax');
+       }
     },
 
     sectionJsonForm: function (existingFields) {

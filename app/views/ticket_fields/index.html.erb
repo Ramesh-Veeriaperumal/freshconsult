@@ -57,6 +57,7 @@
     shared_ownership_enabled = <%= Account.current.shared_ownership_enabled?.to_json.html_safe %>;
     custom_ticket_fields_enabled = <%= current_account.custom_ticket_fields_enabled? %>
     sharedGroups = <%= @groups.to_json.html_safe %>;
+    show_sandbox_notification = <%= show_sandbox_notification %>;
 
     tf_lang = {
      untitled:                    "<%= t("ticket_fields.untitled") %>",
@@ -152,13 +153,15 @@
       level:              '<%= t("ticket_fields.formfield_props.level") %>',
       maxItemsReached:    '<%= t("admin.contact_fields.formfield_props.max_choices") %>',
       addSection:         '<%= t("ticket_fields.section.add_section") %>',
-      field_has_section:  '<%= t("ticket_fields.formfield_props.field_has_section") %>'
+      field_has_section:  '<%= t("ticket_fields.formfield_props.field_has_section") %>',
+      sandbox_notification_for_ticketfields: '<%= t("sandbox.sandbox_notification_for_ticketfields").html_safe %>'
     };
 
     window['translate'] = {}; 
     translate.get = function(name){
       return tf_lang[name] || "";
     };
+
   <% end %>
 <% end %> 
 <% content_for :layoutType do -%>antipattern<%- end %>

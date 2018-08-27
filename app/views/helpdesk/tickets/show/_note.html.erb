@@ -12,6 +12,14 @@ end
 timestamp_id ||=false
 to_email_failures ||= nil
 cc_email_failures ||= nil
+schema_less_note = note.schema_less_note
+outgoing_failure = nil
+
+outgoing_failures_hash = schema_less_note.note_properties[:errors] if schema_less_note.present?
+if note.source == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["twitter"] && outgoing_failures_hash.present?
+	outgoing_failures = outgoing_failures_hash[:twitter] 
+	outgoing_failure = outgoing_failures[:error_message] if outgoing_failures.present?
+end
 
 if current_account.new_survey_enabled?
   kind = note.custom_survey_remark.nil? ? note.kind : 'survey'
@@ -157,7 +165,15 @@ end
       <% end %>
       </div>
 
-
+      <% if outgoing_failure.present? %>
+	      <div class="note_failure">
+	      	<span class="failure_message"> 
+	      		<%#= outgoing_failure %>
+	      		<% #Replace this generic message after specific error messages are provided. %>
+	      		<%= t("helpdesk.tickets.note.outgoing_failure").html_safe %> 
+	      	</span>
+	      </div>
+      <% end %>
 
         <div class="failed_emails">
           <% if to_email_failures.present? || cc_email_failures.present? %>

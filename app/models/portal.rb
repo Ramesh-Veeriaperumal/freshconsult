@@ -229,6 +229,11 @@ class Portal < ActiveRecord::Base
     }
   end
 
+ 
+  def falcon_portal_enable?
+    preferences.key?(:falcon_portal_key)
+  end
+
   private
 
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language

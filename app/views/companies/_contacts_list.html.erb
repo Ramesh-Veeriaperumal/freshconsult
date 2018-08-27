@@ -1,0 +1,33 @@
+<% if company_users_size > 0 %>
+  <ul class="user_list">
+    <% users = company_users.take(Company::MAX_DISPLAY_COMPANY_CONTACTS) %>
+    <% users.each do |user| %>
+        <li class='user-item'>
+          <a href='<%= contact_path(user) %>' class='clearfix' data-pjax='#body-container'>
+              <%= user_avatar(user, :thumb, 'preview_pic small circle') %>
+              <div class='vertical-alignment'>
+                <p class='name ellipsis'> <%= h(user.name) %> </p>
+                <p class='email ellipsis'> <%= h(user.email) %> </p>
+              </div>
+            </a>
+        </li>
+    <%end%>
+    <% if company_users_size > Company::MAX_DISPLAY_COMPANY_CONTACTS %>
+      <li class='user-item clearfix'>
+        <a href='<%= URI::escape('/contacts/filter/all?query=customer_id is ' + company.id.to_s) %>' class='user-link clearfix'>
+          <p class='more-users-link'>...</p>
+          <span class='see-all'>
+            <%= t('view_all')%>
+          </span>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<%= javascript_tag do %>
+  var body_container = jQuery("body");
+  if (body_container.find('.contact-sidebar .widget:not(.load_remote)').length == 1) {
+    body_container.find('.title').html("<%= t('contacts.title') %> " + '('+ <%= company_users_size %>+ ')');
+  }
+<% end %>

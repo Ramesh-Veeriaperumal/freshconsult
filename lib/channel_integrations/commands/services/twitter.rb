@@ -64,6 +64,7 @@ module ChannelIntegrations::Commands::Services
 
         update_errors_in_schema_less_notes(schema_less_notes, data)
       else
+        return error_message('Tweet Id cannot be empty') unless data[:tweet_id].present?
         social_tweet = current_account.tweets.find_by_tweetable_id(context[:note_id])
         return error_message('Social::Tweet not found') if social_tweet.blank?
 
@@ -115,9 +116,8 @@ module ChannelIntegrations::Commands::Services
 
       def check_note_params?(payload)
         context = payload[:context]
-        data = payload[:data]
 
-        data[:tweet_id].present? && context[:note_id].present? && base_validation?(context)
+        context[:note_id].present? && base_validation?(context)
       end
 
       def base_validation?(context)

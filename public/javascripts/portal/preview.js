@@ -21,7 +21,6 @@ jQuery.noConflict()
 
         var iframe = $('#iframe-preview'),
             responsive = $('#responsive-buttons')
-        
         $(window).resize(function() {
             var ww = $(window).width(),
                 topHeight = ww < 901 ? 0 : $("#preview-message").height()
@@ -46,5 +45,4 @@ jQuery.noConflict()
         });
 
     })
-
 }(window.jQuery);
