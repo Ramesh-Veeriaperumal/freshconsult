@@ -32,10 +32,6 @@ class User < ActiveRecord::Base
   before_update :make_inactive, if: -> { email_id_changed? && !@keep_user_active }
   after_commit :send_activation_email, on: :update, :if => [:email_updated?]
 
-  def drop_authorization
-    authorizations.authorizations_without_freshid.destroy_all
-  end
-
   def send_activation_email
     self.deliver_activation_instructions!(account.main_portal,false) if self.email.present? && !self.primary_email.verified? && freshid_disabled_or_customer? && !self.agent_deleted_forever?
   end
