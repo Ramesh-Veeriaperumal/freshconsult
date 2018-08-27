@@ -52,20 +52,26 @@ $header_border_color: if(lightness($header_color) > 50, black, white) !default;
         @include right(-13px);
         top: 35px;
         @include text-align(left);
-        a{
-					color: #444;
-					text-shadow: none;
-					&:hover{
-						background-color: darken($bg_color, 10%);
-					}
-					&.active{
-						font-weight: 500;
-					}
-					.icon-dd-tick-dark{
-						position: absolute;
-						@include left(2px);
-					}
-				}
+        a {
+            width: 100%;
+            color: #444;
+            text-shadow: none;
+            &:hover{
+                background-color: darken($bg_color, 10%);
+            }
+            &.active{
+                font-weight: 500;
+            }
+            .icon-dd-tick-dark{
+                position: absolute;
+                @include left(2px);
+            }
+            .ficon-eye-disabled{
+                &:before{
+                    padding-left: 10px;
+                }
+            }
+        }
       }
     }
     .caret {
