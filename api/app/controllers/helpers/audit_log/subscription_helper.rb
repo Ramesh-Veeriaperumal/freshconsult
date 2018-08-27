@@ -1,12 +1,13 @@
 module AuditLog::SubscriptionHelper
   include AuditLog::AuditLogHelper
+  include AuditLog::Translators::Subscription
 
   ALLOWED_MODEL_CHANGES = [:state, :renewal_period, :subscription_plan_id,
     :agent_limit, :subscription_currency_id, :card_number, :card_expiration].freeze
 
   def subscription_changes(model_data, changes)
     response = []
-    changes.deep_symbolize_keys
+    changes = readable_subscription_changes(changes)
     model_name = :subscription
     changes.each_pair do |key, value|
       next unless ALLOWED_MODEL_CHANGES.include?(key)

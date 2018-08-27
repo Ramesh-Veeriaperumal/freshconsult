@@ -2716,6 +2716,9 @@ en:
         position: "Position"
         rule_on: "On"
         rule_off: "Off"
+        performer: "Performer"
+        events: "Events"
+        conditions: "Conditions"
   ends_with: Ends with
   last_name: Last Name
   forum:
