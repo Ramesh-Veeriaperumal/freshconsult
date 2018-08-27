@@ -132,6 +132,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :'admin/canned_form'
     resource :"ember/portal", only: [:show, :update]
     resource :'audit_log', only: [:filter, :export, :event_name]
+    resource :"proactive/rule"
+    resource :"proactive/outreach"
   end
 
   edit_ticket_properties do
@@ -182,7 +184,6 @@ Authority::Authorization::PrivilegeList.build do
   view_admin do 
     resource :"ember/agent", only: [:complete_gdpr_acceptance]
   end
-
 
   manage_bots do
     resource :"ember/admin/bot", only: %i[new create show index update map_categories mark_completed_status_seen enable_on_portal]

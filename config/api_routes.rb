@@ -203,6 +203,12 @@ Helpkit::Application.routes.draw do
         get :session_info
       end
     end
+
+    # Proactive Support routes
+    scope '/proactive' do
+      resources :outreaches, controller: 'proactive/outreaches', except: [:edit]
+      resources :rules, controller: 'proactive/rules', except: [:edit]
+    end
   end
 
   ember_routes = proc do

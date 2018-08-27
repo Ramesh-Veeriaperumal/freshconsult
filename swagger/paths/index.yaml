@@ -443,3 +443,9 @@
   $ref: ./freshmarketer/enable_integration.yaml
 /freshmarketer/disable_integration:
   $ref: ./freshmarketer/disable_integration.yaml
+
+# Outreach
+/proactive/rules:
+  $ref: ./proactive/rules/list_and_create.yaml
+/proactive/rules/{id}:
+  $ref: ./proactive/rules/crud.yaml

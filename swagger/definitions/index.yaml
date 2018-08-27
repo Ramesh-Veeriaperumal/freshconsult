@@ -143,6 +143,8 @@
 
   trial_widget_complete_step:
     $ref: './request/trial_widget/complete_step.yaml'
+  proactive_rule_input:
+    $ref: ./request/proactive/rule.yaml
 
   sandbox_merge_input:
     $ref: './request/sandboxes/merge.yaml'
@@ -291,6 +293,8 @@
     $ref: ./response/canned_response/folder_show.yaml
   todo_details:
     $ref: ./resource/todo.yaml
+  rule:
+    $ref: ./resource/rule.yaml
 
   # RESPONSE
   meta:
@@ -426,6 +430,8 @@
     $ref: './response/dashboard/leaderboard/groups.yaml'
   requester:
     $ref: './response/tickets/requester.yaml'
+  proactive_rule_response:
+    $ref: ./response/proactive/rule.yaml
 
   # Trial Widget
   trial_widget_index:
