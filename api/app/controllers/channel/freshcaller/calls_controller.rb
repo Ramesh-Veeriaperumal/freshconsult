@@ -40,7 +40,7 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
 
     def handle_call_status_flows
       create_and_link_ticket if incoming_missed_call?
-      create_or_add_to_ticket if inprogress? || on_hold?
+      create_or_add_to_ticket if ongoing?
       create_ticket_add_note if voicemail? || completed? || outgoing_missed_call?
     end
 

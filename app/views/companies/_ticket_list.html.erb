@@ -33,59 +33,28 @@
     <% end %>
 
     <div class="tab-content"> 
-      <div class='tab-pane active' id='conv_tickets'> 
+      <div class='tab-pane active' id='conv_tickets'>
         <p class='muted'> <%= t('contacts.conversations.company_all') %> </p>
-        <div class='timeline' id='timeline'>
-          <ul class='timeline-list'>
-            <% no_tickets_shown = 0 %>
-            <% @company_tickets.each do |item| %>
-              <li class='timeline-item'>
-                <% no_tickets_shown = no_tickets_shown + 1 %>
-                <%= ticket_activity(item, true) %>
-              </li>
-            <% end %>
-          </ul>
+        <div class="loading-small loading-center"
+          rel="remote-load"
+          data-url="/companies/<%=@company.id%>/component?component=recent_tickets">
         </div>
-
-        <% if @total_company_tickets.length > 10 %>
-          <div class='contact_tickets'>
-            <div class="more_results">
-              <%= link_to t('contacts.view_all').html_safe, helpdesk_company_filter_path(:company_id => @company.id) , :id => "show_more" %>
-            </div>
-          </div>
-        <% end %>
-        <% if @company_tickets.empty? %>
-          <p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
-        <% end %>
       </div>
 
       <% if current_account.features_included?(:archive_tickets) %>
-        <div class='tab-pane' id='conv_archive_tickets'> 
-          <div class='timeline' id='timeline'>
-            <ul class='timeline-list'>
-              <% no_tickets_shown = 0 %>
-              <% @company_archive_tickets.each do |item| %>
-                <li class='timeline-item'>
-                  <% no_tickets_shown = no_tickets_shown + 1 %>
-                  <%= ticket_activity(item, true) %>
-                </li>
-              <% end %>
-            </ul>
+        <div class='tab-pane archive_tab load_remote' id='conv_archive_tickets'>
+          <div class=archive_ticket_content rel="remote" 
+               data-remote-url="/companies/<%=@company.id%>/component?component=archive_tickets">
           </div>
-
-          <% if @total_company_archive_tickets.length > 10 %>
-            <div class='contact_tickets'>
-              <div class="more_results">
-                <%= link_to t('contacts.view_all_archived').html_safe, helpdesk_archive_company_filter_path(:company_id => @company.id) , :id => "show_more" %>
-              </div>
-            </div>
-          <% end %>
-          <% if @company_archive_tickets.empty? %>
-            <p class='no-conv-msg'><%= t('contacts.conversations.no_conversations') %></p>
-          <% end %>
-
         </div>
       <% end %>
     </div>
   </div>
 </div>
+<%= javascript_tag do %>
+  jQuery('#conv_archive_tickets-tab').on('click', function(ev){
+    jQuery('.archive_ticket_content').trigger('afterShow');
+    jQuery('.archive_tab').removeClass('load_remote');
+    jQuery(".icon.ticksymbol").addClass("hide");
+  });
+<% end %>

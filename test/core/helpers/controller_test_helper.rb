@@ -12,7 +12,7 @@ module ControllerTestHelper
   def get_admin()
     users = @account.account_managers
     users.each do |user|
-      return user if user.can_view_all_tickets? and user.privilege?(:manage_canned_responses) and !user.agent.occasional?
+      return user if user.can_view_all_tickets? and user.privilege?(:manage_canned_responses) and !user.agent.occasional? and user.active?
     end
     add_test_agent(@account)
   end

@@ -44,20 +44,10 @@
 				
 				<div class="user-info">
 					<h1 class="lead break-word text-center"><%= h(@company.name) %></h1>
-					<% if @company_users_size > 0 %>
-						<div class="no-contacts text-center">
-							<div class="border-wrap left"></div>
-							<div class="no-contacts-msg">
-								<%= link_to t('companies.no_contacts', :no_contacts => @company_users_size), URI::escape('/contacts/filter/all?query=customer_id is ' + @company.id.to_s), :'data-pjax' => "#body-container" %>
-							</div>
-							<div class='border-wrap right'></div>
-						</div>
-					<% end %>
 				</div>
 				
-				<% no_border_class = @company_users_size > 0 ? 'no-border' : '' %>
 				<div class="break-word user-job-title muted pl20 pr20"><%= company_description(h(@company.description)) %></div>
-				<ul class='show-fields <%= no_border_class %>'>
+				<ul class='show-fields'>
 					<% view_company_fields.each do |field| %>
 				    	<%=  render_as_list nil, field %>
 				    <% end %>
@@ -124,43 +114,23 @@
 						<% end %>
 					</div>
 				<% end %>
-				<div class="sidepanel">
-					<h4 class="app-title"><%= t('company.sla_policy_name') %></h4> 
-					<div id="sla_policy" class="sloading loading-small loading-center"
-						 rel="remote-load" 
-						 data-unique="true" 
-						 data-url="/companies/<%=@company.id%>/sla_policies"></div>
-				</div>
-				
-				<% if @company_users_size > 0 %>
-					<div class='sidepanel'>
-						<h4 class="app-title margin-set"><%=t('contacts.title')%> (<%= @company_users_size %>) </h4>
-						<ul class="user_list">	  
-							<% users = @company_users.take(5) %>
-							<% users.each do |user| %>
-							  	<li class='user-item'>
-							  		<a href='<%= contact_path(user) %>' class='clearfix' data-pjax='#body-container'>
-							      		<%= user_avatar(user, :thumb, 'preview_pic small circle') %>
-							      		<div class='vertical-alignment'>
-							      			<p class='name ellipsis'> <%= h(user.name) %> </p>
-							      			<p class='email ellipsis'> <%= h(user.email) %> </p>
-							      		</div>
-						      		</a>
-							  	</li>  
-							<%end%>
-							<% if @company_users_size > 5 %> 
-								<li class='user-item clearfix'>
-									<a href='<%= URI::escape('/contacts/filter/all?query=customer_id is ' + @company.id.to_s) %>' class='user-link clearfix'>
-										<p class='more-users-link'>...</p>
-										<span class='see-all'>
-											<%= t('view_all')%>
-										</span>
-									</a>
-								</li>
-							<% end %>
-						</ul>
+				<% if privilege?(:manage_contacts) %> 
+					<div class="sidepanel">
+						<h4 class="app-title"><%= t('company.sla_policy_name') %></h4> 
+						<div id="sla_policy" class="sloading loading-small loading-center"
+							 rel="remote-load" 
+							 data-unique="true" 
+							 data-url="/companies/<%=@company.id%>/sla_policies"></div>
 					</div>
 				<% end %>
+
+				<div class="widget inactive load_remote">
+					<h3 class="title"><%= t('contacts.title') %></h3> 
+					<div class="content"
+						 rel="remote" 
+						 data-remote-url="/companies/<%=@company.id%>/component?component=contacts_list"></div>
+				</div>
+
 				<% unless @company.domains.blank? %>
 					<div class="sidepanel hide">
 						<div class="first">
@@ -179,7 +149,14 @@
 
 
 <div class="hide" id="customer-delete-confirmation">
- 	<p class="margin-bottom">
+	<p class="margin-bottom">
 		<%= "#{t('company.info1')}<br/><br/>#{t('company.info10')}".html_safe %>
 	</p>
 </div>
+
+<%= javascript_tag do %>
+	jQuery("body").on('click.contact-sidebar', '.widget.inactive.load_remote', function(ev){
+		jQuery(this).children('.content').trigger('afterShow');
+		jQuery(this).removeClass('inactive load_remote');
+	});
+<% end %>

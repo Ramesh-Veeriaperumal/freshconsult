@@ -3,7 +3,7 @@ class TicketDelegator < BaseDelegator
   attr_accessor :ticket_fields
   validate :group_presence, if: -> { group_id && (attr_changed?('group_id') || (property_update? && required_for_closure_field?('group') && status_set_to_closed?)) }
   validate :responder_presence, if: -> { responder_id && (attr_changed?('responder_id') || (property_update? && required_for_closure_field?('agent') && status_set_to_closed?)) }
-  validate :email_config_presence,  if: -> { !property_update? && email_config_id && outbound_email? }
+  validate :email_config_presence,  if: -> { !property_update? && email_config_id && outbound_email? && attr_changed?('email_config_id') }
   validates :email_config, presence: true, if: -> { errors[:email_config_id].blank? && email_config_id && attr_changed?('email_config_id') }
   validate :product_presence, if: -> { product_id && (attr_changed?('product_id', schema_less_ticket) || (property_update? && required_for_closure_field?('product') && status_set_to_closed?)) }
   validate :validate_user, if: -> { requester_id && errors[:requester].blank? && attr_changed?('requester_id') }
