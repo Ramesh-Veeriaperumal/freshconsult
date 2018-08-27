@@ -239,7 +239,6 @@ Helpkit::Application.routes.draw do
     resources :bots, controller: 'ember/admin/bots', only: [:index, :new, :create, :show, :update] do
       member do
         put :map_categories
-        post :training_completed
         post :mark_completed_status_seen
         put :enable_on_portal
         get :bot_folders
