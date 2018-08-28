@@ -15,16 +15,20 @@ module Helpdesk::Ticketfields::TicketStatus
     index = -1
     ticket_statuses.each do |st|
       index = index+1
-      if st.status_id && (st.status_id == attr[:status_id])
+      if st.status_id && st.status_id == attr[:status_id]
         t_s = st
         break
-      elsif((st.name).casecmp(attr[:name]) == 0 and st.deleted?)
+      #for avoiding adding new "custom value with default keys"[ open,closed, pending,resolved] and avoiding entering "custom value with default keys" updation bcoz removal keys will go to next condition
+      elsif ((I18n.t(st.name.downcase)).casecmp(attr[:name]) == 0 and (!attr[:status_id] || DEFAULT_STATUSES.keys.include?(attr[:status_id])))
+        return
+      #Not to allow default values with attr hash to enter , below condition only for custom value status updation and deletion, allowing will automatically update "custom value with default keys"
+      elsif((st.name).casecmp(attr[:name]) == 0 and st.deleted? and !(DEFAULT_STATUSES.keys.include?(attr[:status_id])))
         t_s = st
         t_s.deleted = false # restore the deleted status if the user adds the status with the same name
         break
       end
     end
-    
+
     attr.delete(:status_id)
     unless t_s.nil?
       ModifyTicketStatus.perform_async({ :status_id => t_s.status_id, :status_name => t_s.name }) if attr[:deleted] && !t_s[:deleted]
