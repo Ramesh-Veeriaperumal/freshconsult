@@ -63,6 +63,12 @@
 
 <%= javascript_tag do %>
   (function($){
+     var show_sandbox_notification = <%= show_sandbox_notification %>
+     var notification_message = '<%=t("sandbox.sandbox_notification_for_rules").html_safe %>';
+     if(show_sandbox_notification && jQuery('#va_rules_list table tbody tr').length >= 10){
+             jQuery("#noticeajax").html(notification_message).show();
+             closeableFlash('#noticeajax');
+     }
     $('.activate').itoggle({
       checkedLabel: "<%= t('plain_on') %>",
       uncheckedLabel: "<%= t('plain_off') %>"
