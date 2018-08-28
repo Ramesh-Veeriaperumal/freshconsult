@@ -15,7 +15,7 @@ module Helpdesk::Ticketfields::TicketStatus
     index = -1
     ticket_statuses.each do |st|
       index = index+1
-      if st.status_id && st.status_id == attr[:status_id]
+      if st.status_id && (st.status_id == attr[:status_id])
         t_s = st
         break
       #for avoiding adding new "custom value with default keys"[ open,closed, pending,resolved] and avoiding entering "custom value with default keys" updation bcoz removal keys will go to next condition
