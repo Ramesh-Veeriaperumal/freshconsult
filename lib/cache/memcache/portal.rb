@@ -15,6 +15,14 @@ module Cache::Memcache::Portal
     base.extend ClassMethods
   end
 
+  def clear_cache_apply_portal(url,account_id)
+      key = PORTAL_BY_URL % { :portal_url => url}
+      MemcacheKeys.delete_from_cache key
+
+      key = ACCOUNT_MAIN_PORTAL % { :account_id => account_id }
+      MemcacheKeys.delete_from_cache key
+  end
+
   def clear_portal_cache
 
     (@all_changes && @all_changes[:portal_url] || [] ).each do |url|

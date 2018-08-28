@@ -5,17 +5,30 @@
       <%= portal_logo(portal) %>
     </div>
   </td>
-  <td class="portal-text">
+  <td class="portal-text <%='mint-enabled-list' if support_mint_applicable_portal?(portal)%>">
       <div class="portal-name"><%= pjax_link_to portal.portal_name.blank? ? current_account.name : portal.portal_name, edit_admin_portal_path(portal) %></div>
       <div class="muted"><%= (portal.product || current_account).name %></div>
   </td>
+ 
+  <%if support_mint_applicable_portal?(portal)%>
+    <td class = "list-mint-preview-button">
+      <%= link_to I18n.t("portalcss.mint_preview"), 
+          admin_portal_template_path(portal,:mint_preview_button => "mint preview"), 
+          :method => :put, 
+          :target => "_blank", 
+          :class =>"pull-right preview-button"
+      %>
+    </td>
+  <%end%>   
+
   <td>
     <div class="pull-right">
+     
       <span class="view-portal">
         <span class='ficon-open-in-new-window pr5 fsize-14'></span>
         <span class="tooltip" title="<%= portal.full_url %>">
           <%= link_to(t("admin.products.product.view_portal"), portal.full_url, { :target => "_blank" }) %>
-        </span>
+        </span>   
       </span>
         <%= link_to t("admin.products.product.customize_portal").html_safe, admin_portal_template_path(portal), :class => "btn btn-mini" %>
     </div>

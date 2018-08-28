@@ -107,7 +107,12 @@
     <hr />
     <div id="preferences_btns">
       <%= render :partial => "/admin/shared/customization_buttons", 
-          :locals => { :type => :template, :active_tab => :preferences } %>
+          :locals => { :type => :template,
+                       :active_tab => :preferences,
+                       :falcon_support_portal_theme_enabled =>@falcon_support_portal_theme_enabled,
+                       :falcon_ui =>@current_account.falcon_ui_enabled?
+                     } 
+      %>
     </div>
   <% end %>
 </div>
