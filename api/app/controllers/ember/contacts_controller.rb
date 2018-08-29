@@ -223,7 +223,7 @@ module Ember
           @company_param[:default] = true
         else
           params[cname][:company_id] = @def_company.id
-          params[cname][:client_manager] = @company_param[:view_all_tickets]
+          params[cname][:client_manager] = @company_param[:view_all_tickets] || false
         end
       end
 
@@ -250,7 +250,7 @@ module Ember
         end
         @all_companies.each do |comp|
           company = find_or_create_company(comp) if comp[:id].blank?
-          company_attributes << user_company_hash(company || comp, comp[:view_all_tickets], comp[:default])
+          company_attributes << user_company_hash(company || comp, comp[:view_all_tickets] || false, comp[:default])
         end
         @item.user_companies_attributes = Hash[(0...company_attributes.size).zip company_attributes]
       end
