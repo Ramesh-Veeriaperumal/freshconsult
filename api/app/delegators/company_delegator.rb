@@ -89,6 +89,6 @@ class CompanyDelegator < BaseDelegator
     end
 
     def tam_default_fields_enabled?
-      Account.current.tam_default_company_fields_enabled?
+      Account.current.tam_default_fields_enabled?
     end
 end

@@ -6,7 +6,8 @@ module Ember
       { company_field: params }
     end
 
-    def initial_setup
+    def setup
+      super
       @private_api = true
     end
 
