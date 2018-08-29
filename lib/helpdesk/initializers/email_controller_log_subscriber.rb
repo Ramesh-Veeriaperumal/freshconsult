@@ -6,7 +6,7 @@ class EmailControllerLogSubscriber < ActiveSupport::LogSubscriber
 
     if is_log_reduce_controller? payload[:controller]
       email_params = payload[:params]
-      c_params = exclude_params(payload[:controller], payload[:params])
+      c_params = exclude_params(payload[:controller], payload[:params], payload[:action])
       if payload[:controller] == "MimeController"
         email_params = {}
         c_params.merge!({ "message_id" => extract_message_id(payload[:params]["email"]) })
@@ -25,11 +25,15 @@ class EmailControllerLogSubscriber < ActiveSupport::LogSubscriber
     email_logger.info "  Parameters: #{email_params.inspect}" unless email_params.empty?
   end
 
-  def exclude_params(controller_name, controller_params)
+  def exclude_params(controller_name, controller_params, action = nil)
     f_params = {}
     case controller_name
     when "EmailController"
-      f_params = controller_params.except("text", "html")
+      if action.eql?('create')
+        f_params = controller_params.except("text", "html")
+      else
+        f_params = controller_params.except("username", "api_key")
+      end
     when "EmailServiceController"
       f_params = controller_params.except("text", "html", "body_content_text", "body_content_html")
     when "MailgunController"
