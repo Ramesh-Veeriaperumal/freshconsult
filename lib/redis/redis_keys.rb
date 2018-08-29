@@ -354,9 +354,6 @@ module Redis::RedisKeys
   DISABLE_PORTAL_NEW_THEME = "DISABLE_PORTAL_NEW_THEME"
   BOT_STATUS = "BOT_STATUS:%{account_id}:%{bot_id}"
 
-  # Key for enabling TAM company fields
-  TAM_FIELDS_ENABLED = "TAM_FIELDS_ENABLED"
-
   YEAR_IN_REVIEW_ACCOUNT = "YEAR_IN_REVIEW:%{account_id}"
   YEAR_IN_REVIEW_CLOSED_USERS = "YEAR_IN_REVIEW_CLOSED:%{account_id}"
 

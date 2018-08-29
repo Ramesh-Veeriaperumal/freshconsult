@@ -257,10 +257,6 @@ class Account < ActiveRecord::Base
     set_others_redis_hash(version_key, hash_set)
   end
 
-  def tam_default_company_fields_enabled?
-    Account.current.tam_default_fields_enabled? &&  redis_key_exists?(TAM_FIELDS_ENABLED)
-  end
-
   def support_bot_configured?
     support_bot_enabled? && bot_onboarded?
   end
