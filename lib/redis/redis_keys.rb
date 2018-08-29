@@ -396,6 +396,7 @@ module Redis::RedisKeys
   SEGMENT_LIMIT = 'SEGMENT_LIMIT:%{account_id}'.freeze
 
   #Temp Redis keys for resque to sidekiq migration end
+  
 
   # count cluster to search service keys
   SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED = "SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED"
