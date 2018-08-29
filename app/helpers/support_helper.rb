@@ -264,7 +264,7 @@ module SupportHelper
   # Logo for the portal
   def logo portal, link_flag = false
     _output = []
-    _output << %(<a href= '#{ link_flag ?  "javascript:void(0)" : "#{portal['linkback_url']}" }')
+    _output << %(<a href="#{ link_flag ?  "javascript:void(0)" : "#{portal['linkback_url']}" }")
     _output << %(class='portal-logo'>)
     # Showing the customer uploaded logo or default logo within an image tag
     _output << %(<span class="portal-img"><i></i>
@@ -940,9 +940,8 @@ module SupportHelper
 
     def preview?
       @preview ||= if User.current
-                     is_preview = IS_PREVIEW % { :account_id => current_account.id,
-                     :user_id => User.current.id, :portal_id => @portal.id}
-                     !get_portal_redis_key(is_preview).blank? && !current_user.blank? && current_user.agent?
+                     is_preview = IS_PREVIEW % { :account_id => current_account.id, :user_id => User.current.id, :portal_id => @portal.id}
+                     (!(get_portal_redis_key(is_preview).blank?  && on_mint_preview.blank?)) && !current_user.blank? && current_user.agent?
                    end
     end
 

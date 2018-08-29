@@ -1,0 +1,16 @@
+development:
+  signing_key: "abcdefgh12345678"
+  jwt_default_expiry: 100000
+  service_url: "http://localhost:3001"
+test:
+  signing_key: "abcdefgh12345678"
+  jwt_default_expiry: 100
+  service_url: "http://localhost:3001"
+staging:
+  signing_key: "abcdefgh12345678"
+  jwt_default_expiry: 100000
+  service_url: ""
+production:
+  signing_key: "abcdefgh12345678"
+  jwt_default_expiry: 100000
+  service_url: ""

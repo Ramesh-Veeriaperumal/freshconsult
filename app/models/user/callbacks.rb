@@ -180,6 +180,10 @@ class User < ActiveRecord::Base
     @deleted_model_info = as_api_response(:central_publish)
   end
 
+  def delete_user_authorizations
+    authorizations.authorizations_without_freshid.destroy_all if authorizations.exists?
+  end
+
   protected
 
   def discard_blank_email
@@ -275,10 +279,6 @@ class User < ActiveRecord::Base
 
   def delete_freshfone_user
     freshfone_user.destroy if freshfone_user
-  end
-
-  def delete_user_authorizations
-    self.authorizations.destroy_all if self.authorizations
   end
   
   def delete_forum_moderator

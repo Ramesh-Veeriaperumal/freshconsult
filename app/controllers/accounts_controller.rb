@@ -450,6 +450,8 @@ class AccountsController < ApplicationController
       
       params[:signup][:locale] = assign_language || http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
+      params[:signup][:org_id] = params[:org_id]
+      params[:signup][:join_token] = params[:join_token]
       metrics_obj, account_obj = build_metrics
       params[:signup][:metrics] = metrics_obj
       params[:signup][:account_details] = account_obj
