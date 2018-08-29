@@ -424,6 +424,7 @@ module Redis::RedisKeys
   FRESHSALES_TRACK_SUBSCRIPTION = "FRESHSALES_TRACK_SUBSCRIPTION".freeze
 
   #Temp Redis keys for resque to sidekiq migration end
+  
 
   # count cluster to search service keys
   SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED = "SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED"

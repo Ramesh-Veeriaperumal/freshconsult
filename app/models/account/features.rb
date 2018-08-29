@@ -14,7 +14,9 @@ class Account < ActiveRecord::Base
                    :euc_migrated_twitter, :new_ticket_recieved_metric, :audit_log_ui,
                    :dashboard_announcement_central_publish, :dashboard_announcements,
                    :timeline, :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes,
-                   :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :old_link_back_url_validation, :shopify_actions]
+                   :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, 
+                   :old_link_back_url_validation, :shopify_actions, :db_to_bitmap_features_migration]
+
 
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   
@@ -65,6 +67,24 @@ class Account < ActiveRecord::Base
   Collaboration::Ticket::SUB_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       self.collaboration_enabled? && (self.collab_settings[item.to_s] == 1)
+    end
+  end
+
+  def features?(*feature_names)
+    return super(*feature_names) unless launched?(:db_to_bitmap_features_migration)
+    db_features = feature_names - DB_TO_BITMAP_MIGRATION_FEATURES_LIST
+    if db_features.count == feature_names.count
+      super(*feature_names)
+    else
+      # twitter and facebook DB features are mapped to advanced_twitter and 
+      # advanced_facebook in bitmap
+      feature_names.push :advanced_twitter if feature_names.delete(:twitter).present?
+      feature_names.push :advanced_facebook if feature_names.delete(:facebook).present?
+      if db_features.empty?
+        self.has_features?(*feature_names)
+      else
+        super(db_features) && self.has_features?(*(feature_names - db_features))
+      end
     end
   end
 
