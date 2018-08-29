@@ -30,6 +30,8 @@ class EmailControllerLogSubscriber < ActiveSupport::LogSubscriber
     case controller_name
     when "EmailController"
       f_params = controller_params.except("text", "html")
+    when "EmailServiceController"
+      f_params = controller_params.except("text", "html", "body_content_text", "body_content_html")
     when "MailgunController"
       f_params = controller_params.except("body-html", "body-plain", "stripped-html", "stripped-text")
     when "Helpdesk::ConversationsController"
@@ -48,7 +50,7 @@ class EmailControllerLogSubscriber < ActiveSupport::LogSubscriber
   end
 
   def is_log_reduce_controller?(controller_name)
-    ["EmailController", "MailgunController", "Helpdesk::ConversationsController", "MimeController"].any? {|controller| (controller == controller_name)}
+    ["EmailController", "MailgunController", "Helpdesk::ConversationsController", "MimeController", "EmailServiceController"].any? {|controller| (controller == controller_name)}
   end
 
   def extract_message_id(headers)

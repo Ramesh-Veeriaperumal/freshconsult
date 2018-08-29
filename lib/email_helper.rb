@@ -11,6 +11,10 @@ module EmailHelper
   REQUEST_TIMEOUT = 25
   SENDGRID_RETRY_TIME = 4.hours
 
+  COLLAB_STR_ARRAY = ['Invited to Team Huddle - [#', 'Mentioned in Team Huddle - [#',
+                  'mentioned in Team Huddle - [#', 'Reply in Team Huddle - [#',
+                  'Team Huddle - New Messages in [#', 'Team Huddle - New Message in [#'].freeze
+
   def verify_inline_attachments(item, content_id)
     content = "\"cid:#{content_id}\""
     if item.is_a? Helpdesk::Ticket
@@ -173,6 +177,13 @@ module EmailHelper
     Fdadmin::APICalls.make_api_request_to_global( :post, url_params, "/api/v1/activity/create_activity", "freshopsadmin.freshdesk.com")
   end
 
+  def antispam_enabled? account
+    (((account.subscription.free? or account.subscription.trial?) and !(account.launched?(:whitelist_spam_detection_service))) or (account.subscription.active? and account.launched?(:spam_detection_service)))
+  end
+
+  def collab_email_reply? email_subject
+    COLLAB_STR_ARRAY.any? { |s| email_subject.include?(s) } ? true : false
+  end
 
   def freshops_account_url(account)
       "freshopsadmin.freshdesk.com/accounts/#{account.id}"
