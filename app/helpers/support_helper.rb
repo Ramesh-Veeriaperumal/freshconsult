@@ -8,6 +8,7 @@ module SupportHelper
   include Portal::Helpers::Article
   include Portal::Helpers::SolutionsHelper
   include Cache::FragmentCache::Base
+  include Portal::PreviewKeyTemplate
 
   # TODO-RAILS3 the below helpers are added to use liquids truncate
   # HACK Need to scope down liquid helpers and include only the required ones
@@ -263,7 +264,7 @@ module SupportHelper
   # Logo for the portal
   def logo portal, link_flag = false
     _output = []
-    _output << %(<a href= '#{ link_flag ?  "javascript:void(0)" : "#{portal['linkback_url']}" }')
+    _output << %(<a href="#{ link_flag ?  "javascript:void(0)" : "#{portal['linkback_url']}" }")
     _output << %(class='portal-logo'>)
     # Showing the customer uploaded logo or default logo within an image tag
     _output << %(<span class="portal-img"><i></i>
@@ -923,8 +924,12 @@ module SupportHelper
 
     def portal_preferences
       preferences = current_portal.template.preferences
-        preferences = current_portal.template.get_draft.preferences if preview? && current_portal.template.get_draft
-        preferences || []
+      if get_others_redis_key(mint_preview_key)
+         preferences = current_portal.template.get_draft.preferences if current_portal.template.get_draft
+      elsif preview? && current_portal.template.get_draft
+         preferences = current_portal.template.get_draft.preferences
+      end
+      preferences || []
     end
 
     def escaped_portal_preferences

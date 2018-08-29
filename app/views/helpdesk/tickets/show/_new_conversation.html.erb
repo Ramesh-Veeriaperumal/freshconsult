@@ -86,7 +86,7 @@
 			  		<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" data-domhelper-name="fwd-button"><%= t('fwd_to') %></a> /
     			<% end %>
 				<a href="#"  rel="note-button" data-note-type="note" data-domhelper-name="note-button"><%= t('ticket.add_note') %></a>
-				<% if current_account.collaboration_enabled? %>
+				<% if current_account.collaboration_enabled? && !current_account.freshconnect_enabled?%>
 					<span class="discuss-cta-separator">/</span>
 					<a href="javascript:void(0);" id="DiscussButton"><%= t('collaboration.discuss') %></a>
 				<% end %>

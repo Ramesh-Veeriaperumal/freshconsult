@@ -1,31 +1,85 @@
 <% if @preview %>
     <div id="preview-message" class="preview-message">
         <div class="page">
-        <a href="#" onclick="window.close();return false;" 
-            class="btn btn-large preview-exit pull-right"><%= I18n.t("support.preview.index.exit_preview", :default => "Exit Preview") %></a>
+         <div class = "mint-preview-class">   
+            <a role="button" onclick="window.close();return false;" 
+                            class="btn btn-large preview-exit pull-right">
+                            <%= I18n.t("support.preview.index.exit_preview", :default => "Exit Preview") %>
+            </a>
+            
+            <% if support_mint_applicable_portal?(current_portal)%> 
+                <%mint_preview_key_set = get_others_redis_key(mint_preview_key)%>
+                <%= link_to I18n.t("portalcss.apply_mint"),
+                            admin_portal_template_path(current_portal,:apply_new_skin => "apply"), 
+                            :method => :put, 
+                            :class => "btn btn-large pull-right #{'disabled support-old-ui-preview' unless mint_preview_key_set} mint-button new-skin-apply",
+                            :confirm => t("portalcss.confirm"), :id => "apply_link"%>
+
+                <span class = "pull-right bar"> | </span>
+
+                <span class = "pull-right text <%= 'active' if mint_preview_key_set%>"> 
+                   <%= I18n.t("portalcss.mint") %>
+                </span>
+
+                <%= link_to "", support_preview_path(current_portal,
+                             :mint_preview_toggle  => "mint_preview",:mint_preview=>"true", :classic => ("classic" if mint_preview_key_set)), 
+                             :method => :put, 
+                             :class =>"pull-right switch-toggle inner #{'mint-enabled' if mint_preview_key_set}",
+                             :id => "toggle-button"
+                %>
+
+                <span class = "pull-right text <%= 'active' unless mint_preview_key_set%>">
+                             <%= I18n.t("portalcss.classic") %>
+                </span>
+
+            <%end%>
+         </div>
         <div id="responsive-buttons">
-            <a href="#" class="active" data-width="none">
+            <a role="button" class="active" data-width="none">
                 <span class="preview-desktop"></span>
             </a>
-            <a href="#" data-width="768">
+            <a role="button" data-width="768">
                 <span class="preview-ipad"></span>
             </a>
-            <a href="#" data-width="1024">
+            <a role="button" data-width="1024">
                 <span class="preview-ipad-rotate"></span>
             </a>
-            <a href="#" data-width="330">
+            <a role="button" data-width="330">
                 <span class="preview-iphone"></span>
             </a>
-            <a href="#" data-width="480">
+            <a role="button" data-width="480">
                 <span class="preview-iphone-rotate"></span>
             </a>
         </div>
-        </div>
+      </div>
     </div>
-<% end %>
+<%end%> 
+        
+    <iframe id="iframe-preview" 
+            src="<%= @preview_url %>" 
+            class="<%='mint-enabled-check' if support_mint_applicable_portal?(current_portal)%> loader-mint" 
+            style="height: 100%; 
+            max-width: none;">
+       
+    </iframe>
+    
+    
+
+<%= csrf_meta_tag %>
 <script>
-    jQuery(window).unload(function(){
-        jQuery.get("/admin/portal/<%=current_portal.id%>/template/clear_preview")
+   
+    setCookieOnApply = function(name, value, expires_in_days, path, domain){
+      var exdate=new Date();
+      exdate.setDate(exdate.getDate() + expires_in_days);
+      var c_value=escape(value) + ((expires_in_days==null) ? "" : "; expires="+exdate.toUTCString()) + '; domain='+domain +'; path=' + ( (path ==null) ? '/' : path)
+      document.cookie=name + "=" + c_value;
+    }
+
+    jQuery(window).load(function(){
+      jQuery("iframe-preview").classList.remove("loader-mint")
+    });
+
+    jQuery('.new-skin-apply').on('click', function(){
+      setCookieOnApply("mint_apply", "true", "1", "/", ".freshdesk.com")
     });
 </script>
-<iframe id="iframe-preview" src="<%= @preview_url %>" class="" style="height: 100%; max-width: none;"></iframe>

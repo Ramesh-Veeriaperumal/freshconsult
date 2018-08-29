@@ -80,13 +80,20 @@
 	CustomFields.prototype = {
 		feedJsonForm: function(formInput){
 			var self = this;
+			var customFieldCount = 0;
 			$(formInput).each(function(index, dataItem){
+				if((dataItem.field_type).split("_")[0] == "custom")
+           			customFieldCount++;
 				if(dataItem.name == "unique_external_id" && !is_unique_contact_idetifier_enabled){
 					return true
 				}
 				var dom = self.constructFieldDom(dataItem);
 				$(self.settings.formContainer).append(dom);  
 			});
+			if(show_sandbox_notification && customFieldCount >= 10){
+         		jQuery("#noticeajax").html(translate.get('sandbox_notification_for_ticketfields')).show();
+         		closeableFlash('#noticeajax');
+       		}
 		},
 		constructFieldDom: function(dataItem, container) {
 			var fieldContainer = container || jQuery('<li/>');

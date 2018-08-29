@@ -203,6 +203,12 @@ Helpkit::Application.routes.draw do
         get :session_info
       end
     end
+
+    # Proactive Support routes
+    scope '/proactive' do
+      resources :outreaches, controller: 'proactive/outreaches', except: [:edit]
+      resources :rules, controller: 'proactive/rules', except: [:edit]
+    end
   end
 
   ember_routes = proc do
@@ -239,7 +245,6 @@ Helpkit::Application.routes.draw do
     resources :bots, controller: 'ember/admin/bots', only: [:index, :new, :create, :show, :update] do
       member do
         put :map_categories
-        post :training_completed
         post :mark_completed_status_seen
         put :enable_on_portal
         get :bot_folders
@@ -272,6 +277,7 @@ Helpkit::Application.routes.draw do
         post :bulk_update, to: 'ember/tickets/bulk_actions#bulk_update'
         post :bulk_execute_scenario, to: 'ember/tickets/bulk_actions#bulk_execute_scenario'
         put :bulk_link, to: 'ember/tickets/bulk_actions#bulk_link'
+        put :bulk_unlink, to: 'ember/tickets/bulk_actions#bulk_unlink'
         put :merge, to: 'ember/tickets/merge#merge'
         delete :empty_trash, to: 'ember/tickets/delete_spam#empty_trash'
         delete :empty_spam, to: 'ember/tickets/delete_spam#empty_spam'

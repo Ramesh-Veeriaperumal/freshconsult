@@ -27,6 +27,7 @@ class HttpRequestProxy
 
   TIMEOUT = 10
 
+  attr_accessor :all_headers
   def fetch(params, request)
     unless(request.blank?)
       method = request.env["REQUEST_METHOD"].downcase
@@ -125,6 +126,7 @@ class HttpRequestProxy
           Rails.logger.debug "Response Body: #{proxy_response.body}"
           Rails.logger.debug "Response Code: #{proxy_response.code}"
           Rails.logger.debug "Response Headers: #{proxy_response.headers.inspect}"
+          @all_headers = proxy_response.headers
           if params[:app_name] == 'mailchimp'
             apikey_regex = params[:rest_url][/apikey(.*)/]
             proxy_response.body.gsub!(apikey_regex, '') if apikey_regex

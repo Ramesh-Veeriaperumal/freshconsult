@@ -4,6 +4,7 @@ class AuditLogsController < ApiApplicationController
   include AuditLog::AgentHelper
   include AuditLog::AutomationHelper
 
+  around_filter :run_on_slave
   before_filter :validate_filter_params
 
   def filter

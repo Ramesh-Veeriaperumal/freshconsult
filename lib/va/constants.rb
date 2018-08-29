@@ -72,6 +72,8 @@ module Va
 
     AVAILABLE_LOCALES = I18n.available_locales_with_name.map{ |a| a.reverse }
 
+    READABLE_LANGUAGE_NAMES_BY_KEY = AVAILABLE_LOCALES.to_h.stringify_keys
+
     AVAILABLE_TIMEZONES = ActiveSupport::TimeZone.all.map { |time_zone| [time_zone.name.to_sym, time_zone.to_s] }
 
     MAX_CUSTOM_HEADERS = 5
@@ -94,99 +96,128 @@ module Va
         :without_none => "##"
     }
 
-    NOTE_TYPES = {
-      "--" => "Any",
-      "public" => "Public",
-      "private" => "Private"
+    WEBHOOK_REQUEST_TYPES = {
+      '1' => 'GET',
+      '2' => 'POST',
+      '3' => 'PUT',
+      '4' => 'PATCH',
+      '5' => 'DELETE'
     }
 
-    TICKET_ACTIONS = {
-      "update" => "updated",
-      "delete" => "deleted",
-      "marked_spam" => "marked as spam"
+    WEBHOOK_CONTENT_TYPES = {
+      '1' => 'XML',
+      '2' => 'JSON',
+      '3' => 'X-FORM-URLENCODED'
     }
 
-    TIME_SHEET_ACTIONS = {
-      "added" => "added", 
-      "updated" => "updated"
-    }
+    def self.webhook_content_layouts
+      {
+        '1' => I18n.t('admin.shared.filter_jsinit.simple_layout'),
+        '2' => I18n.t('admin.shared.filter_jsinit.advanced_layout')
+      }
+    end
 
-    READABLE_CONDITIONS = { 
-      "from_email" => ["Requester Email"],
-      "to_email" => ["To Email"],
-      "ticlet_cc" => ["Ticket CC"],
-      "subject" => ["Subject"],
-      "description" => ["Description"],
-      "subject_or_description" => ["Subject or Description"],
-      "last_interaction" => ["Last Interaction"],
-      "priority" => ["Priority", TicketConstants::PRIORITY_NAMES_BY_STR],
-      "ticket_type" => ["Type"],
-      "status" => ["Status", "ticket_statuses", "status_id"],
-      "source" => ["Source", TicketConstants.readable_source_names_by_key],
-      "product_id" => ["Product", "products", "id"],
-      "created_at" => ["Created", VAConfig::CREATED_DURING_NAMES_BY_KEY],
-      "responder_id" => ["Agent", "technicians", "id"],
-      "group_id" => ["Group", "groups", "id"],
-      "internal_agent_id" => ["Internal Agent", "technicians", "id"],
-      "internal_group_id" => ["Internal Group", "groups", "id"],
-      "tag_ids" => ["Tag", "tags", "id"],
-      "requester_email" => ["Requester Email"],
-      "requester_name" =>  ["Requester Name"],
-      "requester_job_title" => ["Requester Title"],
-      "requester_time_zone" => ["Requester Timezone"],
-      "requester_language" => ["Requester Language"],
-      "company_name" => ["Company Name"],
-      "company_domains" => ["Company Domain"],
-      "created_at_supervisor" => ["Hours since created"],
-      "pending_since" => ["Hours since pending"],
-      "resolved_at" => ["Hours since resolved"],
-      "closed_at" => ["Hours since closed"],
-      "opened_at" => ["Hours since reopened"],
-      "first_assigned_at" => ["Hours since first assigned"],
-      "assigned_at" => ["Hours since assigned"],
-      "requester_responded_at" => ["Hours since requester responded"],
-      "agent_responded_at" => ["Hours since agent responded"],
-      "frDueBy" => ["Hours since first response due"],
-      "due_by" => ["Hours since ticket overdue"]
-    }
+    def self.checkbox_options
+      {
+        '0' => I18n.t('admin.shared.filter_jsinit.checked'),
+        '1' => I18n.t('admin.shared.filter_jsinit.unchecked')
+      }
+    end
 
-    READABLE_EVENTS = {
-      "priority" => ["Priority is changed", TicketConstants::PRIORITY_NAMES_BY_STR],
-      "ticket_type" => ["Type is changed"],
-      "status" => ["Status is changed", "ticket_statuses", "status_id"],
-      "group_id" => ["Group is updated", "groups", "id"],
-      "responder_id" => ["Agent is updated", "technicians", "id"],
-      "note_type" => ["Note is added", NOTE_TYPES],
-      "reply_sent" => ["Reply is sent"],
-      "due_by" => ["Due date is changed"],
-      "ticket_action" => ["Ticket is", TICKET_ACTIONS],
-      "time_sheet_action" => ["Time Entry is", TIME_SHEET_ACTIONS],
-      "customer_feedback" => ["Customer Feedback is received", "active_custom_survey_choices", "face_value"],
-      "mail_del_failed_requester" => ["Mail sent to requester address failed"],
-      "mail_del_failed_others" => ["Mail sent to cc or forward address failed"]
-    }
+    def self.readable_conditions
+      { 
+        "from_email" => [I18n.t('requester_email')],
+        "to_email" => [I18n.t('to_email')],
+        "ticlet_cc" => [I18n.t('ticket_cc')],
+        "subject" => [I18n.t('ticket.subject')],
+        "description" => [I18n.t('description')],
+        "subject_or_description" => [I18n.t('subject_or_description')],
+        "last_interaction" => [I18n.t('last_interaction')],
+        "priority" => [I18n.t('ticket.priority'), TicketConstants::PRIORITY_NAMES_BY_STR],
+        "ticket_type" => [I18n.t('ticket.type')],
+        "status" => [I18n.t('ticket.status'), "ticket_statuses", "status_id"],
+        "source" => [I18n.t('ticket.source'), TicketConstants.readable_source_names_by_key],
+        "product_id" => [I18n.t('admin.products.product_label_msg'), "products", "id"],
+        "created_at" => [I18n.t('ticket.created_during.title'), VAConfig::CREATED_DURING_NAMES_BY_KEY],
+        "responder_id" => [I18n.t('ticket.agent'), "technicians", "id"],
+        "group_id" => [I18n.t('ticket.group'), "groups", "id"],
+        "internal_agent_id" => [I18n.t('ticket.internal_agent'), "technicians", "id"],
+        "internal_group_id" => [I18n.t('ticket.internal_group'), "groups", "id"],
+        "tag_ids" => [I18n.t('ticket.tag_condition'), "tags", "id"],
+        "requester_email" => [I18n.t('requester_email')],
+        "requester_name" =>  [I18n.t('requester_name')],
+        "requester_job_title" => [I18n.t('requester_title')],
+        "requester_time_zone" => [I18n.t('requester_time_zone')],
+        "requester_language" => [I18n.t('requester_language'), READABLE_LANGUAGE_NAMES_BY_KEY],
+        "company_name" => [I18n.t('company_name')],
+        "company_domains" => [I18n.t('company_domain')],
+        "created_at_supervisor" => [I18n.t('ticket.created_at')],
+        "pending_since" => [I18n.t('ticket.pending_since')],
+        "resolved_at" => [I18n.t('ticket.resolved_at')],
+        "closed_at" => [I18n.t('ticket.closed_at')],
+        "opened_at" => [I18n.t('ticket.opened_at')],
+        "first_assigned_at" => [I18n.t('ticket.first_assigned_at')],
+        "assigned_at" => [I18n.t('ticket.assigned_at')],
+        "requester_responded_at" => [I18n.t('ticket.requester_responded_at')],
+        "agent_responded_at" => [I18n.t('ticket.agent_responded_at')],
+        "frDueBy" => [I18n.t('ticket.first_response_due')],
+        "due_by" => [I18n.t('ticket.due_by')]
+      }
+    end
 
-    READABLE_ACTIONS = {
-      "priority" => ["Set Priority as", TicketConstants::PRIORITY_NAMES_BY_STR],
-      "ticket_type" => ["Set Type as"],
-      "status" => ["Set Status as", "ticket_statuses", "status_id"],
-      "add_comment" => ["Add Note"],
-      "add_tag" => ["Add Tag"],
-      "add_a_cc" => ["Add a CC"],
-      "add_watcher" => ["Add Watcher", "technicians", "id"],
-      "trigger_webhook" => ["Trigger Webhook"],
-      "responder_id" => ["Assign to Agent", "technicians", "id"],
-      "group_id" => ["Assign to Group", "groups", "id"],
-      "product_id" => ["Assign Product", "products", "id"],
-      "send_email_to_group" => ["Send Email to Group"],
-      "send_email_to_agent" => ["Send Email to Agent"],
-      "send_email_to_requester" => ["Send Email to Requester"],
-      "delete_ticket" => ["Delete the Ticket"],
-      "mark_as_spam" => ["Mark as Spam"],
-      "skip_notification" => ["Skip New Ticket Email Notifications"],
-      "internal_group_id" => ["Assign to Internal Group", "groups", "id"],
-      "internal_agent_id" => ["Assign to Internal Agent", "technicians", "id"]
-    }
+    def self.readable_events
+      {
+        "priority" => [I18n.t('observer_events.priority'), TicketConstants::PRIORITY_NAMES_BY_STR],
+        "ticket_type" => [I18n.t('observer_events.type')],
+        "status" => [I18n.t('observer_events.status'), "ticket_statuses", "status_id"],
+        "group_id" => [I18n.t('observer_events.group'), "groups", "id"],
+        "responder_id" => [I18n.t('observer_events.agent'), "technicians", "id"],
+        "note_type" => [I18n.t('observer_events.note'), {
+                          "--" => I18n.t('any_val.any'),
+                          "public" => I18n.t('ticket.public_note'),
+                          "private" => I18n.t('ticket.private_note')
+                       }],
+        "reply_sent" => [I18n.t('observer_events.reply')],
+        "due_by" => [I18n.t('observer_events.due_date')],
+        "ticket_action" => [I18n.t('observer_events.ticket'), {
+                              "update" => I18n.t('ticket.updated'),
+                              "delete" => I18n.t('ticket.deleted'),
+                              "marked_spam" => I18n.t('ticket.marked_spam')
+                            }],
+        "time_sheet_action" => [I18n.t('observer_events.time_entry'), {
+                                  "added" => I18n.t('ticket.new_time_entry'),
+                                  "updated" => I18n.t('ticket.updated_time_entry')
+                                }],
+        "customer_feedback" => [I18n.t('observer_events.customer_feedback'), 
+                                "active_custom_survey_choices", "face_value"],
+        "mail_del_failed_requester" => [I18n.t('observer_events.mail_del_failed_requester')],
+        "mail_del_failed_others" => [I18n.t('observer_events.mail_del_failed_others')]
+      }
+    end
+
+    def self.readable_actions
+      {
+        "priority" => [I18n.t('set_priority_as'), TicketConstants::PRIORITY_NAMES_BY_STR],
+        "ticket_type" => [I18n.t('set_type_as')],
+        "status" => [I18n.t('set_status_as'), "ticket_statuses", "status_id"],
+        "add_comment" => [I18n.t('add_note')],
+        "add_tag" => [I18n.t('add_tags')],
+        "add_a_cc" => [I18n.t('add_a_cc')],
+        "add_watcher" => [I18n.t('dispatch.add_watcher'), "technicians", "id"],
+        "trigger_webhook" => [I18n.t('trigger_webhook')],
+        "responder_id" => [I18n.t('ticket.assign_to_agent'), "technicians", "id"],
+        "group_id" => [I18n.t('email_configs.info9'), "groups", "id"],
+        "product_id" => [I18n.t('admin.products.assign_product'), "products", "id"],
+        "send_email_to_group" => [I18n.t('send_email_to_group')],
+        "send_email_to_agent" => [I18n.t('send_email_to_agent')],
+        "send_email_to_requester" => [I18n.t('send_email_to_requester')],
+        "delete_ticket" => [I18n.t('delete_the_ticket')],
+        "mark_as_spam" => [I18n.t('mark_as_spam')],
+        "skip_notification" => [I18n.t('dispatch.skip_notifications')],
+        "internal_group_id" => [I18n.t('ticket.assign_to_internal_group'), "groups", "id"],
+        "internal_agent_id" => [I18n.t('ticket.assign_to_internal_agent'), "technicians", "id"]
+      }
+    end
 
     def va_alternate_label
       va_alternate_label = {

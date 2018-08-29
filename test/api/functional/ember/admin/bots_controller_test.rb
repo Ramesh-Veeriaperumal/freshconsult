@@ -549,53 +549,6 @@ module Ember
         end
       end
 
-      def test_training_completed_without_bot_feature
-        bot = create_bot({ product: true})
-        post :training_completed, controller_params(version: 'private', id: bot.id)
-        assert_response 403
-        match_json(request_error_pattern(:require_feature, feature: 'Support Bot'))
-      end   
-      
-      def test_training_completed_without_access
-        enable_bot do
-          bot = create_bot({ product: true})
-          post :training_completed, controller_params(version: 'private', id: bot.id)
-          assert_response 401
-          match_json(request_error_pattern(:invalid_credentials))
-        end
-      end
-
-      def test_training_completed_with_invalid_bot_id
-        enable_bot do
-          set_jwe_auth_header(SUPPORT_BOT)
-          bot = create_bot({ product: true})
-          post :training_completed, controller_params(version: 'private', id: bot.id)
-          assert_response 404
-        end
-      end
-
-      def test_training_completed_with_invalid_state
-        enable_bot do
-          set_jwe_auth_header(SUPPORT_BOT)
-          bot = create_bot({ product: true})
-          bot.training_completed!
-          post :training_completed, controller_params(version: 'private', id: bot.external_id)
-          assert_response 409
-          match_json(request_error_pattern(:invalid_bot_state))
-        end
-      end
-
-      def test_training_completed
-        enable_bot do
-          set_jwe_auth_header(SUPPORT_BOT)
-          bot = create_bot({ product: true})
-          bot.training_inprogress!
-          post :training_completed, controller_params(version: 'private', id: bot.external_id)
-          assert_response 204
-          assert bot.training_status.to_i == BotConstants::BOT_STATUS[:training_completed]
-        end
-      end
-
       def test_clear_status_redis
         enable_bot do
           bot = create_bot({ product: true})
