@@ -5,13 +5,14 @@ class Signup < ActivePresenter::Base
 
   presents :account, :user
   
-  attr_accessor :contact_first_name, :contact_last_name, :new_plan_test
+  attr_accessor :contact_first_name, :contact_last_name, :new_plan_test, :org_id, :join_token
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone, :build_password_policy
   
   before_validation :create_global_shard
 
   after_save :make_user_current, :set_i18n_locale, :populate_seed_data
+  after_save :create_freshid_org_and_account
 
   MAX_ACCOUNTS_COUNT = 10
   #Using this as the version of Rack::Utils we are using doesn't have support for 429
@@ -36,6 +37,10 @@ class Signup < ActivePresenter::Base
     base_errors = error_messages.delete(:base) || []
     non_base_errors = error_messages.collect{|key, values| error_messages = values.collect{|value| "#{key.to_s} #{value}" }} || []
     (base_errors + non_base_errors).flatten
+  end
+
+  def create_freshid_org_and_account
+    account.create_freshid_org_and_account(org_id, join_token, user)
   end
 
   private

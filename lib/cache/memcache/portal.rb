@@ -15,6 +15,14 @@ module Cache::Memcache::Portal
     base.extend ClassMethods
   end
 
+  def clear_cache_apply_portal(url,account_id)
+      key = PORTAL_BY_URL % { :portal_url => url}
+      MemcacheKeys.delete_from_cache key
+
+      key = ACCOUNT_MAIN_PORTAL % { :account_id => account_id }
+      MemcacheKeys.delete_from_cache key
+  end
+
   def clear_portal_cache
 
     (@all_changes && @all_changes[:portal_url] || [] ).each do |url|
@@ -46,6 +54,16 @@ module Cache::Memcache::Portal
   def clear_sitemap_cache
     key = SITEMAP_KEY % { :account_id => self.account_id, :portal_id => self.id }
     MemcacheKeys.delete_from_cache key
+  end
+
+  def fetch_fav_icon_url
+    MemcacheKeys.fetch(['v8', 'portal', 'fav_ico', self]) do
+      fav_icon ? public_fav_icon_url : '/assets/misc/favicon.ico?702017'
+    end
+  end
+
+  def public_fav_icon_url
+    AwsWrapper::S3Object.public_url_for(fav_icon.content.path(:fav_icon), fav_icon.content.bucket_name, expires: 7.days, secure: true)
   end
 
   def solution_categories_from_cache

@@ -22,7 +22,9 @@ module Redis::RedisKeys
 	MIGRATED_EMAIL_TICKET_ID = "MIGRATED_EMAIL_TICKET_ID:%{account_id}:%{email_config_id}:%{message_id}"
 	PORTAL_PREVIEW = "PORTAL_PREVIEW:%{account_id}:%{user_id}:%{template_id}:%{label}"
 	IS_PREVIEW = "IS_PREVIEW:%{account_id}:%{user_id}:%{portal_id}"
-	PREVIEW_URL = "PREVIEW_URL:%{account_id}:%{user_id}:%{portal_id}"
+  	PREVIEW_URL = "PREVIEW_URL:%{account_id}:%{user_id}:%{portal_id}"
+  	MINT_PREVIEW_KEY = "MINT_PREVIEW_KEY:%{account_id}:%{user_id}:%{portal_id}"
+  	
 	GROUP_ROUND_ROBIN_AGENTS = "GROUP_ROUND_ROBIN_AGENTS:%{account_id}:%{group_id}"
 	ADMIN_ROUND_ROBIN_FILTER = "ADMIN_ROUND_ROBIN_FILTER:%{account_id}:%{user_id}"
 
@@ -163,6 +165,7 @@ module Redis::RedisKeys
   EMAIL_TEMPLATE_SPAM_DOMAINS = "EMAIL_TEMPLATE_SPAM_DOMAINS"
   SPAM_USER_EMAIL_DOMAINS = "SPAM_USER_EMAIL_DOMAINS"
   SPAM_NOTIFICATION_WHITELISTED_DOMAINS_EXPIRY = "SPAM_NOTIFICATION_WHITELISTED_DOMAINS:%{account_id}"
+  SPAM_CHECK_TEMPLATE_FLAGGED_RULES = 'SPAM_CHECK_TEMPLATE_FLAGGED_RULES'
 
   DISPATCHER_SIDEKIQ_ENABLED = "DISPATCHER_SIDEKIQ_ENABLED"
   ACCOUNT_EXPORT_SIDEKIQ_ENABLED = "ACCOUNT_EXPORT_SIDEKIQ_ENABLED"
@@ -265,6 +268,9 @@ module Redis::RedisKeys
 
   #From regex of different languages used in quoted text parsing
   QUOTED_TEXT_PARSE_FROM_REGEX = "QUOTED_TEXT_PARSE_FROM_REGEX"
+
+  #deprecated style parsing in email html content
+  DEPRECATED_STYLE_PARSING = "DEPRECATED_STYLE_PARSING:%{account_id}"
 
   # key for enabling fd email service to all the account
 
@@ -393,6 +399,9 @@ module Redis::RedisKeys
   SEGMENT_LIMIT = 'SEGMENT_LIMIT:%{account_id}'.freeze
 
   #Temp Redis keys for resque to sidekiq migration end
+
+  # count cluster to search service keys
+  SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED = "SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED"
 
   # CUSTOMER IMPORT KEYS
   CONTACT_IMPORT_TOTAL_RECORDS = "CONTACT_IMPORT_TOTAL_RECORDS:%{account_id}"

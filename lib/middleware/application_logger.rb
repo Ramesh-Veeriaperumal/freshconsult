@@ -1,5 +1,6 @@
 require 'custom_logger'
 require 'custom_request_store'
+require 'socket'
 
 # In non dev environment the assets path are routed to CDN via direct route53 cdn map.
 # In development mode it lands on the app server itself so we have logs for assets as well when we enable middleware logging.
@@ -10,6 +11,7 @@ class Middleware::ApplicationLogger
   def initialize(app, options = {})
     @app = app
     @@logger ||= CustomLogger.new("#{Rails.root}/log/application.log")
+    @@server_ip ||= Socket.ip_address_list.detect(&:ipv4_private?).try(:ip_address)
     @controller_log_info = nil
   end
 
@@ -42,7 +44,7 @@ class Middleware::ApplicationLogger
       payload[:domain] = request.env['HTTP_HOST'] || env['HTTP_HOST']
       payload[:ip] = request.env['CLIENT_IP'] || env["CLIENT_IP"]
       payload[:url] = request.url
-      payload[:server_ip] = request.env['SERVER_ADDR'] || env["SERVER_ADDR"]
+      payload[:server_ip] = @@server_ip || request.env['SERVER_ADDR'] || env["SERVER_ADDR"]
       payload[:uuid] = message_uuid(request)
       set_controller_keys(payload, request) if controller_log_info.present?
       payload

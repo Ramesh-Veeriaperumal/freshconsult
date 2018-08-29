@@ -9,7 +9,6 @@ class Account < ActiveRecord::Base
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status, :make_current
-  after_create :create_freshid_account, if: [:freshid_signup_allowed?, :freshid_enabled?]
   after_update :change_shard_mapping, :update_default_business_hours_time_zone, 
                :update_google_domain, :update_route_info, :update_users_time_zone
 
@@ -105,12 +104,7 @@ class Account < ActiveRecord::Base
   def update_activity_export
     ScheduledExport::ActivitiesExport.perform_async if time_zone_changed? && activity_export_from_cache.try(:active)
   end
-  
-  def create_freshid_account
-    freshid_acc = Freshid::Account.create({ name: self.name, domain: self.full_domain })
-    raise(ActiveRecord::Rollback, "FRESHID account not created") unless freshid_acc.present?
-  end
-  
+
   def destroy_freshid_account
     account_params = {
       name: self.name,
@@ -457,6 +451,7 @@ class Account < ActiveRecord::Base
     end
 
     def enable_count_es
+      self.launch(:count_service_es_writes) if redis_key_exists?(SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED)
       if redis_key_exists?(DASHBOARD_FEATURE_ENABLED_KEY)
         CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) 
       end

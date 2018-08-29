@@ -42,6 +42,7 @@ class Admin::PortalController < Admin::AdminController
   end
 
   def update
+    params[:portal][:preferences] = @portal.preferences.deep_merge(params[:portal][:preferences])
     if @portal.update_attributes(params[:portal])
       flash[:notice] = t('flash.portal.update.success')
       redirect_to redirect_to_url

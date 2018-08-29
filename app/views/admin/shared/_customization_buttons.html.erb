@@ -2,8 +2,8 @@
 if type == :template 
     @cached_properties = @portal_template.changes.symbolize_keys.keys
    _portal_template = Array(active_tab)
-  _coderefresh_ids = "#portal_template_#{_portal_template.to_s}" 
-  template_constant = if current_account.falcon_support_portal_theme_enabled?
+  _coderefresh_ids = "#portal_template_#{_portal_template.to_s}"
+  template_constant = if current_account.falcon_support_portal_theme_enabled? || @portal.falcon_portal_enable?
     "Portal::Template::TEMPLATE_OPTIONS_FALCON"
   else
     "Portal::Template::TEMPLATE_OPTIONS"
@@ -46,14 +46,23 @@ end
 
   <span class="pull-right">
     <span class="portal-form-actions">
+      <%if support_mint_applicable_portal?(@portal)%>
+       <%= submit_tag value =t("portalcss.mint_preview"),
+                :name => "mint_preview_button",
+                "data-loading-text" => t("portalcss.please_wait"), 
+                :class => "btn new-look", 
+                :id => "mint-preview-button"
+        %>
+      <%end%> 
       <%= submit_tag t("preview"),
                 :name => "preview_button",
-                "data-loading-text" => t("portalcss.please_wait"), :class => "btn" %>
+                "data-loading-text" => t("portalcss.please_wait"), :class => "btn", :id => "preview-button"%>
       <%= submit_tag t("portalcss.save_and_continue"),
                 "data-loading-text" => t("portalcss.please_wait"),
                 "data-code-refresh" => _coderefresh_ids,
                 :name => 'save_button', :class => "btn btn-primary" %>
     </span>
+
     <%= submit_tag t("portalcss.publish_changes"),
                 "data-loading-text" => t("portalcss.please_wait"),
                 "data-code-refresh" => _coderefresh_ids,

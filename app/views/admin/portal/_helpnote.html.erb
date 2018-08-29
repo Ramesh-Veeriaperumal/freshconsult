@@ -1,5 +1,8 @@
-<h3 class="lead"><%=t('admin.portal.helpnote.title')%></h3>
-<p><%=t('admin.portal.helpnote.info1').html_safe%></p>
-<p><%=t('admin.portal.helpnote.info2')%></p>
-<p><%=t('admin.portal.helpnote.info3')%></p>
-<p><%=t('admin.portal.helpnote.info4')%></p>
+<div class="sidepanel wordwrap">
+	<%= render :partial => "/admin/shared/sample_portals"%>
+	<h3 class="title"><%=t('admin.portal.helpnote.title').html_safe %></h3>
+	<p><%= t('admin.portal.helpnote.info1').html_safe %></p>
+	<p><%= t('admin.portal.helpnote.info2') %></p> 
+	<p><%= t('admin.portal.helpnote.info3') %></p>
+	<p><%= t('admin.portal.helpnote.info4') %></p> 
+</div>

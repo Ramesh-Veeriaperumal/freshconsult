@@ -54,7 +54,7 @@ class EmailControllerLogSubscriber < ActiveSupport::LogSubscriber
   end
 
   def is_log_reduce_controller?(controller_name)
-    ["EmailController", "MailgunController", "Helpdesk::ConversationsController", "MimeController"].any? {|controller| (controller == controller_name)}
+    ["EmailController", "MailgunController", "Helpdesk::ConversationsController", "MimeController", "EmailServiceController"].any? {|controller| (controller == controller_name)}
   end
 
   def extract_message_id(headers)
