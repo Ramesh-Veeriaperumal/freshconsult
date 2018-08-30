@@ -96,7 +96,6 @@ class Account < ActiveRecord::Base
     if falcon_ui_applicable?
       self.launch(:falcon_signup)           # To track falcon signup accounts
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
-      self.launch(:archive_ghost)           # enabling archive ghost feature
     end
     launch_freshid_with_omnibar if freshid_signup_allowed?
   end
