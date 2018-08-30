@@ -35,8 +35,7 @@
       @sla_attributes    = params['sla_args'] && params['sla_args']['sla_state_attributes']
       @sla_calculation_time = params['sla_args'] && params['sla_args']['sla_calculation_time']
       Va::Logger::Automation.set_thread_variables(@account.id, params['ticket_id'], params['user_id'])
-      Va::Logger::Automation.log "user=nil" if @user.nil?
-      Va::Logger::Automation.log "ticket=nil" if @ticket.nil?
+      Va::Logger::Automation.log("user_nil=#{@user.nil?}, ticket_nil=#{@ticket.nil?}") if (@user.nil? || @ticket.nil?)
     end
 
     def execute

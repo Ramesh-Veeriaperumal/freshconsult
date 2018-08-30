@@ -47,11 +47,8 @@ module VAConfig
   private
 
     def self.fetch_handler(field, account, handler_type, evaluate_on_type = nil)
-      Rails.logger.debug "The field is : #{field}, handler_type is :#{handler_type},"
       field_key = fetch_field_key field, account, handler_type, evaluate_on_type
       handler_key = FIELDS[handler_type][field_key] || "fallback"
-
-      Rails.logger.debug "field_key is : #{field_key}  handler_key is : #{handler_key}"
       VA_HANDLERS[handler_type][handler_key.to_sym]
     end
 
