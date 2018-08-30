@@ -647,6 +647,13 @@ module Ember
       assert_response 201
     end
 
+    def test_quick_create_with_default_language
+      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
+                                          email: Faker::Internet.email)
+      assert_response 201
+      assert_equal User.last.language, @account.language
+    end
+
     # Show User
     def test_show_a_contact
       sample_user = add_new_user(@account)

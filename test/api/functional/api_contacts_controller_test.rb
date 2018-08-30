@@ -211,6 +211,18 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json(deleted_contact_pattern(User.last))
   end
 
+  def test_create_contact_with_default_language
+    comp = get_company
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        view_all_tickets: true,
+                                        company_id: comp.id,
+                                        time_zone: 'Mountain Time (US & Canada)')
+    assert_response 201
+    match_json(deleted_contact_pattern(User.last))
+    assert_equal User.last.language, @account.language
+  end
+
   def test_create_contact_with_invalid_tags
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
