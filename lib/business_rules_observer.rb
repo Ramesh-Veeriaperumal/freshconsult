@@ -4,7 +4,6 @@ module BusinessRulesObserver
     if event_name == :update
       CHECK_FOR_UPDATE[self.class].each{|chk_prop|
         prop_changed = changes[chk_prop].present?
-        Rails.logger.debug "#{chk_prop} changed : #{prop_changed}"
         events.push("#{event_name}_#{chk_prop}".to_sym) if prop_changed
       }
     else

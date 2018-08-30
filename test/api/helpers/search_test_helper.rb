@@ -111,4 +111,31 @@ module SearchTestHelper
     end
     sleep(10)
   end
+
+  def topic_pattern(topic)
+    category = topic.forum.forum_category
+    {
+      id: topic.id,
+      title: topic.title,
+      forum_id: topic.forum_id,
+      user_id: topic.user_id,
+      locked: topic.locked,
+      published: topic.published,
+      stamp_type: topic.stamp_type,
+      replied_by: topic.replied_by,
+      user_votes: topic.user_votes,
+      merged_topic_id: topic.merged_topic_id,
+      comments_count: topic.posts_count,
+      sticky: topic.sticky.to_s.to_bool,
+      created_at: topic.created_at.try(:utc),
+      updated_at: topic.updated_at.try(:utc),
+      replied_at: topic.replied_at.try(:utc),
+      hits: topic.hits,
+      replied_by: topic.replied_by,
+      category_id: category.id,
+      category_name: category.name,
+      forum_name: topic.forum.name,
+      description_text: topic.topic_desc
+    }
+  end
 end
