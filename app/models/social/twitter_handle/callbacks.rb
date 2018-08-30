@@ -18,6 +18,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   after_commit :initialise_smart_filter, :on => :update, :if => :new_smart_filter_enabled?
   after_commit :remove_euc_redis_key, :on => :update, :if => :destroy_euc_redis_key?
   after_commit :remove_from_eu_redis_set_on_destroy, :on => :destroy, :if => :euc_migrated_account?
+  before_destroy :save_deleted_handle_info
 
   def remove_from_eu_redis_set_on_destroy
     remove_euc_redis_key
@@ -105,24 +106,24 @@ class Social::TwitterHandle < ActiveRecord::Base
       @custom_previous_changes = changes
     end
     
-     def construct_stream_params(name, type, subscription, search_keys)
-      stream_params = {
-        :name     => name,
-        :includes => search_keys.to_a,
-        :excludes => [],
-        :filter   => {
-          :exclude_twitter_handles => []
-        },
-        :data => {
-          :kind => type,
-          :gnip => subscription
-        }
-      }
-      stream_params.merge!({:accessible_attributes => {
-          :access_type => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
-        }}) if type == TWITTER_STREAM_TYPE[:default]    
-      stream_params
-    end
+    def construct_stream_params(name, type, subscription, search_keys)
+     stream_params = {
+       :name     => name,
+       :includes => search_keys.to_a,
+       :excludes => [],
+       :filter   => {
+         :exclude_twitter_handles => []
+       },
+       :data => {
+         :kind => type,
+         :gnip => subscription
+       }
+     }
+     stream_params.merge!({:accessible_attributes => {
+         :access_type => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+       }}) if type == TWITTER_STREAM_TYPE[:default]    
+     stream_params
+   end
 
     def smart_filter_init_params 
       {
@@ -140,7 +141,7 @@ class Social::TwitterHandle < ActiveRecord::Base
 
     def destroy_euc_redis_key?
       # When the consumer authorizes the new app access_token will change and when they re-authorize the state will change.
-      euc_migrated_account? && (self.previous_changes["state"].present? || self.previous_changes["access_token"].present?)
+      euc_migrated_account? && self.previous_changes["access_token"].present?
     end
 
     def euc_migrated_account?
@@ -155,4 +156,7 @@ class Social::TwitterHandle < ActiveRecord::Base
       end
     end
 
+    def save_deleted_handle_info
+      @deleted_model_info = as_api_response(:central_publish)
+    end
 end

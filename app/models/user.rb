@@ -207,6 +207,13 @@ class User < ActiveRecord::Base
     account.agent_groups.permissible_user(self.accessible_groups.pluck(:id), user_id).exists?
   end
 
+  # Make sure we keep the key in va_rules as segments, (evaluate_on.send(condition.dispatcher_key))
+  def segments(segment_ids = nil)
+    return [] if agent?
+    @contact_segment ||= Segments::Match::Contact.new self
+    @contact_segment.ids(segment_ids: segment_ids)
+  end
+
   class << self # Class Methods
     #Search display
     def search_display(user)
@@ -407,6 +414,10 @@ class User < ActiveRecord::Base
 
   def tag_names
     tags.collect{|tag| tag.name}.join(', ')
+  end
+
+  def tags_array
+    tags.collect(&:name)
   end
 
   def tagged?(tag_id)
@@ -1134,18 +1145,21 @@ class User < ActiveRecord::Base
     return if freshid_disabled_or_customer?
     Rails.logger.info "FRESHID Creating user :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}"
     self.name = name_from_email if !self.name.present?
-    freshid_user = Freshid::User.create(user_attributes_for_freshid)
-    if freshid_user.present?
-      self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
-      assign_freshid_attributes_to_agent freshid_user
-      Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
-    end
+    freshid_user = Freshid::User.create(freshid_attributes)
+    sync_profile_from_freshid(freshid_user)
   end
 
   def create_freshid_user!
     create_freshid_user
     save!
     enqueue_activation_email
+  end
+
+  def sync_profile_from_freshid(freshid_user)
+    return if freshid_user.nil?
+    self.freshid_authorization = self.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
+    assign_freshid_attributes_to_agent(freshid_user)
+    Rails.logger.info "FRESHID User created :: a=#{self.account_id}, u=#{self.id}, email=#{self.email}, uuid=#{self.freshid_authorization.uid}"
   end
 
   def destroy_freshid_user
@@ -1159,11 +1173,11 @@ class User < ActiveRecord::Base
   def valid_freshid_password?(incoming_password)
     password_available = password_flag_exists?(email) || false
     valid = password_available && valid_password?(incoming_password)
-    Rails.logger.info "FRESHID API auth :: Before FRESHID login :: a=#{account_id} u=#{id} password_available=#{password_available} valid=#{valid}"
+    ApiAuthLogger.log "FRESHID API auth Before FRESHID login a=#{account_id}, u=#{id}, password_available=#{password_available}, valid=#{valid}"
     unless valid
       remove_password_flag(email, account_id)
       valid = valid_freshid_login?(incoming_password)
-      Rails.logger.info "FRESHID API auth :: After FRESHID login :: a=#{account_id} u=#{id} valid=#{valid}"
+      ApiAuthLogger.log "FRESHID API auth After FRESHID login a=#{account_id}, u=#{id}, valid=#{valid}"
       update_with_fid_password(incoming_password) if valid
     end
     valid
@@ -1186,6 +1200,20 @@ class User < ActiveRecord::Base
     self.active = true
   end
 
+  def freshid_attributes
+    freshid_first_name, freshid_middle_name, freshid_last_name = freshid_split_names
+    { 
+      first_name: freshid_first_name.presence,
+      middle_name: freshid_middle_name.presence,
+      last_name: freshid_last_name.presence,
+      email: email,
+      phone: phone.presence,
+      mobile: mobile.presence,
+      job_title: job_title.presence,
+      domain: account.full_domain
+    }
+  end
+
   def gdpr_pending?
     agent_preferences[:gdpr_acceptance]
   end
@@ -1202,6 +1230,10 @@ class User < ActiveRecord::Base
     active? && primary_email.verified? && freshid_enabled_account?
   end
 
+  def email_id_changed?
+    email_changed? && case_insensitive_value_changed?(email_change)
+  end
+
   private
 
     def freshid_enabled_account?
@@ -1214,6 +1246,14 @@ class User < ActiveRecord::Base
 
     def freshid_disabled_or_customer?
       !freshid_enabled_and_agent?
+    end
+
+    def freshid_agent_not_signed_up_admin?
+      freshid_enabled_and_agent? && !signed_up_admin?
+    end
+
+    def signed_up_admin?
+      account.admin_email == email
     end
 
     def email_allowed_in_freshid?
@@ -1240,20 +1280,6 @@ class User < ActiveRecord::Base
       self.job_title = freshid_user.job_title
       self.active = self.primary_email.verified = freshid_user.active?
       self.password_salt = self.crypted_password = nil
-    end
-
-    def user_attributes_for_freshid
-      freshid_first_name, freshid_middle_name, freshid_last_name = freshid_split_names
-      { 
-        first_name: freshid_first_name.presence,
-        middle_name: freshid_middle_name.presence,
-        last_name: freshid_last_name.presence,
-        email: email,
-        phone: phone.presence,
-        mobile: mobile.presence,
-        job_title: job_title.presence,
-        domain: account.full_domain
-      }
     end
 
     def name_part(part)
@@ -1290,9 +1316,13 @@ class User < ActiveRecord::Base
     end
 
     def email_updated?
-       @all_changes.has_key?(:email)
+      @all_changes.key?(:email) && case_insensitive_value_changed?(@all_changes[:email])
     end
-    
+
+    def case_insensitive_value_changed?(change_values)
+      change_values.include?(nil) || change_values[0].casecmp(change_values[1]) != 0
+    end
+
     def converted_to_agent_or_email_updated?
       converted_to_agent? || email_updated?
     end

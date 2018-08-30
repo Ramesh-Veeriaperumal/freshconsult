@@ -1,76 +1,86 @@
-<% content_for :sidebar do %><% end %> 
-<h3 class="lead">
-  <%=t("portalcss.title", :portal => @portal.main_portal? ? current_account.name : @portal.portal_name)%>
-</h3>
-<div>
-  <ul data-tabs="tabs" class="tabs nav-tabs" id="portal-tabs">
-    <li class="active">      
-      <a href="#preferences" data-toggle="tab" id="preferences-tab">
-        <%=t("portalcss.color_and_font_header").html_safe%>
-      </a>
-    </li>
-    <% if feature?(:css_customization) %>
-    <li>
-        <a id="custom_css-tab" href="#custom_css" data-code-refresh="#portal_template_custom_css">
-          <%=t("portalcss.css_header").html_safe%>
+<div id="portal-reload">
+  <%portal_mint_applicable = support_mint_applicable_portal?(@portal)%>
+  <%if portal_mint_applicable%>
+    <div class="notification-box">
+        <%=t("portalcss.mint_info_template", :portal => @portal.main_portal? ? current_account.name : @portal.portal_name)%>
+        <span class="preview-new-link" id ="new-preview">
+          <a href="#"><%= I18n.t("portalcss.mint_preview") %></a>
+        </span>
+    </div> 
+  <%end%>
+  <% content_for :sidebar do %><% end %> 
+  <h3 class="lead">
+    <%=t("portalcss.title", :portal => @portal.main_portal? ? current_account.name : @portal.portal_name)%>
+  </h3>
+  <div>
+    <ul data-tabs="tabs" class="tabs nav-tabs" id="portal-tabs">
+      <li class="active">      
+        <a href="#preferences" data-toggle="tab" id="preferences-tab">
+          <%=t("portalcss.color_and_font_header").html_safe%>
         </a>
-    </li>
-    <% end %>
-    <% if current_account.layout_customization_enabled? %>
-    <li>
-        <a id="layout-tab" href="#layout" data-toggle="tab" 
-            data-code-refresh="#portal_template_head, #portal_template_header, #portal_template_footer, #portal_template_layout">
-          <%=t("portalcss.layout_and_pages_header").html_safe%>
-        </a>
-    </li>
-    <% end %>
-  </ul>
-  
-  <div class="tab-content">
-    <div class="tab-pane active" id="preferences">
-      <%= render :partial => "/admin/shared/portal_simple", :object => @portal_template %>
-    </div>
-    <%if feature?(:css_customization)%>
-    	<div class="tab-pane" id="custom_css">		
-        <%= render :partial => "custom_css", :object => @portal_template %>
-    	</div>
-    <%end%>
-    <%if current_account.layout_customization_enabled? %>
-      <div class="tab-pane" id="layout">
-        <ul data-tabs="tabs" class="pills nav-pills portal-pills">
-          <li class="active">
-            <a id="template-tab" href="#layout/#template" code-refresh-id="portal_template_layout">
-              <%=t("portalcss.layout_pages.subheader_layout")%>
-            </a>
-          </li>
-          <li>
-            <a id="pages-tab" href="#layout/#pages"><%=t("portalcss.layout_pages.subheader_pages").html_safe%></a> 
-          </li>
-        </ul>
-      <div class="tab-content">
-        <div class="tab-pane active" id="template">
-          <%= render :partial => "layout" %>
-        </div>
-        <div class="tab-pane" id="pages">
-          <div>
-            <h2 class="title light"><%=t("portalcss.layout_pages.subheader_pages")%></h2>
-            <p class="help-text">
-              <%=t("portalcss.layout_pages.pages_help_message")%>
-            </p>
+      </li>
+      <% if feature?(:css_customization) %>
+      <li>
+          <a id="custom_css-tab" href="#custom_css" data-code-refresh="#portal_template_custom_css">
+            <%=t("portalcss.css_header").html_safe%>
+          </a>
+      </li>
+      <% end %>
+      <% if current_account.layout_customization_enabled? %>
+      <li>
+          <a id="layout-tab" href="#layout" data-toggle="tab" 
+              data-code-refresh="#portal_template_head, #portal_template_header, #portal_template_footer, #portal_template_layout">
+            <%=t("portalcss.layout_and_pages_header").html_safe%>
+          </a>
+      </li>
+      <% end %>
+    </ul>
+    
+    <div class="tab-content">
+      <div class="tab-pane active" id="preferences">
+        <%= render :partial => "/admin/shared/portal_simple", :locals => { :portal_simple => @portal_template, :falcon_support_portal_theme_enabled => @falcon_support_portal_theme_enabled, :falcon_ui => @current_account.falcon_ui_enabled? }  %>
+      </div>
+      <%if feature?(:css_customization)%>
+      	<div class="tab-pane" id="custom_css">		
+          <%= render :partial => "custom_css", :object => @portal_template %>
+      	</div>
+      <%end%>
+      <%if current_account.layout_customization_enabled? %>
+        <div class="tab-pane" id="layout">
+          <ul data-tabs="tabs" class="pills nav-pills portal-pills">
+            <li class="active">
+              <a id="template-tab" href="#layout/#template" code-refresh-id="portal_template_layout">
+                <%=t("portalcss.layout_pages.subheader_layout")%>
+              </a>
+            </li>
+            <li>
+              <a id="pages-tab" href="#layout/#pages"><%=t("portalcss.layout_pages.subheader_pages").html_safe%></a> 
+            </li>
+          </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="template">
+            <%= render :partial => "layout" %>
           </div>
-          <br />
-          <div class="row-fluid">
-            <div class="span2">
-              <%= render :partial => "portal_pages"%>
+          <div class="tab-pane" id="pages">
+            <div>
+              <h2 class="title light"><%=t("portalcss.layout_pages.subheader_pages")%></h2>
+              <p class="help-text">
+                <%=t("portalcss.layout_pages.pages_help_message")%>
+              </p>
             </div>
-            <div class="span10 omega">
-              <div id="Customizepage"></div>
+            <br />
+            <div class="row-fluid">
+              <div class="span2">
+                <%= render :partial => "portal_pages"%>
+              </div>
+              <div class="span10 omega">
+                <div id="Customizepage"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  <%end%>
+    <%end%>
 </div> 
 
 <% content_for :pagefixed do %>
@@ -104,6 +114,7 @@
     </div>
   </div>
 <% end %>
+</div>
 
 <% content_for :onload_script do %>
   jQuery("body").on("change", "[rel=portal_form]", function(ev){
@@ -130,8 +141,8 @@
           var $btn = jQuery(btn)
               $form = form
 
-          if(btn.name != "preview_button"){
-
+          
+          if(btn.name != "mint_preview_button" && btn.name != "preview_button"){
             // Disabling all buttons in the form
             jQuery(form).find(".form-buttons .btn").attr("disabled", true)
             jQuery("#cm-fs-actions .btn").attr("disabled", true)
@@ -191,9 +202,29 @@
 <% end %>
 <script>
   Fjax.current_page = 'portal_customizations';
+  
+  if (<%=portal_mint_applicable == true %>){
+    jQuery(document).on('pjax:beforeSend', function () {
+      jQuery(document).off('.portalReloadEvents');
+    });
+   jQuery('#mint-preview-button, #preview-button').on('click',function(){
+      jQuery(document).off('.portalReloadEvents');
+      jQuery(document).on('mouseenter.portalReloadEvents', '#portal-reload', function(){
+        if(getCookie("mint_apply") == "true" ){
+          deleteCookieOnApply("mint_apply");
+          window.location.reload();
+        }
+      });
+    });
+  }
+
+  jQuery('#new-preview').on('click',function(){
+    jQuery('#mint-preview-button').trigger('click');
+  });
+
 </script>
 <% content_for :helpcard do %>
-  
+    <%= render :partial => "/admin/shared/sample_portals"%>
     <div class="help-chart mt0 shorcuts-info">
       <h5 class="lead"><%= t("admin.portal.helpnote.editor_shortcuts") %></h5>
       <span class="row-fluid">
@@ -245,5 +276,7 @@
  
       </p>
     </div>
+
+
 
 <% end %>

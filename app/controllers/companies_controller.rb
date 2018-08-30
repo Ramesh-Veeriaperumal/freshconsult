@@ -8,7 +8,8 @@ class CompaniesController < ApplicationController
   include Redis::OthersRedis 
   
   before_filter :set_selected_tab
-  before_filter :load_item,  :only => [:show, :edit, :update, :update_company, :update_notes, :sla_policies]
+  before_filter :check_archive_feature, :only => [:component]
+  before_filter :load_item,  :only => [:show, :edit, :update, :update_company, :update_notes, :sla_policies, :component]
   before_filter :build_item, :only => [:quick, :new, :create, :create_company]
   before_filter :set_required_fields, :only => [:create_company, :update_company]
   before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_company, :update_company]
@@ -33,7 +34,6 @@ class CompaniesController < ApplicationController
   def show
     respond_to do |format|
       format.html { 
-        define_company_properties
         render :action => :newshow
       }
       format.xml  { render :xml => @company }
@@ -128,25 +128,35 @@ class CompaniesController < ApplicationController
     flash[:notice] = t(:'companies.export_start')
     redirect_to :back
   end
-  
-  protected
 
-    def define_company_properties 
-      @total_company_tickets = 
-        current_account.tickets.permissible(current_user).all_company_tickets(@company.id).visible.newest(11).preload(:ticket_states,:ticket_status,:responder,:requester)
-      @company_tickets = @total_company_tickets.sort_by {|item| -item.created_at.to_i}.take(10)
+  def component
+    component_type = params[:component]
+    return render_error if component_type.blank?
 
-      if current_account.features_included?(:archive_tickets)
-        @total_company_archive_tickets = 
-          current_account.archive_tickets.permissible(current_user).all_company_tickets(@company.id).newest(11).preload(:ticket_status, :responder, :requester)
-        @company_archive_tickets = @total_company_archive_tickets.sort_by {|item| -item.created_at.to_i}.take(10)
-      end
-
-      company_user_list = Account.current.multiple_user_companies_enabled? ? @company.users : 
-                            current_account.users.company_users_via_customer_id(@company.id)
-      @company_users         = company_user_list.limit(6)
-      @company_users_size    = company_user_list.count("1")
+    if component_type == 'contacts_list'
+      company_user_list   = if Account.current.multiple_user_companies_enabled?
+                              @company.users
+                            else
+                              current_account.users.company_users_via_customer_id(@company.id)
+                            end
+      company_users       = company_user_list.limit(Company::MAX_DISPLAY_COMPANY_CONTACTS)
+      company_users_size  = company_user_list.count('1')
+      render partial: "companies/#{component_type}",
+             locals: { company: @company, company_users: company_users,
+                       company_users_size: company_users_size }
+    elsif ['archive_tickets', 'recent_tickets'].include?(component_type)
+      total_company_tickets = safe_send("fetch_#{component_type}")
+      type                  = component_type.split('_')[0]
+      company_tickets       = total_company_tickets.sort_by { |item| -item.created_at.to_i }
+                                                   .take(Company::MAX_DISPLAY_COMPANY_TICKETS)
+      render partial: 'companies/tickets_list',
+             locals: { company: @company, company_tickets: company_tickets,
+                       total_company_tickets: total_company_tickets,
+                       type: type }
     end
+  end
+
+  protected
 
     def scoper
       current_account.companies
@@ -175,4 +185,33 @@ class CompaniesController < ApplicationController
       return companies_url
     end
 
+    def check_archive_feature
+      return render_403 if params[:component] == 'archive_tickets' &&
+        !current_account.features_included?(:archive_tickets)
+    end
+
+    def ticket_preload
+      [:ticket_states, :ticket_status, :responder, :requester]
+    end
+
+    def archive_ticket_preload
+      [:ticket_status, :responder, :requester]
+    end
+
+    def fetch_recent_tickets
+      current_account.tickets.permissible(current_user).all_company_tickets(@company.id)
+                     .visible.newest(Company::MAX_DISPLAY_COMPANY_TICKETS + 1)
+                     .preload(ticket_preload)
+    end
+
+    def fetch_archive_tickets
+      current_account.archive_tickets.permissible(current_user)
+                     .all_company_tickets(@company.id)
+                     .newest(Company::MAX_DISPLAY_COMPANY_TICKETS + 1)
+                     .preload(archive_ticket_preload)
+    end
+
+    def render_error
+      render json: 'Invalid Request', status: 400
+    end
 end

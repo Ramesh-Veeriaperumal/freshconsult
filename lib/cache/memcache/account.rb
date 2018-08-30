@@ -164,7 +164,11 @@ module Cache::Memcache::Account
   end
 
   def features_included?(*feature_names)
-    feature_names.all? { |feature_name| feature_from_cache.include?(feature_name.to_sym) }
+    if self.launched?(:db_to_bitmap_features_migration)
+      self.features? *feature_names.map(&:to_sym)
+    else
+      feature_names.all? { |feature_name| feature_from_cache.include?(feature_name.to_sym) }
+    end
   end
 
   def companies_from_cache
@@ -522,6 +526,34 @@ module Cache::Memcache::Account
 
   def clear_canned_responses_inline_images_from_cache
     MemcacheKeys.delete_from_cache(canned_responses_inline_images_key)
+  end
+
+  def contact_filters_from_cache
+    @contact_filters_from_cache ||= begin
+      key = format(CONTACT_FILTERS, account_id: id)
+      MemcacheKeys.fetch(key) do
+        contact_filters.all
+      end
+    end
+  end
+
+  def clear_contact_filters_cache
+    key = format(CONTACT_FILTERS, account_id: id)
+    MemcacheKeys.delete_from_cache(key)
+  end
+
+  def company_filters_from_cache
+    @company_filters_from_cache ||= begin
+      key = format(COMPANY_FILTERS, account_id: id)
+      MemcacheKeys.fetch(key) do
+        company_filters.all
+      end
+    end
+  end
+
+  def clear_company_filters_cache
+    key = format(COMPANY_FILTERS, account_id: id)
+    MemcacheKeys.delete_from_cache(key)
   end
 
   private

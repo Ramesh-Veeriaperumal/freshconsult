@@ -34,10 +34,11 @@ module Freshid
     private
       def migrate_agents
         Rails.logger.info "FRESHID Enabling and Migrating Agents :: a=#{@account.try(:id)}, d=#{@account.try(:full_domain)}"
-        @account.create_freshid_account
+        account_admin = @account.all_technicians.find_by_email(@account.admin_email) || @account.account_managers.first
         @account.launch_freshid_with_omnibar
         perform_migration_changes
-        @account.all_technicians.find_each { |user| migrate_user_to_freshid(user) if user.freshid_authorization.blank? }
+        @account.create_freshid_org_and_account(nil, nil, account_admin)
+        @account.all_technicians.where("id != #{account_admin.id}").find_each { |user| migrate_user_to_freshid(user) if user.freshid_authorization.blank? }
       rescue Exception => e
         log_migration_error(FRESHID_MIGRATE_AGENTS_ERROR, {}, e)
       end
@@ -65,7 +66,7 @@ module Freshid
       end
 
       def modify_agent_password_policy
-        @revert_migration ? @account.agent_password_policy.try(:destroy) : @account.build_default_password_policy(PasswordPolicy::USER_TYPE[:agent]).save!
+        @revert_migration ? @account.build_default_password_policy(PasswordPolicy::USER_TYPE[:agent]).save! : @account.agent_password_policy.try(:destroy)
       rescue Exception => e
         log_migration_error(FRESHID_AGENT_PASSWORD_POLICY_ERROR, { revert_migration: @revert_migration }, e)
       end

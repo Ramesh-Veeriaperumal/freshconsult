@@ -174,4 +174,12 @@ module Social::Util
     # EUC POD with the handle migrated from the EU data center.
     Account.current.launched?(:euc_migrated_twitter) && ismember?(EU_TWITTER_HANDLES, "#{Account.current.id}:#{handle.twitter_user_id}")
   end
+
+  def encrypt(data)
+    aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+    aes.encrypt
+    aes.key = TwitterConfig::CENTRAL_SECRET_KEY
+    aes.iv  = TwitterConfig::CENTRAL_SECRET_IV
+    Base64.encode64(aes.update(data) + aes.final)
+  end
 end

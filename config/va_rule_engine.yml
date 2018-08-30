@@ -1,0 +1,15 @@
+fields:
+    rule:
+        default: default
+        segments: object_id_array
+        company_ids: object_id_array
+        time_zone: text
+        twitter_id: numeric
+        tag_names: text_array
+        created_at: date
+
+        custom_checkbox: checkbox
+        custom_number: numeric
+        custom_dropdown: dropdown 
+        custom_date: date
+        missing_field: missing_field

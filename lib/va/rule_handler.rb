@@ -35,18 +35,24 @@ class Va::RuleHandler
 
   def matches(evaluate_on)
     if evaluate_on.respond_to?(condition.dispatcher_key)
-      actual_val = evaluate_on.safe_send(condition.dispatcher_key)
-      matched = evaluate_rule(actual_val)
-      Va::Logger::Automation.log "k=#{condition.dispatcher_key}, v=#{value}, o=#{condition.operator}, actual_val=#{actual_val}" unless matched
+      lazy_evaluations = evaluate_on.class.const_get('VA_LAZY_EVALUATIONS') rescue []
+      actual_val = nil
+      matched = if lazy_evaluations.include?(condition.dispatcher_key.to_sym)
+                  evaluate_rule(nil) { |args = []| evaluate_on.safe_send(condition.dispatcher_key, *args) }
+                else
+                  actual_val = evaluate_on.safe_send(condition.dispatcher_key)
+                  evaluate_rule(actual_val)
+                end
+      Va::Logger::Automation.log "k=#{condition.dispatcher_key}, v=#{value.inspect}, o=#{condition.operator}, actual_val=#{actual_val.inspect}" unless matched
       matched
     end
   end
   
-  def evaluate_rule(evaluate_on_value)
+  def evaluate_rule(evaluate_on_value, &block)
     #return evaluate_on_value.safe_send(:casecmp, value)
     #making sure that condition.operator is not tampered, to prevent remote code execution security issue
     return false if condition.operator.nil? || va_operator_list[condition.operator.to_sym].nil?
-    safe_send(condition.operator, evaluate_on_value)
+    safe_send(condition.operator, evaluate_on_value, &block)
   end
   
   def filter_query

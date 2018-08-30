@@ -157,4 +157,5 @@ module Social::Constants
   SMART_FILTER_FEEDBACK_GIVEN = -1;
   TWITTER_MENTION = "@"
   EU_TWITTER_HANDLES = "eu_twitter_handles"
+  TWEET_ALREADY_EXISTS = "Tweet already converted as a ticket".freeze
 end

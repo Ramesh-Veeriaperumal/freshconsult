@@ -229,6 +229,11 @@ class Portal < ActiveRecord::Base
     }
   end
 
+ 
+  def falcon_portal_enable?
+    preferences.key?(:falcon_portal_key)
+  end
+
   private
 
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
@@ -267,7 +272,8 @@ class Portal < ActiveRecord::Base
           preferences[key] = RailsFullSanitizer.sanitize(value)
         elsif key == 'logo_link' && preferences[key].present?
           sanitized_value = RailsFullSanitizer.sanitize(value) #Prevent Xss
-          errors.add(:base, I18n.t('admin.products.portal.invalid_linkback_url')) unless sanitized_value == value && UriParser.valid_url?(value)
+          uri_validation = account.old_link_back_url_validation_enabled? ? UriParser.valid_url?(value) : UriParser.valid_irl?(value, false)
+          errors.add(:base, I18n.t('admin.products.portal.invalid_linkback_url')) unless sanitized_value == value && uri_validation
         end
       end
     end

@@ -4,7 +4,7 @@ class ApiCompanyValidationTest < ActionView::TestCase
   def tear_down
     Account.unstub(:current)
     Account.any_instance.unstub(:company_form)
-    Account.any_instance.unstub(:tam_default_company_fields_enabled?)
+    Account.any_instance.unstub(:tam_default_fields_enabled?)
     CompanyForm.unstub(:custom_company_fields)
     CompanyForm.unstub(:default_company_fields)
     super
@@ -63,7 +63,7 @@ class ApiCompanyValidationTest < ActionView::TestCase
   def test_tam_default_fields_without_feature
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:company_form).returns(CompanyForm.new)
-    Account.any_instance.stubs(:tam_default_company_fields_enabled?).returns(false)
+    Account.any_instance.stubs(:tam_default_fields_enabled?).returns(false)
     controller_params = { 'name' => 'test', 'health_score' => 'At risk', 'account_tier' => 'Premium',
                           'industry' => 'Media', 'renewal_date' => '2017-12-11' }
     company = ApiCompanyValidation.new(controller_params, nil)
@@ -79,7 +79,7 @@ class ApiCompanyValidationTest < ActionView::TestCase
   def test_tam_default_fields_with_invalid_data_types
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:company_form).returns(CompanyForm.new)
-    Account.any_instance.stubs(:tam_default_company_fields_enabled?).returns(true)
+    Account.any_instance.stubs(:tam_default_fields_enabled?).returns(true)
     controller_params = { 'name' => 'test', 'health_score' => 3, 'account_tier' => 4,
                           'industry' => 5, 'renewal_date' => 'test string' }
     company = ApiCompanyValidation.new(controller_params, nil)
@@ -95,7 +95,7 @@ class ApiCompanyValidationTest < ActionView::TestCase
   def test_tam_default_fields_with_required
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:company_form).returns(CompanyForm.new)
-    Account.any_instance.stubs(:tam_default_company_fields_enabled?).returns(true)
+    Account.any_instance.stubs(:tam_default_fields_enabled?).returns(true)
     CompanyForm.any_instance.stubs(:default_company_fields).returns([
       default_required_company_field('health_score'),
       default_required_company_field('account_tier'),
@@ -121,7 +121,7 @@ class ApiCompanyValidationTest < ActionView::TestCase
   def test_tam_default_fields_with_proper_values
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:company_form).returns(CompanyForm.new)
-    Account.any_instance.stubs(:tam_default_company_fields_enabled?).returns(true)
+    Account.any_instance.stubs(:tam_default_fields_enabled?).returns(true)
     CompanyForm.any_instance.stubs(:default_company_fields).returns([
       default_required_company_field('health_score'),
       default_required_company_field('account_tier'),

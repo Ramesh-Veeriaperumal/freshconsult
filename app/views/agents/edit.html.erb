@@ -22,23 +22,30 @@
 
 <% if current_account.falcon_ui_enabled?(current_user) %>
 <script type="text/javascript">
-(function ($) {
-  $('#agent_form').submit(function(e){
-    e.preventDefault();
-    var form = $(this);
-    if (form.valid()) {
-      form.ajaxSubmit({
-        success: function(data){
-          form.data('formChanged', false);
-          top.location.reload();
-        },
-        error: function(data){
-          window.location.reload();
-        }
-      })
-    }
-  });
-}(window.jQuery));
+  (function ($) {
+    $('#agent_form').submit(function(e){
+      e.preventDefault();
+      var form = $(this);
+      if (form.valid()) {
+        form.ajaxSubmit({
+          success: function(data){
+            form.data('formChanged', false);
+            top.location.reload();
+          },
+          error: function(data){
+            window.location.reload();
+          }
+        })
+      }
+    });
+
+    // notification 
+    var show_sandbox_notification = <%= Account.current.account_type == 2 %>
+    var notification_message = '<%=t("sandbox.sandbox_notification_for_agents").html_safe %>';
+     if(show_sandbox_notification){
+        jQuery("#noticeajax").html(notification_message).show();
+        closeableFlash('#noticeajax');
+      }
+  }(window.jQuery));
 </script>
 <% end %>
-

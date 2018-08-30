@@ -78,4 +78,10 @@ module Helpdesk::TicketsHelperMethods
   def due_by_values_present?(ticket)
     ticket.due_by.present? && ticket.frDueBy.present?
   end
+
+  def update_associates_count(item, count = item.associated_tickets_count)
+    item.update_attributes(:subsidiary_tkts_count => count) if item.prime_ticket?
+  rescue => e
+    Rails.logger.info "Error while updating the associates count #{e} - #{Account.current.id} - ticket #{item.display_id} - #{count}"
+  end
 end

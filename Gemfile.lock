@@ -89,8 +89,8 @@ GIT
 
 GIT
   remote: git://github.com/freshdesk/semian.git
-  revision: a0f7118894676312111476f10b8afdc1477d091c
-  branch: fd_master
+  revision: 1919624caf767d4e091f800efb86a22cb363e723
+  tag: v0.1
   specs:
     semian (0.7.1)
 
@@ -255,10 +255,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/freshid-ruby-client.git
-  revision: a02489df352b93d11d3a9041958187e9a0bc8741
-  tag: v2.0.1
+  revision: 5b1caeacb33ebff36b07fc2d33ed4dc3332be07c
+  tag: v2.0.3
   specs:
-    freshid (2.0.1)
+    freshid (2.0.3)
 
 GIT
   remote: git@github.com:freshdesk/launch-party.git
@@ -288,6 +288,13 @@ GIT
   revision: 85175aa156158d16398ed1a53ecada2c7aeda24d
   specs:
     jwe (0.3.0)
+
+GIT
+  remote: git@github.com:freshdesk/rule_engine.git
+  revision: 4af2e80295ebd9dca954adaa8b2c91d8cf075f8d
+  tag: hv0.0.1
+  specs:
+    rule_engine (0.0.1)
 
 GIT
   remote: git@github.com:freshdesk/xeroizer.git
@@ -334,7 +341,7 @@ PATH
 PATH
   remote: vendor/gems/custom_fields-0.1
   specs:
-    custom_fields (0.1-x86_64-darwin-16)
+    custom_fields (0.1)
       acts_as_list (= 0.1.4)
       rails (~> 3.2.18)
 
@@ -1585,6 +1592,7 @@ DEPENDENCIES
   rubytree
   rubyzip (= 1.2.1)
   rugged
+  rule_engine!
   sanitize (= 4.6.5)
   sass-rails (= 3.2.6)
   sax-machine (~> 0.1.0)

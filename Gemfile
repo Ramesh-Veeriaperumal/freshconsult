@@ -201,7 +201,8 @@ gem "akismetor", :git => "git://github.com/freshdesk/akismetor.git"
 gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.git', :branch => "freshdesk", :require => true
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
-gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v2.0.1'
+gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', tag: 'hv0.0.1'
+gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v3.0.0'
 
 gem 'net-http-persistent', '~> 2.9.4'
 
@@ -332,7 +333,7 @@ gem 'typhoeus'
 
 gem 'i18nema', :git => 'https://github.com/freshdesk/i18nema', :require => false
 
-gem 'semian', require: %w(semian semian/mysql2), :git => "git://github.com/freshdesk/semian.git", :branch => "fd_master"
+gem 'semian', require: %w(semian semian/mysql2), :git => "git://github.com/freshdesk/semian.git", :tag => 'v0.1'
 
 # For debugging app in staging/production
 gem 'rbtrace', :require => false

@@ -19,6 +19,14 @@ module SearchService
       write_request.response
     end
 
+    def write_count_object(entity)
+     uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
+     type = 'ticketanalytics'
+     payload = { payload: entity.to_search_count_es_json, version: Search::Job.es_version }
+     write_request = SearchService::Request.new(write_path(type, entity.id), :post, uuid, payload.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), Account.current.id)
+     write_request.response
+    end
+
     def delete_object(type, id)
       uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
       delete_request = SearchService::Request.new(delete_path(type, id), :delete, uuid, {}.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
@@ -33,7 +41,7 @@ module SearchService
 
     def tenant_bootstrap
       uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
-      tenant_request = SearchService::Request.new(tenants_path, :post, uuid, { id: @account_id }.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id)
+      tenant_request = SearchService::Request.new(tenants_path, :post, uuid, { id: @account_id }.to_json, request_headers({ 'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}" }.merge!(sandbox_header)), @account_id)
       tenant_request.response
     end
 
@@ -62,7 +70,7 @@ module SearchService
       end
 
       def request_headers(headers={})
-        { 
+        {
           'Content-type' => 'application/json',
           'Content-Encoding' => 'gzip, deflate',
           'X-Auth-Token' => ES_V2_CONFIG[:auth_token],
@@ -100,6 +108,10 @@ module SearchService
       def delete_by_query_path(document_name)
         path = SearchService::Constants::DELETE_BY_QUERY_PATH % { product_name: ES_V2_CONFIG[:product_name], account_id: @account_id, document_name: document_name }
         "#{service_host}/#{path}"
+      end
+
+      def sandbox_header
+        Account.current.sandbox? ? { 'X-Meta-Sandbox-Account' => true } : {}
       end
   end
 end
