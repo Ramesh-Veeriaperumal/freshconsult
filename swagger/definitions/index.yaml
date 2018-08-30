@@ -506,3 +506,9 @@
     $ref: ./response/freshmarketer/index.yaml
   freshmarketer_session:
     $ref: ./response/freshmarketer/session.yaml
+
+  #Advanced Ticketing
+  advanced_ticketing_create:
+    $ref: ./request/advanced_ticketing/create.yaml
+  advanced_ticketing_insights:
+    $ref: ./response/advanced_ticketing/insights.yaml

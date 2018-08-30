@@ -8206,6 +8206,99 @@
           }
         }
       }
+    },
+    "/advanced_ticketing": {
+      "post": {
+        "tags": [
+          "Advanced Ticketing"
+        ],
+        "summary": "Create",
+        "description": "Create an advanced ticketing application",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/advanced_ticketing_create"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/advanced_ticketing/{id}": {
+      "delete": {
+        "tags": [
+          "Advanced Ticketing"
+        ],
+        "summary": "Delete",
+        "description": "Delete an advanced ticketing application",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Name of the application",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Application not found"
+          }
+        }
+      }
+    },
+    "/advanced_ticketing/insights": {
+      "get": {
+        "tags": [
+          "Advanced Ticketing"
+        ],
+        "description": "Retrieve the insights of advanced ticketing applications",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/advanced_ticketing_insights"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -16229,6 +16322,53 @@
       "properties": {
         "url": {
           "type": "string"
+        }
+      }
+    },
+    "advanced_ticketing_create": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of advanced ticketing application to be created"
+        }
+      }
+    },
+    "advanced_ticketing_insights": {
+      "type": "object",
+      "properties": {
+        "parent_child_tickets": {
+          "type": "object",
+          "properties": {
+            "parent_tickets_count": {
+              "type": "integer"
+            },
+            "child_tickets_count": {
+              "type": "integer"
+            }
+          }
+        },
+        "link_tickets": {
+          "type": "object",
+          "properties": {
+            "tracker_tickets_count": {
+              "type": "integer"
+            },
+            "related_tickets_count": {
+              "type": "integer"
+            }
+          }
+        },
+        "shared_ownership": {
+          "type": "object",
+          "properties": {
+            "shared_ownership_tickets_count": {
+              "type": "integer"
+            }
+          }
         }
       }
     }

@@ -55,7 +55,8 @@ module ApiConstants
                        RakeTaskConstants::LOAD_OBJECT_EXCEPT +
                        CustomerImportConstants::LOAD_OBJECT_EXCEPT +
                        FreshmarketerConstants::LOAD_OBJECT_EXCEPT +
-                       AuditLogConstants::LOAD_OBJECT_EXCEPT
+                       AuditLogConstants::LOAD_OBJECT_EXCEPT +
+                       AdvancedTicketingConstants::LOAD_OBJECT_EXCEPT
 
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +

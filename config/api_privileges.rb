@@ -134,6 +134,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'audit_log', only: [:filter, :export, :event_name]
     resource :"proactive/rule"
     resource :"proactive/outreach"
+    resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
   end
 
   edit_ticket_properties do

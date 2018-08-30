@@ -434,6 +434,8 @@ module Redis::RedisKeys
   CONTACT_IMPORT_FINISHED_RECORDS = "CONTACT_IMPORT_FINISHED_RECORDS:%{account_id}"
   COMPANY_IMPORT_TOTAL_RECORDS = "COMPANY_IMPORT_TOTAL_RECORDS:%{account_id}"
   COMPANY_IMPORT_FINISHED_RECORDS = "COMPANY_IMPORT_FINISHED_RECORDS:%{account_id}"
+
+  ADVANCED_TICKETING_METRICS = "ADVANCED_TICKETING_METRICS"
   ################### END OF REDIS KEYS ###################
 
   #########################################################################################################
