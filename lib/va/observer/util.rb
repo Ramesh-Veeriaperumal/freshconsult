@@ -17,8 +17,7 @@ module Va::Observer::Util
     if user_present?
       filter_observer_events(true, inline)
     else
-      Va::Logger::Automation.log "user_present=false"
-      Va::Logger::Automation.log "@model_changes=#{@model_changes.inspect}, current_user_present=#{User.current.present?}, survey_result?=#{survey_result?}, system_event?=#{system_event?}, zendesk_import?=#{zendesk_import?}, freshdesk_webhook?=#{freshdesk_webhook?}, sent_for_enrichment?=#{sent_for_enrichment?}"
+      Va::Logger::Automation.log "user_present=false, @model_changes=#{@model_changes.inspect}, current_user_present=#{User.current.present?}, survey_result?=#{survey_result?}, system_event?=#{system_event?}, zendesk_import?=#{zendesk_import?}, freshdesk_webhook?=#{freshdesk_webhook?}, sent_for_enrichment?=#{sent_for_enrichment?}"
     end
   end
 
@@ -34,8 +33,7 @@ module Va::Observer::Util
       observer_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
                               filter_event filtered, change_key, change_value  end
       Va::Logger::Automation.log "Triggered object=#{self.class}, id=#{self.id}"
-      Va::Logger::Automation.log "Observer changes not present, model_changes=#{@model_changes.inspect}" if observer_changes.blank?
-      Va::Logger::Automation.log "Skipping observer queue_events=true" if !queue_events
+      Va::Logger::Automation.log("model_changes=#{@model_changes.inspect}, observer_changes_blank=#{observer_changes.blank?}, skip_observer=not_queue_events=#{!queue_events}") if observer_changes.blank? || !queue_events
       return observer_changes unless queue_events
       if observer_changes.present?
         system_event? ? send_system_events(observer_changes) : send_events(observer_changes, inline)
