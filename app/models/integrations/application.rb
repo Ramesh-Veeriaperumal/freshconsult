@@ -139,6 +139,10 @@ class Integrations::Application < ActiveRecord::Base
     self.application_type == "zohocrm"
   end
 
+  def shopify?
+    self.application_type == Integrations::Constants::APP_NAMES[:shopify]
+  end
+
   private
     def self.nameify(name)
       "#{name.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}" unless name.blank?

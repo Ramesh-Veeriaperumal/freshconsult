@@ -1349,6 +1349,9 @@ en:
       helpnote:
         title: Setting up your portals
         tour: Help me configure my portal
+        portal_freshdesk_title: Looking for ideas?
+        portal_info: We've handpicked a few customized portals for you.
+        portal_freshdesk_link: Take a look
         info1: "If you would like your customers and support agents ​to ​access your support portal in your own domain, you can point your support URL ​<b>yourcompany.freshdesk.com​</b> to your own domain like​ ​<b>support.yourcompany.com</b>"
         info2: "You can also choose specific solution and forum categories to be listed in the main portal and other portals​.​"
         info3: "Additionally, you can rebrand the look and feel of your helpdesk by uploading your logo and favicon, giv​e​ your helpdesk a name, and customiz​e​ your portal colors."
@@ -2203,7 +2206,7 @@ en:
         enable_sso_info: Single Sign On allows you to use your own application or a centralized Server (like MS Active Directory) to authenticate agents and customers so that they can access Freshdesk without entering a separate username and password.
         enable_sso: Single Sign On (SSO)
         enable_simple_sso: Simple SSO
-        enable_oauth_sso: Oauth2 SSO
+        enable_oauth_sso: OAuth2 SSO
         enable_oauth2_sso: OAuth 2.0
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
@@ -2261,9 +2264,9 @@ en:
         password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
       errors:
         simple_sso: 
-          invalid_login_url: Please provide a valid login url
+          invalid_login_url: Please provide a valid login URL
         saml_sso:
-          invalid_login_url: Please provide a valid SAML login url
+          invalid_login_url: Please provide a valid SAML login URL
           invalid_fingerprint: Please provide a valid SAML Certificate Fingerprint
       helpnote:
         title: Security Settings
@@ -3042,7 +3045,7 @@ en:
       sso:
         expected_params: "One or more of the expected parameters name, email, and hash are missing."
         invalid_time_entry: "Invalid time entry"
-        url_limitation_error: "Session has expired. Please login again."
+        url_limitation_error: "Session expired. Please login again."
       jwt_sso:
         expected_time_params: "Issued at time(iat) and Expire at time(iat) are missing"
         exceeded_max_expire_time: "Max expiry time of 30 minutes is allowed"
@@ -7351,6 +7354,7 @@ en:
         survey_response_to: to %{agent}
         survey_satisfaction: How would you rate your overall satisfaction for the resolution provided by the agent?
         comments: Comments
+        outgoing_failure: Reply not sent. Please try again after some time.
     merge:
       merge:
         merge_into: Merge into?
@@ -9554,6 +9558,16 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     mark_as_primary: "Mark as primary"
     merge_progress: "Please wait while the contacts are being merged. This might take a few minutes."
   portalcss:
+    mint_info_portals: Your customer portals now have a refreshing, new look. Preview it by clicking on the links below.
+    mint_info_portal: Your customer portal now has a refreshing, new look. Preview it by clicking on the link below.
+    mint_info_template: "\"%{portal}\" portal now has a refreshing, new look."
+    mint_info_portal_settings: Your customer portals now have a refreshing, new look.
+    mint_info_portal_setting: Your customer portal now has a refreshing, new look.
+    mint_preview: Preview new look
+    apply_mint: Apply
+    classic: Classic
+    mint: Mint
+    confirm: "Are you sure you want to apply the new look? All your CSS customizations will be lost. \n\nTip: Create a copy of CSS customizations you currently have and add them after applying the new look."
     reset_all_changes: Reset ALL changes
     reset_all_confirm_message: This action will reset all your customizations to freshdesk default. Are you sure you want to continue?
     publish_changes: Save and Publish
@@ -11774,6 +11788,7 @@ Do let us know if you are interested!"
       freshdesk_dot_com: ".freshdesk.com"
       submit: Submit
     signup_google_error:
+      token_unavailable: "Something went wrong. Try logging in again. If this problem persists, please contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>."
       token_mismatch_error: "Token mismatch error. Please contact support@freshdesk.com."
       error_message: "<center><p class='big-text aligncenter'>Sorry! You do not have enough permission to access this page.<br> Please contact your Account administrator or </p></center><center><a href='http://freshdesk.com/signup'>Signup from Freshdesk Home page </a></center>"
     thank_you:
@@ -11846,6 +11861,7 @@ Do let us know if you are interested!"
       ticket_created: "New Ticket"
       generic_notification: "%{type}"
       bot_training_completion: "Bot training completed"
+      dashboard_announcement_create: "Dashboard announcement"
     preferences_text:
       private_note_created: Private note sent to me
       public_note_created: Public note added to ticket
@@ -11861,6 +11877,7 @@ Do let us know if you are interested!"
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
     bot_training_completion: "%{title} Bot trained successfully!Please switch to mint ui to test and train the bot."
+    dashboard_announcement_create: "has posted '%{title}'"
     muted: Muted
     mute: Mute
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
@@ -12352,6 +12369,9 @@ Do let us know if you are interested!"
       diff_is_edited: Edited Properties
     banner:
       production_info: Your sandbox account is currently active. We do not recommend you make any changes to your Freshdesk account. <a href='http://%{url}' target=_blank rel="noreferrer noopener">Take me there.</a>
+    sandbox_notification_for_rules: Did you know you could use <a href="/a/admin/sandbox" class="group_item_link" target="_top">Sandbox</a> to test automations before directly changing them here?
+    sandbox_notification_for_ticketfields: Did you know you could use <a href="/a/admin/sandbox" class="group_item_link" target="_top">Sandbox</a> to add, edit or delete ticket fields before directly changing them here?
+    sandbox_notification_for_agents: Any new agents added, or any updates made to agent profiles here will not get synced with your Freshdesk account.
   fixtures:
     ticket_templates:
       name: "Initiate a Refund"

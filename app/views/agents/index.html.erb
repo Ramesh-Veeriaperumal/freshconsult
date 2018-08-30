@@ -50,3 +50,13 @@
 	    <%= render :partial => "agents", :object => @agents %>
     </div>
 </div>
+<%= javascript_tag do %>
+   (function($){
+     var show_sandbox_notification = <%= Account.current.account_type == 2 %>
+     var notification_message = '<%=t("sandbox.sandbox_notification_for_agents").html_safe %>';
+     if(show_sandbox_notification){
+             jQuery("#noticeajax").html(notification_message).show();
+             closeableFlash('#noticeajax');
+     }
+   })(jQuery)
+ <% end %>

@@ -8,6 +8,7 @@ module SupportHelper
   include Portal::Helpers::Article
   include Portal::Helpers::SolutionsHelper
   include Cache::FragmentCache::Base
+  include Portal::PreviewKeyTemplate
 
   # TODO-RAILS3 the below helpers are added to use liquids truncate
   # HACK Need to scope down liquid helpers and include only the required ones
@@ -213,17 +214,21 @@ module SupportHelper
   def profile_image user, more_classes = "", width = "50px", height = "50px", profile_size = 'thumb'
     output = []
     output << %(  <div class="user-pic-thumb image-lazy-load #{more_classes}"> )
-    if user['profile_url']
+    if user.blank?
+      output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" />)
+      Rails.logger.error("User is empty::Account:#{Account.current.inspect}")      
+    elsif user['profile_url']
       output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" rel="lazyloadimage"  data-src="#{user['profile_url']}" /> )
     else
-      username = user['name'].lstrip
-
-      if isalpha(username[0])
+      username = user['name'] 
+      username = username.lstrip if username
+      if username && username[0] && isalpha(username[0])
         output << %(<div class="#{profile_size} avatar-text circle text-center bg-#{unique_code(username)}">)
         output << %( #{username[0]} )
         output << %( </div>)
       else
         output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" />)
+        Rails.logger.error("Showing blank profile thumbnail for User: #{username} Account:#{Account.current.id}")
       end
     end
     output << %( </div> )
@@ -259,7 +264,7 @@ module SupportHelper
   # Logo for the portal
   def logo portal, link_flag = false
     _output = []
-    _output << %(<a href= '#{ link_flag ?  "javascript:void(0)" : "#{portal['linkback_url']}" }')
+    _output << %(<a href="#{ link_flag ?  "javascript:void(0)" : "#{portal['linkback_url']}" }")
     _output << %(class='portal-logo'>)
     # Showing the customer uploaded logo or default logo within an image tag
     _output << %(<span class="portal-img"><i></i>
@@ -271,12 +276,7 @@ module SupportHelper
   end
 
   def portal_fav_ico
-    fav_icon = MemcacheKeys.fetch(["v8","portal","fav_ico",current_portal],7.days.to_i) do
-          current_portal.fav_icon.nil? ? '/assets/misc/favicon.ico?702017' :
-                AwsWrapper::S3Object.public_url_for(current_portal.fav_icon.content.path,
-                  current_portal.fav_icon.content.bucket_name,
-                        :secure => true)
-            end
+    fav_icon = current_portal.fetch_fav_icon_url
     "<link rel='shortcut icon' href='#{fav_icon}' />".html_safe
   end
 
@@ -924,8 +924,12 @@ module SupportHelper
 
     def portal_preferences
       preferences = current_portal.template.preferences
-        preferences = current_portal.template.get_draft.preferences if preview? && current_portal.template.get_draft
-        preferences || []
+      if get_others_redis_key(mint_preview_key)
+         preferences = current_portal.template.get_draft.preferences if current_portal.template.get_draft
+      elsif preview? && current_portal.template.get_draft
+         preferences = current_portal.template.get_draft.preferences
+      end
+      preferences || []
     end
 
     def escaped_portal_preferences
@@ -936,9 +940,8 @@ module SupportHelper
 
     def preview?
       @preview ||= if User.current
-                     is_preview = IS_PREVIEW % { :account_id => current_account.id,
-                     :user_id => User.current.id, :portal_id => @portal.id}
-                     !get_portal_redis_key(is_preview).blank? && !current_user.blank? && current_user.agent?
+                     is_preview = IS_PREVIEW % { :account_id => current_account.id, :user_id => User.current.id, :portal_id => @portal.id}
+                     (!(get_portal_redis_key(is_preview).blank?  && on_mint_preview.blank?)) && !current_user.blank? && current_user.agent?
                    end
     end
 

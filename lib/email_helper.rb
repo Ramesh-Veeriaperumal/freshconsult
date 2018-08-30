@@ -11,6 +11,10 @@ module EmailHelper
   REQUEST_TIMEOUT = 25
   SENDGRID_RETRY_TIME = 4.hours
 
+  COLLAB_STR_ARRAY = ['Invited to Team Huddle - [#', 'Mentioned in Team Huddle - [#',
+                  'mentioned in Team Huddle - [#', 'Reply in Team Huddle - [#',
+                  'Team Huddle - New Messages in [#', 'Team Huddle - New Message in [#'].freeze
+
   def verify_inline_attachments(item, content_id)
     content = "\"cid:#{content_id}\""
     if item.is_a? Helpdesk::Ticket
@@ -173,13 +177,33 @@ module EmailHelper
     Fdadmin::APICalls.make_api_request_to_global( :post, url_params, "/api/v1/activity/create_activity", "freshopsadmin.freshdesk.com")
   end
 
+  def antispam_enabled? account
+    (((account.subscription.free? or account.subscription.trial?) and !(account.launched?(:whitelist_spam_detection_service))) or (account.subscription.active? and account.launched?(:spam_detection_service)))
+  end
+
+  def collab_email_reply? email_subject
+    COLLAB_STR_ARRAY.any? { |s| email_subject.include?(s) } ? true : false
+  end
 
   def freshops_account_url(account)
       "freshopsadmin.freshdesk.com/accounts/#{account.id}"
   end
 
+  # This method tells whether the request from email service is authenticated or not.
+  def authenticated_email_service_request? key
+    fd_email_service = (YAML::load_file(File.join(Rails.root, 'config', 'fd_email_service.yml')))[Rails.env]
+    incoming_email_api_key1 = fd_email_service["incoming_email_api_key1"]
+    incoming_email_api_key2 = fd_email_service["incoming_email_api_key2"]
+    return (key == incoming_email_api_key1 or key == incoming_email_api_key2)
+  end
+
   # For checking whether the notifications are routed via email services
   def via_email_service? account, email_config
     return !(email_config && email_config.smtp_mailbox) && ($redis_others.get("ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE") == "1" || account.launched?(:send_emails_via_fd_email_service_feature))
+  end
+
+  def block_outgoing_email(account_id)
+    Rails.logger.info("disabling Outgoing email for #{account_id}")
+    add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, account_id)
   end
 end

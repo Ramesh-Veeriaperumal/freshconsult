@@ -2,7 +2,7 @@ module FdSpamDetectionService
   class Config
 
     attr_writer :global_enable
-    attr_accessor :service_url, :timeout
+    attr_accessor :service_url, :timeout, :outgoing_block_mrr_threshold
 
     def global_enable
       @global_enable ||= false

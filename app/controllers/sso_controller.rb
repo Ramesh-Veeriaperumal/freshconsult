@@ -119,10 +119,13 @@ class SsoController < ApplicationController
     end
 
     def check_csrf_token
-      decoded_token = Base64.decode64(params["at"])
-      unless session["_csrf_token"] == decoded_token
+      if params["at"].blank?
+        Rails.logger.debug "In check_csrf_token :: Token unavailable"
+        flash[:notice] = t('google_signup.signup_google_error.token_unavailable')
+        redirect_to current_account.full_url
+      elsif session["_csrf_token"] != Base64.decode64(params["at"])
         flash[:notice] = t('google_signup.signup_google_error.token_mismatch_error')
-        redirect_to current_account.url_protocol+"://"+portal_url 
+        redirect_to current_account.full_url
       end
     end
 

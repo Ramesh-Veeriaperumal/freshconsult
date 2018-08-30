@@ -61,3 +61,5 @@ ChannelFrameworkConfig = YAML.load_file(File.join(Rails.root, 'config', 'channel
 FreshmarketerConfig = YAML.load_file(Rails.root.join('config', 'freshmarketer.yml'))[Rails.env]
 
 UnsupportedFeaturesList = YAML.load_file(Rails.root.join('config', 'features', 'unsupported_features.yml'))[Rails.env][PodConfig["CURRENT_POD"]]
+
+ProactiveServiceConfig = YAML.load_file(Rails.root.join('config', 'proactive_service.yml'))[Rails.env]

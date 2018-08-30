@@ -88,7 +88,7 @@ module RabbitMq::Utils
     MANUAL_PUBLISH_SUBCRIBERS.each { |f|
       begin
         next if f == "activities" && model == "archive_ticket"
-        if Account.current.features?(:countv2_writes)
+        if Account.current.count_es_writes_enabled?
           next if f == "count" && model != "ticket"
         else
           next if f == "count"

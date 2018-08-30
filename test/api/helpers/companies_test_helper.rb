@@ -51,7 +51,9 @@ module CompaniesTestHelper
 
   def company_field_pattern(_expected_output = {}, company_field)
     company_field_json = company_field_response_pattern company_field
-    company_field_json[:choices] = company_field.choices.map { |x| x[:value] } if company_field.field_type.to_s == 'custom_dropdown'
+    if (['default_health_score', 'default_account_tier', 'default_industry', 'custom_dropdown'].include?(company_field.field_type.to_s))
+      company_field_json[:choices] = company_field.choices.map { |x| x[:value] }
+    end
     company_field_json
   end
 

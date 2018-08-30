@@ -12,7 +12,8 @@ class Account < ActiveRecord::Base
                  :audit_logs_central_publish, :encode_emoji_subject,
                  :time_sheets_central_publish, :new_ticket_recieved_metric, :canned_forms,
                  :euc_migrated_twitter, :twitter_microservice, :twitter_handle_publisher, :csat_email_scan_compatibility,
-                 :sso_login_expiry_limitation, :undo_send]
+                 :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :mint_portal_applicable, 
+                 :old_link_back_url_validation, :shopify_actions, :db_to_bitmap_features_migration]
   
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
@@ -27,7 +28,7 @@ class Account < ActiveRecord::Base
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
-      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments, :freshconnect
+      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments, :freshconnect, :proactive_outreach
 
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
@@ -63,6 +64,24 @@ class Account < ActiveRecord::Base
   Collaboration::Ticket::SUB_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       self.collaboration_enabled? && (self.collab_settings[item.to_s] == 1)
+    end
+  end
+
+  def features?(*feature_names)
+    return super(*feature_names) unless launched?(:db_to_bitmap_features_migration)
+    db_features = feature_names - DB_TO_BITMAP_MIGRATION_FEATURES_LIST
+    if db_features.count == feature_names.count
+      super(*feature_names)
+    else
+      # twitter and facebook DB features are mapped to advanced_twitter and 
+      # advanced_facebook in bitmap
+      feature_names.push :advanced_twitter if feature_names.delete(:twitter).present?
+      feature_names.push :advanced_facebook if feature_names.delete(:facebook).present?
+      if db_features.empty?
+        self.has_features?(*feature_names)
+      else
+        super(db_features) && self.has_features?(*(feature_names - db_features))
+      end
     end
   end
 
@@ -123,6 +142,10 @@ class Account < ActiveRecord::Base
     (launched?(:es_count_reads) || launched?(:list_page_new_cluster)) && features?(:countv2_reads)
   end
 
+  def count_es_writes_enabled?
+    features?(:countv2_writes) || launched?(:count_service_es_writes)
+  end
+  
   def customer_sentiment_enabled?
     Rails.logger.info "customer_sentiment : #{launched?(:customer_sentiment)}"
     launched?(:customer_sentiment)
@@ -251,10 +274,6 @@ class Account < ActiveRecord::Base
   def set_falcon_redis_keys
     hash_set = Hash[COMBINED_VERSION_ENTITY_KEYS.collect { |key| ["#{key}_LIST", Time.now.utc.to_i] }]
     set_others_redis_hash(version_key, hash_set)
-  end
-
-  def tam_default_company_fields_enabled?
-    Account.current.tam_default_fields_enabled? &&  redis_key_exists?(TAM_FIELDS_ENABLED)
   end
 
   def support_bot_configured?

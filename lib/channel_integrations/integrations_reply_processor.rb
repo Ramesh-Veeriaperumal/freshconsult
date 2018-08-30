@@ -15,7 +15,7 @@ module ChannelIntegrations
 
       Sharding.select_shard_of(args[:account_id]) do
         Account.find(args[:account_id]).make_current
-        # reply action doesn't send anything back to channel again.
+        log_params(payload)
         @replies.process(payload)
         perform_dedup_logic(args)
       end
@@ -24,5 +24,11 @@ module ChannelIntegrations
     ensure
       Account.reset_current_account
     end
+
+    private
+
+      def log_params(payload)
+        Rails.logger.debug "channel framework reply, owner: #{payload[:owner]}, command: #{payload[:command_name]}, command_id: #{payload[:command_id]}, meta: #{payload[:meta].inspect}"
+      end
   end
 end
