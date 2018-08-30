@@ -22,13 +22,15 @@ module Archive
 
       def archive_old_data # Some methods are implemented only in Helpdesk::Note.
         if record.class.name == 'Helpdesk::Note'
+          schema_less_properties = schema_less_note.try(:note_properties) || {}
           {
             cc_emails: cc_emails,
             to_emails: to_emails,
             bcc_emails: bcc_emails,
             from_email: from_email,
             category: schema_less_note.try(:category),
-            email_failure_count: schema_less_note.failure_count
+            email_failure_count: schema_less_note.failure_count,
+            outgoing_failures: schema_less_properties[:errors]
           }
         else
           {

@@ -15,6 +15,12 @@ class InstalledApplicationDecorator < ApiDecorator
   def configs_hash
     return {} unless configs[:inputs].present?
     configs_hash = configs[:inputs]
+    # For shopify - we need to remove the oauth token for the additional stores
+    if application.shopify? && configs_hash['additional_stores'].present?
+      configs_hash['additional_stores'] =
+        configs_hash['additional_stores'].each { |key, value| value.symbolize_keys!.except!(*Integrations::Constants::EXCLUDE_FROM_APP_CONFIGS_HASH) }
+    end
+
     # For Dropbox - we need to pass the authkey for loading the chooser
     if Integrations::Constants::ATTACHMENT_APPS.include?(application.name)
       return configs_hash

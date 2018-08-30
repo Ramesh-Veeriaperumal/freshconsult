@@ -92,7 +92,7 @@ module ApiTicketConstants
 
   REQUIRE_PRELOAD = [:bulk_delete, :bulk_spam, :bulk_unspam, :bulk_restore].freeze
   BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update, :delete_forever, :bulk_delete, :bulk_spam, :bulk_restore, :bulk_unspam].freeze
-  BULK_ACTION_METHODS = [:bulk_link] + BULK_ACTION_ASYNC_METHODS
+  BULK_ACTION_METHODS = [:bulk_link, :bulk_unlink] + BULK_ACTION_ASYNC_METHODS
 
   LOAD_OBJECT_EXCEPT = (BULK_ACTION_METHODS + [:merge, :empty_trash, :empty_spam]).freeze
 

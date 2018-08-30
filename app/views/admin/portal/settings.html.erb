@@ -1,3 +1,12 @@
+<%if support_mint_applicable?%>
+    <div class="notification-box">
+		<%if current_account.portals.count>1%>
+			<%=t("portalcss.mint_info_portal_settings")%><br>
+		<%else%>
+			<%=t("portalcss.mint_info_portal_setting")%><br>
+		<%end%>
+	</div>
+<%end%>
 <% @enable_pattern = true %>
 <% content_for :sidebar do -%><%- end %>
 <%= render :partial => 'header', :locals => { :active => :settings } %>

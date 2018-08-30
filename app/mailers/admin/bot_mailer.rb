@@ -1,7 +1,7 @@
 class Admin::BotMailer < ActionMailer::Base
   include EmailHelper
 
-  RECIPIENTS = ['fd-suicide-squad@freshworks.com'].freeze
+  RECIPIENTS = ['fd-freddybot-alerts@freshworks.com'].freeze
 
   def bot_training_completion_email(bot, to_email, user_name, categories)
     headers = {
@@ -18,7 +18,7 @@ class Admin::BotMailer < ActionMailer::Base
     end.deliver
   end
 
-  def bot_training_incomplete_email(bot_id)
+  def bot_training_incomplete_email(bot_data)
     headers = {
       to: RECIPIENTS,
       from: AppConfig['from_email'],
@@ -26,7 +26,7 @@ class Admin::BotMailer < ActionMailer::Base
       sent_on: Time.zone.now
     }
     mail(headers) do |part|
-      part.html { render 'bot_training_incomplete', locals: { account_id: Account.current.id, bot_id: bot_id } }
+    part.html { render 'bot_training_incomplete', locals: { account_id: Account.current.id, bot_id: bot_data[:bot_id], external_id: bot_data[:external_id], domain: Account.current.full_domain, portal_id: bot_data[:portal_id] } }
     end.deliver
   end
 end

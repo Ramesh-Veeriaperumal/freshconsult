@@ -8,26 +8,30 @@ module Ember
       include Helpdesk::ToggleEmailNotification
       include AssociateTicketsHelper
 
-      before_filter :link_tickets_enabled?, only: [:bulk_link]
+      before_filter :link_tickets_enabled?, only: [:bulk_link, :bulk_unlink]
       before_filter :disable_notification, only: [:bulk_update], if: :notification_not_required?
       after_filter  :enable_notification, only: [:bulk_update], if: :notification_not_required?
 
       TICKET_ASSOCIATE_CONSTANTS_CLASS = :TicketAssociateConstants.to_s.freeze
 
       def bulk_link
-        @constants_klass = TICKET_ASSOCIATE_CONSTANTS_CLASS
-        @validation_klass = TicketAssociateConstants::VALIDATION_CLASS
-        return unless validate_body_params
-        @tracker = Account.current.tickets.find_by_display_id(params[:tracker_id])
-        @delegator_klass = TicketAssociateConstants::TRACKER_DELEGATOR_CLASS
-        return unless validate_delegator(@tracker)
-        fetch_objects
-        unless @items.present?
-          return render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
+        validate_bulk_associated_objects do
+          @tracker = Account.current.tickets.find_by_display_id(params[:tracker_id])
+          @delegator_klass = TicketAssociateConstants::TRACKER_DELEGATOR_CLASS
+          return unless validate_delegator(@tracker)
+          fetch_objects
         end
-        validate_items_to_bulk_link
-        execute_bulk_link
-        render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
+        ::Tickets::LinkTickets.perform_async(related_ticket_ids: @tickets.map(&:display_id), 
+          tracker_id: params[:tracker_id]) if @tickets.present?
+        @items ? render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors) : return
+      end
+
+      def bulk_unlink
+        validate_bulk_associated_objects do
+          fetch_objects(scoper, false)
+        end
+        ::Tickets::UnlinkTickets.perform_async(related_ticket_ids: @tickets.map(&:display_id)) if @tickets.present?
+        @items ? render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors) : return
       end
 
       def bulk_update
@@ -56,7 +60,7 @@ module Ember
 
       private
 
-        def validate_items_to_bulk_link
+        def validate_items_to_bulk_link_or_unlink
           @items_failed = []
           @validation_errors = {}
           @delegator_klass = TicketAssociateConstants::DELEGATOR_CLASS
@@ -70,9 +74,15 @@ module Ember
           end
         end
 
-        def execute_bulk_link
-          items = @items - @items_failed
-          ::Tickets::LinkTickets.perform_async(related_ticket_ids: items.map(&:display_id), tracker_id: params[:tracker_id]) if items.present?
+        def validate_bulk_associated_objects
+          @constants_klass  = TICKET_ASSOCIATE_CONSTANTS_CLASS
+          @validation_klass = TicketAssociateConstants::VALIDATION_CLASS
+          return unless validate_body_params
+          yield
+          if @items.present?
+            validate_items_to_bulk_link_or_unlink
+            @tickets = @items - @items_failed
+          end
         end
 
         def validate_update_params(item, validation_context)
@@ -194,8 +204,9 @@ module Ember
           ::Tickets::BulkScenario.perform_async(ticket_ids: bulk_action_succeeded_items, scenario_id: cname_params[:scenario_id])
         end
 
-        def fetch_objects(items = scoper)
-          @items = items.find_all_by_param(permissible_ticket_ids(cname_params[:ids]))
+        def fetch_objects(items = scoper, check_permission = true)
+          ids = check_permission ? permissible_ticket_ids(cname_params[:ids]) : cname_params[:ids]
+          @items = items.find_all_by_param(ids)
         end
 
         def tickets_to_update

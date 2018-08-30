@@ -537,6 +537,48 @@
         }
       }
     },
+    "/tickets/bulk_unlink": {
+      "put": {
+        "summary": "Bulk Unlink",
+        "tags": [
+          "ticket"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/bulk_action_input"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/tickets/bulk_delete": {
       "put": {
         "tags": [
@@ -8013,6 +8055,157 @@
           }
         }
       }
+    },
+    "/proactive/rules": {
+      "get": {
+        "tags": [
+          "proactive rules"
+        ],
+        "summary": "List all",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rules": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/proactive_rule_response"
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/meta"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "proactive rules"
+        ],
+        "description": "Create rule",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/proactive_rule_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/proactive_rule_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "rule not found"
+          }
+        }
+      }
+    },
+    "/proactive/rules/{id}": {
+      "get": {
+        "tags": [
+          "proactive rules"
+        ],
+        "summary": "Show rule",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/proactive_rule_response"
+            }
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "proactive rules"
+        ],
+        "summary": "Delete rule",
+        "description": "Destroys the rule, will not be able to restore",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "proactive rules"
+        ],
+        "summary": "Update rule",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/proactive_rule_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/proactive_rule_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -10456,6 +10649,14 @@
         }
       }
     },
+    "proactive_rule_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/rule"
+        }
+      ]
+    },
     "sandbox_merge_input": {
       "type": "object",
       "properties": {
@@ -12831,6 +13032,24 @@
         }
       ]
     },
+    "rule": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "event": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "event"
+      ]
+    },
     "meta": {
       "type": "object",
       "title": "meta",
@@ -14729,6 +14948,17 @@
           ]
         }
       }
+    },
+    "proactive_rule_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/rule"
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
     },
     "trial_widget_index": {
       "type": "object",
