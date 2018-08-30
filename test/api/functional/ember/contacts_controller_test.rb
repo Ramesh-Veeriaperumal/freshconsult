@@ -791,6 +791,26 @@ module Ember
       match_json(private_api_index_contact_pattern)
     end
 
+    def test_index_with_stop_count_disabled
+      count = Account.current.all_contacts.where("users.deleted = 0 AND users.blocked = 0").count
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account)
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      assert response.api_meta[:count] == count + BULK_CONTACT_CREATE_COUNT
+      assert_not_nil response.api_meta[:next_page]
+    end
+
+    def test_index_with_stop_count_enabled
+      Account.current.launch(:stop_contacts_count_query)
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account)
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      assert response.api_meta[:count].nil?
+      assert_not_nil response.api_meta[:next_page]
+      ensure
+        Account.current.rollback(:stop_contacts_count_query)
+    end
+
     def test_bulk_delete_with_no_params
       put :bulk_delete, construct_params({ version: 'private' }, {})
       assert_response 400

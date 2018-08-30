@@ -15,8 +15,8 @@ class Account < ActiveRecord::Base
                    :dashboard_announcement_central_publish, :dashboard_announcements,
                    :timeline, :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes,
                    :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, 
-                   :old_link_back_url_validation, :shopify_actions, :db_to_bitmap_features_migration]
-
+                   :old_link_back_url_validation, :shopify_actions, :stop_contacts_count_query,
+                   :db_to_bitmap_features_migration]
 
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   
