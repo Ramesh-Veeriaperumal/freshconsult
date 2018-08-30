@@ -3,7 +3,7 @@ class Account < ActiveRecord::Base
                    :customer_sentiment_ui, :dkim, :scheduled_ticket_export,
                    :ticket_contact_export, :email_failures, :disable_emails,
                    :falcon_portal_theme, :freshid, :freshchat_integration,:year_in_review_2017,
-                   :facebook_page_redirect, :announcements_tab, :archive_ghost,
+                   :facebook_page_redirect, :announcements_tab,
                    :ticket_central_publish, :solutions_central_publish, :es_msearch,
                    :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
                    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3,
@@ -260,10 +260,6 @@ class Account < ActiveRecord::Base
 
   def freshconnect_enabled?
     has_feature?(:freshconnect) && freshconnect_account.present? && freshconnect_account.enabled
-  end
-
-  def archive_tickets_feature_enabled?
-    archive_tickets_enabled? || archive_ghost_enabled?
   end
 
   def falcon_ui_enabled?(current_user = :no_user)
