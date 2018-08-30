@@ -6,6 +6,8 @@ module SearchTestHelper
   include CompaniesTestHelper
   include ContactFieldsHelper
 
+  SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search]
+
   def create_search_ticket(params)
     cc_emails = params[:cc_emails] || []
     fwd_emails = params[:fwd_emails] || []
@@ -110,6 +112,53 @@ module SearchTestHelper
       end
     end
     sleep(10)
+  end
+
+  def solution_article_pattern(article, context = 'spotlight')
+    article_pattern = {
+      id: article.parent_id,
+      type: article.parent.art_type,
+      category_id: article.parent.solution_category_meta.id,
+      folder_id: article.parent.solution_folder_meta.id,
+      folder_visibility: article.parent.solution_folder_meta.visibility,
+      agent_id: article.user_id,
+      path: article.to_param,
+      modified_at: article.modified_at.try(:utc),
+      modified_by: article.modified_by,
+      language_id: article.language_id,
+    }
+    article_pattern.merge!(article_content_pattern(article.draft || article, context))
+    article_pattern.merge!(parents_info(article))
+    article_pattern
+  end
+
+  def parents_info(article)
+    {
+      category_name: article.solution_folder_meta.solution_category_meta.safe_send("#{language_short_code(article)}_category").name,
+      folder_name: article.solution_folder_meta.safe_send("#{language_short_code(article)}_folder").name
+    }
+  end
+
+  def article_content_pattern(item, context)
+    article_content_pattern = {
+      title: item.title,
+      status: item.status,
+      created_at: item.created_at.try(:utc),
+      updated_at: item.updated_at.try(:utc)
+    }
+    article_content_pattern.merge!(description_hash(item)) unless context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(context)
+    article_content_pattern
+  end
+
+  def description_hash(item)
+    {
+      description: item.description,
+      description_text: item.is_a?(Solution::Article) ? item.desc_un_html : un_html(item.description),
+    }
+  end
+
+  def language_short_code(article)
+    Language.find(article.language_id).to_key
   end
 
   def topic_pattern(topic)
