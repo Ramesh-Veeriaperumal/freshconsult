@@ -12,7 +12,7 @@ class Signup < ActivePresenter::Base
   before_validation :create_global_shard
 
   after_save :make_user_current, :set_i18n_locale, :populate_seed_data
-  after_save :create_freshid_org_and_account
+  after_save :create_freshid_org_and_account, if: :freshid_signup_allowed?
 
   MAX_ACCOUNTS_COUNT = 10
   #Using this as the version of Rack::Utils we are using doesn't have support for 429
@@ -147,6 +147,10 @@ class Signup < ActivePresenter::Base
   
     def support_email
       "support@#{account.full_domain}"
+    end
+
+    def freshid_signup_allowed?
+      redis_key_exists? FRESHID_NEW_ACCOUNT_SIGNUP_ENABLED
     end
 
     # * * * POD Operation Methods Begin * * *
