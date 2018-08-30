@@ -98,7 +98,7 @@ class UserEmail < ActiveRecord::Base
   protected
 
     def drop_authorization
-      user.drop_authorization
+      user.delete_user_authorizations
     end
 
   private
