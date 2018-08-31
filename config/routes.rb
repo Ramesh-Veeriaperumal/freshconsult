@@ -3285,6 +3285,8 @@ Helpkit::Application.routes.draw do
   match "/admin/bot/*letter", to: redirect('/helpdesk')
   match "/bot/*letter", to: redirect('/helpdesk')
 
+  match "/admin/advanced-ticketing", to: redirect('/helpdesk')
+
   match '/freshid/authorize_callback', :controller => 'freshid', :action => 'authorize_callback', :method => :get
   match '/freshid/oauth_agent_authorize_callback', :controller => 'freshid', :action => 'oauth_agent_authorize_callback', :method => :get
   match '/freshid/oauth_customer_authorize_callback', :controller => 'freshid', :action => 'oauth_customer_authorize_callback', :method => :get
