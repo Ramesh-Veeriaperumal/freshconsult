@@ -153,4 +153,6 @@ module Integrations::Constants
   FALCON_ENABLED_OAUTH_APPS = [APP_NAMES[:google_calendar],
     APP_NAMES[:salesforce], APP_NAMES[:mailchimp], APP_NAMES[:surveymonkey],
     APP_NAMES[:outlook_contacts]].freeze
+
+  SKIP_FALCON_RENDER_APPS = [APP_NAMES[:parent_child_tickets], APP_NAMES[:link_tickets], APP_NAMES[:shared_ownership]].freeze
 end

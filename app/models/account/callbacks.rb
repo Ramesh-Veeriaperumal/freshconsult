@@ -15,6 +15,7 @@ class Account < ActiveRecord::Base
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
+  after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_changed?
 
   before_validation :sync_name_helpdesk_name
   
@@ -96,13 +97,16 @@ class Account < ActiveRecord::Base
     if falcon_ui_applicable?
       self.launch(:falcon_signup)           # To track falcon signup accounts
       self.launch(:falcon_portal_theme)  unless redis_key_exists?(DISABLE_PORTAL_NEW_THEME)   # Falcon customer portal
-      self.launch(:archive_ghost)           # enabling archive ghost feature
     end
     launch_freshid_with_omnibar if freshid_signup_allowed?
   end
 
   def update_activity_export
     ScheduledExport::ActivitiesExport.perform_async if time_zone_changed? && activity_export_from_cache.try(:active)
+  end
+
+  def update_advanced_ticketing_applications
+    NewPlanChangeWorker.perform_async({features: [:disable_old_ui], action: @action})
   end
 
   def destroy_freshid_account
@@ -538,4 +542,14 @@ class Account < ActiveRecord::Base
       Rails.logger.error("#{error_msg} :: #{e.inspect}")
     end
 
+    def disable_old_ui_changed?
+      self.changes[:plan_features].present? && bitmap_feature_changed?(Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES[:disable_old_ui])
+    end
+
+    def bitmap_feature_changed?(feature_val)
+      old_feature = self.changes[:plan_features][0].to_i
+      new_feature = self.changes[:plan_features][1].to_i
+      return false if ((old_feature ^ new_feature) & (2**feature_val)).zero?
+      @action = (old_feature & (2**feature_val)).zero? ? "add" : "drop"
+    end
 end

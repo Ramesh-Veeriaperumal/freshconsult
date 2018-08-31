@@ -5,6 +5,7 @@
     no_custom_app = true
     falcon_enabled = current_account.falcon_ui_enabled?(current_user)
     applications.each do |application| %>
+      <% next if falcon_enabled && skip_falcon_render?(application.name) %>
       <% if application.name == "slack" %>
         <% next if exists_in_installed_apps?(application, @installed_applications).blank? %>
       <% end %>

@@ -70,4 +70,8 @@ module Integrations::IntegrationHelper
   ensure
     ActiveSupport::JSON::Encoding.escape_html_entities_in_json = curr_value
   end
+
+  def skip_falcon_render? app_name
+    Integrations::Constants::SKIP_FALCON_RENDER_APPS.include?(app_name)
+  end
 end
