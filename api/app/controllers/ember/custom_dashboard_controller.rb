@@ -77,26 +77,22 @@ module Ember
     end
 
     def create_announcement
-      check_announcement_feature
       return unless validate_req_params(@item, announcement_text: params[:announcement_text])
       build_announcement
       @dashboard_announcement.save ? @announcement = announcement_for_dashboard : render_errors(@dashboard_announcement.errors)
     end
 
     def end_announcement
-      check_announcement_feature
       @announcement = @item.announcements.active.first
       head 404 and return unless @announcement
       @result = @announcement.deactivate ? { success: true } : render_errors(@announcement.errors)
     end
 
     def get_announcements
-      check_announcement_feature
       @announcements, response.api_meta = fetch_announcements_with_count(params['page'])
     end
 
     def fetch_announcement
-      check_announcement_feature
       @announcement = fetch_announcement_with_viewers
     end
 
@@ -152,10 +148,6 @@ module Ember
 
       def feature_name
         :custom_dashboard
-      end
-
-      def check_announcement_feature
-        render_request_error(:require_feature, 403, feature: 'Dashboard Announcements') unless Account.current.launched? :dashboard_announcements
       end
 
       def scoper

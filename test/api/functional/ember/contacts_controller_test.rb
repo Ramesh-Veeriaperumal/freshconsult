@@ -178,6 +178,28 @@ module Ember
       @account.reload
     end
 
+    def test_create_contact_with_view_all_tickets_as_nil
+      company_ids = [create_company, create_company].map(&:id)
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email,
+                                                             company: {
+                                                               id: company_ids[0],
+                                                               view_all_tickets: nil
+                                                             },
+                                                             other_companies: [
+                                                               {
+                                                                 id: company_ids[1],
+                                                                 view_all_tickets: nil
+                                                               }
+                                                             ])
+      assert_response 201
+      match_json(private_api_contact_pattern(User.last))
+      assert User.last.user_companies.find_by_default(true).company_id == company_ids[0]
+      assert User.last.user_companies.find_by_default(true).client_manager == false
+      assert User.last.user_companies.find_by_default(false).company_id == company_ids[1]
+      assert User.last.user_companies.find_by_default(false).client_manager == false
+    end
+
     def test_create_contact_with_other_companies
       company_ids = [create_company, create_company].map(&:id)
       post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
@@ -410,6 +432,30 @@ module Ember
       assert sample_user.user_companies.find_by_default(false).client_manager == true
     end
 
+    def test_update_contact_with_view_all_tickets_as_nil
+      sample_user = add_new_user(@account)
+      company_ids = [create_company, create_company].map(&:id)
+      put :update, construct_params({ version: 'private', id: sample_user.id },
+                                    company: {
+                                      id: company_ids[0],
+                                      view_all_tickets: nil
+                                    },
+                                    other_companies: [
+                                      {
+                                        id: company_ids[1],
+                                        view_all_tickets: nil
+                                      }
+                                    ])
+      assert_response 200
+      pattern = private_api_contact_pattern(sample_user.reload)
+      pattern.delete(:other_companies)
+      match_json(pattern)
+      assert sample_user.user_companies.find_by_default(true).company_id == company_ids[0]
+      assert sample_user.user_companies.find_by_default(true).client_manager == false
+      assert sample_user.user_companies.find_by_default(false).company_id == company_ids[1]
+      assert sample_user.user_companies.find_by_default(false).client_manager == false
+    end
+
     def test_update_contact_with_other_companies_name
       sample_user = add_new_user(@account)
       comp_name1 = Faker::Lorem.characters(10)
@@ -601,6 +647,13 @@ module Ember
       assert_response 201
     end
 
+    def test_quick_create_with_default_language
+      post :quick_create, construct_params({version: 'private'},  name: Faker::Lorem.characters(10),
+                                          email: Faker::Internet.email)
+      assert_response 201
+      assert_equal User.last.language, @account.language
+    end
+
     # Show User
     def test_show_a_contact
       sample_user = add_new_user(@account)
@@ -736,6 +789,26 @@ module Ember
       get :index, controller_params(version: 'private')
       assert_response 200
       match_json(private_api_index_contact_pattern)
+    end
+
+    def test_index_with_stop_count_disabled
+      count = Account.current.all_contacts.where("users.deleted = 0 AND users.blocked = 0").count
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account)
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      assert response.api_meta[:count] == count + BULK_CONTACT_CREATE_COUNT
+      assert_not_nil response.api_meta[:next_page]
+    end
+
+    def test_index_with_stop_count_enabled
+      Account.current.launch(:stop_contacts_count_query)
+      contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account)
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      assert response.api_meta[:count].nil?
+      assert_not_nil response.api_meta[:next_page]
+      ensure
+        Account.current.rollback(:stop_contacts_count_query)
     end
 
     def test_bulk_delete_with_no_params

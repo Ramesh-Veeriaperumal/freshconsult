@@ -73,8 +73,8 @@ module Ember
 
     def reply_note_params_hash
       body = Faker::Lorem.paragraph
-      email = [Faker::Internet.email, Faker::Internet.email]
-      bcc_emails = [Faker::Internet.email, Faker::Internet.email]
+      email = [Faker::Internet.email, Faker::Internet.email, "\"#{Faker::Name.name}\" <#{Faker::Internet.email}>"]
+      bcc_emails = [Faker::Internet.email, Faker::Internet.email, "\"#{Faker::Name.name}\" <#{Faker::Internet.email}>"]
       email_config = @account.email_configs.where(active: true).first || create_email_config
       params_hash = { body: body, cc_emails: email, bcc_emails: bcc_emails, from_email: email_config.reply_email }
       params_hash
@@ -82,9 +82,9 @@ module Ember
 
     def forward_note_params_hash
       body = Faker::Lorem.paragraph
-      to_emails = [Faker::Internet.email]
-      cc_emails = [Faker::Internet.email, Faker::Internet.email]
-      bcc_emails = [Faker::Internet.email, Faker::Internet.email]
+      to_emails = [Faker::Internet.email, Faker::Internet.email, "\"#{Faker::Name.name}\" <#{Faker::Internet.email}>"]
+      cc_emails = [Faker::Internet.email, Faker::Internet.email, "\"#{Faker::Name.name}\" <#{Faker::Internet.email}>"]
+      bcc_emails = [Faker::Internet.email, Faker::Internet.email, "\"#{Faker::Name.name}\" <#{Faker::Internet.email}>"]
       email_config = @account.email_configs.where(active: true).first || create_email_config
       params_hash = { body: body, to_emails: to_emails, cc_emails: cc_emails, bcc_emails: bcc_emails, from_email: email_config.reply_email }
       params_hash

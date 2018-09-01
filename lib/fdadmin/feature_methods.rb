@@ -1,7 +1,9 @@
 module Fdadmin::FeatureMethods
 
-    BITMAP_FEATURES = YAML.load_file(File.join(
-      Rails.root, 'config/features', 'features.yml'))[:features][:plan_features][:feature_list].keys
+    BITMAP_FEATURES_WITH_VALUES = YAML.load_file(File.join(
+      Rails.root, 'config/features', 'features.yml'))[:features][:plan_features][:feature_list]
+
+    BITMAP_FEATURES = BITMAP_FEATURES_WITH_VALUES.keys
 
     FEATURE_TYPES = ["bitmap", "db", "launchparty"]
 
