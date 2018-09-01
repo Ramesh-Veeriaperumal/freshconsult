@@ -115,6 +115,7 @@ class Account < ActiveRecord::Base
 
   }
 
+  DB_TO_BITMAP_MIGRATION_FEATURES_LIST = PLANS_AND_FEATURES.collect{|key, value| value[:features]}.flatten!.uniq!
   ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets, :shared_ownership]
   ADVANCED_FEATURES_TOGGLE = ADVANCED_FEATURES.map{|f| "#{f}_toggle".to_sym}
 

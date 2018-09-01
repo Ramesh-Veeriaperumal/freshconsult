@@ -1,7 +1,7 @@
 class CompanyDecorator < ApiDecorator
   delegate :id, :name, :description, :note, :health_score,
            :account_tier, :industry, :tam_fields, to: :record
-  delegate :tam_default_company_fields_enabled?, to: 'Account.current'
+  delegate :tam_default_fields_enabled?, to: 'Account.current'
 
   def initialize(record, options)
     super(record)
