@@ -6,6 +6,8 @@ module SearchTestHelper
   include CompaniesTestHelper
   include ContactFieldsHelper
 
+  SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search]
+
   def create_search_ticket(params)
     cc_emails = params[:cc_emails] || []
     fwd_emails = params[:fwd_emails] || []
@@ -110,5 +112,79 @@ module SearchTestHelper
       end
     end
     sleep(10)
+  end
+
+  def solution_article_pattern(article, context = 'spotlight')
+    article_pattern = {
+      id: article.parent_id,
+      type: article.parent.art_type,
+      category_id: article.parent.solution_category_meta.id,
+      folder_id: article.parent.solution_folder_meta.id,
+      folder_visibility: article.parent.solution_folder_meta.visibility,
+      agent_id: article.user_id,
+      path: article.to_param,
+      modified_at: article.modified_at.try(:utc),
+      modified_by: article.modified_by,
+      language_id: article.language_id,
+    }
+    article_pattern.merge!(article_content_pattern(article.draft || article, context))
+    article_pattern.merge!(parents_info(article))
+    article_pattern
+  end
+
+  def parents_info(article)
+    {
+      category_name: article.solution_folder_meta.solution_category_meta.safe_send("#{language_short_code(article)}_category").name,
+      folder_name: article.solution_folder_meta.safe_send("#{language_short_code(article)}_folder").name
+    }
+  end
+
+  def article_content_pattern(item, context)
+    article_content_pattern = {
+      title: item.title,
+      status: item.status,
+      created_at: item.created_at.try(:utc),
+      updated_at: item.updated_at.try(:utc)
+    }
+    article_content_pattern.merge!(description_hash(item)) unless context && SEARCH_CONTEXTS_WITHOUT_DESCRIPTION.include?(context)
+    article_content_pattern
+  end
+
+  def description_hash(item)
+    {
+      description: item.description,
+      description_text: item.is_a?(Solution::Article) ? item.desc_un_html : un_html(item.description),
+    }
+  end
+
+  def language_short_code(article)
+    Language.find(article.language_id).to_key
+  end
+
+  def topic_pattern(topic)
+    category = topic.forum.forum_category
+    {
+      id: topic.id,
+      title: topic.title,
+      forum_id: topic.forum_id,
+      user_id: topic.user_id,
+      locked: topic.locked,
+      published: topic.published,
+      stamp_type: topic.stamp_type,
+      replied_by: topic.replied_by,
+      user_votes: topic.user_votes,
+      merged_topic_id: topic.merged_topic_id,
+      comments_count: topic.posts_count,
+      sticky: topic.sticky.to_s.to_bool,
+      created_at: topic.created_at.try(:utc),
+      updated_at: topic.updated_at.try(:utc),
+      replied_at: topic.replied_at.try(:utc),
+      hits: topic.hits,
+      replied_by: topic.replied_by,
+      category_id: category.id,
+      category_name: category.name,
+      forum_name: topic.forum.name,
+      description_text: topic.topic_desc
+    }
   end
 end

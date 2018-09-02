@@ -209,3 +209,5 @@ api_error_messages:
   fill_values_upto_max_limit: "Choose upto %{max_limit} values found in primary/secondary contacts: '%{values}'"
   invalid_topic: "Topic ID is invalid"
   cannot_convert_topic_to_ticket: "This topic has already been converted into a ticket (#%{ticket_id})"
+  feature_exists: "The %{feature} feature is already available for the account."
+  feature_unavailable: "The %{feature} feature is not available for the account."

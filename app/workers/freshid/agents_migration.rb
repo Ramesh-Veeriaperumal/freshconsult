@@ -66,7 +66,7 @@ module Freshid
       end
 
       def modify_agent_password_policy
-        @revert_migration ? @account.agent_password_policy.try(:destroy) : @account.build_default_password_policy(PasswordPolicy::USER_TYPE[:agent]).save!
+        @revert_migration ? @account.build_default_password_policy(PasswordPolicy::USER_TYPE[:agent]).save! : @account.agent_password_policy.try(:destroy)
       rescue Exception => e
         log_migration_error(FRESHID_AGENT_PASSWORD_POLICY_ERROR, { revert_migration: @revert_migration }, e)
       end

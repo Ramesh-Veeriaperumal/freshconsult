@@ -274,6 +274,7 @@ module Ember
         rescue => e
           Rails.logger.error "Exception while enqueueing to ml overall learning: #{e.message}, #{bot_info}"
           NewRelic::Agent.notice_error(e)
+          raise e
         end
 
         def handle_category_mapping_failure(error_message)

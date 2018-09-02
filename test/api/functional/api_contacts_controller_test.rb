@@ -211,6 +211,18 @@ class ApiContactsControllerTest < ActionController::TestCase
     match_json(deleted_contact_pattern(User.last))
   end
 
+  def test_create_contact_with_default_language
+    comp = get_company
+    post :create, construct_params({},  name: Faker::Lorem.characters(15),
+                                        email: Faker::Internet.email,
+                                        view_all_tickets: true,
+                                        company_id: comp.id,
+                                        time_zone: 'Mountain Time (US & Canada)')
+    assert_response 201
+    match_json(deleted_contact_pattern(User.last))
+    assert_equal User.last.language, @account.language
+  end
+
   def test_create_contact_with_invalid_tags
     comp = get_company
     post :create, construct_params({},  name: Faker::Lorem.characters(15),
@@ -1447,7 +1459,6 @@ class ApiContactsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('mobile', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('address', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
-                bad_request_error_pattern('view_all_tickets', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('twitter_id', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('phone', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('tags', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: 'Null'),
@@ -2258,11 +2269,7 @@ class ApiContactsControllerTest < ActionController::TestCase
                                               view_all_tickets: nil
                                             }
                                           ])
-    assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field(
-      'other_companies', 'view_all_tickets',
-      :datatype_mismatch, expected_data_type: 'Boolean' )]
-    )
+    assert_response 201
   end
 
   def test_create_contact_with_client_manager_integer

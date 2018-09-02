@@ -1,0 +1,80 @@
+module Ember
+  module Admin
+    class AdvancedTicketingController < ApiApplicationController
+      include HelperConcern
+      include Integrations::AdvancedTicketing::AdvFeatureMethods
+      include Redis::RedisKeys
+      include Redis::HashMethods
+
+      def create
+        disable_old_ui_enabled? ? (add_feature cname_params[:name].to_sym) : @item.save!
+        head 204
+      rescue Exception => e
+        Rails.logger.error("Exception while creating advanced ticketing app, account::#{current_account.id}, message::#{e.message}, backtrace::#{e.backtrace.join('\n')}")
+        render_errors({message: e.message})
+      end
+
+      def destroy
+        return unless validate_query_params
+        return unless validate_delegator(nil, { feature: params[:id] })
+        disable_old_ui_enabled? ? (remove_feature params[:id].to_sym) : @item.destroy
+        head 204
+      rescue Exception => e
+        Rails.logger.error("Exception while deleting advanced ticketing app, account::#{current_account.id}, message::#{e.message}, backtrace::#{e.backtrace.join('\n')}")
+        render_errors({message: e.message})
+      end
+
+      def insights
+        return unless validate_query_params
+        @items = multi_get_all_redis_hash(ADVANCED_TICKETING_METRICS)
+        @items = insights_from_s3 if @items.empty?
+      end
+
+      private
+
+      def constants_class
+        'AdvancedTicketingConstants'.freeze
+      end
+
+      def scoper
+        current_account.installed_applications
+      end
+
+      def load_object
+        return if disable_old_ui_enabled?
+        log_and_render_404 unless load_application_by_name(params[:id]) && (@item = scoper.find_by_application_id(@application.id))
+      end
+
+      def disable_old_ui_enabled?
+        current_account.disable_old_ui_enabled?
+      end
+
+      def load_application_by_name(app_name)
+        @application = Integrations::Application.available_apps(current_account.id).find_by_name(app_name)
+      end
+
+      def validate_params
+        return unless validate_body_params
+        load_application_by_name(cname_params[:name])
+        return unless validate_delegator(@application, { feature: cname_params[:name] })
+      end
+
+      def build_object
+        return if disable_old_ui_enabled?
+        @item = Integrations::InstalledApplication.new({account: current_account, application: @application})
+      end
+
+      def insights_from_s3
+        Rails.logger.info("Retrieving insights from s3-baikal, Account::#{current_account.id}")
+        metrics_data = JSON.parse(AwsWrapper::S3Object.read(AdvancedTicketingConstants::S3_FILE_PATH, S3_CONFIG[:baikal_bucket]))
+        multi_set_redis_hash(ADVANCED_TICKETING_METRICS, metrics_data.to_a.flatten, AdvancedTicketingConstants::REDIS_EXPIRY)
+        metrics_data
+      rescue Exception => e
+        Rails.logger.error("Exception while getting insights, Account::#{current_account.id}, Exception::#{e.message}")
+        NewRelic::Agent.notice_error(e, description: "Exception while fetching metrics from s3 for account::#{current_account.id}")
+        render_base_error(:internal_error, 500)
+      end
+
+    end
+  end
+end

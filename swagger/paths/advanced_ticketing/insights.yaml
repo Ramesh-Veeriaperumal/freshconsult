@@ -1,0 +1,15 @@
+get:
+  tags: [Advanced Ticketing]
+  description: Retrieve the insights of advanced ticketing applications
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/advanced_ticketing_insights'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+

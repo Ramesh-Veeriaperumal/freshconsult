@@ -3,7 +3,7 @@ class CompanyDecorator < ApiDecorator
 
   delegate :id, :name, :description, :note, :users, :avatar, :health_score,
            :account_tier, :industry, :tam_fields, to: :record
-  delegate :tam_default_company_fields_enabled?, to: 'Account.current'
+  delegate :tam_default_fields_enabled?, to: 'Account.current'
 
   def initialize(record, options)
     super(record)
@@ -47,7 +47,7 @@ class CompanyDecorator < ApiDecorator
       custom_fields: custom_fields,
       avatar: avatar_hash
     }
-    response.merge!(tam_fields) if tam_default_company_fields_enabled?
+    response.merge!(tam_fields) if tam_default_fields_enabled?
     response
   end
 

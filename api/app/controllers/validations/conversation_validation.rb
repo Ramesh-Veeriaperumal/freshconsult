@@ -18,7 +18,7 @@ class ConversationValidation < ApiValidation
   validates :from_email, custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, accepted: :'valid email address' }
   validates :notify_emails, :to_emails, :attachments, :cc_emails, :bcc_emails, data_type: { rules: Array }
   validates :notify_emails, :to_emails, :cc_emails, :bcc_emails, custom_length: { maximum: ApiTicketConstants::MAX_EMAIL_COUNT, message_options: { element_type: :values } }
-  validates :notify_emails, :to_emails, :cc_emails, :bcc_emails, array: { custom_format: { with: ApiConstants::EMAIL_VALIDATOR, allow_nil: true, accepted: :'valid email address' } }
+  validates :notify_emails, :to_emails, :cc_emails, :bcc_emails, array: { custom_format: { with: ApiConstants::NAMED_EMAIL_VALIDATOR, allow_nil: true, accepted: :'valid email address' } }
   validates :to_emails, required: true, on: :forward
   validates :to_emails, required: true, on: :reply_to_forward
   validates :include_quoted_text, custom_absence: { message: :cannot_be_set }, if: -> { include_quoted_text.to_s == 'true' && full_text.present? }

@@ -359,6 +359,22 @@ end
     ::Freshconnect::UpdateFreshconnect.perform_async(true)
   end
 
+  def handle_disable_old_ui_add_data
+    ::AdvancedTicketingConstants::ADVANCED_TICKETING_APPS.each do |app_name|
+      account.installed_applications.with_name(app_name).each { |app| app.destroy }
+    end
+  end
+
+  def handle_disable_old_ui_drop_data
+    ::AdvancedTicketingConstants::ADVANCED_TICKETING_APPS.each do |app_name|
+      if account.safe_send("#{app_name}_enabled?") && account.installed_applications.with_name(app_name).blank?
+        application = Integrations::Application.available_apps(account.id).find_by_name(app_name)
+        app = Integrations::InstalledApplication.new({ account: account, application: application })
+        app.save!
+      end
+    end
+  end
+
   private
 
   def default_portal_preferences

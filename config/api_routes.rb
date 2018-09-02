@@ -263,6 +263,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :advanced_ticketing, controller: 'ember/admin/advanced_ticketing', only: [ :create, :destroy ] do
+      collection do
+        get :insights
+      end
+    end
+
     match 'tickets/archived/export' => 'archive/tickets#export', via: :post
     match 'tickets/archived/:id/activities' => 'archive/tickets/activities#index', via: :get
     match 'freshconnect_account' => 'ember/freshconnect#update', via: :put

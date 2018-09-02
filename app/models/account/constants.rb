@@ -115,6 +115,7 @@ class Account < ActiveRecord::Base
 
   }
 
+  DB_TO_BITMAP_MIGRATION_FEATURES_LIST = PLANS_AND_FEATURES.collect{|key, value| value[:features]}.flatten!.uniq!
   ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets, :shared_ownership]
   ADVANCED_FEATURES_TOGGLE = ADVANCED_FEATURES.map{|f| "#{f}_toggle".to_sym}
 
@@ -213,7 +214,8 @@ class Account < ActiveRecord::Base
     :post_central_publish => false, :audit_logs_central_publish => false, :twitter_common_redirect => false,
     :euc_migrated_twitter => false, :new_onboarding => false, :new_ticket_recieved_metric => false,
     :audit_log_ui => false, :es_msearch => true, :canned_forms => false, :attachment_virus_detection => false,
-    undo_send: false, timeline: false, twitter_microservice: true, twitter_handle_publisher: true, :old_link_back_url_validation => false, :shopify_actions => true
+    undo_send: false, timeline: false, twitter_microservice: true, twitter_handle_publisher: true, 
+    :old_link_back_url_validation => false, :shopify_actions => true,:stop_contacts_count_query => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days
