@@ -78,7 +78,7 @@ module Freshcaller
     end
 
     def account_admin
-      return account.account_managers.detect { |manager| !manager.occasional_agent? } if params[:fc_user_email].blank?
+      return current_account.account_managers.detect { |manager| !manager.occasional_agent? } if params[:fc_user_email].blank?
       admin_users = current_account.account_managers.select { |manager| manager.email == params[:fc_user_email] }
       admin_users.first
     end
