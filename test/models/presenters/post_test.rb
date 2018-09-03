@@ -36,5 +36,7 @@ class PostTest < ActiveSupport::TestCase
     test_post = create_test_post(test_topic)
     payload = test_post.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_post_pattern(test_post))
+    assoc_payload = test_post.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(central_publish_post_association_pattern)
   end
 end
