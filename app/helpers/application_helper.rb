@@ -123,7 +123,7 @@ module ApplicationHelper
 
   def support_theme_url
     stylesheet_name = is_current_language_rtl? ? "theme_rtl.css" : "theme.css"
-    if preview? || get_others_redis_key(mint_preview_key)
+    if preview? || (mint_preview_key && get_others_redis_key(mint_preview_key))
       query_string ="#{Time.now.to_i}&preview=true"
     else
       query_string = "#{current_portal.template.updated_at.to_i}"
@@ -133,7 +133,7 @@ module ApplicationHelper
 
   def facebook_theme_url
     stylesheet_name = is_current_language_rtl? ? "theme_rtl.css" : "theme.css"
-    if preview? || get_others_redis_key(mint_preview_key)
+    if preview? || (mint_preview_key && get_others_redis_key(mint_preview_key))
       query_string ="#{Time.now.to_i}&preview=true"
     else
       query_string = "#{current_portal.template.updated_at.to_i}"
