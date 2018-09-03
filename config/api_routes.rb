@@ -526,6 +526,8 @@ Helpkit::Application.routes.draw do
     resources :agent_password_policy, controller: 'ember/agent_password_policies',
                                         only: [:index]
 
+    resource :subscription, controller: 'admin/subscriptions', only: [:show]
+
     get '/yearin_review', to: 'ember/year_in_review#index'
     post '/yearin_review/share', to: 'ember/year_in_review#share'
     post '/yearin_review/clear', to: 'ember/year_in_review#clear'

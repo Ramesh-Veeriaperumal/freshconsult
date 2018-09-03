@@ -132,6 +132,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'admin/canned_form'
     resource :"ember/portal", only: [:show, :update]
     resource :'audit_log', only: [:filter, :export, :event_name]
+    resource :"admin/subscription", only: [:show]
     resource :"proactive/rule"
     resource :"proactive/outreach"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
