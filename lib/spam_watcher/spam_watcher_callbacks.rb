@@ -12,6 +12,7 @@ module SpamWatcherCallbacks
       class_attribute :spam_watcher_options
       self.spam_watcher_options = {
         :user_column => options[:user_column],
+        :import_column => options[:import_column],
         :key => SpamConstants::SPAM_WATCHER[self.table_name]["key_space"], 
         :threshold => SpamConstants::SPAM_WATCHER[self.table_name]["threshold"],
         :sec_expire => SpamConstants::SPAM_WATCHER[self.table_name]["sec_expire"],
@@ -49,12 +50,16 @@ module SpamWatcherCallbacks
     end
 
     def generate_spam_watcher_methods
-      user_column, key  = self.spam_watcher_options[:user_column],self.spam_watcher_options[:key]
+      user_column, key, import_column  = self.spam_watcher_options[:user_column],
+                                         self.spam_watcher_options[:key], 
+                                         self.spam_watcher_options[:import_column]
       threshold,sec_expire =  self.spam_watcher_options[:threshold], self.spam_watcher_options[:sec_expire]
 
       class_eval %Q(
         after_commit :spam_watcher_counter, on: :create
         def spam_watcher_counter
+          import_column = "#{import_column}"
+          return if import_column.present? && self.safe_send(import_column)
           begin
             Timeout::timeout(SpamConstants::SPAM_TIMEOUT) {
               if "#{user_column}".blank?

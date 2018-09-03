@@ -583,6 +583,15 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  channel_v2_routes = proc do
+    resources :tickets, controller: 'channel/v2/tickets', only: [:create, :update] do
+      member do
+        post :reply, to: 'channel/v2/conversations#reply'
+        post :notes, to: 'channel/v2/conversations#create'
+      end
+    end
+  end
+
   channel_routes = proc do
     resources :freshcaller_calls, controller: 'channel/freshcaller/calls', only: %i[create update]
     delete '/freshcaller/account', to: 'channel/freshcaller/accounts#destroy'
@@ -623,6 +632,7 @@ Helpkit::Application.routes.draw do
     scope '/channel', defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ } do
       scope '', &channel_routes # "/api/v2/.."
       scope '', &api_routes # "/api/v2/.."
+      scope '/v2', &channel_v2_routes # "/api/channel/v2/.."
     end
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header
     scope '', &api_routes

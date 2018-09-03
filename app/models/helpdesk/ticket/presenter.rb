@@ -51,6 +51,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :email_config_id
     t.add :deleted
     t.add :group_users
+    t.add :import_id
     t.add proc { |x| x.tags.collect { |tag| { id: tag.id, name: tag.name } } }, as: :tags
     REPORT_FIELDS.each do |key|
       t.add proc { |x| x.reports_hash[key.to_s] }, as: key
@@ -74,6 +75,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :display_id
     t.add :account_id
     t.add :archive
+  end
+
+  def central_payload_type
+    if import_ticket && import_id.present?
+      action = [:create, :update].find{ |action| transaction_include_action? action }
+      "import_ticket_#{action}" if action.present?
+    end
   end
 
   def action_in_bhrs?

@@ -35,6 +35,7 @@ api_error_messages:
   unsupported_environment: "Demo site doesn't have this access!"
   require_feature_for_attribute: "The %{feature} feature is required to support %{attribute} attribute in the request"
   invalid_facebook_id: "There is no record matching the facebook_id provided"
+  display_id_exists: "A ticket exists with the same display_id"
   user_blocked: "Has been blocked. No further tickets can be created for this user"
   invalid_user: "You are not authorized to perform this action on behalf of this user. id:%{id}, name:%{name}"
   internal_error: "We're sorry, but something went wrong."
@@ -120,6 +121,7 @@ api_error_messages:
   invalid_full_text: "Content of full text is different from that of body"
   query_format_invalid: "Given query is invalid, expected format \"keyword:value  OPERATOR keyword:'string' OPERATOR keyword:>'yyyy-mm-dd' OPERATOR keyword:<integer\". Space is mandatory between key/value pair and operator. Please check the paranthesis if there are any."
   cannot_set_pending_since: "It cannot be set, when created_at and updated_at are not set or status is not pending"
+  cannot_set_ticket_state: "It cannot be set, when created_at and updated_at are not set"
   duplicate_companies: "One or more duplicate company_ids found"
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
   invalid_company_id: "There is no record matching the id %{company_id}"
@@ -179,6 +181,11 @@ api_error_messages:
   export_ticket_limit_reached: Cannot run more than %{max_limit} ticket exports per agent at a time. Please try again later.
   export_archive_ticket_limit_reached: Cannot run more than %{max_limit} archived ticket exports per account at a time. Please try again later.
   invalid_bot: "There is no bot with the external id %{id}"
+  cannot_set_resolved_at: "It cannot be set, when created_at and updated_at are not set or status is not resolved"
+  cant_set_pending_since: "It cannot be set when status is not pending"
+  cant_set_resolved_at: "It cannot be set when status is not resolved"
+  cant_set_closed_at: "It cannot be set when status is not closed"
+  lt_ticket_created_at: "It cannot be less than the ticket's created time"
   cannot_set_closed_at: "It cannot be set, when created_at and updated_at are not set or status is not closed"
   invalid_inline_attachments_list: "Invalid inline attachment ids : %{invalid_ids}"
   invalid_avatar: "Avatar is invalid"
