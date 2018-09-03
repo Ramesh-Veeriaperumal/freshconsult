@@ -9996,6 +9996,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       h: h
       m: m
       s: s
+      khrs: "k hours"
       hrs: hrs
       mins: mins
     abbr_month_names: [Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
