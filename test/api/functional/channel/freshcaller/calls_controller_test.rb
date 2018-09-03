@@ -36,7 +36,14 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     invalid_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
-    put :update, construct_params(version: 'channel', id: call_id, recording_status: 1)
+    put :update, construct_params(version: 'channel', id: call_id, recording_status: Freshcaller::Call::RECORDING_STATUS_HASH[:'in-progress'])
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
+  end
+
+  def test_update_before_create_with_invalid_auth
+    invalid_auth_header
+    call_id = get_call_id
+    put :update, construct_params(version: 'channel', id: call_id, recording_status: Freshcaller::Call::RECORDING_STATUS_HASH[:'in-progress'])
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
   end
 
@@ -52,6 +59,16 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     set_basic_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
+    put :update, construct_params(version: 'channel', id: call_id, recording_status: 1)
+    call = ::Freshcaller::Call.last
+    match_json(create_pattern(call))
+    assert_equal 1, call.recording_status
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+  end
+
+  def test_update_recording_status_and_basic_auth_with_out_create
+    set_basic_auth_header
+    call_id = get_call_id
     put :update, construct_params(version: 'channel', id: call_id, recording_status: 1)
     call = ::Freshcaller::Call.last
     match_json(create_pattern(call))

@@ -77,10 +77,16 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
     end
 
     def load_object(*)
-      if action_name == 'update'
-        @item = scoper.where(fc_call_id: params[:id]).first
-        log_and_render_404 unless @item
-      end
+      @item = build_object if action_name == 'update'
+    end
+
+    def build_object
+      # TODO: We can remove after deployment 03.08.18
+      fc_call_id = params[:id] || params[:fc_call_id]
+      log_and_render_404 if fc_call_id.blank?
+      @item = scoper.where(fc_call_id: fc_call_id).first_or_initialize
+      @item.account = current_account
+      @item
     end
 
     def sanitize_params

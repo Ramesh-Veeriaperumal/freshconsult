@@ -98,7 +98,7 @@ class CompanyForm < ActiveRecord::Base
     end
 
     def company_field_conditions
-      tam_company_fields_feature =  Account.current.tam_default_company_fields_enabled?
+      tam_company_fields_feature =  Account.current.tam_default_fields_enabled?
       { 'health_score' =>  tam_company_fields_feature,
         'account_tier' =>  tam_company_fields_feature,
         'industry'     =>  tam_company_fields_feature,

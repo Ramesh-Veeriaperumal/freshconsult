@@ -1,0 +1,21 @@
+type: object
+properties:
+  parent_child_tickets:
+    type: object
+    properties:
+      parent_tickets_count:
+        type: integer
+      child_tickets_count:
+        type: integer
+  link_tickets:
+    type: object
+    properties:
+      tracker_tickets_count:
+        type: integer
+      related_tickets_count:
+        type: integer
+  shared_ownership:
+    type: object
+    properties:
+      shared_ownership_tickets_count:
+        type: integer

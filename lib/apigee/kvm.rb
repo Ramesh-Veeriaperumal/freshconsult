@@ -32,7 +32,6 @@ class Apigee::KVM
     if Account.current.apigee_enabled?
       Account.current.rollback(:apigee)
       update_in_s3("delete", params["domain"])
-      RestClient.get(ApigeeConfig::UPDATE_KVM_URI, headers(params))
     else
       Rails.logger.info "Apigee is already disabled for this account #{Account.current}"
     end
@@ -41,15 +40,16 @@ class Apigee::KVM
   def update_in_s3(action, domain)
     if action.present? && domain.present? && AwsWrapper::S3Object.find(ApigeeConfig::S3_FILE_NAME, ApigeeConfig::S3_BUCKET_NAME).exists?
       content = AwsWrapper::S3Object.read(ApigeeConfig::S3_FILE_NAME, ApigeeConfig::S3_BUCKET_NAME)
+      content_as_array = content.split("\n")
       if action == "create"
-        unless content.include? domain
+        unless content_as_array.include? domain
           content = content.present? ? content + "\n#{domain}" : domain
         else
           Rails.logger.info "Domain #{domain} is already present in s3 file"
         end
       elsif action == "delete"
-        if content.include? domain
-          final_domains_list = content.split("\n") - [domain]
+        if content_as_array.include? domain
+          final_domains_list = content_as_array - [domain]
           content = final_domains_list.join("\n")
         else
           Rails.logger.info "Domain #{domain} is not present in s3 file"

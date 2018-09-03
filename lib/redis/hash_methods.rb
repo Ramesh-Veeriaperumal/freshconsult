@@ -1,7 +1,10 @@
 module Redis::HashMethods
-  def multi_set_redis_hash(redis_key, array_of_key_values)
-		newrelic_begin_rescue { $redis_others.perform_redis_op('hmset', redis_key, array_of_key_values) }
-	end
+  def multi_set_redis_hash(redis_key, array_of_key_values, expires = nil)
+    newrelic_begin_rescue do
+      $redis_others.perform_redis_op('hmset', redis_key, array_of_key_values)
+      $redis_others.perform_redis_op('expire', redis_key, expires) if expires
+    end
+  end
 
   def multi_get_redis_hash(redis_key, array_of_keys)
     newrelic_begin_rescue { $redis_others.perform_redis_op('hmget', redis_key, array_of_keys) }

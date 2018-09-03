@@ -403,6 +403,11 @@ class ApiContactsController < ApiApplicationController
       end
     end
 
+    def build_object
+      super
+      @item.language = current_account.language unless params[cname][:language]
+    end
+
     def all_companies_hash
       @all_companies.map { |x| [x[:company_id], x.except(:company_id)] }.to_h
     end

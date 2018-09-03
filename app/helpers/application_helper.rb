@@ -669,7 +669,7 @@ module ApplicationHelper
     }
 
     # TAM company fields place holders
-    if current_account.tam_default_company_fields_enabled?
+    if current_account.tam_default_fields_enabled?
       current_account.company_form.tam_default_fields.each { |field|
         place_holders[:company] <<  ["{{ticket.company.#{field.name}}}",
                                      "Company #{field.label}", "", 

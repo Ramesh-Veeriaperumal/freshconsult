@@ -26,7 +26,6 @@ module Ember
       return if @@before_all_run
       @account.set_custom_dashboard_limit({ dashboard: 25, widgets: { scorecard: 25, bar_chart: 25, csat: 25, leaderboard: 25, ticket_trend_card: 25, time_trend_card: 25, sla_trend_card: 25 } })
       @account.add_feature(:custom_dashboard)
-      @account.launch(:dashboard_announcements)
       @account.dashboards.destroy_all
       create_dashboard_with_widgets(nil, 0, 0)
       create_dashboard_with_widgets(nil, 0, 0)

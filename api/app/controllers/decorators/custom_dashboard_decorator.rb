@@ -19,7 +19,7 @@ class CustomDashboardDecorator < ApiDecorator
       widgets: dashboard_widgets,
       last_modified_since: record.updated_at.to_i
     }.merge!(dashboard_access_details)
-    detail_hash = add_announcements(detail_hash) if Account.current.dashboard_announcements_enabled?
+    detail_hash = add_announcements(detail_hash)
     detail_hash
   end
 

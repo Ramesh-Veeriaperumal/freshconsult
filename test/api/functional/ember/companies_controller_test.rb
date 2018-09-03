@@ -22,7 +22,6 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
 
   def initial_setup
     @private_api = true
-    set_others_redis_key(TAM_FIELDS_ENABLED, true)
     return if @@initial_setup_run
 
     @@initial_setup_run = true
@@ -34,7 +33,6 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
 
   def teardown
     super
-    remove_others_redis_key(TAM_FIELDS_ENABLED)
   end
 
   def create_company(options = {})
