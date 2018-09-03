@@ -466,7 +466,7 @@ $survey-types: happy #82af56, neutral #f3ca6e, sad #ee715e;
 			.report-title-block.changed {
     			color: #F81;
     			font-style: italic;
-					@include margin-right: 10px;
+					@include margin-right(10px);
 			}
 		}
 		.reports-menu{
