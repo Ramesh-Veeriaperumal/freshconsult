@@ -8,5 +8,5 @@ response_hash = {
   created_at: @item.created_at.try(:utc),
   updated_at: @item.updated_at.try(:utc)
 }
-response_hash.merge!(@item.tam_fields) if @item.tam_default_company_fields_enabled?
+response_hash.merge!(@item.tam_fields) if @item.tam_default_fields_enabled?
 JSON.generate(response_hash)

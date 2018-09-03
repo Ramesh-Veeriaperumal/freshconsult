@@ -354,9 +354,6 @@ module Redis::RedisKeys
   DISABLE_PORTAL_NEW_THEME = "DISABLE_PORTAL_NEW_THEME"
   BOT_STATUS = "BOT_STATUS:%{account_id}:%{bot_id}"
 
-  # Key for enabling TAM company fields
-  TAM_FIELDS_ENABLED = "TAM_FIELDS_ENABLED"
-
   YEAR_IN_REVIEW_ACCOUNT = "YEAR_IN_REVIEW:%{account_id}"
   YEAR_IN_REVIEW_CLOSED_USERS = "YEAR_IN_REVIEW_CLOSED:%{account_id}"
 
@@ -399,6 +396,7 @@ module Redis::RedisKeys
   SEGMENT_LIMIT = 'SEGMENT_LIMIT:%{account_id}'.freeze
 
   #Temp Redis keys for resque to sidekiq migration end
+  
 
   # count cluster to search service keys
   SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED = "SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED"

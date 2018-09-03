@@ -9,6 +9,6 @@ JSON.generate(@items.map do |api_company|
     updated_at: api_company.updated_at.try(:utc),
     custom_fields: api_company.custom_fields
   }
-  response_hash.merge!(api_company.tam_fields) if api_company.tam_default_company_fields_enabled?
+  response_hash.merge!(api_company.tam_fields) if api_company.tam_default_fields_enabled?
   response_hash
 end)
