@@ -14,9 +14,6 @@
 		}
 	}
 	@include at-breakpoint($break-tablet){
-		// .hc-nav div {
-		// 	clear:both;
-		// }
 		.hc-search, .hc-nav{
 			float:right;
 		}
