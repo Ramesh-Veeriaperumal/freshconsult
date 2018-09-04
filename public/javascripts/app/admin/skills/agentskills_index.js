@@ -196,7 +196,7 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
       var $currentUserRow = $("#" + localStorage.currentUserID);
       var tempString, finalString, i;
       var skillCount = arr.length,
-        doubleSpace = "  ";
+        doubleSpace = "&nbsp;&nbsp;";
 
       if (skillCount === 0) {
         finalString = "";
@@ -215,7 +215,7 @@ window.App.Admin.AgentSkills = window.App.Admin.AgentSkills || {};
         }
         $('[data-userid=' + localStorage.currentUserID + '].skillsModalLink').html(I18n.t('agent.manage_skills'));
       }
-      $currentUserRow.html(escapeHtml(finalString));
+      $currentUserRow.html(finalString);
     },
 
     recreateRank: function() {

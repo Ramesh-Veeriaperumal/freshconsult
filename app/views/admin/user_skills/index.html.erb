@@ -91,7 +91,7 @@
 
                                   <td id= "<%= (user.id) %>" class="agentSkillList">
                                     <span class="muted">
-                                       <%= h(user.skills[0..4].map(&:name).join('  |  ')).html_safe %>
+                                       <%= user.skills[0..4].map(&:name).join('&nbsp;&nbsp;|&nbsp;&nbsp;').html_safe %>
                                         <% if (user.skills.size > 5) %> 
                                         <% user_skills_rem = (user.skills.size - 5) %>&nbsp;|&nbsp;&nbsp;<%= link_to "#{user_skills_rem} #{t('.more')}", 'javascript:void(0);', :class => "manageSkills", :data => { :userId => (user.id), :userName => (user.name), :skillCount => (user.skills.length) } %>
                                         <% end %>

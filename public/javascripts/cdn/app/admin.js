@@ -1,5 +1,4 @@
 //= require plugins/clipboard.js
-//= require utils.js
 //= require app/admin/admin.js
 //= require app/admin/portal.js
 //= require app/admin/portal_settings.js
