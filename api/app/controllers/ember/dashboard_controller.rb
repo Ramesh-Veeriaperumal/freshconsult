@@ -9,7 +9,7 @@ module Ember
     before_filter :set_dashboard_type
     before_filter :survey_active?, only: [:survey_info]
     around_filter :run_on_slave
-    around_filter :use_time_zone, only: [:scorecard, :ticket_trends]
+    around_filter :use_time_zone, only: [:scorecard, :ticket_trends, :ticket_metrics] # Uses user/account's zone instead of UTC
     
     skip_before_filter :load_object
 

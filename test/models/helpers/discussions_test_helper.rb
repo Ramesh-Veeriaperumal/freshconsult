@@ -16,8 +16,15 @@ module DiscussionsTestHelper
       spam: post.spam,
       trash: post.trash,
       user_votes: post.user_votes,
+      comment: !post.original_post?,
       created_at: post.created_at.try(:utc).try(:iso8601),
       updated_at: post.updated_at.try(:utc).try(:iso8601)
+    }
+  end
+
+  def central_publish_post_association_pattern(expected_output = {})
+    {
+      user: Hash
     }
   end
 end

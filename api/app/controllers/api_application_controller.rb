@@ -51,6 +51,7 @@ class ApiApplicationController < MetalApiController
   include Mobile::MobileHelperMethods
 
   include DataVersioning::Controller
+  include Helpdesk::ToggleEmailNotification
 
   # App specific Before filters Ends
 
@@ -82,15 +83,18 @@ class ApiApplicationController < MetalApiController
   before_filter :validate_filter_params, only: [:index]
 
   before_filter :validate_url_params, only: [:show]
+
   after_filter :set_root_key, :set_app_data_version, if: :private_api?
 
+  around_filter :handle_notification, if: :import_api?
+  
   SINGULAR_RESPONSE_FOR = %w(show create update).freeze
   COLLECTION_RESPONSE_FOR = %w(index search).freeze
   CURRENT_VERSION = 'private-v1'.freeze
 
   SLAVE_ACTIONS = %w(index).freeze
 
-  NAMESPACED_CONTROLLER_REGEX = /pipe\/|channel\/|bot\//
+  NAMESPACED_CONTROLLER_REGEX = /pipe\/|channel\/v2\/|channel\/|bot\//
 
   def index
     load_objects
@@ -528,6 +532,8 @@ class ApiApplicationController < MetalApiController
       # Private API is supposed to work only with session based authentication
       if $infra['PRIVATE_API'] || (get_request? && !request.authorization)
         session_auth
+      elsif $infra['CHANNEL_LAYER']
+        api_key_auth
       else
         if current_account.launched?(:api_jwt_auth) && request.env['HTTP_AUTHORIZATION'][/^Token (.*)/]
           ApiAuthLogger.log "FRESHID API version=V2, auth_type=JWT_TOKEN, a=#{current_account.id}"
@@ -563,6 +569,12 @@ class ApiApplicationController < MetalApiController
       authenticate_with_http_basic do |username, password| # authenticate_with_http_basic - AuthLogic method
         # string check for @ is used to avoid a query.
         @current_user = email_given?(username) ? AuthHelper.get_email_user(username, password, request.ip) : AuthHelper.get_token_user(username)
+      end
+    end
+
+    def api_key_auth
+      authenticate_with_http_basic do |username, password|
+        @current_user = AuthHelper.get_token_user(username)
       end
     end
 
@@ -832,6 +844,10 @@ class ApiApplicationController < MetalApiController
       @private_api ||= params[:version].to_sym == :private
     end
 
+    def import_api?
+      params[:import_id].present?
+    end
+
     def check_falcon
       return if current_account.falcon_ui_enabled?
       Rails.logger.debug "Private API attempted without enabling FalconUI. Domain: #{current_account.full_domain} | Controller: #{params[:controller]} | Action: #{params[:action]} "
@@ -890,5 +906,12 @@ class ApiApplicationController < MetalApiController
 
     def assign_current_app(app_name)
       Thread.current[:app_integration] = app_name
+    end
+
+    def handle_notification
+      disable_notification
+      yield
+    ensure
+      enable_notification
     end
 end
