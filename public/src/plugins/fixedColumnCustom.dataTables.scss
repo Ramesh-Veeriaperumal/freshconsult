@@ -1,5 +1,5 @@
-/* 
-*  
+/*
+*
 *  @css : Jquery Fixed Header Custom css
 *  @Datatable_version_supported : 1.10.9
 */
@@ -13,13 +13,13 @@
     z-index: 10;
     background: #fff;
 
-    .dataTable td,.dataTable th{
+    .dataTable td, .dataTable th{
     	border-right : 1px solid #e5e4e4;
     }
 
     table{
         table-layout : fixed;
-        .fixedWidth , .workable{
+        .fixedWidth, .workable{
             word-break: break-word;
         }
         .fixedWidth{
