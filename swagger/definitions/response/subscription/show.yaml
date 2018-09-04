@@ -1,0 +1,29 @@
+type: object
+properties:
+  id:
+    type: integer
+  state:
+    type: string
+  subscription_plan_id:
+    type: integer
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time
+  currency:
+    type: string
+  addons:
+    type: array
+    items:
+        type: object
+        properties:
+          id:
+            type: number
+          name:
+            type: string
+          features_list:
+            type: array
+            items:
+              type: string

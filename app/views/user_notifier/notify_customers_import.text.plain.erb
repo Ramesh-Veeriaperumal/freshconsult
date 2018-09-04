@@ -3,7 +3,7 @@ Hi <%= @user.name%>,
 <% if @import_success %>
 	<%= "#{t('flash.import.info1', :type => @type, :uc_type => @type.capitalize)}"%>
 <% elsif @wrong_csv %>
-    <%= "#{t('flash.import.info7', :type => @type.singularize.capitalize, :solution_link => 'https://support.freshdesk.com/support/solutions/articles/199329')}" %>
+    <%= "#{t('flash.import.info7', :type => @type.singularize.capitalize, :solution_link => 'https://support.freshdesk.com/support/solutions/articles/196491')}" %>
 <% else %>
 	<% if @import_stopped %>
 		<p><%= "#{t('flash.import.info20', :type => @type, :domain => @account_domain)}" %></p>
@@ -19,7 +19,7 @@ Hi <%= @user.name%>,
 
 	<%= "#{t('flash.import.info4', :type => @type.singularize)}" if @attachment%>
 	
-	<%= @corrupted ? t('flash.import.info6') : "#{t('flash.import.info5', :solution_link => 'https://support.freshdesk.com/support/solutions/articles/199329')}" %>
+	<%= @corrupted ? t('flash.import.info6') : "#{t('flash.import.info5', :solution_link => 'https://support.freshdesk.com/support/solutions/articles/196491')}" %>
 <% end %>
 
 <%= t(:'flash.import.help_desk')%>

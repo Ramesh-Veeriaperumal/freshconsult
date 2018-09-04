@@ -12,7 +12,7 @@ class ConversationsController < ApiApplicationController
   SLAVE_ACTIONS = %w(ticket_conversations).freeze
 
   def create
-    conversation_delegator = ConversationDelegator.new(@item)
+    conversation_delegator = ConversationDelegator.new(@item, notable: @ticket)
     if conversation_delegator.valid?
       is_success = create_note
       render_response(is_success)
@@ -27,7 +27,7 @@ class ConversationsController < ApiApplicationController
     sanitize_params
     build_object
     kbase_email_included? params[cname] # kbase_email_included? present in Email module
-    conversation_delegator = ConversationDelegator.new(@item)
+    conversation_delegator = ConversationDelegator.new(@item, notable: @ticket)
     if conversation_delegator.valid?
       @item.email_config_id = conversation_delegator.email_config_id
       is_success = create_note
@@ -147,10 +147,18 @@ class ConversationsController < ApiApplicationController
       params[cname].except!(ConversationConstants::IGNORE_PARAMS)
     end
 
+    def constants_class
+      ConversationConstants.to_s.freeze
+    end
+
+    def validation_class
+      ConversationValidation
+    end
+
     def validate_params
-      field = "ConversationConstants::#{action_name.upcase}_FIELDS".constantize
+      field = "#{constants_class}::#{action_name.upcase}_FIELDS".constantize
       params[cname].permit(*field)
-      @conversation_validation = ConversationValidation.new(params[cname], @item, string_request_params?)
+      @conversation_validation = validation_class.new(params[cname], @item, string_request_params?)
       valid = @conversation_validation.valid?(action_name.to_sym)
       render_errors @conversation_validation.errors, @conversation_validation.error_options unless valid
       valid

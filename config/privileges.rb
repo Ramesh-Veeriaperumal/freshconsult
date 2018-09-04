@@ -1,6 +1,7 @@
 require_relative 'api_privileges'
 require_relative 'pipe_privileges'
 require_relative 'channel_privileges'
+require_relative 'channel_v2_privileges'
 
 Authority::Authorization::PrivilegeList.build do
 

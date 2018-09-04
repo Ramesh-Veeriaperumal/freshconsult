@@ -800,7 +800,7 @@ private
 
   def execute_observer?
     @execute_observer ||= begin
-      _execute_observer = user_present? && !disable_observer_rule
+      _execute_observer = user_present? && !disable_observer_rule && !import_ticket
       SBRR.log "Ticket ##{self.display_id} save done. Model_changes #{@model_changes.inspect}"
       Va::Logger::Automation.log "Skipping observer" unless _execute_observer
       _execute_observer
