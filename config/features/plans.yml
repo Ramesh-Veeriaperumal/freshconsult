@@ -6,11 +6,13 @@
       - :basic_facebook
       - :basic_dkim
       - :freshchat
+      - :freshconnect
+      - :collaboration
     :inherits: []
     :exclude: []
   :blossom_jan_17:
     :name: Blossom
-    :features: 
+    :features:
       - :split_tickets
       - :add_watcher
       - :traffic_cop
@@ -42,7 +44,6 @@
       - :sitemap
       - :requester_widget
       - :advanced_search
-      - :collaboration
       - :user_notifications
       - :quick_reply
       - :tam_default_fields
@@ -51,7 +52,6 @@
       - :todos_reminder_scheduler
       - :smart_filter
       - :session_replay
-      - :freshconnect
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -92,7 +92,7 @@
       - :round_robin_load_balancing
       - :multiple_user_companies
       - :multiple_companies_toggle
-      - :round_robin_on_update 
+      - :round_robin_on_update
       - :shared_ownership_toggle
       - :advanced_dkim
       - :multi_dynamic_sections
@@ -110,6 +110,6 @@
       - :whitelisted_ips
       - :skill_based_round_robin
       - :sandbox
-    :inherits: 
+    :inherits:
       - :estate_jan_17
     :exclude: []
