@@ -3038,6 +3038,7 @@ Helpkit::Application.routes.draw do
           get :check_domain
           put :unblock_outgoing_email
           post :extend_trial
+          put :change_primary_language
         end
       end
 

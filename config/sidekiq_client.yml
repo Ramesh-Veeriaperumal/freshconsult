@@ -294,7 +294,8 @@ defaults: &defaults
     - [register_freshconnect]
     - [undo_send]
     - [unlink_tickets]
-    
+    - [primary_language_change]
+
 development:
   <<: *defaults
 
