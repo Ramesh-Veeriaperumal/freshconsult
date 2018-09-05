@@ -2715,13 +2715,14 @@ en:
         match_type: "Match any/all conditions"
         filter_data: "Conditions"
         action_data: "Actions"
-        active: "Rule on/off"
+        active: "Rule state"
         position: "Position"
         rule_on: "On"
         rule_off: "Off"
         performer: "Performer"
         events: "Events"
         conditions: "Conditions"
+        custom_field_name: 'Set %{field_name} as'
   ends_with: Ends with
   last_name: Last Name
   forum:

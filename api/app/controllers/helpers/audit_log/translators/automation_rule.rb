@@ -48,7 +48,7 @@ module AuditLog::Translators::AutomationRule
         readable = assign_readable(action, translated_items)
         translate_send_email_to(action, readable)
         translate_webhook(action, readable)
-        translate_name(action, readable)
+        translate_name(action, readable, type)
         translate_operator(action)
         translate_values(action, readable)
         translate_dependent_fields(action, readable)
@@ -70,11 +70,16 @@ module AuditLog::Translators::AutomationRule
     translated_items[name_key]
   end
 
-  def translate_name(action, readable)
+  def customize_field_name(field_name, type)
+    customize_name = I18n.t("admin.audit_log.automation_rule.custom_field_name", field_name: field_name)
+    type == :actions ? customize_name : field_name
+  end
+
+  def translate_name(action, readable, type)
     return action[:name] = readable[0] if readable.present?
     name = action[:category_name] || action[:name]
     field_name, field_type = custom_field_name(name, action[:evaluate_on])
-    action[:name] = field_name if field_name.present?
+    action[:name] = customize_field_name(field_name, type) if field_name.present?
     if field_type.present? && field_type.include?('checkbox')
       action[:value] = Va::Constants.checkbox_options[action[:value]]
       checkbox_values = ["selected", "not_selected"]
@@ -118,7 +123,7 @@ module AuditLog::Translators::AutomationRule
                          val = actionable.map do |act|
                            act.respond_to?('name') ? act.name : act.value
                          end
-                         val << I18n.t('none') if action[key].include?(I18n.t('none'))
+                         val << I18n.t('none') if (action[key].respond_to? :include?) && action[key].include?(I18n.t('none'))
                          val.join(', ')
                        else
                          ''
@@ -144,7 +149,7 @@ module AuditLog::Translators::AutomationRule
       rules.each_pair do |key, type|
         next unless action[type].present?
         action[type].each do |rule|
-          translate_name(rule, nil)
+          translate_name(rule, nil, nil)
           translate_values(rule, readable)
         end
         field_changes << filter_value_by_key(action, key)
