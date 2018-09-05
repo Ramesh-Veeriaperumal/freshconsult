@@ -28,7 +28,9 @@
     }
 }
 
-html[dir="rtl"] .left_wrapper{
-	right : 0;
-	left : auto;
+html[dir="rtl"] { 
+    .left_wrapper {
+	    right : 0;
+        left : auto;
+    }
 }
