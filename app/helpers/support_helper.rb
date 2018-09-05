@@ -924,7 +924,7 @@ module SupportHelper
 
     def portal_preferences
       preferences = current_portal.template.preferences
-      if get_others_redis_key(mint_preview_key)
+      if on_mint_preview
          preferences = current_portal.template.get_draft.preferences if current_portal.template.get_draft
       elsif preview? && current_portal.template.get_draft
          preferences = current_portal.template.get_draft.preferences

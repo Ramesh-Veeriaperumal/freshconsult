@@ -11,7 +11,6 @@ module IntegrationServices::Services
     end
 
     def receive_add_teams
-      create_redis_keys
       post_command_to_central 'install_app'
     rescue => e
       Rails.logger.error "Error in receive_add_teams: #{e}"
@@ -35,14 +34,6 @@ module IntegrationServices::Services
         msg_id = generate_msg_id(payload_hash)
         Rails.logger.info "Command from Microsoft teams, Command: #{command}, Msg_id: #{msg_id}"
         Channel::CommandWorker.perform_async({ payload: payload_hash }, msg_id)
-      end
-
-      def create_redis_keys
-        INTEGRATIONS_REDIS_INFO[:general_keys].each do |_key, value|
-          key = INTEGRATIONS_REDIS_INFO[:template] % { owner: owner_name, key: value, account_id: Account.current.id }
-          $redis_integrations.perform_redis_op('sadd', key, [])
-        end
-        create_auth_redis_key
       end
 
       def create_auth_redis_key # To Give a 10 sec interval to get the response back from central.
