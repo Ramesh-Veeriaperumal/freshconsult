@@ -507,6 +507,9 @@
   freshmarketer_session:
     $ref: ./response/freshmarketer/session.yaml
 
+  #subscription
+  subscription_show:
+    $ref: ./response/subscription/show.yaml
   #Advanced Ticketing
   advanced_ticketing_create:
     $ref: ./request/advanced_ticketing/create.yaml

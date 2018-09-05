@@ -23,7 +23,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_dueby(ticket_status_changed=false)
-    BusinessCalendar.execute(self, {:dueby_calculation => true}) { set_sla_time(ticket_status_changed) } if update_dueby?
+    BusinessCalendar.execute(self, {:dueby_calculation => true}) { 
+      set_sla_time(ticket_status_changed) 
+    } if update_dueby? && !disable_sla_calculation
   end
 
   def set_sla_time(ticket_status_changed)
@@ -101,7 +103,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def update_on_state_time?
-    (self.new_record? || self.ticket_states.resolution_time_updated_at.present?) && (common_updation_condition || (status_changed? && stop_sla_timer_changed?))
+    (self.new_record? || self.ticket_states.resolution_time_updated_at.present?) && 
+      (common_updation_condition || (status_changed? && stop_sla_timer_changed?)) && 
+      !disable_sla_calculation
   end
 
   def update_dueby?
