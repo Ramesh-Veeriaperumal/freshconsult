@@ -1483,6 +1483,76 @@ module Ember
         ::Tickets::BulkTicketActions.jobs.clear
         Account.current.unstub(:skill_based_round_robin_enabled?)
       end
+
+      def test_bulk_unlink_related_ticket_from_tracker
+        enable_adv_ticketing([:link_tickets]) do
+          create_linked_tickets
+          Sidekiq::Testing.inline! do
+            put :bulk_unlink, construct_params({ version: 'private', ids: [@ticket_id] }, false)
+          end
+          assert_response 204
+          ticket = Helpdesk::Ticket.find_by_display_id(@ticket_id)
+          assert !ticket.related_ticket?
+        end
+      end
+
+      def test_bulk_unlink_non_related_ticket
+        enable_adv_ticketing([:link_tickets]) do
+          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
+          associated_ticket = Helpdesk::Ticket.find_by_display_id(ticket_ids[0])
+          associated_ticket.update_attributes(association_type: 1)
+          Sidekiq::Testing.inline! do
+            put :bulk_unlink, construct_params({ version: 'private', ids: ticket_ids }, false)
+          end
+          assert_response 202
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          assert tickets[0].parent_ticket?
+          assert tickets[1].association_type.nil?
+        end
+      end
+
+      def test_bulk_unlink_with_invalid_ids
+        enable_adv_ticketing([:link_tickets]) do
+          Sidekiq::Testing.inline! do
+            put :bulk_unlink, construct_params({ version: 'private', ids: [123456789] }, false)
+          end
+          assert_response 202
+        end
+      end
+
+      def test_bulk_unlink_without_mandatory_field
+        enable_adv_ticketing([:link_tickets]) do
+          asso_tracker_id = create_tracker_ticket.display_id
+          ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
+          associated_tickets = Helpdesk::Ticket.find_all_by_display_id([ticket_ids[0], ticket_ids[1]])
+          associated_tickets.each do |associated_ticket|
+            attributes = { association_type: 4, associates_rdb: asso_tracker_id }
+            associated_ticket.update_attributes(attributes)
+          end
+          Sidekiq::Testing.inline! do
+            put :bulk_unlink, construct_params({ version: 'private' }, false)
+          end
+          assert_response 400
+          tickets = Helpdesk::Ticket.find_all_by_display_id(ticket_ids)
+          tickets.each do |ticket|
+            assert ticket.related_ticket?
+          end
+        end
+      end
+
+      def test_bulk_unlink_tickets_without_permission_for_tracker
+        enable_adv_ticketing([:link_tickets]) do
+          create_linked_tickets
+          ::Tickets::UnlinkTickets.any_instance.stubs(:tracker_ticket_permission?).returns(false)
+          Sidekiq::Testing.inline! do
+            put :bulk_unlink, construct_params({ version: 'private', ids: [@ticket_id] }, false)
+          end
+          assert_response 204
+          ticket = Helpdesk::Ticket.find_by_display_id(@ticket_id)
+          assert ticket.related_ticket?
+          ::Tickets::UnlinkTickets.any_instance.unstub(:tracker_ticket_permission?)
+        end
+      end
     
       private
         def partial_success_and_customfield_response_pattern(succeeded_ids, failures = {})

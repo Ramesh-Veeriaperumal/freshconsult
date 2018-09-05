@@ -11,7 +11,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/tickets/activity"
     resource :"ember/canned_response", only: %i(search)
     resource :"ember/ticket", only: %i(index show create execute_scenario spam latest_note create_child_with_template parse_template fetch_errored_email_details suppression_list_alert)
-    resource :"ember/tickets/bulk_action", only: %i(bulk_execute_scenario bulk_link)
+    resource :"ember/tickets/bulk_action", only: %i(bulk_execute_scenario bulk_link bulk_unlink)
     resource :"ember/tickets/associate", only: [:link, :unlink, :associated_tickets, :prime_association]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
     resource :"ember/attachment", only: [:create, :show]
@@ -132,6 +132,10 @@ Authority::Authorization::PrivilegeList.build do
     resource :'admin/canned_form'
     resource :"ember/portal", only: [:show, :update]
     resource :'audit_log', only: [:filter, :export, :event_name]
+    resource :"admin/subscription", only: [:show]
+    resource :"proactive/rule"
+    resource :"proactive/outreach"
+    resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
   end
 
   edit_ticket_properties do
@@ -182,7 +186,6 @@ Authority::Authorization::PrivilegeList.build do
   view_admin do 
     resource :"ember/agent", only: [:complete_gdpr_acceptance]
   end
-
 
   manage_bots do
     resource :"ember/admin/bot", only: %i[new create show index update map_categories mark_completed_status_seen enable_on_portal]

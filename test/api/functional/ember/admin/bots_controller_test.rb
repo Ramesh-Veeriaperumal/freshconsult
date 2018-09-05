@@ -311,6 +311,34 @@ module Ember
         end
       end
 
+      def test_create_with_bot_api_failure
+        enable_bot do
+          Freshbots::Bot.stubs(:create_bot).returns([{}, 500])
+          portal = create_portal
+          attachment = create_attachment 
+          params = create_params(portal).merge({ avatar: { is_default: false, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: attachment.id}})
+          post :create, params
+          assert_response 500
+          Freshbots::Bot.unstub(:create_bot)
+        end
+      end
+
+      def test_create_with_failure_in_save
+        enable_bot do
+          @controller.stubs(:save_bot).returns(true)
+          Bot.any_instance.stubs(:save).returns(false)
+          Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
+          portal = create_portal
+          attachment = create_attachment 
+          params = create_params(portal).merge({ avatar: { is_default: false, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: attachment.id}})
+          post :create, params
+          Freshbots::Bot.unstub(:create_bot)
+          Bot.any_instance.unstub(:save)
+          @controller.unstub(:save_bot)
+          assert_response 500
+        end
+      end
+
       def test_show_without_support_bot_feature
         bot = create_bot({ product: true})
         get :show, controller_params(version: 'private', id: bot.id)
@@ -473,6 +501,27 @@ module Ember
         end
       end
 
+      def test_update_with_bot_api_failure
+        enable_bot do
+          Freshbots::Bot.stubs(:update_bot).returns(["failure", 500])
+          bot = create_bot({ product: true, default_avatar: 1})
+          put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: bot.additional_settings[:is_default]} )
+          Freshbots::Bot.unstub(:update_bot)
+          assert_response 500
+        end
+      end
+
+      def test_update_with_valid_params_and_custom_avatar
+        enable_bot do
+          Freshbots::Bot.stubs(:update_bot).returns(["success", 200])
+          bot = create_bot({ product: true, default_avatar: 1})
+          attachment = create_attachment
+          put :update, construct_params( version: 'private', id: bot.id, avatar: { is_default: false, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: attachment.id } )
+          Freshbots::Bot.unstub(:update_bot)
+          assert_response 204
+        end
+      end
+
       def test_map_categories_without_support_bot_feature
         put :map_categories, construct_params({ version: 'private', id: 1, category_ids: [1, 2] }, false)
         assert_response 403
@@ -534,6 +583,37 @@ module Ember
         end
       end
 
+      def test_map_categories_with_ml_api_failure
+        enable_bot do
+          bot = create_bot(product: true)
+          category_ids = 3.times.map do
+            create_category.id
+          end
+          bot.portal.solution_category_metum_ids = category_ids
+          Ml::Bot.stubs(:update_ml).returns(false)
+          put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: category_ids }, false)
+          Ml::Bot.unstub(:update_ml)
+          assert_response 503
+        end
+      end
+
+      def test_map_categories_with_exception
+        enable_bot do
+          bot = create_bot(product: true)
+          bot.training_not_started!
+          Bot.any_instance.stubs(:training_inprogress!).raises(RuntimeError)
+          category_ids = 3.times.map do
+            create_category.id
+          end
+          bot.portal.solution_category_metum_ids = category_ids
+          Ml::Bot.stubs(:update_ml).returns(true)
+          put :map_categories, construct_params({ version: 'private', id: bot.id, category_ids: category_ids }, false)
+          Ml::Bot.unstub(:update_ml)
+          Bot.any_instance.unstub(:training_inprogress!)
+          assert_response 500
+        end
+      end
+
       def test_map_categories
         enable_bot do
           bot = create_bot(product: true)
@@ -546,53 +626,6 @@ module Ember
           Ml::Bot.unstub(:update_ml)
           assert_response 204
           assert_equal category_ids, bot.solution_category_metum_ids
-        end
-      end
-
-      def test_training_completed_without_bot_feature
-        bot = create_bot({ product: true})
-        post :training_completed, controller_params(version: 'private', id: bot.id)
-        assert_response 403
-        match_json(request_error_pattern(:require_feature, feature: 'Support Bot'))
-      end   
-      
-      def test_training_completed_without_access
-        enable_bot do
-          bot = create_bot({ product: true})
-          post :training_completed, controller_params(version: 'private', id: bot.id)
-          assert_response 401
-          match_json(request_error_pattern(:invalid_credentials))
-        end
-      end
-
-      def test_training_completed_with_invalid_bot_id
-        enable_bot do
-          set_jwe_auth_header(SUPPORT_BOT)
-          bot = create_bot({ product: true})
-          post :training_completed, controller_params(version: 'private', id: bot.id)
-          assert_response 404
-        end
-      end
-
-      def test_training_completed_with_invalid_state
-        enable_bot do
-          set_jwe_auth_header(SUPPORT_BOT)
-          bot = create_bot({ product: true})
-          bot.training_completed!
-          post :training_completed, controller_params(version: 'private', id: bot.external_id)
-          assert_response 409
-          match_json(request_error_pattern(:invalid_bot_state))
-        end
-      end
-
-      def test_training_completed
-        enable_bot do
-          set_jwe_auth_header(SUPPORT_BOT)
-          bot = create_bot({ product: true})
-          bot.training_inprogress!
-          post :training_completed, controller_params(version: 'private', id: bot.external_id)
-          assert_response 204
-          assert bot.training_status.to_i == BotConstants::BOT_STATUS[:training_completed]
         end
       end
 
@@ -895,6 +928,15 @@ module Ember
         end
       end
 
+      def test_analytics_with_bot_api_failure
+        enable_bot do
+          Freshbots::Bot.stubs(:analytics).returns([{}, 500])
+          bot = create_bot(product: true)
+          get :analytics, controller_params(version: 'private', id: 1, start_date: '2018-02-01', end_date: '2018-02-02')
+          assert_response 503
+        end
+      end
+
       def test_remove_analytics_mock_data
         enable_bot do
           bot = create_bot(product: true)
@@ -902,6 +944,16 @@ module Ember
           bot.reload
           assert_response 204
           assert_equal nil, bot.additional_settings[:analytics_mock_data]
+        end
+      end
+
+      def test_remove_analytics_mock_data_with_failure_in_save
+        enable_bot do
+          bot = create_bot(product: true)
+          Bot.any_instance.stubs(:save).returns(false)
+          put :remove_analytics_mock_data, construct_params(version: 'private', id: bot.id)
+          Bot.any_instance.unstub(:save)
+          assert_response 500
         end
       end
 

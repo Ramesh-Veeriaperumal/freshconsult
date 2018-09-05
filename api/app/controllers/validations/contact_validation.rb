@@ -38,7 +38,7 @@ class ContactValidation < ApiValidation
 
   validates :name, data_type: { rules: String, required: true }, unless: -> { validation_context == :channel_contact_create }
   validates :name, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
-  validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }
+  validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param, allow_nil: true }
   validates :tags, data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true }
 
   validates :active, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }, custom_inclusion: { in: ['true', true], message: :cannot_deactivate }, if: -> { @active_set }
@@ -89,7 +89,8 @@ class ContactValidation < ApiValidation
                   view_all_tickets: {
                     data_type: {
                       rules: 'Boolean',
-                      ignore_string: :allow_string_param
+                      ignore_string: :allow_string_param,
+                      allow_nil: true
                     }
                   }
                 }

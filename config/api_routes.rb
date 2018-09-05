@@ -203,6 +203,12 @@ Helpkit::Application.routes.draw do
         get :session_info
       end
     end
+
+    # Proactive Support routes
+    scope '/proactive' do
+      resources :outreaches, controller: 'proactive/outreaches', except: [:edit]
+      resources :rules, controller: 'proactive/rules', except: [:edit]
+    end
   end
 
   ember_routes = proc do
@@ -239,7 +245,6 @@ Helpkit::Application.routes.draw do
     resources :bots, controller: 'ember/admin/bots', only: [:index, :new, :create, :show, :update] do
       member do
         put :map_categories
-        post :training_completed
         post :mark_completed_status_seen
         put :enable_on_portal
         get :bot_folders
@@ -258,6 +263,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :advanced_ticketing, controller: 'ember/admin/advanced_ticketing', only: [ :create, :destroy ] do
+      collection do
+        get :insights
+      end
+    end
+
     match 'tickets/archived/export' => 'archive/tickets#export', via: :post
     match 'tickets/archived/:id/activities' => 'archive/tickets/activities#index', via: :get
     match 'freshconnect_account' => 'ember/freshconnect#update', via: :put
@@ -272,6 +283,7 @@ Helpkit::Application.routes.draw do
         post :bulk_update, to: 'ember/tickets/bulk_actions#bulk_update'
         post :bulk_execute_scenario, to: 'ember/tickets/bulk_actions#bulk_execute_scenario'
         put :bulk_link, to: 'ember/tickets/bulk_actions#bulk_link'
+        put :bulk_unlink, to: 'ember/tickets/bulk_actions#bulk_unlink'
         put :merge, to: 'ember/tickets/merge#merge'
         delete :empty_trash, to: 'ember/tickets/delete_spam#empty_trash'
         delete :empty_spam, to: 'ember/tickets/delete_spam#empty_spam'
@@ -514,6 +526,8 @@ Helpkit::Application.routes.draw do
     resources :agent_password_policy, controller: 'ember/agent_password_policies',
                                         only: [:index]
 
+    resource :subscription, controller: 'admin/subscriptions', only: [:show]
+
     get '/yearin_review', to: 'ember/year_in_review#index'
     post '/yearin_review/share', to: 'ember/year_in_review#share'
     post '/yearin_review/clear', to: 'ember/year_in_review#clear'
@@ -569,6 +583,15 @@ Helpkit::Application.routes.draw do
     end
   end
 
+  channel_v2_routes = proc do
+    resources :tickets, controller: 'channel/v2/tickets', only: [:create, :update] do
+      member do
+        post :reply, to: 'channel/v2/conversations#reply'
+        post :notes, to: 'channel/v2/conversations#create'
+      end
+    end
+  end
+
   channel_routes = proc do
     resources :freshcaller_calls, controller: 'channel/freshcaller/calls', only: %i[create update]
     delete '/freshcaller/account', to: 'channel/freshcaller/accounts#destroy'
@@ -609,6 +632,7 @@ Helpkit::Application.routes.draw do
     scope '/channel', defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ } do
       scope '', &channel_routes # "/api/v2/.."
       scope '', &api_routes # "/api/v2/.."
+      scope '/v2', &channel_v2_routes # "/api/channel/v2/.."
     end
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header
     scope '', &api_routes

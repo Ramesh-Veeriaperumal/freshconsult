@@ -53,7 +53,8 @@ module Ember
         handle_segments
       else
         super
-        response.api_meta = { count: @items_count }
+        response.api_meta = @items_count ? { count: @items_count } : {}
+        response.api_meta[:next_page] = @more_items
       end
     end
 
@@ -141,6 +142,13 @@ module Ember
         super
       end
 
+      def load_objects
+      # preload(:flexifield) will avoid n + 1 query to contact field data.
+        items = contacts_filter(scoper).preload(preload_options).order('users.name')
+        @items_count = items.count if calculate_count_query?
+        @items = paginate_items(items)
+      end
+
       def load_object(items = scoper)
         @item = items.find_by_id(params[:id])
         @item ||= deleted_agent
@@ -223,7 +231,7 @@ module Ember
           @company_param[:default] = true
         else
           params[cname][:company_id] = @def_company.id
-          params[cname][:client_manager] = @company_param[:view_all_tickets]
+          params[cname][:client_manager] = @company_param[:view_all_tickets] || false
         end
       end
 
@@ -250,7 +258,7 @@ module Ember
         end
         @all_companies.each do |comp|
           company = find_or_create_company(comp) if comp[:id].blank?
-          company_attributes << user_company_hash(company || comp, comp[:view_all_tickets], comp[:default])
+          company_attributes << user_company_hash(company || comp, comp[:view_all_tickets] || false, comp[:default])
         end
         @item.user_companies_attributes = Hash[(0...company_attributes.size).zip company_attributes]
       end
@@ -340,6 +348,10 @@ module Ember
 
       def constants_class
         :ContactConstants.to_s.freeze
+      end
+
+      def calculate_count_query?
+        private_api? && !current_account.stop_contacts_count_query_enabled?
       end
       wrap_parameters(*wrap_params)
   end

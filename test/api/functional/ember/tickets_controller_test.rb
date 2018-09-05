@@ -113,7 +113,7 @@ module Ember
     end
 
     def ticket_params_hash
-      cc_emails = [Faker::Internet.email, Faker::Internet.email]
+      cc_emails = [Faker::Internet.email, Faker::Internet.email, "\"#{Faker::Name.name}\" <#{Faker::Internet.email}>"]
       subject = Faker::Lorem.words(10).join(' ')
       description = Faker::Lorem.paragraph
       email = Faker::Internet.email

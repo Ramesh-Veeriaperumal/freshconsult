@@ -11,14 +11,17 @@ class Va::Logger::Automation
       @@automation_logger ||= Logger.new(log_path)
     end
 
-    def log content
+    def log(content, am_logger = false)
       return if Thread.current[:automation_log_vars].blank?
       context_txt = standard_content
       log_text_array = content.split('\n').map{ |c| "#{context_txt}, content=#{c}" }
-      log_text_array.each {|log_text| logger.debug log_text}
+      log_text_array.each do |log_text|
+        Rails.logger.info(log_text)
+        logger.info(log_text) if am_logger
+      end
     rescue => e
-      Rails.logger.debug "Error in writing to automation.log #{content.inspect}"
-      Rails.logger.debug e.inspect
+      Rails.logger.info "Error in writing to automation.log #{content.inspect}"
+      Rails.logger.info e.inspect
       NewRelic::Agent.notice_error(e, { :custom_params => { :description => "Error in writing to automation.log, #{e.message}" }})
     end
 
@@ -57,7 +60,7 @@ class Va::Logger::Automation
       Thread.current[:automation_log_vars][:rule_type] = rule_type if rule_type
       Thread.current[:automation_log_vars][:start_time] = Time.at(start_time).utc if start_time
       Thread.current[:automation_log_vars][:end_time] = Time.at(end_time).utc if end_time
-      log EXECUTION_COMPLETED
+      log(EXECUTION_COMPLETED, true)
       unset_execution_and_time
     end
 

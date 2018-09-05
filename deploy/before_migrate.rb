@@ -95,6 +95,7 @@ run "ln -nfs #{shared_path}/config/app_integration.yml #{node[:rel_path]}/config
 run "ln -nfs #{shared_path}/config/freshmarketer.yml #{node[:rel_path]}/config/freshmarketer.yml"
 run "ln -nfs #{shared_path}/config/unsupported_features.yml #{node[:rel_path]}/config/features/unsupported_features.yml"
 run "ln -nfs #{shared_path}/config/hyper_trail.yml #{node[:rel_path]}/config/hyper_trail.yml"
+run "ln -nfs #{shared_path}/config/proactive_service.yml #{node[:rel_path]}/config/proactive_service.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

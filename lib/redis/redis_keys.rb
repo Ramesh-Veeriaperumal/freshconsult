@@ -24,6 +24,7 @@ module Redis::RedisKeys
   PORTAL_PREVIEW = "PORTAL_PREVIEW:%{account_id}:%{user_id}:%{template_id}:%{label}"
   IS_PREVIEW = "IS_PREVIEW:%{account_id}:%{user_id}:%{portal_id}"
   PREVIEW_URL = "PREVIEW_URL:%{account_id}:%{user_id}:%{portal_id}"
+  MINT_PREVIEW_KEY = "MINT_PREVIEW_KEY:%{account_id}:%{user_id}:%{portal_id}"
   GROUP_ROUND_ROBIN_AGENTS = "GROUP_ROUND_ROBIN_AGENTS:%{account_id}:%{group_id}"
   ADMIN_ROUND_ROBIN_FILTER = "ADMIN_ROUND_ROBIN_FILTER:%{account_id}:%{user_id}"
 
@@ -364,9 +365,6 @@ module Redis::RedisKeys
   DISABLE_PORTAL_NEW_THEME = "DISABLE_PORTAL_NEW_THEME"
   BOT_STATUS = "BOT_STATUS:%{account_id}:%{bot_id}"
 
-  # Key for enabling TAM company fields
-  TAM_FIELDS_ENABLED = "TAM_FIELDS_ENABLED"
-
   YEAR_IN_REVIEW_ACCOUNT = "YEAR_IN_REVIEW:%{account_id}"
   YEAR_IN_REVIEW_CLOSED_USERS = "YEAR_IN_REVIEW_CLOSED:%{account_id}"
 
@@ -376,8 +374,6 @@ module Redis::RedisKeys
   FRESHCONNECT_NEW_ACCOUNT_SIGNUP_ENABLED = 'FRESHCONNECT_NEW_ACCOUNT_SIGNUP_ENABLED'.freeze
   FRESHWORKS_OMNIBAR_SIGNUP_ENABLED = 'FRESHWORKS_OMNIBAR_SIGNUP_ENABLED'.freeze
   FRESHID_MIGRATION_IN_PROGRESS_KEY = 'FRESHID_MIGRATION_IN_PROGRESS:%{account_id}'.freeze
-  # Key for enabling TAM company fields
-  TAM_FIELDS_ENABLED = "TAM_FIELDS_ENABLED"
 
   FRESHCONNECT_NEW_ACCOUNT_SIGNUP_ENABLED = 'FRESHCONNECT_NEW_ACCOUNT_SIGNUP_ENABLED'.freeze
 
@@ -428,6 +424,7 @@ module Redis::RedisKeys
   FRESHSALES_TRACK_SUBSCRIPTION = "FRESHSALES_TRACK_SUBSCRIPTION".freeze
 
   #Temp Redis keys for resque to sidekiq migration end
+  
 
   # count cluster to search service keys
   SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED = "SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED"
@@ -437,6 +434,8 @@ module Redis::RedisKeys
   CONTACT_IMPORT_FINISHED_RECORDS = "CONTACT_IMPORT_FINISHED_RECORDS:%{account_id}"
   COMPANY_IMPORT_TOTAL_RECORDS = "COMPANY_IMPORT_TOTAL_RECORDS:%{account_id}"
   COMPANY_IMPORT_FINISHED_RECORDS = "COMPANY_IMPORT_FINISHED_RECORDS:%{account_id}"
+
+  ADVANCED_TICKETING_METRICS = "ADVANCED_TICKETING_METRICS"
   ################### END OF REDIS KEYS ###################
 
   #########################################################################################################

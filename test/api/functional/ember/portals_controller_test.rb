@@ -158,4 +158,73 @@ class Ember::PortalsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('id', :bot_exists, code: :invalid_value)])
   end
+
+  def test_link_back_url_with_space
+     # contains space in between
+    check_portal_update_with_invalid_url('http://loremipsum.com/droid dmoe/')
+  end
+
+  def test_link_back_url_without_tld
+    # doesn't have top level domain
+    check_portal_update_with_invalid_url('http://loremipsum/droid dmoe/')
+  end
+
+  def test_link_back_url_with_invalid_length
+    # more than 63 chars in host part
+    check_portal_update_with_invalid_url('http://loremipsumloremipsumloremipsumloremipsumloremipsumloremipsumloremipsumloremipsumloremipsumloremipsum.com/droid/')
+  end
+
+  def test_link_back_url_with_invalid_tld
+    # top level domain should contain atleast two chars
+    check_portal_update_with_invalid_url('http://loremipsum.c')
+  end
+
+  def test_link_back_url_with_local_ip
+    check_portal_update_with_invalid_url('https://192.168.0.1/maps/place/Nagalapuram,+Andhra+Pradesh+517589/@13.5252021,79.8047142,3a,75y,187.5h,90t/data=!3m8!1e1!3m6!1sAF1QipMRGXX6_2va0YsRo44Edo_67YIQ-Yq3NPpCDBnY!2e10!3e11!6shttps:%2F%2Flh5.googleusercontent.com%2Fp%2FAF1QipMRGXX6_2va0YsRo44Edo_67YIQ-Yq3NPpCDBnY%3Dw86-h86-k-no-pi-0-ya110.5-ro0-fo100!7i8704!8i4352!4m5!3m4!1s0x3a4d610798df206d:0x3a5f49a106d2ab7e!8m2!3d13.3857837!4d79.7988547')
+  end
+
+  def test_link_back_url_with_invalid_port
+    check_portal_update_with_invalid_url('https://اف@#$@$%#$%غانستا.icom.mu:809033/coasmmc/com')
+  end
+
+  def test_link_back_url_with_underscore
+    check_portal_update_with_valid_url('https://asdasd-o---asd.com/coasmmc/com/a?=a')
+  end
+
+  def test_link_back_url_with_tamil_language
+    check_portal_update_with_valid_url('https://dmeo.இந்தியா/coasmmc/com')
+  end
+
+  def test_link_back_url_with_accented_chars
+    check_portal_update_with_valid_url('https://ăâåč.icom.mu:8090/coasmmc/com')
+  end
+
+  def test_link_back_url_with_japanese
+    check_portal_update_with_valid_url('https://JP納豆.例.jp/coasmmc/com')
+  end
+
+  def test_link_back_url_with_valid_url_and_path
+    check_portal_update_with_valid_url('https://www.google.co.in/maps/place/Nagalapuram,+Andhra+Pradesh+517589/@13.5252021,79.8047142,3a,75y,187.5h,90t/data=!3m8!1e1!3m6!1sAF1QipMRGXX6_2va0YsRo44Edo_67YIQ-Yq3NPpCDBnY!2e10!3e11!6shttps:%2F%2Flh5.googleusercontent.com%2Fp%2FAF1QipMRGXX6_2va0YsRo44Edo_67YIQ-Yq3NPpCDBnY%3Dw86-h86-k-no-pi-0-ya110.5-ro0-fo100!7i8704!8i4352!4m5!3m4!1s0x3a4d610798df206d:0x3a5f49a106d2ab7e!8m2!3d13.3857837!4d79.7988547')
+  end
+
+  private
+  def check_portal_update_with_valid_url(url)
+    portal = create_portal_with_customisation
+    params_hash = portal_hash(portal)
+    params_hash[:preferences] = params_hash[:preferences].merge(logo_link: url)
+    put :update, construct_params({ version: 'private', id: portal.id }, params_hash)
+    assert_response 200
+    portal.reload
+    match_json(portal_show_pattern(portal))
+  end
+
+  def check_portal_update_with_invalid_url(url)
+    portal = create_portal_with_customisation
+    params_hash = portal_hash(portal)
+    params_hash[:preferences] = params_hash[:preferences].merge(logo_link: url)
+    put :update, construct_params({ version: 'private', id: portal.id }, params_hash)
+    assert_response 400
+    portal.reload
+    assert portal[:preferences][:log_link] != url
+  end
 end

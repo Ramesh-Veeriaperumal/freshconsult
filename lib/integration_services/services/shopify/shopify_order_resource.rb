@@ -78,7 +78,6 @@ module IntegrationServices::Services
         ]
         order.select {|key| required_keys.include?(key) }
       end
-
     end
   end
 end

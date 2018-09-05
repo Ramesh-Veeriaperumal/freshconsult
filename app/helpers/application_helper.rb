@@ -51,7 +51,7 @@ module ApplicationHelper
   #Add the features you want to send to inline manual(for segmenting) to the below array in string format
   #NOTE: The limit for the features is 17 items with up to 24 characters each. 
   # i.e, we can only send first 24 characters of first 17 enabled features for an account. 
-  INLINE_MANUAL_FEATURES = [:freshfone]
+  INLINE_MANUAL_FEATURES = [:freshfone, :mint_portal_applicable]
 
   INLINE_MANUAL_FEATURE_THRESHOLDS = { char_length: 24, max_count: 17}
 
@@ -128,13 +128,21 @@ module ApplicationHelper
 
   def support_theme_url
     stylesheet_name = is_current_language_rtl? ? "theme_rtl.css" : "theme.css"
-    query_string = preview? ? "#{Time.now.to_i}&preview=true" : "#{current_portal.template.updated_at.to_i}"
+    if preview? || get_others_redis_key(mint_preview_key)
+      query_string ="#{Time.now.to_i}&preview=true"
+    else
+      query_string = "#{current_portal.template.updated_at.to_i}"
+    end
     "/support/#{stylesheet_name}?v=#{query_string}"
   end
 
   def facebook_theme_url
     stylesheet_name = is_current_language_rtl? ? "theme_rtl.css" : "theme.css"
-    query_string = preview? ? "#{Time.now.to_i}&preview=true" : "#{current_portal.template.updated_at.to_i}"
+    if preview? || get_others_redis_key(mint_preview_key)
+      query_string ="#{Time.now.to_i}&preview=true"
+    else
+      query_string = "#{current_portal.template.updated_at.to_i}"
+    end
     "/facebook/#{stylesheet_name}?v=#{query_string}"
   end
 
@@ -661,7 +669,7 @@ module ApplicationHelper
     }
 
     # TAM company fields place holders
-    if current_account.tam_default_company_fields_enabled?
+    if current_account.tam_default_fields_enabled?
       current_account.company_form.tam_default_fields.each { |field|
         place_holders[:company] <<  ["{{ticket.company.#{field.name}}}",
                                      "Company #{field.label}", "", 
@@ -2165,7 +2173,42 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
   end
 
+  def is_sandbox_production_active
+    !current_account.sandbox? &&
+    SANDBOX_NOTIFICATION_STATUS.include?(current_account.sandbox_job.try(:status)) &&
+    SANDBOX_URL_PATHS.select{ |i| request.env['PATH_INFO'].include?(i)}.any?
+  end
+
+  def show_sandbox_notification
+    !(Account.current.account_type == 2) && !is_sandbox_production_active && Account.current.sandbox_enabled? && current_user.is_falcon_pref?
+  end
+
+  def support_mint_applicable?
+    if !current_account.falcon_portal_theme_enabled? && current_account.launched?(:mint_portal_applicable)
+      portals = current_account.portals
+      portals.any? do |current_portal|
+        current_template = current_portal.template
+        !current_portal.falcon_portal_enable? && current_template.header.blank? && current_template.footer.blank? &&  current_template.custom_css.blank? && current_template.layout.blank? && current_template.pages.size == 0
+      end
+    end
+  end
+
+  def support_mint_applicable_portal?(current_portal) 
+    if !current_account.falcon_portal_theme_enabled? && current_account.launched?(:mint_portal_applicable)    
+      current_template = current_portal.template
+      !current_portal.falcon_portal_enable? && current_template.header.blank? && current_template.footer.blank? &&  current_template.custom_css.blank? && current_template.layout.blank? && current_template.pages.size == 0
+    end
+  end
+
+  def mint_preview_key
+       if User.current
+          MINT_PREVIEW_KEY % { :account_id => current_account.id, 
+                       :user_id => User.current.id, :portal_id => current_portal.id}
+      end
+     end
+
   def split_with_separator(bucket)
     bucket.present? ? bucket.split('||').map(&:strip) : []
   end
+
 end

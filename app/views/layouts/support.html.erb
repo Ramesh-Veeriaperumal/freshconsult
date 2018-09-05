@@ -12,10 +12,9 @@
 		<%= portal_fav_ico %>
 
 		<!-- Base stylesheet -->
-
- 		
+ 
 		<%= stylesheet_link_tag_with_rtl :'cdn/portal_print',  :media => "print" %>
-		<% if current_account.falcon_support_portal_theme_enabled?%>
+		<% if current_account.falcon_support_portal_theme_enabled? || @portal.falcon_portal_enable? || get_others_redis_key(mint_preview_key)%>
 	  		<%= stylesheet_link_tag_with_rtl :'cdn/falcon_portal_utils' %>	
 	  	<% else %>
 	  		<%= stylesheet_link_tag_with_rtl :'cdn/portal_utils' %>
@@ -23,6 +22,7 @@
 
 		
 		<!-- Theme stylesheet -->
+
 		<link href="<%= support_theme_url %>" media="screen" rel="stylesheet" type="text/css">
 
 		<!-- Google font url if present -->

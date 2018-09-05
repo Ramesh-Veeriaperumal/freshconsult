@@ -2,6 +2,7 @@ module Ember
   class InstalledApplicationsController < ApiApplicationController
     include HelperConcern
     include InstalledApplicationConstants
+    include IntegrationServices::Errors
 
     decorate_views
 
@@ -12,6 +13,8 @@ module Ember
       service_object = @service_class.new(@item, params[:payload])
       @data = service_object.receive(params[:event])
       render :fetch, status: service_object.web_meta[:status]
+    rescue AccessDeniedError => error
+      render_request_error(:access_denied, 403)
     rescue TimeoutError => error
       render_base_error(:integration_timeout, 504)
     rescue StandardError => error

@@ -113,7 +113,7 @@ module Helpdesk
       :livechat_manage_shortcodes,
       :livechat_view_reports,
       :manage_calls,
-      :manage_dashboard 
+      :manage_dashboard
     ]
     
     ADMINISTRATOR = [

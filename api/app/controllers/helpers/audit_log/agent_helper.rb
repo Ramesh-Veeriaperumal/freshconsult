@@ -1,12 +1,13 @@
 module AuditLog::AgentHelper
   include AuditLog::AuditLogHelper
+  include AuditLog::Translators::Agent
 
   ALLOWED_MODEL_CHANGES = [:email, :roles, :single_access_token, :ticket_permission,
                            :available, :occasional].freeze
 
   def agent_changes(_model_data, changes)
     response = []
-    changes.deep_symbolize_keys
+    changes = readable_agent_changes(changes)
     model_name = :agent
     changes.each_pair do |key, value|
       next unless ALLOWED_MODEL_CHANGES.include?(key)

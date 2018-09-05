@@ -9,7 +9,7 @@ class Bot::CheckTrainingStatus < BaseWorker
     status_key = BOT_STATUS % { account_id: Account.current.id, bot_id: args[:bot_id] }
     if get_others_redis_key(status_key).to_i == BotConstants::BOT_STATUS[:training_inprogress]
       Rails.logger.info("Bot Training Incomplete :: Account id : #{Account.current.id} :: Bot id : #{args[:bot_id]}")
-      ::Admin::BotMailer.send(:bot_training_incomplete_email, args[:bot_id])
+      ::Admin::BotMailer.send(:bot_training_incomplete_email, args)
     else
       Rails.logger.info("Bot Training Completed :: Account id : #{Account.current.id} :: Bot id : #{args[:bot_id]}")
     end

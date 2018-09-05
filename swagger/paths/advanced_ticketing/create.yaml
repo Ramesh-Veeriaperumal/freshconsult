@@ -1,0 +1,19 @@
+post:
+  tags: [Advanced Ticketing]
+  summary: Create
+  description: Create an advanced ticketing application
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/advanced_ticketing_create'
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

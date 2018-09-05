@@ -537,6 +537,48 @@
         }
       }
     },
+    "/tickets/bulk_unlink": {
+      "put": {
+        "summary": "Bulk Unlink",
+        "tags": [
+          "ticket"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/bulk_action_input"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/tickets/bulk_delete": {
       "put": {
         "tags": [
@@ -8013,6 +8055,251 @@
           }
         }
       }
+    },
+
+    "/proactive/rules": {
+      "get": {
+        "tags": [
+          "proactive rules"
+        ],
+        "summary": "List all",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rules": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/proactive_rule_response"
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/meta"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "proactive rules"
+        ],
+        "description": "Create rule",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/proactive_rule_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/proactive_rule_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "rule not found"
+          }
+        }
+      }
+    },
+    "/proactive/rules/{id}": {
+      "get": {
+        "tags": [
+          "proactive rules"
+        ],
+        "summary": "Show rule",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/proactive_rule_response"
+            }
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "proactive rules"
+        ],
+        "summary": "Delete rule",
+        "description": "Destroys the rule, will not be able to restore",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "proactive rules"
+        ],
+        "summary": "Update rule",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/proactive_rule_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/proactive_rule_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      }
+    },
+    "/advanced_ticketing": {
+      "post": {
+        "tags": [
+          "Advanced Ticketing"
+        ],
+        "summary": "Create",
+        "description": "Create an advanced ticketing application",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/advanced_ticketing_create"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/advanced_ticketing/{id}": {
+      "delete": {
+        "tags": [
+          "Advanced Ticketing"
+        ],
+        "summary": "Delete",
+        "description": "Delete an advanced ticketing application",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Name of the application",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Application not found"
+          }
+        }
+      }
+    },
+    "/advanced_ticketing/insights": {
+      "get": {
+        "tags": [
+          "Advanced Ticketing"
+        ],
+        "description": "Retrieve the insights of advanced ticketing applications",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/advanced_ticketing_insights"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -10456,6 +10743,14 @@
         }
       }
     },
+    "proactive_rule_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/rule"
+        }
+      ]
+    },
     "sandbox_merge_input": {
       "type": "object",
       "properties": {
@@ -12831,6 +13126,24 @@
         }
       ]
     },
+    "rule": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "event": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "event"
+      ]
+    },
     "meta": {
       "type": "object",
       "title": "meta",
@@ -14730,6 +15043,17 @@
         }
       }
     },
+    "proactive_rule_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/rule"
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
     "trial_widget_index": {
       "type": "object",
       "properties": {
@@ -15999,6 +16323,93 @@
       "properties": {
         "url": {
           "type": "string"
+        }
+      }
+    },
+    "subscription_show": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "state": {
+          "type": "string"
+        },
+        "subscription_plan_id": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "addons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "features_list": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+    "advanced_ticketing_create": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of advanced ticketing application to be created"
+        }
+      }
+    },
+    "advanced_ticketing_insights": {
+      "type": "object",
+      "properties": {
+        "parent_child_tickets": {
+          "type": "object",
+          "properties": {
+            "parent_tickets_count": {
+              "type": "integer"
+            },
+            "child_tickets_count": {
+              "type": "integer"
+            }
+          }
+        },
+        "link_tickets": {
+          "type": "object",
+          "properties": {
+            "tracker_tickets_count": {
+              "type": "integer"
+            },
+            "related_tickets_count": {
+              "type": "integer"
+            }
+          }
+        },
+        "shared_ownership": {
+          "type": "object",
+          "properties": {
+            "shared_ownership_tickets_count": {
+              "type": "integer"
+            }
+          }
         }
       }
     }

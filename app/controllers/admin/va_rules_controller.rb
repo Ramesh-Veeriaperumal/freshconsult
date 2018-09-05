@@ -365,7 +365,7 @@ class Admin::VaRulesController < Admin::AdminController
           choices: segments(:company_filters), operatortype: 'choicelist',
           condition: current_account.segments_enabled? }
       ]
-      add_tam_company_fields filter_hash['company'] if current_account.tam_default_company_fields_enabled?
+      add_tam_company_fields filter_hash['company'] if current_account.tam_default_fields_enabled?
       add_customer_custom_fields filter_hash['company'], "company"
       filter_hash['company'] = filter_hash['company'].select{ |filter| filter.fetch(:condition, true) }
     end

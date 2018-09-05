@@ -34,6 +34,13 @@
 	}
 	.list-page-body .table{
 		table-layout:fixed;
+		td.list-mint-preview-button {
+    			width: 18%;
+			}
+		td.mint-enabled-list {
+			width:20%
+		}
+
 		tr td{
 			width:30.3%;
 			&:first-child{
@@ -224,4 +231,25 @@
 			min-width: 280px;
 		}
 	}
+}
+
+a.preview-button{
+    color: #096cce;
+	position: relative;
+	&:before{
+	    content: '\25B7';
+		font-size: 12px;
+		padding-right: 6px;
+		border: 11px;
+		font-weight: bold;
+		padding-bottom: 0px;
+		position: relative;
+		top: 0px;
+		color: #333;
+	}
+ }
+
+a.preview-button:hover{
+    color: #004080;
+    text-decoration: none;
 }

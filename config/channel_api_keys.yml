@@ -5,10 +5,10 @@ defaults: &defaults
     secret_key: dummy
     iv: dummy
   frankbot:
-    auth_type: dummy
-    secret_key: dummy
-    jwt_secret: dummy
-    jwt_default_expiry: dummy
+    auth_type: jwe
+    secret_key: 0222bcd8eb9911e7891d186590cc7ba7
+    jwt_secret: 0fde22cebceca72d39b841bb72043941
+    jwt_default_expiry: 10000
   twitter:
     auth_type: jwt
     jwt_secret: dummy

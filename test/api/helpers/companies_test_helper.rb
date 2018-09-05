@@ -62,6 +62,10 @@ module CompaniesTestHelper
       description: company.description,
       domains: expected_output[:domains] || domains,
       note: company.note,
+      health_score: company.health_score,
+      account_tier: company.account_tier,
+      industry: company.industry,
+      renewal_date: format_renewal_date(company.renewal_date),
       custom_fields: expected_output['custom_field'] || company.custom_field.map { |k, v| [CustomFieldDecorator.display_name(k), v.respond_to?(:utc) ? v.strftime('%F') : v] }.to_h,
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
@@ -136,7 +140,9 @@ module CompaniesTestHelper
       if @private_api
         company_field_json[:choices] = choice_list(company_field)
       else
-        company_field_json[:choices] = company_field.choices.map { |x| x[:value] } if company_field.field_type.to_s == 'custom_dropdown'
+        if (['default_health_score', 'default_account_tier', 'default_industry', 'custom_dropdown'].include?(company_field.field_type.to_s))
+          company_field_json[:choices] = company_field.choices.map { |x| x[:value] }
+        end
       end
     end
     company_field_json

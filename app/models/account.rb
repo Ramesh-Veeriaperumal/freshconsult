@@ -688,7 +688,7 @@ class Account < ActiveRecord::Base
   end
 
   def create_freshid_org_and_account(org_id, join_token, user)
-    return unless freshid_signup_allowed? && freshid_enabled?
+    return unless freshid_enabled?
     response = org_id.present? ? create_freshid_account_with_user_for_org(org_id, join_token, user) : create_freshid_org_with_account_and_user(user)
     sync_user_info_from_freshid(user, response)
     user.enqueue_activation_email

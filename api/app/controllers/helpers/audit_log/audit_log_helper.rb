@@ -5,9 +5,10 @@ module AuditLog::AuditLogHelper
     def description_properties(*params)
       key, value, options = params
       options ||= {}
+      options.symbolize_keys!
       modified_value = value.present? ? default_value(value) : nil
       modified_value = value if options[:type] == :array
-      { type: :default, field: key, value: modified_value }.merge(options)
+      { type: :default, field: key, value: modified_value }.merge!(options)
     end
 
     def nested_data(nested_value, options)
@@ -73,7 +74,7 @@ module AuditLog::AuditLogHelper
     def event_type_and_description(activity, action, event_type)
       event_type = event_type.join('_')
       response = {
-        action: translated_key(action, :action),
+        action: action,
         event_type: translated_key(event_type, :event_type)
       }
       if action == :update
@@ -107,7 +108,7 @@ module AuditLog::AuditLogHelper
       response.symbolize_keys!
       enriched_data = {
         data: response[:data].map do |activity|
-          activity = activity.deep_symbolize_keys
+          activity = deep_symbolize_keys(activity)
           *event_type, action = activity[:action].split('_')
           action = action.to_sym
           custom_response = {
@@ -121,5 +122,24 @@ module AuditLog::AuditLogHelper
         end
       }
       enriched_data.merge! meta_data(response)
+    end
+
+    # custom function to deep symbolize keys because of different ruby version on production and local
+    # Note: feel free to delete it when there is no issue
+    def deep_symbolize_keys(changes)
+      symbolize = lambda do |value|
+        case value
+        when Hash
+          deep_symbolize_keys(value)
+        when Array
+          value.map { |value| symbolize.call(value) }
+        else
+          value
+        end
+      end
+      changes.inject({}) do |result, (key, value)|
+        result[(key.to_sym rescue key) || key] = symbolize.call(value)
+        result
+      end
     end
 end

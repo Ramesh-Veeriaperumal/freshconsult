@@ -3,7 +3,7 @@ class Account < ActiveRecord::Base
                    :customer_sentiment_ui, :dkim, :scheduled_ticket_export,
                    :ticket_contact_export, :email_failures, :disable_emails,
                    :falcon_portal_theme, :freshid, :freshchat_integration,:year_in_review_2017,
-                   :facebook_page_redirect, :announcements_tab, :archive_ghost,
+                   :facebook_page_redirect, :announcements_tab,
                    :ticket_central_publish, :solutions_central_publish, :es_msearch,
                    :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
                    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3,
@@ -12,11 +12,13 @@ class Account < ActiveRecord::Base
                    :dependent_field_validation, :post_central_publish, :encode_emoji_subject,
                    :time_sheets_central_publish, :twitter_common_redirect, :canned_forms,
                    :euc_migrated_twitter, :new_ticket_recieved_metric, :audit_log_ui,
-                   :dashboard_announcement_central_publish, :dashboard_announcements, :undo_send,
-                   :timeline, :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes,
-                   :sso_login_expiry_limitation, :undo_send, :count_service_es_writes]
-   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
+                   :dashboard_announcement_central_publish, :timeline, :twitter_microservice,
+                   :twitter_handle_publisher, :count_service_es_writes, :sso_login_expiry_limitation,
+                   :undo_send, :count_service_es_writes, :old_link_back_url_validation, :shopify_actions,
+                   :stop_contacts_count_query, :db_to_bitmap_features_migration]
 
+  DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
+  
   BITMAP_FEATURES = [
       :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
       :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields,
@@ -28,7 +30,8 @@ class Account < ActiveRecord::Base
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
-      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments, :freshconnect
+      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments, :freshconnect,
+      :proactive_outreach
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -63,6 +66,24 @@ class Account < ActiveRecord::Base
   Collaboration::Ticket::SUB_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       self.collaboration_enabled? && (self.collab_settings[item.to_s] == 1)
+    end
+  end
+
+  def features?(*feature_names)
+    return super(*feature_names) unless launched?(:db_to_bitmap_features_migration)
+    db_features = feature_names - DB_TO_BITMAP_MIGRATION_FEATURES_LIST
+    if db_features.count == feature_names.count
+      super(*feature_names)
+    else
+      # twitter and facebook DB features are mapped to advanced_twitter and 
+      # advanced_facebook in bitmap
+      feature_names.push :advanced_twitter if feature_names.delete(:twitter).present?
+      feature_names.push :advanced_facebook if feature_names.delete(:facebook).present?
+      if db_features.empty?
+        self.has_features?(*feature_names)
+      else
+        super(db_features) && self.has_features?(*(feature_names - db_features))
+      end
     end
   end
 
@@ -240,10 +261,6 @@ class Account < ActiveRecord::Base
     has_feature?(:freshconnect) && freshconnect_account.present? && freshconnect_account.enabled
   end
 
-  def archive_tickets_feature_enabled?
-    archive_tickets_enabled? || archive_ghost_enabled?
-  end
-
   def falcon_ui_enabled?(current_user = :no_user)
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
     valid_user && (falcon_enabled? || check_admin_mint? || disable_old_ui_enabled?)
@@ -267,10 +284,6 @@ class Account < ActiveRecord::Base
   def set_falcon_redis_keys
     hash_set = Hash[COMBINED_VERSION_ENTITY_KEYS.collect { |key| ["#{key}_LIST", Time.now.utc.to_i] }]
     set_others_redis_hash(version_key, hash_set)
-  end
-
-  def tam_default_company_fields_enabled?
-    Account.current.tam_default_fields_enabled? &&  redis_key_exists?(TAM_FIELDS_ENABLED)
   end
 
   def support_bot_configured?

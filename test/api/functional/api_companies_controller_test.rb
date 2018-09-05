@@ -16,13 +16,11 @@ class ApiCompaniesControllerTest < ActionController::TestCase
       create_company_field params
     end
     clear_contact_field_cache
-    set_others_redis_key(TAM_FIELDS_ENABLED, true)
   end
 
   def teardown
     super
     destroy_custom_fields
-    remove_others_redis_key(TAM_FIELDS_ENABLED)
   end
 
   def domain_array

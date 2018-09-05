@@ -6,10 +6,7 @@ module Ember
       include ChannelAuthentication
       include BotHelper
 
-      skip_before_filter :check_privilege, :verify_authenticity_token, only: [:training_completed]
-      before_filter :channel_client_authentication, only: [:training_completed]
-      before_filter :load_bot_by_external_id, only: [:training_completed]
-      around_filter :handle_exception, only: [:training_completed, :mark_completed_status_seen, :enable_on_portal]
+      around_filter :handle_exception, only: [:mark_completed_status_seen, :enable_on_portal]
       before_filter :verify_create_bot_folder, only: [:create_bot_folder]
 
       def index
@@ -86,16 +83,6 @@ module Ember
           handle_category_mapping_failure(e)
           render_errors(@item.errors)
         end
-      end
-
-      def training_completed
-        return unless validate_state(BotConstants::BOT_STATUS[:training_inprogress])
-        @bot.training_completed!
-        @bot_user = current_account.users.find_by_id(@bot.last_updated_by)
-        categories = @bot.solution_category_meta.includes(:primary_category).map(&:name)
-        ::Admin::BotMailer.send_later(:bot_training_completion_email, @bot, @bot_user.email, @bot_user.name, categories)
-        notify_to_iris
-        head 204
       end
 
       def mark_completed_status_seen
@@ -202,32 +189,6 @@ module Ember
           render_base_error(:internal_error, 500)
         end
 
-        def load_bot_by_external_id
-          @bot = current_account.bots.find_by_external_id(params[:id])
-          log_and_render_404 unless @bot
-        end
-
-        def notify_to_iris
-          Rails.logger.info "Pushing bot training completion to iris. Bot id is #{@bot.id}"
-          push_data_to_service(IrisNotificationsConfig['api']['collector_path'], iris_payload)
-        end
-
-        def payload
-          {
-            bot_id: @bot.id,
-            user_id: @bot_user.id,
-            bot_name: @bot.name
-          }
-        end
-
-        def iris_payload
-          {
-            payload: payload,
-            payload_type: BotConstants::IRIS_NOTIFICATION_TYPE,
-            account_id: Account.current.id.to_s
-          }
-        end
-
         def get_portal_logo_url(portal)
           logo = portal.logo
           logo_url = logo.content.url if logo.present?
@@ -308,11 +269,12 @@ module Ember
           current_account.launch(:solutions_central_publish) unless current_account.solutions_central_publish_enabled?
           Bot::MlSolutionsTraining.perform_async(bot_id: @item.id)
           Rails.logger.info("Enqueueing for training status check:: #{bot_info}")
-          Bot::CheckTrainingStatus.perform_in(1.hour.from_now, bot_id: @item.id)
+          Bot::CheckTrainingStatus.perform_in(1.hour.from_now, { bot_id: @item.id, external_id: @item.external_id, portal_id: @item.portal_id })
           @item.training_inprogress!
         rescue => e
           Rails.logger.error "Exception while enqueueing to ml overall learning: #{e.message}, #{bot_info}"
           NewRelic::Agent.notice_error(e)
+          raise e
         end
 
         def handle_category_mapping_failure(error_message)
