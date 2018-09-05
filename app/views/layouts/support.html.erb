@@ -14,7 +14,7 @@
 		<!-- Base stylesheet -->
  
 		<%= stylesheet_link_tag_with_rtl :'cdn/portal_print',  :media => "print" %>
-		<% if current_account.falcon_support_portal_theme_enabled? || @portal.falcon_portal_enable? || get_others_redis_key(mint_preview_key)%>
+		<% if current_account.falcon_support_portal_theme_enabled? || @portal.falcon_portal_enable? || (mint_preview_key && get_others_redis_key(mint_preview_key))%>
 	  		<%= stylesheet_link_tag_with_rtl :'cdn/falcon_portal_utils' %>	
 	  	<% else %>
 	  		<%= stylesheet_link_tag_with_rtl :'cdn/portal_utils' %>

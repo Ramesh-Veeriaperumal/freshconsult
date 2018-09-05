@@ -128,7 +128,7 @@ module ApplicationHelper
 
   def support_theme_url
     stylesheet_name = is_current_language_rtl? ? "theme_rtl.css" : "theme.css"
-    if preview? || get_others_redis_key(mint_preview_key)
+    if preview? || (mint_preview_key && get_others_redis_key(mint_preview_key))
       query_string ="#{Time.now.to_i}&preview=true"
     else
       query_string = "#{current_portal.template.updated_at.to_i}"
@@ -138,7 +138,7 @@ module ApplicationHelper
 
   def facebook_theme_url
     stylesheet_name = is_current_language_rtl? ? "theme_rtl.css" : "theme.css"
-    if preview? || get_others_redis_key(mint_preview_key)
+    if preview? || (mint_preview_key && get_others_redis_key(mint_preview_key))
       query_string ="#{Time.now.to_i}&preview=true"
     else
       query_string = "#{current_portal.template.updated_at.to_i}"
@@ -2180,7 +2180,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def show_sandbox_notification
-    !(Account.current.account_type == 2) && !is_sandbox_production_active && Account.current.sandbox_enabled? && current_user.is_falcon_pref?
+    !(Account.current.account_type == 2) && !is_sandbox_production_active && Account.current.sandbox_enabled? && current_account.sandbox_lp_enabled? && current_user.is_falcon_pref?
   end
 
   def support_mint_applicable?
