@@ -5,10 +5,10 @@ module ChannelIntegrations::CommonActions
 
     def create_note(payload)
       data = payload[:data]
-      note = construct_note(data)
 
       # we will try to use payload's source. defaults to note.
-      note.source ||= Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+      data[:source] ||= Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+      note = construct_note(data)
       note.save_note!
 
       reply = default_success_format
@@ -19,10 +19,10 @@ module ChannelIntegrations::CommonActions
 
     def create_reply(payload)
       data = payload[:data]
-      note = construct_note(data)
 
       # we will try to use payload's source. defaults to email.
-      note.source ||= Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email']
+      data[:source] ||= Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['email']
+      note = construct_note(data)
       note.save_note!
 
       reply = default_success_format
