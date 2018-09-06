@@ -2074,7 +2074,7 @@ p.default_report_name {
 	}
 }
 #timespent-export-link{
-	margin-right: 10px;
+	@include margin-right(10px);
 	margin-top: 10px;
 }
 
