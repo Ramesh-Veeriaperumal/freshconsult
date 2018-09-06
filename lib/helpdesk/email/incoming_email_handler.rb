@@ -69,7 +69,10 @@ module Helpdesk
 			end
 
 			def perform(parsed_to_email = Hash.new, skip_encoding = false)
-				decode_stuffs if (params[:decode_stuffs_done].nil? or params[:decode_stuffs_done] == false)
+				if collab_email_reply? params[:subject]
+					# block all email related to collab based on subject
+					return processed_email_data(PROCESSED_EMAIL_STATUS[:noop_collab_email_reply])
+				end
 			    result = {}
 			    email_processing_log("Email received: Message-Id #{message_id}")
 			    self.start_time = Time.now.utc
@@ -94,7 +97,7 @@ module Helpdesk
 					account = Account.find_by_full_domain(to_email[:domain])
 					if account && account.allow_incoming_emails?
 						account.make_current
-						email_spam_watcher_counter(account) if params[:spamCheckDone] == false
+						email_spam_watcher_counter(account)
 						TimeZone.set_time_zone
 						from_email = parse_from_email(account)
 						if from_email.nil?
@@ -146,8 +149,8 @@ module Helpdesk
 								email_processing_log "Email Processing Failed: Blank User!", to_email[:email]
 								return processed_email_data(PROCESSED_EMAIL_STATUS[:blank_user], account.id)
 							end
-							set_current_user(user)        
-							if(params[:sanitize_done].nil? or params[:sanitize_done] == false)
+							set_current_user(user)
+							if(params[:sanitize_done].nil? or params[:sanitize_done].to_s.downcase == "false")
 								self.class.trace_execution_scoped(['Custom/Helpdesk::IncomingEmailHandler/sanitize']) do
 									# Workaround for params[:html] containing empty tags
 									if params[:html].blank? && !params[:text].blank? 
@@ -292,11 +295,16 @@ module Helpdesk
 			def body_html_with_formatting(body,email_cmds_regex)
 				body = body.gsub(email_cmds_regex,'<notextile>\0</notextile>')
 				to_html = text_to_html(body)
-				# Process auto_link if the content is less than 300 KB, otherwise leave as text.
-				if body.size < MAXIMUM_CONTENT_LIMIT
-					body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
+				# if auto_linking is done in java side then we will not do
+				if(!params[:auto_link_done].nil? && params[:auto_link_done].to_s.downcase == "true")
+					body_html = to_html
 				else
-					body_html = sanitize(to_html)
+					# Process auto_link if the content is less than 300 KB, otherwise leave as text.
+					if body.size < MAXIMUM_CONTENT_LIMIT
+						body_html = auto_link(to_html) { |text| truncate(text, :length => 100) }
+					else
+						body_html = sanitize(to_html)
+					end
 				end
 
 				html = white_list(body_html)
@@ -360,11 +368,6 @@ module Helpdesk
 			end
 
 			def fetch_ticket(account, from_email, user, email_config)
-				ticket = fetch_ticket_from_div_content(params[:freshdesk_div_tag], account) if(!params[:freshdesk_div_tag].nil?)
-				if can_be_added_to_ticket?(ticket, user, from_email)
-					Rails.logger.info "Found existing ticket @ Email service"
-					return ticket 
-				end
 				display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
 				ticket = account.tickets.find_by_display_id(display_id) if display_id
 				if can_be_added_to_ticket?(ticket, user, from_email)
@@ -390,8 +393,6 @@ module Helpdesk
 
 
 			def fetch_archived_ticket(account, from_email, user, email_config)
-				archive_ticket = fetch_ticket_from_div_content(params[:freshdesk_div_tag], account_id, true) if(!params[:freshdesk_div_tag].nil?)
-				return archive_ticket if can_be_added_to_ticket?(archive_ticket, user, from_email)
 				display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
 				archive_ticket = account.archive_tickets.find_by_display_id(display_id) if display_id
 				return archive_ticket if can_be_added_to_ticket?(archive_ticket, user, from_email)
@@ -411,20 +412,9 @@ module Helpdesk
 						return if email_from_another_portal?(account, fetched_account_id)
 						ticket = account.tickets.find_by_display_id(display_id.to_i)
 						self.actual_archive_ticket = account.archive_tickets.find_by_display_id(display_id.to_i) if account.features_included?(:archive_tickets) && !ticket
-						return ticket 
-					end 
+						return ticket
+					end
 				end
-			end
-
-			def fetch_ticket_from_div_content content, account, is_archive = false
-				ticket_data = content.split(":")
-				ticket_id = is_numeric?(ticket_data[0]) ? ticket_data[0] : 0
-				account_id = ticket_data[1]
-				ticket = nil
-				if(account.id.to_s == account_id)
-					ticket = fetch_archive_or_normal_ticket_by_display_id(ticket_id, account, is_archive)
-				end
-				return ticket
 			end
 
 			def fetch_archive_or_normal_ticket_by_display_id display_id, account, is_archive = false
@@ -676,12 +666,12 @@ module Helpdesk
 			end
 
 			def cleansed_html
-				if (params[:cleanse_done].nil? or params[:cleanse_done] == false)
+				if (params[:cleanse_done].nil? or params[:cleanse_done].to_s.downcase == "false")
 					@cleaned_html_body ||= begin
 						cleansed_html = run_with_timeout(HtmlSanitizerTimeoutError) { 
 						begin
 							result = nil
-							if (!params[:sanitized].nil? && params[:sanitized] == "true")
+							if (!params[:sanitize_done].nil? && params[:sanitize_done].to_s.downcase == "true")
 								result = params[:html]
 							else
 								result = Helpdesk::HTMLSanitizer.clean params[:html]
@@ -743,9 +733,9 @@ module Helpdesk
 			end
 
 			def update_spam_data(ticket)
-				spam_data = params[:spam_info]
+				spam_data = params[:spam_info] if(antispam_enabled?(ticket.account))
 
-				spam_data = check_for_spam(params) if(params[:spam_check_done].nil? or params[:spam_check_done] ==false)
+				spam_data = check_for_spam(params) if(params[:spam_done].nil? or params[:spam_done].to_s.downcase == "false")
 				if spam_data.present?
 					begin
 						ticket.sds_spam = spam_data['spam']
@@ -774,8 +764,8 @@ module Helpdesk
 						end
 						content_id = content_ids["attachment#{i+1}"] && 
 										verify_inline_attachments(item, content_ids["attachment#{i+1}"])
-						att = Helpdesk::Attachment.create_for_3rd_party(account, item, 
-								params["attachment#{i+1}"], i, content_id, true) unless virus_attachment?(params["attachment#{i+1}"], account)
+						att = Helpdesk::Attachment.create_for_3rd_party(account, item,
+								params["attachment#{i+1}"], i, content_id, true)
 						if att && (att.is_a? Helpdesk::Attachment)
 							if content_id && !att["content_file_name"].include?(".svg")
 								content_id_hash[att.content_file_name+"#{inline_count}"] = content_ids["attachment#{i+1}"]
@@ -804,23 +794,6 @@ module Helpdesk
 				return attachments, inline_attachments
 			end
 
-			def virus_attachment? attachment, account
-				if account.launched?(:antivirus_service)  && (params[:virus_scan_done].nil or params[:virus_scan_done] == false)
-					begin
-						file_attachment = (attachment.is_a? StringIO) ? attachment : File.open(attachment.tempfile)
-						result = Email::AntiVirus.scan(io: file_attachment) 
-						if result && result[0] == "virus"
-							@total_virus_attachment = 0 unless @total_virus_attachment
-							@total_virus_attachment += 1  
-							return true
-						end
-					rescue => e
-						Rails.logger.info "Error While checking attachment for virus in account #{account.id}, #{e.class}, #{e.message}, #{e.backtrace}"
-					end
-				end
-				return false
-			end
-							
 			def get_content_ids
 				content_ids = {}
 				split_content_ids = params["content-ids"].tr("{}\\\"","").split(",")
@@ -866,10 +839,10 @@ module Helpdesk
 			def add_email_to_ticket(ticket, from_email, to_email, user)
 				msg_hash = {}
 				# for plain text
-				body = params[:body_content_text_portion]
+				body = params[:body_content_text]
 				# work with the code here
-				full_text = params[:quoted_content_text_portion]
-				if(!((get_email_parsing_redis_flag == "1") or Account.current.launched?(:quoted_text_parsing_feature))  or params[:quoted_parse_done].nil? or params[:quoted_parse_done] == false )
+				full_text = params[:text]
+				if need_local_quoted_parsing?
 					msg_hash = show_quoted_text(params[:text], ticket.reply_email)
 					unless msg_hash.blank?
 						body = msg_hash[:body]
@@ -878,10 +851,10 @@ module Helpdesk
 				end
 
 				# for html text
-				body_html = params[:body_content_html_portion]
-				full_text_html = params[:quoted_content_html_portion]
+				body_html = (quoted_parsing_enabled?) ? params[:body_content_html] : params[:html]
+				full_text_html =  params[:html]
 
-				if(params[:quoted_parse_done].nil? or params[:quoted_parse_done] == false)
+				if need_local_quoted_parsing?
 					msg_hash = show_quoted_text(params[:html], ticket.reply_email,false)
 					unless msg_hash.blank?
 						body_html = msg_hash[:body]
@@ -900,7 +873,8 @@ module Helpdesk
 				end
 				note_params = build_note_params ticket, from_email, user, from_fwd_recipients, body, body_html, full_text, full_text_html, cc_emails
 				note = ticket.notes.build note_params
-				note.subject = (params[:cleanse_done].nil? or params[:cleanse_done] == false) ? Helpdesk::HTMLSanitizer.clean(params[:subject]) : params[:subject]
+				note.quoted_parsing_done= "1" if  quoted_parsing_enabled? && !need_local_quoted_parsing?
+				note.subject = (params[:cleanse_done].nil? or params[:cleanse_done].to_s.downcase == "false") ? Helpdesk::HTMLSanitizer.clean(params[:subject]) : params[:subject]
 				note.source = Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"] if (from_fwd_recipients or ticket.agent_performed?(user) or rsvp_to_fwd?(ticket, from_email, user))
 
 				note.schema_less_note.category = ::Helpdesk::Note::CATEGORIES[:third_party_response] if rsvp_to_fwd?(ticket, from_email, user)
@@ -1037,54 +1011,6 @@ module Helpdesk
 				end
 			end
 
-			def decode_stuffs
-				charsets = params[:charsets].blank? ? {} : ActiveSupport::JSON.decode(params[:charsets])
-				[ :html, :text, :subject, :headers, :from ].each do |t_format|
-					unless params[t_format].nil?
-						charset_encoding = (charsets[t_format.to_s] || "UTF-8").strip()
-
-						# if replacement char is found in subject, the subject is broken. So fetch subject from headers
-						replacement_char = "\uFFFD"
-						if t_format == :subject && (params[t_format].include? replacement_char)
-							(params[t_format], charset_encoding) = fetch_subject_from_header
-						end
-
-						# if subject contains ascii encoding then decode it
-						if t_format == :subject && params[t_format] =~ Mail::Encodings::ENCODED_VALUE
-							params[t_format] = decode_ascii_encoded_stuff params[t_format]
-							next
-						end
-
-						# if !charset_encoding.nil? and !(["utf-8","utf8"].include?(charset_encoding.downcase))
-						if ((t_format == :subject || t_format == :headers) && (charsets[t_format.to_s].blank? || charsets[t_format.to_s].upcase == "UTF-8") && (!params[t_format].valid_encoding?))
-							begin
-								params[t_format] = params[t_format].encode(Encoding::UTF_8, :undef => :replace, 
-				                                      :invalid => :replace, 
-				                                      :replace => '')
-								next
-							rescue Exception => e
-								Rails.logger.error "Error While encoding in process email  \n#{e.message}\n#{e.backtrace.join("\n\t")} #{params}"
-							end
-						end
-
-						begin
-							params[t_format] = Iconv.new('utf-8//IGNORE', charset_encoding).iconv(params[t_format])
-						rescue Exception => e
-							# check whether the encodes are different using the mapping
-							if ENCODING_MAPPING[charset_encoding.upcase]
-								params[t_format] = Iconv.new('utf-8//IGNORE', ENCODING_MAPPING[charset_encoding.upcase]).iconv(params[t_format])
-							elsif ((charsets[t_format.to_s].blank? || charsets[t_format.to_s].upcase == "UTF-8") && (!params[t_format].valid_encoding?))
-								replace_invalid_characters t_format
-							else
-								Rails.logger.error "Error While encoding in process email  \n#{e.message}\n#{e.backtrace.join("\n\t")} #{params}"
-								NewRelic::Agent.notice_error(e,{:description => "Charset Encoding issue with ===============> #{charset_encoding}"})
-							end
-						end
-
-					end
-				end
-			end
-
 			def fetch_subject_from_header
 				params[:headers] =~ /^subject\s*:(.+)$/i
 				subject = $1.strip
@@ -1093,17 +1019,10 @@ module Helpdesk
 				return subject, detected_encoding
 			end
 
-			def decode_ascii_encoded_stuff str
-				res = ""
-				if str =~ Mail::Encodings::ENCODED_VALUE
-					res = Mail::Encodings.value_decode(str)
-				end
-				res
-			end
 
 			def check_for_spam(params)
 				begin
-					Helpdesk::Email::SpamDetector.new.check_spam(params, params[:envelope])					
+					Helpdesk::Email::SpamDetector.new.check_spam(params, params[:envelope])
 				rescue Exception => e
 					Rails.logger.info "Error during spam_check in incoming_email_handler. #{e.message} - #{e.backtrace}"
 					NewRelic::Agent.notice_error(e)
@@ -1181,6 +1100,16 @@ module Helpdesk
 					$last_time_checked = Time.now
 				end
 				return $email_parsing_redis_flag
+			end
+
+			def need_local_quoted_parsing?
+				(params[:quoted_parse_done].nil? or params[:quoted_parse_done].to_s.downcase == "false")
+			end
+
+			# quoted parsing done in email_service. This flag enables the body_html to be saved as simple recent reply.
+			# if this returns false then full_html is saved in body_html also
+			def quoted_parsing_enabled?
+				((get_email_parsing_redis_flag == "1") or Account.current.launched?(:quoted_text_parsing_feature))
 			end
 
 		end

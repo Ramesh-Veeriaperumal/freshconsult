@@ -10042,6 +10042,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       h: h
       m: m
       s: s
+      khrs: "k hours"
       hrs: hrs
       mins: mins
     abbr_month_names: [Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
@@ -12177,6 +12178,9 @@ Do let us know if you are interested!"
       wrong_file_format: "Unsupported file format!"
       unexpected: "Something went wrong!"
       highlight_missing: "Highlight missing"
+    info:
+      follow_flash: "Hey there!<br>You are now following this Team Huddle and will be notified of all new messages in-app and via email."
+      unfollow_flash: "See you later 'gator!<br>You will still be notified when a teammate mentions you and groups that you are a part of and when someone replies to your message."
 
   call:
     duration_html: "<br><br> <b>Call Duration:</b> %{call_duration}"
@@ -12198,9 +12202,6 @@ Do let us know if you are interested!"
       onhold_description: "Conversation with %{customer} and %{agent}"
       default_description: "Conversation with %{customer} and %{agent}"
 
-    info:
-      follow_flash: "Hey there!<br>You are now following this Team Huddle and will be notified of all new messages in-app and via email."
-      unfollow_flash: "See you later 'gator!<br>You will still be notified when a teammate mentions you and groups that you are a part of and when someone replies to your message."
   tam_fields:
     health_score:
       default_choice0: "At risk"
