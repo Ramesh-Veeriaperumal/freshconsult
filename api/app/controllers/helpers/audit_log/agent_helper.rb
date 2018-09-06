@@ -13,7 +13,7 @@ module AuditLog::AgentHelper
       next unless ALLOWED_MODEL_CHANGES.include?(key)
       trans_key = translated_key(key, model_name)
       response.push key == :roles ? 
-        nested_description(trans_key, value, :agent, { type: :link, path: '/a/admin/role' }) :
+        nested_description(trans_key, value, :agent) :
         description_properties(trans_key, value)
     end
     response
