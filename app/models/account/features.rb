@@ -3,17 +3,17 @@ class Account < ActiveRecord::Base
   LP_FEATURES = [:select_all, :round_robin_capping, :suggest_tickets,
                  :customer_sentiment_ui, :dkim, :scheduled_ticket_export,
                  :ticket_contact_export, :disable_emails,
-                 :falcon_portal_theme, :freshid, :freshchat_integration, :year_in_review_2017, :announcements_tab, :archive_ghost,
+                 :falcon_portal_theme, :freshid, :freshchat_integration, :year_in_review_2017, :announcements_tab,
                  :ticket_central_publish, :solutions_central_publish, :es_msearch,
                  :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
                  :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3,
-                 :imap_error_status_check, :va_any_field_without_none, :auto_complete_off,
+                 :imap_error_status_check, :va_any_field_without_none, :auto_complete_off, :sandbox_lp,
                  :sanbox_lp, :encode_emoji, :dependent_field_validation, :post_central_publish,
                  :audit_logs_central_publish, :encode_emoji_subject,
                  :time_sheets_central_publish, :new_ticket_recieved_metric, :canned_forms,
                  :euc_migrated_twitter, :twitter_microservice, :twitter_handle_publisher, :csat_email_scan_compatibility,
                  :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :mint_portal_applicable, 
-                 :old_link_back_url_validation, :shopify_actions, :db_to_bitmap_features_migration]
+                 :old_link_back_url_validation, :shopify_actions, :db_to_bitmap_features_migration, :denormalized_select_for_update]
   
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
