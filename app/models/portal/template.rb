@@ -129,7 +129,7 @@ class Portal::Template < ActiveRecord::Base
   end
 
   def get_draft
-    cached_template = get_portal_redis_key(draft_key)
+    cached_template = get_portal_redis_key(draft_key) if draft_key
     Marshal.load(cached_template) if cached_template
   end
 
@@ -198,10 +198,12 @@ class Portal::Template < ActiveRecord::Base
   private
 
     def draft_key(label = "cosmetic")
-      PORTAL_PREVIEW % {:account_id => self.account_id,
-                        :template_id => self.id,
-                        :label => label,
-                        :user_id => User.current.id }
+      if User.current
+        PORTAL_PREVIEW % {:account_id => self.account_id,
+                          :template_id => self.id,
+                          :label => label,
+                          :user_id => User.current.id }
+      end
     end
 
     def mint_preview_key

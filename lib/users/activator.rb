@@ -43,7 +43,6 @@ module Users
                       (portal.main_portal ? account.default_friendly_email : portal.friendly_email)
       email_config = email_config ? email_config : 
                       (portal.main_portal ? account.primary_email_config : portal.primary_email_config)                      
-      reset_perishable_token! unless perishable_token_reset
 
       e_notification = account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
       if customer?
@@ -58,6 +57,9 @@ module Users
         template = agent_template.last
         subj_template = agent_template.first
       end
+
+      reset_perishable_token! unless perishable_token_reset
+
       activation_url = generate_activation_url(portal)
       activation_params = { :email_body => Liquid::Template.parse(template).render((user_key ||= 'agent') => self, 
                                   'helpdesk_name' =>  account.helpdesk_name, 

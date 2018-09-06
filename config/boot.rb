@@ -5,12 +5,7 @@ ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
 
 require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
 
-env = ENV['RAILS_ENV'] || "development"
-
-# First cut, enable Bootsnap in dev alone and monitor.
-# If no issues then include ENV['ENABLE_BOOTSNAP'] in ruby-with-env nginx config for staging/prod.
-
-ENV['ENABLE_BOOTSNAP'] = "true" if env == 'development'
+# ENV['ENABLE_BOOTSNAP'] is not set anywhere, we are disabling Bootsnap because of the problems mentioned in https://jira.freshworks.com/browse/INFRA-1017
 
 if ENV['ENABLE_BOOTSNAP'] == "true"
   require 'bootsnap'

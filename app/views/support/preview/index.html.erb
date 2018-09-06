@@ -1,4 +1,4 @@
-<% if @preview %>
+<% if preview?%>
     <div id="preview-message" class="preview-message">
         <div class="page">
          <div class = "mint-preview-class">   
@@ -8,7 +8,7 @@
             </a>
             
             <% if support_mint_applicable_portal?(current_portal)%> 
-                <%mint_preview_key_set = get_others_redis_key(mint_preview_key)%>
+                <%mint_preview_key_set = get_others_redis_key(mint_preview_key) if mint_preview_key%>
                 <%= link_to I18n.t("portalcss.apply_mint"),
                             admin_portal_template_path(current_portal,:apply_new_skin => "apply"), 
                             :method => :put, 

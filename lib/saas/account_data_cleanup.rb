@@ -351,14 +351,6 @@ end
     account.launch(:es_msearch)
   end
 
-  def handle_freshconnect_drop_data
-    ::Freshconnect::UpdateFreshconnect.perform_async(false)
-  end
-
-  def handle_freshconnect_add_data
-    ::Freshconnect::UpdateFreshconnect.perform_async(true)
-  end
-
   def handle_disable_old_ui_add_data
     ::AdvancedTicketingConstants::ADVANCED_TICKETING_APPS.each do |app_name|
       account.installed_applications.with_name(app_name).each { |app| app.destroy }

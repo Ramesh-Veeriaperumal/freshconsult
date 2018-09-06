@@ -7,6 +7,6 @@ module Portal::PreviewKeyTemplate
      end
      
       def on_mint_preview
-     	get_others_redis_key(mint_preview_key)
+     	get_others_redis_key(mint_preview_key) if mint_preview_key
      end
 end

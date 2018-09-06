@@ -36,6 +36,10 @@ module AwsWrapper
       AWS::S3::Bucket.new(bucket).objects[file]
     end
 
+    def self.exists?(file,bucket)
+      find(file,bucket).exists?
+    end
+
     def self.delete(file,bucket)
       find(file,bucket).delete
     end

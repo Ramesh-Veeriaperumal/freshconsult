@@ -10,20 +10,19 @@
       <div class="muted"><%= (portal.product || current_account).name %></div>
   </td>
  
-  <%if support_mint_applicable_portal?(portal)%>
-    <td class = "list-mint-preview-button">
+  <td class = "view-mint-preview">
+    <%if support_mint_applicable_portal?(portal)%>
       <%= link_to I18n.t("portalcss.mint_preview"), 
           admin_portal_template_path(portal,:mint_preview_button => "mint preview"), 
           :method => :put, 
           :target => "_blank", 
           :class =>"pull-right preview-button"
-      %>
-    </td>
-  <%end%>   
+    %>
+    <%end%>   
+  </td>
 
   <td>
     <div class="pull-right">
-     
       <span class="view-portal">
         <span class='ficon-open-in-new-window pr5 fsize-14'></span>
         <span class="tooltip" title="<%= portal.full_url %>">
