@@ -25,8 +25,6 @@ class Company < ActiveRecord::Base
   CUST_TYPE_BY_KEY    = Hash[*CUST_TYPES.map { |i| [i[2], i[1]] }.flatten].freeze
   CUST_TYPE_BY_TOKEN  = Hash[*CUST_TYPES.map { |i| [i[0], i[2]] }.flatten].freeze
 
-  VA_LAZY_EVALUATIONS = [:segments].freeze
-
   MAX_DISPLAY_COMPANY_TICKETS = 10
   MAX_DISPLAY_COMPANY_CONTACTS = 5
 end

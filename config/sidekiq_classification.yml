@@ -106,6 +106,7 @@
     - update_taggables_queue
     - suspended_ticket_central_publish
     - unlink_tickets
+    - primary_language_change
   :maintainence:
     - select_all_tickets
     - select_all_batcher
@@ -194,7 +195,6 @@
     - freshid_agents_migration
     - run_rake_task
     - register_freshconnect
-    - update_freshconnect
   :free:
     - free_sla
     - free_supervisor

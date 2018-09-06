@@ -42,7 +42,11 @@ module Portal::TemplateActions
   end
 
   def unset_mint_preview
-     remove_others_redis_key(mint_preview_key)
+     preview_key = if User.current
+                      MINT_PREVIEW_KEY % { :account_id => current_account.id, 
+                                   :user_id => User.current.id, :portal_id => @portal.id}
+                    end
+     remove_others_redis_key(preview_key)
   end
   
   def set_mint_preview

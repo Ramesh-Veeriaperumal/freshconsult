@@ -14,7 +14,7 @@ module AuditLog::AuditLogHelper
     def nested_data(nested_value, options)
       nested_value.map do |each_value|
         each_value.symbolize_keys!
-        description_properties(each_value[:name], each_value[:value],
+        description_properties(each_value[:value] || '', each_value[:name],
                                options.merge(id: each_value[:id]))
       end
     end
@@ -47,7 +47,9 @@ module AuditLog::AuditLogHelper
     end
 
     def default_value(value)
-      { from: value[0], to: value[1] } if value.present?
+      if value.present?
+        value.is_a?(Array) ? { from: value[0], to: value[1] } : value
+      end
     end
 
     def activity_description(model_name, response)

@@ -38,8 +38,8 @@ class EmailController < ApplicationController
     if envelope.present? && multiple_envelope_to_address?( envelope_to = get_to_address_from_envelope(envelope))
      status = process_email_for_each_to_email_address(envelope_to)
     else
-      @process_email = Helpdesk::ProcessEmail.new(params)
-      status =  @process_email.perform 
+      @process_email = Helpdesk::ProcessEmail.new(params) 
+      status =  @process_email.perform
     end
     status = (status == MAINTENANCE_STATUS ? :service_unavailable : :ok )
     render :layout => 'email', :status => status
@@ -59,57 +59,22 @@ class EmailController < ApplicationController
             account = Account.find_by_full_domain(domain).make_current
             account_type = account.email_subscription_state
             user = account.all_users.find_by_email(params[:email])
-            basic_hash = {:created_at => account.created_at, :account_type => account_type, :account_id => account.id}
+            basic_hash = {:domain_status => shard_status, :created_at => account.created_at, :account_type => account_type, :account_id => account.id}
             if user.nil?
-              render :json => {:domain_status => shard_status, :user_status => :not_found}.merge(basic_hash)
+              render :json => {:user_status => :not_found}.merge(basic_hash)
             elsif user.valid_user?
-              render :json => {:domain_status => shard_status, :user_status => :active}.merge(basic_hash)
+              render :json => {:user_status => :active}.merge(basic_hash)
             elsif user.deleted?
-              render :json => {:domain_status => shard_status, :user_status => :deleted}.merge(basic_hash)
+              render :json => {:user_status => :deleted}.merge(basic_hash)
             elsif user.blocked?
-              render :json => {:domain_status => shard_status, :user_status => :blocked}.merge(basic_hash)
+              render :json => {:user_status => :blocked}.merge(basic_hash)
             else
-              render :json => {:domain_status => shard_status, :user_status => :not_active}.merge(basic_hash)
+              render :json => {:user_status => :not_active}.merge(basic_hash)
             end
           end
         end
       else
-        render :json => { :domain_status => shard_status, :user_status => :not_found, :created_at => nil, :account_type => nil, :account_id => nil }
-      end
-    end
-  end
-
-
-  def validate_account
-    account_id = params[:account_id]
-    domain_mapping = DomainMapping.find_by_account_id(account_id)
-    if domain_mapping.blank?
-      render :json => {:domain_status => 404, :user_status => :not_found, :created_at => nil, :account_type => nil, :domain => nil}
-    else
-      shard = ShardMapping.lookup_with_account_id(account_id)
-      shard_status = shard.status
-      if shard.ok?
-        Sharding.select_shard_of(account_id) do
-          Sharding.run_on_slave do
-            account = Account.find_by_id(account_id).make_current
-            account_type = account.email_subscription_state
-            user = account.all_users.find_by_email(params[:email])
-            basic_hash = {:created_at => account.created_at, :account_type => account_type, :domain => account.full_domain}
-            if user.nil?
-              render :json => {:domain_status => shard_status, :user_status => :not_found}.merge(basic_hash)
-            elsif user.valid_user?
-              render :json => {:domain_status => shard_status, :user_status => :active}.merge(basic_hash)
-            elsif user.deleted?
-              render :json => {:domain_status => shard_status, :user_status => :deleted}.merge(basic_hash)
-            elsif user.blocked?
-              render :json => {:domain_status => shard_status, :user_status => :blocked}.merge(basic_hash)
-            else
-              render :json => {:domain_status => shard_status, :user_status => :not_active}.merge(basic_hash)
-            end
-          end
-        end
-      else
-        render :json => { :domain_status => shard_status, :user_status => :not_found, :created_at => nil, :account_type => nil, :domain => nil }
+        render :json => { :domain_status => shard_status, :user_status => :not_found, :created_at => nil, :account_type => nil, :account_id => nil}
       end
     end
   end
@@ -119,19 +84,18 @@ class EmailController < ApplicationController
     Sharding.admin_select_shard_of(account_id) do
       Sharding.run_on_slave do
         account = Account.find_by_id(account_id).make_current
-        account_type = account.email_subscription_state
-        #user = account.all_users.find_by_email(params[:email])
-        render :json => { :status => 200, :created_at => account.created_at, :account_type => account_type, :mrr => account.subscription.cmrr, :ehawk_score => account.ehawk_reputation_score}
+        subscription_type = account.email_subscription_state
+        render :json => { :status => 200, :created_at => account.created_at, :account_domain => account.full_domain, :account_verified => account.verified?, :subscription_type => subscription_type, :mrr => account.subscription.cmrr, :signup_score => account.ehawk_reputation_score, :antispam_enabled => (antispam_enabled?(account))}
       end
     end
   rescue => e
-    render :json => { :status => 404, :created_at => nil, :account_type => nil, :mrr => nil, :ehawk_score => nil }
+    render :json => { :status => 404, :created_at => nil, :account_domain => nil, :account_verified => nil, :subscription_type => nil, :mrr => nil, :signup_score => nil, :antispam_enabled => nil }
   end
 
   private
 
   def authenticate_request
-    render_404 unless (params[:username] == "freshdesk" and params[:api_key] == Helpdesk::EMAIL[:domain_validation_key])
+    render_404 unless ((params[:username] == "freshdesk" and params[:api_key] == Helpdesk::EMAIL[:domain_validation_key]) || authenticated_email_service_request?(request.authorization))
   end
 
   def determine_pod
