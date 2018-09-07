@@ -16,7 +16,7 @@ module ActionMailer
         logger.info("Headers : #{extract_header(event.payload[:mail])} , mail_size : #{event.payload[:mail].bytesize}")
         email_logger.debug(event.payload[:mail])
       else
-        logger.info("Email Sending Failed due to : #{event.payload[:exception]}")
+        logger.info("Email Sending Failed due to : #{event.payload[:exception]}, From_email: #{event.payload[:from]}")
       end
     end
 

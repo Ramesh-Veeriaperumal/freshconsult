@@ -12,11 +12,13 @@
         var opts = $.extend( {}, $.fn.itoggle.defaults, options ),
             _checkbox = $(this),
             opts = $.extend( {}, opts, _checkbox.data()),
-            _onLabel = $("<span />", { 'class': 'on-label'}).html("<span>"+opts.checkedLabel+"</span>"),
-            _offLabel = $("<span />", { 'class': 'off-label'}).html("<span>"+opts.uncheckedLabel+"</span>"),
+            trimmedCheckedLabel = opts.checkedLabel.length > opts.maxLabelLength ? opts.checkedLabel.substring(0, opts.maxLabelLength - 2) + ".." : opts.checkedLabel
+            trimmedUncheckedLabel = opts.uncheckedLabel.length > opts.maxLabelLength ? opts.uncheckedLabel.substring(0, opts.maxLabelLength - 2) + ".." : opts.uncheckedLabel
+            _onLabel = $("<span />", { 'class': 'on-label'}).html("<span aria-label="+opts.checkedLabel+" title="+opts.checkedLabel+">"+trimmedCheckedLabel+"</span>"),
+            _offLabel = $("<span />", { 'class': 'off-label'}).html("<span aria-label="+opts.uncheckedLabel+" title="+opts.uncheckedLabel+">"+trimmedUncheckedLabel+"</span>"),
             _container = $("<span />", { 'class': 'toggle-container' }),
             _handle = $("<span />", { 'class': 'toggle-handle' }).append("<span></span>"),
-            _proxy = $("<p />").html((opts.checkedLabel.length > opts.uncheckedLabel.length) ? opts.checkedLabel : opts.uncheckedLabel),
+            _proxy = $("<p />").html((trimmedCheckedLabel.length > trimmedUncheckedLabel.length) ? trimmedCheckedLabel : trimmedUncheckedLabel),
             _invert = opts.inverted ? !_checkbox.prop('checked') : _checkbox.prop('checked'),
             _ibutton = $("<a />", {
               'href': "#",
@@ -69,6 +71,7 @@
     buttonDisabledClass: "toggle-disabled",
     checkedLabel: "on",
     uncheckedLabel: "off",
+    maxLabelLength: 6,
     activeClass: "",
     inactiveClass: "",
     inverted: false

@@ -3038,6 +3038,7 @@ Helpkit::Application.routes.draw do
           get :check_domain
           put :unblock_outgoing_email
           post :extend_trial
+          put :change_primary_language
         end
       end
 
@@ -3298,6 +3299,8 @@ Helpkit::Application.routes.draw do
   match "/admin/bot", to: redirect('/helpdesk')
   match "/admin/bot/*letter", to: redirect('/helpdesk')
   match "/bot/*letter", to: redirect('/helpdesk')
+
+  match "/admin/advanced-ticketing", to: redirect('/helpdesk')
 
   match '/freshid/authorize_callback', :controller => 'freshid', :action => 'authorize_callback', :method => :get
   match '/freshid/oauth_agent_authorize_callback', :controller => 'freshid', :action => 'oauth_agent_authorize_callback', :method => :get

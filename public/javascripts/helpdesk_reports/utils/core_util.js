@@ -1637,10 +1637,13 @@ HelpdeskReports.CoreUtil = {
     },
     timeMetricConversion: function( total_seconds ){
         if(typeof total_seconds !== 'number')  return total_seconds;
+        var h   = Math.floor(total_seconds / 3600);
+        if(HelpdeskReports.locals.report_type == 'timespent' && h > 999) {
+                return (h/1000).toFixed(1) + '<span class="time-char-format">'+I18n.t('helpdesk_reports.time_shorthand.khrs')+'</span>'
+        }
         var hrs = '<span class="time-char-format">'+I18n.t('helpdesk_reports.time_shorthand.h')+'</span>';
         var mins= '<span class="time-char-format">'+I18n.t('helpdesk_reports.time_shorthand.m')+'</span>';
         var secs= '<span class="time-char-format">'+I18n.t('helpdesk_reports.time_shorthand.s')+'</span>';
-        var h   = Math.floor(total_seconds / 3600);
         var min = Math.floor((total_seconds / 60) % 60);
         var sec = Math.floor(total_seconds % 60);
 

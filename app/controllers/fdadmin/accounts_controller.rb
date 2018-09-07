@@ -8,7 +8,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
-  around_filter :select_master_shard , :only => [:collab_feature,:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit]
+  around_filter :select_master_shard , :only => [:collab_feature,:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit, :change_primary_language]
   before_filter :validate_params, :only => [ :change_api_limit, :change_webhook_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
@@ -593,6 +593,28 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result = {}
     result[:domain_exist] = (params[:domain] && DomainMapping.find_by_domain(params[:domain])) ? true : false
     render :json => result
+  end
+
+  def change_primary_language
+    @account = Account.find(params[:account_id])
+    @account.make_current
+    language = Language.find_by_code(params[:language])
+    result = { account_id: @account.id, account_name: @account.name }
+    begin
+      if language && @account.language == language.code
+        result[:status] = 'notice'
+      else
+        PrimaryLanguageChange.perform_async(language: language.code, email: params[:email], language_name: language.name)
+        result[:status] = 'success'
+      end
+    rescue Exception => e
+      result[:status] = 'error'
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
   end
 
   private 

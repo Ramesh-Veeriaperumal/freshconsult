@@ -292,10 +292,10 @@ defaults: &defaults
     - [check_bot_training]
     - [update_segment_filter]
     - [register_freshconnect]
-    - [update_freshconnect]
     - [undo_send]
     - [unlink_tickets]
-    
+    - [primary_language_change]
+
 development:
   <<: *defaults
 
