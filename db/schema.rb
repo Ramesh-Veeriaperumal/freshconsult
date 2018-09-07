@@ -1408,6 +1408,12 @@ ActiveRecord::Schema.define(:version => 20180705070830) do
     t.text     "boolean_text_16"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "mlt_text_17"
+    t.text     "mlt_text_18"
+    t.text     "mlt_text_19"
+    t.text     "mlt_text_20"
+    t.text     "mlt_text_21"
+    t.integer  "lock_version",       :default => 0
   end
   add_index "denormalized_flexifields", ["account_id", "flexifield_id"], :name => "index_denormalized_flexifields_on_account_id_and_flexifield_id"
   execute "ALTER TABLE denormalized_flexifields ADD PRIMARY KEY (id,account_id)"
