@@ -102,6 +102,8 @@
       - :ticket_activity_export
       - :unique_contact_identifier
       - :custom_dashboard
+      - :audit_logs_central_publish
+      - :audit_log_ui
     :inherits:
       - :garden_jan_17
     :exclude: []

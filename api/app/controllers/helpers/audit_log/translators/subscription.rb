@@ -9,14 +9,13 @@ module AuditLog::Translators::Subscription
         ]
       when :subscription_currency_id
         model_changes[attribute] = [
-          currencies.find { |c| c.id == model_changes[attribute][0] }.name,
-          currencies.find { |c| c.id == model_changes[attribute][1] }.name
+          currencies.find { |c| c.id == model_changes[attribute][0] }.try(:name).to_s,
+          currencies.find { |c| c.id == model_changes[attribute][1] }.try(:name).to_s
         ]
       when :subscription_plan_id
-        plans = SubscriptionPlan.all
         model_changes[attribute] = [
-          plans.find { |plan| plan.id == model_changes[attribute][0] }.display_name,
-          plans.find { |plan| plan.id == model_changes[attribute][1] }.display_name
+          plans.find { |plan| plan.id == model_changes[attribute][0] }.try(:display_name).to_s,
+          plans.find { |plan| plan.id == model_changes[attribute][1] }.try(:display_name).to_s
         ]
       end
     end
@@ -25,5 +24,9 @@ module AuditLog::Translators::Subscription
 
   def currencies
     @currencies ||= Subscription::Currency.all
+  end
+
+  def plans
+    @plans ||= SubscriptionPlan.all
   end
 end
