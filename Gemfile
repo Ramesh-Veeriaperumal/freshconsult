@@ -350,7 +350,7 @@ gem 'rugged'
 
 gem 'clearbit'
 
-gem 'nokogiri', '= 1.8.2'
+gem 'nokogiri', '= 1.8.4'
 gem 'acts_as_api', '1.0.1'
 gem "uglifier", "~> 2.7.2"
 gem "sprockets", "2.2.3"
