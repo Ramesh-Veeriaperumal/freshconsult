@@ -102,7 +102,7 @@ module AuditLog::AuditLogHelper
       type = type.join('_')
       name ||= type
       {
-        name: name, url_type: type, id: (type == :agent ? user_id : id)
+        name: name, url_type: type, id: (type.to_sym == :agent ? user_id : id)
       }
     end
 

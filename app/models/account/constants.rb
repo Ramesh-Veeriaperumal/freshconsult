@@ -104,7 +104,8 @@ class Account < ActiveRecord::Base
         :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections, :custom_dashboard],
+        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections, :custom_dashboard,
+        :audit_logs_central_publish, :audit_log_ui],
       :inherits => [ :garden_jan_17 ]
     },
 
@@ -211,9 +212,9 @@ class Account < ActiveRecord::Base
     :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false,
     :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false,
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
-    :post_central_publish => false, :audit_logs_central_publish => false, :twitter_common_redirect => false,
+    :post_central_publish => false, :twitter_common_redirect => false,
     :euc_migrated_twitter => false, :new_onboarding => false, :new_ticket_recieved_metric => false,
-    :audit_log_ui => false, :es_msearch => true, :canned_forms => false, :attachment_virus_detection => false,
+    :es_msearch => true, :canned_forms => false, :attachment_virus_detection => false,
     undo_send: false, timeline: false, twitter_microservice: true, twitter_handle_publisher: true, 
     :old_link_back_url_validation => false, :shopify_actions => true,:stop_contacts_count_query => false
   }
