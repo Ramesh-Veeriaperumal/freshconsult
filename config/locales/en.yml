@@ -4390,7 +4390,7 @@ en:
         exceeded_email: Sorry, you cannot sign up for any more accounts
         user_emails: Please enter at least one contact detail
         max_user_emails: A contact cannot have more than 10 emails
-        max_user_companies: A contact cannot have more than 20 companies
+        max_user_companies: A contact cannot have more than %{max_companies} companies
         max_skills_per_account: Cannot create more than %{max_limit} skills
         max_skills_per_user: Cannot have more than %{max_limit} skills per agent
         unique_external_id: unique_external_id field cannot be updated

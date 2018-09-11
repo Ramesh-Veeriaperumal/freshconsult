@@ -43,8 +43,7 @@ module UsersHelper
     new_user.reload
   end
 
-  def 
-    add_new_user(account, options={})
+  def add_new_user(account, options={})
 
     if options[:email]
       user = User.find_by_email(options[:email])
@@ -87,8 +86,8 @@ module UsersHelper
     new_user.reload
   end
 
-  def add_user_with_multiple_emails(account, number)
-    new_user = add_new_user(@account)
+  def add_user_with_multiple_emails(account, number, options={})
+    new_user = add_new_user(@account, options)
     new_user.helpdesk_agent = 0;
     new_user.save
     new_user.reload

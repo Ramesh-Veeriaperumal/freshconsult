@@ -2,8 +2,8 @@ module Support::ArchiveTicketsHelper
   TOOLBAR_LINK_OPTIONS = {  "data-remote" => true, 
                             "data-response-type" => "script",
                             "data-method" => :get,
-                            "data-loading-box" => "#ticket-list" } 
-                            
+                            "data-loading-box" => "#ticket-list" }
+  ALL_COMPANIES_OPTION_THRESHOLD = 20
   def visible_fields
     visible_fields = ["display_id", "status", "created_at", "updated_at", "requester_name"] # removed "due_by", "resolved_at"
     current_portal.ticket_fields(:customer_visible).each { |field| visible_fields.push(field.name) }
@@ -33,7 +33,7 @@ module Support::ArchiveTicketsHelper
   end
 
   def current_requested_by_company
-    session[:requested_by_company] = params[:requested_by_company].presence || session[:requested_by_company].presence || 0
+    session[:requested_by_company] = params[:requested_by_company].presence || session[:requested_by_company].presence || default_company_id
   end
 
   def filter_list    
@@ -121,14 +121,30 @@ module Support::ArchiveTicketsHelper
   end
 
   def company_list
-    dropdown_menu [
-      [t("all_companies"), 
-                    filter_support_archive_tickets_path(:requested_by_company => 0), 
-                    (@requested_by_company == 0 )],
-      [:divider]].concat(@companies.map{ 
-                    |x| [ x.name, 
-                          filter_support_archive_tickets_path(:requested_by_company => x.id, :requested_by => 0), 
-                          (@requested_by_company.to_i == x.id) ] unless( current_user.id == x.id )
-                    }), TOOLBAR_LINK_OPTIONS
+    all_companies_option = [[ t("tickets_filter.all_companies"), 
+                             filter_support_archive_tickets_path(:requested_by_company => 0),
+                             (@requested_by_company == 0 ) ],[:divider]]
+
+    companies_list = @companies.map{ 
+                        |x| [ x.name,
+                              filter_support_archive_tickets_path(:requested_by_company => x.id,
+                                                                  :requested_by => 0),
+                              (@requested_by_company.to_i == x.id) ] unless( current_user.id == x.id )
+                      }
+
+    # Do not show all companies option when the number of companies for a contact
+    # exceeds 20. When the contact is a  client manager for all the companies,
+    # allowing all companies option will select all companies tickets and this may
+    # have a impact in performance. 
+    dropdown_options = if @companies.length > ALL_COMPANIES_OPTION_THRESHOLD
+                      companies_list
+                    else
+                      all_companies_option.concat(companies_list)
+                    end
+    dropdown_menu dropdown_options, TOOLBAR_LINK_OPTIONS
+  end
+
+  def default_company_id
+    current_user.company_id || 0
   end
 end

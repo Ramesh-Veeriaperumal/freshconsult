@@ -360,7 +360,7 @@ window.App.Contacts.Contact_form = window.App.Contacts.Contact_form || {};
 
     manageNewCompany: function () {
       var length = $("#user_companies li").not("[data-company-destroyed='true']").length;
-      $('.uc_add_company').toggle(length < 20);
+      $('.uc_add_company').toggle(length < 300);
     },
 
     addCompanyTemplate: function () {
