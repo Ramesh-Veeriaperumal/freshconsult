@@ -79,7 +79,19 @@
               <%= radio_button_tag("account[sso_options][sso_type]", "oauth2", (sso_type == SsoUtil::SSO_TYPES[:oauth2].to_sym)) %>
               <span class="enable_heading"> <%=t(".enable_oauth2_sso")%> </span>
               <%= content_tag( :div, t(".enable_oauth2_info"), :class => "info-data mt5" ) %>
-              <div class="info-data"  id="oauth2_sso_form" style="display:<%= sso_type == SsoUtil::SSO_TYPES[:oauth2].to_sym ? "block": "none" %>;">
+              <div class="info-data <%= 'hide' unless @account.oauth2_sso_enabled? %>"  id="oauth2_sso_form">
+                <% if @account.agent_oauth2_sso_enabled? %>
+                  <%= hidden_field_tag "account[sso_options][agent_oauth2]", @account.sso_options[:agent_oauth2] %>
+                  <% @account.sso_options[:agent_oauth2_config].each do |key, value| %>
+                   <%= hidden_field_tag "account[sso_options][agent_oauth2_config][#{key}]", value %>
+                  <% end %>
+                <% end %>
+                <% if @account.customer_oauth2_sso_enabled? %>
+                  <%= hidden_field_tag "account[sso_options][customer_oauth2]", @account.sso_options[:customer_oauth2] %>
+                  <% @account.sso_options[:customer_oauth2_config].each do |key, value| %>
+                   <%= hidden_field_tag "account[sso_options][customer_oauth2_config][#{key}]", value %>
+                  <% end %>
+                <% end %>
               </div>
             </li>
           <% end %>
@@ -297,6 +309,7 @@
     function ssoFormSlideHandler(){
       slide($('#simple_sso_form'), $('#account_sso_options_sso_type_simple').is(':checked'));
       slide($('#saml_sso_form'), $('#account_sso_options_sso_type_saml').is(':checked'));
+      slide($('#oauth2_sso_form'), $('#account_sso_options_sso_type_oauth2').is(':checked'));
       resetSSOFields();
     }
     
@@ -312,7 +325,7 @@
       }
     }
 
-    $("#account_sso_options_sso_type_saml, #account_sso_options_sso_type_simple").bind("change", ssoFormSlideHandler );
+    $("#account_sso_options_sso_type_saml, #account_sso_options_sso_type_simple, #account_sso_options_sso_type_oauth2").bind("change", ssoFormSlideHandler );
 
     $(".policies-checkbox").click(function(){
       var container = $(this).parents('.policy-checkbox-container');

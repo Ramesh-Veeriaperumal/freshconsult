@@ -185,6 +185,16 @@
       :shadow_fax8: 180
       :shadow_fax9: 181
       :shadow_fax10: 182
+      :audit_logs_central_publish: 183
+      :audit_log_ui: 184
+      :decepticons_3: 185
+      :decepticons_4: 186
+      :decepticons_5: 187
+      :decepticons_6: 188
+      :decepticons_7: 189
+      :decepticons_8: 190
+      :decepticons_9: 191
+      :decepticons_10: 192
 :selectable_features:
       :branding: true
       :gamification_enable: false
