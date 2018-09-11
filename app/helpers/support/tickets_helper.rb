@@ -3,7 +3,8 @@ module Support::TicketsHelper
   TOOLBAR_LINK_OPTIONS = {  "data-remote" => true, 
                             "data-response-type" => "script",
                             "data-method" => :get,
-                            "data-loading-box" => "#ticket-list" }  
+                            "data-loading-box" => "#ticket-list" }
+  ALL_COMPANIES_OPTION_THRESHOLD = 20
 
   def current_filter
     @current_filter ||= set_cookie :wf_filter, "open_or_pending"
@@ -22,7 +23,7 @@ module Support::TicketsHelper
   end
 
   def current_requested_by_company
-    session[:requested_by_company] = params[:requested_by_company].presence || session[:requested_by_company].presence || 0
+    session[:requested_by_company] = params[:requested_by_company].presence || session[:requested_by_company].presence || default_company_id
   end
 
   # Will set a cookie until the browser cache is cleared
@@ -71,15 +72,25 @@ module Support::TicketsHelper
   end
 
   def company_list
-    dropdown_menu [
-      [t("tickets_filter.all_companies"), 
-                    filter_support_tickets_path(:requested_by_company => 0), 
-                    (@requested_by_company == 0 )],
-      [:divider]].concat(@companies.map{ 
-                    |x| [ x.name, 
-                          filter_support_tickets_path(:requested_by_company => x.id, :requested_by => 0), 
-                          (@requested_by_company.to_i == x.id) ]
-                    }), TOOLBAR_LINK_OPTIONS
+    all_companies_option = [[ t("tickets_filter.all_companies"), 
+                             filter_support_tickets_path(:requested_by_company => 0),
+                             (@requested_by_company == 0 ) ],[:divider]]
+    companies_list = @companies.map{
+                        |x| [ x.name,
+                              filter_support_tickets_path(:requested_by_company => x.id,
+                                                          :requested_by => 0),
+                              (@requested_by_company.to_i == x.id) ]
+                     }
+    # Do not show all companies option when the number of companies for a contact
+    # exceeds 20. When the contact is a  client manager for all the companies,
+    # allowing all companies option will select all companies tickets and this may
+    # have a impact in performance. 
+    dropdown_options = if @companies.length > ALL_COMPANIES_OPTION_THRESHOLD
+                      companies_list
+                    else
+                      all_companies_option.concat(companies_list)
+                    end
+    dropdown_menu dropdown_options, TOOLBAR_LINK_OPTIONS
   end
 
   def raised_by
@@ -104,6 +115,10 @@ module Support::TicketsHelper
     else
       @requested_item.name
     end
+  end
+
+  def default_company_id
+    current_user.company_id || 0
   end
 
   def ticket_sorting

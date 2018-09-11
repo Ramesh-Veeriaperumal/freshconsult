@@ -132,7 +132,7 @@ class User < ActiveRecord::Base
   end
 
   def max_user_companies
-    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_companies')) \
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_companies', :max_companies => MAX_USER_COMPANIES)) \
       if (self.user_companies.length > MAX_USER_COMPANIES)
   end
 
