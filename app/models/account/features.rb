@@ -8,14 +8,15 @@ class Account < ActiveRecord::Base
                    :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
                    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3,
                    :imap_error_status_check, :va_any_field_without_none, :api_es, :sandbox_lp,
-                   :encode_emoji, :audit_logs_central_publish, :auto_complete_off,
+                   :encode_emoji, :auto_complete_off,
                    :dependent_field_validation, :post_central_publish, :encode_emoji_subject,
                    :time_sheets_central_publish, :twitter_common_redirect, :canned_forms,
-                   :euc_migrated_twitter, :new_ticket_recieved_metric, :audit_log_ui,
+                   :euc_migrated_twitter, :new_ticket_recieved_metric,
                    :dashboard_announcement_central_publish, :timeline, :twitter_microservice,
                    :twitter_handle_publisher, :count_service_es_writes, :sso_login_expiry_limitation,
-                   :undo_send, :count_service_es_writes, :old_link_back_url_validation, :shopify_actions,
-                   :stop_contacts_count_query, :db_to_bitmap_features_migration]
+                   :undo_send, :count_service_es_writes, :old_link_back_url_validation, :shopify_actions, 
+                   :stop_contacts_count_query, :db_to_bitmap_features_migration, :denormalized_select_for_update]
+
 
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   
@@ -31,6 +32,7 @@ class Account < ActiveRecord::Base
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
       :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments, :freshconnect,
+      :audit_logs_central_publish, :audit_log_ui,
       :proactive_outreach
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 

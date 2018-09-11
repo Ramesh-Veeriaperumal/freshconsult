@@ -35,7 +35,7 @@ class Va::RuleHandler
 
   def matches(evaluate_on)
     if evaluate_on.respond_to?(condition.dispatcher_key)
-      lazy_evaluations = evaluate_on.class.const_get('VA_LAZY_EVALUATIONS') rescue []
+      lazy_evaluations = LAZY_EVALUATIONS[evaluate_on.class.name] || []
       actual_val = nil
       matched = if lazy_evaluations.include?(condition.dispatcher_key.to_sym)
                   evaluate_rule(nil) { |args = []| evaluate_on.safe_send(condition.dispatcher_key, *args) }

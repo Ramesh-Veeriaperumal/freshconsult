@@ -6,6 +6,8 @@
       - :basic_facebook
       - :basic_dkim
       - :freshchat
+      - :freshconnect
+      - :collaboration
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -42,18 +44,16 @@
       - :sitemap
       - :requester_widget
       - :advanced_search
-      - :collaboration
       - :user_notifications
       - :quick_reply
       - :tam_default_fields
       - :contact_company_notes
       - :image_annotation
       - :tam_default_fields
-      - :contact_company_notes 
+      - :contact_company_notes
       - :todos_reminder_scheduler
       - :smart_filter
       - :session_replay
-      - :freshconnect
     :inherits:
       - :sprout_jan_17
     :exclude: []
@@ -102,6 +102,8 @@
       - :ticket_activity_export
       - :unique_contact_identifier
       - :custom_dashboard
+      - :audit_logs_central_publish
+      - :audit_log_ui
     :inherits:
       - :garden_jan_17
     :exclude: []

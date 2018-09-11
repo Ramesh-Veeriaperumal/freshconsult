@@ -110,6 +110,11 @@ module Va
       '3' => 'X-FORM-URLENCODED'
     }
 
+    LAZY_EVALUATIONS = {
+      'User'             => [:segments],
+      'Company'          => [:segments]
+    }.freeze
+
     def self.webhook_content_layouts
       {
         '1' => I18n.t('admin.shared.filter_jsinit.simple_layout'),

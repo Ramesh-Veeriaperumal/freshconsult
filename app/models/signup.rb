@@ -5,7 +5,7 @@ class Signup < ActivePresenter::Base
 
   presents :account, :user
   
-  attr_accessor :contact_first_name, :contact_last_name, :new_plan_test, :organisation_id, :join_token
+  attr_accessor :contact_first_name, :contact_last_name, :new_plan_test, :org_id, :join_token
   before_validation :build_primary_email, :build_portal, :build_roles, :build_admin,
     :build_subscription, :build_account_configuration, :set_time_zone, :build_password_policy
   
@@ -40,7 +40,7 @@ class Signup < ActivePresenter::Base
   end
 
   def create_freshid_org_and_account
-    account.create_freshid_org_and_account(organisation_id, join_token, user)
+    account.create_freshid_org_and_account(org_id, join_token, user)
   end
 
   private

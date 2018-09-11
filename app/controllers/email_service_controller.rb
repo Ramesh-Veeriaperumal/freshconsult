@@ -16,6 +16,7 @@ class EmailServiceController < Fdadmin::MetalApiController
   include EnvelopeParser
   include Helpdesk::Email::Constants
   include AccountConstants
+  include EmailHelper
 
   before_filter :http_authenticate
   before_filter :determine_pod
@@ -81,10 +82,7 @@ class EmailServiceController < Fdadmin::MetalApiController
   end
 
   def http_authenticate
-      fd_email_service = (YAML::load_file(File.join(Rails.root, 'config', 'fd_email_service.yml')))[Rails.env]
-      incoming_email_api_key1 = fd_email_service["incoming_email_api_key1"]
-      incoming_email_api_key2 = fd_email_service["incoming_email_api_key2"]
-      if (!(request.authorization == incoming_email_api_key1 or request.authorization == incoming_email_api_key2))
+      if (!authenticated_email_service_request?(request.authorization))
         Rails.logger.info "Authorization Failed"
         head :forbidden, content_type: "text/html"
       end

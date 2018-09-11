@@ -17,7 +17,10 @@ class HyperTrail::Base
     end
     Rails.logger.info "HT Request => url #{url}, params #{params.inspect}"
     response = HTTParty.get(url, basic_auth: basic_auth, query: params)
-    Rails.logger.debug "HT Fail. #{response.code} #{response.body}" if response.code != 200
+    if response.code != 200
+      Rails.logger.debug "HT Fail. #{response.code} #{response.body}"
+      return { data: [] }
+    end
     JSON.parse response.body
   end
 
