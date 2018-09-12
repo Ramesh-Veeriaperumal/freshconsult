@@ -62,7 +62,7 @@ class Agent < ActiveRecord::Base
   end
 
   def relationship_with_account
-    "agents"
+    "all_agents"
   end
 
   def central_publish_worker_class

@@ -129,19 +129,19 @@ protected
           company_ids = current_user.company_ids
           operator = "or"
         end
-        current_account.archive_tickets.contractor_tickets(user_id, company_ids, operator)
+        current_account.archive_tickets.preload(preload_options).contractor_tickets(user_id, company_ids, operator)
       elsif !current_user.contractor? && current_user.company_client_manager?
         if @requested_by.to_i == 0
           current_user.company.try(:archive_tickets) || current_user.archive_tickets
         else
           requested_for = current_account.users.find_by_id(@requested_by)
           @requested_item = requested_for.company.presence == @company ? requested_for : current_user
-          @requested_item.archive_tickets.contractor_tickets(nil, current_user.company_id, "or")
+          @requested_item.archive_tickets.preload(preload_options).contractor_tickets(nil, current_user.company_id, "or")
         end
       else
         @requested_item = current_user
         @requested_by_company.to_i == 0 ? @requested_item.archive_tickets : 
-          @requested_item.archive_tickets.contractor_tickets(nil, @requested_by_company.to_i, "or")
+          @requested_item.archive_tickets.preload(preload_options).contractor_tickets(nil, @requested_by_company.to_i, "or")
       end
     end
 
@@ -176,6 +176,10 @@ protected
       else
         cc_hash[:reply_cc] = cc_hash[:cc_emails]
       end
+    end
+
+    def preload_options
+      [:ticket_status, :requester, :responder]
     end
 
     def check_feature
