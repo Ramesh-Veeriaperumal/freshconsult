@@ -156,6 +156,19 @@ $header_border_color: #ebeef0 !default;
             position: absolute;
             @include left(2px);
           }
+          .ficon-eye-disabled{
+            position:absolute;
+            @if $rtl {
+              float:left;
+              left:0;
+            }@else{
+              float:right;
+              right:0;
+            }
+            &:before{
+              padding: 0 10px;
+            }
+          }
         }
       }
     }
