@@ -554,8 +554,12 @@ module TicketsTestHelper
   end
 
   def private_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false)
-    filter_clause = all_tickets ? ['spam = ? AND deleted = ?', false, false] : ['created_at > ?', 30.days.ago.in_time_zone(User.current.time_zone)]
-
+    filter_clause = ['spam = ? AND deleted = ?', false, false]
+    unless all_tickets
+      filter_clause[0] << ' AND created_at > ?'
+      filter_clause << Time.zone.now.beginning_of_day.ago(1.month).utc
+    end
+    
     preload_options = [:tags, :ticket_states, :ticket_old_body, :schema_less_ticket, :flexifield]
     preload_options << :requester if requester
     preload_options << :company if company
