@@ -14,6 +14,7 @@ module CentralConstants
       'Post' => '0',
       'Helpdesk::TimeSheet' => '0',
       'Social::TwitterHandle' => '0',
-      'Social::TwitterStream' => '0'
+      'Social::TwitterStream' => '0',
+      'Social::FacebookPage' => '0'
   }
 end

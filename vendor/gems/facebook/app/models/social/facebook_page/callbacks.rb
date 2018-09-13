@@ -1,8 +1,17 @@
 class Social::FacebookPage < ActiveRecord::Base
 
+  # To indicate an FB page can be linked to only one Freshdesk account across POD's.
+  class AlreadyLinkedException < StandardError
+  end
+
+  # No response from facebook API's.
+  class NoResponseException < StandardError
+  end
+
   include Social::Constants
   include MixpanelWrapper
 
+  before_create  :check_subscription
   before_create  :create_mapping
   before_destroy :unregister_stream_subscription
   after_destroy  :remove_mapping
@@ -13,6 +22,7 @@ class Social::FacebookPage < ActiveRecord::Base
 
   after_update :fetch_fb_wall_posts
   after_commit :clear_cache
+  before_destroy :save_deleted_page_info
 
   def cleanup(push_to_sidekiq = false)
     unsubscribe_realtime
@@ -86,6 +96,13 @@ class Social::FacebookPage < ActiveRecord::Base
     end    
   end
 
+  def check_subscription
+    response = Facebook::PageTab::Configure.new(self).execute("check_subscription")
+    raise NoResponseException if response.nil?
+    subscription = JSON.parse(response)
+    raise AlreadyLinkedException if subscription["data"].size > 0
+  end
+
   def remove_mapping
     fb_page_mapping = Social::FacebookPageMapping.find_by_facebook_page_id(page_id)
     fb_page_mapping.destroy if fb_page_mapping
@@ -113,6 +130,10 @@ class Social::FacebookPage < ActiveRecord::Base
 
   def facebook_revamp_enabled?
     Account.current.features?(:social_revamp)
+  end
+
+  def save_deleted_page_info
+    @deleted_model_info = as_api_response(:central_publish)
   end
   
 end

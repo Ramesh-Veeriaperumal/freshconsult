@@ -116,7 +116,7 @@ helpdesk:
     - paperclip_ssrf_patch
     - apigee_config
     - sprockets_monkey_patch
-    - facebook_eu_accounts_config
+    - facebook_fallback_config
     - disposable_email_domains
     - default_data_config
     - emailserv_request
