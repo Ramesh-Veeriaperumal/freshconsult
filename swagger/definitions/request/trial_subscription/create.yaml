@@ -1,0 +1,10 @@
+
+type: object
+properties:
+  trial_subscription:
+    type: object
+    properties:
+      trial_plan:
+        type: string
+        enum: [Sprout Jan 17, Blossom Jan 17, Garden Jan 17, Estate Jan 17, Forest Jan 17]
+        description: name of the plan to try.

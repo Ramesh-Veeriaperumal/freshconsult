@@ -259,6 +259,10 @@
 /todos/{id}:
   $ref: ./todos/crud.yaml
 
+# Trial Subscription
+/trial_subscription:
+  $ref: ./trial_subscription/crud.yaml
+
 # Installed Applications
 /installed_applications:
   $ref: ./installed_applications/list.yaml

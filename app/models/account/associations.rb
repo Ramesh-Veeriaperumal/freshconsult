@@ -96,6 +96,9 @@ class Account < ActiveRecord::Base
   has_one :subscription
   has_many :subscription_payments
 
+  # trial subscriptions
+  has_many :trial_subscriptions
+
 
   has_many :solution_drafts, :class_name =>'Solution::Draft'
   has_many :solution_draft_bodies, :class_name =>'Solution::DraftBody'
