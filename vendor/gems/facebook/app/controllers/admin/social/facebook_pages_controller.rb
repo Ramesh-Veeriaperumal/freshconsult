@@ -7,7 +7,8 @@ class Admin::Social::FacebookPagesController < Admin::AdminController
   def enable_pages
     pages = params[:enable][:pages]
     pages = pages.reject(&:blank?)
-    add_to_db pages
+    errors = add_to_db pages
+    flash[:error] = errors if errors.present?
     redirect_to admin_social_facebook_streams_url
   end
 
@@ -23,6 +24,8 @@ class Admin::Social::FacebookPagesController < Admin::AdminController
   private
   
   def add_to_db fb_pages
+    errors = ''
+    
     fb_pages.each do |fb_page|
       fb_page = ActiveSupport::JSON.decode fb_page
       fb_page.symbolize_keys!
@@ -31,11 +34,21 @@ class Admin::Social::FacebookPagesController < Admin::AdminController
         page_params = fb_page.except(:fetch_since, :message_since)
         page.update_attributes(page_params)
       else
-        break unless current_account.add_new_facebook_page?
-        page = scoper.new(fb_page)
-        page.save 
+        begin
+          break unless current_account.add_new_facebook_page?
+          page = scoper.new(fb_page)
+          page.save 
+        rescue Social::FacebookPage::AlreadyLinkedException => e
+          Rails.logger.debug "Trying to add a page that is already present in another account, account: #{current_account.id}, fb_page: #{fb_page[:page_id]}"
+          errors = I18n.t('facebook.page_already_subscribed')
+        rescue Social::FacebookPage::NoResponseException => e
+          Rails.logger.error "Something went wrong while making the facebook subscription call, account: #{current_account.id}, fb_page: #{fb_page[:page_id]}"
+          errors = I18n.t('facebook.no_subscription_response')
+        end
       end
     end
+
+    errors
   end
   
   def load_item

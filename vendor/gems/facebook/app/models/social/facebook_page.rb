@@ -1,4 +1,5 @@
 class Social::FacebookPage < ActiveRecord::Base
+  publishable on: [:create, :destroy]
 
   include Social::Util
   include Facebook::Constants
@@ -10,7 +11,7 @@ class Social::FacebookPage < ActiveRecord::Base
   self.table_name  =  "social_facebook_pages"
   self.primary_key = :id
 
-  concerned_with :associations, :constants, :validations, :callbacks
+  concerned_with :associations, :constants, :validations, :callbacks, :presenter
   
   attr_accessible :profile_id, :access_token, :page_id, :page_name, :page_token, :page_img_url, :page_link,
                   :import_visitor_posts, :import_company_posts, :enable_page, :fetch_since, :product_id,
