@@ -42,6 +42,8 @@ module Sqs
             insert_facebook_feed(page_id, (Time.now.utc.to_f*1000).to_i, @raw_obj) 
             Rails.logger.info("Pushing message back to Dynamo due to re-auth")
           end
+        else
+          Rails.logger.debug "facebook message, invalid account, #{page_id}" unless validity[:valid_account]
         end
       end
     end

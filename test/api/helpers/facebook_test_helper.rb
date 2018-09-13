@@ -2,7 +2,9 @@ module FacebookTestHelper
   def create_test_facebook_page(account = nil)
     account = create_test_account if account.nil?
     fb_page = FactoryGirl.build(:facebook_pages, account_id: account.id)
+    Social::FacebookPage.any_instance.stubs(:check_subscription).returns({:data => []}.to_json)
     fb_page.save
+    Social::FacebookPage.any_instance.unstub(:check_subscription)
     fb_page
   end
 
@@ -143,7 +145,7 @@ module FacebookTestHelper
   end
 
   def sample_realtime_post(page_id, post_id, user_id, time)
-    {
+    wrap_central_payload({
       'entry' =>
         {
           'changes' => [
@@ -165,11 +167,11 @@ module FacebookTestHelper
           'time' => time.to_i
         },
       'object' => 'page'
-    }
+    })
   end
 
   def sample_realtime_comment(page_id, post_id, comment_id, user_id, time)
-    {
+    wrap_central_payload({
       'entry' =>
         {
           'changes' => [
@@ -193,6 +195,20 @@ module FacebookTestHelper
           'time' => time.to_i
         },
       'object' => 'page'
+    })
+  end
+
+
+  def wrap_central_payload(payload)
+    {
+      "meta": {},
+      "data": {
+        "payload_type": "facebook_realtime_feeds",
+        "payload": payload,
+        "account_id": @account.id,
+        "pod": ChannelFrameworkConfig['pod'],
+        "region": "us-east-1"
+      }
     }
   end
 end
