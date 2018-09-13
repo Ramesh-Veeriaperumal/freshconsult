@@ -2,8 +2,8 @@
     @include at-breakpoint($media-mobile){
         // Body reset
         // ----------
-        /* Applying font size for mobile */          
-        body {  
+        /* Applying font size for mobile */
+        body {
             font-size: $baseFontSizeForMobile;
             line-height: $baseLineHeightForMobile;
         }
@@ -60,7 +60,7 @@
             font-size: 11px;
         }
         h6 {
-            font-size: 10px; 
+            font-size: 10px;
         }
 
         // Page header
@@ -127,7 +127,7 @@
         .min-height-on-desktop{ @include min-height(auto); }
 
         // jQuery ui-datepicker
-        /* Overriding position parameters to handle mobile sizing */    
+        /* Overriding position parameters to handle mobile sizing */
         .ui-datepicker.ui-widget-content{
             width: auto !important;
             @include left(25px !important);
@@ -148,8 +148,8 @@
         // -----
         .btn-signup, .btn-newticket, .btn-login{ width: 100%; }
         .btn-login{ @include float(none); margin-top: 4px; margin-bottom: 4px; }
-        .login-form{ 
-            max-width: none; 
+        .login-form{
+            max-width: none;
             button[type="submit"]{
                 width: 100%;
                 @include margin(15px 0);
@@ -159,10 +159,10 @@
                 margin-bottom: 10px;
             }
         }
-        .alt-login-button{ 
-            @include border-left(0); 
-            @include padding-left(0); 
-            @include box-shadow(none); 
+        .alt-login-button{
+            @include border-left(0);
+            @include padding-left(0);
+            @include box-shadow(none);
         }
         a.btn-signup{
             width: 100%;
@@ -247,28 +247,34 @@
         .login-form, .alt-login-button{ width:auto; @include float(none); border: 0; @include padding(0); }
         // Sprite
         // -----
-        .page-stamp{ display: none; }   
+        .page-stamp{ display: none; }
         // Layout
         // -----
-        .span1, .span2, .span3, .span4, 
+        .span1, .span2, .span3, .span4,
         .span5, .span6, .span7, .span8,
-        .span9, .span10, .span11, .span12 { 
-          @include reset-columns; display: block; 
+        .span9, .span10, .span11, .span12 {
+          @include reset-columns; display: block;
         }
-        .page{ padding: 10px; }
+        .page{
+          padding: 10px;
+
+          &.no-header-tabs {
+            min-height: 66px;
+          }
+        }
         // labels
         // ------
         .label{ @include border-radius(3px); }
         // Modals
         // ------
-        .modal { 
-          position: absolute; 
+        .modal {
+          position: absolute;
           top:   10px;
           @include left(10px);
           @include right(10px);
 
-          /* Resetting width and margin so it will be calculated during the dialog wapper */    
-          width:auto !important; 
+          /* Resetting width and margin so it will be calculated during the dialog wapper */
+          width:auto !important;
           @include margin-left(0 !important);
 
           &.fade.in { top: 10px; margin-top: 0; border-top-left-radius: 6px; }
@@ -284,7 +290,7 @@
           line-height: 2.1em;
         }
         .modal-header .close {
-          &, &:focus, &:hover {        
+          &, &:focus, &:hover {
             @include left(auto);
             background: none;
             @include box-shadow(none);
@@ -324,7 +330,7 @@
 
         // Pagination - Hiding other links from mobile
         // -------------------------------------------
-        .pagination li:first-child a, .pagination li:last-child a, .pagination .active a 
+        .pagination li:first-child a, .pagination li:last-child a, .pagination .active a
         .pagination li:first-child span, .pagination li:last-child span{
             display: block;
         }
@@ -369,22 +375,22 @@
 
         .toolbar-actions, .topic-list .topic-labels{ @include float(none); }
 
-        #topic-toolbar .btn{ 
-            @include padding-left(10px); 
-            @include padding-right(10px); 
+        #topic-toolbar .btn{
+            @include padding-left(10px);
+            @include padding-right(10px);
         }
         .cs-s{
             margin:0.5em 0;
             h3{ border-top-width:4px; }
         }
-        .content, .content-form, .content-light{ 
-            margin-top: 0; 
+        .content, .content-form, .content-light{
+            margin-top: 0;
             padding: $content-padding-mobile;
         }
         .user-comment .user-pic-thumb{
             @include clear(right);
         }
-        hr.content-divider{ 
+        hr.content-divider{
             @include margin-left(0);
             @include margin-right(0);
         }
