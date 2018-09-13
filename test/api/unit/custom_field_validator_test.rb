@@ -312,7 +312,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
   end
 
   def test_format_validatable_fields_valid
-    test = TestValidation.new(attribute1: { 'single_1' => 'w', 'check1_1' => false, 'check2_1' => true, 'decimal1_1' => 898, 'decimal2_1' => 9090, 'number1_1' => 5656, 'number2_1' => -787, 'multi_1' => 'dff', 'url' => 'http://testurl.co.test' })
+    test = TestValidation.new(attribute1: { 'single_1' => 'w', 'check1_1' => false, 'check2_1' => true, 'decimal1_1' => 898, 'decimal2_1' => 9090, 'number1_1' => 5656, 'number2_1' => -787, 'multi_1' => 'dff', 'url1_1' => 'http://testurl.co.test', 'url2_1' => '' })
     assert test.valid?
     assert test.errors.empty?
   end

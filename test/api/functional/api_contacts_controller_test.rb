@@ -65,6 +65,17 @@ class ApiContactsControllerTest < ActionController::TestCase
     company
   end
 
+  def construct_other_companies_hash(company_ids)
+    other_companies = []
+    (1..company_ids.count-1).each do |itr|
+      company_hash = {}
+      company_hash[:company_id] = company_ids[itr]
+      company_hash[:view_all_tickets] = true
+      other_companies.push(company_hash)
+    end
+    other_companies
+  end
+
   def get_user
     @account.all_contacts.where(deleted: false, blocked: false).first
   end
@@ -1872,7 +1883,7 @@ class ApiContactsControllerTest < ActionController::TestCase
 
   def test_create_with_other_companies_max_count_validation
     other_companies = []
-    20.times do
+    (User::MAX_USER_COMPANIES).times do
       other_companies << { company_id: Company.last.id, view_all_tickets: true }
     end
     params_hash = {
@@ -1884,7 +1895,7 @@ class ApiContactsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern(
       'other_companies', :too_long, element_type: :elements,
-      max_count: "#{ContactConstants::MAX_OTHER_COMPANIES_COUNT}", current_count: 20)]
+      max_count: "#{ContactConstants::MAX_OTHER_COMPANIES_COUNT}", current_count: User::MAX_USER_COMPANIES)]
     )
   end
 
@@ -1987,6 +1998,20 @@ class ApiContactsControllerTest < ActionController::TestCase
       'company_id',  :conditional_not_blank, child: 'other_companies')]
     )
   end
+
+  def test_error_in_create_with_more_than_max_companies
+      company_ids = (1..User::MAX_USER_COMPANIES + 1).to_a
+      other_companies_param = construct_other_companies_hash(company_ids)
+      post :create, construct_params({}, name: Faker::Lorem.characters(10),
+                                         email: Faker::Internet.email,
+                                         company_id: company_ids[0],
+                                         view_all_tickets: true,
+                                         other_companies: other_companies_param)
+      assert_response 400
+      match_json([{ field: 'other_companies',
+                    message: "Has #{User::MAX_USER_COMPANIES} elements, it can have maximum of #{ContactConstants::MAX_OTHER_COMPANIES_COUNT} elements",
+                    code: :invalid_value }])
+    end
 
   def test_update_contact_with_company_and_other_companies
     sample_user = get_user_with_default_company

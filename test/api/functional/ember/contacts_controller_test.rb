@@ -68,6 +68,17 @@ module Ember
       contact_ids
     end
 
+    def construct_other_companies_hash(company_ids)
+      other_companies = []
+      (1..company_ids.count-1).each do |itr|
+        company_hash = {}
+        company_hash[:id] = company_ids[itr]
+        company_hash[:view_all_tickets] = true
+        other_companies.push(company_hash)
+      end
+      other_companies
+    end
+
     def test_create_with_incorrect_avatar_type
       params_hash = contact_params_hash.merge(avatar_id: 'ABC')
       post :create, construct_params({ version: 'private' }, params_hash)
@@ -306,6 +317,22 @@ module Ember
                                             feature: :multiple_user_companies)])
       @account.add_feature(:multiple_user_companies)
       @account.reload
+    end
+
+    def test_error_in_create_with_more_than_max_companies
+      company_ids = (1..User::MAX_USER_COMPANIES + 1).to_a
+      other_companies_param = construct_other_companies_hash(company_ids)
+      post :create, construct_params({ version: 'private' }, name: Faker::Lorem.characters(10),
+                                                             email: Faker::Internet.email,
+                                                             company: {
+                                                               id: company_ids[0],
+                                                               view_all_tickets: true
+                                                             },
+                                                             other_companies: other_companies_param)
+      assert_response 400
+      match_json([{ field: 'other_companies',
+                    message: "Has #{User::MAX_USER_COMPANIES} elements, it can have maximum of #{ContactConstants::MAX_OTHER_COMPANIES_COUNT} elements",
+                    code: :invalid_value }])
     end
 
     def test_error_in_create_contact_with_other_companies

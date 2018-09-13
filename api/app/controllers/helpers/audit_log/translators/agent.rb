@@ -9,8 +9,8 @@ module AuditLog::Translators::Agent
         ]
       when :scoreboard_level_id
         model_changes[attribute] = [
-          levels.find { |level| level.id == model_changes[attribute][0] }.name,
-          levels.find { |level| level.id == model_changes[attribute][1] }.name
+          levels.find { |level| level.id == model_changes[attribute][0] }.try(:name).to_s,
+          levels.find { |level| level.id == model_changes[attribute][1] }.try(:name).to_s
         ]
       when :available
         model_changes[attribute] = [
