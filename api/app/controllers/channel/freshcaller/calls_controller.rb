@@ -72,7 +72,7 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
     end
 
     def update_note_body
-      @ticket.notes.conversations.last.update_note_attributes(note_body_attributes:
+      ticket_note.last.update_note_attributes(note_body_attributes:
         { body_html: "#{description} #{duration} #{call_notes}" })
     end
 
@@ -112,7 +112,11 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
       User.reset_current_user
     end
 
+    def ticket_note
+      @ticket.notes.conversations.where(id: @item.notable_id)
+    end
+
     def update_existing_note?
-      @ticket.notes.conversations.present? && (@ticket.notes.conversations.last.id == @item.notable_id)
+      @ticket.notes.conversations.present? && ticket_note.present?
     end
 end

@@ -220,6 +220,13 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    # trial subscriptions
+    resources :trial_subscription, controller: 'admin/trial_subscriptions', only: [:create] do
+      collection do
+        put :cancel
+      end
+    end
+
     resources :bootstrap, controller: 'ember/bootstrap', only: :index do
       collection do
         get :agents_groups, to: 'ember/bootstrap/agents_groups#index'
@@ -527,6 +534,7 @@ Helpkit::Application.routes.draw do
                                         only: [:index]
 
     resource :subscription, controller: 'admin/subscriptions', only: [:show]
+    get '/plans', to: 'admin/subscriptions#plans'
 
     get '/yearin_review', to: 'ember/year_in_review#index'
     post '/yearin_review/share', to: 'ember/year_in_review#share'

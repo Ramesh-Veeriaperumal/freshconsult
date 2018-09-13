@@ -1,5 +1,6 @@
 module SubscriptionsHelper 
   include Subscription::Currencies::Constants
+  include ActionView::Helpers::NumberHelper
 
   PLANS_FEATURES = {
     "sprout" => [ "email_ticketing", "feedback_widget" ,"knowledge_base", "automations", "phone_integration", "mobile_apps", "integrations", "freshchat" ],
@@ -149,7 +150,6 @@ module SubscriptionsHelper
     amount = (plan_info.plan.price/plan_info.plan.period)/100
     format_amount(amount, currency)
   end
-    
   def format_amount(amount, currency)    
     number_to_currency(amount, :unit => CURRENCY_UNITS[currency], :separator => ".", 
       :delimiter => ",", :format => "%u%n", :precision => 0)

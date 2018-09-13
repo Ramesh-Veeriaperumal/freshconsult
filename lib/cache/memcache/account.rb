@@ -468,6 +468,11 @@ module Cache::Memcache::Account
     end
   end
 
+  def latest_trial_subscription_from_cache
+    key = TRIAL_SUBSCRIPTION % { :account_id => self.id }
+    MemcacheKeys.fetch(key) { self.trial_subscriptions.last }
+  end
+
   def clear_contact_password_policy_from_cache
     key = password_policy_memcache_key(PasswordPolicy::USER_TYPE[:contact])
     MemcacheKeys.delete_from_cache(key)

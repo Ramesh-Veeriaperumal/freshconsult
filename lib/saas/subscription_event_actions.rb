@@ -12,6 +12,11 @@ class SAAS::SubscriptionEventActions
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard].freeze
 
+  DASHBOARD_PLANS = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:estate], 
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17], 
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17] ].freeze
+
   DROP  = "drop"
   ADD   = "add"
 
@@ -20,7 +25,7 @@ class SAAS::SubscriptionEventActions
   #
   #change plan will enqueue a job to sidekiq to handle data deletion if its a downgrade.
   ####################################################################################################################
-  def initialize(account, old_plan, add_ons = [])
+  def initialize(account, old_plan = nil, add_ons = [])
     @account     = account || Account.current
     @new_plan    = Account.current.subscription
     @old_plan    = old_plan
@@ -28,23 +33,15 @@ class SAAS::SubscriptionEventActions
   end
 
   def change_plan
-    plan_features = ::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym][:features].dup
-
+    
     if plan_changed?
-      account.features_list.each do |feature|
-        account.reset_feature(feature) unless plan_features.include?(feature) || account_add_ons.include?(feature) || account.selectable_features_list.include?(feature)
-      end
-      account.save
-      #remove_chat_feature
-      plan_features.delete(:support_bot) if account.revoke_support_bot?
-      plan_features.each do |feature|
-        account.set_feature(feature)
-      end
-      account.save
+      reset_plan_features
+      remove_chat_feature
+      add_new_plan_features
       handle_custom_dasboard_launch
       handle_collab_feature
       add_chat_feature
-      #disable_chat_routing unless account.has_feature?(:chat_routing)
+      disable_chat_routing unless account.has_feature?(:chat_routing)
     end
 
     if add_ons_changed?
@@ -71,14 +68,44 @@ class SAAS::SubscriptionEventActions
 
   private
 
+    def reset_plan_features
+      account.features_list.each do |feature|
+        account.reset_feature(feature) unless(plan_features.include?(feature) || 
+          account_add_ons.include?(feature) || 
+          account.selectable_features_list.include?(feature))
+      end
+      account.save
+    end
+
+    def add_new_plan_features
+      plan_features.delete(:support_bot) if account.revoke_support_bot?
+      plan_features.each do |feature|
+        account.set_feature(feature)
+      end
+      account.save
+    end
+
+    def plan_features
+      @plan_features ||= ::PLANS[:subscription_plans][
+        new_plan.subscription_plan.canon_name.to_sym][:features].dup
+    end
+
+    def features_list_to_drop_data
+      DROP_DATA_FEATURES_V2
+    end
+
+    def features_list_to_add_data
+      ADD_DATA_FEATURES_V2
+    end
+
     def handle_feature_drop_data
-      drop_data_features_v2 = DROP_DATA_FEATURES_V2.select { |feature| feature unless account.has_feature?(feature) }
+      drop_data_features_v2 = features_list_to_drop_data.select { |feature| feature unless account.has_feature?(feature) }
       Rails.logger.info "Drop data feautres list:: #{drop_data_features_v2.inspect}"
       handle_feature_data(drop_data_features_v2, DROP) if drop_data_features_v2.present?
     end
 
     def handle_feature_add_data
-      add_data_features_v2 = ADD_DATA_FEATURES_V2.select { |feature| feature if account.has_feature?(feature) }
+      add_data_features_v2 = features_list_to_add_data.select { |feature| feature if account.has_feature?(feature) }
       Rails.logger.info "Add data feautres list:: #{add_data_features_v2.inspect}"
       handle_feature_data(add_data_features_v2, ADD) if add_data_features_v2.present?
     end
@@ -94,7 +121,11 @@ class SAAS::SubscriptionEventActions
 
     # Need to be removed once we won't support live chat
     def add_chat_feature
-      account.add_feature(:chat) if account.subscription.is_chat_plan? && !account.has_feature?(:chat) &&  account.chat_setting.site_id.present?
+      account.add_feature(:chat) if new_plan_has_livechat? && !account.has_feature?(:chat) &&  account.chat_setting.site_id.present?
+    end
+
+    def new_plan_has_livechat?
+      account.subscription.is_chat_plan?
     end
 
     def disable_chat_routing
@@ -134,9 +165,7 @@ class SAAS::SubscriptionEventActions
     end
 
     def dashboard_plan?
-      dashboard_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:estate], SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],
-                        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17], SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17] ]
-      dashboard_plans.include?(new_plan.subscription_plan.name)
+      DASHBOARD_PLANS.include?(new_plan.subscription_plan.name)
     end
 
     def handle_collab_feature

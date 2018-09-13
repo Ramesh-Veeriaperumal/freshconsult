@@ -1,0 +1,20 @@
+post:
+  tags: [trial subscription]
+  summary: Try a higher plan
+  description: Let's the account try out a higher plan for a specified number of days.
+  parameters:
+      - in: body
+        name: trial_subscription
+        schema:
+          $ref: '#/definitions/trial_subscription_create'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/trial_subscription_create_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

@@ -164,7 +164,7 @@ class SubscriptionAdmin::FreshfoneActionsController < ApplicationController
         flash[:notice] = "Select a valid action"
         redirect_to :back
       else
-        send freshfone_action if respond_to? freshfone_action
+        safe_send(freshfone_action) if respond_to? freshfone_action
       end
     end
 

@@ -133,7 +133,7 @@ class User < ActiveRecord::Base
   end
 
   def max_user_companies
-    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_companies')) \
+    self.errors.add(:base, I18n.t('activerecord.errors.messages.max_user_companies', :max_companies => MAX_USER_COMPANIES)) \
       if (self.user_companies.reject(&:marked_for_destruction?).length > MAX_USER_COMPANIES)
   end
 
@@ -987,19 +987,16 @@ class User < ActiveRecord::Base
   def make_customer
     return true if customer?
     set_company_name
-
     self.helpdesk_agent = false
     self.deleted = false
     new_pref = { :was_agent => true }
     self.merge_preferences = { :user_preferences => new_pref }
 
     if self.save
-      subscriptions.destroy_all
       self.cti_phone = nil
       agent.destroy
       deliver_password_reset_instructions!(nil) if freshid_enabled_account?
       freshfone_user.destroy if freshfone_user
-      email_notification_agents.destroy_all
 
       expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date =>

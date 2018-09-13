@@ -24,6 +24,8 @@ class SubscriptionPlan < ActiveRecord::Base
   
   scope :current, :conditions => { :classic => false }, :order => 'amount asc'
 
+  scope :get_details_by_name, ->(fields, names) { select(fields).where(name: names) }
+
   after_commit :clear_cache
   
   SUBSCRIPTION_PLANS = { 

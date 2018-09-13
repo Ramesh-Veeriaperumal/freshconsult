@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
                                 "external_id", "job_title", "language", "description", "unique_external_id"] #client_manager will be moved directly
 
   MAX_USER_EMAILS = 10
-  MAX_USER_COMPANIES = 20
+  MAX_USER_COMPANIES = 300
 
   MERGE_VALIDATIONS = [['emails', MAX_USER_EMAILS, 'emails'],
                        ['twitter_id', 1, 'Twitter User'],

@@ -96,6 +96,9 @@ class Account < ActiveRecord::Base
   has_one :subscription
   has_many :subscription_payments
 
+  # trial subscriptions
+  has_many :trial_subscriptions
+
 
   has_many :solution_drafts, :class_name =>'Solution::Draft'
   has_many :solution_draft_bodies, :class_name =>'Solution::DraftBody'
@@ -157,6 +160,7 @@ class Account < ActiveRecord::Base
   :rule_type => VAConfig::INSTALLED_APP_BUSINESS_RULE, :active => true }, :order => "position"
 
   has_many :email_notifications
+  has_many :email_notification_agents
   has_many :groups
   has_many :agent_groups
   has_many :forum_categories, :order => "position"
