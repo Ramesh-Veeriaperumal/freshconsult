@@ -961,12 +961,10 @@ class User < ActiveRecord::Base
     self.merge_preferences = { :user_preferences => new_pref }
 
     if self.save
-      subscriptions.destroy_all
       self.cti_phone = nil
       agent.destroy
       deliver_password_reset_instructions!(nil) if freshid_enabled_account?
       freshfone_user.destroy if freshfone_user
-      email_notification_agents.destroy_all
 
       expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date =>

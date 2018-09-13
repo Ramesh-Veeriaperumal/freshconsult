@@ -157,6 +157,7 @@ class Account < ActiveRecord::Base
   :rule_type => VAConfig::INSTALLED_APP_BUSINESS_RULE, :active => true }, :order => "position"
    
   has_many :email_notifications
+  has_many :email_notification_agents
   has_many :groups
   has_many :agent_groups
   has_many :forum_categories, :order => "position"
