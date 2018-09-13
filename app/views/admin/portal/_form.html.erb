@@ -88,10 +88,14 @@
     <div class="control-group pt10">
       <label class="control-label"> <%= t("admin.products.portal.show_author_name") %></label>
       <div class="controls personalized_articles">
-        <input rel="toggle" type="checkbox" name="portal[preferences][personalized_articles]" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if portal.preferences[:personalized_articles] %>checked="true"<%end%> value=true />
-          <span class="muted">
-            <%= content_tag(:div, t("admin.products.portal.enable_personalized_articles"), :class => "info-data") %>
-          </span>
+        <%= f.check_box :personalized_articles, 
+          { :checked => (portal.preferences[:personalized_articles].blank? ? false : portal.preferences[:personalized_articles].to_bool), 
+            :id => "portal[preferences][personalized_articles]", 
+            :name => 'portal[preferences][personalized_articles]', :rel => "toggle", 
+            "data-checked-label" => t("plain_yes"), "data-unchecked-label" => t("plain_no") }, true, false %>
+        <span class="muted">
+          <%= content_tag(:div, t("admin.products.portal.enable_personalized_articles"), :class => "info-data") %>
+        </span>
       </div>
     </div>
 
