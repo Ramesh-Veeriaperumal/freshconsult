@@ -1,0 +1,11 @@
+get:
+  tags: [plans]
+  description: Endpoint to list all Freshdesk plans and its pricing details
+  summary: Endpoint to list all Freshdesk plans and its pricing details
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/plans'
+    403:
+      description: Access denied

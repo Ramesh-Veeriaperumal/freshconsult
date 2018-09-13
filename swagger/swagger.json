@@ -8056,7 +8056,46 @@
         }
       }
     },
-
+    "/subscription": {
+      "get": {
+        "tags": [
+          "subscription"
+        ],
+        "description": "Account subscription details",
+        "summary": "Account subscription details",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/subscription_show"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/plans": {
+      "get": {
+        "tags": [
+          "plans"
+        ],
+        "description": "Endpoint to list all Freshdesk plans and its pricing details",
+        "summary": "Endpoint to list all Freshdesk plans and its pricing details",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/plans"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/proactive/rules": {
       "get": {
         "tags": [
@@ -16366,6 +16405,47 @@
                   "type": "string"
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "plans": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "currency": {
+                "type": "string"
+              },
+              "pricings": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "billing_cycle": {
+                      "type": "string"
+                    },
+                    "cost_per_agent": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "advanced_ticketing_create": {
       "type": "object",
       "required": [

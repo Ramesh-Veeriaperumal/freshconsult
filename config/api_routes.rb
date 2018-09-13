@@ -527,6 +527,7 @@ Helpkit::Application.routes.draw do
                                         only: [:index]
 
     resource :subscription, controller: 'admin/subscriptions', only: [:show]
+    get '/plans', to: 'admin/subscriptions#plans'
 
     get '/yearin_review', to: 'ember/year_in_review#index'
     post '/yearin_review/share', to: 'ember/year_in_review#share'

@@ -510,6 +510,9 @@
   #subscription
   subscription_show:
     $ref: ./response/subscription/show.yaml
+  plans:
+    $ref: ./response/subscription/plans.yaml
+
   #Advanced Ticketing
   advanced_ticketing_create:
     $ref: ./request/advanced_ticketing/create.yaml

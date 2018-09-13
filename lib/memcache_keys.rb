@@ -207,7 +207,7 @@ module MemcacheKeys
 
   NER_ENRICHED_NOTE = "NER_ENRICHED_NOTE:%{account_id}:%{ticket_id}"
 
-  SUBSCRIPTION_PLANS = 'v1/SUBSCRIPTION_PLANS'
+  SUBSCRIPTION_PLANS = 'v2/SUBSCRIPTION_PLANS'
 
   LEADERBOARD_MINILIST_REALTIME_FALCON = 'v1/LEADERBOARD_MINILIST_REALTIME_FALCON:%{account_id}:%{user_id}'
 
@@ -222,6 +222,10 @@ module MemcacheKeys
   CONTACT_FILTERS = 'CONTACT_FILTERS:%{account_id}'.freeze
 
   COMPANY_FILTERS = 'COMPANY_FILTERS:%{account_id}'.freeze
+
+  CURRENCY_NAMES = 'CURRENCY_NAMES'.freeze
+
+  PLANS_AGENT_COSTS_BY_CURRENCY = 'PLANS_AGENT_COSTS_BY_CURRENCY:%{currency_name}'.freeze
 
   class << self
 

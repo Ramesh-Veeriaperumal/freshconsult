@@ -446,6 +446,8 @@
 
 /subscription:
   $ref: ./subscription/show.yaml
+/plans:
+  $ref: ./subscription/plans.yaml
 
 # Outreach
 /proactive/rules:
