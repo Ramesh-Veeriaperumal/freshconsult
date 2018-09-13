@@ -24,7 +24,7 @@ class TrialSubscriptionsDelegator < BaseDelegator
 
   def check_last_trial_subscription
     if latest_trial_subscription.present? && !latest_trial_subscription.active? &&
-       (latest_trial_subscription.days_left_for_next_trial > 0)
+       (latest_trial_subscription.days_left_until_next_trial > 0)
       errors[:trial_plan] << 'Cannot activate trial before waiting period'
     end
   end

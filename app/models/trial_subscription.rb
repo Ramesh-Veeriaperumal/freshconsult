@@ -6,6 +6,8 @@ class TrialSubscription < ActiveRecord::Base
 
   concerned_with :constants, :callbacks, :validations
 
+  after_commit :clear_cache
+  
   scope :trials_by_status, ->(s) { where(status: TRIAL_STATUSES[s.to_sym]) }
   scope :ending_trials, ->(date, status) { where('ends_at <= ?', date).trials_by_status(status) }
 
@@ -36,7 +38,7 @@ class TrialSubscription < ActiveRecord::Base
     :features_diff
   end
 
-  def days_left_for_next_trial
+  def days_left_until_next_trial
     return if active?
     interval = TRIAL_INTERVAL_IN_DAYS - (Time.now.utc.to_datetime -
       ends_at.to_datetime).to_i
@@ -48,4 +50,14 @@ class TrialSubscription < ActiveRecord::Base
   rescue StandardError
     Rails.logger.info "Feature not available in yml:: #{feature}"
   end
+  
+  def days_left
+    (ends_at.utc.to_datetime - Time.now.utc.to_datetime).to_i if active?
+  end
+  
+  private
+    def clear_cache
+      key = MemcacheKeys::TRIAL_SUBSCRIPTION % { :account_id => self.account_id }
+      MemcacheKeys.delete_from_cache key
+    end
 end
