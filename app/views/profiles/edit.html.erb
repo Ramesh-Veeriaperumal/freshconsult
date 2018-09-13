@@ -29,9 +29,10 @@
         <%= render :partial => "change_password_form", :locals => { :f => f } %>
     <% end %>
   <% end %>
-
+  </div>
+<% end %>
   <% if current_account.launched?(:undo_send) && current_user.is_falcon_pref? %>
-  <hr>
+  <div class="sidepanel">
     <div class="row-fluid undo-send-option">
       <div class="span10 align-left undo-toggle"><%= t("undo_toggle") %></div>
       <div class="span2 align-right">
@@ -41,9 +42,8 @@
     <div class="row-fluid">
       <div class=" span12 align-left undo-send-tip"><%= t("undo_toggle_tip") %></div>
     </div>
+  </div>
   <% end %>
-</div>
-<% end %> 
   <% if current_account.verified? && current_user.agent? && !current_account.launched?(:hide_api_key) %>
     <div class="sidepanel">
     <%= content_tag( :h3, t("profile.api_key.title"), :class => "title" ) %>

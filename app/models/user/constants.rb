@@ -44,7 +44,7 @@ class User < ActiveRecord::Base
   USER_FILTER_TYPES = ["verified","unverified","all","deleted","blocked"]
 
   PASSWORD_LENGTH = 4
-  MAX_USER_COMPANIES = 20
+  MAX_USER_COMPANIES = 300
 
   ALPHA_NUMERIC_REGEX = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/
   SPECIAL_CHARACTERS_REGEX = /(?=.*([\x20-\x2F]|[\x3A-\x40]|[\x5B-\x60]|[\x7B-\x7E]))/

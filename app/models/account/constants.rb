@@ -104,7 +104,8 @@ class Account < ActiveRecord::Base
         :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections, :custom_dashboard ],
+        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections, :custom_dashboard,
+        :audit_log_ui, :audit_logs_central_publish ],
       :inherits => [ :garden_jan_17 ]
     },
 
@@ -211,7 +212,7 @@ class Account < ActiveRecord::Base
     :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false, 
     :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false, 
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
-    :post_central_publish => false, :audit_logs_central_publish => false,
+    :post_central_publish => false,
     :new_ticket_recieved_metric => false, :euc_migrated_twitter => false, :canned_forms => false, :es_msearch => true,
     csat_email_scan_compatibility: false, sso_login_expiry_limitation: false, :attachment_virus_detection => false,
     :twitter_microservice => true, :twitter_handle_publisher => true, :undo_send => false,

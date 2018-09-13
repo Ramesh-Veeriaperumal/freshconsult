@@ -184,6 +184,7 @@ en:
   any: Any
   or: or
   go_to_new_ui: "Switch to the Mint experience"
+  enable: "Enable"
   email_failure:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
@@ -4335,7 +4336,7 @@ en:
         exceeded_email: Sorry, you cannot sign up for any more accounts
         user_emails: Please enter at least one contact detail
         max_user_emails: A contact cannot have more than 10 emails
-        max_user_companies: A contact cannot have more than 20 companies
+        max_user_companies: A contact cannot have more than %{max_companies} companies
         max_skills_per_account: Cannot create more than %{max_limit} skills
         max_skills_per_user: Cannot have more than %{max_limit} skills per agent
         unique_external_id: unique_external_id field cannot be updated
@@ -5641,6 +5642,7 @@ en:
     goto_customer_portal: Go to Customer Portal
     goto_agent_portal: Agent Portal
     shortcuts_info: "Press <span class='color-orange'>?</span> to view <a id='shortcuts_info' href='#'>Keyboard hints</a>"
+    agent_only_language: "This portal will not be visible to your customers in %{language}."
     tabs:
       reports: Reports
       dashboard: Dashboard

@@ -2,7 +2,7 @@
     <div class="report-content-wrapper" id="">
       <!--report header-->
     <div class="reports-header row-fluid">
-      <div class="reports-title span12">
+      <div class="reports-title">
         <span class="report-icon">
           <% unless generate_pdf_action? %>
             <i class="fsize-36 ficon-time_sheet"></i>
@@ -25,13 +25,13 @@
           </button>
         <% end %>
       </div>
-      <div class="reports-filter span12" id="report-filter-details">
+      <div class="reports-filter row-fluid" id="report-filter-details">
         <% unless generate_pdf_action? %>
           <div class="span1 edit-filter report-filter-slide-btn">
                         <a class="btn btn-primary" id="metric-edit" data-action="open-filter-menu"><%=t('helpdesk_reports.edit_filter')%></a>
           </div>
         <% end %>
-        <div class="filter-type span11">
+        <div class="filter-type span10">
           <ul id="filter_text">
             <li><%=t('reports.time_sheets.filter_by_title')%>:</li>
             <li><%=t('reports.time_sheets.time_period')%> : <strong><%= @report_date.blank? ? date_range_val((Time.zone.now.ago 30.day),Time.zone.now) :  @report_date%></strong></li>
@@ -148,4 +148,3 @@
         }
       });
    <% end %>
-

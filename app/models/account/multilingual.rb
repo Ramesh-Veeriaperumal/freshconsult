@@ -1,5 +1,5 @@
 class Account < ActiveRecord::Base
-  
+
   def multilingual?
     @is_multilingual ||= multilingual_available? &&
         features?(:enable_multilingual)  &&
@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
   def multilingual_available?
     @is_multilingual_available ||= features?(:multi_language)
   end
-  
+
   def applicable_languages
     @multilingual_applicable_languages ||= (supported_languages.collect do |lang|
       obj = Language.find_by_code(lang)
@@ -32,6 +32,7 @@ class Account < ActiveRecord::Base
     @supported_languages_objects ||= (supported_languages || []).map { |l| Language.find_by_code(l) }.sort_by(&:name)
   end
 
+  # All supported languages
   def all_language_objects
     @all_language_objects ||= [language_object] + (multilingual? ? supported_languages_objects : [])
   end
@@ -44,6 +45,7 @@ class Account < ActiveRecord::Base
     all_language_objects.map(&:code)
   end
 
+  # All visible supported portal languages
   def portal_languages_objects
     @portal_languages_objects ||= (portal_languages || []).map { |l| Language.find_by_code(l) }.sort_by(&:name)
   end
@@ -51,16 +53,24 @@ class Account < ActiveRecord::Base
   def all_portal_language_objects
     @all_portal_language_objects ||= ([language_object] + (multilingual? ? portal_languages_objects : [])).uniq
   end
-  
+
   def all_portal_languages
     all_portal_language_objects.map(&:code)
   end
-  
-  def valid_portal_language?(language)
+
+  def visible_language_objects_for_current_user
     if User.current && User.current.agent?
-      all_language_objects.include?(language)
+      all_language_objects
     else
-      all_portal_language_objects.include?(language)
+      all_portal_language_objects
     end
+  end
+
+  def agent_only_language?(language)
+    User.current && User.current.agent? && !all_portal_language_objects.include?(language) && all_language_objects.include?(language)
+  end
+
+  def valid_portal_language?(language)
+    visible_language_objects_for_current_user.include?(language)
   end
 end

@@ -2,8 +2,8 @@
   <%= render :partial => "helpnote_without_tour" %>
 <% end %>
 
-<%= form_for @agent, :html => { :id => "agent_form", :rel => "validate", :multipart => true, 
-    "data-focus-invalid" => false,  "data-ignore" => "", :class => "form-unsaved-changes-trigger" } do |f| %>
+<%= form_for @agent, :html => { :id => "agent_form", :rel => (current_account.falcon_ui_enabled?(current_user) ? nil : "validate"),
+  :multipart => true, "data-focus-invalid" => false,  "data-ignore" => "", :class => "form-unsaved-changes-trigger" } do |f| %>
   <%= f.error_messages %>
   <h3 class="lead">
     <%=t('agent.edit')%>
@@ -19,13 +19,33 @@
       <%= f.submit t('save'), { :class => "btn  btn-primary", 'data-loading-text' => t('saving') } %>
     </div>
 <%end%>
- <%= javascript_tag do %>
-   (function($){
-     var show_sandbox_notification = <%= Account.current.account_type == 2 %>
-     var notification_message = '<%=t("sandbox.sandbox_notification_for_agents").html_safe %>';
+
+<% if current_account.falcon_ui_enabled?(current_user) %>
+<script type="text/javascript">
+  (function ($) {
+    $('#agent_form').submit(function(e){
+      e.preventDefault();
+      var form = $(this);
+      if (form.valid()) {
+        form.ajaxSubmit({
+          success: function(data){
+            form.data('formChanged', false);
+            top.location.reload();
+          },
+          error: function(data){
+            window.location.reload();
+          }
+        })
+      }
+    });
+
+    // notification 
+    var show_sandbox_notification = <%= Account.current.account_type == 2 %>
+    var notification_message = '<%=t("sandbox.sandbox_notification_for_agents").html_safe %>';
      if(show_sandbox_notification){
-             jQuery("#noticeajax").html(notification_message).show();
-             closeableFlash('#noticeajax');
-     }
-   })(jQuery)
- <% end %>
+        jQuery("#noticeajax").html(notification_message).show();
+        closeableFlash('#noticeajax');
+      }
+  }(window.jQuery));
+</script>
+<% end %>

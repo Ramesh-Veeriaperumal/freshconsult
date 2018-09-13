@@ -272,15 +272,15 @@ body .fr-overlay {
         width: 35px;
         top: 17px;
         border: solid 1px #fff;
-        border-right: solid 1px #000;
+        @include border-right(solid 1px #000);
         padding: 0;
         text-align: center;
         color: #fff;
         z-index: 9999;
         background-color: #333;
-        border-radius: 5px 0 0 5px;
-        @include box-shadow(-8px 0 32px rgba(0, 0, 0, 0.2));
-        left: -37px;
+        @include border-radius(5px 0 0 5px);
+        @include left(-37px);
+
 
         &::after {
           content: $font-glyphs-cross;
@@ -533,12 +533,12 @@ body .fr-overlay {
       background: #fff;
       box-shadow: 0 5px 5px -6px #333;
     }
-    
+
    &.has-notification .redactor_toolbar,
     &.has-notification .fr-toolbar  {
       top: 52px;
     }
-    
+
   }
 
   .article-edit{
@@ -641,7 +641,7 @@ body .fr-overlay {
           top: 35px;
           padding: 0 20px;
           background: #fff;
-        } 
+        }
         .fr-element {
           color: #333;
           @include portal-text-formatting();

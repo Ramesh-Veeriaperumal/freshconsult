@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
                  :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3,
                  :imap_error_status_check, :va_any_field_without_none, :auto_complete_off, :sandbox_lp,
                  :sanbox_lp, :encode_emoji, :dependent_field_validation, :post_central_publish,
-                 :audit_logs_central_publish, :encode_emoji_subject,
+                 :encode_emoji_subject,
                  :time_sheets_central_publish, :new_ticket_recieved_metric, :canned_forms,
                  :euc_migrated_twitter, :twitter_microservice, :twitter_handle_publisher, :csat_email_scan_compatibility,
                  :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :mint_portal_applicable, 
@@ -28,9 +28,9 @@ class Account < ActiveRecord::Base
       :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
-      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments, :freshconnect, :proactive_outreach
-
-    ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
+      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments, :freshconnect, :proactive_outreach,
+      :audit_logs_central_publish, :audit_log_ui
+  ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
     Helpdesk::TicketField::VERSION_MEMBER_KEY,
