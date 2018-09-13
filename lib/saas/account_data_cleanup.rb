@@ -1,15 +1,16 @@
 class SAAS::AccountDataCleanup
-
   include Marketplace::ApiMethods
   include Cache::Memcache::ContactField
   include Cache::Memcache::CompanyField
   include Cache::FragmentCache::Base
   include MemcacheKeys
   include AddTamDefaultFieldsHelper
+  include SAAS::DropFeatureData
+  include SAAS::AddFeatureData
 
   attr_accessor :account, :features_to_process, :action
 
-  def initialize(account = Account.current, features_to_process = [], action = "drop")
+  def initialize(account = Account.current, features_to_process = [], action = 'drop')
     @account = account
     @action  = action
     @features_to_process = features_to_process
@@ -63,7 +64,7 @@ end
 
   def handle_skill_based_round_robin_drop_data
     account.groups.skill_based_round_robin_enabled.each do |group|
-      if account.features?(:round_robin_load_balancing) or account.features?(:round_robin)
+      if account.features?(:round_robin_load_balancing) || account.features?(:round_robin)
         group.ticket_assign_type = Group::TICKET_ASSIGN_TYPE[:round_robin]
         group.capping_limit = 0 unless account.features?(:round_robin_load_balancing)
       else
@@ -128,8 +129,8 @@ end
 
   def handle_unique_contact_identifier_drop_data
     account.revoke_feature(:unique_contact_identifier)
-    external_id_field = account.contact_form.default_fields.where(:name => "unique_external_id").first
-    if(external_id_field.present?)
+    external_id_field = account.contact_form.default_fields.where(name: 'unique_external_id').first
+    if external_id_field.present?
       external_id_field.visible_in_portal = false
       if external_id_field.field_options && external_id_field.field_options["widget_position"].present?
         external_id_field.field_options.delete("widget_position")
@@ -142,7 +143,6 @@ end
   def handle_custom_apps_drop_data
     begin
       Integrations::Application.freshplugs(account).destroy_all
-      
       # Remove fa_developer feature - To prevent the developer from using Marketplac Developer portal
       account.features.fa_developer.destroy if account.features_included?(:fa_developer)
 
@@ -269,7 +269,7 @@ end
 
   def handle_ticket_activity_export_drop_data
     ticket_activity_export = account.activity_export
-    return if ticket_activity_export.nil? or !ticket_activity_export.active
+    return if ticket_activity_export.nil? || !ticket_activity_export.active
     ticket_activity_export.active = false
     ticket_activity_export.save
   end
