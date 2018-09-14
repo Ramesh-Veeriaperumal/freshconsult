@@ -34,8 +34,15 @@ class Admin::SecurityController <  Admin::AdminController
       current_account.main_portal.update_attributes( :ssl_enabled => params[:ssl_type] )
     end
 
+    oauth2_sso_disabled = true if @account.oauth2_sso_enabled? && params[:account][:sso_options][:sso_type] != SsoUtil::SSO_TYPES[:oauth2]
     if @account.sso_enabled?
       @account.sso_options = params[:account][:sso_options]
+      @account.remove_oauth2_sso_options if oauth2_sso_disabled
+      if @account.sso_options[:sso_type] == SsoUtil::SSO_TYPES[:oauth2]
+        [:agent_oauth2, :customer_oauth2].each do |key|
+          @account.sso_options[key] = @account.sso_options[key].to_bool if @account.sso_options[key].present?
+        end
+      end
     else
       @account.reset_sso_options
     end
