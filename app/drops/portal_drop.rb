@@ -279,7 +279,7 @@ class PortalDrop < BaseDrop
   end
   
   def personalized_articles?
-    source.preferences[:personalized_articles].blank? ? false : source.preferences[:personalized_articles].to_bool
+    source.preferences[:personalized_articles]
   end
 
   def freshid_feature?
