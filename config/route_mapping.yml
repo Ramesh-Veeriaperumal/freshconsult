@@ -10,6 +10,7 @@
 /solution/categories: /a/solutions/
 /discussions: /a/forums/
 /ticket_fields: /a/admin/
+/admin/manage_languages: /a/admin/account/edit
 /admin/email_configs: /a/admin/
 /admin/portal: /a/admin/
 /admin/chat_widgets: /a/admin/

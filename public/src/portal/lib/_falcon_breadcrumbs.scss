@@ -9,7 +9,7 @@
   }
   a{ @include margin-right(7px); font-size: 14px; color: $blue; }
   a:hover{ color: $textColor; text-decoration: inherit; }
-  a:before, span:before{ 
+  a:before, span:before{
     content: "/";
     @include margin-right(10px);
     color: #bbbbbb;
@@ -32,7 +32,7 @@
     @include float(none);
     @extend .clearfix;
     a{
-      @include float(right);
+      @include float(left);
     }
   }
 }
