@@ -1,0 +1,17 @@
+type: object
+properties:  
+  trial_subscription:
+    type: object
+    properties:
+      ends_at:
+        type: string
+        format: date-time
+        description: Date on which the try higher plan feature will end
+      from_plan_name:
+        type: string
+        enum: [Sprout Jan 17, Blossom Jan 17, Garden Jan 17, Estate Jan 17, Forest Jan 17]
+        description: Current plan, which the account is on, while trying higher plan
+      trial_plan_name:
+        type: string
+        enum: [Sprout Jan 17, Blossom Jan 17, Garden Jan 17, Estate Jan 17, Forest Jan 17]
+        description:  Name of the plan which the account is trying. Always a higher plan compared to current plan (from_plan_name).

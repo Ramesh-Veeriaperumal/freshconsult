@@ -26,6 +26,9 @@ if Rails.env.test?
     factory :subscription, :class => Helpdesk::Subscription do |s|
     end
 
+    factory :trial_subscription, :class => TrialSubscription do |s|
+    end
+
     factory :product, :class => Product do |p|
       sequence(:name) { |n| "Product#{n}" }
       description {Faker::Lorem.paragraph(3)}

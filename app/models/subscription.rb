@@ -20,6 +20,16 @@ class Subscription < ActiveRecord::Base
                   :address2 => :billing_addr2, :city => :billing_city, :state => :billing_state,
                   :country => :billing_country, :zip => :billing_zip  }
 
+  FRESHCHAT_PLANS = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], 
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate], 
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], 
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], 
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:premium],
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_jan_17], 
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17]].freeze
+
   AUTOPILOT_FILEDS = ["state", "next_renewal_at", "renewal_period", "amount", "subscription_plan_id", "agent_limit"]
 
   
@@ -363,12 +373,7 @@ class Subscription < ActiveRecord::Base
   end
 
   def is_chat_plan?
-    freshchat_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
-                        SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
-                        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], SubscriptionPlan::SUBSCRIPTION_PLANS[:premium],
-                        SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_jan_17], SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
-                        SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17]]
-    freshchat_plans.include?(subscription_plan_from_cache.name)
+    FRESHCHAT_PLANS.include?(subscription_plan_from_cache.name)
   end
 
   def set_next_renewal_at(billing_subscription)

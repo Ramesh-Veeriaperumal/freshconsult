@@ -3,6 +3,12 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
   include BootstrapTestHelper
   include AgentsTestHelper
   include AttachmentsTestHelper
+  include TrialSubscriptionHelper
+  
+  def setup 
+    super
+    @subscription_plan = SubscriptionPlan.last
+  end
 
   def test_index
     get :index, controller_params(version: 'private')
@@ -91,4 +97,35 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     match_json(account_pattern(Account.current, Account.current.main_portal))
   end
 
+  def test_account_with_trial_subscription
+    trial_subscription = create_trail_subscription(user_id: @agent.id,
+      trial_plan: @subscription_plan.name)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_with_trial_subscription_pattern(Account.current, 
+      Account.current.main_portal, trial_subscription, @subscription_plan))
+    Account.current.trial_subscriptions.destroy_all
+  end
+  
+  def test_account_with_recent_trial_subscription
+    create_trail_subscription(user_id: @agent.id, status: 2)
+    trial_subscription = create_trail_subscription(user_id: @agent.id, 
+      trial_plan: @subscription_plan.name)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_with_trial_subscription_pattern(Account.current, 
+      Account.current.main_portal, trial_subscription, @subscription_plan))
+    Account.current.trial_subscriptions.destroy_all
+  end
+  
+  def test_cancelled_trial_subscription
+    create_trail_subscription(user_id: @agent.id, status: 2)
+    trial_subscription = create_trail_subscription(user_id: @agent.id,
+      trial_plan: @subscription_plan.name)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_with_trial_subscription_pattern(Account.current, 
+      Account.current.main_portal, trial_subscription, @subscription_plan))
+    Account.current.trial_subscriptions.destroy_all
+  end
 end

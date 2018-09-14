@@ -4123,6 +4123,23 @@ ActiveRecord::Schema.define(version: 20180705070830) do
   add_index "trial_account_jobs", ["pod_info"], :name => "index_trial_accout_jobs_on_pod_info"
   add_index "trial_account_jobs", ["account_id"], :name => "index_trial_account_jobs_on_account_id"
 
+  create_table "trial_subscriptions", :force => true do |t|
+    t.datetime "ends_at"
+    t.string   "from_plan"
+    t.string   "trial_plan"
+    t.string   "result_plan"
+    t.integer  "actor_id"
+    t.integer  "account_id"
+    t.integer  "status"
+    t.integer  "result"
+    t.string   "features_diff"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  add_index "trial_subscriptions", ["account_id", "status"], :name => "by_account_status"
+  add_index "trial_subscriptions", ["status", "ends_at"], :name => "by_status_ends_at"
+
   create_table "user_accesses", :id => false, :force => true do |t|
     t.integer "user_id",    :limit => 8, :null => false
     t.integer "access_id",  :limit => 8, :null => false
