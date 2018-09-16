@@ -23,16 +23,26 @@ namespace :facebook do
   task :realtime_fb_message => :environment do
     include Facebook::RedisMethods
     include Facebook::Exception::Notifier
+    include Facebook::CentralMessageUtil
 
     $sqs_facebook_messages.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
       begin
         #Check for app rate limit before processing feeds
         wait_on_poll if app_rate_limit_reached?
-        puts "Facebook Message ===> #{sqs_msg.body}"
-        facebook_message = Sqs::FacebookMessage.new(sqs_msg.body)
-        facebook_message.process
+
+        type = CENTRAL_PAYLOAD_TYPES[:message]
+        message = get_message(sqs_msg.body, type)
+
+        if message.present?
+          puts "Facebook Message ===> #{message}"
+          facebook_message = Sqs::FacebookMessage.new(message)
+          facebook_message.process
+        else
+          Rails.logger.debug "Message intended for another POD."
+        end
       rescue => e
         NewRelic::Agent.notice_error(e, {:description => "Error while processing sqs request"})
+        Rails.logger.error "Error while processing sqs request, error: #{e.message}, msg: #{sqs_msg.body}"
       end
     end
   end
@@ -65,6 +75,5 @@ namespace :facebook do
     sleep(APP_RATE_LIMIT_EXPIRY)
     wait_on_poll if app_rate_limit_reached?
   end
-
 
 end

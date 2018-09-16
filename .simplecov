@@ -75,7 +75,6 @@ if ENV["CORE_COVERAGE"]
     add_filter  'spec/'
     add_filter  'config/'
     add_filter  'test/'
-    add_filter  'app/controllers/subscription_admin'
     add_filter  'app/controllers/fdadmin'
     add_filter  'app/controllers/freshfone'
     add_filter  'app/controllers/integrations'
