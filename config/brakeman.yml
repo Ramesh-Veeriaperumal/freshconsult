@@ -4,4 +4,5 @@
 - brakeman-output.tabs
 :skip_checks:
 - CheckModelAttrAccessible
+- CheckModelAttributes
 :skip_files:

@@ -1,5 +1,11 @@
 class Admin::SubscriptionDecorator < ApiDecorator
-  delegate :id, :state, :subscription_plan_id,to: :record
+  delegate :id, :state, :subscription_plan_id, to: :record
+
+  def initialize(record, options)
+    super(record)
+    @currency = options[:currency]
+    @plans_to_agent_cost = options[:plans_to_agent_cost]
+  end
 
   def to_hash
     {
@@ -13,6 +19,16 @@ class Admin::SubscriptionDecorator < ApiDecorator
     }
   end
 
+  def plan_hash
+    plan_name = record.name
+    {
+      id: id,
+      name: plan_name,
+      currency: @currency,
+      pricings: construct_pricings(plan_name)
+    }
+  end
+  
   def addon_hash
     return if record.addons.empty?
     addons = []
@@ -24,5 +40,14 @@ class Admin::SubscriptionDecorator < ApiDecorator
 
   def currency_info
     record.currency.name
+  end
+
+  def construct_pricings(plan_name)
+    Billing::Subscription::BILLING_PERIOD.values.collect do |billing_cycle|
+      {
+        billing_cycle: billing_cycle,
+        cost_per_agent: @plans_to_agent_cost[plan_name][billing_cycle]
+      }
+    end
   end
 end

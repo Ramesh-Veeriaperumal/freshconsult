@@ -1,5 +1,7 @@
 class Billing::ChargebeeWrapper
 
+	CHARGEBEE_REST_URL = "https://%{subdomain}.chargebee.com/api/v2"
+
 	def initialize
     subscription = Account.current.subscription
     ChargeBee.configure(:site => subscription.currency_billing_site, 
@@ -92,4 +94,20 @@ class Billing::ChargebeeWrapper
 	def retrieve_invoice_pdf_url(invoice_id)
 		ChargeBee::Invoice.pdf(invoice_id).download.download_url
 	end
+
+	def retrieve_plans_by_id(plan_ids, subdomain, api_key)
+		url = format(CHARGEBEE_REST_URL, subdomain: subdomain) + '/plans'
+		JSON.parse(RestClient::Request.execute({
+		 	method: :get, 
+			url: url, 
+			user: api_key, 
+			headers: { 
+				params: { 
+					limit: 100,
+					"id[in]": "[#{plan_ids.join(',')}]"
+				}
+			}
+		}))["list"].collect{ |list| list["plan"].symbolize_keys! }
+	end
+
 end
