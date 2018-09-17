@@ -33,6 +33,13 @@ class Ember::SurveysControllerTest < ActionController::TestCase
     match_json(index_survey_pattern(@account.custom_surveys.undeleted, true))
   end
 
+  def test_show
+    survey = @account.custom_surveys.first
+    get :show, construct_params(version: 'private', id: survey.id)
+    assert_response 200
+    match_json(show_survey_pattern(survey, true))
+  end
+
   def test_index_without_manage_tickets
     User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
     get :index, controller_params(version: 'private')

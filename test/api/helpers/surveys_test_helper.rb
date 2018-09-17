@@ -24,22 +24,26 @@ module SurveysTestHelper
     survey_result
   end
 
+  def show_survey_pattern(survey, show_rating_labels = false)
+    active_survey = active_classic_survey_rating(survey)
+    if Account.current.new_survey_enabled?
+      survey_questions = survey.survey_questions.map do |q|
+        if q.default
+          survey = { id: 'default_question', label: q.label, accepted_ratings: ratings(q, show_rating_labels), default: true }
+        else
+          survey = { id: "question_#{q.id}", label: q.label, accepted_ratings: ratings(q, show_rating_labels) }
+        end
+        survey
+      end
+      active_survey.merge!(questions: survey_questions)
+    end
+    active_survey
+  end
+  
   def index_survey_pattern(surveys, show_rating_labels = false)
     pattern = []
     surveys.each do |survey|
-      active_survey = active_classic_survey_rating(survey)
-      if Account.current.new_survey_enabled?
-        survey_questions = survey.survey_questions.map do |q|
-          if q.default
-            survey = { id: 'default_question', label: q.label, accepted_ratings: ratings(q, show_rating_labels), default: true }
-          else
-            survey = { id: "question_#{q.id}", label: q.label, accepted_ratings: ratings(q, show_rating_labels) }
-          end
-          survey
-        end
-        active_survey.merge!(questions: survey_questions)
-      end
-      pattern << active_survey
+      pattern << show_survey_pattern(survey, show_rating_labels)
     end
     pattern
   end
