@@ -1,11 +1,11 @@
-<%= t("mailer_notifier.hi_user", user_name: @doer.name) %>
+Hi <%= @doer.name %>,
 <br><br>
-<%= t("mailer_notifier.security_notification.email_changed", agent_name: @model.name, time: @time) %>
+You have changed the email address associated with <%= @model.name %> on <%= @time %>.
 <br><br>
-<%= t("mailer_notifier.security_notification.agent_cannot_access", agent_name: @model.name, account_name: @model.account.name) %>
+Please note that <%= @model.name %> may not be able to access the <%= @model.account.name %> account anymore.
 <br><br>
-<%= t("mailer_notifier.security_notification.unauthorized_change_contact") %><br>
+If this change has been made without your authorization, contact your helpdesk Administrator immediately.<br>
 <br>
 
-<%= t("cloud_log_mailer.logger_email.regards") %><br>
+Regards,<br>
 <%= @model.account.name %>

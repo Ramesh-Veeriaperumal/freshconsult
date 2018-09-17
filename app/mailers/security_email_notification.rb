@@ -2,7 +2,7 @@ class SecurityEmailNotification < ActionMailer::Base
   layout "email_font"
   include EmailHelper
 
-  def agent_alert_mail(model, changed_attributes)
+  def agent_alert_mail(model, subject, changed_attributes)
     begin
       # sending this email via account's primary email config so that if the customer wants this emails 
       # to be sent via custom mail server, simply switching the primary email config will do
@@ -12,9 +12,7 @@ class SecurityEmailNotification < ActionMailer::Base
       headers = {
         :to    => model.email,
         :from  => Account.current.default_friendly_email,
-        :subject => I18n.t('mailer_notifier_subject.agent_details_updated',
-                            changed_attributes: changed_attributes.to_sentence,
-                            account_name: model.account.name),
+        :subject => subject,
         :sent_on => Time.now,
         "Reply-to" => "",
         "Auto-Submitted" => "auto-generated", 
@@ -40,20 +38,18 @@ class SecurityEmailNotification < ActionMailer::Base
     end
 
   end
-  def agent_email_change(model, to, changed_attributes, doer, admin_mail_type = true)
+  def agent_email_change(model,to, subject, changed_attributes,doer,mail_template)
     begin
       # sending this email via account's primary email config so that if the customer wants this emails
       # to be sent via custom mail server, simply switching the primary email config will do
     return if doer.blank? or to.blank?
       email_config = Account.current.primary_email_config
       configure_email_config email_config
-      mail_template = admin_mail_type ? 'admin_alert_email_change' : 'agent_email_change'
       Time.zone = model.time_zone
       headers = {
         :to    => to,
         :from  => Account.current.default_friendly_email,
-        :subject => I18n.t('mailer_notifier_subject.agent_email_changed',
-                      portal_name: model.account.helpdesk_name),
+        :subject => subject,
         :sent_on => Time.now,
         "Reply-to" => "",
         "Auto-Submitted" => "auto-generated",
@@ -66,8 +62,7 @@ class SecurityEmailNotification < ActionMailer::Base
       @time = Time.zone.now.strftime('%B %e at %l:%M %p %Z')
       @model = model
       @account = Account.current
-      @doer = doer
-
+      @doer =doer
       mail(headers) do | part|
         part.text { render "#{mail_template}.text.plain.erb" }
         part.html { render "#{mail_template}.text.html.erb" }
@@ -78,23 +73,23 @@ class SecurityEmailNotification < ActionMailer::Base
 
   end
   def admin_alert_mail(model, subject, body_message_file, changed_attributes, doer)
-    @account = Account.current
-    Time.zone = @account.time_zone
+    Time.zone = Account.current.time_zone
     headers = {
       :to    => Account.current.notification_emails,
       :from  => AppConfig['from_email'],
-      :subject => I18n.t(subject[:key], subject[:locals]),
+      :subject => subject,
       :sent_on => Time.now,
       "Reply-to" => "",
       "Auto-Submitted" => "auto-generated", 
       "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
     }
 
-    headers.merge!(make_header(nil, nil, @account.id, "Admin Alert Email"))
+    headers.merge!(make_header(nil, nil, Account.current.id, "Admin Alert Email"))
     @changes = changed_attributes
     @time = Time.zone.now.strftime('%B %e at %l:%M %p %Z')
     @model = model
     @doer = doer
+    @account = Account.current
 
     mail(headers) do | part|
       part.text { render "#{body_message_file}.text.plain.erb" }
