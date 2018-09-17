@@ -17,6 +17,7 @@ default: &default
     - "contacts_sync:trail"
     - "contacts_sync:paid"
     - "contacts_sync:free"
+    - "integration_test_helper:update_record"
     - "trial_subscriptions:rollback_trail_subscriptions_data"
 
 development:
