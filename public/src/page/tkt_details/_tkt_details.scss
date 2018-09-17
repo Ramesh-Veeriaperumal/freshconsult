@@ -620,6 +620,7 @@ li {
     @include micro-position(4px);
     z-index: 7;
     @include float(left);
+    direction: ltr;
     .file-upload {
         background-color: #F8F8F8;
         border: 1px solid #d5d5d5;
@@ -676,7 +677,7 @@ li {
         max-width: 150px;
         z-index: 1;
         position: relative;
-        @include float(left);
+        float: left;
     }
     .file-size {
         color: #999;
@@ -686,7 +687,7 @@ li {
     }
     .ficon-cross {
         font-size: 1.2em;
-        @include float(left);
+        float: left;
         @include padding(0px 4px 2px 4px);
         border: 1px solid transparent;
         border-radius: 21px;
@@ -694,7 +695,7 @@ li {
         cursor: pointer;
         width: 6px;
         position: relative;
-        @include left(-4px);
+        left: -4px;
 
     }
     .ficon-cross:hover {
@@ -1883,7 +1884,7 @@ li {
              font-size: 17px;
              padding-right: 5px;
              position: relative;
-             top: 1px;   
+             top: 1px;
         }
      }
     .request_panel .ui-form .request_form_options {
@@ -4703,7 +4704,7 @@ li {
 }
 
 #email_failure_information{
-  overflow-y:scroll;  
+  overflow-y:scroll;
 }
 
 .errored-email{
@@ -4719,7 +4720,7 @@ li {
         background-color: #f0f0f0;
         border-radius: 5px;
         @include padding(8px 0);
-        
+
 
         .list-inner {
             max-height: 300px;
@@ -4737,7 +4738,7 @@ li {
 
                 .error-details {
                     display: inline-block;
-                    vertical-align: top; 
+                    vertical-align: top;
                     width: 85%;
 
                     .errored-email {
@@ -4774,7 +4775,7 @@ li {
                         .summary-error-text {
                             color : #A90329;
                         }
-                        
+
                         .long-text {
                             transition: all .3s linear;
                             -moz-transition: all .3s linear;
@@ -4806,7 +4807,7 @@ li {
                         p:first-child {
                             margin-top: 5px;
                         }
-                        
+
                         p:not(:first-child) {
                             margin: 0px;
                         }
@@ -4822,12 +4823,12 @@ li {
                                 display: inherit;
                                 opacity: 1;
                             }
-                        } 
-                    } 
+                        }
+                    }
                 }
 
                 .emails_label {
-                    display: inline-block; 
+                    display: inline-block;
                     @include padding(0 15px 15px);
                     color: #666;
                     font-weight: 600;
@@ -4849,7 +4850,7 @@ li {
 
         &.hide {
             visibility: hidden;
-        }        
+        }
     }
 
     .error-details {
@@ -4872,4 +4873,3 @@ li {
     text-align: center;
     @include padding(3px 8px 4px);
 }
-

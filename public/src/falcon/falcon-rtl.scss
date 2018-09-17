@@ -1,0 +1,127 @@
+:lang(ar),
+:lang(he) {
+  .customer-portal .portal-section .controls {
+    margin-right: 350px;
+    margin-left: 0;
+  }
+  .select2-container .select2-choice .select2-arrow{
+    b {
+      transform: rotate(180deg);
+      &::after {
+        right: 6px;
+      }
+    }
+  }
+
+  .edit_helpdesk_ticket_field, .edit_company_field{
+   .custom-field-form {
+     margin-right: 60px;
+     margin-left: 10px;
+   }
+ }
+
+  .survey_rating_order {
+    .rating_order_select {
+      .bad_to_good, .good_to_bad {
+        padding-right: 50px;
+        b.caret {
+          transform: rotate(360deg);
+          &:before {
+            right:46px;
+          }
+          &:after {
+            right:50px;
+          }
+        }
+      }
+    }
+  }
+  .fr-modal-title {
+    .fr-modal-title-line h4 {
+      float: right !important;
+    }
+  }
+  .modal {
+    &.fade.in {
+      .modal-header {
+        .close {
+          float: left;
+        }
+      }
+    }
+  }
+  .ticket-view-saveas::after{
+    content: "\f120";
+    font-weight: bold;
+    top: -1px;
+  }
+  .ticket-view-saveas::before{
+    content: "\f138";
+    top: 3px;
+  }
+  #ticket_fields-list {
+    .ph-list {
+      .btn-group.open {
+        .dropdown-menu {
+          top: 29px;
+        }
+      }
+      .btn-group>.btn:first-child {
+        border-right: 1px solid #dadfe3;
+        float: none;
+      }
+    }
+  }
+  #filter_text{
+    float: right;
+    li strong{
+      float: left;
+      direction: ltr;
+    }
+  }
+  .form-horizontal select {
+    content: "\200E‎";
+  }
+
+  input[type="radio"]:checked {
+    &::after {
+      top: -24px;
+      right: inherit;
+      left: -3px;
+    }
+    &::before {
+      left: inherit;
+      right: -4px;
+    }
+  }
+
+  input[type='checkbox']:checked:before {
+    left: -1px;
+  }
+
+  .marketplace-listing .ficon-search {
+    right: 16px;
+  }
+
+  .marketplace-listing .appsearch-box .search-query {
+    padding-right: 25px;
+  }
+
+  .insights {
+    left: -40px;
+    right: inherit;
+  }
+
+  body.community .cm-sb-list li .forum_expand:before {
+    border-right-color: transparent;
+  }
+
+  #body-container .btn-group > .btn:first-child + .dropdown-toggle {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+  }
+  #body-container .btn-group > .btn:first-child {
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 2px;
+  }
+}

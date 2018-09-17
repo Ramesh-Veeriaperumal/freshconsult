@@ -197,7 +197,7 @@ class Portal < ActiveRecord::Base
   end
 
   def multilingual?
-    @is_multilingual ||= Account.current.multilingual? && Account.current.portal_languages.present?
+    @is_multilingual ||= Account.current.multilingual? && (Account.current.portal_languages.present? || (User.current && User.current.agent?))
   end
 
   def tickets_url

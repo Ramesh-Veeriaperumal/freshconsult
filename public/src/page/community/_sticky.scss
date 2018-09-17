@@ -84,7 +84,7 @@
 	.search-lang{
 		cursor: pointer;
     position: absolute;
-    right: 14px;
+    @include right(14px);
     top: 27px;
     #s2id_language_select{
     	position: relative;
