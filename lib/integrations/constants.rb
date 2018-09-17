@@ -49,8 +49,7 @@ module Integrations::Constants
     :shared_ownership => "shared_ownership",
     :microsoft_teams => "microsoft_teams",
     :google_hangout_chat => "google_hangout_chat",
-    :ticket_summary => "ticket_summary",
-    :twitter => "twitter"
+    :ticket_summary => "ticket_summary"
   }
 
   DISPLAY_IN_PAGES = { 'ticket_show' => 2, 'contact_show' => 1, 'company_show' => 0, 'time_sheet_show' => 3, 'editor_show' => 4 }.freeze

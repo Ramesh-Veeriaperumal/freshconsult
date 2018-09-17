@@ -564,14 +564,13 @@ class User < ActiveRecord::Base
 
   def enqueue_activation_email(email_config = nil, portal = nil)
     portal.make_current if portal
-    active_freshid_agent = agent? && active_freshid_user?
     if self.language.nil?
-      email_type = active_freshid_agent ? :deliver_agent_invitation! : :deliver_activation_instructions!
-      args = active_freshid_agent ? [portal] : [ portal, false, email_config]
+      email_type = active_freshid_agent? ? :deliver_agent_invitation! : :deliver_activation_instructions!
+      args = active_freshid_agent? ? [portal] : [ portal, false, email_config]
       Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, email_type, args),
         nil, 5.minutes.from_now)
     else
-      active_freshid_agent ? deliver_agent_invitation!(portal) : deliver_activation_instructions!(portal, false, email_config)
+      active_freshid_agent? ? deliver_agent_invitation!(portal) : deliver_activation_instructions!(portal, false, email_config)
     end
   end
 
@@ -962,12 +961,10 @@ class User < ActiveRecord::Base
     self.merge_preferences = { :user_preferences => new_pref }
 
     if self.save
-      subscriptions.destroy_all
       self.cti_phone = nil
       agent.destroy
       deliver_password_reset_instructions!(nil) if freshid_enabled_account?
       freshfone_user.destroy if freshfone_user
-      email_notification_agents.destroy_all
 
       expiry_period = self.user_policy ? FDPasswordPolicy::Constants::GRACE_PERIOD : FDPasswordPolicy::Constants::NEVER.to_i.days
       self.set_password_expiry({:password_expiry_date =>
@@ -1226,12 +1223,16 @@ class User < ActiveRecord::Base
     self.preferences[:agent_preferences]
   end
 
-  def active_freshid_user?
-    active? && primary_email.verified? && freshid_enabled_account?
+  def active_freshid_agent?
+    @active_freshid_agent ||= active_and_verified? && freshid_enabled_and_agent?
   end
 
   def email_id_changed?
     email_changed? && case_insensitive_value_changed?(email_change)
+  end
+
+  def active_and_verified?
+    active? && primary_email.verified?
   end
 
   private
@@ -1349,24 +1350,23 @@ class User < ActiveRecord::Base
     end
 
     def touch_add_role_change(role)
-      if self.agent.present?
-        role_info = { id: role.id, name: role.name }
-        self.agent.user_changes ||= {"roles" => {added: [], removed: []}}
-        self.agent.user_changes["roles"].present? ? 
-          self.agent.user_changes["roles"][:added].push(role_info) :
-          self.agent.user_changes["roles"] = {added: [role_info]}
-      end
-      @role_change_flag = true
+      touch_role_change(role)
     end
 
     def touch_remove_role_change(role)
+      touch_role_change(role, true)
+    end
+
+    def touch_role_change(role, remove = false)
       if self.agent.present?
         role_info = { id: role.id, name: role.name }
         self.agent.user_changes ||= {"roles" => {added: [], removed: []}}
+        roles_key = remove ? :removed : :added
         self.agent.user_changes["roles"].present? ? 
-          self.agent.user_changes["roles"][:removed].push(role_info) :
-          self.agent.user_changes["roles"] = {removed: [role_info]}
+          self.agent.user_changes["roles"][roles_key].push(role_info) :
+          self.agent.user_changes["roles"] = { roles_key => [role_info] }
       end
+      privileges_will_change!
       @role_change_flag = true
     end
 

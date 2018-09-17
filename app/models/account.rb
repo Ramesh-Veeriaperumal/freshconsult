@@ -224,6 +224,10 @@ class Account < ActiveRecord::Base
       )
   end
 
+  def active_trial
+    @active_trial_subscription ||= trial_subscriptions.trials_by_status(:active).first
+  end
+ 
   class << self # class methods
 
     def reset_current_account

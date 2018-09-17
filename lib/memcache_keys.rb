@@ -211,6 +211,8 @@ module MemcacheKeys
 
   CANNED_RESPONSES_INLINE_IMAGES = "CANNED_RESPONSES_INLINE_IMAGES:%{account_id}"
 
+  TRIAL_SUBSCRIPTION = "TRIAL_SUBSCRIPTION:%{account_id}"
+
   CONTACT_FILTERS = 'CONTACT_FILTERS:%{account_id}'.freeze
 
   COMPANY_FILTERS = 'COMPANY_FILTERS:%{account_id}'.freeze
