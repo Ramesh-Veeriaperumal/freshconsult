@@ -36,12 +36,14 @@ module SocialTestHelper
 
   def create_facebook_page(populate_streams = false)
     fb_page = FactoryGirl.build(:facebook_pages, :account_id => @account.id)
+    Social::FacebookPage.any_instance.stubs(:check_subscription).returns({:data => []}.to_json)
     fb_page.save
     fb_page.update_attributes(:import_visitor_posts => true)
     if populate_streams
       fb_page.account.make_current
       fb_page.build_default_streams
     end
+    Social::FacebookPage.any_instance.unstub(:check_subscription)
     fb_page
   end
 

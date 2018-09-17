@@ -146,6 +146,9 @@
   proactive_rule_input:
     $ref: ./request/proactive/rule.yaml
 
+  trial_subscription_create:
+    $ref: './request/trial_subscription/create.yaml'
+
   sandbox_merge_input:
     $ref: './request/sandboxes/merge.yaml'
 
@@ -307,7 +310,8 @@
       $ref: '#/definitions/extended_note'
   partial_success_response:
     $ref: ./response/bulk_partial_success.yaml
-
+  trial_subscription_create_response:
+    $ref: './response/trial_subscription/create_response.yaml'
   make_agent_response:
     $ref: ./response/make_agent.yaml
   agent_partial_success_response:
@@ -510,6 +514,9 @@
   #subscription
   subscription_show:
     $ref: ./response/subscription/show.yaml
+  plans:
+    $ref: ./response/subscription/plans.yaml
+
   #Advanced Ticketing
   advanced_ticketing_create:
     $ref: ./request/advanced_ticketing/create.yaml

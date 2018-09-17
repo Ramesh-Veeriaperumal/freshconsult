@@ -179,4 +179,16 @@ module BootstrapTestHelper
     return agent if agent.is_a?(User)
     agent.user
   end
+
+  def account_with_trial_subscription_pattern(account, portal, 
+    subscription, subscription_plan)
+    response_pattern = account_pattern(account, portal)
+    response_pattern[:account][:trial_subscription] = {
+      active: (subscription.status == 0),
+      days_left: subscription.days_left,
+      days_left_until_next_trial: subscription.days_left_until_next_trial,
+      plan_name: subscription_plan.name
+    }
+    response_pattern
+  end
 end

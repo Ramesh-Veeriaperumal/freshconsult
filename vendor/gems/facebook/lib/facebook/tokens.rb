@@ -19,7 +19,7 @@ module Facebook
       end
 
       def fallback_account?
-        FacebookEuAccountsConfig::ACCOUNT_IDS.include?(Account.current.id)
+        FacebookFallbackConfig::ACCOUNT_IDS.include?(Account.current.id)
       end
 
       def default_page_tokens
@@ -30,10 +30,11 @@ module Facebook
       end
 
       def fallback_page_tokens
-        {
-          app_id: FacebookConfig::PAGE_TAB_APP_ID_FALLBACK,
-          secret: FacebookConfig::PAGE_TAB_SECRET_KEY_FALLBACK
-        }
+        if euc_account?
+          { app_id: FacebookConfig::PAGE_TAB_APP_ID_EUC, secret: FacebookConfig::PAGE_TAB_SECRET_KEY_EUC }
+        else
+          { app_id: FacebookConfig::PAGE_TAB_APP_ID_EU, secret: FacebookConfig::PAGE_TAB_SECRET_KEY_EU }
+        end
       end
 
       def default_app_tokens
@@ -44,10 +45,15 @@ module Facebook
       end
 
       def fallback_app_tokens
-        {
-          app_id: FacebookConfig::APP_ID_FALLBACK,
-          secret: FacebookConfig::SECRET_KEY_FALLBACK
-        }
+        if euc_account?
+          { app_id: FacebookConfig::APP_ID_EUC, secret: FacebookConfig::SECRET_KEY_EUC }
+        else
+          { app_id: FacebookConfig::APP_ID_EU, secret: FacebookConfig::SECRET_KEY_EU }
+        end
+      end
+
+      def euc_account?
+        FacebookFallbackConfig::EUC_ACCOUNT_IDS.include?(Account.current.id)
       end
   end
 end

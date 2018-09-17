@@ -92,13 +92,10 @@ class Time
      end
 end
 
-
 class Time
-
-  def business_time_until(to_time,business_calendar_config=nil)
+  def business_time_until(to_time, business_calendar_config = nil)
     business_calendar_config ||= BusinessCalendar.config
-    # Make sure that we will calculate time from A to B "clockwise"
-    from_time = Time.zone.parse(self.strftime('%Y-%m-%d %H:%M:%S'))
+    from_time = Time.zone.parse(strftime('%Y-%m-%d %H:%M:%S'))
     direction = 1
     if from_time < to_time
       time_a = from_time
@@ -110,34 +107,42 @@ class Time
     end
 
     # Align both times to the closest business hours
-    time_a = Time::roll_forward(time_a,business_calendar_config)
-    time_b = Time::roll_forward(time_b,business_calendar_config)
+    time_a = Time.roll_forward(time_a, business_calendar_config)
+    time_b = Time.roll_forward(time_b, business_calendar_config)
 
-    # If same date, then calculate difference straight forward
+    # For same day, simple difference is the answer.
     if time_a.to_date == time_b.to_date
-      result = time_b - time_a
-      return result *= direction
-    end
-    
- 
-    # Both times are in different dates
-    result = Time.zone.parse(time_a.strftime('%Y-%m-%d ') + 
-        business_calendar_config.end_of_workday(time_a.wday)) - time_a   # First day
-    result += time_b - Time.zone.parse(time_b.strftime('%Y-%m-%d  ') + 
-        business_calendar_config.beginning_of_workday(time_b.wday)) # Last day
+      time_b - time_a
+    else
+      # Both times are on different dates. Duration may be shorter than a day.
+      first_day_duration = Time.zone.parse(time_a.strftime('%Y-%m-%d ') +
+                                   business_calendar_config.end_of_workday(time_a.wday)) - time_a
+      last_day_duration = time_b - Time.zone.parse(time_b.strftime('%Y-%m-%d  ') +
+                                             business_calendar_config.beginning_of_workday(time_b.wday))
 
-    time_b = Time.end_of_workday(Time.roll_backward(time_b-1.day,business_calendar_config),business_calendar_config) #To preceed the time_b since last day is calculated - Abhinav
-    # # All days in between - Abhinav
-    while(time_b.to_date > time_a.to_date)
-      time_a = Time::roll_forward(time_a+1.day,business_calendar_config)
-      duration_of_working_day = Time::end_of_workday(time_a,business_calendar_config) - Time::beginning_of_workday(time_a,business_calendar_config)
-      result += duration_of_working_day  
-    end
-    
-    
-    
-    # Make sure that sign is correct
-    result *= direction
+      # Remaining are full days.
+      date_a = time_a.to_date + 1
+      date_b = time_b.to_date - 1
+      days = (date_b - date_a).to_i
+      wday_counts = [days / 7] * 7
+      (0..(days % 7)).each { |day| wday_counts[(date_a.wday + day) % 7] += 1 }
+
+      (date_a.year..date_b.year).each do |year|
+        business_calendar_config.holiday_data.each do |holiday|
+          holidate = Date.parse("#{holiday[0]} #{year}")
+          if (holidate >= date_a) && (holidate <= date_b) && (wday_counts[holidate.wday] > 0)
+            wday_counts[holidate.wday] -= 1
+          end
+        end
+      end
+
+      wday_duration = [0] * 7
+      business_calendar_config.weekdays.each do |wday|
+        wday_duration[wday] = Time.zone.parse(business_calendar_config.end_of_workday(wday)) - Time.zone.parse(business_calendar_config.beginning_of_workday(wday))
+      end
+      # Add dot product of the two arrays. https://stackoverflow.com/a/7372688/443682
+      work_duration_in_between = (0...wday_counts.count).inject(0) { |coeff, wday| coeff + wday_counts[wday] * wday_duration[wday] }
+      first_day_duration + work_duration_in_between + last_day_duration
+    end * direction
   end
-
 end

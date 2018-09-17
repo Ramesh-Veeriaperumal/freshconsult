@@ -6,7 +6,7 @@ class AgentDestroyCleanup < BaseWorker
 
   sidekiq_options :queue => :agent_destroy_cleanup, :retry => 0, :backtrace => true, :failures => :exhausted
 
-  USER_ASSOCIATED_MODELS = [:report_filters, :user_skills]
+  USER_ASSOCIATED_MODELS = [:report_filters, :user_skills, :ticket_subscriptions, :email_notification_agents]
   
   attr_accessor :args
 
@@ -16,6 +16,7 @@ class AgentDestroyCleanup < BaseWorker
       @args    = args
       @account = Account.current
       if args[:user_id].present?
+        @user = @account.users.find_by_id args[:user_id]
         destroy_agents_personal_items
         delete_user_associated
         delete_user_from_leaderboard
@@ -30,9 +31,8 @@ class AgentDestroyCleanup < BaseWorker
   private
 
     def destroy_agents_personal_items # destroy agents personal canned_responses,scn_automations,tkt_templates
-      user = @account.users.find_by_id args[:user_id]
       ["canned_responses","scn_automations","ticket_templates"].each do |items|
-        @account.safe_send(items).only_me(user).destroy_all if user.present?
+        @account.safe_send(items).only_me(@user).destroy_all if @user.present?
       end
     end
 

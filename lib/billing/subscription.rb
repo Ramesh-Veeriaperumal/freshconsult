@@ -1,6 +1,7 @@
 class Billing::Subscription < Billing::ChargebeeWrapper
 
   include Marketplace::ApiMethods
+  include SubscriptionsHelper
 
   CUSTOMER_INFO   = { :first_name => :admin_first_name, :last_name => :admin_last_name, 
                        :company => :name }
@@ -37,6 +38,13 @@ class Billing::Subscription < Billing::ChargebeeWrapper
 
   def self.billing_cycle
     Hash[*MAPPED_PLANS.map { |i| [i[0], i[2]] }.flatten]
+  end
+
+  def self.current_plans_costs_per_agent_from_cache(currency)
+    MemcacheKeys.fetch(format(MemcacheKeys::PLANS_AGENT_COSTS_BY_CURRENCY, 
+      currency_name: currency.name)) do
+      Billing::Subscription.new.current_plans_costs_per_agent(currency)  
+    end
   end
 
   #instance methods
@@ -109,8 +117,11 @@ class Billing::Subscription < Billing::ChargebeeWrapper
   end
   
   def retrieve_plan(plan_name, renewal_period = 1)
-    billing_plan_name = %(#{plan_name.gsub(' ','_').to_s.downcase}_#{BILLING_PERIOD[renewal_period]})
-    super billing_plan_name
+    super chargebee_plan_id(plan_name, renewal_period)
+  end
+
+  def chargebee_plan_id(plan_name, renewal_period)
+    %(#{plan_name.gsub(' ','_').to_s.downcase}_#{BILLING_PERIOD[renewal_period]})
   end
 
   def subscription_exists?(account_id)
@@ -135,6 +146,32 @@ class Billing::Subscription < Billing::ChargebeeWrapper
       return false if error.http_code == 404
       NewRelic::Agent.notice_error(error)
     end
+  end
+
+  def current_plans_costs_per_agent(currency)
+    chargebee_id_to_subscription_plan_name = {}
+    plans_to_agent_cost = {}
+    SubscriptionPlan.current_plan_names_from_cache.each do |plan_name|
+      plans_to_agent_cost[plan_name] = {}
+      Billing::Subscription::BILLING_PERIOD.keys.each do |billing_period|
+        chargebee_plan_id = chargebee_plan_id(plan_name, billing_period) 
+        chargebee_id_to_subscription_plan_name[chargebee_plan_id] = plan_name
+      end
+    end
+    plans = retrieve_plans_by_id(chargebee_id_to_subscription_plan_name.keys, 
+      currency.billing_site, currency.billing_api_key)
+    plans.each do |plan|
+      amt = (plan[:price]/plan[:period])/100
+      plans_to_agent_cost[chargebee_id_to_subscription_plan_name[
+        plan[:id]]][Billing::Subscription::BILLING_PERIOD[plan[:period]]] = 
+        format_amount(amt, currency.name)
+    end
+    plans_to_agent_cost
+  rescue StandardError => e
+    Rails.logger.error "Exception while fetching plan deatils from ChargeBee
+      #{e.backtrace}"
+    NewRelic::Agent.notice_error(e, description: 'Exception while fetching plan 
+      deatils from ChargeBee #{e.backtrace} for Account #{Account.current.id}')
   end
   
   private
