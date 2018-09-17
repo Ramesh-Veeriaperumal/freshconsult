@@ -56,6 +56,8 @@ ul.disc{
 // --------------------------------------------------
 .break-all{
   word-break: break-word;
+  -ms-word-wrap: break-word;
+  word-wrap: break-word;
 }
 // --------------------------------------------------
 //                  For Affix plugin
@@ -70,9 +72,9 @@ ul.disc{
 .clearfix {
   @include clearfix();
 }
-.clearBoth{ @include clear(both); }            
-.clearLeft{ @include clear(left); }            
-.clearRight{ @include clear(right); }    
+.clearBoth{ @include clear(both); }
+.clearLeft{ @include clear(left); }
+.clearRight{ @include clear(right); }
 
 // --------------------------------------------------
 //          Accessible yet invisible text
@@ -200,6 +202,6 @@ ul.disc{
 
 
 .word-wrap{
-  word-break: normal; 
-  word-wrap: break-word;  
+  word-break: normal;
+  word-wrap: break-word;
 }

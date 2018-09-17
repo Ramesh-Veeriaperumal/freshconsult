@@ -1,9 +1,9 @@
-Hi <%= @model.name %>,
+<%= t("mailer_notifier.hi_user", user_name: @model.name) %>
 <br><br>
 
-Your <%= @changes.to_sentence %> <%= @changes.size > 1 ? "have" : "has" %> been updated on <%= @time %>.
+<%= t("mailer_notifier.security_notification.agent_updated", data_updated: @changes.to_sentence, time: @time, count: @changes.size) %>
 
 <br><br>
-If this change has been made without your authorization, contact your helpdesk Administrator immediately.
+<%= t("mailer_notifier.security_notification.unauthorized_change_contact") %>
 <br>
 <%= @model.account.name %>

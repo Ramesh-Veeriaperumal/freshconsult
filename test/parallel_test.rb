@@ -40,17 +40,6 @@ tests_to_run.each do |file|
 	end
 end
 
-tests_to_run.each do |file|
-	res = `cat #{file} | grep 'def test_' | wc -l`
-	tests = res.match(/\d+/)[0].to_i
-	queue[queue_count] ? queue[queue_count] << file : queue[queue_count] = [file]
-	pushed_count = pushed_count+tests
-	if pushed_count >= each_queue_count
-		pushed_count = 0
-		queue_count = queue_count + 1
-	end
-end
-
 # Making necessary code changes compatible for parallel running
 `sed -i -e "s/helpkit_test_rails3/helpkit_<%= ENV['TEST_ENV_NAME'] %>/g" config/database.yml`
 `cat test/lib/helpdesk/initializers/redis.rb > lib/helpdesk/initializers/redis.rb`

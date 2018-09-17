@@ -23,11 +23,9 @@
         if (cmd == "fullscreen") {
           $(editor.opts.toolbarContainer).toggleClass('fr-fullscreen');
         } else if (cmd == "html") {
-
           if (!editor.$oel.froalaEditor('codeView.isActive') && $('.fr-element').get(0)) {
             var opts = editor.opts.SANDBOX_BLACKLIST;
             var iframe = $('.fr-element').find('iframe');
-
             _checkIframeSandbox(iframe, opts);
           }
         } else if(cmd == 'linkInsert') {
@@ -52,6 +50,11 @@
           return false;
         }
 
+        if (editor.$oel.froalaEditor('codeView.isActive') && $('.fr-element').get(0)) {
+          var codeInsertedHtml = editor.$oel.froalaEditor('codeView.get');
+          var sanitizedCode = Sanitizer.sanitizeSrcAttribute(codeInsertedHtml);
+          editor.$oel.froalaEditor('html.set', sanitizedCode);
+        }
       });
 
       var form = editor.$oel.get(0).form;

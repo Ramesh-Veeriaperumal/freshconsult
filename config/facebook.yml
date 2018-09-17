@@ -1,9 +1,17 @@
 defaults: &defaults
-
- app_id: 725120837575289
- secret_key: 0f949aec052448fa67f4690e1c286859
- callback_url: http://localhost.freshdesk-dev.com:3000/social/facebook
-
+  app_id: 725120837575289
+  secret_key: 0f949aec052448fa67f4690e1c286859
+  callback_url: http://localhost.freshdesk-dev.com:3000/social/facebook
+  page_tab_app_id: 532141443602251
+  page_tab_app_secret: 674a8844ca40fc2dd528ae1a58f67725
+  app_id_euc: dummy_euc
+  secret_key_euc: dummy_euc
+  page_tab_app_id_euc: dummy_euc
+  page_tab_app_secret_euc: dummy_euc
+  app_id_eu: dummy_eu
+  secret_key_eu: dummy_eu
+  page_tab_app_id_eu: dummy_eu
+  page_tab_app_secret_eu: dummy_eu
 
 development:
   app_id: 725120837575289
@@ -11,10 +19,14 @@ development:
   callback_url: http://localhost.freshdesk-dev.com:3000/social/facebook
   page_tab_app_id: 532141443602251
   page_tab_app_secret: 674a8844ca40fc2dd528ae1a58f67725
-  app_id_fallback: dummy
-  secret_key_fallback: dummy
-  page_tab_app_id_fallback: dummy
-  page_tab_app_secret_fallback: dummy
+  app_id_euc: dummy_euc
+  secret_key_euc: dummy_euc
+  page_tab_app_id_euc: dummy_euc
+  page_tab_app_secret_euc: dummy_euc
+  app_id_eu: dummy_eu
+  secret_key_eu: dummy_eu
+  page_tab_app_id_eu: dummy_eu
+  page_tab_app_secret_eu: dummy_eu
 
 staging:
   app_id: 725120837575289
@@ -22,10 +34,14 @@ staging:
   callback_url: http://localhost.freshdesk-dev.com:3000/social/facebook
   page_tab_app_id: 532141443602251
   page_tab_app_secret: 674a8844ca40fc2dd528ae1a58f67725
-  app_id_fallback: dummy
-  secret_key_fallback: dummy
-  page_tab_app_id_fallback: dummy
-  page_tab_app_secret_fallback: dummy
+  app_id_euc: dummy_euc
+  secret_key_euc: dummy_euc
+  page_tab_app_id_euc: dummy_euc
+  page_tab_app_secret_euc: dummy_euc
+  app_id_eu: dummy_eu
+  secret_key_eu: dummy_eu
+  page_tab_app_id_eu: dummy_eu
+  page_tab_app_secret_eu: dummy_eu
 
 slave:
  <<: *defaults
@@ -38,7 +54,11 @@ production:
   callback_url: http://localhost.freshdesk-dev.com:3000/social/facebook
   page_tab_app_id: 532141443602251
   page_tab_app_secret: 674a8844ca40fc2dd528ae1a58f67725
-  app_id_fallback: dummy
-  secret_key_fallback: dummy
-  page_tab_app_id_fallback: dummy
-  page_tab_app_secret_fallback: dummy
+  app_id_euc: dummy_euc
+  secret_key_euc: dummy_euc
+  page_tab_app_id_euc: dummy_euc
+  page_tab_app_secret_euc: dummy_euc
+  app_id_eu: dummy_eu
+  secret_key_eu: dummy_eu
+  page_tab_app_id_eu: dummy_eu
+  page_tab_app_secret_eu: dummy_eu

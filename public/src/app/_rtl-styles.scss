@@ -1,11 +1,23 @@
 @if $rtl {
 	.redactor_editor{
 		direction:rtl !important;
+		* {
+			direction:rtl !important;
+		}
 	}
 	.redactor_toolbar li,.redactor_toolbar li.redactor_separator{
 		float: right;
 	}
 	#tickets-expanded .subject_style{
 		margin-left:8px;
+	}
+	.ticket-view-saveas:after {
+		left: 12px !important;
+	}
+	#view_manage_links {
+		text-align: left;
+	}
+	.ticket-view-save:before {
+		right: 13px;
 	}
 }

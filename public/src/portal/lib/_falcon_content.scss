@@ -144,10 +144,6 @@ li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	@include float(right);
 	font-weight: 400;
 	margin-top: -35px;
-	@if $rtl {
-		margin-top: 0;
-		@include float(left);
-	}
 	a{color: $blue;}
 }
 

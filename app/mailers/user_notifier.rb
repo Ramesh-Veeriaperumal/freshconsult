@@ -207,12 +207,13 @@ class UserNotifier < ActionMailer::Base
       email_config = options[:user].account.primary_email_config
       configure_email_config email_config
       @import_stopped = options[:import_stopped]
-      import_stopped_subject = @import_stopped ? 'stopped' : nil 
+      import_subject_key = @import_stopped ? 'customer_import_stopped' : 'customer_import' 
       
       @account_domain = options[:user].account.full_domain
       headers = {
-        :subject                    => "#{options[:type].capitalize} Import for "\
-                                       "#{@account_domain} #{import_stopped_subject}",
+        :subject                    => I18n.t("mailer_notifier_subject.#{import_subject_key}",
+                                      import_type: I18n.t("search.#{options[:type]}", default: options[:type].capitalize),
+                                      account_full_domain: @account_domain),
         :to                         => options[:user].email,
         :from                       => options[:user].account.default_friendly_email,
         :bcc                        => AppConfig['reports_email'],

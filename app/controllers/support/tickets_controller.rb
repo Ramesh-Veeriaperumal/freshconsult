@@ -187,19 +187,19 @@ class Support::TicketsController < SupportController
           company_ids = @client_manager_companies
           operator = "or"
         end
-        current_account.tickets.contractor_tickets(user_id, company_ids, operator)
+        current_account.tickets.preload(preload_options).contractor_tickets(user_id, company_ids, operator)
       elsif !current_user.contractor? && current_user.company_client_manager? && @company
         if @requested_by.to_i == 0
           current_user.company.try(:all_tickets) || current_user.tickets
         else
           requested_for = current_account.users.find_by_id(@requested_by)
           @requested_item = requested_for.company_ids.include?(@company.id) ? requested_for : current_user
-          @requested_item.tickets.contractor_tickets(nil, current_user.company_id, "or")
+          @requested_item.tickets.preload(preload_options).contractor_tickets(nil, current_user.company_id, "or")
         end
       else
         @requested_item = current_user
         @requested_by_company.to_i == 0 ? @requested_item.tickets : 
-          @requested_item.tickets.contractor_tickets(nil, @requested_by_company.to_i, "or")
+          @requested_item.tickets.preload(preload_options).contractor_tickets(nil, @requested_by_company.to_i, "or")
       end
     end
 
@@ -235,6 +235,10 @@ class Support::TicketsController < SupportController
 
     def public_request?
       current_user.nil?
+    end
+
+    def preload_options
+      [:ticket_old_body, :ticket_status, :requester, :responder]
     end
 
     def separate_new_emails_from_reply_cc cc_emails

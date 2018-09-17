@@ -20,7 +20,6 @@ SimpleCov.start do
   add_filter  'spec/'
   add_filter  'config/'
   add_filter  'test/'
-  add_filter  'app/controllers/subscription_admin'
   add_filter  'app/controllers/fdadmin'
   add_filter  'lib/fdadmin'
   add_filter  'reports'

@@ -4970,6 +4970,41 @@
         }
       }
     },
+    "/trial_subscription": {
+      "post": {
+        "tags": [
+          "trial subscription"
+        ],
+        "summary": "Try a higher plan",
+        "description": "Let's the account try out a higher plan for a specified number of days.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "trial_subscription",
+            "schema": {
+              "$ref": "#/definitions/trial_subscription_create"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/trial_subscription_create_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/installed_applications": {
       "get": {
         "tags": [
@@ -8056,7 +8091,46 @@
         }
       }
     },
-
+    "/subscription": {
+      "get": {
+        "tags": [
+          "subscription"
+        ],
+        "description": "Account subscription details",
+        "summary": "Account subscription details",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/subscription_show"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/plans": {
+      "get": {
+        "tags": [
+          "plans"
+        ],
+        "description": "Endpoint to list all Freshdesk plans and its pricing details",
+        "summary": "Endpoint to list all Freshdesk plans and its pricing details",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/plans"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/proactive/rules": {
       "get": {
         "tags": [
@@ -10751,6 +10825,27 @@
         }
       ]
     },
+    "trial_subscription_create": {
+      "type": "object",
+      "properties": {
+        "trial_subscription": {
+          "type": "object",
+          "properties": {
+            "trial_plan": {
+              "type": "string",
+              "enum": [
+                "Sprout Jan 17",
+                "Blossom Jan 17",
+                "Garden Jan 17",
+                "Estate Jan 17",
+                "Forest Jan 17"
+              ],
+              "description": "name of the plan to try."
+            }
+          }
+        }
+      }
+    },
     "sandbox_merge_input": {
       "type": "object",
       "properties": {
@@ -13236,6 +13331,43 @@
             ]
           }
         ]
+      }
+    },
+    "trial_subscription_create_response": {
+      "type": "object",
+      "properties": {
+        "trial_subscription": {
+          "type": "object",
+          "properties": {
+            "ends_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Date on which the try higher plan feature will end"
+            },
+            "from_plan_name": {
+              "type": "string",
+              "enum": [
+                "Sprout Jan 17",
+                "Blossom Jan 17",
+                "Garden Jan 17",
+                "Estate Jan 17",
+                "Forest Jan 17"
+              ],
+              "description": "Current plan, which the account is on, while trying higher plan"
+            },
+            "trial_plan_name": {
+              "type": "string",
+              "enum": [
+                "Sprout Jan 17",
+                "Blossom Jan 17",
+                "Garden Jan 17",
+                "Estate Jan 17",
+                "Forest Jan 17"
+              ],
+              "description": "Name of the plan which the account is trying. Always a higher plan compared to current plan (from_plan_name)."
+            }
+          }
+        }
       }
     },
     "make_agent_response": {
@@ -16366,6 +16498,47 @@
                   "type": "string"
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "plans": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              },
+              "currency": {
+                "type": "string"
+              },
+              "pricings": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "billing_cycle": {
+                      "type": "string"
+                    },
+                    "cost_per_agent": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "advanced_ticketing_create": {
       "type": "object",
       "required": [

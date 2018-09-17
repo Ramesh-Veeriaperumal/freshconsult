@@ -18,7 +18,7 @@
 		border-right: 0;
 		.hc-search-input{
 			width: 88%;
-			float: right;
+			@include float(right);
 			input.special{
 				padding: 0 0 3px 0;
 			}
@@ -26,7 +26,7 @@
 		.hc-search-button{
 			position: absolute;
 			width: 4%;
-			float: left;
+			@include float(left);
 			@include margin-left(32px);
 			.btn-primary{
 				background-color: white;

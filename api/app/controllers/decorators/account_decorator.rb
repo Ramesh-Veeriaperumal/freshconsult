@@ -27,6 +27,8 @@ class AccountDecorator < ApiDecorator
     ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
     ret_hash[:dashboard_limits] = record.account_additional_settings.custom_dashboard_limits if record.custom_dashboard_enabled?
     ret_hash[:freshchat] = freshchat_options_hash if record.freshchat_enabled?
+    trial_subscription = record.latest_trial_subscription_from_cache
+    ret_hash[:trial_subscription] = trial_subscription_hash(trial_subscription) if trial_subscription
     ret_hash
   end
 
@@ -127,5 +129,14 @@ class AccountDecorator < ApiDecorator
       sandbox_info[:sandbox][:account_type] = record.account_type if record.sandbox_job || record.sandbox?
       sandbox_info[:sandbox][:production_url] = record.account_additional_settings.additional_settings[:sandbox].try(:[], :production_url) if record.sandbox?
       sandbox_info
+    end
+
+    def trial_subscription_hash(trial_subscription)
+      {
+        active: trial_subscription.active?,
+        days_left: trial_subscription.days_left,
+        days_left_until_next_trial: trial_subscription.days_left_until_next_trial,
+        plan_name: trial_subscription.trial_plan
+      }
     end
 end
