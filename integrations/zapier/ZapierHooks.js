@@ -488,5 +488,16 @@ var Zap = {
             output[oattr] = value;
         }
         return output;
+    },
+
+    ticket_type_poller_post_poll : function(bundle) {
+        /**
+         * Mapping response from {{fd_url}}/api/v2/ticket_fields?type=default_ticket_type
+         * to new array structure for easier consumption by Zapier
+         */
+        var content = z.JSON.parse(bundle.response.content);
+        return content[0].choices.map( function(el) {
+            return {name: el}
+        });
     }
 };

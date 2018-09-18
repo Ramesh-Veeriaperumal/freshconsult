@@ -1,11 +1,11 @@
-<%= t("mailer_notifier.hi") %><br><br>
+Hi,<br><br>
 
-<%= t("mailer_notifier.security_notification.agent_deleted", agent_name: @model.name, doer: @doer, time: @time) %>
+An agent, <%= @model.name %> was deleted by <%= @doer %> in your helpdesk at <%= @time %>. 
 <%if @model.account.subscription.state.downcase.eql?('active')%>
-<%= t("mailer_notifier.security_notification.update_agent_billing", billing_url: "#{@model.account.full_url}/subscription").html_safe %>
+To reflect this change in your billing, please <a href = "<%= @model.account.full_url %>/subscription">update</a> the agent information in the billing page. 
 <%end%>
-<%= t("mailer_notifier.security_notification.deleted_agent_info", agent_name: @model.name) %>
+Note that <%= @model.name %> will still exist in your helpdesk as a contact.
 <br><br>
-<%= t("mailer_notifier.security_notification.current_agent_stats", full_time: @model.account.all_agents.full_time_agents.size, occasional: @model.account.all_agents.occasional_agents.size) %><br><br>
+You currently have <%= @model.account.all_agents.full_time_agents.size %> full time agents and <%= @model.account.all_agents.occasional_agents.size %> occasional agents in your Freshdesk account.<br><br>
 
 <%= render :partial => "footer" %>

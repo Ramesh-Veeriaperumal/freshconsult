@@ -17,23 +17,13 @@ class Security::Admin::AgentObserver < ActiveRecord::Observer
 
   def commit_on_create(agent)
     return if skip_notification?(agent)    
-    subject = { key: 'mailer_notifier_subject.agent_added',
-                locals: {
-                  account_name: agent.account.name
-                }
-              }
+    subject = "#{agent.account.name}: A new agent was added in your helpdesk"
     roles_name = agent.user.roles.map(&:name)
     notify_admins(agent.user, subject, "agent_create", roles_name.to_a)
   end
 
   def commit_on_destroy(agent)
-    subject = { 
-      key: 'mailer_notifier_subject.agent_deleted',
-      locals: {
-        agent_name: agent.user.name,
-        account_name: agent.account.name
-      }
-    }
+    subject = "#{agent.account.name}: #{agent.user.name} was deleted"
     notify_admins(agent.user, subject, "agent_delete", [])
   end
 
