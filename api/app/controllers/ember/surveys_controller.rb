@@ -8,6 +8,11 @@ module Ember
       custom_survey? ? current_account.custom_surveys.undeleted.preload(survey_questions: [:survey, :custom_field_choices_desc]) : default_survey
     end
 
+    def load_object
+      @item = current_account.custom_surveys.with_questions_and_choices.find_by_id(params[:id])
+      log_and_render_404 unless @item
+    end
+
     def decorator_options
       super(version: 'private')
     end

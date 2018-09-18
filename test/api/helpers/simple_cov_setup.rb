@@ -2,6 +2,7 @@ module SimpleCovSetup
   require 'simplecov'
   require 'simplecov-csv'
   require 'simplecov-rcov'
+  require 'codecov'
 
   require "#{Dir.pwd}/test/api/helpers/boc_groups.rb"
 
@@ -53,6 +54,7 @@ module SimpleCovSetup
     add_filter  'config/'
     add_filter  'test/'
     add_filter  'fdadmin'
+    add_filter  'vendor/gems'
 
     GROUP_FILE_MAP.each do |group, filelist|
       add_group group do |src_file|
@@ -82,10 +84,12 @@ module SimpleCovSetup
   SimpleCov.command_name "rails_app_#{$$}"
   SimpleCov.merge_timeout 3600 # 1 hour
 
+
   SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
     SimpleCov::Formatter::HTMLFormatter,
     SimpleCov::Formatter::CSVFormatter,
     SimpleCov::Formatter::RcovFormatter,
+    SimpleCov::Formatter::Codecov
   ]
 end
 

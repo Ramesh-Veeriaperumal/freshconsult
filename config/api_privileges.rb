@@ -26,7 +26,7 @@ Authority::Authorization::PrivilegeList.build do
 
     resource :"ember/agent", only: %i(index me achievements update)
     resource :"ember/group", only: [:index]
-    resource :"ember/survey", only: [:index]
+    resource :"ember/survey", only: [:index, :show]
     resource :"ember/dashboard/activity", only: [:index]
     resource :"ember/portal", only: [:index]
     resource :"ember/email_config", only: [:index, :search]
