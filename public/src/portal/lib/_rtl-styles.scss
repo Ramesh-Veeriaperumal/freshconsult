@@ -1,6 +1,6 @@
 @if $rtl {
 	.content .heading{clear:both;}
-	.redactor_toolbar li,.redactor_toolbar li.redactor_separator, 
+	.redactor_toolbar li,.redactor_toolbar li.redactor_separator,
 	.breadcrumb,.breadcrumb a:before, .breadcrumb span:before, .breadcrumb > a
 	{
 		float: right;
@@ -14,9 +14,6 @@
 		}
 	}
 	@include at-breakpoint($break-tablet){
-		.hc-nav div {
-			clear:both;
-		}
 		.hc-search, .hc-nav{
 			float:right;
 		}
@@ -31,6 +28,4 @@
 		border-bottom-right-radius:4px;
 		border-top-right-radius:4px;
 	}
-
-	
 }

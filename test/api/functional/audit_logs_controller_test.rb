@@ -4,14 +4,17 @@ class AuditLogsControllerTest < ActionController::TestCase
   def setup
     super
     initial_setup
+    @account.add_feature :audit_logs_central_publish
+  end
+
+  def teardown
+    @account.revoke_feature :audit_logs_central_publish
   end
 
   @@initial_setup_run = false
 
   def initial_setup
     @account ||= Account.first.make_current
-    @account.launch :audit_logs_central_publish
-
     @@initial_setup_run = true
   end
 

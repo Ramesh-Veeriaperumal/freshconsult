@@ -16,6 +16,8 @@ class ApiContactsControllerTest < ActionController::TestCase
     @account.features.multiple_user_companies.create
     @account.add_feature(:falcon)
     @account.add_feature(:multiple_user_companies)
+    @account.add_feature(:multi_timezone)
+    @account.add_feature(:multi_language)
     @account.launch(:contact_delete_forever)
     @account.reload
 

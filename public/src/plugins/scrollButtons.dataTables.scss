@@ -96,13 +96,13 @@
     @include transition(all .20s linear);  
 }
 
-html[dir="rtl"]{
+html[dir="rtl"] {
     .scrollers {
-            right : auto;
-            left : 0px;
-            border-top-left-radius: 8px;
-            border-bottom-left-radius: 8px;
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
+        right : auto;
+        left : 0px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
     }
 }

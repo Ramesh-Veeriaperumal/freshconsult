@@ -184,7 +184,7 @@ $rtl: false !default;
   @if $origin == left {
     @if $rtl { float: right; }
     @else    { float: left; }
-  } @elseif $origin == right {
+  } @else if $origin == right {
     @if $rtl { float: left; }
     @else    { float: right; }
   } @else{
@@ -221,7 +221,7 @@ $rtl: false !default;
   @if $origin == left {
     @if $rtl { clear: right; }
     @else    { clear: left; }
-  } @elseif $origin == right {
+  } @else if $origin == right {
     @if $rtl { clear: left; }
     @else    { clear: right; }
   } @else{
@@ -233,7 +233,7 @@ $rtl: false !default;
   @if $origin == left {
     @if $rtl { text-align: right; }
     @else    { text-align: left; }
-  } @elseif $origin == right {
+  } @else if $origin == right {
     @if $rtl { text-align: left; }
     @else    { text-align: right; }
   } @else {

@@ -207,7 +207,7 @@ class Post < ActiveRecord::Base
   def inline_attachment_ids=(attachment_ids)
     attachment_ids ||= []
     attachment_ids = attachment_ids.split(',') if attachment_ids.is_a? String
-    attachment_ids = (inline_attachment_ids + attachment_ids).map(&:to_i).uniq
+    attachment_ids = (inline_attachment_ids + attachment_ids).map(&:to_i).uniq.reject { |id| id == 0 }
     super(attachment_ids)
   end
 

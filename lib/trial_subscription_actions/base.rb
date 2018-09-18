@@ -1,4 +1,4 @@
-class TrialSubscription::Base < SAAS::SubscriptionEventActions
+class TrialSubscriptionActions::Base < SAAS::SubscriptionEventActions
 
   DROP_DATA_FEATURES = (SAAS::SubscriptionActions::DROP_DATA_FEATURES +
     DROP_DATA_FEATURES_V2).uniq.freeze
