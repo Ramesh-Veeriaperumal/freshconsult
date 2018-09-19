@@ -544,3 +544,39 @@ if Rails.env.test?
 
 
 end
+
+namespace :integration_test_helper do
+
+  task :update_record, [:model_name, :where_clause, 
+    :properties_to_update] => :environment do |t, args|
+    begin
+      unless Rails.env.production?
+        model_clazz = Module.const_get(args[:model_name])
+        where_clause = eval args[:where_clause]
+        properties_to_update = eval args[:properties_to_update]
+        if model_clazz.is_sharded?
+          Sharding.select_shard_of(where_clause[:account_id]) do
+            Account.find(where_clause[:account_id]).make_current
+            do_update model_clazz, where_clause, properties_to_update
+          end
+        else
+          do_update model_clazz, where_clause, properties_to_update
+        end
+        Rails.logger.debug "updated the record with model name #{args[:model_name]},
+          where clause #{where_clause.inspect} and values #{properties_to_update.inspect}"
+      end
+    rescue StandardError => e
+      Rails.logger.error("Exception while running the task update_model: 
+        #{e.backtrace}")
+    end
+  end
+
+  def do_update(model_clazz, where_clause, properties_to_update)
+    model_clazz.where(where_clause).each do |record| 
+      properties_to_update.each do |property, value| 
+        record.safe_send("#{property}=", value)
+      end
+      record.save!
+    end 
+  end
+end

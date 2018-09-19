@@ -35,11 +35,7 @@ class Account < ActiveRecord::Base
 
   def disable_agent_oauth2_sso!
     return false unless self.agent_oauth2_sso_enabled?
-    revoke_feature(:oauth2)
-    if self.sso_options.present?
-      self.sso_options.delete(:agent_oauth2)
-      self.sso_options.delete(:agent_oauth2_config)
-    end
+    remove_agent_oauth2_sso_options
     disable_oauth2_sso unless customer_oauth2_sso_enabled?
     self.save
   end
@@ -55,18 +51,35 @@ class Account < ActiveRecord::Base
 
   def disable_customer_oauth2_sso!
     return false unless self.customer_oauth2_sso_enabled?
-    revoke_feature(:oauth2)
-    if self.sso_options.present?
-      self.sso_options.delete(:customer_oauth2)
-      self.sso_options.delete(:customer_oauth2_config)
-    end
+    remove_customer_oauth2_sso_options
     disable_oauth2_sso unless agent_oauth2_sso_enabled?
     self.save
   end
 
   def disable_oauth2_sso
+    revoke_feature(:oauth2)
     self.sso_options.delete(:sso_type) if self.sso_options.present?
     self.sso_enabled = false
+  end
+
+  def remove_oauth2_sso_options
+    revoke_feature(:oauth2)
+    remove_agent_oauth2_sso_options
+    remove_customer_oauth2_sso_options
+  end
+
+  def remove_agent_oauth2_sso_options
+    if self.sso_options.present?
+      self.sso_options.delete(:agent_oauth2)
+      self.sso_options.delete(:agent_oauth2_config)
+    end
+  end
+
+  def remove_customer_oauth2_sso_options
+    if self.sso_options.present?
+      self.sso_options.delete(:customer_oauth2)
+      self.sso_options.delete(:customer_oauth2_config)
+    end
   end
 
   def agent_oauth2_logout_redirect_url

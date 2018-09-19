@@ -17,7 +17,7 @@ window.Sanitizer = window.Sanitizer || {};
   		**/
   		var bodyContent = html.match(/<body(.*?) ([\w\W]*?)<\/body>/g);
   		html = (bodyContent != null) ? bodyContent[0] : html;
-      
+
   		return html;
   	},
 
@@ -55,18 +55,24 @@ window.Sanitizer = window.Sanitizer || {};
         html = html.replace(/<div(.*?)><p(.*?)>((?:[\w\W]*?))<\/p><\/div>/g,'<p $1>$3</p>');
 
 			}
-				
+
       return html;
     },
 
     onPasteFromExcel: function (html) {
       // Set border to table
       if(/(microsoft-com|schemas-microsoft-com:office:excel|content=Excel.Sheet)/.test(html)) {
-        html = html.replace(/<table(.*?)border=0/, '<table$1 border=1') 
+        html = html.replace(/<table(.*?)border=0/, '<table$1 border=1')
       }
 
       return html;
+    },
+
+    sanitizeSrcAttribute: function(codeInsertedHtml) {
+      codeInsertedHtml = codeInsertedHtml.replace(/src="data:text\/html;base64(.*)"/i, '')
+      return codeInsertedHtml
     }
+
 
   }
 }(window.jQuery));

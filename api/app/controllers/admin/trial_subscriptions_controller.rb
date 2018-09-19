@@ -3,8 +3,6 @@ class Admin::TrialSubscriptionsController < ApiApplicationController
 
   before_filter -> { validate_delegator @item }, only: [:cancel, :create]
 
-  decorate_views(decorate_object: [:create])
-
   def create
     if @item.construct_and_save
       head 204
@@ -37,7 +35,6 @@ class Admin::TrialSubscriptionsController < ApiApplicationController
     end
 
     def scoper
-      # used by build object for create action
       TrialSubscription
     end
 
