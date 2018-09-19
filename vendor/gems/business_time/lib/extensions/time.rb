@@ -127,19 +127,26 @@ class Time
       days = (date_b - date_a).to_i
       wday_counts = [days / 7] * 7
       (0..(days % 7)).each { |day| wday_counts[(date_a.wday + day) % 7] += 1 }
-
-      (date_a.year..date_b.year).each do |year|
-        business_calendar_config.holiday_data.each do |holiday|
-          holidate = Date.parse("#{holiday[0]} #{year}")
-          if (holidate >= date_a) && (holidate <= date_b) && (wday_counts[holidate.wday] > 0)
-            wday_counts[holidate.wday] -= 1
+      begin
+        (date_a.year..date_b.year).each do |year|
+          business_calendar_config.holidays.each do |holiday|
+            holidate = Date.parse("#{holiday.day}-#{holiday.mon}-#{year}")
+            if (holidate >= date_a) && (holidate <= date_b) && (wday_counts[holidate.wday] > 0)
+              wday_counts[holidate.wday] -= 1
+            end
           end
         end
+      rescue StandardError => e
+        Rails.logger.error "Business Hours : #{business_calendar_config.try(:account_id)} : Error while trying to subtract holidays #{e.inspect} #{e.backtrace.join("\n\t")}"
       end
 
       wday_duration = [0] * 7
       business_calendar_config.weekdays.each do |wday|
-        wday_duration[wday] = Time.zone.parse(business_calendar_config.end_of_workday(wday)) - Time.zone.parse(business_calendar_config.beginning_of_workday(wday))
+        begin
+          wday_duration[wday] = Time.zone.parse(business_calendar_config.end_of_workday(wday)) - Time.zone.parse(business_calendar_config.beginning_of_workday(wday))
+        rescue StandardError => e
+          Rails.logger.error "Business Hours : #{business_calendar_config.try(:account_id)} : Error while trying to compute working hours #{e.inspect} #{e.backtrace.join("\n\t")}"
+        end
       end
       # Add dot product of the two arrays. https://stackoverflow.com/a/7372688/443682
       work_duration_in_between = (0...wday_counts.count).inject(0) { |coeff, wday| coeff + wday_counts[wday] * wday_duration[wday] }
