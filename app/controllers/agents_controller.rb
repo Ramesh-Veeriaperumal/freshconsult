@@ -222,7 +222,11 @@ class AgentsController < ApplicationController
         format.html do
           flash[:notice] = t(:'flash.general.update.success', :human_name => 'Agent')
           freshcaller_alerts
-          redirect_to :action => 'index'
+          if current_account.falcon_ui_enabled?(current_user)
+            render :nothing => true
+          else
+            redirect_to :action => 'index'
+          end
         end
         format.json {head :ok}
         format.xml {head :ok } 

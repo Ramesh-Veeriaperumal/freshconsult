@@ -80,9 +80,9 @@ jiraIssueStatus=`cat /tmp/jiraIssueResult.txt | ruby -r rubygems -r json -e "put
 
 gitUserEmail=`git var GIT_AUTHOR_IDENT | egrep -o "<.*?@.*?.com>" | sed -e 's/[<>]//g'`
 
-if [ "$jiraIssueStatus" != "In Progress" -a  "$jiraIssueStatus" != "Open" ]
+if [ "$jiraIssueStatus" != "In Progress" -a  "$jiraIssueStatus" != "Open" -a "$jiraIssueStatus" != "In Review" ]
 then
-  printMsg "Jira Issue ${jiraId} is in Status[${jiraIssueStatus}]. It needs to be [In Progress] or [Open].
+  printMsg "Jira Issue ${jiraId} is in Status[${jiraIssueStatus}]. It needs to be [In Progress] or [Open] or [In Review].
 Kindly update the status before the commit"
 exit 1;
 fi;
