@@ -136,13 +136,13 @@ class Company < ActiveRecord::Base
   end
 
   def validate_format_of_default_dropdown field, error_label
-    add_error_to_self(field, error_label) unless field.choices_value.include? safe_send(field.name)
+    add_error_for_default_dropdown(field, error_label) unless field.choices_value.include? safe_send(field.name)
   end
 
   def no_op field, error_label
   end
 
-  def add_error_to_self field, error_label
+  def add_error_for_default_dropdown field, error_label
     self.errors.add(field.safe_send(error_label),
       I18n.t("#{self.class.to_s.downcase}.errors.default_dropdown"))
   end
