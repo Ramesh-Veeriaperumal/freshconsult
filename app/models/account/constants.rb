@@ -104,8 +104,7 @@ class Account < ActiveRecord::Base
         :collision, :layout_customization, :round_robin, :enterprise_reporting,
         :custom_ssl, :custom_roles, :multiple_business_hours, :facebook_page_tab, :dynamic_sections,
         :helpdesk_restriction_toggle, :round_robin_load_balancing, :multiple_user_companies,
-        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections, :custom_dashboard,
-        :audit_log_ui, :audit_logs_central_publish ],
+        :multiple_companies_toggle, :round_robin_on_update, :multi_dynamic_sections, :custom_dashboard],
       :inherits => [ :garden_jan_17 ]
     },
 

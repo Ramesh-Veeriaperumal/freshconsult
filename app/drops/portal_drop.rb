@@ -285,7 +285,7 @@ class PortalDrop < BaseDrop
   end
 
   def personalized_articles?
-    source.preferences[:personalized_articles]
+    source.personalized_articles?
   end
 
   def freshid_feature?
