@@ -62,6 +62,43 @@ module ActiveRecord
   end
 end
 
+# Monitor the logs and then take a call to gohead with the fix.
+# Fix link from Rails 4.1+ : https://github.com/rails/rails/pull/12779
+# FD side problem noticed during Multi-AZ db failures. More details on - https://jira.freshworks.com/browse/FD-13418
+
+module ActiveRecord
+  module ConnectionAdapters
+    class AbstractMysqlAdapter
+        def begin_db_transaction
+          execute "BEGIN"
+        rescue Exception
+          log_exception_skip("BEGIN")
+          # Transactions aren't supported
+        end
+
+        def commit_db_transaction #:nodoc:
+          execute "COMMIT"
+        rescue Exception
+          log_exception_skip("COMMIT")
+          # Transactions aren't supported
+        end
+
+        def rollback_db_transaction #:nodoc:
+          execute "ROLLBACK"
+        rescue Exception
+          log_exception_skip("ROLLBACK")
+          # Transactions aren't supported
+        end
+
+        def log_exception_skip(action)
+          if defined?(Rails.logger.info)
+            Rails.logger.info("AR TRANSACTION ERROR SKIPPED :: #{action} :: #{Thread.current[:message_uuid].inspect}")
+          end
+        end
+    end
+  end
+end
+
 # Monkey Patch AR Update method to include account_id for tables that have account_id column.
 # Raw method override of - https://github.com/rails/rails/blob/3-2-stable/activerecord/lib/active_record/persistence.rb#L354
 module ActiveRecord

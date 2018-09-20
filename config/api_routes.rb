@@ -443,7 +443,7 @@ Helpkit::Application.routes.draw do
         get :check_following
       end
     end
-    resources :surveys, controller: 'ember/surveys', only: [:index]
+    resources :surveys, controller: 'ember/surveys', only: [:index, :show]
     resources :portals, controller: 'ember/portals', only: [:index, :update, :show] do
       member do
         get :bot_prerequisites

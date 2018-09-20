@@ -1,6 +1,5 @@
 module SlaTestHelper
-
-  def ticket_params_hash
+  def ticket_params_hash_sla
     cc_emails = [Faker::Internet.email, Faker::Internet.email]
     subject = Faker::Lorem.words(10).join(' ')
     description = Faker::Lorem.paragraph
@@ -55,16 +54,17 @@ module SlaTestHelper
     end
   end
 
-  def freeze_time(time)
-    Time.zone = @business_calender.time_zone
+  def freeze_time_now(time)
+    Time.zone = @account.time_zone
     Timecop.freeze(time)
     yield
     Timecop.return
-    Time.zone = @business_calender.time_zone
+    Time.zone = @account.time_zone
   end
 
   def get_datetime(time, day)
     date = Date.parse(day)
     Time.zone.parse("#{date} #{time}")
   end
+
 end

@@ -1,0 +1,25 @@
+
+codecov:
+  notify:
+    require_ci_to_pass: no
+
+coverage:
+  precision: 2
+  round: nearest
+  range: "40...100"
+
+  status:
+    project:
+      default:
+        threshold: 0%
+        only_pulls: true
+
+    patch:
+      default:
+        target: "90%"
+        only_pulls: true
+
+comment:
+  layout: "header, reach, diff, flags, files, footer"
+  require_changes: yes
+  behavior: default

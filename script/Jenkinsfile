@@ -1,7 +1,7 @@
 import groovy.json.JsonSlurperClassic
 
  //Assinging variable
- jobName = env.JOB_NAME 
+ jobName = env.JOB_NAME
  build   = env.BUILD_NUMBER
  buildno = build.toInteger()
  label = ""
@@ -11,14 +11,14 @@ try {
 
 	instance_no    = get_number_instances()
 	no = (buildno % instance_no).toString()
-    label  = "backend_label_$no" 
+    label  = "backend_label_$no"
 
 }
 catch (e) {
 
-     echo "error with label name" + e  
+     echo "error with label name" + e
      no = (buildno % 8).toString()
-     label  = "backend_label_$no"    
+     label  = "backend_label_$no"
 
 }
 
@@ -26,40 +26,40 @@ catch (e) {
 //Label name
 echo instance_no + "- Total number of instances are running"
 echo label + " label name"
- 
-//Getting total number of instances 
+
+//Getting total number of instances
 def get_number_instances() {
 
         result = ["curl", "-k", "-X", "GET", "-H", "Content-Type: application/json","-H", "Authorization: Bearer c535a01828c0a4c5c2fb7c18d72ae087b379d5e63ba9cbe2f17c45649f16300c", "https://api.spotinst.io/aws/ec2/group/sig-86dd0ad7?accountId=act-f9698e90"].execute().text
 	    data = new JsonSlurperClassic().parseText(result)
 		instance_no =  data.response.items
 	    number = instance_no['capacity']['target'][0]
-	    return number    
-	        
+	    return number
+
 }
 
 
 //Specfiy the branch to checkout based on PR condition
 def branch_checkout() {
-        
+
            try {
 	                      checkout([$class: 'GitSCM', branches: [[name: "$params.ghprbSourceBranch"]],
                             doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
                             userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])
 
 	            }//If Merge Conflict Occurs build will fail with below message
-		       
+
 		       catch (e) {
 		                 echo 'This branch is out-of-date with the base br anch' + e
 		                 sh 'exit 1'
-		        }          
+		        }
 
 }
 
 
-//Build setup based on category 
+//Build setup based on category
 def build_setup(category) {
-        
+
         sh  """#!/bin/bash
 	        source /etc/profile.d/rvm.sh
 	        yes | cp -rf /home/jenkins/s3.yml /home/jenkins/workspace/$jobName/config/s3.yml
@@ -68,10 +68,11 @@ def build_setup(category) {
 	        yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/$jobName/config/channel_api_keys.yml
 	        sudo service mysql start
 	        sudo service elasticsearch start
+          export CODECOV_TOKEN="${params.CODECOV_TOKEN}"
 	      	"""
-	      	
+
 	    if(category != 'private' && category != 'public') {
- 	
+
 	      sh  """#!/bin/bash
 		      source /etc/profile.d/rvm.sh
 		      redis-server --daemonize yes
@@ -79,12 +80,12 @@ def build_setup(category) {
 	          bundle exec rake db:bootstrap RAILS_ENV=test
 	      	  """
 	      }
-  	
-	      	
+
+
 	    if(category == 'sandbox')  {
-	
+
 	     sh '''#!/bin/bash
-	        source /etc/profile.d/rvm.sh 
+	        source /etc/profile.d/rvm.sh
 	        echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
             sed -i "s/sandbox_test/sandbox${BUILD_NUMBER}/g" config/database.yml
 	        bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
@@ -92,15 +93,15 @@ def build_setup(category) {
             git init tmp/sandbox_test/
             git config --global user.email "sample@freshdesk.com"
             git config --global user.name "Sample"
-            '''   
+            '''
 	     }
- 	
+
 }
 
 
-//Execute testCases 
+//Execute testCases
 def execute_test_cases(category) {
-        
+
         if(category == 'pronto') {
             sh """#!/bin/bash
                source /etc/profile.d/rvm.sh
@@ -108,51 +109,51 @@ def execute_test_cases(category) {
                PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/$params.ghprbTargetBranch
                """
         }
-        
+
         if(category == 'public') {
            sh '''#!/bin/bash
               source /etc/profile.d/rvm.sh
               ruby test/parallel_test.rb 3 public
               '''
         }
-        
+
         if(category == 'private') {
            sh '''#!/bin/bash
               source /etc/profile.d/rvm.sh
               ruby test/parallel_test.rb 5 private
               '''
         }
-        
+
         if(category == 'sandbox') {
            sh '''#!/bin/bash
               source /etc/profile.d/rvm.sh
               bundle exec ruby test/api/suites/sandbox_test_suite.rb
               '''
         }
-        
+
 }
 
 //Publish Reports
 def publish_report(category) {
-         
+
                  publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
 		                             reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html',
 		                             reportName: "coverage $category", reportTitles: ''])
-		         
-		         junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'                      
-         
+
+		         junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'
+
 }
 
 //Distribted run based on category
 def distributed_run(category) {
-        
-   timestamps {     
+
+   timestamps {
 	     //Machine label where this jobs needs to run
 		 node(label) {
-		 
+
 		    //Checkout stage
 		    	stage(category + " Tests") {
-				    
+
 					    //Branch checkout
 					  if(jobName.contains("pullrequest")) {
                          branch_checkout()
@@ -160,33 +161,33 @@ def distributed_run(category) {
 					       checkout scm
 					   }
 
-  
+
 					    //Build setup
-					    if(category != 'pronto') {		
+					    if(category != 'pronto') {
 			    			//Intialization process
 			            	build_setup(category)
 			    		}
-			    	
+
 			    	     //Executing test cases
 	                     try{
 				               execute_test_cases(category)
 				         }
 				         catch (e) {
-				               "issue with test execution" + e          
-				         } 
-			    		
+				               "issue with test execution" + e
+				         }
+
 			    		 finally {
 				    		if(category != 'pronto') {
-				    		     //Publish Report    
-						            publish_report(category)                        
+				    		     //Publish Report
+						            publish_report(category)
 				    		}
-				         }		   
-		    		  
+				         }
+
                   }
-		    		   
+
 			}
-		 }	
-   }	 
+		 }
+   }
 
 
 //Parallel Test starts here
@@ -202,12 +203,9 @@ parallel Public: {
 
 
 //Ends results published here
-timestamps {     
+timestamps {
 	     //Machine label where this jobs needs to run
 		 node("master") {
-		 	junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'		    
-		 }	
-}	 
-
-
-
+		 	junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'
+		 }
+}

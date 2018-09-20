@@ -39,11 +39,7 @@ class GamificationScoreObserver < ActiveRecord::Observer
 	def process_ticket_score_on_update(ticket)
 		if (ticket.reopened_now? or (ticket.ticket_changes.key?(:deleted) && ticket.deleted?))
 			args = { :id => ticket.id, :account_id => ticket.account_id, :remove_score => true }
-			if redis_key_exists?(SIDEKIQ_GAMIFICATION_PROCESS_TICKET_SCORE)
-				Gamification::ProcessTicketScore.perform_async(args)
-			else
-				Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, args)
-			end
+			Gamification::ProcessTicketScore.perform_async(args)
     elsif ticket.resolved_now?
       		add_support_score(ticket)
     end
@@ -51,11 +47,7 @@ class GamificationScoreObserver < ActiveRecord::Observer
 
 	def add_support_score(ticket)
 		args = { :id => ticket.id, :account_id => ticket.account_id, :fcr =>  ticket.first_call_resolution?, :resolved_at_time => ticket.resolved_at, :remove_score => false }
-		if redis_key_exists?(SIDEKIQ_GAMIFICATION_PROCESS_TICKET_SCORE)
-			Gamification::ProcessTicketScore.perform_async(args) unless (ticket.resolved_at.nil? or ticket.responder.nil?)
-		else
-			Resque.enqueue(Gamification::Scoreboard::ProcessTicketScore, args) unless (ticket.resolved_at.nil? or ticket.responder.nil?)
-		end
+		Gamification::ProcessTicketScore.perform_async(args) unless (ticket.resolved_at.nil? or ticket.responder.nil?)
 	end
 
   private 

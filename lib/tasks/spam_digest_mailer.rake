@@ -13,11 +13,7 @@ namespace :spam_digest_mailer do
 						account.make_current
 						forum_spam_digest_recipients = account.forum_moderators.map(&:email).compact
 						if account.features_included?(:forums) && forum_spam_digest_recipients.present?
-							if redis_key_exists?(SIDEKIQ_DISPATCH_SPAM_DIGEST)
-								Community::DispatchSpamDigest.perform_async
-							else
-								Resque.enqueue(Workers::Community::DispatchSpamDigest, {:account_id => account.id })
-							end
+							Community::DispatchSpamDigest.perform_async
 							puts "** Queued ** #{account} ** for spam digest email **"
 						end
 						Account.reset_current_account
