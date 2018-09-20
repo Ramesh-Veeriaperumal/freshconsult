@@ -474,20 +474,10 @@ class AccountsController < ApplicationController
 
     def add_to_crm(account_id)
       if (Rails.env.production? or Rails.env.staging?)
-        if redis_key_exists?(SIDEKIQ_MARKETO_QUEUE)
-          Subscriptions::AddLead.perform_at(ThirdCRM::ADD_LEAD_WAIT_TIME.minute.from_now, { :account_id => account_id,
+        Subscriptions::AddLead.perform_at(ThirdCRM::ADD_LEAD_WAIT_TIME.minute.from_now, { :account_id => account_id,
           :signup_id => params[:signup_id]})
-        else
-          Resque.enqueue_at(ThirdCRM::ADD_LEAD_WAIT_TIME.minute.from_now, Marketo::AddLead, { :account_id => account_id,
-          :signup_id => params[:signup_id]})
-        end
-        if redis_key_exists?(FRESHSALES_ACCOUNT_SIGNUP)
-          CRMApp::Freshsales::Signup.perform_at(5.minutes.from_now, { account_id: account_id,
-            fs_cookie: params[:fs_cookie] })
-        else
-          Resque.enqueue_at(5.minute.from_now, CRM::Freshsales::Signup, { account_id: account_id,
-            fs_cookie: params[:fs_cookie] })
-        end
+        CRMApp::Freshsales::Signup.perform_at(5.minutes.from_now, { account_id: account_id,
+          fs_cookie: params[:fs_cookie] })
       end  
     end  
 
@@ -508,14 +498,9 @@ class AccountsController < ApplicationController
 
     def update_crm
       if Rails.env.production?
-        if redis_key_exists?(FRESHSALES_DELETED_CUSTOMER)
-          CRMApp::Freshsales::DeletedCustomer.perform_async({ 
-            account_id: current_account.id 
-          })  
-        else
-          Resque.enqueue(CRM::AddToCRM::DeletedCustomer, { :account_id => current_account.id })
-          Resque.enqueue(CRM::Freshsales::DeletedCustomer, { :account_id => current_account.id })
-        end
+        CRMApp::Freshsales::DeletedCustomer.perform_async({ 
+          account_id: current_account.id 
+        })
       end
     end      
 
@@ -529,11 +514,7 @@ class AccountsController < ApplicationController
     end
 
     def add_churn
-      if redis_key_exists?(SIDEKIQ_SUBSCRIPTIONS_ADD_DELETED_EVENT)
-        Subscriptions::AddDeletedEvent.perform_async({ :account_id => current_account.id })
-      else
-        Resque.enqueue(Subscription::Events::AddDeletedEvent, { :account_id => current_account.id })
-      end
+      Subscriptions::AddDeletedEvent.perform_async({ :account_id => current_account.id })
     end   
 
     def schedule_cleanup

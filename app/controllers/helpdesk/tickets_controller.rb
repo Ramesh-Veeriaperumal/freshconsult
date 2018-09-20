@@ -1817,15 +1817,6 @@ class Helpdesk::TicketsController < ApplicationController
        #@ticket_filter.query_hash = JSON.parse(@cached_filter_data[:data_hash]) unless @cached_filter_data[:data_hash].blank?
     end
 
-    def dashboard_filter_redis_key
-      key = {
-              :account_id => current_account.id,
-              :user_id => current_user.id,
-              :session_id => request.session_options[:id]
-            }
-      DASHBOARD_TABLE_FILTER_KEY % key
-    end
-
     def load_article_filter
       return if view_context.current_filter.to_s != 'article_feedback' || params[:article_id].present?
       params[:article_id] = get_tickets_redis_key(article_filter_key)

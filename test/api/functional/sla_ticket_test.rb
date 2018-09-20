@@ -113,4 +113,14 @@ class TicketsControllerTest < ActionController::TestCase
     monday = get_datetime('10:00', '30 Aug 2018')
     assert_equal monday.business_time_until(get_datetime('9:00', '27 Aug 2018'), @business_calendar), -100_800
   end
+  
+  def test_business_time_until_func_invalid_holiday_dates
+    # when business calender is corrupt
+    BusinessCalendar.any_instance.stubs(:holiday_data).returns([["",""]])
+    Time.zone = @account.business_calendar.default.first.time_zone
+    monday = get_datetime('9:00', '27 Aug 2018')
+    assert_equal monday.business_time_until(get_datetime('10:00', '30 Aug 2018'), @business_calendar), 100_800
+    BusinessCalendar.any_instance.unstub(:holiday_data)
+  end
+
 end

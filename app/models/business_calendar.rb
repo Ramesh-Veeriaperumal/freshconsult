@@ -69,10 +69,16 @@ class BusinessCalendar < ActiveRecord::Base
 
   def beginning_of_workday day
     business_hour_data[:working_hours][day][:beginning_of_workday]
+  rescue StandardError => e
+    Rails.logger.error "Business Hours : #{id} : #{account_id}  : Error while trying to fetch start of work: #{e.inspect} #{e.backtrace.join("\n\t")}"
+    '12:00 am'
   end
   
   def end_of_workday day
     business_hour_data[:working_hours][day][:end_of_workday]
+  rescue StandardError => e
+    Rails.logger.error "Business Hours : #{id} : #{account_id}  : Error while trying to fetch end of work: #{e.inspect} #{e.backtrace.join("\n\t")}"
+    '12:00 am'
   end
 
   def weekdays
@@ -89,8 +95,8 @@ class BusinessCalendar < ActiveRecord::Base
     holiday_data.each do |holiday|
       begin
         calendar_holidays << Date.parse(holiday[0])
-      rescue
-        #dont do anything, just skip the invalid holiday
+      rescue StandardError => e
+        Rails.logger.error "Business Hours : #{id} : #{account_id} : Error while trying to fetch hoilday list: #{e.inspect} #{e.backtrace.join("\n\t")}"
         next
       end
     end

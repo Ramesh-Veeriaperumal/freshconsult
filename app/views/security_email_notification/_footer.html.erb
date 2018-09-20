@@ -1,6 +1,6 @@
-<%= t("mailer_notifier.security_notification.unauthorized_change_info") %><br><br>
+If this change has been made without your authorization, send us a reply.<br><br>
 
-<%= t("mailer_notifier.thanks") %><br>
-<%= t("mailer_notifier.freshdesk_customer_support") %><br><br>
+Thanks,<br>
+Freshdesk Customer Support.<br><br>
 
-<%= t("mailer_notifier.security_notification.configure_change_html", security_url: "#{@model.account.full_url}/admin/security").html_safe %><br>
+You can configure this notification settings by <a href= "<%= @model.account.full_url %>/admin/security">clicking here</a> or going to Admin->Security in your account<br>

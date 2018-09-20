@@ -22,4 +22,4 @@ coverage:
 comment:
   layout: "header, reach, diff, flags, files, footer"
   require_changes: yes
-  behavior: new
+  behavior: default
