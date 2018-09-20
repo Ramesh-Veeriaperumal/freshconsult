@@ -3749,6 +3749,27 @@ module Ember
       User.any_instance.unstub(:assigned_ticket_permission)
     end
 
+    def test_update_properties_closure_status_with_product_required_for_closure_default_field_blank_negative
+      Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
+      t = create_ticket
+      params_hash = { status: 5 }
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 400
+    ensure
+      Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
+    end
+
+    def test_update_properties_closure_status_with_product_required_for_closure_default_field_blank_positive
+      Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
+      t = create_ticket(@account)
+      t.update_attributes(product: create_product)
+      params_hash = { status: 5}
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 200
+    ensure
+      Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
+    end
+
     def test_update_compose_email_with_subject_and_description
       Account.any_instance.stubs(:compose_email_enabled?).returns(true)
       t = ticket
