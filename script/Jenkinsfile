@@ -2,6 +2,8 @@ import groovy.json.JsonSlurperClassic
 
  //Assinging variable
  jobName = env.JOB_NAME
+ build   = env.BUILD_NUMBER
+ buildno = build.toInteger()
 
 
 
@@ -76,6 +78,7 @@ def execute_test_cases(category) {
 
         if(category == 'pronto') {
             sh """#!/bin/bash
+               ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
                source /etc/profile.d/rvm.sh
                bundle install
                PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/$params.ghprbTargetBranch
@@ -121,24 +124,10 @@ def distributed_run(category) {
 
    timestamps {
    
-	 //Machine label where this jobs needs to run
-	 node("spot_backend") {
-
-
-	 //Image name where this job has to run
-	       docker.image('792634465463.dkr.ecr.us-east-1.amazonaws.com/fdesk/backend').inside {
+   //Image name where this job has to run
+	       docker.image('792634465463.dkr.ecr.us-east-1.amazonaws.com/fdesk/backend_v2').inside {
        
-		    //Checkout stage
-		    	stage(category + " Tests") {
-
-					    //Branch checkout
-					  if(jobName.contains("pullrequest")) {
-                         branch_checkout()
-					   }else{
-					       checkout scm
-					   }
-
-
+		 
 					    //Build setup
 					    if(category != 'pronto') {
 			    			//Intialization process
@@ -160,24 +149,35 @@ def distributed_run(category) {
 				    		}
 				         }
                   }
-           }       
-	   }
+            }
+       }
+
+
+ //Machine label where this jobs needs to run
+ node("spot_backend") {
+     
+      //Checkout stage
+	stage("Checkout") {
+
+		    //Branch checkout
+		  if(jobName.contains("pullrequest")) {
+             branch_checkout()
+		   }else{
+		       checkout scm
+		   }
+	}	   
+     
+    //Parallel Test starts here
+    parallel Public: {
+           distributed_run("public");
+    },Private: {
+           distributed_run("private");
+    },Sandbox: {
+           distributed_run("sandbox");
+    },Pronto: {
+           distributed_run("pronto");
     }
  }
-
-
-//Parallel Test starts here
-parallel Public: {
-       distributed_run("public");
-},Private: {
-       distributed_run("private");
-},Sandbox: {
-       distributed_run("sandbox");
-},Pronto: {
-       distributed_run("pronto");
-}
-
-
 //Ends results published here
 timestamps {
 	     //Machine label where this jobs needs to run
