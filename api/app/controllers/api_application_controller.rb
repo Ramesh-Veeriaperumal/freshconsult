@@ -112,10 +112,6 @@ class ApiApplicationController < MetalApiController
         MemcacheKeys.cache(cache_key % { :account_id => current_account.id }, response.body) unless cache_key.nil?
       end
   end
-  
-  def cache_response
-    
-  end
 
   def index
     load_objects

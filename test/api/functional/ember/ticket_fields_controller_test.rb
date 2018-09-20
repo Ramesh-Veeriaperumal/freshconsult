@@ -84,6 +84,39 @@ module Ember
       product_choices = response.find { |x| x['type'] == 'default_product'} 
       assert_equal Account.current.products.count, product_choices['choices'].count
     end
+    
+    def test_cache_dropped_after_new_product
+      pdt = Product.new(name: 'Product B')
+      pdt.save
+      portal_default = create_portal
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      product_choices = response.find { |x| x['type'] == 'default_product'} 
+      assert_equal Account.current.products.count, product_choices['choices'].count
+      # check for cached response (this will be from cache when we run memcache)
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response2 = parse_response @response.body
+      product_choices = response2.find { |x| x['type'] == 'default_product'} 
+      assert_equal Account.current.products.count, product_choices['choices'].count
+      old_count = Account.current.products.count
+      
+      assert_equal response, response2
+      
+      pdt = Product.new(name: 'Product C')
+      pdt.save
+      new_count =  Account.current.products.count
+      assert new_count > old_count, "New Product added failed"
+      
+      portal_default = create_portal
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      product_choices = response.find { |x| x['type'] == 'default_product'} 
+      assert_equal new_count, product_choices['choices'].count
+      
+    end
 
   end
 end
