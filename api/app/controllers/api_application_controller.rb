@@ -88,6 +88,8 @@ class ApiApplicationController < MetalApiController
 
   around_filter :handle_notification, if: :import_api?
   
+  around_filter :response_cache, only: [:index, :show], if: :private_api?
+  
   SINGULAR_RESPONSE_FOR = %w(show create update).freeze
   COLLECTION_RESPONSE_FOR = %w(index search).freeze
   CURRENT_VERSION = 'private-v1'.freeze
@@ -95,6 +97,25 @@ class ApiApplicationController < MetalApiController
   SLAVE_ACTIONS = %w(index).freeze
 
   NAMESPACED_CONTROLLER_REGEX = /pipe\/|channel\/v2\/|channel\/|bot\//
+  
+  def response_cache
+      cache_key = self.class::RESPONSE_CACHE_KEYS[action_name] if defined? self.class::RESPONSE_CACHE_KEYS
+      @cache_data = MemcacheKeys.get_from_cache(cache_key % { :account_id => current_account.id }) unless cache_key.nil?
+      if !@cache_data.nil? && !@cache_data.empty?
+        response.body = @cache_data
+        response.headers['Content-Type'] = "application/json; charset=utf-8"
+      else
+        yield
+      end
+    ensure
+      unless !@cache_data.nil? && !@cache_data.empty?
+        MemcacheKeys.cache(cache_key % { :account_id => current_account.id }, response.body) unless cache_key.nil?
+      end
+  end
+  
+  def cache_response
+    
+  end
 
   def index
     load_objects
@@ -820,6 +841,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def set_root_key
+      Rails.logger.info "Set root key called"
       return unless params[:version] == 'private' && response.api_root_key.blank?
       response.api_root_key = case action_name
                               when *self.class::SINGULAR_RESPONSE_FOR
@@ -832,6 +854,9 @@ class ApiApplicationController < MetalApiController
     end
 
     def api_root_key
+      Rails.logger.info "----"
+      Rails.logger.info @api_root_key
+      Rails.logger.info defined?(self.class::ROOT_KEY) ? self.class::ROOT_KEY.to_s : controller_name.gsub('api_', '')
       @api_root_key ||=
         defined?(self.class::ROOT_KEY) ? self.class::ROOT_KEY.to_s : controller_name.gsub('api_', '')
     end
