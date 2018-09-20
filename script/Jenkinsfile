@@ -33,6 +33,7 @@ def build_setup(category) {
 
         sh  """#!/bin/bash
 	        source /etc/profile.d/rvm.sh
+	        ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 	        yes | cp -rf /home/jenkins/s3.yml /home/jenkins/workspace/$jobName/config/s3.yml
 	        yes | cp -rf /home/jenkins/redis.yml /home/jenkins/workspace/$jobName/config/redis.yml
 	        yes | cp -rf /home/jenkins/elasticsearch.yml /home/jenkins/workspace/$jobName/config/elasticsearch.yml
