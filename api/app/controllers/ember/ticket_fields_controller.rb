@@ -21,7 +21,7 @@ class Ember::TicketFieldsController < ::ApiTicketFieldsController
 
   # Whenever we change the Structure (add/modify/remove keys), we will have to modify the below constant
   CURRENT_VERSION = 'private-v3'.freeze
-  
+
   def exclude_products
     current_account.products_from_cache.empty?
   end

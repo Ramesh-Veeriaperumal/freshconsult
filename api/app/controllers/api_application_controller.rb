@@ -841,7 +841,6 @@ class ApiApplicationController < MetalApiController
     end
 
     def set_root_key
-      Rails.logger.info "Set root key called"
       return unless params[:version] == 'private' && response.api_root_key.blank?
       response.api_root_key = case action_name
                               when *self.class::SINGULAR_RESPONSE_FOR
@@ -854,9 +853,6 @@ class ApiApplicationController < MetalApiController
     end
 
     def api_root_key
-      Rails.logger.info "----"
-      Rails.logger.info @api_root_key
-      Rails.logger.info defined?(self.class::ROOT_KEY) ? self.class::ROOT_KEY.to_s : controller_name.gsub('api_', '')
       @api_root_key ||=
         defined?(self.class::ROOT_KEY) ? self.class::ROOT_KEY.to_s : controller_name.gsub('api_', '')
     end
