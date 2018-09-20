@@ -37,10 +37,6 @@ class Discussions::MergeTopicController < ApplicationController
 		  args = { :source_topic_ids => @source_topics.map(&:id), 
 				   :target_topic_id => @target_topic.id, 
 				   :source_note => params[:source_note] }
-		  if redis_key_exists?(SIDEKIQ_MERGE_TOPICS)
-		  	Community::MergeTopicsWorker.perform_async(args)
-		  else
-            Resque.enqueue(Workers::Community::MergeTopics,args)
-          end
+		  Community::MergeTopicsWorker.perform_async(args)
 		end
 end

@@ -93,19 +93,11 @@ class AccountConfiguration < ActiveRecord::Base
 
   	def update_crm_and_map
       if (Rails.env.production? or Rails.env.staging?) && company_contact_info_updated?
-        if redis_key_exists?(FRESHSALES_ADMIN_UPDATE)
-          CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {
-            account_id: account_id, 
-            item_id: id
-          })
-        else
-          Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateAdmin, {:account_id => account_id, :item_id => id})
-        end
-        if redis_key_exists?(SIDEKIQ_MARKETO_QUEUE)
-          Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => account_id, :old_email => previous_email})
-        else
-          Resque.enqueue_at(15.minutes.from_now, Marketo::AddLead, {:account_id => account_id, :old_email => previous_email})
-        end
+        CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {
+          account_id: account_id, 
+          item_id: id
+        })
+        Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => account_id, :old_email => previous_email})
       end
     end
 

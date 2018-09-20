@@ -319,11 +319,7 @@ module FreshdeskCore::Model
           :operation => "delete_webhooks",
           :app_id => app.id
         }
-        if redis_key_exists?(JIRA_ACC_UPDATES_SIDEKIQ_ENABLED)
-          Integrations::JiraAccountConfig.perform_async(args)
-        else
-          Resque.enqueue(Workers::Integrations::JiraAccountUpdates,args)
-        end
+        Integrations::JiraAccountConfig.perform_async(args)
       end
     end
 

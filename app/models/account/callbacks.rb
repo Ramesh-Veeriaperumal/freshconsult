@@ -457,9 +457,7 @@ class Account < ActiveRecord::Base
 
     def enable_count_es
       self.launch(:count_service_es_writes) if redis_key_exists?(SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED)
-      if redis_key_exists?(DASHBOARD_FEATURE_ENABLED_KEY)
-        CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) 
-      end
+      CountES::IndexOperations::EnableCountES.perform_async({ :account_id => self.id }) 
     end
 
     def disable_searchv2
@@ -467,10 +465,8 @@ class Account < ActiveRecord::Base
     end
 
     def disable_count_es
-      if redis_key_exists?(DASHBOARD_FEATURE_ENABLED_KEY)
-       [:admin_dashboard, :agent_dashboard, :supervisor_dashboard].each do |f|
-          self.rollback(f)
-        end
+     [:admin_dashboard, :agent_dashboard, :supervisor_dashboard].each do |f|
+        self.rollback(f)
       end
       #CountES::IndexOperations::DisableCountES.perform_async({ :account_id => self.id, :shard_name => ActiveRecord::Base.current_shard_selection.shard }) unless dashboard_new_alias?
     end
@@ -492,16 +488,8 @@ class Account < ActiveRecord::Base
 
     def update_crm_and_map
       if (Rails.env.production? or Rails.env.staging?) && !self.sandbox?
-        if redis_key_exists?(FRESHSALES_ADMIN_UPDATE)
-          CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {:account_id => self.id})
-        else
-          Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateAdmin, {:account_id => self.id})
-        end
-        if redis_key_exists?(SIDEKIQ_MARKETO_QUEUE)
-          Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => self.id})
-        else
-          Resque.enqueue_at(15.minutes.from_now, Marketo::AddLead, {:account_id => self.id})
-        end
+        CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {:account_id => self.id})
+        Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => self.id})
       end
     end
 

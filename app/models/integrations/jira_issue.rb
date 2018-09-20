@@ -41,11 +41,7 @@ class Integrations::JiraIssue
       newIntegratedResource = Integrations::IntegratedResource.createResource(params, @installed_app)
       params[:operation] = "update"
       params[:app_id] = @installed_app.id
-      if redis_key_exists?(JIRA_ACC_UPDATES_SIDEKIQ_ENABLED)
-        Integrations::JiraAccountConfig.perform_async(params)
-      else
-        Resque.enqueue(Workers::Integrations::JiraAccountUpdates,params)
-      end
+      Integrations::JiraAccountConfig.perform_async(params)
       return newIntegratedResource
     else
       return res_data
@@ -66,11 +62,7 @@ class Integrations::JiraIssue
       newIntegratedResource["custom_field"]=custom_field_id unless custom_field_id.blank?
       params[:operation] = "link_issue"
       params[:app_id] = @installed_app.id
-      if redis_key_exists?(JIRA_ACC_UPDATES_SIDEKIQ_ENABLED)
-        Integrations::JiraAccountConfig.perform_async(params)
-      else
-        Resque.enqueue(Workers::Integrations::JiraAccountUpdates,params)
-      end
+      Integrations::JiraAccountConfig.perform_async(params)
       return newIntegratedResource
     else
       res_data
