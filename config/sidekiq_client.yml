@@ -279,6 +279,7 @@ defaults: &defaults
     - [update_segment_filter]
     - [register_freshconnect]
     - [primary_language_change]
+    - [freshops_service]
 
 development:
   <<: *defaults
