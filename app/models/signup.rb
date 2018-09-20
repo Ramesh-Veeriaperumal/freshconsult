@@ -85,12 +85,12 @@ class Signup < ActivePresenter::Base
     end
     
     def build_subscription      
-      #new_plan_test is a variable which we set when we signup via script to test new plan before enabling redis key for flip.
-      #will remove this check a week later this feature goes live.
-      account.plan = if redis_key_exists?(NEW_SIGNUP_ENABLED) || new_plan_test
-        SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17])
-      else
-          SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate])
+    #new_plan_test is a variable which we set when we signup via script to test new plan before enabling redis key for flip.        SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17])
+      #will remove this check a week later this feature goes live.  
+      account.plan = if redis_key_exists?(NEW_SIGNUP_ENABLED) || new_plan_test  
+        SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17]) 
+      else  
+          SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate])  
       end
     end
     
