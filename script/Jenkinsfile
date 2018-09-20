@@ -2,56 +2,27 @@ import groovy.json.JsonSlurperClassic
 
  //Assinging variable
  jobName = env.JOB_NAME
- build   = env.BUILD_NUMBER
- buildno = build.toInteger()
- label = ""
- instance_no = 0
 
-try {
-
-	instance_no    = get_number_instances()
-	no = (buildno % instance_no).toString()
-    label  = "backend_label_$no"
-
-}
-catch (e) {
-
-     echo "error with label name" + e
-     no = (buildno % 8).toString()
-     label  = "backend_label_$no"
-
-}
-
-
-//Label name
-echo instance_no + "- Total number of instances are running"
-echo label + " label name"
-
-//Getting total number of instances
-def get_number_instances() {
-
-        result = ["curl", "-k", "-X", "GET", "-H", "Content-Type: application/json","-H", "Authorization: Bearer c535a01828c0a4c5c2fb7c18d72ae087b379d5e63ba9cbe2f17c45649f16300c", "https://api.spotinst.io/aws/ec2/group/sig-86dd0ad7?accountId=act-f9698e90"].execute().text
-	    data = new JsonSlurperClassic().parseText(result)
-		instance_no =  data.response.items
-	    number = instance_no['capacity']['target'][0]
-	    return number
-
-}
 
 
 //Specfiy the branch to checkout based on PR condition
 def branch_checkout() {
 
            try {
-	                      checkout([$class: 'GitSCM', branches: [[name: "$params.ghprbSourceBranch"]],
-                            doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
-                            userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])
-
+	                    checkout ([$class: 'GitSCM', branches: [[name: "$params.ghprbSourceBranch"]],
+                        browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/freshdesk/helpkit.git'],
+                        doGenerateSubmoduleConfigurations: false,extensions: [[$class: 'PreBuildMerge',
+                        options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'default', mergeTarget: "$params.ghprbTargetBranch"]]],
+                        submoduleCfg: [], userRemoteConfigs: [[credentialsId: '371ebd17-e4d3-44e1-bfa3-70f99ee904b5',url: 'https://github.com/freshdesk/helpkit.git']]])
+           
 	            }//If Merge Conflict Occurs build will fail with below message
 
 		       catch (e) {
-		                 echo 'This branch is out-of-date with the base br anch' + e
-		                 sh 'exit 1'
+		               
+		                //branch = params.BRANCH
+               checkout([$class: 'GitSCM', branches: [[name: params.BRANCH]], doGenerateSubmoduleConfigurations: false,
+                         extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '371ebd17-e4d3-44e1-bfa3-70f99ee904b5',url: 'https://github.com/freshdesk/helpkit.git']]])
+                         
 		        }
 
 }
@@ -68,7 +39,7 @@ def build_setup(category) {
 	        yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/$jobName/config/channel_api_keys.yml
 	        sudo service mysql start
 	        sudo service elasticsearch start
-          export CODECOV_TOKEN="${params.CODECOV_TOKEN}"
+            export CODECOV_TOKEN="${params.CODECOV_TOKEN}"
 	      	"""
 
 	    if(category != 'private' && category != 'public') {
@@ -148,9 +119,14 @@ def publish_report(category) {
 def distributed_run(category) {
 
    timestamps {
-	     //Machine label where this jobs needs to run
-		 node(label) {
+   
+	 //Machine label where this jobs needs to run
+	 node("spot_backend") {
 
+
+	 //Image name where this job has to run
+	       docker.image('792634465463.dkr.ecr.us-east-1.amazonaws.com/fdesk/backend').inside {
+       
 		    //Checkout stage
 		    	stage(category + " Tests") {
 
@@ -182,12 +158,11 @@ def distributed_run(category) {
 						            publish_report(category)
 				    		}
 				         }
-
                   }
-
-			}
-		 }
-   }
+           }       
+	   }
+    }
+ }
 
 
 //Parallel Test starts here
