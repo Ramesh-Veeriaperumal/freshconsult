@@ -19,10 +19,10 @@ module Helpdesk::Ticketfields::TicketStatus
         t_s = st
         break
       #for avoiding adding new "custom value with default keys"[ open,closed, pending,resolved] and avoiding entering "custom value with default keys" updation bcoz removal keys will go to next condition
-      elsif ((I18n.t(st.name.downcase)).casecmp(attr[:name]) == 0 and (!attr[:status_id] || DEFAULT_STATUSES.keys.include?(attr[:status_id])))
+      elsif ((I18n.t(st.name.downcase)).casecmp(attr[:name]) == 0 && (!attr[:status_id] || DEFAULT_STATUSES.keys.include?(attr[:status_id])))
         return
       #Not to allow default values with attr hash to enter , below condition only for custom value status updation and deletion, allowing will automatically update "custom value with default keys"
-      elsif((st.name).casecmp(attr[:name]) == 0 and st.deleted? and !(DEFAULT_STATUSES.keys.include?(attr[:status_id])))
+      elsif((st.name).casecmp(attr[:name]) == 0 && st.deleted? && !(DEFAULT_STATUSES.keys.include?(attr[:status_id])))
         t_s = st
         t_s.deleted = false # restore the deleted status if the user adds the status with the same name
         break
