@@ -83,7 +83,7 @@ class AccountsController < ApplicationController
       respond_to do |format|
         format.json {
           render :json => { :success => true,
-                            :url => edit_account_domain_url(:perishable_token => @signup.user.perishable_token, :host => @signup.account.full_domain),
+                            :url => email_signup_redirect_url,
                             :callback => params[:callback],
                             :account_id => @signup.account.id
                           }
@@ -611,7 +611,7 @@ class AccountsController < ApplicationController
       @signup.user.reset_perishable_token!
       save_account_sign_up_params(@signup.account.id, params[:signup].merge({"signup_method" => action}))
       add_account_info_to_dynamo
-      set_account_onboarding_pending
+      set_account_onboarding_pending unless @signup.account.launched?(:new_onboarding)
       mark_new_account_setup
       add_to_crm(@signup.account.id)
     end
@@ -750,5 +750,11 @@ class AccountsController < ApplicationController
     def destroy_user_session
       current_user_session.destroy unless current_user_session.nil?
       @current_user_session = @current_user = nil
+    end
+
+    def email_signup_redirect_url
+      @signup.account.launched?(:new_onboarding) ? 
+        signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain) :
+        edit_account_domain_url(:perishable_token => @signup.user.perishable_token, :host => @signup.account.full_domain)
     end
 end
