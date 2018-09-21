@@ -8,26 +8,23 @@ import groovy.json.JsonSlurperClassic
 
 
 //Specfiy the branch to checkout based on PR condition
-def branch_checkout() {
+def checkout(type) {
 
        sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
+     
+       if(type=='pullrequest') {
+           branch = ${params.ghprbSourceBranch}
+       }else{
+           branch = ${params.BRANCH}
+       }
 
-           try {
-	                    checkout ([$class: 'GitSCM', branches: [[name: "$params.ghprbSourceBranch"]],
-                        browser: [$class: 'GithubWeb', repoUrl: 'https://github.com/freshdesk/helpkit.git'],
-                        doGenerateSubmoduleConfigurations: false,extensions: [[$class: 'PreBuildMerge',
-                        options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeStrategy: 'default', mergeTarget: "$params.ghprbTargetBranch"]]],
-                        submoduleCfg: [], userRemoteConfigs: [[credentialsId: '371ebd17-e4d3-44e1-bfa3-70f99ee904b5',url: 'https://github.com/freshdesk/helpkit.git']]])
-           
-	            }//If Merge Conflict Occurs build will fail with below message
-
-		       catch (e) {
-		               
-		                //branch = params.BRANCH
-               checkout([$class: 'GitSCM', branches: [[name: params.BRANCH]], doGenerateSubmoduleConfigurations: false,
-                         extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '371ebd17-e4d3-44e1-bfa3-70f99ee904b5',url: 'https://github.com/freshdesk/helpkit.git']]])
-                         
-		        }
+       sh  """#!/bin/bash
+	        source /etc/profile.d/rvm.sh
+	        cd /home/jenkins/
+	        git clone -b $branch git@github.com:freshdesk/helpkit.git
+	        cd helpkit/
+	       	"""
+          
 
 }
 
@@ -37,11 +34,10 @@ def build_setup(category) {
 
         sh  """#!/bin/bash
 	        source /etc/profile.d/rvm.sh
-	        ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-	        yes | cp -rf /home/jenkins/s3.yml /home/jenkins/workspace/$jobName/config/s3.yml
-	        yes | cp -rf /home/jenkins/redis.yml /home/jenkins/workspace/$jobName/config/redis.yml
-	        yes | cp -rf /home/jenkins/elasticsearch.yml /home/jenkins/workspace/$jobName/config/elasticsearch.yml
-	        yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/$jobName/config/channel_api_keys.yml
+	        yes | cp -rf /home/jenkins/s3.yml /home/jenkins/helpkit/config/s3.yml
+	        yes | cp -rf /home/jenkins/redis.yml /home/jenkins/helpkit/config/redis.yml
+	        yes | cp -rf /home/jenkins/elasticsearch.yml /home/jenkins/helpkit/config/elasticsearch.yml
+	        yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/helpkit/config/channel_api_keys.yml
 	        sudo service mysql start
 	        sudo service elasticsearch start
             export CODECOV_TOKEN="${params.CODECOV_TOKEN}"
@@ -83,7 +79,7 @@ def execute_test_cases(category) {
                ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
                source /etc/profile.d/rvm.sh
                bundle install
-               PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/$params.ghprbTargetBranch
+               PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/falcon-prestaging
                """
         }
 
@@ -129,27 +125,37 @@ def distributed_run(category) {
    //Image name where this job has to run
 	       docker.image('792634465463.dkr.ecr.us-east-1.amazonaws.com/fdesk/backend_v2').inside {
        
-		 
-					    //Build setup
-					    if(category != 'pronto') {
-			    			//Intialization process
-			            	build_setup(category)
-			    		}
-
-			    	     //Executing test cases
-	                     try{
-				               execute_test_cases(category)
-				         }
-				         catch (e) {
-				               "issue with test execution" + e
-				         }
-
-			    		 finally {
-				    		if(category != 'pronto') {
-				    		     //Publish Report
-						            publish_report(category)
-				    		}
-				         }
+							    //Checkout stage
+						stage(category) {
+					
+							    //Branch checkout
+							  if(jobName.contains("pullrequest")) {
+					                checkout("pullrequest")
+							   }else{
+							        checkout("normal")
+							   }
+							
+				             //Build setup
+							    if(category != 'pronto') {
+					    			//Intialization process
+					            	build_setup(category)
+					    		}
+		
+					    	     //Executing test cases
+			                     try{
+						               execute_test_cases(category)
+						         }
+						         catch (e) {
+						               "issue with test execution" + e
+						         }
+		
+					    		 finally {
+						    		if(category != 'pronto') {
+						    		     //Publish Report
+								            publish_report(category)
+						    		}
+						         }
+					    }	         
                   }
             }
        }
@@ -158,16 +164,7 @@ def distributed_run(category) {
  //Machine label where this jobs needs to run
  node("spot_backend") {
      
-      //Checkout stage
-	stage("Checkout") {
-
-		    //Branch checkout
-		  if(jobName.contains("pullrequest")) {
-             branch_checkout()
-		   }else{
-		       checkout scm
-		   }
-	}	   
+      
      
     //Parallel Test starts here
     parallel Public: {
