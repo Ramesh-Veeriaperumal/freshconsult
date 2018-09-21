@@ -1,10 +1,6 @@
 class BotFeedbackDecorator < ApiDecorator
   delegate :id, :bot_id, :category, :useful, :received_at, :query_id, :query, :state, :chat_id, :customer_id, :client_id, :ticket, to: :record
 
-  def initialize(record)
-    super(record)
-  end
-
   def to_hash
     feedback_hash = {
       id: id,

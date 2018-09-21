@@ -174,6 +174,15 @@ module Ember
         end
       end
 
+      def test_index
+        enable_bot do
+          create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
+          get :index, controller_params(version: 'private', id: @bot.id, start_at: DateTime.now.utc - 1, end_at: DateTime.now.utc)
+          match_json(bot_feedback_index_pattern(@bot, DateTime.now.utc - 1, DateTime.now.utc))
+          assert_response 200
+        end
+      end
+
       def test_bulk_delete_without_params
         enable_bot do
           put :bulk_delete, construct_params(version: 'private',id: @bot.id)
@@ -596,6 +605,16 @@ module Ember
           post :create_article, construct_params({ version: 'private', id: @bot.id }, article_params.merge(ids: bot_feedback_ids))
           assert_response 204
           assert_equal @account.solution_article_meta.size, (articles_count + 1)
+        end
+      end
+
+      def test_create_article_failure_in_save
+        enable_bot do
+          @controller.stubs(:primary_article_hash).returns({})
+          bot_feedback_ids = create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
+          post :create_article, construct_params({ version: 'private', id: @bot.id }, article_params.merge(ids: bot_feedback_ids))
+          @controller.unstub(:primary_article_hash)
+          assert_response 400
         end
       end
     end

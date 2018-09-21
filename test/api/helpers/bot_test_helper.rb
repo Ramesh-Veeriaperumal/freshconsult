@@ -340,6 +340,13 @@ module BotTestHelper
     bot_feedback_ids
   end
 
+  def create_bot_feedback_and_bot_ticket(helpdesk_ticket,bot)
+    bot_feedback = create_bot_feedback(bot.id)
+    bot_ticket = helpdesk_ticket.build_bot_ticket(ticket_id: helpdesk_ticket.id, account_id: Account.current.id, bot_id: bot.id, query_id: bot_feedback.query_id, conversation_id: bot_feedback.query_id)
+    bot_ticket.save
+    bot_feedback
+  end
+
   def article_params(folder_visibility = Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
     category = create_category
     {
@@ -393,5 +400,24 @@ module BotTestHelper
         }
       }
     ].to_json
+  end
+
+  def request_body_ml_training_start_pattern(bot)
+    {
+      account_id: Account.current.id.to_s,
+      payload_type: 'ml_training_start',
+      payload: {
+        account_full_domain: Account.current.full_domain,
+        model_properties: central_publish_ml_training_start_pattern(bot)
+      }
+    }
+  end
+
+  def central_publish_ml_training_start_pattern(bot)
+    {
+      external_id: bot.external_id,
+      category_ids: bot.solution_category_metum_ids,
+      account_id: bot.account_id
+    }
   end
 end
