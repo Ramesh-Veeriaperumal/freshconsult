@@ -13,18 +13,28 @@ module AccountSetup
 
   module InstanceMethods
     def complete_step
-      Rails.logger.debug "::::::: Trial widget update : #{current_flag} set up :::::::"
-      current_account.safe_send("mark_#{current_flag}_setup_and_save")
+      Rails.logger.debug "::::::: Trial widget update : #{current_setup_flag} set up :::::::"
+      current_account.safe_send("mark_#{current_setup_flag}_setup_and_save")
     rescue Exception => e
       Rails.logger.debug "::::::: Trial widget account setup error : #{e}"
     end
 
-    def current_flag
-      Account::Setup::CONTROLLER_SETUP_KEYS[params[:controller].split('/').last]
+    def setup_not_complete?
+      response.code == '200' && current_account.subscription.trial? && 
+        !current_account.safe_send("#{current_setup_flag}_setup?") && current_setup_flag_eligible?
     end
 
-    def setup_not_complete?
-      response.code == '200' && current_account.subscription.trial? && !current_account.safe_send("#{current_flag}_setup?")
+    def current_setup_flag
+      @current_setup_flag ||= Account::Setup::CONTROLLER_SETUP_KEYS[params[:controller].split('/').last]
     end
+
+    def current_setup_flag_eligible?
+      return true unless respond_to?("#{current_setup_flag}_eligible?")
+      safe_send("#{current_setup_flag}_eligible?")
+    end
+
+    def reports_eligible?
+      !current_account.launched?(:new_onboarding)
+    end  
   end
 end

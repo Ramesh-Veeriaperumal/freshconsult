@@ -1,0 +1,7 @@
+  type: object
+  properties:
+    subdomains:
+      type: array
+      items:
+        type: string
+        description: domain name

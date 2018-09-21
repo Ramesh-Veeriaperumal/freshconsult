@@ -154,4 +154,42 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     forward_test_tickets = @account.tickets.requester_latest_tickets(forward_test_ticket_requester, OnboardingConstants::TICKET_CREATE_DURATION.ago)
     forward_test_tickets.each(&:destroy)
   end
+
+  def test_validate_domain_failure
+    existing_domain = @account.domain
+    post :validate_domain_name, construct_params(version: 'private', subdomain: existing_domain)
+    assert_response 400
+  end
+
+  def test_validate_domain_success
+    random_digits = SecureRandom.random_number.to_s[2..4]
+    new_domain = @account.domain + random_digits
+    post :validate_domain_name, construct_params(version: 'private', subdomain: new_domain)
+    assert_response 204
+  end
+
+  def test_suggest_domains
+    @account.make_current
+    expected_subdomains = DomainGenerator.sample(@account.admin_email, 3)
+    get :suggest_domains, construct_params(version: 'private')
+    assert_response 200
+    suggested_subdomains = JSON.parse(response.body)["subdomains"]
+    assert_equal expected_subdomains, suggested_subdomains
+  end
+
+  def test_customize_domain_failure
+    @account.make_current
+    existing_domain = @account.domain
+    put :customize_domain, construct_params(version: 'private', subdomain: existing_domain)
+    assert_response 400
+  end
+
+  def test_customize_domain_success
+    @account.make_current
+    new_domain = Faker::Lorem.word
+    put :customize_domain, construct_params(version: 'private', subdomain: new_domain)
+    assert_response 200
+    assert_equal @account.domain, new_domain
+  end
+
 end

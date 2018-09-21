@@ -17,8 +17,6 @@ module Account::Setup
 
   SETUP_KEYS_DISPLAY_ORDER = ACCOUNT_SETUP_FEATURES_LIST[:setup_keys_display_order]
 
-  ALL_SETUP_KEYS = SETUP_KEYS_DISPLAY_ORDER
-
   SETUP_EXPIRY = 60.days
 
   CONTROLLER_SETUP_KEYS = {
@@ -54,8 +52,8 @@ module Account::Setup
     @current_setup_keys ||= sort_setup_keys(INDEPENDENT_SETUP_KEYS.keys + current_condition_based_keys)
   end
 
-  def all_setup_keys
-    ALL_SETUP_KEYS
+  def setup_keys
+    SETUP_KEYS_DISPLAY_ORDER
   end
 
 	# For each feature listed in CONDITION_BASED_SETUP_KEYS, add a method that has the corresponding
@@ -78,11 +76,22 @@ module Account::Setup
     self.falcon_ui_enabled?(User.current) && self.features_included?(:forums)
   end
 
-  FALCON_SETUP_KEYS.each do |setup_key|
-    define_method "#{setup_key}_eligible?" do
-      self.falcon_ui_enabled?(User.current)
-    end
-  end
+	# TRIAL WIDGET CLEANUP - can be removed after trial widget deprecation
+	def custom_app_eligible?
+		!self.launched?(:new_onboarding)
+	end
+
+	# TRIAL WIDGET CLEANUP - can be removed after trial widget deprecation
+	def reports_eligible?
+		!self.launched?(:new_onboarding)
+	end
+
+
+	FALCON_SETUP_KEYS.each do |setup_key|
+		define_method "#{setup_key}_eligible?" do
+			self.falcon_ui_enabled?(User.current)
+		end
+	end
 
   def sort_setup_keys(setup_keys)
     setup_keys.sort_by { |setup_key| SETUP_KEYS_DISPLAY_ORDER.index setup_key}
@@ -92,9 +101,16 @@ module Account::Setup
     @current_in_setup ||= self.in_setup & current_setup_keys
   end
 
-  ALL_SETUP_KEYS.each do |setup_key|
-    define_method "mark_#{setup_key}_setup_and_save" do
-      self.safe_send("mark_#{setup_key}_setup")
+	SETUP_KEYS.each do |setup_key|
+		define_method "mark_#{setup_key}_setup_and_save" do
+			self.safe_send("mark_#{setup_key}_setup")
+			save_setup
+		end
+	end
+
+  SETUP_KEYS.each do |setup_key|
+    define_method "unmark_#{setup_key}_setup_and_save" do
+      self.safe_send("unmark_#{setup_key}_setup")
       save_setup
     end
   end
