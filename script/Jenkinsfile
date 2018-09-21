@@ -13,16 +13,16 @@ def checkout(type) {
        sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
      
        if(type=='pullrequest') {
-           branch = ${params.ghprbSourceBranch}
+           branch = params.ghprbSourceBranch
        }else{
-           branch = ${params.BRANCH}
+           branch = params.BRANCH
        }
 
        sh  """#!/bin/bash
 	        source /etc/profile.d/rvm.sh
 	        cd /home/jenkins/
 	        git clone -b $branch git@github.com:freshdesk/helpkit.git
-	        cd helpkit/
+	        cd /home/jenkins/helpkit/
 	       	"""
           
 
@@ -48,6 +48,7 @@ def build_setup(category) {
 	      sh  """#!/bin/bash
 		      source /etc/profile.d/rvm.sh
 		      redis-server --daemonize yes
+		      cd /home/jenkins/helpkit/
 		      bundle install
 	          bundle exec rake db:bootstrap RAILS_ENV=test
 	      	  """
@@ -58,6 +59,7 @@ def build_setup(category) {
 
 	     sh '''#!/bin/bash
 	        source /etc/profile.d/rvm.sh
+	        cd /home/jenkins/helpkit/
 	        echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
             sed -i "s/sandbox_test/sandbox${BUILD_NUMBER}/g" config/database.yml
 	        bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
@@ -76,8 +78,8 @@ def execute_test_cases(category) {
 
         if(category == 'pronto') {
             sh """#!/bin/bash
-               ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
                source /etc/profile.d/rvm.sh
+               cd /home/jenkins/helpkit/
                bundle install
                PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/falcon-prestaging
                """
@@ -86,6 +88,7 @@ def execute_test_cases(category) {
         if(category == 'public') {
            sh '''#!/bin/bash
               source /etc/profile.d/rvm.sh
+              cd /home/jenkins/helpkit/
               ruby test/parallel_test.rb 3 public
               '''
         }
@@ -93,6 +96,7 @@ def execute_test_cases(category) {
         if(category == 'private') {
            sh '''#!/bin/bash
               source /etc/profile.d/rvm.sh
+              cd /home/jenkins/helpkit/
               ruby test/parallel_test.rb 5 private
               '''
         }
@@ -100,6 +104,7 @@ def execute_test_cases(category) {
         if(category == 'sandbox') {
            sh '''#!/bin/bash
               source /etc/profile.d/rvm.sh
+              cd /home/jenkins/helpkit/
               bundle exec ruby test/api/suites/sandbox_test_suite.rb
               '''
         }
@@ -110,10 +115,10 @@ def execute_test_cases(category) {
 def publish_report(category) {
 
                  publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
-		                             reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html',
+		                             reportDir: '/home/jenkins/helpkit/tmp/coverage', reportFiles: 'index.html',
 		                             reportName: "coverage $category", reportTitles: ''])
 
-		         junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'
+		         junit allowEmptyResults: true, testResults: '/home/jenkins/helpkit/test/api/reports/*.xml'
 
 }
 
