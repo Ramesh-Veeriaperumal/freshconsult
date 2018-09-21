@@ -232,7 +232,8 @@
               "conversations",
               "requester",
               "company",
-              "survey"
+              "survey",
+              "sla_policy"
             ]
           }
         ],
