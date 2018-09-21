@@ -9,8 +9,6 @@ import groovy.json.JsonSlurperClassic
 
 //Specfiy the branch to checkout based on PR condition
 def checkout(type) {
-
-       sh 'ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts'
      
        if(type=='pullrequest') {
            branch = params.ghprbSourceBranch
