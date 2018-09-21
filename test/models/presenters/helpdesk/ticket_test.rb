@@ -188,4 +188,14 @@ class TicketTest < ActiveSupport::TestCase
     @account.subscription.state = 'active'
     @account.subscription.save
   end
+
+  def test_duplicate_ticket_status
+    locale = I18n.locale
+    I18n.locale = "de"
+    last_position_id = @account.ticket_statuses.last.position
+    status_custom_field = @account.ticket_fields.find_by_field_type("default_status")
+    status_custom_field.update_attributes(FIELD_DETAILS)
+    I18n.locale = locale
+    assert_equal last_position_id, @account.ticket_statuses.last.position
+  end
 end
