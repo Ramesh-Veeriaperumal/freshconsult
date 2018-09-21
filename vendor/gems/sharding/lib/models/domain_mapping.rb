@@ -18,10 +18,11 @@ class DomainMapping < ActiveRecord::Base
 	def act_as_directory
   end
 
-	def clear_cache
-	  key = MemcacheKeys::SHARD_BY_DOMAIN % { :domain => domain }
+  def clear_cache
+    domain_to_be_cleared = (transaction_include_action? :update) ? domain_was : domain
+    key = MemcacheKeys::SHARD_BY_DOMAIN % { :domain => domain_to_be_cleared }
     MemcacheKeys.delete_from_cache key
-    clear_global_pod_cache if Fdadmin::APICalls.non_global_pods?
+    clear_global_pod_cache(domain_to_be_cleared) if Fdadmin::APICalls.non_global_pods?
 	end
 
   # * * * POD Operation Methods Begin * * *
@@ -42,8 +43,8 @@ class DomainMapping < ActiveRecord::Base
     PodDnsUpdate.perform_async(domain_config)
   end
 
-  def clear_global_pod_cache
-    request_parameters = {:domain => [domain],:target_method => :clear_domain_mapping_cache_for_pods}
+  def clear_global_pod_cache(domain_to_be_cleared)
+    request_parameters = {:domain => [domain_to_be_cleared],:target_method => :clear_domain_mapping_cache_for_pods}
     Fdadmin::APICalls.connect_main_pod(request_parameters)
   end
   # * * * POD Operation Methods Ends * * * 
