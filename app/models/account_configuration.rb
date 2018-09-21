@@ -50,9 +50,9 @@ class AccountConfiguration < ActiveRecord::Base
 
 
   def notification_emails
-    all_admin_emails = account.account_managers.collect(&:email)
-    admin_notification_emails = all_admin_emails & contact_info[:notification_emails].to_a
-    admin_notification_emails = all_admin_emails & [admin_email] if admin_notification_emails.blank?
+    all_admin_emails = account.account_managers.collect {|admin| admin.email.downcase}
+    admin_notification_emails = all_admin_emails & contact_info[:notification_emails].to_a.map(&:downcase)
+    admin_notification_emails = all_admin_emails & [admin_email.downcase] if admin_notification_emails.blank?
     admin_notification_emails.presence || all_admin_emails
   end
 
