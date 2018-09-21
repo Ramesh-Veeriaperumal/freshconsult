@@ -164,7 +164,7 @@ module Solution::ArticlesHelper
   end
 
   def draft_portal_preview
-    portal_preview_path(support_draft_preview_path(@article, "preview", path_url_locale), @article.solution_folder_meta.solution_category_meta, true)
+    article_path(support_draft_preview_path(@article, "preview", path_url_locale), @article.solution_folder_meta.solution_category_meta, true)
   end
 
   def orphan_category?

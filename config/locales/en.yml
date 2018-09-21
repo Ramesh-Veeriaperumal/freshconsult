@@ -2198,7 +2198,7 @@ en:
       failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator
     security:
       index:
-        not_admin_email: "Please enter a valid admin email" 
+        not_admin_email: "Please enter a valid admin email"
         shared_secret: Shared Secret
         remote_login_url: Remote login URL
         shared_secret_info: Please copy this token and keep it safe. You need this to enable Remote authentication. This is a shared secret between you and Freshdesk.
@@ -2264,7 +2264,7 @@ en:
         password_policy_info3: Changes you make to the password policy will be applicable within 8 hours. Your agents will be prompted to update their passwords during this time. If they fail to conform, they will be logged out of the support portal and will be forced to change their passwords the next time they try to log in.
         password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
       errors:
-        simple_sso: 
+        simple_sso:
           invalid_login_url: Please provide a valid login URL
         saml_sso:
           invalid_login_url: Please provide a valid SAML login URL
@@ -4174,6 +4174,9 @@ en:
   portal_customizer_auto_suggest_solutions: Enable this feature if you want to suggest existing solutions when user creates a new ticket. This also applies to the search feature inside feedback widget.
   show_me_how: Show me how
   view_on_portal: "View on Portal"
+  copy_link: "Copy Link"
+  copied_link: "Copied"
+
   agent_list:
     tab:
       active: "Full-Time"
@@ -10235,7 +10238,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       avg_first_res_time: Average 1st response time
       avg_res_time: Average response time
       avg_resolution_time: Average resolution time
-      received_tickets: Tickets Received 
+      received_tickets: Tickets Received
       tickets_enagaged: Tickets Engaged
       agent: Agent
     timespent:
@@ -11971,7 +11974,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         invalid_name: "Invalid company name"
         required_name: "Enter company name"
   unique_external_id:
-    helpcard: 
+    helpcard:
       title: "Unique External Id"
       info: Use a single ID across all your systems to identify a customer, makes it easier to track and find the right customer information when you need it. <br><a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank">Help me set up an external ID</a>
 
