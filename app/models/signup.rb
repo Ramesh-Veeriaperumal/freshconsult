@@ -85,7 +85,7 @@ class Signup < ActivePresenter::Base
     end
     
     def build_subscription      
-      SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17])
+      account.plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17])
     end
     
     def build_account_configuration
