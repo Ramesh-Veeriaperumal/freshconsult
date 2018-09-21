@@ -295,6 +295,7 @@ defaults: &defaults
     - [undo_send]
     - [unlink_tickets]
     - [primary_language_change]
+    - [freshops_service]
 
 development:
   <<: *defaults

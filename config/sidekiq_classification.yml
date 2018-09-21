@@ -107,6 +107,7 @@
     - suspended_ticket_central_publish
     - unlink_tickets
     - primary_language_change
+    - freshops_service
   :maintainence:
     - select_all_tickets
     - select_all_batcher
