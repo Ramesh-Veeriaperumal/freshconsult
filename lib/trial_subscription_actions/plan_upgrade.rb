@@ -1,4 +1,4 @@
-class TrialSubscription::PlanUpgrade < TrialSubscription::Base
+class TrialSubscriptionActions::PlanUpgrade < TrialSubscriptionActions::Base
 
   private
 
