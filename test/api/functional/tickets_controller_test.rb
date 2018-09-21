@@ -3214,7 +3214,6 @@ class TicketsControllerTest < ActionController::TestCase
                                                       type: nil
                                  )
     match_json([bad_request_error_pattern('description',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
-                bad_request_error_pattern('subject',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
@@ -4141,6 +4140,13 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(update_ticket_pattern(params_hash, t.reload))
     match_json(update_ticket_pattern({}, t))
     assert_equal delayed_job_count_before + 1, Delayed::Job.count
+  end
+
+  def test_update_when_subject_is_blank
+    t = create_ticket(requester_id: @agent.id)
+    Helpdesk::Ticket.any_instance.stubs(:subject).returns("")
+    put :update, construct_params({ id: ticket.display_id }, {priority: 4})
+    assert_response 200
   end
 
   def test_create_child
