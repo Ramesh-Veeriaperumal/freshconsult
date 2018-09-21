@@ -91,13 +91,7 @@ window.App = window.App || {};
 
     cancel_UI_toggle: function () {
       this.toggleViews();
-
-      if($('#solution_article_description').data('newEditor')) {
-        $('#solution_article_description').froalaEditor('destroy');
-      } else {
-        jQuery('#solution_article_description').destroyEditor()
-      }
-      
+      $('#solution_article_description').froalaEditor('destroy');
       $('#sticky_redactor_toolbar').addClass('hide');
       $('.article-view-edit:hidden').show();
       $(".autosave-notif:visible").hide();
