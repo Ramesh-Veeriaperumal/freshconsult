@@ -7945,6 +7945,8 @@ en:
       auth_error: "Error while authorizing the app"
     update_action:
       success: "App updated successfully."
+    save_action:
+      success: "App updated successfully."
     tooltip:
       suspended: Not Available
     help_and_support: "Help and Support"
