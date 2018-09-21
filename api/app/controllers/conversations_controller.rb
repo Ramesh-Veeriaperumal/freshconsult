@@ -30,6 +30,11 @@ class ConversationsController < ApiApplicationController
     conversation_delegator = ConversationDelegator.new(@item, notable: @ticket)
     if conversation_delegator.valid?
       @item.email_config_id = conversation_delegator.email_config_id
+      if @item.email_config_id
+        @item.from_email = current_account.features?(:personalized_email_replies) ? conversation_delegator.email_config.friendly_email_personalize(current_user.name) : conversation_delegator.email_config.friendly_email
+      else
+        @item.from_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
+      end
       is_success = create_note
       # publish solution is being set in kbase_email_included based on privilege and email params
       create_solution_article if is_success && @publish_solution
