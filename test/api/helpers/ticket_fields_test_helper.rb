@@ -3,16 +3,6 @@ module TicketFieldsTestHelper
 
   FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date' }
 
-  FIELD_DETAILS = { :field_type => "default_status", :label => "Status", :label_in_porta => "Status", :description => "dads", :position => 6, :active => true, :required => true, :required_for_closure => false, :visible_in_portal => true, :editable_in_portal => false, :required_in_portal => false, 
-                    :choices => [ { "customer_display_name" => "Verarbeitung läuft", "position" => 1, "name" => "Offen", "status_id" => 2, "deleted" => false }, 
-                    { "customer_display_name" => "Warten auf Ihre Antwort", "stop_sla_timer" => true, "position" => 2, "name" => "Ausstehend", "status_id" => 3, "deleted" => false}, 
-                    { "customer_display_name" => "Dieses Ticket wurde gelöst", "position" => 3, "name" => "Gelöst", "status_id" => 4, "deleted" => false}, 
-                    { "customer_display_name" => "Dieses Ticket wurde geschlossen", "position" => 4, "name" => "Geschlossen", "status_id" => 5, "deleted" => false}, 
-                    { "customer_display_name" => "Awaiting your Reply", "stop_sla_timer" => true, "position" => 5, "name" => "Waiting on Customer", "status_id" => 6, "deleted" => false}, 
-                    { "customer_display_name" => "Being Processed", "stop_sla_timer" => false, "position" => 6, "name" => "Waiting on Third Party", "status_id" => 7, "deleted"=> false}, 
-                    { "customer_display_name" => "Verarbeitung läuft", "stop_sla_timer" => false, "position" => 7, "name"=> "Offen" , "deleted"=>false } ], 
-                    :field_options=>{}, :denormalized_field=>true, :action=>"edit" }
-
   def create_custom_field(name, type, field_name = nil)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
     return ticket_field_exists if ticket_field_exists
