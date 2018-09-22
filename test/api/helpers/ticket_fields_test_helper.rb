@@ -327,7 +327,7 @@ module TicketFieldsTestHelper
   end
 
 
-  def sample_status_ticket_fields(locale = "en")
+  def sample_status_ticket_fields(locale = 'en')
     current_locale = I18n.locale
     I18n.locale = locale
     field_options = { :field_type => "default_status", :label => "Status", :label_in_porta => "Status", :description => "dads", :position => 6, :active => true, :required => true, :required_for_closure => false, :visible_in_portal => true, :editable_in_portal => false, :required_in_portal => false, 

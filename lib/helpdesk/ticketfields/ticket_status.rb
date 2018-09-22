@@ -18,8 +18,8 @@ module Helpdesk::Ticketfields::TicketStatus
       if st.status_id && (st.status_id == attr[:status_id])
         t_s = st
         break
-      #for avoiding adding new "custom value with default keys"[ open,closed, pending,resolved] and avoiding entering "custom value with default keys" updation bcoz removal keys will go to next condition
-      elsif ((I18n.t(st.name.downcase)).casecmp(attr[:name]) == 0 && (!attr[:status_id] || DEFAULT_STATUSES.keys.include?(attr[:status_id])))
+      #for avoid adding new "custom value with default keys in translation"[ open,closed, pending,resolved] and avoiding entering "custom value with default keys" updation bcoz removal keys will go to next condition
+      elsif custom_status_name_same_as_default_status_name?(st, attr)
         return
       #Not to allow default values with attr hash to enter , below condition only for custom value status updation and deletion, allowing will automatically update "custom value with default keys"
       elsif((st.name).casecmp(attr[:name]) == 0 && st.deleted? && !(DEFAULT_STATUSES.keys.include?(attr[:status_id])))
@@ -57,6 +57,10 @@ module Helpdesk::Ticketfields::TicketStatus
           t_s.stop_sla_timer = true  
         end
       end  
+    end
+
+    def custom_status_name_same_as_default_status_name?(status, attr)
+      ((I18n.t(status.name.downcase)).casecmp(attr[:name]) == 0 && (!attr[:status_id] || DEFAULT_STATUSES.keys.include?(attr[:status_id])))
     end
 
 end
