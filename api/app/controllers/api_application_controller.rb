@@ -87,9 +87,9 @@ class ApiApplicationController < MetalApiController
   after_filter :set_root_key, :set_app_data_version, if: :private_api?
 
   around_filter :handle_notification, if: :import_api?
-  
+
   around_filter :response_cache, only: [:index, :show], if: :private_api?
-  
+
   SINGULAR_RESPONSE_FOR = %w(show create update).freeze
   COLLECTION_RESPONSE_FOR = %w(index search).freeze
   CURRENT_VERSION = 'private-v1'.freeze
@@ -97,18 +97,18 @@ class ApiApplicationController < MetalApiController
   SLAVE_ACTIONS = %w(index).freeze
 
   NAMESPACED_CONTROLLER_REGEX = /pipe\/|channel\/v2\/|channel\/|bot\//
-  
+
   def response_cache
       cache_key = self.class::RESPONSE_CACHE_KEYS[action_name] if defined? self.class::RESPONSE_CACHE_KEYS
       @cache_data = MemcacheKeys.get_from_cache(cache_key % { :account_id => current_account.id }) unless cache_key.nil?
-      if !@cache_data.nil? && !@cache_data.empty?
+      if @cache_data.present?
         response.body = @cache_data
         response.headers['Content-Type'] = "application/json; charset=utf-8"
       else
         yield
       end
     ensure
-      unless !@cache_data.nil? && !@cache_data.empty?
+      unless @cache_data.present?
         MemcacheKeys.cache(cache_key % { :account_id => current_account.id }, response.body) unless cache_key.nil?
       end
   end
