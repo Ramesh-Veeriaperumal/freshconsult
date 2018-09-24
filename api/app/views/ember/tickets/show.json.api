@@ -1,6 +1,7 @@
 response_hash = @item.to_hash
 company_hash = @item.company_hash
 archive_hash = @item.archive_hash
+sla_policy_hash = @item.sla_policy_hash
 response_hash[:description] = @item.ticket_body.description_html
 response_hash[:description_text] = @item.ticket_body.description
 
@@ -13,6 +14,7 @@ response_hash.merge!(attachments: @item.attachments_hash)
 response_hash.merge!(cloud_files: @item.cloud_files_hash)
 response_hash.merge!(meta: @item.meta)
 response_hash.merge!(collaboration: @item.collaboration_hash) if Account.current.collaboration_enabled?
+response_hash[:sla_policy] = sla_policy_hash if sla_policy_hash
 response_hash.merge!(sender_email: @item.sender_email) if @item.sender_email
 response_hash.merge!(archive_ticket: archive_hash) if archive_hash
 

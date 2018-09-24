@@ -214,6 +214,7 @@ api_error_messages:
   require_feature_for_multiple_companies: "The %{feature} feature is required to associate more than 1 %{attribute}"
   should_be_set_as_blank: "Should be set as empty, if %{parent} is set as null"
   fill_values_upto_max_limit: "Choose upto %{max_limit} values found in primary/secondary contacts: '%{values}'"
+  invalid_domain: "Domain already exists"
   invalid_topic: "Topic ID is invalid"
   cannot_convert_topic_to_ticket: "This topic has already been converted into a ticket (#%{ticket_id})"
   feature_exists: "The %{feature} feature is already available for the account."

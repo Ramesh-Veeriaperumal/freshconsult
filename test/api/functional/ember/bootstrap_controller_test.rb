@@ -74,10 +74,13 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     Account.current.revoke_feature(:falcon)
     Account.current.rollback(:falcon)
     Account.current.reload
+    Account.any_instance.stubs(:disable_old_ui_enabled?).returns(false)
 
+    Account.any_instance.stubs(:disable_old_ui_enabled?).returns(false)
     get :index, controller_params(version: 'private')
     assert_response 404
 
+    Account.any_instance.unstub(:disable_old_ui_enabled?)
     Account.current.add_feature(:falcon)
 
     Account.current.reload

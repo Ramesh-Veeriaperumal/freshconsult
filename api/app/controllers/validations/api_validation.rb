@@ -89,6 +89,12 @@ class ApiValidation
     ApiConstants::BULK_ACTION_METHODS.include?(validation_context)
   end
 
+  ["create", "update"].each do |action|
+    define_method("#{action}?") do
+      action.to_sym == validation_context
+    end
+  end
+
   def validate_query_hash
     return unless query_hash.present? && query_hash.is_a?(Array)
     query_hash.each_with_index do |query, index|
