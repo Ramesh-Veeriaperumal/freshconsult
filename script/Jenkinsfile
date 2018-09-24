@@ -122,7 +122,7 @@ def publish_report(category) {
 		                             reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html',
 		                             reportName: "coverage $category", reportTitles: ''])
 		                             
-		        junit allowEmptyResults: true, testResults: "/home/jenkins/workspace/$jobName/test/api/reports/*.xml"                     
+		        junit allowEmptyResults: true, testResults: "test/api/reports/*.xml"                     
 
 }
 
@@ -174,7 +174,8 @@ def distributed_run(category) {
  node("spot_backend") {
      
      //Creating Sub directory
-     sh "sudo rm -rf /home/jenkins/workspace/$jobName/"
+     sh "sudo rm -rf /home/jenkins/workspace/$jobName/tmp"
+     sh "sudo rm -rf /home/jenkins/workspace/$jobName/test"
      sh "mkdir -p /home/jenkins/workspace/$jobName/tmp/"
      sh "mkdir -p /home/jenkins/workspace/$jobName/test/api/reports/"
       
