@@ -1,0 +1,95 @@
+  type: object
+  properties:
+    account:
+        type: object
+        properties:
+          full_domain:
+            type: string
+          helpdesk_name:
+            type: string
+          name:
+            type: string
+          time_zone:
+            type: string
+          language:
+            type: string
+          portal_languages:
+            type: object
+            properties:
+              code:
+                type: string
+              id:
+                type: integer
+              name: 
+                type: string
+          date_format:
+            type: object
+            properties:
+              moment_date_with_week:
+                type: string
+              datepicker:
+                type: string
+              datepicker_escaped:
+                type: string
+              datepicker_full_date:
+                type: string
+              mediumDate:
+                type: string
+          features:
+            type: array
+            items:
+              type: string
+          launched:
+            type: array
+            items:
+              type: string
+          subscription:
+            type: object
+            description: Available only if he is an admin
+            properties:
+              agent_limit:
+                type: integer
+              state:
+                type: string
+              subscription_plan:
+                type: string
+              trial_days:
+                type: integer
+          settings:
+            type: object
+            properties:
+              personalized_email_replies:
+                type: boolean
+              componse_email_enabled:
+                type: boolean
+              include_survey_manually:
+                type: boolean
+              show_on_boarding:
+                type: boolean
+          ssl_enabled:
+            type: boolean
+          verified:
+            type: boolean
+          collaboration:
+            type: object
+            properties:
+              client_account_id:
+                type: string
+              client_id:
+                type: string
+              collab_url:
+                type: string
+              init_auth_token:
+                type: string
+              rts_url:
+                type: string
+          created_at:
+            type: string
+            format: date-time
+          social_options:
+            type: object
+            properties:
+              handles_associated:
+                type: boolean
+              social_enabled:
+                type: boolean

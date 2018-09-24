@@ -124,6 +124,10 @@
     $ref: ./request/onboarding/update_activation_email.yaml
   onboarding_test_email_forwarding_input:
     $ref: ./request/onboarding/test_email_forwarding.yaml
+  onboarding_validate_domain_name_input:
+    $ref: ./request/onboarding/validate_domain_name.yaml
+  onboarding_customize_domain_input:
+    $ref: ./request/onboarding/customize_domain.yaml
   update_channels_input:
     $ref: ./request/onboarding/update_channels.yaml
   suppression_list:
@@ -448,6 +452,10 @@
       $ref: './response/onboarding/forward_email_confirmation.yaml'
   onboarding_test_email_forwarding:
       $ref: './response/onboarding/test_email_forwarding.yaml'
+  onboarding_suggest_domains:
+      $ref: './response/onboarding/suggest_domains.yaml'
+  onboarding_customize_domain:
+      $ref: './response/onboarding/customize_domain.yaml'
 
   #Ticket Templates
   ticket_templates_index:

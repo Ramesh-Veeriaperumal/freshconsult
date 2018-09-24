@@ -216,8 +216,8 @@
         <div class="span6">
           <div class="btn-bold pb5"><%= t('.send_notifications') %></div>
           <%= select_tag "account[account_configuration_attributes][]",
-            options_for_select( @account.account_managers.collect{|i| [i.name, i.email]},
-            selected = @account.account_configuration.contact_info[:notification_emails] ),
+            options_for_select( @account.account_managers.collect{|i| [i.name, i.email.downcase]},
+            selected = @account.account_configuration.contact_info[:notification_emails].to_a.map(&:downcase)),
             { :class => "select2 required input-xlarge", :multiple => :multiple, :placeholder => t('.select_admin') } %>  
         </div>
         <div class="span6 notify-divider" style="">

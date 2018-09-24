@@ -12,6 +12,7 @@ class Account < ActiveRecord::Base
   after_update :change_shard_mapping, :update_default_business_hours_time_zone, 
                :update_google_domain, :update_route_info, :update_users_time_zone
 
+  after_update :clear_domain_cache, :if => :account_domain_changed?
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
@@ -34,15 +35,20 @@ class Account < ActiveRecord::Base
   after_commit :update_sendgrid, on: :create
   after_commit :remove_email_restrictions, on: :update , :if => :account_verification_changed?
 
-  after_commit :update_crm_and_map, on: :update, :if => :account_domain_changed?
+  after_commit :update_crm_and_map, :send_domain_change_email, on: :update, :if => :account_domain_changed?
   after_commit :update_bot, on: :update, if: :update_bot?
 
   after_commit :update_account_details_in_freshid, on: :update, :if => :update_freshid?
   after_commit :trigger_launchparty_feature_callbacks, on: :create
   after_commit :disable_freshid, on: :update, :if => [:sso_enabled_freshid_account?, :freshid_migration_not_in_progress?]
   after_commit :enable_freshid, on: :update, :if => [:sso_disabled_not_freshid_account?, :freshid_migration_not_in_progress?]
+
+  after_commit :enable_new_onboarding, on: :create
+  after_commit :mark_customize_domain_setup_and_save, on: :create, if: :full_signup?
+
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_signup_allowed?
 
+  include MemcacheKeys
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -163,6 +169,12 @@ class Account < ActiveRecord::Base
   def launch_freshid_with_omnibar
     launch(:freshid)
     launch(:freshworks_omnibar) if omnibar_signup_allowed?
+  end
+
+  def enable_new_onboarding
+    if (has_feature?(:falcon) && LOCALES_FOR_NEW_ONBOARDING.include?(language))
+      launch :new_onboarding
+    end
   end
 
   protected
@@ -339,6 +351,11 @@ class Account < ActiveRecord::Base
         domain_mapping = DomainMapping.find_by_account_id_and_domain(id,@old_object.full_domain)
         domain_mapping.update_attribute(:domain,full_domain)
       end
+    end
+
+    def clear_domain_cache
+      key = ACCOUNT_BY_FULL_DOMAIN % { :full_domain => @old_object.full_domain }
+      MemcacheKeys.delete_from_cache key
     end
 
     def update_global_pod_domain
@@ -532,6 +549,11 @@ class Account < ActiveRecord::Base
       Rails.logger.error("#{error_msg} :: #{e.inspect}")
     end
 
+    def send_domain_change_email
+      account_name = previous_changes.key?("name") ? previous_changes["name"].first : name
+      SendDomainChangedMail.perform_async({ account_name: account_name })
+    end
+
     def disable_old_ui_changed?
       self.changes[:plan_features].present? && bitmap_feature_changed?(Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES[:disable_old_ui])
     end
@@ -546,5 +568,4 @@ class Account < ActiveRecord::Base
       return false if ((old_feature ^ new_feature) & (2**feature_val)).zero?
       @action = (old_feature & (2**feature_val)).zero? ? "add" : "drop"
     end
-
 end

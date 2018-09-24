@@ -202,6 +202,14 @@ module Ember
       match_json(todo_pattern(todo.merge({ todo_id: reminder.id })))
     end
 
+    def test_update_with_invalid_value_for_todo_body
+      TodoValidation.any_instance.stubs(:valid?).returns(true)
+      reminder = get_new_reminder('test delete')
+      todo = { body: Faker::Lorem.characters(500) }
+      put :update, construct_params({ version: 'private', id: reminder.id }, todo)
+      assert_response 400
+    end
+
     def test_update_to_ticket_todo
       ticket = get_ticket
       reminder = get_new_reminder('test delete', ticket.display_id)
@@ -379,6 +387,49 @@ module Ember
       @account.unstub(:todos_reminder_scheduler_enabled?)
       assert_response 400
     end
+
+    def test_update_with_reminder_and_rememberable_type
+      ticket = get_ticket
+      reminder = get_new_reminder('test delete', ticket.display_id)
+      put :update, construct_params({ version: 'private', id: reminder.id }, body: 'Ticket todo 1')
+      assert_response 200
+      match_json(todo_pattern({todo_id: reminder.id, body: 'Ticket todo 1', type: 'ticket', rememberable_id: ticket.display_id,ticket_subject: ticket.subject}))
+    end
+
+    def test_index_with_type_and_rememberable_id
+      ticket = get_ticket
+      reminder = get_new_reminder('test delete', ticket.display_id)
+      get :index, controller_params({ version: 'private', type: 'ticket', rememberable_id: ticket.display_id })
+      assert_response 200
+      a = parse_response response.body
+      a.first.must_match_json_expression(todo_pattern({todo_id: reminder.id, body: 'test delete', type: 'ticket', rememberable_id: ticket.display_id, ticket_subject: ticket.subject}))
+    end
+
+    def test_fetch_reminders_with_reminder_id
+      ticket = get_ticket
+      reminder = get_new_reminder('test delete', ticket.display_id)
+      put :update, construct_params({ version: 'private', id: reminder.id}, body: 'Ticket todo 1' )
+      assert_response 200
+      match_json(todo_pattern({todo_id: reminder.id, body: 'Ticket todo 1', type: 'ticket', rememberable_id: ticket.display_id,  ticket_subject: ticket.subject}))
+    end 
+
+    def test_index_without_type_and_reminder_id
+      ticket = get_ticket
+      reminder = get_new_reminder('test delete', ticket.display_id)
+      get :index, controller_params({ version: 'private', rememberable_id: ticket.display_id})
+      assert_response 200
+      a = parse_response response.body
+      a.first.must_match_json_expression(todo_pattern({todo_id: reminder.id, body: 'test delete', type: 'ticket', rememberable_id: ticket.display_id, ticket_subject: ticket.subject}))
+    end
+
+    def test_delete_with_invalid_id
+      Helpdesk::Reminder.any_instance.stubs(:destroy).returns(false)
+      reminder = get_new_reminder('test delete', nil)
+      delete :destroy, construct_params(@api_params, false).merge(id: reminder.id)
+      Helpdesk::Reminder.any_instance.unstub(:destroy)
+      assert_response 500
+    end
+
 
     def validation_error_response(field, message, code)
       {
