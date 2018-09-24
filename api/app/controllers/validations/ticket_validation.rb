@@ -26,7 +26,12 @@ class TicketValidation < ApiValidation
   validates :description, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
   validates :email_config_id, :subject, :email, required: { message: :field_validation_for_outbound }, on: :compose_email
 
-  validates :description, :ticket_type, :status, :subject, :priority, :product, :agent, :group, :internal_group_id, :internal_agent_id, default_field:
+  validates :subject, default_field: {
+                        required_fields: proc { |x| x.required_default_fields },
+                        field_validations: proc { |x| x.default_field_validations }
+                      }, if: -> { create? || (update? && subject.present?) }
+
+  validates :description, :ticket_type, :status, :priority, :product, :agent, :group, :internal_group_id, :internal_agent_id, default_field:
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
@@ -358,10 +363,6 @@ class TicketValidation < ApiValidation
 
   def update_or_update_multiple?
     [:update, :bulk_update].include?(validation_context)
-  end
-
-  def update?
-    [:update].include?(validation_context)
   end
 
   def execute_scenario?

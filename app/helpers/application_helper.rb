@@ -2082,11 +2082,6 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     (current_user.privilege?(:admin_tasks))  ?  user_trigger && current_account.subscription.trial?  :  user_trigger
   end
 
-  def inlinemanual_topic_id
-    topic = (current_user.privilege?(:admin_tasks)) ? 'admin_topic' : 'agent_topic'
-    User::INLINE_MANUAL[topic]
-  end
-
   def outgoing_callers
     current_account.freshfone_caller_id
   end

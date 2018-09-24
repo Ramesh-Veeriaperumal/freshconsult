@@ -49,7 +49,7 @@ class FreshidController < ApplicationController
         @current_user = @user_session.record
         Rails.logger.info "FRESHID create_user_session :: a=#{current_account.try(:id)}, u=#{@current_user.try(:id)}"
         perform_after_login if @current_user.agent?
-        redirect_back_or_default('/') if grant_day_pass
+        redirect_back_or_default(default_return_url) if grant_day_pass
       else
         redirect_to login_url
       end
@@ -78,4 +78,12 @@ class FreshidController < ApplicationController
       !session[:authorize]
     end  
 
+    def default_return_url
+      @default_return_url ||= begin
+        from_cookie = cookies[:return_to] # The :return_url cookie will be used by Ember App
+        cookies.delete(:return_url) if from_cookie.present?
+        # TODO-EMBERAPI: Cookie deletion does not seem reflect properly on the client
+        from_cookie || '/'
+      end
+    end
 end

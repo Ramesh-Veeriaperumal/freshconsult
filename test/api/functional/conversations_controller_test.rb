@@ -423,6 +423,61 @@ class ConversationsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('from_email', :absent_in_db, resource: :"active email_config", attribute: :from_email)])
   end
 
+  def test_reply_without_from_email_and_personalized_replies
+    @account.features.personalized_email_replies.create
+    @account.reload
+    Account.current.reload
+    params_hash = reply_note_params_hash
+    params_hash.delete(:from_email)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 201
+    latest_note = Helpdesk::Note.last
+
+    assert_equal ticket.friendly_reply_email_personalize(@agent.name), latest_note.from_email
+    match_json(v2_reply_note_pattern(params_hash, latest_note))
+    match_json(v2_reply_note_pattern({}, latest_note))
+  end
+
+  def test_reply_without_from_email
+    @account.features.personalized_email_replies.destroy
+    @account.reload
+    Account.current.reload
+    params_hash = reply_note_params_hash
+    params_hash.delete(:from_email)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 201
+    latest_note = Helpdesk::Note.last
+    assert_equal ticket.selected_reply_email, latest_note.from_email
+    match_json(v2_reply_note_pattern(params_hash, latest_note))
+    match_json(v2_reply_note_pattern({}, latest_note))
+  end
+
+  def test_reply_with_from_address_personalized_replies
+    @account.features.personalized_email_replies.create
+    @account.reload
+    email_config = create_email_config
+    params_hash = reply_note_params_hash.merge(from_email: email_config.reply_email)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 201
+    latest_note = Helpdesk::Note.last
+    assert_equal email_config.friendly_email_personalize(@agent.name), latest_note.from_email
+    match_json(v2_reply_note_pattern(params_hash, latest_note))
+    match_json(v2_reply_note_pattern({}, latest_note))
+  end
+
+  def test_reply_with_from_address_without_personalized_replies
+    @account.features.personalized_email_replies.destroy
+    @account.reload
+    email_config = create_email_config
+    params_hash = reply_note_params_hash.merge(from_email: email_config.reply_email)
+    post :reply, construct_params({ id: ticket.display_id }, params_hash)
+    assert_response 201
+    latest_note = Helpdesk::Note.last
+    assert_equal email_config.friendly_email, latest_note.from_email
+    match_json(v2_reply_note_pattern(params_hash, latest_note))
+    match_json(v2_reply_note_pattern({}, latest_note))
+  end
+
   def test_reply_new_email_config
     email_config = create_email_config
     params_hash = reply_note_params_hash.merge(from_email: email_config.reply_email)

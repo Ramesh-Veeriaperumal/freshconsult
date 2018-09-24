@@ -349,6 +349,12 @@
   $ref: ./onboarding/forward_email_confirmation.yaml
 /onboarding/test_email_forwarding:
   $ref: ./onboarding/test_email_forwarding.yaml
+/onboarding/suggest_domains:
+  $ref: ./onboarding/suggest_domains.yaml
+/onboarding/validate_domain_name:
+  $ref: ./onboarding/validate_domain_name.yaml
+/onboarding/customize_domain:
+  $ref: ./onboarding/customize_domain.yaml
 
 # Trial Widget
 /trial_widget:

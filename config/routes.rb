@@ -1259,6 +1259,7 @@ Helpkit::Application.routes.draw do
         post :update_channel_configs
         post :update_activation_email
         post :resend_activation_email
+        post :complete_step
       end
     end
 

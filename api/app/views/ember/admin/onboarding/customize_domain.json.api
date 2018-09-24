@@ -1,0 +1,1 @@
+JSON.generate(account: AccountDecorator.new(current_account).simple_hash)

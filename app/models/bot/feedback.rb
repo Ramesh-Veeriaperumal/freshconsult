@@ -2,6 +2,8 @@ class Bot::Feedback < ActiveRecord::Base
   belongs_to :bot, class_name: 'Bot'
   belongs_to_account
   has_one :feedback_mapping, class_name: 'Bot::FeedbackMapping', dependent: :destroy
+  has_one :bot_ticket, class_name: 'Bot::Ticket', primary_key: :query_id, foreign_key: :query_id
+  has_one :ticket, class_name: 'Helpdesk::Ticket', through: :bot_ticket
 
   attr_accessible :bot_id, :category, :useful, :received_at, :query_id, :query, :external_info, :state, :suggested_articles
 

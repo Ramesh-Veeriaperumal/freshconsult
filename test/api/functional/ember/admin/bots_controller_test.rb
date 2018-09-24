@@ -172,10 +172,9 @@ module Ember
       def test_new_with_invalid_portal_id
         enable_bot do
           portal = @account.portals.last
-          invalid_portal_id = portal.id + 1
-          get :new, controller_params(version: 'private', portal_id: invalid_portal_id)
+          get :new, controller_params(version: 'private', portal_id: "0")
           assert_response 400
-          pattern = [:portal_id, :invalid_portal]
+          pattern = [:portal_id, :invalid_portal_id]
           assert_bot_failure pattern
         end
       end
@@ -733,6 +732,10 @@ module Ember
       def test_bot_folders
         enable_bot do
           bot = create_bot({ product: true})
+          category = create_category
+          bot.portal.solution_category_metum_ids = [category.id]
+          bot.category_ids = [category.id]
+          create_folder(category_meta_id: category.id)
           get :bot_folders, controller_params(version: 'private', id: bot.id)
           assert_response 200
         end

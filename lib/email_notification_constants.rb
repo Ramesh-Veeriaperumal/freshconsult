@@ -188,6 +188,8 @@ module EmailNotificationConstants
 
   SPAM_FILTERED_NOTIFICATIONS = [ REPLY, FORWARD]
 
+  RECENT_ACCOUNT_SPAM_FILTERED_NOTIFICATIONS = [ REPLY ]
+
   AGENT_INVITE_NOTIFICATION = {
     agent_subject_template: '{{portal_name}} agent invitation',
     agent_template: 'Hi {{agent.name}},<br /><br />Your {{helpdesk_name}} account has been created.<br /><br />Click <a href="{{helpdesk_url}}">here</a> to go to your account. <br /><br />If the above URL does not work, try copying and pasting it into your browser. Please feel free to contact us, if you continue to face any problems.<br /><br />Regards,<br />{{helpdesk_name}}'
