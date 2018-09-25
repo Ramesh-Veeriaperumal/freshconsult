@@ -121,13 +121,8 @@ def publish_report(category) {
                  publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
 		                             reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html',
 		                             reportName: "coverage $category", reportTitles: ''])
-		       
-		      
-                junit  testResults: "test/api/reports/*.xml"
-		      
-
-                      
 }
+
 
 //Distribted run based on category
 def distributed_run(category) {
@@ -194,5 +189,8 @@ def distributed_run(category) {
     },Pronto: {
            distributed_run("pronto");
     }
+    
+    //Extracting xml file
+     junit  testResults: "test/api/reports/*.xml"
  }
  
