@@ -122,11 +122,9 @@ def publish_report(category) {
 		                             reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html',
 		                             reportName: "coverage $category", reportTitles: ''])
 		       
-		       if(category != 'sandbox') {
-                    junit allowEmptyResults: true, testResults: "test/api/reports/*.xml"
-		       }else{
-		            junit allowEmptyResults: false, testResults: "test/api/reports/*.xml"  
-		       }
+		      
+                junit  testResults: "test/api/reports/*.xml"
+		      
 
                       
 }
@@ -197,10 +195,4 @@ def distributed_run(category) {
            distributed_run("pronto");
     }
  }
-//Ends results published here
-timestamps {
-	     //Machine label where this jobs needs to run
-		 node("master") {
-		 	junit allowEmptyResults: false, testResults: 'test/api/reports/*.xml'
-		 }
-}
+ 
