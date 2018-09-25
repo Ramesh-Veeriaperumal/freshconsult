@@ -209,7 +209,6 @@ class AgentsController < ApplicationController
     group_ids = params[nscname].delete(:group_ids)
     @agent.build_agent_groups_attributes(group_ids)
     if @agent.update_attributes(params[nscname])
-      @agent.user.save if @agent.user_changes.key?("roles")
       begin
         if @user.role_ids.include?(current_account.roles.find_by_name("Account Administrator").id)
           call_location = "Agent Update"
