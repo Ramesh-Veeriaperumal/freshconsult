@@ -121,9 +121,14 @@ def publish_report(category) {
                  publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
 		                             reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html',
 		                             reportName: "coverage $category", reportTitles: ''])
-		                             
-		        junit allowEmptyResults: true, testResults: "test/api/reports/*.xml"                     
+		       
+		       if(category != 'sandbox') {
+                    junit allowEmptyResults: false, testResults: "test/api/reports/*.xml"
+		       }else{
+		            junit allowEmptyResults: true, testResults: "test/api/reports/*.xml"  
+		       }
 
+                      
 }
 
 //Distribted run based on category
@@ -155,7 +160,8 @@ def distributed_run(category) {
 						               execute_test_cases(category)
 						         }
 						         catch (e) {
-						               "issue with test execution" + e
+						               echo "issue with test execution" + e
+						               currentBuild.result = 'UNSTABLE'
 						         }
 		
 					    		 finally {
@@ -195,6 +201,6 @@ def distributed_run(category) {
 timestamps {
 	     //Machine label where this jobs needs to run
 		 node("master") {
-		 	junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'
+		 	junit allowEmptyResults: false, testResults: 'test/api/reports/*.xml'
 		 }
 }
