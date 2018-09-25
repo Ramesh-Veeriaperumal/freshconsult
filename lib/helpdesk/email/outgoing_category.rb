@@ -96,6 +96,17 @@ module Helpdesk::Email::OutgoingCategory
     return $spam_filtered_notifications
   end
 
+  def recent_account_spam_filtered_notifications
+    if ($recent_account_spam_filtered_notifications.blank? || $recent_account_spam_filtered_notifications_time.blank? || 
+                                                        $recent_account_spam_filtered_notifications_time < 5.minutes.ago)
+      notificatons_list = get_all_members_in_a_redis_set(RECENT_ACCOUNT_SPAM_FILTERED_NOTIFICATIONS).map { |e| e.to_i }
+      $recent_account_spam_filtered_notifications = (notificatons_list.present? ? 
+                  notificatons_list : EmailNotification::RECENT_ACCOUNT_SPAM_FILTERED_NOTIFICATIONS)
+      $recent_account_spam_filtered_notifications_time = Time.now
+    end
+    return $recent_account_spam_filtered_notifications
+  end
+
   def spam_blacklisted_rules
     if ($spam_blacklisted_rules.blank? || $spam_rules_checked_time.blank? || $spam_rules_checked_time < 5.minutes.ago)
       rules_list = get_all_members_in_a_redis_set(SPAM_BLACKLISTED_RULES)

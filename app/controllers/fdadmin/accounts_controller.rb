@@ -8,7 +8,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
-  around_filter :select_master_shard , :only => [:collab_feature,:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit, :change_primary_language]
+  around_filter :select_master_shard , :only => [:collab_feature,:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action]
   before_filter :validate_params, :only => [ :change_api_limit, :change_webhook_limit ]
   before_filter :load_account, :only => [:user_info, :reset_login_count]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
@@ -236,12 +236,29 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   def extend_trial
     account = Account.find_by_id(params[:account_id]).make_current
     result = {:account_id => account.id , :account_name => account.name }
-    days_count = if account.admin_email.ends_with?("freshdesk.com")
-      account.tickets.count < 500 ? 120 : 60
+    days_count = if account.admin_email.ends_with?("freshdesk.com") || account.admin_email.ends_with?("freshworks.com")
+      account.tickets.count < 500 ? 150 : 90
     else
       account.tickets.count < 1000 ? 30 : 10
     end
     result[:status] = (do_trial_extend(days_count.days) ? "success" : "notice")
+    Account.reset_current_account
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
+
+  def trigger_action
+    account = Account.find_by_id(params[:account_id]).make_current
+    result = {:account_id => account.id , :account_name => account.name }
+    if respond_to?("trigger_#{params[:action_type]}_action")
+      safe_send("trigger_#{params[:action_type]}_action")
+      result[:status] = 'success'
+    else
+      result[:status] = 'error'
+    end
     Account.reset_current_account
     respond_to do |format|
       format.json do

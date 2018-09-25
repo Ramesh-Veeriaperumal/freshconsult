@@ -1,4 +1,6 @@
 require_relative '../../../test_helper'
+['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+
 module Ember
   module Dashboard
     class ActivitiesControllerTest < ActionController::TestCase
@@ -10,6 +12,7 @@ module Ember
       include UsersTestHelper
       include ForumsTestHelper
       include SolutionsTestHelper
+      include SocialTicketsCreationHelper
 
       PAGE_LIMIT = 30
       PER_PAGE   = 20
@@ -29,6 +32,30 @@ module Ember
         return if @@before_all_run
         create_n_tickets(PAGE_LIMIT*2)
         @@before_all_run = true
+      end
+
+      def test_per_page_params_greater_than_max_limit
+        stub_const(DashboardConstants, 'MAX_PAGE_LIMIT', 50) do
+          get :index, controller_params(version: 'private', per_page: 60)
+          assert_equal @controller.instance_variable_get(:@per_page), 50
+        end
+      end
+
+      def test_per_page_params_lesser_than_min_limit
+        get :index, controller_params(version: 'private', per_page: 10)
+        assert_equal @controller.instance_variable_get(:@per_page), DashboardConstants::MIN_PAGE_LIMIT
+      end
+
+      def test_per_page_params_within_limit
+        get :index, controller_params(version: 'private', per_page: 40)
+        assert_equal @controller.instance_variable_get(:@per_page), 40
+      end
+
+      def test_run_time_error
+        Helpdesk::Activity.stubs(:freshest).raises(RuntimeError)
+        get :index, controller_params(version: 'private', since_id: 1, per_page: 40)
+        Helpdesk::Activity.unstub(:freshest)
+        assert_response 500
       end
 
       def test_activities_create_ticket

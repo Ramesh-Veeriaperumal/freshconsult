@@ -232,7 +232,8 @@
               "conversations",
               "requester",
               "company",
-              "survey"
+              "survey",
+              "sla_policy"
             ]
           }
         ],
@@ -6232,6 +6233,83 @@
         }
       }
     },
+    "/onboarding/suggest_domains": {
+      "get": {
+        "tags": [
+          "onboarding"
+        ],
+        "description": "Suggest domains",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/onboarding_suggest_domains"
+            }
+          }
+        }
+      }
+    },
+    "/onboarding/validate_domain_name": {
+      "post": {
+        "tags": [
+          "onboarding"
+        ],
+        "description": "Validate domain",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "description": "Domain name to validate",
+            "schema": {
+              "$ref": "#/definitions/onboarding_validate_domain_name_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/onboarding/customize_domain": {
+      "put": {
+        "tags": [
+          "onboarding"
+        ],
+        "description": "Customize domain",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "description": "Domain name to change",
+            "schema": {
+              "$ref": "#/definitions/onboarding_customize_domain_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/onboarding_customize_domain"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/trial_widget": {
       "post": {
         "summary": "Trial Widget Steps",
@@ -10674,6 +10752,26 @@
         }
       }
     },
+    "onboarding_validate_domain_name_input": {
+      "type": "object",
+      "description": "Domain name",
+      "properties": {
+        "subdomain": {
+          "type": "string",
+          "description": "Domain name that needs to be validated"
+        }
+      }
+    },
+    "onboarding_customize_domain_input": {
+      "type": "object",
+      "description": "Domain name",
+      "properties": {
+        "subdomain": {
+          "type": "string",
+          "description": "Domain name that needs to be updated"
+        }
+      }
+    },
     "update_channels_input": {
       "type": "object",
       "description": "Channels Array",
@@ -14609,6 +14707,82 @@
         },
         "customer_id": {
           "type": "string"
+        },
+        "ticket_id": {
+          "type": "integer",
+          "description": "Ticket created for the unanswered question"
+        },
+        "requester": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "job_title": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "phone": {
+              "type": "string"
+            },
+            "mobile": {
+              "type": "string"
+            },
+            "twitter_id": {
+              "type": "string"
+            },
+            "has_email": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "avatar": {
+              "$ref": "#/definitions/avatar"
+            },
+            "company": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "view_all_tickets": {
+                  "type": "boolean"
+                },
+                "avatar": {
+                  "$ref": "#/definitions/avatar"
+                }
+              }
+            },
+            "other_companies": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "view_all_tickets": {
+                    "type": "boolean"
+                  },
+                  "avatar": {
+                    "$ref": "#/definitions/avatar"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -15280,6 +15454,165 @@
         "ticket_display_id": {
           "type": "integer",
           "description": "Display ID of the test email ticket."
+        }
+      }
+    },
+    "onboarding_suggest_domains": {
+      "type": "object",
+      "properties": {
+        "subdomains": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "domain name"
+          }
+        }
+      }
+    },
+    "onboarding_customize_domain": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "type": "object",
+          "properties": {
+            "full_domain": {
+              "type": "string"
+            },
+            "helpdesk_name": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "time_zone": {
+              "type": "string"
+            },
+            "language": {
+              "type": "string"
+            },
+            "portal_languages": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            },
+            "date_format": {
+              "type": "object",
+              "properties": {
+                "moment_date_with_week": {
+                  "type": "string"
+                },
+                "datepicker": {
+                  "type": "string"
+                },
+                "datepicker_escaped": {
+                  "type": "string"
+                },
+                "datepicker_full_date": {
+                  "type": "string"
+                },
+                "mediumDate": {
+                  "type": "string"
+                }
+              }
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "launched": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "subscription": {
+              "type": "object",
+              "description": "Available only if he is an admin",
+              "properties": {
+                "agent_limit": {
+                  "type": "integer"
+                },
+                "state": {
+                  "type": "string"
+                },
+                "subscription_plan": {
+                  "type": "string"
+                },
+                "trial_days": {
+                  "type": "integer"
+                }
+              }
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "personalized_email_replies": {
+                  "type": "boolean"
+                },
+                "componse_email_enabled": {
+                  "type": "boolean"
+                },
+                "include_survey_manually": {
+                  "type": "boolean"
+                },
+                "show_on_boarding": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "ssl_enabled": {
+              "type": "boolean"
+            },
+            "verified": {
+              "type": "boolean"
+            },
+            "collaboration": {
+              "type": "object",
+              "properties": {
+                "client_account_id": {
+                  "type": "string"
+                },
+                "client_id": {
+                  "type": "string"
+                },
+                "collab_url": {
+                  "type": "string"
+                },
+                "init_auth_token": {
+                  "type": "string"
+                },
+                "rts_url": {
+                  "type": "string"
+                }
+              }
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "social_options": {
+              "type": "object",
+              "properties": {
+                "handles_associated": {
+                  "type": "boolean"
+                },
+                "social_enabled": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
         }
       }
     },

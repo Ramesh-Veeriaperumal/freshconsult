@@ -113,7 +113,6 @@ module Redis::RedisKeys
   ZENDESK_IMPORT_CUSTOM_DROP_DOWN = "ZENDESK_IMPORT_CUSTOM_DROP_DOWN_%{account_id}"
   STREAM_RECENT_SEARCHES = "STREAM_RECENT_SEARCHES:%{account_id}:%{agent_id}"
   STREAM_VOLUME = "STREAM_VOLUME:%{account_id}:%{stream_id}"
-  MOBILE_NOTIFICATION_MESSAGE_CHANNEL = "MOBILE_NOTIFICATION_MESSAGE_CHANNEL_%{channel_id}"
   MOBILE_NOTIFICATION_REGISTRATION_CHANNEL = "MOBILE_NOTIFICATION_REGISTRATION_CHANNEL"
 
   RIAK_FAILED_TICKET_CREATION = "RIAK:FAILED_TICKET_CREATION"
@@ -146,9 +145,6 @@ module Redis::RedisKeys
   ARTICLE_FEEDBACK_FILTER = "ARTICLE_FEEDBACK_FILTER:%{account_id}:%{user_id}:%{session_id}"
   #These are redis set keys used for temporary feature checks.
   COMPOSE_EMAIL_ENABLED = "COMPOSE_EMAIL_ENABLED"
-  BI_REPORTS_UI_ENABLED = "BI_REPORTS_UI"
-  BI_REPORTS_REAL_TIME_PDF = "BI_REPORTS_REAL_TIME_PDF"
-  BI_REPORTS_ATTACHMENT_VIA_S3 = "BI_REPORTS_ATTACHMENT_VIA_S3"
   BI_REPORTS_MAIL_ATTACHMENT_LIMIT_IN_BYTES = "BI_REPORTS_MAIL_ATTACHMENT_LIMIT_IN_BYTES"
   BI_REPORTS_INTERNAL_CSV_EXPORT = "BI_REPORTS_INTERNAL_CSV_EXPORT"
   DASHBOARD_DISABLED = "DASHBOARD_DISABLED"
@@ -290,28 +286,10 @@ module Redis::RedisKeys
   # Search Service Keys
   SEARCH_SERVICE_SIGNUP = "SEARCH_SERVICE_SIGNUP"
 
-  #Following are the dead keys. Need to remove them from code and any references
-  GROUP_AGENT_TICKET_ASSIGNMENT = "GROUP_AGENT_TICKET_ASSIGNMENT:%{account_id}:%{group_id}"
-  HELPDESK_GAME_NOTIFICATIONS = "HELPDESK_GAME_NOTIFICATIONS:%{account_id}:%{user_id}"
-  DASHBOARD_TABLE_FILTER_KEY = "DASHBOARD_TABLE_FILTER_KEY:%{account_id}:%{user_id}"
-  DASHBOARD_FEATURE_ENABLED_KEY = "DASHBOARD_FEATURE_ENABLED_KEY"
-  USER_OTP_KEY = "USER_OTP_KEY:%{email}" #deadkey
-  #End of dead keys
 
   DASHBOARD_INDEX = "DASHBOARD_INDEX:%{account_id}"
 
   ACCOUNT_SIGN_UP_PARAMS = "ACCOUNT_SIGN_UP_PARAMS:%{account_id}"
-
-  EHAWK_SPAM_COMMUNITY_REGEX_KEY = "EHAWK_SPAM_COMMUNITY_REGEX"
-  EHAWK_SPAM_EMAIL_REGEX_KEY = "EHAWK_SPAM_EMAIL_REGEX"
-  EHAWK_IP_BLACKLISTED_REGEX_KEY = "EHAWK_IP_BLACKLISTED_REGEX"
-  EHAWK_SPAM_COUNTRY_REGEX_KEY = "EHAWK_SPAM_COUNTRY_REGEX"
-  EHAWK_SPAM_GEOLOCATION_REGEX_KEY = "EHAWK_SPAM_GEOLOCATION_REGEX"
-  EHAWK_IP_DISTANCE_VELOCITY_LIMIT_KEY = "EHAWK_IP_DISTANCE_VELOCITY_LIMIT"
-  EHAWK_WHITELISTED_IP = "EHAWK_WHITELISTED_IP"
-  EHAWK_WHITELISTED_EMAIL = "EHAWK_WHITELISTED_EMAIL"
-  EHAWK_BLACKLISTED_IP = "EHAWK_BLACKLISTED_IP"
-  EHAWK_BLACKLISTED_EMAIL = "EHAWK_BLACKLISTED_EMAIL"
 
   MARKETPLACE_APP_TICKET_DETAILS = "MARKETPLACE_APP_TICKET_DETAILS:%{account_id}"
   AUTOMATION_TICKET_PARAMS = "AUTOMATION_TICKET_PARAMS:%{account_id}:%{ticket_id}"
@@ -335,9 +313,9 @@ module Redis::RedisKeys
 
   CLAMAV_CONNECTION_ERROR_TIMEOUT = "CLAMAV_CONNECTION_ERROR_TIMEOUT"
 
-  CLOSE_VALIDATION = "CLOSE_VALIDATION"
   CUSTOM_CATEGORY_NOTIFICATIONS = "CUSTOM_CATEGORY_NOTIFICATIONS"
   SPAM_FILTERED_NOTIFICATIONS = "SPAM_FILTERED_NOTIFICATIONS"
+  RECENT_ACCOUNT_SPAM_FILTERED_NOTIFICATIONS = "RECENT_ACCOUNT_SPAM_FILTERED_NOTIFICATIONS"
   HAPROXY_IP_BLACKLIST_KEY = "HAPROXY_IP_BLACKLIST_KEY"
   HAPROXY_DOMAIN_BLACKLIST_KEY = "HAPROXY_DOMAIN_BLACKLIST_KEY"
   HAPROXY_IP_BLACKLIST_CHANNEL = "HAPROXY_IP_BLACKLIST_CHANNEL"
@@ -375,19 +353,11 @@ module Redis::RedisKeys
   FRESHWORKS_OMNIBAR_SIGNUP_ENABLED = 'FRESHWORKS_OMNIBAR_SIGNUP_ENABLED'.freeze
   FRESHID_MIGRATION_IN_PROGRESS_KEY = 'FRESHID_MIGRATION_IN_PROGRESS:%{account_id}'.freeze
 
-  FRESHCONNECT_NEW_ACCOUNT_SIGNUP_ENABLED = 'FRESHCONNECT_NEW_ACCOUNT_SIGNUP_ENABLED'.freeze
-
-  TRIAL_21_DAYS = "TRIAL_21_DAYS"
   UPDATE_TIME_ZONE = "UPDATE_TIME_ZONE:%{account_id}"
-
-  # Key for disabling collab bell
-  COLLAB_BELL_DISABLED = 'COLLAB_BELL_DISABLED'.freeze
 
   CANNED_FORMS = 'CANNED_FORMS:%<account_id>s'.freeze
 
   SANDBOX_DIFF_RATE_LIMIT = 'SANDBOX_DIFF_RATE_LIMIT'
-
-  TRIAL_21_DAYS = "TRIAL_21_DAYS"
 
   # CUSTOMER IMPORT KEYS
   CONTACT_IMPORT_TOTAL_RECORDS = "CONTACT_IMPORT_TOTAL_RECORDS:%{account_id}"
@@ -396,44 +366,9 @@ module Redis::RedisKeys
   COMPANY_IMPORT_FINISHED_RECORDS = "COMPANY_IMPORT_FINISHED_RECORDS:%{account_id}"
   STOP_CONTACT_IMPORT = "STOP_CONTACT_IMPORT:%{account_id}"
   STOP_COMPANY_IMPORT = "STOP_COMPANY_IMPORT:%{account_id}"
-
-  #Temp Redis keys for resque to sidekiq migration start
-  SIDEKIQ_TOGGLE_AGENT_FROM_GROUPS = "SIDEKIQ_TOGGLE_AGENT_FROM_GROUPS"
-  SIDEKIQ_RESTORE_SPAM_TICKETS = "SIDEKIQ_RESTORE_SPAM_TICKETS"
-  SIDEKIQ_DISPATCH_SPAM_DIGEST = "SIDEKIQ_DISPATCH_SPAM_DIGEST"
-  ADD_AGENT_TO_ROUND_ROBIN = 'ADD_AGENT_TO_ROUND_ROBIN'
-  SIDEKIQ_GAMIFICATION_UPDATE_USER_SCORE = "SIDEKIQ_GAMIFICATION_UPDATE_USER_SCORE"
-  SIDEKIQ_GAMIFICATION_PROCESS_TICKET_SCORE = "SIDEKIQ_GAMIFICATION_PROCESS_TICKET_SCORE"
-  SIDEKIQ_GAMIFICATION_PROCESS_SOLUTION_QUESTS = "SIDEKIQ_GAMIFICATION_PROCESS_SOLUTION_QUESTS"
-  SIDEKIQ_GAMIFICATION_PROCESS_POST_QUESTS = "SIDEKIQ_GAMIFICATION_PROCESS_POST_QUESTS"
-  SIDEKIQ_GAMIFICATION_PROCESS_TOPIC_QUESTS = "SIDEKIQ_GAMIFICATION_PROCESS_TOPIC_QUESTS"
-  SIDEKIQ_GAMIFICATION_PROCESS_TICKET_QUESTS = "SIDEKIQ_GAMIFICATION_PROCESS_TICKET_QUESTS"
-  SIDEKIQ_NULLIFY_DELETED_CUSTOMFIELD_DATA = "SIDEKIQ_NULLIFY_DELETED_CUSTOMFIELD_DATA"
-  SIDEKIQ_MERGE_TOPICS = "SIDEKIQ_MERGE_TOPICS"
-  SIDEKIQ_MARKETO_QUEUE = "SIDEKIQ_MARKETO_QUEUE"
-  JIRA_ACC_UPDATES_SIDEKIQ_ENABLED = "JIRA_ACC_UPDATES_SIDEKIQ_ENABLED"
-  REPORT_POST_SIDEKIQ_ENABLED = "REPORT_POST_SIDEKIQ_ENABLED"
-  FORUM_POSTS_SPAM_MARKER = "FORUM_POSTS_SPAM_MARKER".freeze
-  SIDEKIQ_MARKETOQUEUE = "SIDEKIQ_MARKETO_QUEUE"
-  SIDEKIQ_SUBSCRIPTIONS_ADD_DELETED_EVENT = "SIDEKIQ_SUBSCRIPTIONS_ADD_DELETED_EVENT"
-  SIDEKIQ_ADD_SUBSCRIPTION_EVENTS = "SIDEKIQ_ADD_SUBSCRIPTION_EVENTS"
-  SIDEKIQ_BAN_USER = "SIDEKIQ_BAN_USER"
-  FRESHSALES_ADMIN_UPDATE = "FRESHSALES_ADMIN_UPDATE".freeze
-  FRESHSALES_DELETED_CUSTOMER = "FRESHSALES_DELETED_CUSTOMER".freeze
-  FRESHSALES_ACCOUNT_SIGNUP = "FRESHSALES_ACCOUNT_SIGNUP".freeze
-  FRESHSALES_TRACK_SUBSCRIPTION = "FRESHSALES_TRACK_SUBSCRIPTION".freeze
-
-  #Temp Redis keys for resque to sidekiq migration end
   
-
   # count cluster to search service keys
   SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED = "SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED"
-
-  # CUSTOMER IMPORT KEYS
-  CONTACT_IMPORT_TOTAL_RECORDS = "CONTACT_IMPORT_TOTAL_RECORDS:%{account_id}"
-  CONTACT_IMPORT_FINISHED_RECORDS = "CONTACT_IMPORT_FINISHED_RECORDS:%{account_id}"
-  COMPANY_IMPORT_TOTAL_RECORDS = "COMPANY_IMPORT_TOTAL_RECORDS:%{account_id}"
-  COMPANY_IMPORT_FINISHED_RECORDS = "COMPANY_IMPORT_FINISHED_RECORDS:%{account_id}"
 
   ADVANCED_TICKETING_METRICS = "ADVANCED_TICKETING_METRICS"
   ################### END OF REDIS KEYS ###################
@@ -492,133 +427,3 @@ module Redis::RedisKeys
   end
 
 end
-
-
-
-
-  #Temp Redis keys for resque to sidekiq migration end
-
-
-
-
-	# def increment(key)
-	# 	newrelic_begin_rescue { $redis.INCR(key) }
-	# end
-
-	# def get_key(key)
-	# 	newrelic_begin_rescue { $redis.get(key) }
-	# end
-
-	# def remove_key(key)
-	# 	newrelic_begin_rescue { $redis.del(key) }
-	# end
-
-	# def set_key(key, value, expires = 86400)
-	# 	newrelic_begin_rescue do
-	# 		$redis.set(key, value)
-	# 		$redis.expire(key,expires) if expires
-	#   end
-	# end
-
-	# def set_expiry(key, expires)
-	# 	newrelic_begin_rescue do
-	# 		$redis.expire(key, expires)
-	# 	end
-	# end
-
-	# def get_expiry(key)
-	# 	newrelic_begin_rescue { $redis.ttl(key) }
-	# end
-
-	# def add_to_set(key, values, expires = 86400)
-	# 	newrelic_begin_rescue do
-	# 		if values.respond_to?(:each)
-	# 			values.each do |val|
-	# 				$redis.sadd(key, val)
-	# 			end
-	# 		else
-	# 			$redis.sadd(key, values)
-	# 		end
-	# 		# $redis.expire(key,expires) if expires
-	#   end
-	# end
-
-	# def remove_value_from_set(key, value)
-	# 	newrelic_begin_rescue { $redis.srem(key, value) }
-	# end
-
-
-	# def list_push(key,values,direction = 'right', expires = 3600)
-	# 	newrelic_begin_rescue do
-	# 		command = direction == 'right' ? 'rpush' : 'lpush'
-	# 		unless values.class == Array
-	# 			$redis.send(command, key, values)
-	# 		else
-	# 			values.each do |val|
-	# 				$redis.send(command, key, val)
-	# 			end
-	# 		end
-	# 		$redis.expire(key,expires) if expires
-	#   end
-	# end
-
-	# def list_pull(key,direction = 'left')
-	# 	newrelic_begin_rescue do
-	# 		command = direction == 'right' ? 'rpull' : 'lpull'
-	# 		$redis.send(command, key)
-	#   end
-	# end
-
-	# def list_members(key)
-	# 	count = 0
- #    tries = 3
- #    begin
-	# 		length = $redis.llen(key)
-	# 		$redis.lrange(key,0,length - 1)
-	#   rescue Exception => e
-	#   	NewRelic::Agent.notice_error(e,{:key => key,
- #        :value => length,
- #        :description => "Redis issue",
- #        :count => count})
- #      if count<tries
- #          count += 1
- #          retry
- #      end
-	#   end
-	# end
-
-	# def exists(key)
-	# 	begin
-	# 		$redis.exists(key)
-	# 	rescue Exception => e
- #        	NewRelic::Agent.notice_error(e)
- #    	end
-	# end
-
-	# def array_of_keys(pattern)
-	# 	begin
-	# 		$redis.keys(pattern)
-	# 	rescue Exception => e
- #        	NewRelic::Agent.notice_error(e)
- #    	end
-	# end
-
-	# def publish_to_channel channel, message
-	# 	newrelic_begin_rescue do
-	#   	return $redis.publish(channel, message)
-	#   end
-	# end
-
-	# def add_to_hash(hash, key, value, expires = 86400)
-	# 	newrelic_begin_rescue do
-	# 		$redis.hset(hash, key, value)
-	# 		# $redis.expire(hash, expires)
-	#   end
-	# end
-
-	# def get_hash_value(hash, key)
-	# 	newrelic_begin_rescue do
-	# 		$redis.hget(hash, key)
-	#   end
-	# end
-

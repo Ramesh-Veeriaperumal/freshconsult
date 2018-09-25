@@ -8,6 +8,12 @@ module SearchTestHelper
 
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search]
 
+  STATUSES = {
+    resolved_at: [Helpdesk::Ticketfields::TicketStatus::RESOLVED, Helpdesk::Ticketfields::TicketStatus::CLOSED],
+    closed_at: [Helpdesk::Ticketfields::TicketStatus::CLOSED],
+    pending_since: [Helpdesk::Ticketfields::TicketStatus::PENDING]
+  }.freeze
+
   def create_search_ticket(params)
     cc_emails = params[:cc_emails] || []
     fwd_emails = params[:fwd_emails] || []
@@ -186,5 +192,121 @@ module SearchTestHelper
       forum_name: topic.forum.name,
       description_text: topic.topic_desc
     }
+  end
+
+  def search_ticket_pattern(ticket)
+    ticket_pattern = {
+      id: ticket.id,
+      tags: ticket.tags,
+      responder_id: ticket.responder_id,
+      created_at: ticket.created_at.try(:utc).try(:iso8601),
+      subject: ticket.subject,
+      requester_id: ticket.requester_id,
+      group_id: ticket.group_id,
+      status: ticket.status,
+      source: ticket.source,
+      priority: ticket.priority,
+      archived: ticket.archive,
+      description_text: ticket.description,
+      due_by: ticket.due_by.try(:utc).try(:iso8601),
+      stats: stats(ticket)
+    }
+    ticket_pattern[:requester] = requester_pattern(ticket.requester) if ticket.requester
+    ticket_pattern
+  end
+
+  def requester_pattern(requester)
+    {
+      name: requester.name,
+      job_title: requester.job_title,
+      email: requester.email,
+      phone: requester.phone,
+      mobile: requester.mobile,
+      twitter_id: requester.twitter_id,
+      id: requester.id,
+      has_email: requester.email.present?,
+      active: requester.active,
+      avatar: requester.avatar,
+      language: requester.language
+    }
+  end
+
+  def stats(ticket)
+    {
+      agent_responded_at: ticket.ticket_states.agent_responded_at.try(:utc).try(:iso8601),
+      requester_responded_at: ticket.ticket_states.requester_responded_at.try(:utc).try(:iso8601),
+      first_responded_at: ticket.ticket_states.first_response_time.try(:utc).try(:iso8601),
+      status_updated_at: ticket.ticket_states.status_updated_at.try(:utc).try(:iso8601),
+      reopened_at: ticket.ticket_states.opened_at.try(:utc).try(:iso8601)
+    }.merge(status_based_stats(ticket))
+  end
+
+  def status_based_stats(ticket)
+    STATUSES.each_with_object({}) do |(key, value), res|
+      res[key] = ticket.ticket_states.safe_send(key).try(:utc).try(:iso8601) || (value.include?(ticket.status) ? ticket.ticket_states.updated_at.try(:utc).try(:iso8601) : nil)
+      res
+    end
+  end
+
+  def contact_pattern(contact)
+    contact_pattern = {
+      id: contact.id,
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone,
+      mobile: contact.mobile,
+      company_id: default_company(contact).company_id,
+      company_name: contact.company_name,
+      avatar: Hash,
+      twitter_id: contact.twitter_id,
+      facebook_id: contact.fb_profile_id,
+      external_id: contact.external_id,
+      unique_external_id: contact.unique_external_id,
+      other_emails: other_emails(contact)
+    }
+    contact_pattern[:other_companies] = other_companies(contact) if @account.multiple_user_companies_enabled?
+    contact_pattern
+  end
+
+  def default_company(contact)
+    @default_user_company ||= contact.user_companies.select(&:default).first
+  end
+
+  def other_emails(contact)
+    contact.user_emails.reject(&:primary_role).map(&:email)
+  end
+
+  def other_companies(contact)
+    contact.user_companies.preload(:company).map do |user_company|
+      contact_company_pattern(user_company) if user_company.company.present? && !user_company.default
+    end.compact
+  end
+
+  def contact_company_pattern(user_company)
+    {
+      id: user_company.company_id,
+      view_all_tickets: user_company.client_manager,
+      name: user_company.company.name,
+      avatar: Hash
+    }
+  end
+
+  def company_pattern(company)
+    user_count = company.users.count
+    {
+      id: company.id,
+      name: company.name,
+      description: company.description,
+      note: company.note,
+      domains: domains(company),
+      created_at: company.created_at.try(:utc),
+      updated_at: company.updated_at.try(:utc),
+      custom_fields: Hash,
+      user_count: user_count
+    }
+  end
+
+  def domains(company)
+    company.domains.nil? ? [] : company.domains.split(',')
   end
 end

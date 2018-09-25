@@ -293,8 +293,11 @@ defaults: &defaults
     - [update_segment_filter]
     - [register_freshconnect]
     - [undo_send]
+    - [send_domain_changed_mail]
     - [unlink_tickets]
     - [primary_language_change]
+    - [default_data_population]
+    - [freshops_service]
 
 development:
   <<: *defaults

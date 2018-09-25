@@ -80,7 +80,7 @@ module Ember
         end
 
         def load_objects
-          @items = @bot.bot_feedbacks
+          @items = @bot.bot_feedbacks.preload(ticket: { requester: [ { user_companies: { company: :avatar } }, :avatar] })
           load_unanswered
           response.api_meta = { count: @unanswered_list.count }
         end

@@ -491,4 +491,15 @@ module UsersTestHelper
   def get_default_company(contact)
     contact.user_companies.find_by_default(true)
   end
+
+  def enable_multiple_user_companies
+    Account.current.add_feature(:multiple_user_companies)
+    yield
+  ensure
+    disable_multiple_user_companies
+  end
+
+  def disable_multiple_user_companies
+    Account.current.revoke_feature(:multiple_user_companies)
+  end
 end

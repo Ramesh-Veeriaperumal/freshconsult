@@ -1,4 +1,8 @@
 module BotTestHelper
+  include UsersTestHelper
+  include CompanyTestHelper
+  include TicketsTestHelper
+
   def create_bot(options = {})
     avatar_hash = {
       is_default: false
@@ -92,6 +96,10 @@ module BotTestHelper
       portal_id: portal.id,
       portal_logo: get_portal_logo_url(portal)
     }
+  end
+
+  def enable_multiple_user_companies
+    !Account.current.multiple_user_companies_enabled? && Account.current.add_feature(:multiple_user_companies)
   end
 
   def enable_bot
@@ -236,10 +244,24 @@ module BotTestHelper
     bot_feedback
   end
 
+  def create_bot_feedback_and_bot_ticket(helpdesk_ticket,bot)
+    bot_feedback = create_bot_feedback(@bot.id)
+    bot_ticket = helpdesk_ticket.build_bot_ticket(ticket_id: helpdesk_ticket.id, account_id: Account.current.id, bot_id: bot.id, query_id: bot_feedback.query_id, conversation_id: bot_feedback.query_id)
+    bot_ticket.save
+    bot_feedback
+  end
+
+
+  def create_ticket_with_requester_and_companies
+    company_ids = [create_company, create_company].map(&:id)
+    requester = create_contact_with_other_companies(@account, company_ids)
+    create_ticket(:requester_id => requester.id)
+  end
+
   def bot_feedback_index_pattern(bot, start_at, end_at, useful = 1)
     useful = useful.present? ? [useful] : [1,3]
     conditions  = { bot_id: bot.id, state: 1, category: 2, useful: useful, created_at: start_at..end_at }
-    unanswered_list = bot.bot_feedbacks.where(conditions).order('received_at DESC')
+    unanswered_list = bot.bot_feedbacks.where(conditions).preload(ticket: { requester: [ { user_companies: { company: :avatar } }, :avatar] }).order('received_at DESC')
     responses = unanswered_list.map do |item|
       response_hash = {
         id: item.id,
@@ -254,9 +276,38 @@ module BotTestHelper
         customer_id: item.customer_id,
         client_id: item.client_id
       }
+      if item.ticket
+        response_hash[:ticket_id] = item.ticket.display_id
+        response_hash[:requester] = contact_hash(item.ticket.requester, :sideload_options => ['company'])
+      end
       response_hash
     end
     responses
+  end
+
+  def contact_hash(contact, options)
+    contact_hash = {
+      id: contact.id,
+      name: contact.name,
+      job_title: contact.job_title,
+      email: contact.email,
+      phone: contact.phone,
+      mobile: contact.mobile,
+      twitter_id: contact.twitter_id,
+      has_email: contact.email.present?,
+      active: contact.active,
+      avatar: contact.avatar
+    }
+    contact_hash.merge(company_info(contact)) if options[:sideload_options] && options[:sideload_options].include?('company')
+  end
+
+  def company_info(contact)
+    ret_hash = {}
+    if contact.default_user_company.present?
+      ret_hash[:company] = company_hash(contact)
+      ret_hash[:other_companies] = other_companies_hash(true, contact) if @account.multiple_user_companies_enabled?
+    end
+    ret_hash
   end
 
   def create_params(portal)
@@ -287,6 +338,13 @@ module BotTestHelper
       bot_feedback_ids << create_bot_feedback(bot_id, params).id
     end
     bot_feedback_ids
+  end
+
+  def create_bot_feedback_and_bot_ticket(helpdesk_ticket,bot)
+    bot_feedback = create_bot_feedback(bot.id)
+    bot_ticket = helpdesk_ticket.build_bot_ticket(ticket_id: helpdesk_ticket.id, account_id: Account.current.id, bot_id: bot.id, query_id: bot_feedback.query_id, conversation_id: bot_feedback.query_id)
+    bot_ticket.save
+    bot_feedback
   end
 
   def article_params(folder_visibility = Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
@@ -342,5 +400,24 @@ module BotTestHelper
         }
       }
     ].to_json
+  end
+
+  def request_body_ml_training_start_pattern(bot)
+    {
+      account_id: Account.current.id.to_s,
+      payload_type: 'ml_training_start',
+      payload: {
+        account_full_domain: Account.current.full_domain,
+        model_properties: central_publish_ml_training_start_pattern(bot)
+      }
+    }
+  end
+
+  def central_publish_ml_training_start_pattern(bot)
+    {
+      external_id: bot.external_id,
+      category_ids: bot.solution_category_metum_ids,
+      account_id: bot.account_id
+    }
   end
 end

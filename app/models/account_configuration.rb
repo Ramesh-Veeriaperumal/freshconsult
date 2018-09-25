@@ -14,6 +14,7 @@ class AccountConfiguration < ActiveRecord::Base
 
   after_update :update_billing, :update_reseller_subscription
   after_commit :update_crm_and_map, on: :update, :unless => :sandbox?
+  after_commit :populate_industry_based_default_data, on: :update
   include Concerns::DataEnrichmentConcern
 
   CONTACT_INFO_KEYS = [:full_name, :first_name, :last_name, :email, :notification_emails,  :job_title, :phone]
@@ -49,9 +50,9 @@ class AccountConfiguration < ActiveRecord::Base
 
 
   def notification_emails
-    all_admin_emails = account.account_managers.collect(&:email)
-    admin_notification_emails = all_admin_emails & contact_info[:notification_emails].to_a
-    admin_notification_emails = all_admin_emails & [admin_email] if admin_notification_emails.blank?
+    all_admin_emails = account.account_managers.collect {|admin| admin.email.downcase}
+    admin_notification_emails = all_admin_emails & contact_info[:notification_emails].to_a.map(&:downcase)
+    admin_notification_emails = all_admin_emails & [admin_email.downcase] if admin_notification_emails.blank?
     admin_notification_emails.presence || all_admin_emails
   end
 
@@ -93,19 +94,11 @@ class AccountConfiguration < ActiveRecord::Base
 
   	def update_crm_and_map
       if (Rails.env.production? or Rails.env.staging?) && company_contact_info_updated?
-        if redis_key_exists?(FRESHSALES_ADMIN_UPDATE)
-          CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {
-            account_id: account_id, 
-            item_id: id
-          })
-        else
-          Resque.enqueue_at(15.minutes.from_now, CRM::AddToCRM::UpdateAdmin, {:account_id => account_id, :item_id => id})
-        end
-        if redis_key_exists?(SIDEKIQ_MARKETO_QUEUE)
-          Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => account_id, :old_email => previous_email})
-        else
-          Resque.enqueue_at(15.minutes.from_now, Marketo::AddLead, {:account_id => account_id, :old_email => previous_email})
-        end
+        CRMApp::Freshsales::AdminUpdate.perform_at(15.minutes.from_now, {
+          account_id: account_id, 
+          item_id: id
+        })
+        Subscriptions::AddLead.perform_at(15.minutes.from_now, {:account_id => account_id, :old_email => previous_email})
       end
     end
 
@@ -126,4 +119,10 @@ class AccountConfiguration < ActiveRecord::Base
       self.account.sandbox?
     end
 
+    def populate_industry_based_default_data
+      # User.current check added to segregate updates triggered by contact enrichment sidekiq worker
+      if User.current.nil? && company_contact_info_updated? && !Account.current.sample_data_setup? && Account.current.subscription.trial?
+        DefaultDataPopulation.perform_async({:industry => company_info[:industry]})
+      end
+    end
 end

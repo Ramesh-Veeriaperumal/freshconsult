@@ -22,3 +22,54 @@ properties:
     type: string
   customer_id:
     type: string
+  ticket_id:
+    type: integer
+    description: Ticket created for the unanswered question
+  requester:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      job_title:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      mobile:
+        type: string
+      twitter_id:
+        type: string
+      has_email:
+        type: boolean
+      active:
+        type: boolean
+      avatar:
+        $ref: '#/definitions/avatar'
+      company:
+        type: object
+        properties:
+          id:
+            type: number
+          name:
+            type: string
+          view_all_tickets:
+            type: boolean
+          avatar: 
+            $ref: '#/definitions/avatar'
+      other_companies:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: number
+            name:
+              type: string
+            view_all_tickets:
+              type: boolean
+            avatar:
+              $ref: '#/definitions/avatar'
+      

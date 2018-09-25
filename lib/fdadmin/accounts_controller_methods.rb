@@ -51,7 +51,7 @@ module Fdadmin::AccountsControllerMethods
 
 	def fetch_email_details(account)
 		mail_array = []
-		account.all_email_configs.collect do |em|
+		account.all_email_configs.preload([:imap_mailbox, :smtp_mailbox]).collect do |em|
 			mail_hash = {}
 			mail_hash[:name] = em.name
 			mail_hash[:reply_email] = em.reply_email
@@ -165,4 +165,8 @@ module Fdadmin::AccountsControllerMethods
 			subscription.save!
 		end
 	end
+
+  def trigger_enable_old_ui_action
+    InternalService::FreshopsOperations.perform_async(params)
+  end
 end

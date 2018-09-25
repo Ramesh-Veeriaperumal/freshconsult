@@ -38,6 +38,8 @@ class Users::ContactDeleteForeverWorker < BaseWorker
         destroy_user_replies
         destroy_user_topics
         destroy_user_calls
+        destroy_custom_survey_results
+        destroy_survey_results
         destroy_user
       end
     rescue Exception => e
@@ -145,6 +147,14 @@ class Users::ContactDeleteForeverWorker < BaseWorker
     def destroy_user_topics
       destroy_unpublished_spam
       find_in_batches_and_destroy(@user.topics)
+    end
+
+    def destroy_survey_results
+      find_in_batches_and_destroy(@user.survey_results)
+    end
+
+    def destroy_custom_survey_results
+      find_in_batches_and_destroy(@user.custom_survey_results)
     end
 
     def destroy_unpublished_spam

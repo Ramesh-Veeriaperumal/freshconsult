@@ -28,6 +28,20 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
     @user_id = rand(10**10)
   end
 
+  def test_record_not_found_exception
+        assert_nothing_raised do
+            Social::PremiumFacebookWorker.any_instance.stubs(:fan_page).raises(ActiveRecord::RecordNotFound)
+            thread_id = 9999
+            msg_id = thread_id + 20
+            time = Time.now.utc
+            dm = sample_dms(thread_id, @user_id, msg_id, time)
+            Koala::Facebook::API.any_instance.stubs(:get_connections).returns(dm)
+            account_id = Account.last.id + 20
+            Social::PremiumFacebookWorker.new.perform('account_id' => account_id)
+            Social::PremiumFacebookWorker.any_instance.unstub(:fan_page)
+        end
+  end
+
   def test_dm_is_converted_to_a_ticket
     thread_id = rand(10**10)
     msg_id = thread_id + 20
