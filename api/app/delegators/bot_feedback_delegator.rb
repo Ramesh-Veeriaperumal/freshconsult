@@ -3,9 +3,6 @@ class BotFeedbackDelegator < BaseDelegator
 
   def initialize(record, options = {})
     @item = record
-    options.each do |key, value|
-      instance_variable_set("@#{key}", value)
-    end
     super(record, options)
   end
 

@@ -54,6 +54,7 @@ class TicketUpdatePropertyValidation < ApiValidation
     super(request_params, item, allow_string_param)
     @fr_due_by ||= item.try(:frDueBy).try(:iso8601) if item
     @due_by ||= item.try(:due_by).try(:iso8601) if item
+    @product = item.product_id if !request_params.key?(:product_id) && item.try(:product_id)
     @item = item
     fill_custom_fields(request_params, item.custom_field_via_mapping) if item && item.custom_field_via_mapping.present?
   end

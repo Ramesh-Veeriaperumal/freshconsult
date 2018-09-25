@@ -12,8 +12,7 @@ class Admin::TrialSubscriptionsController < ApiApplicationController
   end
 
   def cancel
-    @item.status = TrialSubscription::TRIAL_STATUSES[:cancelled]
-    if @item.save
+    if @item.mark_cancelled!
       head 204
     else
       render_custom_errors(@item)

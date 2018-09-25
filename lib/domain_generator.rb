@@ -1,6 +1,6 @@
 class DomainGenerator
 
-	attr_accessor :email, :email_name, :domain, :subdomain
+	attr_accessor :email, :email_name, :domain, :subdomain, :excluded_domains
 
 	include ActiveModel::Validations
 
@@ -13,8 +13,9 @@ class DomainGenerator
 	validate :email_validity
 	validate :disposable_email?
 
-	def initialize(email)
+	def initialize(email, excluded_domains = [])
 		self.email = Mail::Address.new(email)
+		self.excluded_domains = excluded_domains
 		Rails.logger.warn "Email not valid" unless self.valid?
 	end
 
@@ -43,8 +44,26 @@ class DomainGenerator
 			sample_account.run_domain_validations)
 	end
 
+	def valid_domain?(full_domain)
+		sample_account = Account.new
+		sample_account.full_domain = full_domain
+		!excluded_domains.include?(full_domain) && (DomainMapping.new(:domain => full_domain).valid? && 
+			sample_account.run_domain_validations)
+	end
+
 	def domain_name
 		@domain_name ||= domain_prefix.capitalize
+	end
+
+	def self.sample(email, count=1)
+		sample_domains = []
+		excluded_domains = []
+		count.times do 
+			current_sample_domain = new(email, excluded_domains)
+			sample_domains << current_sample_domain.subdomain
+			excluded_domains << current_sample_domain.domain
+		end
+		sample_domains
 	end
 
 	private
@@ -52,7 +71,7 @@ class DomainGenerator
 	def generate_helpdesk_domain
 		([""] + DOMAIN_SUGGESTIONS).each do |suggestion|
 			current_domain_suggestion = "#{domain_prefix}#{suggestion}.#{HELPDESK_BASE_DOMAIN}"
-			return current_domain_suggestion if self.class.valid_domain?(current_domain_suggestion)
+			return current_domain_suggestion if valid_domain?(current_domain_suggestion)
 		end
 		return nil
 	end
@@ -77,7 +96,7 @@ class DomainGenerator
 	def generate_random_domain_name
 		suggestion_keyword = DOMAIN_SUGGESTIONS.sample
 		current_domain_suggestion = "#{domain_prefix}#{suggestion_keyword}#{random_digits}.#{HELPDESK_BASE_DOMAIN}"
-		return current_domain_suggestion if self.class.valid_domain?(current_domain_suggestion)
+		return current_domain_suggestion if valid_domain?(current_domain_suggestion)
 	end
 
 	def random_digits

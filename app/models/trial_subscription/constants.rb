@@ -7,7 +7,8 @@ class TrialSubscription < ActiveRecord::Base
 
   RESULTS = {
     upgraded: 0,
-    downgraded: 1
+    downgraded: 1,
+    addons_changed: 2
   }.freeze
 
   TRIAL_INTERVAL_IN_DAYS = 90
@@ -16,6 +17,5 @@ class TrialSubscription < ActiveRecord::Base
     activate: TrialSubscriptionActions::PlanUpgrade,
     cancel: TrialSubscriptionActions::PlanDowngrade
   }.freeze
-
   TRIAL_SUBSCRIPTION_LP_FEATURE = :trial_subscription
 end

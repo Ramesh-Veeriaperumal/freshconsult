@@ -147,6 +147,10 @@ class User < ActiveRecord::Base
   has_many :scheduled_exports
   has_many :scheduled_ticket_exports, :dependent => :destroy
 
+  has_many :custom_survey_results, class_name: 'CustomSurvey::SurveyResult', foreign_key: 'customer_id'
+
+  has_many :survey_results, class_name: 'SurveyResult', foreign_key: 'customer_id'
+
   has_and_belongs_to_many :accesses,  
     :class_name => 'Helpdesk::Access',
     :join_table => 'user_accesses',

@@ -24,15 +24,6 @@ namespace :spam_watcher do
     puts "Check for abnormal activities end at  #{Time.now}"
   end
   
-  
-
-  task :clear_spam_tickets => :environment do
-    account_ids = $redis_others.perform_redis_op("smembers", "SPAM_CLEARABLE_ACCOUNTS")
-    return unless account_ids
-    accounts = Account.active_accounts.find(:all,:conditions => ["accounts.id in (?)",account_ids])
-    accounts.each { |account| Resque.enqueue Workers::ClearSpam }
-  end
-  
 end
 
 

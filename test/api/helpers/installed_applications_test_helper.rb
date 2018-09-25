@@ -136,6 +136,7 @@ module InstalledApplicationsTestHelper
   def create_integ_user_credentials(options = {})
     app = Integrations::Application.find_by_name(options[:app_name])
     installed_app = @account.installed_applications.find_by_application_id(app.id)
+    installed_app = create_application(options[:app_name]) if installed_app.nil?
     user_credential = installed_app.user_credentials.build
     user_credential.account_id = installed_app.account_id
     user_credential.user_id = options[:user_id]

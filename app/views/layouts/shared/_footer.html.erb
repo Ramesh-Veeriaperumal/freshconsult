@@ -81,9 +81,9 @@
 	  var APP_ENV = "<%= Rails.env %>";
 	</script>
 
-<% if (current_user.privilege?(:admin_tasks) && current_account.onboarding_pending?)  %>
-  <%= javascript_include_tag :'cdn/admin_onboarding' %>
-  <%= render partial: "admin_onboarding/onboarding_modal" %>
+<% if !current_account.launched?(:new_onboarding) && (current_user.privilege?(:admin_tasks) && current_account.onboarding_pending?)  %>	
+  <%= javascript_include_tag :'cdn/admin_onboarding' %>	
+  <%= render partial: "admin_onboarding/onboarding_modal" %>	
 <% else %>
 	<% if current_account.launched?(:onboarding_inlinemanual) %>
 		<script>window.inlineManualOptions = { language: "<%= I18n.locale %>" } ;</script>
@@ -94,10 +94,6 @@
 		<% end %>
 		<script type="text/javascript" >
 			window.inlineManualTracking = <%= inline_manual_people_tracing.to_json.html_safe %>
-			window.im_option = {
-				to_activate : <%= show_onboarding? %>,
-				topic_id : <%= inlinemanual_topic_id %>
-			}
 		</script>
 		<%= javascript_include_tag :'cdn/inline_manual_trigger' %>
 		<div class="hide" id="inline-manual-meta">

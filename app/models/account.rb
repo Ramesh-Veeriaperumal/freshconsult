@@ -637,7 +637,7 @@ class Account < ActiveRecord::Base
 
   # update domain name at Portal, Forum & Activities and support email
 
-  def update_default_domain_and_email_config(new_domain_name, support_email_name)
+  def update_default_domain_and_email_config(new_domain_name, support_email_name = "support")
     self.transaction do 
       update_account_and_main_portal_domain(new_domain_name)
       update_default_forum_category_name(new_domain_name)
@@ -661,6 +661,10 @@ class Account < ActiveRecord::Base
 
   def email_signup?
     "email_signup" == self.signup_method.to_s
+  end
+
+  def full_signup?
+    "new_signup_free" == self.signup_method.to_s
   end
 
   def active_suspended?
@@ -784,12 +788,15 @@ class Account < ActiveRecord::Base
   private
 
     def update_account_and_main_portal_domain new_domain_name
+      self.domain = new_domain_name
       self.assign_attributes({
-        :domain => new_domain_name,
         :name => new_domain_name.capitalize,
-        :helpdesk_name => new_domain_name
-      })
-      self.main_portal.name = new_domain_name
+        :helpdesk_name => new_domain_name,
+        :main_portal_attributes => {
+          :name => new_domain_name,
+          :id => self.main_portal.id
+        }
+      }) if self.email_signup?
     end
     
     def update_default_forum_category_name(new_domain_name)

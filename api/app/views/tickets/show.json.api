@@ -43,11 +43,13 @@ requester_hash = @item.requester
 stats_hash = @item.stats
 company_hash = @item.company_hash
 conversations_hash = @item.conversations
+sla_policy_hash = @item.sla_policy_hash
 response_hash.merge!(deleted: @item.deleted) if @item.deleted
 response_hash.merge!(associated_tickets_list: @item.associates) if @item.associated_ticket?
 response_hash.merge!(requester: requester_hash) if requester_hash
 response_hash.merge!(stats: stats_hash) if stats_hash
 response_hash.merge!(company: company_hash) if company_hash
+response_hash[:sla_policy] = sla_policy_hash if sla_policy_hash
 response_hash.merge!(conversations: conversations_hash) if conversations_hash
 response_hash.merge!(internal_agent_id: @item.internal_agent_id, internal_group_id: @item.internal_group_id) if Account.current.shared_ownership_enabled?
 JSON.generate(response_hash)

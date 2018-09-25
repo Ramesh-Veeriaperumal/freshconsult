@@ -16,12 +16,7 @@ class AgentGroupObserver < ActiveRecord::Observer
         args = { :account_id => agent_group.account_id,
                 :user_id => agent_group.user_id,
                 :group_id => agent_group.group_id }
-
-        if redis_key_exists?(ADD_AGENT_TO_ROUND_ROBIN)
-          Groups::AddAgentToRoundRobin.perform_async(args)
-        else
-          Resque.enqueue(Helpdesk::AddAgentToRoundRobin, args) #maintain state for new key
-        end
+        Groups::AddAgentToRoundRobin.perform_async(args)
       end
     end
     true

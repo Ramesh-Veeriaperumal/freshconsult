@@ -34,9 +34,7 @@ class BotValidation < ApiValidation
   end
 
   def validate_portal_id
-    if @portal_id.blank? && (@portal_id.to_i <= 0)
-      errors[:portal_id] << :invalid_portal_id
-    end
+    errors[:portal_id] << :invalid_portal_id if @portal_id.blank? || @portal_id.to_i <= 0
   end
 
   def validate_time_period

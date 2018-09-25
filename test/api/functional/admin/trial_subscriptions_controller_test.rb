@@ -121,6 +121,16 @@ class Admin::TrialSubscriptionsControllerTest < ActionController::TestCase
     assert_response 204
   end
 
+  def test_trial_subscription_cancellation_end_at
+    params_hash = { trial_plan: get_valid_plan_name }
+    post :create, construct_params({}, params_hash)
+    assert_response 204
+    put :cancel, construct_params({})
+    trial_subscription = Account.current.trial_subscriptions.last
+    assert_equal TrialSubscription::TRIAL_INTERVAL_IN_DAYS, trial_subscription.days_left_until_next_trial,
+                 'Trail should be 90 days when cancelled'
+  end
+
   def test_trial_subscription_cancellation_failure
     put :cancel, construct_params({})
     assert_response 400

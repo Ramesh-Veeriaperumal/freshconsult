@@ -1,1 +1,0 @@
-Fixtures::DefaultFeedbackWidgetTicket.new.create

@@ -24,6 +24,7 @@ module Ember
         @account.reload
         @bot = Account.current.bots.where(portal_id: portal_id).first || create_bot({ product: false, default_avatar: 1})
         @bot.bot_feedbacks.each(&:destroy)
+        @bot_feedback_ids = create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
         @before_all_run = true
       end
 
@@ -44,6 +45,30 @@ module Ember
           get :index, controller_params(version: 'private', id: @bot.id, start_at: DateTime.now.utc - 6, end_at: DateTime.now.utc + 1)
           assert_response 200
           match_json(bot_feedback_index_pattern(@bot, DateTime.now.utc - 6, DateTime.now.utc + 1))
+        end
+      end
+
+      def test_index_with_bot_ticket
+        enable_bot do
+          enable_multiple_user_companies
+          helpdesk_ticket = create_ticket_with_requester_and_companies
+          bot_feedback = create_bot_feedback_and_bot_ticket(helpdesk_ticket,@bot)
+
+          get :index, controller_params(version: 'private', id: @bot.id, start_at: DateTime.now.utc - 6, end_at: DateTime.now.utc + 1)
+          assert_response 200
+          match_json(bot_feedback_index_pattern(@bot, DateTime.now.utc - 6, DateTime.now.utc + 1))
+
+          parsed_response = JSON.parse(response.body)
+
+          # with bot_ticket
+          feedback_with_bot_ticket = parsed_response.select { |n| n['id'] == bot_feedback.id }[0]
+          assert_equal feedback_with_bot_ticket['ticket_id'], helpdesk_ticket.display_id
+          assert_equal feedback_with_bot_ticket['requester']['id'], helpdesk_ticket.requester_id
+
+          #without bot_ticket
+          feedback_without_bot_ticket = parsed_response.select { |n| n['id'] == @bot_feedback_ids[0] }[0]
+          assert_equal feedback_without_bot_ticket['ticket_id'], nil
+          assert_equal feedback_without_bot_ticket['requester'], nil
         end
       end
 
@@ -146,6 +171,15 @@ module Ember
           assert_response 403
           match_json(request_error_pattern(:access_denied))
           User.any_instance.unstub(:privilege?)
+        end
+      end
+
+      def test_index
+        enable_bot do
+          create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
+          get :index, controller_params(version: 'private', id: @bot.id, start_at: DateTime.now.utc - 1, end_at: DateTime.now.utc)
+          match_json(bot_feedback_index_pattern(@bot, DateTime.now.utc - 1, DateTime.now.utc))
+          assert_response 200
         end
       end
 
@@ -571,6 +605,16 @@ module Ember
           post :create_article, construct_params({ version: 'private', id: @bot.id }, article_params.merge(ids: bot_feedback_ids))
           assert_response 204
           assert_equal @account.solution_article_meta.size, (articles_count + 1)
+        end
+      end
+
+      def test_create_article_failure_in_save
+        enable_bot do
+          @controller.stubs(:primary_article_hash).returns({})
+          bot_feedback_ids = create_n_bot_feedbacks(@bot.id, BULK_BOT_FEEDBACK_COUNT)
+          post :create_article, construct_params({ version: 'private', id: @bot.id }, article_params.merge(ids: bot_feedback_ids))
+          @controller.unstub(:primary_article_hash)
+          assert_response 400
         end
       end
     end

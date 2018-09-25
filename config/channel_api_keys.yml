@@ -1,26 +1,26 @@
 defaults: &defaults
-  zapier:
-    auth_type: dummy
-    jwt_secret: dummy
-    secret_key: dummy
-    iv: dummy
-  frankbot:
-    auth_type: jwe
-    secret_key: 0222bcd8eb9911e7891d186590cc7ba7
-    jwt_secret: 0fde22cebceca72d39b841bb72043941
-    jwt_default_expiry: 10000
-  twitter:
-    auth_type: jwt
-    jwt_secret: dummy
+ zapier:
+   auth_type: jwt
+   jwt_secret: 0222bcd8eb9911e7891d186590cc7ba7
+   secret_key: 0fde22cebceca72d39b841bb72043941
+   iv: c9e65436ee6218c7
+ frankbot:
+   auth_type: jwe
+   secret_key: 0222bcd8eb9911e7891d186590cc7ba7
+   jwt_secret: 0fde22cebceca72d39b841bb72043941
+   jwt_default_expiry: 10000
+ twitter:
+   auth_type: jwt
+   jwt_secret: 9rQ7H5RVm35vSvNUDWFjZPz3YKsqxp8p
 
 development:
-  <<: *defaults
+ <<: *defaults
 
 test:
-  <<: *defaults
+ <<: *defaults
 
 staging:
-  <<: *defaults
+ <<: *defaults
 
 production:
-  <<: *defaults
+ <<: *defaults
