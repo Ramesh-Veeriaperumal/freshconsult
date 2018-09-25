@@ -4,10 +4,8 @@ class Product < ActiveRecord::Base
   include Cache::Memcache::Product
   include Cache::FragmentCache::Base
   include Cache::Memcache::Dashboard::Custom::CacheData
-  include MemcacheCleaner
-  include MemcacheKeys
 
-  DELETE_CACHE_KEYS =[TICKET_FIELDS_FULL]
+  clear_memcache [TICKET_FIELDS_FULL]
 
   before_destroy :remove_primary_email_config_role
   validates_uniqueness_of :name , :case_sensitive => false, :scope => :account_id

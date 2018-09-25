@@ -1,9 +1,6 @@
 class Helpdesk::PicklistValue < ActiveRecord::Base
   
-  include MemcacheCleaner
-  include MemcacheKeys
-
-  DELETE_CACHE_KEYS =[ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING,TICKET_FIELDS_FULL]
+  clear_memcache [ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING,TICKET_FIELDS_FULL]
 
   belongs_to_account
   self.table_name =  "helpdesk_picklist_values"

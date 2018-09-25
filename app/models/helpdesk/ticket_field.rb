@@ -7,10 +7,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketField
   include DataVersioning::Model
-  include MemcacheCleaner
-  include MemcacheKeys
 
-  DELETE_CACHE_KEYS =[TICKET_FIELDS_FULL]
+  clear_memcache [TICKET_FIELDS_FULL]
 
   self.table_name =  "helpdesk_ticket_fields"
   attr_accessible :name, :label, :label_in_portal, :description, :active, 

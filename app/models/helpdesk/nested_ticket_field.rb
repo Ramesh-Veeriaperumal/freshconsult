@@ -1,9 +1,6 @@
 class Helpdesk::NestedTicketField < ActiveRecord::Base
   
-  include MemcacheCleaner
-  include MemcacheKeys
-
-  DELETE_CACHE_KEYS =[TICKET_FIELDS_FULL]
+  clear_memcache [TICKET_FIELDS_FULL]
     
   self.primary_key = :id
 

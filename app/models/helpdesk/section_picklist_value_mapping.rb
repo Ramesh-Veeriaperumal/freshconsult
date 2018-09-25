@@ -1,9 +1,6 @@
 class Helpdesk::SectionPicklistValueMapping < ActiveRecord::Base
   
-  include MemcacheKeys
-  include MemcacheCleaner
-
-  DELETE_CACHE_KEYS =[TICKET_FIELDS_FULL]
+  clear_memcache [TICKET_FIELDS_FULL]
 
   self.primary_key = :id  
   attr_protected  :account_id
