@@ -123,9 +123,9 @@ def publish_report(category) {
 		                             reportName: "coverage $category", reportTitles: ''])
 		       
 		       if(category != 'sandbox') {
-                    junit allowEmptyResults: false, testResults: "test/api/reports/*.xml"
+                    junit allowEmptyResults: true, testResults: "test/api/reports/*.xml"
 		       }else{
-		            junit allowEmptyResults: true, testResults: "test/api/reports/*.xml"  
+		            junit allowEmptyResults: false, testResults: "test/api/reports/*.xml"  
 		       }
 
                       
