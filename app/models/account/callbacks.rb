@@ -1,7 +1,7 @@
 class Account < ActiveRecord::Base
   require 'launch_party/feature_class_mapping'
 
-  before_create :downcase_full_domain,:set_default_values, :set_shard_mapping, :save_route_info
+  before_create :set_default_values, :set_shard_mapping, :save_route_info
   before_create :add_features_to_binary_column
   validates_inclusion_of :time_zone, :in => TIME_ZONES, :unless => :time_zone_updation_running?
   before_update :check_default_values, :backup_changes, :check_timezone_update
@@ -19,6 +19,7 @@ class Account < ActiveRecord::Base
   after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_changed?
 
   before_validation :sync_name_helpdesk_name
+  before_validation :downcase_full_domain, :only => [:create , :update] , :if => :full_domain_changed?
   
   after_destroy :remove_global_shard_mapping, :remove_from_master_queries
   after_destroy :remove_shard_mapping, :destroy_route_info

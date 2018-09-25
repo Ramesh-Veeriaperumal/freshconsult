@@ -229,7 +229,11 @@ class Portal < ActiveRecord::Base
     }
   end
 
- 
+  def personalized_articles?
+    return false if preferences[:personalized_articles].blank?
+    preferences[:personalized_articles].class == String ? preferences[:personalized_articles].to_bool : preferences[:personalized_articles]
+  end
+
   def falcon_portal_enable?
     preferences.key?(:falcon_portal_key)
   end
@@ -413,4 +417,5 @@ class Portal < ActiveRecord::Base
       valid_domains << portal_url if portal_url.present?
       valid_domains
     end
+
 end

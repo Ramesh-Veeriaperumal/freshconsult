@@ -132,7 +132,7 @@ class UserEmail < ActiveRecord::Base
     end
 
     def change_email_status
-      self.verified = false
+      self.verified = user.active_freshid_agent?
       true
     end
 
