@@ -875,7 +875,7 @@ module Ember
 
       def test_analytics_without_access
         enable_bot do
-          user = add_new_user(@account)
+          user = add_new_user(@account, active: true)
           login_as(user)
           get :analytics, controller_params(version: 'private', id: 1, start_date: '2018-02-01', end_date: '2018-03-01')
           assert_response 403
