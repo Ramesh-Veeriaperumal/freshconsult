@@ -208,7 +208,7 @@
       :freshcaller_widget: false
       :falcon: false
       :opt_out_analytics: false
-      :disable_old_ui: false
+      :disable_old_ui: true
       :oauth2: false
       :segments: false
       :proactive_outreach: false

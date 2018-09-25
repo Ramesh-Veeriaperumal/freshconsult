@@ -276,11 +276,17 @@ class Billing::BillingController < ApplicationController
     def update_features
       SAAS::SubscriptionActions.new.change_plan(@account, @old_subscription, @existing_addons)
       SAAS::SubscriptionEventActions.new(@account, @old_subscription, @existing_addons).change_plan if @account.new_pricing_launched?
+      if Account.current.active_trial.present?
+        Account.current.active_trial.update_result!(@old_subscription, Account.current.subscription)
+      end
     end
 
-    def update_features?            
-      @old_subscription.subscription_plan_id != @account.subscription.subscription_plan_id or 
-        addons_changed?
+    def update_features?
+      plan_changed? || addons_changed?
+    end
+
+    def plan_changed?
+      @old_subscription.subscription_plan_id != @account.subscription.subscription_plan_id
     end
 
     def addons_changed?

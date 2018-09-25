@@ -10,3 +10,4 @@
 //= require app/search/templates/solution_context_search
 //= require app/solutions/search_config.js
 //= require app/solutions/after_save.js
+//= require plugins/clipboard.js

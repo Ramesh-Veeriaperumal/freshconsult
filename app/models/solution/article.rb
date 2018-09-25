@@ -283,11 +283,7 @@ class Solution::Article < ActiveRecord::Base
 
     def queue_quest_job
       args = { :id => self.id, :account_id => self.account_id }
-      if redis_key_exists?(SIDEKIQ_GAMIFICATION_PROCESS_SOLUTION_QUESTS)
-        Gamification::ProcessSolutionQuests.perform_async(args)
-      else
-        Resque.enqueue(Gamification::Quests::ProcessSolutionQuests, args)
-      end
+      Gamification::ProcessSolutionQuests.perform_async(args)
     end
 
     def status_in_default_folder

@@ -18,11 +18,7 @@ module Integrations::Jira::WebhookInstaller
       :operation => "create_webhooks",
       :app_id => self.id
     }
-    if redis_key_exists?(JIRA_ACC_UPDATES_SIDEKIQ_ENABLED)
-      Integrations::JiraAccountConfig.perform_async(options)
-    else
-      Resque.enqueue(Workers::Integrations::JiraAccountUpdates,options)
-    end
+    Integrations::JiraAccountConfig.perform_async(options)
   rescue => error
     Rails.logger.error "Error while creating webhook - #{Account.current.id} - #{error}"
   end
@@ -34,11 +30,7 @@ module Integrations::Jira::WebhookInstaller
         :domain => self.configs_domain,
         :operation => "delete_webhooks"
       }
-    if redis_key_exists?(JIRA_ACC_UPDATES_SIDEKIQ_ENABLED)
-      Integrations::JiraAccountConfig.perform_async(options)
-    else
-      Resque.enqueue(Workers::Integrations::JiraAccountUpdates,options)
-    end
+    Integrations::JiraAccountConfig.perform_async(options)
   rescue => error
     Rails.logger.error "Error while deleting webhook - #{Account.current.id} - #{error}"
   end

@@ -319,6 +319,9 @@ class SubscriptionsController < ApplicationController
       return if scoper.subscription_plan_id == @cached_subscription.subscription_plan_id
       SAAS::SubscriptionActions.new.change_plan(scoper.account, @cached_subscription, @cached_addons)
       SAAS::SubscriptionEventActions.new(scoper.account, @cached_subscription, @cached_addons).change_plan if current_account.new_pricing_launched?
+      if Account.current.active_trial.present?
+        Account.current.active_trial.update_result!(@cached_subscription, Account.current.subscription)
+      end
     end
 
     #Events
@@ -331,11 +334,7 @@ class SubscriptionsController < ApplicationController
     def add_event
       args = { :account_id => @subscription.account_id, :subscription_id => @subscription.id,
             :subscription_hash => subscription_info(@cached_subscription) }
-      if redis_key_exists?(SIDEKIQ_ADD_SUBSCRIPTION_EVENTS)
-        Subscriptions::SubscriptionAddEvents.perform_async(args)
-      else
-        Resque.enqueue(Subscription::Events::AddEvent, args)
-      end
+      Subscriptions::SubscriptionAddEvents.perform_async(args)
     end
 
     def key
