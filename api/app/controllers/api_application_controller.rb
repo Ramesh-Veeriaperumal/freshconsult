@@ -88,6 +88,7 @@ class ApiApplicationController < MetalApiController
 
   around_filter :handle_notification, if: :import_api?
 
+ # This should be the last arount filter , can be make available to public as needed
   around_filter :response_cache, only: [:index, :show], if: :private_api?
 
   SINGULAR_RESPONSE_FOR = %w(show create update).freeze
@@ -99,18 +100,23 @@ class ApiApplicationController < MetalApiController
   NAMESPACED_CONTROLLER_REGEX = /pipe\/|channel\/v2\/|channel\/|bot\//
 
   def response_cache
-      cache_key = self.class::RESPONSE_CACHE_KEYS[action_name] if defined? self.class::RESPONSE_CACHE_KEYS
-      @cache_data = MemcacheKeys.get_from_cache(cache_key % { :account_id => current_account.id }) unless cache_key.nil?
-      if @cache_data.present?
-        response.body = @cache_data
-        response.headers['Content-Type'] = "application/json; charset=utf-8"
-      else
-        yield
-      end
-    ensure
-      unless @cache_data.present?
-        MemcacheKeys.cache(cache_key % { :account_id => current_account.id }, response.body) unless cache_key.nil?
-      end
+    if response_cache_data.present?
+      Rails.logger.info "API cache HIT | #{controller_name}/#{action_name} | Acc: #{current_account.id}"
+      response.body = response_cache_data
+      response.headers['Content-Type'] = "application/json; charset=utf-8" #assumption we are handling only json response
+    else
+      Rails.logger.info "API cache MISS | #{controller_name}/#{action_name} | Acc: #{current_account.id}"
+      yield
+      MemcacheKeys.cache(response_cache_key % { account_id: current_account.id }, response.body) if response_cache_key
+    end
+  end
+  
+  def response_cache_key
+    @cache_key ||= self.class::RESPONSE_CACHE_KEYS[action_name] if defined? self.class::RESPONSE_CACHE_KEYS
+  end
+
+  def response_cache_data
+    @cache_data ||= MemcacheKeys.get_from_cache(response_cache_key % { account_id: current_account.id }) if response_cache_key
   end
 
   def index
