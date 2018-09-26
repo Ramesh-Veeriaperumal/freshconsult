@@ -109,7 +109,6 @@ def execute_test_cases(category) {
               cd /home/jenkins/helpkit/
               bundle exec ruby test/api/suites/sandbox_test_suite.rb
               yes | cp -rf /home/jenkins/helpkit/tmp/coverage /home/jenkins/workspace/$jobName/tmp/
-              yes | cp -rf /home/jenkins/helpkit/test/api/reports/*.xml /home/jenkins/workspace/$jobName/test/api/reports/
               """
         }
 
@@ -154,6 +153,7 @@ def distributed_run(category) {
 						         }
 						         catch (e) {
 						               echo "issue with test execution" + e
+						               currentBuild.result = 'UNSTABLE'
 						         }
 		
 					    		 finally {
