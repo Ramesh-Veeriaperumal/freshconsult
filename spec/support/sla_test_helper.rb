@@ -14,10 +14,10 @@ module SlaTestHelper
     conditions = { 'ticket_type' => ['Incident'] }
     resolution_time = [7200, 10_800, 14_400, 18_000] # [urgent, high, medium, low]
     response_time = [3600, 7200, 10_800, 14_400]
-    create_sla_policy(true, conditions, {}, {}, resolution_time: resolution_time, response_time: response_time)
+    build_sla_policy(true, conditions, {}, {}, resolution_time: resolution_time, response_time: response_time)
   end
 
-  def create_sla_policy(is_active = true, conditions = {}, response_rule = '', resolution_rule = '', options = {})
+  def build_sla_policy(is_active = true, conditions = {}, response_rule = '', resolution_rule = '', options = {})
     sla_policy = FactoryGirl.build(
       :sla_policies,
       name: options[:name] || Faker::Lorem.words(5),

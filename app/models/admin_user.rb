@@ -15,7 +15,7 @@ class AdminUser < ActiveRecord::Base
 
   validates_uniqueness_of :name, :message => "is already in use"
  
-  validates_format_of :name, :with => /^([a-z0-9_]{2,16})$/i,
+  validates_format_of :name, :with => /\A([a-z0-9_]{2,16})\z/i,
     :message => "must be 4 to 16 letters, numbers or underscores and have no spaces"
 
   ADMIN_ROLES = [
