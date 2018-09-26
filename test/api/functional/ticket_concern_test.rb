@@ -70,7 +70,7 @@ class FakeControllerTest < ActionController::TestCase
     User.any_instance.stubs(:group_ticket_permission).returns(true).at_most_once
     Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(nil)
     Helpdesk::Ticket.any_instance.stubs(:requester_id).returns(nil)
-    User.any_instance.stubs(:agent_groups).returns([]).at_most_once
+    User.any_instance.stubs(:associated_group_ids).returns([]).at_most_once
     @controller.send(:verify_ticket_permission, @agent,  Helpdesk::Ticket.first)
     User.any_instance.unstub(:can_view_all_tickets, :group_ticket_permission, :agent_groups)
     Helpdesk::Ticket.unstub(:responder_id, :requester_id)

@@ -1,18 +1,19 @@
 class PortalDrop < BaseDrop
-  
+
   include Rails.application.routes.url_helpers
-  
+
   self.liquid_attributes += [:name, :language]
 
   MOST_VIEWED_ARTICLES_COUNT = 10
   MAX_ARTICLES_LIMIT = 30
   ARTICLE_CACHE_EXPIRY = 1.day
+  USER_LOGIN_PAGE = 'user_login'.freeze
 
   include Redis::RedisKeys
   include Redis::PortalRedis
 
   CACHE_METHODS = [:solution_categories, :folders, :articles_count]
-  
+
   def initialize(source)
     super source
   end
@@ -22,19 +23,19 @@ class PortalDrop < BaseDrop
     @current_page = current_context['current_page_token']
     @facebook_portal = current_context['facebook_portal']
     @context = current_context
-    
+
     super
   end
 
   # Portal branding related information
   def logo_url
     @logo_url ||=  MemcacheKeys.fetch(["v8", "portal", "logo_href", source],7.days.to_i) do
-            source.logo.nil? ? 
+            source.logo.nil? ?
               "/assets/misc/logo.png" :
-              AwsWrapper::S3Object.public_url_for(source.logo.content.path(:logo), 
+              AwsWrapper::S3Object.public_url_for(source.logo.content.path(:logo),
                             source.logo.content.bucket_name,
                             :secure => true)
-                
+
     end
   end
 
@@ -60,7 +61,7 @@ class PortalDrop < BaseDrop
       end
     end
   end
-  
+
   def can_signup_feature
     feature? :signup_link
   end
@@ -72,7 +73,7 @@ class PortalDrop < BaseDrop
   def home_url
     @home_url ||= support_home_path
   end
-  
+
   def signup_url
     @signup_url ||= support_signup_path(url_options)
   end
@@ -80,11 +81,11 @@ class PortalDrop < BaseDrop
   def logout_url
     @logout_url ||= logout_path(url_options)
   end
-  
+
   def new_ticket_url
     @new_ticket_url ||= new_support_ticket_path(url_options)
   end
-  
+
   def helpdesk_url
     @helpdesk_url ||= root_path
   end
@@ -93,7 +94,7 @@ class PortalDrop < BaseDrop
     @my_topics_url ||= my_topics_support_discussions_topics_path
   end
 
-  def new_topic_url    
+  def new_topic_url
     _opts = url_options.merge({ :forum_id => @context['forum'].id }) if @context['forum'].present?
     @new_topic_url ||= new_support_discussions_topic_path( _opts )
   end
@@ -108,6 +109,11 @@ class PortalDrop < BaseDrop
 
   def has_user_signed_in
     @has_user_signed_in ||= user ? true : false
+  end
+
+
+  def is_not_login_page
+     (current_page && current_page != USER_LOGIN_PAGE)
   end
 
   def has_alternate_login
@@ -198,7 +204,7 @@ class PortalDrop < BaseDrop
                       c.solution_folder_meta.visible(portal_user) }.reject(&:blank?) || []).flatten
   end
 
-  # !MODEL-ENHANCEMENT Need to make published articles for a 
+  # !MODEL-ENHANCEMENT Need to make published articles for a
   # folder to be tracked inside the folder itself... similar to fourms
   def articles_count
     @articles_count ||= folders.map{ |f| f.solution_article_meta.published.count }.sum
@@ -245,9 +251,9 @@ class PortalDrop < BaseDrop
   def recent_articles
     @recent_articles ||= source.account.solution_article_meta.for_portal(source).published.newest(10)
   end
-  
+
   def url_options
-    @url_options ||= { :host => source.host }    
+    @url_options ||= { :host => source.host }
   end
 
   def url_options_with_protocol
@@ -257,7 +263,7 @@ class PortalDrop < BaseDrop
   def paid_account
     @paid_account ||= portal_account.subscription.paid_account?
   end
-  
+
   def settings
     @settings ||= source.template.preferences
   end
@@ -265,21 +271,21 @@ class PortalDrop < BaseDrop
   def language_list
     source.language_list
   end
-  
+
   def recent_topics
     Forum::RecentTopicsDrop.new(self.source)
   end
-  
+
   def languages
     source.account.all_portal_language_objects
   end
-  
+
   def current_language
     Language.current
   end
-  
+
   def personalized_articles?
-    source.preferences[:personalized_articles].blank? ? false : source.preferences[:personalized_articles].to_bool
+    source.personalized_articles?
   end
 
   def freshid_feature?
@@ -296,7 +302,7 @@ class PortalDrop < BaseDrop
 				        [ support_tickets_path,     :tickets,     portal_user ]]
 
 			@load_tabs ||= tabs.map { |s|
-  	    HashDrop.new( :name => s[1].to_s, :url => s[0], 
+  	    HashDrop.new( :name => s[1].to_s, :url => s[0],
           :label => (s[3] || I18n.t("header.tabs.#{s[1].to_s}")), :tab_type => s[1].to_s ) if s[2]
       }.reject(&:blank?)
     end
@@ -309,5 +315,5 @@ class PortalDrop < BaseDrop
 			key = PORTAL_CACHE_VERSION % { :account_id => source.account_id }
 			get_portal_redis_key(key) || "0"
 		end
-    
+
 end

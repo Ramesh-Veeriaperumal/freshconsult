@@ -10,7 +10,7 @@ class Admin::PortalController < Admin::AdminController
     main_portal_edit unless current_account.multi_product_enabled?
     @products = current_account.products.all(:include => :portal).select{ |p| !p.portal_enabled? }
   end
-  
+
   def settings
     @account = current_account
     @restricted_helpdesk = current_account.restricted_helpdesk?
@@ -42,6 +42,7 @@ class Admin::PortalController < Admin::AdminController
   end
 
   def update
+    params[:portal][:preferences][:personalized_articles] = article_pref_value
     params[:portal][:preferences] = @portal.preferences.deep_merge(params[:portal][:preferences])
     if @portal.update_attributes(params[:portal])
       flash[:notice] = t('flash.portal.update.success')
@@ -53,17 +54,27 @@ class Admin::PortalController < Admin::AdminController
   end
 
   def destroy
-    flash[:notice] = !@portal.main_portal && @portal.destroy ? t('flash.portal.destroy.success', :product_name => @portal.product.name) : 
+    flash[:notice] = !@portal.main_portal && @portal.destroy ? t('flash.portal.destroy.success', :product_name => @portal.product.name) :
       t('flash.portal.destroy.failure')
     redirect_to admin_portal_index_path
   end
-  
+
   def delete_logo
-    delete_icon('logo')    
+    delete_icon('logo')
   end
-  
+
   def delete_favicon
     delete_icon('fav_icon')
+  end
+
+  private
+
+  def article_pref_value
+    article_pref = params[:portal][:preferences][:personalized_articles]
+    article_pref.to_bool if article_pref.present? && article_pref.is_a?(String)
+  rescue => e
+    Rails.logger.error "article_pref_value :: #{current_account.id} :: #{e}"
+    false
   end
 
   protected
@@ -117,7 +128,7 @@ class Admin::PortalController < Admin::AdminController
       @solution_categories = current_account.solution_category_meta.preload(:primary_category)
       @forums_categories = current_account.forum_categories
     end
-    
+
     def delete_icon(icon_type)
       @portal.safe_send(icon_type).destroy
       @portal.save
@@ -147,4 +158,5 @@ class Admin::PortalController < Admin::AdminController
       flash[:notice] = t(:"flash.portal.not_found.#{obj}")
       redirect_to admin_portal_index_path
     end
+
 end

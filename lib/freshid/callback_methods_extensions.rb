@@ -6,7 +6,7 @@ module Freshid::CallbackMethodsExtensions
   
   def user_active? user
     ###### Overridden ######
-    user.active? && user.primary_email.verified?
+    user.active_and_verified?
   end
   
   def company_field_update_required?
