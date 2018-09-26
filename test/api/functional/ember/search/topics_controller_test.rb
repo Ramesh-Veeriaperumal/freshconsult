@@ -16,18 +16,18 @@ module Ember::Search
 
     def test_results_with_valid_params
       topic = create_test_topic(Account.current.forums.first)
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([topic], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'spotlight', term:  Faker::Lorem.word, limit: 3)
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([topic]) do
+        post :results, construct_params(version: 'private', context: 'spotlight', term:  Faker::Lorem.word, limit: 3)
+      end
       assert_response 200
       assert_equal [topic_pattern(topic)].to_json, response.body
     end
 
     def test_results_with_merge_context
       topic = create_test_topic(Account.current.forums.first)
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([topic], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'merge', term:  Faker::Lorem.word, limit: 3)
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([topic]) do
+        post :results, construct_params(version: 'private', context: 'merge', term:  Faker::Lorem.word, limit: 3)
+      end
       assert_response 200
       assert_equal [topic_pattern(topic)].to_json, response.body
     end
