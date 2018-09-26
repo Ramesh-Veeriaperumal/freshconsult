@@ -22,7 +22,7 @@ module Helpdesk::Ticketfields::TicketStatus
       elsif custom_status_name_same_as_default_status_name?(st, attr)
         return
       #Not to allow default values with attr hash to enter , below condition only for custom value status updation and deletion, allowing will automatically update "custom value with default keys"
-      elsif((st.name).casecmp(attr[:name]) == 0 && st.deleted? && !(DEFAULT_STATUSES.keys.include?(attr[:status_id])))
+      elsif custom_status_name_same_as_deleted_status_name?(st, attr)
         t_s = st
         t_s.deleted = false # restore the deleted status if the user adds the status with the same name
         break
@@ -63,4 +63,7 @@ module Helpdesk::Ticketfields::TicketStatus
       ((I18n.t(status.name.downcase)).casecmp(attr[:name]) == 0 && (!attr[:status_id] || DEFAULT_STATUSES.keys.include?(attr[:status_id])))
     end
 
+    def custom_status_name_same_as_deleted_status_name?(status, attr)
+      ((status.name).casecmp(attr[:name]) == 0 && status.deleted? && !(DEFAULT_STATUSES.keys.include?(attr[:status_id])))
+    end
 end
