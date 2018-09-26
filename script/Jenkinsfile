@@ -154,7 +154,6 @@ def distributed_run(category) {
 						         }
 						         catch (e) {
 						               echo "issue with test execution" + e
-						               currentBuild.result = 'UNSTABLE'
 						         }
 		
 					    		 finally {
