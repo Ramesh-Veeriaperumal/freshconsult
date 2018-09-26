@@ -98,6 +98,7 @@ Helpkit::Application.routes.draw do
     resources :canned_response_folders, controller: 'canned_response_folders', only: [:index, :show]
     resources :canned_responses, controller: 'canned_responses', only: [:index, :show]
     resources :scenario_automations, controller: 'scenario_automations', only: :index
+    get 'canned_response_folders/:id/responses', to: 'canned_responses#folder_responses'
 
     resources :surveys, only: [:index] do
       collection do

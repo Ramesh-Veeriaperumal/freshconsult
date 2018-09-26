@@ -1,14 +1,25 @@
 class CannedResponsesController < ApiApplicationController
   include HelperConcern
   include TicketConcern
+  include HelpdeskAccessMethods
 
-  decorate_views
+  decorate_views(decorate_objects: [:folder_responses])
 
   before_filter :canned_response_permission?, :load_ticket, only: [:show]
   before_filter :filter_ids, only: :index
+  before_filter :load_folder, :validate_filter_params, only: :folder_responses
   SLAVE_ACTIONS = %w[index search].freeze
 
   MAX_IDS_COUNT = 10
+
+  def folder_responses
+    @items = accessible_from_esv2('Admin::CannedResponses::Response', { size: 300 }, default_visiblity, 'raw_title', @folder.id)
+    @items = fetch_ca_responses_from_db(@folder.id) if @items.nil?
+    # pagination is handled here because load_objects is overridden here for the index action
+    @items_count = @items.count
+    @items = paginate_items(@items)
+    response.api_meta = { count: @items_count }
+  end
 
   private
 
@@ -48,6 +59,11 @@ class CannedResponsesController < ApiApplicationController
       log_and_render_404 if @items.blank?
     end
 
+    def load_folder
+      @folder = current_account.canned_response_folders.find_by_id(params[:id])
+      log_and_render_404 unless @folder
+    end
+
     def filter_ids
       @ids = params[:ids].to_s.split(',').map(&:to_i).reject(&:zero?).first(MAX_IDS_COUNT)
       log_and_render_404 if @ids.blank?
@@ -70,5 +86,12 @@ class CannedResponsesController < ApiApplicationController
 
     def canned_response_permission?
       render_request_error(:access_denied, 403) unless @item.visible_to_me?
+    end
+
+    def fetch_ca_responses_from_db(folder_id = nil)
+      options = [{ folder_id: @folder.id }]
+      ca_responses = accessible_elements(current_account.canned_responses,
+                                         query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', *options))
+      (ca_responses || []).compact
     end
 end
