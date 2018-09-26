@@ -14,9 +14,9 @@ module Ember::Search
 
     def test_results_with_spotlight_context
       ticket = create_ticket
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([ticket], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'spotlight')
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'spotlight')
+      end
       
       assert_response 200
       assert_equal [search_ticket_pattern(ticket)].to_json, response.body
@@ -24,9 +24,9 @@ module Ember::Search
 
     def test_results_with_created_at_filter_params
       ticket = create_ticket
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([ticket], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'spotlight', filter_params: {created_at: "0"})
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'spotlight', filter_params: {created_at: "0"})
+      end
       assert_response 200
       assert_equal [search_ticket_pattern(ticket)].to_json, response.body
     end
@@ -40,45 +40,45 @@ module Ember::Search
       custom_field_name << ticket_field.last.name
       account.save
       ticket = create_ticket({custom_field: {"test_custom_number_1": "3"}})
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([ticket], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'spotlight', filter_params: {custom_fields: {"test_custom_number_1": "3"}})
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'spotlight', filter_params: {custom_fields: {"test_custom_number_1": "3"}})
+      end
       assert_response 200
       assert_equal [search_ticket_pattern(ticket)].to_json, response.body
     end
 
     def test_results_with_merge_context_and_search_field_display_id
       ticket = create_ticket
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([ticket], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'merge', field: 'display_id')
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'merge', field: 'display_id')
+      end
       assert_response 200
       assert_equal [search_ticket_pattern(ticket)].to_json, response.body
     end
 
     def test_results_with_merge_context_and_search_field_subject
       ticket = create_ticket
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([ticket], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'merge', field: 'subject')
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'merge', field: 'subject')
+      end
       assert_response 200
       assert_equal [search_ticket_pattern(ticket)].to_json, response.body
     end
 
     def test_results_with_merge_context_and_search_field_requester
       ticket = create_ticket
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([ticket], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'merge', field: 'requester')
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'merge', field: 'requester')
+      end
       assert_response 200
       assert_equal [search_ticket_pattern(ticket)].to_json, response.body
     end
 
     def test_results_with_recent_tracker_context
       ticket = create_ticket
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([ticket], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'recent_tracker')
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'recent_tracker')
+      end
       assert_response 200
       assert_equal [search_ticket_pattern(ticket)].to_json, response.body
     end
@@ -90,9 +90,9 @@ module Ember::Search
     	user.agent.update_attributes(ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
     	Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
     	ticket = create_ticket({}, group)
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([ticket], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'spotlight')
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([ticket]) do
+        post :results, construct_params(version: 'private', context: 'spotlight')
+      end
       user.agent.update_attributes(:ticket_permission => permission)
       Account.any_instance.unstub(:shared_ownership_enabled?)
       assert_response 200
