@@ -128,8 +128,21 @@ def distributed_run(category) {
 
    timestamps {
    
+   image_name = "";
+   
+   if(category != 'pronto') {
+             image_name = "792634465463.dkr.ecr.us-east-1.amazonaws.com/fdesk/backend_v2"
+                      
+   }else{
+             image_name = "792634465463.dkr.ecr.us-east-1.amazonaws.com/fdesk/backend_v2"
+
+   }
+ 
+
+   
+   
    //Image name where this job has to run
-	       docker.image('792634465463.dkr.ecr.us-east-1.amazonaws.com/fdesk/backend_v2').inside {
+	       docker.image(image_name).inside {
        
 							    //Checkout stage
 						stage(category) {
