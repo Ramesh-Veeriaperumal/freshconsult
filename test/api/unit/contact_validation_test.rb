@@ -196,6 +196,23 @@ class ContactValidationTest < ActionView::TestCase
     Account.unstub(:current)
   end
 
+  def test_contact_with_other_emails_empty
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    controller_params = {
+      name: Faker::Lorem.characters(15),
+      email: nil, 
+      other_emails: [],
+      phone: Faker::Lorem.characters(10)
+    }
+    item = nil
+    contact = ContactValidation.new(controller_params, item)
+    assert contact.valid?
+    assert contact.valid?(:update)
+    assert contact.errors.full_messages.empty?
+  end
+
   private
 
     def contact_field(name)
