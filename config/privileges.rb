@@ -143,7 +143,7 @@ Authority::Authorization::PrivilegeList.build do
 
     # Used for API V2 canned_response
     resource :"canned_response_folder", only: [:index, :show]
-    resource :"canned_response", only: [:index, :show]
+    resource :"canned_response", only: [:index, :show, :folder_responses]
 
     # Used for API V2 scenario_automations
     resource :"scenario_automation", only: [:index]

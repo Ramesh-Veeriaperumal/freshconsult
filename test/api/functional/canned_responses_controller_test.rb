@@ -1,5 +1,6 @@
 require_relative '../../test_helper'
-['canned_responses_helper.rb', 'group_helper.rb', 'agent_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['canned_responses_helper.rb', 'group_helper.rb', 'agent_helper.rb', 'ticket_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['canned_responses_test_helper.rb', 'canned_response_folders_test_helper.rb', 'attachments_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 require_relative "#{Rails.root}/lib/helpdesk_access_methods.rb"
 
 class CannedResponsesControllerTest < ActionController::TestCase
@@ -273,5 +274,44 @@ class CannedResponsesControllerTest < ActionController::TestCase
     end
     match_json(pattern)
   end
-end
 
+  def test_folder_responses
+    folder_id = @@ca_folder_all.id
+    ca_responses = Array.new(10) { create_canned_response(@@ca_folder_all.id) }
+    get :folder_responses, controller_params(id: folder_id)
+    assert_response 200
+    pattern = []
+    ca_responses.each do |ca|
+      pattern << ca_response_show_pattern(ca.id)
+    end
+    match_json(pattern)
+  end
+
+  def test_folder_responses_with_invalid_folder_id
+    get :folder_responses, controller_params(id: Faker::Number.number(6))
+    assert_response 404
+  end
+
+  def test_folder_responses_with_pagination
+    folder_id = @@ca_folder_all.id
+    10.times do
+      create_canned_response(@@ca_folder_all.id)
+    end
+    get :folder_responses, controller_params(id: folder_id, per_page: 1)
+    assert_response 200
+    assert JSON.parse(response.body).count == 1
+    get :folder_responses, controller_params(id: folder_id, per_page: 1, page: 2)
+    assert_response 200
+    assert JSON.parse(response.body).count == 1
+  end
+
+  def test_folder_responses_with_pagination_with_default_limit
+    folder_id = @@ca_folder_all.id
+    40.times do
+      create_canned_response(@@ca_folder_all.id)
+    end
+    get :folder_responses, controller_params(id: folder_id)
+    assert_response 200
+    assert JSON.parse(response.body).count == ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
+  end
+end
