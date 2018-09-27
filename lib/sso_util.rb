@@ -83,6 +83,9 @@ module SsoUtil
     settings.name_identifier_format = SAML_NAME_ID_FORMAT
     settings.name_identifier_format = SAML_NAME_ID_UNSPECIFIED if current_account.features?(:saml_unspecified_nameid)
     settings.idp_cert_fingerprint_algorithm = XMLSecurity::Document::SHA256 unless acc.launched?(:sha1_enabled)
+    if current_account.launched?(:saml_ecrypted_assertion)
+      settings.private_key = SAMLConfigs::SP_KEY
+    end
     settings
   end
 
@@ -185,8 +188,7 @@ module SsoUtil
   def validate_saml_response(acc, saml_xml)
     user_name = user_email_id = phone = company = error_message = ''
 
-    response = OneLogin::RubySaml::Response.new(saml_xml, SAML_SSO_RESPONSE_SETTINGS)
-    response.settings = get_saml_settings(acc)
+    response = OneLogin::RubySaml::Response.new(saml_xml, {settings: get_saml_settings(acc)}.merge(SAML_SSO_RESPONSE_SETTINGS))
     response.settings.issuer = nil
     valid_response = response.is_valid?
 
