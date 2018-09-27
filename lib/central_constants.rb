@@ -16,6 +16,6 @@ module CentralConstants
     'DashboardAnnouncement' => '0',
     'Social::TwitterHandle' => '0',
     'Social::TwitterStream' => '0',
-    'Social::FacebookPage' => '0'
+    'Integrations::InstalledApplication' => '0'
   }
 end

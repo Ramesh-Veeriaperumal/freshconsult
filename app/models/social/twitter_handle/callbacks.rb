@@ -6,6 +6,7 @@ class Social::TwitterHandle < ActiveRecord::Base
   include Social::Util
   include Social::SmartFilter
   include Redis::OthersRedis
+  include CentralLib::Util
 
   before_save :add_default_search, :set_default_state, :persist_previous_changes
   before_create :set_default_threaded_time

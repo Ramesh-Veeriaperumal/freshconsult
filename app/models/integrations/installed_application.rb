@@ -2,6 +2,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   include Integrations::AppsUtil
   include Integrations::Jira::WebhookInstaller
   include Cache::FragmentCache::Base
+  include CentralLib::Util
   
   serialize :configs, Hash
   belongs_to :application, :class_name => 'Integrations::Application'
@@ -21,8 +22,12 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   after_destroy :delete_google_accounts, :after_destroy_customize
   before_save :before_save_customize
   before_create :before_create_customize
+  before_destroy :store_deleted_model
   after_create :after_create_customize
   after_save :after_save_customize
+  after_save :store_model_changes
+  before_update :store_old_configs
+
   after_commit :after_commit_on_create_customize, :on => :create
   after_commit :after_commit_on_update_customize, :on => :update
   after_commit :after_commit_on_destroy_customize, :on => :destroy
@@ -30,11 +35,36 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   after_commit :clear_application_on_dip_from_cache
   after_commit :clear_fragment_caches, :if => :attachment_applications?
 
+  publishable on: [:create, :update, :destroy], if: :publish_feature_launched?
+
   include ::Integrations::AppMarketPlaceExtension
 
   scope :with_name, lambda { |app_name| where("applications.name = ?", app_name ).joins(:application).select('installed_applications.*')}
   delegate :oauth_url, :to => :application 
   scope :with_type_cti, -> { where("applications.application_type = 'cti_integration'").includes(:application) }
+
+  concerned_with :presenter
+
+  # serialized field doesn't have changes when key values are changed - @old_configs
+  attr_accessor :old_configs
+
+  def store_model_changes
+    return @model_changes unless @model_changes.nil?
+    @model_changes = self.changes
+    @model_changes[:configs] = [@old_configs, self.configs]
+  end
+
+  def store_deleted_model
+    @deleted_model_info = central_publish_payload
+  end
+
+  def publish_feature_launched?
+    Account.current.launched?(:installed_app_publish)
+  end
+
+  def store_old_configs
+    @old_configs = Integrations::InstalledApplication.find(self.id).configs
+  end
   
   def to_liquid
     configs[:inputs]
