@@ -8,11 +8,15 @@ module MemcacheCleaner
   end
 
   def clean_memcache_data
-    acc_id_hash = { :account_id => self.account_id }
-    if defined? self.class::cache_keys_to_delete
-      self.class::cache_keys_to_delete.each do |key|
-        MemcacheKeys.delete_from_cache key % acc_id_hash
+    begin
+      if defined? self.class::cache_keys_to_delete
+        acc_id_hash = { account_id: self.account_id }
+        self.class::cache_keys_to_delete.each do |key|
+          MemcacheKeys.delete_from_cache key % acc_id_hash
+        end
       end
+    rescue StandardError => e
+      Rails.logger.info "Exception while clean response cache : #{e.message} : #{e.backtrace}"
     end
   end
   
