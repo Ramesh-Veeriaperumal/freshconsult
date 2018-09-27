@@ -85,6 +85,7 @@ helpdesk:
     - helpdesk_reports/reports_app_config
     - controller_log_subscriber
     - zero_downtime_migration
+    - memcache_cleaner
     - action_mailer_log_subscriber
     - email_controller_log_subscriber
     - thrift
