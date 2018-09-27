@@ -103,11 +103,11 @@ def build_setup(category) {
 def execute_test_cases(category) {
 
         if(category == 'pronto') {
-            sh """#!/bin/bash
-               source /etc/profile.d/rvm.sh
-               bundle install
-               PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/$params.ghprbTargetBranch
-               """
+            //sh """#!/bin/bash
+            //   source /etc/profile.d/rvm.sh
+            //   bundle install
+            //   PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run //-f github_status github_pr -c origin/falcon-prestaging
+            //   """
         }
 
         if(category == 'public') {
@@ -173,7 +173,8 @@ def distributed_run(category) {
 				               execute_test_cases(category)
 				         }
 				         catch (e) {
-				               "issue with test execution" + e
+				               echo "issue with test execution" + e
+				               currentBuild.result = 'UNSTABLE'
 				         }
 
 			    		 finally {
