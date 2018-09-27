@@ -16,19 +16,19 @@ module Freshquery
     end
 
     def custom_string_mappings
-      proc { Account.current.flexifield_def_entries.map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_text' }.compact.to_h }
+      proc { Account.current.flexifield_def_entries.preload(:ticket_field).map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_text' }.compact.to_h }
     end
 
     def custom_number_mappings
-      proc { Account.current.flexifield_def_entries.map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_number' }.compact.to_h }
+      proc { Account.current.flexifield_def_entries.preload(:ticket_field).map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_number' }.compact.to_h }
     end
 
     def custom_checkbox_mappings
-      proc { Account.current.flexifield_def_entries.map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_checkbox' }.compact.to_h }
+      proc { Account.current.flexifield_def_entries.preload(:ticket_field).map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_checkbox' }.compact.to_h }
     end
 
     def custom_dropdown_mappings
-      proc { Account.current.flexifield_def_entries.map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_dropdown' }.compact.to_h }
+      proc { Account.current.flexifield_def_entries.preload(:ticket_field).map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_dropdown' }.compact.to_h }
     end
 
     def custom_dropdown_choices
@@ -38,6 +38,36 @@ module Freshquery
     # def custom_date_mappings
     # 	proc{ Account.current.flexifield_def_entries.map{|x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == "custom_date" }.compact.to_h }
     # end
+  end
+
+  class FqTicketAnalyticsHelper < FqTicketHelper
+    include Singleton
+
+    def custom_dropdown_mappings
+     proc { Account.current.flexifield_def_entries.preload(:ticket_field).map{|x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if ['custom_dropdown','nested_field'].include?(x.ticket_field.field_type)}.compact.to_h }
+   end
+
+   def custom_dropdown_choices
+     proc { TicketsValidationHelper.custom_dropdown_field_choices.map { |k, v| [TicketDecorator.display_name(k), v] }.to_h.merge(
+      Hash.new.tap do |nested_val_hash|
+        Account.current.nested_fields_from_cache.each do |nested_value|
+          level1_key = TicketDecorator.display_name(nested_value.name)
+          level2_key = nested_value.nested_ticket_fields.find{|x| x.level == 2 }.try(:name)
+          level3_key = nested_value.nested_ticket_fields.find{|x| x.level == 3 }.try(:name)
+          choices = nested_value.formatted_nested_choices
+          nested_val_hash[level1_key] = choices.keys
+          if level2_key.present?
+            level2_array = choices.keys.map { |k| choices[k] }
+            level2_values = level2_array.map(&:keys).flatten.uniq
+            nested_val_hash[TicketDecorator.display_name(level2_key)] = level2_values
+            if level3_key.present?
+              level3_values = level2_array.map(&:values).flatten.uniq
+              nested_val_hash[TicketDecorator.display_name(level3_key)] = level3_values
+            end
+          end
+        end
+      end) }
+   end
   end
 
   class FqContactHelper
@@ -112,7 +142,7 @@ module Freshquery
     include Freshquery::Model
     include Singleton
 
-    fq_schema 'ticket', FqTicketHelper.instance do
+    fq_schema 'ticket', FqTicketHelper.instance, 512 do
       attribute :priority, choices: :priorities
       attribute :status, choices: :status_ids
       attribute :group_id, type: :positive_integer
@@ -129,7 +159,7 @@ module Freshquery
     end
 
 
-    fq_schema 'archiveticket', FqTicketHelper.instance do
+    fq_schema 'archiveticket', FqTicketHelper.instance, 512 do
       attribute :priority, choices: :priorities
       attribute :status, choices: :status_ids
       attribute :group_id, type: :positive_integer
@@ -144,7 +174,7 @@ module Freshquery
       attribute :product_id, type: :positive_integer
     end
 
-    fq_schema 'user', FqContactHelper.instance do
+    fq_schema 'user', FqContactHelper.instance, 512 do
       attribute :company_id, transform: :company_ids, type: :positive_integer
       attribute :twitter_id, :mobile, :phone, type: :string
       attribute :active, type: :boolean
@@ -160,7 +190,7 @@ module Freshquery
       # custom_date mappings: :custom_date_mappings
     end
 
-    fq_schema 'company', FqCompanyHelper.instance do
+    fq_schema 'company', FqCompanyHelper.instance, 512 do
       attribute :domain, transform: :domains, type: :string
       attribute :created_at, :updated_at, type: :date
       custom_string mappings: :custom_string_mappings
@@ -168,6 +198,23 @@ module Freshquery
       custom_boolean mappings: :custom_checkbox_mappings
       custom_dropdown mappings: :custom_dropdown_mappings, choices: :custom_dropdown_choices
       # custom_date mappings: :custom_date_mappings
+    end
+
+    # skipping validation for count cluster alone
+    fq_schema 'ticket_analytics', FqTicketAnalyticsHelper.instance, 8192, false do
+      attribute :priority, choices: :priorities
+      attribute :status, choices: :status_ids
+      attribute :group_id, :internal_group_id,  type: :positive_integer
+      attribute :agent_id, transform: :responder_id, type: :positive_integer
+      attribute :internal_agent_id, :sl_skill_id, type: :positive_integer
+      attribute :created_at, :updated_at, :due_by, type: :date_time
+      attribute :fr_due_by, transform: :frDueBy, type: :date
+      attribute :type, transform: :ticket_type, choices: :ticket_types, type: :string
+      attribute :tag, transform: :tag_names, type: :string
+      attribute :spam, :deleted, :trashed, :status_stop_sla_timer, :status_deleted, type: :boolean
+      attribute :product_id, :source, :company_id, :association_type, :watchers, :tag_ids, type: :positive_integer
+      attribute :requester_id, transform: :requester_id, type: :positive_integer
+      custom_dropdown mappings: :custom_dropdown_mappings, choices: :custom_dropdown_choices
     end
   end
 end
