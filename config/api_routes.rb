@@ -205,6 +205,7 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :attachments, controller: 'api_attachments', only: [:destroy]
     # Proactive Support routes
     scope '/proactive' do
       resources :outreaches, controller: 'proactive/outreaches', except: [:edit]
@@ -428,7 +429,7 @@ Helpkit::Application.routes.draw do
       resources :notes, controller: 'customer_notes', only: [:create, :update, :destroy, :show, :index]
     end
 
-    resources :attachments, controller: 'ember/attachments', only: [:create, :show, :destroy] do
+    resources :attachments, controller: 'ember/attachments', only: [:create, :show] do
       member do
         put :unlink
       end
