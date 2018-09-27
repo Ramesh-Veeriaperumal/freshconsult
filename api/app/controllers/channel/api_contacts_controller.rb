@@ -3,7 +3,9 @@ module Channel
     include ChannelAuthentication
 
     skip_before_filter :check_privilege, only: :show
+    skip_before_filter :load_object, :after_load_object, only: :fetch_contact_by_email
     skip_before_filter :check_privilege, if: :channel_twitter?
+    skip_before_filter :check_privilege, if: :channel_proactive?
     before_filter :channel_client_authentication
 
     def create
@@ -25,6 +27,16 @@ module Channel
         else
           render_custom_errors
         end
+      end
+    end
+
+    def fetch_contact_by_email
+      @item = current_account.contacts.find_by_email(params[:email])
+      if @item.present?
+        decorate_object
+        render :show, status: :ok
+      else
+        head 404
       end
     end
 

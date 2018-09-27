@@ -11,7 +11,8 @@ module ChannelIntegrations::Constants
   # The owner name received from the Kafka and their corresponding service class names.
   SERVICE_NAME_CLASS_MAPPING = {
     'microsoft-teams': 'MicrosoftTeams',
-    'twitter': 'Twitter'
+    'twitter': 'Twitter',
+    'shopify': 'Shopify'
   }.freeze
 
   # The module names for the Command/replies.

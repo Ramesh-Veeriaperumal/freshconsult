@@ -1,5 +1,6 @@
 module JwtTestHelper
   TWITTER = 'twitter'.freeze
+  PROACTIVE = 'proactive'.freeze
 
   def generate_jwt_token(user_id, account_id, jti, iat, algorithm = 'HS256')
     payload = {:jti => jti, :iat => iat,
@@ -10,6 +11,7 @@ module JwtTestHelper
 
   def generate_custom_jwt_token(source_name)
     return generate_twitter_jwt(source_name) if source_name == TWITTER
+    return generate_proactive_jwt(source_name) if source_name == PROACTIVE
     domain = @account.full_domain.split('.')[0]
     account_details = {"domain_name": domain,
                      "timestamp":Time.now.iso8601
@@ -24,6 +26,11 @@ module JwtTestHelper
   end
 
   def generate_twitter_jwt(source_name)
+    payload = { enc_payload: { 'account_id' => @account.id, "timestamp": Time.now.iso8601 } }
+    JWT.encode payload, CHANNEL_API_CONFIG[source_name]['jwt_secret'], 'HS256', source: source_name
+  end
+
+  def generate_proactive_jwt(source_name)
     payload = { enc_payload: { 'account_id' => @account.id, "timestamp": Time.now.iso8601 } }
     JWT.encode payload, CHANNEL_API_CONFIG[source_name]['jwt_secret'], 'HS256', source: source_name
   end
