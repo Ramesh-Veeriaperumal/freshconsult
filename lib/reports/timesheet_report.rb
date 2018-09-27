@@ -677,6 +677,8 @@ module Reports::TimesheetReport
             csv_data << strip_equal(record.workable.safe_send(val))
           elsif :customer_name == val
             csv_data << strip_equal(record.customer_name_reports)
+          elsif :hours == val
+            csv_data << get_time_in_hours(record.time_spent)
           else
             csv_data << strip_equal(record.safe_send(val))
           end
@@ -755,7 +757,7 @@ module Reports::TimesheetReport
 
   def construct_timesheet_entries
     params[:current_params].each { |name, value| instance_variable_set("@#{name}", (value || [])) }
-    @ticket_type.map!{|b| nil if b.nil? || b.empty? } if @ticket_type
+    @ticket_type.map!{|b| (b.nil? || b.empty?) ? nil : b } if @ticket_type
     @billable.map!{|b| b.to_s.to_bool} if @billable
     offset = params[:scroll_position].to_i * TIMESHEET_ROWS_LIMIT
     @current_group = [group_by_caluse]
