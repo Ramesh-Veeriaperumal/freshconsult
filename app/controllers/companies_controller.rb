@@ -120,11 +120,7 @@ class CompaniesController < ApplicationController
     args = { :csv_hash => params[:export_fields],
              :user => current_user.id,
              :portal_url => portal_url }
-    if redis_key_exists?(COMPANIES_EXPORT_SIDEKIQ_ENABLED)
-      Export::CompanyWorker.perform_async(args)
-    else
-      Resque.enqueue(Workers::ExportCompany, args)
-    end
+    Export::CompanyWorker.perform_async(args)
     flash[:notice] = t(:'companies.export_start')
     redirect_to :back
   end

@@ -4,7 +4,6 @@ module CustomFields
       # some initialization behavior
       require 'custom_fields/migrations/custom_field_data'
       require 'custom_fields/view/dom_element'
-      require 'custom_fields/workers/nullify_deleted_custom_field_data'
       require 'custom_fields/workers/nullify_deleted_custom_field_data_worker'
       require 'custom_fields/constants'
 

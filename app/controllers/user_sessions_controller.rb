@@ -13,6 +13,7 @@ class UserSessionsController < ApplicationController
   include Mobile::Actions::Push_Notifier
   include Freshid::ControllerMethods
 
+  prepend_around_filter :rescue_from_shard_not_found, :only => [:freshid_destroy]
   skip_before_filter :check_privilege, :verify_authenticity_token  
   skip_before_filter :require_user, :except => [:destroy, :freshid_destroy]
   skip_before_filter :check_account_state
@@ -514,6 +515,15 @@ class UserSessionsController < ApplicationController
 
     def is_freshid_agent_and_not_mobile?
       !is_native_mobile? && params[:user_session].try(:[], :email) && freshid_agent?(params[:user_session][:email])
+    end
+
+    def rescue_from_shard_not_found
+      begin
+        yield
+      rescue ShardNotFound
+        Rails.logger.debug "Skipping deleted account for freshID logout"
+        redirect_to params[:redirect_uri]
+      end
     end
 
 end

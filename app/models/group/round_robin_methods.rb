@@ -338,11 +338,6 @@ class Group < ActiveRecord::Base
       Rails.logger.debug "Exception while updating sorted set : #{e.message}"
     end
 
-    def old_round_robin_key
-      GROUP_AGENT_TICKET_ASSIGNMENT % {:account_id => self.account_id, 
-                              :group_id => self.id}
-    end
-
     def new_round_robin_key
       GROUP_ROUND_ROBIN_AGENTS % { :account_id => self.account_id, 
                                  :group_id => self.id}

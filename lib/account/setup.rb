@@ -54,6 +54,10 @@ module Account::Setup
 		@current_setup_keys ||= sort_setup_keys(INDEPENDENT_SETUP_KEYS.keys + current_condition_based_keys)
 	end
 
+	def setup_keys
+		SETUP_KEYS_DISPLAY_ORDER
+	end
+	
 	def all_setup_keys
 		ALL_SETUP_KEYS
 	end
@@ -78,6 +82,17 @@ module Account::Setup
 		self.falcon_ui_enabled?(User.current) && self.features_included?(:forums)
 	end
 
+	# TRIAL WIDGET CLEANUP - can be removed after trial widget deprecation
+	def custom_app_eligible?
+		!self.launched?(:new_onboarding)
+	end
+
+	# TRIAL WIDGET CLEANUP - can be removed after trial widget deprecation
+	def reports_eligible?
+		!self.launched?(:new_onboarding)
+	end
+
+
 	FALCON_SETUP_KEYS.each do |setup_key|
 		define_method "#{setup_key}_eligible?" do
 			self.falcon_ui_enabled?(User.current)
@@ -92,11 +107,17 @@ module Account::Setup
 		@current_in_setup ||= self.in_setup & current_setup_keys
 	end
 
+	SETUP_KEYS.each do |setup_key|
+		define_method "mark_#{setup_key}_setup_and_save" do
+			self.safe_send("mark_#{setup_key}_setup")
+			save_setup
+		end
+	end
+
   SETUP_KEYS.each do |setup_key|
-    define_method "mark_#{setup_key}_setup_and_save" do
-      self.safe_send("mark_#{setup_key}_setup")
+    define_method "unmark_#{setup_key}_setup_and_save" do
+      self.safe_send("unmark_#{setup_key}_setup")
       save_setup
     end
   end
-
 end

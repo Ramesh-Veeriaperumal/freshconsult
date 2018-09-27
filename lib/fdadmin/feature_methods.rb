@@ -13,7 +13,7 @@ module Fdadmin::FeatureMethods
     def feature_types(feature_name)
       feature_types = []
       feature_types << "bitmap" if BITMAP_FEATURES.include?(feature_name)
-      feature_types << "db" if @account.features.respond_to?(feature_name)
+      # feature_types << "db" if @account.features.respond_to?(feature_name) # disabling adding db features via freshops
       feature_types << "launchparty" if Account::LAUNCHPARTY_FEATURES.keys.include?(feature_name)
       feature_types
     end

@@ -206,25 +206,6 @@
       "note": ""
     },
     {
-      "warning_type": "Mass Assignment",
-      "warning_code": 17,
-      "fingerprint": "84c8d715dfe6f3de7d5480322c2a41512ab238b18f3bea349e614aa84902e8dc",
-      "message": "Unprotected mass assignment",
-      "file": "lib/subscription/events/add_deleted_event.rb",
-      "line": 15,
-      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
-      "code": "SubscriptionEvent.create(subscription_info(Account.current.subscription).merge(deleted_event_info(Account.current.subscription)))",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Subscription::Events::AddDeletedEvent",
-        "method": "perform"
-      },
-      "user_input": "Account.current.subscription",
-      "confidence": "High",
-      "note": ""
-    },
-    {
       "warning_type": "Cross Site Scripting",
       "warning_code": 2,
       "fingerprint": "881916c0aaf70b957ddbb3933b5f0a49bc948ec34285799178006746c4e672b0",

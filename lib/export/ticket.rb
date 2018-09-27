@@ -36,16 +36,12 @@ class Export::Ticket < Struct.new(:export_params)
     # Not using the methods in RedisOthers to avoid the include /extend problem
     # class methods vs instance methods issue
     export_params = export_params.except(:authenticity_token, :action, :controller, :utf8)
-    if $redis_others.perform_redis_op("exists", TICKET_EXPORT_SIDEKIQ_ENABLED)
-      if $redis_others.perform_redis_op("sismember", PREMIUM_TICKET_EXPORT, Account.current.id)
-        Tickets::Export::PremiumTicketsExport.perform_async(export_params)
-      elsif $redis_others.perform_redis_op("sismember", LONG_RUNNING_TICKET_EXPORT, Account.current.id)
-        Tickets::Export::LongRunningTicketsExport.perform_async(export_params)
-      else
-        Tickets::Export::TicketsExport.perform_async(export_params)
-      end
+    if $redis_others.perform_redis_op("sismember", PREMIUM_TICKET_EXPORT, Account.current.id)
+      Tickets::Export::PremiumTicketsExport.perform_async(export_params)
+    elsif $redis_others.perform_redis_op("sismember", LONG_RUNNING_TICKET_EXPORT, Account.current.id)
+      Tickets::Export::LongRunningTicketsExport.perform_async(export_params)
     else
-      Resque.enqueue(Helpdesk::TicketsExport, export_params)
+      Tickets::Export::TicketsExport.perform_async(export_params)
     end
   end
   

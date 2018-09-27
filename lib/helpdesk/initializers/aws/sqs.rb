@@ -38,7 +38,7 @@ GLOBAL_SQS_QUEUE_URLS.each do |queue_name, variable_name|
     puts "Error in fetching URL for SQS Queue #{SQS[queue_name]} - error #{e.message}"
     NewRelic::Agent.notice_error(e, {:description => "Error in fetching URL for SQS Queue #{SQS[queue_name]} - error #{e.message}"})
   end
-end
+end unless Rails.env.development?
 
 # SQS v2 Queues list
  SQS_V2_QUEUES =  [
@@ -64,6 +64,6 @@ SQS_V2_QUEUES.each do |queue_name|
     puts "Error in fetching URL for SQS Queue #{SQS[queue_name]} - error #{e.message}"
     NewRelic::Agent.notice_error(e, {:description => "Error in fetching URL for SQS Queue #{SQS[queue_name]} - error #{e.message}"})
   end
-end
+end unless Rails.env.development?
 SQS_V2_QUEUE_URLS.freeze
 

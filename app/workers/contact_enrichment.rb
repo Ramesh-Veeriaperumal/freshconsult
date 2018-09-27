@@ -13,7 +13,8 @@ class ContactEnrichment
       email_id = account.contact_info[:email]
       result = Clearbit::Enrichment.find(email: email_id, stream: true)
       account.account_configuration.contact_info = generate_clearbit_contact_info(result, email_update)
-      account.account_configuration.company_info.merge!(generate_clearbit_company_info(result))
+      account_company_info = account.account_configuration.company_info.dup
+      account.account_configuration.company_info = account_company_info.merge(generate_clearbit_company_info(result))
       account.account_configuration.save
     rescue Nestful::ClientError, Nestful::ResourceInvalid,Nestful::ResourceNotFound  => e
       error_log = "CLEARBIT ERROR. Account: #{account.full_domain}, Id: #{account.id}, error: #{e}"
@@ -47,8 +48,7 @@ class ContactEnrichment
                            :job_title => result.try(:[], "person").try(:[], 'employment').try(:[], 'title'),
                            :twitter => result.try(:[], "person").try(:[], 'twitter').try(:[], 'handle'),
                            :facebook => result.try(:[], "person").try(:[], 'facebook').try(:[], 'handle'),
-                           :linkedin => result.try(:[], "person").try(:[], 'linkedin').try(:[], 'handle'),
-
+                           :linkedin => result.try(:[], "person").try(:[], 'linkedin').try(:[], 'handle')
     }
     person_contact_info.reject! { |k, v| v.nil? || v.empty? }
     merge_type = (email_update || Account.current.email_signup?)  ? :merge : :reverse_merge

@@ -118,7 +118,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   end
 
   def update_config
-    update_ext(update_config_params(params[:configs]))
+    update_ext(update_config_params(JSON.parse(params[:configs])))
   end
 
   def app_status
@@ -159,7 +159,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
 
   def update_params
     {
-      :configs => params[:configs],
+      :configs => JSON.parse(params[:configs]),
       :version_id => params[:version_id]
     }
   end
@@ -264,7 +264,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
           notice_message = t('marketplace.install_action.failure')
         end
       end
-      configs = params[:configs].blank? ? {} : params[:configs]
+      configs = params[:configs].blank? ? {} : JSON.parse(params[:configs])
       oauth_configs = is_oauth_app?(@extension) ? { :oauth_configs => account_tokens.body } : {}
       configs = configs.merge(is_oauth_app?(@extension) ? { :oauth_configs => account_tokens.body } : {})
       configs
