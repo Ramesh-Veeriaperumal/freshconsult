@@ -39,6 +39,8 @@ module Freshquery
         elsif options[:type] == 'date'
           @options[:only_date] = true
           return 'validate_custom_date_array'
+        elsif options[:type] == 'date_time'
+          return 'validate_custom_date_array'
         elsif options[:type] == 'boolean'
           @options[:rules] = 'boolean'
           @options[:force_allow_string] = true

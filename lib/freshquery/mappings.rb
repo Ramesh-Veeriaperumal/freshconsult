@@ -2,21 +2,23 @@ module Freshquery
   class Mappings
     attr_accessor :document_type, :fqhelper, :mapping, :es_keys, :date_fields, :query_length
 
-    TYPES = %w(integer positive_integer negative_integer date boolean string).freeze
+    TYPES = %w(integer positive_integer negative_integer date date_time boolean string).freeze
     CUSTOM_TYPES = %w(integer date boolean string).freeze
     VALID_OPTIONS = %w(type choices regex transform mappings).freeze
 
     @@all_mappings = {}
 
-    def initialize(fqhelper, query_length = 512)
+    def initialize(fqhelper, query_length, validate)
       @fqhelper = fqhelper
       @mapping = {}
       @es_keys = {}
       @default_fields = []
       @date_fields = []
+      @date_time_fields = []
       @boolean_fields = []
       @custom_proc = {}
       @custom_choices = {}
+      @validate = validate
       @query_length = [Freshquery::Constants::DEFAULT_QUERY_LENGTH, query_length].min
     end
 
@@ -26,6 +28,10 @@ module Freshquery
         raise "Invalid option(s) '#{(options.keys - VALID_OPTIONS).join(', ')}', should be any one of '#{VALID_OPTIONS.join(', ')}'"
       end
       result
+    end
+
+    def should_validate?
+      @validate
     end
 
     def attribute(*args)
@@ -41,6 +47,8 @@ module Freshquery
           case hash[:type]
           when 'date'
             @date_fields << options.fetch(:transform, att).to_s
+          when 'date_time'
+            @date_time_fields << options.fetch(:transform, att).to_s
           when 'boolean'
             @boolean_fields << options.fetch(:transform, att).to_s
           end
@@ -149,6 +157,14 @@ module Freshquery
         return @date_fields + hash.values
       end
       @date_fields
+    end
+
+    def date_time_fields
+      if @custom_proc['date_time']
+        hash = @custom_proc['date_time'].call
+        return @date_time_fields + hash.values
+      end
+      @date_time_fields
     end
 
     def boolean_fields
