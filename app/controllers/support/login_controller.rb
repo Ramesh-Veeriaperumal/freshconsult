@@ -46,7 +46,7 @@ class Support::LoginController < SupportController
         redirect_to(edit_password_reset_path(stale_user.perishable_token))
       else
         remove_old_filters if @current_user.agent?
-        redirect_back_or_default('/') if grant_day_pass 
+        redirect_back_or_default(default_return_url) if grant_day_pass 
         #Unable to put 'grant_day_pass' in after_filter due to double render
       end
     else

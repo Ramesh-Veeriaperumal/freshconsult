@@ -8,6 +8,8 @@ module Ember
       before_filter :set_user_email_config, only: [:update_activation_email]
       before_filter :check_onboarding_finished, only: [:update_channel_config]
       before_filter :check_forward_verification_email_ticket, only: [:forward_email_confirmation]
+      before_filter :construct_domain_name, only: [:customize_domain, :validate_domain_name]
+      after_filter :unmark_support_email, only: [:customize_domain]
 
       def update_activation_email
         @item.email = @user_email_config[:new_email]
@@ -51,6 +53,21 @@ module Ember
         else
           head 204
         end
+      end
+
+      def validate_domain_name
+        head 204 if validate_delegator(@item, new_domain: @full_domain)
+      end
+
+      def suggest_domains
+        domains = DomainGenerator.sample(current_account.admin_email, 3)
+        @suggest_domains = { subdomains: domains }
+      end
+
+      def customize_domain
+        return unless validate_delegator(@item, new_domain: @full_domain)
+        @support_email_configured = current_account.support_email_setup?
+        current_account.mark_customize_domain_setup_and_save if current_account.update_default_domain_and_email_config(params[:subdomain])
       end
 
       private
@@ -126,6 +143,15 @@ module Ember
           return false unless forward_test_ticket_requester
           @forward_test_ticket = current_account.tickets.requester_latest_tickets(forward_test_ticket_requester, OnboardingConstants::TICKET_CREATE_DURATION.ago).first
           @forward_test_ticket ? (@forward_test_ticket.try(:subject) == OnboardingConstants::TEST_FORWARDING_SUBJECT) : false
+        end
+
+        def construct_domain_name
+          params[:subdomain].downcase!
+          @full_domain = params[:subdomain] + "." + AppConfig['base_domain'][Rails.env]
+        end
+
+        def unmark_support_email
+          current_account.unmark_support_email_setup_and_save unless @support_email_configured
         end
     end
   end

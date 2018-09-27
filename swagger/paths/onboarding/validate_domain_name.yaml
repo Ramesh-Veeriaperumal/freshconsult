@@ -1,0 +1,17 @@
+post:
+  tags: [onboarding]
+  description: Validate domain
+  parameters:
+      - name: data
+        in: body
+        description: Domain name to validate
+        schema:
+          $ref: '#/definitions/onboarding_validate_domain_name_input'
+
+  responses:
+    204:
+      description: OK
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'

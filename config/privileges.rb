@@ -623,6 +623,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"integrations/microsoft_team", :only => [:oauth, :install]
     resource :"integrations/google_hangout_chat", :only => [:oauth, :install]
     resource :"user", :only => [:enable_falcon_for_all, :disable_old_helpdesk]
+    resource :"admin/onboarding"
 
     # Used by API V2
     resource :api_ticket_field, :only => [:index]
@@ -652,7 +653,6 @@ Authority::Authorization::PrivilegeList.build do
     # new item day passes && getting started
     resource :"admin/day_pass"
     resource :"admin/freshfone/credit"
-    resource :"admin/onboarding"
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
     resource :"rake_task", only: [:run_rake_task]

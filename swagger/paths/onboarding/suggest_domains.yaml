@@ -1,0 +1,8 @@
+get:
+  tags: [onboarding]
+  description: Suggest domains
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/onboarding_suggest_domains'

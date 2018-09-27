@@ -24,7 +24,7 @@ module ApiTicketConstants
   PERMITTED_ARCHIVE_FIELDS = SHOW_FIELDS
   UPDATE_PROPERTIES_FIELDS = %w(due_by responder_id group_id status priority tags skip_close_notification subject description attachment_ids requester_id company_id inline_attachment_ids).freeze | AttachmentConstants::CLOUD_FILE_FIELDS
 
-  ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats survey).freeze
+  ALLOWED_INCLUDE_PARAMS = %w(conversations requester company stats survey sla_policy).freeze
   SIDE_LOADING = %w(requester stats company survey).freeze
   INCLUDE_PRELOAD_MAPPING = { 'stats' => :ticket_states }.freeze
   BULK_DELETE_PRELOAD_OPTIONS = [:tags, :schema_less_ticket].freeze

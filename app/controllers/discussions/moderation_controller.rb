@@ -119,11 +119,7 @@ class Discussions::ModerationController < ApplicationController
 					   :account_id => post.account_id,
 					   :report_type => type
 					}
-			if redis_key_exists?(REPORT_POST_SIDEKIQ_ENABLED)
-		        ::Community::ReportPostWorker.perform_async(params)
-		    else
-		        Resque.enqueue(Workers::Community::ReportPost, params)
-	        end
+		  ::Community::ReportPostWorker.perform_async(params)
 		end
 
 		def dynamo_redirect

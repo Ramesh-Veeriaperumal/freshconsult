@@ -160,6 +160,34 @@ module Ember
         AwsWrapper::S3Object.unstub(:read)
         remove_others_redis_key(ADVANCED_TICKETING_METRICS)
       end
+
+      def test_create_with_exception
+        disable_feature(:parent_child_tickets) do
+          Integrations::InstalledApplication.any_instance.stubs(:save!).raises(RuntimeError)
+          post :create, construct_params({version: 'private'}, {name: 'parent_child_tickets'})
+          assert_response 400
+        end
+      ensure
+        Integrations::InstalledApplication.any_instance.unstub(:save!)
+      end
+
+      def test_destroy_with_exception
+        create_installed_application(:parent_child_tickets) do
+          Integrations::InstalledApplication.any_instance.stubs(:destroy).raises(RuntimeError)
+          delete :destroy, controller_params(version: 'private', id: 'parent_child_tickets')
+          assert_response 400
+          Integrations::InstalledApplication.any_instance.unstub(:destroy)
+        end
+      end
+
+      def test_insights_with_exception
+        AwsWrapper::S3Object.stubs(:read).raises(RuntimeError)
+        get :insights, controller_params(version: 'private')
+        assert_response 500
+      ensure
+        AwsWrapper::S3Object.unstub(:read)
+        remove_others_redis_key(ADVANCED_TICKETING_METRICS)
+      end
     end
   end
 end

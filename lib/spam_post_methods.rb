@@ -56,11 +56,7 @@ module SpamPostMethods
 				   :report_type => type,
 				   :klass_name => post.class.name
 				}
-		if redis_key_exists?(REPORT_POST_SIDEKIQ_ENABLED)
-	        Community::ReportPostWorker.perform_async(params)
-	    else
-	        Resque.enqueue(Workers::Community::ReportPost, params)
-        end
+	   Community::ReportPostWorker.perform_async(params)
 	end
 
 	def portal_id(post) 

@@ -1,0 +1,19 @@
+put:
+  tags: [onboarding]
+  description: Customize domain
+  parameters:
+      - name: data
+        in: body
+        description: Domain name to change
+        schema:
+          $ref: '#/definitions/onboarding_customize_domain_input'
+
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/onboarding_customize_domain'
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'

@@ -6,6 +6,7 @@ module OnboardingConstants
   CHANNELS = %w(phone live_chat social forums).freeze
   DISABLEABLE_CHANNELS = %w(social forums).freeze
   VALIDATION_CLASS = 'OnboardingValidation'.freeze
+  DELEGATOR_CLASS = 'OnboardingDelegator'.freeze
   TICKET_CREATE_DURATION = 5.minutes
   VALID_EMAIL_PROVIDERS = ::ONBOARDING_CONFIG["email_forwarding"]["email_providers"].freeze
   FROM_EMAIL = ::ONBOARDING_CONFIG["email_forwarding"]["from_email"].freeze

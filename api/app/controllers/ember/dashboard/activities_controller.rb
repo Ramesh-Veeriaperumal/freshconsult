@@ -15,6 +15,7 @@ module Ember::Dashboard
       end
     rescue Exception => e
       NewRelic::Agent.notice_error(e, description: 'Error occoured in dashboard activities')
+      render_base_error(:internal_error, 500)
     end
 
     def per_page

@@ -237,11 +237,7 @@ protected
       # Continue with the old method for changing agent score
       acc = user.account
       args = { :id => user.id, :account_id => acc.id }
-      if redis_key_exists?(SIDEKIQ_GAMIFICATION_UPDATE_USER_SCORE)
-        Gamification::UpdateUserScore.perform_async(args)
-      else
-        Resque.enqueue(Gamification::Scoreboard::UpdateUserScore, args)
-      end
+      Gamification::UpdateUserScore.perform_async(args)
     end
   end
 

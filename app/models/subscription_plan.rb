@@ -7,7 +7,6 @@ class SubscriptionPlan < ActiveRecord::Base
   serialize :price, Hash
   
   has_many :subscriptions
-  
   has_many :subscription_plan_addons, :class_name => "Subscription::PlanAddon", :source => :subscription_plan_addon
   has_many :addons,
     :class_name => "Subscription::Addon",
@@ -27,7 +26,7 @@ class SubscriptionPlan < ActiveRecord::Base
   scope :get_details_by_name, ->(fields, names) { select(fields).where(name: names) }
 
   after_commit :clear_cache
-  
+
   SUBSCRIPTION_PLANS = { 
     :basic => "Basic", 
     :pro => "Pro", 

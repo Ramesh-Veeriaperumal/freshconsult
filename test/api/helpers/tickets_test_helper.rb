@@ -15,6 +15,7 @@ module TicketsTestHelper
   include ForumHelper
   include AttachmentsTestHelper
   include Helpdesk::Email::Constants
+  
 
   CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
   DROPDOWN_OPTIONS = Faker::Lorem.words(5).freeze
@@ -32,6 +33,23 @@ module TicketsTestHelper
   }.freeze
   TAG_NAMES = Faker::Lorem.words(10).freeze
   CUSTOM_FIELDS_VALUES = { 'country' => 'USA', 'state' => 'California', 'city' => 'Burlingame', 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' => Faker::Lorem.paragraph, 'dropdown' => CUSTOM_FIELDS_CHOICES[0], 'date' => '2015-09-09' }.freeze
+
+  #pattern
+  def sla_policy_pattern(expected_output = {}, sla_policy)
+    conditions_hash = {}
+    sla_policy.conditions.each { |key, value| conditions_hash[key.to_s.pluralize] = value } unless sla_policy.conditions.nil?
+    {
+      id: Fixnum,
+      name: sla_policy.name,
+      description: sla_policy.description,
+      is_default: sla_policy.is_default,
+      applicable_to: expected_output[:applicable_to] || conditions_hash,
+      position: sla_policy.position,
+      active: sla_policy.active,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
 
 
   def tickets_controller_before_all before_all_run
@@ -106,12 +124,11 @@ module TicketsTestHelper
                                                   internal_group_id: expected_output[:internal_group_id] || ticket.internal_group_id)
   end
 
-  def index_ticket_pattern_with_associations(ticket, requester = true, ticket_states = true, company = true, exclude = [])
+  def index_ticket_pattern_with_associations(ticket, param_object, exclude = [])
     ticket_pattern_with_association(
-      ticket, false, false, 
-      requester, company, 
-      ticket_states
-    ).merge(ticket_association_pattern(ticket,true)).except(*([:attachments, :conversations, :description, :description_text] - exclude))
+      ticket,
+      param_object
+      ).merge(ticket_association_pattern(ticket,true)).except(*([:attachments, :conversations, :description, :description_text] - exclude))
   end
 
   def index_deleted_ticket_pattern(ticket)
@@ -136,25 +153,28 @@ module TicketsTestHelper
     show_ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
 
-  def ticket_pattern_with_association(ticket, limit = false, notes = true, requester = true, company = true, stats = true)
+  def ticket_pattern_with_association(ticket, param_object)
     result_pattern = ticket_pattern(ticket)
-    if notes
+    if param_object.notes
       notes_pattern = []
       ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
         notes_pattern << index_note_pattern(n)
       end
-      notes_pattern = notes_pattern.take(10) if limit
+      notes_pattern = notes_pattern.take(10) if param_object.limit
       result_pattern[:conversations] = notes_pattern.ordered!
     end
     result_pattern[:deleted] = true if ticket.deleted
-    if requester
+    if param_object.requester
       result_pattern[:requester] = ticket.requester ? requester_pattern(ticket.requester) : {}
     end
-    if company
+    if param_object.company
       result_pattern[:company] = ticket.company ? company_pattern(ticket.company) : {}
     end
-    if stats
+    if param_object.stats
       result_pattern[:stats] = ticket.ticket_states ? ticket_states_pattern(ticket.ticket_states, ticket.status) : {}
+    end
+    if param_object.sla_policy
+      result_pattern[:sla_policy] = ticket.sla_policy ? sla_policy_pattern(ticket.sla_policy) : {}
     end
     result_pattern
   end
@@ -163,8 +183,8 @@ module TicketsTestHelper
     ticket_pattern(expected_output, ticket).merge(association_type: expected_output[:association_type] || ticket.association_type)
   end
 
-  def show_ticket_pattern_with_association(ticket, limit = false, notes = true, requester = true, company = true, stats = true)
-    ticket_pattern_with_association(ticket, limit, notes, requester, company, stats).merge(association_type: ticket.association_type)
+  def show_ticket_pattern_with_association(ticket, param_object)
+    ticket_pattern_with_association(ticket, param_object).merge(association_type: ticket.association_type)
   end
 
   def requester_pattern(requester)
@@ -195,10 +215,6 @@ module TicketsTestHelper
       pending_since: ticket_states.pending_since.try(:utc).try(:iso8601) || ([3].include?(status) ? ticket_states.updated_at.try(:utc).try(:iso8601) : nil),
       reopened_at: ticket_states.opened_at.try(:utc).try(:iso8601)
     }
-  end
-
-  def show_ticket_pattern_with_association(ticket, limit = false, notes = true, requester = true, company = true, stats = true)
-    ticket_pattern_with_association(ticket, limit, notes, requester, company, stats).merge(association_type: ticket.association_type)
   end
 
   def show_deleted_ticket_pattern(expected_output = {}, ticket)
@@ -565,7 +581,8 @@ module TicketsTestHelper
     preload_options << :company if company
 
     pattern_array = Helpdesk::Ticket.where(*filter_clause).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).preload(preload_options).map do |ticket|
-      pattern = index_ticket_pattern_with_associations(ticket, requester, true, false, [:tags])
+      param_object = OpenStruct.new(:requester => requester, :stats => true)
+      pattern = index_ticket_pattern_with_associations(ticket, param_object, [:tags])
       pattern[:requester] = Hash if requester
       pattern[:company] = Hash if company && ticket.company
       pattern[:survey_result] = feedback_pattern(ticket.custom_survey_results.last) if survey && ticket.custom_survey_results.present?
@@ -576,8 +593,9 @@ module TicketsTestHelper
   def private_api_ticket_index_spam_deleted_pattern(spam = false, deleted = false)
     filter_clause = { helpdesk_schema_less_tickets: { boolean_tc02: false }, deleted: deleted }
     filter_clause[:spam] = spam if spam
+    param_object = OpenStruct.new(:stats => true)
     pattern_array = Helpdesk::Ticket.joins(:schema_less_ticket).where(filter_clause).order('created_at desc').limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
-      index_ticket_pattern_with_associations(ticket, false, true, false, [:tags])
+      index_ticket_pattern_with_associations(ticket, param_object, [:tags])
     end
   end
 
@@ -588,20 +606,23 @@ module TicketsTestHelper
     query_hash_params[:wf_model] = 'Helpdesk::Ticket'
     query_hash_params[:wf_order] = wf_order
     query_hash_params[:data_hash] = QueryHash.new(query_hash_params[:query_hash].values).to_system_format
+    param_object = OpenStruct.new(:stats => true)
     pattern_array = Account.current.tickets.filter(params: query_hash_params, filter: 'Helpdesk::Filters::CustomTicketFilter').first(per_page).map do |ticket|
-      index_ticket_pattern_with_associations(ticket, false, true, false, [:tags])
+      index_ticket_pattern_with_associations(ticket, param_object, [:tags])
     end
   end
 
   def private_api_ticket_index_filter_pattern(filter_data)
     per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
+    param_object = OpenStruct.new(:stats => true)
     pattern_array = Account.current.tickets.filter(params: filter_data, filter: 'Helpdesk::Filters::CustomTicketFilter').first(per_page).map do |ticket|
-      index_ticket_pattern_with_associations(ticket, false, true, false, [:tags])
+      index_ticket_pattern_with_associations(ticket, param_object, [:tags])
     end
   end
 
   def ticket_show_pattern(ticket, survey_result = nil, requester = false)
-    pattern = ticket_pattern_with_association(ticket, false, false, false, false, true).merge(cloud_files: Array)
+    param_object = OpenStruct.new(:stats => true)
+    pattern = ticket_pattern_with_association(ticket, param_object).merge(cloud_files: Array)
     ticket_topic = ticket_topic_pattern(ticket)
     pattern[:freshfone_call] = freshfone_call_pattern(ticket) if freshfone_call_pattern(ticket).present?
     if (Account.current.features?(:facebook) || Account.current.basic_facebook_enabled?) && ticket.facebook?

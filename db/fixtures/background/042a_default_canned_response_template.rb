@@ -11,16 +11,16 @@ account.canned_responses.create(
   folder_id: folder_id,
   content_html: %q(
     <div dir="ltr">
-        <div>Hello {{ticket.requester.name}} <br><br>
-            Name: {{ticket.requester.firstname}} {{ticket.requester.lastname}} <br>
-            Email:{{ticket.from_email}}<br>
-            Address: {{ticket.requester.address}}<br>
-            OrderID: &lt;Fill in the Order ID here&gt; <br><br><br>
-            Regards,
-            {{ticket.agent.name}}<br>
-            {{helpdesk_name}} Support<br><br>
-            Please check this link for ticket status: {{ticket.url}}
-        </div>
+      Thank you for reaching out to us. Our team will look into your request and get back to you shortly. 
+      <br>
+      <br>
+      You can check the status of your request and add comments here:
+      <br>
+      {{ticket.url}}
+      <br>
+      <br>
+      Regards,<br>
+      {{ticket.agent.name}}
     </div>
   )
 )

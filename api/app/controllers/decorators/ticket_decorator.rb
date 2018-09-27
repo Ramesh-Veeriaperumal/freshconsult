@@ -117,6 +117,14 @@ class TicketDecorator < ApiDecorator
     end
   end
 
+  def sla_policy_hash
+    if @sideload_options.include?('sla_policy')
+      sla_policy = record.sla_policy
+      return unless sla_policy
+      SlaPolicyDecorator.new(sla_policy).to_hash
+    end
+  end
+
   def company_hash_v2
     if @sideload_options.include?('company')
       company = record.company

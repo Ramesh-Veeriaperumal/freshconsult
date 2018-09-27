@@ -1,56 +1,319 @@
 default_forum:
   - category: Announcements
     data: 0
-    email: soundofmusic@freshdesk.com
-    name: Maria Von Trapp
+    email: joe.mathew@freshdesk.com
+    name: Joe Mathew
     views: 10
     likes: 5
     sticky: true
   - category: Announcements
     data: 1
-    email: Oliver.Twist@freshdesk.com
-    name: Oliver Twist
+    email: sam.kart@freshdesk.com
+    name: Sam Kart
     views: 6
     likes: 3
     sticky: false
+    replies:
+      - data: 0
+        email: bob.tree@freshdesk.com
+        name: Bob Tree
+      - data: 1
+        email: aroundtheworld80@freshdesk.com
+        name: Phileas Fogg
+      - data: 2
+        email: johnny.appleseed@freshdesk.com
+        name: Johnny Appleseed
   - category: Feature requests
     data: 2
-    email: hermoine.granger@freshdesk.com
-    name: Hermione Granger
+    email: lewis.clarke@freshdesk.com
+    name: Lewis Clarke
     views: 7
     likes: 8
     sticky: true
     status: 1
   - category: Feature requests
     data: 3
-    email: aroundtheworld80@freshdesk.com
-    name: Phileas Fogg
+    email: soundofmusic@freshdesk.com
+    name: Maria Von Trapp
     views: 14
     likes: 4
     sticky: false
     status: 2
     replies:
       - data: 0
-        email: oliver.twist@freshdesk.com
-        name: Oliver Twist
-  - category: Tips and Tricks
+        email:  matt.rogers@freshdesk.com
+        name: Matt Rogers
+      - data: 1
+        email: sam.kart@freshdesk.com
+        name: Sam Kart
+  - category: Sales and offers
     data: 4
-    email: matt.rogers@freshdesk.com
-    name: Matt Rogers
+    email: sam.kart@freshdesk.com
+    name: Sam Kart
     views: 10
     likes: 4
     sticky: false
-  - category: Tips and Tricks
+    replies:
+      - data: 0
+        email: lewis.clarke@freshdesk.com
+        name: Lewis Clarke
+      - data: 1
+        email: emily.dean@freshdesk.com
+        name: Emily Dean
+  - category: Sales and offers
     data: 5
-    email: norman.jones@freshdesk.com
-    name: Norman Jones
+    email: joe.mathew@freshdesk.com
+    name: Joe Mathew
     views: 15
     likes: 10
     sticky: true
+    replies:
+      - data: 0
+        email: clboone@freshdesk.com
+        name: Clarice Boone
   - category: Report a problem
     data: 6
-    email: hermoine.granger@freshdesk.com
-    name: Hermione Granger
+    email: finchhoot1@freshdesk.com
+    name: Finch Hoot
     views: 3
     likes: 0
     sticky: false
+    replies:
+      - data: 0
+        email: sam.kart@freshdesk.com
+        name: Sam Kart
+  - category: Report a problem
+    data: 7
+    email: mark.colbert@freshdesk.com
+    name: Mark Colbert
+    views: 3
+    likes: 0
+    sticky: false
+    replies:
+      - data: 0
+        email: joe.mathew@freshdesk.com
+        name: Joe Mathew
+industry_mapping:
+  "Hotels, Restaurants & Leisure": travel
+  "Internet Software & Services": "software & services"
+  "Software": "software & services"
+  "IT Services": "software & services"
+  "Professional Services": "software & services"
+default_ticket:
+  base_tickets:
+    - status: Open
+      priority: high
+      source: email
+      type: Question
+      group: Billing
+      requester:
+        info:
+          name: James Dean
+          email: james@freshdesk.com
+    - status: Closed
+      priority: high
+      source: email
+      type: Question
+      requester:
+        info:
+          name: Rachel Doe
+          email: rachel@freshdesk.com
+          phone: 1 866 832 3090
+        company:
+          name: Acme Inc.
+          domains: acmecorp.com
+          account_tier: "Basic"
+      responder: true
+      survey: true
+      replies:
+        - content: 0
+    - status: Open
+      priority: low
+      source: feedback_widget
+      type: Question
+      requester:
+        info:
+          name: Matt Rogers
+          email: matt.rogers@freshdesk.com
+      replies:
+        - content: 0
+  ecommerce:
+    - status: open
+      priority: medium
+      source: email
+      type: Question
+      tags: shipping_address
+      requester:
+        info:
+          name: Anne Richard
+          email: anne.richard1@freshdesk.com
+          phone: 1 869 673 5678
+      group: Shipping and delivery
+      survey: true
+      replies:
+        - content: 0
+        - content: 1
+          requester:
+            info:
+              name: Anne Richard
+              email: anne.richard1@freshdesk.com
+    - status: open
+      priority: urgent
+      source: email
+      type: Problem
+      tags: replacement
+      group: Replacements
+      requester:
+        info:
+          name: Matt Rogers
+          email: matt.rogers@freshdesk.com
+          phone: 1 789 563 3670
+      replies:
+        - content: 0
+        - content: 1
+          requester:
+            info:
+              name: Matt Rogers
+              email: matt.rogers@freshdesk.com
+    - status: open
+      priority: medium
+      source: email
+      type: Question
+      tags: address_change
+      group: Account managers
+      requester:
+        info:
+          name: Clarice Boone
+          email: clboone@freshdesk.com
+          phone: 896 5668 9780
+      replies:
+        - content: 0
+    - status: open
+      priority: medium
+      source: email
+      type: Question
+      tags: payment_option
+      requester:
+        info:
+          name: Phileas Fogg
+          email: aroundtheworld80@freshdesk.com
+      replies:
+        - content: 0
+  "software & services":
+    - status: Pending
+      priority: low
+      source: email
+      type: incident
+      requester:
+        info:
+          name: Clarice Boone
+          email: clboone@freshdesk.com
+      group: Customer Support
+      replies:
+        - content: 0
+    - status: Closed
+      priority: high
+      source: email
+      type: Problem
+      tags: login
+      requester:
+        info:
+          name: Sam Osborne
+          email: sam.ozzy@freshdesk.com
+      group: Login and security
+      survey: true
+      replies:
+        - content: 0
+        - content: 1
+          requester:
+            info:
+              name: Sam Osborne
+              email: sam.ozzy@freshdesk.com
+    - status: Pending
+      priority: High
+      source: email
+      type: Request
+      tags: storage
+      requester:
+        info:
+          name: Rachel Zane
+          email: rachel@freshdesk.com
+      group: Development
+      replies:
+        - content: 0
+    - status: Pending
+      priority: urgent 
+      source: email
+      type: Question
+      tags: cancel_account
+      requester:
+        info:
+          name: Bob Tree
+          email: bob.tree@freshdesk.com
+      group: Account managers
+      replies:
+        - content: 0
+  travel:
+    - status: Pending
+      priority: high
+      source: email
+      type: Cancellation
+      tags: cancellation,refund
+      requester:
+        info:
+          name: Mark Colbert
+          email: mark.colbert@freshdesk.com
+          phone: 1-444-444-4444
+      group: Cancellation
+      replies:
+        - content: 0
+        - content: 1
+          requester:
+            info:
+              name: Mark Colbert
+              email: mark.colbert@freshdesk.com
+    - status: Resolved
+      priority: high
+      source: email
+      type: Question
+      tags: Baggage
+      requester:
+        info:
+          name: Sam Kart
+          email: samk@freshdesk.com
+          phone: 1 869 673 5678
+      group: Baggage
+      survey: true
+      replies:
+          - content: 0
+          - content: 1
+            requester:
+              info:
+                name: Sam Kart
+                email: samk@freshdesk.com
+    - status: Pending
+      priority: low
+      source: email
+      type: Question
+      tags: cancellation,refund
+      requester:
+        info:
+          name: Lewis Clarke
+          email: lewis.clarke@freshdesk.com
+          phone: 1 889 533 0357
+      group: Cancellation
+      replies:
+        - content: 0
+    - status: "Waiting on Third Party"
+      priority: medium
+      source: email
+      type: Question
+      tags: package_caribbean
+      requester:
+        info:
+          name: Sara James
+          email: sara.james@freshdesk.com
+          phone: 896 5668 9780
+      group: Marketing
+      replies:
+          - content: 0

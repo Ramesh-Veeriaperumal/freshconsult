@@ -1,7 +1,11 @@
 require_relative '../../test_helper'
+['solutions_helper.rb', 'solution_builder_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module ApiSolutions
   class CategoriesControllerTest < ActionController::TestCase
     include SolutionsTestHelper
+    include SolutionBuilderHelper
+    include SolutionsHelper
+
 
     def setup
       super
@@ -376,6 +380,18 @@ module ApiSolutions
       assert_response 400
       match_json([bad_request_error_pattern('page', :datatype_mismatch, expected_data_type: 'Positive Integer'),
         bad_request_error_pattern('per_page', :per_page_invalid, max_value: 100)])
+    end
+
+    #build object else case test
+    def test_build_object_for_existing_translation
+      language = Language.find(1)
+      @account.account_additional_settings[:supported_languages] = [language.to_key]
+      @account.account_additional_settings.save
+      params = create_solution_category_alone(solution_default_params(:category).merge(lang_codes: [language.to_key, :primary]))
+      category_meta = Solution::Builder.category(params)
+      post :create, construct_params({ id: category_meta.id, language: language.to_key },  name: Faker::Name.name, description: Faker::Lorem.paragraph)
+      assert_not_nil @controller.instance_variable_get(:@item)
+      assert_response 405
     end
 
     # Position tests

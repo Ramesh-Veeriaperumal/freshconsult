@@ -58,6 +58,14 @@ module Channel
       match_json([bad_request_error_pattern('domains', :'has already been taken')])
     end
 
+    def test_create_avatar_id_validation_failure
+      set_jwt_auth_header('zapier')
+      invalid_avatar_ids = [9999]
+      post :create, construct_params({ version: 'channel' }, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array, avatar_id: invalid_avatar_ids.first)
+      assert_response 400
+      match_json([bad_request_error_pattern('avatar_id', :invalid_list, list: invalid_avatar_ids)])
+    end
+
     def test_create_company_without_required_custom_field
       field = { type: 'text', field_type: 'custom_text', label: 'required_linetext', required_for_agent: true }
       params = company_params(field)

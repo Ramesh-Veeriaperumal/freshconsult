@@ -1,7 +1,7 @@
 class Account::Setup::UpdatedObjectsObserver < ActiveRecord::Observer
   include Account::Setup::ObserverUtils
 
-  observe Account, EmailConfig, VaRule, EmailNotification
+  observe Account, EmailConfig, VaRule, EmailNotification, Portal
 
 	def after_commit(object)
 		if object.safe_send(:transaction_include_action?, :update)
@@ -19,7 +19,8 @@ class Account::Setup::UpdatedObjectsObserver < ActiveRecord::Observer
         'EmailConfig' => 'support_email',
         'VaRule' => 'automation',
         'ScenarioAutomation' => 'automation',
-        'EmailNotification' => 'email_notification'
+        'EmailNotification' => 'email_notification',
+        'Portal' => 'customize_domain'
       }
     end
 
@@ -43,5 +44,9 @@ class Account::Setup::UpdatedObjectsObserver < ActiveRecord::Observer
 	def additional_check_for_email_notification(email_notification)
 		#This step is related to update email requester notification
 		email_notification.account.verified? && email_notification.requester_notification_updated?
+	end
+
+	def additional_check_for_customize_domain(portal)
+		portal.previous_changes.key?("portal_url")
 	end
 end

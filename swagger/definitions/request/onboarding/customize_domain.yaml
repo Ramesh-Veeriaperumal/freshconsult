@@ -1,0 +1,6 @@
+type: object
+description: Domain name
+properties:
+  subdomain:
+    type: string
+    description: Domain name that needs to be updated

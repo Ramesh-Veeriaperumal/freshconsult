@@ -252,7 +252,8 @@ module ActionMailerCallbacks
 
     def check_spam_category(mail, params)
       category = nil
-      if account_created_recently? && spam_filtered_notifications.include?(params[:type])
+      notification_type = params[:type].to_i
+      if (account_created_recently? && recent_account_spam_filtered_notifications.include?(notification_type)) || spam_filtered_notifications.include?(notification_type)
         spam_params = {:headers => mail.header.to_s, :text => mail.text_part.to_s, :html => mail.html_part.to_s }
         email = Helpdesk::Email::SpamDetector.construct_raw_mail(spam_params)
         response = FdSpamDetectionService::Service.new(Helpdesk::EMAIL[:outgoing_spam_account], email).check_spam

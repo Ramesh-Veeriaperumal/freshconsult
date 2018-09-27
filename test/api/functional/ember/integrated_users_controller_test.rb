@@ -135,6 +135,7 @@ class Ember::IntegratedUsersControllerTest < ActionController::TestCase
   def test_user_credentials_remove
     agent = add_test_agent(@account)
     agent.make_current
+    login_as(agent)
     user_params = {
       app_name: 'harvest',
       user_id: agent.id,
@@ -147,6 +148,7 @@ class Ember::IntegratedUsersControllerTest < ActionController::TestCase
     integ_user = create_integ_user_credentials(user_params)
     delete :user_credentials_remove, controller_params({ version: 'private', 
       installed_application_id: integ_user.installed_application_id }, true)
+    login_as(get_admin)
     assert_response 204
   end
 

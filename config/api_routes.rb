@@ -518,6 +518,9 @@ Helpkit::Application.routes.draw do
         post :update_channel_config
         get :forward_email_confirmation
         post :test_email_forwarding
+        get :suggest_domains
+        post :validate_domain_name 
+        put :customize_domain
       end
     end
 

@@ -3,6 +3,7 @@ require_relative '../test_helper'
 require 'sidekiq/testing'
 require 'webmock/minitest'
 ['shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+
 Sidekiq::Testing.fake!
 
 class TicketsControllerTest < ActionController::TestCase
@@ -12,6 +13,7 @@ class TicketsControllerTest < ActionController::TestCase
   include AwsTestHelper
   include CannedResponsesTestHelper
   include SharedOwnershipTestHelper
+  include SlaPoliciesTestHelper
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
@@ -2394,11 +2396,20 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(show_ticket_pattern_with_notes(ticket))
   end
 
+  def test_show_with_sla_policy
+    ticket.deleted = false
+    get :show, controller_params(id: ticket.display_id, include: 'stats, sla_policy')
+    assert_response 200
+    param_object = OpenStruct.new(:stats => true, :sla_policy => true)
+    match_json(show_ticket_pattern_with_association(ticket, param_object))
+  end
+
   def test_show_with_requester
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'requester')
     assert_response 200
-    match_json(show_ticket_pattern_with_association(ticket, false, false, true, false, false))
+    param_object = OpenStruct.new(:requester => true)
+    match_json(show_ticket_pattern_with_association(ticket, param_object))
   end
 
   def test_show_with_company
@@ -2408,7 +2419,8 @@ class TicketsControllerTest < ActionController::TestCase
     t.update_column(:owner_id, company.id)
     get :show, controller_params(id: ticket.display_id, include: 'company')
     assert_response 200
-    match_json(show_ticket_pattern_with_association(ticket, false, false, false, true, false))
+    param_object = OpenStruct.new(:company => true)
+    match_json(show_ticket_pattern_with_association(ticket, param_object))
   end
 
   def test_show_with_stats
@@ -2419,7 +2431,8 @@ class TicketsControllerTest < ActionController::TestCase
 
     get :show, controller_params(id: t.display_id, include: 'stats')
     assert_response 200
-    match_json(show_ticket_pattern_with_association(t, false, false, false, false, true))
+    param_object = OpenStruct.new(:stats => true)
+    match_json(show_ticket_pattern_with_association(t, param_object))
   end
 
   def test_show_with_all_associations
@@ -2430,14 +2443,15 @@ class TicketsControllerTest < ActionController::TestCase
     t.reload
     get :show, controller_params(id: t.display_id, include: 'conversations,requester,company,stats')
     assert_response 200
-    match_json(show_ticket_pattern_with_association(t))
+    param_object = OpenStruct.new(:notes => true, :requester => true, :company => true, :stats => true)
+    match_json(show_ticket_pattern_with_association(t, param_object))
   end
 
   def test_show_with_empty_include
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: '')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company, stats')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company, stats, sla_policy')])
   end
 
   def test_show_with_wrong_type_include
@@ -2451,7 +2465,7 @@ class TicketsControllerTest < ActionController::TestCase
     ticket.update_column(:deleted, false)
     get :show, controller_params(id: ticket.display_id, include: 'test')
     assert_response 400
-    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company, stats')])
+    match_json([bad_request_error_pattern('include', :not_included, list: 'conversations, requester, company, stats, sla_policy')])
   end
 
   def test_show_with_invalid_params
@@ -2831,8 +2845,10 @@ class TicketsControllerTest < ActionController::TestCase
                             .order('created_at DESC')
                             .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_equal tkts.count, response.size
+    param_object = OpenStruct.new(:requester => true)
+    param_object.requester = true
     pattern = tkts.map do |tkt|
-      index_ticket_pattern_with_associations(tkt, true, false, false, [:description, :description_text])
+      index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
     end
     match_json(pattern)
   end
@@ -2846,8 +2862,9 @@ class TicketsControllerTest < ActionController::TestCase
                             .order('created_at DESC')
                             .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_equal tkts.count, response.size
+    param_object = OpenStruct.new(:stats => true)
     pattern = tkts.map do |tkt|
-      index_ticket_pattern_with_associations(tkt, false, true, false, [:description, :description_text])
+      index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
     end
     match_json(pattern)
   end
@@ -2861,8 +2878,9 @@ class TicketsControllerTest < ActionController::TestCase
                             .order('created_at DESC')
                             .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_equal tkts.count, response.size
+    param_object = OpenStruct.new(:company => true)
     pattern = tkts.map do |tkt|
-      index_ticket_pattern_with_associations(tkt, false, false, true, [:description, :description_text])
+      index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
     end
     match_json(pattern)
   end
@@ -2899,8 +2917,9 @@ class TicketsControllerTest < ActionController::TestCase
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
     get :index, controller_params(filter: 'spam')
     assert_response 200
+    param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, false, false, false, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
     match_json(pattern)
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:dashboard_new_alias?)
@@ -2915,8 +2934,9 @@ class TicketsControllerTest < ActionController::TestCase
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
     get :index, controller_params(filter: 'new_and_my_open')
     assert_response 200
+    param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, false, false, false, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
     match_json(pattern)
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
@@ -2931,8 +2951,9 @@ class TicketsControllerTest < ActionController::TestCase
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
     get :index, controller_params(include: 'stats')
     assert_response 200
+    param_object = OpenStruct.new(:stats => true)
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, false, true, false, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
     match_json(pattern)
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
@@ -2948,8 +2969,9 @@ class TicketsControllerTest < ActionController::TestCase
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
     get :index, controller_params(requester_id: user.id)
     assert_response 200
+    param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, false, false, false, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
     match_json(pattern)
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
@@ -2965,9 +2987,10 @@ class TicketsControllerTest < ActionController::TestCase
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_1.id, t_2.id).to_json, status: 200)
     get :index, controller_params(order_by: 'status')
     assert_response 200
+    param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t_2, false, false, false, [:description, :description_text]))
-    pattern.push(index_ticket_pattern_with_associations(t_1, false, false, false, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t_2, param_object, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t_1, param_object, [:description, :description_text]))
     match_json(pattern)
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
@@ -2983,9 +3006,10 @@ class TicketsControllerTest < ActionController::TestCase
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_2.id, t_1.id).to_json, status: 200)
     get :index, controller_params(order_type: 'asc')
     assert_response 200
+    param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t_1, false, false, false, [:description, :description_text]))
-    pattern.push(index_ticket_pattern_with_associations(t_2, false, false, false, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t_1, param_object, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t_2, param_object, [:description, :description_text]))
     match_json(pattern)
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
@@ -3000,8 +3024,9 @@ class TicketsControllerTest < ActionController::TestCase
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
     get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200
+    param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, false, false, false, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
     match_json(pattern)
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
@@ -3022,8 +3047,9 @@ class TicketsControllerTest < ActionController::TestCase
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
     get :index, controller_params(company_id: "#{company.id}")
     assert_response 200
+    param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, false, false, false, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
     match_json(pattern)
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
@@ -3188,7 +3214,6 @@ class TicketsControllerTest < ActionController::TestCase
                                                       type: nil
                                  )
     match_json([bad_request_error_pattern('description',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
-                bad_request_error_pattern('subject',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
@@ -4115,6 +4140,13 @@ class TicketsControllerTest < ActionController::TestCase
     match_json(update_ticket_pattern(params_hash, t.reload))
     match_json(update_ticket_pattern({}, t))
     assert_equal delayed_job_count_before + 1, Delayed::Job.count
+  end
+
+  def test_update_when_subject_is_blank
+    t = create_ticket(requester_id: @agent.id)
+    Helpdesk::Ticket.any_instance.stubs(:subject).returns("")
+    put :update, construct_params({ id: ticket.display_id }, {priority: 4})
+    assert_response 200
   end
 
   def test_create_child

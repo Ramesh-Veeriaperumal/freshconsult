@@ -50,7 +50,6 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_account do
-    resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config]
     resource :"channel/freshcaller/account", only: [:destroy]
     resource :"admin/trial_subscription"
   end
@@ -125,7 +124,6 @@ Authority::Authorization::PrivilegeList.build do
 
   admin_tasks do
     resource :"admin/sandbox", only: [:create, :index, :destroy, :diff, :merge]
-    resource :"ember/admin/onboarding", only: %i[update_channel_config]
     resource :"ember/contact", only: [:update_password]
     resource :'ember/trial_widget', only: %i[index sales_manager complete_step]
     resource :'ember/contact_password_policy', only: [:index]
@@ -133,6 +131,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'admin/canned_form'
     resource :"ember/portal", only: [:show, :update]
     resource :'audit_log', only: [:filter, :export, :event_name]
+    resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config suggest_domains validate_domain_name customize_domain]
     resource :"admin/subscription", only: [:show, :plans]
     resource :"proactive/rule"
     resource :"proactive/outreach"
