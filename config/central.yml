@@ -1,12 +1,48 @@
 development:
   api_endpoint: https://central-staging.freshworksapi.com/collector
   service_token: ZmlnOmh5cGVydHJhaWwtY2k=
+  central_secret:
+    twitter:
+      label: "twitter"
+      key: "bf3c199c2470cb477d907b1e0917c17b"
+      iv: "1324659871023654"
+    installed_application:
+      label: "key1"
+      key: "bf3c199c2470cb477d907b1e0917c17b"
+      iv: "1324659871023654"
 test:
   api_endpoint: https://central-staging.freshworksapi.com/collector
   service_token: dummy
+  central_secret:
+    twitter:
+      label: "twitter"
+      key: "bf3c199c2470cb477d907b1e0917c17b"
+      iv: "1324659871023654"
+    installed_application:
+      label: "key1"
+      key: "bf3c199c2470cb477d907b1e0917c17b"
+      iv: "1324659871023654"
 staging:
   api_endpoint: https://central-staging.freshworksapi.com/collector
   service_token: dummy
+  central_secret:
+    twitter:
+      label: dummy
+      key: dummy
+      iv: dummy
+    installed_application:
+      label: dummy
+      key: dummy
+      iv: dummy
 production:
   api_endpoint: https://central-production.freshworksapi.com/collector
   service_token: dummy
+  central_secret:
+    twitter:
+      label: dummy 
+      key: dummy
+      iv: dummy
+    installed_application:
+      label: dummy
+      key: dummy
+      iv: dummy
