@@ -1,5 +1,5 @@
 require_relative '../../test_helper'
-['dashboard_object.rb', 'widget_object.rb'].each { |filename| require_relative "#{Rails.root}/test/api/helpers/custom_dashboard/#{filename}"}
+['dashboard_object.rb', 'widget_object.rb','search_service_result.rb'].each { |filename| require_relative "#{Rails.root}/test/api/helpers/custom_dashboard/#{filename}"}
 require "#{Rails.root}/test/api/helpers/custom_dashboard_test_helper.rb"
 module Ember
   class CustomDashboardControllerTest < ActionController::TestCase
@@ -1119,6 +1119,156 @@ module Ember
       clear_redis_data
       clear_group_agents_redis_data(@group_odd)
       clear_group_agents_redis_data(@group_even)
+    end
+
+    # To check service writes test
+    def test_widgets_data_api_meta_from_search_service
+      Account.current.launch(:count_service_es_reads)
+      stub_data = fetch_search_service_scorecard_stub(@@scorecard_dashboard.widgets)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :widgets_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, type: 'scorecard')
+      assert_response 200
+      assert_not_nil response.api_meta[:last_dump_time]
+      assert_not_nil response.api_meta[:dashboard][:last_modified_since]
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+     def test_widget_data_preview_for_scorecard_with_default_filter_from_search_service
+      Account.current.launch(:count_service_es_reads)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new({"records" => {"results" => { "unresolved" => { "total" => 55 } }} }))
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: 'unresolved')
+      assert_response 200
+      match_json({ 'count' => 55 })
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_widget_data_preview_for_scorecard_with_custom_filter_from_search_service
+      ticket_filter = create_filter
+      Account.current.launch(:count_service_es_reads)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(SearchServiceResult.new({"records" => { "results" => {"#{ticket_filter.id}" => {"total" => 87} }}}))
+      # ::Dashboard::SearchServiceTrendCount.any_instance.stubs(:fetch_count).returns({ "results" => {"#{ticket_filter.id}" => {"total" => 87} }})
+      get :widget_data_preview, controller_params(version: 'private', type: 'scorecard', ticket_filter_id: ticket_filter.id)
+      assert_response 200
+      match_json({ 'count' => 87 })
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+
+    def test_widget_data_preview_for_bar_chart_with_custom_filter_from_search_service
+      ticket_filter = create_filter
+      field = Account.current.ticket_fields.find_by_field_type('default_status')
+      Account.current.launch(:count_service_es_reads)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id, ticket_filter.id))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: ticket_filter.id, categorised_by: field.id, representation: NUMBER)
+      assert_response 200
+      match_json(bar_chart_preview_response_pattern(field.id))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_default_filter_from_search_service
+      field = Account.current.ticket_fields.find_by_field_type('default_group')
+      Account.current.launch(:count_service_es_reads)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
+      assert_response 200
+      match_json(bar_chart_preview_response_pattern(field.id))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_default_field_from_search_service
+      field = Account.current.ticket_fields.find_by_field_type('default_agent')
+      Account.current.launch(:count_service_es_reads) 
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
+      assert_response 200
+      match_json(bar_chart_preview_response_pattern(field.id))
+      ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_custom_field_from_search_service
+      choices = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
+      field = create_custom_field_dropdown('test_custom_dropdown_bar_chart', choices)
+      Account.current.launch(:count_service_es_reads)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id, 'unresolved', choices))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
+      assert_response 200
+      match_json(bar_chart_preview_response_pattern(field.id, choices))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_number_field_from_search_service
+      field = Account.current.ticket_fields.find_by_field_type('default_agent')
+      Account.current.launch(:count_service_es_reads)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
+      assert_response 200
+      match_json(bar_chart_preview_response_pattern(field.id))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_widget_data_preview_for_bar_chart_with_percentage_representation_from_search_service
+      field = Account.current.ticket_fields.find_by_field_type('default_status')
+      Account.current.launch(:count_service_es_reads)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(bar_chart_preview_search_service_es_response_stub(field.id))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: PERCENTAGE)
+      assert_response 200
+      match_json(bar_chart_preview_response_percentage_pattern(field.id))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_widgets_data_for_scorecard_widgets_from_search_service
+      Account.current.launch(:count_service_es_reads)
+      stub_data = fetch_search_service_scorecard_stub(@@scorecard_dashboard.widgets)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :widgets_data, controller_params(version: 'private', id: @@scorecard_dashboard.id, type: 'scorecard')
+      assert_response 200
+      match_json(scorecard_response_pattern_search_service(@@scorecard_dashboard.widgets, stub_data))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_widgets_data_for_bar_chart_widgets_from_search_service
+      Account.current.launch(:count_service_es_reads)
+      stub_data = fetch_bar_chart_from_service_stub(@@bar_chart_dashboard.widgets)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :widgets_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, type: 'bar_chart')
+      assert_response 200
+      match_json(bar_chart_from_service_response_pattern(@@bar_chart_dashboard.widgets, stub_data))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_bar_chart_data_for_bar_chart_widget_from_search_service
+      widget = @@bar_chart_dashboard.widgets.first
+      Account.current.launch(:count_service_es_reads)
+      stub_data = bar_chart_data_es_response_service_stub(widget)
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :bar_chart_data, controller_params(version: 'private', id: @@bar_chart_dashboard.id, widget_id: widget.id)
+      assert_response 200
+      match_json(bar_chart_data_response_pattern(widget))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
     end
 
     def test_create_announcement_without_privilege

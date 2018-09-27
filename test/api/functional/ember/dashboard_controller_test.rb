@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+require_relative "#{Rails.root}/test/api/helpers/custom_dashboard/search_service_result.rb"
 module Ember
   class DashboardControllerTest < ::ActionController::TestCase
     include GroupHelper
@@ -470,5 +471,150 @@ module Ember
     #     assert_response 400
     #   end
     # end
+
+        # search service related tests
+    def test_scorecard_without_filter_data_search_service
+      Account.first.make_current
+      User.first.make_current
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      Account.current.launch(:count_service_es_reads)
+      stub_data = scorecard_stub_data
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :scorecard, controller_params(version: 'private')
+      assert_response 200
+      match_json(scorecard_pattern_search_service(stub_data))
+    ensure
+      User.any_instance.unstub(:privilege?)
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_scorecard_with_product_id_search_service
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(true)
+      product = create_product
+      Account.current.launch(:count_service_es_reads)
+      stub_data = scorecard_stub_data
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :scorecard, controller_params(version: 'private', product_ids: [product.id])
+      assert_response 200
+      match_json(scorecard_pattern_search_service(stub_data))
+    ensure
+      User.any_instance.unstub(:privilege?)
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_scorecard_with_group_id_that_agent_belong_search_service
+      agent = add_test_agent(@account, role: Role.where(name: 'Account Administrator').first.id)
+      @controller.stubs(:current_user).returns(agent)
+      group = create_group_with_agents(@account, agent_list: [agent.id])
+      User.any_instance.stubs(:agent_groups).returns(group.agent_groups)
+      Account.current.launch(:count_service_es_reads)
+      stub_data = scorecard_stub_data
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :scorecard, controller_params(version: 'private', group_ids: [group.id])
+      assert_response 200
+      match_json(scorecard_pattern_search_service(stub_data))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      User.any_instance.unstub(:agent_groups)
+      @controller.unstub(:current_user)
+    end
+
+    def test_scorecard_for_supervisor_with_global_access_and_no_associated_groups_search_service
+      agent = add_test_agent(@account, role: Role.where(name: 'Supervisor').first.id)
+      group = create_group(@account)
+      @controller.stubs(:current_user).returns(agent)
+      Account.current.launch(:count_service_es_reads)
+      stub_data = scorecard_stub_data
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :scorecard, controller_params(version: 'private', group_ids: [group.id])
+      assert_response 200
+      match_json(scorecard_pattern_search_service(stub_data))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      @controller.unstub(:current_user)
+    end
+
+    def test_scorecard_for_admin_search_service
+      agent = add_test_agent(@account, role: Role.where(name: 'Administrator').first.id)
+      group = create_group(@account)
+      @controller.stubs(:current_user).returns(agent)
+      Account.current.launch(:count_service_es_reads)
+      stub_data = scorecard_stub_data
+      SearchService::Client.any_instance.stubs(:multi_aggregate).returns(stub_data)
+      get :scorecard, controller_params(version: 'private', group_ids: [group.id])
+      assert_response 200
+      match_json(scorecard_pattern_search_service(stub_data))
+    ensure
+      SearchService::Client.any_instance.unstub(:multi_aggregate)
+      Account.current.rollback(:count_service_es_reads)
+      @controller.unstub(:current_user)
+    end
+
+    def test_unresolved_tickets_widget_with_group_filter_search_service
+      group = create_group(@account)
+      Account.current.launch(:count_service_es_reads)
+      stub_data = unreloved_tickets_stub_data(group_ids: [group.id], group_by: 'group_id')
+      SearchService::Client.any_instance.stubs(:aggregate).returns(stub_data)
+      get :unresolved_tickets_data, controller_params(version: 'private', widget: 1, group_ids: [group.id], group_by: 'group_id')
+      assert_response 200
+    ensure
+      SearchService::Client.any_instance.unstub(:aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_unresolved_tickets_widget_with_product_filter_search_service
+      product = create_product()
+      Account.current.launch(:count_service_es_reads)
+      stub_data = unreloved_tickets_stub_data(product_ids: [product.id], group_by: 'group_id')
+      SearchService::Client.any_instance.stubs(:aggregate).returns(stub_data)
+      get :unresolved_tickets_data, controller_params(version: 'private', widget: 1, product_ids: [product.id], group_by: 'group_id')
+      assert_response 200
+    ensure
+      SearchService::Client.any_instance.unstub(:aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_unresolved_tickets_widget_without_filter_search_service
+      Account.current.launch(:count_service_es_reads)
+      stub_data = unreloved_tickets_stub_data(group_by: 'group_id', status_ids: [2])
+      SearchService::Client.any_instance.stubs(:aggregate).returns(stub_data)
+      get :unresolved_tickets_data, controller_params(version: 'private', widget: 1, group_by: 'group_id', status_ids: [2])
+      assert_response 200
+    ensure
+      SearchService::Client.any_instance.unstub(:aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_unresolved_tickets_detailed_page_without_filter_search_service
+      Account.current.launch(:count_service_es_reads)
+      stub_data = unreloved_tickets_stub_data(group_by: 'responder_id')
+      SearchService::Client.any_instance.stubs(:aggregate).returns(stub_data)
+      get :unresolved_tickets_data, controller_params(version: 'private', group_by: 'responder_id')
+      assert_response 200
+    ensure
+      SearchService::Client.any_instance.unstub(:aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
+
+    def test_unresolved_tickets_detailed_page_with_filter_search_service
+      groups = []
+      create_groups(@account).each { |group| groups << group.id }
+      Account.current.launch(:count_service_es_reads)
+      stub_data = unreloved_tickets_stub_data(group_by: 'group_id', group_ids: groups)
+      SearchService::Client.any_instance.stubs(:aggregate).returns(stub_data)
+      get :unresolved_tickets_data, controller_params(version: 'private', group_by: 'group_id', group_ids: groups)
+      assert_response 200
+    ensure
+      SearchService::Client.any_instance.unstub(:aggregate)
+      Account.current.rollback(:count_service_es_reads)
+    end
   end
 end

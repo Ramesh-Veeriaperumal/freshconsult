@@ -114,6 +114,7 @@ module TicketFieldsTestHelper
                                                            description: '',
                                                            required: required,
                                                            required_for_closure: required_for_closure,
+                                                           column_name: "ffs_#{field_name}",
                                                            flexifield_def_entry_id: flexifield_def_entry.id)
     parent_custom_field.save
 

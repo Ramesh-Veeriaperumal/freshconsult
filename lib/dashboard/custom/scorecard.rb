@@ -44,8 +44,20 @@ class Dashboard::Custom::Scorecard < Dashboards
     end
 
     def fetch_count
-      count_result = Dashboard::TrendCount.new(true, trend_count_options).fetch_count
-      parse_count(count_result)
+      if Account.current.launched?(:count_service_es_reads)
+        count_result = Dashboard::SearchServiceTrendCount.new(trend_count_options).fetch_count
+        parse_search_es_response(count_result["results"])
+      else
+        count_result = Dashboard::TrendCount.new(true, trend_count_options).fetch_count
+        parse_count(count_result)
+      end
+    end
+
+    def parse_search_es_response(response)
+      result = @widget_trends.map do |widget_id, type|
+          [widget_id, response[type.to_s]["total"]]
+      end
+      result
     end
 
     def trend_count_options

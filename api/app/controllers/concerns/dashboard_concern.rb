@@ -81,7 +81,13 @@ module DashboardConcern
     elsif instance_variable_get("@#{@group_by.first}").present? || User.current.assigned_ticket_permission
       options[:include_missing] = false
     end
-    ticket_counts = ::Dashboard::DataLayer.new(es_enabled, options).aggregated_data
+    if Account.current.launched?(:count_service_es_reads)
+      options[:filter_condition].merge!({spam: [false], deleted: [false]})
+      ticket_counts = Dashboard::SearchServiceTrendCount.new(options).fetch_count
+      ticket_counts = parse_results(ticket_counts)
+    else
+      ticket_counts = ::Dashboard::DataLayer.new(es_enabled, options).aggregated_data
+    end
     build_response(ticket_counts, options[:include_missing], params[:widget])
   end
 
@@ -234,4 +240,26 @@ module DashboardConcern
   def set_custom_errors(item = @item)
     ErrorHelper.rename_error_fields(ERROR_FIELD_NAME_MAPPINGS.dup, item)
   end
+
+  private
+
+  def parse_results(counts)
+    results = {}
+    counts["results"].each do |result|
+      value = result["value"].to_i == -1 ? nil : result["value"].to_i
+      result["groups"].each do |group|
+        results[[value, group["value"].to_i]] = group["count"]
+      end
+    end
+    results
+  end
+
+  def parse_scorecard_hash(response, trends)
+    result = {}
+    trends.each do |trend|
+      result[trend.to_s] = response["results"][trend.to_s].present? ? response["results"][trend.to_s]["total"] : 0
+    end
+    result
+  end
+
 end

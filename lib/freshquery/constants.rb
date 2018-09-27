@@ -1,5 +1,5 @@
 module Freshquery::Constants
-	DEFAULT_QUERY_LENGTH = 512
+	DEFAULT_QUERY_LENGTH = 8192
 	DEFAULT_PER_PAGE = 30
 	DEFAULT_PAGE = 1
   QUERY_FORMAT_INVALID = "Given query is invalid, expected format \"keyword:value  OPERATOR keyword:'string' OPERATOR keyword:>'yyyy-mm-dd' OPERATOR keyword:<integer\". Space is mandatory between key/value pair and operator. Please check the paranthesis if there are any.".freeze

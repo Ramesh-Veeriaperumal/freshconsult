@@ -80,9 +80,15 @@ class Dashboard::Custom::BarChart < Dashboards
     end
 
     def fetch_agg_data
-      count_result = Search::Dashboard::Custom::Count.new(true, trend_count_options).fetch_count
+      if Account.current.launched?(:count_service_es_reads)
+        count_result= Dashboard::SearchServiceTrendCount.new(trend_count_options).fetch_count
+        count_result= parse_search_count_result(count_result)
+      else
+        count_result = Search::Dashboard::Custom::Count.new(true, trend_count_options).fetch_count
+        count_result= parse_count_result(count_result)
+      end
       Rails.logger.info "Count response:: #{count_result.inspect}"
-      parse_count_result(count_result)
+      count_result
     end
 
     def trend_count_options
@@ -102,6 +108,21 @@ class Dashboard::Custom::BarChart < Dashboards
         result << [trend[0], parse_agg_result(count_result[i], @agg_options[i])]
       end
       result
+    end
+
+    def parse_search_count_result(count_result)
+      result = []
+      @widget_trends.each_with_index do |trend, i|
+        result<<[trend[0], parse_aggs_result(count_result["results"][i.to_s], @agg_options[i])]
+      end
+      result
+    end
+
+    def parse_aggs_result(result,options)
+      data = result["results"].map do |values|
+          {name: values["value"].to_i > 0 ? values["value"].to_i : values["value"] , data: [(options['representation'].to_i == NUMBER ? values["count"] : (values["count"].to_f * 100 / result["total"]).round(1))] }
+      end
+      { group_by: options["group_by_field"][0], data: data }
     end
 
     def parse_agg_result(result, options)

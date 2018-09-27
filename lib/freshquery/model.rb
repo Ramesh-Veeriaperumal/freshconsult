@@ -15,7 +15,7 @@ module Freshquery::Model
       mapping = get_mapping(type)
       tree = construct_expression_tree(query.strip, parser, mapping.query_length)
       record = parser.record
-      valid = mapping.valid?(record)
+      valid = mapping.should_validate? ? mapping.valid?(record) : true
       if valid == true
         Freshquery::Response.new(true, tree.accept(visitor(mapping)))
       else
@@ -48,9 +48,9 @@ module Freshquery::Model
   end # Instance methods
 
   module ClassMethods
-    def fq_schema(document_type, fqhelper, query_length = 512, &block)
+    def fq_schema(document_type, fqhelper, query_length, validate = true, &block)
       raise 'Attibutes block required' unless block_given?
-      mapping = Freshquery::Mappings.new(fqhelper, query_length)
+      mapping = Freshquery::Mappings.new(fqhelper, query_length, validate)
       Freshquery::Mappings.put(document_type, mapping)
       mapping.instance_eval(&block)
     end
