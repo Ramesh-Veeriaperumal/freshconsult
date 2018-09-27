@@ -21,11 +21,11 @@ module Ember::Search
         companies.each { |company| add_avatar_to_company(company) }
         contact = create_contact_with_other_companies(@account, companies.map(&:id))
         add_avatar_to_user(contact)
-        Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([contact], { total_entries: 0 }))
-        post :results, construct_params(version: 'private', context: 'spotlight', term: contact.name, limit: 3)
-        Search::V2::QueryHandler.any_instance.unstub(:query_results)
+        stub_private_search_response([contact]) do
+          post :results, construct_params(version: 'private', context: 'spotlight', term: contact.name, limit: 3)
+        end
         assert_response 200
-        match_json([contact_pattern(contact)])
+        match_json([private_search_contact_pattern(contact)])
       end
     end
 
@@ -33,11 +33,11 @@ module Ember::Search
       enable_multiple_user_companies do
         company = create_company
         add_avatar_to_company(company)
-        Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([company], { total_entries: 0 }))
-        post :results, construct_params(version: 'private', context: 'spotlight', term: company.name, limit: 3)
-        Search::V2::QueryHandler.any_instance.unstub(:query_results)
+        stub_private_search_response([company]) do
+          post :results, construct_params(version: 'private', context: 'spotlight', term: company.name, limit: 3)
+        end
         assert_response 200
-        assert_equal [company_pattern(company)].to_json, response.body
+        assert_equal [private_search_company_pattern(company)].to_json, response.body
       end
     end
 
@@ -48,11 +48,11 @@ module Ember::Search
       add_avatar_to_user(contact)
       source_user = create_contact_with_other_companies(@account, companies.map(&:id))
       add_avatar_to_user(source_user)
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([contact], { total_entries: 0 }))
-      post :results, construct_params(version: 'private', context: 'merge', term: contact.name, source_user_id: source_user.id, limit: 3)
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([contact]) do
+        post :results, construct_params(version: 'private', context: 'merge', term: contact.name, source_user_id: source_user.id, limit: 3)
+      end
       assert_response 200
-      match_json([contact_pattern(contact)])
+      match_json([private_search_contact_pattern(contact)])
     end
 
     def test_results_with_freshcaller_context
@@ -61,11 +61,11 @@ module Ember::Search
         companies.each { |company| add_avatar_to_company(company) }
         contact = create_contact_with_other_companies(@account, companies.map(&:id))
         add_avatar_to_user(contact)
-        Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([contact], { total_entries: 0 }))
-        post :results, construct_params(version: 'private', context: 'freshcaller', term: contact.name, limit: 3)
-        Search::V2::QueryHandler.any_instance.unstub(:query_results)
+        stub_private_search_response([contact]) do
+          post :results, construct_params(version: 'private', context: 'freshcaller', term: contact.name, limit: 3)
+        end
         assert_response 200
-        match_json([contact_pattern(contact)])
+        match_json([private_search_contact_pattern(contact)])
       end
     end
 
@@ -75,11 +75,11 @@ module Ember::Search
         companies.each { |company| add_avatar_to_company(company) }
         contact = create_contact_with_other_companies(@account, companies.map(&:id))
         add_avatar_to_user(contact)
-        Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([contact], { total_entries: 0 }))
-        post :results, construct_params(version: 'private', context: 'filteredContactSearch', term: contact.name, all: true, limit: 3)
-        Search::V2::QueryHandler.any_instance.unstub(:query_results)
+        stub_private_search_response([contact]) do
+          post :results, construct_params(version: 'private', context: 'filteredContactSearch', term: contact.name, all: true, limit: 3)
+        end
         assert_response 200
-        match_json([contact_pattern(contact)])
+        match_json([private_search_contact_pattern(contact)])
       end
     end
 
@@ -87,11 +87,11 @@ module Ember::Search
       enable_multiple_user_companies do
         company = create_company
         add_avatar_to_company(company)
-        Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([company], { total_entries: 0 }))
-        post :results, construct_params(version: 'private', context: 'filteredCompanySearch', term: company.name, all: true, limit: 3)
-        Search::V2::QueryHandler.any_instance.unstub(:query_results)
+        stub_private_search_response([company]) do
+          post :results, construct_params(version: 'private', context: 'filteredCompanySearch', term: company.name, all: true, limit: 3)
+        end
         assert_response 200
-        assert_equal [company_pattern(company)].to_json, response.body
+        assert_equal [private_search_company_pattern(company)].to_json, response.body
       end
     end
   end

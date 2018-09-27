@@ -41,27 +41,27 @@ module Ember::Search
 
     def test_results_with_valid_params
       article = create_article(article_params).primary_article
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([article], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'spotlight', term: article.title, limit: 3)
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([article]) do
+        post :results, construct_params(version: 'private', context: 'spotlight', term: article.title, limit: 3)
+      end
       assert_response 200
       assert_equal [solution_article_pattern(article)].to_json, response.body
     end
 
     def test_results_with_insert_solutions_context
       article = create_article(article_params).primary_article
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([article], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'insert_solutions', term: article.title, limit: 3)
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([article]) do
+        post :results, construct_params(version: 'private', context: 'insert_solutions', term: article.title, limit: 3)
+      end
       assert_response 200
       assert_equal [solution_article_pattern(article, :agent_insert_solution)].to_json, response.body
     end
 
     def test_results_with_bot_map_context
       article = create_article(article_params).primary_article
-      Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new([article], { total_entries: 1 }))
-      post :results, construct_params(version: 'private', context: 'bot_map_solution', term: article.title, limit: 3)
-      Search::V2::QueryHandler.any_instance.unstub(:query_results)
+      stub_private_search_response([article]) do
+        post :results, construct_params(version: 'private', context: 'bot_map_solution', term: article.title, limit: 3)
+      end
       assert_response 200
       assert_equal [solution_article_pattern(article, :filtered_solution_search)].to_json, response.body
     end
