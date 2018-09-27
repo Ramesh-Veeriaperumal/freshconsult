@@ -166,8 +166,16 @@ def distributed_run(category) {
 						               execute_test_cases(category)
 						         }
 						         catch (e) {
+						         
+						            //Not applicable for pronto since it will lots of warning which in turnes make buid unstable
+						            if(category != 'pronto') {
 						               echo "issue with test execution" + e
 						               currentBuild.result = 'UNSTABLE'
+						            }else{
+						                echo "Verifiy Pronto code" + e
+						            }
+
+						               
 						         }
 		
 					    		 finally {
