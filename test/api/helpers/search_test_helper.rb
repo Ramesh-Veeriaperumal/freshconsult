@@ -310,6 +310,10 @@ module SearchTestHelper
     }
   end
 
+  def public_search_company_pattern(company)
+    private_search_company_pattern(company).except(:user_count)
+  end
+
   def domains(company)
     company.domains.nil? ? [] : company.domains.split(',')
   end

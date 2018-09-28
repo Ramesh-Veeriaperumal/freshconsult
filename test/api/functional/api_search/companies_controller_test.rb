@@ -3,7 +3,7 @@ module ApiSearch
   class CompaniesControllerTest < ActionController::TestCase
     include SearchTestHelper
 
-    CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'].freeze
+    CHOICES = ['Test Dropdown1', 'Test Dropdown2', 'Test Dropdown3'].freeze
 
     def setup
       super
@@ -27,14 +27,12 @@ module ApiSearch
       CompanyFieldChoice.create(value: CHOICES[0], position: 1)
       CompanyFieldChoice.create(value: CHOICES[1], position: 2)
       CompanyFieldChoice.create(value: CHOICES[2], position: 3)
-      CompanyFieldChoice.update_all(account_id: @account.id)
-      CompanyFieldChoice.update_all(company_field_id: cfid)
+      CompanyFieldChoice.where('value LIKE ?', '%Test Dropdown%').update_all(account_id: @account.id)
+      CompanyFieldChoice.where('value LIKE ?', '%Test Dropdown%').update_all(company_field_id: cfid)
 
       @account.reload
-      clear_es(@account.id)
       30.times { create_search_company(company_params_hash) }
       @account.companies.last(5).map { |x| x.update_attributes('cf_sample_date' => nil) }
-      write_data_to_es(@account.id)
       @@initial_setup_run = true
     end
 
@@ -60,7 +58,9 @@ module ApiSearch
 
     def test_companies_custom_fields
       companies = @account.companies.select { |x| x.custom_field['cf_sample_number'] == 2 || x.custom_field['cf_sample_checkbox'] == false || x.domains.split(',').include?('aaa.aa') }
-      get :index, controller_params(query: '"domain:\'aaa.aa\' OR sample_checkbox:false OR sample_number:2"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"domain:\'aaa.aa\' OR sample_checkbox:false OR sample_number:2"')
+      end
       assert_response 200
       response = parse_response @response.body
       assert_equal companies.size, response['results'].size
@@ -68,27 +68,33 @@ module ApiSearch
 
     def test_companies_domains_null
       companies = @account.companies.select { |x| x.domains.blank? }
-      get :index, controller_params(query: '"domain: null"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"domain: null"')
+      end
       assert_response 200
-      pattern = companies.map { |company| company_pattern(company) }
+      pattern = companies.map { |company| public_search_company_pattern(company) }
       match_json(results: pattern, total: companies.size)
     end
 
     # Custom Fields
     def test_companies_custom_dropdown_null
       companies = @account.companies.select { |x| x.cf_sample_dropdown.nil? }
-      get :index, controller_params(query: '"sample_dropdown: null"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"sample_dropdown: null"')
+      end
       assert_response 200
-      pattern = companies.map { |company| company_pattern(company) }
+      pattern = companies.map { |company| public_search_company_pattern(company) }
       match_json(results: pattern, total: companies.size)
     end
 
     def test_companies_custom_dropdown_valid_choice
       choice = CHOICES[rand(3)]
       companies = @account.companies.select { |x| x.cf_sample_dropdown == choice }
-      get :index, controller_params(query: '"sample_dropdown:\'' + choice + '\' "')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"sample_dropdown:\'' + choice + '\' "')
+      end
       assert_response 200
-      pattern = companies.map { |company| company_pattern(company) }
+      pattern = companies.map { |company| public_search_company_pattern(company) }
       match_json(results: pattern, total: companies.size)
     end
 
@@ -102,17 +108,21 @@ module ApiSearch
       choice = CHOICES[rand(3)]
       domain = @account.companies.map(&:domains).map { |x| x.split(',') }.flatten.compact.first
       companies = @account.companies.select { |x| x.cf_sample_dropdown == choice && x.domains.split(',').include?(domain) }
-      get :index, controller_params(query: '"sample_dropdown:\'' + choice + '\' AND domain:\'' + domain + '\'"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"sample_dropdown:\'' + choice + '\' AND domain:\'' + domain + '\'"')
+      end
       assert_response 200
-      pattern = companies.map { |company| company_pattern(company) }
+      pattern = companies.map { |company| public_search_company_pattern(company) }
       match_json(results: pattern, total: companies.size)
     end
 
     def test_companies_custom_number_null
       companies = @account.companies.select { |x| x.cf_sample_number.nil? }
-      get :index, controller_params(query: '"sample_number: null"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"sample_number: null"')
+      end
       assert_response 200
-      pattern = companies.map { |company| company_pattern(company) }
+      pattern = companies.map { |company| public_search_company_pattern(company) }
       match_json(results: pattern, total: companies.size)
     end
 
@@ -123,18 +133,22 @@ module ApiSearch
 
     def test_companies_custom_text_null
       companies = @account.companies.select { |x| x.cf_sample_text.nil? }
-      get :index, controller_params(query: '"sample_text: null"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"sample_text: null"')
+      end
       assert_response 200
-      pattern = companies.map { |company| company_pattern(company) }
+      pattern = companies.map { |company| public_search_company_pattern(company) }
       match_json(results: pattern, total: companies.size)
     end
 
     def test_companies_custom_text_special_characters
       text = @account.companies.map(&:cf_sample_text).compact.last(2)
       companies = @account.companies.select { |x| text.include?(x.cf_sample_text) }
-      get :index, controller_params(query: "\"sample_text:'#{text[0]}' or sample_text:'#{text[1]}'\"")
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: "\"sample_text:'#{text[0]}' or sample_text:'#{text[1]}'\"")
+      end
       assert_response 200
-      pattern = companies.map { |company| company_pattern(company) }
+      pattern = companies.map { |company| public_search_company_pattern(company) }
       match_json(results: pattern, total: companies.size)
     end
 
@@ -145,9 +159,11 @@ module ApiSearch
 
     def test_companies_filter_using_custom_checkbox
       companies = @account.companies.select { |x| x.cf_sample_checkbox == true }
-      get :index, controller_params(query: '"sample_checkbox:true"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"sample_checkbox:true"')
+      end
       assert_response 200
-      pattern = companies.map { |company| company_pattern(company) }
+      pattern = companies.map { |company| public_search_company_pattern(company) }
       match_json(results: pattern, total: companies.size)
     end
 
@@ -160,9 +176,11 @@ module ApiSearch
     def test_companies_valid_date
       d1 = (Date.today - 1).iso8601
       companies = @account.companies.select { |x| x.created_at.utc.to_date.iso8601 <= d1 }
-      get :index, controller_params(query: '"created_at :< \'' + d1 + '\'"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"created_at :< \'' + d1 + '\'"')
+      end
       assert_response 200
-      pattern = companies.map { |company| company_pattern(company) }
+      pattern = companies.map { |company| public_search_company_pattern(company) }
       match_json(results: pattern, total: companies.size)
     end
 
@@ -170,9 +188,11 @@ module ApiSearch
       d1 = (Date.today - 8).iso8601
       d2 = (Date.today - 1).iso8601
       companies = @account.companies.select { |x| x.created_at.utc.to_date.iso8601 >= d1 && x.created_at.utc.to_date.iso8601 <= d2 }
-      get :index, controller_params(query: '"(created_at :> \'' + d1 + '\' AND created_at :< \'' + d2 + '\')"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"(created_at :> \'' + d1 + '\' AND created_at :< \'' + d2 + '\')"')
+      end
       assert_response 200
-      pattern = companies.map { |company| company_pattern(company) }
+      pattern = companies.map { |company| public_search_company_pattern(company) }
       match_json(results: pattern, total: companies.size)
     end
 
@@ -180,16 +200,20 @@ module ApiSearch
       d1 = (Date.today - 8).iso8601
       d2 = (Date.today - 1).iso8601
       companies = @account.companies.select { |x| (x.created_at.utc.to_date.iso8601 >= d1 && x.created_at.utc.to_date.iso8601 <= d2) }
-      get :index, controller_params(query: '"(created_at :> \'' + d1 + '\' AND created_at :< \'' + d2 + '\')"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"(created_at :> \'' + d1 + '\' AND created_at :< \'' + d2 + '\')"')
+      end
       assert_response 200
-      pattern = companies.map { |company| company_pattern(company) }
+      pattern = companies.map { |company| public_search_company_pattern(company) }
       match_json(results: pattern, total: companies.size)
     end
 
     def test_companies_created_on_a_day
       d1 = Date.today.to_date.iso8601
       companies = @account.companies.select { |x| x.created_at.utc.to_date.iso8601 == d1 }
-      get :index, controller_params(query: '"created_at: \'' + d1 + '\'"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"created_at: \'' + d1 + '\'"')
+      end
       assert_response 200
       response = parse_response @response.body
       assert response['total'] == companies.size
@@ -198,7 +222,9 @@ module ApiSearch
     def test_companies_updated_on_a_day
       d1 = (Date.today + 2).to_date.iso8601
       companies = @account.companies.select { |x| x.updated_at.utc.to_date.iso8601 == d1 }
-      get :index, controller_params(query: '"updated_at: \'' + d1 + '\'"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"updated_at: \'' + d1 + '\'"')
+      end
       assert_response 200
       response = parse_response @response.body
       assert response['total'] == companies.size
@@ -217,9 +243,11 @@ module ApiSearch
       d1 = Date.today.to_date.iso8601
       domain = @account.companies.map(&:domains).map { |x| x.split(',') }.flatten.compact.first
       companies = @account.companies.select { |x| x.cf_sample_dropdown == choice && x.domains.split(',').include?(domain) && x.cf_sample_checkbox == true && x.cf_sample_text.nil? && x.created_at.utc.to_date.iso8601 == d1 }
-      get :index, controller_params(query: '"sample_dropdown:\'' + choice + '\' AND domain:\'' + domain + '\' AND sample_checkbox:true AND sample_text:null AND created_at:\'' + d1 + '\'"')
+      stub_public_search_response(companies) do
+        get :index, controller_params(query: '"sample_dropdown:\'' + choice + '\' AND domain:\'' + domain + '\' AND sample_checkbox:true AND sample_text:null AND created_at:\'' + d1 + '\'"')
+      end
       assert_response 200
-      pattern = companies.map { |company| company_pattern(company) }
+      pattern = companies.map { |company| public_search_company_pattern(company) }
       match_json(results: pattern, total: companies.size)
     end
   end
