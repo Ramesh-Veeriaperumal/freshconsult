@@ -196,7 +196,7 @@ class Import::Customers::Base
   end
 
   def notify_mailer param = false
-    UserNotifier.notify_customers_import(mailer_params(param))
+    UserNotifier.send_later(:notify_customers_import, mailer_params(param), { locale_object: @current_user })
   end
 
   def mailer_params corrupted
