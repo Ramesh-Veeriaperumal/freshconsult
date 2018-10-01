@@ -114,9 +114,9 @@ module Ember
       response = parse_response @response.body
       product_choices = response.find { |x| x['type'] == 'default_product'}
       choices = product_choices['choices']
-      product = choices[choices.length-1]
+      product = choices.detect{ |c| c["label"] == "Product C"}
       assert_equal new_count, choices.count
-      assert_equal "Product C", product["label"]
+      assert_not_nil product
       #check the memcache here
 
     end
