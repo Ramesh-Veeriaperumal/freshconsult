@@ -104,6 +104,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
                       "article_feedback" => [spam_condition(false), deleted_condition(false)],
                       "my_article_feedback" => [spam_condition(false), deleted_condition(false)]
                    }
+  DEFAULT_FILTERS_FOR_SEARCH = { 
+                      "spam" => "spam:true AND deleted:false",
+                      "deleted" =>  "deleted:true",
+                      "spam_deleted" =>  "spam:false AND deleted:false",
+                      "pending" => "status:#{PENDING} AND spam:false AND deleted:false",
+                      "open" => "status:#{OPEN} AND spam:false AND deleted:false",
+                      "new" => "spam:false AND deleted:false AND agent_id:null AND status:#{OPEN}",
+                   }
+
 
   USER_COLUMNS = ["responder_id", "helpdesk_subscriptions.user_id", "internal_agent_id"]
   GROUP_COLUMNS = ["group_id", "internal_group_id"]
@@ -217,6 +226,46 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     else
       DEFAULT_FILTERS.fetch(filter_name, DEFAULT_FILTERS[default_value]).dclone
     end
+  end
+
+  def default_filter_for_es_search(filter_name)
+    Time.use_zone(Account.current.time_zone) do
+      default_value = "all_tickets"
+      if ["overdue","due_today","all_tickets","unresolved","new_and_my_open"].include?(filter_name)
+        DEFAULT_FILTERS_FOR_SEARCH["spam_deleted"] + " AND " + safe_send("#{filter_name}_filter")
+      elsif "on_hold".eql?filter_name
+        statuses = Helpdesk::TicketStatus.onhold_statuses(Account.current)
+        DEFAULT_FILTERS_FOR_SEARCH["spam_deleted"] + " AND " + (statuses.present? ? "(status:" + statuses.join(' OR status:') + ")" : " AND status:null")
+      elsif collab_filter_enabled_for?(filter_name) or "raised_by_me".eql?filter_name
+        # custom_ticket_filter_query(ongoing_collab_filter)  need to do
+        DEFAULT_FILTERS_FOR_SEARCH["spam_deleted"] + " AND requester_id:#{User.current.id}"
+      elsif(["shared_by_me","shared_with_me"].include?(filter_name) and Account.current.shared_ownership_enabled?)
+        safe_send("#{filter_name}_filter")
+      else
+        DEFAULT_FILTERS_FOR_SEARCH.fetch(filter_name, DEFAULT_FILTERS_FOR_SEARCH[default_value]).dclone
+      end
+    end
+  end
+
+  def overdue_filter
+    "due_by:<'#{Time.zone.now.utc.iso8601}' AND status_stop_sla_timer:false AND status_deleted:false"
+  end
+
+  def due_today_filter
+    "due_by:>'#{Time.zone.now.beginning_of_day.utc.iso8601}' AND due_by:<'#{Time.zone.now.end_of_day.utc.iso8601}' AND status_stop_sla_timer:false AND status_deleted:false"
+  end
+
+  def all_tickets_filter
+    "created_at:>'#{Time.zone.now.ago(1.month).beginning_of_day.utc.iso8601}' AND created_at:<'#{Time.zone.now.utc.iso8601}'"
+  end
+
+  def unresolved_filter
+    statuses = Helpdesk::TicketStatus.unresolved_statuses(Account.current).join(" OR status:")
+    "(status:" + statuses + ")"
+  end
+
+  def new_and_my_open_filter
+    "(agent_id:null or agent_id:#{User.current.id})"
   end
   
   def self.deserialize_from_params(params)

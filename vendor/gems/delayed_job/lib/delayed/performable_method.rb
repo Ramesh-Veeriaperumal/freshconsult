@@ -43,6 +43,9 @@ module Delayed
     rescue ShardNotFound => e
         Rails.logger.info("Shard not found. #{e.inspect} Account : #{account_id}")
         false
+    rescue ActiveRecord::RecordNotFound => e
+      Rails.logger.info("Record not found. #{e.inspect} Account : #{account_id}")
+      false
     end
 
     private

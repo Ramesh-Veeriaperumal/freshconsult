@@ -9,10 +9,10 @@ class Social::TwitterHandle < ActiveRecord::Base
     t.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
     t.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
     t.add :screen_name
-    t.add proc { |x| x.encrypt(x.access_token) }, as: :access_token
-    t.add proc { |x| x.encrypt(x.access_secret) }, as: :access_secret
+    t.add proc { |x| x.encrypt_for_central(x.access_token, 'twitter') }, as: :access_token
+    t.add proc { |x| x.encrypt_for_central(x.access_secret, 'twitter') }, as: :access_secret
     t.add :state
-    t.add :encryption_key_name
+    t.add proc {|x| x.encryption_key_name('twitter')}, as: :encryption_key_name
   end
 
   def model_changes_for_central
@@ -22,7 +22,7 @@ class Social::TwitterHandle < ActiveRecord::Base
     attributes_to_encrypt.each do |attribute|
       changes = previous_changes.try(:[], attribute)
       if changes.present?
-        changes.map! { |x| encrypt(x) }
+        changes.map! { |x| encrypt_for_central(x) }
         previous_changes[attribute] = changes
       end
     end
@@ -36,8 +36,5 @@ class Social::TwitterHandle < ActiveRecord::Base
   def self.central_publish_enabled?
     Account.current.twitter_handle_publisher_enabled?
   end
-
-  def encryption_key_name
-    TwitterConfig::CENTRAL_SECRET_LABEL
-  end
+  
 end

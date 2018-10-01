@@ -351,6 +351,7 @@ module Redis::RedisKeys
   
   # count cluster to search service keys
   SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED = "SEARCH_SERVICE_COUNT_ES_WRITES_ENABLED"
+  SEARCH_SERVICE_COUNT_ES_READS_ENABLED = "SEARCH_SERVICE_COUNT_ES_READS_ENABLED"
 
   ################### END OF REDIS KEYS ###################
 

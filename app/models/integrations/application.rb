@@ -25,6 +25,8 @@ class Integrations::Application < ActiveRecord::Base
     :class_name => 'Integrations::InstalledApplication',
     :dependent => :destroy
 
+  concerned_with :presenter
+
   def to_liquid
     JSON.parse(self.to_json)["application"]
   end

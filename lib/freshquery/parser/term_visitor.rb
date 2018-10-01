@@ -3,6 +3,7 @@ module Freshquery
     class TermVisitor < Freshquery::Parser::NodeVisitor
       def initialize(mapping)
         @date_fields = mapping.date_fields
+        @date_time_fields = mapping.date_time_fields
         @es_keys = mapping.es_keys
         @boolean_fields = mapping.boolean_fields
       end
@@ -12,7 +13,7 @@ module Freshquery
       end
 
       def reduce_level(data, left, right)
-        if [data, left.type, right.type] == ['OR', :operand, :operand] && left.key == right.key && [left.value, right.value].exclude?(nil) && @date_fields.exclude?(left.key)
+        if [data, left.type, right.type] == ['OR', :operand, :operand] && left.key == right.key && [left.value, right.value].exclude?(nil) && @date_fields.exclude?(left.key) && @date_time_fields.exclude?(left.key)
           { Freshquery::Constants::ES_OPERATORS[data] => [terms_filter(construct_key(left), [left.value, right.value])] }
         else
           { Freshquery::Constants::ES_OPERATORS[data] => [left.accept(self), right.accept(self)] }
@@ -35,6 +36,10 @@ module Freshquery
             value = (node.action == '<') ? end_of_day(node.value) : beginning_of_day(node.value)
             bool_filter(
               range_filter(key => { operator  => value })
+            )
+          elsif @date_time_fields.include?(key)
+            bool_filter(
+              range_filter(key => { operator  => node.value })
             )
           else
             bool_filter(
