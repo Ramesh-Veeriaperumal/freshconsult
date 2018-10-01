@@ -98,6 +98,7 @@ class ApiApplicationController < MetalApiController
   SLAVE_ACTIONS = %w(index).freeze
 
   NAMESPACED_CONTROLLER_REGEX = /pipe\/|channel\/v2\/|channel\/|bot\//
+  RESPONSE_CACHE_TIMEOUT = 30.days.to_i
 
   def response_cache
     if response_cache_data.present?
@@ -107,7 +108,7 @@ class ApiApplicationController < MetalApiController
     else
       Rails.logger.info "API cache MISS | #{controller_name}/#{action_name} | Acc: #{current_account.id}"
       yield
-      MemcacheKeys.cache(response_cache_key % { account_id: current_account.id }, response.body) if response_cache_key
+      MemcacheKeys.cache(response_cache_key % { account_id: current_account.id }, response.body,RESPONSE_CACHE_TIMEOUT) if response_cache_key
     end
   end
   
