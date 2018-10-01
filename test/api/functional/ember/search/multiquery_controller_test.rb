@@ -59,6 +59,16 @@ module Ember::Search
       Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
+    def test_result_with_special_enabled
+      Account.current.launch(:es_v2_splqueries)
+      templates = ['agentSpotlightTicket', 'agentSpotlightCustomer', 'agentSpotlightSolution', 'agentSpotlightTopic']
+      post :search_results, construct_params({version: "private", context: "spotlight", term:  Faker::Lorem.word, limit: 3, templates: templates})
+      response = parse_response @response.body
+      assert templates.all? {|d| response.has_key?(d)}   
+    ensure
+      Account.current.rollback(:es_v2_splqueries)
+    end
+
     # Commented for Hack for forums, to be used when forums feature has been migrated to bitmap
     # def test_result_without_forums_feature
     #   account = Account.current

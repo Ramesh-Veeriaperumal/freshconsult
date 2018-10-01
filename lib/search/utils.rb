@@ -238,7 +238,11 @@ class Search::Utils
   end
 
   def self.context_mapping(context)
-    context.gsub('Exact','')
+    if (Account.current.launched?(:es_v2_splqueries) && Search::Utils::SPECIAL_TEMPLATES.has_value?(context))
+      context.sub('Exact','').sub('Special','') 
+    else
+      context.sub('Exact','')
+    end
   end
 
   private
