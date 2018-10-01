@@ -8,6 +8,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   include Helpdesk::Utils::Attachment
   include Helpdesk::Permission::Attachment
+  include Helpdesk::MultiFileAttachment::Util
 
   attr_accessor :skip_virus_detection
 
@@ -67,6 +68,9 @@ class Helpdesk::Attachment < ActiveRecord::Base
     after_commit :clear_user_avatar_cache
     before_save :set_account_id
     validate :virus_in_attachment?, if: :attachment_virus_detection_enabled?
+
+    after_commit :mark_draft_attachment_for_cleanup, on: :create, :if => :draft_attachment?
+    after_commit :unmark_draft_attachment_for_cleanup, on: :destroy, :if => :draft_attachment?
     
   alias_attribute :parent_type, :attachable_type
 
@@ -355,4 +359,15 @@ class Helpdesk::Attachment < ActiveRecord::Base
     errors.add(:base, "VIRUS_FOUND") if attachment_has_virus?
   end
 
+  def draft_attachment?
+    self.attachable_type == "UserDraft"
+  end
+
+  def mark_draft_attachment_for_cleanup
+    mark_for_cleanup(self.id)
+  end
+
+  def unmark_draft_for_cleanup
+    unmark_for_cleanup(self.id)
+  end
 end

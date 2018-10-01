@@ -107,6 +107,7 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
         :user_phone => current_user.phone.present? ? current_user.phone : current_user.mobile,
         :account_name => current_account.name,
         :account_domain => "#{FreshcallerConfig['domain_prefix']}#{current_account.domain}",
+        :account_region => ShardMapping.fetch_by_account_id(current_account.id).region,
         :api => {
           :account_name => current_account.name,
           :account_id => current_account.id,

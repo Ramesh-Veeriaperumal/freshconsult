@@ -26,6 +26,41 @@ module DashboardTestHelper
     @scorecard.values
   end
 
+  def scorecard_stub_data
+    set_dashboard_type
+    scorecard_fields = ROLE_BASED_SCORECARD_FIELDS[@dashboard_type.to_sym]
+    stub_data = {}
+    stub_data["results"] = {}
+    scorecard_fields.each_with_index do |field, index|
+      stub_data["results"][field.to_s] = {"total" => rand(1000), "results"=>[]}
+    end
+    SearchServiceResult.new({"records" => stub_data})
+  end
+
+  def scorecard_pattern_search_service(stub_data)
+    result = []
+    stub_data.records["results"].each_with_index do |record,index|
+      result << {"id"=>index,"name"=>"#{record[0]}","value"=>record[1]["total"]}
+    end
+    result.as_json
+  end
+
+  def unreloved_tickets_stub_data(params)
+    status_ids = params[:status_ids].present? ? params[:status_ids] : status_list_from_cache
+    group_by_field = params[:group_by]
+    first_ids = params[:"#{(group_by_field + "s")}"] || [-1,3,4,7,12]
+    stub_data = {}
+    stub_data["total"] =
+    stub_data["results"] = []
+    first_ids.each do |id|
+      data = {"key"=>"#{group_by_field}", "value"=>"#{id}", "count"=>rand(1000), "groups" => []}
+      status_ids.each do |i|
+        data["groups"] << {"key"=>"status", "value"=>"#{i}", "count"=>rand(1000)}
+      end
+      stub_data["results"] << data
+    end
+    SearchServiceResult.new({"records" => stub_data})
+  end
   def set_dashboard_type
     type = if User.current.privilege?(:admin_tasks)
               'admin'

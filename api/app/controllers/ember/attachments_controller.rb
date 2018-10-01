@@ -8,15 +8,14 @@ module Ember
 
     decorate_views
 
-    skip_before_filter :check_privilege, only: [:destroy, :unlink]
+    skip_before_filter :check_privilege, only: [:unlink]
     before_filter :can_send_user?, only: [:create]
-    before_filter :check_shared, :load_items, :check_destroy_permission, only: [:destroy]
     before_filter :validate_body_params, :load_ticket, :load_shared, :check_unlink_permission, only: [:unlink]
     before_filter :check_item_permission, only: [:show]
 
     def create
       return unless validate_delegator(@item, user: @user, api_user: api_current_user)
-      create_attachment
+      render_custom_errors(@item) && return unless @item.save
     end
 
     def unlink
@@ -94,14 +93,6 @@ module Ember
         AttachmentConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym].include?(request.content_mime_type.ref)
       end
 
-      def create_attachment
-        if @item.save
-          mark_for_cleanup(@item.id) if @item.attachable_type == AttachmentConstants::STANDALONE_ATTACHMENT_TYPE
-        else
-          render_custom_errors(@item)
-        end
-      end
-
       def check_unlink_permission
         can_unlink = false
         if ['Helpdesk::Ticket', 'Helpdesk::Note'].include? shared_attachable_type
@@ -110,10 +101,6 @@ module Ember
           can_unlink = template_priv? @item.shared_attachable
         end
         access_denied unless can_unlink
-      end
-
-      def post_destroy_actions(item)
-        unmark_for_cleanup(item.id) if item.attachable_type == AttachmentConstants::STANDALONE_ATTACHMENT_TYPE
       end
 
       def constants_class

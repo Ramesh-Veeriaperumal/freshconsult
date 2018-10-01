@@ -1,0 +1,215 @@
+module Search::Dashboard::QueryHelper
+  # For search service count cluster migration. This file is used for filter params to FQL Strings.
+
+  # Field mapping used to transform to search service field
+  COLUMN_MAPPING = {
+      'helpdesk_schema_less_tickets.boolean_tc02' =>  'trashed',
+      'owner_id'                                  =>  'company_id',
+      'helpdesk_tags.id'                          =>  'tag_ids',
+      'helpdesk_tags.name'                        =>  'tag',
+      'helpdesk_subscriptions.user_id'            =>  'watchers',
+      'helpdesk_schema_less_tickets.product_id'   =>  'product_id',
+      'internal_group'                            =>  'internal_group_id',
+      'internal_agent'                            =>  'internal_agent_id',
+      'ticket_type'                               =>  'type'
+    }
+
+  STRING_FIELDS = ["type","tag"]
+
+  NOT_ANALYZED_COLUMNS = { "type" => "ticket_type" }
+
+  # WF Filter conditions is convert into FQL Format for search service
+  def transform_fields(wf_conditions)
+    conditions = []
+    wf_conditions.each do |field|
+      cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s)
+      field_values = field['value'].to_s.split(',')
+      if cond_field.include?("flexifields")  
+      	conditions << transform_flexifield_filter(field["ff_name"].gsub("_#{Account.current.id}" , ""), field_values) 
+      elsif cond_field.present?
+      	conditions << transform_field(cond_field, field_values) 
+      end
+    end
+    conditions << construct_query_for_restricted if @with_permissible and User.current.agent? and User.current.restricted?
+    conditions.join(" AND ")
+  end
+
+  def construct_query_for_restricted
+    Account.current.shared_ownership_enabled? ? shared_ownership_permissible_filter : permissible_filter 
+  end
+
+  def permissible_filter
+    ({
+      :group_tickets      =>  add_or_condition([transform_group_id('group_id', ['0']),transform_responder_id('responder_id', [User.current.id.to_s])]),
+      :assigned_tickets   =>  transform_responder_id('responder_id', [User.current.id.to_s])
+    })[Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]]
+  end
+
+  def shared_ownership_permissible_filter
+    ({
+      :group_tickets    => add_or_condition([transform_group_id('group_id', ['0']),transform_internal_group_id('internal_group_id', ['0']),transform_responder_id('responder_id', [User.current.id.to_s]),transform_internal_agent_id('internal_agent_id', [User.current.id.to_s])]),
+      :assigned_tickets => add_or_condition([transform_responder_id('responder_id', [User.current.id.to_s]),transform_internal_agent_id('internal_agent_id', [User.current.id.to_s])])
+      })[Agent::PERMISSION_TOKENS_BY_KEY[User.current.agent.ticket_permission]]
+  end
+
+  # External filter conditions is convert into FQL Format for search service.  
+  # @filter_condition -> external filters in form of {"group_id" => [1,2], "status" => [3]}
+  def construct_filter_query_es
+    temp = []
+    @filter_condition.each do |k,v|
+      cond_field = (COLUMN_MAPPING[k].presence || k.to_s)
+      temp << transform_field(cond_field, v.map(&:to_s)) #to make string
+    end
+    temp << construct_query_for_restricted if @with_permissible and User.current.agent? and User.current.restricted?
+    temp.join(' AND ')
+  end
+
+  # create group_by hash which will be sent to search service group by hash. It is used for aggs by field_name
+  # sample level_1 => {"field_name" => "status", "missing" => true/false}
+  def group_by_field(field, missing=false, limit=100, order=nil )
+    group_by={}
+    group_by["field"] = group_by_field_name(field)
+    group_by["missing"] = missing
+    group_by["limit"] = limit
+    group_by["order"] = order if order.present?
+    group_by
+  end
+
+  def group_by_field_name(f_name)
+    fname = COLUMN_MAPPING[f_name].presence || f_name
+    fname = NOT_ANALYZED_COLUMNS[fname] + ".not_analyzed" if NOT_ANALYZED_COLUMNS.keys.include?(fname)
+    fname = fname + ".not_analyzed" if fname.include?("ffs")
+    fname
+  end
+
+  # For handling responder ids
+  def transform_responder_id(field_name , values)
+    if values.include?('0')
+      values.delete('0')
+      values.push(User.current.id.to_s)
+    end
+    transform_filter("agent_id", values)
+  end
+
+  # For handling group id
+  ['transform_group_id','transform_internal_group_id'].each do |method_name|
+    define_method method_name do |field_name, values|
+      if values.include?('0')
+        values.delete('0')
+        values.concat(User.current.agent_groups.select(:group_id).map(&:group_id).map(&:to_s))
+      end
+      transform_filter(field_name, values)
+    end
+  end
+
+  #For handling status
+  def transform_status(field_name, values)
+    if values.include?('0')
+      values.delete('0')
+      values.concat(Helpdesk::TicketStatus.unresolved_statuses(Account.current).map(&:to_s))
+    end
+    transform_filter(field_name, values)
+  end
+
+  # For handling internal agent ids
+  ["transform_watchers", "transform_internal_agent_id"].each do |method_name|
+    define_method method_name do |field_name, values|
+      if values.include?('0')
+        values.delete('0')
+        values.push(User.current.id.to_s)
+      end
+      transform_filter(field_name, values)
+    end
+  end
+    
+  # Handle conditions with null queries 
+  def transform_filter(field_name, values)
+    null_included = values.include?("-1")
+  	if null_included
+    	values.delete("-1") 
+  	end
+    return "#{field_name}:null" unless values.present?
+  	query = "#{field_name}:" + values.join(" OR #{field_name}:")
+    query = "#{field_name}:'" + values.join("' OR #{field_name}:'") + "'" if STRING_FIELDS.include?(field_name)
+    query =  query + " OR #{field_name}:null"  if null_included 
+  	(values.length > 1 || null_included) ? "(" + query + ")"  : query
+  end
+
+  #handling flexifields 
+  def transform_flexifield_filter(field_name, values)
+    queries = []
+    if values.include?("-1")
+      values.delete("-1") 
+      queries << "#{field_name}:null"
+    end
+    queries.push(values.map{|v| "#{field_name}:'#{v}'"}) if values.present?
+  	queries.length >1 ? add_or_condition(queries)  : queries.first
+  end
+
+    # Only one value can be chosen
+  def transform_created_at(field_name, value)
+    value = value.first #=> One value in array as we do .split
+    case value
+    when 'today'
+      "created_at:>'#{Time.zone.now.beginning_of_day.utc.iso8601}'"
+    when 'yesterday'
+      "created_at:>'#{Time.zone.now.yesterday.beginning_of_day.utc.iso8601}' AND created_at:<'#{Time.zone.now.beginning_of_day.utc.iso8601}'"
+    when 'week'
+      "created_at:>'#{Time.zone.now.beginning_of_week.utc.iso8601}'"
+    when 'last_week'
+      "created_at:>'#{Time.zone.now.beginning_of_day.ago(7.days).utc.iso8601}'"
+    when 'month'
+      "created_at:>'#{Time.zone.now.beginning_of_month.utc.iso8601}'"
+    when 'last_month'
+      "created_at:>'#{Time.zone.now.beginning_of_day.ago(1.month).utc.iso8601}'"
+    when 'two_months'
+      "created_at:>'#{Time.zone.now.beginning_of_day.ago(2.months).utc.iso8601}'"
+    when 'six_months'
+      "created_at:>'#{Time.zone.now.beginning_of_day.ago(6.months).utc.iso8601}'"
+    else
+      if value.to_s.is_number?
+      	"created_at:>'#{Time.zone.now.ago(value.to_i.minutes).utc.iso8601}'"
+      else
+        start_date, end_date = value.split('-')
+        "created_at:>'#{Time.zone.parse(start_date).utc.iso8601}' AND created_at:<'#{Time.zone.parse(end_date).end_of_day.utc.iso8601}'"
+      end
+    end
+  end
+
+  def transform_updated_at(field_name, value)
+    value = value.first
+    "updated_at:>'#{Time.zone.parse(value).utc.iso8601}'"
+  end
+
+  # due by fields
+  def transform_due_by(field_name, values)
+    queries = []
+    values.each do |value|
+      case value.to_i
+      # Overdue
+      when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:all_due]
+      	queries << "due_by:<'#{Time.zone.now.utc.iso8601}'"
+      # Today
+      when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_today]
+      	queries << "(due_by:>'#{Time.zone.now.beginning_of_day.utc.iso8601}' AND due_by:<'#{Time.zone.now.end_of_day.utc.iso8601}')"
+      # Tomorrow
+      when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_tomo]
+      	queries << "(due_by:>'#{Time.zone.now.tomorrow.beginning_of_day.utc.iso8601}' AND due_by:<'#{Time.zone.now.tomorrow.end_of_day.utc.iso8601}')"
+      # Next 8 hours
+      when TicketConstants::DUE_BY_TYPES_KEYS_BY_TOKEN[:due_next_eight]
+      	queries << "(due_by:>'#{Time.zone.now.utc.iso8601}' AND due_by:<'#{8.hours.from_now.utc.iso8601}')"
+      end
+    end
+    add_or_condition(queries) + " AND status_stop_sla_timer:false AND status_deleted:false"
+  end
+
+  def add_or_condition(queries)
+    "(" + queries.join(" OR ") + ")"
+  end
+
+  #for common transform fields
+  def transform_field(field_name, values)
+    safe_send("transform_#{field_name}", field_name, values) rescue transform_filter(field_name, values)
+  end
+
+end

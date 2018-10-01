@@ -72,27 +72,42 @@ number_of_parallel_jobs.to_i.times do |i|
 
 		# create temp test suites for current process
 		temp_suite = suite_type == 'public' ? "tempp_#{i}_public_api_test_suite.rb" : "tempp_#{i}.rb"
-		`echo '' > test/api/suites/#{temp_suite}`
+		`echo 'begin' > test/api/suites/#{temp_suite}`
 		queue[i].each do |file|
-			`echo 'require "./#{file}"' >> test/api/suites/#{temp_suite}`
+			`echo '  require "./#{file}"' >> test/api/suites/#{temp_suite}`
 		end
+		`echo 'rescue Exception => e' >> test/api/suites/#{temp_suite}`
+		`echo '  puts "Process exitted because of the exception"' >> test/api/suites/#{temp_suite}`
+		`echo '  puts e.backtrace' >> test/api/suites/#{temp_suite}`
+		`echo '  exit 1' >> test/api/suites/#{temp_suite}`
+		`echo 'end' >> test/api/suites/#{temp_suite}`
 
 		# run current test suite in current process
 		`echo '' >  test/tmp_result_#{i}.log`
 		`bundle exec ruby test/api/suites/#{temp_suite} >> test/tmp_result_#{i}.log`
 
-
 		#clean-up
 		`rm -f test/api/suites/#{temp_suite}`
-		puts `cat test/tmp_result_#{i}.log`
 		`echo "drop database helpkit_child_#{child_process_id}" | mysql -u root`
-		# [ ] `rm -f test/api/suites/tmp_result_#{i}.log`
+		puts `cat test/tmp_result_#{i}.log`
+		
+		if `grep 'Process exitted because of the exception' test/tmp_result_#{i}.log`.length > 0
+			`rm -f test/tmp_result_#{i}.log`
+			exit 1
+		end
+		`rm -f test/tmp_result_#{i}.log`
 
 		# print process message 
 		puts "Process__#{i} ends at #{Time.now.strftime('%d/%m/%Y %H:%M:%S')}"
 	end
 end
 
-Process.waitall
+processes = Process.waitall
 `echo "drop database helpkit_parent_#{parent_process_id}" | mysql -u root`
 p "All process ends at #{Time.now.strftime('%d/%m/%Y %H:%M:%S')}"
+processes.each do |p|
+	if p[1].exitstatus == 1
+		puts "The build will be marked failed because a process in #{suite_type} suite exitted with some exception"
+		exit 1
+	end
+end

@@ -133,45 +133,6 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.unstub(:valid_type?)
   end
 
-  def test_destroy_attachment_without_ticket_privilege
-    ticket_id = create_ticket.display_id
-    attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
-    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
-    delete :destroy, controller_params(version: 'private', id: attachment.id)
-    User.any_instance.unstub(:privilege?)
-    assert_response 403
-  end
-
-  def test_destroy_attachment_without_ticket_permission
-    ticket_id = create_ticket.display_id
-    attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
-    User.any_instance.stubs(:has_ticket_permission?).returns(false)
-    delete :destroy, controller_params(version: 'private', id: attachment.id)
-    User.any_instance.unstub(:has_ticket_permission?)
-    assert_response 403
-  end
-
-  def test_destroy_attachment_with_shared_attachments
-    ticket = create_ticket
-    create_shared_attachment(ticket)
-    attachment = ticket.attachments_sharable.first
-    delete :destroy, controller_params(version: 'private', id: attachment.id)
-    assert_response 403
-  end
-
-  def test_destroy_user_draft_attachment
-    attachment = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id)
-    delete :destroy, controller_params(version: 'private', id: attachment.id)
-    assert_response 204
-  end
-
-  def test_destroy_ticket_attachment
-    ticket_id = create_ticket.display_id
-    attachment = create_attachment(attachable_type: 'Helpdesk::Ticket', attachable_id: ticket_id)
-    delete :destroy, controller_params(version: 'private', id: attachment.id)
-    assert_response 204
-  end
-
   def test_unlink_attachment
     @controller.request.env['CONTENT_TYPE'] = 'application/json; charset=UTF-8'
     ticket = create_ticket

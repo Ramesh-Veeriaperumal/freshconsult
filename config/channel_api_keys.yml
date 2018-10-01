@@ -12,6 +12,9 @@ defaults: &defaults
  twitter:
    auth_type: jwt
    jwt_secret: 9rQ7H5RVm35vSvNUDWFjZPz3YKsqxp8p
+ proactive:
+   auth_type: jwt
+   jwt_secret: abcdefgh12345678
 
 development:
  <<: *defaults

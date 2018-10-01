@@ -4,55 +4,25 @@ import groovy.json.JsonSlurperClassic
  jobName = env.JOB_NAME
  build   = env.BUILD_NUMBER
  buildno = build.toInteger()
- label = ""
- instance_no = 0
 
-try {
-
-	instance_no    = get_number_instances()
-	no = (buildno % instance_no).toString()
-    label  = "backend_label_$no"
-
-}
-catch (e) {
-
-     echo "error with label name" + e
-     no = (buildno % 8).toString()
-     label  = "backend_label_$no"
-
-}
-
-
-//Label name
-echo instance_no + "- Total number of instances are running"
-echo label + " label name"
-
-//Getting total number of instances
-def get_number_instances() {
-
-        result = ["curl", "-k", "-X", "GET", "-H", "Content-Type: application/json","-H", "Authorization: Bearer c535a01828c0a4c5c2fb7c18d72ae087b379d5e63ba9cbe2f17c45649f16300c", "https://api.spotinst.io/aws/ec2/group/sig-86dd0ad7?accountId=act-f9698e90"].execute().text
-	    data = new JsonSlurperClassic().parseText(result)
-		instance_no =  data.response.items
-	    number = instance_no['capacity']['target'][0]
-	    return number
-
-}
 
 
 //Specfiy the branch to checkout based on PR condition
-def branch_checkout() {
+def checkout(type) {
+     
+       if(type=='pullrequest') {
+           branch = params.ghprbSourceBranch
+       }else{
+           branch = params.BRANCH
+       }
 
-           try {
-	                      checkout([$class: 'GitSCM', branches: [[name: "$params.ghprbSourceBranch"]],
-                            doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [],
-                            userRemoteConfigs: [[url: 'git@github.com:freshdesk/helpkit.git']]])
-
-	            }//If Merge Conflict Occurs build will fail with below message
-
-		       catch (e) {
-		                 echo 'This branch is out-of-date with the base br anch' + e
-		                 sh 'exit 1'
-		        }
+       sh  """#!/bin/bash
+	        source /etc/profile.d/rvm.sh
+	        cd /home/jenkins/
+	        git clone -b $branch git@github.com:freshdesk/helpkit.git
+	        cd /home/jenkins/helpkit/
+	       	"""
+          
 
 }
 
@@ -62,13 +32,13 @@ def build_setup(category) {
 
         sh  """#!/bin/bash
 	        source /etc/profile.d/rvm.sh
-	        yes | cp -rf /home/jenkins/s3.yml /home/jenkins/workspace/$jobName/config/s3.yml
-	        yes | cp -rf /home/jenkins/redis.yml /home/jenkins/workspace/$jobName/config/redis.yml
-	        yes | cp -rf /home/jenkins/elasticsearch.yml /home/jenkins/workspace/$jobName/config/elasticsearch.yml
-	        yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/workspace/$jobName/config/channel_api_keys.yml
+	        yes | cp -rf /home/jenkins/s3.yml /home/jenkins/helpkit/config/s3.yml
+	        yes | cp -rf /home/jenkins/redis.yml /home/jenkins/helpkit/config/redis.yml
+	        yes | cp -rf /home/jenkins/elasticsearch.yml /home/jenkins/helpkit/config/elasticsearch.yml
+	        yes | cp -rf /home/jenkins/channel_api_keys.yml /home/jenkins/helpkit/config/channel_api_keys.yml
 	        sudo service mysql start
 	        sudo service elasticsearch start
-          export CODECOV_TOKEN="${params.CODECOV_TOKEN}"
+            export CODECOV_TOKEN="${params.CODECOV_TOKEN}"
 	      	"""
 
 	    if(category != 'private' && category != 'public') {
@@ -76,6 +46,7 @@ def build_setup(category) {
 	      sh  """#!/bin/bash
 		      source /etc/profile.d/rvm.sh
 		      redis-server --daemonize yes
+		      cd /home/jenkins/helpkit/
 		      bundle install
 	          bundle exec rake db:bootstrap RAILS_ENV=test
 	      	  """
@@ -86,6 +57,7 @@ def build_setup(category) {
 
 	     sh '''#!/bin/bash
 	        source /etc/profile.d/rvm.sh
+	        cd /home/jenkins/helpkit/
 	        echo "create database sandbox${BUILD_NUMBER}" | mysql -uroot
             sed -i "s/sandbox_test/sandbox${BUILD_NUMBER}/g" config/database.yml
 	        bundle exec rake db:sandbox_shard_setup RAILS_ENV=test
@@ -105,30 +77,39 @@ def execute_test_cases(category) {
         if(category == 'pronto') {
             sh """#!/bin/bash
                source /etc/profile.d/rvm.sh
+               cd /home/jenkins/helpkit/
                bundle install
-               PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/$params.ghprbTargetBranch
+               PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/falcon-prestaging
                """
         }
 
         if(category == 'public') {
-           sh '''#!/bin/bash
+           sh """#!/bin/bash
               source /etc/profile.d/rvm.sh
+              cd /home/jenkins/helpkit/
               ruby test/parallel_test.rb 3 public
-              '''
+              yes | cp -rf /home/jenkins/helpkit/tmp/coverage /home/jenkins/workspace/$jobName/tmp/
+              yes | cp -rf /home/jenkins/helpkit/test/api/reports/*.xml /home/jenkins/workspace/$jobName/test/api/reports/
+              """
         }
 
         if(category == 'private') {
-           sh '''#!/bin/bash
+           sh """#!/bin/bash
               source /etc/profile.d/rvm.sh
+              cd /home/jenkins/helpkit/
               ruby test/parallel_test.rb 5 private
-              '''
+              yes | cp -rf /home/jenkins/helpkit/tmp/coverage /home/jenkins/workspace/$jobName/tmp/
+              yes | cp -rf /home/jenkins/helpkit/test/api/reports/*.xml /home/jenkins/workspace/$jobName/test/api/reports/
+              """
         }
 
         if(category == 'sandbox') {
-           sh '''#!/bin/bash
+           sh """#!/bin/bash
               source /etc/profile.d/rvm.sh
+              cd /home/jenkins/helpkit/
               bundle exec ruby test/api/suites/sandbox_test_suite.rb
-              '''
+              yes | cp -rf /home/jenkins/helpkit/tmp/coverage /home/jenkins/workspace/$jobName/tmp/
+              """
         }
 
 }
@@ -139,73 +120,98 @@ def publish_report(category) {
                  publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true,
 		                             reportDir: '/home/jenkins/workspace/${JOB_NAME}/tmp/coverage', reportFiles: 'index.html',
 		                             reportName: "coverage $category", reportTitles: ''])
-
-		         junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'
-
 }
+
 
 //Distribted run based on category
 def distributed_run(category) {
 
    timestamps {
-	     //Machine label where this jobs needs to run
-		 node(label) {
+   
+   image_name = "";
+   
+   if(category != 'pronto') {
+             image_name = "792634465463.dkr.ecr.us-east-1.amazonaws.com/fdesk/backend_v2"
+                      
+   }else{
+             image_name = "792634465463.dkr.ecr.us-east-1.amazonaws.com/fworks/pronto"
 
-		    //Checkout stage
-		    	stage(category + " Tests") {
-
-					    //Branch checkout
-					  if(jobName.contains("pullrequest")) {
-                         branch_checkout()
-					   }else{
-					       checkout scm
-					   }
-
-
-					    //Build setup
-					    if(category != 'pronto') {
-			    			//Intialization process
-			            	build_setup(category)
-			    		}
-
-			    	     //Executing test cases
-	                     try{
-				               execute_test_cases(category)
-				         }
-				         catch (e) {
-				               "issue with test execution" + e
-				         }
-
-			    		 finally {
-				    		if(category != 'pronto') {
-				    		     //Publish Report
-						            publish_report(category)
-				    		}
-				         }
-
-                  }
-
-			}
-		 }
    }
+ 
 
 
-//Parallel Test starts here
-parallel Public: {
-       distributed_run("public");
-},Private: {
-       distributed_run("private");
-},Sandbox: {
-       distributed_run("sandbox");
-},Pronto: {
-       distributed_run("pronto");
-}
+   
+   
+   //Image name where this job has to run
+	       docker.image(image_name).inside {
+       
+							    //Checkout stage
+						stage(category) {
+					
+							    //Branch checkout
+							  if(jobName.contains("pullrequest")) {
+					                checkout("pullrequest")
+							   }else{
+							        checkout("normal")
+							   }
+							
+				             //Build setup
+							    if(category != 'pronto') {
+					    			//Intialization process
+					            	build_setup(category)
+					    		}
+		
+					    	     //Executing test cases
+			                     try{
+						               execute_test_cases(category)
+						         }
+						         catch (e) {
+						         
+						            //Not applicable for pronto since it will lots of warning which in turnes make buid unstable
+						            if(category != 'pronto') {
+						               echo "issue with test execution" + e
+						               currentBuild.result = 'UNSTABLE'
+						            }else{
+						                echo "Verifiy Pronto code" + e
+						            }
+
+						               
+						         }
+		
+					    		 finally {
+						    		if(category != 'pronto') {
+						    		     //Publish Report
+								            publish_report(category)
+						    		}
+						         }
+					    }	         
+                  }
+            }
+       }
 
 
-//Ends results published here
-timestamps {
-	     //Machine label where this jobs needs to run
-		 node("master") {
-		 	junit allowEmptyResults: true, testResults: 'test/api/reports/*.xml'
-		 }
-}
+ //Machine label where this jobs needs to run
+ node("spot_backend") {
+     
+     //Creating Sub directory
+     sh "sudo rm -rf /home/jenkins/workspace/$jobName/tmp"
+     sh "sudo rm -rf /home/jenkins/workspace/$jobName/test"
+     sh "mkdir -p /home/jenkins/workspace/$jobName/tmp/"
+     sh "mkdir -p /home/jenkins/workspace/$jobName/test/api/reports/"
+      
+     
+    //Parallel Test starts here
+    parallel Public: {
+           distributed_run("public");
+    },Private: {
+           distributed_run("private");
+    },Sandbox: {
+           distributed_run("sandbox");
+    },Pronto: {
+           distributed_run("pronto");
+    }
+    
+    //Extracting xml file
+     junit  testResults: "test/api/reports/*.xml"
+ }
+ 

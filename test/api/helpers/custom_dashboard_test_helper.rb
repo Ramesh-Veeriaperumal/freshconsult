@@ -214,6 +214,79 @@ module CustomDashboardTestHelper
     end
   end
 
+  def fetch_search_service_scorecard_stub(widgets)
+    stub_data = {}
+    stub_data["results"] = {}
+    widgets.map(&:ticket_filter_id).uniq.each do |filter|
+      stub_data["results"][filter.to_s] = {"total" => rand(1000), "results"=>[]}
+    end
+    SearchServiceResult.new({"records" => stub_data})
+  end
+
+  def bar_chart_preview_search_service_es_response_stub(field_id, ticket_filter_id="unresolved", choices = [2, 8, 4])
+    stub_data = {"results" => 
+      {"0" => { 
+        "total" => 14,
+        "results" => [
+          { "value" => choices[0], "count" => 11 },
+          { "value" => choices[1], "count" => 2 },
+          { "value" => choices[2], "count" => 1 }
+        ]
+      }
+    }}
+    SearchServiceResult.new({"records" => stub_data})
+  end
+
+  def scorecard_response_pattern_search_service(widgets, stub_data)
+    widgets.map { |widget| { id: widget.id, widget_data: { count: stub_data.records["results"][widget.ticket_filter_id.to_s]["total"] } } }
+  end
+
+  def fetch_bar_chart_from_service_stub(widgets)
+    stub_data = {}
+    stub_data["results"] = {}
+    widgets.map(&:config_data).each_with_index do |config, index|
+      stub_data["results"]["#{index}"] = { "total" => 14,
+          "results" => [
+          { "value" => 3, "count" => 45 },
+          { "value" => 2, "count" => 29 },
+          { "value" => 11, "count" => 25 },
+          { "value" => 8, "count" => 18},
+          { "value" => 12, "count" => 8}
+        ]}
+    end
+    SearchServiceResult.new({"records" => stub_data})
+  end
+
+  def bar_chart_from_service_response_pattern(widgets, stub_data)
+    widgets.each_with_index.map do |widget, i|
+      {
+        id: widget.id,
+        widget_data: {
+          group_by: widget.config_data[:categorised_by],
+          data: stub_data.records["results"]["#{i}"]["results"].map { |stub| { name: stub['value'], data: [stub['count']] } }
+        }
+      }
+    end
+  end
+
+  def bar_chart_data_es_response_service_stub(widget, choices = [2, 8, 4, 14, 5, 9, 12, 22, 11])
+    stub_data = {"results" => 
+      {"0" => { "total" => 143,
+        "results" => [
+        { 'value' => choices[0], 'count' => 40 },
+        { 'value' => choices[1], 'count' => 21 },
+        { 'value' => choices[2], 'count' => 11 },
+        { 'value' => choices[3], 'count' => 10 },
+        { 'value' => choices[4], 'count' => 8 },
+        { 'value' => choices[5], 'count' => 6 },
+        { 'value' => choices[6], 'count' => 4 },
+        { 'value' => choices[7], 'count' => 2 },
+        { 'value' => choices[8], 'count' => 1 }
+      ]}
+    }}
+    SearchServiceResult.new({"records" => stub_data})
+  end
+
   def match_announcement_response(response_hash, announcement_text, dashboard_id)
     response_hash = response_hash.deep_symbolize_keys
     assert_not_nil_and_delete(response_hash, [:id, :created_at, :updated_at])

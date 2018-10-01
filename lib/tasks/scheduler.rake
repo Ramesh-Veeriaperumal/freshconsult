@@ -215,23 +215,27 @@ namespace :scheduler do
   
   def enqueue_premium_twitter(delay = nil)
     premium_twitter_accounts.each do |account_id|
-      Sharding.select_shard_of(account_id) do  
-        account = Account.find(account_id).make_current
-        if account.launched?(:twitter_microservice)
-          Rails.logger.info "Skipping Premium Twitter Worker for account id #{account_id} because of twitter_microservice"
+      begin
+        Sharding.select_shard_of(account_id) do  
+          account = Account.find(account_id).make_current
+          if account.launched?(:twitter_microservice)
+            Rails.logger.info "Skipping Premium Twitter Worker for account id #{account_id} because of twitter_microservice"
+            Account.reset_current_account
+            next
+          end
+
           Account.reset_current_account
-          next
+
+          Rails.logger.info "Enqueuing Premium Twitter Worker for account id #{account_id}"
+          if delay.nil?
+            Social::PremiumTwitterWorker.perform_async({:account_id => account_id})
+          else
+            Social::PremiumTwitterWorker.perform_in(delay, {:account_id => account_id})
+          end
+
         end
-
-        Account.reset_current_account
-
-        Rails.logger.info "Enqueuing Premium Twitter Worker for account id #{account_id}"
-        if delay.nil?
-          Social::PremiumTwitterWorker.perform_async({:account_id => account_id})
-        else
-          Social::PremiumTwitterWorker.perform_in(delay, {:account_id => account_id})
-        end
-
+      rescue AccountBlocked, ActiveRecord::RecordNotFound, ShardNotFound, DomainNotReady => e
+        Rails.logger.debug "#{e.inspect} -- Enqueue Premium Twitter skipped for #{account_id}"
       end
     end
   end

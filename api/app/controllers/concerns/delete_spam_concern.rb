@@ -29,7 +29,6 @@ module DeleteSpamConcern
 
   def destroy
     if destroy_item(@item)
-      post_destroy_actions(@item)
       return head 204
     end
     return render_errors(@item.errors) if @item.errors.any?
@@ -88,7 +87,7 @@ module DeleteSpamConcern
     end
 
     def define_model
-      if controller_name.eql?('attachments')
+      if controller_name.eql?('api_attachments')
         'attachable'
       elsif controller_name.eql?('cloud_files')
         'droppable'

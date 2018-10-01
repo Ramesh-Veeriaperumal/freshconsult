@@ -32,10 +32,8 @@ module ApiSearch
 
       3.times { Company.create(name: Faker::Name.name, account_id: @account.id) }
       @account.reload
-      clear_es(@account.id)
       30.times { create_search_contact(contact_params_hash) }
       @account.contacts.last(5).map { |x| x.update_attributes('cf_sample_date' => nil, 'customer_id' => nil) }
-      write_data_to_es(@account.id)
       @@initial_setup_run = true
     end
 
@@ -69,9 +67,11 @@ module ApiSearch
 
     def test_contacts_active
       contacts = @account.contacts.select(&:active?)
-      get :index, controller_params(query: '"active:true"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"active:true"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
@@ -116,10 +116,12 @@ module ApiSearch
       match_json(results: pattern, total: contacts.size)
     end
 
-    def test_contacts_created_on_a_day
+    def test_contacts_created_on_a_day    
       d1 = Date.today.to_date.iso8601
       contacts = @account.contacts.select { |x| x.created_at.utc.to_date.iso8601 == d1 && x.deleted == false }
-      get :index, controller_params(query: '"created_at: \'' + d1 + '\'"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"created_at: \'' + d1 + '\'"')
+      end
       assert_response 200
       response = parse_response @response.body
       assert response['total'] == contacts.size
@@ -163,7 +165,9 @@ module ApiSearch
 
     def test_contacts_company_id
       contacts = @account.contacts.select { |x| [1, 2].include?(x.customer_id) }
-      get :index, controller_params(query: '"company_id:1 OR company_id:2"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"company_id:1 OR company_id:2"')
+      end
       assert_response 200
       pattern = contacts.map { |contact| index_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
@@ -171,7 +175,9 @@ module ApiSearch
 
     def test_contacts_company_id_null
       contacts = @account.contacts.select { |x| x.customer_id.nil? }
-      get :index, controller_params(query: '"company_id:null"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"company_id:null"')
+      end
       assert_response 200
       response = parse_response @response.body
       assert response['total'] == contacts.size
@@ -179,9 +185,11 @@ module ApiSearch
 
     def test_contacts_custom_fields
       contacts = @account.contacts.select { |x| x.custom_field['cf_sample_number'] == 1 || x.custom_field['cf_sample_checkbox'] == true || x.company_id == 2 }
-      get :index, controller_params(query: '"sample_number:1 OR sample_checkbox:true OR company_id:2"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"sample_number:1 OR sample_checkbox:true OR company_id:2"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
@@ -195,9 +203,11 @@ module ApiSearch
       email1 = @account.contacts.first.email
       email2 = @account.contacts.last.email
       contacts = @account.contacts.select { |x| [email1, email2].include?(x.email) }
-      get :index, controller_params(query: '"email:\'' + email1 + '\' or email:\'' + email2 + '\'"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"email:\'' + email1 + '\' or email:\'' + email2 + '\'"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
@@ -206,7 +216,9 @@ module ApiSearch
       email2 = @account.contacts.last.email
       d1 = @account.contacts.last.created_at.to_date.iso8601
       contacts = @account.contacts.select { |x| ([email1, email2].include?(x.email) || x.created_at.utc.to_date.iso8601 == d1) && x.deleted == false }
-      get :index, controller_params(query: '"(email:\'' + email1 + '\' or email:\'' + email2 + '\') or created_at:\'' + d1 + '\'"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"(email:\'' + email1 + '\' or email:\'' + email2 + '\') or created_at:\'' + d1 + '\'"')
+      end
       assert_response 200
       response = parse_response @response.body
       assert response['total'] == contacts.size
@@ -222,9 +234,11 @@ module ApiSearch
 
     def test_contacts_valid_tag
       contacts = @account.contacts.select { |x| x.tag_names.include?('tag1') || x.tag_names.include?('TAG4') }
-      get :index, controller_params(query: '"tag:tag1 or tag:\'TAG4\'"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"tag:tag1 or tag:\'TAG4\'"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
@@ -243,7 +257,9 @@ module ApiSearch
 
     def test_contacts_tag_null
       contacts = @account.contacts.select { |x| x.tags.empty? }
-      get :index, controller_params(query: '"tag : null"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"tag : null"')
+      end
       assert_response 200
       response = parse_response @response.body
       assert response['total'] == contacts.size
@@ -252,15 +268,19 @@ module ApiSearch
     def test_contacts_twitter_id_filter
       twitter1, twitter2 = @account.contacts.map(&:twitter_id).reject(&:blank?).uniq.first(2)
       contacts = @account.contacts.select { |x| [twitter1, twitter2].include?(x.twitter_id) }
-      get :index, controller_params(query: '"twitter_id:\'' + twitter1 + '\' or twitter_id:\'' + twitter2 + '\'"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"twitter_id:\'' + twitter1 + '\' or twitter_id:\'' + twitter2 + '\'"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
     def test_contacts_twitter_id_null
       contacts = @account.contacts.select { |x| x.twitter_id.nil? }
-      get :index, controller_params(query: '"twitter_id : null"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"twitter_id : null"')
+      end
       assert_response 200
       response = parse_response @response.body
       assert response['total'] == contacts.size
@@ -269,15 +289,19 @@ module ApiSearch
     def test_contacts_mobile_filter
       mobile1, mobile2 = @account.contacts.map(&:mobile).reject(&:blank?).uniq.first(2)
       contacts = @account.contacts.select { |x| [mobile1, mobile2].include?(x.mobile) }
-      get :index, controller_params(query: '"mobile:\'' + mobile1 + '\' or mobile:\'' + mobile2 + '\'"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"mobile:\'' + mobile1 + '\' or mobile:\'' + mobile2 + '\'"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
     def test_contacts_mobile_null
       contacts = @account.contacts.select { |x| x.mobile.nil? }
-      get :index, controller_params(query: '"mobile : null"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"mobile : null"')
+      end
       assert_response 200
       response = parse_response @response.body
       assert response['total'] == contacts.size
@@ -286,15 +310,19 @@ module ApiSearch
     def test_contacts_phone_filter
       phone1, phone2 = @account.contacts.map(&:phone).reject(&:blank?).uniq.first(2)
       contacts = @account.contacts.select { |x| [phone1, phone2].include?(x.phone) }
-      get :index, controller_params(query: '"phone:\'' + phone1 + '\' or phone:\'' + phone2 + '\'"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"phone:\'' + phone1 + '\' or phone:\'' + phone2 + '\'"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
     def test_contacts_phone_null
       contacts = @account.contacts.select { |x| x.phone.nil? }
-      get :index, controller_params(query: '"phone : null"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"phone : null"')
+      end
       assert_response 200
       response = parse_response @response.body
       assert response['total'] == contacts.size
@@ -303,9 +331,11 @@ module ApiSearch
     def test_contacts_language_filter
       language1, language2 = @account.contacts.map(&:language).reject(&:blank?).uniq.first(2)
       contacts = @account.contacts.select { |x| [language1, language2].include?(x.language) }
-      get :index, controller_params(query: '"language:\'' + language1 + '\' or language:\'' + language2 + '\'"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"language:\'' + language1 + '\' or language:\'' + language2 + '\'"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
@@ -318,9 +348,11 @@ module ApiSearch
     def test_contacts_time_zone_filter
       time_zone1, time_zone2 = @account.contacts.map(&:time_zone).reject(&:blank?).uniq.first(2)
       contacts = @account.contacts.select { |x| [time_zone1, time_zone2].include?(x.time_zone) }
-      get :index, controller_params(query: '"time_zone:\'' + time_zone1 + '\' or time_zone:\'' + time_zone2 + '\'"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"time_zone:\'' + time_zone1 + '\' or time_zone:\'' + time_zone2 + '\'"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
@@ -334,18 +366,22 @@ module ApiSearch
 
     def test_contacts_custom_dropdown_null
       contacts = @account.contacts.select { |x| x.cf_sample_dropdown.nil? }
-      get :index, controller_params(query: '"sample_dropdown: null"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"sample_dropdown: null"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
     def test_contacts_custom_dropdown_valid_choice
       choice = CHOICES[rand(3)]
       contacts = @account.contacts.select { |x| x.cf_sample_dropdown == choice }
-      get :index, controller_params(query: '"sample_dropdown:\'' + choice + '\' "')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"sample_dropdown:\'' + choice + '\' "')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
@@ -358,17 +394,21 @@ module ApiSearch
     def test_contacts_custom_dropdown_combined_condition
       choice = CHOICES[rand(3)]
       contacts = @account.contacts.select { |x| x.cf_sample_dropdown == choice && x.active? }
-      get :index, controller_params(query: '"sample_dropdown:\'' + choice + '\' AND active:true"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"sample_dropdown:\'' + choice + '\' AND active:true"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
     def test_custom_number_null
       contacts = @account.contacts.select { |x| x.cf_sample_number.nil? }
-      get :index, controller_params(query: '"sample_number: null"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"sample_number: null"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
@@ -379,18 +419,22 @@ module ApiSearch
 
     def test_custom_text_null
       contacts = @account.contacts.select { |x| x.cf_sample_text.nil? }
-      get :index, controller_params(query: '"sample_text: null"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"sample_text: null"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
     def test_contacts_custom_text_special_characters
       text = @account.contacts.map(&:cf_sample_text).compact.last(2)
       contacts = @account.contacts.select { |x| text.include?(x.cf_sample_text) }
-      get :index, controller_params(query: "\"sample_text:'#{text[0]}' or sample_text:'#{text[1]}'\"")
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: "\"sample_text:'#{text[0]}' or sample_text:'#{text[1]}'\"")
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
@@ -401,18 +445,22 @@ module ApiSearch
 
     def test_contacts_filter_using_custom_checkbox
       contacts = @account.contacts.select { |x| x.cf_sample_checkbox == true }
-      get :index, controller_params(query: '"sample_checkbox:true"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"sample_checkbox:true"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
     def test_contacts_combined_condition
       choice = CHOICES[rand(3)]
       contacts = @account.contacts.select { |x| x.cf_sample_dropdown == choice && x.active? && x.cf_sample_checkbox == true && x.cf_sample_text.nil? }
-      get :index, controller_params(query: '"sample_dropdown:\'' + choice + '\' AND active:true AND sample_checkbox:true AND sample_text:null"')
+      stub_public_search_response(contacts) do
+        get :index, controller_params(query: '"sample_dropdown:\'' + choice + '\' AND active:true AND sample_checkbox:true AND sample_text:null"')
+      end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 

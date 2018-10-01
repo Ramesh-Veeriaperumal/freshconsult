@@ -16,6 +16,16 @@ module SearchService
       query_request.response
     end
 
+    def multi_aggregate(payload = nil, uuid = nil, additional_log_info = {})
+      query_request = SearchService::Request.new(multi_aggregate_path, :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id, additional_log_info)
+      query_request.response
+    end
+
+    def aggregate(payload = nil, uuid = nil, additional_log_info = {})
+      query_request = SearchService::Request.new(aggregate_path, :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id, additional_log_info)
+      query_request.response
+    end
+
     def write_object(entity, version, parent_id, type, locale = nil)
       uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
       payload = { payload: entity.to_esv2_json, version: version, parent_id: parent_id }
@@ -28,7 +38,9 @@ module SearchService
      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
      type = 'ticketanalytics'
      payload = { payload: entity.to_search_count_es_json, version: Search::Job.es_version }
-     write_request = SearchService::Request.new(write_path(type, entity.id), :post, uuid, payload.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), Account.current.id)
+     path = write_path(type, entity.id)
+     write_request = SearchService::Request.new(path , :post, uuid, payload.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), Account.current.id)
+     Rails.logger.debug("Count search Service Request Write account_id :: #{Account.current.id} :: UUID :: #{uuid.inspect} :: path :: #{path} ")
      write_request.response
     end
 
@@ -117,6 +129,16 @@ module SearchService
 
       def delete_by_query_path(document_name)
         path = SearchService::Constants::DELETE_BY_QUERY_PATH % { product_name: ES_V2_CONFIG[:product_name], account_id: @account_id, document_name: document_name }
+        "#{service_host}/#{path}"
+      end
+
+      def multi_aggregate_path
+         path = SearchService::Constants::MULTI_AGGREGATE_PATH % { product_name: ES_V2_CONFIG[:product_name], account_id: @account_id }
+        "#{service_host}/#{path}"
+      end
+
+      def aggregate_path
+        path = SearchService::Constants::AGGREGATE_PATH % { product_name: ES_V2_CONFIG[:product_name], account_id: @account_id }
         "#{service_host}/#{path}"
       end
 

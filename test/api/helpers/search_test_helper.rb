@@ -248,14 +248,14 @@ module SearchTestHelper
     end
   end
 
-  def contact_pattern(contact)
+  def private_search_contact_pattern(contact)
     contact_pattern = {
       id: contact.id,
       name: contact.name,
       email: contact.email,
       phone: contact.phone,
       mobile: contact.mobile,
-      company_id: default_company(contact).company_id,
+      company_id: default_company_id(contact),
       company_name: contact.company_name,
       avatar: Hash,
       twitter_id: contact.twitter_id,
@@ -266,6 +266,10 @@ module SearchTestHelper
     }
     contact_pattern[:other_companies] = other_companies(contact) if @account.multiple_user_companies_enabled?
     contact_pattern
+  end
+
+  def default_company_id(contact)
+    default_company(contact) ? default_company(contact).company_id : nil
   end
 
   def default_company(contact)
@@ -291,7 +295,7 @@ module SearchTestHelper
     }
   end
 
-  def company_pattern(company)
+  def private_search_company_pattern(company)
     user_count = company.users.count
     {
       id: company.id,
@@ -306,7 +310,25 @@ module SearchTestHelper
     }
   end
 
+  def public_search_company_pattern(company)
+    private_search_company_pattern(company).except(:user_count)
+  end
+
   def domains(company)
     company.domains.nil? ? [] : company.domains.split(',')
+  end
+
+  def stub_private_search_response(objects)
+    Search::V2::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new(objects, { total_entries: objects.size }))
+    yield
+  ensure
+    Search::V2::QueryHandler.any_instance.unstub(:query_results)
+  end
+  
+  def stub_public_search_response(objects)
+    SearchService::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new(objects, { total_entries: objects.size }))
+    yield
+  ensure
+    SearchService::QueryHandler.any_instance.unstub(:query_results)
   end
 end

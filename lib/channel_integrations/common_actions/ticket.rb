@@ -17,7 +17,6 @@ module ChannelIntegrations::CommonActions
 
       def construct_ticket(payload)
         description_html = payload.delete(:description)
-
         ticket = current_account.tickets.build(payload)
         ticket.ticket_body_attributes = { description_html: description_html } if description_html.present?
         ticket

@@ -90,5 +90,4 @@ module Integrations::AppsUtil
     response_text = JSON.parse response[:text]
     response_text["response"]["error"].present?
   end
-
 end

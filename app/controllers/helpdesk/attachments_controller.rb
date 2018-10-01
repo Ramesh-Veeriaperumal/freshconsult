@@ -76,7 +76,6 @@ class Helpdesk::AttachmentsController < ApplicationController
     attachable_id = current_user.id
     @attachment = Helpdesk::Attachment.new(content: params[:file], account_id: Account.current.id, attachable_type: "UserDraft", attachable_id: attachable_id)
     if @attachment.save
-      mark_for_cleanup(@attachment.id)
       respond_to do |format|
         format.json do
           render :json => {"files" => [@attachment.to_jq_upload]}.to_json
@@ -93,7 +92,6 @@ class Helpdesk::AttachmentsController < ApplicationController
 
   def delete_attachment
     if @item.destroy
-      unmark_for_cleanup(@item.id)
       respond_to do |format|
         format.json do
           render :json => @item.to_json    

@@ -30,7 +30,7 @@ class Integrations::Hootsuite::HootsuiteController < ApplicationController
     session[:hootsuite_return_to] = request.fullpath
     respond_to do |format|
       format.html {
-        redirect_to params.merge(:controller => "home",:action => "domain_page")
+        redirect_to params.merge(:controller => "home",:action => "domain_page", :only_path => true)
       }
     end
   end
