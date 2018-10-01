@@ -7,7 +7,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketField
   include DataVersioning::Model
-  
+
+  clear_memcache [TICKET_FIELDS_FULL]
+
   self.table_name =  "helpdesk_ticket_fields"
   attr_accessible :name, :label, :label_in_portal, :description, :active, 
     :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, 

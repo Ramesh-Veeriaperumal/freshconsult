@@ -87,7 +87,10 @@ class ApiApplicationController < MetalApiController
   after_filter :set_root_key, :set_app_data_version, if: :private_api?
 
   around_filter :handle_notification, if: :import_api?
-  
+
+ # This should be the last arount filter , can be make available to public as needed
+  around_filter :response_cache, only: [:index, :show], if: :private_api?
+
   SINGULAR_RESPONSE_FOR = %w(show create update).freeze
   COLLECTION_RESPONSE_FOR = %w(index search).freeze
   CURRENT_VERSION = 'private-v1'.freeze
@@ -95,6 +98,27 @@ class ApiApplicationController < MetalApiController
   SLAVE_ACTIONS = %w(index).freeze
 
   NAMESPACED_CONTROLLER_REGEX = /pipe\/|channel\/v2\/|channel\/|bot\//
+  RESPONSE_CACHE_TIMEOUT = 30.days.to_i
+
+  def response_cache
+    if response_cache_data.present?
+      Rails.logger.info "API cache HIT | #{controller_name}/#{action_name} | Acc: #{current_account.id}"
+      response.body = response_cache_data
+      response.headers['Content-Type'] = "application/json; charset=utf-8" #assumption we are handling only json response
+    else
+      Rails.logger.info "API cache MISS | #{controller_name}/#{action_name} | Acc: #{current_account.id}"
+      yield
+      MemcacheKeys.cache(response_cache_key % { account_id: current_account.id }, response.body,RESPONSE_CACHE_TIMEOUT) if response_cache_key
+    end
+  end
+  
+  def response_cache_key
+    @cache_key ||= self.class::RESPONSE_CACHE_KEYS[action_name] if defined? self.class::RESPONSE_CACHE_KEYS
+  end
+
+  def response_cache_data
+    @cache_data ||= MemcacheKeys.get_from_cache(response_cache_key % { account_id: current_account.id }) if response_cache_key
+  end
 
   def index
     load_objects

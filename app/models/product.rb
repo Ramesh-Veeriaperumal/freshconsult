@@ -5,6 +5,8 @@ class Product < ActiveRecord::Base
   include Cache::FragmentCache::Base
   include Cache::Memcache::Dashboard::Custom::CacheData
 
+  clear_memcache [TICKET_FIELDS_FULL]
+
   before_destroy :remove_primary_email_config_role
   validates_uniqueness_of :name , :case_sensitive => false, :scope => :account_id
   xss_sanitize :only => [:name, :description], :plain_sanitize => [:name, :description]

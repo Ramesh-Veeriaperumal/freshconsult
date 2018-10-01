@@ -1,7 +1,5 @@
-
 # Whenever we change the Structure (add/modify/remove keys),
 # we will have to modify the CURRENT_VERSION constant in the controller
-
 JSON.generate(@items.map do |ticket_field|
   response_hash = {
     id: ticket_field.id,
@@ -52,7 +50,7 @@ JSON.generate(@items.map do |ticket_field|
             ticket_field_id: sf.ticket_field_id
           }
         end,
-        picklist_mapping_ids: section.section_picklist_mappings.map(&:picklist_value).map(&:id)
+        picklist_mapping_ids: section.section_picklist_mappings.map(&:picklist_value_id)
       }
     end
     response_hash.merge!(sections: sections)
