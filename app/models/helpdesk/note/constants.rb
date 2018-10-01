@@ -24,6 +24,7 @@ class Helpdesk::Note < ActiveRecord::Base
     Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:canned_form] => SOURCE_KEYS_BY_TOKEN['canned_form']
   }
 
+  SOURCE_NAMES_BY_KEY = SOURCE_KEYS_BY_TOKEN.invert
   # IMP: Whenever a new category is added, it must be handled in reports accordingly.
   CATEGORIES = {
     :customer_response => 1,
@@ -36,8 +37,11 @@ class Helpdesk::Note < ActiveRecord::Base
     :broadcast => 8
   }
 
+  CATEGORIES_NAMES_BY_KEY = CATEGORIES.invert
+
   NER_DATA_TIMEOUT = 30.days.to_i
 
   EXCLUDE_SOURCE =  %w{meta summary}.freeze
 	
+  RELATED_ASSOCIATIONS = %w{note_body schema_less_note}.freeze
 end

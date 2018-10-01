@@ -211,7 +211,7 @@ class Account < ActiveRecord::Base
     :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false, 
     :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false, 
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
-    :post_central_publish => false,
+    :post_central_publish => false, :note_central_publish => false,
     :new_ticket_recieved_metric => false, :euc_migrated_twitter => false, :canned_forms => false, :es_msearch => true,
     csat_email_scan_compatibility: false, sso_login_expiry_limitation: false, :attachment_virus_detection => false,
     :twitter_microservice => true, :twitter_handle_publisher => true, :undo_send => false,

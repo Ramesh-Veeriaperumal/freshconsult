@@ -19,6 +19,8 @@ module Freshcaller
       deleted: 3
     }
 
+    RECORDING_STATUS_NAMES_BY_KEY = RECORDING_STATUS_HASH.invert
+
     RECORDING_STATUS_HASH.each_pair do |k, v|
       define_method("recording_#{k.to_s.gsub(/\W/, '')}?") do
         recording_status == v

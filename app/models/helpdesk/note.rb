@@ -19,7 +19,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   self.table_name =  "helpdesk_notes"
 
-  concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :esv2_methods
+  concerned_with :associations, :constants, :callbacks, :riak, :s3, :mysql, :attributes, :rabbitmq, :esv2_methods, :presenter
   text_datastore_callbacks :class => "note"
   spam_watcher_callbacks :user_column => "user_id"
   #zero_downtime_migration_methods :methods => {:remove_columns => ["body", "body_html"] } 
