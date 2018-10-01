@@ -125,7 +125,7 @@ module Social::Constants
 
   STREAM_VOLUME_RETENION_PERIOD = 28.days
   
-  MAX_FEEDS_THRESHOLD = 700
+  MAX_FEEDS_THRESHOLD = 1500
 
   URL_REGEX = /(([a-z]{3,6}:\/\/)|(^|))([a-zA-Z0-9\-]+\.)+[a-z]{2,13}[\.\?\=\&\%\/\w\-\:\#\+\|\*\!]*([^@\s]|$)/
   
