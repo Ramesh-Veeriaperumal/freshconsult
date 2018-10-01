@@ -199,6 +199,5 @@ module Channel
       end
       match_json(pattern)
     end
-
   end
 end

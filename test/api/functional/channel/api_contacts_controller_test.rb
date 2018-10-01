@@ -201,5 +201,20 @@ module Channel
       match_json(pattern.ordered!)
       assert_response 200
     end
+
+    def test_fetch_contact_by_email
+      sample_user = add_new_user(@account)
+      set_jwt_auth_header('proactive')
+      get :fetch_contact_by_email, controller_params(version: 'channel', email: sample_user.email)
+      ignore_keys = [:was_agent, :agent_deleted_forever, :marked_for_hard_delete]
+      match_json(contact_pattern(sample_user.reload).except(*ignore_keys))
+      assert_response 200
+    end
+
+    def test_fetch_contact_by_email_not_found
+      set_jwt_auth_header('proactive')
+      get :fetch_contact_by_email, controller_params(version: 'channel', email: 'emily@freshdesk.com')
+      assert_response 404
+    end
   end
 end

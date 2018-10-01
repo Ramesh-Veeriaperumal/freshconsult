@@ -310,6 +310,10 @@ module SearchTestHelper
     }
   end
 
+  def public_search_company_pattern(company)
+    private_search_company_pattern(company).except(:user_count)
+  end
+
   def domains(company)
     company.domains.nil? ? [] : company.domains.split(',')
   end
@@ -319,5 +323,12 @@ module SearchTestHelper
     yield
   ensure
     Search::V2::QueryHandler.any_instance.unstub(:query_results)
+  end
+  
+  def stub_public_search_response(objects)
+    SearchService::QueryHandler.any_instance.stubs(:query_results).returns(Search::V2::PaginationWrapper.new(objects, { total_entries: objects.size }))
+    yield
+  ensure
+    SearchService::QueryHandler.any_instance.unstub(:query_results)
   end
 end

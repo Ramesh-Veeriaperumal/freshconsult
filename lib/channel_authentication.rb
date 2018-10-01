@@ -3,7 +3,8 @@ module ChannelAuthentication
   TYPE_JWT = 'jwt'.freeze
   CHANNELS = {
     twitter: 'twitter'.freeze,
-    zapier: 'zapier'.freeze
+    zapier: 'zapier'.freeze,
+    proactive: 'proactive'.freeze
   }.freeze
 
   def channel_client_authentication
@@ -49,6 +50,12 @@ module ChannelAuthentication
 
     def channel_twitter?
       source(request.headers['X-Channel-Auth']) == CHANNELS[:twitter]
+    rescue StandardError => e
+      invalid_credentials_error
+    end
+
+    def channel_proactive?
+      source(request.headers['X-Channel-Auth']) == CHANNELS[:proactive]
     rescue StandardError => e
       invalid_credentials_error
     end

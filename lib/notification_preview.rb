@@ -18,6 +18,10 @@ class NotificationPreview
     parse_preview body
   end
 
+  def add_custom_preview_hash(hash)
+    @message_preview_hash.merge!(hash)
+  end
+
   private
 
   def load_ticket_custom_fields

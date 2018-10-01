@@ -128,6 +128,7 @@ module AuditLog::AuditLogHelper
 
     # custom function to deep symbolize keys because of different ruby version on production and local
     # Note: feel free to delete it when there is no issue
+    # For developers looking for def deep_symbolize_keys!, include hashr in your Gemfile. It's not added for development.
     def deep_symbolize_keys(changes)
       symbolize = lambda do |value|
         case value

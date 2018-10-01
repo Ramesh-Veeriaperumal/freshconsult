@@ -205,10 +205,16 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :attachments, controller: 'api_attachments', only: [:destroy]
     # Proactive Support routes
     scope '/proactive' do
       resources :outreaches, controller: 'proactive/outreaches', except: [:edit]
-      resources :rules, controller: 'proactive/rules', except: [:edit]
+      resources :rules, controller: 'proactive/rules', except: [:edit] do
+        collection do
+          post 'placeholders'
+          post 'preview_email'
+        end
+      end
     end
   end
 
@@ -428,7 +434,7 @@ Helpkit::Application.routes.draw do
       resources :notes, controller: 'customer_notes', only: [:create, :update, :destroy, :show, :index]
     end
 
-    resources :attachments, controller: 'ember/attachments', only: [:create, :show, :destroy] do
+    resources :attachments, controller: 'ember/attachments', only: [:create, :show] do
       member do
         put :unlink
       end
@@ -618,7 +624,11 @@ Helpkit::Application.routes.draw do
     post '/freshcaller/migration/fetch_pod_info', to: 'channel/freshcaller/migration#fetch_pod_info'
 
     resources :tickets, controller: 'channel/tickets', only: [:create]
-    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]
+    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index] do
+      collection do
+        get :fetch_contact_by_email
+      end
+    end
     resources :companies, controller: 'channel/api_companies', only: [:create]
     resources :attachments, controller: 'channel/attachments', only: [:create]
     scope '/v2' do
