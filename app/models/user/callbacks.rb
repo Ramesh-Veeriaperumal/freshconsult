@@ -333,11 +333,12 @@ class User < ActiveRecord::Base
   def send_alert_email
     if agent?
       changed_attributes_names = ["primary email "]
-      SecurityEmailNotification.send_later(:deliver_agent_email_change_alert, self, self.email_was,
-        changed_attributes_names, User.current, "agent_email_change", { :locale_object => self })
+      subject = "System notification: Agent email address changed"
+      SecurityEmailNotification.send_later(:deliver_agent_email_change, self, self.email_was,subject,
+        changed_attributes_names,User.current,"agent_email_change")
       if User.current.email.present? && User.current.email != self.email_was
-          SecurityEmailNotification.send_later(:deliver_agent_email_change_alert, self, User.current.email,
-            changed_attributes_names, User.current, "admin_alert_email_change", { :locale_object => User.current })
+          SecurityEmailNotification.send_later(:deliver_agent_email_change, self,User.current.email ,subject,
+          changed_attributes_names,User.current,"admin_alert_email_change")
       end
     end
   end
