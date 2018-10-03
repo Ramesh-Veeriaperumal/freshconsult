@@ -231,12 +231,4 @@ module Social::Util
     twt[:twitter_extended_entities].present? && twt[:twitter_extended_entities]['media'].present?
   end
 
-  #This method is moved to CentralLib::Util module for refactoring
-  # def encrypt(data)
-  #   aes = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
-  #   aes.encrypt
-  #   aes.key = TWITTER_CENTRAL_SECRET_KEY
-  #   aes.iv  = TWITTER_CENTRAL_SECRET_IV
-  #   Base64.encode64(aes.update(data) + aes.final)
-  # end
 end
