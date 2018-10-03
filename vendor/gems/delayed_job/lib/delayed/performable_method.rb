@@ -1,16 +1,15 @@
 module Delayed
-  class PerformableMethod < Struct.new(:object, :method, :args, :account, :portal, :locale_object)
+  class PerformableMethod < Struct.new(:object, :method, :args, :account, :portal)
     # attr_accessor :account
     
     CLASS_STRING_FORMAT = /^CLASS\:([A-Z][\w\:]+)$/
     AR_STRING_FORMAT    = /^AR\:([A-Z][\w\:]+)\:(\d+)$/
 
-    def initialize(object, method, args, account = Account.current, portal = Portal.current)
+    def initialize(object, method, args, account=Account.current, portal= Portal.current)
       raise NoMethodError, "undefined method `#{method}' for #{self.inspect}" unless object.respond_to?(method)
 
       Rails.logger.debug "$$$$$$$$ Method -- #{method.to_sym} ------------- account #{Account.current}" 
       self.object = dump(object)
-      self.locale_object = (args.last.is_a?(Hash) && args.last.key?(:locale_object)) ? args.pop[:locale_object] : nil
       self.args   = args.map { |a| dump(a) }
       self.method = method.to_sym
       self.account = dump(Account.current) if Account.current
@@ -37,9 +36,7 @@ module Delayed
        Sharding.select_shard_of(account_id) do
         load(account).safe_send(:make_current) if account
         load(portal).safe_send(:make_current) if portal
-        set_locale
         load(object).safe_send(method, *args.map{|a| load(a)})
-        set_default_locale
         # $statsd.increment "email_counter.#{account_id}"
       end
       true
@@ -52,15 +49,6 @@ module Delayed
     end
 
     private
-
-    def set_locale
-      I18n.locale = (locale_object && locale_object.language) ? locale_object.language :
-        (Portal.current ? Portal.current.language : (Account.current ? Account.current.language : I18n.default_locale))
-    end
-
-    def set_default_locale
-      I18n.locale = I18n.default_locale
-    end
 
     def load(arg)
       case arg
