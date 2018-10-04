@@ -73,7 +73,9 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
 
   def delete_multiple
     @items.each do |item|
-      item.destroy if vizible_to_me?(item)
+      if vizible_to_me?(item)
+        item.soft_delete!
+      end
     end
   end
 

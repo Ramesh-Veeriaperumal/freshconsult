@@ -1,6 +1,8 @@
 # encoding: utf-8
 class Helpdesk::CannedResponses::FoldersController < ApplicationController
 
+  include HelpdeskControllerMethods
+
   before_filter :load_object, :only => [:update, :edit, :show, :destroy]
   before_filter :check_default, :only => [:edit, :destroy, :update]
   before_filter :load_folders, :new_folder, :only => [:index, :show]
@@ -79,21 +81,6 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
     end
   end
 
-  def destroy
-    flash[:notice] = t('canned_folders.deleted') if @current_folder.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(helpdesk_canned_responses_folders_path ,
-                                :notice => t('canned_folders.deleted')) }
-      format.js {
-        render :update do |page|
-          page.redirect_to helpdesk_canned_responses_folders_path
-        end
-      }
-      format.xml  { head :ok }
-    end
-  end
-
   private
 
   def load_object
@@ -134,4 +121,8 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
   def set_selected_tab
     @selected_tab = :admin
   end  
+
+  def after_destroy_url
+    helpdesk_canned_responses_folders_path
+  end
 end

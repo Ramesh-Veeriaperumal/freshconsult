@@ -196,9 +196,13 @@ class Account < ActiveRecord::Base
   has_many :ticket_statuses, :class_name => 'Helpdesk::TicketStatus', :order => "position"
 
 
-  has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'folder_type , name'
+  has_many :canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :conditions => { :deleted => false }, :order => 'folder_type , name'
 
-  has_many :canned_responses , :class_name =>'Admin::CannedResponses::Response' , :order => 'title'
+  has_many :canned_responses , :class_name =>'Admin::CannedResponses::Response' , :conditions => { :deleted => false }, :order => 'title'
+
+  has_many :all_canned_response_folders, :class_name =>'Admin::CannedResponses::Folder', :order => 'folder_type , name'
+
+  has_many :all_canned_responses , :class_name =>'Admin::CannedResponses::Response' , :order => 'title'
 
   has_many :accesses, :class_name => 'Helpdesk::Access'
 
