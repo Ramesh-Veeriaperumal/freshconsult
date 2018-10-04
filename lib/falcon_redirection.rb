@@ -14,6 +14,7 @@ class FalconRedirection
     DYNAMIC_PATHS = {
                       /^\/helpdesk\/tickets\/(\d+)/ => '/a/tickets/:id',
                       /^\/helpdesk\/tickets\/archived\/(\d+)/ => '/a/tickets/:id',
+                      /^\/helpdesk\/scenario_automations\/(\d+)\/edit/ => '/a/scenario_automations/:id/edit',
                       # /^\/helpdesk\/tickets\/(\d+)\/edit$/ => '/a/tickets/:id',
                       /^\/solution\/articles\/(\d+)/ => '/a/solutions/articles/:id',
                       /^\/discussions\/topics\/(\d+)/ => '/a/forums/topics/:id',
@@ -23,7 +24,10 @@ class FalconRedirection
                       /^\/solution\/categories\/(\d+)/ => '/a/solutions/categories/:id',
                       /^\/discussions\/(\d+)/ => '/a/forums/categories/:id',
                       /^\/discussions\/forums\/(\d+)/ => '/a/forums/folders/:id',
-                    }.freeze
+                      /^\/admin\/va_rules\/(\d+)\/edit/ => '/a/admin/va_rules/:id/edit',
+                      /^\/admin\/supervisor_rules\/(\d+)\/edit/ => '/a/admin/supervisor_rules/:id/edit',
+                      /^\/admin\/observer_rules\/(\d+)\/edit/ => '/a/admin/observer_rules/:id/edit'
+    }.freeze
 
     SOCIAL_STREAMS_PATH = ['admin/social/facebook_streams','admin/social/twitter_streams','integrations/slack_v2/add_slack_agent','integrations/slack_v2/new'].freeze
     
