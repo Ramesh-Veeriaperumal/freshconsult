@@ -450,6 +450,24 @@
       "note": ""
     },
     {
+      "warning_type": "Attribute Restriction",
+      "warning_code": 19,
+      "fingerprint": "d0d36662b9886b7458ece679613519d8f1f86fbd22f8d19094d017977ded5bcd",
+      "message": "Mass assignment is not restricted using attr_accessible",
+      "file": "app/models/sqs_post.rb",
+      "line": 1,
+      "link": "http://brakemanscanner.org/docs/warning_types/attribute_restriction/",
+      "code": null,
+      "render_path": null,
+      "location": {
+        "type": "model",
+        "model": "SQSPost"
+      },
+      "user_input": null,
+      "confidence": "High",
+      "note": ""
+    },
+    {
       "warning_type": "Cross Site Scripting",
       "warning_code": 2,
       "fingerprint": "d7dbb695efc7c55692bd6fc6a60d08242db24c3b83988b71066c08503f69a310",
@@ -502,6 +520,25 @@
       },
       "user_input": "params",
       "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
+      "fingerprint": "f087961da904eff9b1f1d3e0441d0ca514bf65e2e58eecee844f588ca98c29fc",
+      "message": "Unprotected mass assignment",
+      "file": "app/controllers/support/discussions/posts_controller.rb",
+      "line": 53,
+      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "SQSPost.new(params[:post].clone.delete_if do\n (k == \"attachments\")\n end)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Support::Discussions::PostsController",
+        "method": "sqs_create"
+      },
+      "user_input": "params[:post].clone.delete_if",
+      "confidence": "High",
       "note": ""
     },
     {
@@ -580,6 +617,6 @@
       "note": "The embed is within quoted text"
     }
   ],
-  "updated": "2018-06-26 00:16:10 +0530",
+  "updated": "2018-09-21 17:48:29 +0530",
   "brakeman_version": "3.3.0"
 }
