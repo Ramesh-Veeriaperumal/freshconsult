@@ -19,11 +19,13 @@ class DomainMapping < ActiveRecord::Base
   end
 
   def clear_cache
-    domain_to_be_cleared = (transaction_include_action? :update) ? domain_was : domain
-    key = MemcacheKeys::SHARD_BY_DOMAIN % { :domain => domain_to_be_cleared }
-    MemcacheKeys.delete_from_cache key
-    clear_global_pod_cache(domain_to_be_cleared) if Fdadmin::APICalls.non_global_pods?
-	end
+    domains_to_be_cleared = (transaction_include_action? :update) ? [domain_was, domain] : [domain]
+    domains_to_be_cleared.each do |domain_to_be_cleared|
+      key = MemcacheKeys::SHARD_BY_DOMAIN % { :domain => domain_to_be_cleared }
+      MemcacheKeys.delete_from_cache key
+      clear_global_pod_cache(domain_to_be_cleared) if Fdadmin::APICalls.non_global_pods?
+    end
+  end
 
   # * * * POD Operation Methods Begin * * *
   def update_route53
