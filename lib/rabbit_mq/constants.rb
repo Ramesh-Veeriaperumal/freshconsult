@@ -130,9 +130,9 @@ module RabbitMq::Constants
     "internal_agent_id", "internal_group_id", 
 
     # columns stored in reports_hash in schema_less_ticket
-    "first_response_id", "agent_reassigned_count", "group_reassigned_count", "reopened_count", 
-    "private_note_count", "public_note_count", "agent_reply_count", "customer_reply_count",
-    "agent_assigned_flag", "agent_reassigned_flag", "group_assigned_flag", "group_reassigned_flag",
+    "first_response_id", "first_response_agent_id", "first_response_group_id", "first_assign_agent_id", "first_assign_group_id",
+    "agent_reassigned_count", "group_reassigned_count", "reopened_count", "private_note_count", "public_note_count",
+    "agent_reply_count", "customer_reply_count", "agent_assigned_flag", "agent_reassigned_flag", "group_assigned_flag", "group_reassigned_flag",
     "internal_agent_assigned_flag", "internal_agent_reassigned_flag", "internal_group_assigned_flag", "internal_group_reassigned_flag",
     "internal_agent_first_assign_in_bhrs", "last_resolved_at"
   ]
