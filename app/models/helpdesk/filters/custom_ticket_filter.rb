@@ -9,11 +9,13 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   has_many :dashboard_widgets, class_name: 'DashboardWidget', foreign_key: 'ticket_filter_id'
 
-  after_commit :update_widgets, on: :update, :if => :dynamic_filter?
+  after_commit :update_widgets, on: :update
 
-  before_destroy :update_widgets
+  before_destroy :deactivate_widgets
 
   MODEL_NAME = "Helpdesk::Ticket"
+
+  CUSTOM_DASHBOARD_TICKET_FILTERS = 'v1/CUSTOM_DASHBOARD_TICKET_FILTERS:%{account_id}:%{dashboard_id}'
 
   def self.deleted_condition(input)
     { "condition" => "deleted", "operator" => "is", "value" => input}
@@ -614,7 +616,21 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def update_widgets
+    dynamic_filter? ? deactivate_widgets : clear_dashboards_filters_cache
+  end
+
+  def clear_dashboards_filters_cache
+    filter_dashboards = Account.current.dashboard_widgets.where('ticket_filter_id = ?', id).pluck(:dashboard_id)
+    filter_dashboards.each { |dashboard_id| clear_dashboard_filters_cache(dashboard_id) }
+  end
+
+  def deactivate_widgets
     Helpdesk::DeactivateFilterWidgets.perform_async({ filter_id: self.id })
+  end
+
+  def clear_dashboard_filters_cache(dashboard_id)
+    key = CUSTOM_DASHBOARD_TICKET_FILTERS % { account_id: Account.current.id, dashboard_id: dashboard_id }
+    MemcacheKeys.delete_from_cache(key)
   end
 
   class << self
