@@ -109,6 +109,12 @@ class Admin::CannedResponses::Response < ActiveRecord::Base
     })
   end
 
+  def soft_delete!
+    self.deleted = true
+    self.update_column(:deleted, true)
+    self.remove_es_document
+  end
+
   private
 
   def validate_title
