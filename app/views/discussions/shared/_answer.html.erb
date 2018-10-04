@@ -13,7 +13,7 @@
 			<% if popup %>
 				<%= truncate(post.body, :length => 500 ) %>
 			<% else %>
-				<%= post.body_html.html_safe %>
+				<%= h(post.body_html.html_safe) %>
 			<% end %>
 		</div>
 		<div class="attachment_wrapper mb20">
