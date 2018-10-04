@@ -9,9 +9,9 @@ module MemcacheCleaner
 
   def clean_memcache_data
     begin
-      if defined? self.class::cache_keys_to_delete
+      if defined? self.cache_keys_to_delete
         acc_id_hash = { account_id: self.account_id }
-        self.class::cache_keys_to_delete.each do |key|
+        self.cache_keys_to_delete.each do |key|
           MemcacheKeys.delete_from_cache key % acc_id_hash
         end
       end
@@ -22,7 +22,7 @@ module MemcacheCleaner
   
   module ClassMethods
     def clear_memcache(keys)
-      self.class.send :define_method, "cache_keys_to_delete" do
+      self.send :define_method, "cache_keys_to_delete" do
         keys || []
       end
     end
