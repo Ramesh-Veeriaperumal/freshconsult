@@ -40,7 +40,7 @@
     - central_publish
     - active_ticket_central_publish
     - user_central_publish
-
+    - active_note_central_publish
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup
@@ -97,6 +97,7 @@
     - customer_note_body_queue
     - update_taggables_queue
     - suspended_ticket_central_publish
+    - suspended_note_central_publish
     - send_domain_changed_mail
     - primary_language_change
     - freshops_service
@@ -186,6 +187,7 @@
     - free_account_jobs
     - contacts_sync_free
     - free_ticket_central_publish
+    - free_note_central_publish
   :mailbox_jobs:
     - mailbox_jobs
   :email:
@@ -202,6 +204,7 @@
     - trial_twitter
     - contacts_sync_trial
     - trial_ticket_central_publish
+    - trial_note_central_publish
   :spam:
     - email_notification_spam_queue
     - spam_data_migration

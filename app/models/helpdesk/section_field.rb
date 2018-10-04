@@ -1,6 +1,6 @@
 class Helpdesk::SectionField < ActiveRecord::Base
 
-  include MemcacheKeys
+  clear_memcache [ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING,TICKET_FIELDS_FULL]
 
   self.primary_key = :id
   self.table_name = "helpdesk_section_fields"
@@ -17,10 +17,4 @@ class Helpdesk::SectionField < ActiveRecord::Base
   
   validates_presence_of :ticket_field_id
 
-  after_commit :clear_cache
-
-  def clear_cache
-    key = ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING % { account_id: self.account_id }
-    MemcacheKeys.delete_from_cache key
-  end
 end
