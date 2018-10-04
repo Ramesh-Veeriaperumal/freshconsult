@@ -39,9 +39,14 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
     end
 
     def handle_call_status_flows
-      create_and_link_ticket if incoming_missed_call?
+      create_or_update_ticket if incoming_missed_call? || abandoned?
       create_or_add_to_ticket if ongoing?
       create_ticket_add_note if voicemail? || completed? || outgoing_missed_call?
+    end
+
+    def create_or_update_ticket
+      return update_ticket_details if @ticket.present? && abandoned?
+      create_and_link_ticket
     end
 
     def create_and_link_ticket
@@ -69,6 +74,11 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
       note = @ticket.notes.build(note_params)
       note.save_note
       @item.notable = note
+    end
+
+    def update_ticket_details
+      @ticket.update_ticket_attributes(update_ticket_params)
+      update_note_body if update_existing_note?
     end
 
     def update_note_body

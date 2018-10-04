@@ -33,6 +33,7 @@ module Freshcaller::CallsTestHelper
     {
       version: 'channel',
       id: call_id,
+      call_type: 'incoming',
       call_status: status,
       customer_number: Faker::PhoneNumber.phone_number.to_s,
       customer_location: Faker::Address.country.to_s,
