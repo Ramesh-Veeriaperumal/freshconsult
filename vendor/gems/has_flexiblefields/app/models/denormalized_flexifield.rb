@@ -33,7 +33,13 @@ class DenormalizedFlexifield < ActiveRecord::Base
 
   SERIALIZED_COLUMN_MAPPING_BY_ATTRIBUTES.each do |attribute, db_column|
     define_method attribute do
-      safe_send(db_column, false)[attribute]
+      begin
+        db_value = safe_send(db_column, false)
+        db_value[attribute]
+      rescue Exception => e
+        Rails.logger.debug "DenormalizedFlexifield Exception, ID: #{self.id}, Message: #{e.message}, db_value: #{db_value.inspect}, db_value class: #{db_value.class.name} attribute: #{attribute}, db_column: #{db_column}"
+        nil
+      end
     end
 
     define_method "#{attribute}=" do |new_value|
