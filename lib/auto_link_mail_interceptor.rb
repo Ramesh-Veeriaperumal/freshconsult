@@ -30,6 +30,7 @@ class AutoLinkMailInterceptor
         autolinked_body = FDRinku.auto_link(sandbox_footer(mail.body).to_s)
         encode_body(mail, autolinked_body)
       end
+      convert_email_to_base64 mail if (Thread.current[:line_length_exceeded] == true)
       mail
     end
 
@@ -57,6 +58,28 @@ class AutoLinkMailInterceptor
 
     def self.normalize_new_lines(text)
       text.to_s.gsub(/\r\n?/, "\n")
+    end
+
+    def self.convert_email_to_base64 mail=@mail
+      if(!mail.parts.blank?)
+        mail.parts.each do |part|
+        convert_part_to_base64 part
+      end
+      else
+        mail.content_transfer_encoding = "base64"
+        mail.body = Mail::Encodings::Base64.encode(mail.body.to_s)
+      end
+    end
+
+    def self.convert_part_to_base64 part
+      if(part.multipart?)
+        part.parts.each do |part|
+          convert_part_to_base64 part
+        end
+      else
+        part.content_transfer_encoding = "base64"
+        part.body = Mail::Encodings::Base64.encode(part.body.to_s)
+      end
     end
 
 end

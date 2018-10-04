@@ -4,14 +4,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::Filters::CustomTicketFilter
   include Collaboration::TicketFilter
+  include Cache::Memcache::Dashboard::Custom::CacheData
 
   attr_accessor :query_hash
 
   has_many :dashboard_widgets, class_name: 'DashboardWidget', foreign_key: 'ticket_filter_id'
 
-  after_commit :update_widgets, on: :update, :if => :dynamic_filter?
+  after_commit :update_widgets, on: :update
 
-  before_destroy :update_widgets
+  before_destroy :deactivate_widgets
 
   MODEL_NAME = "Helpdesk::Ticket"
 
@@ -625,6 +626,15 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
   end
 
   def update_widgets
+    dynamic_filter? ? deactivate_widgets : clear_dashboards_filters_cache
+  end
+
+  def clear_dashboards_filters_cache
+    filter_dashboards = Account.current.dashboard_widgets.where('ticket_filter_id = ?', id).pluck(:dashboard_id)
+    filter_dashboards.each { |dashboard_id| clear_ticket_filter_widgets_from_cache(dashboard_id) }
+  end
+
+  def deactivate_widgets
     Helpdesk::DeactivateFilterWidgets.perform_async({ filter_id: self.id })
   end
 
