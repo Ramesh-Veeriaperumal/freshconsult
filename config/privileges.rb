@@ -265,6 +265,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"search/v2/spotlight", :only => [:solutions]
     resource :"helpdesk/ticket", :only => [:get_solution_detail]
     resource :"solution/draft", :only => [:index]
+    resource :"api_search/solution", only: [:results]
 
     # Used by V2 API
     resource :"api_solutions/category", :only => [:index, :show]

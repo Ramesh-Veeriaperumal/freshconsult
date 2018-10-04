@@ -167,7 +167,6 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_solutions do
-    resource :"ember/search/solution", only: [:results]
     resource :"ember/solutions/article", only: [:index,:article_content]
     resource :"ember/search/multiquery", only: [:search_results]
     resource :"ember/admin/bot", only: [:bot_folders]

@@ -84,4 +84,11 @@ class ApiSolutionArticlesFlowsTest < ActionDispatch::IntegrationTest
   		assert_response 200
   	end
   end
+
+  def test_search_solutions_api_insert_solutions
+    sample_article = get_article
+  	language_code = @account.language
+    get("api/v2/search/solutions?term=Sample", nil, @headers)
+    assert_response 200
+  end
 end
