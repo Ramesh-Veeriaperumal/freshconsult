@@ -54,7 +54,8 @@ class ConversationsController < ApiApplicationController
   end
 
   def destroy
-    @item.update_attribute(:deleted, true)
+    @item.deleted = true
+    @item.save!
     head 204
   end
 

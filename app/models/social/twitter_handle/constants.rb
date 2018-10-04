@@ -24,5 +24,5 @@ class Social::TwitterHandle < ActiveRecord::Base
   ]
 
   TWITTER_STATE_KEYS_BY_TOKEN = Hash[*TWITTER_STATES.map { |i| [i[0], i[2]] }.flatten]
-
+  TWITTER_NAMES_BY_STATE_KEYS = TWITTER_STATE_KEYS_BY_TOKEN.invert
 end

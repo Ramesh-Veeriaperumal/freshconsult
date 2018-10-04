@@ -1,4 +1,7 @@
 class Helpdesk::NestedTicketField < ActiveRecord::Base
+  
+  clear_memcache [TICKET_FIELDS_FULL]
+    
   self.primary_key = :id
 
   self.table_name =  "helpdesk_nested_ticket_fields"

@@ -8,6 +8,9 @@ class Helpdesk::Note < ActiveRecord::Base
   before_create :validate_schema_less_note, :update_observer_events
   before_create :create_broadcast_message, :if => :broadcast_note?
   before_save :load_schema_less_note, :update_category, :load_note_body, :ticket_cc_email_backup
+  before_save :update_note_changes
+
+  before_destroy :save_deleted_note_info
 
   after_create :update_content_ids, :update_parent, :add_activity
   after_commit :fire_create_event, on: :create
@@ -34,6 +37,7 @@ class Helpdesk::Note < ActiveRecord::Base
 
   after_commit  :enqueue_for_NER, on: :create, :if => :validate_for_ner_api
 
+  publishable
   # Callbacks will be executed in the order in which they have been included.
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
@@ -92,6 +96,12 @@ class Helpdesk::Note < ActiveRecord::Base
         end
      end
     end
+  end
+
+  def save_deleted_note_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
+    @deleted_model_info[:archive] = false
+    @deleted_model_info
   end
 
   protected
@@ -297,6 +307,14 @@ class Helpdesk::Note < ActiveRecord::Base
 
     def fire_create_event
       fire_event(:create) unless disable_observer
+    end
+
+    def update_note_changes
+      @model_changes = self.changes.to_hash unless defined?(@model_changes)
+      RELATED_ASSOCIATIONS.each do |association|
+        @model_changes.merge!(self.send(association).changes.try(:to_hash))
+      end
+      @model_changes.symbolize_keys!
     end
 
     def reset_emails(emails_array)

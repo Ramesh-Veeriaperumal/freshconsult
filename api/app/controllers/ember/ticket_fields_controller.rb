@@ -1,8 +1,14 @@
 class Ember::TicketFieldsController < ::ApiTicketFieldsController
   include TicketFieldConcern
-
+  include MemcacheKeys
+  
   send_etags_along('TICKET_FIELD_LIST')
 
+  RESPONSE_CACHE_KEYS = {
+    'index' => TICKET_FIELDS_FULL
+  }
+  #make sure the adding version when ever the response or view file modifed
+   
   around_filter :run_on_db, :only => :index
   skip_around_filter :run_on_slave
 

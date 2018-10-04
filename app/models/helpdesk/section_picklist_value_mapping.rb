@@ -1,5 +1,7 @@
 class Helpdesk::SectionPicklistValueMapping < ActiveRecord::Base
   
+  clear_memcache [TICKET_FIELDS_FULL]
+
   self.primary_key = :id  
   attr_protected  :account_id
   
@@ -8,4 +10,5 @@ class Helpdesk::SectionPicklistValueMapping < ActiveRecord::Base
   belongs_to :picklist_value, :class_name => "Helpdesk::PicklistValue"
 
   validates_uniqueness_of :picklist_value_id, :scope => :account_id
+
 end

@@ -182,7 +182,9 @@ class Account < ActiveRecord::Base
 
   has_many :ticket_fields, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:picklist_values, :flexifield_def_entry], :order => "helpdesk_ticket_fields.position"
-
+  has_many :ticket_fields_only, :class_name => 'Helpdesk::TicketField', 
+           :conditions => {:parent_id => nil},
+           :order => 'helpdesk_ticket_fields.position'
   has_many :ticket_fields_without_choices, :class_name => 'Helpdesk::TicketField', :conditions => {:parent_id => nil},
     :include => [:flexifield_def_entry], :order => "helpdesk_ticket_fields.position"
 

@@ -12,6 +12,8 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   attr_accessor :skip_virus_detection
 
+  concerned_with :presenter
+
   BINARY_TYPE = "application/octet-stream"
 
   MAX_DIMENSIONS = 16000000
