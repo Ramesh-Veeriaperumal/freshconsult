@@ -24,11 +24,11 @@ var TemplateDockManager = Class.create({
         NO_CONTENT: 204
       },
       messages: {
-        NO_LOGS_FOUND: 'There are no logs for the last 15 minutes.',
+        NO_LOGS_FOUND: 'There are no logs for the last 1 hour.',
         ERROR_FETCHING_LOGS: 'There was an error while trying to fetch the logs. Please <a class="reload_logs">try again</a> later.',
         TAKING_TOO_LONG: 'The request is taking longer than usual. Please <a class="reload_logs">try again</a> later.',
-        FOUND_LOGS: 'Logs for the last 15 minutes',
-        LOADING: 'Retrieving logs for the last 15 minutes. This may take up to 30 seconds.'
+        FOUND_LOGS: 'Logs for the last 1 hour',
+        LOADING: 'Retrieving logs for the last 1 hour. This may take up to 30 seconds.'
       },
       count: 12,
       logsAPIPollInterval: 5000
@@ -80,7 +80,7 @@ var TemplateDockManager = Class.create({
           jQuery('.search-apps').show();
         },
         select: function( event, ui ) {
-          that.getAppInfo(ui.item.url, true); // params are 'url to be loaded on click', 'is this from search suggestion?' 
+          that.getAppInfo(ui.item.url, true); // params are 'url to be loaded on click', 'is this from search suggestion?'
           jQuery(".appsearch-box #query").val(ui.item.term);
         },
         focus: function( event, ui ) {
@@ -96,8 +96,8 @@ var TemplateDockManager = Class.create({
             .appendTo( ul );
       };
 
-    }); 
-    
+    });
+
   },
   bindTemplateEvents: function(){
     jQuery(document).on("click.tmpl_events", ".browse-btn, .category, .back2list_btn, .back2catg_btn, #appGalleryLogo, .view-all", this.loadApps.bindAsEventListener(this))
@@ -163,9 +163,9 @@ var TemplateDockManager = Class.create({
     var descHeight = jQuery(".descript").outerHeight();
     var whatsNewHeight = 0;
     if(jQuery(".whats-new").length > 0){
-      whatsNewHeight = jQuery(".whats-new").outerHeight();  
+      whatsNewHeight = jQuery(".whats-new").outerHeight();
     }
-    
+
     jQuery('.head-spacer').animate({
       scrollTop: descHeight+whatsNewHeight+15
     }, 1000);
@@ -208,7 +208,7 @@ var TemplateDockManager = Class.create({
         if(jQuery(el).hasClass('view-all')) {
           jQuery('a[href="#' + jQuery(el).attr('id') + '"]').click();
         };
-        if(jQuery(el).is('#category_0') || jQuery(el).hasClass('view-all')) { 
+        if(jQuery(el).is('#category_0') || jQuery(el).hasClass('view-all')) {
           jQuery('#category_0').css({'color':'#555','font-weight': 'bold'});
         }
         that.isSearched = false;
@@ -326,7 +326,7 @@ var TemplateDockManager = Class.create({
         moretext = "more",
         lesstext = "less",
         content  = jQuery(".descript").html();
- 
+
     if(content && content.length > showChar) {
 
         var c = content.substr(0, showChar);
@@ -373,7 +373,7 @@ var TemplateDockManager = Class.create({
         that.platformVersion == '2.0' ? parent.location = resp_body.redirect_url : window.location = resp_body.redirect_url;
       },
       error: function(jqXHR, exception) {
-        that.showErrorMsg(that.customMessages.no_connection);        
+        that.showErrorMsg(that.customMessages.no_connection);
       }
     });
   },
@@ -589,7 +589,7 @@ var TemplateDockManager = Class.create({
     };
     var toShow = e.target.id;
     var toHide = toShow === 'configs_tab' ? 'logs_tab' : 'configs_tab';
-    
+
     jQuery('.' + formClasses[toHide]).css('display', 'none');
     jQuery('.' + formClasses[toShow]).css('display', '');
     jQuery('#' + toShow).addClass('active');
@@ -603,19 +603,19 @@ var TemplateDockManager = Class.create({
         return {};
       }
     }
-    
+
     function isLog(log) {
       return log && log.length !== 0;
     }
-    
+
     function transform(log) {
       var splitAt = log.indexOf(' ');
-      
+
       log = [ log.slice(0, splitAt), log.slice(splitAt + 1) ];
 
       var timestamp = log[0];
       var log = safeJSONParse(log[1]);
-      
+
       return {
         timestamp: (new Date(timestamp || '')).toLocaleTimeString(),
         id: (log.RequestId || '').slice(-5),
@@ -623,7 +623,7 @@ var TemplateDockManager = Class.create({
         message: log.message || ''
       };
     }
-    
+
     return logs.split('\n').filter(isLog).map(transform);
   },
 
@@ -633,7 +633,7 @@ var TemplateDockManager = Class.create({
 
   downloadLogs: function(url, extensionId) {
     var self = this;
-    
+
     jQuery.ajax({
       method: 'GET',
       url: url,
@@ -651,7 +651,7 @@ var TemplateDockManager = Class.create({
   },
   renderLogsTab: function(params, extensionId) {
     var logsForm = jQuery('.logs-form');
-    
+
     if (logsForm.attr('data-extension_id') == extensionId && this.isAppBrowserOpened) {
       logsForm.html(JST['marketplace/marketplace_install_logs'](params));
     }
@@ -659,7 +659,7 @@ var TemplateDockManager = Class.create({
   pollLogAPI: function() {
     var self = this;
     var count = self.loggerOptions.count;
-    
+
     function poll(extensionId, versionId) {
       /**
        *  The two extension ID will be different only if the slider has been opened
@@ -669,7 +669,7 @@ var TemplateDockManager = Class.create({
       if (self.extensionId != extensionId || !self.isAppBrowserOpened) {
         return;
       }
-      
+
       jQuery.ajax({
         url: '/mkp/data-pipe.json',
         method: 'POST',
@@ -692,20 +692,20 @@ var TemplateDockManager = Class.create({
                 message: self.loggerOptions.messages.TAKING_TOO_LONG
               }, extensionId);
             }
-            
+
             return setTimeout(poll.bind(null, extensionId, versionId), self.loggerOptions.logsAPIPollInterval);
           }
-          
+
           if (response.status === self.loggerOptions.status.OK) {
             return self.downloadLogs(response.url, extensionId);
           }
-          
+
           if (response.status === self.loggerOptions.status.NO_CONTENT) {
             return self.renderLogsTab({
               message: self.loggerOptions.messages.NO_LOGS_FOUND
             }, extensionId);
           }
-          
+
           return self.renderLogsTab({
             message: self.loggerOptions.messages.ERROR_FETCHING_LOGS
           }, extensionId);
@@ -739,7 +739,7 @@ var TemplateDockManager = Class.create({
     e.preventDefault();
     e.stopPropagation();
     var that = this;
-    
+
     var el = jQuery(e.currentTarget);
     jQuery.ajax({
       url: jQuery(el).attr("data-url"),
@@ -756,7 +756,7 @@ var TemplateDockManager = Class.create({
         that.isAppBrowserOpened = true;
 
         jQuery(document).one("click.tmpl_events", ".tab#logs_tab" , that.pollLogAPI.bindAsEventListener(that));
-        
+
         if ( install_extension.account_suspended ) {
           that.showErrorMsg(that.customMessages.suspended_plan_info);
         }
@@ -819,7 +819,7 @@ var TemplateDockManager = Class.create({
         that.showErrorMsg(that.customMessages.no_connection);
       }
     });
-    
+
   },
 
   whenAvailable: function(methodName, configs) {
@@ -839,7 +839,7 @@ var TemplateDockManager = Class.create({
     e.stopPropagation();
     var that = this;
     var el = jQuery(e.currentTarget);
-    
+
     jQuery.ajax({
       url: jQuery(el).attr("data-url"),
       type: jQuery(el).attr("data-method"),
@@ -906,7 +906,7 @@ var TemplateDockManager = Class.create({
     e.stopPropagation();
     window.history.pushState(null, null, this.tabName);
   },
-  
+
   destroy: function(obj){
     jQuery(obj).off(".tmpl_events");
   }
