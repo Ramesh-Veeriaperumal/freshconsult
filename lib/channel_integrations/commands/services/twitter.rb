@@ -4,7 +4,8 @@ module ChannelIntegrations::Commands::Services
     include ChannelIntegrations::Constants
     include ChannelIntegrations::CommonActions::Note
     include ChannelIntegrations::CommonActions::Ticket
-
+    include Social::Twitter::Util
+    
     def receive_create_ticket(payload)
       return error_message('Invalid request') unless check_ticket_params?(payload)
 
@@ -62,7 +63,7 @@ module ChannelIntegrations::Commands::Services
         schema_less_notes = current_account.schema_less_notes.find_by_note_id(note_id)
         return error_message('SchemaLessNote not found') if schema_less_notes.blank?
 
-        update_errors_in_schema_less_notes(schema_less_notes, data)
+        update_errors_in_schema_less_notes(schema_less_notes, data, note_id)
       else
         return error_message('Tweet Id cannot be empty') unless data[:tweet_id].present?
         social_tweet = current_account.tweets.find_by_tweetable_id(context[:note_id])
@@ -133,12 +134,13 @@ module ChannelIntegrations::Commands::Services
         false
       end
 
-      def update_errors_in_schema_less_notes(schema_less_notes, data)
+      def update_errors_in_schema_less_notes(schema_less_notes, data, note_id)
         schema_less_notes.note_properties[:errors] = {} if schema_less_notes.note_properties[:errors].nil?
         twitter_errors = { twitter: { error_code: data[:status_code], error_message: data[:message] } }
         schema_less_notes.note_properties[:errors].merge!(twitter_errors)
 
         schema_less_notes.save!
+        notify_iris(note_id)
       end
 
       def update_tweet_in_social_tweets(social_tweet, data)

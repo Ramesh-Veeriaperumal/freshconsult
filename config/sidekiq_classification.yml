@@ -36,6 +36,8 @@
     - add_agent_to_round_robin
     - toggle_agent_from_all_roundrobin_groups
     - default_data_population
+    - twitter_reply
+
   :central_realtime:
     - central_publish
     - active_ticket_central_publish

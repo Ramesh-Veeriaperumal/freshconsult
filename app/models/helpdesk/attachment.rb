@@ -66,7 +66,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     before_save :randomize_filename, :if => :randomize?
     before_post_process :image?, :valid_image?
     before_create :set_content_type
-    after_commit :clear_user_avatar_cache
+    after_commit :clear_user_avatar_cache, if: :user_attachment?
     before_save :set_account_id
     validate :virus_in_attachment?, if: :attachment_virus_detection_enabled?
     
@@ -126,6 +126,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
       JWT.decode(token, account.attachment_secret).first.with_indifferent_access
     end
 
+  end
+
+  def user_attachment?
+    self.attachable_type == 'User'
   end
 
   def s3_permissions
@@ -298,6 +302,14 @@ class Helpdesk::Attachment < ActiveRecord::Base
     self.attachable_type.include?("Inline") || self.attachable_type.include?("Image Upload")
   end
 
+  def fetch_from_s3
+    attachment_filename = "tempfile-#{Account.current.id}-#{self.id}"
+    file = File.new(attachment_filename, 'w+b', 0o644)
+    file.write(AwsWrapper::S3Object.read(self.content.path, self.content.bucket_name))
+    file.flush.seek(0, IO::SEEK_SET) # flush data to file and set RW pointer to beginning
+    file
+  end
+
   private
 
   def set_random_secret
@@ -356,5 +368,4 @@ class Helpdesk::Attachment < ActiveRecord::Base
   def virus_in_attachment?
     errors.add(:base, "VIRUS_FOUND") if attachment_has_virus?
   end
-
 end

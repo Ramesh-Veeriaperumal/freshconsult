@@ -11859,7 +11859,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       ticket_created: "New Ticket"
       generic_notification: "%{type}"
       bot_training_completion: "Bot training completed"
-      dashboard_announcement_create: "Dashboard announcement"
+      twitter_reply_failure: "Twitter response not sent"
     preferences_text:
       private_note_created: Private note sent to me
       public_note_created: Public note added to ticket
@@ -11875,7 +11875,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
     bot_training_completion: "%{title} Bot trained successfully!Please switch to mint ui to test and train the bot."
-    dashboard_announcement_create: "has posted '%{title}'"
+    twitter_reply_failure: "Response to ticket {{title}} was not sent. Please try again after some time."
     muted: Muted
     mute: Mute
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"

@@ -187,14 +187,12 @@ class Helpdesk::NotesController < ApplicationController
         if tweet?
           twt_type = params[:tweet_type] || :mention.to_s
           @tweet_body = @note.body.strip
-          error_message, reply_twt = safe_send("send_tweet_as_#{twt_type}")
-          if error_message.blank?
-            flash[:notice] = t(:'flash.tickets.reply.success') 
-          else
-            flash.now[:notice] = t('twitter.not_authorized')
-          end
-        elsif facebook?  
-          send_facebook_reply  
+          twitter_handle_id = params[:twitter_handle_id]
+          args = { ticket_id: @parent.id, note_id: @note.id, tweet_type: twt_type, twitter_handle_id: twitter_handle_id }
+          Social::TwitterReplyWorker.perform_async(args)
+          flash[:notice] = t(:'flash.tickets.reply.success')
+        elsif facebook?
+          send_facebook_reply
         end
       end
       Thread.current[:notifications] = nil
@@ -211,14 +209,14 @@ class Helpdesk::NotesController < ApplicationController
     def facebook?
       (!@parent.fb_post.nil?) and (!params[:fb_post].blank?)  and (params[:fb_post].eql?("true")) 
     end
-  
+
   def validate_fwd_to_email
     if(@item.fwd_email? and fetch_valid_emails(params[:helpdesk_note][:to_emails]).blank?)
           flash[:error] = t('validate_fwd_to_email_msg')
           redirect_to item_url
     end
   end
-
+  
   def check_for_kbase_email
     kbase_email = current_account.kbase_email
       if ((params[:helpdesk_note][:bcc_emails] && params[:helpdesk_note][:bcc_emails].include?(kbase_email)) || 
