@@ -94,6 +94,7 @@
 		<% end %>
 		<script type="text/javascript" >
 			window.inlineManualTracking = <%= inline_manual_people_tracing.to_json.html_safe %>
+      window.im_option = {}
 		</script>
 		<%= javascript_include_tag :'cdn/inline_manual_trigger' %>
 		<div class="hide" id="inline-manual-meta">
