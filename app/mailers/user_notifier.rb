@@ -206,8 +206,11 @@ class UserNotifier < ActionMailer::Base
       # to be sent via custom mail server, simply switching the primary email config will do
       email_config = options[:user].account.primary_email_config
       configure_email_config email_config
+      
       headers = {
-        :subject                    => "#{options[:type].capitalize} Import for #{options[:user].account.full_domain}",
+        :subject                    => I18n.t("mailer_notifier_subject.customer_import",
+                                      import_type: I18n.t("search.#{options[:type]}", default: options[:type].capitalize),
+                                      account_full_domain: options[:user].account.full_domain),
         :to                         => options[:user].email,
         :from                       => options[:user].account.default_friendly_email,
         :bcc                        => AppConfig['reports_email'],

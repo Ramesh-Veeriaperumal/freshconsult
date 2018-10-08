@@ -1,4 +1,4 @@
-Hi <%= @user.name%>,
+<%= t("mailer_notifier.hi_user", user_name: @user.name) %>
 
 <% if @import_success %>
 	<%= "#{t('flash.import.info1', :type => @type, :uc_type => @type.capitalize)}"%>
