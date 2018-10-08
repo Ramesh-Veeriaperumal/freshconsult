@@ -124,6 +124,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   has_one :bot_ticket, class_name: 'Bot::Ticket', dependent: :destroy
 
+  has_many :canned_form_handles, :class_name => 'Admin::CannedFormHandle', :dependent => :destroy
+
   private
 
   def set_inline_attachable_type(inline_attachment)
