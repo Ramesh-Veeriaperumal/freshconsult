@@ -216,7 +216,7 @@ class Account < ActiveRecord::Base
     csat_email_scan_compatibility: false, sso_login_expiry_limitation: false, :attachment_virus_detection => false,
     :twitter_microservice => true, :twitter_handle_publisher => true, :undo_send => false,
     :email_deprecated_style_parsing => false, :old_link_back_url_validation => false, :shopify_actions => true,
-    :saml_ecrypted_assertion => false, :installed_app_publish => false
+    :saml_ecrypted_assertion => false, :installed_app_publish => false,  :disable_banners => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

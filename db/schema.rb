@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20180705070830) do
+ActiveRecord::Schema.define(version: 20180821052830) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -123,6 +123,7 @@ ActiveRecord::Schema.define(:version => 20180705070830) do
     t.datetime "updated_at"
     t.text     "content_html", :limit => 2147483647
     t.integer  "folder_id",    :limit => 8
+    t.boolean  "deleted",      :default => false
   end
 
   add_index "admin_canned_responses", ["account_id", "folder_id", "title"], :name => "Index_ca_responses_on_account_id_folder_id_and_title", :length => {"account_id"=>nil, "folder_id"=>nil, "title"=>20}

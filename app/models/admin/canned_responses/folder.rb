@@ -7,6 +7,12 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
   has_many :canned_responses,
     :class_name => 'Admin::CannedResponses::Response',
     :foreign_key => "folder_id",
+    :conditions => { :deleted => false },
+    :dependent => :destroy
+
+  has_many :all_canned_responses,
+    :class_name => 'Admin::CannedResponses::Response',
+    :foreign_key => "folder_id",
     :dependent => :destroy
 
   attr_accessor :visible_responses_count
@@ -56,6 +62,7 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
 
   before_save :set_folder_type
   before_destroy :confirm_destroy
+  after_commit :delete_ca_response, :on => :update, :if => :deleted?
 
   def personal?
     self.folder_type == FOLDER_TYPE_KEYS_BY_TOKEN[:personal]
@@ -75,6 +82,12 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
       if is_default?
         self.errors.add(:base,"Cannot delete default folder!!")
         return false
+      end
+    end
+
+    def delete_ca_response
+      canned_responses.find_each do |ca|
+        ca.soft_delete!
       end
     end
 

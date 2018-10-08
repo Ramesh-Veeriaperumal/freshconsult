@@ -86,7 +86,7 @@ unpublished =  !original && !post.published
 		</div>
 
 		<div class="post-content" rel="image-enlarge">
-			<%= post.body_html.html_safe %>
+			<%= h(post.body_html.html_safe) %>
 		</div>
 
 		<% unless original %>
