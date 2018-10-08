@@ -16,16 +16,15 @@ module Ember
 
     decorate_views(
       decorate_objects: [:ticket_conversations],
-      decorate_object: %i(create update reply forward facebook_reply tweet broadcast)
+      decorate_object: %i(create update reply facebook_reply tweet broadcast)
     )
 
-    before_filter :can_send_user?, only: %i(create reply forward facebook_reply tweet broadcast)
-    before_filter :set_defaults, only: [:forward]
+    before_filter :can_send_user?, only: %i(create reply facebook_reply tweet broadcast)
     before_filter :link_tickets_enabled?, only: [:broadcast]
     before_filter :validate_attachments_permission, only: [:create, :update]
     before_filter :check_enabled_undo_send, only: [:undo_send]
 
-    SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply broadcast).freeze
+    SINGULAR_RESPONSE_FOR = %w(reply create update tweet facebook_reply broadcast).freeze
     SLAVE_ACTIONS = %w(ticket_conversations).freeze
 
     def ticket_conversations
@@ -62,13 +61,6 @@ module Ember
       set_worker_choice_false(current_user.id, params[:id], params['created_at'].to_time.iso8601)
       remove_undo_reply_enqueued(params[:id])
       head 204
-    end
-
-    def forward
-      return unless validate_params
-      sanitize_and_build
-      return unless validate_delegator(@item, delegator_hash.merge(cloud_file_ids: @cloud_file_ids))
-      save_note_and_respond
     end
 
     def broadcast
@@ -301,20 +293,13 @@ module Ember
       end
 
       def assign_from_email
-        return unless reply? || forward?
+        return unless reply?
         if @delegator.email_config
           @item.email_config_id = @delegator.email_config.id
           @item.from_email = current_account.features?(:personalized_email_replies) ? @delegator.email_config.friendly_email_personalize(current_user.name) : @delegator.email_config.friendly_email
         else
           @item.from_email = current_account.features?(:personalized_email_replies) ? @ticket.friendly_reply_email_personalize(current_user.name) : @ticket.selected_reply_email
         end
-      end
-
-      def assign_attributes_for_forward
-        @item.private = true
-        @item.note_body.full_text_html ||= (@item.note_body.body_html || '')
-        @item.note_body.full_text_html = @item.note_body.full_text_html + bind_last_conv(@ticket, signature, true) if @include_quoted_text
-        load_cloud_files
       end
 
       def load_normal_attachments
@@ -360,8 +345,7 @@ module Ember
       def shared_attachments
         # shared attachments explicitly included in the  note
         @shared_attachments ||= begin
-          attachments_to_exclude = forward? ? (parent_attachments || []).map(&:id) : []
-          shared_attachment_ids = (@attachment_ids || []) - attachments_to_exclude
+          shared_attachment_ids = (@attachment_ids || [])
           return [] unless shared_attachment_ids.any?
           current_account.attachments.where('id IN (?) AND attachable_type IN (?)', shared_attachment_ids, AttachmentConstants::CLONEABLE_ATTACHMENT_TYPES)
         end
@@ -387,12 +371,8 @@ module Ember
         ErrorHelper.rename_error_fields(fields_to_be_renamed, item)
       end
 
-      def forward?
-        @forward ||= current_action?('forward')
-      end
-
       def agent_mapping_required?
-        forward? || current_action?('facebook_reply')
+        current_action?('facebook_reply')
       end
 
       def set_defaults
@@ -409,7 +389,7 @@ module Ember
       end
 
       def ember_redirect?
-        %i(create reply forward facebook_reply broadcast).include?(action_name.to_sym)
+        %i(create reply facebook_reply broadcast).include?(action_name.to_sym)
       end
 
       def render_201_with_location(template_name: "conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)
@@ -522,7 +502,6 @@ module Ember
         @item.attachments = @item.attachments + draft_attachments if draft_attachments
         @item.inline_attachment_ids = @inline_attachment_ids if @inline_attachment_ids
         assign_from_email
-        assign_attributes_for_forward if forward?
       end
 
       def compute_quoted_text(body_html, full_text_html)

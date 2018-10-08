@@ -12,7 +12,7 @@ Helpkit::Application.routes.draw do
         post :satisfaction_ratings, to: 'satisfaction_ratings#create'
         post :reply, to: 'conversations#reply'
         post :notes, to: 'conversations#create'
-        post :forward, to: 'conversations#forward'
+        post :forward, to: 'api_conversations#forward'
         post :reply_to_forward, to: 'api_conversations#reply_to_forward'
         post :time_entries, to: 'time_entries#create'
         get :sessions, to: 'admin/freshmarketer#sessions'
@@ -321,7 +321,6 @@ Helpkit::Application.routes.draw do
         put :undo_send, to: 'ember/conversations#undo_send'
         get :reply_template, to: 'ember/conversations#reply_template'
         post :reply_template, to: 'ember/conversations#reply_template'
-        post :forward, to: 'ember/conversations#forward'
         get :forward_template, to: 'ember/conversations#forward_template'
         post :broadcast, to: 'ember/conversations#broadcast'
 

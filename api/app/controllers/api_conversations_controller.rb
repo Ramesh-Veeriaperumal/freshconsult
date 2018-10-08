@@ -249,9 +249,9 @@ class ApiConversationsController < ApiApplicationController
       attachments = params[cname][:attachments]
       Helpdesk::KbaseArticles.create_article_from_note(current_account, @item.user, title, body_html, attachments)
     end
-
-    def render_201_with_location(template_name: "api_conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)
-      render template_name, location: safe_send(location_url, item_id), status: 201
+  
+    def render_201_with_location(template_name: "conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)
+      return super(location_url: location_url)
     end
 
 end
