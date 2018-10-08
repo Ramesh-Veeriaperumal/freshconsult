@@ -80,6 +80,14 @@ module Ember
       params_hash
     end
 
+    def twitter_dm_reply_params_hash
+      body = Faker::Lorem.characters(rand(1..140))
+      twitter_handle_id = @twitter_handle.id
+      tweet_type = 'dm'
+      params_hash = { body: body, twitter_handle_id: twitter_handle_id, tweet_type: tweet_type }
+      params_hash
+    end
+
     def forward_note_params_hash
       body = Faker::Lorem.paragraph
       to_emails = [Faker::Internet.email, Faker::Internet.email, "\"#{Faker::Name.name}\" <#{Faker::Internet.email}>"]
@@ -1171,6 +1179,26 @@ module Ember
       ticket.update_attributes(spam: false)
     end
 
+    def test_tweet_dm_reply_with_attachment_ids
+      attachment_ids = []
+      file = fixture_file_upload('files/image4kb.png', 'image/png')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      ticket = create_twitter_ticket
+      dm_text = Faker::Lorem.paragraphs(5).join[0..500]
+      @account = Account.current
+      @account.launch(:twitter_dm_outgoing_attachment)
+      reply_id = get_social_id
+      dm_reply_params = { id: reply_id, id_str: reply_id.to_s, recipient_id_str: rand.to_s[2..11], text: dm_text, created_at: Time.zone.now.to_s }
+      with_twitter_dm_stubbed(Twitter::DirectMessage.new(dm_reply_params)) do
+        params_hash = twitter_dm_reply_params_hash.merge(attachment_ids: attachment_ids)
+        post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+        assert_response 201
+        latest_note = Helpdesk::Note.last
+        match_json(private_note_pattern(params_hash, latest_note))
+        assert latest_note.attachments.size == attachment_ids.size
+      end
+    end
+
     def test_tweet_reply_without_params
       ticket = create_twitter_ticket
       post :tweet, construct_params({ version: 'private', id: ticket.display_id }, {})
@@ -1192,22 +1220,85 @@ module Ember
     end
 
     def test_twitter_reply_to_tweet_ticket
-      with_twitter_update_stubbed do
+      Sidekiq::Testing.inline! do
+        with_twitter_update_stubbed do
 
-        ticket = create_twitter_ticket
+          ticket = create_twitter_ticket
 
-        @account = Account.current
+          @account = Account.current
 
-        params_hash = {
+          params_hash = {
             body: Faker::Lorem.sentence[0..130],
             tweet_type: 'mention',
             twitter_handle_id: @twitter_handle.id
-        }
-        post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-        assert_response 201
-        latest_note = Helpdesk::Note.last
-        match_json(private_note_pattern(params_hash, latest_note))
+          }
+          post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+          assert_response 201
+          latest_note = Helpdesk::Note.last
+          match_json(private_note_pattern(params_hash, latest_note))
+          tweet = latest_note.tweet
+          assert_equal tweet.tweet_id, @twit.id
+          assert_equal tweet.tweet_type, params_hash[:tweet_type]
+        end
       end
+    end
+
+    def test_twitter_reply_to_tweet_ticket_with_attachments
+      attachment_ids = []
+      file = fixture_file_upload('files/image4kb.png', 'image/png')
+      attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      ticket = create_twitter_ticket
+      @account = Account.current
+      @account.launch(:twitter_mention_outgoing_attachment)
+      params_hash = {
+            body: Faker::Lorem.sentence[0..130],
+            tweet_type: 'mention',
+            twitter_handle_id: @twitter_handle.id,
+            attachment_ids: attachment_ids
+          }
+      Sidekiq::Testing.inline! do
+        with_twitter_update_stubbed do
+          Twitter::REST::Client.any_instance.expects(:upload).once
+          post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+          assert_response 201
+          latest_note = Helpdesk::Note.last
+          match_json(private_note_pattern(params_hash, latest_note))
+          file_name = "tempfile-#{@account.id}-#{@twitter_handle.id}-#{latest_note.attachments[0].id}"
+          tweet = latest_note.tweet
+          assert_equal tweet.tweet_id, @twit.id
+          assert_equal tweet.tweet_type, params_hash[:tweet_type]
+          assert_equal File.exists?(file_name), false
+        end
+      end
+    ensure
+      @account.rollback(:twitter_mention_outgoing_attachment)
+    end
+
+    def test_show_error_message_on_twitter_reply_failure
+      Sidekiq::Testing.inline! do
+        with_twitter_update_stubbed do
+
+          ticket = create_twitter_ticket
+
+          @account = Account.current
+          Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(true)
+          Social::TwitterReplyWorker.any_instance.stubs(:push_data_to_service).returns(nil)
+          Social::TwitterReplyWorker.any_instance.expects(:push_data_to_service).once
+          params_hash = {
+            body: Faker::Lorem.sentence[0..130],
+            tweet_type: 'mention',
+            twitter_handle_id: @twitter_handle.id
+          }
+          post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+          assert_response 201
+          latest_note = Helpdesk::Note.last
+          schema_less_note = latest_note.schema_less_note
+          assert_equal schema_less_note.note_properties[:errors][:twitter].present?, true
+        end
+      end
+    ensure
+      Social::TwitterHandle.any_instance.unstub(:reauth_required?)
+      Social::TwitterReplyWorker.any_instance.unstub(:push_data_to_service)
     end
 
     def test_twitter_reply_to_tweet_ticket_more_than_280_limit
@@ -1242,17 +1333,21 @@ module Ember
         text: dm_text,
         created_at: Time.zone.now.to_s
       }
-
-      with_twitter_dm_stubbed(Twitter::DirectMessage.new(dm_reply_params)) do
-        params_hash = {
-          body: Faker::Lorem.sentence[0..130],
-          tweet_type: 'dm',
-          twitter_handle_id: @twitter_handle.id
-        }
-        post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-        assert_response 201
-        latest_note = Helpdesk::Note.last
-        match_json(private_note_pattern(params_hash, latest_note))
+      Sidekiq::Testing.inline! do
+        with_twitter_dm_stubbed(Twitter::DirectMessage.new(dm_reply_params)) do
+          params_hash = {
+            body: Faker::Lorem.sentence[0..130],
+            tweet_type: 'dm',
+            twitter_handle_id: @twitter_handle.id
+          }
+          post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+          assert_response 201
+          latest_note = Helpdesk::Note.last
+          match_json(private_note_pattern(params_hash, latest_note))
+          tweet = latest_note.tweet
+          assert_equal tweet.tweet_id, dm_reply_params[:id]
+          assert_equal tweet.tweet_type, params_hash[:tweet_type]
+        end
       end
     end
 
@@ -2098,6 +2193,7 @@ module Ember
       Account.current.reload
       ticket = create_twitter_ticket
       note = create_public_note(ticket)
+      Timecop.travel(1.seconds)
       BULK_NOTE_CREATE_COUNT.times do
         create_public_note(ticket)
       end
@@ -2134,6 +2230,7 @@ module Ember
       Account.current.reload
       ticket = create_twitter_ticket
       note = create_twitter_note(ticket)
+      Timecop.travel(1.seconds)
       BULK_NOTE_CREATE_COUNT.times do
         create_public_note(ticket)
       end
@@ -2259,16 +2356,19 @@ module Ember
     private
 
       def with_twitter_update_stubbed
-        twit = sample_twitter_object
-        Twitter::REST::Client.any_instance.stubs(:update).returns(twit)
+        @twit = sample_twitter_object
+        media_id = rand(10 ** 15)
+        Twitter::REST::Client.any_instance.stubs(:update).returns(@twit)
+        Twitter::REST::Client.any_instance.stubs(:upload).returns(media_id)
         unless GNIP_ENABLED
-          Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(twit.id))
+          Social::DynamoHelper.stubs(:update).returns(dynamo_update_attributes(@twit.id))
           Social::DynamoHelper.stubs(:get_item).returns(sample_dynamo_get_item_params)
         end
 
         yield
 
         Twitter::REST::Client.any_instance.unstub(:update)
+        Twitter::REST::Client.any_instance.unstub(:upload)
         unless GNIP_ENABLED
           Social::DynamoHelper.unstub(:update)
           Social::DynamoHelper.unstub(:get_item)
@@ -2276,6 +2376,7 @@ module Ember
       end
 
       def with_twitter_dm_stubbed(sample_dm_reply)
+        Account.any_instance.stubs(:twitter_microservice_enabled?).returns(false)
         Twitter::REST::Client.any_instance.stubs(:create_direct_message).returns(sample_dm_reply)
         unless GNIP_ENABLED
           Social::DynamoHelper.stubs(:insert).returns({})
@@ -2284,6 +2385,7 @@ module Ember
 
         yield
 
+        Account.any_instance.unstub(:twitter_microservice_enabled?)
         Twitter::REST::Client.any_instance.unstub(:create_direct_message)
         unless GNIP_ENABLED
           Social::DynamoHelper.unstub(:insert)

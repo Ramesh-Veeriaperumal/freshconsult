@@ -16,7 +16,7 @@ class Account < ActiveRecord::Base
                    :twitter_handle_publisher, :count_service_es_writes, :count_service_es_reads, :sso_login_expiry_limitation,
                    :undo_send, :count_service_es_writes, :old_link_back_url_validation, :shopify_actions, 
                    :stop_contacts_count_query, :db_to_bitmap_features_migration, :denormalized_select_for_update,
-                   :trial_subscription, :installed_app_publish, :disable_banners]
+                   :trial_subscription, :installed_app_publish, :disable_banners, :twitter_dm_outgoing_attachment, :twitter_mention_outgoing_attachment]
 
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   

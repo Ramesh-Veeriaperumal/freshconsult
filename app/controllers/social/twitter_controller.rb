@@ -385,7 +385,8 @@ class Social::TwitterController < Social::BaseController
       )
       saved = note.save_note
       if saved
-        error_message, reply_twt = send_tweet_as_mention(ticket, note, tweet_body)
+        twitter_handle_id = params[:twitter_handle_id]
+        error_message, reply_twt = send_tweet_as_mention(twitter_handle_id, ticket, note, tweet_body)
         if error_message.blank?
           @interactions[:current] << recent_agent_reply(reply_twt, note) if reply_twt
           MOBILE_TWITTER_RESPONSE_CODES[:reply_success]

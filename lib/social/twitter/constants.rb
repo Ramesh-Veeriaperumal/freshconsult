@@ -65,4 +65,5 @@ module Social::Twitter::Constants
 
   COMMON_REDIRECT_REDIS_PREFIX = "TWITTER_COMMON_AUTH"
 
+  IRIS_NOTIFICATION_TYPE = 'twitter_reply_failure'.freeze
 end

@@ -108,7 +108,10 @@ module Ember
       assign_note_attributes
 
       @delegator_klass = 'TwitterReplyDelegator'
-      return unless validate_delegator(@item, twitter_handle_id: @twitter_handle_id)
+      return unless validate_delegator(@item, twitter_handle_id: @twitter_handle_id, attachment_ids: @attachment_ids)
+
+      draft_attachments = @delegator.draft_attachments
+      @item.attachments = @item.attachments + draft_attachments if draft_attachments
 
       if @item.save_note
         tweet_and_render
@@ -415,13 +418,10 @@ module Ember
       end
 
       def tweet_and_render
-        error_msg, _tweet = safe_send("send_tweet_as_#{@tweet_type}", @ticket, @item, @item.body)
-        if error_msg
-          @item.errors[:body] << :unable_to_connect_twitter
-          render_response(false)
-        else
-          render_201_with_location(template_name: 'ember/conversations/tweet')
-        end
+        twitter_handle_id = params[:twitter_handle_id]
+        args = { ticket_id: @ticket.id, note_id: @item.id, tweet_type: @tweet_type, twitter_handle_id: twitter_handle_id }
+        Social::TwitterReplyWorker.perform_async(args)
+        render_201_with_location(template_name: 'ember/conversations/tweet')
       end
 
       def template_content
