@@ -60,6 +60,7 @@ class CRM::FreshsalesUtility
       # Updating the sales account's owner ID to leads if its the farming account, irrespective of the account's updated_at value.
       updated_at = Time.now.strftime("%Y-%m-%dT%H:%M:%S%:z") # To reuse the create_lead_with_same_owner method, Adding updated_at value as current datatime. 
       status,response = create_lead_with_same_owner(farming_account[:owner_id], updated_at)
+      Rails.logger.info "Signup Freshsales :: #{@account.id} :: status :: #{status} :: response :: #{response.inspect} :: Updating Owner"
     else
       result = search({ entities: 'lead,contact', field: 'email', query: @account.admin_email,
                       includes: 'owner,lead_stage' })
@@ -68,17 +69,21 @@ class CRM::FreshsalesUtility
 
       if contact
         status, response = create_lead_with_same_owner(contact[:owner_id], contact[:updated_at])
+        Rails.logger.info "Signup Freshsales :: #{@account.id} :: status :: #{status} :: response :: #{response.inspect} :: Lead with same Owner"
       elsif lead
         status, response = create_or_update_lead(lead, result[:lead_stages])
+        Rails.logger.info "Signup Freshsales :: #{@account.id} :: status :: #{status} :: response :: #{response.inspect} :: create of Update Owner"
       else
         sales_account = search_accounts_by_name(@account.name, 'owner')[:sales_accounts].first
         if sales_account
           status, response = create_lead_with_same_owner(sales_account[:owner_id], sales_account[:updated_at])
+          Rails.logger.info "Signup Freshsales :: #{@account.id} :: status :: #{status} :: response :: #{response.inspect} :: Lead with same Owner"
         else
           company_leads = search_leads_by_company_name(@account.name, 'owner')[:leads]
           company_lead  = recent_lead_by_account_and_product(company_leads, @account.id, @deal_product_id)
-          status, response = company_lead ? create_lead_with_same_owner(company_lead[:owner_id], company_lead[:updated_at]) : 
+          status, response = company_lead ? create_lead_with_same_owner(company_lead[:owner_id], company_lead[:updated_at]) :
                                             fs_create('lead', new_lead_params)
+          Rails.logger.info "Signup Freshsales :: #{@account.id} :: status :: #{status} :: response :: #{response.inspect} :: create or Lead withn same Owner"
         end
       end
     end
@@ -580,7 +585,8 @@ class CRM::FreshsalesUtility
         method: options[:method]
       }
       response = proxy.fetch_using_req_params(params, request_params)
-      raise "Error occured while requesting Freshsales status:: #{response[:status]} 
+      Rails.logger.info "Signup Freshsales :: params :: #{params.inspect} request_params :: #{request_params.inspect} :: Lead create req"
+      raise "Error occured while requesting Freshsales status:: #{response[:status]}
                                           account:: #{Account.current.id}" unless success_status?(response[:status])
 
       response_content = symbolize_response(JSON.parse(response[:text]))      
