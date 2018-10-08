@@ -1,0 +1,16 @@
+get:
+  tags: [search]
+  summary: Search Articles
+  parameters:
+    - name: term
+      in: query
+      type: string
+      description: search term for articles
+  responses:
+    200:
+      description: Success
+      schema:
+        type: array
+        items:
+          $ref: '#/definitions/solution_article'
+        

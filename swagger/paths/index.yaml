@@ -299,6 +299,11 @@
 /solutions/articles/{id}/article_content:
   $ref: ./solutions/article_content.yaml
 
+
+#Search
+/search/solutions:
+  $ref: ./search/solutions.yaml
+
 #Dashboard activities
 /dashboards/activities:
   $ref: ./dashboard/activities.yaml

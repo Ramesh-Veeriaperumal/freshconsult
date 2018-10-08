@@ -75,6 +75,8 @@ Helpkit::Application.routes.draw do
       resources :tickets, only: [:index]
       resources :contacts, only: [:index]
       resources :companies, only: [:index]
+      post :solutions, to: 'solutions#results'
+      get :solutions, to: 'solutions#results'
     end
 
     resources :contacts, as: 'api_contacts', controller: 'api_contacts', except: [:new, :edit] do
@@ -551,10 +553,11 @@ Helpkit::Application.routes.draw do
     post '/yearin_review/clear', to: 'ember/year_in_review#clear'
 
     # Search routes
+
     post '/search/tickets/',      to: 'ember/search/tickets#results'
     post '/search/customers/',    to: 'ember/search/customers#results'
     post '/search/topics/',       to: 'ember/search/topics#results'
-    post '/search/solutions/',    to: 'ember/search/solutions#results'
+    
     post '/search/multiquery',    to: 'ember/search/multiquery#search_results'
 
     post '/search/autocomplete/requesters/',    to: 'ember/search/autocomplete#requesters'

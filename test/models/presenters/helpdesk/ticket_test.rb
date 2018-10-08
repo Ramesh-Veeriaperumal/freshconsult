@@ -1,10 +1,12 @@
 require_relative '../../test_helper'
 ['ticket_fields_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
+['note_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
 class TicketTest < ActiveSupport::TestCase
   include TicketsTestHelper
   include TicketFieldsTestHelper
   include GroupsTestHelper
+  include NoteHelper
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
   DROPDOWN_CHOICES = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon']
@@ -68,6 +70,38 @@ class TicketTest < ActiveSupport::TestCase
   def test_central_publish_payload_with_responder_and_group
     group = create_group_with_agents(@account, agent_list: [@agent.id])
     t = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assoc_payload = t.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
+  end
+
+  def test_central_publish_payload_with_first_response
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    t = create_ticket(ticket_params_hash(responder_id: @agent.id, group_id: group.id))
+    n = create_note(create_note(source: 0, ticket_id: t.id, user_id: @agent.id, private: false, body: Faker::Lorem.paragraph))
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assoc_payload = t.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
+  end
+
+  def test_central_publish_payload_agent_update
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    t = create_ticket(ticket_params_hash(group_id: group.id))
+    t.reload
+    t.update_attributes(responder_id: @agent.id)
+    payload = t.central_publish_payload.to_json
+    payload.must_match_json_expression(cp_ticket_pattern(t))
+    assoc_payload = t.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(cp_assoc_ticket_pattern(t))
+  end
+
+  def test_central_publish_payload_group_update
+    group = create_group_with_agents(@account, agent_list: [@agent.id])
+    t = create_ticket(ticket_params_hash(responder_id: @agent.id))
+    t.reload
+    t.update_attributes(group_id: group.id)
     payload = t.central_publish_payload.to_json
     payload.must_match_json_expression(cp_ticket_pattern(t))
     assoc_payload = t.associations_to_publish.to_json

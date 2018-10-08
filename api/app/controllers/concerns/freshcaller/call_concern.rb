@@ -22,6 +22,12 @@ module Freshcaller::CallConcern
     params_hash
   end
 
+  def update_ticket_params
+    params_hash = { subject: ticket_title,
+                ticket_body_attributes: { description_html: description, description: description } }
+    params_hash
+  end
+
   def note_params
     user_id = @agent.present? ? @agent.id : account_admin_id
     {
@@ -62,6 +68,10 @@ module Freshcaller::CallConcern
     @options[:call_status] == 'no-answer'
   end
 
+  def abandoned?
+    @options[:call_status] == 'abandoned'
+  end
+
   def voicemail?
     @options[:call_status] == 'voicemail'
   end
@@ -80,9 +90,10 @@ module Freshcaller::CallConcern
 
   def generate_title
     call_date = DateTime.parse(@options[:call_created_at]).in_time_zone(current_account.time_zone)
+    return I18n.t("call.ticket.#{call_status_string}_title", customer: customer_title) if abandoned?
     return I18n.t("call.ticket.#{@options[:call_type]}_#{call_status_string}_title", customer: customer_title) if missed_call?
     return I18n.t("call.ticket.#{call_status_string}_title", customer: customer_title) if voicemail?
-    I18n.t("call.ticket.#{call_status_string}_title", customer: customer_title, date: call_date.strftime('%a, %b %d'),
+    I18n.t("call.ticket.#{call_status_string}_title", type: @options[:call_type].camelize, customer: customer_title, date: call_date.strftime('%a, %b %d'),
                                                       time: call_date.strftime('%I:%M:%S %p'))
   end
 
@@ -91,13 +102,13 @@ module Freshcaller::CallConcern
   end
 
   def customer_details
-    return "#{@contact.name} ( #{@options[:customer_number]} ,#{@options[:customer_location]} )" if @contact.present? && @contact.name != @options[:customer_number]
-    return "#{@options[:customer_number]} ( #{@options[:customer_location]} )" if @options[:customer_location].present?
+    return "#{@contact.name} (#{@options[:customer_number]}, #{@options[:customer_location]})" if @contact.present? && @contact.name != @options[:customer_number]
+    return "#{@options[:customer_number]} (#{@options[:customer_location]})" if @options[:customer_location].present?
     @options[:customer_number]
   end
 
   def agent_details
-    return "#{@agent.name} ( #{@options[:agent_number]} )" if @agent.present?
+    return "#{@agent.name} (#{@options[:agent_number]})" if @agent.present?
     @options[:agent_number]
   end
 
@@ -106,6 +117,7 @@ module Freshcaller::CallConcern
   end
 
   def generate_description
+    return I18n.t("call.ticket.#{call_status_string}_description", customer: customer_details, agent: agent_details) if abandoned?
     return I18n.t("call.ticket.#{@options[:call_type]}_#{call_status_string}_description", customer: customer_details, agent: agent_details) if missed_call?
     I18n.t("call.ticket.#{call_status_string}_description", customer: customer_details, agent: agent_details)
   end

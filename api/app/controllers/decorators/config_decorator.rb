@@ -8,10 +8,18 @@ class ConfigDecorator < ApiDecorator
     ret_hash[:social] = social_config
     ret_hash[:email] = email_mailbox_config
     ret_hash[:zendesk_app_id] = zendesk_app_id
+    ret_hash[:warnings] = warn_items
     ret_hash
   end
 
-  def social_config 
+  def warn_items
+    warn_items = {}
+    warn_items[:livechat_deprecation] = livechat_deprecation?
+    warn_items[:freshfone_deprecation] = freshfone_deprecation?
+    warn_items
+  end
+
+  def social_config
     social_config = {}
     social_config.merge!(facebook_config)
     social_config.merge!(twitter_config)

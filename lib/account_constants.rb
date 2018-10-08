@@ -6,7 +6,7 @@ module AccountConstants
     2 => :us
   }
 
-  LOCALES_FOR_NEW_ONBOARDING = []
+  LOCALES_FOR_NEW_ONBOARDING = ["en"]
 
   DATEFORMATS_TYPES = {
     :us => {

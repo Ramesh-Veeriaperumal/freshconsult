@@ -43,4 +43,12 @@ module Concerns::ApplicationViewConcern
   def custom_mailbox_error?
     Account.current.check_custom_mailbox_status
   end
+
+  def freshfone_deprecation?
+    Account.current.freshfone_enabled? && !Account.current.freshcaller_enabled?
+  end
+
+  def livechat_deprecation?
+    Account.current.livechat_enabled? && !(Account.current.freshchat_enabled? && Account.current.freshchat_account.try(:enabled))
+  end
 end

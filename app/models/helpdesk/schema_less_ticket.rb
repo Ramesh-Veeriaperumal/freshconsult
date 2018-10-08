@@ -125,16 +125,40 @@ class Helpdesk::SchemaLessTicket < ActiveRecord::Base
 	end
 
 	def set_first_response_id(note_id)
-		unless reports_hash.has_key?("first_response_id")
-			self.reports_hash.merge!("first_response_id" => note_id)
-			self.save
+		if reports_hash.key?('first_response_id')
+      update_first_response_agent_id unless reports_hash.key?('first_response_agent_id')
+    else
+      self.reports_hash.merge!('first_response_id' => note_id)
+      fetch_first_response_agent_id(note_id)
+      self.reports_hash.merge!('first_response_group_id' => self.ticket.group_id)
+      self.save
 		end
 	end
 
 	def set_last_resolved_at(time)
 		self.reports_hash['last_resolved_at'] = time
 	end
-	
+
+  def update_first_response_agent_id
+    first_response_agent_id = fetch_first_response_agent_id(reports_hash['first_response_id'])
+    self.save
+    first_response_agent_id
+  end
+
+  def fetch_first_response_agent_id(note_id)
+    note = self.ticket.notes.find_by_id(note_id)
+    self.reports_hash.merge!('first_response_agent_id' => note.user_id) if note
+    self.reports_hash['first_response_agent_id']
+  end
+
+  def set_first_assign_agent_id(agent_id)
+    self.reports_hash.merge!('first_assign_agent_id' => agent_id)
+  end
+
+  def set_first_assign_group_id(group_id)
+    self.reports_hash.merge!('first_assign_group_id' => group_id)
+  end
+
 	["agent", "group", "internal_agent", "internal_group"].each do |type|
 		define_method("set_#{type}_assigned_flag") do
 			return if reports_hash.has_key?("#{type}_reassigned_flag")

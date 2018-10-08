@@ -1,7 +1,7 @@
-require_relative '../../../test_helper'
+require_relative '../../test_helper'
 ['solutions_helper.rb', 'solution_builder_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
-module Ember::Search
+module ApiSearch
   class SolutionsControllerTest < ActionController::TestCase
     include SolutionsHelper
     include SolutionBuilderHelper
