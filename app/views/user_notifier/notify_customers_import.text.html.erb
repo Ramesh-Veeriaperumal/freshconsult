@@ -1,5 +1,5 @@
 <div>
-Hi <%= @user.name%>,
+<%= t("mailer_notifier.hi_user", user_name: @user.name) %>
 </div>
 <div>
 <% if @import_success %>
