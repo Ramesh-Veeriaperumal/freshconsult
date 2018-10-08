@@ -16,16 +16,16 @@ module Ember
 
     decorate_views(
       decorate_objects: [:ticket_conversations],
-      decorate_object: %i(create update reply forward facebook_reply tweet reply_to_forward broadcast)
+      decorate_object: %i(create update reply forward facebook_reply tweet broadcast)
     )
 
-    before_filter :can_send_user?, only: %i(create reply forward reply_to_forward facebook_reply tweet broadcast)
+    before_filter :can_send_user?, only: %i(create reply forward facebook_reply tweet broadcast)
     before_filter :set_defaults, only: [:forward]
     before_filter :link_tickets_enabled?, only: [:broadcast]
     before_filter :validate_attachments_permission, only: [:create, :update]
     before_filter :check_enabled_undo_send, only: [:undo_send]
 
-    SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply reply_to_forward broadcast).freeze
+    SINGULAR_RESPONSE_FOR = %w(reply forward create update tweet facebook_reply broadcast).freeze
     SLAVE_ACTIONS = %w(ticket_conversations).freeze
 
     def ticket_conversations
@@ -62,13 +62,6 @@ module Ember
       set_worker_choice_false(current_user.id, params[:id], params['created_at'].to_time.iso8601)
       remove_undo_reply_enqueued(params[:id])
       head 204
-    end
-
-    def reply_to_forward
-      return unless validate_params
-      sanitize_and_build
-      return unless validate_delegator(@item, delegator_hash)
-      save_note_and_respond
     end
 
     def forward
@@ -265,7 +258,6 @@ module Ember
       def assign_note_attributes
         # assign user instead of id as the object is already loaded.
         assign_user @item
-        @item.to_emails = params[cname][:to_emails] if reply_to_forward?
         @item.notable = @ticket # assign notable instead of id as the object is already loaded.
         @item.notable.account = current_account
         load_normal_attachments
@@ -396,10 +388,6 @@ module Ember
         @forward ||= current_action?('forward')
       end
 
-      def reply_to_forward?
-        @reply_to_forward ||= current_action?('reply_to_forward')
-      end
-
       def agent_mapping_required?
         forward? || current_action?('facebook_reply')
       end
@@ -418,7 +406,7 @@ module Ember
       end
 
       def ember_redirect?
-        %i(create reply forward facebook_reply reply_to_forward broadcast).include?(action_name.to_sym)
+        %i(create reply forward facebook_reply broadcast).include?(action_name.to_sym)
       end
 
       def render_201_with_location(template_name: "conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)
@@ -480,8 +468,8 @@ module Ember
       def load_parent_ticket
         @ticket = tickets_scoper.find_by_param(params[:id], current_account)
         unless @ticket
-          archive_ticket = if current_account.features_included?(:archive_tickets) 
-          archive_tickets_scoper.find_by_display_id(params[:id]) 
+          archive_ticket = if current_account.features_included?(:archive_tickets)
+          archive_tickets_scoper.find_by_display_id(params[:id])
           else
             nil
           end

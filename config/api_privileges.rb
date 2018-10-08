@@ -66,7 +66,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   forward_ticket do
-    resource :"ember/conversation", only: %i[forward reply_to_forward forward_template note_forward_template latest_note_forward_template reply_to_forward_template]
+    resource :"ember/conversation", only: %i[forward forward_template note_forward_template latest_note_forward_template reply_to_forward_template]
   end
 
   merge_or_split_ticket do
