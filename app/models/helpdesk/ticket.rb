@@ -457,6 +457,32 @@ class Helpdesk::Ticket < ActiveRecord::Base
     MemcacheKeys.get_from_cache(key)
   end
 
+  def fetch_latest_cf_handle(cf_obj)
+    self.canned_form_handles.where(canned_form_id: cf_obj.id).last
+  end
+
+  # Create/Fetch canned form handle 
+
+  def create_or_fetch_canned_form(cf_obj)
+    Sharding.run_on_master do 
+      latest_cf_handle = fetch_latest_cf_handle(cf_obj)
+      
+      # If there is any unused CF handle url, use it. Otherwise, create a new one.
+      if latest_cf_handle.nil? || latest_cf_handle.response_note_id
+        handle = cf_obj.canned_form_handles.build(ticket_id: self.id)
+
+        unless handle.save
+          Rails.logger.info "Error While saving canned form handle - #{handle.errors}"
+          return nil 
+        else
+          return handle
+        end
+      end
+
+        return latest_cf_handle
+    end
+  end
+
   #This method will return the user who initiated the outbound email
   #If it doesn't exist, returning requester.
   def outbound_initiator

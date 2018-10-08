@@ -5,6 +5,9 @@ class Helpdesk::TicketDrop < BaseDrop
   include DateHelper
 
   self.liquid_attributes += [ :group , :ticket_type , :deleted, :internal_group ]
+  DYNAMIC_LIQUID_METHODS = ["canned_form"]
+
+  attr_accessor :dynamic_method_name, :dynamic_method_id
 
   def initialize(source)
     super source
@@ -258,8 +261,23 @@ class Helpdesk::TicketDrop < BaseDrop
     field_name = "#{method}_#{@source.account_id}"
     required_field_type = @source.custom_field_type_mappings[field_name]
     required_field_value = @source.custom_field[field_name]
-    return super unless required_field_value # required_field_value will be present only for custom field
-    formatted_field_value(required_field_type, required_field_value)
+    # required_field_value will be present only for custom field
+    return formatted_field_value(required_field_type, required_field_value) if required_field_value 
+    return safe_send(dynamic_method_name.to_s.to_sym, dynamic_method_id) if dynamic_liquid_method?(method)
+    return super
+  end
+
+  def dynamic_liquid_method?(method)
+    @dynamic_method_id = method.to_s.split("_")[-1]
+    @dynamic_method_name = method.to_s.split("_" + dynamic_method_id)[0]
+    (DYNAMIC_LIQUID_METHODS.include? dynamic_method_name) && (method == dynamic_method_name + "_" + dynamic_method_id)
+  end
+
+  def canned_form(cf_id)
+    cf_obj = Account.current.canned_forms.find(cf_id)
+    cf_handle = @source.create_or_fetch_canned_form(cf_obj)
+    cf_support_url = cf_handle.try(:handle_url)
+    return "<a href=#{cf_support_url}> #{cf_obj.name}</a>" if cf_support_url
   end
 
   def current_portal
