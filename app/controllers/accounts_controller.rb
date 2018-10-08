@@ -476,6 +476,7 @@ class AccountsController < ApplicationController
       if (Rails.env.production? or Rails.env.staging?)
         Subscriptions::AddLead.perform_at(ThirdCRM::ADD_LEAD_WAIT_TIME.minute.from_now, { :account_id => account_id,
           :signup_id => params[:signup_id]})
+        Rails.logger.info "Signup Freshsales :: #{account_id} :: Invoking signup worker"
         CRMApp::Freshsales::Signup.perform_at(5.minutes.from_now, { account_id: account_id,
           fs_cookie: params[:fs_cookie] })
       end  
