@@ -33,8 +33,8 @@ class Admin::OnboardingController < Admin::AdminController
 
   def complete_step
     step_name = params[:step]
-    if current_account.respond_to?("#{step_name}_setup?") && !current_account.send("#{step_name}_setup?")
-      current_account.try("mark_#{step_name}_setup_and_save")
+    if current_account.respond_to?("#{step_name}_setup?") && !current_account.safe_send("#{step_name}_setup?")
+      current_account.safe_send("mark_#{step_name}_setup_and_save")
     end
     render json: {success: true}
   end
