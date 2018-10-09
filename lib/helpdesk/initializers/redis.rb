@@ -12,6 +12,9 @@ mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.ym
 
 #$redis_secondary = Redis.new(:host => config["host"], :port => config["port"])
 
+#For logging redis performance timings
+TimeBandits.add ::TimeBandits::TimeConsumers::Redis
+
 $redis_tickets = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
 $redis_reports = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
 $redis_integrations = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
