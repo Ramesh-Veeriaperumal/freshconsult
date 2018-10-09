@@ -216,7 +216,8 @@ class Account < ActiveRecord::Base
     :es_msearch => true, :canned_forms => false, :attachment_virus_detection => false,
     undo_send: false, timeline: false, twitter_microservice: true, twitter_handle_publisher: true, 
     :old_link_back_url_validation => false, :shopify_actions => true,:stop_contacts_count_query => false,
-    :disable_banners =>false,:installed_app_publish => false, twitter_dm_outgoing_attachment: false, twitter_mention_outgoing_attachment: false
+    :disable_banners =>false,:installed_app_publish => false, twitter_dm_outgoing_attachment: false, twitter_mention_outgoing_attachment: false,
+    :whitelist_supervisor_sla_limitation => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days
