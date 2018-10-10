@@ -625,9 +625,9 @@ class ConversationsControllerTest < ActionController::TestCase
     file = fixture_file_upload('files/attachment.txt', 'plain/text', :binary)
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = update_note_params_hash.merge('attachments' => [file, file2])
-    n =  note
-    n.attachments.destroy_all
+    n =  create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2)
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    n.instance_variable_set("@note_body_content", nil)
     put :update, construct_params({ id: n.id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 200
