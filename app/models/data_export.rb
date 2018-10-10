@@ -12,6 +12,9 @@ class DataExport < ActiveRecord::Base
 
   TICKET_EXPORT_LIMIT = 3
   PAID_TICKET_EXPORT_LIMIT = 10
+  
+  CONTACT_EXPORT_LIMIT_PER_ACCOUNT = 1
+  COMPANY_EXPORT_LIMIT_PER_ACCOUNT = 1
 
 
   EXPORT_STATUS = {:started => 1,
@@ -20,6 +23,7 @@ class DataExport < ActiveRecord::Base
                    :completed => 4,
                    :failed => 5}
 
+  EXPORT_IN_PROGRESS_STATUS = [:started, :file_created, :file_upload].freeze
 
   scope :ticket_export, :conditions => { :source => EXPORT_TYPE[:ticket] }, :order => "id"
   scope :data_backup, :conditions => { :source => EXPORT_TYPE[:backup] }, :limit => 1 
@@ -31,6 +35,8 @@ class DataExport < ActiveRecord::Base
   scope :current_exports, :conditions => ["status = #{EXPORT_STATUS[:started]} and last_error is null"]
   scope :running_ticket_exports, :conditions => ["source = #{EXPORT_TYPE[:ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
   scope :running_archive_ticket_exports, :conditions => ["source = #{EXPORT_TYPE[:archive_ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
+  scope :running_contact_exports, conditions: ["source = #{EXPORT_TYPE[:contact]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
+  scope :running_company_exports, conditions: ["source = #{EXPORT_TYPE[:company]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
 
 
   def owner?(downloader)
@@ -81,11 +87,27 @@ class DataExport < ActiveRecord::Base
     Account.current.account_additional_settings.archive_ticket_exports_limit || default_export_limit
   end
 
+  def self.contact_export_limit
+    Account.current.account_additional_settings.contact_exports_limit || CONTACT_EXPORT_LIMIT_PER_ACCOUNT
+  end
+
+  def self.company_export_limit
+    Account.current.account_additional_settings.company_exports_limit || COMPANY_EXPORT_LIMIT_PER_ACCOUNT
+  end
+
   def self.ticket_export_limit_reached?(user)
     user.data_exports.running_ticket_exports.count >= self.ticket_export_limit
   end
 
   def self.archive_ticket_export_limit_reached?
     Account.current.data_exports.running_archive_ticket_exports.count >= self.archive_ticket_export_limit
+  end
+
+  def self.contact_export_limit_reached?
+    Account.current.data_exports.running_contact_exports.count >= contact_export_limit
+  end
+
+  def self.company_export_limit_reached?
+    Account.current.data_exports.running_company_exports.count >= company_export_limit
   end
 end

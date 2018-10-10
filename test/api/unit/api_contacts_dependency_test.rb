@@ -12,7 +12,7 @@ class ApiContactsDependencyTest < ActionView::TestCase
       :can_change_password?, :load_password_policy, :check_agent_limit, :can_make_agent, :run_on_slave, :set_mobile,
       :init_user_email, :load_companies, :check_parent, :fetch_contacts, :set_native_mobile, :set_required_fields,
       :unset_thread_variables, :validate_state_param
-      :set_validatable_custom_fields, :restrict_user_primary_email_delete, :ensure_proper_sts_header, :set_ui_preference]
+      :set_validatable_custom_fields, :restrict_user_primary_email_delete, :ensure_proper_sts_header, :set_ui_preference, :export_limit_reached?]
     actual_filters = ContactsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

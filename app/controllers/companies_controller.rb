@@ -6,7 +6,8 @@ class CompaniesController < ApplicationController
   include CompaniesHelperMethods
   include Redis::RedisKeys
   include Redis::OthersRedis 
-  
+  include Export::Util
+
   before_filter :set_selected_tab
   before_filter :check_archive_feature, :only => [:component]
   before_filter :load_item,  :only => [:show, :edit, :update, :update_company, :update_notes, :sla_policies, :component]
@@ -15,6 +16,7 @@ class CompaniesController < ApplicationController
   before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_company, :update_company]
   before_filter :set_validatable_default_fields, only: [:create, :update, :create_company, :update_company]
   before_filter :set_native_mobile, :only => [:update]
+  before_filter :export_limit_reached?, only: [:export_csv]
 
   def index
     per_page = (!params[:per_page].blank? && params[:per_page].to_i >= 500) ? 500 :  50
@@ -117,9 +119,12 @@ class CompaniesController < ApplicationController
 
   def export_csv
     portal_url = main_portal? ? current_account.host : current_portal.portal_url
-    args = { :csv_hash => params[:export_fields],
-             :user => current_user.id,
-             :portal_url => portal_url }
+    create_export 'company'
+    file_hash @data_export.id
+    args = { csv_hash: params[:export_fields],
+             user: current_user.id,
+             portal_url: portal_url,
+             data_export: @data_export.id }
     Export::CompanyWorker.perform_async(args)
     flash[:notice] = t(:'companies.export_start')
     redirect_to :back
@@ -175,6 +180,13 @@ class CompaniesController < ApplicationController
 
     def get_domain(domains)
       domains.split(",").map{ |s| s.gsub(/^(\s)?(http:\/\/)?(www\.)?/,'').gsub(/\/.*$/,'') }
+    end
+
+    def export_limit_reached?
+      if DataExport.company_export_limit_reached?
+        flash[:notice] = I18n.t('export_data.customer_export.limit_reached')
+        redirect_to companies_url
+      end
     end
 
     def after_destroy_url

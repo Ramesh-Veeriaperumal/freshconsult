@@ -6,8 +6,7 @@ class Export::ContactWorker
 
   def perform(args)
     args.symbolize_keys!
-
-    customer_export = Export::Customer.new(args[:csv_hash], args[:portal_url], "contact")
+    customer_export = Export::Customer.new(args[:csv_hash], args[:portal_url], 'contact', args[:data_export])
     customer_export.export_data
   end
 end

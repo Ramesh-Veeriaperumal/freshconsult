@@ -29,6 +29,8 @@ class Export::Ticket < Struct.new(:export_params)
       NewRelic::Agent.notice_error(e)
       puts "Error  ::#{e.message}\n#{e.backtrace.join("\n")}"
       @data_export.failure!(e.message + "\n" + e.backtrace.join("\n"))
+    ensure
+      schedule_export_cleanup(@data_export, data_export_type) if @data_export.present?
     end
   end
 
