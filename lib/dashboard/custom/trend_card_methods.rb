@@ -31,11 +31,11 @@ module Dashboard::Custom::TrendCardMethods
     def fetch_date_range(date_range)
       case date_range
       when 1
-        format_date(Time.now)
+        format_date(Time.zone.now)
       when 2
-        format_date(Time.now.beginning_of_week)
+        format_date(Time.zone.now.beginning_of_week)
       when 3
-        format_date(Time.now.beginning_of_month)
+        format_date(Time.zone.now.beginning_of_month)
       when 4
         format_date(6.days.ago)
       when 5
@@ -43,17 +43,21 @@ module Dashboard::Custom::TrendCardMethods
       end
     end
 
+    # Custom dashboard queries and thus uses account time zone 
     def fetch_redshift_req_params(options, refresh_interval = nil)
-      req_params = {
-        time_trend: false,
-        time_trend_conditions: [],
-        reference: true,
-        date_range: fetch_date_range(options[:date_range].to_i),
-        metric: TREND_METRICS_MAPPING[options[:metric].to_i]
-      }
-      req_params[:refresh_frequency] = refresh_interval if refresh_interval
-      req_params[:filter] = construct_redshift_filter(options[:group_ids].present? ? options[:group_ids].join(',') : nil, options[:product_id])
-      req_params
+      Time.use_zone(Account.current.time_zone) do
+        req_params = {
+          time_trend: false,
+          time_trend_conditions: [],
+          reference: true,
+          date_range: fetch_date_range(options[:date_range].to_i),
+          metric: TREND_METRICS_MAPPING[options[:metric].to_i],
+          time_zone: Time.zone.name
+        }
+        req_params[:refresh_frequency] = refresh_interval if refresh_interval
+        req_params[:filter] = construct_redshift_filter(options[:group_ids].present? ? options[:group_ids].join(',') : nil, options[:product_id])
+        req_params
+      end
     end
 
     def construct_redshift_filter(group_ids, product_id)
