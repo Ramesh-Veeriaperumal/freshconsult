@@ -13,7 +13,7 @@ class Middleware::CorsEnabler < Rack::Cors
       'X-Path', 'X-Method', 'X-Query-String', 'X-Ua-Compatible',
       'X-Meta-Request-Version', 'X-Request-Id', 'X-Runtime',
       'X-RateLimit-Total', 'X-RateLimit-Remaining', 'X-RateLimit-Used-CurrentRequest',
-      'X-Freshdesk-API-Version'
+      'X-Freshdesk-API-Version', 'Link', 'Retry-After'
     ]
     # Should have all the custom headers that server will send else your client will not have access to those headers
   }.freeze
