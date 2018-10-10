@@ -254,7 +254,9 @@ module Channel::V2
     end
 
     def test_sla_calculation_if_created_at_current_time
-      started_bhr_time = Time.gm(2018, 9, 17, 8) # fix date so to calculate sla correctly
+      BusinessCalendar.any_instance.stubs(:holidays).returns([])
+      current_time = Time.now.monday
+      started_bhr_time = Time.gm(current_time.year, current_time.month, current_time.day, 8) # fix date so to calculate sla correctly
       created_at = updated_at = started_bhr_time.iso8601
       params = {
         requester_id: requester.id, status: 2, priority: 2,
@@ -277,7 +279,9 @@ module Channel::V2
     end
 
     def test_sla_calculation_if_created_at_is_less_than_1month
-      started_bhr_time = Time.gm(Time.now.year, Time.now.month,Date.today.monday.day, 8) # fix date so to calculate sla correctly
+      BusinessCalendar.any_instance.stubs(:holidays).returns([])
+      current_time = Time.now.monday
+      started_bhr_time = Time.gm(current_time.year, current_time.month, current_time.day, 8) # fix date so to calculate sla correctly
       created_at = updated_at = (started_bhr_time - 7.day).iso8601
       params = {
         requester_id: requester.id, status: 2, priority: 2,
@@ -300,7 +304,9 @@ module Channel::V2
     end
 
     def test_sla_calculation_if_created_at_is_greater_than_1month
-      started_bhr_time = Time.gm(2018, 9, 17, 8) # fix date so to calculate sla correctly
+      BusinessCalendar.any_instance.stubs(:holidays).returns([])
+      current_time = Time.now.monday
+      started_bhr_time = Time.gm(current_time.year, current_time.month, current_time.day, 8) # fix date so to calculate sla correctly
       created_at = updated_at = (started_bhr_time - 60.day).iso8601
       params = {
         requester_id: requester.id, status: 2, priority: 2,
