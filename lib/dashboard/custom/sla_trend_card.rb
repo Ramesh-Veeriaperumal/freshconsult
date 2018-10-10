@@ -1,12 +1,10 @@
 class Dashboard::Custom::SlaTrendCard < Dashboards
   include Cache::Memcache::Dashboard::CacheData
   include Dashboard::Custom::TrendCardMethods
-  # include MemcacheKeys
 
   CONFIG_FIELDS = [:group_ids, :product_id, :metric, :date_range].freeze
 
   CACHE_EXPIRY = 3600
-  REFRESH_INTERVAL = 30
 
   METRICS_MAPPING = {
     8 => 'FCR_TICKETS_PERC',
@@ -29,17 +27,13 @@ class Dashboard::Custom::SlaTrendCard < Dashboards
 
   private
 
-    # def cache_custom_dashboard_metric
-    #   redshift_cache_data CUSTOM_DASHBOARD_METRIC, "process_custom_dashboard_results", "redshift_custom_dashboard_cache_identifier"
-    # end
-
     def fetch_widgets_redshift_data
       return unless @dashboard
       @widgets = @dashboard.sla_trend_card_widgets_from_cache
       return [] if @widgets.length < 1
       redshift_req_params = @widgets.map { |widget| fetch_redshift_req_params(widget.config_data) }
       result = fetch_redshift_data(redshift_req_params)
-      return result if result[:error]
+      return result if result[:error] # Error is cached to prevent further hits. Has to be handled better
       @widgets.each_with_index.map do |widget, i|
         {
           id: widget.id,

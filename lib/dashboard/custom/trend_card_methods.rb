@@ -15,11 +15,16 @@ module Dashboard::Custom::TrendCardMethods
   ALL_PRODUCTS = 0
   ALL_GROUPS = 0
 
+  REPORTS_TIMEOUT = 5
+
   private
 
     def fetch_redshift_data(req_params)
-      received, expiry, dump_time = Dashboard::RedshiftRequester.new(req_params).fetch_records
-      return { error: 'Reports service unavailable', status: 503 } if is_redshift_error?(received)
+      received, expiry, dump_time = Dashboard::RedshiftRequester.new(req_params, REPORTS_TIMEOUT).fetch_records
+      if is_redshift_error?(received)
+        Rails.logger.info "Error in TrendCard query: #{Account.current.id}: #{@dashboard.id}: #{received.inspect}"
+        return { error: 'Reports service unavailable', status: 503 }
+      end
       { data: received, last_dump_time: dump_time }
     end
 
