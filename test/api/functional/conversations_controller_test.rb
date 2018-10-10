@@ -622,10 +622,11 @@ class ConversationsControllerTest < ActionController::TestCase
   end
 
   def test_update_with_attachment
-    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    file = fixture_file_upload('files/attachment.txt', 'plain/text', :binary)
     file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params = update_note_params_hash.merge('attachments' => [file, file2])
     n =  note
+    n.attachments.destroy_all
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     put :update, construct_params({ id: n.id }, params)
     DataTypeValidator.any_instance.unstub(:valid_type?)
@@ -633,7 +634,7 @@ class ConversationsControllerTest < ActionController::TestCase
     response_params = params.except(:attachments)
     match_json(v2_update_note_pattern(params, n.reload))
     match_json(v2_update_note_pattern({}, n.reload))
-    assert n.attachments.count == 2
+    assert_equal n.attachments.count, 2
   end
 
   def test_attachments_invalid_size_update
