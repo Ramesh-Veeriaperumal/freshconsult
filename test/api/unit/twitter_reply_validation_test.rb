@@ -1,6 +1,13 @@
 require_relative '../unit_test_helper'
+require_relative '../helpers/attachments_test_helper'
 
 class TwitterReplyValidationTest < ActionView::TestCase
+  include AttachmentsTestHelper
+
+  def self.fixture_path
+    Rails.root.join('test', 'api', 'fixtures')
+  end
+
   def test_numericality
     controller_params = { 'twitter_handle_id' => 1, body: 'asdfg', tweet_type: 'mention' }
     item = Helpdesk::Ticket.new
@@ -114,5 +121,140 @@ class TwitterReplyValidationTest < ActionView::TestCase
                                             }, item)
     refute validation.valid?
     assert validation.errors.full_messages.include?('Ticket not_a_twitter_ticket')
+  end
+
+  def get_agent
+    @account = Account.first.make_current
+    @agent = @account.agents.first.user
+    @agent.active = true
+    @agent.save!
+  end
+
+  def test_with_valid_attachments
+    ticket_instance = Helpdesk::Ticket.any_instance
+    ticket_instance.stubs(:twitter?).returns(true)
+    item = Helpdesk::Ticket.new
+
+    get_agent
+    @account.launch(:twitter_dm_outgoing_attachment)
+    agent_id = @agent.id
+    attachment_ids = []
+    file = fixture_file_upload('/files/image4kb.png', 'image/png')
+    attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: agent_id).id
+
+    validation = TwitterReplyValidation.new({
+                                              body: Faker::Lorem.characters(rand(10..140)),
+                                              twitter_handle_id: 1,
+                                              tweet_type: 'dm',
+                                              attachment_ids: attachment_ids
+                                            }, item)
+
+    assert validation.valid?
+    @account.rollback(:twitter_dm_outgoing_attachment)
+    ticket_instance.unstub(:twitter?)
+  end
+
+  def test_with_invalid_attachments_type
+    ticket_instance = Helpdesk::Ticket.any_instance
+    ticket_instance.stubs(:twitter?).returns(true)
+    item = Helpdesk::Ticket.new
+
+    get_agent
+    @account.launch(:twitter_dm_outgoing_attachment)
+    agent_id = @agent.id
+    attachment_ids = []
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: agent_id).id
+
+    validation = TwitterReplyValidation.new({
+                                              body: Faker::Lorem.characters(rand(10..140)),
+                                              twitter_handle_id: 1,
+                                              tweet_type: 'dm',
+                                              attachment_ids: attachment_ids
+                                            }, item)
+
+    refute validation.valid?
+    assert validation.errors.full_messages.include?('Attachment ids twitter_attachment_file_invalid')
+    @account.rollback(:twitter_dm_outgoing_attachment)
+    ticket_instance.unstub(:twitter?)
+  end
+
+  # def test_with_duplicate_attachments_type
+  #   ticket_instance = Helpdesk::Ticket.any_instance
+  #   ticket_instance.stubs(:twitter?).returns(true)
+  #   item = Helpdesk::Ticket.new
+
+  #   get_agent
+  #   @account.launch(:twitter_dm_outgoing_attachment)
+  #   agent_id = @agent.id
+  #   attachment_ids = []
+  #   file = fixture_file_upload('/files/giphy.gif', 'image/gif')
+  #   file2 = fixture_file_upload('/files/image4kb.png', 'image/png')
+  #   attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: agent_id).id
+  #   attachment_ids << create_attachment(content: file2, attachable_type: 'UserDraft', attachable_id: agent_id).id
+
+  #   validation = TwitterReplyValidation.new({
+  #                                             body: Faker::Lorem.characters(rand(10..140)),
+  #                                             twitter_handle_id: 1,
+  #                                             tweet_type: 'dm',
+  #                                             attachment_ids: attachment_ids
+  #                                           }, item)
+
+  #   refute validation.valid?
+  #   assert validation.errors.full_messages.include?('Attachment ids twitter_attachment_file_unique_type')
+  #   @account.rollback(:twitter_dm_outgoing_attachment)
+  #   ticket_instance.unstub(:twitter?)
+  # end
+
+  def test_with_invalid_attachments_limit
+    ticket_instance = Helpdesk::Ticket.any_instance
+    ticket_instance.stubs(:twitter?).returns(true)
+    item = Helpdesk::Ticket.new
+
+    get_agent
+    @account.launch(:twitter_dm_outgoing_attachment)
+    agent_id = @agent.id
+    attachment_ids = []
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
+    file2 = fixture_file_upload('/files/image4kb.png', 'image/png')
+    attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: agent_id).id
+    attachment_ids << create_attachment(content: file2, attachable_type: 'UserDraft', attachable_id: agent_id).id
+
+    validation = TwitterReplyValidation.new({
+                                              body: Faker::Lorem.characters(rand(10..140)),
+                                              twitter_handle_id: 1,
+                                              tweet_type: 'dm',
+                                              attachment_ids: attachment_ids
+                                            }, item)
+
+    refute validation.valid?
+    assert validation.errors.full_messages.include?('Attachment ids twitter_attachment_file_limit')
+    @account.rollback(:twitter_dm_outgoing_attachment)
+    ticket_instance.unstub(:twitter?)
+  end
+
+  def test_with_invalid_attachments_size
+    ticket_instance = Helpdesk::Ticket.any_instance
+    ticket_instance.stubs(:twitter?).returns(true)
+    item = Helpdesk::Ticket.new
+
+    get_agent
+    @account.launch(:twitter_dm_outgoing_attachment)
+    agent_id = @agent.id
+    attachment_ids = []
+    file = fixture_file_upload('/files/image6mb.jpg', 'image/jpeg')
+    attachment_ids << create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: agent_id).id
+
+    validation = TwitterReplyValidation.new({
+                                              body: Faker::Lorem.characters(rand(10..140)),
+                                              twitter_handle_id: 1,
+                                              tweet_type: 'dm',
+                                              attachment_ids: attachment_ids
+                                            }, item)
+
+    refute validation.valid?
+    assert validation.errors.full_messages.include?('Attachment ids twitter_attachment_single_file_size')
+    @account.rollback(:twitter_dm_outgoing_attachment)
+    ticket_instance.unstub(:twitter?)
   end
 end

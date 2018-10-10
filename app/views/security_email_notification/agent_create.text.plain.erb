@@ -1,7 +1,13 @@
-Hi,
+<%= t("mailer_notifier.hi") %>
 
-A new <%= @model.agent.occasional ? "Occasional" : "Full-time" %> agent, <%= @model.name %> was added by <%= @doer %> in your helpdesk at <%= @time %> and has the <%= @changes.size > 1 ? "roles" : "role" %> <%= @changes.to_sentence %>.
+<%= t("mailer_notifier.security_notification.agent_added",
+		agent_type: t("agent.#{@model.agent.occasional ? 'occasional' : 'full_time'}"),
+		agent_name: @model.name,
+		doer: @doer,
+		time: @time,
+		agent_data_key: t("mailer_notifier.role", count: @changes.size),
+		agent_data_value: @changes.to_sentence) %>
 
-You currently have <%= @model.account.all_agents.full_time_agents.size %> full time agents and <%= @model.account.all_agents.occasional_agents.size %> occasional agents in your Freshdesk account.
+<%= t("mailer_notifier.security_notification.current_agent_stats", full_time: @model.account.all_agents.full_time_agents.size, occasional: @model.account.all_agents.occasional_agents.size) %>
 
 <%= render :partial => "footer_plain", :formats => [:html] %>

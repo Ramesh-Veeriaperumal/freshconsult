@@ -374,6 +374,9 @@ module Redis::RedisKeys
   ADVANCED_TICKETING_METRICS = "ADVANCED_TICKETING_METRICS"
   ################### END OF REDIS KEYS ###################
 
+  #Supervisor tickets limitation key (Number of tickets per rule) - initial value 50000
+  SUPERVISOR_TICKETS_LIMIT = "SUPERVISOR_TICKETS_LIMIT"
+
   #########################################################################################################
 
   # NOTE::

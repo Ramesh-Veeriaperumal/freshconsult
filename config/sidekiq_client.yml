@@ -300,6 +300,7 @@ defaults: &defaults
     - [send_domain_changed_mail]
     - [unlink_tickets]
     - [primary_language_change]
+    - [twitter_reply]   
     - [default_data_population]
     - [freshops_service]
 

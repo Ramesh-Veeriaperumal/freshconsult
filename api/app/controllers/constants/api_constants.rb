@@ -100,4 +100,24 @@ module ApiConstants
   MAX_CUSTOMER_EXPORT_FIELDS = 100
 
   APP_AUTHORIZATION_WHITELIST = { 'ember/freshconnect' => [:update] }.freeze
+
+  TWITTER_ALLOWED_ATTACHMENT_TYPES = {
+    'image/jpeg' => 'image',
+    'image/png' => 'image',
+    'image/jpg' => 'image'
+  }.freeze
+
+  TWITTER_ATTACHMENT_CONFIG = {
+    dm: {
+      fileTypes: ['image'],
+      image: { size: 5, limit: 1 },
+      gif: { size: 15, limit: 1 }
+    },
+    mention: {
+      fileTypes: ['image'],
+      image: { size: 5, limit: 4 },
+      gif: { size: 15, limit: 1 }
+    }
+  }.freeze
+
 end.freeze

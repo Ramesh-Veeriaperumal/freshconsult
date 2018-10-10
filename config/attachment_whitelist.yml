@@ -11,6 +11,7 @@ jpg : image/jpeg
 png : image/png
 tif : image/tiff
 tiff: image/tiff
+gif : image/gif
 xls : application/vnd.ms-excel
 xlsx: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
 mp3 : audio/mpeg
