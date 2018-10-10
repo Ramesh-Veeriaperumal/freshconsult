@@ -1,8 +1,8 @@
 class ExportCsvValidation < ApiValidation
-  attr_accessor :default_fields, :custom_fields
+  attr_accessor :default_fields, :custom_fields, :fields
 
   CUSTOMER_EXPORT_EXCLUDE_FIELDS = %w(tag_names).freeze
-
+  validates :fields, data_type: { rules: Hash, allow_nil: false }, required: true, if: -> { contact_or_company? }
   validates :default_fields,
     data_type: { rules: Array, allow_nil: false },
     array: {
@@ -64,5 +64,9 @@ class ExportCsvValidation < ApiValidation
   def display_name(name, type = nil)
     return name[0..(-Account.current.id.to_s.length - 2)] if type == :ticket
     name[3..-1]
+  end
+
+  def contact_or_company?
+    ['contact', 'company'].include?(@export_type)
   end
 end

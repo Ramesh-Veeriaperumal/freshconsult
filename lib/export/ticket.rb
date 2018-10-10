@@ -42,6 +42,7 @@ class Export::Ticket < Struct.new(:export_params)
       @data_export.failure!('Export::Failed')
       DataExportMailer.export_failure(email_params)
     end
+    schedule_export_cleanup(@data_export, data_export_type) if @data_export.present?
   end
 
   def self.enqueue(export_params)
@@ -166,13 +167,6 @@ class Export::Ticket < Struct.new(:export_params)
       end
       export_params[:format] == FILE_FORMAT[0] ? write_csv(file, record) : write_xls(file, @data_xls_erb, record)
     end
-  end
-
-  def write_csv(file, record)
-    csv_string = CSVBridge.generate do |csv|
-      csv << record
-    end
-    file.write(csv_string)
   end
 
   def write_xls(file, erb, record = [])

@@ -8,9 +8,15 @@ post:
       schema:
         $ref: '#/definitions/contact_export_input'
   responses:
-    204:
+    200:
       description: Success
+      schema:
+        $ref: '#/definitions/export_response'
     400:
       description: Bad Request Error
       schema:
         $ref: '#/definitions/bad_request_error'
+    429:
+      description: Simultaneous export limit reached
+      schema:
+        $ref: '#/definitions/request_error_with_data'

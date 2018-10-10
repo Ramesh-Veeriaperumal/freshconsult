@@ -152,8 +152,10 @@
   $ref: ./contacts/bulk_whitelist.yaml
 /contacts/merge:
   $ref: ./contacts/merge.yaml
-/contacts/export_csv:
-  $ref: ./contacts/export_csv.yaml
+/contacts/export:
+  $ref: ./contacts/export.yaml
+/contacts/export/{id}:
+  $ref: ./contacts/export_status.yaml
 /contacts/quick_create:
   $ref: ./contacts/quick_create.yaml
 /contacts/import:
@@ -169,8 +171,10 @@
   $ref: ./companies/crud.yaml
 /companies/{id}/activities:
   $ref: ./companies/activities.yaml
-/companies/export_csv:
-  $ref: ./companies/export_csv.yaml
+/companies/export:
+  $ref: ./companies/export.yaml
+/companies/export/{id}:
+  $ref: ./companies/export_status.yaml
 /companies/bulk_delete:
   $ref: ./companies/bulk_delete.yaml
 

@@ -82,6 +82,14 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings[:archive_ticket_export_per_account_limit] unless additional_settings.blank?
   end
 
+  def contact_exports_limit
+    additional_settings[:contact_export_per_account_limit] if additional_settings.present?
+  end
+
+  def company_exports_limit
+    additional_settings[:company_export_per_account_limit] if additional_settings.present?
+  end
+
   private
 
   def clear_cache

@@ -48,7 +48,8 @@ end unless Rails.env.development?
   :default_email_queue, :email_dead_letter_queue, :agent_collision_queue,
   :collab_agent_update_queue, :collab_ticket_update_queue, :fd_email_failure_reference,
   :scheduled_ticket_export_queue, :scheduled_user_export_queue, :scheduled_company_export_queue,
-  :scheduled_export_payload_enricher_queue, :fd_scheduler_reminder_todo_queue, :bot_feedback_queue
+  :scheduled_export_payload_enricher_queue, :fd_scheduler_reminder_todo_queue, :bot_feedback_queue,
+  :fd_scheduler_export_cleanup_queue
 ]
 
 SQS_V2_QUEUE_URLS = {}

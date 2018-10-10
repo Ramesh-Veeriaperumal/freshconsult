@@ -186,6 +186,7 @@ api_error_messages:
   integration_timeout: "Didn't receive a timely response from the upstream server"
   export_ticket_limit_reached: Cannot run more than %{max_limit} ticket exports per agent at a time. Please try again later.
   export_archive_ticket_limit_reached: Cannot run more than %{max_limit} archived ticket exports per account at a time. Please try again later.
+  export_limit_reached: "Cannot run more than %{max_limit} %{export_type} exports per account at a time. Please try again later."
   invalid_bot: "There is no bot with the external id %{id}"
   cannot_set_resolved_at: "It cannot be set, when created_at and updated_at are not set or status is not resolved"
   cant_set_pending_since: "It cannot be set when status is not pending"

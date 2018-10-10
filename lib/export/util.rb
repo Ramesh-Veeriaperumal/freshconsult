@@ -1,6 +1,6 @@
 module Export::Util
   include Rails.application.routes.url_helpers
-
+  EXPORT_CLEANUP = "export_cleanup"
   def check_and_create_export type
     limit_data_exports type
     create_export type
@@ -48,6 +48,13 @@ module Export::Util
       yield(f)
     end
   end
+
+  def write_csv(file, record)
+    csv_string = CSVBridge.generate do |csv|
+      csv << record
+    end
+    file.write(csv_string)
+  end
   
   def append_file(file_string, file_path)
     File.open(file_path, "a") do |f|
@@ -82,9 +89,43 @@ module Export::Util
             )
   end
 
+  def hash_url_with_token(portal_url, token)
+    Rails.application.routes.url_helpers.download_file_url(@data_export.source,
+                                                           token,
+                                                           host: portal_url,
+                                                           protocol: Account.current.url_protocol)
+  end
+
   def file_hash(export_id)
     hash = Digest::SHA1.hexdigest("#{export_id}#{Time.now.to_f}")
     @data_export.save_hash!(hash)
     hash
+  end
+
+  def schedule_export_cleanup(export, type)
+    job_id = [Account.current.id, 'export_cleanup', export.id].join('_')
+    payload = {
+      job_id: job_id,
+      group: ::SchedulerClientKeys['export_group_name'],
+      scheduled_time: (Time.zone.now + 15.days).utc.iso8601,
+      data: {
+        account_id: Account.current.id,
+        export_id: export.id,
+        enqueued_at: Time.now.to_i,
+        scheduler_type: "#{type}_export_cleanup"
+      },
+      sqs: {
+        url: SQS_V2_QUEUE_URLS[SQS[:fd_scheduler_export_cleanup_queue]]
+      }
+    }
+    scheduler_client = SchedulerService::Client.new(job_id: job_id,
+                                                    payload: payload,
+                                                    group: payload[:group],
+                                                    account_id: payload[:data][:account_id],
+                                                    end_point: ::SchedulerClientKeys['end_point'],
+                                                    scheduler_type: payload[:data][:scheduler_type])
+    response = scheduler_client.schedule_job
+    Rails.logger.info "scheduler response message successful job_id:::: #{job_id} :::: #{response}"
+    response
   end
 end

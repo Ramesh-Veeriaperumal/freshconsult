@@ -2,21 +2,23 @@ module ContactsCompaniesConcern
   extend ActiveSupport::Concern
   include Redis::RedisKeys
   include Redis::OthersRedis
+  include Export::Util
 
   EXPORT_WORKERS = {
-    "contact" => Export::ContactWorker,
-    "company" => Export::CompanyWorker
-  }
+    'contact' => Export::ContactWorker,
+    'company' => Export::CompanyWorker
+  }.freeze
 
-  def export_field_mappings
-    current_account.safe_send("#{cname}_form").safe_send("#{cname}_fields_from_cache").inject({}) do |a, e|
+  def export_field_mappings(export_type)
+    current_account.safe_send("#{export_type}_form").safe_send("#{export_type}_fields_from_cache").inject({}) do |a, e|
       fields_to_export.include?(e.name) ? a.merge!(e.label => e.name) : a
     end
   end
 
   def fields_to_export
-    @export_fields ||= [*params[cname][:default_fields],
-                        *(params[cname][:custom_fields] ||
+    fields = params[cname][:fields]
+    @export_fields ||= [*fields[:default_fields],
+                        *(fields[:custom_fields] ||
                           []).collect { |field| "cf_#{field}" }]
   end
 
@@ -24,14 +26,19 @@ module ContactsCompaniesConcern
     main_portal? ? current_account.host : current_portal.portal_url
   end
 
-  def contact_company_export_csv export_type
+  def contact_company_export(export_type)
     @validation_klass = 'ExportCsvValidation'
-    params_hash = params[cname].merge("export_type"=>cname)
+    params_hash = params[cname].merge('export_type' => export_type)
     return false unless validate_body_params(nil, params_hash)
+    fields = "#{export_type.capitalize}Constants::EXPORT_ARRAY_FIELDS".constantize
+    params[cname][:fields].permit(*fields)
     sanitize_body_params
-    args = { :csv_hash => export_field_mappings,
-             :user => api_current_user.id,
-             :portal_url => portal_url }
+    create_export export_type
+    file_hash @data_export.id
+    args = { csv_hash: export_field_mappings(export_type),
+             user: api_current_user.id,
+             portal_url: portal_url,
+             data_export: @data_export.id }
     EXPORT_WORKERS[export_type].perform_async(args)
   end
 
@@ -44,5 +51,41 @@ module ContactsCompaniesConcern
     avatar_id = @item.avatar.id if params[cname].key?('avatar_id') && @item.avatar
     @item.avatar_attributes = { id: avatar_id, _destroy: 1 } if avatar_id.present? &&
                                                                 avatar_id != params[cname][:avatar_id]
+  end
+
+  def fetch_data_export_item(export_type)
+    @data_export = current_account.data_exports.find_by_source_and_token(DataExport::EXPORT_TYPE[export_type.to_sym], params[:id])
+    return log_and_render_404 unless @data_export
+  end
+
+  def check_export_limit(export_type)
+    if DataExport.safe_send("#{export_type}_export_limit_reached?")
+      export_limit = DataExport.safe_send("#{export_type}_export_limit")
+      render_request_error_with_info(:export_limit_reached, 429,
+                                     { max_limit: export_limit, export_type: export_type },
+                                     max_simultaneous_export: export_limit)
+    end
+  end
+
+  def fetch_export_details
+    @export_details = {
+      id: @data_export.token,
+      status: fetch_status
+    }
+    if @data_export.status == DataExport::EXPORT_STATUS[:completed]
+      attachment = @data_export.attachment
+      options = { expires: 5.minutes, secure: true, response_content_type: attachment.content_content_type, response_content_disposition: 'attachment' }
+      url = AwsWrapper::S3Object.url_for(attachment.content.path(:original), attachment.content.bucket_name, options)
+      @export_details.merge!(download_url: url)
+    end
+  end
+
+  def fetch_status
+    export_status = DataExport::EXPORT_STATUS.key(@data_export.status)
+    if DataExport::EXPORT_IN_PROGRESS_STATUS.include?(export_status)
+      'in_progress'
+    else
+      export_status
+    end
   end
 end

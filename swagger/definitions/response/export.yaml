@@ -1,0 +1,6 @@
+type: object
+allOf:
+  - properties:
+      id:
+        type: string
+        description: Token of the data export

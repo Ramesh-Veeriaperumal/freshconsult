@@ -3,8 +3,8 @@ module CompanyConstants
   HASH_FIELDS = ['custom_fields'].freeze
   COMPLEX_FIELDS = ARRAY_FIELDS | HASH_FIELDS
 
-  EXPORT_CSV_ARRAY_FIELDS = %w(default_fields custom_fields).freeze
-  EXPORT_CSV_FIELDS = EXPORT_CSV_ARRAY_FIELDS
+  EXPORT_ARRAY_FIELDS = %w[default_fields custom_fields].freeze
+  EXPORT_FIELDS = %w[fields].freeze
   FIELDS = %w(name description note avatar_id avatar health_score
               account_tier renewal_date industry).freeze | ARRAY_FIELDS | HASH_FIELDS
   # INDEX_FIELDS = %w(query_hash include letter filter).freeze
@@ -27,7 +27,7 @@ module CompanyConstants
   }.freeze
 
   ACTIVITY_TYPES = %w(tickets archived_tickets).freeze
-  LOAD_OBJECT_EXCEPT = %w(bulk_delete export_csv).freeze
+  LOAD_OBJECT_EXCEPT = %w[bulk_delete export export_details].freeze
 
   FIELD_MAPPINGS = {
     :"company_domains.base" => :domains,

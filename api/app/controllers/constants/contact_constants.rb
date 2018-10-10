@@ -20,8 +20,8 @@ module ContactConstants
   SHOW_FIELDS = %w(include).freeze
   MERGE_ARRAY_FIELDS = ['secondary_contact_ids'].freeze
   MERGE_FIELDS = %w[primary_contact_id contact].freeze | MERGE_ARRAY_FIELDS
-  EXPORT_CSV_ARRAY_FIELDS = %w(default_fields custom_fields).freeze
-  EXPORT_CSV_FIELDS = EXPORT_CSV_ARRAY_FIELDS
+  EXPORT_ARRAY_FIELDS = %w[default_fields custom_fields].freeze
+  EXPORT_FIELDS = %w[fields].freeze
 
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, blocked: false },
@@ -45,7 +45,7 @@ module ContactConstants
 
   BULK_ACTION_METHODS = [:bulk_delete, :bulk_restore, :bulk_send_invite, :bulk_whitelist].freeze
 
-  LOAD_OBJECT_EXCEPT = [:merge, :export_csv, :quick_create].freeze + BULK_ACTION_METHODS
+  LOAD_OBJECT_EXCEPT = [:merge, :export, :quick_create, :export_details].freeze + BULK_ACTION_METHODS
 
   # Max other email count excluding the primary email
   MAX_OTHER_EMAILS_COUNT = (User::MAX_USER_EMAILS - 1)

@@ -3202,7 +3202,7 @@
         }
       }
     },
-    "/contacts/export_csv": {
+    "/contacts/export": {
       "post": {
         "tags": [
           "contact"
@@ -3219,14 +3219,53 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "Success"
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/export_response"
+            }
           },
           "400": {
             "description": "Bad Request Error",
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          },
+          "429": {
+            "description": "Simultaneous export limit reached",
+            "schema": {
+              "$ref": "#/definitions/request_error_with_data"
+            }
+          }
+        }
+      }
+    },
+    "/contacts/export/{id}": {
+      "get": {
+        "tags": [
+          "contact"
+        ],
+        "summary": "Export status",
+        "description": "Responds with status details of export based on token.",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "description": "token of data export",
+            "in": "path",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status of the export",
+            "schema": {
+              "$ref": "#/definitions/export_status_response"
+            }
+          },
+          "404": {
+            "description": "Data Export not found"
           }
         }
       }
@@ -3564,7 +3603,7 @@
         }
       }
     },
-    "/companies/export_csv": {
+    "/companies/export": {
       "post": {
         "tags": [
           "company"
@@ -3581,14 +3620,53 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "Success"
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/export_response"
+            }
           },
           "400": {
             "description": "Bad Request Error",
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          },
+          "429": {
+            "description": "Simultaneous export limit reached",
+            "schema": {
+              "$ref": "#/definitions/request_error_with_data"
+            }
+          }
+        }
+      }
+    },
+    "/companies/export/{id}": {
+      "get": {
+        "tags": [
+          "company"
+        ],
+        "summary": "Export status",
+        "description": "Responds with status details of export based on token.",
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "description": "token of data export",
+            "in": "path",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status of the export",
+            "schema": {
+              "$ref": "#/definitions/export_status_response"
+            }
+          },
+          "404": {
+            "description": "Data Export not found"
           }
         }
       }
@@ -10543,33 +10621,38 @@
     "contact_export_input": {
       "type": "object",
       "properties": {
-        "default_fields": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "address",
-              "company_id",
-              "description",
-              "email",
-              "job_title",
-              "language",
-              "mobile",
-              "name",
-              "phone",
-              "time_zone",
-              "twitter_id",
-              "other_emails",
-              "tags"
-            ],
-            "uniqueItems": true
-          }
-        },
-        "custom_fields": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "uniqueItems": true
+        "fields": {
+          "type": "object",
+          "properties": {
+            "default_fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "address",
+                  "company_id",
+                  "description",
+                  "email",
+                  "job_title",
+                  "language",
+                  "mobile",
+                  "name",
+                  "phone",
+                  "time_zone",
+                  "twitter_id",
+                  "other_emails",
+                  "tags"
+                ],
+                "uniqueItems": true
+              }
+            },
+            "custom_fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "uniqueItems": true
+              }
+            }
           }
         }
       }
@@ -10577,28 +10660,33 @@
     "company_export_input": {
       "type": "object",
       "properties": {
-        "default_fields": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "name",
-              "description",
-              "domains",
-              "notes",
-              "health_score",
-              "account_tier",
-              "industry",
-              "renewal_date"
-            ],
-            "uniqueItems": true
-          }
-        },
-        "custom_fields": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "uniqueItems": true
+        "fields": {
+          "type": "object",
+          "properties": {
+            "default_fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "name",
+                  "description",
+                  "domains",
+                  "notes",
+                  "health_score",
+                  "account_tier",
+                  "industry",
+                  "renewal_date"
+                ],
+                "uniqueItems": true
+              }
+            },
+            "custom_fields": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "uniqueItems": true
+              }
+            }
           }
         }
       }
@@ -13636,6 +13724,37 @@
           }
         }
       }
+    },
+    "export_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Token of the data export"
+            }
+          }
+        }
+      ]
+    },
+    "export_status_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "download_url": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "watchers": {
       "title": "data",

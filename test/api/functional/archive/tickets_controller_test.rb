@@ -155,6 +155,7 @@ class Archive::TicketsControllerTest < ActionController::TestCase
                     export_name: "Test export" }
     archive_tickets = @account.archive_tickets
     initial_count = ticket_data_export(DataExport::EXPORT_TYPE[:archive_ticket]).count
+    SchedulerService::Client.any_instance.stubs(:schedule_job).returns(status: 200, body: "")
     search_stub_archive_tickets(archive_tickets) do
       Sidekiq::Testing.inline! do
         post :export, construct_params({ version: 'private' }, params_hash)
@@ -162,6 +163,7 @@ class Archive::TicketsControllerTest < ActionController::TestCase
     end
     current_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:archive_ticket])
     assert_equal initial_count, current_data_exports.length - 1
+    SchedulerService::Client.unstub(:schedule_job)
   end
 
   def test_export_with_invalid_query

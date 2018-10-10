@@ -50,10 +50,6 @@ module Ember
       load_sla_policy
     end
 
-    def export_csv
-      head 204 if contact_company_export_csv(cname)
-    end
-
     def bulk_delete
       bulk_action do
         @items_failed = []

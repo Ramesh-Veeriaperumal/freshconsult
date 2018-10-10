@@ -1,0 +1,4 @@
+response_hash = {
+  id: @data_export.token
+}
+JSON.generate(response_hash)

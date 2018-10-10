@@ -99,8 +99,9 @@ class DataExportMailer < ActionMailer::Base
 
   def export_failure(options = {})
     @user = options[:user]
+    type = ['contact', 'company'].include?(options[:type]) ? 'customer' : options[:type]
     headers = {
-      subject: safe_send("#{options[:type]}_export_subject", options),
+      subject: safe_send("#{type}_export_subject", options),
       to: @user.email,
       from: AppConfig['from_email'],
       bcc: AppConfig['reports_email'],
@@ -117,7 +118,7 @@ class DataExportMailer < ActionMailer::Base
 
   def customer_export(options={})
     headers = {
-      :subject => "#{options[:type].capitalize} export for #{options[:domain]}",
+      :subject => safe_send('customer_export_subject', options),
       :to      => options[:user].email,
       :from    => "support@freshdesk.com",
       :bcc     => AppConfig['reports_email'],
@@ -210,6 +211,12 @@ class DataExportMailer < ActionMailer::Base
             :start_date => options[:export_params][:start_date].to_date, 
             :end_date => options[:export_params][:end_date].to_date,
             :domain => options[:domain])
+    end
+
+    def customer_export_subject(options)
+      I18n.t('export_data.customer_export.subject',
+             type: options[:type].capitalize,
+             domain: options[:domain])
     end
 
   # TODO-RAILS3 Can be removed oncewe fully migrate to rails3
