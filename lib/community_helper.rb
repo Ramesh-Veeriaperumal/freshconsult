@@ -14,7 +14,7 @@ module CommunityHelper
     path = nil
     unless (category.nil? || category.portal_ids.empty? || category.portal_ids.include?(current_portal.id))
       category_portal = category.portals.last
-      ["#{category_portal.url_protocol}://", category_portal.host].join
+      path = ["#{category_portal.url_protocol}://", category_portal.host].join
     end
     path
   end
