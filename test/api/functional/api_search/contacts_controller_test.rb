@@ -169,7 +169,7 @@ module ApiSearch
         get :index, controller_params(query: '"company_id:1 OR company_id:2"')
       end
       assert_response 200
-      pattern = contacts.map { |contact| index_contact_pattern(contact) }
+      pattern = contacts.map { |contact| public_search_contact_pattern(contact) }
       match_json(results: pattern, total: contacts.size)
     end
 
