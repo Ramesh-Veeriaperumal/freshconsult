@@ -658,6 +658,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/getting_started"
     resource :"agent", :only => [:api_key]
     resource :"rake_task", only: [:run_rake_task]
+    resource :automation_essential
   end
 
   manage_skills do

@@ -122,6 +122,14 @@ Helpkit::Application.routes.draw do
     match 'export/ticket_activities' => 'export#ticket_activities', :defaults => { format: 'json' }, :as => :ticket_activities, via: :get
     match 'rake_task/run_rake_task' => 'rake_task#run_rake_task', :defaults => { format: 'json' }, :as => :run_rake_task, via: :get
 
+    resources :automation_essentials, only: [] do
+      collection do
+        get :lp_launched_features
+        put :lp_launch
+        put :lp_rollback
+      end
+    end
+
     # Feedbacks about the product
     resources :product_feedback, controller: 'ember/product_feedback', only: [:create]
 
