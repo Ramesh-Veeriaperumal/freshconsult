@@ -528,12 +528,26 @@ class Helpdesk::Ticket < ActiveRecord::Base
     ::Tickets::ResetAssociations.perform_async({:ticket_ids=>[self.display_id]})
   end
 
+  def sla_retries_count
+    Thread.current[:ticket_sla_calculation_retries] || 0
+  end
+
+  def sla_calculation_max_limit_reached?
+    sla_retries_count >= TicketConstants::SLA_CALCULATION_MAX_RETRY
+  end
+
+  def increment_sla_retry_count
+    Thread.current[:ticket_sla_calculation_retries] = sla_retries_count + 1
+  end
+
   def enqueue_sla_calculation?
-    sla_on_background && ((transaction_include_action?(:create) && (self.skip_dispatcher? || account.skip_dispatcher?)) || (transaction_include_action?(:update) && observer_will_not_be_enqueued?))
+    sla_on_background && !sla_calculation_max_limit_reached? && ((transaction_include_action?(:create) && (self.skip_dispatcher? || account.skip_dispatcher?)) || (transaction_include_action?(:update) && observer_will_not_be_enqueued?))
   end
 
   def enqueue_sla_calculation
-    job_id = Sla::Calculation.perform_async(:ticket_id => self.id, :sla_state_attributes => sla_state_attributes, :sla_calculation_time => sla_calculation_time.to_i)
+    increment_sla_retry_count
+    job_id = Sla::Calculation.perform_async(:ticket_id => self.id, :sla_state_attributes => sla_state_attributes, 
+      :sla_calculation_time => sla_calculation_time.to_i, :retries => sla_retries_count)
     Rails.logger.debug "Sla on background, ticket #{self.id} #{self.display_id} #{sla_state_attributes.inspect} Job Id :: #{job_id}"
   end
 
