@@ -11859,7 +11859,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       ticket_created: "New Ticket"
       generic_notification: "%{type}"
       bot_training_completion: "Bot training completed"
-      dashboard_announcement_create: "Dashboard announcement"
+      twitter_reply_failure: "Twitter response not sent"
     preferences_text:
       private_note_created: Private note sent to me
       public_note_created: Public note added to ticket
@@ -11875,7 +11875,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     toggle_mobile_notifications: Toggle mobile notifications
     toggle_web_notifications: Toggle web notifications
     bot_training_completion: "%{title} Bot trained successfully!Please switch to mint ui to test and train the bot."
-    dashboard_announcement_create: "has posted '%{title}'"
+    twitter_reply_failure: "Response to ticket {{title}} was not sent. Please try again after some time."
     muted: Muted
     mute: Mute
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
@@ -12340,6 +12340,135 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
+  mailer_notifier:
+    hi: 'Hi,'
+    hey_user: 'Hey %{user_name}'
+    hi_user: 'Hi %{user_name},'
+    hi_team: 'Hi team,'
+    hello_user: 'Hello %{user},'
+    dear_user: 'Dear %{user},'
+    dear_user_plain: 'Dear user,'
+    portal_support: '%{portal_name} Support'
+    cool: 'Cool!'
+    role: 
+      one: 'role'
+      other: 'roles'
+    thanks: "Thanks,"
+    reports: reports
+    rule: "Rule: "
+    freshdesk_customer_support: 'Freshdesk Customer Support'
+    freshdesk_team: 'Freshdesk Team'
+    reports_team_freshdesk: 'Reports Team, Freshdesk'
+    welcome_to_freshdesk: 'Welcome to Freshdesk!'
+    moderator_approval: "Moderator approval"
+    sincerely: "Sincerely,"
+    security_notification:
+      trusted_ip_enabled: 
+        one: 'IP whitelisting has been enabled on your account. Your portal will be accessible only in the IP range below:'
+        other: 'IP whitelisting has been enabled on your account. Your portal will be accessible only in the IP ranges below:'
+      trusted_ip_modified: 
+        one: 'The whitelisted IP addresses were modified on your account. Your portal will be accessible only in the IP range below:'
+        other: 'The whitelisted IP addresses were modified on your account. Your portal will be accessible only in the IP ranges below:'
+      trusted_ip_disabled: "IP whitelisting has been disabled on your account."
+      trusted_ip_actor: 'These modifications were made by %{user_name} on %{time}.'
+      trusted_ip_actor_change: 'This was done by %{user_name} on %{time}.'
+      trusted_ip_create_time: 'This was done on %{time}.'
+      agent_email_change: 'The email address associated with your account has been changed on %{time}.'
+      unauthorized_change_contact: If this change was made without your authorization, please contact your account administrator right away.
+      agent_deleted: 'An agent, %{agent_name} was deleted by %{doer} in your account on %{time}.'
+      deleted_agent_info: 'Note that %{agent_name} will still exist in your account as a contact.'
+      current_agent_stats: 'You currently have %{full_time} full time agents and %{occasional} occasional agents in your Freshdesk account.'
+      update_agent_billing: 'To reflect this change in your billing, please <a href="%{billing_url}">update</a> the agent information in the billing page.'
+      update_agent_billing_plain: 'To reflect this change in your billing, please update the agent information in the billing page.'
+      agent_added: 'A new %{agent_type} agent, %{agent_name} was added by %{doer} in your account on %{time} and has the %{agent_data_key} %{agent_data_value}.'
+      agent_updated:
+        one: 'Your %{data_updated} was updated on %{time}.'
+        other: 'Your %{data_updated} were updated on %{time}.'
+      email_changed: 'You have changed the email address associated with %{agent_name} on %{time}.'
+      agent_cannot_access: 'Please note that %{agent_name} may not be able to access the %{account_name} account anymore.'
+      unauthorized_change_info: 'If this change was made without your authorization, send us a reply.'
+      configure_change: 'You can configure this notification settings under Admin -> Security.'
+      configure_change_html: 'You can configure this notification settings by <a href="%{security_url}"> clicking here </a> or going to Admin -> Security in your account'
+    import_notification:
+      zendesk_import_success: Your import from Zendesk has been successful. Awesome.
+      zendesk_freshness: "We are happy that you have decided to make the right jump here, and we hope that you like our Freshness. "
+      write_to_email: "If you have questions, please write to <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>."
+      zendesk_import_fail: 'The import process failed because you uploaded an export file of the wrong type. The import feature requires a full XML export from Zendesk. You can follow the instructions below to get the Full XML export from Zendesk.'
+      zendesk_how_step1: Click on the Manage icon in the sidebar, then select Reports.
+      zendesk_how_step2: 'In Zendesk Classic: Select the Manage menu, then select Reporting.'
+      zendesk_how_step3: Click the Export tab.
+      zendesk_how_step4: Click on Full XML export and select Generate.
+      zendesk_import_failure: Our attempts to import data from your Zendesk account has failed.
+      zendesk_failure_reasons: 'Reasons for failure could be one of following:'
+      zendesk_failure_reason1: 'Your Zendesk backup URL has expired.'
+      zendesk_failure_reason2: You have entered the wrong Zendesk credentials.
+      zendesk_request_backup: If your Zendesk credentials are correct, please request Zendesk for another Backup URL and try again.
+      unsure_email_us: "If you aren't sure what to do, please shoot an email to <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a>."
+      zendesk_import_complete: Your zendesk data import has been finished. Let us know if you need any other assistence.
+      google_import_reasons: 'We could not import all the contacts from Google. The reason may be the %{reason}. Please try again, if you continue to get the problem contact the support.'
+      google_import_success: 'Your Google Contacts import has been finished successfully.  Please check the imported contacts under Contacts tab.'
+    export_success_download: "The %{export_type} export you had requested is complete. You can download the file from <a href='%{url}'>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
+    ecomerce_notification:
+      token_expiry: 'We want to let you know that your auth token for Ecommerce account %{account_name} will expire in %{expiry_date}.'
+      token_update: Please revoke the token and update the account inorder to be active.
+      view_account: View account
+      contact_us: 'For any help, contact us at support@freshdesk.com.'
+    email_config_notification:
+      email_added: 'This email has been added as your support email address in %{app_name}. Click the URL below to activate your support email.'
+      paste_url_browser: If the above URL does not work, try copying and pasting it into your browser. If you continue to have problems, please feel free to contact us.
+      test_email: You've received the test mail you just sent out from Freshdesk account.
+      check_ticket_tab: 'If everything worked fine, you should now see this mail converted to a new ticket. Hop over to your Freshdesk helpdesk portal and look under the "Tickets" tab.'
+      ticket_convert: "Got it? Great! Now everytime your customers send you an email here, you'll have it appear as a ticket in Freshdesk automatically!"
+      check_configuration: 'If your helpdesk did not show you a new ticket, first make sure that you have configured all your emails in this id to get forwarded to your Freshdesk support id ( "%{to_email}" ).'
+      support_link: "You can learn how to do this <a href='https://support.freshdesk.com/support/solutions/articles/37541-converting-your-support-email-into-freshdesk-tickets' target='_blank'>here</a>. Still having problems? Get in touch with us at support@freshdesk.com and we'll help you set this up."
+    click_to_activate: Click here to activate your Freshdesk account
+    topics_awaiting_approval: There are topics waiting for your approval. Please take a look at them.
+    report_notifications:
+      report_name: 'Report name: '
+      filters_applied: 'Filters applied:'
+      for_metric: 'For metric: '
+      report_export_complete: 'The %{@report_label} report %{@ticket_export} export you had requested is complete. '
+      download_attachment: 'Please find the file attached with this mail.'
+      download_file_plain: 'You can download the file from %{export_url} (it will expire in 45 days).'
+      download_file: "You can download the file from <a href='%{export_url}'>here</a> (It will expire in 45 days). If the link does not work, copy and paste the URL below in your browser's address bar:"
+      scheduled_report_name: 'Scheduled report name : '
+      pdf_size_exceed: 'Sorry, the size of your PDF file is over 10MB.'
+      no_data: 'Seems like there is no data to display for date range %{date_range} with applied filters.'
+      csv_report_request_at: 'CSV report requested at : '
+      invalid_acc_count: 'Number of invalid accounts'
+    user_notifications:
+      configure_webhook: Please check and reconfigure the rule to avoid any loss of communication.
+      webhook_failed: "The %{automation_type} rule you configured to send API request to %{webhook_url} has failed after several retries."
+      webhook_drop_limit: "A webhook that was scheduled 24 hours ago for execution has now been dropped since you consistently exceeded your API rate limits."
+      webhook_drop_support: "If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, click here https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq."
+      webhook_drop_support_link: "If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, <a href='https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq'>click here.</a>"
+  mailer_notifier_subject: 
+    agent_email_changed: '%{portal_name}: Agent email address changed'
+    agent_details_updated: Your %{changed_attributes} in %{account_name} has been updated
+    agent_added: "%{account_name}: A new agent was added to your account"
+    agent_deleted: "%{account_name}: %{agent_name} was deleted"
+    ip_restrictions_added: "%{account_name}: New IP restrictions added to your account"
+    ip_restrictions_modified: "%{account_name}: The IP restrictions modified in your account"
+    data_import: 'Data import for %{domain}'
+    zendesk_success: 'Import from Zendesk is complete'
+    google_contact_success: 'Successfully imported Google Contacts for %{domain}'
+    google_contact_error: "Error in importing Google Contacts for %{domain}"
+    data_export: "Data export for %{host}"
+    no_ticket_in_range: 'No tickets in range - %{domain}'
+    export_type: '%{export_type} export for %{domain}'
+    report_export: 'Reports export for %{range}'
+    agent_export: 'Agents list export'
+    ecommerce_token: 'Ecommerce account %{ecom_name} token expiration'
+    test_email: "Woohoo.. Your Freshdesk test email"
+    email_activation: "%{portal_name} email activation instructions"
+    scheduled_report_update: "[Important] Scheduled report - Recipient update required"
+    report_type_sub: "%{report_name} report for %{date_range}"
+    ticket_export: 'Ticket export | '
+    topics_awaiting_approval: 'Topics waiting for approval in %{account_name} - %{timestamp}'
+    recheck_webhook: Please recheck the webhook settings in your account
+    webhook_dropped: "Webhook dropped"
+    customer_import: "%{import_type} import for %{account_full_domain}"
+    customer_import_stopped: "%{import_type} import for %{account_full_domain} stopped"
   sandbox:
     live: Sandbox is live
     sync_complete: Sandbox sync complete!

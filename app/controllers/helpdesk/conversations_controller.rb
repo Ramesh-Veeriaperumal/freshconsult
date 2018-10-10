@@ -109,13 +109,15 @@ class Helpdesk::ConversationsController < ApplicationController
 
   def twitter
     tweet_text = params[:helpdesk_note][:note_body_attributes][:body].strip
-    twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : "mention"
+    twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : 'mention'
+    twitter_handle_id = params[:twitter_handle_id]
     
     error_message, @tweet_body = get_tweet_text(twt_type, @parent, tweet_text)
     if error_message.blank?
-      if @item.save_note 
-        error_message, reply_twt = safe_send("send_tweet_as_#{twt_type}")
-        flash[:notice] = error_message.blank? ?  t(:'flash.tickets.reply.success') : error_message
+      if @item.save_note
+        args = { ticket_id: @parent.id, note_id: @item.id, tweet_type: twt_type, twitter_handle_id: twitter_handle_id }
+        Social::TwitterReplyWorker.perform_async(args)
+        flash.now[:notice] = t(:'flash.tickets.reply.success')
         process_and_redirect
       else
         flash.now[:notice] = t(:'flash.tickets.reply.failure')

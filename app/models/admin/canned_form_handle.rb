@@ -2,7 +2,7 @@ class Admin::CannedFormHandle < ActiveRecord::Base
   self.primary_key = :id
   belongs_to_account
 
-  attr_accessible :response_note_id, :response_data
+  attr_accessible :id_token, :ticket_id, :response_note_id, :response_data
 
   belongs_to :canned_form, class_name: 'Admin::CannedForm'
   belongs_to :ticket, class_name: 'Helpdesk::Ticket'

@@ -120,7 +120,7 @@ module Social::Constants
   TWITTER_TIMEOUT = {
     :search => 5,
     :dm     => 10,
-    :reply  => 10
+    :reply  => 60
   }
 
   STREAM_VOLUME_RETENION_PERIOD = 28.days
@@ -158,4 +158,9 @@ module Social::Constants
   TWITTER_MENTION = "@"
   EU_TWITTER_HANDLES = "eu_twitter_handles"
   TWEET_ALREADY_EXISTS = "Tweet already converted as a ticket".freeze
+
+  TWITTER_ERROR_CODES = {
+    reauth_required: 89,
+    timeout: 504
+  }
 end

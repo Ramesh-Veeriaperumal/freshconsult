@@ -286,6 +286,7 @@ defaults: &defaults
     - [default_data_population]
     - [send_domain_changed_mail]
     - [freshops_service]
+    - [twitter_reply]
 
 development:
   <<: *defaults

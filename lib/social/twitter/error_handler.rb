@@ -8,7 +8,7 @@ module Social::Twitter::ErrorHandler
   module ClassMethods
     
     include Social::Util
-
+    include Social::Constants
     def twt_sandbox(handle, timeout = TwitterConfig::TWITTER_TIMEOUT)
       
       #overide timeout according the the env timeout values
@@ -24,6 +24,7 @@ module Social::Twitter::ErrorHandler
           @social_error_msg = "#{I18n.t('social.streams.twitter.feeds_blank')}"
         elsif handle.reauth_required?
           @social_error_msg = "#{I18n.t('social.streams.twitter.handle_auth_error')}"
+          social_error_code = TWITTER_ERROR_CODES[:reauth_required]
         end
 
         Timeout.timeout(timeout) do
@@ -35,21 +36,26 @@ module Social::Twitter::ErrorHandler
         @sandbox_handle.last_error = exception.to_s
         @sandbox_handle.save
         @social_error_msg = "#{I18n.t('social.streams.twitter.handle_auth_error')}"
+        social_error_code = exception.code
         notify_error(exception)
 
       rescue Twitter::Error::AlreadyPosted => exception
         @social_error_msg = "#{I18n.t('social.streams.twitter.already_tweeted')}"
+        social_error_code = exception.code
         notify_error(exception)
 
       rescue Twitter::Error::AlreadyRetweeted => exception
         @social_error_msg = "#{I18n.t('social.streams.twitter.already_retweeted')}"
+        social_error_code = exception.code
         notify_error(exception)
 
       rescue Twitter::Error::TooManyRequests => exception
         @social_error_msg = "#{I18n.t('social.streams.twitter.rate_limit_reached')}"
+        social_error_code = exception.code
         notify_error(exception)
 
       rescue Twitter::Error::Forbidden => exception
+        social_error_code = exception.code
         @social_error_msg =  exception.message.include?("not following") ? 
                               "#{I18n.t('social.streams.twitter.not_following')}" : "#{I18n.t('social.streams.twitter.client_error')}"
         if exception.message.include?("temporarily locked")  
@@ -61,23 +67,27 @@ module Social::Twitter::ErrorHandler
 
       rescue Twitter::Error::GatewayTimeout => exception
         @social_error_msg = "GatewayTimeout Error"
+        social_error_code = exception.code
         notify_error(exception)
 
       rescue Twitter::Error::NotFound => exception
         @social_error_msg = "#{I18n.t('social.streams.twitter.wrong_call')}" #Unfavoriting what has not been fav already
+        social_error_code = exception.code
         notify_error(exception)
 
       rescue Twitter::Error => exception
         @social_error_msg = "#{I18n.t('social.streams.twitter.client_error')}"
+        social_error_code = exception.code
         notify_error(exception)
       
       rescue Timeout::Error => exception
         @social_error_msg = "#{I18n.t('social.streams.twitter.client_error')}"
+        social_error_code = TWITTER_ERROR_CODES[:timeout]
         error = caller[0..11]
         notify_error(error, "Twitter Timeout Exception")      
       end
 
-      return [@social_error_msg, return_value]
+      return [@social_error_msg, return_value, social_error_code]
     end
 
     def notify_error(error, subject = nil)
