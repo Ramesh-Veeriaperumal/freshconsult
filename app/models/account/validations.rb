@@ -3,8 +3,7 @@ class Account < ActiveRecord::Base
 	validates_associated :account_configuration, :on => :create
 	validates_format_of :domain, :with => /(?=.*?[A-Za-z])[a-zA-Z0-9]*\Z/
   validates_length_of :name, :in => 3..100, :too_long => I18n.t('long_company_name_error'), :too_short => I18n.t('short_company_name_error')
-  validate :valid_domain?, :if => :full_domain_changed?
-  validate :valid_sso_options?
+  validate :valid_domain?, :valid_sso_options?
   validate :valid_plan?, :valid_payment_info?, :valid_subscription?, on: :create
   validates_uniqueness_of :google_domain ,:allow_blank => true, :allow_nil => true
   validates_numericality_of :ticket_display_id,

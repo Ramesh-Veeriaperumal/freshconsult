@@ -272,7 +272,7 @@ class Solution::ArticlesController < ApplicationController
     def portal_check
       format = params[:format]
       if format.nil? && (current_user.nil? || current_user.customer?)
-        return redirect_to support_solutions_article_path(params[:id], url_locale: params[:language])
+        return redirect_to support_solutions_article_path(params[:id])
       elsif !privilege?(:view_solutions)
         access_denied
       end

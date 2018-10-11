@@ -73,9 +73,8 @@ class Discussions::UnpublishedController < ApplicationController
 		end
 
 		def spam_scope
-			spam_scoper = params[:scope]
-			Post::SPAM_SCOPES_DYNAMO.values.map(&:to_s).include?(spam_scoper) ? 
-				spam_scoper.constantize : Post::SPAM_SCOPES_DYNAMO.values.first
+			Post::SPAM_SCOPES_DYNAMO.values.map(&:to_s).include?(params[:scope]) ? 
+				params[:scope].constantize : Post::SPAM_SCOPES_DYNAMO.values.first
 		end
 
 		def load_post

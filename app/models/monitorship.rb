@@ -12,7 +12,7 @@ class Monitorship < ActiveRecord::Base
   scope :active_monitors, :conditions => { :active => true }
   scope :by_user, lambda { |user| { :conditions => ["user_id = ?", user.id ] } }
 
-  ALLOWED_TYPES = {forum: "Forum", topic: "Topic"}
+  ALLOWED_TYPES = [:forum, :topic]
   ACTIONS = [:follow, :unfollow, :is_following, :followers]
   ADD_FOLLOWER_MAILERS_FOR = [:topic, :forum]
 

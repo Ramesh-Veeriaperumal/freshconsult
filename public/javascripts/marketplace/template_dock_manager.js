@@ -396,26 +396,16 @@ var TemplateDockManager = Class.create({
     });
 
     // validation succeeds - return installation parameters.
-    var configs = {};
-    var configsObj = jQuery("#install-form").serialize().split('&')
-              .map(function(e) { var x = e.split("="); if(x[0] != 'authenticity_token' && x[0] != "" && x[0]!= null) { 
-                configs[x[0]] = decodeURIComponent(x[1]); 
-              }});
-    return Promise.resolve({configs: configs,
-                            authenticity_token: jQuery("#install-form input[name='authenticity_token']").val()});
+    return Promise.resolve(jQuery('#install-form').serialize());
   },
 
-  submitIparams: function(el, params) {
+  submitIparams: function(el, configs) {
     var that = this;
     var initialCount = 0;
-    var data = { configs: params.configs == "" ? params.configs : Object.toJSON(params.configs) };
-    if (this.platformVersion === '1.0') {
-      data['authenticity_token'] = params.authenticity_token
-    }
     jQuery.ajax({
       url: jQuery(el).attr("data-url"),
       type: jQuery(el).attr("data-method"),
-      data: data,
+      data: configs,
       beforeSend: function(){
         that.handleInstallProgress();
       },

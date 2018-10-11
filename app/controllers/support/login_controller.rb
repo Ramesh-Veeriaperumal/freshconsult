@@ -145,14 +145,5 @@ class Support::LoginController < SupportController
 			end
 		end
 
-    def default_return_url
-      @default_return_url ||= begin
-        from_cookie = cookies[:return_to] # The :return_url cookie will be used by Ember App
-        cookies.delete(:return_url) if from_cookie.present?
-        # TODO-EMBERAPI: Cookie deletion does not seem reflect properly on the client
-        from_cookie || '/'
-      end
-    end
-
 end
 

@@ -55,11 +55,6 @@
           clipboard_html = normalize(editor, clipboard_html);
         }
 
-        if (typeof(clipboard_html) === 'string') {
-          // To prevent breaking of dropdowns: [FD-14869] removing data-dropdown attribute
-          clipboard_html = clipboard_html.replace(/data-toggle="dropdown"/gm, '');
-        }
-
         return clipboard_html;
       });
 

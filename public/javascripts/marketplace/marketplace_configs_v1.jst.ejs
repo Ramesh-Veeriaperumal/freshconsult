@@ -10,9 +10,9 @@
         </label>
         
         <% if (configs[i].field_type == 1) { %>
-          <input type="text" class="fa-textip <% if (configs[i].is_required) {%> required <%}%> fa-elements" name="<%- configs[i].name %>" value="<%- configs[i].default_value %>">
+          <input type="text" class="fa-textip <% if (configs[i].is_required) {%> required <%}%> fa-elements" name="[configs][<%- configs[i].name %>]" value="<%- configs[i].default_value %>">
         <% } else { %>
-          <select name="<%- configs[i].name %>" class="select2 fa-elements" style="width:200px;">
+          <select name="[configs][<%- configs[i].name %>]" class="select2 fa-elements" style="width:200px;">
             <% for(var j=0; j < configs[i].default_value.length; j++){ %>
               <option value="<%- configs[i].default_value[j] %>"><%- configs[i].default_value[j] %></option>
             <% } %>

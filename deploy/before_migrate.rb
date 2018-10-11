@@ -110,7 +110,6 @@ run "ln -nfs #{shared_path}/config/search/dynamo_tables.yml #{node[:rel_path]}/c
 
 #Cert Files
 run "ln -nfs #{shared_path}/config/cert/freshid.pem #{node[:rel_path]}/config/cert/freshid.pem"
-run "ln -nfs #{shared_path}/config/cert/saml.pem #{node[:rel_path]}/config/cert/saml.pem"
 
 # Xero Cert files start
 run "ln -nfs #{shared_path}/config/cert/integrations/xero/entrust-cert.pem #{node[:rel_path]}/config/cert/integrations/xero/entrust-cert.pem"

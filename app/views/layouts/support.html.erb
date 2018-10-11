@@ -60,7 +60,7 @@
 			<%= render :partial => "layouts/shared/chat/chat" %>
 		<% end %>
 
-		<% if portal_bot_enabled? && allowed_in_portal?(:open_solutions) %>
+		<% if portal_bot_enabled? %>
 			<%= render :partial => "layouts/shared/bot" %>
 		<% end %>
 

@@ -7,8 +7,6 @@ window.App = window.App || {};
 
   App.Solutions.Article = $.extend(App.Solutions.Article, {
 
-    copyArticleLinkEvent: null,
-
     showPageBindings: function () {
       var $this = this;
       this.articleHistoryEllipsisExpand();
@@ -17,8 +15,7 @@ window.App = window.App || {};
       this.bindForCancelBtn();
       this.bindForEditBtn();
       this.bindForShowMaster();
-      this.bindForCopyBtn();
-
+      
       this.modalBindings();
       this.outdateOrUpdate();
     },
@@ -30,10 +27,10 @@ window.App = window.App || {};
         $this.articleTags = $this.articleTags !== "" ? $this.articleTags.split(",") : "";
         $this.articleProperties();
         $this.checkTranslations();
-
+        
         // Check rendered SEO meta length on modal load
-        jQuery(this).find('#article-form [rel=charcounter]').each(function(pos,item){
-          $this.validateSeoLength(item)
+        jQuery(this).find('#article-form [rel=charcounter]').each(function(pos,item){ 
+          $this.validateSeoLength(item) 
         });
         // Bind keyup SEO meta checks
         $this.seoCharCounter();
@@ -45,21 +42,6 @@ window.App = window.App || {};
       $('body').on('click.articles', '.article-edit-btn', function () {
         $this.startEditing();
         $('.breadcrumb').addClass('breadcrumb-edit');
-      });
-    },
-
-    bindForCopyBtn: function () {
-      var $copyElement = $('.article-link-copy-btn');
-      this.copyArticleLinkEvent = new Clipboard('.article-link-copy-btn', {
-        text: function (target) {
-          return target.querySelector('#article-link-copy-btn').href;
-        }
-      });
-
-      this.copyArticleLinkEvent.on('success', function () {
-        var $contentEle = $copyElement.children('.content');
-        $copyElement.addClass('btn--copied');
-        $contentEle.text($copyElement.data('text-copied'));
       });
     },
 
@@ -108,16 +90,16 @@ window.App = window.App || {};
         );
       });
     },
-
+    
     seoCharCounter: function () {
       var $this = this;
-
+      
       // Validate on keyup
       $('body').on('keyup.articles', '#article-form [rel=charcounter]', function (ev) {
         $this.validateSeoLength(ev.target);
       });
     },
-
+    
     validateSeoLength: function (element) {
       var originalMsg = $(element).data('org-msg'),
           limitMsg = $(element).data('limit-msg'),

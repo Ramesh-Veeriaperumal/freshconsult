@@ -20,7 +20,7 @@ namespace :traffic_switch do
           free_account_ids << subscription.account_id if any_active_agent > 0 
         elsif subscription.state.eql?("active") and subscription.amount > 0
           amount_paid = subscription.amount / subscription.renewal_period
-          paid_account_details << [subscription.account_id, subscription.subscription_plan_id ] if (amount_paid > 1 and amount_paid <= 100)
+          paid_account_details << [subscription.account_id, subscription.subscription_plan_id ] if amount_paid <= 100
         end
       end
     end
