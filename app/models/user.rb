@@ -938,6 +938,10 @@ class User < ActiveRecord::Base
     company_names.join(" || ")
   end
 
+  def emails_for_export
+    self.emails.join(" || ")
+  end
+
   def client_managers_for_export
     user_companies.map(&:client_manager).join(" || ")
   end
