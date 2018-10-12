@@ -68,7 +68,7 @@ class NotificationPreview
       new_value = ""
       if message_preview_hash[placeholder].present?
         new_value = message_preview_hash[placeholder].to_s
-        new_value = new_value.gsub("<yourdomain>.freshdesk.com", account.full_domain)
+        new_value = new_value.gsub("<yourdomain>.freshdesk.com", (Portal.current.present? ? Portal.current.host : Account.current.host))
         new_value = new_value.gsub("<current agent’s name>", User.current.name)
       end
       notification_body = notification_body.gsub('{{' + placeholder + '}}', new_value)
