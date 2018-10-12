@@ -7544,11 +7544,15 @@ en:
     no_tickets_mail:
       body: Seems like there are no tickets in the provided date range.
     customer_export:
+      subject: "%{type} export for %{domain}"
       body: "The %{field} export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
+      note: "This link will expire in 15 days."
+      limit_reached: "We're still generating the previous export. Retry when it's complete."
     ticket_export:
       info: Your Ticket data will be sent to your email shortly!
       subject: Export of tickets %{filter} within ( %{start_date} to %{end_date} ) for  %{domain}
       body: "The ticket export you had requested is complete. You can download the file from <a href=%{url}>here</a>. If the link does not work, copy and paste the URL below in your browser's address bar:"
+      note: "This link will expire in 15 days."
       limit_reached: Cannot run more than %{max_limit} ticket exports per agent at a time. Please try again later.
     archive_ticket_export:
       limit_reached: Cannot run more than %{max_limit} archived ticket exports per account at a time. Please try again later.
@@ -11982,9 +11986,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         invalid_name: "Invalid company name"
         required_name: "Enter company name"
   unique_external_id:
-    helpcard:
-      title: "Unique External Id"
-      info: Use a single ID across all your systems to identify a customer, makes it easier to track and find the right customer information when you need it. <br><a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank">Help me set up an external ID</a>
+    helpcard: 
+      title: "Unique External ID"
+      info: Import your customers’ unique IDs and easily identify their conversations in Freshdesk. <br><a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank">Help me set up external ID</a>
 
   requester_fields_updated: The requester widget has been updated.
   select_requester: "Please select requester"
