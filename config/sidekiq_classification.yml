@@ -37,6 +37,7 @@
     - toggle_agent_from_all_roundrobin_groups
     - twitter_reply
     - default_data_population
+    - undo_send
 
   :central_realtime:
     - central_publish
@@ -62,7 +63,6 @@
     - block_account
     - check_bot_training
   :occasional:
-    - undo_send
     - plan_change_workerv2
     - merge_contacts
     - plan_change

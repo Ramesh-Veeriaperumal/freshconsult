@@ -22,7 +22,8 @@ class Tickets::UndoSendWorker < BaseWorker
       note = build_note(note_schema_less_associated_attributes, attachment_list,
                         inline_attachment_list, user_id,
                         ticket_id, created_at, note_basic_attributes)
-      note.save_note if note.present?
+      saved = note.save_note if note.present?
+      send_newrelic_exception(account_id, user_id, ticket_id, created_at, StandardError.new('SaveError')) unless saved
       if publish_solution_later
         publish_solution(note.note_body.body_html, ticket_id, note.attachments)
       end
@@ -30,8 +31,7 @@ class Tickets::UndoSendWorker < BaseWorker
     end
     delete_undo_choice(user_id, ticket_id, created_at)
   rescue Exception => e
-    NewRelic::Agent.notice_error(e,
-                                 args: "#{account_id}:#{user_id}:#{ticket_id}:undosend:#{created_at}")
+    send_newrelic_exception(account_id, user_id, ticket_id, created_at, e)
     raise e
   ensure
     remove_undo_reply_enqueued(ticket_id)
@@ -72,5 +72,10 @@ class Tickets::UndoSendWorker < BaseWorker
             end
     Helpdesk::KbaseArticles
       .create_article_from_note(Account.current, user_id, title, body_html, attachments)
+  end
+
+  def send_newrelic_exception(account_id, user_id, ticket_id, created_at, exception)
+    NewRelic::Agent.notice_error(exception,
+                                 args: "#{account_id}:#{user_id}:#{ticket_id}:undosend:#{created_at}")
   end
 end
