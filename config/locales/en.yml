@@ -6017,6 +6017,7 @@ en:
   facebook:
     add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
+    facebook_user_blocked: "Facebook isn't allowing us to send your reply."
     error_on_reply_fb: "Your reply could not be posted on your Facebook page. Please try again later or check with your admin."
     page_already_subscribed: "Some of the facebook pages you are trying to add is already linked to an freshdesk account."
     no_subscription_response: "Couldn't connect with facebook. Please try again after some time."

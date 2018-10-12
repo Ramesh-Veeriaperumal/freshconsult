@@ -87,7 +87,8 @@ module Ember
       assign_note_attributes
       @delegator_klass = 'FbReplyDelegator'
       return unless validate_delegator(@item, note_id: @note_id)
-      is_success = reply_to_fb_ticket(@delegator.note)
+      reply_sent = reply_to_fb_ticket(@delegator.note)
+      is_success = (reply_sent == :fb_user_blocked) || (reply_sent == :failure)  ? false : reply_sent
       render_response(is_success)
     end
 
@@ -239,15 +240,21 @@ module Ember
         return unless @item.save_note
         fb_page     = @ticket.fb_post.facebook_page
         parent_post = note || @ticket
-        reply_sent = begin
-          if @ticket.is_fb_message?
-            send_reply(fb_page, @ticket, @item, POST_TYPE[:message])
-          else
-            send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
-          end
+        reply_sent = send_reply_to_fb(fb_page, parent_post)
+        if reply_sent == :fb_user_blocked
+          @item.errors[:body] << :facebook_user_blocked
+        else
+          @item.errors[:body] << :unable_to_perform
         end
-        @item.errors[:body] << :unable_to_perform unless reply_sent
         reply_sent
+      end
+
+      def send_reply_to_fb(fb_page, parent_post)
+          if @ticket.is_fb_message?
+            return send_reply(fb_page, @ticket, @item, POST_TYPE[:message])
+          else
+            return send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
+          end
       end
 
       def assign_note_attributes

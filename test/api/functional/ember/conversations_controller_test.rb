@@ -576,12 +576,22 @@ module Ember
 
     def test_facebook_reply_failure
       ticket = create_ticket_from_fb_post
-      Facebook::TicketActions::Util.stubs(:send_reply).returns(false)
+      @controller.stubs(:send_reply_to_fb).returns(:failure)
       params_hash = { body: Faker::Lorem.paragraph }
       post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('body', :unable_to_perform)])
-      Facebook::TicketActions::Util.unstub(:send_reply)
+      @controller.unstub(:send_reply_to_fb)    
+    end
+
+   def test_facebook_reply_to_fb_dm_ticket_when_user_blocked
+      ticket = create_ticket_from_fb_direct_message
+      @controller.stubs(:send_reply_to_fb).returns(:fb_user_blocked)
+      params_hash = { body: "Note content" }
+      res = post :facebook_reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('body', :facebook_user_blocked)])
+      @controller.unstub(:send_reply_to_fb)
     end
 
     def test_facebook_reply_to_fb_post_ticket

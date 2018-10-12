@@ -133,7 +133,11 @@ module Facebook
           rest = Koala::Facebook::API.new(fan_page.access_token)
           rest.get_object(profile_id,{:fields => PROFILE_NAME_FIELDS}).symbolize_keys
         end
-        user ? "#{user[:first_name]} #{user[:last_name]}" : ""
+        if ERRORS.include?(user)
+          ""
+        else
+          "#{user[:first_name]} #{user[:last_name]}"
+        end
       end
 
     end
