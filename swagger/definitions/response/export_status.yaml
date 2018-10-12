@@ -1,0 +1,9 @@
+type: object
+allOf:
+  - properties:
+      id:
+        type: string
+      status:
+        type: string
+      download_url:
+        type: string

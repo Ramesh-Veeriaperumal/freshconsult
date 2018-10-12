@@ -109,9 +109,6 @@ module Ember
       end
     end
 
-    def export_csv
-      head 204 if contact_company_export_csv(cname)
-    end
 
     def timeline
       items = HyperTrail::Timeline.new(params.merge!(type: cname).to_h).fetch

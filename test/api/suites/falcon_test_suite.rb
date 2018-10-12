@@ -13,7 +13,8 @@ integration_test = [
   'test/api/integration/flows/company_fields_flows_test.rb',
   'test/api/integration/flows/contact_fields_flows_test.rb',
   'test/api/integration/flows/ticket_fields_flows_test.rb',
-  'test/api/integration/flows/surveys_flows_test.rb'
+  'test/api/integration/flows/surveys_flows_test.rb',
+  'test/api/integration/flows/sla_flow_test.rb'
 ]
 
 sidekiq_tests = Dir.glob('test/api/sidekiq/*_test.rb')

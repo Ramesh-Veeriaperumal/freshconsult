@@ -1,14 +1,16 @@
 type: object
 properties:
-  default_fields:
-    type: array
-    items: 
-      type : string
-      enum: ["name", "description", "domains", "notes", "health_score", "account_tier", "industry", "renewal_date"] 
-      uniqueItems: true
-  custom_fields:
-    type: array
-    items:
-      type: string
-      uniqueItems: true
-  
+  fields:
+    type: object
+    properties:
+      default_fields:
+        type: array
+        items: 
+          type : string
+          enum: ["name", "description", "domains", "notes", "health_score", "account_tier", "industry", "renewal_date"] 
+          uniqueItems: true
+      custom_fields:
+        type: array
+        items:
+          type: string
+          uniqueItems: true

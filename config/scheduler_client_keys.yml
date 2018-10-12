@@ -3,7 +3,7 @@ common: &common
   token: 5d22173692589c423223f06307a0bdcb
   group_name: helpkit_test
   todo_group_name: helpkit_todo_reminder
-  
+  export_group_name: helpkit_export_cleanup
 development:
   <<: *common
 staging:

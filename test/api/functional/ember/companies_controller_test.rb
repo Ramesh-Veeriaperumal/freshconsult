@@ -425,67 +425,6 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     assert_response 204
   end
 
-  def test_export_csv_with_no_params
-    BULK_CREATE_COMPANY_COUNT.times do
-      create_company
-    end
-    company_form = @account.company_form
-    post :export_csv, construct_params({version: 'private'}, {})
-    assert_response 400
-    match_json([bad_request_error_pattern(:request, :select_a_field)])
-  end
-
-  def test_export_csv_with_invalid_params
-    BULK_CREATE_COMPANY_COUNT.times do
-      create_company
-    end
-    company_form = @account.company_form
-    params_hash = { default_fields: [Faker::Lorem.word], custom_fields: [Faker::Lorem.word] }
-    post :export_csv, construct_params({version: 'private'}, params_hash)
-    assert_response 400
-    match_json([bad_request_error_pattern(:default_fields, :not_included, list: (company_form.default_company_fields.map(&:name)).join(',')),
-                bad_request_error_pattern(:custom_fields, :not_included, list: (company_form.custom_company_fields.map(&:name).collect { |x| x[3..-1] }).join(','))])
-  end
-
-  def test_export_csv_sidekiq
-    create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Location', editable_in_signup: 'true'))
-    create_company_field(company_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Area of specification', editable_in_signup: 'true'))
-
-    BULK_CREATE_COMPANY_COUNT.times do
-      create_company(@account)
-    end
-
-    default_fields = @account.company_form.default_company_fields
-    custom_fields = @account.company_form.custom_company_fields
-    Export::CompanyWorker.jobs.clear
-    params_hash = { default_fields: default_fields.map(&:name), custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } }
-    post :export_csv, construct_params({version: 'private'}, params_hash)
-    assert_response 204
-    sidekiq_jobs = Export::CompanyWorker.jobs
-    assert_equal 1, sidekiq_jobs.size
-    csv_hash = (default_fields | custom_fields).collect{ |x| { x.label => x.name } }.inject(&:merge)
-    assert_equal csv_hash, sidekiq_jobs.first["args"][0]["csv_hash"]
-    assert_equal User.current.id, sidekiq_jobs.first["args"][0]["user"]
-    Export::CompanyWorker.jobs.clear
-  end
-
-  def test_export_csv_resque
-    create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Location', editable_in_signup: 'true'))
-    create_company_field(company_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Area of specification', editable_in_signup: 'true'))
-
-    BULK_CREATE_COMPANY_COUNT.times do
-      create_company(@account)
-    end
-
-    default_fields = @account.company_form.default_company_fields
-    custom_fields = @account.company_form.custom_company_fields
-    Resque.inline = true
-    params_hash = { default_fields: default_fields.map(&:name), custom_fields: custom_fields.map(&:name).collect { |x| x[3..-1] } }
-    post :export_csv, construct_params({version: 'private'}, params_hash)
-    assert_response 204
-    Resque.inline = false
-  end
-
   def test_create_with_invalid_email_and_custom_field
     field = { type: 'text', field_type: 'custom_text', label: 'note'}
     params = company_params(field)

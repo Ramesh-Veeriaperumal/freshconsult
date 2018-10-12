@@ -5,6 +5,8 @@ class Dashboard::AdminRedshiftWidget < Dashboards
   DASHBOARD_METRICS = "DASHBOARD_METRICS"
   DASHBOARD_TRENDS  = "DASHBOARD_TRENDS"
 
+  REPORTS_TIMEOUT = 5
+
   attr_accessor :req_params
 
   def initialize params
@@ -46,7 +48,7 @@ class Dashboard::AdminRedshiftWidget < Dashboards
   end
 
   def process_results
-    received, expiry, dump_time = Dashboard::RedshiftRequester.new(req_params).fetch_records
+    received, expiry, dump_time = Dashboard::RedshiftRequester.new(req_params, REPORTS_TIMEOUT).fetch_records
     return redshift_error_response if is_redshift_error?(received)
     result = received[0]
     data = result["result"]
@@ -58,7 +60,7 @@ class Dashboard::AdminRedshiftWidget < Dashboards
     req_params[:time_trend]               = true
     req_params[:time_trend_conditions]    = ['h']
     req_params[:reference]                = true
-    received, expiry, dump_time = Dashboard::RedshiftRequester.new(req_params).fetch_records
+    received, expiry, dump_time = Dashboard::RedshiftRequester.new(req_params, REPORTS_TIMEOUT).fetch_records
     return redshift_error_response if is_redshift_error?(received)
     result = received[0]
     data = result["result"]

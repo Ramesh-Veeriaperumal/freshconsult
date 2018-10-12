@@ -6,6 +6,7 @@ class ContactsController < ApplicationController
    include UserHelperMethods
    include Redis::RedisKeys
    include Redis::OthersRedis
+   include Export::Util
 
    before_filter :redirect_to_mobile_url
    before_filter :set_ui_preference, :only => [:show]
@@ -32,7 +33,8 @@ class ContactsController < ApplicationController
    before_filter :set_validatable_custom_fields, :only => [:create, :update, :create_contact, :update_contact]
    before_filter :restrict_user_primary_email_delete, :only => :update_contact
    before_filter :check_agent_deleted_forever, :only => [:restore]
-  
+   before_filter :export_limit_reached?, only: [:export_csv]
+
   def index
     respond_to do |format|
       format.html do
@@ -177,9 +179,12 @@ class ContactsController < ApplicationController
 
   def export_csv
     portal_url = main_portal? ? current_account.host : current_portal.portal_url
-    export_worker_params = {:csv_hash => params[:export_fields], 
-                                            :user => current_user.id, 
-                                            :portal_url => portal_url}
+    create_export 'contact'
+    file_hash @data_export.id
+    export_worker_params = { csv_hash: params[:export_fields],
+                             user: current_user.id,
+                             portal_url: portal_url,
+                             data_export: @data_export.id }
     Export::ContactWorker.perform_async(export_worker_params)
     flash[:notice] = t(:'contacts.export_start')
     redirect_to :back
@@ -478,6 +483,13 @@ protected
     def validate_state_param
       #whitelisting contacts filter param
       render :nothing => true, :status => 400 if params[:state] && !User::USER_FILTER_TYPES.include?(params[:state])
+    end
+
+    def export_limit_reached?
+      if DataExport.contact_export_limit_reached?
+        flash[:notice] = I18n.t('export_data.customer_export.limit_reached')
+        redirect_to contacts_path
+      end
     end
 
     def fetch_contacts

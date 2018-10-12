@@ -1,0 +1,18 @@
+get:
+  tags: [contact]
+  summary: Export status
+  description: Responds with status details of export based on token.
+  parameters:
+    - name: id
+      type: integer
+      description: token of data export
+      in: path
+      format: int64
+      required: true
+  responses:
+    200:
+      description: Status of the export
+      schema:
+        $ref: '#/definitions/export_status_response'
+    404:
+      description: Data Export not found

@@ -6,7 +6,6 @@ class Dashboard::Custom::TicketTrendCard < Dashboards
   CONFIG_FIELDS = [:group_ids, :product_id, :metric, :date_range].freeze
 
   CACHE_EXPIRY = 3600
-  REFRESH_INTERVAL = 30
 
   METRICS_MAPPING = {
     1 => 'RECEIVED_TICKETS',
@@ -28,17 +27,13 @@ class Dashboard::Custom::TicketTrendCard < Dashboards
 
   private
 
-    # def cache_custom_dashboard_metric
-    #   redshift_cache_data CUSTOM_DASHBOARD_METRIC, "process_custom_dashboard_results", "redshift_custom_dashboard_cache_identifier"
-    # end
-
     def fetch_widgets_redshift_data
       return unless @dashboard
       @widgets = @dashboard.ticket_trend_card_widgets_from_cache
-      return [] if @widgets.length < 1
+      return [] if @widgets.empty?
       redshift_req_params = @widgets.map { |widget| fetch_redshift_req_params(widget.config_data) }
       result = fetch_redshift_data(redshift_req_params)
-      return result if result[:error]
+      return result if result[:error] # Error is cached to prevent further hits. Has to be handled better
       @widgets.each_with_index.map do |widget, i|
         {
           id: widget.id,

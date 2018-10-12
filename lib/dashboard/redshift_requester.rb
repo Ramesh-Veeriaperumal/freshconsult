@@ -4,14 +4,18 @@ class Dashboard::RedshiftRequester
   
   REFRESH_FREQUENCY = 30
 
-  def initialize params
+  def initialize(params, timeout = nil)
     @query_params = query_params params
+    @timeout  = timeout  # Dashboard queries have 5 seconds
   end
 
   def fetch_records
-    result = bulk_request(@query_params, true)
+    result = bulk_request(@query_params, true, @timeout)
     expiry = cache_expire_time result
-    result = [error_message] if error_in_response?(result)
+    if error_in_response?(result)
+      Rails.logger.info("Error in reports request :: #{result.inspect}")
+      result = [error_message]
+    end
     dump_time = last_redshift_dump_time(result)
     [result, expiry, dump_time]
   end

@@ -2,7 +2,7 @@ class AccountActivation::RemoveRestrictionsWorker < BaseWorker
 	include Sidekiq::Worker
 	sidekiq_options :queue => :activation_worker, :retry => 5, :backtrace => true, :failures => :exhausted
 
-	def perform
+	def perform(args = {})
 		activate_notifications
 		activate_restricted_rules
 	rescue Exception => e

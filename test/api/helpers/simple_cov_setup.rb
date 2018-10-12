@@ -42,6 +42,13 @@ module SimpleCovSetup
   }.freeze
 
   SimpleCov.start do
+    # Adding exact filters
+    add_filter 'app/mailers'
+    add_filter 'app/controllers/helpdesk'
+    add_filter 'app/controllers/integrations'
+    add_filter 'app/controllers/freshfone'
+    add_filter 'app/helpers/freshfone'
+
     add_filter SimpleCov::StringFilter.new("^((?!#{root}/(api|lib|app\/models|app\/workers|app\/observers|app\/drops|app\/helpers)\/).)*$")
     # add_filter SimpleCov::StringFilter.new("^((?!#{root}/app\/workers).)*$")
     # add_filter SimpleCov::StringFilter.new("^((?!#{root}/app\/observers).)*$")

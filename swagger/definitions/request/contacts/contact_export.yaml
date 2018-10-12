@@ -1,13 +1,18 @@
 type: object
 properties:
-  default_fields:
-    type: array
-    items:
-      type: string
-      enum: ["address", "company_id", "description", "email", "job_title", "language", "mobile", "name", "phone", "time_zone", "twitter_id", "other_emails", "tags"]
-      uniqueItems: true
-  custom_fields:
-    type: array
-    items:
-      type: string
-      uniqueItems: true
+  fields:
+    type: object
+    properties:
+      default_fields:
+        type: array
+        items:
+          type: string
+          enum: ["address", "company_id", "description", "email", "job_title",
+                 "language", "mobile", "name", "phone", "time_zone", "twitter_id",
+                 "other_emails", "tags", "unique_external_id"]
+          uniqueItems: true
+      custom_fields:
+        type: array
+        items:
+          type: string
+          uniqueItems: true

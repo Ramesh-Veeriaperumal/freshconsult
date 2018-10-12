@@ -90,6 +90,8 @@ Helpkit::Application.routes.draw do
       end
       collection do
         post :merge, to: 'contacts/merge#merge'
+        post :export, to: 'contacts/misc#export'
+        get 'export/:id', to: 'contacts/misc#export_details'
       end
     end
 
@@ -121,6 +123,14 @@ Helpkit::Application.routes.draw do
 
     match 'export/ticket_activities' => 'export#ticket_activities', :defaults => { format: 'json' }, :as => :ticket_activities, via: :get
     match 'rake_task/run_rake_task' => 'rake_task#run_rake_task', :defaults => { format: 'json' }, :as => :run_rake_task, via: :get
+
+    resources :automation_essentials, only: [] do
+      collection do
+        get :lp_launched_features
+        put :lp_launch
+        put :lp_rollback
+      end
+    end
 
     # Feedbacks about the product
     resources :product_feedback, controller: 'ember/product_feedback', only: [:create]
@@ -175,7 +185,12 @@ Helpkit::Application.routes.draw do
 
     resources :business_hours, controller: 'api_business_hours', only: [:index, :show]
 
-    resources :companies, as: 'api_companies', controller: 'api_companies', except: [:new, :edit]
+    resources :companies, as: 'api_companies', controller: 'api_companies', except: [:new, :edit] do
+      collection do
+        post :export, to: 'companies/misc#export'
+        get 'export/:id', to: 'companies/misc#export_details'
+      end
+    end
 
     resources :company_fields, as: 'api_company_fields', controller: 'api_company_fields', only: [:index]
 
@@ -402,7 +417,6 @@ Helpkit::Application.routes.draw do
         put :bulk_restore
         put :bulk_send_invite
         put :bulk_whitelist
-        post :export_csv
         get :import, to: 'ember/customer_imports#index'
         post :import, to: 'ember/customer_imports#create'
         delete :import, to: 'ember/customer_imports#destroy'
@@ -424,7 +438,6 @@ Helpkit::Application.routes.draw do
     resources :companies, controller: 'ember/companies', only: [:index, :show, :create, :update] do
       collection do
         put :bulk_delete
-        post :export_csv
         get :import, to: 'ember/customer_imports#index'
         post :import, to: 'ember/customer_imports#create'
         get :import_status, to: 'ember/customer_imports#status'

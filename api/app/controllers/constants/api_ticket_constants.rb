@@ -95,7 +95,7 @@ module ApiTicketConstants
   BULK_ACTION_ASYNC_METHODS = [:bulk_execute_scenario, :bulk_update, :delete_forever, :bulk_delete, :bulk_spam, :bulk_restore, :bulk_unspam].freeze
   BULK_ACTION_METHODS = [:bulk_link, :bulk_unlink] + BULK_ACTION_ASYNC_METHODS
 
-  LOAD_OBJECT_EXCEPT = (BULK_ACTION_METHODS + [:merge, :empty_trash, :empty_spam]).freeze
+  LOAD_OBJECT_EXCEPT = (BULK_ACTION_METHODS + [:merge, :empty_trash, :empty_spam, :export_csv]).freeze
 
   MAX_EMAIL_COUNT = TicketConstants::MAX_EMAIL_COUNT - 1
 

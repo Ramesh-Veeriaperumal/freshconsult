@@ -328,6 +328,11 @@
   customer_note_response:
     $ref: ./response/customer_note.yaml
 
+  export_response:
+    $ref: ./response/export.yaml
+  export_status_response:
+    $ref: ./response/export_status.yaml
+
   watchers:
     $ref: ./response/tickets/watchers.yaml
   latest_note:

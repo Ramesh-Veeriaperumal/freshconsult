@@ -398,11 +398,11 @@ module HelpdeskReports::Helper::Ticket
     @real_time_export = REAL_TIME_REPORTS_EXPORT
   end
 
-  def bulk_request(req_params, web_request = false)
+  def bulk_request(req_params, web_request = false, timeout = nil)
     begin
       # response = RestClient.post url, req_params.to_json, :content_type => :json, :accept => :json
       url = get_reports_service_url web_request
-      timeout = web_request ? ReportsAppConfig::WEB_REQ_TIMEOUT : ReportsAppConfig::BG_REQ_TIMEOUT
+      timeout ||= web_request ? ReportsAppConfig::WEB_REQ_TIMEOUT : ReportsAppConfig::BG_REQ_TIMEOUT
       response = RestClient::Request.new(
         method: :post,
         url: url,
@@ -412,6 +412,7 @@ module HelpdeskReports::Helper::Ticket
 
       JSON.parse(response.body)
     rescue => e
+      NewRelic::Agent.notice_error(e)
       [{"errors" => e.inspect}]
     end
   end
