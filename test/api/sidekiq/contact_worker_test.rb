@@ -6,12 +6,16 @@ Sidekiq::Testing.fake!
 
 require Rails.root.join('test', 'api', 'helpers', 'search_test_helper.rb')
 
-class CompanyWorkerTest < ActionView::TestCase
+class ContactWorkerTest < ActionView::TestCase
   include SearchTestHelper
 
   def setup
     @account = Account.first.make_current
     @contact = create_search_contact(contact_params_hash)
+  end
+
+  def teardown
+    @contact.destroy
   end
 
   def contact_params_hash
@@ -26,19 +30,24 @@ class CompanyWorkerTest < ActionView::TestCase
   end
 
   def test_index
+    export_entry = @account.data_exports.new(
+                            :source => DataExport::EXPORT_TYPE["contact".to_sym], 
+                            :user => User.current,
+                            :status => DataExport::EXPORT_STATUS[:started]
+                            )
+    export_entry.save
+    hash = Digest::SHA1.hexdigest("#{export_entry.id}#{Time.now.to_f}")
+    export_entry.save_hash!(hash)
     args = { csv_hash: { 'Full name' => 'name', 'Title' => 'job_title', 'Email' => 'email', 'Work phone' => 'phone', 'Mobile phone' => 'mobile', 'Twitter' => 'twitter_id', 'Company' => 'company_name', 'Address' => 'address', 'Time zone' => 'time_zone', 'Language' => 'language', 'About' => 'description', 'Can see all tickets from this company' => 'client_manager', 'Unique external ID' => 'unique_external_id' },
              user: @account.users.first.id,
-             portal_url: 'localhost.freshpo.com' }
+             portal_url: 'localhost.freshpo.com', data_export: export_entry.id }
     User.current = Account.current.users.first
-    Export::Util.stubs(:build_attachment).returns(true)
     Export::ContactWorker.new.perform(args)
-    data_export = @account.data_exports.last
-    assert_equal data_export.status, DataExport::EXPORT_STATUS[:completed]
-    assert_equal data_export.source, DataExport::EXPORT_TYPE[:contact]
-    assert_equal data_export.last_error, nil
-    data_export.destroy
-    @contact.destroy
+    export_entry.reload
+    assert_equal export_entry.status, DataExport::EXPORT_STATUS[:completed]
+    assert_equal export_entry.source, DataExport::EXPORT_TYPE[:contact]
+    assert_equal export_entry.last_error, nil
   ensure
-    Export::Util.unstub(:build_attachment)
+    export_entry.destroy
   end
 end

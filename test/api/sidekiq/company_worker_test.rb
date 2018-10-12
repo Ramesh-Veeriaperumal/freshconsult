@@ -14,6 +14,10 @@ class CompanyWorkerTest < ActionView::TestCase
     @company = create_search_company(company_params_hash)
   end
 
+  def teardown
+    @company.destroy
+  end
+
   def company_params_hash
     name = Faker::Company.name
     description = Faker::Lorem.sentence
@@ -24,19 +28,24 @@ class CompanyWorkerTest < ActionView::TestCase
   end
 
   def test_index
+    export_entry = @account.data_exports.new(
+                            :source => DataExport::EXPORT_TYPE["company".to_sym], 
+                            :user => User.current,
+                            :status => DataExport::EXPORT_STATUS[:started]
+                            )
+    export_entry.save
+    hash = Digest::SHA1.hexdigest("#{export_entry.id}#{Time.now.to_f}")
+    export_entry.save_hash!(hash)
     args  = { csv_hash: { 'Company Name' => 'name', 'Description' => 'description', 'Notes' => 'note', 'Domains for this company' => 'domains', 'Health score' => 'health_score', 'Account tier' => 'account_tier', 'Renewal date' => 'renewal_date', 'Industry' => 'industry' },
               user: @account.users.first.id,
-              portal_url: 'localhost.freshpo.com' }
+              portal_url: 'localhost.freshpo.com', data_export: export_entry.id }
     User.current = Account.current.users.first
-    Export::Util.stubs(:build_attachment).returns(true)
     Export::CompanyWorker.new.perform(args)
-    data_export = @account.data_exports.last
-    assert_equal data_export.status, DataExport::EXPORT_STATUS[:completed]
-    assert_equal data_export.source, DataExport::EXPORT_TYPE[:company]
-    assert_equal data_export.last_error, nil
-    data_export.destroy
-    @company.destroy
+    export_entry.reload
+    assert_equal export_entry.status, DataExport::EXPORT_STATUS[:completed]
+    assert_equal export_entry.source, DataExport::EXPORT_TYPE[:company]
+    assert_equal export_entry.last_error, nil
   ensure
-    Export::Util.unstub(:build_attachment)
+    export_entry.destroy
   end
 end
