@@ -44,7 +44,7 @@ class ApiApplicationController < MetalApiController
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone, :set_msg_id
   before_filter :force_utf8_params
   before_filter :set_cache_buster
-  before_filter :check_falcon, if: :private_api?
+
   include AuthenticationSystem
   include HelpdeskSystem
   include SubscriptionSystem
@@ -870,12 +870,6 @@ class ApiApplicationController < MetalApiController
 
     def import_api?
       params[:import_id].present?
-    end
-
-    def check_falcon
-      return if current_account.falcon_ui_enabled?
-      Rails.logger.debug "Private API attempted without enabling FalconUI. Domain: #{current_account.full_domain} | Controller: #{params[:controller]} | Action: #{params[:action]} "
-      head 404
     end
 
     def run_on_db

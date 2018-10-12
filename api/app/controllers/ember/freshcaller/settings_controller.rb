@@ -3,7 +3,6 @@ class Ember::Freshcaller::SettingsController < ApiApplicationController
   include ApplicationHelper
   include ::Freshcaller::Endpoints
   before_filter :check_freshcaller_account, only: [:redirect_url]
-  skip_before_filter :check_falcon, only: [:index]
 
   def index
     @settings = {
