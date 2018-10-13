@@ -108,6 +108,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
     } unless products.blank?
   }
 
+  scope :created_in_last_twenty_days, conditions: [" updated_at > ? ", 20.days.ago]
+
   #************************** Archive scope ends here *****************************#
 
   include RabbitMq::Publisher

@@ -91,7 +91,7 @@ class Admin::TrialSubscriptionsControllerTest < ActionController::TestCase
     assert_response 204
   end
 
-  def test_latest_trial_subscription_ends_at
+  def test_400_while_creating_trial_within_interval_period
     params_hash = { trial_plan: get_valid_plan_name }
     post :create, construct_params({}, params_hash)
     assert_response 204
@@ -150,5 +150,25 @@ class Admin::TrialSubscriptionsControllerTest < ActionController::TestCase
     params_hash = { trial_plan: get_valid_plan_name }
     post :create, construct_params({}, params_hash)
     assert_response 403
+  end
+
+  def test_usage_metrics
+    features = ['skill_based_round_robin', 'email_notification', 'custom_dashboard']
+    get :usage_metrics, controller_params(version: 'private', 
+      features: features.join(','))
+    assert_response 200
+    data = JSON.parse(response.body)
+    assert_equal 3, data.count
+    data.keys.all?{ |key| features.include? key }
+    data.values.each{ |result| assert_include [true, false], result }  
+  end
+
+  def test_usage_metrics_for_all_features
+    list = UsageMetrics::Features::FEATURES_LIST + 
+      UsageMetrics::Features::FEATURES_TRUE_BY_DEFAULT
+    shard = ShardMapping.lookup_with_account_id(Account.current.id)
+    result_array = UsageMetrics::Features.metrics(Account.current, shard, list)
+    result_array.values.each{ |result| assert_include [true, false], result }
+    result_array.keys.each{ |result| assert_include list, result }
   end
 end

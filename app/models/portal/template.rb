@@ -54,6 +54,10 @@ class Portal::Template < ActiveRecord::Base
   TEMPLATE_MAPPING_FILE_BY_TOKEN_FALCON = Hash[*TEMPLATE_MAPPING_FALCON.map { |i| [i[0], i[1]] }.flatten]
   TEMPLATE_OPTIONS_FALCON = TEMPLATE_MAPPING_FALCON.map { |i| i[0] }
 
+  def self.has_custom_css?
+    where('custom_css is not null'.freeze).exists?
+  end
+
   # Set of prefrences data that will be used during template creation
   def default_preferences
     if Account.current and (Account.current.falcon_support_portal_theme_enabled? || self.portal.falcon_portal_enable?)

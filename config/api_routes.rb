@@ -250,6 +250,7 @@ Helpkit::Application.routes.draw do
     resources :trial_subscription, controller: 'admin/trial_subscriptions', only: [:create] do
       collection do
         put :cancel
+        get :usage_metrics
       end
     end
 

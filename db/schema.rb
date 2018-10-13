@@ -11,8 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 20180821052830) do
+ActiveRecord::Schema.define(version: 20181008070830) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2730,6 +2729,7 @@ ActiveRecord::Schema.define(version: 20180821052830) do
   add_index "helpdesk_time_sheets", ["account_id"], :name => "index_time_sheets_on_account_id_and_ticket_id"
   add_index "helpdesk_time_sheets", ["user_id"], :name => "index_time_sheets_on_user_id"
   add_index "helpdesk_time_sheets", ["workable_type", "workable_id"], :name => "index_helpdesk_sheets_on_workable"
+  add_index "helpdesk_time_sheets", ["account_id", "created_at"], :name => "index_helpdesk_sheets_on_account_id_and_created_at"
 
   create_table "imap_mailboxes", :force => true do |t|
     t.integer  "email_config_id",    :limit => 8

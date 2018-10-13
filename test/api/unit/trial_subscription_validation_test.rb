@@ -15,4 +15,27 @@ class TrialSubscriptionsValidationTest < ActionView::TestCase
     errors = trial_subscription_validation.errors.full_messages
     assert errors.include?('Trial plan datatype_mismatch')
   end
+
+  def test_usage_metrics_for_features_too_long_error
+    trial_subscription_validation = TrialSubscriptionsValidation.new({ 
+      features: (UsageMetrics::Features::FEATURES_LIST + 
+        UsageMetrics::Features::FEATURES_TRUE_BY_DEFAULT) }, nil)
+    refute trial_subscription_validation.valid?(:usage_metrics)
+    errors = trial_subscription_validation.errors.full_messages
+    assert errors.include?('Features too_long')
+  end
+
+  def test_usage_metrics_for_invalid_feature
+    trial_subscription_validation = TrialSubscriptionsValidation.new({ 
+      features: [ :test_feature ] }, nil)
+    refute trial_subscription_validation.valid?(:usage_metrics)
+    errors = trial_subscription_validation.errors.full_messages
+    assert errors.include?('Features not_included')
+  end
+
+  def test_usage_metrics_for_valid_feature
+    trial_subscription_validation = TrialSubscriptionsValidation.new({ 
+      features: [:parent_child_tickets_toggle, :scenario_automations] }, nil)
+    assert trial_subscription_validation.valid?(:usage_metrics)
+  end
 end

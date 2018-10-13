@@ -123,6 +123,11 @@ class Group < ActiveRecord::Base
   CAPPING_LIMIT_OPTIONS = (2..MAX_CAPPING_LIMIT).map { |i| 
     ["#{i} #{I18n.t("group.capping_tickets")}", i] 
     }.insert(0, ["1 #{I18n.t("group.capping_ticket")}", 1])
+  NON_DEFAULT_BUSINESS_HOURS = { 'business_calendars.is_default': false }
+
+  def self.has_different_business_hours?
+    joins(:business_calendar).where(NON_DEFAULT_BUSINESS_HOURS).exists?
+  end
   
   def excluded_agents(account)      
    return account.users.find(:all , :conditions=>['helpdesk_agent = true and id not in (?)',agents.map(&:id)]) unless agents.blank? 
