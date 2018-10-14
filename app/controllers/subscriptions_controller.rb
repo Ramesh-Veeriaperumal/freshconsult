@@ -86,6 +86,7 @@ class SubscriptionsController < ApplicationController
   end
 
   def show
+    @selected_plan = params['plan']
     @offline_subscription = scoper.offline_subscription?
     @invoice = scoper.subscription_invoices.last unless @offline_subscription or scoper.affiliate.present?
   end
