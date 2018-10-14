@@ -542,7 +542,7 @@ class Subscription < ActiveRecord::Base
 
     def update_crm
       if autopilot_fields_changed? and (Rails.env.staging? or Rails.env.production?)
-        Subscriptions::UpdateLeadToAutopilot.perform_async
+        Subscriptions::UpdateLeadToAutopilot.perform_async(event: ThirdCRM::EVENTS[:subscription])
       end
     end
 

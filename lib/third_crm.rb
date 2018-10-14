@@ -1,4 +1,8 @@
 class ThirdCRM
+  EVENTS = {
+    subscription: 'subscription',
+    trial_subscription: 'trial_subscription'
+  }
   PRODUCT_NAME = "Freshdesk"
 
   ADD_LEAD_WAIT_TIME = 5
@@ -39,15 +43,21 @@ class ThirdCRM
         'string--Customer--Status' => :state, 'integer--Renewal--Period' => :renewal_period}
     }
 
+  TRIAL_SUBSCRIPTION_ACTION_TYPE_TO_UPSELL_STATUS = {
+    activate: 'true',
+    cancel: 'false'
+  }
+
   def add_signup_data(account, options = {})
     @signup_id = options[:signup_id]
     @old_email = options[:old_email]
     add_lead_to_crm(lead_info(account))
   end
 
-  def update_subscription_data(account)
-    contact_data = subscription_info(account.subscription)
-    update_lead(contact_data.merge({"Email" => account.admin_email}))
+  def add_or_update_contact(account, args)
+    contact_data = safe_send("#{args[:event]}_info", account, args)
+    contact_data.merge(Email: account.admin_email) unless contact_data[:Email]
+    update_lead(contact_data)
   end
 
   def mark_as_deleted_customer
@@ -67,15 +77,28 @@ class ThirdCRM
     end
 
     account_info = user_info(account)
-    subscription_info = subscription_info(account.subscription)
+    subscription_info = subscription_info(account)
     misc = account.conversion_metric ? signup_info(account.conversion_metric) : {'default' => {}, 'custom' => {}}
     lead_details = account_info['default'].merge(misc['default'])
     lead_details["custom"] = account_info['custom'].merge(subscription_info['custom']).merge(misc['custom'])
     {"contact" => lead_details}
   end
 
-
   private
+
+    def trial_subscription_info(account, args)
+      status = TRIAL_SUBSCRIPTION_ACTION_TYPE_TO_UPSELL_STATUS[args[:action_type].to_sym]
+      { 
+        custom: {
+          'string--Upsell--Account--URL': account.full_url,
+          'string--Upsell--Account--ID': account.id.to_s,
+          'boolean--Upsell--Status': status,
+          'string--Upsell--Plan': args[:plan],
+        },
+        Email: args[:email],
+        LastName: args[:name]
+      }
+    end
 
     def add_lead_to_crm(lead_record)
       trigger_url = AUTOPILOT_TOKENS['contact_with_trigger_url']  % {:trigger_code => AUTOPILOT_TOKENS['trigger_code']}
@@ -111,7 +134,8 @@ class ThirdCRM
       }
     end
 
-    def subscription_info(subscription)
+    def subscription_info(account, args=nil)
+      subscription = account.subscription
       {
         'custom' => SUBSCRIPTION_INFO["custom"].inject({}) { |h, (k, v)| h[k] = AUTOPILOT_STATES[subscription.safe_send(v).to_s] || subscription.safe_send(v).to_s; h }.merge(
           {  'date--Signup--Date' => subscription.created_at.strftime("%Y-%m-%d"),
