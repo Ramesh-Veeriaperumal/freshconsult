@@ -6,7 +6,7 @@ window.App = window.App || {};
   "use strict";
 
   App.Solutions.Article = {
-    
+
     data: {},
 
     STRINGS: {},
@@ -36,7 +36,7 @@ window.App = window.App || {};
       this.showVersionDropdown();
       this.versionSelection();
     },
-    
+
     onLeave: function (data) {
       $('body').off('.articles');
       $(document).off('.articles');
@@ -44,6 +44,9 @@ window.App = window.App || {};
       if (this.autoSave) {
         this.autoSave.stopSaving();
         this.autoSave = null;
+      }
+      if (this.copyArticleLinkEvent) {
+        this.copyArticleLinkEvent.destroy();
       }
     },
 

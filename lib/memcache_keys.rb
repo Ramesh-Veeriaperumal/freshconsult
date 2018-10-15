@@ -220,6 +220,8 @@ module MemcacheKeys
   CONTACT_FILTERS = 'CONTACT_FILTERS:%{account_id}'.freeze
 
   COMPANY_FILTERS = 'COMPANY_FILTERS:%{account_id}'.freeze
+  
+  TICKET_FIELDS_FULL = 'TICKET_FIELDS_FULL:%{account_id}'.freeze
 
   TICKET_FIELDS_FULL = 'TICKET_FIELDS_FULL:%{account_id}'.freeze
 

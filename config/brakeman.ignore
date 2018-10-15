@@ -138,7 +138,7 @@
       "fingerprint": "6da04369dbd2a70e8a46c7af874bf0e5f24948d605ad80125c7ca4606ccd8c41",
       "message": "Unsafe parameter value in link_to href",
       "file": "app/views/discussions/topics/widgets/_ticket.html.erb",
-      "line": 10,
+      "line": 13,
       "link": "http://brakemanscanner.org/docs/warning_types/link_to_href",
       "code": "link_to(current_account.topics.find(params[:id]).ticket, current_account.topics.find(params[:id]).ticket)",
       "render_path": [{"type":"controller","class":"Discussions::TopicsController","method":"show","line":135,"file":"app/controllers/discussions/topics_controller.rb"},{"type":"template","name":"discussions/topics/show","line":18,"file":"app/views/discussions/topics/show.html.erb"},{"type":"template","name":"discussions/topics/_sidebar","line":19,"file":"app/views/discussions/topics/_sidebar.html.erb"}],
@@ -196,7 +196,7 @@
       "line": 50,
       "link": "http://brakemanscanner.org/docs/warning_types/link_to_href",
       "code": "link_to(h(current_account.all_users.find(params[:id]).name), (\"https://facebook.com/\" + current_account.all_users.find(params[:id]).fb_profile_id), :target => \"_blank\")",
-      "render_path": [{"type":"controller","class":"ContactsController","method":"hover_card","line":159,"file":"app/controllers/contacts_controller.rb"}],
+      "render_path": [{"type":"controller","class":"ContactsController","method":"hover_card","line":155,"file":"app/controllers/contacts_controller.rb"}],
       "location": {
         "type": "template",
         "template": "contacts/_hover_card"
@@ -211,10 +211,10 @@
       "fingerprint": "881916c0aaf70b957ddbb3933b5f0a49bc948ec34285799178006746c4e672b0",
       "message": "Unescaped model attribute",
       "file": "app/views/helpdesk/tickets/show/_custom_survey_note.html.erb",
-      "line": 42,
+      "line": 38,
       "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":177,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
+      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":192,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_custom_survey_note"
@@ -229,10 +229,10 @@
       "fingerprint": "881916c0aaf70b957ddbb3933b5f0a49bc948ec34285799178006746c4e672b0",
       "message": "Unescaped model attribute",
       "file": "app/views/helpdesk/tickets/show/_custom_survey_note.html.erb",
-      "line": 38,
+      "line": 42,
       "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":177,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
+      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":192,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_custom_survey_note"
@@ -299,6 +299,24 @@
       "note": ""
     },
     {
+      "warning_type": "Cross Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "a4020ce8ae55dc81ee3f563fe3adf6b215ad3c2feb78154860ef55023830c5a6",
+      "message": "Unescaped model attribute",
+      "file": "app/views/helpdesk/archive_tickets/show/_activity.html.erb",
+      "line": 43,
+      "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "code": "(Unresolved Model).new[:stack].size",
+      "render_path": [{"type":"template","name":"helpdesk/archive_tickets/activities","line":3,"file":"app/views/helpdesk/archive_tickets/activities.html.erb"}],
+      "location": {
+        "type": "template",
+        "template": "helpdesk/archive_tickets/show/_activity"
+      },
+      "user_input": null,
+      "confidence": "High",
+      "note": ""
+    },
+    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "a573bca956dcb99b364da08aebc8f5559b7c3cf80a81a8dbee84d54d8f839157",
@@ -361,7 +379,7 @@
       "fingerprint": "b4ad395c833d72eb9aa7e51c64106170561a0790d1803e6601737014ad5f9352",
       "message": "Possible SQL injection",
       "file": "app/models/agent.rb",
-      "line": 63,
+      "line": 66,
       "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Agent.where(:id => self.id).update_all(\"points = #{score}\")",
       "render_path": null,
@@ -450,6 +468,24 @@
       "note": ""
     },
     {
+      "warning_type": "Attribute Restriction",
+      "warning_code": 19,
+      "fingerprint": "d0d36662b9886b7458ece679613519d8f1f86fbd22f8d19094d017977ded5bcd",
+      "message": "Mass assignment is not restricted using attr_accessible",
+      "file": "app/models/sqs_post.rb",
+      "line": 1,
+      "link": "http://brakemanscanner.org/docs/warning_types/attribute_restriction/",
+      "code": null,
+      "render_path": null,
+      "location": {
+        "type": "model",
+        "model": "SQSPost"
+      },
+      "user_input": null,
+      "confidence": "High",
+      "note": ""
+    },
+    {
       "warning_type": "Cross Site Scripting",
       "warning_code": 2,
       "fingerprint": "d7dbb695efc7c55692bd6fc6a60d08242db24c3b83988b71066c08503f69a310",
@@ -458,7 +494,7 @@
       "line": 5,
       "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":180,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
+      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":195,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_survey_note"
@@ -473,7 +509,7 @@
       "fingerprint": "e893b31f3f22e77c7870f26c4572e38cac8ddb614889e7c83783c44fbf752a23",
       "message": "Possible unprotected redirect",
       "file": "app/controllers/integrations/marketplace/shopify_controller.rb",
-      "line": 66,
+      "line": 74,
       "link": "http://brakemanscanner.org/docs/warning_types/redirect/",
       "code": "redirect_to((AppConfig[\"integrations_url\"][Rails.env] + \"/auth/shopify?shop=#{(params[:remote_id] or Integrations::ShopifyRemoteUser.where(:account_id => current_account.id).first.remote_id)}&origin=id%3D#{current_account.id.to_s}\"))",
       "render_path": null,
@@ -505,6 +541,25 @@
       "note": ""
     },
     {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
+      "fingerprint": "f087961da904eff9b1f1d3e0441d0ca514bf65e2e58eecee844f588ca98c29fc",
+      "message": "Unprotected mass assignment",
+      "file": "app/controllers/support/discussions/posts_controller.rb",
+      "line": 53,
+      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "SQSPost.new(params[:post].clone.delete_if do\n (k == \"attachments\")\n end)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Support::Discussions::PostsController",
+        "method": "sqs_create"
+      },
+      "user_input": "params[:post].clone.delete_if",
+      "confidence": "High",
+      "note": ""
+    },
+    {
       "warning_type": "Command Injection",
       "warning_code": 14,
       "fingerprint": "f6051cdced36478b1d5877872131207742c7445112f52bdea7a7adbeb3de1647",
@@ -532,7 +587,7 @@
       "line": 44,
       "link": "http://brakemanscanner.org/docs/warning_types/link_to_href",
       "code": "link_to(h(current_account.all_users.find(params[:id]).twitter_id), (\"https://twitter.com/\" + current_account.all_users.find(params[:id]).twitter_id), :target => \"_blank\")",
-      "render_path": [{"type":"controller","class":"ContactsController","method":"hover_card","line":159,"file":"app/controllers/contacts_controller.rb"}],
+      "render_path": [{"type":"controller","class":"ContactsController","method":"hover_card","line":155,"file":"app/controllers/contacts_controller.rb"}],
       "location": {
         "type": "template",
         "template": "contacts/_hover_card"
@@ -580,6 +635,6 @@
       "note": "The embed is within quoted text"
     }
   ],
-  "updated": "2018-06-26 00:16:10 +0530",
+  "updated": "2018-10-05 19:56:51 +0530",
   "brakeman_version": "3.3.0"
 }
