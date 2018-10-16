@@ -1786,7 +1786,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         elsif current_account.livechat_enabled? && !freshchat_enabled?
           content_tag('div', "<a href='javascript:void(0)'></a> #{t('live_chat_deprecation')} <a href='https://support.freshdesk.com/support/solutions/articles/236834' target='_blank'> #{t('live_chat_migration')} </a>".html_safe, class: "alert-message block-message warning full-width")
         elsif current_account.freshfone_enabled? && !current_account.freshcaller_enabled?
-          content_tag('div', "<a href='javascript:void(0)'></a> #{t('freshfone_deprecation')} <a href='https://support.freshdesk.com/support/solutions/articles/236834' target='_blank'> #{t('freshfone_migration')} </a>".html_safe, class: "alert-message block-message warning full-width")
+          content_tag('div', "<a href='javascript:void(0)'></a> #{t('freshfone_deprecation')} <a href='https://support.freshdesk.com/support/solutions/articles/236833' target='_blank'> #{t('freshfone_migration')} </a>".html_safe, class: "alert-message block-message warning full-width")
         end
       end
     end
