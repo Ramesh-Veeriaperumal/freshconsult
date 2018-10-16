@@ -376,7 +376,7 @@ module Redis::RedisKeys
 
   #Supervisor tickets limitation key (Number of tickets per rule) - initial value 50000
   SUPERVISOR_TICKETS_LIMIT = "SUPERVISOR_TICKETS_LIMIT"
-  SLA_TICKETS_LIMIT = "SLA_TICKETS_LIMIT"
+
 
   #########################################################################################################
 
