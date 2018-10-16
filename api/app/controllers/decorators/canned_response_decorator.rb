@@ -38,7 +38,7 @@ class CannedResponseDecorator < ApiDecorator
     def parse_response
       # Parses the content even when @ticket is nil
       @ticket.escape_liquid_attributes = Account.current.launched?(:escape_liquid_for_reply) if @ticket
-      Liquid::Template.parse(content_html).render({ ticket: @ticket, helpdesk_name: @ticket.try(:account).try(:portal_name) }.stringify_keys)
+      Liquid::Template.parse(content_html).render({ ticket: @ticket, helpdesk_name: @ticket.try(:account).try(:helpdesk_name) }.stringify_keys)
     end
 
     def attachments
