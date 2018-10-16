@@ -124,3 +124,4 @@ helpdesk:
     - disposable_email_domains
     - default_data_config
     - emailserv_request
+    - saml_config

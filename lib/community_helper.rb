@@ -1,21 +1,28 @@
 module CommunityHelper
 
-  def preview_portal(relative_path, category = nil)
+  def preview_portal(relative_path, category = nil, extraClass = nil)
     category.portals.collect(&:id) if category.present?
     # Above line added just to preload the portals. The above line is otherwise useless
+    is_falcon = current_account.falcon_ui_enabled?(current_user)
     return if category.present? && category.portal_ids.empty?
-    %(<span class="tooltip pull-right portal-preview-icon" data-placement="left" title="#{t('solution.view_on_portal')}">
-      #{link_to('<i class="ficon-open-in-portal fsize-21"></i>'.html_safe, portal_preview_path(relative_path, category), :target => "view-portal")}
+    %(<span class="tooltip pull-right portal-preview-icon #{is_falcon ? extraClass : ''}" data-placement="left" title="#{t('solution.view_on_portal')}">
+      #{link_to('<i class="ficon-open-in-portal fsize-21"></i>'.html_safe, article_path(relative_path, category), :target => "view-portal")}
     </span>).html_safe
   end
 
-  def portal_preview_path relative_path, category, draft_preview = false
-    path = relative_path
+  def category_path_generator category
+    path = nil
     unless (category.nil? || category.portal_ids.empty? || category.portal_ids.include?(current_portal.id))
       category_portal = category.portals.last
-      path = ["#{category_portal.url_protocol}://", category_portal.host, relative_path, "#{'?different_portal=true' if draft_preview}"].join
+      path = ["#{category_portal.url_protocol}://", category_portal.host].join
     end
     path
+  end
+
+   def article_path relative_path, category, draft_preview = false
+    category_path = category_path_generator category
+    relative_path = [category_path, relative_path, "#{'?different_portal=true' if draft_preview}"].join if category_path
+    relative_path
   end
 
   def article_attachment_link(att, type)
@@ -39,7 +46,7 @@ module CommunityHelper
     classes = []
     classes << "eligible" if Account.current.features?(:multi_language)
     if Account.current.multilingual_available?
-      classes << "available" 
+      classes << "available"
       classes << (Account.current.multilingual? ? "ml-enabled" : "ml-disabled")
     end
     classes.join(" ").html_safe

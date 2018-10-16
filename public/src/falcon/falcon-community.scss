@@ -29,6 +29,7 @@ $bread-crumbs-active: #000;
 $list-selected: #fffef7;
 $list-option-selected: #ebedf0;
 $app-icon-color: #6f7c87;
+$btn-hover-color: #dadfe3;
 
 
 body.community{
@@ -654,6 +655,22 @@ body.community.solutions {
 
 	.select2-search-choice-close::after{
 			top: -4px;
+	}
+
+	// copy btn
+	.edit-container {
+		width: 235px;
+
+		.article-link-copy-btn {
+			.ficon-clone {
+				font-size: 14px;
+			}
+		}
+	}
+
+	#body-container .btn--copied {
+		background-color: $btn-hover-color;
+		border: 1px solid $btn-hover-color;
 	}
 }
 
