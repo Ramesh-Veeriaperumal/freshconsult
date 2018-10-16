@@ -5,6 +5,7 @@ class Reports::TimesheetReportsController < ApplicationController
   include HelpdeskReports::Helper::ScheduledReports
   helper AutocompleteHelper
 
+  before_filter :check_timesheet_feature
   before_filter :check_permission, :set_selected_tab, :set_report_type
   before_filter :report_filter_data_hash, :report_columns_hash, :only => [:index]
   before_filter :construct_csv_params,                          :only => [:export_csv]
@@ -42,8 +43,6 @@ class Reports::TimesheetReportsController < ApplicationController
     render json: nil, status: :ok
   end
 
-
-
   def save_reports_filter
     common_save_reports_filter
   end
@@ -54,6 +53,26 @@ class Reports::TimesheetReportsController < ApplicationController
 
   def delete_reports_filter
     common_delete_reports_filter
+  end
+
+  protected
+
+  def check_timesheet_feature
+    return if feature?(:timesheets) || current_account.has_feature?(:timesheets)
+
+    respond_to do |format|
+      if is_native_mobile?
+        format.json {
+          render json: {
+            requires_feature: false
+          }
+        }
+      else
+        format.html  {
+          render template: "/errors/non_covered_feature.html", locals: { feature: :timesheets }
+        }
+      end
+    end
   end
 
   private
