@@ -59,7 +59,7 @@ module Ember
         @article = Solution::Article.new
         @article.title = 'Sample'
         @article.description = '<b>aaa</b>'
-        @article.status = 1
+        @article.status = 2
         @article.language_id = @account.language_object.id
         @article.parent_id = @articlemeta.id
         @article.account_id = @account.id
@@ -90,6 +90,7 @@ module Ember
         @draft.title = 'Sample'
         @draft.category_meta = Solution::FolderMeta.first.solution_category_meta
         @draft.status = 1
+        @draft.description = '<b>aaa</b>'
         @draft.save
 
         @draft_body = Solution::DraftBody.new
@@ -209,6 +210,14 @@ module Ember
         match_json(pattern)
       end
 
+      def test_index_with_both_draft_and_article
+        draft = @account.solution_drafts.last
+        get :index, controller_params(version: 'private', ids: draft.article.parent_id, language_id: 6)
+        response_body = JSON.parse(response.body).last
+        assert_response 200
+        response_body.must_match_json_expression private_api_solution_article_pattern_index(draft.article)
+      end
+
       def test_article_content_with_invalid_id
         article = @account.solution_articles.where(language_id: 6).last
         get :article_content, controller_params(version: 'private', id: article.parent_id + 20, language_id: 6)
@@ -251,6 +260,13 @@ module Ember
         get :article_content, controller_params(version: 'private', id: article.parent_id, language_id: 1000)
         assert_response 400
         match_json([bad_request_error_pattern('language_id', :not_included, list: @account.all_portal_language_objects.map(&:id))])
+      end
+
+      def test_article_content_with_both_draft_and_article
+        draft = @account.solution_drafts.last
+        get :article_content, controller_params(version: 'private', id: draft.article.parent_id, language_id: 6)
+        assert_response 200
+        match_json(article_content_pattern(draft.article))
       end
     end
   end
