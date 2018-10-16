@@ -1,4 +1,8 @@
 class ThirdCRM
+  EVENTS = {
+    subscription: 'subscription',
+    trial_subscription: 'trial_subscription'
+  }
   PRODUCT_NAME = "Freshdesk"
 
   ADD_LEAD_WAIT_TIME = 5

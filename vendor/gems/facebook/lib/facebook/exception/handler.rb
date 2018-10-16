@@ -13,6 +13,8 @@ module Facebook
         include Facebook::RedisMethods
         include Facebook::Exception::Notifier
         include Facebook::Exception::Constants
+
+        ERRORS = [:fb_user_blocked, :failure]
              
         def sandbox(raw_obj = nil)
           @exception = nil
@@ -42,6 +44,8 @@ module Facebook
                 IGNORED_ERRORS.include?(@exception.fb_error_code) ? 
                     raise_sns_notification(error_params[:error_msg][0..50], error_params) : 
                     update_error_and_notify(error_params)
+              elsif facebook_user_blocked?
+                  return :fb_user_blocked
               else
                 raise_newrelic_error(error_params)
               end
@@ -63,12 +67,17 @@ module Facebook
             @fan_page.log_api_hits
           end
           
-          @exception.nil? ? return_value : false
+          @exception.nil? ? return_value : :failure
               
         end
         
         
-        private       
+        private   
+
+        def facebook_user_blocked?
+          error_params[:error_code] == 230 || error_params[:error_code] == 551
+        end
+
         def auth_error?
           if @exception.fb_error_code == AUTH_ERROR
             subcode = @exception.fb_error_subcode if @exception.respond_to?(:fb_error_subcode)

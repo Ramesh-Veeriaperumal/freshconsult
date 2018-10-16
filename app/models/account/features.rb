@@ -14,7 +14,7 @@ class Account < ActiveRecord::Base
                  :euc_migrated_twitter, :twitter_microservice, :twitter_handle_publisher, :csat_email_scan_compatibility,
                  :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :count_service_es_reads, :mint_portal_applicable, 
                  :old_link_back_url_validation, :shopify_actions, :db_to_bitmap_features_migration,
-                 :denormalized_select_for_update, :installed_app_publish, :disable_banners]
+                 :denormalized_select_for_update, :installed_app_publish, :disable_banners, :quoted_text_parsing_feature]
   
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 

@@ -214,7 +214,7 @@ en:
       content: |
               <p>Hi %{agent_name},<br><br>
                 The following message composed by you on ticket <a target='_blank' href=%{ticket_url}>%{ticket_id}</a> failed to reach the recipient %{failed_email}.<br>
-                Reason: %{error_message}.<br><br>
+                Reason: "%{error_message}.<br><br>"
                 Message content: <br>%{failed_content}</p>
     note_display:
       title  : "Message not delivered"
@@ -434,7 +434,7 @@ en:
   attachments: Attachments
   attachment_delete: "You're about to permanently delete this attachment. Continue?"
   attachment_limit_failed_message: Attachment(s) that exceed the %{size} limit have been dropped. Please reach out to the sender.
-  attachment_contain_virus: %{size} attachments are discarded since they contain virus.
+  attachment_contain_virus: "%{size} attachments are discarded since they contain virus."
   cc_dropped_message: The following cc's are dropped due to moderation - %{emails}
   emails_dropped_message: The following emails are dropped due to moderation - %{emails}
   emails_added_to_cc: Email(s) successfully added to CC.
@@ -2430,7 +2430,7 @@ en:
       cancel_label: Cancel
       new: New Role
       edit: Edit Role
-      default_role_with_name: %{role_name} (Default Role)
+      default_role_with_name: "%{role_name} (Default Role)"
       default_role_edit: This is a default system role. It cannot be edited or removed. You can view its permissions here, or %{go_back}.
       role_name: Role Name
       role_description: Description
@@ -4586,7 +4586,7 @@ en:
     export_title: "Export Agents to CSV"
     last_logged_in: Last logged in %{time} ago.
     last_logged: Last logged in
-    ago: %{time} ago.
+    ago: "%{time} ago."
     days_ago: "%{days} ago"
     last_seen_at: "Last seen at"
     no_recent_activity: "No recent activity"
@@ -5452,7 +5452,7 @@ en:
     article_properties:
       title_counter_message: 'Recommended length: 50-60 characters'
       description_counter_message: 'Recommended length: 150-160 characters'
-      exceeded_message: %{current_message} (current text exceeds recommendation)
+      exceeded_message: "%{current_message} (current text exceeds recommendation)"
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
   chatwidget_intro: Customize your Live Chat widget below and see a realtime preview.
@@ -5973,8 +5973,11 @@ en:
     add_page: Add Facebook Page
     deleted: The facebook page %{facebook_page} has been removed.
     error_on_reply_fb: "Your reply could not be posted on your Facebook page. Please try again later or check with your admin."
+    facebook_user_blocked: "Facebook isn't allowing us to send your reply."
+
     page_already_subscribed: "Some of the facebook pages you are trying to add is already linked to an freshdesk account."
     no_subscription_response: "Couldn't connect with facebook. Please try again after some time."
+
     user_blocked: "This user has blocked your page. You will not be able to send them any messages."
     not_authorized: You were not authorized by Facebook
     realtime: "<b>Realtime stream feed fetching app is stopped</b> due to some changes on this Facebook account <a href='%{realtime_url}' > Re-authorize and Enable </a> "
@@ -6177,7 +6180,7 @@ en:
       btn: Link
       view_tracker: "View Tracker"
       title: Link Tickets
-      info: %{count} ticket(s) selected (link the selected ticket(s) to an existing problem or create a new problem ticket)
+      info: "%{count} ticket(s) selected (link the selected ticket(s) to an existing problem or create a new problem ticket)"
       search_placeholder: Search for existing problem tickets
       create_new: " Create New "
       recently_created: "Recently Created"
@@ -7936,7 +7939,7 @@ en:
     search_language_warning: "Search available in English only"
     buy_app: Buy App
     paid_apps_trial_info: "Paid Apps are not available for trial at this point of time. Please contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> for further information."
-    app_price: %{price} / %{addon_type} / month
+    app_price: "%{price} / %{addon_type} / month"
     paid_app: PAID
     no_payment_info: We do not have your payment details on file. Please update them to proceed further. <br>
     update_payment_info: Update payment info
@@ -8435,7 +8438,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       desc: "View customer details, invoices, and add time sheet entries to your QuickBooks Online account."
       connect_text: "Connecting to QuickBooks will make it easier for your agents to access and update data in it right from your helpdesk."
       remote_configurations:
-        signup: "<p>You are now being redirected to Freshdesk\'s account creation page. We highly recommend that you make use of the product walkthrough (displayed when you login the first time) after creating your account. You may also link your helpdesk to QuickBooks by going to <b>Admin-->Integrations</b>.</p><br><p>In case of any difficulties at any time during the setup process or while using the helpdesk, please feel free to contact our support team at <b>support@freshdesk.com</b></p>"
+        signup: "<p>You are now being redirected to Freshdesk's account creation page. We highly recommend that you make use of the product walkthrough (displayed when you login the first time) after creating your account. You may also link your helpdesk to QuickBooks by going to <b>Admin-->Integrations</b>.</p><br><p>In case of any difficulties at any time during the setup process or while using the helpdesk, please feel free to contact our support team at <b>support@freshdesk.com</b></p>"
         connect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to link your account to QuickBooks.</p>"
         disconnect: "<p>You are now being redirected to your Freshdesk's integration page where you will have the option to disable your account from QuickBooks.</p>"
         launch: "<p>You are now being redirected to your Freshdesk's dashboard page.</p>"
@@ -10190,7 +10193,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         day_month_year: '%{day} %{month}, %{year}'
         week: '%{start_day} %{start_month} - %{end_day} %{end_month}'
         week_with_year: '%{start_day} %{start_month}, %{start_year} - %{end_day} %{end_month}, %{end_year}'
-        month: %{month}
+        month: "%{month}"
         month_year: '%{month}, %{year}'
         qtr_year: '%{start_month} - %{end_month}, %{year}'
         qtr: '%{start_month} - %{end_month}'

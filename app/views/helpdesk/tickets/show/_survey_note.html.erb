@@ -1,9 +1,12 @@
+<%
+show_quoted_text_btn ||= false
+%>
 <div rel="image-enlarge" class="details" id='<%= notedetails %>' data-note-id="<%= note.id %>">
 	<%= content_tag(:div, "", :class => "#{note.survey_remark.survey_result.get_small_img_class} smiley") unless note.survey_remark.nil? || note.survey_remark.survey_result.nil? %>
 	<div class="request_mail <%= 'survey-note old-survey-note' unless note.survey_remark.nil? %>">
 		<%=  "<div class='old-survey-text'>#{h(note.survey_remark.survey_result.text)}</div>".html_safe unless note.survey_remark.nil? || note.survey_remark.survey_result.nil? %>
 		<%= note.body_html.html_safe %>
-		<% if note.fwd_email? %>
+		<% if note.fwd_email? || show_quoted_text_btn %>
 			<div class="freshdesk_quote" data-remote-quote=true></div>
 		<% end %>
 	</div>

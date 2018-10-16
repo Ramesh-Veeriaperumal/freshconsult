@@ -71,8 +71,15 @@ module Facebook
             send_reply(fb_page, parent_post, @item, POST_TYPE[:comment])
           end          
         end
-        flash[:notice] = reply_sent ? t(:'flash.tickets.reply.success') : t(:'facebook.error_on_reply_fb')
-      end  
+        if reply_sent == :fb_user_blocked
+            flash[:notice] = t(:'facebook.facebook_user_blocked')
+        elsif reply_sent == :failure
+            flash[:notice] = t(:'facebook.error_on_reply_fb')  
+        else
+            flash[:notice] = t(:'flash.tickets.reply.success') 
+        end
+      end
+ 
       
       #send reply to a ticket/note
       def send_reply(fan_page, parent, note, msg_type)
