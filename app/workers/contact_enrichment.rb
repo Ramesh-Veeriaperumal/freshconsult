@@ -13,8 +13,10 @@ class ContactEnrichment
       email_id = account.contact_info[:email]
       result = Clearbit::Enrichment.find(email: email_id, stream: true)
       account.account_configuration.contact_info = generate_clearbit_contact_info(result, email_update)
+      account.account_configuration.contact_info_will_change!
       account_company_info = account.account_configuration.company_info.dup
       account.account_configuration.company_info = account_company_info.merge(generate_clearbit_company_info(result))
+      account.account_configuration.company_info_will_change!
       account.account_configuration.save
     rescue Nestful::ClientError, Nestful::ResourceInvalid,Nestful::ResourceNotFound  => e
       error_log = "CLEARBIT ERROR. Account: #{account.full_domain}, Id: #{account.id}, error: #{e}"
