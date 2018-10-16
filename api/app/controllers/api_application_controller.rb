@@ -559,7 +559,7 @@ class ApiApplicationController < MetalApiController
       elsif $infra['CHANNEL_LAYER']
         api_key_auth
       else
-        if current_account.launched?(:api_jwt_auth) && request.env['HTTP_AUTHORIZATION'][/^Token (.*)/]
+        if current_account.launched?(:api_jwt_auth) && request.env['HTTP_AUTHORIZATION'] && request.env['HTTP_AUTHORIZATION'][/^Token (.*)/]
           ApiAuthLogger.log "FRESHID API version=V2, auth_type=JWT_TOKEN, a=#{current_account.id}"
           # authenticate using JWT token
           authenticate_with_http_token do |token|

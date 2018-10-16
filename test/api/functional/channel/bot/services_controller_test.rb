@@ -9,9 +9,9 @@ module Channel
 
       SUPPORT_BOT = 'frankbot'.freeze
 
-      def set_up
+      def setup
         super
-        before_all
+        @controller.request.env['HTTP_AUTHORIZATION'] = nil
       end
 
       def wrap_cname(params)
@@ -62,6 +62,19 @@ module Channel
           post :training_completed, controller_params(version: 'private', id: bot.external_id)
           assert_response 204
           assert bot.training_status.to_i == BotConstants::BOT_STATUS[:training_completed]
+        end
+      end
+
+      def test_training_completed_for_account_with_api_jwt_auth_feature
+        enable_bot do
+          Account.current.launch(:api_jwt_auth)
+          set_jwe_auth_header(SUPPORT_BOT)
+          bot = create_bot(product: true)
+          bot.training_inprogress!
+          post :training_completed, controller_params(version: 'private', id: bot.external_id)
+          assert_response 204
+          assert bot.training_status.to_i == BotConstants::BOT_STATUS[:training_completed]
+          Account.current.rollback(:api_jwt_auth)
         end
       end
     end
