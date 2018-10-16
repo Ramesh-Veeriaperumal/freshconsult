@@ -65,27 +65,6 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_nil agent_info['collision_user_hash']
   end
 
-  def test_launchparty
-    Account.current.add_feature(:falcon)
-    Account.current.reload
-    get :index, controller_params(version: 'private')
-    assert_response 200
-
-    Account.current.revoke_feature(:falcon)
-    Account.current.rollback(:falcon)
-    Account.current.reload
-    Account.any_instance.stubs(:disable_old_ui_enabled?).returns(false)
-
-    Account.any_instance.stubs(:disable_old_ui_enabled?).returns(false)
-    get :index, controller_params(version: 'private')
-    assert_response 404
-
-    Account.any_instance.unstub(:disable_old_ui_enabled?)
-    Account.current.add_feature(:falcon)
-
-    Account.current.reload
-  end
-
   def test_custom_dashboard_limits_without_feature
     Account.current.stubs(:custom_dashboard_enabled?).returns(false)
     get :account, controller_params(version: 'private')

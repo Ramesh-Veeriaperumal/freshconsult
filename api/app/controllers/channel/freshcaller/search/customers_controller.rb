@@ -1,7 +1,7 @@
 class Channel::Freshcaller::Search::CustomersController < Ember::Search::CustomersController
   include ::Freshcaller::JwtAuthentication
   include ::Freshcaller::CallConcern
-  skip_before_filter :check_privilege, :set_current_account, :check_day_pass_usage_with_user_time_zone, :check_falcon
+  skip_before_filter :check_privilege, :set_current_account, :check_day_pass_usage_with_user_time_zone
   before_filter :reset_current_user
   before_filter :custom_authenticate_request
 

@@ -1,0 +1,18 @@
+get:
+  tags: [trial subscription]
+  summary: Feature usage metrics
+  description: To get usage metrics for all the account features
+  parameters:
+    - name: features
+      in: query
+      type: string
+      description: features list max of 10 in a comma seperated values.
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/feature_usage_metrics'
+    404:
+      description: Page number is invalid
+    403:
+      description: Access denied

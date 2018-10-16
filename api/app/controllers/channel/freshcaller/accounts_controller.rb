@@ -1,6 +1,6 @@
 class Channel::Freshcaller::AccountsController < ApiApplicationController
   include ::Freshcaller::JwtAuthentication
-  skip_before_filter :check_privilege, :set_current_account, :check_day_pass_usage_with_user_time_zone, :check_falcon, :verify_authenticity_token
+  skip_before_filter :check_privilege, :set_current_account, :check_day_pass_usage_with_user_time_zone, :verify_authenticity_token
   before_filter :custom_authenticate_request
 
   def destroy

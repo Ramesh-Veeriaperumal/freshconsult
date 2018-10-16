@@ -88,6 +88,10 @@ class Solution::Article < ActiveRecord::Base
     }
   end
 
+  def self.has_multi_language_article?
+    select('distinct language_id').limit(2).length > 1
+  end
+
   def type_name
     TYPE_NAMES_BY_KEY[art_type]
   end

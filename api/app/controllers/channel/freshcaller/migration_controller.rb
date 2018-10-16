@@ -3,7 +3,7 @@ class Channel::Freshcaller::MigrationController < ApiApplicationController
   include ::Freshcaller::JwtAuthentication
   include TwilioMaster
   
-  skip_before_filter :check_privilege, :set_current_account, :check_day_pass_usage_with_user_time_zone, :check_falcon, :load_object
+  skip_before_filter :check_privilege, :set_current_account, :check_day_pass_usage_with_user_time_zone, :load_object
   before_filter :custom_authenticate_request
   around_filter :run_on_all_shardings, only: :fetch_pod_info
   around_filter :select_slave_shard, only: [:validate, :cross_verify]

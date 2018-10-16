@@ -131,6 +131,7 @@ api_error_messages:
   duplicate_companies: "One or more duplicate company_ids found"
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
   invalid_company_id: "There is no record matching the id %{company_id}"
+  facebook_user_blocked: "Facebook 230 exception"
   unable_to_perform: "Unable to perform"
   missing_contact_detail: "Please enter at least one contact detail"
   wrong_internal_agent: "Internal Agent does not belong to the specified Group"

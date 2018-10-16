@@ -160,8 +160,6 @@
   $ref: ./contacts/quick_create.yaml
 /contacts/import:
   $ref: ./contacts/import_crud.yaml
-/contacts/quick_create:
-  $ref: ./contacts/quick_create.yaml
 /contacts/{id}/timeline:
   $ref: ./contacts/timeline.yaml
 
@@ -266,6 +264,8 @@
 # Trial Subscription
 /trial_subscription:
   $ref: ./trial_subscription/crud.yaml
+/trial_subscription/usage_metrics:
+  $ref: ./trial_subscription/usage_metrics.yaml
 
 # Installed Applications
 /installed_applications:
@@ -318,19 +318,19 @@
   $ref: ./dashboard/quest.yaml
 
 #Dashboard
-/dashboards:
+/default_dashboards:
   $ref: ./dashboard/config.yaml
-/dashboards/ticket_summaries:
+/default_dashboards/ticket_summaries:
   $ref: ./dashboard/ticket_summary.yaml
-/dashboards/satisfaction_surveys:
+/default_dashboards/satisfaction_surveys:
   $ref: ./dashboard/satisfaction_survey.yaml
 /dashboards/forum_moderations:
   $ref: ./dashboard/forum_moderation.yaml
-/dashboards/unresolved_tickets:
+/default_dashboards/unresolved_tickets:
   $ref: ./dashboard/unresolved_ticket.yaml
-/dashboards/ticket_trends:
+/default_dashboards/ticket_trends:
   $ref: ./dashboard/ticket_trends.yaml
-/dashboards/ticket_metrics:
+/default_dashboards/ticket_metrics:
   $ref: ./dashboard/ticket_metrics.yaml
 /dashboards/leaderboard_agents:
   $ref: ./dashboard/leaderboard/agents.yaml

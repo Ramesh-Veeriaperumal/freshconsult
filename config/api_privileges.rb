@@ -51,7 +51,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_account do
     resource :"channel/freshcaller/account", only: [:destroy]
-    resource :"admin/trial_subscription"
+    resource :"admin/trial_subscription", only: [:create, :cancel]
   end
 
   manage_email_settings do
@@ -136,6 +136,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"proactive/rule"
     resource :"proactive/outreach"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
+    resource :"admin/trial_subscription", only: [:usage_metrics]
   end
 
   edit_ticket_properties do

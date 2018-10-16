@@ -13,6 +13,8 @@ module Facebook
         include Facebook::RedisMethods
         include Facebook::Exception::Notifier
         include Facebook::Exception::Constants
+
+        ERRORS = [:fb_user_blocked, :failure]
              
         def sandbox(raw_obj = nil)
           @exception = nil
@@ -42,10 +44,11 @@ module Facebook
                 IGNORED_ERRORS.include?(@exception.fb_error_code) ? 
                     raise_sns_notification(error_params[:error_msg][0..50], error_params) : 
                     update_error_and_notify(error_params)
+              elsif facebook_user_blocked?
+                  return :fb_user_blocked
               else
-                raise_newrelic_error(error_params)
-              end
-            
+                 raise_newrelic_error(error_params)
+              end 
             elsif server_error?
               if permission_error?
                 update_error_and_notify(error_params)
@@ -54,16 +57,15 @@ module Facebook
                 raise_sns_notification("Server Error", {:error => "Server Error", :exception => @exception})
               end
             else
-              raise_newrelic_error(error_params)
+                raise_newrelic_error(error_params)
             end
-            
           rescue => @exception
             raise_newrelic_error(page_info)
           ensure
             @fan_page.log_api_hits
           end
           
-          @exception.nil? ? return_value : false
+          @exception.nil? ? return_value : :failure
               
         end
         
@@ -75,7 +77,9 @@ module Facebook
             subcode and AUTH_SUB_CODES.include?(subcode) or ERROR_MESSAGES.any?{|k,v| error_params[:error_msg].include?(v)}
           end
         end
-        
+        def facebook_user_blocked?
+          error_params[:error_code] == 230 || error_params[:error_code] == 551
+        end
         def client_error?
           !@exception.http_status.blank? and @exception.http_status.between?(HTTP_STATUS_CLIENT_ERROR.first,  HTTP_STATUS_CLIENT_ERROR.last)
         end

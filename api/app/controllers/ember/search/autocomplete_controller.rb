@@ -9,10 +9,16 @@ module Ember
         @klasses        = ['User']
         @search_context = :requester_autocomplete
         @items = []
-        search(esv2_autocomplete_models) do |results|
-          response.api_meta = { count: results.total_entries }
-          results.each do |result|
-            @items.concat(result.search_data)
+        
+        if skip_auto_complete? && !@search_key.match(ApiConstants::EMAIL_REGEX).present?
+          response.api_meta = { count: 0 }
+        else
+          @exact_match = true if skip_auto_complete?
+          search(esv2_autocomplete_models) do |results|
+            response.api_meta = { count: results.total_entries }
+            results.each do |result|
+              @items.concat(result.search_data)
+            end
           end
         end
         response.api_root_key = :contacts
@@ -74,6 +80,10 @@ module Ember
       end
 
       def company_users
+      end
+
+      def skip_auto_complete?
+          current_account.auto_complete_off_enabled? && !api_current_user.privilege?(:view_contacts)
       end
 
       private

@@ -2,6 +2,8 @@ class Admin::TrialSubscriptionsController < ApiApplicationController
   include HelperConcern
 
   before_filter -> { validate_delegator @item }, only: [:cancel, :create]
+  before_filter :sanitize_params, only: [:usage_metrics]
+  before_filter :validate_query_params, only: [:usage_metrics]
 
   def create
     if @item.construct_and_save
@@ -17,6 +19,10 @@ class Admin::TrialSubscriptionsController < ApiApplicationController
     else
       render_custom_errors(@item)
     end
+  end
+
+  def usage_metrics
+    @item = UsageMetrics::Features.metrics(current_account, fetch_shard, params[:features])
   end
 
   private
@@ -39,5 +45,9 @@ class Admin::TrialSubscriptionsController < ApiApplicationController
 
     def validate_params
       validate_body_params
+    end
+
+    def sanitize_params
+      params[:features] = params[:features].split(',').map!(&:to_sym) if params[:features].present?
     end
 end

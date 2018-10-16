@@ -5,6 +5,7 @@ class Export::Customer
   include Export::Util
 
   VALUE_MAPPING = {
+    "Email" => "emails_for_export",
     "Language" => "language_name",
     "Company" => "company_names_for_export",
     "Can see all tickets from this company" => "client_managers_for_export"

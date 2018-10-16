@@ -13,6 +13,10 @@ class UserCompany < ActiveRecord::Base
   after_commit :remove_tickets_company_id, :set_default_company, on: :destroy
   after_commit :update_es_index
 
+  def self.has_multiple_companies?
+    select(:id).group(:user_id).having("count(user_id) > 1").exists?
+  end
+
   private
 
   def associate_tickets

@@ -1,537 +1,537 @@
-  id:
-    type: integer
-    format: int64
-    minimum: 1
-  custom_field:
-    type: object
+id:
+  type: integer
+  format: int64
+  minimum: 1
+custom_field:
+  type: object
 
-  bootstrap_agents_groups:
-    $ref: ./response/bootstrap/agents_groups.yaml
-  bootstrap_me:
-    $ref: ./response/bootstrap/me.yaml
-  bootstrap_account:
-    $ref: ./response/bootstrap/account.yaml
+bootstrap_agents_groups:
+  $ref: ./response/bootstrap/agents_groups.yaml
+bootstrap_me:
+  $ref: ./response/bootstrap/me.yaml
+bootstrap_account:
+  $ref: ./response/bootstrap/account.yaml
 
-  # ERROR
-  bulk_action_error:
-    $ref: ./error/bulk.yaml
-  bad_request_error:
-    $ref: ./error/bad_request.yaml
-  internal_server_error:
-    $ref: ./error/internal_server_error.yaml
-  request_error:
-    $ref: ./error/request.yaml
-  agents_bulk_action_error:
-    $ref: ./response/agents/bulk_error.yaml
-  request_error_with_data:
-    $ref: ./error/request_error_with_info.yaml
+# ERROR
+bulk_action_error:
+  $ref: ./error/bulk.yaml
+bad_request_error:
+  $ref: ./error/bad_request.yaml
+internal_server_error:
+  $ref: ./error/internal_server_error.yaml
+request_error:
+  $ref: ./error/request.yaml
+agents_bulk_action_error:
+  $ref: ./response/agents/bulk_error.yaml
+request_error_with_data:
+  $ref: ./error/request_error_with_info.yaml
 
-  # REQUEST
-  bulk_action_input:
-    $ref: ./request/bulk.yaml
-  make_agent_params:
-    $ref: ./request/contacts/make_agent.yaml
-  attachment_create_input:
-    $ref: ./request/attachments/attachment.yaml
-  company_input:
-    $ref: ./request/companies/company.yaml
-  contact_input:
-    $ref: ./request/contacts/contact.yaml
-  quick_create_input:
-    $ref: ./request/contacts/quick_create.yaml
-  contact_merge_input:
-    $ref: ./request/contacts/merge.yaml
-  contact_note_input:
-    $ref: ./request/contact_note.yaml
-  company_note_input:
-    $ref: ./request/company_note.yaml
-  update_password:
-    $ref: ./request/contacts/update_password.yaml
-  note_create_input:
-    $ref: ./request/conversations/note.yaml
-  note_update_input:
-    $ref: ./request/conversations/update.yaml
-  note_reply_input:
-    $ref: ./request/conversations/reply.yaml
-  note_forward_input:
-    $ref: ./request/conversations/forward.yaml
-  note_broadcast_input:
-    $ref: ./request/conversations/broadcast.yaml
-  facebook_reply_input:
-    $ref: ./request/conversations/facebook_reply.yaml
-  twitter_reply_input:
-    $ref: ./request/conversations/twitter_reply.yaml
-  conversation_template:
-    $ref: ./resource/conversation_template.yaml
-  conversation_forward_template:
-    $ref: ./resource/conversation_forward_template.yaml
-  note_reply_to_forward_input:
-    $ref: ./request/conversations/reply_to_forward.yaml
-  post_reply_template_input:
-    $ref: ./request/conversations/post_reply_template_input.yaml
-  undo_reply_input:
-    $ref: ./request/conversations/undo_send.yaml
+# REQUEST
+bulk_action_input:
+  $ref: ./request/bulk.yaml
+make_agent_params:
+  $ref: ./request/contacts/make_agent.yaml
+attachment_create_input:
+  $ref: ./request/attachments/attachment.yaml
+company_input:
+  $ref: ./request/companies/company.yaml
+contact_input:
+  $ref: ./request/contacts/contact.yaml
+quick_create_input:
+  $ref: ./request/contacts/quick_create.yaml
+contact_merge_input:
+  $ref: ./request/contacts/merge.yaml
+contact_note_input:
+  $ref: ./request/contact_note.yaml
+company_note_input:
+  $ref: ./request/company_note.yaml
+update_password:
+  $ref: ./request/contacts/update_password.yaml
+note_create_input:
+  $ref: ./request/conversations/note.yaml
+note_update_input:
+  $ref: ./request/conversations/update.yaml
+note_reply_input:
+  $ref: ./request/conversations/reply.yaml
+note_forward_input:
+  $ref: ./request/conversations/forward.yaml
+note_broadcast_input:
+  $ref: ./request/conversations/broadcast.yaml
+facebook_reply_input:
+  $ref: ./request/conversations/facebook_reply.yaml
+twitter_reply_input:
+  $ref: ./request/conversations/twitter_reply.yaml
+conversation_forward_template:
+  $ref: ./resource/conversation_forward_template.yaml
+note_reply_to_forward_input:
+  $ref: ./request/conversations/reply_to_forward.yaml
+post_reply_template_input:
+  $ref: ./request/conversations/post_reply_template_input.yaml
+undo_reply_input:
+  $ref: ./request/conversations/undo_send.yaml
 
-  summary_input:
-    $ref: ./request/tickets/summary_input.yaml
-  full_text:
-    $ref: ./resource/full_text.yaml
-  ticket_input:
-    $ref: ./request/tickets/ticket.yaml
-  ticket_bulk_update_input:
-    $ref: ./request/tickets/bulk_update.yaml
-  ticket_update_input:
-    $ref: ./request/tickets/update.yaml
-  ticket_merge_input:
-    $ref: ./request/tickets/merge.yaml
-  ticket_update_properties_input:
-    $ref: ./request/tickets/update_properties.yaml
-  ticket_export_csv_input:
-    $ref: ./request/tickets/export_csv.yaml
-  ticket_export_input:
-    $ref: ./request/archive_tickets/export.yaml
-  add_watcher_input:
-    $ref: ./request/subscriptions/add_watcher.yaml
-  draft_create_input:
-    $ref: ./request/drafts/draft.yaml
-  execute_scenario_input:
-    $ref: ./request/tickets/execute_scenario.yaml
-  link_input:
-    $ref: ./request/tickets/link_input.yaml
-  create_child_with_template:
-    $ref: ./request/tickets/create_child_with_template.yaml
-  requester_input:
-    $ref: ./request/tickets/requester.yaml
-  cloud_file_input:
-    $ref: ./request/cloud_files/cloud_file.yaml
-  query_hash:
-    $ref: ./request/ticket_filters/query_hash.yaml
-  ticket_filter_input:
-    $ref: ./request/ticket_filters/ticket_filter.yaml
-  contact_export_input:
-    $ref: ./request/contacts/contact_export.yaml
-  company_export_input:
-    $ref: ./request/companies/company_export.yaml
-  integrated_resource_create:
-    $ref: ./request/integrated_resources/integrated_resource.yaml
-  profile_input:
-    $ref: ./request/profiles/profile.yaml
-  agent_input:
-    $ref: ./request/agents/agent.yaml
-  bulk_agent_input:
-    $ref: ./request/agents/bulk_agent.yaml
-  onboarding_update_activation_email_input:
-    $ref: ./request/onboarding/update_activation_email.yaml
-  onboarding_test_email_forwarding_input:
-    $ref: ./request/onboarding/test_email_forwarding.yaml
-  onboarding_validate_domain_name_input:
-    $ref: ./request/onboarding/validate_domain_name.yaml
-  onboarding_customize_domain_input:
-    $ref: ./request/onboarding/customize_domain.yaml
-  update_channels_input:
-    $ref: ./request/onboarding/update_channels.yaml
-  suppression_list:
-    $ref: ./request/tickets/suppression_list.yaml
-  bot_enable_on_portal_input:
-    $ref: ./request/bots/enable_on_portal_input.yaml
-  bot_map_categories_input:
-    $ref: ./request/bots/map_categories_input.yaml
-  map_article_input:
-    $ref: ./request/bot_feedbacks/map_article.yaml
-  create_article_input:
-    $ref: ./request/bot_feedbacks/create_article.yaml
-  bot_create_req:
-    $ref: ./request/bots/bot_create.yaml
-  bot_update_req:
-    $ref: ./request/bots/bot_update.yaml
+summary_input:
+  $ref: ./request/tickets/summary_input.yaml
+full_text:
+  $ref: ./resource/full_text.yaml
+ticket_input:
+  $ref: ./request/tickets/ticket.yaml
+ticket_bulk_update_input:
+  $ref: ./request/tickets/bulk_update.yaml
+ticket_update_input:
+  $ref: ./request/tickets/update.yaml
+ticket_merge_input:
+  $ref: ./request/tickets/merge.yaml
+ticket_update_properties_input:
+  $ref: ./request/tickets/update_properties.yaml
+ticket_export_csv_input:
+  $ref: ./request/tickets/export_csv.yaml
+ticket_export_input:
+  $ref: ./request/archive_tickets/export.yaml
+add_watcher_input:
+  $ref: ./request/subscriptions/add_watcher.yaml
+draft_create_input:
+  $ref: ./request/drafts/draft.yaml
+execute_scenario_input:
+  $ref: ./request/tickets/execute_scenario.yaml
+link_input:
+  $ref: ./request/tickets/link_input.yaml
+create_child_with_template:
+  $ref: ./request/tickets/create_child_with_template.yaml
+requester_input:
+  $ref: ./request/tickets/requester.yaml
+cloud_file_input:
+  $ref: ./request/cloud_files/cloud_file.yaml
+query_hash:
+  $ref: ./request/ticket_filters/query_hash.yaml
+ticket_filter_input:
+  $ref: ./request/ticket_filters/ticket_filter.yaml
+contact_export_input:
+  $ref: ./request/contacts/contact_export.yaml
+company_export_input:
+  $ref: ./request/companies/company_export.yaml
+integrated_resource_create:
+  $ref: ./request/integrated_resources/integrated_resource.yaml
+profile_input:
+  $ref: ./request/profiles/profile.yaml
+agent_input:
+  $ref: ./request/agents/agent.yaml
+bulk_agent_input:
+  $ref: ./request/agents/bulk_agent.yaml
+onboarding_update_activation_email_input:
+  $ref: ./request/onboarding/update_activation_email.yaml
+onboarding_test_email_forwarding_input:
+  $ref: ./request/onboarding/test_email_forwarding.yaml
+onboarding_validate_domain_name_input:
+  $ref: ./request/onboarding/validate_domain_name.yaml
+onboarding_customize_domain_input:
+  $ref: ./request/onboarding/customize_domain.yaml
+update_channels_input:
+  $ref: ./request/onboarding/update_channels.yaml
+suppression_list:
+  $ref: ./request/tickets/suppression_list.yaml
+bot_enable_on_portal_input:
+  $ref: ./request/bots/enable_on_portal_input.yaml
+bot_map_categories_input:
+  $ref: ./request/bots/map_categories_input.yaml
+map_article_input:
+  $ref: ./request/bot_feedbacks/map_article.yaml
+create_article_input:
+  $ref: ./request/bot_feedbacks/create_article.yaml
+bot_create_req:
+  $ref: ./request/bots/bot_create.yaml
+bot_update_req:
+  $ref: ./request/bots/bot_update.yaml
 
-  trial_widget_complete_step:
-    $ref: './request/trial_widget/complete_step.yaml'
-  proactive_rule_input:
-    $ref: ./request/proactive/rule.yaml
+trial_widget_complete_step:
+  $ref: './request/trial_widget/complete_step.yaml'
+proactive_rule_input:
+  $ref: ./request/proactive/rule.yaml
 
-  trial_subscription_create:
-    $ref: './request/trial_subscription/create.yaml'
+trial_subscription_create:
+  $ref: './request/trial_subscription/create.yaml'
+feature_usage_metrics:
+  $ref: './request/trial_subscription/usage_metrics.yaml'
 
-  sandbox_merge_input:
-    $ref: './request/sandboxes/merge.yaml'
+sandbox_merge_input:
+  $ref: './request/sandboxes/merge.yaml'
 
-  # RESOURCE
-  conversation_template:
-    $ref: ./resource/conversation_template.yaml
-  contact:
-    $ref: ./resource/contact.yaml
-  customer_note:
-    $ref: ./resource/customer_note.yaml
-  contact_note:
-    $ref: ./resource/contact_note.yaml
-  company_note:
-    $ref: ./resource/company_note.yaml
-  product_feedback:
-    $ref: ./resource/product_feedback.yaml
-  avatar:
-    $ref: ./resource/avatar.yaml
-  broadcast_message:
-    $ref: ./resource/broadcast_message.yaml
-  company:
-    $ref: ./resource/company.yaml
-  note:
-    $ref: ./resource/note.yaml
-  ticket:
-    $ref: ./resource/ticket.yaml
-  attachment:
-    $ref: ./resource/attachment.yaml
-  agent:
-    $ref: ./resource/agent.yaml
-  profile:
-    $ref: ./resource/profile.yaml
-  sla_policy:
-    $ref: ./resource/sla_policy.yaml
-  draft:
-    $ref: ./resource/draft.yaml
-  bot:
-    $ref: ./resource/bot.yaml
-  bot_folder:
-    $ref: ./resource/bot_folder.yaml
-  canned_response:
-    $ref: ./resource/canned_response.yaml
-  canned_response_folder:
-    $ref: ./resource/canned_response_folder.yaml
-  fb_post:
-    $ref: ./resource/fb_post.yaml
-  fb_page:
-    $ref: ./resource/fb_page.yaml
-  ticket_filter:
-    $ref: ./resource/ticket_filter.yaml
-  tweet_post:
-    $ref: ./resource/tweet_post.yaml
-  survey_result:
-    $ref: ./resource/survey_result.yaml
-  freshfone_call:
-    $ref: ./resource/freshfone_call.yaml
-  ticket_topic:
-    $ref: ./resource/ticket_topic.yaml
-  survey_question:
-    $ref: ./resource/survey_question.yaml
-  survey:
-    $ref: ./resource/survey.yaml
-  ticket_stats:
-    $ref: ./resource/extension/ticket/stats.yaml
-  portal:
-    $ref: ./resource/portal.yaml
-  bot_prerequisites:
-    $ref: ./response/bot_prerequisites.yaml
-  installed_applications:
-    $ref: ./resource/installed_applications.yaml
-  installed_application_fetch:
-    $ref: ./request/installed_applications/fetch.yaml
-  integrated_users:
-    $ref: ./resource/integrated_users.yaml
-  integrated_resources:
-    $ref: ./resource/integrated_resources.yaml
-  scenario_automation:
-    $ref: ./resource/scenario_automation.yaml
-  solution_article:
-    $ref: ./resource/solution_article.yaml
-  extension_generic:
-    $ref: ./resource/extension/generic.yaml
-  extended_contact:
+# RESOURCE
+conversation_template:
+  $ref: ./resource/conversation_template.yaml
+contact:
+  $ref: ./resource/contact.yaml
+customer_note:
+  $ref: ./resource/customer_note.yaml
+contact_note:
+  $ref: ./resource/contact_note.yaml
+company_note:
+  $ref: ./resource/company_note.yaml
+product_feedback:
+  $ref: ./resource/product_feedback.yaml
+avatar:
+  $ref: ./resource/avatar.yaml
+broadcast_message:
+  $ref: ./resource/broadcast_message.yaml
+company:
+  $ref: ./resource/company.yaml
+note:
+  $ref: ./resource/note.yaml
+ticket:
+  $ref: ./resource/ticket.yaml
+attachment:
+  $ref: ./resource/attachment.yaml
+agent:
+  $ref: ./resource/agent.yaml
+profile:
+  $ref: ./resource/profile.yaml
+sla_policy:
+  $ref: ./resource/sla_policy.yaml
+draft:
+  $ref: ./resource/draft.yaml
+bot:
+  $ref: ./resource/bot.yaml
+bot_folder:
+  $ref: ./resource/bot_folder.yaml
+canned_response:
+  $ref: ./resource/canned_response.yaml
+canned_response_folder:
+  $ref: ./resource/canned_response_folder.yaml
+fb_post:
+  $ref: ./resource/fb_post.yaml
+fb_page:
+  $ref: ./resource/fb_page.yaml
+ticket_filter:
+  $ref: ./resource/ticket_filter.yaml
+tweet_post:
+  $ref: ./resource/tweet_post.yaml
+survey_result:
+  $ref: ./resource/survey_result.yaml
+freshfone_call:
+  $ref: ./resource/freshfone_call.yaml
+ticket_topic:
+  $ref: ./resource/ticket_topic.yaml
+survey_question:
+  $ref: ./resource/survey_question.yaml
+survey:
+  $ref: ./resource/survey.yaml
+ticket_stats:
+  $ref: ./resource/extension/ticket/stats.yaml
+portal:
+  $ref: ./resource/portal.yaml
+bot_prerequisites:
+  $ref: ./response/bot_prerequisites.yaml
+installed_applications:
+  $ref: ./resource/installed_applications.yaml
+installed_application_fetch:
+  $ref: ./request/installed_applications/fetch.yaml
+integrated_users:
+  $ref: ./resource/integrated_users.yaml
+integrated_resources:
+  $ref: ./resource/integrated_resources.yaml
+scenario_automation:
+  $ref: ./resource/scenario_automation.yaml
+solution_article:
+  $ref: ./resource/solution_article.yaml
+extension_generic:
+  $ref: ./resource/extension/generic.yaml
+extended_contact:
+  allOf:
+    - $ref: '#/definitions/contact'
+    - $ref: ./resource/extension/contact.yaml
+extended_company:
+  allOf:
+    - $ref: '#/definitions/company'
+    - $ref: ./resource/extension/company.yaml
+extended_note:
+  allOf:
+    - $ref: '#/definitions/note'
+    - $ref: ./resource/extension/note.yaml
+extended_ticket:
+  allOf:
+    - $ref: '#/definitions/ticket'
+    - $ref: ./resource/extension/ticket.yaml
+extended_archive_ticket:
+  allOf:
+    - $ref: '#/definitions/ticket'
+    - $ref: ./resource/extension/archive_ticket.yaml
+extended_sla_policy:
+  allOf:
+    - $ref: '#/definitions/sla_policy'
+    - $ref: ./resource/extension/sla_policy.yaml
+extended_canned_response:
+  $ref: ./resource/extension/canned_response.yaml
+extended_canned_response_folder:
+  allOf:
+    - $ref: '#/definitions/canned_response_folder'
+    - $ref: ./resource/extension/canned_response_folder.yaml
+extended_cloud_file:
+  allOf:
+    - $ref: '#/definitions/extension_generic'
+    - $ref: '#/definitions/cloud_file_input'
+extended_survey:
+  allOf:
+    - $ref: '#/definitions/extension_generic'
+    - $ref: '#/definitions/survey'
+
+ticket_index:
+  type: array
+  items:
     allOf:
-      - $ref: '#/definitions/contact'
-      - $ref: ./resource/extension/contact.yaml
-  extended_company:
-    allOf:
-      - $ref: '#/definitions/company'
-      - $ref: ./resource/extension/company.yaml
-  extended_note:
-    allOf:
-      - $ref: '#/definitions/note'
-      - $ref: ./resource/extension/note.yaml
-  extended_ticket:
-    allOf:
-      - $ref: '#/definitions/ticket'
+      - $ref: ./resource/extension/ticket/list.yaml
+      - $ref: '#/definitions/ticket_stats'
       - $ref: ./resource/extension/ticket.yaml
-  extended_archive_ticket:
-    allOf:
-      - $ref: '#/definitions/ticket'
-      - $ref: ./resource/extension/archive_ticket.yaml
-  extended_sla_policy:
-    allOf:
-      - $ref: '#/definitions/sla_policy'
-      - $ref: ./resource/extension/sla_policy.yaml
-  extended_canned_response:
-    $ref: ./resource/extension/canned_response.yaml
-  extended_canned_response_folder:
-    allOf:
-      - $ref: '#/definitions/canned_response_folder'
-      - $ref: ./resource/extension/canned_response_folder.yaml
-  extended_cloud_file:
-    allOf:
-      - $ref: '#/definitions/extension_generic'
-      - $ref: '#/definitions/cloud_file_input'
-  extended_survey:
-    allOf:
-      - $ref: '#/definitions/extension_generic'
-      - $ref: '#/definitions/survey'
+ticket_show:
+  allOf:
+    - $ref: '#/definitions/extended_ticket'
+    - $ref: ./resource/extension/ticket/show.yaml
+archive_ticket_show:
+  allOf:
+    - $ref: '#/definitions/extended_archive_ticket'
+    - $ref: ./resource/extension/archive_ticket/show.yaml
+archive_conversations_show:
+  type: array
+  items:
+    $ref: '#/definitions/extended_note'
+archive_activities_index:
+  $ref: './response/tickets/activity.yaml'
 
-  ticket_index:
-    type: array
-    items:
-      allOf:
-        - $ref: ./resource/extension/ticket/list.yaml
-        - $ref: '#/definitions/ticket_stats'
-        - $ref: ./resource/extension/ticket.yaml
-  ticket_show:
-    allOf:
-      - $ref: '#/definitions/extended_ticket'
-      - $ref: ./resource/extension/ticket/show.yaml
-  archive_ticket_show:
-    allOf:
-      - $ref: '#/definitions/extended_archive_ticket'
-      - $ref: ./resource/extension/archive_ticket/show.yaml
-  archive_conversations_show:
-    type: array
-    items:
-      $ref: '#/definitions/extended_note'
-  archive_activities_index:
-    $ref: './response/tickets/activity.yaml'
+canned_response_folder_details:
+  $ref: ./response/canned_response/folder_show.yaml
+todo_details:
+  $ref: ./resource/todo.yaml
+rule:
+  $ref: ./resource/rule.yaml
 
-  canned_response_folder_details:
-    $ref: ./response/canned_response/folder_show.yaml
-  todo_details:
-    $ref: ./resource/todo.yaml
-  rule:
-    $ref: ./resource/rule.yaml
+# RESPONSE
+meta:
+  $ref: './response/meta.yaml'
+ner_api_data:
+  $ref: './resource/ner_api_data.yaml'
+conversations_show:
+  type: array
+  items:
+    $ref: '#/definitions/extended_note'
+partial_success_response:
+  $ref: ./response/bulk_partial_success.yaml
+trial_subscription_create_response:
+  $ref: './response/trial_subscription/create_response.yaml'
+make_agent_response:
+  $ref: ./response/make_agent.yaml
+agent_partial_success_response:
+  $ref: ./response/agents/create_multiple.yaml
 
-  # RESPONSE
-  meta:
-    $ref: './response/meta.yaml'
-  ner_api_data:
-    $ref: './resource/ner_api_data.yaml'
-  conversations_show:
-    type: array
-    items:
-      $ref: '#/definitions/extended_note'
-  partial_success_response:
-    $ref: ./response/bulk_partial_success.yaml
-  trial_subscription_create_response:
-    $ref: './response/trial_subscription/create_response.yaml'
-  make_agent_response:
-    $ref: ./response/make_agent.yaml
-  agent_partial_success_response:
-    $ref: ./response/agents/create_multiple.yaml
+contact_note_response:
+  $ref: ./response/contact_note.yaml
+company_note_response:
+  $ref: ./response/company_note.yaml
+customer_note_response:
+  $ref: ./response/customer_note.yaml
 
-  contact_note_response:
-    $ref: ./response/contact_note.yaml
-  company_note_response:
-    $ref: ./response/company_note.yaml
-  customer_note_response:
-    $ref: ./response/customer_note.yaml
+export_response:
+  $ref: ./response/export.yaml
+export_status_response:
+  $ref: ./response/export_status.yaml
 
-  export_response:
-    $ref: ./response/export.yaml
-  export_status_response:
-    $ref: ./response/export_status.yaml
+watchers:
+  $ref: ./response/tickets/watchers.yaml
+latest_note:
+  $ref: './response/conversations/latest_note.yaml'
+email_failures:
+  $ref: ./response/tickets/email_failures.yaml
+prime_association:
+  $ref: ./response/tickets/prime_association.yaml
+associated_tickets:
+  $ref: ./response/tickets/associated_ticket.yaml
+company_with_associations:
+  $ref: './response/companies/list.yaml'
+contact_activity:
+  $ref: './response/contacts/activity.yaml'
+company_activity:
+  $ref: './response/companies/activity.yaml'
+company_activities_with_meta:
+  $ref: './response/companies/activities_with_meta.yaml'
+timeline_activity:
+  $ref: './response/contacts/timeline.yaml'
+contact_post_activity:
+  $ref: './response/contacts/post.yaml'
+contact_ticket_activity:
+  $ref: './response/contacts/ticket.yaml'
 
-  watchers:
-    $ref: ./response/tickets/watchers.yaml
-  latest_note:
-    $ref: './response/conversations/latest_note.yaml'
-  email_failures:
-    $ref: ./response/tickets/email_failures.yaml
-  prime_association:
-    $ref: ./response/tickets/prime_association.yaml
-  associated_tickets:
-    $ref: ./response/tickets/associated_ticket.yaml
-  company_with_associations:
-    $ref: './response/companies/list.yaml'
-  contact_activity:
-    $ref: './response/contacts/activity.yaml'
-  company_activity:
-    $ref: './response/companies/activity.yaml'
-  company_activities_with_meta:
-    $ref: './response/companies/activities_with_meta.yaml'
-  timeline_activity:
-    $ref: './response/contacts/timeline.yaml'
-  contact_post_activity:
-    $ref: './response/contacts/post.yaml'
-  contact_ticket_activity:
-    $ref: './response/contacts/ticket.yaml'
+twitter_handle:
+  $ref: './resource/twitter_handle.yaml'
+ticket_activity:
+  $ref: './response/tickets/activity.yaml'
+canned_response_show:
+  allOf:
+    - $ref: '#/definitions/extended_canned_response'
+    - $ref: ./response/canned_response/show.yaml
+reply_to_forward_template:
+  $ref: ./resource/reply_to_forward_template.yaml
+password_policy:
+  $ref: ./resource/password_policy.yaml
+summary:
+  $ref: ./response/tickets/summary.yaml
+bot_index:
+  type: array
+  items:
+    $ref: '#/definitions/bot_list'
+bot_new:
+  $ref: './response/bot_new.yaml'
+bot_create:
+  $ref: './response/bot_create.yaml'
+bot_show:
+  $ref: './response/bot_show.yaml'
+bot_list:
+  $ref: './response/bot_list.yaml'
+bot_product_data:
+  $ref: './response/bot_product_data.yaml'
+bot_folders:
+  $ref: './response/bot_folders.yaml'
+bot_folder_list:
+  $ref: './response/bot_folder_list.yaml'
+create_bot_folder:
+  $ref: './response/create_bot_folder.yaml'
+bot_feedback_index:
+  type: array
+  items:
+    $ref: '#/definitions/unanswered_list'
+unanswered_list:
+  $ref: './response/bot_feedbacks/unanswered_list.yaml'
+bot_analytics:
+  $ref: './response/bot_analytics.yaml'
 
-  twitter_handle:
-    $ref: './resource/twitter_handle.yaml'
-  ticket_activity:
-    $ref: './response/tickets/activity.yaml'
-  canned_response_show:
-    allOf:
-      - $ref: '#/definitions/extended_canned_response'
-      - $ref: ./response/canned_response/show.yaml
-  reply_to_forward_template:
-    $ref: ./resource/reply_to_forward_template.yaml
-  password_policy:
-    $ref: ./resource/password_policy.yaml
-  summary:
-    $ref: ./response/tickets/summary.yaml
-  bot_index:
-     type: array
-     items:
-        $ref: '#/definitions/bot_list'
-  bot_new:
-    $ref: './response/bot_new.yaml'
-  bot_create:
-    $ref: './response/bot_create.yaml'
-  bot_show:
-    $ref: './response/bot_show.yaml'
-  bot_list:
-    $ref: './response/bot_list.yaml'
-  bot_product_data:
-    $ref: './response/bot_product_data.yaml'
-  bot_folders:
-    $ref: './response/bot_folders.yaml'
-  bot_folder_list:
-    $ref: './response/bot_folder_list.yaml'
-  create_bot_folder:
-    $ref: './response/create_bot_folder.yaml'
-  bot_feedback_index:
-     type: array
-     items:
-        $ref: '#/definitions/unanswered_list'
-  unanswered_list:
-    $ref: './response/bot_feedbacks/unanswered_list.yaml'
-  bot_analytics:
-    $ref: './response/bot_analytics.yaml'
+article_content:
+  $ref: './response/article_content.yaml'
 
-  article_content:
-    $ref: './response/article_content.yaml'
+topic_show:
+  $ref: './response/discussions/topics/show.yaml'
+topic_first_post:
+  $ref: './response/discussions/topics/first_post.yaml'
 
-  topic_show:
-    $ref: './response/discussions/topics/show.yaml'
-  topic_first_post:
-    $ref: './response/discussions/topics/first_post.yaml'
+freshmarketer_sessions:
+  $ref: './response/tickets/freshmarketer_sessions.yaml'
 
-  freshmarketer_sessions:
-    $ref: './response/tickets/freshmarketer_sessions.yaml'
+# Dashboard activities
+dashboard_activities:
+  $ref: './response/dashboard/activities.yaml'
 
-  # Dashboard activities
-  dashboard_activities:
-    $ref: './response/dashboard/activities.yaml'
+#dashbord quests
+dashboard_quests:
+  $ref: './response/dashboard/quest.yaml'
+#agent achievements
+agent_achievements:
+  $ref: './response/agents/achievements.yaml'
+#dashboard
+dashboard_widget_config:
+  $ref: './response/dashboard/widget_config.yaml'
+scorecard:
+  $ref: './response/dashboard/scorecard.yaml'
+satisfaction_survey_widget:
+  $ref: './response/dashboard/satisfaction_survey.yaml'
+forum_moderation_widget:
+  $ref: './response/dashboard/forum_moderation.yaml'
+unresolved_tickets:
+  $ref: './response/dashboard/unresolved_ticket.yaml'
+ticket_trends_widget:
+  $ref: './response/dashboard/ticket_trends.yaml'
+ticket_metrics_widget:
+  $ref: './response/dashboard/ticket_metrics.yaml'
+leaderboard_agents_lists:
+  $ref: './response/dashboard/leaderboard/agents.yaml'
+leaderboard_groups_lists:
+  $ref: './response/dashboard/leaderboard/groups.yaml'
+requester:
+  $ref: './response/tickets/requester.yaml'
+proactive_rule_response:
+  $ref: ./response/proactive/rule.yaml
 
-  #dashbord quests
-  dashboard_quests:
-    $ref: './response/dashboard/quest.yaml'
-  #agent achievements
-  agent_achievements:
-    $ref: './response/agents/achievements.yaml'
-  #dashboard
-  dashboard_widget_config:
-    $ref: './response/dashboard/widget_config.yaml'
-  scorecard:
-    $ref: './response/dashboard/scorecard.yaml'
-  satisfaction_survey_widget:
-    $ref: './response/dashboard/satisfaction_survey.yaml'
-  forum_moderation_widget:
-    $ref: './response/dashboard/forum_moderation.yaml'
-  unresolved_tickets:
-    $ref: './response/dashboard/unresolved_ticket.yaml'
-  ticket_trends_widget:
-    $ref: './response/dashboard/ticket_trends.yaml'
-  ticket_metrics_widget:
-    $ref: './response/dashboard/ticket_metrics.yaml'
-  leaderboard_agents_lists:
-    $ref: './response/dashboard/leaderboard/agents.yaml'
-  leaderboard_groups_lists:
-    $ref: './response/dashboard/leaderboard/groups.yaml'
-  requester:
-    $ref: './response/tickets/requester.yaml'
-  proactive_rule_response:
-    $ref: ./response/proactive/rule.yaml
+# Trial Widget
+trial_widget_index:
+  $ref: './response/trial_widget/index.yaml'
+trial_widget_sales_manager:
+  $ref: './response/trial_widget/sales_manager.yaml'
 
-  # Trial Widget
-  trial_widget_index:
-    $ref: './response/trial_widget/index.yaml'
-  trial_widget_sales_manager:
-    $ref: './response/trial_widget/sales_manager.yaml'
+#onboarding
+onboarding_forward_email_confirmation:
+  $ref: './response/onboarding/forward_email_confirmation.yaml'
+onboarding_test_email_forwarding:
+  $ref: './response/onboarding/test_email_forwarding.yaml'
+onboarding_suggest_domains:
+  $ref: './response/onboarding/suggest_domains.yaml'
+onboarding_customize_domain:
+  $ref: './response/onboarding/customize_domain.yaml'
 
-  #onboarding
-  onboarding_forward_email_confirmation:
-      $ref: './response/onboarding/forward_email_confirmation.yaml'
-  onboarding_test_email_forwarding:
-      $ref: './response/onboarding/test_email_forwarding.yaml'
-  onboarding_suggest_domains:
-      $ref: './response/onboarding/suggest_domains.yaml'
-  onboarding_customize_domain:
-      $ref: './response/onboarding/customize_domain.yaml'
+#Ticket Templates
+ticket_templates_index:
+  $ref: './response/ticket_templates/index.yaml'
+ticket_templates_show:
+  $ref: './response/ticket_templates/show.yaml'
 
-  #Ticket Templates
-  ticket_templates_index:
-    $ref: './response/ticket_templates/index.yaml'
-  ticket_templates_show:
-    $ref: './response/ticket_templates/show.yaml'
+#Marketplace
+marketplace_apps:
+  $ref: ./resource/marketplace_apps.yaml
 
-  #Marketplace
-  marketplace_apps:
-    $ref: ./resource/marketplace_apps.yaml
+#Canned forms
+canned_form_index:
+  $ref: ./resource/extension/canned_forms/list.yaml
+canned_form_input:
+  $ref: ./request/canned_forms/input.yaml
+canned_form_show:
+  $ref: ./resource/canned_forms.yaml
+canned_form_show_handle:
+  $ref: ./resource/extension/canned_forms/handle.yaml
 
-  #Canned forms
-  canned_form_index:
-    $ref: ./resource/extension/canned_forms/list.yaml
-  canned_form_input:
-    $ref: ./request/canned_forms/input.yaml
-  canned_form_show:
-    $ref: ./resource/canned_forms.yaml
-  canned_form_show_handle:
-    $ref: ./resource/extension/canned_forms/handle.yaml
+#Custom dashboard
+dashboard_custom_widgets_data:
+  $ref: ./response/dashboard/custom/widgets_data.yaml
+dashboard_custom_widget_data_preview:
+  $ref: ./response/dashboard/custom/widget_data_preview.yaml
+dashboard_list:
+  $ref: './response/custom_dashboard/dashboard_list.yaml'
+dashboard_show:
+  $ref: './response/custom_dashboard/dashboard_show.yaml'
+dashboard_update:
+  $ref: './request/custom_dashboard/dashboard_update.yaml'
+dashboard_create:
+  $ref: './request/custom_dashboard/dashboard_create.yaml'
+create_announcement:
+  $ref: ./response/dashboard/custom/create_announcement.yaml
+get_announcements:
+  $ref: ./response/dashboard/custom/get_announcements.yaml
+end_announcement:
+  $ref: ./response/dashboard/custom/end_announcement.yaml
+announcement_create:
+  $ref: './request/custom_dashboard/create_announcement.yaml'
+announcement_end:
+  $ref: './request/custom_dashboard/end_announcement.yaml'
+fetch_announcement:
+  $ref: './response/dashboard/custom/fetch_announcement.yaml'
 
-  #Custom dashboard
-  dashboard_custom_widgets_data:
-    $ref: ./response/dashboard/custom/widgets_data.yaml
-  dashboard_custom_widget_data_preview:
-    $ref: ./response/dashboard/custom/widget_data_preview.yaml
-  dashboard_list:
-    $ref: './response/custom_dashboard/dashboard_list.yaml'
-  dashboard_show:
-    $ref: './response/custom_dashboard/dashboard_show.yaml'
-  dashboard_update:
-    $ref: './request/custom_dashboard/dashboard_update.yaml'
-  dashboard_create:
-    $ref: './request/custom_dashboard/dashboard_create.yaml'
-  create_announcement:
-    $ref: ./response/dashboard/custom/create_announcement.yaml
-  get_announcements:
-    $ref: ./response/dashboard/custom/get_announcements.yaml
-  end_announcement:
-    $ref: ./response/dashboard/custom/end_announcement.yaml
-  announcement_create:
-    $ref: './request/custom_dashboard/create_announcement.yaml'
-  announcement_end:
-    $ref: './request/custom_dashboard/end_announcement.yaml'
-  fetch_announcement:
-    $ref: './response/dashboard/custom/fetch_announcement.yaml'
+#sandbox
+sandboxes_index:
+  $ref: ./response/sandboxes/index.yaml
+sandboxes_create:
+  $ref: ./response/sandboxes/create.yaml
+sandboxes_diff:
+  $ref: ./response/sandboxes/diff.yaml
+sandboxes_merge:
+  $ref: ./response/sandboxes/merge.yaml
 
-  #sandbox
-  sandboxes_index:
-    $ref: ./response/sandboxes/index.yaml
-  sandboxes_create:
-    $ref: ./response/sandboxes/create.yaml
-  sandboxes_diff:
-    $ref: ./response/sandboxes/diff.yaml
-  sandboxes_merge:
-    $ref: ./response/sandboxes/merge.yaml
+#Freshmarketer
+freshmarketer_experiment:
+  $ref: ./response/freshmarketer/index.yaml
+freshmarketer_session:
+  $ref: ./response/freshmarketer/session.yaml
 
-  #Freshmarketer
-  freshmarketer_experiment:
-    $ref: ./response/freshmarketer/index.yaml
-  freshmarketer_session:
-    $ref: ./response/freshmarketer/session.yaml
+#subscription
+subscription_show:
+  $ref: ./response/subscription/show.yaml
+plans:
+  $ref: ./response/subscription/plans.yaml
 
-  #subscription
-  subscription_show:
-    $ref: ./response/subscription/show.yaml
-  plans:
-    $ref: ./response/subscription/plans.yaml
-
-  #Advanced Ticketing
-  advanced_ticketing_create:
-    $ref: ./request/advanced_ticketing/create.yaml
-  advanced_ticketing_insights:
-    $ref: ./response/advanced_ticketing/insights.yaml
+#Advanced Ticketing
+advanced_ticketing_create:
+  $ref: ./request/advanced_ticketing/create.yaml
+advanced_ticketing_insights:
+  $ref: ./response/advanced_ticketing/insights.yaml
