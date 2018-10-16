@@ -1,6 +1,6 @@
 module DiffHelper
   METHODS = ['added', 'modified', 'deleted', 'conflict']
-  def compare_ids(diff, diff_data)
+  def compare_ids(diff, data_diff)
     diff_data = {}
     generated_diff_ids = {}
     data_diff_ids = {}
@@ -15,7 +15,7 @@ module DiffHelper
         end
       end
       data_diff_ids[method_name] ||= {}
-      diff_data.each do |association, data|
+      data_diff.each do |association, data|
         association = association_mapping(association)
         if (method_name == 'modified' && (association == "ticket_fields" || association == "va_rules"))
           (data_diff_ids[method_name][association] ||= []) << data.map { |item| item[:id].to_i if item[:status] == method_name.to_sym && !(item[:changes].count == 1 && item[:changes].first[:key] =~ /(.*)\/position/) }.compact
@@ -32,6 +32,7 @@ module DiffHelper
         diff_data[method_name][association] << [generated_diff_ids[method_name][association].uniq.sort, data_diff_ids[method_name][association].flatten.uniq.sort]
       end
     end
+    diff_data
   end
 
   def association_mapping(association)

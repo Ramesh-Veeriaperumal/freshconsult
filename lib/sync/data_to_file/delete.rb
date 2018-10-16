@@ -29,8 +29,8 @@ class Sync::DataToFile::Delete
             next
           end
         end
-        item = transfrom_id(@transformer, item, model_name(object)) unless sandbox
-        delete_file(object_path) if delete?(item, table_name(object), object, object_path)
+        item = transform_id(@transformer, item, model_name(object), true)
+        delete_file(object_path) if delete?(item, table_name(object), object)
       end
     end
   end
@@ -45,12 +45,11 @@ class Sync::DataToFile::Delete
       object.class.table_name
     end
 
-    def delete?(item, table_name, object, _object_path)
+    def delete?(item, table_name, object)
       (!item.gsub(/.*_([^_]+)$/, '\1').to_i.zero? && item.to_i.zero?) || (!item.to_i.zero? && !record_present?(table_name, account.id, item.to_i, object))
     end
 
     def delete_file(path)
-      sync_logger.info('*' * 100 + "  ---- Deleting  File #{path}")
       FileUtils.rm_r(path)
     end
 end

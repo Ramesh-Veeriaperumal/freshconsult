@@ -52,6 +52,7 @@ module EmailNotificationsSandboxHelper
     return [] unless email_notification
     email_notification.notification_type = 115
     email_notification.save
+    email_notification.attributes.merge("model" => MODEL_NAME, "action" => "conflict")
   end
 
   def create_email_notification(account, params = {})

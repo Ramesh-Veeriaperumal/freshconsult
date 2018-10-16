@@ -1,6 +1,6 @@
 module Sync::FileToData::Util
   def self.included(base)
-    [Sync::CustomLogger, Sync::Util, Sync::Constants, Sync::Transformer::Util, Sync::SqlUtil].each do |file|
+    [Sync::Util, Sync::Constants, Sync::Transformer::Util, Sync::SqlUtil].each do |file|
       base.send(:include, file)
     end
   end

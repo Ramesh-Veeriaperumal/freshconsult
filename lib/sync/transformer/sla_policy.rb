@@ -1,13 +1,14 @@
 module Sync::Transformer::SlaPolicy
   include Sync::Transformer::Util
-  ESCALATIONS_KEYS = ['reminder_response', 'reminder_resolution', 'response', 'resolution'].freeze
+  ESCALATIONS_KEYS = [:reminder_response, :reminder_resolution, :response, :resolution].freeze
 
   CONDITIONS_KEY_NAME_MAPPING = {
     'group_id' => 'Group',
     'product_id' => 'Product'
   }.freeze
 
-  def transform_helpdesk_sla_policy_escalations(data, mapping_table)
+  def transform_helpdesk_sla_policy_escalations(data, mapping_table = {})
+    data = data.symbolize_keys
     ESCALATIONS_KEYS.each do |iterator|
       next if data[iterator].blank?
       data[iterator].each do |k, v|
@@ -18,7 +19,7 @@ module Sync::Transformer::SlaPolicy
     data
   end
 
-  def transform_helpdesk_sla_policy_conditions(data, mapping_table)
+  def transform_helpdesk_sla_policy_conditions(data, mapping_table = {})
     CONDITIONS_KEY_NAME_MAPPING.each do |key, model|
       if data[key].present?
         data[key] = apply_id_mapping(data[key], get_mapping_data(model, mapping_table))

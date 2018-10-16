@@ -8,7 +8,8 @@ class Sync::FileToData::PostMigration
   DELETE_AGENT_ASSOCIATIONS = {
     'AgentGroup' => ['Group', 'group_id'],
     'UserSkill' =>  ['Admin::Skill', 'skill_id']
-  }.freeze
+  }
+  
   def initialize(master_account_id, mapping_table, self_associations, deleted_associations, resync = false, account = Account.current)
     @master_account_id = master_account_id
     @mapping_table = mapping_table
