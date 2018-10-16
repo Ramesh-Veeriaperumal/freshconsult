@@ -327,5 +327,47 @@ module Channel::V2
       assert t.due_by - t.created_at == 31.day, "Expected due_by => #{t.due_by.inspect} should be 30 days ahead of created time => #{t.created_at.inspect}"
       assert t.frDueBy - t.created_at == 31.day, "Expected frDueBy => #{t.frDueBy.inspect} should be 30 days ahead of  created time => #{t.created_at.inspect}"
     end
+
+    def test_create_with_required_custom_dropdown_field
+      ticket_field = @account.ticket_fields.find_by_name('test_custom_dropdown_1')
+      previous_required_field = ticket_field.required
+      ticket_field.update_attributes(required: true)
+      created_at = updated_at = Time.now
+      params = {
+          requester_id: requester.id, status: 2, priority: 2,
+          subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+          'created_at' => created_at, 'updated_at' => updated_at
+      }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 201
+      t = Helpdesk::Ticket.last
+      match_json(ticket_pattern(params, t))
+      match_json(ticket_pattern({}, t))
+      assert (t.created_at - created_at).to_i == 0
+      assert (t.updated_at - updated_at).to_i == 0
+      ticket_field.update_attributes(required: previous_required_field)
+    end
+
+    def test_create_with_required_custom_dependent_field
+      ticket_field = @account.ticket_fields.find_by_name('test_custom_country_1')
+      previous_required_field = ticket_field.required
+      ticket_field.update_attributes(required: true)
+      created_at = updated_at = Time.now
+      params = {
+          requester_id: requester.id, status: 2, priority: 2,
+          subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+          'created_at' => created_at, 'updated_at' => updated_at
+      }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 201
+      t = Helpdesk::Ticket.last
+      match_json(ticket_pattern(params, t))
+      match_json(ticket_pattern({}, t))
+      assert (t.created_at - created_at).to_i == 0
+      assert (t.updated_at - updated_at).to_i == 0
+      ticket_field.update_attributes(required: previous_required_field)
+    end
   end
 end

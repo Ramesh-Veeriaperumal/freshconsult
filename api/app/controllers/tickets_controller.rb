@@ -26,7 +26,7 @@ class TicketsController < ApiApplicationController
   def create
     assign_protected
     return render_request_error(:recipient_limit_exceeded, 429) if recipients_limit_exceeded?
-    ticket_delegator = TicketDelegator.new(@item, ticket_fields: @ticket_fields,
+    ticket_delegator = ticket_delegator_class.new(@item, ticket_fields: @ticket_fields,
       custom_fields: params[cname][:custom_field], tags: cname_params[:tags],
       company_id: params[cname][:company_id], parent_attachment_params: parent_attachment_params, 
       inline_attachment_ids: @inline_attachment_ids)
@@ -50,7 +50,7 @@ class TicketsController < ApiApplicationController
     delegator_hash = { ticket_fields: @ticket_fields, custom_fields: custom_fields,
                        company_id: params[cname][:company_id], tags: cname_params[:tags] }
     delegator_hash[:tracker_ticket_id] = cname_params[:tracker_ticket_id] if link_or_unlink?
-    ticket_delegator = TicketDelegator.new(@item, delegator_hash)
+    ticket_delegator = ticket_delegator_class.new(@item, delegator_hash)
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
     else
@@ -102,6 +102,10 @@ class TicketsController < ApiApplicationController
     end
 
   private
+    # delegator class to be used when calling create or update
+    def ticket_delegator_class
+      'TicketDelegator'.constantize
+    end
 
     # Same as http://apidock.com/rails/Hash/extract! without the shortcomings in http://apidock.com/rails/Hash/extract%21#1530-Non-existent-key-semantics-changed-
     # extract the keys from the hash & delete the same in the original hash to avoid repeat assignments
