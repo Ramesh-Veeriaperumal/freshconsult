@@ -28,6 +28,7 @@ class Sync::Templatization
         changes_for_model(resync_root_path, relation[0])
       end
     end
+    FileUtils.rm_rf(resync_root_path)
     {}.tap { |r| @delta.each { |k, v| r[k] = v.values.compact } } # Consolidate
   end
 
