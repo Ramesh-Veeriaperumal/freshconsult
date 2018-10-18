@@ -56,7 +56,7 @@ class ThirdCRM
 
   def add_or_update_contact(account, args)
     contact_data = safe_send("#{args[:event]}_info", account, args)
-    contact_data.merge(Email: account.admin_email) unless contact_data[:Email]
+    contact_data.merge!(Email: account.admin_email) unless contact_data[:Email]
     update_lead(contact_data)
   end
 
