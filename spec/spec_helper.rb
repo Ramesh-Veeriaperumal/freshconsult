@@ -96,8 +96,7 @@ Spork.prefork do
   'spec/support/wf/test_case_generator.rb',
   'spec/support/wf/operator_helper.rb',
   'spec/support/wf/option_selector.rb',
-  'spec/support/wf/test_case.rb',
-  'test/test_file_methods.rb'].each do |file_path| require "#{Rails.root}/#{file_path}" end
+  'spec/support/wf/test_case.rb'].each do |file_path| require "#{Rails.root}/#{file_path}" end
 
 
   RSpec.configure do |config|
@@ -210,11 +209,8 @@ Spork.prefork do
       GNIP_ENABLED = false
       RIAK_ENABLED = false
 
-      #Sharding.run_on_all_shards do
       DatabaseCleaner.clean_with(:truncation,
                                  {:pre_count => true, :reset_ids => false})
-        #set_autoincrement_ids
-      #end
 
       $redis_others.flushall
 

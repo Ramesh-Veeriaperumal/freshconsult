@@ -4,14 +4,15 @@ module Sync::Util
   # XXX TODO - remove all Sync:: since they r under the same namespace
 
   def sync_config_to_local(account_id, repo_path)
+    FileUtils.rm_rf(repo_path)
     branch    = branch_name(account_id)
     gitClient = Sync::GitClient.new(repo_path, branch)
     gitClient.checkout_branch
   end
 
-  def commit_config_to_git(repo_path, master_account_id = nil, sandbox = false)
+  def commit_config_to_git(repo_path, sandbox = false)
     RELATIONS.each do |relation|
-      Sync::DataToFile::Manager.new(repo_path, master_account_id, relation[0], relation[1], sandbox).write_config
+      Sync::DataToFile::Manager.new(repo_path, relation[0], relation[1], sandbox).write_config
     end
   end
 
@@ -71,6 +72,7 @@ module Sync::Util
   end
 
   def create_file(path, content)
+    FileUtils.mkdir_p(File.dirname(path))
     File.open(path, 'w') { |f| f.puts content }
   end
 
@@ -93,6 +95,7 @@ module Sync::Util
         next unless file
         file_path =  repo_path + '/' + file
         new_file = file_path.gsub(GIT_ROOT_PATH, RESYNC_ROOT_PATH)
+        FileUtils.mkdir_p(File.dirname(new_file))
         # copy file
         if File.exist?(file_path)
           FileUtils.cp(file_path, File.dirname(new_file))

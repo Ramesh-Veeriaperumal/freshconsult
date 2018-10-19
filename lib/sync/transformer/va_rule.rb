@@ -30,8 +30,7 @@ module Sync::Transformer::VaRule
       elsif FITER_DATA_NAME_MAPPINGS.keys.include?(it[:name])
         it[:value] = apply_id_mapping(it[:value], get_mapping_data(FITER_DATA_NAME_MAPPINGS[it[:name]], mapping_table))
       elsif STATUS_DATA_NAME_MAPPINGS.keys.include?(it[:name])
-        model_name = STATUS_DATA_NAME_MAPPINGS[it[:name]]
-        it[:value] = apply_id_mapping(it[:value], get_mapping_data(model_name, mapping_table, 'status_id'), model_name)
+        it[:value] = apply_id_mapping(it[:value], get_mapping_data(STATUS_DATA_NAME_MAPPINGS[it[:name]], mapping_table, 'status_id'))
       elsif it[:name] == 'created_at' && it[:business_hours_id].present?
         it[:business_hours_id] = apply_id_mapping(it[:business_hours_id], get_mapping_data('BusinessCalendar', mapping_table))
       else
@@ -58,8 +57,7 @@ module Sync::Transformer::VaRule
           nested_rule[:name] = change_custom_field_name(nested_rule[:name])
         end
       elsif STATUS_DATA_NAME_MAPPINGS.keys.include?(it[:name])
-        model_name = STATUS_DATA_NAME_MAPPINGS[it[:name]]
-        it[:value] = apply_id_mapping(it[:value], get_mapping_data(model_name, mapping_table, 'status_id'), model_name)
+        it[:value] = apply_id_mapping(it[:value], get_mapping_data(STATUS_DATA_NAME_MAPPINGS[it[:name]], mapping_table, 'status_id'))
       elsif ACTION_DATA_NAME_MAPPINGS.keys.include?(it[:name])
         value_key = ['send_email_to_group', 'send_email_to_agent'].include?(it[:name]) ? :email_to : :value
         it[value_key] = apply_id_mapping(it[value_key], get_mapping_data(ACTION_DATA_NAME_MAPPINGS[it[:name]], mapping_table)) if ACTION_DATA_NAME_MAPPINGS[it[:name]].present?
@@ -81,8 +79,7 @@ module Sync::Transformer::VaRule
           if FITER_DATA_NAME_MAPPINGS.keys.include?(it[:name])
             it[value_key]  = apply_id_mapping(it[value_key], get_mapping_data(FITER_DATA_NAME_MAPPINGS[it[:name]], mapping_table))
           else
-            model_name = STATUS_DATA_NAME_MAPPINGS[it[:name]]
-            it[value_key]  = apply_id_mapping(it[value_key], get_mapping_data(model_name, mapping_table, 'status_id'), model_name)
+            it[value_key]  = apply_id_mapping(it[value_key], get_mapping_data(STATUS_DATA_NAME_MAPPINGS[it[:name]], mapping_table, 'status_id'))
           end
         end
       end

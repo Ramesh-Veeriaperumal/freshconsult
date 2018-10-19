@@ -22,16 +22,12 @@ class Sync::FileToData::Manager
           ActiveRecord::Base.transaction do
             (@model_insert_order & model_directories.keys).each do |_model|
               model_directories[_model].each do |model_directory|
-                begin
-                  @push_to_sql.perform(_model, model_directory, action)
-                rescue Exception => e
-                  Sync::Logger.log("Exception during push_to_sql, model: #{_model.inspect}, model_directory #{model_directory.inspect}, action: #{action}, exception: #{e.message}, backtrace: #{e.backtrace[0..5].inspect}")
-                end  
+                @push_to_sql.perform(_model, model_directory, action)
               end
             end
           end
         rescue StandardError => e
-          Sync::Logger.log("Error Sandbox push data to sql account #{account.id} #{model_directories} #{e.inspect}, #{e.backtrace[0..5].inspect}")
+          sync_logger.info("Error Sandbox push data to sql account #{account.id} #{model_directories} #{e.inspect}, #{e.backtrace.inspect}")
           @failed_records[model] ||= []
           @failed_records[model] << id
         end
@@ -62,7 +58,7 @@ class Sync::FileToData::Manager
       clear_cache_methods = MODEL_MEMCACHE_KEYS[model] || ['clear_cache']
       clear_cache_methods.each do |clear_cache_method|
         next unless obj.respond_to?(clear_cache_method, true)
-        Sync::Logger.log("Clearing Cache for : #{model}")
+        sync_logger.info("Clearing Cache for : #{model}")
         obj.account_id = Account.current.id if obj.respond_to?('account_id')
         obj.safe_send(clear_cache_method)
       end

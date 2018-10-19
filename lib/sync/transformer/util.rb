@@ -7,26 +7,16 @@ module Sync::Transformer::Util
     end
   end
 
-  def apply_id_mapping(value, mapping_info = {}, model = '', reverse = false)
-    Sync::Logger.log("Inside apply_id_mapping, value: #{value.inspect} mapping_info: #{mapping_info.inspect}, model: #{model}, reverse: #{reverse}, resync: #{@resync}")
-    if value.present? && (value.is_a?(Array) || !value.to_i.zero?)
-      if value.is_a? Array
-        value.map { |val| apply_id_mapping(val, mapping_info, model, reverse) }
-      elsif @resync && mapping_info.key?(value.to_i)
-        mapping_value(mapping_info, value)
-      elsif !skip_transformation?(value, model) && value.to_i > 0
-        calc_id(value, reverse)
-      else
-        value
-      end
+  def apply_id_mapping(value, mapping_info)
+    if value.is_a? Array
+      value.map { |val| val.present? && mapping_info[val.to_i].present? ? mapping_value(mapping_info, val) : val }
     else
-      value
+      value.present? && mapping_info[value.to_i].present? ? mapping_value(mapping_info, value) : value
     end
   end
 
   def mapping_value(mapping_info, value)
-    new_value = mapping_info[value.to_i]
-    new_value ? new_value.is_a?(String) ? new_value.to_s : new_value.to_i : new_value
+    value.is_a?(String) ? mapping_info[value.to_i].to_s : mapping_info[value.to_i].to_i
   end
 
   def get_mapping_data(model, mapping_table, mapped_column = :id)
