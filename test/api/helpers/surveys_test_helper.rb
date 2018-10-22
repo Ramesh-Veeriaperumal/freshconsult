@@ -55,7 +55,9 @@ module SurveysTestHelper
   def active_classic_survey_rating(survey)
     {
       id: survey.id,
-      title: survey.title_text
+      title: survey.title_text,
+      created_at: survey.created_at,
+      updated_at: survey.updated_at
     }
   end
 
