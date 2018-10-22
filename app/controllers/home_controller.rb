@@ -14,6 +14,7 @@ class HomeController < ApplicationController
       flash.keep(:notice)
       redirect_to support_home_path(:url_locale => current_user.language) and return if 
           current_account.multilingual? && current_user
+      params.delete(:language) unless Language.find_by_code(params[:language])
       redirect_to support_home_path(:url_locale => params[:language]) and return
     end   
     # redirect_to login_path and return unless (allowed_in_portal?(:open_solutions) || allowed_in_portal?(:open_forums))

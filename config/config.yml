@@ -12,99 +12,105 @@ support_url: https://support.freshdesk.com
 privacy_policy: https://freshdesk.com/privacy
 latest_shard: "shard_7"
 feedback_account:
-    development: http://localhost.freshdesk-dev.com:3000
-    staging: https://feedback1.freshpo.com
-    production: https://support.freshdesk.com
+  development: http://localhost.freshdesk-dev.com:3000
+  staging: https://feedback1.freshpo.com
+  production: https://support.freshdesk.com
 
 attachment:
-    attachment_common: &attachment_common 
-        protocol: http
-        port: 
-    development: 
-        <<: *attachment_common
-        domain: 
-            poduseast: localhost.freshdesk-dev.com
-            podeuwest: localhost.freshdesk-dev.com
-            podeucentral: localhost.freshdesk-dev.com
-        port: ':3000'
-    staging:
-        <<: *attachment_common
-        domain: 
-            poduseast: attachment.freshpo.com
-            podeuwest: euattachment.freshpo.com
-            podeucentral: eucattachment.freshpo.com
-        protocol: https
-    production:
-        <<: *attachment_common
-        domain: 
-            poduseast: attachment.freshdesk.com
-            podeuwest: euattachment.freshdesk.com
-            podeucentral: eucattachment.freshdesk.com
-        protocol: https
+  attachment_common: &attachment_common
+    protocol: http
+    port:
+  development:
+    <<: *attachment_common
+    domain:
+      poduseast: localhost.freshdesk-dev.com
+      podeuwest: localhost.freshdesk-dev.com
+      podeucentral: localhost.freshdesk-dev.com
+    port: ':3000'
+  staging:
+    <<: *attachment_common
+    domain:
+      poduseast: attachment.freshpo.com
+      podeuwest: euattachment.freshpo.com
+      podeucentral: eucattachment.freshpo.com
+    protocol: https
+  production:
+    <<: *attachment_common
+    domain:
+      poduseast: attachment.freshdesk.com
+      podeuwest: euattachment.freshdesk.com
+      podeucentral: eucattachment.freshdesk.com
+    protocol: https
+  test:
+    domain:
+      poduseast: localhost.freshdesk-dev.com
+      podeuwest: localhost.freshdesk-dev.com
+      podeucentral: localhost.freshdesk-dev.com
+    port: ':3000'
 
 # Used in account creation (account.rb)
-base_domain: 
-    development: freshdesk-dev.com
-    production: freshdesk.com
-    staging: freshpo.com
-    test: freshpo.com
+base_domain:
+  development: freshdesk-dev.com
+  production: freshdesk.com
+  staging: freshpo.com
+  test: freshpo.com
 
 demo_site:
-    development: "localhost:388"
-    production:  "demo.freshdesk.com"
-    staging:     "demo.freshpo.com"
+  development: "localhost:388"
+  production: "demo.freshdesk.com"
+  staging: "demo.freshpo.com"
 
 sub_bcc_email:
-    development: "kiran@freshdesk.com"
-    production:  "team@freshdesk.com"
-    staging:     "support@freshpo.com"
-    
+  development: "kiran@freshdesk.com"
+  production: "team@freshdesk.com"
+  staging: "support@freshpo.com"
+
 crm:
-    development: 
-       api_key: "08a70b1b65d5775a1138db79ed84313b"
-       domain:  "freshdesk-dev"
-    production: 
-       api_key: "7689a7f6686c7ad23037f9ad96e7c4cc"
-       domain:  "freshdesk"
-    staging:  
-       api_key: "08a70b1b65d5775a1138db79ed84313b"
-       domain:  "freshdesk-dev"
+  development:
+    api_key: "08a70b1b65d5775a1138db79ed84313b"
+    domain: "freshdesk-dev"
+  production:
+    api_key: "7689a7f6686c7ad23037f9ad96e7c4cc"
+    domain: "freshdesk"
+  staging:
+    api_key: "08a70b1b65d5775a1138db79ed84313b"
+    domain: "freshdesk-dev"
 
 salesforce:
-    development:
-       consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
-       consumer_secret : "8034737126137452216"
-       access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
-       access_secret : "2336849265765064476"
-    production: 
-       consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
-       consumer_secret : "8034737126137452216"
-       access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
-       access_secret : "2336849265765064476"
-    staging:  
-       consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
-       consumer_secret : "8034737126137452216"
-       access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
-       access_secret : "2336849265765064476"
-    test:
-       consumer_key : "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
-       consumer_secret : "8034737126137452216"
-       access_token : "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
-       access_secret : "2336849265765064476"
+  development:
+    consumer_key: "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
+    consumer_secret: "8034737126137452216"
+    access_token: "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
+    access_secret: "2336849265765064476"
+  production:
+    consumer_key: "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
+    consumer_secret: "8034737126137452216"
+    access_token: "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
+    access_secret: "2336849265765064476"
+  staging:
+    consumer_key: "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
+    consumer_secret: "8034737126137452216"
+    access_token: "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
+    access_secret: "2336849265765064476"
+  test:
+    consumer_key: "3MVG9Y6d_Btp4xp7._6YSpCqcHkm0UjNo990w4MV9TRff1pc.8Y3.ZHlScJe87hD9Y93UycT6NV3VuWqZwTTq"
+    consumer_secret: "8034737126137452216"
+    access_token: "5Aep8617VFpoP.M.4tPuMJu8KZ7H4IwcutjcNuNzoB_S7l9x0BM6vIHUXzDWH26X7Kh5XTLcVfdnA=="
+    access_secret: "2336849265765064476"
 
 freshsales:
-    development:
-      authentication_token: "jxpnk1mNjMvj47mdXBKKVg"
-      portal_url: "https://fdadmintest.freshmarketeer.com"
-    test:
-      authentication_token: "jxpnk1mNjMvj47mdXBKKVg"
-      portal_url: "https://fdadmintest.freshmarketeer.com"
-    staging:
-      authentication_token: "jxpnk1mNjMvj47mdXBKKVg"
-      portal_url: "https://fdadmintest.freshmarketeer.com"
-    production:
-      authentication_token: "1uzGOM_zc-27E1jjJUoTGw"
-      portal_url: "https://freshdesk.freshsales.io"
+  development:
+    authentication_token: "jxpnk1mNjMvj47mdXBKKVg"
+    portal_url: "https://fdadmintest.freshmarketeer.com"
+  test:
+    authentication_token: "jxpnk1mNjMvj47mdXBKKVg"
+    portal_url: "https://fdadmintest.freshmarketeer.com"
+  staging:
+    authentication_token: "jxpnk1mNjMvj47mdXBKKVg"
+    portal_url: "https://fdadmintest.freshmarketeer.com"
+  production:
+    authentication_token: "1uzGOM_zc-27E1jjJUoTGw"
+    portal_url: "https://freshdesk.freshsales.io"
 
 freshchat:
   development:
@@ -119,8 +125,6 @@ freshchat:
   production:
     token: "b2bd4a97-1290-4dcb-966c-c27547ba9470"
     app_id: "6ba3ce2a-c09a-4247-9b28-83507210bf78"
-
-
 
 marketo:
   development:
@@ -144,16 +148,14 @@ marketo:
     api_subdomain: "626-CPN-682"
     api_version: "2_1"
 
-
-
 integrations_url:
-    development: "http://localhost:3000"
-    test: "https://login.freshpo.com"
-    production: "https://login.freshdesk.com"
-    # staging: "https://login.freshbugs.com"
-    staging: "https://login.freshpo.com"
-    # staging: "https://login.freshitil.com"
-    #staging: "https://login.freshpo.com"
+  development: "http://localhost:3000"
+  test: "https://login.freshpo.com"
+  production: "https://login.freshdesk.com"
+  # staging: "https://login.freshbugs.com"
+  staging: "https://login.freshpo.com"
+  # staging: "https://login.freshitil.com"
+  # staging: "https://login.freshpo.com"
 
 global_integration_url:
   development: "http://localhost:3000"
@@ -204,10 +206,9 @@ freshops_subdomain:
 partner_subdomain:
   poduseast1: partner
   podeuwest1: partnereu
-  podeucentral1: partnereuc  
+  podeucentral1: partnereuc
 
 billing_subdomain: billing
 
 # Show Trial Expiry notifier only if the trail days is less than 100 (dashboard/index.html)
 show_trail_notifier_in_days: 30
-
