@@ -20,7 +20,7 @@ class Admin::Sandbox::MergeWorker < BaseWorker
       delete_sandbox
     end
   rescue StandardError => e
-    Rails.logger.error("Sandbox merge Exception in account: #{@account.id}  \n#{e.message}\n#{e.backtrace[0..7].inspect}")
+    Rails.logger.error("Sandbox merge Exception in account: #{@account.id}  \n#{e.message}\n#{e.backtrace.join("\n\t")}")
     NewRelic::Agent.notice_error(e, description: "Sandbox merge Error in Account: #{@account.id}")
     @job.update_last_error(e, :error) if @job
     send_error_notification(e, @account)

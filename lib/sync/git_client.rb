@@ -14,7 +14,7 @@ module Sync
 
     def get_changes(target, source)
       run_git_command do
-        run_and_log "git checkout #{source}"
+        run_and_log "git checkout  #{source}"
         run_and_log "git checkout #{target}"
         run_and_log "git merge -s resolve origin/#{source} --no-commit --no-ff "
       end
@@ -29,14 +29,14 @@ module Sync
 
     def remove_repo(stale_branch, master)
       if repo_client.branches.to_a.collect(&:name).include?("origin/#{stale_branch}")
-        Sync::Logger.log 'Branch found. Deleting the branch'
+        puts 'Branch found. Deleting the branch'
         run_git_command do
           run_and_log("git checkout #{master}")
           run_and_log("git push origin --delete #{stale_branch}")
           run_and_log("git branch -d #{stale_branch}")
         end
       else
-        Sync::Logger.log 'Branch not found.'
+        puts 'Branch not found.'
       end
     end
 
@@ -164,10 +164,10 @@ module Sync
       #   checkout_branch: @branch
       # })
       clone_repo
-      fetch_and_switch
+      fecth_and_switch
     end
 
-    def fetch_and_switch
+    def fecth_and_switch # XXX Rename
       branch = repo_client.branches["origin/#{@branch}"]
 
       # Create the branch
@@ -179,8 +179,7 @@ module Sync
         end
       else
         run_git_command do
-          run_and_log "git checkout origin/#{@branch}"
-          run_and_log "git checkout -b #{@branch}"
+          run_and_log "git checkout #{@branch}"
         end
       end
     end
@@ -204,8 +203,8 @@ module Sync
     end
 
     def run_and_log(command, log = true)
-      Sync::Logger.log command
-      Sync::Logger.log system(command)
+      puts command if log
+      system(command)
     end
 
     class ConfigConflictError < StandardError

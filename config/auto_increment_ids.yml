@@ -39,10 +39,9 @@ defaults: &defaults
     shard_28: 41000000000
     shard_29_1: 42000000000
     shard_29_2: 43000000000
+    shard_29_3: 44000000000
     shard_30: 45000000000
     shard_30_2: 46000000000
-    shard_31_1: 44000000000
-    sandbox_shard_us: 11000000000000
     sandbox_shard_1: 100000000000
     sandbox_shard_2: 101000000000
     sandbox_shard_3: 102000000000
@@ -85,20 +84,15 @@ defaults: &defaults
     sandbox_shard_30: 139000000000
     sandbox_shard_30_2: 140000000000
 
+  podeuwest1:
+    eu_shard_1: 7000000000
+    eu_shard_2: 10000000000
+    eu_shard_3: 75000000000
   podeucentral1:
-    eu_shard_1:   7000000000
-    eu_shard_2:  10000000000
-    eu_shard_3:  75000000000
     euc_shard_1: 15000000000
     euc_shard_2: 76000000000
-    sandbox_shard_euc: 12000000000000
   podapsoutheast2:
-    aus_shard_1: 51000000000
-    sandbox_shard_au: 13000000000000
-  podapsouth1:
-    ind_shard_1: 81000000000
-    shard_27_1:  40000000000
-    sandbox_shard_ind: 14000000000000
+    aus_shard_1: 51000000000  
 
 development:
   poduseast:
@@ -109,30 +103,15 @@ development:
     shard_5: 4000000000
     shard_6: 5000000000
     shard_7: 6000000000
-    sandbox_shard_1: 20000000000
 
 slave:
   <<: *defaults
 
 test:
-  poduseast:
-    shard_1: 1
-    sandbox_shard_1: 2000000000
+  <<: *defaults
 
 staging:
-  poduseast:
-    shard_1: 1
-    shard_2: 1000000000
-    shard_3: 2000000000
-    shard_4: 3000000000
-    shard_5: 4000000000
-    shard_6: 5000000000
-    sandbox_shard_1: 1000000000000
-    sandbox_shard_2: 1010000000000
-    sandbox_shard_3: 1020000000000
-    sandbox_shard_4: 1030000000000
-    sandbox_shard_5: 1040000000000
-    sandbox_shard_6: 1050000000000
+  <<: *defaults
 
 production:
   <<: *defaults

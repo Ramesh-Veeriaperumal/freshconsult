@@ -18,8 +18,8 @@ class ProvisionSandboxTest < ActionView::TestCase
         delete_sandbox_data
       end
       @@count_data = count_data
-      @@production_account = @production_account
     end
+
     super
   end
 
@@ -54,13 +54,9 @@ class ProvisionSandboxTest < ActionView::TestCase
     {"error" => e}
   end
 
-  def master_account_data(table)
-    @@count_data[:master_account_data][table].sort.map{|v| IGNORE_TABLES_FOR_OFFSET.include?(table) ? v : v + offset(@@production_account.id)}
-  end
-
   (MODEL_DEPENDENCIES.keys.map {|table| MODEL_TABLE_MAPPING[table]}.compact - IGNORE_TABLES).each do |table|
     define_method "test_create_sandbox_#{table}" do
-      assert_equal master_account_data(table), @@count_data[:sandbox_account_data][table].sort
+      assert_equal @@count_data[:master_account_data][table].sort, @@count_data[:sandbox_account_data][table].sort
     end
   end
 end

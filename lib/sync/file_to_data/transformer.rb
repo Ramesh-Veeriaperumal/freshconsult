@@ -16,8 +16,7 @@ class Sync::FileToData::Transformer
     'Helpdesk::TicketStatus'      => ['status_id'],
     'Admin::Skill'                => ['filter_data'],
     'Admin::CannedResponses::Response' => ['content_html'],
-    'EmailNotification'           => ['requester_template', 'agent_template'],
-    'Helpdesk::ParentChildTemplate' => ['parent_template_id', 'child_template_id']
+    'EmailNotification' => ['requester_template', 'agent_template']
   }.freeze
 
   CUSTOM_TEXT_FIELDS_TYPES = {
@@ -31,14 +30,10 @@ class Sync::FileToData::Transformer
   }.freeze
 
   TICKET_TEMPLATE_KEY_MODEL_MAPPING = {
-    responder_id: 'User',
-    product_id:   'Product',
-    group_id:     'Group'
+    'responder_id' => 'User',
+    'product_id'   => 'Product',
+    'group_id'     => 'Group'
   }.freeze
-
-  SKIP_TRANSFORMATION = [
-    'Helpdesk::TicketStatus'
-  ].freeze
 
   attr_accessor :master_account_id, :mapping_table, :account, :resync
 
@@ -49,9 +44,6 @@ class Sync::FileToData::Transformer
     @max_ticket_status_id = get_max_ticket_status_id if resync
     find_available_ticket_field_columns if resync
     @mapping_table = {}
-    production_account_id = resync ? account.id : master_account_id
-    production_account_shard = ShardMapping.fetch_by_account_id(production_account_id)
-    @offset_value = Integer(SANDBOX_ID_OFFSET[production_account_shard.shard_name])
   end
 
   def available?(model, column)
@@ -91,12 +83,11 @@ class Sync::FileToData::Transformer
 
   def transform_admin_skill_filter_data(data, mapping_table)
     # Need to move va rule filter data logic to util.
-    transform_va_rule_filter_data(data, mapping_table)
+    transform_va_rule_filter_data(data, mapping_table).map { |it| it.stringify_keys! }
   end
 
   def transform_helpdesk_ticket_template_template_data(data, mapping_table)
     @mapping_table = mapping_table
-    data = data.symbolize_keys
     data = Hash[data.map { |k, v| [change_custom_field_name(k), v] }]
     data[:inherit_parent] = data[:inherit_parent].map { |k| change_custom_field_name(k) } if data[:inherit_parent]
     TICKET_TEMPLATE_KEY_MODEL_MAPPING.each do |key, model|
@@ -105,23 +96,6 @@ class Sync::FileToData::Transformer
       end
     end
     ActionController::Parameters.new(data)
-  end
-
-  def skip_transformation?(data, model = '')
-    @resync || SKIP_TRANSFORMATION.include?(model)
-  end
-
-  ['Helpdesk::ParentChildTemplate'].each do |model|
-    TRANSFORMATIONS[model].each do |column|
-      define_method "transform_#{model.gsub('::', '').snakecase}_#{column}" do |data, mapping_table|
-        apply_id_mapping(data, get_mapping_data('Helpdesk::TicketTemplate', mapping_table))
-      end
-    end
-  end
-
-  def calc_id(val, reverse = false)
-    new_val = reverse ? val.to_i - @offset_value : val.to_i + @offset_value
-    val.is_a?(String) ? new_val.to_s : new_val
   end
 
   private

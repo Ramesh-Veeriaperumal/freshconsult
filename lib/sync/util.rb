@@ -10,9 +10,9 @@ module Sync::Util
     gitClient.checkout_branch
   end
 
-  def commit_config_to_git(repo_path, master_account_id = nil, sandbox = false)
+  def commit_config_to_git(repo_path, sandbox = false)
     RELATIONS.each do |relation|
-      Sync::DataToFile::Manager.new(repo_path, master_account_id, relation[0], relation[1], sandbox).write_config
+      Sync::DataToFile::Manager.new(repo_path, relation[0], relation[1], sandbox).write_config
     end
   end
 
