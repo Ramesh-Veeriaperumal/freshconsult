@@ -18,7 +18,7 @@ class DenormalizedFlexifield < ActiveRecord::Base
   after_commit :set_state_variables, :set_changes_variables
 
   SERIALIZED_DB_COLUMNS.each do |db_column|
-    serialize db_column
+    serialize db_column, Hash
 
     define_method db_column do |display_warn = true|
       display_warning if @warn && display_warn
