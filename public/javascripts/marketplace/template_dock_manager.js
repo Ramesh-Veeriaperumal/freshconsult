@@ -364,6 +364,9 @@ var TemplateDockManager = Class.create({
 
     var url = jQuery('.install-oauth-btn').attr('data-url');
     if (jQuery(el).attr("data-page") == "oauth_iparams") {
+      if (!validate()) {
+          return that.displayError(that.customMessages.validation_failed);
+        }
       url += "?oauth_iparams=" + JSON.stringify(postConfigs());
     }
     jQuery.ajax({
