@@ -21,7 +21,7 @@ class Admin::Sandbox::DataToFileWorker < BaseWorker
     end
     Rails.logger.info " **** [SANDBOX] Finished config_to_file for account: #{@account.id} **** "
   rescue StandardError => e
-    Rails.logger.error("Sandbox Exception in account: #{@account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}")
+    Rails.logger.error("Sandbox Exception in account: #{@account.id} \n#{e.message}\n#{e.backtrace[0..10].inspect}")
     NewRelic::Agent.notice_error(e, description: "Sandbox Error in Account: #{@account.id}")
     @job.update_last_error(e, :build_error) if @job
     send_error_notification(e, @account)

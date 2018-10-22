@@ -61,7 +61,7 @@ module MergeHelper
 
   def sql_select_query(account_id, table_name,model,  id)
     sql = "select * from #{table_name} where account_id = #{account_id} and id = #{id}"
-    sql += " and deleted = 0" if model.respond_to?('deleted') # soft delete
+    sql += " and deleted = 0" if model.column_names.include?('deleted') # soft delete
     ActiveRecord::Base.connection.exec_query(sql).to_hash
   end
 

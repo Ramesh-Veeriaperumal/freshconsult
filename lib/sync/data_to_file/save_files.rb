@@ -15,12 +15,13 @@ class Sync::DataToFile::SaveFiles
     objects = [*base_object.safe_send(config)]
     objects.each do |object|
       next if ignore_object?(object)
-      dump_object(path, config, object)
+      obj_id = generate_id(object, config)
+      dump_object(path, config, object, obj_id)
       associations.each do |association|
         if association.is_a?(Hash)
           association.keys.each do |key|
             if object.safe_send(key).present?
-              dump_object_and_associations("#{path}/#{config}/#{object.id}", object, key, association[key])
+              dump_object_and_associations("#{path}/#{config}/#{obj_id}", object, key, association[key])
             end
           end
         else
@@ -28,7 +29,8 @@ class Sync::DataToFile::SaveFiles
           relations.each do |relation|
             relation_objects = [*object.safe_send(relation)]
             relation_objects.each_with_index do |relation_obj, i|
-              dump_object("#{path}/#{config}/#{object.id}", relation, relation_obj, i + 1)
+              relation_obj_id = generate_id(relation_obj, relation, i + 1)
+              dump_object("#{path}/#{config}/#{obj_id}", relation, relation_obj, relation_obj_id)
             end
           end
         end
@@ -38,9 +40,8 @@ class Sync::DataToFile::SaveFiles
 
   private
 
-    def dump_object(path, association, object, counter = -1)
+    def dump_object(path, association, object, obj_id)
       columns = object.class.columns.collect(&:name) - IGNORE_ASSOCIATIONS
-      obj_id = generate_id(object, association, counter)
       columns.each do |column|
         file_path = "#{path}/#{association}/#{obj_id}/#{column}#{FILE_EXTENSION}"
         content   = object.read_attribute(column) # using read attribute to read the value in mysql in case method override(custom_form)
@@ -49,21 +50,31 @@ class Sync::DataToFile::SaveFiles
       end
     end
 
-    def generate_id(object, association, counter)
+    def generate_id(object, association, counter = -1)
       # Need to remove counter logic
-      obj_id = (object.id.nil? && (counter != -1) ? "#{association}_#{object.attributes.except!("account_id").values.sort.join("_")}" : object.id)
+      model = model_name(object)
+      obj_id = (object.id.nil? && (counter != -1) ? "#{association}_#{merged_ids(object, model)}" : object.id)
       return obj_id unless sandbox
-      transfrom_id(@transformer, obj_id, model_name(object))
+      transform_id(@transformer, obj_id, model)
     end
 
     def apply_mapping(model, object, column, data)
-      if sandbox && @transformer.available_column?(model, column)
-        sync_logger.info('*' * 100 + "  ---- apply_mapping  Model: #{model} column: #{column} data: #{data} ")
-        data = @transformer.safe_send("transform_#{model.gsub('::', '').snakecase}_#{column}", data)
-      elsif sandbox && model == 'Helpdesk::Attachment' && column == 'attachable_id'
-        data = @transformer.transfor_helpdesk_attachment_attachable_id(data, object)
+      association = MODEL_DEPENDENCIES[model].to_a.detect { |x| x[1].to_s == column.to_s }
+      if sandbox && @transformer.available_column?(model, column, object)
+        Sync::Logger.log('*' * 100 + "  ---- apply_mapping  Model: #{model} column: #{column} data: #{data.inspect} ")
+        @transformer.safe_send("transform_#{model.gsub('::', '').snakecase}_#{column}", data)
+      elsif sandbox && association.present?
+        associated_model = association[2] && object.respond_to?(association[2]) ? 
+          object.safe_send(association[2]) : association[0].first
+        associated_model = 'VaRule' if associated_model == 'VARule'
+        transform_id(@transformer, data, associated_model)
+      elsif data.is_a?(Hash) && !['Helpdesk::TicketTemplate'].include?(model)
+        data.symbolize_keys
+      elsif data.is_a?(Array)
+        data.each { |el| el.symbolize_keys! if el.is_a?(Hash) }
+      else
+        data
       end
-      data
     end
 
     def ignore_object?(object)
@@ -77,5 +88,9 @@ class Sync::DataToFile::SaveFiles
 
     def agent_invitation?(object)
       object.class.name == 'EmailNotification' && object.notification_type == EmailNotification::AGENT_INVITATION
+    end
+
+    def merged_ids(object, model)
+      object.attributes.except!('account_id').values.sort.map { |c_id| sandbox ? transform_id(@transformer, c_id, model) : c_id }.join('_')
     end
 end

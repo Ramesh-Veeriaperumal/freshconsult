@@ -276,7 +276,11 @@ class Account < ActiveRecord::Base
     end
 
     def add_to_billing
-      Billing::AddSubscriptionToChargebee.perform_async
+      if sandbox?
+        Billing::AddSubscriptionToChargebee.new.perform
+      else
+        Billing::AddSubscriptionToChargebee.perform_async
+      end
     end
 
     def create_shard_mapping

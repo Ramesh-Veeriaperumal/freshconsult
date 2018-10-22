@@ -14,7 +14,7 @@ module Sync
 
     def sync_config_from_production(committer)
       sync_config_to_local(@master_account_id, repo_path)
-      commit_config_to_git(repo_path)
+      commit_config_to_git(repo_path, master_account_id)
       message = "Storing Config #{Time.now.strftime('%H:%M:%S')}"
       sync_config_to_remote(@master_account_id, repo_path, message, committer[:name], committer[:email])
     end
@@ -33,7 +33,7 @@ module Sync
       sync_config_to_local(staging_account_id, staging_repo_path)
       Sharding.admin_select_shard_of(staging_account_id) do
         @account = Account.find(staging_account_id).make_current
-        commit_config_to_git(staging_repo_path, true)
+        commit_config_to_git(staging_repo_path, master_account_id, true)
       end
       message = "Storing Config #{Time.now.strftime('%H:%M:%S')}"
       sync_config_to_remote(@staging_account_id, staging_repo_path, message, committer[:name], committer[:email])

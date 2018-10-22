@@ -30,6 +30,8 @@ module ProvisionSandboxTestHelper
   IGNORE_TABLES = ["helpdesk_shared_attachments", "helpdesk_attachments", "users", "agents", "user_emails", "helpdesk_tags", "helpdesk_accesses"]
   MODELS = ['canned_responses', 'agents', 'ticket_fields', 'skills', 'password_policies', 'va_rules', 'sla_policies', 'email_notifications', 'company_form', 'contact_form', 'custom_surveys', 'status_groups', 'roles', 'tags']
   MODEL_TABLE_MAPPING = Hash[ActiveRecord::Base.send(:descendants).collect {|c| [c.name, c.table_name]}]
+  IGNORE_TABLES_FOR_OFFSET = ['group_accesses', 'user_accesses', 'user_roles']
+
   def model_table_mapping
     @model_table_mapping = Hash[ActiveRecord::Base.send(:descendants).collect {|c| [c.name, c.table_name]}]
   end
@@ -136,21 +138,31 @@ module ProvisionSandboxTestHelper
   end
 
   def create_conflicts_in_production(account)
+    @diff ||= {}
     MODELS.each do |model|
-      send("create_conflict_#{model}_in_production", account) if respond_to?("create_conflict_#{model}_in_production")
+      @diff[model] ||= []
+      @diff[model] << send("create_conflict_#{model}_in_production", account) if respond_to?("create_conflict_#{model}_in_production")
     end
   end
 
   def create_sample_data_sandbox(sandbox_account_id)
-    diff = {}
+    @diff ||= {}
     MODELS.each do |model|
-      diff[model] ||= []
-        Sharding.run_on_shard('sandbox_shard_1') do
-          @account = Account.find(sandbox_account_id).make_current
-          diff[model] = send("#{model}_data", @account)
+      @diff[model] ||= []
+      Sharding.run_on_shard('sandbox_shard_1') do
+        @account = Account.find(sandbox_account_id).make_current
+        generated_diff = send("#{model}_data", @account)
+        generated_diff.each do |each_diff|
+          if !each_diff["id"].to_i.zero? && each_diff["action"] != 'added'
+            each_diff["id"] = each_diff["id"] - offset(@production_account.id)
+          else
+            p "****** Sub not done #{each_diff["id"]} #{each_diff["action"]}"
+          end
         end
+        @diff[model].concat(generated_diff)
+      end
     end
-    diff
+    @diff
   end
 
   def delete_sandbox_references(account)
@@ -194,6 +206,13 @@ module ProvisionSandboxTestHelper
       subscription.set_billing_params("USD")
       subscription.state.downcase!
       subscription.sneaky_save
+    end
+  end
+
+  def offset(master_account_id)
+    @offset ||= begin
+      master_account_shard = ShardMapping.fetch_by_account_id(master_account_id)
+      Integer(SANDBOX_ID_OFFSET[master_account_shard.shard_name])
     end
   end
 end

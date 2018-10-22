@@ -10,3 +10,6 @@ SANDBOX_FIXTURES = YAML::load_file(File.join(Rails.root, 'config', 'sandbox_fixt
 
 MODEL_DEPENDENCIES = YAML::load_file(File.join(Rails.root, 'config', 'sandbox_config.yml'))["MODEL_DEPENDENCIES"]
 
+SANDBOX_ID_OFFSET = YAML::load_file(File.join(Rails.root, 'config', 'sandbox_id_offset.yml'))[Rails.env][PodConfig["CURRENT_POD"]]
+
+SANDBOX_SHARD_CONFIG = YAML::load_file(File.join(Rails.root, 'config', 'sandbox_shard_config.yml'))[Rails.env][PodConfig["CURRENT_POD"]]

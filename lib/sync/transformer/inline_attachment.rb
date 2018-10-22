@@ -40,6 +40,8 @@ module Sync::Transformer::InlineAttachment
           arel_values << [table[column], attachment.safe_send(column)]
         end
         arel_values << [table[:account_id], @destination_account_id]
+        transformed_id = apply_id_mapping(attachment_id)
+        arel_values << [table[:id], transformed_id] if transformed_id != attachment_id
         data = insert_attachment_in_destination_account(data, arel_values, old_inline_urls[index], attachment_id)
       end
       data
@@ -53,8 +55,9 @@ module Sync::Transformer::InlineAttachment
         # copy s3 attachment
         insert_mapping_table(source_attachment_id, insert_id)
         new_inline_url = attachment.inline_url
-        data.gsub! old_inline_url, new_inline_url
+        data = data.gsub old_inline_url, new_inline_url
       end
+      data
     end
 
     def insert_mapping_table(source_attachment_id, destination_attachment_id)
