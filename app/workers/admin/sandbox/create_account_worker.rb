@@ -24,14 +24,14 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
       @job.sandbox_account_id = signup.account_id
       post_account_creation_activites
       # Setting make current again for master account and user because it will update during creating new account
-      set_trial_period(@job.sandbox_account_id)
       @account.make_current
       @user.make_current
+      set_trial_period(@job.sandbox_account_id)
       @job.mark_as!(:account_complete)
       # Sync Config changes from production to sandbox
       ::Admin::Sandbox::DataToFileWorker.perform_async({})
     rescue StandardError => e
-      Rails.logger.error "Error in creating sandbox account #{e.backtrace[0..10].inspect}"
+      Rails.logger.error "Error in creating sandbox account #{e.backtrace.join("\n\t")}"
       NewRelic::Agent.notice_error(e, 'Sandbox signup error')
       @job.update_last_error(e, :build_error) if @job
     ensure
@@ -62,7 +62,8 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
         time_zone: @account.time_zone
       }
       Thread.current[:create_sandbox_account] = true
-      Sharding.run_on_shard(SANDBOX_SHARD_CONFIG) do
+      current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
+      Sharding.run_on_shard "sandbox_#{current_shard}" do
         signup = Signup.new(params)
         signup.save!
         signup
@@ -71,20 +72,17 @@ class Admin::Sandbox::CreateAccountWorker < BaseWorker
 
     def set_trial_period(sandbox_account_id)
       Sharding.select_shard_of sandbox_account_id do
-        sandbox_account = Account.find(sandbox_account_id).make_current
+        sandbox_account = Account.find(sandbox_account_id)
         subscription = sandbox_account.subscription
         data = { trial_end: AccountConstants::SANDBOX_TRAIL_PERIOD.days.from_now.utc.to_i }
         result = Billing::ChargebeeWrapper.new.update_subscription(subscription.account_id, data)
         raise unless result.subscription.status.eql?('in_trial')
         subscription.next_renewal_at = Time.at(result.subscription.trial_end).utc
-        subscription.state.downcase!
-        subscription.sneaky_save
+        subscription.save!
       end
     rescue StandardError => e
-      Rails.logger.error "Error in extending sandbox trail period #{e.message} #{e.backtrace[0..10].inspect}"
+      Rails.logger.error "Error in extending sandbox trail period #{e.backtrace.join("\n\t")}"
       NewRelic::Agent.notice_error(e, 'Sandbox trial extension error')
-    ensure
-      Account.reset_current_account
     end
 
     def valid_domain?(domain)

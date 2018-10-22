@@ -17,7 +17,6 @@ module Middleware
           original_queue = msg['queue']
           msg['queue'] = queue_from_classification(msg['queue'])
           msg['original_queue'] = original_queue
-          msg['message_uuid'] = Thread.current[:message_uuid]
           if !@ignore.include?(worker.to_s)
             if msg['account_id'] && Account.current.try(:id) && msg['account_id'] != Account.current.id
                 Rails.logger.debug "Account ID mismatch #{Account.current.id} #{msg.inspect}"
@@ -25,6 +24,7 @@ module Middleware
                 raise ::AccountMismatch
             end
             msg['account_id'] ||= ::Account.current.id
+            msg['message_uuid'] = Thread.current[:message_uuid]
           end
           yield
           # rescue Exception => e
