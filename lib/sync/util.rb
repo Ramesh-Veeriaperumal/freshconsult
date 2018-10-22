@@ -5,7 +5,6 @@ module Sync::Util
 
   def sync_config_to_local(account_id, repo_path)
     FileUtils.rm_rf(repo_path)
-
     branch    = branch_name(account_id)
     gitClient = Sync::GitClient.new(repo_path, branch)
     gitClient.checkout_branch

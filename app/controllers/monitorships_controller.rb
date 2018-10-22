@@ -3,7 +3,6 @@ class MonitorshipsController < ApplicationController
   helper DiscussionsHelper
 
   before_filter :access_denied, :unless => :logged_in?
-
   skip_before_filter :check_privilege, :only => [:toggle,:is_following]
   before_filter :unprocessable_entity, :unless => :valid_request
   before_filter :fetch_monitorship, :only => :toggle
@@ -38,7 +37,8 @@ class MonitorshipsController < ApplicationController
   private
 
     def load_parent
-      @parent = params[:object].capitalize.constantize.find(params[:id])  
+      parent_scoper = Monitorship::ALLOWED_TYPES[params[:object].to_sym]
+      @parent       = parent_scoper.constantize.find(params[:id])
     end
 
     def assign_flash
@@ -58,11 +58,12 @@ class MonitorshipsController < ApplicationController
     end
 
     def monitorable?
-      Monitorship::ALLOWED_TYPES.include?(params[:object].to_sym) and monitorable_object
+      Monitorship::ALLOWED_TYPES.keys.include?(params[:object].to_sym) and monitorable_object
     end
 
     def monitorable_object
-      @obj ||= params[:object].to_s.capitalize.constantize.find(params[:id])
+      monitorable_scoper = Monitorship::ALLOWED_TYPES[params[:object].to_sym]
+      @obj ||= monitorable_scoper.constantize.find(params[:id])
     end
 
     def valid_action?
@@ -81,4 +82,5 @@ class MonitorshipsController < ApplicationController
     def unfollow
       @monitorship.update_attributes({:active => false})
     end
+
 end

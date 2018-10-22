@@ -3,13 +3,18 @@
   "use strict";
 
   window.onload = function(){
+    var setting_url = '/api/_/freshcaller/settings';
+    var refreshToken = function(responseFunction){
+      $.get(setting_url).done(responseFunction);
+    };
     $.when(
       $.getScript(freshcaller.widgetLoaderUrl)
     ).done(function () {
-      $.get('/api/_/freshcaller/settings').done(function(response){
+      $.get(setting_url).done(function(response){
         window.freshcallerWidget = new window.FreshcallerWidget({
           widgetUrl: freshcaller.widgetUrl, productName: 'freshdesk',
           freshidEnabled: response.freshcaller_settings.freshid_enabled, token: response.freshcaller_settings.token,
+          refreshToken: refreshToken,
           styleOptions: { left: ' left: -10px;', zindex: ' z-index: 9;' }
         });
       });

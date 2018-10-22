@@ -163,6 +163,40 @@ class CannedResponsesControllerTest < ActionController::TestCase
     assert_equal evaluated_response, "<div>#{h(ticket.subject)}</div>"
   end
 
+  def test_placeholder_helpdesk_name
+    Account.current.launch(:escape_liquid_for_reply)
+    ticket = create_ticket(:subject => 'test ticket')
+    helpdesk_name = Account.current.helpdesk_name
+    ca_response = create_response(
+      title: Faker::Lorem.sentence,
+      content_html: "<div>{{helpdesk_name}}</div>",
+      visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
+    )      
+    login_as(@agent)
+    get :show, controller_params(version: 'v2', id: ca_response.id, ticket_id: ticket.display_id, include: 'evaluated_response')
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    evaluated_response = json_response["evaluated_response"]
+    assert_equal evaluated_response, "<div>#{h(helpdesk_name)}</div>"
+  end
+
+  def test_placeholder_portal_name
+    Account.current.launch(:escape_liquid_for_reply)
+    ticket = create_ticket(:subject => 'test ticket')
+    portal_name = Account.current.portal_name
+    ca_response = create_response(
+      title: Faker::Lorem.sentence,
+      content_html: "<div>{{ticket.portal_name}}</div>",
+      visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:all_agents]
+    )      
+    login_as(@agent)
+    get :show, controller_params(version: 'v2', id: ca_response.id, ticket_id: ticket.display_id, include: 'evaluated_response')
+    assert_response 200
+    json_response = JSON.parse(response.body)
+    evaluated_response = json_response["evaluated_response"]
+    assert_equal evaluated_response, "<div>#{h(portal_name)}</div>"
+  end
+
   def test_show_with_empty_include
     ca_response2 = create_canned_response(@ca_folder_personal.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
     login_as(@agent)

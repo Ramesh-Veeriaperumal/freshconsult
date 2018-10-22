@@ -13,11 +13,6 @@ module Ember
       BOT_CREATE_HASH = {"content"=>{"_type"=>"bot", "botVrsnHsh"=>"4a6d796657ea459deb15883ceaec4167b556a547", "botHsh"=>"fdc5f5d386fd9a402707bca98f2bb770e2c13b0b", "vrsnNmbr"=>1, "nm"=>"freshdeskbot", "prflPicUrl"=>"https://s3.amazonaws.com/cdn.freshpo.com/data/helpdesk/attachments/development/14/original/beautiful_nature_landscape_05_hd_picture_166223.jpg?1515472982", "intrnlNm"=>"FrankBot", "dscrptn"=>"Include Recommendation, API.AI (remoteResponse) and Agent chat", "actv"=>true, "crtDt"=>"2018-01-13T18:33:57Z"}}
       BOT_UPDATE_HASH = {"status" => "success"} 
       SUPPORT_BOT = 'frankbot'.freeze
-      
-      def set_up
-        super
-        before_all
-      end
 
       def wrap_cname(params)
         { bot: params }

@@ -119,7 +119,7 @@ label, button, select, textarea {
 #form-content {
   margin: 0 auto;
   width: 525;
-  padding-bottom: 50px;
+  padding-bottom: 100px;
   position: relative;
   line-height: 1.5;
   @include text-align(left);
@@ -140,7 +140,8 @@ label, button, select, textarea {
 
 .fixed {
   position: fixed;
-  height: 70px;
+  padding-bottom: 15px;
+  height: auto;
   width: 100%;
   border: solid 1px rgba(212, 212, 212, 0.73);
   margin: 0 auto;

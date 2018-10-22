@@ -35,11 +35,18 @@
 	<% end %>
 	<% content_for :sticky_right do %>
 	  	<% unless @article.solution_folder_meta.visibility == Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:bot] %>
-	  		<%= preview_portal(support_solutions_article_path(@article, path_url_locale), @article.solution_folder_meta.solution_category_meta) if @article.published? %>
+	  		<%= preview_portal(support_solutions_article_path(@article, path_url_locale), @article.solution_folder_meta.solution_category_meta, 'mt6') if @article.published? %>
 	  	<% end %>
 	  <% if privilege?(:publish_solution) %>
       <% unless @article.new_record? || (@article.draft.present? && @article.draft.locked?) %>
     	  <div class="pagination-right edit-container">
+					<% if current_account.falcon_ui_enabled?(current_user) && @article.published? %>
+						<button class="btn article-link-copy-btn" data-text-copied="<%= t('copied_link') %>">
+							<a href="<%= article_path(multilingual_article_path(@article, path_url_locale), @article.solution_folder_meta.solution_category_meta) %>" class="hidden" id="article-link-copy-btn"></a>
+							<span class="ficon-clone"></span>
+							<span class="content">	<%= t('copy_link') %></span>
+						</button>
+					<% end %>
     	    <a href="javascript:void(0)" class="btn btn-primary article-edit-btn"><%= t('edit') %></a>
     	  </div>
       <% end %>

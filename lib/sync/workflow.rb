@@ -63,7 +63,6 @@ module Sync
         staging_branch = branch_name(@staging_account_id)
 
         FileUtils.rm_rf(repo_path)
-
         gitClient = GitClient.new(repo_path, master_branch)
         gitClient.checkout_branch
         gitClient.remove_repo(staging_branch, master_branch) # Start from scratch. Delete the old staging branch

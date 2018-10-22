@@ -5,6 +5,10 @@ module Channel::V2
 
     private
 
+    def ticket_delegator_class
+      'Channel::V2::TicketDelegator'.constantize
+    end
+
     def constants_class
       CHANNEL_V2_TICKETS_CONSTANTS_CLASS
     end

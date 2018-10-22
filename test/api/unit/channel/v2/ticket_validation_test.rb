@@ -1,8 +1,10 @@
 require_relative '../../../unit_test_helper'
 require "#{Rails.root}/test/api/helpers/custom_field_validator_test_helper.rb"
+require "#{Rails.root}/test/api/helpers/ticket_fields_test_helper.rb"
 
 module Channel::V2
   class TicketValidationTest < ActionView::TestCase
+    include TicketFieldsTestHelper
 
     DATE_FIELDS = %w(opened_at pending_since resolved_at closed_at first_assigned_at
                   assigned_at first_response_time requester_responded_at agent_responded_at
@@ -42,6 +44,74 @@ module Channel::V2
       ticket = TicketValidation.new(controller_params, item)
       assert ticket.valid?(:create)
       Account.unstub(:current)
+    end
+
+    def test_create_with_required_custom_dropdown_field
+      Account.stubs(:current).returns(Account.first)
+      @account = Account.current
+      create_custom_field_dropdown('test_custom_dropdown', required = true)
+      ticket_field = @account.ticket_fields.find_by_name('test_custom_dropdown_1')
+      previous_required_field = ticket_field.required
+      ticket_field.update_attributes(required: true)
+      time_now = Time.now
+      controller_params = { requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 2,
+                            'created_at' => time_now, 'updated_at' => time_now }
+      item = nil
+      ticket = TicketValidation.new(controller_params, item)
+      assert ticket.valid?(:create)
+      ticket_field.update_attributes(required: previous_required_field)
+    end
+
+    def test_update_with_required_custom_dropdown_field
+      Account.stubs(:current).returns(Account.first)
+      @account = Account.current
+      create_custom_field_dropdown('test_custom_dropdown', required = true)
+      ticket_field = @account.ticket_fields.find_by_name('test_custom_dropdown_1')
+      previous_required_field = ticket_field.required
+      ticket_field.update_attributes(required: true)
+      time_now = Time.now
+      controller_params = { requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 2,
+                            'created_at' => time_now, 'updated_at' => time_now }
+      item = nil
+      ticket = TicketValidation.new(controller_params, item)
+      assert ticket.valid?(:create)
+      ticket_field.update_attributes(required: previous_required_field)
+    end
+
+    def test_create_with_required_custom_dependent_field
+      Account.stubs(:current).returns(Account.first)
+      @account = Account.current
+      create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+      ticket_field = @account.ticket_fields.find_by_name('test_custom_country_1')
+      previous_required_field = ticket_field.required
+      ticket_field.update_attributes(required: true)
+      time_now = Time.now
+      controller_params = { requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 2,
+                            'created_at' => time_now, 'updated_at' => time_now }
+      item = nil
+      ticket = TicketValidation.new(controller_params, item)
+      assert ticket.valid?(:create)
+      ticket_field.update_attributes(required: previous_required_field)
+    end
+
+    def test_update_with_required_custom_dependent_field
+      Account.stubs(:current).returns(Account.first)
+      @account = Account.current
+      create_dependent_custom_field(%w(test_custom_country test_custom_state test_custom_city))
+      ticket_field = @account.ticket_fields.find_by_name('test_custom_country_1')
+      previous_required_field = ticket_field.required
+      ticket_field.update_attributes(required: true)
+      time_now = Time.now
+      controller_params = { requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 2,
+                            'created_at' => time_now, 'updated_at' => time_now }
+      item = nil
+      ticket = TicketValidation.new(controller_params, item)
+      assert ticket.valid?(:update)
+      ticket_field.update_attributes(required: previous_required_field)
     end
 
     def test_created_at_string

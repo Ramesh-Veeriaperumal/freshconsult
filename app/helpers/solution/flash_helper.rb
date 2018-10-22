@@ -23,7 +23,7 @@ module Solution::FlashHelper
     unless language_visible_in_portal? @article
       relative_path = support_solutions_article_path(@article, view_context.path_url_locale)
       publish_link_html(
-        view_context.portal_preview_path(relative_path, @article_meta.solution_folder_meta.solution_category_meta),
+        view_context.article_path(relative_path, @article_meta.solution_folder_meta.solution_category_meta),
         t('solution.view_on_portal')
       )
     else

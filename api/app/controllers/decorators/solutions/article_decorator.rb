@@ -31,7 +31,7 @@ class Solutions::ArticleDecorator < ApiDecorator
       modified_by: modified_by,
       language_id: language_id
     }
-    ret_hash.merge!(draft_info(draft || record))
+    ret_hash.merge!(draft_info(record_or_draft))
     ret_hash.merge!(visibility_hash)
   end
 
@@ -76,7 +76,7 @@ class Solutions::ArticleDecorator < ApiDecorator
         language_id: language_id,
         attachments: attachments_hash
       }
-    ret_hash.merge!(description_hash(draft || record))
+    ret_hash.merge!(description_hash(record_or_draft))
   end
 
   private
@@ -102,5 +102,9 @@ class Solutions::ArticleDecorator < ApiDecorator
         description: item.description,
         description_text: item.is_a?(Solution::Article) ? desc_un_html : un_html(item.description),
       }
+    end
+
+    def record_or_draft
+      record.status == Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] ? draft : record
     end
 end

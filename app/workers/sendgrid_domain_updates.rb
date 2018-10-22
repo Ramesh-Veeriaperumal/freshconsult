@@ -100,6 +100,9 @@ class SendgridDomainUpdates < BaseWorker
 
       unless account.conversion_metric.nil?
         account.conversion_metric.spam_score = spam_score
+        # When spam_score gets assigned to the default value(0) again, ActiveRecord doesn't generate model changes
+        # Changes to spam_score are necessary for contact enrichment callback to trigger
+        account.conversion_metric.spam_score_will_change! 
         account.conversion_metric.save
       end
 
