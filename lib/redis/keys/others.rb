@@ -2,6 +2,7 @@ module Redis::Keys::Others
   
   PREVIEW_URL                             = "PREVIEW_URL:%{account_id}:%{user_id}:%{portal_id}".freeze
   EMAIL_TICKET_ID                         = "EMAIL_TICKET_ID:%{account_id}:%{message_id}".freeze
+  MINT_PREVIEW_KEY                        = "MINT_PREVIEW_KEY:%{account_id}:%{user_id}:%{portal_id}"
   MIGRATED_EMAIL_TICKET_ID                = "MIGRATED_EMAIL_TICKET_ID:%{account_id}:%{email_config_id}:%{message_id}".freeze
   ADMIN_ROUND_ROBIN_FILTER                = "ADMIN_ROUND_ROBIN_FILTER:%{account_id}:%{user_id}".freeze
   ACCOUNT_ONBOARDING_PENDING              = "ACCOUNT_ONBOARDING_PENDING:%{account_id}".freeze
@@ -24,6 +25,7 @@ module Redis::Keys::Others
   CLASSIC_REPORTS_ENABLED                 = "CLASSIC_REPORTS_ENABLED".freeze
   OLD_REPORTS_ENABLED                     = "OLD_REPORTS_ENABLED".freeze
   CUSTOM_SSL                              = "CUSTOM_SSL:%{account_id}".freeze
+  USER_EMAIL_MIGRATED                     = "user_email_migrated".freeze
   SUBSCRIPTIONS_BILLING                   = "SUBSCRIPTIONS_BILLING:%{account_id}".freeze
   SEARCH_KEY                              = "SEARCH_KEY:%{account_id}:%{klass_name}:%{id}".freeze
   STREAM_RECENT_SEARCHES                  = "STREAM_RECENT_SEARCHES:%{account_id}:%{agent_id}".freeze
@@ -101,6 +103,11 @@ module Redis::Keys::Others
   QUOTED_TEXT_PARSING_NOT_REQUIRED        = "QUOTED_TEXT_PARSING_NOT_REQUIRED".freeze
   ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE   = "ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE".freeze
   ROUTE_EMAILS_VIA_FD_SMTP_SERVICE        = "ROUTE_EMAILS_VIA_FD_SMTP_SERVICE".freeze
+  NEW_QUEUE_MEMBER                        = "FRESHFONE:NEW_QUEUE_MEMBER:%{account_id}:%{queue_id}".freeze
+  BLACKLISTED_SPAM_DOMAINS                = "BLACKLISTED_SPAM_DOMAINS".freeze
+  SPAM_EMAIL_EXACT_REGEX_KEY              = "SPAM_EMAIL_EXACT_REGEX".freeze
+  SPAM_EMAIL_APPRX_REGEX_KEY              = "SPAM_EMAIL_APPRX_REGEX".freeze
+  CROSS_DOMAIN_API_GET_DISABLED           = "CROSS_DOMAIN_API_GET_DISABLED".freeze
   ACCOUNT_SETUP                           = "ACCOUNT_SETUP:%{account_id}".freeze
   NEW_SIGNUP_ENABLED                      = "NEW_SIGNUP_ENABLED".freeze
   META_DATA_TIMESTAMP                     = "META_DATA_TIMESTAMP".freeze
