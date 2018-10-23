@@ -59,7 +59,7 @@ module Ember
 
     def undo_send
       set_worker_choice_false(current_user.id, params[:id], params['created_at'].to_time.iso8601)
-      remove_undo_reply_enqueued(params[:id])
+      remove_undo_send_traffic_cop_msg(params[:id])
       head 204
     end
 

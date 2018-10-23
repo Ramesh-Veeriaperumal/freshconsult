@@ -23,7 +23,10 @@ class Tickets::UndoSendWorker < BaseWorker
                         inline_attachment_list, user_id,
                         ticket_id, created_at, note_basic_attributes)
       saved = note.save_note if note.present?
-      send_newrelic_exception(account_id, user_id, ticket_id, created_at, StandardError.new('SaveError')) unless saved
+      unless saved
+        send_newrelic_exception(account_id, user_id, ticket_id, created_at,
+                                StandardError.new('SaveError'))
+      end
       if publish_solution_later
         publish_solution(note.note_body.body_html, ticket_id, note.attachments)
       end
@@ -34,7 +37,7 @@ class Tickets::UndoSendWorker < BaseWorker
     send_newrelic_exception(account_id, user_id, ticket_id, created_at, e)
     raise e
   ensure
-    remove_undo_reply_enqueued(ticket_id)
+    remove_undo_send_traffic_cop_msg(ticket_id)
   end
 
   def build_note(note_schema_less_associated_attributes, attachment_list,
