@@ -8,11 +8,14 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
   before_filter :check_domain_exists, :only => :change_url , :if => :non_global_pods?
   around_filter :select_slave_shard , :only => [:api_jwt_auth_feature,:sha1_enabled_feature,:select_all_feature,:show, :features, :agents, :tickets, :portal, :user_info,:check_contact_import,:latest_solution_articles]
-  around_filter :select_master_shard , :only => [:collab_feature,:add_day_passes, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action]
+  around_filter :select_master_shard , :only => [:collab_feature,:add_day_passes,:migrate_to_freshconnect, :add_feature, :change_url, :single_sign_on, :remove_feature,:change_account_name, :change_api_limit, :reset_login_count,:contact_import_destroy, :change_currency, :extend_trial, :reactivate_account, :suspend_account, :change_webhook_limit, :change_primary_language, :trigger_action]
   before_filter :validate_params, :only => [ :change_api_limit, :change_webhook_limit ]
-  before_filter :load_account, :only => [:user_info, :reset_login_count]
+  before_filter :load_account, :only => [:user_info, :reset_login_count, :migrate_to_freshconnect]
   before_filter :load_user_record, :only => [:user_info, :reset_login_count]
   before_filter :symbolize_feature_name, :only => [:add_feature, :remove_feature]
+  before_filter :check_freshconnect_migrate, :only => [:migrate_to_freshconnect]
+
+  SUCCESS = 200..299
 
   def show
     account_summary = {}
@@ -132,6 +135,49 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def migrate_to_freshconnect
+    result = {}
+    begin
+      account = Account.current
+      check_create_organisation(account)
+      if account.collab_settings.nil?
+        Freshconnect::RegisterFreshconnect.perform_async
+        result[:status] = "success"
+      else
+        freshconnect_flag = account.has_feature?(:collaboration)
+        CollabPreEnableWorker.perform_async(false)
+        account.revoke_feature(:collaboration)
+        actual_response = do_migrate_freshconnect(freshconnect_flag, account)
+        response_code = actual_response.code
+        if SUCCESS.include?(response_code)
+          response = JSON.parse(actual_response.body)
+          response = response.deep_symbolize_keys
+          fresh_connect_acc = Freshconnect::Account.new(account_id: account.id,
+                                                        product_account_id: response[:product_account_id],
+                                                        enabled: response[:enabled],
+                                                        freshconnect_domain: response[:domain])
+          fresh_connect_acc.save!
+          account.add_feature(:freshconnect)
+          if account.save
+            result[:status] = "success"
+          else
+            result[:status] = "error"
+          end
+        else
+          result[:status] = "notice"
+        end
+      end
+    rescue Exception => e
+      result[:status] = "error"
+    end
+    result[:account_id] = account.id
+    result[:account_name] = account.name
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
 
   def change_api_limit
     result = {}
@@ -635,6 +681,57 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
   end
 
   private 
+
+    def check_freshconnect_migrate
+      account = Account.current
+      render :json => {:status => "notice"}.to_json and return unless account.freshid_enabled? && account.falcon_enabled?
+    end
+
+    def check_create_organisation(account)
+      freshid_account_params = {
+        name: account.name,
+        account_id: account.id,
+        domain: account.full_domain
+      }
+      fd_account = Freshid::Account.new(freshid_account_params)
+      existing_organisation = fd_account.organisation
+      if !existing_organisation
+        #org does not exist, create one
+        account_admin = account.all_technicians.find_by_email(account.admin_email)
+        if !account_admin || !account_admin.active?
+          account_admin = account.account_managers.first
+        end
+        account.create_freshid_org_with_account_and_user(account_admin)
+      end
+    end
+
+    def do_migrate_freshconnect(fc_enabled, account)
+      RestClient::Request.execute(
+        method: :post,
+        url: "#{CollabConfig['freshconnect_url']}/migrate/account",
+        payload: {
+          domain: account.full_domain,
+          account_id: account.id.to_s,
+          enabled: fc_enabled
+        }.to_json,
+        headers: {
+          'Content-Type' => 'application/json',
+          'ProductName' => 'freshdesk',
+          'Authorization' => collab_request_token
+        }
+      )
+    end
+
+    def collab_request_token
+      @request_token ||= JWT.encode(
+        {
+          ProductAccountId: '',
+          IsServer: '1'
+        }, CollabConfig['secret_key']
+      )
+    end
+
+
     def validate_params
       render :json => {:status => "error"} and return unless /^[0-9]/.match(params[:new_limit])
     end
