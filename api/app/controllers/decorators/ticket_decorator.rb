@@ -1,10 +1,12 @@
 class TicketDecorator < ApiDecorator
-  delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, :fr_escalated, :group_id, :priority,
-    :requester_id, :responder, :responder_id, :source, :spam, :status, :subject, :display_id, :ticket_type,
-    :schema_less_ticket, :deleted, :due_by, :frDueBy, :isescalated, :description,
-    :internal_group_id, :internal_agent_id, :association_type, :associates, :associated_ticket?, :can_be_associated?,
-    :description_html, :tag_names, :attachments, :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id, 
-    :subsidiary_tkts_count, to: :record
+  delegate :ticket_body, :custom_field_via_mapping, :cc_email, :email_config_id, 
+    :fr_escalated, :group_id, :priority, :requester_id, :responder, :responder_id, 
+    :source, :spam, :status, :subject, :display_id, :ticket_type, :schema_less_ticket, 
+    :deleted, :due_by, :frDueBy, :isescalated, :description, :internal_group_id, 
+    :internal_agent_id, :association_type, :associates, :associated_ticket?, 
+    :can_be_associated?, :description_html, :tag_names, :attachments, 
+    :attachments_sharable, :company_id, :cloud_files, :ticket_states, :skill_id, 
+    :subsidiary_tkts_count, :import_id, :id, to: :record
 
   delegate :multiple_user_companies_enabled?, to: 'Account.current'
 
@@ -73,13 +75,36 @@ class TicketDecorator < ApiDecorator
 
   def stats
     return unless private_api? || @sideload_options.include?('stats')
-    {
+    states = {
       agent_responded_at: ticket_states.agent_responded_at.try(:utc),
       requester_responded_at: ticket_states.requester_responded_at.try(:utc),
       first_responded_at: ticket_states.first_response_time.try(:utc),
       status_updated_at: ticket_states.status_updated_at.try(:utc),
       reopened_at: ticket_states.opened_at.try(:utc)
     }.merge(dirty_fixed_stats)
+    return states unless channel_v2_api?
+    states.merge({
+      first_assigned_at: ticket_states.first_assigned_at.try(:utc),
+      assigned_at: ticket_states.assigned_at.try(:utc),
+      sla_timer_stopped_at: ticket_states.sla_timer_stopped_at.try(:utc),
+      avg_response_time_by_bhrs: ticket_states.avg_response_time_by_bhrs,
+      resolution_time_by_bhrs: ticket_states.resolution_time_by_bhrs,
+      on_state_time: ticket_states.on_state_time,
+      inbound_count: ticket_states.inbound_count,
+      outbound_count: ticket_states.outbound_count,
+      group_escalated: ticket_states.group_escalated,
+      first_resp_time_by_bhrs: ticket_states.first_resp_time_by_bhrs,
+      avg_response_time: ticket_states.avg_response_time,
+      resolution_time_updated_at: ticket_states.resolution_time_updated_at.try(:utc)
+    })
+  end
+
+  def channel_v2_attributes
+    {
+      import_id: import_id,
+      ticket_id: id,
+      deleted: deleted
+    } if channel_v2_api?
   end
 
   def fb_post

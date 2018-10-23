@@ -42,7 +42,9 @@ response_hash = {
 requester_hash = @item.requester
 stats_hash = @item.stats
 company_hash = @item.company_hash
+channel_v2_attributes = @item.channel_v2_attributes
 conversations_hash = @item.conversations
+response_hash.merge!(channel_v2_attributes) if channel_v2_attributes
 sla_policy_hash = @item.sla_policy_hash
 response_hash.merge!(deleted: @item.deleted) if @item.deleted
 response_hash.merge!(associated_tickets_list: @item.associates) if @item.associated_ticket?

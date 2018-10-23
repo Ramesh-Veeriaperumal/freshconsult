@@ -448,6 +448,7 @@ module Ember
         parent_ticket = create_ticket
         child_ticket = create_ticket(status: 4)
         Helpdesk::Ticket.any_instance.stubs(:child_ticket?).returns(true)
+        Helpdesk::Ticket.any_instance.stubs(:associates_rdb).returns(parent_ticket.display_id)
         Helpdesk::Ticket.any_instance.stubs(:associates).returns([child_ticket.display_id])
         Helpdesk::Ticket.any_instance.stubs(:association_type).returns(TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:assoc_parent])
         params_hash = { ids: [parent_ticket.display_id], properties: { status: 4 } }

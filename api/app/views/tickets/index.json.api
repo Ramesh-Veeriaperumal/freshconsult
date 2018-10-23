@@ -34,6 +34,8 @@ JSON.generate(@items.map do |item|
   requester_hash = item.requester
   stats_hash = item.stats
   company_hash = item.company_hash
+  channel_v2_attributes = item.channel_v2_attributes
+  response_hash.merge!(channel_v2_attributes) if channel_v2_attributes
   response_hash.merge!(deleted: item.deleted) if item.deleted
   response_hash.merge!(requester: requester_hash) if requester_hash
   response_hash.merge!(stats: stats_hash) if stats_hash

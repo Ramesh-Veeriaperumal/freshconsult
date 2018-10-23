@@ -205,7 +205,7 @@ module TicketsTestHelper
   end
 
   def ticket_states_pattern(ticket_states, status=nil)
-    {
+    states_hash = {
       closed_at: ticket_states.closed_at.try(:utc).try(:iso8601) || ([5].include?(status) ? ticket_states.updated_at.try(:utc).try(:iso8601) : nil),
       resolved_at: ticket_states.resolved_at.try(:utc).try(:iso8601) || ([4,5].include?(status) ? ticket_states.updated_at.try(:utc).try(:iso8601) : nil),
       first_responded_at: ticket_states.first_response_time.try(:utc).try(:iso8601),
@@ -215,6 +215,23 @@ module TicketsTestHelper
       pending_since: ticket_states.pending_since.try(:utc).try(:iso8601) || ([3].include?(status) ? ticket_states.updated_at.try(:utc).try(:iso8601) : nil),
       reopened_at: ticket_states.opened_at.try(:utc).try(:iso8601)
     }
+    if @channel_v2_api
+      states_hash.merge!({
+        first_assigned_at: ticket_states.first_assigned_at.try(:utc).try(:iso8601),
+        assigned_at: ticket_states.assigned_at.try(:utc).try(:iso8601),
+        sla_timer_stopped_at: ticket_states.sla_timer_stopped_at.try(:utc).try(:iso8601),
+        avg_response_time_by_bhrs: ticket_states.avg_response_time_by_bhrs,
+        resolution_time_by_bhrs: ticket_states.resolution_time_by_bhrs,
+        on_state_time: ticket_states.on_state_time,
+        inbound_count: ticket_states.inbound_count,
+        outbound_count: ticket_states.outbound_count,
+        group_escalated: ticket_states.group_escalated,
+        first_resp_time_by_bhrs: ticket_states.first_resp_time_by_bhrs,
+        avg_response_time: ticket_states.avg_response_time,
+        resolution_time_updated_at: ticket_states.resolution_time_updated_at.try(:utc).try(:iso8601)
+      })
+    end
+    states_hash
   end
 
   def show_deleted_ticket_pattern(expected_output = {}, ticket)
@@ -286,6 +303,15 @@ module TicketsTestHelper
 
     if @account.skill_based_round_robin_enabled?
       ticket_hash.merge!( :skill_id => expected_output[:skill_id] || ticket.skill_id)
+    end
+
+    if @channel_v2_api
+      ticket_hash.merge!(
+        import_id: ticket.import_id,
+        ticket_id: ticket.id,
+        deleted: ticket.deleted,
+        stats: ticket_states_pattern(ticket.ticket_states, ticket.status)
+      )
     end
 
     if @private_api
