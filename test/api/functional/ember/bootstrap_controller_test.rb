@@ -110,4 +110,26 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
       Account.current.main_portal, trial_subscription, @subscription_plan))
     Account.current.trial_subscriptions.destroy_all
   end
+
+  def test_collaboration_without_freshconnect
+    Account.any_instance.stubs(:collaboration_enabled?).returns(true)
+    Account.current.add_feature(:collaboration)
+    Account.current.reload
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+  end
+
+  def test_freshconnect_without_collaboration
+    User.current.authorizations.build(provider: Freshid::Constants::FRESHID_PROVIDER, uid: freshid_user.uuid)
+    Account.current.revoke_feature(:collaboration)
+    Account.any_instance.stubs(:freshconnect_enabled?).returns(true)
+    Account.current.add_feature(:freshconnect)
+    Account.current.launch(:freshid)
+    Account.current.reload
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+  end
+
 end
