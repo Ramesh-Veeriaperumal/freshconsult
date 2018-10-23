@@ -372,6 +372,8 @@ module Redis::RedisKeys
   SEARCH_SERVICE_COUNT_ES_READS_ENABLED = "SEARCH_SERVICE_COUNT_ES_READS_ENABLED"
 
   ADVANCED_TICKETING_METRICS = "ADVANCED_TICKETING_METRICS"
+
+  DETECT_USER_LANGUAGE = "DETECT_USER_LANGUAGE:%{text}".freeze
   ################### END OF REDIS KEYS ###################
 
   #Supervisor tickets limitation key (Number of tickets per rule) - initial value 50000

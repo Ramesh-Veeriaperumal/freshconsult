@@ -8,6 +8,9 @@ require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 class DetectUserLanguageTest < ActionView::TestCase
   include ContactSegmentsTestHelper
   include AccountTestHelper
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
   def teardown
     super
     Account.unstub(:current)
@@ -38,12 +41,27 @@ class DetectUserLanguageTest < ActionView::TestCase
     assert_equal 'ar', @user.language, 'language detection proper response from Google'
   end
 
+  def test_language_detect_from_cache
+    text = Faker::Lorem.sentence(7)
+    key  = "DETECT_USER_LANGUAGE:#{text}"
+    set_others_redis_key(key, 'ro', 600)
+    response = Struct.new(:body)
+    mock_response = response.new(sample_google_lang_response('de').to_json)
+    Google::APIClient.any_instance.stubs(:execute).returns(mock_response)
+    User.any_instance.stubs(:detect_language?).returns(true)
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: text)
+    @user.reload
+    assert_equal 'ro', @user.language
+    assert_not_equal 'de', @user.language, 'language detection not from cache'
+    remove_others_redis_key(key)
+  end
+
   def test_language_detect_unkown_language
     response = Struct.new(:body)
     mock_response = response.new(sample_google_lang_response('yy').to_json)
     Google::APIClient.any_instance.stubs(:execute).returns(mock_response)
     User.any_instance.stubs(:detect_language?).returns(true)
-    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string')
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string - sample 1')
     @user.reload
     assert_equal @user.account.language, @user.language, 'language detection unkown language from Google'
   end
@@ -53,7 +71,7 @@ class DetectUserLanguageTest < ActionView::TestCase
     mock_response = response.new('{}'.to_json)
     Google::APIClient.any_instance.stubs(:execute).returns(mock_response)
     User.any_instance.stubs(:detect_language?).returns(true)
-    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string')
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string - sample 2')
     @user.reload
     assert_equal @user.account.language, @user.language, 'language detection improper response from google'
   end
@@ -63,7 +81,7 @@ class DetectUserLanguageTest < ActionView::TestCase
     mock_response = response.new('{}'.to_json)
     Google::APIClient.any_instance.stubs(:execute).raises(StandardError)
     User.any_instance.stubs(:detect_language?).returns(true)
-    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string')
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string - sample 3')
     @user.reload
     assert_equal @user.account.language, @user.language, 'language detection improper response from google'
   end
