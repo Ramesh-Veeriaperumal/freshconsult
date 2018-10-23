@@ -23,7 +23,6 @@ module Freshconnect
     end
 
     private
-
       def register_with_freshconnect
         RestClient::Request.execute(
           method: :post,

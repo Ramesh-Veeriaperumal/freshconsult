@@ -35,7 +35,7 @@ module CannedResponsesSandboxHelper
     canned_response = account.canned_responses.last
     return [] unless canned_response
     data = canned_response.attributes.clone
-    canned_response.destroy
+    canned_response.soft_delete!
     [data.merge({"action" => 'deleted', "model" => canned_response.class.name})]
   end
 

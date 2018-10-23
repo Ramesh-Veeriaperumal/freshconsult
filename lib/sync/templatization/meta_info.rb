@@ -1,7 +1,7 @@
 module Sync::Templatization::MetaInfo
   include Sync::Constants
   include Sync::Templatization::Constant
-  DEAFULT_META_INFO = ['va_rule', 'admin_skill', 'admin_canned_responses_folder', 'scenario_automation',
+  DEFAULT_META_INFO = ['va_rule', 'admin_skill', 'admin_canned_responses_folder', 'scenario_automation',
                        'group', 'role', 'helpdesk_tag', 'helpdesk_sla_policy', 'product', 'business_calendar'].freeze
 
   def password_policy_meta_info(dir_path)
@@ -34,7 +34,7 @@ module Sync::Templatization::MetaInfo
     end
   end
 
-  DEAFULT_META_INFO.each do |model|
+  DEFAULT_META_INFO.each do |model|
     define_method "#{model}_meta_info" do |dir_path|
       { name: get_value(dir_path, 'name') }
     end
@@ -63,7 +63,7 @@ module Sync::Templatization::MetaInfo
 
   def section_field_meta_info(dir_path)
     section_meta_info = {}
-    ticket_field_id = File.basename(dir_path)
+    ticket_field_id = transform_by_action(File.basename(dir_path).to_i)
     section_field = @acc.section_fields.find_by_ticket_field_id(ticket_field_id)
     section_meta_info[:label] = @acc.sections.find_by_id(section_field.section_id).label
     section_meta_info[:parent_name] = @acc.ticket_fields.find_by_id(section_field.parent_ticket_field_id).label
@@ -71,8 +71,8 @@ module Sync::Templatization::MetaInfo
   end
 
   def ticket_field_section_meta_info(dir_path)
-    filed_options = get_value(dir_path, 'field_options')
-    return {} unless filed_options.key?('section')
+    field_options = get_value(dir_path, 'field_options')
+    return {} if field_options && !field_options.symbolize_keys.key?(:section)
     # If it is deleted fetch from production else fetch from sandbox
     select_shard_and_slave(account_by_action) { section_field_meta_info(dir_path) }
   rescue Exception => e
@@ -109,7 +109,8 @@ module Sync::Templatization::MetaInfo
   end
 
   def default_survey_question_id(dir_path)
-    @acc.custom_surveys.find_by_id(File.basename(dir_path)).all_fields.find_by_default(1).id
+    sandbox_survey_question_id = @acc.custom_surveys.find_by_id(transform_id_to_sandbox_accounts_id(File.basename(dir_path).to_i)).all_fields.find_by_default(1).id
+    transform_id_to_production_accounts_id(sandbox_survey_question_id)
   end
 
   def helpdesk_permissible_domain_meta_info(dir_path)
@@ -122,12 +123,24 @@ module Sync::Templatization::MetaInfo
     group_id = get_value(dir_path, 'group_id')
     status_id = get_value(dir_path, 'status_id')
     {
-      status:  select_shard_and_slave(account_by_action) { @acc.ticket_statuses.find_by_id(status_id).name },
-      group: select_shard_and_slave(account_by_action) { @acc.groups.find_by_id(group_id).name }
+      status:  select_shard_and_slave(account_by_action) { @acc.ticket_statuses.find_by_id(transform_by_action(status_id)).name },
+      group: select_shard_and_slave(account_by_action) { @acc.groups.find_by_id(transform_by_action(group_id)).name }
     }
   end
 
   def account_by_action
     action == :deleted ? account.id : sandbox_account_id
+  end
+
+  def transform_by_action(item_id)
+    action == :deleted ? item_id : transform_id_to_sandbox_accounts_id(item_id)
+  end
+
+  def transform_id_to_sandbox_accounts_id(item_id)
+    @transformer.apply_id_mapping(item_id, {}, '', true)
+  end
+
+  def transform_id_to_production_accounts_id(item_id)
+    @transformer.apply_id_mapping(item_id)
   end
 end

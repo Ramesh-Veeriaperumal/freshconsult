@@ -24,7 +24,7 @@ class Admin::Sandbox::DiffWorker < BaseWorker
                         Sandbox config time #{sandbox_config_time_taken} Templatization time #{templatization_time_taken}****")
     end
   rescue StandardError => e
-    Rails.logger.error("Sandbox Diff Exception in account: #{@account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}")
+    Rails.logger.error("Sandbox Diff Exception in account: #{@account.id} \n#{e.message}\n#{e.backtrace[0..7].inspect}")
     NewRelic::Agent.notice_error(e, description: "Sandbox diff Error in Account: #{@account.id}")
     @job.update_last_error(e, :error) if @job
     send_error_notification(e, @account)

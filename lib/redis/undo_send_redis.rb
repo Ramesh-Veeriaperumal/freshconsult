@@ -57,12 +57,12 @@ module Redis::UndoSendRedis
     get_tickets_redis_key(key)
   end
 
-  def enqueue_undo_send_msg(ticket_id, user_id)
+  def enqueue_undo_send_traffic_cop_msg(ticket_id, user_id)
     key = get_enqueued_key(ticket_id)
     set_tickets_redis_key(key, user_id)
   end
 
-  def remove_undo_reply_enqueued(ticket_id)
+  def remove_undo_send_traffic_cop_msg(ticket_id)
     key = get_enqueued_key(ticket_id)
     remove_tickets_redis_key(key)
   end

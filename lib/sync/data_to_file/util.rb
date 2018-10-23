@@ -1,16 +1,17 @@
 module Sync::DataToFile::Util
   def self.included(base)
-    [Sync::CustomLogger, Sync::Util, Sync::Constants, Sync::Transformer::Util, Sync::SqlUtil].each do |file|
+    [Sync::Util, Sync::Constants, Sync::Transformer::Util, Sync::SqlUtil].each do |file|
       base.send(:include, file)
       base.include  InstanceMethods
     end
   end
 
   module InstanceMethods
-    def transfrom_id(transformer, data, model)
-      if sandbox && transformer.available_id?(model)
-        sync_logger.info('*' * 100 + "  ---- Transforming id for create file model: #{model}")
-        data = transformer.safe_send("transform_#{model.gsub('::', '').snakecase}_id", data).to_s
+    def transform_id(transformer, data, model, reverse = false)
+      if sandbox && (can_transform = !@transformer.skip_transformation?(data))
+        old_data = data
+        data = transformer.apply_id_mapping(old_data, {}, '', reverse)
+        Sync::Logger.log('*' * 100 + "  ---- Transforming id for create file model: #{model}, old_data = #{old_data.inspect}, new_data = #{data.inspect}, reverse = #{reverse.inspect}")
       end
       data
     end

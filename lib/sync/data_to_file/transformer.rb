@@ -2,20 +2,23 @@ class Sync::DataToFile::Transformer
   include Sync::DataToFile::Util
   include Sync::Transformer::VaRule
   include Sync::Transformer::InlineAttachmentUtil
+  include Sync::Transformer::SlaPolicy
   attr_accessor :mapping_table, :account, :master_account_id
 
   TRANSFORMATION_COLUMNS = {
-    'Helpdesk::TicketField' => ['name'],
-    'Helpdesk::NestedTicketField' => ['name'],
-    'FlexifieldDef'               => ['name'],
-    'FlexifieldDefEntry'          => ['flexifield_alias'],
-    'Helpdesk::TicketTemplate'    => ['template_data', 'data_description_html'],
-    'VaRule'                      => ['filter_data', 'action_data'],
-    'Helpdesk::SharedAttachment'  => ['attachment_id'],
-    'Admin::Skill'                => ['filter_data'],
-    'Admin::CannedResponses::Response' => ['content_html'],
-    'EmailNotification' => ['requester_template', 'agent_template']
-  }.freeze
+    'Helpdesk::TicketField'       => [['name']],
+    'Helpdesk::NestedTicketField' => [['name']],
+    'FlexifieldDef'               => [['name']],
+    'FlexifieldDefEntry'          => [['flexifield_alias']],
+    'Helpdesk::TicketTemplate'    => [['template_data', 'data_description_html']],
+    'VaRule'                      => [['filter_data', 'action_data']],
+    'Helpdesk::SharedAttachment'  => [['attachment_id'], lambda { |transformer, object| !transformer.skip_transformation?(object.read_attribute('attachment_id'), object.class.to_s) }],
+    'Admin::Skill'                => [['filter_data']],
+    'Admin::CannedResponses::Response' => [['content_html']],
+    'EmailNotification'           => [['requester_template', 'agent_template']],
+    'Helpdesk::Attachment'        => [['attachable_id'], lambda { |transformer, object| object.read_attribute('attachable_type') == 'Account' }],
+    'Helpdesk::SlaPolicy'         => [['conditions', 'escalations']]
+  }
 
   INLINE_ATTACHMENT_TRANSFORMATION_COLUMNS = {
     'EmailNotification'                => ['requester_template', 'agent_template'],
@@ -33,8 +36,19 @@ class Sync::DataToFile::Transformer
     'Helpdesk::Attachment'
   ].freeze
 
-  def initialize(mapping_table, account = Account.current)
+  SKIP_TRANSFORMATION = [
+    'Helpdesk::TicketStatus'
+  ].freeze
+
+  TICKET_TEMPLATE_KEY_MODEL_MAPPING = {
+    'responder_id' => 'User',
+    'product_id'   => 'Product',
+    'group_id'     => 'Group'
+  }.freeze
+
+  def initialize(mapping_table, master_account_id, account = Account.current)
     @account       = account
+    @master_account_id = master_account_id
     @mapping_table = mapping_table
     @mapping_table.keys.each do |model|
       next unless ['Account', 'Helpdesk::Attachment']
@@ -42,20 +56,30 @@ class Sync::DataToFile::Transformer
         @mapping_table[model][mapping_column] = @mapping_table[model][mapping_column].invert
       end
     end
-    @master_account_id = @mapping_table['Account'][:id][account.id.to_i] if mapping_table.present?
+    master_account_shard = ShardMapping.fetch_by_account_id(@master_account_id)
+    @offset_value = Integer(SANDBOX_ID_OFFSET[master_account_shard.shard_name])
+    @current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
+    @autoincrement_id = AutoIncrementId[@current_shard].to_i
   end
 
-  def available_column?(model, column)
-    (TRANSFORMATION_COLUMNS[model.to_s] || []).include?(column)
+  def available_column?(model, column, object)
+    transformation_column = (TRANSFORMATION_COLUMNS[model.to_s] || [[]])
+    transformation_column[0].include?(column) && (!transformation_column[1].present? || transformation_column[1].call(self, object))
   end
 
   def available_id?(model)
     TRANSFORMATION_IDS.include?(model)
   end
 
+  def skip_transformation?(data, model = '')
+    Sync::Logger.log "Inside skip_transformation, model: #{model}, #{SKIP_TRANSFORMATION.include?(model)}, data: #{data.to_i}, autoincrement_id: #{@autoincrement_id}, #{data.to_i >= @autoincrement_id}"
+    set_shard_and_autoincrement_id
+    SKIP_TRANSFORMATION.include?(model) || data.to_i >= @autoincrement_id
+  end
+
   ['Helpdesk::TicketField', 'Helpdesk::NestedTicketField','FlexifieldDef','FlexifieldDefEntry'].each do |model|
     TRANSFORMATION_COLUMNS[model].each do |column|
-      define_method "transform_#{model.gsub('::', '').snakecase}_#{column}" do |data|
+      define_method "transform_#{model.gsub('::', '').snakecase}_#{column[0]}" do |data|
         change_custom_field_name(data)
       end
     end
@@ -68,26 +92,31 @@ class Sync::DataToFile::Transformer
   def transform_helpdesk_ticket_template_template_data(data)
     data = Hash[data.map { |k, v| [change_custom_field_name(k), v] }]
     data[:inherit_parent] = data[:inherit_parent].map { |k| change_custom_field_name(k) } if data[:inherit_parent]
+    TICKET_TEMPLATE_KEY_MODEL_MAPPING.each do |key, model|
+      if data[key].present?
+        data[key] = apply_id_mapping(data[key], {})
+      end
+    end
     ActionController::Parameters.new(data)
   end
 
   def transform_admin_skill_filter_data(data)
     # Need to move va rule filter data logic to util.
-    transform_va_rule_filter_data(data, mapping_table).map{|it| it.stringify_keys!}
+    transform_va_rule_filter_data(data)
   end
 
   def transform_helpdesk_shared_attachment_attachment_id(data)
-    apply_id_mapping(data, get_mapping_data('Helpdesk::Attachment', mapping_table)).to_i
+    apply_id_mapping(data)
   end
 
   TRANSFORMATION_IDS.each do |model|
     define_method "transform_#{model.gsub('::', '').snakecase}_id" do |data|
-      apply_id_mapping(data, get_mapping_data(model, mapping_table)).to_i
+      apply_id_mapping(data)
     end
   end
 
-  def transfor_helpdesk_attachment_attachable_id(data, object)
-    data = master_account_id if data && object.read_attribute('attachable_type') == 'Account'
+  def transform_helpdesk_attachment_attachable_id(data)
+    data = master_account_id if data
     data
   end
 
@@ -123,11 +152,16 @@ class Sync::DataToFile::Transformer
     end
   end
 
+  def calc_id(val, reverse = false)
+    new_val = reverse ? val.to_i + @offset_value : val.to_i - @offset_value
+    val.is_a?(String) ? new_val.to_s : new_val
+  end    
+
   private
 
     def replace_existing_inline_url(data, attachment_ids, old_inline_urls)
       attachment_ids.each_with_index do |attachment_id, index|
-        existing_attachment_id = @mapping_table['Helpdesk::Attachment'][:id][attachment_id] if attachment_mapping_exists?
+        existing_attachment_id = apply_id_mapping(attachment_id)
         data = existing_inline_url(existing_attachment_id, data, old_inline_urls[index]) if existing_attachment_id
       end
       data
@@ -140,11 +174,19 @@ class Sync::DataToFile::Transformer
     def existing_inline_url(existing_attachment_id, data, old_inline_url)
       Sharding.admin_select_shard_of(@master_account_id) do
         destination_account = Account.find(@master_account_id).make_current
-        attachment = destination_account.attachments.find(existing_attachment_id)
-        existing_url = attachment.inline_url
-        data.gsub! old_inline_url, existing_url
+        attachment = destination_account.attachments.find_by_id(existing_attachment_id)
+        data.gsub! old_inline_url, attachment.inline_url if data && attachment
       end
+      data
     ensure
       @account.make_current
+    end
+
+    def set_shard_and_autoincrement_id
+      if @current_shard != ActiveRecord::Base.current_shard_selection.shard.to_s
+        @current_shard = ActiveRecord::Base.current_shard_selection.shard.to_s
+        @autoincrement_id = AutoIncrementId[@current_shard].to_i
+        Sync::Logger.log "current_shard changed, current_shard: #{@current_shard.inspect}, @autoincrement_id: #{@autoincrement_id}"
+      end
     end
 end
