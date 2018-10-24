@@ -130,6 +130,8 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     get :account, controller_params(version: 'private')
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
+    Account.current.revoke_feature(:freshconnect)
+    Account.current.rollback(:freshid)
   end
 
 end

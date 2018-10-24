@@ -1,11 +1,11 @@
 require_relative '../unit_test_helper'
 require_relative '../../test_transactions_fixtures_helper'
-require Rails.root.join('test', 'core', 'helpers', 'twitter_test_helper.rb')
-require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
+['twitter_test_helper', 'account_test_helper', 'shopify_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 class ChannelMessagePollerTest < ActionView::TestCase
   include AccountTestHelper
   include TwitterTestHelper
+  include ShopifyTestHelper
 
   def teardown
     cleanup_twitter_handles(@account)
@@ -52,6 +52,24 @@ class ChannelMessagePollerTest < ActionView::TestCase
   #   tweet = @account.tweets.last
   #   assert_equal tweet[:tweetable_id], payload[:note_id]
   # end
+
+  def test_shopify_convert_as_ticket
+    payload, command_payload = shopify_create_ticket_command
+    push_to_channel(command_payload)
+    ticket = @account.tickets.last
+    assert_equal ticket.description, payload[:description]
+    assert_equal ticket.subject, payload[:subject]
+    assert_equal ticket.status, 5
+  end
+
+  def test_shopify_placeholders_convert_as_ticket
+    description = description_with_shopify_placeholders
+    payload, command_payload = shopify_create_ticket_command(description)
+    push_to_channel(command_payload)
+    ticket = @account.tickets.last
+    assert_equal ticket.status, 5
+    assert_equal ticket.subject, payload[:subject]
+  end
 
   private
 
@@ -105,6 +123,20 @@ class ChannelMessagePollerTest < ActionView::TestCase
       ticket.notes.save!
 
       ticket.notes.last
+    end
+
+    def shopify_create_ticket_command(description=nil)
+      payload = {
+        "subject": Faker::Lorem.characters(50),
+        "description": description || Faker::Lorem.characters(100),
+        "requester_id": @account.users.last.id,
+      }
+
+      [payload, sample_shopify_create_ticket_command(@account, 'proactive_delivery_feedback', payload)]
+    end
+
+    def description_with_shopify_placeholders
+      "<div>Total price :&nbsp;</div><div>{{shopify.total_price}}</div><div><br></div><div>First name :&nbsp;</div><div>{{shopify.customer.first_name}}</div>"
     end
 
     def push_to_channel(command_payload)
