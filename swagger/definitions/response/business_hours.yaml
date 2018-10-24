@@ -1,0 +1,24 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      description: Business Calender ID
+      type: integer
+    name:
+      description: Business Calender Name
+      type: string
+    description:
+      description: Business Calender Description
+      type: string
+    business_hours:
+      description: Business Calender Intervals
+      type: object
+    created_at:
+      description: Business Calender created time
+      type: string
+      format: date-time
+    updated_at:
+      description: Business Calender created time
+      type: string
+      format: date-time
