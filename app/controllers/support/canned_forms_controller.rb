@@ -59,7 +59,7 @@ class Support::CannedFormsController < SupportController
         render_404 && return
       end
       @fields = @form.present? ? @form.prepare_form_json[:fields].map(&:symbolize_keys) : []
-      @ticket ||= I18n.t('support.canned_form.ticket_subject')
+      @ticket ||= I18n.t('support.canned_form.ticket_subject_and_created_at')
     end
 
     def current_user_blank?
