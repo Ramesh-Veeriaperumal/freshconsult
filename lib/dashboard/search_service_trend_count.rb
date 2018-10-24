@@ -39,8 +39,9 @@ class Dashboard::SearchServiceTrendCount < Dashboards
   # For scorecard/barchart multiqueries  similar to msearch in elasticsearch
   def multi_aggregation(queries)
     query_contexts = []
+    Rails.logger.info "Queries input :: #{queries}"
     queries.each_with_index do |query, index|
-      @response = Freshquery::Runner.instance.construct_es_query('ticket_analytics', query.to_json)
+      @response = Freshquery::Runner.instance.construct_es_query('ticketanalytics', query.to_json)
       context = get_context(index) 
       query_contexts << context
     end
@@ -52,7 +53,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
 
   #For unresolved widget and ticket list page single queries similar to search in elasticsearch
   def aggregation(query)
-    @response = Freshquery::Runner.instance.construct_es_query('ticket_analytics', query.to_json)
+    @response = Freshquery::Runner.instance.construct_es_query('ticketanalytics', query.to_json)
     context = get_context("", query.blank?)
     if @errors.present?
       log_error(query)
@@ -90,7 +91,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
       context["tag"] = tag.to_s
     end
     if @response.present? && @response.valid?
-      context["params"]["filter"] = @response.terms.to_json 
+      context["params"]["filter"] = decode_values(@response.terms.to_json) # Hack to handle special characters ' " \ in query
     elsif !blank_query # adding this condition for if query blank need to get full ticket count
       @errors << "Error in forming ES Query in FQL in count cluster #{@response.inspect} :: tag :: #{tag.to_s}"
       @tag_errors << "#{tag.to_s}" if tag.present?
@@ -122,5 +123,4 @@ class Dashboard::SearchServiceTrendCount < Dashboards
     end
     response
   end
-
 end

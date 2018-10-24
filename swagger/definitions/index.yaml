@@ -535,3 +535,7 @@ advanced_ticketing_create:
   $ref: ./request/advanced_ticketing/create.yaml
 advanced_ticketing_insights:
   $ref: ./response/advanced_ticketing/insights.yaml
+
+#Business Hours
+business_hours:
+  $ref: ./response/business_hours.yaml

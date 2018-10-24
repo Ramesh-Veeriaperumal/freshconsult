@@ -37,6 +37,17 @@ class BusinessCalendar < ActiveRecord::Base
 
   xss_sanitize :only => [:name, :description]
 
+  def business_intervals
+    interval = {}
+    working_hours.each do |day, business_hour|
+      interval[BusinessCalenderConstants::WEEKDAY_HUMAN_LIST[day-1]] = {
+          start_time: business_hour[:beginning_of_workday],
+          end_time: business_hour[:end_of_workday]
+      }
+    end
+    interval
+  end
+
   def time_zone
     tz = self.read_attribute(:time_zone)
     tz = "Kyiv" if tz.eql?("Kyev")

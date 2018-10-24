@@ -201,7 +201,7 @@ module Freshquery
     end
 
     # skipping validation for count cluster alone
-    fq_schema 'ticket_analytics', FqTicketAnalyticsHelper.instance, 8192, false do
+    fq_schema 'ticketanalytics', FqTicketAnalyticsHelper.instance, 8192, false do
       attribute :priority, choices: :priorities
       attribute :status, choices: :status_ids
       attribute :group_id, :internal_group_id,  type: :positive_integer

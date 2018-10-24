@@ -1,0 +1,12 @@
+get:
+  summary: Business Hours
+  tags: [business_hours]
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/business_hours'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
