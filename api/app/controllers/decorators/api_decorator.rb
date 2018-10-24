@@ -19,6 +19,10 @@ class ApiDecorator
     defined?($infra) && $infra['PRIVATE_API']
   end
 
+  def channel_v2_api?
+    defined?($infra) && $infra['CHANNEL_LAYER']
+  end
+
   def format_date(value, utc_format = false)
     return utc_format ? value.utc : value.strftime('%F') if value.respond_to?(:utc)
     value

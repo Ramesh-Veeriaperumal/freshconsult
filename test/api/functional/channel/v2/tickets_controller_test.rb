@@ -1,4 +1,5 @@
 require_relative '../../../test_helper'
+require 'webmock/minitest'
 
 module Channel::V2
   class TicketsControllerTest < ActionController::TestCase
@@ -58,6 +59,17 @@ module Channel::V2
                       priority: 2, status: 3, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
                       due_by: 14.days.since.iso8601, fr_due_by: 1.day.since.iso8601, group_id: @create_group.id }
       params_hash
+    end
+
+    def get_user_with_default_company
+      user_company = @account.user_companies.group(:user_id).having('count(*) = 1 ').last
+      if user_company.present?
+        user_company.user
+      else
+        new_user = add_new_user(@account)
+        new_user.user_companies.create(:company_id => get_company.id, :default => true)
+        new_user.reload
+      end
     end
 
     def test_create_with_created_at_updated_at
@@ -251,6 +263,694 @@ module Channel::V2
                    bad_request_error_pattern('spam', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: Integer)
                  ])
       assert_response 400
+    end
+
+    def test_index_without_permitted_tickets
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Helpdesk::Ticket.update_all(responder_id: nil)
+      get :index, controller_params(per_page: 50)
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month).count, response.size
+
+      Agent.any_instance.stubs(:ticket_permission).returns(3)
+      get :index, controller_params
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 0, response.size
+
+      expected = Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month).update_all(responder_id: @agent.id)
+      get :index, controller_params
+      assert_response 200
+      Agent.any_instance.unstub(:ticket_permission)
+      response = parse_response @response.body
+      assert_equal expected, response.size
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_invalid_sort_params
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      get :index, controller_params(order_type: 'test', order_by: 'test')
+      assert_response 400
+      pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
+      pattern << bad_request_error_pattern('order_by', :not_included, list: 'due_by,created_at,updated_at,priority,status')
+      match_json(pattern)
+    ensure
+      Account.any_instance.unstub(:sla_management_enabled?)
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_sort_by_due_by_with_sla_disabled
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Account.any_instance.stubs(:sla_management_enabled?).returns(false)
+      get :index, controller_params(order_type: 'test', order_by: 'due_by')
+      assert_response 400
+      pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
+      pattern << bad_request_error_pattern('order_by', :not_included, list: 'created_at,updated_at,priority,status')
+      match_json(pattern)
+    ensure
+      Account.any_instance.unstub(:sla_management_enabled?)
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_extra_params
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      hash = { filter_name: 'test', company_name: 'test' }
+      get :index, controller_params(hash)
+      assert_response 400
+      pattern = []
+      hash.keys.each { |key| pattern << bad_request_error_pattern(key, :invalid_field) }
+      match_json pattern
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_invalid_params
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      get :index, controller_params(company_id: 999, requester_id: '999', filter: 'x')
+      pattern = [bad_request_error_pattern('filter', :not_included, list: 'new_and_my_open,watching,spam,deleted')]
+      pattern << bad_request_error_pattern('company_id', :absent_in_db, resource: :company, attribute: :company_id)
+      pattern << bad_request_error_pattern('requester_id', :absent_in_db, resource: :contact, attribute: :requester_id)
+      assert_response 400
+      match_json pattern
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_invalid_email_in_params
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      get :index, controller_params(email: Faker::Internet.email)
+      pattern = [bad_request_error_pattern('email', :absent_in_db, resource: :contact, attribute: :email)]
+      assert_response 400
+      match_json pattern
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_invalid_params_type
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      get :index, controller_params(company_id: 'a', requester_id: 'b')
+      pattern = [bad_request_error_pattern('company_id', :datatype_mismatch, expected_data_type: 'Positive Integer')]
+      pattern << bad_request_error_pattern('requester_id', :datatype_mismatch, expected_data_type: 'Positive Integer')
+      assert_response 400
+      match_json pattern
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_monitored_by
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      get :index, controller_params(filter: 'watching')
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 0, response.count
+
+      subscription = FactoryGirl.build(:subscription, account_id: @account.id,
+                                                      ticket_id: Helpdesk::Ticket.first.id,
+                                                      user_id: @agent.id)
+      subscription.save
+      get :index, controller_params(filter: 'watching')
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.count
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_new_and_my_open
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Helpdesk::Ticket.update_all(status: 3)
+      Helpdesk::Ticket.first.update_attributes(status: 2, responder_id: @agent.id,
+                                               deleted: false, spam: false)
+      get :index, controller_params(filter: 'new_and_my_open')
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.size
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_default_filter
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Helpdesk::Ticket.update_all(created_at: 2.months.ago)
+      Helpdesk::Ticket.first.update_attributes(created_at: 1.months.ago,
+                                               deleted: false, spam: false)
+      get :index, controller_params
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.size
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_default_filter_order_type
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Helpdesk::Ticket.update_all(created_at: 2.months.ago)
+      Helpdesk::Ticket.first.update_attributes(created_at: 1.months.ago,
+                                               deleted: false, spam: false)
+      get :index, controller_params(order_type: 'asc')
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.size
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_default_filter_order_by
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Helpdesk::Ticket.update_all(created_at: 2.months.ago)
+      Helpdesk::Ticket.first(2).each do|x|
+        x.update_attributes(created_at: 1.months.ago,
+                            deleted: false, spam: false)
+      end
+      get :index, controller_params(order_by: 'status')
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 2, response.size
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_spam
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      get :index, controller_params(filter: 'spam')
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 0, response.size
+
+      Helpdesk::Ticket.first.update_attributes(spam: true, created_at: 2.months.ago)
+      get :index, controller_params(filter: 'spam')
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.size
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_spam_and_deleted
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      pattern = /SELECT  `helpdesk_tickets`.* FROM/
+      from = 'WHERE '
+      to = ' ORDER BY'
+      query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam', updated_since: '2009-09-09') }
+      assert_equal "`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`spam` = 1 AND (helpdesk_tickets.updated_at >= '2009-09-09 00:00:00')", query
+      query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'deleted', updated_since: '2009-09-09') }
+      assert_equal "`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 1 AND `helpdesk_schema_less_tickets`.`boolean_tc02` = 0 AND (helpdesk_tickets.updated_at >= '2009-09-09 00:00:00')", query
+      query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam') }
+      assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`spam` = 1', query
+      query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam', requester_id: 1) }
+      assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`requester_id` = 1 AND `helpdesk_tickets`.`spam` = 1', query
+      query = trace_query_condition(pattern, from, to) { get :index, controller_params }
+      assert_match(/`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`\.`deleted` = 0 AND `helpdesk_tickets`\.`spam` = 0 AND \(helpdesk_tickets.created_at > '.*'\)$/, query)
+      query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam', company_id: 1) }
+      assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`owner_id` = 1 AND `helpdesk_tickets`.`spam` = 1', query
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_deleted
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      tkts = Helpdesk::Ticket.select { |x| x.deleted && !x.schema_less_ticket.boolean_tc02 }
+      t = ticket
+      t.update_column(:deleted, true)
+      t.update_column(:spam, true)
+      t.update_column(:created_at, 2.months.ago)
+      tkts << t.reload
+      get :index, controller_params(filter: 'deleted')
+      pattern = []
+      tkts.each { |tkt| pattern << index_deleted_ticket_pattern(tkt) }
+      match_json(pattern)
+
+      t.update_column(:deleted, false)
+      t.update_column(:spam, false)
+      assert_response 200
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_requester_filter
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Helpdesk::Ticket.update_all(requester_id: User.first.id)
+      ticket = create_ticket(requester_id: User.last.id)
+      ticket.update_column(:created_at, 2.months.ago)
+      get :index, controller_params(requester_id: "#{User.last.id}")
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.count
+      set_wrap_params
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_filter_and_requester_email
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      user = add_new_user(@account)
+
+      get :index, controller_params(filter: 'new_and_my_open', email: user.email)
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 0, response.count
+
+      Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: user.id, status: 2)
+      get :index, controller_params(filter: 'new_and_my_open', email: user.email)
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.count
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_company
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      company = create_company
+      user = add_new_user(@account)
+      sidekiq_inline {
+        user.company_id = company.id
+        user.save!
+      }
+      ticket = create_ticket(requester_id: user.id)
+      get :index, controller_params(company_id: "#{company.id}")
+      assert_response 200
+
+      tkts = Helpdesk::Ticket.where(owner_id: company.id)
+      pattern = tkts.map { |tkt| index_ticket_pattern(tkt) }
+      match_json(pattern)
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_filter_and_requester
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      user = add_new_user(@account)
+      requester = User.first
+      Helpdesk::Ticket.update_all(requester_id: user.id)
+      get :index, controller_params(filter: 'new_and_my_open', requester_id: "#{requester.id}")
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 0, response.count
+
+      Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: requester.id, status: 2)
+      get :index, controller_params(filter: 'new_and_my_open', requester_id: "#{requester.id}")
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.count
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_filter_and_company
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Helpdesk::Ticket.update_all(status: 3)
+      user = get_user_with_default_company
+      user_id = user.id
+      company_id = user.company.id
+      Helpdesk::Ticket.where(deleted: 0, spam: 0).update_all(
+        requester_id: nil, owner_id: nil
+      )
+
+      get :index, controller_params(filter: 'new_and_my_open', company_id: "#{company_id}")
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 0, response.count
+
+      tkt = Helpdesk::Ticket.first
+      tkt.update_attributes(
+        status: 2, requester_id: user_id,
+        owner_id: company_id, responder_id: nil
+      )
+      get :index, controller_params(
+        filter: 'new_and_my_open',
+        company_id: "#{company_id}"
+      )
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.count
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_company_and_requester
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      company = Company.first
+      user1 = User.first
+      user2 = User.first(2).last
+      sidekiq_inline { user1.update_attributes(company_id: company.id) }
+      user1.reload
+
+      expected_size = @account.tickets.where(deleted: 0, spam: 0, requester_id: user1.id, owner_id: company.id).count
+      get :index, controller_params(company_id: company.id, requester_id: "#{user1.id}")
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal expected_size, response.size
+
+      sidekiq_inline { user2.update_attributes(company_id: nil) }
+      get :index, controller_params(company_id: company.id, requester_id: "#{user2.id}")
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 0, response.size
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_requester_filter_company
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      remove_wrap_params
+      user = get_user_with_default_company
+      user_id = user.id
+      company = user.company
+      new_company = create_company
+      add_new_user(@account, customer_id: new_company.id)
+      Helpdesk::Ticket.where(deleted: 0, spam: 0).update_all(requester_id: new_company.users.map(&:id).first)
+      get :index, controller_params(company_id: company.id,
+                                    requester_id: "#{User.first.id}", filter: 'new_and_my_open')
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 0, response.size
+
+      Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: user_id,
+                                                                          status: 2, responder_id: nil)
+      get :index, controller_params(company_id: company.id,
+                                    requester_id: "#{user_id}", filter: 'new_and_my_open')
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.size
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_requester_nil
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      ticket = create_ticket
+      ticket.requester.destroy
+      get :index, controller_params(include: 'requester')
+      assert_response 200
+      requester_hash = JSON.parse(response.body).select { |x| x['id'] == ticket.id }.first['requester']
+      ticket.destroy
+      assert requester_hash.nil?
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_dates
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      get :index, controller_params(updated_since: Time.zone.now.iso8601)
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 0, response.size
+
+      tkt = Helpdesk::Ticket.first
+      tkt.update_column(:created_at, 1.days.from_now)
+      get :index, controller_params(updated_since: Time.zone.now.iso8601)
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 0, response.size
+
+      tkt.update_column(:updated_at, 1.days.from_now)
+      get :index, controller_params(updated_since: Time.zone.now.iso8601)
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal 1, response.size
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_time_zone
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      tkt = Helpdesk::Ticket.where(deleted: false, spam: false).first
+      old_time_zone = Time.zone.name
+      Time.zone = 'Chennai'
+      get :index, controller_params(updated_since: tkt.updated_at.iso8601)
+      assert_response 200
+      response = parse_response @response.body
+      assert response.size > 0
+      assert response.map { |item| item['ticket_id'] }
+      Time.zone = old_time_zone
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_stats
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      get :index, controller_params(include: 'stats')
+      assert_response 200
+      response = parse_response @response.body
+      tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
+                              .created_in(Helpdesk::Ticket.created_in_last_month)
+                              .order('created_at DESC')
+                              .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+      assert_equal tkts.count, response.size
+      param_object = OpenStruct.new
+      pattern = tkts.map do |tkt|
+        index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
+      end
+      match_json(pattern)
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_empty_include
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      get :index, controller_params(include: '')
+      assert_response 400
+      match_json([bad_request_error_pattern(
+        'include', :not_included,
+        list: 'requester, stats, company')]
+      )
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_wrong_type_include
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      get :index, controller_params(include: ['test'])
+      assert_response 400
+      match_json([bad_request_error_pattern('include', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: 'Array')])
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_invalid_param_value
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      get :index, controller_params(include: 'test')
+      assert_response 400
+      match_json([bad_request_error_pattern(
+        'include', :not_included,
+        list: 'requester, stats, company')]
+      )
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_spam_count_es_enabled
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      t = create_ticket(spam: true)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(filter: 'spam')
+      assert_response 200
+      param_object = OpenStruct.new
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      match_json(pattern)
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+      Account.any_instance.unstub(:api_es_enabled?)
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_new_and_my_open_count_es_enabled
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      t = create_ticket(status: 2)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(filter: 'new_and_my_open')
+      assert_response 200
+      param_object = OpenStruct.new
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      match_json(pattern)
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:api_es_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_stats_with_count_es_enabled
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      t = create_ticket
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(include: 'stats')
+      assert_response 200
+      param_object = OpenStruct.new(:stats => true)
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      p "pattern : #{pattern.inspect}"
+      match_json(pattern)
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:api_es_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_requester_with_count_es_enabled
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      user = add_new_user(@account)
+      t = create_ticket(requester_id: user.id)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(requester_id: user.id)
+      assert_response 200
+      param_object = OpenStruct.new
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      match_json(pattern)
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:api_es_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_filter_order_by_with_count_es_enabled
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      t_1 = create_ticket(status: 2, created_at: 10.days.ago)
+      t_2 = create_ticket(status: 3, created_at: 11.days.ago)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_1.id, t_2.id).to_json, status: 200)
+      get :index, controller_params(order_by: 'status')
+      assert_response 200
+      param_object = OpenStruct.new
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t_2, param_object, [:description, :description_text]))
+      pattern.push(index_ticket_pattern_with_associations(t_1, param_object, [:description, :description_text]))
+      match_json(pattern)
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:api_es_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_default_filter_order_type_count_es_enabled
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      t_1 = create_ticket(created_at: 10.days.ago)
+      t_2 = create_ticket(created_at: 11.days.ago)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_2.id, t_1.id).to_json, status: 200)
+      get :index, controller_params(order_type: 'asc')
+      assert_response 200
+      param_object = OpenStruct.new
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t_1, param_object, [:description, :description_text]))
+      pattern.push(index_ticket_pattern_with_associations(t_2, param_object, [:description, :description_text]))
+      match_json(pattern)
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:api_es_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_updated_since_count_es_enabled
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      t = create_ticket(updated_at: 2.days.from_now)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(updated_since: Time.zone.now.iso8601)
+      assert_response 200
+      param_object = OpenStruct.new
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      match_json(pattern)
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:api_es_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_index_with_company_count_es_enabled
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      company = create_company
+      user = add_new_user(@account)
+      sidekiq_inline {
+        user.company_id = company.id
+        user.save!
+      }
+      t = create_ticket(requester_id: user.id)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(company_id: "#{company.id}")
+      assert_response 200
+      param_object = OpenStruct.new
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      match_json(pattern)
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:api_es_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+      @channel_v2_api = false
+      $infra['CHANNEL_LAYER'] = false
     end
 
     def test_sla_calculation_if_created_at_current_time
