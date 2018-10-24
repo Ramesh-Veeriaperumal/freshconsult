@@ -2,6 +2,7 @@ require_relative '../../test_helper'
 module Proactive
   class RulesControllerTest < ActionController::TestCase
     include ::Proactive::ProactiveJwtAuth
+    include EmailConfigsHelper
     def setup
       super
       Account.find(Account.current.id).make_current
@@ -9,7 +10,7 @@ module Proactive
     end
 
     def wrap_cname(params)
-      { rules: params }
+      { rule: params }
     end
 
     def rule_create_params_hash
@@ -92,6 +93,134 @@ module Proactive
       HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(text: "{\"description\": \"bad request error\"}", status: 400)
       get :index, controller_params
       assert_response 400
+    end
+
+    def test_create_abandoned_cart_rule_with_email
+      email_config = fetch_email_config
+      params_hash = rule_create_params_hash.merge(event: 'abandoned_cart',
+                                                  action: {
+                                                    email: {
+                                                      subject: 'subject',
+                                                      description: '<div>description</div>',
+                                                      email: 'sample@test.com',
+                                                      email_config_id: email_config.id,
+                                                      status: 4,
+                                                      type: 'Question',
+                                                      priority: 4,
+                                                      group_id: 1
+                                                    }
+                                                  })
+      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(rules_with_email_action('abandoned_cart').merge(status: 201))
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+    end
+
+    def test_create_delivery_feedback_rule_with_email
+      email_config = fetch_email_config
+      params_hash = rule_create_params_hash.merge(event: 'delivery_feedback',
+                                                  action: {
+                                                    email: {
+                                                      subject: 'subject',
+                                                      description: '<div>description</div>',
+                                                      email: 'sample@test.com',
+                                                      email_config_id: email_config.id,
+                                                      status: 4,
+                                                      type: 'Question',
+                                                      priority: 4,
+                                                      group_id: 1
+                                                    }
+                                                  })
+      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(rules_with_email_action('delivery_feedback').merge(status: 201))
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+    end
+
+    def test_update_abandoned_cart_rule_with_email
+      email_config = fetch_email_config
+      params_hash = rule_create_params_hash.merge(event: 'abandoned_cart',
+                                                  action: {
+                                                    email: {
+                                                      subject: 'subject',
+                                                      description: '<div>description</div>',
+                                                      email: 'sample@test.com',
+                                                      email_config_id: email_config.id,
+                                                      status: 4,
+                                                      type: 'Question',
+                                                      priority: 4,
+                                                      group_id: 1
+                                                    }
+                                                  })
+      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(rules_with_email_action('abandoned_cart').merge(status: 200))
+      put :update, construct_params({ version: 'private', id: 1 }, params_hash)
+      assert_response 200
+    end
+
+    def test_update_delivery_feedback_rule_with_email
+      email_config = fetch_email_config
+      params_hash = rule_create_params_hash.merge(event: 'delivery_feedback',
+                                                  action: {
+                                                    email: {
+                                                      subject: 'subject',
+                                                      description: '<div>description</div>',
+                                                      email: 'sample@test.com',
+                                                      email_config_id: email_config.id,
+                                                      status: 4,
+                                                      type: 'Question',
+                                                      priority: 4,
+                                                      group_id: 1
+                                                    }
+                                                  })
+      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(rules_with_email_action('delivery_feedback').merge(status: 200))
+      put :update, construct_params({ version: 'private', id: 1 }, params_hash)
+      assert_response 200
+    end
+
+    def test_create_with_invalid_email_params
+      params_hash = rule_create_params_hash.merge(event: 'abandoned_cart',
+                                                  action: {
+                                                    email: {
+                                                      subject: 'subject',
+                                                      description: '<div>description</div>',
+                                                      email: 'sample@test.com',
+                                                      email_config_id: 9999,
+                                                      status: 4,
+                                                      type: 'Question',
+                                                      priority: 4,
+                                                      group_id: 9999
+                                                    }
+                                                  })
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('email_config_id', :absent_in_db, resource: :email_config, attribute: :email_config_id),
+                  bad_request_error_pattern('group', :"can't be blank", code: :invalid_value)])
+    end
+
+    def test_update_with_invalid_email_params
+      params_hash = rule_create_params_hash.merge(event: 'delivery_feedback',
+                                                  action: {
+                                                    email: {
+                                                      subject: 'subject',
+                                                      description: '<div>description</div>',
+                                                      email: 'sample@test.com',
+                                                      email_config_id: 9999,
+                                                      status: 4,
+                                                      type: 'Question',
+                                                      priority: 4,
+                                                      group_id: 9999
+                                                    }
+                                                  })
+      put :update, construct_params({ version: 'private', id: 1 }, params_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('email_config_id', :absent_in_db, resource: :email_config, attribute: :email_config_id),
+                  bad_request_error_pattern('group', :"can't be blank", code: :invalid_value)])
+    end
+
+    def fetch_email_config
+      Account.current.email_configs.where('active = true').first || create_email_config
+    end
+
+    def rules_with_email_action(event)
+      { text: "{\"rule\":{\"id\":4,\"sample_name\":\"name\",\"description\":\"sample description\",\"event\":\"#{event}\",\"action\":{\"email\":{\"subject\":\"subject\",\"description\":\"\\u003cdiv\\u003edescription\\u003c/div\\u003e\",\"email\":\"sample@test.com\",\"email_config_id\":1,\"status\":4,\"type\":\"Question\",\"priority\":4,\"group_id\":1}},\"created_at\":\"2018-09-19T15:47:04.000Z\",\"updated_at\":\"2018-09-20T04:06:35.000Z\"}}" }
     end
   end
 end
