@@ -108,12 +108,65 @@ module ActiveRecord
       return 0 if attributes_with_values.empty?
       klass = self.class
       stmt = nil
-      if klass.column_names.include? "account_id"
+      if account_id_column_exists?
         stmt = klass.unscoped.where(klass.arel_table[klass.primary_key].eq(id)).where(klass.arel_table["account_id"].eq(account_id)).arel.compile_update(attributes_with_values)
       else
         stmt = klass.unscoped.where(klass.arel_table[klass.primary_key].eq(id)).arel.compile_update(attributes_with_values)
       end
       klass.connection.update stmt
+    end
+
+    # MonekyPatch :
+    # https://github.com/rails/rails/blob/3-2-stable/activerecord/lib/active_record/persistence.rb#L320
+    # https://github.com/rails/rails/blob/3-2-stable/activerecord/lib/active_record/persistence.rb#L192
+    # to include account_id in where conditions for tables that has account_id column.
+    # We cannot override https://github.com/rails/rails/blob/3-2-stable/activerecord/lib/active_record/relation.rb#L275
+    # because relations are meant for bulk updates and it can have multiple touch points in the Framework like Migration, rake tasks, unit tests etc.
+
+    def touch(name = nil)
+      attributes = timestamp_attributes_for_update_in_model
+      attributes << name if name
+
+      unless attributes.empty?
+        current_time = current_time_from_proper_timezone
+        changes = {}
+
+        attributes.each do |column|
+          changes[column.to_s] = write_attribute(column.to_s, current_time)
+        end
+
+        changes[self.class.locking_column] = increment_lock if locking_enabled?
+
+        @changed_attributes.except!(*changes.keys)
+        primary_key = self.class.primary_key
+
+        if account_id_column_exists?
+          self.class.unscoped.update_all(changes, { primary_key => self[primary_key], "account_id" => self["account_id"] }) == 1
+        else
+          self.class.unscoped.update_all(changes, { primary_key => self[primary_key] }) == 1
+        end
+      end
+    end
+
+    def update_column(name, value)
+      name = name.to_s
+      raise ActiveRecordError, "#{name} is marked as readonly" if self.class.readonly_attributes.include?(name)
+      raise ActiveRecordError, "can not update on a new record object" unless persisted?
+
+      updated_count = nil
+      if account_id_column_exists?
+        updated_count = self.class.unscoped.update_all({ name => value }, { self.class.primary_key => id, "account_id" => self["account_id"] })
+      else
+        updated_count = self.class.unscoped.update_all({ name => value }, self.class.primary_key => id)
+      end
+
+      raw_write_attribute(name, value)
+
+      updated_count == 1
+    end
+
+    def account_id_column_exists?
+      self.class.column_names.include? "account_id"
     end
   end
 end
