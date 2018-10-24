@@ -18,12 +18,16 @@ module Search::Dashboard::QueryHelper
 
   NOT_ANALYZED_COLUMNS = { "type" => "ticket_type" }
 
+  SINGLE_QUOTE = '#&$!SinQuo'.freeze
+  DOUBLE_QUOTE = '#&$!DouQuo'.freeze
+  BACK_SLASH = '#&$!BacSla'.freeze
+
   # WF Filter conditions is convert into FQL Format for search service
   def transform_fields(wf_conditions)
     conditions = []
     wf_conditions.each do |field|
       cond_field = (COLUMN_MAPPING[field['condition']].presence || field['condition'].to_s)
-      field_values = field['value'].to_s.split(',')
+      field_values = field['value'].to_s.split(',').map { |value| encode_value(value)} # Hack to handle special chars in query
       if cond_field.include?("flexifields")  
       	conditions << transform_flexifield_filter(field["ff_name"].gsub("_#{Account.current.id}" , ""), field_values) 
       elsif cond_field.present?
@@ -125,9 +129,7 @@ module Search::Dashboard::QueryHelper
   # Handle conditions with null queries 
   def transform_filter(field_name, values)
     null_included = values.include?("-1")
-  	if null_included
-    	values.delete("-1") 
-  	end
+    values.delete('-1') if null_included
     return "#{field_name}:null" unless values.present?
   	query = "#{field_name}:" + values.join(" OR #{field_name}:")
     query = "#{field_name}:'" + values.join("' OR #{field_name}:'") + "'" if STRING_FIELDS.include?(field_name)
@@ -212,4 +214,13 @@ module Search::Dashboard::QueryHelper
     safe_send("transform_#{field_name}", field_name, values) rescue transform_filter(field_name, values)
   end
 
+  def encode_value(value)
+    # Hack to handle special chars in query
+    value.gsub(/['"\\]/, '\'' => SINGLE_QUOTE, '"' => DOUBLE_QUOTE, '\\' => BACK_SLASH)
+  end
+
+  def decode_values(values)
+    # Hack to handle special characters ' " \ in query
+    values.gsub(SINGLE_QUOTE, '\'').gsub(DOUBLE_QUOTE, '\"').gsub(BACK_SLASH, '\\\\\\\\')
+  end
 end
