@@ -55,6 +55,7 @@ class AccountsController < ApplicationController
   before_filter :update_language_attributes, :only => [:update_languages]
   before_filter :validate_portal_language_inclusion, :only => [:update_languages]
   before_filter(:only => [:manage_languages]) { |c| c.requires_feature :multi_language }
+  before_filter :access_denied, only: [:email_signup, :new_signup_free], :if => :params_contain_url
   
   def show
   end   
@@ -423,6 +424,15 @@ class AccountsController < ApplicationController
     end      
 
   private
+
+    def params_contain_url
+      contains = [:user_first_name, :user_last_name, :user_email, :user_phone, :account_name, :account_domain].any? do |key| 
+        value = params[:signup][key].to_s
+        (value.include?("http://") || value.include?("https://"))
+      end
+      Rails.logger.info "Failing Signup" if contains
+      contains
+    end
 
     def check_sandbox?
       access_denied if current_account.sandbox?

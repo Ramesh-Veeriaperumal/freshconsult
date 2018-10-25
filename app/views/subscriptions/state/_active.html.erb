@@ -96,10 +96,12 @@
 <% unless @offline_subscription %>
 <div class="plan-section-title">
   <div class="choose-plan-title">
-    <a class="plan-expand" href="#"> <%= t('choose_different_plan') %> </a>
+    <a class="plan-expand <%= 'plan-expand-click' if @selected_plan.present? %>" href="#"> 
+      <%= t('choose_different_plan') %> 
+    </a>
   </div>
   <%= content_tag(:h5, t('downgrade_plan_v2'), :class => "lead-note pb15") %>
-  <div class="choose-plan-drop" style="display:none;" ><%= render :partial => current_account.new_pricing_launched? ? "/subscriptions/select_new_plans" : "/subscriptions/select_plans", :locals => {:plans => @plans, :subscription => @subscription, :show_all => false } %></div>
+  <div class="choose-plan-drop" style="<%= 'display:none' if @selected_plan.nil? %>" ><%= render :partial => current_account.new_pricing_launched? ? "/subscriptions/select_new_plans" : "/subscriptions/select_plans", :locals => {:plans => @plans, :subscription => @subscription, :show_all => false } %></div>
 </div>
 <% end %>
 

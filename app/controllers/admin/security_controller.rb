@@ -64,15 +64,19 @@ class Admin::SecurityController <  Admin::AdminController
     CUSTOM_SSL % { :account_id => current_account.id }
   end
 
- def request_custom_ssl
-   set_others_redis_key(ssl_key, "1", 86400*10)
-   current_account.main_portal.update_attributes( :portal_url => params[:domain_name] )
-   FreshdeskErrorsMailer.error_email( nil, 
-                                              { "domain_name" => params[:domain_name] }, 
-                                              nil, 
-                                              { :subject => "Request for new SSL Certificate -
-                                                          Account ID ##{current_account.id}" })
-    render :json => { :success => true }
+  def request_custom_ssl
+    if current_account.features?(:custom_ssl)
+      set_others_redis_key(ssl_key, "1", 86400*10)
+      current_account.main_portal.update_attributes( :portal_url => params[:domain_name] )
+      FreshdeskErrorsMailer.error_email( nil, 
+                                                { "domain_name" => params[:domain_name] }, 
+                                                nil, 
+                                                { :subject => "Request for new SSL Certificate -
+                                                            Account ID ##{current_account.id}" })
+      render :json => { :success => true }
+    else
+      render :json => { :success => false }
+    end
   end
 
   def load_whitelisted_ips
