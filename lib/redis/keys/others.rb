@@ -170,6 +170,8 @@ module Redis::Keys::Others
   GROUP_WIDGET_CACHE_GET                  = "GROUP_WIDGET_CACHE_GET:%{account_id}".freeze
   # Feature related or temporary keys
   COMPOSE_EMAIL_ENABLED                   = "COMPOSE_EMAIL_ENABLED".freeze
+  PREMIUM_TICKET_EXPORT                   = "PREMIUM_TICKET_EXPORT".freeze
+  LONG_RUNNING_TICKET_EXPORT              = "LONG_RUNNING_TICKET_EXPORT".freeze
   DASHBOARD_DISABLED                      = "DASHBOARD_DISABLED".freeze
   RESTRICTED_COMPOSE                      = "RESTRICTED_COMPOSE".freeze
   SLAVE_QUERIES                           = "SLAVE_QUERIES".freeze
