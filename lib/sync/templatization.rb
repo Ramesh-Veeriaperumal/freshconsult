@@ -1,7 +1,6 @@
 class Sync::Templatization
   include Sync::Templatization::Constant
   include Sync::Util
-  include Sync::CustomLogger
   include Sync::Constants
   include Sync::Templatization::MetaInfo
 
@@ -16,6 +15,7 @@ class Sync::Templatization
     @resync_root_path   = "#{RESYNC_ROOT_PATH}/#{account.id}"
     @repo_client        = Rugged::Repository.new("#{root_path}/.git")
     @action             = nil
+    @transformer        = Sync::DataToFile::Transformer.new({}, account.id)
   end
 
   def build_delta
@@ -28,7 +28,7 @@ class Sync::Templatization
         changes_for_model(resync_root_path, relation[0])
       end
     end
-    FileUtils.rm_rf(resync_root_path) # Cleanup resync root path
+    FileUtils.rm_rf(resync_root_path)
     {}.tap { |r| @delta.each { |k, v| r[k] = v.values.compact } } # Consolidate
   end
 
@@ -178,7 +178,7 @@ class Sync::Templatization
     def begin_rescue
       yield
     rescue Exception => e
-      sync_logger.info("Sandbox resync templatization  account id #{account.id} \n#{e}\n#{e.backtrace.join("\n\t")}")
+      Sync::Logger.log("Sandbox resync templatization  account id #{account.id} \n#{e}\n#{e.backtrace[0..7].inspect}")
       nil
     end
 

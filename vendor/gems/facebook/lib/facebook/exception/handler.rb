@@ -70,7 +70,12 @@ module Facebook
         end
         
         
-        private       
+        private   
+
+        def facebook_user_blocked?
+          error_params[:error_code] == 230 || error_params[:error_code] == 551
+        end
+
         def auth_error?
           if @exception.fb_error_code == AUTH_ERROR
             subcode = @exception.fb_error_subcode if @exception.respond_to?(:fb_error_subcode)

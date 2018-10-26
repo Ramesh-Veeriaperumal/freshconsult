@@ -3,7 +3,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_validation :populate_requester, :load_ticket_status, :set_default_values
   before_validation :assign_flexifield, :assign_email_config_and_product, :on => :create
-  before_validation :validate_assoc_parent_ticket, :on => :create, :if => :child_ticket?
+  before_validation :validate_assoc_parent_ticket, :if => :child_ticket?
   before_validation :validate_related_tickets, :on => :create, :if => :tracker_ticket?
   before_validation :validate_tracker_ticket, :on => :update, :if => :tracker_ticket_id
 
@@ -53,7 +53,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_destroy :save_deleted_ticket_info
 
   after_create :refresh_display_id, :create_meta_note, :update_content_ids
-  after_create :set_parent_child_assn, :if => :child_ticket?
+  after_save :set_parent_child_assn, :if => :child_ticket?
   after_save :check_child_tkt_status, :if => :child_ticket?
 
   after_commit :create_initial_activity, on: :create
@@ -481,6 +481,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # Parent Child ticket validations...
   def validate_assoc_parent_ticket
+    return if self.associates_rdb.present?
     @assoc_parent_ticket = Account.current.tickets.permissible(User.current).readonly(false).find_by_display_id(assoc_parent_tkt_id)
     if !(@assoc_parent_ticket && @assoc_parent_ticket.can_be_associated?)
       errors.add(:parent_id, t('ticket.parent_child.permission_denied'))

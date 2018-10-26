@@ -8613,6 +8613,28 @@
           }
         }
       }
+    },
+    "/business_hours": {
+      "get": {
+        "summary": "Business Hours",
+        "tags": [
+          "business_hours"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/business_hours"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -17124,6 +17146,40 @@
             "shared_ownership_tickets_count": {
               "type": "integer"
             }
+          }
+        }
+      }
+    },
+    "business_hours": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Business Calender ID",
+            "type": "integer"
+          },
+          "name": {
+            "description": "Business Calender Name",
+            "type": "string"
+          },
+          "description": {
+            "description": "Business Calender Description",
+            "type": "string"
+          },
+          "business_hours": {
+            "description": "Business Calender Intervals",
+            "type": "object"
+          },
+          "created_at": {
+            "description": "Business Calender created time",
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "description": "Business Calender created time",
+            "type": "string",
+            "format": "date-time"
           }
         }
       }

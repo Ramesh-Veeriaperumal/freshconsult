@@ -53,7 +53,6 @@ namespace :db do
   end
 
   task :sandbox_shard_setup =>  :environment do
-
     unless Rails.env.production?
       shard_name = 'sandbox_shard_1'
       Sharding.run_on_shard(shard_name) do
@@ -106,40 +105,45 @@ def set_auto_increment_id(shard_name,auto_increment)
 
   global_tables = [ "affiliate_discount_mappings", "facebook_page_mappings", "affiliate_discounts", "shard_mappings","domain_mappings", "google_domains", "subscription_affiliates", "subscription_announcements", "delayed_jobs","features", "wf_filters", "global_blacklisted_ips", "accounts", "subscription_plans", "schema_migrations","subscription_currencies", "itil_asset_plans", "subscription_payments", "mailbox_jobs", "service_api_keys", "pod_shard_conditions","remote_integrations_mappings" ]
   Sharding.run_on_shard(shard_name) do
-    ActiveRecord::Base.connection.tables.each do |table_name|
+    auto_increment_id = AutoIncrementId[shard_name].to_i
+    (ActiveRecord::Base.connection.tables - global_tables).each do |table_name|
       begin
-        puts table_name
+        puts "Altering auto increment id for #{table_name}"
+        auto_increment_query = "ALTER TABLE #{table_name} AUTO_INCREMENT = #{auto_increment_id}"
+        ActiveRecord::Base.connection.execute(auto_increment_query)
+      #   unless global_tables.include?(table_name)
+      #     column_names = []
+      #     column_values = []
 
-        unless global_tables.include?(table_name)
-          column_names = []
-          column_values = []
+      #     ActiveRecord::Base.connection.columns(table_name).each do |column|
+      #       if !column.null and column.default.nil?
+      #         column_names.push(column.name)
 
-          ActiveRecord::Base.connection.columns(table_name).each do |column|
-            if !column.null and column.default.nil?
-              column_names.push(column.name)
-
-              if column.name == "id"
-                column_values.push(auto_increment)
-              elsif column.name == "account_id"
-                table_name == "applications" ? column_values.push(-1) : column_values.push(0)
-              elsif (column.type.to_s == "string") or (column.type.to_s == "text")
-                column_values.push("'Freshdesk'")
-              elsif column.type.to_s == "integer"
-                column_values.push(1)
-              elsif column.type.to_s == "datetime"
-                column_values.push("'#{Time.now.to_s(:db)}'")
-              end
-            end
-          end
-          names_stuff =  column_names.join(",")
-          values_stuff =  column_values.join(",")
-          ActiveRecord::Base.connection.execute("insert into #{table_name}(#{names_stuff}) values(#{values_stuff})")
-        end
+      #         if column.name == "id"
+      #           column_values.push(auto_increment)
+      #         elsif column.name == "account_id"
+      #           table_name == "applications" ? column_values.push(-1) : column_values.push(0)
+      #         elsif (column.type.to_s == "string") or (column.type.to_s == "text")
+      #           column_values.push("'Freshdesk'")
+      #         elsif column.type.to_s == "integer"
+      #           column_values.push(1)
+      #         elsif column.type.to_s == "datetime"
+      #           column_values.push("'#{Time.now.to_s(:db)}'")
+      #         end
+      #       end
+      #     end
+      #     names_stuff =  column_names.join(",")
+      #     values_stuff =  column_values.join(",")
+      #     ActiveRecord::Base.connection.execute("insert into #{table_name}(#{names_stuff}) values(#{values_stuff})")
+      #   end
+      # rescue
+      #   error_tables.push(table_name)
+      # end
       rescue
         error_tables.push(table_name)
       end
     end
-    puts "Error Tables : #{error_tables.join(',')}"
+    puts "Error Tables : #{error_tables.inspect}"
   end
 end
 

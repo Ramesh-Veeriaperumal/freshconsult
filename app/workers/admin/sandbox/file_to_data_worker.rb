@@ -14,7 +14,7 @@ class Admin::Sandbox::FileToDataWorker < BaseWorker
       @job = @account.sandbox_job
       @sandbox_account_id = @job.sandbox_account_id
       @job.mark_as!(:provision_staging)
-      ::Sync::Workflow.new(@sandbox_account_id).provision_staging_instance(committer)
+      ::Sync::Workflow.new(@sandbox_account_id, false).provision_staging_instance(committer)
       @job.mark_shard_as!(:ok)
       post_data_migration_activities
       @account.make_current # notification email takes current account.
@@ -23,7 +23,7 @@ class Admin::Sandbox::FileToDataWorker < BaseWorker
     end
     Rails.logger.info " **** [SANDBOX]  Finished file_to_data for account: #{@account.id} ***** "
   rescue StandardError => e
-    Rails.logger.error("Sandbox Exception in account: #{@account.id} \n#{e.message}\n#{e.backtrace.join("\n\t")}")
+    Rails.logger.error("Sandbox Exception in account: #{@account.id} \n#{e.message}\n#{e.backtrace[0..7].inspect}")
     NewRelic::Agent.notice_error(e, description: "Sandbox Error in Account: #{@account.id}")
     @job.update_last_error(e, :build_error) if @job
     send_error_notification(e, @account)

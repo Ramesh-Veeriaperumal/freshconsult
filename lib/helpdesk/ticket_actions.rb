@@ -36,8 +36,7 @@ module Helpdesk::TicketActions
 
     if @ticket.requester.language.nil?
       text = text_for_detection(@ticket.ticket_body.description)
-      Rails.logger.info "language_detection => tkt_source:#{@ticket.source}, acc_id:#{@ticket.account_id}, tkt_id:#{@ticket.id}, 
-        req_id:#{@ticket.requester_id}, text:#{text}"
+      Rails.logger.info "language_detection => tkt_source:#{@ticket.source}, acc_id:#{@ticket.account_id}, tkt_id:#{@ticket.id}, req_id:#{@ticket.requester_id}, text:#{text}"
       language_detection(@ticket.requester_id, @ticket.account_id, text)
     end
     notify_cc_people cc_emails unless cc_emails.blank?

@@ -116,7 +116,12 @@ module FormBuilders::Redactor
           when :solution then
             REDACTOR_SOLUTION_EDITOR
           when :forum then
-            REDACTOR_FORUM_EDITOR
+            no_moderation_options = { 
+              :buttons => ['bold','italic','underline', 'deleted','|','unorderedlist', 'orderedlist',  
+                      '|','fontcolor', 'backcolor', '|' ,'link','image','codeEditor']
+            }
+            return REDACTOR_FORUM_EDITOR.merge(no_moderation_options) if no_moderation?
+            return REDACTOR_FORUM_EDITOR
           when :ticket then
             REDACTOR_TICKET_EDITOR
           when :template then
@@ -126,6 +131,10 @@ module FormBuilders::Redactor
           else
             REDACTOR_DEFAULT_EDITOR
         end
+      end
+
+      def no_moderation? 
+        !(Account.current.features?(:moderate_all_posts) || Account.current.features?(:moderate_posts_with_links))
       end
 
 end

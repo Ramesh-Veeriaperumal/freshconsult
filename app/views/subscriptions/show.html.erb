@@ -17,3 +17,26 @@
   Fjax.afterNextPage = function(){ App.SelectPlan.destroy()}
 
 </script>
+
+<% if @selected_plan.present? %>
+  <% content_for :onload_script do %>
+    (function($) {
+      jQuery(window).bind("load", function() {
+        <%- case @subscription.state -%>
+        <%- when 'active' -%>
+          <% @plans.select do |plan| %>
+            <% if plan.display_name.downcase == @selected_plan %>
+              jQuery('#<%= plan.name.parameterize.underscore %>_button').click();
+            <% end %>
+          <% end %>
+        <%- when 'free' -%>
+          if(jQuery('.sprout-new-active a').length) {
+            jQuery('.sprout-new-active a')[0].click();
+          } else if(jQuery('.free-plan-payment a').length) {
+            jQuery('.free-plan-payment a')[0].click();
+          }
+        <%- end -%>
+      });
+    })(jQuery)
+  <% end %>
+<% end %>

@@ -10,11 +10,12 @@ module ChannelIntegrations::Commands::Services
       build_custom_fields(payload)
       build_placeholders(payload)
       payload[:data][:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]
+      context = payload[:context][:from]
       ticket = create_ticket(payload)
-      ::Rails.logger.info("Ticket created for abandoned cart :: Account ID : #{payload['account_id']}")
+      ::Rails.logger.info("Ticket created for #{context} :: Account ID : #{payload['account_id']}")
       ticket
     rescue StandardError => e
-      ::Rails.logger.error("Error creating abnadoned cart ticket :: #{e.message}")
+      ::Rails.logger.error("Error creating #{context} ticket :: #{e.message}")
     end
 
     def build_tags(payload)
@@ -43,7 +44,16 @@ module ChannelIntegrations::Commands::Services
       contact_hash = contact.present? ? contact.as_json["user"].stringify_keys : {}
       company_hash = contact.present? && contact.company.present? ? contact.company.as_json["company"].stringify_keys : {}
       shopify = payload.delete(:shopify).with_indifferent_access
+      shopify = transform_line_items(shopify) if payload[:context][:from] == 'DeliveryFeedback'
       payload[:data][:description] = Liquid::Template.parse(payload[:data][:description]).render({ 'shopify': shopify, 'contact': contact_hash, 'company': company_hash }.stringify_keys)
+    end
+
+    def transform_line_items(shopify_payload)
+      line_items = shopify_payload['line_items']
+      return shopify_payload unless line_items.present?
+      line_items_title = line_items.map { |li| li['title'] }
+      shopify_payload['line_items'] = line_items_title.join(', ')
+      shopify_payload
     end
   end
 end

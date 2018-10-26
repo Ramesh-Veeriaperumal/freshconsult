@@ -19,6 +19,7 @@ module Proactive
           custom_fields: @email_action_params[:custom_field], tags: @email_action_params[:tags]) # add inline_attachment_ids: @inline_attachment_ids
           if !ticket_delegator.valid?(:create)
             render_custom_errors(ticket_delegator, true)
+            return
           end
       end
 
@@ -47,6 +48,7 @@ module Proactive
           custom_fields: @email_action_params[:custom_field], tags: @email_action_params[:tags]) # add inline_attachment_ids: @inline_attachment_ids
           if !ticket_delegator.valid?(:create)
             render_custom_errors(ticket_delegator, true)
+            return
           end
       end
       make_rud_request('put', 'update')
@@ -162,7 +164,8 @@ module Proactive
       end
 
       def email_action?
-        cname_params[:event] == 'abandoned_cart' && cname_params.key?(:action) && cname_params[:action].key?(:email)
+        RuleConstants::EMAIL_ACTION_EVENTS.include?(cname_params[:event]) &&
+         cname_params.key?(:action) && cname_params[:action].key?(:email)
       end
 
       def build_ticket_object

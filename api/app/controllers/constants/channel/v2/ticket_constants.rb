@@ -1,6 +1,7 @@
 module Channel::V2::TicketConstants
   DISPLAY_ID_FIELD = %w(display_id).freeze
   IMPORT_ID_FIELD = %w(import_id).freeze
+  PARENT_ID_FIELD = %w(parent_id).freeze
   TICKET_ATTRIBUTES = (%w(deleted spam created_at updated_at) + 
                         DISPLAY_ID_FIELD + IMPORT_ID_FIELD).freeze
   TICKET_STATES_ATTRIBUTES = %w(opened_at pending_since resolved_at closed_at
@@ -22,7 +23,7 @@ module Channel::V2::TicketConstants
                    TICKET_ATTRIBUTES +
                    TICKET_STATES_ATTRIBUTES).freeze
   UPDATE_FIELDS = (ApiTicketConstants::UPDATE_FIELDS +
-                   TICKET_ATTRIBUTES +
+                   TICKET_ATTRIBUTES + PARENT_ID_FIELD +
                    TICKET_STATES_ATTRIBUTES).freeze
 
   DATETIME_ATTRIBUTES = %i(opened_at pending_since resolved_at closed_at first_assigned_at

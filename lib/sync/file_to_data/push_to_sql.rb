@@ -18,11 +18,11 @@ class Sync::FileToData::PushToSql
         }
       }
     }
-    @mapping_table = load_mapping_table(root_path.gsub(RESYNC_ROOT_PATH, GIT_ROOT_PATH)).merge!(@mapping_table) if resync
+    #@mapping_table = load_mapping_table(root_path.gsub(RESYNC_ROOT_PATH, GIT_ROOT_PATH)).merge!(@mapping_table) if resync
   end
 
   def perform(model, path, action)
-    sync_logger.info("Push data to sql Model: #{model} Path:#{path}")
+    Sync::Logger.log("Push data to sql Model: #{model} Path:#{path}")
     initialize_mapping_table(model)
     return unless File.directory?(path)
     object              = model.constantize.new
@@ -49,14 +49,14 @@ class Sync::FileToData::PushToSql
       end
       arel_values << [table[:updated_at], Time.now] if object.respond_to?('updated_at')
       arel_values << [table[:account_id], account.id]
-      arel_values << [table[:id], item.to_i] if retain_id?(item, model)
-      ret_val = send(action, table_name, item.to_i, arel_values, table)
+      arel_values << [table[:id], generate_id(item, model)] if generate_id?(item, model)
+      ret_val = send(action, table_name, item.to_i, arel_values, object, table)
       @mapping_table[model][:id][item.to_i] = ret_val if ret_val.present?
     end
   end
 
   def apply_mapping(column_values, model, table, serialized_columns, action)
-    sync_logger.info("Apply Mapping  Model : #{model} Column Values : #{column_values.inspect} Mapping Table : #{@mapping_table.inspect}}")
+    Sync::Logger.log("Apply Mapping  Model : #{model} Column Values : #{column_values.inspect} Mapping Table : #{@mapping_table.inspect}}")
     ret_val = []
     column_values.each do |column, data|
       association = MODEL_DEPENDENCIES[model].detect { |x| x[1].to_s == column.to_s }
@@ -67,10 +67,11 @@ class Sync::FileToData::PushToSql
         if associated_model.to_s == model.to_s
           @self_associations.push([model, column, association[2]])
         else
-          sync_logger.info("Associated Model : #{associated_model} ** Column : #{column} ** Model : #{model}")
-          column_values[column] = @mapping_table[associated_model][:id][data] if data && @mapping_table[associated_model]
+          Sync::Logger.log("Associated Model : #{associated_model} ** Column : #{column} ** Model : #{model}")
+          column_values[column] = @mapping_table[associated_model][:id][data] if data && @mapping_table[associated_model] && @mapping_table[associated_model][:id][data]
         end
       elsif column_values[column].present? && action != :deleted && @transformer.available?(model, column)
+        Sync::Logger.log("available transformer, column: #{column}, value: #{column_values[column].inspect}  model: #{model}")
         transformed_column_value = @transformer.safe_send("transform_#{model.gsub('::', '').snakecase}_#{column}", column_values[column], @mapping_table)
         if transformed_column_value != column_values[column] && !serialized_columns.include?(column)
           @mapping_table[model][column] ||= {}
@@ -86,15 +87,20 @@ class Sync::FileToData::PushToSql
 
   private
 
-    def retain_id?(item, model)
-      retain_id && !item.to_i.zero? && ['Helpdesk::Attachment'].exclude?(model) # Add into the list if not to retain_id
+    def generate_id?(item, model)
+      !resync && !item.to_i.zero? 
     end
 
-    def added(table_name, item_id, arel_values, _table = nil)
+    def generate_id(item, model)
+      @transformer.apply_id_mapping(item)
+    end
+
+    def added(table_name, item_id, arel_values, object, _table = nil)
+      return if record_present?(table_name, Account.current.id, item_id, object)
       delete_and_insert(table_name, item_id, arel_values)
     end
 
-    def deleted(table_name, item_id, arel_values, _table = nil)
+    def deleted(table_name, item_id, arel_values, _object, _table = nil)
       model = model_table_mapping.key(table_name)
       if item_id.zero?
         column_names = model.constantize.columns.collect(&:name)
@@ -102,14 +108,14 @@ class Sync::FileToData::PushToSql
         raise("Sandbox HABTM delete record failed. Column missing in table #{table_name} columns #{diff_columns}") if diff_columns.present?
         delete_habtm_record(table_name, arel_values)
       else
-        return if Sharding.select_shard_of(@master_account_id) {  Sharding.run_on_slave { record_present?(table_name, @master_account_id, item_id, model.constantize) } }
+        return if Sharding.select_shard_of(@master_account_id) {  Sharding.run_on_slave { record_present?(table_name, @master_account_id, @transformer.calc_id(item_id), model.constantize) } }
         @deleted_associations[model] ||= []
         @deleted_associations[model].append(item_id)
         delete_record(table_name, item_id)
       end
     end
 
-    def modified(_table_name, item_id, arel_values, table)
+    def modified(_table_name, item_id, arel_values, object, table)
       return if item_id.zero?
       update_manager = Arel::UpdateManager.new table.engine
       update_manager.set(arel_values).where(table[:id].eq(item_id)).table(table)

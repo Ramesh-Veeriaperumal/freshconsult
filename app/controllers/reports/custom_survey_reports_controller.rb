@@ -4,9 +4,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
   include ApplicationHelper
   include HelpdeskReports::Helper::ControllerMethods
 
-  before_filter { |c| current_account.new_survey_enabled? }
-
-  before_filter :set_report_type
+  before_filter :check_custom_survey_feature, :set_report_type
   before_filter :set_selected_tab, :report_filter_data_hash, :only => :index
   before_filter :save_report_max_limit?,                     :only   => [:save_reports_filter]
   before_filter :construct_report_filters,                   :only   => [:save_reports_filter,:update_reports_filter]
@@ -92,6 +90,21 @@ class Reports::CustomSurveyReportsController < ApplicationController
   end
 
   private
+
+    def check_custom_survey_feature
+      return if current_account.new_survey_enabled?
+
+      respond_to do |format|
+        format.json {
+          render json: {
+            requires_feature: false
+          }
+        }
+        format.html  {
+          render template: "/errors/non_covered_feature.html", locals: { feature: :survey }
+        }
+      end
+    end
 
     def set_selected_tab
       @selected_tab = :reports

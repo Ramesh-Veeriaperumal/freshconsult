@@ -18,6 +18,9 @@ gem 'strong_parameters', "0.2.3" # Used for API params validation
 gem "mysql2", "~> 0.3.0"
 gem "bootsnap", :require => false
 
+#For instrumenting cache-performance
+gem "time_bandits", :git => 'git@github.com:freshdesk/time_bandits', :tag => 'v1.0'
+
 gem "connection_pool"
 gem "clamav-client", "3.1.0", require: "clamav/client"
 gem "rest-client", "1.8.0"
@@ -203,7 +206,7 @@ gem 'freshdesk_features', :git => 'git@github.com:freshdesk/freshdesk-features.g
 gem 'launchparty', :git => 'git@github.com:freshdesk/launch-party.git', :tag => 'v0.2'
 gem 'binarize', "0.1.1", :git => 'git@github.com:freshdesk/binarize.git', :branch => 'not_a_model_column'
 gem 'rule_engine', git: 'git@github.com:freshdesk/rule_engine.git', tag: 'hv0.0.1'
-gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v3.0.0'
+gem 'freshid', :git => 'git@github.com:freshdesk/freshid-ruby-client.git', :tag => 'v3.0.1'
 
 gem 'net-http-persistent', '~> 2.9.4'
 

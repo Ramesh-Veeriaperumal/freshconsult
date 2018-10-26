@@ -23,7 +23,7 @@ class AccountDecorator < ApiDecorator
       created_at: record.created_at.try(:utc)
     }
     ret_hash.merge!(sandbox_info)
-    ret_hash[:collaboration] = collaboration_hash if record.collaboration_enabled?
+    ret_hash[:collaboration] = collaboration_hash if record.collaboration_enabled? || (record.freshconnect_enabled? && record.freshid_enabled? && User.current.freshid_authorization)
     ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
     ret_hash[:dashboard_limits] = record.account_additional_settings.custom_dashboard_limits if record.custom_dashboard_enabled?
     ret_hash[:freshchat] = freshchat_options_hash if record.freshchat_enabled?

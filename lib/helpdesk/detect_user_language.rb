@@ -1,5 +1,7 @@
 require 'google/api_client'
 include Social::Util
+include Redis::RedisKeys
+include Redis::OthersRedis
 
 class Helpdesk::DetectUserLanguage
 
@@ -13,6 +15,8 @@ class Helpdesk::DetectUserLanguage
     :"zh-TW" => "zh-CN"
   }
 
+  TEXT_LANGUAGE_EXPIRY = 600#10 MINUTES
+
   def self.set_user_language!(user, text)
     language, time_taken = language_detect(text)
 
@@ -20,6 +24,7 @@ class Helpdesk::DetectUserLanguage
     if language
       log_result("successful", user.email, time_taken, language)
       language = GOOGLE_LANGUAGES.has_key?(language.to_sym) ? GOOGLE_LANGUAGES[language.to_sym] : language
+      cache_user_laguage(text, language)
       user.language = (I18n.available_locales_with_name.map{
         |lang,sym| sym.to_s }.include? language) ? language : user.account.language
     else
@@ -44,7 +49,7 @@ class Helpdesk::DetectUserLanguage
     response_body = JSON.parse(@language_response.body)
     if response_body && response_body["data"]
       language = response_body["data"]["detections"].flatten.last["language"]
-      Rails.logger.info "google::language_detection language : #{language} for text : #{text}"
+      Rails.logger.info "google::language_detection language : #{language} for text : #{text} - #{Account.current.id}"
     else
       raise "Response: #{response_body.to_json}"
     end
@@ -55,12 +60,17 @@ class Helpdesk::DetectUserLanguage
   end
 
   def self.log_result(result, email, time, lang=nil)
-    Rails.logger.debug "Language detection #{result} #{email} #{time} #{lang}"
+    Rails.logger.debug "Language detection #{result} #{email} #{time} #{lang} #{Account.current.id}"
   end
 
   def self.log_errors(title, message, error)
     Rails.logger.info "#{title} #{message}"
     notify_social_dev(title, {:msg => message}) 
     NewRelic::Agent.notice_error(error, {:description => "#{title} #{message}"})
-  end 
+  end
+
+  def self.cache_user_laguage text, language
+    key = DETECT_USER_LANGUAGE % { :text => text }
+    set_others_redis_key(key, language, TEXT_LANGUAGE_EXPIRY)
+  end
 end

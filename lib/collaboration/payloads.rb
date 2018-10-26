@@ -15,7 +15,7 @@ class Collaboration::Payloads
       client_account_id: Account.current.id.to_s,
       init_auth_token: acc_auth_token,
       rts_url: CollabConfig['rts_url'],
-      freshconnect_enabled: current_account.freshconnect_enabled?
+      freshconnect_enabled: freshid_and_freshconnect_enabled?
     }
     payload.merge(payload_params)
   end
@@ -51,7 +51,7 @@ class Collaboration::Payloads
     end
 
     def payload_params
-      if current_account.freshconnect_enabled?
+      if freshid_and_freshconnect_enabled?
         { collab_url: CollabConfig['freshconnect_url'], product_name: CollabConfig['product_name'] }
       else
         { collab_url: CollabConfig['collab_url'] }
