@@ -295,6 +295,14 @@ module Cache::Memcache::Account
       end
     end
   end
+  
+  def reset_skills_trimmed_version_from_cache
+    @skills_trimmed_version_from_cache = nil
+  end
+  
+  def reset_skills_from_cache
+    @skills_from_cache = nil
+  end
 
   def scheduled_ticket_exports_from_cache
     @scheduled_ticket_exports_from_cache ||= begin

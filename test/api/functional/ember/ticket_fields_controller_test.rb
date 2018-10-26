@@ -121,5 +121,42 @@ module Ember
 
     end
 
+    def test_cache_response_new_skill
+      #check the memcache here
+      @skills_trimmed_version_from_cache = nil
+      Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+      Account.current.skills.new(
+               :name => 'Skill A',
+               :match_type => "all"
+        )
+      Account.current.save
+      
+      #check empty in the memchace for key TICKET_FIELDS_FULL:1
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      skill_field = response.find { |x| x['type'] == 'default_skill' }
+      assert_equal Account.current.skills.count, skill_field['choices'].length
+
+      # check for the response is modified value in memcache  for key TICKET_FIELDS_FULL:1
+      Account.current.skills.new(
+               :name => 'Skill B',
+               :match_type => "all"
+        )
+      Account.current.save
+      new_count =  Account.current.skills.count
+      #check empty in the memchace for key TICKET_FIELDS_FULL:1
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+
+      skill_choices = response.find { |x| x['type'] == 'default_skill'}
+      choices = skill_choices['choices']
+      skill = choices[choices.length-1]
+      assert_equal new_count, choices.count
+      assert_equal "Skill B", skill["label"]
+    end
+
+
   end
 end
