@@ -21,6 +21,15 @@ module FreshcallerSpecHelper
     @account.reload
   end
 
+  def create_freshcaller_call
+    call_id = @account.freshcaller_calls.pluck(:fc_call_id).max.to_i  + 1
+    @freshcaller_call = @account.freshcaller_calls.new(:account_id => :freshcaller_account, :fc_call_id => call_id, :recording_status => 2)
+    # :notable_id => 1, :noteable_type => "Helpdesk::Note",
+    @freshcaller_call.account.features.reload
+    @freshcaller_call.save!
+    @freshcaller_call
+  end
+
   def freshcaller_proxy_params
     {
       method: 'get',

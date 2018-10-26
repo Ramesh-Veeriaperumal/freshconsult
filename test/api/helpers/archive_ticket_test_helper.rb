@@ -1,3 +1,4 @@
+[ 'group_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module ArchiveTicketTestHelper
   include GroupHelper
   ARCHIVE_BODY = JSON.parse(File.read("#{Rails.root}/test/api/fixtures/archive_ticket_body.json"))['archive_ticket_association']
