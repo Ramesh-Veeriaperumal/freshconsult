@@ -22,7 +22,7 @@ class VaRule < ActiveRecord::Base
   
   validates_presence_of :name, :rule_type
   validates_uniqueness_of :name, :scope => [:account_id, :rule_type] , :unless => :automation_rule?
-  validate :has_events?, :has_conditions?, :has_actions?, :has_safe_conditions?
+  validate :has_events?, :has_conditions?, :has_actions?, :has_safe_conditions?, :has_valid_action_data?
   validate :any_restricted_actions?
 
   before_save :set_encrypted_password
@@ -427,6 +427,14 @@ class VaRule < ActiveRecord::Base
       filter_array.each do |filter|
         filter.symbolize_keys!
         errors.add(:base,"Enter a valid condition") if filter[:operator].present? && va_operator_list[filter[:operator].to_sym].nil?
+      end
+    end
+
+    # To allow not more than 63K character in action_data
+    def has_valid_action_data?
+      return true if self.action_data.nil?
+      if self.action_data.to_yaml.length >= MAX_ACTION_DATA_LIMIT
+        errors.add(:base,I18n.t("admin.va_rules.webhook.action_data_limit_exceed"))
       end
     end
 end

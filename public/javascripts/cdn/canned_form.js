@@ -6,3 +6,4 @@
 //= require frameworks/plugins/jquery.ui.timepicker.addon.js
 //= require frameworks/plugins/select2.js
 //= require bootstrap.js
+//= require app/canned_form.js

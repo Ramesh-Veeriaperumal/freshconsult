@@ -1,8 +1,7 @@
 <footer>
   <div class="form-footer fixed">
     <div id="footer-content" class=<%="disable-action" if @preview%>>
-      <a href=<%= support_tickets_path %> class="btn btn-light pull-left cancel"><%= t('cancel') %></a>
-      <%= submit_tag t('send_feedback'), :class => "btn btn-success", :id => "submit"%>
+      <%= submit_tag t('support.canned_form.form_submit'), :class => "form-submit", :id => "submit"%>
     </div>
   </div>
 </footer>

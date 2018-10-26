@@ -660,6 +660,7 @@ javascripts:
   canned_form:
     - public/javascripts/bootstrap.js
     - public/javascripts/frameworks/plugins/select2.js
+    - public/javascripts/app/canned_form.js
 
 <% 
   # Adding specific javascript assets to the package list

@@ -1,8 +1,16 @@
 <header>
   <div id="preview-header" class="fixed header">
-    <div id="header-content">
-      <%= image_tag logo_url, :alt => t('logo'), :onerror => "default_image_error(this)",:"data-type" => "logo", :class=>'pull-left'%>
-      <div id="header-title"><%=current_portal.portal_name%></div>
+    <div class="header-content">
+      <div class="logo"> <%= image_tag logo_url, :alt => t('logo'), :onerror => "default_image_error(this)",:"data-type" => "logo", :class=>'pull-left logo'%> </div>
+      <div class="header-title"><%=current_portal.portal_name%></div>
+    </div>
+    <div class="progress-tracker">
+      <div class='progress-text'>
+        <span>0</span> of <%= "#{@form.fields.count}"%> questions answered
+      </div>
+      <div class="progress-bar">
+        <div class="progress"></div>
+      </div>
     </div>
   </div>
 </header>
