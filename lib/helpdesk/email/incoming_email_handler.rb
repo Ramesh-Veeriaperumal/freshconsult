@@ -674,6 +674,7 @@ module Helpdesk
 							if (!params[:sanitize_done].nil? && params[:sanitize_done].to_s.downcase == "true")
 								result = params[:html]
 							else
+								params[:html] = Nokogiri::HTML(params[:html]).to_html
 								result = Helpdesk::HTMLSanitizer.clean params[:html]
 								result = Nokogiri::HTML.parse(result).css('body').inner_html
 							end
