@@ -144,15 +144,6 @@ module TicketsTestHelper
     ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
 
-  def show_ticket_pattern_with_notes(ticket, limit = false)
-    notes_pattern = []
-    ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
-      notes_pattern << index_note_pattern(n)
-    end
-    notes_pattern = notes_pattern.take(limit) if limit
-    show_ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
-  end
-
   def ticket_pattern_with_association(ticket, param_object)
     result_pattern = ticket_pattern(ticket)
     if param_object.notes
@@ -177,10 +168,6 @@ module TicketsTestHelper
       result_pattern[:sla_policy] = ticket.sla_policy ? sla_policy_pattern(ticket.sla_policy) : {}
     end
     result_pattern
-  end
-
-  def show_ticket_pattern(expected_output = {}, ticket)
-    ticket_pattern(expected_output, ticket).merge(association_type: expected_output[:association_type] || ticket.association_type)
   end
 
   def show_ticket_pattern_with_association(ticket, param_object)
@@ -971,4 +958,23 @@ module TicketsTestHelper
       query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] 
     }
   end
+
+  def stub_requirements_for_stats
+    $infra['CHANNEL_LAYER'] = true
+    @channel_v2_api = true
+    TicketDecorator.any_instance.stubs(:private_api?).returns(true)
+    Account.any_instance.stubs(:count_es_enabled?).returns(true)
+    Account.any_instance.stubs(:api_es_enabled?).returns(true)
+    Account.any_instance.stubs(:dashboard_new_alias?).returns(true)
+  end
+
+  def unstub_requirements_for_stats
+    TicketDecorator.any_instance.unstub(:private_api?)
+    Account.any_instance.unstub(:count_es_enabled?)
+    Account.any_instance.unstub(:api_es_enabled?)
+    Account.any_instance.unstub(:dashboard_new_alias?)
+    @channel_v2_api = false
+    $infra['CHANNEL_LAYER'] = false
+  end
+
 end

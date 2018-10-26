@@ -14,7 +14,7 @@ class AttachmentValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(account)
   end
 
-  def tear_down
+  def teardown
     Account.unstub(:current)
     super
   end

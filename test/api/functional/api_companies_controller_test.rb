@@ -20,6 +20,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def teardown
     super
+    Account.any_instance.unstub(:tam_default_fields_enabled?)
     destroy_custom_fields
   end
 
@@ -28,6 +29,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_company
+    enable_tam_fields
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10))
     assert_response 201
@@ -35,6 +37,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_company_with_custom_fields
+    enable_tam_fields
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10),
                                        custom_fields: { 'linetext' => 'test123' })
@@ -43,6 +46,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_company_quick
+    enable_tam_fields
     post :create, construct_params({}, name: Faker::Lorem.characters(10))
     assert_response 201
     match_json(public_api_company_pattern(Company.last))
@@ -104,6 +108,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_length_valid_with_trailing_space
+    enable_tam_fields
     params_hash = { name: Faker::Lorem.characters(20) + white_space }
     post :create, construct_params({}, params_hash)
     assert_response 201
@@ -118,6 +123,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_company_with_invalid_tam_default_fields
+    enable_tam_fields
     post :create, construct_params({}, name: Faker::Lorem.characters(10),
                                        description: Faker::Lorem.paragraph,
                                        domains: domain_array,
@@ -132,6 +138,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_company_with_valid_data_for_tam_default_fields
+    enable_tam_fields
     post :create, construct_params({}, name: Faker::Lorem.characters(10),
                                        description: Faker::Lorem.paragraph,
                                        domains: domain_array,
@@ -153,6 +160,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_company
+    enable_tam_fields
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     name = Faker::Lorem.characters(10)
     put :update, construct_params({ id: company.id }, name: name, description: Faker::Lorem.paragraph,
@@ -163,6 +171,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_company_with_nil_custom_field
+    enable_tam_fields
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     put :update, construct_params({ id: company.id }, custom_fields: {})
     match_json(public_api_company_pattern({}, company.reload))
@@ -228,6 +237,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_length_valid_trailing_spaces
+    enable_tam_fields
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     params_hash = { name: Faker::Lorem.characters(20) + white_space }
     put :update, construct_params({ id: company.id }, params_hash)
@@ -236,6 +246,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_company_with_invalid_tam_default_fields
+    enable_tam_fields
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     params_hash = {health_score: Faker::Lorem.characters(5), account_tier: Faker::Lorem.characters(5)}
     put :update, construct_params({ id: company.id }, params_hash)
@@ -246,6 +257,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_company_with_valid_data_for_tam_default_fields
+    enable_tam_fields
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     params_hash = { health_score: 'Happy', account_tier: 'Premium',
                    industry: 'Media', renewal_date: '2017-10-26' }
@@ -263,6 +275,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_show_company
+    enable_tam_fields
     company = create_company
     get :show, construct_params(id: company.id)
     assert_response 200
@@ -282,6 +295,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_index
+    enable_tam_fields
     3.times do
       create_company
     end
@@ -323,6 +337,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_companies_with_empty_domains
+    enable_tam_fields
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: [], note: Faker::Lorem.characters(10))
     assert_response 201
@@ -359,6 +374,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_company_with_valid_custom_field_values
+    enable_tam_fields
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph,
                                        domains: domain_array, note: Faker::Lorem.characters(10),
                                        custom_fields: { 'agt_count' => 21, 'date' => '2015-01-15',
@@ -408,6 +424,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_delete_existing_domains
+    enable_tam_fields
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array)
     put :update, construct_params({ id: company.id }, domains: [])
     assert_response 200
@@ -428,6 +445,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_array_fields_with_compacting_array
+    enable_tam_fields
     domain = Faker::Lorem.characters(10)
     company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, domains: domain_array)
     put :update, construct_params({ id: company.id }, domains: [domain, '', '', nil])
@@ -452,6 +470,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_all_default_fields_required_invalid
+    enable_tam_fields
     default_non_required_fiels = CompanyField.where(required_for_agent: false, column_name: 'default')
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     post :create, construct_params({},  name: Faker::Name.name)
@@ -481,6 +500,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_with_all_default_fields_required_invalid
+    enable_tam_fields
     default_non_required_fiels = CompanyField.where(required_for_agent: false,  column_name: 'default')
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     put :update, construct_params({ id: company.id },  domains: [],
@@ -529,4 +549,12 @@ class ApiCompaniesControllerTest < ActionController::TestCase
     company.save!
     company
   end
+
+
+  private
+
+  def enable_tam_fields
+    Account.any_instance.stubs(:tam_default_fields_enabled?).returns(true)
+  end
+
 end

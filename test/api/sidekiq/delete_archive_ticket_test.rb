@@ -9,7 +9,7 @@ require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 class DeleteArchiveTicketTest < ActionView::TestCase
   include AccountTestHelper
 
-  def tear_down
+  def teardown
     Account.unstub(:current)
     super
   end
