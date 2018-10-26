@@ -5,7 +5,7 @@ module Helpdesk::TicketModelExtension
   EXPORT_FIELDS = [
     [ "export_data.fields.ticket_id",             "display_id",              true ,  nil              , 1     , nil],
     [ "export_data.fields.subject",               "subject",                 true ,  nil              , 2     , nil],
-    [ "export_data.fields.status",                "status_name",             true ,  nil              , 4     , nil],
+    [ "export_data.fields.status",                "status_name",             true ,  :ticket_status   , 4     , nil],
     [ "export_data.fields.priority",              "priority_name",           false,  nil              , 5     , nil],
     [ "export_data.fields.source",                "source_name",             false,  nil              , 6     , nil], 
     [ "export_data.fields.type",                  "ticket_type",             false,  nil              , 7     , nil],
@@ -39,7 +39,7 @@ module Helpdesk::TicketModelExtension
 
   ARCHIVE_TICKETS_FIELDS_TO_IGNORE = ["association_type_name", "internal_agent_name", "internal_group_name"]
 
-  ASSOCIATION_BY_VALUE = Hash[*EXPORT_FIELDS.map { |i| [i[1], i[3]] }.flatten ]
+  ASSOCIATION_BY_VALUE = Hash[*EXPORT_FIELDS.map { |i| [i[1], i[3]] }.flatten ] # Refers to the relation
 
   DESCRIPTION_INDEX_DEFAULT = 3
 
