@@ -513,7 +513,9 @@ module Channel::V2
     end
 
     def test_index_with_deleted
-      stub_requirements_for_stats
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      TicketDecorator.any_instance.stubs(:private_api?).returns(true)
       tkts = Helpdesk::Ticket.select { |x| x.deleted && !x.schema_less_ticket.boolean_tc02 }
       t = ticket
       t.update_column(:deleted, true)
@@ -571,6 +573,7 @@ module Channel::V2
     def test_index_with_company
       $infra['CHANNEL_LAYER'] = true
       @channel_v2_api = true
+      TicketDecorator.any_instance.stubs(:private_api?).returns(true)
       company = create_company
       user = add_new_user(@account)
       sidekiq_inline {
@@ -712,24 +715,29 @@ module Channel::V2
     end
 
     def test_index_with_dates
-      stub_requirements_for_stats
-      get :index, controller_params(updated_since: Time.zone.now.iso8601)
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      TicketDecorator.any_instance.stubs(:private_api?).returns(true)
+      count = Account.current.tickets.where("updated_at >= ?", Time.zone.now.utc.iso8601).count
+      get :index, controller_params(updated_since: Time.zone.now.utc.iso8601)
       assert_response 200
       response = parse_response @response.body
-      assert_equal 0, response.size
+      assert_equal count, response.size
 
       tkt = Helpdesk::Ticket.first
       tkt.update_column(:created_at, 1.days.from_now)
-      get :index, controller_params(updated_since: Time.zone.now.iso8601)
+      count = Account.current.tickets.where("updated_at >= ?", Time.zone.now.utc.iso8601).count
+      get :index, controller_params(updated_since: Time.zone.now.utc.iso8601)
       assert_response 200
       response = parse_response @response.body
-      assert_equal 0, response.size
+      assert_equal count, response.size
 
       tkt.update_column(:updated_at, 1.days.from_now)
-      get :index, controller_params(updated_since: Time.zone.now.iso8601)
+      count = Account.current.tickets.where("updated_at >= ?", Time.zone.now.utc.iso8601).count
+      get :index, controller_params(updated_since: Time.zone.now.utc.iso8601)
       assert_response 200
       response = parse_response @response.body
-      assert_equal 1, response.size
+      assert_equal count, response.size
     ensure
       unstub_requirements_for_stats
     end
