@@ -19,7 +19,7 @@ gem "mysql2", "~> 0.3.0"
 gem "bootsnap", :require => false
 
 #For instrumenting cache-performance
-gem "time_bandits", :git => 'git@github.com:freshdesk/time_bandits', :tag => 'v1.0'
+gem "time_bandits", :git => 'git@github.com:freshdesk/time_bandits', :tag => 'v1.1'
 
 gem "connection_pool"
 gem "clamav-client", "3.1.0", require: "clamav/client"

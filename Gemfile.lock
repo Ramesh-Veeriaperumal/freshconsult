@@ -298,8 +298,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/time_bandits
-  revision: e0de9656514365a3423fade7e345b5425e690a57
-  tag: v1.0
+  revision: 3e7044932fa5bc10e5ccbc09895e9630d7d417bf
+  tag: v1.1
   specs:
     time_bandits (0.10.12)
       activesupport (>= 2.3.2)

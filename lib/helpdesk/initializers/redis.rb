@@ -14,6 +14,7 @@ mobile_config = YAML::load_file(File.join(Rails.root, 'config', 'redis_mobile.ym
 
 #For logging redis performance timings
 TimeBandits.add ::TimeBandits::TimeConsumers::Redis
+ENV["TIME_BANDITS_VERBOSE"] = "true" if Rails.env.development? #logging is enabled and default for development env
 
 $redis_tickets = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
 $redis_reports = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
