@@ -181,10 +181,21 @@ module Ember
           Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
           delete :destroy, controller_params(version: 'private', id: 'parent_child_tickets')
           assert_response 204
-          assert_equal 1,Account.current.installed_applications.with_name('parent_child_tickets').count
+          assert_equal 0,Account.current.installed_applications.with_name('parent_child_tickets').count
           assert_equal false, Account.current.parent_child_tickets_enabled?
           Account.any_instance.unstub(:disable_old_ui_enabled?)
         end
+      end
+
+      def test_destroy_with_feature_and_without_installed_app_entry
+        Account.current.add_feature(:parent_child_tickets) unless Account.current.parent_child_tickets_enabled?
+        Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+        delete :destroy, controller_params(version: 'private', id: 'parent_child_tickets')
+        assert_response 204
+        assert_equal false, Account.current.parent_child_tickets_enabled?
+      ensure
+        Account.any_instance.unstub(:disable_old_ui_enabled?)
+        Account.current.revoke_feature(:parent_child_tickets) if Account.current.parent_child_tickets_enabled?
       end
 
       def test_destroy_without_existing_feature
