@@ -2,7 +2,7 @@ require_relative '../unit_test_helper'
 require "#{Rails.root}/test/api/helpers/custom_field_validator_test_helper.rb"
 
 class TicketValidationTest < ActionView::TestCase
-  def tear_down
+  def teardown
     Account.unstub(:current)
     super
   end

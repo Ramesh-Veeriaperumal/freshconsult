@@ -1,10 +1,10 @@
 require_relative '../unit_test_helper'
 
 class TimeEntryFilterValidationTest < ActionView::TestCase
-  def tear_down
+  def teardown
     Account.unstub(:current)
     Account.any_instance.unstub(:companies)
-    ActiveRecord::Relation.any_instance.unstub(find_by_id)
+    ActiveRecord::Relation.any_instance.unstub(:find_by_id)
     Account.any_instance.unstub(:agents_details_from_cache)
     super
   end

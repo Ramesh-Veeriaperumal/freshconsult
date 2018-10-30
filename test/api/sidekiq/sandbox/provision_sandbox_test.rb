@@ -23,7 +23,7 @@ class ProvisionSandboxTest < ActionView::TestCase
     super
   end
 
-  def tear_down
+  def teardown
     Account.unstub(:current)
     super
   end

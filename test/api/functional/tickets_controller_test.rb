@@ -25,25 +25,25 @@ class TicketsControllerTest < ActionController::TestCase
   UPDATE_CUSTOM_FIELDS_VALUES_INVALID = { 'number' => '1.89', 'decimal' => 'addsad', 'checkbox' => 'nmbm', 'text' => Faker::Lorem.characters(300), 'paragraph' =>  3_543_534, 'date' => '2015-09-09T09:00' }
 
   ERROR_PARAMS =  {
-    'number' => [:datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String],
-    'decimal' => [:datatype_mismatch, expected_data_type: 'Number'],
-    'checkbox' => [:datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String],
-    'text' => [:'Has 300 characters, it can have maximum of 255 characters'],
-    'paragraph' => [:datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer],
-    'date' => [:invalid_date, accepted: 'yyyy-mm-dd']
+      'number' => [:datatype_mismatch, expected_data_type: 'Integer', prepend_msg: :input_received, given_data_type: String],
+      'decimal' => [:datatype_mismatch, expected_data_type: 'Number'],
+      'checkbox' => [:datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String],
+      'text' => [:'Has 300 characters, it can have maximum of 255 characters'],
+      'paragraph' => [:datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: Integer],
+      'date' => [:invalid_date, accepted: 'yyyy-mm-dd']
   }
 
   ERROR_REQUIRED_PARAMS  =  {
-    'number' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :Integer }],
-    'decimal' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :Number }],
-    'checkbox' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :Boolean }],
-    'text' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }],
-    'paragraph' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }],
-    'date' => [:invalid_date, { code: :missing_field, accepted: 'yyyy-mm-dd' }]
+      'number' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :Integer }],
+      'decimal' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :Number }],
+      'checkbox' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :Boolean }],
+      'text' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }],
+      'paragraph' => [:datatype_mismatch, { code: :missing_field, expected_data_type: :String }],
+      'date' => [:invalid_date, { code: :missing_field, accepted: 'yyyy-mm-dd' }]
   }
   ERROR_CHOICES_REQUIRED_PARAMS  =  {
-    'dropdown' => [:not_included, { code: :missing_field, list: 'Get Smart,Pursuit of Happiness,Armaggedon' }],
-    'country' => [:not_included, { code: :missing_field, list: 'Australia,USA' }]
+      'dropdown' => [:not_included, { code: :missing_field, list: 'Get Smart,Pursuit of Happiness,Armaggedon' }],
+      'country' => [:not_included, { code: :missing_field, list: 'Australia,USA' }]
   }
 
   def setup
@@ -87,7 +87,7 @@ class TicketsControllerTest < ActionController::TestCase
 
   def get_user_with_multiple_companies
     user_company = @account.user_companies.group(:user_id).having(
-      'count(user_id) > 1 '
+        'count(user_id) > 1 '
     ).last
     if user_company.present?
       user_company.user
@@ -767,12 +767,13 @@ class TicketsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
     post :create, construct_params({}, params)
-    DataTypeValidator.any_instance.unstub(:valid_type?)
     response_params = params.except(:tags, :attachments)
     match_json(ticket_pattern(params.merge(status: 2, priority: 2, source: 2), Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     assert_response 201
     assert Helpdesk::Ticket.last.attachments.count == 2
+  ensure
+    DataTypeValidator.any_instance.unstub(:valid_type?)
   end
 
   def test_create_with_invalid_attachment_array
@@ -803,9 +804,11 @@ class TicketsControllerTest < ActionController::TestCase
     params = ticket_params_hash.merge('attachments' => [file])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :create, construct_params({}, params)
-    DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 400
     match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
+  ensure
+    Rack::Test::UploadedFile.any_instance.unstub(:size)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
   end
 
   def test_attachment_invalid_size_update
@@ -817,12 +820,13 @@ class TicketsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     Helpdesk::Ticket.any_instance.stubs(:attachments).returns([attachment])
     put :update, construct_params({ id: Helpdesk::Ticket.first.id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{2 * invalid_attachment_limit} MB")])
+  ensure
     DataTypeValidator.any_instance.unstub(:valid_type?)
     Helpdesk::Attachment.any_instance.unstub(:content_file_size)
     Helpdesk::Attachment.any_instance.unstub(:size)
     Helpdesk::Ticket.any_instance.unstub(:attachments)
-    assert_response 400
-    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{2 * invalid_attachment_limit} MB")])
   end
 
   def test_create_with_nested_custom_fields_with_invalid_first_children_valid
@@ -865,10 +869,10 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     assert_response 400
     assert_includes([
-      bad_request_error_pattern(custom_field_error_label('test_custom_country'), :conditional_not_blank, child: 'test_custom_state'),
-      bad_request_error_pattern(custom_field_error_label('test_custom_country'), :conditional_not_blank, child: 'test_custom_city')
-      ].map(&:with_indifferent_access),
-      JSON.parse(response.body)["errors"].first)
+                        bad_request_error_pattern(custom_field_error_label('test_custom_country'), :conditional_not_blank, child: 'test_custom_state'),
+                        bad_request_error_pattern(custom_field_error_label('test_custom_country'), :conditional_not_blank, child: 'test_custom_city')
+                    ].map(&:with_indifferent_access),
+                    JSON.parse(response.body)["errors"].first)
   end
 
   def test_create_with_nested_custom_fields_with_valid_first_valid_second_invalid_third
@@ -1186,12 +1190,13 @@ class TicketsControllerTest < ActionController::TestCase
     t = ticket
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     put :update, construct_params({ id: t.display_id }, params)
-    DataTypeValidator.any_instance.unstub(:valid_type?)
     response_params = params.except(:tags, :attachments)
     match_json(update_ticket_pattern(params, t.reload))
     match_json(update_ticket_pattern({}, t))
     assert_response 200
     assert ticket.attachments.count == 2
+  ensure
+    DataTypeValidator.any_instance.unstub(:valid_type?)
   end
 
   def test_update_with_invalid_attachment_params_format
@@ -1773,7 +1778,7 @@ class TicketsControllerTest < ActionController::TestCase
     time = 12.days.since.iso8601
     params_hash = { status: 4, due_by: time, custom_fields: {
         test_custom_paragraph: Faker::Lorem.characters(200)
-      } }
+    } }
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('due_by', :cannot_set_due_by_fields, code: :incompatible_field)])
@@ -2189,17 +2194,19 @@ class TicketsControllerTest < ActionController::TestCase
   def test_update_verify_permission_invalid_permission
     User.any_instance.stubs(:has_ticket_permission?).with(ticket).returns(false)
     put :update, construct_params({ id: ticket.display_id }, update_ticket_params_hash)
-    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:has_ticket_permission?)
   end
 
   def test_update_verify_permission_ticket_trashed
     Helpdesk::SchemaLessTicket.any_instance.stubs(:trashed).returns(true)
     put :update, construct_params({ id: ticket.display_id }, update_ticket_params_hash)
-    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  ensure
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
   end
 
   def test_delete_has_ticket_permission_invalid
@@ -2207,9 +2214,10 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:group_ticket_permission).returns(false)
     User.any_instance.stubs(:assigned_ticket_permission).returns(false)
     delete :destroy, construct_params(id: Helpdesk::Ticket.first.display_id)
-    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
   end
 
   def test_delete_has_ticket_permission_valid
@@ -2218,8 +2226,9 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:group_ticket_permission).returns(false)
     User.any_instance.stubs(:assigned_ticket_permission).returns(false)
     delete :destroy, construct_params(id: t.display_id)
-    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204
+  ensure
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
   end
 
   def test_delete_group_ticket_permission_invalid
@@ -2228,10 +2237,11 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:assigned_ticket_permission).returns(false)
     Helpdesk::Ticket.stubs(:group_tickets_permission).returns([])
     delete :destroy, construct_params(id: Helpdesk::Ticket.first.display_id)
-    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
-    Helpdesk::Ticket.unstub(:group_tickets_permission)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
+    Helpdesk::Ticket.unstub(:group_tickets_permission)
   end
 
   def test_delete_assigned_ticket_invalid_permission
@@ -2240,10 +2250,11 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:assigned_ticket_permission).returns(true)
     Helpdesk::Ticket.stubs(:assigned_tickets_permission).returns([])
     delete :destroy, construct_params(id: ticket.display_id)
-    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
-    Helpdesk::Ticket.unstub(:assigned_tickets_permission)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
+    Helpdesk::Ticket.unstub(:assigned_tickets_permission)
   end
 
   def test_delete_group_ticket_permission_valid
@@ -2253,8 +2264,9 @@ class TicketsControllerTest < ActionController::TestCase
     group = create_group_with_agents(@account, agent_list: [@agent.id])
     t = create_ticket(ticket_params_hash.merge(group_id: group.id))
     delete :destroy, construct_params(id: t.display_id)
-    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204
+  ensure
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
   end
 
   def test_delete_group_ticket_permission_internal_agent_valid
@@ -2265,9 +2277,10 @@ class TicketsControllerTest < ActionController::TestCase
     t = create_ticket(ticket_params_hash.merge(internal_group_id: group.id))
     Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
     delete :destroy, construct_params(id: t.display_id)
-    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
-    Account.any_instance.unstub(:features?)
     assert_response 204
+  ensure
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
+    Account.any_instance.unstub(:shared_ownership_enabled?)
   end
 
   def test_delete_assigned_ticket_permission_valid
@@ -2277,8 +2290,9 @@ class TicketsControllerTest < ActionController::TestCase
     t = create_ticket(ticket_params_hash)
     Helpdesk::Ticket.any_instance.stubs(:responder_id).returns(@agent.id)
     delete :destroy, construct_params(id: t.display_id)
-    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204
+  ensure
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     Helpdesk::Ticket.any_instance.unstub(:responder_id)
   end
 
@@ -2290,9 +2304,11 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::Ticket.any_instance.stubs(:internal_agent_id).returns(@agent.id)
     Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
     delete :destroy, construct_params(id: t.display_id)
-    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
     assert_response 204
+  ensure
     Helpdesk::Ticket.any_instance.unstub(:responder_id)
+    User.any_instance.unstub(:can_view_all_tickets?, :group_ticket_permission, :assigned_ticket_permission)
+    Account.any_instance.unstub(:shared_ownership_enabled?)
   end
 
   def test_restore_extra_params
@@ -2311,9 +2327,10 @@ class TicketsControllerTest < ActionController::TestCase
   def test_restore_without_privilege
     User.any_instance.stubs(:privilege?).with(:delete_ticket).returns(false)
     put :restore, construct_params(id: Helpdesk::Ticket.first.display_id)
-    User.any_instance.unstub(:privilege?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:privilege?)
   end
 
   def test_restore_with_permission
@@ -2329,9 +2346,10 @@ class TicketsControllerTest < ActionController::TestCase
     t = create_ticket
     t.update_column(:deleted, true)
     put :restore, construct_params(id: t.display_id)
-    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  ensure
+    Helpdesk::SchemaLessTicket.any_instance.unstub(:trashed)
   end
 
   def test_restore_without_ticket_privilege
@@ -2339,9 +2357,10 @@ class TicketsControllerTest < ActionController::TestCase
     t = create_ticket
     t.update_column(:deleted, true)
     put :restore, construct_params(id: t.display_id)
-    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:has_ticket_permission?)
   end
 
   def test_show_object_not_present
@@ -2353,9 +2372,10 @@ class TicketsControllerTest < ActionController::TestCase
   def test_show_without_permission
     User.any_instance.stubs(:has_ticket_permission?).returns(false)
     get :show, controller_params(id: Helpdesk::Ticket.first.display_id)
-    User.any_instance.unstub(:has_ticket_permission?)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+  ensure
+    User.any_instance.unstub(:has_ticket_permission?)
   end
 
   def test_update_deleted
@@ -2499,9 +2519,10 @@ class TicketsControllerTest < ActionController::TestCase
     expected = Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month).update_all(responder_id: @agent.id)
     get :index, controller_params
     assert_response 200
-    Agent.any_instance.unstub(:ticket_permission)
     response = parse_response @response.body
     assert_equal expected, response.size
+  ensure
+    Agent.any_instance.unstub(:ticket_permission)
   end
 
   def test_index_with_invalid_sort_params
@@ -2510,8 +2531,6 @@ class TicketsControllerTest < ActionController::TestCase
     pattern = [bad_request_error_pattern('order_type', :not_included, list: 'asc,desc')]
     pattern << bad_request_error_pattern('order_by', :not_included, list: 'due_by,created_at,updated_at,priority,status')
     match_json(pattern)
-  ensure
-    Account.any_instance.unstub(:sla_management_enabled?)
   end
 
   def test_index_sort_by_due_by_with_sla_disabled
@@ -2565,8 +2584,8 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal 0, response.count
 
     subscription = FactoryGirl.build(:subscription, account_id: @account.id,
-                                                    ticket_id: Helpdesk::Ticket.first.id,
-                                                    user_id: @agent.id)
+                                     ticket_id: Helpdesk::Ticket.first.id,
+                                     user_id: @agent.id)
     subscription.save
     get :index, controller_params(filter: 'watching')
     assert_response 200
@@ -2729,7 +2748,7 @@ class TicketsControllerTest < ActionController::TestCase
     user_id = user.id
     company_id = user.company.id
     Helpdesk::Ticket.where(deleted: 0, spam: 0).update_all(
-      requester_id: nil, owner_id: nil
+        requester_id: nil, owner_id: nil
     )
 
     get :index, controller_params(filter: 'new_and_my_open', company_id: "#{company_id}")
@@ -2739,12 +2758,12 @@ class TicketsControllerTest < ActionController::TestCase
 
     tkt = Helpdesk::Ticket.first
     tkt.update_attributes(
-      status: 2, requester_id: user_id,
-      owner_id: company_id, responder_id: nil
+        status: 2, requester_id: user_id,
+        owner_id: company_id, responder_id: nil
     )
     get :index, controller_params(
-      filter: 'new_and_my_open',
-      company_id: "#{company_id}"
+        filter: 'new_and_my_open',
+        company_id: "#{company_id}"
     )
     assert_response 200
     response = parse_response @response.body
@@ -2841,9 +2860,9 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     response = parse_response @response.body
     tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
-                            .created_in(Helpdesk::Ticket.created_in_last_month)
-                            .order('created_at DESC')
-                            .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+                .created_in(Helpdesk::Ticket.created_in_last_month)
+                .order('created_at DESC')
+                .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_equal tkts.count, response.size
     param_object = OpenStruct.new(:requester => true)
     param_object.requester = true
@@ -2858,9 +2877,9 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     response = parse_response @response.body
     tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
-                            .created_in(Helpdesk::Ticket.created_in_last_month)
-                            .order('created_at DESC')
-                            .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+                .created_in(Helpdesk::Ticket.created_in_last_month)
+                .order('created_at DESC')
+                .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_equal tkts.count, response.size
     param_object = OpenStruct.new(:stats => true)
     pattern = tkts.map do |tkt|
@@ -2874,9 +2893,9 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     response = parse_response @response.body
     tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
-                            .created_in(Helpdesk::Ticket.created_in_last_month)
-                            .order('created_at DESC')
-                            .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+                .created_in(Helpdesk::Ticket.created_in_last_month)
+                .order('created_at DESC')
+                .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_equal tkts.count, response.size
     param_object = OpenStruct.new(:company => true)
     pattern = tkts.map do |tkt|
@@ -2889,8 +2908,8 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(include: '')
     assert_response 400
     match_json([bad_request_error_pattern(
-      'include', :not_included,
-      list: 'requester, stats, company')]
+                    'include', :not_included,
+                    list: 'requester, stats, company')]
     )
   end
 
@@ -2904,15 +2923,15 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(include: 'test')
     assert_response 400
     match_json([bad_request_error_pattern(
-      'include', :not_included,
-      list: 'requester, stats, company')]
+                    'include', :not_included,
+                    list: 'requester, stats, company')]
     )
   end
 
   def test_index_with_spam_count_es_enabled
-    Account.any_instance.stubs(:count_es_enabled?).returns(:true)
-    Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-    Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+    Account.any_instance.stubs(:count_es_enabled?).returns(true)
+    Account.any_instance.stubs(:api_es_enabled?).returns(true)
+    Account.any_instance.stubs(:dashboard_new_alias?).returns(true)
     t = create_ticket(spam: true)
     stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
     get :index, controller_params(filter: 'spam')
@@ -2921,6 +2940,7 @@ class TicketsControllerTest < ActionController::TestCase
     pattern = []
     pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
     match_json(pattern)
+  ensure
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:dashboard_new_alias?)
     Account.any_instance.unstub(:api_es_enabled?)
@@ -2938,6 +2958,7 @@ class TicketsControllerTest < ActionController::TestCase
     pattern = []
     pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
     match_json(pattern)
+  ensure
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
     Account.any_instance.unstub(:dashboard_new_alias?)
@@ -2955,6 +2976,7 @@ class TicketsControllerTest < ActionController::TestCase
     pattern = []
     pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
     match_json(pattern)
+  ensure
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
     Account.any_instance.unstub(:dashboard_new_alias?)
@@ -2973,6 +2995,7 @@ class TicketsControllerTest < ActionController::TestCase
     pattern = []
     pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
     match_json(pattern)
+  ensure
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
     Account.any_instance.unstub(:dashboard_new_alias?)
@@ -2992,6 +3015,7 @@ class TicketsControllerTest < ActionController::TestCase
     pattern.push(index_ticket_pattern_with_associations(t_2, param_object, [:description, :description_text]))
     pattern.push(index_ticket_pattern_with_associations(t_1, param_object, [:description, :description_text]))
     match_json(pattern)
+  ensure
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
     Account.any_instance.unstub(:dashboard_new_alias?)
@@ -3011,6 +3035,7 @@ class TicketsControllerTest < ActionController::TestCase
     pattern.push(index_ticket_pattern_with_associations(t_1, param_object, [:description, :description_text]))
     pattern.push(index_ticket_pattern_with_associations(t_2, param_object, [:description, :description_text]))
     match_json(pattern)
+  ensure
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
     Account.any_instance.unstub(:dashboard_new_alias?)
@@ -3028,6 +3053,7 @@ class TicketsControllerTest < ActionController::TestCase
     pattern = []
     pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
     match_json(pattern)
+  ensure
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
     Account.any_instance.unstub(:dashboard_new_alias?)
@@ -3051,6 +3077,7 @@ class TicketsControllerTest < ActionController::TestCase
     pattern = []
     pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
     match_json(pattern)
+  ensure
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
     Account.any_instance.unstub(:dashboard_new_alias?)
@@ -3157,7 +3184,7 @@ class TicketsControllerTest < ActionController::TestCase
     fr_due_by = 3.hours.since.to_time.in_time_zone('Tokelau Is.')
     t.update_attributes(manual_dueby: Time.zone.now.iso8601)
     put :update, construct_params({ id: t.display_id }, due_by: due_by.chop,
-                                                        fr_due_by: fr_due_by.iso8601)
+                                  fr_due_by: fr_due_by.iso8601)
     match_json(update_ticket_pattern({ due_by: due_by, fr_due_by: fr_due_by.utc.iso8601 }, t.reload))
     assert_response 200
   end
@@ -3184,16 +3211,16 @@ class TicketsControllerTest < ActionController::TestCase
     default_non_required_fiels.map { |x| x.toggle!(:required) }
     product = create_product
     post :create, construct_params({},  requester_id: @agent.id,
-                                        status: 2,
-                                        priority: 2,
-                                        type: 'Feature Request',
-                                        source: 1,
-                                        description: Faker::Lorem.characters(15),
-                                        group_id: ticket_params_hash[:group_id],
-                                        responder_id: ticket_params_hash[:responder_id],
-                                        product_id: product.id,
-                                        subject: Faker::Lorem.characters(15)
-                                  )
+                                   status: 2,
+                                   priority: 2,
+                                   type: 'Feature Request',
+                                   source: 1,
+                                   description: Faker::Lorem.characters(15),
+                                   group_id: ticket_params_hash[:group_id],
+                                   responder_id: ticket_params_hash[:responder_id],
+                                   product_id: product.id,
+                                   subject: Faker::Lorem.characters(15)
+    )
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     assert_response 201
   ensure
@@ -3204,15 +3231,15 @@ class TicketsControllerTest < ActionController::TestCase
     default_non_required_fiels = Helpdesk::TicketField.where(required: false, default: 1)
     default_non_required_fiels.map { |x| x.toggle!(:required) }
     put :update, construct_params({ id: ticket.display_id },  subject: nil,
-                                                      description: nil,
-                                                      group_id: nil,
-                                                      product_id: nil,
-                                                      responder_id: nil,
-                                                      status: nil,
-                                                      priority: nil,
-                                                      source: nil,
-                                                      type: nil
-                                 )
+                                  description: nil,
+                                  group_id: nil,
+                                  product_id: nil,
+                                  responder_id: nil,
+                                  status: nil,
+                                  priority: nil,
+                                  source: nil,
+                                  type: nil
+    )
     match_json([bad_request_error_pattern('description',  :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('group_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
                 bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'Null'),
@@ -3316,12 +3343,13 @@ class TicketsControllerTest < ActionController::TestCase
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
     post :create, construct_params({ _action: 'compose_email' }, params)
-    DataTypeValidator.any_instance.unstub(:valid_type?)
     response_params = params.except(:tags, :attachments)
     match_json(ticket_pattern(params.merge(status: 2, priority: 2, source: 10, email_config_id: params[:email_config_id].to_i), Helpdesk::Ticket.last))
     match_json(ticket_pattern({}, Helpdesk::Ticket.last))
     assert_response 201
     assert Helpdesk::Ticket.last.attachments.count == 2
+  ensure
+    DataTypeValidator.any_instance.unstub(:valid_type?)
   end
 
   def test_compose_email_without_status
@@ -3617,7 +3645,7 @@ class TicketsControllerTest < ActionController::TestCase
     post :create, construct_params({}, params)
     match_json([bad_request_error_pattern(custom_field_error_label('test_custom_date'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request'),
                 bad_request_error_pattern(custom_field_error_label('test_custom_number'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')
-              ])
+               ])
   ensure
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
@@ -3840,9 +3868,9 @@ class TicketsControllerTest < ActionController::TestCase
   def test_create_without_company_id
     sample_requester = get_user_with_default_company
     params = {
-      requester_id: sample_requester.id,
-      status: 2, priority: 2,
-      subject: Faker::Name.name, description: Faker::Lorem.paragraph
+        requester_id: sample_requester.id,
+        status: 2, priority: 2,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph
     }
     post :create, construct_params({}, params)
     t = Helpdesk::Ticket.last
@@ -3854,26 +3882,26 @@ class TicketsControllerTest < ActionController::TestCase
 
   def test_create_with_unique_external_id_and_expect_validation_error
     params = {
-      subject: Faker::Lorem.characters(100),
-      description: Faker::Lorem.paragraph,
-      unique_external_id: Faker::Lorem.characters(30),
-      status: 2, priority: 2,
+        subject: Faker::Lorem.characters(100),
+        description: Faker::Lorem.paragraph,
+        unique_external_id: Faker::Lorem.characters(30),
+        status: 2, priority: 2,
     }
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern(
-      'unique_external_id', :require_feature_for_attribute,
-      code: :inaccessible_field, feature: :unique_contact_identifier,
-        attribute: "unique_external_id")]
+                    'unique_external_id', :require_feature_for_attribute,
+                    code: :inaccessible_field, feature: :unique_contact_identifier,
+                    attribute: "unique_external_id")]
     )
   end
 
   def test_create_with_unique_external_id
     params = {
-      subject: Faker::Lorem.characters(100),
-      description: Faker::Lorem.paragraph,
-      unique_external_id: Faker::Lorem.characters(30),
-      status: 2, priority: 2,
+        subject: Faker::Lorem.characters(100),
+        description: Faker::Lorem.paragraph,
+        unique_external_id: Faker::Lorem.characters(30),
+        status: 2, priority: 2,
     }
     @account.add_feature :unique_contact_identifier
     post :create, construct_params({}, params)
@@ -3901,10 +3929,10 @@ class TicketsControllerTest < ActionController::TestCase
     sample_requester.company_id = company.id
     sample_requester.save!
     params = {
-      requester_id: sample_requester.id,
-      company_id: company.id, status: 2,
-      priority: 2, subject: Faker::Name.name,
-      description: Faker::Lorem.paragraph
+        requester_id: sample_requester.id,
+        company_id: company.id, status: 2,
+        priority: 2, subject: Faker::Name.name,
+        description: Faker::Lorem.paragraph
     }
     post :create, construct_params({}, params)
     t = Helpdesk::Ticket.last
@@ -3921,10 +3949,10 @@ class TicketsControllerTest < ActionController::TestCase
     sample_requester = get_user_with_multiple_companies
     company_id = (sample_requester.company_ids - [sample_requester.company_id]).sample
     params = {
-      requester_id: sample_requester.id,
-      company_id: company_id, status: 2,
-      priority: 2, subject: Faker::Name.name,
-      description: Faker::Lorem.paragraph
+        requester_id: sample_requester.id,
+        company_id: company_id, status: 2,
+        priority: 2, subject: Faker::Name.name,
+        description: Faker::Lorem.paragraph
     }
     post :create, construct_params({}, params)
     t = Helpdesk::Ticket.last
@@ -3940,14 +3968,14 @@ class TicketsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
     company_id = 15_000
     params = {
-      requester_id: requester.id, company_id: company_id,
-      status: 2, priority: 2, subject: Faker::Name.name,
-      description: Faker::Lorem.paragraph
+        requester_id: requester.id, company_id: company_id,
+        status: 2, priority: 2, subject: Faker::Name.name,
+        description: Faker::Lorem.paragraph
     }
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern(
-      'company_id', :invalid_company_id, company_id: 15_000, attribute: :company_id)]
+                    'company_id', :invalid_company_id, company_id: 15_000, attribute: :company_id)]
     )
   ensure
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
@@ -3957,15 +3985,15 @@ class TicketsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
     company_id = "str"
     params = { requester_id: requester.id, company_id: company_id,
-      status: 2, priority: 2, subject: Faker::Name.name,
-      description: Faker::Lorem.paragraph
+               status: 2, priority: 2, subject: Faker::Name.name,
+               description: Faker::Lorem.paragraph
     }
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern(
-      'company_id', :datatype_mismatch, code: :missing_field,
-      expected_data_type: 'Positive Integer', prepend_msg: :input_received,
-      given_data_type: 'String')]
+                    'company_id', :datatype_mismatch, code: :missing_field,
+                    expected_data_type: 'Positive Integer', prepend_msg: :input_received,
+                    given_data_type: 'String')]
     )
   ensure
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
@@ -3975,16 +4003,16 @@ class TicketsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
     company_id = true
     params = {
-      requester_id: requester.id, company_id: company_id,
-      status: 2, priority: 2, subject: Faker::Name.name,
-      description: Faker::Lorem.paragraph
+        requester_id: requester.id, company_id: company_id,
+        status: 2, priority: 2, subject: Faker::Name.name,
+        description: Faker::Lorem.paragraph
     }
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern(
-      'company_id', :datatype_mismatch, code: :missing_field,
-      expected_data_type: 'Positive Integer', prepend_msg: :input_received,
-      given_data_type: 'Boolean')]
+                    'company_id', :datatype_mismatch, code: :missing_field,
+                    expected_data_type: 'Positive Integer', prepend_msg: :input_received,
+                    given_data_type: 'Boolean')]
     )
   ensure
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
@@ -3994,15 +4022,15 @@ class TicketsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
     company_id = -100
     params = {
-      requester_id: requester.id, company_id: company_id,
-      status: 2, priority: 2, subject: Faker::Name.name,
-      description: Faker::Lorem.paragraph
+        requester_id: requester.id, company_id: company_id,
+        status: 2, priority: 2, subject: Faker::Name.name,
+        description: Faker::Lorem.paragraph
     }
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern(
-      'company_id', :datatype_mismatch, code: :missing_field,
-      expected_data_type: 'Positive Integer')]
+                    'company_id', :datatype_mismatch, code: :missing_field,
+                    expected_data_type: 'Positive Integer')]
     )
   ensure
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
@@ -4015,17 +4043,17 @@ class TicketsControllerTest < ActionController::TestCase
     sample_requester.company_id = company.id
     sample_requester.save!
     params = {
-      requester_id: sample_requester.id, company_id: company.id,
-      status: 2, priority: 2, subject: Faker::Name.name,
-      description: Faker::Lorem.paragraph
+        requester_id: sample_requester.id, company_id: company.id,
+        status: 2, priority: 2, subject: Faker::Name.name,
+        description: Faker::Lorem.paragraph
     }
     post :create, construct_params({}, params)
     assert_response 400
     match_json([bad_request_error_pattern(
-      'company_id', :require_feature_for_attribute, {
-        code: :inaccessible_field,
-        feature: :multiple_user_companies,
-        attribute: "company_id" })]
+                    'company_id', :require_feature_for_attribute, {
+                    code: :inaccessible_field,
+                    feature: :multiple_user_companies,
+                    attribute: "company_id" })]
     )
   ensure
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
@@ -4057,8 +4085,8 @@ class TicketsControllerTest < ActionController::TestCase
     assert t.owner_id != company_id
     assert_response 400
     match_json([bad_request_error_pattern(
-      'company_id', :invalid_company_id, company_id: 90_000,
-      attribute: :company_id)]
+                    'company_id', :invalid_company_id, company_id: 90_000,
+                    attribute: :company_id)]
     )
   ensure
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
@@ -4073,9 +4101,9 @@ class TicketsControllerTest < ActionController::TestCase
     assert t.owner_id != company_id
     assert_response 400
     match_json([bad_request_error_pattern(
-      'company_id', :datatype_mismatch,
-      code: :missing_field, expected_data_type: 'Positive Integer',
-      prepend_msg: :input_received, given_data_type: String)]
+                    'company_id', :datatype_mismatch,
+                    code: :missing_field, expected_data_type: 'Positive Integer',
+                    prepend_msg: :input_received, given_data_type: String)]
     )
   ensure
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
@@ -4090,9 +4118,9 @@ class TicketsControllerTest < ActionController::TestCase
     assert t.owner_id != company_id
     assert_response 400
     match_json([bad_request_error_pattern(
-      'company_id', :datatype_mismatch, code: :missing_field,
-      expected_data_type: 'Positive Integer', prepend_msg: :input_received,
-      given_data_type: 'Boolean')]
+                    'company_id', :datatype_mismatch, code: :missing_field,
+                    expected_data_type: 'Positive Integer', prepend_msg: :input_received,
+                    given_data_type: 'Boolean')]
     )
   ensure
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
@@ -4107,8 +4135,8 @@ class TicketsControllerTest < ActionController::TestCase
     assert t.owner_id != company_id
     assert_response 400
     match_json([bad_request_error_pattern(
-      'company_id', :datatype_mismatch,
-      code: :missing_field, expected_data_type: 'Positive Integer')]
+                    'company_id', :datatype_mismatch,
+                    code: :missing_field, expected_data_type: 'Positive Integer')]
     )
   ensure
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
@@ -4122,10 +4150,10 @@ class TicketsControllerTest < ActionController::TestCase
     put :update, construct_params({ id: t.display_id }, params)
     assert_response 400
     match_json([bad_request_error_pattern(
-      'company_id', :require_feature_for_attribute, {
-        code: :inaccessible_field, feature: :multiple_user_companies,
-        attribute: "company_id"
-      })]
+                    'company_id', :require_feature_for_attribute, {
+                    code: :inaccessible_field, feature: :multiple_user_companies,
+                    attribute: "company_id"
+                })]
     )
   ensure
     Account.any_instance.unstub(:multiple_user_companies_enabled?)
@@ -4147,6 +4175,8 @@ class TicketsControllerTest < ActionController::TestCase
     Helpdesk::Ticket.any_instance.stubs(:subject).returns("")
     put :update, construct_params({ id: ticket.display_id }, {priority: 4})
     assert_response 200
+  ensure
+    Helpdesk::Ticket.any_instance.unstub(:subject)
   end
 
   def test_create_child
@@ -4177,6 +4207,9 @@ class TicketsControllerTest < ActionController::TestCase
       assert_equal nil, latest_ticket.subsidiary_tkts_count
       assert_equal 1, parent_ticket.subsidiary_tkts_count
     end
+  ensure
+    Helpdesk::Ticket.any_instance.unstub(:associates=)
+    Helpdesk::Ticket.any_instance.unstub(:associates)
   end
 
   def test_destroy_child_ticket
@@ -4226,8 +4259,10 @@ class TicketsControllerTest < ActionController::TestCase
       params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
       post :create, construct_params(params_hash)
       assert_response 403
-      User.any_instance.unstub(:has_ticket_permission?)
     end
+  ensure
+    Helpdesk::Ticket.any_instance.unstub(:associates=)
+    User.any_instance.unstub(:has_ticket_permission?)
   end
 
   def test_create_child_to_parent_with_max_children
@@ -4239,6 +4274,8 @@ class TicketsControllerTest < ActionController::TestCase
       assert_response 400
       match_json([bad_request_error_pattern('parent_id', :exceeds_limit, limit: TicketConstants::CHILD_TICKETS_PER_ASSOC_PARENT)])
     end
+  ensure
+    Helpdesk::Ticket.any_instance.unstub(:associates)
   end
 
   def test_create_child_to_a_spam_parent
@@ -4338,6 +4375,8 @@ class TicketsControllerTest < ActionController::TestCase
       assert latest_ticket.tracker_ticket?
       assert_equal 1, latest_ticket.subsidiary_tkts_count
     end
+  ensure
+    Helpdesk::Ticket.any_instance.unstub(:associates=)
   end
 
   def test_destroy_related_ticket
@@ -4376,6 +4415,8 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('related_ticket_ids', :require_feature_for_attribute,
                                           code: :inaccessible_field, feature: :link_tickets, attribute: 'related_ticket_ids')])
+  ensure
+    Account.any_instance.unstub(:link_tkts_enabled?)
   end
 
   def test_tracker_create_with_invalid_params
@@ -4477,8 +4518,9 @@ class TicketsControllerTest < ActionController::TestCase
       assert_response 403
       ticket = Helpdesk::Ticket.find_by_display_id(ticket_id)
       assert !ticket.related_ticket?
-      user_unstub_ticket_permission
     end
+  ensure
+    user_unstub_ticket_permission
   end
 
   def test_link_ticket_without_tracker_permission
@@ -4588,8 +4630,9 @@ class TicketsControllerTest < ActionController::TestCase
       user_stub_ticket_permission
       put :update, construct_params({ id: @ticket_id, tracker_id: nil }, false)
       assert_unlink_failure(@ticket, 403)
-      user_unstub_ticket_permission
     end
+  ensure
+    user_unstub_ticket_permission
   end
 
   def test_unlink_non_existant_ticket_from_tracker
@@ -4616,9 +4659,10 @@ class TicketsControllerTest < ActionController::TestCase
       non_tracker_id = create_ticket.display_id
       Helpdesk::Ticket.any_instance.stubs(:associates).returns([non_tracker_id])
       put :update, construct_params({ id: @ticket_id, tracker_id: nil }, false)
-      Helpdesk::Ticket.any_instance.unstub(:associates)
       assert_unlink_failure(@ticket, 400, ['tracker_id', :invalid_tracker])
     end
+  ensure
+    Helpdesk::Ticket.any_instance.unstub(:associates)
   end
 
   def test_unlink_without_both_tracker_and_related_permission

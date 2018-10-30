@@ -1,3 +1,4 @@
+[ 'agents_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 module ProfilesTestHelper
   include AgentsTestHelper
 

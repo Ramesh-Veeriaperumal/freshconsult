@@ -5,7 +5,7 @@ class ContactMergeValidationTest < ActionView::TestCase
     File.join(Rails.root, 'test/api/fixtures/')
   end
 
-  def tear_down
+  def teardown
     Account.unstub(:current)
     Account.any_instance.unstub(:contact_form)
     ContactForm.unstub(:default_contact_fields)

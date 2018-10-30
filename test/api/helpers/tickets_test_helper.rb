@@ -1,5 +1,5 @@
 ['ticket_fields_test_helper.rb', 'conversations_test_helper.rb', 'attachments_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
-['ticket_helper.rb', 'company_helper.rb', 'group_helper.rb', 'note_helper.rb', 'email_configs_helper.rb', 'products_helper.rb', 'freshfone_spec_helper.rb', 'forum_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['ticket_helper.rb', 'company_helper.rb', 'group_helper.rb', 'note_helper.rb', 'email_configs_helper.rb', 'products_helper.rb', 'freshfone_spec_helper.rb', 'freshcaller_spec_helper.rb', 'forum_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require "#{Rails.root}/spec/helpers/social_tickets_helper.rb"
 module TicketsTestHelper
   include GroupHelper
@@ -12,6 +12,7 @@ module TicketsTestHelper
   include NoteHelper
   include SocialTicketsHelper
   include FreshfoneSpecHelper
+  include FreshcallerSpecHelper
   include ForumHelper
   include AttachmentsTestHelper
   include Helpdesk::Email::Constants
@@ -144,15 +145,6 @@ module TicketsTestHelper
     ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
 
-  def show_ticket_pattern_with_notes(ticket, limit = false)
-    notes_pattern = []
-    ticket.notes.visible.exclude_source('meta').order(:created_at).each do |n|
-      notes_pattern << index_note_pattern(n)
-    end
-    notes_pattern = notes_pattern.take(limit) if limit
-    show_ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
-  end
-
   def ticket_pattern_with_association(ticket, param_object)
     result_pattern = ticket_pattern(ticket)
     if param_object.notes
@@ -177,10 +169,6 @@ module TicketsTestHelper
       result_pattern[:sla_policy] = ticket.sla_policy ? sla_policy_pattern(ticket.sla_policy) : {}
     end
     result_pattern
-  end
-
-  def show_ticket_pattern(expected_output = {}, ticket)
-    ticket_pattern(expected_output, ticket).merge(association_type: expected_output[:association_type] || ticket.association_type)
   end
 
   def show_ticket_pattern_with_association(ticket, param_object)
@@ -651,6 +639,7 @@ module TicketsTestHelper
     pattern = ticket_pattern_with_association(ticket, param_object).merge(cloud_files: Array)
     ticket_topic = ticket_topic_pattern(ticket)
     pattern[:freshfone_call] = freshfone_call_pattern(ticket) if freshfone_call_pattern(ticket).present?
+    pattern[:freshcaller_call] = freshcaller_call_pattern(ticket) if freshcaller_call_pattern(ticket).present?
     if (Account.current.features?(:facebook) || Account.current.basic_facebook_enabled?) && ticket.facebook?
       fb_pattern = ticket.fb_post.post? ? fb_post_pattern({}, ticket.fb_post) : fb_dm_pattern({}, ticket.fb_post)
       pattern[:fb_post] = fb_pattern
@@ -751,6 +740,16 @@ module TicketsTestHelper
     }
   end
 
+  def freshcaller_call_pattern(ticket)
+    call = ticket.freshcaller_call
+    return unless call.present?
+    {
+      id: call.id,
+      fc_call_id: call.fc_call_id,
+      recording_status: call.recording_status
+     }
+  end
+
   def ticket_meta_pattern(ticket)
     meta_info = ticket.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta']).body
     meta_info = YAML.load(meta_info)
@@ -786,6 +785,11 @@ module TicketsTestHelper
     create_audio_attachment
   end
 
+  def new_freshcaller_call
+    create_test_freshcaller_account unless account.freshcaller_account.present?
+    @call = create_freshcaller_call
+  end
+
   def create_audio_attachment
     @file_url ||= "#{Rails.root}/spec/fixtures/files/callrecording.mp3"
     @data = File.open(@file_url)
@@ -804,6 +808,17 @@ module TicketsTestHelper
     associate_call_to_item(@ticket)
 
     new_fone_call
+    note = create_normal_reply_for(@ticket)
+    associate_call_to_item(note)
+    @ticket
+  end
+
+  def new_ticket_from_freshcaller_call
+    new_freshcaller_call
+    @ticket = create_ticket
+    associate_call_to_item(note)
+
+    new_freshcaller_call
     note = create_normal_reply_for(@ticket)
     associate_call_to_item(note)
     @ticket
@@ -833,6 +848,15 @@ module TicketsTestHelper
     limit ? notes_pattern.take(limit) : notes_pattern
   end
 
+  def conversations_pattern_freshcaller(ticket, requester = false, limit = false)
+    notes_pattern = ticket.notes.visible.exclude_source('meta').order(:created_at).map do |n|
+      note_pattern = note_pattern_index_freshcaller(n)
+      note_pattern[:requester] = Hash.new if requester
+      note_pattern
+    end
+    limit ? notes_pattern.take(limit) : notes_pattern
+  end
+
   def note_pattern_index(note)
     index_note = {
       from_email: note.from_email,
@@ -843,6 +867,19 @@ module TicketsTestHelper
     single_note = private_note_pattern({}, note)
     single_note.merge!(index_note)
     single_note[:freshfone_call] = freshfone_call_pattern(note) if freshfone_call_pattern(note)
+    single_note
+  end
+
+  def note_pattern_index_freshcaller(note)
+    index_note = {
+      from_email: note.from_email,
+      cc_emails:  note.cc_emails,
+      bcc_emails: note.bcc_emails,
+      source: note.source
+    }
+    single_note = private_note_pattern({}, note)
+    single_note.merge!(index_note)
+    single_note[:freshcaller_call] = freshcaller_call_pattern(note) if freshcaller_call_pattern(note)
     single_note
   end
 
@@ -971,4 +1008,23 @@ module TicketsTestHelper
       query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] 
     }
   end
+
+  def stub_requirements_for_stats
+    $infra['CHANNEL_LAYER'] = true
+    @channel_v2_api = true
+    TicketDecorator.any_instance.stubs(:private_api?).returns(true)
+    Account.any_instance.stubs(:count_es_enabled?).returns(true)
+    Account.any_instance.stubs(:api_es_enabled?).returns(true)
+    Account.any_instance.stubs(:dashboard_new_alias?).returns(true)
+  end
+
+  def unstub_requirements_for_stats
+    TicketDecorator.any_instance.unstub(:private_api?)
+    Account.any_instance.unstub(:count_es_enabled?)
+    Account.any_instance.unstub(:api_es_enabled?)
+    Account.any_instance.unstub(:dashboard_new_alias?)
+    @channel_v2_api = false
+    $infra['CHANNEL_LAYER'] = false
+  end
+
 end

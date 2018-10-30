@@ -1,7 +1,7 @@
 require_relative '../unit_test_helper'
 
 class ActivityFilterValidationTest < ActionView::TestCase
-  def tear_down
+  def teardown
     Account.unstub(:current)
     super
   end

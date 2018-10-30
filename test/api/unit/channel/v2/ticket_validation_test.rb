@@ -18,7 +18,7 @@ module Channel::V2
       "closed_at" => 5
     }
 
-    def tear_down
+    def teardown
       Account.unstub(:current)
       super
     end

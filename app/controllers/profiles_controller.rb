@@ -55,11 +55,11 @@ class ProfilesController < ApplicationController
         @check_session.destroy
         current_user_session.destroy
         @password_failed = false
-        unless current_account.falcon_ui_enabled?(current_user)
-          redirect_to new_user_session_url
-        else
+        if current_account.falcon_ui_enabled?(current_user) and current_user.agent?
           render :partial => '/profiles/change_password.rjs'
-        end     
+        else
+          redirect_to new_user_session_url
+        end
       else
         change_password_fail 
       end

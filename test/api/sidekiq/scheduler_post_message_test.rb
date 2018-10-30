@@ -10,7 +10,7 @@ class SchedulerPostMessageTest < ActionView::TestCase
   include CreateTicketHelper
   include TodosTestHelper
   SUCCESS = 200..299
-  def tear_down
+  def teardown
     Account.unstub(:current)
     super
   end

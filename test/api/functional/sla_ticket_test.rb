@@ -24,7 +24,7 @@ class TicketsControllerTest < ActionController::TestCase
     @@before_all_run_sla = true
   end
 
-  def tear_down
+  def teardown
     super
   end
 

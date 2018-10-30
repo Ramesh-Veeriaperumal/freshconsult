@@ -1,7 +1,7 @@
 require_relative '../unit_test_helper'
 
 class ApiCompanyValidationTest < ActionView::TestCase
-  def tear_down
+  def teardown
     Account.unstub(:current)
     Account.any_instance.unstub(:company_form)
     Account.any_instance.unstub(:tam_default_fields_enabled?)

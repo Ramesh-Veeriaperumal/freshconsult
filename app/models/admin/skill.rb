@@ -1,5 +1,7 @@
 class Admin::Skill < ActiveRecord::Base
 
+  clear_memcache [TICKET_FIELDS_FULL]
+
   primary_key = :id
   
   include Cache::Memcache::Skill

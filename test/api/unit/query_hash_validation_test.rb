@@ -5,7 +5,7 @@ class QueryHashValidationTest < ActionView::TestCase
 
   include TicketFieldsTestHelper
 
-  def tear_down
+  def teardown
     Account.unstub(:current)
     super
   end

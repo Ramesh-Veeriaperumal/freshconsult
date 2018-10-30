@@ -4,7 +4,7 @@ require_relative '../helpers/ticket_fields_test_helper'
 class CustomTicketFilterValidationTest < ActionView::TestCase
   include TicketFieldsTestHelper
 
-  def tear_down
+  def teardown
     Account.unstub(:current)
     super
   end

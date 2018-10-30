@@ -87,6 +87,8 @@ module Channel::V2
       match_json(ticket_pattern({}, t))
       assert (t.created_at - created_at).to_i == 0
       assert (t.updated_at - updated_at).to_i == 0
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_create_with_pending_since
@@ -107,6 +109,8 @@ module Channel::V2
       match_json(ticket_pattern(params, t))
       match_json(ticket_pattern({}, t))
       assert (t.pending_since - pending_since).to_i == 0
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_create_with_on_state_time
@@ -123,6 +127,8 @@ module Channel::V2
       match_json(ticket_pattern(params, t))
       match_json(ticket_pattern({}, t))
       assert t.on_state_time - on_state_time == 0
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_create_with_on_state_time_as_string
@@ -140,6 +146,8 @@ module Channel::V2
       match_json(ticket_pattern(params.merge(status: 2, priority: 2, requester_id: t.requester_id), t))
       match_json(ticket_pattern({}, t))
       assert t.on_state_time - on_state_time == 0
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_create_with_closed_at
@@ -158,6 +166,8 @@ module Channel::V2
       match_json(ticket_pattern(params, t))
       match_json(ticket_pattern({}, t))
       assert (t.closed_at - closed_at).to_i == 0
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_update_with_closed_at
@@ -177,6 +187,8 @@ module Channel::V2
       match_json(update_ticket_pattern(params, t))
       match_json(update_ticket_pattern({}, t))
       assert (t.closed_at - closed_at).to_i == 0
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_ticket_close_after_reopened
@@ -221,6 +233,8 @@ module Channel::V2
       t = Helpdesk::Ticket.last
       match_json(ticket_pattern(params, t))
       match_json(ticket_pattern({}, t))
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_ticket_create_with_invalid_import_properties
@@ -263,6 +277,8 @@ module Channel::V2
                    bad_request_error_pattern('spam', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: Integer)
                  ])
       assert_response 400
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_index_without_permitted_tickets
@@ -283,11 +299,12 @@ module Channel::V2
       expected = Helpdesk::Ticket.where(deleted: 0, spam: 0).created_in(Helpdesk::Ticket.created_in_last_month).update_all(responder_id: @agent.id)
       get :index, controller_params
       assert_response 200
-      Agent.any_instance.unstub(:ticket_permission)
       response = parse_response @response.body
       assert_equal expected, response.size
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
+      Agent.any_instance.unstub(:ticket_permission)
     end
 
     def test_index_with_invalid_sort_params
@@ -299,7 +316,6 @@ module Channel::V2
       pattern << bad_request_error_pattern('order_by', :not_included, list: 'due_by,created_at,updated_at,priority,status')
       match_json(pattern)
     ensure
-      Account.any_instance.unstub(:sla_management_enabled?)
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -328,6 +344,7 @@ module Channel::V2
       pattern = []
       hash.keys.each { |key| pattern << bad_request_error_pattern(key, :invalid_field) }
       match_json pattern
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -341,6 +358,7 @@ module Channel::V2
       pattern << bad_request_error_pattern('requester_id', :absent_in_db, resource: :contact, attribute: :requester_id)
       assert_response 400
       match_json pattern
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -352,6 +370,7 @@ module Channel::V2
       pattern = [bad_request_error_pattern('email', :absent_in_db, resource: :contact, attribute: :email)]
       assert_response 400
       match_json pattern
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -364,6 +383,7 @@ module Channel::V2
       pattern << bad_request_error_pattern('requester_id', :datatype_mismatch, expected_data_type: 'Positive Integer')
       assert_response 400
       match_json pattern
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -384,6 +404,7 @@ module Channel::V2
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.count
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -398,6 +419,7 @@ module Channel::V2
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.size
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -412,6 +434,7 @@ module Channel::V2
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.size
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -426,6 +449,7 @@ module Channel::V2
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.size
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -442,6 +466,7 @@ module Channel::V2
       assert_response 200
       response = parse_response @response.body
       assert_equal 2, response.size
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -459,6 +484,7 @@ module Channel::V2
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.size
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -481,6 +507,7 @@ module Channel::V2
       assert_match(/`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`\.`deleted` = 0 AND `helpdesk_tickets`\.`spam` = 0 AND \(helpdesk_tickets.created_at > '.*'\)$/, query)
       query = trace_query_condition(pattern, from, to) { get :index, controller_params(filter: 'spam', company_id: 1) }
       assert_equal '`helpdesk_tickets`.`account_id` = 1 AND `helpdesk_tickets`.`deleted` = 0 AND `helpdesk_tickets`.`owner_id` = 1 AND `helpdesk_tickets`.`spam` = 1', query
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -488,6 +515,7 @@ module Channel::V2
     def test_index_with_deleted
       $infra['CHANNEL_LAYER'] = true
       @channel_v2_api = true
+      TicketDecorator.any_instance.stubs(:private_api?).returns(true)
       tkts = Helpdesk::Ticket.select { |x| x.deleted && !x.schema_less_ticket.boolean_tc02 }
       t = ticket
       t.update_column(:deleted, true)
@@ -502,8 +530,8 @@ module Channel::V2
       t.update_column(:deleted, false)
       t.update_column(:spam, false)
       assert_response 200
-      @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+    ensure
+      unstub_requirements_for_stats
     end
 
     def test_index_with_requester_filter
@@ -517,6 +545,7 @@ module Channel::V2
       response = parse_response @response.body
       assert_equal 1, response.count
       set_wrap_params
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -536,6 +565,7 @@ module Channel::V2
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.count
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -543,6 +573,7 @@ module Channel::V2
     def test_index_with_company
       $infra['CHANNEL_LAYER'] = true
       @channel_v2_api = true
+      TicketDecorator.any_instance.stubs(:private_api?).returns(true)
       company = create_company
       user = add_new_user(@account)
       sidekiq_inline {
@@ -556,6 +587,7 @@ module Channel::V2
       tkts = Helpdesk::Ticket.where(owner_id: company.id)
       pattern = tkts.map { |tkt| index_ticket_pattern(tkt) }
       match_json(pattern)
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -576,6 +608,7 @@ module Channel::V2
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.count
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -608,6 +641,7 @@ module Channel::V2
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.count
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -632,6 +666,7 @@ module Channel::V2
       assert_response 200
       response = parse_response @response.body
       assert_equal 0, response.size
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -659,6 +694,7 @@ module Channel::V2
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.size
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -673,6 +709,7 @@ module Channel::V2
       requester_hash = JSON.parse(response.body).select { |x| x['id'] == ticket.id }.first['requester']
       ticket.destroy
       assert requester_hash.nil?
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -680,25 +717,29 @@ module Channel::V2
     def test_index_with_dates
       $infra['CHANNEL_LAYER'] = true
       @channel_v2_api = true
-      get :index, controller_params(updated_since: Time.zone.now.iso8601)
+      TicketDecorator.any_instance.stubs(:private_api?).returns(true)
+      count = Account.current.tickets.where("updated_at >= ?", Time.zone.now.utc.iso8601).count
+      get :index, controller_params(updated_since: Time.zone.now.utc.iso8601)
       assert_response 200
       response = parse_response @response.body
-      assert_equal 0, response.size
+      assert_equal count, response.size
 
       tkt = Helpdesk::Ticket.first
       tkt.update_column(:created_at, 1.days.from_now)
-      get :index, controller_params(updated_since: Time.zone.now.iso8601)
+      count = Account.current.tickets.where("updated_at >= ?", Time.zone.now.utc.iso8601).count
+      get :index, controller_params(updated_since: Time.zone.now.utc.iso8601)
       assert_response 200
       response = parse_response @response.body
-      assert_equal 0, response.size
+      assert_equal count, response.size
 
       tkt.update_column(:updated_at, 1.days.from_now)
-      get :index, controller_params(updated_since: Time.zone.now.iso8601)
+      count = Account.current.tickets.where("updated_at >= ?", Time.zone.now.utc.iso8601).count
+      get :index, controller_params(updated_since: Time.zone.now.utc.iso8601)
       assert_response 200
       response = parse_response @response.body
-      assert_equal 1, response.size
-      @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+      assert_equal count, response.size
+    ensure
+      unstub_requirements_for_stats
     end
 
     def test_index_with_time_zone
@@ -713,6 +754,7 @@ module Channel::V2
       assert response.size > 0
       assert response.map { |item| item['ticket_id'] }
       Time.zone = old_time_zone
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -733,6 +775,7 @@ module Channel::V2
         index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
       end
       match_json(pattern)
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -746,6 +789,7 @@ module Channel::V2
         'include', :not_included,
         list: 'requester, stats, company')]
       )
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -756,6 +800,7 @@ module Channel::V2
       get :index, controller_params(include: ['test'])
       assert_response 400
       match_json([bad_request_error_pattern('include', :datatype_mismatch, expected_data_type: 'String', prepend_msg: :input_received, given_data_type: 'Array')])
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
@@ -769,60 +814,47 @@ module Channel::V2
         'include', :not_included,
         list: 'requester, stats, company')]
       )
+    ensure
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
 
     def test_index_with_spam_count_es_enabled
-      $infra['CHANNEL_LAYER'] = true
-      @channel_v2_api = true
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      stub_requirements_for_stats
       t = create_ticket(spam: true)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      @request_stub = stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
       get :index, controller_params(filter: 'spam')
       assert_response 200
       param_object = OpenStruct.new
       pattern = []
       pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
       match_json(pattern)
-      Account.any_instance.unstub(:count_es_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
-      Account.any_instance.unstub(:api_es_enabled?)
-      @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+    ensure
+      unstub_requirements_for_stats
     end
 
     def test_index_with_new_and_my_open_count_es_enabled
-      $infra['CHANNEL_LAYER'] = true
-      @channel_v2_api = true
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      stub_requirements_for_stats
       t = create_ticket(status: 2)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      @request_stub = stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
       get :index, controller_params(filter: 'new_and_my_open')
       assert_response 200
       param_object = OpenStruct.new
       pattern = []
       pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
       match_json(pattern)
-      Account.any_instance.unstub(:count_es_enabled?)
-      Account.any_instance.unstub(:api_es_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
-      @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+    ensure
+      unstub_requirements_for_stats
     end
 
     def test_index_with_stats_with_count_es_enabled
       $infra['CHANNEL_LAYER'] = true
       @channel_v2_api = true
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      Account.any_instance.stubs(:count_es_enabled?).returns(true)
+      Account.any_instance.stubs(:api_es_enabled?).returns(true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(true)
       t = create_ticket
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      @request_stub = stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
       get :index, controller_params(include: 'stats')
       assert_response 200
       param_object = OpenStruct.new(:stats => true)
@@ -830,44 +862,35 @@ module Channel::V2
       pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
       p "pattern : #{pattern.inspect}"
       match_json(pattern)
+    ensure
       Account.any_instance.unstub(:count_es_enabled?)
       Account.any_instance.unstub(:api_es_enabled?)
       Account.any_instance.unstub(:dashboard_new_alias?)
+      remove_request_stub(@request_stub)
       @channel_v2_api = false
       $infra['CHANNEL_LAYER'] = false
     end
 
     def test_index_with_requester_with_count_es_enabled
-      $infra['CHANNEL_LAYER'] = true
-      @channel_v2_api = true
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      stub_requirements_for_stats
       user = add_new_user(@account)
       t = create_ticket(requester_id: user.id)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      @request_stub = stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
       get :index, controller_params(requester_id: user.id)
       assert_response 200
       param_object = OpenStruct.new
       pattern = []
       pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
       match_json(pattern)
-      Account.any_instance.unstub(:count_es_enabled?)
-      Account.any_instance.unstub(:api_es_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
-      @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+    ensure
+      unstub_requirements_for_stats
     end
 
     def test_index_with_filter_order_by_with_count_es_enabled
-      $infra['CHANNEL_LAYER'] = true
-      @channel_v2_api = true
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      stub_requirements_for_stats
       t_1 = create_ticket(status: 2, created_at: 10.days.ago)
       t_2 = create_ticket(status: 3, created_at: 11.days.ago)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_1.id, t_2.id).to_json, status: 200)
+      @request_stub = stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_1.id, t_2.id).to_json, status: 200)
       get :index, controller_params(order_by: 'status')
       assert_response 200
       param_object = OpenStruct.new
@@ -875,63 +898,42 @@ module Channel::V2
       pattern.push(index_ticket_pattern_with_associations(t_2, param_object, [:description, :description_text]))
       pattern.push(index_ticket_pattern_with_associations(t_1, param_object, [:description, :description_text]))
       match_json(pattern)
-      Account.any_instance.unstub(:count_es_enabled?)
-      Account.any_instance.unstub(:api_es_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
-      @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+    ensure
+      unstub_requirements_for_stats
     end
 
     def test_index_with_default_filter_order_type_count_es_enabled
-      $infra['CHANNEL_LAYER'] = true
-      @channel_v2_api = true
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      stub_requirements_for_stats
       t_1 = create_ticket(created_at: 10.days.ago)
       t_2 = create_ticket(created_at: 11.days.ago)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_2.id, t_1.id).to_json, status: 200)
+      @request_stub = stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_2.id, t_1.id).to_json, status: 200)
       get :index, controller_params(order_type: 'asc')
       assert_response 200
-      param_object = OpenStruct.new
+      param_object = OpenStruct.new(:stats => true)
       pattern = []
       pattern.push(index_ticket_pattern_with_associations(t_1, param_object, [:description, :description_text]))
       pattern.push(index_ticket_pattern_with_associations(t_2, param_object, [:description, :description_text]))
       match_json(pattern)
-      Account.any_instance.unstub(:count_es_enabled?)
-      Account.any_instance.unstub(:api_es_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
-      @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+    ensure
+      unstub_requirements_for_stats
     end
 
     def test_index_updated_since_count_es_enabled
-      $infra['CHANNEL_LAYER'] = true
-      @channel_v2_api = true
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      stub_requirements_for_stats
       t = create_ticket(updated_at: 2.days.from_now)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      @request_stub = stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
       get :index, controller_params(updated_since: Time.zone.now.iso8601)
       assert_response 200
-      param_object = OpenStruct.new
+      param_object = OpenStruct.new(:stats => true)
       pattern = []
       pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
       match_json(pattern)
-      Account.any_instance.unstub(:count_es_enabled?)
-      Account.any_instance.unstub(:api_es_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
-      @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+    ensure
+      unstub_requirements_for_stats
     end
 
     def test_index_with_company_count_es_enabled
-      $infra['CHANNEL_LAYER'] = true
-      @channel_v2_api = true
-      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:api_es_enabled?).returns(:true)
-      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      stub_requirements_for_stats
       company = create_company
       user = add_new_user(@account)
       sidekiq_inline {
@@ -939,18 +941,15 @@ module Channel::V2
         user.save!
       }
       t = create_ticket(requester_id: user.id)
-      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      @request_stub = stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
       get :index, controller_params(company_id: "#{company.id}")
       assert_response 200
-      param_object = OpenStruct.new
+      param_object = OpenStruct.new(:stats => true)
       pattern = []
       pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
       match_json(pattern)
-      Account.any_instance.unstub(:count_es_enabled?)
-      Account.any_instance.unstub(:api_es_enabled?)
-      Account.any_instance.unstub(:dashboard_new_alias?)
-      @channel_v2_api = false
-      $infra['CHANNEL_LAYER'] = false
+    ensure
+      unstub_requirements_for_stats
     end
 
     def test_sla_calculation_if_created_at_current_time
@@ -976,6 +975,9 @@ module Channel::V2
       assert (t.updated_at - updated_at).to_i.zero?
       assert t.due_by - t.created_at == 1.day, "Expected due_by => #{t.due_by.inspect} to be equal to created time => #{t.created_at.inspect}"
       assert t.frDueBy - t.created_at == 8.hour, "Expected frDueBy => #{t.frDueBy.inspect} to be equal to created time => #{t.created_at.inspect}"
+    ensure
+      BusinessCalendar.any_instance.unstub(:holidays)
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_sla_calculation_if_created_at_is_less_than_1month
@@ -1001,6 +1003,9 @@ module Channel::V2
       assert (t.updated_at - updated_at).to_i.zero?
       assert t.due_by - t.created_at == 1.day, "Expected due_by => #{t.due_by.inspect} to be equal to created time => #{t.created_at.inspect}"
       assert t.frDueBy - t.created_at == 8.hour, "Expected frDueBy => #{t.frDueBy.inspect} to be equal to created time => #{t.created_at.inspect}"
+    ensure
+      BusinessCalendar.any_instance.unstub(:holidays)
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_sla_calculation_if_created_at_is_greater_than_1month
@@ -1026,6 +1031,9 @@ module Channel::V2
       assert (t.updated_at - updated_at).to_i.zero?
       assert t.due_by - t.created_at == 31.day, "Expected due_by => #{t.due_by.inspect} should be 30 days ahead of created time => #{t.created_at.inspect}"
       assert t.frDueBy - t.created_at == 31.day, "Expected frDueBy => #{t.frDueBy.inspect} should be 30 days ahead of  created time => #{t.created_at.inspect}"
+    ensure
+      BusinessCalendar.any_instance.unstub(:holidays)
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_create_with_required_custom_dropdown_field
@@ -1047,6 +1055,8 @@ module Channel::V2
       assert (t.created_at - created_at).to_i == 0
       assert (t.updated_at - updated_at).to_i == 0
       ticket_field.update_attributes(required: previous_required_field)
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
 
     def test_create_with_required_custom_dependent_field
@@ -1068,6 +1078,8 @@ module Channel::V2
       assert (t.created_at - created_at).to_i == 0
       assert (t.updated_at - updated_at).to_i == 0
       ticket_field.update_attributes(required: previous_required_field)
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
     end
   end
 end

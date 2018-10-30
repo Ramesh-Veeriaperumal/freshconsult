@@ -3,7 +3,7 @@ require "#{Rails.root}/test/api/helpers/custom_field_validator_test_helper.rb"
 
 module Pipe
   class TicketValidationTest < ActionView::TestCase
-    def tear_down
+    def teardown
       Account.unstub(:current)
       super
     end

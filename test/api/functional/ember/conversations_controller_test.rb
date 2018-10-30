@@ -541,6 +541,18 @@ module Ember
       MixpanelWrapper.unstub(:send_to_mixpanel)
     end
 
+    def test_ticket_conversations_with_freshcaller_call
+      # while creating freshcaller account during tests MixpanelWrapper was throwing error, so stubing that
+      MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+      ticket  = new_ticket_from_freshcaller_call
+      remove_wrap_params
+      assert ticket.notes.all.map { |n| n.freshcaller_call.present? || nil }.compact.present?
+      get :ticket_conversations, construct_params({ version: 'private', id: ticket.display_id }, false)
+      assert_response 200
+      match_json(conversations_pattern_freshcaller(ticket))
+      MixpanelWrapper.unstub(:send_to_mixpanel)
+    end
+
     def test_ticket_conversations_on_spammed_ticket
       t = create_ticket(spam: true)
       get :ticket_conversations, controller_params(version: 'private', id: t.display_id)

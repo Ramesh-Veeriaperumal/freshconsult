@@ -6,7 +6,7 @@ class SchedulerPollerTodosReminderTest < ActionView::TestCase
   include AccountTestHelper
   include CreateTicketHelper
   include TodosTestHelper
-  def tear_down
+  def teardown
     Account.unstub(:current)
     super
   end
