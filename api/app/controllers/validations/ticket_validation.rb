@@ -24,7 +24,7 @@ class TicketValidation < ApiValidation
   # Default fields validation
   validates :subject, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
   validates :description, custom_absence: { message: :outbound_email_field_restriction }, if: :source_as_outbound_email?, on: :update
-  validates :email_config_id, :subject, :email, required: { message: :field_validation_for_outbound }, on: :compose_email
+  validates :email_config_id, :subject, :email, required: { message: :field_validation_for_outbound }, if: :compose_email_or_proactive_rule_create?
 
   validates :subject, default_field: {
                         required_fields: proc { |x| x.required_default_fields },
@@ -47,7 +47,7 @@ class TicketValidation < ApiValidation
                               {
                                 required_fields: proc { |x| x.required_default_fields },
                                 field_validations: proc { |x| x.default_field_validations }
-                              }, on: :compose_email
+                              }, if: :compose_email_or_proactive_rule_create_update?
 
   validates :template_text, data_type: { rules: String, required: true }, on: :parse_template
 
@@ -319,7 +319,12 @@ class TicketValidation < ApiValidation
   end
 
   def required_default_fields
-    ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status?)) }
+    case validation_context
+    when :proactive_rule_update
+      []
+    else
+      ticket_fields.select { |x| x.default && (x.required || (x.required_for_closure && closure_status?)) }
+    end
   end
 
   def default_fields_to_validate
@@ -328,6 +333,14 @@ class TicketValidation < ApiValidation
 
   def create_or_update?
     [:create, :update].include?(validation_context)
+  end
+
+  def compose_email_or_proactive_rule_create_update?
+    [:compose_email, :proactive_rule_create, :proactive_rule_update].include?(validation_context)
+  end
+
+  def compose_email_or_proactive_rule_create?
+    [:compose_email, :proactive_rule_create].include?(validation_context)
   end
 
   def sources

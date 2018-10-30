@@ -21,6 +21,22 @@ module Proactive
       params_hash
     end
 
+    def rule_filters_fetch_params_hash
+      type = 'shopify'
+      event = 'abandoned_cart'
+      params_hash = { event: event,
+                      integration_details: { type: type } }
+      params_hash
+    end
+
+    def rule_filters_fetch_params_invalid_hash
+      type = 'shopify'
+      event = 'abandod_cart'
+      params_hash = { event: event,
+                      integration_details: { type: type } }
+      params_hash
+    end
+
     def test_create_rule_with_valid_params
       params_hash = rule_create_params_hash
       HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(text: "{\"rule\": {\"id\":1,\"name\":\"sample_name\",\"description\":\"sample description\",\"created_at\":\"2018-06-27T11:07:01.000Z\",\"updated_at\":\"2018-06-27T11:07:01.000Z\"}}", status: 201)
@@ -95,6 +111,18 @@ module Proactive
       assert_response 400
     end
 
+    def test_fetch_filters_with_valid_params
+      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(text: "{\"shopify_fields\" : { \"name\": \"name\", \"type\": \"text\", \"operations\": [\"not_equals\"]} }", status: 200)
+      post :filters, construct_params({ version: 'private' }, rule_filters_fetch_params_hash)
+      assert_response 200
+    end
+
+    def test_fetch_filters_with_invalid_params
+      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(text: "{ \"validation_failed\": { \"errors\": [{\"type\": \"text\"}] } }", status: 400)
+      post :filters, construct_params({ version: 'private' }, rule_filters_fetch_params_invalid_hash)
+      assert_response 200
+    end
+    
     def test_create_abandoned_cart_rule_with_email
       email_config = fetch_email_config
       params_hash = rule_create_params_hash.merge(event: 'abandoned_cart',
@@ -222,5 +250,6 @@ module Proactive
     def rules_with_email_action(event)
       { text: "{\"rule\":{\"id\":4,\"sample_name\":\"name\",\"description\":\"sample description\",\"event\":\"#{event}\",\"action\":{\"email\":{\"subject\":\"subject\",\"description\":\"\\u003cdiv\\u003edescription\\u003c/div\\u003e\",\"email\":\"sample@test.com\",\"email_config_id\":1,\"status\":4,\"type\":\"Question\",\"priority\":4,\"group_id\":1}},\"created_at\":\"2018-09-19T15:47:04.000Z\",\"updated_at\":\"2018-09-20T04:06:35.000Z\"}}" }
     end
+    
   end
 end

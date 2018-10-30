@@ -3,28 +3,21 @@ module Proactive
     include ::Proactive::ProactiveJwtAuth
     include ::Proactive::Constants
     include ::Proactive::ProactiveUtil
-
+    include ::Proactive::RuleFiltersConcern
     include Helpdesk::TagMethods
 
     ROOT_KEY = :proactive_rule
 
     before_filter :check_proactive_feature, :generate_jwt_token
     skip_before_filter :build_object, only: [:create]
-    skip_before_filter :load_object, only: [:destroy, :show, :update, :placeholders, :preview_email]
+    skip_before_filter :load_object, only: [:destroy, :show, :update, :filters, :placeholders, :preview_email]
 
     def create
-      if email_action?
-        build_ticket_object # for validation
-        ticket_delegator = TicketDelegator.new(@ticket_item, ticket_fields: @ticket_fields,
-          custom_fields: @email_action_params[:custom_field], tags: @email_action_params[:tags]) # add inline_attachment_ids: @inline_attachment_ids
-          if !ticket_delegator.valid?(:create)
-            render_custom_errors(ticket_delegator, true)
-            return
-          end
+      if identify_customer_type? || is_filter_action_valid
+        return if email_action? && !is_email_action_valid
+        service_response = make_http_call(PROACTIVE_SERVICE_ROUTES[:rules_route], 'post')
+        render :create, status: service_response[:status]
       end
-
-      service_response = make_http_call(PROACTIVE_SERVICE_ROUTES[:rules_route], 'post')
-      render :create, status: service_response[:status]
     end
 
     def index
@@ -42,20 +35,23 @@ module Proactive
     end
 
     def update
-      if email_action?
-        build_ticket_object # for validation
-        ticket_delegator = TicketDelegator.new(@ticket_item, ticket_fields: @ticket_fields,
-          custom_fields: @email_action_params[:custom_field], tags: @email_action_params[:tags]) # add inline_attachment_ids: @inline_attachment_ids
-          if !ticket_delegator.valid?(:create)
-            render_custom_errors(ticket_delegator, true)
-            return
-          end
+      if identify_customer_type? || is_filter_action_valid
+        return if email_action? && !is_email_action_valid
+        make_rud_request('put', 'update')
       end
-      make_rud_request('put', 'update')
     end
 
     def destroy
       make_rud_request('delete', 'destroy')
+    end
+
+    def filters
+      filter_hash = {}
+      add_contact_fields filter_hash
+      add_company_fields filter_hash
+      response = fetch_trigger_based_fields
+      filter_hash[:shopify_fields] = @item
+      @item = filter_hash if response[:status] == 200
     end
 
     def placeholders
@@ -92,7 +88,7 @@ module Proactive
       end
 
       def generate_jwt_token
-        jwt_payload = { account_id: current_account.id, sub: 'helpkit' }
+        jwt_payload = { account_id: current_account.id, sub: 'helpkit', domain: current_account.full_domain }
         @auth = "Token #{sign_payload(jwt_payload)}"
       end
 
@@ -101,20 +97,26 @@ module Proactive
       end
 
       def validate_params
-        return unless email_action?
-        @email_action_params = params[cname][:action][:email].except(:schedule_details).dup
+        if email_action?
+          @email_action_params = params[cname][:action][:email].except(:schedule_details).dup
 
-        # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
-        @ticket_fields = Account.current.ticket_fields_from_cache
-        @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
-        # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
-        custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
-        field = ("ApiTicketConstants::COMPOSE_EMAIL_FIELDS".constantize | ['custom_fields' => custom_fields]) - RuleConstants::ATTACHMENT_FIELDS
-        @email_action_params.permit(*field)
-        set_default_values
-        params_hash = @email_action_params.merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
-        ticket = TicketValidation.new(params_hash, @ticket_item, string_request_params?)
-        render_custom_errors(ticket, true) unless ticket.valid?('compose_email'.to_sym)
+          # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
+          @ticket_fields = Account.current.ticket_fields_from_cache
+          @name_mapping = TicketsValidationHelper.name_mapping(@ticket_fields) # -> {:text_1 => :text}
+          # Should not allow any key value pair inside custom fields hash if no custom fields are available for accnt.
+          custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
+          field = ("ApiTicketConstants::COMPOSE_EMAIL_FIELDS".constantize | ['custom_fields' => custom_fields]) - RuleConstants::ATTACHMENT_FIELDS
+          @email_action_params.permit(*field)
+          set_default_values
+          params_hash = @email_action_params.merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
+          ticket = TicketValidation.new(params_hash, @ticket_item, string_request_params?)
+          if !ticket.valid?("proactive_rule_#{action_name}".to_sym)
+            render_custom_errors(ticket, true)
+            return
+          end
+        end
+        rule_validation = ProactiveRuleValidation.new(params[cname])
+        render_custom_errors(rule_validation, true) unless rule_validation.valid?(action_name.to_sym)
       end
 
       def sanitize_params
@@ -164,8 +166,7 @@ module Proactive
       end
 
       def email_action?
-        RuleConstants::EMAIL_ACTION_EVENTS.include?(cname_params[:event]) &&
-         cname_params.key?(:action) && cname_params[:action].key?(:email)
+        EVENTS.include?(cname_params[:event]) && cname_params.key?(:action) && cname_params[:action].key?(:email)
       end
 
       def build_ticket_object
@@ -190,5 +191,97 @@ module Proactive
       def ticket_scoper
         current_account.tickets
       end
+
+      def fetch_trigger_based_fields
+        route = "#{PROACTIVE_SERVICE_ROUTES[:rules_route]}/filters"
+        make_http_call(route, 'post')
+      end
+
+      def fetch_contact_company_fields
+        contact_fields = {}
+        company_fields = {}
+        add_contact_fields(contact_fields)
+        add_company_fields(company_fields)
+        [contact_fields, company_fields]
+      end
+
+      def is_email_action_valid
+        email_delegator = false
+        if email_action?
+          build_ticket_object # for validation
+          ticket_delegator = TicketDelegator.new(@ticket_item, ticket_fields: @ticket_fields,
+            custom_fields: @email_action_params[:custom_field], tags: @email_action_params[:tags]) # add inline_attachment_ids: @inline_attachment_ids
+          email_delegator = ticket_delegator.valid?(:create)
+            unless email_delegator
+              render_custom_errors(ticket_delegator, true)
+            end
+        end
+        email_delegator
+      end
+
+      def is_filter_action_valid
+        filter_delegator = false
+        contact_fields, company_fields = fetch_contact_company_fields
+        filter_hash = cname_params[:filter].present? ? cname_params[:filter] : nil 
+        conditions_arr = cname_params[:filter].present? && cname_params[:filter][:conditions].present? ? cname_params[:filter][:conditions] : nil
+        rule_delegator = ProactiveRuleDelegator.new(Object.new, filter: filter_hash, conditions: conditions_arr, contact_fields: contact_fields, company_fields: company_fields)
+        filter_delegator = rule_delegator.valid?
+        unless filter_delegator
+          render_custom_errors(rule_delegator, true) 
+        end
+        sanitize_service_params(contact_fields, company_fields) if filter_delegator
+        filter_delegator
+      end
+
+      #Return true for all customer
+      def identify_customer_type?
+        EVENTS.include?(cname_params[:event]) && cname_params[:filter].blank? ? true : false
+      end
+
+      #sanitizing the value of filter for rule engine
+      def sanitize_service_params(contact_fields, company_fields)
+        sanitize_filter_params
+        contact_fields = build_contact_field_hash(contact_fields)
+        company_fields = build_company_field_hash(company_fields)
+        conditions = cname_params[:filter].present? && cname_params[:filter][:conditions].present? ? cname_params[:filter][:conditions] : []
+        conditions.each do |condition|
+          if(condition[:entity] == ALLOWED_ENTITIES[0])
+            sanitize_condition_value(condition, contact_fields[condition[:field]])
+          elsif(condition[:entity] == ALLOWED_ENTITIES[1])
+            sanitize_condition_value(condition, company_fields[condition[:field]])
+          end
+        end
+        # params[:filter].deep_merge("conditions" => conditions)
+        cname_params[:filter][:conditions] = conditions if conditions.present?
+      end
+
+      def build_contact_field_hash(contact_fields)
+        contact_fields["contact_fields"].map { |field| { field[:name] => field.except(:name) } }.reduce(:merge)
+      end
+
+      def build_company_field_hash(company_fields)
+        company_fields["company_fields"].map { |field| { field[:name] => field.except(:name) } }.reduce(:merge)
+      end
+
+      def sanitize_condition_value(condition, field_properties)
+        if %w[number decimal].include?(field_properties[:type])
+          condition[:value] = condition[:value].to_f
+        elsif field_properties[:type] == "text"
+          condition[:value] = condition[:value].to_s
+        elsif field_properties[:type] == "boolean" 
+          condition[:value] = (condition[:value] == "true" || condition[:value] == CHECKED) ? true : false
+        elsif field_properties[:type] == "date"
+          condition[:value] = Time.parse(condition[:value]).utc
+        end
+      end
+
+      def sanitize_filter_params
+        cname_params[:filter] = {} if private_api? && specific_all_condition_change?
+      end
+      
+      def specific_all_condition_change?
+        cname_params[:filter].present? && cname_params[:filter].key?(:conditions) && cname_params[:filter][:conditions].blank?
+      end
+
   end
 end
