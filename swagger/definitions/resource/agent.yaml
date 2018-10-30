@@ -21,6 +21,8 @@
         type: integer
     available_since:
       type: string
+    type:
+      type: string  
     contact:
       type: object
       properties:

@@ -763,6 +763,16 @@ class Account < ActiveRecord::Base
     DomainMapping.where(account_id: sandbox_job.try(:sandbox_account_id)).first.try(:domain)
   end
 
+  #Temp method to directly create support agent type if it was not created as part of fixtures/migration.
+  def get_or_create_agent_types
+    agent_types = self.agent_types.all
+    if agent_types.length == 0
+      AgentType.create_support_agent_type(self)
+      return self.agent_types.all
+    end    
+    agent_types
+  end
+
   protected
   
     def external_url_is_valid?(url) 

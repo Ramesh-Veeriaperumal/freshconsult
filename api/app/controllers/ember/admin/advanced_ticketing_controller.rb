@@ -1,8 +1,11 @@
 module Ember
   module Admin
     class AdvancedTicketingController < ApiApplicationController
+      before_filter :perform_fsm_operations, only: :create, :if => :feature_fsm?
+
       include HelperConcern
       include Integrations::AdvancedTicketing::AdvFeatureMethods
+      include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
       include Redis::RedisKeys
       include Redis::HashMethods
 
