@@ -27,7 +27,7 @@ module ContactsCompaniesConcern
   end
 
   def contact_company_export(export_type)
-    @validation_klass = 'ExportCsvValidation'
+    @validation_klass = export_type == 'contact' ? 'ContactExportValidation' : 'ExportCsvValidation'
     params_hash = params[cname].merge('export_type' => export_type)
     return false unless validate_body_params(nil, params_hash)
     fields = "#{export_type.capitalize}Constants::EXPORT_ARRAY_FIELDS".constantize
