@@ -28,10 +28,10 @@ class User < ActiveRecord::Base
   before_save :set_time_zone, :set_default_company
   before_save :set_language, :unless => :detect_language?
   before_save :trigger_perishable_token_reset, if: :email_id_changed?
-  before_save :set_contact_name, :update_user_related_changes
+  before_save :sanitize_contact_name, :set_contact_name, :update_user_related_changes
   before_save :set_customer_privilege, :set_contractor_privilege, :if => :customer?
   before_save :restrict_domain, if: :email_id_changed?
-  before_save :sanitize_contact_name, :backup_customer_id
+  before_save :backup_customer_id
   before_save :set_falcon_ui_preference, :if => :falcon_ui_applicable?
   before_save :persist_updated_at
 
@@ -232,13 +232,17 @@ class User < ActiveRecord::Base
       self.user_companies = [default_user_company] unless has_multiple_companies_feature?
     end
   end
-  
-  def set_contact_name 
-    if self.name.blank? && email_obtained.present?
-      self.name = name_from_email
+
+  def set_contact_name
+    if name.blank?
+      if email_obtained.present?
+        self.name = name_from_email
+      else
+        self.name ||= fb_profile_id || twitter_id || phone || mobile
+      end
     end
   end
-  
+
   def name_from_email
     (email_obtained.split("@")[0]).capitalize
   end
@@ -308,10 +312,13 @@ class User < ActiveRecord::Base
   def validate_language language
     !(I18n.available_locales.include?(language.to_sym))
   end
-  
+
   def sanitize_contact_name
-    self.name.gsub!("\"", "") unless self.name.nil?
-  end  
+    if name.present?
+      name.delete!('"')
+      name.gsub!(URI::DEFAULT_PARSER.make_regexp, '').try(:strip!)
+    end
+  end
 
   def backup_customer_id
     unless self.changes.has_key?("perishable_token")

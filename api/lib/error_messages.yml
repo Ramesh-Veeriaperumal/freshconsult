@@ -205,6 +205,7 @@ api_error_messages:
 
   invalid_tracker: "Tracker is invalid"
   max_limit: "Has exceeded maximum %{name} limit of %{max_value}"
+  pattern_not_allowed: "%{pattern} not allowed in %{field}"
   cannot_set_ticket_association_fields: "It should contain either related_ticket_ids or parent_id and not both"
   cannot_create_tracker: "Tracker ticket can't be created as related_ticket_ids are invalid"
   bot_exists: "Bot already exists for this portal"
