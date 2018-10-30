@@ -25,7 +25,8 @@ module AgentsTestHelper
       signature: expected_output[:signature_html] || agent.signature_html,
       ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,
       updated_at: agent.updated_at,
-      contact: expected_output[:user] || user
+      contact: expected_output[:user] || user,
+      type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name
     }
   end
 
