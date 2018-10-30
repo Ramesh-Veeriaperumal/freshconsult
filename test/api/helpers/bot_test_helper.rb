@@ -422,4 +422,16 @@ module BotTestHelper
       account_id: bot.account_id
     }
   end
+
+  def xss_params(portal)
+    {
+      version: 'private',
+      format: :json,
+      name: '<script>alert(5)</script>',
+      portal_id: portal.id,
+      header: '<script>alert(5)</script>',
+      theme_colour: '<script>alert(5)</script>',
+      widget_size: '<script>alert(5)</script>'
+    }
+  end
 end

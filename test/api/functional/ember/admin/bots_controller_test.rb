@@ -249,6 +249,22 @@ module Ember
         end
       end
 
+      def test_create_with_xss_params
+        enable_bot do
+          Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
+          portal = create_portal
+          params = xss_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 8}})
+          post :create, params
+          assert_response 200
+          bot = Bot.last
+          assert_equal bot.name, 'alert(5)'
+          bot.template_data.each do |key, value|
+            assert_equal value, 'alert(5)'
+          end
+          Freshbots::Bot.unstub(:create_bot)
+        end
+      end
+
       def test_create_with_valid_params_and_custom_avatar
         enable_bot do
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
@@ -456,6 +472,21 @@ module Ember
           put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: bot.additional_settings[:is_default]} )
           Freshbots::Bot.unstub(:update_bot)
           assert_response 204
+        end
+      end
+
+      def test_update_with_xss_params
+        enable_bot do
+          Freshbots::Bot.stubs(:update_bot).returns(["success", 200])
+          bot = create_bot({ product: true, default_avatar: 1})
+          put :update, construct_params( version: 'private', id: bot.id, name: '<script>alert(5)</script>', header: '<script>alert(5)</script>', theme_colour: '<script>alert(5)</script>', widget_size: '<script>alert(5)</script>')
+          Freshbots::Bot.unstub(:update_bot)
+          assert_response 204
+          bot.reload
+          assert_equal bot.name, 'alert(5)'
+          bot.template_data.each do |key, value|
+            assert_equal value, 'alert(5)'
+          end
         end
       end
 
