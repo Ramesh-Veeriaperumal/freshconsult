@@ -6,7 +6,7 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   include DataVersioning::ExternalModel
 
   before_filter :verify_oauth_callback , :only => [:oauth_callback]
-  before_filter :extension, :only => [:install, :reinstall, :uninstall, :oauth_callback, :new_configs, :edit_configs, :new_oauth_iparams, :edit_oauth_iparams]
+  before_filter :extension, :only => [:install, :reinstall, :uninstall, :oauth_callback, :new_configs, :new_oauth_iparams, :edit_oauth_iparams]
   before_filter :extension_has_config?, :only => [:new_configs]
   before_filter :verify_billing_info, :only => [:install, :reinstall], :if => :paid_app?
   after_filter  :update_timestamp, only: [:install, :reinstall, :uninstall, :enable, :disable, :update_config]
@@ -52,9 +52,11 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
     acc_config = account_configs
     render_error_response && return if error_status?(acc_config)
     if platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2]
+      extension_v2
       configs_page_v2
       @configs = acc_config.body
     else
+      extension
       extn_configs = extension_configs
       render_error_response && return if error_status?(extn_configs)
       @configs = account_configurations(extn_configs.body, acc_config.body)
