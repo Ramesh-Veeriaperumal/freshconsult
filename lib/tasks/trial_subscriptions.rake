@@ -12,7 +12,7 @@ namespace :trial_subscriptions do
             trail_subscription.status = TrialSubscription::TRIAL_STATUSES[:inactive]
             Sharding.run_on_master { trail_subscription.save! }
             Rails.logger.info "Trial subscriptions : #{account.id} : Intializing downgrade"
-          rescue e
+          rescue StandardError => e
             NewRelic::Agent.notice_error(e, description: "Trial subscriptions : #{account.try(:id)} : Error while initializing : trying to downgrade")
             Rails.logger.error "Trial subscriptions : #{account.try(:id)} : Error while initializing : trying to downgrade : #{e.inspect} #{e.backtrace.join("\n\t")}"
           ensure
