@@ -101,13 +101,17 @@ module BootstrapTestHelper
     pattern[:dashboard_limits] = account.account_additional_settings.custom_dashboard_limits if account.custom_dashboard_enabled?
     pattern[:freshchat] = freshchat_hash if account.freshchat_enabled?
     pattern.merge!(sandbox_info(account))
+    first_invoice = account.subscription.subscription_invoices.first
     if User.current.privilege?(:manage_users) || User.current.privilege?(:manage_account)
       pattern[:subscription] = {
         agent_limit: account.subscription.agent_limit,
         state: account.subscription.state,
         subscription_plan: String,
         trial_days: account.subscription.trial_days,
-        is_copy_right_enabled: account.copy_right_enabled?
+        is_copy_right_enabled: account.copy_right_enabled?,
+        mrr: account.subscription.cmrr,
+        signup_date: account.subscription.created_at,
+        first_invoice_date: first_invoice.nil? ? nil : first_invoice.created_at
       }
     end
     pattern
