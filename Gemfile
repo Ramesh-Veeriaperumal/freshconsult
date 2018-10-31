@@ -188,6 +188,7 @@ gem "gemoji-parser", "~> 1.3.1"
 
 # Please do not update Paperclip unless you can get it Monkey Patched for Imagemagick DoS Bug.
 # Please see https://hackerone.com/reports/390
+gem "cocaine", :git => "git@github.com:freshdesk/cocaine.git", :tag => 'v0.5.8.1'
 gem "paperclip", "~> 4.2.2"
 
 gem "aws-sdk", "~> 1.31.3"

@@ -208,6 +208,14 @@ GIT
       uuidtools
 
 GIT
+  remote: git@github.com:freshdesk/cocaine.git
+  revision: 9c2d844f229d87fe2ba677ee781fded0883f623d
+  tag: v0.5.8.1
+  specs:
+    cocaine (0.5.8)
+      climate_control (>= 0.0.3, < 1.0)
+
+GIT
   remote: git@github.com:freshdesk/emailserv_request.git
   revision: 84996af205809c8a0cc143e1c37fe02405759818
   tag: v1.1
@@ -622,8 +630,6 @@ GEM
     climate_control (0.2.0)
     clockwork (0.4.1)
       tzinfo
-    cocaine (0.5.8)
-      climate_control (>= 0.0.3, < 1.0)
     code_analyzer (0.4.8)
       sexp_processor
     codeclimate-engine-rb (0.4.1)
@@ -1460,6 +1466,7 @@ DEPENDENCIES
   clamav-client (= 3.1.0)
   clearbit
   clockwork (= 0.4.1)
+  cocaine!
   codecov
   compass-blueprint (= 1.0.0)
   compass-rails (= 2.0.0)
