@@ -18,7 +18,7 @@ SKIP_FILES_FALCON = [
   'test/api/unit/api_throttler_test.rb',
   'test/api/unit/api_solutions/article_validation_test.rb'
 ]
-SKIP_FILES_PUBLIC = ['test/api/functional/shared_ownership_ticket_test.rb', 'test/api/functional/api_profiles_controller_test.rb']
+SKIP_FILES_PUBLIC = ['test/api/functional/shared_ownership_ticket_test.rb']
 
 SUCCESSFUL_SEARCH_TESTS = [
 	"test/api/functional/api_search/contacts_controller_test.rb",
