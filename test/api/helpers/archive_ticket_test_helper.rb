@@ -66,6 +66,12 @@ module ArchiveTicketTestHelper
     Helpdesk::ArchiveTicket.any_instance.unstub(:read_from_s3)
   end
 
+  def stub_archive_note_assoc(association)
+    Helpdesk::ArchiveNote.any_instance.stubs(:read_from_s3).returns(association)
+    yield 
+    Helpdesk::ArchiveNote.any_instance.unstub(:read_from_s3)
+  end 
+
   def create_archive_ticket_with_assoc(params = {})
     params_hash = archive_ticket_params_hash(params)
     ticket = create_ticket(params_hash)
@@ -79,15 +85,22 @@ module ArchiveTicketTestHelper
       params_hash = modify_params_hash(ticket, params_hash)
       @archive_association = create_archive_association(ticket, params_hash)
     end
+    if params[:create_note_association]
+      @archive_note_association = create_note_archive_association
+    end
   end
 
   def build_conversations(ticket, params = {})
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
     4.times do
       params = {
         user_id: @agent.id,
         ticket_id: ticket.id,
-        source: 2
-      }
+        source: 2, 
+        attachments: {
+          resource: file
+        }
+      }      
       create_note(params)
     end
   end
@@ -99,6 +112,10 @@ module ArchiveTicketTestHelper
   def create_archive_association(_ticket, params_hash)
     associations = archive_ticket_association_payload(params_hash)
     Helpdesk::ArchiveTicketAssociation.new(associations['archive_ticket_association'])
+  end
+
+  def create_note_archive_association
+    Helpdesk::ArchiveNoteAssociation.new(archive_note_association_payload)
   end
 
   def archive_ticket_params_hash(params = {})
@@ -195,5 +212,43 @@ module ArchiveTicketTestHelper
         'ticket_type' => params[:type] || 'Incident'
       }
     }
+  end
+
+  def archive_note_association_payload
+    {
+      'associations_data' => {
+        'helpdesk_tickets' => {
+          'deleted' => false
+        },
+        'helpdesk_notes_association' => {
+          'schema_less_note' => {
+            'from_email' => nil,
+            'to_emails' => nil,
+            'bcc_emails' => [],
+            'cc_emails' => {
+              'cc_emails' => []
+            }
+          }
+        }
+      }
+    } 
+  end
+
+  def create_archive_note(note,archive_ticket)
+      params = {
+        :user_id => note.user_id,
+        :archive_ticket_id => archive_ticket.id,
+        :note_id => note.id,
+        :notable_id => archive_ticket.id,
+        :source => note.source,
+        :incoming => note.incoming,
+        :private => note.safe_send(:private),
+        :created_at => note.created_at,
+        :updated_at => note.updated_at,
+        :deleted  => note.deleted
+      }
+      test_archive_note = @account.archive_notes.build(params)
+      test_archive_note.save
+      test_archive_note
   end
 end

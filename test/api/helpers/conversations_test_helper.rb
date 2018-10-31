@@ -26,6 +26,24 @@ module ConversationsTestHelper
     }
   end
 
+  def archive_note_pattern(expected_output, archive_note)
+    body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
+    {
+      body: body_html || archive_note.body_html,
+      body_text: expected_output[:body] || archive_note.body,
+      id: Fixnum,
+      incoming: (expected_output[:incoming] || archive_note.incoming).to_s.to_bool,
+      private: (expected_output[:private] || archive_note.private).to_s.to_bool,
+      user_id: expected_output[:user_id] || archive_note.user_id,
+      support_email: archive_note.support_email,
+      ticket_id: expected_output[:ticket_id] || archive_note.notable.display_id,
+      attachments: Array,
+      to_emails: archive_note.to_emails,
+      created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+      updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
+  end
+
   def v2_note_pattern(expected_output, note)
     body_html = format_ticket_html(expected_output[:body]) if expected_output[:body]
     {

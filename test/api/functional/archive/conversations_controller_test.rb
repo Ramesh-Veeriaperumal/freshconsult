@@ -21,7 +21,9 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
     create_archive_ticket_with_assoc(
       created_at: TICKET_UPDATED_DATE,
       updated_at: TICKET_UPDATED_DATE,
-      create_conversations: true
+      create_conversations: true, 
+      create_association: true,
+      create_note_association: true
     )
   end
 
@@ -39,6 +41,25 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
     get :ticket_conversations, controller_params(id: archive_ticket.display_id)
     assert_response 200
     match_json(note_json)
+  end
+
+  def test_ticket_conversations_with_archive_notes
+    current_shard = ShardMapping.find_by_account_id(@account.id).shard_name
+    archive_note_config_prev = ArchiveNoteConfig[current_shard]
+    ArchiveNoteConfig[current_shard] = (Helpdesk::ArchiveTicket.last ? Helpdesk::ArchiveTicket.last.id : 1) + 1000
+
+    stub_archive_note_assoc(@archive_note_association) do 
+      archive_ticket = @account.archive_tickets.find_by_ticket_id(@archive_ticket.id)
+      result_pattern = []
+      archive_ticket.notes.conversations.map do |note|
+        archive_note = create_archive_note(note, archive_ticket)
+        result_pattern << archive_note_payload(archive_note, archive_note_pattern({}, archive_note))
+      end
+      get :ticket_conversations, controller_params(id: archive_ticket.display_id)
+      assert_response 200
+      match_json(result_pattern)
+    end
+    ArchiveNoteConfig[current_shard] = archive_note_config_prev
   end
 
   def test_ticket_conversations_with_pagination

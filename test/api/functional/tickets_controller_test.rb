@@ -819,7 +819,8 @@ class TicketsControllerTest < ActionController::TestCase
     params = update_ticket_params_hash.merge('attachments' => [attachment])
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     Helpdesk::Ticket.any_instance.stubs(:attachments).returns([attachment])
-    put :update, construct_params({ id: Helpdesk::Ticket.first.id }, params)
+    ticket = create_ticket
+    put :update, construct_params({ id: ticket.display_id }, params)
     assert_response 400
     match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{2 * invalid_attachment_limit} MB")])
   ensure
@@ -2213,7 +2214,8 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:can_view_all_tickets?).returns(false)
     User.any_instance.stubs(:group_ticket_permission).returns(false)
     User.any_instance.stubs(:assigned_ticket_permission).returns(false)
-    delete :destroy, construct_params(id: Helpdesk::Ticket.first.display_id)
+    ticket = create_ticket
+    delete :destroy, construct_params(id: ticket.display_id)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
   ensure
@@ -2236,7 +2238,8 @@ class TicketsControllerTest < ActionController::TestCase
     User.any_instance.stubs(:group_ticket_permission).returns(true)
     User.any_instance.stubs(:assigned_ticket_permission).returns(false)
     Helpdesk::Ticket.stubs(:group_tickets_permission).returns([])
-    delete :destroy, construct_params(id: Helpdesk::Ticket.first.display_id)
+    ticket = create_ticket
+    delete :destroy, construct_params(id: ticket.display_id)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
   ensure
@@ -2578,14 +2581,15 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_monitored_by
+    ticket = create_ticket
     subscription = FactoryGirl.build(:subscription, account_id: @account.id,
-                                     ticket_id: Helpdesk::Ticket.first.id,
+                                     ticket_id: ticket.id,
                                      user_id: @agent.id)
     subscription.save
     get :index, controller_params(filter: 'watching')
     assert_response 200
     response = parse_response @response.body
-    assert response.any? {|record| record["id"] == Helpdesk::Ticket.first.id}, "Ticket not found in Watching!"
+    assert response.any? {|record| record["id"] == ticket.display_id}, "Ticket not found in Watching!"
   end
 
   def test_index_with_new_and_my_open
@@ -2636,7 +2640,7 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(filter: 'spam')
     assert_response 200
     response = parse_response @response.body
-    assert response.any? {|record| record["id"] == ticket.id}, "Ticket not found in Spam!"
+    assert response.any? {|record| record["id"] == ticket.display_id}, "Ticket not found in Spam!"
   end
 
   def test_index_with_spam_and_deleted
@@ -2814,18 +2818,19 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_dates
-    tkt = Helpdesk::Ticket.first
-    tkt.update_column(:created_at, 1.days.from_now)
+    tkt = create_ticket
+    tkt.update_column(:created_at, 2.days.ago)
+    tkt.update_column(:updated_at, 1.days.ago)
     get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
-    assert !response.any? {|record| record["id"] == Helpdesk::Ticket.first.id}, "Ticket should be present in the this filter!"
+    assert !response.any? {|record| record["id"] == tkt.display_id}, "Ticket should be present in this filter!"
 
     tkt.update_column(:updated_at, 1.days.from_now)
     get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
-    assert response.any? {|record| record["id"] == Helpdesk::Ticket.first.id}, "Ticket not present in the this filter!" 
+    assert response.any? {|record| record["id"] == tkt.display_id}, "Ticket not present in this filter!" 
   end
 
   def test_index_with_time_zone
