@@ -242,7 +242,7 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         DEFAULT_FILTERS_FOR_SEARCH["spam_deleted"] + " AND " + safe_send("#{filter_name}_filter")
       elsif "on_hold".eql?filter_name
         statuses = Helpdesk::TicketStatus.onhold_statuses(Account.current)
-        DEFAULT_FILTERS_FOR_SEARCH["spam_deleted"] + " AND " + (statuses.present? ? "(status:" + statuses.join(' OR status:') + ")" : " AND status:null")
+        DEFAULT_FILTERS_FOR_SEARCH["spam_deleted"] + " AND " + (statuses.present? ? "(status:" + statuses.join(' OR status:') + ")" : "status:null")
       elsif collab_filter_enabled_for?(filter_name) or "raised_by_me".eql?filter_name
         # custom_ticket_filter_query(ongoing_collab_filter)  need to do
         DEFAULT_FILTERS_FOR_SEARCH["spam_deleted"] + " AND requester_id:#{User.current.id}"
