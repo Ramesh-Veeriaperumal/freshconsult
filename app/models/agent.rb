@@ -31,6 +31,8 @@ class Agent < ActiveRecord::Base
   
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :create
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update  
+  before_save :set_default_type_if_needed, on: [:create, :update]
+
   validates_presence_of :user_id
   validate :validate_signature
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
@@ -351,5 +353,9 @@ class Agent < ActiveRecord::Base
     Thread.current[:group_changes].present? ? 
       Thread.current[:group_changes].push(agent_info) : 
       Thread.current[:group_changes]=[agent_info]
+  end
+
+  def set_default_type_if_needed
+    self.agent_type = AgentType.agent_type_id(SUPPORT_AGENT) unless self.agent_type
   end
 end
