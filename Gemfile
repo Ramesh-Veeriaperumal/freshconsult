@@ -119,7 +119,7 @@ gem "ruby-saml", "1.7.0"
 
 gem 'xeroizer', :git => "git@github.com:freshdesk/xeroizer.git"
 
-gem 'rubyzip', '1.2.1' # will load new rubyzip version
+gem 'rubyzip', '1.2.2' # will load new rubyzip version
 gem 'zip-zip' # will load compatibility for old rubyzip API.
 
 gem "riak-client", "1.4.2"
