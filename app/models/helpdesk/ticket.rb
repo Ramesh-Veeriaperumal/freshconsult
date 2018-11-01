@@ -636,17 +636,17 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def included_in_fwd_emails?(from_email)
-    (cc_email_hash) and  (cc_email_hash[:fwd_emails].any? {|email| email.downcase.include?(from_email.downcase) })
+    (cc_email_hash) and  (cc_email_hash[:fwd_emails].any? {|email| email.downcase.eql?(from_email.downcase) })
   end
 
   def included_in_cc?(from_email)
-    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.include?(from_email.downcase) }) or
-                     (cc_email_hash[:fwd_emails].any? {|email| email.include?(from_email.downcase) }) or
+    (cc_email_hash) and  ((cc_email_hash[:cc_emails].any? {|email| email.downcase.eql?(from_email.downcase) }) or
+                     included_in_fwd_emails?(from_email) or
                      included_in_to_emails?(from_email))
   end
 
   def included_in_to_emails?(from_email)
-    (self.to_emails || []).select{|email_id| email_id.downcase.include?(from_email.downcase) }.present?
+    (self.to_emails || []).select{|email_id| email_id.downcase.eql?(from_email.downcase) }.present?
   end
 
   def ticket_id_delimiter
