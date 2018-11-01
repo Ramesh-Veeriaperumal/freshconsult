@@ -67,8 +67,7 @@ class User < ActiveRecord::Base
   end
 
   def self.central_publish_enabled?
-    Account.current.audit_logs_central_publish_enabled? || 
-      Account.current.launched?(:contact_delete_forever)
+    Account.current.launched?(:contact_delete_forever)
   end
 
   def event_info action
