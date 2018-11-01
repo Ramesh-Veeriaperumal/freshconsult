@@ -16,8 +16,6 @@ module ApiSearch
 
     def initial_setup
       return if @@initial_setup_run
-      @account.launch(:service_reads)
-      @account.launch(:service_writes)
       @account.tags.destroy_all
       CUSTOM_FIELDS.each do |custom_field|
         create_custom_field("test_custom_#{custom_field}", custom_field)
@@ -28,9 +26,7 @@ module ApiSearch
       create_custom_field('and_number', 'number', '08')
       create_custom_field('status', 'text', '14')
       construct_sections('type')
-      clear_es(@account.id)
       30.times { create_search_ticket(ticket_params_hash) }
-      write_data_to_es(@account.id)
       @@initial_setup_run = true
     end
 
@@ -143,7 +139,10 @@ module ApiSearch
 
     def test_tickets_custom_fields
       tickets = @account.tickets.select { |x| x.custom_field['test_custom_number_1'] == 1 || x.custom_field['test_custom_checkbox_1'] == false || x.custom_field['test_custom_checkbox_1'].nil? || x.priority == 2 }
-      get :index, controller_params(query: '"test_custom_number:1 OR test_custom_checkbox:false OR priority:2"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"test_custom_number:1 OR test_custom_checkbox:false OR priority:2"')
+      end
+      
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -171,7 +170,9 @@ module ApiSearch
       ticket = @account.tickets.select { |x| x if x.custom_field['test_custom_number_1'].to_i < 0 }.first
       val = ticket.custom_field['test_custom_number_1']
       tickets = @account.tickets.select { |x| x if x.custom_field['test_custom_number_1'].to_i == val }
-      get :index, controller_params(query: '"test_custom_number:' + val.to_s + '"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"test_custom_number:' + val.to_s + '"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -181,7 +182,9 @@ module ApiSearch
       ticket = @account.tickets.select { |x| x if x.custom_field['test_custom_number_1'].to_i < 0 }.first
       val = ticket.custom_field['test_custom_number_1']
       tickets = @account.tickets.select { |x| x if x.custom_field['test_custom_number_1'].to_i == val }
-      get :index, controller_params(query: '"  ( test_custom_number:' + val.to_s + '  )  "')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"  ( test_custom_number:' + val.to_s + '  )  "')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -189,7 +192,9 @@ module ApiSearch
 
     def test_tickets_filter_using_custom_checkbox
       tickets = @account.tickets.select { |x| x.custom_field['test_custom_checkbox_1'] == true }
-      get :index, controller_params(query: '"test_custom_checkbox:true"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"test_custom_checkbox:true"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -197,7 +202,9 @@ module ApiSearch
 
     def test_tickets_priority
       tickets = @account.tickets.select { |x| [1, 2].include?(x.priority) }
-      get :index, controller_params(query: '"priority:1 OR priority:2"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"priority:1 OR priority:2"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -205,7 +212,9 @@ module ApiSearch
 
     def test_tickets_case_indepdent_keywords_and_opertors
       tickets = @account.tickets.select { |x| [1, 2].include?(x.priority) }
-      get :index, controller_params(query: '"PRIORITY:1 or priority:2"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"PRIORITY:1 or priority:2"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -214,7 +223,9 @@ module ApiSearch
     def test_tickets_custom_text_special_characters
       text = @account.tickets.map(&:test_custom_text_1).compact.last(2)
       tickets = @account.tickets.select { |x| text.include?(x.test_custom_text_1) }
-      get :index, controller_params(query: "\"test_custom_text:'#{text[0]}' or test_custom_text:'#{text[1]}'\"")
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: "\"test_custom_text:'#{text[0]}' or test_custom_text:'#{text[1]}'\"")
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -227,7 +238,9 @@ module ApiSearch
 
     def test_tickets_status
       tickets = @account.tickets.select { |x| [2, 3].include?(x.status) }
-      get :index, controller_params(query: '"status:2 OR status:3"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"status:2 OR status:3"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -235,7 +248,9 @@ module ApiSearch
 
     def test_tickets_nested_condition
       tickets = @account.tickets.select { |x| [3, 2].include?(x.status) }.select { |x| [1, 2].include?(x.priority) }
-      get :index, controller_params(query: '"(status:2 OR status:3) AND (priority:1 or priority:2)"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"(status:2 OR status:3) AND (priority:1 or priority:2)"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -265,7 +280,9 @@ module ApiSearch
     def test_tickets_valid_date
       d1 = (Date.today - 1).iso8601
       tickets = @account.tickets.select { |x| x.created_at.to_date.iso8601 <= d1 }
-      get :index, controller_params(query: '"created_at :< \'' + d1 + '\'"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"created_at :< \'' + d1 + '\'"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -280,7 +297,9 @@ module ApiSearch
     def test_tickets_created_on_a_day
       d1 = Date.today.to_date.iso8601
       tickets = @account.tickets.select { |x| x.created_at.utc.to_date.iso8601 == d1 }
-      get :index, controller_params(query: '"created_at: \'' + d1 + '\'"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"created_at: \'' + d1 + '\'"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -289,7 +308,9 @@ module ApiSearch
     def test_tickets_fr_due_by_on_a_day
       d1 = Date.today.to_date.iso8601
       tickets = @account.tickets.select { |x| x.frDueBy.utc.to_date.iso8601 == d1 }
-      get :index, controller_params(query: '"fr_due_by: \'' + d1 + '\'"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"fr_due_by: \'' + d1 + '\'"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -298,7 +319,9 @@ module ApiSearch
     def test_tickets_due_by_on_a_day
       d1 = Date.today.to_date.iso8601
       tickets = @account.tickets.select { |x| x.due_by.utc.to_date.iso8601 == d1 }
-      get :index, controller_params(query: '"due_by: \'' + d1 + '\'"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"due_by: \'' + d1 + '\'"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -316,7 +339,9 @@ module ApiSearch
     def test_tickets_updated_on_a_day
       d1 = Date.today.to_date.iso8601
       tickets = @account.tickets.select { |x| x.updated_at.utc.to_date.iso8601 == d1 }
-      get :index, controller_params(query: '"updated_at: \'' + d1 + '\'"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"updated_at: \'' + d1 + '\'"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -326,7 +351,9 @@ module ApiSearch
       d1 = (Date.today - 8).iso8601
       d2 = (Date.today - 1).iso8601
       tickets = @account.tickets.select { |x| x.created_at.to_date.iso8601 >= d1 && x.created_at.to_date.iso8601 <= d2 }
-      get :index, controller_params(query: '"(created_at :> \'' + d1 + '\' AND created_at :< \'' + d2 + '\')"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"(created_at :> \'' + d1 + '\' AND created_at :< \'' + d2 + '\')"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -336,7 +363,9 @@ module ApiSearch
       d1 = (Date.today - 8).iso8601
       d2 = (Date.today - 1).iso8601
       tickets = @account.tickets.select { |x| (x.created_at.to_date.iso8601 >= d1 && x.created_at.to_date.iso8601 <= d2) && x.priority == 2 }
-      get :index, controller_params(query: '"(created_at :> \'' + d1 + '\' AND created_at :< \'' + d2 + '\') AND priority:2 "')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"(created_at :> \'' + d1 + '\' AND created_at :< \'' + d2 + '\') AND priority:2 "')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -356,7 +385,9 @@ module ApiSearch
       d1 = (Date.today - 8).iso8601
       d2 = (Date.today - 1).iso8601
       tickets = @account.tickets.select { |x| x.frDueBy.to_date.iso8601 >= d1 && x.frDueBy.to_date.iso8601 <= d2 }
-      get :index, controller_params(query: '"(fr_due_by :> \'' + d1 + '\' AND fr_due_by :< \'' + d2 + '\')"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"(fr_due_by :> \'' + d1 + '\' AND fr_due_by :< \'' + d2 + '\')"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -366,7 +397,9 @@ module ApiSearch
       d1 = (Date.today - 8).iso8601
       d2 = (Date.today - 1).iso8601
       tickets = @account.tickets.select { |x| x.due_by.to_date.iso8601 >= d1 && x.due_by.to_date.iso8601 <= d2 }
-      get :index, controller_params(query: '"(due_by :> \'' + d1 + '\' AND due_by :< \'' + d2 + '\')"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"(due_by :> \'' + d1 + '\' AND due_by :< \'' + d2 + '\')"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -374,7 +407,9 @@ module ApiSearch
 
     def test_tickets_valid_type
       tickets = @account.tickets.select { |x| ['Question', 'Feature Request'].include?(x.ticket_type) }
-      get :index, controller_params(query: '"type: \'Feature Request\' OR type:Question"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"type: \'Feature Request\' OR type:Question"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -388,7 +423,9 @@ module ApiSearch
 
     def test_tickets_valid_type_and_priority
       tickets = @account.tickets.select { |x| ['Question', 'Feature Request'].include?(x.ticket_type) && x.priority == 2 }
-      get :index, controller_params(query: '"(type: \'Feature Request\' OR type:Question) AND priority:2"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"(type: \'Feature Request\' OR type:Question) AND priority:2"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -396,7 +433,9 @@ module ApiSearch
 
     def test_tickets_valid_tag
       tickets = @account.tickets.select { |x| x.tag_names.include?('tag1') || x.tag_names.include?('TAG4') }
-      get :index, controller_params(query: '"tag:tag1 or tag:\'TAG4\'"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"tag:tag1 or tag:\'TAG4\'"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -418,7 +457,9 @@ module ApiSearch
     def test_tickets_custom_dropdown_valid_choice
       choice = CHOICES[rand(3)]
       tickets = @account.tickets.select { |x| x.custom_field['test_custom_dropdown_1'] == choice }
-      get :index, controller_params(query: '"test_custom_dropdown:\'' + choice + '\'"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"test_custom_dropdown:\'' + choice + '\'"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -433,7 +474,9 @@ module ApiSearch
     def test_tickets_custom_dropdown_combined_condition
       choice = CHOICES[rand(3)]
       tickets = @account.tickets.select { |x| x.custom_field['test_custom_dropdown_1'] == choice && [3, 4].include?(x.status) && [2, 3].include?(x.priority) }
-      get :index, controller_params(query: '"test_custom_dropdown:\'' + choice + '\' AND (status:3 OR status:4) AND (priority:2 OR priority:3)"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"test_custom_dropdown:\'' + choice + '\' AND (status:3 OR status:4) AND (priority:2 OR priority:3)"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -442,7 +485,9 @@ module ApiSearch
     def test_tickets_agent_id
       agent_id = rand(4) + 1
       tickets = @account.tickets.select { |x| x.responder_id == agent_id }
-      get :index, controller_params(query: '"agent_id:' + agent_id.to_s + '"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"agent_id:' + agent_id.to_s + '"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -450,7 +495,9 @@ module ApiSearch
 
     def test_tickets_agent_id_combined_condition
       tickets = @account.tickets.select { |x| [1, 3].include?(x.responder_id) && x.priority > 2 }
-      get :index, controller_params(query: '"(agent_id:1 OR agent_id:3) AND (priority:3 OR priority:4)"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"(agent_id:1 OR agent_id:3) AND (priority:3 OR priority:4)"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -473,7 +520,9 @@ module ApiSearch
     def test_custom_dropdown_null
       choice = CHOICES[rand(3)]
       tickets = @account.tickets.select { |x| x.test_custom_dropdown_1.nil? || x.test_custom_dropdown_1 == choice }
-      get :index, controller_params(query: '"test_custom_dropdown: null or test_custom_dropdown: \''+ choice +'\'"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"test_custom_dropdown: null or test_custom_dropdown: \''+ choice +'\'"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -481,7 +530,9 @@ module ApiSearch
 
     def test_custom_number_null
       tickets = @account.tickets.select { |x| x.test_custom_number_1.nil? || x.test_custom_number_1 == 1}
-      get :index, controller_params(query: '"test_custom_number: null or test_custom_number:1 "')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"test_custom_number: null or test_custom_number:1 "')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -489,7 +540,9 @@ module ApiSearch
 
     def test_custom_text_null
       tickets = @account.tickets.select { |x| x.test_custom_text_1.nil? }
-      get :index, controller_params(query: '"test_custom_text: null"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"test_custom_text: null"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -505,7 +558,9 @@ module ApiSearch
 
     def test_group_id_null
       tickets = @account.tickets.select { |x| x.group_id.nil? }
-      get :index, controller_params(query: '"group_id: null"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"group_id: null"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -513,7 +568,9 @@ module ApiSearch
 
     def test_agent_id_null
       tickets = @account.tickets.select { |x| x.responder_id.nil? }
-      get :index, controller_params(query: '"agent_id: null"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"agent_id: null"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -521,7 +578,9 @@ module ApiSearch
 
     def test_tags_null
       tickets = @account.tickets.select { |x| x.tags.empty? }
-      get :index, controller_params(query: '"tag: null"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"tag: null"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -555,7 +614,9 @@ module ApiSearch
 
     def test_section_field_number
       tickets = @account.tickets.select { |x| x.custom_field['section_number_1'] && x.custom_field['section_number_1'] >= 5 && x.custom_field['section_number_1'] <= 8 }
-      get :index, controller_params(query: '"section_number: 5 or section_number: 6 or section_number: 7 or section_number: 8"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"section_number: 5 or section_number: 6 or section_number: 7 or section_number: 8"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -569,7 +630,9 @@ module ApiSearch
 
     def test_section_field_checkbox
       tickets = @account.tickets.select { |x| x.custom_field['section_checkbox_1'] == true }
-      get :index, controller_params(query: '"section_checkbox: true"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"section_checkbox: true"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -582,10 +645,12 @@ module ApiSearch
     end
 
     def test_section_field_text
-      text = @account.tickets.where('ticket_type = "Question"').first.custom_field['section_text_1']
-      tickets = @account.tickets.select { |x| x.custom_field['section_text_1'] == text }
-      get :index, controller_params(query: '"section_text:\'' + text + '\' "')
+      tickets = @account.tickets.select{ |x| !x.custom_field['section_text_1'].nil? }
+      text = tickets.first.section_text_1
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"section_text:\'' + text + '\' "')
       assert_response 200
+      end
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
     end
@@ -618,7 +683,9 @@ module ApiSearch
 
     def test_section_field_dropdown
       tickets = @account.tickets.select { |x| x.custom_field['section_dropdown_1'] == SECTION_CHOICES.first }
-      get :index, controller_params(query: '"section_dropdown:\'' + SECTION_CHOICES.first + '\' "')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"section_dropdown:\'' + SECTION_CHOICES.first + '\' "')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -651,7 +718,9 @@ module ApiSearch
       n1 = 1
       n2 = 8
       tickets = @account.tickets.select { |x| x.custom_field['test_custom_number_1'] && (x.custom_field['test_custom_number_1'] >= n1 && x.custom_field['test_custom_number_1'] <= n2) && x.priority == 2 }
-      get :index, controller_params(query: '"(test_custom_number :> ' + n1.to_s + ' AND test_custom_number :< ' + n2.to_s + ') AND priority:2 "')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"(test_custom_number :> ' + n1.to_s + ' AND test_custom_number :< ' + n2.to_s + ') AND priority:2 "')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -661,7 +730,9 @@ module ApiSearch
       n1 = -3
       n2 = 0
       tickets = @account.tickets.select { |x| x.custom_field['test_custom_number_1'] && (x.custom_field['test_custom_number_1'] >= n1 && x.custom_field['test_custom_number_1'] <= n2) }
-      get :index, controller_params(query: '"(test_custom_number :>  '+ n1.to_s + ' AND test_custom_number :< ' + n2.to_s + ')"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"(test_custom_number :>  '+ n1.to_s + ' AND test_custom_number :< ' + n2.to_s + ')"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
@@ -669,10 +740,26 @@ module ApiSearch
 
     def test_tickets_priority_status_valid_range
       tickets = @account.tickets.select { |x| [1, 2, 3].include?(x.priority) and [3,4,5,6].include?(x.status) }
-      get :index, controller_params(query: '"(priority :> 1 and priority :< 3) and (status :> 3 and status :< 6)"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"(priority :> 1 and priority :< 3) and (status :> 3 and status :< 6)"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
+    end
+
+    def test_results_with_restricted_agent_and_shared_ownership
+      user = User.current
+      permission = user.agent.ticket_permission
+      group = create_group_with_agents(Account.current, agent_list: [user.id])
+      user.agent.update_attributes(ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
+      get :index, controller_params(query: '"agent_id:100"')
+      user.agent.update_attributes(:ticket_permission => permission)
+      Account.any_instance.unstub(:shared_ownership_enabled?)
+      assert_response 200
+      response = parse_response @response.body
+      assert response['total'] == 0
     end
 
     # Space testing
@@ -690,7 +777,9 @@ module ApiSearch
       d1 = 6.days.until.to_date.iso8601
       d2 = 2.days.until.to_date.iso8601
       tickets = @account.tickets.select { |x| [1, 2, 3, 4].include?(x.priority) and ( x.created_at.to_date.iso8601 >= d1 and x.created_at.to_date.iso8601 <= d2 ) }
-      get :index, controller_params(query: '"( priority :1 or priority  :2 or priority  : 3 or priority  :  4    ) and (created_at    :>  \'' + d1 + '\' and created_at :<  \'' + d2 + '\')"')
+      stub_public_search_response(tickets) do
+	      get :index, controller_params(query: '"( priority :1 or priority  :2 or priority  : 3 or priority  :  4    ) and (created_at    :>  \'' + d1 + '\' and created_at :<  \'' + d2 + '\')"')
+      end
       assert_response 200
       pattern = tickets.map { |ticket| index_ticket_pattern(ticket) }
       match_json(results: pattern, total: tickets.size)
