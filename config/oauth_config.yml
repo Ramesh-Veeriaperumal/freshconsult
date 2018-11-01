@@ -60,6 +60,7 @@ development:
  google_oauth2: # Used by Google portal sso login, google calendar, google marketplace sso app.
   consumer_token: 364422961642-4fr54sficbm151u7f5is9722er6vcjsu.apps.googleusercontent.com
   client_id_ios: 663183371165-qov5cti179dlnlcv85rkcgce2g2s59fb.apps.googleusercontent.com
+  client_id_iosv4_classic: 663183371165-lv3s96hi2hch71mda41luq5b9b5v5h5f.apps.googleusercontent.com
   consumer_secret: cBiFYwJm90bqfmBt7gg3Rxqe 
   api_key: AIzaSyA8kkDuuYOBJHImPkz6YSQedGyGcRJuVsg # Used to detect user language by the core team.
  google_gadget_oauth2:
@@ -106,6 +107,7 @@ defaults: &defaults
  google_oauth2:
   consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
   client_id_ios: 663183371165-qov5cti179dlnlcv85rkcgce2g2s59fb.apps.googleusercontent.com
+  client_id_iosv4_classic: 663183371165-lv3s96hi2hch71mda41luq5b9b5v5h5f.apps.googleusercontent.com
   consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
   api_key: AIzaSyA8kkDuuYOBJHImPkz6YSQedGyGcRJuVsg
  google_gadget_oauth2:
@@ -160,6 +162,7 @@ staging:
  google_oauth2:
   consumer_token: 663183371165-dh9ct05c08k8q00lra341g46asffkaaf.apps.googleusercontent.com
   client_id_ios: 663183371165-0s9usgo31k637fe78gt4nq813tkb4t4g.apps.googleusercontent.com
+  client_id_iosv4_classic: 663183371165-lv3s96hi2hch71mda41luq5b9b5v5h5f.apps.googleusercontent.com
   consumer_secret: 5c7UOsdl0okTN22LcNX0d99i
   api_key: AIzaSyA8kkDuuYOBJHImPkz6YSQedGyGcRJuVsg
  google_contacts:
@@ -220,6 +223,7 @@ production:
  google_oauth2:
   consumer_token: 367378856688.apps.googleusercontent.com
   client_id_ios: 663183371165-0s9usgo31k637fe78gt4nq813tkb4t4g.apps.googleusercontent.com
+  client_id_iosv4_classic: 663183371165-lv3s96hi2hch71mda41luq5b9b5v5h5f.apps.googleusercontent.com
   consumer_secret: M0tVzcR4cSL-pRxDUqSV2FH1
   api_key: AIzaSyDZWCWNdZUiq_mYe70i80tKHpzRBz4ZADM
  google_gadget_oauth2:
