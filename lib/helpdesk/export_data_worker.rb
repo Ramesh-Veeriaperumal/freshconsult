@@ -23,9 +23,18 @@ class Helpdesk::ExportDataWorker < Struct.new(:params)
       zip_all_files zip_file_path
       @data_export.file_created!
       @file = File.open(zip_file_path,  'r')
-      
-      @data_export.build_attachment(:content => @file)
-      @data_export.save!
+
+      options = {
+          file_content: @file,
+          filename: "#{Account.current.id}.zip",
+          content_type: 'application/octet-stream',
+          content_size: @file.size
+      }
+      att = Helpdesk::Attachment.create_for_3rd_party(Account.current, @file, options, 0, nil)
+      att.update_attributes content_updated_at: Time.now.to_i,
+                            attachable_id: @data_export.id,
+                            attachable_type: "DataExport"
+      att.save
 
       @data_export.file_uploaded!
       hash_file_name = Digest::SHA1.hexdigest(@data_export.id.to_s + Time.now.to_f.to_s)
