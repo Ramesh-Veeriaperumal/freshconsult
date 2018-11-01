@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+['solutions_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 class Contacts::MiscControllerTest < ActionController::TestCase
   include UsersTestHelper
   include CustomFieldsTestHelper
