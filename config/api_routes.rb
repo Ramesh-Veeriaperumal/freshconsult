@@ -227,11 +227,11 @@ Helpkit::Application.routes.draw do
     resources :attachments, controller: 'api_attachments', only: [:destroy]
     # Proactive Support routes
     scope '/proactive' do
-      resources :outreaches, controller: 'proactive/outreaches', except: [:edit]
       resources :rules, controller: 'proactive/rules', except: [:edit] do
         collection do
-          post 'placeholders'
-          post 'preview_email'
+          post :filters
+          post :placeholders
+          post :preview_email
         end
       end
     end

@@ -86,6 +86,75 @@ module Ember
         end
       end
 
+      def test_create_fsm
+        create_fsm do
+          Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+          post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
+
+          assert_response 204
+          assert Account.current.field_service_management_enabled?
+          assert Account.current.parent_child_tickets_enabled?
+
+          field = Account.current.ticket_fields.find_by_name("cf_fsm_phone_number_#{Account.current.id}")
+          assert field.present?
+
+          Account.any_instance.unstub(:disable_old_ui_enabled?)
+        end
+      end
+
+      # Test create with failed validation.
+      def test_create_fsm_with_old_ui_enabled
+        create_fsm do
+          Account.current.revoke_feature(:disable_old_ui)
+          post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
+
+          assert_response 400
+          match_json([bad_request_error_pattern('name', :fsm_only_on_mint_ui, code: :invalid_value, feature: :field_service_management)])
+        end
+      end
+
+      def test_create_fsm_with_launch_party_disabled
+        create_fsm do
+          Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+          Account.current.rollback(:field_service_management_lp)
+          post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
+
+          assert_response 400
+          match_json([bad_request_error_pattern('name', :fsm_launch_party_not_enabled, code: :invalid_value, feature: :field_service_management)])
+
+          Account.current.launch(:field_service_management_lp)
+          Account.any_instance.unstub(:disable_old_ui_enabled?)
+        end
+      end
+
+      # Feature already enabled validation.
+      def test_create_fsm_with_already_enabled
+        create_fsm do
+          Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+          Account.current.set_feature(:field_service_management)
+          post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
+
+          assert_response 400
+          match_json([bad_request_error_pattern('name', :feature_exists, code: :invalid_value, feature: :field_service_management)])
+
+          Account.any_instance.unstub(:disable_old_ui_enabled?)
+        end
+      end
+
+      # Todo: Custom field count validation_fail
+
+      def test_create_fsm_with_plan_based_feature_disabled
+        create_fsm do
+          Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+          Account.any_instance.stubs(:field_service_management_toggle_enabled?).returns(false)
+          post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
+          assert_response 400
+          match_json([bad_request_error_pattern('name', :require_feature, code: :invalid_value, feature: :field_service_management)])
+          Account.any_instance.unstub(:field_service_management_toggle_enabled?)
+          Account.any_instance.unstub(:disable_old_ui_enabled?)
+        end
+      end
+
       def test_destroy_parent_child
         create_installed_application(:parent_child_tickets) do
           delete :destroy, controller_params(version: 'private', id: 'parent_child_tickets')
@@ -112,10 +181,21 @@ module Ember
           Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
           delete :destroy, controller_params(version: 'private', id: 'parent_child_tickets')
           assert_response 204
-          assert_equal 1,Account.current.installed_applications.with_name('parent_child_tickets').count
+          assert_equal 0,Account.current.installed_applications.with_name('parent_child_tickets').count
           assert_equal false, Account.current.parent_child_tickets_enabled?
           Account.any_instance.unstub(:disable_old_ui_enabled?)
         end
+      end
+
+      def test_destroy_with_feature_and_without_installed_app_entry
+        Account.current.add_feature(:parent_child_tickets) unless Account.current.parent_child_tickets_enabled?
+        Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+        delete :destroy, controller_params(version: 'private', id: 'parent_child_tickets')
+        assert_response 204
+        assert_equal false, Account.current.parent_child_tickets_enabled?
+      ensure
+        Account.any_instance.unstub(:disable_old_ui_enabled?)
+        Account.current.revoke_feature(:parent_child_tickets) if Account.current.parent_child_tickets_enabled?
       end
 
       def test_destroy_without_existing_feature

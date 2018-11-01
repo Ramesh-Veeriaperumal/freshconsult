@@ -19,7 +19,10 @@ class Bot < ActiveRecord::Base
 
   before_create :set_external_id, :set_analytics_mock_data
   before_update :check_constant_fields
+  before_save :sanitize_template_data
   before_destroy :clear_status, :cleanup
+
+  xss_sanitize :only => [:name], :plain_sanitizer => [:name]
 
   has_one :logo,
           as: :attachable,
@@ -118,6 +121,12 @@ class Bot < ActiveRecord::Base
 
   def category_ids
     self.solution_category_metum_ids
+  end
+
+  def sanitize_template_data
+    template_data.each do |key, value|
+      template_data[key] = RailsFullSanitizer.sanitize(value)
+    end
   end
 
   private

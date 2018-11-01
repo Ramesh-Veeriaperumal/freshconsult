@@ -205,6 +205,7 @@ api_error_messages:
 
   invalid_tracker: "Tracker is invalid"
   max_limit: "Has exceeded maximum %{name} limit of %{max_value}"
+  pattern_not_allowed: "%{pattern} not allowed in %{field}"
   cannot_set_ticket_association_fields: "It should contain either related_ticket_ids or parent_id and not both"
   cannot_create_tracker: "Tracker ticket can't be created as related_ticket_ids are invalid"
   bot_exists: "Bot already exists for this portal"
@@ -227,3 +228,8 @@ api_error_messages:
   cannot_convert_topic_to_ticket: "This topic has already been converted into a ticket (#%{ticket_id})"
   feature_exists: "The %{feature} feature is already available for the account."
   feature_unavailable: "The %{feature} feature is not available for the account."
+  fsm_only_on_mint_ui: "Old UI must be disabled for the field service management to work."
+  fsm_launch_party_not_enabled: "Field service feature has to be launched."
+  fsm_custom_fields_not_available: "Required custom fields are not available to be reserved."
+  fsm_dynamic_sections_absence: "Dynamic sections feature has to be enabled for field service management to be enabled."
+  something_wrong_in_fsm_enable: "Something went wrong while trying to reserve fields for field service management."

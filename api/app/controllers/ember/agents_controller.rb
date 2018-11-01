@@ -73,7 +73,7 @@ module Ember
       end
 
       def validate_item_delegator(item)
-        @agent_delegator = AgentDelegator.new(item)
+        @agent_delegator = AgentDelegator.new(params[cname]['agents'].first.slice(:role_ids, :group_ids))
         @agent_delegator.valid?
       end
 
@@ -156,7 +156,6 @@ module Ember
       def agent_availability_details?
         params[:only] == 'available' && current_user.privilege?(:manage_availability)
       end
-
       def supervisor_scoper_agent_availability
         agent_groups = current_account.agent_groups_from_cache
         current_user_id = current_user.id

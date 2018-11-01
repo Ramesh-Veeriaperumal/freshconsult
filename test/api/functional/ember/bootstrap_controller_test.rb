@@ -111,6 +111,30 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     Account.current.trial_subscriptions.destroy_all
   end
 
+  def test_account_with_facebook_reauth_required
+    Account.current.stubs(:fb_reauth_check_from_cache).returns(true)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    Account.current.unstub(:fb_reauth_check_from_cache)
+  end 
+
+  def test_account_with_twitter_reauth_required
+    Account.current.stubs(:twitter_reauth_check_from_cache).returns(true)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    Account.current.unstub(:twitter_reauth_check_from_cache)
+  end
+
+  def test_account_with_custom_inbox_error
+    Account.current.stubs(:check_custom_mailbox_status).returns(true)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    Account.current.unstub(:check_custom_mailbox_status)  
+  end 
+  
   def test_collaboration_without_freshconnect
     Account.any_instance.stubs(:collaboration_enabled?).returns(true)
     Account.current.add_feature(:collaboration)

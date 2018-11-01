@@ -213,6 +213,27 @@ class ContactValidationTest < ActionView::TestCase
     assert contact.errors.full_messages.empty?
   end
 
+  def test_name_invalid_create
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    controller_params = { 'name' => 'test https://www.test.com', :email => Faker::Internet.email }
+    item = nil
+    contact = ContactValidation.new(controller_params, item)
+    refute contact.valid?(:create)
+    assert_equal({ email: {}, name: {:pattern=>:URL, :field=>:name, :code=>:invalid_format} }, contact.error_options)
+  end
+
+  def test_name_invalid_update
+    Account.stubs(:current).returns(Account.new)
+    Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
+    ContactForm.any_instance.stubs(:default_contact_fields).returns([])
+    controller_params = { 'name' => 'test https://www.test.com', :email => Faker::Internet.email }
+    item = nil
+    contact = ContactValidation.new(controller_params, item)
+    refute contact.valid?(:update)
+    assert_equal({ email: {}, name: {:pattern=>:URL, :field=>:name, :code=>:invalid_format} }, contact.error_options)
+  end
   private
 
     def contact_field(name)

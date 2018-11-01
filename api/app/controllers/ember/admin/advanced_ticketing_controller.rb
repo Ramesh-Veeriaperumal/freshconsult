@@ -1,8 +1,11 @@
 module Ember
   module Admin
     class AdvancedTicketingController < ApiApplicationController
+      before_filter :perform_fsm_operations, only: :create, :if => :feature_fsm?
+
       include HelperConcern
       include Integrations::AdvancedTicketing::AdvFeatureMethods
+      include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
       include Redis::RedisKeys
       include Redis::HashMethods
 
@@ -17,7 +20,8 @@ module Ember
       def destroy
         return unless validate_query_params
         return unless validate_delegator(nil, { feature: params[:id] })
-        disable_old_ui_enabled? ? (remove_feature params[:id].to_sym) : @item.destroy
+        remove_feature params[:id].to_sym if disable_old_ui_enabled?
+        @item.destroy if @item
         head 204
       rescue Exception => e
         Rails.logger.error("Exception while deleting advanced ticketing app, account::#{current_account.id}, message::#{e.message}, backtrace::#{e.backtrace.join('\n')}")
@@ -41,8 +45,7 @@ module Ember
       end
 
       def load_object
-        return if disable_old_ui_enabled?
-        log_and_render_404 unless load_application_by_name(params[:id]) && (@item = scoper.find_by_application_id(@application.id))
+        log_and_render_404 unless (@item = scoper.with_name(params[:id]).first) || disable_old_ui_enabled?
       end
 
       def disable_old_ui_enabled?

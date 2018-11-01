@@ -274,4 +274,47 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     get :revert_identity, construct_params(version: 'private')
     assert_response 204
   end
-end
+  
+   def test_agent_availability_without_admin_task_privilege
+    group = create_group_with_agents(@account, role: Role.find_by_name('Supervisor').id)
+    current_user = User.current
+    group.agent_groups.create(user_id: current_user.id)
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    User.any_instance.stubs(:privilege?).with(:view_contacts).returns(true)
+    get :index, controller_params(version: 'private', only: 'available')
+    response_body = JSON.parse(response.body).first
+    response_body.must_match_json_expression(private_api_agent_pattern(current_user.agent))
+    assert_response 200
+    ensure
+      User.any_instance.unstub(:privilege?)
+  end
+
+  def test_agent_availability_with_admin_task_privilege
+    group = create_group_with_agents(@account, role: Role.find_by_name('Supervisor').id)
+    current_user = User.current
+    group.agent_groups.create(user_id: User.current.id)
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(false)
+    User.any_instance.stubs(:privilege?).with(:view_contacts).returns(false)
+    get :index, controller_params(version: 'private', only: 'available')
+    assert_response 403
+    ensure
+      User.any_instance.unstub(:privilege?)
+  end
+
+  def test_validate_item_with_invalid_role_ids
+    valid_email = Faker::Internet.email
+    request_params = [ {:email => valid_email, :role_ids => [ @account.roles.admin.first.id ]} ]
+    Account.any_instance.stubs(:roles_from_cache).returns([])
+    post :create_multiple, construct_params(version: 'private', agents: request_params)
+    assert_response 202
+    ensure
+      Account.any_instance.unstub(:roles_from_cache)
+    
+  end
+end  

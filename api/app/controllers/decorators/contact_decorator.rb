@@ -12,6 +12,8 @@ class ContactDecorator < ApiDecorator
     'tag_names' => 'tags'
   }
 
+  EXCEPT_LIST = %w[id cust_identifier account_id created_at updated_at sla_policy_id delta import_id].freeze
+
   def initialize(record, options)
     super(record)
     @name_mapping = options[:name_mapping]
@@ -30,6 +32,10 @@ class ContactDecorator < ApiDecorator
     custom_fields_hash
   end
 
+  def raw_custom_fields
+    record.custom_field
+  end
+
   def other_emails
     record.user_emails.reject(&:primary_role).map(&:email)
   end
@@ -41,6 +47,18 @@ class ContactDecorator < ApiDecorator
   def other_companies
     others = record.user_companies - [default_company]
     others.map { |x| { company_id: x.company_id, view_all_tickets: x.client_manager } }
+  end
+
+  def fetch_primary_company_details
+    if record.company.present?
+      primary_company = record.company.attributes.except!(*EXCEPT_LIST)
+      primary_company['domains'] = record.company.company_domains.map(&:domain)
+      primary_company.merge!(record.company.tam_fields) if current_account
+                                                           .tam_default_fields_enabled?
+      { primary_company: primary_company }
+    else
+      { primary_company: nil }
+    end
   end
 
   def other_companies_hash

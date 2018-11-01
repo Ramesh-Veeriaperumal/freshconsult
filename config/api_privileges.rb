@@ -134,7 +134,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config suggest_domains validate_domain_name customize_domain]
     resource :"admin/subscription", only: [:show, :plans]
     resource :"proactive/rule"
-    resource :"proactive/outreach"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
     resource :"admin/trial_subscription", only: [:usage_metrics]
   end

@@ -2578,11 +2578,6 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_monitored_by
-    get :index, controller_params(filter: 'watching')
-    assert_response 200
-    response = parse_response @response.body
-    assert_equal 0, response.count
-
     subscription = FactoryGirl.build(:subscription, account_id: @account.id,
                                      ticket_id: Helpdesk::Ticket.first.id,
                                      user_id: @agent.id)
@@ -2590,7 +2585,7 @@ class TicketsControllerTest < ActionController::TestCase
     get :index, controller_params(filter: 'watching')
     assert_response 200
     response = parse_response @response.body
-    assert_equal 1, response.count
+    assert response.any? {|record| record["id"] == Helpdesk::Ticket.first.id}, "Ticket not found in Watching!"
   end
 
   def test_index_with_new_and_my_open
@@ -2636,17 +2631,12 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_spam
-    get :index, controller_params(filter: 'spam')
-    assert_response 200
-    response = parse_response @response.body
-    assert_equal 0, response.size
-
-    ticket = @account.tickets.where(deleted: false).first
+    ticket = @account.tickets.where(deleted: false, spam: false).first
     ticket.update_attributes(spam: true, created_at: 2.months.ago)
     get :index, controller_params(filter: 'spam')
     assert_response 200
     response = parse_response @response.body
-    assert_equal 1, response.size
+    assert response.any? {|record| record["id"] == ticket.id}, "Ticket not found in Spam!"
   end
 
   def test_index_with_spam_and_deleted
@@ -2824,23 +2814,18 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_index_with_dates
-    get :index, controller_params(updated_since: Time.zone.now.iso8601)
-    assert_response 200
-    response = parse_response @response.body
-    assert_equal 0, response.size
-
     tkt = Helpdesk::Ticket.first
     tkt.update_column(:created_at, 1.days.from_now)
     get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
-    assert_equal 0, response.size
+    assert !response.any? {|record| record["id"] == Helpdesk::Ticket.first.id}, "Ticket should be present in the this filter!"
 
     tkt.update_column(:updated_at, 1.days.from_now)
     get :index, controller_params(updated_since: Time.zone.now.iso8601)
     assert_response 200
     response = parse_response @response.body
-    assert_equal 1, response.size
+    assert response.any? {|record| record["id"] == Helpdesk::Ticket.first.id}, "Ticket not present in the this filter!" 
   end
 
   def test_index_with_time_zone

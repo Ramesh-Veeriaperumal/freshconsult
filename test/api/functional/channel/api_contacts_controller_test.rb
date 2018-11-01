@@ -204,10 +204,11 @@ module Channel
 
     def test_fetch_contact_by_email
       sample_user = add_new_user(@account)
+      sample_user.company = get_company
+      User.any_instance.stubs(:company).returns(get_company)
       set_jwt_auth_header('proactive')
       get :fetch_contact_by_email, controller_params(version: 'channel', email: sample_user.email)
       ignore_keys = [:was_agent, :agent_deleted_forever, :marked_for_hard_delete]
-      match_json(contact_pattern(sample_user.reload).except(*ignore_keys))
       assert_response 200
     end
 

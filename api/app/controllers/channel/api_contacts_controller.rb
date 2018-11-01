@@ -34,7 +34,7 @@ module Channel
       @item = current_account.contacts.find_by_email(params[:email])
       if @item.present?
         decorate_object
-        render :show, status: :ok
+        render :fetch_contact_by_email, status: :ok
       else
         head 404
       end

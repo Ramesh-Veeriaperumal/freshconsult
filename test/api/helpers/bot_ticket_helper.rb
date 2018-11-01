@@ -16,6 +16,7 @@ module BotTicketHelper
                             account_id: Account.current.id,
                             portal_id: portal_id,
                             last_updated_by: get_admin.id,
+                            template_data: test_template_data,
                             enable_in_portal: true,
                             external_id: generate_uuid,
                             additional_settings: {
@@ -43,5 +44,13 @@ module BotTicketHelper
     assert_equal bot_ticket.bot_id, bot_id
     assert_equal bot_ticket.query_id, query_id
     assert_equal bot_ticket.conversation_id, conversation_id
+  end
+
+  def test_template_data
+    test_template_data = {
+      header: Faker::Lorem.sentence,
+      theme_colour: '#039a7b',
+      widget_size: 'STANDARD'
+    }
   end
 end

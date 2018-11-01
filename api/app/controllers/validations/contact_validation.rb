@@ -126,6 +126,7 @@ class ContactValidation < ApiValidation
   validates :avatar_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
 
   validates :password, data_type: { rules: String, required: true }, on: :update_password
+  validate  :check_url_present, if: -> { name.present? }, only: [:create, :update]
 
   def initialize(request_params, item, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -175,6 +176,13 @@ class ContactValidation < ApiValidation
   end
 
   private
+
+    def check_url_present
+      if name =~ URI::DEFAULT_PARSER.make_regexp
+        errors[:name] = :pattern_not_allowed
+        error_options[:name] = { pattern: :URL, field: :name, code: :invalid_format }
+      end
+    end
 
     def email_mandatory?
       MANDATORY_FIELD_ARRAY.all? { |x| safe_send(x).blank? && errors[x].blank? }
