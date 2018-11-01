@@ -1,0 +1,21 @@
+get:
+  tags: [role]
+  summary: List all roles
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          roles:
+            type: array
+            items:
+              $ref: '#/definitions/role_response'
+          meta:
+            $ref: '#/definitions/meta'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+        description: Access denied

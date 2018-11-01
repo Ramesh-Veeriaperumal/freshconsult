@@ -3,6 +3,7 @@ class GroupDelegator < BaseDelegator
 
   validate :valid_agent?, if: -> { escalate_to.present? }
   validate :valid_agent, if: -> { agent_groups.present? }
+  validate :valid_business_calendar?, if: -> {  business_calendar_id.present? }
 
   private
 
@@ -22,4 +23,12 @@ class GroupDelegator < BaseDelegator
     def invalid_users(agent_list)
       (agent_list - Account.current.agents_details_from_cache.map(&:id))
     end
+
+    def valid_business_calendar?       
+      if !Account.current.business_calendar.find_by_id(business_calendar_id)
+        errors[:business_hour_id] << :invalid_values
+        @error_options= { business_hour_id: {fields: business_calendar_id}}
+      end
+    end 
+
 end

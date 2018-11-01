@@ -1,0 +1,24 @@
+type: object
+properties:
+  name:
+      description: Name of the role
+      type: string
+  description:
+      description: A small description of the role
+      type: string
+  default:
+      description: Flag to indicate that its a default role
+      type: boolean
+  created_at:
+      description: Role's created time
+      type: string
+      format: date-time
+  updated_at:
+      description: Role's updated time
+      type: string
+      format: date-time
+  privileges:
+      description: List of Privileges associated with this role
+      type: array
+      items: 
+        type: string

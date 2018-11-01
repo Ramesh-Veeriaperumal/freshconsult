@@ -6,34 +6,200 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     { group: params }
   end
 
-  def test_group_index
-    3.times do
-      create_group(@account)
-    end
-    get :index, controller_params(version: 'private')
-    pattern = []
-    Account.current.groups.order(:name).all.each do |group|
-      pattern << group_pattern(group)
-    end
-    assert_response 200
-    match_json(pattern.ordered!)
-  end
+  # def test_group_index
+  #   3.times do
+  #     create_group_private_api(@account)
+  #   end
+  #   get :index, controller_params(version: 'private')
+  #   pattern = []
+  #   Account.current.groups.all.each do |group|
+  #     pattern << private_group_pattern(group) if group.ticket_assign_type==0
+  #     pattern << private_group_pattern_with_ocr(group) if group.ticket_assign_type==10
+  #     pattern << private_group_pattern_with_normal_round_robin(group) if group.ticket_assign_type==1 && group.capping_limit==0
+  #     pattern << private_group_pattern_with_lbrr(group) if group.ticket_assign_type==1 && group.capping_limit!=0
+  #     pattern << private_group_pattern_with_sbrr(group) if group.ticket_assign_type==2
+  #   end
+  #   assert_response 200
+  #   match_json(pattern.ordered!)
+  # end
 
   def test_show_group
-    group = create_group(@account)
+    group = create_group_private_api(@account)
     get :show, controller_params(version: 'private', id: group.id)
     assert_response 200
-    match_json(group_pattern_without_assingn_type(Group.find(group.id)))
+    match_json(private_group_pattern(Group.find(group.id)))
   end
 
   def test_show_group_without_manage_availability_privilege
-    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
-    group = create_group(@account)
-    get :show, controller_params(version: 'private', id: group.id)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(true)   
+    post :create, construct_params({version: 'private'},{
+      name: Faker::Lorem.characters(10),
+      description: Faker::Lorem.paragraph,
+      assignment_type: 1,
+      round_robin_type: 1,
+      allow_agents_to_change_availability:true,
+      business_hour_id:1,
+      escalate_to:1,
+      agent_ids:[1],
+      unassigned_for:'30m'
+    })      
     assert_response 403
     match_json(request_error_pattern(:access_denied))
   ensure
-    User.any_instance.unstub(:privilege?)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
+  end
+
+  
+  def test_create_group_with_existing_name
+    existing_group = Group.first || create_group(@account)
+    post :create, construct_params({version: 'private'}, name: existing_group.name, description: Faker::Lorem.paragraph,assignment_type: 0)
+    assert_response 409
+    match_json([bad_request_error_pattern('name', :'has already been taken')])
+  end
+
+  def test_create_group_with_no_assignment    
+    post :create, construct_params({version: 'private'},{
+      name: Faker::Lorem.characters(10),
+      description: Faker::Lorem.paragraph,
+      assignment_type: 0,
+      business_hour_id:1,
+      escalate_to:1,
+      agent_ids:[1],
+      unassigned_for: '30m'
+    })
+    assert_response 201
+    match_json(private_group_pattern(Group.last))
+  end  
+
+  def test_create_group_with_ocr  
+    Account.current.stubs(:features?).with(:round_robin).returns(true)
+    Account.current.stubs(:omni_channel_routing_enabled?).returns(true)    
+    post :create, construct_params({version: 'private'},{
+      name: Faker::Lorem.characters(10),
+      description: Faker::Lorem.paragraph,
+      assignment_type: 2,
+      business_hour_id:1,
+      escalate_to:1,
+      agent_ids:[1],
+      unassigned_for:'30m',
+      allow_agents_to_change_availability:true
+    })
+    assert_response 201
+    match_json(private_group_pattern_with_ocr(Group.last))
+    Account.current.stubs(:features?).with(:round_robin).returns(false) 
+    Account.current.unstub(:omni_channel_routing_enabled?)
+  end
+
+  def test_create_group_with_normal_round_robin
+    Account.current.stubs(:features?).with(:round_robin).returns(true)        
+    post :create, construct_params({version: 'private'},{
+      name: Faker::Lorem.characters(10),
+      description: Faker::Lorem.paragraph,
+      assignment_type: 1,
+      round_robin_type: 1,
+      allow_agents_to_change_availability:true,
+      business_hour_id:1,
+      escalate_to:1,
+      agent_ids:[1],
+      unassigned_for:'30m'
+    })
+    assert_response 201
+    match_json(private_group_pattern_with_normal_round_robin(Group.last))
+    Account.current.stubs(:features?).with(:round_robin).returns(false)   
+  end
+
+  def test_create_group_with_lbrr   
+    Account.current.stubs(:features?).with(:round_robin).returns(true)
+    Account.current.stubs(:round_robin_capping_enabled?).returns(true)
+    post :create, construct_params({version: 'private'},{
+      name: Faker::Lorem.characters(10),
+      description: Faker::Lorem.paragraph,
+      assignment_type: 1,
+      round_robin_type:2,
+      capping_limit:5,
+      allow_agents_to_change_availability:true,
+      business_hour_id:1,
+      escalate_to:1,
+      agent_ids:[1],
+      unassigned_for:'30m'
+    })
+    assert_response 201
+    match_json(private_group_pattern_with_lbrr(Group.last))
+    Account.current.stubs(:features?).with(:round_robin).returns(false)
+    Account.current.unstub(:round_robin_capping_enabled?)
+  end
+
+  def test_create_group_with_sbrr  
+    Account.current.stubs(:features?).with(:round_robin).returns(true) 
+    Account.current.stubs(:skill_based_round_robin_enabled?).returns(true)
+    post :create, construct_params({version: 'private'},{
+      name: Faker::Lorem.characters(10),
+      description: Faker::Lorem.paragraph,
+      assignment_type: 1,
+      round_robin_type:3,
+      capping_limit:5,
+      allow_agents_to_change_availability:true,
+      business_hour_id:1,
+      escalate_to:1,
+      agent_ids:[1],
+      unassigned_for: '30m'
+    })
+    assert_response 201
+    match_json(private_group_pattern_with_sbrr(Group.last))
+    Account.current.stubs(:features?).with(:round_robin).returns(false)
+    Account.current.unstub(:skill_based_round_robin_enabled?)
+  end  
+  
+  def test_update_group
+    group = create_group_private_api(@account)
+    put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for: '30m', agent_ids: [1])
+    assert_response 200
+    match_json(private_group_pattern(Group.find_by_id(group.id)))
+  end
+
+  def test_update_group_from_noass_to_lbrr
+    group = create_group_private_api(@account)
+    put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for: '30m', agent_ids:[1],
+    assignment_type: 1, round_robin_type: 2, capping_limit: 23 )
+    assert_response 200
+    match_json(private_group_pattern_with_lbrr(Group.find_by_id(group.id)))
+  end
+
+  def test_update_group_from_lbrr_to_noass    
+    group = create_group_private_api(@account, ticket_assign_type:1, capping_limit: 23)
+    put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for:'30m', agent_ids:[1],
+    assignment_type: 0)
+    assert_response 200
+    match_json(private_group_pattern(Group.find_by_id(group.id)))
+  end
+
+  def test_update_group_from_sbrr_to_normal_round_robin
+    group = create_group_private_api(@account, ticket_assign_type:2, capping_limit:23) 
+    put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for:'30m', agent_ids:[1],
+    round_robin_type:1)
+    assert_response 200
+    match_json(private_group_pattern_with_normal_round_robin(Group.find_by_id(group.id)))
+  end
+
+  def test_update_group_from_lbrr_to_ocr
+    Account.current.stubs(:features?).with(:round_robin).returns(true)
+    Account.current.stubs(:omni_channel_routing_enabled?).returns(true) 
+    group = create_group_private_api(@account, ticket_assign_type:1,capping_limit:23)    
+    put :update, construct_params({version:'private', id: group.id },escalate_to: 1, unassigned_for:'30m', agent_ids:[1], assignment_type:2)
+    assert_response 200
+    match_json(private_group_pattern_with_ocr(Group.find_by_id(group.id)))
+    Account.current.stubs(:features?).with(:round_robin).returns(false) 
+    Account.current.unstub(:omni_channel_routing_enabled?)
+  end 
+
+  def test_delete_group
+    group = create_group_private_api(@account, ticket_assign_type:2, capping_limit:23) 
+    delete :destroy, construct_params(id: group.id)
+    assert_equal ' ', 	@response.body
+    assert_response 204
+    assert_nil Group.find_by_id(group.id)
   end
 
 end

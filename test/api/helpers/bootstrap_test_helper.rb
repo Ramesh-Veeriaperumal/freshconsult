@@ -145,13 +145,35 @@ module BootstrapTestHelper
     }
   end
 
+  def group_assignment_type(group)
+    GroupConstants::DB_ASSIGNMENT_TYPE_FOR_MAP[group.ticket_assign_type]
+  end 
+
+  def round_robin_enabled?
+    Account.current.features? :round_robin
+  end 
+
+  def round_robin_hash(group)      
+    rr_type=get_round_robin_type(group)    
+    hash={
+      round_robin_type: rr_type,      
+      allow_agents_to_change_availability: group.toggle_availability
+    }    
+    hash.merge!({capping_limit: group.capping_limit}) unless rr_type == GroupConstants::ROUND_ROBIN    
+    hash
+  end
+
   def group_simple_pattern(group)
-    {
+    ret_hash={
       id: group.id,
       name: group.name,
       agent_ids: group.agents.map(&:id),
-      skill_based_round_robin_enabled: group.skill_based_round_robin_enabled?
+      assignment_type: group_assignment_type(group)        
     }
+    if round_robin_enabled? && group_assignment_type(group) == GroupConstants::ROUND_ROBIN_ASSIGNMENT
+      ret_hash.merge!(round_robin_hash(group))
+    end 
+    ret_hash
   end
 
   def agent_group_pattern(account)
@@ -196,4 +218,15 @@ module BootstrapTestHelper
     }
     response_pattern
   end
+
+  private
+
+  def get_round_robin_type(group)
+    round_robin_type=1 if group.ticket_assign_type==1 && group.capping_limit==0
+    round_robin_type=2 if group.ticket_assign_type==1 && group.capping_limit!=0
+    round_robin_type=3 if group.ticket_assign_type==2
+    round_robin_type
+  end 
+
 end
+

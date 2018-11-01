@@ -239,7 +239,14 @@ Helpkit::Application.routes.draw do
 
   ember_routes = proc do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
-    resources :groups, controller: 'ember/groups', only: [:index, :show]
+    resources :groups, controller: 'ember/groups', only: [:index, :show, :create, :update, :destroy]
+
+    resources :roles, controller: 'api_roles', only: [:index] do
+      collection do
+        post 'bulk_update'
+      end
+    end
+
     resources :email_configs, controller: 'ember/email_configs' do
       collection do
         get :search, to: 'ember/email_configs#search'

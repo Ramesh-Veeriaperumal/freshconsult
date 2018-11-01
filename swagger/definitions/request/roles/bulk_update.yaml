@@ -1,0 +1,23 @@
+type: object
+properties:
+  ids:
+    description: Array of role ID's to be updated
+    type: array
+    items:
+      type: integer
+  options:
+    type: object
+    properties:
+      privileges:
+        type: object
+        properties:
+          add:
+            type: array
+            description: Contains the list of privileges to be added
+            items:
+              type: string
+          remove:
+            type: array
+            description: Contains the list of privileges to be removed
+            items:
+              type: string

@@ -53,4 +53,8 @@ class BaseDelegator < SimpleDelegator
     def attachment_size
       Account.current.attachment_limit_in_bytes
     end
+
+    def private_api?
+      defined?($infra) && $infra['PRIVATE_API']
+    end
 end

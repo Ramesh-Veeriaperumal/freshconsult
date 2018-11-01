@@ -32,4 +32,19 @@ module GroupHelper
     groups
   end
 
+  def create_group_private_api(account,options={})
+    name = Faker::Name.name
+    group = FactoryGirl.build(:group,:name=> name)
+    group.account_id = account.id
+    group.description=Faker::Lorem.paragraph   
+    group.escalate_to=1
+    group.agent_ids=[1,2]  
+    group.business_calendar_id=1
+    group.ticket_assign_type=options[:ticket_assign_type] if options[:ticket_assign_type]
+    group.ticket_assign_type=options[:round_robin_type] if options[:round_robin_type]
+    group.capping_limit=options[:capping_limit] if options[:capping_limit]  
+    group.save!
+    group
+  end 
+
 end
