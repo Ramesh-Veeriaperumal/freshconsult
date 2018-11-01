@@ -675,7 +675,7 @@ module Helpdesk
 							if (!params[:sanitize_done].nil? && params[:sanitize_done].to_s.downcase == "true")
 								result = params[:html]
 							else
-								params[:html] = Nokogiri::HTML(params[:html]).to_html
+								params[:html] = Nokogiri::HTML(params[:html]).to_html if params[:html].present?
 								result = Helpdesk::HTMLSanitizer.clean params[:html]
 								result = Nokogiri::HTML.parse(result).css('body').inner_html
 							end
@@ -735,15 +735,17 @@ module Helpdesk
 			end
 
 			def update_spam_data(ticket)
-				spam_data = params[:spam_info] if(antispam_enabled?(ticket.account))
-
-				spam_data = check_for_spam(params) if(params[:spam_done].nil? or params[:spam_done].to_s.downcase == "false")
+				spam_data = JSON.parse(params[:spam_info]) if(antispam_enabled?(ticket.account) && !params[:spam_done].nil? && params[:spam_done].to_s.downcase == "true")
+				if(params[:spam_done].nil? or params[:spam_done].to_s.downcase == "false")
+					spam_data = check_for_spam(params) 
+					spam_data.merge!({'is_spam' => spam_data['spam']}).with_indifferent_access
+				end
 				if spam_data.present?
 					begin
-						ticket.sds_spam = spam_data['spam']
+						ticket.sds_spam = spam_data['is_spam']
 						ticket.spam_score = spam_data['score']
-						ticket.spam = true if spam_data['spam'] == true
-						Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{spam_data['rules']}"
+						ticket.spam = true if spam_data['is_spam'] == true
+						Rails.logger.info "Spam rules triggered for ticket with message_id #{params[:message_id]}: #{spam_data['rules'].inspect}"
 					rescue => e
 						puts e.message
 						end
