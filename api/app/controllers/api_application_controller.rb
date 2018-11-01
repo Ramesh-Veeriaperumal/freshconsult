@@ -672,6 +672,7 @@ class ApiApplicationController < MetalApiController
 
     def set_current_portal
       @current_portal ||= Portal.fetch_by_url(request_host) || @current_account.main_portal_from_cache
+      @current_portal.make_current 
     end
 
     def get_request?
