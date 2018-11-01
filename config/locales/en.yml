@@ -2620,6 +2620,7 @@ en:
         suggestion_solutions: "Suggest Solutions"
         daypass_agent: "Daypass agent"
         occasional_agent: "Occasional Agent"
+        field_agent: Field Agent
         add_new_agent: "Add new agent"
         add_new_group: "Add new group"
         automatic_ticket_assignment: "Automatic ticket assignment"
@@ -4197,6 +4198,7 @@ en:
       active: "Full-Time"
       occasional: "Occasional"
       deleted: "Deleted"
+      field_agent: "Field Agents"
     sort:
       sorted_by: Sorted by
       name: "Name"
@@ -4587,8 +4589,8 @@ en:
     trial: In trial version
     account_suspended: account suspended
     buy: Buy more
-    available_seats: "%{count} Agent seats available"
-    available_seats_without_count: Agent seats available
+    available_seats: "%{count} seats available"
+    available_seats_without_count: seats available
     no_seats: No agent seats available
     export_title: "Export Agents to CSV"
     last_logged_in: Last logged in %{time} ago.
@@ -4632,6 +4634,8 @@ en:
       title4: Scopes and Roles
       info14: You can choose which tickets your agents can see by modifying their Ticket Scope. You should also specify what actions an agent is able to perform within your helpdesk by choosing a Role.
       info15: Note that you will not be able to either modify your own roles or delete yourself as an agent.
+      title5: Field Agent
+      info16: A field agent is an expert representative from the company who assists users with maintainance, repairs or any other operations outside the company premises on specified locations.
     make_admin: Make this agent an admin
     view_user: View User
     use_email: Use this email
@@ -4659,6 +4663,7 @@ en:
     occasional_description: This agent will be accessing the support portal
     full_time: Full time
     occasional: Occasional
+    field_agent: Field Agent
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
     insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"

@@ -36,7 +36,7 @@ class Agent < ActiveRecord::Base
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
-    :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token
+    :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type
 
   attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes
 
@@ -76,19 +76,19 @@ class Agent < ActiveRecord::Base
 
   # State => Fulltime, Occational or Deleted
   #
-  def self.filter(state = "active",letter="", order = "name", order_type = "ASC", page = 1, per_page = 20)
+  def self.filter(type, state = "active", letter="", order = "name", order_type = "ASC", page = 1, per_page = 20)
     order = "name" unless order && AgentsHelper::AGENT_SORT_ORDER_COLUMN.include?(order.to_sym)
     order_type = "ASC" unless order_type && AgentsHelper::AGENT_SORT_ORDER_TYPE.include?(order_type.to_sym)
     paginate :per_page => per_page,
       :page => page,
       :include => { :user => :avatar },
-      :conditions => filter_condition(state,letter),
+      :conditions => filter_condition(state,letter,type),
       :order => "#{order} #{order_type}"
   end
 
-  def self.filter_condition(state,letter)
+  def self.filter_condition(state, letter, type)
     unless "deleted".eql?(state)
-      return ["users.deleted = ? and agents.occasional = ? and users.name like ?", false, "occasional".eql?(state),"#{letter}%"]
+      return ["users.deleted = ? and agents.occasional = ? and users.name like ? and agents.agent_type = ?", false, "occasional".eql?(state),"#{letter}%",type]
     else
       return ["users.deleted = ?", true]
     end
@@ -330,7 +330,11 @@ class Agent < ActiveRecord::Base
       },
       mobile: {
         conditions: [ "users.mobile = ? ", agent_filter.mobile ]
-      }
+      },
+
+      type: {
+        conditions: { agent_type: AgentType.agent_type_id(agent_filter.type) }
+      } 
     }
   end
 
