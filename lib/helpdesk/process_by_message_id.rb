@@ -20,11 +20,11 @@ module Helpdesk::ProcessByMessageId
     @email_message_id ||= lambda do 
       if params[:message_id].present? && params[:message_id] =~ /#{MESSAGE_ID_REGEX}/i
         $1
-      elsif params[:headers] =~ /^message-id: #{MESSAGE_ID_REGEX}/i
+      elsif params[:headers] =~ /^message-id:\s{1,}#{MESSAGE_ID_REGEX}/i
         $1
-      elsif params[:headers] =~ /^x-ms-tnef-correlator: #{MESSAGE_ID_REGEX}/i
+      elsif params[:headers] =~ /^x-ms-tnef-correlator:\s{1,}#{MESSAGE_ID_REGEX}/i
         $1
-      elsif params[:headers] =~ /message-id: #{MESSAGE_ID_REGEX}/i
+      elsif params[:headers] =~ /message-id:\s{1,}#{MESSAGE_ID_REGEX}/i
         Rails.logger.debug "Message-id match found in the middle of header text - #{$1}"
         $1
       end
