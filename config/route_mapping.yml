@@ -36,8 +36,8 @@
 /account/edit: /a/admin/
 /agents: /a/admin/
 /agents/new: /a/admin/
-/groups: /a/admin/
-/groups/new: /a/admin/
+/groups: /a/admin/groups
+/groups/new: /a/admin/groups/new
 /helpdesk/sla_policies: /a/admin/
 /helpdesk/sla_policies/new: /a/admin/
 /admin/products: /a/admin/

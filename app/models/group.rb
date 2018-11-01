@@ -27,7 +27,7 @@ class Group < ActiveRecord::Base
   after_commit :sync_sbrr_queues
 
   validates_presence_of :name
-  validates_uniqueness_of :name, :scope => :account_id
+  validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
 
   has_many :agent_groups , 
     :class_name => "AgentGroup", 
