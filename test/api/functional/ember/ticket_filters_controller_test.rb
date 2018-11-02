@@ -149,6 +149,20 @@ module Ember
                   bad_request_error_pattern('name', :missing_field)])
     end
 
+
+    def test_create_with_valid_params_without_feature
+      @account.revoke_feature(:custom_ticket_views)
+      filter_params = sample_filter_input_params
+      new_name = "#{Faker::Name.name} - #{Time.zone.now}"
+      filter_params[:name] = new_name
+
+      post :create, construct_params({ version: 'private' }, filter_params)
+      assert_response 403
+    ensure
+      @account.add_feature(:custom_ticket_views)
+    end
+
+
     def test_update_with_invalid_values
       filter1 = create_filter
       filter_params = sample_filter_input_params
