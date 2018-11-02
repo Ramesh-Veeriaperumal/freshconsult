@@ -2,7 +2,10 @@ module Ember
   class TicketFiltersController < ApiApplicationController
     include AccessibleControllerMethods
 
+    FEATURE_NAME = :custom_ticket_views
+
     before_filter :has_permission?, only: [:update, :destroy]
+    before_filter :check_feature, only: [:update, :destroy, :create]
 
     def index
       load_objects
@@ -30,7 +33,7 @@ module Ember
       prefix_ff_params
       set_user_visibility
 
-      @item.deserialize_from_params(hasherized_params)      
+      @item.deserialize_from_params(hasherized_params)
       @item.visibility = params[:ticket_filter][:visibility]
 
       if @item.save
@@ -51,6 +54,11 @@ module Ember
     end
 
     private
+
+      def check_feature
+        return true if current_account.has_feature?(FEATURE_NAME)
+        render_request_error(:require_feature, 403, feature: FEATURE_NAME.to_s.titleize)
+      end
 
       def validate_params
         params[cname].permit(*CustomFilterConstants::INDEX_FIELDS)
