@@ -102,7 +102,6 @@
       - :custom_dashboard
       - :audit_logs_central_publish
       - :audit_log_ui
-      - :field_service_management_toggle
     :inherits:
       - :garden_jan_17
     :exclude: []

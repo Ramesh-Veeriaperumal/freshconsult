@@ -256,7 +256,7 @@ class Account < ActiveRecord::Base
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
     valid_user && (falcon_enabled? || check_admin_mint? || disable_old_ui_enabled?)
   end
-  
+
   def check_admin_mint?
     return false if User.current.nil?
     admin_only_mint_enabled? && User.current.privilege?(:admin_tasks)
