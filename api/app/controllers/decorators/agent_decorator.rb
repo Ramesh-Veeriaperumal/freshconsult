@@ -25,8 +25,7 @@ class AgentDecorator < ApiDecorator
       contact: ContactDecorator.new(record.user, {}).to_hash,
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc),
-      gdpr_admin_name: record.user.current_user_gdpr_admin,
-      type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == record.agent_type }.name
+      gdpr_admin_name: record.user.current_user_gdpr_admin
     }
   end
 

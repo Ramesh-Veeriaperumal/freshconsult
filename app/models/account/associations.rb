@@ -389,5 +389,4 @@ class Account < ActiveRecord::Base
   has_one  :freshconnect_account, class_name: 'Freshconnect::Account', dependent: :destroy
 
   has_many :dashboard_announcements, class_name: 'DashboardAnnouncement', dependent: :destroy
-  has_many :agent_types, class_name: 'AgentType', dependent: :destroy
 end

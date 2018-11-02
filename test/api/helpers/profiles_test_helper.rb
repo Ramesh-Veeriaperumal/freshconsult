@@ -22,8 +22,7 @@ module ProfilesTestHelper
         available_since: expected_output[:available_since] || agent.active_since,
         contact: contact_pattern(expected_output[:user] || agent.user),
         created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-        updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-        type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name
+        updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
 

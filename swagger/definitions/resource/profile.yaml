@@ -21,8 +21,6 @@ properties:
         type: array
         items:
           type: integer
-      type:
-        type: string
       available_since:
         type: string
       contact:

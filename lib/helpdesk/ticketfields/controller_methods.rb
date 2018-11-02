@@ -69,16 +69,16 @@ module Helpdesk::Ticketfields::ControllerMethods
       }
     end
 
-    def ff_meta_data(field_details, account = current_account, alias_present = false)
+    def ff_meta_data(field_details, account = current_account)
       type = field_details.delete(:type)
       column_name = available_columns(type).first
       add_to_used_columns(type, column_name)
-      label = alias_present ? field_details[:flexifield_alias] : field_details[:label]
+
       {
         flexifield_def_id:  account.ticket_field_def.id,
         flexifield_name:    column_name,
         flexifield_coltype: type,
-        flexifield_alias:   field_name(label, account),
+        flexifield_alias:   field_name(field_details[:label], account),
         flexifield_order:   field_details[:position], # ofc. there'll be gaps.
         import_id:          field_details.delete(:import_id)
       }
