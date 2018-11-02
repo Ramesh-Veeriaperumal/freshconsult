@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20181012101322) do
+ActiveRecord::Schema.define(version: 20181008070830) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -217,20 +217,6 @@ ActiveRecord::Schema.define(:version => 20181012101322) do
   add_index "agent_groups", ["account_id", "user_id", "group_id"], :name => "index_agent_groups_on_account_id_and_user_id_and_group_id"
   add_index "agent_groups", ["group_id", "user_id"], :name => "agent_groups_group_user_ids"
 
-  create_table "agent_types", :force => true do |t|
-    t.integer  "agent_type_id"
-    t.string   "name"
-    t.string   "label"
-    t.boolean  "default",                    :default => false
-    t.integer  "account_id",    :limit => 8,                    :null => false
-    t.integer  "deleted",                    :default => 0
-    t.datetime "created_at",                                    :null => false
-    t.datetime "updated_at",                                    :null => false
-  end
-
-  add_index "agent_types", ["account_id", "agent_type_id"], :name => "index_account_id_and_type_id__on_agent_types"
-  add_index "agent_types", ["account_id", "name"], :name => "index_account_id_and_name_on_agent_types", :unique => true
-
   create_table "agents", :force => true do |t|
     t.integer  "user_id",             :limit => 8
     t.text     "signature"
@@ -246,7 +232,6 @@ ActiveRecord::Schema.define(:version => 20181012101322) do
     t.boolean  "available",                        :default => true
     t.datetime "active_since"
     t.datetime "last_active_at"
-    t.integer  "agent_type",                       :default => 1
   end
 
   add_index "agents", ["account_id", "google_viewer_id"], :name => "index_agents_on_account_id_and_google_viewer_id"

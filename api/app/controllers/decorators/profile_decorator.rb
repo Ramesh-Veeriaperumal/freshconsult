@@ -16,8 +16,7 @@ class ProfileDecorator < ApiDecorator
       available_since:  record.active_since.try(:utc),
       contact:          ContactDecorator.new(record.user, {}).to_hash,
       created_at:       created_at.try(:utc),
-      updated_at:       updated_at.try(:utc),
-      type:             Account.current.agent_types_from_cache.find { |type| type.agent_type_id == record.agent_type }.name
+      updated_at:       updated_at.try(:utc)
     }
   end
 

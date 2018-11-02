@@ -1,4 +1,3 @@
-agent_types = Account.current.agent_types_from_cache
 JSON.generate(@items.map do |agent|
   user = agent.user
   {
@@ -10,7 +9,6 @@ JSON.generate(@items.map do |agent|
     created_at: agent.created_at.try(:utc),
     updated_at: agent.updated_at.try(:utc),
     available_since: agent.active_since.try(:utc),
-    type: agent_types.find { |type| type.agent_type_id == agent.agent_type }.name,
     contact: {
       active: user.active,
       email: user.email,

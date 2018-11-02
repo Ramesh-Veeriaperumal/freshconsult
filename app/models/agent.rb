@@ -31,19 +31,17 @@ class Agent < ActiveRecord::Base
   
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :create
   after_commit  ->(obj) { obj.update_agent_to_livechat } , on: :update  
-  before_save :set_default_type_if_needed, on: [:create, :update]
-
   validates_presence_of :user_id
   validate :validate_signature
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
-    :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type
+    :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token
   attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
-  scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false }
-  scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false }
+  scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
+  scope :occasional_agents, :conditions => { :occasional => true, 'users.deleted' => false}
   scope :list , lambda {{ :include => :user , :order => :name }}  
 
   xss_sanitize :only => [:signature_html],  :html_sanitize => [:signature_html]
@@ -81,19 +79,19 @@ class Agent < ActiveRecord::Base
 
   # State => Fulltime, Occational or Deleted
   #
-  def self.filter(type, state = "active", letter="", order = "name", order_type = "ASC", page = 1, per_page = 20)
+  def self.filter(state = "active",letter="", order = "name", order_type = "ASC", page = 1, per_page = 20)
     order = "name" unless order && AgentsHelper::AGENT_SORT_ORDER_COLUMN.include?(order.to_sym)
     order_type = "ASC" unless order_type && AgentsHelper::AGENT_SORT_ORDER_TYPE.include?(order_type.to_sym)
     paginate :per_page => per_page,
       :page => page,
       :include => { :user => :avatar },
-      :conditions => filter_condition(state,letter,type),
+      :conditions => filter_condition(state,letter),
       :order => "#{order} #{order_type}"
   end
 
-  def self.filter_condition(state, letter, type)
+  def self.filter_condition(state,letter)
     unless "deleted".eql?(state)
-      return ["users.deleted = ? and agents.occasional = ? and users.name like ? and agents.agent_type = ?", false, "occasional".eql?(state),"#{letter}%",type]
+      return ["users.deleted = ? and agents.occasional = ? and users.name like ?", false, "occasional".eql?(state),"#{letter}%"]
     else
       return ["users.deleted = ?", true]
     end
@@ -335,11 +333,7 @@ class Agent < ActiveRecord::Base
       },
       mobile: {
         conditions: [ "users.mobile = ? ", agent_filter.mobile ]
-      },
-
-      type: {
-        conditions: { agent_type: AgentType.agent_type_id(agent_filter.type) }
-      } 
+      }
     }
   end
 
@@ -357,9 +351,5 @@ class Agent < ActiveRecord::Base
     Thread.current[:group_changes].present? ? 
       Thread.current[:group_changes].push(agent_info) : 
       Thread.current[:group_changes]=[agent_info]
-  end
-
-  def set_default_type_if_needed
-    self.agent_type = AgentType.agent_type_id(SUPPORT_AGENT) unless self.agent_type
   end
 end

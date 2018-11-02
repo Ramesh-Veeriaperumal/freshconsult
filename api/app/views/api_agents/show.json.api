@@ -10,7 +10,6 @@ response_hash = {
   created_at: @item.created_at.try(:utc),
   updated_at: @item.updated_at.try(:utc),
   available_since: @item.active_since.try(:utc),
-  type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == @item.agent_type }.name,
   contact: {
     active: user.active,
     email: user.email,
