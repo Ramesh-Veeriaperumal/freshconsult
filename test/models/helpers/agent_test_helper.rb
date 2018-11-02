@@ -22,8 +22,7 @@ module AgentTestHelper
       created_at: agent.created_at.try(:utc).try(:iso8601),
       updated_at: agent.updated_at.try(:utc).try(:iso8601),
       active_since: agent.active_since.try(:utc).try(:iso8601),
-      last_active_at: agent.last_active_at.try(:utc).try(:iso8601),
-      agent_type: agent.agent_type
+      last_active_at: agent.last_active_at.try(:utc).try(:iso8601)
     }
   end
 end

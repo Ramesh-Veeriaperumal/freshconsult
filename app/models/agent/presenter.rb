@@ -24,7 +24,6 @@ class Agent < ActiveRecord::Base
     s.add :scoreboard_level_id
     s.add :account_id
     s.add :available
-    s.add :agent_type
     s.add proc { |x| x.groups.map { |ag| {name: ag.name, id: ag.id }}}, as: :groups
     USER_FIELDS.each do |key|
       s.add proc { |d| d.user.safe_send(key) }, as: key
