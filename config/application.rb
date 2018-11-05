@@ -256,12 +256,6 @@ end if File.exists? recaptcha_file
 
 GC::Profiler.enable if defined?(GC) && defined?(GC::Profiler) && GC::Profiler.respond_to?(:enable)
 
-# Load rbtrace
-if defined?(PhusionPassenger)
-  PhusionPassenger.on_event(:starting_request_handler_thread) do
-    if Rails.env.staging?
-      Rails.logger.error("Loading rbtrace gem")
-      require 'rbtrace'
-    end
-  end
-end
+# Enable rbtrace by default as this is useful to get callstack and other runtime information.
+# There is no overhead unless we invoke rbtrace and attach the pid.
+require 'rbtrace'

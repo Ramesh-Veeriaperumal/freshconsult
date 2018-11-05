@@ -31,6 +31,9 @@ class PlanChangeWorker
   end
 
   def drop_round_robin_data(account)
+    account.groups.basic_round_robin_enabled.each do |group|
+      group.turn_off_automatic_ticket_assignment
+    end
     Role.remove_manage_availability_privilege account
   end
 
@@ -148,10 +151,9 @@ class PlanChangeWorker
   end
 
   def drop_round_robin_load_balancing_data(account)
-    account.groups.capping_enabled_groups.find_each do |group|
-      group.capping_limit = 0
-      group.save
-    end
+    account.groups.capping_enabled_groups.each do |group|
+      group.turn_off_automatic_ticket_assignment
+    end 
   end
 
 =begin

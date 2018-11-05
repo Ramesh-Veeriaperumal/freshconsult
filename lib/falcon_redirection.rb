@@ -24,6 +24,7 @@ class FalconRedirection
                       /^\/solution\/categories\/(\d+)/ => '/a/solutions/categories/:id',
                       /^\/discussions\/(\d+)/ => '/a/forums/categories/:id',
                       /^\/discussions\/forums\/(\d+)/ => '/a/forums/folders/:id',
+                      /^\/groups\/(\d+)\/edit/ => '/a/admin/groups/:id/edit',
                       /^\/admin\/va_rules\/(\d+)\/edit/ => '/a/admin/va_rules/:id/edit',
                       /^\/admin\/supervisor_rules\/(\d+)\/edit/ => '/a/admin/supervisor_rules/:id/edit',
                       /^\/admin\/observer_rules\/(\d+)\/edit/ => '/a/admin/observer_rules/:id/edit'
