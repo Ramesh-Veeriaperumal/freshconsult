@@ -3,6 +3,45 @@ module GroupsTestHelper
   include GroupHelper
   include AgentHelper
   # Patterns
+
+  def private_group_pattern(expected_output={}, group)    
+    group_json = group_json(expected_output, group)
+    group_json.delete(:business_hour_id)    
+    group_json[:business_hour]=business_hour_hash(expected_output, group) if is_business_hour_present?(expected_output,group)    
+    group_json[:assignment_type]=GroupConstants::DB_ASSIGNMENT_TYPE_FOR_MAP[group.ticket_assign_type] 
+    group_json[:agent_ids] = group.agent_groups.pluck(:user_id)    
+    group_json
+  end 
+
+  def private_group_pattern_with_ocr(expected_output={}, group)
+    group_json=private_group_pattern(expected_output={},group)
+    group_json[:allow_agents_to_change_availability]= group.toggle_availability if ocr_enabled?
+    group_json
+  end 
+
+  def private_group_pattern_with_normal_round_robin(expected_output={}, group)
+    group_json=private_group_pattern(expected_output={},group)    
+    group_json[:allow_agents_to_change_availability]= group.toggle_availability if round_robin_enabled?
+    group_json[:round_robin_type]=get_round_robin_type(group) if round_robin_enabled?    
+    group_json
+  end
+  
+  def private_group_pattern_with_lbrr(expected_output={}, group)
+    group_json=private_group_pattern(expected_output={},group)    
+    group_json[:allow_agents_to_change_availability]= group.toggle_availability if round_robin_enabled?
+    group_json[:round_robin_type]=get_round_robin_type(group) if round_robin_enabled? 
+    group_json[:capping_limit]=group.capping_limit if round_robin_enabled?
+    group_json
+  end  
+  
+  def private_group_pattern_with_sbrr(expected_output={}, group)
+    group_json=private_group_pattern(expected_output={},group)    
+    group_json[:allow_agents_to_change_availability]= group.toggle_availability if round_robin_enabled?
+    group_json[:round_robin_type]=get_round_robin_type(group) if round_robin_enabled?  && sbrr_enabled?
+    group_json[:capping_limit]=group.capping_limit if round_robin_enabled? && sbrr_enabled?  
+    group_json
+  end  
+
   def group_pattern(expected_output = {}, group)
     group_json = group_json(expected_output, group)
     group_json[:auto_ticket_assign] = decorate_boolean((expected_output[:auto_ticket_assign] || group.ticket_assign_type)) if group.round_robin_enabled?
@@ -28,7 +67,7 @@ module GroupsTestHelper
     {
       id: Fixnum,
       name: expected_output[:name] || group.name,
-      description: expected_output[:description] || group.description,
+      description: expected_output[:description] || group.description,     
       business_hour_id: expected_output[:business_hour_id] || group.business_calendar_id,
       escalate_to: expected_output[:escalate_to] || group.escalate_to,
       unassigned_for: expected_output[:unassigned_for] || (GroupConstants::UNASSIGNED_FOR_MAP.key(group.assign_time)),
@@ -36,6 +75,22 @@ module GroupsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
+
+  def business_hour_hash(expected_output, group)
+    business_hour_id=expected_output[business_hour_id].nil? ? group.business_calendar_id : expected_output[business_hour_id]
+    business_hour=Account.current.business_calendar.find_by_id(business_hour_id)
+    return business_hour if business_hour.nil?
+    result=Hash.new
+    result[:id]=business_hour.id
+    result[:name]=business_hour.name    
+    result  
+  end
+
+  def is_business_hour_present?(expected_output, group)
+    business_hour_id=expected_output[business_hour_id].nil? ? group.business_calendar_id : expected_output[business_hour_id]
+    business_hour=Account.current.business_calendar.find_by_id(business_hour_id)
+    return business_hour.nil? ? false : true
+  end  
 
   def decorate_boolean(value)
     value ? value.to_s.to_bool : value
@@ -71,4 +126,23 @@ module GroupsTestHelper
   def v2_group_params
     { name: Faker::Name.name,  description: Faker::Lorem.paragraph, agent_ids: agents_ids_array }
   end
+
+  def round_robin_enabled?
+    Account.current.features?(:round_robin)
+  end
+
+  def sbrr_enabled?
+    Account.current.skill_based_round_robin_enabled?
+  end
+
+  def ocr_enabled?
+    Account.current.omni_channel_routing_enabled?
+  end 
+
+  def get_round_robin_type(group)
+    round_robin_type=1 if group.ticket_assign_type==1 && group.capping_limit==0
+    round_robin_type=2 if group.ticket_assign_type==1 && group.capping_limit!=0
+    round_robin_type=3 if group.ticket_assign_type==2
+    round_robin_type
+  end 
 end

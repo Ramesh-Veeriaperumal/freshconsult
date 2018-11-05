@@ -30,10 +30,6 @@ class VaRule < ActiveRecord::Base
     "#{VAConfig::RULES_BY_ID[self.rule_type].to_s}_#{action}"
   end
 
-  def self.central_publish_enabled?
-    Account.current.audit_logs_central_publish_enabled?
-  end
-
   def event_info action
     { :ip_address => Thread.current[:current_ip] }
   end

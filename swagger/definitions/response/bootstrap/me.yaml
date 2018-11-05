@@ -48,6 +48,8 @@ properties:
     properties:
       csrf_token:
         type: string
+      iris_notification_url:
+        type: string
       collision_url:
         type: string
       autorefresh_url:

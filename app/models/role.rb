@@ -112,10 +112,7 @@ class Role < ActiveRecord::Base
   end
 
   def manage_availability_privileges
-    view_admin_enabled = privilege?(:manage_users) || privilege?(:manage_canned_responses) || privilege?(:manage_dispatch_rules) ||
-      privilege?(:manage_supervisor_rules) || privilege?(:manage_scenario_automation_rules) || privilege?(:manage_email_settings) ||
-      privilege?(:manage_account)
-
+    view_admin_enabled = RoleConstants::PRIVILEGE_DEPENDENCY_MAP[:view_admin].any? {|privilege| privilege?(privilege)}
     view_admin_enabled ? [:manage_availability] : [:view_admin, :manage_availability]
   end
   # protected

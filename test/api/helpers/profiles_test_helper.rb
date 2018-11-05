@@ -1,10 +1,29 @@
 [ 'agents_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
+
 module ProfilesTestHelper
   include AgentsTestHelper
 
   def profile_pattern(user)
     agent = user.agent
-    private_api_agent_pattern(agent).merge!(additional_agent_info(agent))
+    private_api_profile_pattern(agent).merge!(additional_agent_info(agent))
+  end
+
+
+  def private_api_profile_pattern(expected_output = {}, agent)
+    {
+
+        available: expected_output[:available] || agent.available,
+        occasional: expected_output[:occasional] || agent.occasional,
+        id: Fixnum,
+        ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,
+        signature: expected_output[:signature_html] || agent.signature_html,
+        role_ids: expected_output[:role_ids] || agent.user.role_ids,
+        group_ids: expected_output[:group_ids] || agent.group_ids,
+        available_since: expected_output[:available_since] || agent.active_since,
+        contact: contact_pattern(expected_output[:user] || agent.user),
+        created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
+        updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
+    }
   end
 
   def additional_agent_info(agent)

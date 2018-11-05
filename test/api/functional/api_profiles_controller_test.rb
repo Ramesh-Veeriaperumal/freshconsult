@@ -69,6 +69,25 @@ class ApiProfilesControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+
+  def test_update_profile_error
+    params_hash = { time_zone: 'Central Time (US & Canada)', language: 'hu', signature: Faker::Lorem.paragraph }
+    Agent.any_instance.stubs(:update_attributes).returns(false)
+    put :update, construct_params({ version: 'private', id: 'me' }, params_hash)
+    assert_response 500
+  ensure
+    Agent.any_instance.unstub(:update_attributes)
+  end
+
+  def test_reset_api_key_error
+    params_hash = { time_zone: 'Central Time (US & Canada)', language: 'hu', signature: Faker::Lorem.paragraph }
+    User.any_instance.stubs(:save!).raises(RuntimeError)
+    put :reset_api_key, construct_params({ version: 'private', id: 'me' }, params_hash)
+    assert_response 500
+  ensure
+    User.any_instance.unstub(:save!)
+  end
+
   def test_update_profile_email
     currentuser = User.current
     params_hash = { email: Faker::Internet.email }
@@ -76,18 +95,12 @@ class ApiProfilesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('email', :invalid_field)])
     assert_response 400
   end
-  
+
   def test_reset_api_key
     currentuser = User.current
     post :reset_api_key, construct_params({ version: 'private', id: 'me' }, {})
     assert_response 200
     match_json(profile_pattern(currentuser.reload))
-  end
-
-  def test_meta_csrf_token
-    get :show, controller_params({ version: 'private', id: 'me' }, {})
-    assert_response 200
-    assert_not_nil response.api_meta[:csrf_token]
   end
 
   def test_meta_csrf_token

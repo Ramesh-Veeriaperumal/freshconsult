@@ -14,7 +14,7 @@ module Ember
     private
 
       def load_object
-        @item = current_account.twitter_handles.find(params[:id])
+        @item = current_account.twitter_handles.find_by_id(params[:id])
         log_and_render_404 unless @item
       end
   end

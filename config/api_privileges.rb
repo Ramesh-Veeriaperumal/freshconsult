@@ -114,7 +114,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_availability do
-    resource :"ember/group", only: [:show]
+    resource :"ember/group", only: [:show, :index, :update]
     resource :"ember/agent", only: %i[update]
   end
 
@@ -128,6 +128,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/trial_widget', only: %i[index sales_manager complete_step]
     resource :'ember/contact_password_policy', only: [:index]
     resource :'ember/agent_password_policy', only: [:index] # Not using it now.
+    resource :"ember/group" , only: [:index, :create, :update, :show, :destroy]
+    resource :"api_role", :only => [:index, :bulk_update]
     resource :'admin/canned_form'
     resource :"ember/portal", only: [:show, :update]
     resource :'audit_log', only: [:filter, :export, :event_name]

@@ -1,5 +1,6 @@
 class Admin::TrialSubscriptionsController < ApiApplicationController
   include HelperConcern
+  SLAVE_ACTIONS = %w(usage_metrics).freeze
 
   before_filter -> { validate_delegator @item }, only: [:cancel, :create]
   before_filter :sanitize_params, only: [:usage_metrics]

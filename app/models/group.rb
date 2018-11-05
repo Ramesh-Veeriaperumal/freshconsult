@@ -27,7 +27,7 @@ class Group < ActiveRecord::Base
   after_commit :sync_sbrr_queues
 
   validates_presence_of :name
-  validates_uniqueness_of :name, :scope => :account_id
+  validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
 
   has_many :agent_groups , 
     :class_name => "AgentGroup", 
@@ -82,6 +82,7 @@ class Group < ActiveRecord::Base
   scope :trimmed, :select => [:'groups.id', :'groups.name']
   scope :disallowing_toggle_availability, :conditions => { :toggle_availability => false }
   scope :round_robin_groups, :conditions => 'ticket_assign_type > 0', :order => :name
+  scope :basic_round_robin_enabled, :conditions => ["ticket_assign_type = 1 and capping_limit = 0"], :order => :name
   scope :capping_enabled_groups, :conditions => ["ticket_assign_type = 1 and capping_limit > 0"], :order => :name
   scope :skill_based_round_robin_enabled, :order => :name,
         :conditions => ["ticket_assign_type = #{Group::TICKET_ASSIGN_TYPE[:skill_based]}"]
@@ -209,6 +210,12 @@ class Group < ActiveRecord::Base
     agents.exists?('users.id' => agent.id)
   end
 
+  def turn_off_automatic_ticket_assignment
+      self.ticket_assign_type = TICKET_ASSIGN_TYPE[:default]
+      self.capping_limit= 0
+      self.save
+  end
+
   private
 
     def capping_limit_change
@@ -253,4 +260,6 @@ class Group < ActiveRecord::Base
         Thread.current[:agent_changes].push(agent_info) : 
         Thread.current[:agent_changes]=[agent_info]
     end
+
+    
 end

@@ -32,10 +32,6 @@ class Group < ActiveRecord::Base
     g.add proc { |x| x.agents.map(&:id) }, as: :agent_ids
   end
 
-  def self.central_publish_enabled?
-    Account.current.audit_logs_central_publish_enabled?
-  end
-
   def event_info action
     { :ip_address => Thread.current[:current_ip] }
   end

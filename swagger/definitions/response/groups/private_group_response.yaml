@@ -1,0 +1,46 @@
+type: object
+properties:
+  name:
+      description: Name of the group
+      type: string
+  description:
+      description: A small description of the group
+      type: string      
+  escalate_to:
+      description: Escalate to an agent
+      type: integer
+  unassigned_for:      
+      type: string
+      enum: ['30m', '1h', '2h', '4h', '8h', '12h', '1d', '2d', '3d', nil]
+  agent_ids:
+      description: List of Agents associated with this group
+      type: array
+      items: 
+        type: integer 
+  assingment_type:
+      description: Speicifies the assignment logic for this group
+      type: integer
+      enum: [0, 1, 2]
+  round_robin_type:
+      description: Specifies the round robin mechanism
+      type: string
+      enum: [1, 2, 3]
+  capping_limit:
+      type: integer      
+  allow_agents_to_change_availability:      
+      type: boolean    
+  business_hour:
+      type: object
+      properties: 
+        id: 
+           type: integer
+        name: 
+           type: string
+  created_at:
+      description: Groups's created time
+      type: string
+      format: date-time
+  updated_at:
+      description: Group's updated time
+      type: string
+      format: date-time

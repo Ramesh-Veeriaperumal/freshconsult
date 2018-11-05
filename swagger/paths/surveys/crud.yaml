@@ -1,19 +1,21 @@
 get:
   tags: [Survey]
-  summary: List all
+  summary: Show a survey
   parameters:
-    - name: state
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+    - name: only
       in: query
-      type: string
-      enum: ['active']
+      type: string  
   responses:
     200:
       description: Success
       schema:
-        type: array
-        items:
-          $ref: '#/definitions/extended_survey'
-    400:
-      description: Bad Request Error
-      schema:
-        $ref: '#/definitions/bad_request_error'
+        $ref: '#/definitions/extended_survey'
+    404:
+      description: Resource not found
+    403:
+      description: Access denied

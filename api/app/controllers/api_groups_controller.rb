@@ -1,4 +1,5 @@
 class ApiGroupsController < ApiApplicationController
+  include GroupConstants
   decorate_views
   before_filter :prepare_agents, only: [:create, :update]
 
@@ -7,7 +8,7 @@ class ApiGroupsController < ApiApplicationController
     if !group_delegator.valid?
       render_errors(group_delegator.errors, group_delegator.error_options)
     elsif @item.save
-      render_201_with_location(item_id: @item.id)
+      render_success_response
     else
       render_errors(@item.errors)
     end
@@ -24,9 +25,8 @@ class ApiGroupsController < ApiApplicationController
   end
 
   private
-
     def validate_params
-      group_params = Account.current.features?(:round_robin) ? GroupConstants::FIELDS : GroupConstants::FIELDS_WITHOUT_TICKET_ASSIGN
+      group_params = Account.current.features?(:round_robin) ? FIELDS : FIELDS_WITHOUT_TICKET_ASSIGN
       params[cname].permit(*group_params)
       group = ApiGroupValidation.new(params[cname], @item)
       render_errors group.errors, group.error_options unless group.valid?
@@ -51,7 +51,7 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def sanitize_params
-      params[cname][:unassigned_for] = GroupConstants::UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]]
+      params[cname][:unassigned_for] = UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]]
       ParamsHelper.assign_and_clean_params({ unassigned_for: :assign_time, auto_ticket_assign: :ticket_assign_type },
                                            params[cname])
     end
@@ -77,4 +77,8 @@ class ApiGroupsController < ApiApplicationController
         @item.agent_groups = agent_groups if @agent_ids.empty? || agent_groups.empty?
       end
     end
+
+   def render_success_response
+      render_201_with_location(item_id: @item.id)
+   end 
 end

@@ -37,6 +37,12 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     match_json(account_pattern(Account.current, portal))
   end
 
+  def test_iris_key
+    get :index, controller_params(version: 'private')
+    agent_info = ActiveSupport::JSON.decode(response.body)['agent']
+    assert_not_nil response.api_meta[:iris_notification_url]
+  end
+
   def test_collision_autorefresh_freshid_keys
     Account.current.features.collision.create
     Account.current.add_feature(:auto_refresh)

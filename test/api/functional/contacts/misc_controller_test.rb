@@ -1,8 +1,12 @@
 require_relative '../../test_helper'
+['solutions_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 class Contacts::MiscControllerTest < ActionController::TestCase
   include UsersTestHelper
   include CustomFieldsTestHelper
+  include SolutionsHelper
+  include EmailConfigsTestHelper
   include AttachmentsTestHelper
+  
   BULK_CONTACT_CREATE_COUNT = 2
   def setup
     super
@@ -31,6 +35,27 @@ class Contacts::MiscControllerTest < ActionController::TestCase
     put :send_invite, controller_params(id: contact.id)
     assert_response 204
   end
+
+
+  def test_send_invite_main_portal
+    contact = add_new_user(@account, active: false)
+    put :send_invite, controller_params(id: contact.id)
+    assert_equal Portal.current.main_portal, true
+    assert_response 204
+  end
+
+  def test_send_invite_portal
+    contact = add_new_user(@account, active: false)
+    pdt = Product.new(name: 'Product A')
+    pdt.save
+    create_email_config(product_id: pdt.id)
+    portal_custom = create_portal(portal_url: 'sample.freshpo.com' , product_id: pdt.id)
+    @request.host = portal_custom.portal_url
+    put :send_invite, controller_params(id: contact.id)
+    assert_equal Portal.current, portal_custom
+    assert_response 204
+  end
+
 
   def test_send_invite_to_active_contact
     contact = add_new_user(@account, active: true)

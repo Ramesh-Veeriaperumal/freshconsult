@@ -64,18 +64,29 @@ end
 
   def handle_skill_based_round_robin_drop_data
     account.groups.skill_based_round_robin_enabled.each do |group|
-      if account.features?(:round_robin_load_balancing) || account.features?(:round_robin)
+      if account.features?(:round_robin_load_balancing) || account.features?(:round_robin) 
         group.ticket_assign_type = Group::TICKET_ASSIGN_TYPE[:round_robin]
         group.capping_limit = 0 unless account.features?(:round_robin_load_balancing)
+        group.save!
       else
-        group.ticket_assign_type = Group::TICKET_ASSIGN_TYPE[:default]
-        group.capping_limit = 0
+        group.turn_off_automatic_ticket_assignment
       end
-      group.save!
     end
     account.skills.destroy_all
   end
 
+  def handle_round_robin_load_balancing_drop_data
+    account.groups.capping_enabled_groups.each do |group|
+      group.turn_off_automatic_ticket_assignment
+    end 
+  end
+
+  def handle_round_robin_drop_data
+    account.groups.basic_round_robin_enabled.each do |group|
+      group.turn_off_automatic_ticket_assignment
+    end 
+  end
+  
   def handle_occasional_agent_drop_data
     #marking all occasional agents as full time.
     account.agents.where(occasional:true).find_each do |agent|
@@ -379,7 +390,6 @@ end
     }
     )
   end
-
 
   def update_all_in_batches(change_hash)
     change_hash.symbolize_keys!

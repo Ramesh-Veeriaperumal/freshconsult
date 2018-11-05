@@ -536,6 +536,18 @@ advanced_ticketing_create:
 advanced_ticketing_insights:
   $ref: ./response/advanced_ticketing/insights.yaml
 
+#Groups Private API
+group_request:
+  $ref: ./definitions/request/groups/private_group_request.yaml
+group_response:
+  $ref: ./definitions/response/groups/private_group_response.yaml
+
+#Roles Private API
+role_response:
+  $ref: ./definitions/response/roles/private_role_response.yaml
+role_bulk_update_request:
+  $ref: ./request/roles/bulk_update.yaml
+
 #Business Hours
 business_hours:
   $ref: ./response/business_hours.yaml

@@ -1,0 +1,62 @@
+  get:
+    tags: [group]
+    summary: Show Group
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        format: int64
+        description: ID of group
+        required: true      
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/group_response'
+      404:
+        description: Group not found
+      403:
+        description: Access denied
+  
+  delete:
+    tags: [group]
+    summary: Delete Group
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        format: int64
+        description: ID of group
+        required: true
+    responses:
+      204:
+        description: Success
+      404:
+        description: Group not found
+      403:
+        description: Access denied
+
+  put:
+    tags: [group]
+    description: Update Group
+    parameters:
+      - $ref: '#/parameters/id'
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/group_request'
+    responses:
+      200:
+        description: Success
+        schema:
+          $ref: '#/definitions/group_response'
+      403:
+        description: Access denied
+      404:
+        description: Group not found
+      400:
+        description: Bad Request Error
+        schema:
+          $ref: '#/definitions/bad_request_error'
+
