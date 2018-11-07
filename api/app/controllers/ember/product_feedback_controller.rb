@@ -52,7 +52,7 @@ class Ember::ProductFeedbackController < ApiApplicationController
 
     def sanitize_params
       [:subject, :description].each do |field|
-        params[cname][field] = RailsFullSanitizer.sanitize params[cname][field] if params[cname][field].present?
+        params[cname][field] = Helpdesk::HTMLSanitizer.clean(params[cname][field]) if params[cname][field].present?
       end
       [:tags, :attachment_ids].each do |field|
         params[cname][field].uniq! if params[cname][field].present?
