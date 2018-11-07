@@ -34,6 +34,10 @@ window.App = window.App || {};
       this.data.title = $('#current-article-title').text();
       this.data.description = $('#current-article-description').html();
     },
+
+    addTargetTopForLinks: function () {
+      $('.reload-page a:not([target])').attr('target', '_top');
+    },
 		
 		toggleViews: function () {
 			$('.article-edit, .article-view, .breadcrumb-btns, .edit-container, #show_master_article').toggleClass('hide');

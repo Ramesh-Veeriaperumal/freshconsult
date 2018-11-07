@@ -40,6 +40,7 @@ window.App.Discussions = window.App.Discussions || {};
 			this.bindPostUpdateForm();
 			this.bindReplyLink();
 			this.bindReplyCancelLink();
+			this.addTargetTopForLinks();
 			App.Discussions.Moderation.bindShowMore();
 			highlight_code();
 		},
@@ -151,6 +152,10 @@ window.App.Discussions = window.App.Discussions || {};
 				}
 			});
 		},
+
+    addTargetTopForLinks: function () {
+      $('.reload-page a:not([target])').attr('target', '_top');
+    },
 
 		unblockElement: function (element) {
 			$(element).unblock();
