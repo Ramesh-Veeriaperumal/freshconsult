@@ -31,16 +31,15 @@ module CentralPublishWorker
     sidekiq_options :queue => "suspended_note_central_publish", :retry => 5, :dead => true, :backtrace => true, :failures => :exhausted
   end
 
-  class AccountDeletionWorker < CentralPublisher::Worker
-
+  class AccountWorker < CentralPublisher::Worker  
     def model_object
-      nil
+       @args[:event] == "delete" ? nil : Account.find(@args[:model_id])
     end
-
+    
     def model_name
       'Account'
     end
-    
+    sidekiq_options :queue => "central_publish", :retry => 5, :dead => true, :backtrace => true, :failures => :exhausted
   end
 
   class UserWorker < CentralPublisher::Worker

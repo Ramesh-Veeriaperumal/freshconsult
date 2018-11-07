@@ -26,7 +26,7 @@ class Account < ActiveRecord::Base
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods
+  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods, :presenter
 
   include CustomerDeprecationMethods
   
@@ -37,7 +37,7 @@ class Account < ActiveRecord::Base
                   :language, :ssl_enabled, :whitelisted_ip_attributes, :account_additional_settings_attributes,
                   :primary_email_config_attributes, :main_portal_attributes, :account_type
 
-  attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate
+  attr_accessor :user, :plan, :plan_start, :creditcard, :address, :affiliate, :model_changes
 
   include Account::Setup
   include Account::BackgroundFixtures
