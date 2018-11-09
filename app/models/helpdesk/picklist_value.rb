@@ -1,5 +1,8 @@
 class Helpdesk::PicklistValue < ActiveRecord::Base
   
+  include Redis::DisplayIdRedis
+  include Redis::RedisKeys
+
   clear_memcache [ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING,TICKET_FIELDS_FULL]
 
   belongs_to_account
@@ -25,6 +28,8 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   accepts_nested_attributes_for :sub_picklist_values, :allow_destroy => true
   
   before_validation :trim_spaces, :if => :value_changed?
+
+  before_create :assign_picklist_id, if: :redis_picklist_id_enabled?
 
 
   CACHEABLE_ATTRIBUTES = ["id", "account_id", "pickable_id", "pickable_type", "value", "position", "created_at", "updated_at"]
@@ -70,6 +75,30 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
 
   private
+
+    def assign_picklist_id
+      key = PICKLIST_ID % { account_id: account_id }
+      begin
+        computed_id = $redis_display_id.evalsha(Redis::DisplayIdLua.picklist_id_lua_script, [:keys], key.to_a)
+      rescue Redis::BaseError => e
+        NewRelic::Agent.notice_error(e, {description: 'Redis Error', uuid: Thread.current[:message_uuid]})
+        Rails.logger.debug "Redis Error, #{e.message}"
+        if e.message.include?('NOSCRIPT No matching script')
+          exception = true
+          Redis::DisplayIdLua.load_picklist_id_lua_script
+        end
+      end
+      if computed_id.nil?
+        # this may not return accurate value until soft delete is implemented
+        computed_id = account.picklist_values.maximum('picklist_id').to_i + 1
+        set_display_id_redis_key(key, computed_id)
+      end
+      self.picklist_id = computed_id.to_i
+    end
+
+    def redis_picklist_id_enabled?
+      account.redis_picklist_id_enabled?
+    end
 
     def filter_fields fields
       fields.select {|field| field.required_for_closure? }
