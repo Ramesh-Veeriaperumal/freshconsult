@@ -22,7 +22,7 @@ class Social::TwitterHandle < ActiveRecord::Base
     attributes_to_encrypt.each do |attribute|
       changes = previous_changes.try(:[], attribute)
       if changes.present?
-        changes.map! { |x| encrypt_for_central(x) }
+        changes.map! { |x| encrypt_for_central(x, 'twitter') }
         previous_changes[attribute] = changes
       end
     end
@@ -35,6 +35,10 @@ class Social::TwitterHandle < ActiveRecord::Base
 
   def self.central_publish_enabled?
     Account.current.twitter_handle_publisher_enabled?
+  end
+
+  def event_info(event)
+    {pod: ChannelFrameworkConfig['pod']}
   end
   
 end
