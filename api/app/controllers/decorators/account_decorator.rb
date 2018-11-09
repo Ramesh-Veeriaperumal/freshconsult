@@ -55,16 +55,17 @@ class AccountDecorator < ApiDecorator
     def subscription_hash
       subscription = record.subscription
       first_invoice = subscription.subscription_invoices.first
-      {
+      ret_hash = {
         agent_limit: subscription.agent_limit,
         state: subscription.state,
         subscription_plan: subscription.subscription_plan.name,
         trial_days: subscription.trial_days,
         is_copy_right_enabled: record.copy_right_enabled?,
-        mrr: subscription.cmrr,
         signup_date: subscription.created_at,
         first_invoice_date: first_invoice.nil? ? nil : first_invoice.created_at
       }
+      ret_hash[:mrr] = subscription.cmrr if User.current.privilege?(:admin_tasks) || User.current.privilege?(:manage_account)
+      ret_hash
     end
 
     def settings_hash

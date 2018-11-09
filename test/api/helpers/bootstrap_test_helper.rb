@@ -109,10 +109,10 @@ module BootstrapTestHelper
         subscription_plan: String,
         trial_days: account.subscription.trial_days,
         is_copy_right_enabled: account.copy_right_enabled?,
-        mrr: account.subscription.cmrr,
         signup_date: account.subscription.created_at,
         first_invoice_date: first_invoice.nil? ? nil : first_invoice.created_at
       }
+      pattern[:subscription][:mrr] = account.subscription.cmrr if User.current.privilege?(:admin_tasks) || User.current.privilege?(:manage_account)
     end
     pattern
   end

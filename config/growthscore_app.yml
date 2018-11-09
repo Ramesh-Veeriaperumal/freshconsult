@@ -1,0 +1,14 @@
+defaults: &defaults
+  app_id: 639e73d887164fd58861a97b00d7edaa
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+
+test:
+  <<: *defaults
