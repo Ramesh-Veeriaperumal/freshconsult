@@ -61,6 +61,11 @@ class Account < ActiveRecord::Base
     self.full_domain.downcase!
   end
 
+  def contact_info
+    account = self.make_current
+    account.account_configuration.contact_info.select { |type| CONTACT_DATA.include? type.to_sym }
+  end
+
   def check_default_values
     dis_max_id = get_max_display_id
     if self.ticket_display_id.blank? or (self.ticket_display_id < dis_max_id)

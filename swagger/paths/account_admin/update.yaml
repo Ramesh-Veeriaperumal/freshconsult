@@ -1,0 +1,24 @@
+put:
+  tags: [Account Admin]
+  summary: Update
+  description: Update Account's primary contact details
+  parameters:
+    - name: account_admin
+      in: body
+      schema:
+        $ref: '#/definitions/account_admin_update'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/account_admin_update'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    405:
+      description: Method Not Allowed
+      schema:
+       $ref: '#/definitions/method_not_allowed_error'

@@ -512,6 +512,9 @@ Helpkit::Application.routes.draw do
     post '/audit_log/export', to: 'audit_logs#export'
     get '/audit_log/event_name', to: 'audit_logs#event_name'
 
+    # account update
+    put '/account_admin', to: 'account_admins#update'
+
     # dirty hack - check privilege fails when using 'solutions' namespace although controller action mapping is unaffected
     get 'solutions/articles', to: 'ember/solutions/articles#index'
     get 'solutions/articles/:id/article_content', to: 'ember/solutions/articles#article_content'

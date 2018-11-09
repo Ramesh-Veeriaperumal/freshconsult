@@ -115,6 +115,7 @@ module BootstrapTestHelper
       }
       pattern[:subscription][:mrr] = account.subscription.cmrr if User.current.privilege?(:admin_tasks) || User.current.privilege?(:manage_account)
     end
+    pattern[:contact_info] = account.contact_info.presence
     pattern
   end
 

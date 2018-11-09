@@ -52,6 +52,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_account do
     resource :"channel/freshcaller/account", only: [:destroy]
     resource :"admin/trial_subscription", only: [:create, :cancel]
+    resource :"account_admin", only: [:update]
     resource :"admin/api_account", only: [:cancel]
     resource :"admin/api_data_export", only: [:account_export]
   end

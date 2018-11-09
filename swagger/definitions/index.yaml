@@ -25,6 +25,8 @@ agents_bulk_action_error:
   $ref: ./response/agents/bulk_error.yaml
 request_error_with_data:
   $ref: ./error/request_error_with_info.yaml
+method_not_allowed_error:
+  $ref: ./error/method_not_allowed.yaml
 
 # REQUEST
 bulk_action_input:
@@ -570,3 +572,7 @@ role_bulk_update_request:
 #Business Hours
 business_hours:
   $ref: ./response/business_hours.yaml
+
+# Account Configuration
+account_admin_update:
+  $ref: ./request/account_admin/update.yaml

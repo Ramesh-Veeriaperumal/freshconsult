@@ -9117,6 +9117,47 @@
           }
         }
       }
+    },
+    "/account_admin": {
+      "put": {
+        "tags": [
+          "Account Admin"
+        ],
+        "summary": "Update",
+        "description": "Update Account's primary contact details",
+        "parameters": [
+          {
+            "name": "account_admin",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/account_admin_update"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/account_admin_update"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "schema": {
+              "$ref": "#/definitions/method_not_allowed_error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -9422,6 +9463,23 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "contact_info": {
+                  "type": "object",
+                  "properties": {
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             },
@@ -9573,6 +9631,14 @@
         },
         "additional_info": {
           "type": "object"
+        }
+      }
+    },
+    "method_not_allowed_error": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
         }
       }
     },
@@ -18231,6 +18297,33 @@
             "type": "string",
             "format": "date-time"
           }
+        }
+      }
+    },
+    "account_admin_update": {
+      "type": "object",
+      "required": [
+        "first_name",
+        "last_name",
+        "email"
+      ],
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "description": "First name of the account's primary contact"
+        },
+        "last_name": {
+          "type": "string",
+          "description": "Last name of the account's primary contact"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "email of account's primary contact"
+        },
+        "phone": {
+          "type": "string",
+          "description": "phone number of account's primary contact"
         }
       }
     }

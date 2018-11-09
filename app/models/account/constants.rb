@@ -229,4 +229,6 @@ class Account < ActiveRecord::Base
     :sandbox => 2
   }
 
+  CONTACT_DATA = [:first_name, :last_name, :email, :phone].freeze
+
 end
