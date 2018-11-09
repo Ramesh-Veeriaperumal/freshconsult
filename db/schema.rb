@@ -4320,6 +4320,9 @@ ActiveRecord::Schema.define(version: 20181022133027) do
     t.integer  "rule_type"
     t.boolean  "active"
     t.integer  "position"
+    t.text     "condition_data"
+    t.boolean  "outdated"
+    t.integer  "last_updated_by",  :limit => 8
   end
 
   add_index "va_rules", ["account_id", "rule_type"], :name => "index_va_rules_on_account_id_and_rule_type"

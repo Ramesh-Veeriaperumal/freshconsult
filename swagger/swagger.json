@@ -9048,11 +9048,12 @@
         "tags": [
           "business_hours"
         ],
+
         "responses": {
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/business_hours"
+                  "$ref": "#/definitions/business_hours"
             }
           },
           "400": {
@@ -9155,6 +9156,151 @@
             "schema": {
               "$ref": "#/definitions/method_not_allowed_error"
             }
+          }
+        }
+      }
+    },
+    "/automations/{rule_type}/rules": {
+      "get": {
+        "tags": [
+          "automation rules"
+        ],
+        "summary": "List all",
+        "type": "object",
+        "properties": {
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/automation_rule_response"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/definitions/meta"
+              },
+              {
+                "properties": {
+                  "cascading_rules": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "automation rules"
+        ],
+        "description": "Create rule",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/automation_rule_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/automation_rule_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "rule not found"
+          }
+        }
+      }
+    },
+    "/automations/{rule_type}/rules/{id}": {
+      "get": {
+        "tags": [
+          "automation rules"
+        ],
+        "summary": "Show rule",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/automation_rule_response"
+            }
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "automation rules"
+        ],
+        "summary": "Delete rule",
+        "description": "Destroys the rule, will not be able to restore",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "automation rules"
+        ],
+        "summary": "Update rule",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/automation_rule_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/automation_rule_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Rule not found"
           }
         }
       }
@@ -11639,6 +11785,14 @@
         }
       ]
     },
+    "automation_rule_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/automation_rule"
+        }
+      ]
+    },
     "trial_subscription_create": {
       "type": "object",
       "properties": {
@@ -14106,6 +14260,157 @@
         "event"
       ]
     },
+    "automation_rule": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "position": {
+          "type": "integer"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "performer": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "members": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field_name": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "conditions": {
+          "type": "object",
+          "properties": {
+            "condition_set_1": {
+              "type": "object",
+              "properties": {
+                "match_type": {
+                  "type": "string",
+                  "enum": [
+                    "all",
+                    "any"
+                  ]
+                },
+                "ticket/contact/company": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "field_name": {
+                        "type": "string"
+                      },
+                      "operator": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "operator": {
+              "type": "string",
+              "enum": [
+                "and",
+                "or"
+              ]
+            },
+            "condition_set_2": {
+              "type": "object",
+              "properties": {
+                "match_type": {
+                  "type": "string",
+                  "enum": [
+                    "all",
+                    "any"
+                  ]
+                },
+                "ticket/contact/company": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "field_name": {
+                        "type": "string"
+                      },
+                      "operator": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field_name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "name",
+        "conditions",
+        "actions"
+      ]
+    },
+    "automation_rule_common_response": {
+      "type": "object",
+      "properties": {
+        "affected_tickets_count": {
+          "type": "integer"
+        },
+        "outdated": {
+          "type": "boolean"
+        },
+        "last_updated_by": {
+          "type": "integer"
+        }
+      }
+    },
     "meta": {
       "type": "object",
       "title": "meta",
@@ -16154,6 +16459,20 @@
       "allOf": [
         {
           "$ref": "#/definitions/rule"
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "automation_rule_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/automation_rule"
+        },
+        {
+          "$ref": "#/definitions/automation_rule_common_response"
         },
         {
           "$ref": "#/definitions/extension_generic"

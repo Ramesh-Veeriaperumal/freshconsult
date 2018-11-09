@@ -1,0 +1,5 @@
+type: object
+allOf:
+  - $ref: '#/definitions/resource/automation_rule'
+  - $ref: '#/definitions/resource/automation_rule_common'
+  - $ref: '#/definitions/extension_generic'

@@ -158,6 +158,9 @@ feature_usage_metrics:
 sandbox_merge_input:
   $ref: './request/sandboxes/merge.yaml'
 
+automation_rule_input:
+  $ref: ./request/admin/automation_rule.yaml
+
 account_cancellation_request:
   $ref: './request/accounts/cancel.yaml'
     
@@ -307,10 +310,14 @@ todo_details:
   $ref: ./resource/todo.yaml
 rule:
   $ref: ./resource/rule.yaml
+automation_rule:
+  $ref: ./resource/automation_rule.yaml
 
 # RESPONSE
 meta:
   $ref: './response/meta.yaml'
+automation_rule_meta:
+  $ref: './resource/automation_rule_meta'
 ner_api_data:
   $ref: './resource/ner_api_data.yaml'
 conversations_show:
@@ -540,6 +547,9 @@ advanced_ticketing_create:
   $ref: ./request/advanced_ticketing/create.yaml
 advanced_ticketing_insights:
   $ref: ./response/advanced_ticketing/insights.yaml
+
+automation_rule_response:
+  $ref: ./response/admin/automation_rule.yaml
 
 #Help Widget
 help_widget_index:
