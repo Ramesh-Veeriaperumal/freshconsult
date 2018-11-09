@@ -24,7 +24,7 @@ class Product < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_fragment_caches } , on: :create
   after_commit ->(obj) { obj.clear_fragment_caches } , on: :destroy
   after_commit :clear_fragment_caches, on: :update, :if => :pdt_name_changed?
-  after_commit :unset_product_field, :update_dashboard_widgets, on: :destroy 
+  after_commit :unset_product_field, :update_dashboard_widgets, :update_help_widgets, on: :destroy 
 
   belongs_to_account
   has_one    :portal               , :dependent => :destroy
@@ -34,6 +34,7 @@ class Product < ActiveRecord::Base
   has_many   :twitter_handles      , :class_name => 'Social::TwitterHandle', :dependent => :nullify
   has_many   :facebook_pages       , :class_name => 'Social::FacebookPage' , :dependent => :nullify
   has_many   :ecommerce_accounts   , :class_name => 'Ecommerce::Account', :dependent => :nullify
+  has_many   :help_widgets
 
   has_one    :bot, class_name: 'Bot', dependent: :destroy
 
@@ -89,6 +90,13 @@ class Product < ActiveRecord::Base
     product_bot_info = { name: name, portal_enabled: portal.present? }
     product_bot_info = portal.bot_info.merge!(product_bot_info) if portal
     product_bot_info
+  end
+
+  def update_help_widgets # To trigger callbacks
+    return unless account.help_widget_enabled?
+    help_widgets.each do |h|
+      h.update_attributes(:product_id => nil)
+    end
   end
 
   private

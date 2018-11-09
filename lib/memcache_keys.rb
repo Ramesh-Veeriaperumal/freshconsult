@@ -221,6 +221,8 @@ module MemcacheKeys
   
   ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
 
+  HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"
+
   class << self
 
     include MemcacheReadWriteMethods

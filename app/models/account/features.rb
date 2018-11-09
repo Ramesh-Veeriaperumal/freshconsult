@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
                  :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :count_service_es_reads, :mint_portal_applicable, 
                  :old_link_back_url_validation, :shopify_actions, :db_to_bitmap_features_migration,
                  :denormalized_select_for_update, :installed_app_publish, :disable_banners, :quoted_text_parsing_feature, 
-                 :product_central_publish, :redis_picklist_id]
+                 :product_central_publish, :redis_picklist_id, :help_widget]
   
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
@@ -284,5 +284,9 @@ class Account < ActiveRecord::Base
 
   def revoke_support_bot?
     redis_key_exists?(REVOKE_SUPPORT_BOT) || (Rails.env.production? && PODS_FOR_BOT.exclude?(PodConfig['CURRENT_POD']))
+  end
+
+  def help_widget_enabled?
+    launched?(:help_widget)
   end
 end

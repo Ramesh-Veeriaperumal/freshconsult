@@ -222,7 +222,8 @@ module FreshdeskCore::Model
                         "contact_notes",
                         "contact_note_bodies",
                         "company_notes",
-                        "company_note_bodies"
+                        "company_note_bodies",
+                        "help_widgets"
                     ]
 
   STATUS = {
@@ -256,6 +257,7 @@ module FreshdeskCore::Model
     delete_sitemap(account)
     remove_from_spam_detection_service(account)
     delete_canned_forms(account)
+    delete_widget_data_from_s3(account)
     delete_data_from_tables(account.id)
     account.destroy
   end
@@ -470,5 +472,19 @@ module FreshdeskCore::Model
     # This method will trigger destroy callback and delete forms in service side.
     def delete_canned_forms(account)
       account.canned_forms.each(&:destroy) if account.canned_forms_enabled?
+    end
+
+    def delete_widget_data_from_s3(account)
+      return unless account.help_widget_enabled?
+      widget_ids = account.help_widgets.pluck(:id)
+      s3_keys = widget_ids.map { |hid|  
+        [
+          HelpWidget::FILE_PATH % { :widget_id => hid }, 
+          HelpWidget::ZERO_BYTE_FILE_PATH % { :widget_id => hid }
+        ]
+      }.flatten
+      AwsWrapper::S3.batch_delete(S3_CONFIG[:help_widget_bucket], s3_keys)
+    rescue Exception => e
+      Rails.logger.info "Unable to delete widget data from S3. #{e.message}"
     end
 end

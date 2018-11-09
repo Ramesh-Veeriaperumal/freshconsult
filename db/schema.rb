@@ -2112,6 +2112,18 @@ ActiveRecord::Schema.define(:version => 20181015074036) do
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
 
+  create_table "help_widgets", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.integer  "product_id", :limit => 8
+    t.string   "name"
+    t.text     "settings"
+    t.boolean  "active",                  :default => true
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
+  end
+
+  add_index "help_widgets", ["account_id", "active"], :name => "index_help_widgets_on_account_id_and_active"
+
   create_table "helpdesk_accesses", :force => true do |t|
     t.string   "accessible_type"
     t.integer  "accessible_id",   :limit => 8
