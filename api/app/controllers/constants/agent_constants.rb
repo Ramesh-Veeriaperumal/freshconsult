@@ -1,7 +1,7 @@
 module AgentConstants
   LOAD_OBJECT_EXCEPT = %i[create_multiple complete_gdpr_acceptance enable_undo_send disable_undo_send].freeze
   STATES = %w(occasional fulltime).freeze
-  INDEX_FIELDS = %w(state email phone mobile only).freeze
+  INDEX_FIELDS = %w[state email phone mobile only type].freeze
   UPDATE_ARRAY_FIELDS = %w(group_ids role_ids).freeze
   UPDATE_FIELDS = %w(name email phone mobile time_zone job_title language signature ticket_scope occasional shortcuts_enabled).freeze | UPDATE_ARRAY_FIELDS | [ticket_assignment: [:available]].freeze
   CREATE_MULTIPLE_FIELDS = UPDATE_FIELDS

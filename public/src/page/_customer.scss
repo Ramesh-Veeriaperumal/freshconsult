@@ -96,6 +96,12 @@
 		margin-top:10px;
 		margin-bottom:5px;
 	}
+	.agent_type {
+		margin-bottom: 0;
+		.radio.inline {
+			margin: 0 10px 10px 0;
+		}
+	}
 	.seperator{
 		padding-top:40px;
 		@include margin-left(0);
