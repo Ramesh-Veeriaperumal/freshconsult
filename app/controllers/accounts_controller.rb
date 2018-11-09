@@ -5,7 +5,6 @@ class AccountsController < ApplicationController
   include Redis::OthersRedis
   include Redis::TicketsRedis
   include Redis::DisplayIdRedis
-  include MixpanelWrapper 
   include Onboarding::OnboardingRedisMethods
 
   layout :choose_layout 
@@ -447,7 +446,6 @@ class AccountsController < ApplicationController
           params[:signup]["#{param}_#{key}"] = value
         end
       end
-      
       params[:signup][:locale] = assign_language || http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
       params[:signup][:org_id] = params[:org_id]
@@ -484,75 +482,20 @@ class AccountsController < ApplicationController
     end  
 
     def perform_account_cancel(feedback)
-      update_crm
-      deliver_mail(feedback)
-      create_deleted_customers_info
+      current_account.update_crm
+      current_account.send_account_deleted_email(feedback)
+      current_account.create_deleted_customers_info
 
-      if current_account.subscription.active? or current_account.subscription_payments.present?
-        add_churn
-        schedule_cleanup
+      if current_account.paid_account?
+        current_account.add_churn
+        current_account.schedule_cleanup
       else
-        clear_account_data
+        current_account.clear_account_data
       end
 
       redirect_to "#{AppConfig['app_website']}"
     end
-
-    def update_crm
-      if Rails.env.production?
-        CRMApp::Freshsales::DeletedCustomer.perform_async({ 
-          account_id: current_account.id 
-        })
-      end
-    end      
-
-    def deliver_mail(feedback)
-      SubscriptionNotifier.account_deleted(current_account, 
-                                  feedback) if Rails.env.production?
-    end
     
-    def create_deleted_customers_info
-      DeletedCustomers.create(customer_details) if current_account.subscription.active?
-    end
-
-    def add_churn
-      Subscriptions::AddDeletedEvent.perform_async({ :account_id => current_account.id })
-    end   
-
-    def schedule_cleanup
-      current_account.subscription.update_attributes(:state => "suspended")
-      jid = AccountCleanup::DeleteAccount.perform_in(14.days.from_now, {:account_id => current_account.id})
-      dc = DeletedCustomers.find_by_account_id(current_account.id)
-      dc.update_attributes({:job_id => jid}) if dc
-    end
-
-    def clear_account_data
-      current_account.subscription.update_attributes(:state => "suspended")
-      AccountCleanup::DeleteAccount.perform_async({:account_id => current_account.id})
-      ::MixpanelWrapper.send_to_mixpanel(self.class.name)
-    end
-
-    def customer_details
-      {
-        :full_domain => "#{current_account.name}(#{current_account.full_domain})",
-        :account_id => current_account.id,
-        :admin_name => current_account.admin_first_name,
-        :admin_email => current_account.admin_email,
-        :status => FreshdeskCore::Model::STATUS[:scheduled],
-        :account_info => account_info
-      }
-    end
-
-    def account_info
-      { 
-        :plan => current_account.subscription.subscription_plan_id,
-        :agents_count => current_account.agents.count,
-        :tickets_count => current_account.tickets.count,
-        :user_count => current_account.contacts.count,
-        :account_created_on => current_account.created_at 
-      }
-    end      
-
     def enable_restricted_helpdesk action
       restricted_helpdesk = @account.restricted_helpdesk?
       if (action == "create" && !restricted_helpdesk &&  @account.features?(:twitter_signin))

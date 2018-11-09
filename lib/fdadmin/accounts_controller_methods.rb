@@ -169,4 +169,11 @@ module Fdadmin::AccountsControllerMethods
   def trigger_enable_old_ui_action
     InternalService::FreshopsOperations.perform_async(params)
   end
+	
+	def trigger_stop_account_cancellation_action
+		account = Account.find(params[:account_id])
+		account.make_current
+		account.kill_account_cancellation_request_job
+	end
+
 end

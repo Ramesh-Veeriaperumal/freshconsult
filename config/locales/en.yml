@@ -12323,6 +12323,15 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     enable_mint_success: "Yay! Mint has successfully been enabled for all agents."
     enable_mint_success_info: To disable the old Freshdesk completely, visit the admin tab in Mint
     enable_mint_error: Mint has already been enabled for all agents. Refresh to see the latest settings.
+  account_cancelled:
+    email:
+      subject: "%{account_full_domain} has been cancelled"
+      header: "Account Cancelled"
+      body: "<div>Hi %{user_name},</div><br/><div>This email is a confirmation that your Freshdesk account has been cancelled. We’re sorry to see you go.</div><br/>
+           <div>If you have feedback on how we can provide a better experience, please write to us at %{support_email}. We’d love to hear from you. </div><br/>"
+  email_content:
+    regards: "Regards,"
+    freshdesk_team: "Freshdesk team."
   freshchat:
     admin:
       title_text: 'Freshchat'
