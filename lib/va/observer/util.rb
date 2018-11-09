@@ -30,8 +30,7 @@ module Va::Observer::Util
     end
 
     def filter_observer_events(queue_events=true, inline=false)
-      observer_changes = @model_changes.inject({}) do |filtered, (change_key, change_value)| 
-                              filter_event filtered, change_key, change_value  end
+      observer_changes = filter_observer_changes
       Va::Logger::Automation.log "Triggered object=#{self.class}, id=#{self.id}"
       Va::Logger::Automation.log("model_changes=#{@model_changes.inspect}, observer_changes_blank=#{observer_changes.blank?}, skip_observer=not_queue_events=#{!queue_events}") if observer_changes.blank? || !queue_events
       return observer_changes unless queue_events
@@ -49,12 +48,17 @@ module Va::Observer::Util
 
       changelist
     end
-
-    def filter_event filtered, change_key, change_value
-      ( TICKET_EVENTS.include?( change_key ) ||
-        Account.current.event_flexifields_with_ticket_fields_from_cache.
-                                          map(&:flexifield_name).map(&:to_sym).include?(change_key)
-          ) ? filtered.merge!({change_key => change_value}) : filtered
+    
+    def filter_observer_changes
+      observer_changes = {}
+      filter_changes = proc do |event|
+        event = event.to_sym
+        observer_changes[event] = @model_changes[event] if @model_changes.key? event
+      end
+      TICKET_EVENTS.each(&filter_changes)
+      Account.current.event_flexifields_with_ticket_fields_from_cache.map(&:flexifield_name).each(&filter_changes)
+      Va::Logger::Automation.log "Observer changes matching the ticket and event flexifields #{observer_changes.inspect}"
+      observer_changes
     end
 
     def send_events observer_changes, inline = false
