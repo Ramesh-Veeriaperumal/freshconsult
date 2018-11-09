@@ -105,12 +105,7 @@ module Ember
 
       draft_attachments = @delegator.draft_attachments
       @item.attachments = @item.attachments + draft_attachments if draft_attachments
-
-      if @item.save_note
-        tweet_and_render
-      else
-        render_response(false)
-      end
+      handle_twitter_conversations
     end
 
     def reply_forward_template
@@ -405,11 +400,25 @@ module Ember
         render template_name, location: safe_send(location_url, item_id), status: 201
       end
 
-      def tweet_and_render
-        twitter_handle_id = params[:twitter_handle_id]
-        args = { ticket_id: @ticket.id, note_id: @item.id, tweet_type: @tweet_type, twitter_handle_id: twitter_handle_id }
-        Social::TwitterReplyWorker.perform_async(args)
-        render_201_with_location(template_name: 'ember/conversations/tweet')
+      def handle_twitter_conversations
+        if @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
+          reply_handle = current_account.twitter_handles.find_by_id(@twitter_handle_id)
+          stream_id = reply_handle.default_stream_id
+          tweet_id = random_tweet_id
+          @item.build_tweet(tweet_id: tweet_id,
+                            tweet_type: Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm],
+                            twitter_handle_id: @twitter_handle_id, stream_id: stream_id)
+        end
+        if @item.save_note
+          if @tweet_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
+            Social::TwitterReplyWorker.perform_async(ticket_id: @ticket.id, note_id: @item.id,
+                                                     tweet_type: @tweet_type,
+                                                     twitter_handle_id: @twitter_handle_id)
+          end
+          render_201_with_location(template_name: 'ember/conversations/tweet')
+        else
+          render_response(false)
+        end
       end
 
       def template_content

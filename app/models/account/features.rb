@@ -12,7 +12,7 @@ class Account < ActiveRecord::Base
                    :dependent_field_validation, :post_central_publish, :encode_emoji_subject, :note_central_publish,
                    :time_sheets_central_publish, :twitter_common_redirect, :canned_forms,
                    :euc_migrated_twitter, :new_ticket_recieved_metric,
-                   :dashboard_announcement_central_publish, :timeline, :twitter_microservice,
+                   :dashboard_announcement_central_publish, :timeline,
                    :twitter_handle_publisher, :count_service_es_writes, :count_service_es_reads, :sso_login_expiry_limitation,
                    :undo_send, :count_service_es_writes, :old_link_back_url_validation, :shopify_actions, 
                    :stop_contacts_count_query, :db_to_bitmap_features_migration, :denormalized_select_for_update,

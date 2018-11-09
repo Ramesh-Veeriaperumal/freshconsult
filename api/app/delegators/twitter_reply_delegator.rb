@@ -12,7 +12,8 @@ class TwitterReplyDelegator < ConversationBaseDelegator
 
   def validate_twitter_handle
     twitter_handle = Account.current.twitter_handles.where(id: @twitter_handle_id).first
-    errors[:twitter_handle_id] << :"is invalid" unless twitter_handle
+    return errors[:twitter_handle_id] << :"is invalid" unless twitter_handle
+    errors[:twitter_handle_id] << :"requires re-authorization" if twitter_handle.reauth_required?
   end
 
   def validate_agent_id

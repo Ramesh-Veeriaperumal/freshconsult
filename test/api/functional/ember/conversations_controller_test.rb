@@ -736,6 +736,26 @@ module Ember
       match_json([bad_request_error_pattern('ticket_id', :not_a_twitter_ticket)])
     end
 
+    def test_tweet_reply_with_invalid_handle
+      ticket = create_twitter_ticket
+      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, body: Faker::Lorem.sentence[0..130],
+                                    tweet_type: 'dm',
+                                    twitter_handle_id: 123)
+      assert_response 400
+      match_json([bad_request_error_pattern('twitter_handle_id', 'is invalid')])
+    end
+
+    def test_tweet_reply_with_requth
+      ticket = create_twitter_ticket
+      Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(true)
+      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, body: Faker::Lorem.sentence[0..130],
+                                    tweet_type: 'dm',
+                                    twitter_handle_id: 1)
+      assert_response 400
+      match_json([bad_request_error_pattern('twitter_handle_id', 'requires re-authorization')])
+      Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(false)
+    end
+
     def test_twitter_reply_to_tweet_ticket
       Sidekiq::Testing.inline! do
         with_twitter_update_stubbed do
@@ -791,33 +811,6 @@ module Ember
       @account.rollback(:twitter_mention_outgoing_attachment)
     end
 
-    def test_show_error_message_on_twitter_reply_failure
-      Sidekiq::Testing.inline! do
-        with_twitter_update_stubbed do
-
-          ticket = create_twitter_ticket
-
-          @account = Account.current
-          Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(true)
-          Social::TwitterReplyWorker.any_instance.stubs(:push_data_to_service).returns(nil)
-          Social::TwitterReplyWorker.any_instance.expects(:push_data_to_service).once
-          params_hash = {
-            body: Faker::Lorem.sentence[0..130],
-            tweet_type: 'mention',
-            twitter_handle_id: @twitter_handle.id
-          }
-          post :tweet, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
-          assert_response 201
-          latest_note = Helpdesk::Note.last
-          schema_less_note = latest_note.schema_less_note
-          assert_equal schema_less_note.note_properties[:errors][:twitter].present?, true
-        end
-      end
-    ensure
-      Social::TwitterHandle.any_instance.unstub(:reauth_required?)
-      Social::TwitterReplyWorker.any_instance.unstub(:push_data_to_service)
-    end
-
     def test_twitter_reply_to_tweet_ticket_more_than_280_limit
       with_twitter_update_stubbed do
 
@@ -834,7 +827,6 @@ module Ember
         assert_response 400
       end
     end
-
 
     def test_twitter_dm_reply_to_tweet_ticket
       ticket = create_twitter_ticket
@@ -862,7 +854,7 @@ module Ember
           latest_note = Helpdesk::Note.last
           match_json(private_note_pattern(params_hash, latest_note))
           tweet = latest_note.tweet
-          assert_equal tweet.tweet_id, dm_reply_params[:id]
+          assert_equal tweet.tweet_id < 0, true,"Tweet id should be less than zero"
           assert_equal tweet.tweet_type, params_hash[:tweet_type]
         end
       end
@@ -1893,7 +1885,6 @@ module Ember
       end
 
       def with_twitter_dm_stubbed(sample_dm_reply)
-        Account.any_instance.stubs(:twitter_microservice_enabled?).returns(false)
         Twitter::REST::Client.any_instance.stubs(:create_direct_message).returns(sample_dm_reply)
         unless GNIP_ENABLED
           Social::DynamoHelper.stubs(:insert).returns({})
@@ -1902,7 +1893,7 @@ module Ember
 
         yield
 
-        Account.any_instance.unstub(:twitter_microservice_enabled?)
+
         Twitter::REST::Client.any_instance.unstub(:create_direct_message)
         unless GNIP_ENABLED
           Social::DynamoHelper.unstub(:insert)

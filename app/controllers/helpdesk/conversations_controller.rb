@@ -111,12 +111,25 @@ class Helpdesk::ConversationsController < ApplicationController
     tweet_text = params[:helpdesk_note][:note_body_attributes][:body].strip
     twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : 'mention'
     twitter_handle_id = params[:twitter_handle_id]
-    
     error_message, @tweet_body = get_tweet_text(twt_type, @parent, tweet_text)
+    reply_handle_id = twitter_handle_id || @parent.fetch_twitter_handle
+    reply_handle = current_account.twitter_handles.find_by_id(reply_handle_id)
+    if reply_handle.blank?
+      error_message = (I18n.t('social.streams.twitter.feeds_blank')).to_s
+    elsif reply_handle.reauth_required?
+      error_message = (I18n.t('social.streams.twitter.handle_auth_error')).to_s
+    end
     if error_message.blank?
+      if twt_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm]
+        stream_id = reply_handle.default_stream_id
+        tweet_id = random_tweet_id
+        @item.build_tweet(tweet_id: tweet_id,
+                          tweet_type:  Social::Twitter::Constants::TWITTER_NOTE_TYPE[:dm],
+                          twitter_handle_id: reply_handle_id, stream_id: stream_id)
+      end
       if @item.save_note
         args = { ticket_id: @parent.id, note_id: @item.id, tweet_type: twt_type, twitter_handle_id: twitter_handle_id }
-        Social::TwitterReplyWorker.perform_async(args)
+        Social::TwitterReplyWorker.perform_async(args) if twt_type == Social::Twitter::Constants::TWITTER_NOTE_TYPE[:mention]
         flash.now[:notice] = t(:'flash.tickets.reply.success')
         process_and_redirect
       else
