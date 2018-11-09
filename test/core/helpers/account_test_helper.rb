@@ -20,6 +20,7 @@ module AccountTestHelper
   end
 
   def create_new_account(domain = "localhost", user_email = Helpdesk::EMAIL[:sample_email])
+    Account.reset_current_account
     signup = Signup.new(  
       :account_name => 'Test Account',
       :account_domain => domain,
@@ -29,7 +30,8 @@ module AccountTestHelper
       :user_password => 'test1234',
       :user_password_confirmation => 'test1234', 
       :user_email => user_email,
-      :user_helpdesk_agent => true
+      :user_helpdesk_agent => true,
+      :new_plan_test => true
     )
     signup.save
     
@@ -89,4 +91,21 @@ module AccountTestHelper
     }
   end
 
+  def central_publish_account_post(account)
+    {
+      id: account.id, 
+      name: account.name, 
+      full_domain: account.full_domain, 
+      time_zone: account.time_zone, 
+      helpdesk_name: account.helpdesk_name, 
+      sso_enabled: account.sso_enabled, 
+      sso_options: account.sso_options, 
+      ssl_enabled: account.ssl_enabled,
+      reputation: account.reputation,
+      account_type: { id: account.account_type, name: Account::ACCOUNT_TYPES.key(account.account_type) },
+      features: account.features_list,
+      created_at: account.created_at.try(:utc).try(:iso8601),
+      updated_at: account.updated_at.try(:utc).try(:iso8601)
+    }
+  end
 end
