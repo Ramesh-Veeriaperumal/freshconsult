@@ -1,0 +1,13 @@
+type: array
+items:
+  type: object
+  properties:
+    id:
+      type: integer
+      description: Id of the widget
+    product_id:
+      type: integer
+      description: Id of the product which the widget is associated with.
+    name:
+      type: string
+      description: Name of the widget

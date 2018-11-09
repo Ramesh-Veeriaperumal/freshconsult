@@ -11,6 +11,13 @@ class TicketFieldDecorator < ApiDecorator
   # Not including default_agent and default_group because its choices are not needed for private API
   DEFAULT_FIELDS = %w[default_priority default_source default_status default_ticket_type default_product default_skill].freeze
 
+  FIELD_NAME_MAPPINGS = {
+    'product': 'product_id',
+    'group': 'group_id',
+    'agent': 'responder_id',
+    'ticket_type': 'type'
+  }
+
   def portal_cc
     record.field_options.try(:[], 'portalcc')
   end
@@ -29,6 +36,11 @@ class TicketFieldDecorator < ApiDecorator
 
   def name
     default ? record.name : TicketDecorator.display_name(record.name)
+  end
+
+  # use the below function in case the client does not do the field name mapping
+  def validatable_field_name 
+    default ? (FIELD_NAME_MAPPINGS[record.name.to_sym] || record.name) : TicketDecorator.display_name(record.name)
   end
 
   def nested_ticket_field_name
@@ -83,6 +95,41 @@ class TicketFieldDecorator < ApiDecorator
                        else
                          []
                        end
+  end
+
+  def default_agent_choices
+    choices_by_name_id Account.current.agents_details_from_cache
+  end
+
+  def default_group_choices
+    choices_by_name_id Account.current.groups_from_cache
+  end
+
+  def to_widget_hash
+    response_hash = {
+      id: id,
+      name: validatable_field_name,
+      label: label,
+      description: description,
+      position: position,
+      required_for_closure: required_for_closure,
+      required_for_agents: required,
+      type: field_type,
+      default: default,
+      customers_can_edit: editable_in_portal,
+      label_for_customers: label_in_portal,
+      required_for_customers: required_in_portal,
+      displayed_to_customers: visible_in_portal,
+      belongs_to_section: belongs_to_section?,
+      created_at: created_at.try(:utc),
+      updated_at: updated_at.try(:utc)
+    }
+    response_hash.merge!(choices: default_agent_choices) if field_type == 'default_agent' and default_agent_choices.present?
+    response_hash.merge!(choices: default_group_choices) if field_type == 'default_group' and default_group_choices.present?
+    response_hash.merge!(choices: ticket_field_choices_by_id) if ticket_field_choices_by_id.present?
+    response_hash.merge!(portal_cc: portal_cc) if default_requester?
+    response_hash.merge!(portal_cc_to: portalcc_to) if default_requester?
+    response_hash
   end
 
   private

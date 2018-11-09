@@ -1,0 +1,37 @@
+get:
+  tags: [List of Help widgets]
+  description: Listing all widgets associated to the account
+  summary: List all
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/help_widget_index'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+post:
+  tags: [help widget creation]
+  description: Creates new widget with a name  and default settings
+  summary: Create widget
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/help_widget_create_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/help_widget_create'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

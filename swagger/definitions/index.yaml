@@ -536,6 +536,22 @@ advanced_ticketing_create:
 advanced_ticketing_insights:
   $ref: ./response/advanced_ticketing/insights.yaml
 
+#Help Widget
+help_widget_index:
+  $ref: ./response/help_widgets/index.yaml
+help_widget_create_input:
+  $ref: ./request/help_widgets/create.yaml
+help_widget_create:
+  $ref: ./response/help_widgets/show.yaml
+help_widget_show:
+  $ref: ./request/help_widgets/show.yaml
+help_widget_show_response:
+  $ref: ./response/help_widgets/show.yaml
+help_widget_update:
+  $ref: ./request/help_widgets/update.yaml
+help_widget_update_response:
+  $ref: ./response/help_widgets/show.yaml
+
 #Groups Private API
 group_request:
   $ref: ./definitions/request/groups/private_group_request.yaml

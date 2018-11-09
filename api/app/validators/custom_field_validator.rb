@@ -196,14 +196,14 @@ class CustomFieldValidator < ActiveModel::EachValidator
     def get_parent(values)
       ancestor = @custom_fields.detect { |x| x.id == @current_field.parent_id }
       parent = @current_field.level == 2 ? ancestor : @custom_fields.detect { |x| x.parent_id == @current_field.parent_id && x.level == 2 }
-      parent && ancestor ? { name: ancestor.name, value: values.try(:[], parent.name), ancestor_value: values.try(:[], ancestor.name), required: (ancestor.required || (ancestor.required_for_closure && @closure_status)) } : {}
+      parent && ancestor ? { name: ancestor.name, value: values.try(:[], parent.name), ancestor_value: values.try(:[], ancestor.name), required: (ancestor.required || (ancestor.required_for_closure && @closure_status)), required_in_portal: ancestor.required_in_portal } : {}
     end
 
     # required based on ticket field attribute or combination of status & ticket field attribute.
     def required_field?(record, values)
       # Should we have to raise exception or warn if current_field doen't respond to required_attribute?
       is_required = (@required_attribute && @current_field.safe_send(@required_attribute.to_sym)) || (@closure_status && @current_field.required_for_closure)
-      is_required ||= @parent[:required] if @parent.present?
+      is_required ||= @parent[@required_attribute.to_sym] if @parent.present?
       is_required = section_parent_present?(record, values) if is_required && section_field?
       is_required
     end

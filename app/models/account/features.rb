@@ -17,7 +17,8 @@ class Account < ActiveRecord::Base
                    :undo_send, :count_service_es_writes, :old_link_back_url_validation, :shopify_actions, 
                    :stop_contacts_count_query, :db_to_bitmap_features_migration, :denormalized_select_for_update,
                    :trial_subscription, :installed_app_publish, :disable_banners, :twitter_dm_outgoing_attachment, :twitter_mention_outgoing_attachment,
-                   :new_onboarding, :onboarding_inlinemanual, :skip_portal_cname_chk, :ner, :whitelist_supervisor_sla_limitation, :product_central_publish]
+                   :new_onboarding, :onboarding_inlinemanual, :skip_portal_cname_chk, :ner, :whitelist_supervisor_sla_limitation, :product_central_publish,
+                   :help_widget]
 
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   
@@ -294,5 +295,9 @@ class Account < ActiveRecord::Base
 
   def revoke_support_bot?
     redis_key_exists?(REVOKE_SUPPORT_BOT) || (Rails.env.production? && PODS_FOR_BOT.exclude?(PodConfig['CURRENT_POD']))
+  end
+
+  def help_widget_enabled?
+    launched?(:help_widget)
   end
 end

@@ -7,7 +7,7 @@ module DecoratorConcern
   }.freeze
   DECORATOR_METHOD_MAPPING = ACTION_MAPPING.each_with_object({}) { |(k, v), inverse| v.each { |e| inverse[e] = k } }
 
-  DECORATOR_NAME_REGEX = /Ember::|Pipe::|Channel::V2::|Channel::|ApiSearch::|Bot::/
+  DECORATOR_NAME_REGEX = /Ember::|Pipe::|Channel::V2::|Channel::|ApiSearch::|Bot::|Widget::/
 
   module ClassMethods
     attr_reader :decorator_method_mapping

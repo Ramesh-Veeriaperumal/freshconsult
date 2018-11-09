@@ -15,7 +15,7 @@ class TicketDelegator < BaseDelegator
                                 required_based_on_status: proc { |x| x.closure_status? },
                                 required_attribute: :required,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
-                              } }, unless: -> { property_update? || bulk_update? }
+                              } }, unless: -> { widget_ticket? || property_update? || bulk_update? }                         
   validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
                               {
                                 validatable_custom_fields: proc { |x| x.custom_fields_to_validate },
@@ -277,6 +277,10 @@ class TicketDelegator < BaseDelegator
   end
 
   private
+
+    def widget_ticket?
+      @ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:feedback_widget]
+    end
 
     def property_update?
       [:update_properties].include?(validation_context)

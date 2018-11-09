@@ -1,0 +1,41 @@
+# Whenever we change the Structure (add/modify/remove keys),
+# we will have to modify the CURRENT_VERSION constant in the controller
+JSON.generate(@items.map do |ticket_field|
+  response_hash = ticket_field.to_widget_hash
+  if ticket_field.field_type == 'nested_field'
+    nested_ticket_fields = ticket_field.nested_ticket_fields.map do |tf_nested_field|
+      {
+        id: tf_nested_field.id,
+        name: tf_nested_field.nested_ticket_field_name,
+        description: tf_nested_field.description,
+        label: tf_nested_field.label,
+        label_in_portal: tf_nested_field.label_in_portal,
+        level: tf_nested_field.level,
+        ticket_field_id: tf_nested_field.ticket_field_id,
+        created_at: tf_nested_field.created_at.try(:utc),
+        updated_at: tf_nested_field.updated_at.try(:utc)
+      }
+    end
+    response_hash.merge!(nested_ticket_fields: nested_ticket_fields)
+  end
+  if ticket_field.has_section?
+    sections =  ticket_field.picklist_values.map(&:section).compact.uniq.map do |section|
+      {
+        id: section.id,
+        label: section.label,
+        section_fields: section.section_fields.map do |sf|
+          if sf.ticket_field.editable_in_portal
+            {
+              id: sf.id,
+              position: sf.position,
+              ticket_field_id: sf.ticket_field_id
+            } 
+          end
+        end.compact,
+        picklist_mapping_ids: section.section_picklist_mappings.map(&:picklist_value_id)
+      }
+    end
+    response_hash.merge!(sections: sections)
+  end
+  response_hash
+end)

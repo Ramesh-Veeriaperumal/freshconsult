@@ -13041,3 +13041,13 @@ Yes, we can accomodate vegan meals. Regarding Labadee though, we can't customize
 Thanks,<br>
 Rebecca<br>
 Saul's support"
+  help_widget:
+    name: "Welcome to %{name}"
+    form_title: "Send us a message"
+    form_button_text: "Send message"
+    form_submit_message: "Thank you for your feedback"
+    message: "Welcome to support"
+    button_text: "Help"
+    untitled_widget: "Untitled widget %{count}"
+    invalid_components: "Invalid components hash with %{key}"
+    invalid_settings: "Invalid settings hash with %{key}"

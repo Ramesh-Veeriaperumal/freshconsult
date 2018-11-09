@@ -496,6 +496,16 @@
 /roles/bulk_update:
   $ref: ./roles/bulk_update.yaml
   
+# Help Widget
+/help_widgets:
+  $ref: ./help_widgets/index.yaml
+
+/help_widgets/{id}:
+  $ref: ./help_widgets/crud.yaml
+
+/help_widgets/update:
+  $ref: ./help_widgets/update.yaml
+
 # Business Hours
 /business_hours:
   $ref: ./business_hours.yaml

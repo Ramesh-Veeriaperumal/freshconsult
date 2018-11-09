@@ -235,6 +235,9 @@ Helpkit::Application.routes.draw do
         end
       end
     end
+
+    resources :help_widgets, controller: 'help_widgets'
+    
   end
 
   ember_routes = proc do
@@ -669,6 +672,11 @@ Helpkit::Application.routes.draw do
     match '/bots/:id/training_completed', to: 'channel/bot/services#training_completed', via: :post
   end
 
+  widget_routes = proc do
+    resources :tickets, controller: 'widget/tickets', only: [:create]
+    resources :ticket_fields, controller: 'widget/ticket_fields', only: [:index]
+  end
+
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do
     scope '/v2', &api_routes # "/api/v2/.."
     scope '/_', defaults: { version: 'private', format: 'json' }, constraints: { format: /(json|$^)/ } do
@@ -683,6 +691,9 @@ Helpkit::Application.routes.draw do
       scope '', &channel_routes # "/api/v2/.."
       scope '', &api_routes # "/api/v2/.."
       scope '/v2', &channel_v2_routes # "/api/channel/v2/.."
+    end
+    scope '/widget', defaults: { version: 'widget', format: 'json' }, constraints: { format: /(json|$^)/ } do
+      scope '', &widget_routes # "/api/widget/.."
     end
     constraints ApiConstraints.new(version: 2), &api_routes # "/api/.." with Accept Header
     scope '', &api_routes

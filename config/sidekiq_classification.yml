@@ -200,6 +200,7 @@
     - freshid_agents_migration
     - run_rake_task
     - register_freshconnect
+    - widget_upload_config
   :free:
     - free_sla
     - free_supervisor

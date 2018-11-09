@@ -69,5 +69,9 @@ if Rails.env.test?
     factory :quest, :class => Quest do
       name "TestingQuest"
     end
+
+    factory :help_widget, :class => HelpWidget do
+      name "TestingHelpWidget"
+    end
   end
 end

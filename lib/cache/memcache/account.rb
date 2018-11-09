@@ -53,6 +53,11 @@ module Cache::Memcache::Account
     end
   end
 
+  def help_widget_from_cache(widget_id)
+    key = HELP_WIDGETS % { :account_id => self.id, :id => widget_id }
+    MemcacheKeys.fetch(key) { self.help_widgets.active.find_by_id(widget_id) }
+  end
+
   def clear_required_ticket_fields_cache
     key = ACCOUNT_REQUIRED_TICKET_FIELDS % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)

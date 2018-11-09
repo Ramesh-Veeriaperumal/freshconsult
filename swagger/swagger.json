@@ -8885,6 +8885,163 @@
         }
       }
     },
+    "/help_widgets": {
+      "get": {
+        "tags": [
+          "List of Help widgets"
+        ],
+        "description": "Listing all widgets associated to the account",
+        "summary": "List all",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/help_widget_index"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "help widget creation"
+        ],
+        "description": "Creates new widget with a name  and default settings",
+        "summary": "Create widget",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/help_widget_create_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/help_widget_create"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/help_widgets/{id}": {
+      "get": {
+        "tags": [
+          "Help Widget Show"
+        ],
+        "description": "Responses with default setting of the help widget",
+        "summary": "Widget settings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/help_widget_show_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Help Widget",
+        "tags": [
+          "Help Widget Delete"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "format": "int64",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/help_widgets/update": {
+      "put": {
+        "tags": [
+          "Widget settings update"
+        ],
+        "description": "Update the settings of the Widget",
+        "summary": "Update for settings",
+        "parameters": [
+          {
+            "name": "settings",
+            "in": "body",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/help_widget_update"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/help_widget_update_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/business_hours": {
       "get": {
         "summary": "Business Hours",
@@ -9067,6 +9224,9 @@
           "type": "object",
           "properties": {
             "csrf_token": {
+              "type": "string"
+            },
+            "iris_notification_url": {
               "type": "string"
             },
             "collision_url": {
@@ -17444,6 +17604,508 @@
           "properties": {
             "shared_ownership_tickets_count": {
               "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "help_widget_index": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Id of the widget"
+          },
+          "product_id": {
+            "type": "integer",
+            "description": "Id of the product which the widget is associated with."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the widget"
+          }
+        }
+      }
+    },
+    "help_widget_create_input": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the widget"
+        },
+        "product_id": {
+          "type": "integer",
+          "description": "Id of the product for which widget will be created"
+        },
+        "settings": {
+          "properties": {
+            "components": {
+              "type": "object",
+              "properties": {
+                "contact_form": {
+                  "type": "boolean",
+                  "description": "Contact form is On or Off On - true / Off - false"
+                },
+                "suggestion": {
+                  "type": "boolean",
+                  "description": "Solution articles is On or Off On - true / Off - false"
+                }
+              }
+            },
+            "contact_form": {
+              "type": "object",
+              "properties": {
+                "form_type": {
+                  "type": "integer",
+                  "description": "1- simple form 2- form with ticket fields"
+                },
+                "form_tittle": {
+                  "type": "string",
+                  "description": "Title of the form"
+                },
+                "form_submit_message": {
+                  "type": "string",
+                  "description": "Message when the form is submitted"
+                },
+                "screenshot": {
+                  "type": "boolean"
+                },
+                "attach_file": {
+                  "type": "boolean"
+                },
+                "captcha": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "appearance": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "integer",
+                  "description": "1- Bottom_left 2- Bottom_right"
+                },
+                "offset_from_bottom": {
+                  "type": "integer",
+                  "description": "Offset from bottom in px"
+                },
+                "offset_from_right": {
+                  "type": "integer",
+                  "description": "Offset from right in px"
+                },
+                "offset_from_left": {
+                  "type": "integer",
+                  "description": "Offset from left in px"
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "height of the widget in px"
+                },
+                "theme_color": {
+                  "type": "string",
+                  "description": "theme of the widget"
+                },
+                "button_color": {
+                  "type": "string",
+                  "description": "Color of the buttons in widget"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "help_widget_create": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Welcome message"
+            },
+            "button_text": {
+              "type": "string",
+              "description": "Text on the button ( default = Help )"
+            },
+            "components": {
+              "type": "object",
+              "properties": {
+                "contact_form": {
+                  "type": "boolean",
+                  "description": "Contact form is On or Off On - true / Off - false"
+                },
+                "suggestion": {
+                  "type": "boolean",
+                  "description": "Solution articles is On or Off On - true / Off - false"
+                }
+              }
+            },
+            "contact_form": {
+              "type": "object",
+              "properties": {
+                "form_type": {
+                  "type": "integer",
+                  "description": "1 - simple form 2 - form with ticket fields ( default = 1 )"
+                },
+                "form_title": {
+                  "type": "string",
+                  "description": "Title of the form"
+                },
+                "form_submit_message": {
+                  "type": "string",
+                  "description": "Message when the form is submitted"
+                },
+                "screenshot": {
+                  "type": "boolean"
+                },
+                "attach_file": {
+                  "type": "boolean"
+                },
+                "captcha": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "appearance": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "integer",
+                  "description": "1 - Bottom_left 2 - Bottom_right ( default = 1 )"
+                },
+                "offset_from_bottom": {
+                  "type": "integer",
+                  "description": "Offset from bottom in px ( default = 30px )"
+                },
+                "offset_from_right": {
+                  "type": "integer",
+                  "description": "Offset from right in px ( default = 30px )"
+                },
+                "offset_from_left": {
+                  "type": "integer",
+                  "description": "Offset from left in px ( default = 30px )"
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "height of the widget in px ( default = 600px )"
+                },
+                "theme_color": {
+                  "type": "string",
+                  "description": "theme of the widget ( default color = 1054da )"
+                },
+                "button_color": {
+                  "type": "string",
+                  "description": "Color of the buttons in widget ( default color = 16193e )"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "help_widget_show": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Id of the widget"
+        }
+      }
+    },
+    "help_widget_show_response": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Welcome message"
+            },
+            "button_text": {
+              "type": "string",
+              "description": "Text on the button ( default = Help )"
+            },
+            "components": {
+              "type": "object",
+              "properties": {
+                "contact_form": {
+                  "type": "boolean",
+                  "description": "Contact form is On or Off On - true / Off - false"
+                },
+                "suggestion": {
+                  "type": "boolean",
+                  "description": "Solution articles is On or Off On - true / Off - false"
+                }
+              }
+            },
+            "contact_form": {
+              "type": "object",
+              "properties": {
+                "form_type": {
+                  "type": "integer",
+                  "description": "1 - simple form 2 - form with ticket fields ( default = 1 )"
+                },
+                "form_title": {
+                  "type": "string",
+                  "description": "Title of the form"
+                },
+                "form_submit_message": {
+                  "type": "string",
+                  "description": "Message when the form is submitted"
+                },
+                "screenshot": {
+                  "type": "boolean"
+                },
+                "attach_file": {
+                  "type": "boolean"
+                },
+                "captcha": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "appearance": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "integer",
+                  "description": "1 - Bottom_left 2 - Bottom_right ( default = 1 )"
+                },
+                "offset_from_bottom": {
+                  "type": "integer",
+                  "description": "Offset from bottom in px ( default = 30px )"
+                },
+                "offset_from_right": {
+                  "type": "integer",
+                  "description": "Offset from right in px ( default = 30px )"
+                },
+                "offset_from_left": {
+                  "type": "integer",
+                  "description": "Offset from left in px ( default = 30px )"
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "height of the widget in px ( default = 600px )"
+                },
+                "theme_color": {
+                  "type": "string",
+                  "description": "theme of the widget ( default color = 1054da )"
+                },
+                "button_color": {
+                  "type": "string",
+                  "description": "Color of the buttons in widget ( default color = 16193e )"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "help_widget_update": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Welcome message"
+            },
+            "button_text": {
+              "type": "string",
+              "description": "Text on the button"
+            },
+            "components": {
+              "type": "object",
+              "properties": {
+                "contact_form": {
+                  "type": "boolean",
+                  "description": "Contact form is On or Off On - true / Off - false"
+                },
+                "suggestion": {
+                  "type": "boolean",
+                  "description": "Solution articles is On or Off On - true / Off - false"
+                }
+              }
+            },
+            "contact_form": {
+              "type": "object",
+              "properties": {
+                "form_type": {
+                  "type": "integer",
+                  "description": "1- simple form 2- form with ticket fields"
+                },
+                "form_tittle": {
+                  "type": "string",
+                  "description": "Title of the form"
+                },
+                "form_submit_message": {
+                  "type": "string",
+                  "description": "Message when the form is submitted"
+                },
+                "screenshot": {
+                  "type": "boolean"
+                },
+                "attach_file": {
+                  "type": "boolean"
+                },
+                "captcha": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "appearance": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "integer",
+                  "description": "1- Bottom_left 2- Bottom_right"
+                },
+                "offset_from_bottom": {
+                  "type": "integer",
+                  "description": "Offset from bottom in px"
+                },
+                "offset_from_right": {
+                  "type": "integer",
+                  "description": "Offset from right in px"
+                },
+                "offset_from_left": {
+                  "type": "integer",
+                  "description": "Offset from left in px"
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "height of the widget in px"
+                },
+                "theme_color": {
+                  "type": "string",
+                  "description": "theme of the widget"
+                },
+                "button_color": {
+                  "type": "string",
+                  "description": "Color of the buttons in widget"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "help_widget_update_response": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Welcome message"
+            },
+            "button_text": {
+              "type": "string",
+              "description": "Text on the button ( default = Help )"
+            },
+            "components": {
+              "type": "object",
+              "properties": {
+                "contact_form": {
+                  "type": "boolean",
+                  "description": "Contact form is On or Off On - true / Off - false"
+                },
+                "suggestion": {
+                  "type": "boolean",
+                  "description": "Solution articles is On or Off On - true / Off - false"
+                }
+              }
+            },
+            "contact_form": {
+              "type": "object",
+              "properties": {
+                "form_type": {
+                  "type": "integer",
+                  "description": "1 - simple form 2 - form with ticket fields ( default = 1 )"
+                },
+                "form_title": {
+                  "type": "string",
+                  "description": "Title of the form"
+                },
+                "form_submit_message": {
+                  "type": "string",
+                  "description": "Message when the form is submitted"
+                },
+                "screenshot": {
+                  "type": "boolean"
+                },
+                "attach_file": {
+                  "type": "boolean"
+                },
+                "captcha": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "appearance": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "integer",
+                  "description": "1 - Bottom_left 2 - Bottom_right ( default = 1 )"
+                },
+                "offset_from_bottom": {
+                  "type": "integer",
+                  "description": "Offset from bottom in px ( default = 30px )"
+                },
+                "offset_from_right": {
+                  "type": "integer",
+                  "description": "Offset from right in px ( default = 30px )"
+                },
+                "offset_from_left": {
+                  "type": "integer",
+                  "description": "Offset from left in px ( default = 30px )"
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "height of the widget in px ( default = 600px )"
+                },
+                "theme_color": {
+                  "type": "string",
+                  "description": "theme of the widget ( default color = 1054da )"
+                },
+                "button_color": {
+                  "type": "string",
+                  "description": "Color of the buttons in widget ( default color = 16193e )"
+                }
+              }
             }
           }
         }

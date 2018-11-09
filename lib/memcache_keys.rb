@@ -225,6 +225,8 @@ module MemcacheKeys
   
   TICKET_FIELDS_FULL = 'TICKET_FIELDS_FULL:%{account_id}'.freeze
 
+  HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"
+
   TICKET_FIELDS_FULL = 'TICKET_FIELDS_FULL:%{account_id}'.freeze
 
   CURRENCY_NAMES = 'CURRENCY_NAMES'.freeze
