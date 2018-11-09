@@ -24,6 +24,8 @@ module MemcacheKeys
 
   ACCOUNT_AGENT_GROUPS = "v4/ACCOUNT_AGENT_GROUPS:%{account_id}"
 
+  ACCOUNT_AGENT_GROUPS_HASH = "v4/ACCOUNT_AGENT_GROUPS_HASH:%{account_id}"
+
   ACCOUNT_PRODUCTS = "v1/ACCOUNT_PRODUCTS:%{account_id}"
 
   ACCOUNT_TAGS = "v1/ACCOUNT_TAGS:%{account_id}"
