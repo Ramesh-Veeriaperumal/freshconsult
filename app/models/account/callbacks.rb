@@ -47,6 +47,7 @@ class Account < ActiveRecord::Base
   after_commit :mark_customize_domain_setup_and_save, on: :create, if: :full_signup?
 
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_signup_allowed?
+  publishable on: [:create, :update]
 
   include MemcacheKeys
 
@@ -140,7 +141,7 @@ class Account < ActiveRecord::Base
 
   # Need to revisit when we push all the events for an account
   def central_publish_worker_class
-    "CentralPublishWorker::AccountDeletionWorker"
+    "CentralPublishWorker::AccountWorker"
   end
 
   def crud_apigee_kvm(action, plan_name, domain = nil, map_identifier = "default")

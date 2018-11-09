@@ -67,6 +67,7 @@ window.App = window.App || {};
       this.showPageBindings();
       this.handleEdit();
       this.formValidate();
+      this.addTargetTopForLinks();
       this.highlightCode();
     }
 
