@@ -9,8 +9,19 @@ class TicketFieldTest < ActiveSupport::TestCase
     I18n.locale = 'de'
     last_position_id = @account.ticket_statuses.last.position
     status_custom_field = @account.ticket_fields.find_by_field_type('default_status')
-    status_custom_field.update_attributes(sample_status_ticket_fields 'de')
+    status_custom_field.update_attributes(sample_status_ticket_fields('de', 'open', last_position_id))
     assert_equal last_position_id, @account.ticket_statuses.last.position
+    ensure
+      I18n.locale = locale
+  end
+
+  def test_translate_key_value
+    locale = I18n.locale
+    I18n.locale = 'de'
+    last_position_id = @account.ticket_statuses.last.position
+    status_custom_field = @account.ticket_fields.find_by_field_type('default_status')
+    status_custom_field.update_attributes(sample_status_ticket_fields('de', 'Support', last_position_id))
+    assert_equal last_position_id+1, @account.ticket_statuses.last.position
     ensure
       I18n.locale = locale
   end
