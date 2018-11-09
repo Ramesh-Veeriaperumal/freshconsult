@@ -37,18 +37,20 @@ class Helpdesk::ScheduledTask < ActiveRecord::Base
     'Helpdesk::ReportFilter' => :scheduled_report, 
     'Reports::BuildNoActivity' => :build_no_activity,
     'Wf::Filter' => :ticket_schedule,
-    'ScheduledExport' => :ticket_dump
+    'ScheduledExport' => :ticket_dump,
+    'DataExportCleanup' => :data_export_cleanup
   }
 
   SCHEDULABLE_WORKER = { 
     :scheduled_report => 'Reports::ScheduledReports'.constantize, 
     :build_no_activity => 'Reports::BuildNoActivity'.constantize,
     :ticket_schedule => 'Tickets::Schedule'.constantize,
-    :ticket_dump => 'Tickets::Dump'.constantize
+    :ticket_dump => 'Tickets::Dump'.constantize,
+    :data_export_cleanup => 'DataExportCleanup'.constantize
   }
 
   INACTIVE_STATUS = [ STATUS_NAME_TO_TOKEN[:disabled], STATUS_NAME_TO_TOKEN[:expired] ]
 
-  ACCOUNT_INDEPENDENT_TASKS = [ :build_no_activity ]
+  ACCOUNT_INDEPENDENT_TASKS = [ :build_no_activity, :data_export_cleanup ]
   
 end

@@ -269,6 +269,8 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    post '/account/export', to: 'admin/api_data_exports#account_export'
+
     resources :topics, controller: 'ember/discussions/topics', only: [:show] do
       member do
         get :first_post

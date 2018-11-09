@@ -15,6 +15,8 @@ class DataExport < ActiveRecord::Base
   
   CONTACT_EXPORT_LIMIT_PER_ACCOUNT = 1
   COMPANY_EXPORT_LIMIT_PER_ACCOUNT = 1
+  OLD_BACKUP_UPPER_THRESHOLD_DAYS = 30
+  OLD_BACKUP_LOWER_THRESHOLD_DAYS = 60
 
 
   EXPORT_STATUS = {:started => 1,
@@ -37,6 +39,9 @@ class DataExport < ActiveRecord::Base
   scope :running_archive_ticket_exports, :conditions => ["source = #{EXPORT_TYPE[:archive_ticket]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
   scope :running_contact_exports, conditions: ["source = #{EXPORT_TYPE[:contact]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
   scope :running_company_exports, conditions: ["source = #{EXPORT_TYPE[:company]} and status NOT in (?)", [EXPORT_STATUS[:completed], EXPORT_STATUS[:failed]]]
+  scope :old_data_backup, lambda{ |threshold = OLD_BACKUP_UPPER_THRESHOLD_DAYS.days.ago| { 
+    conditions: ["source = #{EXPORT_TYPE[:backup]} and created_at <= (?) and created_at >= (?)", 
+      threshold, OLD_BACKUP_LOWER_THRESHOLD_DAYS.days.ago] }}
 
 
   def owner?(downloader)

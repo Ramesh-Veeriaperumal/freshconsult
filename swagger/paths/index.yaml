@@ -484,7 +484,6 @@
 /advanced_ticketing/insights:
   $ref: ./advanced_ticketing/insights.yaml
 
-
 #Groups Private API
 /groups:
   $ref: ./groups/list_and_create.yaml
@@ -500,3 +499,7 @@
 # Business Hours
 /business_hours:
   $ref: ./business_hours.yaml
+
+# Account Export 
+/data_export/export:
+  $ref: ./data_exports/export.yaml
