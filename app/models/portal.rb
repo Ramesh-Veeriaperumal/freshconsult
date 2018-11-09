@@ -78,8 +78,8 @@ class Portal < ActiveRecord::Base
   belongs_to_account
   belongs_to :product
 
-  concerned_with :solution_associations
-
+  concerned_with :solution_associations, :presenter
+  
   APP_CACHE_VERSION = "FD78"
 
   def logo_attributes=(icon_attr)
