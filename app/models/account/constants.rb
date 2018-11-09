@@ -116,7 +116,7 @@ class Account < ActiveRecord::Base
   }
 
   DB_TO_BITMAP_MIGRATION_FEATURES_LIST = PLANS_AND_FEATURES.collect{|key, value| value[:features]}.flatten!.uniq!
-  ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets, :shared_ownership]
+  ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets, :shared_ownership, :field_service_management]
   ADVANCED_FEATURES_TOGGLE = ADVANCED_FEATURES.map{|f| "#{f}_toggle".to_sym}
 
   # Features added temporarily to avoid release for all the customers at one shot
@@ -217,6 +217,7 @@ class Account < ActiveRecord::Base
     :twitter_microservice => true, :twitter_handle_publisher => true, :undo_send => false,
     :email_deprecated_style_parsing => false, :old_link_back_url_validation => false, :shopify_actions => true,
     :saml_ecrypted_assertion => false, :installed_app_publish => false,  :disable_banners => false, :quoted_text_parsing_feature => false,
+    :field_service_management_lp => false,
     :product_central_publish => false
   }
 

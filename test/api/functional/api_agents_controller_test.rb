@@ -40,6 +40,22 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert response.size == Agent.where(occasional: true).count
   end
 
+  def test_agent_filter_type
+    field_agent_type = AgentType.create_agent_type(@account, 'field_agent')
+    3.times do
+      add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id })
+    end
+    Account.stubs(:current).returns(Account.first)
+    get :index, controller_params(type: field_agent_type.name.to_s)
+    assert_response 200
+    response = parse_response @response.body
+    assert response.size == Agent.where(agent_type: field_agent_type.agent_type_id).count
+  ensure
+    Account.unstub
+    Agent.where(agent_type: field_agent_type.agent_type_id).destroy_all
+    field_agent_type.destroy
+  end
+
   def test_agent_filter_email
     email = @account.all_agents.first.user.email
     get :index, controller_params(email: email)
@@ -93,6 +109,13 @@ class ApiAgentsControllerTest < ActionController::TestCase
     get :index, controller_params(state: 'active')
     assert_response 400
     match_json([bad_request_error_pattern('state', :not_included, list: 'occasional,fulltime')])
+  end
+
+  def test_agent_filter_invalid_type
+    get :index, controller_params(type: 1)
+    valid_types = @account.agent_types.map(&:name)
+    assert_response 400
+    match_json([bad_request_error_pattern('type', :not_included, list: valid_types.join(','))])
   end
 
   def test_show_agent
