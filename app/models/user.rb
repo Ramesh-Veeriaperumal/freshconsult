@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
   # publishable on: :update
-
+  
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :case_sensitive => false

@@ -5,15 +5,20 @@ class Product < ActiveRecord::Base
   include Cache::FragmentCache::Base
   include Cache::Memcache::Dashboard::Custom::CacheData
 
+  concerned_with :presenter
+
+  publishable on: [:create, :update, :destroy]
+
+  before_destroy :remove_primary_email_config_role,:save_deleted_product_info
   clear_memcache [TICKET_FIELDS_FULL]
 
-  clear_memcache [TICKET_FIELDS_FULL]
-
-  before_destroy :remove_primary_email_config_role
   validates_uniqueness_of :name , :case_sensitive => false, :scope => :account_id
   xss_sanitize :only => [:name, :description], :plain_sanitize => [:name, :description]
 
   after_create :create_chat_widget
+
+  before_save :create_model_changes, on: :update
+
 
   after_commit :clear_cache
   after_update :widget_update
@@ -106,6 +111,15 @@ class Product < ActiveRecord::Base
 
     def remove_primary_email_config_role
       primary_email_config.update_attribute(:primary_role, false)
+    end
+
+    def save_deleted_product_info
+      @deleted_model_info = central_publish_payload
+    end
+
+    def create_model_changes
+      @model_changes = self.changes.to_hash
+      @model_changes.symbolize_keys!
     end
 
     def update_dashboard_widgets

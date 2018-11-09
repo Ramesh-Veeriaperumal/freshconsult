@@ -9,6 +9,9 @@ class EmailConfig < ActiveRecord::Base
   include Redis::RedisKeys
   include Redis::OthersRedis
 
+
+  concerned_with :presenter
+
   belongs_to :product
   belongs_to :group, :foreign_key =>'group_id' #?!?!?! Not a literal belonging in true ER sense.
 
@@ -104,6 +107,7 @@ class EmailConfig < ActiveRecord::Base
     end
 
   private
+  
     # Wrap name with double quotes if it has a special character and not already wrapped
     def format_name(name)
       (name =~ SPECIAL_CHARACTERS_REGEX and name !~ /".+"/) ? "\"#{name}\"" : name

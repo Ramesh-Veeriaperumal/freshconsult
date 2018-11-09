@@ -18,6 +18,7 @@ module CentralConstants
     'Social::TwitterHandle' => '0',
     'Social::TwitterStream' => '0',
     'Integrations::InstalledApplication' => '0',
-    'Social::FacebookPage' => '0'
+    'Social::FacebookPage' => '0',
+    'Product' => '0'
   }
 end

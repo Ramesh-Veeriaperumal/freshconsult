@@ -78,7 +78,7 @@ class Portal < ActiveRecord::Base
   belongs_to_account
   belongs_to :product
 
-  concerned_with :solution_associations
+  concerned_with :solution_associations, :presenter
 
   APP_CACHE_VERSION = "FD78"
 
@@ -239,7 +239,7 @@ class Portal < ActiveRecord::Base
   end
 
   private
-
+  
     ### MULTILINGUAL SOLUTIONS - META READ HACK!! - shouldn't be necessary after we let users decide the language
     def update_solutions_language
       Community::HandleLanguageChange.perform_async unless account.features_included?(:enable_multilingual)
