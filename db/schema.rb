@@ -2342,6 +2342,8 @@ ActiveRecord::Schema.define(version: 20181022133027) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id",    :limit => 8
+    t.integer  "picklist_id", limit: 3
+    t.boolean  "deleted"
   end
 
   add_index "helpdesk_picklist_values", ["account_id", "pickable_type", "pickable_id"], :name => "index_on_picklist_account_id_and_pickabke_type_and_pickable_id"

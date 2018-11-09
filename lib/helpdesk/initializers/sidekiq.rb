@@ -71,6 +71,7 @@ Sidekiq.configure_client do |config|
       "Admin::Sandbox::CreateAccountWorker",
       'Admin::CloneWorker',
       'Freshid::AccountDetailsUpdate',
+      'MigrationWorker',
       'DataExportCleanup'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
@@ -171,6 +172,7 @@ Sidekiq.configure_server do |config|
       "Admin::Sandbox::CreateAccountWorker",
       'Admin::CloneWorker',
       'Freshid::AccountDetailsUpdate',
+      'MigrationWorker',
       'DataExportCleanup'
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
@@ -257,6 +259,7 @@ Sidekiq.configure_server do |config|
       "CRMApp::Freshsales::AdminUpdate",
       'CRMApp::Freshsales::TrackSubscription',
       'Freshid::AccountDetailsUpdate',
+      'MigrationWorker',
       'DataExportCleanup'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [

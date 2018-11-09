@@ -36,6 +36,7 @@ REDIS_UNIQUE_CONNECTION_OBJECTS = [$redis_tickets, $rate_limit, $sidekiq_conn]
 
 #Loading Redis Display Id's Lua script
 Redis::DisplayIdLua.load_display_id_lua_script_to_redis
+Redis::DisplayIdLua.load_picklist_id_lua_script
 
 Redis.class_eval {add_method_tracer :set}
 Redis.class_eval {add_method_tracer :get}
