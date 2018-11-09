@@ -2458,7 +2458,7 @@ class Helpdesk::TicketsController < ApplicationController
 
   def export_limit_reached?
     if DataExport.ticket_export_limit_reached?(User.current)
-      flash[:notice] = I18n.t('export_data.ticket_export.limit_reached')
+      flash[:notice] = I18n.t('export_data.ticket_export.limit_reached', :max_limit => DataExport.ticket_export_limit)
       return redirect_to helpdesk_tickets_path
     end
   end
