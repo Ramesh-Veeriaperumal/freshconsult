@@ -8078,8 +8078,7 @@ en:
         add_note_to_ticket: "Add note to ticket"
         view_all: View all
     cti_admin:
-      helptext: "<p>Integrate your telephone system with your online helpdesk using the Freshdesk CTI framework. With our simple documentation and straightforward APIs, hooking up your online helpdesk with a telephone system becomes a walk in the park.</p><p>Once you’re done setting up your adaptor with our helpdesk, your support agents will be able to make/receive calls, access customer details, take notes during calls, and maintain context to provide that jaw-drop awesome customer support.</p><p><a href='
-https://support.freshdesk.com/solution/articles/221418-computer-telephony-integration-framework'> Learn more </a>"
+      helptext: "With our CTI framework, you can connect your existing phone system and make it easy for your team to make and receive calls from Freshdesk. With our simple documentation and straightforward APIs, connecting your Freshdesk account with your existing telephony system is easier than ever.</p><p>Once you’re done setting up your adapter, your team will be able to make and receive calls, access customer details, take notes and have context to provide awesome customer support right    from Freshdesk.</p><p><a href='https://support.freshdesk.com/solution/articles/221418-computer-telephony-integration-framework'> Learn more </a>"
       no_feature: "This app can only be installed for accounts with CTI enabled."
       label: "CTI Framework"
       desc: "Unify your telephony experience within Freshdesk"
@@ -12353,6 +12352,15 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     enable_mint_success: "Yay! Mint has successfully been enabled for all agents."
     enable_mint_success_info: To disable the old Freshdesk completely, visit the admin tab in Mint
     enable_mint_error: Mint has already been enabled for all agents. Refresh to see the latest settings.
+  account_cancelled:
+    email:
+      subject: "%{account_full_domain} has been cancelled"
+      header: "Account Cancelled"
+      body: "<div>Hi %{user_name},</div><br/><div>This email is a confirmation that your Freshdesk account has been cancelled. We’re sorry to see you go.</div><br/>
+           <div>If you have feedback on how we can provide a better experience, please write to us at %{support_email}. We’d love to hear from you. </div><br/>"
+  email_content:
+    regards: "Regards,"
+    freshdesk_team: "Freshdesk team"
   freshchat:
     admin:
       title_text: 'Freshchat'

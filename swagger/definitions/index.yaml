@@ -156,6 +156,9 @@ feature_usage_metrics:
 sandbox_merge_input:
   $ref: './request/sandboxes/merge.yaml'
 
+account_cancellation_request:
+  $ref: './request/accounts/cancel.yaml'
+    
 # RESOURCE
 conversation_template:
   $ref: ./resource/conversation_template.yaml

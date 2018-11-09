@@ -510,6 +510,11 @@
 /business_hours:
   $ref: ./business_hours.yaml
 
+# Account 
+/accounts/cancel:
+  $ref: ./accounts/cancel.yaml
+
 # Account Export 
 /data_export/export:
   $ref: ./data_exports/export.yaml
+

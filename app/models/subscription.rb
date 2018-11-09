@@ -432,6 +432,10 @@ class Subscription < ActiveRecord::Base
     non_sprout_plan? && !new_blossom?
   end
   
+  def renewal_in_two_days?
+    (Time.zone.now + 2.days) >= next_renewal_at
+  end
+
   protected
   
     def set_renewal_at

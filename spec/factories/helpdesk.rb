@@ -134,5 +134,8 @@ if Rails.env.test?
       sequence(:name) { |n| "Testing Ticket Template#{n}" }
       description { Faker::Lorem.sentence(10) }
     end
+    
+    factory :subscription_payment, :class => SubscriptionPayment do |s|
+    end
   end
 end

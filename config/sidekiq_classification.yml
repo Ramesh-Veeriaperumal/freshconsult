@@ -172,6 +172,7 @@
     - deactivate_product_widgets
     - deactivate_filter_widgets
     - update_segment_filter
+    - cancel_account
     - migration
   :external:
     - code_console_execution

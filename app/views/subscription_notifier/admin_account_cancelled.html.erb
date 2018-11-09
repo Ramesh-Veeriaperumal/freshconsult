@@ -1,0 +1,7 @@
+<div>
+  <%= t('account_cancelled.email.body',{:user_name => @account.admin_first_name, :support_email => @support_email}).html_safe %>
+  <div>
+    <div><%= t('email_content.regards') %></div>
+    <%= t('email_content.freshdesk_team') %>
+  </div>
+</div>

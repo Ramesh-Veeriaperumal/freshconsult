@@ -303,6 +303,7 @@ defaults: &defaults
     - [twitter_reply]   
     - [default_data_population]
     - [freshops_service]
+    - [cancel_account]
     - [migration]
     - [widget_upload_config]
 development:

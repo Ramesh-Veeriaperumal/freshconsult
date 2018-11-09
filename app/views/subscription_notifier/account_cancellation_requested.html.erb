@@ -1,0 +1,26 @@
+<div>Hi,</div><br/>
+<div>
+  <%= %(#{@account.admin_first_name}, admin of #{@account.full_domain} placed a request to cancel the account just now. ) %>
+</div>
+<br/>
+<div>
+  <ul>
+    <li><%= %(Contact email: #{@account.admin_email} ) %></li>
+    <li>Account ID: <%= link_to @account.id,@freshops_account_url%> </li>
+    <li><%= %(Domain: #{@account.full_domain})%></li>
+    <li><%= %(Plan: #{@account.subscription.subscription_plan.name}) %></li>
+    <li>MRR: <b><%=@account.currency_name%> <%= @account.subscription.amount %>
+      <% unless @account.currency_name == "USD"%>
+        ($ <%=@account.subscription.usd_equivalent%>)
+      <%end%></b>
+    </li>
+    <li><%= %(Billing period: #{@billing_period}) %></li>
+    <li><%= %(Agents: #{@account.subscription.agent_limit}) %> <%= "(#{pluralize(@account.subscription.free_agents, 'free agent')})" if @account.subscription.free_agents > 0 %></li>
+  </ul>
+</div>
+<div>The reason for them leaving is: <b><%=%(#{@reason[:title]})%></b><%=%(They also said: '#{@reason[:additional_info]}') unless @reason[:additional_info].nil?%></div><br/>
+<div>You have <b>six hours</b> to reach out to them before we process the request. Go team!</div><br/>
+<div>
+   <div>Thanks,</div>
+   Freshdesk Product Team
+</div>

@@ -100,6 +100,7 @@ module BootstrapTestHelper
     pattern[:social_options] = social_options_hash if account.features?(:twitter) || account.basic_twitter_enabled?
     pattern[:dashboard_limits] = account.account_additional_settings.custom_dashboard_limits if account.custom_dashboard_enabled?
     pattern[:freshchat] = freshchat_hash if account.freshchat_enabled?
+    pattern[:account_cancellation_requested] =  account.account_cancellation_requested?
     pattern.merge!(sandbox_info(account))
     first_invoice = account.subscription.subscription_invoices.first
     if User.current.privilege?(:manage_users) || User.current.privilege?(:manage_account)

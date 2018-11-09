@@ -29,6 +29,7 @@ class AccountDecorator < ApiDecorator
     ret_hash[:freshchat] = freshchat_options_hash if record.freshchat_enabled?
     trial_subscription = record.latest_trial_subscription_from_cache
     ret_hash[:trial_subscription] = trial_subscription_hash(trial_subscription) if trial_subscription
+    ret_hash[:account_cancellation_requested] = record.account_cancellation_requested?
     ret_hash
   end
 

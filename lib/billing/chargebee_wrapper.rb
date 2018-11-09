@@ -110,4 +110,10 @@ class Billing::ChargebeeWrapper
 		}))["list"].collect{ |list| list["plan"].symbolize_keys! }
 	end
 
+	def change_term_end(account_id, data)
+		Rails.logger.debug ":::ChargeBee - Change Term End - Params sent:::"
+		Rails.logger.debug data.inspect
+		ChargeBee::Subscription.change_term_end(account_id, data)
+	end
+
 end

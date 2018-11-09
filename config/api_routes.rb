@@ -271,6 +271,12 @@ Helpkit::Application.routes.draw do
         get :account, to: 'ember/bootstrap#account'
       end
     end
+    
+    resource :accounts, controller: 'admin/api_accounts' do
+      collection do
+        post :cancel
+      end
+    end
 
     post '/account/export', to: 'admin/api_data_exports#account_export'
 

@@ -9064,6 +9064,38 @@
         }
       }
     },
+    "/accounts/cancel": {
+      "post": {
+        "tags": [
+          "Account Cancellation"
+        ],
+        "summary": "Account Cancellation",
+        "description": "Request for Account cancellation.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "data",
+            "schema": {
+              "$ref": "#/definitions/account_cancellation_request"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },  
     "/data_export/export": {
       "post": {
         "tags": [
@@ -11614,6 +11646,18 @@
         "meta"
       ]
     },
+
+  "account_cancellation_request": {
+    "type": "object",
+    "properties": {
+      "cancellation_feedback": {
+        "type": "string",
+        "description": "Account cancellation feedback"
+      },
+      "additional_cancellation_feedback": {
+        "type": "string",
+        "description": "Additional account cancellation feedback by admin"
+
     "conversation_template": {
       "type": "object",
       "properties": {
