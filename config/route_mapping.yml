@@ -48,6 +48,7 @@
 /admin/gamification: /a/admin/
 /integrations/applications: /a/admin/integrations/applications
 /account: /a/admin/
+/account/cancel: /a/admin/account/cancel/
 /subscription: /a/admin/
 /subscription/billing: /a/admin/
 /admin/day_passes: /a/admin/
