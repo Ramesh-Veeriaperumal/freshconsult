@@ -2081,6 +2081,35 @@ li {
         .freshdesk_satisfaction_survey {
             display: none;
         }
+        .facebook_post {
+            .fb-original-post {
+                border: 1px #ebeef0 solid;
+                margin: 27px 27px 27px 0;
+                background-color: #fff;
+                padding: 15px;
+                border-radius: 4px;
+                &__image {
+                    display: inline-block;
+                    width: 20%;
+                }
+                &__description {
+                    display: inline-block;
+                    vertical-align: top;
+                    margin: 0 10px;
+                    width: 70%;
+                }
+                &__title {
+                    margin: 0 0 6px;
+                }
+                &__date {
+                    margin: 5px 0;
+                    color: #999;
+                }
+                &__post {
+                    margin: 15px 0 0;
+                }
+            }
+        }
     }
     .tag {
         @include float(right);

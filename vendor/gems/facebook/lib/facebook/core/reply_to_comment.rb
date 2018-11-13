@@ -27,6 +27,9 @@ module Facebook
           #Case to convert a post to a ticket via a comment happens only when it's a visitor comment  
           elsif convert_post_to_ticket?(self, true)
             process_post
+          else
+            # Convert the parent comments as a ticket(parent comment will have the context) and add this reply as a note.
+            fetch_and_process_comment()
           end
         end
         
@@ -41,10 +44,10 @@ module Facebook
       private 
       
       #Post is a ticket but the parent comment is not converted to a note
-      def fetch_and_process_comment(fb_post)
+      def fetch_and_process_comment(fb_post = nil)
         #Explicitly logging second call made within the exception handler
         self.fan_page.log_api_hits
-        Facebook::Core::Comment.new(self.fan_page, in_reply_to).process(fb_post.postable)
+        Facebook::Core::Comment.new(self.fan_page, in_reply_to).process(fb_post.try(:postable))
       end
       
     end

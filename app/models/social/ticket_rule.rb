@@ -48,10 +48,12 @@ class Social::TicketRule < ActiveRecord::Base
   #parent_is_a_status - The parent of the current object is a status
   #is_a_visitor_comment - If the current object is a visitor comment
   #feed_body - Current comment's feed body
-  def convert_fb_feed_to_ticket?(is_a_post, parent_is_a_status = false, is_a_visitor_comment = false, feed_body = "")
+  #skip_optimal - Skip the optimal rule evaluation(In case of comments & optimal we are skipping, refer: FD-16831)
+  def convert_fb_feed_to_ticket?(is_a_post, parent_is_a_status = false, is_a_visitor_comment = false, feed_body = "", skip_optimal = false)
     return false if strict?
 
     if optimal?
+      return false if skip_optimal
       return import_visitor_posts? if is_a_post
 
       return apply(feed_body, SOURCE[:facebook]) if (is_a_visitor_comment && parent_is_a_status && import_company_comments?)
