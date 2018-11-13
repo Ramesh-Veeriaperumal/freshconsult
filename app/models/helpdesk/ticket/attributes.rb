@@ -22,6 +22,20 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.ticket_body_content
   end
 
+  def first_response_agent_id
+    return self.schema_less_ticket.reports_hash.key?('first_response_agent_id') ?
+            self.schema_less_ticket.reports_hash['first_response_agent_id'] :
+            self.schema_less_ticket.update_first_response_agent_id
+  end
+
+  def reopened_flag
+    reopened_now?
+  end
+
+  def resolved_flag
+    resolved_now?
+  end
+
   # ticket_body association between Helpdesk::Ticket and Helpdesk::TicketBody
   # has_one relationship is not defined
   # this method takes care of the association

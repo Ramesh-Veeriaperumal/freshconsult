@@ -3,11 +3,9 @@ class Helpdesk::Note < ActiveRecord::Base
   DATETIME_FIELDS = ["last_modified_timestamp", "created_at", "updated_at"]
   BODY_HASH_FIELDS = ["body", "body_html", "full_text", "full_text_html"]
   EMAIL_FIELDS = ["from_email", "to_emails", "cc_emails", "bcc_emails"]
-  ASSOCIATION_REFS_BASED_ON_TYPE = ["feedback", "tweet", "fb_post", "freshcaller"]
+  ASSOCIATION_REFS_BASED_ON_TYPE = ["feedback", "tweet", "fb_post"]
   DONT_CARE_FIELDS = ["body", "full_text"]
   DONT_CARE_VALUE = '*'.freeze
-
-
 
   acts_as_api
 
@@ -59,7 +57,6 @@ class Helpdesk::Note < ActiveRecord::Base
     t.add :attachments, template: :central_publish
     t.add :tweet_hash, if: proc { |x| x.tweet.present? }
     t.add :fb_post_hash, if: proc{ |x| x.fb_post.present? }
-    t.add :freshcaller_hash, if: proc{ |x| x.freshcaller_call.present? || x.freshfone_call.present? }
     t.add :feedback_hash, if: proc{ |x| x.survey_remark.present? || x.custom_survey_remark.present? }
   end
 
@@ -98,18 +95,19 @@ class Helpdesk::Note < ActiveRecord::Base
     }
   end
 
-  def freshcaller_hash
-    freshcaller_assoc = freshcaller || freshfone_call
-    recording_status = freshcaller_assoc.recording_status
-    {
-      "id": freshcaller_assoc.id,
-      "fc_call_id": freshcaller_assoc.fc_call_id,
-      "recording_status": {
-        "id": recording_status,
-        "name": Freshcaller::CALL::RECORDING_STATUS_NAMES_BY_KEY[recording_status]
-      }
-    }
-  end
+  # Has to be taken later as the relation is quite different.
+  # def freshcaller_hash
+  #   freshcaller_assoc = freshcaller_call || freshfone_call
+  #   recording_status = freshcaller_assoc.recording_status
+  #   {
+  #     "id": freshcaller_assoc.id,
+  #     "fc_call_id": freshcaller_assoc.fc_call_id,
+  #     "recording_status": {
+  #       "id": recording_status,
+  #       "name": Freshcaller::CALL::RECORDING_STATUS_NAMES_BY_KEY[recording_status]
+  #     }
+  #   }
+  # end
 
   def feeback_hash
     survey_remark_assoc = survey_remark || custom_survey_remark
