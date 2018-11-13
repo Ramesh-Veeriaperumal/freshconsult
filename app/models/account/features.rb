@@ -151,6 +151,10 @@ class Account < ActiveRecord::Base
     count_es_enabled? && api_es_enabled?
   end
 
+  def count_es_tickets_enabled?
+    count_es_enabled? && es_tickets_enabled?
+  end
+
   def count_es_writes_enabled?
     features?(:countv2_writes) || launched?(:count_service_es_writes)
   end

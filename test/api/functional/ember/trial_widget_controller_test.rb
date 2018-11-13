@@ -1,4 +1,5 @@
 require_relative '../../test_helper'
+require 'webmock/minitest'
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'trial_widget_test_helper.rb')
@@ -54,9 +55,11 @@ class Ember::TrialWidgetControllerTest < ActionController::TestCase
   end
 
   def test_sales_manager
+    WebMock.allow_net_connect!
     get :sales_manager, controller_params({ version: 'private' }, false)
     assert_response 200
     match_json(trial_widget_sales_manager_pattern)
+    WebMock.disable_net_connect!
   end
 
   def test_complete_step_with_wrong_step_name
