@@ -334,4 +334,9 @@ class SupportController < ApplicationController
       redirect_to support_login_path
     end
   end
+
+  def render_request_error(code, status, params_hash = {})
+    @error = RequestError.new(code, params_hash)
+    render '/request_error', status: status
+  end
 end

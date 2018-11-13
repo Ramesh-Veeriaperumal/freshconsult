@@ -23,6 +23,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/twitter_handles", only: %i(index check_following)
     resource :"ember/marketplace_app", only: [:index]
     resource :'admin/canned_form', only: [:index, :show, :create_handle]
+    resource :"tickets/bot_response", only: %i(show update)
 
     resource :"ember/agent", only: %i(index me achievements update)
     resource :"ember/group", only: [:index]
@@ -59,6 +60,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_email_settings do
     resource :"ember/admin/onboarding", only: %i[forward_email_confirmation test_email_forwarding]
+    resource :"admin/api_email_notification"
   end
 
   reply_ticket do
@@ -193,7 +195,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   manage_bots do
-    resource :"ember/admin/bot", only: %i[new create show index update map_categories mark_completed_status_seen enable_on_portal]
+    resource :"ember/admin/bot", only: %i[new create show index update map_categories mark_completed_status_seen enable_on_portal email_channel]
     resource :"ember/portal", only: %i[show bot_prerequisites]
   end
 

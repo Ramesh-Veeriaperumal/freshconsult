@@ -30,6 +30,7 @@ class Support::Solutions::ArticlesController < SupportController
   after_filter :add_watcher, :add_to_article_ticket, :only => :create_ticket, :if => :no_error
 
   before_filter :cleanup_params_for_title, :only => [:show]
+  before_filter :load_current_object_id, :only => [:show]
 
    CREATE_TICKET_VALID_FIELDS = ["email"]
 
@@ -220,5 +221,8 @@ class Support::Solutions::ArticlesController < SupportController
       support_solutions_article_path(@article.primary_article, :url_locale => current_account.language)
     end
 
+    def load_current_object_id
+      @current_object = { current_object_id: @article.id }
+    end
 end
 

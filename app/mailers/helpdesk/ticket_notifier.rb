@@ -41,7 +41,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def self.notify_by_email(notification_type, ticket, comment = nil, opts = {})
     internal_notification = opts[:internal_notification]
-    e_notification = ticket.account.email_notifications.find_by_notification_type(notification_type)
+    e_notification = fetch_email_notification(ticket, notification_type)
     begin
         if e_notification.agent_notification?
           if (notification_type == EmailNotification::NEW_TICKET)
@@ -60,11 +60,10 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       requester_plain_template = e_notification.get_requester_plain_template(ticket.requester)
       r_template = Liquid::Template.parse(requester_template.last.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")) 
       r_plain_template = Liquid::Template.parse(requester_plain_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}").gsub("{{ticket.description}}", "{{ticket.description_text}}"))
-      r_s_template = Liquid::Template.parse(requester_template.first.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")) 
-      html_version = r_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
-      plain_version = r_plain_template.render('ticket' => ticket, 
-                'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
+      r_s_template = Liquid::Template.parse(requester_template.first.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
+      template_params = construct_template_params(ticket, comment, opts)
+      html_version = r_template.render(template_params).html_safe
+      plain_version = r_plain_template.render(template_params).html_safe
 
       params = { :ticket => ticket,
              :notification_type => notification_type,
@@ -135,10 +134,9 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       r_template = Liquid::Template.parse(requester_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}")) 
       r_plain_template = Liquid::Template.parse(requester_plain_template.gsub("{{ticket.status}}","{{ticket.requester_status_name}}").gsub("{{ticket.description}}", "{{ticket.description_text}}"))
       r_s_template = Liquid::Template.parse(requester_subject.gsub("{{ticket.status}}","{{ticket.requester_status_name}}"))
-      html_version = r_template.render('ticket' => ticket, 
-                  'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
-      plain_version = r_plain_template.render('ticket' => ticket, 
-                  'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
+      template_params = construct_template_params(ticket, comment)
+      html_version = r_template.render(template_params).html_safe
+      plain_version = r_plain_template.render(template_params).html_safe
       params = { :ticket => ticket,
                :notification_type => e_notification.notification_type,
                :receips => to_emails,
@@ -645,6 +643,20 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       part.text { render "notify_bulk_child_creation.text.plain" }
       part.html { render "notify_bulk_child_creation.text.html" }
     end.deliver
+  end
+
+  def self.fetch_email_notification(ticket, notification_type)
+    return ticket.account.bot_email_response if notification_type == EmailNotification::BOT_RESPONSE_TEMPLATE
+    ticket.account.email_notifications.find_by_notification_type(notification_type)
+  end
+
+  def self.construct_template_params(ticket, comment, opts = {})
+    {
+      'ticket' => ticket, 
+      'helpdesk_name' => ticket.account.helpdesk_name, 
+      'comment' => comment, 
+      'freddy_suggestions' => opts[:freddy_suggestions]
+    }
   end
 
   private

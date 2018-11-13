@@ -1,0 +1,12 @@
+type: object
+allOf:
+  - properties:
+      articles:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: number
+            agent_feedback:
+              type: boolean

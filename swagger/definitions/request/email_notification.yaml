@@ -1,0 +1,14 @@
+type: object
+properties:
+  requester_notification:
+    type: boolean
+  requester_template:
+    type: string
+  requester_subject_template:
+    type: string
+  agent_notification:
+    type: boolean
+  agent_template:
+    type: string
+  agent_subject_template:
+    type: string

@@ -51,6 +51,8 @@ class Bot < ActiveRecord::Base
 
   UPDATE_DISALLOWED_FIELDS = %w[external_id portal_id product_id account_id].freeze
 
+  SET_AND_GET_ATTRIBUTES = ["email_channel"].freeze
+
   def check_constant_fields
     (changes.keys & UPDATE_DISALLOWED_FIELDS).empty?
   end
@@ -126,6 +128,16 @@ class Bot < ActiveRecord::Base
   def sanitize_template_data
     template_data.each do |key, value|
       template_data[key] = RailsFullSanitizer.sanitize(value)
+    end
+  end
+
+  SET_AND_GET_ATTRIBUTES.each do |attr_name|
+    define_method attr_name.to_s do
+      self.additional_settings[attr_name]
+    end
+
+    define_method "#{attr_name}=" do |value|
+      self.additional_settings.deep_merge!(attr_name => value)
     end
   end
 

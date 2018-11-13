@@ -306,6 +306,9 @@ defaults: &defaults
     - [cancel_account]
     - [migration]
     - [widget_upload_config]
+    - [bot_email_reply]
+    - [bot_email_ml_feedback]
+    
 development:
   <<: *defaults
 

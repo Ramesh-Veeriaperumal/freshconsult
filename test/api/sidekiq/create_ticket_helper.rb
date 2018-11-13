@@ -6,6 +6,8 @@ module CreateTicketHelper
     o = [('a'..'z'), ('A'..'Z')].map { |i| i.to_a }.flatten
     sub = (0...50).map { o[rand(o.length)] }.join
     desc = (0...50).map { o[rand(o.length)] }.join
+    cc_emails = params[:cc_emails] || []
+    fwd_emails = params[:fwd_emails] || []
     ticket = Helpdesk::Ticket.new(
         :account_id => a.id,
         :subject => sub,
@@ -13,9 +15,10 @@ module CreateTicketHelper
                           :description_html => desc},
         :email => params[:email],
         :status => Helpdesk::Ticketfields::TicketStatus::OPEN,
-        :source => Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
+        :source => params[:source] || Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:phone],
         :group_id => params[:group_id],
-        :created_at => params[:created_at] || Time.now
+        :created_at => params[:created_at] || Time.now,
+        cc_email: Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
       )
       random_group_id = group_ids.sample
       ticket.group_id ||= random_group_id

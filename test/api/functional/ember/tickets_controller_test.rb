@@ -1,6 +1,7 @@
 require_relative '../../test_helper'
 ['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'ticket_template_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['account_test_helper.rb', 'shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+require Rails.root.join('test', 'api', 'helpers', 'bot_response_test_helper.rb')
 
 module Ember
   class TicketsControllerTest < ActionController::TestCase
@@ -25,6 +26,7 @@ module Ember
     include CustomFieldsTestHelper
     include ArchiveTicketTestHelper
     include DiscussionsTestHelper
+    include BotResponseTestHelper
 
     ARCHIVE_DAYS = 120
     TICKET_UPDATED_DATE = 150.days.ago
@@ -933,6 +935,73 @@ module Ember
       assert_response 201
     ensure
       clear_field_options
+    end
+
+    def test_create_from_email_with_bot_configuration
+      Account.any_instance.stubs(:support_bot_configured?).returns(true)
+      Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      @bot = @account.main_portal.bot || create_test_email_bot({email_channel: true})
+      @account.reload
+      ticket = create_ticket({source: 1})
+      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute
+      assert_equal 1, ::Bot::Emailbot::SendBotEmail.jobs.size 
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:bot_email_channel_enabled?)
+    end
+
+    def test_create_from_email_without_bot_configuration
+      Account.any_instance.stubs(:support_bot_configured?).returns(false)
+      Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      ticket = create_ticket({source: 1})
+      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute 
+      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size 
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:bot_email_channel_enabled?)
+    end
+
+    def test_create_from_email_without_email_bot_channel
+      Account.any_instance.stubs(:support_bot_configured?).returns(true)
+      Account.any_instance.stubs(:bot_email_channel_enabled?).returns(false)
+      ticket = create_ticket({source: 1})
+      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute   
+      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size 
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:bot_email_channel_enabled?)
+    end
+
+    def test_create_from_other_source_with_bot_configuration
+      Account.any_instance.stubs(:support_bot_configured?).returns(true)
+      Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      ticket = create_ticket
+      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute
+      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:bot_email_channel_enabled?)
+    end
+
+    def test_spam_ticket_with_bot_configuration
+      Account.any_instance.stubs(:support_bot_configured?).returns(true)
+      Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      ticket = create_ticket({spam: true})
+      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute
+      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:bot_email_channel_enabled?)
     end
 
     def test_execute_scenario_without_params

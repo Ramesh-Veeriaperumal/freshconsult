@@ -793,6 +793,19 @@ class Account < ActiveRecord::Base
     agent_types
   end
 
+  def bot_email_response
+    email_notifications.find_by_notification_type(EmailNotification::BOT_RESPONSE_TEMPLATE) || default_bot_email_response
+  end
+
+  def default_bot_email_response
+    email_notifications.new(
+      requester_subject_template: EmailNotificationConstants::DEFAULT_BOT_RESPONSE_TEMPLATE[:requester_subject_template],
+      requester_template: EmailNotificationConstants::DEFAULT_BOT_RESPONSE_TEMPLATE[:requester_template],
+      requester_notification: true,
+      agent_notification: false,
+      notification_type: EmailNotification::BOT_RESPONSE_TEMPLATE)
+  end
+
   protected
   
     def external_url_is_valid?(url) 

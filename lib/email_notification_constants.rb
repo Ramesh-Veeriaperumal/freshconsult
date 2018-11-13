@@ -195,4 +195,16 @@ module EmailNotificationConstants
     agent_template: 'Hi {{agent.name}},<br /><br />Your {{helpdesk_name}} account has been created.<br /><br />Click <a href="{{helpdesk_url}}">here</a> to go to your account. <br /><br />If the above URL does not work, try copying and pasting it into your browser. Please feel free to contact us, if you continue to face any problems.<br /><br />Regards,<br />{{helpdesk_name}}'
   }
 
+  DEFAULT_BOT_RESPONSE_TEMPLATE = {
+    requester_subject_template: 'Re: {{ticket.subject}}',
+    requester_template: " <p> Hello {{ticket.requester.name}},<br><br>
+    Thanks for reaching out! We've received your request - 
+    <a href='{{ticket.url}}'style= 'font-weight:normal; text-decoration:none; color:#448EE1; font-weight:normal; font-size:13px;'>
+    {{ticket.id}}</a>, where you can check status and add comments.
+    <br><br>While you wait, {{ticket.portal.bot_name}}, our friendly support sidekick found some answers for you.</p>
+    {{freddy_suggestions}}
+    <p>Regards,
+    <br>{{ticket.portal.name}}</p>"
+  }.freeze
+  
 end

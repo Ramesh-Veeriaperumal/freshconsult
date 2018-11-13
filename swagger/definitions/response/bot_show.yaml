@@ -25,11 +25,13 @@ properties:
     type: string
   enable_on_portal:
     type: boolean
+  email_channel:
+    type: boolean
   product:
     type: object
     properties:
       name:
-       type: string
+        type: string
       portal_id:
         type: integer
       portal_logo:

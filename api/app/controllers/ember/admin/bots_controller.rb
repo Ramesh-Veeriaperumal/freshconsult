@@ -8,6 +8,7 @@ module Ember
 
       around_filter :handle_exception, only: [:mark_completed_status_seen, :enable_on_portal]
       before_filter :verify_create_bot_folder, only: [:create_bot_folder]
+      before_filter :check_bot_email_feature, only: :update
 
       def index
         @bots = { onboarded: current_account.bot_onboarded?, products: current_account.bots_from_cache }
@@ -35,23 +36,6 @@ module Ember
 
       def show
         return unless validate_query_params
-        portal = @item.portal
-        @bot = {
-          product: product_hash(portal),
-          id: params[:id].to_i,
-          external_id: @item.external_id,
-          enable_on_portal: @item.enable_in_portal,
-          all_categories: categories_list(portal),
-          selected_category_ids: @item.category_ids,
-          widget_code_src: BOT_CONFIG[:widget_code_src],
-          product_hash: BOT_CONFIG[:freshdesk_product_id],
-          environment: BOT_CONFIG[:widget_code_env]
-        }
-        @bot[:analytics_mock_data] = true if @item.additional_settings[:analytics_mock_data]
-        training_status = @item.training_status
-        @bot.merge!(status: training_status) if training_status
-        @bot.merge!(@item.profile)
-        @bot
       end
 
       def update
@@ -59,7 +43,9 @@ module Ember
         return unless validate_delegator(nil, params.merge(support_bot: @item))
         update_bot_attributes
         # Updating bot at Joehukum side
-        update_bot if save_bot
+        if save_bot
+          allow_bot_api? ? update_bot : (head 204)
+        end
       end
 
       def map_categories
@@ -189,21 +175,6 @@ module Ember
           render_base_error(:internal_error, 500)
         end
 
-        def get_portal_logo_url(portal)
-          logo = portal.logo
-          logo_url = logo.content.url if logo.present?
-          logo_url
-        end
-
-        def product_hash(portal)
-          name = portal.main_portal? ? portal.name : portal.product.name
-          {
-            name: name,
-            portal_id: portal.id,
-            portal_logo: get_portal_logo_url(portal)
-          }
-        end
-
         def delegator_hash
           @portal = get_portal(params[:portal_id])
           bot = @portal.bot if @portal
@@ -256,6 +227,7 @@ module Ember
               @item.additional_settings.delete(:default_avatar_url)
             end
           end
+          @item.email_channel = cname_params[:email_channel]
         end
 
         def update_logo
@@ -280,17 +252,6 @@ module Ember
         def handle_category_mapping_failure(error_message)
           @item.category_ids = @old_category_ids if @item.category_ids != @old_category_ids
           Rails.logger.error("BOT :: Category Mapping Failed :: Account id : #{@item.account_id} :: Bot id : #{@item.id} :: #{error_message}")
-        end
-
-        def categories_list(portal)
-          Language.for_current_account.make_current
-          public_category_meta = portal.public_category_meta
-          return [] unless public_category_meta
-          articles_count = Solution::CategoryMeta.bot_articles_count_hash(public_category_meta.map(&:id))
-          Language.reset_current
-          public_category_meta.map do |category|
-            { id: category.id, label: category.name, articles_count: articles_count[category.id] || 0 }
-          end
         end
 
         def save_bot
@@ -331,6 +292,15 @@ module Ember
 
         def metrics(response_hash, date)
           BotConstants::DEFAULT_ANALYTICS_HASH.merge(response_hash[date] || {})
+        end
+
+        def check_bot_email_feature
+          return if cname_params[:email_channel].blank? || current_account.bot_email_channel_enabled?
+          render_request_error(:require_feature, 403, feature: 'bot_email_channel')
+        end
+
+        def allow_bot_api?
+          cname_params.keys.none? { |x| BotConstants::SKIP_BOT_API.include?(x) }
         end
     end
   end

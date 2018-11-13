@@ -45,6 +45,7 @@ module BotTestHelper
                                  }.merge(avatar_hash),
                                  last_updated_by: options[:last_updated_by] || 1)
     test_bot.logo = attachment
+    test_bot.email_channel = options[:email_channel] || false
     test_bot.save(validate: false)
     test_bot.training_not_started!
     test_bot
@@ -113,6 +114,13 @@ module BotTestHelper
 
   def disable_bot
     Account.current.revoke_feature(:support_bot)
+  end
+
+  def enable_bot_email_channel
+    Account.current.stubs(:bot_email_channel_enabled?).returns(true)
+    yield
+  ensure
+    Account.current.unstub(:bot_email_channel_enabled?)
   end
 
   def offboard_bot
