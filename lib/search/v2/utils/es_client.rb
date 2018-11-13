@@ -8,7 +8,8 @@ module Search
 
       class EsClient
 
-        ES_TIME_DEFAULT=-1
+        ES_TIME_DEFAULT = -1
+        ES_TIMEOUT = 5
 
         attr_accessor :method, :path, :payload, :logger, :response, :log_data
 
@@ -33,7 +34,7 @@ module Search
           # _Note_: If Typhoeus is not a preferred client, can change here alone.
           #
           def es_request
-            request_to_es = Typhoeus::Request.new(@path, method: @method, body: @payload, headers: { 'User-Agent' => "V2Client #{@uuid}", 'X-Request-Id' => @uuid, 'Connection' => 'keep-alive' })
+            request_to_es = Typhoeus::Request.new(@path, method: @method, body: @payload, headers: { 'User-Agent' => "V2Client #{@uuid}", 'X-Request-Id' => @uuid, 'Connection' => 'keep-alive' }, timeout: ES_TIMEOUT)
             attach_callbacks(request_to_es)
 
             logger.log_request(
