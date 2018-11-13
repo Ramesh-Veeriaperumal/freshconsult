@@ -53,6 +53,11 @@ module Cache::Memcache::Account
     end
   end
 
+  def help_widget_from_cache(widget_id)
+    key = HELP_WIDGETS % { :account_id => self.id, :id => widget_id }
+    MemcacheKeys.fetch(key) { self.help_widgets.active.find_by_id(widget_id) }
+  end
+
   def clear_required_ticket_fields_cache
     key = ACCOUNT_REQUIRED_TICKET_FIELDS % { :account_id => self.id }
     MemcacheKeys.delete_from_cache(key)
@@ -147,6 +152,24 @@ module Cache::Memcache::Account
       MemcacheKeys.fetch(key) { agent_groups.select('user_id,group_id').all }
     end
   end
+
+  def agent_groups_hash_from_cache
+    @agent_groups_hash_from_cache ||= begin
+      key = agent_groups_hash_memcache_key
+      MemcacheKeys.fetch(key) { 
+        Rails.logger.debug "fetching agent_groups from db"
+        agent_groups_ids = Hash.new              
+        agents_groups = Account.current.agent_groups_from_cache
+        agents_groups.each do |ag|
+          agent_groups_ids[ag.group_id] ||= []          
+          agent_groups_ids[ag.group_id].push(ag.user_id)
+        end        
+        agent_groups_ids
+      }
+    end
+  end 
+
+  
 
   def products_from_cache
     key = ACCOUNT_PRODUCTS % { :account_id => self.id }
@@ -581,6 +604,18 @@ module Cache::Memcache::Account
     end
   end
 
+   def agent_types_from_cache
+    @agent_types_from_cache ||= begin
+      key = agent_type_memcache_key(self.id) 
+      MemcacheKeys.fetch(key) { self.get_or_create_agent_types }
+    end
+  end
+
+  def clear_agent_types_cache
+    key = agent_type_memcache_key(self.id)
+    MemcacheKeys.delete_from_cache(key)
+  end
+
   def clear_company_filters_cache
     key = format(COMPANY_FILTERS, account_id: id)
     MemcacheKeys.delete_from_cache(key)
@@ -615,6 +650,10 @@ module Cache::Memcache::Account
       ACCOUNT_AGENT_GROUPS % { account_id: id }
     end
 
+    def agent_groups_hash_memcache_key
+      ACCOUNT_AGENT_GROUPS_HASH % { account_id: id }
+    end 
+
     def tags_memcache_key
       ACCOUNT_TAGS % { :account_id => self.id }
     end
@@ -637,6 +676,10 @@ module Cache::Memcache::Account
 
     def bots_count_memcache_key
       BOTS_COUNT % { account_id: self.id }
+    end
+
+    def agent_type_memcache_key(account_id)
+      ACCOUNT_AGENT_TYPES % { :account_id => account_id }
     end
 
     def canned_responses_inline_images_key

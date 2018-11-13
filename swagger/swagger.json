@@ -8885,17 +8885,18 @@
         }
       }
     },
-    "/business_hours": {
+    "/help_widgets": {
       "get": {
-        "summary": "Business Hours",
         "tags": [
-          "business_hours"
+          "List of Help widgets"
         ],
+        "description": "Listing all widgets associated to the account",
+        "summary": "List all",
         "responses": {
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/business_hours"
+              "$ref": "#/definitions/help_widget_index"
             }
           },
           "400": {
@@ -8903,6 +8904,403 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "help widget creation"
+        ],
+        "description": "Creates new widget with a name  and default settings",
+        "summary": "Create widget",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/help_widget_create_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/help_widget_create"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/help_widgets/{id}": {
+      "get": {
+        "tags": [
+          "Help Widget Show"
+        ],
+        "description": "Responses with default setting of the help widget",
+        "summary": "Widget settings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/help_widget_show_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Help Widget",
+        "tags": [
+          "Help Widget Delete"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "type": "integer",
+            "format": "int64",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/help_widgets/update": {
+      "put": {
+        "tags": [
+          "Widget settings update"
+        ],
+        "description": "Update the settings of the Widget",
+        "summary": "Update for settings",
+        "parameters": [
+          {
+            "name": "settings",
+            "in": "body",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/help_widget_update"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/help_widget_update_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/business_hours": {
+      "get": {
+        "summary": "Business Hours",
+        "tags": [
+          "business_hours"
+        ],
+
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+                  "$ref": "#/definitions/business_hours"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/accounts/cancel": {
+      "post": {
+        "tags": [
+          "Account Cancellation"
+        ],
+        "summary": "Account Cancellation",
+        "description": "Request for Account cancellation.",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "data",
+            "schema": {
+              "$ref": "#/definitions/account_cancellation_request"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },  
+    "/data_export/export": {
+      "post": {
+        "tags": [
+          "Account export"
+        ],
+        "summary": "Export account data",
+        "description": "Let's the admin to export account data.",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+          }
+        }
+      }
+    },
+    "/account_admin": {
+      "put": {
+        "tags": [
+          "Account Admin"
+        ],
+        "summary": "Update",
+        "description": "Update Account's primary contact details",
+        "parameters": [
+          {
+            "name": "account_admin",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/account_admin_update"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/account_admin_update"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "405": {
+            "description": "Method Not Allowed",
+            "schema": {
+              "$ref": "#/definitions/method_not_allowed_error"
+            }
+          }
+        }
+      }
+    },
+    "/automations/{rule_type}/rules": {
+      "get": {
+        "tags": [
+          "automation rules"
+        ],
+        "summary": "List all",
+        "type": "object",
+        "properties": {
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/automation_rule_response"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/definitions/meta"
+              },
+              {
+                "properties": {
+                  "cascading_rules": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "automation rules"
+        ],
+        "description": "Create rule",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/automation_rule_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/automation_rule_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "rule not found"
+          }
+        }
+      }
+    },
+    "/automations/{rule_type}/rules/{id}": {
+      "get": {
+        "tags": [
+          "automation rules"
+        ],
+        "summary": "Show rule",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/automation_rule_response"
+            }
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "automation rules"
+        ],
+        "summary": "Delete rule",
+        "description": "Destroys the rule, will not be able to restore",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "automation rules"
+        ],
+        "summary": "Update rule",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/automation_rule_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/automation_rule_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Rule not found"
           }
         }
       }
@@ -9045,6 +9443,9 @@
           "type": "object",
           "properties": {
             "csrf_token": {
+              "type": "string"
+            },
+            "iris_notification_url": {
               "type": "string"
             },
             "collision_url": {
@@ -9208,6 +9609,23 @@
                       "type": "boolean"
                     }
                   }
+                },
+                "contact_info": {
+                  "type": "object",
+                  "properties": {
+                    "first_name": {
+                      "type": "string"
+                    },
+                    "last_name": {
+                      "type": "string"
+                    },
+                    "email": {
+                      "type": "string"
+                    },
+                    "phone": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             },
@@ -9359,6 +9777,14 @@
         },
         "additional_info": {
           "type": "object"
+        }
+      }
+    },
+    "method_not_allowed_error": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
         }
       }
     },
@@ -11359,6 +11785,14 @@
         }
       ]
     },
+    "automation_rule_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/automation_rule"
+        }
+      ]
+    },
     "trial_subscription_create": {
       "type": "object",
       "properties": {
@@ -11432,6 +11866,18 @@
         "meta"
       ]
     },
+
+  "account_cancellation_request": {
+    "type": "object",
+    "properties": {
+      "cancellation_feedback": {
+        "type": "string",
+        "description": "Account cancellation feedback"
+      },
+      "additional_cancellation_feedback": {
+        "type": "string",
+        "description": "Additional account cancellation feedback by admin"
+
     "conversation_template": {
       "type": "object",
       "properties": {
@@ -11902,6 +12348,9 @@
         "available_since": {
           "type": "string"
         },
+        "type": {
+          "type": "string"
+        },
         "contact": {
           "type": "object",
           "properties": {
@@ -11976,6 +12425,9 @@
               "items": {
                 "type": "integer"
               }
+            },
+            "type": {
+              "type": "string"
             },
             "available_since": {
               "type": "string"
@@ -13807,6 +14259,157 @@
         "name",
         "event"
       ]
+    },
+    "automation_rule": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "position": {
+          "type": "integer"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "performer": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "members": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field_name": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "conditions": {
+          "type": "object",
+          "properties": {
+            "condition_set_1": {
+              "type": "object",
+              "properties": {
+                "match_type": {
+                  "type": "string",
+                  "enum": [
+                    "all",
+                    "any"
+                  ]
+                },
+                "ticket/contact/company": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "field_name": {
+                        "type": "string"
+                      },
+                      "operator": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "operator": {
+              "type": "string",
+              "enum": [
+                "and",
+                "or"
+              ]
+            },
+            "condition_set_2": {
+              "type": "object",
+              "properties": {
+                "match_type": {
+                  "type": "string",
+                  "enum": [
+                    "all",
+                    "any"
+                  ]
+                },
+                "ticket/contact/company": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "field_name": {
+                        "type": "string"
+                      },
+                      "operator": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field_name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "name",
+        "conditions",
+        "actions"
+      ]
+    },
+    "automation_rule_common_response": {
+      "type": "object",
+      "properties": {
+        "affected_tickets_count": {
+          "type": "integer"
+        },
+        "outdated": {
+          "type": "boolean"
+        },
+        "last_updated_by": {
+          "type": "integer"
+        }
+      }
     },
     "meta": {
       "type": "object",
@@ -15862,6 +16465,20 @@
         }
       ]
     },
+    "automation_rule_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/automation_rule"
+        },
+        {
+          "$ref": "#/definitions/automation_rule_common_response"
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
     "trial_widget_index": {
       "type": "object",
       "properties": {
@@ -17421,6 +18038,508 @@
         }
       }
     },
+    "help_widget_index": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Id of the widget"
+          },
+          "product_id": {
+            "type": "integer",
+            "description": "Id of the product which the widget is associated with."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the widget"
+          }
+        }
+      }
+    },
+    "help_widget_create_input": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the widget"
+        },
+        "product_id": {
+          "type": "integer",
+          "description": "Id of the product for which widget will be created"
+        },
+        "settings": {
+          "properties": {
+            "components": {
+              "type": "object",
+              "properties": {
+                "contact_form": {
+                  "type": "boolean",
+                  "description": "Contact form is On or Off On - true / Off - false"
+                },
+                "suggestion": {
+                  "type": "boolean",
+                  "description": "Solution articles is On or Off On - true / Off - false"
+                }
+              }
+            },
+            "contact_form": {
+              "type": "object",
+              "properties": {
+                "form_type": {
+                  "type": "integer",
+                  "description": "1- simple form 2- form with ticket fields"
+                },
+                "form_tittle": {
+                  "type": "string",
+                  "description": "Title of the form"
+                },
+                "form_submit_message": {
+                  "type": "string",
+                  "description": "Message when the form is submitted"
+                },
+                "screenshot": {
+                  "type": "boolean"
+                },
+                "attach_file": {
+                  "type": "boolean"
+                },
+                "captcha": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "appearance": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "integer",
+                  "description": "1- Bottom_left 2- Bottom_right"
+                },
+                "offset_from_bottom": {
+                  "type": "integer",
+                  "description": "Offset from bottom in px"
+                },
+                "offset_from_right": {
+                  "type": "integer",
+                  "description": "Offset from right in px"
+                },
+                "offset_from_left": {
+                  "type": "integer",
+                  "description": "Offset from left in px"
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "height of the widget in px"
+                },
+                "theme_color": {
+                  "type": "string",
+                  "description": "theme of the widget"
+                },
+                "button_color": {
+                  "type": "string",
+                  "description": "Color of the buttons in widget"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "help_widget_create": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Welcome message"
+            },
+            "button_text": {
+              "type": "string",
+              "description": "Text on the button ( default = Help )"
+            },
+            "components": {
+              "type": "object",
+              "properties": {
+                "contact_form": {
+                  "type": "boolean",
+                  "description": "Contact form is On or Off On - true / Off - false"
+                },
+                "suggestion": {
+                  "type": "boolean",
+                  "description": "Solution articles is On or Off On - true / Off - false"
+                }
+              }
+            },
+            "contact_form": {
+              "type": "object",
+              "properties": {
+                "form_type": {
+                  "type": "integer",
+                  "description": "1 - simple form 2 - form with ticket fields ( default = 1 )"
+                },
+                "form_title": {
+                  "type": "string",
+                  "description": "Title of the form"
+                },
+                "form_submit_message": {
+                  "type": "string",
+                  "description": "Message when the form is submitted"
+                },
+                "screenshot": {
+                  "type": "boolean"
+                },
+                "attach_file": {
+                  "type": "boolean"
+                },
+                "captcha": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "appearance": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "integer",
+                  "description": "1 - Bottom_left 2 - Bottom_right ( default = 1 )"
+                },
+                "offset_from_bottom": {
+                  "type": "integer",
+                  "description": "Offset from bottom in px ( default = 30px )"
+                },
+                "offset_from_right": {
+                  "type": "integer",
+                  "description": "Offset from right in px ( default = 30px )"
+                },
+                "offset_from_left": {
+                  "type": "integer",
+                  "description": "Offset from left in px ( default = 30px )"
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "height of the widget in px ( default = 600px )"
+                },
+                "theme_color": {
+                  "type": "string",
+                  "description": "theme of the widget ( default color = 1054da )"
+                },
+                "button_color": {
+                  "type": "string",
+                  "description": "Color of the buttons in widget ( default color = 16193e )"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "help_widget_show": {
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Id of the widget"
+        }
+      }
+    },
+    "help_widget_show_response": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Welcome message"
+            },
+            "button_text": {
+              "type": "string",
+              "description": "Text on the button ( default = Help )"
+            },
+            "components": {
+              "type": "object",
+              "properties": {
+                "contact_form": {
+                  "type": "boolean",
+                  "description": "Contact form is On or Off On - true / Off - false"
+                },
+                "suggestion": {
+                  "type": "boolean",
+                  "description": "Solution articles is On or Off On - true / Off - false"
+                }
+              }
+            },
+            "contact_form": {
+              "type": "object",
+              "properties": {
+                "form_type": {
+                  "type": "integer",
+                  "description": "1 - simple form 2 - form with ticket fields ( default = 1 )"
+                },
+                "form_title": {
+                  "type": "string",
+                  "description": "Title of the form"
+                },
+                "form_submit_message": {
+                  "type": "string",
+                  "description": "Message when the form is submitted"
+                },
+                "screenshot": {
+                  "type": "boolean"
+                },
+                "attach_file": {
+                  "type": "boolean"
+                },
+                "captcha": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "appearance": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "integer",
+                  "description": "1 - Bottom_left 2 - Bottom_right ( default = 1 )"
+                },
+                "offset_from_bottom": {
+                  "type": "integer",
+                  "description": "Offset from bottom in px ( default = 30px )"
+                },
+                "offset_from_right": {
+                  "type": "integer",
+                  "description": "Offset from right in px ( default = 30px )"
+                },
+                "offset_from_left": {
+                  "type": "integer",
+                  "description": "Offset from left in px ( default = 30px )"
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "height of the widget in px ( default = 600px )"
+                },
+                "theme_color": {
+                  "type": "string",
+                  "description": "theme of the widget ( default color = 1054da )"
+                },
+                "button_color": {
+                  "type": "string",
+                  "description": "Color of the buttons in widget ( default color = 16193e )"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "help_widget_update": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Welcome message"
+            },
+            "button_text": {
+              "type": "string",
+              "description": "Text on the button"
+            },
+            "components": {
+              "type": "object",
+              "properties": {
+                "contact_form": {
+                  "type": "boolean",
+                  "description": "Contact form is On or Off On - true / Off - false"
+                },
+                "suggestion": {
+                  "type": "boolean",
+                  "description": "Solution articles is On or Off On - true / Off - false"
+                }
+              }
+            },
+            "contact_form": {
+              "type": "object",
+              "properties": {
+                "form_type": {
+                  "type": "integer",
+                  "description": "1- simple form 2- form with ticket fields"
+                },
+                "form_tittle": {
+                  "type": "string",
+                  "description": "Title of the form"
+                },
+                "form_submit_message": {
+                  "type": "string",
+                  "description": "Message when the form is submitted"
+                },
+                "screenshot": {
+                  "type": "boolean"
+                },
+                "attach_file": {
+                  "type": "boolean"
+                },
+                "captcha": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "appearance": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "integer",
+                  "description": "1- Bottom_left 2- Bottom_right"
+                },
+                "offset_from_bottom": {
+                  "type": "integer",
+                  "description": "Offset from bottom in px"
+                },
+                "offset_from_right": {
+                  "type": "integer",
+                  "description": "Offset from right in px"
+                },
+                "offset_from_left": {
+                  "type": "integer",
+                  "description": "Offset from left in px"
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "height of the widget in px"
+                },
+                "theme_color": {
+                  "type": "string",
+                  "description": "theme of the widget"
+                },
+                "button_color": {
+                  "type": "string",
+                  "description": "Color of the buttons in widget"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "help_widget_update_response": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Welcome message"
+            },
+            "button_text": {
+              "type": "string",
+              "description": "Text on the button ( default = Help )"
+            },
+            "components": {
+              "type": "object",
+              "properties": {
+                "contact_form": {
+                  "type": "boolean",
+                  "description": "Contact form is On or Off On - true / Off - false"
+                },
+                "suggestion": {
+                  "type": "boolean",
+                  "description": "Solution articles is On or Off On - true / Off - false"
+                }
+              }
+            },
+            "contact_form": {
+              "type": "object",
+              "properties": {
+                "form_type": {
+                  "type": "integer",
+                  "description": "1 - simple form 2 - form with ticket fields ( default = 1 )"
+                },
+                "form_title": {
+                  "type": "string",
+                  "description": "Title of the form"
+                },
+                "form_submit_message": {
+                  "type": "string",
+                  "description": "Message when the form is submitted"
+                },
+                "screenshot": {
+                  "type": "boolean"
+                },
+                "attach_file": {
+                  "type": "boolean"
+                },
+                "captcha": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "appearance": {
+              "type": "object",
+              "properties": {
+                "position": {
+                  "type": "integer",
+                  "description": "1 - Bottom_left 2 - Bottom_right ( default = 1 )"
+                },
+                "offset_from_bottom": {
+                  "type": "integer",
+                  "description": "Offset from bottom in px ( default = 30px )"
+                },
+                "offset_from_right": {
+                  "type": "integer",
+                  "description": "Offset from right in px ( default = 30px )"
+                },
+                "offset_from_left": {
+                  "type": "integer",
+                  "description": "Offset from left in px ( default = 30px )"
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "height of the widget in px ( default = 600px )"
+                },
+                "theme_color": {
+                  "type": "string",
+                  "description": "theme of the widget ( default color = 1054da )"
+                },
+                "button_color": {
+                  "type": "string",
+                  "description": "Color of the buttons in widget ( default color = 16193e )"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "group_request": {
       "$ref": "./definitions/request/groups/private_group_request.yaml"
     },
@@ -17497,6 +18616,33 @@
             "type": "string",
             "format": "date-time"
           }
+        }
+      }
+    },
+    "account_admin_update": {
+      "type": "object",
+      "required": [
+        "first_name",
+        "last_name",
+        "email"
+      ],
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "description": "First name of the account's primary contact"
+        },
+        "last_name": {
+          "type": "string",
+          "description": "Last name of the account's primary contact"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "email of account's primary contact"
+        },
+        "phone": {
+          "type": "string",
+          "description": "phone number of account's primary contact"
         }
       }
     }

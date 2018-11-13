@@ -1,0 +1,13 @@
+post:
+  tags: [Account export]
+  summary: Export account data
+  description: Let's the admin to export account data.
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

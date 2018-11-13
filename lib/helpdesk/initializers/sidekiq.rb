@@ -70,7 +70,9 @@ Sidekiq.configure_client do |config|
       "CRMApp::Freshsales::TrackSubscription",
       "Admin::Sandbox::CreateAccountWorker",
       'Admin::CloneWorker',
-      'Freshid::AccountDetailsUpdate'
+      'Freshid::AccountDetailsUpdate',
+      'MigrationWorker',
+      'DataExportCleanup'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -169,7 +171,9 @@ Sidekiq.configure_server do |config|
       "CRMApp::Freshsales::TrackSubscription",
       "Admin::Sandbox::CreateAccountWorker",
       'Admin::CloneWorker',
-      'Freshid::AccountDetailsUpdate'
+      'Freshid::AccountDetailsUpdate',
+      'MigrationWorker',
+      'DataExportCleanup'
     ]
     chain.add Middleware::Sidekiq::Server::SetCurrentUser, :required_classes => [
       "AccountCreation::PopulateSeedData",
@@ -254,7 +258,9 @@ Sidekiq.configure_server do |config|
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
       'CRMApp::Freshsales::TrackSubscription',
-      'Freshid::AccountDetailsUpdate'
+      'Freshid::AccountDetailsUpdate',
+      'MigrationWorker',
+      'DataExportCleanup'
     ]
     chain.add Middleware::Sidekiq::Client::SetCurrentUser, :required_classes => [
       "Tickets::BulkScenario",

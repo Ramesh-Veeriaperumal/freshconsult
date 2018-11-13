@@ -40,17 +40,9 @@ module Ember
       end
 
       def decorator_options
-        super({ agent_groups_ids: group_agents_mappings })
+        super({ agent_groups_ids: current_account.agent_groups_hash_from_cache })
       end
-
-      def group_agents_mappings
-        agent_groups_ids = Hash.new { |hash, key| hash[key] = [] }
-        agents_groups = current_account.agent_groups_from_cache
-        agents_groups.each do |ag|
-          agent_groups_ids[ag.group_id].push(ag.user_id)
-        end
-        agent_groups_ids
-      end
+      
 
       def reset_attributes                
         if params[cname]["assignment_type"] == NO_ASSIGNMENT

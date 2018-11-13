@@ -1,0 +1,19 @@
+put:
+  tags: [Widget settings update]
+  description: Update the settings of the Widget
+  summary: Update for settings
+  parameters:
+    - name: settings
+      in: body
+      schema:
+        allOf:
+          - $ref: '#/definitions/help_widget_update'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/help_widget_update_response'
+    400:
+      description: Bad Request Error
+    403:
+      description: Access denied

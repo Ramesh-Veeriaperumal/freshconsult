@@ -56,4 +56,7 @@ class Agent < ActiveRecord::Base
     allowed_fields
   end
   
+  SUPPORT_AGENT = 'support_agent'
+  FIELD_AGENT = 'field_agent'
+  DELETED_AGENT = 'deleted'
 end

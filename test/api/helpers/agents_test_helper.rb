@@ -26,7 +26,8 @@ module AgentsTestHelper
       signature: expected_output[:signature_html] || agent.signature_html,
       ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,
       updated_at: agent.updated_at,
-      contact: expected_output[:user] || user
+      contact: expected_output[:user] || user,
+      type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name
     }
   end
 
@@ -45,7 +46,8 @@ module AgentsTestHelper
       contact: contact_pattern(expected_output[:user] || agent.user),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
-      gdpr_admin_name: expected_output[:gdpr_admin_name] || agent.user.current_user_gdpr_admin
+      gdpr_admin_name: expected_output[:gdpr_admin_name] || agent.user.current_user_gdpr_admin,
+      type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name
     }
   end
 
@@ -175,7 +177,8 @@ module AgentsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},
       role_ids: expected_output[:role_ids] || agent_user.role_ids,
       group_ids: expected_output[:group_ids] || agent.group_ids,
-      contact: expected_output[:user] || user
+      contact: expected_output[:user] || user,
+      type: Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent.agent_type }.name
     }
   end
 

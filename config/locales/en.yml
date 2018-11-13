@@ -4234,6 +4234,7 @@ en:
       active: "Full-Time"
       occasional: "Occasional"
       deleted: "Deleted"
+      field_agent: "Field Agents"
     sort:
       sorted_by: Sorted by
       name: "Name"
@@ -4624,8 +4625,8 @@ en:
     trial: In trial version
     account_suspended: account suspended
     buy: Buy more
-    available_seats: "%{count} Agent seats available"
-    available_seats_without_count: Agent seats available
+    available_seats: "%{count} seats available"
+    available_seats_without_count: seats available
     no_seats: No agent seats available
     export_title: "Export Agents to CSV"
     last_logged_in: Last logged in %{time} ago.
@@ -4669,6 +4670,8 @@ en:
       title4: Scopes and Roles
       info14: You can choose which tickets your agents can see by modifying their Ticket Scope. You should also specify what actions an agent is able to perform within your helpdesk by choosing a Role.
       info15: Note that you will not be able to either modify your own roles or delete yourself as an agent.
+      title5: Field Agent
+      info16: A field agent is an expert representative from the company who assists users with maintainance, repairs or any other operations outside the company premises on specified locations.
     make_admin: Make this agent an admin
     view_user: View User
     use_email: Use this email
@@ -4697,6 +4700,7 @@ en:
     occasional_description: This agent will be accessing the support portal
     full_time: Full time
     occasional: Occasional
+    field_agent: Field Agent
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
     insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"
@@ -8074,8 +8078,7 @@ en:
         add_note_to_ticket: "Add note to ticket"
         view_all: View all
     cti_admin:
-      helptext: "<p>Integrate your telephone system with your online helpdesk using the Freshdesk CTI framework. With our simple documentation and straightforward APIs, hooking up your online helpdesk with a telephone system becomes a walk in the park.</p><p>Once you’re done setting up your adaptor with our helpdesk, your support agents will be able to make/receive calls, access customer details, take notes during calls, and maintain context to provide that jaw-drop awesome customer support.</p><p><a href='
-https://support.freshdesk.com/solution/articles/221418-computer-telephony-integration-framework'> Learn more </a>"
+      helptext: "With our CTI framework, you can connect your existing phone system and make it easy for your team to make and receive calls from Freshdesk. With our simple documentation and straightforward APIs, connecting your Freshdesk account with your existing telephony system is easier than ever.</p><p>Once you’re done setting up your adapter, your team will be able to make and receive calls, access customer details, take notes and have context to provide awesome customer support right    from Freshdesk.</p><p><a href='https://support.freshdesk.com/solution/articles/221418-computer-telephony-integration-framework'> Learn more </a>"
       no_feature: "This app can only be installed for accounts with CTI enabled."
       label: "CTI Framework"
       desc: "Unify your telephony experience within Freshdesk"
@@ -12349,6 +12352,15 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
     enable_mint_success: "Yay! Mint has successfully been enabled for all agents."
     enable_mint_success_info: To disable the old Freshdesk completely, visit the admin tab in Mint
     enable_mint_error: Mint has already been enabled for all agents. Refresh to see the latest settings.
+  account_cancelled:
+    email:
+      subject: "%{account_full_domain} has been cancelled"
+      header: "Account Cancelled"
+      body: "<div>Hi %{user_name},</div><br/><div>This email is a confirmation that your Freshdesk account has been cancelled. We’re sorry to see you go.</div><br/>
+           <div>If you have feedback on how we can provide a better experience, please write to us at %{support_email}. We’d love to hear from you. </div><br/>"
+  email_content:
+    regards: "Regards,"
+    freshdesk_team: "Freshdesk team"
   freshchat:
     admin:
       title_text: 'Freshchat'
@@ -13037,3 +13049,13 @@ Yes, we can accomodate vegan meals. Regarding Labadee though, we can't customize
 Thanks,<br>
 Rebecca<br>
 Saul's support"
+  help_widget:
+    name: "Welcome to %{name}"
+    form_title: "Send us a message"
+    form_button_text: "Send message"
+    form_submit_message: "Thank you for your feedback"
+    message: "Welcome to support"
+    button_text: "Help"
+    untitled_widget: "Untitled widget %{count}"
+    invalid_components: "Invalid components hash with %{key}"
+    invalid_settings: "Invalid settings hash with %{key}"

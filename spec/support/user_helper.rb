@@ -11,14 +11,16 @@ module UsersHelper
                         :agent => 1,
                         :ticket_permission => options[:ticket_permission] || Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets],
                         :role_ids => ["#{role_id}"],
-                        :unique_external_id => options[:unique_external_id] })
+                        :unique_external_id => options[:unique_external_id] ,
+                        :agent_type => options[:agent_type] || 1})
   end
 
   def add_agent(account, options={})
     new_agent = FactoryGirl.build(:agent,
                                       :account_id => account.id,
                                       :available => 1,
-                                      :ticket_permission => options[:ticket_permission])
+                                      :ticket_permission => options[:ticket_permission],
+                                      :agent_type => options[:agent_type] || 1)
     new_user = FactoryGirl.build(:user,
                                     :account_id => account.id,
                                     :name => options[:name],

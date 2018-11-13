@@ -973,8 +973,8 @@ module Channel::V2
       updated_at = Time.parse updated_at
       assert (t.created_at - created_at).to_i.zero?
       assert (t.updated_at - updated_at).to_i.zero?
-      assert t.due_by - t.created_at == 1.day, "Expected due_by => #{t.due_by.inspect} to be equal to created time => #{t.created_at.inspect}"
-      assert t.frDueBy - t.created_at == 8.hour, "Expected frDueBy => #{t.frDueBy.inspect} to be equal to created time => #{t.created_at.inspect}"
+      assert t.due_by - t.created_at == 1.day, "Expected due_by => #{t.due_by.inspect} to be 1 day ahead of created time => #{t.created_at.inspect}"
+      assert t.frDueBy - t.created_at == 8.hour, "Expected frDueBy => #{t.frDueBy.inspect} to be 8 hours ahead of created time => #{t.created_at.inspect}"
     ensure
       BusinessCalendar.any_instance.unstub(:holidays)
       Account.any_instance.unstub(:shared_ownership_enabled?)
@@ -1001,8 +1001,8 @@ module Channel::V2
       updated_at = Time.parse updated_at
       assert (t.created_at - created_at).to_i.zero?
       assert (t.updated_at - updated_at).to_i.zero?
-      assert t.due_by - t.created_at == 1.day, "Expected due_by => #{t.due_by.inspect} to be equal to created time => #{t.created_at.inspect}"
-      assert t.frDueBy - t.created_at == 8.hour, "Expected frDueBy => #{t.frDueBy.inspect} to be equal to created time => #{t.created_at.inspect}"
+      assert t.due_by - t.created_at == 1.day, "Expected due_by => #{t.due_by.inspect} to be 1 day ahead of created time => #{t.created_at.inspect}"
+      assert t.frDueBy - t.created_at == 8.hour, "Expected frDueBy => #{t.frDueBy.inspect} to be 8 hours ahead of created time => #{t.created_at.inspect}"
     ensure
       BusinessCalendar.any_instance.unstub(:holidays)
       Account.any_instance.unstub(:shared_ownership_enabled?)
@@ -1012,7 +1012,7 @@ module Channel::V2
       BusinessCalendar.any_instance.stubs(:holidays).returns([])
       current_time = Time.now.monday
       started_bhr_time = Time.gm(current_time.year, current_time.month, current_time.day, 8) # fix date so to calculate sla correctly
-      created_at = updated_at = (started_bhr_time - 60.day).iso8601
+      created_at = updated_at = (started_bhr_time - 2.month).iso8601
       params = {
         requester_id: requester.id, status: 2, priority: 2,
         subject: Faker::Name.name, description: Faker::Lorem.paragraph,
@@ -1029,8 +1029,8 @@ module Channel::V2
       updated_at = Time.parse updated_at
       assert (t.created_at - created_at).to_i.zero?
       assert (t.updated_at - updated_at).to_i.zero?
-      assert t.due_by - t.created_at == 31.day, "Expected due_by => #{t.due_by.inspect} should be 30 days ahead of created time => #{t.created_at.inspect}"
-      assert t.frDueBy - t.created_at == 31.day, "Expected frDueBy => #{t.frDueBy.inspect} should be 30 days ahead of  created time => #{t.created_at.inspect}"
+      assert t.created_at + 1.month == t.due_by, "Expected due_by => #{t.due_by.inspect} should be 1 month after created time => #{t.created_at.inspect}"
+      assert t.created_at + 1.month == t.frDueBy, "Expected frDueBy => #{t.frDueBy.inspect} should be 1 month after created time => #{t.created_at.inspect}"
     ensure
       BusinessCalendar.any_instance.unstub(:holidays)
       Account.any_instance.unstub(:shared_ownership_enabled?)

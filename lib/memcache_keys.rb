@@ -24,6 +24,8 @@ module MemcacheKeys
 
   ACCOUNT_AGENT_GROUPS = "v4/ACCOUNT_AGENT_GROUPS:%{account_id}"
 
+  ACCOUNT_AGENT_GROUPS_HASH = "v4/ACCOUNT_AGENT_GROUPS_HASH:%{account_id}"
+
   ACCOUNT_PRODUCTS = "v1/ACCOUNT_PRODUCTS:%{account_id}"
 
   ACCOUNT_TAGS = "v1/ACCOUNT_TAGS:%{account_id}"
@@ -223,12 +225,15 @@ module MemcacheKeys
   
   TICKET_FIELDS_FULL = 'TICKET_FIELDS_FULL:%{account_id}'.freeze
 
+  HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"
+
   TICKET_FIELDS_FULL = 'TICKET_FIELDS_FULL:%{account_id}'.freeze
 
   CURRENCY_NAMES = 'CURRENCY_NAMES'.freeze
 
   PLANS_AGENT_COSTS_BY_CURRENCY = 'PLANS_AGENT_COSTS_BY_CURRENCY:%{currency_name}'.freeze
 
+  ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
   class << self
 
     include MemcacheReadWriteMethods

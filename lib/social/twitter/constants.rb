@@ -12,7 +12,10 @@ module Social::Twitter::Constants
     :dm => "DM",
     :custom => "Custom"
   }
-  
+  TWITTER_NOTE_TYPE = {
+    dm: 'dm',
+    mention: 'mention'
+  }.freeze
   TWITTER_ACTIONS = {
     :favorite    => "favorite",
     :unfavorite  => "unfavorite",

@@ -1,0 +1,38 @@
+get:
+  tags: [Help Widget Show]
+  description: Responses with default setting of the help widget
+  summary: Widget settings
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/help_widget_show_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+delete:
+  summary: Delete Help Widget
+  tags: [Help Widget Delete]
+  parameters:
+    - name: id
+      type: integer
+      format: int64
+      in: path
+      required: true
+  responses:
+    204:
+      description: Success
+    404:
+      description: User not found
+    403:
+      description: Access denied

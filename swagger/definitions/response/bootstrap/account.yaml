@@ -96,6 +96,17 @@ properties:
                 type: boolean
               social_enabled:
                 type: boolean
+          contact_info:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email:
+                type: string
+              phone:
+                type: string
       portal:
         type: object
         properties:

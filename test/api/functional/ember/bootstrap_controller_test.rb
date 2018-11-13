@@ -28,6 +28,19 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     match_json(account_pattern(Account.current, Account.current.main_portal))
   end
 
+  def test_account_without_admin_and_accout_admin_privilege
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_account).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+    get :account, controller_params(version: 'private')
+    parsed_response = parse_response response.body
+    assert_response 200
+    assert_nil parsed_response['account']['subscription']['mrr']
+    assert_nil parsed_response['config']['growthscore_app_id']
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
   def test_account_with_fav_icon_for_portal
     portal = Account.current.main_portal
     file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')

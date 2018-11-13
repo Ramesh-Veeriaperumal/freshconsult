@@ -1,0 +1,9 @@
+type: object
+properties:
+  cancellation_feedback:
+    type: string
+    description: Account cancellation feedback
+  additional_cancellation_feedback:
+    type: string
+    description: Additional account cancellation feedback by admin
+    

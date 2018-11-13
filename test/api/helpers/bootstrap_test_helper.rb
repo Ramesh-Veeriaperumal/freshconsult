@@ -100,6 +100,7 @@ module BootstrapTestHelper
     pattern[:social_options] = social_options_hash if account.features?(:twitter) || account.basic_twitter_enabled?
     pattern[:dashboard_limits] = account.account_additional_settings.custom_dashboard_limits if account.custom_dashboard_enabled?
     pattern[:freshchat] = freshchat_hash if account.freshchat_enabled?
+    pattern[:account_cancellation_requested] =  account.account_cancellation_requested?
     pattern.merge!(sandbox_info(account))
     first_invoice = account.subscription.subscription_invoices.first
     if User.current.privilege?(:manage_users) || User.current.privilege?(:manage_account)
@@ -109,11 +110,12 @@ module BootstrapTestHelper
         subscription_plan: String,
         trial_days: account.subscription.trial_days,
         is_copy_right_enabled: account.copy_right_enabled?,
-        mrr: account.subscription.cmrr,
         signup_date: account.subscription.created_at,
         first_invoice_date: first_invoice.nil? ? nil : first_invoice.created_at
       }
+      pattern[:subscription][:mrr] = account.subscription.cmrr if User.current.privilege?(:admin_tasks) || User.current.privilege?(:manage_account)
     end
+    pattern[:contact_info] = account.contact_info.presence
     pattern
   end
 

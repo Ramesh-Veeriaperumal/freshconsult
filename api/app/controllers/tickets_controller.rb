@@ -338,8 +338,13 @@ class TicketsController < ApiApplicationController
       params[cname].permit(*field)
       set_default_values
       params_hash = params[cname].merge(statuses: Helpdesk::TicketStatus.status_objects_from_cache(current_account), ticket_fields: @ticket_fields)
-      ticket = validation_class.new(params_hash, @item, string_request_params?)
+      additional_params = get_additional_params
+      ticket = validation_class.new(params_hash, @item, string_request_params?, additional_params)
       render_custom_errors(ticket, true) unless ticket.valid?(original_action_name.to_sym)
+    end
+
+    def get_additional_params
+      # placeholder function to pass additional params into ticket validation
     end
 
     def set_default_values

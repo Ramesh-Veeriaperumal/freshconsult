@@ -243,7 +243,7 @@ class TicketValidation < ApiValidation
 
   validates :inline_attachment_ids, data_type: { rules: Array }
 
-  def initialize(request_params, item, allow_string_param = false)
+  def initialize(request_params, item, allow_string_param = false, additional_params = {})
     @request_params = request_params
     @status_ids = request_params[:statuses].map(&:status_id) if request_params.key?(:statuses)
     super(request_params, item, allow_string_param)
@@ -252,6 +252,7 @@ class TicketValidation < ApiValidation
     @due_by ||= item.try(:due_by).try(:iso8601) if item
     @product = item.product_id if !request_params.key?(:product_id) && item.try(:product_id)
     @item = item
+    @additional_params = additional_params
     fill_custom_fields(request_params, item.custom_field_via_mapping) if item && item.custom_field_via_mapping.present?
   end
 

@@ -32,6 +32,7 @@ class AgentsController < ApplicationController
   before_filter :set_filter_data, :only => [ :update,  :create]
   before_filter :set_skill_data, :only => [:new, :edit]
   before_filter :access_denied, only: :reset_password, if: :freshid_enabled?
+  before_filter :sanitize_params, only: [:create, :update]
 
   def load_object
     @agent = scoper.find(params[:id])
@@ -55,7 +56,9 @@ class AgentsController < ApplicationController
       #for using query string in api calls
       @agents = scoper.with_conditions(convert_query_to_conditions(params[:query])) 
     else
-      @agents = scoper.filter(params[:state],params[:letter], current_agent_order, current_agent_order_type, params[:page])
+      state = params[:state] == Agent::FIELD_AGENT ? 'active' : params[:state]
+      type =  fetch_agent_type(params[:state])
+      @agents = scoper.filter(type, state, params[:letter], current_agent_order, current_agent_order_type, params[:page])
     end
     respond_to do |format|
       format.html #index.html.erb
@@ -94,7 +97,7 @@ class AgentsController < ApplicationController
     end    
   end
 
-  def edit   
+  def edit  
     #@agent.signature_html ||= @agent.signature_value
     @agent_skills = gon.agent_skills = current_account.skill_based_round_robin_enabled? ? 
     @agent.user.user_skills.preload(:skill).map { |user_skill|
@@ -129,7 +132,7 @@ class AgentsController < ApplicationController
     render :json => { :shortcuts_enabled => @agent.shortcuts_enabled? }
   end  
 
-  def create    
+  def create 
     @user  = current_account.users.new #by Shan need to check later        
     group_ids = params[nscname].delete(:group_ids)
     @agent = current_account.agents.new(params[nscname]) 
@@ -189,6 +192,12 @@ class AgentsController < ApplicationController
       @responseObj[:reached_limit] = :true
     end              
   end
+
+  def sanitize_params
+    params['agent']['occasional'] = (params['agent']['agent_type'] == 'occasional')
+    params['agent']['agent_type'] = params['agent']['agent_type'] == 'field_agent' ? AgentType.agent_type_id(Agent::FIELD_AGENT) : AgentType.agent_type_id(Agent::SUPPORT_AGENT)
+  end
+
   
   def update
     @agent.occasional = params[:agent][:occasional] || false
@@ -536,4 +545,14 @@ private
     main_portal? ? current_account.host : current_portal.portal_url
   end
 
+  def fetch_agent_type(state)
+    if state == Agent::FIELD_AGENT
+      AgentType.agent_type_id(Agent::FIELD_AGENT)
+    elsif state == Agent::DELETED_AGENT
+      nil
+    else
+      AgentType.agent_type_id(Agent::SUPPORT_AGENT)
+    end
+  end
 end
+

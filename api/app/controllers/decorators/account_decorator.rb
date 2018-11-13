@@ -27,8 +27,10 @@ class AccountDecorator < ApiDecorator
     ret_hash[:social_options] = social_options_hash if record.features?(:twitter) || record.basic_twitter_enabled?
     ret_hash[:dashboard_limits] = record.account_additional_settings.custom_dashboard_limits if record.custom_dashboard_enabled?
     ret_hash[:freshchat] = freshchat_options_hash if record.freshchat_enabled?
+    ret_hash[:contact_info] = record.contact_info.presence
     trial_subscription = record.latest_trial_subscription_from_cache
     ret_hash[:trial_subscription] = trial_subscription_hash(trial_subscription) if trial_subscription
+    ret_hash[:account_cancellation_requested] = record.account_cancellation_requested?
     ret_hash
   end
 
@@ -55,16 +57,17 @@ class AccountDecorator < ApiDecorator
     def subscription_hash
       subscription = record.subscription
       first_invoice = subscription.subscription_invoices.first
-      {
+      ret_hash = {
         agent_limit: subscription.agent_limit,
         state: subscription.state,
         subscription_plan: subscription.subscription_plan.name,
         trial_days: subscription.trial_days,
         is_copy_right_enabled: record.copy_right_enabled?,
-        mrr: subscription.cmrr,
         signup_date: subscription.created_at,
         first_invoice_date: first_invoice.nil? ? nil : first_invoice.created_at
       }
+      ret_hash[:mrr] = subscription.cmrr if User.current.privilege?(:admin_tasks) || User.current.privilege?(:manage_account)
+      ret_hash
     end
 
     def settings_hash

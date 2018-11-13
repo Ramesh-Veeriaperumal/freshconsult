@@ -29,7 +29,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/survey", only: [:index, :show]
     resource :"ember/dashboard/activity", only: [:index]
     resource :"ember/portal", only: [:index]
-    resource :"ember/email_config", only: [:index, :search]
+    resource :"ember/email_config", only: [:index, :search, :show]
     resource :"ember/dashboard", only: %i(scorecard show survey_info)
     resource :"ember/dashboard/quest", only: %i(index)
     resource :"ember/contact_field", only: [:index]
@@ -52,6 +52,9 @@ Authority::Authorization::PrivilegeList.build do
   manage_account do
     resource :"channel/freshcaller/account", only: [:destroy]
     resource :"admin/trial_subscription", only: [:create, :cancel]
+    resource :"account_admin", only: [:update]
+    resource :"admin/api_account", only: [:cancel]
+    resource :"admin/api_data_export", only: [:account_export]
   end
 
   manage_email_settings do
@@ -137,6 +140,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/subscription", only: [:show, :plans]
     resource :"proactive/rule"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
+    resource :'help_widget', only: [:index, :create, :show, :update, :destroy]
     resource :"admin/trial_subscription", only: [:usage_metrics]
   end
 

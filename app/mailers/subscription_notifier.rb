@@ -155,12 +155,38 @@ class SubscriptionNotifier < ActionMailer::Base
       part.html { render "salesforce_details", :formats => [:html] }
     end.deliver
   end
+
+  def account_cancellation_requested(feedback)
+    period = { 1 => "Monthly", 3 => "Quarterly", 6 => "Half Yearly", 12 => "Annual" }
+    setup_email(AppConfig['cs_email'], "Cancellation request from #{Account.current.full_domain}.", Account.current.id, "Cancellation Request")
+    @account = Account.current
+    @reason  = feedback
+    @billing_period = period[@account.subscription.renewal_period]
+    @freshops_account_url = freshops_account_url(Account.current)
+    mail(@headers) do |part|
+      part.html { render "account_cancellation_requested", :formats => [:html]}
+    end.deliver
+  end
+
+  def admin_account_cancelled(account_admins_email_list)
+    setup_email(account_admins_email_list,
+                t('account_cancelled.email.subject',{:account_full_domain => Account.current.full_domain}),
+                AppConfig['from_email'],
+                Account.current.id,
+                t('account_cancelled.email.header'))
+    @account = Account.current
+    @support_email = AppConfig['from_email']
+    mail(@headers) do |part|
+      part.html { render "admin_account_cancelled", :formats => [:html]}
+    end.deliver
+  end
+
   private
     def setup_email(to, subject, from = AppConfig['billing_email'], account_id, n_type)
       @headers = {
         :subject  => subject,
         :to       => to.respond_to?(:email) ? to.email : to,
-        :from     => from.respond_to?(:email) ? from.email : from , 
+        :from     => from.respond_to?(:email) ? from.email : from ,
         :sent_on  => Time.now
       }
 

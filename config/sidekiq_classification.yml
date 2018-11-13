@@ -172,6 +172,8 @@
     - deactivate_product_widgets
     - deactivate_filter_widgets
     - update_segment_filter
+    - cancel_account
+    - migration
   :external:
     - code_console_execution
     - integrations
@@ -200,6 +202,7 @@
     - freshid_agents_migration
     - run_rake_task
     - register_freshconnect
+    - widget_upload_config
   :free:
     - free_sla
     - free_supervisor

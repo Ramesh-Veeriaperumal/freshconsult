@@ -1,5 +1,4 @@
 class Social::TwitterHandle < ActiveRecord::Base
-
   DM_THREADTIME = [
     [ :never,    I18n.t('never'),      0 ],
     [ :one,      I18n.t('one'),      3600 ],

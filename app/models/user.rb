@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
   include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
   # publishable on: :update
-
+  
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :unique_external_id, :scope => :account_id, :allow_nil => true, :case_sensitive => false
@@ -579,16 +579,17 @@ class User < ActiveRecord::Base
     enqueue_activation_email(params[:email_config], portal) if !deleted and !email.blank? and send_activation and !Thread.current[:create_sandbox_account]
     true
   end
-
+  
   def enqueue_activation_email(email_config = nil, portal = nil)
     portal.make_current if portal
+    active_freshid_agent = active_freshid_agent?
     if self.language.nil?
-      email_type = active_freshid_agent? ? :deliver_agent_invitation! : :deliver_activation_instructions!
-      args = active_freshid_agent? ? [portal] : [ portal, false, email_config]
+      email_type = active_freshid_agent ? :deliver_agent_invitation! : :deliver_activation_instructions!
+      args = active_freshid_agent ? [portal] : [ portal, false, email_config]
       Delayed::Job.enqueue(Delayed::PerformableMethod.new(self, email_type, args),
         nil, 5.minutes.from_now)
     else
-      active_freshid_agent? ? deliver_agent_invitation!(portal) : deliver_activation_instructions!(portal, false, email_config)
+      active_freshid_agent ? deliver_agent_invitation!(portal) : deliver_activation_instructions!(portal, false, email_config)
     end
   end
 
@@ -1266,7 +1267,7 @@ class User < ActiveRecord::Base
   end
 
   def active_freshid_agent?
-    @active_freshid_agent ||= active_and_verified? && freshid_enabled_and_agent?
+    active_and_verified? && freshid_enabled_and_agent?
   end
 
   def email_id_changed?
