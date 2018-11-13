@@ -55,6 +55,8 @@
           klass.safe_send(action[:method], action[:args])
         end
       }
+      # To send bot response for tickets created via email
+      ::Bot::Emailbot::SendBotEmail.perform_async(ticket_id: @ticket.id) if source_email?
     rescue Exception => e
       Va::Logger::Automation.log_error(DISPATCHER_ERROR, e)
       NewRelic::Agent.notice_error(e)
@@ -65,6 +67,15 @@
     end
 
     private
+
+    def source_email?
+      if @ticket.spam_or_deleted?
+        Rails.logger.info "Ticket #{@ticket.id} is either spammed or deleted before getting ML response"
+        return false
+      else
+        @ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] && @account.bot_email_channel_enabled? && @ticket.portal.bot.try(:email_channel) && @account.support_bot_configured?
+      end
+    end
 
     def notify_cc_recipients
       if @ticket.cc_email_hash.present? && @ticket.cc_email_hash[:cc_emails].present? && get_others_redis_key("NOTIFY_CC_ADDED_VIA_DISPATCHER").present?

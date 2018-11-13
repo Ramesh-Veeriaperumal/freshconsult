@@ -157,6 +157,10 @@ class PortalDrop < BaseDrop
     (@tabs.size > 1) ? @tabs : []
   end
 
+  def bot_name
+    source.bot.name
+  end
+
   # Access to Discussions
   def has_forums
     @has_forums ||= (feature?(:forums) && allowed_in_portal?(:open_forums) && !feature?(:hide_portal_forums) && forums.present?)

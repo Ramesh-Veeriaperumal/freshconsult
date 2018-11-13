@@ -52,6 +52,8 @@ class EmailNotification < ActiveRecord::Base
   RESOLUTION_SLA_REMINDER = 23
   DEFAULT_FORWARD_TEMPLATE = 24
 
+  # Bot template
+  BOT_RESPONSE_TEMPLATE = 201
 
   DISABLE_NOTIFICATION = {
     NEW_TICKET =>  { 
@@ -104,13 +106,16 @@ class EmailNotification < ActiveRecord::Base
     [:additional_email_verification,  ADDITIONAL_EMAIL_VERIFICATION,  VISIBILITY[:REQUESTER_ONLY]     ],
     [:notify_comment,                 NOTIFY_COMMENT,                 VISIBILITY[:AGENT_ONLY]         ],
     [:new_ticket_cc,                  NEW_TICKET_CC,                  VISIBILITY[:CC_NOTIFICATION]    ],
-    [:public_note_cc,                 PUBLIC_NOTE_CC,                 VISIBILITY[:CC_NOTIFICATION]    ]
+    [:public_note_cc,                 PUBLIC_NOTE_CC,                 VISIBILITY[:CC_NOTIFICATION]    ],
+    [:bot_response_template,          BOT_RESPONSE_TEMPLATE,          VISIBILITY[:REQUESTER_ONLY]     ]
   ]
 
   # List of notfications to agents which cannot be turned off
   AGENT_MANDATORY_LIST = [ :user_activation_email, :password_reset_email, :notify_comment, :agent_invitation_email]
   # List of notfications to requester which cannot be turned off
   REQUESTER_MANDATORY_LIST = [ :password_reset_email ]
+  # List of notifications not visible under admin's
+  CUSTOM_NOTIFICATION_LIST = [ BOT_RESPONSE_TEMPLATE ]
 
   TOKEN_BY_KEY  = Hash[*EMAIL_NOTIFICATIONS.map { |i| [i[1], i[0]] }.flatten]
   VISIBILITY_BY_KEY  = Hash[*EMAIL_NOTIFICATIONS.map { |i| [i[1], i[2]] }.flatten]
@@ -137,11 +142,12 @@ class EmailNotification < ActiveRecord::Base
   def visible_to_agent?
     return false if token == :password_reset_email and account.freshid_enabled?
     return false if token == :agent_invitation_email and !account.freshid_enabled?
-    [ VISIBILITY[:AGENT_AND_REQUESTER], VISIBILITY[:AGENT_ONLY] ].include? VISIBILITY_BY_KEY[self.notification_type]
+    EmailNotification.agent_visible_template?(self.notification_type)
   end
 
   def visible_to_requester?
-    [ VISIBILITY[:AGENT_AND_REQUESTER], VISIBILITY[:REQUESTER_ONLY] ].include? VISIBILITY_BY_KEY[self.notification_type]
+    return false if CUSTOM_NOTIFICATION_LIST.include? (self.notification_type)
+    EmailNotification.requester_visible_template?(self.notification_type)
   end
 
   def reply_template?
@@ -162,6 +168,14 @@ class EmailNotification < ActiveRecord::Base
 
   def can_turn_off_for_requester?
     !REQUESTER_MANDATORY_LIST.include?(self.token)
+  end
+
+  def self.agent_visible_template?(notification_type)
+    ([ VISIBILITY[:AGENT_AND_REQUESTER], VISIBILITY[:AGENT_ONLY] ].include? VISIBILITY_BY_KEY[notification_type])
+  end
+
+  def self.requester_visible_template?(notification_type)
+    ([ VISIBILITY[:AGENT_AND_REQUESTER], VISIBILITY[:REQUESTER_ONLY] ].include? VISIBILITY_BY_KEY[notification_type])
   end
 
   def outdate_email_notification!(category)

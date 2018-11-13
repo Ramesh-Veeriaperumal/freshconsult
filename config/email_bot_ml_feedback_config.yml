@@ -1,0 +1,12 @@
+development:
+  api_endpoint: https://central-staging.freshworksapi.com/collector
+  service_token: ZmlnOmh5cGVydHJhaWwtY2k=
+test:
+  api_endpoint: https://central-staging.freshworksapi.com/collector
+  service_token: dummy
+staging:
+  api_endpoint: https://central-staging.freshworksapi.com/collector
+  service_token: dummy
+production:
+  api_endpoint: https://central-staging.freshworksapi.com/collector
+  service_token: dummy

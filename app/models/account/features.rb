@@ -15,7 +15,7 @@ class Account < ActiveRecord::Base
                  :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :count_service_es_reads, :mint_portal_applicable, 
                  :old_link_back_url_validation, :shopify_actions, :db_to_bitmap_features_migration,
                  :denormalized_select_for_update, :installed_app_publish, :disable_banners, :quoted_text_parsing_feature, 
-                 :product_central_publish, :redis_picklist_id, :help_widget]
+                 :product_central_publish, :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish]
   
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 

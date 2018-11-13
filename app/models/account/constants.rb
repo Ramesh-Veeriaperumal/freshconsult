@@ -218,7 +218,7 @@ class Account < ActiveRecord::Base
     :email_deprecated_style_parsing => false, :old_link_back_url_validation => false, :shopify_actions => true,
     :saml_ecrypted_assertion => false, :installed_app_publish => false,  :disable_banners => false, :quoted_text_parsing_feature => false,
     :product_central_publish => false, :help_widget => false,
-    :field_service_management_lp => false
+    :field_service_management_lp => false, :bot_email_channel => false, :bot_email_central_publish => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days

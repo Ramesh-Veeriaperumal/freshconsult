@@ -117,6 +117,101 @@
 	}
 }
 
+.do-you-find-it-helpful{
+	position: fixed;
+	display: flex;
+	width: 440px;
+	height: 150px;
+	right: 150px;
+	bottom: 15px;
+	background-color: #ffffff;
+	border-radius: 5px;
+	box-shadow: 0 0 5px 2px #ccc;
+	strong{
+		font-size: 16px;
+	}
+	.bot-ticket-content{
+		margin-top: 22px;
+		margin-right: 24px;
+		a{
+			color: $blue;
+		}
+		p{
+			margin-top: 2px;
+			font-size: 14px;
+		}
+		button{
+			margin-right: 5px;
+			margin-top: 15px;
+			display: inline;
+			font-size: 12px;
+			height: 36px;
+		}
+		.btn-primary{
+			letter-spacing: 0.4px;
+		}
+	}
+	.bot-article-content {
+		margin-top: 24px;
+		margin-left: 20px;
+		a{
+			color: #448EE1;
+			font-size: 16px;
+		}
+		li{
+			margin-top: 7px;
+			font-weight: 500;
+		}
+		.help {
+			margin-bottom: 15px;
+		}
+	}
+	.bot-image {
+		background-image: url("/images/email-bot.png");
+		background-repeat: no-repeat;
+		background-size: 100%;
+		background-position: 0;
+		width: 170px;
+		display: inline;
+		margin-right: 10px;
+		white-space: nowrap;
+		margin-left: 6px;
+	}
+	.thanks-for-feedback {
+		display: table;
+		width: 100%;
+		height: 100%;
+		text-align: center;
+		div{
+			margin-top: 20px;
+		}
+		.widget-vote {
+			border-radius: 50%;
+			width: 40px;
+			height: 40px;
+			margin: 40px 0px 0px 200px;
+			&:before {
+				padding: 10px 0px 0px 2px;
+				font-size: 17px;
+			}
+		}
+		.down{
+			@extend .ficon-thumbs-down;
+			border: 1px solid #F8AB59;
+			&:before {
+				color: #F8AB59;
+			}
+		}
+		.up{
+			@extend .ficon-thumbs-up;
+			border: 1px solid #31C072;
+			&:before {
+				color: #31C072;
+			}
+		}
+	}
+}
+
 .article-list li, .topic-list li, .ticket-list li,
 li.article-item, li.topic-item, li.ticket-item, li.note-item {
 	list-style: none;

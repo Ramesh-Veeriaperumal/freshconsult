@@ -660,8 +660,13 @@ module SupportHelper
       :preferences => preview? ? escaped_portal_preferences : portal_preferences,
       :image_placeholders => { :spacer => spacer_image_url,
                               :profile_thumb => image_path("misc/profile_blank_thumb.jpg"),
-                               :profile_medium => image_path("misc/profile_blank_medium.jpg") }
-    }.to_json
+                               :profile_medium => image_path("misc/profile_blank_medium.jpg") },
+      :falcon_portal_theme => Account.current.falcon_support_portal_theme_enabled?
+    }.merge(controller_js_object || {}).to_json
+  end
+
+  def controller_js_object
+    @current_object if @current_object
   end
 
   def portal_copyright portal

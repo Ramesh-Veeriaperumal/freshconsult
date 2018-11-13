@@ -6,11 +6,14 @@ common: &common
   update_bot_url: 'https://admin.intfreshbots.com/rest/api/v1/bots/%{botHash}'
   avatar_bucket_url: 'https://s3.amazonaws.com/cdn.freshpo.com'
   avatar_cdn_url: 'https://assets30.freshpo.com'
+  email_bot_article_cdn_url: 'https://assets1.freshpo.com'
   widget_code_src: 'https://www.intfreshbots.com/assets/share/js/fbotsChat.js'
   widget_code_env: 'stag'
   ml_onboarding_url: 'https://freshiqnew.freshpo.com/api/v1/afr/onboard'
   ml_authorization_key: '7F77DC551CFF7BAB845879ABD41DA'
   analytics_url: 'https://admin.intfreshbots.com/rest/api/report/v1/funnel/stats'
+  email_bot_domain: 'https://freshiqnew.freshpo.com'
+  email_bot_path: '/api/v1/afr/smart_reply'
 
 development:
   <<: *common
