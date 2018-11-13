@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
                  :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3,
                  :imap_error_status_check, :va_any_field_without_none, :auto_complete_off, :sandbox_lp,
                  :sanbox_lp, :encode_emoji, :dependent_field_validation, :post_central_publish,
-                 :encode_emoji_subject, :note_central_publish,
+                 :encode_emoji_subject, :note_central_publish, :company_central_publish,
                  :time_sheets_central_publish, :new_ticket_recieved_metric, :canned_forms,
                  :euc_migrated_twitter, :twitter_microservice, :twitter_handle_publisher, :csat_email_scan_compatibility,
                  :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :count_service_es_reads, :mint_portal_applicable, 
