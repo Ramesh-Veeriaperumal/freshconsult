@@ -55,31 +55,9 @@ module Conversations::Twitter
     resp = nil
 
     unless @reply_handle.nil?
-      latest_comment = ticket.notes.latest_twitter_comment.first
-      latest_tweet = latest_comment.nil? ? ticket.tweet : latest_comment.tweet
-      status_id = latest_tweet.tweet_id
-      req_twt_id = latest_comment.nil? ? ticket.requester.twitter_id : latest_comment.user.twitter_id
-
-      error_msg, return_value, error_code = twt_sandbox(@reply_handle, TWITTER_TIMEOUT[:reply]) {
-        twitter  = TwitterWrapper.new(@reply_handle).get_twitter
-        msg_body = tweet_body
-        resp = twitter.create_direct_message(req_twt_id, msg_body) unless Account.current.twitter_microservice_enabled?
-
-        #update dynamo
-        unless latest_tweet.stream_id.nil? || Account.current.twitter_microservice_enabled?
-          dynamo_helper = Social::Dynamo::Twitter.new
-          stream_id = "#{current_account.id}_#{latest_tweet.stream_id}"
-          reply_params = {
-            :id => resp.attrs[:id_str],
-            :user_id => resp.attrs[:recipient_id_str],
-            :body => resp.attrs[:text],
-            :posted_at => resp.attrs[:created_at]
-          }
-          dynamo_helper.update_dm(stream_id, reply_params)
-        end
-
-        Account.current.twitter_microservice_enabled? ? process_tweet(note, nil, reply_handle_id, :dm) : process_tweet(note, resp, reply_handle_id, :dm)
-      }
+      error_msg, return_value, error_code = twt_sandbox(@reply_handle, TWITTER_TIMEOUT[:reply]) do
+        process_tweet(note, nil, reply_handle_id, :dm)
+      end
     end
     [error_msg, resp, error_code]
   end

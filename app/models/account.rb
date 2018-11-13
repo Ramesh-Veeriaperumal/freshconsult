@@ -26,7 +26,7 @@ class Account < ActiveRecord::Base
   
   is_a_launch_target
   
-  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods, :presenter
+  concerned_with :associations, :constants, :validations, :callbacks, :features, :solution_associations, :multilingual, :sso_methods, :presenter, :subscription_methods
 
   include CustomerDeprecationMethods
   
@@ -724,6 +724,29 @@ class Account < ActiveRecord::Base
     redis_key_exists? freshid_migration_in_progress_key
   end
 
+  def account_cancel_requested?
+    redis_key_exists?(account_cancel_request_job_key)
+  end
+  
+  def account_cancellation_requested?
+    redis_key_exists?(account_cancellation_request_job_key)
+  end
+  
+  def account_cancellation_request_job_key
+    ACCOUNT_CANCELLATION_REQUEST_JOB_ID % {:account_id => self.id}
+  end
+
+  def kill_account_cancellation_request_job
+    job_id= get_others_redis_key(account_cancellation_request_job_key)
+    job = Sidekiq::ScheduledSet.new.find_job(job_id)
+    job.delete if job.present?
+    delete_account_cancellation_request_job_key
+  end
+
+  def delete_account_cancellation_request_job_key
+    remove_others_redis_key(account_cancellation_request_job_key)
+  end
+
   def canned_responses_inline_images
     attachment_ids = []
     canned_responses.find_each(batch_size: 100) do |canned_response|
@@ -746,6 +769,16 @@ class Account < ActiveRecord::Base
         type[field.name.to_sym] = field.field_type
       end
     end
+  end
+
+  #Temp method to directly create support agent type if it was not created as part of fixtures/migration.
+  def get_or_create_agent_types
+    agent_types = self.agent_types.all
+    if agent_types.length == 0
+      AgentType.create_support_agent_type(self)
+      return self.agent_types.all
+    end    
+    agent_types
   end
 
   protected

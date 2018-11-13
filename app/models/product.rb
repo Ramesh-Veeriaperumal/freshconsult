@@ -4,20 +4,27 @@ class Product < ActiveRecord::Base
   include Cache::Memcache::Product
   include Cache::FragmentCache::Base
 
+  concerned_with :presenter
+
+  publishable on: [:create, :update, :destroy]
+
+  before_destroy :remove_primary_email_config_role,:save_deleted_product_info
   clear_memcache [TICKET_FIELDS_FULL]
 
-  before_destroy :remove_primary_email_config_role
   validates_uniqueness_of :name , :case_sensitive => false, :scope => :account_id
   xss_sanitize :only => [:name, :description], :plain_sanitize => [:name, :description]
 
   after_create :create_chat_widget
+
+  before_save :create_model_changes, on: :update
+
 
   after_commit :clear_cache
   after_update :widget_update
   after_commit ->(obj) { obj.clear_fragment_caches } , on: :create
   after_commit ->(obj) { obj.clear_fragment_caches } , on: :destroy
   after_commit :clear_fragment_caches, on: :update, :if => :pdt_name_changed?
-  after_commit :unset_product_field, :update_dashboard_widgets, on: :destroy 
+  after_commit :unset_product_field, :update_dashboard_widgets, :update_help_widgets, on: :destroy 
 
   belongs_to_account
   has_one    :portal               , :dependent => :destroy
@@ -27,6 +34,7 @@ class Product < ActiveRecord::Base
   has_many   :twitter_handles      , :class_name => 'Social::TwitterHandle', :dependent => :nullify
   has_many   :facebook_pages       , :class_name => 'Social::FacebookPage' , :dependent => :nullify
   has_many   :ecommerce_accounts   , :class_name => 'Ecommerce::Account', :dependent => :nullify
+  has_many   :help_widgets
 
   has_one    :bot, class_name: 'Bot', dependent: :destroy
 
@@ -84,12 +92,27 @@ class Product < ActiveRecord::Base
     product_bot_info
   end
 
+  def update_help_widgets # To trigger callbacks
+    return unless account.help_widget_enabled?
+    help_widgets.each do |h|
+      h.update_attributes(:product_id => nil)
+    end
+  end
+
   private
+
+    def save_deleted_product_info
+      @deleted_model_info = central_publish_payload
+    end
+
+    def create_model_changes
+      @model_changes = self.changes.to_hash
+      @model_changes.symbolize_keys!
+    end
 
     def remove_primary_email_config_role
       primary_email_config.update_attribute(:primary_role, false)
     end
-
 
    def widget_update
 

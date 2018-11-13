@@ -40,6 +40,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account_summary[:disable_emails] = account.launched?(:disable_emails)
     account_summary[:saml_sso_enabled] = account.is_saml_sso?
     account_summary[:falcon_enabled] = account.has_feature?(:falcon)
+    account_summary[:account_cancellation_requested] = account.account_cancellation_requested?
     respond_to do |format|
       format.json do
         render :json => account_summary

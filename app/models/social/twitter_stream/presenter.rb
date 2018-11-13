@@ -40,4 +40,8 @@ class Social::TwitterStream < Social::Stream
     previous_changes.merge(@model_changes || {})
   end
 
+  def event_info(event)
+    {pod: ChannelFrameworkConfig['pod']}
+  end
+
 end

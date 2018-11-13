@@ -92,4 +92,10 @@ class Billing::ChargebeeWrapper
 	def retrieve_invoice_pdf_url(invoice_id)
 		ChargeBee::Invoice.pdf(invoice_id).download.download_url
 	end
+	
+	def change_term_end(account_id, data)
+ 		Rails.logger.debug ":::ChargeBee - Change Term End - Params sent:::"
+ 		Rails.logger.debug data.inspect
+ 		ChargeBee::Subscription.change_term_end(account_id, data)
+ 	end
 end

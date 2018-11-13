@@ -287,6 +287,7 @@ defaults: &defaults
     - [send_domain_changed_mail]
     - [freshops_service]
     - [twitter_reply]
+    - [widget_upload_config]
 
 development:
   <<: *defaults

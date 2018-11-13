@@ -240,7 +240,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def event_info(event_name)
-    return {} if event_name == 'destroy'
+    return   {pod: ChannelFrameworkConfig['pod']} if event_name == 'destroy'
     lifecycle_hash = (event_name == 'create' && resolved_at) ? default_lifecycle_properties : (@ticket_lifecycle || {})
     { action_in_bhrs: action_in_bhrs? }.merge(lifecycle_hash)
   end

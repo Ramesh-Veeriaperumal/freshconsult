@@ -11,8 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180821052830) do
-
+ActiveRecord::Schema.define(version: 20181022133027) do
+  
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -218,6 +218,20 @@ ActiveRecord::Schema.define(version: 20180821052830) do
   add_index "agent_groups", ["account_id", "user_id", "group_id"], :name => "index_agent_groups_on_account_id_and_user_id_and_group_id"
   add_index "agent_groups", ["group_id", "user_id"], :name => "agent_groups_group_user_ids"
 
+  create_table "agent_types", :force => true do |t|
+    t.integer  "agent_type_id"
+    t.string   "name"
+    t.string   "label"
+    t.boolean  "default",                    :default => false
+    t.integer  "account_id",    :limit => 8,                    :null => false
+    t.integer  "deleted",                    :default => 0
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
+  end
+
+  add_index "agent_types", ["account_id", "agent_type_id"], :name => "index_account_id_and_type_id__on_agent_types"
+  add_index "agent_types", ["account_id", "name"], :name => "index_account_id_and_name_on_agent_types", :unique => true
+
   create_table "agents", :force => true do |t|
     t.integer  "user_id",             :limit => 8
     t.text     "signature"
@@ -233,6 +247,7 @@ ActiveRecord::Schema.define(version: 20180821052830) do
     t.boolean  "available",                        :default => true
     t.datetime "active_since"
     t.datetime "last_active_at"
+    t.integer  "agent_type",                       :default => 1
   end
 
   add_index "agents", ["account_id", "google_viewer_id"], :name => "index_agents_on_account_id_and_google_viewer_id"
@@ -1130,6 +1145,7 @@ ActiveRecord::Schema.define(version: 20180821052830) do
 
   add_index "data_exports", ["account_id", "source", "token"], :name => "index_data_exports_on_account_id_source_and_token"
   add_index "data_exports", ["account_id", "user_id", "source"], :name => "index_data_exports_on_account_id_user_id_and_source"
+  add_index "data_exports", ["source", "created_at"], :name => "index_data_exports_on_source_and_created_at"
 
   create_table "day_pass_configs", :force => true do |t|
     t.integer  "account_id",        :limit => 8
@@ -2097,6 +2113,18 @@ ActiveRecord::Schema.define(version: 20180821052830) do
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true
 
+  create_table "help_widgets", :force => true do |t|
+    t.integer  "account_id", :limit => 8
+    t.integer  "product_id", :limit => 8
+    t.string   "name"
+    t.text     "settings"
+    t.boolean  "active",                  :default => true
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
+  end
+
+  add_index "help_widgets", ["account_id", "active"], :name => "index_help_widgets_on_account_id_and_active"
+
   create_table "helpdesk_accesses", :force => true do |t|
     t.string   "accessible_type"
     t.integer  "accessible_id",   :limit => 8
@@ -2260,6 +2288,8 @@ ActiveRecord::Schema.define(version: 20180821052830) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_id",    :limit => 8
+    t.integer  'picklist_id', limit: 3
+    t.boolean  'deleted'
   end
 
   add_index "helpdesk_picklist_values", ["account_id", "pickable_type", "pickable_id"], :name => "index_on_picklist_account_id_and_pickabke_type_and_pickable_id"
@@ -4236,6 +4266,9 @@ ActiveRecord::Schema.define(version: 20180821052830) do
     t.integer  "rule_type"
     t.boolean  "active"
     t.integer  "position"
+    t.text     "condition_data"
+    t.boolean  "outdated"
+    t.integer  "last_updated_by",  :limit => 8
   end
 
   add_index "va_rules", ["account_id", "rule_type"], :name => "index_va_rules_on_account_id_and_rule_type"

@@ -14,7 +14,8 @@ class Account < ActiveRecord::Base
                  :euc_migrated_twitter, :twitter_microservice, :twitter_handle_publisher, :csat_email_scan_compatibility,
                  :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :count_service_es_reads, :mint_portal_applicable, 
                  :old_link_back_url_validation, :shopify_actions, :db_to_bitmap_features_migration,
-                 :denormalized_select_for_update, :installed_app_publish, :disable_banners, :quoted_text_parsing_feature]
+                 :denormalized_select_for_update, :installed_app_publish, :disable_banners, :quoted_text_parsing_feature, 
+                 :product_central_publish, :redis_picklist_id, :help_widget]
   
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
@@ -256,7 +257,7 @@ class Account < ActiveRecord::Base
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
     valid_user && (falcon_enabled? || check_admin_mint? || disable_old_ui_enabled?)
   end
-
+  
   def check_admin_mint?
     return false if User.current.nil?
     admin_only_mint_enabled? && User.current.privilege?(:admin_tasks)
@@ -283,5 +284,9 @@ class Account < ActiveRecord::Base
 
   def revoke_support_bot?
     redis_key_exists?(REVOKE_SUPPORT_BOT) || (Rails.env.production? && PODS_FOR_BOT.exclude?(PodConfig['CURRENT_POD']))
+  end
+
+  def help_widget_enabled?
+    launched?(:help_widget)
   end
 end

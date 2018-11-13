@@ -62,12 +62,18 @@ module AgentsHelper
      false
    end
  end
+
+  def is_field_agent?(agent)
+    agent.agent_type == AgentType.agent_type_id(Agent::FIELD_AGENT)
+  end
   
   def agent_list_tabs
     state = params.fetch(:state, "active")
     
-    available_states = [:active, :deleted]
-    available_states.insert(1, :occasional) if current_account.occasional_agent_enabled?
+    available_states = [:active]
+    available_states.push(:occasional) if current_account.occasional_agent_enabled?
+    available_states.push(:field_agent) if current_account.field_service_management_enabled?
+    available_states.push(:deleted)
 
     available_states.map do |tab|
       content_tag(:li, :class => "#{(state == tab.to_s) ? 'active' : '' }") do
@@ -85,8 +91,18 @@ module AgentsHelper
   end
 
   def agent_count(state)
-    scoper = :occasional.eql?(state) ? "occasional_agents" : "full_time_agents"
-    current_account.all_agents.safe_send(scoper).size
+    case state
+    when :occasional
+      agent_type = AgentType.agent_type_id(Agent::SUPPORT_AGENT)
+      occasional = true
+    when :field_agent
+      agent_type = AgentType.agent_type_id(Agent::FIELD_AGENT)
+      occasional = false
+    else
+      agent_type = AgentType.agent_type_id(Agent::SUPPORT_AGENT)
+      occasional = false
+    end
+    current_account.agents.where(agent_type: agent_type, occasional: occasional).size
   end
   
   def agent_list_sort

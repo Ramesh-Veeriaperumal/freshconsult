@@ -382,4 +382,8 @@ class Account < ActiveRecord::Base
   has_many :contact_notes
   has_many :company_notes
   has_one  :freshconnect_account, class_name: 'Freshconnect::Account', dependent: :destroy
+
+  has_many :help_widgets, dependent: :destroy
+  has_many :picklist_values, class_name: 'Helpdesk::PicklistValue', include: [:pickable]
+  has_many :agent_types, class_name: 'AgentType', dependent: :destroy
 end

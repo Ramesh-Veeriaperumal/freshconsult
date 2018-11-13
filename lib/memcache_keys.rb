@@ -218,6 +218,10 @@ module MemcacheKeys
   COMPANY_FILTERS = 'COMPANY_FILTERS:%{account_id}'.freeze
   
   TICKET_FIELDS_FULL = 'TICKET_FIELDS_FULL:%{account_id}'.freeze
+  
+  ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
+
+  HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"
 
   class << self
 
