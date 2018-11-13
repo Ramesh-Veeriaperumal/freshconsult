@@ -48,8 +48,7 @@ class Company < ActiveRecord::Base
   end
 
   def custom_company_fields
-    account.company_form.company_fields_from_cache.reject 
-    { |field| field.column_name == 'default' }
+    account.company_form.company_fields_from_cache.reject { |field| field.column_name == 'default' }
   end
 
   def model_changes_for_central
@@ -57,8 +56,7 @@ class Company < ActiveRecord::Base
     flexifield_changes = changes.select { |k, v| k.to_s.starts_with?(*FLEXIFIELD_PREFIXES) }
     return changes if flexifield_changes.blank?
     company_custom_field_name_mapping = account.company_form.
-    company_fields_from_cache.each_with_object({}) 
-    { |entry, hash| hash[entry.column_name] = entry.name }
+    company_fields_from_cache.each_with_object({}) { |entry, hash| hash[entry.column_name] = entry.name }
     flexifield_changes.each_pair do |key, val|
       changes[company_custom_field_name_mapping[key.to_s]] = val
     end
