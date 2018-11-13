@@ -53,6 +53,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :deleted
     t.add :group_users
     t.add :import_id
+    t.add proc { |x| x.attachments.map(&:id) }, as: :attachment_ids
     t.add proc { |x| x.tags.collect { |tag| { id: tag.id, name: tag.name } } }, as: :tags
     REPORT_FIELDS.each do |key|
       t.add proc { |x| x.reports_hash[key.to_s] }, as: key
@@ -72,6 +73,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :requester, template: :central_publish
     t.add :responder, template: :central_publish
     t.add :group, template: :central_publish
+    t.add :attachments, template: :central_publish
   end
 
   api_accessible :central_publish_destroy do |t|

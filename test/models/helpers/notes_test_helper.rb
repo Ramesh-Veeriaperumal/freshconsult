@@ -2,7 +2,8 @@
 
 module NotesTestHelper
   include NoteTestHelper
-  ASSOCIATION_REFS_BASED_ON_TYPE = ["feedback", "tweet", "fb_post", "freshcaller"]
+
+  ASSOCIATION_REFS_BASED_ON_TYPE = ["feedback", "tweet", "fb_post"]
 
   def note_params_hash(params = {})
     body = params[:body_html] || Faker::Lorem.paragraph
