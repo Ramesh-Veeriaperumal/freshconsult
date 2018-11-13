@@ -224,4 +224,31 @@ class FacebookRealtimeTest < ActionView::TestCase
     assert_equal @account.facebook_posts.find_by_post_id(fb_post_id).postable.is_a?(Helpdesk::Ticket), true
     assert_equal @account.facebook_posts.find_by_post_id(fb_comment_id).postable.is_a?(Helpdesk::Note), true
   end
+
+  def test_comments_to_company_post_convert_to_ticket_with_optimal_rule_type_with_no_includes
+    user_id = rand(10 ** 10)
+    post_id = rand(10 ** 15)
+    comment_id = rand(10 ** 15)
+    time = Time.now.utc
+    post_user_id = @fb_page.page_id
+    ticket_rule = @fb_page.default_ticket_rule
+    filter_data_hash = ticket_rule.filter_data
+    filter_data_hash[:includes] = []
+    ticket_rule.filter_data = filter_data_hash
+    ticket_rule.save!
+    comment_feed = sample_realtime_comment(@fb_page.page_id, post_id, comment_id, user_id, time)
+    koala_post = sample_post_feed(@fb_page.page_id, post_user_id, post_id, time)
+    koala_comment = sample_comment_feed(post_id, user_id, comment_id, time)
+    koala_post[0]['comments'] = koala_comment
+    sqs_msg = Hashit.new(body: comment_feed.to_json)
+
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
+    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Koala::Facebook::API.any_instance.unstub(:get_object)
+    fb_comment_id = koala_comment['data'][0]['id']
+    comment_content = koala_comment['data'][0]['message']
+    fb_post = @account.facebook_posts.find_by_post_id(fb_comment_id).postable
+    assert_equal fb_post.is_a?(Helpdesk::Ticket), true
+    assert_equal fb_post.description, comment_content
+  end
 end
