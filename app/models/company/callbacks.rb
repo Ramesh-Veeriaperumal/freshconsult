@@ -9,6 +9,9 @@ class Company < ActiveRecord::Base
   
   before_create :check_sla_policy
   before_update :check_sla_policy, :backup_company_changes
+  before_destroy :save_deleted_company_info
+
+  publishable on: [:create, :update, :destroy]
 
   
   # Callbacks will be executed in the order in which they have been included. 
@@ -25,6 +28,10 @@ class Company < ActiveRecord::Base
   end
   
   private
+
+    def save_deleted_company_info
+     @deleted_model_info = as_api_response(:central_publish)
+    end
     
     def backup_company_changes
       @model_changes = self.changes.clone.to_hash

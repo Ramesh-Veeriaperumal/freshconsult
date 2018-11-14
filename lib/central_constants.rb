@@ -8,6 +8,7 @@ module CentralConstants
     'Solution::Article' => '0',
     'Bot::FeedbackMapping' => '0',
     'User' => '0',
+    'Company' => '0',
     'Subscription' => '0',
     'Agent' => '0',
     'VaRule' => '0',

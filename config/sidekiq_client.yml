@@ -230,6 +230,7 @@ defaults: &defaults
     - [email_service_provider]
     - [calculate_sla]
     - [forum_ban_user]
+    - [company_central_publish]
     - [gamification_solution_quests]
     - [gamification_ticket_score]
     - [toggle_agent_from_all_roundrobin_groups]

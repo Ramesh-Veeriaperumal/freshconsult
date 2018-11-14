@@ -44,6 +44,7 @@
     - active_ticket_central_publish
     - user_central_publish
     - active_note_central_publish
+    - company_central_publish
 
   :falcon_occasional:
     - scheduler_post_message
