@@ -12038,16 +12038,19 @@
       ]
     },
 
-  "account_cancellation_request": {
-    "type": "object",
-    "properties": {
-      "cancellation_feedback": {
-        "type": "string",
-        "description": "Account cancellation feedback"
-      },
-      "additional_cancellation_feedback": {
-        "type": "string",
-        "description": "Additional account cancellation feedback by admin"
+    "account_cancellation_request": {
+      "type": "object",
+      "properties": {
+        "cancellation_feedback": {
+          "type": "string",
+          "description": "Account cancellation feedback"
+        },
+        "additional_cancellation_feedback": {
+          "type": "string",
+          "description": "Additional account cancellation feedback by admin"
+        }
+      }
+    },
 
     "conversation_template": {
       "type": "object",
