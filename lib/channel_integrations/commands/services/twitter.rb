@@ -136,7 +136,7 @@ module ChannelIntegrations::Commands::Services
 
       def update_errors_in_schema_less_notes(schema_less_notes, data, note_id)
         schema_less_notes.note_properties[:errors] = {} if schema_less_notes.note_properties[:errors].nil?
-        twitter_errors = { twitter: { error_code: data[:status_code], error_message: data[:message] } }
+        twitter_errors = { twitter: { error_code: data[:status_code], error_message: data[:message], code: data[:code] } }
         schema_less_notes.note_properties[:errors].merge!(twitter_errors)
 
         schema_less_notes.save!

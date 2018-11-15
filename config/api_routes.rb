@@ -676,7 +676,7 @@ Helpkit::Application.routes.draw do
     resources :attachments, controller: 'channel/attachments', only: [:create]
     scope '/v2' do
       resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :index]
-      resources :attachments, controller: 'channel/attachments', only: [:create]
+      resources :attachments, controller: 'channel/attachments', only: [:create, :show]
     end
     scope '/bot' do
       resources :tickets, controller: 'channel/bot/tickets', only: [:create]

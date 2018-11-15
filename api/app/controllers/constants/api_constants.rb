@@ -110,7 +110,7 @@ module ApiConstants
   TWITTER_ATTACHMENT_CONFIG = {
     dm: {
       fileTypes: ['image'],
-      image: { size: 5, limit: 1 },
+      image: { size: 3, limit: 1 },
       gif: { size: 15, limit: 1 }
     },
     mention: {
