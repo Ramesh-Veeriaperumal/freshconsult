@@ -21,13 +21,16 @@ class Group < ActiveRecord::Base
     queue_length = llen_round_robin_redis(round_robin_key)
     (queue_length + RR_BUFFER).times do
       current_agent_id = get_others_redis_rpoplpush(round_robin_key, round_robin_key)
+      Rails.logger.debug "CURRENT AGENT ID :: #{current_agent_id}"
       return if current_agent_id.nil?
       current_agent = account.available_agents.find_by_user_id(current_agent_id)
+      Rails.logger.debug "CURRENT AGENT :: #{current_agent.inspect}"
       return current_agent if current_agent.present?
       $redis_others.lrem(round_robin_key, 0, current_agent_id)
     end
     nil
   end
+
 
   def update_agent_capping_with_lock user_id, new_score, operation="incr"
     agent_key = round_robin_agent_capping_key(user_id)
@@ -68,6 +71,7 @@ class Group < ActiveRecord::Base
       end
       rpush_to_rr_capping_queue(ticket_id)
     else
+      Rails.logger.debug "Redis key not exists for round robin :: group #{self.id} :: ticket #{ticket_id}"
       sadd_round_robin_redis(rr_temp_tickets_queue_key, ticket_id)
     end
     nil

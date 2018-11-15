@@ -32,7 +32,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
       end
     elsif group.round_robin_enabled?
       agent = group.next_available_agent
-      Rails.logger.debug "Normal round robin : #{self.display_id} #{agent.inspect}
+      Rails.logger.debug "Normal round robin : #{self.display_id} :: #{agent.inspect} :: #{group.inspect} ::
         #{get_others_redis_list(group.round_robin_key).inspect}".squish
       agent
     end
@@ -263,6 +263,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
   
   def round_robin_conditions(ticket_changes)
+     Rails.logger.debug "Round Robin Conditions :: #{ticket_changes.inspect} :: #{self.responder_id} :: #{group_id}"
     #return if no change was made to the group
     return if !ticket_changes.has_key?(:group_id)
     #skip if agent is assigned in the transaction
