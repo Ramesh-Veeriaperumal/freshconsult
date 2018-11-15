@@ -54,6 +54,11 @@ class Middleware::CorsEnabler < Rack::Cors
        @status, @headers, @response = super(env)
     end
     [@status, @headers, @response]
+  rescue ArgumentError => error
+    if error.message.starts_with?('invalid %-encoding')
+      Rails.logger.error("CORS :: API Invalid Encoding error :: #{env} :: x_request_id :: #{env['action_dispatch.request_id']} :: #{error.message} :: #{error.backtrace}")
+      notify_new_relic_agent(error, env['REQUEST_URI'], env['action_dispatch.request_id'], description: 'CORS :: Error occurred while processing API')
+    end
   end
 
   # this is to allow api request with the format being sent in query string
@@ -78,5 +83,10 @@ class Middleware::CorsEnabler < Rack::Cors
     @whitelisted_domain=get_all_members_in_a_redis_set(WHITELISTED_DOMAINS_KEY)
     return @whitelisted_domain.include?(env["HTTP_ORIGIN"]) if @whitelisted_domain.present?      
     false
+  end
+
+  def notify_new_relic_agent(exception, uri, request_id, custom_params = {})
+    options_hash =  { uri: uri, custom_params: custom_params.merge(x_request_id: request_id) }
+    NewRelic::Agent.notice_error(exception, options_hash)
   end
 end
