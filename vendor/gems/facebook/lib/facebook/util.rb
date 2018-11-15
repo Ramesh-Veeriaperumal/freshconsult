@@ -29,21 +29,14 @@ module Facebook
     
     #via_comment - When the call to convert a post to a ticket is made by a comment
     def convert_post_to_ticket?(core_obj, via_comment = false) 
-      core_obj.fetch_parent_data if via_comment 
-      unless social_revamp_enabled?
-        if via_comment
-          ((core_obj.koala_comment.by_visitor? && core_obj.koala_post.by_company? && core_obj.fan_page.import_company_posts) || (core_obj.koala_post.by_visitor? && core_obj.fan_page.import_visitor_posts)) && !user_blocked?(core_obj.koala_post.requester_fb_id)
-        else
-          core_obj.koala_post.by_visitor? && core_obj.fan_page.import_visitor_posts && !user_blocked?(core_obj.koala_post.requester_fb_id)
-        end
-      else
+      core_obj.fetch_parent_data if via_comment
         return false if user_blocked?(core_obj.koala_post.requester_fb_id)
         if via_comment
-          core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(core_obj.koala_post.by_visitor?, core_obj.koala_post.by_company?, core_obj.koala_comment.by_visitor?)
+          # Skipping optimal check(last argument: false) if its comment and convert_post_to_ticket. Refer: FD-16831.
+          core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(core_obj.koala_post.by_visitor?, core_obj.koala_post.by_company?, core_obj.koala_comment.by_visitor?, '' , true)
         else
-          core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(core_obj.koala_post.by_visitor?) 
+          core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(core_obj.koala_post.by_visitor?)
         end
-      end
     end  
     
     def convert_comment_to_ticket?(core_obj)
@@ -52,7 +45,7 @@ module Facebook
     end
     
     #Parse the feed content from facebook post
-    def html_content_from_feed(feed, item)
+    def html_content_from_feed(feed, item, original_post = nil)
       html_content =  CGI.escapeHTML(feed[:message]) if feed[:message]
       if "video".eql?(feed[:type])
         desc = feed[:description] || ""
@@ -72,11 +65,41 @@ module Facebook
       item.inline_attachments = [inline_attachment].compact
       html_content
     end
+
+    #Parse the feed content from facebook post
+    def html_content_from_original_post(feed, item)
+      html_content =  CGI.escapeHTML(feed[:message]) if feed[:message]
+      page_name = feed[:from][:name]
+      # posting_time = DateTime.parse(feed[:created_time]).strftime("%B %C at %I:%M %p")
+      html_content = html_content.first(230)+ "..."
+      if "video".eql?(feed[:type])
+        desc = feed[:description] || ""
+        thumbnail, inline_attachment = create_inline_attachment_and_get_url(feed[:picture], item, 0)
+        html_content = FEED_VIDEO_WITH_ORIGINAL_POST % { :target_url => feed[:link], :thumbnail => thumbnail, 
+          :att_url => feed[:link], :name => feed[:name], :html_content => html_content, :desc => desc, :page_name => page_name } if thumbnail.present?
+
+      elsif "photo".eql?(feed[:type])
+        photo_url, inline_attachment = create_inline_attachment_and_get_url(feed[:picture], item, 0)
+        html_content = FEED_PHOTO_WITH_ORIGINAL_POST % { :html_content => html_content, :link => feed[:link],
+         :photo_url => photo_url, :height => "", :page_name => page_name} if photo_url.present?
+      elsif "link".eql?(feed[:type])
+        link_story   = "<a href=\"#{feed[:link]}\">#{feed[:name]}</a>" if feed[:name]
+        html_content = FEED_LINK_WITH_ORIGINAL_POST % {:html_content => html_content, :link_story => link_story}
+      else
+        html_content = FEED_WITH_ORIGINAL_POST % {:html_content => html_content, :page_name => page_name
+    }
+      end
+      inline_attachment = nil unless attachment_present?(inline_attachment)
+      item.inline_attachments = [inline_attachment].compact
+      html_content
+    end
     
     #Parse the feed content from facebook comment
-    def html_content_from_comment(feed, item)
+    def html_content_from_comment(feed, item, original_post = nil)
       html_content =  CGI.escapeHTML(feed[:message]) if feed[:message] 
-      return html_content unless feed[:attachment]        
+      unless feed[:attachment]
+        return original_post.present? ? ( COMMENT_WITH_ORIGINAL_POST % {comment: html_content, original_post: original_post} ) : html_content 
+      end
       
       begin
         attachment = feed[:attachment].symbolize_keys!     
@@ -87,19 +110,27 @@ module Facebook
         elsif ["photo","sticker"].include?(attachment[:type])
           height = attachment[:type] == "sticker" ? "200px" : ""
           photo_url, inline_attachment = create_inline_attachment_and_get_url(attachment[:media][:image][:src], item, 0)
-          html_content = COMMENT_PHOTO % { :html_content => html_content, :link => attachment[:target][:url],
-           :photo_url => photo_url, :height => height } if photo_url.present?
+
+          if photo_url.present?
+            html_content = if original_post.present?
+                COMMENT_PHOTO_WITH_ORIGINAL_POST % {:html_content => html_content, :link => attachment[:target][:url],
+                 :photo_url => photo_url, :height => height, :original_post => original_post}
+              else
+                COMMENT_PHOTO % { :html_content => html_content, :link => attachment[:target][:url],
+                 :photo_url => photo_url, :height => height }
+            end
+          end
         end
       rescue => e
         Rails.logger.debug("Error while parsing attachment in comment:: #{feed[:id]} :: #{feed[:attachment]}")
       end
       inline_attachment = nil unless attachment_present?(inline_attachment)
-      item.inline_attachments = [inline_attachment].compact   
+      item.inline_attachments = item.inline_attachments + [inline_attachment].compact
       html_content
     end
     
     #Parse the feed content from facebook message
-    def html_content_from_message(message, item)
+    def html_content_from_message(message, item, original_post = nil)
       message = HashWithIndifferentAccess.new(message)
       html_content =  CGI.escapeHTML(message[:message]) if message[:message]
       inline_attachments = []

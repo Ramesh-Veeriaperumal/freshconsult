@@ -288,6 +288,9 @@ defaults: &defaults
     - [freshops_service]
     - [twitter_reply]
     - [widget_upload_config]
+    - [bot_email_reply]
+    - [bot_email_ml_feedback]
+    - [company_central_publish]
 
 development:
   <<: *defaults

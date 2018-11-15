@@ -91,9 +91,48 @@ module Facebook
 
     FEED_LINK       = "<div class=\"facebook_post\"><p> %{html_content}</p><p>%{link_story}</p></div>"
 
+    FEED_VIDEO_WITH_ORIGINAL_POST	= "
+    <div class=\"fb-original-post__image\">
+      <a class=\"thumbnail\" href=\"%{target_url}\" target=\"_blank\">
+        <img src=\"%{thumbnail}\">
+      </a>
+    </div>
+    <div class=\"fb-original-post__description\"> 
+        <h2 class=\"subject fb-original-post__title\">%{page_name}</h2> 
+        <p class=\"fb-original-post__post\">%{html_content}</p>
+    </div>"
+
+    FEED_PHOTO_WITH_ORIGINAL_POST	= "
+    <div class=\"fb-original-post__image\">
+      <a href=\"%{link}\" target=\"_blank\">
+        <img src=\"%{photo_url}\">
+      </a>
+    </div>
+    <div class=\"fb-original-post__description\"> 
+        <h2 class=\"subject fb-original-post__title\">%{page_name}</h2> 
+        <p class=\"fb-original-post__post\">%{html_content}</p>
+    </div>"
+
+    FEED_LINK_WITH_ORIGINAL_POST	= "
+    <div class=\"fb-original-post__description\"> 
+        <h2 class=\"subject fb-original-post__title\">%{page_name}</h2> 
+        <p class=\"fb-original-post__post\">%{html_content}</p>
+        %{link_story}
+    </div>"
+
+    FEED_WITH_ORIGINAL_POST       = "
+    <div class=\"fb-original-post__description\"> 
+        <h2 class=\"subject fb-original-post__title\">%{page_name}</h2> 
+        <p class=\"fb-original-post__post\">%{html_content}</p>
+    </div>"
+
+    COMMENT_WITH_ORIGINAL_POST = "<div class=\"facebook_post\"><p>%{comment}</p><div class=\"fb-original-post\">%{original_post}</div></div>"
+
     COMMENT_SHARE   = FEED_LINK
 
     COMMENT_PHOTO   = FEED_PHOTO
+
+    COMMENT_PHOTO_WITH_ORIGINAL_POST = "<div class=\"facebook_post\"><p> %{html_content}</p><p><a href=\"%{link}\" target=\"_blank\"><img height=\"%{height}\" src=\"%{photo_url}\"></a></p><div class=\"fb-original-post\">%{original_post}</div></div>"
 
     COMMENT_STICKER = FEED_PHOTO
 

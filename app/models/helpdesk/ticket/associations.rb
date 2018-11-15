@@ -123,6 +123,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
            :source => :installed_application
 
   has_one :bot_ticket, class_name: 'Bot::Ticket', dependent: :destroy
+  has_one :bot_response, class_name: 'Bot::Response', dependent: :destroy
 
   has_many :canned_form_handles, :class_name => 'Admin::CannedFormHandle', :dependent => :destroy
 

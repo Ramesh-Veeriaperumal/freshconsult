@@ -9,6 +9,8 @@
 class Search::Filters::Docs
   include Search::Filters::QueryHelper
 
+  DEFAULT_TIMEOUT = 5
+
   attr_accessor :params, :negative_params, :with_permissible
 
   ES_PAGINATION_SIZE = 30
@@ -105,7 +107,7 @@ class Search::Filters::Docs
   private
 
     # Make request to ES to get the DOCS
-    def es_request(model_class, end_point, options={}, query_params = {})
+    def es_request(model_class, end_point, options={}, query_params = {}, timeout = DEFAULT_TIMEOUT)
       permissible_value = with_permissible.nil? ? true : with_permissible
       deserialized_params = es_query(params, negative_params, permissible_value).merge(options)
       query_params.merge!(query_string)
@@ -114,7 +116,8 @@ class Search::Filters::Docs
       error_handle do
         request = RestClient::Request.new(method: :get,
                                            url: full_path,
-                                           payload: deserialized_params.to_json)
+                                           payload: deserialized_params.to_json,
+                                           timeout: timeout)
         log_request(request)
         response = request.execute
         log_response(response)

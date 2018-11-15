@@ -30,6 +30,12 @@ module TicketsTestHelper
                   }
   end
 
+  def create_ticket_with_attachments(params={})
+    file = File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))
+    attachments = [{:resource => file}]
+    create_ticket(params.merge({:attachments => attachments}))
+  end
+
   def create_ticket(params = {}, group = nil, internal_group = nil)
     requester_id = params[:requester_id] #|| User.find_by_email("rachel@freshdesk.com").id
     unless requester_id
@@ -142,7 +148,15 @@ module TicketsTestHelper
       email_config_id: ticket.email_config_id,
       deleted:ticket.deleted,
       group_users: Array,
-      tags: Array
+      tags: Array,
+      import_id: ticket.import_id,
+      attachment_ids: ticket.attachments.map(&:id),
+      first_response_agent_id: ticket.first_response_agent_id,
+      first_response_group_id: ticket.reports_hash['first_response_group_id'],
+      first_assign_agent_id: ticket.reports_hash['first_assign_agent_id'],
+      first_assign_group_id: ticket.reports_hash['first_assign_group_id'],
+      first_assigned_at: ticket.first_assigned_at.try(:utc).try(:iso8601),
+      first_response_time: ticket.first_response_time.try(:utc).try(:iso8601)
     }
     ret_hash[:skill_id] = ticket.sl_skill_id if Account.current.skill_based_round_robin_enabled?
     ret_hash[:product_id] = ticket.product_id if Account.current.multi_product_enabled?
@@ -158,6 +172,7 @@ module TicketsTestHelper
       requester: Hash,
       responder: (ticket.responder ? Hash : nil),
       group: (ticket.group ? Hash : nil),
+      attachments: Array
     }
   end
 

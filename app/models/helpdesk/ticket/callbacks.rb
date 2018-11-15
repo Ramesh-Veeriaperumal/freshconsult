@@ -178,6 +178,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
         unless ticket_states.first_assigned_at
           ticket_states.first_assigned_at = time_zone_now
           schema_less_ticket.set_first_assign_bhrs(self.created_at, ticket_states.first_assigned_at, self.group)
+          schema_less_ticket.set_first_assign_agent_id(self.responder_id)
         end
       else
         schema_less_ticket.update_agent_reassigned_count("create")
@@ -187,7 +188,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
     if (@model_changes.key?(:group_id) && group)
-      schema_less_ticket.update_group_reassigned_count("create") if @model_changes[:group_id][0]
+      if @model_changes[:group_id][0]
+        schema_less_ticket.update_group_reassigned_count("create")
+      elsif schema_less_ticket.reports_hash['group_reassigned_count'].to_i.zero?
+        schema_less_ticket.set_first_assign_group_id(self.group_id)
+      end
       schema_less_ticket.set_group_assigned_flag
     end
     #for internal_agent_id
@@ -781,8 +786,12 @@ private
     if responder_id
       schema_less_ticket.set_first_assign_bhrs(current_action_time, ticket_states.first_assigned_at, self.group)
       schema_less_ticket.set_agent_assigned_flag
+      schema_less_ticket.set_first_assign_agent_id(responder_id)
     end
-    schema_less_ticket.set_group_assigned_flag if group_id
+    if group_id
+      schema_less_ticket.set_group_assigned_flag
+      schema_less_ticket.set_first_assign_group_id(group_id)
+    end
     schema_less_ticket.reports_hash ||= {}
     schema_less_ticket.reports_hash['lifecycle_last_updated_at'] = current_action_time
   end

@@ -1,9 +1,10 @@
 class Helpdesk::Ticket < ActiveRecord::Base
   include RepresentationHelper
   FLEXIFIELD_PREFIXES = ['ffs_', 'ff_text', 'ff_int', 'ff_date', 'ff_boolean', 'ff_decimal', 'dn_slt_', 'dn_mlt_'].freeze
-  REPORT_FIELDS = [:first_assign_by_bhrs, :first_response_id, :agent_reassigned_count, :group_reassigned_count, :reopened_count, :private_note_count, :public_note_count, :agent_reply_count, :customer_reply_count, :agent_assigned_flag, :agent_reassigned_flag, :group_assigned_flag, :group_reassigned_flag, :internal_agent_assigned_flag, :internal_agent_reassigned_flag, :internal_group_assigned_flag, :internal_group_reassigned_flag, :internal_agent_first_assign_in_bhrs, :last_resolved_at].freeze
+  REPORT_FIELDS = [:first_assign_by_bhrs, :first_response_id, :first_response_group_id, :first_assign_agent_id, :first_assign_group_id, :agent_reassigned_count, :group_reassigned_count, :reopened_count, :private_note_count, :public_note_count, :agent_reply_count, :customer_reply_count, :agent_assigned_flag, :agent_reassigned_flag, :group_assigned_flag, :group_reassigned_flag, :internal_agent_assigned_flag, :internal_agent_reassigned_flag, :internal_group_assigned_flag, :internal_group_reassigned_flag, :internal_agent_first_assign_in_bhrs, :last_resolved_at].freeze
+  NEW_REPORT_FIELDS = [:first_response_agent_id].freeze # Used for backfilling, can be removed once backfilling is complete
   EMAIL_KEYS = [:cc_emails, :fwd_emails, :bcc_emails, :reply_cc, :tkt_cc].freeze
-  DATETIME_FIELDS = [:due_by, :closed_at, :resolved_at, :created_at, :updated_at].freeze
+  DATETIME_FIELDS = [:due_by, :closed_at, :resolved_at, :created_at, :updated_at, :first_response_time, :first_assigned_at].freeze
   TAG_KEYS = [:add_tag, :remove_tag].freeze
   WATCHER_KEYS = [:add_watcher, :remove_watcher].freeze
   SYSTEM_ACTIONS = [:add_comment, :add_a_cc, :email_to_requester, :email_to_group, :email_to_agent].freeze
@@ -51,9 +52,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :email_config_id
     t.add :deleted
     t.add :group_users
+    t.add :import_id
+    t.add proc { |x| x.attachments.map(&:id) }, as: :attachment_ids
     t.add proc { |x| x.tags.collect { |tag| { id: tag.id, name: tag.name } } }, as: :tags
     REPORT_FIELDS.each do |key|
       t.add proc { |x| x.reports_hash[key.to_s] }, as: key
+    end
+    NEW_REPORT_FIELDS.each do |key|
+      t.add proc { |x| x.safe_send(key) }, as: key
     end
     DATETIME_FIELDS.each do |key|
       t.add proc { |x| x.utc_format(x.safe_send(key)) }, as: key
@@ -67,6 +73,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :requester, template: :central_publish
     t.add :responder, template: :central_publish
     t.add :group, template: :central_publish
+    t.add :attachments, template: :central_publish
   end
 
   api_accessible :central_publish_destroy do |t|
@@ -74,6 +81,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :display_id
     t.add :account_id
     t.add :archive
+  end
+
+  def central_payload_type
+    if import_ticket && import_id.present?
+      action = [:create, :update].find{ |action| transaction_include_action? action }
+      "import_ticket_#{action}" if action.present?
+    end
   end
 
   def action_in_bhrs?

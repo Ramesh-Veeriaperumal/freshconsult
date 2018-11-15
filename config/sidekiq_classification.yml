@@ -43,6 +43,7 @@
     - active_ticket_central_publish
     - user_central_publish
     - active_note_central_publish
+    - company_central_publish
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup
@@ -182,6 +183,8 @@
     - run_rake_task
     - register_freshconnect
     - widget_upload_config
+    - bot_email_reply
+    - bot_email_ml_feedback
   :free:
     - free_sla
     - free_supervisor

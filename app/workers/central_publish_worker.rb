@@ -46,4 +46,8 @@ module CentralPublishWorker
     sidekiq_options :queue => "user_central_publish", :retry => 5, :dead => true, :failures => :exhausted
   end
 
+  class CompanyWorker < CentralPublisher::Worker
+    sidekiq_options :queue => "company_central_publish", :retry => 5, :dead => true, :backtrace => true, :failures => :exhausted
+  end
+
 end

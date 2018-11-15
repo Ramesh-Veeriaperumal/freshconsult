@@ -43,47 +43,6 @@ defaults: &defaults
     shard_30_2: 46000000000
     shard_31_1: 44000000000
     sandbox_shard_us: 11000000000000
-    sandbox_shard_1: 100000000000
-    sandbox_shard_2: 101000000000
-    sandbox_shard_3: 102000000000
-    sandbox_shard_4: 103000000000
-    sandbox_shard_5: 104000000000
-    sandbox_shard_6: 105000000000
-    sandbox_shard_7: 106000000000
-    sandbox_shard_8: 107000000000
-    sandbox_shard_9: 108000000000
-    sandbox_shard_10: 109000000000
-    sandbox_shard_11: 110000000000
-    sandbox_shard_12: 111000000000
-    sandbox_shard_13: 112000000000
-    sandbox_shard_14: 113000000000
-    sandbox_shard_15: 114000000000
-    sandbox_shard_17: 115000000000
-    sandbox_shard_18: 116000000000
-    sandbox_shard_19: 117000000000
-    sandbox_shard_20: 118000000000
-    sandbox_shard_21: 119000000000
-    sandbox_shard_22: 120000000000
-    sandbox_shard_23_1: 121000000000
-    sandbox_shard_23_2: 122000000000
-    sandbox_shard_23_3: 123000000000
-    sandbox_shard_23_4: 124000000000
-    sandbox_shard_24_1: 125000000000
-    sandbox_shard_24_2: 126000000000
-    sandbox_shard_24_3: 127000000000
-    sandbox_shard_24_4: 128000000000
-    sandbox_shard_24_5: 129000000000
-    sandbox_shard_25_1: 130000000000
-    sandbox_shard_25_2: 131000000000
-    sandbox_shard_25_3: 132000000000
-    sandbox_shard_26_1: 133000000000
-    sandbox_shard_27_1: 134000000000
-    sandbox_shard_28: 135000000000
-    sandbox_shard_29_1: 136000000000
-    sandbox_shard_29_2: 137000000000
-    sandbox_shard_29_3: 138000000000
-    sandbox_shard_30: 139000000000
-    sandbox_shard_30_2: 140000000000
 
   podeucentral1:
     eu_shard_1:   7000000000

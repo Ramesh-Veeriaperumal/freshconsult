@@ -20,7 +20,7 @@ class Company < ActiveRecord::Base
 
   validate :format_of_default_fields, :if => :validatable_default_fields
 
-  concerned_with :associations, :callbacks, :esv2_methods, :rabbitmq, :constants
+  concerned_with :associations, :callbacks, :esv2_methods, :rabbitmq, :constants, :presenter
 
   TAM_DEFAULT_FIELD_MAPPINGS.keys.each do |key|
     alias_attribute(TAM_DEFAULT_FIELD_MAPPINGS[key], key)
