@@ -8,7 +8,7 @@ module BotConstants
 
   NEW_FIELDS                = %w[portal_id].freeze
   CREATE_FIELDS             = %w[name avatar portal_id header theme_colour widget_size bot].freeze
-  UPDATE_FIELDS             = CREATE_FIELDS
+  UPDATE_FIELDS             = CREATE_FIELDS + %w[email_channel].freeze
   MAP_CATEGORIES_FIELDS     = %w[category_ids].freeze
   ENABLE_ON_PORTAL_FIELDS   = %w[enable_on_portal].freeze
   CREATE_BOT_FOLDER_FIELDS  = %w[category_id name description visibility].freeze
@@ -36,5 +36,7 @@ module BotConstants
 
   WIDGET_CODE_SELF_INIT = 'false'.freeze
   WIDGET_CODE_INIT_TYPE = 'normal'.freeze
+
+  SKIP_BOT_API = ["email_channel"].freeze
 end
 

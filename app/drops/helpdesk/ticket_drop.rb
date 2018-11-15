@@ -288,4 +288,7 @@ class Helpdesk::TicketDrop < BaseDrop
     CcViewHelper.new(@source, @source.cc_email_hash[:tkt_cc], @source.cc_email_hash[:dropped_cc_emails]).cc_content
   end
 
+  def portal
+    @source.portal
+  end
 end

@@ -1,0 +1,7 @@
+type: object
+required:
+  - email_channel
+properties:
+  email_channel:
+    type: boolean
+    description: Boolean to indicate if bot should be enabled email channel

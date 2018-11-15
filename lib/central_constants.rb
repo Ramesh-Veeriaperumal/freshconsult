@@ -8,6 +8,7 @@ module CentralConstants
     'Solution::Article' => '0',
     'Bot::FeedbackMapping' => '0',
     'User' => '0',
+    'Company' => '0',
     'Subscription' => '0',
     'Agent' => '0',
     'VaRule' => '0',
@@ -19,6 +20,7 @@ module CentralConstants
     'Social::TwitterStream' => '0',
     'Integrations::InstalledApplication' => '0',
     'Social::FacebookPage' => '0',
-    'Product' => '0'
+    'Product' => '0',
+    'Bot::Response' => '0'
   }
 end

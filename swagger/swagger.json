@@ -1908,6 +1908,70 @@
         }
       }
     },
+    "/tickets/{id}/bot_response": {
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Show Bot Responses",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/bot_response"
+            }
+          },
+          "204": {
+            "description": "Bot response not found"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Ticket Not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Update Bot Response",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/bot_response_input"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
     "/tickets/archived/{id}": {
       "get": {
         "tags": [
@@ -8650,6 +8714,75 @@
         }
       }
     },
+    "/email_notifications/{id}": {
+      "get": {
+        "tags": [
+          "email_notifications"
+        ],
+        "summary": "Show",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Identifier of the email notification",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/email_notification_show"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "email_notifications"
+        ],
+        "summary": "Update",
+        "description": "Update Bot",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Identifier of the email notification",
+            "required": true
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/email_notification_update"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request error"
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/groups": {
       "get": {
         "tags": [
@@ -10506,6 +10639,29 @@
         }
       ]
     },
+    "bot_response_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "properties": {
+            "articles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number"
+                  },
+                  "agent_feedback": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "full_text": {
       "type": "object",
       "properties": {
@@ -11642,6 +11798,18 @@
         }
       }
     },
+    "bot_email_channel": {
+      "type": "object",
+      "required": [
+        "email_channel"
+      ],
+      "properties": {
+        "email_channel": {
+          "type": "boolean",
+          "description": "Boolean to indicate if bot should be enabled email channel"
+        }
+      }
+    },
     "bot_map_categories_input": {
       "type": "object",
       "required": [
@@ -11765,6 +11933,9 @@
         },
         "widget_size": {
           "type": "string"
+        },
+        "email_channel": {
+          "type": "boolean"
         }
       }
     },
@@ -11867,16 +12038,19 @@
       ]
     },
 
-  "account_cancellation_request": {
-    "type": "object",
-    "properties": {
-      "cancellation_feedback": {
-        "type": "string",
-        "description": "Account cancellation feedback"
-      },
-      "additional_cancellation_feedback": {
-        "type": "string",
-        "description": "Additional account cancellation feedback by admin"
+    "account_cancellation_request": {
+      "type": "object",
+      "properties": {
+        "cancellation_feedback": {
+          "type": "string",
+          "description": "Account cancellation feedback"
+        },
+        "additional_cancellation_feedback": {
+          "type": "string",
+          "description": "Additional account cancellation feedback by admin"
+        }
+      }
+    },
 
     "conversation_template": {
       "type": "object",
@@ -15496,6 +15670,77 @@
         }
       ]
     },
+    "bot_response": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "articles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "title": {
+                "type": "string"
+              },
+              "opened": {
+                "type": "boolean"
+              },
+              "useful": {
+                "type": "boolean"
+              },
+              "agent_feedback": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "ticket_id": {
+          "type": "number"
+        },
+        "bot_id": {
+          "type": "number"
+        },
+        "bot": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "avatar": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "avatar_id": {
+                  "type": "integer"
+                },
+                "is_default": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "header": {
+              "type": "string"
+            },
+            "theme_colour": {
+              "type": "string"
+            },
+            "widget_size": {
+              "type": "string"
+            }
+          }
+        },
+        "updated_at": {
+          "format": "date-time"
+        }
+      }
+    },
     "bot_index": {
       "type": "array",
       "items": {
@@ -15592,6 +15837,9 @@
           "type": "string"
         },
         "enable_on_portal": {
+          "type": "boolean"
+        },
+        "email_channel": {
           "type": "boolean"
         },
         "product": {
@@ -18537,6 +18785,55 @@
               }
             }
           }
+        }
+      }
+    },
+    "email_notification_show": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "requester_notification": {
+          "type": "boolean"
+        },
+        "requester_template": {
+          "type": "string"
+        },
+        "requester_subject_template": {
+          "type": "string"
+        },
+        "agent_notification": {
+          "type": "boolean"
+        },
+        "agent_template": {
+          "type": "string"
+        },
+        "agent_subject_template": {
+          "type": "string"
+        }
+      }
+    },
+    "email_notification_update": {
+      "type": "object",
+      "properties": {
+        "requester_notification": {
+          "type": "boolean"
+        },
+        "requester_template": {
+          "type": "string"
+        },
+        "requester_subject_template": {
+          "type": "string"
+        },
+        "agent_notification": {
+          "type": "boolean"
+        },
+        "agent_template": {
+          "type": "string"
+        },
+        "agent_subject_template": {
+          "type": "string"
         }
       }
     },

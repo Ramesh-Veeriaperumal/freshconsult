@@ -227,13 +227,13 @@ module Ember
       end
 
       def load_objects
-        items = tickets_filter.preload(conditional_preload_options)
         if params[:only] == 'count'
-          @items_count = optimized_count(items)
           @items = []
-          return
+          @items_count = ( current_account.count_es_enabled? ? ::Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket) : tickets_filter.count )
+        else
+          items_relation_object = tickets_filter.preload(conditional_preload_options)
+          @items = ( current_account.count_es_tickets_enabled? ? tickets_from_es : paginate_items(items_relation_object) )
         end
-        @items = paginate_items(items)
       end
 
       def load_object
@@ -392,14 +392,6 @@ module Ember
           filter = Helpdesk::Filters::CustomTicketFilter.new
           filter.deserialize_from_params(ticket_filter_params[:params])
           filter.query_hash
-        end
-      end
-
-      def optimized_count(items)
-        if !default_filter? && current_account.count_es_enabled?
-          ::Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
-        else
-          items.count
         end
       end
 

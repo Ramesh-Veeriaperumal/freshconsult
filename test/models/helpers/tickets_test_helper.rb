@@ -30,6 +30,12 @@ module TicketsTestHelper
                   }
   end
 
+  def create_ticket_with_attachments(params={})
+    file = File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))
+    attachments = [{:resource => file}]
+    create_ticket(params.merge({:attachments => attachments}))
+  end
+
   def create_ticket(params = {}, group = nil, internal_group = nil)
     requester_id = params[:requester_id] #|| User.find_by_email("rachel@freshdesk.com").id
     unless requester_id
@@ -144,6 +150,7 @@ module TicketsTestHelper
       group_users: Array,
       tags: Array,
       import_id: ticket.import_id,
+      attachment_ids: ticket.attachments.map(&:id),
       first_response_agent_id: ticket.first_response_agent_id,
       first_response_group_id: ticket.reports_hash['first_response_group_id'],
       first_assign_agent_id: ticket.reports_hash['first_assign_agent_id'],
@@ -165,6 +172,7 @@ module TicketsTestHelper
       requester: Hash,
       responder: (ticket.responder ? Hash : nil),
       group: (ticket.group ? Hash : nil),
+      attachments: Array
     }
   end
 

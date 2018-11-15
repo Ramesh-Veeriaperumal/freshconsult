@@ -14,4 +14,5 @@ module FeatureConstants
   CANNED_FORMS = :canned_forms
   SANDBOX = :sandbox
   TIMELINE = [:timeline].freeze
+  BOT_EMAIL_CHANNEL = :bot_email_channel.freeze
 end

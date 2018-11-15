@@ -2754,6 +2754,13 @@ Helpkit::Application.routes.draw do
       resources :notes
     end
 
+    resources :bot_responses do
+      collection do
+        get :filter
+        put :update_response
+      end
+    end
+
     match '/surveys/:ticket_id' => 'surveys#create_for_portal', :as => :portal_survey
     match '/surveys/:survey_code/:rating/new' => 'surveys#new', :as => :customer_survey
     match '/surveys/:survey_code/:rating' => 'surveys#create', :as => :survey_feedback, :via => :post

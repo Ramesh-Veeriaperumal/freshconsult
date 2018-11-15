@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   before_save :persist_updated_at
 
 
-  publishable on: :destroy
+  publishable on: [:create, :update, :destroy], if: -> { !helpdesk_agent? || helpdesk_agent_changed? }
 
   before_destroy :save_deleted_user_info
 

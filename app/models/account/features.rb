@@ -4,7 +4,7 @@ class Account < ActiveRecord::Base
                    :ticket_contact_export, :email_failures, :disable_emails,
                    :falcon_portal_theme, :freshid, :freshchat_integration,:year_in_review_2017,
                    :facebook_page_redirect, :announcements_tab,
-                   :ticket_central_publish, :solutions_central_publish, :es_msearch,
+                   :ticket_central_publish, :company_central_publish, :solutions_central_publish, :es_msearch,
                    :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
                    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3,
                    :imap_error_status_check, :va_any_field_without_none, :api_es, :sandbox_lp,
@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
                    :stop_contacts_count_query, :db_to_bitmap_features_migration, :denormalized_select_for_update,
                    :trial_subscription, :installed_app_publish, :disable_banners, :twitter_dm_outgoing_attachment, :twitter_mention_outgoing_attachment,
                    :new_onboarding, :onboarding_inlinemanual, :skip_portal_cname_chk, :ner, :whitelist_supervisor_sla_limitation, :product_central_publish,
-                   :help_widget, :redis_picklist_id]
+                   :help_widget, :redis_picklist_id, :bot_email_channel, :bot_email_central_publish]
 
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   
@@ -149,6 +149,10 @@ class Account < ActiveRecord::Base
   
   def count_es_api_enabled?
     count_es_enabled? && api_es_enabled?
+  end
+
+  def count_es_tickets_enabled?
+    count_es_enabled? && es_tickets_enabled?
   end
 
   def count_es_writes_enabled?

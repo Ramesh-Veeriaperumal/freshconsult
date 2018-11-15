@@ -95,6 +95,8 @@
   $ref: ./tickets/summary.yaml
 /tickets/{id}/undo_send:
   $ref: ./conversations/undo_send.yaml
+/tickets/{id}/bot_response:
+  $ref: ./tickets/bot_response.yaml
 
 /tickets/archived/{id}:
   $ref: ./archive_tickets/crud.yaml
@@ -484,6 +486,10 @@
 /advanced_ticketing/insights:
   $ref: ./advanced_ticketing/insights.yaml
 
+# Email Notifications
+/email_notifications/{id}:
+  $ref: ./email_notifications/show_and_update.yaml
+  
 # Automation rules
 /automation_rules:
   $ref: ./automation_rules/list_and_create.yaml

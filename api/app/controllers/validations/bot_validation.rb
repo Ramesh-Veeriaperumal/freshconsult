@@ -1,5 +1,5 @@
 class BotValidation < ApiValidation
-  attr_accessor :id, :name, :avatar, :portal_id, :template_data, :category_ids, :enable_on_portal, :header, :start_date, :end_date
+  attr_accessor :id, :name, :avatar, :portal_id, :template_data, :category_ids, :enable_on_portal, :header, :start_date, :end_date, :email_channel
 
   validates :id, data_type: { rules: String, required: true, allow_nil: false }, if: :show_or_update
   validates :name, data_type: { rules: String, required: true }, length: { maximum: 25 }, if: :create_or_update
@@ -9,6 +9,7 @@ class BotValidation < ApiValidation
   validate  :validate_portal_id, if: :portal_id_dependant_actions
   validates :category_ids, data_type: { rules: Array }, required: true, on: :map_categories
   validates :enable_on_portal, required: true, data_type: { rules: 'Boolean' }, on: :enable_on_portal
+  validates :email_channel, data_type: { rules: 'Boolean' }
   validates :start_date, :end_date, date_time: { allow_nil: false }, required: true, on: :analytics
   validate  :validate_time_period, if: -> { errors[:start_date].blank? && errors[:end_date].blank? }, on: :analytics
   validate  :validate_avatar, if: -> { errors[:avatar].blank? && create_or_update }

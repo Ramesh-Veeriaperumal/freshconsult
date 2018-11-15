@@ -1,1 +1,1 @@
-JSON.generate(@bot)
+JSON.generate(Admin::BotDecorator.new(@item).to_show_hash)

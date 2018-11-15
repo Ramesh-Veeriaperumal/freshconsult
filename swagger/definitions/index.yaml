@@ -74,6 +74,8 @@ undo_reply_input:
 
 summary_input:
   $ref: ./request/tickets/summary_input.yaml
+bot_response_input:
+  $ref: ./request/tickets/bot_response.yaml
 full_text:
   $ref: ./resource/full_text.yaml
 ticket_input:
@@ -134,6 +136,8 @@ suppression_list:
   $ref: ./request/tickets/suppression_list.yaml
 bot_enable_on_portal_input:
   $ref: ./request/bots/enable_on_portal_input.yaml
+bot_email_channel:
+  $ref: ./request/bots/email_channel.yaml  
 bot_map_categories_input:
   $ref: ./request/bots/map_categories_input.yaml
 map_article_input:
@@ -384,6 +388,8 @@ password_policy:
   $ref: ./resource/password_policy.yaml
 summary:
   $ref: ./response/tickets/summary.yaml
+bot_response:
+  $ref: ./response/tickets/bot_response.yaml
 bot_index:
   type: array
   items:
@@ -582,6 +588,12 @@ role_bulk_update_request:
 #Business Hours
 business_hours:
   $ref: ./response/business_hours.yaml
+
+# Email notifications
+email_notification_show:
+  $ref: ./response/email_notification.yaml
+email_notification_update:
+  $ref: ./request/email_notification.yaml
 
 # Account Configuration
 account_admin_update:

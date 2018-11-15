@@ -9,6 +9,8 @@
 class Search::Filters::Docs
   include Search::Filters::QueryHelper
 
+  DEFAULT_TIMEOUT = 5
+
   attr_accessor :params, :negative_params, :with_permissible
 
   ES_PAGINATION_SIZE = 30
@@ -121,13 +123,14 @@ class Search::Filters::Docs
   private
 
     # Make request to ES to get the DOCS
-    def es_request(model_class, end_point, options={}, query_params = {})
+    def es_request(model_class, end_point, options={}, query_params = {}, timeout = DEFAULT_TIMEOUT)
       full_path = request_path(end_point, query_params)
       deserialized_params = payload_params(options)
       error_handle do
         request = RestClient::Request.new(method: :get,
                                            url: full_path,
-                                           payload: deserialized_params.to_json)
+                                           payload: deserialized_params.to_json,
+                                           timeout: timeout)
         log_request(request)
         response = request.execute
         log_response(response)
@@ -135,13 +138,14 @@ class Search::Filters::Docs
       end
     end
 
-    def bulk_es_request(end_point, query_params)
+    def bulk_es_request(end_point, query_params, timeout = DEFAULT_TIMEOUT)
       full_path = request_path(end_point, query_params)
       error_handle do
         request = Typhoeus::Request.new(full_path,
                                           method: :get,
                                           body: @params,
-                                          headers: {content_type: "application/x-ndjson"})
+                                          headers: {content_type: "application/x-ndjson"},
+                                          timeout: timeout)
         Rails.logger.debug("#Request => #{request.original_options}")
         response = request.run
         Rails.logger.debug("# => #{response.code} #{response.class.to_s.gsub(/^Net::HTTP/, '')} | #{response.headers} \n")

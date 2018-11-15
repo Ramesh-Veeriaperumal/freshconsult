@@ -1,0 +1,45 @@
+type: object
+properties:
+  id:
+    type: number
+  articles:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        opened:
+          type: boolean
+        useful:
+          type: boolean
+        agent_feedback:
+          type: boolean
+  ticket_id:
+    type: number
+  bot_id:
+    type: number
+  bot:
+    type: object
+    properties:
+      name:
+        type: string
+      avatar:
+        type: object
+        properties:
+          url:
+            type: string
+          avatar_id:
+            type: integer
+          is_default:
+            type: boolean
+      header:
+        type: string
+      theme_colour:
+        type: string
+      widget_size:
+        type: string
+  updated_at:
+    format: date-time

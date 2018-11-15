@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181022133027) do
+ActiveRecord::Schema.define(version: 20181113055606) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -4547,6 +4547,19 @@ ActiveRecord::Schema.define(version: 20181022133027) do
   end
 
   add_index "bot_feedback_mappings", ["account_id", "feedback_id"], :name => "index_bot_feedback_mappings_on_feedback_id"
+
+  create_table "bot_responses", :force => true do |t|
+    t.integer  "account_id",         :limit => 8, :null => false
+    t.integer  "ticket_id",          :limit => 8, :null => false
+    t.integer  "bot_id",             :limit => 8, :null => false
+    t.text     "suggested_articles"
+    t.string   "query_id",                        :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+  end
+
+  add_index "bot_responses", ["account_id", "query_id"], :name => "index_bot_responses_on_account_id_query_id"
+  add_index "bot_responses", ["account_id", "ticket_id"], :name => "index_bot_responses_on_account_id_ticket_id"
 
   create_table 'canned_form_handles', force: true do |t|
     t.integer  'ticket_id', limit: 8, null: false

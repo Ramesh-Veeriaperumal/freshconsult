@@ -2,6 +2,20 @@
 
 require 'mail'
 Mail::Message.class_eval do
+
+    def deliver
+      inform_interceptors
+      response = ""
+      if delivery_handler
+        response = delivery_handler.deliver_mail(self) { do_delivery }
+      else
+        response = do_delivery
+      end
+      Rails.logger.info "Email successfully relayed to SMTP mail server. Response from mail server: #{response.string}" if (response.present? && response.class == Net::SMTP::Response)
+      inform_observers
+      self
+    end
+
     private
       
       HEADER_SEPARATOR_WITH_MATCH_PATTERN = /(#{Mail::Patterns::CRLF}#{Mail::Patterns::CRLF}|#{Mail::Patterns::CRLF}#{Mail::Patterns::WSP}*#{Mail::Patterns::CRLF}(?!#{Mail::Patterns::WSP}))/m

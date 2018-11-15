@@ -40,4 +40,30 @@ module BotHelper
     logger.error error.backtrace.join("\n")
     render_base_error(:internal_error, 500)
   end
+
+  def product_hash(portal)
+    name = portal.main_portal? ? portal.name : portal.product.name
+    {
+      name: name,
+      portal_id: portal.id,
+      portal_logo: get_portal_logo_url(portal)
+    }
+  end
+
+  def get_portal_logo_url(portal)
+    logo = portal.logo
+    logo_url = logo.content.url if logo.present?
+    logo_url
+  end
+
+  def categories_list(portal)
+    Language.for_current_account.make_current
+    public_category_meta = portal.public_category_meta
+    return [] unless public_category_meta
+    articles_count = Solution::CategoryMeta.bot_articles_count_hash(public_category_meta.map(&:id))
+    Language.reset_current
+    public_category_meta.map do |category|
+      { id: category.id, label: category.name, articles_count: articles_count[category.id] || 0 }
+    end
+  end
 end

@@ -16,6 +16,7 @@ Helpkit::Application.routes.draw do
         post :reply_to_forward, to: 'api_conversations#reply_to_forward'
         post :time_entries, to: 'time_entries#create'
         get :sessions, to: 'admin/freshmarketer#sessions'
+        resource :bot_response, controller: 'tickets/bot_response', only: [:show, :update]
       end
     end
 
@@ -236,6 +237,8 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
+    
     resources :help_widgets, controller: 'help_widgets'
     
   end

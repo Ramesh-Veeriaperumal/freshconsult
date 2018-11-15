@@ -755,6 +755,81 @@ module Ember
         end
       end
 
+      def test_email_channel
+        enable_bot do
+          enable_bot_email_channel do
+            bot = create_bot({ product: true })
+            bot.enable_in_portal = false
+            bot.save
+            put :update, construct_params({ version: 'private', id: bot.id }, { email_channel: true })
+            assert_response 204
+            bot.reload
+            assert bot.email_channel == true
+          end
+        end
+      end
+
+      def test_email_channel_without_manage_bot_privilege
+        enable_bot do
+          enable_bot_email_channel do
+            User.any_instance.stubs(:privilege?).with(:manage_bots).returns(false)
+            bot = create_bot({ product: true })
+            put :update, construct_params({ version: 'private', id: bot.id }, { email_channel: true })
+            assert_response 403
+            match_json(request_error_pattern(:access_denied))
+            User.any_instance.unstub(:privilege?)
+          end
+        end
+      end
+
+      def test_email_channel_with_invalid_bot_id
+        enable_bot do
+          enable_bot_email_channel do
+            bot = create_bot({ product: true })
+            put :update, construct_params({ version: 'private', id: 0 }, { email_channel: true })
+            assert_response 404
+          end
+        end
+      end
+
+      def test_email_channel_with_invalid_params
+        enable_bot do
+          enable_bot_email_channel do
+            bot = create_bot({ product: true })
+            put :update, construct_params({ version: 'private', id: bot.id }, { email_channel: 'true' })
+            assert_response 400
+            match_json([bad_request_error_pattern('email_channel', :datatype_mismatch, expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
+          end
+        end
+      end
+
+      def test_email_channel_without_feature
+        bot = create_bot({ product: true })
+        put :update, construct_params({ version: 'private', id: bot.id }, { email_channel: true })
+        assert_response 403
+        match_json(request_error_pattern(:require_feature, feature: 'Support Bot'))
+      end
+
+      def test_email_channel_without_email_channel_feature
+        enable_bot do
+          bot = create_bot({ product: true })
+          put :update, construct_params({ version: 'private', id: bot.id}, { email_channel: true })
+          assert_response 403
+          match_json(request_error_pattern(:require_feature, feature: 'bot_email_channel'))
+        end
+      end
+
+      def test_email_channel_with_missing_field
+        enable_bot do
+          enable_bot_email_channel do
+            bot = create_bot({ product: true})
+            put :update, construct_params({ version: 'private', id: bot.id }, {})
+            assert_response 400
+            match_json(request_error_pattern(:missing_params))
+          end
+        end
+      end
+
       def test_bot_folders
         enable_bot do
           bot = create_bot({ product: true})

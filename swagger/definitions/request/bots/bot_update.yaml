@@ -19,3 +19,5 @@ properties:
     type: string
   widget_size:
     type: string
+  email_channel:
+    type: boolean

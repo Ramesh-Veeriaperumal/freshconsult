@@ -1,6 +1,8 @@
+require 'webmock/minitest'
 require_relative '../../test_helper'
 ['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'ticket_template_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['account_test_helper.rb', 'shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+require Rails.root.join('test', 'api', 'helpers', 'bot_response_test_helper.rb')
 
 module Ember
   class TicketsControllerTest < ActionController::TestCase
@@ -25,6 +27,7 @@ module Ember
     include CustomFieldsTestHelper
     include ArchiveTicketTestHelper
     include DiscussionsTestHelper
+    include BotResponseTestHelper
 
     ARCHIVE_DAYS = 120
     TICKET_UPDATED_DATE = 150.days.ago
@@ -933,6 +936,73 @@ module Ember
       assert_response 201
     ensure
       clear_field_options
+    end
+
+    def test_create_from_email_with_bot_configuration
+      Account.any_instance.stubs(:support_bot_configured?).returns(true)
+      Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      @bot = @account.main_portal.bot || create_test_email_bot({email_channel: true})
+      @account.reload
+      ticket = create_ticket({source: 1})
+      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute
+      assert_equal 1, ::Bot::Emailbot::SendBotEmail.jobs.size 
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:bot_email_channel_enabled?)
+    end
+
+    def test_create_from_email_without_bot_configuration
+      Account.any_instance.stubs(:support_bot_configured?).returns(false)
+      Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      ticket = create_ticket({source: 1})
+      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute 
+      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size 
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:bot_email_channel_enabled?)
+    end
+
+    def test_create_from_email_without_email_bot_channel
+      Account.any_instance.stubs(:support_bot_configured?).returns(true)
+      Account.any_instance.stubs(:bot_email_channel_enabled?).returns(false)
+      ticket = create_ticket({source: 1})
+      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute   
+      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size 
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:bot_email_channel_enabled?)
+    end
+
+    def test_create_from_other_source_with_bot_configuration
+      Account.any_instance.stubs(:support_bot_configured?).returns(true)
+      Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      ticket = create_ticket
+      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute
+      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:bot_email_channel_enabled?)
+    end
+
+    def test_spam_ticket_with_bot_configuration
+      Account.any_instance.stubs(:support_bot_configured?).returns(true)
+      Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      ticket = create_ticket({spam: true})
+      ::Bot::Emailbot::SendBotEmail.jobs.clear
+      args = {'ticket_id' => ticket.id, 'user_id' => ticket.requester_id, 'is_webhook' => ticket.freshdesk_webhook?, 'sla_args' => {'sla_on_background' => ticket.sla_on_background, 'sla_state_attributes' => ticket.sla_state_attributes, 'sla_calculation_time' => ticket.sla_calculation_time.to_i}}
+      disptchr = Helpdesk::Dispatcher.new(args)
+      disptchr.execute
+      assert_equal 0, ::Bot::Emailbot::SendBotEmail.jobs.size
+      Account.any_instance.unstub(:support_bot_configured?)
+      Account.any_instance.unstub(:bot_email_channel_enabled?)
     end
 
     def test_execute_scenario_without_params
@@ -2398,6 +2468,7 @@ module Ember
     end
 
     def test_export_inline_sidekiq_csv_with_no_tickets
+      WebMock.allow_net_connect!
       @account.launch(:ticket_contact_export)
       2.times do
         create_ticket
@@ -2410,9 +2481,11 @@ module Ember
       current_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:ticket])
       assert_equal initial_count, current_data_exports.length
       @account.rollback(:ticket_contact_export)
+      WebMock.disable_net_connect!
     end
 
     def test_export_inline_sidekiq_csv_with_privilege
+      WebMock.allow_net_connect!
       @account.launch(:ticket_contact_export)
       2.times do
         create_ticket
@@ -2427,9 +2500,11 @@ module Ember
       assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.csv')
       @account.rollback(:ticket_contact_export)
+      WebMock.disable_net_connect!
     end
 
     def test_export_inline_sidekiq_xls_with_privilege
+      WebMock.allow_net_connect!
       @account.launch(:ticket_contact_export)
       2.times do
         create_ticket
@@ -2444,6 +2519,7 @@ module Ember
       assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.xls')
       @account.rollback(:ticket_contact_export)
+      WebMock.disable_net_connect!
     end
 
     def test_update_with_company_id
@@ -3771,6 +3847,161 @@ module Ember
       assert_response 200
     ensure
       Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: false)
+    end
+
+    def test_index_with_spam_count_es_enabled
+      Account.any_instance.stubs(:count_es_enabled?).returns(true)
+      Account.any_instance.stubs(:es_tickets_enabled?).returns(true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(true)
+      t = create_ticket(spam: true)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(filter: 'spam')
+      assert_response 200
+      param_object = OpenStruct.new(:stats => true)
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object))
+      match_json(pattern)
+    ensure
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+      Account.any_instance.unstub(:es_tickets_enabled?)
+    end
+
+    def test_index_with_new_and_my_open_count_es_enabled
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      t = create_ticket(status: 2)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(filter: 'new_and_my_open')
+      assert_response 200
+      param_object = OpenStruct.new(:stats => true)
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object))
+      match_json(pattern)
+    ensure
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:es_tickets_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+    end
+
+    def test_index_with_stats_with_count_es_enabled
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      t = create_ticket
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(include: 'stats')
+      assert_response 200
+      param_object = OpenStruct.new(:stats => true)
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object))
+      match_json(pattern)
+    ensure
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:es_tickets_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+    end
+
+    def test_index_with_requester_with_count_es_enabled
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      user = add_new_user(@account)
+      t = create_ticket(requester_id: user.id)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(requester_id: user.id)
+      assert_response 200
+      param_object = OpenStruct.new(:stats => true)
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object))
+      match_json(pattern)
+    ensure
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:es_tickets_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+    end
+
+    def test_index_with_filter_order_by_with_count_es_enabled
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      t_1 = create_ticket(status: 2, created_at: 10.days.ago)
+      t_2 = create_ticket(status: 3, created_at: 11.days.ago)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_1.id, t_2.id).to_json, status: 200)
+      get :index, controller_params(order_by: 'status')
+      assert_response 200
+      param_object = OpenStruct.new(:stats => true)
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
+      pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
+      match_json(pattern)
+    ensure
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:es_tickets_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+    end
+
+    def test_index_with_default_filter_order_type_count_es_enabled
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      t_1 = create_ticket(created_at: 10.days.ago)
+      t_2 = create_ticket(created_at: 11.days.ago)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t_2.id, t_1.id).to_json, status: 200)
+      get :index, controller_params(order_type: 'asc')
+      assert_response 200
+      param_object = OpenStruct.new(:stats => true)
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
+      pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
+      match_json(pattern)
+    ensure
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:es_tickets_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+    end
+
+    def test_index_updated_since_count_es_enabled
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      t = create_ticket(updated_at: 2.days.from_now)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(updated_since: Time.zone.now.iso8601)
+      assert_response 200
+      param_object = OpenStruct.new(:stats => true)
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object))
+      match_json(pattern)
+    ensure
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:es_tickets_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
+    end
+
+    def test_index_with_company_count_es_enabled
+      Account.any_instance.stubs(:count_es_enabled?).returns(:true)
+      Account.any_instance.stubs(:es_tickets_enabled?).returns(:true)
+      Account.any_instance.stubs(:dashboard_new_alias?).returns(:true)
+      company = create_company
+      user = add_new_user(@account)
+      sidekiq_inline {
+        user.company_id = company.id
+        user.save!
+      }
+      t = create_ticket(requester_id: user.id)
+      stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: count_es_response(t.id).to_json, status: 200)
+      get :index, controller_params(company_id: "#{company.id}")
+      assert_response 200
+      param_object = OpenStruct.new(:stats => true)
+      pattern = []
+      pattern.push(index_ticket_pattern_with_associations(t, param_object))
+      match_json(pattern)
+    ensure
+      Account.any_instance.unstub(:count_es_enabled?)
+      Account.any_instance.unstub(:es_tickets_enabled?)
+      Account.any_instance.unstub(:dashboard_new_alias?)
     end
 
     def test_update_compose_email_with_subject_and_description

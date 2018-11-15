@@ -1,0 +1,38 @@
+get:
+  tags: ['ticket']
+  summary: Show Bot Responses
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/bot_response'
+    403:
+      description: Access denied 
+    404:
+      description: Ticket Not found
+    204:
+      description: Bot response not found
+
+put:
+  tags: ['ticket']
+  summary: Update Bot Response
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/bot_response_input'
+  responses:
+    204:
+      description: Success
+    403:
+      description: Access denied
+    404:
+      description: Not found

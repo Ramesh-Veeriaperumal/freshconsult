@@ -50,7 +50,8 @@ module ActionMailerCallbacks
           :address              => smtp_mailbox.server_name,
           :port                 => smtp_mailbox.port,
           :authentication       => smtp_mailbox.authentication,
-          :domain               => smtp_mailbox.domain
+          :domain               => smtp_mailbox.domain,
+          :return_response      => true
         }
         Rails.logger.debug "Used SMTP mailbox : #{email_config.smtp_mailbox.user_name} in email config : #{email_config.id} while email delivery"
         self.smtp_settings = smtp_settings
@@ -63,8 +64,8 @@ module ActionMailerCallbacks
           category_id = sender_config["categoryId"]
           ip_pool = sender_config["ipPoolName"]
         end
-        self.smtp_settings = read_smtp_settings(category_id)
-        mail.delivery_method(:smtp, read_smtp_settings(category_id))
+        set_smtp_settings_util(category_id)
+        mail.delivery_method(:smtp, self.smtp_settings)
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email, ip_pool)
       else
         notification_type = is_num?(mail_type) ? mail_type : get_notification_type_id(mail_type) 
@@ -86,8 +87,8 @@ module ActionMailerCallbacks
           end
         else
           Rails.logger.debug "Fetched category : #{category_id} while email delivery"
-          self.smtp_settings = read_smtp_settings(category_id)
-          mail.delivery_method(:smtp, read_smtp_settings(category_id))
+          set_smtp_settings_util(category_id)
+          mail.delivery_method(:smtp, self.smtp_settings)
         end
         set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email, ip_pool)
       end
@@ -104,11 +105,14 @@ module ActionMailerCallbacks
         category_id = nil
       end
       Rails.logger.debug "Fetched category : #{category_id} while email delivery"
-      self.smtp_settings = read_smtp_settings(category_id)
-      mail.delivery_method(:smtp, read_smtp_settings(category_id))  
+      set_smtp_settings_util(category_id)
+      mail.delivery_method(:smtp, self.smtp_settings)  
       return category_id
     end
-
+    def set_smtp_settings_util(category_id)
+      smtp_settings = (read_smtp_settings(category_id)).merge!(:return_response => true)
+      self.smtp_settings = smtp_settings
+    end
     def set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email, ip_pool= nil)
       if Helpdesk::Email::OutgoingCategory::MAILGUN_PROVIDERS.include?(category_id.to_i)
         Rails.logger.debug "Sending email via mailgun"

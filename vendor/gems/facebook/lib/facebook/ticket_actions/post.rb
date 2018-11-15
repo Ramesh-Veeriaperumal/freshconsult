@@ -5,7 +5,7 @@ module Facebook
       include Facebook::TicketActions::Util
       include Facebook::Util
       
-      def add_as_ticket(fan_page, koala_feed, ticket_attributes)
+      def add_as_ticket(fan_page, koala_feed, ticket_attributes, koala_original_post = nil)
         ticket = nil
         can_comment = koala_feed.can_comment
         
@@ -24,8 +24,8 @@ module Facebook
               :post_attributes  => post_attributes(koala_feed.post_type, can_comment)
             }
           )
-
-          description_html = safe_send("html_content_from_#{koala_feed.type}", koala_feed.feed, ticket)
+          post_html = koala_original_post.present? ? html_content_from_original_post(koala_original_post.feed, ticket) : nil
+          description_html = safe_send("html_content_from_#{koala_feed.type}", koala_feed.feed, ticket, post_html)
           ticket.ticket_body_attributes = {
               :description      => koala_feed.description,
               :description_html => description_html
