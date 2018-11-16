@@ -24,9 +24,10 @@ class User < ActiveRecord::Base
   include AccountConstants
   include PasswordPolicies::UserHelpers
   include Redis::FreshidPasswordRedis
-  include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams
 
   concerned_with :constants, :associations, :callbacks, :user_email_callbacks, :rabbitmq, :esv2_methods, :presenter
+
+  include CustomerDeprecationMethods, CustomerDeprecationMethods::NormalizeParams # Placed here to handle deprecated Customer class. Has to be after associations
 
   validates_uniqueness_of :twitter_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
   validates_uniqueness_of :external_id, :scope => :account_id, :allow_nil => true, :allow_blank => true
