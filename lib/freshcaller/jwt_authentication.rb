@@ -39,12 +39,18 @@ module Freshcaller::JwtAuthentication
         'Accept' => 'application/json',
         'Content-Type' => 'application/json',
         'Authorization' => "Freshdesk token=#{sign_payload(payload)}"
-      },
-      :query => params
+      }
     }
-
+    if request_type == :get
+      options.merge!({:query => params})
+    else
+      options.merge!({:body => params.to_json})
+    end
+    Rails.logger.info "Freshcaller Request Params :: #{HTTP_METHOD_TO_CLASS_MAPPING[request_type]} #{URI.encode(path)} #{options.inspect}"
     request = HTTParty::Request.new(HTTP_METHOD_TO_CLASS_MAPPING[request_type], URI.encode(path), options)
-    request.perform
+    freshcaller_response = request.perform
+    Rails.logger.info "Freshcaller Response :: #{freshcaller_response.body} #{freshcaller_response.code} #{freshcaller_response.message} #{freshcaller_response.headers.inspect}"
+    freshcaller_response
   end
   
   def auth_hash
