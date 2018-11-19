@@ -28,24 +28,30 @@ class AgentType < ActiveRecord::Base
     agent_type_details = DEFAULT_AGENT_TYPE_LIST[agent_type]
     agent_type_id = self.next_agent_type_id
     raise "Invalid agent type #{agent_type}" unless agent_type_details
-    self.create_support_agent_type_with(agent_type_details, account , agent_type_id)
+    self.create_agent_type_with(agent_type_details, account , agent_type_id)
   end
 
   #Temp method to directly create support agent type if it was created as part of fixtures/migration.
   def self.create_support_agent_type(account)
     agent_type_details = DEFAULT_AGENT_TYPE_LIST[:support_agent]
-    self.create_support_agent_type_with(agent_type_details, account, 1)
+    self.create_agent_type_with(agent_type_details, account, 1)
   end
 
-  def self.create_support_agent_type_with(agent_type_details, account, agent_type_id)
-    agent_type = account.agent_types.create(name: agent_type_details[0],
+  def self.create_agent_type_with(agent_type_details, account, agent_type_id)
+    begin
+      agent_type = account.agent_types.create(name: agent_type_details[0],
                                             label: agent_type_details[1],
                                             account_id: account.id,
                                             deleted: false,
                                             default: true,
                                             agent_type_id: agent_type_id)
-    agent_type.save!
-    agent_type
+      agent_type.save!
+      agent_type
+    rescue Exception => e
+      error_message = "Agent type creation failed for account:: #{account.id}. Agent type: #{agent_type_details.join(", ")} Exception:: #{e.message} \n#{e.backtrace.to_a.join("\n")}"
+      Rails.logger.error(error_message)
+      NewRelic::Agent.notice_error(error_message)
+    end
   end
 
   def self.destroy_agent_type(account, agent_type)
