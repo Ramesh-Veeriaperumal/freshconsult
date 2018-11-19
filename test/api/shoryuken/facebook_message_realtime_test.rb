@@ -13,11 +13,14 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
   include Facebook::Constants
 
   def teardown
+    Social::FacebookPage.any_instance.stubs(:unsubscribe_realtime).returns(true)
     super
     @account.facebook_pages.destroy_all
     @account.facebook_streams.destroy_all
     @account.tickets.where(source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook]).destroy_all
     Account.unstub(:current)
+  ensure
+    Social::FacebookPage.any_instance.unstub(:unsubscribe_realtime)
   end
 
   def setup
@@ -44,6 +47,8 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     ticket = @account.facebook_posts.find_by_post_id(dm_msg_id).postable
     assert_equal ticket.is_a?(Helpdesk::Ticket), true
     assert_equal verify_ticket_properties(ticket, msg), true
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 
   def test_dm_is_converted_to_ticket_with_group
@@ -67,6 +72,8 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     ticket = @account.facebook_posts.find_by_post_id(dm_msg_id).postable
     assert_equal ticket.is_a?(Helpdesk::Ticket), true
     assert_equal ticket.group_id, group.id
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 
   def test_second_dm_after_threading_interval_is_converted_into_a_new_ticket
@@ -88,6 +95,8 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     second_msg_id = second_msg[:id]
     assert_equal @account.facebook_posts.find_by_post_id(first_msg_id).postable.is_a?(Helpdesk::Ticket), true
     assert_equal @account.facebook_posts.find_by_post_id(second_msg_id).postable.is_a?(Helpdesk::Ticket), true
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 
   def test_second_dm_within_threading_interval_is_added_as_a_note_on_same_ticket
@@ -109,6 +118,8 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     note = @account.facebook_posts.find_by_post_id(second_msg_id).postable
     assert_equal note.is_a?(Helpdesk::Note), true
     assert_equal verify_note_properties(note, second_msg), true
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 
   def test_convert_multiple_dm_messages_within_thread_interval_to_notes
@@ -130,6 +141,8 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     second_msg_id = second_msg[:id]
     assert_equal @account.facebook_posts.find_by_post_id(first_msg_id).postable.is_a?(Helpdesk::Note), true
     assert_equal @account.facebook_posts.find_by_post_id(second_msg_id).postable.is_a?(Helpdesk::Note), true
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 
   def test_do_not_convert_dm_when_import_dms_is_not_choosen
@@ -146,5 +159,7 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     Sqs::FacebookMessage.new(sqs_msg.body).process
     dm_msg_id = msg['id']
     assert_nil @account.facebook_posts.find_by_post_id(dm_msg_id)
+  ensure
+    Koala::Facebook::API.any_instance.unstub(:get_object)
   end
 end
