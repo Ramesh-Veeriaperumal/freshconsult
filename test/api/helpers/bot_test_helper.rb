@@ -176,7 +176,8 @@ module BotTestHelper
       selected_category_ids: bot.solution_category_metum_ids,
       widget_code_src: BOT_CONFIG[:widget_code_src],
       product_hash: BOT_CONFIG[:freshdesk_product_id],
-      environment: BOT_CONFIG[:widget_code_env]
+      environment: BOT_CONFIG[:widget_code_env],
+      region: BOT_CONFIG[:widget_code_region]
     }
     show_pattern[:analytics_mock_data] = true if bot.additional_settings[:analytics_mock_data]
     show_pattern

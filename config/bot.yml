@@ -14,6 +14,8 @@ common: &common
   analytics_url: 'https://admin.intfreshbots.com/rest/api/report/v1/funnel/stats'
   email_bot_domain: 'https://freshiqnew.freshpo.com'
   email_bot_path: '/api/v1/afr/smart_reply'
+  master_client_external_id: 'freshdesk-frankbot-us'
+  widget_code_region: 'us'
 
 development:
   <<: *common

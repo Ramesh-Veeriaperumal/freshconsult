@@ -3,7 +3,6 @@ module Freshbots
     BOT_CREATION_SUCCESS_STATUS = 201
     BOT_UPDATION_SUCCESS_STATUS = 200
     INTERNAL_NAME = 'FrankBot'.freeze
-    MASTER_CLIENT_EXTERNAL_ID = 'freshdesk-frankbot-us'.freeze
 
     class << self
       def create_bot(bot)
@@ -75,10 +74,10 @@ module Freshbots
       private
 
         def external_client_id(bot, action)
-          # When creating a bot, the MASTER_CLIENT_EXTERNAL_ID used is a default
+          # When creating a bot, the master_client_external_id used is a default
           # bot which acts as a template for creating a new bot.
           if action == :create
-            MASTER_CLIENT_EXTERNAL_ID
+            BOT_CONFIG[:master_client_external_id]
           else
             bot.external_id
           end
