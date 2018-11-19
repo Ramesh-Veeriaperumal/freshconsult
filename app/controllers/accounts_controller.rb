@@ -5,10 +5,11 @@ class AccountsController < ApplicationController
   include Redis::OthersRedis
   include Redis::TicketsRedis
   include Redis::DisplayIdRedis
+  include MixpanelWrapper 
   include Onboarding::OnboardingRedisMethods
 
-  layout :choose_layout
-
+  layout :choose_layout 
+  
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free, :email_signup, :signup_validate_domain,
                                                                              :create, :rebrand, :dashboard, :rabbitmq_exchange_info, :edit_domain]
 
@@ -17,15 +18,15 @@ class AccountsController < ApplicationController
     :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain]
   skip_before_filter :check_account_state
   skip_before_filter :redirect_to_mobile_url
-  skip_before_filter :check_day_pass_usage,
+  skip_before_filter :check_day_pass_usage, 
     :except => [:cancel, :edit, :update, :delete_logo, :delete_favicon, :show, :manage_languages, :update_languages]
-  skip_filter :select_shard,
+  skip_filter :select_shard, 
 
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages, :edit_domain, :validate_domain, :update_domain]
   skip_before_filter :ensure_proper_protocol, :ensure_proper_sts_header,
 
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
-  skip_before_filter :determine_pod,
+  skip_before_filter :determine_pod, 
     :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo, :manage_languages, :update_languages]
   skip_after_filter :set_last_active_time
 
@@ -54,10 +55,11 @@ class AccountsController < ApplicationController
   before_filter :update_language_attributes, :only => [:update_languages]
   before_filter :validate_portal_language_inclusion, :only => [:update_languages]
   before_filter(:only => [:manage_languages]) { |c| c.requires_feature :multi_language }
-
+  before_filter :access_denied, only: [:email_signup, :new_signup_free], :if => :params_contain_url
+  
   def show
-  end
-
+  end   
+   
   def edit
     @supported_languages_list = current_account.account_additional_settings.supported_languages
     @ticket_display_id = current_account.get_max_display_id
@@ -69,7 +71,7 @@ class AccountsController < ApplicationController
       @ticket_display_id = redis_display_id if redis_display_id > @ticket_display_id
     end
   end
-
+  
   def check_domain
     puts "#{params[:domain]}"
     render :json => { :account_name => true }, :callback => params[:callback]
@@ -120,7 +122,7 @@ class AccountsController < ApplicationController
   def update_domain
     if current_account.update_default_domain_and_email_config(params["company_domain"],params["support_email"])
       current_user.reset_perishable_token!
-      render json: {  :success => true,
+      render json: {  :success => true, 
                       :url => signup_complete_url(:token => current_user.perishable_token, :host => current_account.full_domain)
                     }
       destroy_user_session
@@ -140,7 +142,7 @@ class AccountsController < ApplicationController
 
   def signup_validate_domain
     respond_to do |format|
-      format.json do
+      format.json do 
         head :bad_request and return if params[:domain].blank?
         new_domain = params["domain"] + "." + AppConfig['base_domain'][Rails.env]
         domain_validation_response = DomainGenerator.valid_domain?(new_domain) ? :ok : :conflict
@@ -179,10 +181,10 @@ class AccountsController < ApplicationController
       end
     else
       render :json => { :success => false, :errors => @signup.all_errors }, :callback => params[:callback]
-    end
+    end    
   end
 
-  def create
+  def create    
     @account.affiliate = SubscriptionAffiliate.find_by_token(cookies[:affiliate]) unless cookies[:affiliate].blank?
 
     if @account.needs_payment_info?
@@ -191,7 +193,7 @@ class AccountsController < ApplicationController
       @account.address = @address
       @account.creditcard = @creditcard
     end
-
+    
     if @account.save
       flash[:domain] = @account.domain
       redirect_to :action => 'thanks'
@@ -202,7 +204,7 @@ class AccountsController < ApplicationController
 
   def update
     redirect_url = params[:redirect_url].presence || admin_home_index_path
-    @account.account_additional_settings[:date_format] = params[:account][:account_additional_settings_attributes][:date_format]
+    @account.account_additional_settings[:date_format] = params[:account][:account_additional_settings_attributes][:date_format] 
     @account.time_zone = params[:account][:time_zone]
     @account.helpdesk_name = params[:account][:helpdesk_name]
     @account.ticket_display_id = params[:account][:ticket_display_id]
@@ -225,36 +227,30 @@ class AccountsController < ApplicationController
     else
       render :action => 'edit'
     end
-  end
-
-  def rebrand
-    responseObj = { :status =>
+  end  
+  
+  def rebrand  
+    responseObj = { :status => 
         current_portal.update_attributes(params[:account][:main_portal_attributes]) }
-    redirect_to admin_getting_started_index_path
+    redirect_to admin_getting_started_index_path        
   end
-
+  
   def cancel
-    if current_account.falcon_ui_enabled?
-      current_user.toggle_ui_preference unless current_user.is_falcon_pref?
-      cookies[:falcon_enabled] = true
-      redirect_to FalconRedirection.falcon_redirection_path request.path_info, request.query_string
-    else
-      if request.post? and !params[:confirm].blank?
-        response = Billing::Subscription.new.cancel_subscription(current_account)
-        perform_account_cancel(params[:account_feedback]) if response
-      end
+    if request.post? and !params[:confirm].blank?
+      response = Billing::Subscription.new.cancel_subscription(current_account)
+      perform_account_cancel(params[:account_feedback]) if response
     end
   end
-
+  
   def thanks
     redirect_to :action => "plans" and return unless flash[:domain]
     # render :layout => 'public' # Uncomment if your "public" site has a different layout than the one used for logged-in users
   end
-
+  
   def dashboard
     render :text => 'Dashboard action, engage!', :layout => true
   end
-
+  
   def delete_logo
     current_account.main_portal.logo.destroy
     current_account.main_portal.save
@@ -263,15 +259,15 @@ class AccountsController < ApplicationController
       format.js { render :text => "success" }
     end
   end
-
+  
   def delete_favicon
     current_account.main_portal.fav_icon.destroy
     current_account.main_portal.save
-
+    
     respond_to do |format|
       format.html { redirect_to :back }
       format.js { render :text => "success" }
-    end
+    end    
   end
 
   def manage_languages
@@ -291,46 +287,46 @@ class AccountsController < ApplicationController
     def multi_language_available?
       current_account.features_included?(:multi_language)
     end
-
+    
     def check_supported_languages
       (params[:account][:account_additional_settings_attributes][:supported_languages] = []) if params[:account][:account_additional_settings_attributes][:supported_languages].nil?
     end
 
-    def choose_layout
+    def choose_layout 
       request.headers['X-PJAX'] ? 'maincontent' : 'application'
     end
-
+  
     def load_object
       @obj = @account = current_account
     end
-
+    
     def build_user
       @account.user = @user = User.new(params[:user])
     end
-
+    
     def build_plan
       redirect_to :action => "plans" unless @plan = SubscriptionPlan.find_by_name(params[:plan])
       @account.plan = @plan
     end
-
+    
     def build_primary_email_and_portal
        d_email = "support@#{@account.full_domain}"
        @account.build_primary_email_config(:to_email => d_email, :reply_email => d_email, :name => @account.name, :primary_role => true)
        @account.primary_email_config.active = true
-
-      begin
-        locale = http_accept_language.compatible_language_from I18n.available_locales
+      
+      begin 
+        locale = http_accept_language.compatible_language_from I18n.available_locales  
         locale = I18n.default_locale if locale.blank?
       rescue
         locale =  I18n.default_locale
       end
       portal_preferences = (@account.falcon_portal_theme_enabled?) ? default_falcon_preferences : default_preferences
 
-      @account.build_main_portal(:name => @account.helpdesk_name || @account.name, :preferences => portal_preferences,
+      @account.build_main_portal(:name => @account.helpdesk_name || @account.name, :preferences => portal_preferences, 
                                :language => locale.to_s() , :account => @account, :main_portal => true)
-
+     
     end
-
+ 
     def default_preferences
       HashWithIndifferentAccess.new({:bg_color => "#efefef",:header_color => "#252525", :tab_color => "#006063", :personalized_articles => true})
     end
@@ -338,38 +334,38 @@ class AccountsController < ApplicationController
     def default_falcon_preferences
       HashWithIndifferentAccess.new({:bg_color => "#f3f5f7",:header_color => "#ffffff", :tab_color => "#ffffff", :personalized_articles => true})
     end
-
+  
     def redirect_url
       { :action => 'show' }
     end
-
+    
     def load_billing
       @creditcard = ActiveMerchant::Billing::CreditCard.new(params[:creditcard])
       @address = SubscriptionAddress.new(params[:address])
     end
-
+    
     def authorized?
-      %w(new create plans canceled thanks).include?(self.action_name) ||
+      %w(new create plans canceled thanks).include?(self.action_name) || 
       (self.action_name == 'dashboard' && logged_in?) ||
       privilege?(:manage_account)
-    end
-
+    end 
+    
     def admin_selected_tab
       @selected_tab = :admin
-    end
+    end   
 
     def validate_custom_domain_feature
       unless @account.custom_domain_enabled?
         params[:account][:main_portal_attributes][:portal_url] = nil
       end
     end
-
+    
     def build_metrics
       # return if params[:session_json].blank?
       metrics_obj = {}
       account_obj = {}
-      begin
-        account_obj[:first_referrer] = params[:first_referrer] if params[:first_referrer].present?
+      begin  
+        account_obj[:first_referrer] = params[:first_referrer] if params[:first_referrer].present? 
         account_obj[:first_landing_url] = params[:first_landing_url] if params[:first_landing_url].present?
         account_obj[:fd_cid] = params[:fd_cid] if params[:fd_cid].present?
         if params[:user]
@@ -425,33 +421,43 @@ class AccountsController < ApplicationController
         Rails.logger.error("Error while building conversion metrics with session params: \n #{params[:session_json]} \n#{e.message}\n#{e.backtrace.join("\n")}")
         return nil, nil
       end
-    end
+    end      
 
   private
+
+    def params_contain_url
+      contains = [:user_first_name, :user_last_name, :user_email, :user_phone, :account_name, :account_domain].any? do |key| 
+        value = params[:signup][key].to_s
+        (value.include?("http://") || value.include?("https://"))
+      end
+      Rails.logger.info "Failing Signup" if contains
+      contains
+    end
 
     def check_sandbox?
       access_denied if current_account.sandbox?
     end
 
     def get_account_for_sub_domain
-      base_domain = AppConfig['base_domain'][Rails.env]
+      base_domain = AppConfig['base_domain'][Rails.env]    
       @sub_domain = params[:account][:sub_domain]
       @full_domain = @sub_domain+"."+base_domain
-      @account =  Account.find_by_full_domain(@full_domain)
+      @account =  Account.find_by_full_domain(@full_domain)    
     end
 
     def select_latest_shard(&block)
       Sharding.select_latest_shard(&block)
-    end
+    end   
 
     def build_signup_param
       params[:signup] = {}
-
+      
       [:user, :account].each do |param|
         params[param].each do |key, value|
           params[:signup]["#{param}_#{key}"] = value
         end
       end
+      
       params[:signup][:locale] = assign_language || http_accept_language.compatible_language_from(I18n.available_locales)
       params[:signup][:time_zone] = params[:utc_offset]
       params[:signup][:org_id] = params[:org_id]
@@ -484,23 +490,78 @@ class AccountsController < ApplicationController
         Rails.logger.info "Signup Freshsales :: #{account_id} :: Invoking signup worker"
         CRMApp::Freshsales::Signup.perform_at(5.minutes.from_now, { account_id: account_id,
           fs_cookie: params[:fs_cookie] })
-      end
-    end
+      end  
+    end  
 
     def perform_account_cancel(feedback)
-      current_account.update_crm
-      current_account.send_account_deleted_email(feedback)
-      current_account.create_deleted_customers_info
+      update_crm
+      deliver_mail(feedback)
+      create_deleted_customers_info
 
-      if current_account.paid_account?
-        current_account.add_churn
-        current_account.schedule_cleanup
+      if current_account.subscription.active? or current_account.subscription_payments.present?
+        add_churn
+        schedule_cleanup
       else
-        current_account.clear_account_data
+        clear_account_data
       end
 
       redirect_to "#{AppConfig['app_website']}"
     end
+
+    def update_crm
+      if Rails.env.production?
+        CRMApp::Freshsales::DeletedCustomer.perform_async({ 
+          account_id: current_account.id 
+        })
+      end
+    end      
+
+    def deliver_mail(feedback)
+      SubscriptionNotifier.account_deleted(current_account, 
+                                  feedback) if Rails.env.production?
+    end
+    
+    def create_deleted_customers_info
+      DeletedCustomers.create(customer_details) if current_account.subscription.active?
+    end
+
+    def add_churn
+      Subscriptions::AddDeletedEvent.perform_async({ :account_id => current_account.id })
+    end   
+
+    def schedule_cleanup
+      current_account.subscription.update_attributes(:state => "suspended")
+      jid = AccountCleanup::DeleteAccount.perform_in(14.days.from_now, {:account_id => current_account.id})
+      dc = DeletedCustomers.find_by_account_id(current_account.id)
+      dc.update_attributes({:job_id => jid}) if dc
+    end
+
+    def clear_account_data
+      current_account.subscription.update_attributes(:state => "suspended")
+      AccountCleanup::DeleteAccount.perform_async({:account_id => current_account.id})
+      ::MixpanelWrapper.send_to_mixpanel(self.class.name)
+    end
+
+    def customer_details
+      {
+        :full_domain => "#{current_account.name}(#{current_account.full_domain})",
+        :account_id => current_account.id,
+        :admin_name => current_account.admin_first_name,
+        :admin_email => current_account.admin_email,
+        :status => FreshdeskCore::Model::STATUS[:scheduled],
+        :account_info => account_info
+      }
+    end
+
+    def account_info
+      { 
+        :plan => current_account.subscription.subscription_plan_id,
+        :agents_count => current_account.agents.count,
+        :tickets_count => current_account.tickets.count,
+        :user_count => current_account.contacts.count,
+        :account_created_on => current_account.created_at 
+      }
+    end      
 
     def enable_restricted_helpdesk action
       restricted_helpdesk = @account.restricted_helpdesk?
@@ -635,8 +696,8 @@ class AccountsController < ApplicationController
     end
 
     # Scheduled job will be cancelled(deleted) when a user submits the form within 10m.
-    # Suppose, if the user submits form after 10 min, he will be taken to dashboard with
-    # domain name which was auto-generated.Even if user enters new domain name in the
+    # Suppose, if the user submits form after 10 min, he will be taken to dashboard with 
+    # domain name which was auto-generated.Even if user enters new domain name in the 
     # edit domain page after 10 min, it will not be considered.
 
     def check_activation_mail_job_status
@@ -650,21 +711,21 @@ class AccountsController < ApplicationController
         end
       else
         respond_to do |format|
-          format.html do
+          format.html do 
             if current_user_session
               flash[:notice] = t("accounts.edit_domain.account_url_defaulted")
               redirect_to "/"
             end
           end
-          format.json do
-            render json: {  :success => false,
+          format.json do 
+            render json: {  :success => false, 
                             :url => root_url(:host => current_account.full_domain)},
                             :status => :request_timeout
             return
           end
         end
       end
-    end
+    end      
 
     # When user submits edit domain form & does not change domain name, taking user directly to dashboard.
     # If user changes the domain name, validate and proceed with update_domain.
@@ -703,7 +764,7 @@ class AccountsController < ApplicationController
     end
 
     def email_signup_redirect_url
-      @signup.account.launched?(:new_onboarding) ?
+      @signup.account.launched?(:new_onboarding) ? 
         signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain) :
         edit_account_domain_url(:perishable_token => @signup.user.perishable_token, :host => @signup.account.full_domain)
     end
