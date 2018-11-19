@@ -11,6 +11,12 @@ class SsoController < ApplicationController
 
   MOBILE_GOOGLE_SSO_VERIFY_URL = 'https://www.googleapis.com/oauth2/v3/tokeninfo'
 
+  PLATFORM_TOKEN_MAPPING = {
+        "ios" => "client_id_ios",
+        "iosv4_classic" => "client_id_iosv4_classic",
+        "android" => "consumer_token",
+      }
+
   def mobile_app_google_login
     redirect_to "https://#{request.host}/auth/google_login"
   end
@@ -97,7 +103,8 @@ class SsoController < ApplicationController
     def mobile_sso_google(id_token, platform)
       gsso_response = HTTParty.post(MOBILE_GOOGLE_SSO_VERIFY_URL, body: { id_token: id_token }).parsed_response
       return nil if gsso_response.has_key?('error_description')
-      client_id_name = (platform.downcase == 'ios' ? 'client_id_ios' : 'consumer_token')
+
+      client_id_name = PLATFORM_TOKEN_MAPPING.fetch(platform.downcase, "consumer_token")
 
       if gsso_response['aud'] == Integrations::OAUTH_CONFIG_HASH['google_oauth2'][client_id_name] &&
         ['accounts.google.com', 'https://accounts.google.com'].include?(gsso_response['iss'])

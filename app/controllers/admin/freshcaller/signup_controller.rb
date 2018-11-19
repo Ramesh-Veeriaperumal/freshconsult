@@ -101,23 +101,30 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
 
   def signup_params
     {
-      :signup => {
-        :user_name => current_user.name,
-        :user_email => current_user.email,
-        :user_phone => current_user.phone.present? ? current_user.phone : current_user.mobile,
-        :account_name => current_account.name,
-        :account_domain => "#{FreshcallerConfig['domain_prefix']}#{current_account.domain}",
-        :account_region => ShardMapping.fetch_by_account_id(current_account.id).region,
-        :api => {
-          :account_name => current_account.name,
-          :account_id => current_account.id,
-          :freshdesk_calls_url => "#{protocol}#{current_account.full_domain}/api/channel/freshcaller_calls",
-          :app => 'Freshdesk',
-          :client_ip => request.remote_ip,
-          :domain_url => "#{protocol}#{current_account.full_domain}",
-          :access_token => current_user.single_access_token
+      signup: {
+        user_name: current_user.name,
+        user_email: current_user.email,
+        user_phone: current_user.phone.present? ? current_user.phone : current_user.mobile,
+        account_name: current_account.name,
+        time_zone: current_account.conversion_metric.try(:offset).to_s,
+        account_domain: "#{FreshcallerConfig['domain_prefix']}#{current_account.domain}",
+        account_region: ShardMapping.fetch_by_account_id(current_account.id).region,
+        currency: current_account.subscription.try(:currency).try(:name),
+        api: {
+          account_name: current_account.name,
+          account_id: current_account.id,
+          freshdesk_calls_url: "#{protocol}#{current_account.full_domain}/api/channel/freshcaller_calls",
+          app: 'Freshdesk',
+          client_ip: request.remote_ip,
+          domain_url: "#{protocol}#{current_account.full_domain}",
+          access_token: current_user.single_access_token
         }
-      }
+      },
+      session_json: current_account.conversion_metric.try(:session_json),
+      source: 'Freshdesk',
+      medium: 'in-product',
+      country: current_account.conversion_metric.try(:country),
+      first_referrer: "#{protocol}#{current_account.full_domain}"
     }
   end
 

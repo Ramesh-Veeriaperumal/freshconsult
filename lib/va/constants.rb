@@ -78,6 +78,8 @@ module Va
 
     MAX_CUSTOM_HEADERS = 5
 
+    MAX_ACTION_DATA_LIMIT = 63000
+
     QUERY_OPERATOR = {
         :is => 'IS', :is_not => 'IS NOT', :in => 'IN',
         :not_in => 'NOT IN', :equal => '=', :not_equal => '!=',

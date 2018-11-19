@@ -35,7 +35,7 @@ module Admin::Marketplace::ExtensionsHelper
                         :type => params[:type],
                         :category_id => category['id']
                       }
-    admin_marketplace_extensions_path + '?' + category_params.to_query
+    "#{admin_marketplace_extensions_path}?#{category_params.to_query}"
   end
 
   def category_name(categories)

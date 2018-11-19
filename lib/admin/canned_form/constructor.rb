@@ -33,8 +33,8 @@ class Admin::CannedForm::Constructor
     element_class = 'btn'
     value1 = I18n.t('plain_yes')
     value2 = I18n.t('plain_no')
-    radio_button1 = radio_button_tag(%(#{@object_name}[#{@field_name}]), true, true)
-    label1 = content_tag(:label, radio_button1 + value1, :class => element_class + ' active')
+    radio_button1 = radio_button_tag(%(#{@object_name}[#{@field_name}]), true, false)
+    label1 = content_tag(:label, radio_button1 + value1, :class => element_class)
     radio_button2 = radio_button_tag(%(#{@object_name}[#{@field_name}]), false)
     label2 = content_tag(:label, radio_button2 + value2, :class => element_class)
     checkbox_element = content_tag(:div, label1 + label2, :class => "btn-group #{@element_class}", :role => 'group', :"data-toggle" => 'buttons')

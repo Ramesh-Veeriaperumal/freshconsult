@@ -16,6 +16,12 @@ module Marketplace::HelperMethods
     @extension = extension.body
   end
 
+  def extension_v2
+    extension = extension_details_v2(params[:extension_id], params[:version_id])
+    render_error_response and return if error_status?(extension)
+    @extension = extension.body
+  end
+
   def is_ni?
     @extension['type'] == Marketplace::Constants::EXTENSION_TYPE[:ni]
   end

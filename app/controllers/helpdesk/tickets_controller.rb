@@ -62,7 +62,6 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :filter_params_ids, :only =>[:destroy,:assign,:close_multiple,:spam,:pick_tickets, :delete_forever, :delete_forever_spam, :execute_bulk_scenario, :unspam, :restore]
   before_filter :validate_bulk_scenario, :only => [:execute_bulk_scenario], :if => :close_validation_enabled?
   before_filter :validate_ticket_close, :only => [:close_multiple], :if => :close_validation_enabled?
-  before_filter :scoper_ticket_actions, :only => [ :assign,:close_multiple, :pick_tickets ]
 
   #Set Native mobile is above scoper ticket actions, because, we send mobile response in scoper ticket actions, and
   #the nmobile format has to be set. Else we will get a missing template error.
@@ -104,7 +103,7 @@ class Helpdesk::TicketsController < ApplicationController
   before_filter :set_default_filter , :only => [:custom_search, :export_csv]
 
   before_filter :verify_permission, :only => [:show, :edit, :update, :execute_scenario, :close, :change_due_by, :print, :clear_draft, :save_draft,
-              :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore, :activitiesv2, :activities_all, :fetch_errored_email_details, :suppression_list_alert]
+              :draft_key, :get_ticket_agents, :quick_assign, :prevnext, :status, :update_ticket_properties, :activities, :unspam, :restore, :activitiesv2, :activities_all, :fetch_errored_email_details, :suppression_list_alert]
 
   before_filter :validate_scenario, :only => [:execute_scenario], :if => :close_validation_enabled?
   before_filter :validate_quick_assign_close, :only => [:quick_assign], :if => :close_validation_enabled?
@@ -352,7 +351,7 @@ class Helpdesk::TicketsController < ApplicationController
           render :json => array
         end
       end
-      format.mobile do
+	    format.mobile do
         unless @response_errors.nil?
           render :json => {:errors => @response_errors}.to_json
         else
@@ -529,8 +528,8 @@ class Helpdesk::TicketsController < ApplicationController
   def show
     @to_emails = @ticket.to_emails
 
-    draft_hash = @ticket.draft
-    @draft = draft_hash.exists? ? draft_hash.body : ""
+    draft_hash = get_tickets_redis_hash_key(draft_key)
+    @draft = draft_hash ? draft_hash["draft_data"] : ""
 
     @subscription = current_user && @item.subscriptions.find(
       :first,
@@ -555,9 +554,9 @@ class Helpdesk::TicketsController < ApplicationController
       format.xml  {
         render :xml => @item.to_xml
       }
-      format.json {
-        render :json => @item.to_json
-      }
+	    format.json {
+		    render :json => @item.to_json
+	    }
       format.js
       format.nmobile {
         hash = {}
@@ -582,8 +581,8 @@ class Helpdesk::TicketsController < ApplicationController
         render :json => hash
       }
       format.mobile {
-     render :json => @item.to_mob_json
-    }
+		 render :json => @item.to_mob_json
+	  }
     end
   end
 
@@ -953,7 +952,6 @@ class Helpdesk::TicketsController < ApplicationController
       item.save
       #mark_requester_deleted(item,false)
     end
-
     display_unspam_flash
   end
 
@@ -1296,7 +1294,8 @@ class Helpdesk::TicketsController < ApplicationController
           retry
       end
     end
-   respond_to do |format|
+
+     respond_to do |format|
          format.html {
             render :nothing => true
          }
@@ -1304,18 +1303,19 @@ class Helpdesk::TicketsController < ApplicationController
             render :json => {:success => success}
          }
      end
+
   end
 
   def clear_draft
-    @ticket.draft.clear
-    respond_to do |format|
-      format.html {
-        render :nothing => true
-      }
-      format.nmobile{
-        render :json => {:success => true}
-      }
-    end
+    remove_tickets_redis_key(draft_key)
+     respond_to do |format|
+         format.html {
+            render :nothing => true
+         }
+         format.nmobile{
+            render :json => {:success => true}
+         }
+     end
   end
 
   def activities
@@ -1672,7 +1672,7 @@ class Helpdesk::TicketsController < ApplicationController
     end
 
     def find_topic
-      @topic = current_account.topics.find(:first, :conditions => {:id => params[:topic_id]}) unless params[:topic_id].nil?
+    	@topic = current_account.topics.find(:first, :conditions => {:id => params[:topic_id]}) unless params[:topic_id].nil?
     end
 
     def redirect_merged_topics
@@ -2325,6 +2325,7 @@ class Helpdesk::TicketsController < ApplicationController
                     :tickets => get_updated_ticket_count,
                     :undo => "") }.to_json }
     end
+
   end
 
   def display_unspam_flash
@@ -2458,7 +2459,7 @@ class Helpdesk::TicketsController < ApplicationController
   def export_limit_reached?
     if DataExport.ticket_export_limit_reached?(User.current)
       flash[:notice] = I18n.t('export_data.ticket_export.limit_reached', :max_limit => DataExport.ticket_export_limit)
-      return redirect_to helpdesk_tickets_path 
+      return redirect_to helpdesk_tickets_path
     end
   end
 

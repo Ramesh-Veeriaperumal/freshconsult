@@ -15,13 +15,15 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
   def index
     if params[:sort_by]
       @extensions = Hash.new
-      params[:sort_by].each do |sort_key| 
-        @extensions[sort_key.to_sym] = mkp_extensions(sort_key).body
-        render_error_response and return if error_status?(mkp_extensions(sort_key))
+      params[:sort_by].each do |sort_key|
+        extensions = mkp_extensions(sort_key)
+        @extensions[sort_key.to_sym] = extensions.body
+        render_error_response and return if error_status?(extensions)
       end
     else
-      @extensions = mkp_extensions.body
-      render_error_response and return if error_status?(mkp_extensions)
+      extensions = mkp_extensions
+      @extensions = extensions.body
+      render_error_response and return if error_status?(extensions)
     end
   end
 

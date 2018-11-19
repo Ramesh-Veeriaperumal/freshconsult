@@ -1,8 +1,10 @@
 <%=render(partial: 'layout')%>
 <body>
-  <%=render(partial: 'header')%>
-  <%=form_tag(url_for(:action=> :new, :controller => "support/canned_forms")) do %>
-    <%=render(partial: 'canned_form')%>
-    <%=render(partial: 'footer')%>
-  <%end%>
+  <div class="canned-form">
+    <%=render(partial: 'header')%>
+    <%=form_tag(url_for(:action=> :new, :controller => "support/canned_forms")) do %>
+      <%=render(partial: 'canned_form')%>
+      <%=render(partial: 'footer')%>
+    <%end%>
+  </div>
 </body>

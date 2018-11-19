@@ -24,6 +24,7 @@ class Account < ActiveRecord::Base
   protected
 
   	def valid_domain?
+      Rails.logger.info "Starting domain validation | Account: #{self.full_domain}"
       conditions = new_record? ? ['full_domain = ?', self.full_domain] : ['full_domain = ? and id <> ?', self.full_domain, self.id]
       self.errors[:base] << 'Domain is not available!' if self.full_domain.blank? || self.class.count(:conditions => conditions) > 0 || self.full_domain.split('.').count > 3
     end

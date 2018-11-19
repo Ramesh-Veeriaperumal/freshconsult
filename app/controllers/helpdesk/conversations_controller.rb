@@ -110,7 +110,7 @@ class Helpdesk::ConversationsController < ApplicationController
   def twitter
     tweet_text = params[:helpdesk_note][:note_body_attributes][:body].strip
     twt_type = Social::Tweet::TWEET_TYPES.rassoc(params[:tweet_type].to_sym) ? params[:tweet_type] : 'mention'
-    twitter_handle_id = params[:twitter_handle_id]
+    twitter_handle_id = params[:twitter_handle]
     error_message, @tweet_body = get_tweet_text(twt_type, @parent, tweet_text)
     reply_handle_id = twitter_handle_id || @parent.fetch_twitter_handle
     reply_handle = current_account.twitter_handles.find_by_id(reply_handle_id)

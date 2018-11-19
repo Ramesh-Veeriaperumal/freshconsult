@@ -8,7 +8,7 @@ module HelpdeskReports::Export::Utils
     I18n.locale =  (User.current && User.current.language) ? User.current.language : I18n.default_locale
   end
   
-  def build_file file_string, format, report_type, export_type, compress=false, scheduled_report=false
+  def build_file file_string, format, report_type, export_type, scheduled_report=false
     report_name = REPORTS_NAME_MAPPING[report_type]
     filter_name = (defined?(params) && params[:filter_name]) ? "#{report_name}_#{params[:filter_name]}" : report_name 
     filter_name = filter_name.gsub(/[\s+\/]/,'_').underscore
@@ -16,14 +16,6 @@ module HelpdeskReports::Export::Utils
     file_path   = generate_file_path("bi_reports", file_name)
 
     write_file(file_string, file_path)
-    if compress
-      Zip::File.open("#{file_path.gsub('.'+format, '.zip')}", Zip::File::CREATE) do |zipfile|
-        zipfile.add(file_name, file_path)
-      end
-      File.delete(file_path)
-      file_name = file_name.gsub('.'+format, '.zip')
-      file_path = generate_file_path("bi_reports", file_name)
-    end
     set_attachment_method(file_path) unless scheduled_report
     upload_file(file_path, file_name, export_type) if @attachment_via_s3
     file_path
