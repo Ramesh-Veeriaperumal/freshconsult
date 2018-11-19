@@ -34,6 +34,33 @@ module SocialTestHelper
     }
   end
 
+  def fb_public_dm_pattern(expected_output = {}, fb_post)
+    ret_hash = {
+      id: expected_output[:post_id] || fb_post.post_id, # id will be post_id for public API
+      type: expected_output[:msg_type] || fb_post.msg_type,
+    }
+    ret_hash.merge!(page: fb_public_page_pattern(fb_post, expected_output)) if ['Helpdesk::Ticket'].include?(fb_post.postable_type)
+  end
+
+  def fb_public_post_pattern(expected_output = {}, fb_post)
+    post_attributes_hash = {}
+    post_attributes_hash[:post_type] = Facebook::Constants::CODE_TO_POST_TYPE[expected_output[:post_type] || fb_post.post_attributes[:post_type]] 
+
+    fb_public_dm_pattern(expected_output, fb_post).merge(post_attributes_hash)
+  end
+
+  def fb_public_page_pattern(fb_post, expected_output)
+    page = fb_post.facebook_page
+    {
+      id: page.page_id,
+      name: page.page_name,
+      image_url: page.page_img_url,
+      link: page.page_link,
+      profile_id: page.profile_id,
+      product_id: page.product_id
+    }
+  end
+
   def create_facebook_page(populate_streams = false)
     fb_page = FactoryGirl.build(:facebook_pages, :account_id => @account.id)
     Social::FacebookPage.any_instance.stubs(:check_subscription).returns({:data => []}.to_json)

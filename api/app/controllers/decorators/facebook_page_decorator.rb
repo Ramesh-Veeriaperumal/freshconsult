@@ -13,4 +13,15 @@ class FacebookPageDecorator < ApiDecorator
       product_id: product_id
     }
   end
+
+  def public_hash
+    {
+      id: page_id,
+      name: page_name,
+      link: page_link,
+      image_url: page_img_url,
+      profile_id: profile_id,
+      product_id: product_id
+    }
+  end
 end

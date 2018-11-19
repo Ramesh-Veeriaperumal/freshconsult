@@ -39,6 +39,8 @@ response_hash = {
     }
   end
 }
+
+source_additional_info = {}
 requester_hash = @item.requester
 stats_hash = @item.stats
 company_hash = @item.company_hash
@@ -46,6 +48,12 @@ channel_v2_attributes = @item.channel_v2_attributes
 conversations_hash = @item.conversations
 response_hash.merge!(channel_v2_attributes) if channel_v2_attributes
 sla_policy_hash = @item.sla_policy_hash
+facebook = @item.facebook_public_hash
+tweet = @item.tweet_public_hash
+source_additional_info.merge!(facebook: facebook) if facebook.present?
+source_additional_info.merge!(twitter: tweet) if tweet.present?
+source_additional_info = source_additional_info.present? ? source_additional_info : nil
+response_hash.merge!(source_additional_info: source_additional_info)
 response_hash.merge!(deleted: @item.deleted) if @item.deleted
 response_hash.merge!(associated_tickets_list: @item.associates) if @item.associated_ticket?
 response_hash.merge!(requester: requester_hash) if requester_hash

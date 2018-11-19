@@ -62,6 +62,11 @@ class ConversationsController < ApiApplicationController
   def ticket_conversations
     return if validate_filter_params
     preload_options = [:schema_less_note, :note_old_body, :attachments]
+    if @ticket.facebook?
+      preload_options << :fb_post
+    elsif @ticket.twitter?
+      preload_options << :tweet
+    end
     ticket_conversations = @ticket.notes.conversations(preload_options, :created_at)
     @items = paginate_items(ticket_conversations)
   end

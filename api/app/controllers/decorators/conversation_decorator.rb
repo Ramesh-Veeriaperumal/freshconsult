@@ -13,6 +13,10 @@ class ConversationDecorator < ApiDecorator
     @sideload_options = options[:sideload_options] || []
   end
 
+  def public_json
+    construct_json.merge(source_additional_info: source_additional_info)
+  end
+
   def construct_json
     schema_less_properties = schema_less_note.try(:note_properties) || {}
     {
@@ -52,6 +56,15 @@ class ConversationDecorator < ApiDecorator
 
   def to_hash
     [to_json, freshfone_call, freshcaller_call, tweet_hash, facebook_hash, feedback_hash, requester_hash].inject(&:merge)
+  end
+
+  def source_additional_info
+    source_info = {}
+    tweet = tweet_public_hash
+    source_info.merge!(twitter: tweet) if tweet.present?
+    source_info.merge!(facebook: FacebookPostDecorator.new(record.fb_post).public_hash) if record.fb_note? && record.fb_post.present?
+
+    source_info.present? ? source_info : nil
   end
 
   def facebook_hash
@@ -100,6 +113,18 @@ class ConversationDecorator < ApiDecorator
         tweet_type: record.tweet.tweet_type,
         twitter_handle_id: record.tweet.twitter_handle_id
       }
+    }
+  end
+
+  def tweet_public_hash
+    return {} unless record.tweet? && record.tweet && record.tweet.twitter_handle
+    handle = record.tweet.twitter_handle
+    {
+      id: record.tweet.tweet_id > 0 ? record.tweet.tweet_id.to_s : nil,
+      type: record.tweet.tweet_type,
+      support_handle_id: handle.twitter_user_id.to_s,
+      support_screen_name: handle.screen_name,
+      requester_screen_name: record.notable.requester.twitter_id
     }
   end
 
