@@ -28,8 +28,8 @@ module Facebook
           elsif convert_post_to_ticket?(self, true)
             process_post
           else
-            # Convert the parent comments as a ticket(parent comment will have the context) and add this reply as a note.
-            fetch_and_process_comment()
+            # Convert the parent comments as a ticket(Even if it is a company comment) and add this reply as a note to that ticket.
+            fetch_and_process_comment(nil, true)
           end
         end
         
@@ -43,11 +43,14 @@ module Facebook
       
       private 
       
-      #Post is a ticket but the parent comment is not converted to a note
-      def fetch_and_process_comment(fb_post = nil)
+      # Condition 1: Post is a ticket but the parent comment is not converted to a note.
+      # Condition 2: Post, Comment hasn't yet got converted to a ticket.
+      # => Optimal: Comment to this reply to comment will be added as a ticket.
+      # => Broad: Will be created as a single ticket.
+      def fetch_and_process_comment(fb_post = nil, convert_company_comment_to_ticket = false)
         #Explicitly logging second call made within the exception handler
         self.fan_page.log_api_hits
-        Facebook::Core::Comment.new(self.fan_page, in_reply_to).process(fb_post.try(:postable))
+        Facebook::Core::Comment.new(self.fan_page, in_reply_to).process(fb_post.try(:postable), convert_company_comment_to_ticket)
       end
       
     end

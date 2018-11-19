@@ -9,7 +9,7 @@ module Facebook
         ticket = nil
         can_comment = koala_feed.can_comment
         
-        if koala_feed.description.present? || (koala_feed.photo? || koala_feed.video? || koala_feed.link?)
+        if koala_feed.description.present? || (koala_feed.photo? || koala_feed.video? || koala_feed.link? || koala_feed.video_inline? || koala_feed.animated_image_video?)
           ticket = @account.tickets.build(
             :subject    => koala_feed.subject,
             :requester  => facebook_user(koala_feed.requester),

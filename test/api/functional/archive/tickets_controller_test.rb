@@ -296,6 +296,7 @@ class Archive::TicketsControllerTest < ActionController::TestCase
                                              description_text: archive_ticket.description,
                                              custom_fields: custom_fields(archive_ticket)
                                            }, @archive_ticket)
+      ticket_pattern.delete(:source_additional_info)
       changes = {
         created_at: archive_ticket.created_at,
         updated_at: archive_ticket.updated_at,

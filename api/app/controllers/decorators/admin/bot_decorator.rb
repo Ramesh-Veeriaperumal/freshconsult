@@ -13,7 +13,8 @@ class Admin::BotDecorator < ApiDecorator
       selected_category_ids: category_ids,
       widget_code_src: BOT_CONFIG[:widget_code_src],
       product_hash: BOT_CONFIG[:freshdesk_product_id],
-      environment: BOT_CONFIG[:widget_code_env]
+      environment: BOT_CONFIG[:widget_code_env],
+      region: BOT_CONFIG[:widget_code_region]
     }
     ret_hash[:analytics_mock_data] = true if additional_settings[:analytics_mock_data]
     ret_hash[:status] = training_status if training_status

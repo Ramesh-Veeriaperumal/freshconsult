@@ -10,7 +10,7 @@ module Facebook
         "remove" => AUXILLARY_LIST
       }
     
-    FEED_TYPES = ["post", "status", "comment", "reply_to_comment", "photo", "video", "share", "link", "like", "message"]
+    FEED_TYPES = ["post", "status", "comment", "reply_to_comment", "photo", "video", "share", "link", "like", "message", "video_inline", "animated_image_video"]
     
     POST_TYPE  = Hash[*FEED_TYPES.map{|type| [type, type]}.flatten].symbolize_keys
     
@@ -26,8 +26,9 @@ module Facebook
       :post               => 1,
       :comment            => 2,
       :reply_to_comment   => 3
-      
     }
+
+    CODE_TO_POST_TYPE = Hash[*POST_TYPE_CODE.keys.map{|type| [POST_TYPE_CODE[type], type.to_s]}.flatten]
     
     RULE_TYPE = {
       :strict   => 1,
@@ -145,6 +146,8 @@ module Facebook
     ACCESS_TOKEN_PARAMS = "client_id=%{client_id}&client_secret=%{client_secret}&redirect_uri=%{redirect_uri}&code=%{code}"
 
     INLINE_FILE_FORMATS = ['png', 'jpeg', 'gif', 'tiff']
+
+    PARENT_POST_LENGTH = 230
 
   end
 end

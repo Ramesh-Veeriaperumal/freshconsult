@@ -2,6 +2,7 @@
 require_relative '../test_helper'
 require 'sidekiq/testing'
 require 'webmock/minitest'
+['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 Sidekiq::Testing.fake!
@@ -14,6 +15,8 @@ class TicketsControllerTest < ActionController::TestCase
   include CannedResponsesTestHelper
   include SharedOwnershipTestHelper
   include SlaPoliciesTestHelper
+  include ::SocialTestHelper
+  include ::SocialTicketsCreationHelper
 
   CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date)
 
@@ -2456,6 +2459,20 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     param_object = OpenStruct.new(:stats => true)
     match_json(show_ticket_pattern_with_association(t, param_object))
+  end
+
+  def test_show_with_twitter_ticket
+    ticket = create_twitter_ticket
+    get :show, controller_params(id: ticket.display_id)
+    assert_response 200
+    match_json(show_ticket_pattern({}, ticket))
+  end
+
+  def test_show_with_facebook_ticket
+    ticket = create_ticket_from_fb_post
+    get :show, controller_params(id: ticket.display_id)
+    assert_response 200
+    match_json(show_ticket_pattern({},ticket))
   end
 
   def test_show_with_all_associations

@@ -1,6 +1,14 @@
 class FacebookPostDecorator < ApiDecorator
   delegate :id, :post_id, :msg_type, :post_attributes, to: :record
 
+  def public_hash
+    fb_post_hash = { id: post_id.to_s, type: msg_type }
+    # This is to convert post_type to enum. Post_type will be post, comment, reply_to_comment
+    fb_post_hash[:post_type] = Facebook::Constants::CODE_TO_POST_TYPE[post_attributes[:post_type]] if record.post?
+    fb_post_hash[:page] = FacebookPageDecorator.new(record.facebook_page).public_hash if ['Helpdesk::Ticket'].include?(record.postable_type)
+    fb_post_hash
+  end
+
   def to_hash
     fb_post_hash = {
       id: id,

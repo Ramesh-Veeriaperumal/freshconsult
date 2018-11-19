@@ -121,13 +121,42 @@ class TicketDecorator < ApiDecorator
     }
   end
 
+  def facebook_public_hash
+    return unless (Account.current.features?(:facebook) || Account.current.basic_facebook_enabled?) && record.facebook?
+    FacebookPostDecorator.new(record.fb_post).public_hash
+  end
+
+  def tweet_public_hash
+    return unless (Account.current.features?(:twitter) || Account.current.basic_twitter_enabled?) && record.twitter? && record.tweet.twitter_handle
+    handle = record.tweet.twitter_handle
+    {
+      id: record.tweet.tweet_id.to_s,
+      type: record.tweet.tweet_type,
+      support_handle_id: handle.twitter_user_id.to_s,
+      support_screen_name: handle.screen_name,
+      requester_screen_name: record.requester.twitter_id
+    }
+  end
+
   def conversations
     if @sideload_options.include?('conversations')
       preload_options = [:schema_less_note, :note_old_body, :attachments]
+      preload_options = public_preload_options(preload_options) unless private_api?
+      
       ticket_conversations = record.notes.
                              conversations(preload_options, :created_at, ConversationConstants::MAX_INCLUDE)
-      ticket_conversations.map { |conversation| ConversationDecorator.new(conversation, ticket: record).construct_json }
+      decorator_method = private_api? ? 'construct_json' : 'public_json'                       
+      ticket_conversations.map { |conversation| ConversationDecorator.new(conversation, ticket: record).safe_send(decorator_method) }
     end
+  end
+
+  def public_preload_options(preload_options)
+    if record.facebook?
+      preload_options << :fb_post
+    elsif record.twitter?
+      preload_options << :tweet
+    end
+    preload_options
   end
 
   def company_hash
