@@ -51,5 +51,30 @@ module Channel
 
       assert_response 415
     end
+
+    def test_show_attachment
+      set_jwt_auth_header('twitter')
+      set_content_type('multipart/form-data')
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      post :create, construct_params({ version: 'channel' }, attachment_params_hash)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      latest_attachment = Helpdesk::Attachment.last
+      get :show, controller_params(version: 'channel', id: latest_attachment.id)
+      assert_equal response.headers.include?('Location'), true
+      assert_response 302
+    end
+
+    def test_show_attachment_should_error_on_unauthorized_header
+      set_content_type('multipart/form-data')
+      set_jwt_auth_header('twitter')
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      post :create, construct_params({ version: 'channel' }, attachment_params_hash)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      latest_attachment = Helpdesk::Attachment.last
+      request.env['X-Channel-Auth'] = nil
+      get :show, controller_params(version: 'channel', id: latest_attachment.id)
+      assert_response 401
+    end
+
   end
 end

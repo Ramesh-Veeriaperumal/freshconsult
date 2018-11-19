@@ -119,7 +119,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 	  
       def create_field_agent_type
-        AgentType.create_agent_type(Account.current, FIELD_AGENT)
+        agent_type = AgentType.create_agent_type(Account.current, FIELD_AGENT)
+        raise "Field agent type did not get created" unless agent_type
       end
 
       def cleanup_fsm

@@ -6,6 +6,22 @@ import groovy.json.JsonSlurperClassic
  buildno = build.toInteger()
 
 
+def send_email() {
+    def jobName = currentBuild.fullDisplayName
+    def authorLogin = params.ghprbPullAuthorLogin
+    def authorEmail = params.ghprbPullAuthorEmail
+    def pullTitle = params.ghprbPullTitle
+    def pullLink = params.ghprbPullLink
+    def pullId = params.ghprbPullId
+    def jobUrl = env.BUILD_URL
+    def mailRecipients = authorEmail + ", cc:freshdesk-tech-leads@freshworks.com, bcc:mahendran.kumaraguru@freshworks.com, bcc:nagarajan.raman@freshworks.com"
+
+    emailext body: "Build Failed on PR <a href=${pullLink}>#${pullId}</a> <strong>$pullTitle <br/><br/>Author:</strong> $authorLogin<br/><br/><strong>Job URL:</strong> $jobUrl ",
+        mimeType: 'text/html',
+        subject: "[Jenkins] Falcon-Backend Unit Test Build Failed - #${buildno}",
+        to: "${mailRecipients}",
+        replyTo: "${mailRecipients}"
+}
 
 //Specfiy the branch to checkout based on PR condition
 def checkout(type) {
@@ -212,6 +228,10 @@ def distributed_run(category) {
     }
     
     //Extracting xml file
-     junit  testResults: "test/api/reports/*.xml"
+    junit  testResults: "test/api/reports/*.xml"
+
+    if(currentBuild.result == "UNSTABLE") {
+        send_email();  
+    }
  }
  
