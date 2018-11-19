@@ -83,6 +83,7 @@
   jQuery(document).ready(function(){
     rule_value = jQuery("input[name='social_ticket_rule[][rule_type]']:checked").val();
     toggle_settings(rule_value, false)
+    jQuery('.rule-settings .form-group li input').css('width', '600px');
   });
 
   jQuery(".social_ticket_rule_includes").select2({

@@ -33,7 +33,7 @@ module Facebook
       end
       
       #Returns a if the feed type is a post?, video? or status? or link?
-      ["photo", "video", "status", "link"].each do |object|
+      ["photo", "video", "status", "link", "video_inline", "animated_image_video"].each do |object|
         define_method("#{object}?") do
           @feed[:type] == POST_TYPE["#{object}".to_sym]
         end
