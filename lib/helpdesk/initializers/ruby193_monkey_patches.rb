@@ -327,25 +327,6 @@ class Mysql2::Result
   end
 end
 
-#memcache marshel load monkey patch...
-module Marshal
-  class << self
-    def load_with_utf8_enforcement(object, other_proc=nil)
-      @utf8_proc ||= Proc.new do |o|
-        begin  
-          o.force_encoding("UTF-8") if o.is_a?(String) && o.respond_to?(:force_encoding)
-        rescue
-          Rails.logger.debug ":::: encoding error in Marshal load patch...."
-        end
-        other_proc.call(o) if other_proc
-        o
-      end
-      load_without_utf8_enforcement(object, @utf8_proc)
-    end
-    alias_method_chain :load, :utf8_enforcement
-  end
-end
-
 class String
   def map
     [self]

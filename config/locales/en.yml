@@ -1082,7 +1082,7 @@ en:
           link_to_product: "Link to Product"
           visible_to: "Visible to"
       ticket_rules:
-        title: "Create Ticket Rules"
+        title: "Set rules to create tickets"
         header: "Convert tweets from above stream to tickets"
         header_ext: "and assign product"
         add: "Add new keyword filter"
@@ -1120,7 +1120,7 @@ en:
         edit:
           cancel: "Cancel"
           update: "Update"
-          tke_rule_breif_desc: "Posts will automatically get converted into tickets based on these settings"
+          tke_rule_breif_desc: "Convert posts and comments into tickets"
           edit_stream: "Edit Page"
         page_tab:
           page_tab_head: "Facebook Page Tab"
@@ -1132,23 +1132,23 @@ en:
           configure_tab: "Create your Facebook page tab"
           configure_tab_auth: "<a href='%{page_tab_url}'> Create your Facebook page tab</a>"
         ticket_rules:
-          do_not_convert: "Do not convert"
-          do_not_convert_help: "No posts will be converted to tickets."
+          do_not_convert: "Do not convert anything"
+          do_not_convert_help: "No post will be converted as a ticket."
           convert_only_relevant: "Convert only relevant posts"
-          convert_visitor: "Convert all Visitor Posts to tickets"
-          convert_company: "For company posts, convert individual visitor comments to tickets when they contain these keywords"
+          convert_visitor: "Convert all posts added by visitors into tickets"
+          convert_company: "On posts added by the Page, capture comments from visitors as tickets when they contain the following keywords:"
           view_info_text: "You can still view all other visitor comments in your Social Tab"
           assign_to_gp: "Assign to group"
           convert_everything: "Convert everything"
-          convert_everything_help: "All Visitor posts and all Company posts with any Visitor Comments will be converted to tickets. You can manually split comments into separate tickets."
+          convert_everything_help: "Posts added by visitors and the Page along with the comments will be converted into tickets."
           convert_relevant: "Converts posts according to the visitor posts or company comments with respect to the given settings"
           import_visitor_posts: "Convert all Visitor Posts to tickets"
           import_company_posts: "For company posts, convert individual visitor comments to tickets when they have these keywords"
           assign_to_gp: "Assign tickets to group"
-          include_helptext: "support, help; Leave it blank to convert all comments to a ticket."
+          include_helptext: "for example: 'support', 'help' or leave this field blank to capture all visitor comments as tickets"
         convert_dm:
           header: "Convert all Messages to tickets"
-          threading_interval: "Set Ticket Threading Interval"
+          threading_interval: "Set ticket threading interval"
           dm_info: "Multiple messages with same person within this time interval will be merged into one ticket"
           assign_to_gp: "Assign tickets to group"
         page_form:
@@ -5067,7 +5067,7 @@ en:
       fb_reply_info: "<a href='%{reply_url}'> Last Reply </a> by %{user_name}<br>%{created_on}"
       my_topic_reply: "Last Reply by <b>%{post_name}</b>, %{created_on}"
       topic_brief: "Posted by <b>%{user_name}</b>, %{created_on}"
-      last_post_brief: "<a href='%{last_post_url}'>%{link_label}</a> by %{user_name} %{created_on}"
+      last_post_brief: "<a href='%{last_post_url}'>%{link_label}</a> by %{user_name}, %{created_on}"
       best_answer: Best Answer
       matching_results: "Matching Topics Found"
       in_forum: "In: %{forum_name}"
@@ -11596,7 +11596,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       post:
         approve: Approve
         approve_tooltip: Approve and Publish
-        ban_tooltip: Mark user and all his posts as Spam
+        ban_tooltip: Mark user and all their posts as Spam
         spam: Spam
     index:
       all_topics: All Activity
@@ -11750,7 +11750,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       spam_actions:
         approve: Approve
         approve_tooltip: Approve and Publish
-        ban_tooltip: Mark user and all his posts as Spam
+        ban_tooltip: Mark user and all their posts as Spam
         ban_confirm: "Are you sure you want to delete the user and mark all his/her posts as Spam?"
         spam: Spam
       spam:

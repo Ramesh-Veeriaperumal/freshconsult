@@ -10,7 +10,7 @@ module Facebook
         "remove" => AUXILLARY_LIST
       }
     
-    FEED_TYPES = ["post", "status", "comment", "reply_to_comment", "photo", "video", "share", "link", "like", "message"]
+    FEED_TYPES = ["post", "status", "comment", "reply_to_comment", "photo", "video", "share", "link", "like", "message", "video_inline", "animated_image_video"]
     
     POST_TYPE  = Hash[*FEED_TYPES.map{|type| [type, type]}.flatten].symbolize_keys
     
@@ -145,6 +145,8 @@ module Facebook
     ACCESS_TOKEN_PARAMS = "client_id=%{client_id}&client_secret=%{client_secret}&redirect_uri=%{redirect_uri}&code=%{code}"
 
     INLINE_FILE_FORMATS = ['png', 'jpeg', 'gif', 'tiff']
+
+    PARENT_POST_LENGTH = 230
 
   end
 end
