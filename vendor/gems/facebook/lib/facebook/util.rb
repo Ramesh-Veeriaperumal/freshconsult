@@ -167,11 +167,16 @@ module Facebook
           message[:shares][:data].each_with_index do |share, i|
             if share[:link]
               url = share[:link]
-              stickers_url, inline_attachment = create_inline_attachment_and_get_url(url, item, i)
+              file = open(url) # Moved here to avoid multiple calls
+              stickers_url, inline_attachment = create_inline_attachment_and_get_url(url, item, i, file)
               inline_attachments.push(inline_attachment) if attachment_present?(inline_attachment)
               
               html_content = MESSAGE_SHARE % {:html_content => html_content, :url => stickers_url,
                :height => "200px"} if stickers_url
+
+              content_url = get_content_url(file, url) if !attachment_present?(inline_attachment) && !stickers_url
+              html_content = "#{html_content}<br>" if message[:message].present? && content_url # For new line creation
+              html_content = LINK_SHARE % {:html_content => html_content, :title => I18n.t('ticket.share_facebook'), :url => content_url} if content_url
             end
           end
           html_content = "#{html_content} </p></div>"
@@ -181,14 +186,18 @@ module Facebook
       html_content
     end
 
-    def create_inline_attachment_and_get_url url, item, i
-      options = get_options(url, {}, true)
+    def create_inline_attachment_and_get_url url, item, i, file = nil
+      options = get_options(url, {}, true, file)
       if options.is_a? Hash
         inline_attachment = create_inline_attachment(item, i, options)
         attached_url = attachment_url inline_attachment, url
         return [attached_url, inline_attachment]
       end
       return [nil,nil]
+    end
+
+    def get_content_url file, url
+      return (!file.nil? && file.content_type.split('/').last == "html") ? url : nil
     end
 
     def attachment_present? attachment
@@ -207,8 +216,8 @@ module Facebook
       end
     end
 
-    def get_options(url, attachment_params = {}, inline = false)
-      file = open(url)
+    def get_options(url, attachment_params = {}, inline = false, file = nil)
+      file = open(url) if file.nil?
       if !inline || INLINE_FILE_FORMATS.include?(file.content_type.split('/').last)
         file_name = attachment_params[:name] || url.split(URL_DELIMITER).first[url.rindex(URL_PATH_DELIMITER)+1, url.length]
         content_type = file_name.split(FILENAME_DELIMITER).last
