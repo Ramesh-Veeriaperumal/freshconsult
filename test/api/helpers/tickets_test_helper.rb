@@ -117,7 +117,7 @@ module TicketsTestHelper
   end
 
   def index_ticket_pattern(ticket, exclude = [])
-    ticket_pattern(ticket).merge(ticket_association_pattern(ticket,true)).except(*([:attachments, :conversations] - exclude))
+    ticket_pattern(ticket).merge(ticket_association_pattern(ticket,true)).except(*([:attachments, :conversations, :description, :description_text] - exclude))
   end
 
   def so_ticket_pattern(expected_output = {}, ticket)
@@ -132,8 +132,8 @@ module TicketsTestHelper
       ).merge(ticket_association_pattern(ticket,true)).except(*([:attachments, :conversations, :description, :description_text] - exclude))
   end
 
-  def index_deleted_ticket_pattern(ticket)
-    index_ticket_pattern(ticket).merge(deleted: ticket.deleted.to_s.to_bool)
+  def index_deleted_ticket_pattern(ticket, exclude = [])
+    index_ticket_pattern(ticket, exclude).merge(deleted: ticket.deleted.to_s.to_bool)
   end
 
   def ticket_pattern_with_notes(ticket, limit = false)
