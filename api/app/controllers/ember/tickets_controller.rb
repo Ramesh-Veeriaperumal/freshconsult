@@ -236,6 +236,11 @@ module Ember
         end
       end
 
+      def d_query_hash
+        wf_query_hash
+      end
+      # We should have done alias_method for the above scenario. But given the prod scenario at this moment, we've done this.
+
       def load_object
         @item = scoper.find_by_display_id(params[:id])
         unless @item
