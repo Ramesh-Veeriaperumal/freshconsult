@@ -136,7 +136,8 @@ module ConversationsTestHelper
       from_email: note.from_email,
       cc_emails:  note.cc_emails,
       bcc_emails: note.bcc_emails,
-      source: note.source
+      source: note.source,
+      source_additional_info: nil
     }
     single_note = note_pattern({}, note)
     single_note.merge(index_note)

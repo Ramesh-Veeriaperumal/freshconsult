@@ -29,6 +29,13 @@ module Facebook
         @object_link       =  @feed[:attachment][:media][:image][:src] if @feed[:attachment] and @feed[:attachment][:media]
       end
 
+      #Returns a if the feed type is a post?, video? or status? or link?
+      ["photo", "video", "status", "link", "video_inline", "animated_image_video"].each do |object|
+        define_method("#{object}?") do
+          @feed[:attachment][:type] == POST_TYPE["#{object}".to_sym]
+        end
+      end
+
       def type
         COMMENT
       end

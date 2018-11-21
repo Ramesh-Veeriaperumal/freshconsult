@@ -39,9 +39,10 @@ module Facebook
         end
     end  
     
-    def convert_comment_to_ticket?(core_obj)
+    # convert_company_commment_too. When true creates a ticket for company comment. Happens when a user replies to a company comment. 
+    def convert_comment_to_ticket?(core_obj, convert_company_comment_to_ticket = false)
       core_obj.fetch_parent_data
-      core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(false, core_obj.koala_post.by_company?, core_obj.koala_comment.by_visitor?, core_obj.koala_comment.description) && !user_blocked?(core_obj.koala_comment.requester_fb_id)
+      core_obj.fan_page.default_ticket_rule.convert_fb_feed_to_ticket?(false, core_obj.koala_post.by_company?, (core_obj.koala_comment.by_visitor? || convert_company_comment_to_ticket), core_obj.koala_comment.description) && !user_blocked?(core_obj.koala_comment.requester_fb_id)
     end
     
     #Parse the feed content from facebook post
@@ -71,7 +72,7 @@ module Facebook
       html_content =  CGI.escapeHTML(feed[:message]) if feed[:message]
       page_name = feed[:from][:name]
       # posting_time = DateTime.parse(feed[:created_time]).strftime("%B %C at %I:%M %p")
-      html_content = html_content.first(230)+ "..."
+      html_content = html_content.first(PARENT_POST_LENGTH) + "..." if html_content.length > PARENT_POST_LENGTH
       if "video".eql?(feed[:type])
         desc = feed[:description] || ""
         thumbnail, inline_attachment = create_inline_attachment_and_get_url(feed[:picture], item, 0)
@@ -107,7 +108,7 @@ module Facebook
           desc = feed[:description] || ""
           link_story   = "<a href=\"#{attachment[:url]}\">#{attachment[:title]}</a>" if attachment[:title]
           html_content = COMMENT_SHARE % {:html_content => html_content, :link_story => link_story}
-        elsif ["photo","sticker"].include?(attachment[:type])
+        elsif ["photo","sticker","video_inline", "animated_image_video"].include?(attachment[:type])
           height = attachment[:type] == "sticker" ? "200px" : ""
           photo_url, inline_attachment = create_inline_attachment_and_get_url(attachment[:media][:image][:src], item, 0)
 

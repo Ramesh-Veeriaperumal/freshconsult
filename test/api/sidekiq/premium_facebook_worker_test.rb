@@ -12,13 +12,15 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
   include AccountTestHelper
   include GroupsTestHelper
   include FacebookTestHelper
-
   def teardown
+    Social::FacebookPage.any_instance.stubs(:unsubscribe_realtime).returns(true)
     super
     @account.facebook_pages.destroy_all
     @account.facebook_streams.destroy_all
     @account.tickets.where(source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook]).destroy_all
     Account.unstub(:current)
+  ensure
+    Social::FacebookPage.any_instance.unstub(:unsubscribe_realtime)
   end
 
   def setup
@@ -40,6 +42,8 @@ class PremiumFacebookWorkerTest < ActionView::TestCase
             Social::PremiumFacebookWorker.new.perform('account_id' => account_id)
             Social::PremiumFacebookWorker.any_instance.unstub(:fan_page)
         end
+    ensure
+       Koala::Facebook::API.any_instance.unstub(:get_connections) 
   end
 
   def test_dm_is_converted_to_a_ticket

@@ -172,7 +172,7 @@ module TicketsTestHelper
   end
 
   def show_ticket_pattern_with_association(ticket, param_object)
-    ticket_pattern_with_association(ticket, param_object).merge(association_type: ticket.association_type)
+    ticket_pattern_with_association(ticket, param_object).merge(association_type: ticket.association_type, source_additional_info: source_additional_info(ticket))
   end
 
   def requester_pattern(requester)
@@ -319,7 +319,7 @@ module TicketsTestHelper
   end
 
   def show_ticket_pattern(expected_output = {}, ticket)
-    ticket_pattern(expected_output, ticket).merge(association_type: expected_output[:association_type] || ticket.association_type)
+    ticket_pattern(expected_output, ticket).merge(association_type: expected_output[:association_type] || ticket.association_type, source_additional_info: source_additional_info(ticket))
   end
 
   def create_ticket_pattern(expected_output = {}, ignore_extra_keys = true, ticket)
@@ -1025,6 +1025,30 @@ module TicketsTestHelper
     Account.any_instance.unstub(:dashboard_new_alias?)
     @channel_v2_api = false
     $infra['CHANNEL_LAYER'] = false
+  end
+
+  def source_additional_info(ticket)
+    return nil unless ticket.twitter? || ticket.facebook?
+
+    info = {}
+    info.merge!(twitter: tweet_hash(ticket)) if ticket.twitter?
+    info.merge!(facebook: facebook_hash(ticket)) if ticket.facebook?
+    info
+  end
+
+  def tweet_hash(ticket)
+    handle = ticket.tweet.twitter_handle
+    {
+      id: ticket.tweet.tweet_id.to_s,
+      type: ticket.tweet.tweet_type,
+      support_handle_id: handle.twitter_user_id.to_s,
+      support_screen_name: handle.screen_name,
+      requester_screen_name: ticket.requester.twitter_id
+    }
+  end
+
+  def facebook_hash(ticket)
+    ticket.fb_post.post? ? fb_public_post_pattern({}, ticket.fb_post) : fb_public_dm_pattern({}, ticket.fb_post)
   end
 
 end
