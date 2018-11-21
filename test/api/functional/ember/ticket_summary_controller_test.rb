@@ -68,7 +68,7 @@ class TicketSummaryControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(:attachment_ids, :invalid_list, list: invalid_ids.join(', '))])
     assert_response 400
     Account.current.revoke_feature(:ticket_summary)
-    end
+  end
 
   def test_create_summary_note_with_invalid_attachment_size_with_launch_25_limit
     Account.current.add_feature(:ticket_summary)

@@ -76,11 +76,8 @@ module AccountConstants
 
   DEFAULT_FORUM_POST_SPAM_REGEX = "(gmail|kindle|f.?a.?c.?e.?b.?o.?o.?k|apple|microsoft|google|aol |hotmail|mozilla|q.?u.?i.?c.?k.?b.?o.?o.?k.?s?|norton|netgear|bsnl|webroot|cann?on|hp.?printer|lexmark.?printer|avg.?antivirus|symantec|avast|mcafee|bitty.?browser|netscape|belkin|dlink|tp-link|buffalo.?router|deepnet.?explorer|cisco|hitachi|linksys|panda|bitdefender|bullguard|trend.?micro|avira|kaspersky|plenty.?of.?fish|pof |zoho|rogers |windstream|sbcglobal|verizon |icloud |roadrunner |thunderbird|sasktel |hewlett.?packard|bell.?canada|skype |webroot |dell ).*(s.?u.?p.?p.?o.?r.?t| p.?h.?o.?n.?e|n.?u.?m.?b.?e.?r|t.?o.?l.?l)"
 
-  ATTACHMENT_LIMIT = {
-    trial_or_sprout: 15,
-    paid: [25, 20]
-  }.freeze
-
+  ATTACHMENT_LIMIT = 20
+  
   # min is used by default
   DASHBOARD_LIMITS = {
     min: { dashboard: 15, widgets: { scorecard: 15, bar_chart: 5, csat: 3, leaderboard: 3, ticket_trend_card: 2, time_trend_card: 2, sla_trend_card: 2 } },
@@ -91,15 +88,6 @@ module AccountConstants
   SANDBOX_TRAIL_PERIOD = 180
 
   def attachment_limit
-    @attachment_limit ||= begin
-      subscription.trial_or_sprout_plan? ? ATTACHMENT_LIMIT[:trial_or_sprout] : (Account.current.outgoing_attachment_limit_25_enabled? ? ATTACHMENT_LIMIT[:paid][0] : ATTACHMENT_LIMIT[:paid][1])
-    rescue => e
-      NewRelic::Agent.notice_error(e,{:custom_params => {:description => "Error occurred while calculating attachment limit"}})
-      ATTACHMENT_LIMIT[:trial_or_sprout]
-    end
+    @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT
   end
-
-  def attachment_limit_in_bytes
-    @attachment_limit_in_bytes ||= attachment_limit.megabytes
-  end 
 end

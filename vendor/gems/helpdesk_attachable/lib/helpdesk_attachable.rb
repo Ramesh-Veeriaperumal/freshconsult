@@ -6,13 +6,7 @@ module HelpdeskAttachable
     include HelpdeskExceptions
     include ActionView::Helpers::NumberHelper
 
-    # MAX_ATTACHMENT_SIZE = 1024
-    MAX_ATTACHMENT_SIZE         = 15.megabyte
     FACEBOOK_ATTACHMENTS_SIZE   = 25.megabyte
-
-    def self.mailgun_max_attachment_size
-      Account.current.incoming_attachment_limit_25_enabled? ? 25.megabyte : 20.megabyte
-    end
 
     def self.included(base)
       base.extend ClassMethods
@@ -50,7 +44,7 @@ module HelpdeskAttachable
           @total_attachment_size = (attachments || []).collect{ |a| a.content_file_size }.sum
         end
 
-        allowed_limit = options[:attachment_limit] || Account.current.attachment_limit_in_bytes
+        allowed_limit = options[:attachment_limit] || Account.current.attachment_limit.megabytes
         allowed_limit_human_size = number_to_human_size(allowed_limit)
         @total_attachment_size += args[:content].size
 

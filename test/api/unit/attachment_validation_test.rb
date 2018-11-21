@@ -42,7 +42,7 @@ class AttachmentValidationTest < ActionView::TestCase
 
     controller_params = { 'user_id' => 1, content: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) }
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    FileSizeValidator.any_instance.stubs(:current_size).returns(20_000_000)
+    FileSizeValidator.any_instance.stubs(:current_size).returns(26.megabytes)
     attachment_validation = AttachmentValidation.new(controller_params, nil)
     refute attachment_validation.valid?(:create)
     FileSizeValidator.any_instance.unstub(:current_size)
@@ -135,8 +135,8 @@ class AttachmentValidationTest < ActionView::TestCase
 
   def test_attachment_size_for_trial
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
-    assert_equal Account.current.attachment_limit, 15
-    assert_attachment_limit(19, 14)
+    assert_equal Account.current.attachment_limit, 20
+    assert_attachment_limit(26, 19)
     DataTypeValidator.any_instance.unstub(:valid_type?)
   end
 
@@ -147,8 +147,8 @@ class AttachmentValidationTest < ActionView::TestCase
     account.subscription.state = "free"
     account.subscription.subscription_plan = SubscriptionPlan.find_by_name("Sprout Jan 17")
     account.instance_variable_set("@attachment_limit", nil)
-    assert_equal account.attachment_limit, 15
-    assert_attachment_limit(18, 13)
+    assert_equal account.attachment_limit, 20
+    assert_attachment_limit(22, 19)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     Subscription.any_instance.unstub(:subscription_plan_from_cache)
   end
@@ -167,9 +167,7 @@ class AttachmentValidationTest < ActionView::TestCase
       Subscription.any_instance.unstub(:subscription_plan_from_cache)
       account.rollback(:outgoing_attachment_limit_25)
     end
-  end
 
-  PAID_PLANS.each do |plan_name|
     define_method "test_attachment_size_for_#{plan_name}_without_25_launch_feature" do 
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       Subscription.any_instance.stubs(:subscription_plan_from_cache).returns(SubscriptionPlan.new(:name => "#{plan_name} Jan 17"))
@@ -177,7 +175,7 @@ class AttachmentValidationTest < ActionView::TestCase
       account.subscription.state = "active"
       account.instance_variable_set("@attachment_limit", nil)
       assert_equal account.attachment_limit, 20
-      assert_attachment_limit(23, 19)
+      assert_attachment_limit(23, 18)
       DataTypeValidator.any_instance.unstub(:valid_type?)
       Subscription.any_instance.unstub(:subscription_plan_from_cache)
     end
