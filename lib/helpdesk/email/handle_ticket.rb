@@ -137,7 +137,7 @@ class Helpdesk::Email::HandleTicket
         end
       rescue HelpdeskExceptions::AttachmentLimitException => ex
         Rails.logger.error("ERROR ::: #{ex.message}")
-        message = attachment_exceeded_message(HelpdeskAttachable.mailgun_max_attachment_size)
+        message = attachment_exceeded_message(ATTACHMENT_LIMIT.megabytes)
         add_notification_text item, message
         break
       rescue Exception => e
