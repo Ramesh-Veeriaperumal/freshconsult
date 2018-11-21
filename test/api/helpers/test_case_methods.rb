@@ -42,8 +42,8 @@ module TestCaseMethods
     end
   end
 
-  def enable_adv_ticketing(features = [])
-    features.each { |f| Account.current.add_feature f }
+  def enable_adv_ticketing(features = [], &block)
+    features.is_a?(Array) ? features.each { |f| Account.current.add_feature(f) } : Account.current.add_feature(features)
     if block_given?
       yield
       disable_adv_ticketing(features)
@@ -51,7 +51,7 @@ module TestCaseMethods
   end
 
   def disable_adv_ticketing(features = [])
-    features.each { |f| Account.current.revoke_feature f }
+    features.is_a?(Array) ? features.each { |f| Account.current.revoke_feature(f) } : Account.current.revoke_feature(features)
   end
 
   def stub_current_account
