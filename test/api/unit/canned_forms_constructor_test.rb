@@ -9,7 +9,7 @@ class CannedFormsConstructorTest < ActionView::TestCase
   LABEL_ELEMENT = "<label for=\"canned_forms_%{field_name}\">%{field_label}</label>"
   PLACEHOLDER = " placeholder=\"%{field_placeholder}\""
   TEXT_ELEMENT = "<input class=\"canned-form-%{field_type}\" id=\"canned_forms_%{field_name}\" name=\"canned_forms[%{field_name}]\"%{placeholder} size=\"30\" type=\"text\" />"
-  CHECKBOX_ELEMENT = "<div class=\"btn-group canned-form-%{field_type}\" data-toggle=\"buttons\" role=\"group\"><label class=\"btn active\"><input checked=\"checked\" id=\"canned_forms_%{field_name}_true\" name=\"canned_forms[%{field_name}]\" type=\"radio\" value=\"true\" />Yes</label><label class=\"btn\"><input id=\"canned_forms_%{field_name}_false\" name=\"canned_forms[%{field_name}]\" type=\"radio\" value=\"false\" />No</label></div>"
+  CHECKBOX_ELEMENT = "<div class=\"btn-group canned-form-%{field_type}\" data-toggle=\"buttons\" role=\"group\"><label class=\"btn\"><input id=\"canned_forms_%{field_name}_true\" name=\"canned_forms[%{field_name}]\" type=\"radio\" value=\"true\" />Yes</label><label class=\"btn\"><input id=\"canned_forms_%{field_name}_false\" name=\"canned_forms[%{field_name}]\" type=\"radio\" value=\"false\" />No</label></div>"
   PARAGRAPH_ELEMENT = "<textarea class=\"canned-form-%{field_type}\" cols=\"50\" id=\"canned_forms_%{field_name}\" name=\"canned_forms[%{field_name}]\"%{placeholder} rows=\"5\">\n</textarea>"
   DROPDOWN_ELEMENT = "<select class=\"canned-form-%{field_type} select2\" id=\"canned_forms_%{field_name}\" name=\"canned_forms[%{field_name}]\"><option value=\"\">...</option>%{choices}</select>"
   CHOICE = "\n<option value=\"%{choice}\">%{choice}</option>"
