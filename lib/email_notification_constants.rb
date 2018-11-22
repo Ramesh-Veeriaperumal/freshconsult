@@ -197,14 +197,14 @@ module EmailNotificationConstants
 
   DEFAULT_BOT_RESPONSE_TEMPLATE = {
     requester_subject_template: 'Re: {{ticket.subject}}',
-    requester_template: " <p> Hello {{ticket.requester.name}},<br><br>
-    Thanks for reaching out! We've received your request - 
+    requester_template: "<div><div style='padding-bottom:18px;'>Hello {{ticket.requester.name}},</div>
+    <div style='padding-bottom:18px;'> Thanks for reaching out! We've received your request -
     <a href='{{ticket.url}}'style= 'font-weight:normal; text-decoration:none; color:#448EE1; font-weight:normal; font-size:13px;'>
-    {{ticket.id}}</a>, where you can check status and add comments.
-    <br><br>While you wait, {{ticket.portal.bot_name}}, our friendly support sidekick found some answers for you.</p>
+    {{ticket.id}}</a>, where you can check status and add comments. </div>
+    <div style='padding-bottom:18px;'>While you wait, {{ticket.portal.bot_name}}, our friendly support sidekick found some answers for you. </div>
     {{freddy_suggestions}}
-    <p>Regards,
-    <br>{{ticket.portal.name}}</p>"
+    Regards,
+    <div>{{ticket.portal.name}}</div></div>"
   }.freeze
   
 end
