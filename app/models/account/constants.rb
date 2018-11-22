@@ -219,7 +219,7 @@ class Account < ActiveRecord::Base
     :whitelist_supervisor_sla_limitation => false, :disable_banners =>false, :installed_app_publish => false, email_deprecated_style_parsing: false,
     :twitter_dm_outgoing_attachment => false, :twitter_mention_outgoing_attachment => false, :product_central_publish => false,
     :saml_ecrypted_assertion => false, :quoted_text_parsing_feature => false,
-    :field_service_management_lp => false, :help_widget => false, :bot_email_channel => false, :bot_email_central_publish => false
+    :field_service_management_lp => false, :help_widget => false, :bot_email_channel => false, :bot_email_central_publish => false,
     :description_by_request => true
   }
 
