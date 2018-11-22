@@ -443,4 +443,82 @@ module BotTestHelper
       widget_size: '<script>alert(5)</script>'
     }
   end
+
+  def chat_history_hash(query_id)
+    {
+      data: 
+      [{
+        tcktMsgHsh: query_id,
+        tcktHsh: "0d7e8ca392038ae416a570c7bc6fb7c47e47354b",
+        cnvrstnHsh: "518d598a452943b0dbf365af2f33cd594494b523",
+        tcktSts: "Open",
+        msg: "Want to know about linked tickets",
+        athr: "Customer",
+        sndrNm: "Freshdesk-d3de53a8b7eb11e88f4c12ada5c50d22.intfreshbots.com",
+        pblcNt: true,
+        rstrctInpt: false,
+        crDt: "16 Oct 2018 07:33:34",
+        crtDtTmstmp: 1539675214734,
+        crtDtStrng: "Today, 07:33 AM",
+        msgCntntTyp: "text",
+        tcktMssgptns: []
+      }.with_indifferent_access,
+      {
+        tcktMsgHsh: "32a6b7f06617b7293db149b2af73f4ba39bb65b5",
+        tcktHsh: "5578cf63c38d5aaccd36ea88778fc0faa9793d4d",
+        cnvrstnHsh: "518d598a452943b0dbf365af2f33cd594494b523",
+        tcktSts: "Closed",
+        msg: "Ticket created",
+        athr: "Bot",
+        sndrNm: "Freddy1",
+        sndrImg: "//duydw1h751t2r.cloudfront.net/botavatar_3.png",
+        pblcNt: true,
+        rstrctInpt: false,
+        crDt: "30 Oct 2018 06:33:24",
+        crtDtTmstmp: 1540881204121,
+        crtDtStrng: "Today, 06:33 AM",
+        msgCntntTyp: "text",
+        rplyCntntTyp: "opt",
+        tcktMssgptns:
+        [{
+          id: 1,
+          value: "Ticket Id: 1",
+          displayText: "Ticket Id: 1",
+          mtdt: {
+            adhcClSprtd: false,
+            qckRplyLst: [],
+            sgstns: [],
+            itm: {
+                nm: "Ticket Id: 1",
+                sbTtl: "parent child tickets",
+                btn2Url: "http://test.com/support/tickets/1"
+            }
+          },
+          cntntTyp: "itm"
+        }]
+      }.with_indifferent_access]
+    }
+  end
+
+  def chat_history_pattern(bot_feedback)
+    [
+      {
+        ticket_msg_hash: bot_feedback.query_id,
+        msg: 'Want to know about linked tickets',
+        author: 'Customer',
+        date: 1539675214734,
+        unanswered: true
+      },
+      {
+        ticket_msg_hash: '32a6b7f06617b7293db149b2af73f4ba39bb65b5',
+        msg: 'Ticket created',
+        author: 'Bot',
+        date: 1540881204121,
+        ticket: [{
+          display_text: 'Ticket Id: 1',
+          url: 'http://test.com/support/tickets/1'
+        }]
+      }
+    ]
+  end
 end

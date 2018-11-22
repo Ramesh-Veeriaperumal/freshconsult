@@ -422,6 +422,8 @@
   $ref: ./bot_feedbacks/bulk_map_article.yaml
 /bots/{id}/bot_feedbacks/create_article:
   $ref: ./bot_feedbacks/create_article.yaml
+/bots/{bot_id}/bot_feedbacks/{id}/chat_history:
+  $ref: ./bot_feedbacks/chat_history.yaml
 /bots/{id}/analytics:
   $ref: ./bots/analytics.yaml
 /bots/{id}/remove_analytics_mock_data:

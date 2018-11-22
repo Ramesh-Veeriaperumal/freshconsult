@@ -1,0 +1,44 @@
+type: object
+properties:
+  ticket_msg_hash:
+    type: string
+    description: Unique identifier of the message
+  msg:
+    type: string
+  author:
+    type: string
+    enum: ['Bot','Customer']
+  date:
+    type: string
+  suggested_articles:
+    type: array
+    items:
+      type: object
+      properties:
+        display_text:
+          type: string
+          description: Title of the article suggested by bot
+        url:
+          type: string
+          description: Url of the article suggested by bot
+  ticket:
+    type: array
+    items:
+      type: object
+      properties:
+        display_text:
+          type: string
+          description: Title of the ticket
+        url:
+          type: string
+          description: Url of the ticket created
+  unanswered:
+    type: boolean
+    description: Boolean to indicate if the message was the corresponding unanswered question
+  meta:
+    title: meta data
+    type: object
+    properties:
+      end_of_message:
+        type: boolean
+        description: Boolean to indicate end of messages

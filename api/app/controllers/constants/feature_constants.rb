@@ -15,4 +15,5 @@ module FeatureConstants
   SANDBOX = :sandbox
   TIMELINE = [:timeline].freeze
   BOT_EMAIL_CHANNEL = :bot_email_channel.freeze
+  BOT_CHAT_HISTORY = :bot_chat_history.freeze
 end

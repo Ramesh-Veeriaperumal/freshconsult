@@ -16,6 +16,7 @@ common: &common
   email_bot_path: '/api/v1/afr/smart_reply'
   master_client_external_id: 'freshdesk-frankbot-us'
   widget_code_region: 'us'
+  chat_history_url: "https://api.intfreshbots.com/api/v1/customer/custHash/chat/history"
 
 development:
   <<: *common
