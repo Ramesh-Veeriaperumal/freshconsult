@@ -71,6 +71,16 @@ module Freshbots
         [response, response.code]
       end
 
+      def chat_messages(bot_feedback, direction = BotFeedbackConstants::CHAT_HISTORY_DIRECTIONS[0], incld_msg = true, query_id = nil)
+        url = Addressable::URI.parse(BOT_CONFIG[:chat_history_url].gsub('custHash',bot_feedback.external_info[:customer_id]))
+        url.query_values = construct_query_params(bot_feedback, direction, incld_msg, query_id)
+        headers = { 'Client-Id': bot_feedback.external_info[:client_id] }
+        response = RestClient.get url.to_s, headers
+        raise "ChatHistoryApiException: Response: #{response}, Response Code: #{response.code}" if response.nil? || response.code != 200
+        response = JSON.parse(response)['data']
+        [response,response.count < BotFeedbackConstants::CHAT_HISTORY_MSG_COUNT]
+      end
+
       private
 
         def external_client_id(bot, action)
@@ -116,6 +126,17 @@ module Freshbots
 
         def account_url(bot)
           "https://#{bot.account.full_domain}"
+        end
+
+        def construct_query_params(bot_feedback, direction, incld_msg, query_id)
+          query_hash = {
+            ordrBy: BotFeedbackConstants::CHAT_HISTORY_DIRECTION_VALUES[direction],
+            tcktMsgHsh: query_id || bot_feedback.query_id,
+            cntMsgTRtrv: BotFeedbackConstants::CHAT_HISTORY_MSG_COUNT,
+            incldPssdMssg: incld_msg
+          }
+          query_hash[:msgDrctn] = BotFeedbackConstants::CHAT_HISTORY_DIRECTIONS[0] if direction == BotFeedbackConstants::CHAT_HISTORY_DIRECTIONS[0]
+          query_hash
         end
     end
   end

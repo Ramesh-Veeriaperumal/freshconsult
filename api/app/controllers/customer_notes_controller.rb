@@ -1,6 +1,7 @@
 class CustomerNotesController < ApiApplicationController
   include HelperConcern
   include AttachmentConcern
+  include Utils::Sanitizer
   decorate_views
 
   ROOT_KEY = :note
@@ -110,15 +111,21 @@ class CustomerNotesController < ApiApplicationController
     end
 
     def sanitize_params
-      params[cname]["note_body_attributes"] = {
-        body: params[cname].delete(:body) { '' }
-      } if cname_params[:body]
+      sanitize_body_html if cname_params[:body]
       params[cname][:created_by] = api_current_user.id.to_s if create?
       params[cname][:last_updated_by] = api_current_user.id.to_s if update?
       params[cname][:attachments] = params[cname][:attachments].map do |att|
         { resource: att }
       end if params[cname][:attachments]
       ParamsHelper.save_and_remove_params(self, CustomerNoteConstants::PARAMS_TO_SAVE_AND_REMOVE, cname_params)
+    end
+
+    def sanitize_body_html
+      params[cname]["note_body_attributes"] = {
+        body_html: params[cname].delete(:body) { '' }
+      }
+      sanitize_body_hash(cname_params, :note_body_attributes, 'body')
+      params[cname][:note_body_attributes][:body] = params[cname][:note_body_attributes].delete(:body_html) { '' }
     end
 
     def assign_note_attributes

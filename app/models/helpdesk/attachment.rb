@@ -83,8 +83,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
     end
 
     def create_for_3rd_party account, item, attached, i, content_id, mailgun=false
-      limit = mailgun ? HelpdeskAttachable.mailgun_max_attachment_size :
-                        HelpdeskAttachable::MAX_ATTACHMENT_SIZE
+      limit = Account.current.incoming_attachment_limit_25_enabled? ? 25.megabytes : AccountConstants::ATTACHMENT_LIMIT.megabytes
       if attached.is_a?(Hash)
         file_content = attached[:file_content]
         original_filename = attached[:filename]

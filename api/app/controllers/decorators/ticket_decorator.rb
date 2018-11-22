@@ -61,6 +61,18 @@ class TicketDecorator < ApiDecorator
     requester_hash
   end
 
+  def description_hash
+    return false unless private_api? || description_allowed?
+    {
+      description: ticket_body.description_html,
+      description_text: ticket_body.description
+    }
+  end
+
+  def description_allowed?
+    @sideload_options.include?('description') || !Account.current.description_by_request_enabled?
+  end
+
   def freshfone_call
     if freshfone_enabled?
       call = record.freshfone_call

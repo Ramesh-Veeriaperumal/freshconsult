@@ -7671,6 +7671,68 @@
         }
       }
     },
+    "/bots/{bot_id}/bot_feedbacks/{id}/chat_history": {
+      "get": {
+        "tags": [
+          "Bot"
+        ],
+        "summary": "Retrieve the chat history for an unanswered question",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot feedback",
+            "required": true
+          },
+          {
+            "name": "bot_id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "description": "ID of the bot",
+            "required": true
+          },
+          {
+            "name": "query_id",
+            "in": "query",
+            "type": "string",
+            "description": "Message Id after which the messages have to be retrieved"
+          },
+          {
+            "name": "direction",
+            "in": "query",
+            "type": "string",
+            "enum": [
+              "frwrd",
+              "bkwrd"
+            ],
+            "description": "direction to fetch messages"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/chat_history"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "404": {
+            "description": "Resource not found"
+          }
+        }
+      }
+    },
     "/bots/{id}/analytics": {
       "get": {
         "tags": [
@@ -16138,6 +16200,74 @@
                 "type": "integer",
                 "description": "Number of chats initiated"
               }
+            }
+          }
+        }
+      }
+    },
+    "chat_history": {
+      "type": "object",
+      "properties": {
+        "ticket_msg_hash": {
+          "type": "string",
+          "description": "Unique identifier of the message"
+        },
+        "msg": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string",
+          "enum": [
+            "Bot",
+            "Customer"
+          ]
+        },
+        "date": {
+          "type": "string"
+        },
+        "suggested_articles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "display_text": {
+                "type": "string",
+                "description": "Title of the article suggested by bot"
+              },
+              "url": {
+                "type": "string",
+                "description": "Url of the article suggested by bot"
+              }
+            }
+          }
+        },
+        "ticket": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "display_text": {
+                "type": "string",
+                "description": "Title of the ticket"
+              },
+              "url": {
+                "type": "string",
+                "description": "Url of the ticket created"
+              }
+            }
+          }
+        },
+        "unanswered": {
+          "type": "boolean",
+          "description": "Boolean to indicate if the message was the corresponding unanswered question"
+        },
+        "meta": {
+          "title": "meta data",
+          "type": "object",
+          "properties": {
+            "end_of_message": {
+              "type": "boolean",
+              "description": "Boolean to indicate end of messages"
             }
           }
         }

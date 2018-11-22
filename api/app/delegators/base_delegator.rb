@@ -51,7 +51,7 @@ class BaseDelegator < SimpleDelegator
     end
 
     def attachment_size
-      Account.current.attachment_limit_in_bytes
+      Account.current.attachment_limit.megabytes
     end
 
     def private_api?

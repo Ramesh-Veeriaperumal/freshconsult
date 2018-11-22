@@ -18,6 +18,7 @@ class TicketsController < ApiApplicationController
 
   decorate_views(decorate_objects: [:index, :search])
   DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
+  DESCRIPTION = :description.to_s.freeze
 
   before_filter :ticket_permission?, only: [:destroy]
   before_filter :check_search_feature, :validate_search_params, only: [:search]
@@ -198,9 +199,9 @@ class TicketsController < ApiApplicationController
     end
 
     def conditional_preload_options
-      preload_options = [:ticket_old_body, :schema_less_ticket, :flexifield, :tags]
+      preload_options = [:schema_less_ticket, :flexifield, :tags]
       @ticket_filter.include_array.each do |assoc|
-        preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc] || assoc)
+        preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc.to_sym] || assoc)
         increment_api_credit_by(2)
       end
       Rails.logger.info ":::preloads: #{preload_options.inspect}"
@@ -245,6 +246,7 @@ class TicketsController < ApiApplicationController
     end
 
     def validate_filter_params
+      include_description unless description_included? || current_account.description_by_request_enabled?
       params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @ticket_filter = TicketFilterValidation.new(params, nil, string_request_params?)
       render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
@@ -256,6 +258,14 @@ class TicketsController < ApiApplicationController
       params.permit(*ApiTicketConstants::SEARCH_ALLOWED_DEFAULT_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS, *custom_fields)
       @ticket_filter = TicketFilterValidation.new(params.merge(cf: custom_fields))
       render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?
+    end
+
+    def description_included?
+      !params[:include].nil? && params[:include].include?(DESCRIPTION)
+    end
+
+    def include_description
+      params[:include] = params[:include].nil? ? DESCRIPTION : "#{params[:include]},#{DESCRIPTION}"
     end
 
     def scoper

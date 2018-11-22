@@ -35,16 +35,16 @@ module TicketsTestHelper
                   }
   end
 
-  def enable_adv_ticketing(feature, &block)
-    Account.current.add_feature feature
+  def enable_adv_ticketing(features = [], &block)
+    features.is_a?(Array) ? features.each { |f| Account.current.add_feature(f) } : Account.current.add_feature(features)
     if block_given?
       yield
-      Account.current.revoke_feature feature
+      disable_adv_ticketing(features)
     end
   end
 
-  def disable_adv_ticketing feature
-    Account.current.revoke_feature feature
+  def disable_adv_ticketing(features = [])
+    features.is_a?(Array) ? features.each { |f| Account.current.revoke_feature(f) } : Account.current.revoke_feature(features)
   end
 
   def create_ticket(params = {}, group = nil, internal_group = nil)

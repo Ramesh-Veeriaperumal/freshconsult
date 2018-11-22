@@ -14,7 +14,7 @@ class AccountDecorator < ApiDecorator
       date_format: record.account_additional_settings.date_format,
       language: record.language,
       features: record.enabled_features_list,
-      launched: record.all_launched_features,
+      launched: launched_features_list,
       subscription: subscription_hash,
       portal_languages: record.all_portal_language_objects,
       settings: settings_hash,
@@ -145,5 +145,13 @@ class AccountDecorator < ApiDecorator
         days_left_until_next_trial: trial_subscription.days_left_until_next_trial,
         plan_name: trial_subscription.trial_plan
       }
+    end
+
+    def launched_features_list
+      record.all_launched_features.tap do |lp_features|
+        if record.subscription.trial? || record.suspended?
+          lp_features.delete :trial_subscription
+        end
+      end
     end
 end

@@ -76,6 +76,7 @@ class TicketsControllerTest < ActionController::TestCase
     @account.time_zone = Time.zone.name
     @account.save
     @account.revoke_feature :unique_contact_identifier
+    @account.launch :description_by_request
     @@before_all_run = true
   end
 
@@ -2874,7 +2875,7 @@ class TicketsControllerTest < ActionController::TestCase
     param_object = OpenStruct.new(:requester => true)
     param_object.requester = true
     pattern = tkts.map do |tkt|
-      index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
+      index_ticket_pattern_with_associations(tkt, param_object)
     end
     match_json(pattern)
   end
@@ -2890,7 +2891,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal tkts.count, response.size
     param_object = OpenStruct.new(:stats => true)
     pattern = tkts.map do |tkt|
-      index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
+      index_ticket_pattern_with_associations(tkt, param_object)
     end
     match_json(pattern)
   end
@@ -2906,7 +2907,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_equal tkts.count, response.size
     param_object = OpenStruct.new(:company => true)
     pattern = tkts.map do |tkt|
-      index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
+      index_ticket_pattern_with_associations(tkt, param_object)
     end
     match_json(pattern)
   end
@@ -2916,7 +2917,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern(
                     'include', :not_included,
-                    list: 'requester, stats, company')]
+                    list: 'requester, stats, company, description')]
     )
   end
 
@@ -2931,7 +2932,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern(
                     'include', :not_included,
-                    list: 'requester, stats, company')]
+                    list: 'requester, stats, company, description')]
     )
   end
 
@@ -2945,7 +2946,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t, param_object))
     match_json(pattern)
   ensure
     Account.any_instance.unstub(:count_es_enabled?)
@@ -2963,7 +2964,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t, param_object))
     match_json(pattern)
   ensure
     Account.any_instance.unstub(:count_es_enabled?)
@@ -2981,7 +2982,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     param_object = OpenStruct.new(:stats => true)
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t, param_object))
     match_json(pattern)
   ensure
     Account.any_instance.unstub(:count_es_enabled?)
@@ -3000,7 +3001,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t, param_object))
     match_json(pattern)
   ensure
     Account.any_instance.unstub(:count_es_enabled?)
@@ -3019,8 +3020,8 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t_2, param_object, [:description, :description_text]))
-    pattern.push(index_ticket_pattern_with_associations(t_1, param_object, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
+    pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
     match_json(pattern)
   ensure
     Account.any_instance.unstub(:count_es_enabled?)
@@ -3039,8 +3040,8 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t_1, param_object, [:description, :description_text]))
-    pattern.push(index_ticket_pattern_with_associations(t_2, param_object, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t_1, param_object))
+    pattern.push(index_ticket_pattern_with_associations(t_2, param_object))
     match_json(pattern)
   ensure
     Account.any_instance.unstub(:count_es_enabled?)
@@ -3058,7 +3059,7 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t, param_object))
     match_json(pattern)
   ensure
     Account.any_instance.unstub(:count_es_enabled?)
@@ -3082,13 +3083,85 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     param_object = OpenStruct.new
     pattern = []
-    pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+    pattern.push(index_ticket_pattern_with_associations(t, param_object))
     match_json(pattern)
   ensure
     Account.any_instance.unstub(:count_es_enabled?)
     Account.any_instance.unstub(:api_es_enabled?)
     Account.any_instance.unstub(:dashboard_new_alias?)
   end
+
+  def test_index_with_description_in_include_after_deprecation
+    Account.any_instance.stubs(:description_by_request_enabled?).returns(true)
+    get :index, controller_params(include: 'description')
+    assert_response 200
+    response = parse_response @response.body
+    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
+                .created_in(Helpdesk::Ticket.created_in_last_month)
+                .order('created_at DESC')
+                .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+    assert_equal tkts.count, response.size
+    param_object = OpenStruct.new()
+    pattern = tkts.map do |tkt|
+      index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
+    end
+    match_json(pattern)
+    Account.any_instance.unstub(:description_by_request_enabled?)
+  end
+
+  def test_index_without_description_in_include_after_deprecation
+    Account.any_instance.stubs(:description_by_request_enabled?).returns(true)
+    get :index, controller_params()
+    assert_response 200
+    response = parse_response @response.body
+    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
+                .created_in(Helpdesk::Ticket.created_in_last_month)
+                .order('created_at DESC')
+                .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+    assert_equal tkts.count, response.size
+    param_object = OpenStruct.new()
+    pattern = tkts.map do |tkt|
+      index_ticket_pattern_with_associations(tkt, param_object)
+    end
+    match_json(pattern)
+    Account.any_instance.unstub(:description_by_request_enabled?)
+  end
+
+  def test_index_with_description_in_include_before_deprecation
+    Account.any_instance.stubs(:description_by_request_enabled?).returns(false)
+    get :index, controller_params(include: 'description')
+    assert_response 200
+    response = parse_response @response.body
+    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
+                .created_in(Helpdesk::Ticket.created_in_last_month)
+                .order('created_at DESC')
+                .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+    assert_equal tkts.count, response.size
+    param_object = OpenStruct.new()
+    pattern = tkts.map do |tkt|
+      index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
+    end
+    match_json(pattern)
+    Account.any_instance.unstub(:description_by_request_enabled?)
+  end
+
+  def test_index_without_description_in_include_before_deprecation
+    Account.any_instance.stubs(:description_by_request_enabled?).returns(false)
+    get :index, controller_params()
+    assert_response 200
+    response = parse_response @response.body
+    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
+                .created_in(Helpdesk::Ticket.created_in_last_month)
+                .order('created_at DESC')
+                .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+    assert_equal tkts.count, response.size
+    param_object = OpenStruct.new()
+    pattern = tkts.map do |tkt|
+      index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
+    end
+    match_json(pattern)
+    Account.any_instance.unstub(:description_by_request_enabled?)
+  end  
 
   def test_show_with_conversations_exceeding_limit
     ticket.update_column(:deleted, false)

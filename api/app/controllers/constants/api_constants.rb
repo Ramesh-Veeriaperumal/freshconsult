@@ -27,6 +27,7 @@ module ApiConstants
   EMAIL_VALIDATOR = AccountConstants::EMAIL_VALIDATOR
   NAMED_EMAIL_VALIDATOR = AccountConstants::NAMED_EMAIL_VALIDATOR
   ALLOWED_ATTACHMENT_SIZE = 15 * 1024 * 1024
+  ATTACHMENT_LIMIT = AccountConstants::ATTACHMENT_LIMIT
   LOAD_OBJECT_EXCEPT = [:create, :index, :route_not_found, :filtered_index, :search] +
                        TimeEntryConstants::LOAD_OBJECT_EXCEPT +
                        ConversationConstants::LOAD_OBJECT_EXCEPT +

@@ -107,7 +107,7 @@ class ApiValidation
   end
 
   def attachment_limit
-    @attachment_limit ||= (Account.current.attachment_limit_in_bytes)
+    @attachment_limit ||= (Account.current.attachment_limit.megabytes)
   end
 
   private

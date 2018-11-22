@@ -1,5 +1,8 @@
 require_relative '../../../test_helper'
 ['solutions_helper.rb', 'solution_builder_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+require 'webmock/minitest'
+WebMock.allow_net_connect!
+
 module Ember
   module Admin  
     class BotFeedbacksControllerTest < ActionController::TestCase
@@ -617,6 +620,78 @@ module Ember
           assert_response 400
         end
       end
+
+      def test_chat_history
+        enable_bot do
+          Account.current.launch(FeatureConstants::BOT_CHAT_HISTORY)
+          bot_feedback = Account.current.bot_feedbacks.find_by_id(@bot_feedback_ids.first)
+          stub_request(:get,%r{^https://api.intfreshbots.com/api/v1/customer.*?$}).to_return(body: chat_history_hash(bot_feedback.query_id).to_json, status: 200)
+          get :chat_history, controller_params(version: 'private', id: @bot_feedback_ids.first)
+          assert_response 200
+          match_json(chat_history_pattern(bot_feedback))
+          Account.current.rollback(FeatureConstants::BOT_CHAT_HISTORY)
+        end
+      end
+
+      def test_chat_history_without_launchparty
+        enable_bot do
+          get :chat_history, controller_params(version: 'private', id: @bot_feedback_ids.first)
+          assert_response 403
+        end
+      end
+
+      def test_chat_history_with_exception
+        enable_bot do
+          Account.current.launch(:bot_chat_history)
+          Freshbots::Bot.stubs(:chat_messages).raises('ChatHistoryApiException')
+          get :chat_history, controller_params(version: 'private', id: @bot_feedback_ids.first)
+          assert_response 500
+          Freshbots::Bot.unstub(:chat_messages)
+          Account.current.rollback(:bot_chat_history)
+        end
+      end
+
+      def test_chat_history_for_end_of_message_meta
+        enable_bot do
+          Account.current.launch(:bot_chat_history)
+          bot_feedback = Account.current.bot_feedbacks.find_by_id(@bot_feedback_ids.first)
+          stub_request(:get,%r{^https://api.intfreshbots.com/api/v1/customer.*?$}).to_return(body: chat_history_hash(bot_feedback.query_id).to_json, status: 200)
+          get :chat_history, controller_params(version: 'private', id: @bot_feedback_ids.first)
+          assert_response 200
+          assert_equal response.api_meta[:end_of_message], true
+          match_json(chat_history_pattern(bot_feedback))
+          Account.current.rollback(:bot_chat_history)
+        end
+      end
+
+      def test_chat_history_with_invalid_bot_feedback
+        enable_bot do
+          Account.current.launch(:bot_chat_history)
+          get :chat_history, controller_params(version: 'private', id: @bot_feedback_ids.last+20)
+          assert_response 404
+          Account.current.rollback(:bot_chat_history)
+        end
+      end
+
+      def test_chat_history_with_invalid_field
+        enable_bot do
+          Account.current.launch(:bot_chat_history)
+          get :chat_history, controller_params(version: 'private', id: @bot_feedback_ids.first, test: 'abc')
+          assert_response 500
+          Account.current.rollback(:bot_chat_history)
+        end
+      end
+
+      def test_chat_history_with_invalid_direction_param
+        enable_bot do
+          Account.current.launch(:bot_chat_history)
+          get :chat_history, controller_params(version: 'private', id: @bot_feedback_ids.first, direction: 'abc')
+          assert_response 400
+          match_json([bad_request_error_pattern('direction', :not_included, code: :invalid_value, list: BotFeedbackConstants::CHAT_HISTORY_DIRECTIONS.join(','))])
+          Account.current.rollback(:bot_chat_history)
+        end
+      end
+
     end
   end
 end
