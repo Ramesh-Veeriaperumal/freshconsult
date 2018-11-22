@@ -11,7 +11,7 @@ module Bot::Emailbot
         return
       end
       solution_ids = ml_response['data'].collect { |response| response['id'] }
-      @meta_articles = account.solution_article_meta.where('id IN (?)', solution_ids).preload(:primary_article)
+      @meta_articles = account.solution_article_meta.where('`solution_article_meta`.`id` IN (?)', solution_ids).visible_to_all.preload(:primary_article)
       if @meta_articles.any?
         create_bot_response
         send_email_notification
@@ -67,17 +67,17 @@ module Bot::Emailbot
       end
 
       def freddy_suggestions
-        string = "<div>"
+        string = ""
         @meta_articles.each do |article|
           article_url = Rails.application.routes.url_helpers.support_solutions_article_url(article, host: article.account.host)
           article_full_url = article_url + '?query_id=' + @ticket.bot_response.query_id
           desc = article.article_body.desc_un_html.truncate(220)
-          string << "<div> <img src='#{BOT_CONFIG[:email_bot_article_cdn_url]}/images/bot_solution_article.png'
+          string << "<div><img src='#{BOT_CONFIG[:email_bot_article_cdn_url]}/images/bot_solution_article.png'
             height='13px' width='13px' style='vertical-align:middle; margin-bottom:2px'><a href='#{article_full_url}' style='text-decoration:none;
             color:#448EE1; font-weight:500; padding-left:4px;'> #{article.title}</a><div style='padding-left:20px; width:450px;
-            text-align:justify;'>#{desc}<a href='#{article_full_url}' style='text-decoration:none; color:#448EE1;'> Read more </a><br><br></div></div>"
+            text-align:justify; padding-bottom:20px;'>#{desc}<a href='#{article_full_url}' style='text-decoration:none; color:#448EE1;'> Read more </a></div></div>"
         end
-        string += "</div>"
+        string
       end
 
       def account
