@@ -1,6 +1,6 @@
 <% @user_session ||= current_account.user_sessions.new %>
 <%= form_for @user_session, :url => support_login_path do |f| %>
-  <%= render  'custom_error_messages' %>
+  <%= render :partial => '/support/login/custom_error_messages' %>
 	<fieldset>
 	  	<div class="control-group">
 	  		<div class="controls">

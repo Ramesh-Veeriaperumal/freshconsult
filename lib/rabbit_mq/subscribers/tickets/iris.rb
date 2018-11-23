@@ -7,7 +7,7 @@ module RabbitMq::Subscribers::Tickets::Iris
                              :status, :product_id, :owner_id,
                              :isescalated, :fr_escalated, :spam, :deleted,
                              :long_tc01, :long_tc02, :internal_group_id, :internal_agent_id,
-                             :association_type
+                             :association_type, :due_by
                            ]
 
   def mq_iris_ticket_properties(action)

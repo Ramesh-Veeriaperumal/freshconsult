@@ -87,7 +87,7 @@ class User < ActiveRecord::Base
   end
 
   def relationship_with_account
-    "users"
+    "all_users"
   end
 
   def central_publish_worker_class
