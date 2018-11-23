@@ -246,9 +246,9 @@ class Account < ActiveRecord::Base
 
   has_one :zendesk_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:zendesk]}
 
-  has_one :contact_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:contact]}
+  has_many :contact_imports, class_name: 'Admin::DataImport', conditions: { source: Admin::DataImport::IMPORT_TYPE[:contact] }, dependent: :destroy
 
-  has_one :company_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:company]}
+  has_many :company_imports, class_name: 'Admin::DataImport', conditions: { source: Admin::DataImport::IMPORT_TYPE[:company] }, dependent: :destroy
 
   has_one :agent_skill_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:agent_skill]}
 

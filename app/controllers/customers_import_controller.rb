@@ -10,19 +10,23 @@ class CustomersImportController < ApplicationController
    #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
   def csv
-    redirect_to "/#{params[:type].pluralize}", :flash => { :notice => t(:'flash.import.already_running')} if current_account.safe_send("#{params[:type]}_import")
+    if current_account.safe_send("#{params[:type]}_imports").safe_send(:"running_#{params[:type]}_imports").present?
+      redirect_to "/#{params[:type].pluralize}", flash: { notice: t(:'flash.import.already_running') }
+    end
   end
 
   def map_fields
     import_fields
     @headers = to_hash(@rows.first)
-    rescue
-      redirect_to "/imports/#{params[:type]}", :flash=>{:error =>t(:'flash.customers_import.wrong_format')}
-  end 
+  rescue => e
+    redirect_to "/imports/#{params[:type]}", :flash=>{:error =>t(:'flash.customers_import.wrong_format')}
+    @import.failure!(e.message + "\n" + e.backtrace.join("\n")) if @import
+  end
   
   def create
     if fields_mapped?
-      current_account.safe_send(:"create_#{params[:type]}_import",{:import_status => Admin::DataImport::IMPORT_STATUS[:started]})
+      @import = current_account.safe_send("#{params[:type]}_imports").create!(import_status: Admin::DataImport::IMPORT_STATUS[:started])
+      set_counts params[:type]
       import_worker = params[:type].eql?("company") ?
         "Import::CompanyWorker" :
         "Import::ContactWorker"
@@ -56,14 +60,15 @@ class CustomersImportController < ApplicationController
 
   def customer_params
     { 
-      :account_id => current_account.id,
-      :email => current_user.email,
-      :type => params[:type],
-      :customers => {
-        :file_name => @file_name,
-        :file_location => @file_location,
-        :fields =>  @field_params,
-      }
+      account_id: current_account.id,
+      email: current_user.email,
+      type: params[:type],
+      customers: {
+        file_name: @file_name,
+        file_location: @file_location,
+        fields:  @field_params
+      },
+      data_import: @import.id
     }
   end
 
