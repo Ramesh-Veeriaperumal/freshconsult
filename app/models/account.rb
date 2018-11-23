@@ -736,6 +736,10 @@ class Account < ActiveRecord::Base
     redis_key_exists? freshid_migration_in_progress_key
   end
 
+  def account_cancel_requested?
+    redis_key_exists?(account_cancel_request_job_key)
+  end
+  
   def account_cancellation_requested?
     redis_key_exists?(account_cancellation_request_job_key)
   end

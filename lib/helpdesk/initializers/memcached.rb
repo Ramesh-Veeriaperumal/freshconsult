@@ -1,6 +1,9 @@
 
 memcacheserializer = Marshal
 
+TimeBandits.add ::TimeBandits::TimeConsumers::CustomDalli  # logging custom_dalli performance time for Controller caching
+ENV["TIME_BANDITS_VERBOSE"] = "true" if Rails.env.development? #logging is enabled and default for development env
+
 # The below config is used for caching the app data. (Groups, Agent, TicketFields)
 config = YAML::load_file(File.join(Rails.root, 'config', 'dalli.yml'))[Rails.env].symbolize_keys!
 servers = config.delete(:servers)

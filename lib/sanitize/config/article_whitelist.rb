@@ -10,6 +10,7 @@ class Sanitize
         'source' => HTML_RELAXED[:attributes]['source'] + ['media'],
         'object' => ['type', 'height', 'width', 'typemustmatch', 'form', 'classid', 'codebase'],
         'param' => ['value'],
+        'li' => ['value'],
         'embed' => [
                     'src', 'type', 'width', 'height',
                     'flashvars', 'base', 'hidden', 'target',

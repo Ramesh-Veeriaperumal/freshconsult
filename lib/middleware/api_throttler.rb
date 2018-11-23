@@ -48,6 +48,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     @mobile_user_agent = env["HTTP_USER_AGENT"]
     @sub_domain = @host.split(".")[0]
     @path_info = env["PATH_INFO"]
+    @request_method = env["REQUEST_METHOD"]
     if SKIPPED_SUBDOMAINS.include?(@sub_domain)
       @status, @headers, @response = @app.call(env)
       return [@status, @headers, @response]
@@ -67,7 +68,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
     elsif allowed? env
       @status, @headers, @response = @app.call(env)
       unless by_pass_throttle?
-        Rails.logger.error("API V1 Throttled :: Account: #{@account_id}, Host: #{@host}, Count: #{@count}, Time: #{Time.now}")
+        Rails.logger.error("API V1 Throttled :: Account: #{@account_id}, Host: #{@host}, Path_Info: #{@path_info}, Request_Method: #{@request_method}, Count: #{@count}, Time: #{Time.now}")
         remove_others_redis_key(key) if get_others_redis_key(key+"_expiry").nil?
         increment_others_redis(key)
         value = get_others_redis_key(key).to_i
@@ -75,7 +76,7 @@ class Middleware::ApiThrottler < Rack::Throttle::Hourly
       end
     else
       retry_value = retry_after
-      Rails.logger.error("API V1 Ratelimit Error :: Account: #{@account_id}, Host: #{@host}, Count: #{@count}, Retry-After: #{retry_value}, Time: #{Time.now}")
+      Rails.logger.error("API V1 Ratelimit Error :: Account: #{@account_id}, Host: #{@host}, Path_Info: #{@path_info}, Request_Method: #{@request_method}, Count: #{@count}, Retry-After: #{retry_value}, Time: #{Time.now}")
       @status, @headers,@response = [403, {'Retry-After' => retry_value,'Content-Type' => 'text/html'}, 
                                       ["You have exceeded the limit of requests per hour"]]
     end

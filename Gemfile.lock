@@ -1255,7 +1255,7 @@ GEM
     rubytree (0.9.7)
       json (~> 1.8)
       structured_warnings (~> 0.2)
-    rubyzip (1.2.1)
+    rubyzip (1.2.2)
     rufus-scheduler (2.0.24)
       tzinfo (>= 0.3.22)
     rugged (0.24.0)
@@ -1619,7 +1619,7 @@ DEPENDENCIES
   ruby-openid-apps-discovery (= 1.2.0)
   ruby-saml (= 1.7.0)
   rubytree
-  rubyzip (= 1.2.1)
+  rubyzip (= 1.2.2)
   rugged
   rule_engine!
   sanitize (= 4.6.5)

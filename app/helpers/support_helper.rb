@@ -216,11 +216,11 @@ module SupportHelper
     output << %(  <div class="user-pic-thumb image-lazy-load #{more_classes}"> )
     if user.blank?
       output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" />)
-      Rails.logger.error("User is empty::Account:#{Account.current.inspect}")      
+      Rails.logger.error("User is empty::Account:#{Account.current.inspect}")
     elsif user['profile_url']
       output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="#{profile_size}" rel="lazyloadimage"  data-src="#{user['profile_url']}" /> )
     else
-      username = user['name'] 
+      username = user['name']
       username = username.lstrip if username
       if username && username[0] && isalpha(username[0])
         output << %(<div class="#{profile_size} avatar-text circle text-center bg-#{unique_code(username)}">)
@@ -234,6 +234,16 @@ module SupportHelper
     output << %( </div> )
     output.join("").html_safe
   end
+
+  #user avatar for canned form preview
+  def preview_profile_image
+    output = []
+    output << %(  <div class="user-pic-thumb image-lazy-load"> )
+    output << %( <img src="/images/misc/profile_blank_thumb.jpg" onerror="imgerror(this)" class="preview_image" rel="lazyloadimage"  }" /> )
+    output << %( </div> )
+    output.join("").html_safe
+  end
+
 
   #freshfone audio dom
   # TODO-RAILS3 duplicate of tickets_helper
