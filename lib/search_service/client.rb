@@ -34,10 +34,11 @@ module SearchService
       write_request.response
     end
 
-    def write_count_object(entity)
+    # Time published from RMQ used as version stamp
+    def write_count_object(entity, version)
      uuid = Thread.current[:message_uuid].try(:first) || UUIDTools::UUID.timestamp_create.hexdigest
      type = 'ticketanalytics'
-     payload = { payload: entity.to_search_count_es_json, version: Search::Job.es_version }
+     payload = { payload: entity.to_search_count_es_json, version: version }
      path = write_path(type, entity.id)
      write_request = SearchService::Request.new(path , :post, uuid, payload.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), Account.current.id)
      Rails.logger.debug("Count search Service Request Write account_id :: #{Account.current.id} :: UUID :: #{uuid.inspect} :: path :: #{path} ")

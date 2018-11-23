@@ -1,5 +1,7 @@
 require_relative '../unit_test_helper'
 require 'sidekiq/testing'
+require 'webmock/minitest'
+WebMock.allow_net_connect!
 Sidekiq::Testing.fake!
 require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require Rails.root.join('test', 'api', 'sidekiq', 'create_ticket_helper.rb')
@@ -22,6 +24,7 @@ class SchedulerCancelMessageTest < ActionView::TestCase
     Account.current.launch(:todos_reminder_scheduler)
     @ticket = create_test_ticket(email: 'sample@freshdesk.com')
     @reminder = get_new_reminder('test delete', @ticket.id, nil, nil, @user.id)
+    stub_request(:delete, %r{^http://scheduler-staging.freshworksapi.com/schedules.*?$}).to_return(status: 202)
     responses = ::Scheduler::CancelMessage.new.perform('job_ids' => Array(job_id), 'group_name' => group_name)
     refute responses.blank?
     responses.each do |response|
@@ -36,6 +39,7 @@ class SchedulerCancelMessageTest < ActionView::TestCase
     Account.current.launch(:todos_reminder_scheduler)
     @ticket = create_test_ticket(email: 'sample@freshdesk.com')
     @reminder = get_new_reminder('test delete', @ticket.id, nil, nil, @user.id)
+    stub_request(:delete, %r{^http://scheduler-staging.freshworksapi.com/schedules.*?$}).to_return(status: 202)
     responses = ::Scheduler::CancelMessage.new.perform(job_ids: Array(job_id), group_name: group_name)
     responses.each do |response|
       assert_includes SUCCESS, response.to_i, "Expected one of #{SUCCESS}, got #{response}"

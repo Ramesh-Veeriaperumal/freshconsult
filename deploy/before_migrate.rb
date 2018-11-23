@@ -96,6 +96,7 @@ run "ln -nfs #{shared_path}/config/unsupported_features.yml #{node[:rel_path]}/c
 run "ln -nfs #{shared_path}/config/hyper_trail.yml #{node[:rel_path]}/config/hyper_trail.yml"
 run "ln -nfs #{shared_path}/config/proactive_service.yml #{node[:rel_path]}/config/proactive_service.yml"
 run "ln -nfs #{shared_path}/config/email_bot_ml_feedback_config.yml #{node[:rel_path]}/config/email_bot_ml_feedback_config.yml"
+run "ln -nfs #{shared_path}/config/growthscore_app.yml #{node[:rel_path]}/config/growthscore_app.yml"
 
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"

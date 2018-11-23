@@ -309,6 +309,9 @@ Helpkit::Application.routes.draw do
       end
       member do
         resources :bot_feedbacks, controller: 'ember/admin/bot_feedbacks', only: [:index] do
+          member do
+            get :chat_history
+          end
           collection do
             put :bulk_delete
             put :bulk_map_article

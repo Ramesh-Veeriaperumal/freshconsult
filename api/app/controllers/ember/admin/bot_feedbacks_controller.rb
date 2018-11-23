@@ -4,9 +4,10 @@ module Ember
       include HelperConcern
       include DeleteSpamConcern
 
-      before_filter :load_bot
+      before_filter :load_bot, unless: :skip_bot_load?
       before_filter :set_solutions_klasses, only: [:bulk_map_article, :create_article]
       before_filter :has_publish_solution_privilege, only: [:bulk_map_article, :bulk_delete, :create_article]
+      before_filter :check_chat_history_launchparty, only: [:chat_history]
 
       def bulk_map_article
         return unless validate_body_params
@@ -31,7 +32,27 @@ module Ember
         end
       end
 
+      def chat_history
+        return unless validate_query_params
+        # Initial api call will not have query id. We retrieve forward messages for initial call.
+        chat_messages, end_of_message = params[:query_id].present? ? Freshbots::Bot.chat_messages(@item, params[:direction], false, params[:query_id]) : Freshbots::Bot.chat_messages(@item)
+        @chat_history = parse_chat_history_response(chat_messages)
+        response.api_meta = {end_of_message: true} if end_of_message
+      rescue Exception => e
+        Rails.logger.error "Chat history exception is #{e.message}, Account is #{current_account.id}, Unanswered question is #{@item.id}"
+        NewRelic::Agent.notice_error(e)
+        render_base_error(:internal_error,500)
+      end
+
       private
+
+        def scoper
+          current_account.bot_feedbacks
+        end
+
+        def check_chat_history_launchparty
+          render_request_error(:access_denied, 403) unless Account.current.launched?(FeatureConstants::BOT_CHAT_HISTORY)
+        end
 
         def set_solutions_klasses
           @delegator_klass = BotConstants::SOLUTION_DELEGATOR_CLASS
@@ -120,6 +141,42 @@ module Ember
           @items.each do |item|
             @items_failed << item unless validate_item(item) && map_article(item, article_id)
           end
+        end
+
+        def skip_bot_load?
+          BotFeedbackConstants::SKIP_BOT_LOAD.include?(action_name)
+        end
+
+        def parse_chat_history_response(messages)
+          messages.map do |msg|
+            msg_hash =  {
+                          ticket_msg_hash: msg['tcktMsgHsh'],
+                          msg: msg['msg'],
+                          author: msg['athr'],
+                          date: msg['crtDtTmstmp']
+                        }
+            content_type = msg_content_type(msg)
+            msg_hash[BotFeedbackConstants::MSG_CONTENT_TYPES[content_type][:response_key]] = parse_ticket_msg_options(msg, content_type) if content_type
+            msg_hash[:unanswered] = true if unanswered?(msg)
+            msg_hash
+          end
+        end
+
+        def unanswered? msg
+          msg['tcktMsgHsh'] == @item.query_id
+        end
+
+        def msg_content_type(msg)
+          msg['tcktMssgptns'].first['cntntTyp'] if msg['tcktMssgptns'].present? && BotFeedbackConstants::MSG_CONTENT_TYPES.keys.include?(msg['tcktMssgptns'].first['cntntTyp'])
+        end
+
+        def parse_ticket_msg_options(msg, content_type)
+          msg['tcktMssgptns'].map {|item|
+            {
+              display_text: item['displayText'],
+              url: item['mtdt'][content_type][BotFeedbackConstants::MSG_CONTENT_TYPES[content_type][:url]]
+            }
+          }
         end
     end
   end

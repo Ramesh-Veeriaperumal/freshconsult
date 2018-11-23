@@ -226,7 +226,7 @@ class Search::V2::SpotlightController < ApplicationController
         'ticket'        => { model: 'Helpdesk::Ticket',   associations: [ { flexifield: :flexifield_def }, { requester: :avatar }, :ticket_states, :ticket_old_body, :ticket_status, :responder, :group, { :ticket_states => :tickets } ] },
         'archiveticket' => { model: 'Helpdesk::ArchiveTicket',     associations: [] }, 
         'article'       => { model: 'Solution::Article',  associations: [ :user, :article_body, :recent_author, { :solution_folder_meta => :en_folder } ] }, 
-        'user'          => { model: 'User',               associations: [ :avatar, :customer, :default_user_company, :companies ] }
+        'user'          => { model: 'User',               associations: [ :avatar, :company, :default_user_company, :companies ] }
       }
     end
 end

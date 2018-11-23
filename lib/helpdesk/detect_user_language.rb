@@ -15,8 +15,6 @@ class Helpdesk::DetectUserLanguage
     :"zh-TW" => "zh-CN"
   }
 
-  TEXT_LANGUAGE_EXPIRY = 600#10 MINUTES
-
   def self.set_user_language!(user, text)
     language, time_taken = language_detect(text)
 
@@ -71,6 +69,6 @@ class Helpdesk::DetectUserLanguage
 
   def self.cache_user_laguage text, language
     key = DETECT_USER_LANGUAGE % { :text => text }
-    set_others_redis_key(key, language, TEXT_LANGUAGE_EXPIRY)
+    set_others_redis_key(key, language)
   end
 end

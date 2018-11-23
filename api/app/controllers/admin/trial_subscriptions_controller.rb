@@ -51,4 +51,10 @@ class Admin::TrialSubscriptionsController < ApiApplicationController
     def sanitize_params
       params[:features] = params[:features].split(',').map!(&:to_sym) if params[:features].present?
     end
+
+    def check_account_state
+      if current_account.suspended? || current_account.subscription.trial?
+        render_request_error(:access_denied, 403)
+      end
+    end
 end

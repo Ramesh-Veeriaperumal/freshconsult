@@ -418,6 +418,8 @@ unanswered_list:
   $ref: './response/bot_feedbacks/unanswered_list.yaml'
 bot_analytics:
   $ref: './response/bot_analytics.yaml'
+chat_history:
+  $ref: './response/bot_feedbacks/chat_history.yaml'
 
 article_content:
   $ref: './response/article_content.yaml'

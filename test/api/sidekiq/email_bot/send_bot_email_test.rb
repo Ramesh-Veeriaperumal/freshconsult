@@ -37,17 +37,13 @@ class SendBotEmailTest < ActionView::TestCase
     }
   end
 
-  def fetch_bot_and_articles
+  def fetch_bot_and_articles(status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published], folder_visibility = Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
     @bot = @account.main_portal.bot || create_test_email_bot({email_channel: true})
-    @articles = get_articles
-  end
-
-  def get_articles
     @agent = get_admin()
     setup_solutions
     @articles = []
     3.times do
-      @articles.push(create_article(article_params))
+      @articles.push(create_article(article_params(status, folder_visibility)))
     end
     @articles
   end
@@ -57,6 +53,16 @@ class SendBotEmailTest < ActionView::TestCase
     subscription.state = 'active'
     subscription.save
     @account.reload
+  end
+
+  def test_send_bot_email_with_bot_visibility
+    delayed_job_size_before = Delayed::Job.count
+    ticket = create_ticket
+    fetch_bot_and_articles(Solution::Article::STATUS_KEYS_BY_TOKEN[:published], Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:bot])
+    stub_request(:post, %r{^https://freshiqnew.freshpo.com/api/v1/afr/smart_reply.*?$}).to_return(body: stub_response(true).to_json, status: 200)
+    ::Bot::Emailbot::SendBotEmail.new.perform(ticket_id: ticket.id)
+    delayed_job_size_after = Delayed::Job.count
+    assert_equal delayed_job_size_before, delayed_job_size_after
   end
 
   def test_send_bot_email
@@ -108,7 +114,7 @@ class SendBotEmailTest < ActionView::TestCase
 
   private
 
-    def article_params(status = Solution::Article::STATUS_KEYS_BY_TOKEN[:published], folder_visibility = Solution::Constants::VISIBILITY_KEYS_BY_TOKEN[:anyone])
+    def article_params(status, folder_visibility)
       category = create_category
       {
         title: "Test",

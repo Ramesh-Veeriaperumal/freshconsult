@@ -319,6 +319,25 @@ class CustomerNotesControllerTest < ActionController::TestCase
     @account.add_feature(:contact_company_notes)
   end
 
+  def test_create_contact_note_with_xss_payload
+    params_hash = create_note_params_hash
+    params_hash['body'] = "<div>xss check<style onload=alert(document.cookie)></div>"
+    post :create, construct_params(contact_unwrapped_params, params_hash)
+    assert_response 201
+    parsed_response = parse_response response.body
+    assert_equal(parsed_response['body'], '<div>xss check</div>')
+  end
+
+  def test_update_contact_note_with_xss_payload
+    note = _create_contact_note(@contact, @agent)
+    params_hash = update_note_params_hash
+    params_hash['body'] = "<div>xss check<style onload=alert(document.cookie)></div>"
+    put :update, construct_params(contact_unwrapped_params.merge(id: note.id), params_hash)
+    assert_response 200
+    parsed_response = parse_response response.body
+    assert_equal(parsed_response['body'], '<div>xss check</div>')
+  end
+
   # Company notes test cases
 
   def test_create_company_note
@@ -584,9 +603,28 @@ class CustomerNotesControllerTest < ActionController::TestCase
   def test_create_company_note_without_feature
     @account.revoke_feature(:contact_company_notes)
     params_hash = create_note_params_hash
-    post :create, construct_params(contact_unwrapped_params, params_hash)
+    post :create, construct_params(company_unwrapped_params, params_hash)
     assert_response 403
     match_json(request_error_pattern('require_feature', feature: 'Contact Company Notes'))
     @account.add_feature(:contact_company_notes)
+  end
+
+  def test_create_company_note_with_xss_payload
+    params_hash = create_note_params_hash
+    params_hash['body'] = "<div>xss check<style onload=alert(document.cookie)></div>"
+    post :create, construct_params(company_unwrapped_params, params_hash)
+    assert_response 201
+    parsed_response = parse_response response.body
+    assert_equal(parsed_response['body'], '<div>xss check</div>')
+  end
+
+  def test_update_company_note_with_xss_payload
+    note = _create_contact_note(@contact, @agent)
+    params_hash = update_note_params_hash
+    params_hash['body'] = "<div>xss check<style onload=alert(document.cookie)></div>"
+    put :update, construct_params(company_unwrapped_params.merge(id: note.id), params_hash)
+    assert_response 200
+    parsed_response = parse_response response.body
+    assert_equal(parsed_response['body'], '<div>xss check</div>')
   end
 end

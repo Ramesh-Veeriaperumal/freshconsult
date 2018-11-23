@@ -200,7 +200,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_bots do
-    resource :"ember/admin/bot_feedback", only: %i[index bulk_delete bulk_map_article create_article]
+    resource :"ember/admin/bot_feedback", only: %i[index bulk_delete bulk_map_article create_article chat_history]
     resource :"ember/admin/bot", only: %i[index show]
   end
 

@@ -1,0 +1,38 @@
+get:
+  tags: [Bot]
+  summary: Retrieve the chat history for an unanswered question
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      description: ID of the bot feedback
+      required: true
+    - name: bot_id
+      in: path
+      type: integer
+      format: int64
+      description: ID of the bot
+      required: true
+    - name: query_id
+      in: query
+      type: string
+      description: Message Id after which the messages have to be retrieved
+    - name: direction
+      in: query
+      type: string
+      enum: ['frwrd', 'bkwrd']
+      description: direction to fetch messages
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/chat_history'
+    400:
+      description: Bad request error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+    404:
+      description: Resource not found

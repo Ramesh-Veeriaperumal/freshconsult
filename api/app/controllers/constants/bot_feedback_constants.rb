@@ -6,6 +6,24 @@ module BotFeedbackConstants
   BULK_MAP_ARTICLE_FIELDS = %w[article_id].freeze
   BULK_ACTION_METHODS = [:bulk_delete, :bulk_map_article, :create_article].freeze
   CREATE_ARTICLE_FIELDS = %w[title description folder_id].freeze
+  CHAT_HISTORY_FIELDS = %w[query_id direction].freeze
+  CHAT_HISTORY_DIRECTION_VALUES = {
+    'frwrd': 'asc',
+    'bkwrd': 'desc'
+  }.with_indifferent_access.freeze
+  CHAT_HISTORY_DIRECTIONS = CHAT_HISTORY_DIRECTION_VALUES.keys.freeze
+  CHAT_HISTORY_MSG_COUNT = 10.freeze
+  MSG_CONTENT_TYPES = {
+    'artcl': {
+      'response_key': 'suggested_articles',
+      'url': 'url'
+    },
+    'itm': {
+      'response_key': 'ticket',
+      'url': 'btn2Url'
+    }
+  }.with_indifferent_access.freeze
+  SKIP_BOT_LOAD = %w[chat_history].freeze
 
   FEEDBACK_CATEGORY = [
     [:answered,   1], # answered

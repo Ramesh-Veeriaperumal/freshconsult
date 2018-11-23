@@ -30,6 +30,7 @@ module Channel::V2
         @@custom_field_names << @@ticket_fields.last.name
       end
       @account.launch :add_watcher
+      @account.launch :description_by_request
       @account.save
       @@before_all_run = true
     end
@@ -524,7 +525,7 @@ module Channel::V2
       tkts << t.reload
       get :index, controller_params(filter: 'deleted')
       pattern = []
-      tkts.each { |tkt| pattern << index_deleted_ticket_pattern(tkt) }
+      tkts.each { |tkt| pattern << index_deleted_ticket_pattern(tkt, [:description, :description_text]:) }
       match_json(pattern)
 
       t.update_column(:deleted, false)
@@ -585,7 +586,7 @@ module Channel::V2
       assert_response 200
 
       tkts = Helpdesk::Ticket.where(owner_id: company.id)
-      pattern = tkts.map { |tkt| index_ticket_pattern(tkt) }
+      pattern = tkts.map { |tkt| index_ticket_pattern(tkt, [:description, :description_text]) }
       match_json(pattern)
     ensure
       @channel_v2_api = false
@@ -787,7 +788,7 @@ module Channel::V2
       assert_response 400
       match_json([bad_request_error_pattern(
         'include', :not_included,
-        list: 'requester, stats, company')]
+        list: 'requester, stats, company,  description')]
       )
     ensure
       @channel_v2_api = false
@@ -812,7 +813,7 @@ module Channel::V2
       assert_response 400
       match_json([bad_request_error_pattern(
         'include', :not_included,
-        list: 'requester, stats, company')]
+        list: 'requester, stats, company, description')]
       )
     ensure
       @channel_v2_api = false
