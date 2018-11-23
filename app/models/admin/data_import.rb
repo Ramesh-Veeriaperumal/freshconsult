@@ -14,29 +14,41 @@ class Admin::DataImport < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
     
-  IMPORT_TYPE = {:zendesk => 1, :contact => 2, :company => 3, :agent_skill => 4}
-  IMPORT_STATUS = { 
-                    :started => 1, 
-                    :completed => 2, 
-                    :file_creation => 3,
-                    :blocked => 4, 
-                    :failure => 5
-                  }
+  IMPORT_TYPE = { zendesk: 1, contact: 2, company: 3, agent_skill: 4 }.freeze
+
+  IMPORT_STATUS = { started: 1,
+                    completed: 2,
+                    file_created: 3,
+                    blocked: 4,
+                    failed: 5,
+                    cancelled: 6 }.freeze
+
+  IN_PROGRESS_STATUS = [:started, :file_created].freeze
+
+  scope :running_contact_imports, conditions: ['source = ? and import_status in (?)', IMPORT_TYPE[:contact],
+                                               [IMPORT_STATUS[:started], IMPORT_STATUS[:file_created]]]
+
+  scope :running_company_imports, conditions: ['source = ? and import_status in (?)', IMPORT_TYPE[:company],
+                                               [IMPORT_STATUS[:started], IMPORT_STATUS[:file_created]]]
 
   def completed!
-    self.update_attributes(:import_status => IMPORT_STATUS[:completed])
+    update_attributes(import_status: IMPORT_STATUS[:completed])
   end
 
   def file_creation!
-    self.update_attributes(:import_status => IMPORT_STATUS[:file_creation])
+    update_attributes(import_status: IMPORT_STATUS[:file_created])
   end
 
   def blocked!
-    self.update_attributes(:import_status => IMPORT_STATUS[:blocked])
+    update_attributes(import_status: IMPORT_STATUS[:blocked])
   end
 
   def failure!(error)
-    self.update_attributes({:import_status => IMPORT_STATUS[:failure], :last_error => error})
+    update_attributes(import_status: IMPORT_STATUS[:failed], last_error: error)
+  end
+
+  def cancelled!
+    update_attributes(import_status: IMPORT_STATUS[:cancelled])
   end
 
   private

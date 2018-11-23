@@ -312,6 +312,8 @@ canned_response_folder_details:
   $ref: ./response/canned_response/folder_show.yaml
 todo_details:
   $ref: ./resource/todo.yaml
+customer_import_details: 
+  $ref: ./resource/customer_import.yaml
 rule:
   $ref: ./resource/rule.yaml
 automation_rule:
@@ -343,6 +345,15 @@ company_note_response:
   $ref: ./response/company_note.yaml
 customer_note_response:
   $ref: ./response/customer_note.yaml
+
+customer_import_create_response:
+  $ref: ./response/customer_import/create.yaml
+customer_import_view_response:
+  $ref: ./response/customer_import/view.yaml
+customer_import_list_response:
+  $ref: ./response/customer_import/list.yaml
+customer_import_cancel_response:
+  $ref: ./response/customer_import/cancel.yaml
 
 export_response:
   $ref: ./response/export.yaml

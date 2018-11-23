@@ -3,9 +3,10 @@ module CustomerImportConstants
 
   # validation class
   VALIDATION_CLASS = 'CustomerImportValidation'.freeze
+  INDEX_FIELDS = ['status'].freeze
+  ALLOWED_STATUS_PARAMS = Admin::DataImport::IMPORT_STATUS.keys.map(&:to_s) - ['started', 'file_created'].freeze + ['in_progress'].freeze
 
-  WRAP_PARAMS = [:customer_import, exclude: [], format: [:json, :multipart_form]].freeze
-  LOAD_OBJECT_EXCEPT = [:status]
+  WRAP_PARAMS = [:api_customer_import, exclude: [], format: [:json, :multipart_form]].freeze
 
   INVALID_CSV_FILE_ERROR = { file: :invalid_csv_file }.freeze
   IMPORT_STARTED = { import_status: Admin::DataImport::IMPORT_STATUS[:started] }.freeze
@@ -16,6 +17,7 @@ module CustomerImportConstants
   ALLOWED_CONTENT_TYPE_FOR_ACTION = {
     create: [:multipart_form]
   }.freeze
+  NO_CONTENT_TYPE_REQUIRED = [:cancel].freeze
   ACCEPTED_FILE_TYPE = { accepted: 'CSV' }.freeze
   CSV_FILE_EXTENSION_REGEX = /.*\.csv\z/
 end

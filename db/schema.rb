@@ -139,7 +139,8 @@ ActiveRecord::Schema.define(version: 20181113055606) do
     t.text     "last_error"
   end
 
-  add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
+  add_index 'admin_data_imports', ['account_id', 'created_at'], name: 'index_data_imports_on_account_id_and_created_at'
+  add_index 'admin_data_imports', ['account_id', 'source', 'status'], name: 'index_data_exports_on_account_id_source_and_status'
 
   create_table "admin_sandbox_accounts", :force => true do |t|
     t.integer  "account_id",         :limit => 8

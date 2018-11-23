@@ -11,7 +11,7 @@ module ImportCsvUtil
   VALID_CLIENT_MANAGER_VALUES = ["yes", "true"]
   AND_SYMBOL = "&"
   IMPORT_BATCH_SIZE = 25
-
+  IMPORT_KEY_EXPIRY = 30.days.to_i
   #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
   def import_fields
@@ -34,19 +34,26 @@ module ImportCsvUtil
     file_path  = "import/#{Account.current.id}/#{type}/#{Time.now.to_i}/#{file_field.original_filename}"
     output, status= Open3.capture2('wc','-l', file_field.path)
     row_count = output.strip.split(' ')[0].to_i
-    save_row_count row_count, type
 
     AwsWrapper::S3Object.store(file_path, file_field.tempfile, S3_CONFIG[:bucket], :content_type => file_field.content_type)
-
     session[:map_fields] = {}
+    session[:map_fields][:row_count] = row_count
     session[:map_fields][:file_name] = file_field.original_filename
     session[:map_fields][:file_path] = file_path
   end
 
-  def save_row_count count, type
-    key = Object.const_get("#{type.upcase}_IMPORT_TOTAL_RECORDS") % {:account_id => 
-                                                                          Account.current.id}
-    set_others_redis_with_expiry(key, count, {})
+  def set_counts(type)
+    key = format(Object.const_get("#{type.upcase}_IMPORT_TOTAL_RECORDS"),
+                 account_id: Account.current.id,
+                 import_id: @import.id)
+    set_others_redis_with_expiry(key, @row_count, ex: IMPORT_KEY_EXPIRY)
+
+    ['IMPORT_FINISHED_RECORDS', 'IMPORT_FAILED_RECORDS'].each do |key_type|
+      key = format(Object.const_get("#{type.upcase}_#{key_type}"),
+                   account_id: Account.current.id,
+                   import_id: @import.id)
+      set_others_redis_with_expiry(key, 0, ex: IMPORT_KEY_EXPIRY)
+    end
   end
 
   def read_file file_location, header = false
@@ -62,9 +69,73 @@ module ImportCsvUtil
     raise e
   end
 
+  def fetch_import_details(import)
+    @import_item = { id: import.id,
+                     created_at: import.created_at,
+                     status: fetch_status_value(import) }
+    status = calculate_status(import)
+    @import_item.merge!(status)
+    @import_item[:failures] = fetch_failures(import)
+    @import_item
+  end
+
+  def calculate_status(import)
+    status = {}
+    key = format(Object.const_get("#{import_type.upcase}_IMPORT_TOTAL_RECORDS"),
+                 account_id: Account.current.id,
+                 import_id: import.id)
+    total_rows = get_others_redis_key(key).to_i
+    status[:total_records] = total_rows if total_rows.nonzero?
+
+    key = format(Object.const_get("#{import_type.upcase}_IMPORT_FINISHED_RECORDS"),
+                 account_id: Account.current.id,
+                 import_id: import.id)
+    completed_rows = get_others_redis_key(key).to_i
+    status[:completed_records] = completed_rows if completed_rows.nonzero?
+
+    if status[:completed_records] && fetch_status_value(import) == 'in_progress'
+      @import_item[:estimated_time_remaining] = calculate_time_remaining(import, status)
+    end
+    status
+  end
+
+  def fetch_failures(import)
+    failures = {}
+    key = format(Object.const_get("#{import_type.upcase}_IMPORT_FAILED_RECORDS"),
+                 account_id: Account.current.id,
+                 import_id: import.id)
+    failure_count = get_others_redis_key(key).to_i
+    failures[:count] = failure_count if failure_count.nonzero?
+    attachment = import.attachments.first
+    if attachment
+      url = attachment.attachment_url_for_api(true, :original, 5.minutes)
+      failures[:report] = url
+    end
+    failures
+  end
+
+  def calculate_time_remaining(import, status)
+    time_taken = (Time.now.utc - import.created_at.utc)
+    time_remaining = ((status[:total_records] - status[:completed_records]) * time_taken) / (status[:completed_records])
+    [time_remaining / 3600, time_remaining / 60 % 60,
+      time_remaining % 60].map { |t| t.to_i.to_s.rjust(2, '0') }.join(':')
+  end
+
+  def fetch_status_value(import)
+    if in_progress_values.include?(import.import_status)
+      'in_progress'
+    else
+      Admin::DataImport::IMPORT_STATUS.key(import.import_status)
+    end
+  end
+
+  def in_progress_values
+    Admin::DataImport::IMPORT_STATUS.values_at(*Admin::DataImport::IN_PROGRESS_STATUS)
+  end
 
   def file_info
     @file_name = session[:map_fields][:file_name]
+    @row_count = session[:map_fields][:row_count]
     @file_location = session[:map_fields][:file_path]
   end
 
@@ -82,6 +153,10 @@ module ImportCsvUtil
 
   def file_location
     session[:map_fields][:file_path]
+  end
+
+  def row_count
+    @row_count ||= session[:map_fields][:row_count]
   end
 
   def delete_import_file(file_location)

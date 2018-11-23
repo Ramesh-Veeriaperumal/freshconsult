@@ -160,8 +160,12 @@
   $ref: ./contacts/export_status.yaml
 /contacts/quick_create:
   $ref: ./contacts/quick_create.yaml
-/contacts/import:
-  $ref: ./contacts/import_crud.yaml
+/contacts/imports:
+  $ref: ./contact_imports/list_and_create.yaml
+/contacts/imports/{id}:
+  $ref: ./contact_imports/crud.yaml
+/contacts/imports/{id}/cancel:
+  $ref: ./contact_imports/cancel.yaml
 /contacts/{id}/timeline:
   $ref: ./contacts/timeline.yaml
 
@@ -177,6 +181,12 @@
   $ref: ./companies/export_status.yaml
 /companies/bulk_delete:
   $ref: ./companies/bulk_delete.yaml
+/companies/imports:
+  $ref: ./company_imports/list_and_create.yaml
+/companies/imports/{id}:
+  $ref: ./company_imports/crud.yaml
+/companies/imports/{id}/cancel:
+  $ref: ./company_imports/cancel.yaml
 
 /attachments/{id}:
   $ref: ./attachments/crud.yaml

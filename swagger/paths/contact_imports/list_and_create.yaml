@@ -1,0 +1,45 @@
+get:
+  tags: [contact import]
+  summary: List of imports
+  description: Responds with list of imports.
+  parameters:
+    - name: status
+      type: string
+      description: status of import (contact/company)
+      in: query
+  responses:
+    200:
+      description: Status of imports
+      schema:
+        $ref: '#/definitions/customer_import_list_response'
+    404:
+      description: Import not exists
+    400:
+      description: Validation error
+post:
+  tags: [contact import]
+  summary: Create import
+  description: To schedule import of contacts
+  consumes:
+    - multipart/form-data
+  parameters:
+    - name: file
+      in: formData
+      description: file to upload
+      required: true
+      type: file
+    - name: fields
+      in: formData
+      type: string
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/customer_import_create_response'
+    400:
+      description: Validation error
+    401:
+      description: Unauthorized action
+    429:
+      description: Existing import in progress
+ 

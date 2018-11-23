@@ -416,6 +416,7 @@ Authority::Authorization::PrivilegeList.build do
     # Used by V2 API
     resource :"api_contact", :only => [:create, :update]
     resource :"api_company", :only => [:create, :update]
+    resource :api_customer_import, only: [:index, :create, :show, :cancel]
 
     # Used by API V2 Search
     resource :"api_search/contact", :only => [:index]
