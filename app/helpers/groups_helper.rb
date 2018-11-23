@@ -17,5 +17,4 @@ module GroupsHelper
       { id: agent.id, value: agent.name, text: agent.name }
     end
   end
-
 end

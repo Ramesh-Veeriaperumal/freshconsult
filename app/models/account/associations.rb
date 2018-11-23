@@ -162,6 +162,7 @@ class Account < ActiveRecord::Base
   has_many :email_notifications
   has_many :email_notification_agents
   has_many :groups
+  has_many :group_types, class_name: 'GroupType', dependent: :destroy
   has_many :agent_groups
   has_many :forum_categories, :order => "position"
 

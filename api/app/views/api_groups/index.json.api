@@ -1,3 +1,8 @@
+group_types = Account.current.group_types_from_cache
+group_type_name = {}
+group_types.each do |group_type|
+  group_type_name[group_type.group_type_id] = group_type.name
+end
 JSON.generate(@items.map do |group|
   response_hash = {
     id: group.id,
@@ -6,6 +11,7 @@ JSON.generate(@items.map do |group|
     escalate_to: group.escalate_to,
     unassigned_for: group.unassigned_for,
     business_hour_id: group.business_hour_id,
+    group_type: group_type_name[group.group_type],
     created_at: group.created_at.try(:utc),
     updated_at: group.updated_at.try(:utc)
   }

@@ -11,6 +11,7 @@ class Group < ActiveRecord::Base
     g.add :email_on_assign
     g.add :escalate_to
     g.add :assign_time
+    g.add :group_type
     g.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
     g.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
     g.add :import_id

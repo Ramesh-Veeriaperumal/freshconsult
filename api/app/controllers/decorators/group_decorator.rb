@@ -1,5 +1,6 @@
 class GroupDecorator < ApiDecorator
-  delegate :id, :name, :description, :escalate_to, to: :record
+  delegate :id, :name, :description, :escalate_to, :group_type, to: :record
+
 
   def round_robin_enabled?
     Account.current.features? :round_robin
