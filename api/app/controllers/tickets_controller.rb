@@ -29,7 +29,7 @@ class TicketsController < ApiApplicationController
     return render_request_error(:recipient_limit_exceeded, 429) if recipients_limit_exceeded?
     ticket_delegator = ticket_delegator_class.new(@item, ticket_fields: @ticket_fields,
       custom_fields: params[cname][:custom_field], tags: cname_params[:tags],
-      company_id: params[cname][:company_id], parent_attachment_params: parent_attachment_params, 
+      company_id: params[cname][:company_id], parent_attachment_params: parent_attachment_params,
       inline_attachment_ids: @inline_attachment_ids)
     if !ticket_delegator.valid?(:create)
       render_custom_errors(ticket_delegator, true)
@@ -202,7 +202,7 @@ class TicketsController < ApiApplicationController
       preload_options = [:schema_less_ticket, :flexifield, :tags]
       @ticket_filter.include_array.each do |assoc|
         preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc.to_sym] || assoc)
-        increment_api_credit_by(2)
+        increment_api_credit_by(2) unless (assoc.to_s == DESCRIPTION && !current_account.description_by_request_enabled?)
       end
       Rails.logger.info ":::preloads: #{preload_options.inspect}"
       preload_options
