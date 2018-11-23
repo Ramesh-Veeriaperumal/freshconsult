@@ -4499,6 +4499,7 @@ en:
     tickets_completed: "%{count} tickets completed"
     ratio_tickets_completed: "%{count} / %{total} tickets completed"
   group:
+    group_type: Group Type
     no_group_info: You haven’t created any groups.
     sbrr:
       manage_skills: Manage Skills

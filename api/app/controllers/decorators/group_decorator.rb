@@ -1,6 +1,7 @@
 class GroupDecorator < ApiDecorator
+
   include GroupConstants
-  delegate :id, :name, :description, :escalate_to, to: :record
+  delegate :id, :name, :description, :escalate_to, :group_type, to: :record
 
   def initialize(record, options)
     super(record)
@@ -21,6 +22,7 @@ class GroupDecorator < ApiDecorator
       unassigned_for: unassigned_for,
       business_hour_id: business_hour_id,
       agent_ids: agent_ids,
+      group_type: GroupType.group_type_name(record.group_type),
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc)
     }.merge(record.round_robin_enabled? ? { auto_ticket_assign: auto_ticket_assign } : {})
@@ -31,6 +33,7 @@ class GroupDecorator < ApiDecorator
       id: record.id,
       name: record.name,
       agent_ids: agent_ids,
+      group_type: GroupType.group_type_name(record.group_type),
       assignment_type: assignment_type
       }
       if round_robin_enabled? && assignment_type == ROUND_ROBIN_ASSIGNMENT     
@@ -122,6 +125,7 @@ class GroupDecorator < ApiDecorator
     escalate_to: record.escalate_to,
     unassigned_for: unassigned_for,
     agent_ids: record.agent_ids,
+    group_type: GroupType.group_type_name(record.group_type),
     assignment_type: assignment_type,    
     created_at: created_at.try(:utc),
     updated_at: updated_at.try(:utc)    

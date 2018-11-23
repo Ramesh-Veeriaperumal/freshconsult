@@ -20,6 +20,7 @@ class Group < ActiveRecord::Base
   publishable on: [:create, :update, :destroy]
   
   before_save :reset_toggle_availability, :create_model_changes
+  before_save :set_default_type_if_needed, on: [:create]
   before_destroy :backup_user_ids
 
   after_commit :round_robin_actions, :clear_cache
@@ -62,7 +63,7 @@ class Group < ActiveRecord::Base
 
   attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
                    :ticket_assign_type, :toggle_availability, :business_calendar_id, :agent_groups_attributes,
-                   :capping_limit
+                   :capping_limit, :group_type
 
   attr_accessor :capping_enabled
 
@@ -218,6 +219,17 @@ class Group < ActiveRecord::Base
 
   private
 
+    def self.api_filter(group_filter)
+      {
+        'field_agent_group': {
+          conditions: { group_type: group_filter.group_type }
+        },
+        'support_agent_group': {
+          conditions: { group_type: group_filter.group_type }
+        }
+      }
+    end    
+
     def capping_limit_change
       return false if !capping_limit_changed?
       ((capping_limit_changes[1] - capping_limit_changes[0]) > 0) ? :increased : :decreased
@@ -261,5 +273,8 @@ class Group < ActiveRecord::Base
         Thread.current[:agent_changes]=[agent_info]
     end
 
-    
+    def set_default_type_if_needed
+      self.group_type = GroupType.group_type_id(GroupConstants::SUPPORT_GROUP_NAME) unless self.group_type
+    end
+      
 end

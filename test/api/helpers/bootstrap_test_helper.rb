@@ -170,6 +170,7 @@ module BootstrapTestHelper
       id: group.id,
       name: group.name,
       agent_ids: group.agents.map(&:id),
+      group_type: GroupType.group_type_name(group.group_type),
       assignment_type: group_assignment_type(group)        
     }
     if round_robin_enabled? && group_assignment_type(group) == GroupConstants::ROUND_ROBIN_ASSIGNMENT

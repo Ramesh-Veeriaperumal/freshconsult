@@ -25,11 +25,26 @@ class ApiGroupsController < ApiApplicationController
   end
 
   private
+
+    def validate_filter_params
+      params.permit(*INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
+      @group_filter = GroupFilterValidation.new(params)
+      render_errors(@group_filter.errors, @group_filter.error_options) unless @group_filter.valid?
+    end
+
     def validate_params
-      group_params = Account.current.features?(:round_robin) ? FIELDS : FIELDS_WITHOUT_TICKET_ASSIGN
+      group_params = if update?
+      current_account.features?(:round_robin) ? UPDATE_FIELDS : UPDATE_FIELDS_WITHOUT_TICKET_ASSIGN
+      else
+        current_account.features?(:round_robin) ? FIELDS : FIELDS_WITHOUT_TICKET_ASSIGN
+      end
       params[cname].permit(*group_params)
       group = ApiGroupValidation.new(params[cname], @item)
-      render_errors group.errors, group.error_options unless group.valid?
+      if create?
+        render_errors group.errors, group.error_options unless group.valid?(:create)
+      else
+        render_errors group.errors, group.error_options unless group.valid?
+      end
     end
 
     def load_object
@@ -47,13 +62,17 @@ class ApiGroupsController < ApiApplicationController
     end
 
     def load_objects
-      super(scoper.sort_by { |x| x.name.downcase })
+      super(groups_filter(current_account.groups).order(:name))
     end
 
     def sanitize_params
+      if params[cname][:group_type].present?
+        group_type_id = GroupType.group_type_id(params[cname][:group_type])
+        params[cname][:group_type] = group_type_id
+      end
       params[cname][:unassigned_for] = UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]]
       ParamsHelper.assign_and_clean_params({ unassigned_for: :assign_time, auto_ticket_assign: :ticket_assign_type },
-                                           params[cname])
+      params[cname])
     end
 
     def prepare_agents
@@ -78,7 +97,15 @@ class ApiGroupsController < ApiApplicationController
       end
     end
 
-   def render_success_response
+    def groups_filter(groups)
+      @group_filter.conditions.each do |key|
+        clause = groups.api_filter(@group_filter)[key.to_sym] || {}
+        groups = groups.where("group_type" => GroupType.group_type_id(clause[:conditions][:group_type]))
+      end
+      groups
+    end
+  
+    def render_success_response
       render_201_with_location(item_id: @item.id)
-   end 
+    end 
 end

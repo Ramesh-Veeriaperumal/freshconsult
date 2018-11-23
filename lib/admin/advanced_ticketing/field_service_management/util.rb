@@ -3,6 +3,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     include Admin::AdvancedTicketing::FieldServiceManagement::Constant
     include Helpdesk::Ticketfields::ControllerMethods
     include Cache::Memcache::Helpdesk::Section
+    include GroupConstants
 
     private
 
@@ -11,6 +12,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         reserve_fsm_custom_fields
         create_section
         create_field_agent_type
+        add_data_to_group_type
         expire_cache
 
         Account.current.add_feature(:parent_child_tickets)
@@ -117,7 +119,20 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
         section.save
       end
-	  
+      
+      def add_data_to_group_type
+        begin
+          account = Account.current
+          group_type_id = Account.current.group_types.last.group_type_id + 1
+          group_type = account.group_types.create(:name => FIELD_GROUP_NAME, :group_type_id => group_type_id, :label => FIELD_GROUP_NAME, :account_id => account.id, :deleted => false, :default => true )
+          group_type.save!
+        rescue Exception => e
+          error_message = "Group type creation failed for account:: #{account.id}. Group type: #{FIELD_GROUP_NAME} Exception:: #{e.message} \n#{e.backtrace.to_a.join("\n")}"
+          Rails.logger.error(error_message)
+          NewRelic::Agent.notice_error(error_message)
+        end
+      end
+
       def create_field_agent_type
         agent_type = AgentType.create_agent_type(Account.current, FIELD_AGENT)
         raise "Field agent type did not get created" unless agent_type
@@ -128,6 +143,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         destroy_sections
         destroy_service_ticket_type
         destroy_field_agent
+        destroy_field_group
       end
 
       def destroy_custom_fields
@@ -163,6 +179,10 @@ module Admin::AdvancedTicketing::FieldServiceManagement
 
       def destroy_field_agent
         AgentType.destroy_agent_type(Account.current, FIELD_AGENT)
+      end
+
+      def destroy_field_group
+        GroupType.destroy_group_type(Account.current, FIELD_GROUP_NAME)
       end
 
       def expire_cache
