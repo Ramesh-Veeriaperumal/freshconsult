@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class Tickets::BotResponseControllerTest < ActionController::TestCase
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   include BotTestHelper
   include BotResponseTestHelper
 

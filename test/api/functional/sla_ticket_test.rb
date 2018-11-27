@@ -5,7 +5,7 @@ require 'webmock/minitest'
 %w[account_test_helper.rb business_calendars_helper.rb].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 ['tickets_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 class TicketsControllerTest < ActionController::TestCase
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   include SlaTestHelper
   include AccountTestHelper
   include BusinessCalendarsTestHelper

@@ -1,12 +1,12 @@
 require 'webmock/minitest'
 require_relative '../../test_helper'
 ['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'ticket_template_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
-['account_test_helper.rb', 'shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
-require Rails.root.join('test', 'api', 'helpers', 'bot_response_test_helper.rb')
+['account_test_helper.rb', 'shared_ownership_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+['tickets_test_helper.rb', 'bot_response_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 
 module Ember
   class TicketsControllerTest < ActionController::TestCase
-    include TicketsTestHelper
+    include ApiTicketsTestHelper
     include ScenarioAutomationsTestHelper
     include AttachmentsTestHelper
     include GroupHelper
@@ -919,7 +919,6 @@ module Ember
     end
 
     def test_create_with_section_fields_with_parent_custom_dropdown_and_child_dependent
-      skip("ticket tests failing")
       dropdown_value = CUSTOM_FIELDS_CHOICES.sample
       sections = [
         {
@@ -2296,7 +2295,6 @@ module Ember
     end
 
     def test_update_with_section_fields_parent_custom_dropdown_and_child_dependent
-      skip("ticket tests failing")
       dropdown_value = CUSTOM_FIELDS_CHOICES.sample
       sections = [
         {
@@ -2659,6 +2657,7 @@ module Ember
       agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)
       ticket = Helpdesk::Ticket.last
       params_hash = ticket_params_hash.merge(email: agent.email, related_ticket_ids: [ticket.display_id])
+      disable_adv_ticketing([:link_tickets])
       post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('related_ticket_ids', :require_feature_for_attribute, {
@@ -2667,10 +2666,10 @@ module Ember
     end
 
     def test_child_create_without_feature
-      skip("ticket tests failing")
       create_parent_ticket
       parent_ticket = Account.current.tickets.last
       params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
+      disable_adv_ticketing([:parent_child_tickets])
       post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('parent_id', :require_feature_for_attribute, {
@@ -2679,7 +2678,6 @@ module Ember
     end
 
     def test_child_create
-      skip("ticket tests failing")
       enable_adv_ticketing([:parent_child_tickets]) do
         Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
         create_parent_ticket
@@ -2751,7 +2749,6 @@ module Ember
     end
 
     def test_create_child_with_some_parent_attachments
-      skip("ticket tests failing")
       enable_adv_ticketing([:parent_child_tickets]) do
         parent = create_ticket_with_attachments(1, 5)
         params = ticket_params_hash.merge(parent_id: parent.display_id, attachment_ids: parent.attachments.map(&:id).first(1))
@@ -2765,7 +2762,6 @@ module Ember
     end
 
     def test_create_child_with_some_parent_attachments_some_new_attachments
-      skip("ticket tests failing")
       enable_adv_ticketing([:parent_child_tickets]) do
         parent = create_ticket_with_attachments(1, 5)
         parent_attachment_ids = parent.attachments.map(&:id).first(1)
@@ -3145,7 +3141,6 @@ module Ember
     end
 
     def test_create_child_with_invalid_parent_template
-      skip("ticket tests failing")
       enable_adv_ticketing([:parent_child_tickets]) do
         create_parent_child_template(1)
         child_template_ids = @child_templates.map(&:id)
@@ -3159,7 +3154,6 @@ module Ember
     end
 
     def test_create_child_with_inaccessible_parent_template
-      skip("ticket tests failing")
       enable_adv_ticketing([:parent_child_tickets]) do
         agent = add_test_agent(@account)
         @groups = []
@@ -3184,7 +3178,6 @@ module Ember
     end
 
     def test_create_child_with_invalid_child_template
-      skip("ticket tests failing")
       enable_adv_ticketing([:parent_child_tickets]) do
         create_parent_child_template(1)
         child_template_ids = @child_templates.map(&:id)
@@ -3487,7 +3480,6 @@ module Ember
     end
 
     def test_unlink_related_ticket_from_tracker
-      skip("ticket tests failing")
       enable_adv_ticketing([:link_tickets]) do
         create_linked_tickets
         Helpdesk::Ticket.any_instance.stubs(:associates).returns([@tracker_id])
@@ -3512,7 +3504,6 @@ module Ember
     end
 
     def test_unlink_ticket_without_permission
-      skip("ticket tests failing")
       enable_adv_ticketing([:link_tickets]) do
         create_linked_tickets
         user_stub_ticket_permission
@@ -3542,7 +3533,6 @@ module Ember
     end
 
     def test_unlink_related_ticket_from_non_tracker
-      skip("ticket tests failing")
       enable_adv_ticketing([:link_tickets]) do
         create_linked_tickets
         non_tracker_id = create_ticket.display_id
@@ -3554,7 +3544,6 @@ module Ember
     end
 
     def test_unlink_without_both_tracker_and_related_permission
-      skip("ticket tests failing")
       enable_adv_ticketing([:link_tickets]) do
         ticket_restricted_agent = add_agent_to_group(nil,
                                                    ticket_permission = 3, role_id = @account.roles.agent.first.id)
@@ -3568,7 +3557,6 @@ module Ember
     end
 
     def test_unlink_with_related_permission_and_without_tracker_permission
-      skip("ticket tests failing")
       enable_adv_ticketing([:link_tickets]) do
         ticket_restricted_agent = add_agent_to_group(nil,
                                                    ticket_permission = 3, role_id = @account.roles.agent.first.id)
@@ -3584,7 +3572,6 @@ module Ember
     end
 
     def test_unlink_without_related_ticket_permission
-      skip("ticket tests failing")
       enable_adv_ticketing([:link_tickets]) do
         ticket_restricted_agent = add_agent_to_group(nil,
                                                    ticket_permission = 3, role_id = @account.roles.agent.first.id)

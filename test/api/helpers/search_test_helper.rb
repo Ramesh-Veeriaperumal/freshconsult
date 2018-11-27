@@ -1,7 +1,7 @@
 ['users_test_helper.rb', 'tickets_test_helper.rb', 'companies_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 ['contact_fields_helper.rb', 'ticket_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module SearchTestHelper
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   include UsersTestHelper
   include CompaniesTestHelper
   include ContactFieldsHelper

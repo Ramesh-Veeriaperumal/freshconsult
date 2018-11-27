@@ -1,7 +1,7 @@
 ['ticket_fields_test_helper.rb', 'conversations_test_helper.rb', 'attachments_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 ['ticket_helper.rb', 'company_helper.rb', 'group_helper.rb', 'note_helper.rb', 'email_configs_helper.rb', 'products_helper.rb', 'freshfone_spec_helper.rb', 'freshcaller_spec_helper.rb', 'forum_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require "#{Rails.root}/spec/helpers/social_tickets_helper.rb"
-module TicketsTestHelper
+module ApiTicketsTestHelper
   include GroupHelper
   include ConversationsTestHelper
   include TicketFieldsTestHelper

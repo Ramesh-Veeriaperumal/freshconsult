@@ -3,7 +3,7 @@ Dir["#{Rails.root}/test/core/helpers/*.rb"].each { |file| require file }
 class TicketsControllerTest < ActionController::TestCase
   include AccountTestHelper
   include SharedOwnershipTestHelper
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
 
   def setup
     super

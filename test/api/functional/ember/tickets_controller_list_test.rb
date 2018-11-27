@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 ['account_test_helper.rb', 'shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 module Ember
   class TicketsControllerTest < ActionController::TestCase
-    include TicketsTestHelper
+    include ApiTicketsTestHelper
     include TicketFieldsTestHelper
     include ProductsHelper
     include CompanyHelper

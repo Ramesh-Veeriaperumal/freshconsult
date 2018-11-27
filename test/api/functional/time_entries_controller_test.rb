@@ -3,6 +3,15 @@ require_relative '../test_helper'
 class TimeEntriesControllerTest < ActionController::TestCase
   include TimeEntriesTestHelper
 
+  def setup
+    super
+    Account.any_instance.stubs(:enabled_features_list).returns([:timesheets])
+  end
+
+  def teardown
+    Account.any_instance.unstub(:enabled_features_list)
+  end
+
   def wrap_cname(params = {})
     { time_entry: params }
   end
@@ -55,6 +64,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_destroy_invalid_id
     delete :destroy, controller_params(id: 78_979)
+    puts response.body.inspect
     assert_response :missing
   end
 
@@ -123,11 +133,11 @@ class TimeEntriesControllerTest < ActionController::TestCase
   end
 
   def test_index_without_feature
-    @account.class.any_instance.stubs(:has_feature?).returns(false)
-    get :index, controller_params(billable: 0)
+    Account.any_instance.stubs(:enabled_features_list).returns([])
+    get :index, controller_params(billable: 'false')
     match_json(request_error_pattern(:require_feature, feature: 'Timesheets'))
     assert_response 403
-    @account.class.any_instance.unstub(:has_feature?)
+    Account.any_instance.unstub(:enabled_features_list)
   end
 
   def test_index
@@ -913,11 +923,11 @@ class TimeEntriesControllerTest < ActionController::TestCase
 
   def test_update_without_feature
     ts = create_time_entry(timer_running: true)
-    @account.class.any_instance.stubs(:has_feature?).returns(false)
+    Account.any_instance.stubs(:enabled_features_list).returns([])
     put :update, construct_params({ id: ts.id }, time_spent: '09:00', note: 'test note', billable: true)
     match_json(request_error_pattern(:require_feature, feature: 'Timesheets'))
     assert_response 403
-    @account.class.any_instance.unstub(:has_feature?)
+    Account.any_instance.unstub(:enabled_features_list)
   end
 
   def test_update_with_ticket_trashed
@@ -969,6 +979,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
       time = Time.zone.now - 1.hour - 23.minutes
       timer.update_column(:start_time, time)
       put :toggle_timer, construct_params({ id: timer.id }, {})
+      puts response.body.inspect
       assert_response 200
       match_json(time_entry_pattern({ timer_running: false, time_spent: '01:23' }, timer.reload))
     end
@@ -1169,6 +1180,7 @@ class TimeEntriesControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:shared_ownership_enabled?).returns(true)
     Account.any_instance.stubs(:features?).with(:timesheets).returns(true)
     get :index, controller_params({})
+    puts response.body.inspect
     assert_response 200
     assert_equal expected, JSON.parse(response.body).count
   ensure

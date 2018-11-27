@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   include InstalledApplicationsTestHelper
   include TimeEntriesTestHelper
   include IntegratedResourcesTestHelper

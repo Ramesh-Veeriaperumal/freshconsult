@@ -6,7 +6,7 @@ module Ember
     class ActivitiesControllerTest < ActionController::TestCase
       include DashboardTestHelper
       include DashboardActivitiesTestHelper
-      include TicketsTestHelper
+      include ApiTicketsTestHelper
       include TicketActivitiesTestHelper
       include PrivilegesHelper
       include UsersTestHelper

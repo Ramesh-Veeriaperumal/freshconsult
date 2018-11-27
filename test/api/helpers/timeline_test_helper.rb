@@ -1,7 +1,7 @@
 ['tickets_test_helper.rb'].each { |file| require Rails.root.join('test/api/helpers', file) }
 
 module TimelineTestHelper
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
 
   def create_timeline_sample_data(sample_user, count = 1)
     sample_data = []

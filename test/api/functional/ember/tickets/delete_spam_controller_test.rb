@@ -2,7 +2,7 @@ require_relative '../../../test_helper'
 module Ember
   module Tickets
     class DeleteSpamControllerTest < ActionController::TestCase
-      include TicketsTestHelper
+      include ApiTicketsTestHelper
 
       BULK_CREATE_TICKET_COUNT = 2
 
@@ -51,7 +51,6 @@ module Ember
       end
 
       def test_delete_forever_success
-        skip("ticket tests failing")
         deleted_ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash.merge(deleted: true))
         spam_ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash.merge(spam: true))
         ticket_ids = deleted_ticket_ids + spam_ticket_ids
@@ -90,7 +89,6 @@ module Ember
       end
 
       def test_restore_with_unauthorized_ticket_id
-        skip("ticket tests failing")
         ticket = create_ticket(deleted: true)
         User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
         User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
@@ -102,7 +100,6 @@ module Ember
       end
 
       def test_restore_with_valid_ticket_id
-        skip("ticket tests failing")
         tags = Faker::Lorem.words(3).uniq
         ticket = create_ticket(tag_names: tags.join(','))
         delete :destroy, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
@@ -130,7 +127,6 @@ module Ember
       end
 
       def test_spam_with_errors
-        skip("ticket tests failing")
         ticket = create_ticket(spam: true)
         put :spam, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)
         assert_response 404
@@ -150,7 +146,6 @@ module Ember
       end
 
       def test_unspam_with_unauthorized_ticket_id
-        skip("ticket tests failing")
         ticket = create_ticket(spam: true)
         User.any_instance.stubs(:can_view_all_tickets?).returns(false).at_most_once
         User.any_instance.stubs(:group_ticket_permission).returns(false).at_most_once
@@ -168,7 +163,6 @@ module Ember
       end
 
       def test_unspam_with_valid_ticket_id
-        skip("ticket tests failing")
         tags = Faker::Lorem.words(3).uniq
         ticket = create_ticket(tag_names: tags.join(','))
         put :spam, construct_params({ version: 'private' }, false).merge(id: ticket.display_id)

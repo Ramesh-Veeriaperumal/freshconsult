@@ -4,7 +4,7 @@ require 'sidekiq/testing'
 class Archive::ConversationsControllerTest < ActionController::TestCase
   include ArchiveTicketTestHelper
   include ConversationsTestHelper
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   include TicketHelper
 
   ARCHIVE_DAYS = 120

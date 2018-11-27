@@ -185,7 +185,7 @@ module TicketFieldsTestHelper
                                                 flexifield_order: 6,
                                                 flexifield_coltype: 'dropdown',
                                                 account_id: @account.id)
-    flexifield_def_entry[0].save
+    flexifield_def_entry[0].save unless Account.current.ticket_field_def.flexifield_def_entries.pluck(:flexifield_name).include?("ffs_0#{id || 7}")
 
     parent_custom_field = FactoryGirl.build(:ticket_field, account_id: @account.id,
                                                            name: "#{labels[0].downcase}_#{@account.id}",
@@ -209,7 +209,7 @@ module TicketFieldsTestHelper
       is_saved = create_nested_field(flexifield_def_entry[nested_field_id], parent_custom_field, nested_field_params.merge(type: 'nested_field'), @account)
       construct_child_levels(flexifield_def_entry[nested_field_id], parent_custom_field, nested_field_params) if is_saved
 
-      flexifield_def_entry[nested_field_id].save
+      flexifield_def_entry[nested_field_id].save unless Account.current.ticket_field_def.flexifield_def_entries.pluck(:flexifield_name).include?("ffs_0#{nested_field_id + (id || 7)}")
     end
 
     nested_field_vals = []

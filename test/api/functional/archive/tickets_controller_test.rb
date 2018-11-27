@@ -4,7 +4,7 @@ Sidekiq::Testing.fake!
 
 class Archive::TicketsControllerTest < ActionController::TestCase
   include ArchiveTicketTestHelper
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   include TicketHelper
   include ContactFieldsHelper
 

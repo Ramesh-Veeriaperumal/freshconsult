@@ -2,7 +2,7 @@ require_relative '../../../test_helper'
 module Ember
   module Tickets
     class RequesterControllerTest < ActionController::TestCase
-      include TicketsTestHelper
+      include ApiTicketsTestHelper
       include ContactFieldsHelper
       include CompaniesTestHelper
 

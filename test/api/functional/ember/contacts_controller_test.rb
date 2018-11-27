@@ -7,7 +7,7 @@ module Ember
     include UsersTestHelper
     include AttachmentsTestHelper
     include ContactFieldsHelper
-    include TicketsTestHelper
+    include ApiTicketsTestHelper
     include ArchiveTicketTestHelper
     include CustomFieldsTestHelper
     include TimelineTestHelper

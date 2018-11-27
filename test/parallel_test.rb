@@ -84,6 +84,7 @@ number_of_parallel_jobs.to_i.times do |i|
     end
     `echo 'rescue Exception => e' >> test/api/suites/#{temp_suite}`
     `echo '  puts "Process exitted because of the exception"' >> test/api/suites/#{temp_suite}`
+    `echo '  puts e.inspect' >> test/api/suites/#{temp_suite}`
     `echo '  puts e.backtrace' >> test/api/suites/#{temp_suite}`
     `echo '  exit 1' >> test/api/suites/#{temp_suite}`
     `echo 'end' >> test/api/suites/#{temp_suite}`
@@ -118,4 +119,5 @@ number_of_parallel_jobs.to_i.times do |i|
   end
   `rm -f test/tmp_result_#{i}.log`
 end
-exit 1 if is_failed
+
+raise "Something Went Wrong. A #{suite_type} process failed" if is_failed
