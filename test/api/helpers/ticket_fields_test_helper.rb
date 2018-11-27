@@ -327,17 +327,18 @@ module TicketFieldsTestHelper
   end
 
 
-  def sample_status_ticket_fields(locale = 'en', val, position)
+  def sample_status_ticket_fields(locale = 'en', val, cx_display_name, position)
     current_locale = I18n.locale
     I18n.locale = locale
+    val = I18n.t(val) if val == "open"
     field_options = { :field_type => "default_status", :label => "Status", :label_in_porta => "Status", :description => "dads", :position => 6, :active => true, :required => true, :required_for_closure => false, :visible_in_portal => true, :editable_in_portal => false, :required_in_portal => false, 
-                    :choices => [ { "customer_display_name" => I18n.t("being_processed"), "position" => 1, "name" => I18n.t("open"), "status_id" => 2, "deleted" => false }, 
+                    :choices => [ { "customer_display_name" => cx_display_name, "position" => 1, "name" => I18n.t("open"), "status_id" => 2, "deleted" => false }, 
                     { "customer_display_name" => I18n.t("awaiting_your_reply"), "stop_sla_timer" => true, "position" => 2, "name" => I18n.t("pending"), "status_id" => 3, "deleted" => false}, 
                     { "customer_display_name" => I18n.t("this_ticket_has_been_resolved"), "position" => 3, "name" => I18n.t("resolved"), "status_id" => 4, "deleted" => false}, 
                     { "customer_display_name" => I18n.t("this_ticket_has_been_closed"), "position" => 4, "name" => I18n.t("closed"), "status_id" => 5, "deleted" => false}, 
                     { "customer_display_name" => "Awaiting your Reply", "stop_sla_timer" => true, "position" => 5, "name" => "Waiting on Customer", "status_id" => 6, "deleted" => false}, 
                     { "customer_display_name" => "Being Processed", "stop_sla_timer" => false, "position" => 6, "name" => "Waiting on Third Party", "status_id" => 7, "deleted"=> false}, 
-                    { "customer_display_name" => I18n.t("awaiting_your_reply"), "stop_sla_timer" => false, "position" => position, "name"=> I18n.t(val), "deleted"=>false } ], 
+                    { "customer_display_name" => I18n.t("awaiting_your_reply"), "stop_sla_timer" => false, "position" => position, "name"=> val, "deleted"=>false } ], 
                     :field_options=>{}, :denormalized_field=>true, :action=>"edit" }
     I18n.locale = current_locale
     field_options
