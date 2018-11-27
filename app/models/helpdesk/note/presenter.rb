@@ -3,7 +3,7 @@ class Helpdesk::Note < ActiveRecord::Base
   DATETIME_FIELDS = ["last_modified_timestamp", "created_at", "updated_at"]
   BODY_HASH_FIELDS = ["body", "body_html", "full_text", "full_text_html"]
   EMAIL_FIELDS = ["from_email", "to_emails", "cc_emails", "bcc_emails"]
-  ASSOCIATION_REFS_BASED_ON_TYPE = ["feedback", "tweet", "fb_post"]
+  # ASSOCIATION_REFS_BASED_ON_TYPE = ["tweet", "fb_post"]
   DONT_CARE_FIELDS = ["body", "full_text"]
   DONT_CARE_VALUE = '*'.freeze
 
@@ -29,12 +29,20 @@ class Helpdesk::Note < ActiveRecord::Base
     (EMAIL_FIELDS + BODY_HASH_FIELDS).each do |key|
       t.add proc { |x| x.safe_send(key) }, as: key
     end
-    (ASSOCIATION_REFS_BASED_ON_TYPE).each do |key|
-      t.add proc { |x| x.safe_send(key).id }, as: "#{key}_id".to_sym, :if => proc { |x| x.safe_send(key) }
-    end
+
+    #association_ids
+    t.add :notable_display_id, as: :notable_id
+    t.add :notable_type
     t.add :user_id
-    t.add :ticket_id
     t.add proc { |x| x.attachments.map(&:id) }, as: :attachment_ids
+    t.add proc { |x| x.survey_result_assoc.id }, as: :feedback_id, :if => proc { |x| x.feedback? }
+
+    # the custom sources i.e. tweet, fb, others are custom sources and will be revisited.
+    # (ASSOCIATION_REFS_BASED_ON_TYPE).each do |key|
+    #   t.add proc { |x| x.safe_send(key).id }, as: "#{key}_id".to_sym, :if => proc { |x| x.safe_send(key) }
+    # end
+    # t.add proc { |x| x.freshfone_call.id }, as: :freshfone_call_id, :if => proc { |x| x.freshfone_call.present?}
+    # t.add proc { |x| x.freshcaller_call.id }, as: :freshcaller_call_id, :if => proc { |x| x.freshcaller_call.present?}
   end
 
   def category_hash
@@ -51,93 +59,74 @@ class Helpdesk::Note < ActiveRecord::Base
     }
   end
 
+  def survey_result_assoc
+    @survey_result_assoc ||= (survey_remark || custom_survey_remark).survey_result
+  end
+
+  # associations
   api_accessible :central_publish_associations do |t|
-    t.add proc { |x| x.notable }, as: :ticket, template: :central_publish
+    t.add :notable, template: :central_publish
     t.add :user, template: :central_publish
     t.add :attachments, template: :central_publish
-    t.add :tweet_hash, if: proc { |x| x.tweet.present? }
-    t.add :fb_post_hash, if: proc{ |x| x.fb_post.present? }
-    t.add :feedback_hash, if: proc{ |x| x.survey_remark.present? || x.custom_survey_remark.present? }
+    t.add :feedback_hash, as: :feedback, if: proc{ |x| x.feedback? }
+    # t.add :freshfone_call, template: :central_publish, if: proc { |x| x.freshfone_call.present? }
+    # t.add :freshcaller_call, template: :central_publish, if: proc { |x| x.freshcaller_call.present? }
+    # t.add :tweet_hash, as: :tweet, if: proc { |x| x.tweet.present? }
+    # t.add :fb_post_hash, as: :fb_post, if: proc{ |x| x.fb_post.present? }
   end
 
   api_accessible :central_publish_destroy do |t|
     t.add :id
-    t.add :ticket_id
+    t.add :notable_display_id, as: :notable_id
+    t.add :notable_type
     t.add :account_id
   end
 
-  def tweet_hash
-    twitter_handle = tweet.twitter_handle
+  # Internal methods used by presenter.
+  def notable_display_id
+    case notable_type
+      when 'Helpdesk::Ticket'
+          notable.display_id
+      when 'Helpdesk::ArchiveTicket'
+        Helpdesk::ArchiveTicket.unscoped { notable.display_id }
+    end
+  end
+
+  def feedback_hash
+    survey_rating = survey_result_assoc.class == SurveyResult ? survey_result_assoc.rating : survey_result_assoc.custom_rating
     {
-      "id": tweet.id,
-      "tweet_id": tweet.tweet_id,
-      "type": tweet.type,
-      "twitter_handle": {
-        "id": twitter_handle.id,
-        "state": {
-          "constant": twitter_handle.constant,
-          "name": Social::TwitterHandle::TWITTER_NAMES_BY_STATE_KEYS[twitter_handle.constant]
-        }
-      },
-      "stream_id": tweet.stream_id
+      "id": survey_result_assoc.id,
+      "rating": survey_rating,
+      "agent_id": survey_result_assoc.agent_id,
+      "group_id": survey_result_assoc.group_id,
+      "survey_id": survey_result_assoc.survey_id
     }
   end
 
-  def fb_post_hash
-    {
-      "id": fb_post.id,
-      "post_id": fb_post.post_id,
-      "msg_type": fb_post.msg_type,
-      "page": {
-        "name": fb_post.facebook_page.page_name,
-        "page_id": fb_post.facebook_page.page_id
-      }
-    }
-  end
 
-  # Has to be taken later as the relation is quite different.
-  # def freshcaller_hash
-  #   freshcaller_assoc = freshcaller_call || freshfone_call
-  #   recording_status = freshcaller_assoc.recording_status
+  # def tweet_hash
+  #   twitter_handle = tweet.twitter_handle
   #   {
-  #     "id": freshcaller_assoc.id,
-  #     "fc_call_id": freshcaller_assoc.fc_call_id,
-  #     "recording_status": {
-  #       "id": recording_status,
-  #       "name": Freshcaller::CALL::RECORDING_STATUS_NAMES_BY_KEY[recording_status]
+  #     "id": tweet.id,
+  #     "tweet_id": tweet.tweet_id,
+  #     "type": tweet.tweet_type,
+  #     "stream_id": tweet.stream_id,
+  #     "twitter_handle_id": twitter_handle.id
+  #   }
+  # end
+
+  # def fb_post_hash
+  #   {
+  #     "id": fb_post.id,
+  #     "post_id": fb_post.post_id,
+  #     "msg_type": fb_post.msg_type,
+  #     "page": {
+  #       "name": fb_post.facebook_page.page_name,
+  #       "page_id": fb_post.facebook_page.page_id
   #     }
   #   }
   # end
 
-  def feeback_hash
-    survey_remark_assoc = survey_remark || custom_survey_remark
-    survey_result_assoc = survey_remark_assoc.survey_result
-    survey_assoc = survey_remark_assoc.survey
-    {
-      "id": survey_result_assoc.id,
-      "rating": survey_result_assoc.rating,
-      "survey": {
-        "id": survey_assoc.id,
-        "title": survey_assoc.title,
-        "active": survey_assoc.active,
-        "default": survey_assoc.default,
-        "deleted": survey_assoc.deleted,
-
-      }
-    }
-  end
-
-  def ticket_id
-    belongs_to_ticket? ? notable.display_id : Helpdesk::ArchiveTicket.unscoped { notable.display_id }
-  end
-
-  def belongs_to_ticket?
-    notable_type == 'Helpdesk::Ticket'
-  end
-
-  def belongs_to_archive_ticket?
-    notable_type == 'Helpdesk::ArchiveTicket'
-  end
 
   # ************************************
   # METHOS USED BY CENTRAL PUBLISHER GEM.
