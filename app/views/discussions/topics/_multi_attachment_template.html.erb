@@ -41,7 +41,7 @@
          {{/if}}
   {{/if}}
   {{if (render_type=="error")}}
-     <div class="file-upload pull-left mr10 mb10 tooltip error error-file" title="Attachment failed - file > 15 MB">
+     <div class="file-upload pull-left mr10 mb10 tooltip error error-file" title="Attachment failed - file > ${window.attachmentSize} MB">
    <i class="ficon-notice file-close"></i> <span class="file-name"><span class="fname ellipsis">{{html Helpdesk.MultipleFileUpload.FilenameSplitter(files.name).fname}}</span><span class="ftype">.{{html Helpdesk.MultipleFileUpload.FilenameSplitter(files.name).type}}</span></span>
    <span class="file-size">({{html Helpdesk.MultipleFileUpload.formatFileSize(files.size)}})</span>
    </div>

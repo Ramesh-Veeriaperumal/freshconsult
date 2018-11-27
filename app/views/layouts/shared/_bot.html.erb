@@ -12,6 +12,7 @@
       s.setAttribute("data-env", "<%= BOT_CONFIG[:widget_code_env] %>");
       s.setAttribute("data-self-init", "<%= BotConstants::WIDGET_CODE_SELF_INIT %>");
       s.setAttribute("data-init-type", "<%= BotConstants::WIDGET_CODE_INIT_TYPE %>");
+      s.setAttribute("data-region", "<%= BOT_CONFIG[:widget_code_region] %>");
       if (c) {
         s.onreadystatechange = s.onload = function() {
           if (!loaded) {

@@ -5105,7 +5105,7 @@ en:
       fb_reply_info: "<a href='%{reply_url}'> Last Reply </a> by %{user_name}<br>%{created_on}"
       my_topic_reply: "Last Reply by <b>%{post_name}</b>, %{created_on}"
       topic_brief: "Posted by <b>%{user_name}</b>, %{created_on}"
-      last_post_brief: "<a href='%{last_post_url}'>%{link_label}</a> by %{user_name} %{created_on}"
+      last_post_brief: "<a href='%{last_post_url}'>%{link_label}</a> by %{user_name}, %{created_on}"
       best_answer: Best Answer
       matching_results: "Matching Topics Found"
       in_forum: "In: %{forum_name}"
@@ -11623,7 +11623,7 @@ en:
       post:
         approve: Approve
         approve_tooltip: Approve and Publish
-        ban_tooltip: Mark user and all his posts as Spam
+        ban_tooltip: Mark user and all their posts as Spam
         spam: Spam
     index:
       all_topics: All Activity
@@ -11777,7 +11777,7 @@ en:
       spam_actions:
         approve: Approve
         approve_tooltip: Approve and Publish
-        ban_tooltip: Mark user and all his posts as Spam
+        ban_tooltip: Mark user and all their posts as Spam
         ban_confirm: "Are you sure you want to delete the user and mark all his/her posts as Spam?"
         spam: Spam
       spam:

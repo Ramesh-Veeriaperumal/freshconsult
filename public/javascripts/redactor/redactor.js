@@ -246,6 +246,9 @@ var Redactor = function(element, options)
 							"h1", "h2", "h3", "h4", "h5", "h6",
 							"canvas", "figure", "figcaption",
 							"output", "section", "summary", "time", 'col' ],
+		nonAllowedAttributes: {
+		  img: ['onerror']
+		},
 		blackListedStyles: ["position"],
 		toolbarExternal: false,
 		buttonsCustom: {},
@@ -2041,6 +2044,7 @@ Redactor.prototype = {
 	// REMOVE TAGS
 	stripTags: function(html) {
 		var allowed = this.opts.allowedTags;
+		var nonAllowedAttributes = this.opts.nonAllowedAttributes;
 		// This is capture sytle tags when pasting from safari to chrome
 		//If this is done in firefox - a dangling pointer error occurs while redo after undo
 		if(($.browser.webkit == true) && (!(navigator.appVersion.indexOf("Win")!=-1)))
@@ -2048,9 +2052,17 @@ Redactor.prototype = {
 			allowed[allowed.length] = 'style';
 		}
 		var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
+		// Regex to select attributes from tags
+		var attributes = /(\S+\s?)=[\s"']?((?:.(?!["']?\s+(?:\S+)\s?=|[>"']))+.)[\s"']?/gi;
 		return html.replace(tags, function ($0, $1)
 		{
-			return $.inArray($1.toLowerCase(), allowed) > '-1' ? $0 : '';
+		  if ($.inArray($1.toLowerCase(), allowed) > '-1') {
+		    var tagName = $1;
+		    return $0.replace(attributes, function (match, $1) {
+		      return $.inArray($1.toLowerCase(), nonAllowedAttributes[tagName]) > '-1' ? '' : match;
+		    });
+		  }
+		  return '';
 		});
 	},
 

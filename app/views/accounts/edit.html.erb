@@ -147,28 +147,31 @@
 								</div>
 							<% end %>
 
-						    <div class="control-group account-branding-toggle">
-				              <%= f.label :account_branding, t('account.branding_toggle.title'), :class => "control-label" %>
-				              <div class="controls">
-				                <% unless current_account.subscription.trial_or_sprout_plan? %>
-				                    <%= f.fields_for :bitmap_features do |bm| %>
-				                        <%= bm.check_box :branding, {:id => 'account_branding_enabled', :checked => Account.current.branding_enabled?} %>
-				                        <div class="help-block"><%= t('account.branding_toggle.helpnote') %></div>
-				                    <% end %>
-
-				                <% else %>
-				                    <%= link_to "javascript:void(0)", :class => "btn" do %>
-				                        <span class='ficon-lock locked'></span>
-				                        <%=t('account.branding_toggle.disable_branding') %>
-				                    <% end %>
-				                    <div class="branding-upgrade-message">
-				                      <% options = (current_user.privilege?(:manage_account)) ? {:tag => :a, :href => subscription_url} : {:tag => :p} %>
-				                      <%= content_tag(options[:tag], t('subscription.upgrade.message'), :href => options[:href]) %>
-				                    </div>
-				                <% end %>
-				              </div>
-				            </div>
 						<% end %>
+
+						<!-- freshdesk branding -->
+					    <div class="control-group account-branding-toggle">
+			              <%= f.label :account_branding, t('account.branding_toggle.title'), :class => "control-label" %>
+			              <div class="controls">
+			                <% unless current_account.subscription.trial_or_sprout_plan? %>
+			                    <%= f.fields_for :bitmap_features do |bm| %>
+			                        <%= bm.check_box :branding, {:id => 'account_branding_enabled', :checked => Account.current.branding_enabled?} %>
+			                        <div class="help-block"><%= t('account.branding_toggle.helpnote') %></div>
+			                    <% end %>
+
+			                <% else %>
+			                    <%= link_to "javascript:void(0)", :class => "btn" do %>
+			                        <span class='ficon-lock locked'></span>
+			                        <%=t('account.branding_toggle.disable_branding') %>
+			                    <% end %>
+			                    <div class="branding-upgrade-message">
+			                      <% options = (current_user.privilege?(:manage_account)) ? {:tag => :a, :href => subscription_url} : {:tag => :p} %>
+			                      <%= content_tag(options[:tag], t('subscription.upgrade.message'), :href => options[:href]) %>
+			                    </div>
+			                <% end %>
+			              </div>
+			            </div>
+						
 						<% if current_user.is_falcon_pref? && current_account.rebranding_enabled? && !(current_account.subscription.sprout_plan?)%>
 								<div class="control-group">
 									<label class="control-label"><%= t("admin.products.portal.agent_portal") %></label>
