@@ -181,9 +181,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :limit => 1000
     }
   }
+
   scope :all_article_tickets,
-          :joins => [:article_ticket],
-          :order => "`article_tickets`.`id` DESC"
+    :joins => %(INNER JOIN article_tickets ON article_tickets.ticketable_id = helpdesk_tickets.id and 
+        article_tickets.ticketable_type = 'Helpdesk::Ticket' and 
+        article_tickets.account_id = helpdesk_tickets.account_id),
+    :order => "`article_tickets`.`id` DESC"
 
   # The below scope "for_user_articles" HAS to be used along with "all_article_tickets"
   # Otherwise, the condition and hence the query would fail.
