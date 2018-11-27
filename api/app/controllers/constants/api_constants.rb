@@ -54,7 +54,6 @@ module ApiConstants
                        ApiArchiveTicketConstants::LOAD_OBJECT_EXCEPT +
                        BotFeedbackConstants::LOAD_OBJECT_EXCEPT +
                        RakeTaskConstants::LOAD_OBJECT_EXCEPT +
-                       CustomerImportConstants::LOAD_OBJECT_EXCEPT +
                        FreshmarketerConstants::LOAD_OBJECT_EXCEPT +
                        AuditLogConstants::LOAD_OBJECT_EXCEPT +
                        AdminSubscriptionConstants::LOAD_OBJECT_EXCEPT +
@@ -64,7 +63,8 @@ module ApiConstants
   NO_CONTENT_TYPE_REQUIRED = ApiTicketConstants::NO_CONTENT_TYPE_REQUIRED +
                              ContactConstants::NO_CONTENT_TYPE_REQUIRED +
                              SubscriptionConstants::NO_CONTENT_TYPE_REQUIRED +
-                             TimeEntryConstants::NO_CONTENT_TYPE_REQUIRED
+                             TimeEntryConstants::NO_CONTENT_TYPE_REQUIRED +
+                             CustomerImportConstants::NO_CONTENT_TYPE_REQUIRED
 
   ALLOWED_DOMAIN = AppConfig['base_domain'][Rails.env]
   MAX_LENGTH_STRING = 255

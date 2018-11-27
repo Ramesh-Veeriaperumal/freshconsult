@@ -11,6 +11,10 @@ module Helpdesk::Ticketfields::TicketStatus
   def update_ticket_status(attr,position)
     attr[:position] = position+1
     attr.symbolize_keys!
+
+    #for avoid adding new "custom value with default keys in translation"[ open,closed, pending,resolved] and avoiding entering "custom value with default keys"
+    return if custom_status_name_same_as_default_status_name?(attr)
+
     t_s = nil
     index = -1
     ticket_statuses.each do |st|
@@ -18,9 +22,6 @@ module Helpdesk::Ticketfields::TicketStatus
       if st.status_id && (st.status_id == attr[:status_id])
         t_s = st
         break
-      #for avoid adding new "custom value with default keys in translation"[ open,closed, pending,resolved] and avoiding entering "custom value with default keys" updation bcoz removal keys will go to next condition
-      elsif custom_status_name_same_as_default_status_name?(st, attr)
-        return
       #Not to allow default values with attr hash to enter , below condition only for custom value status updation and deletion, allowing will automatically update "custom value with default keys"
       elsif custom_status_name_same_as_deleted_status_name?(st, attr)
         t_s = st
@@ -59,8 +60,9 @@ module Helpdesk::Ticketfields::TicketStatus
       end  
     end
 
-    def custom_status_name_same_as_default_status_name?(status, attr)
-      ((I18n.t(status.name.downcase)).casecmp(attr[:name]) == 0 && (!attr[:status_id] || DEFAULT_STATUSES.keys.include?(attr[:status_id])))
+    def custom_status_name_same_as_default_status_name?(attr)
+      default_trans_status = DEFAULT_STATUSES.values.map { |name| I18n.t(name.downcase).downcase }
+      (default_trans_status.include?(attr[:name].downcase) && (!attr[:status_id] || DEFAULT_STATUSES.keys.include?(attr[:status_id])))
     end
 
     def custom_status_name_same_as_deleted_status_name?(status, attr)

@@ -139,7 +139,8 @@ ActiveRecord::Schema.define(version: 20181113055606) do
     t.text     "last_error"
   end
 
-  add_index "admin_data_imports", ["account_id", "created_at"], :name => "index_data_imports_on_account_id_and_created_at"
+  add_index 'admin_data_imports', ['account_id', 'created_at'], name: 'index_data_imports_on_account_id_and_created_at'
+  add_index 'admin_data_imports', ['account_id', 'source', 'status'], name: 'index_data_exports_on_account_id_source_and_status'
 
   create_table "admin_sandbox_accounts", :force => true do |t|
     t.integer  "account_id",         :limit => 8
@@ -2149,6 +2150,20 @@ ActiveRecord::Schema.define(version: 20181113055606) do
   add_index "group_accesses", ["account_id"], :name => "index_group_accesses_on_account_id"
   add_index "group_accesses", ["group_id"], :name => "index_group_accesses_on_group_id"
 
+  create_table "group_types", :force => true do |t|
+    t.integer  "group_type_id"
+    t.string   "name"
+    t.string   "label"
+    t.integer  "account_id",    :limit => 8,                    :null => false
+    t.boolean  "deleted",                    :default => false
+    t.boolean  "default",                    :default => true
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
+  end
+
+  add_index "group_types", ["account_id", "group_type_id"], :name => "index_account_id_group_type_id_on_group_types", :unique => true
+  add_index "group_types", ["account_id", "name"], :name => "index_account_id_name_on_group_types", :unique => true
+
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.text     "description"
@@ -2162,7 +2177,8 @@ ActiveRecord::Schema.define(version: 20181113055606) do
     t.integer  "ticket_assign_type",                :default => 0
     t.integer  "business_calendar_id", :limit => 8
     t.boolean  "toggle_availability",               :default => false
-    t.integer  "capping_limit",        :default => 0
+    t.integer  "capping_limit",                     :default => 0
+    t.integer  "group_type",                        :default => 1
   end
 
   add_index "groups", ["account_id", "name"], :name => "index_groups_on_account_id", :unique => true

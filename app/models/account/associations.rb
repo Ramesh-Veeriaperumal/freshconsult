@@ -162,6 +162,7 @@ class Account < ActiveRecord::Base
   has_many :email_notifications
   has_many :email_notification_agents
   has_many :groups
+  has_many :group_types, class_name: 'GroupType', dependent: :destroy
   has_many :agent_groups
   has_many :forum_categories, :order => "position"
 
@@ -249,9 +250,9 @@ class Account < ActiveRecord::Base
 
   has_one :zendesk_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:zendesk]}
 
-  has_one :contact_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:contact]}
+  has_many :contact_imports, class_name: 'Admin::DataImport', conditions: { source: Admin::DataImport::IMPORT_TYPE[:contact] }, dependent: :destroy
 
-  has_one :company_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:company]}
+  has_many :company_imports, class_name: 'Admin::DataImport', conditions: { source: Admin::DataImport::IMPORT_TYPE[:company] }, dependent: :destroy
 
   has_one :agent_skill_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:agent_skill]}
 

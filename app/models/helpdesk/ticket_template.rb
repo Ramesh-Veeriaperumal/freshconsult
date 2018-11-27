@@ -70,7 +70,7 @@ class Helpdesk::TicketTemplate < ActiveRecord::Base
   serialize :template_data, Hash
   attr_accessor :reset_tmpl_assoc
   attr_accessible :name, :description, :template_data, :accessible_attributes, :parents_attributes, :children_attributes, :association_type
-  xss_sanitize :only => [:name, :description], :html_sanitize => [:name, :description], :decode_calm_sanitizer => [:data_description_html]
+  xss_sanitize :only => [:name, :description, :data_description_html], :html_sanitize => [:name, :description], :decode_calm_sanitizer => [:data_description_html]
 
   accepts_nested_attributes_for :accessible
   accepts_nested_attributes_for :parents, :allow_destroy => true

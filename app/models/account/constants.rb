@@ -213,11 +213,12 @@ class Account < ActiveRecord::Base
     :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
     :post_central_publish => false, :twitter_common_redirect => false, :note_central_publish => false,
     :euc_migrated_twitter => false, :new_onboarding => false, :new_ticket_recieved_metric => false,
-    :es_msearch => true, :canned_forms => false, :attachment_virus_detection => false,
-    undo_send: false, timeline: false, twitter_handle_publisher: true, 
-    :old_link_back_url_validation => false, :shopify_actions => true,:stop_contacts_count_query => false,
-    :whitelist_supervisor_sla_limitation => false, :disable_banners =>false, :installed_app_publish => false,
+    :es_msearch => true, :canned_forms => false, :attachment_virus_detection => false, sso_login_expiry_limitation: false,
+    undo_send: false, timeline: false, twitter_handle_publisher: true, csat_email_scan_compatibility: false,
+    :old_link_back_url_validation => false, :shopify_actions => true,:stop_contacts_count_query => false, twitter_microservice: true,
+    :whitelist_supervisor_sla_limitation => false, :disable_banners =>false, :installed_app_publish => false, email_deprecated_style_parsing: false,
     :twitter_dm_outgoing_attachment => false, :twitter_mention_outgoing_attachment => false, :product_central_publish => false,
+    :saml_ecrypted_assertion => false, :quoted_text_parsing_feature => false,
     :field_service_management_lp => false, :help_widget => false, :bot_email_channel => false, :bot_email_central_publish => false,
     :description_by_request => true
   }

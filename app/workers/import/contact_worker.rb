@@ -10,7 +10,7 @@ class Import::ContactWorker
     args.symbolize_keys!
     acc = Account.current
     if (acc.subscription.trial? and acc.tickets.count < 10 and !$spam_watcher.perform_redis_op("get", "#{acc.id}-"))
-      acc.contact_import.blocked!
+      acc.contact_imports.find(args[:data_import]).blocked!
       raise SpamAccountError
     end
     register_signal_handlers

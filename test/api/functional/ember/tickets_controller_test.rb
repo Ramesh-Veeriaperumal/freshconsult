@@ -28,6 +28,8 @@ module Ember
     include ArchiveTicketTestHelper
     include DiscussionsTestHelper
     include BotResponseTestHelper
+    include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
+    include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
 
     ARCHIVE_DAYS = 120
     TICKET_UPDATED_DATE = 150.days.ago
@@ -4030,6 +4032,78 @@ module Ember
                   bad_request_error_pattern('description', :outbound_email_field_restriction, code: :incompatible_field)])
     ensure
       Account.any_instance.unstub(:compose_email_enabled?)
+    end
+
+    def test_create_ticket_with_service_task_type_without_mandatory_custom_fields
+      perform_fsm_operations
+      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                      priority: 2, status: 2, type: SERVICE_TASK_TYPE, responder_id: @agent.id }      
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 400
+    ensure
+      cleanup_fsm
+    end
+
+    def test_create_ticket_when_fsm_enabled
+      perform_fsm_operations
+      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                      priority: 2, status: 2, type: 'Problem', responder_id: @agent.id }      
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+    ensure
+      cleanup_fsm
+    end
+
+    def test_create_ticket_with_service_task_type
+      perform_fsm_operations
+      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                      priority: 2, status: 2, type: SERVICE_TASK_TYPE, responder_id: @agent.id, custom_fields: {cf_fsm_contact_name: "test",cf_fsm_service_location: "test", cf_fsm_phone_number: "test"} }      
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+    ensure
+      cleanup_fsm
+    end
+
+    def test_update_ticket_with_type_service_task_without_mandatory_custom_fields
+      perform_fsm_operations
+      ticket = create_ticket
+      params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10), type: SERVICE_TASK_TYPE }      
+      put :update, construct_params({ version: 'private', id: ticket.id }, params_hash)
+      assert_response 400
+    ensure
+      cleanup_fsm
+    end
+
+    def test_update_ticket_when_fsm_enabled
+      perform_fsm_operations
+      ticket = create_ticket
+      params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10) }      
+      put :update, construct_params({ version: 'private', id: ticket.id }, params_hash)
+      assert_response 200
+    ensure
+      cleanup_fsm
+    end
+
+    def test_update_ticket_with_type_service_task
+      perform_fsm_operations
+      ticket = create_ticket
+      params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10), type: SERVICE_TASK_TYPE, custom_fields: {cf_fsm_contact_name: "test",cf_fsm_service_location: "test", cf_fsm_phone_number: "test"} } 
+      put :update, construct_params({ version: 'private', id: ticket.id }, params_hash)
+      assert_response 200
+    ensure
+      cleanup_fsm
+    end
+
+    def test_other_custom_field_validations_when_fsm_enabled
+      create_custom_field('email1', 'text',true)
+      perform_fsm_operations
+      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                      priority: 2, status: 2, type: SERVICE_TASK_TYPE, responder_id: @agent.id, custom_fields: {cf_fsm_contact_name: "test",cf_fsm_service_location: "test", cf_fsm_phone_number: "test"} }      
+      post :create, construct_params({ version: 'private' }, params_hash)
+      assert_response 201
+    ensure
+      @account.ticket_fields.find_by_name("email1_#{@account.id}").destroy
+      cleanup_fsm
     end
   end
 end

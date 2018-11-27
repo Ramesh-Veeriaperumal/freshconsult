@@ -94,14 +94,31 @@ module Proactive
     end
 
     def test_retrieve_rules
-      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(text: "{\"rules\": [{\"id\":1,\"name\":\"test\",\"description\":\"new\",\"type\":0,\"created_at\":\"2018-08-01T07:24:54.000Z\",\"updated_at\":\"2018-08-01T07:24:54.000Z\"},{\"id\":2,\"name\":\"test\",\"description\":\"safsdfaasf\",\"type\":0,\"created_at\":\"2018-08-01T07:25:02.000Z\",\"updated_at\":\"2018-08-01T07:25:02.000Z\"},{\"id\":3,\"name\":\"test\",\"description\":\"safsdfaasf\",\"type\":0,\"created_at\":\"2018-08-01T08:30:00.000Z\",\"updated_at\":\"2018-08-01T08:30:00.000Z\"}]}", status: 200)
+      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(rules_index_action_payload.merge(status: 200))
       get :index, controller_params
       assert_response 200
     end
 
     def test_retrieve_rules_with_pagination
-      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(text: "{\"rules\": [{\"id\":1,\"name\":\"test\",\"description\":\"new\",\"type\":0,\"created_at\":\"2018-08-01T07:24:54.000Z\",\"updated_at\":\"2018-08-01T07:24:54.000Z\"},{\"id\":2,\"name\":\"test\",\"description\":\"safsdfaasf\",\"type\":0,\"created_at\":\"2018-08-01T07:25:02.000Z\",\"updated_at\":\"2018-08-01T07:25:02.000Z\"},{\"id\":3,\"name\":\"test\",\"description\":\"safsdfaasf\",\"type\":0,\"created_at\":\"2018-08-01T08:30:00.000Z\",\"updated_at\":\"2018-08-01T08:30:00.000Z\"}]}", status: 200)
+      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(rules_index_action_payload.merge(status: 200))
       get :index, controller_params(per_page: 1)
+      assert_response 200
+    end
+
+    def test_retrieve_rules_with_next_page
+      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(rules_index_action_payload.merge(status: 200))
+      HttpRequestProxy.any_instance.stubs(:all_headers).returns({'link' => 'test.com'})
+      get :index, controller_params
+      assert_equal true, @response.api_meta[:next]
+      assert_response 200
+    ensure
+      HttpRequestProxy.any_instance.unstub(:all_headers)
+    end
+
+    def test_retrieve_rules_with_no_next_page
+      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(rules_index_action_payload.merge(status: 200))
+      get :index, controller_params
+      assert_nil @response.api_meta
       assert_response 200
     end
 
@@ -249,6 +266,10 @@ module Proactive
 
     def rules_with_email_action(event)
       { text: "{\"rule\":{\"id\":4,\"sample_name\":\"name\",\"description\":\"sample description\",\"event\":\"#{event}\",\"action\":{\"email\":{\"subject\":\"subject\",\"description\":\"\\u003cdiv\\u003edescription\\u003c/div\\u003e\",\"email\":\"sample@test.com\",\"email_config_id\":1,\"status\":4,\"type\":\"Question\",\"priority\":4,\"group_id\":1}},\"created_at\":\"2018-09-19T15:47:04.000Z\",\"updated_at\":\"2018-09-20T04:06:35.000Z\"}}" }
+    end
+
+    def rules_index_action_payload
+      { text: "{\"rules\": [{\"id\":1,\"name\":\"test\",\"description\":\"new\",\"type\":0,\"created_at\":\"2018-08-01T07:24:54.000Z\",\"updated_at\":\"2018-08-01T07:24:54.000Z\"},{\"id\":2,\"name\":\"test\",\"description\":\"safsdfaasf\",\"type\":0,\"created_at\":\"2018-08-01T07:25:02.000Z\",\"updated_at\":\"2018-08-01T07:25:02.000Z\"},{\"id\":3,\"name\":\"test\",\"description\":\"safsdfaasf\",\"type\":0,\"created_at\":\"2018-08-01T08:30:00.000Z\",\"updated_at\":\"2018-08-01T08:30:00.000Z\"}]}" }
     end
     
   end

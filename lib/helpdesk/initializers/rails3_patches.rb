@@ -123,6 +123,48 @@ module ActiveRecord
     # We cannot override https://github.com/rails/rails/blob/3-2-stable/activerecord/lib/active_record/relation.rb#L275
     # because relations are meant for bulk updates and it can have multiple touch points in the Framework like Migration, rake tasks, unit tests etc.
 
+    # MonkeyPatch :
+    # https://github.com/rails/rails/blob/3-2-stable/activerecord/lib/active_record/persistence.rb#L117
+    # https://github.com/rails/rails/blob/3-2-stable/activerecord/lib/active_record/persistence.rb#L128
+    # to include account_id in where conditions for tables that has account_id column.
+
+    def destroy
+      destroy_associations
+
+      if persisted?
+        IdentityMap.remove(self) if IdentityMap.enabled?
+        pk         = self.class.primary_key
+        column     = self.class.columns_hash[pk]
+        substitute = connection.substitute_at(column, 0)
+        if account_id_column_exists?
+          relation = self.class.unscoped.where(self.class.arel_table[pk].eq(substitute)).where(self.class.arel_table["account_id"].eq(account_id))
+        else
+          relation = self.class.unscoped.where(self.class.arel_table[pk].eq(substitute))
+        end
+        relation.bind_values = [[column, id]]
+        relation.delete_all
+      end
+
+      @destroyed = true
+      freeze
+    end
+
+    def delete
+      if persisted?
+        if account_id_column_exists?
+          relation = self.class.unscoped.where(self.class.arel_table[self.class.primary_key].eq(id)).where(self.class.arel_table["account_id"].eq(account_id))
+        else
+          relation = self.class.unscoped.where(self.class.arel_table[self.class.primary_key].eq(id))
+        end
+        IdentityMap.remove_by_id(self.symbolized_base_class, self.class.primary_key ) if IdentityMap.enabled?
+        IdentityMap.remove(self) if IdentityMap.enabled?
+        relation.delete_all
+      end
+
+      @destroyed = true
+      freeze
+    end
+
     def touch(name = nil)
       attributes = timestamp_attributes_for_update_in_model
       attributes << name if name

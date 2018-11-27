@@ -228,6 +228,7 @@ Sidekiq.configure_server do |config|
       "WebhookV1Worker",
       "SendSignupActivationMail",
       "DevNotificationWorker",
+      "PodDnsUpdate",
       "SearchV2::Manager::DisableSearch",
       "CountES::IndexOperations::DisableCountES",
       "Gamification::ProcessTicketQuests",
@@ -258,6 +259,8 @@ Sidekiq.configure_server do |config|
       "CRMApp::Freshsales::Signup",
       "CRMApp::Freshsales::AdminUpdate",
       'CRMApp::Freshsales::TrackSubscription',
+      'Admin::Sandbox::CreateAccountWorker',
+      'Admin::CloneWorker',
       'Freshid::AccountDetailsUpdate',
       'MigrationWorker',
       'DataExportCleanup'

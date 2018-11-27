@@ -26,7 +26,7 @@ module Proactive
       request_params += "page=#{params[:page]}&" if params[:page].present?
       route = request_params == '' ? PROACTIVE_SERVICE_ROUTES[:rules_route] : "#{PROACTIVE_SERVICE_ROUTES[:rules_route]}?#{request_params.chop}"
       service_response = make_http_call(route, 'get')
-      add_link_header(page: (page.to_i + 1)) if service_response[:headers].present? && service_response[:headers]['link'].present?
+      response.api_meta = { next: true } if service_response[:headers].present? && service_response[:headers]['link'].present?
       render :index, status: service_response[:status]
     end
 

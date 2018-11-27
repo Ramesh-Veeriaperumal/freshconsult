@@ -12,7 +12,6 @@ class Company < ActiveRecord::Base
   before_destroy :save_deleted_company_info
 
   publishable on: [:create, :update, :destroy]
-
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last

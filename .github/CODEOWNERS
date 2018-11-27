@@ -1,10 +1,16 @@
+db/schema.rb @venkatesanmurali @thanashyam
+db/migrate/*.rb @venkatesanmurali @thanashyam
 
-config/sidekiq*.yml @venkatesanmurali @hrishikesh-p
+Gemfile @hrishikesh-p @thanashyam
+Gemfile.lock @hrishikesh-p @thanashyam
 
 lib/rabbit_mq/* @sram2020
 
+swagger/* @thanashyam @venkatesanmurali @abinaya21 @ksashikumar
+
+public/* @rajasegar-c @parsurv @vishnubalajikm
 config/locales/en.yml @akshayasrikanth
-api/lib/error_messages.yml @shankar-ganesh
+api/lib/error_messages.yml @shankar-ganesh @akshayasrikanth
 
 lib/sanitize/config/html_relaxed.rb  @paschalraj
 lib/sanitize/config/image_relaxed.rb @paschalraj

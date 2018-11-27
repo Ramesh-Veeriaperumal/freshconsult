@@ -1,5 +1,6 @@
 # A big thanks to http://blog.arkency.com/2014/05/mastering-rails-validations-objectify/ !!!!
 class TicketDelegator < BaseDelegator
+  include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
   attr_accessor :ticket_fields
   validate :group_presence, if: -> { group_id && (attr_changed?('group_id') || (property_update? && required_for_closure_field?('group') && status_set_to_closed?)) }
   validate :responder_presence, if: -> { responder_id && (attr_changed?('responder_id') || (property_update? && required_for_closure_field?('agent') && status_set_to_closed?)) }
@@ -15,7 +16,7 @@ class TicketDelegator < BaseDelegator
                                 required_based_on_status: proc { |x| x.closure_status? },
                                 required_attribute: :required,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
-                              } }, unless: -> { widget_ticket? || property_update? || bulk_update? }                         
+                              } }, unless: -> { self.ticket_type == SERVICE_TASK_TYPE || (widget_ticket? || property_update? || bulk_update?) }                         
   validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
                               {
                                 validatable_custom_fields: proc { |x| x.custom_fields_to_validate },
@@ -24,7 +25,7 @@ class TicketDelegator < BaseDelegator
                                 required_based_on_status: proc { |x| x.closure_status? },
                                 required_attribute: :required,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
-                              } }, if: :bulk_update?
+                              } }, if: -> {self.ticket_type != SERVICE_TASK_TYPE && bulk_update? }
 
   validates :custom_field_via_mapping,  custom_field: { custom_field_via_mapping:
                               {
@@ -33,7 +34,7 @@ class TicketDelegator < BaseDelegator
                                 nested_field_choices: proc { TicketsValidationHelper.custom_nested_field_choices },
                                 required_based_on_status: proc { |x| x.closure_status? },
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
-                              } }, if: :property_update?
+                              } }, if: -> { self.ticket_type != SERVICE_TASK_TYPE && property_update? }
 
   validate :facebook_id_exists?, if: -> { !property_update? && facebook_id }
 

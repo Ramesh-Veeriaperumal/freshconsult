@@ -8,6 +8,7 @@ class Import::Customers::Base
 
   def initialize(params)
     @failed_items = []
+    @failed_count = 0
     @params = params
     @created = @updated = 0
     @customer_params = params[:customers].symbolize_keys!
@@ -20,6 +21,11 @@ class Import::Customers::Base
     customer_import.update_attribute(:created_at, Time.now.utc)
     parse_csv_file
     build_error_csv_file unless @failed_items.blank?
+    if redis_key_exists?(stop_redis_key)
+      customer_import && customer_import.cancelled!
+    else
+      customer_import && customer_import.completed!
+    end
     Rails.logger.debug "Customer stopped the #{@params[:type]} import" if redis_key_exists?(stop_redis_key)
     Rails.logger.debug "#{@params[:type]} import completed. 
                         Total records:#{total_rows_to_be_imported}
@@ -30,6 +36,7 @@ class Import::Customers::Base
     NewRelic::Agent.notice_error(e, {:description => "Error in CSV file format :: 
       #{@params[:type]}_import :: #{current_account.id}"})
     @wrong_csv = e.to_s
+    customer_import.failure!(e.message + "\n" + e.backtrace.join("\n"))
   rescue => e
     NewRelic::Agent.notice_error(e, {:description => "Error in #{@params[:type]}_import :: 
       account_id :: #{current_account.id}"})
@@ -53,6 +60,7 @@ class Import::Customers::Base
     completed_rows = 0
 
     CSVBridge.parse(content_of(csv_file)).each_slice(IMPORT_BATCH_SIZE).with_index do |rows, index|
+      @failed_count = 0
       rows.each_with_index do |row, inner_index|
         row = row.collect{|r| Helpdesk::HTMLSanitizer.clean(r.to_s)}
         (@csv_headers = row) && next if index==0 && inner_index==0
@@ -63,6 +71,7 @@ class Import::Customers::Base
       completed_rows += IMPORT_BATCH_SIZE
       processed_count = completed_rows > total_rows ? total_rows - (completed_rows - IMPORT_BATCH_SIZE) : IMPORT_BATCH_SIZE
       update_completed_rows processed_count
+      update_failed_rows @failed_count unless @failed_count.zero?
       break if redis_key_exists?(stop_redis_key)
     end
   rescue => e
@@ -73,20 +82,26 @@ class Import::Customers::Base
   end
   
   def stop_redis_key
-    @stop_redis_key ||= Object.const_get("STOP_#{@params[:type].upcase}_IMPORT") %
-                        { :account_id => Account.current.id }
+    @stop_redis_key ||= format(Object.const_get("STOP_#{@params[:type].upcase}_IMPORT"),
+                         account_id: Account.current.id)
   end
 
   def update_completed_rows processed_count
-    key = Object.const_get("#{@params[:type].upcase}_IMPORT_FINISHED_RECORDS") % {:account_id => 
-                                                                          Account.current.id}
+    key = format(Object.const_get("#{@params[:type].upcase}_IMPORT_FINISHED_RECORDS"),
+            account_id: Account.current.id, import_id: @import.id)
     increment_others_redis(key, processed_count)
   end
   
   def total_rows_to_be_imported
-    key = Object.const_get("#{@params[:type].upcase}_IMPORT_TOTAL_RECORDS") % {:account_id => 
-                                                                    Account.current.id}
+    key =  format(Object.const_get("#{@params[:type].upcase}_IMPORT_TOTAL_RECORDS"),
+            account_id: Account.current.id, import_id: @import.id)
     get_others_redis_key(key).to_i
+  end
+
+  def update_failed_rows failed_count
+    key = format(Object.const_get("#{@params[:type].upcase}_IMPORT_FAILED_RECORDS"),
+           account_id: Account.current.id, import_id: @import.id)
+    increment_others_redis(key, failed_count)
   end
 
   def assign_field_values row
@@ -139,7 +154,7 @@ class Import::Customers::Base
   end
 
   def customer_import
-    @import ||= current_account.safe_send("#{@params[:type]}_import")
+    @import ||= current_account.safe_send("#{@params[:type]}_imports").find(@params[:data_import])
   end
 
   def is_user?
@@ -166,6 +181,7 @@ class Import::Customers::Base
   def failed_item row
     error_msg = @item.errors.map {|msg| (msg.to_s) +" "+ (@item.errors["#{msg}"].to_s)}.to_sentence
     @failed_items << row.push(error_msg)
+    @failed_count += 1
   end
 
   # Building csv file for failed items.
@@ -177,7 +193,7 @@ class Import::Customers::Base
       @failed_items.map {|item| csv << item}
     end
     write_file(csv_string)
-    customer_import && customer_import.completed!
+    build_failed_attachment
   end
 
   def write_file file_string
@@ -203,20 +219,17 @@ class Import::Customers::Base
     File.size(failed_file_path)
   end
 
+  def build_failed_attachment
+    file = File.open(failed_file_path, 'r')
+    failed_attachment = customer_import.attachments.build(content: file, account_id: current_account.id)
+    failed_attachment.save!
+  end
+
   def notify_and_cleanup(corrupted = false)
-    customer_import && customer_import.destroy
-    remove_progress_keys
     notify_mailer corrupted
     remove_stop_import_key
   end
 
-  def remove_progress_keys
-    ["IMPORT_TOTAL_RECORDS", "IMPORT_FINISHED_RECORDS"].each do |key_type|
-      key = Object.const_get("#{@params[:type].upcase}_#{key_type}") % {:account_id => 
-                                                                       Account.current.id}
-      remove_others_redis_key key
-    end
-  end
 
   def remove_stop_import_key
     remove_others_redis_key stop_redis_key

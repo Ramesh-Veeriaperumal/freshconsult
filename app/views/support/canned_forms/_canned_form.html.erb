@@ -1,22 +1,54 @@
-<div class="welcome-note">
-  <%= @ticket.try(:class) == String ? @ticket : @ticket.subject %>
-  <%= link_to("(##{@ticket.display_id})", helpdesk_ticket_path(@ticket.display_id), :class => 'ticket_id', :target => "_blank") unless @ticket.try(:class) == String %>
-  <p>
-    <%= "#{@form.welcome_text}"%>
-  </p>
+<div class="welcome-note active_form_class">
+  <div class="agent_avatar">
+    <%= @ticket.try(:class) == String ? profile_image(@current_user) : @ticket.responder_id? ? profile_image(@ticket.responder) : preview_profile_image  %>
+  </div>
+  <div class='introduction-text'>
+    <%= t('support.canned_form.hey')%> <%= @current_user.present? ? "#{@current_user.name}" : ""%><img src='/images/emojis/wave.png' alt=':D'>
+  </div>
+  <div class='welcome-text'>
+    <p>
+      <%= "#{@form.welcome_text}"%>
+    </p>
+  </div>
+  <div class='ticket_details'>
+    <div class="ticket_subject">
+      <%= @ticket.try(:class) == String ? @ticket.split(',')[0] : link_to("#{@ticket.subject}", helpdesk_ticket_path(@ticket.subject), :class => 'subject', :target => "_blank") %>
+    </div>
+    <div class="ticket_created_at">
+      <%= @ticket.try(:class) == String ? @ticket.split(',')[1] : formated_date(@ticket.created_at) %>
+    </div>
+  </div>
+  <button class="active_button active_form_option welcome-note-button" aria-label="Focus to form field"> <%= t('support.canned_form.okay')  %> </button><div class='info-text'><p><%= t('support.canned_form.move_to_form_field') %></p></div>
 </div>
 <div id="form-content">
-  <ul class='form-field-list'>
+  <div class='form-field-list'>
     <%@fields.each do |field|%>
-      <li class='canned-form-field'>
+      <div class='canned-form-field'>
         <!-- field[:deleted] check is for preview -->
         <%unless field[:deleted] %>
           <%= construct_canned_form(
             :canned_forms,
             field
             ) %>
+         <% if field[:type] == 6 or field[:type] == 1 %>
+          <button class="active_button active_form_option paragraph-button" aria-label="Next form field"> <%= t('support.canned_form.next')  %> </button>
+        <% end %>
         <%end%>
-      </li>
+      </div>
     <%end%>
-  </ul>
+  </div>
 </div>
+
+<%= javascript_tag do %>
+  (function($) {
+
+  	$(window).on('load', function(){
+      window.App = window.App || {};
+      App.Support = App.Support || {};
+      App.Support.Canned_forms = App.Support.Canned_forms || {};
+
+      App.Support.Canned_forms.initializeData();
+    });
+
+  })(jQuery);
+<% end %>

@@ -91,6 +91,11 @@ Helpkit::Application.routes.draw do
       end
       collection do
         post :merge, to: 'contacts/merge#merge'
+        resources :imports, controller: 'api_customer_imports', only: [:index, :create, :show] do
+          member do
+            put :cancel
+          end
+        end
         post :export, to: 'contacts/misc#export'
         get 'export/:id', to: 'contacts/misc#export_details'
       end
@@ -177,7 +182,6 @@ Helpkit::Application.routes.draw do
       end
     end
 
-
     resources :contact_fields, controller: 'api_contact_fields', only: [:index]
 
     resources :products, controller: 'api_products', only: [:index, :show]
@@ -188,6 +192,11 @@ Helpkit::Application.routes.draw do
 
     resources :companies, as: 'api_companies', controller: 'api_companies', except: [:new, :edit] do
       collection do
+        resources :imports, controller: 'api_customer_imports', only: [:index, :create, :show] do
+          member do
+            put :cancel
+          end
+        end
         post :export, to: 'companies/misc#export'
         get 'export/:id', to: 'companies/misc#export_details'
       end
@@ -442,11 +451,12 @@ Helpkit::Application.routes.draw do
         put :bulk_restore
         put :bulk_send_invite
         put :bulk_whitelist
-        get :import, to: 'ember/customer_imports#index'
-        post :import, to: 'ember/customer_imports#create'
-        delete :import, to: 'ember/customer_imports#destroy'
-        get :import_status, to: 'ember/customer_imports#status'
         post :quick_create
+        resources :imports, controller: 'api_customer_imports', only: [:index, :create, :show] do
+          member do
+            put :cancel
+          end
+        end
       end
       member do
         put :restore
@@ -463,10 +473,11 @@ Helpkit::Application.routes.draw do
     resources :companies, controller: 'ember/companies', only: [:index, :show, :create, :update] do
       collection do
         put :bulk_delete
-        get :import, to: 'ember/customer_imports#index'
-        post :import, to: 'ember/customer_imports#create'
-        get :import_status, to: 'ember/customer_imports#status'
-        delete :import, to: 'ember/customer_imports#destroy'
+        resources :imports, controller: 'api_customer_imports', only: [:index, :create, :show] do
+          member do
+            put :cancel
+          end
+        end
       end
       member do
         get :activities

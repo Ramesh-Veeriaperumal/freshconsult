@@ -102,7 +102,6 @@ Authority::Authorization::PrivilegeList.build do
   manage_contacts do
     resource :"ember/contact", only: [:create, :update, :quick_create]
     resource :"ember/company", only: [:create, :update]
-    resource :"ember/customer_import", only: [:index, :create, :status, :destroy]
     resource :"ember/search/autocomplete", only: [:companies]
     resource :"ember/tickets/requester", only: [:update]
     resource :"ember/contact/todo", only: [:create, :update, :destroy]

@@ -1,0 +1,17 @@
+get:
+  tags: [contact import]
+  summary: View an import
+  description: Responds with details of the import.
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/customer_import_view_response'
+    404:
+      description: Import not found

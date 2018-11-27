@@ -15,7 +15,6 @@ class TicketsController < ApiApplicationController
   include Redis::TicketsRedis
   include AssociateTicketsHelper
 
-
   decorate_views(decorate_objects: [:index, :search])
   DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
   DESCRIPTION = :description.to_s.freeze
@@ -335,7 +334,12 @@ class TicketsController < ApiApplicationController
     end
 
     def validation_class
-      TicketValidation
+      service_task = Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+      if params[cname][:type] == service_task || (@item && @item.ticket_type == service_task)
+        FsmTicketValidation
+      else
+        TicketValidation
+      end
     end
 
     def validate_params

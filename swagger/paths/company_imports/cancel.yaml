@@ -1,0 +1,16 @@
+put:
+  tags: [company import]
+  summary: Cancel an import
+  parameters:
+    - name: id
+      type: integer
+      format: int64
+      in: path
+      required: true
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/customer_import_cancel_response'
+    404:
+      description: Import not found
