@@ -135,6 +135,28 @@ module Ember
         assert_equal params_hash[:contact][:name], response['contact']['name']
         assert_equal nil, response['company']
       end
+
+      def test_update_requester_with_contact_only_and_company_required
+        company_required_field = create_company_field(company_params(type: 'phone_number', field_type: 'custom_phone_number', label: 'Phone Number', name: 'phone_number', required_for_agent: true, field_options: { 'widget_position' => 4 }))
+        @account.reload
+        params_hash = { contact: { name: Faker::Lorem.word, custom_fields: { position: Faker::Lorem.word } }, company: {} }
+        put :update, construct_params({ version: 'private', id: @ticket.display_id }, params_hash)
+        assert_response 200
+      ensure
+        company_required_field.required_for_agent = false
+        company_required_field.save
+      end
+
+      def test_update_requester_with_company_only_and_contact_required
+        contact_required_field = create_contact_field(cf_params(type: 'phone_number', field_type: 'custom_phone_number', label: 'Custom Phone Number', name: 'phone_number', required_for_agent: true, field_options: { 'widget_position' => 9 }))
+        @account.reload
+        params_hash = { contact: {}, company: { custom_fields: { place: Faker::Lorem.word } } }
+        put :update, construct_params({ version: 'private', id: @ticket.display_id }, params_hash)
+        assert_response 200
+      ensure
+        contact_required_field.required_for_agent = false
+        contact_required_field.save
+      end
     end
   end
 end

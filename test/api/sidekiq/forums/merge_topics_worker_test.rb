@@ -30,7 +30,7 @@ class MergeTopicsWorkerTest < ActionView::TestCase
   def test_merge_topics_worker
     set_assertion_counts
     TopicMailer.stubs(:deliver_topic_merge_email).returns(nil)
-    Community::MergeTopicsWorker.new.perform(source_topic_ids: [@source_topic.id], target_topic_id: @target_topic.id, source_note: 'Test')
+    Community::MergeTopicsWorker.new.perform(source_topic_ids: [@source_topic.id], target_topic_id: @target_topic.id, source_note: '<div dir="ltr"><p>test</p></div>')
     assert_equal @activity_count+2, @account.activities.count
     assert_equal @topic_posts_count+1, @source_topic.posts.count
     assert_equal @target_monitors_count+1, @target_topic.monitorships.active_monitors.count
@@ -42,7 +42,7 @@ class MergeTopicsWorkerTest < ActionView::TestCase
   def test_merge_topics_worker_with_empty_note
     set_assertion_counts
     TopicMailer.stubs(:deliver_topic_merge_email).returns(nil)
-    Community::MergeTopicsWorker.new.perform(source_topic_ids: [@source_topic.id], target_topic_id: @target_topic.id, source_note: '<p></p>')
+    Community::MergeTopicsWorker.new.perform(source_topic_ids: [@source_topic.id], target_topic_id: @target_topic.id, source_note: '<div dir="ltr"><p></p></div>')
     assert_equal @activity_count+1, @account.activities.count
     assert_equal @topic_posts_count, @source_topic.posts.count
     assert_equal @target_monitors_count+1, @target_topic.monitorships.active_monitors.count
