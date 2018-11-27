@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181113055606) do
+ActiveRecord::Schema.define(version: 20181126132023) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1436,6 +1436,7 @@ ActiveRecord::Schema.define(version: 20181113055606) do
   end
 
   add_index "flexifield_defs", ["name", "account_id"], :name => "idx_ffd_onceperdef", :unique => true
+  add_index "flexifield_defs", ["account_id", "module"], :name => "index_flexifield_defs_on_module"
 
   create_table "flexifield_picklist_vals", :force => true do |t|
     t.integer  "flexifield_def_entry_id", :limit => 8, :null => false
