@@ -16,7 +16,6 @@ module ApiTicketsTestHelper
   include ForumHelper
   include AttachmentsTestHelper
   include Helpdesk::Email::Constants
-  
 
   CUSTOM_FIELDS_CHOICES = Faker::Lorem.words(5).uniq.freeze
   DROPDOWN_OPTIONS = Faker::Lorem.words(5).freeze
@@ -28,14 +27,14 @@ module ApiTicketsTestHelper
     },
     Faker::Address.country => {
       Faker::Address.state => [Faker::Address.city],
-      Faker::Address.state => [],
+      Faker::Address.state => [Faker::Address.city],
       Faker::Address.state => [Faker::Address.city, Faker::Address.city]
     }
   }.freeze
   TAG_NAMES = Faker::Lorem.words(10).freeze
   CUSTOM_FIELDS_VALUES = { 'country' => 'USA', 'state' => 'California', 'city' => 'Burlingame', 'number' => 32_234, 'decimal' => '90.89', 'checkbox' => true, 'text' => Faker::Name.name, 'paragraph' => Faker::Lorem.paragraph, 'dropdown' => CUSTOM_FIELDS_CHOICES[0], 'date' => '2015-09-09' }.freeze
 
-  #pattern
+  # pattern
   def sla_policy_pattern(expected_output = {}, sla_policy)
     conditions_hash = {}
     sla_policy.conditions.each { |key, value| conditions_hash[key.to_s.pluralize] = value } unless sla_policy.conditions.nil?
@@ -51,7 +50,6 @@ module ApiTicketsTestHelper
       updated_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$}
     }
   end
-
 
   def tickets_controller_before_all before_all_run
     return if before_all_run
@@ -91,11 +89,11 @@ module ApiTicketsTestHelper
        state   = DEPENDENT_FIELD_VALUES[country].keys.sample
        city    = DEPENDENT_FIELD_VALUES[country][state].sample
        params = ticket_params_hash.except(:description).merge(custom_field: {})
-       params[:custom_field]["test_custom_dropdown_#{@account.id}"] = [DROPDOWN_OPTIONS.sample, nil].sample
+       params[:custom_field]["test_custom_dropdown_#{@account.id}"] = [DROPDOWN_OPTIONS.sample].sample
        params[:custom_field]["test_custom_country_#{@account.id}"]  = country
        params[:custom_field]["test_custom_state_#{@account.id}"]    = state
        params[:custom_field]["test_custom_city_#{@account.id}"]     = city
-       params[:tag_names] = [TAG_NAMES.sample(rand(1..3)).join(','), nil].sample
+       params[:tag_names] = [TAG_NAMES.sample(rand(1..3)).join(',')].sample
        params[:responder_id] = [@account.agents.sample.id, nil].sample
        ticket = create_ticket(params)
        ticket.product = [@account.products.sample, nil].sample
@@ -235,7 +233,7 @@ module ApiTicketsTestHelper
     show_ticket_pattern(ticket).merge(conversations: notes_pattern.ordered!)
   end
 
- def feedback_pattern(survey_result)
+  def feedback_pattern(survey_result)
     {
       survey_id: survey_result.survey_id,
       agent_id: survey_result.agent_id,
@@ -554,13 +552,13 @@ module ApiTicketsTestHelper
       cc_emails = @note.cc_emails
       @to_list = []
       @cc_list = []
-      email_failures.each do |email,error|
-        failed_email = {"email" => email,"type" => FAILURE_CATEGORY[error.to_i]}
+      email_failures.each do |email, error|
+        failed_email = { 'email' => email, 'type' => FAILURE_CATEGORY[error.to_i] }
         @to_list.push(failed_email) if to_emails.include?(email)
         @cc_list.push(failed_email) if cc_emails.include?(email)
       end
     end
-    result = {to_list: @to_list, cc_list: @cc_list}
+    result = { to_list: @to_list, cc_list: @cc_list }
     result
   end
 
@@ -574,13 +572,29 @@ module ApiTicketsTestHelper
       @to_list = []
       @cc_list = []
       email_failures.each do |email,error|
-        failed_email = {"email" => email,"type" => FAILURE_CATEGORY[error.to_i]}
+        failed_email = { 'email' => email, 'type' => FAILURE_CATEGORY[error.to_i] }
         @to_list.push(failed_email) if to_emails.include?(email)
         @cc_list.push(failed_email) if cc_emails.include?(email)
       end
     end
-    result = {to_list: @to_list, cc_list: @cc_list}
+    result = { to_list: @to_list, cc_list: @cc_list }
     result
+  end
+
+  def filter_factory_order_response_stub(order_by = 'created_at', order_type = 'desc', all_tickets = false)
+    filter_clause = ['spam = ? AND deleted = ?', false, false]
+    unless all_tickets
+      filter_clause[0] << ' AND created_at > ?'
+      filter_clause << Time.zone.now.beginning_of_day.ago(1.month).utc
+    end
+    ticket_ids = Helpdesk::Ticket.where(*filter_clause)
+                                 .order("#{order_by} #{order_type}")
+                                 .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+                                 .map(&:id)
+    {
+      total: 31,
+      results: ticket_ids.map { |id| { id: id, document: 'ticketanalytics' } }
+    }.to_json
   end
 
   def private_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false)
@@ -589,13 +603,12 @@ module ApiTicketsTestHelper
       filter_clause[0] << ' AND created_at > ?'
       filter_clause << Time.zone.now.beginning_of_day.ago(1.month).utc
     end
-    
+
     preload_options = [:tags, :ticket_states, :ticket_old_body, :schema_less_ticket, :flexifield]
     preload_options << :requester if requester
     preload_options << :company if company
-
     pattern_array = Helpdesk::Ticket.where(*filter_clause).order("#{order_by} #{order_type}").limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).preload(preload_options).map do |ticket|
-      param_object = OpenStruct.new(:requester => requester, :stats => true)
+      param_object = OpenStruct.new(requester: requester, stats: true)
       pattern = index_ticket_pattern_with_associations(ticket, param_object, [:tags])
       pattern[:requester] = Hash if requester
       pattern[:company] = Hash if company && ticket.company
@@ -607,35 +620,101 @@ module ApiTicketsTestHelper
   def private_api_ticket_index_spam_deleted_pattern(spam = false, deleted = false)
     filter_clause = { helpdesk_schema_less_tickets: { boolean_tc02: false }, deleted: deleted }
     filter_clause[:spam] = spam if spam
-    param_object = OpenStruct.new(:stats => true)
+    param_object = OpenStruct.new(stats: true)
     pattern_array = Helpdesk::Ticket.joins(:schema_less_ticket).where(filter_clause).order('created_at desc').limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]).map do |ticket|
       index_ticket_pattern_with_associations(ticket, param_object, [:tags])
     end
   end
 
   def private_api_ticket_index_query_hash_pattern(query_hash, wf_order = 'created_at')
-    per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
     query_hash_params = {}
     query_hash_params[:query_hash] = query_hash
     query_hash_params[:wf_model] = 'Helpdesk::Ticket'
     query_hash_params[:wf_order] = wf_order
     query_hash_params[:data_hash] = QueryHash.new(query_hash_params[:query_hash].values).to_system_format
-    param_object = OpenStruct.new(:stats => true)
-    pattern_array = Account.current.tickets.filter(params: query_hash_params, filter: 'Helpdesk::Filters::CustomTicketFilter').first(per_page).map do |ticket|
+    param_object = OpenStruct.new(stats: true)
+    pattern_array = private_api_ticket_index_first_page_objects(query_hash_params).map do |ticket|
       index_ticket_pattern_with_associations(ticket, param_object, [:tags])
     end
   end
 
-  def private_api_ticket_index_filter_pattern(filter_data)
+  def private_api_ticket_index_first_page_objects(query_hash_params)
     per_page = ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page]
-    param_object = OpenStruct.new(:stats => true)
-    pattern_array = Account.current.tickets.filter(params: filter_data, filter: 'Helpdesk::Filters::CustomTicketFilter').first(per_page).map do |ticket|
+    Account.current.tickets.filter(params: query_hash_params, filter: 'Helpdesk::Filters::CustomTicketFilter').first(per_page)
+  end
+
+  def filter_factory_es_cluster_query_response_stub(query_hash, wf_order = 'created_at')
+    query_hash_params = {}
+    query_hash_params[:query_hash] = query_hash
+    query_hash_params[:wf_model] = 'Helpdesk::Ticket'
+    query_hash_params[:wf_order] = wf_order
+    query_hash_params[:data_hash] = QueryHash.new(query_hash_params[:query_hash].values).to_system_format
+    param_object = OpenStruct.new(stats: true)
+
+    ticket_ids = private_api_ticket_index_first_page_objects(query_hash_params).map(&:id)
+    {
+      total: 31,
+      results: ticket_ids.map { |id| { id: id, document: 'ticketanalytics' } }
+    }.to_json
+  end
+
+  def filter_factory_es_cluster_response_stub(query_hash, wf_order = 'created_at')
+    query_hash_params = {}
+    query_hash_params[:query_hash] = query_hash
+    query_hash_params[:wf_model] = 'Helpdesk::Ticket'
+    query_hash_params[:wf_order] = wf_order
+    query_hash_params[:data_hash] = QueryHash.new(query_hash_params[:query_hash].values).to_system_format
+    param_object = OpenStruct.new(stats: true)
+
+    ticket_ids = private_api_ticket_index_first_page_objects(query_hash_params).map(&:id)
+    {
+      total: 31,
+      results: ticket_ids.map { |id| { id: id, document: 'ticketanalytics' } }
+    }.to_json
+  end
+
+  def filter_factory_filter_es_response_stub(filter_data)
+    ticket_ids = private_api_ticket_index_first_page_objects(filter_data).map(&:id)
+    {
+      total: 31,
+      results: ticket_ids.map { |id| { id: id, document: 'ticketanalytics' } }
+    }.to_json
+  end
+
+  def private_api_ticket_index_filter_pattern(filter_data)
+    param_object = OpenStruct.new(stats: true)
+    pattern_array = private_api_ticket_index_first_page_objects(filter_data).map do |ticket|
+      index_ticket_pattern_with_associations(ticket, param_object, [:tags])
+    end
+  end
+
+  def filter_factory_default_filter_es_response_stub(filter_name)
+    query_hash_params = {}
+    query_hash_params[:wf_model] = 'Helpdesk::Ticket'
+    filter = Helpdesk::Filters::CustomTicketFilter.new.default_filter(filter_name)
+    query_hash_params[:data_hash] = filter
+    param_object = OpenStruct.new(stats: true)
+
+    ticket_ids = private_api_ticket_index_first_page_objects(query_hash_params).map(&:id)
+    {
+      total: 31,
+      results: ticket_ids.map { |id| { id: id, document: 'ticketanalytics' } }
+    }.to_json
+  end
+
+  def private_api_ticket_index_default_filter_pattern(filter_name)
+    query_hash_params = {}
+    query_hash_params[:wf_model] = 'Helpdesk::Ticket'
+    filter = Helpdesk::Filters::CustomTicketFilter.new.default_filter(filter_name)
+    query_hash_params[:data_hash] = filter
+    param_object = OpenStruct.new(stats: true)
+    pattern_array = private_api_ticket_index_first_page_objects(query_hash_params).map do |ticket|
       index_ticket_pattern_with_associations(ticket, param_object, [:tags])
     end
   end
 
   def ticket_show_pattern(ticket, survey_result = nil, requester = false)
-    param_object = OpenStruct.new(:stats => true)
+    param_object = OpenStruct.new(stats: true)
     pattern = ticket_pattern_with_association(ticket, param_object).merge(cloud_files: Array)
     ticket_topic = ticket_topic_pattern(ticket)
     pattern[:freshfone_call] = freshfone_call_pattern(ticket) if freshfone_call_pattern(ticket).present?
@@ -747,7 +826,7 @@ module ApiTicketsTestHelper
       id: call.id,
       fc_call_id: call.fc_call_id,
       recording_status: call.recording_status
-     }
+    }
   end
 
   def ticket_meta_pattern(ticket)
@@ -911,12 +990,12 @@ module ApiTicketsTestHelper
     tracker_ticket
   end
 
-    def create_related_tickets(related_count = 1)
-    related_count.times.collect {|i|
+  def create_related_tickets(related_count = 1)
+    related_count.times.collect do |i|
       related_ticket = create_ticket
       related_ticket.update_attributes(association_type: 4)
       related_ticket
-    }
+    end
   end
 
   def assert_link_failure(ticket_id, pattern = nil)
@@ -961,8 +1040,8 @@ module ApiTicketsTestHelper
     2.times do
       @group_with_sbrr_enabled << create_group(@account, ticket_assign_type: 2, toggle_availability: 1)
       @skills << @account.skills.create(
-        :name => Faker::Lorem.words(3).join(' '),
-        :match_type => "all"
+        name: Faker::Lorem.words(3).join(' '),
+        match_type: 'all'
       )
     end
   end
@@ -972,15 +1051,15 @@ module ApiTicketsTestHelper
     group_with_sbrr_enabled = Account.current.groups.where(ticket_assign_type: 2)
     skills = Account.current.skills
     3.times do
-      create_ticket({:group => group_with_sbrr_enabled[0], :skill_id => skills[0].id})
-      create_ticket({:group => group_with_sbrr_enabled[1], :skill_id => skills[1].id})
+      create_ticket(group: group_with_sbrr_enabled[0], skill_id: skills[0].id)
+      create_ticket(group: group_with_sbrr_enabled[1], skill_id: skills[1].id)
     end
   end
 
-  def create_archive_and_child ticket
+  def create_archive_and_child(ticket)
     Account.current.features.archive_tickets.create
     archive_ticket = Helpdesk::ArchiveTicket.new
-    archive_ticket.subject = "Test archive ticket"
+    archive_ticket.subject = 'Test archive ticket'
     archive_ticket.save
     archive_child = Helpdesk::ArchiveChild.new
     archive_child.ticket_id = ticket.id
@@ -995,17 +1074,17 @@ module ApiTicketsTestHelper
   end
 
   def export_ticket_fields
-    Hash[*Helpdesk::TicketModelExtension.allowed_ticket_export_fields.map {|i| [i, i]}.flatten].symbolize_keys
+    Hash[*Helpdesk::TicketModelExtension.allowed_ticket_export_fields.map { |i| [i, i] }.flatten].symbolize_keys
   end
 
   def ticket_export_param
-    { 
+    {
       ticket_fields: export_ticket_fields,
       contact_fields: { 'name' => 'Requester Name', 'mobile' => 'Mobile Phone' },
       company_fields: { 'name' => 'Company Name' },
       format: 'csv', date_filter: '4',
-      ticket_state_filter: 'created_at', start_date: 1.days.ago.iso8601, end_date: Time.zone.now.iso8601,
-      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }] 
+      ticket_state_filter: 'created_at', start_date: 1.day.ago.iso8601, end_date: Time.zone.now.iso8601,
+      query_hash: [{ 'condition' => 'status', 'operator' => 'is_in', 'ff_name' => 'default', 'value' => %w(2 5) }]
     }
   end
 
@@ -1031,8 +1110,8 @@ module ApiTicketsTestHelper
     return nil unless ticket.twitter? || ticket.facebook?
 
     info = {}
-    info.merge!(twitter: tweet_hash(ticket)) if ticket.twitter?
-    info.merge!(facebook: facebook_hash(ticket)) if ticket.facebook?
+    info[:twitter] = tweet_hash(ticket) if ticket.twitter?
+    info[:facebook] = facebook_hash(ticket) if ticket.facebook?
     info
   end
 
@@ -1050,5 +1129,4 @@ module ApiTicketsTestHelper
   def facebook_hash(ticket)
     ticket.fb_post.post? ? fb_public_post_pattern({}, ticket.fb_post) : fb_public_dm_pattern({}, ticket.fb_post)
   end
-
 end

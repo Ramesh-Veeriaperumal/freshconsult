@@ -131,4 +131,6 @@ module ApiTicketConstants
   VERIFY_REQUESTER_ON_PROPERTY_VALUE_CHANGES = %w(email phone twitter_id 
                                           facebook_id unique_external_id).freeze
   SECONDARY_TICKET_PARAMS = %w(tracker_id).freeze
+
+  MAX_PAGE_LIMIT = 300
 end.freeze

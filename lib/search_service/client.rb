@@ -11,6 +11,11 @@ module SearchService
       query_request.response
     end
 
+    def analytics_query(payload = nil, uuid = nil, additional_log_info = {})
+      query_request = SearchService::Request.new(analytics_query_path, :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id, additional_log_info)
+      query_request.response
+    end
+
     def multi_query(payload = nil, uuid = nil, additional_log_info = {})
       query_request = SearchService::Request.new(multi_query_path, :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id, additional_log_info)
       query_request.response

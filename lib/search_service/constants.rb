@@ -9,5 +9,6 @@ module SearchService
     DELETE_BY_QUERY_PATH = 'v1/%{product_name}/%{account_id}/%{document_name}'.freeze
     MULTI_AGGREGATE_PATH = 'v1/analytics/%{product_name}/%{account_id}/multi_aggregate'.freeze
     AGGREGATE_PATH = 'v1/analytics/%{product_name}/%{account_id}/aggregate'.freeze
+    ANALYTICS_QUERY_PATH = 'v1/analytics/%{product_name}/%{account_id}/query'
   end.freeze
 end.freeze
