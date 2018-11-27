@@ -67,4 +67,25 @@ module CannedResponseFoldersTestHelper
     @ca_responses.blank? ? @ca_responses : @ca_responses.compact!
     @ca_responses
   end
+
+  def ca_create_pattern(folder)
+    {
+      id: folder.id,
+      name: folder.name
+    }
+  end
+
+  def ca_folder_create_pattern(name, id)
+    {
+      id: id,
+      name: name
+    }
+  end
+
+  def build_request_param(folder)
+    { 
+      version: 'v2', 
+      canned_response_folder: folder 
+    }
+  end
 end

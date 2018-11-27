@@ -16,3 +16,25 @@ get:
       description: Bad Request Error
       schema:
         $ref: '#/definitions/bad_request_error'
+
+post:
+  tags: ['canned response']
+  description: Creates new canned response folder
+  summary: Create folder
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/canned_response_folder_create'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/canned_response_folder'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
