@@ -7,6 +7,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   include Helpdesk::Ticketfields::TicketStatus
   include Cache::Memcache::Helpdesk::TicketField
   include DataVersioning::Model
+  include Helpdesk::Ticketfields::PublisherMethods
 
   clear_memcache [TICKET_FIELDS_FULL]
 
@@ -32,6 +33,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   SECTION_DROPDOWNS = ["default_ticket_type", "custom_dropdown"]
   VERSION_MEMBER_KEY = 'TICKET_FIELD'.freeze
+
+  concerned_with :presenter
 
   belongs_to_account
   belongs_to :flexifield_def_entry, :dependent => :destroy
@@ -80,7 +83,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   before_validation :populate_choices, :clear_ticket_type_cache
 
-  before_destroy :update_ticket_filter
+  before_destroy :update_ticket_filter, :save_deleted_field_info
 
   before_save :set_portal_edit
 
@@ -90,6 +93,19 @@ class Helpdesk::TicketField < ActiveRecord::Base
   acts_as_list :scope => 'account_id = #{account_id}'
 
   after_commit :clear_cache
+
+  after_commit :backup_changes
+
+  publishable
+
+  after_commit :discard_changes
+
+  alias :backed_picklist_values_attributes= :picklist_values_attributes=
+
+  def picklist_values_attributes=(attr)
+    backup_changes
+    self.backed_picklist_values_attributes = attr
+  end
 
   def update_ticket_filter
     return unless dropdown_field? or field_type == "default_internal_group"
@@ -522,6 +538,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
     def populate_choices
       return unless @choices
+      backup_changes if nested_field? || status_field?
       if(["nested_field"].include?(self.field_type))
         clear_picklist_cache
         run_through_picklists(@choices, picklist_values, self)
@@ -606,6 +623,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
   private
     def status_field?
       self.field_type.eql?("default_status")
+    end
+
+    def type_field?
+      self.field_type.eql?("default_ticket_type")
     end
 
     def custom_field?

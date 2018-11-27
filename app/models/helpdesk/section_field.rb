@@ -1,5 +1,7 @@
 class Helpdesk::SectionField < ActiveRecord::Base
 
+  include Helpdesk::Ticketfields::Publisher
+
   clear_memcache [ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING,TICKET_FIELDS_FULL]
 
   self.primary_key = :id
@@ -17,4 +19,6 @@ class Helpdesk::SectionField < ActiveRecord::Base
   
   validates_presence_of :ticket_field_id
 
+  ticket_field_publishable
+  
 end

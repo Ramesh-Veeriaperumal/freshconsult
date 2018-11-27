@@ -220,7 +220,7 @@ class Account < ActiveRecord::Base
     :twitter_dm_outgoing_attachment => true, :twitter_mention_outgoing_attachment => true, :product_central_publish => false,
     :saml_ecrypted_assertion => false, :quoted_text_parsing_feature => false,
     :field_service_management_lp => false, :help_widget => false, :bot_email_channel => false, :bot_email_central_publish => false,
-    :description_by_request => true
+    :description_by_request => true, :ticket_fields_central_publish => false
   }
 
   BLOCK_GRACE_PERIOD = 90.days
