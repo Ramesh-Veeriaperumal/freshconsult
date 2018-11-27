@@ -1,4 +1,4 @@
-module NoteTestHelper 
+module NoteTestHelper
   def create_note(params = {})
     test_note = FactoryGirl.build(:helpdesk_note,
                          :source => params[:source] || Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["note"],
@@ -10,6 +10,7 @@ module NoteTestHelper
     test_note.incoming = params[:incoming] if params[:incoming]
     test_note.private = params[:private] if params[:private]
     test_note.category = params[:category] if params[:category]
+    test_note.send_survey = params[:send_survey] if params[:send_survey]
     body = params[:body] || Faker::Lorem.paragraph
     test_note.build_note_body(:body => body, :body_html => params[:body_html] || body)
     if params[:attachments]
@@ -50,5 +51,28 @@ module NoteTestHelper
     file = File.new(Rails.root.join("spec/fixtures/files/attachment.txt"))
     attachments = [{:resource => file}]
     create_note(params.merge({:attachments => attachments}))
+  end
+
+  # def create_note_with_freshcaller(params = {})
+  #   test_note = create_note(params)
+  #   call_obj = build_call
+  #   link_and_create(call_obj, test_note)
+  #   test_note
+  # end
+
+  def create_note_with_survey_result(ticket, params = {})
+    note = create_note(note_params_hash({:source => Helpdesk::Note::SOURCE_KEYS_BY_TOKEN["feedback"]}))
+    survey = @account.surveys.first
+    survey.send_while = 4
+    survey.save
+    survey_handle = @ticket.survey_handles.build
+    survey_handle.survey = survey
+    survey_handle.response_note_id = note.id
+    survey_handle.save!
+    survey_handle.create_survey_result(Survey::HAPPY)
+    survey_result = survey_handle.survey_result
+    survey_result.build_survey_remark({:note_id => note.id})
+    survey_result.save!
+    note
   end
 end

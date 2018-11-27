@@ -1,9 +1,15 @@
 ['note_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+# ['note_test_helper.rb', 'freshcaller_call_test_helper.rb', 'twitter_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
+# ['facebook_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 
 module NotesTestHelper
   include NoteTestHelper
+  # include FreshcallerCallTestHelper
+  # include TwitterTestHelper
+  # include FacebookTestHelper
+  # include Facebook::Constants
 
-  ASSOCIATION_REFS_BASED_ON_TYPE = ["feedback", "tweet", "fb_post"]
+  # ASSOCIATION_REFS_BASED_ON_TYPE = ["tweet", "fb_post"]
 
   def note_params_hash(params = {})
     body = params[:body_html] || Faker::Lorem.paragraph
@@ -49,24 +55,79 @@ module NotesTestHelper
 
       attachment_ids: note.attachments.map(&:id),
       user_id: note.user_id,
-      ticket_id: note.notable.display_id
+      notable_id: note.notable.display_id,
+      notable_type: note.notable_type
     }
-    ASSOCIATION_REFS_BASED_ON_TYPE.each do |ref|
-      ret_hash["#{ref}_id".to_sym] = note.safe_send(refs).id if note.safe_send(ref)
-    end 
+    ret_hash["feedback_id"] = note.survey_result_assoc.id if note.feedback?
+    # ASSOCIATION_REFS_BASED_ON_TYPE.each do |ref|
+    #   ret_hash["#{ref}_id".to_sym] = note.safe_send(ref).id if note.safe_send(ref)
+    # end 
+
+    # ret_hash["freshfone_call_id"] = note.freshfone_call.id if note.freshfone_call.present?
+    # ret_hash["freshcall_call_id"] = note.freshcaller_call.id if note.freshcaller_call.present?
     ret_hash
   end
 
   def central_assoc_note_pattern(expected_output = {}, note)
     ret_hash = {
-      ticket: Hash,
+      notable: Hash,
       user: Hash,
       attachments: Array
     }
-    ASSOCIATION_REFS_BASED_ON_TYPE.each do |ref|
-      ret_hash[ref.to_sym] = Hash if note.safe_send(ref) 
-    end
+    ret_hash["feedback"] = feedback_hash(note) if note.feedback?
+    # ret_hash["fb_post"] = fb_post_hash(note) if note.fb_post.present?
+    # ret_hash["tweet"] = tweet_hash(note) if note.tweet.present?
+    # ret_hash["freshfone_call"] = Hash if note.freshfone_call.present?
+    # ret_hash["freshcaller_call"] = freshcaller_call_hash(note) if note.freshcaller_call.present?
     ret_hash
   end
 
+  # def tweet_hash(note)
+  #   tweet = note.tweet
+  #   twitter_handle = note.tweet.twitter_handle
+  #   ret_hash = {
+  #     id: tweet.id,
+  #     tweet_id: tweet.tweet_id,
+  #     type: tweet.tweet_type,
+  #     stream_id: tweet.stream_id,
+  #     twitter_handle_id: twitter_handle.id
+  #   }
+  # end
+
+  # def freshcaller_call_hash(note)
+  #   call = note.freshcaller_call
+  #   ret_hash = {
+  #     id: call.id,
+  #     fc_call_id: call.fc_call_id,
+  #     recording_status: {
+  #       id: call.recording_status,
+  #       name: Freshcaller::Call::RECORDING_STATUS_NAMES_BY_KEY[call.recording_status]
+  #     }
+  #   }
+  # end
+
+  # def fb_post_hash(note)
+  #   fb_post = note.fb_post
+  #   ret_hash = {
+  #     "id": fb_post.id,
+  #     "post_id": fb_post.post_id,
+  #     "msg_type": fb_post.msg_type,
+  #     "page": {
+  #       "name": fb_post.facebook_page.page_name,
+  #       "page_id": fb_post.facebook_page.page_id
+  #     }
+  #   }
+  # end
+
+  def feedback_hash(note)
+    survey_result_assoc = note.survey_result_assoc
+    survey_rating = survey_result_assoc.class == SurveyResult ? survey_result_assoc.rating : survey_result_assoc.custom_rating
+    ret_hash = {
+      "id": survey_result_assoc.id,
+      "rating": survey_rating,
+      "agent_id": survey_result_assoc.agent_id,
+      "group_id": survey_result_assoc.group_id,
+      "survey_id": survey_result_assoc.survey_id
+    }
+  end
 end

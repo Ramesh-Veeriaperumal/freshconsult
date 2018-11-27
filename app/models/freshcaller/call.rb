@@ -4,6 +4,7 @@ module Freshcaller
     self.primary_key = :id
 
     belongs_to_account
+    # concerned_with :presenter
 
     belongs_to :ticket, foreign_key: 'notable_id', class_name: 'Helpdesk::Ticket'
     belongs_to :note, foreign_key: 'notable_id', class_name: 'Helpdesk::Note'
