@@ -140,6 +140,17 @@ module Cache::Memcache::Account
     end
   end
 
+  def group_types_from_cache
+    @group_types_from_cache ||= begin
+      key = group_types_memcache_key
+      MemcacheKeys.fetch(key) {self.group_types.find(:all)}      
+    end
+  end
+
+   def clear_group_types_cache
+     MemcacheKeys.delete_from_cache(ACCOUNT_GROUP_TYPES % { :account_id =>self.id })
+  end
+
   def agent_groups_from_cache
     @agent_groups_from_cache ||= begin
       key = agent_groups_memcache_key
@@ -628,6 +639,10 @@ module Cache::Memcache::Account
 
     def bots_memcache_key
       ACCOUNT_BOTS % { account_id: self.id }
+    end
+
+    def group_types_memcache_key
+      ACCOUNT_GROUP_TYPES % { :account_id => self.id }
     end
 
     def bots_count_memcache_key

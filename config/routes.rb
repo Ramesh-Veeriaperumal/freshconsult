@@ -400,6 +400,7 @@ Helpkit::Application.routes.draw do
   end
 
   match '/agents/filter/:state(/*letter)' => 'agents#index'
+  match '/groups/filter/:state' => 'groups#index'
   match '/logout' => 'user_sessions#destroy', :as => :logout
   match '/login' => 'user_sessions#new', :as => :login
   match '/login/sso' => 'user_sessions#sso_login', :as => :sso_login

@@ -30,6 +30,7 @@ module GroupsTestHelper
       name: expected_output[:name] || group.name,
       description: expected_output[:description] || group.description,
       business_hour_id: expected_output[:business_hour_id] || group.business_calendar_id,
+      group_type: expected_output[:group_type] || GroupType.group_type_name(group.group_type),
       escalate_to: expected_output[:escalate_to] || group.escalate_to,
       unassigned_for: expected_output[:unassigned_for] || (GroupConstants::UNASSIGNED_FOR_MAP.key(group.assign_time)),
       created_at: %r{^\d\d\d\d[- \/.](0[1-9]|1[012])[- \/.](0[1-9]|[12][0-9]|3[01])T\d\d:\d\d:\d\dZ$},

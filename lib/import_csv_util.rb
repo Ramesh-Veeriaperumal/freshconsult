@@ -11,7 +11,7 @@ module ImportCsvUtil
   VALID_CLIENT_MANAGER_VALUES = ["yes", "true"]
   AND_SYMBOL = "&"
   IMPORT_BATCH_SIZE = 25
-
+  IMPORT_KEY_EXPIRY = 30.days.to_i
   #------------------------------------Customers include both contacts and companies-----------------------------------------------
 
   def import_fields
@@ -34,20 +34,27 @@ module ImportCsvUtil
     file_path  = "import/#{Account.current.id}/#{type}/#{Time.now.to_i}/#{file_field.original_filename}"
     if type == 'contact' || type == 'company'
       row_count = `wc -l "#{file_field.path}"`.strip.split(' ')[0].to_i
-      save_row_count row_count, type
     end
     
     AwsWrapper::S3Object.store(file_path, file_field.tempfile, S3_CONFIG[:bucket], :content_type => file_field.content_type)
-
     session[:map_fields] = {}
+    session[:map_fields][:row_count] = row_count
     session[:map_fields][:file_name] = file_field.original_filename
     session[:map_fields][:file_path] = file_path
   end
 
-  def save_row_count count, type
-    key = Object.const_get("#{type.upcase}_IMPORT_TOTAL_RECORDS") % {:account_id => 
-                                                                          Account.current.id}
-    set_others_redis_with_expiry(key, count, {})
+  def set_counts(type)
+    key = format(Object.const_get("#{type.upcase}_IMPORT_TOTAL_RECORDS"),
+                 account_id: Account.current.id,
+                 import_id: @import.id)
+    set_others_redis_with_expiry(key, @row_count, ex: IMPORT_KEY_EXPIRY)
+
+    ['IMPORT_FINISHED_RECORDS', 'IMPORT_FAILED_RECORDS'].each do |key_type|
+      key = format(Object.const_get("#{type.upcase}_#{key_type}"),
+                   account_id: Account.current.id,
+                   import_id: @import.id)
+      set_others_redis_with_expiry(key, 0, ex: IMPORT_KEY_EXPIRY)
+    end
   end
 
   def read_file file_location, header = false
@@ -63,9 +70,9 @@ module ImportCsvUtil
     raise e
   end
 
-
   def file_info
     @file_name = session[:map_fields][:file_name]
+    @row_count = session[:map_fields][:row_count]
     @file_location = session[:map_fields][:file_path]
   end
 
@@ -75,6 +82,10 @@ module ImportCsvUtil
 
   def content_of csv_file
     csv_file.read.force_encoding('utf-8').encode('utf-16', :undef => :replace, :invalid => :replace, :replace => '').encode('utf-8')
+  end
+
+  def row_count
+    @row_count ||= session[:map_fields][:row_count]
   end
 
   def delete_import_file(file_location)

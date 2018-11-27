@@ -1,6 +1,7 @@
 require_relative '../test_helper'
 class ApiGroupsControllerTest < ActionController::TestCase
   include GroupsTestHelper
+  include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
   def wrap_cname(params)
     { api_group: params }
   end
@@ -11,6 +12,19 @@ class ApiGroupsControllerTest < ActionController::TestCase
     match_json(group_pattern(Group.last))
   end
 
+  def test_create_group_with_group_type
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, group_type: @account.group_types.first.name, auto_ticket_assign: true)
+    assert_response 201
+    match_json(group_pattern(Group.last))
+  end
+
+  def test_create_group_with_invalid_group_type
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, group_type: Faker::Lorem.characters(10), auto_ticket_assign: true)
+    assert_response 400
+    result = (JSON.parse response.body)["errors"][0]["code"]
+    assert_equal result,"invalid_value"
+  end
+
   def test_create_group_with_existing_name
     existing_group = Group.first || create_group(@account)
     post :create, construct_params({}, name: existing_group.name, description: Faker::Lorem.paragraph)
@@ -19,7 +33,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_create_group_with_all_fields
-    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.sentence(2),
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.sentence(2), group_type: GroupConstants::SUPPORT_GROUP_NAME,
                                        escalate_to: 1, unassigned_for: '30m', auto_ticket_assign: true, agent_ids: [1])
     assert_response 201
     match_json(group_pattern({ agent_ids: [1] }, Group.last))
@@ -83,6 +97,27 @@ class ApiGroupsControllerTest < ActionController::TestCase
     end
     assert_response 200
     match_json(pattern.ordered!)
+  end
+
+  def test_index_for_validate_filter_params_valid
+    add_data_to_group_type
+    3.times do
+      create_group(@account,{},2)
+    end
+    group_count = @account.groups.where(group_type: GroupType.group_type_id(GroupConstants::SUPPORT_GROUP_NAME)).count
+    get :index, controller_params(group_type: @account.group_types.first.name)
+    res = JSON.parse response.body
+    assert_equal group_count,res.size
+    assert_response 200
+  ensure
+    destroy_field_group
+  end
+
+  def test_index_for_validate_filter_params_invalid
+    get :index, controller_params(group_type: Faker::Lorem.characters(10))
+    assert_response 400
+    result = (JSON.parse response.body)["errors"][0]["code"]
+    assert_equal result,"invalid_value"
   end
 
   def test_show_with_invalid_boolean_value
@@ -183,6 +218,15 @@ class ApiGroupsControllerTest < ActionController::TestCase
     assert_response 200
     match_json(group_pattern({ agent_ids: [1] }, group.reload))
   end
+
+  def test_update_group_type_of_group
+    group = create_group(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, ticket_assign_type: 1)
+    put :update, construct_params({ id: group.id }, group_type: GroupConstants::SUPPORT_GROUP_NAME)
+    assert_response 400
+    result = (JSON.parse response.body)["errors"][0]["code"]
+    assert_equal result,"invalid_field"
+  end
+
 
   def test_validate_agent_list
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, agent_ids: [''])

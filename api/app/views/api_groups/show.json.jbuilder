@@ -1,6 +1,7 @@
 json.cache! CacheLib.key(@item, params) do
   json.extract! @item, :id, :name, :description, :escalate_to, :unassigned_for, :business_hour_id
   json.set! :auto_ticket_assign, @item.auto_ticket_assign if @item.round_robin_enabled?
+  json.set! :group_type, GroupType.group_type_name(@item.group_type)
   json.partial! 'shared/utc_date_format', item: @item
 end
 
