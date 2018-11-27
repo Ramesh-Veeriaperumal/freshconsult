@@ -54,7 +54,7 @@ module Community::TopicsMerge
 
   def self.blank_reply?(note)
     return true if note.blank?
-    ['&nbsp;', '<br>', '<br />', '<p>', '</p>'].each { |str| note.gsub!(str, '') }
+    ['&nbsp;', '<br>', '<br />', '<p>', '</p>', '<div dir="ltr">', '</div>'].each { |str| note.gsub!(str, '') }
     note.blank?
   end
 
