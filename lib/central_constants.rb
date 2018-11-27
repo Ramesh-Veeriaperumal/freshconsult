@@ -20,6 +20,7 @@ module CentralConstants
       'Product' => '0',
       'Integrations::InstalledApplication' => '0',
       'Social::FacebookPage' => '0',
-      'Bot::Response' => '0'
+      'Bot::Response' => '0',
+      'Helpdesk::TicketField' => '0'
   }
 end

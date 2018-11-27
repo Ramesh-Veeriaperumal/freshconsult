@@ -42,6 +42,7 @@
     - central_publish
     - active_ticket_central_publish
     - user_central_publish
+    - ticket_field_central_publish
     - active_note_central_publish
     - company_central_publish
   :scheduled:

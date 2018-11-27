@@ -10,6 +10,8 @@ class Helpdesk::Section < ActiveRecord::Base
   serialize :options
 
   attr_protected :account_id
+
+  concerned_with :presenter
   
   belongs_to_account
   has_many :section_fields, :dependent => :destroy, :order => 'position'

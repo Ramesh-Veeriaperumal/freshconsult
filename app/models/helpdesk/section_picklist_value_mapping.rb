@@ -1,4 +1,6 @@
 class Helpdesk::SectionPicklistValueMapping < ActiveRecord::Base
+
+  include Helpdesk::Ticketfields::Publisher
   
   clear_memcache [TICKET_FIELDS_FULL]
 
@@ -11,4 +13,10 @@ class Helpdesk::SectionPicklistValueMapping < ActiveRecord::Base
 
   validates_uniqueness_of :picklist_value_id, :scope => :account_id
 
+  ticket_field_publishable
+
+  def ticket_field
+    picklist_value.pickable
+  end
+  
 end
