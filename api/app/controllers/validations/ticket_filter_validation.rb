@@ -3,6 +3,11 @@ class TicketFilterValidation < FilterValidation
                 :order_by, :conditions, :requester, :status, :cf, :include,
                 :include_array, :query_hash, :only
 
+  validates :page, custom_numericality: {
+    only_integer: true, greater_than: 0, ignore_string: :allow_string_param,
+    less_than_or_equal_to: ApiTicketConstants::MAX_PAGE_LIMIT,
+    custom_message: :tickets_page_invalid, message_options: { max_value: ApiTicketConstants::MAX_PAGE_LIMIT }
+  }
   validates :company_id, :requester_id, custom_numericality: { only_integer: true, greater_than: 0, ignore_string: :allow_string_param }
   validate :verify_requester, if: -> { errors[:requester_id].blank? && (requester_id || email) }
   validate :verify_company, if: -> { errors[:company_id].blank? && company_id }

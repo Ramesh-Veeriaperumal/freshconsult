@@ -12,7 +12,7 @@ module Ember
     include LeaderboardTestHelper
     include Redis::RedisKeys
     include Redis::SortedSetRedis
-    include TicketsTestHelper
+    include ApiTicketsTestHelper
     include ProductsTestHelper
 
     def setup

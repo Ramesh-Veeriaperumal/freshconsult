@@ -4,7 +4,7 @@ class TicketSummaryControllerTest < ActionController::TestCase
   include ConversationsTestHelper
   include AttachmentsTestHelper
   include CannedResponsesHelper
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   include DynamoHelper
   include AwsTestHelper
 

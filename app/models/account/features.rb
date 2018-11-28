@@ -18,7 +18,8 @@ class Account < ActiveRecord::Base
                    :stop_contacts_count_query, :db_to_bitmap_features_migration, :denormalized_select_for_update,
                    :trial_subscription, :installed_app_publish, :disable_banners, :twitter_dm_outgoing_attachment, :twitter_mention_outgoing_attachment,
                    :new_onboarding, :onboarding_inlinemanual, :skip_portal_cname_chk, :ner, :whitelist_supervisor_sla_limitation, :product_central_publish,
-                   :help_widget, :redis_picklist_id, :bot_email_channel, :bot_email_central_publish, :es_tickets, :description_by_request, :bot_chat_history]
+                   :help_widget, :redis_picklist_id, :bot_email_channel, :bot_email_central_publish, :es_tickets,
+                   :description_by_request, :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish]
 
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   

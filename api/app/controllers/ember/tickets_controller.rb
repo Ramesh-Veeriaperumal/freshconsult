@@ -228,11 +228,49 @@ module Ember
 
       def load_objects
         if params[:only] == 'count'
+          @items_count = optimized_count
           @items = []
-          @items_count = ( current_account.count_es_enabled? ? ::Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket) : tickets_filter.count )
         else
-          items_relation_object = tickets_filter.preload(conditional_preload_options)
-          @items = ( current_account.count_es_tickets_enabled? ? tickets_from_es : paginate_items(items_relation_object) )
+          @items = load_ticket_items
+        end
+      end
+
+      def load_ticket_items
+        if use_filter_factory?
+          items = FilterFactory::TicketFilterer.filter(params, true).preload(conditional_preload_options)
+          paginate_items(items, true)
+        elsif current_account.count_es_tickets_enabled?
+          tickets_from_es
+        else
+          paginate_items(tickets_filter.preload(conditional_preload_options))
+        end
+      end
+
+      def paginate_items(items, ff_load = false)
+        if ff_load
+          Rails.logger.info ':::FilterFactory Pagination started:::'
+          add_link_header(page: (page + 1)) if items.length > per_page
+          items[0..(per_page - 1)] # get paginated_collection of length 'per_page'
+        else
+          super(items)
+        end
+      end
+
+      def use_filter_factory?
+        return false if params[:filter] && (['spam', 'deleted'].include? params[:filter].to_s)
+        Account.current.filter_factory_enabled? && !params[:ids]
+      end
+
+      # def ticket_filterer_params
+      #   preloads = params[:include] ? (params[:include].split(',') + conditional_preload_options).compact : conditional_preload_options
+      #   params.merge(include: preloads)
+      # end
+
+      def optimized_count
+        if current_account.count_es_enabled?
+          ::Search::Tickets::Docs.new(wf_query_hash).count(Helpdesk::Ticket)
+        else
+          tickets_filter.count
         end
       end
 

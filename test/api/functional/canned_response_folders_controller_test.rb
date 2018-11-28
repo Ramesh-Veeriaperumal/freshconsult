@@ -1,4 +1,4 @@
-require_relative '../../test_helper'
+require_relative '../test_helper'
 ['canned_responses_helper.rb', 'group_helper.rb', 'agent_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require_relative "#{Rails.root}/lib/helpdesk_access_methods.rb"
 
@@ -121,4 +121,136 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
     assert_response 404
   end
 
+  def test_create
+    name = Faker::App.name
+    folder = {
+      name: name
+    }
+    post :create, construct_params(build_request_param(folder))
+    assert_response 201
+    match_json(ca_folder_create_pattern(name, ActiveSupport::JSON.decode(response.body)['id']))
+  end
+
+  def test_create_duplicate
+    name = Faker::App.name
+    folder = {
+      name: @ca_folder_all.name
+    }
+    post :create, construct_params(build_request_param(folder))
+    assert_response 409
+  end
+
+  def test_create_privilage_check
+    User.any_instance.stubs(:privilege?).with(:manage_canned_responses).returns(false)
+    name = Faker::App.name
+    folder = {
+      name: name
+    }
+    post :create, construct_params(build_request_param(folder))
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_create_with_invalid_datatype
+    folder = {
+      name: 1
+    }
+    post :create, construct_params(build_request_param(folder))
+    assert_response 400
+  end
+
+  def test_create_with_personal
+    folder = {
+      name: 'Personal_'
+    }
+    post :create, construct_params(build_request_param(folder))
+    assert_response 400
+  end
+
+  def test_create_with_length
+    folder = {
+      name: 'as'
+    }
+    post :create, construct_params(build_request_param(folder))
+    assert_response 400
+  end
+
+  def test_create_with_invalid_params1
+    folder = {
+      name: 'test',
+      test: 2
+    }
+    post :create, construct_params(build_request_param(folder))
+    assert_response 400
+  end
+
+  def test_create_with_invalid_params2
+    post :create, construct_params({ version: 'v2', canned_response_folder: {}})
+    assert_response 400
+  end
+
+  def test_update
+    folder = {
+      name: Faker::App.name
+    }
+    put :update, construct_params(build_request_param(folder)).merge(id: @ca_folder_all.id)
+    assert_response 200
+    @ca_folder_all.reload
+    match_json(ca_create_pattern(@ca_folder_all))
+  end
+
+  def test_update_privilage_check
+    User.any_instance.stubs(:privilege?).with(:manage_canned_responses).returns(false)
+    folder = {
+      name: Faker::App.name
+    }
+    put :update, construct_params(build_request_param(folder)).merge(id: @ca_folder_all.id)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_update_with_invalid_datatype
+    folder = {
+      name: 1
+    }
+    put :update, construct_params(build_request_param(folder)).merge(id: @ca_folder_all.id)
+    assert_response 400
+  end
+
+  def test_update_with_personal
+    folder = {
+      name: 'Personal_'
+    }
+    put :update, construct_params(build_request_param(folder)).merge(id: @ca_folder_all.id)
+    assert_response 400
+  end
+
+  def test_update_with_length
+    folder = {
+      name: 'as'
+    }
+    put :update, construct_params(build_request_param(folder)).merge(id: @ca_folder_all.id)
+    assert_response 400
+  end
+
+  def test_update_with_invalid_params1
+    folder = {
+      name: 'test',
+      test: 2
+    }
+    put :update, construct_params(build_request_param(folder)).merge(id: @ca_folder_all.id)
+    assert_response 400
+  end
+
+  def test_update_with_invalid_params2
+    put :update, construct_params({ version: 'v2', canned_response_folder: {} }).merge(id: @ca_folder_all.id)
+    assert_response 400
+  end
+
+  def test_update_personal_folder
+    put :update, construct_params({ version: 'v2', canned_response_folder: {name: 'test'} }).merge(id: @ca_folder_personal.id)
+    assert_response 400
+  end
 end

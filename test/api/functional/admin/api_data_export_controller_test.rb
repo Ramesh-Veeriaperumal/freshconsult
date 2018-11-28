@@ -4,7 +4,7 @@ require 'webmock/minitest'
 
 
 class Admin::ApiDataExportsControllerTest < ActionController::TestCase
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   
   def test_export_user_data
     Helpdesk::ExportDataWorker.any_instance.unstub(:export_users_data)

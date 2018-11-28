@@ -2,7 +2,7 @@ require_relative '../../../test_helper'
 
 module Ember::Search
   class TicketsControllerTest < ActionController::TestCase
-  	include TicketsTestHelper
+  	include ApiTicketsTestHelper
   	include SearchTestHelper
 
     def test_result_without_user_access

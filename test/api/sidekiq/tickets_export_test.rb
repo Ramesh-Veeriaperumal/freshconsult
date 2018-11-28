@@ -1,6 +1,8 @@
 require_relative '../unit_test_helper'
 require 'sidekiq/testing'
 require 'faker'
+require 'webmock/minitest'
+WebMock.allow_net_connect!
 
 Sidekiq::Testing.fake!
 
@@ -16,17 +18,18 @@ class TicketsExportTest < ActionView::TestCase
   include ArchiveTicketTestHelper
 
   def setup
-    @account = Account.first.make_current
+    super
+    @account ||= Account.first.make_current
+    @agent = @account.agents.first || add_agent_to_account(@account, name: Faker::Name.name, active: 1, role: 1)
     datetime = Time.now
     @start_time = (datetime - 86400).to_s(:db)
     @end_time = datetime.to_s(:db)
     @time = (datetime - 1200).to_s(:db)
     @ticket_fields = { display_id: 'Ticket ID', subject: 'Subject', description: 'Description', status_name: 'Status', priority_name: 'Priority', source_name: 'Source', ticket_type: 'Type', responder_name: 'Agent', group_name: 'Group', created_at: 'Created time', due_by: 'Due by Time', resolved_at: 'Resolved time', closed_at: 'Closed time', updated_at: 'Last update time', first_response_time: 'Initial response time', time_tracked_hours: 'Time tracked', first_res_time_bhrs: 'First response time (in hrs)', resolution_time_bhrs: 'Resolution time (in hrs)', outbound_count: 'Agent interactions', inbound_count: 'Customer interactions', resolution_status: 'Resolution status', first_response_status: 'First response status', ticket_tags: 'Tags', ticket_survey_results: 'Survey results', product_name: 'Product' }
+    stub_request(:post, %r{^http://scheduler-staging.freshworksapi.com/schedules.*?$}).to_return(status: 200, body: "", headers: {})
   end
 
   def test_index_ticket_csv
-    skip("ticket tests failing")
-    @agent = add_agent_to_account(@account, options = { role: 1, active: 1 })
     @ticket = create_ticket(requester_id: @agent.user_id)
     @ticket.ticket_states.created_at = @time
     @ticket.ticket_states.save!
@@ -55,8 +58,6 @@ class TicketsExportTest < ActionView::TestCase
   end
 
   def test_index_ticket_excel
-    skip("ticket tests failing")
-    @agent = add_agent_to_account(@account, options = { role: 1, active: 1 })
     @ticket = create_ticket(requester_id: @agent.user_id)
     @ticket.ticket_states.created_at = @time
     @ticket.ticket_states.save!
@@ -85,8 +86,6 @@ class TicketsExportTest < ActionView::TestCase
   end
 
   def test_index_associated_contact_csv
-    skip("ticket tests failing")
-    @agent = add_agent_to_account(@account, options = { role: 1, active: 1 })
     @ticket = create_ticket(requester_id: @agent.user_id)
     @ticket.ticket_states.created_at = @time
     @ticket.ticket_states.save!
@@ -115,8 +114,6 @@ class TicketsExportTest < ActionView::TestCase
   end
 
   def test_index_associated_company_csv
-    skip("ticket tests failing")
-    @agent = add_agent_to_account(@account, options = { role: 1, active: 1 })
     @ticket = create_ticket(requester_id: @agent.user_id)
     @ticket.ticket_states.created_at = @time
     @ticket.ticket_states.save!
@@ -145,8 +142,6 @@ class TicketsExportTest < ActionView::TestCase
   end
 
   def test_index_associated_contact_and_company_csv
-    skip("ticket tests failing")
-    @agent = add_agent_to_account(@account, options = { role: 1, active: 1 })
     @ticket = create_ticket(requester_id: @agent.user_id)
     @ticket.ticket_states.created_at = @time
     @ticket.ticket_states.save!
@@ -175,8 +170,6 @@ class TicketsExportTest < ActionView::TestCase
   end
 
   def test_index_closed_csv
-    skip("ticket tests failing")
-    @agent = add_agent_to_account(@account, options = { role: 1, active: 1 })
     @ticket = create_ticket(requester_id: @agent.user_id, responder_id: 1)
     args = { format: 'csv', date_filter: '0', ticket_state_filter: 'closed_at',
              query_hash: [{ condition: 'created_at', operator: 'is_greater_than', value: 'last_month' }],

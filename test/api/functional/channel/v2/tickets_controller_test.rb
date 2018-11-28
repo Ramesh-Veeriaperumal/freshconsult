@@ -3,7 +3,7 @@ require 'webmock/minitest'
 
 module Channel::V2
   class TicketsControllerTest < ActionController::TestCase
-    include TicketsTestHelper
+    include ApiTicketsTestHelper
 
     CUSTOM_FIELDS = %w[number checkbox decimal text paragraph dropdown country state city date].freeze
 
@@ -525,7 +525,7 @@ module Channel::V2
       tkts << t.reload
       get :index, controller_params(filter: 'deleted')
       pattern = []
-      tkts.each { |tkt| pattern << index_deleted_ticket_pattern(tkt, [:description, :description_text]:) }
+      tkts.each { |tkt| pattern << index_deleted_ticket_pattern(tkt, [:description, :description_text]) }
       match_json(pattern)
 
       t.update_column(:deleted, false)
@@ -773,7 +773,7 @@ module Channel::V2
       assert_equal tkts.count, response.size
       param_object = OpenStruct.new
       pattern = tkts.map do |tkt|
-        index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
+        index_ticket_pattern_with_associations(tkt, param_object)
       end
       match_json(pattern)
     ensure
@@ -788,7 +788,7 @@ module Channel::V2
       assert_response 400
       match_json([bad_request_error_pattern(
         'include', :not_included,
-        list: 'requester, stats, company,  description')]
+        list: 'requester, stats, company, description')]
       )
     ensure
       @channel_v2_api = false
@@ -860,7 +860,7 @@ module Channel::V2
       assert_response 200
       param_object = OpenStruct.new(:stats => true)
       pattern = []
-      pattern.push(index_ticket_pattern_with_associations(t, param_object, [:description, :description_text]))
+      pattern.push(index_ticket_pattern_with_associations(t, param_object))
       p "pattern : #{pattern.inspect}"
       match_json(pattern)
     ensure

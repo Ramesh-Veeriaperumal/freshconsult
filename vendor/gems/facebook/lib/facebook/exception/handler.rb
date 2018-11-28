@@ -24,12 +24,14 @@ module Facebook
             return_value = yield
           rescue Koala::Facebook::APIError => @exception
             
+            Rails.logger.debug "Error inside facebook sandbox - #{@exception.fb_error_code}::#{@exception.http_status}::#{error_params[:error_code]} - #{@exception.to_s}"
             if auth_error?
               update_error_and_notify(error_params)
                          
             elsif client_error?
               if app_rate_limit_exceeded?
                 throttle_processing unless app_rate_limit_reached?
+                Sqs::Message.new("{}").requeue(JSON.parse(@raw_obj)) if @raw_obj
                 notify_error(error_params)
               elsif page_rate_limit_exceeded?
                 throttle_fb_page_processing(@fan_page.account_id, @fan_page.page_id)
@@ -82,9 +84,7 @@ module Facebook
             subcode and AUTH_SUB_CODES.include?(subcode) or ERROR_MESSAGES.any?{|k,v| error_params[:error_msg].include?(v)}
           end
         end
-        def facebook_user_blocked?
-          error_params[:error_code] == 230 || error_params[:error_code] == 551
-        end
+        
         def client_error?
           !@exception.http_status.blank? and @exception.http_status.between?(HTTP_STATUS_CLIENT_ERROR.first,  HTTP_STATUS_CLIENT_ERROR.last)
         end

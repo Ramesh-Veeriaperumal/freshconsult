@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 
 module Widget
   class TicketsControllerTest < ActionController::TestCase
-    include TicketsTestHelper
+    include ApiTicketsTestHelper
     include HelpWidgetsTestHelper
 
     def setup
