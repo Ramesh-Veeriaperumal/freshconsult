@@ -1,4 +1,5 @@
 class ApiGroupsController < ApiApplicationController
+  include GroupConstants
   decorate_views
   before_filter :prepare_agents, only: [:create, :update]
 
