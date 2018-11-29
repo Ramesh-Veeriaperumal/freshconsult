@@ -1138,7 +1138,26 @@ module Ember
 
       match_json(reply_template_pattern(
         template: "<div>#{h(t.subject)}</div>",
-        signature: "<div><p>Thanks</p><p>#{t.subject}</p></div>"))
+        signature: "<div><p>Thanks</p><p>#{h(t.subject)}</p></div>"))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_reply_template)
+    end
+
+    def test_agent_signature_in_agent_reply_template_with_xss
+      Account.current.launch(:escape_liquid_for_reply)
+      remove_wrap_params
+      t = create_ticket(:subject => '<svg/onload=alert(document.domain)>;')
+
+      notification_template = '<div>{{ticket.subject}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_reply_template).returns(notification_template)
+      get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
+      assert_response 200
+
+      match_json(reply_template_pattern(
+        template: "<div>#{h(t.subject)}</div>",
+        signature: "<div><p>Thanks</p><p>#{h(t.subject)}</p></div>"))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_reply_template)
     end
@@ -1229,6 +1248,24 @@ module Ember
       EmailNotification.any_instance.unstub(:get_forward_template)
     end
 
+    def test_agent_signature_in_agent_forward_template_with_xss
+      Account.current.launch(:escape_liquid_for_reply) 
+      remove_wrap_params
+      t = create_ticket(:subject => '<svg/onload=alert(document.domain)>;')
+
+      notification_template = '<div>{{ticket.subject}}</div>'
+      agent_signature = '<div><p>Thanks</p><p>{{ticket.subject}}</p></div>'
+      Agent.any_instance.stubs(:signature_value).returns(agent_signature)
+      EmailNotification.any_instance.stubs(:get_forward_template).returns(notification_template)
+
+      get :forward_template, construct_params({ version: 'private', id: t.display_id }, false)
+      assert_response 200
+      match_json(forward_template_pattern(template: "<div>#{h(t.subject)}</div>",
+                                        signature: "<div><p>Thanks</p><p>#{h(t.subject)}</p></div>"))
+      Agent.any_instance.unstub(:signature_value)
+      EmailNotification.any_instance.unstub(:get_forward_template)
+    end
+
     def test_agent_note_forward_template_with_signature_and_attachments_empty_cc
       note = create_note(user_id: @agent.id, ticket_id: ticket.id, source: 2, attachments: { resource: fixture_file_upload('files/attachment.txt', 'plain/text', :binary) })
       notification_template = '<div>{{ticket.id}}</div>'
@@ -1241,7 +1278,7 @@ module Ember
       res = parse_response(response.body)
       assert_equal 0, res['cc_emails'].size
       assert_response 200
-      match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{ticket.subject}</p></div>"))
+      match_json(forward_template_pattern(template: "<div>#{ticket.display_id}</div>", signature: "<div><p>Thanks</p><p>#{h(ticket.subject)}</p></div>"))
       Agent.any_instance.unstub(:signature_value)
       EmailNotification.any_instance.unstub(:get_forward_template)
       Helpdesk::Ticket.any_instance.unstub(:current_cc_emails)

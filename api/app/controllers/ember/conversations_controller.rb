@@ -110,6 +110,7 @@ module Ember
 
     def reply_forward_template
       @item = last_forwardable_note if action_name.to_sym == :latest_note_forward_template
+      @ticket.escape_liquid_attributes = current_account.launched?(:escape_liquid_for_reply)
       if params.key?(:body)
         time = params[:time]
         body_html = get_reply_template_content(current_user.id, @ticket.display_id, time)
