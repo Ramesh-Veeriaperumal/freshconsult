@@ -21,7 +21,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   before_destroy :before_destroy_customize
   after_destroy :delete_google_accounts, :after_destroy_customize
   before_save :before_save_customize
-  before_create :before_create_customize
+  before_create :before_create_customize, :unless => :skip_callbacks
   before_destroy :store_deleted_model
   after_create :after_create_customize
   after_save :after_save_customize
@@ -30,7 +30,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 
   after_commit :after_commit_on_create_customize, :on => :create
   after_commit :after_commit_on_update_customize, :on => :update
-  after_commit :after_commit_on_destroy_customize, :on => :destroy
+  after_commit :after_commit_on_destroy_customize, :on => :destroy, :unless => :skip_callbacks
   after_commit :after_commit_customize
   after_commit :clear_application_on_dip_from_cache
   after_commit :clear_fragment_caches, :if => :attachment_applications?
@@ -38,6 +38,8 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   publishable on: [:create, :update, :destroy], if: :publish_feature_launched?
 
   include ::Integrations::AppMarketPlaceExtension
+
+  attr_accessor :skip_callbacks
 
   scope :with_name, lambda { |app_name| where("applications.name = ?", app_name ).joins(:application).select('installed_applications.*')}
   delegate :oauth_url, :to => :application 
