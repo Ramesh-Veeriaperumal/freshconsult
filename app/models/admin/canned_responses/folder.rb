@@ -59,6 +59,9 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
   scope :default_folder,
     :conditions => { :is_default => true }
 
+  scope :editable_folder,
+    :conditions => { :folder_type => FOLDER_TYPE_KEYS_BY_TOKEN[:others] }
+
 
   before_save :set_folder_type
   before_destroy :confirm_destroy

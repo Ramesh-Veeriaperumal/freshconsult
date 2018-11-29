@@ -8,7 +8,7 @@ class ApiConversationsControllerTest < ActionController::TestCase
   include ConversationsTestHelper
   include AttachmentsTestHelper
   include CannedResponsesHelper
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   include AwsTestHelper
 
   BULK_ATTACHMENT_CREATE_COUNT = 2

@@ -3,7 +3,7 @@ require_relative '../../../test_helper'
 module Ember
   module Tickets
     class BulkActionsControllerTest < ActionController::TestCase
-      include TicketsTestHelper
+      include ApiTicketsTestHelper
       include ScenarioAutomationsTestHelper
       include AttachmentsTestHelper
       include GroupHelper
@@ -957,7 +957,6 @@ module Ember
       end
 
       def test_bulk_update_closure_status_with_required_for_closure_default_field_with_incorrect_value_in_db
-        skip("ticket tests failing")
         Helpdesk::TicketField.where(name: 'product').update_all(required_for_closure: true)
         product_id = @account.reload.products.last.try(:id) || 1
         ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, product_id: product_id + 10_00, responder_id: @agent.id + 100)
@@ -1493,7 +1492,6 @@ module Ember
       end
 
       def test_bulk_unlink_related_ticket_from_tracker
-        skip("ticket tests failing")
         enable_adv_ticketing([:link_tickets]) do
           create_linked_tickets
           Sidekiq::Testing.inline! do
@@ -1550,7 +1548,6 @@ module Ember
       end
 
       def test_bulk_unlink_tickets_without_permission_for_tracker
-        skip("ticket tests failing")
         enable_adv_ticketing([:link_tickets]) do
           create_linked_tickets
           ::Tickets::UnlinkTickets.any_instance.stubs(:tracker_ticket_permission?).returns(false)

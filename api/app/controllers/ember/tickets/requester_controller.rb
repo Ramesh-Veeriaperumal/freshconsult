@@ -60,7 +60,7 @@ module Ember
           render_request_error(:missing_params, 400) if cname_params[:contact].blank? && cname_params[:company].blank?
           cname_params.permit(*REQUESTER_FIELDS)
           REQUESTER_FIELDS.each do |type|
-            next if instance_variable_get("@#{type}").blank?
+            next if instance_variable_get("@#{type}").blank? || cname_params[type.to_sym].blank?
             fields = current_account.safe_send("#{type}_form").custom_fields_in_widget
             instance_variable_set("@#{type}_name_mapping", CustomFieldDecorator.name_mapping(fields))
 

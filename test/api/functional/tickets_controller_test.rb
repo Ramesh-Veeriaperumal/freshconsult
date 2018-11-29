@@ -8,7 +8,7 @@ require 'webmock/minitest'
 Sidekiq::Testing.fake!
 
 class TicketsControllerTest < ActionController::TestCase
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   include CustomFieldsTestHelper
   include AttachmentsTestHelper
   include AwsTestHelper

@@ -304,11 +304,13 @@ defaults: &defaults
     - [twitter_reply]   
     - [default_data_population]
     - [freshops_service]
+    - [ticket_field_central_publish]
     - [cancel_account]
     - [migration]
     - [widget_upload_config]
     - [bot_email_reply]
     - [bot_email_ml_feedback]
+    - [ticket_field_central_publish]
     
 development:
   <<: *defaults

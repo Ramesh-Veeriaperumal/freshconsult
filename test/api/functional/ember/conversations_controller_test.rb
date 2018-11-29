@@ -8,7 +8,7 @@ module Ember
     include AttachmentsTestHelper
     include GroupHelper
     include CannedResponsesHelper
-    include TicketsTestHelper
+    include ApiTicketsTestHelper
     include SocialTestHelper
     include SocialTicketsCreationHelper
     include TwitterHelper

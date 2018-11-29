@@ -1,7 +1,12 @@
 class GoogleDrive < ActiveRecord::Migration
-	
+  shard :all
+
   @app_name = "google_drive"
- 
+
+  def migrate(direction)
+    self.send(direction)
+  end
+
   def self.up
     Integrations::Application.create(
           :name => @app_name,

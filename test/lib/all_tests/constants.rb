@@ -15,7 +15,7 @@ INTEGRATION_TESTS = [
 PRESENTER_TESTS = [
     'test/models/presenters/bot/response_test.rb'
 ]
-SIDEKIQ_TESTS = (Dir.glob('test/api/sidekiq/*_test.rb') | Dir.glob('test/api/sidekiq/email_bot/*_test.rb')) - Dir.glob('test/api/sidekiq/sandbox/*_test.rb')
+SIDEKIQ_TESTS = (Dir.glob('test/api/sidekiq/*_test.rb') | Dir.glob('test/api/sidekiq/email_bot/*_test.rb') | Dir.glob('test/api/sidekiq/forums/*_test.rb')) - Dir.glob('test/api/sidekiq/sandbox/*_test.rb')
 SHORYUKEN_TESTS = Dir.glob('test/api/shoryuken/*_test.rb')
 SKIP_FILES_FALCON = [
   'test/api/unit/api_throttler_test.rb',

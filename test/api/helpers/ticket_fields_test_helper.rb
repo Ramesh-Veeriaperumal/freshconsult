@@ -7,6 +7,8 @@ module TicketFieldsTestHelper
   SECTIONS_FOR_CUSTOM_DROPDOWN = [ { title: 'section1', value_mapping: %w(Choice\ 1 Choice\ 2), ticket_fields: %w(test_custom_number test_custom_date) },
                                    { title: 'section2', value_mapping: ['Choice 3'], ticket_fields: %w(test_custom_paragraph) } ]
 
+  DEFAULT_FIELDS = %w[default_priority default_source default_status default_ticket_type default_product default_skill].freeze
+
 
   def create_custom_field(name, type, required = false, required_for_closure = false)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
@@ -185,7 +187,7 @@ module TicketFieldsTestHelper
                                                 flexifield_order: 6,
                                                 flexifield_coltype: 'dropdown',
                                                 account_id: @account.id)
-    flexifield_def_entry[0].save
+    flexifield_def_entry[0].save unless Account.current.ticket_field_def.flexifield_def_entries.pluck(:flexifield_name).include?("ffs_0#{id || 7}")
 
     parent_custom_field = FactoryGirl.build(:ticket_field, account_id: @account.id,
                                                            name: "#{labels[0].downcase}_#{@account.id}",
@@ -209,7 +211,7 @@ module TicketFieldsTestHelper
       is_saved = create_nested_field(flexifield_def_entry[nested_field_id], parent_custom_field, nested_field_params.merge(type: 'nested_field'), @account)
       construct_child_levels(flexifield_def_entry[nested_field_id], parent_custom_field, nested_field_params) if is_saved
 
-      flexifield_def_entry[nested_field_id].save
+      flexifield_def_entry[nested_field_id].save unless Account.current.ticket_field_def.flexifield_def_entries.pluck(:flexifield_name).include?("ffs_0#{nested_field_id + (id || 7)}")
     end
 
     nested_field_vals = []
@@ -359,6 +361,287 @@ module TicketFieldsTestHelper
       )
     end
     skills
+  end
+
+  def ticket_field_hash(ticket_fields, account)
+    ticket_fields.map do |field|
+      { :field_type             => field.field_type,
+        :id                     => field.id,
+        :name                   => field.name,
+        :dom_type               => field.dom_type,
+        :label                  => ( field.is_default_field? ) ? I18n.t("ticket_fields.fields.#{field.name}") : field.label,
+        :label_in_portal        => field.label_in_portal,
+        :description            => field.description,
+        :position               => field.position,
+        :active                 => field.active,
+        :required               => field.required,
+        :required_for_closure   => field.required_for_closure,
+        :visible_in_portal      => field.visible_in_portal,
+        :editable_in_portal     => field.editable_in_portal,
+        :required_in_portal     => field.required_in_portal,
+        :choices                => get_choices(field, account),
+        :levels                 => field.levels,
+        :level_three_present    => field.level_three_present,
+        :field_options          => field.field_options || { :section   => false},
+        :has_section            => field.has_section?
+      }
+    end
+  end
+
+  def get_choices(field, account)
+    case field.field_type
+      when "nested_field" then
+        field.nested_choices
+      when "default_status" then
+        Helpdesk::TicketStatus.statuses_list(account)
+      else
+        field.choices(nil, true)
+    end
+  end
+
+  def ticket_field_publish_pattern(field)
+    pattern = {
+      id: field.id,
+      form_id: field.ticket_form_id,
+      name: field.name,
+      label: field.label,
+      label_in_portal: field.label_in_portal,
+      description: field.description,
+      active: field.active,
+      field_type: field.field_type,
+      position: field.position,
+      required: field.required,
+      visible_in_portal: field.visible_in_portal,
+      editable_in_portal: field.editable_in_portal,
+      required_in_portal: field.required_in_portal,
+      required_for_closure: field.required_for_closure,
+      def_entry_id: field.flexifield_def_entry_id,
+      field_options: field.field_options,
+      default: field.default,
+      level: field.level,
+      import_id: field.import_id,
+      column_name: field.column_name,
+      belongs_to_section: field.section_field?,
+      created_at: field.created_at.try(:utc).try(:iso8601),
+      updated_at: field.updated_at.try(:utc).try(:iso8601)
+    }
+    pattern.merge!(choices: ticket_field_choices_payload(field))
+    pattern.merge!(sections: sections_hash(field)) if field.has_sections? || field.section_field? 
+    pattern.merge!(nested_ticket_fields: nested_ticket_fields(field.nested_ticket_fields)) if field.nested_field?
+    pattern
+  end
+
+  def ticket_field_choices_payload field
+    case field.field_type
+    when 'custom_dropdown'
+      choices_by_id(Hash[field.picklist_values.reject(&:destroyed?).map { |pv| [pv.id, pv.value] }])
+    when 'nested_field'
+      nested_field_payload(field.picklist_values.reject(&:destroyed?))
+    when *DEFAULT_FIELDS
+      safe_send(:"#{field.field_type}_choices")
+    else
+      []
+    end
+  end
+
+  def nested_field_payload(pvs)
+    pvs.collect do |c|
+      {
+        label: c.value,
+        value: c.value,
+        choices: nested_field_payload(c.sub_picklist_values.reject(&:destroyed?))
+      }
+    end
+  end
+
+  def choices_by_id(list)
+    list.map do |k, v|
+      {
+        label: v,
+        value: v,
+        id: k # Needed as it is used in section data.
+      }
+    end
+  end
+
+  def choices_by_name_id(list)
+    list.map do |item|
+      {
+        label: item.name,
+        value: item.id
+      }
+    end
+  end
+
+  def default_priority_choices
+    TicketConstants.priority_list.map do |k, v|
+      {
+        label: v,
+        value: k
+      }
+    end
+  end
+
+  def default_source_choices
+    TicketConstants.source_names.map do |k, v|
+      {
+        label: k,
+        value: v
+      }
+    end
+  end
+
+  def default_status_choices
+    statuses = Account.current.ticket_status_values
+    status_group_info = group_ids_with_names(statuses) if Account.current.shared_ownership_enabled?
+
+    statuses.map {|status| 
+      status_hash = {
+        :value => status.status_id,
+        :label => default_status?(status[:status_id]) ? 
+          Helpdesk::Ticketfields::TicketStatus::DEFAULT_STATUSES[status[:status_id]] : status[:name],
+        :customer_display_name => Helpdesk::TicketStatus.translate_status_name(status,"customer_display_name"),
+        :stop_sla_timer => status.stop_sla_timer,
+        :default => default_status?(status[:status_id]),
+        :deleted => status.deleted
+      }
+      status_hash[:group_ids] = status_group_info[status.status_id] if Account.current.shared_ownership_enabled?
+      status_hash
+    }
+  end
+
+  def group_ids_with_names statuses
+    status_group_info = {}
+    groups = Account.current.groups_from_cache
+    statuses.map do |status|
+      group_info = []
+      if !status.is_default?
+        status_groups = status.status_groups
+        status_group_ids = status_groups.map(&:group_id)
+        groups.inject(group_info) {|sg, g| group_info << g.id if status_group_ids.include?(g.id)}
+      end
+      status_group_info[status.status_id] = group_info
+    end
+    status_group_info
+  end
+
+
+  def default_status?(status_id)
+    Helpdesk::Ticketfields::TicketStatus::DEFAULT_STATUSES.keys.include?(status_id)
+  end
+
+  def default_product_choices
+    choices_by_name_id Account.current.products_from_cache
+  end
+
+  def default_ticket_type_choices
+    type_values = Account.current.ticket_type_values
+    type_values.map do |type|
+      {
+        label: type.value,
+        value: type.value,
+        id: type.id # Needed as it is used in section data.
+      }
+    end
+  end
+
+  def default_skill_choices
+    Account.current.skills_trimmed_version_from_cache.map do |skill|
+      {
+        id: skill.id,
+        label: skill.name,
+        value: skill.id
+      }
+    end
+  end
+
+  def sections_hash(field)
+    field.has_sections? ? picklist_values_payload(field.picklist_values) : section_fields_payload(field.section_fields)
+  end
+
+  def picklist_values_payload picklist_values
+    picklist_values.map(&:section).compact.uniq.map do |s|
+      section_payload(s)
+    end
+  end
+
+  def section_fields_payload section_fields
+    section_fields.map(&:section).compact.uniq.map do |s|
+      section_payload(s)
+    end
+  end
+
+  def section_payload(section)
+    {
+      id: section.id,
+      label: section.label,
+      associated_picklist_values: section.associated_picklist_values,
+      section_fields: section.section_field_ids
+    }
+  end
+
+  def nested_ticket_fields(fields)
+    fields.map do |f|
+      {
+        id: f.id,
+        name: f.name,
+        label: f.label,
+        label_in_portal: f.label_in_portal,
+        description: f.description,
+        level: f.level,
+        created_at: f.created_at.try(:utc).try(:iso8601),
+        updated_at: f.updated_at.try(:utc).try(:iso8601)
+      }
+    end
+  end
+
+  def job_type 
+    "CentralPublishWorker::TicketFieldWorker"
+  end
+
+  def job_args
+    {
+      queue: "ticket_field_central_publish",
+      account_id: Account.current.id
+    }
+  end
+
+  def event_type action
+    "ticket_field_#{action}"
+  end
+
+  def event_args field, action, model_changes = {}
+    {
+      model_id: field.id,
+      model_changes: action == :update ? model_changes : {},
+      relationship_with_account: "ticket_fields_with_nested_fields",
+      event: action.to_s,
+      current_user_id: User.current.id
+    }
+  end
+
+  def ts(time)
+    time.strftime("%Y-%m-%dT%H:%M:%S%:z")
+  end
+
+  def status_choices(new_status = nil)
+    ret = Account.current.ticket_statuses.map{|t| 
+      {
+        :customer_display_name => t.customer_display_name,
+        :position => t.position, 
+        :name => t.name, 
+        :status_id => t.status_id, 
+        :deleted => t.deleted
+      }
+    }
+    ret.push(
+      {
+        :customer_display_name => new_status,
+        :name => new_status,
+        :position => Account.current.ticket_statuses.last.position + 1,
+        :deleted => false
+      }) if new_status
+    ret
   end
 
   private

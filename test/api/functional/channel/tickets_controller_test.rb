@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 
 module Channel
   class TicketsControllerTest < ActionController::TestCase
-    include TicketsTestHelper
+    include ApiTicketsTestHelper
 
     CUSTOM_FIELDS = %w[number checkbox decimal text paragraph dropdown country state city date].freeze
 

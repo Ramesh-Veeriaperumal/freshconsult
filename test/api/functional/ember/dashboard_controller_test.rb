@@ -6,7 +6,7 @@ module Ember
     include ProductsHelper
     include DashboardTestHelper
     include DashboardRedshiftTestHelper
-    include TicketsTestHelper
+    include ApiTicketsTestHelper
     include SurveysTestHelper
 
     # ticket_summaries

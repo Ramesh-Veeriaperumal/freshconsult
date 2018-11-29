@@ -2,7 +2,7 @@ require_relative '../../../test_helper'
 module Ember
   module Tickets
     class CollabControllerTest < ActionController::TestCase
-      include TicketsTestHelper
+      include ApiTicketsTestHelper
 
       def wrap_cname(params)
         { collab: params }

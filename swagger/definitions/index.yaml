@@ -566,6 +566,10 @@ advanced_ticketing_create:
   $ref: ./request/advanced_ticketing/create.yaml
 advanced_ticketing_insights:
   $ref: ./response/advanced_ticketing/insights.yaml
+  
+#Canned Response
+canned_response_folder_create:
+  $ref: ./response/canned_response/folder_create.yaml
 
 automation_rule_response:
   $ref: ./response/admin/automation_rule.yaml

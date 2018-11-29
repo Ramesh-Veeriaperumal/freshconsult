@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class SlaFlowTest < ActionDispatch::IntegrationTest
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
 
   def test_sla_calculation_exception_handling
     t = create_ticket

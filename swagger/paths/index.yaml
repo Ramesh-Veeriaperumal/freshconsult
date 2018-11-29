@@ -223,7 +223,7 @@
 /canned_response_folders/{id}:
   $ref: ./canned_responses/folder_show.yaml
 /canned_responses/:
-  $ref: ./canned_responses/list.yaml
+  $ref: ./canned_responses/list_and_create.yaml
 /canned_responses/{id}:
   $ref: ./canned_responses/show.yaml
 /canned_responses/search:

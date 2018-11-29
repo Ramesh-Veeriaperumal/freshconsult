@@ -3,7 +3,7 @@
 module BotTestHelper
   include UsersTestHelper
   include CompanyTestHelper
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
 
   def create_bot(options = {})
     avatar_hash = {

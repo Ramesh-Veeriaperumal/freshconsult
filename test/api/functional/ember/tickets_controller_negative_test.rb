@@ -4,7 +4,7 @@ module Ember
   class TicketsControllerTest < ActionController::TestCase
     include AccountTestHelper
     include SharedOwnershipTestHelper
-    include TicketsTestHelper
+    include ApiTicketsTestHelper
 
     def setup
       super

@@ -2,7 +2,7 @@ require_relative '../../test_helper'
 ['account_test_helper.rb', 'shared_ownership_test_helper'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 module Ember
   class TicketsControllerTest < ActionController::TestCase
-    include TicketsTestHelper
+    include ApiTicketsTestHelper
     include TicketFieldsTestHelper
     include ProductsHelper
     include CompanyHelper
@@ -13,13 +13,11 @@ module Ember
     include AccountTestHelper
     include SharedOwnershipTestHelper
 
-
     CREATED_AT_OPTIONS = %w(
       any_time 5 15 30 60 240 720 1440
       today yesterday week last_week
-      month last_month two_months six_months set_date
+      month last_month two_months six_months
     ).freeze
-
 
     def setup
       super
@@ -62,7 +60,7 @@ module Ember
         'helpdesk_schema_less_tickets.product_id' => ['is_in', [@account.products.map(&:id).sample(rand(1..3)), nil].sample],
         'association_type' => ['is_in', [sample_arr(4), nil].sample],
         'created_at' => ['is_greater_than', CREATED_AT_OPTIONS.sample],
-        'test_custom_dropdown' => ['is_in', [DROPDOWN_OPTIONS.sample(rand(1..3)), nil].sample, 'custom_field']
+        'test_custom_dropdown' => ['is_in', [DROPDOWN_OPTIONS.sample(rand(1..3))].sample, 'custom_field']
       }.merge(dependent_filter_data_hash)
     end
 
@@ -118,13 +116,90 @@ module Ember
       params_hash
     end
 
+    def match_db_and_es_query_responses(query_hash_params)
+      # Runs on DB and fetches records
+      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+      assert_response 200
+      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      # Checks for ES response
+      match_query_response_with_es_enabled(query_hash_params)
+    end
+
+    def match_db_and_es_filter_responses(ticket_filter)
+      get :index, controller_params(version: 'private', filter: ticket_filter.id)
+      assert_response 200
+      match_json(private_api_ticket_index_filter_pattern(ticket_filter.data))
+      match_query_response_with_es_enabled(ticket_filter.data)
+    end
+
+    def match_query_response_with_es_enabled(query_hash_params)
+      enable_es_api_load(query_hash_params) do
+        response_stub = filter_factory_es_cluster_response_stub(query_hash_params)
+        SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+        SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
+        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+        assert_response 200
+        match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      end
+    end
+
+    def match_filter_response_with_es_enabled(ticket_filter)
+      enable_es_api_load(ticket_filter) do
+        response_stub = filter_factory_filter_es_response_stub(ticket_filter.data)
+        SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+        SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
+        get :index, controller_params(version: 'private', filter: ticket_filter.id)
+        assert_response 200
+        match_json(private_api_ticket_index_filter_pattern(ticket_filter.data))
+      end
+    end
+
+    def match_custom_query_response_with_es_enabled(query_hash_params, order_by = 'created_at')
+      enable_es_api_load(query_hash_params) do
+        response_stub = filter_factory_es_cluster_query_response_stub(query_hash_params, order_by)
+        SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+        SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
+        get :index, controller_params({ version: 'private', query_hash: query_hash_params, order_by: order_by }, false)
+        assert_response 200
+
+        match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      end
+    end
+
+    def match_default_filter_response_with_es_enabled(filter_name)
+      enable_es_api_load(filter_name) do
+        response_stub = filter_factory_default_filter_es_response_stub(filter_name)
+        SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+        SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
+        get :index, controller_params({ version: 'private', filter: filter_name }, false)
+        assert_response 200
+
+        match_json(private_api_ticket_index_default_filter_pattern(filter_name))
+      end
+    end
+
+    def match_order_query_with_es_enabled(order_params, all_tickets = false)
+      enable_es_api_load(order_params) do
+        response_stub = filter_factory_order_response_stub(order_params[:order_by], order_params[:order_type], all_tickets)
+        SearchService::Client.any_instance.stubs(:query).returns(SearchService::Response.new(response_stub))
+        SearchService::Response.any_instance.stubs(:records).returns(JSON.parse(response_stub))
+        get :index, controller_params({ version: 'private' }.merge(order_params))
+        assert_response 200
+        match_json(private_api_ticket_index_pattern(false, false, false, order_params[:order_by], order_params[:order_type], all_tickets))
+      end
+    end
+
+    def enable_es_api_load(params, &block)
+      Account.current.launch(:new_es_api)
+      yield if block_given?
+      Account.current.rollback(:new_es_api)
+    end
+
     def test_skill_filter
       enable_adv_ticketing([:skill_based_round_robin]) do
         create_skill_tickets
         query_hash_params = { '0' => query_hash_param('sl_skill_id', 'is_in', [@account.skills.sample.id]) }
-        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-        assert_response 200
-        match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+        match_db_and_es_query_responses(query_hash_params)
       end
     end
 
@@ -132,241 +207,173 @@ module Ember
       enable_adv_ticketing([:skill_based_round_robin]) do
         create_skill_tickets
         query_hash_params = { '0' => query_hash_param('sl_skill_id', 'is_in', @account.skills.map(&:id).sample(rand(1..2))) }
-        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-        assert_response 200
-        match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+        match_db_and_es_query_responses(query_hash_params)
       end
     end
 
     def test_agent_me_filter
       query_hash_params = { '0' => query_hash_param('responder_id', 'is_in', [0]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_agent_unassigned_filter
       query_hash_params = { '0' => query_hash_param('responder_id', 'is_in', [-1]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_agent_filter
       query_hash_params = { '0' => query_hash_param('responder_id', 'is_in', [@account.agents.sample.id]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_multiple_agents_filter
       query_hash_params = { '0' => query_hash_param('responder_id', 'is_in', @account.agents.map(&:id).sample(rand(1..3))) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_my_groups_filter
       query_hash_params = { '0' => query_hash_param('group_id', 'is_in', [0]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_unassigned_group_filter
       query_hash_params = { '0' => query_hash_param('group_id', 'is_in', [-1]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_group_filter
       query_hash_params = { '0' => query_hash_param('group_id', 'is_in', [@account.groups.sample.id]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_multiple_groups_filter
       query_hash_params = { '0' => query_hash_param('group_id', 'is_in', @account.groups.map(&:id).sample(rand(1..3))) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_overdue_filter
       query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [1]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_today_dueby_filter
       query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [2]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_tomorrow_dueby_filter
       query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [3]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_next_8_hrs_dueby_filter
       query_hash_params = { '0' => query_hash_param('due_by', 'due_by_op', [4]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_all_unresolved_filter
       query_hash_params = { '0' => query_hash_param('status', 'is_in', [0]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_status_filter
       query_hash_params = { '0' => query_hash_param('status', 'is_in', [@account.ticket_statuses.sample.id]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_multiple_status_filter
       query_hash_params = { '0' => query_hash_param('status', 'is_in', @account.ticket_statuses.map(&:id).sample(rand(1..3))) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_priority_filter
       query_hash_params = { '0' => query_hash_param('priority', 'is_in', [rand(1..4)]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_multiple_priority_filter
       query_hash_params = { '0' => query_hash_param('priority', 'is_in', sample_arr(4)) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_none_type_filter
       query_hash_params = { '0' => query_hash_param('ticket_type', 'is_in', [-1]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_type_filter
       query_hash_params = { '0' => query_hash_param('ticket_type', 'is_in', [@account.ticket_type_values.sample.value]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_multiple_type_filter
       query_hash_params = { '0' => query_hash_param('ticket_type', 'is_in', @account.ticket_type_values.map(&:value).sample(rand(1..3))) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_source_filter
       query_hash_params = { '0' => query_hash_param('source', 'is_in', [rand(1..11)]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_multiple_source_filter
       query_hash_params = { '0' => query_hash_param('source', 'is_in', sample_arr(11)) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_tags_filter
       query_hash_params = { '0' => query_hash_param('helpdesk_tags.name', 'is_in', TAG_NAMES.sample(rand(1..3))) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_customers_filter
       query_hash_params = { '0' => query_hash_param('owner_id', 'is_in', [@account.companies.sample.id]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_multiple_customers_filter
       query_hash_params = { '0' => query_hash_param('owner_id', 'is_in', @account.companies.map(&:id).sample(rand(1..3))) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_requesters_filter
       query_hash_params = { '0' => query_hash_param('requester_id', 'is_in', [@account.contacts.sample.id]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_multiple_requesters_filter
       query_hash_params = { '0' => query_hash_param('requester_id', 'is_in', @account.contacts.map(&:id).sample(rand(1..3))) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_none_products_filter
       query_hash_params = { '0' => query_hash_param('helpdesk_schema_less_tickets.product_id', 'is_in', [-1]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_products_filter
       query_hash_params = { '0' => query_hash_param('helpdesk_schema_less_tickets.product_id', 'is_in', [@account.products.sample.id]) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_multiple_products_filter
       query_hash_params = { '0' => query_hash_param('helpdesk_schema_less_tickets.product_id', 'is_in', @account.products.map(&:id).sample(rand(1..3))) }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_custom_dropdown_filter
       query_hash_params = { '0' => query_hash_param('test_custom_dropdown', 'is_in', [DROPDOWN_OPTIONS.sample], 'custom_field') }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_multiple_custom_filter
       query_hash_params = { '0' => query_hash_param('test_custom_dropdown', 'is_in', DROPDOWN_OPTIONS.sample(3), 'custom_field') }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_dependent_field_one_level
       query_hash_params = { '0' => query_hash_param('test_custom_country', 'is_in', [DEPENDENT_FIELD_VALUES.keys.sample.dup], 'custom_field') }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_dependent_field_two_level
@@ -376,9 +383,7 @@ module Ember
         '0' => query_hash_param('test_custom_country', 'is_in', [country], 'custom_field'),
         '1' => query_hash_param('test_custom_state', 'is_in', [state], 'custom_field')
       }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_dependent_field_three_level
@@ -390,9 +395,7 @@ module Ember
         '1' => query_hash_param('test_custom_state', 'is_in', [state], 'custom_field'),
         '2' => query_hash_param('test_custom_city', 'is_in', [city], 'custom_field')
       }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_default_custom_fields_filter
@@ -400,9 +403,7 @@ module Ember
         '0' => query_hash_param('status', 'is_in', [2, 3]),
         '1' => query_hash_param('test_custom_dropdown', 'is_in', [DROPDOWN_OPTIONS.sample], 'custom_field')
       }
-      get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-      assert_response 200
-      match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
+      match_db_and_es_query_responses(query_hash_params)
     end
 
     def test_all_filters
@@ -413,22 +414,18 @@ module Ember
         query_hash_params[counter.to_s] = query_hash_param(k.dup, *v)
         counter += 1
       end
-      enable_adv_ticketing(%i[link_tickets parent_child_tickets skill_based_round_robin]) {
-        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-        assert_response 200
-        match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
-      }
+      enable_adv_ticketing(%i[link_tickets parent_child_tickets skill_based_round_robin]) do
+        match_db_and_es_query_responses(query_hash_params)
+      end
     end
 
     30.times.each do |i|
       define_method("test_multiple_filter_case_#{i + 1}") do
         query_hash_params = random_query_hash_params
         Rails.logger.debug "Method: test_multiple_filter_case_#{i + 1} :: params: #{query_hash_params.inspect}"
-        enable_adv_ticketing(%i[link_tickets parent_child_tickets]) {
-          get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
-          assert_response 200
-          match_json(private_api_ticket_index_query_hash_pattern(query_hash_params))
-        }
+        enable_adv_ticketing(%i[link_tickets parent_child_tickets]) do
+          match_db_and_es_query_responses(query_hash_params)
+        end
       end
     end
 
@@ -437,6 +434,8 @@ module Ember
       get :index, controller_params(version: 'private', filter: ticket_filter.id)
       assert_response 200
       match_json(private_api_ticket_index_filter_pattern(ticket_filter.data))
+
+      match_filter_response_with_es_enabled(ticket_filter)
     end
 
     def test_index_with_custom_filter_id
@@ -444,6 +443,8 @@ module Ember
       get :index, controller_params(version: 'private', filter: custom_filter.id)
       assert_response 200
       match_json(private_api_ticket_index_filter_pattern(custom_filter.data))
+
+      match_filter_response_with_es_enabled(custom_filter)
     end
 
     def test_index_with_order_clauses
@@ -451,6 +452,8 @@ module Ember
       get :index, controller_params({ version: 'private' }.merge(filter_params))
       assert_response 200
       match_json(private_api_ticket_index_pattern(false, false, false, filter_params[:order_by], filter_params[:order_type]))
+
+      match_order_query_with_es_enabled(filter_params)
     end
 
     def test_index_with_customer_response_order_clauses
@@ -461,6 +464,8 @@ module Ember
       get :index, controller_params({ version: 'private', query_hash: query_hash_params, order_by: 'requester_responded_at' }, false)
       assert_response 200
       match_json(private_api_ticket_index_query_hash_pattern(query_hash_params, wf_order = 'requester_responded_at'))
+
+      match_custom_query_response_with_es_enabled(query_hash_params, 'requester_responded_at')
     ensure
       @account.features.sort_by_customer_response.destroy
       MixpanelWrapper.unstub(:send_to_mixpanel)
@@ -474,143 +479,131 @@ module Ember
       get :index, controller_params({ version: 'private', query_hash: query_hash_params, order_by: 'agent_responded_at' }, false)
       assert_response 200
       match_json(private_api_ticket_index_query_hash_pattern(query_hash_params, 'agent_responded_at'))
+
+      match_custom_query_response_with_es_enabled(query_hash_params, 'agent_responded_at')
     ensure
       @account.features.sort_by_customer_response.destroy
       MixpanelWrapper.unstub(:send_to_mixpanel)
     end
-    
-    def test_tickets_shared_by_Internal_agent
+
+    def test_tickets_shared_by_internal_agent
       @account.add_feature :shared_ownership
       initialize_internal_agent_with_default_internal_group
 
-      ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
-                               :responder_id => @responding_agent.id}, nil, @internal_group)
-      ticket2 = create_ticket({:status => 2, :responder_id => @responding_agent.id})
+      ticket1 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
+                                responder_id: @responding_agent.id }, nil, @internal_group)
+      ticket2 = create_ticket(status: 2, responder_id: @responding_agent.id)
       login_as(@responding_agent)
       get :index, controller_params(version: 'private', filter: 'shared_by_me')
+      assert_response 200
+      match_json(private_api_ticket_index_default_filter_pattern('shared_by_me'))
 
-      assert_match /#{ticket1.subject}/, response.body
-      assert_no_match /#{ticket2.subject}/, response.body
+      match_default_filter_response_with_es_enabled('shared_by_me')
     end
 
-    def test_tickets_shared_with_Internal_agent
+    def test_tickets_shared_with_internal_agent
       @account.add_feature :shared_ownership
       initialize_internal_agent_with_default_internal_group
 
-      ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
-                               :responder_id => @responding_agent.id}, nil, @internal_group)
-      ticket2 = create_ticket({:status => 2, :responder_id => @internal_agent.id})
+      ticket1 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
+                                responder_id: @responding_agent.id }, nil, @internal_group)
+      ticket2 = create_ticket({ status: 2, responder_id: @internal_agent.id })
 
       login_as(@internal_agent)
-
       get :index, controller_params(version: 'private', filter: 'shared_with_me')
+      assert_response 200
+      match_json(private_api_ticket_index_default_filter_pattern('shared_with_me'))
 
-      assert_match /#{ticket1.subject}/, response.body
-      assert_no_match /#{ticket2.subject}/, response.body
+      match_default_filter_response_with_es_enabled('shared_with_me')
     end
 
     def test_filter_by_internal_agent_with_agent
       enable_feature(:shared_ownership) do
         initialize_internal_agent_with_default_internal_group
+        ticket = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
+                                 responder_id: @responding_agent.id }, nil, @internal_group)
+        query_hash_params = { '0' => query_hash_param('internal_agent_id', 'is_in', [@internal_agent.id]) }
 
-        ticket = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
-                                :responder_id => @responding_agent.id}, nil, @internal_group)
-        query_hash_params = {'0' => query_hash_param('internal_agent_id', 'is_in', [@internal_agent.id])}
-        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
-
-        assert_match /#{ticket.subject}/, response.body
+        match_db_and_es_query_responses(query_hash_params)
       end
     end
 
     def test_filter_by_internal_group_with_group
       enable_feature(:shared_ownership) do
         initialize_internal_agent_with_default_internal_group
+        ticket = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
+                                 responder_id: @responding_agent.id }, nil, @internal_group)
+        query_hash_params = { '0' => query_hash_param('internal_group_id', 'is_in', [@internal_group.id]) }
 
-        ticket = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
-                                :responder_id => @responding_agent.id}, nil, @internal_group)
-
-
-        query_hash_params = {'0' => query_hash_param('internal_group_id', 'is_in', [@internal_group.id])}
-        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
-
-        assert_match /#{ticket.subject}/, response.body
+        match_db_and_es_query_responses(query_hash_params)
       end
     end
 
     def test_filter_by_any_agent_with_agent
       enable_feature(:shared_ownership) do
         initialize_internal_agent_with_default_internal_group
+        ticket = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
+                                 responder_id: @responding_agent.id }, nil, @internal_group)
+        query_hash_params = { '0' => query_hash_param('any_agent_id', 'is_in', [@internal_agent.id]) }
 
-        ticket = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
-                                :responder_id => @responding_agent.id}, nil, @internal_group)
-
-        query_hash_params = {'0' => query_hash_param('any_agent_id', 'is_in', [@internal_agent.id])}
-        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
-
-        assert_match /#{ticket.subject}/, response.body
+        match_db_and_es_query_responses(query_hash_params)
       end
     end
 
     def test_filter_by_any_group_with_group
       enable_feature(:shared_ownership) do
         initialize_internal_agent_with_default_internal_group
+        ticket = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
+                                 responder_id: @responding_agent.id }, nil, @internal_group)
 
-        ticket = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
-                                :responder_id => @responding_agent.id}, nil, @internal_group)
+        query_hash_params = { '0' => query_hash_param('any_group_id', 'is_in', [@internal_group.id]) }
 
-        query_hash_params = {'0' => query_hash_param('any_group_id', 'is_in', [@internal_group.id])}
-        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
-
-        assert_match /#{ticket.subject}/, response.body
+        match_db_and_es_query_responses(query_hash_params)
       end
     end
 
     def test_filter_by_internal_agent_and_internal_group_with_agent_and_group
       enable_feature(:shared_ownership) do
         initialize_internal_agent_with_default_internal_group
+        ticket1 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
+                                  responder_id: @responding_agent.id }, nil, @internal_group)
+        ticket2 = create_ticket({ status: 2, responder_id: @internal_agent.id }, group = @internal_group)
 
-        ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
-                                 :responder_id => @responding_agent.id}, nil, @internal_group)
-        ticket2 = create_ticket({:status => 2, :responder_id => @internal_agent.id}, group = @internal_group)
+        query_hash_params = {
+          '0' => query_hash_param('internal_agent_id', 'is_in', [@internal_agent.id]),
+          '1' => query_hash_param('internal_group_id', 'is_in', [@internal_group.id])
+        }
 
-        query_hash_params = {'0' => query_hash_param('internal_agent_id', 'is_in', [@internal_agent.id]),
-                             '1' => query_hash_param('internal_group_id', 'is_in', [@internal_group.id])}
-        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
-        assert_match /#{ticket1.subject}/, response.body
-        assert_no_match /#{ticket2.subject}/, response.body
+        match_db_and_es_query_responses(query_hash_params)
       end
     end
 
     def test_filter_by_any_agent_and_any_group_with_agent_and_group
       enable_feature(:shared_ownership) do
         initialize_internal_agent_with_default_internal_group
+        ticket1 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
+                                  responder_id: @responding_agent.id }, nil, @internal_group)
+        ticket2 = create_ticket({ status: 2, responder_id: @internal_agent.id }, group = @internal_group)
 
-        ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
-                                 :responder_id => @responding_agent.id}, nil, @internal_group)
-        ticket2 = create_ticket({:status => 2, :responder_id => @internal_agent.id}, group = @internal_group)
+        query_hash_params = {
+          '0' => query_hash_param('any_agent_id', 'is_in', [@internal_agent.id]),
+          '1' => query_hash_param('any_group_id', 'is_in', [@internal_group.id])
+        }
 
-        query_hash_params = {'0' => query_hash_param('any_agent_id', 'is_in', [@internal_agent.id]),
-                             '1' => query_hash_param('any_group_id', 'is_in', [@internal_group.id])}
-        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
-
-        assert_match /#{ticket1.subject}/, response.body
-        assert_match /#{ticket2.subject}/, response.body
+        match_db_and_es_query_responses(query_hash_params)
       end
     end
 
     def test_filter_by_any_agent_and_any_group_with_agent
       enable_feature(:shared_ownership) do
         initialize_internal_agent_with_default_internal_group
+        ticket1 = create_ticket({ status: @status.status_id, internal_agent_id: @internal_agent.id,
+                                  responder_id: @responding_agent.id }, nil, @internal_group)
+        ticket2 = create_ticket({ status: 2, responder_id: @responding_agent.id }, group = @internal_group)
 
-        ticket1 = create_ticket({:status => @status.status_id, :internal_agent_id => @internal_agent.id,
-                                 :responder_id => @responding_agent.id}, nil, @internal_group)
-        ticket2 = create_ticket({:status => 2, :responder_id => @responding_agent.id}, group = @internal_group)
+        query_hash_params = { '0' => query_hash_param('any_agent_id', 'is_in', [@internal_agent.id]) }
 
-        query_hash_params = {'0' => query_hash_param('any_agent_id', 'is_in', [@internal_agent.id])}
-        get :index, controller_params({version: 'private', query_hash: query_hash_params}, false)
-
-        assert_match /#{ticket1.subject}/, response.body
-        assert_no_match /#{ticket2.subject}/, response.body
+        match_db_and_es_query_responses(query_hash_params)
       end
     end
 
@@ -620,6 +613,8 @@ module Ember
       get :index, controller_params({ version: 'private' }.merge(filter_params))
       assert_response 200
       match_json(private_api_ticket_index_pattern(false, false, false, 'created_at', 'desc', true))
+
+      match_order_query_with_es_enabled({ query_hash: '', order_by: 'created_at', order_type: 'desc' }, true)
     end
 
     # Tickets list spam / trash should have emptying_on_background flag about background job in its meta
@@ -631,6 +626,8 @@ module Ember
       assert_response 200
       match_json(private_api_ticket_index_spam_deleted_pattern(true))
       assert response.api_meta.key?(:emptying_on_background) && !response.api_meta[:emptying_on_background]
+
+      match_default_filter_response_with_es_enabled('spam')
     end
 
     def test_index_empty_trash_meta_notice
@@ -641,6 +638,8 @@ module Ember
       assert_response 200
       match_json(private_api_ticket_index_spam_deleted_pattern(false, true))
       assert response.api_meta.key?(:emptying_on_background) && !response.api_meta[:emptying_on_background]
+
+      match_default_filter_response_with_es_enabled('deleted')
     end
 
     def test_index_other_fields_must_not_have_the_notice_key
@@ -649,6 +648,8 @@ module Ember
       assert_response 200
       match_json(private_api_ticket_index_filter_pattern(ticket_filter.data))
       assert !response.api_meta.key?(:emptying_on_background)
+
+      match_filter_response_with_es_enabled(ticket_filter)
     end
 
     def test_index_empty_spam_notice_should_be_true
@@ -659,6 +660,8 @@ module Ember
       assert_response 200
       match_json(private_api_ticket_index_spam_deleted_pattern(true))
       assert response.api_meta[:emptying_on_background]
+
+      match_default_filter_response_with_es_enabled('spam')
     ensure
       remove_others_redis_key(empty_spam_key)
     end
@@ -671,6 +674,13 @@ module Ember
       assert_response 200
       match_json(private_api_ticket_index_spam_deleted_pattern(true))
       assert !response.api_meta[:emptying_on_background]
+
+      match_default_filter_response_with_es_enabled('spam')
+    end
+
+    def test_index_with_page_greater_than_limit
+      get :index, controller_params(version: 'private', page: ApiTicketConstants::MAX_PAGE_LIMIT + 4)
+      assert_response 400
     end
 
     def test_access_tickets_controller_with_jwt_token
@@ -680,13 +690,13 @@ module Ember
       log_out
       token = get_mobile_jwt_token_of_user(@agent)
       bearer_token = "Bearer #{token}"
-      current_header = request.env["HTTP_AUTHORIZATION"]
-      request.env["HTTP_USER_AGENT"] = "Freshdesk_Native"
+      current_header = request.env['HTTP_AUTHORIZATION']
+      request.env['HTTP_USER_AGENT'] = 'Freshdesk_Native'
       set_custom_jwt_header(bearer_token)
       get :index, controller_params(version: 'private', filter: custom_filter.id)
       # get :index, controller_params(version: 'private', per_page: 50)
       assert_response 200
-      request.env["HTTP_AUTHORIZATION"] = current_header
+      request.env['HTTP_AUTHORIZATION'] = current_header
       UserSession.any_instance.stubs(:cookie_credentials).returns([user.persistence_token, user.id])
       login_as(user)
       user.make_current
@@ -697,18 +707,17 @@ module Ember
       custom_filter = create_filter
       UserSession.any_instance.unstub(:cookie_credentials)
       log_out
-      bearer_token = "Bearer AAAAAAA"
-      current_header = request.env["HTTP_AUTHORIZATION"]
-      request.env["HTTP_USER_AGENT"] = "Freshdesk_Native"
+      bearer_token = 'Bearer AAAAAAA'
+      current_header = request.env['HTTP_AUTHORIZATION']
+      request.env['HTTP_USER_AGENT'] = 'Freshdesk_Native'
       set_custom_jwt_header(bearer_token)
       get :index, controller_params(version: 'private', filter: custom_filter.id)
       # get :index, controller_params(version: 'private', per_page: 50)
       assert_response 401
       UserSession.any_instance.stubs(:cookie_credentials).returns([user.persistence_token, user.id])
-      request.env["HTTP_AUTHORIZATION"] = current_header
+      request.env['HTTP_AUTHORIZATION'] = current_header
       login_as(user)
       user.make_current
     end
-
   end
 end
