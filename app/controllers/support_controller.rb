@@ -177,7 +177,7 @@ class SupportController < ApplicationController
     def multilingual_meta page_token
       return unless [ :solution_home, :solution_category, :article_list, :article_view ].include?(page_token)
       @page_meta[:multilingual_meta] = alternate_version_languages.inject({}) do |result,language|
-        result[language.code] = alternate_version_url(language) unless language == Language.current
+        result[language.code] = alternate_version_url(language)
         result
       end
     end
