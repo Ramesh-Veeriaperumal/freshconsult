@@ -7,6 +7,8 @@ class Freshfone::Call < ActiveRecord::Base
   self.table_name =  :freshfone_calls
   self.primary_key = :id
 
+  # concerned_with :presenter
+
   serialize :recording_deleted_info, Hash  
   belongs_to :agent, :class_name => '::User', :foreign_key => 'user_id'
   belongs_to_account

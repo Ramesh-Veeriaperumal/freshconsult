@@ -7,6 +7,8 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   self.table_name =  "helpdesk_nested_ticket_fields"
   attr_protected  :account_id
 
+  concerned_with :presenter
+
   belongs_to_account
   belongs_to :ticket_field, :class_name => "Helpdesk::TicketField"
   belongs_to :flexifield_def_entry, :dependent => :destroy
