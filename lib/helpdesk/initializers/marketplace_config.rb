@@ -9,6 +9,7 @@ module MarketplaceConfig
   MKP_OAUTH_URL = config[:mkp_oauth_url]
   DATA_PIPE_URL = config[:data_pipe_url]
   DATA_PIPE_KEY = config[:data_pipe_key]
+  JWT_SECRET = config[:jwt_secret]
   API_AUTH_KEY = config[:api_auth_key]
   DEV_OAUTH_KEY = config[:dev_oauth_key]
   DEV_OAUTH_SECRET = config[:dev_oauth_secret]
