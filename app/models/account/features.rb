@@ -290,4 +290,8 @@ class Account < ActiveRecord::Base
   def help_widget_enabled?
     launched?(:help_widget)
   end
+
+  def cascade_dispatcher_enabled?
+    has_feature?(:cascade_dispatcher) || features?(:cascade_dispatchr)
+  end
 end

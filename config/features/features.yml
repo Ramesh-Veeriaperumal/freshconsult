@@ -96,7 +96,7 @@
       :ticket_summary: 92
       :shared_ownership: 93
       :oauth2: 94
-      :autobots_3: 95
+      :cascade_dispatcher: 95
       :autobots_4: 96
       :autobots_5: 97
       :autobots_6: 98
@@ -213,3 +213,4 @@
       :segments: false
       :proactive_outreach: false
       :field_service_management: false
+      :cascade_dispatcher: false
