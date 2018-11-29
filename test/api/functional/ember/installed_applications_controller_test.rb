@@ -281,20 +281,71 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
 
   def test_contact_fetch_on_salesforce_v2
     app_id = get_installed_app('salesforce_v2').id
-    response = '{"totalSize":1,"done":true,"records":[{"attributes":{"type":
-    "Contact","url":"/services/data/v20.0/sobjects/Contact/0037F00000NLydYQAT"},
-    "Name":"Tom cruse","Id":"0037F00000NLydYQAT","IsDeleted":false,
-    "MasterRecordId":null,"AccountId":"0017F00000QVHSYQA5","LastName":"cruse",
-    "FirstName":"Tom","Salutation":"Mr.","OtherStreet":null,"OtherCity":null}]}'
-    response_mock = get_response_mock(response, 200)
-    IntegrationServices::Services::Salesforce::SalesforceContactResource.
+    response = '[{"Name":"1g10 FDsquad2title", "Id":"0037F000014SHRrQAO", "IsDeleted":false,
+    "AccountId":"0017F00001KlKN0QAN", "LastName":"FDsquad2title", "FirstName":"1g10",
+    "Salutation":"Mr."}]'
+    configured_fields = ["Name", "Id", "IsDeleted", "MasterRecordId", "AccountId", "LastName", "FirstName", "Salutation", "OtherStreet", "OtherCity", "Id"]
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    IntegrationServices::Services::CloudElements::Hub::Crm::ContactResource.
       any_instance.stubs(:http_get).returns(response_mock)
     param = construct_params(get_request_payload(app_id, 
-      'fetch_user_selected_fields','contact','tom@localhost.freshdesk-dev.com'))
+      'fetch_user_selected_fields','contact','4.g10squad1@gmail.com'))
     post :fetch, param
     assert_response 200
     assert response_mock.verify
-    match_json JSON.parse(response)
-    IntegrationServices::Services::Salesforce::SalesforceContactResource.any_instance.unstub
+    match_json(salesforce_v2_response_pattern(response, configured_fields, 'Contact'))
+  ensure
+    IntegrationServices::Services::CloudElements::Hub::Crm::ContactResource.any_instance.unstub
+  end
+
+  def test_account_fetch_on_salesforce_v2
+    app_id = get_installed_app('salesforce_v2').id
+    response = '[{"LastModifiedDate":"2018-11-14T13:30:40.000+0000",
+    "IsDeleted":false,"LastViewedDate":"2018-11-14T13:31:30.000+0000",
+    "LastReferencedDate":"2018-11-14T13:31:30.000+0000",
+    "Name":"Abernathy, Swift and Huels","SystemModstamp":"2018-11-14T13:30:40.000+0000",
+    "BillingAddress":{"street":"salesforce billing street to notes"},
+    "CleanStatus":"Pending","CreatedById":"0057F000002ILo1QAG",
+    "OwnerId":"0057F000002ILo1QAG","BillingStreet":"salesforce billing street to notes",
+    "CreatedDate":"2018-11-07T10:45:15.000+0000",
+    "PhotoUrl":"/services/images/photo/0017F00001KlKN0QAN",
+    "Id":"0017F00001KlKN0QAN","LastModifiedById":"0057F000002ILo1QAG"}]'
+    configured_fields = ["Name", "Id", "IsDeleted", "MasterRecordId", "Type", "ParentId", "BillingStreet", "BillingCity", "BillingState", "BillingPostalCode", "Id"]
+    response_mock = Minitest::Mock.new
+    response_mock.expect :body, response
+    response_mock.expect :status, 200
+    acc_response = '[{"LastModifiedDate":"2018-11-14T13:21:58.000+0000",
+    "IsDeleted":false,"AccountId":"0017F00001KlKN0QAN",
+    "Email":"4.g10squad1@gmail.com","IsEmailBounced":false,
+    "FDCONTACTID__c":"992819","AssistantName":"titile name",
+    "FirstName":"1g10","LastViewedDate":"2018-11-19T12:37:15.000+0000",
+    "LastReferencedDate":"2018-11-19T12:37:15.000+0000",
+    "MailingAddress":{"street":"FD street to update in freshdesk application"},
+    "Salutation":"Mr.","Name":"1g10 FDsquad2title",
+    "SystemModstamp":"2018-11-14T13:21:58.000+0000","CleanStatus":"Pending",
+    "CreatedById":"0057F000002ILo1QAG","OwnerId":"0057F000002ILo1QAG",
+    "CreatedDate":"2018-11-14T13:15:02.000+0000",
+    "PhotoUrl":"/services/images/photo/0037F000014SHRrQAO",
+    "Id":"0037F000014SHRrQAO","LastName":"FDsquad2title",
+    "LastModifiedById":"0057F000002ILo1QAG",
+    "MailingStreet":"FD street to update in freshdesk application"}]'
+    acc_response_mock = Minitest::Mock.new
+    acc_response_mock.expect :body, acc_response
+    acc_response_mock.expect :status, 200
+    IntegrationServices::Services::CloudElements::Hub::Crm::ContactResource.
+      any_instance.stubs(:http_get).returns(acc_response_mock)
+    IntegrationServices::Services::CloudElements::Hub::Crm::AccountResource.
+      any_instance.stubs(:http_get).returns(response_mock)
+    param = construct_params(get_request_payload(app_id, 
+      'fetch_user_selected_fields','account',{email: "4.g10squad1@gmail.com"}))
+    post :fetch, param
+    assert_response 200
+    assert response_mock.verify
+    match_json(salesforce_v2_response_pattern(response, configured_fields, 'Account'))
+  ensure
+    IntegrationServices::Services::CloudElements::Hub::Crm::AccountResource.any_instance.unstub
+    IntegrationServices::Services::CloudElements::Hub::Crm::ContactResource.any_instance.unstub
   end
 end

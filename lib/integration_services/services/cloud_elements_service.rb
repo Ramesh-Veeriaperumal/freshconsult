@@ -1,6 +1,5 @@
 module IntegrationServices::Services
   class CloudElementsService < IntegrationServices::Service
- 
     def self.title
       'cloud_elements'
     end

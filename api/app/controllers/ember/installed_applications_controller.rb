@@ -3,6 +3,7 @@ module Ember
     include HelperConcern
     include InstalledApplicationConstants
     include IntegrationServices::Errors
+    include Integrations::CloudElements::Crm::CrmUtil
 
     decorate_views
 
@@ -10,8 +11,10 @@ module Ember
 
     def fetch
       return unless validate_body_params(@item)
-      service_object = @service_class.new(@item, params[:payload])
-      @data = service_object.receive(params[:event])
+      payload, metadata = construct_app_payload(params[:payload])
+      service_object = @service_class.new(@item, payload, metadata)
+      response = service_object.receive(params[:event])
+      @data = add_additional_property(response, payload)
       render :fetch, status: service_object.web_meta[:status]
     rescue AccessDeniedError => error
       render_request_error(:access_denied, 403)
@@ -19,7 +22,7 @@ module Ember
       render_base_error(:integration_timeout, 504)
     rescue StandardError => error
       Rails.logger.error "Exception while fetching data from integrated
-      application, message: #{error.message}, exception: #{error.inspect}"
+      application, message: #{error.message}, exception: #{error.inspect} trace: #{error.backtrace}"
       render_base_error(:bad_gateway, 502)
     end
 
@@ -49,6 +52,62 @@ module Ember
       def load_object
         @item = scoper.detect { |installed_applications| installed_applications.id == params[:id].to_i }
         log_and_render_404 unless @item
+      end
+
+      def element
+        @item.application.name
+      end
+
+      def app
+        Integrations::Application.find_by_name(element)
+      end
+
+      def metadata
+        { :app_name => element,
+          :element_token => @item.configs_element_token,
+          :object => get_crm_constants['objects'][params[:payload][:type]]
+        }
+      end
+
+      def service_obj(payload, metadata)
+        IntegrationServices::Services::CloudElementsService.new(@installed_app, payload, metadata)
+      end
+
+      def construct_app_payload(payload)
+        if element == "salesforce_v2"
+          payload = construct_payload_with_query(payload) if payload[:type] == "account"
+          return payload, metadata
+        else
+          return payload, {}
+        end
+      end
+
+      def construct_payload_with_query(payload)
+        new_metadata = {:app_name => metadata[:app_name],
+                    :element_token => metadata[:element_token],
+                    :object => get_crm_constants["objects"]["contact"]}
+        response = get_contact_account_ids payload[:value][:email], new_metadata
+        accIds = Array.new
+        response["records"].each do |res|
+         accIds.push(res["accountId"])  if res["accountId"].present?
+        end
+        query = accIds.collect{|id| "#{get_crm_constants['account_name_format']}='#{id}'"}.join(" OR ")
+        payload[:value][:query] = query
+        payload
+      end
+
+      def add_additional_property(response, payload)
+        if (element == "salesforce_v2" && payload[:type] == "contact" &&
+              @item.configs_contact_fields.include?("AccountName"))
+          metadata[:account_object] = get_crm_constants['objects']['account']
+          response = get_contact_account_name response, metadata
+        end
+        response
+      end
+
+      def get_contact_account_ids(email, metadata)
+        payload = {:email => email}
+        service_obj(payload, metadata).receive("get_contact_account_id")
       end
 
       def load_service_object
