@@ -194,10 +194,11 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
     folder = {
       name: Faker::App.name
     }
-    put :update, construct_params(build_request_param(folder)).merge(id: @ca_folder_all.id)
+    ca_folder = create_cr_folder(name: Faker::Name.name)
+    put :update, construct_params(build_request_param(folder)).merge(id: ca_folder.id)
     assert_response 200
-    @ca_folder_all.reload
-    match_json(ca_create_pattern(@ca_folder_all))
+    ca_folder.reload
+    match_json(ca_create_pattern(ca_folder))
   end
 
   def test_update_privilage_check
