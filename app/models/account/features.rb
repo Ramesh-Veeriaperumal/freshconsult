@@ -35,7 +35,7 @@ class Account < ActiveRecord::Base
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
       :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments, :freshconnect,
-      :proactive_outreach, :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing     
+      :proactive_outreach, :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing    
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -304,5 +304,9 @@ class Account < ActiveRecord::Base
 
   def help_widget_enabled?
     launched?(:help_widget)
+  end
+
+  def cascade_dispatcher_enabled?
+    has_feature?(:cascade_dispatcher) || features?(:cascade_dispatchr)
   end
 end

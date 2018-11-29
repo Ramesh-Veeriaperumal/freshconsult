@@ -100,7 +100,7 @@
           Va::Logger::Automation.log_error(DISPATCHER_ERROR, e)
         end
         total_rules += 1
-        next if @account.features?(:cascade_dispatchr)
+        next if @account.cascade_dispatcher_enabled?
         if evaluate_on.present?
           log_total_execution_info(total_rules, rule_type, start_time, Time.now.utc)
           return
