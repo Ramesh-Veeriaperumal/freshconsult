@@ -30,10 +30,24 @@ module Ember
         }
       end
 
+      def generate_marketplace_token
+        jwt_payload = {
+          account_id: current_account.id.to_s,
+          domain: current_account.full_domain,
+          time: Time.now.to_i,
+          user: {
+            id: current_user.id.to_s,
+            is_admin: current_user.privilege?(:admin_tasks)
+          }
+        }
+
+        JWT.encode(jwt_payload, MarketplaceConfig::JWT_SECRET, 'HS256')
+      end
 
       def construct_api_meta
         api_meta = {
-          csrf_token: safe_send(:form_authenticity_token)
+          csrf_token: safe_send(:form_authenticity_token),
+          marketplace_auth_token: generate_marketplace_token
         }
         api_meta[:iris_notification_url] = IrisNotificationsConfig["collector_host"]
         api_meta[:collision_url] = agentcollision_alb_socket_host if current_account.features?(:collision)

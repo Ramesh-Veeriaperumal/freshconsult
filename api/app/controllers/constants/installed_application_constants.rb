@@ -5,7 +5,7 @@ module InstalledApplicationConstants
   INSTALLED_APPLICATION_CONSTANTS = 'InstalledApplicationConstants'.freeze
   APP_NAME_TO_SERVICE_MAP = {
     salesforce: "salesforce",
-    salesforce_v2: "salesforce",
+    salesforce_v2: "cloud_elements",
     freshsales: "freshsales",
     shopify: "shopify"
   }.freeze

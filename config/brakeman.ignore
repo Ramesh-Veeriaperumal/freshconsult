@@ -1,32 +1,14 @@
 {
   "ignored_warnings": [
     {
-      "warning_type": "Mass Assignment",
-      "warning_code": 17,
-      "fingerprint": "01706179f719dcc67205f917e766da56fe3d6ddfadf8724265c2e18f4c469ff5",
-      "message": "Unprotected mass assignment",
-      "file": "app/controllers/helpdesk/attachments_controller.rb",
-      "line": 77,
-      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
-      "code": "Helpdesk::Attachment.new(:content => params[:file], :account_id => Account.current.id, :attachable_type => \"UserDraft\", :attachable_id => current_user.id)",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Helpdesk::AttachmentsController",
-        "method": "create_attachment"
-      },
-      "user_input": "Account.current",
-      "confidence": "Weak",
-      "note": ""
-    },
-    {
-      "warning_type": "Cross Site Scripting",
+      "warning_type": "Cross-Site Scripting",
       "warning_code": 2,
       "fingerprint": "1eacb00d793904d4eb92dabcbebdcb6346c77775caf9576c0605f1a67610f489",
+      "check_name": "CrossSiteScripting",
       "message": "Unescaped model attribute",
       "file": "app/views/helpdesk/tickets/show/_activity.html.erb",
       "line": 43,
-      "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new[:stack].size",
       "render_path": [{"type":"controller","class":"Helpdesk::TicketsController","method":"activities","line":1337,"file":"app/controllers/helpdesk/tickets_controller.rb"},{"type":"template","name":"helpdesk/tickets/activities","line":3,"file":"app/views/helpdesk/tickets/activities.html.erb"}],
       "location": {
@@ -41,10 +23,11 @@
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "2805db54a76837c64c83472814ea6f8b1440588c539fd45ab90393f0d379a325",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/partner_admin/affiliates_controller.rb",
       "line": 51,
-      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
       "code": "SubscriptionAffiliate.new(ActiveSupport::JSON.decode(request.body.read))",
       "render_path": null,
       "location": {
@@ -57,32 +40,34 @@
       "note": ""
     },
     {
-      "warning_type": "File Access",
-      "warning_code": 16,
-      "fingerprint": "31ea9a89bb5f6e844cf02695ad5555143d43b1bdca90cd5b62ee174db6b85165",
-      "message": "Parameter value used in file name",
-      "file": "lib/helpdesk_reports/export/utils.rb",
-      "line": 23,
-      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
-      "code": "File.delete(generate_file_path(\"bi_reports\", \"#{(\"#{{ :glance => \"Helpdesk In-depth\", :ticket_volume => \"Ticket Volume Trends\", :agent_summary => \"Agent Performance\", :group_summary => \"Group Performance\", :performance_distribution => \"Performance Distribution\", :customer_report => \"Top Customer Analysis\", :timesheet_reports => \"Time Sheet Summary\", :chat_summary => \"Chat Summary\", :phone_summary => \"Phone Summary\", :satisfaction_survey => \"Satisfaction Survey\", :timespent => \"Ticket Lifecycle\" }[report_type]}_#{params[:filter_name]}\" or { :glance => \"Helpdesk In-depth\", :ticket_volume => \"Ticket Volume Trends\", :agent_summary => \"Agent Performance\", :group_summary => \"Group Performance\", :performance_distribution => \"Performance Distribution\", :customer_report => \"Top Customer Analysis\", :timesheet_reports => \"Time Sheet Summary\", :chat_summary => \"Chat Summary\", :phone_summary => \"Phone Summary\", :satisfaction_survey => \"Satisfaction Survey\", :timespent => \"Ticket Lifecycle\" }[report_type]).gsub(/[\\s+\\/]/, \"_\").underscore}-#{Time.current.strftime(\"%d-%b-%y-%H-%M\")}-#{SecureRandom.urlsafe_base64(4)}.#{format}\"))",
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "fingerprint": "328b25585a61fc8a51250a8206e29fb0a084741a95b52f7cdd50b19f9a3f215a",
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "lib/helpdesk/initializers/githooks.rb",
+      "line": 7,
+      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
+      "code": "`ln -s \"#{Rails.root}/script/githooks/#{script_name}\" \"#{Rails.root}/.git/hooks/#{script_name}\"`",
       "render_path": null,
       "location": {
         "type": "method",
-        "class": "HelpdeskReports::Export::Utils",
-        "method": "build_file"
+        "class": "GitHooksInit",
+        "method": "s(:self).link_script"
       },
-      "user_input": "params[:filter_name]",
-      "confidence": "Weak",
+      "user_input": "script_name",
+      "confidence": "Medium",
       "note": ""
     },
     {
       "warning_type": "Redirect",
       "warning_code": 18,
       "fingerprint": "33cd97663c4f31bee5f237800e3c278df3a3b0ae95e9248fcb5bfb5b0b1e2975",
+      "check_name": "Redirect",
       "message": "Possible unprotected redirect",
       "file": "app/controllers/integrations/github_controller.rb",
-      "line": 107,
-      "link": "http://brakemanscanner.org/docs/warning_types/redirect/",
+      "line": 101,
+      "link": "https://brakemanscanner.org/docs/warning_types/redirect/",
       "code": "redirect_to(Integrations::Application.find_by_name(APP_NAME).oauth_url(:account_id => @current_account.id, :portal_id => current_portal.id))",
       "render_path": null,
       "location": {
@@ -95,13 +80,54 @@
       "note": ""
     },
     {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "fingerprint": "40cdb0d1f98a46ec59eade8ad71fdd4d107cce0030c2ba1145da23df74295b3d",
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "lib/helpdesk/initializers/githooks.rb",
+      "line": 8,
+      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
+      "code": "`chmod +x \"#{Rails.root}/.git/hooks/#{script_name}\"`",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "GitHooksInit",
+        "method": "s(:self).link_script"
+      },
+      "user_input": "script_name",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "fingerprint": "563e1e93ff14168ad0d09df2342836699bd894347d531b1ea0b07183f7b437a7",
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "lib/import_csv_util.rb",
+      "line": 35,
+      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
+      "code": "Open3.capture2(\"wc\", \"-l\", params[:file].path)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "ImportCsvUtil",
+        "method": "store_file"
+      },
+      "user_input": "params[:file].path",
+      "confidence": "High",
+      "note": ""
+    },
+    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "59934e4e45362f887e3d75753d7697605d8db133fd4f9f56c413b647d7472b2d",
+      "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "lib/reports/helpdesk_report.rb",
       "line": 42,
-      "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Account.current.tickets.visible.find(:all, :select => (\"count(*) count,DATE(CONVERT_TZ(helpdesk_ticket_states.#{type},'+00:00','#{Time.zone.formatted_offset}')) date\"), :joins => \"INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id\", :conditions => fetch_condition(type), :group => (\"DATE(CONVERT_TZ(helpdesk_ticket_states.#{type},'+00:00','#{Time.zone.formatted_offset}'))\"))",
       "render_path": null,
       "location": {
@@ -117,10 +143,11 @@
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "5b3ca8d41afe33ed67005b2f34be8996757bcd43bb73706a487c5d4dc95d711a",
+      "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/helpdesk/access.rb",
       "line": 145,
-      "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "scope(:user_accessible_items_via_group, lambda do\n { :joins => (\"#{group_accesses_join(type, user)} #{agent_groups_join}\"), :conditions => (\"#{type_conditions(type)} AND (#{user_conditions(user)[:global]} OR #{user_conditions(user)[:users_via_group]})\"), :select => \"accessible_id, accessible_type, access_type\" }\n end)",
       "render_path": null,
       "location": {
@@ -133,31 +160,14 @@
       "note": ""
     },
     {
-      "warning_type": "Cross Site Scripting",
-      "warning_code": 4,
-      "fingerprint": "6da04369dbd2a70e8a46c7af874bf0e5f24948d605ad80125c7ca4606ccd8c41",
-      "message": "Unsafe parameter value in link_to href",
-      "file": "app/views/discussions/topics/widgets/_ticket.html.erb",
-      "line": 13,
-      "link": "http://brakemanscanner.org/docs/warning_types/link_to_href",
-      "code": "link_to(current_account.topics.find(params[:id]).ticket, current_account.topics.find(params[:id]).ticket)",
-      "render_path": [{"type":"controller","class":"Discussions::TopicsController","method":"show","line":135,"file":"app/controllers/discussions/topics_controller.rb"},{"type":"template","name":"discussions/topics/show","line":18,"file":"app/views/discussions/topics/show.html.erb"},{"type":"template","name":"discussions/topics/_sidebar","line":19,"file":"app/views/discussions/topics/_sidebar.html.erb"}],
-      "location": {
-        "type": "template",
-        "template": "discussions/topics/widgets/_ticket"
-      },
-      "user_input": "params",
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
-      "warning_type": "Cross Site Scripting",
+      "warning_type": "Cross-Site Scripting",
       "warning_code": 2,
       "fingerprint": "7d762f66749406e46c70f913df8f1ac6fb4c6bf24224f388c5ca26e005ebed79",
+      "check_name": "CrossSiteScripting",
       "message": "Unescaped model attribute",
       "file": "app/views/integrations/hootsuite/tickets/_note.html.erb",
       "line": 60,
-      "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
       "render_path": [{"type":"controller","class":"Integrations::Hootsuite::TicketsController","method":"show","line":21,"file":"app/controllers/integrations/hootsuite/tickets_controller.rb"},{"type":"template","name":"integrations/hootsuite/tickets/show","line":61,"file":"app/views/integrations/hootsuite/tickets/show.html.erb"}],
       "location": {
@@ -169,52 +179,16 @@
       "note": ""
     },
     {
-      "warning_type": "Command Injection",
-      "warning_code": 14,
-      "fingerprint": "80e07e223be689e9aa7b07274c0762fdc0c71197e161bee6b6fa11f76a19dbbf",
-      "message": "Possible command injection",
-      "file": "lib/helpdesk/initializers/githooks.rb",
-      "line": 8,
-      "link": "http://brakemanscanner.org/docs/warning_types/command_injection/",
-      "code": "`chmod +x \"#{Rails.root}/.git/hooks/#{script_name}\"`",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "GitHooksInit",
-        "method": "s(:self).link_script"
-      },
-      "user_input": "script_name",
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
-      "warning_type": "Cross Site Scripting",
-      "warning_code": 4,
-      "fingerprint": "84a675135ad85592a4a5b147a137bd24e85db2e59381489cb7770b2266fe9f5d",
-      "message": "Unsafe parameter value in link_to href",
-      "file": "app/views/contacts/_hover_card.html.erb",
-      "line": 50,
-      "link": "http://brakemanscanner.org/docs/warning_types/link_to_href",
-      "code": "link_to(h(current_account.all_users.find(params[:id]).name), (\"https://facebook.com/\" + current_account.all_users.find(params[:id]).fb_profile_id), :target => \"_blank\")",
-      "render_path": [{"type":"controller","class":"ContactsController","method":"hover_card","line":155,"file":"app/controllers/contacts_controller.rb"}],
-      "location": {
-        "type": "template",
-        "template": "contacts/_hover_card"
-      },
-      "user_input": "params",
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
-      "warning_type": "Cross Site Scripting",
+      "warning_type": "Cross-Site Scripting",
       "warning_code": 2,
       "fingerprint": "881916c0aaf70b957ddbb3933b5f0a49bc948ec34285799178006746c4e672b0",
+      "check_name": "CrossSiteScripting",
       "message": "Unescaped model attribute",
       "file": "app/views/helpdesk/tickets/show/_custom_survey_note.html.erb",
-      "line": 38,
-      "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "line": 41,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":192,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
+      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":195,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_custom_survey_note"
@@ -224,15 +198,16 @@
       "note": ""
     },
     {
-      "warning_type": "Cross Site Scripting",
+      "warning_type": "Cross-Site Scripting",
       "warning_code": 2,
       "fingerprint": "881916c0aaf70b957ddbb3933b5f0a49bc948ec34285799178006746c4e672b0",
+      "check_name": "CrossSiteScripting",
       "message": "Unescaped model attribute",
       "file": "app/views/helpdesk/tickets/show/_custom_survey_note.html.erb",
-      "line": 42,
-      "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "line": 45,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":192,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
+      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":195,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_custom_survey_note"
@@ -245,10 +220,11 @@
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "8b5d0b244eb392141c0ed63068d3a1b15f3b19c82c7a1c5a9648428288f7951c",
+      "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "lib/search/recent_tickets.rb",
       "line": 27,
-      "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Account.current.archive_tickets.where(:display_id => (super)).select(\"archive_tickets.display_id, archive_tickets.subject\").order(\"field(display_id, #{super.join(\",\")})\")",
       "render_path": null,
       "location": {
@@ -264,10 +240,11 @@
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "8e71e83411a59283b070dacf74b1af14713d0c7b7bd6dcfd87e47ec4e236970a",
+      "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/wf/filter.rb",
       "line": 707,
-      "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Wf::Filter.find(:all, :conditions => ((([\"type = ? and model_class_name = ?\", self.class.name, self.model_class_name] or [\"model_class_name = ?\", self.model_class_name]) << Wf::Config.current_user.id) << \"0\"))",
       "render_path": null,
       "location": {
@@ -283,10 +260,11 @@
       "warning_type": "File Access",
       "warning_code": 16,
       "fingerprint": "a3c91a25465f52ca16fa2470c213227e5a1a30d609b7ded97efe2ca1a170d211",
+      "check_name": "FileAccess",
       "message": "Model attribute used in file name",
       "file": "lib/helpdesk/export_data_worker.rb",
       "line": 19,
-      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "FileUtils.mkdir_p(\"#{Rails.root}/tmp/#{Account.find_by_full_domain(params[:domain]).id}\")",
       "render_path": null,
       "location": {
@@ -299,13 +277,14 @@
       "note": ""
     },
     {
-      "warning_type": "Cross Site Scripting",
+      "warning_type": "Cross-Site Scripting",
       "warning_code": 2,
       "fingerprint": "a4020ce8ae55dc81ee3f563fe3adf6b215ad3c2feb78154860ef55023830c5a6",
+      "check_name": "CrossSiteScripting",
       "message": "Unescaped model attribute",
       "file": "app/views/helpdesk/archive_tickets/show/_activity.html.erb",
       "line": 43,
-      "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new[:stack].size",
       "render_path": [{"type":"template","name":"helpdesk/archive_tickets/activities","line":3,"file":"app/views/helpdesk/archive_tickets/activities.html.erb"}],
       "location": {
@@ -320,10 +299,11 @@
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "a573bca956dcb99b364da08aebc8f5559b7c3cf80a81a8dbee84d54d8f839157",
+      "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/helpdesk/note.rb",
-      "line": 103,
-      "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "line": 115,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "scope(:broadcast_notes, :joins => \"INNER JOIN helpdesk_schema_less_notes on helpdesk_schema_less_notes.note_id = helpdesk_notes.id and helpdesk_notes.account_id = helpdesk_schema_less_notes.account_id\", :conditions => ([\"notable_type = ? and deleted = 0 and helpdesk_schema_less_notes.#{Helpdesk::SchemaLessNote.category_column} = ?\", \"Helpdesk::Ticket\", Helpdesk::Note::CATEGORIES[:broadcast]]))",
       "render_path": null,
       "location": {
@@ -339,10 +319,11 @@
       "warning_type": "File Access",
       "warning_code": 16,
       "fingerprint": "aa6ba2371bb8a0125728e35c49c23c5aecec75bca58be920b1babfeb2328ef25",
+      "check_name": "FileAccess",
       "message": "Model attribute used in file name",
       "file": "lib/helpdesk_reports/export/utils.rb",
-      "line": 77,
-      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
+      "line": 69,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "FileUtils.mkdir_p(\"#{Rails.root}/tmp/export/#{Account.current.id}/#{type}\")",
       "render_path": null,
       "location": {
@@ -358,10 +339,11 @@
       "warning_type": "File Access",
       "warning_code": 16,
       "fingerprint": "aafb075015879b5acb89068a8074049d551d6c2f190a31dee9b1e70eef0b2a34",
+      "check_name": "FileAccess",
       "message": "Model attribute used in file name",
       "file": "lib/export/util.rb",
-      "line": 54,
-      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
+      "line": 67,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "FileUtils.mkdir_p(\"#{Rails.root}/tmp/export/#{Account.current.id}/#{type}\")",
       "render_path": null,
       "location": {
@@ -377,10 +359,11 @@
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "b4ad395c833d72eb9aa7e51c64106170561a0790d1803e6601737014ad5f9352",
+      "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/agent.rb",
-      "line": 66,
-      "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "line": 71,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Agent.where(:id => self.id).update_all(\"points = #{score}\")",
       "render_path": null,
       "location": {
@@ -393,32 +376,14 @@
       "note": ""
     },
     {
-      "warning_type": "Mass Assignment",
-      "warning_code": 17,
-      "fingerprint": "c3b23e9732e69e2c68425757a246a83a62325ebc76ca0d191b89697cd75c695f",
-      "message": "Unprotected mass assignment",
-      "file": "app/controllers/helpdesk/leaderboard_controller.rb",
-      "line": 55,
-      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
-      "code": "SupportScore.new(:group_id => params[:id])",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Helpdesk::LeaderboardController",
-        "method": "generate_leaderboard"
-      },
-      "user_input": "params[:id]",
-      "confidence": "Weak",
-      "note": ""
-    },
-    {
-      "warning_type": "Cross Site Scripting",
+      "warning_type": "Cross-Site Scripting",
       "warning_code": 2,
       "fingerprint": "c42042670e53c642a157725235a2ff3875263dc136f015c9352975de4c28e9ac",
+      "check_name": "CrossSiteScripting",
       "message": "Unescaped model attribute",
       "file": "app/views/helpdesk/tickets/_note.html.erb",
       "line": 63,
-      "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
       "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":41,"file":"app/controllers/helpdesk/notes_controller.rb"}],
       "location": {
@@ -430,32 +395,14 @@
       "note": ""
     },
     {
-      "warning_type": "Command Injection",
-      "warning_code": 14,
-      "fingerprint": "ca454c0f49a3d461d3091bf595991d4342a3c46ac220b717d2913dc24c526594",
-      "message": "Possible command injection",
-      "file": "lib/helpdesk/initializers/githooks.rb",
-      "line": 6,
-      "link": "http://brakemanscanner.org/docs/warning_types/command_injection/",
-      "code": "`rm \"#{Rails.root}/.git/hooks/#{script_name}\"`",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "GitHooksInit",
-        "method": "s(:self).link_script"
-      },
-      "user_input": "script_name",
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "ceea98b4f1722489009da749e56a2dccd10e7dcc830ab20b9f5c82bb94d3e2a0",
+      "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "lib/search/recent_tickets.rb",
       "line": 16,
-      "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Account.current.tickets.where(:display_id => (super)).select(\"helpdesk_tickets.display_id, helpdesk_tickets.subject\").order(\"field(display_id, #{super.join(\",\")})\")",
       "render_path": null,
       "location": {
@@ -468,33 +415,16 @@
       "note": ""
     },
     {
-      "warning_type": "Attribute Restriction",
-      "warning_code": 19,
-      "fingerprint": "d0d36662b9886b7458ece679613519d8f1f86fbd22f8d19094d017977ded5bcd",
-      "message": "Mass assignment is not restricted using attr_accessible",
-      "file": "app/models/sqs_post.rb",
-      "line": 1,
-      "link": "http://brakemanscanner.org/docs/warning_types/attribute_restriction/",
-      "code": null,
-      "render_path": null,
-      "location": {
-        "type": "model",
-        "model": "SQSPost"
-      },
-      "user_input": null,
-      "confidence": "High",
-      "note": ""
-    },
-    {
-      "warning_type": "Cross Site Scripting",
+      "warning_type": "Cross-Site Scripting",
       "warning_code": 2,
       "fingerprint": "d7dbb695efc7c55692bd6fc6a60d08242db24c3b83988b71066c08503f69a310",
+      "check_name": "CrossSiteScripting",
       "message": "Unescaped model attribute",
       "file": "app/views/helpdesk/tickets/show/_survey_note.html.erb",
-      "line": 5,
-      "link": "http://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "line": 8,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
       "code": "(Unresolved Model).new.body_html",
-      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":195,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
+      "render_path": [{"type":"controller","class":"Helpdesk::NotesController","method":"index","line":39,"file":"app/controllers/helpdesk/notes_controller.rb"},{"type":"template","name":"helpdesk/tickets/show/_conversations","line":3,"file":"app/views/helpdesk/tickets/show/_conversations.html.erb"},{"type":"template","name":"helpdesk/tickets/show/_note","line":198,"file":"app/views/helpdesk/tickets/show/_note.html.erb"}],
       "location": {
         "type": "template",
         "template": "helpdesk/tickets/show/_survey_note"
@@ -507,10 +437,11 @@
       "warning_type": "Redirect",
       "warning_code": 18,
       "fingerprint": "e893b31f3f22e77c7870f26c4572e38cac8ddb614889e7c83783c44fbf752a23",
+      "check_name": "Redirect",
       "message": "Possible unprotected redirect",
       "file": "app/controllers/integrations/marketplace/shopify_controller.rb",
-      "line": 74,
-      "link": "http://brakemanscanner.org/docs/warning_types/redirect/",
+      "line": 72,
+      "link": "https://brakemanscanner.org/docs/warning_types/redirect/",
       "code": "redirect_to((AppConfig[\"integrations_url\"][Rails.env] + \"/auth/shopify?shop=#{(params[:remote_id] or Integrations::ShopifyRemoteUser.where(:account_id => current_account.id).first.remote_id)}&origin=id%3D#{current_account.id.to_s}\"))",
       "render_path": null,
       "location": {
@@ -523,31 +454,14 @@
       "note": ""
     },
     {
-      "warning_type": "Cross Site Scripting",
-      "warning_code": 4,
-      "fingerprint": "ecf22538aee116e3d705829c177d046cedcbaed5b2d870db671930730d211f03",
-      "message": "Unsafe parameter value in link_to href",
-      "file": "app/views/helpdesk/collab_tickets/show/_original_request.html.erb",
-      "line": 1,
-      "link": "http://brakemanscanner.org/docs/warning_types/link_to_href",
-      "code": "link_to(user_avatar(current_account.tickets.find_by_display_id(params[:id]).requester, :thumb, \"preview_pic circle\"), current_account.tickets.find_by_display_id(params[:id]).requester, :class => \"avatar-wrap\")",
-      "render_path": [{"type":"controller","class":"Helpdesk::CollabTicketsController","method":"show","line":17,"file":"app/controllers/helpdesk/collab_tickets_controller.rb"},{"type":"template","name":"helpdesk/collab_tickets/show","line":37,"file":"app/views/helpdesk/collab_tickets/show.html.erb"}],
-      "location": {
-        "type": "template",
-        "template": "helpdesk/collab_tickets/show/_original_request"
-      },
-      "user_input": "params",
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
       "warning_type": "Mass Assignment",
       "warning_code": 17,
       "fingerprint": "f087961da904eff9b1f1d3e0441d0ca514bf65e2e58eecee844f588ca98c29fc",
+      "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
       "file": "app/controllers/support/discussions/posts_controller.rb",
       "line": 53,
-      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
       "code": "SQSPost.new(params[:post].clone.delete_if do\n (k == \"attachments\")\n end)",
       "render_path": null,
       "location": {
@@ -560,50 +474,14 @@
       "note": ""
     },
     {
-      "warning_type": "Command Injection",
-      "warning_code": 14,
-      "fingerprint": "f6051cdced36478b1d5877872131207742c7445112f52bdea7a7adbeb3de1647",
-      "message": "Possible command injection",
-      "file": "lib/helpdesk/initializers/githooks.rb",
-      "line": 7,
-      "link": "http://brakemanscanner.org/docs/warning_types/command_injection/",
-      "code": "`ln -s \"#{Rails.root}/script/githooks/#{script_name}\" \"#{Rails.root}/.git/hooks/#{script_name}\"`",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "GitHooksInit",
-        "method": "s(:self).link_script"
-      },
-      "user_input": "script_name",
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
-      "warning_type": "Cross Site Scripting",
-      "warning_code": 4,
-      "fingerprint": "f9e994423dd06fa05d78aa1c9a3ca73ab3ea9caec4bec933e097185c2b07797f",
-      "message": "Unsafe parameter value in link_to href",
-      "file": "app/views/contacts/_hover_card.html.erb",
-      "line": 44,
-      "link": "http://brakemanscanner.org/docs/warning_types/link_to_href",
-      "code": "link_to(h(current_account.all_users.find(params[:id]).twitter_id), (\"https://twitter.com/\" + current_account.all_users.find(params[:id]).twitter_id), :target => \"_blank\")",
-      "render_path": [{"type":"controller","class":"ContactsController","method":"hover_card","line":155,"file":"app/controllers/contacts_controller.rb"}],
-      "location": {
-        "type": "template",
-        "template": "contacts/_hover_card"
-      },
-      "user_input": "params",
-      "confidence": "Medium",
-      "note": ""
-    },
-    {
       "warning_type": "File Access",
       "warning_code": 16,
       "fingerprint": "faac769090b42361ef0cd0bd702af5fbbe270d9ebf852414b7a1621851897a5d",
+      "check_name": "FileAccess",
       "message": "Model attribute used in file name",
       "file": "lib/helpdesk/export_data_worker.rb",
       "line": 25,
-      "link": "http://brakemanscanner.org/docs/warning_types/file_access/",
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "File.open(File.join(\"#{Rails.root}/tmp/\", \"#{Account.find_by_full_domain(params[:domain]).id}.zip\"), \"r\")",
       "render_path": null,
       "location": {
@@ -619,10 +497,11 @@
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "fe71b06e7d06089c725c66bf6a4c6c8b119a98184078b06df68dd8bf96cc49b3",
+      "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "lib/reports/helpdesk_report.rb",
       "line": 62,
-      "link": "http://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Account.current.tickets.visible.find(:all, :joins => \"INNER JOIN helpdesk_ticket_states on helpdesk_tickets.id = helpdesk_ticket_states.ticket_id and helpdesk_tickets.account_id = helpdesk_ticket_states.account_id\", :conditions => (\" (helpdesk_ticket_states.resolved_at > '#{start_date}' and helpdesk_ticket_states.resolved_at < '#{end_date}')\"))",
       "render_path": null,
       "location": {
@@ -635,6 +514,6 @@
       "note": "The embed is within quoted text"
     }
   ],
-  "updated": "2018-10-05 19:56:51 +0530",
-  "brakeman_version": "3.3.0"
+  "updated": "2018-11-27 12:49:45 +0530",
+  "brakeman_version": "4.3.1"
 }

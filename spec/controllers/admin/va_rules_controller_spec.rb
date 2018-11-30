@@ -75,9 +75,11 @@ describe Admin::VaRulesController do
 
   it "should cascade dispatchr rules" do
     @account.features.send(:cascade_dispatchr).create
+    @account.add_feature(:cascade_dispatcher)
     post :toggle_cascade, {:cascade_dispatcher=>"0","_"=>""}
     @account.reload
     @account.features?(:cascade_dispatchr).should be_falsey
+    @account.has_feature?(:cascade_dispatcher).should be_falsey
   end
 
 end

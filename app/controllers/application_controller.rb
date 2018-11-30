@@ -335,7 +335,9 @@ class ApplicationController < ActionController::Base
     end
 
     def set_last_active_time
-      current_user.agent.update_last_active if Account.current && current_user && current_user.agent? && !current_user.agent.nil?
+      Sharding.run_on_master do
+        current_user.agent.update_last_active if Account.current && current_user && current_user.agent? && !current_user.agent.nil?
+      end
     end
 
     def request_host
