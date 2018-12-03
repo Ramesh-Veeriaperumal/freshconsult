@@ -439,8 +439,8 @@ module BotTestHelper
       name: '<script>alert(5)</script>',
       portal_id: portal.id,
       header: '<script>alert(5)</script>',
-      theme_colour: '<script>alert(5)</script>',
-      widget_size: '<script>alert(5)</script>'
+      theme_colour: '#039a7b',
+      widget_size: 'STANDARD'
     }
   end
 
