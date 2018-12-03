@@ -46,6 +46,8 @@ properties:
   meta:
     type: object
     properties:
+      marketplace_auth_token:
+        type: string
       csrf_token:
         type: string
       iris_notification_url:

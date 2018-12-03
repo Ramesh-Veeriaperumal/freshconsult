@@ -84,11 +84,11 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
   end
 
   def oauth_install
-    oauth_handshake
+    render :json => { :redirect_url => oauth_handshake }
   end
 
   def edit_oauth_configs
-    oauth_handshake
+    render :json => { :redirect_url => oauth_handshake }
   end
 
   def oauth_callback
@@ -139,24 +139,6 @@ class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminControlle
     update_ext = update_extension(update_ext_params)
     flash[:notice] = t('marketplace.update_action.success') if update_ext.status == 200
     render :json => update_ext.body, :status => update_ext.status
-  end
-
-  def oauth_handshake(is_reauthorize = false)
-    callback = Marketplace::ApiEndpoint::ENDPOINT_URL[:oauth_callback] % {
-      :extension_id => params[:extension_id],
-      :version_id => params[:version_id]
-    }
-    oauth_callback_url =  "#{request.protocol}#{request.host_with_port}" + callback
-    mkp_oauth_endpoint = Marketplace::ApiEndpoint::ENDPOINT_URL[:oauth_install] % {
-      :product_id => PRODUCT_ID.to_s,
-      :account_id => Account.current.id.to_s,
-      :version_id => params[:version_id]
-    }
-    reauth_param = is_reauthorize ? "&edit_oauth=true&installed_extn_id=" + params[:installed_extn_id] : ""
-    redirect_url = "#{MarketplaceConfig::MKP_OAUTH_URL}/" + mkp_oauth_endpoint + "?callback=" + oauth_callback_url + reauth_param
-    redirect_url = redirect_url + "&fdcode=" + CGI.escape(generate_md5_digest(redirect_url, MarketplaceConfig::API_AUTH_KEY))
-    redirect_url += "&oauth_iparams=#{params[:oauth_iparams]}" if params[:oauth_iparams].present?
-    render :json => { :redirect_url => redirect_url }
   end
 
   def update_params

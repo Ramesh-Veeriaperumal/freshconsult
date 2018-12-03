@@ -175,6 +175,59 @@ module MarketplaceHelper
     FreshRequest::Response.new(Response.new(body))
   end
 
+   def extension_details_v2_agent_oauth
+    body = {
+      'extension_id' => 1,
+      'type' => 1,
+      'app_type' => 1,
+      'account' => 'Freshdesk',
+      'name' => 'google_plug',
+      'display_name' => 'Google Plug',
+      'description' => 'Dummy Desription',
+      'instructions' => nil,
+      'cover_art' => {
+        'thumb' => 'https://dummy.cloudfront.net/images/04/live_cover_art/thumb/40.png',
+        'thumb2x' => 'https://dummy.cloudfront.net/images/04/live_cover_art/thumb2x/40.png'
+      },
+      'screenshots' => [
+        {
+          'large' => 'https://dummy.cloudfront.net/images/04/live_screenshot/large/1360x850_Hangouts.png',
+          'large2x' => 'https://dummy.cloudfront.net/images/04/live_screenshot/large2x/1360x850_Hangouts.png'
+        }
+      ],
+      'categories' => [
+        {
+          'id' => 7,
+          'name' => 'Google Apps'
+        }
+      ],
+      'contact_details' => {
+        'support_email' => 'support@freshdesk.com',
+        'support_url' => 'https://support.freshdesk.com'
+      },
+      'options' => nil,
+      'published_date' => 'over 1 year',
+      'addon' => nil,
+      'platform_details' => {
+        '1.0' => [1],
+        '2.0' => [3]
+      },
+      'version_id' => 3,
+      'placeholders' => {
+        'ticket_sidebar' => {
+          'url' => 'https://dummy.cloudfront.net/app-assets/1/app/template.html',
+          'icon_url' => 'https://dummy.cloudfront.net/app-assets/1/app/logo.png'
+        }
+      },
+      'features' => ['backend', 'agent_oauth'],
+      'events' => { },
+      'has_config' => false,
+      'app_version' => '3.0',
+      'whats_new' => 'Updated to use the latest Google script'
+    }
+    FreshRequest::Response.new(Response.new(body))
+  end
+
   def installed_extensions_v2
     body =  [{   
               'installed_extension_id' => 1,

@@ -6,7 +6,6 @@ class Admin::SandboxesController < ApiApplicationController
 
   decorate_views(decorate_objects: [:index])
 
-  before_filter :check_feature
   before_filter :validate_merge_params, only: [:merge]
   before_filter :load_object, only: [:destroy, :diff, :merge]
   before_filter :destroy?, only: [:destroy]
@@ -53,11 +52,6 @@ class Admin::SandboxesController < ApiApplicationController
   end
 
   private
-
-  def check_feature
-    return if current_account.sandbox_lp_enabled?
-    render_request_error(:require_feature, 403, feature: 'sandbox')
-  end
 
   def feature_name
     FeatureConstants::SANDBOX

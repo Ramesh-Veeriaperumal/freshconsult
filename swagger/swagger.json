@@ -9901,6 +9901,9 @@
             "csrf_token": {
               "type": "string"
             },
+            "marketplace_auth_token": {
+              "type": "string"
+            },
             "iris_notification_url": {
               "type": "string"
             },

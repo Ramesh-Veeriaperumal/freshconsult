@@ -96,7 +96,7 @@
       :ticket_summary: 92
       :shared_ownership: 93
       :oauth2: 94
-      :autobots_3: 95
+      :cascade_dispatcher: 95
       :autobots_4: 96
       :autobots_5: 97
       :autobots_6: 98
@@ -193,7 +193,7 @@
       :decepticons_6: 188
       :decepticons_7: 189
       :decepticons_8: 190
-      :decepticons_8: 191
+      :decepticons_9: 191
       :decepticons_10: 192
 :selectable_features:
       :branding: true
@@ -208,10 +208,10 @@
       :freshcaller_widget: false
       :falcon: false
       :support_bot: false
-      :freshcaller_widget: false
       :opt_out_analytics: false
       :disable_old_ui: true
       :oauth2: false
       :segments: false
       :proactive_outreach: false
       :field_service_management: false
+      :cascade_dispatcher: false

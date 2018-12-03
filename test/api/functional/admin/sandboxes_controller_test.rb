@@ -17,7 +17,6 @@ class Admin::SandboxesControllerTest < ActionController::TestCase
     @account = @user.account.make_current
     @user.make_current
     @account.add_feature(:sandbox)
-    @account.launch(:sandbox_lp)
   end
 
   def test_index
@@ -62,11 +61,9 @@ class Admin::SandboxesControllerTest < ActionController::TestCase
 
   def test_index_without_feature
     @account.revoke_feature(:sandbox)
-    @account.rollback(:sandbox_lp)
     get :index, controller_params({ version: 'private' })
     assert_response 403
     @account.add_feature(:sandbox)
-    @account.launch(:sandbox_lp)
   end
 
   def test_index_with_sandbox_account

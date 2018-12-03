@@ -11,6 +11,9 @@ JSON.generate(@installed_apps.map do |installed_app|
     version_id: installation_details['version_id'],
     features: extension_details['features'],
     extension_type: extension_details['type']
+  } : {}).merge(extension_details['features'].include?(Marketplace::Constants::AGENT_OAUTH) ? {
+    authorize_url: installed_app[:authorize_url],
+    reauthorize_url: installed_app[:reauthorize_url]
   } : {})
   response_hash
 end)

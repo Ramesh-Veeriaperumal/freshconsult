@@ -171,6 +171,23 @@ module InstalledApplicationsTestHelper
     mock
   end
 
+  def salesforce_v2_response_pattern(response, fields_array, type)
+    response_hash = Hash.new
+    field_response = JSON.parse(response)
+    response_hash = {"totalSize"=> field_response.length, "done" => true, "records" => []}
+    field_response.each do |response|
+      hash = { "attributes"=> { "type" => type}}
+      fields_array.each do |field|
+        hash[field] = response[field]
+      end
+      hash["accountId"] = response["AccountId"] if type == "Contact" && response["AccountId"]
+      hash["Id"] = response["Id"]
+      hash.delete("AccountName")
+      response_hash["records"].push(hash)
+    end
+    response_hash
+  end
+
   def form_fields_result
     {"Lead"=>{"id"=>2000022766, "name"=>"DefaultLeadForm", "field_class"=>"Lead",
            "fields"=>[{"id"=>"56f639ac", "name"=>"basic_information", "label"=>"Basicinformation",

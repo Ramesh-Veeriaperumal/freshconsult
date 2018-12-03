@@ -6,6 +6,25 @@ module Marketplace::ApiMethods
 
   private
 
+    def oauth_handshake(is_reauthorize = false, extension_id = params[:extension_id], version_id = params[:version_id],
+     oauth_iparams = params[:oauth_iparams], installed_extn_id = params[:installed_extn_id])
+      callback = Marketplace::ApiEndpoint::ENDPOINT_URL[:oauth_callback] % {
+        :extension_id => extension_id,
+        :version_id => version_id
+      }
+      oauth_callback_url =  "#{request.protocol}#{request.host_with_port}" + callback
+      mkp_oauth_endpoint = Marketplace::ApiEndpoint::ENDPOINT_URL[:oauth_install] % {
+        :product_id => PRODUCT_ID.to_s,
+        :account_id => Account.current.id.to_s,
+        :version_id => version_id
+      }
+      reauth_param = is_reauthorize ? "&edit_oauth=true&installed_extn_id=#{installed_extn_id}" : ""
+      redirect_url = "#{MarketplaceConfig::MKP_OAUTH_URL}/#{mkp_oauth_endpoint}?callback=#{oauth_callback_url}#{reauth_param}"
+      redirect_url = "#{redirect_url}&fdcode=#{CGI.escape(generate_md5_digest(redirect_url, MarketplaceConfig::API_AUTH_KEY))}"
+      redirect_url = "#{redirect_url}&oauth_iparams=#{oauth_iparams}" if oauth_iparams.present? & !oauth_iparams.blank?
+      redirect_url
+    end
+
     # Global API's
     def mkp_extensions(sort_key = nil)
       begin
