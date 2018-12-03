@@ -197,6 +197,8 @@ module Redis::Keys::Others
   DETECT_USER_LANGUAGE                     = "DETECT_USER_LANGUAGE:%{text}".freeze
   SPAM_NOTIFICATION_WHITELISTED_DOMAINS_EXPIRY = "SPAM_NOTIFICATION_WHITELISTED_DOMAINS:%{account_id}".freeze
   RECENT_ACCOUNT_SPAM_FILTERED_NOTIFICATIONS   = "RECENT_ACCOUNT_SPAM_FILTERED_NOTIFICATIONS".freeze
+  INVOICE_DUE                                  = "INVOICE_DUE:%{account_id}".freeze
+
   #Account cancellation related keys
   ACCOUNT_CANCELLATION_REQUEST_JOB_ID = "ACCOUNT_CANCELLATION_REQUEST_JOB_ID:%{account_id}".freeze
 end
