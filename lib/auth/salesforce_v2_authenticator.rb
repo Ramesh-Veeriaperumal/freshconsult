@@ -22,6 +22,11 @@ class Auth::SalesforceV2Authenticator < Auth::Authenticator
   end
 
   def get_redirect_url
-    "#{@portal_url}/integrations/sync/crm/instances?state=salesforce_v2&method=post"
+    (@falcon_enabled == 'true') ? "#{@portal_url}/" + "a/admin/" + "#{sf_sync_url}" :
+                                  "#{@portal_url}/" + "#{sf_sync_url}"
+  end
+
+  def sf_sync_url
+    "integrations/sync/crm/instances?state=salesforce_v2&method=post"
   end
 end

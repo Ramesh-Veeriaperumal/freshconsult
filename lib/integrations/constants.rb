@@ -150,7 +150,7 @@ module Integrations::Constants
   OAUTH_STRATEGIES_TO_SKIP = %w(github salesforce shopify slack infusionsoft google_oauth2 google_contacts google_gadget_oauth2 outlook_contacts salesforce_v2 microsoft_teams google_hangout_chat).freeze
 
   FALCON_ENABLED_OAUTH_APPS = [APP_NAMES[:google_calendar],
-    APP_NAMES[:salesforce], APP_NAMES[:mailchimp], APP_NAMES[:surveymonkey],
+    APP_NAMES[:salesforce], APP_NAMES[:salesforce_v2], APP_NAMES[:mailchimp], APP_NAMES[:surveymonkey],
     APP_NAMES[:outlook_contacts]].freeze
 
   SKIP_FALCON_RENDER_APPS = [APP_NAMES[:parent_child_tickets], APP_NAMES[:link_tickets], APP_NAMES[:shared_ownership]].freeze

@@ -16,7 +16,7 @@ class Account < ActiveRecord::Base
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
-  after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_changed?
+  after_update :set_disable_old_ui_changed_now, :if => :disable_old_ui_changed?
 
   before_validation :sync_name_helpdesk_name
   before_validation :downcase_full_domain, :only => [:create , :update] , :if => :full_domain_changed?
@@ -45,6 +45,7 @@ class Account < ActiveRecord::Base
 
   after_commit :enable_new_onboarding, on: :create
   after_commit :mark_customize_domain_setup_and_save, on: :create, if: :full_signup?
+  after_commit :update_advanced_ticketing_applications, on: :update, if: :disable_old_ui_changed
 
   after_rollback :destroy_freshid_account_on_rollback, on: :create, if: :freshid_signup_allowed?
   publishable on: [:create, :update]
@@ -564,5 +565,9 @@ class Account < ActiveRecord::Base
       new_feature = self.changes[:plan_features][1].to_i
       return false if ((old_feature ^ new_feature) & (2**feature_val)).zero?
       @action = (old_feature & (2**feature_val)).zero? ? "add" : "drop"
+    end
+
+    def set_disable_old_ui_changed_now
+      self.disable_old_ui_changed = true
     end
 end

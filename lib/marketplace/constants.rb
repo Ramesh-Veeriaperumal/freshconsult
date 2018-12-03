@@ -16,6 +16,7 @@ module Marketplace::Constants
   MARKETPLACE_VERSION_MEMBER_KEY = 'MARKETPLACE_APPS_LIST'.freeze
   SECURE_IPARAMS = 'secure_iparams'.freeze
   OAUTH_IPARAMS = 'oauth_iparams'.freeze
+  AGENT_OAUTH = 'agent_oauth'.freeze
   
   EXTENSION_TYPES = [
     # Extension Type, Extension Type ID, versionable?
