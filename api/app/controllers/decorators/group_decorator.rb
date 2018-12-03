@@ -124,7 +124,7 @@ class GroupDecorator < ApiDecorator
     description: record.description,
     escalate_to: record.escalate_to,
     unassigned_for: unassigned_for,
-    agent_ids: record.agent_ids,
+    agent_ids: agent_ids,
     group_type: GroupType.group_type_name(record.group_type),
     assignment_type: assignment_type,    
     created_at: created_at.try(:utc),
