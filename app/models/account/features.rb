@@ -16,7 +16,7 @@ class Account < ActiveRecord::Base
                  :old_link_back_url_validation, :shopify_actions, :db_to_bitmap_features_migration,
                  :denormalized_select_for_update, :installed_app_publish, :disable_banners, :quoted_text_parsing_feature, 
                  :product_central_publish, :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
-                 :description_by_request, :ticket_fields_central_publish]
+                 :description_by_request, :ticket_fields_central_publish, :skip_invoice_due_warning]
   
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
 
