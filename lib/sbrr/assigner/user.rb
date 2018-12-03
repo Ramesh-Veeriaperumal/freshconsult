@@ -2,6 +2,8 @@ module SBRR
   module Assigner
     class User < Base
 
+      MAX_NEXT_AGENT_RETRY = 5
+
       def ticket
         @ticket ||= new_ticket
       end
@@ -26,7 +28,9 @@ module SBRR
       end
 
       def next_agent
-        begin
+        is_user_eligible = false
+        count = 0
+        while !is_user_eligible && count < MAX_NEXT_AGENT_RETRY do
           user_id, score = queue.top #checking top here to generate relevant queues
           SBRR.log "TOP USER #{user_id}, #{"%16d" % score.to_i}" 
           user = Account.current.users.find_by_id(user_id) if user_id
@@ -35,7 +39,6 @@ module SBRR
             (no_of_tickets_assigned(score) < group.capping_limit) && 
               group.skill_based_round_robin_enabled? &&
                 conditions_matched && user.agent.available
-
           if is_user_eligible
             relevant_queues = relevant_queues(user)
             right_queue     = right_queue(relevant_queues)
@@ -44,7 +47,9 @@ module SBRR
           else
             SBRR.log "USER :: #{user_id} #{user && user.id}, is_user_eligible :: false, #{group.capping_limit}, #{conditions_matched.inspect}, #{user && user.agent && user.agent.available.inspect}"
           end
-        end until !is_user_eligible # should there be a max retry? as users will always be in the queue? - Hari
+          queue.dequeue_object_with_lock user if !conditions_matched
+          count = count + 1
+        end
         return nil
       end
 
