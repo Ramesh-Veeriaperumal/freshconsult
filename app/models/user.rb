@@ -1123,7 +1123,7 @@ class User < ActiveRecord::Base
   end
 
   def accessible_groups
-    privilege?(:admin_tasks) ? Account.current.groups : self.groups
+    privilege?(:admin_tasks) ? Account.current.groups_from_cache : self.groups
   end
 
   def accessible_roundrobin_groups
