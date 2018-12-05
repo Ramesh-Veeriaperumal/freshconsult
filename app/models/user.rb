@@ -78,11 +78,10 @@ class User < ActiveRecord::Base
 
     c.validate_password_history = {:if => :password_history_enabled?,
                                    :depth => :password_history_depth}
-
-    c.password_format_options([{:if => :password_alphanumeric_enabled?, :regex => FDPasswordPolicy::Regex.alphanumeric, :error => I18n.t('password_policy.alphanumeric')},
-                               {:if => :password_special_character_enabled?, :regex => FDPasswordPolicy::Regex.special_characters, :error => I18n.t('password_policy.special_characters')},
-                               {:if => :password_mixed_case_enabled?, :regex => FDPasswordPolicy::Regex.mixed_case, :error => I18n.t('password_policy.mixed_case')}])
-
+    c.password_format_options([{:if => :password_alphanumeric_enabled?, :regex => FDPasswordPolicy::Regex.alphanumeric, :error => "password_policy.alphanumeric"},
+                               {:if => :password_special_character_enabled?, :regex => FDPasswordPolicy::Regex.special_characters, :error => "password_policy.special_characters"},
+                               {:if => :password_mixed_case_enabled?, :regex => FDPasswordPolicy::Regex.mixed_case, :error => "password_policy.mixed_case"}])                                  
+    
     c.validate_password_contains_login(:if => :password_contains_login_enabled?)
 
     c.password_expiry_field(:text_uc01)
