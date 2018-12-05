@@ -68,6 +68,18 @@ module InstalledApplicationsTestHelper
       harvest_note: 'Freshdesk Ticket # {{ticket.id}}}' } }
   end
 
+  def shopify_config
+    {
+      inputs: {
+        'refresh_token' => '',
+        'oauth_token' => '4c8650267b720f646c64bd9e8a83271d',
+        'shop_name' => 'fd-integration-private.myshopify.com',
+        'shop_display_name' => 'fd-integration-private',
+        'webhook_verifier' => 'effeb687d7004c39569019ca8a61111d4bcb6747ec9f3cddfbfcda468c6a9521'
+      }
+    }
+  end
+
   def dropbox_config
     { inputs: { 'app_key' => '25zkc7ywmf7tnrl' } }
   end

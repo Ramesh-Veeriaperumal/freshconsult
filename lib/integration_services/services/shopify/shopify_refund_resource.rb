@@ -7,12 +7,14 @@ module IntegrationServices::Services
         order_resource = IntegrationServices::Services::Shopify::ShopifyOrderResource.new(@service, @store, @token)
         order = order_resource.get_order(order_id)
         return {} if order.blank?
+        presentment_currency = order["presentment_currency"]
         raise "Cannot refund" if order["can_refund_full_order"].blank?
         refund_line_items = order["line_items"].map do |item|
           { line_item_id: item["id"], quantity: item["quantity"]}
         end
         refund_calculate_hash = {
           "refund": {
+            "currency": presentment_currency, 
             "shipping": {
               "full_refund": true
             },
@@ -27,6 +29,7 @@ module IntegrationServices::Services
         end
         refund_hash = {
           "refund": {
+            "currency": presentment_currency,
             "shipping": {
               "full_refund": true
             },
@@ -49,6 +52,7 @@ module IntegrationServices::Services
         order_resource = IntegrationServices::Services::Shopify::ShopifyOrderResource.new(@service, @store, @token)
         order = order_resource.get_order(order_id)
         return {} if order.blank?
+        presentment_currency = order["presentment_currency"]
         quantity = 0
         order["line_items"].each do |item|
           if item["id"] == line_item_id
@@ -58,6 +62,7 @@ module IntegrationServices::Services
         end
         refund_calculate_hash = {
           "refund": {
+            "currency": presentment_currency,
             "refund_line_items": [
               {
                 "line_item_id": line_item_id,
@@ -74,6 +79,7 @@ module IntegrationServices::Services
         end
         refund_hash = {
           "refund": {
+            "currency": presentment_currency,
             "refund_line_items": [
               {
                 "line_item_id": line_item_id,
