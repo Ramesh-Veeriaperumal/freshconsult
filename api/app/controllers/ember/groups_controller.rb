@@ -33,10 +33,16 @@ module Ember
       end       
 
       def scoper
-        return current_account.groups if create?
-        return current_account.groups_from_cache if index? && api_current_user.privilege?(:admin_tasks)
-        return api_current_user.accessible_groups unless destroy?
+        return current_account.groups if create?                  
+        return accessible_groups if !api_current_user.privilege?(:admin_tasks)        
         return current_account.groups_from_cache
+      end
+
+      def accessible_groups     
+        group_ids_hash = current_account.agent_groups_from_cache.each_with_object ({}) do |ar,hash|
+            hash[ar.group_id]=true if ar.user_id==api_current_user.id 
+        end   
+        current_account.groups_from_cache.select { |ar| group_ids_hash[ar.id] }   
       end
 
       def decorator_options
