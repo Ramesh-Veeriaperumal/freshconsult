@@ -1,6 +1,8 @@
 module Concerns::ApplicationViewConcern
   extend ActiveSupport::Concern
 
+  INVOICE_GRACE_PERIOD = 15.days
+
   def formated_date(date_time, options={})
     default_options = {
       :format => :short_day_with_time,
@@ -50,5 +52,33 @@ module Concerns::ApplicationViewConcern
 
   def livechat_deprecation?
     Account.current.livechat_enabled? && !(Account.current.freshchat_enabled? && Account.current.freshchat_account.try(:enabled))
+  end
+
+  def invoice_due?
+    admin? && invoice_due_banner_enabled && invoice_due_exists?
+  end
+
+  def admin?
+    User.current.privilege?(:admin_tasks)
+  end
+
+  def invoice_due_banner_enabled
+    !Account.current.skip_invoice_due_warning_enabled?
+  end
+
+  def invoice_due_key
+    format(INVOICE_DUE, account_id: Account.current.id)
+  end
+
+  def invoice_due_exists?
+    redis_key_exists?(invoice_due_key)
+  end
+
+  def invoice_due_date
+    get_others_redis_key(invoice_due_key).to_i
+  end
+
+  def grace_period_exceeded?
+    Time.now.utc.to_i - invoice_due_date > INVOICE_GRACE_PERIOD
   end
 end

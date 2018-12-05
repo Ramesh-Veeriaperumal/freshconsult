@@ -25,10 +25,20 @@ module Channel
       company
     end
 
+    def test_create_contact_with_invalid_company_id
+      set_jwt_auth_header('zapier')
+      post :create, construct_params({version: 'channel'}, 
+      name: Faker::Lorem.characters(10), email: Faker::Internet.email, 
+      company_id: 999999999)
+      assert_response 400
+      match_json([bad_request_error_pattern('company_id', :absent_in_db, 
+        resource: :company, attribute: :company_id)])
+    end
+
     def test_create_contact
       set_jwt_auth_header('zapier')
-      post :create, construct_params({version: 'channel'},  name: Faker::Lorem.characters(10),
-                                        email: Faker::Internet.email)
+      post :create, construct_params({version: 'channel'}, 
+      name: Faker::Lorem.characters(10), email: Faker::Internet.email)
       assert_response 201
       match_json(deleted_contact_pattern(User.last))
     end
@@ -189,6 +199,12 @@ module Channel
       post :create, construct_params({ version: 'channel' }, name: Faker::Lorem.characters(10),
                                                              twitter_id: Faker::Internet.email)
       assert_response 401
+    end
+
+    def test_list_contacts_for_proactive
+        set_jwt_auth_header('proactive')
+        get :index, controller_params( version: 'channel', email: 'emily@freshdesk.com')
+        assert_response 200
     end
 
     def test_get_a_twitter_contact_by_twitter_id

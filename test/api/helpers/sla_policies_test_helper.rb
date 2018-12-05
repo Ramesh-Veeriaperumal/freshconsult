@@ -36,6 +36,40 @@ module SlaPoliciesTestHelper
     sla_policy
   end
 
+  def create_sla_policy_with_escalations(conditions = {}, escalations = {})
+    sla_policy = FactoryGirl.build(:sla_policies, name: Faker::Lorem.words(5), description: Faker::Lorem.paragraph, account_id: @account.id,
+                                                  conditions: { group_id: conditions[:group_id] || ['1']}, 
+                                                  escalations: { 
+                                                      reminder_response: {
+                                                        "1" => { :time => escalations[:time] || -1800, :agents_id => escalations[:agent_ids] || [-1] }
+                                                      },
+                                                      reminder_resolution: {
+                                                        "1" => { :time => escalations[:time] || -1800, :agents_id => escalations[:agent_ids] || [-1] }
+                                                      }
+                                                    })
+    sla_policy.save
+    sla_policy
+  end
+
+  def create_sla_policy_with_details(conditions = {}, escalations = {}, ticket_priority = 1)
+    sla_policy = FactoryGirl.build(:sla_policies, name: Faker::Lorem.words(5), description: Faker::Lorem.paragraph, account_id: @account.id,
+                                                  conditions: { group_id: conditions[:group_id] || ['1']}, 
+                                                  escalations: { 
+                                                      response: {
+                                                        "1" => { :time => escalations[:time] || -1800, :agents_id => escalations[:agent_ids] || [-1] }
+                                                      },
+                                                      resolution: {
+                                                        "1" => { :time => escalations[:time] || -1800, :agents_id => escalations[:agent_ids] || [-1] }
+                                                      }
+                                                    })
+    sla_policy.save(validate: false)
+    sla_details = FactoryGirl.build(:sla_details, name: "SLA for ticket priority", priority: ticket_priority, 
+                                              response_time: 900, resolution_time: 900, sla_policy_id: sla_policy.id,
+                                              account_id: @account.id, escalation_enabled: true)
+    sla_details.save
+    sla_policy
+  end
+
   # Helpers
   def v2_sla_policy_payload
     sla_policy_params.to_json

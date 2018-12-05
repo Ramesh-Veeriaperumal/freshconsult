@@ -16,6 +16,20 @@ module BotConstants
 
   IRIS_NOTIFICATION_TYPE    = 'bot_training_completion'.freeze
 
+  ALLOWED_SIZES             = %w[FULLSCREEN STANDARD].freeze
+  DEFAULT_AVATAR_COUNT      = 5
+  AVATAR_CREATE_FIELDS      = {
+    avatar_id: { custom_numericality: { only_integer: true, allow_nil: false, required: true, greater_than: 0, ignore_string: :allow_string_param }},
+    url: { data_type: { rules: String, required: true, allow_nil: false }},
+    is_default: { data_type: { rules: 'Boolean', required: true, allow_nil: false }}
+  }.freeze
+
+  AVATAR_UPDATE_FIELDS      = {
+    avatar_id: { custom_numericality: { only_integer: true, allow_nil: false, required: true, greater_than: 0, ignore_string: :allow_string_param }},
+    url: { data_type: { rules: String, required: true, allow_nil: false }},
+    is_default: { data_type: { rules: 'Boolean', allow_nil: false }}
+  }.freeze
+
   BOT_STATUS = {
     training_not_started: 1,
     training_inprogress: 2,

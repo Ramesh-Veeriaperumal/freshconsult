@@ -68,7 +68,7 @@ class Sync::DataToFile::SaveFiles
           object.safe_send(association[2]) : association[0].first
         associated_model = 'VaRule' if associated_model == 'VARule'
         transform_id(@transformer, data, associated_model)
-      elsif data.is_a?(Hash) && !['Helpdesk::TicketTemplate'].include?(model)
+      elsif data.is_a?(Hash) && (SKIP_SYMBOLIZE_KEYS[model] || []).exclude?(column)
         data.symbolize_keys
       elsif data.is_a?(Array)
         data.each { |el| el.symbolize_keys! if el.is_a?(Hash) }

@@ -47,6 +47,8 @@ module TicketHelper
       test_ticket.internal_group_id = internal_group ? internal_group.id : nil
     end
     test_ticket.group_id = group ? group.id : nil
+    test_ticket.skip_sbrr_assigner = params[:skip_sbrr_assigner] if params[:skip_sbrr_assigner]
+    test_ticket.skill = params[:skill] if params[:skill]
     test_ticket.save_ticket
     test_ticket
   end

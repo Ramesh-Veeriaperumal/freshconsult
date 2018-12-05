@@ -1,5 +1,8 @@
 class Billing::BillingController < ApplicationController
-
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+  include Billing::Constants
+  include Billing::BillingHelper
   skip_before_filter :check_privilege, :verify_authenticity_token,
                       :set_current_account, :set_time_zone, :set_locale, 
                       :check_account_state, :ensure_proper_protocol, :ensure_proper_sts_header,
@@ -13,54 +16,9 @@ class Billing::BillingController < ApplicationController
 
   before_filter :ensure_right_parameters, :retrieve_account, 
                 :load_subscription_info
- 
-  
-  EVENTS = [ "subscription_changed", "subscription_activated", "subscription_renewed", 
-              "subscription_cancelled", "subscription_reactivated", "card_added", 
-              "card_updated", "payment_succeeded", "payment_refunded", "card_deleted", "customer_changed"]          
 
-  LIVE_CHAT_EVENTS = [ "subscription_activated", "subscription_renewed", "subscription_cancelled", 
-                        "subscription_reactivated", "subscription_changed"]
-
-  # Events to be synced for all sources including API.
-  SYNC_EVENTS_ALL_SOURCE = [ "payment_succeeded", "payment_refunded", "subscription_reactivated" ]
-
-  ADDONS_TO_IGNORE = ["bank_charges_monthly", "bank_charges_quarterly", "bank_charges_half_yearly", 
-    "bank_charges_annual"]
-
-  INVOICE_TYPES = { 
-    :recurring => "0", 
-    :non_recurring => "1" 
-  }
-
-  EVENT_SOURCES = {
-    :api => "api"
-  }
-
-  META_INFO = { :plan => :subscription_plan_id, :renewal_period => :renewal_period, 
-                :agents => :agent_limit, :free_agents => :free_agents }
-
-  ADDRESS_INFO = { :first_name => :first_name, :last_name => :last_name, :address1 => :billing_addr1,
-                    :address2 => :billing_addr2, :city => :billing_city, :state => :billing_state,
-                    :country => :billing_country, :zip => :billing_zip  }
-
-  IN_TRIAL = "in_trial"
-  CANCELLED = "cancelled"
-  NO_CARD = "no_card"
-  OFFLINE = "off"
-  PAID = "paid"
-
-  TRIAL = "trial"
-  FREE = "free"
-  ACTIVE = "active"  
-  SUSPENDED = "suspended"              
-
-  ONLINE_CUSTOMER = "on"
-
-  TRUE = "true"
-  
   def trigger
-    if not_api_source? or sync_for_all_sources?
+    if (not_api_source? or sync_for_all_sources?) && INVOICE_EVENTS.exclude?(params[:event_type])
       safe_send(params[:event_type], params[:content])
     end
 
@@ -71,6 +29,8 @@ class Billing::BillingController < ApplicationController
       end
     end
 
+    handle_due_invoices if check_due_invoices?
+
     Account.reset_current_account
     respond_to do |format|
       format.xml { head 200 }
@@ -79,7 +39,7 @@ class Billing::BillingController < ApplicationController
   end
 
   def select_shard(&block)
-    Sharding.select_shard_of(params[:content][:customer][:id]) do 
+    Sharding.select_shard_of(customer_id_param) do 
         yield 
     end
   end
@@ -116,13 +76,13 @@ class Billing::BillingController < ApplicationController
     end   
 
     def ensure_right_parameters
-      if ((params[:event_type].blank?) or (params[:content].blank?) or params[:content][:customer].blank?)
+      if ((params[:event_type].blank?) or (params[:content].blank?) or customer_id_param.blank?)
         return render :json => ArgumentError, :status => 500
       end
     end
 
     def retrieve_account
-      @account = Account.find_by_id(params[:content][:customer][:id])      
+      @account = Account.find_by_id(customer_id_param)      
       if @account
         @account.make_current
       else
@@ -316,7 +276,7 @@ class Billing::BillingController < ApplicationController
 
     # Only a short-term solution. For the long term, billing should be made as a separate APP.
     def determine_pod
-      shard = ShardMapping.lookup_with_account_id(params[:content][:customer][:id])
+      shard = ShardMapping.lookup_with_account_id(customer_id_param)
       if shard.nil?
         return # fallback to the current pod.
       elsif shard.pod_info.blank?

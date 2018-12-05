@@ -15,6 +15,7 @@ class VaRule < ActiveRecord::Base
 
   serialize :filter_data
   serialize :action_data
+  serialize :condition_data
 
   concerned_with :presenter
 
@@ -26,6 +27,7 @@ class VaRule < ActiveRecord::Base
   validate :any_restricted_actions?
 
   before_save :set_encrypted_password
+  before_save :migrate_filter_data, :if => :conditions_changed?
   before_destroy :save_deleted_rule_info
   after_commit :clear_observer_rules_cache, :if => :observer_rule?
   after_commit :clear_api_webhook_rules_from_cache, :if => :api_webhook_rule?
@@ -254,6 +256,24 @@ class VaRule < ActiveRecord::Base
           return true
         end
       end
+    end
+  end
+
+  def conditions_changed?
+    self.changes.key?(:match_type) || 
+      (self.changes.key?(:filter_data) && 
+       self.changes[:filter_data][0] != self.changes[:filter_data][1])
+  end
+
+  def migrate_filter_data
+    if dispatchr_rule?
+      self.condition_data = { self.match_type.to_sym => self.filter_data }
+    elsif observer_rule?
+      self.condition_data = {
+        performer: self.filter_data[:performer],
+        events: self.filter_data[:events],
+        conditions: { self.match_type.to_sym => self.filter_data[:conditions] }
+      }
     end
   end
 
