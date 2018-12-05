@@ -73,8 +73,6 @@ module Ember
           get :index, controller_params(version: 'private')
           assert_response 200
           match_json(bot_index_not_onboarded_multiproduct_pattern)
-          product1
-          product2
           Account.any_instance.unstub(:bot_onboarded?)
         end
       end
@@ -192,8 +190,7 @@ module Ember
           params = create_params(portal)
           post :create, params
           assert_response 400
-          pattern = [:avatar, :"It should be a/an key/value pair", {code: "missing_field"}]
-          assert_bot_failure pattern
+          match_json([bad_request_error_pattern('avatar', :missing_avatar)])
           Account.current.bots = []
           Freshbots::Bot.unstub(:create_bot)
         end
@@ -202,7 +199,7 @@ module Ember
 
       def test_create_without_support_bot_feature
         portal = create_portal
-        params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 8}})
+        params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 }})
         post :create, params
         assert_response 403
         Account.current.bots = []
@@ -215,7 +212,7 @@ module Ember
           User.any_instance.stubs(:privilege?).with(:view_bots).returns(true)
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
           portal = create_portal
-          params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 8}})
+          params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 }})
           post :create, params
           assert_response 403
           match_json(request_error_pattern(:access_denied))
@@ -229,7 +226,7 @@ module Ember
           User.any_instance.stubs(:privilege?).with(:view_bots).returns(false)
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
           portal = create_portal
-          params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 8}})
+          params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 }})
           post :create, params
           assert_response 200
           User.any_instance.unstub(:privilege?)
@@ -240,7 +237,7 @@ module Ember
         enable_bot do
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
           portal = create_portal
-          params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 8}})
+          params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 }})
           post :create, params
           assert_response 200
           bot = Bot.last
@@ -249,18 +246,42 @@ module Ember
         end
       end
 
+      def test_create_with_negative_default_avatar_id
+        enable_bot do
+          Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
+          portal = create_portal
+          params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: -1 }})
+          post :create, params
+          assert_response 400
+          match_json([bad_request_error_pattern_with_nested_field(:avatar, :avatar_id, :datatype_mismatch, code: :invalid_value, expected_data_type: 'Positive Integer')])
+          Account.current.bots = []
+          Freshbots::Bot.unstub(:create_bot)
+        end
+      end
+
+      def test_create_with_invalid_default_avatar_id
+        enable_bot do
+          Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
+          portal = create_portal
+          params = create_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: BotConstants::DEFAULT_AVATAR_COUNT + 1 }})
+          post :create, params
+          assert_response 400
+          match_json([bad_request_error_pattern(:avatar, :invalid_default_avatar)])
+          Account.current.bots = []
+          Freshbots::Bot.unstub(:create_bot)
+        end
+      end
+
       def test_create_with_xss_params
         enable_bot do
           Freshbots::Bot.stubs(:create_bot).returns([BOT_CREATE_HASH, 201])
           portal = create_portal
-          params = xss_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 8}})
+          params = xss_params(portal).merge({ avatar: { is_default: true, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 }})
           post :create, params
           assert_response 200
           bot = Bot.last
           assert_equal bot.name, 'alert(5)'
-          bot.template_data.each do |key, value|
-            assert_equal value, 'alert(5)'
-          end
+          assert_equal bot.template_data[:header], 'alert(5)'
           Freshbots::Bot.unstub(:create_bot)
         end
       end
@@ -302,7 +323,7 @@ module Ember
           params = create_params(portal).merge({ avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com" }})
           post :create, params
           assert_response 400
-          match_json([bad_request_error_pattern('avatar', :invalid_avatar)])
+          match_json([bad_request_error_pattern_with_nested_field(:avatar, :avatar_id, :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer')])
           Account.current.bots = []
           Freshbots::Bot.unstub(:create_bot)
         end
@@ -444,7 +465,7 @@ module Ember
           User.any_instance.stubs(:privilege?).with(:view_bots).returns(true)
           Freshbots::Bot.stubs(:update_bot).returns(["success", 200])
           bot = create_bot({ product: true, default_avatar: 1})
-          put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: bot.additional_settings[:is_default]} )
+          put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 } )
           Freshbots::Bot.unstub(:update_bot)
           User.any_instance.unstub(:privilege?)
           assert_response 403
@@ -458,7 +479,7 @@ module Ember
           User.any_instance.stubs(:privilege?).with(:manage_bots).returns(true)
           Freshbots::Bot.stubs(:update_bot).returns(["success", 200])
           bot = create_bot({ product: true, default_avatar: 1})
-          put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: bot.additional_settings[:is_default]} )
+          put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 } )
           Freshbots::Bot.unstub(:update_bot)
           User.any_instance.unstub(:privilege?)
           assert_response 204
@@ -469,7 +490,7 @@ module Ember
         enable_bot do
           Freshbots::Bot.stubs(:update_bot).returns(["success", 200])
           bot = create_bot({ product: true, default_avatar: 1})
-          put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: bot.additional_settings[:is_default]} )
+          put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 } )
           Freshbots::Bot.unstub(:update_bot)
           assert_response 204
         end
@@ -479,14 +500,12 @@ module Ember
         enable_bot do
           Freshbots::Bot.stubs(:update_bot).returns(["success", 200])
           bot = create_bot({ product: true, default_avatar: 1})
-          put :update, construct_params( version: 'private', id: bot.id, name: '<script>alert(5)</script>', header: '<script>alert(5)</script>', theme_colour: '<script>alert(5)</script>', widget_size: '<script>alert(5)</script>')
+          put :update, construct_params(version: 'private', id: bot.id, name: '<script>alert(5)</script>', header: '<script>alert(5)</script>')
           Freshbots::Bot.unstub(:update_bot)
           assert_response 204
           bot.reload
           assert_equal bot.name, 'alert(5)'
-          bot.template_data.each do |key, value|
-            assert_equal value, 'alert(5)'
-          end
+          assert_equal bot.template_data[:header], 'alert(5)'
         end
       end
 
@@ -495,7 +514,7 @@ module Ember
           Freshbots::Bot.stubs(:update_bot).returns(["success", 200])
           bot = create_bot({ product: true})
           invalid_bot_id = bot.id + 1
-          put :update, construct_params( version: 'private', id: invalid_bot_id, avatar: { is_default: false, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: bot.additional_settings[:is_default]} )
+          put :update, construct_params( version: 'private', id: invalid_bot_id, avatar: { is_default: false, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 } )
           Freshbots::Bot.unstub(:update_bot)
           assert_response 404
         end
@@ -522,7 +541,7 @@ module Ember
           put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com" } )
           Freshbots::Bot.unstub(:update_bot)
           assert_response 400
-          match_json([bad_request_error_pattern('avatar', :invalid_avatar)])
+          match_json([bad_request_error_pattern_with_nested_field(:avatar, :avatar_id, :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer')])
         end
       end
 
@@ -530,7 +549,7 @@ module Ember
         enable_bot do
           Freshbots::Bot.stubs(:update_bot).returns(["failure", 500])
           bot = create_bot({ product: true, default_avatar: 1})
-          put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: bot.additional_settings[:is_default]} )
+          put :update, construct_params( version: 'private', id: bot.id, avatar: { url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: 1 } )
           Freshbots::Bot.unstub(:update_bot)
           assert_response 500
         end
@@ -539,7 +558,7 @@ module Ember
       def test_update_with_valid_params_and_custom_avatar
         enable_bot do
           Freshbots::Bot.stubs(:update_bot).returns(["success", 200])
-          bot = create_bot({ product: true, default_avatar: 1})
+          bot = create_bot({ product: true, default_avatar: 1 })
           attachment = create_attachment
           put :update, construct_params( version: 'private', id: bot.id, avatar: { is_default: false, url: "https://s3.amazonaws.com/cdn.freshpo.com", avatar_id: attachment.id } )
           Freshbots::Bot.unstub(:update_bot)

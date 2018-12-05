@@ -1,8 +1,9 @@
 ['ticket_fields_test_helper.rb', 'conversations_test_helper.rb', 'attachments_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
-['ticket_helper.rb', 'company_helper.rb', 'group_helper.rb', 'note_helper.rb', 'email_configs_helper.rb', 'products_helper.rb', 'freshfone_spec_helper.rb', 'freshcaller_spec_helper.rb', 'forum_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
+['ticket_helper.rb', 'company_helper.rb', 'group_helper.rb', 'note_helper.rb', 'email_configs_helper.rb', 'products_helper.rb', 'freshfone_spec_helper.rb', 'freshcaller_spec_helper.rb', 'forum_helper.rb', 'agent_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require "#{Rails.root}/spec/helpers/social_tickets_helper.rb"
 module ApiTicketsTestHelper
   include GroupHelper
+  include AgentHelper
   include ConversationsTestHelper
   include TicketFieldsTestHelper
   include EmailConfigsHelper
@@ -1054,6 +1055,36 @@ module ApiTicketsTestHelper
       create_ticket(group: group_with_sbrr_enabled[0], skill_id: skills[0].id)
       create_ticket(group: group_with_sbrr_enabled[1], skill_id: skills[1].id)
     end
+  end
+
+  def sbrr_create_skill_tickets(requester_id)
+    create_skill if @account.skills.empty?
+    group_with_sbrr_enabled = Account.current.groups.where(ticket_assign_type: 2)
+    skills = Account.current.skills
+    3.times do
+      create_ticket({skip_sbrr_assigner: false,skill: skills[0], skill_id: skills[0].id, requester_id: requester_id}, group_with_sbrr_enabled[0])
+      create_ticket({skip_sbrr_assigner: false,skill: skills[1], skill_id: skills[1].id, requester_id: requester_id}, group_with_sbrr_enabled[1])
+    end
+  end
+
+  def sbrr_setup
+    if @account.agents.first
+      agent = @account.agents.first
+    else
+      agent = add_agent_to_account(@account, options = { role: 4, active: 1, email: "testxyz@yopmail.com"})
+    end
+    agent.available = true
+    agent.save!
+    sbrr_create_skill_tickets agent.user_id
+    group = @account.groups.where(ticket_assign_type: 2).first
+    group.capping_limit = 1
+    group.save!
+    ticket = @account.tickets.where("sl_skill_id > ? and group_id = ?", 0, group.id).first
+    agent_group = @account.agent_groups.build(user_id: agent.user_id, group_id: group.id)
+    agent_group.save!
+    user_skill = UserSkill.new(user_id: agent.user_id,skill_id: ticket.sl_skill_id)
+    user_skill.save!
+    return[agent.user_id, ticket]
   end
 
   def create_archive_and_child(ticket)

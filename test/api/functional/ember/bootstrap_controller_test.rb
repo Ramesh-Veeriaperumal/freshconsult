@@ -4,7 +4,9 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
   include AgentsTestHelper
   include AttachmentsTestHelper
   include TrialSubscriptionHelper
-  
+  include Redis::RedisKeys
+  include Redis::OthersRedis
+
   def setup 
     super
     @subscription_plan = SubscriptionPlan.last
@@ -183,4 +185,87 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     Account.current.rollback(:freshid)
   end
 
+  def test_invoice_due_warning_nil_for_admin
+    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    invoice = JSON.parse(response.body)['config']['warnings']['invoice_overdue']
+    assert_nil invoice
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_invoice_due_warning_with_skip_feature
+    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    Account.current.launch(:skip_invoice_due_warning)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    invoice = JSON.parse(response.body)['config']['warnings']['invoice_overdue']
+    assert_nil invoice
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:skip_invoice_due_warning)
+  end
+
+
+  def test_invoice_due_warning_with_skip_feature_with_redis_set
+    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    Account.current.launch(:skip_invoice_due_warning)
+    set_others_redis_key(invoice_due_key, Time.now.utc.to_i - 10.days)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    invoice = JSON.parse(response.body)['config']['warnings']['invoice_overdue']
+    assert_nil invoice
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:skip_invoice_due_warning)
+    remove_others_redis_key(invoice_due_key)
+  end
+
+  def test_invoice_due_warning_for_non_admin
+    set_others_redis_key(invoice_due_key, Time.now.utc.to_i - 10.days)
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    invoice = JSON.parse(response.body)['config']['warnings']['invoice_overdue']
+    assert_nil invoice
+  ensure
+    User.any_instance.unstub(:privilege?)
+    remove_others_redis_key(invoice_due_key)
+  end
+
+  def test_invoice_due_warning_for_admin
+    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    invoice_key = format(INVOICE_DUE, account_id: Account.current.id)
+    set_others_redis_key(invoice_due_key, Time.now.utc.to_i - 10.days)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    invoice = JSON.parse(response.body)['config']['warnings']['invoice_overdue']
+    assert_equal invoice, false
+  ensure
+    User.any_instance.unstub(:privilege?)
+    remove_others_redis_key(invoice_due_key)
+  end
+
+  def test_invoice_overdue_warning_for_admin
+    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    invoice_key = format(INVOICE_DUE, account_id: Account.current.id)
+    set_others_redis_key(invoice_due_key, Time.now.utc.to_i - 20.days)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    invoice = JSON.parse(response.body)['config']['warnings']['invoice_overdue']
+    assert_equal invoice, true
+  ensure
+    User.any_instance.unstub(:privilege?)
+    remove_others_redis_key(invoice_due_key)
+  end
 end

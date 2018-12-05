@@ -78,7 +78,7 @@ class Account < ActiveRecord::Base
   def schedule_account_cancellation_request(feedback)
     SubscriptionNotifier.account_cancellation_requested(feedback) if Rails.env.production?
     job_id = AccountCancelWorker.perform_in(WIN_BACK_PERIOD.days.from_now,{:account_id => self.id})
-    set_others_redis_key(self.account_cancellation_request_job_key,job_id)
+    set_others_redis_key(self.account_cancellation_request_job_key,job_id,864000)
     renewal_extend if self.subscription.renewal_in_two_days?
   end
 

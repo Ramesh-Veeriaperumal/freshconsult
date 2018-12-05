@@ -115,4 +115,11 @@ module Sync::Constants
     "company_form"                 => "contact_form",
     "helpdesk_permissible_domains" => "helpdesk"
   }
+
+  SKIP_SYMBOLIZE_KEYS = {
+    'Helpdesk::TicketTemplate' => ['template_data'],
+    'PasswordPolicy' => ['configs'],
+    'Helpdesk::TicketField' => ['field_options']
+  }
+
 end
