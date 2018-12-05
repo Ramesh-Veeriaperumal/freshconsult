@@ -741,6 +741,7 @@ en:
         sign_in_using: Sign In
         sign_in_using_google: Sign in using your Google account
         help: Help
+      freshid_login_message: Please login using your Freshworks account credentials
     shared:
       was_this_article_useful: Was this article useful?
       related_files: Related Files

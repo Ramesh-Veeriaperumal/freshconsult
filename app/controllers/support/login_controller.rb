@@ -23,7 +23,7 @@ class Support::LoginController < SupportController
     if current_account.sso_enabled? && !current_account.oauth2_sso_enabled? && check_request_referrer 
       sso_login_page_redirect #TODO : change this to allow different sign on for customer and agent
     elsif params[:new_account_signup]
-      redirect_to_freshid_login
+      redirect_to_freshid_login(login_hint: params[:signup_email], login_message: t('support.login.freshid_login_message'))
     else
       @user_session = current_account.user_sessions.new
       respond_to do |format|
