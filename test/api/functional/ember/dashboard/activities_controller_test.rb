@@ -205,6 +205,17 @@ module Ember
         assert_response 400
       end
 
+      def test_activities_with_no_user
+        requester, ticket = create_new_ticket
+        sidekiq_inline {
+        requester.delete_forever!
+        }
+        expected = get_activity_pattern(last_activity, requester,"new_ticket")
+        get :index, controller_params({version: 'private'})
+        assert_response 200
+        assert_equal(expected, JSON.parse(@response.body)[0])
+      end
+
       def test_activities_with_page_that_does_not_exist
         get :index, controller_params({version: 'private', page: 200})
         assert_response 200
