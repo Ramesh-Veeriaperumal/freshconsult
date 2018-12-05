@@ -606,6 +606,10 @@ role_bulk_update_request:
 business_hours:
   $ref: ./response/business_hours.yaml
 
+#Canned Responses
+canned_response_create:
+  $ref: ./request/canned_response/create.yaml
+
 # Email notifications
 email_notification_show:
   $ref: ./response/email_notification.yaml

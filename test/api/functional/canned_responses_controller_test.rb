@@ -1,4 +1,4 @@
-require_relative '../../test_helper'
+require_relative '../test_helper'
 ['canned_responses_helper.rb', 'group_helper.rb', 'agent_helper.rb', 'ticket_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['canned_responses_test_helper.rb', 'canned_response_folders_test_helper.rb', 'attachments_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 require_relative "#{Rails.root}/lib/helpdesk_access_methods.rb"
@@ -12,6 +12,7 @@ class CannedResponsesControllerTest < ActionController::TestCase
   include AgentHelper
   include TicketHelper
   include AttachmentsTestHelper
+  include AwsTestHelper
 
   def setup
     super
@@ -307,6 +308,312 @@ class CannedResponsesControllerTest < ActionController::TestCase
       pattern << ca_response_search_pattern(ca.id)
     end
     match_json(pattern)
+  end
+
+  def test_create_all_users
+    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 0)))
+    assert_response 201
+    match_json(ca_response_show_pattern(ActiveSupport::JSON.decode(response.body)['id']))
+  end
+
+  def test_create_with_user_access
+    post :create, construct_params(build_ca_param(create_ca_response_input(nil, 1)))
+    assert_response 201
+    match_json(ca_response_show_pattern(ActiveSupport::JSON.decode(response.body)['id']))
+  end
+
+  def test_create_with_group_access
+    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 2, [1])))
+    assert_response 201
+    match_json(ca_response_show_pattern(ActiveSupport::JSON.decode(response.body)['id']))
+  end
+
+  def test_create_all_users_with_multipart
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 0)))
+    assert_response 201
+    match_json(ca_response_show_pattern(ActiveSupport::JSON.decode(response.body)['id']))
+  end
+
+  def test_create_with_user_access_with_multipart
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    post :create, construct_params(build_ca_param(create_ca_response_input(nil, 1)))
+    assert_response 201
+    match_json(ca_response_show_pattern(ActiveSupport::JSON.decode(response.body)['id']))
+  end
+
+  def test_create_with_group_access_with_multipart
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 2, [1])))
+    assert_response 201
+    match_json(ca_response_show_pattern(ActiveSupport::JSON.decode(response.body)['id']))
+  end
+
+  def test_create_with_group_visibility_without_group_id
+    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 2)))
+    match_json(validation_error_pattern(bad_request_error_pattern(:group_ids, 'It should not be blank as this is a mandatory field', code: 'invalid_value')))
+    assert_response 400
+  end
+
+  def test_create_personal_with_group
+    post :create, construct_params(build_ca_param(create_ca_response_input(@ca_folder_personal.id, 2, [1])))
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:folder_id, 'You can only save canned responses just visible to you in the personal folder.', code: 'invalid_value')))
+  end
+
+  def test_create_invalid_visibility
+    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 10)))
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:visibility, "It should be one of these values: '#{Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TYPE.keys.join(',')}'", code: 'invalid_value')))
+  end
+
+  def test_craete_invalid_folder_id
+    post :create, construct_params(build_ca_param(create_ca_response_input(100, 2, [1])))
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:folder_id, 'Please specify a valid folder ID.', code: 'invalid_value')))
+  end
+
+  def test_craete_invalid_group_id
+    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 2, [100])))
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:group_id, 'Please specify a valid group ID.', code: 'invalid_value')))
+  end
+
+  def test_create_with_invalid_title
+    ca_response = create_ca_response_input(@@ca_folder_all.id, 0)
+    ca_response[:title] = 'qw'
+    post :create, construct_params(build_ca_param(ca_response))
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:title, 'Has 2 characters, it should have minimum of 3 characters and can have maximum of 240 characters', code: 'invalid_value')))
+  end
+
+  def test_create_with_invalid_content_html
+    ca_response = create_ca_response_input(@@ca_folder_all.id, 0)
+    ca_response[:content_html] = '{{test}'
+    post :create, construct_params(build_ca_param(ca_response))
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:content_html, 'Variable &#x27;{{test}&#x27; was not properly terminated with regexp: /\\}\\}/ ', code: 'invalid_value')))
+  end
+
+  def test_create_duplicate
+    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    ca_response2 = create_ca_response_input(@@ca_folder_all.id, 0)
+    ca_response2[:title] = ca_response1.title
+    post :create, construct_params(build_ca_param(ca_response2))
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:base, 'Duplicate response. Title already exists', code: 'invalid_value')))
+  end
+
+  def test_create_privilage_check
+    User.any_instance.stubs(:privilege?).with(:manage_canned_responses).returns(false)
+    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 0)))
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_create_with_attachment
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    params = create_ca_response_input(@@ca_folder_all.id, 0)
+    params = params.merge('attachments' => [file, file2])
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :create, construct_params(build_ca_param(params))
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 201
+    ca_response = @account.canned_responses.find(ActiveSupport::JSON.decode(response.body)['id'])
+    match_json(ca_response_show_pattern(ca_response.id, ca_response.attachments_sharable))
+  end
+
+  def test_create_with_invalid_attachment_array
+    params = create_ca_response_input(@@ca_folder_all.id, 0)
+    params = params.merge('attachments' => [1, 2])
+    post :create, construct_params(build_ca_param(params))
+    assert_response 400
+    match_json([bad_request_error_pattern('attachments', :array_datatype_mismatch, expected_data_type: 'valid file format')])
+  end
+
+  def test_create_with_invalid_attachment_type
+    params = create_ca_response_input(@@ca_folder_all.id, 0)
+    params = params.merge('attachments' => 'test')
+    post :create, construct_params(build_ca_param(params))
+    assert_response 400
+    match_json([bad_request_error_pattern('attachments', :datatype_mismatch, expected_data_type: Array, given_data_type: String, prepend_msg: :input_received)])
+  end
+
+  def test_attachment_invalid_size_create
+    invalid_attachment_limit = @account.attachment_limit + 2
+    Rack::Test::UploadedFile.any_instance.stubs(:size).returns(invalid_attachment_limit.megabytes)
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    params = create_ca_response_input(@@ca_folder_all.id, 0)
+    params = params.merge('attachments' => [file])
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :create, construct_params(build_ca_param(params))
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 400
+    match_json([bad_request_error_pattern('attachments', :invalid_size, max_size: "#{@account.attachment_limit} MB", current_size: "#{invalid_attachment_limit} MB")])
+  end
+
+  def test_create_with_attachment_ids
+    params = create_ca_response_input(@@ca_folder_all.id, 0)
+    attachment_ids = []
+    attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+    params = params.merge(attachment_ids: attachment_ids)
+    stub_attachment_to_io do
+      post :create, construct_params(params)
+    end
+    assert_response 201
+    ca_response = @account.canned_responses.find(ActiveSupport::JSON.decode(response.body)['id'])
+    assert ca_response.shared_attachments.size == 1
+  end
+
+  def test_create_with_invalid_attachment_ids
+    params = create_ca_response_input(@@ca_folder_all.id, 0)
+    params = params.merge(attachment_ids: [100])
+    stub_attachment_to_io do
+      post :create, construct_params(params)
+    end
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:attachment_ids, "There are no records matching the ids: '100'", code: 'invalid_value')))
+  end
+
+  def test_create_with_invalid_attachment_ids_array
+    params = create_ca_response_input(@@ca_folder_all.id, 0)
+    params = params.merge(attachment_ids: ['test'])
+    stub_attachment_to_io do
+      post :create, construct_params(params)
+    end
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:attachment_ids, 'It should contain elements of type Positive Integer only', code: 'datatype_mismatch')))
+  end
+
+  def test_update_title
+    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    title = Faker::App.name
+    canned_response = {
+      title: title
+    }
+    put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
+    assert_response 200
+    assert title == ActiveSupport::JSON.decode(response.body)['title']
+    match_json(ca_response_show_pattern(ca_response1.id))
+  end
+
+  def test_update_content_html
+    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    content_html = Faker::App.name
+    canned_response = {
+      content_html: content_html
+    }
+    put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
+    assert_response 200
+    assert content_html == ActiveSupport::JSON.decode(response.body)['content_html']
+    match_json(ca_response_show_pattern(ca_response1.id))
+  end
+
+  def test_update_visibility_user
+    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    canned_response = {
+      visibility: 1
+    }
+    put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
+    assert_response 200
+    ca_response1.reload
+    assert Helpdesk::Access.last.user_accesses.first.access_id == ca_response1.helpdesk_accessible.id
+    match_json(ca_response_show_pattern(ca_response1.id))
+  end
+
+  def test_update_visibility_group
+    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    canned_response = {
+      visibility: 2,
+      group_ids: [1]
+    }
+    put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
+    assert_response 200
+    ca_response1.reload
+    assert Helpdesk::Access.last.group_accesses.first.access_id == ca_response1.helpdesk_accessible.id
+    match_json(ca_response_show_pattern(ca_response1.id))
+  end
+
+  def test_update_visibility_user_group_without_folder_id
+    ca_response1 = create_canned_response(@ca_folder_personal.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
+    canned_response = {
+      visibility: 2,
+      group_ids: [1]
+    }
+    put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
+    assert_response 400
+  end
+
+  def test_update_visibility_user_group_with_folder_id
+    ca_response1 = create_canned_response(@ca_folder_personal.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
+    canned_response = {
+      visibility: 2,
+      group_ids: [1],
+      folder_id: @@ca_folder_all.id
+    }
+    put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
+    assert_response 200
+    ca_response1.reload
+    assert Helpdesk::Access.last.group_accesses.first.access_id == ca_response1.helpdesk_accessible.id
+    match_json(ca_response_show_pattern(ca_response1.id))
+  end
+
+  def test_update_attachment
+    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    file2 = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    canned_response = {
+      attachments: [file, file2]
+    }
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 200
+    ca_response1.reload
+    assert ca_response1.shared_attachments.size == 2
+    match_json(ca_response_show_pattern(ca_response1.id, ca_response1.attachments_sharable))
+  end
+
+  def test_update_attachment_ids
+    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    attachment_ids = []
+    attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+    canned_response = {
+      attachment_ids: attachment_ids
+    }
+    @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 200
+    ca_response1.reload
+    assert ca_response1.shared_attachments.size == 1
+  end
+
+  def test_update_privilage_check
+    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    User.any_instance.stubs(:privilege?).with(:manage_canned_responses).returns(false)
+    canned_response = {
+      title: Faker::App.name
+    }
+    put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
+    assert_response 403
+    match_json(request_error_pattern(:access_denied))
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_update_with_invalid_content_html
+    ca_response1 = create_canned_response(@@ca_folder_all.id)
+    canned_response = {
+      content_html: '{{test}'
+    }
+    put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
+    assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:content_html, 'Variable &#x27;{{test}&#x27; was not properly terminated with regexp: /\\}\\}/ ', code: 'invalid_value')))
   end
 
   def test_folder_responses
