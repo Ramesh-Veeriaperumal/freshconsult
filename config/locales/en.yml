@@ -12347,6 +12347,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
       copy_from_freshchat: 'Copy from Freshchat'
       portal_url: 'Portal URL:'
       admin_apikey: 'API Key:'
+      activate_now: 'Activate Now'
       sign_up_btn: 'Sign up now'
       sign_up_text: Start chatting with customers on your website, portal or mobile app.
       save: 'Save'
