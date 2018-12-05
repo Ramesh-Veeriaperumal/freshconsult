@@ -7,6 +7,7 @@ class Export::PayloadEnricher::Ticket < Export::PayloadEnricher::Base
   COMPANY               = "company"
   ACCOUNT_ID            = "account_id"
   DEFAULT_FIELDS        = %w(deleted spam responder_id group_id internal_agent_id internal_group_id).freeze
+  LAG_TIME_DIFFERENCE   = 0.5.second
 
   def enrich
     if @sqs_msg[ACTION] != DESTROY
@@ -21,6 +22,17 @@ class Export::PayloadEnricher::Ticket < Export::PayloadEnricher::Base
 
   def queue_name
     :scheduled_ticket_export_queue
+  end
+
+  def latest_ticket_change?
+    return true unless Account.current.scheduled_export_fix_enabled?
+    action_epoch = @sqs_msg["action_epoch"]
+    return true if Time.now.utc >= Time.at(action_epoch).utc + LAG_TIME_DIFFERENCE
+    fetch_object
+    return false unless @ticket # New ticket scenario
+    [@ticket, @ticket.ticket_states].compact.all? do |obj|
+      obj.updated_at.utc >= Time.at(action_epoch).utc - LAG_TIME_DIFFERENCE
+    end
   end
 
   private

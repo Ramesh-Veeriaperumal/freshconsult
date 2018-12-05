@@ -3,8 +3,7 @@ class Ryuken::ScheduledExportPayloadEnricher
   include Shoryuken::Worker
 
   UTC = 'UTC'.freeze
-  shoryuken_options queue: SQS[:scheduled_export_payload_enricher_queue], auto_delete: true, 
-                    body_parser: :json
+  shoryuken_options queue: SQS[:scheduled_export_payload_enricher_queue], body_parser: :json
 
   def perform(sqs_msg, args)
     Sharding.run_on_slave do
@@ -12,9 +11,14 @@ class Ryuken::ScheduledExportPayloadEnricher
         Rails.logger.info("Inside Enricher :: #{args.inspect}")
         export_fields_data  = Export::EnricherHelper.export_fields_data_from_cache
         payload_enricher    = Export::EnricherHelper.create_payload_enricher(args, export_fields_data)
-        enriched_data       = payload_enricher.enrich
-        AwsWrapper::SqsV2.send_message(SQS[payload_enricher.queue_name], enriched_data.to_json)
-        Rails.logger.info("After Enricher :: #{enriched_data.inspect}")
+        if payload_enricher.latest_ticket_change?
+          enriched_data       = payload_enricher.enrich
+          AwsWrapper::SqsV2.send_message(SQS[payload_enricher.queue_name], enriched_data.to_json)
+          Rails.logger.info("After Enricher :: #{enriched_data.inspect}")
+          sqs_msg.delete
+        else
+          Rails.logger.info("Requeued to enricher :: #{args.inspect}")
+        end
       }
     end
   rescue Exception => e
@@ -26,8 +30,8 @@ class Ryuken::ScheduledExportPayloadEnricher
 
   private
 
-  def set_timezone_utc(&block)
-    Time.use_zone(UTC, &block)
-  end
+    def set_timezone_utc(&block)
+      Time.use_zone(UTC, &block)
+    end
 
 end

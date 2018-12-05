@@ -36,4 +36,8 @@ class Export::PayloadEnricher::Base
     end
   end
 
+  def latest_ticket_change?
+    true
+  end
+
 end

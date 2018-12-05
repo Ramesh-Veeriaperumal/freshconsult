@@ -2,7 +2,7 @@ class Export::TicketDump < Export::TicketSchedule
   
   def perform
     initialize_params
-    @file_path = generate_file_path('ticket', 'csv')
+    @file_path = generate_file_path("ticket_#{@schedule.id}", 'csv')
     Sharding.run_on_slave { export_tickets }
     upload_file
     save_file_name file_name
