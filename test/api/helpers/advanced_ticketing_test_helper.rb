@@ -1,4 +1,5 @@
 module AdvancedTicketingTestHelper
+  include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
   def disable_feature(feature)
     Account.current.revoke_feature(feature)
@@ -10,28 +11,15 @@ module AdvancedTicketingTestHelper
     Account.any_instance.unstub(:disable_old_ui_enabled?)
   end
 
-  def create_fsm
+  def enable_fsm
     Account.current.revoke_feature(:parent_child_tickets)
     Account.current.launch(:field_service_management_lp)
     Account.current.set_feature(:disable_old_ui)
     Account.current.set_feature(:field_service_management_toggle) unless Account.current.has_feature?(:field_service_management_toggle)
     yield
   ensure
-    # Destroying custom fields if exists.
-    custom_fields_to_reserve = Admin::AdvancedTicketing::FieldServiceManagement::Constant::CUSTOM_FIELDS_TO_RESERVE
-    custom_fields_to_reserve.each do |custom_field|
-      name = "#{custom_field[:name]}_#{Account.current.id}"
-      field = Account.current.ticket_fields.find_by_name(name)
-      field.destroy if field.present?
-    end
-
-    # Destroy section if exist
-    section = Account.current.sections.find_by_label("Service task section")
-    section.destroy if section.present?
-
-    # disable the created features.
+    cleanup_fsm
     Account.current.revoke_feature(:field_service_management)
-    Account.current.revoke_feature(:parent_child_tickets)
   end
 
   def create_installed_application(app_name)

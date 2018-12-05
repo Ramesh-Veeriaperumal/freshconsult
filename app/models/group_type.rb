@@ -44,7 +44,7 @@ class GroupType < ActiveRecord::Base
   end
 
   def self.destroy_group_type(account,group_type)
-    account.group_types.find_by_name(group_type).destroy
+    account.group_types.find_by_name(group_type).try(:destroy)
   end  
 
 

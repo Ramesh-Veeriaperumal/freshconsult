@@ -2,6 +2,8 @@ module Ember
   module Admin
     class AdvancedTicketingController < ApiApplicationController
       before_filter :perform_fsm_operations, only: :create, :if => :feature_fsm?
+      before_filter :validate_destroy, only: :destroy
+      before_filter :cleanup_fsm, only: :destroy, :if => :fsm?
 
       include HelperConcern
       include Integrations::AdvancedTicketing::AdvFeatureMethods
@@ -18,8 +20,6 @@ module Ember
       end
 
       def destroy
-        return unless validate_query_params
-        return unless validate_delegator(nil, { feature: params[:id] })
         remove_feature params[:id].to_sym if disable_old_ui_enabled?
         @item.destroy if @item
         head 204
@@ -76,6 +76,11 @@ module Ember
         Rails.logger.error("Exception while getting insights, Account::#{current_account.id}, Exception::#{e.message}")
         NewRelic::Agent.notice_error(e, description: "Exception while fetching metrics from s3 for account::#{current_account.id}")
         render_base_error(:internal_error, 500)
+      end
+
+      def validate_destroy
+        validate_query_params
+        validate_delegator(nil, { feature: params[:id] })
       end
 
     end

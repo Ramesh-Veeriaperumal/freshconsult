@@ -190,5 +190,9 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         Account.current.clear_section_parent_fields_cache
         clear_all_section_ticket_fields_cache
       end
+
+      def fsm?
+        params[:id] == FSM_FEATURE.to_s
+      end
   end
 end
