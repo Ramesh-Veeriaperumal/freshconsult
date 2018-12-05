@@ -249,8 +249,7 @@ HTML
 	def topic_info topic
 		output = []
 		output << topic_brief(topic)
-		output << %(<div> #{last_post_brief(topic.to_liquid)} </div>) if topic.has_comments
-		output.join(", ")
+		output << %(<div> #{last_post_brief(topic.to_liquid)} </div>)
 	end
 
 	def fb_topic_info topic
