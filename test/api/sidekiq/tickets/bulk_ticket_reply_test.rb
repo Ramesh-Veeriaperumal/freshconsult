@@ -52,6 +52,13 @@ class BulkTicketReplyTest < ActionView::TestCase
     return ActiveSupport::HashWithIndifferentAccess.new(args)
   end
 
+  def create_args_without_spam_key
+    ticket_ids = create_n_tickets(2)
+    user_id = @agent.id
+    args = build_args(ticket_ids, user_id, spam_key)
+    return ActiveSupport::HashWithIndifferentAccess.new(args)
+  end
+
   def test_bulk_ticket_reply_worker_runs
     args = create_args
     Tickets::BulkTicketReply.new.perform(args)
@@ -80,5 +87,15 @@ class BulkTicketReplyTest < ActionView::TestCase
     assert_equal old_count, new_count
   rescue Exception => e
     assert_equal e.message, 'test'
+  end
+
+  def test_ensure_errors_out_on_redis_fail
+    args = create_args_without_spam_key
+    old_count = @account.tickets.where(display_id: args["ids"].first).first.notes.count
+    Tickets::BulkTicketReply.new.perform(args)
+    @account.reload
+    new_count = @account.tickets.where(display_id: args["ids"].first).first.notes.count
+    assert_equal 0, Tickets::BulkTicketReply.jobs.size
+  rescue Exception => e
   end
 end
