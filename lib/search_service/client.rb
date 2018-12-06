@@ -46,7 +46,8 @@ module SearchService
      payload = { payload: entity.to_search_count_es_json, version: version }
      path = write_path(type, entity.id)
      write_request = SearchService::Request.new(path , :post, uuid, payload.to_json, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), Account.current.id)
-     Rails.logger.debug("Count search Service Request Write account_id :: #{Account.current.id} :: UUID :: #{uuid.inspect} :: path :: #{path} ")
+     Rails.logger.debug("Count search Service Request Write account_id :: #{Account.current.id} :: UUID :: #{uuid.inspect} :: path :: #{path} :: version :: #{version}")
+     Rails.logger.info("Count search service payload :: #{payload.inspect} :: #{version}")
      write_request.response
     end
 
