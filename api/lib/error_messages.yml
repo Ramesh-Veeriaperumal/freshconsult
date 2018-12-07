@@ -230,6 +230,8 @@ api_error_messages:
   fsm_custom_fields_not_available: "Required custom fields are not available to be reserved."
   fsm_dynamic_sections_absence: "Dynamic sections feature has to be enabled for field service management to be enabled."
   something_wrong_in_fsm_enable: "Something went wrong while trying to reserve fields for field service management."
+  agent_type_change_not_allowed: "You cannot change the agent type"
+  agent_group_type_mismatch: "Agent and group need to be of the same type"
 
   #help widget validation error messages
   field_validation_for_widget: "It should not be blank as this is a mandatory field for help widget ticket"

@@ -35,6 +35,8 @@ class Agent < ActiveRecord::Base
 
   validates_presence_of :user_id
   validate :validate_signature
+  validate :check_agent_type_changed, on: :update
+  validate :validate_agent_group_types, :if => :check_agent_group_types?
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
@@ -269,6 +271,14 @@ class Agent < ActiveRecord::Base
     self.agent_groups_attributes = agent_groups_array if agent_groups_array.present?
   end
 
+  def fetch_valid_groups
+    agent_type_name = AgentType.agent_type_name(self.agent_type)
+    group_type_name = Agent::AGENT_GROUP_TYPE_MAPPING[agent_type_name]
+    group_type_id = GroupType.group_type_id(group_type_name)
+    Account.current.groups_from_cache.select { |group| group.group_type == group_type_id }
+  end
+
+
   protected
     # adding the agent role ids through virtual attr agent_role_ids.
     # reason is this callback is getting executed before user roles update.
@@ -289,6 +299,10 @@ class Agent < ActiveRecord::Base
   def allow_availability_toggle?
     self.groups.round_robin_groups.exists? &&
       self.groups.round_robin_groups.disallowing_toggle_availability.count('1') == 0
+  end
+
+  def check_agent_group_types?
+    account.field_service_management_enabled? && self.agent_groups.present?
   end
 
   def reset_to_beginner_level
@@ -361,5 +375,23 @@ class Agent < ActiveRecord::Base
 
   def set_default_type_if_needed
     self.agent_type = AgentType.agent_type_id(SUPPORT_AGENT) unless self.agent_type
+  end
+
+  def check_agent_type_changed
+    if agent_type_changed?
+      self.errors[:agent_type] << :agent_type_change_not_allowed 
+      return false
+    end
+    true
+  end
+
+  # checking whether agent type and group type are same
+  def validate_agent_group_types
+    invalid_groups = self.agent_groups.map(&:group_id) - fetch_valid_groups.map(&:id)
+    if invalid_groups.present?
+      self.errors[:group_ids] << :agent_group_type_mismatch
+      return false
+    end
+    true
   end
 end

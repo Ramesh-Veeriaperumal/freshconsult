@@ -63,6 +63,10 @@ module AgentsHelper
    end
  end
 
+  def is_support_agent?(agent)
+    agent.agent_type == AgentType.agent_type_id(Agent::SUPPORT_AGENT)
+  end
+
   def is_field_agent?(agent)
     agent.agent_type == AgentType.agent_type_id(Agent::FIELD_AGENT)
   end
@@ -179,4 +183,8 @@ module AgentsHelper
   end
   
   # ITIL Related Methods ends here
+
+  def edit?
+    action_name == 'edit'
+  end
 end

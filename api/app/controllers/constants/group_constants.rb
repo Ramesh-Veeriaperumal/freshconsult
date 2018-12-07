@@ -20,6 +20,8 @@ module GroupConstants
 
   FIELD_GROUP_NAME = 'field_agent_group'
 
+  GROUPS_AGENTS_MAPPING = { SUPPORT_GROUP_NAME => Agent::SUPPORT_AGENT, FIELD_GROUP_NAME => Agent::FIELD_AGENT }
+
   INDEX_FIELDS = %w(group_type).freeze
 
   ACCESSIBLE_FIELDS_FOR_SUPERVISOR= %w(auto_ticket_assign)  

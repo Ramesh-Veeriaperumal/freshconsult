@@ -2926,6 +2926,7 @@ en:
         fcagent_already_present: There was an issue in enabling phone capabilities for this agent. Please reach out to <a href="mailto:support@freshdesk.com" target="_top">support@freshdesk.com</a> to resolve this.
       edit:
         not_allowed: You cannot edit this agent
+        agent_type_change_not_allowed: You cannot change the agent type
     roles:
       create:
         success: The role "%{name}" has been created
