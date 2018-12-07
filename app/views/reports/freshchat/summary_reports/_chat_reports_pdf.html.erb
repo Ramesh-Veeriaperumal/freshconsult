@@ -66,7 +66,7 @@
 <% row_limit = params[:scheduled_report] ? HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:schedule][:pdf] : HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:pdf] %>
 
 <div class="export-exceeds-row-limit" id="export-exceeds-limit-msg" >
-  <%= t('helpdesk_reports.export_exceeds_row_limit_msg', row_max_limit: row_limit)%>
+  <%= t('helpdesk_reports.export_exceeds_row_limit_msg') % {:row_max_limit => row_limit}%>
 </div>
 
 <%= javascript_tag do %>

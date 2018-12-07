@@ -100,7 +100,7 @@ class Reports::Freshfone::SummaryReportsController < ApplicationController
           end
           csv << csv_data
         end
-        csv << t('helpdesk_reports.export_exceeds_row_limit_msg', :row_max_limit => csv_row_limit) if exceeds_row_limit
+        csv << [t('helpdesk_reports.export_exceeds_row_limit_msg') % {:row_max_limit => csv_row_limit}] if exceeds_row_limit
       end
     end
 
