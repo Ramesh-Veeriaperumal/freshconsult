@@ -47,11 +47,6 @@
     - active_note_central_publish
     - company_central_publish
 
-  :falcon_occasional:
-    - scheduler_post_message
-    - scheduler_cancel_message
-    - delete_archive_ticket
-    - freshcaller_account_delete
   :scheduled:
     - scheduled_reports
     - scheduled_reports_cleanup
@@ -114,6 +109,11 @@
     - unlink_tickets
     - primary_language_change
     - freshops_service
+    - scheduler_post_message
+    - scheduler_cancel_message
+    - delete_archive_ticket
+    - freshcaller_account_delete
+    - update_segment_filter
   :maintainence:
     - select_all_tickets
     - select_all_batcher
@@ -173,7 +173,6 @@
     - inline_image_shredder
     - deactivate_product_widgets
     - deactivate_filter_widgets
-    - update_segment_filter
     - cancel_account
     - migration
   :external:
