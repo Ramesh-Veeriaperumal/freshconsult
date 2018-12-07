@@ -130,7 +130,7 @@ module FDPasswordPolicy
           password_format_options.each do |option|
             if safe_send(option[:if])
               found = self.password =~ option[:regex]
-              self.errors.add(:base, option[:error]) unless found
+              self.errors.add(:base, I18n.t(option[:error])) unless found
             end
           end
         end

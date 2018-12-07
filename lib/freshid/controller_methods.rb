@@ -24,8 +24,8 @@ module Freshid::ControllerMethods
     redirect_to freshid_authorize(callback_url, freshid_logout_url, current_account.full_domain, sso)
   end
 
-  def redirect_to_freshid_login
-    redirect_to Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url)
+  def redirect_to_freshid_login(options = {})
+    redirect_to Freshid::Config.login_url(freshid_authorize_callback_url, freshid_logout_url, options)
   end
 
   def freshid_enabled_and_not_logged_in?

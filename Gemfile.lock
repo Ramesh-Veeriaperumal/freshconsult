@@ -263,10 +263,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/freshid-ruby-client.git
-  revision: 7fdad563877aa41178219e5a5ea4c8aef3e21368
-  tag: v3.0.1
+  revision: ace5944855a4e875802ca6dd655acca2241c9191
+  tag: v3.0.3
   specs:
-    freshid (3.0.1)
+    freshid (3.0.3)
 
 GIT
   remote: git@github.com:freshdesk/launch-party.git
