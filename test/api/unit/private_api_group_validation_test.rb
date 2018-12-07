@@ -1,11 +1,20 @@
 require_relative '../unit_test_helper'
 
 class PrivateApiGroupValidationTest < ActionView::TestCase
+
+  def setup
+    Account.stubs(:current).returns(Account.first)
+  end
+
+  def teardown
+    Account.unstub(:current) 
+  end
+
   def test_noassignment_valid
     group = PrivateApiGroupValidation.new({ name: Faker::Name.name, unassigned_for: '30m', escalate_to: 1,
                                      description: Faker::Lorem.paragraph, assignment_type: 0,
-                                     agent_ids: [1, 2] }, nil)
-    assert group.valid?
+                                     agent_ids: [1, 2], group_type: GroupConstants::SUPPORT_GROUP_NAME }, nil)
+    assert group.valid?(:create)
   end
 
   def test_normal_round_robin_valid
@@ -53,8 +62,8 @@ class PrivateApiGroupValidationTest < ActionView::TestCase
   def test_value_invalid
     group = PrivateApiGroupValidation.new({ unassigned_for: '30hh', escalate_to: '23',
                                      description: 123, auto_ticket_assign: 'false',
-                                     agent_ids: 123 }, nil)
-    refute group.valid?
+                                     agent_ids: 123, group_type: Faker::Lorem.characters(10) }, nil)
+    refute group.valid?(:create)
     errors = group.errors.full_messages
     assert errors.include?('Name datatype_mismatch')
     assert errors.include?('Unassigned for not_included')
@@ -62,6 +71,7 @@ class PrivateApiGroupValidationTest < ActionView::TestCase
     assert errors.include?('Agent ids datatype_mismatch')
     assert errors.include?('Description datatype_mismatch')
     assert errors.include?('Auto ticket assign datatype_mismatch')
+    assert errors.include?('Group type not_included')
   end
 
   def test_array_nil

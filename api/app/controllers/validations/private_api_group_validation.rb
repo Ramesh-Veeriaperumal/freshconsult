@@ -1,7 +1,7 @@
 class PrivateApiGroupValidation < ApiGroupValidation
   include GroupConstants
   CHECK_PARAMS_SET_FIELDS=["round_robin_type","capping_limit","allow_agents_to_change_availability"].freeze
-  attr_accessor   :round_robin_type, :capping_limit, :allow_agents_to_change_availability, :error_options    
+  attr_accessor   :round_robin_type, :capping_limit, :allow_agents_to_change_availability, :error_options, :group_type    
 
   validate :set_default_value
 
@@ -17,6 +17,7 @@ class PrivateApiGroupValidation < ApiGroupValidation
   validate :lbrr_feature_check, if: -> { is_assignment_type_round_robin? && @request_params["round_robin_type"] == LOAD_BASED_ROUND_ROBIN }
   validate :sbrr_feature_check, if: -> { is_assignment_type_round_robin? && @request_params["round_robin_type"] == SKILL_BASED_ROUND_ROBIN }
   validate :ocr_feature_check, if: -> { is_assignment_type_ocr? }
+  validates :group_type, custom_inclusion: { in: proc { |x| x.account_group_types} , data_type: { rules: String } }, on: :create
 
  
   def initialize(request_params, item=nil, allow_string_param = false)
@@ -110,6 +111,10 @@ class PrivateApiGroupValidation < ApiGroupValidation
 
   def update?
     @item.present?
+  end
+
+  def account_group_types
+    Account.current.group_types_from_cache.map(&:name)
   end
 
 end

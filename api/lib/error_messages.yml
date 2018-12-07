@@ -240,7 +240,8 @@ api_error_messages:
   no_matching_privilege: "No matching privileges found for: '%{list}'"
   default_role_modified: "You cannot modify a default role."
   missing_privileges: "Please check privileges that are dependent on: '%{list}'"
-
+  invalid_field_auto_assign: "Auto ticket assignment is not available for field service groups."
+  invalid_agent_ids: "Agent and group need to be of the same type."
   existing_import_inprogress: "We're still processing the previous import. Retry when it's complete."
   invalid_import_value: "Invalid value. Should be set as the index of field"
   invalid_import_fields: "Invalid fields: %{invalid_values}"

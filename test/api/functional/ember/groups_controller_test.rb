@@ -1,6 +1,8 @@
 require_relative '../../test_helper'
 class Ember::GroupsControllerTest < ActionController::TestCase
   include GroupsTestHelper
+  include GroupConstants
+  include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
 
   def wrap_cname(params)
     { group: params }
@@ -22,6 +24,14 @@ class Ember::GroupsControllerTest < ActionController::TestCase
   #   assert_response 200
   #   match_json(pattern.ordered!)
   # end
+
+  def enabling_fsm_feature
+    @account.add_feature(:field_service_management)
+  end
+
+  def revoke_fsm_feature
+    @account.revoke_feature(:field_service_management)
+  end
 
   def test_show_group
     group = create_group_private_api(@account)
@@ -73,6 +83,43 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     match_json(private_group_pattern(Group.last))
   end  
 
+  def test_create_group_with_group_type_valid
+    enabling_fsm_feature
+    post :create, construct_params({version: 'private'},{
+      name: Faker::Lorem.characters(10),
+      description: Faker::Lorem.paragraph,
+      assignment_type: 0,
+      business_hour_id:1,
+      escalate_to:1,
+      agent_ids:[1],
+      unassigned_for: '30m',
+      group_type: SUPPORT_GROUP_NAME
+    })
+    assert_response 201
+    match_json(private_group_pattern(Group.last))
+  ensure
+    revoke_fsm_feature
+  end
+
+  def test_create_group_with_group_type_invalid
+    enabling_fsm_feature
+    post :create, construct_params({version: 'private'},{
+      name: Faker::Lorem.characters(10),
+      description: Faker::Lorem.paragraph,
+      assignment_type: 0,
+      business_hour_id:1,
+      escalate_to:1,
+      agent_ids:[1],
+      unassigned_for: '30m',
+      group_type: Faker::Lorem.characters(10)
+    })
+    assert_response 400
+    res = JSON.parse response.body
+    assert_equal res["errors"][0]["code"],"invalid_value"
+  ensure
+    revoke_fsm_feature
+  end 
+
   def test_create_group_with_ocr  
     Account.current.stubs(:features?).with(:round_robin).returns(true)
     Account.current.stubs(:omni_channel_routing_enabled?).returns(true)    
@@ -90,6 +137,47 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     match_json(private_group_pattern_with_ocr(Group.last))
     Account.current.stubs(:features?).with(:round_robin).returns(false) 
     Account.current.unstub(:omni_channel_routing_enabled?)
+  end
+
+  def test_create_support_group_with_field_agent
+    enabling_fsm_feature
+    add_data_to_group_type
+    post :create, construct_params({version: 'private'},{
+      name: Faker::Lorem.characters(10),
+      description: Faker::Lorem.paragraph,
+      assignment_type: 0,
+      business_hour_id:1,
+      escalate_to:1,
+      agent_ids:[1],
+      unassigned_for: '30m',
+      group_type: FIELD_GROUP_NAME
+    })
+    assert_response 400
+    res = JSON.parse response.body
+    assert_equal res["errors"][0]["code"],"invalid_value"
+  ensure
+    destroy_field_group
+    revoke_fsm_feature
+  end
+
+  def test_create_field_group_with_assignment_type_invalid
+    enabling_fsm_feature
+    add_data_to_group_type
+    post :create, construct_params({version: 'private'},{
+      name: Faker::Lorem.characters(10),
+      description: Faker::Lorem.paragraph,
+      assignment_type: 1,
+      business_hour_id:1,
+      escalate_to:1,
+      unassigned_for: '30m',
+      group_type: FIELD_GROUP_NAME
+    })
+    assert_response 400
+    res = JSON.parse response.body
+    assert_equal res["errors"][0]["code"],"invalid_value"
+  ensure
+    destroy_field_group
+    revoke_fsm_feature
   end
 
   def test_create_group_with_normal_round_robin
@@ -157,6 +245,21 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for: '30m', agent_ids: [1])
     assert_response 200
     match_json(private_group_pattern(Group.find_by_id(group.id)))
+  end
+
+  def test_update_group_type
+    enabling_fsm_feature
+    Account.stubs(:current).returns(@account)
+    add_data_to_group_type
+    group = create_group_private_api(@account)
+    put :update, construct_params({version:'private', id: group.id }, escalate_to: 1, unassigned_for: '30m', agent_ids: [1], group_type: FIELD_GROUP_NAME)
+    assert_response 400
+    res = JSON.parse response.body
+    assert_equal res["errors"][0]["message"],"Unexpected/invalid field in request"
+  ensure
+    destroy_field_group
+    revoke_fsm_feature
+    Account.unstub(:current)
   end
 
   def test_update_group_from_noass_to_lbrr

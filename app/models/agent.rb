@@ -294,6 +294,10 @@ class Agent < ActiveRecord::Base
     end
   end
 
+  def self.destroy_agents(account, type)
+    account.agents.where(agent_type: type).destroy_all
+  end
+
   private
 
   def allow_availability_toggle?

@@ -121,16 +121,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
       
       def add_data_to_group_type
-        begin
-          account = Account.current
-          group_type_id = Account.current.group_types.last.group_type_id + 1
-          group_type = account.group_types.create(:name => FIELD_GROUP_NAME, :group_type_id => group_type_id, :label => FIELD_GROUP_NAME, :account_id => account.id, :deleted => false, :default => true )
-          group_type.save!
-        rescue Exception => e
-          error_message = "Group type creation failed for account:: #{account.id}. Group type: #{FIELD_GROUP_NAME} Exception:: #{e.message} \n#{e.backtrace.to_a.join("\n")}"
-          Rails.logger.error(error_message)
-          NewRelic::Agent.notice_error(error_message)
-        end
+        group_type = GroupType.create_group_type(Account.current, FIELD_GROUP_NAME)
+        raise "Field group type did not get created" unless group_type
       end
 
       def create_field_agent_type
@@ -178,6 +170,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def destroy_field_agent
+        Agent.destroy_agents(Account.current, AgentType.agent_type_id(FIELD_AGENT))
         AgentType.destroy_agent_type(Account.current, FIELD_AGENT)
       end
 

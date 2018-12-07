@@ -9,16 +9,25 @@ module Ember
     end
 
      private
-      def validate_params                         
-        group_params=api_current_user.privilege?(:admin_tasks) ? PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG : []
+      def validate_params  
+        group_params = unless api_current_user.privilege?(:admin_tasks)
+          []
+        else
+          (update?) ? UPDATE_PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG : PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG
+        end
         group_params=Account.current.features?(:round_robin) ? group_params | RR_FIELDS : group_params  
         group_params=Account.current.omni_channel_routing_enabled?  ? group_params | OCR_FIELDS : group_params            
         params[cname].permit(*group_params)        
-        group=PrivateApiGroupValidation.new(params[cname],@item)                
-        render_errors group.errors, group.error_options unless group.valid?       
+        group=PrivateApiGroupValidation.new(params[cname],@item) 
+        valid = update? ? group.valid? : group.valid?(:create)               
+        render_errors group.errors, group.error_options unless valid     
       end
 
-      def sanitize_params                     
+      def sanitize_params
+        if params[cname][:group_type].present?
+          group_type_id = GroupType.group_type_id(params[cname][:group_type])
+          params[cname][:group_type] = group_type_id
+        end                     
         reset_attributes if update?
         params[cname][:assignment_type] = ASSIGNMENT_TYPES_SANITIZE[params[cname][:assignment_type]] if params[cname][:assignment_type].present?
         params[cname][:unassigned_for] = UNASSIGNED_FOR_MAP[params[cname][:unassigned_for]] if params[cname][:unassigned_for].present?        
