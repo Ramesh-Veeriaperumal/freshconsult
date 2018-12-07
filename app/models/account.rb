@@ -789,6 +789,15 @@ class Account < ActiveRecord::Base
     agent_types
   end
 
+  def get_or_create_group_types
+    group_types = self.group_types.all
+    if group_types.length == 0
+      GroupType.populate_default_group_types(self)
+      return self.group_types.all
+    end    
+    group_types
+  end
+
   def bot_email_response
     email_notifications.find_by_notification_type(EmailNotification::BOT_RESPONSE_TEMPLATE) || default_bot_email_response
   end
