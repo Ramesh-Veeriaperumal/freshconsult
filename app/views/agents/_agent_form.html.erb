@@ -41,7 +41,7 @@
         <li class="control-group agent_type">
 				  <%= label(:agent, :signature_html, t('agent.type'), :class => "control-label") %>
 				  <div class="controls">
-						<div class="radio inline">
+						<div class="radio inline <%= 'agent-type-button-disabled' if is_field_agent?(@agent) %>">
 						  <%= radio_button 'agent', 'agent_type', 'full_time', :checked => !agents_exceeded?(@agent), :disabled => full_time_disabled?(@agent) %>
 						  <span class="<%= 'muted' if @agent.new_record? && !agents_available? %>">
 							  <strong><%= t('agent.full_time') %></strong><br />
@@ -52,7 +52,7 @@
 						  </span>
 					  </div>
             <% if current_account.occasional_agent_enabled? %>
-  					  <div class="radio inline">
+  					  <div class="radio inline <%= 'agent-type-button-disabled' if is_field_agent?(@agent) %>">
   						  <%= radio_button 'agent', 'agent_type', 'occasional', :checked => agents_exceeded?(@agent) %>
   						  <strong><%= t('agent.occasional') %></strong><br />
   						  <%= I18n.t('agent.day_passes_available', :count => available_passes) %>
@@ -60,7 +60,7 @@
   					  </div>
             <% end %>
             <% if current_account.field_service_management_enabled? %>
-              <div class="radio inline">
+              <div class="radio inline <%= 'agent-type-button-disabled' if edit? && is_support_agent?(@agent) %>">
                 <%= radio_button 'agent', 'agent_type', 'field_agent', :checked => is_field_agent?(@agent), :disabled => full_time_disabled?(@agent) %>
                 <span class="<%= 'muted' if @agent.new_record? && !agents_available? %>">
                   <strong><%= t('agent.field_agent') %></strong><br />
@@ -331,7 +331,7 @@
                          <b>#{h(group.name)}</b>
                          <span class='muted info_data ellipsis'>#{h(group.description)}</span>".html_safe)
                 %>
-                <input type='hidden' name='agent[group_ids][]' value= <%= "#{group.id}" %> />
+                <input type='hidden' name='agent[group_ids][]' value= <%= "#{group.id}" %>/>
               </li>
             <% end %>
           </ul>
@@ -405,7 +405,7 @@
 
       <% @groups.each do |group| %>
           groups[<%= group.id %>] = <%= @agent.groups.include?(group) %>;
-          group_details[<%= group.id %>] = ["<%= group.name %>", "<%= escape_javascript(group.description)%>"];
+          group_details[<%= group.id %>] = ["<%= group.name %>", "<%= escape_javascript(group.description)%>", "<%= group.group_type %>"];
       <% end %>
       App.Agents.Form.initializeData({userName: userName, roles: roles,
 				role_details: role_details, freshid_enabled: freshid_enabled, groups: groups, group_details: group_details, SkillBasedRRFlag: <%=@manage_skills%>});
