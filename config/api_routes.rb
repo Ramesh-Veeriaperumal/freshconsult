@@ -616,6 +616,11 @@ Helpkit::Application.routes.draw do
     post '/search/autocomplete/agents/',        to: 'ember/search/autocomplete#agents'
     post '/search/autocomplete/companies/',     to: 'ember/search/autocomplete#companies'
     post '/search/autocomplete/tags/',          to: 'ember/search/autocomplete#tags'
+    
+    scope '/automations/:rule_type' do
+      resources :rules, controller: 'admin/automations', only: [:index, :destroy]
+    end
+
   end
 
   pipe_routes = proc do

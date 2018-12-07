@@ -240,6 +240,8 @@ api_error_messages:
   no_matching_privilege: "No matching privileges found for: '%{list}'"
   default_role_modified: "You cannot modify a default role."
   missing_privileges: "Please check privileges that are dependent on: '%{list}'"
+
   existing_import_inprogress: "We're still processing the previous import. Retry when it's complete."
   invalid_import_value: "Invalid value. Should be set as the index of field"
   invalid_import_fields: "Invalid fields: %{invalid_values}"
+  rule_type_not_allowed: "Rule type not allowed: %{rule_type}"
