@@ -51,4 +51,29 @@ module CannedResponsesTestHelper
   def evaluate_response_new_ticket(content_html)
     Liquid::Template.parse(content_html).render(ticket: nil)
   end
+
+  def create_ca_response_input(folder_id = nil, visibility = nil, group_id = nil)
+    ret_hash = {
+      title: Faker::Name.name,
+      content_html: Faker::Name.name,
+      visibility: visibility,
+      group_ids: group_id
+    }
+    ret_hash[:folder_id] = folder_id if folder_id.present?
+    ret_hash
+  end
+
+  def build_ca_param(response)
+    {
+      version: 'v2',
+      canned_response: response
+    }
+  end
+
+  def validation_error_pattern(value)
+    {
+      description: 'Validation failed',
+      errors: [value]
+    }
+  end
 end

@@ -320,7 +320,7 @@ class UserSessionsController < ApplicationController
       return redirect_to login_url 
     end
     if @current_user.active_freshid_agent?
-      redirect_to support_login_url(params: {new_account_signup: true}) and return
+      redirect_to support_login_url(params: {new_account_signup: true, signup_email: @current_user.email}) and return
     elsif freshid_enabled?
       new_freshid_signup = @current_user.active = true
     end

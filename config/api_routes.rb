@@ -108,7 +108,7 @@ Helpkit::Application.routes.draw do
     resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy]
     
     resources :canned_response_folders, controller: 'canned_response_folders', only: [:index, :show, :create, :update]
-    resources :canned_responses, controller: 'canned_responses', only: [:index, :show]
+    resources :canned_responses, controller: 'canned_responses', only: [:index, :show, :create, :update]
     resources :scenario_automations, controller: 'scenario_automations', only: :index
     get 'canned_response_folders/:id/responses', to: 'canned_responses#folder_responses'
 

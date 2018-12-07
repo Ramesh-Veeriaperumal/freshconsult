@@ -1,0 +1,23 @@
+type: object
+properties:
+  title:
+    type: string
+  content_html:
+    type: string
+  folder_id:
+    type: integer
+  attachments:
+    type: array
+    items:
+      type: string
+      format: byte
+  attachment_ids:
+    type: array
+    items:
+      type: integer
+  visibility:
+    type: integer
+  group_ids:
+    type: array
+    items:
+      type: integer

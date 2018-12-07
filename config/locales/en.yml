@@ -741,6 +741,7 @@ en:
         sign_in_using: Sign In
         sign_in_using_google: Sign in using your Google account
         help: Help
+      freshid_login_message: Please login using your Freshworks account credentials
     shared:
       was_this_article_useful: Was this article useful?
       related_files: Related Files
@@ -5105,7 +5106,7 @@ en:
       fb_reply_info: "<a href='%{reply_url}'> Last Reply </a> by %{user_name}<br>%{created_on}"
       my_topic_reply: "Last Reply by <b>%{post_name}</b>, %{created_on}"
       topic_brief: "Posted by <b>%{user_name}</b>, %{created_on}"
-      last_post_brief: "<a href='%{last_post_url}'>%{link_label}</a> by %{user_name} %{created_on}"
+      last_post_brief: "<a href='%{last_post_url}'>%{link_label}</a> by %{user_name}, %{created_on}"
       best_answer: Best Answer
       matching_results: "Matching Topics Found"
       in_forum: "In: %{forum_name}"
@@ -9579,7 +9580,12 @@ en:
       title: Canned responses
     errors:
       duplicate_title: "Duplicate response. Title already exists"
-      valid_folder_id: Please specify a valid folder ID.(Personal/General folder is not editable)
+      invalid_visibility: Please specify a valid visibility. 0 for making it visible for all agents in your account, 1 if you want to make it visible to just you, or 2 if you want to make it visible to agents in certain groups.
+      invalid_folder_id: Please specify a valid folder ID.
+      personal_folder: You can only save canned responses just visible to you in the personal folder.
+      invalid_group_id: Please specify a valid group ID.
+      required_folder_id: Please specify folder id.
+      valid_folder_id: Please specify a valid folder ID. Personal and General folders are not editable.
   ca_response:
     delete_confirm: Are you sure you want to delete this canned response?
   merge_contacts:
@@ -11624,7 +11630,7 @@ en:
       post:
         approve: Approve
         approve_tooltip: Approve and Publish
-        ban_tooltip: Mark user and all his posts as Spam
+        ban_tooltip: Mark user and all their posts as Spam
         spam: Spam
     index:
       all_topics: All Activity
@@ -11778,7 +11784,7 @@ en:
       spam_actions:
         approve: Approve
         approve_tooltip: Approve and Publish
-        ban_tooltip: Mark user and all his posts as Spam
+        ban_tooltip: Mark user and all their posts as Spam
         ban_confirm: "Are you sure you want to delete the user and mark all his/her posts as Spam?"
         spam: Spam
       spam:

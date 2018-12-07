@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
   include InstalledApplicationsTestHelper
-  APP_NAMES = ['zohocrm', 'harvest', 'dropbox', 'salesforce', 'salesforce_v2', 'freshsales']
+  APP_NAMES = ['zohocrm', 'harvest', 'dropbox', 'salesforce', 'salesforce_v2', 'freshsales', 'shopify']
 
   def setup
     super
@@ -353,4 +353,648 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     IntegrationServices::Services::CloudElements::Hub::Crm::AccountResource.any_instance.unstub
     IntegrationServices::Services::CloudElements::Hub::Crm::ContactResource.any_instance.unstub
   end
+
+  def test_shopify_refund_full_order
+    Account.current.launch(:shopify_actions)
+    app_id = get_installed_app('shopify').id
+    order_id = 1025918795834
+    line_item_id = nil
+    url = "https://fd-integration-private.myshopify.com"
+    order_json = fetch_order.to_json
+    calculate_json = fetch_refund_calculate.to_json
+    response = fetch_refund_response.to_json
+    
+    order_mock = get_response_mock(order_json, 200)
+    calculate_mock = get_response_mock(calculate_json, 200)
+    response_mock = get_response_mock(response, 201)
+
+    calculate_url = "#{url}/admin/orders/#{order_id}/refunds/calculate.json"
+    refund_url = "#{url}/admin/orders/#{order_id}/refunds.json"
+    
+    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.stubs(:http_get).returns(order_mock)
+    IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(calculate_url, full_refund_calculate_hash.to_json).returns(calculate_mock)
+    IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(refund_url, full_refund_hash.to_json).returns(response_mock)
+
+    param = construct_params({ version: 'private', id: app_id, event: 'refund_full_order', payload: { orderId: order_id, lineItemId: line_item_id, store: "fd-integration-private.myshopify.com"}})
+    post :fetch, param
+    assert_response 200
+    match_json JSON.parse(response)
+    IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.unstub
+    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub
+  end
+
+  def test_shopify_refund_line_item
+    Account.current.launch(:shopify_actions)
+    app_id = get_installed_app('shopify').id
+    order_id = 1025918795834
+    line_item_id = 2382039318586
+    url = "https://fd-integration-private.myshopify.com"
+    order_json = fetch_order.to_json
+    calculate_json = fetch_refund_calculate.to_json
+    response = fetch_refund_response.to_json
+    
+    order_mock = get_response_mock(order_json, 200)
+    calculate_mock = get_response_mock(calculate_json, 200)
+    response_mock = get_response_mock(response, 201)
+
+    calculate_url = "#{url}/admin/orders/#{order_id}/refunds/calculate.json"
+    refund_url = "#{url}/admin/orders/#{order_id}/refunds.json"
+
+    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.stubs(:http_get).returns(order_mock)
+    IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(calculate_url, lineitem_refund_calculate_hash.to_json).returns(calculate_mock)
+    IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.stubs(:http_post).with(refund_url, lineitem_refund_hash.to_json).returns(response_mock)
+
+    param = construct_params({ version: 'private', id: app_id, event: 'refund_line_item', payload: { orderId: order_id, lineItemId: line_item_id, store: "fd-integration-private.myshopify.com"}})
+    post :fetch, param
+    assert_response 200
+    match_json JSON.parse(response)
+    IntegrationServices::Services::Shopify::ShopifyRefundResource.any_instance.unstub
+    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub
+  end
+
+  def lineitem_refund_calculate_hash
+    {
+      refund: {
+        currency: "USD", 
+        refund_line_items: [
+          {
+            line_item_id: 2382039318586,
+            quantity: 1
+          }
+        ]
+      }
+    }
+  end
+
+  def lineitem_refund_hash
+    {
+      refund: {
+        currency: "USD",
+        refund_line_items: [
+          {
+            line_item_id: 2382039318586,
+            quantity: 1
+          }
+        ],
+        transactions: [
+           {
+              order_id: 1025918795834,
+              kind: 'refund', 
+              gateway: 'manual', 
+              parent_id: 1152647921722,
+              amount: '227.74', 
+              currency: 'USD', 
+              maximum_refundable: '769.36'
+           }
+        ]
+      }
+    }
+  end
+
+  def full_refund_calculate_hash
+    {
+      refund: {
+        currency: "USD", 
+        shipping: {
+          full_refund: true
+        },
+        refund_line_items: [
+          {
+            line_item_id: 2382039318586,
+            quantity: 1
+          },
+          {
+            line_item_id: 2382039351354,
+            quantity: 1
+          }
+        ]
+      }
+    }
+  end
+
+  def full_refund_hash
+    {
+      refund: {
+        currency: "USD", 
+        shipping: {
+          full_refund: true
+        },
+        refund_line_items: [
+          {
+            line_item_id: 2382039318586,
+            quantity: 1
+          },
+          {
+            line_item_id: 2382039351354,
+            quantity: 1
+          }
+        ],
+        transactions: [
+           {
+              order_id: 1025918795834,
+              kind: 'refund', 
+              gateway: 'manual', 
+              parent_id: 1152647921722,
+              amount: '227.74', 
+              currency: 'USD', 
+              maximum_refundable: '769.36'
+           }
+        ]
+      }
+    }
+  end
+
+
+  def fetch_order
+    { 
+     order: {
+        id: 1025918795834,
+        email: 'hackerspainters.4+20181121132828@gmail.com', 
+        closed_at: nil,
+        created_at: '2018-11-28T05:26:56-12:00', 
+        updated_at: '2018-11-28T05:26:58-12:00', 
+        number: 5271,
+        note: '', 
+        token: '2a0e0fc9d940ea705663a42d8c4ace87', 
+        gateway: 'manual', 
+        test: false,
+        total_price: '769.36', 
+        subtotal_price: '652.00', 
+        total_weight: 56000,
+        total_tax: '117.36', 
+        taxes_included: false,
+        currency: 'USD', 
+        financial_status: 'paid', 
+        confirmed: true,
+        total_discounts: '0.00', 
+        total_line_items_price: '652.00', 
+        cart_token: nil,
+        buyer_accepts_marketing: false,
+        name: '#6271', 
+        referring_site: nil,
+        landing_site: nil,
+        cancelled_at: nil,
+        cancel_reason: nil,
+        total_price_usd: '769.36', 
+        checkout_token: nil,
+        reference: nil,
+        user_id: 19497058362,
+        location_id: 13114900538,
+        source_identifier: nil,
+        source_url: nil,
+        processed_at: '2018-11-28T05:26:56-12:00', 
+        device_id: nil,
+        phone: nil,
+        customer_locale: nil,
+        app_id: 1354745,
+        browser_ip: nil,
+        landing_site_ref: nil,
+        order_number: 6271,
+        discount_applications: [
+
+        ],
+        discount_codes: [
+
+        ],
+        note_attributes: [
+
+        ],
+        payment_gateway_names: [
+           'manual'
+        ],
+        processing_method: 'manual', 
+        checkout_id: nil,
+        source_name: 'shopify_draft_order', 
+        fulfillment_status: nil,
+        tax_lines: [
+           {
+              price: '117.36', 
+              rate: 0.18,
+              title: 'IGST', 
+              price_set: {
+                 shop_money: {
+                    amount: '117.36', 
+                    currency_code: 'USD'
+                 },
+                 presentment_money: {
+                    amount: '117.36', 
+                    currency_code: 'USD'
+                 }
+              }
+           }
+        ],
+        tags: '', 
+        contact_email: 'hackerspainters.4+20181121132828@gmail.com', 
+        order_status_url: 'https:\/\/checkout.shopify.com\/13325991994\/orders\/2a0e0fc9d940ea705663a42d8c4ace87\/authenticate?key=2f60188ce7422a8cc46daead570ea01b', 
+        presentment_currency: 'USD', 
+        total_line_items_price_set: {
+           shop_money: {
+              amount: '652.00', 
+              currency_code: 'USD'
+           },
+           presentment_money: {
+              amount: '652.00', 
+              currency_code: 'USD'
+           }
+        },
+        total_discounts_set: {
+           shop_money: {
+              amount: '0.00', 
+              currency_code: 'USD'
+           },
+           presentment_money: {
+              amount: '0.00', 
+              currency_code: 'USD'
+           }
+        },
+        total_shipping_price_set: {
+           shop_money: {
+              amount: '0.00', 
+              currency_code: 'USD'
+           },
+           presentment_money: {
+              amount: '0.00', 
+              currency_code: 'USD'
+           }
+        },
+        subtotal_price_set: {
+           shop_money: {
+              amount: '652.00', 
+              currency_code: 'USD'
+           },
+           presentment_money: {
+              amount: '652.00', 
+              currency_code: 'USD'
+           }
+        },
+        total_price_set: {
+           shop_money: {
+              amount: '769.36', 
+              currency_code: 'USD'
+           },
+           presentment_money: {
+              amount: '769.36', 
+              currency_code: 'USD'
+           }
+        },
+        total_tax_set: {
+           shop_money: {
+              amount: '117.36', 
+              currency_code: 'USD'
+           },
+           presentment_money: {
+              amount: '117.36', 
+              currency_code: 'USD'
+           }
+        },
+        total_tip_received: '0.0', 
+        admin_graphql_api_id: 'gid:\/\/shopify\/Order\/1025918795834', 
+        line_items: [
+           {
+              id: 2382039318586,
+              variant_id: 20489541877818,
+              title: 'Product - 20181017164101', 
+              quantity: 1,
+              price: '193.00', 
+              sku: '', 
+              variant_title: nil,
+              vendor: 'Robel-Murray', 
+              fulfillment_service: 'manual', 
+              product_id: 2038439608378,
+              requires_shipping: true,
+              taxable: true,
+              gift_card: false,
+              name: 'Product - 20181017164101', 
+              variant_inventory_management: nil,
+              properties: [
+
+              ],
+              product_exists: true,
+              fulfillable_quantity: 1,
+              grams: 27000,
+              total_discount: '0.00', 
+              fulfillment_status: nil,
+              price_set: {
+                 shop_money: {
+                    amount: '193.00', 
+                    currency_code: 'USD'
+                 },
+                 presentment_money: {
+                    amount: '193.00', 
+                    currency_code: 'USD'
+                 }
+              },
+              total_discount_set: {
+                 shop_money: {
+                    amount: '0.00', 
+                    currency_code: 'USD'
+                 },
+                 presentment_money: {
+                    amount: '0.00', 
+                    currency_code: 'USD'
+                 }
+              },
+              discount_allocations: [
+
+              ],
+              admin_graphql_api_id: 'gid:\/\/shopify\/LineItem\/2382039318586', 
+              tax_lines: [
+                 {
+                    title: 'IGST', 
+                    price: '34.74', 
+                    rate: 0.18,
+                    price_set: {
+                       shop_money: {
+                          amount: '34.74', 
+                          currency_code: 'USD'
+                       },
+                       presentment_money: {
+                          amount: '34.74', 
+                          currency_code: 'USD'
+                       }
+                    }
+                 }
+              ]
+           },
+           {
+              id: 2382039351354,
+              variant_id: 20490883563578,
+              title: 'Product - 20181017181257', 
+              quantity: 1,
+              price: '459.00', 
+              sku: '', 
+              variant_title: nil,
+              vendor: 'Collins-Homenick', 
+              fulfillment_service: 'manual', 
+              product_id: 2038582018106,
+              requires_shipping: true,
+              taxable: true,
+              gift_card: false,
+              name: 'Product - 20181017181257', 
+              variant_inventory_management: nil,
+              properties: [
+
+              ],
+              product_exists: true,
+              fulfillable_quantity: 1,
+              grams: 29000,
+              total_discount: '0.00', 
+              fulfillment_status: nil,
+              price_set: {
+                 shop_money: {
+                    amount: '459.00', 
+                    currency_code: 'USD'
+                 },
+                 presentment_money: {
+                    amount: '459.00', 
+                    currency_code: 'USD'
+                 }
+              },
+              total_discount_set: {
+                 shop_money: {
+                    amount: '0.00', 
+                    currency_code: 'USD'
+                 },
+                 presentment_money: {
+                    amount: '0.00', 
+                    currency_code: 'USD'
+                 }
+              },
+              discount_allocations: [
+
+              ],
+              admin_graphql_api_id: 'gid:\/\/shopify\/LineItem\/2382039351354', 
+              tax_lines: [
+                 {
+                    title: 'IGST', 
+                    price: '82.62', 
+                    rate: 0.18,
+                    price_set: {
+                       shop_money: {
+                          amount: '82.62', 
+                          currency_code: 'USD'
+                       },
+                       presentment_money: {
+                          amount: '82.62', 
+                          currency_code: 'USD'
+                       }
+                    }
+                 }
+              ]
+           }
+        ],
+        shipping_lines: [
+
+        ],
+        fulfillments: [
+
+        ],
+        refunds: [
+
+        ],
+        customer: {
+           id: 1220069720122,
+           email: 'hackerspainters.4+20181121132828@gmail.com', 
+           accepts_marketing: false,
+           created_at: '2018-11-21T01:28:30-12:00', 
+           updated_at: '2018-11-28T05:26:58-12:00', 
+           first_name: nil,
+           last_name: nil,
+           orders_count: 16,
+           state: 'disabled', 
+           total_spent: '769.36', 
+           last_order_id: 1025918795834,
+           note: nil,
+           verified_email: true,
+           multipass_identifier: nil,
+           tax_exempt: false,
+           phone: nil,
+           tags: '', 
+           last_order_name: '#6271', 
+           currency: 'USD', 
+           admin_graphql_api_id: 'gid:\/\/shopify\/Customer\/1220069720122'
+        }
+     }
+   }
+  end
+
+  def fetch_refund_calculate
+    { 
+     refund: {
+        shipping: {
+           amount: '0.00', 
+           tax: '0.00', 
+           maximum_refundable: '0.00'
+        },
+        refund_line_items: [
+           {
+              quantity: 1,
+              line_item_id: 2382039318586,
+              location_id: nil,
+              restock_type: 'no_restock', 
+              price: '193.00', 
+              subtotal: '193.00', 
+              total_tax: '34.74', 
+              discounted_price: '193.00', 
+              discounted_total_price: '193.00', 
+              total_cart_discount_amount: '0.00'
+           }
+        ],
+        transactions: [
+           {
+              order_id: 1025918795834,
+              kind: 'suggested_refund', 
+              gateway: 'manual', 
+              parent_id: 1152647921722,
+              amount: '227.74', 
+              currency: 'USD', 
+              maximum_refundable: '769.36'
+           }
+        ],
+        currency: 'USD'
+     }
+   }
+  end
+
+  def fetch_refund_response
+    { 
+     refund: {
+        id: 32214188090,
+        order_id: 1025918795834,
+        created_at: '2018-11-28T05:27:49-12:00', 
+        note: nil,
+        user_id: nil,
+        processed_at: '2018-11-28T05:27:49-12:00', 
+        restock: false,
+        admin_graphql_api_id: 'gid:\/\/shopify\/Refund\/32214188090', 
+        refund_line_items: [
+           {
+              id: 56870436922,
+              quantity: 1,
+              line_item_id: 2382039318586,
+              location_id: nil,
+              restock_type: 'no_restock', 
+              subtotal: 193.0,
+              total_tax: 34.74,
+              subtotal_set: {
+                 shop_money: {
+                    amount: '193.00', 
+                    currency_code: 'USD'
+                 },
+                 presentment_money: {
+                    amount: '193.00', 
+                    currency_code: 'USD'
+                 }
+              },
+              total_tax_set: {
+                 shop_money: {
+                    amount: '34.74', 
+                    currency_code: 'USD'
+                 },
+                 presentment_money: {
+                    amount: '34.74', 
+                    currency_code: 'USD'
+                 }
+              },
+              line_item: {
+                 id: 2382039318586,
+                 variant_id: 20489541877818,
+                 title: 'Product - 20181017164101', 
+                 quantity: 1,
+                 price: '193.00', 
+                 sku: '', 
+                 variant_title: nil,
+                 vendor: 'Robel-Murray', 
+                 fulfillment_service: 'manual', 
+                 product_id: 2038439608378,
+                 requires_shipping: true,
+                 taxable: true,
+                 gift_card: false,
+                 name: 'Product - 20181017164101', 
+                 variant_inventory_management: nil,
+                 properties: [
+
+                 ],
+                 product_exists: true,
+                 fulfillable_quantity: 0,
+                 grams: 27000,
+                 total_discount: '0.00', 
+                 fulfillment_status: nil,
+                 price_set: {
+                    shop_money: {
+                       amount: '193.00', 
+                       currency_code: 'USD'
+                    },
+                    presentment_money: {
+                       amount: '193.00', 
+                       currency_code: 'USD'
+                    }
+                 },
+                 total_discount_set: {
+                    shop_money: {
+                       amount: '0.00', 
+                       currency_code: 'USD'
+                    },
+                    presentment_money: {
+                       amount: '0.00', 
+                       currency_code: 'USD'
+                    }
+                 },
+                 discount_allocations: [
+
+                 ],
+                 admin_graphql_api_id: 'gid:\/\/shopify\/LineItem\/2382039318586', 
+                 tax_lines: [
+                    {
+                       title: 'IGST', 
+                       price: '34.74', 
+                       rate: 0.18,
+                       price_set: {
+                          shop_money: {
+                             amount: '34.74', 
+                             currency_code: 'USD'
+                          },
+                          presentment_money: {
+                             amount: '34.74', 
+                             currency_code: 'USD'
+                          }
+                       }
+                    }
+                 ]
+              }
+           }
+        ],
+        transactions: [
+           {
+              id: 1152651788346,
+              order_id: 1025918795834,
+              kind: 'refund', 
+              gateway: 'manual', 
+              status: 'success', 
+              message: 'Refunded 227.74 from manual gateway', 
+              created_at: '2018-11-28T05:27:49-12:00', 
+              test: false,
+              authorization: nil,
+              location_id: nil,
+              user_id: nil,
+              parent_id: 1152647921722,
+              processed_at: '2018-11-28T05:27:49-12:00', 
+              device_id: nil,
+              receipt: {
+
+              },
+              error_code: nil,
+              source_name: '2303410', 
+              amount: '227.74', 
+              currency: 'USD', 
+              admin_graphql_api_id: 'gid:\/\/shopify\/OrderTransaction\/1152651788346'
+           }
+        ],
+        order_adjustments: [
+
+        ]
+     }
+   }
+  end
+
 end

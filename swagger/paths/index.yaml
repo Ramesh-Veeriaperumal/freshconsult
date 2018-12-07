@@ -225,7 +225,7 @@
 /canned_responses/:
   $ref: ./canned_responses/list_and_create.yaml
 /canned_responses/{id}:
-  $ref: ./canned_responses/show.yaml
+  $ref: ./canned_responses/show_and_update.yaml
 /canned_responses/search:
   $ref: ./canned_responses/search.yaml
 

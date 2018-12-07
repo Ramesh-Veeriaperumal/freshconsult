@@ -525,6 +525,7 @@ Authority::Authorization::PrivilegeList.build do
 
   manage_canned_responses do
     resource :"helpdesk/canned_responses/folder"
+    resource :"canned_response", only: [:create, :update]
     resource :"canned_response_folder", :only => [:create, :update]
   end
 

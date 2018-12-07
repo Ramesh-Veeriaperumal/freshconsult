@@ -87,24 +87,51 @@ module Ember
       end
 
       def test_create_fsm
-        create_fsm do
-          Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
-          post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
+        enable_fsm do
+          begin
+            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            fields_count_before_installation = Account.current.ticket_fields.size
+            total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
 
-          assert_response 204
-          assert Account.current.field_service_management_enabled?
-          assert Account.current.parent_child_tickets_enabled?
+            post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
 
-          field = Account.current.ticket_fields.find_by_name("cf_fsm_phone_number_#{Account.current.id}")
-          assert field.present?
+            assert_response 204          
+            assert Account.current.field_service_management_enabled?
+            assert Account.current.parent_child_tickets_enabled?
+            fields_count_after_installation = Account.current.ticket_fields.size
+            assert fields_count_after_installation == (total_fsm_fields_count + fields_count_before_installation)
+          ensure
+            Account.any_instance.unstub(:disable_old_ui_enabled?)
+          end
+        end
+      end
 
-          Account.any_instance.unstub(:disable_old_ui_enabled?)
+      def test_destroy_fsm
+        enable_fsm do
+          begin
+            Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
+            post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
+
+            assert_response 204
+            assert Account.current.field_service_management_enabled?
+            assert Account.current.parent_child_tickets_enabled?
+
+            fields_count_after_installation = Account.current.ticket_fields.size
+            total_fsm_fields_count = CUSTOM_FIELDS_TO_RESERVE.size
+
+            delete :destroy, controller_params(version: 'private', id: 'field_service_management')
+
+            fields_count_after_destroy = Account.current.ticket_fields.size
+            assert fields_count_after_destroy == (fields_count_after_installation - total_fsm_fields_count)
+          ensure
+            Account.any_instance.unstub(:disable_old_ui_enabled?)
+          end
         end
       end
 
       # Test create with failed validation.
       def test_create_fsm_with_old_ui_enabled
-        create_fsm do
+        enable_fsm do
           Account.current.revoke_feature(:disable_old_ui)
           post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
 
@@ -114,7 +141,7 @@ module Ember
       end
 
       def test_create_fsm_with_launch_party_disabled
-        create_fsm do
+        enable_fsm do
           Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
           Account.current.rollback(:field_service_management_lp)
           post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
@@ -129,7 +156,7 @@ module Ember
 
       # Feature already enabled validation.
       def test_create_fsm_with_already_enabled
-        create_fsm do
+        enable_fsm do
           Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
           Account.current.set_feature(:field_service_management)
           post :create, construct_params({version: 'private'}, {name: 'field_service_management'})
@@ -144,7 +171,7 @@ module Ember
       # Todo: Custom field count validation_fail
 
       def test_create_fsm_with_plan_based_feature_disabled
-        create_fsm do
+        enable_fsm do
           Account.any_instance.stubs(:disable_old_ui_enabled?).returns(true)
           Account.any_instance.stubs(:field_service_management_toggle_enabled?).returns(false)
           post :create, construct_params({version: 'private'}, {name: 'field_service_management'})

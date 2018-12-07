@@ -86,6 +86,15 @@ class DetectUserLanguageTest < ActionView::TestCase
     assert_equal @user.account.language, @user.language, 'language detection improper response from google'
   end
 
+  def test_lang_detection_with_cld
+    User.any_instance.stubs(:detect_language?).returns(true)
+    @account.launch(:compact_lang_detection)
+    Users::DetectLanguage.new.perform(user_id: @user.id, text: 'test string - sample 2')
+    @user.reload
+    assert_equal @user.language, "en"
+    @account.rollback(:compact_lang_detection)
+  end
+
   def sample_google_lang_response(lang = 'ar')
     { 'data' => {
       'detections' =>

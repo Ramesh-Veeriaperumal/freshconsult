@@ -202,4 +202,25 @@ class Ember::GroupsControllerTest < ActionController::TestCase
     assert_nil Group.find_by_id(group.id)
   end
 
+  def test_supervisor_index
+    User.stubs(:current).returns(User.first)
+    User.current.stubs(:privilege?).with(:admin_tasks).returns(false)
+    User.current.stubs(:privilege?).with(:manage_availability).returns(true)   
+    Account.current.groups.delete_all
+    3.times do
+      create_group_private_api(@account, agent_ids:[User.first.id])
+    end   
+    pattern = [] 
+    get :index, controller_params(version: 'private')
+    User.current.groups.order(:name).all.each do |group|
+      pattern << private_group_pattern(group)
+    end   
+    assert_response 200
+    match_json(pattern.ordered!)
+  ensure
+    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+    User.any_instance.stubs(:privilege?).with(:manage_availability).returns(false)
+  end
+
+
 end

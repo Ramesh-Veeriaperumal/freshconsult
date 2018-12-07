@@ -1,11 +1,13 @@
 class CannedResponsesController < ApiApplicationController
   include HelperConcern
   include TicketConcern
+  include CannedResponseConcern
+  include AttachmentConcern
   include HelpdeskAccessMethods
 
   decorate_views(decorate_objects: [:folder_responses])
 
-  before_filter :canned_response_permission?, :load_ticket, only: [:show]
+  before_filter :canned_response_permission?, :load_ticket, only: [:show, :update]
   before_filter :filter_ids, only: :index
   before_filter :load_folder, :validate_filter_params, only: :folder_responses
   SLAVE_ACTIONS = %w[index search].freeze
@@ -21,7 +23,36 @@ class CannedResponsesController < ApiApplicationController
     response.api_meta = { count: @items_count }
   end
 
+  def self.wrap_params
+    CannedResponseConstants::WRAP_PARAMS
+  end
+
   private
+
+    def assign_protected
+      @item.account = current_account
+      build_attachments
+      @item.shared_attachments = @item.shared_attachments
+    end
+
+    def valid_content_type?
+      return true if super
+      allowed_content_types = CannedResponseConstants::ALLOWED_CONTENT_TYPE_FOR_ACTION[action_name.to_sym] || [:json]
+      allowed_content_types.include?(request.content_mime_type.ref)
+    end
+
+    def sanitize_params
+      @delegator_klass = 'CannedResponseDelegator'
+      validate_delegator(@item, cname_params.slice(*CannedResponseConstants::DELEGATE_FIELDS))
+      construct_canned_response
+    end
+
+    def validate_params
+      @validation_klass = 'CannedResponsesValidation'
+      params[cname].permit(*CannedResponseConstants::CREATE_FIELDS)
+      canned_response = validation_klass.new(params[cname], @item, string_request_params?)
+      render_custom_errors(canned_response, true) unless canned_response.valid?(action_name.to_sym)
+    end
 
     def validate_filter_params
       params.permit(*ApiConstants::DEFAULT_INDEX_FIELDS, :ids)
@@ -94,4 +125,11 @@ class CannedResponsesController < ApiApplicationController
                                          query_hash('Admin::CannedResponses::Response', 'admin_canned_responses', *options))
       (ca_responses || []).compact
     end
+
+    def build_attachments
+      build_shared_attachment
+      build_shared_attachment_with_ids
+    end
+
+    wrap_parameters(*wrap_params)
 end

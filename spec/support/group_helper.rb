@@ -40,7 +40,8 @@ module GroupHelper
     group.account_id = account.id
     group.description=Faker::Lorem.paragraph   
     group.escalate_to=1
-    group.agent_ids=[1,2]  
+    group.agent_ids=options[:agent_ids]
+    group.agent_ids=[1,2] if !options[:agent_ids]
     group.business_calendar_id=1
     group.ticket_assign_type=options[:ticket_assign_type] if options[:ticket_assign_type]
     group.ticket_assign_type=options[:round_robin_type] if options[:round_robin_type]
