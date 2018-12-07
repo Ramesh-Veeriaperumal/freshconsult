@@ -84,7 +84,7 @@ module Freshcaller::JwtAuthentication
 
   def set_user(payload)
     user = current_account.technicians.find_by_single_access_token(payload['api_key'])
-    return (@current_user = user) if user.present?
+    return (@current_user = user) && user.make_current if user.present?
     render_request_error :invalid_credentials, Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
   end
 
