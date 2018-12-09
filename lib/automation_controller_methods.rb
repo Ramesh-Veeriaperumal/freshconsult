@@ -139,7 +139,7 @@ module AutomationControllerMethods
 
   def add_custom_actions action_hash
     special_case = none_option
-    current_account.ticket_fields.custom_fields.each do |field|
+    current_account.ticket_fields.non_encrypted_custom_fields.each do |field|
       action_hash.push({
                          :id => field.id,
                          :name => field.name,

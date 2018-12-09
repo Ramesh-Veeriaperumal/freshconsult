@@ -24,6 +24,11 @@ class Dynamo
     inactive: 1
   }.freeze
 
+  DYNAMO_ACTIONS = {
+    put: 'PUT',
+    add: 'ADD'
+  }.freeze
+
   def self.read_capacity
     DYNAMO_THROUGHPUT[:read]
   end
@@ -278,7 +283,7 @@ class Dynamo
 			{
 				item.first.to_s => {
 					:value => self.class.attr_convert(item.last[:new].to_s),
-					:action => 'PUT'
+					:action => DYNAMO_ACTIONS[:put]
 				}
 			}
 		end).inject {|res, hash| res.merge(hash) }
@@ -291,7 +296,7 @@ class Dynamo
 			:attribute_updates => (attributes.map do |attr|
 				{
 					attr.to_s => {
-						:action => "ADD",
+						:action => DYNAMO_ACTIONS[:add],
 						:value => { :n => value.to_i.to_s }
 					}
 				}

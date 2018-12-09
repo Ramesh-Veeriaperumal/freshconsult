@@ -175,6 +175,7 @@
     - deactivate_filter_widgets
     - cancel_account
     - migration
+    - remove_encrypted_fields
   :external:
     - code_console_execution
     - integrations

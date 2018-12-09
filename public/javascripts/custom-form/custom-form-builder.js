@@ -162,7 +162,6 @@
     },
 
     appendDom: function(existingFields){
-
       $(existingFields).each($.proxy(function(index, dataItem){
 
         if( !dataItem.field_options.section )
@@ -202,20 +201,20 @@
       switch(dataItem.dom_type) {
 
           case 'requester':
-             dataItem.type = "text";
-          break;
+            dataItem.type = "text";
+            break;
 
           case 'dropdown_blank':
           case 'nested_field':
-             dataItem.type = "dropdown";
-          break;
+            dataItem.type = "dropdown";
+            break;
 
           case 'html_paragraph':
-             dataItem.type = "paragraph";
-          break;
+            dataItem.type = "paragraph";
+            break;
 
           default:
-             dataItem.type = dataItem.dom_type;
+            dataItem.type = dataItem.dom_type;
        }
     },
 

@@ -124,14 +124,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def add_associates(val)
-    update_associates(val,"ADD")
+    update_associates(val, Dynamo::DYNAMO_ACTIONS[:add])
   end
 
   def remove_associates(val)
     update_associates(val,"DELETE")
   end
 
-  def update_associates(val, action="ADD")
+  def update_associates(val, action = Dynamo::DYNAMO_ACTIONS[:add])
     @associates = nil
     hash =  {
      :key => HASH_KEY,
@@ -141,7 +141,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                 table_name,
                 hash, nil,
                 { ASSOCIATES => val}, action)
-    update_associates_count(self) if action == 'ADD'
+    update_associates_count(self) if action == Dynamo::DYNAMO_ACTIONS[:add]
     return resp.data.attributes[ASSOCIATES].map {|e| e.to_i} if resp_data?(resp)
     nil
   end

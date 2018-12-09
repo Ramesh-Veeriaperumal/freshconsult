@@ -262,8 +262,9 @@ class CustomFieldsController < Admin::AdminController
           field.destroy if field
         elsif sec_field[:id].nil?
           ticket_field_name = sec_field.delete(:ticket_field_name)
+          is_encrypted = sec_field.delete(:is_encrypted) 
           if sec_field[:ticket_field_id].nil?
-            alias_name = field_name(ticket_field_name, account)
+            alias_name = field_name(ticket_field_name, account, is_encrypted)
             invalid_field = @invalid_fields.find { |f| f.name == alias_name && f.section_field? }
             # When multiple fields with same name are saved, we'll save the last field and not the first. 
             if invalid_field.present?

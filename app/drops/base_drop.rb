@@ -130,6 +130,8 @@ class BaseDrop < Liquid::Drop
         escape_liquid_attribute(field_value)
       when :custom_date
         formatted_date(field_value)
+      when :encrypted_text
+        nil
       else 
         field_value
       end

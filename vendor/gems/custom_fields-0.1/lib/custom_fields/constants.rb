@@ -11,9 +11,13 @@ module CustomFields
       :custom_checkbox        => { :type => 1006, :dom_type => :checkbox,       :db_column_type => :tiny_int_1 },
       :custom_date            => { :type => 1007, :dom_type => :date,           :db_column_type => :date_time },
       :custom_paragraph       => { :type => 1008, :dom_type => :paragraph,      :db_column_type => :text },
-      :custom_url             => { :type => 1009, :dom_type => :url,            :db_column_type => :text }
+      :custom_url             => { :type => 1009, :dom_type => :url,            :db_column_type => :text },
+      :encrypted_text         => { :type => 1010, :dom_type => :encrypted_text, :db_column_type => :varchar_255 }
     }
 
     TIME_ZONE_CHOICES = ActiveSupport::TimeZone.all.map do |time_zone| [time_zone.to_s, time_zone.name.to_sym] end
+
+    CUSTOM_FIELD_LABEL_PREFIX = 'cf_'
+    ENCRYPTED_FIELD_LABEL_PREFIX = 'cf_enc_'
   end
 end

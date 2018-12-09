@@ -742,6 +742,21 @@ module Ember
       assert_equal ticket_date_format, res['custom_fields']['requester_date']
     end
 
+    def test_show_a_contact_with_encrypted_text_field
+      contact_field = create_contact_field(cf_params(type: 'encrypted_text', field_type: 'encrypted_text', label: 'Sensitive info', name: 'cf_enc_sensitive_info'))
+      @account.reload
+      encryption_key_text = SecureRandom.base64(50)
+      Account.any_instance.stubs(:hipaa_encryption_key).returns(encryption_key_text)
+      Account.any_instance.stubs(:hipaa_and_encrypted_fields_enabled?).returns(true)
+      sensitive_data = 'A positive'
+      sample_user = add_new_user(@account, { custom_fields: { cf_enc_sensitive_info: sensitive_data } })
+      get :show, controller_params(version: 'private', id: sample_user.id)
+      assert_response 200
+      res = JSON.parse(response.body)
+      contact_field.destroy
+      assert_equal sensitive_data, res['custom_fields']['enc_sensitive_info']
+    end
+
     def test_show_a_non_existing_contact
       get :show, controller_params(version: 'private', id: 0)
       assert_response :missing

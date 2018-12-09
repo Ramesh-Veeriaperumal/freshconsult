@@ -536,6 +536,7 @@ en:
     nested_field: Dependent field
     drag_and_drop_field: Drag & Drop Field
     default_field_error: Default fields cannot be dropped into section
+    encrypted_text: "Encrypted Field"
   ticket_fields:
     fields:
       source: Source
@@ -564,6 +565,7 @@ en:
     confirm_deletion: Warning! You will lose the data pertaining to this field in all old tickets permanently. Are you sure you want to delete this field?
     no_choice_message: "At least one valid choice has to be present"
     customer_label_missing: Customer label cannot not be empty
+    encrypted_field_banner_text: "This is an encrypted field and will not appear in search results."
     index:
       number: Number
       decimal: Decimal
@@ -3739,6 +3741,7 @@ en:
       export_data: Export Data
       export_now: Export now
       export_data_text: Generate an XML of all available Help desk data and send it via email
+      export_data_instruction: By doing this, you are also exporting encrypted fields that contain sensitive data about your customers.
       account_settings: Account Settings
       primary_contact : Primary contact details
       primary_contact_info : (Used for all account-related communications from Freshdesk)
@@ -10339,6 +10342,7 @@ en:
       all_reports: "All Reports"
       schedule: "Schedule"
       new_schedule: "New Schedule"
+      schedule_encryption_info: "* By exporting <a href='' target='_blank'>encrypted fields</a>, you are downloading sensitive data about your customers."
       no_schedule: "No schedules created"
       create_new: "Create"
       schedule_show_message: "You cannot edit a schedule once it's created"

@@ -300,16 +300,15 @@ module RabbitMq::Subscribers::Tickets::Activities
     changes.each do |k,v|
       tf = acc_ff_fields.find {|f_field| f_field.safe_send(field) == k.to_s}.ticket_field if ff_fields_name.include?(k.to_sym)
       if tf
-        # for single/multi line text
-        if tf.field_type == "custom_paragraph" or tf.field_type == "custom_text"
+        case tf.field_type
+        when "custom_paragraph", "custom_text", "encrypted_text"
+          # for single line/multi line/encrypted text
           value = [nil, DONT_CARE_VALUE]
-        # for check box
-        elsif tf.field_type == "custom_checkbox"
+        when "custom_checkbox" # for check box
           (v[1] == true || v[1] == "1") ? checked << "#{tf.label}" : unchecked << "#{tf.label}"
-        # for date field
-        elsif tf.field_type == "custom_date"
+        when "custom_date" # for date field
           value = v[1].is_a?(Time)  ? [nil,v[1].utc.strftime('%-d %b, %Y')] : add_dont_care(v)
-        elsif tf.field_type == "custom_number"
+        when "custom_number"
           value = v[1].is_a?(Integer) ? [nil, v[1].to_s] : add_dont_care(v)
         else
           value = add_dont_care(v)

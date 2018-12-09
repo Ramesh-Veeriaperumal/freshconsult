@@ -1,3 +1,5 @@
+$encrypted-placeholder-color: #FFD18B;
+
 .insert-field {
 	font-size: 14px;
 	font-weight: 500;
@@ -284,6 +286,16 @@
 					background: #d25a4a;
 					&:after {
 						@include border-left-color(#d25a4a);
+					}
+				}
+			}
+			&.encrypted-placeholder {
+				border: 1px solid $encrypted-placeholder-color;
+				.ui-dragging-text {
+					background: $encrypted-placeholder-color;
+					color: #000;
+					&:after {
+						@include border-left-color($encrypted-placeholder-color);
 					}
 				}
 			}

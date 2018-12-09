@@ -74,21 +74,23 @@ module Helpdesk::Ticketfields::ControllerMethods
       column_name = available_columns(type).first
       add_to_used_columns(type, column_name)
       label = alias_present ? field_details[:flexifield_alias] : field_details[:label]
+      is_encrypted = type.to_sym == Helpdesk::TicketField::CUSTOM_FIELD_PROPS[:encrypted_text][:dom_type]
       {
         flexifield_def_id:  account.ticket_field_def.id,
         flexifield_name:    column_name,
         flexifield_coltype: type,
-        flexifield_alias:   field_name(label, account),
+        flexifield_alias:   field_name(label, account, is_encrypted),
         flexifield_order:   field_details[:position], # ofc. there'll be gaps.
         import_id:          field_details.delete(:import_id)
       }
     end
 
-    def field_name(label, account = current_account)
+    def field_name(label, account = current_account, encrypted = false)
       # invalid_start_char = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', ' ']
       label = label.gsub(/[^ _0-9a-zA-Z]+/, '')
       label = "rand#{rand(999_999)}" if label.blank?
-      label = "cf_#{label}"
+      prefix = encrypted ? ENCRYPTED_FIELD_LABEL_PREFIX : CUSTOM_FIELD_LABEL_PREFIX
+      label = "#{prefix}#{label}"
       "#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}_#{account.id}".squeeze('_')
     end
 

@@ -84,7 +84,7 @@ class AdminEmail::AssociatedAccounts < Dynamo
           value: {
             "SS" => ["#{account_id},#{time_stamp}"]
           },
-          action: "ADD"
+          action: DYNAMO_ACTIONS[:add]
         }
       }
     }))

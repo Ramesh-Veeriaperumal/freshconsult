@@ -84,7 +84,8 @@ module AccountConstants
     mid: { dashboard: 20, widgets: { scorecard: 20, bar_chart: 7, csat: 3, leaderboard: 3, ticket_trend_card: 3, time_trend_card: 3, sla_trend_card: 3 } },
     max: { dashboard: 25, widgets: { scorecard: 25, bar_chart: 9, csat: 3, leaderboard: 3, ticket_trend_card: 4, time_trend_card: 4, sla_trend_card: 4 } }
   }.freeze
-
+  
+  HIPAA_ENCRYPTION_ALGORITHM = 'AES-256-CBC'
   SANDBOX_TRAIL_PERIOD = 180
 
   def attachment_limit

@@ -24,9 +24,7 @@ class Account < ActiveRecord::Base
   has_many :portals, :dependent => :destroy
   has_one  :main_portal, :class_name => 'Portal', :conditions => { :main_portal => true}
   has_one :account_additional_settings, :class_name => 'AccountAdditionalSettings'
-  delegate :supported_languages, :to => :account_additional_settings
-  delegate :secret_keys, to: :account_additional_settings
-  delegate :max_template_limit, to: :account_additional_settings
+  delegate :supported_languages, :secret_keys, :max_template_limit, to: :account_additional_settings_from_cache
   has_one  :whitelisted_ip
   has_one :contact_password_policy, :class_name => 'PasswordPolicy',
     :conditions => {:user_type => PasswordPolicy::USER_TYPE[:contact]}, :dependent => :destroy

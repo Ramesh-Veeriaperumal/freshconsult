@@ -2,6 +2,7 @@ class DenormalizedFlexifield < ActiveRecord::Base
   self.primary_key = :id
 
   include FlexifieldConstants
+  include Helpdesk::EncryptedField
 
   MAX_RETRY = 5
 
@@ -35,7 +36,7 @@ class DenormalizedFlexifield < ActiveRecord::Base
     define_method attribute do
       begin
         db_value = safe_send(db_column, false)
-        db_value[attribute]
+        sanitize_value(db_column, db_value[attribute], true)
       rescue Exception => e
         Rails.logger.debug "DenormalizedFlexifield Exception, ID: #{self.id}, Message: #{e.message}, db_value: #{db_value.inspect}, db_value class: #{db_value.class.name} attribute: #{attribute}, db_column: #{db_column}"
         nil
@@ -44,11 +45,11 @@ class DenormalizedFlexifield < ActiveRecord::Base
 
     define_method "#{attribute}=" do |new_value|
       current_value = safe_send(attribute) # self.current_state[db_column][attribute]
-      new_value = sanitize_value(db_column, new_value) unless new_value.nil?
       if current_value != new_value
         if new_value.nil?
           safe_send(db_column, false).delete(attribute)
         else
+          new_value = sanitize_value(db_column, new_value)
           safe_send(db_column, false)[attribute] = new_value
         end
         current_state[db_column.to_sym][attribute.to_sym] = new_value
@@ -119,8 +120,9 @@ class DenormalizedFlexifield < ActiveRecord::Base
       Rails.logger.warn warning_message
     end
 
-    def sanitize_value(db_column, value)
-      SERIALIZED_COLUMN_SANITIZATION_BY_DB_COLUMN[db_column].each do |method|
+    def sanitize_value(db_column, value, read = false)
+      sanitization_methods_hash = read ? SERIALIZED_COLUMN_READ_SANITIZATION_BY_DB_COLUMN : SERIALIZED_COLUMN_WRITE_SANITIZATION_BY_DB_COLUMN
+      sanitization_methods_hash[db_column].each do |method|
         value = safe_send(method, value)
       end
       value

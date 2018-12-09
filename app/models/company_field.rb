@@ -46,7 +46,7 @@ class CompanyField < ActiveRecord::Base
   }
 
   CUSTOM_FIELDS_SUPPORTED = [ :custom_text, :custom_paragraph, :custom_checkbox, :custom_number,
-                              :custom_dropdown, :custom_phone_number, :custom_url, :custom_date ]
+                              :custom_dropdown, :custom_phone_number, :custom_url, :custom_date, :encrypted_text ]
 
   DB_COLUMNS = {
     :text         => { :column_name => "cf_text",     :column_limits => 10 },

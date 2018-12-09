@@ -36,7 +36,7 @@ class Account < ActiveRecord::Base
       :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
       :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
       :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments, :freshconnect,
-      :proactive_outreach, :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing    
+      :proactive_outreach, :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :custom_encrypted_fields, :hipaa
     ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -71,6 +71,12 @@ class Account < ActiveRecord::Base
   Collaboration::Ticket::SUB_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
       self.collaboration_enabled? && (self.collab_settings[item.to_s] == 1)
+    end
+  end
+
+  Fdadmin::FeatureMethods::BITMAP_FEATURES_WITH_VALUES.each do |key, value|
+    define_method "#{key.to_s}_feature_changed?" do
+      self.changes[:plan_features].present? && bitmap_feature_changed?(value)
     end
   end
 
@@ -305,6 +311,17 @@ class Account < ActiveRecord::Base
 
   def help_widget_enabled?
     launched?(:help_widget)
+  end
+
+  # Checks if a bitmap feature has been added or removed
+  # old_feature ^ new_feature - Will give the list of all features that have been modified in update call
+  # (old_feature ^ new_feature) & (2**feature_val) - Will return zero if the given feature has not been modified
+  # old_feature & (2**feature_val) - Checks if the given feature is part of old_feature. If so, the feature has been removed. Else,it's been added.
+  def bitmap_feature_changed?(feature_val)
+    old_feature = self.changes[:plan_features][0].to_i
+    new_feature = self.changes[:plan_features][1].to_i
+    return false if ((old_feature ^ new_feature) & (2**feature_val)).zero?
+    @action = (old_feature & (2**feature_val)).zero? ? "add" : "drop"
   end
 
   def cascade_dispatcher_enabled?

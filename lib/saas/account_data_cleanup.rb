@@ -383,6 +383,11 @@ end
     end
   end
 
+  def handle_hipaa_drop_data
+    account.revoke_feature :custom_encrypted_fields
+    account.remove_encrypted_fields
+  end
+  
   private
 
   def default_portal_preferences
