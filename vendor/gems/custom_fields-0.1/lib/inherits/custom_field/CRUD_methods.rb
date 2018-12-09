@@ -10,7 +10,7 @@ module Inherits
         def create_field(field_details, account = Account.current)
           #can remove levels after removing nested levels from cf_customizer.js        
           custom_field      = self.new field_details
-          custom_field.name = field_name field_details[:label]
+          custom_field.name = field_name field_details[:label], custom_field.encrypted_field?
           populate_meta_data custom_field, field_details[self::CUSTOM_FORM_ID_COLUMN]
 
           if custom_field.errors.full_messages.empty? && custom_field.save # rails flushes errors before saving
@@ -39,11 +39,12 @@ module Inherits
             custom_field.column_name = available_columns.first
           end
 
-          def field_name(label)
+          def field_name(label, encrypted = false)
             # XML attributes shouldn't start with a numeral. Pre-fixed 'cf_' as a simple fix
             label = label.gsub(/[^ _0-9a-zA-Z]+/,"")
             label = "rand#{rand(999999)}" if label.blank?
-            "cf_#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}".squeeze("_")
+            prefix = encrypted ? CustomField::Constants::ENCRYPTED_FIELD_LABEL_PREFIX : CustomField::Constants::CUSTOM_FIELD_LABEL_PREFIX
+            "#{prefix}#{label.strip.gsub(/\s/, '_').gsub(/\W/, '').downcase}".squeeze("_")
           end
 
       end

@@ -22,7 +22,9 @@ class CompanyDrop < BaseDrop
   end
 	
   def before_method(method)
-    required_field_type = @source.custom_field_types["cf_#{method}"]
+    field_name = "cf_#{method}"
+    @field_mappings ||= @source.custom_field_types
+    required_field_type = @field_mappings[field_name]
     return super unless required_field_type
     required_field_value = @source.custom_field["cf_#{method}"]
     formatted_field_value(required_field_type, required_field_value)

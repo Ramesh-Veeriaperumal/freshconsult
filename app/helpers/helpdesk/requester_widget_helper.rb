@@ -75,12 +75,12 @@ module Helpdesk::RequesterWidgetHelper
 
   def requester_widget_addable_contact_fields
     ignore_fields = CONTACT_FIELDS_EXCLUDE_TYPES + CONTACT_FIELDS_DEFAULT_TYPES
-    current_account.contact_form.contact_fields.reject {|field| ignore_fields.include?(field.field_type)} - requester_widget_custom_fields
+    current_account.contact_form.contact_fields(false, !current_account.falcon_and_encrypted_fields_enabled?).reject {|field| ignore_fields.include?(field.field_type)} - requester_widget_custom_fields
   end
 
   def requester_widget_addable_company_fields
     ignore_fields = COMPANY_FIELDS_EXCLUDE_TYPES + COMPANY_FIELDS_DEFAULT_TYPES
-    current_account.company_form.company_fields.reject {|field| ignore_fields.include?(field.field_type)} - requester_widget_custom_fields
+    current_account.company_form.company_fields(!current_account.falcon_and_encrypted_fields_enabled?).reject {|field| ignore_fields.include?(field.field_type)} - requester_widget_custom_fields
   end
 
   def get_user_default_fields_count user, company
@@ -112,7 +112,7 @@ module Helpdesk::RequesterWidgetHelper
   def construct_widget_fields user, company
     html = ""
     count = get_user_default_fields_count(user, company)
-    requester_widget_custom_fields.each do |field|
+    requester_widget_custom_fields.reject {|f| f.encrypted_field?}.each do |field|
       obj = field.is_a?(ContactField) ? user : company
       if field_value(field, obj).present?
         html << "<div class='widget-more-content hide'>" if count == CONTACT_WIDGET_MAX_DISPLAY_COUNT
@@ -188,14 +188,14 @@ module Helpdesk::RequesterWidgetHelper
     end
 
     def custom_contact_fields
-      contact_fields = current_account.contact_form.contact_fields.select { |field|
+      contact_fields = current_account.contact_form.contact_fields(false, !current_account.falcon_and_encrypted_fields_enabled?).select { |field|
         field.field_options.present? && field.field_options.key?("widget_position")
       }
       contact_fields.sort_by { |field| field.field_options["widget_position"] }
     end
 
     def custom_company_fields
-      company_fields = current_account.company_form.company_fields.select { |field|
+      company_fields = current_account.company_form.company_fields(!current_account.falcon_and_encrypted_fields_enabled?).select { |field|
         field.field_options.present? && field.field_options.key?("widget_position")
       }
       company_fields.sort_by { |field| field.field_options["widget_position"] }

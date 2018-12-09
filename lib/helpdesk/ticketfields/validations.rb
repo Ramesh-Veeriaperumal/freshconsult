@@ -29,12 +29,9 @@ module Helpdesk::Ticketfields::Validations
 
   def feature_based_fields_count(field_data_group)
     {}.tap do |h|
-      if denormalized_flexifields_enabled?
-        h[:string]   = calculate_fields_count(field_data_group['text'])
-        h[:dropdown] = calculate_dropdown_fields_count(field_data_group)
-      else
-        h[:string]   = calculate_string_fields_count(field_data_group)
-      end
+      dn_flexifield_enabled = denormalized_flexifields_enabled?
+      h[:string] = calculate_string_fields_count(field_data_group, dn_flexifield_enabled)
+      h[:dropdown] = calculate_dropdown_fields_count(field_data_group) if dn_flexifield_enabled
     end
   end
 
@@ -48,8 +45,10 @@ module Helpdesk::Ticketfields::Validations
     end
   end
 
-  def calculate_string_fields_count(field_data_group)
-    calculate_dropdown_fields_count(field_data_group) + calculate_fields_count(field_data_group['text'])
+  def calculate_string_fields_count(field_data_group, dn_flexifield_enabled = false)
+    count = calculate_fields_count(field_data_group['text']) + calculate_fields_count(field_data_group['encrypted_text'])
+    count += calculate_dropdown_fields_count(field_data_group) unless dn_flexifield_enabled
+    count
   end
 
   def calculate_dropdown_fields_count(field_data_group)

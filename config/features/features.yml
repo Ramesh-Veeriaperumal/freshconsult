@@ -97,8 +97,8 @@
       :shared_ownership: 93
       :oauth2: 94
       :cascade_dispatcher: 95
-      :autobots_4: 96
-      :autobots_5: 97
+      :hipaa: 96
+      :custom_encrypted_fields: 97
       :autobots_6: 98
       :autobots_7: 99
       :autobots_8: 100
@@ -213,4 +213,5 @@
       :segments: false
       :proactive_outreach: false
       :field_service_management: false
+      :custom_encrypted_fields: false
       :cascade_dispatcher: false

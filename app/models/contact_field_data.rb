@@ -1,6 +1,6 @@
 class ContactFieldData < ActiveRecord::Base
 
-  
+  include Helpdesk::EncryptedField
   serialize :text_uc02, Hash
   alias_attribute :history_column, :text_uc02
   

@@ -361,6 +361,11 @@ end
   def handle_custom_dashboard_add_data
     account.launch(:es_msearch)
   end
+
+  def handle_hipaa_drop_data
+    account.revoke_feature :custom_encrypted_fields
+    account.remove_encrypted_fields
+  end
   
   private
 

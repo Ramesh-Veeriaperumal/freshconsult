@@ -18,9 +18,11 @@
         <%= content_tag(:h3, t("custom_fields.drag_and_drop_field"), :class => "title") %> 
         <ul id="custom-fields" class="custom-fields"> 
           <% Helpdesk::TicketField::CUSTOM_FIELD_PROPS.each do |field, details| %>
+            <% next if ( details[:dom_type] == :encrypted_text and !@hipaa_enabled )%>
             <li class="field tooltip" data-type="<%="#{details[:dom_type]}"%>" 
                 data-field-type="<%="#{field}"%>" data-fresh="true" 
-                data-drag-info="<%=t("custom_fields.#{details[:dom_type]}").html_safe %>"> 
+                data-drag-info="<%=t("custom_fields.#{details[:dom_type]}").html_safe %>"
+                data-drag-class="<%=(details[:dom_type] == :encrypted_text) ? "encrypted-placeholder" : ""%>">
                 <% font_name = (details[:dom_type] == :'paragraph') ? "default-format" : details[:dom_type] %>
                 <%= content_tag(:span, '', :class => font_class(font_name,nil,'dom-icon tooltip'), :title => t("custom_fields.#{details[:dom_type]}")) %> 
             </li>
@@ -60,7 +62,7 @@
     show_sandbox_notification = <%= show_sandbox_notification %>;
 
     tf_lang = {
-     untitled:                    "<%= t("ticket_fields.untitled") %>",
+      untitled:                   "<%= t("ticket_fields.untitled") %>",
       firstChoice:                "<%= t("ticket_fields.first_choice") %>",
       secondChoice:               "<%= t("ticket_fields.second_choice") %>", 
       customerLabelEmpty:         "<%= t("ticket_fields.customer_label_missing") %>",
@@ -127,6 +129,8 @@
       nested_unique_names:        '<%= t("ticket_fields.formfield_props.nested_unique_names") %>',
       nested_3rd_level:           '<%= t("ticket_fields.formfield_props.nested_3rd_level") %>',
       mappedInternalGroup:        '<%= t("admin.contact_fields.formfield_props.mapped_internal_groups") %>',
+      encrypted_field_banner_text:   '<%= t("ticket_fields.encrypted_field_banner_text") %>',
+      encrypted_text: '<%= t("custom_fields.encrypted_text") %>',
 
       default:            '<%= t("admin.contact_fields.formfield_props.default") %>',
       number:             '<%= t("custom_fields.number") %>',

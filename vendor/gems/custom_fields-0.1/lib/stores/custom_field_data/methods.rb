@@ -18,8 +18,7 @@ module Stores
       def set_ff_value ff_alias, ff_value
         ff_field = to_ff_field ff_alias
         if ff_field
-          ff_value = nil if ff_value.blank?
-          write_attribute(ff_field, ff_value)
+          process_while_writing(ff_field, ff_value)
         else
           raise ArgumentError, "CustomField alias: #{ff_alias} not found in flexifeld def mapping"
         end
@@ -45,12 +44,25 @@ module Stores
 
         def process_while_reading column_name, field_type
           value = read_attribute(column_name)
+          return value if value.blank?
           case field_type
           when :custom_date
-            value.utc if value.present?
+            value.utc
+          when :encrypted_text
+            decrypt_field_value(value)
           else
             value
           end
+        end
+
+        def process_while_writing ff_field, ff_value
+          ff_value = encrypt_field_value(ff_value) if ff_field_type(ff_field) == :encrypted_text
+          ff_value = nil if ff_value.blank?
+          write_attribute(ff_field, ff_value)
+        end
+
+        def ff_field_type ff_field
+          custom_fields_cache.detect { |custom_field| custom_field.column_name == ff_field }.field_type
         end
 
     end

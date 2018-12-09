@@ -20,6 +20,11 @@
 		<div class="sidepanel">
 			<h5 class="lead"><%= t(".export_data") %></h5> 
 			<p><%= t('.export_data_text') %></p>
+			<% if current_account.falcon_and_encrypted_fields_enabled? %>
+			<div class="exported-data-encrypt-info">
+				<%= t('.export_data_instruction') %>
+			</div>
+			<% end %>
 			<%= submit_tag "#{t('.export_now')} &rsaquo;".html_safe, { :class => "btn" } %>
 		</div>
 	<% end %>

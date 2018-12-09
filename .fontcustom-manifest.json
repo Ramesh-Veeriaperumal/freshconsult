@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "fa2f8e7ddae4a809887bb8b713c7db17f9706388c8546b996de7f26a7ff3d46b",
-    "current": "fa2f8e7ddae4a809887bb8b713c7db17f9706388c8546b996de7f26a7ff3d46b"
+    "previous": "2344b7c35d0202144ffa15fd6a5cf9174756831203b020df38a7d52d606546f3",
+    "current": "2344b7c35d0202144ffa15fd6a5cf9174756831203b020df38a7d52d606546f3"
   },
   "fonts": [
-    "public/assets/glyphs_fa2f8e7ddae4a809887bb8b713c7db17.ttf",
-    "public/assets/glyphs_fa2f8e7ddae4a809887bb8b713c7db17.svg",
-    "public/assets/glyphs_fa2f8e7ddae4a809887bb8b713c7db17.woff",
-    "public/assets/glyphs_fa2f8e7ddae4a809887bb8b713c7db17.eot"
+    "public/assets/glyphs_2344b7c35d0202144ffa15fd6a5cf917.ttf",
+    "public/assets/glyphs_2344b7c35d0202144ffa15fd6a5cf917.svg",
+    "public/assets/glyphs_2344b7c35d0202144ffa15fd6a5cf917.woff",
+    "public/assets/glyphs_2344b7c35d0202144ffa15fd6a5cf917.eot"
   ],
   "glyphs": {
     "abandoned-call": {
@@ -506,6 +506,14 @@
       "codepoint": 61963,
       "source": "public/glyphs/vectors/db-unassigned.svg"
     },
+    "deathstar-off": {
+      "codepoint": 62148,
+      "source": "public/glyphs/vectors/deathstar-off.svg"
+    },
+    "deathstar-on": {
+      "codepoint": 62149,
+      "source": "public/glyphs/vectors/deathstar-on.svg"
+    },
     "decimal": {
       "codepoint": 61897,
       "source": "public/glyphs/vectors/decimal.svg"
@@ -609,6 +617,14 @@
     "email_commands_setting": {
       "codepoint": 61755,
       "source": "public/glyphs/vectors/email_commands_setting.svg"
+    },
+    "encrypted_text": {
+      "codepoint": 62154,
+      "source": "public/glyphs/vectors/encrypted_text.svg"
+    },
+    "encryption-lock": {
+      "codepoint": 62155,
+      "source": "public/glyphs/vectors/encryption-lock.svg"
     },
     "eraser": {
       "codepoint": 62019,

@@ -21,6 +21,7 @@
 			addChoice : '#addchoice',
 			deleteChoice : '.delete-choice',
 			privateSymbol : '.private-symbol',
+			encryptionSymbol : '.encryption-symbol',
 			fieldLabel: '.field-label',
 			customMessages : {
 				untitled : 'Untitled',
@@ -101,6 +102,10 @@
 			var label = jQuery("<label class='custom-form-label'/>").append(dataItem.label);
 			var lock = jQuery("<span />").addClass('ficon-security private-symbol muted');
 			label.prepend(lock);
+			if (dataItem.dom_type === "encrypted_text"){
+				var encryptedFieldLock = jQuery("<span />").addClass('ficon-encryption-lock encryption-symbol');
+				label.prepend(encryptedFieldLock);
+			}
 			controlLabel.append(label);
 			var field = jQuery("<div class='controls'/>");
 			var controlGroup = jQuery('<div class="control-group"/>');
@@ -126,6 +131,7 @@
 				case 'url':
 				case 'number':
 				case 'email':
+				case 'encrypted_text':
 					field.append('<input type="text" disabled/>');
 					controlGroup.append(controlLabel);
 					break;

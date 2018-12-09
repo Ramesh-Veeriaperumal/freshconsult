@@ -7,7 +7,7 @@
   custom_fields = []
   default_ticket_type_field = ""
   section_container = ""
-  ticket_fields ||= current_portal.ticket_fields_including_nested_fields
+  ticket_fields ||= current_portal.ticket_fields_including_nested_fields(:non_encrypted_ticket_fields)
 %>
 <% ticket_fields.each do |field| 
   next if field.section_field?

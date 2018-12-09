@@ -1,0 +1,78 @@
+$encrypted-placeholder-color: #FFD18B;
+$encrypted-banner-border: rgba(251,173,30,0.2);
+$encrypted-banned-background-color: #FFFADE;
+$encrypted-text-color: #FF6C46;
+$encrypted-symbol-color: #F5A623;
+$encrypted-bg-color: #FFF7EC;
+$info-text-color: #323232;
+
+.custom-mailbox-default {
+  #FreshdeskMailbox{
+    display:none;
+  }
+  #CustomMailbox{
+    display: block;
+  }
+}
+
+.template_form {
+  .ficon-encryption-lock{
+    @include left(2.5%);
+    position: absolute;
+    color: $encrypted-symbol-color;
+  }
+}
+
+.exported-data-encrypt-info{
+  border: 1px solid $encrypted-banner-border;
+  border-radius: 2px;
+  background-color: $encrypted-banned-background-color;
+  margin-bottom:15px;
+  color: $info-text-color;
+  font-size: 13px;
+  line-height: 140%;
+  @include padding(6px 8px 6px 11px);
+	}
+
+
+.encrypted-star {
+  font-size: 15px;
+  vertical-align: top;
+}
+
+.encrypted_text input {
+  background-color: $encrypted-bg-color;
+}
+
+.custom-fields-props-dialog .dom-icon.ficon-encrypted_text {
+    background-color: $encrypted-placeholder-color;
+    color: #000;
+}
+
+.encrypted-field-banner {   
+  border: 1px solid $encrypted-banner-border; 
+  border-radius: 2px; 
+  background-color: $encrypted-banned-background-color;
+}
+
+.encrypted-field-banner-text {
+    color: $encrypted-text-color;
+    padding: 5px 10px;
+}
+
+.encryption-symbol {
+  @include margin(0 7px 0 2px);
+  @include left(-8px);
+  position: absolute;
+  color: $encrypted-symbol-color;
+}
+
+.encrypted {
+  color: $encrypted-symbol-color;
+}
+
+.ticket_fields, .contact_fields {
+  .custom-field.encrypted_text input[disabled] {
+      background-color: $encrypted-bg-color;
+    }
+}

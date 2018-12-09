@@ -38,7 +38,7 @@
       <%= h(@ticket.product.name) %>
     </span>
   <% end %>
-<% current_portal.ticket_fields.each do |field| %>
+<% current_portal.ticket_fields(:non_encrypted_ticket_fields).each do |field| %>
   <% if field.visible_in_view_form? && field.flexifield_def_entry %>
     <span>
       <b><%= field.label %></b>

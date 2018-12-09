@@ -29,3 +29,4 @@
 //= require custom-form/template/section_header
 //= require custom-form/template/section_container
 //= require custom-form/template/section
+//= require custom-form/template/hipaa_custom_field_banner

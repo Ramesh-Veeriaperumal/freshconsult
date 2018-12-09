@@ -811,6 +811,31 @@ class Account < ActiveRecord::Base
       notification_type: EmailNotification::BOT_RESPONSE_TEMPLATE)
   end
 
+  def falcon_and_encrypted_fields_enabled?
+    user = User.current
+    falcon_ui_enabled = user && user.agent? ? falcon_ui_enabled?(user) : falcon_ui_enabled?
+    falcon_ui_enabled and hipaa_and_encrypted_fields_enabled?
+  end
+
+  def hipaa_and_encrypted_fields_enabled?
+    custom_encrypted_fields_enabled? and hipaa_enabled?
+  end
+
+  def remove_encrypted_fields
+    # delete ticket fields
+    ticket_fields.encrypted_custom_fields.destroy_all
+
+    # delete contact fields
+    contact_form.encrypted_custom_contact_fields.map(&:destroy)
+
+    # delete company fields
+    company_form.encrypted_custom_company_fields.map(&:destroy)
+  end
+
+  def hipaa_encryption_key
+    @hipaa_encryption_key ||= get_others_redis_key(cf_encryption_key) || fetch_cf_encryption_key_from_dynamo
+  end
+
   protected
   
     def external_url_is_valid?(url) 
@@ -866,8 +891,18 @@ class Account < ActiveRecord::Base
         :name => name
       })
     end
-    
+
+    def fetch_cf_encryption_key_from_dynamo
+      encryption_key = AccountEncryptionKeys.find(id, :hipaa_key)
+      set_others_redis_key(cf_encryption_key, encryption_key, 1.day)
+      encryption_key
+    end
+
     def freshid_migration_in_progress_key
       FRESHID_MIGRATION_IN_PROGRESS_KEY % {account_id: self.id}
+    end
+
+    def cf_encryption_key
+      CUSTOM_ENCRYPTED_FIELD_KEY % { account_id: self.id }
     end
 end
