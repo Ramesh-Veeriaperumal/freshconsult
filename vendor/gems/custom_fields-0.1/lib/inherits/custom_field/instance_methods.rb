@@ -144,7 +144,7 @@ module Inherits
       end
 
       def encrypted_field?
-        self.field_type.to_sym == self.class::CUSTOM_FIELD_PROPS[:encrypted_text][:dom_type]
+        self.field_type.to_sym == self.class::CUSTOM_FIELD_PROPS[:encrypted_text].try(:[], :dom_type)
       end
 
       private
