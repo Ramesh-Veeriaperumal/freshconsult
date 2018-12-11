@@ -1,0 +1,16 @@
+$encrypted-color: #F5A623;
+$encrypted-background-color: #FFF7EC;
+
+.encrypted_text.encrypted-text-field {
+	background-color: $encrypted-background-color;
+}
+
+.encrypted {
+	color: $encrypted-color;
+}
+
+.encrypted-lock {
+	color: $encrypted-color;
+    @include float(left);
+    @include padding(4px 5px 0px 0px);
+}

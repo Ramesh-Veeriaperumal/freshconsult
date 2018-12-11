@@ -5,7 +5,7 @@
   <%= render :partial => "helpnote" %>
 <% end %>
 <div class="contact_fields">
-  <%= render :partial => "/admin/shared/customer_fields_header", :locals => { :field_class => ContactField} %>
+  <%= render :partial => "/admin/shared/customer_fields_header", :locals => { :field_class => ContactField } %>
   <br/>
   <%= javascript_include_tag :'cdn/contact_fields' %>
   <%= form_for @fields_to_render, :url => { :action => "update" }, :html => { :method => :put, :id => "Updateform" } do |f| %>
@@ -82,7 +82,9 @@
       multiple_company_dialog_on : '<%= t("admin.contact_fields.multiple_company_dialog_on") %>',
       multiple_company_dialog_warning : '<%= t("admin.contact_fields.multiple_company_dialog_warning") %>',
       multiple_company_message_enable : '<%= t("admin.contact_fields.formfield_props.multiple_company_message_enable") %>',
-      sandbox_notification_for_ticketfields: '<%= t("sandbox.sandbox_notification_for_ticketfields").html_safe %>'
+      sandbox_notification_for_ticketfields: '<%= t("sandbox.sandbox_notification_for_ticketfields").html_safe %>',
+      encrypted_field_banner_text:   '<%= t("ticket_fields.encrypted_field_banner_text") %>',
+      encrypted_text: '<%= t("custom_fields.encrypted_text") %>'
     };
 
     window['translate'] = {}; 

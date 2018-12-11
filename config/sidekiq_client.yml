@@ -291,6 +291,7 @@ defaults: &defaults
     - [bot_email_reply]
     - [bot_email_ml_feedback]
     - [company_central_publish]
+    - [remove_encrypted_fields]
     - [ticket_field_central_publish]
 
 development:

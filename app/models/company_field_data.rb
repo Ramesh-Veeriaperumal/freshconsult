@@ -1,5 +1,6 @@
 class CompanyFieldData < ActiveRecord::Base
 
+  include Helpdesk::EncryptedField
   self.table_name = "company_field_data"
   self.primary_key = :id
 

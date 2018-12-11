@@ -85,7 +85,7 @@ class Helpdesk::CannedResponsesController < ApplicationController
     content = @ca_resp.content_html
     if ticket_present?
       @ticket.escape_liquid_attributes = current_account.launched?(:escape_liquid_for_reply)
-      Liquid::Template.parse(content).render('ticket' => @ticket, 'helpdesk_name' => @ticket.account.helpdesk_name)
+      Liquid::Template.parse(content).render('ticket' => @ticket.to_liquid, 'helpdesk_name' => @ticket.account.helpdesk_name)
     else
       params[:tkt_cr].present? ? Liquid::Template.parse(content).render('ticket' => nil) : content
     end

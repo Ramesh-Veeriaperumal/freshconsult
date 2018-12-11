@@ -3,7 +3,8 @@ class TicketFieldsController < CustomFieldsController
   include TicketFieldsHelper
 
   def index
-    @ticket_fields = current_portal.ticket_fields_including_nested_fields
+    @hipaa_enabled = current_account.falcon_and_encrypted_fields_enabled?
+    @ticket_fields = @hipaa_enabled ? current_portal.ticket_fields_including_nested_fields : current_portal.ticket_fields_including_nested_fields(:non_encrypted_ticket_fields)
     @section_data = current_account.sections
 
     respond_to do |format|

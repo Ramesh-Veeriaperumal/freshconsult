@@ -182,9 +182,11 @@ window.App.Agents = window.App.Agents || {};
 		});
 
 		$doc.on("click.agent-roles", '#add-group', function(){
+		  const field_agent = 2, support_agent = 1;
 		  $("#agent_group ul").children().remove();
 		  for(var key in _this.groups){
-		    if(!_this.groups[key]){
+		  	const agent_type = $("#agent_agent_type_field_agent").prop('checked') ? field_agent : support_agent
+		    if(!_this.groups[key] && _this.group_details[key][2] == agent_type) {
 		      $("#agent_group ul").append(JST["app/admin/agents/templates/item_checkbox"]({
     				type: 'group',
     				key: key,

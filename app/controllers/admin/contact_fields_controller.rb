@@ -9,6 +9,11 @@ class Admin::ContactFieldsController < Admin::AdminController
   include Cache::Memcache::Account
   include Helpdesk::CustomFields::CustomFieldMethods
 
+  def index
+    super
+    @hipaa_enabled = current_account.falcon_and_encrypted_fields_enabled?
+  end
+
   def update
     super
     clear_contact_fields_cache
@@ -40,6 +45,6 @@ class Admin::ContactFieldsController < Admin::AdminController
     end
 
     def index_scoper
-      @index_scoper ||= current_account.contact_form.contact_fields # ||= saves MemCache calls
+      @index_scoper ||= current_account.contact_form.contact_fields(false, !current_account.falcon_and_encrypted_fields_enabled?) # ||= saves MemCache calls
     end
 end

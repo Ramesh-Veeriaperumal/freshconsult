@@ -12,6 +12,9 @@ var isDefault = /^default/.test(field_type),
 		<% if(custom_form_type != 'company' && field_type != 'default_requester' && !visible_in_portal) { %>
 			<span class='ficon-security private-symbol muted'></span>
 		<% } %>
+		<% if(dom_type == 'encrypted_text') { %>
+			<span class='ficon-encryption-lock private-symbol encrypted'></span>
+		<% } %>
 		<% if (dom_type != 'checkbox') { %>
 			<label class='custom-form-label'><%= label %></label>
 		<% } %>
@@ -30,7 +33,8 @@ var isDefault = /^default/.test(field_type),
 			case 'url':
 			case 'number':
 			case 'decimal':
-			case 'email': %>
+			case 'email':
+			case 'encrypted_text': %>
 				<input type='text' disabled>
 				<% break;
 			case 'requester': %>

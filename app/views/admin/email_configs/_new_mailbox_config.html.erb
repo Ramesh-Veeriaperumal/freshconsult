@@ -37,18 +37,18 @@
 	<li class="control-group">
 		<label class="control-label" ><%=t('mailbox.mail_server').html_safe%></label>
 		<div class="controls row-fluid">
-	      <label class="radio span3 inline">
-	        <input checked="checked" id="DisableMailbox" name="email_config[smtp_mailbox_attributes][_destroy]" type="radio" value="1">
-		    	<%= t('mailbox.use_default')%>
-	      </label>
-	      <label class="radio inline">
-	        <input id="EnableMailbox" name="email_config[smtp_mailbox_attributes][_destroy]" type="radio" value="0">
-		    	<%= t('mailbox.use_your_own')%>
-	      </label>
+			<label class="radio span3 inline">
+				<input <% if !(current_account.falcon_and_encrypted_fields_enabled?) %> checked="checked" <% end %> id="DisableMailbox" name="email_config[smtp_mailbox_attributes][_destroy]" type="radio" value="1">
+				<%= t('mailbox.use_default')%>
+			</label>
+			<label class="radio inline">
+				<input <% if (current_account.falcon_and_encrypted_fields_enabled?) %> checked="checked" <% end %>id="EnableMailbox" name="email_config[smtp_mailbox_attributes][_destroy]" type="radio" value="0">
+				<%= t('mailbox.use_your_own')%>
+			</label>
 		</div>
 	</li>
 
-	<li class="control-group">
+	<li class="control-group <% if current_account.falcon_and_encrypted_fields_enabled? %>custom-mailbox-default<%end%>">
 		<div id="FreshdeskMailbox">
 			<span class="span4 control-label"> <%=t('email_configs.info8')%>: </span>
 			<div class="controls">

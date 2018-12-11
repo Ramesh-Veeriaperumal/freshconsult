@@ -87,7 +87,7 @@ window.App.Discussions = window.App.Discussions || {};
 				var url = $('#stamp_type').data('url');
 				$('#stamp-data').html('');
 				$('#stamp-data').addClass('sloading loading-small');
-				
+
 				App.track('Topic Stamp Change');
 				$.ajax({
 					url : url,
@@ -110,7 +110,7 @@ window.App.Discussions = window.App.Discussions || {};
 				}, 1000);
       });
 		},
-			
+
 		bindPostEditCancelLink: function () {
 			var $this = this;
 			$('body').on('click.topic_show', "[rel=post-edit-cancel]", function (ev) {
@@ -154,7 +154,12 @@ window.App.Discussions = window.App.Discussions || {};
 		},
 
     addTargetTopForLinks: function () {
-      $('.reload-page a:not([target])').attr('target', '_top');
+			$('.reload-page a').each(function() {
+				var hrefArray = this.href.split('/').slice(-1)[0];
+				if(hrefArray.indexOf('#') == -1) {
+					$(this).attr('target', '_top');
+				}
+			});
     },
 
 		unblockElement: function (element) {

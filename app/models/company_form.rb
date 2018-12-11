@@ -10,17 +10,22 @@ class CompanyForm < ActiveRecord::Base
   acts_as_custom_form :custom_field_class => 'CompanyField',
                         :custom_fields_cache_method => :custom_company_fields
 
-  def company_fields
+  def company_fields(exclude_encrypted_fields = false)
     # fetching just once per request, reducing memcache calls
     @company_fields ||= fetch_company_fields
+    exclude_encrypted_fields ? @company_fields.select{ |cf| !cf.encrypted_field? } : @company_fields
   end
 
   def default_company_fields
     company_fields.select{ |cf| cf.default_field? }
   end
 
-  def custom_company_fields
-    company_fields.select{ |cf| cf.custom_field? }
+  def custom_company_fields(exclude_encrypted_fields = false)
+    company_fields.select{ |cf| cf.custom_field? && (exclude_encrypted_fields ? !cf.encrypted_field? : true) }
+  end
+
+  def encrypted_custom_company_fields
+    company_fields.select{ |cf| cf.custom_field? && cf.encrypted_field? }
   end
 
   def agent_required_company_fields

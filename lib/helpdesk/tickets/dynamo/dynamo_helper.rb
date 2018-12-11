@@ -55,7 +55,7 @@ module Helpdesk::Tickets::Dynamo::DynamoHelper
   #val_to_add ==> Hash of {attr_name => array of values to add}
   #condition_expression ==> string containing condition expression in dynamo format
   #action can be ADD or DELETE
-  def self.update_set_attributes(table, hash, range, val_to_add, action = "ADD", condition_expression = nil)
+  def self.update_set_attributes(table, hash, range, val_to_add, action = Dynamo::DYNAMO_ACTIONS[:add], condition_expression = nil)
     dynamo_sandbox(table) do
       params = base_params(table, hash, range)
 

@@ -143,6 +143,10 @@ module Inherits
         end
       end
 
+      def encrypted_field?
+        self.field_type.to_sym == self.class::CUSTOM_FIELD_PROPS[:encrypted_text][:dom_type]
+      end
+
       private
         def return_account_property
           (account || Account.current).safe_send(name)

@@ -17,6 +17,11 @@ class AgentType < ActiveRecord::Base
     agent_type ? agent_type.agent_type_id : nil
   end
 
+  def self.agent_type_name(agent_type_id)
+    agent_type = Account.current.agent_types_from_cache.find { |type| type.agent_type_id == agent_type_id }
+    agent_type ? agent_type.name : nil
+  end
+
   #Determines ID to be used for a new agent type
   def self.next_agent_type_id
     agent_types = Account.current.agent_types_from_cache 

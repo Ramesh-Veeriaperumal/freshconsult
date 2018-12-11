@@ -198,4 +198,5 @@ module Redis::Keys::Others
   INVOICE_DUE                                  = "INVOICE_DUE:%{account_id}".freeze
   #Account cancellation related keys
   ACCOUNT_CANCELLATION_REQUEST_JOB_ID = "ACCOUNT_CANCELLATION_REQUEST_JOB_ID:%{account_id}".freeze
+  CUSTOM_ENCRYPTED_FIELD_KEY               = "CF_ENC_ENCRYPTION_KEY:%{account_id}".freeze
 end

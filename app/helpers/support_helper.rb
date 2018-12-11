@@ -392,6 +392,10 @@ module SupportHelper
     # adding :for attribute for requester(as email) element => to enable accessability
     if field[:name] == "requester"
       label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class, :for => "#{object_name}_email"
+    elsif field.encrypted_field?
+      label_tag "#{object_name}_#{field[:name]}",
+                content_tag(:span, "", :class => "ficon-encryption-lock encrypted", :title => t('custom_fields.encrypted_text'), 'data-toggle' => 'tooltip', 'data-placement' => 'top' ) + 
+                " #{field[:label_in_portal].html_safe}", :class => element_class, :for => "#{object_name}_email"
     else
       label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class
     end
@@ -414,9 +418,11 @@ module SupportHelper
         when "widget_requester" then
           render(:partial => "/support/shared/widget_requester", :locals => { :object_name => object_name, :field => field, :html_opts => html_opts, :value => field_value })
         when "text", "number", "decimal" then
-      text_field(object_name, field_name, { :class => element_class + " span12", :value => field_value }.merge(html_opts))
+          text_field(object_name, field_name, { :class => element_class + " span12", :value => field_value }.merge(html_opts))
+        when "encrypted_text" then
+          text_field(object_name, field_name, { :class => element_class + " span12 ficon-encrypted_text encrypted-text-field", :value => field_value }.merge(html_opts))
         when "paragraph" then
-      text_area(object_name, field_name, { :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts))
+          text_area(object_name, field_name, { :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts))
         when "dropdown" then
             select(object_name, field_name,
                 field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices,
@@ -428,11 +434,11 @@ module SupportHelper
           select(object_name, field_name, choices,
               { :include_blank => "...", :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class, :disabled => disabled})
         when "nested_field" then
-      nested_field_tag(object_name, field_name, field,
+          nested_field_tag(object_name, field_name, field,
             {:include_blank => "...", :selected => field_value, :pl_value_id => pl_value_id},
             {:class => element_class}, field_value, true, required)
         when "hidden" then
-      hidden_field(object_name , field_name , :value => field_value)
+          hidden_field(object_name , field_name , :value => field_value)
         when "checkbox" then
           check_box_html = { :class => element_class }
           if pl_value_id

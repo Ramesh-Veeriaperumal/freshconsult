@@ -76,7 +76,7 @@ module Reports
           end
         end
         if args[:complete_export]
-          ticket_data << I18n.t('helpdesk_reports.export_exceeds_row_limit_msg', :row_max_limit => options[:csv_row_limit]) if options[:exceeds_limit]
+          ticket_data << I18n.t('helpdesk_reports.export_exceeds_row_limit_msg') % {:row_max_limit => options[:csv_row_limit]} if options[:exceeds_limit]
           if args[:batch_id] == 1
             build_file_and_email(ticket_data, TYPES[:csv], options)
             return

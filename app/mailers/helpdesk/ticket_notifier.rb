@@ -70,7 +70,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
              :receips => ticket.from_email,
              :email_body_plain => plain_version,
              :email_body_html => html_version,
-             :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name).html_safe}
+             :subject => r_s_template.render('ticket' => ticket.to_liquid, 'helpdesk_name' => ticket.account.helpdesk_name).html_safe}
       if(notification_type == EmailNotification::NEW_TICKET and ticket.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:phone])
         params[:attachments] = ticket.all_attachments
         params[:cloud_files] = ticket.cloud_files
@@ -96,16 +96,16 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
       a_template = Liquid::Template.parse(agent_template.last) 
       a_plain_template = Liquid::Template.parse(agent_plain_template.gsub("{{ticket.description}}", "{{ticket.description_text}}"))
       a_s_template = Liquid::Template.parse(agent_template.first) 
-      html_version = a_template.render('ticket' => ticket, 
+      html_version = a_template.render('ticket' => ticket.to_liquid, 
                 'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
-      plain_version = a_plain_template.render('ticket' => ticket, 
+      plain_version = a_plain_template.render('ticket' => ticket.to_liquid, 
                 'helpdesk_name' => ticket.account.helpdesk_name, 'comment' => comment).html_safe
       headers = { :ticket => ticket,
        :notification_type => e_notification.notification_type,
        :receips => receips,
        :email_body_plain => plain_version,
        :email_body_html => html_version,
-       :subject => a_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name).html_safe,
+       :subject => a_s_template.render('ticket' => ticket.to_liquid, 'helpdesk_name' => ticket.account.helpdesk_name).html_safe,
        :survey_id => survey_id,
        :disable_bcc_notification => e_notification.bcc_disabled?,
        :private_comment => comment ? comment.private : false,
@@ -142,7 +142,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
                :receips => to_emails,
                :email_body_plain => plain_version,
                :email_body_html => html_version,
-               :subject => r_s_template.render('ticket' => ticket, 'helpdesk_name' => ticket.account.helpdesk_name).html_safe,
+               :subject => r_s_template.render('ticket' => ticket.to_liquid, 'helpdesk_name' => ticket.account.helpdesk_name).html_safe,
                :disable_bcc_notification => e_notification.bcc_disabled?}
                   
       if !cc_mails.nil?
@@ -652,7 +652,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
   def self.construct_template_params(ticket, comment, opts = {})
     {
-      'ticket' => ticket, 
+      'ticket' => ticket.to_liquid, 
       'helpdesk_name' => ticket.account.helpdesk_name, 
       'comment' => comment, 
       'freddy_suggestions' => opts[:freddy_suggestions]

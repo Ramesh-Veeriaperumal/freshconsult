@@ -10,17 +10,22 @@ class ContactForm < ActiveRecord::Base
   acts_as_custom_form :custom_field_class => 'ContactField',
                       :custom_fields_cache_method => :custom_contact_fields
 
-  def contact_fields(skip_filter = false)
+  def contact_fields(skip_filter = false, exclude_encrypted_fields = false)
     # fetching just once per request, reducing memcache calls
     @contact_fields ||= skip_filter ? all_contact_fields : fetch_contact_fields
+    exclude_encrypted_fields ? @contact_fields.select{ |cf| !cf.encrypted_field? } : @contact_fields
   end
 
   def default_contact_fields(skip_filter = false)
     contact_fields(skip_filter).select { |cf| cf.default_field? }
   end
 
-  def custom_contact_fields
-    contact_fields.select{ |cf| cf.custom_field? }
+  def custom_contact_fields(exclude_encrypted_fields = false)
+    contact_fields.select{ |cf| cf.custom_field? && (exclude_encrypted_fields ? !cf.encrypted_field? : true) }
+  end
+
+  def encrypted_custom_contact_fields
+    contact_fields.select{ |cf| cf.custom_field? && cf.encrypted_field? }
   end
 
   def customer_visible_contact_fields

@@ -63,6 +63,10 @@ module AgentsHelper
    end
  end
 
+  def is_support_agent?(agent)
+    agent.agent_type == AgentType.agent_type_id(Agent::SUPPORT_AGENT)
+  end
+
   def is_field_agent?(agent)
     agent.agent_type == AgentType.agent_type_id(Agent::FIELD_AGENT)
   end
@@ -176,6 +180,10 @@ module AgentsHelper
     output = content_tag(:h3, t('agent_assigned_title').html_safe, :class => "title")
     output << (@recent_unresolved_tickets.empty? ? t('agent_assigned_info') : render(:partial => "tickets", :object => @recent_unresolved_tickets))
     output.html_safe
+  end
+
+  def edit?
+    action_name == 'edit'
   end
   
   # ITIL Related Methods ends here

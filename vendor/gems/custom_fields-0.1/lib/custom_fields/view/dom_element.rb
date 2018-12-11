@@ -28,6 +28,8 @@ module CustomFields
       end
 
       def construct
+        # Show encrypted fields only if HIPAA enabled
+        return if (@field.encrypted_field? and !Account.current.falcon_and_encrypted_fields_enabled?)
         element = (@disabled and @dom_type != :checkbox) ? construct_disabled : safe_send(:"construct_#{@dom_type}")
         element += loading_gif if @args[:include_loading_symbol] and @dom_type != :checkbox
         element += autocomplete_box if @args[:autocomplete]
@@ -39,12 +41,14 @@ module CustomFields
           regex_validity = (@field.field_options and @field.field_options['regex']) ? true : false;
           maxlength_validity = @field.field_type != :default_domains ? true : false # Temp fix
           domains = @field.field_type == :default_domains ? true : false
+          is_encrypted_field = @field.field_type == :encrypted_text
 
           html_options = {
                             :class => "#{@field_class}" +
                                 (domains ? " domain_tokens" : '') +
                                 (regex_validity ? " regex_validity" : '') +
-                                (maxlength_validity ? ' field_maxlength' : ""),
+                                (maxlength_validity ? ' field_maxlength' : "") +
+                                ( is_encrypted_field ? ' encrypted-text-field' : ""),
                             :disabled => @disabled,
                             :type => 'text'
                           }
@@ -57,6 +61,7 @@ module CustomFields
         end
 
         alias_method :construct_number, :construct_text
+        alias_method :construct_encrypted_text, :construct_text
 
         def construct_email
           text_field_tag("#{@object_name}[#{@field_name}]", @field_value,
@@ -146,7 +151,10 @@ module CustomFields
 
         def wrap element
           div = content_tag :div, (element+@bottom_note), :class => 'controls'
-          content_tag :li, (@label+div), :class => "control-group #{ @dom_type }"
+          encrypted_lock_icon = content_tag :span, " ", :class => "ficon-encryption-lock encrypted-lock", 
+                                :title => t('custom_fields.encrypted_text'), 'data-toggle' => 'tooltip', 'data-placement' => 'top'
+          content = @field.dom_type == :encrypted_text ? encrypted_lock_icon+@label+div : @label+div
+          content_tag :li, (content), :class => "control-group #{ @dom_type }"
         end
 
         def wrap_checkbox element

@@ -155,6 +155,7 @@
     - deactivate_product_widgets
     - deactivate_filter_widgets
     - update_segment_filter
+    - remove_encrypted_fields
   :external:
     - code_console_execution
     - integrations

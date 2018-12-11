@@ -58,6 +58,7 @@ window.App = window.App || {};
       $('body').on('change.solutionHome', '#solution_folder_meta_visibility', App.Solutions.Folder.setCompanyVisibility);
       $('body').on('click.solutionHome', '.modal-footer [data-dismiss="modal"]', this.resetFormOnCancel);
       $('body').on('click.solutionHome', '.article-feedback-list', this.sendPostMessage.bind(this));
+      this.startWatchRoutes();
       this.Folder.bindCreateNew();
       this.Folder.eventsForCategorySelect();
     },
@@ -92,6 +93,16 @@ window.App = window.App || {};
       } else {
         $(e.currentTarget).attr('target','_top');
       }
+    },
+
+    startWatchRoutes: function () {
+      jQuery(document).one('pjax:success', function() {
+        var isIframe = (window !== window.top);
+        var postMessage = window.parent.postMessage;
+        if (postMessage && isIframe) {
+          window.parent.postMessage({ action: "update_iframe_url", path: location.pathname }, window.location.origin)
+        }
+      });
     },
 
     isIe: function () {

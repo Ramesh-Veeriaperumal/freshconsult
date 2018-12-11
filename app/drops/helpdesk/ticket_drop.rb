@@ -162,7 +162,7 @@ class Helpdesk::TicketDrop < BaseDrop
   end
 
   def public_url
-    return "" unless @source.account.features_included?(:public_ticket_url)
+    return "" if !@source.account.features_included?(:public_ticket_url) || @source.account.hipaa_and_encrypted_fields_enabled?
 
     access_token = @source.access_token.blank? ? @source.get_access_token : @source.access_token
 
@@ -259,7 +259,8 @@ class Helpdesk::TicketDrop < BaseDrop
 
   def before_method(method)
     field_name = "#{method}_#{@source.account_id}"
-    required_field_type = @source.custom_field_type_mappings[field_name]
+    @field_mappings ||= @source.custom_field_type_mappings
+    required_field_type = @field_mappings[field_name]
     required_field_value = @source.custom_field[field_name]
     return formatted_field_value(required_field_type, required_field_value) if required_field_value 
     return safe_send(dynamic_method_name.to_s.to_sym, dynamic_method_id) if dynamic_liquid_method?(method)

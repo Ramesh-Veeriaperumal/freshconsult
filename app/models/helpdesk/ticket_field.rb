@@ -26,7 +26,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :custom_dropdown        => { :type => :custom, :dom_type => :dropdown_blank},
     :custom_date            => { :type => :custom, :dom_type => :date},
     :custom_decimal         => { :type => :custom, :dom_type => :decimal},
-    :nested_field           => { :type => :custom, :dom_type => :nested_field}
+    :nested_field           => { :type => :custom, :dom_type => :nested_field},
+    :encrypted_text         => { :type => :custom, :dom_type => :encrypted_text}
   }
 
   SECTION_LIMIT = 2
@@ -140,6 +141,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   scope :custom_fields, :conditions => ["flexifield_def_entry_id is not null"]
   scope :custom_dropdown_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_dropdown'"]
+  scope :non_encrypted_ticket_fields, :conditions => ["field_type != 'encrypted_text'"]
+  scope :non_encrypted_custom_fields, conditions: ["flexifield_def_entry_id is not null and field_type != 'encrypted_text'"]
   scope :customer_visible, :conditions => { :visible_in_portal => true }
   scope :customer_editable, :conditions => { :editable_in_portal => true }
   scope :agent_required_fields, :conditions => { :required => true }
@@ -153,6 +156,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   scope :event_fields, :conditions=>["flexifield_def_entry_id is not null and (field_type = 'nested_field' or field_type='custom_dropdown' or field_type='custom_checkbox')"]
   scope :default_fields, -> { where(:default => true ) }
   scope :custom_checkbox_fields, :conditions => ["flexifield_def_entry_id is not null and field_type = 'custom_checkbox'"]
+  scope :encrypted_custom_fields, conditions: ["flexifield_def_entry_id is not null and field_type = 'encrypted_text'"]
 
 
   # Enumerator constant for mapping the CSS class name to the field type
@@ -176,7 +180,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   :custom_date            => { :type => :custom,  :dom_type => "date"},
                   :custom_decimal         => { :type => :custom,  :dom_type => "decimal"},
                   :custom_dropdown        => { :type => :custom,  :dom_type => "dropdown_blank"},
-                  :nested_field           => { :type => :custom,  :dom_type => "nested_field"}
+                  :nested_field           => { :type => :custom,  :dom_type => "nested_field"},
+                  :encrypted_text         => { :type => :custom,  :dom_type => "encrypted_text"}
                 }
 
   def dom_type
@@ -505,6 +510,14 @@ class Helpdesk::TicketField < ActiveRecord::Base
     # end
   end
 
+  def encrypted_field?
+    field_type.to_sym == CUSTOM_FIELD_PROPS[:encrypted_text][:dom_type]
+  end
+
+  def exclude_encrypted_field?
+    encrypted_field? && !Account.current.falcon_and_encrypted_fields_enabled?
+  end
+
   protected
 
     def group_agents(ticket, internal_group = false)
@@ -629,6 +642,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
     end
 
     def custom_field?
-      self.field_type.starts_with?("custom_")
+      !self.default
     end
 end
