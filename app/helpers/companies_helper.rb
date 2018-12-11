@@ -7,7 +7,7 @@ module CompaniesHelper
   end
 
   def render_as_list form_builder, field
-    return if field.encrypted?
+    return if field.encrypted_field?
     field_value = (field_value = @company.safe_send(field.name)).blank? ? field.default_value : field_value
     if form_builder.nil? 
       show_field field,field_value
