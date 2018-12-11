@@ -256,20 +256,23 @@ module ActionMailerCallbacks
 
     def check_spam_category(mail, params)
       category = nil
-      notification_type = params[:type].to_i
-      if (account_created_recently? && recent_account_spam_filtered_notifications.include?(notification_type)) || spam_filtered_notifications.include?(notification_type)
-        spam_params = {:headers => mail.header.to_s, :text => mail.text_part.to_s, :html => mail.html_part.to_s }
-        email = Helpdesk::Email::SpamDetector.construct_raw_mail(spam_params)
-        response = FdSpamDetectionService::Service.new(params[:account_id], email).check_spam
-        if response.spam?
-          category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] 
-          check_spam_rules(response)
+      begin
+        notification_type = params[:type].to_i
+
+        if (account_created_recently? && recent_account_spam_filtered_notifications.include?(notification_type)) || spam_filtered_notifications.include?(notification_type)
+          spam_params = {:headers => mail.header.to_s, :text => mail.text_part.to_s, :html => mail.html_part.to_s }
+          email = Helpdesk::Email::SpamDetector.construct_raw_mail(spam_params)
+          response = FdSpamDetectionService::Service.new(params[:account_id], email).check_spam
+          if response.spam?
+            category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] 
+            check_spam_rules(response)
+          end
+          Rails.logger.info "Spam check response for outgoing email with Account ID : #{params[:account_id]}, Ticket ID: #{params[:ticket_id]}, Note ID: #{params[:note_id]} - #{response.spam?}"
         end
-        Rails.logger.info "Spam check response for outgoing email with Account ID : #{params[:account_id]}, Ticket ID: #{params[:ticket_id]}, Note ID: #{params[:note_id]} - #{response.spam?}"
+      rescue => e
+        Rails.logger.info "Error in outgoing email spam check: #{e.message} - #{e.backtrace}"
       end
       return category
-    rescue => e
-      Rails.logger.info "Error in outgoing email spam check: #{e.message} - #{e.backtrace}"
     end 
 
   end
