@@ -186,6 +186,7 @@
 						</div>
 					</div> 
 				<% } %>
+				<%=JST['custom-form/template/hipaa_custom_field_banner'](obj)%>
 			</div>
 			<% if( field_type == "default_company_name" && is_multiple_contact_feature_present) { %>
 				<div class="multiple_companies_section">

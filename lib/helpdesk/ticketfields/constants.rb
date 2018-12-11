@@ -24,7 +24,8 @@ module Helpdesk::Ticketfields::Constants
     checkbox:      ['checkbox', CHECKBOX_FIELDS, CHECKBOX_FIELD_COUNT],
     date:          ['date', DATE_FIELDS, DATE_FIELD_COUNT],
     paragraph:     ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MLT_FIELDS.length],
-    decimal:       ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT]
+    decimal:       ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT],
+    encrypted_text:['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ESLT_FIELDS.length]
   }.freeze
 
   FFS_LIMIT = 80
@@ -46,4 +47,7 @@ module Helpdesk::Ticketfields::Constants
     boolean: CHECKBOX_FIELD_COUNT,
     decimal: DECIMAL_FIELD_COUNT
   }.freeze
+
+  CUSTOM_FIELD_LABEL_PREFIX = 'cf_'
+  ENCRYPTED_FIELD_LABEL_PREFIX = 'cf_enc_'
 end

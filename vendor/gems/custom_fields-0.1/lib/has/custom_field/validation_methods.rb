@@ -82,6 +82,7 @@ module Has
         alias_method :validate_format_of_custom_paragraph, :no_op
         alias_method :validate_format_of_custom_phone_number, :no_op
         alias_method :validate_format_of_custom_date, :no_op
+        alias_method :validate_format_of_encrypted_text, :no_op
 
     end
   

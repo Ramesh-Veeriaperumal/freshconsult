@@ -34,12 +34,13 @@ module GroupHelper
     groups
   end
 
-  def create_group_private_api(account,options={})
+  def create_group_private_api(account,options={},group_type= 1)
     name = Faker::Name.name
     group = FactoryGirl.build(:group,:name=> name)
     group.account_id = account.id
     group.description=Faker::Lorem.paragraph   
     group.escalate_to=1
+    group.group_type= group_type
     group.agent_ids=options[:agent_ids]
     group.agent_ids=[1,2] if !options[:agent_ids]
     group.business_calendar_id=1

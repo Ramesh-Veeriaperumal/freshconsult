@@ -11,6 +11,7 @@ class Group < ActiveRecord::Base
   include AccountOverrider
   include RoundRobinCapping::Methods
   include DataVersioning::Model
+  include GroupConstants
 
   TICKET_ASSIGN_TYPE = {:default => 0, :round_robin => 1, :skill_based => 2} #move other constants after merge - hari
   VERSION_MEMBER_KEY = 'AGENTS_GROUPS'.freeze
@@ -22,6 +23,7 @@ class Group < ActiveRecord::Base
   before_save :reset_toggle_availability, :create_model_changes
   before_save :set_default_type_if_needed, on: [:create]
   before_destroy :backup_user_ids
+  validate :agent_id_validation, :auto_ticket_assign_validation, if: -> {Account.current.field_service_management_enabled?}
 
   after_commit :round_robin_actions, :clear_cache
   after_commit :nullify_tickets_and_widgets, :destroy_group_in_liveChat, on: :destroy
@@ -62,8 +64,8 @@ class Group < ActiveRecord::Base
   has_many   :ecommerce_accounts, :class_name => 'Ecommerce::Account', :dependent => :nullify
 
   attr_accessible :name,:description,:email_on_assign,:escalate_to,:assign_time ,:import_id, 
-                   :ticket_assign_type, :toggle_availability, :business_calendar_id, :agent_groups_attributes,
-                   :capping_limit, :group_type
+  :ticket_assign_type, :toggle_availability, :business_calendar_id, :agent_groups_attributes,
+  :capping_limit, :group_type
 
   attr_accessor :capping_enabled
 
@@ -274,7 +276,36 @@ class Group < ActiveRecord::Base
     end
 
     def set_default_type_if_needed
-      self.group_type = GroupType.group_type_id(GroupConstants::SUPPORT_GROUP_NAME) unless self.group_type
+      self.group_type = GroupType.group_type_id(SUPPORT_GROUP_NAME) unless self.group_type
     end
-      
-end
+
+    def agent_id_validation
+      @group_type = GroupType.group_type_name(self.group_type)
+      type = GROUPS_AGENTS_MAPPING[@group_type]
+      user_ids = self.agent_groups.map(&:user_id)
+      input_agent_ids = []
+      user_ids.each do |user_id|
+        input_agent_ids << Account.current.agents_from_cache.find{ |x| x.user_id == user_id }.id
+      end
+      valid_agent_ids = Account.current.agents_from_cache.select{ |x| x.agent_type == AgentType.agent_type_id(type)}.map(&:id)
+      invalid_ids = []
+      input_agent_ids.each do |input_agent|
+        unless valid_agent_ids.include?(input_agent)
+          invalid_ids << input_agent
+        end
+      end
+      unless invalid_ids.blank?
+        self.errors.add(:agent_groups, 'invalid_agent_ids') 
+        return false
+      end
+      true
+    end
+
+    def auto_ticket_assign_validation
+      if @group_type == FIELD_GROUP_NAME && !self.ticket_assign_type.eql?(TICKET_ASSIGN_TYPE[:default])
+        self.errors.add(:ticket_assign_type, 'invalid_field_auto_assign') 
+        return false
+      end
+      true
+    end
+  end

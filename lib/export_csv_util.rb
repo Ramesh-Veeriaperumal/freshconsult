@@ -76,21 +76,24 @@ module ExportCsvUtil
     flexi_fields = Account.current.ticket_fields.custom_fields(:include => :flexifield_def_entry)
     default_csv_headers = Helpdesk::TicketModelExtension.ticket_csv_headers
 
-    flexi_fields , additional_flexi_fields = split_flexifields(flexi_fields)
+    flexi_fields , additional_flexi_fields, encrypted_fields = split_flexifields(flexi_fields)
 
     default_csv_headers = default_csv_headers + [ {:label => I18n.t("export_data.fields.product"), :value => "product_name", :selected => false, :type => :field_type} ] if Account.current.multi_product_enabled?
-    default_csv_headers = default_csv_headers + generate_headers(flexi_fields)
+    default_csv_headers = default_csv_headers + generate_headers(flexi_fields + encrypted_fields)
   end
 
   def export_customer_fields type
     return unless ["contact", "company"].include?(type)
     custom_form = Account.current.safe_send("#{type}_form")
-    custom_fields = type.eql?("contact") ? custom_form.safe_send("#{type}_fields", true) : custom_form.safe_send("#{type}_fields")
-    custom_fields.reject!{|x| ["tag_names"].include?(x.name)} if type.eql?("contact")
-    custom_fields.collect { |cf| 
-            { :label => cf.label, 
-              :value => cf.name, 
-              :type => cf.field_type, :selected => false} }
+    custom_fields = type.eql?("contact") ? custom_form.safe_send("#{type}_fields", true, !Account.current.falcon_and_encrypted_fields_enabled?) 
+    : custom_form.safe_send("#{type}_fields", !Account.current.falcon_and_encrypted_fields_enabled?)
+    custom_fields.reject!{ |x| ["tag_names"].include?(x.name) } if type.eql?("contact")
+    custom_fields.collect { |cf|
+            { :label => cf.label,
+              :value => cf.name,
+              :type => cf.field_type,
+              :selected => false ,
+              :encrypted =>  cf.encrypted_field?} }
   end
 
   def export_contact_company_fields(type)
@@ -213,18 +216,22 @@ module ExportCsvUtil
   def split_flexifields fields
     default_fields = []
     additional_fields = []
+    encrypted_fields = []
     fields.each do |field|
-      if field.field_type != "custom_paragraph"
-        default_fields << field
-      else
+      case field.field_type
+      when "custom_paragraph"
         additional_fields << field
+      when "encrypted_text"
+        encrypted_fields << field if Account.current.falcon_and_encrypted_fields_enabled?
+      else
+        default_fields << field
       end
     end
-    [default_fields, additional_fields]
+    [default_fields, additional_fields, encrypted_fields]
   end
 
   def generate_headers flexi_fields
-    flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) } }
+    flexi_fields.collect { |ff| { :label => ff.label, :label_in_portal => ff.label_in_portal, :value => ff.name, :type => ff.field_type, :selected => false, :levels => (ff.nested_levels || []) , :encrypted => ff.encrypted_field? } }
   end
 
   def sort_export_fields export_fields, actual_fields

@@ -17,6 +17,7 @@ module ContactsHelper
   end
 
   def render_as_list form_builder, field
+    return if field.encrypted_field?
     field_value = (field_value = @user.safe_send(field.name)).blank? ? field.default_value : field_value
     if form_builder.nil? 
       if field.name == "email"
@@ -35,7 +36,7 @@ module ContactsHelper
   end
 
   def view_contact_fields 
-    reject_fields = [:default_name, :default_job_title, :default_company_name, :default_description, :default_tag_names]
+    reject_fields = [:default_name, :default_job_title, :default_company_name, :default_description, :default_tag_names, :encrypted_text]
     view_contact_fields = contact_fields.reject do |item|
       (reject_fields.include? item.field_type) || !(@user.safe_send(item.name).present?)
     end

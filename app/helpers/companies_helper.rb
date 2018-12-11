@@ -7,6 +7,7 @@ module CompaniesHelper
   end
 
   def render_as_list form_builder, field
+    return if field.encrypted_field?
     field_value = (field_value = @company.safe_send(field.name)).blank? ? field.default_value : field_value
     if form_builder.nil? 
       show_field field,field_value
@@ -18,7 +19,7 @@ module CompaniesHelper
   end
 
   def view_company_fields 
-    reject_fields = [:default_name, :default_description, :default_note]
+    reject_fields = [:default_name, :default_description, :default_note, :encrypted_text]
     view_company_fields = company_fields.reject do |item|
       field_value = (field_value = @company.safe_send(item.name)).blank? ? item.default_value : field_value
       (reject_fields.include? item.field_type) || !field_value.present?

@@ -4882,6 +4882,11 @@ div[class*='checkbox-ticket']{
   }
 }
 
+.agent-type-button-disabled{
+  pointer-events: none;
+  opacity: 0.4;
+}
+
 /*-----------------New Tag Create differentiation in Select2-----------------------*/
 .new-tag-create{
 	border-top:1px solid #eee;

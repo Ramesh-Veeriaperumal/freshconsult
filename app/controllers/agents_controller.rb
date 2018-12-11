@@ -247,8 +247,13 @@ class AgentsController < ApplicationController
       result = { errors: errors }
       respond_to do |format|
         format.html {
+          flash[:error] = t(:"flash.agents.edit.#{@agent.errors.messages[:agent_type]}") if @agent.errors.messages[:agent_type].present?
           set_skill_data
-          render :action => :edit
+          if current_account.falcon_ui_enabled?(current_user)
+            render :nothing => true
+          else
+            redirect_to :action => 'edit'
+          end
          }
         format.json { render :json => result.to_json, :status => :bad_request }
         format.xml {render :xml => result.to_xml, :status => :bad_request } 

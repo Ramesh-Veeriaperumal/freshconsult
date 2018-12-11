@@ -40,7 +40,7 @@ module Va::Webhook::Util
     def substitute_placeholders_in_format act_on, content_key, content_type = nil
       event_hash  = get_matched_event_hash(triggered_event)
       content     = act_hash[content_key]
-      contexts    = { map_class(act_on.class.name) => act_on, 'helpdesk_name' => act_on.account.helpdesk_name, 
+      contexts    = { map_class(act_on.class.name) => act_on.to_liquid, 'helpdesk_name' => act_on.account.helpdesk_name, 
                     'triggered_event' => j(event_hash.to_json) }
       contexts.merge!('event_performer' => doer) if doer.present?
       filters     = { :filters => [Va::Webhook::HelperMethods] }

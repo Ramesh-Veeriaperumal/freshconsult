@@ -1,9 +1,90 @@
 require_relative '../test_helper'
 class ApiGroupsControllerTest < ActionController::TestCase
   include GroupsTestHelper
+  include GroupHelper
   include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
+  include GroupConstants
+  
   def wrap_cname(params)
     { api_group: params }
+  end
+
+  def enabling_fsm_feature_and_lp
+    Account.current.add_feature(:field_service_management)
+    Account.current.launch(:field_service_management_lp)
+  end
+
+  def revoke_fsm_feature_and_rollback_lp
+    Account.current.revoke_feature(:field_service_management)
+    Account.current.rollback(:field_service_management_lp)
+  end
+
+  def test_update_ticket_assign_type_for_field_group
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature_and_lp
+    add_data_to_group_type
+    create_field_agent_type
+    group = create_group(@account, { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph }, group_type = 2)
+    put :update, construct_params({ id: group.id }, escalate_to: 1, unassigned_for: '30m',
+                                                    auto_ticket_assign: true)
+    assert_response 400
+    res = JSON.parse response.body
+    assert_equal res["errors"][0]["message"], "Auto ticket assignment is not available for field service groups."
+  ensure
+    destroy_field_group
+    destroy_field_agent
+    revoke_fsm_feature_and_rollback_lp
+    Account.unstub(:current)
+  end
+
+  def test_create_field_group_with_ticket_assign_type
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature_and_lp
+    add_data_to_group_type
+    create_field_agent_type
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, auto_ticket_assign: true, group_type: FIELD_GROUP_NAME)
+    assert_response 400
+    res = JSON.parse response.body
+    assert_equal res["errors"][0]["message"],"Auto ticket assignment is not available for field service groups."
+  ensure
+    destroy_field_group
+    destroy_field_agent
+    revoke_fsm_feature_and_rollback_lp
+    Account.unstub(:current)
+  end
+
+  def test_agent_type_and_group_type_check_invalid
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature_and_lp
+    add_data_to_group_type
+    create_field_agent_type
+    group = create_group_with_agents(@account, { name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph }, group_type = 2)
+    put :update, construct_params({ id: group.id }, escalate_to: 1, unassigned_for: '30m',
+                                                    auto_ticket_assign: true, agent_ids: [1])
+    assert_response 400
+    res = JSON.parse response.body
+    assert_equal res["errors"][0]["message"], "Agent and group need to be of the same type."
+    assert_equal res["errors"][1]["message"], "Auto ticket assignment is not available for field service groups."
+  ensure
+    destroy_field_group
+    destroy_field_agent
+    revoke_fsm_feature_and_rollback_lp
+    Account.unstub(:current)
+  end
+
+  def test_agent_type_and_group_type_check_valid
+    Account.stubs(:current).returns(Account.first)
+    enabling_fsm_feature_and_lp
+    add_data_to_group_type
+    create_field_agent_type
+    post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, auto_ticket_assign: true, group_type: SUPPORT_GROUP_NAME, agent_ids: [1])
+    assert_response 201
+    match_json(group_pattern(Group.last))
+  ensure
+    destroy_field_group
+    destroy_field_agent
+    revoke_fsm_feature_and_rollback_lp
+    Account.unstub(:current)
   end
 
   def test_create_group

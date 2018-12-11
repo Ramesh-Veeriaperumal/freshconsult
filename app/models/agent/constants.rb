@@ -59,4 +59,6 @@ class Agent < ActiveRecord::Base
   SUPPORT_AGENT = 'support_agent'
   FIELD_AGENT = 'field_agent'
   DELETED_AGENT = 'deleted'
+  
+  AGENT_GROUP_TYPE_MAPPING = GroupConstants::GROUPS_AGENTS_MAPPING.invert
 end

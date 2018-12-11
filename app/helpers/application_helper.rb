@@ -650,7 +650,7 @@ module ApplicationHelper
     end
 
     # Custom Field Placeholders
-    current_account.ticket_fields.custom_fields.each { |custom_field|
+    current_account.ticket_fields.non_encrypted_custom_fields.each { |custom_field|
       nested_vals = []
       custom_field.nested_ticket_fields.each { |nested_field|
         name = nested_field.name[0..nested_field.name.rindex('_')-1]
@@ -662,7 +662,7 @@ module ApplicationHelper
     }
 
     # Contact Custom Field Placeholders
-    current_account.contact_form.custom_contact_fields.each { |custom_field|
+    current_account.contact_form.custom_contact_fields(true).each { |custom_field|
       name = custom_field.name[3..-1]
       #date fields disabled till db fix
       place_holders[:requester] <<  ["{{ticket.requester.#{name}}}", "Requester #{custom_field.label}", "", "ticket_requester_#{name}"]
@@ -678,7 +678,7 @@ module ApplicationHelper
     end
 
     # Company Custom Field Placeholders
-    current_account.company_form.custom_company_fields.each { |custom_field|
+    current_account.company_form.custom_company_fields(true).each { |custom_field|
       name = custom_field.name[3..-1]
       #date fields disabled till db fix
       place_holders[:company] <<  ["{{ticket.company.#{name}}}", "Company #{custom_field.label}", "", "ticket_requester_company_#{name}"]
@@ -696,7 +696,7 @@ module ApplicationHelper
     # Ticket Public URL placeholder
     place_holders[:tickets] << ['{{ticket.public_url}}', 'Public Ticket URL' ,
                       'URL for accessing the tickets without login', 'ticket_public_url'
-                      ] if current_account.features?(:public_ticket_url)
+                      ] if current_account.features?(:public_ticket_url) && !current_account.hipaa_and_encrypted_fields_enabled?
 
     place_holders
   end
@@ -1294,11 +1294,13 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def construct_new_ticket_element(form_builder,object_name, field, field_label, dom_type, required, field_value = "", field_name = "", in_portal = false , is_edit = false, pl_value_id=nil)
+    return "" if field.encrypted_field? && !current_account.falcon_and_encrypted_fields_enabled?
     dom_type = (field.field_type == "nested_field") ? "nested_field" : dom_type
     element_class   = " #{ (required && !object_name.eql?(:template_data)) ?
                       (field.field_type == "default_description" ? 'required_redactor' : 'required') : '' } #{ dom_type }"
     element_class  += " required_closure" if (field.required_for_closure && !field.required)
     element_class  += " section_field" if field.section_field?
+    field_label     = '<span class="ficon-encryption-lock"></span>' + field_label if field.encrypted_field? && current_account.falcon_and_encrypted_fields_enabled?
     field_label    += '<span class="required_star">*</span>'.html_safe if required
     field_label    += "#{add_requester_field}".html_safe if (dom_type == "requester" && !is_edit) #add_requester_field has been type converted to string to handle false conditions
     field_name      = (field_name.blank?) ? field.field_name.html_safe : field_name.html_safe
@@ -1329,7 +1331,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
         element = label + text_field(object_name, field_name, :class => element_class, :value => field_value)
         element = add_cc_field_tag element ,field if (field.portal_cc_field? && !is_edit && controller_name.singularize != "feedback_widget") #dirty fix
         element += add_name_field if !is_edit and !current_user
-      when "text", "number", "decimal" then
+      when "text", "number", "decimal", "encrypted_text" then
         element = label + text_field(object_name, field_name, :class => element_class, :value => "#{field_value}")
       when "paragraph" then
         element = label + text_area(object_name, field_name, :class => element_class, :value => field_value)

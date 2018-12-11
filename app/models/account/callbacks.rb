@@ -6,6 +6,8 @@ class Account < ActiveRecord::Base
   validates_inclusion_of :time_zone, :in => TIME_ZONES, :unless => :time_zone_updation_running?
   before_update :check_default_values, :backup_changes, :check_timezone_update
   before_update :update_global_pod_domain
+  before_update :generate_encryption_key, if: :enabled_custom_encrypted_fields?
+  before_update :delete_encrypted_fields, if: :disabled_custom_encrypted_fields?
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status, :make_current
@@ -16,6 +18,7 @@ class Account < ActiveRecord::Base
   after_update :update_freshfone_voice_url, :if => :freshfone_enabled?
   after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
+  after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_feature_changed?
   after_update :set_disable_old_ui_changed_now, :if => :disable_old_ui_changed?
 
   before_validation :sync_name_helpdesk_name
@@ -184,6 +187,11 @@ class Account < ActiveRecord::Base
     end
   end
 
+  def generate_encryption_key
+    encryption_key = SecureRandom.base64(50)
+    AccountEncryptionKeys.update id.to_s, { hipaa_key: encryption_key }
+  end
+
   protected
 
     def set_default_values
@@ -247,6 +255,18 @@ class Account < ActiveRecord::Base
 
     def remove_email_restrictions
       AccountActivation::RemoveRestrictionsWorker.perform_async
+    end
+
+    def enabled_custom_encrypted_fields?
+      custom_encrypted_fields_feature_changed? && hipaa_and_encrypted_fields_enabled?
+    end
+
+    def disabled_custom_encrypted_fields?
+      custom_encrypted_fields_feature_changed? && !hipaa_and_encrypted_fields_enabled?
+    end
+
+    def delete_encrypted_fields
+      RemoveEncryptedFieldsWorker.perform_async
     end
 
   private

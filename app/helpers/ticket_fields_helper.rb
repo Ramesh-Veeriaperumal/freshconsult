@@ -29,6 +29,7 @@ module TicketFieldsHelper
   def section_data_hash(sections, account)
     sections.map do |section|
       section_fields = generate_section_fields(section)
+      section_fields.reject! { |section_field| section_field[:is_encrypted] } if !account.falcon_and_encrypted_fields_enabled?
       parent_ticket_field_id = section_fields.present? ? section_fields[0][:parent_ticket_field_id] : 
                                                          section.parent_ticket_field_id
       {
@@ -60,7 +61,8 @@ module TicketFieldsHelper
           :id => field.id,
           :position => field.position,
           :ticket_field_id => field.ticket_field_id,
-          :parent_ticket_field_id => field.parent_ticket_field_id
+          :parent_ticket_field_id => field.parent_ticket_field_id,
+          :is_encrypted => field.ticket_field.encrypted_field?
         }
       end
     end

@@ -51,9 +51,9 @@ class ApiAgentsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert response.size == Agent.where(agent_type: field_agent_type.agent_type_id).count
   ensure
-    Account.unstub
-    Agent.where(agent_type: field_agent_type.agent_type_id).destroy_all
+    Account.current.agents.where(agent_type: field_agent_type.agent_type_id).destroy_all
     field_agent_type.destroy
+    Account.unstub(:current)
   end
 
   def test_agent_filter_email
@@ -265,6 +265,43 @@ class ApiAgentsControllerTest < ActionController::TestCase
                 bad_request_error_pattern(:group_ids, :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
     assert_response 400
   end
+
+  def test_update_field_agent_with_support_type_group
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id })
+    group = create_group(@account)
+    params = { group_ids: [group.id] }
+    Account.stubs(:current).returns(Account.first)
+    put :update, construct_params({ id: agent.id }, params)
+    match_json([bad_request_error_pattern('group_ids', :agent_group_type_mismatch)])
+    assert_response 400
+  ensure
+    agent.destroy
+    group.destroy
+    field_agent_type.destroy
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_update_support_agent_with_field_type_group
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    group_type = GroupType.create(:name => 'field_agent_group', :account_id => @account.id, :group_type_id => 2)
+    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id })
+    group = create_group(@account, {}, group_type.group_type_id)
+    params = { group_ids: [group.id] }
+    Account.stubs(:current).returns(Account.first)
+    put :update, construct_params({ id: agent.id }, params)
+    match_json([bad_request_error_pattern('group_ids', :agent_group_type_mismatch)])
+    assert_response 400
+  ensure
+    agent.destroy
+    group.destroy
+    group_type.destroy
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.unstub(:current)
+  end
+
 
   def test_update_agent_with_array_fields_invalid_model
     agent = add_test_agent(@account, role: Role.find_by_name('Agent').id)

@@ -310,6 +310,7 @@ defaults: &defaults
     - [widget_upload_config]
     - [bot_email_reply]
     - [bot_email_ml_feedback]
+    - [remove_encrypted_fields]
     - [ticket_field_central_publish]
     
 development:

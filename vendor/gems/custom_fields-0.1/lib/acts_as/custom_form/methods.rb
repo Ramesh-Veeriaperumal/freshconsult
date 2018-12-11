@@ -4,7 +4,8 @@ module ActAs
     module Methods
       
       TEXT_FIELD_TYPES = [ CustomFields::Constants::CUSTOM_FIELD_PROPS[:custom_text][:type], 
-                           CustomFields::Constants::CUSTOM_FIELD_PROPS[:custom_paragraph][:type]
+                           CustomFields::Constants::CUSTOM_FIELD_PROPS[:custom_paragraph][:type],
+                           CustomFields::Constants::CUSTOM_FIELD_PROPS[:encrypted_text][:type]
                          ]
       
       def to_ff_field ff_alias

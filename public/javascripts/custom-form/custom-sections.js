@@ -364,6 +364,7 @@
 								'picklist_ids':				picklist_ids,
 								'action':					'save',
 								'parent_ticket_field_id':	this.options.parent_id, 
+                'is_encrypted': data.dom_type == 'encrypted_text'
 							}
 
 			if (sec_id == "" || sec_id == null ) { //New
@@ -617,6 +618,7 @@
 									'ticket_field_id':			data.id, 
 									'ticket_field_name':		data.label,
 									'parent_ticket_field_id':	this.options.parent_id, //Have to check
+                  'is_encrypted': data.dom_type == 'encrypted_text'
 								};
 				data.field_options['section'] = true;
 				this.options.builder_instance.setAction(
@@ -840,6 +842,7 @@
 								'ticket_field_id':			data.id, 
 								'ticket_field_name':		data.label,
 								'parent_ticket_field_id':	this.options.parent_id,
+                'is_encrypted': data.dom_type == 'encrypted_text'
 							};
 
 			if($.isEmptyObject(this.section_data[id].section_fields)) 

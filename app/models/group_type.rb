@@ -30,21 +30,34 @@ class GroupType < ActiveRecord::Base
 
   def self.populate_default_group_types(account)
     begin
-      group_type = account.group_types.create(:name => SUPPORT_GROUP_NAME, :group_type_id => 1, 
-        :label => SUPPORT_GROUP_NAME, :account_id => account.id, :deleted => false, :default => true)
-      group_type.save!
+      group_type = GroupType.create_group_type(account,SUPPORT_GROUP_NAME)
+      group_type
     rescue Exception => e
       error_message = "Group type creation failed for account:: #{account.id}. Group type: #{SUPPORT_GROUP_NAME} Exception:: #{e.message} \n#{e.backtrace.to_a.join("\n")}"
       Rails.logger.error(error_message)
       NewRelic::Agent.notice_error(error_message)
     end
+  end
 
-
-
+  def self.create_group_type(account,group_type)
+    begin
+      group_type_id = account.group_types.blank? ? 1 : last.group_type_id + 1
+      default = (group_type == SUPPORT_GROUP_NAME || group_type == FIELD_GROUP_NAME) ? true : false
+      group_type = account.group_types.create(:name => group_type, :group_type_id => group_type_id, :label => group_type, :account_id => account.id, :deleted => false, :default => default )
+      group_type.save!
+      group_type
+    rescue Exception => e
+      error_message = "Group type creation failed for account:: #{account.id}. Group type: #{group_type} Exception:: #{e.message} \n#{e.backtrace.to_a.join("\n")}"
+      Rails.logger.error(error_message)
+      NewRelic::Agent.notice_error(error_message)
+    end
   end
 
   def self.destroy_group_type(account,group_type)
-    account.group_types.find_by_name(group_type).try(:destroy)
+    group_type_record = account.group_types.find_by_name(group_type)
+    group_type_id = group_type_record.try(:group_type_id)
+    group_type_record.try(:destroy)
+    account.groups.where(group_type: group_type_id).destroy_all if group_type_id
   end  
 
 

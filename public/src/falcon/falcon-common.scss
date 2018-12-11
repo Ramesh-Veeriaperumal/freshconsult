@@ -57,7 +57,6 @@ $survey-options-color: (
   some-what-agree: #6bb437,
   strongly-agree: #189e00);
 
-
 .header,
 #footer {
   display: none;
@@ -1906,7 +1905,6 @@ div[class$="-toggle"]{
   }
 }
 
-
 /*Chat settings*/
 
 .freshchat-edit {
@@ -1978,6 +1976,9 @@ div[class$="-toggle"]{
 @import "falcon-reports";
 @import "falcon-livechat";
 @import "falcon-social";
+@import "falcon-rtl";
+@import "falcon-encrypted";
+
 
 .sandbox-notification-content {
   background: #fffade;

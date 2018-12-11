@@ -20,6 +20,8 @@ module GroupConstants
 
   FIELD_GROUP_NAME = 'field_agent_group'
 
+  GROUPS_AGENTS_MAPPING = { SUPPORT_GROUP_NAME => Agent::SUPPORT_AGENT, FIELD_GROUP_NAME => Agent::FIELD_AGENT }
+
   INDEX_FIELDS = %w(group_type).freeze
 
   ACCESSIBLE_FIELDS_FOR_SUPERVISOR= %w(auto_ticket_assign)  
@@ -29,8 +31,10 @@ module GroupConstants
   ROUND_ROBIN_TYPE_SANITIZE= {1 => 1, 2 => 1, 3 => 2}  
 
   DB_ASSIGNMENT_TYPE_FOR_MAP = {0 => 0, 1 => 1, 2 => 1, 10 => 2}   
+
+  UPDATE_PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG=%w(name description business_hour_id escalate_to unassigned_for agent_ids assignment_type).freeze | ARRAY_FIELDS
   
-  PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG=%w(name description business_hour_id escalate_to unassigned_for agent_ids assignment_type).freeze | ARRAY_FIELDS
+  PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG= UPDATE_PRIVATE_API_FIELDS_WITHOUT_ASSIGNMENT_CONFIG | INDEX_FIELDS
 
   RR_FIELDS = %w(assignment_type round_robin_type capping_limit allow_agents_to_change_availability)
 

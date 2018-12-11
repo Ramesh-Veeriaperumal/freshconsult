@@ -31,7 +31,9 @@ class Ryuken::SchedulerPollerTodosReminder
   private
 
     def format_time(reminder_at)
-      Time.zone.parse(reminder_at.to_s).strftime('%d %b %Y at %I:%M %p')
+      Time.use_zone(@user.time_zone) {
+        Time.zone.parse(reminder_at.to_s).strftime('%d %b %Y at %I:%M %p') 
+      }
     end
 
     def payload_to_iris

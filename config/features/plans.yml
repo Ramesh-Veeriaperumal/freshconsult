@@ -115,6 +115,7 @@
       - :whitelisted_ips
       - :skill_based_round_robin
       - :sandbox
+      - :hipaa
     :inherits:
       - :estate_jan_17
     :exclude: []

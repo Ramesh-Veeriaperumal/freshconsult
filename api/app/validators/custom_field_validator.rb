@@ -49,6 +49,8 @@ class CustomFieldValidator < ActiveModel::EachValidator
       CustomLengthValidator.new(options.merge(attributes: field_name, maximum: ApiConstants::MAX_LENGTH_STRING)).validate(record)
     end
 
+    alias_method :validate_encrypted_text, :validate_custom_text
+
     # Required validator for string field based on condition
     def validate_custom_paragraph(record, field_name)
       string_options = construct_options(ignore_string: :allow_string_param, attributes: field_name, rules: String, required: @is_required)

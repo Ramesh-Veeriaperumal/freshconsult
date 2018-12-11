@@ -180,14 +180,17 @@ module TicketFieldsTestHelper
     ticket_field_exists = @account.ticket_fields.find_by_name("#{labels[0].downcase}_#{@account.id}")
     return ticket_field_exists if ticket_field_exists
 
-    flexifield_def_entry[0] = FactoryGirl.build(:flexifield_def_entry,
+    flexifield_def_entry[0] = Account.current.ticket_field_def.flexifield_def_entries.find_by_flexifield_name("ffs_0#{id || 7}")
+    if flexifield_def_entry[0].blank?
+      flexifield_def_entry[0] = FactoryGirl.build(:flexifield_def_entry,
                                                 flexifield_def_id: @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                                 flexifield_alias: "#{labels[0].downcase}_#{@account.id}",
                                                 flexifield_name: "ffs_0#{id || 7}",
                                                 flexifield_order: 6,
                                                 flexifield_coltype: 'dropdown',
                                                 account_id: @account.id)
-    flexifield_def_entry[0].save unless Account.current.ticket_field_def.flexifield_def_entries.pluck(:flexifield_name).include?("ffs_0#{id || 7}")
+      flexifield_def_entry[0].save
+    end
 
     parent_custom_field = FactoryGirl.build(:ticket_field, account_id: @account.id,
                                                            name: "#{labels[0].downcase}_#{@account.id}",
@@ -196,7 +199,7 @@ module TicketFieldsTestHelper
                                                            field_type: 'nested_field',
                                                            description: '',
                                                            flexifield_def_entry_id: flexifield_def_entry[0].id)
-    parent_custom_field.save
+    save_var = parent_custom_field.save
 
     (1..2).each do |nested_field_id|
       flexifield_def_entry[nested_field_id] = FactoryGirl.build(:flexifield_def_entry,

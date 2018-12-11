@@ -57,6 +57,10 @@
 				if (ele_text == null || ele_text == '') {
 					ele_text = "Move here";
 				}
+				var ele_class = ui.item.data('drag-class');
+				if (ele_class !== null && ele_class !== ''){
+					$('.ui-sortable-placeholder').addClass(ele_class);
+				}
 				$('.ui-sortable-placeholder').append('<div class="ui-dragging-text">' + ele_text + '</div>');
 			});
 			$(this.originalList).sortable(this.options);

@@ -28,6 +28,11 @@ module VAConfig
 
   CREATED_DURING_NAMES_BY_KEY = Hash[*CREATED_DURING_VALUES.map { |i| [i[2], i[1]] }.flatten]
 
+  ASSOCIATION_MAPPING = { 
+                          dispatcher: :va_rules,
+                          observer: :observer_rules
+                        }
+
   def self.handler(field, account, evaluate_on_type = nil)
     fetch_handler field, account, :rule, evaluate_on_type
   end

@@ -34,7 +34,8 @@ class VaRule < ActiveRecord::Base
   after_commit :clear_installed_app_business_rules_from_cache, :if => :installed_app_business_rule?
   after_commit :log_rule_change, if: :automated_rule?
 
-  attr_writer :conditions, :actions, :events, :performer
+  attr_writer :conditions, :actions, :events, :performer, :rule_operator,
+              :rule_performer, :rule_events, :rule_conditions
   attr_accessor :triggered_event, :response_time
 
   attr_accessible :name, :description, :match_type, :active, :filter_data, :action_data, :rule_type, :position
@@ -61,7 +62,7 @@ class VaRule < ActiveRecord::Base
   }
 
   def filter_data
-    (observer_rule? || api_webhook_rule?) ? read_attribute(:filter_data).symbolize_keys : read_attribute(:filter_data)
+    (self[:filter_data].present? && (observer_rule? || api_webhook_rule?)) ? read_attribute(:filter_data).symbolize_keys : read_attribute(:filter_data)
   end
 
   def performer
@@ -79,7 +80,40 @@ class VaRule < ActiveRecord::Base
   def actions
     @actions ||= action_data.collect{ |act_hash| deserialize_action act_hash }
   end
-  
+
+  def condition_data
+    has_condition_data? && (observer_rule? || api_webhook_rule?) ?
+          self[:condition_data].symbolize_keys : self[:condition_data]
+  end
+
+  def has_condition_data?
+    self[:condition_data].present?
+  end
+
+  def rule_operator
+     @rule_operator ||= (observer_rule? ? condition_data[:conditions].keys.first.to_sym : condition_data.keys.first.to_sym) if has_condition_data?
+  end
+ 
+   def rule_performer
+     @rule_performer ||= Va::Performer.new(condition_data[:performer].symbolize_keys) if has_condition_data?
+   end
+ 
+   def rule_events
+     @rule_events ||= condition_data[:events].collect{ |e| Va::Event.new(e.symbolize_keys, account) } if has_condition_data?
+   end
+ 
+   def rule_conditions
+     if has_condition_data?
+       @rule_conditions ||= begin
+         if observer_rule?
+           condition_data[:conditions].values.first
+         elsif dispatchr_rule?
+           condition_data.values.first
+         end
+       end
+     end
+   end
+
   def deserialize_action(act_hash)
     act_hash.symbolize_keys!
     Va::Action.new(act_hash, self)
@@ -389,16 +423,20 @@ class VaRule < ActiveRecord::Base
 
     def has_events?
       return unless observer_rule? || api_webhook_rule?
-      errors.add(:base,I18n.t("errors.events_empty")) if(filter_data[:events].blank?)
+      errors.add(:base,I18n.t("errors.events_empty")) if 
+        ((account.automation_revamp_enabled? && condition_data[:events].blank?) || 
+            (!account.automation_revamp_enabled? && filter_data[:events].blank?))
     end
     
     def has_conditions?
       return unless supervisor_rule?
-      errors.add(:base,I18n.t("errors.conditions_empty")) if(filter_data.blank?)
+      errors.add(:base,I18n.t("errors.conditions_empty")) if
+        ((!account.automation_revamp_enabled? && filter_data.blank?) || 
+          (account.automation_revamp_enabled? && condition_data.blank?))
     end
     
     def has_actions?
-      errors.add(:base,I18n.t("errors.actions_empty")) if(action_data.blank?)
+      errors.add(:base,I18n.t("errors.actions_empty")) if (action_data.blank?)
     end
 
     def encrypt data
@@ -449,10 +487,12 @@ class VaRule < ActiveRecord::Base
 
     # To make sure that condition operators are not being tampered.
     def has_safe_conditions?
-      return true if filter_array.nil?
-      filter_array.each do |filter|
-        filter.symbolize_keys!
-        errors.add(:base,"Enter a valid condition") if filter[:operator].present? && va_operator_list[filter[:operator].to_sym].nil?
+      unless account.automation_revamp_enabled?
+        return true if filter_array.nil?
+        filter_array.each do |filter|
+          filter.symbolize_keys!
+          errors.add(:base,"Enter a valid condition") if filter[:operator].present? && va_operator_list[filter[:operator].to_sym].nil?
+        end
       end
     end
 

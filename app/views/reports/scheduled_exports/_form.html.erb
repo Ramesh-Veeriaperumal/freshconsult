@@ -110,7 +110,7 @@
 						<span class="item">
 							<label class="checkbox">
 								<%= check_box_tag "fields_data[ticket][#{ticket[:value]}]", ticket[:label], ticket[:selected], :data => {:field =>"ticket-fields"} %>
-								<%= ticket[:label].html_safe %>
+								<%= ticket[:label].html_safe %><%= content_tag :span, "*", class: 'encrypted-star' if  ticket[:encrypted] && current_account.falcon_and_encrypted_fields_enabled?  %>
 		  				</label>
 							<% if ticket[:levels] %>
 								<div class="ml10">
@@ -155,7 +155,7 @@
 						<span class="item">
 							<label class="checkbox">
 		    				<%= check_box_tag "fields_data[contact][#{contact[:value]}]", contact[:label], contact[:selected], :data => {:field =>"contact-fields"}  %>
-								<%= contact[:label].html_safe %>
+								<%= contact[:label].html_safe %><%= content_tag :span, "*", class: 'encrypted-star' if contact[:encrypted] && current_account.falcon_and_encrypted_fields_enabled?%>
 		  				</label>
 						</span>
 					<% end %>
@@ -190,14 +190,21 @@
 						<span class="item">
 							<label class="checkbox">
 		    				<%= check_box_tag "fields_data[company][#{company[:value]}]", company[:label], company[:selected], :data => {:field =>"company-fields"}  %>
-								<%= company[:label].html_safe %>
+								<%= company[:label].html_safe %><%= content_tag :span, "*", class: 'encrypted-star' if company[:encrypted] && current_account.falcon_and_encrypted_fields_enabled? %>
 		  				</label>
 						</span>
-					<% end %>
+					<%end%>
 				</div>
 			</div>
 		</div>
 	</li>
+  <% if current_account.falcon_and_encrypted_fields_enabled? %>
+  <li>
+    <div class="exported-data-encrypt-info">
+      <%=t('helpdesk_reports.ticket_schedule.schedule_encryption_info').html_safe %>
+    </div>
+  </li>
+  <% end %>
 	<li class="ticket-schedule-item">
 		<h3 class="title mb8 schedule-title"> <%= t('helpdesk_reports.ticket_schedule.new.delivery')%> </h3>
 		<div class="mt20">
