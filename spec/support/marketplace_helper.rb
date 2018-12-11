@@ -122,6 +122,11 @@ module MarketplaceHelper
     end
   end
 
+  def oauth_handshake_response
+    body = { redirect_url: "http://localhost:3005/product/4/account/1/versions/2/oauth_install?fdcode=Freshdesk+3ae07484ef166b45ad830f480b88f6ff&callback=http://localhost.freshpo.com/admin/marketplace/installed_extensions/1/2/oauth_callback"}
+    FreshRequest::Response.new(Response.new(body))
+  end
+
   def extension_details_v2
     body = {
       'extension_id' => 1,
