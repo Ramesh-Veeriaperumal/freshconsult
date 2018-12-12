@@ -92,13 +92,13 @@ def build_setup(category) {
 def execute_test_cases(category) {
 
         if(category == 'pronto') {
-            sh """#!/bin/bash
-               source /etc/profile.d/rvm.sh
-               cd /home/jenkins/helpkit/
-               bundle install
-               PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/falcon-prestaging
-               """
-        }
+           sh """#!/bin/bash
+              source /usr/local/rvm/scripts/rvm
+              cd /home/jenkins/helpkit/
+              rm -rf Gemfile*	
+              PRONTO_GITHUB_ACCESS_TOKEN=01e7bb24ab7efd8415542b6ecf6767385a9e89e4 PRONTO_PULL_REQUEST_ID=$params.ghprbPullId pronto run -f github_status github_pr -c origin/falcon-prestaging
+              """
+       }
 
         if(category == 'public') {
            sh """#!/bin/bash
