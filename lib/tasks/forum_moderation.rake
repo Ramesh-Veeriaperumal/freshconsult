@@ -4,14 +4,14 @@ namespace :forum_moderation do
   task :scan => :environment do
     $sqs_forum_moderation.poll(:initial_timeout => false, :batch_size => 10) do |sqs_msg|
       begin
-        puts "** Got ** #{sqs_msg.body} **"
+        Rails.logger.info("Forum Moderation: ** Got ** #{sqs_msg.body} **")
         msg_attributes = JSON.parse(sqs_msg.body)['sqs_post']
         Sharding.select_shard_of(msg_attributes['account_id']) do
           Community::Moderation::QueuedPost.new(msg_attributes).analyze
         end
-        puts "** Done ** #{sqs_msg.body} **"
+        Rails.logger.info("Forum Moderation: ** Done ** #{sqs_msg.body} **")
       rescue => e
-        puts "** Failed ** #{sqs_msg.body} ** #{e}"
+        Rails.logger.info("Forum Moderation: ** Failed ** #{sqs_msg.body} ** #{e}")
         ForumErrorsMailer.forum_moderation_failed({:error => e, :message => sqs_msg.body})
       ensure
         Account.reset_current_account
