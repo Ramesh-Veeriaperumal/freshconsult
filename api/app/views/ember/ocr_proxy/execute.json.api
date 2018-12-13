@@ -1,0 +1,5 @@
+if @proxy_response.present? && @proxy_response.is_a?(Hash)
+    JSON.generate(@proxy_response)
+elsif @proxy_response.present? && @proxy_response.is_a?(String)
+    @proxy_response
+end

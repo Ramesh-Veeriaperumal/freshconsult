@@ -59,7 +59,7 @@ module GroupsTestHelper
     group_json = group_json(expected_output, group)
     group_json[:auto_ticket_assign] = (expected_output[:auto_ticket_assign] || group.ticket_assign_type).to_s.to_bool
     group_json
-  end
+  end  
 
   def group_json(expected_output, group)
     expected_output[:ignore_created_at] ||= true
