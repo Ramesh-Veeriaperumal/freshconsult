@@ -1,0 +1,32 @@
+<div class="shopify-listing-container">
+  <div class="main-content">
+    <div class="main-wrapper">
+      <div class="body-wrapper">
+        <div class="logo-container">
+          <img src="/images/misc/shopify_fd_logo.png" alt="Freshdesk" width="204px" />
+        </div>
+        <div class="text-container">
+          <p class="main-text"><b>Connect to Freshdesk</b><p>
+          <p class="main-subtext">Connect to an existing account or create a new account<p>
+        </div>
+        <div class="action-container">
+        <%= form_tag("/shopify_account_verification", {:method => :post, :class => "search-form"}) do %>
+          <div class="action-label">Your Freshdesk URL</div>
+          <input id="domain-name" class="domain-box" rel="ghostWriter" autocomplete="off" autofocus="on" name="account"/>
+          <span class="placeholder"><%= @base_domain %></span>
+          <input name='hmac' value='<%= @hmac %>' type='hidden' class="doamin-hidden"/>
+          <input name='shop' value='<%= @shop %>' type='hidden' class="doamin-hidden"/>
+          <input name='timestamp' value='<%= @timestamp %>' type='hidden' />
+          <%= submit_tag "CONNECT", :class => "domain-btn", :id => "domain-btn", :disabled => true%> 
+        <% end %>
+        </div>
+        <div class="signup-container">
+          New to Freshdesk? <a href="https://freshdesk.com/signup?utm_source=shopify&utm_medium=marketplace_listing&utm_campaign=shopify_integration">Sign up here</a>
+        </div>
+      </div>
+      <div>
+        <img src="/images/misc/shopify_footer.png" alt="Freshdesk" width="100%" height="127.5px"/>
+      </div>
+    </div>
+  </div> 
+</div>
