@@ -317,13 +317,13 @@ customer_import_details:
 rule:
   $ref: ./resource/rule.yaml
 automation_rule:
-  $ref: ./resource/automation_rule.yaml
+  $ref: ./response/admin/automation_rule.yaml
 
 # RESPONSE
 meta:
   $ref: './response/meta.yaml'
 automation_rule_meta:
-  $ref: './resource/automation_rule_meta'
+  $ref: './resource/automation_rule_meta.yaml'
 ner_api_data:
   $ref: './resource/ner_api_data.yaml'
 conversations_show:

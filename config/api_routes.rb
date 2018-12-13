@@ -21,6 +21,7 @@ Helpkit::Application.routes.draw do
     end
 
     match '_search/tickets' => 'tickets#search', as: :tickets_search, via: :get
+    match 'search_log' => 'ember/search/logger#log_click', via: :post
 
     resources :conversations, except: [:new, :edit, :show, :index, :create]
 

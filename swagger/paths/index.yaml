@@ -405,6 +405,10 @@
 /dashboards/{id}/announcements/{announcement_id}:
   $ref: ./custom_dashboard/announcement_show.yaml
 
+# Search logger
+/search_log:
+  $ref: ./search/log_click.yaml
+
 # Frankbot
 /bots:
   $ref: ./bots/list_and_create.yaml

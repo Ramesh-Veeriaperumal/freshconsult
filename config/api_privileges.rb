@@ -46,6 +46,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/product_feedback"
     resource :"ember/ticket_template", only: %i(show index)
     resource :"ember/search/multiquery", only: [:search_results]
+    resource :"ember/search/logger", only: [:log_click]
     resource :"ember/year_in_review", only: %i(index clear)
     resource :"ember/custom_dashboard", only: %i(widgets_data show index bar_chart_data)
   end
