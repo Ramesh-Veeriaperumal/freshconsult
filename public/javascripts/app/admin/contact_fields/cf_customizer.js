@@ -256,8 +256,7 @@
 							input_box = $(this).find("span.dropchoice input"),
 							isDestroyed = $(this).data('destroy'),
 							choice_id = input_box.attr("data_id");
-							
-							temp['value'] = escapeHtml(input_box.val());
+							temp['value'] = $.trim(escapeHtml(input_box.val()));
 							if( choice_id != "undefined" && choice_id != 0) {
 								temp['id'] = choice_id;
 							}
