@@ -43,6 +43,13 @@ module CloudFilesHelper
      end
   end
 
+  def clone_cloud_files_attachments(src , dest)
+    src.cloud_files.each do |cloud_file|
+      dest.cloud_files.build({url: cloud_file.url, filename: cloud_file.filename,
+                                  application_id: cloud_file.application_id})
+    end
+  end
+
   def build_draft_attachments model, attachment_list
     if Account.current.launched?(:attachments_scope)
       attachments = Account.current.attachments.permissible_drafts(User.current).where(id: attachment_list).limit(50)
