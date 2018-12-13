@@ -47,14 +47,13 @@ module Wf
       def handle_unassigned
         array_values = split_values
         array_values.delete("-1")
-        
         return [" (#{condition.full_key} is NULL) "] if array_values.empty?
         return [" (#{condition.full_key} is NULL or #{condition.full_key} in (?)) ",array_values]
       end
 
       def sql_condition
         return [" #{condition.full_key} is NULL "] if value.empty?
-        return handle_unassigned if value.include?("-1")
+        return handle_unassigned if split_values.include?("-1")
         return [" #{condition.full_key} in (?) ", split_values] if operator == :is_in 
       end
     end
