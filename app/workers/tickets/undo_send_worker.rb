@@ -12,6 +12,7 @@ class Tickets::UndoSendWorker < BaseWorker
     publish_solution_later = args['publish_solution_later']
     note_basic_attributes = args['note_basic_attributes']
     created_at = note_basic_attributes['created_at']
+    post_to_forum_topic = args['post_to_forum_topic']
 
     @ticket = Account.current.tickets.where(display_id: ticket_id).first
 
@@ -30,6 +31,9 @@ class Tickets::UndoSendWorker < BaseWorker
       if publish_solution_later
         publish_solution(note.note_body.body_html, ticket_id, note.attachments)
       end
+
+      @ticket.add_forum_post(note) if post_to_forum_topic && saved
+
       delete_body_data(user_id, ticket_id, created_at)
     end
     delete_undo_choice(user_id, ticket_id, created_at)

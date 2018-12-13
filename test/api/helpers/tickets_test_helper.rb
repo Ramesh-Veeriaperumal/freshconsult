@@ -904,11 +904,11 @@ module ApiTicketsTestHelper
     @ticket
   end
 
-  def new_ticket_from_forum_topic
+  def new_ticket_from_forum_topic(params = {})
     @account.launch(:forum_post_spam_whitelist)
-    topic = create_test_topic(Forum.first)
+    topic = create_test_topic(Forum.first || create_test_forum(create_test_category))
     @account.rollback(:forum_post_spam_whitelist)
-    ticket = create_ticket
+    ticket = create_ticket(params)
     ticket_topic = create_ticket_topic_mapping(topic, ticket)
     ticket
   end

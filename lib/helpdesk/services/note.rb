@@ -12,7 +12,7 @@ module Helpdesk
                                     :quoted_text, :skip_notification,
                                     :last_note_id].freeze
 
-      def save_note_later(publish_solution_later)
+      def save_note_later(publish_solution_later, post_to_forum_topic)
         ticket = notable
         build_note_and_sanitize
         self.to_emails = build_to_emails(ticket.requester)
@@ -26,7 +26,8 @@ module Helpdesk
                                       note_schema_less_associated_attributes,
                                       attachment_list,
                                       inline_attachment_list,
-                                      publish_solution_later)
+                                      publish_solution_later,
+                                      post_to_forum_topic)
 
         send_to_sidekiq_and_set_redis_flags(args)
       end
@@ -92,15 +93,18 @@ module Helpdesk
       end
 
       def build_args_for_sidekiq(ticket_display_id, note_schema_less_associated_attributes,
-                                 attachment_list, inline_attachment_list, publish_solution_later)
-        { account_id: account_id,
+                                 attachment_list, inline_attachment_list, publish_solution_later, post_to_forum_topic)
+        {
+          account_id: account_id,
           user_id: user_id,
           ticket_id: ticket_display_id,
           note_basic_attributes: attributes,
           note_schema_less_associated_attributes: note_schema_less_associated_attributes,
           attachment_details: attachment_list,
           inline_attachment_details: inline_attachment_list,
-          publish_solution_later: publish_solution_later }
+          publish_solution_later: publish_solution_later,
+          post_to_forum_topic: post_to_forum_topic
+        }
       end
 
       def send_to_sidekiq_and_set_redis_flags(args)

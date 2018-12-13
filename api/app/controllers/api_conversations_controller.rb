@@ -112,7 +112,7 @@ class ApiConversationsController < ApiApplicationController
 
     def save_note_later
       assign_extras
-      @item.save_note_later(@publish_solution)
+      @item.save_note_later(@publish_solution, false)
     end
 
     def assign_attributes_for_forward

@@ -700,7 +700,7 @@ class Helpdesk::TicketsController < ApplicationController
         @note.send_survey = params[:send_survey]
         @note.include_surveymonkey_link = params[:include_surveymonkey_link]
         clear_saved_draft
-        add_forum_post if params[:post_forums]
+        @ticket.add_forum_post(@note) if params[:post_forums]
         note_to_kbase
         flash[:notice] = t(:'flash.tickets.reply.success')
       end
