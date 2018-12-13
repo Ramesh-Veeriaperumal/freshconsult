@@ -54,7 +54,7 @@ module Wf
 
       def sql_condition
         return [" #{condition.full_key} is NULL "] if value.empty?
-        return handle_unassigned if value.include?("-1")
+        return handle_unassigned if split_values.include?("-1")
         return [" #{condition.full_key} in (?) ", split_values] if operator == :is_in 
       end
     end
