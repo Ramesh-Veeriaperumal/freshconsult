@@ -224,7 +224,8 @@ module FreshdeskCore::Model
                         "company_notes",
                         "company_note_bodies",
                         "help_widgets",
-                        "bot_responses"
+                        "bot_responses",
+                        "custom_translations"
                     ]
 
   STATUS = {
