@@ -4649,6 +4649,48 @@
             "description": "Canned response not found"
           }
         }
+      },
+      "put": {
+        "tags": [
+          "canned response"
+        ],
+        "description": "Update canned response",
+        "summary": "Update Canned Response",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true,
+            "description": "ID of canned response"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/canned_response_create"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/canned_response_show"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
       }
     },
     "/canned_responses/search": {
@@ -9920,10 +9962,10 @@
         "meta": {
           "type": "object",
           "properties": {
-            "csrf_token": {
+            "marketplace_auth_token": {
               "type": "string"
             },
-            "marketplace_auth_token": {
+            "csrf_token": {
               "type": "string"
             },
             "iris_notification_url": {
@@ -12381,7 +12423,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "./definitions/resource/automation_rule.yaml"
+          "$ref": "#/definitions/automation_rule"
         }
       ]
     },
@@ -14821,14 +14863,154 @@
     },
     "automation_rule": {
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "./definitions/resource/automation_rule.yaml"
+      "properties": {
+        "name": {
+          "type": "string"
         },
-        {
-          "$ref": "./definitions/resource/automation_rule_common.yaml"
+        "position": {
+          "type": "integer"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "performer": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "members": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "conditions": {
+          "type": "object",
+          "properties": {
+            "condition_set_1": {
+              "type": "object",
+              "properties": {
+                "match_type": {
+                  "type": "string",
+                  "enum": [
+                    "all",
+                    "any"
+                  ]
+                },
+                "ticket/contact/company": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "field_name": {
+                        "type": "string"
+                      },
+                      "operator": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "operator": {
+              "type": "string",
+              "enum": [
+                "and",
+                "or"
+              ]
+            },
+            "condition_set_2": {
+              "type": "object",
+              "properties": {
+                "match_type": {
+                  "type": "string",
+                  "enum": [
+                    "all",
+                    "any"
+                  ]
+                },
+                "ticket/contact/company": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "field_name": {
+                        "type": "string"
+                      },
+                      "operator": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            }
+          }
         }
+      },
+      "required": [
+        "name",
+        "conditions",
+        "actions"
       ]
+    },
+    "automation_rule_common": {
+      "type": "object",
+      "properties": {
+        "outdated": {
+          "type": "boolean"
+        },
+        "last_updated_by": {
+          "type": "integer"
+        },
+        "affected_tickets_count": {
+          "type": "integer"
+        }
+      }
     },
     "meta": {
       "type": "object",
@@ -18620,10 +18802,10 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "./definitions/resource/automation_rule.yaml"
+          "$ref": "#/definitions/automation_rule"
         },
         {
-          "$ref": "./definitions/resource/automation_rule_common.yaml"
+          "$ref": "#/definitions/automation_rule_common"
         }
       ]
     },
@@ -19204,6 +19386,42 @@
             "description": "Business Calender created time",
             "type": "string",
             "format": "date-time"
+          }
+        }
+      }
+    },
+    "canned_response_create": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "content_html": {
+          "type": "string"
+        },
+        "folder_id": {
+          "type": "integer"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "attachment_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "visibility": {
+          "type": "integer"
+        },
+        "group_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
           }
         }
       }

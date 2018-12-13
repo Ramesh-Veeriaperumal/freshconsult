@@ -317,7 +317,9 @@ customer_import_details:
 rule:
   $ref: ./resource/rule.yaml
 automation_rule:
-  $ref: ./response/admin/automation_rule.yaml
+  $ref: ./resource/automation_rule.yaml
+automation_rule_common:
+  $ref: ./resource/automation_rule_common.yaml
 
 # RESPONSE
 meta:
