@@ -46,6 +46,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/product_feedback"
     resource :"ember/ticket_template", only: %i(show index)
     resource :"ember/search/multiquery", only: [:search_results]
+    resource :"ember/search/logger", only: [:log_click]
     resource :"ember/year_in_review", only: %i(index clear)
     resource :"ember/custom_dashboard", only: %i(widgets_data show index bar_chart_data)
   end
@@ -120,6 +121,8 @@ Authority::Authorization::PrivilegeList.build do
   manage_availability do
     resource :"ember/group", only: [:show, :index, :update]
     resource :"ember/agent", only: %i[update]
+    resource :"ember/ocr_proxy"
+    resource :'ember/omni_channel', only: [:index]
   end
 
   delete_ticket do
@@ -137,9 +140,11 @@ Authority::Authorization::PrivilegeList.build do
     resource :'admin/canned_form'
     resource :"ember/portal", only: [:show, :update]
     resource :'audit_log', only: [:filter, :export, :event_name]
+    resource :'ember/omni_channel', only: [:index]
     resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config suggest_domains validate_domain_name customize_domain]
     resource :"admin/subscription", only: [:show, :plans]
     resource :"proactive/rule"
+    resource :"ember/ocr_proxy"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
     resource :'help_widget', only: [:index, :create, :show, :update, :destroy]
     resource :"admin/trial_subscription", only: [:usage_metrics]

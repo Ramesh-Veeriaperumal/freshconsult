@@ -21,6 +21,7 @@ Helpkit::Application.routes.draw do
     end
 
     match '_search/tickets' => 'tickets#search', as: :tickets_search, via: :get
+    match 'search_log' => 'ember/search/logger#log_click', via: :post
 
     resources :conversations, except: [:new, :edit, :show, :index, :create]
 
@@ -135,6 +136,9 @@ Helpkit::Application.routes.draw do
         get :lp_launched_features
         put :lp_launch
         put :lp_rollback
+        get :features_list
+        put :bitmap_add_feature
+        put :bitmap_revoke_feature
       end
     end
 
@@ -255,6 +259,7 @@ Helpkit::Application.routes.draw do
   ember_routes = proc do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :groups, controller: 'ember/groups', only: [:index, :show, :create, :update, :destroy]
+    resources :omni_channels, controller: 'ember/omni_channels', only: :index
 
     resources :roles, controller: 'api_roles', only: [:index] do
       collection do
@@ -266,6 +271,13 @@ Helpkit::Application.routes.draw do
       collection do
         get :search, to: 'ember/email_configs#search'
       end
+    end
+
+    resources :ocr_proxy, controller: 'ember/ocr_proxy' do
+      collection do
+        get '*all', to: 'ember/ocr_proxy#execute' 
+        put '*all', to: 'ember/ocr_proxy#execute'          
+      end 
     end
 
     # trial subscriptions
@@ -703,6 +715,13 @@ Helpkit::Application.routes.draw do
     match '/bots/:id/training_completed', to: 'channel/bot/services#training_completed', via: :post
   end
 
+  ocr_routes = proc do
+    resources :agents, controller: 'channel/omni_channel_routing/agents', only: [:index]
+    resources :groups, controller: 'channel/omni_channel_routing/groups', only: [:index]
+    resources :agents_groups, controller: 'channel/omni_channel_routing/agents_groups', only: [:index]    
+    get 'accounts/linked_accounts', to: 'channel/omni_channel_routing/linked_accounts#index'    
+  end 
+
   widget_routes = proc do
     resources :tickets, controller: 'widget/tickets', only: [:create]
     resources :ticket_fields, controller: 'widget/ticket_fields', only: [:index]
@@ -721,6 +740,10 @@ Helpkit::Application.routes.draw do
     scope '/channel', defaults: { version: 'channel', format: 'json' }, constraints: { format: /(json|$^)/ } do
       scope '', &channel_routes # "/api/v2/.."
       scope '', &api_routes # "/api/v2/.."
+      scope '/ocr', defaults: { version: 'ocr', format: 'json' }, constraints: { format: /(json|$^)/ } do
+        scope '', &ocr_routes # "/api/v2/.."
+        scope '', &api_routes # "/api/v2/.."
+      end
       scope '/v2', &channel_v2_routes # "/api/channel/v2/.."
     end
     scope '/widget', defaults: { version: 'widget', format: 'json' }, constraints: { format: /(json|$^)/ } do

@@ -1,4 +1,5 @@
 require_relative '../../../test_helper'
+require Rails.root.join('test', 'api', 'helpers', 'archive_ticket_test_helper.rb')
 module Ember
   module Tickets
     class ActivitiesControllerTest < ActionController::TestCase
@@ -6,6 +7,7 @@ module Ember
       include TicketActivitiesTestHelper
       include PrivilegesHelper
       include UsersTestHelper
+      include ArchiveTicketTestHelper
 
       CUSTOM_FIELDS = %w(number checkbox decimal text paragraph dropdown country state city date).freeze
 
@@ -72,6 +74,14 @@ module Ember
         assert_response 200
       ensure
         @controller.unstub(:fetch_activities)
+      end
+
+      def test_log_and_render_301_archive_with_archive_ticket_link
+        enable_archive_tickets do
+          create_archive_ticket_with_assoc
+          get :index, controller_params(version: 'private', ticket_id: @archive_ticket.display_id)
+          assert_response 301
+        end
       end
 
       def test_activity_with_restricted_hash

@@ -1,8 +1,8 @@
 type: object
-  properties:    
-    outdated:
-      type: boolean
-    last_updated_by:
-      type: integer
-    affected_tickets_count:
-      type: integer
+properties:
+  outdated:
+    type: boolean
+  last_updated_by:
+    type: integer
+  affected_tickets_count:
+    type: integer

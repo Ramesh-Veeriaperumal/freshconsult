@@ -2,8 +2,8 @@ class AutomationEssentialsController < ApiApplicationController
 
   skip_before_filter :load_object
   before_filter :check_environment
-  before_filter :check_params, only: [:lp_launch, :lp_rollback]
-  before_filter :validate_feature, only: [:lp_launch, :lp_rollback]
+  before_filter :check_params, only: [:lp_launch, :lp_rollback, :bitmap_add_feature, :bitmap_revoke_feature]
+  before_filter :validate_feature, only: [:lp_launch, :lp_rollback, :bitmap_add_feature, :bitmap_revoke_feature]
 
   def lp_launch
     current_account.launch(params[:feature])
@@ -19,21 +19,44 @@ class AutomationEssentialsController < ApiApplicationController
     render_all_features
   end
 
+  def bitmap_add_feature
+    current_account.add_feature(params[:feature].to_sym)
+    render_all_features
+  end
+
+  def bitmap_revoke_feature
+    current_account.revoke_feature(params[:feature].to_sym)
+    render_all_features
+  end
+
+  def features_list
+    render_all_features
+  end
+
   private
 
-  def check_environment
-    render_request_error :unsupported_environment, 400 if Rails.env.production?
-  end
+    def lp_action?
+      action_name.starts_with?('lp')
+    end
 
-  def check_params
-    render_request_error :missing_params, 400 if params[:feature].blank?
-  end
+    def check_environment
+      render_request_error :unsupported_environment, 400 if Rails.env.production?
+    end
 
-  def validate_feature
-    render_request_error :invalid_values, 400, fields: 'feature' unless Account::LP_FEATURES.include?(params[:feature].to_sym)
-  end
+    def check_params
+      render_request_error :missing_params, 400 if params[:feature].blank?
+    end
 
-  def render_all_features
-    render 'lp_launched_features'
-  end
+    def validate_feature
+      features = lp_action? ? Account::LP_FEATURES : Account::BITMAP_FEATURES
+      render_request_error :invalid_values, 400, fields: 'feature' unless features.include?(params[:feature].to_sym)
+    end
+
+    def render_all_features
+      if lp_action?
+        render 'lp_launched_features'
+      else
+        render 'bitmap_features'
+      end
+    end
 end

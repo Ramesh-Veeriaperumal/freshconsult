@@ -76,8 +76,7 @@ module Ember
       email = [Faker::Internet.email, Faker::Internet.email, "\"#{Faker::Name.name}\" <#{Faker::Internet.email}>"]
       bcc_emails = [Faker::Internet.email, Faker::Internet.email, "\"#{Faker::Name.name}\" <#{Faker::Internet.email}>"]
       email_config = @account.email_configs.where(active: true).first || create_email_config
-      params_hash = { body: body, cc_emails: email, bcc_emails: bcc_emails, from_email: email_config.reply_email }
-      params_hash
+      { body: body, cc_emails: email, bcc_emails: bcc_emails, from_email: email_config.reply_email }
     end
 
     def twitter_dm_reply_params_hash
@@ -1897,6 +1896,72 @@ module Ember
       get :reply_template, construct_params({ version: 'private', id: t.display_id }, false)
       assert_response 200
       assert(JSON.parse(response.body)['cc_emails'] == cc_emails)
+    end
+
+    def test_reply_with_post_to_forum_topic
+      t = new_ticket_from_forum_topic
+      create_normal_reply_for(t)
+      old_posts_count = t.ticket_topic.topic.posts.count
+      params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10), post_to_forum_topic: true)
+      post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      assert_equal old_posts_count + 1, t.reload.ticket_topic.topic.posts.count
+    end
+
+    def test_reply_without_post_to_forum_topic
+      t = new_ticket_from_forum_topic
+      create_normal_reply_for(t)
+      old_posts_count = t.ticket_topic.topic.posts.count
+      params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10), post_to_forum_topic: false)
+      post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      assert_equal old_posts_count, t.reload.ticket_topic.topic.posts.count
+    end
+
+    def test_reply_with_post_to_forum_topic_with_exception
+      t = new_ticket_from_forum_topic
+      create_normal_reply_for(t)
+      old_posts_count = t.ticket_topic.topic.posts.count
+      Topic.any_instance.stubs(:clone_cloud_files_attachments).raises(Exception)
+      params_hash = reply_note_params_hash.merge(full_text: Faker::Lorem.paragraph(10), post_to_forum_topic: true)
+      post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(params_hash, latest_note))
+      match_json(private_note_pattern({}, latest_note))
+      assert_equal old_posts_count, t.reload.ticket_topic.topic.posts.count
+    end
+
+    def test_reply_with_post_to_forum_topic_with_attachments
+      t = new_ticket_from_forum_topic
+      note = create_normal_reply_for(t)
+      create_shared_attachment(note)
+      attachment_ids = []
+      inline_attachment_ids = []
+      BULK_ATTACHMENT_CREATE_COUNT.times do
+        attachment_ids << create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
+        inline_attachment_ids << create_attachment(attachable_type: 'Tickets Image Upload').id
+      end
+      old_posts_count = t.ticket_topic.topic.posts.count
+      params_hash = reply_note_params_hash.merge(attachment_ids: attachment_ids, inline_attachment_ids: inline_attachment_ids, user_id: @agent.id, post_to_forum_topic: true, cloud_files: [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }])
+      stub_attachment_to_io do
+        post :reply, construct_params({ version: 'private', id: t.display_id }, params_hash)
+      end
+      assert_response 201
+      note = Helpdesk::Note.last
+      post = t.reload.ticket_topic.topic.posts.last
+      match_json(private_note_pattern(params_hash, Helpdesk::Note.last))
+      match_json(private_note_pattern({}, Helpdesk::Note.last))
+      assert note.attachments.size == attachment_ids.size
+      assert_equal post.attachments.count, note.attachments.count
+      assert_equal post.inline_attachments.count, note.inline_attachments.count
+      assert_equal post.cloud_files.count, note.cloud_files.count
     end
 
     private

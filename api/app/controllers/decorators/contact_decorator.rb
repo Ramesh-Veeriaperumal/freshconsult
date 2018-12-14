@@ -122,6 +122,13 @@ class ContactDecorator < ApiDecorator
     req_hash
   end
 
+  def to_ocr_hash
+    {
+      name: name,
+      email: email   
+    }
+  end 
+
   private
 
     def to_full_hash

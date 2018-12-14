@@ -27,15 +27,30 @@ class SbrrNextAgentTest < ActiveSupport::TestCase
     assert_nothing_raised do
       SBRR::Queue::User.any_instance.stubs(:top).returns([nil,nil])
       SBRR::Queue::User.any_instance.stubs(:dequeue_object_with_lock).returns(true)
+      SBRR::Assigner::User.any_instance.stubs(:no_of_tickets_assigned).returns(0)
       user_id, ticket = sbrr_setup
       t = SBRR::Assigner::User.new ticket
       assigned, next_agent = t.do_assign
       assigned = false if !assigned
       assert_equal false, assigned
     end
-    ensure
-      SBRR::Queue::User.any_instance.unstub(:top)
-      SBRR::Queue::User.any_instance.unstub(:dequeue_object_with_lock)
+  ensure
+    unstub_methods
+  end
+
+  def test_next_agent_with_no_agent_retry
+    assert_nothing_raised do
+      user_id, ticket = sbrr_setup
+      SBRR::Queue::User.any_instance.stubs(:top).returns([user_id, 100])
+      SBRR::Queue::User.any_instance.stubs(:dequeue_object_with_lock).returns(true)
+      SBRR::Assigner::User.any_instance.stubs(:no_of_tickets_assigned).returns(6)
+      t = SBRR::Assigner::User.new ticket
+      assigned, next_agent = t.do_assign
+      assigned ||= false
+      assert_equal false, assigned
+    end
+  ensure
+    unstub_methods
   end
 
     #Positive case with selecting 2nd next_agent
@@ -49,10 +64,8 @@ class SbrrNextAgentTest < ActiveSupport::TestCase
       assigned, next_agent = t.do_assign
       assert_equal true, assigned
     end
-    ensure
-      SBRR::Queue::User.any_instance.unstub(:top)
-      SBRR::Queue::User.any_instance.unstub(:dequeue_object_with_lock)
-      SBRR::Assigner::User.any_instance.unstub(:no_of_tickets_assigned)
+  ensure
+    unstub_methods
   end
 
   #Positive case with selecting next_agent
@@ -66,9 +79,15 @@ class SbrrNextAgentTest < ActiveSupport::TestCase
       assigned, next_agent = t.do_assign
       assert_equal true, assigned
     end
-    ensure
+  ensure
+    unstub_methods
+  end
+
+  private
+
+    def unstub_methods
       SBRR::Queue::User.any_instance.unstub(:top)
       SBRR::Queue::User.any_instance.unstub(:dequeue_object_with_lock)
       SBRR::Assigner::User.any_instance.unstub(:no_of_tickets_assigned)
-  end
+    end
 end

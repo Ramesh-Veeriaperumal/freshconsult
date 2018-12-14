@@ -1,0 +1,7 @@
+post:
+  tags: [search]
+  summary: Log clicks on term search results
+  description: Click data is sent in request body
+  responses:
+    204:
+      description: Success

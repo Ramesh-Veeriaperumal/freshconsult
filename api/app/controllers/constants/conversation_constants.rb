@@ -12,7 +12,7 @@ module ConversationConstants
   SIDE_LOADING = %w(requester).freeze
   PERMITTED_ARCHIVE_FIELDS = (TICKET_CONVERSATIONS_FIELDS + ApiConstants::PAGINATE_FIELDS).freeze
 
-  REPLY_FIELDS = %w[body full_text user_id from_email send_survey last_note_id include_surveymonkey_link].freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
+  REPLY_FIELDS = %w[body full_text user_id from_email send_survey last_note_id include_surveymonkey_link post_to_forum_topic].freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   BROADCAST_FIELDS = %w(body user_id inline_attachment_ids).freeze
   REPLY_TO_FORWARD_FIELDS = %w(body full_text user_id from_email to_emails send_survey).freeze | REPLY_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS
   FORWARD_FIELDS = %w(body full_text agent_id from_email include_quoted_text include_original_attachments).freeze | FORWARD_ARRAY_FIELDS | AttachmentConstants::CLOUD_FILE_FIELDS

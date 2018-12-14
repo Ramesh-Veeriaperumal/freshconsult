@@ -2,29 +2,35 @@ require_relative '../unit_test_helper'
 require 'sidekiq/testing'
 require 'faker'
 
+require Rails.root.join('test', 'api', 'helpers', 'tickets_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
+
 Sidekiq::Testing.fake!
 
 class UndoSendWorkerTest < ActionView::TestCase
+  include UsersTestHelper
+  include ApiTicketsTestHelper
+
   def setup
     @account = Account.first.make_current
     @account.launch(:undo_send)
+    @customer = Account.current.users.first
   end
 
-  def ticket
-    ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
-    ticket
+  def teardown
+    @account.rollback(:undo_send)
   end
 
-  def undo_send_args
+  def undo_send_args(ticket)
     {
       account_id: Account.current.id,
-      user_id: User.current.id,
+      user_id: @customer.id,
       ticket_id: ticket.display_id,
       note_basic_attributes:
         {
           'id' => nil,
           'body' => nil,
-          'user_id' => User.current.id,
+          'user_id' => @customer.id,
           'source' => 0,
           'incoming' => false,
           'private' => false,
@@ -39,7 +45,7 @@ class UndoSendWorkerTest < ActionView::TestCase
       note_schema_less_associated_attributes:
         {
           from_email: reply_note_params_hash[:from_email],
-          to_emails: [User.current.email],
+          to_emails: [@customer.email],
           cc_emails: [],
           bcc_emails: [],
           header_info: nil,
@@ -81,11 +87,44 @@ class UndoSendWorkerTest < ActionView::TestCase
   end
 
   def test_undo_send_reply
-    User.current = Account.current.users.first
-    args = HashWithIndifferentAccess.new(undo_send_args)
+    ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+    create_normal_reply_for(ticket)
+    args = HashWithIndifferentAccess.new(undo_send_args(ticket))
+    old_notes_count = ticket.notes.count
     Tickets::UndoSendWorker.new.perform(args)
     assert_equal 0, ::Tickets::UndoSendWorker.jobs.size
-  ensure
-    @account.rollback(:undo_send)
+    assert_equal old_notes_count + 1, ticket.reload.notes.count
+  end
+
+  def test_undo_reply_with_blank_ticket
+    ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+    create_normal_reply_for(ticket)
+    Helpdesk::Ticket.any_instance.stubs(:blank?).returns(true)
+    old_notes_count = ticket.notes.count
+    args = HashWithIndifferentAccess.new(undo_send_args(ticket))
+    Tickets::UndoSendWorker.new.perform(args)
+    assert_equal old_notes_count, ticket.reload.notes.count
+  end
+
+  def test_undo_reply_with_undo_send
+    ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+    create_normal_reply_for(ticket)
+    Helpdesk::Ticket.any_instance.stubs(:blank?).returns(true)
+    old_notes_count = ticket.notes.count
+    args = HashWithIndifferentAccess.new(undo_send_args(ticket))
+    Tickets::UndoSendWorker.any_instance.stubs(:get_undo_option).returns('false')
+    Tickets::UndoSendWorker.new.perform(args)
+    assert_equal old_notes_count, ticket.reload.notes.count
+  end
+
+  def test_post_to_forum_topic
+    ticket = new_ticket_from_forum_topic(requester_id: @customer.id)
+    create_normal_reply_for(ticket)
+    old_posts_count = ticket.ticket_topic.topic.posts.count
+    args = HashWithIndifferentAccess.new(undo_send_args(ticket).merge(post_to_forum_topic: true))
+    Tickets::UndoSendWorker.new.perform(args)
+    assert_equal 0, ::Tickets::UndoSendWorker.jobs.size
+    new_posts_count = ticket.reload.ticket_topic.topic.posts.count
+    assert_equal old_posts_count + 1, new_posts_count
   end
 end

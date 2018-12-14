@@ -463,16 +463,6 @@ class User < ActiveRecord::Base
   def falcon_invite_eligible?
     (account.falcon_ui_enabled? && !account.disable_old_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
   end
-  
-  def enabled_undo_send?
-    Account.current.launched?(:undo_send) && preferences[:agent_preferences][:undo_send]
-  end
-
-  def toggle_undo_send(pref)
-    new_pref = { undo_send: pref }
-    self.merge_preferences = { agent_preferences: new_pref }
-    save
-  end
 
   def enabled_undo_send?
     Account.current.launched?(:undo_send) && preferences[:agent_preferences][:undo_send]
@@ -577,7 +567,7 @@ class User < ActiveRecord::Base
     enqueue_activation_email(params[:email_config], portal) if !deleted and !email.blank? and send_activation and !Thread.current[:create_sandbox_account]
     true
   end
-  
+
   def enqueue_activation_email(email_config = nil, portal = nil)
     portal.make_current if portal
     active_freshid_agent = active_freshid_agent?

@@ -1105,6 +1105,18 @@ ActiveRecord::Schema.define(version: 20181126132023) do
   add_index "cti_phones", ["account_id", "agent_id"], :name => "index_cti_phones_on_account_id_and_agent_id", :unique => true
   add_index "cti_phones", ["account_id", "phone"], :name => "index_cti_phones_on_account_id_and_phone", :unique => true
 
+  create_table "custom_translations", :force => true do |t|
+    t.integer  "translatable_id",   :limit => 8, :null => false
+    t.string   "translatable_type",              :null => false
+    t.integer  "language_id",                    :null => false
+    t.binary   "translations"
+    t.integer  "account_id",        :limit => 8, :null => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+  end
+
+  add_index "custom_translations", ["account_id", "translatable_type", "language_id", "translatable_id"], :name => "ct_acc_id_translatable_type_lang_id_translatable_id"
+
   create_table "customer_forums", :force => true do |t|
     t.integer  "customer_id", :limit => 8
     t.integer  "forum_id",    :limit => 8

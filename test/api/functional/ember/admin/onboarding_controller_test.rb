@@ -36,6 +36,12 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
     assert_response 400
   end
 
+  def test_disable_disablable_channels
+    @account.set_account_onboarding_pending
+    post :update_channel_config, construct_params(version: 'private', channels: %w[phone forums])
+    assert_response 204
+  end
+
   def test_channel_update_after_onboarding_complete
     Account.current.complete_account_onboarding
     post :update_channel_config, construct_params(version: 'private', channels: channels_params)
@@ -68,6 +74,17 @@ class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
   def test_resend_activation_email
     get :resend_activation_email, construct_params(version: 'private')
     assert_response 204
+  end
+
+  def test_update_activation_email_save_failure
+    user = add_new_user(@account)
+    put :update_activation_email, construct_params(version: 'private', new_email: user.email)
+    errors = JSON.parse(@response.body)['errors']
+    assert_response 409
+    assert_equal errors[0]['message'], 'It should be a unique value'
+    user.destroy
+  ensure
+    User.any_instance.unstub(:save)
   end
 
   def test_forward_email_confirmation
