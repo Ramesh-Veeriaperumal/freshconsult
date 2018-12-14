@@ -47,7 +47,7 @@ module SBRR
           else
             SBRR.log "USER :: #{user_id} #{user && user.id}, is_user_eligible :: false, #{group.capping_limit}, #{conditions_matched.inspect}, #{user && user.agent && user.agent.available.inspect}"
           end
-          queue.dequeue_object_with_lock user if !conditions_matched
+          queue.dequeue_object_with_lock user if !conditions_matched && user
           count = count + 1
         end
         return nil

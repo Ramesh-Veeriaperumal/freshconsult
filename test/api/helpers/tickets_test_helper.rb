@@ -1039,7 +1039,7 @@ module ApiTicketsTestHelper
     @group_with_sbrr_enabled = []
     @skills = []
     2.times do
-      @group_with_sbrr_enabled << create_group(@account, ticket_assign_type: 2, toggle_availability: 1)
+      @group_with_sbrr_enabled << create_group(@account, ticket_assign_type: 2, toggle_availability: 1, capping_limit: 5)
       @skills << @account.skills.create(
         name: Faker::Lorem.words(3).join(' '),
         match_type: 'all'
@@ -1058,13 +1058,10 @@ module ApiTicketsTestHelper
   end
 
   def sbrr_create_skill_tickets(requester_id)
-    create_skill if @account.skills.empty?
+    create_skill
     group_with_sbrr_enabled = Account.current.groups.where(ticket_assign_type: 2)
-    skills = Account.current.skills
-    3.times do
-      create_ticket({skip_sbrr_assigner: false,skill: skills[0], skill_id: skills[0].id, requester_id: requester_id}, group_with_sbrr_enabled[0])
-      create_ticket({skip_sbrr_assigner: false,skill: skills[1], skill_id: skills[1].id, requester_id: requester_id}, group_with_sbrr_enabled[1])
-    end
+    ticket = create_ticket({ skip_sbrr_assigner: false, skill: @skills[0], skill_id: @skills[0].id, requester_id: requester_id }, group_with_sbrr_enabled[0])
+    [@skills[0].id, group_with_sbrr_enabled[0].id, ticket]
   end
 
   def sbrr_setup
@@ -1075,16 +1072,13 @@ module ApiTicketsTestHelper
     end
     agent.available = true
     agent.save!
-    sbrr_create_skill_tickets agent.user_id
-    group = @account.groups.where(ticket_assign_type: 2).first
-    group.capping_limit = 1
-    group.save!
-    ticket = @account.tickets.where("sl_skill_id > ? and group_id = ?", 0, group.id).first
-    agent_group = @account.agent_groups.build(user_id: agent.user_id, group_id: group.id)
+    user_id = agent.user_id
+    skill_id, group_id, ticket = sbrr_create_skill_tickets user_id
+    agent_group = @account.agent_groups.build(user_id: user_id, group_id: group_id)
     agent_group.save!
-    user_skill = UserSkill.new(user_id: agent.user_id,skill_id: ticket.sl_skill_id)
+    user_skill = UserSkill.new(user_id: user_id, skill_id: ticket.sl_skill_id)
     user_skill.save!
-    return[agent.user_id, ticket]
+    [user_id, ticket]
   end
 
   def create_archive_and_child(ticket)
