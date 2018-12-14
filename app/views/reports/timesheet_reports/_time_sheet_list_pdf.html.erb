@@ -81,7 +81,7 @@
 
 <% if exceeds_row_limit %>
   <div class="export-exceeds-row-limit">
-    <%= t('helpdesk_reports.export_exceeds_row_limit_msg', row_max_limit: row_max_limit)%>
+    <%= t('helpdesk_reports.export_exceeds_row_limit_msg') % {:row_max_limit => row_max_limit}%>
   </div>
 <% end %>
 

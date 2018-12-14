@@ -229,7 +229,7 @@ input[type="reset"],
 input[type="button"],
 a.btn.btn-primary,
 button.btn-primary,
-a[href*="/login"],
+.banner-nav a[href*="/login"],
 .redactor_btns_box .btn.btn-primary
 {
 width: auto; // Override of generic input selector
@@ -251,6 +251,10 @@ background-color: $btnPrimaryHover;
 text-decoration: none;
 color: $btnPrimaryTextColor;
 }
+}
+
+.banner-nav a[href*="/login"]{
+  font-size: 14px;
 }
 
 .btn-signup{

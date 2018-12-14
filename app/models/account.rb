@@ -712,6 +712,14 @@ class Account < ActiveRecord::Base
     Freshid::Organisation.create(payload)
   end
 
+  def create_freshid_org_without_account_and_user
+    Freshid::Organisation.create_for_account(name)
+  end
+
+  def map_freshid_org_to_account(org_id)
+    Freshid::Organisation.new(id: org_id).map_to_account(full_domain)
+  end
+
   def freshid_attributes
     { name: name, domain: full_domain }
   end

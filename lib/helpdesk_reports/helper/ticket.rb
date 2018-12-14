@@ -199,7 +199,7 @@ module HelpdeskReports::Helper::Ticket
 
         csv << res
       end
-      csv << t('helpdesk_reports.export_exceeds_row_limit_msg', :row_max_limit => csv_row_limit) if exceeds_limit
+      csv << [t('helpdesk_reports.export_exceeds_row_limit_msg') % {:row_max_limit => csv_row_limit}] if exceeds_limit
     end
     csv_string
   end

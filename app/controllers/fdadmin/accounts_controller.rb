@@ -140,14 +140,13 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     result = {}
     begin
       account = Account.current
-      check_create_organisation(account)
+      org_created = check_create_organisation(account)
+      render :json => {:status => "notice"}.to_json and return unless org_created
       if account.collab_settings.nil?
         Freshconnect::RegisterFreshconnect.perform_async
         result[:status] = "success"
       else
         freshconnect_flag = account.has_feature?(:collaboration)
-        CollabPreEnableWorker.perform_async(false)
-        account.revoke_feature(:collaboration)
         actual_response = do_migrate_freshconnect(freshconnect_flag, account)
         response_code = actual_response.code
         if SUCCESS.include?(response_code)
@@ -155,11 +154,13 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
           response = response.deep_symbolize_keys
           fresh_connect_acc = Freshconnect::Account.new(account_id: account.id,
                                                         product_account_id: response[:product_account_id],
-                                                        enabled: response[:enabled],
+                                                        enabled: false,
                                                         freshconnect_domain: response[:domain])
           fresh_connect_acc.save!
           account.add_feature(:freshconnect)
           if account.save
+            CollabPreEnableWorker.perform_async(false)
+            account.revoke_feature(:collaboration)
             result[:status] = "success"
           else
             result[:status] = "error"
@@ -685,7 +686,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
 
     def check_freshconnect_migrate
       account = Account.current
-      render :json => {:status => "notice"}.to_json and return unless account.freshid_enabled? && account.falcon_enabled?
+      render :json => {:status => "notice"}.to_json and return unless account.freshid_enabled? && account.falcon_enabled? && !account.freshconnect_account.present?
     end
 
     def check_create_organisation(account)
@@ -694,16 +695,17 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
         account_id: account.id,
         domain: account.full_domain
       }
+      existing_account = Freshid::Account.find_by_domain(freshid_account_params[:domain])
+      return false unless existing_account
       fd_account = Freshid::Account.new(freshid_account_params)
       existing_organisation = fd_account.organisation
       if !existing_organisation
         #org does not exist, create one
-        account_admin = account.all_technicians.find_by_email(account.admin_email)
-        if !account_admin || !account_admin.active?
-          account_admin = account.account_managers.first
-        end
-        account.create_freshid_org_with_account_and_user(account_admin)
+        response = account.create_freshid_org_without_account_and_user
+        new_org = response[:id]
+        return new_org && account.map_freshid_org_to_account(new_org)
       end
+      existing_organisation
     end
 
     def do_migrate_freshconnect(fc_enabled, account)
