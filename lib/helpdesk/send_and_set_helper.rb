@@ -189,17 +189,6 @@ module Helpdesk::SendAndSetHelper
                             })
   end
 
-  def add_forum_post
-    @topic = Topic.find_by_id_and_account_id(@ticket.ticket_topic.topic_id,current_account.id)
-    if !@topic.locked?
-      @post  = @topic.posts.build(:body_html => params[:helpdesk_note][:note_body_attributes][:body_html])
-      @post.user = current_user
-      @post.account_id = current_account.id
-      attachment_builder(@post, params[:helpdesk_note][:attachments], params[:cloud_file_attachments] )
-      @post.save!
-    end
-  end      
-
   def note_to_kbase
     begin
       create_article if @note.instance_variable_get(:@publish_solution)

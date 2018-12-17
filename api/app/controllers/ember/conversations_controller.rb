@@ -45,6 +45,7 @@ module Ember
     end
 
     def reply
+      @post_to_forum_topic = params[cname][:post_to_forum_topic]
       @last_note_id = params[:last_note_id].to_i
       @last_note_id = @ticket.notes.last.try(:id) if @last_note_id == 1
       return unless validate_params
@@ -223,6 +224,7 @@ module Ember
           create_solution_article if @publish_solution
           @ticket.draft.clear if reply?
         end
+        @ticket.add_forum_post(@item) if @post_to_forum_topic
         render_response(is_success)
       end
 
@@ -293,7 +295,7 @@ module Ember
 
       def save_note_later
         assign_extras
-        @item.save_note_later(@publish_solution)
+        @item.save_note_later(@publish_solution, @post_to_forum_topic)
       end
 
       def assign_from_email

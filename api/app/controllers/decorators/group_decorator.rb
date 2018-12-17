@@ -13,6 +13,13 @@ class GroupDecorator < ApiDecorator
     User.current.privilege?(:manage_availability) ? to_full_hash : to_restricted_hash
   end
 
+  def to_ocr_hash
+    {
+      id: record.id,
+      name: record.name
+    }
+  end
+
   def to_full_hash
     {
       id: record.id,

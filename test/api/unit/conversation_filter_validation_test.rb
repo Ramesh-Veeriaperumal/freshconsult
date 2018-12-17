@@ -8,12 +8,10 @@ class ConversationFilterValidationTest < ActionView::TestCase
   end
 
   def test_nil_value
-    conversation_filter = ConversationFilterValidation.new(include: nil)
+    conversation_filter = ConversationFilterValidation.new(include: '')
     refute conversation_filter.valid?(:ticket_conversations)
     error = conversation_filter.errors.full_messages
-    assert error.include?('Include datatype_mismatch')
-    assert_equal({ include: {
-      expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'
-    }}, conversation_filter.error_options)
+    assert error.include?('Include not_included')
+    assert_equal({ include: { list: 'requester' } }, conversation_filter.error_options)
   end
 end

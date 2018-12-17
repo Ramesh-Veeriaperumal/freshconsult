@@ -8,6 +8,7 @@ module GroupHelper
         group.group_type = group_type
 		group.ticket_assign_type  = options[:ticket_assign_type] if options[:ticket_assign_type]
         group.toggle_availability = options[:toggle_availability] if options[:toggle_availability]
+        group.capping_limit = options[:capping_limit] if options[:capping_limit]
 		group.save!
 		group
 	end

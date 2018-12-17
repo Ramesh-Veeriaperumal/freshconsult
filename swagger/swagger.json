@@ -3494,8 +3494,8 @@
             "description": "Import not found"
           }
         }
-       }
-      },
+      }
+    },
     "/contacts/{id}/timeline": {
       "get": {
         "summary": "Contact timeline",
@@ -3505,7 +3505,7 @@
         ],
         "parameters": [
           {
-            "$ref": "#/parameters/id"  
+            "$ref": "#/parameters/id"
           }
         ],
         "responses": {
@@ -3523,7 +3523,6 @@
           }
         }
       }
-    }
     },
     "/companies": {
       "get": {
@@ -4648,6 +4647,48 @@
           },
           "404": {
             "description": "Canned response not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "canned response"
+        ],
+        "description": "Update canned response",
+        "summary": "Update Canned Response",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true,
+            "description": "ID of canned response"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/canned_response_create"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/canned_response_show"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
       }
@@ -7312,6 +7353,20 @@
         }
       }
     },
+    "/search_log": {
+      "post": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Log clicks on term search results",
+        "description": "Click data is sent in request body",
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/bots": {
       "get": {
         "tags": [
@@ -9106,6 +9161,160 @@
         }
       }
     },
+    "/automation_rules": {
+      "get": {
+        "tags": [
+          "automation rules"
+        ],
+        "summary": "List all",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "rules": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/automation_rule_response"
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/meta"
+                    },
+                    {
+                      "$ref": "#/definitions/automation_rule_meta"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "automation rules"
+        ],
+        "description": "Create rule",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/automation_rule_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/automation_rule_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "rule not found"
+          }
+        }
+      }
+    },
+    "/automation_rules/{id}": {
+      "get": {
+        "tags": [
+          "automation rules"
+        ],
+        "summary": "Show rule",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/automation_rule_response"
+            }
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "automation rules"
+        ],
+        "summary": "Delete rule",
+        "description": "Destroys the rule, will not be able to restore",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "automation rules"
+        ],
+        "summary": "Update rule",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/automation_rule_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/automation_rule_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Rule not found"
+          }
+        }
+      }
+    },
     "/groups": {
       "get": {
         "tags": [
@@ -9504,12 +9713,11 @@
         "tags": [
           "business_hours"
         ],
-
         "responses": {
           "200": {
             "description": "Success",
             "schema": {
-                  "$ref": "#/definitions/business_hours"
+              "$ref": "#/definitions/business_hours"
             }
           },
           "400": {
@@ -9517,60 +9725,6 @@
             "schema": {
               "$ref": "#/definitions/bad_request_error"
             }
-          }
-        }
-      }
-    },
-    "/accounts/cancel": {
-      "post": {
-        "tags": [
-          "Account Cancellation"
-        ],
-        "summary": "Account Cancellation",
-        "description": "Request for Account cancellation.",
-        "parameters": [
-          {
-            "in": "body",
-            "name": "data",
-            "schema": {
-              "$ref": "#/definitions/account_cancellation_request"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
-            "description": "Access denied"
-          }
-        }
-      }
-    },  
-    "/data_export/export": {
-      "post": {
-        "tags": [
-          "Account export"
-        ],
-        "summary": "Export account data",
-        "description": "Let's the admin to export account data.",
-        "responses": {
-          "204": {
-            "description": "Success"
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "403": {
           }
         }
       }
@@ -9616,138 +9770,48 @@
         }
       }
     },
-    "/automations/{rule_type}/rules": {
-      "get": {
-        "tags": [
-          "automation rules"
-        ],
-        "summary": "List all",
-        "type": "object",
-        "properties": {
-          "rules": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/automation_rule_response"
-            }
-          },
-          "meta": {
-            "type": "object",
-            "allOf": [
-              {
-                "$ref": "#/definitions/meta"
-              },
-              {
-                "properties": {
-                  "cascading_rules": {
-                    "type": "boolean"
-                  }
-                }
-              }
-            ]
-          }
-        }
-      },
+    "/accounts/cancel": {
       "post": {
         "tags": [
-          "automation rules"
+          "Account Cancellation"
         ],
-        "description": "Create rule",
+        "summary": "Account Cancellation",
+        "description": "Request for Account cancellation.",
         "parameters": [
           {
-            "name": "data",
             "in": "body",
-            "required": true,
+            "name": "data",
             "schema": {
-              "$ref": "#/definitions/automation_rule_input"
+              "$ref": "#/definitions/account_cancellation_request"
             }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/automation_rule_response"
-            }
-          },
-          "400": {
-            "description": "Bad Request Error",
-            "schema": {
-              "$ref": "#/definitions/bad_request_error"
-            }
-          },
-          "404": {
-            "description": "rule not found"
-          }
-        }
-      }
-    },
-    "/automations/{rule_type}/rules/{id}": {
-      "get": {
-        "tags": [
-          "automation rules"
-        ],
-        "summary": "Show rule",
-        "parameters": [
-          {
-            "$ref": "#/parameters/id"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/automation_rule_response"
-            }
-          },
-          "404": {
-            "description": "Rule not found"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "automation rules"
-        ],
-        "summary": "Delete rule",
-        "description": "Destroys the rule, will not be able to restore",
-        "parameters": [
-          {
-            "$ref": "#/parameters/id"
           }
         ],
         "responses": {
           "204": {
             "description": "Success"
           },
-          "404": {
-            "description": "Rule not found"
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
-      },
-      "put": {
+      }
+    },
+    "/data_export/export": {
+      "post": {
         "tags": [
-          "automation rules"
+          "Account export"
         ],
-        "summary": "Update rule",
-        "parameters": [
-          {
-            "$ref": "#/parameters/id"
-          },
-          {
-            "name": "data",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/automation_rule_input"
-            }
-          }
-        ],
+        "summary": "Export account data",
+        "description": "Let's the admin to export account data.",
         "responses": {
-          "200": {
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/automation_rule_response"
-            }
+          "204": {
+            "description": "Success"
           },
           "400": {
             "description": "Bad Request Error",
@@ -9755,8 +9819,8 @@
               "$ref": "#/definitions/bad_request_error"
             }
           },
-          "404": {
-            "description": "Rule not found"
+          "403": {
+            "description": "Access denied"
           }
         }
       }
@@ -9898,10 +9962,10 @@
         "meta": {
           "type": "object",
           "properties": {
-            "csrf_token": {
+            "marketplace_auth_token": {
               "type": "string"
             },
-            "marketplace_auth_token": {
+            "csrf_token": {
               "type": "string"
             },
             "iris_notification_url": {
@@ -12282,14 +12346,6 @@
         }
       ]
     },
-    "automation_rule_input": {
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/automation_rule"
-        }
-      ]
-    },
     "trial_subscription_create": {
       "type": "object",
       "properties": {
@@ -12363,7 +12419,14 @@
         "meta"
       ]
     },
-
+    "automation_rule_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/automation_rule"
+        }
+      ]
+    },
     "account_cancellation_request": {
       "type": "object",
       "properties": {
@@ -12377,7 +12440,6 @@
         }
       }
     },
-
     "conversation_template": {
       "type": "object",
       "properties": {
@@ -14830,7 +14892,7 @@
           "items": {
             "type": "object",
             "properties": {
-              "field_name": {
+              "name": {
                 "type": "string"
               },
               "from": {
@@ -14920,7 +14982,7 @@
           "items": {
             "type": "object",
             "properties": {
-              "field_name": {
+              "name": {
                 "type": "string"
               },
               "value": {
@@ -14936,16 +14998,16 @@
         "actions"
       ]
     },
-    "automation_rule_common_response": {
+    "automation_rule_common": {
       "type": "object",
       "properties": {
-        "affected_tickets_count": {
-          "type": "integer"
-        },
         "outdated": {
           "type": "boolean"
         },
         "last_updated_by": {
+          "type": "integer"
+        },
+        "affected_tickets_count": {
           "type": "integer"
         }
       }
@@ -14956,6 +15018,14 @@
       "properties": {
         "count": {
           "type": "integer"
+        }
+      }
+    },
+    "automation_rule_meta": {
+      "type": "object",
+      "properties": {
+        "cascading_rules": {
+          "type": "boolean"
         }
       }
     },
@@ -17161,20 +17231,6 @@
         }
       ]
     },
-    "automation_rule_response": {
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/automation_rule"
-        },
-        {
-          "$ref": "#/definitions/automation_rule_common_response"
-        },
-        {
-          "$ref": "#/definitions/extension_generic"
-        }
-      ]
-    },
     "trial_widget_index": {
       "type": "object",
       "properties": {
@@ -18734,6 +18790,25 @@
         }
       }
     },
+    "canned_response_folder_create": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "automation_rule_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/automation_rule"
+        },
+        {
+          "$ref": "#/definitions/automation_rule_common"
+        }
+      ]
+    },
     "help_widget_index": {
       "type": "array",
       "items": {
@@ -19236,6 +19311,121 @@
         }
       }
     },
+    "group_request": {
+      "$ref": "./definitions/request/groups/private_group_request.yaml"
+    },
+    "group_response": {
+      "$ref": "./definitions/response/groups/private_group_response.yaml"
+    },
+    "role_response": {
+      "$ref": "./definitions/response/roles/private_role_response.yaml"
+    },
+    "role_bulk_update_request": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "description": "Array of role ID's to be updated",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "privileges": {
+              "type": "object",
+              "properties": {
+                "add": {
+                  "type": "array",
+                  "description": "Contains the list of privileges to be added",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "remove": {
+                  "type": "array",
+                  "description": "Contains the list of privileges to be removed",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "business_hours": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Business Calender ID",
+            "type": "integer"
+          },
+          "name": {
+            "description": "Business Calender Name",
+            "type": "string"
+          },
+          "description": {
+            "description": "Business Calender Description",
+            "type": "string"
+          },
+          "business_hours": {
+            "description": "Business Calender Intervals",
+            "type": "object"
+          },
+          "created_at": {
+            "description": "Business Calender created time",
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "description": "Business Calender created time",
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "canned_response_create": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "content_html": {
+          "type": "string"
+        },
+        "folder_id": {
+          "type": "integer"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "byte"
+          }
+        },
+        "attachment_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "visibility": {
+          "type": "integer"
+        },
+        "group_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
     "email_notification_show": {
       "type": "object",
       "properties": {
@@ -19282,93 +19472,6 @@
         },
         "agent_subject_template": {
           "type": "string"
-        }
-      }
-    },
-    "group_request": {
-      "$ref": "./definitions/request/groups/private_group_request.yaml"
-    },
-    "group_response": {
-      "$ref": "./definitions/response/groups/private_group_response.yaml"
-    },
-    "role_response": {
-      "$ref": "./definitions/response/roles/private_role_response.yaml"
-    },
-    "role_bulk_update_request": {
-      "type": "object",
-      "properties": {
-        "ids": {
-          "description": "Array of role ID's to be updated",
-          "type": "array",
-          "items": {
-            "type": "integer"
-          }
-        },
-        "options": {
-          "type": "object",
-          "properties": {
-            "privileges": {
-              "type": "object",
-              "properties": {
-                "add": {
-                  "type": "array",
-                  "description": "Contains the list of privileges to be added",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "remove": {
-                  "type": "array",
-                  "description": "Contains the list of privileges to be removed",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "canned_response_folder_create": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    },
-    "business_hours": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "description": "Business Calender ID",
-            "type": "integer"
-          },
-          "name": {
-            "description": "Business Calender Name",
-            "type": "string"
-          },
-          "description": {
-            "description": "Business Calender Description",
-            "type": "string"
-          },
-          "business_hours": {
-            "description": "Business Calender Intervals",
-            "type": "object"
-          },
-          "created_at": {
-            "description": "Business Calender created time",
-            "type": "string",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "description": "Business Calender created time",
-            "type": "string",
-            "format": "date-time"
-          }
         }
       }
     },

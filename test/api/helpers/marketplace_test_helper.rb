@@ -35,8 +35,8 @@ module MarketplaceTestHelper
       version_id: 3,
       features: ['backend', 'agent_oauth'],
       extension_type: 1,
-      authorize_url: 'http://localhost:3005/product/4/account/1/versions/3/oauth_install?callback=http://localhost.freshpo.com/admin/marketplace/installed_extensions/1/3/oauth_callback&fdcode=Freshdesk+54375eb91740125b26ce9bcf41898699',
-      reauthorize_url: 'http://localhost:3005/product/4/account/1/versions/3/oauth_install?callback=http://localhost.freshpo.com/admin/marketplace/installed_extensions/1/3/oauth_callback&edit_oauth=true&installed_extn_id=1&fdcode=Freshdesk+9b27c383b3bbae964d161e76bebfec66'
+      authorize_url: 'http://localhost:3005/product/4/account/1/versions/3/oauth_install?fdcode=Freshdesk+081eebbfb4f32661a431f24f64a5e0f4',
+      reauthorize_url: 'http://localhost:3005/product/4/account/1/versions/3/oauth_install?fdcode=Freshdesk+081eebbfb4f32661a431f24f64a5e0f4'
     }]
   end
   

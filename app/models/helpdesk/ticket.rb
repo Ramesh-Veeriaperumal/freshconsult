@@ -1350,6 +1350,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Va::Logger::Automation.unset_thread_variables
   end
 
+  def has_active_forum_topic? # rubocop:disable PredicateName
+    ticket_topic && ticket_topic.topic && !ticket_topic.topic.locked?
+  end
+
+  def add_forum_post(ticket_note)
+    has_active_forum_topic? && ticket_topic.topic.create_post_from_ticket_note(ticket_note)
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?

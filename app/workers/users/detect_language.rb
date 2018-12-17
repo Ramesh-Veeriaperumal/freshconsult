@@ -33,11 +33,11 @@ class Users::DetectLanguage < BaseWorker
 
     def detect_lang_from_cld
       if en_via_cld?
-        Rails.logger.debug "successfully detected en via cld text:: #{@text}, account_id:: #{@account.id}"
+        Rails.logger.debug "successfully detected en via cld text:: #{@text}, account_id:: #{Account.current.id}"
         @user.language = "en"
         @user.save!
       else
-        Rails.logger.debug "cld non english text:: #{@text}, account_id:: #{@account.id}"
+        Rails.logger.debug "cld non english text:: #{@text}, account_id:: #{Account.current.id}"
         Helpdesk::DetectUserLanguage.set_user_language!(@user, @text)
       end
     end

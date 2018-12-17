@@ -4,14 +4,15 @@ module ChannelAuthentication
   CHANNELS = {
     twitter: 'twitter'.freeze,
     zapier: 'zapier'.freeze,
-    proactive: 'proactive'.freeze
+    proactive: 'proactive'.freeze,
+    ocr: 'ocr_channel'.freeze
   }.freeze
 
-  def channel_client_authentication
+  def channel_client_authentication    
     auth_token = header_token
     if auth_token
       config = auth_token[:config]
-      payload = verify_token(auth_token,config)
+      payload = auth_token[:source] == CHANNELS[:ocr] ? verify_ocr_token(auth_token,config) : verify_token(auth_token, config)
       decrypt_payload(payload, config) if payload.present? && auth_token[:source] == CHANNELS[:zapier]
     else
       invalid_credentials_error unless params[:controller] == 'channel/tickets'
@@ -23,6 +24,16 @@ module ChannelAuthentication
     def verify_token(auth_token,config)
       jwt_token = config[:auth_type] == TYPE_JWE ? jwe_decryption(auth_token[:token],config[:secret_key]) : auth_token[:token];
       verified_payload = jwt_verify(jwt_token, config[:jwt_secret], 'HS256') if jwt_token.present?
+      verified_payload.present? ? verified_payload : invalid_credentials_error
+    end  
+
+    def verify_ocr_token(auth_token,config)
+      jwt_token = config[:auth_type] == TYPE_JWE ? jwe_decryption(auth_token[:token],config[:secret_key]) : auth_token[:token]
+      verified_payload = {}
+      config[:jwt_secret].each do |secret|
+        verified_payload = jwt_verify(jwt_token, secret, 'HS256') if jwt_token.present?
+        break if verified_payload.present?
+      end
       verified_payload.present? ? verified_payload : invalid_credentials_error
     end  
 
@@ -79,10 +90,12 @@ module ChannelAuthentication
       nil
     end
 
-    def source(token)
+    def source(token)      
       return @source if @source.present?
-
       return if token.blank?
+      jwt_payload = token.split('.')[1]
+      @source = JSON.parse(Base64.decode64(jwt_payload))['source'] if jwt_payload.present?
+      return @source if @source.present?
       jwt_header = token.split('.')[0]
       @source = JSON.parse(Base64.decode64(jwt_header))['source'] if jwt_header
     end

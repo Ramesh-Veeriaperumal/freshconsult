@@ -227,7 +227,8 @@ module FreshdeskCore::Model
                     'user_skills',
                     'admin_sandbox_jobs',
                     'help_widgets',
-                    'bot_responses'].freeze
+                    'bot_responses',
+                    'custom_translations'].freeze
 
   STATUS = {
       :deleted => 0,
