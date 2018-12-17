@@ -271,13 +271,16 @@ class Agent < ActiveRecord::Base
     self.agent_groups_attributes = agent_groups_array if agent_groups_array.present?
   end
 
+  def field_agent?
+    self.agent_type == AgentType.agent_type_id(Agent::FIELD_AGENT)
+  end
+  
   def fetch_valid_groups
     agent_type_name = AgentType.agent_type_name(self.agent_type)
     group_type_name = Agent::AGENT_GROUP_TYPE_MAPPING[agent_type_name]
     group_type_id = GroupType.group_type_id(group_type_name)
     Account.current.groups_from_cache.select { |group| group.group_type == group_type_id }
   end
-
 
   protected
     # adding the agent role ids through virtual attr agent_role_ids.

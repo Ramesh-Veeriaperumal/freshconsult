@@ -33,6 +33,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :sanitise_subject, :if => :should_sanitise_subject?
 
+  before_save :validate_group_agent_and_ticket_type, :on => :create, :if => :fsm_enabled?
+
+  before_save :validate_group_agent_and_ticket_type, :on => :update, :if => :should_validate_group_agent_and_ticket_type?
+
   before_update :update_sender_email
 
   before_update :stop_recording_timestamps, :unless => :model_changes?
@@ -564,6 +568,45 @@ private
 
   def twitter_ticket_spammed?
     self.twitter? && @model_changes.key?(:spam) && @model_changes[:spam][1] == true
+  end
+
+  def fsm_enabled?
+    Account.current.field_service_management_enabled?
+  end
+
+  def should_validate_group_agent_and_ticket_type?
+    return false unless fsm_enabled?
+    return true if (responder_id_changed? || ticket_type_changed? || group_id_changed?)
+  end
+
+  def validate_group_agent_and_ticket_type
+    validate_ticket_type if ticket_type_changed?
+    return false unless self.errors.empty?
+    validate_group_and_ticket_type if (group_id_changed? && self.group)
+    validate_agent_and_ticket_type if (responder_id_changed? && self.responder)
+    return false unless self.errors.empty?
+  end
+
+  def validate_ticket_type
+    service_task = Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+    if new_record? && self.service_task?
+      self.errors.add(:ticket_type, ErrorConstants::ERROR_MESSAGES[:should_be_child] % {type: service_task}) and return false unless child_ticket?
+    else
+      self.errors.add(:ticket_type, ErrorConstants::ERROR_MESSAGES[:from_service_task_not_possible]) and return false if @model_changes[:ticket_type].first == service_task
+      self.errors.add(:ticket_type, ErrorConstants::ERROR_MESSAGES[:to_service_task_not_possible]) and return false if @model_changes[:ticket_type].last == service_task
+    end
+  end
+
+  def validate_group_and_ticket_type
+    self.errors.add(:group_id, ErrorConstants::ERROR_MESSAGES[:only_field_group_allowed]) and return false if (self.service_task? && !group.field_group?)
+    self.errors.add(:group_id, ErrorConstants::ERROR_MESSAGES[:field_group_not_allowed]) and return false if (!self.service_task? && group.field_group?)
+  end
+
+  def validate_agent_and_ticket_type
+    agent = self.responder.agent
+    return true unless agent
+    self.errors.add(:responder_id, ErrorConstants::ERROR_MESSAGES[:only_field_agent_allowed]) and return false if (self.service_task? && !agent.field_agent?)
+    self.errors.add(:responder_id, ErrorConstants::ERROR_MESSAGES[:field_agent_not_allowed]) and return false if (!self.service_task? && agent.field_agent?)
   end
 
   def auto_refresh_allowed?
