@@ -1,0 +1,17 @@
+defaults: &defaults
+  api_endpoint: "http://localhost:3001/api/v1/"
+  auth_type: "jwt"
+  jwt_secret: ""
+  jwt_default_expiry: "30"
+
+development:
+  <<: *defaults
+
+staging:
+  <<: *defaults
+
+production:
+  <<: *defaults
+
+test:
+  <<: *defaults

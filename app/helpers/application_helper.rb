@@ -1698,7 +1698,7 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
 
   def attachment_size
-    Account.current.attachment_limit
+    Account.current.attachment_limit if Account.current
   end
 
   private

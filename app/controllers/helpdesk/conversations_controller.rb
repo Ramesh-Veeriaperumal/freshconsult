@@ -58,7 +58,7 @@ class Helpdesk::ConversationsController < ApplicationController
     learn_valid_ticket_data
     if @item.save_note
       clear_saved_draft
-      add_forum_post if params[:post_forums]
+      @parent.add_forum_post(@item) if params[:post_forums]
       note_to_kbase
       flash[:notice] = t(:'flash.tickets.reply.success')
       process_and_redirect
@@ -71,7 +71,7 @@ class Helpdesk::ConversationsController < ApplicationController
   def forward
     build_attachments @item, :helpdesk_note
     if @item.save_note
-      add_forum_post if params[:post_forums]
+      @parent.add_forum_post(@item) if params[:post_forums]
       note_to_kbase
       flash[:notice] = t(:'fwd_success_msg')
       process_and_redirect
@@ -84,7 +84,7 @@ class Helpdesk::ConversationsController < ApplicationController
   def reply_to_forward
     build_attachments @item, :helpdesk_note
     if @item.save_note
-      add_forum_post if params[:post_forums]
+      @parent.add_forum_post(@item) if params[:post_forums]
       flash[:notice] = t(:'fwd_success_msg')
       process_and_redirect
     else
@@ -303,18 +303,7 @@ class Helpdesk::ConversationsController < ApplicationController
         @item.body.gsub!(NEW_LINE_WITH_CARRIAGE_RETURN, NEW_LINE_CHARACTER)
         create_error(:facebook) if @item.notable.facebook_realtime_message? and @item.body.length > Facebook::Constants::REALTIME_MESSSAGING_CHARACTER_LIMIT
       end
-      
-      def add_forum_post
-        @topic = Topic.find_by_id_and_account_id(@parent.ticket_topic.topic_id,current_account.id)
-        if !@topic.locked?
-          @post  = @topic.posts.build(:body_html => params[:helpdesk_note][:note_body_attributes][:body_html])
-          @post.user = current_user
-          @post.account_id = current_account.id
-          attachment_builder(@post, params[:helpdesk_note][:attachments], params[:cloud_file_attachments] )
-          @post.save!
-        end
-      end
-      
+
       def set_quoted_text
         @item.quoted_text = params[:quoted_text].present? && params[:quoted_text] == 'true'
       end

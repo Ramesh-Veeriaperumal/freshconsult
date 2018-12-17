@@ -35,13 +35,14 @@ module ModerationUtil
   end
 
   def to_be_moderated?(post)
-    return true if Account.current.features_included?(:moderate_all_posts)
+    return true if Account.current.features?(:moderate_all_posts)
 
-    Account.current.features_included?(:moderate_posts_with_links) && suspicious?(post)
+    Account.current.features?(:moderate_posts_with_links) && suspicious?(post)
   end
 
   def suspicious?(post)
     content = post_content(post)
+    Rails.logger.info("Checking for suspicious content: #{content}, Account Id: #{Account.current.id}")
     email_or_phone?(content.gsub(URI.regexp,'')) || unsafe_links?(content)
   end
 

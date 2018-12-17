@@ -95,7 +95,9 @@ describe Admin::Marketplace::InstalledExtensionsController do
   describe "GET oauth_install" do
     it "redirects to oauth service" do
       get :oauth_install, { extension_id: 1, version_id: 2 }
-      expect(response.status).to eq(302)
+      expect(response.status).to eq(200)
+      response.body.should_not nil
+      expect(JSON.parse(URI.decode(response.body)).symbolize_keys).to eq(oauth_handshake_response.body)
     end
   end
 

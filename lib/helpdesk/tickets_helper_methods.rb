@@ -80,7 +80,9 @@ module Helpdesk::TicketsHelperMethods
   end
 
   def update_associates_count(item, count = item.associated_tickets_count)
-    item.update_attributes(:subsidiary_tkts_count => count) if item.prime_ticket?
+    Sharding.run_on_master {
+      item.update_attributes(:subsidiary_tkts_count => count) if item.prime_ticket? and 
+        item.subsidiary_tkts_count != count }
   rescue => e
     Rails.logger.info "Error while updating the associates count #{e} - #{Account.current.id} - ticket #{item.display_id} - #{count}"
   end

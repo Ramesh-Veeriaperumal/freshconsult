@@ -30,6 +30,7 @@ helpdesk:
     - belongs_to_account
     - chat_config
     - collab
+    - omni_channel_routing
     - compass
     - concerns
     - count_fix

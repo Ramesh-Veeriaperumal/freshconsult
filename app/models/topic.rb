@@ -9,7 +9,8 @@ class Topic < ActiveRecord::Base
   HITS_CACHE_THRESHOLD = 100
 
   include Community::HitMethods
-  
+  include CloudFilesHelper
+
   acts_as_voteable
   validates_presence_of :forum, :user, :title
   validate :check_stamp_type
@@ -484,5 +485,34 @@ class Topic < ActiveRecord::Base
 
   def ticket
     ticket_topic.ticketable if ticket_topic
+  end
+
+  def create_post_from_ticket_note(ticket_note)
+    @post = posts.build(body_html: ticket_note.body_html,user_id: ticket_note.user_id)
+    inline_attachments_map = {}
+    ticket_note.all_attachments.each do |attachment|
+      @post.attachments.build(content: attachment.to_io)
+    end
+    ticket_note.inline_attachments.each do |attachment|
+      inline_attachments_map[attachment.inline_url] = @post.inline_attachments.build(content: attachment.to_io, attachable_type: 'Forums Image Upload')
+    end
+    clone_cloud_files_attachments(ticket_note, @post)
+
+    #save this to generate ids for inline attachments
+    @post.save!
+
+    #replace inline urls of note body html to copied attachments if there is any
+    unless ticket_note.inline_attachments.empty?
+      body_html = @post.body_html
+      @post = account.posts.find(@post.id) # hack , @post.reload is not working even if we change body_html.
+      inline_attachments_map.each do |inline_url, attachment_copy|
+        body_html.gsub!(inline_url, attachment_copy.inline_url)
+      end
+      @post.body_html = body_html
+      @post.save!
+    end
+  rescue Exception => e
+    Rails.logger.debug "Error while creating post from ticket note::: #{e.message}, Account:: [#{ticket_note.account_id},#{ticket_note.id} "
+    NewRelic::Agent.notice_error(e)
   end
 end

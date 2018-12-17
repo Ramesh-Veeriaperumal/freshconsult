@@ -18,11 +18,19 @@ module Marketplace::ApiMethods
         :account_id => Account.current.id.to_s,
         :version_id => version_id
       }
-      reauth_param = is_reauthorize ? "&edit_oauth=true&installed_extn_id=#{installed_extn_id}" : ""
-      redirect_url = "#{MarketplaceConfig::MKP_OAUTH_URL}/#{mkp_oauth_endpoint}?callback=#{oauth_callback_url}#{reauth_param}"
-      redirect_url = "#{redirect_url}&fdcode=#{CGI.escape(generate_md5_digest(redirect_url, MarketplaceConfig::API_AUTH_KEY))}"
-      redirect_url = "#{redirect_url}&oauth_iparams=#{oauth_iparams}" if oauth_iparams.present? & !oauth_iparams.blank?
-      redirect_url
+      
+      redirect_url = "#{MarketplaceConfig::MKP_OAUTH_URL}/#{mkp_oauth_endpoint}"
+      fdcode = CGI.escape(generate_md5_digest(redirect_url, MarketplaceConfig::API_AUTH_KEY))
+      
+      queryParams = {}
+      queryParams[:oauth_iparams] = oauth_iparams if oauth_iparams.present? & !oauth_iparams.blank?
+
+      if params.has_key?(:extension_id) # For Account Level OAuth alone add callback url.
+        reauth_param = is_reauthorize ? "&edit_oauth=true&installed_extn_id=#{installed_extn_id}" : ""
+        queryParams[:callback] = "#{oauth_callback_url}#{reauth_param}"
+      end
+
+      "#{redirect_url}?fdcode=#{fdcode}#{queryParams.blank? ? '' : '&' + queryParams.to_query}"
     end
 
     # Global API's

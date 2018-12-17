@@ -1,0 +1,209 @@
+body {
+  margin: 0;
+  line-height: 2;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+  font-size: 16px;
+}
+
+a {
+  color: #448ee1 !important;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+
+.body-wrapper {
+  margin-left: 13%;
+}
+
+.main-content {
+  padding-top: 5%;
+  margin: 0 auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 900px;
+  min-width: 550px;
+  width: 55%;
+  height: 475px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px 0 rgba(24, 50, 71, 0.1), 2px 5px 16px 0 rgba(24, 50, 71, 0);
+  background-color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+}
+.logo-container {
+  margin-bottom: 50px;
+  margin-left: 25%;
+}
+.text-container {
+  margin-bottom: 50px;
+  p {
+    margin-bottom: 5px;
+  }
+  .main-text {
+    font-size: 26px;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1.27;
+    color: #183247;
+    margin-left: 20%;
+  }
+  .main-subtext {
+    font-size: 14px;
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.31;
+    color: #6f7c87;
+    margin-left: 14%;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+.container {
+  position: absolute;
+  zoom: 1;
+  width: 100%;
+  height: 679px;
+}
+.action-container {
+  margin-bottom: 50px;
+}
+.signup-container {
+  margin-left: 25%;
+  font-size: 14px;
+  font-weight: 400;
+  color: #6f7c87;
+  -webkit-font-smoothing: antialiased;
+}
+.action-label {
+  font-size: 13px;
+  font-weight: 300;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.21;
+  letter-spacing: normal;
+  color: #6f7c87;
+  margin-bottom: 7px;
+}
+.domain-box {
+  height: 32px;
+  width: 65%;
+  background-color: #ffffff;
+  border-radius: 4px 0 0 4px;
+  margin-right: 0px;
+  border: 1px solid #dadfe3;
+  border-right: none;
+  padding: 5px 5px 5px 12px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.domain-box:hover {
+  border: 1px solid #6f7c87;
+  box-shadow: inset 0px 0px 0px 1px #6f7c87;
+  border-right: 0;
+}
+
+.domain-box:focus {
+  border: 1px solid #02b875;
+  box-shadow: inset 0px 0px 0px 1px #02b875;
+  border-right: 0;
+}
+
+.domain-btn {
+  width: 16% !important;
+  position: absolute;
+  left: 71%;
+  height: 44px;
+  border-radius: 0 4px 4px 0;
+  font-size: 12px;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: 0.6px;
+  color: #f3f5f7;
+  padding: 1%;
+  -webkit-font-smoothing: antialiased;
+  background-color: #02b875;
+  border: 1px #03a86b solid;
+  box-shadow: none;
+}
+.doamin-hidden {
+  display: none;
+}
+.placeholder {
+  position: relative;
+  margin-top: 14px;
+  right: 35%;
+  float: right;
+  font-size: 13px;
+  font-weight: 300;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: 1.21;
+  letter-spacing: 0.5px;
+  color: #acb6be;
+}
+
+.domain-btn:hover {
+  border: 1px solid #02a468;
+  background: #02a468;
+  transition: 0.1s linear;
+}
+
+.domain-btn:focus {
+  outline: -webkit-focus-ring-color auto 5px;
+  outline-color: -webkit-focus-ring-color;
+  outline-style: auto;
+  outline-width: 5px;
+  border-color: #02b875;
+}
+
+.domain-btn:disabled {
+  background-color: #b7e5d6;
+  border: 1px solid #b1e0d1;
+  transition: 0.1s linear;
+}
+
+@media (max-width: 991px) {
+  .body-wrapper {
+    margin-left: 5%;
+  }
+  .domain-btn {
+    width: 20% !important;
+    position: absolute;
+    left: 70.2%;
+  }
+  .placeholder {
+    position: relative;
+    right: 32%;
+    float: right;
+    font-size: 12px;
+  }
+  .domain-box {
+    width: 67%;
+  }
+  .action-container {
+    margin-left: 0%;
+  }
+}
+
+@media (min-width: 992px) and  (max-width: 1200px) {
+  .body-wrapper {
+    margin-left: 10%;
+  }
+  .domain-btn {
+    width: 20% !important;
+    left: 72%;
+  }
+  .placeholder {
+    position: relative;
+    right: 32%;
+    float: right;
+    font-size: 12px;
+  }
+  .domain-box {
+    width: 67%;
+  }
+}
