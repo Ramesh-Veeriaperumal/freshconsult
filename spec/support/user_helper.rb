@@ -11,7 +11,7 @@ module UsersHelper
                         :agent => 1,
                         :ticket_permission => 1,
                         :role_ids => ["#{role_id}"],
-                        :unique_external_id => options[:unique_external_id] ,
+                        :unique_external_id => options[:unique_external_id],
                         :agent_type => options[:agent_type] || 1})
   end
 

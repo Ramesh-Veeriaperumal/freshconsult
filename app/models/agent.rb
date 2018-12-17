@@ -275,6 +275,9 @@ class Agent < ActiveRecord::Base
     Account.current.groups_from_cache.select { |group| group.group_type == group_type_id }
   end
 
+  def field_agent?
+    self.agent_type == AgentType.agent_type_id(Agent::FIELD_AGENT)
+  end
 
   protected
     # adding the agent role ids through virtual attr agent_role_ids.
