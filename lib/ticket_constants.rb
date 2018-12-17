@@ -2,6 +2,8 @@ module TicketConstants
   
   CHAT_SOURCES = { :snapengage =>  "snapengage.com", :olark => "olark.com"}
 
+  SERVICE_TASK_NAME = "Service Task"
+
   MAX_RELATED_TICKETS = 300
 
   CHILD_TICKETS_PER_ASSOC_PARENT = 10

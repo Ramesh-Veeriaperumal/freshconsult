@@ -321,13 +321,13 @@ class Helpdesk::TicketField < ActiveRecord::Base
       when "default_status" then
         Helpdesk::TicketStatus.statuses_from_cache(Account.current).collect{|c|  [CGI.unescapeHTML(c[0]),c[1]] }
       when "default_ticket_type" then
-        Account.current.ticket_types_from_cache.collect { |c| [CGI.unescapeHTML(c.value),
-                                                      c.value,
-                                                      {"data-id" => c.id}] }
+        ticket_types = Account.current.ticket_types_from_cache.select{ |type| type.value != TicketConstants::SERVICE_TASK_NAME }
+        ticket_types.collect { |c| [CGI.unescapeHTML(c.value), c.value,
+                               {"data-id" => c.id}] }
       when "default_agent" then
         return group_agents(ticket)
       when "default_group" then
-        Account.current.groups_from_cache.collect { |c| [c.name, c.id] }
+        Account.current.groups_from_cache.select { |group| group.group_type == GroupConstants::SUPPORT_GROUP_ID }.collect { |c| [c.name, c.id] }
       when "default_internal_agent" then
         return group_agents(ticket, true)
       when "default_internal_group" then
@@ -535,7 +535,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
           return agent_list
         end
       end
-
       internal_group ? [] : Account.current.agents_details_from_cache.collect { |c| [c.name, c.id] }
     end
 
