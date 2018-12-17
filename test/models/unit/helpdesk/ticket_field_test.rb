@@ -3,6 +3,8 @@ require_relative '../../test_helper'
 
 class TicketFieldTest < ActiveSupport::TestCase
   include TicketFieldsTestHelper
+  include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
+  include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
 
   def test_duplicate_ticket_status
     locale = I18n.locale
@@ -25,4 +27,30 @@ class TicketFieldTest < ActiveSupport::TestCase
     ensure
       I18n.locale = locale
   end
+
+  def test_default_ticket_types
+    Account.stubs(:current).returns(Account.first)
+    perform_fsm_operations
+    field = Account.current.ticket_fields.find_by_field_type("default_ticket_type")
+    record = Account.current.ticket_types_from_cache.find{ |x| x.value == SERVICE_TASK_TYPE}
+    service_task_data = [record.value, record.value, {"data-id"=>record.id}]
+    data = field.html_unescaped_choices
+    refute data.include?(service_task_data)
+  ensure
+    cleanup_fsm
+    Account.unstub(:current)
+  end
+
+  def test_default_group
+    Account.stubs(:current).returns(Account.first)
+    perform_fsm_operations
+    field = Account.current.ticket_fields.find_by_field_type("default_group")
+    records = Account.current.groups_from_cache.select{ |x| x.group_type == GroupType.group_type_id(GroupConstants::SUPPORT_GROUP_NAME)}
+    output_data = field.html_unescaped_choices
+    assert_equal records.count,output_data.count
+  ensure
+    cleanup_fsm
+    Account.unstub(:current)
+  end
+
 end
