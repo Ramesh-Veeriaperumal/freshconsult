@@ -22,6 +22,10 @@ module GroupConstants
 
   GROUPS_AGENTS_MAPPING = { SUPPORT_GROUP_NAME => Agent::SUPPORT_AGENT, FIELD_GROUP_NAME => Agent::FIELD_AGENT }
 
+  SUPPORT_GROUP_ID = 1
+
+  SUPPORT_AGENT_ID = 1
+
   INDEX_FIELDS = %w(group_type).freeze
 
   ACCESSIBLE_FIELDS_FOR_SUPERVISOR= %w(auto_ticket_assign)  

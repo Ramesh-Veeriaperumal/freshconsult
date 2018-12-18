@@ -28,7 +28,7 @@
 						</label>
 					</div>
 					<div class="mt5" id="accessible_group">
-						<%= access.select_tag("helpdesk_ticket_template[accessible_attributes][group_ids]", options_from_collection_for_select(current_account.groups_from_cache,"id", "name",{:selected=>@tkt_template.accessible.groups.collect{|group| group.id} ,:include_blank => true}), {:multiple => true, :class => "select2 span5", :size => 4, :placeholder => "Select groups"}) %>
+						<%= access.select_tag("helpdesk_ticket_template[accessible_attributes][group_ids]", options_from_collection_for_select(current_account.groups_from_cache.select { |group| group.group_type == GroupConstants::SUPPORT_GROUP_ID },"id", "name",{:selected=>@tkt_template.accessible.groups.collect{|group| group.id} ,:include_blank => true}), {:multiple => true, :class => "select2 span5", :size => 4, :placeholder => "Select groups"}) %>
 					</div>
 					</div>
 				<%end%>

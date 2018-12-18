@@ -240,6 +240,13 @@ api_error_messages:
   no_matching_privilege: "No matching privileges found for: '%{list}'"
   default_role_modified: "You cannot modify a default role."
   missing_privileges: "Please check privileges that are dependent on: '%{list}'"
+  should_be_child: A ticket of type %{type} cannot be created without parent_id
+  to_service_task_not_possible: The type of a ticket can not be updated to Service Task
+  from_service_task_not_possible: The type of a Service Task ticket can not be updated
+  only_field_group_allowed: Only Field Agent Groups can be assigned to a ticket of type Service Task
+  field_group_not_allowed: Tickets that are not of type Service Task cannot be assigned a Field Agent Group
+  only_field_agent_allowed: Only Field Agents can be assigned to a ticket of type Service Task
+  field_agent_not_allowed: Tickets that are not of type Service Task cannot be assigned a Field Agent
   invalid_field_auto_assign: "Auto ticket assignment is not available for field service groups."
   invalid_agent_ids: "Agent and group need to be of the same type."
   existing_import_inprogress: "We're still processing the previous import. Retry when it's complete."

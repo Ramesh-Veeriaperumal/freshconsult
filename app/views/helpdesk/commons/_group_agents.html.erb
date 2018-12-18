@@ -2,6 +2,9 @@
   <option value=""><%= t("no_agents_in_selected_group") %></option>
 <% else %>
   <option value=""><%= blank_value %></option>
+  <% support_agents_from_cache = Account.current.agents_from_cache.select{|x| x.agent_type == GroupConstants::SUPPORT_GROUP_ID}.map(&:user_id) 
+    @agents = @agents.select{|x| support_agents_from_cache.include?(x.id)}
+  %>
   <% @agents.each do |agent| %>
     <% if !assigned_agent.nil? && assigned_agent.to_i == agent.id %>
     <option value="<%=agent.id%>" selected="selected"><%=agent.name%></option>

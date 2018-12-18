@@ -19,7 +19,8 @@ module UsersTestHelper
                         :role => 1,
                         :agent => 1,
                         :ticket_permission => 1,
-                        :role_ids => ["#{role_id}"] })
+                        :role_ids => ["#{role_id}"],
+                        :agent_type => options[:agent_type] || 1 })
   end
 
   def add_agent(account, options={})
@@ -27,7 +28,8 @@ module UsersTestHelper
     new_agent = FactoryGirl.build(:agent,
                                   :account_id => account.id,
                                   :available => 1,
-                                  :ticket_permission => options[:ticket_permission] || Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets])
+                                  :ticket_permission => options[:ticket_permission] || Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets],
+                                  :agent_type => options[:agent_type] || 1)
     new_user = FactoryGirl.build(:user,
                                     :account_id => account.id,
                                     :name => options[:name] || Faker::Name.name,
