@@ -63,7 +63,7 @@ footer, header, hgroup, menu, nav, section {
     display:block;
 }
 
-ol, ul { @include reset-list-style; }
+ol:not([type]), ul { @include reset-list-style; }
 
 nav ul { list-style:none; }
 
@@ -86,7 +86,9 @@ hr { display:block; height:1px; border:0; border-top:1px solid #ccc; margin:1em 
 
 input, select { vertical-align:middle; }
 
-ol{ list-style:decimal outside; @include margin(3px 8px 3px 28px); }
+ol:not([type]) { list-style:decimal outside; }
+
+ol { @include margin(3px 8px 3px 28px);  }
 
 strong, b{ font-weight:bold; }
 

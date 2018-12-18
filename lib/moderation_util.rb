@@ -73,8 +73,10 @@ module ModerationUtil
   end
 
   def any_unsafe_link?(links, domain_list)
+    Rails.logger.info("Whitelisted domains list is: #{domain_list}, Account id: #{Account.current.id}")
     links.each do |link|
       host = url_host(link)
+      Rails.logger.info("Host name after parsing link: #{link} is #{host} for account: #{Account.current.id}")
       next if host.blank?
       return true unless domain_list.include? host
     end

@@ -13,7 +13,7 @@ window.App = window.App || {};
         $('.breadcrumb').addClass('breadcrumb-edit');
       }
     },
-    
+
     resetData: function () {
       this.data.title = null;
       this.data.description = null;
@@ -28,7 +28,7 @@ window.App = window.App || {};
     editUrlChange: function (editingFlag) {
       window.location.hash = (editingFlag ? "#edit" : "");
     },
-    
+
     setDataFromPage: function () {
       this.data = $('#article-form').data() || {};
       this.data.title = $('#current-article-title').text();
@@ -36,9 +36,14 @@ window.App = window.App || {};
     },
 
     addTargetTopForLinks: function () {
-      $('.reload-page a:not([target])').attr('target', '_top');
+      $('.reload-page a').each(function() {
+        var hrefArray = this.href.split('/').slice(-1)[0];
+        if(hrefArray.indexOf('#') == -1) {
+          $(this).attr('target', '_top');
+        }
+      });
     },
-		
+
 		toggleViews: function () {
 			$('.article-edit, .article-view, .breadcrumb-btns, .edit-container, #show_master_article').toggleClass('hide');
 		},
@@ -54,14 +59,14 @@ window.App = window.App || {};
         }
       }
     },
-    
+
     startEditing: function () {
       $('#sticky_redactor_toolbar').removeClass('hide');
       if ($('#solution-notification-bar .article-view-edit').is(':visible')) {
         $('.sticky_editor_toolbar').addClass('has-notification');
       }
       $('#solution_article_title').focus();
-      
+
       this.setFormValues();
         invokeEditor('solution_article_description', 'solution');
 
@@ -79,14 +84,14 @@ window.App = window.App || {};
       this.editUrlChange(true);
       this.attachmentsDelEvents();
       this.disableDraftResetAttr();
-      
+
     },
 
     disableDraftResetAttr:  function () {
       //Disbale the input for cancel draft changes by default
       $('#cancel_draft_changes_input').prop('disabled', true);
     },
-    
+
     setFormValues: function () {
       var html = this.data.description;
       $('#solution_article_title').val(this.data.title);
@@ -107,7 +112,7 @@ window.App = window.App || {};
         return false;
       }
       if (App.namespace === "solution/articles/new" || App.namespace === "solution/articles/create") {
-        
+
         var isEmpty, element = $("#solution_article_description");
         if (element.data('redactor')) {
           isEmpty = element.data('redactor').isNotEmpty();

@@ -29,7 +29,6 @@ module Helpdesk::Ticketfields::TicketStatus
         break
       end
     end
-
     attr.delete(:status_id)
     unless t_s.nil?
       ModifyTicketStatus.perform_async({ :status_id => t_s.status_id, :status_name => t_s.name }) if attr[:deleted] && !t_s[:deleted]
@@ -62,7 +61,7 @@ module Helpdesk::Ticketfields::TicketStatus
 
     def custom_status_name_same_as_default_status_name?(attr)
       default_trans_status = DEFAULT_STATUSES.values.map { |name| I18n.t(name.downcase).downcase }
-      (default_trans_status.include?(attr[:name].downcase) && (!attr[:status_id] || DEFAULT_STATUSES.keys.include?(attr[:status_id])))
+      (default_trans_status.include?(attr[:name].downcase) && !attr[:status_id])
     end
 
     def custom_status_name_same_as_deleted_status_name?(status, attr)

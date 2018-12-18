@@ -28,45 +28,47 @@ module Reports::CustomSurveyReport
       return (toDate[0,2] + "-" + toDate[2,2] + "-" + toDate[4,4])
     end
   end
-
-  def build_survey_csv
-
-    csv_headers = SURVEY_CSV_HEADERS_1 + survey_question_labels + SURVEY_CSV_HEADERS_2
-
-    csv_row_limit = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
-    csv_size = @survey_results.size
-    if (csv_size > csv_row_limit)
-      @survey_results.slice!(csv_row_limit..(csv_size - 1))
-      exceeds_limit = true
-    end 
-
-    csv_string = CSVBridge.generate do |csv|
-      csv << csv_headers
-      @survey_results.each do |survey_result|
-        csv_row_arr = csv_row(survey_result).compact
-        csv << csv_row_arr
-      end
-      csv << t('helpdesk_reports.export_exceeds_row_limit_msg', :row_max_limit => csv_row_limit) if exceeds_limit
-    end
-    csv_string
-  end
+  
 
   def generate_survey_data
 
-    conditions = {:start_date => start_date, :end_date => end_date, :survey_id => survey_id}
+    csv_headers = SURVEY_CSV_HEADERS_1 + survey_question_labels + SURVEY_CSV_HEADERS_2
 
-    @survey_results = []
+    conditions = {:start_date => start_date, :end_date => end_date, :survey_id => survey_id}
 
     include_array = [{:survey_remark => { :feedback => :note_old_body }}, 
                       :survey_result_data, :survey => [:survey_questions], 
                       :surveyable => [:requester, :company, :responder, :group ]]
 
-    Account.current.custom_survey_results.
+
+    csv_row_limit = HelpdeskReports::Constants::Export::FILE_ROW_LIMITS[:export][:csv]
+
+    csv_rows_count = 0
+
+
+    csv_string = CSVBridge.generate do |csv|
+      csv << csv_headers
+      Account.current.custom_survey_results.
             export_data(conditions).agent_filter(agent_id).
             group_filter(group_id).
             find_in_batches(:include => include_array) do |sr_results|
-             @survey_results += sr_results
+              
+              size = sr_results.size
+              @survey_data_exists = true if size > 0
+              if (csv_rows_count+size)>csv_row_limit
+                sr_results.slice!( (csv_row_limit - csv_rows_count )..(size - 1))
+                @exceeds_limit = true
+              end
+              sr_results.each do |survey_result|
+                csv_row_arr = csv_row(survey_result).compact
+                csv << csv_row_arr
+              end
+              csv_rows_count += sr_results.size
+      
+      end 
+      csv << [t('helpdesk_reports.export_exceeds_row_limit_msg') % {:row_max_limit => csv_row_limit}] if @exceeds_limit
     end
+    csv_string
   end
 
   private

@@ -85,7 +85,7 @@ class HelpdeskReports::Formatter::Ticket::Glance
   def construct_metric_value
     @current_values , @previous_values = {}, {}
 
-    if @current_result.empty? 
+    if @current_result.nil? || @current_result.empty? 
       set_default_value(CURRENT_METRICS)
     else
       split_values_based_on_benchmark(@current_result)

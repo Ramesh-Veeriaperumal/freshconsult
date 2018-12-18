@@ -22,7 +22,7 @@ class Admin::FreshchatController < Admin::AdminController
     end
 
     def load_profile
-      @profile = current_user.agent    
+      @profile = current_user.agent
     end
 
     def update_item

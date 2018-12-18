@@ -10,8 +10,8 @@ class HelpdeskReports::Export::SatisfactionSurvey < HelpdeskReports::Export::Rep
   end
 
   def build_export
-    generate_survey_data
-    @survey_results.present? ? generate_file : nil
+    csv_string = generate_survey_data
+    @survey_data_exists ? build_file(csv_string , file_format, report_type, PDF_EXPORT_TYPE) : nil
   end
 
   def survey_report_params args
@@ -30,8 +30,7 @@ class HelpdeskReports::Export::SatisfactionSurvey < HelpdeskReports::Export::Rep
   private
   
     def generate_file
-      file = build_survey_csv
-      build_file(file, file_format, report_type, PDF_EXPORT_TYPE)
+      build_file(file_string, file_format, report_type, PDF_EXPORT_TYPE)
     end
 
 end

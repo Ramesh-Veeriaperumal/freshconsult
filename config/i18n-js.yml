@@ -57,6 +57,7 @@ translations:
     , '*.ticket.broadcast_note'
     , '*.ticket.broadcast_notes'
     , '*.ticket.properties_updated'
+    , '*.dashed_none'
     ]
   - file: 'public/javascripts/cdn/i18n/portal/%{locale}.js' 
     only: [

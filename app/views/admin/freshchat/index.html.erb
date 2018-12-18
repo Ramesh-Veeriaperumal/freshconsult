@@ -38,9 +38,20 @@
       <% if(@item.new_record?) %>
         <div class="mint-bg-box">
           <h5 class="lead"> <%=t('freshchat.admin.sign_up_text')%></h5>
-          <a href="https://www.freshworks.com/live-chat-software?utm_source=Freshdesk-App" target="_blank" class="btn btn-primary signup-chat"> <%=t('freshchat.admin.sign_up_btn')%></a>
-        </div> 
-      <% end %> 
+          <a
+            href="https://www.freshworks.com/live-chat-software?utm_source=Freshdesk-App"
+            target="_blank"
+            class="btn btn-primary signup-chat">
+            <%=t('freshchat.admin.sign_up_btn')%>
+          </a>
+          <a
+            href="https://www.freshworks.com/live-chat-software?utm_source=Freshdesk-App"
+            target="_blank"
+            class="btn btn-primary activate-freshchat hide">
+            <%=t('freshchat.admin.activate_now')%>
+          </a>
+        </div>
+      <% end %>
 
       <div class="control-group">
         <label class="control-label">
@@ -48,7 +59,11 @@
           <span class="required_star">*</span>
 
           <span class="pl5 chat-key-copy">
-            <a href="<%=Freshchat::Account::CONFIG[:agentWidgetHostUrl]%>/settings/appdata#integration" target="_blank"><%= t('freshchat.admin.copy_from_freshchat')%></a>
+            <a
+              href="<%=Freshchat::Account::CONFIG[:agentWidgetHostUrl]%>/settings/appdata#integration"
+              target="_blank"
+              class="freshchat_settings_integration_url">
+              <%= t('freshchat.admin.copy_from_freshchat')%></a>
             <i class="ficon ficon-open-in-portal fsize-12"></i>
           </span>
 
@@ -63,7 +78,11 @@
           <%= t('freshchat.admin.widget_token') %>
           <span class="required_star">*</span>
           <span class="pl5 chat-key-copy">
-            <a href="<%=Freshchat::Account::CONFIG[:agentWidgetHostUrl]%>/settings/appdata#integration" target="_blank"><%= t('freshchat.admin.copy_from_freshchat')%></a>
+            <a
+              href="<%=Freshchat::Account::CONFIG[:agentWidgetHostUrl]%>/settings/appdata#integration"
+              target="_blank"
+              class="freshchat_settings_integration_url">
+              <%= t('freshchat.admin.copy_from_freshchat')%></a>
             <i class="ficon ficon-open-in-portal fsize-12"></i>
           </span>
         </label>
@@ -75,10 +94,10 @@
         <div class="row-fluid">
           <div class="span10">
             <h5 class="lead"> <%= t('freshchat.admin.enable_chat_in_portal')%></h5>
-            <p class="small lead-desc muted pt3"><%= t('freshchat.admin.enable_chat_in_portal_info')%></p> 
+            <p class="small lead-desc muted pt3"><%= t('freshchat.admin.enable_chat_in_portal_info')%></p>
           </div>
           <div class="span2 align-right">
-            <%= f.check_box :portal_widget_enabled, 
+            <%= f.check_box :portal_widget_enabled,
                 { :rel => "toggle", :checked => (@item.portal_widget_enabled === 'true')}, true, false %>
           </div>
         </div>
@@ -95,22 +114,71 @@
       <div class="chatlist-item">
         <p class="small lead-desc"> <span class="muted"><%=t('freshchat.admin.portal_url')%> </span>https://<%=current_account.full_domain%></p>
         <p class="small lead-desc"> <span class="muted"><%=t('freshchat.admin.admin_apikey')%> </span><%=@profile.user.single_access_token%></p>
-        
+
         <div class="button-container pr5">
           <a href="/admin/home" id="cancel" class="btn btn-secondary"> <%= t('freshchat.admin.cancel')%></a>
           <%= f.submit t('freshchat.admin.save'), :class => "btn btn-primary" %>
         </div>
       </div>
-    <% end %> 
+    <% end %>
   </div>
 </div>
+<% if freshid_enabled? %>
+<script type="text/javascript">
 
+(function($){
 
-<%= javascript_tag do %>
+  var eventTarget = parent.document.querySelector('[data-omnibar-event-target]');
+
+  var parseFreshIdData = function(data) {
+    var fcInfo = data.products.filter(function(item) {
+      return item.originalName.toLowerCase() === "freshchat";
+    })[0];
+
+    if (fcInfo.accounts.length) {
+      // Freshchat account exists
+      $('.mint-bg-box').hide();
+      replaceFreshChatUrls(fcInfo.accounts[0].urls[0]);
+    } else {
+      setupOmnibarPromo();
+    }
+
+  };
+
+  var setupOmnibarPromo = function() {
+    $('.activate-freshchat').removeClass('hide');
+    $('.signup-chat').addClass('hide');
+
+    // Setup handlers now
+    $('body').on('click.freshchat_admin', '.activate-freshchat', function(ev) {
+      ev.preventDefault();
+      var openOmnibarEvent = new CustomEvent('showPromotionForProduct', {
+        detail: {
+          productName : "freshchat"
+        }
+      });
+
+      eventTarget.dispatchEvent(openOmnibarEvent);
+    });
+
+  };
+
+  var replaceFreshChatUrls = function(fcAccUrl) {
+    var fcSettingsUrl = fcAccUrl + '/settings/appdata#integration';
+    $('.freshchat_settings_integration_url').attr('href', fcSettingsUrl);
+  }
+
+  if (eventTarget) {
+    parseFreshIdData(JSON.parse(localStorage.getItem('freshworks-omnibar:products')));
+  }
+
+})(jQuery);
+</script>
+<% end %>
+
+<script type="text/javascript">
   var success_message = "<%= t('freshchat.admin.action.success_message')%>";
   jQuery(document).ready(function(){
-
-    <!-- submit the form -->
 
     jQuery('body').on('change.freshchat', 'input[name="chat_enabled"]', function() {
       var chat_enabled = jQuery('input[name="chat_enabled"]').is(':checked');
@@ -129,4 +197,4 @@
       <% end %>
     });
   });
-<% end %>
+</script>
