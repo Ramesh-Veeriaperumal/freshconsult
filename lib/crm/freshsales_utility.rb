@@ -132,7 +132,7 @@ class CRM::FreshsalesUtility
         admin_leads.any? ? fs_update('lead', recently_updated(admin_leads)[:id], admin_basic_info) :
                            create_lead_with_same_owner(recent_lead[:owner_id], recent_lead[:updated_at])
       else
-        fs_create('lead', new_lead_params)
+        raise "No leads found for the account #{@account.id}"
       end
     end
   end

@@ -13,6 +13,7 @@ class CRMApp::Freshsales::AdminUpdate < CRMApp::Freshsales::BaseWorker
       to Freshsales args::#{args.inspect} : #{e.message} - #{e.backtrace}" 
     NewRelic::Agent.notice_error(e, { description: "Error occured while 
       pushing AdminUpdate Info to Freshsales args::#{args.inspect}" })
+    raise e
   end
 
 end

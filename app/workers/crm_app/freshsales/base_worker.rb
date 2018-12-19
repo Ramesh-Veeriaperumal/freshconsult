@@ -1,6 +1,6 @@
 class CRMApp::Freshsales::BaseWorker < BaseWorker
 
-  sidekiq_options :queue => :track_customer_in_freshsales, :retry => 0, 
+  sidekiq_options :queue => :track_customer_in_freshsales, :retry => 5,
     :failures => :exhausted
 
   def prepare_subscription(subscription_args)
