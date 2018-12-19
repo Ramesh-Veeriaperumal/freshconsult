@@ -1435,6 +1435,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_update_company
+    Account.any_instance.stubs(:multiple_user_companies_enabled?).returns(true)
     new_user = add_new_user(@account)
     company = Company.create(name: Faker::Name.name, account_id: @account.id)
     company.save
@@ -1449,6 +1450,8 @@ class TicketsControllerTest < ActionController::TestCase
     assert_response 200
     match_json(update_ticket_pattern({}, ticket.reload))
     assert_equal other_company.id, ticket.company_id
+  ensure
+    Account.any_instance.unstub(:multiple_user_companies_enabled?)
   end
 
   def test_update_closed_with_nil_due_by_without_fr_due_by
