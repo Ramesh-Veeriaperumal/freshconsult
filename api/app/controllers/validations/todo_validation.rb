@@ -29,9 +29,16 @@ class TodoValidation < FilterValidation
   validates :reminder_at, custom_absence: {
     message: :only_ticket_type_allowed
   }, unless: :ticket_type?, on: :create
+
+  validates :reminder_at, custom_absence: {
+    message: :access_denied,
+    code: :access_denied
+  }, unless: :valid_user?, on: :update
+
   validates :reminder_at, custom_absence: {
     message: :only_ticket_type_allowed
   }, unless: :ticket_check?, on: :update
+
   validate :reminder_time, if: lambda {
     reminder_at.present?
   }
@@ -73,5 +80,9 @@ class TodoValidation < FilterValidation
 
     def ticket_check?
       item.ticket_id?
+    end
+
+    def valid_user?
+      User.current.id == item.user_id
     end
 end

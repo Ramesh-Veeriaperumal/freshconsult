@@ -4,6 +4,7 @@ module Ember
     include ApiTicketsTestHelper
     include TodosTestHelper
     include AgentHelper
+    include UsersTestHelper
 
     def wrap_cname(params)
       { todo: params }
@@ -310,6 +311,22 @@ module Ember
           'reminder_at',
           'Cannot set reminder for Contact and Company todos',
           'incompatible_field'
+        )
+      )
+    end
+
+    def test_update_reminder_with_ticket_todo_by_unauthorized_user
+      ticket = get_ticket
+      sample_user = add_new_user(@account)
+      reminder = get_new_reminder('test delete', ticket.display_id, nil, nil, sample_user.id)
+      todo = { reminder_at: reminder.updated_at.utc.iso8601 }
+      put :update, construct_params({ version: 'private', id: reminder.id }, todo)
+      assert_response 403
+      match_json(
+        validation_error_response(
+          'reminder_at',
+          'You are not authorized to perform this action.',
+          'access_denied'
         )
       )
     end
