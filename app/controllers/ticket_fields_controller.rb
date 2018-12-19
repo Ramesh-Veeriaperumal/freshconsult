@@ -6,12 +6,12 @@ class TicketFieldsController < CustomFieldsController
     @hipaa_enabled = current_account.falcon_and_encrypted_fields_enabled?
     @ticket_fields = @hipaa_enabled ? current_portal.ticket_fields_including_nested_fields : current_portal.ticket_fields_including_nested_fields(:non_encrypted_ticket_fields)
     @section_data = current_account.sections
-
+    support_groups = current_account.groups_from_cache.select{ |group| group.group_type == GroupType.group_type_id(GroupConstants::SUPPORT_GROUP_NAME)}
     respond_to do |format|
       format.html {
         @ticket_field_json = ticket_field_hash(@ticket_fields, current_account)
         @section_data_json = section_data_hash(@section_data, current_account)
-        @groups = current_account.shared_ownership_enabled? ? current_account.groups_from_cache.collect { |g| [g.id, CGI.escapeHTML(g.name)]} : []
+        @groups = current_account.shared_ownership_enabled? ? support_groups.collect { |g| [g.id, CGI.escapeHTML(g.name)]} : []
       }
       format.xml  { render :xml => @ticket_fields.to_xml }
       format.json  { render :json => @ticket_fields }

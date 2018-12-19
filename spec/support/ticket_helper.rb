@@ -26,7 +26,8 @@ module TicketHelper
                                          :tag_names => params[:tag_names],
                                          :product_id => params[:product_id],
                                          :sl_skill_id => params[:skill_id],
-                                         :company_id => params[:company_id])
+                                         :company_id => params[:company_id],
+                                         :ticket_type => params[:type])
     test_ticket.build_ticket_body(:description => params[:description] || Faker::Lorem.paragraph)
     if params[:attachments]
       test_ticket.attachments.build(content: params[:attachments][:resource],
@@ -34,11 +35,12 @@ module TicketHelper
                                     account_id: test_ticket.account_id)
     end
     test_ticket.cloud_files = params[:cloud_files] if params[:cloud_files]
-
+    
+    
     if @account.link_tickets_enabled? && params[:display_ids].present?
       test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
       test_ticket.related_ticket_ids = params[:display_ids]
-    elsif @account.parent_child_tickets_enabled? && params[:assoc_parent_id].present?
+    elsif (@account.parent_child_tickets_enabled? || @account.field_service_management_enabled?) && params[:assoc_parent_id].present?
       test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:child]
       test_ticket.assoc_parent_tkt_id = params[:assoc_parent_id]
     end
@@ -51,6 +53,17 @@ module TicketHelper
     test_ticket.skill = params[:skill] if params[:skill]
     test_ticket.save_ticket
     test_ticket
+  end
+
+  def create_service_task_ticket
+    parent_ticket = create_ticket
+    params = { assoc_parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+               description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+               priority: 2, status: 2, type: Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE, 
+               custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }
+    
+    fsm_ticket =  create_ticket(params)
+    fsm_ticket
   end
 
   def create_n_tickets(count, params={})
@@ -75,5 +88,14 @@ module TicketHelper
                                                 note: Faker::Lorem.sentence(3))
     time_sheet.save
     time_sheet
+  end
+
+  def create_field_agent
+    add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT)})
+  end
+
+  def create_field_agent_group
+    group = create_group(@account, { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, group_type: 
+      GroupType.group_type_id(GroupConstants::FIELD_GROUP_NAME)})
   end
 end

@@ -28,7 +28,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   include AccountConstants
   include RoundRobinCapping::Methods
   include MemcacheKeys
-
+ 
   SCHEMA_LESS_ATTRIBUTES = ["product_id","to_emails","product", "skip_notification",
                             "header_info", "st_survey_rating", "survey_rating_updated_at", "trashed",
                             "access_token", "escalation_level", "sla_policy_id", "sla_policy", "manual_dueby", "sender_email", 
@@ -450,7 +450,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def parent_ticket?
     self.associated_ticket? && TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[self.association_type] == :assoc_parent
   end
-
+  
+  def service_task?
+    ticket_type == Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
+  end
   # Fetch NER data from cache.
   def fetch_ner_data
     key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.id }

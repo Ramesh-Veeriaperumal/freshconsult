@@ -30,7 +30,6 @@ module Ember
     include BotResponseTestHelper
     include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
     include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
-
     ARCHIVE_DAYS = 120
     TICKET_UPDATED_DATE = 150.days.ago
 
@@ -676,6 +675,169 @@ module Ember
       match_json(ticket_show_pattern(t))
       assert_equal t.owner_id, sample_requester.company_id
       assert_response 201
+    end
+
+    def test_create_service_task_ticket
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          parent_ticket = create_ticket
+          params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+                     description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                     priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
+                     custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }      
+          post :create, construct_params({ version: 'private' }, params)
+          assert_response 201
+        ensure
+          cleanup_fsm
+        end
+      end
+    end
+
+    def test_create_service_task_ticket_failure
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          params = { email: Faker::Internet.email,
+                   description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                   priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
+                   custom_fields: { cf_fsm_contact_name:
+                    "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }  
+          post :create, construct_params({version: 'private'}, params)
+          match_json([bad_request_error_pattern('ticket_type', :should_be_child, :type => SERVICE_TASK_TYPE, :code => :invalid_value)])
+          assert_response 400
+        ensure
+          cleanup_fsm
+        end 
+      end
+    end
+
+    def test_create_service_task_ticket_with_invalid_field_agent_failure
+      enable_adv_ticketing([:field_service_management]) do
+       begin
+         perform_fsm_operations
+         parent_ticket = create_ticket
+         params = { responder_id: @agent.id, parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+                   description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                   priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
+                   custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }      
+         post :create, construct_params({version: 'private'}, params)
+         match_json([bad_request_error_pattern('responder_id', :only_field_agent_allowed, :code => :invalid_value)])
+         assert_response 400
+       ensure
+        cleanup_fsm
+       end
+      end
+    end
+
+    def test_create_non_service_task_ticket_with_invalid_field_agent_failure
+      enable_adv_ticketing([:field_service_management]) do
+        begin 
+          perform_fsm_operations
+          Account.stubs(:current).returns(Account.first)
+          field_agent = create_field_agent
+          params = { responder_id: field_agent.id, email: Faker::Internet.email,
+                     description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                     priority: 2, status: 2 }
+          post :create, construct_params({version: 'private'}, params)
+          match_json([bad_request_error_pattern('responder_id', :field_agent_not_allowed, :code => :invalid_value)])
+          assert_response 400
+        ensure
+          cleanup_fsm
+          Account.unstub(:current)
+        end
+      end
+    end
+
+
+    def test_create_non_service_task_ticket_with_invalid_field_agent_and_group_failure
+      enable_adv_ticketing([:field_service_management]) do
+        begin 
+          perform_fsm_operations
+          Account.stubs(:current).returns(Account.first)
+          field_group = create_field_agent_group
+          field_agent = create_field_agent
+          field_group.agent_groups.create(user_id: field_agent.id, group_id: field_agent.id)
+          params = { group_id: field_group.id, responder_id: field_agent.id,  email: Faker::Internet.email,
+                     description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                     priority: 2, status: 2 }
+          post :create, construct_params({version: 'private'}, params)
+          match_json([bad_request_error_pattern('group_id', :field_group_not_allowed, :code => :invalid_value),
+                      bad_request_error_pattern('responder_id', :field_agent_not_allowed, :code => :invalid_value)])
+          assert_response 400
+        ensure
+          cleanup_fsm
+          Account.unstub(:current)
+        end
+      end
+    end
+    
+    def test_create_service_task_ticket_with_invalid_field_group_failure
+      enable_adv_ticketing([:field_service_management]) do
+        begin 
+          perform_fsm_operations
+          group = create_group(@account)    
+          parent_ticket = create_ticket
+          params = { group_id: group.id, parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+                     description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                     priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
+                     custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }      
+          post :create, construct_params({version: 'private'}, params)
+          match_json([bad_request_error_pattern('group_id', :only_field_group_allowed, :code => :invalid_value)])
+          assert_response 400
+        ensure
+          cleanup_fsm
+        end
+      end
+    end
+
+    def test_create_non_service_task_ticket_with_invalid_field_group_failure 
+      enable_adv_ticketing([:field_service_management]) do
+        begin 
+          perform_fsm_operations
+          Account.stubs(:current).returns(Account.first)
+          field_group = create_field_agent_group
+          params = { group_id: field_group.id, email: Faker::Internet.email,
+                     description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                     priority: 2, status: 2 }
+          post :create, construct_params({version: 'private'}, params)
+          match_json([bad_request_error_pattern('group_id', :field_group_not_allowed, :code => :invalid_value)])
+          assert_response 400
+        ensure
+          cleanup_fsm
+          Account.unstub(:current)
+        end
+      end
+    end
+
+    def test_update_service_task_ticket_type_failure 
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations      
+          fsm_ticket = create_service_task_ticket
+          params = {:type => "Question"}
+          put :update, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
+          match_json([bad_request_error_pattern('ticket_type', :from_service_task_not_possible, :code => :invalid_value)])
+          assert_response 400
+        ensure
+          cleanup_fsm
+        end
+      end
+    end
+
+    def test_update_non_service_task_ticket_to_service_task_failure 
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations      
+          ticket = create_ticket
+          params = {:type => SERVICE_TASK_TYPE, custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }
+          put :update, construct_params({ id: ticket.display_id, version: 'private' }, params)
+          match_json([bad_request_error_pattern('ticket_type', :to_service_task_not_possible, :code => :invalid_value)])
+          assert_response 400
+        ensure
+          cleanup_fsm
+        end
+      end
     end
 
     def test_create_with_company_id
@@ -4022,39 +4184,37 @@ module Ember
     end
 
     def test_create_ticket_with_service_task_type_without_mandatory_custom_fields
-      perform_fsm_operations
-      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-                      priority: 2, status: 2, type: SERVICE_TASK_TYPE, responder_id: @agent.id }      
-      post :create, construct_params({ version: 'private' }, params_hash)
-      assert_response 400
-    ensure
-      cleanup_fsm
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                          priority: 2, status: 2, type: SERVICE_TASK_TYPE}      
+          post :create, construct_params({ version: 'private' }, params_hash)
+          assert_response 400
+        ensure
+          cleanup_fsm
+        end
+      end
     end
 
     def test_create_ticket_when_fsm_enabled
-      perform_fsm_operations
-      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-                      priority: 2, status: 2, type: 'Problem', responder_id: @agent.id }      
-      post :create, construct_params({ version: 'private' }, params_hash)
-      assert_response 201
-    ensure
-      cleanup_fsm
-    end
-
-    def test_create_ticket_with_service_task_type
-      perform_fsm_operations
-      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-                      priority: 2, status: 2, type: SERVICE_TASK_TYPE, responder_id: @agent.id, custom_fields: {cf_fsm_contact_name: "test",cf_fsm_service_location: "test", cf_fsm_phone_number: "test"} }      
-      post :create, construct_params({ version: 'private' }, params_hash)
-      assert_response 201
-    ensure
-      cleanup_fsm
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                          priority: 2, status: 2, type: 'Problem', responder_id: @agent.id }      
+          post :create, construct_params({ version: 'private' }, params_hash)
+          assert_response 201
+        ensure
+          cleanup_fsm
+        end
+      end
     end
 
     def test_update_ticket_with_type_service_task_without_mandatory_custom_fields
       perform_fsm_operations
-      ticket = create_ticket
-      params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10), type: SERVICE_TASK_TYPE }      
+      ticket = create_ticket({type: SERVICE_TASK_TYPE})
+      params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10) }      
       put :update, construct_params({ version: 'private', id: ticket.id }, params_hash)
       assert_response 400
     ensure
@@ -4062,23 +4222,17 @@ module Ember
     end
 
     def test_update_ticket_when_fsm_enabled
-      perform_fsm_operations
-      ticket = create_ticket
-      params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10) }      
-      put :update, construct_params({ version: 'private', id: ticket.id }, params_hash)
-      assert_response 200
-    ensure
-      cleanup_fsm
-    end
-
-    def test_update_ticket_with_type_service_task
-      perform_fsm_operations
-      ticket = create_ticket
-      params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10), type: SERVICE_TASK_TYPE, custom_fields: {cf_fsm_contact_name: "test",cf_fsm_service_location: "test", cf_fsm_phone_number: "test"} } 
-      put :update, construct_params({ version: 'private', id: ticket.id }, params_hash)
-      assert_response 200
-    ensure
-      cleanup_fsm
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          ticket = create_ticket
+          params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10) }      
+          put :update, construct_params({ version: 'private', id: ticket.id }, params_hash)
+          assert_response 200
+        ensure
+          cleanup_fsm
+        end
+      end
     end
 
     def test_other_custom_field_validations_when_fsm_enabled
