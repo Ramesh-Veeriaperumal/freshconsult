@@ -34,7 +34,15 @@
         <div class="filter-type span10">
           <ul id="filter_text">
             <li><%=t('reports.time_sheets.filter_by_title')%>:</li>
-            <li><%=t('reports.time_sheets.time_period')%> : <strong><%= @report_date.blank? ? date_range_val((Time.zone.now.ago 30.day),Time.zone.now) :  @report_date%></strong></li>
+            <li><%=t('reports.time_sheets.time_period')%> :
+              <strong>
+                <%= if @report_date.blank?
+                  date_range_val((Time.zone.now.ago 6.days), Time.zone.now)
+                else
+                  @report_date
+                end %>
+              </strong>
+            </li>
           </ul>
           <ul id="filter_text_others"></ul>
         </div>
