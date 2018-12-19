@@ -209,4 +209,33 @@ module DashboardTestHelper
         }
     end
   end
+
+  def enable_gamification
+    Account.current.add_feature(:gamification)
+    yield
+  ensure
+    disable_gamification
+  end
+
+  def disable_gamification
+    Account.current.revoke_feature(:gamification)
+  end
+
+  def quests_pattern(quests)
+    quests.map { |quest| quest_pattern(quest) }
+  end
+
+  def quest_pattern(quest)
+    {
+      id: quest.id,
+      name: quest.name,
+      description: quest.description,
+      points: quest.points,
+      badge_id: quest.badge_id,
+      category: quest.category,
+      sub_category: quest.sub_category,
+      created_at: quest.created_at.try(:utc),
+      updated_at: quest.updated_at.try(:utc)
+    }
+  end
 end
