@@ -35,6 +35,10 @@ class Middleware::SecurityResponseHeader
     @req_path.include?(LOGIN_PATH) && !SSO_PATHS.include?(@req_path)
   end
 
+  def logged_in?
+    User.current.present?
+  end
+
   def ignore_subdomain?
     sub_domain = @host.split('.')[0]
     BYPASS_CHECK_SUBDOMAINS.inject(false) { |should_skip, skip_domain| should_skip || sub_domain.include?(skip_domain) }
@@ -56,7 +60,7 @@ class Middleware::SecurityResponseHeader
       return headers if ignore_x_frame_options?(headers)
 
       if login_path?
-        headers['X-Frame-Options'] = 'DENY'
+        headers['X-Frame-Options'] = logged_in? ? 'SAMEORIGIN' : 'DENY'
       else
         headers['X-Frame-Options'] = 'SAMEORIGIN' unless ignore_path?
       end
