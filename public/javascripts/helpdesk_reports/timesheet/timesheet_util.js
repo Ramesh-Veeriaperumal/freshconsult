@@ -1111,11 +1111,11 @@ var savedReportUtil = (function() {
                params.data_hash.date.date_range = dateRange;
                params.data_hash.date.presetRange = false;
           }
-          //Only first page load we set date range to last 30 days, so its a presetRange
+          //Only first page load we set date range to last 7 days, so its a presetRange
           if(Helpkit.presetRangesSelected == undefined) {
               params.data_hash.date.date_range = _this.save_util.dateRangeDiff(dateRange);
               params.data_hash.date.presetRange = true;
-              params.data_hash.date.period = 'last_30';
+              params.data_hash.date.period = 'last_7';
           }
 
           params.data_hash.report_filters = Helpkit.locals.local_hash != undefined ? Helpkit.locals.local_hash : [];
@@ -1170,7 +1170,7 @@ var savedReportUtil = (function() {
                       if(Helpkit.presetRangesSelected == undefined) {
                             params.data_hash.date.date_range = _this.save_util.dateRangeDiff(dateRange);
                             params.data_hash.date.presetRange = true;
-                            params.data_hash.date.period = 'last_30';
+                            params.data_hash.date.period = 'last_7';
                       }
                   }
               }
@@ -1244,10 +1244,10 @@ var savedReportUtil = (function() {
                     _this.addFiltersToMenu(false);
                 }
             } else {
-              var default_date_range = _this.save_util.convertDateDiffToDate(29);
+              var default_date_range = _this.save_util.convertDateDiffToDate(6);
               jQuery('#date_range').val(default_date_range);
               Helpkit.presetRangesSelected = true;
-              Helpkit.presetRangesPeriod = 'last_30';
+              Helpkit.presetRangesPeriod = 'last_7';
               Helpkit.locals.columns.length = 0;
             }
             _this.save_util.setActiveSavedReport(jQuery(".reports-menu li a[data-index=" + index +"]"));
