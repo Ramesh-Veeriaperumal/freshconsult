@@ -31,7 +31,7 @@ module Billing::BillingHelper
     end
 
     def set_invoice_due_key?
-      offline_customer? && !invoice_invalidated? && !invoice_satisfied?
+      offline_customer? && !invoice_invalidated? && params[:content][:invoice][:status] == PAYMENT_DUE
     end
 
     def invoice_due_key
@@ -39,7 +39,7 @@ module Billing::BillingHelper
     end
 
     def set_invoice_due_key
-      set_others_redis_key(invoice_due_key, params[:content][:invoice][:end_date], INVOICE_DUE_EXPIRY)
+      set_others_redis_key(invoice_due_key, params[:occurred_at], INVOICE_DUE_EXPIRY)
     end
 
     def invoice_invalidated?
