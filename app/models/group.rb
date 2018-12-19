@@ -214,6 +214,10 @@ class Group < ActiveRecord::Base
       self.save
   end
 
+  def field_group? 
+    self.group_type == GroupType.group_type_id(GroupConstants::FIELD_GROUP_NAME)  
+  end
+
   private
 
     def self.api_filter(group_filter)
