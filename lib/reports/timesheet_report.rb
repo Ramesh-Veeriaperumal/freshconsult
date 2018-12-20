@@ -781,10 +781,10 @@ module Reports::TimesheetReport
   end
 
   def get_time_in_hours(seconds)
-    hh = (seconds/3600).to_i
-    mm = ((seconds % 3600)/60.to_f).round
-
-    hh.to_s.rjust(2,'0') + ":" + mm.to_s.rjust(2,'0')
+    hh = (seconds / 3600).to_i
+    mm = (seconds % 3600) / 60
+    ss = (seconds % 60).to_f.round
+    hh.to_s.rjust(2, '0') + ':' + mm.to_s.rjust(2, '0') + ':' + ss.to_s.rjust(2, '0')
   end
 
   def validate_chosen_custom_fields(cols)

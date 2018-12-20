@@ -11,8 +11,8 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181113055606) do
-  
+ActiveRecord::Schema.define(:version => 20181219060820) do
+
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
     t.integer  "account_id",           :limit => 8
@@ -3358,6 +3358,20 @@ ActiveRecord::Schema.define(version: 20181113055606) do
   add_index "social_fb_posts", ["account_id", "post_id"], :name => "index_social_fb_posts_on_post_id", :length => {"account_id"=>nil, "post_id"=>30}
   add_index "social_fb_posts", ["account_id", "thread_id", "postable_type"], :name => "account_thread_postable_type", :length => {"account_id"=>nil, "thread_id"=>30, "postable_type"=>30}
   add_index 'social_fb_posts', ['account_id', 'thread_key', 'postable_type', 'facebook_page_id'], name: 'index_on_thread_key'
+
+  create_table "social_fb_user_id_mapping", :force => true do |t|
+    t.integer  "account_id",    :limit => 8, :null => false
+    t.integer  "user_id",       :limit => 8, :null => false
+    t.integer  "fb_page_id",    :limit => 8, :null => false
+    t.integer  "page_scope_id", :limit => 8, :null => false
+    t.integer  "app_scope_id",  :limit => 8
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
+  end
+
+  add_index "social_fb_user_id_mapping", ["account_id", "fb_page_id", "app_scope_id"], :name => "index_fb_user_id_mapping_account_id_fb_page_id_app_scope_id"
+  add_index "social_fb_user_id_mapping", ["account_id", "page_scope_id"], :name => "index_social_fb_user_id_mapping_on_account_id_page_scope_id", :unique => true
+  add_index "social_fb_user_id_mapping", ["account_id", "user_id"], :name => "index_social_fb_user_id_mapping_on_account_id_user_id"
 
   create_table "social_streams", :force => true do |t|
     t.string   "name"

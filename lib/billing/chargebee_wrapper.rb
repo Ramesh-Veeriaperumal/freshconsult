@@ -70,6 +70,7 @@ class Billing::ChargebeeWrapper
 	#other
 	def update_customer(account_id, data)
 		data[:meta_data] = {:customer_key => Account.current.full_domain}.to_json # update for existing customers
+		data[:cf_account_url] = Account.current.full_domain
 		ChargeBee::Customer.update(account_id, data)
 	end
 
