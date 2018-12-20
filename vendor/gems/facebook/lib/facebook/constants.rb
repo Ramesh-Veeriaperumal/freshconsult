@@ -151,6 +151,8 @@ module Facebook
 
     PARENT_POST_LENGTH = 230
 
+    PAGE_SCOPE_URL = "pages_id_mapping"
+
   end
 end
   

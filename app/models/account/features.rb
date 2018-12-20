@@ -20,7 +20,7 @@ class Account < ActiveRecord::Base
                    :new_onboarding, :onboarding_inlinemanual, :skip_portal_cname_chk, :ner, :whitelist_supervisor_sla_limitation, :product_central_publish,
                    :help_widget, :redis_picklist_id, :bot_email_channel, :bot_email_central_publish, :es_tickets,
                    :description_by_request, :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
-                   :skip_invoice_due_warning, :scheduled_export_fix, :compact_lang_detection, :automation_revamp]
+                   :skip_invoice_due_warning, :scheduled_export_fix, :compact_lang_detection, :automation_revamp, :facebook_page_scope_migration]
 
   DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
   
