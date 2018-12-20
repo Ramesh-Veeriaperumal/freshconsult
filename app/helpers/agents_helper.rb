@@ -181,6 +181,10 @@ module AgentsHelper
     output << (@recent_unresolved_tickets.empty? ? t('agent_assigned_info') : render(:partial => "tickets", :object => @recent_unresolved_tickets))
     output.html_safe
   end
+
+  def edit?
+    action_name == 'edit'
+  end
   
   # ITIL Related Methods ends here
 

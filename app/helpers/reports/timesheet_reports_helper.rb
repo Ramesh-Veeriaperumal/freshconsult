@@ -74,4 +74,10 @@ module Reports::TimesheetReportsHelper
     return entry.html_safe
   end
 
+  def get_time_in_hours(seconds)
+    hh = (seconds / 3600).to_i
+    mm = ((seconds % 3600) / 60).to_i
+    ss = (seconds % 60).to_i
+    hh.to_s.rjust(2, '0') + ":" + mm.to_s.rjust(2, '0') + ":" + ss.to_s.rjust(2, '0')
+  end
 end

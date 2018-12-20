@@ -15,7 +15,8 @@ INTEGRATION_TESTS = [
 PRESENTER_TESTS = [
     'test/models/presenters/bot/response_test.rb'
 ]
-SIDEKIQ_TESTS = (Dir.glob('test/api/sidekiq/*_test.rb') | Dir.glob('test/api/sidekiq/email_bot/*_test.rb') | Dir.glob('test/api/sidekiq/forums/*_test.rb')) - Dir.glob('test/api/sidekiq/sandbox/*_test.rb')
+SIDEKIQ_TESTS = Dir.glob('test/api/sidekiq/**/*_test.rb')
+SKIP_FILES_SIDEKIQ = Dir.glob('test/api/sidekiq/sandbox/*_test.rb') + Dir.glob('test/api/sidekiq/admin/sla/*_test.rb') + Dir.glob('test/api/sidekiq/community/clear_site_map_test.rb')
 SHORYUKEN_TESTS = Dir.glob('test/api/shoryuken/*_test.rb')
 SKIP_FILES_FALCON = [
   'test/api/unit/api_throttler_test.rb',
@@ -32,7 +33,7 @@ SUCCESSFUL_SEARCH_TESTS = [
 LIB_TESTS = Dir.glob('test/lib/unit/*_test.rb')
 MODEL_TESTS = Dir.glob('test/models/**/*_test.rb')
 
-ALL_TESTS_FALCON = (UNIT_TESTS | FUNCTIONAL_TESTS_EMBER | SIDEKIQ_TESTS | SHORYUKEN_TESTS | INTEGRATION_TESTS | FRESHCALLER_CHANNEL_TESTS | LIB_TESTS | MODEL_TESTS | PRESENTER_TESTS) - SKIP_FILES_FALCON + SUCCESSFUL_SEARCH_TESTS
+ALL_TESTS_FALCON = (UNIT_TESTS | FUNCTIONAL_TESTS_EMBER | SIDEKIQ_TESTS | SHORYUKEN_TESTS | INTEGRATION_TESTS | FRESHCALLER_CHANNEL_TESTS | LIB_TESTS | MODEL_TESTS | PRESENTER_TESTS) - SKIP_FILES_FALCON + SUCCESSFUL_SEARCH_TESTS - SKIP_FILES_SIDEKIQ
 ALL_TESTS_PUBLIC = (FUNCTIONAL_TESTS_PUBLIC) - FUNCTIONAL_TESTS_EMBER - PIPE_TESTS - SEARCH_TESTS - SKIP_FILES_PUBLIC
 
 ALL_TESTS = (ALL_TESTS_FALCON + ALL_TESTS_PUBLIC).uniq

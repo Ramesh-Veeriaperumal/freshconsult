@@ -44,7 +44,6 @@ module Va::Webhook::Util
                     'triggered_event' => j(event_hash.to_json) }
       contexts.merge!('event_performer' => doer) if doer.present?
       filters     = { :filters => [Va::Webhook::HelperMethods] }
-
       case content
       when String
         Liquid::TemplateInFormat.parse(content.to_s, content_type).render(contexts, filters)
