@@ -85,7 +85,7 @@ module Channel::V2
     
     def display_id_exists?
       unless id.present?
-        ticket = Account.current.tickets.find_by_display_id(display_id)
+        ticket = ::Account.current.tickets.find_by_display_id(display_id)
         errors[:display_id] << :display_id_exists if ticket.present?
       end
     end

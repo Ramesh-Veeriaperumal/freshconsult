@@ -162,7 +162,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def send_notifications
-      return if skip_notification
+      return if skip_notification || import_note
       if notable.customer_performed?(user)
         # Ticket re-opening, moved as an observer's default rule
         e_notification = account.email_notifications.find_by_notification_type(EmailNotification::REPLIED_BY_REQUESTER)
@@ -322,7 +322,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def update_ticket_states
-      return if meta?
+      return if meta? || import_note
       user_id = User.current.id if User.current
       unless zendesk_import?
         args = {
@@ -339,7 +339,7 @@ class Helpdesk::Note < ActiveRecord::Base
     end
 
     def notify_ticket_monitor
-      return if meta?
+      return if meta? || import_note
       notable.subscriptions.each do |subscription|
         if subscription.user_id != user_id
           Helpdesk::WatcherNotifier.send_later(:deliver_notify_on_reply,

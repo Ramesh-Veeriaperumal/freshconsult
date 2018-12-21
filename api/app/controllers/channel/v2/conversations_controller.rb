@@ -7,6 +7,11 @@ module Channel::V2
     
     private
 
+      def create_note
+        @item.import_note = true if import_api?
+        super
+      end
+
       def constants_class
         CHANNEL_V2_CONVERSATIONS_CONSTANTS_CLASS
       end
