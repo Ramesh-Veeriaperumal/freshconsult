@@ -5,7 +5,7 @@ module ModerationUtil
 
   EMAIL_PATTERN = /(^.*[-A-Z0-9.'_&%=+]+@(?:[A-Z0-9\-]+\.)+(?:[A-Z]{2,10}).*$)/i
   NUMBER_PATTERN = /((\+\d{1,3}(-| )?\(?\d\)?(-| )?\d{1,5})|(\(?\d{2,6}\)?))(-| )?([A-Z,0-9]{2,4})(-| )?([A-Z,0-9]{3,4})(-| )?(( x| ext)(-| )?\d{1,5}){0,1}/
-
+  DATA_ID_PATTERN = /data-id=\"[0-9a-f-]*\"/
   APPROVED_DOMAINS = YAML::load_file(File.join(Rails.root, 'config', 'whitelisted_link_domains.yml'))
 
 	def is_spam?(post, request_params)
@@ -43,7 +43,7 @@ module ModerationUtil
   def suspicious?(post)
     content = post_content(post)
     Rails.logger.info("Checking for suspicious content: #{content}, Account Id: #{Account.current.id}")
-    email_or_phone?(content.gsub(URI.regexp,'')) || unsafe_links?(content)
+    email_or_phone?(remove_links_and_ids(content)) || unsafe_links?(content)
   end
 
   def post_content(post)
@@ -91,6 +91,10 @@ module ModerationUtil
       # There can be many malformed urls being sent.
       return ""
     end
+  end
+
+  def remove_links_and_ids(content)
+    content.gsub(URI.regexp,'').gsub(DATA_ID_PATTERN,'')
   end
 
 end
