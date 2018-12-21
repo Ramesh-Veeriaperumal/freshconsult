@@ -71,7 +71,6 @@ module DashboardConcern
   end
 
   def fetch_unresolved_tickets
-    es_enabled = current_account.features?(:countv2_reads)
     # Send only column names to ES for aggregation since column names are used as keys
     # need to work here based on es and db
     options = { group_by: @group_by, filter_condition: @filter_condition, cache_data: false, include_missing: true, workload: @group_by.first.to_s }
@@ -86,7 +85,7 @@ module DashboardConcern
       ticket_counts = Dashboard::SearchServiceTrendCount.new(options).fetch_count
       ticket_counts = parse_results(ticket_counts)
     else
-      ticket_counts = ::Dashboard::DataLayer.new(es_enabled, options).aggregated_data
+      ticket_counts = ::Dashboard::DataLayer.new(current_account.features?(:countv2_reads), options).aggregated_data
     end
     build_response(ticket_counts, options[:include_missing], params[:widget])
   end

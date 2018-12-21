@@ -100,7 +100,8 @@ module Search::Dashboard::QueryHelper
     define_method method_name do |field_name, values|
       if values.include?('0')
         values.delete('0')
-        values.concat(User.current.agent_groups.select(:group_id).map(&:group_id).map(&:to_s))
+        @current_agent_group ||= User.current.agent_groups.pluck(:group_id).map(&:to_s)
+        values.concat(@current_agent_group)
       end
       transform_filter(field_name, values)
     end
