@@ -31,7 +31,7 @@ class Company < ActiveRecord::Base
     def save_deleted_company_info
      @deleted_model_info = {
         id: id,
-        account_id: account_id
+        account_id: account_id,
         name: self.name
       }
     end
