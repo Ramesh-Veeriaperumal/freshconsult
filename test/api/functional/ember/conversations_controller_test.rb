@@ -267,6 +267,21 @@ module Ember
       @account.rollback(:undo_send)
     end
 
+    def test_dummy_id_generated_with_undo_send
+      @account.launch(:undo_send)
+      user = other_user
+      user.preferences[:agent_preferences][:undo_send] = true
+      params_hash = reply_note_params_hash
+      old_count = Helpdesk::Note.count
+      params_hash[:user_id] = user.id
+      post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
+      new_count = Helpdesk::Note.count
+      assert_response 201
+      assert_equal old_count, new_count
+      user.preferences[:agent_preferences][:undo_send] = false
+      @account.rollback(:undo_send)
+    end
+
     def test_reply_with_undo_send_with_previous_note
       @account.launch(:undo_send)
       user = other_user
