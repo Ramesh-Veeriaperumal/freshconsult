@@ -66,4 +66,5 @@ class User < ActiveRecord::Base
   FRESHID_IGNORED_EMAIL_IDS = ["custserv@freshdesk.com"]
 
   VA_LAZY_EVALUATIONS = [:segments].freeze
+  CONTACT_NAME_SANITIZER_REGEX = /www\..*|\/|"/
 end
