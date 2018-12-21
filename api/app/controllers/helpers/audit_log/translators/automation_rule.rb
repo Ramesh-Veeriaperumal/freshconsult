@@ -216,9 +216,13 @@ module AuditLog::Translators::AutomationRule
     end
     fields = instance_variable_get("@custom_#{evaluate_on}_fields")
     if fields.present?
-      field = fields.find { |field| field.name == name ||
+      if evaluate_on == 'ticket'
+        field = fields.find { |field| field.name == name ||
         (field.flexifield_def_entry.present? &&
           field.flexifield_def_entry.flexifield_name == name) }
+      else 
+        field = fields.find { |field| field.name == name }
+      end
       [field.label, field.field_type.to_s] if field.present?
     end
   end
