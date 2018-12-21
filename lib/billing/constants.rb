@@ -5,7 +5,7 @@ module Billing::Constants
   EVENTS = [ "subscription_changed", "subscription_activated", "subscription_renewed",
               "subscription_cancelled", "subscription_reactivated", "card_added",
               "card_updated", "payment_succeeded", "payment_refunded", "card_deleted",
-              "customer_changed"].freeze + INVOICE_EVENTS
+              "customer_changed", "card_expiring"].freeze + INVOICE_EVENTS
 
   ADDITIONAL_INVOICE_EVENTS = ['payment_succeeded', 'subscription_cancelled' ].freeze
 
@@ -42,6 +42,7 @@ module Billing::Constants
   OFFLINE = "off"
   PAID = "paid"
   VOIDED = 'voided'
+  CARD_STATUS = "valid"
 
   PAYMENT_DUE = 'payment_due'.freeze
 
