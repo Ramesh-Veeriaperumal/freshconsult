@@ -1,5 +1,7 @@
 module Concerns::ApplicationViewConcern
   extend ActiveSupport::Concern
+    include Redis::OthersRedis
+    include Redis::RedisKeys
 
   INVOICE_GRACE_PERIOD = 15.days
 
@@ -21,6 +23,8 @@ module Concerns::ApplicationViewConcern
     end
     final_date = options[:translate] ? (I18n.l date_time , :format => time_format) : (date_time.strftime(time_format))
   end
+
+  TIME_TO_DISPLAY_CARD_BANNER = 15.days
 
   def facebook_reauth_link 
     "/a/admin/social/facebook_streams";
@@ -61,6 +65,21 @@ module Concerns::ApplicationViewConcern
   def admin?
     User.current.privilege?(:admin_tasks)
   end
+
+  def card_expired?
+    ret_hash = {}
+    key = CARD_EXPIRY_KEY % { :account_id => Account.current.id }
+    if redis_key_exists?(key)
+      value = get_others_redis_hash(key)
+      if value["next_renewal"] <= (DateTime.now + TIME_TO_DISPLAY_CARD_BANNER) && value["next_renewal"] > value["card_expiry_date"]
+          ret_hash ={
+            :next_renewal_date => value["next_renewal"],
+            :card_expired => value["card_expiry_date"] <= DateTime.now
+          }
+      end
+    end
+    ret_hash
+  end 
 
   def invoice_due_banner_enabled
     !Account.current.skip_invoice_due_warning_enabled?

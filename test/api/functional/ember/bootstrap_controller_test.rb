@@ -161,7 +161,79 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     match_json(account_pattern(Account.current, Account.current.main_portal))
     Account.current.unstub(:check_custom_mailbox_status)  
   end 
-  
+
+  def test_account_with_card_expiry_notification_agent
+    User.current.stubs(:privilege?).with(:admin_tasks).returns(false)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    response = parse_response @response.body
+    assert_equal response['config']['warnings']['card_expired'] , nil
+    assert_equal response['config']['warnings']['next_renewal_date'] , nil
+  ensure
+    User.current.unstub(:privilege?)
+  end
+
+  def test_account_with_card_expiry_notification_display_banner_admin_card_expired
+    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    key = CARD_EXPIRY_KEY % { :account_id => Account.current.id }
+    set_others_redis_hash(key,{ "next_renewal" => DateTime.now + 5.days, "card_expiry_date" => DateTime.now - 2.days})  
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    response = parse_response @response.body
+    assert_equal response['config']['warnings']['card_expired'] , true 
+    assert_not_nil response['config']['warnings']['next_renewal_date']
+  ensure
+    remove_others_redis_key(key)
+    User.current.unstub(:privilege?)
+  end
+
+  def test_account_with_card_expiry_notification_display_banner_admin_card_expiring
+    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    key = CARD_EXPIRY_KEY % { :account_id => Account.current.id }
+    set_others_redis_hash(key,{ "next_renewal" => DateTime.now + 5.days, "card_expiry_date" => DateTime.now + 3.days}) 
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    response = parse_response @response.body
+    assert_equal response['config']['warnings']['card_expired'], false 
+    assert_not_nil response['config']['warnings']['next_renewal_date']
+  ensure
+    remove_others_redis_key(key)
+    User.current.unstub(:privilege?)
+  end
+
+  def test_account_with_card_expiry_notification_not_display_banner_admin
+    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    key = CARD_EXPIRY_KEY % { :account_id => Account.current.id }
+    set_others_redis_hash(key,{ "next_renewal" => DateTime.now + 16.days, "card_expiry_date" => DateTime.now + 3.days})  
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    response = parse_response @response.body
+    assert_nil response['config']['warnings']['card_expired'] 
+    assert_nil response['config']['warnings']['next_renewal_date'] 
+  ensure
+    remove_others_redis_key(key)
+    User.current.unstub(:privilege?)
+  end
+
+  def test_account_with_card_expiry_notification_not_display_banner_admin_card_expire_after_next_renewal
+    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    key = CARD_EXPIRY_KEY % { :account_id => Account.current.id }
+    set_others_redis_hash(key,{ "next_renewal" => DateTime.now + 5.days, "card_expiry_date" => DateTime.now + 8.days}) 
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    response = parse_response @response.body
+    assert_nil response['config']['warnings']['card_expiry_date'] 
+    assert_nil response['config']['warnings']['next_renewal_date']
+  ensure
+    remove_others_redis_key(key)
+    User.current.unstub(:privilege?)
+  end
+
   def test_collaboration_without_freshconnect
     Account.any_instance.stubs(:collaboration_enabled?).returns(true)
     Account.current.add_feature(:collaboration)

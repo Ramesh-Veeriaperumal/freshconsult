@@ -3,6 +3,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
   include Redis::OthersRedis
   include Billing::Constants
   include Billing::BillingHelper
+
   before_filter :verify_signature
   prepend_around_filter :select_shard
   skip_before_filter :set_time_zone
@@ -42,7 +43,8 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
   end
 
   private
-    #Authentication
+
+    # Authentication
     def login_from_basic_auth
       authenticate_or_request_with_http_basic do |username, password|
         password_hash = Digest::MD5.hexdigest(password)
@@ -50,7 +52,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       end
     end
 
-    #Other checks
+    # Other checks
     def ssl_check
       render :json => ArgumentError, :status => 500 if (Rails.env.production? and !request.ssl?)
     end
@@ -145,7 +147,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       plan = subscription_plan(@billing_data.subscription.plan_id)      
       @old_subscription = @account.subscription.dup
       @existing_addons = @account.addons.dup
-      
+
       @account.subscription.update_attributes(@subscription_data.merge(plan_info(plan)))
       update_addons(@account.subscription, @billing_data.subscription)
 
@@ -158,22 +160,30 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
 
     def subscription_renewed(content)
       @account.subscription.update_attributes(@subscription_data)
+      if redis_key_exists?(card_expiry_key)
+        value = { 'next_renewal' => @subscription_data[:next_renewal_at] }
+        set_others_redis_hash(card_expiry_key, value)
+      end
     end
 
     def subscription_cancelled(content)
       @account.subscription.update_attributes(:state => SUSPENDED)
+      remove_others_redis_key(card_expiry_key)
     end
 
     def subscription_reactivated(content)
       deleted_customer = DeletedCustomers.find_by_account_id(@account.id)
       deleted_customer.reactivate if deleted_customer
-      
+
       @account.subscription.update_attributes(@subscription_data)
     end
 
     def card_added(content)
       @account.subscription.set_billing_info(@billing_data.card)
       @account.subscription.save
+      if content['customer']['card_status'] == CARD_STATUS
+        remove_others_redis_key(card_expiry_key)
+      end
     end
     alias :card_updated :card_added
 
@@ -181,6 +191,13 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       @account.subscription.clear_billing_info
       @account.subscription.save
       auto_collection_off_trigger
+    end
+
+    def card_expiring(content)
+      if content['customer']['auto_collection'] == ONLINE_CUSTOMER
+        value = { 'next_renewal' => @subscription_data[:next_renewal_at], 'card_expiry_date' => DateTime.now.utc + 30.days }
+        set_others_redis_hash(card_expiry_key, value)
+      end
     end
 
     def customer_changed(content)

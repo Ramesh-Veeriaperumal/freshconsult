@@ -53,4 +53,8 @@ module Billing::BillingHelper
     def non_recurring?
       (params[:content][:invoice] && !params[:content][:invoice][:recurring])
     end
+
+    def card_expiry_key
+      format(CARD_EXPIRY_KEY, account_id: @account.id)
+    end
 end
