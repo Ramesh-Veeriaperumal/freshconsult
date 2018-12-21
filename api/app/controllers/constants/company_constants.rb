@@ -12,11 +12,14 @@ module CompanyConstants
   ACTIVITIES_FIELDS = %w(type).freeze
   BULK_ACTION_METHODS = [:bulk_delete].freeze
   DEFAULT_DROPDOWN_FIELDS = %i(health_score account_tier industry)
-  VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(custom_field health_score account_tier industry).freeze
 
   FIELD_MAPPINGS = { :"company_domains.base" => :domains, :"company_domains.domain" => :domains }.freeze
   DEFAULT_DROPDOWN_FIELDS = %i(health_score account_tier industry)
   VALIDATABLE_DELEGATOR_ATTRIBUTES = %w(custom_field health_score account_tier industry).freeze
+  VALIDATABLE_DELEGATOR_ATTRIBUTES_HASH = {}
+  VALIDATABLE_DELEGATOR_ATTRIBUTES.each do |field|
+    VALIDATABLE_DELEGATOR_ATTRIBUTES_HASH[field] = true
+  end
 
   AVATAR_EXT = %w(.jpg .jpeg .jpe .png).freeze
   AVATAR_CONTENT = {

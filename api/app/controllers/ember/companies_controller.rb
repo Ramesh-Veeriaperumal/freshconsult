@@ -26,8 +26,9 @@ module Ember
       return unless validate_delegator(@item, delegator_params)
       mark_avatar_for_destroy
       Company.transaction do
-        @item.update_attributes!(params[cname].except(:avatar_id))
+        @item.avatar.save if params[cname].key?('avatar_id') && @item.avatar    # for deletion if marked_for_deletion
         assign_avatar
+        params[cname].except(:avatar_id).present? ? @item.update_attributes!(params[cname].except(:avatar_id)) : @item.save!
       end
       @item.reload
       render :show
@@ -63,7 +64,7 @@ module Ember
 
       def validatable_delegator_attributes
         params[cname].select do |key, value|
-          if CompanyConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES.include?(key)
+          if CompanyConstants::VALIDATABLE_DELEGATOR_ATTRIBUTES_HASH[key] == true
             params[cname].delete(key)
             true
           end
