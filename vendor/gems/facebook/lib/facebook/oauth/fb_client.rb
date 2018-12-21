@@ -91,6 +91,7 @@ module Facebook
                 source_string = "#{source_account.domain}"
                 page_id = nil
               end
+              Rails.logger.debug "Linked FB page info :: #{Account.current.id} :: #{page[:access_token]} :: #{page[:id]} :: #{source_account}" 
             end
           end
           
