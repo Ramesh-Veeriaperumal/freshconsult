@@ -55,7 +55,9 @@ module Channel
       set_jwt_auth_header('zapier')
       post :create, construct_params({version: 'channel'}, name: Faker::Lorem.characters(10), domains: domains, note: Faker::Lorem.characters(10))
       assert_response 409
-      match_json([bad_request_error_pattern('domains', :'has already been taken')])
+      response = parse_response @response.body
+      error_message = response['errors'][0]['message']
+      assert_equal error_message, domains[0] + ' is already taken by the company with company id:' + company.id.to_s
     end
 
     def test_create_avatar_id_validation_failure
