@@ -217,22 +217,40 @@ class ContactValidationTest < ActionView::TestCase
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
     ContactForm.any_instance.stubs(:default_contact_fields).returns([])
-    controller_params = { 'name' => 'test https://www.test.com', :email => Faker::Internet.email }
-    item = nil
-    contact = ContactValidation.new(controller_params, item)
-    refute contact.valid?(:create)
-    assert_equal({ email: {}, name: {:pattern=>:URL, :field=>:name, :code=>:invalid_format} }, contact.error_options)
+    ['sam https://www.test.com', 'test name/cont "', 'test name / sime'].each do |name|
+      controller_params = { name: name, email: Faker::Internet.email }
+      item = nil
+      contact = ContactValidation.new(controller_params, item)
+      refute contact.valid?(:create)
+      assert_equal({
+        email: {},
+        name: {
+          pattern: '/,",www.',
+          field: :name,
+          code: :invalid_format
+        }
+      }, contact.error_options)
+    end
   end
 
   def test_name_invalid_update
     Account.stubs(:current).returns(Account.new)
     Account.any_instance.stubs(:contact_form).returns(ContactForm.new)
     ContactForm.any_instance.stubs(:default_contact_fields).returns([])
-    controller_params = { 'name' => 'test https://www.test.com', :email => Faker::Internet.email }
-    item = nil
-    contact = ContactValidation.new(controller_params, item)
-    refute contact.valid?(:update)
-    assert_equal({ email: {}, name: {:pattern=>:URL, :field=>:name, :code=>:invalid_format} }, contact.error_options)
+    ['sam https://www.test.com', 'test name/cont "', 'test name / sime'].each do |name|
+      controller_params = { name: name, email: Faker::Internet.email }
+      item = nil
+      contact = ContactValidation.new(controller_params, item)
+      refute contact.valid?(:update)
+      assert_equal({
+        email: {},
+        name: {
+          pattern: '/,",www.',
+          field: :name,
+          code: :invalid_format
+        }
+      }, contact.error_options)
+    end
   end
   private
 

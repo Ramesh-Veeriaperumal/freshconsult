@@ -234,12 +234,8 @@ class User < ActiveRecord::Base
   end
 
   def set_contact_name
-    if name.blank?
-      if email_obtained.present?
-        self.name = name_from_email
-      else
-        self.name ||= fb_profile_id || twitter_id || phone || mobile
-      end
+    if self.name.blank? && email_obtained.present?
+      self.name = name_from_email
     end
   end
 
@@ -314,10 +310,7 @@ class User < ActiveRecord::Base
   end
 
   def sanitize_contact_name
-    if name.present?
-      name.delete!('"')
-      name.gsub!(URI::DEFAULT_PARSER.make_regexp, '').try(:strip!)
-    end
+    name.gsub!(CONTACT_NAME_SANITIZER_REGEX, '') if name.present?
   end
 
   def backup_customer_id
