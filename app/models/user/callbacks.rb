@@ -312,7 +312,7 @@ class User < ActiveRecord::Base
   end
   
   def sanitize_contact_name
-    self.name.gsub!("\"", "") unless self.name.nil?
+    name.gsub!(CONTACT_NAME_SANITIZER_REGEX, '') if name.present?
   end  
 
   def backup_customer_id

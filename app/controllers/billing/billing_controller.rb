@@ -1,8 +1,10 @@
 class Billing::BillingController < ApplicationController
+
   include Redis::RedisKeys
   include Redis::OthersRedis
   include Billing::Constants
   include Billing::BillingHelper
+
   skip_before_filter :check_privilege, :verify_authenticity_token,
                       :set_current_account, :set_time_zone, :set_locale, 
                       :check_account_state, :ensure_proper_protocol, :ensure_proper_sts_header,
@@ -16,6 +18,7 @@ class Billing::BillingController < ApplicationController
 
   before_filter :ensure_right_parameters, :retrieve_account, 
                 :load_subscription_info
+ 
 
   def trigger
     if (not_api_source? or sync_for_all_sources?) && INVOICE_EVENTS.exclude?(params[:event_type])
@@ -44,8 +47,10 @@ class Billing::BillingController < ApplicationController
     end
   end
 
-  private
-    #Authentication
+  private 
+
+    # Authentication
+
     def login_from_basic_auth
       authenticate_or_request_with_http_basic do |username, password|
         password_hash = Digest::MD5.hexdigest(password)
@@ -53,7 +58,7 @@ class Billing::BillingController < ApplicationController
       end
     end
 
-    #Other checks
+    # Other checks
     def ssl_check
       render :json => ArgumentError, :status => 500 if (Rails.env.production? and !request.ssl?)
     end
@@ -160,11 +165,17 @@ class Billing::BillingController < ApplicationController
     end
 
     def subscription_renewed(content)
+
       @account.subscription.update_attributes(@subscription_data)
+      if redis_key_exists?(card_expiry_key)
+         value = { "next_renewal" => @subscription_data[:next_renewal_at]}
+         set_others_redis_hash(card_expiry_key,value)
+      end
     end
 
     def subscription_cancelled(content)
       @account.subscription.update_attributes(:state => SUSPENDED)
+      remove_others_redis_key(card_expiry_key)
     end
 
     def subscription_reactivated(content)
@@ -177,6 +188,9 @@ class Billing::BillingController < ApplicationController
     def card_added(content)
       @account.subscription.set_billing_info(@billing_data.card)
       @account.subscription.save
+      if content['customer']['card_status'] == CARD_STATUS
+        remove_others_redis_key(card_expiry_key)
+      end
     end
     alias :card_updated :card_added
 
@@ -184,6 +198,13 @@ class Billing::BillingController < ApplicationController
       @account.subscription.clear_billing_info
       @account.subscription.save
       auto_collection_off_trigger
+    end
+
+    def card_expiring(content)
+      if content['customer']['auto_collection'] == ONLINE_CUSTOMER
+          value = { "next_renewal" => @subscription_data[:next_renewal_at], "card_expiry_date" => DateTime.now.utc + 30.days}
+        set_others_redis_hash(card_expiry_key,value)
+      end
     end
 
     def customer_changed(content)
