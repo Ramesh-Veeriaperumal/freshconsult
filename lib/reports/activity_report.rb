@@ -228,7 +228,7 @@ end
 
   def start_date(zone = true)
     t = zone ? Time.zone : Time
-    parse_from_date.nil? ? (t.now.ago 6.days).beginning_of_day.to_s(:db) :
+    parse_from_date.nil? ? (t.now.ago 30.days).beginning_of_day.to_s(:db) :
         t.parse(parse_from_date).beginning_of_day.to_s(:db)
   end
   
