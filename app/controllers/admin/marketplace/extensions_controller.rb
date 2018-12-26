@@ -15,8 +15,26 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
   def index
     if params[:sort_by]
       @extensions = Hash.new
+      threads = []
+
+      # Get the main thread current variables
+      current_locals = {}
+      Thread.current.keys.each do |key|
+        current_locals[key] = Thread.current[key]
+      end
+
       params[:sort_by].each do |sort_key|
-        extensions = mkp_extensions(sort_key)
+        threads << Thread.new(current_locals) do |locals|
+          # Set the thread locals from the main thread
+          locals.keys.each do |key|
+            Thread.current[key] = locals[key]
+          end
+          mkp_extensions(sort_key)
+        end
+      end
+
+      params[:sort_by].each_with_index do |sort_key, index|
+        extensions = threads[index].value
         @extensions[sort_key.to_sym] = extensions.body
         render_error_response and return if error_status?(extensions)
       end

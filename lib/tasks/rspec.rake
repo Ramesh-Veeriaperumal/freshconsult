@@ -236,8 +236,8 @@ if Rails.env.test?
 
   UnitTests = [ APITests, BillingTests, EmailTests,  ForumTests, FunctionalTests,
                 GnipTests, HelpdeskTests,MiddlewareSpecs, MobihelpTests, MobileAppTests, ModelTests,
-                 XssTests, ChatTests, IntegrationTests, TwitterTests, FacebookTests, FreshfoneTests, FreshfoneReportsTests].flatten.uniq
-                 #FacebookTests, SolutionTests, VaRulesTests
+                XssTests, ChatTests, IntegrationTests, TwitterTests, FacebookTests, FreshfoneTests, FreshfoneReportsTests].flatten.uniq
+  #FacebookTests, SolutionTests, VaRulesTests
 
   AllTests  = [UnitTests,ModelTests,EmailTests, MobihelpTests, IntegrationTests, ForumDynamoTests].flatten.uniq
 
@@ -547,8 +547,8 @@ end
 
 namespace :integration_test_helper do
 
-  task :update_record, [:model_name, :where_clause, 
-    :properties_to_update] => :environment do |t, args|
+  task :update_record, [:model_name, :where_clause,
+  :properties_to_update] => :environment do |t, args|
     begin
       unless Rails.env.production?
         model_clazz = Module.const_get(args[:model_name])
@@ -566,17 +566,66 @@ namespace :integration_test_helper do
           where clause #{where_clause.inspect} and values #{properties_to_update.inspect}"
       end
     rescue StandardError => e
-      Rails.logger.error("Exception while running the task update_model: 
+      Rails.logger.error("Exception while running the task update_model:
         #{e.backtrace}")
     end
   end
 
+  task :run_script, [:script_to_run] => :environment do |t, args|
+    begin
+      unless Rails.env.production?
+        Rails.logger.info "started running script => #{args[:script_to_run]}"
+        eval args[:script_to_run]
+        Rails.logger.info "completed running script => #{args[:script_to_run]}"
+      end
+    rescue StandardError => e
+      Rails.logger.error("Exception while running the script #{args[:script_to_run]} error message -> #{e.message} error trace -> #{e.backtrace}")
+    end
+  end
+
   def do_update(model_clazz, where_clause, properties_to_update)
-    model_clazz.where(where_clause).each do |record| 
-      properties_to_update.each do |property, value| 
+    model_clazz.where(where_clause).each do |record|
+      properties_to_update.each do |property, value|
         record.safe_send("#{property}=", value)
       end
       record.save!
-    end 
+    end
+  end
+end
+
+namespace :redis_key do
+  task :delete_keys, [:redis_keys_to_delete] => :environment do |t, args|
+    begin
+      unless Rails.env.production?
+        evaluated_argument = eval(args[:redis_keys_to_delete])
+        evaluated_argument.each {|redis_name, values|
+          redis_key_type = eval "$#{redis_name}"
+          values.each {|redis_key_to_delete|
+            Rails.logger.info("redis_key_type -> #{redis_key_type}, key to remove -> #{redis_key_to_delete}")
+            redis_key_type.perform_redis_op("del", redis_key_to_delete)
+          }
+        }
+      end
+    rescue StandardError => e
+      Rails.logger.error("Exception while deleting redis key. Error message -> #{e.message} error trace -> #{e.backtrace}")
+    end
+  end
+
+
+  task :set_redis_string, [:redis_keys_to_set] => :environment do |t, args|
+    begin
+      unless Rails.env.production?
+        data = eval args[:redis_keys_to_set]
+        data.each {|redis_name, values|
+          redis_instance = eval "$#{redis_name}"
+          values.each {|key, value|
+            Rails.logger.info("redis key type #{redis_instance}, key to set in redis -> #{key}, value to set in redis -> #{value}")
+            redis_instance.perform_redis_op("set", key, value)
+          }
+        }
+      end
+    rescue StandardError => e
+      Rails.logger.error("Exception while setting redis keys. Error message -> #{e.message} error trace -> #{e.backtrace}")
+    end
   end
 end

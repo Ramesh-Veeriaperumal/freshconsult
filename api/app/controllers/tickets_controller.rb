@@ -35,7 +35,9 @@ class TicketsController < ApiApplicationController
     elsif @item.save_ticket
       @ticket = @item # Dirty hack. Should revisit.
       render_201_with_location(item_id: @item.display_id)
-      notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank? || compose_email?
+      notify_cc_people @cc_emails[:cc_emails] unless @cc_emails[:cc_emails].blank? || 
+                                                     compose_email? || 
+                                                     @ticket.import_ticket
     else
       render_errors(@item.errors)
     end

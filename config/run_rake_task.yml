@@ -18,7 +18,10 @@ default: &default
     - "contacts_sync:paid"
     - "contacts_sync:free"
     - "integration_test_helper:update_record"
+    - "integration_test_helper:run_script"
     - "trial_subscriptions:rollback_trail_subscriptions_data"
+    - "redis_key:set_redis_string"
+    - "redis_key:delete_keys"
 
 development:
   <<: *default

@@ -4,6 +4,7 @@ module Redis::UndoSendRedis
 
   UNDO_SEND_REDIS_DELIMITERS = ['body', 'body_html', 'full_text', 'full_text_html'].freeze
   UNDO_SEND_FALSE = 'false'.freeze
+  UNDO_SEND_TRAFFIC_COP_MESSAGE_EXPIRY = 300
 
   def get_body_data(user_id, ticket_id, created_at)
     key = get_body_key(user_id, ticket_id, created_at)
@@ -59,7 +60,7 @@ module Redis::UndoSendRedis
 
   def enqueue_undo_send_traffic_cop_msg(ticket_id, user_id)
     key = get_enqueued_key(ticket_id)
-    set_tickets_redis_key(key, user_id)
+    set_tickets_redis_key(key, user_id, UNDO_SEND_TRAFFIC_COP_MESSAGE_EXPIRY)
   end
 
   def remove_undo_send_traffic_cop_msg(ticket_id)

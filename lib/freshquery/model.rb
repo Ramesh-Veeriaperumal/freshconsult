@@ -10,14 +10,15 @@ module Freshquery::Model
       Freshquery::Mappings.get(type)
     end
 
-    def construct_es_query(type, query)
+    def construct_es_query(type, query, v_mapping = false)
       parser = Freshquery::Parser::SearchParser.new
       mapping = get_mapping(type)
       tree = construct_expression_tree(query.strip, parser, mapping.query_length)
       record = parser.record
       valid = mapping.should_validate? ? mapping.valid?(record) : true
       if valid == true
-        Freshquery::Response.new(true, tree.accept(visitor(mapping)))
+        visitor_mapping = v_mapping || visitor(mapping)
+        Freshquery::Response.new(true, tree.accept(visitor_mapping))
       else
         Freshquery::Response.new(false, nil, valid)
       end

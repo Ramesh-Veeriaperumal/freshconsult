@@ -29,7 +29,11 @@ class Company < ActiveRecord::Base
   private
 
     def save_deleted_company_info
-     @deleted_model_info = as_api_response(:central_publish)
+      @deleted_model_info = {
+        id: id,
+        account_id: account_id,
+        name: self.name
+      }
     end
     
     def backup_company_changes

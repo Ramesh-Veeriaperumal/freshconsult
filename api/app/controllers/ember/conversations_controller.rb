@@ -26,6 +26,7 @@ module Ember
 
     SINGULAR_RESPONSE_FOR = %w(reply create update tweet facebook_reply broadcast).freeze
     SLAVE_ACTIONS = %w(ticket_conversations).freeze
+    DUMMY_ID_FOR_UNDO_SEND_NOTE = 9_007_199_254_740_991
 
     def ticket_conversations
       validate_filter_params
@@ -536,8 +537,9 @@ module Ember
       end
 
       def set_dummy_note_id
-        # for undo_send, since we don't have a note id for 10 seconds, we are rendering a note with dummy note id
-        @item.id = @last_note_id + 1 if @item.new_record?
+        # for undo_send, since we don't have a note id for 10 seconds,
+        # we are rendering a note with dummy note id with the maximum integer limit in javascipt
+        @item.id = DUMMY_ID_FOR_UNDO_SEND_NOTE
       end
 
       wrap_parameters(*wrap_params)

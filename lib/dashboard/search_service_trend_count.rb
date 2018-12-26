@@ -40,8 +40,10 @@ class Dashboard::SearchServiceTrendCount < Dashboards
   def multi_aggregation(queries)
     query_contexts = []
     Rails.logger.info "Queries input :: #{queries}"
+    mapping = Freshquery::Mappings.get('ticketanalytics')
+    visitor_mapping = Freshquery::Parser::TermVisitor.new(mapping)
     queries.each_with_index do |query, index|
-      @response = Freshquery::Runner.instance.construct_es_query('ticketanalytics', query.to_json)
+      @response = Freshquery::Runner.instance.construct_es_query('ticketanalytics', query.to_json, visitor_mapping)
       context = get_context(index) 
       query_contexts << context
     end

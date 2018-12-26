@@ -62,7 +62,7 @@ module Helpdesk::NotifierFormattingMethods
   end
 
   def generate_email_references(ticket)
-    ticket.header_info_present? ? "<#{ticket.header_info[:message_ids].join(">,<")}>" : ""
+    ticket.header_info_present? ? "<#{ticket.header_info[:message_ids].join(">,\t<")}>" : ""
   end
 
   def in_reply_to(ticket)

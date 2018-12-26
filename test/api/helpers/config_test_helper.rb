@@ -17,6 +17,9 @@ module ConfigTestHelper
     warn_items = {}
     warn_items[:livechat_deprecation] = livechat_deprecation?
     warn_items[:freshfone_deprecation] = freshfone_deprecation?
+    if admin?
+      warn_items.merge!(card_expired?)
+    end  
     warn_items[:invoice_overdue] = grace_period_exceeded? if invoice_due?
     warn_items
   end
