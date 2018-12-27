@@ -8,6 +8,8 @@ class AgentGroup < ActiveRecord::Base
 
   VERSION_MEMBER_KEY = 'AGENTS_GROUPS'.freeze
 
+  concerned_with :presenter
+
   belongs_to_account
   belongs_to :user
   belongs_to :group
@@ -25,6 +27,10 @@ class AgentGroup < ActiveRecord::Base
   after_commit :add_to_group_capping, on: :create, :if => :capping_enabled?
   after_commit :remove_from_group_capping, on: :destroy, :if => :capping_enabled?
   after_commit :sync_skill_based_user_queues
+  before_save :create_model_changes, on: :update
+  before_destroy :save_deleted_agent_group_info
+
+  publishable
 
 
   scope :available_agents,
@@ -74,6 +80,15 @@ class AgentGroup < ActiveRecord::Base
   end
 
   private
+
+    def save_deleted_agent_group_info
+      @deleted_model_info = central_publish_payload
+    end
+
+    def create_model_changes
+      @model_changes = self.changes.to_hash
+      @model_changes.symbolize_keys!
+    end
 
     def capping_enabled?
       self.group.lbrr_enabled?
