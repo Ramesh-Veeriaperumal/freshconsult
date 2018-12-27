@@ -4710,6 +4710,11 @@
             "in": "query",
             "type": "string",
             "required": true
+          },
+          {
+            "name": "folder_id",
+            "in": "query",
+            "type": "integer"
           }
         ],
         "responses": {

@@ -2106,11 +2106,12 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
 
   def inline_manual_people_tracing
     role = current_user.privilege?(:admin_tasks) ? "admin" : "agent"
+    ui_preference = current_account.falcon_ui_enabled?(current_user) ? 'mint' : 'oldui'
     state  = current_account.subscription.state
     bucket = current_account.account_additional_settings.additional_settings[:announcement_bucket].to_s
     bucket_split = split_with_separator bucket
     features_to_send = features_for_inline_manual
-    roles_to_send = [[role,state],bucket_split,features_to_send].reduce([], :concat)
+    roles_to_send = [[ui_preference],[role,state],bucket_split,features_to_send].reduce([], :concat)
     inline_manual_people_tracing = {
       :uid      => current_user.id,
       :name     => current_account.full_domain,

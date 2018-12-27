@@ -44,6 +44,8 @@ module Billing::Constants
   VOIDED = 'voided'
   CARD_STATUS = 'valid'
 
+  PAYMENT_DUE = 'payment_due'.freeze
+
   TRIAL = "trial"
   FREE = "free"
   ACTIVE = "active"

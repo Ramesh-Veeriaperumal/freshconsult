@@ -76,6 +76,18 @@ class ApiCompaniesController < ApiApplicationController
       ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, params[cname])
     end
 
+    def render_custom_errors(item = @item, merge_item_error_options = false)
+      errors, options = format_custom_errors(item, merge_item_error_options)
+      if errors.messages[:domains].present? && errors.messages.fetch(:domains) == ['has already been taken']
+        item.company_domains.each do |cd|
+          @existing_company ||= current_account.company_domains.find_by_domain(cd.domain) if cd.new_record?
+        end
+        errors.add(:domains, @existing_company.domain + ' is already taken by the company with company id:' + @existing_company.company_id.to_s)
+        options[:code] = :duplicate_value
+      end
+      render_errors(errors, options || {})
+    end
+
     def set_custom_errors(item = @item)
       ErrorHelper.rename_error_fields(field_mappings, item)
     end

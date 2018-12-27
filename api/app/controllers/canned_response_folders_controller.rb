@@ -64,8 +64,8 @@ class CannedResponseFoldersController < ApiApplicationController
     end
 
     def fetch_ca_responses(folder_id = nil)
-      @ca_responses = accessible_from_esv2('Admin::CannedResponses::Response', { size: 300 }, default_visiblity, 'raw_title', folder_id)
-      @ca_responses = fetch_ca_responses_from_db(folder_id) if @ca_responses.nil?
+      @ca_responses = (accessible_from_esv2('Admin::CannedResponses::Response', { size: 300 }, default_visiblity, 'raw_title', folder_id) || []).sort_by { |cr| [cr.title.downcase] }
+      @ca_responses = fetch_ca_responses_from_db(folder_id) if @ca_responses.empty?
     end
 
     def validation_class

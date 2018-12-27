@@ -23,7 +23,7 @@ module UsageMetrics::GardenFeatures
   end
 
   def forums(args)
-    author = args[:account].posts.order('id desc').first.user
-    !(FRESHDESK_USER_EMAIL_REGEX === author.email)
+    post = args[:account].posts.order('id desc').first
+    post.present? ? FRESHDESK_USER_EMAIL_REGEX.match(post.user.email).nil? : false
   end
 end

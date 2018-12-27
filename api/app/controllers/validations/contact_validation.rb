@@ -178,9 +178,9 @@ class ContactValidation < ApiValidation
   private
 
     def check_url_present
-      if name =~ URI::DEFAULT_PARSER.make_regexp
+      if name =~ User::CONTACT_NAME_SANITIZER_REGEX
         errors[:name] = :pattern_not_allowed
-        error_options[:name] = { pattern: :URL, field: :name, code: :invalid_format }
+        error_options[:name] = { pattern: '/,",www.', field: :name, code: :invalid_format }
       end
     end
 

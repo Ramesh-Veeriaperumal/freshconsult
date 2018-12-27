@@ -129,6 +129,9 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     company = create_company(domains: [comp_domain])
     params_hash = company_params_hash.merge(domains: [comp_domain])
     post :create, construct_params({ version: 'private' }, params_hash)
+    response = parse_response @response.body
+    error_message = response['errors'][0]['message']
+    assert_equal error_message, comp_domain + ' is already taken by the company with company id:' + company.id.to_s
     assert_response 409
   end
 
@@ -325,6 +328,9 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     company = create_company(domains: [comp_domain])
     other_company = create_company
     post :update, construct_params({ version: 'private', id: other_company.id }, domains: [comp_domain])
+    response = parse_response @response.body
+    error_message = response['errors'][0]['message']
+    assert_equal error_message, comp_domain + ' is already taken by the company with company id:' + company.id.to_s
     assert_response 409
   end
 
