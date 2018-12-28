@@ -28,7 +28,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :product_id, :if => proc { Account.current.multi_product_enabled? }
     t.add :company_id
     t.add :sla_policy_id
-    t.add :association_type, :if => proc { Account.current.parent_child_tickets_enabled? || Account.current.link_tickets_enabled? }
+    t.add :association_type, :if => proc { Account.current.parent_child_infra_enabled? || Account.current.link_tickets_enabled? }
     t.add :isescalated, as: :is_escalated
     t.add :fr_escalated
     t.add :resolution_time_by_bhrs, as: :time_to_resolution_in_bhrs
