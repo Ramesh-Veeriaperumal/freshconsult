@@ -13,9 +13,14 @@ class Account < ActiveRecord::Base
     s.add :ssl_enabled
     s.add :reputation
     s.add :account_type_hash, as: :account_type
+    s.add :premium
     s.add proc { |x| x.features_list }, as: :features
     s.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
     s.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
+  end
+
+  api_accessible :central_publish_associations do |t|
+    t.add :subscription, template: :central_publish
   end
 
   def model_changes_for_central(options = {})
