@@ -23,17 +23,17 @@ module AccountConstants
       :short_day_with_week => "%a, %-d %b, %Y",
       :short_day_with_time => "%a, %-d %b, %Y at %l:%M %p",
     }
-  } 
-  
-  # Default email settings for additional settings
-  DEFAULTS_FONT_SETTINGS = { 
-    :email_template => { 
-      "font-size"   => '13px',
-      "font-family" => 'Helvetica Neue, Helvetica, Arial, sans-serif'
-    }
-  } 
+  }
 
-  DATA_DATEFORMATS = { 
+  # Default email settings for additional settings
+  DEFAULTS_FONT_SETTINGS = {
+    :email_template => {
+      "font-size"   => '13px',
+      "font-family" => '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif'
+    }
+  }
+
+  DATA_DATEFORMATS = {
     :non_us => {
       :moment_date_with_week  => 'ddd, D MMM, YYYY',
       :datepicker       => 'd M, yy',
@@ -50,14 +50,14 @@ module AccountConstants
     }
   }
 
-  DATEFORMATS_NAME_BY_VALUE = Hash[*DATEFORMATS.flatten] 
+  DATEFORMATS_NAME_BY_VALUE = Hash[*DATEFORMATS.flatten]
 
   MAINTENANCE_STATUS = 503
   TIME_ZONES = ActiveSupport::TimeZone.all.map(&:name).freeze
 
   VALID_URL_REGEX = /\A(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?\z/i
 
-  # Used by API too. 
+  # Used by API too.
   EMAIL_VALIDATOR = /(\A[-A-Z0-9.!#$%&'*+\/=?^_`{|}~]+@[A-Z0-9](?:[A-Z0-9\-]{0,61}[A-Z0-9])?(?:\.[A-Z0-9](?:[A-Z0-9\-]{0,61}[A-Z0-9])?)+\z)/i
   EMAIL_REGEX = /(\b[-a-zA-Z0-9.'’_&%=~+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b)/
   EMAIL_SCANNER = /\b[-a-zA-Z0-9.'’_&%=~+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}\b/
@@ -82,7 +82,7 @@ module AccountConstants
    DASHBOARD_LIMITS = { min: { dashboard: 5, widgets: { scorecard: 6, bar_chart: 3, csat: 3, leaderboard: 3, forum_moderation: 1, ticket_trend_card: 2, time_trend_card: 2, sla_trend_card: 2 } },
                        mid: { dashboard: 5, widgets: { scorecard: 8, bar_chart: 4, csat: 3, leaderboard: 3, forum_moderation: 1, ticket_trend_card: 3, time_trend_card: 3, sla_trend_card: 3 } },
                        max: { dashboard: 10, widgets: { scorecard: 12, bar_chart: 5, csat: 3, leaderboard: 3, forum_moderation: 1, ticket_trend_card: 4, time_trend_card: 4, sla_trend_card: 4 } } }
-   
+
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT
   end

@@ -6,7 +6,8 @@ window.App.Admin = window.App.Admin || {};
     "use strict";
 
     App.Admin.AdminFontSettings = {
-		fontname_pairs : {	
+		fontname_pairs : {
+			'System'		: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif",
 			'Helvetica'		: 'Helvetica Neue, Helvetica, Arial, sans-serif',
 			'Sans Serif'	: 'arial, helvetica, sans-serif',
 			'Serif'			: 'times new roman, serif',
@@ -36,7 +37,7 @@ window.App.Admin = window.App.Admin || {};
 			$(document).on("click.fontsetting","#font-change", function(){
 				$("#font-show").addClass('hide');
 				$("#font-edit").removeClass('hide');
-			}) 
+			})
     	},
     	bindFontSave: function(){
 			$(document).on('click.fontsetting', '#save-font', function(){
@@ -45,7 +46,7 @@ window.App.Admin = window.App.Admin || {};
 				$.ajax({
 					type: "POST",
           			dataType: "script",
-				    data: { "_method" : "put",  
+				    data: { "_method" : "put",
 				    		"font-family" : $("#family-text").attr('rel')
 				    	},
 					url: "/admin/account_additional_settings/update_font",
@@ -65,13 +66,13 @@ window.App.Admin = window.App.Admin || {};
 			$(document).on("click","#font-family-dropdown a", function(){
 				$("#family-text").text($(this).text()).attr('rel',$(this)[0].rel).css('font-family',$(this)[0].rel);
 				$(this).parent().removeClass('active');
-			}) 
+			})
     	},
     	bindFontSettingText: function(){
 			$(document).on("click.fontsetting", "#family-selected-text", function (ev) {
 				ev.stopPropagation();
 				$(this).siblings('.redactor_dropdown').toggleClass('active');
-			}) 
+			})
     	},
     	bindDOM: function(){
 			$(document).on("click.fontsetting", function (ev) {
@@ -79,7 +80,7 @@ window.App.Admin = window.App.Admin || {};
 			});
     	},
     	buildFontFamily: function(){
-			var fontnames = ['Helvetica','Sans Serif','Serif','Wide','Narrow','Courier New','Garamond','Georgia','Tahoma','Trebuchet MS','Verdana']
+			var fontnames = ['System', 'Helvetica','Sans Serif','Serif','Wide','Narrow','Courier New','Garamond','Georgia','Tahoma','Trebuchet MS','Verdana']
 
 			var dropdown = $('<div class="redactor_dropdown" id="font-family-dropdown" >');
 			var len = fontnames.length;
