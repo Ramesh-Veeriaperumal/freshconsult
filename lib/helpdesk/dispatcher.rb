@@ -42,12 +42,13 @@
       Time.use_zone(@account.time_zone) {
         execute_rules unless @is_webhook
         round_robin unless @ticket.spam? || @ticket.deleted?
-        @ticket.sbrr_fresh_ticket = true
+        @ticket.sbrr_fresh_ticket = @ticket.skip_ocr_sync = true
         if @sla_on_background && @ticket.is_in_same_sla_state?(@sla_attributes)
           @ticket.update_sla = true
           @ticket.sla_calculation_time = @sla_calculation_time
         end
         @ticket.save
+        @ticket.sync_task_changes_to_ocr(nil)
         notify_cc_recipients
         @ticket.autoreply
         @ticket.va_rules_after_save_actions.each do |action|

@@ -26,6 +26,7 @@ class Agent < ActiveRecord::Base
   before_create :mark_unavailable
   after_commit :enqueue_round_robin_process, on: :update
   after_commit :sync_skill_based_queues, on: :update
+  after_commit :sync_agent_availability_to_ocr, on: :update, if: :allow_ocr_sync?
 
   after_commit :nullify_tickets, :agent_destroy_cleanup, on: :destroy
   
@@ -168,6 +169,10 @@ class Agent < ActiveRecord::Base
     if account.skill_based_round_robin_enabled? && @model_changes.key?(:available)
       SBRR::Toggle::User.perform_async(:user_id => user_id)
     end
+  end
+
+  def sync_agent_availability_to_ocr
+    OmniChannelRouting::AgentSync.perform_async(user_id: user_id, availability: available)
   end
 
   def nullify_tickets
@@ -392,5 +397,9 @@ class Agent < ActiveRecord::Base
       return false
     end
     true
+  end
+
+  def allow_ocr_sync?
+    account.omni_channel_routing_enabled? && @model_changes.key?(:available)    
   end
 end

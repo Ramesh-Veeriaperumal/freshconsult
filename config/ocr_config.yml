@@ -1,8 +1,9 @@
 defaults: &defaults
   api_endpoint: "http://localhost:3001/api/v1/"
   auth_type: "jwt"
-  jwt_secret: ""
+  jwt_secret: "uRmMYCtGKITr4YCgouIqVicStGRs3SPo"
   jwt_default_expiry: "30"
+  admin_jwt_secret: "admin-authkey"
 
 development:
   <<: *defaults

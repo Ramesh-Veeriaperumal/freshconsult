@@ -293,6 +293,9 @@ defaults: &defaults
     - [company_central_publish]
     - [remove_encrypted_fields]
     - [ticket_field_central_publish]
+    - [ocr_agent_sync]
+    - [ocr_task_sync]
+
 
 development:
   <<: *defaults
