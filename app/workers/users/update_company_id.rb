@@ -41,20 +41,21 @@ class Users::UpdateCompanyId < BaseWorker
       user_ids.each do |user_id|
         account.user_companies.create(:company_id => company_id, :user_id => user_id, :default => true)
       end
-      account.users.where("id in (?)", user_ids).update_all(:customer_id => company_id)
+      account.users.update_all_with_publish({ customer_id: company_id }, { id: user_ids })
     end
   end
 
   def destroy_user_companies(account, user_ids, company_id)
     Sharding.run_on_master do 
       account.user_companies.where(["user_id in (?) and company_id = ?", user_ids, company_id]).destroy_all
-      account.users.where("id in (?)", user_ids).update_all(:customer_id => nil)
+      account.users.update_all_with_publish({ customer_id: nil }, { id: user_ids })
     end
   end
 
   def destroy_contractor_companies(account, user_ids, company_id)
     Sharding.run_on_master do 
       account.user_companies.where(["user_id in (?) and company_id = ?", user_ids, company_id]).destroy_all
+      account.users.update_all_with_publish({ customer_id: nil }, { id: user_ids })
     end
   end
 end
