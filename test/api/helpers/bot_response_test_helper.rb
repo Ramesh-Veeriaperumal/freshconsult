@@ -196,6 +196,7 @@ module BotResponseTestHelper
       end
     end
     bot_response.updated_at = Time.parse(Bot::Response.find(bot_response.id).updated_at.to_s).utc.iso8601
+    bot_response.created_at = Time.parse(Bot::Response.find(bot_response.id).created_at.to_s).utc.iso8601
     response = Tickets::BotResponseDecorator.new(bot_response).to_hash
     response
   end

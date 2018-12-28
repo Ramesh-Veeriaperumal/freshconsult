@@ -16191,6 +16191,9 @@
             }
           }
         },
+        "created_at": {
+          "format": "date-time"
+        },
         "updated_at": {
           "format": "date-time"
         }

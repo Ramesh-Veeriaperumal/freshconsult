@@ -41,5 +41,7 @@ properties:
         type: string
       widget_size:
         type: string
+  created_at:
+    format: date-time
   updated_at:
     format: date-time

@@ -1,11 +1,12 @@
 class Tickets::BotResponseDecorator < ApiDecorator
-  delegate :id, :ticket, :bot, :suggested_articles, :updated_at, to: :record
+  delegate :id, :ticket, :bot, :suggested_articles, :created_at, :updated_at, to: :record
 
   def to_hash
     hash = {
       id: id,
       ticket_id: ticket.display_id,
       articles: bot_suggested_articles,
+      created_at: created_at,
       updated_at: updated_at
     }
     [hash, bot_hash].inject(&:merge)
