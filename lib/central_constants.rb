@@ -1,6 +1,6 @@
 module CentralConstants
   MODEL_PAYLOAD_VERSION = {
-    'Account' => '0',
+    'Account' => '1',
     'Helpdesk::Ticket' => '0',
     'Helpdesk::Note' => '0',
     'Solution::Category' => '0',
@@ -9,7 +9,7 @@ module CentralConstants
     'Bot::FeedbackMapping' => '0',
     'User' => '0',
     'Company' => '0',
-    'Subscription' => '0',
+    'Subscription' => '1',
     'Agent' => '0',
     'VaRule' => '0',
     'Group' => '0',
