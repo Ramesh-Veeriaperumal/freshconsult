@@ -11,7 +11,7 @@
 <span class="seperator"></span>
 
 <div class="row-fluid">
-  <%= form_for( :ebay_account , :url => { :controller => "ebay_accounts", :action => "generate_session"}, :html => { :class => "form-horizontal", :rel => "validate"} ) do |f| %>
+  <%= form_for( :ebay_account , :url => { :controller => "ebay_accounts", :action => "generate_session"}, :html => { :class => "form-horizontal", :rel => "validate", :target => '_top'} ) do |f| %>
     
     <%= render :partial => "/admin/ecommerce/ebay_accounts/form", :locals => {:f => f, :page => "new"} %>
   <% end %>
