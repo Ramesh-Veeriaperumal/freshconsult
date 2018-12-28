@@ -13,11 +13,13 @@ module Freshid::ControllerMethods
   end
 
   def redirect_to_agent_sso_freshid_authorize
-    redirect_to_freshid_authorize(freshid_oauth_agent_authorize_callback_url, true)
+    redirect_url = agent_oauth2_enabled? ? freshid_oauth_agent_authorize_callback_url : freshid_saml_agent_authorize_callback_url
+    redirect_to_freshid_authorize(redirect_url, true)
   end
 
   def redirect_to_customer_sso_freshid_authorize
-    redirect_to freshid_customer_authorize(freshid_oauth_customer_authorize_callback_url, freshid_logout_url, current_account.full_domain)
+    redirect_url = customer_oauth2_enabled? ? freshid_oauth_customer_authorize_callback_url : freshid_saml_customer_authorize_callback_url
+    redirect_to freshid_customer_authorize(redirect_url, freshid_logout_url, current_account.full_domain)
   end
 
   def redirect_to_freshid_authorize(callback_url=freshid_authorize_callback_url, sso=false)
@@ -29,15 +31,7 @@ module Freshid::ControllerMethods
   end
 
   def freshid_enabled_and_not_logged_in?
-    !logged_in? && freshid_enabled? && !session.delete(:authorize) && !agent_oauth2_enabled?
-  end
-
-  def agent_oauth2_enabled_and_not_logged_in?
-    !logged_in? && agent_oauth2_enabled?
-  end
-
-  def customer_oauth2_enabled_and_not_logged_in?
-    !logged_in? && customer_oauth2_enabled?
+    !logged_in? && freshid_enabled? && !session.delete(:authorize) && !agent_freshid_sso_enabled?
   end
 
   def freshid_agent?(email, account = nil)
@@ -56,6 +50,30 @@ module Freshid::ControllerMethods
 
   def customer_oauth2_enabled?
     current_account.oauth2_enabled? && current_account.freshid_enabled? && current_account.sso_enabled? && current_account.customer_oauth2_sso_enabled?
+  end
+
+  def agent_freshid_saml_enabled?
+    current_account.freshid_saml_enabled? && current_account.freshid_enabled? && current_account.sso_enabled? && current_account.agent_freshid_saml_sso_enabled?
+  end
+
+  def customer_freshid_saml_enabled?
+    current_account.freshid_saml_enabled? && current_account.freshid_enabled? && current_account.sso_enabled? && current_account.customer_freshid_saml_sso_enabled?
+  end
+
+  def agent_freshid_sso_enabled?
+    agent_oauth2_enabled? || agent_freshid_saml_enabled?
+  end
+
+  def customer_freshid_sso_enabled?
+    customer_oauth2_enabled? || customer_freshid_saml_enabled?
+  end
+
+  def agent_freshid_sso_enabled_and_not_logged_in?
+    !logged_in? && agent_freshid_sso_enabled?
+  end
+
+  def customer_freshid_sso_enabled_and_not_logged_in?
+    !logged_in? && customer_freshid_sso_enabled?
   end
 
 end

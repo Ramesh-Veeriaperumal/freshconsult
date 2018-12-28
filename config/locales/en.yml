@@ -2227,6 +2227,8 @@ en:
         enable_simple_sso: Simple SSO
         enable_oauth_sso: OAuth2 SSO
         enable_oauth2_sso: OAuth 2.0
+        enable_freshid_saml: Freshid SAML
+        enable_freshid_saml_info: "Freshid SAML is an XML standard used for communicating identities between two web applications. You can use it to let large teams access your support portal easily using Single Sign On."
         remote_logout_url: Remote logout URL
         remote_authentication: Remote Authentication
         enable_SSL: "Secure Connection using SSL"
