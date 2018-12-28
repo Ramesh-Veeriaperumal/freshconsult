@@ -156,7 +156,8 @@ module TicketsTestHelper
       first_assign_agent_id: ticket.reports_hash['first_assign_agent_id'],
       first_assign_group_id: ticket.reports_hash['first_assign_group_id'],
       first_assigned_at: ticket.first_assigned_at.try(:utc).try(:iso8601),
-      first_response_time: ticket.first_response_time.try(:utc).try(:iso8601)
+      first_response_time: ticket.first_response_time.try(:utc).try(:iso8601),
+      on_state_time: ticket.on_state_time
     }
     ret_hash[:skill_id] = ticket.sl_skill_id if Account.current.skill_based_round_robin_enabled?
     ret_hash[:product_id] = ticket.product_id if Account.current.multi_product_enabled?

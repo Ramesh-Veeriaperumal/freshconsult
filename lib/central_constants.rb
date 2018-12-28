@@ -1,7 +1,7 @@
 module CentralConstants
   MODEL_PAYLOAD_VERSION = {
     'Account' => '1',
-    'Helpdesk::Ticket' => '0',
+    'Helpdesk::Ticket' => '1',
     'Helpdesk::Note' => '0',
     'Solution::Category' => '0',
     'Solution::Folder' => '0',
