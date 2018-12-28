@@ -2831,11 +2831,11 @@ module Ember
       create_parent_ticket
       parent_ticket = Account.current.tickets.last
       params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
-      disable_adv_ticketing([:parent_child_tickets])
+      disable_adv_ticketing([:parent_child_tickets, :field_service_management, :parent_child_infra])
       post :create, construct_params({ version: 'private' }, params_hash)
       assert_response 400
       match_json([bad_request_error_pattern('parent_id', :require_feature_for_attribute, {
-      code: :inaccessible_field, feature: :parent_child_tickets, attribute: 'parent_id'
+        code: :inaccessible_field, feature: :parent_child_infra, attribute: 'parent_id'
       })])
     end
 

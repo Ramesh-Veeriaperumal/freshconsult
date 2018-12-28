@@ -292,18 +292,11 @@ class Group < ActiveRecord::Base
       @group_type = GroupType.group_type_name(self.group_type)
       type = GROUPS_AGENTS_MAPPING[@group_type]
       user_ids = self.agent_groups.map(&:user_id)
-      input_agent_ids = []
-      user_ids.each do |user_id|
-        input_agent_ids << Account.current.agents_from_cache.find{ |x| x.user_id == user_id }.id
-      end
-      valid_agent_ids = Account.current.agents_from_cache.select{ |x| x.agent_type == AgentType.agent_type_id(type)}.map(&:id)
-      invalid_ids = []
-      input_agent_ids.each do |input_agent|
-        unless valid_agent_ids.include?(input_agent)
-          invalid_ids << input_agent
-        end
-      end
-      unless invalid_ids.blank?
+      agents = Account.current.agents_from_cache
+      group_agent_type = AgentType.agent_type_id(type)
+      invalid_update = agents.any? { |x| x.agent_type != group_agent_type && user_ids.include?(x.user_id) }
+
+      if invalid_update
         self.errors.add(:agent_groups, 'invalid_agent_ids') 
         return false
       end

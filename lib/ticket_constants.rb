@@ -402,7 +402,7 @@ module TicketConstants
   end
 
   def self.feature_based_association_type
-    assoc_parent_child_feature = Account.current.parent_child_tickets_enabled?
+    assoc_parent_child_feature = Account.current.parent_child_infra_enabled?
     link_tickets_feature = Account.current.link_tickets_enabled?
     return [] unless assoc_parent_child_feature || link_tickets_feature
     list = [TICKET_ASSOCIATION_FILTER[0]]

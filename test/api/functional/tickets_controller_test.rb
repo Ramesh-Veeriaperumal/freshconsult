@@ -317,6 +317,7 @@ class TicketsControllerTest < ActionController::TestCase
         assert_response 201
       ensure
         cleanup_fsm
+        Account.unstub(:current)
       end
     end
   end
@@ -472,6 +473,66 @@ class TicketsControllerTest < ActionController::TestCase
         cleanup_fsm
         Account.unstub(:current)
       end
+    end
+  end
+
+  def test_create_service_task_ticket
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        cleanup_fsm
+        perform_fsm_operations
+        Account.stubs(:current).returns(Account.first)
+        parent_ticket = create_ticket
+        params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+                   description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                   priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
+                   custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }      
+        post :create, construct_params(params)
+        assert_response 201
+      ensure
+        cleanup_fsm
+        Account.unstub(:current)
+      end
+    end
+  end
+
+  def test_create_with_service_task_with_pc_disabled
+    disable_adv_ticketing([:parent_child_tickets])
+    enable_adv_ticketing([:field_service_management]) do
+      begin
+        cleanup_fsm  
+        perform_fsm_operations
+        Account.stubs(:current).returns(Account.first)
+        parent_ticket = create_ticket
+        params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+                   description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                   priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
+                   custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }      
+        post :create, construct_params(params)
+        assert_response 201
+      ensure
+        cleanup_fsm
+        Account.unstub(:current)
+      end
+    end
+  end
+
+  def test_create_with_service_task_with_both_advanced_features_disabled
+    disable_adv_ticketing([:field_service_management, :parent_child_tickets])
+    begin
+      cleanup_fsm
+      perform_fsm_operations
+      Account.stubs(:current).returns(Account.first)
+      parent_ticket = create_ticket
+      params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+                 description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                 priority: 2, status: 2, type: SERVICE_TASK_TYPE, 
+                 custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }      
+      post :create, construct_params(params)
+      assert_response 400
+    ensure
+      cleanup_fsm
+      Account.unstub(:current)
     end
   end
 
@@ -4499,12 +4560,13 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_child_without_feature
+    disable_adv_ticketing([:parent_child_tickets, :field_service_management, :parent_child_infra])
     parent_ticket = create_parent_ticket
     params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
     post :create, construct_params(params_hash)
     assert_response 400
     match_json([bad_request_error_pattern('parent_id', :require_feature_for_attribute,
-                                          code: :inaccessible_field, feature: :parent_child_tickets, attribute: 'parent_id')])
+                                          code: :inaccessible_field, feature: :parent_child_infra, attribute: 'parent_id')])
   end
 
   def test_create_child_to_inaccessible_parent

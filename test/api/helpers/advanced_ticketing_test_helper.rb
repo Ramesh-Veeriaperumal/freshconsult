@@ -12,7 +12,6 @@ module AdvancedTicketingTestHelper
   end
 
   def enable_fsm
-    Account.current.revoke_feature(:parent_child_tickets)
     Account.current.launch(:field_service_management_lp)
     Account.current.set_feature(:disable_old_ui)
     Account.current.set_feature(:field_service_management_toggle) unless Account.current.has_feature?(:field_service_management_toggle)

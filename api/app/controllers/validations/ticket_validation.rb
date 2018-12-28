@@ -87,9 +87,9 @@ class TicketValidation < ApiValidation
     code: :inaccessible_field,
     message_options: {
       attribute: 'parent_id',
-      feature: :parent_child_tickets
+      feature: :parent_child_infra
     }
-  }, unless: -> { parent_child_enabled? }
+  }, unless: -> { Account.current.parent_child_infra_enabled? }
 
   validates :parent_template_id, custom_absence: {
     message: :require_feature_for_attribute,

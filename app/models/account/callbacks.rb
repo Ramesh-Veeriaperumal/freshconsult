@@ -8,6 +8,7 @@ class Account < ActiveRecord::Base
   before_update :update_global_pod_domain
   before_update :generate_encryption_key, if: :enabled_custom_encrypted_fields?
   before_update :delete_encrypted_fields, if: :disabled_custom_encrypted_fields?
+  before_update :toggle_parent_child_infra, :if => :parent_child_dependent_features_changed?
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status, :make_current
@@ -124,6 +125,18 @@ class Account < ActiveRecord::Base
 
   def update_advanced_ticketing_applications
     NewPlanChangeWorker.perform_async({features: [:disable_old_ui], action: @action})
+  end
+
+  def parent_child_dependent_features_changed?
+    PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_feature_changed?")}
+  end
+
+  def toggle_parent_child_infra
+    parent_child_infra_features_present? ? self.set_feature(:parent_child_infra) : self.reset_feature(:parent_child_infra)
+  end
+
+  def parent_child_infra_features_present?
+    PARENT_CHILD_INFRA_FEATURES.any? { |f| self.safe_send("#{f}_enabled?")} 
   end
 
   def destroy_freshid_account
