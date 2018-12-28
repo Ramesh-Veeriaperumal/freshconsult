@@ -157,14 +157,14 @@ module TicketsTestHelper
       first_assign_group_id: ticket.reports_hash['first_assign_group_id'],
       first_assigned_at: ticket.first_assigned_at.try(:utc).try(:iso8601),
       first_response_time: ticket.first_response_time.try(:utc).try(:iso8601),
+      product_id: ticket.product_id,
+      association_type: ticket.association_type,
+      archive: ticket.archive,
+      internal_agent_id: ticket.internal_agent_id,
+      internal_group_id: ticket.internal_group_id,
       on_state_time: ticket.on_state_time
     }
     ret_hash[:skill_id] = ticket.sl_skill_id if Account.current.skill_based_round_robin_enabled?
-    ret_hash[:product_id] = ticket.product_id if Account.current.multi_product_enabled?
-    ret_hash[:association_type] = ticket.association_type if (Account.current.parent_child_tickets_enabled? || Account.current.link_tickets_enabled?)
-    ret_hash[:archive] = ticket.archive if Account.current.features_included?(:archive_tickets)
-    ret_hash[:internal_agent_id] = ticket.internal_agent_id if Account.current.shared_ownership_enabled?
-    ret_hash[:internal_group_id] = ticket.internal_group_id if Account.current.shared_ownership_enabled?
     ret_hash
   end
 
