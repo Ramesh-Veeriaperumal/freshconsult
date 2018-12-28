@@ -356,6 +356,8 @@ module TicketConstants
 
   LBRR_REFLECTION_KEYS = [:deleted, :spam, :status, :responder_id, :group_id]
 
+  RR_ACTIVE_ATTRIBUTES = [:deleted, :spam, :status]
+
   SLA_CALCULATION_MAX_RETRY = 5
 
   def self.translate_priority_name(priority)

@@ -38,6 +38,8 @@
     - twitter_reply
     - default_data_population
     - undo_send
+    - ocr_agent_sync
+    - ocr_task_sync
 
   :central_realtime:
     - central_publish

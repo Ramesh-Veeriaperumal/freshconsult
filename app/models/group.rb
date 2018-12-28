@@ -22,7 +22,7 @@ class Group < ActiveRecord::Base
   
   before_save :reset_toggle_availability, :create_model_changes
   before_save :set_default_type_if_needed, on: [:create]
-  before_destroy :backup_user_ids
+  before_destroy :backup_user_ids, :save_deleted_group_info
   validate :agent_id_validation, :auto_ticket_assign_validation, if: -> {Account.current.field_service_management_enabled?}
 
   after_commit :round_robin_actions, :clear_cache
@@ -224,6 +224,11 @@ class Group < ActiveRecord::Base
   end
 
   private
+
+
+  def save_deleted_group_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
+  end
 
     def self.api_filter(group_filter)
       {

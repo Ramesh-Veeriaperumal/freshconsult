@@ -1,8 +1,12 @@
 module Channel::OmniChannelRouting
   class AgentsController < ::ApiAgentsController
     include ChannelAuthentication
+    include ::OmniChannelRouting::Util
+
+    SLAVE_ACTIONS = %w(index task_load).freeze
+
     skip_before_filter :check_privilege
-    before_filter :channel_client_authentication
+    before_filter :log_request_header, :channel_client_authentication
 
     def index
       load_objects
@@ -14,8 +18,24 @@ module Channel::OmniChannelRouting
       @items = items
     end
 
-    def scoper
-      current_account.agents.preload(:user)
+    def task_load
+      status_ids = []
+      current_account.ticket_status_values_from_cache.each do |status|
+        status_ids << status.status_id unless status.stop_sla_timer
+      end
+      count =  @agent.tickets.visible.sla_on_tickets(status_ids).count
+      @response_hash = { agent_id: params[:id].to_i, task_load: count }
     end
+
+    private
+
+      def scoper
+        current_account.agents.preload(:user)
+      end
+
+      def load_object
+        @agent = current_account.agents.find_by_user_id(params[:id])
+      end
+
   end
 end

@@ -34,6 +34,11 @@ class Group < ActiveRecord::Base
     g.add proc { |x| x.agents.map(&:id) }, as: :agent_ids
   end
 
+  api_accessible :central_publish_destroy do |t|
+    t.add :id
+    t.add :account_id   
+  end
+
   def event_info action
     { :ip_address => Thread.current[:current_ip] }
   end

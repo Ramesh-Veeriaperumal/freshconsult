@@ -725,7 +725,11 @@ Helpkit::Application.routes.draw do
     resources :agents, controller: 'channel/omni_channel_routing/agents', only: [:index]
     resources :groups, controller: 'channel/omni_channel_routing/groups', only: [:index]
     resources :agents_groups, controller: 'channel/omni_channel_routing/agents_groups', only: [:index]    
-    get 'accounts/linked_accounts', to: 'channel/omni_channel_routing/linked_accounts#index'    
+    get 'accounts/linked_accounts', to: 'channel/omni_channel_routing/linked_accounts#index'
+    get 'agents/:id/task_load', to: 'channel/omni_channel_routing/agents#task_load'
+    get 'groups/:id/unassigned_tasks', to: 'channel/omni_channel_routing/groups#unassigned_tasks'
+    put 'tickets/:id' , to: 'channel/omni_channel_routing/tickets#assign'
+    put 'accounts/linked_accounts', to: 'channel/omni_channel_routing/linked_accounts#update'
   end 
 
   widget_routes = proc do

@@ -64,7 +64,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
     :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save, 
     :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background, 
-    :sla_calculation_time, :disable_sla_calculation, :import_ticket
+    :sla_calculation_time, :disable_sla_calculation, :import_ticket, :ocr_update, :skip_ocr_sync
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
     # - will be clearing these after activity publish.
@@ -1359,6 +1359,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def add_forum_post(ticket_note)
     has_active_forum_topic? && ticket_topic.topic.create_post_from_ticket_note(ticket_note)
+  end
+
+  def rr_active
+    !deleted && !spam && !ticket_status.stop_sla_timer
+  end
+  alias_method :rr_active?, :rr_active
+
+  def round_robin_attributes
+    { active: rr_active, agent_id: responder_id, group_id: group_id }
   end
 
   private
