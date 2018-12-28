@@ -11,6 +11,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   clear_memcache [TICKET_FIELDS_FULL]
 
+  concerned_with :presenter
+
   self.table_name =  "helpdesk_ticket_fields"
   attr_accessible :name, :label, :label_in_portal, :description, :active, 
     :field_type, :position, :required, :visible_in_portal, :editable_in_portal, :required_in_portal, 

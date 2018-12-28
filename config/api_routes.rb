@@ -228,6 +228,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    resources :download, controller: 'admin/custom_translations/download', path: 'admin/custom_translations/', only: [:primary] do
+      collection do
+        get :primary, to: 'admin/custom_translations/download#primary'
+      end
+    end
+
     resources :freshmarketer, controller: 'admin/freshmarketer', only: :index do
       collection do
         put :link
