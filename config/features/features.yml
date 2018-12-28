@@ -99,7 +99,7 @@
       :cascade_dispatcher: 95
       :hipaa: 96
       :custom_encrypted_fields: 97
-      :autobots_6: 98
+      :freshid_saml: 98
       :autobots_7: 99
       :autobots_8: 100
       :autobots_9: 101

@@ -17,34 +17,54 @@
         <!-- SSO BEGIN -->
         <ul>
           <li>
-            <%= radio_button_tag("account[sso_options][sso_type]", "saml", (sso_type == :saml)) %>
-            <span class="enable_heading"> <%=t(".enable_saml")%> </span>
-            <%= content_tag( :div, t(".enable_saml_info"), :class => "info-data mt5" ) %>
-            <div class="info-data"  id="saml_sso_form" style="display:<%= sso_type == :saml ? "block": "none" %>;">
-              <ul class="ui-form-inline">
-                <%= f.fields_for :sso_options, @account.sso_options do |p| %>
-                  <li>
-                    <%= p.label :login_url, t('.saml_login_url') %>
-                    <%= content_tag( :div, t(".saml_login_url_info"), :class => "info-data" ) %>
-                    <%= p.text_field :saml_login_url, :value => @account[:sso_options].default(:saml_login_url), :size => 50, :class => "text" %>
-                  </li>
-                  <li>
-                    <%= p.label :logout_url, t('.saml_logout_url') %>
-                    <%= content_tag( :div, t(".saml_logout_url_info"), :class => "info-data" ) %>
-                    <%= p.text_field :saml_logout_url, :value => @account[:sso_options].default(:saml_logout_url), :size => 50, :class => "text" %>
-                  </li>
-                  <li>
-                    <%= p.label :saml_cert, t('.saml_cert_fingerprint') %>
-                    <% if @account.launched? :sha1_enabled %>
-                      <%= content_tag(:div, t(".saml_cert_fingerprint_info"), :class => "info-data") %>
-                    <% else %>
-                      <%= content_tag(:div, t(".saml_cert_fingerprint_info_sha256"), :class => "info-data") %>
-                    <% end %>
-                    <%= p.text_field :saml_cert_fingerprint, :value => @account[:sso_options].default(:saml_cert_fingerprint), :size => 50, :class => "text" %>
-                  </li>
+            <% if sso_type == SsoUtil::SSO_TYPES[:freshid_saml].to_sym %>
+              <%= radio_button_tag("account[sso_options][sso_type]", "freshid_saml", (sso_type == SsoUtil::SSO_TYPES[:freshid_saml].to_sym)) %>
+              <span class="enable_heading"> <%=t(".enable_freshid_saml")%> </span>
+              <%= content_tag( :div, t(".enable_freshid_saml_info"), :class => "info-data mt5" ) %>
+              <div class="info-data <%= 'hide' unless @account.freshid_saml_sso_enabled? %>"  id="freshid_saml_sso_form">
+                <% if @account.agent_freshid_saml_sso_enabled? %>
+                  <%= hidden_field_tag "account[sso_options][agent_freshid_saml]", @account.sso_options[:agent_freshid_saml] %>
+                  <% @account.sso_options[:agent_freshid_saml_config].each do |key, value| %>
+                   <%= hidden_field_tag "account[sso_options][agent_freshid_saml_config][#{key}]", value %>
+                  <% end %>
                 <% end %>
-              </ul>
-            </div>
+                <% if @account.customer_freshid_saml_sso_enabled? %>
+                  <%= hidden_field_tag "account[sso_options][customer_freshid_saml]", @account.sso_options[:customer_freshid_saml] %>
+                  <% @account.sso_options[:customer_freshid_saml_config].each do |key, value| %>
+                   <%= hidden_field_tag "account[sso_options][customer_freshid_saml_config][#{key}]", value %>
+                  <% end %>
+                <% end %>
+              </div>
+            <% else %>
+              <%= radio_button_tag("account[sso_options][sso_type]", "saml", (sso_type == :saml)) %>
+              <span class="enable_heading"> <%=t(".enable_saml")%> </span>
+              <%= content_tag( :div, t(".enable_saml_info"), :class => "info-data mt5" ) %>
+              <div class="info-data"  id="saml_sso_form" style="display:<%= sso_type == :saml ? "block": "none" %>;">
+                <ul class="ui-form-inline">
+                  <%= f.fields_for :sso_options, @account.sso_options do |p| %>
+                    <li>
+                      <%= p.label :login_url, t('.saml_login_url') %>
+                      <%= content_tag( :div, t(".saml_login_url_info"), :class => "info-data" ) %>
+                      <%= p.text_field :saml_login_url, :value => @account[:sso_options].default(:saml_login_url), :size => 50, :class => "text" %>
+                    </li>
+                    <li>
+                      <%= p.label :logout_url, t('.saml_logout_url') %>
+                      <%= content_tag( :div, t(".saml_logout_url_info"), :class => "info-data" ) %>
+                      <%= p.text_field :saml_logout_url, :value => @account[:sso_options].default(:saml_logout_url), :size => 50, :class => "text" %>
+                    </li>
+                    <li>
+                      <%= p.label :saml_cert, t('.saml_cert_fingerprint') %>
+                      <% if @account.launched? :sha1_enabled %>
+                        <%= content_tag(:div, t(".saml_cert_fingerprint_info"), :class => "info-data") %>
+                      <% else %>
+                        <%= content_tag(:div, t(".saml_cert_fingerprint_info_sha256"), :class => "info-data") %>
+                      <% end %>
+                      <%= p.text_field :saml_cert_fingerprint, :value => @account[:sso_options].default(:saml_cert_fingerprint), :size => 50, :class => "text" %>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            <%end%>
           </li>
           <li>
             <%= radio_button_tag("account[sso_options][sso_type]", "simple", (sso_type == :simple)) %>

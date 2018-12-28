@@ -17,16 +17,16 @@ class FreshidController < ApplicationController
     create_user_session user
   end
 
-  def oauth_agent_authorize_callback
-    user = fetch_user_by_code(params[:code], freshid_oauth_agent_authorize_callback_url, current_account)
+  def agent_authorize_callback_helper(url)
+    user = fetch_user_by_code(params[:code], url, current_account)
     Rails.logger.info "FRESHID authorize_callback :: user_present=#{user.present?} , user=#{user.try(:id)}, valid_user=#{user.try(:valid_user?)}"
     show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
     activate_user user
     create_user_session(user)
   end
 
-  def oauth_customer_authorize_callback
-    freshid_user_data = fetch_freshid_end_user_by_code(params[:code], freshid_oauth_customer_authorize_callback_url, current_account)
+  def customer_authorize_callback_helper(url)
+    freshid_user_data = fetch_freshid_end_user_by_code(params[:code], url, current_account)
     email = freshid_user_data.try(:[], :email)
     user = nil
     if email.present?
@@ -37,6 +37,22 @@ class FreshidController < ApplicationController
     end
     show_login_error(user.nil?, !user.try(:valid_user?)) and return if user.nil? || !user.valid_user?
     create_user_session(user)
+  end
+
+  def oauth_agent_authorize_callback
+    agent_authorize_callback_helper(freshid_oauth_agent_authorize_callback_url)
+  end
+
+  def oauth_customer_authorize_callback
+    customer_authorize_callback_helper(freshid_oauth_customer_authorize_callback_url)
+  end
+
+  def saml_agent_authorize_callback
+    agent_authorize_callback_helper(freshid_saml_agent_authorize_callback_url)
+  end
+
+  def saml_customer_authorize_callback
+    customer_authorize_callback_helper(freshid_saml_customer_authorize_callback_url)
   end
 
   private

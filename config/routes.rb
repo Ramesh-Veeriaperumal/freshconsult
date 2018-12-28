@@ -3282,6 +3282,8 @@ Helpkit::Application.routes.draw do
   match '/freshid/authorize_callback', :controller => 'freshid', :action => 'authorize_callback', :method => :get
   match '/freshid/oauth_agent_authorize_callback', :controller => 'freshid', :action => 'oauth_agent_authorize_callback', :method => :get
   match '/freshid/oauth_customer_authorize_callback', :controller => 'freshid', :action => 'oauth_customer_authorize_callback', :method => :get
+  match '/freshid/saml_agent_authorize_callback', :controller => 'freshid', :action => 'saml_agent_authorize_callback', :method => :get
+  match '/freshid/saml_customer_authorize_callback', :controller => 'freshid', :action => 'saml_customer_authorize_callback', :method => :get
   match '/freshid/event_callback', :controller => 'freshid', :action => 'event_callback', :method => :post
   match '/freshid/logout', :controller => 'user_sessions', :action => 'freshid_destroy', :method => :get 
 
