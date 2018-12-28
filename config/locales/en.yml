@@ -539,6 +539,7 @@ en:
     encrypted_text: "Encrypted Field"
   ticket_fields:
     fields:
+      fsm_fields_edit: This default field cannot be edited
       source: Source
       subject: Subject
       requester: Search a requester
@@ -631,6 +632,7 @@ en:
       nested_3rd_level: Label required for 3rd level items
       field_has_section: Field has section
     section:
+      fsm_section_delete: This default section cannot be deleted
       remove_type: Section is associated with this type
       new_section: New Section
       confirm_text: Please confirm...
