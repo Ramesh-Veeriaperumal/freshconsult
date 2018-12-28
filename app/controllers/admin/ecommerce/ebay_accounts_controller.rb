@@ -25,7 +25,7 @@ class Admin::Ecommerce::EbayAccountsController < Admin::Ecommerce::AccountsContr
   def update
     if @ebay_account.update_attributes(params["ecommerce_ebay_account"])
       flash[:notice] = t(:'flash.general.update.success', :human_name => t('admin.ecommerce.human_name'))
-      redirect_to admin_ecommerce_accounts_path
+      redirect_to ecommerce_path
     else
       flash[:error] = t(:'flash.general.update.failure', :human_name => t('admin.ecommerce.human_name'))
       render :edit
@@ -38,7 +38,7 @@ class Admin::Ecommerce::EbayAccountsController < Admin::Ecommerce::AccountsContr
     else
       flash[:error] = t(:'flash.general.destroy.failure', :human_name => t('admin.ecommerce.human_name'))
     end
-    redirect_to admin_ecommerce_accounts_path
+    redirect_to ecommerce_path
   end
 
   def authorize
@@ -106,7 +106,7 @@ class Admin::Ecommerce::EbayAccountsController < Admin::Ecommerce::AccountsContr
 
     def display_error(msg=nil)
       flash[:error] = msg.present? ? msg : t(:'flash.general.create.failure', :human_name => t('admin.ecommerce.human_name'))
-      redirect_to admin_ecommerce_accounts_path
+      redirect_to ecommerce_path
     end
 
     def add_ecommerce_account(parsed_data, configs)
@@ -123,7 +123,7 @@ class Admin::Ecommerce::EbayAccountsController < Admin::Ecommerce::AccountsContr
           
         if ebay_account.save && account_subscribe(configs["ebay_auth_token"], parsed_data["ebay_site_id"])
          flash[:notice] = t(:'flash.general.create.success', :human_name => t('admin.ecommerce.human_name'))
-          return redirect_to admin_ecommerce_accounts_path
+          return redirect_to ecommerce_path
         end
       end
       display_error(ebay_account.errors[:base].join(", "))
@@ -133,12 +133,13 @@ class Admin::Ecommerce::EbayAccountsController < Admin::Ecommerce::AccountsContr
       ebay_account = scoper.find(params["ebay_account_id"])
       ebay_account.configs[:auth_token] = configs["ebay_auth_token"]
       ebay_account.configs[:hard_expiration_time] = configs["hard_expiration_time"]
+      ebay_account.reauth_required = false
       if ebay_account.save
         flash[:notice] = t(:'flash.general.update.success', :human_name => t('admin.ecommerce.human_name'))
       else
         flash[:error] = t(:'flash.general.update.failure', :human_name => t('admin.ecommerce.human_name'))
       end
-        redirect_to admin_ecommerce_accounts_path
+        redirect_to ecommerce_path
     end
 
     def construct_ebay_request(additional_data, ru_params, ebay_site_id)
@@ -159,11 +160,15 @@ class Admin::Ecommerce::EbayAccountsController < Admin::Ecommerce::AccountsContr
     def check_account_limit
       if scoper.count >= MAX_ECOMMERCE_ACCOUNTS
         flash[:error] = t('admin.ecommerce.new.max_limit')
-        redirect_to admin_ecommerce_accounts_path
+        redirect_to ecommerce_path
       end
     end
 
     def non_global_pods?
       Fdadmin::APICalls.non_global_pods? && (request.host == GLOBAL_INTEGRATION_URL)
+    end
+
+    def ecommerce_path
+      current_account.falcon_ui_enabled?(current_user) ? "/a#{admin_ecommerce_accounts_path}" : admin_ecommerce_accounts_path
     end
 end

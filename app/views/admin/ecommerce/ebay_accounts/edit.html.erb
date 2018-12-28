@@ -12,7 +12,7 @@
 
 
 <div class="row-fluid">
-  <%= form_for(@ebay_account, :url => { :controller => "ebay_accounts", :action => "update"}, :html => { :class => "form-horizontal", :rel => "validate"} ) do |f| %>
+  <%= form_for(@ebay_account, :url => { :controller => "ebay_accounts", :action => "update"}, :html => { :class => "form-horizontal", :rel => "validate", :target => '_top'} ) do |f| %>
     <%= render :partial => "/admin/ecommerce/ebay_accounts/form", :locals => {:f => f,:account => @ebay_account,:page => "edit"} %>
   <% end %>
 </div>
