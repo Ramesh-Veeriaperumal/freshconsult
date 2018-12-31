@@ -48,7 +48,7 @@
           @ticket.sla_calculation_time = @sla_calculation_time
         end
         @ticket.save
-        @ticket.sync_task_changes_to_ocr(nil)
+        @ticket.sync_task_changes_to_ocr(nil) if Account.current.omni_channel_routing_enabled?
         notify_cc_recipients
         @ticket.autoreply
         @ticket.va_rules_after_save_actions.each do |action|
