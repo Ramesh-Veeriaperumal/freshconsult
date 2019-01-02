@@ -1,1 +1,1 @@
-JSON.generate(@item)
+JSON.generate(@response)

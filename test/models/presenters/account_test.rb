@@ -8,6 +8,8 @@ class AccountTest < ActiveSupport::TestCase
     assert_equal 1, CentralPublishWorker::AccountWorker.jobs.size
     payload = @account.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_account_post(@account))
+    assoc_payload = @account.associations_to_publish.to_json
+    assoc_payload.must_match_json_expression(central_publish_account_association_pattern(@account))
   end
 
   def test_add_bitmap_feature

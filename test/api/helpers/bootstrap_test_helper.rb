@@ -5,6 +5,14 @@ module BootstrapTestHelper
   include Social::Util
   include PortalsCustomisationTestHelper
   include ConfigTestHelper
+
+  DEFAULTS_FONT_SETTINGS = {
+    email_template: {
+      "font-size"   => '13px',
+      "font-family" => '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif'
+    }
+  }.freeze
+
   def index_pattern(agent, account, portal)
     {
       agent: agent_info_pattern(agent),
@@ -93,6 +101,7 @@ module BootstrapTestHelper
       },
       verified: account.verified?,
       created_at: account.created_at.try(:utc),
+      email_fonts: account.account_additional_settings.email_template_settings,
       ssl_enabled: account.ssl_enabled?
     }
 

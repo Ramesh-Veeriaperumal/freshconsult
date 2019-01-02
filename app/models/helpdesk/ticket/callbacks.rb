@@ -76,6 +76,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :set_links, :on => :create, :if => :tracker_ticket?
   after_commit :add_links, :on => :update, :if => :linked_now?
   after_commit :remove_links, :on => :update, :if => :unlinked_now?
+  after_commit :sync_task_changes_to_ocr, on: :update, if: :allow_ocr_sync?
   after_commit :enqueue_skill_based_round_robin, :on => :update, :if => :enqueue_sbrr_job?
   after_commit :save_sentiment, on: :create 
   after_commit :update_spam_detection_service, :if => :model_changes?
@@ -559,7 +560,23 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def save_deleted_ticket_info
     @deleted_model_info = as_api_response(:central_publish_destroy)
   end
-  
+
+  def allow_ocr_sync?
+    res = account.omni_channel_routing_enabled? && 
+      !skip_ocr_sync && observer_will_not_be_enqueued? &&
+        disable_observer_rule.nil? && !ocr_update &&
+          Thread.current[:observer_doer_id].nil? &&
+            round_robin_attributes_changed?
+    Rails.logger.debug "****** allow_ocr_sync? #{res}"
+    res
+  end
+
+  def sync_task_changes_to_ocr(changes = round_robin_attribute_changes)
+    # Will remove the log later
+    Rails.logger.debug "sync_task_changes_to_ocr, trace :: #{caller[0..10].inspect}"
+    OmniChannelRouting::TaskSync.perform_async(id: display_id, attributes: round_robin_attributes, changes: changes)
+  end
+
 private
 
   def model_changes?
@@ -944,6 +961,27 @@ private
   def sanitize_meta_data
     meta_data.each do |k,v|
       meta_data[k] = RailsFullSanitizer.sanitize v if v.is_a? String
+    end
+  end
+
+  def rr_active_changed?
+    previous_state = ticket_was(@model_changes.slice(*TicketConstants::RR_ACTIVE_ATTRIBUTES))
+    rr_active? != previous_state.rr_active?
+  end
+
+  def rr_active_change
+    [!rr_active, rr_active]
+  end
+
+  def round_robin_attributes_changed?
+    @model_changes.key?(:responder_id) || @model_changes.key?(:group_id) || rr_active_changed?
+  end
+
+  def round_robin_attribute_changes
+    Hash.new.tap do |field_changes|
+      field_changes[:active]   = rr_active_change if rr_active_changed?
+      field_changes[:agent_id] = @model_changes[:responder_id] if @model_changes.key?(:responder_id)
+      field_changes[:group_id] = @model_changes[:group_id] if @model_changes.key?(:group_id)
     end
   end
 end

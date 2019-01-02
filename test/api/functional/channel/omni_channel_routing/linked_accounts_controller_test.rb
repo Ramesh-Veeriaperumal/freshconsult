@@ -49,7 +49,7 @@ class Channel::OmniChannelRouting::LinkedAccountsControllerTest < ActionControll
     expected_json = { accounts: [{ id: @account.id, product: 'freshdesk', domain: @account.full_domain }] }
     get :index, controller_params(version: 'channel/ocr/accounts')
     match_json(expected_json)
-    assert_response 200    
+    assert_response 200
   ensure
     @account.reload
     @account.unstub(:freshcaller_account)

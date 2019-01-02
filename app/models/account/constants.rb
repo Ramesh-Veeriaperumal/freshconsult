@@ -232,6 +232,7 @@ class Account < ActiveRecord::Base
     :sandbox => 2
   }
 
+  PARENT_CHILD_INFRA_FEATURES = [:parent_child_tickets, :field_service_management]
   CONTACT_DATA = [:first_name, :last_name, :email, :phone].freeze
 
 end

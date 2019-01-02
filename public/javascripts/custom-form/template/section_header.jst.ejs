@@ -1,5 +1,5 @@
-<% 
-	var list_of_type = ''; 
+<%
+	var list_of_type = '', fsm_ticket_type = "Service Task"; 
 	for (var i = 0; i < obj.picklist_ids.length; i++) { 
 		for (var j = 0; j < types.length; j++) {
 			if(types[j].id == obj.picklist_ids[i].picklist_value_id){ 
@@ -15,6 +15,10 @@
 		<%= I18n.t('ticket_fields.section.section_label_is', {dataLabel: dataLabel}) %><span>
 		<span class="tooltip" title="<%= list_of_type %>"><%= list_of_type %></span>
 	</div>
-	<div class = "section-icon ficon-edit section-edit pull-right"></div>
+	<% if(list_of_type != fsm_ticket_type) { %>
+		<div class = "section-icon ficon-edit section-edit pull-right"></div>
+	<% } else{ %>
+		<div class = "section-icon ficon-edit-strike-thru section-edit pull-right"></div>
+	<% } %>
 </div>
-<div class = "section-icon pull-right ficon-trash-o section-delete" id="delete-section-icon"></div>
+	<div class = "section-icon pull-right ficon-trash-o section-delete" id="delete-section-icon"></div>

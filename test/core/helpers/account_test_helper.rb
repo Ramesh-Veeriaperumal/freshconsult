@@ -105,7 +105,14 @@ module AccountTestHelper
       account_type: { id: account.account_type, name: Account::ACCOUNT_TYPES.key(account.account_type) },
       features: account.features_list,
       created_at: account.created_at.try(:utc).try(:iso8601),
-      updated_at: account.updated_at.try(:utc).try(:iso8601)
+      updated_at: account.updated_at.try(:utc).try(:iso8601),
+      premium: account.premium
+    }
+  end
+
+  def central_publish_account_association_pattern(_expected_output = {})
+    {
+      subscription: Hash
     }
   end
 end

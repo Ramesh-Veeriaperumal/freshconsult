@@ -25,19 +25,19 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :requester_id
     t.add :skill_id, :if => proc { Account.current.skill_based_round_robin_enabled? }
     t.add :custom_fields_hash, as: :custom_fields
-    t.add :product_id, :if => proc { Account.current.multi_product_enabled? }
+    t.add :product_id
     t.add :company_id
     t.add :sla_policy_id
-    t.add :association_type, :if => proc { Account.current.parent_child_tickets_enabled? || Account.current.link_tickets_enabled? }
+    t.add :association_type
     t.add :isescalated, as: :is_escalated
     t.add :fr_escalated
     t.add :resolution_time_by_bhrs, as: :time_to_resolution_in_bhrs
     t.add :resolution_time_by_chrs, as: :time_to_resolution_in_chrs
     t.add :inbound_count
     t.add :first_resp_time_by_bhrs, as: :first_response_by_bhrs
-    t.add :archive, :if => proc { Account.current.features_included?(:archive_tickets) }
-    t.add :internal_agent_id, :if => proc { Account.current.shared_ownership_enabled? }
-    t.add :internal_group_id, :if => proc { Account.current.shared_ownership_enabled? }
+    t.add :archive
+    t.add :internal_agent_id
+    t.add :internal_group_id
     t.add :parent_ticket, as: :parent_id
     t.add :outbound_email?, as: :outbound_email
     t.add :subject
@@ -53,6 +53,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :deleted
     t.add :group_users
     t.add :import_id
+    t.add :on_state_time
     t.add proc { |x| x.attachments.map(&:id) }, as: :attachment_ids
     t.add proc { |x| x.tags.collect { |tag| { id: tag.id, name: tag.name } } }, as: :tags
     REPORT_FIELDS.each do |key|
@@ -254,8 +255,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def event_info(event_name)
-    return   {pod: ChannelFrameworkConfig['pod']} if event_name == 'destroy'
-    lifecycle_hash = (event_name == 'create' && resolved_at) ? default_lifecycle_properties : (@ticket_lifecycle || {})
+    return { pod: ChannelFrameworkConfig['pod'] } if event_name == :destroy
+    lifecycle_hash = event_name == :create && resolved_at ? default_lifecycle_properties : @ticket_lifecycle || {}
     { action_in_bhrs: action_in_bhrs? }.merge(lifecycle_hash)
   end
 

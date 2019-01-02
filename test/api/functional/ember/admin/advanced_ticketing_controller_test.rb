@@ -97,7 +97,6 @@ module Ember
 
             assert_response 204          
             assert Account.current.field_service_management_enabled?
-            assert Account.current.parent_child_tickets_enabled?
             fields_count_after_installation = Account.current.ticket_fields.size
             assert fields_count_after_installation == (total_fsm_fields_count + fields_count_before_installation)
           ensure

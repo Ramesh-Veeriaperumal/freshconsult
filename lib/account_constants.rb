@@ -29,7 +29,7 @@ module AccountConstants
   DEFAULTS_FONT_SETTINGS = { 
     :email_template => { 
       "font-size"   => '13px',
-      "font-family" => 'Helvetica Neue, Helvetica, Arial, sans-serif'
+      "font-family" => '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif'
     }
   } 
 

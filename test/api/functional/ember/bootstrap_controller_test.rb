@@ -160,7 +160,20 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
     Account.current.unstub(:check_custom_mailbox_status)  
-  end 
+  end
+
+  def test_account_for_email_font_parameter
+    AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns({})
+    get :account, controller_params(version: 'private')
+    email_font = JSON.parse(response.body)['account']['email_fonts']
+    assert email_font == DEFAULTS_FONT_SETTINGS[:email_template]
+
+    AccountAdditionalSettings.any_instance.stubs(:additional_settings).returns(email_template: 'test')
+    get :account, controller_params(version: 'private')
+    email_font = JSON.parse(response.body)['account']['email_fonts']
+    assert email_font == 'test'
+    AccountAdditionalSettings.any_instance.unstub(:additional_settings)
+  end
 
   def test_account_with_card_expiry_notification_agent
     User.current.stubs(:privilege?).with(:admin_tasks).returns(false)

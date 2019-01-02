@@ -14,8 +14,6 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         create_field_agent_type
         add_data_to_group_type
         expire_cache
-
-        Account.current.add_feature(:parent_child_tickets)
       rescue StandardError => e
         cleanup_fsm
         Rails.logger.error "error in performing fsm operations, account id: #{Account.current.id}, message: #{e.message}"
@@ -147,8 +145,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def destroy_sections
-        section = Account.current.sections.find_by_label("Service task section")
-        section.destroy if section.present?
+        Account.current.picklist_values.find_by_value(SERVICE_TASK_TYPE).try(:section).try(:destroy)
       end
 
       def destroy_service_ticket_type
@@ -160,7 +157,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
         service_task_type = picklist_values.find_by_value(SERVICE_TASK_TYPE)
         service_task_type.destroy if service_task_type.present? && new_picklist_values.size > 0
 
-        field_options = type_field[:field_options]
+        field_options = type_field[:field_options] || {}
         section_present_in_other_picklists = new_picklist_values.any? {|picklist| picklist.section.present?}
 
         if !section_present_in_other_picklists && field_options[:section_present].present?

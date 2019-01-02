@@ -56,7 +56,8 @@
     this.data = $H();
     this.section_instance = {};
     this.sortSender = null;
-  };
+  },
+  fsm_fields = ["cf_fsm_contact_name", "cf_fsm_phone_number", "cf_fsm_service_location", "cf_fsm_appointment_date", "cf_fsm_appointment_start_time", "cf_fsm_appointment_end_time"].map(function(field){ return (field + "_" + current_account_id); });
   customFieldsForm.prototype = {
     uniqId: function () {
       return Math.round(new Date().getTime() + (Math.random() * 100));
@@ -188,9 +189,10 @@
 
         dataItem.disabled_customer_data = this.settings.disabledByDefault[dataItem.field_type];
       }
-
       if($.inArray(dataItem.field_type, this.settings.nonEditableFields) >= 0) {
         dataItem.is_editable = false;
+      } else {
+        dataItem.is_editable = fsm_fields.includes(dataItem.name) ? false : true ;
       }
 
       dataItem.custom_form_type = this.settings.customFormType;
@@ -224,12 +226,13 @@
           instance = $(element).data('customfield'),
           selectedPicklistIds = {},
           fieldtype = instance.getProperties()['field_type'];
+      if(!this.data.get(id) || !fsm_fields.includes(this.data.get(id).name)){     
+        if ($.inArray(fieldtype, this.settings.nonEditableFields) == -1) {
+          if(id && (this.data.get(id).has_section))
+            selectedPicklistIds = this.section_instance.selectedPicklist(id);
 
-      if ($.inArray(fieldtype, this.settings.nonEditableFields) == -1) {
-        if(id && (this.data.get(id).has_section))
-          selectedPicklistIds = this.section_instance.selectedPicklist(id);
-
-        this.fieldDialog.show(element, instance.attachEvents, selectedPicklistIds);
+          this.fieldDialog.show(element, instance.attachEvents, selectedPicklistIds);
+        }
       }
 
     },
@@ -296,19 +299,20 @@
       if(this.section_instance.getNumSections(id) > 0) {
         return;
       }
+      if(!fsm_fields.includes(this.settings.currentData._object.name)){
+        if($(sourcefield).closest('ul').hasClass('section-body')){
+          //Section Field
+          this.section_instance.deleteSecFieldsdialog(sourcefield, id);
 
-      if($(sourcefield).closest('ul').hasClass('section-body')){
-        //Section Field
-        this.section_instance.deleteSecFieldsdialog(sourcefield, id);
+        }else{
 
-      }else{
+          $(this.settings.dialogContainer).html(JST['custom-form/template/section_confirm']({
+            'confirm_type': 'deleteNonSecField'
+          }));
+          $(this.settings.confirmModal).modal('show');
 
-        $(this.settings.dialogContainer).html(JST['custom-form/template/section_confirm']({
-          'confirm_type': 'deleteNonSecField'
-        }));
-        $(this.settings.confirmModal).modal('show');
-
-      }
+        }
+    }
       this.fieldDialog.hideDialog();
     },
 

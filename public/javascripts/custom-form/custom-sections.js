@@ -37,6 +37,8 @@
 		this.convertHash();
 		this.init();
 	};
+	var fsm_section_label = "Service task section";
+
 	customSections.prototype = {
 		convertHash: function () {
 			var i, j, data = this.options.secCurrentData;
@@ -274,14 +276,16 @@
 		},
 
 		deleteSecFieldsdialog: function (field, id) {
-			this.options.ui		= field; //Field or ui.item
-			var no_of_existence	= $(this.options.formContainer).find("[data-id = '"+id+"']").length,
+			if(!fsm_fields.includes(field)){
+				this.options.ui		= field; //Field or ui.item
+				var no_of_existence	= $(this.options.formContainer).find("[data-id = '"+id+"']").length,
 				confirm_type	= (no_of_existence == 1) ? 'confirmDeleteField' : 'deleteSecField';
 
-			$(this.options.dialogContainer).html(JST['custom-form/template/section_confirm']({
+				$(this.options.dialogContainer).html(JST['custom-form/template/section_confirm']({
 				'confirm_type':confirm_type
-			}));
-			$(this.options.sectionConfirmModal).modal('show');
+				}));
+				$(this.options.sectionConfirmModal).modal('show');
+			}
 		},
 // --------------------------------  Function Based on Section Edit   --------------------------------
 		showSectionDialogue: function(sectionData){
@@ -311,11 +315,12 @@
 			$(this.options.formContainer).on('click', this.options.sectionEdit, $.proxy(function (e) {
 
 				var sectionData = this.currentSection(e);
-				this.options.parent_id = $(e.currentTarget).closest("li.custom-field").attr("data-id");
-				this.showSectionDialogue(sectionData);
-				$(e.currentTarget).find('.tooltip').twipsy('hide');
-				return false;
-
+				if(sectionData.label != fsm_section_label){
+					this.options.parent_id = $(e.currentTarget).closest("li.custom-field").attr("data-id");
+					this.showSectionDialogue(sectionData);
+					$(e.currentTarget).find('.tooltip').twipsy('hide');
+					return false;
+				}
 			}, this) );
 		},
 
@@ -507,7 +512,11 @@
 				icon_dom.addClass(delete_enabled).prop('title', '');
 				$(container).find('.emptySectionInfo').show();
 			} else {
+				if(this.section_data[section_id].label != fsm_section_label){
 				icon_dom.addClass(delete_disabled).prop('title', translate.get('section_has_fields'));
+				} else {
+					icon_dom.addClass(delete_disabled).prop('title', translate.get('fsm_section_delete'));
+				}
 				$(container).find('.emptySectionInfo').hide();
 			}
 		},

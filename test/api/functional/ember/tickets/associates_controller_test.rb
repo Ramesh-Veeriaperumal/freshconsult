@@ -127,7 +127,7 @@ module Ember
         Account.current.instance_variable_set('@pc', false) # Memoize is used. Hence setting it to false once the feature is disabled.
         get :prime_association, construct_params({ version: 'private', id: @child_ticket.display_id }, false)
         assert_response 403
-        match_json(request_error_pattern(:require_feature, feature: 'Parent Child Tickets'))
+        match_json(request_error_pattern(:require_feature, feature: 'Parent Child Tickets and Field Service Management'))
       end
 
       # Tests for associated tickets for tracker/parent tickets
@@ -264,7 +264,7 @@ module Ember
         Account.current.instance_variable_set('@pc', false) # memoize is used, hence setting it to false once the feature is disabled.
         get :associated_tickets, construct_params({ version: 'private', id: @parent_ticket.display_id }, false)
         assert_response 403
-        match_json(request_error_pattern(:require_feature, feature: 'Parent Child Tickets'))
+        match_json(request_error_pattern(:require_feature, feature: 'Parent Child Tickets and Field Service Management'))
       end
     end
   end

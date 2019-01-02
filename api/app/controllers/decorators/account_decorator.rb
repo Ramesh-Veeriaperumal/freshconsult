@@ -20,6 +20,7 @@ class AccountDecorator < ApiDecorator
       settings: settings_hash,
       ssl_enabled: record.ssl_enabled?,
       verified: record.verified?,
+      email_fonts: record.account_additional_settings.email_template_settings,
       created_at: record.created_at.try(:utc)
     }
     ret_hash.merge!(sandbox_info)

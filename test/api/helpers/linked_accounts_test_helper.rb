@@ -1,5 +1,4 @@
 module LinkedAccountsTestHelper
-
   def link_freshchat
     return @freshchat = @account.freshchat_account if @account.freshchat_account.present?
     @freshchat = @account.build_freshchat_account
@@ -11,7 +10,7 @@ module LinkedAccountsTestHelper
     return @freshcaller = @account.freshcaller_account if @account.freshcaller_account.present?
     @freshcaller = @account.build_freshcaller_account
     @freshcaller.freshcaller_account_id = 1
-    @freshcaller.domain = "localhost"
+    @freshcaller.domain = 'localhost'
     @freshcaller.save
   end
 
