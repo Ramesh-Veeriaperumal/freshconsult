@@ -16,12 +16,18 @@ module Ember
     end
 
     def update
-      if params[cname]['helpdesk_logo'].present?
-        assign_protected
-        update_logo
-      else
-        reset_preference
+      if current_account.subscription.sprout_plan?
+          render_request_error :access_denied, 403 
+          return false
+      else 
+        if params[cname]['helpdesk_logo'].present?
+          assign_protected
+          update_logo
+        else
+          reset_preference
+        end
       end
+
       @item.save ? render(:show) : render_errors(@item.errors)
     end
 
@@ -45,7 +51,9 @@ module Ember
       end
 
       def load_objects
+        
         @items = current_account.portals.all
+        
       end
 
       def preload_options
