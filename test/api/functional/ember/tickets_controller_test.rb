@@ -1220,6 +1220,18 @@ module Ember
       [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, false) }
     end
 
+    def test_execute_scenario_for_nested_dropdown_with_closure_action_without_dropdown_value_present
+      scenario = create_scn_automation_rule(scenario_automation_params.merge(close_action_params))
+      ticket_field1 = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+      ticket_field2 = @@ticket_fields.detect { |c| c.name == "test_custom_country_#{@account.id}" }
+      [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, true) }
+      t = create_ticket({custom_field: { ticket_field1.name => 'Sample Text', ticket_field2.name => 'USA' }})
+      put :execute_scenario, construct_params({ version: 'private', id: t.display_id }, scenario_id: scenario.id)
+      assert_response 400
+    ensure
+      [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, false) }
+    end
+
     def test_execute_scenario_success_with_closure_action
       scenario = create_scn_automation_rule(scenario_automation_params.merge(close_action_params))
       Helpdesk::TicketField.where(name: 'group').update_all(required_for_closure: true)
@@ -1946,6 +1958,17 @@ module Ember
       assert_response 400
       match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
     ensure
+      ticket_field.update_attribute(:required_for_closure, false)
+    end
+
+    def test_update_properties_closure_status_with_required_for_closure_custom_nested_dropdown_field_blank_with_incorrect_value_in_db
+      t = create_ticket(requester_id: @agent.id)
+      params = { status: 5 }
+      ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_country_#{@account.id}" }
+      ticket_field.update_attribute(:required_for_closure, true)
+      put :update_properties, construct_params({ version: 'private', id: t.display_id }, params)
+      assert_response 400
+      ensure
       ticket_field.update_attribute(:required_for_closure, false)
     end
 

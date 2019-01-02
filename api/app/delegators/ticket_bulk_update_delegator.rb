@@ -61,7 +61,7 @@ class TicketBulkUpdateDelegator < BaseDelegator
   end
 
   def fields_to_validate(default)
-    ticket_fields.select { |x| x.default == default && (validate_field?(x) || (x.required_for_closure && status_set_to_closed?)) }
+    ticket_fields.select { |x| x.default == default && (validate_field?(x) || (x.required_for_closure || (x.parent_id.present? && x.parent.required_for_closure)) && status_set_to_closed?) }
   end
 
   def group_presence # this is a custom validate method so that group cache can be used.
