@@ -54,7 +54,7 @@
 			<%= render :partial => "integrations" %>
 
 		<% end %>
-		<% if current_account.launched?(:undo_send) && current_user.is_falcon_pref? %>
+		<% if current_account.undo_send_enabled? && current_account.falcon_ui_enabled?(current_user) %>
 			<hr>
 			<div class="row-fluid undo-send-option">
 				<div class="span10 align-left undo-toggle-freshid"><%= t("undo_toggle") %></div>
