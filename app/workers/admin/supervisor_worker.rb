@@ -2,12 +2,14 @@ module Admin
   class SupervisorWorker < BaseWorker
     include Redis::RedisKeys
     include Redis::OthersRedis
+    include SchedulerSemaphoreMethods
 
     sidekiq_options :queue => :supervisor, :retry => 0, :backtrace => true, :failures => :exhausted
     SUPERVISOR_ERROR = 'SUPERVISOR_EXECUTION_FAILED'.freeze
     TICKET_SAVE_ERROR = 'TICKET_SAVE_FAILED'.freeze
 
     def perform
+      schedule_error = false
       execute_on_db {
         account = Account.current
         return unless account.supervisor_enabled?
@@ -56,6 +58,7 @@ module Admin
                   end
                 end
               rescue Exception => e
+                schedule_error = true
                 log_info(account.id, rule.id, ticket.id) { Va::Logger::Automation.log_error(TICKET_SAVE_ERROR, e) }
                 NewRelic::Agent.notice_error(e,{:description => "Error while executing supervisor rule for a tkt :: #{ticket.id} :: account :: #{account.id}" })
                 next
@@ -87,6 +90,7 @@ module Admin
         }
       }
       ensure
+        del_scheduler_semaphore(Account.current.id, self.class.name) unless schedule_error
         Account.reset_current_account
         Va::Logger::Automation.unset_thread_variables
     end
