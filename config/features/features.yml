@@ -156,7 +156,7 @@
       :wild_cards_10: 152
       :contact_company_notes: 153
       :proactive_outreach: 69
-      :g10_2: 154
+      :undo_send: 154
       :g10_3: 155
       :g10_4: 156
       :g10_5: 157
@@ -216,3 +216,4 @@
       :field_service_management: false
       :custom_encrypted_fields: false
       :cascade_dispatcher: false
+      :undo_send: false

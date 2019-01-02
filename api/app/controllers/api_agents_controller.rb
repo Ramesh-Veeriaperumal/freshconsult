@@ -34,13 +34,13 @@ class ApiAgentsController < ApiApplicationController
   end
 
   def enable_undo_send
-    head 400 unless current_account.launched?(:undo_send)
+    head 400 unless current_account.undo_send_enabled?
     api_current_user.toggle_undo_send(true) unless api_current_user.enabled_undo_send?
     head :no_content
   end
 
   def disable_undo_send
-    head 400 unless current_account.launched?(:undo_send)
+    head 400 unless current_account.undo_send_enabled?
     api_current_user.toggle_undo_send(false) if api_current_user.enabled_undo_send?
     head :no_content
   end

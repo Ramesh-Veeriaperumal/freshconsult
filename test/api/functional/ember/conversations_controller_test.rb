@@ -256,7 +256,7 @@ module Ember
     end
 
     def test_reply_with_undo_send
-      @account.launch(:undo_send)
+      @account.add_feature(:undo_send)
       user = other_user
       user.preferences[:agent_preferences][:undo_send] = true
       params_hash = reply_note_params_hash
@@ -264,11 +264,11 @@ module Ember
       post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 201
       user.preferences[:agent_preferences][:undo_send] = false
-      @account.rollback(:undo_send)
+      @account.revoke_feature(:undo_send)
     end
 
     def test_dummy_id_generated_with_undo_send
-      @account.launch(:undo_send)
+      @account.add_feature(:undo_send)
       user = other_user
       user.preferences[:agent_preferences][:undo_send] = true
       params_hash = reply_note_params_hash
@@ -277,13 +277,13 @@ module Ember
       post :reply, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       new_count = Helpdesk::Note.count
       assert_response 201
-      assert_equal old_count, new_count
+      assert_equal old_count + 1, new_count
       user.preferences[:agent_preferences][:undo_send] = false
-      @account.rollback(:undo_send)
+      @account.revoke_feature(:undo_send)
     end
 
     def test_reply_with_undo_send_with_previous_note
-      @account.launch(:undo_send)
+      @account.add_feature(:undo_send)
       user = other_user
       user.preferences[:agent_preferences][:undo_send] = true
       params_hash = reply_note_params_hash
@@ -291,21 +291,22 @@ module Ember
       post :reply, construct_params({ version: 'private', id: ticket.display_id, last_note_id: 15 }, params_hash)
       assert_response 201
       user.preferences[:agent_preferences][:undo_send] = false
-      @account.rollback(:undo_send)
+      @account.revoke_feature(:undo_send)
     end
 
     def test_reply_being_undone
-      @account.launch(:undo_send)
+      @account.add_feature(:undo_send)
       user = other_user
+      User.any_instance.stubs(:enabled_undo_send?).returns(true)
       user.preferences[:agent_preferences][:undo_send] = true
       put :undo_send, version: 'private', id: ticket.display_id, created_at: Time.now.utc
       assert_response 204
       user.preferences[:agent_preferences][:undo_send] = false
-      @account.rollback(:undo_send)
+      @account.revoke_feature(:undo_send)
     end
 
     def test_reply_template_after_undo
-      @account.launch(:undo_send)
+      @account.add_feature(:undo_send)
       remove_wrap_params
       t = create_ticket
       t.display_id = 15
@@ -325,11 +326,11 @@ module Ember
       EmailNotification.any_instance.unstub(:get_reply_template)
     ensure
       Account.any_instance.unstub(:bcc_email)
-      @account.rollback(:undo_send)
+      @account.revoke_feature(:undo_send)
     end
 
     def test_reply_template_after_undo_with_attachments
-      @account.launch(:undo_send)
+      @account.add_feature(:undo_send)
       remove_wrap_params
       t = create_ticket
       notification_template = '<div>{{ticket.id}}</div>'
@@ -343,7 +344,7 @@ module Ember
       EmailNotification.any_instance.unstub(:get_reply_template)
     ensure
       Account.any_instance.unstub(:bcc_email)
-      @account.rollback(:undo_send)
+      @account.revoke_feature(:undo_send)
     end
 
     def test_reply_without_from_email

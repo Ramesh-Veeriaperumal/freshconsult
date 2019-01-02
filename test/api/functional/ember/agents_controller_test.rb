@@ -317,4 +317,18 @@ class Ember::AgentsControllerTest < ActionController::TestCase
       Account.any_instance.unstub(:roles_from_cache)
     
   end
+
+  def test_enable_undo_send
+    agent = @account.all_agents.first
+    @agent.stubs(:privilege?).returns(true)
+    post :enable_undo_send, construct_params(id: @agent.id)
+    assert_response 204
+  end
+
+  def test_disable_undo_send
+    agent = @account.all_agents.first
+    @agent.stubs(:privilege?).returns(true)
+    post :disable_undo_send, construct_params(id: @agent.id)
+    assert_response 204
+  end
 end  

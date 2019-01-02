@@ -13,12 +13,12 @@ class UndoSendWorkerTest < ActionView::TestCase
 
   def setup
     @account = Account.first.make_current
-    @account.launch(:undo_send)
+    @account.add_feature(:undo_send)
     @customer = Account.current.users.first
   end
 
   def teardown
-    @account.rollback(:undo_send)
+    @account.revoke_feature(:undo_send)
   end
 
   def undo_send_args(ticket)
