@@ -87,9 +87,9 @@ class TicketFieldDecorator < ApiDecorator
     # TODO-EMBER Fix caching issue
     @choices_by_id ||= case record.field_type
                        when 'custom_dropdown'
-                         choices_by_id(Hash[record.picklist_values.map { |pv| [pv.id, pv.value] }])
+                         choices_by_id(picklist_values)
                        when 'nested_field'
-                         nested_field_choices_by_id(record.picklist_values)
+                         nested_field_choices_by_id(picklist_values)
                        when *DEFAULT_FIELDS
                          safe_send(:"#{record.field_type}_choices")
                        else
@@ -109,7 +109,7 @@ class TicketFieldDecorator < ApiDecorator
     response_hash = {
       id: id,
       name: validatable_field_name,
-      label: label,
+      label: translated_label,
       description: description,
       position: position,
       required_for_closure: required_for_closure,
@@ -117,7 +117,7 @@ class TicketFieldDecorator < ApiDecorator
       type: field_type,
       default: default,
       customers_can_edit: editable_in_portal,
-      label_for_customers: label_in_portal,
+      label_for_customers: translated_label_in_portal,
       required_for_customers: required_in_portal,
       displayed_to_customers: visible_in_portal,
       belongs_to_section: belongs_to_section?,
@@ -132,26 +132,92 @@ class TicketFieldDecorator < ApiDecorator
     response_hash
   end
 
+  def to_private_hash
+    response_hash = {
+      name: name,
+      position: position,
+      required_for_closure: required_for_closure,
+      required_for_agents: required,
+      type: field_type,
+      default: default,
+      customers_can_edit: editable_in_portal,
+      label_for_customers: translated_label_in_portal,
+      required_for_customers: required_in_portal,
+      displayed_to_customers: visible_in_portal,
+      belongs_to_section: belongs_to_section?
+    }.merge(default_info)
+    response_hash[:choices] = ticket_field_choices_by_id if ticket_field_choices_by_id.present?
+    if default_requester?
+      response_hash[:portal_cc] = portal_cc
+      response_hash[:portal_cc_to] = portalcc_to
+    end
+    response_hash[:nested_ticket_fields] = nested_fields_hash if field_type == 'nested_field'
+    response_hash[:sections] = sections_hash if has_section?
+    response_hash
+  end
+
+  def nested_fields_hash
+    nested_ticket_fields.map do |tf_nested_field|
+      {
+        name: tf_nested_field.nested_ticket_field_name,
+        label_in_portal: tf_nested_field.translated_label_in_portal,
+        level: tf_nested_field.level,
+        ticket_field_id: tf_nested_field.ticket_field_id
+      }.merge(tf_nested_field.default_info)
+    end
+  end
+
+  def sections_hash
+    picklist_values.map(&:section).compact.uniq.map do |section|
+      {
+        id: section.id,
+        label: section.label,
+        section_fields: section_field_hash(section),
+        picklist_mapping_ids: section.section_picklist_mappings.map(&:picklist_value_id)
+      }
+    end
+  end
+
+  def default_info
+    {
+      id: record.id,
+      label: translated_label,
+      description: record.description,
+      created_at: record.created_at.try(:utc),
+      updated_at: record.updated_at.try(:utc)
+    }
+  end
+
+  def translated_label_in_portal
+    label = level.to_i > 1 ? "customer_label_#{level}" : 'customer_label'
+    translation_record.present? ? translation_record.translations[label] || label_in_portal : label_in_portal
+  end
+
   private
 
     def nested_field_choices_by_id(pvs)
       pvs.collect do |c|
         {
-          label: c.value,
+          label: translated_choice(c),
           value: c.value,
           choices: nested_field_choices_by_id(c.sub_picklist_values)
-        }
+        }.merge(picklist_ids(c))
       end
     end
 
-    def choices_by_id(list)
-      list.map do |k, v|
+    def choices_by_id(picklist_values)
+      picklist_values.collect do |value|
         {
-          label: v,
-          value: v,
-          id: k # Needed as it is used in section data.
-        }
+          label: translated_choice(value),
+          value: value.value,
+          id: value.id # Needed as it is used in section data.
+        }.merge(picklist_ids(value))
       end
+    end
+
+    def picklist_ids(value)
+      picklist_id = value.respond_to?(:picklist_id) ? value.picklist_id : nil
+      picklist_id ? { choice_id: picklist_id } : {}
     end
 
     def choices_by_name_id(list)
@@ -184,11 +250,14 @@ class TicketFieldDecorator < ApiDecorator
     def default_status_choices
       # TODO-EMBER This is a cached method. Not expected work properly in production
       Helpdesk::TicketStatus.statuses_list(Account.current).map do |status|
-        status.slice(:customer_display_name, :stop_sla_timer, :deleted , :group_ids).merge({
-          label: default_status?(status[:status_id]) ? DEFAULT_STATUSES[status[:status_id]] : status[:name],
+        status_label = default_status?(status[:status_id]) ? DEFAULT_STATUSES[status[:status_id]] : translated_status(status[:status_id], status[:name])
+        status.slice(:stop_sla_timer, :deleted, :group_ids).merge(
+          label: status_label,
           value: status[:status_id],
-          default: default_status?(status[:status_id])
-        })
+          default: default_status?(status[:status_id]),
+          choice_id: status[:status_id],
+          customer_display_name: status_label
+        )
       end
     end
 
@@ -203,10 +272,10 @@ class TicketFieldDecorator < ApiDecorator
     def default_ticket_type_choices
       Account.current.ticket_types_from_cache.map do |type|
         {
-          label: type.value,
+          label: translated_choice(type),
           value: type.value,
           id: type.id # Needed as it is used in section data.
-        }
+        }.merge(picklist_ids(type))
       end
     end
 
@@ -216,6 +285,50 @@ class TicketFieldDecorator < ApiDecorator
           id: skill.id,
           label: skill.name,
           value: skill.id
+        }
+      end
+    end
+
+    def translated_label
+      choice = level.to_i > 1 ? "label_#{level}" : 'label'
+      translation_record.present? ? translation_record.translations[choice] || record.label : record.label
+    end
+
+    def language
+      @language ||= current_user && Account.current.supported_languages.include?(current_user.language) && current_user.language_object.to_key
+    end
+
+    def current_user
+      @current_user ||= User.current
+    end
+
+    def translation_record
+      @translation_record ||= if Account.current.custom_translations_enabled? && language && id != -1
+                                case level
+                                when 2..3
+                                  record.ticket_field.safe_send("#{language}_translation")
+                                else
+                                  record.safe_send("#{language}_translation")
+                                end
+                              end
+    end
+
+    def translated_choice(picklist_value)
+      choices = translation_record.present? && translation_record.translations['choices']
+      choices ? choices["choice_#{picklist_value.picklist_id}"] || picklist_value.value : picklist_value.value
+    end
+
+    def translated_status(status_id, value)
+      choices = translation_record.present? && translation_record.translations['choices']
+      choices ? choices["choice_#{status_id}"] || value : value
+    end
+
+    def section_field_hash(section)
+      section.section_fields.map do |sf|
+        {
+          id: sf.id,
+          position: sf.position,
+          ticket_field_id: sf.ticket_field_id
         }
       end
     end

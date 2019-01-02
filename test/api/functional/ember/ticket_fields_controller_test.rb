@@ -16,6 +16,9 @@ module Ember
       pdt = Product.new(name: 'New Product')
       pdt.account_id = @account.id
       pdt.save
+      additional = @account.account_additional_settings
+      additional.supported_languages = ['fr']
+      additional.save
       @@before_all_run = true
     end
 
@@ -157,6 +160,202 @@ module Ember
       assert_equal "Skill B", skill["label"]
     end
 
+    def test_index_with_custom_translations_for_status_with_same_user_language
+      status_field = Account.current.ticket_fields.find_by_field_type(:default_status)
+      stub_params_for_custom_translations('fr')
+      status = create_custom_status
+      status = Account.current.ticket_statuses.last
+      ct = create_custom_translation(status_field.id, 'fr', status_field.name, status_field.label_in_portal, [[status.status_id, status.name]]).translations
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      status_field = response.find { |field| field['type'] == 'default_status' }
+      assert_equal status_field['label'], ct['label']
+      assert_equal status_field['label_for_customers'], ct['customer_label']
+      choice = status_field['choices'].find { |choices| choices['choice_id'] == status.status_id }
+      assert_equal choice['label'], ct['choices']["choice_#{status.status_id}"]
+      assert_equal choice['customer_display_name'], ct['customer_choices']["choice_#{status.status_id}"]
+    ensure
+      unstub_params_for_custom_translations
+    end
 
+    def test_index_with_custom_translations_for_status_with_different_user_language
+      status_field = Account.current.ticket_fields.find_by_field_type(:default_status)
+      stub_params_for_custom_translations('en')
+      status = create_custom_status
+      status = Account.current.ticket_statuses.last
+      ct = create_custom_translation(status_field.id, 'fr', status_field.name, status_field.label_in_portal, [[status.status_id, status.name]]).translations
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      status_field = response.find { |field| field['type'] == 'default_status' }
+      assert_equal status_field['label'].downcase, status_field['name'].downcase
+      assert_equal status_field['name'].downcase, status_field['label_for_customers'].downcase
+      choice = status_field['choices'].find { |choices| choices['choice_id'] == status.status_id }
+      assert_equal status.name.downcase, choice['label'].downcase
+      assert_equal choice['customer_display_name'], status.customer_display_name
+    ensure
+      unstub_params_for_custom_translations
+    end
+
+    def test_index_with_custom_translations_for_type_with_same_user_language
+      type = Account.current.ticket_fields.find_by_field_type(:default_ticket_type)
+      db_choice = Account.current.ticket_types_from_cache.last
+      stub_params_for_custom_translations('fr')
+      ct = create_custom_translation(type.id, 'fr', type.label, type.label_in_portal, [[db_choice.picklist_id, db_choice.value]]).translations
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      type_field = response.find { |field| field['type'] == 'default_ticket_type' }
+      assert_equal type_field['label'], ct['label']
+      assert_equal type_field['label_for_customers'], ct['customer_label']
+      choice = type_field['choices'].find { |choices| choices['id'] == db_choice.id }
+      assert_equal choice['label'], ct['choices']["choice_#{db_choice.picklist_id}"]
+    ensure
+      unstub_params_for_custom_translations
+    end
+
+    def test_index_with_custom_translations_for_type_with_different_user_language
+      type = Account.current.ticket_fields.find_by_field_type(:default_ticket_type)
+      db_choice = Account.current.ticket_types_from_cache.last
+      stub_params_for_custom_translations('en')
+      ct = create_custom_translation(type.id, 'fr', type.label, type.label_in_portal, [[db_choice.picklist_id, db_choice.value]]).translations
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      type_field = response.find { |field| field['type'] == 'default_ticket_type' }
+      assert_equal  type_field['label'].downcase, 'type'
+      assert_equal 'type', type_field['label_for_customers'].downcase
+      choice = type_field['choices'].find { |x| x['id'] == db_choice.id }
+      assert_equal choice['label'], db_choice.value
+    ensure
+      unstub_params_for_custom_translations
+    end
+
+    def test_index_with_custom_translations_for_custom_dropdown_with_same_language
+      stub_params_for_custom_translations('fr')
+      custom_field = create_custom_field_dropdown
+      db_choice = custom_field.picklist_values.first
+      ct = create_custom_translation(custom_field.id, 'fr', custom_field.label, custom_field.label_in_portal, [[db_choice.picklist_id, db_choice.value]]).translations
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      dropdown_field = response.find { |field| field['id'] == custom_field.id }
+      check_assertion_label_for_custom_translations(dropdown_field, ct, custom_field)
+      check_assertions_for_custom_translations(dropdown_field, ct, db_choice)
+    ensure
+      unstub_params_for_custom_translations
+    end
+
+    def test_index_with_custom_translations_for_custom_dropdown_with_different_language
+      stub_params_for_custom_translations('en')
+      custom_field = create_custom_field_dropdown
+      db_choice = custom_field.picklist_values.first
+      ct = create_custom_translation(custom_field.id, 'fr', custom_field.name, custom_field.label_in_portal, [[db_choice.picklist_id, db_choice.value]]).translations
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      dropdown_field = response.find { |field| field['id'] == custom_field.id }
+      check_assertion_label_for_custom_translations(dropdown_field, nil, custom_field)
+      check_assertions_for_custom_translations(dropdown_field, nil, db_choice)
+    ensure
+      unstub_params_for_custom_translations
+    end
+
+    def test_index_with_custom_translations_for_dependent_field_level_1_with_same_language
+      stub_params_for_custom_translations('fr')
+      custom_field = create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city])
+      db_choice = custom_field.picklist_values.first
+      ct = create_custom_translation(custom_field.id, 'fr', custom_field.label, custom_field.label_in_portal, [[db_choice.picklist_id, db_choice.value]]).translations
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      dependent_field = response.find { |field| field['id'] == custom_field.id }
+      check_assertion_label_for_custom_translations(dependent_field, ct, custom_field)
+      check_assertions_for_custom_translations(dependent_field, ct, db_choice)
+    ensure
+      unstub_params_for_custom_translations
+    end
+
+    def test_index_with_custom_translations_for_dependent_field_level_1_with_different_language
+      stub_params_for_custom_translations('en')
+      custom_field = create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city])
+      db_choice = custom_field.picklist_values.first
+      ct = create_custom_translation(custom_field.id, 'fr', custom_field.label, custom_field.label_in_portal, [[db_choice.picklist_id, db_choice.value]]).translations
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      dependent_field = response.find { |field| field['id'] == custom_field.id }
+      check_assertion_label_for_custom_translations(dependent_field, nil, custom_field)
+      check_assertions_for_custom_translations(dependent_field, nil, db_choice)
+    ensure
+      unstub_params_for_custom_translations
+    end
+
+    def test_index_with_custom_translations_for_dependent_field_level_2_with_same_language
+      stub_params_for_custom_translations('fr')
+      custom_field = create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city])
+      level2_field = custom_field.nested_ticket_fields.find_by_level(2)
+      level1_picklist_value = custom_field.picklist_values.first
+      level2_picklist_value = level1_picklist_value.sub_picklist_values.first
+      ct = create_custom_translation(custom_field.id, 'fr', custom_field.label, custom_field.label_in_portal, [[level2_picklist_value.picklist_id, level2_picklist_value.value]], level2_field).translations
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      dependent_field = response.find { |field| field['id'] == custom_field.id }
+      check_assertions_for_custom_translations(dependent_field, ct, level2_picklist_value, 2)
+      dependent_field = dependent_field['nested_ticket_fields'].find { |x| x['level'] == 2 }
+      check_assertion_label_for_custom_translations(dependent_field, ct, level2_field, 2)
+    ensure
+      unstub_params_for_custom_translations
+    end
+
+    def test_index_with_custom_translations_for_dependent_field_level_2_with_different_language
+      stub_params_for_custom_translations('en')
+      custom_field = create_dependent_custom_field(%w[test_custom_country test_custom_state test_custom_city])
+      level2_field = custom_field.nested_ticket_fields.find_by_level(2)
+      level1_picklist_value = custom_field.picklist_values.first
+      level2_picklist_value = level1_picklist_value.sub_picklist_values.first
+      ct = create_custom_translation(custom_field.id, 'fr', custom_field.label, custom_field.label_in_portal, [[level2_picklist_value.picklist_id, level2_picklist_value.value]], level2_field).translations
+      get :index, controller_params(version: 'private')
+      assert_response 200
+      response = parse_response @response.body
+      dependent_field = response.find { |field| field['id'] == custom_field.id }
+      check_assertions_for_custom_translations(dependent_field, nil, level2_picklist_value, 2)
+      dependent_field = dependent_field['nested_ticket_fields'].find { |x| x['level'] == 2 }
+      check_assertion_label_for_custom_translations(dependent_field, nil, level2_field, 2)
+    ensure
+      unstub_params_for_custom_translations
+    end
+
+    def check_assertion_label_for_custom_translations(fields_data_from_api, custom_translation = nil, db_field_data = nil, level = nil)
+      label_level = level.to_i > 1 ?  "label_#{level}" : 'label'
+      label = custom_translation.nil? ? db_field_data.label : custom_translation[label_level]
+      assert_equal fields_data_from_api['label'], label
+      label_in_portal = custom_translation.nil? ? db_field_data.label_in_portal : custom_translation['customer_' + label_level]
+      assert_equal fields_data_from_api[level.to_i > 1 ? 'label_in_portal' : 'label_for_customers'], label_in_portal
+    end
+
+    def check_assertions_for_custom_translations(fields_data_from_api, custom_translation = nil, choice_data = nil, level = nil)
+      if choice_data.present?
+        choices = fields_data_from_api['choices']
+        choice = level.to_i > 1 ? choices.first['choices'].first : choices.find { |choice1| choice1['id'] == choice_data.id }
+        choice = choices.first if choice.blank?
+        choice_label = custom_translation.nil? ? choice_data.value : custom_translation['choices']["choice_#{choice_data.picklist_id}"]
+        assert_equal choice['label'], choice_label
+      end
+    end
+
+    def stub_params_for_custom_translations(language)
+      Helpdesk::PicklistValue.any_instance.stubs(:picklist_id).returns(:id) # once picklist_id migration went live need to remove this stubbing in all places
+      Account.any_instance.stubs(:custom_translations_enabled?).returns(true)
+      User.any_instance.stubs(:language).returns(language)
+    end
+
+    def unstub_params_for_custom_translations
+      Account.any_instance.unstub(:custom_translations_enabled?)
+      User.any_instance.unstub(:language)
+      Helpdesk::PicklistValue.any_instance.unstub(:picklist_id)
+    end
   end
 end

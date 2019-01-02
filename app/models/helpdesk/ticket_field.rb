@@ -79,6 +79,14 @@ class Helpdesk::TicketField < ActiveRecord::Base
                              :include => {:section => {:section_fields => :ticket_field}}, 
                              :order => "position"
 
+  has_many :custom_translations, class_name: 'CustomTranslation', as: :translatable, dependent: :destroy, inverse_of: :translatable
+
+  Language.all.each do |lang|
+    has_one :"#{lang.to_key}_translation",
+    conditions: proc { { language_id: lang.id, account_id: Account.current.id } },
+    class_name: 'CustomTranslation',
+    as: :translatable
+  end
 
   validates_associated :ticket_statuses, :if => :status_field?
   accepts_nested_attributes_for :ticket_statuses, :allow_destroy => true

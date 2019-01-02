@@ -330,4 +330,8 @@ class Account < ActiveRecord::Base
   def cascade_dispatcher_enabled?
     has_feature?(:cascade_dispatcher) || features?(:cascade_dispatchr)
   end
+
+  def custom_translations_enabled?
+    redis_picklist_id_enabled? && has_feature?(:custom_translations)
+  end
 end
