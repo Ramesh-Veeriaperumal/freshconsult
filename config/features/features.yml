@@ -99,7 +99,7 @@
       :cascade_dispatcher: 95
       :hipaa: 96
       :custom_encrypted_fields: 97
-      :autobots_6: 98
+      :freshid_saml: 98
       :autobots_7: 99
       :autobots_8: 100
       :autobots_9: 101
@@ -146,7 +146,7 @@
       :infinity_10: 142
       :field_service_management: 143
       :field_service_management_toggle: 144
-      :wild_cards_3: 145
+      :parent_child_infra: 145
       :wild_cards_4: 146
       :wild_cards_5: 147
       :wild_cards_6: 148

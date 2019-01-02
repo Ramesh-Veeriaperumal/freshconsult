@@ -147,7 +147,7 @@ class Helpdesk::Note < ActiveRecord::Base
       add_client_manager_cc if performed_by_client_manager?
       # notable.cc_email_will_change! if notable_cc_email_updated?(@prev_cc_email, notable.cc_email)
       notable.trigger_cc_changes(@prev_cc_email)
-      notable.skip_sbrr = true #to skip sbrr on note creation. make sure not to pass this to update_ticket_states worker
+      notable.skip_sbrr = notable.skip_ocr_sync = true #to skip sbrr on note creation. make sure not to pass this to update_ticket_states worker
       notable.save
     end
 

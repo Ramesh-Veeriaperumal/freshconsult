@@ -20,7 +20,7 @@ class Support::LoginController < SupportController
   before_filter :authenticate_with_freshid, only: :new, if: :freshid_enabled_and_not_logged_in?
 
   def new
-    if current_account.sso_enabled? && !current_account.oauth2_sso_enabled? && check_request_referrer 
+    if current_account.sso_enabled? && !current_account.freshid_sso_enabled? && check_request_referrer 
       sso_login_page_redirect #TODO : change this to allow different sign on for customer and agent
     elsif params[:new_account_signup]
       redirect_to_freshid_login(signup_email: params[:signup_email], login_message: t('support.login.freshid_login_message'))

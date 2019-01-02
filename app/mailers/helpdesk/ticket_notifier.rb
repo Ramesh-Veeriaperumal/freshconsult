@@ -676,7 +676,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
         if header_info[:message_ids].blank?
           header_info[:message_ids] = [ticket_message_id]
           ticket.header_info = header_info
-          ticket.skip_sbrr = true
+          ticket.skip_sbrr = ticket.skip_ocr_sync = true
           ticket.save
         end
       end

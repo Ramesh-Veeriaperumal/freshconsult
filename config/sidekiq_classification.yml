@@ -37,6 +37,8 @@
     - toggle_agent_from_all_roundrobin_groups
     - default_data_population
     - twitter_reply
+    - ocr_agent_sync
+    - ocr_task_sync
 
   :central_realtime:
     - central_publish

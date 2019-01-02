@@ -22,7 +22,7 @@ class Group < ActiveRecord::Base
   
   before_save :reset_toggle_availability, :create_model_changes
   before_save :set_default_type_if_needed, on: [:create]
-  before_destroy :backup_user_ids
+  before_destroy :backup_user_ids, :save_deleted_group_info
   validate :agent_id_validation, :auto_ticket_assign_validation, if: -> {Account.current.field_service_management_enabled?}
 
   after_commit :round_robin_actions, :clear_cache
@@ -220,6 +220,11 @@ class Group < ActiveRecord::Base
 
   private
 
+
+  def save_deleted_group_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
+  end
+
     def self.api_filter(group_filter)
       {
         'field_agent_group': {
@@ -280,13 +285,11 @@ class Group < ActiveRecord::Base
       @group_type = GroupType.group_type_name(self.group_type)
       type = GROUPS_AGENTS_MAPPING[@group_type]
       user_ids = self.agent_groups.map(&:user_id)
-      input_agent_ids = []
-      user_ids.each do |user_id|
-        input_agent_ids << Account.current.agents_from_cache.find{ |x| x.user_id == user_id }.id
-      end
-      valid_agent_ids = Account.current.agents_from_cache.select{ |x| x.agent_type == AgentType.agent_type_id(type)}.map(&:id)
-      invalid_ids = input_agent_ids - valid_agent_ids
-      unless invalid_ids.blank?
+      agents = Account.current.agents_from_cache
+      group_agent_type = AgentType.agent_type_id(type)
+      invalid_update = agents.any? { |x| x.agent_type != group_agent_type && user_ids.include?(x.user_id) }
+
+      if invalid_update
         self.errors.add(:agent_groups, 'invalid_agent_ids') 
         return false
       end

@@ -45,6 +45,7 @@ module Tickets
             evaluate_on.update_sla = true
             evaluate_on.sla_calculation_time = sla_args[:sla_calculation_time]
           end
+          evaluate_on.skip_ocr_sync = true
           evaluate_on.save!
           evaluate_on.va_rules_after_save_actions.each do |action|
             klass = action[:klass].constantize
@@ -77,6 +78,24 @@ module Tickets
             end
           end
         end
+
+        # Need to refactor this
+        if Account.current.omni_channel_routing_enabled?
+          if evaluate_on.present? && args[:enqueued_class] == 'Helpdesk::Ticket'
+            previous_changes = args[:model_changes]
+            if evaluate_on.errors.any?
+              evaluate_on.model_changes = previous_changes
+            else
+              evaluate_on.model_changes = evaluate_on.merge_changes previous_changes, evaluate_on.model_changes
+            end
+            evaluate_on.sync_task_changes_to_ocr if evaluate_on.allow_ocr_sync?
+          else
+            if evaluate_on.allow_ocr_sync? && !evaluate_on.skip_sbrr && !evaluate_on.errors.any?
+              evaluate_on.sync_task_changes_to_ocr
+            end
+          end
+        end
+ 
         Thread.current[:observer_doer_id] = nil
         return {:sbrr_exec => evaluate_on.sbrr_exec_obj}
       end
