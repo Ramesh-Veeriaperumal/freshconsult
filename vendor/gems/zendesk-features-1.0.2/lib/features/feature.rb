@@ -25,8 +25,6 @@ module Features
     before_destroy :destroy_dependant_features, :clear_features_from_cache
     before_create :clear_features_from_cache
 
-    after_create :add_bitmap_or_lp_feature
-    after_destroy :revoke_bitmap_or_lp_feature
   
     def available?
       feature_owner_instance.features.available?(to_sym)
@@ -86,32 +84,6 @@ module Features
     end
     
     private
-
-      def add_bitmap_or_lp_feature
-        feature_name = Account::FEATURE_NAME_CHANGES[to_sym] || to_sym
-        if Account::DB_TO_LP_MIGRATION_P2_FEATURES_LIST.include? to_sym
-          account.launch(feature_name)
-        elsif Account::DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST.include? to_sym
-          if Account.current.present? # to handle signups
-            account.add_feature(feature_name)
-          else
-            account.set_feature(feature_name)
-          end
-        else
-          Rails.logger.info "FEATURE #{feature_name} not migrated"
-        end
-      end
-
-      def revoke_bitmap_or_lp_feature
-        feature_name = Account::FEATURE_NAME_CHANGES[to_sym] || to_sym
-        if Account::DB_TO_LP_MIGRATION_P2_FEATURES_LIST.include? to_sym
-          account.rollback(feature_name)
-        elsif Account::DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST.include? to_sym
-          account.revoke_feature(feature_name)
-        else
-          Rails.logger.info "FEATURE #{feature_name} not migrated"
-        end
-      end
     
     def feature_owner_instance
       safe_send(self.class.feature_owner)
