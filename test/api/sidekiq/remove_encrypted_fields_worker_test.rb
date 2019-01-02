@@ -5,7 +5,7 @@ Sidekiq::Testing.fake!
 require Rails.root.join('test', 'api', 'helpers', 'tickets_test_helper.rb')
 
 class ResetAssociationsTest < ActionView::TestCase
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   include ContactFieldsHelper
   include Cache::Memcache::CompanyField
   include Cache::Memcache::ContactField

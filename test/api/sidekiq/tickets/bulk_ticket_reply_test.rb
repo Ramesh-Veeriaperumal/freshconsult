@@ -66,6 +66,8 @@ class BulkTicketReplyTest < ActionView::TestCase
   end
 
   def test_bulk_ticket_reply_worker_updates_tickets
+    user = add_new_user(Account.current)
+    user = add_new_user(@account)
     args = create_args
     Redis.stubs(:perform_redis_op).returns(true)
     old_count = @account.tickets.where(display_id: args["ids"].first).first.notes.count

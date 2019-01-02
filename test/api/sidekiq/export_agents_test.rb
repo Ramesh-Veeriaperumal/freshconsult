@@ -1,6 +1,7 @@
 require_relative '../unit_test_helper'
 require 'sidekiq/testing'
 require 'faker'
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 
 Sidekiq::Testing.fake!
 
@@ -8,9 +9,10 @@ require Rails.root.join('spec', 'support', 'agent_helper.rb')
 
 class CompanyWorkerTest < ActionView::TestCase
   include AgentHelper
+  include AccountTestHelper
 
   def setup
-    @account = Account.first.make_current
+    create_test_account
     @agent = add_agent_to_account(@account, options = { role: 1, active: 1 })
   end
 
