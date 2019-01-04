@@ -290,7 +290,7 @@ class Account < ActiveRecord::Base
       product_central_publish: false, help_widget: false, company_central_publish: false,
       field_service_management_lp: false, bot_email_channel: false,
       description_by_request: true, ticket_fields_central_publish: false,
-      facebook_page_scope_migration: false, agent_group_central_publish: false
+      facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: false
     }, :merge
   )
 

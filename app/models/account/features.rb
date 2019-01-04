@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
     :skip_invoice_due_warning, :company_central_publish, :product_central_publish,
     :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
     :description_by_request, :ticket_fields_central_publish, :facebook_page_scope_migration,
-    :agent_group_central_publish
+    :agent_group_central_publish, :custom_fields_search
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze

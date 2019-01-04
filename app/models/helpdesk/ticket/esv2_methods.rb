@@ -1,22 +1,30 @@
 # encoding: utf-8
 class Helpdesk::Ticket < ActiveRecord::Base
+  include CustomAttributes
+  include FlexifieldConstants
+  DEFAULT_FIELDS = [
+      :subject, :description, :requester_id, :to_emails, :cc_email, :priority,
+      :status, :ticket_type, :responder_id, :group_id, :source, :due_by,
+      :frDueBy, :spam, :deleted, :product_id, :status_stop_sla_timer, :status_deleted,
+      :tags, :internal_group_id, :internal_agent_id, :association_type
+    ]
 
   # Trigger push to ES only if ES fields updated
   #
   def esv2_fields_updated?
-    (@model_changes.keys & esv2_columns).any?
+    esv2_columns_or_with_denormalized = account.launched?(:custom_fields_search) ? esv2_columns_with_denormalized : esv2_columns
+    (@model_changes.keys & esv2_columns_or_with_denormalized).any?
   end
   
   # Columns to observe for model_changes
   #
   def esv2_columns
-    @@esv2_columns ||= [:subject, :description, :requester_id, :to_emails, :cc_email, :priority,
-                      :status, :ticket_type, :responder_id, :group_id, :source, :due_by,
-                      :frDueBy, :spam, :deleted, :product_id, :status_stop_sla_timer, :status_deleted,
-                      :tags, :internal_group_id, :internal_agent_id, :association_type
-                    ].concat(esv2_ff_columns)
+    @@esv2_columns ||= DEFAULT_FIELDS.concat(esv2_ff_columns)
   end
 
+  def esv2_columns_with_denormalized
+    @@esv2_columns_with_denormalized ||= DEFAULT_FIELDS.concat(esv2_ff_columns + (SERIALIZED_SLT_FIELDS + SERIALIZED_MLT_FIELDS).map(&:to_sym))
+  end
   # Flexifield columns supported in V2
   #
   def esv2_ff_columns
@@ -26,6 +34,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   # Custom json used by ES v2
   #
   def to_esv2_json
+    custom_attr = account.launched?(:custom_fields_search) ? fetch_custom_attributes : esv2_custom_attributes
     as_json({
       :root => false,
       :tailored_json => true,
@@ -40,7 +49,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
                   :internal_group_id, :internal_agent_id, :association_type,
                   :frDueBy, :priority, :ticket_type, :subject, :description
                 ]
-    }, false).merge(esv2_custom_attributes)
+    }, false).merge(custom_attr)
             .merge(attachments: es_v2_attachments).to_json
   end
 
