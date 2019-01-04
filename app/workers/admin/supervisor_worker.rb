@@ -1,11 +1,13 @@
 module Admin
   class SupervisorWorker < BaseWorker
 
+    include SchedulerSemaphoreMethods
     sidekiq_options :queue => :supervisor, :retry => 0, :backtrace => true, :failures => :exhausted
     SUPERVISOR_ERROR = 'SUPERVISOR_EXECUTION_FAILED'.freeze
     TICKET_SAVE_ERROR = 'TICKET_SAVE_FAILED'.freeze
 
     def perform
+      schedule_error = false
       execute_on_db {
         account = Account.current
         return unless account.supervisor_enabled?
@@ -49,6 +51,7 @@ module Admin
               Va::Logger::Automation.log_execution_and_time(rule_total_time, ticket_ids.size, rule_type, rule_start_time, rule_end_time)
             }
           rescue Exception => e
+            schedule_error = true
             log_info(account.id, rule.id) { Va::Logger::Automation.log_error(SUPERVISOR_ERROR, e) }
             NewRelic::Agent.notice_error(e)
           rescue
@@ -60,6 +63,7 @@ module Admin
         log_info(account.id) { Va::Logger::Automation.log_execution_and_time(total_time, supervisor_rules.size, rule_type, start_time, end_time) }
       }
       ensure
+        del_scheduler_semaphore(Account.current.id, self.class.name) if !schedule_error
         Account.reset_current_account
         Va::Logger::Automation.unset_thread_variables
     end

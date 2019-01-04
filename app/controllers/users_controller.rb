@@ -180,13 +180,13 @@ class UsersController < ApplicationController
   end
 
   def enable_undo_send
-    head 400 unless current_account.launched?(:undo_send)
+    head 400 unless current_account.undo_send_enabled?
     current_user.toggle_undo_send(true) unless current_user.enabled_undo_send?
     head :no_content
   end
 
   def disable_undo_send
-    head 400 unless current_account.launched?(:undo_send)
+    head 400 unless current_account.undo_send_enabled?
     current_user.toggle_undo_send(false) if current_user.enabled_undo_send?
     head :no_content
   end

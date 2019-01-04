@@ -30,6 +30,7 @@ $redis_round_robin = Redis.new(:host => round_robin_config["host"], :port => rou
 $redis_session = Redis.new(:host => redis_session_config["host"], :port => redis_session_config["port"],:timeout => redis_session_config["timeout"], :tcp_keepalive => redis_session_config["keepalive"])
 $sidekiq_conn = Redis.new(:host => sidekiq_config["host"], :port => sidekiq_config["port"], :tcp_keepalive => sidekiq_config["keepalive"])
 $redis_mobile = Redis.new(:host => mobile_config["host"], :port => mobile_config["port"], :timeout => mobile_config["timeout"], :tcp_keepalive => mobile_config["keepalive"])
+$semaphore = Redis.new(:host => config["host"], :port => config["port"], :timeout => config["timeout"], :tcp_keepalive => config["keepalive"])
 
 # Include connection objects to new redis instances here. This is used for redis_maintenance.rake.
 # There are 3 DBs per region, having one connection object per DB below.

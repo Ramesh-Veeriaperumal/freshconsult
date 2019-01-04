@@ -132,6 +132,8 @@ namespace :scheduler do
   end
 
   def enqueue_automation(name, task_name, premium_constant = "non_premium_accounts")
+    include SchedulerSemaphoreMethods
+
     automation = case name
       when "supervisor" 
          SUPERVISOR_TASKS
@@ -154,6 +156,11 @@ namespace :scheduler do
         Account.safe_send(automation[task_name][:account_method]).current_pod.safe_send(premium_constant).each do |account|
           begin
             account.make_current
+            if scheduler_semaphore_exists?(account.id, class_constant)
+              puts "[#{Time.now}]It should be skipped since #{name} job for this account_id = #{account.id} has been already enqueued. Semaphore Lock Exists"
+            else
+              set_scheduler_semaphore(account.id, class_constant)
+            end
             if name.eql?("supervisor")
               class_constant.perform_async if account.supervisor_enabled? &&
                                               account.supervisor_rules.count > 0
