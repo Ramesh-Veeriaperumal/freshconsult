@@ -39,7 +39,7 @@ class Account < ActiveRecord::Base
     :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
     :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :parent_child_infra,
     :session_replay, :segments, :freshconnect, :proactive_outreach, :audit_logs_central_publish,
-    :audit_log_ui, :omni_channel_routing, :custom_encrypted_fields, :hipaa, :freshid_saml, :canned_forms
+    :audit_log_ui, :omni_channel_routing, :custom_encrypted_fields, :hipaa, :freshid_saml, :canned_forms, :custom_translations
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -329,6 +329,10 @@ class Account < ActiveRecord::Base
 
   def cascade_dispatcher_enabled?
     has_feature?(:cascade_dispatcher) || features?(:cascade_dispatchr)
+  end
+
+  def custom_translations_enabled?
+    redis_picklist_id_enabled? && has_feature?(:custom_translations)
   end
 
   def undo_send_enabled?
