@@ -266,7 +266,7 @@ module Proactive
       def sanitize_condition_value(condition, field_properties)
         if %w[number decimal].include?(field_properties[:type])
           condition[:value] = condition[:value].to_f
-        elsif field_properties[:type] == "text"
+        elsif %w[text paragraph].include?(field_properties[:type])
           condition[:value] = condition[:value].to_s
         elsif field_properties[:type] == "boolean" 
           condition[:value] = (condition[:value] == "true" || condition[:value] == CHECKED) ? true : false
