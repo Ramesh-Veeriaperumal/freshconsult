@@ -9,7 +9,7 @@ class Account < ActiveRecord::Base
     :imap_error_status_check, :va_any_field_without_none, :encode_emoji, :auto_complete_off,
     :csat_email_scan_compatibility, :dependent_field_validation, :post_central_publish,
     :encode_emoji_subject, :note_central_publish, :db_to_bitmap_features_migration_phase2,
-    :time_sheets_central_publish, :canned_forms, :incoming_attachment_limit_25,
+    :time_sheets_central_publish, :incoming_attachment_limit_25,
     :euc_migrated_twitter, :new_ticket_recieved_metric, :mint_portal_applicable,
     :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes,
     :count_service_es_reads, :quoted_text_parsing_feature, :shopify_actions,
@@ -39,7 +39,7 @@ class Account < ActiveRecord::Base
     :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
     :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :parent_child_infra,
     :session_replay, :segments, :freshconnect, :proactive_outreach, :audit_logs_central_publish,
-    :audit_log_ui, :omni_channel_routing, :custom_encrypted_fields, :hipaa, :freshid_saml
+    :audit_log_ui, :omni_channel_routing, :custom_encrypted_fields, :hipaa, :freshid_saml, :canned_forms
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [

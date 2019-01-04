@@ -182,7 +182,7 @@
       :freshfone_caller_id_masking: 177
       :agent_conference: 178
       :freshfone_warm_transfer: 179
-      :shadow_fax8: 180
+      :canned_forms: 180
       :shadow_fax9: 181
       :shadow_fax10: 182
       :audit_logs_central_publish: 183
