@@ -593,7 +593,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_inclusion_invalid
-    sources_list = @account.compose_email_enabled? ? '1,2,3,7,8,9,10' : '1,2,3,7,8,9'
+    sources_list = @account.compose_email_enabled? ? '1,2,3,5,6,7,8,9,10' : '1,2,3,5,6,7,8,9'
     params = ticket_params_hash.merge(requester_id: requester.id, priority: 90, status: 56, type: 'jk', source: '89')
     post :create, construct_params({}, params)
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
@@ -604,7 +604,7 @@ class TicketsControllerTest < ActionController::TestCase
   end
 
   def test_create_inclusion_invalid_datatype
-    sources_list = @account.compose_email_enabled? ? '1,2,3,7,8,9,10' : '1,2,3,7,8,9'
+    sources_list = @account.compose_email_enabled? ? '1,2,3,5,6,7,8,9,10' : '1,2,3,5,6,7,8,9'
     params = ticket_params_hash.merge(requester_id: requester.id, priority: '1', status: '2', source: '9')
     post :create, construct_params({}, params)
     match_json([bad_request_error_pattern('priority', :not_included, code: :datatype_mismatch, list: '1,2,3,4', prepend_msg: :input_received, given_data_type: String),
@@ -2096,7 +2096,7 @@ class TicketsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Refund'),
-                bad_request_error_pattern('source', :not_included, list: '1,2,3,7,8,9,10')])
+                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,10')])
   end
 
   def test_update_length_invalid
@@ -2419,6 +2419,22 @@ class TicketsControllerTest < ActionController::TestCase
     ticket_field.update_attribute(:required_for_closure, false)
     assert_response 400
     match_json([bad_request_error_pattern(custom_field_error_label('test_custom_city'), :not_included, code: :missing_field, list: 'Brisbane')])
+  end
+
+  def test_update_source_of_twitter_ticket_fails
+    ticket = create_twitter_ticket
+    params = { source: 1 }
+    put :update, construct_params({ id: ticket.display_id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: ApiTicketConstants::UNPERMITTED_SOURCES_FOR_UPDATE.join(','))])
+  end
+
+  def test_update_source_of_facebook_ticket_fails
+    ticket = create_ticket_from_fb_post
+    params = { source: 1 }
+    put :update, construct_params({ id: ticket.display_id }, params)
+    assert_response 400
+    match_json([bad_request_error_pattern('source', :source_update_not_permitted, sources: ApiTicketConstants::UNPERMITTED_SOURCES_FOR_UPDATE.join(','))])
   end
 
   def test_destroy
@@ -3564,7 +3580,7 @@ class TicketsControllerTest < ActionController::TestCase
                 bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
                 bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
                 bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Refund'),
-                bad_request_error_pattern('source', :not_included, list: '1,2,3,7,8,9,10')])
+                bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9,10')])
     assert_response 400
   ensure
     default_non_required_fiels.map { |x| x.toggle!(:required) }
@@ -3864,7 +3880,7 @@ class TicketsControllerTest < ActionController::TestCase
     params_hash = update_ticket_params_hash.except(:email).merge(source: 10)
     put :update, construct_params({ id: t.display_id }, params_hash)
     assert_response 400
-    match_json([bad_request_error_pattern('source', :not_included, list: '1,2,3,7,8,9')])
+    match_json([bad_request_error_pattern('source', :not_included, list: '1,2,3,5,6,7,8,9')])
   ensure
     Account.any_instance.unstub(:compose_email_enabled?)
   end
