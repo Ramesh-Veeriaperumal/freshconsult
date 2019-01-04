@@ -8,7 +8,7 @@ require Rails.root.join('test', 'api', 'helpers', 'test_case_methods.rb')
 require Rails.root.join('test', 'core', 'helpers', 'controller_test_helper.rb')
 
 class ResetAssociationsTest < ActionView::TestCase
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   include UsersHelper
   include TestCaseMethods
   include ControllerTestHelper

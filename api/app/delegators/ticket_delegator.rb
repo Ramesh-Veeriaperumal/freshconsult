@@ -33,6 +33,7 @@ class TicketDelegator < BaseDelegator
                                 drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices },
                                 nested_field_choices: proc { TicketsValidationHelper.custom_nested_field_choices },
                                 required_based_on_status: proc { |x| x.closure_status? },
+                                required_attribute: :required,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               } }, if: -> { self.ticket_type != SERVICE_TASK_TYPE && property_update? }
 
@@ -192,7 +193,7 @@ class TicketDelegator < BaseDelegator
     if bulk_update?
       custom_drodpowns.select { |x| instance_variable_get("@#{x.name}_set") }
     else
-      custom_drodpowns.select { |x| x.required_for_closure && status_set_to_closed? }
+      custom_drodpowns.select { |x| (x.required_for_closure || (x.parent_id.present? && x.parent.required_for_closure)) && status_set_to_closed? }
     end
   end
 

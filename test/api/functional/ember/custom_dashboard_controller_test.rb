@@ -401,6 +401,15 @@ module Ember
       match_json(bar_chart_preview_response_pattern(field.id, choices))
     end
 
+    def test_widget_data_preview_for_bar_chart_with_numeric_values
+      choices = ['Get Smart 123', '123 Pursuit of Happiness', '123']
+      field = create_custom_field_dropdown('test_custom_dropdown_bar_chart', choices)
+      ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id, choices))
+      get :widget_data_preview, controller_params(version: 'private', type: 'bar_chart', ticket_filter_id: 'unresolved', categorised_by: field.id, representation: NUMBER)
+      assert_response 200
+      match_json(bar_chart_preview_response_pattern(field.id, choices))
+    end
+
     def test_widget_data_preview_for_bar_chart_with_number_field
       field = Account.current.ticket_fields.find_by_field_type('default_agent')
       ::Search::Dashboard::Custom::Count.any_instance.stubs(:fetch_count).returns(bar_chart_preview_es_response_stub(field.id))

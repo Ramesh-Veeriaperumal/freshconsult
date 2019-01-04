@@ -1,10 +1,12 @@
 module Admin::Sla::Escalation
   class Base < BaseWorker
     include SlaSidekiq
+    include SchedulerSemaphoreMethods
     sidekiq_options :queue => :sla, :retry => 0, :backtrace => true, :failures => :exhausted
 
     def perform
       account = Account.current
+      schedule_error = false
       sla_default = execute_on_db { account.sla_policies.default.first }
       sla_rule_based = execute_on_db do 
         account.sla_policies.rule_based.active.inject({}) do |sp_hash, sp| 
@@ -32,7 +34,10 @@ module Admin::Sla::Escalation
       log_format=logging_format(account,overdue_tickets,overdue_tickets_time_taken,
         froverdue_tickets,froverdue_tickets_time_taken)
       custom_logger.info "#{log_format}" unless custom_logger.nil?
+    rescue Exception => e
+      schedule_error = true
     ensure
+      del_scheduler_semaphore(Account.current.id, self.class.name) unless schedule_error
       Account.reset_current_account
     end
 

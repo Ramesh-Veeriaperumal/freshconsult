@@ -107,6 +107,14 @@ module Search::Dashboard::QueryHelper
     end
   end
 
+  def transform_any_group_id(field_name, values)
+    "(#{transform_field('group_id', values)} OR #{transform_field('internal_group_id', values)})"
+  end
+
+  def transform_any_agent_id(field_name, values)
+    "(#{transform_field('agent_id', values)} OR #{transform_field('internal_agent_id', values)})"
+  end
+
   #For handling status
   def transform_status(field_name, values)
     if values.include?('0')
@@ -145,7 +153,7 @@ module Search::Dashboard::QueryHelper
       values.delete("-1") 
       queries << "#{field_name}:null"
     end
-    queries.push(values.map{|v| "#{field_name}:'#{v}'"}) if values.present?
+    queries.push(*values.map { |val| "#{field_name}:'#{val}'" }) if values.present?
   	queries.length >1 ? add_or_condition(queries)  : queries.first
   end
 

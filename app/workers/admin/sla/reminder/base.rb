@@ -1,10 +1,12 @@
 module Admin::Sla::Reminder
   class Base < BaseWorker
     include SlaSidekiq
+    include SchedulerSemaphoreMethods
     sidekiq_options :queue => :sla_reminders, :retry => 0, :backtrace => true, :failures => :exhausted
 
     def perform
       account = Account.current
+      schedule_error = false
       return if account.nil?
       user_based_sla = execute_on_db { account.sla_policies.active }
 
@@ -35,8 +37,10 @@ module Admin::Sla::Reminder
       log_format=logging_format(account, total_tickets, response_reminder_time_taken, 
         reminder_ticket_time_taken)
       custom_logger.info "#{log_format}" unless custom_logger.nil?
-
+    rescue Exception => e
+      schedule_error = true
     ensure
+      del_scheduler_semaphore(Account.current.id, self.class.name) unless schedule_error
       Account.reset_current_account
     end
 

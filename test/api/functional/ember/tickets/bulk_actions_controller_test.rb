@@ -140,6 +140,24 @@ module Ember
         [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, false) }
       end
 
+        def test_bulk_execute_scenario_with_closure_action_for_nested_dropdown_without_level2_value_present
+        scenario_id = create_scn_automation_rule(scenario_automation_params.merge(close_action_params)).id
+        ticket_field1 = @@ticket_fields.detect { |c| c.name == "test_custom_text_#{@account.id}" }
+        ticket_field2 = @@ticket_fields.detect { |c| c.name == "test_custom_country_#{@account.id}" }
+        [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, true) }
+        invalid_tickets = []
+        BULK_CREATE_TICKET_COUNT.times do
+          invalid_tickets << create_ticket({custom_field: { ticket_field1.name => 'Sample Text', ticket_field2.name => 'USA' }})
+        end
+        ticket_ids = (invalid_tickets).map(&:display_id)
+        Sidekiq::Testing.inline! do
+          post :bulk_execute_scenario, construct_params({ version: 'private' }, scenario_id: scenario_id, ids: ticket_ids)
+        end
+        assert_response 202
+      ensure
+        [ticket_field1, ticket_field2].map { |x| x.update_attribute(:required_for_closure, false) }
+      end
+
       def test_bulk_execute_scenario_with_closure_of_parent_ticket_failure
         parent_ticket = create_ticket
         child_ticket = create_ticket
@@ -866,6 +884,20 @@ module Ember
         assert_response 400
         match_json([bad_request_error_pattern(custom_field_error_label(ticket_field.label), :not_included, list: CUSTOM_FIELDS_CHOICES.join(','))])
       ensure
+        ticket_field.update_attribute(:required_for_closure, false)
+      end
+
+      def test_bulk_update_closure_status_with_required_for_closure_custom_nested_dropdown_field_blank
+        properties_hash = update_ticket_params_hash.except(:due_by, :fr_due_by).merge(status: 5)
+        ticket_field = @@ticket_fields.detect { |c| c.name == "test_custom_country_#{@account.id}" }
+        ticket_field.update_attribute(:required_for_closure, true)
+        ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT)
+        params_hash = { ids: ticket_ids, properties: properties_hash }
+        Sidekiq::Testing.inline! do
+          post :bulk_update, construct_params({ version: 'private' }, params_hash)
+        end
+        assert_response 202
+        ensure
         ticket_field.update_attribute(:required_for_closure, false)
       end
 

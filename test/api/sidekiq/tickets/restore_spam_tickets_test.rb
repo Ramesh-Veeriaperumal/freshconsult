@@ -6,7 +6,7 @@ require Rails.root.join('test', 'api', 'helpers', 'tickets_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'controller_test_helper.rb')
 
 class RestoreSpamTicketsTest < ActionView::TestCase
-  include TicketsTestHelper
+  include ApiTicketsTestHelper
   include UsersHelper
   include ControllerTestHelper
 

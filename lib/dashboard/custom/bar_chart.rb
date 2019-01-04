@@ -1,5 +1,7 @@
 class Dashboard::Custom::BarChart < Dashboards
   CONFIG_FIELDS = [:ticket_filter_id, :categorised_by, :representation].freeze
+  ID_FIELDS = ['source', 'priority', 'status', 'responder_id', 'group_id', 'internal_group_id',
+  'internal_agent_id', 'requester_id', 'product_id', 'owner_id', 'sl_skill_id', 'association_type'].freeze
 
   ES_FIELD_NAME_MAPPING = {
     requester: 'requester_id',
@@ -119,10 +121,11 @@ class Dashboard::Custom::BarChart < Dashboards
     end
 
     def parse_aggs_result(result,options)
-      data = result["results"].map do |values|
-          {name: values["value"].to_i > 0 ? values["value"].to_i : values["value"] , data: [(options['representation'].to_i == NUMBER ? values["count"] : (values["count"].to_f * 100 / result["total"]).round(1))] }
+      id_field = ID_FIELDS.include?(options['group_by_field'][1])
+      data = result['results'].map do |values|
+          { name: id_field ? values['value'].to_i : values['value'], data: [(options['representation'].to_i == NUMBER ? values['count'] : (values['count'].to_f * 100 / result['total']).round(1))] }
       end
-      { group_by: options["group_by_field"][0], data: data }
+      { group_by: options['group_by_field'][0], data: data }
     end
 
     def parse_agg_result(result, options)

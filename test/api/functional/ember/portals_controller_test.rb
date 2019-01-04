@@ -88,6 +88,16 @@ class Ember::PortalsControllerTest < ActionController::TestCase
     assert portal.preferences[:helpdesk][:primary_background] == params_hash[:preferences][:helpdesk][:primary_background]
     assert portal.preferences[:helpdesk][:nav_background] == params_hash[:preferences][:helpdesk][:nav_background]
   end
+  
+  def test_update_colors_for_sprout
+    Subscription.any_instance.stubs(:sprout_plan?).returns(true)
+    portal = create_portal_with_customisation
+    params_hash = portal_hash(portal)
+    put :update, construct_params({ version: 'private', id: portal.id }, params_hash.merge(helpdesk_logo: nil))
+    assert_response 403
+    portal.reload
+    Subscription.any_instance.unstub(:sprout_plan?)
+  end
 
   def test_update_logo
     file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')

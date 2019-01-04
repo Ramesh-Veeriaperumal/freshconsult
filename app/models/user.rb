@@ -465,7 +465,7 @@ class User < ActiveRecord::Base
   end
 
   def enabled_undo_send?
-    Account.current.launched?(:undo_send) && preferences[:agent_preferences][:undo_send]
+    Account.current.undo_send_enabled? && preferences[:agent_preferences][:undo_send]
   end
 
   def toggle_undo_send(pref)
