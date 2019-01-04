@@ -27,7 +27,7 @@ class Account < ActiveRecord::Base
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
     :shopify_actions, :skip_invoice_due_warning, :automation_revamp,
     :scheduled_export_fix, :compact_lang_detection,
-    :facebook_page_scope_migration, :agent_group_central_publish
+    :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search
   ].freeze
 
   DB_FEATURES = [

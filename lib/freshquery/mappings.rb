@@ -3,7 +3,7 @@ module Freshquery
     attr_accessor :document_type, :fqhelper, :mapping, :es_keys, :date_fields, :query_length
 
     TYPES = %w(integer positive_integer negative_integer date date_time boolean string).freeze
-    CUSTOM_TYPES = %w(integer date boolean string).freeze
+    CUSTOM_TYPES = %w[custom_string custom_number custom_dropdown].freeze
     VALID_OPTIONS = %w(type choices regex transform mappings).freeze
 
     @@all_mappings = {}
@@ -117,10 +117,12 @@ module Freshquery
       if @custom_proc.present?
         @custom_proc.each do |type, proc|
           hash = proc.call
-          if hash.class != Hash
-            raise 'mappings proc should return a Hash object'
+          if hash.class != Hash && hash.class != Array
+            raise 'mappings proc should return a Hash or Array object'
           else
-            if type == 'dropdown'
+            if CUSTOM_TYPES.include?(type)
+              result.merge!({ type => { type: type } })
+            elsif type == 'dropdown'
               choices = @custom_choices.call
               result.merge!(hash.map { |k, v| [k, { choices: choices.fetch(k, []) }] }.to_h)
             else
@@ -136,6 +138,7 @@ module Freshquery
       result = {}
       if @custom_proc.present?
         @custom_proc.each do |type, proc|
+          next if CUSTOM_TYPES.include?(type)
           hash = proc.call
           if hash.class != Hash
             raise 'mappings proc should return a Hash object'
@@ -173,6 +176,15 @@ module Freshquery
         return @boolean_fields + hash.values
       end
       @boolean_fields
+    end
+
+    def custom_fields
+      result = {}
+      @custom_proc.each_pair do |key, proc|
+        result[key] = proc.call
+        result[key] = result[key].map!{|x| "#{x}.not_analyzed"} if ['custom_string', 'custom_dropdown'].include?(key)
+      end
+      result
     end
 
     def self.all_mappings

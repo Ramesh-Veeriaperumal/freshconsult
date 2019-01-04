@@ -292,7 +292,7 @@ class Account < ActiveRecord::Base
       email_deprecated_style_parsing: false, saml_ecrypted_assertion: false,
       quoted_text_parsing_feature: false, description_by_request: true,
       ticket_fields_central_publish: false, skip_invoice_due_warning: false,
-      facebook_page_scope_migration: false, agent_group_central_publish: false
+      facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: false
     }, :merge
   )
 
