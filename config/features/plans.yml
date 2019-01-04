@@ -54,6 +54,7 @@
       - :todos_reminder_scheduler
       - :smart_filter
       - :session_replay
+      - :canned_forms
     :inherits:
       - :sprout_jan_17
     :exclude: []

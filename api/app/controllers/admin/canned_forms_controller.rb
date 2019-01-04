@@ -32,7 +32,7 @@ class Admin::CannedFormsController < ApiApplicationController
 
   private
 
-    def launch_party_name
+    def feature_name
       FeatureConstants::CANNED_FORMS
     end
 
