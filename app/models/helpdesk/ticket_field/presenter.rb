@@ -111,4 +111,5 @@ class Helpdesk::TicketField < ActiveRecord::Base
   def central_publish_worker_class
     "CentralPublishWorker::TicketFieldWorker"
   end
+
 end

@@ -19,6 +19,13 @@ Helpkit::Application.routes.draw do
         resource :bot_response, controller: 'tickets/bot_response', only: [:show, :update]
       end
     end
+    namespace :admin do 
+      resources :upload, controller: 'custom_translations/upload', path: '/custom_translations/', only: [:upload] do
+        member do
+          post :upload, to: 'custom_translations/upload#upload'
+        end
+      end
+    end
 
     match '_search/tickets' => 'tickets#search', as: :tickets_search, via: :get
     match 'search_log' => 'ember/search/logger#log_click', via: :post
