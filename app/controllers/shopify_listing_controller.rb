@@ -25,13 +25,7 @@ class ShopifyListingController < ApplicationController
       render("/errors/invalid_domain", :layout => false)
     else
       account = params[:account].include?(@base_domain) ? params[:account] : params[:account] + @base_domain
-      account = Account.find_by_full_domain(account)
-      if account.nil?
-        render("/errors/invalid_domain", :layout => false)
-      else
-        shop_name = params[:shop]
-        redirect_to AppConfig['integrations_url'][Rails.env] + "/auth/shopify?shop=#{shop_name}&origin=id%3D#{account.id}"
-      end
+      redirect_to get_redirect_url(account)
     end
   end
 
@@ -46,6 +40,14 @@ class ShopifyListingController < ApplicationController
 
     def check_params?
       return true if (params[:hmac] && params[:shop])
+    end
+
+    def get_redirect_url(full_domain)
+      protocol = Rails.env.development? ? 'http' : 'https'
+      port = Rails.env.development? ? ':4200' : ''
+      landing_path = '/integrations/marketplace/shopify/landing'
+      shop_name = params[:shop]
+      redirect_domain = "#{protocol}://#{full_domain}#{port}#{landing_path}?remote_id=#{shop_name}"
     end
 
 end
