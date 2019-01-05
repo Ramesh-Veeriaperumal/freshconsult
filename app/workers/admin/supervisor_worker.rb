@@ -30,7 +30,7 @@ module Admin
             tickets = account.tickets.where(negate_conditions).where(conditions).updated_in(1.month.ago).visible.joins(joins).select("helpdesk_tickets.*")
             tickets.each do |ticket|
               begin
-                next if ticket.sent_for_enrichment?
+                next if ticket.sent_for_enrichment? || ticket.service_task?
                 execute_on_db("run_on_master") { 
                   rule.trigger_actions ticket
                   ticket.save_ticket! if ticket.properties_updated?

@@ -29,9 +29,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   before_save :reset_assoc_parent_tkt_status, :if => :assoc_parent_ticket?
 
-  before_save  :update_ticket_related_changes, :update_company_id, :set_sla_policy
+  before_save :update_ticket_related_changes, :update_company_id
 
-  before_save :sanitise_subject, :if => :should_sanitise_subject? 
+  before_save :set_sla_policy, unless: :service_task?
+
+  before_save :sanitise_subject, :if => :should_sanitise_subject?
 
   before_save :validate_group_agent_and_ticket_type, :on => :create, :if => :fsm_enabled?
 
@@ -304,7 +306,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def skip_dispatcher?
     @skip_dispatcher ||= begin
-      _skip_dispatcher = import_id || outbound_email? || !requester.valid_user?
+      _skip_dispatcher = import_id || outbound_email? || !requester.valid_user? || service_task?
       Va::Logger::Automation.log "Skipping dispatcher" if _skip_dispatcher
       _skip_dispatcher
     end
@@ -543,7 +545,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def enqueue_sla_calculation?
-    sla_on_background && !sla_calculation_max_limit_reached? && ((transaction_include_action?(:create) && (self.skip_dispatcher? || account.skip_dispatcher?)) || (transaction_include_action?(:update) && observer_will_not_be_enqueued?))
+    sla_on_background && !sla_calculation_max_limit_reached? && ((transaction_include_action?(:create) && (self.skip_dispatcher? || account.skip_dispatcher?)) || (transaction_include_action?(:update) && observer_will_not_be_enqueued?)) && !service_task?
   end
 
   def enqueue_sla_calculation
@@ -877,7 +879,7 @@ private
 
   def execute_observer?
     @execute_observer ||= begin
-      _execute_observer = user_present? && !disable_observer_rule
+      _execute_observer = user_present? && !disable_observer_rule && !import_ticket && !service_task?
       SBRR.log "Ticket ##{self.display_id} save done. Model_changes #{@model_changes.inspect}"
       Va::Logger::Automation.log "Skipping observer" unless _execute_observer
       _execute_observer

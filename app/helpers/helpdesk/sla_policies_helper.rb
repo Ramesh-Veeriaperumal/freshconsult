@@ -1,4 +1,5 @@
 module Helpdesk::SlaPoliciesHelper
+  include Admin::AdvancedTicketing::FieldServiceManagement::Constant
 
 	DEFAULT_SLA_SECONDS = 900 #Default time for sla - 15 minutes
 	SECONDS_IN_MINUTE = 60
@@ -21,10 +22,10 @@ module Helpdesk::SlaPoliciesHelper
     	Helpdesk::SlaPolicy::esclation_time_options)
   end
 
-	def groups
-		(current_account.groups || {}).map{ |group| [group.name, group.id] }
-	end
-	alias_method :group_id_list, :groups
+    def groups
+      current_account.groups.map { |group| [group.name, group.id] if group.support_agent_group? }.compact
+    end
+    alias_method :group_id_list, :groups
 
 	def products
 		(current_account.products || {}).map{ |product| [product.name, product.id] }
@@ -36,10 +37,10 @@ module Helpdesk::SlaPoliciesHelper
 	end
 	alias_method :source_list, :sources
 
-	def ticket_types
-		current_account.ticket_type_values.collect { |c| [ c.value, c.value ] }
-	end
-	alias_method :ticket_type_list, :ticket_types
+    def ticket_types
+      current_account.ticket_type_values.collect { |c| [ c.value, c.value ]  if c.value != SERVICE_TASK_TYPE }.compact
+    end
+    alias_method :ticket_type_list, :ticket_types
 
 	def get_value seconds, select_field=false
 		seconds = DEFAULT_SLA_SECONDS unless seconds.present?
