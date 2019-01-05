@@ -392,7 +392,7 @@ module SupportHelper
     # adding :for attribute for requester(as email) element => to enable accessability
     if field[:name] == "requester"
       label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class, :for => "#{object_name}_email"
-    elsif field.encrypted_field?
+    elsif field.respond_to?(:encrypted_field?) && field.encrypted_field?
       label_tag "#{object_name}_#{field[:name]}",
                 content_tag(:span, "", :class => "ficon-encryption-lock encrypted", :title => t('custom_fields.encrypted_text'), 'data-toggle' => 'tooltip', 'data-placement' => 'top' ) + 
                 " #{field[:label_in_portal].html_safe}", :class => element_class, :for => "#{object_name}_email"
