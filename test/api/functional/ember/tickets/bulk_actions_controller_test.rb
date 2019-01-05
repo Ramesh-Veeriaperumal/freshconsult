@@ -86,6 +86,23 @@ module Ember
         assert_response 202
       end
 
+      def test_bulk_execute_scenario_with_invalid_ticket_types       
+        Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+        scenario_id = create_scn_automation_rule(scenario_automation_params).id
+        param_hash = ticket_params_hash
+        invalid_ids = create_n_tickets(2, param_hash)
+        id_list = [*invalid_ids]
+        Helpdesk::Ticket.any_instance.stubs(:service_task?).returns(true)
+        post :bulk_execute_scenario, construct_params({ version: 'private' }, scenario_id: scenario_id, ids: id_list)
+        failures = {}
+        invalid_ids.each { |id| failures[id] = { id: :fsm_ticket_scenario_failure } }
+        match_json(partial_success_response_pattern([], failures))
+        assert_response 202
+      ensure
+        Helpdesk::Ticket.any_instance.unstub(:service_task?)
+        Account.any_instance.unstub(:field_service_management_enabled?)
+      end
+
       def test_bulk_execute_scenario_without_scenario_id
         ticket_ids = create_n_tickets(BULK_CREATE_TICKET_COUNT, ticket_params_hash)
         post :bulk_execute_scenario, construct_params({ version: 'private' }, ids: ticket_ids)

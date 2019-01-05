@@ -450,10 +450,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def parent_ticket?
     self.associated_ticket? && TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[self.association_type] == :assoc_parent
   end
-  
+
   def service_task?
     ticket_type == Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE
   end
+
   # Fetch NER data from cache.
   def fetch_ner_data
     key = NER_ENRICHED_NOTE % { :account_id => self.account_id , :ticket_id => self.id }

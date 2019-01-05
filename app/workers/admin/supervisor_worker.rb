@@ -37,6 +37,7 @@ module Admin
             ticket_ids = []
             account.tickets.where(negate_conditions).where(conditions).updated_in(1.month.ago)
             .visible.joins(joins).readonly(false).find_each do |ticket|
+              next if ticket.service_task?
               tickets_count +=  1
               Va::Logger::Automation.set_thread_variables(account.id, ticket.id, nil, rule.id)
               if supervisor_tickets_limit && (tickets_count > supervisor_tickets_limit)

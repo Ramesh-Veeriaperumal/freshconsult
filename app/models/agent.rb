@@ -287,6 +287,10 @@ class Agent < ActiveRecord::Base
     Account.current.groups_from_cache.select { |group| group.group_type == group_type_id }
   end
 
+  def support_agent?
+    agent_type == Admin::AdvancedTicketing::FieldServiceManagement::Constant::SUPPORT_AGENT_TYPE
+  end
+
   protected
     # adding the agent role ids through virtual attr agent_role_ids.
     # reason is this callback is getting executed before user roles update.

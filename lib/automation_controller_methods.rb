@@ -2,6 +2,7 @@ module AutomationControllerMethods
 
   include Integrations::IntegrationHelper
   include Spam::SpamAction
+  include Admin::AdvancedTicketing::FieldServiceManagement::Constant
   SEPARATOR = "-----------------------"
 
   def index
@@ -53,7 +54,8 @@ module AutomationControllerMethods
   end
 
   def ticket_type_values_with_none
-    [['', t('none')]]+current_account.ticket_types_from_cache.collect { |c| [ c.value, c.value ] }
+    # skipping FSM Ticket type
+    [['', t('none')]] + current_account.ticket_types_from_cache.collect { |c| [ c.value, c.value ] if c.value != SERVICE_TASK_TYPE }.compact
   end
 
   protected
@@ -139,7 +141,9 @@ module AutomationControllerMethods
 
   def add_custom_actions action_hash
     special_case = none_option
-    current_account.ticket_fields.non_encrypted_custom_fields.each do |field|
+    # Skipping Fields reserved for FSM.
+    cf = current_account.ticket_fields.non_encrypted_custom_fields.reject { |cf| cf.fsm_reserved_custom_field? }
+    cf.each do |field|
       action_hash.push({
                          :id => field.id,
                          :name => field.name,
@@ -194,11 +198,13 @@ module AutomationControllerMethods
   end
 
   def groups_list_from_cache
-    @groups_list ||= current_account.groups_from_cache.sort_by(&:name).collect { |g| [g.id, CGI.escapeHTML(g.name)]}
+    # removing field service groups from list of groups
+    @groups_list ||= current_account.groups_from_cache.sort_by(&:name).collect { |g| [g.id, CGI.escapeHTML(g.name)] if g.support_agent_group? }.compact
   end
 
   def agents_list
-    @agents_list ||= current_account.users.technicians.collect { |au| [au.id, CGI.escapeHTML(au.name)] }
+    # removing field service agents from list of agents
+    @agents_list ||= current_account.users.technicians.collect { |au| [au.id, CGI.escapeHTML(au.name)] if au.agent && au.agent.support_agent? }.compact
   end
 
   def none_option
@@ -217,12 +223,14 @@ module AutomationControllerMethods
     # IMPORTANT - If an action requires a privilege to be executed, then add it
     # in ACTION_PRIVILEGE in Va::Action class
 
+    # skipping FSM ticket type
+    ticket_types = current_account.ticket_type_values.select { |type| type.value != SERVICE_TASK_TYPE }
     set_actions = [
         { :name => -1, :value => t('click_to_select_action') },
         { :name => "priority", :value => t('set_priority_as'), :domtype => "dropdown",
           :choices => TicketConstants.priority_list.sort, :unique_action => true },
         { :name => "ticket_type", :value => t('set_type_as'), :domtype => "dropdown",
-          :choices => current_account.ticket_type_values.collect { |c| [ c.value, c.value ] },
+          :choices => ticket_types.collect { |c| [c.value, c.value] },
           :unique_action => true },
         { :name => "status", :value => t('set_status_as'), :domtype => "dropdown",
           :choices => Helpdesk::TicketStatus.status_names(current_account),
