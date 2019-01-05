@@ -264,7 +264,7 @@ class UserSessionsController < ApplicationController
       end
       url = url.presence || support_home_url
       redirect_to freshid_logout(url) and return
-    elsif current_user.present? && !current_user.agent? 
+    elsif current_user.present? && !current_user.agent? && customer_freshid_sso_enabled?
       url = if customer_oauth2_enabled?
         current_account.customer_oauth2_logout_redirect_url
       elsif customer_freshid_saml_enabled?
