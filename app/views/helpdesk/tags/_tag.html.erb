@@ -10,12 +10,12 @@
               <i class="symbols-tag-edit tooltip fsize-12" title="<%= t("helpdesk.tags.tag.rename_tag") %>"></i>
           </span>
           <span class="tag-name">
-          <a href="#" class="tag_name <% if tag.name.length > 20 %> tooltip <% end %>" id="tag_name_<%= tag.id.to_s %>" <% if tag.name.length > 20 %> data-original-title="<%= h(tag.name) %>" <% end %> data-tag-name="<%= tag.name %>" >
+          <a href="#" class="tag_name <% if tag.name.length > 20 %> tooltip <% end %>" id="tag_name_<%= tag.id.to_s %>" <% if tag.name.length > 20 %> data-original-title="<%= h "#{tag.name}" %>" <% end %> data-tag-name="<%= h "#{tag.name}" %>" >
             <%= h(tag.name) %>
           </a>
         </span>
         <span id="tag_text_container_<%= tag.id.to_s %>" class="hide">
-          <input type="text" tag_id="<%= tag.id.to_s %>" class="textbox tag_text" value="<%= tag.name %>" maxlength = '32'>
+          <input type="text" tag_id="<%= tag.id.to_s %>" class="textbox tag_text" value="<%= h "#{tag.name}" %>" maxlength = '32'>
         </span>
    </span>
   </td>

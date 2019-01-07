@@ -84,7 +84,7 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
       :estimate => estimate_addon_price,
       :addon_type => addon_type,
       :payment_ok_btn => render_to_string( :inline => is_ni? ? "<%= link_to t('ok'), params['install_url'],
-        :class => 'btn btn-default btn-primary payment-btn nativeapp', :method => :post %>"
+        :class => 'btn btn-default btn-primary payment-btn nativeapp', :method => :post, :target => '_top' %>"
         : "<%= link_to t('ok'), '#', 'data-url' => params['install_url'],
         :class => 'btn btn-default btn-primary payment-btn #{btn_class}' %>"))
     }

@@ -99,6 +99,7 @@ run "ln -nfs #{shared_path}/config/ocr_config.yml #{node[:rel_path]}/config/ocr_
 run "ln -nfs #{shared_path}/config/email_bot_ml_feedback_config.yml #{node[:rel_path]}/config/email_bot_ml_feedback_config.yml"
 run "ln -nfs #{shared_path}/config/growthscore_app.yml #{node[:rel_path]}/config/growthscore_app.yml"
 
+
 #supreme-code-console
 run "ln -nfs #{shared_path}/config/api_config_internal_tools.yml #{node[:rel_path]}/config/api_config_internal_tools.yml"
 run "ln -nfs #{shared_path}/config/sandbox.yml  #{node[:rel_path]}/config/sandbox.yml"

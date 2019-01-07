@@ -124,15 +124,28 @@ window.App.Agents = window.App.Agents || {};
 		freshid_info_fields.val('').removeClass('uneditable-input');
 		freshid_info_fields.removeAttr('tabindex');
 	},
-
+	
 	initializeAgentForm: function() {
 		var $doc = $(document);
 		var _this = this;
+		if($("#selected-roles ul li").length == 0 ) {
+			for(var key in _this.role_details){
+				if(_this.role_details[key][0].toLowerCase().trim()=='agent'){
+					_this.roles[key] = true;
+					$("#selected-roles ul").append(JST["app/admin/agents/templates/selected_item"]({
+						type: 'role',
+						key: key,
+						details: _this.role_details[key]
+		     		}));
+				}
+	      	}
+      	}
+      	
 		$doc.on("click.agent-roles", 'div.icon_remove', function(){
-      $('#role_'+$(this).attr('rel')).remove();
-      $('.twipsy').remove();
-      $("#agent_form").valid();
-      _this.roles[$(this).attr('rel')] = false;
+			$('#role_'+$(this).attr('rel')).remove();
+			$('.twipsy').remove();
+			$("#agent_form").valid();
+			_this.roles[$(this).attr('rel')] = false;
 		});
 
 		$doc.on("click.agent-roles", '#agent_role ul li input', function(){

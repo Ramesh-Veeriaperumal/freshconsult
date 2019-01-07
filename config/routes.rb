@@ -207,6 +207,8 @@ Helpkit::Application.routes.draw do
     match "/auth/#{provider}/callback" => 'omniauth_callbacks#complete', :provider => provider
   end
 
+  match '/shopify_landing' => 'shopify_listing#show', :via => :get
+  match '/shopify_account_verification' => 'shopify_listing#verify_domain_shopify', :via => :post
   match '/auth/:provider/callback' => 'authorizations#create', :as => :callback
   match '/oauth2callback' => 'authorizations#create', :as => :calender, :provider => 'google_oauth2'
   match '/auth/failure' => 'authorizations#failure', :as => :failure
