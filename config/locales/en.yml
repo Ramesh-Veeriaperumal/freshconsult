@@ -6277,6 +6277,7 @@ en:
       create_tracker_sidebar_title: "What is a tracker?"
       create_tracker_sidebar_line1: "A <b>Tracker</b> is a master ticket that allows you to manage multiple tickets with the same context by linking them together."
       create_tracker_sidebar_line2: "Through a tracker, agents can broadcast messages to all related tickets and make sure updates are delivered to all the agents of the related tickets in a consistent manner."
+
     ticket_association:
        title: Ticket Association
     parent_child:

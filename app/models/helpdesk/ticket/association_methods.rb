@@ -170,7 +170,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
     notify_associates_fallback(associated_tickets) if associated_tickets.present?
     self.associates = associated_tickets
-    associated_tickets
+  rescue => e
+    Rails.logger.info "Error associates_from_db #{e} - #{Account.current.id} - ticket #{self.display_id}"
+  ensure
+    return associated_tickets
   end
 
   def resp_data?(resp)

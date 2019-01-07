@@ -86,6 +86,7 @@ class Community::Moderation::QueuedPost
 
     def moderate
       if spam
+        Rails.logger.info("Spam content detected during moderation, Account Id: #{Account.current.id}, params: #{@params}")
         create_unpublished_post(ForumSpam)
       elsif to_be_moderated?(post)
         create_unpublished_post(ForumUnpublished)
