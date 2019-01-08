@@ -8,7 +8,7 @@ module Channel::V2
                   :agent_responded_at, :status_updated_at, :sla_timer_stopped_at,
                   :on_state_time, :inbound_count, :outbound_count, :first_resp_time_by_bhrs, 
                   :resolution_time_by_bhrs, :group_escalated, :avg_response_time, 
-                  :avg_response_time_by_bhrs, :import_id
+                  :avg_response_time_by_bhrs, :import_id, :facebook
 
     include TimestampsValidationConcern
 
@@ -33,6 +33,10 @@ module Channel::V2
 
     validate :display_id_exists?, if: -> { display_id.present? }
 
+    validate :facebook_hash_presence?, unless: -> { facebook_ticket? }, on: :create
+
+    validates :facebook, data_type: { rules: Hash, required: true }, hash: { validatable_fields_hash: proc { |x| x.facebook_fields_validation } }, if: -> { facebook_ticket? }, on: :create
+
     def required_default_fields
       []
     end
@@ -43,6 +47,54 @@ module Channel::V2
 
     def ticket_state_change_allowed?
       created_at && updated_at
+    end
+
+    def sources
+      super | [::TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]]
+    end
+
+    def facebook_ticket?
+      ::TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook] == source
+    end
+
+    def facebook_hash_presence?
+      errors[:facebook] << :invalid_field if facebook.present?
+    end
+
+    def facebook_fields_validation
+      facebook_dm_ticket? ? facebook_dm_fields_validation : facebook_post_fields_validation
+    end
+
+    def facebook_post_fields_validation
+      {
+        post_id: { data_type: { rules: String, required: true } },
+        page_id: { data_type: { rules: Integer, required: true } },
+        msg_type: {
+          data_type: { rules: String, required: true },
+          custom_inclusion: { in: Channel::V2::TicketConstants::FB_MSG_TYPES }
+        },
+        can_comment: { data_type: { rules: 'Boolean', required: true } },
+        post_type: {
+          data_type: { rules: Integer, required: true },
+          custom_inclusion: { in: Facebook::Constants::CODE_TO_POST_TYPE.keys }
+        }
+      }
+    end
+
+    def facebook_dm_fields_validation
+      {
+        post_id: { data_type: { rules: String, required: true } },
+        page_id: { data_type: { rules: Integer, required: true } },
+        msg_type: {
+          data_type: { rules: String, required: true },
+          custom_inclusion: { in: Channel::V2::TicketConstants::FB_MSG_TYPES }
+        },
+        thread_id: { data_type: { rules: String, required: true } }
+      }
+    end
+
+    def facebook_dm_ticket?
+      facebook[:msg_type].present? && facebook[:msg_type] == Channel::V2::TicketConstants::FB_MSG_TYPES[0]
     end
 
     def validate_ticket_states

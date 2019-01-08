@@ -2,6 +2,10 @@ class FacebookPostDecorator < ApiDecorator
   delegate :id, :post_id, :msg_type, :post_attributes, to: :record
 
   def public_hash
+    channel_v2_api? ? to_hash : construct_public_hash
+  end
+
+  def construct_public_hash
     fb_post_hash = { id: post_id.to_s, type: msg_type }
     # This is to convert post_type to enum. Post_type will be post, comment, reply_to_comment
     fb_post_hash[:post_type] = Facebook::Constants::CODE_TO_POST_TYPE[post_attributes[:post_type]] if record.post?
@@ -22,6 +26,7 @@ class FacebookPostDecorator < ApiDecorator
       fb_post_hash[:post_type] = post_attributes[:post_type]
       fb_post_hash[:can_comment?] = record.can_comment?
     end
+    fb_post_hash[:thread_id] = record.thread_id if !record.post? && channel_v2_api?
     fb_post_hash
   end
 
