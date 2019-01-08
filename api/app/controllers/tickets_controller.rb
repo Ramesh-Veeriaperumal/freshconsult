@@ -52,6 +52,7 @@ class TicketsController < ApiApplicationController
     delegator_hash = { ticket_fields: @ticket_fields, custom_fields: custom_fields,
                        company_id: params[cname][:company_id], tags: cname_params[:tags] }
     delegator_hash[:tracker_ticket_id] = cname_params[:tracker_ticket_id] if link_or_unlink?
+    delegator_hash[:source] = params[cname][:source]
     ticket_delegator = ticket_delegator_class.new(@item, delegator_hash)
     if !ticket_delegator.valid?(:update)
       render_custom_errors(ticket_delegator, true)
@@ -200,7 +201,7 @@ class TicketsController < ApiApplicationController
     end
 
     def conditional_preload_options
-      preload_options = [:schema_less_ticket, :flexifield, :tags]
+      preload_options = [:schema_less_ticket, :tags, { flexifield: [:denormalized_flexifield] }]
       @ticket_filter.include_array.each do |assoc|
         preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc.to_sym] || assoc)
         increment_api_credit_by(2) unless (assoc.to_s == DESCRIPTION && !current_account.description_by_request_enabled?)

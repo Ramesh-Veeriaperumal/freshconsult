@@ -59,6 +59,7 @@ module Admin::Sla::Reminder
                              safe_send("#{reminder_type}_reminder", sla_rule_based.keys).
                              updated_in(2.month.ago)
           reminder_tickets.find_each do |ticket|
+            next if ticket.service_task?
             log_tickets_limit_exceeded(account.id, ticket.display_id, reminder_type, 
             reminder_tickets_count, "REMINDER") and 
             break if tickets_limit_check(total_tickets, reminder_tickets_count + 1)

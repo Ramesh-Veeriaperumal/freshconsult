@@ -6,4 +6,5 @@ module Freshquery::Constants
   QUERY_LENGTH_INVALID = "Has %{current_count} characters, it can have maximum of %{max_count} characters".freeze
   STRING_WITHIN_QUOTES = /\"(.*)\"/.freeze
   ES_OPERATORS = { '<' => 'lte', '>' => 'gte', 'OR' => 'should', 'AND' => 'must' }.freeze
-end.freeze
+  CUSTOM_FIELDS_NAME = { "custom_string" => "custom_single_line_texts.not_analyzed", "custom_number" => "custom_numbers", "custom_dropdown" => "custom_dropdowns.not_analyzed" }.freeze
+end

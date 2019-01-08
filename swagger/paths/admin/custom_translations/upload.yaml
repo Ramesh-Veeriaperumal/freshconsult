@@ -1,0 +1,24 @@
+post:
+  tags: [Custom Translations]
+  summary: Upload translations for fields
+  consumes:
+    - multipart/form-data
+  parameters: 
+    - name: id
+      in: path
+      type: string 
+      description: Language code 
+      required: true
+    - name: translation_file
+      type: file
+      in: formData
+      description: yml/yaml file with translations for fields
+      required: true
+  responses:
+    202:
+      description: Accepted
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+

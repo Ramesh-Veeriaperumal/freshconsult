@@ -49,6 +49,8 @@ module BulkActionConcern
         else
           ret_hash[:errors][:id] = :unable_to_perform
         end
+      elsif bulk_scenario_fsm_items.include?(id)
+        ret_hash[:errors][:id] = :fsm_ticket_scenario_failure
       elsif !bulk_action_succeeded_items.include?(id)
         ret_hash[:errors][:id] = :"is invalid"
       else
@@ -67,6 +69,10 @@ module BulkActionConcern
 
     def id_param
       @identifier ||= (@items || @items_failed || []).first.is_a?(Helpdesk::Ticket) ? :display_id : :id
+    end
+
+    def bulk_scenario_fsm_items
+      @fsm_ids ||= (@fsm_items || []).map(&id_param)
     end
 
     def async_process?

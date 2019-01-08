@@ -38,6 +38,18 @@ module Freshquery
     # def custom_date_mappings
     # 	proc{ Account.current.flexifield_def_entries.map{|x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == "custom_date" }.compact.to_h }
     # end
+
+    def custom_string_fields
+      proc { Account.current.flexifield_def_entries.map { |x| x.flexifield_name if x.ticket_field.field_type == 'custom_text' }.compact }
+    end
+
+    def custom_number_fields
+      proc { Account.current.flexifield_def_entries.map { |x| x.flexifield_name if x.ticket_field.field_type == 'custom_number' }.compact }
+    end
+
+    def custom_dropdown_fields
+      proc { Account.current.flexifield_def_entries.map { |x| x.flexifield_name if ['custom_dropdown', 'nested_field'].include?(x.ticket_field.field_type)}.compact }
+    end
   end
 
   class FqTicketAnalyticsHelper < FqTicketHelper
@@ -151,11 +163,18 @@ module Freshquery
       attribute :fr_due_by, transform: :frDueBy, type: :date
       attribute :type, transform: :ticket_type, choices: :ticket_types
       attribute :tag, transform: :tag_names, type: :string
+      
+      # Existing approach per_field filter
       custom_string mappings: :custom_string_mappings
       custom_number mappings: :custom_number_mappings
       custom_boolean mappings: :custom_checkbox_mappings
       custom_dropdown mappings: :custom_dropdown_mappings, choices: :custom_dropdown_choices
-      # custom_date mappings: :custom_date_mappings
+      
+      # New Approach and the query format will be type based filter
+      # (custom_number:1 or custom_number:2) AND (custom_string:'AXV1234' or custom_dropdown:'Incident')
+      custom_attributes type: 'custom_string', mappings: :custom_string_fields
+      custom_attributes type: 'custom_number', mappings: :custom_number_fields
+      custom_attributes type: 'custom_dropdown', mappings: :custom_dropdown_fields
     end
 
 

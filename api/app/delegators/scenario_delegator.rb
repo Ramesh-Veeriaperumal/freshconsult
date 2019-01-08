@@ -2,6 +2,7 @@ class ScenarioDelegator < BaseDelegator
   attr_accessor :va_rule
   validate :scenario_presence, if: -> { @scenario_id.present? }
   validate :validate_closure, if: -> { @item.present? && errors[:scenario_id].blank? }
+  validate :validate_type, if: -> { @item.present? && errors[:scenario_id].blank? }
 
   def initialize(record, options)
     @item = record
@@ -34,5 +35,9 @@ class ScenarioDelegator < BaseDelegator
 
   def closure_status?
     [ApiTicketConstants::CLOSED, ApiTicketConstants::RESOLVED].include?(@item.status.to_i)
+  end
+
+  def validate_type
+    errors[:id] << :fsm_ticket_scenario_failure if @item.service_task?
   end
 end

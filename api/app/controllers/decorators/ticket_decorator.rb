@@ -120,12 +120,12 @@ class TicketDecorator < ApiDecorator
   end
 
   def fb_post
-    return unless (Account.current.features?(:facebook) || Account.current.basic_facebook_enabled?) && record.facebook?
+    return unless (Account.current.has_feature?(:advanced_facebook) || Account.current.basic_facebook_enabled?) && record.facebook?
     FacebookPostDecorator.new(record.fb_post).to_hash
   end
 
   def tweet
-    return unless (Account.current.features?(:twitter) || Account.current.basic_twitter_enabled?) && record.twitter?
+    return unless (Account.current.has_feature?(:advanced_twitter) || Account.current.basic_twitter_enabled?) && record.twitter?
     {
       tweet_id: record.tweet.tweet_id.to_s,
       tweet_type: record.tweet.tweet_type,
@@ -134,12 +134,12 @@ class TicketDecorator < ApiDecorator
   end
 
   def facebook_public_hash
-    return unless (Account.current.features?(:facebook) || Account.current.basic_facebook_enabled?) && record.facebook?
+    return unless (Account.current.has_feature?(:advanced_facebook) || Account.current.basic_facebook_enabled?) && record.facebook?
     FacebookPostDecorator.new(record.fb_post).public_hash
   end
 
   def tweet_public_hash
-    return unless (Account.current.features?(:twitter) || Account.current.basic_twitter_enabled?) && record.twitter? && record.tweet.twitter_handle
+    return unless (Account.current.has_feature?(:advanced_twitter) || Account.current.basic_twitter_enabled?) && record.twitter? && record.tweet.twitter_handle
     handle = record.tweet.twitter_handle
     {
       id: record.tweet.tweet_id.to_s,

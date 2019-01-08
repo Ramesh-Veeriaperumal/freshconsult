@@ -33,7 +33,7 @@ module Freshquery
           @options[:only_integer] = true
           @options[:greater_than] = 0
           return 'validate_custom_number_array'
-        elsif options[:type] == 'integer'
+        elsif ['integer', 'custom_number'].include?(options[:type])
           @options[:only_integer] = true
           return 'validate_custom_number_array'
         elsif options[:type] == 'date'

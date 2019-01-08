@@ -1,9 +1,10 @@
 # encoding: utf-8
 class Helpdesk::ArchiveTicket < ActiveRecord::Base
-
+  include CustomAttributes
   # Custom json used by ES v2
   #
   def to_esv2_json
+    custom_attr = account.launched?(:custom_fields_search) ? fetch_custom_attributes : esv2_custom_attributes
     as_json({
       :root => false,
       :tailored_json => true,
@@ -18,7 +19,7 @@ class Helpdesk::ArchiveTicket < ActiveRecord::Base
                   :created_at, :updated_at, :account_id, :display_id, :group_id, 
                   :priority, :ticket_type, :subject
                 ]
-    }, false).merge(esv2_custom_attributes)
+    }, false).merge(custom_attr)
             .merge(attachments: es_v2_attachments).to_json
   end
 

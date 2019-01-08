@@ -59,7 +59,7 @@ class ProactiveRuleDelegator < BaseDelegator
   def check_field_value_types(value, type)
     if %w[number decimal].include?(type) && !numeric?(value)
       build_in_valid_data_type_error("Number/Decimal")
-    elsif type == "text" && !value.is_a?(String)
+    elsif %w[text paragraph].include?(type) && !value.is_a?(String)
       build_in_valid_data_type_error("String")
     elsif type == "multi_text" && !value.is_a?(Array)
       build_in_valid_data_type_error("Array")

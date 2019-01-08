@@ -646,6 +646,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"email_preview"
     resource :"admin/freshchat", :only => [:index, :create, :update, :toggle]
     resource :"admin/freshmarketer", only: %i[index link unlink enable_integration disable_integration]
+    resource :"admin/custom_translations/upload", :only => [:upload]
   end
 
   manage_account do
@@ -676,7 +677,6 @@ Authority::Authorization::PrivilegeList.build do
 
   contractor do
   end
-
   # Authority::Authorization::PrivilegeList.privileges.each { |privilege| puts privilege}
 
 end

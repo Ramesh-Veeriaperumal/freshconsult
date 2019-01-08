@@ -50,6 +50,7 @@ module Ember
         return unless validate_delegator(@item, scenario_id: cname_params[:scenario_id])
         fetch_objects
         validate_scenario_execution if actions_contain_close?(@delegator.va_rule)
+        skip_fsm_tickets if Account.current.field_service_management_enabled?
         execute_scenario
         render_bulk_action_response(bulk_action_succeeded_items, bulk_action_errors)
       end
@@ -177,6 +178,16 @@ module Ember
 
         def close_action? status
           [CLOSED, RESOLVED].include? status.to_i
+        end
+        
+        def skip_fsm_tickets
+          @fsm_items = []
+          @items.delete_if do |item|
+            if item.service_task?
+              @fsm_items << item
+              true
+            end
+          end
         end
 
         def validate_scenario_execution

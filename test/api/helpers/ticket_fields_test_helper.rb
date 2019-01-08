@@ -2,6 +2,7 @@ module TicketFieldsTestHelper
   include Helpdesk::Ticketfields::ControllerMethods
 
   FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date' }.freeze
+  FIELD_MAPPING_DN = { 'paragraph' => 'mlt', 'text' => 'slt' }.freeze
   SECTIONS_FOR_TYPE = [ { title: 'section1', value_mapping: %w(Question Problem), ticket_fields: %w(test_custom_number test_custom_date) },
                         { title: 'section2', value_mapping: ['Incident'], ticket_fields: %w(test_custom_paragraph test_custom_dropdown) } ]
   SECTIONS_FOR_CUSTOM_DROPDOWN = [ { title: 'section1', value_mapping: %w(Choice\ 1 Choice\ 2), ticket_fields: %w(test_custom_number test_custom_date) },
@@ -17,6 +18,36 @@ module TicketFieldsTestHelper
       return ticket_field_exists
     end
     flexifield_mapping = type == 'text' ? unused_ffs_col : "ff_#{FIELD_MAPPING[type]}05"
+    flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
+                                             flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
+                                             flexifield_alias: "#{name.downcase}_#{@account.id}",
+                                             flexifield_name: flexifield_mapping,
+                                             flexifield_order: 5,
+                                             flexifield_coltype: type.to_s,
+                                             account_id: @account.id)
+    flexifield_def_entry.save
+
+    parent_custom_field = FactoryGirl.build(:ticket_field, account_id: @account.id,
+                                                           name: "#{name.downcase}_#{@account.id}",
+                                                           label: name,
+                                                           label_in_portal: name,
+                                                           field_type: "custom_#{type}",
+                                                           description: '',
+                                                           required: required,
+                                                           required_for_closure: required_for_closure,
+                                                           column_name: flexifield_def_entry.flexifield_name,
+                                                           flexifield_def_entry_id: flexifield_def_entry.id)
+    parent_custom_field.save
+    parent_custom_field
+  end
+
+  def create_custom_field_dn(name, type, required = false, required_for_closure = false)
+    ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
+    if ticket_field_exists
+      ticket_field_exists.update_attributes(required: required, required_for_closure: required_for_closure)
+      return ticket_field_exists
+    end
+    flexifield_mapping = "dn_#{FIELD_MAPPING_DN[type]}_005"
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
                                              flexifield_alias: "#{name.downcase}_#{@account.id}",

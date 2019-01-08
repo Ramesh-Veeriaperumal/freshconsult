@@ -149,6 +149,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :'help_widget', only: [:index, :create, :show, :update, :destroy]
     resource :"admin/trial_subscription", only: [:usage_metrics]
     resource :"admin/automation", only: [:index, :destroy]
+    resource :"admin/custom_translations/upload", only: [:upload]
     resource :"admin/custom_translations/download", only: [:primary]
   end
 

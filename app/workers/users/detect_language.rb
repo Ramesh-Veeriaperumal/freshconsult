@@ -38,7 +38,7 @@ class Users::DetectLanguage < BaseWorker
         @user.save!
       else
         Rails.logger.debug "cld non english text:: #{@text}, account_id:: #{Account.current.id}"
-        Helpdesk::DetectUserLanguage.set_user_language!(@user, @text)
+        detect_lang_from_google
       end
     end
 

@@ -64,8 +64,11 @@ class TicketDelegator < BaseDelegator
 
   validate :validate_topic, if: -> { @topic_id }
 
+  validate :source_update_permissible?, if: -> { @source }
+
   def initialize(record, options)
     @ticket_fields = options[:ticket_fields]
+    @source = options[:source]
     check_params_set(options[:custom_fields]) if options[:custom_fields].is_a?(Hash)
     if options[:parent_attachment_params].present?
       @parent = options[:parent_attachment_params][:parent_ticket]
@@ -275,6 +278,13 @@ class TicketDelegator < BaseDelegator
     if @topic_ticket.present? && !@topic_ticket.deleted
       errors[:topic_id] << :cannot_convert_topic_to_ticket
       error_options[:ticket_id] = @topic_ticket.display_id
+    end
+  end
+
+  def source_update_permissible?
+    if ApiTicketConstants::UNPERMITTED_SOURCES_FOR_UPDATE.include?(self.source)
+      errors[:source] << :source_update_not_permitted
+      error_options.merge!(source: { sources: ApiTicketConstants::UNPERMITTED_SOURCES_FOR_UPDATE.join(',') })
     end
   end
 

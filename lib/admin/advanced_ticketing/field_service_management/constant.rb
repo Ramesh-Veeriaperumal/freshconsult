@@ -61,5 +61,8 @@ module Admin::AdvancedTicketing::FieldServiceManagement
     SERVICE_TASK_TYPE = "Service Task"
     FIELD_AGENT = :field_agent
     SERVICE_TASK_MANDATORY_FIELDS = CUSTOM_FIELDS_TO_RESERVE.select { |field| field[:required] }.map { |field| field[:flexifield_alias] }
+    FSM_FIELDS_PREFIX = 'cf_fsm_'.freeze
+    SUPPORT_AGENT_TYPE = 1
+    SUPPORT_GROUP_TYPE = 1
   end
 end

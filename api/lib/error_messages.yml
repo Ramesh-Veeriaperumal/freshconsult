@@ -232,7 +232,7 @@ api_error_messages:
   something_wrong_in_fsm_enable: "Something went wrong while trying to reserve fields for field service management."
   agent_type_change_not_allowed: "You cannot change the agent type"
   agent_group_type_mismatch: "Agent and group need to be of the same type"
-
+  source_update_not_permitted: "Source of tickets of sources %{sources} can not be updated."
   #help widget validation error messages
   field_validation_for_widget: "It should not be blank as this is a mandatory field for help widget ticket"
 
@@ -253,3 +253,10 @@ api_error_messages:
   invalid_import_value: "Invalid value. Should be set as the index of field"
   invalid_import_fields: "Invalid fields: %{invalid_values}"
   rule_type_not_allowed: "Rule type not allowed: %{rule_type}"
+  fsm_ticket_scenario_failure: "Cannot run scenarios on a ticket of type service task"
+  invalid_upload_file_type: "Invalid file type(%{current_extension}). Please upload yml/yaml file."
+  mismatch_language: "Language code in file and url do not match."
+  primary_lang_translations_not_allowed: "Translations for primary language not allowed." 
+  no_file_uploaded: "No file uploaded!"
+  invalid_yml_file: "Upload a valid yml/yaml file."
+  unsupported_language: "Language given in the request URL (%{language_code}) is not found. Allowed languages are %{list}"

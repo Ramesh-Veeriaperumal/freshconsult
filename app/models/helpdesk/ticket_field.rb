@@ -529,6 +529,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     encrypted_field? && !Account.current.falcon_and_encrypted_fields_enabled?
   end
 
+  def fsm_reserved_custom_field?
+    name.starts_with?(Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_FIELDS_PREFIX)
+  end
+
   protected
 
     def group_agents(ticket, internal_group = false)

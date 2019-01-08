@@ -6,6 +6,7 @@ module Freshquery
         @date_time_fields = mapping.date_time_fields
         @es_keys = mapping.es_keys
         @boolean_fields = mapping.boolean_fields
+        @custom_fields = mapping.custom_fields
       end
 
       def visit_operator(node)
@@ -13,7 +14,7 @@ module Freshquery
       end
 
       def reduce_level(data, left, right)
-        if [data, left.type, right.type] == ['OR', :operand, :operand] && left.key == right.key && [left.value, right.value].exclude?(nil) && @date_fields.exclude?(left.key) && @date_time_fields.exclude?(left.key)
+        if [data, left.type, right.type] == ['OR', :operand, :operand] && left.key == right.key && [left.value, right.value].exclude?(nil) && @date_fields.exclude?(left.key) && @date_time_fields.exclude?(left.key) && @custom_fields.keys.exclude?(left.key)
           { Freshquery::Constants::ES_OPERATORS[data] => [terms_filter(construct_key(left), [left.value, right.value])] }
         else
           { Freshquery::Constants::ES_OPERATORS[data] => [left.accept(self), right.accept(self)] }
@@ -52,6 +53,8 @@ module Freshquery
           bool_filter(
             range_filter(key => on_a_date(node.value))
           )
+        elsif @custom_fields.keys.include?(key) 
+          bool_filter({should: term_array(@custom_fields[key], node.value) + [term_filter(Freshquery::Constants::CUSTOM_FIELDS_NAME.fetch(key,key), node.value)]})
         else
           terms_filter(key, [node.value])
         end
@@ -75,6 +78,12 @@ module Freshquery
 
       def bool_filter(cond_block)
         { bool: cond_block }
+      end
+
+      def term_array(fields, value)
+        fields.map do |field|
+          term_filter(field, value)
+        end
       end
 
       def range_filter(cond_block)

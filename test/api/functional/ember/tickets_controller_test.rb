@@ -1184,6 +1184,19 @@ module Ember
       assert_response 404
     end
 
+    def test_execute_scenario_with_invalid_ticket_type
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      scenario_id = create_scn_automation_rule(scenario_automation_params).id
+      ticket_id = create_ticket(ticket_params_hash).display_id
+      Helpdesk::Ticket.any_instance.stubs(:service_task?).returns(true)
+      put :execute_scenario, construct_params({ version: 'private', id: ticket_id }, scenario_id: scenario_id)
+      assert_response 400
+      match_json([bad_request_error_pattern('id', :fsm_ticket_scenario_failure)])
+    ensure
+      Helpdesk::Ticket.any_instance.unstub(:service_task?)
+      Account.any_instance.unstub(:field_service_management_enabled?)
+    end
+
     def test_execute_scenario_without_ticket_access
       scenario_id = create_scn_automation_rule(scenario_automation_params).id
       ticket_id = create_ticket(ticket_params_hash).display_id

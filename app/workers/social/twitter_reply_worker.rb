@@ -5,6 +5,9 @@ module Social
 
     sidekiq_options queue: :twitter_reply, retry: 0, backtrace: true, failures: :exhausted
 
+    class TwitterReplyError < StandardError
+    end
+
     def perform(args)
       args.symbolize_keys!
       ticket = Account.current.tickets.find(args[:ticket_id])
@@ -20,6 +23,7 @@ module Social
         error_response = { code: error_code, message: error_message }
         update_errors_in_schema_less_notes(error_response, note.id)
         notify_iris(note.id)
+        raise TwitterReplyError, "Error Code: #{error_code} :: ticket id :: #{ticket.display_id}, note id :: #{note.id} :: message #{error_message}"
       end
     end
 

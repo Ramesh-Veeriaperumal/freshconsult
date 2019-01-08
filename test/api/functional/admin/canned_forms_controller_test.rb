@@ -11,7 +11,7 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
   def setup
     super
     stub_request(:any, %r{^#{FORMSERV_CONFIG["formserv_url"]}.*?$}).to_rack(FakeFormserv)
-    Account.current.launch(:canned_forms)
+    Account.current.add_feature(:canned_forms)
   end
 
   def teardown
@@ -19,7 +19,7 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
     canned_forms.each do |form|
       form.destroy
     end
-    Account.current.rollback(:canned_forms)
+    Account.current.revoke_feature(:canned_forms)
     # unstub webmock request
     WebMock.allow_net_connect!
   end
@@ -102,7 +102,7 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
   end
 
   def test_index_canned_form_without_feature
-    Account.current.stubs(:all_launched_features).returns([])
+    Account.current.revoke_feature(:canned_forms)
     get :index, controller_params(version: 'private')
     canned_forms = Account.current.canned_forms.active_forms.limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
     assert_response 403
@@ -395,7 +395,7 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
     new_field = dropdown_payload
     new_field['choices'] = []
     iteration = CannedFormConstants::MAX_CHOICE_LIMIT + 1
-    iteration.times do       
+    iteration.times do
       new_field['choices'] << choice_payload
     end
     request_param = { 'name' => Faker::Name.name, 'version' => canned_form.version, 'fields' => JSON.parse(canned_form.fields.to_json) }
@@ -469,7 +469,7 @@ class Admin::CannedFormsControllerTest < ActionController::TestCase
           choice.merge!(update_hash['choices'][c_index])
         end
         update_hash.delete 'choices'
-        field['choices'].sort_by! { |c| c['position'] } 
+        field['choices'].sort_by! { |c| c['position'] }
       end
       field.merge!(update_hash)
     end
