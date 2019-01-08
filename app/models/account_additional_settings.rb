@@ -5,6 +5,7 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   include AccountAdditionalSettings::AdditionalSettings
   include AccountConstants
+  include SandboxConstants
 
   belongs_to :account
   serialize :supported_languages, Array
@@ -88,6 +89,46 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def company_exports_limit
     additional_settings[:company_export_per_account_limit] if additional_settings.present?
+  end
+
+  def create_clone_job(destination_id, email = User.current.email, state = :clone_initiated)
+    raise StandardError unless STATUS_KEYS_BY_TOKEN.key?(state)
+    clone_details = {
+      status: STATUS_KEYS_BY_TOKEN[state],
+      clone_account_id: destination_id,
+      initiated_by: email,
+      last_error: "",
+      additional_data: ""
+    }
+    self.additional_settings ||= {}
+    additional_settings[:clone] = clone_details
+    save
+  end
+
+  def update_last_error(e, state)
+    raise StandardError unless STATUS_KEYS_BY_TOKEN.key?(state)
+    clone_details = {
+      status: STATUS_KEYS_BY_TOKEN[state],
+      last_error: e.to_s
+    }
+    additional_settings[:clone] = (additional_settings[:clone] || {}).merge(clone_details)
+    save
+  end
+
+  def mark_as!(state)
+    update_last_error(nil, state)
+  end
+
+  def clone_status
+    return nil unless additional_settings.present?
+    status_id = additional_settings.fetch(:clone, {}).fetch(:status, nil)
+    return nil unless PROGRESS_KEYS_BY_TOKEN.key?(status_id)
+    PROGRESS_KEYS_BY_TOKEN[status_id]
+  end
+
+  def destroy_clone_job
+    additional_settings.delete(:clone)
+    save
   end
 
   private

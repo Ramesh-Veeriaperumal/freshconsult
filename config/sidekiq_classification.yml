@@ -158,6 +158,7 @@
     - deactivate_filter_widgets
     - update_segment_filter
     - remove_encrypted_fields
+    - clone
   :external:
     - code_console_execution
     - integrations
