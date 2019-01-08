@@ -24,6 +24,7 @@ class Helpdesk::Reminder < ActiveRecord::Base
   scope :with_resources, lambda { |resources|
                           self.preload(*resources).order("id DESC")
                         }
+  scope :scheduled, conditions: ['reminder_at is not null']
   attr_accessible :body, :deleted, :user, :reminder_at
   
   validates_numericality_of :user_id

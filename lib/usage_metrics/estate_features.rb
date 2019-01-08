@@ -46,4 +46,8 @@ module UsageMetrics::EstateFeatures
   def multiple_business_hours(args)
     args[:account].groups.has_different_business_hours?
   end
+
+  def segments(args)
+    args[:account].contact_filters.exists?
+  end
 end

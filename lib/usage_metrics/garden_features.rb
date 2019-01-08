@@ -26,4 +26,8 @@ module UsageMetrics::GardenFeatures
     post = args[:account].posts.order('id desc').first
     post.present? ? FRESHDESK_USER_EMAIL_REGEX.match(post.user.email).nil? : false
   end
+
+  def support_bot(args)
+    args[:account].bots.exists?
+  end
 end
