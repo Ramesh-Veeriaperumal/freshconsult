@@ -1,6 +1,5 @@
 require 'new_relic/agent/instrumentation/controller_instrumentation'
 require 'new_relic/agent/instrumentation/rails3/action_controller'
-require 'new_relic/agent/instrumentation/rails3/errors'
 
 class MetalApiController < ActionController::Metal
   # Modules to be included for metal controller to work for our APP
@@ -28,7 +27,6 @@ class MetalApiController < ActionController::Metal
   # Inorder to make NewRelic work for ActionController::Metal
   include NewRelic::Agent::Instrumentation::ControllerInstrumentation
   include NewRelic::Agent::Instrumentation::Rails3::ActionController
-  include NewRelic::Agent::Instrumentation::Rails3::Errors
 
   # For configuration(like perform_caching, allow_forgery_protection) to be loaded for action controller metal, there are methods originally in base needs to be declared.
   extend MetalCompatibility
