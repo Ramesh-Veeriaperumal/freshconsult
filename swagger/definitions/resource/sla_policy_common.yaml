@@ -1,0 +1,10 @@
+type: object
+properties:
+  is_default:
+    type: boolean
+  position:
+    type: integer
+  created_at:
+    type: string
+  updated_at:
+    type: string

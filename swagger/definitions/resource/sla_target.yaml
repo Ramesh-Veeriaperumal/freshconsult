@@ -1,0 +1,15 @@
+type: object
+properties:
+  respond_within:
+    type: integer
+  resolve_within:
+    type: integer
+  business_hours:
+    type: boolean
+  escalation_enabled:
+    type: boolean
+required:
+  - respond_within
+  - resolve_within
+  - business_hours
+  - escalation_enabled

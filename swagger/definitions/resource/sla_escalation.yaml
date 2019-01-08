@@ -1,0 +1,10 @@
+type: object
+properties:
+  level_1:
+    $ref: '#/definitions/sla_escalation_level'
+  level_2:
+    $ref: '#/definitions/sla_escalation_level'
+  level_3:
+    $ref: '#/definitions/sla_escalation_level'
+  level_4:
+    $ref: '#/definitions/sla_escalation_level'

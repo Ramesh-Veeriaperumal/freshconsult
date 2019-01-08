@@ -700,4 +700,12 @@ module Cache::Memcache::Account
     def canned_responses_inline_images_key
       CANNED_RESPONSES_INLINE_IMAGES % { account_id: self.id }
     end
+
+    def sources
+      if Account.current.compose_email_enabled?
+        ApiTicketConstants::SOURCES | [TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email]]
+      else
+        ApiTicketConstants::SOURCES
+      end
+    end
 end

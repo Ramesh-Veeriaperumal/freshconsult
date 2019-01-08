@@ -1,0 +1,4 @@
+type: object
+allOf:
+  - $ref: '#/definitions/sla_policy'
+  - $ref: '#/definitions/sla_policy_common'

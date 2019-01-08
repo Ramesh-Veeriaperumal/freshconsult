@@ -281,7 +281,7 @@ class Helpdesk::SlaPolicy < ActiveRecord::Base
     end
 
     def standardize_cond_values(k, v)
-      return if (datatype || {})[k] == "text" 
+      return if (k == "ticket_type")
       conditions[k] = v.map(&:to_i)
     end
 

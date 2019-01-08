@@ -221,7 +221,7 @@ Helpkit::Application.routes.draw do
         get :details, action: :index
       end
     end
-    resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update]
+    resources :sla_policies, controller: 'api_sla_policies', only: [:index, :update, :create]
 
     resources :archived_tickets ,  path: 'tickets/archived', controller: 'archive/tickets', only: [:show, :destroy] do
       member do

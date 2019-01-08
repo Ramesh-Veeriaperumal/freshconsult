@@ -1,0 +1,38 @@
+get:
+  tags: [Sla Policy]
+  summary: List all
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          Sla Policy:
+            type: array
+            items:
+              $ref: '#/definitions/sla_policy_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+post:
+  tags: [Sla Policy]
+  summary: Create
+  description: Create an SLA Policy application
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/sla_policy_input'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/sla_policy_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
