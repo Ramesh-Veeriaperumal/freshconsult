@@ -1,41 +1,45 @@
 class Account < ActiveRecord::Base
+  LP_FEATURES = [
+    :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
+    :dkim, :scheduled_ticket_export, :ticket_contact_export, :disable_emails,
+    :year_in_review_2017, :falcon_portal_theme, :freshid, :freshchat_integration,
+    :announcements_tab, :sso_login_expiry_limitation, :es_msearch, :ticket_central_publish,
+    :solutions_central_publish, :launch_smart_filter, :outgoing_attachment_limit_25,
+    :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3, :undo_send,
+    :imap_error_status_check, :va_any_field_without_none, :encode_emoji, :auto_complete_off,
+    :csat_email_scan_compatibility, :dependent_field_validation, :post_central_publish,
+    :encode_emoji_subject, :note_central_publish, :db_to_bitmap_features_migration_phase2,
+    :time_sheets_central_publish, :incoming_attachment_limit_25,
+    :euc_migrated_twitter, :new_ticket_recieved_metric, :mint_portal_applicable,
+    :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes,
+    :count_service_es_reads, :quoted_text_parsing_feature, :shopify_actions,
+    :count_service_es_writes, :old_link_back_url_validation, :db_to_bitmap_features_migration,
+    :installed_app_publish, :denormalized_select_for_update, :disable_banners,
+    :skip_invoice_due_warning, :company_central_publish, :product_central_publish,
+    :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
+    :description_by_request, :ticket_fields_central_publish, :facebook_page_scope_migration,
+    :agent_group_central_publish, :custom_fields_search
+  ].freeze
 
-  LP_FEATURES = [:select_all, :round_robin_capping, :suggest_tickets,
-                 :customer_sentiment_ui, :dkim, :scheduled_ticket_export,
-                 :ticket_contact_export, :disable_emails,
-                 :falcon_portal_theme, :freshid, :freshchat_integration, :year_in_review_2017, :announcements_tab,
-                 :ticket_central_publish, :solutions_central_publish, :es_msearch,
-                 :launch_smart_filter, :outgoing_attachment_limit_25, :incoming_attachment_limit_25,
-                 :whitelist_sso_login, :apigee, :admin_only_mint, :customer_notes_s3,
-                 :imap_error_status_check, :va_any_field_without_none, :auto_complete_off,
-                 :encode_emoji, :dependent_field_validation, :post_central_publish,
-                 :encode_emoji_subject, :note_central_publish, :company_central_publish,
-                 :time_sheets_central_publish, :new_ticket_recieved_metric, :canned_forms,
-                 :euc_migrated_twitter, :twitter_microservice, :twitter_handle_publisher, :csat_email_scan_compatibility,
-                 :sso_login_expiry_limitation, :undo_send, :count_service_es_writes, :count_service_es_reads, :mint_portal_applicable, 
-                 :old_link_back_url_validation, :shopify_actions, :db_to_bitmap_features_migration,
-                 :denormalized_select_for_update, :installed_app_publish, :disable_banners, :quoted_text_parsing_feature, 
-                 :product_central_publish, :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
-                 :description_by_request, :ticket_fields_central_publish, :skip_invoice_due_warning,  :facebook_page_scope_migration,
-                 :agent_group_central_publish
-               ]
-  
-  DB_FEATURES   = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone]
+  DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
 
   BITMAP_FEATURES = [
-      :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor, :create_observer, :sla_management,
-      :email_commands, :assume_identity, :rebranding, :custom_apps, :custom_ticket_fields, :custom_company_fields,
-      :custom_contact_fields, :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
-      :multi_product,:multiple_business_hours, :multi_timezone, :customer_slas, :layout_customization,
-      :advanced_reporting, :timesheets, :multiple_emails, :custom_domain, :gamification, :gamification_enable,
-      :auto_refresh, :branding, :advanced_dkim, :basic_dkim,:system_observer_events, :unique_contact_identifier,
-       :ticket_activity_export, :caching, :private_inline, :collaboration,
-      :multi_dynamic_sections, :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
-      :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields, :custom_dashboard,
-      :support_bot, :image_annotation, :tam_default_fields, :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
-      :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :session_replay, :segments, :freshconnect, :proactive_outreach,
-      :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :custom_encrypted_fields, :hipaa, :freshid_saml,
-      :parent_child_infra, :undo_send
+    :split_tickets, :add_watcher, :traffic_cop, :custom_ticket_views, :supervisor,
+    :create_observer, :sla_management, :email_commands, :assume_identity, :rebranding,
+    :custom_apps, :custom_ticket_fields, :custom_company_fields, :custom_contact_fields,
+    :occasional_agent, :allow_auto_suggest_solutions, :basic_twitter, :basic_facebook,
+    :multi_product, :multiple_business_hours, :multi_timezone, :customer_slas,
+    :layout_customization, :advanced_reporting, :timesheets, :multiple_emails,
+    :custom_domain, :gamification, :gamification_enable, :auto_refresh, :branding,
+    :advanced_dkim, :basic_dkim, :system_observer_events, :unique_contact_identifier,
+    :ticket_activity_export, :caching, :private_inline, :collaboration, :multi_dynamic_sections,
+    :skill_based_round_robin, :auto_ticket_export, :user_notifications, :falcon,
+    :multiple_companies_toggle, :multiple_user_companies, :denormalized_flexifields,
+    :custom_dashboard, :support_bot, :image_annotation, :tam_default_fields, :undo_send,
+    :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
+    :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :parent_child_infra,
+    :session_replay, :segments, :freshconnect, :proactive_outreach, :audit_logs_central_publish,
+    :audit_log_ui, :omni_channel_routing, :custom_encrypted_fields, :hipaa, :freshid_saml, :canned_forms, :custom_translations
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -80,21 +84,37 @@ class Account < ActiveRecord::Base
   end
 
   def features?(*feature_names)
-    return super(*feature_names) unless launched?(:db_to_bitmap_features_migration)
-    db_features = feature_names - DB_TO_BITMAP_MIGRATION_FEATURES_LIST
-    if db_features.count == feature_names.count
-      super(*feature_names)
+    feature_names = feature_names.to_set
+    if launched? :db_to_bitmap_features_migration_phase2
+      features_migrated_to_bmp = Account.handle_feature_name_change(feature_names &
+        DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST)
+      features_migrated_to_lp = feature_names & DB_TO_LP_MIGRATION_P2_FEATURES_LIST
+      features_not_migrated = feature_names -
+                              DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST -
+                              DB_TO_LP_MIGRATION_P2_FEATURES_LIST
+      Rails.logger.info("These features are not yet migrated: #{features_not_migrated.inspect}")
+      has_features?(*features_migrated_to_bmp) &&
+        launched?(*features_migrated_to_lp) &&
+        super(*features_not_migrated)
+    elsif launched? :db_to_bitmap_features_migration # phase 1
+      features_migrated_to_bmp = Account.handle_feature_name_change(feature_names &
+        DB_TO_BITMAP_MIGRATION_FEATURES_LIST)
+      features_not_migrated = feature_names - DB_TO_BITMAP_MIGRATION_FEATURES_LIST
+      has_features?(*features_migrated_to_bmp) &&
+        super(*features_not_migrated)
     else
-      # twitter and facebook DB features are mapped to advanced_twitter and 
-      # advanced_facebook in bitmap
-      feature_names.push :advanced_twitter if feature_names.delete(:twitter).present?
-      feature_names.push :advanced_facebook if feature_names.delete(:facebook).present?
-      if db_features.empty?
-        self.has_features?(*feature_names)
-      else
-        super(db_features) && self.has_features?(*(feature_names - db_features))
+      super(*feature_names)
+    end
+  end
+
+  def self.handle_feature_name_change(feature_names)
+    FEATURE_NAME_CHANGES.each do |key, val|
+      unless feature_names.delete?(key).nil?
+        Rails.logger.info("Feature name changed from #{key} to #{val}")
+        feature_names.add val
       end
     end
+    feature_names
   end
 
   def has_both_feature? f
@@ -157,7 +177,7 @@ class Account < ActiveRecord::Base
   def count_es_writes_enabled?
     features?(:countv2_writes) || launched?(:count_service_es_writes)
   end
-  
+
   def customer_sentiment_enabled?
     Rails.logger.info "customer_sentiment : #{launched?(:customer_sentiment)}"
     launched?(:customer_sentiment)
@@ -267,7 +287,7 @@ class Account < ActiveRecord::Base
     valid_user = (current_user == :no_user ? true : (current_user && current_user.is_falcon_pref?))
     valid_user && (falcon_enabled? || check_admin_mint? || disable_old_ui_enabled?)
   end
-  
+
   def check_admin_mint?
     return false if User.current.nil?
     admin_only_mint_enabled? && User.current.privilege?(:admin_tasks)
@@ -309,6 +329,10 @@ class Account < ActiveRecord::Base
 
   def cascade_dispatcher_enabled?
     has_feature?(:cascade_dispatcher) || features?(:cascade_dispatchr)
+  end
+
+  def custom_translations_enabled?
+    redis_picklist_id_enabled? && has_feature?(:custom_translations)
   end
 
   def undo_send_enabled?

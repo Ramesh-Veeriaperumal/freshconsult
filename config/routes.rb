@@ -3009,6 +3009,7 @@ Helpkit::Application.routes.draw do
           post :extend_trial
           put :change_primary_language
           post :trigger_action
+          post :enable_freshid
         end
       end
 

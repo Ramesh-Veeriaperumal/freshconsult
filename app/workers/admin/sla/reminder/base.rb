@@ -58,6 +58,7 @@ module Admin::Sla::Reminder
                              safe_send("#{reminder_type}_reminder", sla_rule_based.keys).
                              updated_in(2.month.ago)
           reminder_tickets.find_each do |ticket|
+            next if ticket.service_task?
             reminder_tickets_count += 1
             sla_policy = sla_rule_based[ticket.sla_policy_id]
             execute_on_db("run_on_master") do

@@ -126,17 +126,20 @@ class Portal < ActiveRecord::Base
     user.monitored_topics.published.topics_for_portal(self).count
   end
 
-  #Yeah.. It is ugly.
-  def ticket_fields(additional_scope = :all)
-    filter_fields account.ticket_fields.safe_send(additional_scope), ticket_field_conditions
+  # Yeah.. It is ugly.
+  def ticket_fields(additional_scope = :all, include_translation = false)
+    fields = account.ticket_fields.safe_send(additional_scope)
+    fields = fields.preload(preload_translations(include_translation)) if additional_scope == :customer_visible
+    filter_fields fields, ticket_field_conditions
   end
 
   def ticket_fields_including_nested_fields(additional_scope = :all)
     filter_fields account.ticket_fields_including_nested_fields.safe_send(additional_scope), ticket_field_conditions
   end
 
-  def customer_editable_ticket_fields
-    filter_fields account.ticket_fields_including_nested_fields.customer_editable, ticket_field_conditions
+  # include_translation is used for whether we need to preload custom_translations or not
+  def customer_editable_ticket_fields(include_translation = false)
+    filter_fields account.ticket_fields_including_nested_fields.customer_editable.preload(preload_translations(include_translation)), ticket_field_conditions
   end
 
   def layout
@@ -416,6 +419,15 @@ class Portal < ActiveRecord::Base
       valid_domains = [account.full_domain]
       valid_domains << portal_url if portal_url.present?
       valid_domains
+    end
+
+    def preload_translations(include_translation = false)
+      @preload_translations ||= if Account.current.custom_translations_enabled? && include_translation
+                                  language = User.current ? User.current.language_object : Language.find_by_code(I18n.locale)
+                                  Account.current.supported_languages.include?(language.code) ? ["#{language.to_key}_translation".to_sym, { nested_ticket_fields: { ticket_field: ["#{language.to_key}_translation".to_sym] } }] : []
+                                else
+                                  []
+                                end
     end
 
 end

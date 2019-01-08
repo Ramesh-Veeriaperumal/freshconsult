@@ -115,10 +115,10 @@ class Account < ActiveRecord::Base
 
   }
 
-  DB_TO_BITMAP_MIGRATION_FEATURES_LIST = PLANS_AND_FEATURES.collect{|key, value| value[:features]}.flatten!.uniq!
   ADVANCED_FEATURES = [:link_tickets, :parent_child_tickets, :shared_ownership, :field_service_management]
   ADVANCED_FEATURES_TOGGLE = ADVANCED_FEATURES.map{|f| "#{f}_toggle".to_sym}
 
+  # to be removed in DB to bitmap phase 3 changes.
   # Features added temporarily to avoid release for all the customers at one shot
   # Default feature when creating account has been made true :surveys & ::survey_links $^&WE^%$E
   TEMPORARY_FEATURES = {
@@ -136,7 +136,7 @@ class Account < ActiveRecord::Base
     :collaboration => false
   }
 
-
+  # to be removed in DB to bitmap phase 3 changes.
   # NOTE ::: Before adding any new features, please have a look at the TEMPORARY_FEATURES
   SELECTABLE_FEATURES = {
     :gamification_enable => false, :portal_cc => false, :personalized_email_replies => false, :agent_collision => false,
@@ -166,62 +166,133 @@ class Account < ActiveRecord::Base
   #Features that need to connect to the FDnode server
   FD_NODE_FEATURES = ['cti']
 
+  # DB to Bitmap/LP migration starts
+  FEATURES_TO_BE_REMOVED = [
+    :bi_reports, :contact_merge_ui, :multiple_user_emails,
+    :facebook_realtime, :autorefresh_node, :updated_twilio_client, :count_es_reads,
+    :reports_regenerate_data, :chat_enable, :sandbox_account, :portal_cc,
+    :disable_rr_toggle, :count_es_writes, :round_robin_revamp, :business_hours,
+    :scenario_automations, :social_revamp, :spam_dynamo, :activity_revamp
+  ].to_set.freeze
+
+  TEMPORARY_AND_SELECTABLE_FEATURES_TO_BITMAP = [
+    :gamification_enable, :personalized_email_replies, :agent_collision,
+    :cascade_dispatchr, :cascade_dispatcher, :id_less_tickets, :reply_to_based_tickets,
+    :no_list_view_count_query, :client_debugging, :collision_socket,
+    :resource_rate_limit, :disable_agent_forward, :call_quality_metrics,
+    :domain_restricted_access, :freshfone_conference, :marketplace, :fa_developer,
+    :archive_tickets, :compose_email, :limit_mobihelp_results, :ecommerce,
+    :es_v2_writes, :shared_ownership, :freshfone_call_metrics, :cobrowsing,
+    :threading_without_user_check, :freshfone_call_monitoring, :collaboration,
+    :freshfone_caller_id_masking, :agent_conference, :freshfone_warm_transfer,
+    :restricted_helpdesk, :enable_multilingual, :countv2_writes, :countv2_reads,
+    :helpdesk_restriction_toggle, :freshfone_acw, :ticket_templates, :cti,
+    :all_notify_by_custom_server, :freshfone_custom_forwarding, :freshfone,
+    :freshfone_onboarding, :freshfone_gv_forward, :skill_based_round_robin,
+    :advanced_search, :advanced_search_bulk_actions, :chat, :chat_routing,
+    :tokenize_emoji, :custom_dashboard, :report_field_regenerate,
+    :saml_old_issuer, :redis_display_id, :es_multilang_solutions,
+    :sort_by_customer_response, :survey_links, :tags_filter_reporting,
+    :saml_unspecified_nameid, :euc_hide_agent_metrics, :single_session_per_user
+  ].to_set.freeze
+
+  TEMPORARY_AND_SELECTABLE_FEATURES_TO_LP = (
+    TEMPORARY_AND_SELECTABLE_FEATURES_TO_BITMAP +
+    FEATURES_TO_BE_REMOVED
+  ).each_with_object(
+    SELECTABLE_FEATURES.dup.merge(TEMPORARY_FEATURES.dup)
+  ) do |fname, temp_features|
+    temp_features.delete(fname)
+  end
+
+  # all plan features were migrated first.
+  DB_TO_BITMAP_MIGRATION_FEATURES_LIST = PLANS_AND_FEATURES.collect do |key, value|
+    value[:features]
+  end.flatten!.uniq!.to_set
+
+  # required for phase 2 of DB to bitmap migration.
+  FEATURE_NAME_CHANGES = {
+    twitter: :advanced_twitter,
+    facebook: :advanced_facebook,
+    agent_collision: :collision,
+    cascade_dispatchr: :cascade_dispatcher
+  }.freeze
+
+  DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST = (
+    [
+      *DB_TO_BITMAP_MIGRATION_FEATURES_LIST, # phase 1 (plan features)
+      *ADMIN_CUSTOMER_PORTAL_FEATURES.keys,
+      *TEMPORARY_AND_SELECTABLE_FEATURES_TO_BITMAP
+    ].to_set - FEATURES_TO_BE_REMOVED
+  ).freeze
+
+  DB_TO_LP_MIGRATION_P2_FEATURES_LIST = (
+    TEMPORARY_AND_SELECTABLE_FEATURES_TO_LP.keys.to_set -
+    FEATURES_TO_BE_REMOVED -
+    DB_TO_BITMAP_MIGRATION_P2_FEATURES_LIST
+  ).freeze
+  # DB to Bitmap/LP migration ends
+
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
-  LAUNCHPARTY_FEATURES = {
-    :admin_dashboard => false, :agent_conference => false, :agent_dashboard => false,
-    :agent_new_ticket_cache => false, :api_search_beta => false, :autopilot_headsup => false, 
-    :autoplay => false, :bi_reports => false, :cache_new_tkt_comps_forms => false, 
-    :delayed_dispatchr_feature => false, :enable_old_sso => false, 
-    :es_count_reads => false, :es_count_writes => false, :es_down => false, :es_tickets => false, 
-    :es_v1_enabled => false, :es_v2_reads => false, :fb_msg_realtime => false, 
-    :force_index_tickets => false, :freshfone_call_tracker => false, :freshfone_caller_id_masking => false,
-    :freshfone_new_notifications => false, :freshfone_onboarding => false, :gamification_perf => false,
-    :gamification_quest_perf => false, :lambda_exchange => false,
-    :list_page_new_cluster => false, :meta_read => false, :most_viewed_articles => false,
-    :multifile_attachments => true, :new_footer_feedback_box => false, :new_leaderboard => false,
-    :periodic_login_feature => false, :restricted_helpdesk => false,
-    :round_robin_capping => false, :sidekiq_dispatchr_feature => false,
-    :supervisor_dashboard => false, :support_new_ticket_cache => false,
-    :synchronous_apps => false, :ticket_list_page_filters_cache => false,
-    :spam_detection_service => false, :skip_hidden_tkt_identifier => false, 
-    :agent_collision_alb => false, :auto_refresh_alb => false, :countv2_template_read => false, 
-    :customer_sentiment_ui => false, :portal_solution_cache_fetch => false, :activity_ui => false,
-    :customer_sentiment => false, :countv2_template_write => false, :logout_logs => false, 
-    :gnip_2_0 => false, :froala_editor => false, :es_v2_splqueries => false, 
-    :suggest_tickets => false, :"Freshfone New Notifications" => false, :feedback_widget_captcha => false,
-    :es_multilang_solutions => false, :requester_widget => false, :spam_blacklist_feature => false,
-    :custom_timesheet => false, :antivirus_service => false, :hide_api_key => false, 
-    :skip_ticket_threading => false, :multi_dynamic_sections => true, :dashboard_new_alias => false, 
-    :attachments_scope => false, :kbase_spam_whitelist => false, :forum_post_spam_whitelist => false, 
-    :enable_qna => false, :enable_insights => false, 
-    :escape_liquid_attributes => true, :escape_liquid_for_reply => true,
-    :close_validation => false, :pjax_reload => false, :one_hop => false, :lifecycle_report => false, 
-    :service_writes => false, :service_reads => false, 
-    :admin_only_mint => false, :send_emails_via_fd_email_service_feature => false, 
-    :user_notifications => false,  :freshplug_enabled => false, :dkim => false, 
-    :sha1_enabled => false, :disable_archive => false, :sha256_enabled => false, 
-    :auto_ticket_export => false, :select_all => false, :facebook_realtime => false, 
-    :"Freshfone Call Tracker" => false, :ticket_contact_export => false, 
-    :custom_apps => false, :timesheet => false, :api_jwt_auth => false, :disable_emails => false, 
-    :skip_portal_cname_chk => false, :falcon_signup => false, :falcon_portal_theme => false, 
-    :image_annotation => false, :email_actions => false, :ner => false, :disable_freshchat => false, 
-    :freshchat_integration => false, :froala_editor_forums => false,
-    :ticket_central_publish => false, :solutions_central_publish => false, :freshid => false,
-    :launch_smart_filter => true, :onboarding_inlinemanual => false, :incoming_attachment_limit_25 => false, 
-    :outgoing_attachment_limit_25 => false, :whitelist_sso_login => false, :apigee => false, 
-    :contact_delete_forever => false, :imap_error_status_check => false, :va_any_field_without_none => false, 
-    :auto_complete_off => false, :freshworks_omnibar => false, :dependent_field_validation => false,
-    :post_central_publish => false, :note_central_publish => false,
-    :new_ticket_recieved_metric => false, :euc_migrated_twitter => false, :canned_forms => false, :es_msearch => true,
-    csat_email_scan_compatibility: false, sso_login_expiry_limitation: false, :attachment_virus_detection => false,
-    :twitter_microservice => true, :twitter_handle_publisher => true, :undo_send => false,
-    :email_deprecated_style_parsing => false, :old_link_back_url_validation => false, :shopify_actions => true,
-    :saml_ecrypted_assertion => false, :installed_app_publish => false,  :disable_banners => false, :quoted_text_parsing_feature => false,
-    :product_central_publish => false, :help_widget => false, :company_central_publish => false,
-    :field_service_management_lp => false, :bot_email_channel => false, :bot_email_central_publish => false,
-    :description_by_request => true, :ticket_fields_central_publish => false, :skip_invoice_due_warning => false, :facebook_page_scope_migration => false,
-    :agent_group_central_publish => false
-  }
+  LAUNCHPARTY_FEATURES = [TEMPORARY_AND_SELECTABLE_FEATURES_TO_LP].reduce(
+    {
+      admin_dashboard: false, agent_conference: false, agent_dashboard: false,
+      agent_new_ticket_cache: false, api_search_beta: false, autopilot_headsup: false,
+      autoplay: false, bi_reports: false, cache_new_tkt_comps_forms: false,
+      delayed_dispatchr_feature: false, disable_old_sso: false, enable_old_sso: false,
+      es_count_reads: false, es_count_writes: false, es_down: false, es_tickets: false,
+      es_v1_enabled: false, es_v2_reads: false, fb_msg_realtime: false,
+      force_index_tickets: false, freshfone_call_tracker: false, freshfone_caller_id_masking: false,
+      freshfone_new_notifications: false, freshfone_onboarding: false, gamification_perf: false,
+      gamification_quest_perf: false, lambda_exchange: false,
+      list_page_new_cluster: false, meta_read: false, most_viewed_articles: false,
+      multifile_attachments: true, new_footer_feedback_box: false, new_leaderboard: false,
+      periodic_login_feature: false, restricted_helpdesk: false,
+      round_robin_capping: false, sidekiq_dispatchr_feature: false,
+      supervisor_dashboard: false, support_new_ticket_cache: false,
+      synchronous_apps: false, ticket_list_page_filters_cache: false,
+      spam_detection_service: false, skip_hidden_tkt_identifier: false,
+      agent_collision_alb: false, auto_refresh_alb: false, countv2_template_read: false,
+      customer_sentiment_ui: false, portal_solution_cache_fetch: false, activity_ui: false,
+      customer_sentiment: false, countv2_template_write: false, logout_logs: false,
+      gnip_2_0: false, froala_editor: false, es_v2_splqueries: false,
+      suggest_tickets: false, :"Freshfone New Notifications" => false, feedback_widget_captcha: false,
+      es_multilang_solutions: false, requester_widget: false, spam_blacklist_feature: false,
+      custom_timesheet: false, antivirus_service: false, hide_api_key: false,
+      skip_ticket_threading: false, multi_dynamic_sections: true, dashboard_new_alias: false,
+      attachments_scope: false, kbase_spam_whitelist: false, forum_post_spam_whitelist: false,
+      enable_qna: false, enable_insights: false, skip_invoice_due_warning: false,
+      escape_liquid_attributes: true, escape_liquid_for_reply: true, escape_liquid_for_portal: true,
+      close_validation: false, pjax_reload: false, one_hop: false, lifecycle_report: false,
+      service_writes: false, service_reads: false, disable_banners: false,
+      admin_only_mint: false, send_emails_via_fd_email_service_feature: false,
+      user_notifications: false, freshplug_enabled: false, dkim: false,
+      sha1_enabled: false, disable_archive: false, sha256_enabled: false,
+      auto_ticket_export: false, select_all: false, facebook_realtime: false,
+      :"Freshfone Call Tracker" => false, ticket_contact_export: false,
+      custom_apps: false, timesheet: false, api_jwt_auth: false, disable_emails: false,
+      skip_portal_cname_chk: false, falcon_signup: false, falcon_portal_theme: false,
+      image_annotation: false, email_actions: false, ner: false, disable_freshchat: false,
+      freshchat_integration: false, froala_editor_forums: false, note_central_publish: false,
+      ticket_central_publish: false, solutions_central_publish: false, freshid: false,
+      launch_smart_filter: true, onboarding_inlinemanual: false, incoming_attachment_limit_25: false,
+      outgoing_attachment_limit_25: false, whitelist_sso_login: false, apigee: false,
+      contact_delete_forever: false, imap_error_status_check: false, va_any_field_without_none: false,
+      auto_complete_off: false, freshworks_omnibar: false, dependent_field_validation: false,
+      post_central_publish: false, twitter_common_redirect: false, installed_app_publish: false,
+      euc_migrated_twitter: false, new_onboarding: false, new_ticket_recieved_metric: false,
+      es_msearch: true, canned_forms: false, attachment_virus_detection: false,
+      undo_send: false, timeline: false, twitter_microservice: true, twitter_handle_publisher: true,
+      old_link_back_url_validation: false, shopify_actions: true, stop_contacts_count_query: false,
+      csat_email_scan_compatibility: false, sso_login_expiry_limitation: false,
+      email_deprecated_style_parsing: false, bot_email_central_publish: false,
+      saml_ecrypted_assertion: false, quoted_text_parsing_feature: false,
+      product_central_publish: false, help_widget: false, company_central_publish: false,
+      field_service_management_lp: false, bot_email_channel: false,
+      description_by_request: true, ticket_fields_central_publish: false,
+      facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: false
+    }, :merge
+  )
 
   BLOCK_GRACE_PERIOD = 90.days
 
@@ -232,5 +303,4 @@ class Account < ActiveRecord::Base
   }
 
   PARENT_CHILD_INFRA_FEATURES = [:parent_child_tickets, :field_service_management]
-
 end

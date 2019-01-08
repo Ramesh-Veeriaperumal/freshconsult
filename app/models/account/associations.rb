@@ -388,4 +388,5 @@ class Account < ActiveRecord::Base
   has_many :help_widgets, dependent: :destroy
   has_many :picklist_values, class_name: 'Helpdesk::PicklistValue', include: [:pickable]
   has_many :agent_types, class_name: 'AgentType', dependent: :destroy
+  has_many :custom_translations, class_name: 'CustomTranslation', dependent: :destroy
 end
