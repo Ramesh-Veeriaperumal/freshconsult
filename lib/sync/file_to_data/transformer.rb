@@ -42,10 +42,11 @@ class Sync::FileToData::Transformer
 
   attr_accessor :master_account_id, :mapping_table, :account, :resync
 
-  def initialize(master_account_id, resync = false, account = Account.current)
+  def initialize(master_account_id, resync = false, clone = false, account = Account.current)
     @master_account_id    = master_account_id
     @account              = account
     @resync               = resync
+    @clone                = clone
     @max_ticket_status_id = get_max_ticket_status_id if resync
     find_available_ticket_field_columns if resync
     @mapping_table = {}
@@ -108,7 +109,7 @@ class Sync::FileToData::Transformer
   end
 
   def skip_transformation?(data, model = '')
-    @resync || SKIP_TRANSFORMATION.include?(model)
+    @clone || @resync || SKIP_TRANSFORMATION.include?(model)
   end
 
   ['Helpdesk::ParentChildTemplate'].each do |model|

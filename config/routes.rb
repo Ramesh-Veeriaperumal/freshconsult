@@ -3017,6 +3017,8 @@ Helpkit::Application.routes.draw do
           put :unblock_outgoing_email
           post :extend_trial
           put :change_primary_language
+          get :clone_account
+          post :clone_account
           post :trigger_action
         end
       end

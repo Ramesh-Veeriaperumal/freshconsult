@@ -12,7 +12,13 @@ module SandboxConstants
     [:merge_in_progress, 10],
     [:merge_complete,    11],
     [:error, 98],
-    [:build_error, 99]
+    [:build_error, 99],
+    [:clone_initiated, 101],
+    [:clone_backup_staging, 102],
+    [:clone_sync_from_prod, 103],
+    [:clone_provision_staging, 104],
+    [:clone_complete, 105],
+    [:clone_error, 199]
   ].freeze
 
   PROGRESS_STATUS = [
@@ -25,6 +31,9 @@ module SandboxConstants
     [[9],             :diff_complete],
     [[10],            :merge_in_progress],
     [[11],            :merge_complete],
+    [[101, 102, 103, 104], :clone_in_progress],
+    [[105],           :clone_complete],
+    [[199],           :clone_error]
   ].freeze
 
   PROGRESS_KEYS_BY_TOKEN = Hash[*PROGRESS_STATUS.map { |i| i[0].map { |j| [j, i[1]] } }.flatten].freeze

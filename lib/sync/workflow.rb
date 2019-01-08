@@ -4,12 +4,14 @@ module Sync
 
     attr_accessor :master_account_id, :repo_path, :staging_account_id, :retain_id, :staging_repo_path
 
-    def initialize(staging_account_id = nil, retain_id = true, master_account_id = Account.current.id)
+    def initialize(staging_account_id = nil, retain_id = true, master_account_id = Account.current.id, clone = false, branch = nil)
       @master_account_id  = master_account_id
       @staging_account_id = staging_account_id
       @retain_id          = retain_id
       @repo_path          = "#{GIT_ROOT_PATH}/#{master_account_id}"
       @staging_repo_path  = "#{GIT_ROOT_PATH}/#{staging_account_id}"
+      @clone              = clone
+      @branch             = branch
     end
 
     def sync_config_from_production(committer)
