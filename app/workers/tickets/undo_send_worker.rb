@@ -29,7 +29,7 @@ class Tickets::UndoSendWorker < BaseWorker
                                 StandardError.new('SaveError'))
       end
       if publish_solution_later
-        publish_solution(note.note_body.body_html, ticket_id, note.attachments)
+        publish_solution(note.note_body.body_html, note.attachments)
       end
 
       @ticket.add_forum_post(note) if post_to_forum_topic && saved
@@ -69,16 +69,15 @@ class Tickets::UndoSendWorker < BaseWorker
     note.inline_attachment_ids = inline_attachment_list
   end
 
-  def publish_solution(body_html, ticket_id, attachments)
-    ticket = Account.current.tickets.where(id: ticket_id).first
+  def publish_solution(body_html, attachments)
     # title is set only for API if the ticket subject length is lesser than 3. from UI, it fails silently.
-    title = if ticket.subject.length < 3
-              t('undo_send_solution_error', ticket_display_id: ticket.display_id)
+    title = if @ticket.subject.length < 3
+              I18n.t('undo_send_solution_error', ticket_display_id: @ticket.display_id)
             else
-              ticket.subject
+              @ticket.subject
             end
     Helpdesk::KbaseArticles
-      .create_article_from_note(Account.current, user_id, title, body_html, attachments)
+      .create_article_from_note(Account.current, User.current, title, body_html, attachments)
   end
 
   def send_newrelic_exception(account_id, user_id, ticket_id, created_at, exception)
