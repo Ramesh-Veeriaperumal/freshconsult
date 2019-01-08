@@ -1,13 +1,11 @@
 require 'new_relic/agent/instrumentation/controller_instrumentation'
 require 'new_relic/agent/instrumentation/rails3/action_controller'
-require 'new_relic/agent/instrumentation/rails3/errors'
 
 class MimeController < Fdadmin::MetalApiController
 
   include ActionController::Redirecting
   include NewRelic::Agent::Instrumentation::ControllerInstrumentation
   include NewRelic::Agent::Instrumentation::Rails3::ActionController
-  include NewRelic::Agent::Instrumentation::Rails3::Errors
   
   append_view_path "#{Rails.root}/app/views"
 
@@ -20,7 +18,7 @@ class MimeController < Fdadmin::MetalApiController
   before_filter :set_default_locale, :set_msg_id
 
   def new
-  	render :layout => false
+    render :layout => false
   end
 
   def create
