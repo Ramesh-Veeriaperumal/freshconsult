@@ -48,7 +48,7 @@ end
 # creating parent database
 `bundle install`
 `redis-server --port 6379 --daemonize yes`
-`echo "create database helpkit_parent_#{parent_process_id}" | mysql -u root`
+`echo "create database helpkit_parent_#{parent_process_id} CHARACTER SET utf8 COLLATE utf8_general_ci" | mysql -u root`
 `bundle exec rake db:bootstrap RAILS_ENV=test`
 
 
@@ -71,7 +71,7 @@ number_of_parallel_jobs.to_i.times do |i|
 
 
     # create database for child and clone from parent
-    `echo "create database helpkit_child_#{child_process_id}" | mysql -u root`
+    `echo "create database helpkit_child_#{child_process_id} CHARACTER SET utf8 COLLATE utf8_general_ci" | mysql -u root`
     `mysqldump -u root helpkit_parent_#{parent_process_id} | mysql -u root helpkit_child_#{child_process_id}`
 
     process_logger "Copied database from helpkit_parent_#{parent_process_id} to helpkit_child_#{child_process_id}"

@@ -461,6 +461,19 @@ module Ember
       assert Helpdesk::Note.last.attachments.size == (attachments.size + 1)
     end
 
+    def test_reply_with_attachment_id_name_in_unicode
+      unicode_ticket = ticket
+      file = fixture_file_upload('files/Квитанция.log', 'text/plain', :binary)
+      attachment_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
+      params_hash = reply_note_params_hash.merge(attachment_ids: [attachment_id])
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      @request.env['CONTENT_TYPE'] = 'multipart/form-data'
+      post :reply, construct_params({ version: 'private', id: unicode_ticket.display_id }, params_hash)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      assert_response 201
+      assert Helpdesk::Note.last.attachments.first.content_file_name == 'Квитанция.log'
+    end
+
     def test_reply_with_cloud_files_upload
       cloud_file_params = [{ name: 'image.jpg', url: CLOUD_FILE_IMAGE_URL, application_id: 20 }]
       params = reply_note_params_hash.merge(cloud_files: cloud_file_params)
