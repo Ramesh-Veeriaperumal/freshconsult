@@ -31,3 +31,8 @@ json.set! :is_escalated, @item.isescalated
 json.set! :tags, @item.tag_names
 
 json.partial! 'shared/utc_date_format', item: @item, add: { due_by: :due_by, frDueBy: :fr_due_by }
+
+channel_v2_attributes = @item.channel_v2_attributes
+stats_hash = @item.stats
+json.merge!(channel_v2_attributes) if channel_v2_attributes
+json.set! :stats, stats_hash if stats_hash.present? && channel_v2_attributes.present?

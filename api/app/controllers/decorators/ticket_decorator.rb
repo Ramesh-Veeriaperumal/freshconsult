@@ -86,7 +86,7 @@ class TicketDecorator < ApiDecorator
   end
 
   def stats
-    return unless private_api? || @sideload_options.include?('stats')
+    return unless private_api? || channel_v2_api? || @sideload_options.include?('stats')
     states = {
       agent_responded_at: ticket_states.agent_responded_at.try(:utc),
       requester_responded_at: ticket_states.requester_responded_at.try(:utc),

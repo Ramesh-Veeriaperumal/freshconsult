@@ -191,6 +191,7 @@ module Channel::V2
 
     def test_facebook_post_ticket_create
       $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
       fb_page_id = fetch_or_create_fb_page
       params = {
         requester_id: requester.id, status: 5, priority: 2, source: 6,
@@ -213,10 +214,12 @@ module Channel::V2
     ensure
       Account.any_instance.unstub(:shared_ownership_enabled?)
       $infra['CHANNEL_LAYER'] = false
+      @channel_v2_api = false
     end
 
     def test_facebook_dm_ticket_create
       $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
       fb_page_id = fetch_or_create_fb_page
       params = {
         requester_id: requester.id, status: 5, priority: 2, source: 6,
@@ -238,6 +241,7 @@ module Channel::V2
     ensure
       Account.any_instance.unstub(:shared_ownership_enabled?)
       $infra['CHANNEL_LAYER'] = false
+      @channel_v2_api = false
     end
 
     def test_update_with_closed_at

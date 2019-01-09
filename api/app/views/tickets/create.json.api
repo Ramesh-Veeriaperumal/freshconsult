@@ -37,6 +37,10 @@
                                             }
                                           end
                }
+              channel_v2_attributes = @item.channel_v2_attributes
+              stats_hash = @item.stats
+              response_hash.merge!(channel_v2_attributes) if channel_v2_attributes
+              response_hash.merge!(stats: stats_hash) if stats_hash && channel_v2_attributes
               response_hash.merge!(internal_agent_id: @item.internal_agent_id, internal_group_id: @item.internal_group_id) if Account.current.shared_ownership_enabled?
               if @item.associated_ticket?
                 response_hash[:association_type] = @item.association_type
