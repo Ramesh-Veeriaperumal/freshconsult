@@ -6,53 +6,53 @@ class Sync::FileToData::Transformer
   include Sync::Transformer::InlineAttachment
 
   TRANSFORMATIONS = {
-    'Helpdesk::TicketField' => ['name', 'column_name'],
-    'Helpdesk::NestedTicketField' => ['name'],
-    'FlexifieldDef'               => ['name'],
-    'FlexifieldDefEntry'          => ['flexifield_alias', 'flexifield_name'],
-    'VaRule'                      => ['filter_data', 'action_data'],
-    'Helpdesk::SlaPolicy'         => ['escalations', 'conditions'],
-    'Helpdesk::TicketTemplate'    => ['template_data', 'data_description_html'],
-    'Helpdesk::TicketStatus'      => ['status_id'],
-    'Admin::Skill'                => ['filter_data'],
-    'Admin::CannedResponses::Response' => ['content_html'],
-    'EmailNotification'           => ['requester_template', 'agent_template'],
-    'Helpdesk::ParentChildTemplate' => ['parent_template_id', 'child_template_id']
+    'Helpdesk::TicketField'             => ['name', 'column_name'],
+    'Helpdesk::NestedTicketField'       => ['name'],
+    'FlexifieldDef'                     => ['name'],
+    'FlexifieldDefEntry'                => ['flexifield_alias', 'flexifield_name'],
+    'VaRule'                            => ['filter_data', 'action_data'],
+    'Helpdesk::SlaPolicy'               => ['escalations', 'conditions'],
+    'Helpdesk::TicketTemplate'          => ['template_data', 'data_description_html'],
+    'Helpdesk::TicketStatus'            => ['status_id'],
+    'Admin::Skill'                      => ['filter_data'],
+    'Admin::CannedResponses::Response'  => ['content_html'],
+    'EmailNotification'                 => ['requester_template', 'agent_template'],
+    'Helpdesk::ParentChildTemplate'     => ['parent_template_id', 'child_template_id'],
+    'Helpdesk::PicklistValue'           => ['picklist_id'],
   }.freeze
 
   CUSTOM_TEXT_FIELDS_TYPES = {
-    'dn_slt' => 'text',
-    'ffs' => 'dropdown',
-    'ff_int' => 'number',
-    'ff_boolean' => 'checkbox',
-    'ff_date' => 'date',
-    'dn_mlt' => 'paragraph',
-    'ff_decimal' => 'decimal'
+    'dn_slt'      => 'text',
+    'ffs'         => 'dropdown',
+    'ff_int'      => 'number',
+    'ff_boolean'  => 'checkbox',
+    'ff_date'     => 'date',
+    'dn_mlt'      => 'paragraph',
+    'ff_decimal'  => 'decimal',
   }.freeze
 
   TICKET_TEMPLATE_KEY_MODEL_MAPPING = {
     responder_id: 'User',
     product_id:   'Product',
-    group_id:     'Group'
+    group_id:     'Group',
   }.freeze
 
   SKIP_TRANSFORMATION = [
-    'Helpdesk::TicketStatus'
+    'Helpdesk::TicketStatus',
   ].freeze
 
   attr_accessor :master_account_id, :mapping_table, :account, :resync
 
   def initialize(master_account_id, resync = false, clone = false, account = Account.current)
-    @master_account_id    = master_account_id
-    @account              = account
-    @resync               = resync
+    @master_account_id        = master_account_id
+    @account                  = account
+    @resync                   = resync
     @clone                = clone
-    @max_ticket_status_id = get_max_ticket_status_id if resync
-    find_available_ticket_field_columns if resync
-    @mapping_table = {}
-    production_account_id = resync ? account.id : master_account_id
-    production_account_shard = ShardMapping.fetch_by_account_id(production_account_id)
-    @offset_value = Integer(SANDBOX_ID_OFFSET[production_account_shard.shard_name])
+    @mapping_table            = {}
+    production_account_id     = resync ? account.id : master_account_id
+    production_account_shard  = ShardMapping.fetch_by_account_id(production_account_id)
+    @offset_value             = Integer(SANDBOX_ID_OFFSET[production_account_shard.shard_name])
+    load_resync_dependent_vars if resync
   end
 
   def available?(model, column)
@@ -108,6 +108,12 @@ class Sync::FileToData::Transformer
     ActionController::Parameters.new(data)
   end
 
+  def transform_helpdesk_picklist_value_picklist_id(data, _mapping_table)
+    return data unless @resync
+
+    @max_picklist_id += 1
+  end
+
   def skip_transformation?(data, model = '')
     @clone || @resync || SKIP_TRANSFORMATION.include?(model)
   end
@@ -138,12 +144,22 @@ class Sync::FileToData::Transformer
       end
     end
 
-    def get_max_ticket_status_id
+    def fetch_max_ticket_status_id
       Account.current.ticket_statuses.maximum('status_id')
+    end
+
+    def fetch_max_picklist_id
+      Account.current.picklist_values.maximum('picklist_id')
     end
 
     def change_custom_field_name(data)
       data = "#{Regexp.last_match(1)}_#{account.id}" if data =~ /(.*)_#{master_account_id}/
       data
+    end
+
+    def load_resync_dependent_vars
+      @max_ticket_status_id = fetch_max_ticket_status_id
+      @max_picklist_id = fetch_max_picklist_id
+      find_available_ticket_field_columns
     end
 end
