@@ -235,6 +235,7 @@ class Account < ActiveRecord::Base
   # DB to Bitmap/LP migration ends
 
   # List of Launchparty features available in code. Set it to true if it has to be enabled when signing up a new account
+
   LAUNCHPARTY_FEATURES = [TEMPORARY_AND_SELECTABLE_FEATURES_TO_LP].reduce(
     {
       admin_dashboard: false, agent_conference: false, agent_dashboard: false,
@@ -292,7 +293,8 @@ class Account < ActiveRecord::Base
       email_deprecated_style_parsing: false, saml_ecrypted_assertion: false,
       quoted_text_parsing_feature: false, description_by_request: true,
       ticket_fields_central_publish: false, skip_invoice_due_warning: false,
-      facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: false
+      facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: false,
+      update_billing_info: false, allow_billing_info_update: false
     }, :merge
   )
 

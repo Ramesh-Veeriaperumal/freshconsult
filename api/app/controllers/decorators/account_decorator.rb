@@ -68,6 +68,7 @@ class AccountDecorator < ApiDecorator
         first_invoice_date: first_invoice.nil? ? nil : first_invoice.created_at
       }
       ret_hash[:mrr] = subscription.cmrr if User.current.privilege?(:admin_tasks) || User.current.privilege?(:manage_account)
+      ret_hash[:invoice_email] = record.invoice_emails.first if account_admin?
       ret_hash
     end
 
@@ -154,5 +155,9 @@ class AccountDecorator < ApiDecorator
           lp_features.delete :trial_subscription
         end
       end
+    end
+
+    def account_admin?
+      User.current.privilege?(:manage_account)
     end
 end

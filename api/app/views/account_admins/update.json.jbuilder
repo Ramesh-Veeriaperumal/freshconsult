@@ -3,3 +3,7 @@ if @item.contact_info.present?
     json.set! key, value
   end
 end
+
+if @item.invoice_emails.present?
+  json.set! :invoice_emails, @item.invoice_emails
+end 

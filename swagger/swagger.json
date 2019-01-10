@@ -9740,7 +9740,7 @@
           "Account Admin"
         ],
         "summary": "Update",
-        "description": "Update Account's primary contact details",
+        "description": "Update Account's primary contact details and billing information",
         "parameters": [
           {
             "name": "account_admin",
@@ -9771,6 +9771,28 @@
             "schema": {
               "$ref": "#/definitions/method_not_allowed_error"
             }
+          }
+        }
+      }
+    },
+    "/account_admin/disable_billing_info_updation": {
+      "put": {
+        "tags": [
+          "Account Admin"
+        ],
+        "summary": "Disable billing info updation",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
       }
@@ -19545,6 +19567,16 @@
         "phone": {
           "type": "string",
           "description": "phone number of account's primary contact"
+        },
+        "invoice_emails": {
+          "type": "array",
+          "description": "invoice email of account",
+          "maxItems": 1,
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
         }
       }
     }

@@ -271,7 +271,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
   end
 
   def test_invoice_due_warning_nil_for_admin
-    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    set_user_privileges([:admin_tasks, :manage_users, :manage_tickets], [:manage_account])
     get :account, controller_params(version: 'private')
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
@@ -282,7 +282,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
   end
 
   def test_invoice_due_warning_with_skip_feature
-    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    set_user_privileges([:admin_tasks, :manage_users, :manage_tickets], [:manage_account])
     Account.current.launch(:skip_invoice_due_warning)
     get :account, controller_params(version: 'private')
     assert_response 200
@@ -296,7 +296,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
 
 
   def test_invoice_due_warning_with_skip_feature_with_redis_set
-    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    set_user_privileges([:admin_tasks, :manage_users, :manage_tickets], [:manage_account])
     Account.current.launch(:skip_invoice_due_warning)
     set_others_redis_key(invoice_due_key, Time.now.utc.to_i - 10.days)
     get :account, controller_params(version: 'private')
@@ -312,10 +312,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
 
   def test_invoice_due_warning_for_non_admin
     set_others_redis_key(invoice_due_key, Time.now.utc.to_i - 10.days)
-    User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
-    User.any_instance.stubs(:privilege?).with(:manage_users).returns(true)
-    User.any_instance.stubs(:privilege?).with(:manage_account).returns(true)
-    User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(true)
+    set_user_privileges([:manage_users, :manage_tickets], [:manage_account, :admin_tasks])
     get :account, controller_params(version: 'private')
     assert_response 200
     match_json(account_pattern(Account.current, Account.current.main_portal))
@@ -327,7 +324,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
   end
 
   def test_invoice_due_warning_for_admin
-    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    set_user_privileges([:admin_tasks, :manage_users, :manage_tickets], [:manage_account])
     invoice_key = format(INVOICE_DUE, account_id: Account.current.id)
     set_others_redis_key(invoice_due_key, Time.now.utc.to_i - 10.days)
     get :account, controller_params(version: 'private')
@@ -341,7 +338,7 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
   end
 
   def test_invoice_overdue_warning_for_admin
-    User.current.stubs(:privilege?).with(:admin_tasks).returns(true)
+    set_user_privileges([:admin_tasks, :manage_users, :manage_tickets], [:manage_account])
     invoice_key = format(INVOICE_DUE, account_id: Account.current.id)
     set_others_redis_key(invoice_due_key, Time.now.utc.to_i - 20.days)
     get :account, controller_params(version: 'private')
@@ -352,5 +349,73 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
   ensure
     User.any_instance.unstub(:privilege?)
     remove_others_redis_key(invoice_due_key)
+  end
+
+  def test_invoice_email_for_non_account_admin
+    set_user_privileges([:admin_tasks, :manage_users, :manage_tickets], [:manage_account])
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    invoice = JSON.parse(response.body)['account']['subscription']['invoice_email']
+    assert_nil invoice
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_invoice_email_for_account_admin
+    set_user_privileges([:manage_account, :admin_tasks, :manage_users, :manage_tickets], [])
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    invoice = JSON.parse(response.body)['account']['subscription']['invoice_email']
+    assert_not_nil invoice
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_update_billing_info_for_non_account_admin
+    Account.current.launch(:update_billing_info)
+    set_user_privileges([:admin_tasks, :manage_users, :manage_tickets], [:manage_account])
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    billing_update = JSON.parse(response.body)['config']['billing_info_update_enabled']
+    assert_nil billing_update
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:update_billing_info)
+  end
+
+  def test_update_billing_info_nil_for_account_admin
+    set_user_privileges([:manage_account, :admin_tasks, :manage_users, :manage_tickets], [])
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    billing_update = JSON.parse(response.body)['config']['billing_info_update_enabled']
+    assert_nil billing_update
+  ensure
+    User.any_instance.unstub(:privilege?)
+  end
+
+  def test_update_billing_info_for_account_admin
+    Account.current.launch(:update_billing_info)
+    set_user_privileges([:manage_account, :admin_tasks, :manage_users, :manage_tickets], [])
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+    billing_update = JSON.parse(response.body)['config']['billing_info_update_enabled']
+    assert_equal billing_update, true
+  ensure
+    User.any_instance.unstub(:privilege?)
+    Account.current.rollback(:update_billing_info)
+  end
+
+  def set_user_privileges(add_privileges, remove_privileges)
+    add_privileges.each do |privilege|
+      User.any_instance.stubs(:privilege?).with(privilege).returns(true)
+    end
+    remove_privileges.each do |privilege|
+      User.any_instance.stubs(:privilege?).with(privilege).returns(false)
+    end
   end
 end

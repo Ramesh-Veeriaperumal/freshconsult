@@ -1,4 +1,5 @@
 class Account < ActiveRecord::Base
+
   LP_FEATURES = [
     :select_all, :round_robin_capping, :suggest_tickets,
     :customer_sentiment_ui, :dkim, :scheduled_ticket_export,
@@ -27,7 +28,8 @@ class Account < ActiveRecord::Base
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
     :shopify_actions, :skip_invoice_due_warning, :automation_revamp,
     :scheduled_export_fix, :compact_lang_detection,
-    :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search
+    :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search,
+    :update_billing_info, :allow_billing_info_update
   ].freeze
 
   DB_FEATURES = [

@@ -1,7 +1,7 @@
 put:
   tags: [Account Admin]
   summary: Update
-  description: Update Account's primary contact details
+  description: Update Account's primary contact details and billing information
   parameters:
     - name: account_admin
       in: body
@@ -21,4 +21,4 @@ put:
     405:
       description: Method Not Allowed
       schema:
-       $ref: '#/definitions/method_not_allowed_error'
+        $ref: '#/definitions/method_not_allowed_error'

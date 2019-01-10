@@ -542,6 +542,9 @@
 /account_admin:
   $ref: ./account_admin/update.yaml
 
+/account_admin/disable_billing_info_updation:
+  $ref: ./account_admin/disable_billing_info_updation.yaml
+
 # Account 
 /accounts/cancel:
   $ref: ./accounts/cancel.yaml

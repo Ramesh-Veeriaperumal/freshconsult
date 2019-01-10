@@ -12,12 +12,18 @@ class AccountAdminValidationTest < ActionView::TestCase
     assert account_admin_validation.valid?
   end
 
+  def test_required_params_with_invoice_email
+    Account.stubs(:current).returns(Account.new)
+    account_admin_validation = AccountAdminValidation.new(first_name: 'me', last_name: 'you', invoice_emails: ['me@you.we'])
+    assert account_admin_validation.valid?
+  end
+
   def test_absence_of_required_params
     Account.stubs(:current).returns(Account.new)
     Account.stubs(:current).returns(Account.new)
     account_admin_validation = AccountAdminValidation.new(phone: '0000000')
     assert account_admin_validation.invalid?
-    require_params_error_messages = { email: 'cannot be blank', first_name: 'cannot be blank', last_name: 'cannot be blank' }
+    require_params_error_messages = { email: :missing_field, first_name: 'cannot be blank', last_name: 'cannot be blank' }
     assert_equal require_params_error_messages, account_admin_validation.errors.to_h
   end
 
@@ -31,5 +37,22 @@ class AccountAdminValidationTest < ActionView::TestCase
     account_admin_validation = AccountAdminValidation.new(first_name: 'me', last_name: 'you', email: 'me', phone: '0000000')
     assert account_admin_validation.invalid?
     assert_equal email_invalid_message, account_admin_validation.errors.to_h
+  end
+
+  def test_invalid_invoice_email
+    Account.stubs(:current).returns(Account.new)
+    Account.stubs(:current).returns(Account.new)
+    account_admin_validation = AccountAdminValidation.new(first_name: 'me', last_name: 'you', invoice_emails: 'me@you.com', phone: '0000000')
+    assert account_admin_validation.invalid?
+    invoice_email_invalid_message = { invoice_emails: :datatype_mismatch }
+    assert_equal invoice_email_invalid_message, account_admin_validation.errors.to_h
+    account_admin_validation = AccountAdminValidation.new(first_name: 'me', last_name: 'you', invoice_emails: ['me@you.'], phone: '0000000')
+    assert account_admin_validation.invalid?
+    invoice_email_invalid_message = { invoice_emails: 'Email is invalid' }
+    assert_equal invoice_email_invalid_message, account_admin_validation.errors.to_h
+    account_admin_validation = AccountAdminValidation.new(first_name: 'me', last_name: 'you', invoice_emails: ['me@you.com', 'you@me.com'], phone: '0000000')
+    assert account_admin_validation.invalid?
+    invoice_email_invalid_message = { invoice_emails: :too_long }
+    assert_equal invoice_email_invalid_message, account_admin_validation.errors.to_h
   end
 end

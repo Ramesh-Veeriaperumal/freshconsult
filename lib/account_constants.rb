@@ -85,8 +85,14 @@ module AccountConstants
     max: { dashboard: 25, widgets: { scorecard: 25, bar_chart: 9, csat: 3, leaderboard: 3, ticket_trend_card: 4, time_trend_card: 4, sla_trend_card: 4 } }
   }.freeze
   
+  PAID_BY_RESELLER = {
+    'Yes' =>  true,
+    'No' => false
+  }.freeze
+
   HIPAA_ENCRYPTION_ALGORITHM = 'AES-256-CBC'
   SANDBOX_TRAIL_PERIOD = 180
+  MAX_INVOICE_EMAILS = 1
 
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT

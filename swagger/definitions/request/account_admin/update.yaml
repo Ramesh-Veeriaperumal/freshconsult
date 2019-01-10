@@ -17,3 +17,11 @@ properties:
   phone:
     type: string
     description: phone number of account's primary contact
+  invoice_emails:
+    type: array
+    description: invoice email of account
+    maxItems: 1
+    minItems: 1
+    items:
+      type: string
+      format: email

@@ -556,6 +556,7 @@ Helpkit::Application.routes.draw do
 
     # account update
     put '/account_admin', to: 'account_admins#update'
+    put 'account_admin/disable_billing_info_updation', to: 'account_admins#disable_billing_info_updation'
 
     # dirty hack - check privilege fails when using 'solutions' namespace although controller action mapping is unaffected
     get 'solutions/articles', to: 'ember/solutions/articles#index'
