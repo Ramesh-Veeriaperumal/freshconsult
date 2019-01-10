@@ -9889,6 +9889,49 @@
           }
         }
       }
+    },
+    "/admin/custom_translations/primary": {
+      "get": {
+        "tags": [
+          "Custom Translations"
+        ],
+        "summary": "Download primary",
+        "description": "Download the labels for primary language",
+        "responses": {
+          "200": {
+            "description": "Success (Downloads translation file in yml format)"
+          }
+        }
+      }
+    },
+    "/admin/custom_translations/{id}": {
+      "get": {
+        "tags": [
+          "Custom Translations"
+        ],
+        "summary": "Download secondary",
+        "description": "Download the labels for secondary language",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Language code",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success (Downloads translation file in yml format)"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {

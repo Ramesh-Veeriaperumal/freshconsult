@@ -238,6 +238,7 @@ Helpkit::Application.routes.draw do
     resources :download, controller: 'admin/custom_translations/download', path: 'admin/custom_translations/', only: [:primary] do
       collection do
         get :primary, to: 'admin/custom_translations/download#primary'
+        get ':id', to: 'admin/custom_translations/download#secondary'
       end
     end
 

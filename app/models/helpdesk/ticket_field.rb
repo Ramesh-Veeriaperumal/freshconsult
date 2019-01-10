@@ -47,6 +47,16 @@ class Helpdesk::TicketField < ActiveRecord::Base
                           :conditions => {:field_type => 'nested_field'},
                           :dependent => :destroy,
                           :order => "level"
+                          
+  has_many :custom_translations, :class_name => "CustomTranslation", :as => :translatable, :dependent => :destroy
+  
+  Language.all.each do |lang|
+      has_one :"#{lang.to_key}_translation",
+      :conditions => proc { { language_id: lang.id, 
+        account_id: Account.current.id } },
+      :class_name => "CustomTranslation", 
+      :as => :translatable
+  end
 
   has_many :picklist_values, :as => :pickable, 
                              :class_name => 'Helpdesk::PicklistValue',

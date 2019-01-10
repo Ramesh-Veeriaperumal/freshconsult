@@ -1,0 +1,17 @@
+get:
+  tags: [Custom Translations]
+  summary: Download secondary
+  description: Download the labels for secondary language
+  parameters: 
+    - name: id
+      in: path
+      type: string 
+      description: Language code 
+      required: true
+  responses:
+    200:
+      description: Success (Downloads translation file in yml format)
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

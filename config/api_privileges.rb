@@ -150,7 +150,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/trial_subscription", only: [:usage_metrics]
     resource :"admin/automation", only: [:index, :destroy]
     resource :"admin/custom_translations/upload", only: [:upload]
-    resource :"admin/custom_translations/download", only: [:primary]
+    resource :"admin/custom_translations/download", only: [:primary, :secondary]
   end
 
   edit_ticket_properties do

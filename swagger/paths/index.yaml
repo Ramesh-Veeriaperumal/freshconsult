@@ -562,4 +562,7 @@
 # Custom Translations
 /admin/custom_translations/{id}/upload:
   $ref: ./admin/custom_translations/upload.yaml
-
+/admin/custom_translations/primary:
+  $ref: ./admin/custom_translations/primary.yaml 
+/admin/custom_translations/{id}:
+  $ref: ./admin/custom_translations/secondary.yaml 

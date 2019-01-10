@@ -39,6 +39,40 @@ class Helpdesk::TicketField < ActiveRecord::Base
     tf.add proc { |field| field.fetch_custom_field_choices }, as: :choices, if: :field_with_choice?
   end
 
+  api_accessible :custom_translation_secondary do |t|
+    t.add ->(model, options) { model.fetch_label(options[:lang]) }, as: :label
+    t.add ->(model, options) { model.fetch_customer_label(options[:lang]) }, as: :customer_label
+    t.add ->(model, options) { model.fetch_choices(options[:lang]) }, as: :choices, if: :field_with_choice?
+  end
+
+  def fetch_label(lang)
+    tf = parent_id.nil? ? self : parent
+    translation = tf.safe_send("#{lang}_translation").try(:translations)
+    return '' if translation.nil?
+    unless parent_id.nil?
+      return translation["label_#{level}"] ? translation["label_#{level}"] : ''
+    end
+    
+    translation['label'] || ''
+  end
+
+  def fetch_customer_label(lang)
+    tf = parent_id.nil? ? self : parent
+    translation = tf.safe_send("#{lang}_translation").try(:translations)
+    return '' if translation.nil?
+    unless parent_id.nil?
+      return translation["customer_label_#{level}"] ? translation["customer_label_#{level}"] : ''
+    end
+
+    translation['customer_label'] || ''
+  end
+
+  def fetch_choices(lang)
+    tf = parent_id.nil? ? self : parent
+    translation = tf.safe_send("#{lang}_translation").try(:translations)
+    Hash[fetch_custom_field_choices.map { |key, value| [key, translation && translation['choices'][key].present? ? translation['choices'][key] : ''] }]
+  end
+
   def field_with_choice?
     ['nested_field', 'custom_dropdown', 'default_status', 'default_ticket_type'].include?(field_type)
   end
