@@ -13,11 +13,35 @@ class ApiSlaPolicyValidationTest < ActionView::TestCase
     assert errors.include?('Name datatype_mismatch')
   end
 
+  def test_name_nil_for_create
+    sla = ApiSlaPolicyValidation.new({ applicable_to: { company_ids: [1, 2] } }, nil)
+    refute sla.valid?(:create)
+    errors = sla.errors.full_messages
+    
+    assert errors.include?('Name missing_field')
+    assert errors.include?('Sla target missing_field')
+  end
+  
+  def test_name_nil
+    sla = ApiSlaPolicyValidation.new({ name: nil }, nil)
+    refute sla.valid?
+    errors = sla.errors.full_messages
+    assert errors.include?('Name datatype_mismatch')
+  end
+
   def test_name_invalid_data_type
     sla = ApiSlaPolicyValidation.new({ name: [] }, nil)
     refute sla.valid?
     errors = sla.errors.full_messages
     assert errors.include?('Name datatype_mismatch')
+  end
+
+  def test_name_invalid_data_type_create
+    sla = ApiSlaPolicyValidation.new({ name: [] }, nil)
+    refute sla.valid?(:create)
+    errors = sla.errors.full_messages
+    assert errors.include?('Name blank')
+    assert errors.include?('Applicable to missing_field')
   end
 
   def test_description_nil
@@ -53,6 +77,13 @@ class ApiSlaPolicyValidationTest < ActionView::TestCase
     refute sla.valid?
     errors = sla.errors.full_messages
     assert errors.include?('Applicable to datatype_mismatch')
+  end
+
+    def test_applicable_to_nil_create
+    sla = ApiSlaPolicyValidation.new({ applicable_to: nil }, nil)
+    refute sla.valid?(:create)
+    errors = sla.errors.full_messages
+    assert errors.include?('Applicable to blank')
   end
 
   def test_applicable_to_invalid_data_type

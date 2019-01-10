@@ -79,5 +79,7 @@ module SlaPolicyConstants
                   ['sla_target'] | ['sla_target' => ALLOWED_HASH_SLA_TARGET_FIELD] | 
                   ['applicable_to'] | ['applicable_to' => ALLOWED_HASH_CONDITION_FIELDS] | 
                   ['escalation'] | ['escalation' => ALLOWED_HASH_ESCALATIONS_FIELD]
+              
+  CREATE_FIELDS = UPDATE_FIELDS
 
 end

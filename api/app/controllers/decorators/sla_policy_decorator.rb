@@ -44,7 +44,7 @@ class SlaPolicyDecorator < ApiDecorator
       {
         respond_within:       input_hash.response_time,
         resolve_within:       input_hash.resolution_time, 
-        business_hours:       input_hash.override_bhrs, 
+        business_hours:       !input_hash.override_bhrs, 
         escalation_enabled:   input_hash.escalation_enabled
       }
     end

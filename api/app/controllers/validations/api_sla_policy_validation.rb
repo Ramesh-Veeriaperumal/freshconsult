@@ -3,8 +3,9 @@ class ApiSlaPolicyValidation < ApiValidation
                 :sla_target, :priority_1, :priority_2, :priority_3, :priority_4,
                 :escalation, :response, :resolution, :level_1, :level_2, :level_3, :level_4
 
-  
-  validates :name, data_type: { rules: String, allow_nil: false, custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING} }
+  validates :name,:applicable_to,:sla_target, required: true, on: :create
+  validates :name, data_type: { rules: String, allow_nil: false},custom_length: { maximum: ApiConstants::MAX_LENGTH_STRING }
+
   validates :description, data_type: { rules: String, allow_nil: true }
   validates :active, data_type: { rules: 'Boolean'}
 
@@ -69,5 +70,4 @@ class ApiSlaPolicyValidation < ApiValidation
       end
     end
   end
-
 end
