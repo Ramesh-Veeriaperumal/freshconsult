@@ -50,6 +50,11 @@ module AccountConstants
     }
   }
 
+  PAID_BY_RESELLER = {
+    'Yes' =>  true,
+    'No' => false
+  }.freeze
+
   DATEFORMATS_NAME_BY_VALUE = Hash[*DATEFORMATS.flatten]
 
   MAINTENANCE_STATUS = 503
@@ -78,6 +83,7 @@ module AccountConstants
   ATTACHMENT_LIMIT = 20
 
   HIPAA_ENCRYPTION_ALGORITHM = 'AES-256-CBC'
+  MAX_INVOICE_EMAILS = 1
 
    DASHBOARD_LIMITS = { min: { dashboard: 5, widgets: { scorecard: 6, bar_chart: 3, csat: 3, leaderboard: 3, forum_moderation: 1, ticket_trend_card: 2, time_trend_card: 2, sla_trend_card: 2 } },
                        mid: { dashboard: 5, widgets: { scorecard: 8, bar_chart: 4, csat: 3, leaderboard: 3, forum_moderation: 1, ticket_trend_card: 3, time_trend_card: 3, sla_trend_card: 3 } },

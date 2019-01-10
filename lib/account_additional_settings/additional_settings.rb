@@ -22,4 +22,9 @@ module AccountAdditionalSettings::AdditionalSettings
     end
   end
 
+  def set_payment_preference(paid_by_reseller)
+    additional_settings = self.additional_settings || {}
+    additional_settings[:paid_by_reseller] = PAID_BY_RESELLER[paid_by_reseller] || false
+    update_attributes(additional_settings: additional_settings)
+  end
 end

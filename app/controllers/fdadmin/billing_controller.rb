@@ -153,6 +153,7 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
       update_addons(@account.subscription, @billing_data.subscription)
 
       update_features if update_features?
+      @account.account_additional_settings.set_payment_preference(@billing_data.subscription.cf_reseller)
     end
 
     def subscription_activated(content)
