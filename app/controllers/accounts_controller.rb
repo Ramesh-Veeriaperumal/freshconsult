@@ -34,11 +34,10 @@ class AccountsController < ApplicationController
   before_filter :validate_signup_email, only: [:email_signup, :new_signup_free]
   before_filter :check_for_existing_accounts, only: [:email_signup, :new_signup_free]
 
-  before_filter :account_unverified?, :only => [:edit_domain, :validate_domain, :update_domain]
   before_filter :ensure_proper_user, :only => [:edit_domain]
-  before_filter :check_activation_mail_job_status, :only => [:edit_domain, :update_domain]
+  before_filter :check_activation_mail_job_status, :only => [:edit_domain, :update_domain], :unless => :freshid_enabled?
   before_filter :validate_domain_name, :only => [:update_domain]
-  after_filter  :kill_account_activation_email_job, :only => [:update_domain]
+  after_filter  :kill_account_activation_email_job, :only => [:update_domain], :unless => :freshid_enabled?
   before_filter :build_user, :only => [ :new, :create ]
   before_filter :build_metrics, :only => [ :create ]
   before_filter :load_billing, :only => [ :show, :new, :create, :payment_info ]
@@ -104,9 +103,12 @@ class AccountsController < ApplicationController
   # creating a session which will be deleted once update domain is done as the session cookie is based on domain
 
   def edit_domain
-    @user_session = current_account.user_sessions.new(current_user)
+    new_freshid_signup = @current_user.active = true unless @current_user.active_freshid_agent?
+    @user_session = current_account.user_sessions.new(@current_user)
     if @user_session.save
-      current_account.schedule_account_activation_email(current_user.id) unless current_account.freshid_enabled?
+      @current_user.reload
+      @current_user.primary_email.update_attributes({verified: false}) if new_freshid_signup
+      @current_account.schedule_account_activation_email(@current_user.id) unless freshid_enabled?
       render :layout => false
       return
     else
@@ -282,7 +284,9 @@ class AccountsController < ApplicationController
     end
   end
 
+
   protected
+
     def multi_language_available?
       current_account.features_included?(:multi_language)
     end
@@ -615,11 +619,6 @@ class AccountsController < ApplicationController
     def normal_full_signup?
       account_params = params['account']
       account_params && account_params.key?(:domain)
-    end
-
-    # Do not allow users to perform edit/validate/update domain if account is verified
-    def account_unverified?
-      access_denied if current_account.verified?
     end
 
     def ensure_proper_user

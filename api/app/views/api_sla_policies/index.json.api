@@ -6,8 +6,12 @@ JSON.generate(@items.map do |sla_policy|
     active: sla_policy.active,
     is_default: sla_policy.is_default,
     position: sla_policy.position,
+    sla_target: SlaPolicyDecorator.pluralize_sla_target(sla_policy.sla_details),
     applicable_to: SlaPolicyDecorator.pluralize_conditions(sla_policy.conditions),
+    escalation: SlaPolicyDecorator.pluralize_escalations(sla_policy.escalations),
     created_at: sla_policy.created_at.try(:utc),
     updated_at: sla_policy.updated_at.try(:utc)
   }
 end)
+
+

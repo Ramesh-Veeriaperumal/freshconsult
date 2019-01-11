@@ -12,7 +12,7 @@ module Sync::Transformer::Util
     if value.present? && (value.is_a?(Array) || !value.to_i.zero?)
       if value.is_a? Array
         value.map { |val| apply_id_mapping(val, mapping_info, model, reverse) }
-      elsif @resync && mapping_info.key?(value.to_i)
+      elsif clone_or_resync? && mapping_info.key?(value.to_i)
         mapping_value(mapping_info, value)
       elsif !skip_transformation?(value, model) && value.to_i > 0
         calc_id(value, reverse)
@@ -33,4 +33,10 @@ module Sync::Transformer::Util
     return {} if mapping_table[model.to_s].blank?
     mapping_table[model.to_s][mapped_column] || {}
   end
+
+  private
+
+    def clone_or_resync?
+      @clone || @resync
+    end
 end

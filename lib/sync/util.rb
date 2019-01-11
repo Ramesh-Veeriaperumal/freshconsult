@@ -17,7 +17,7 @@ module Sync::Util
   end
 
   def sync_config_to_remote(account_id, repo_path, message, author, email)
-    branch = branch_name(account_id)
+    branch    = branch_name(account_id)
     gitClient = Sync::GitClient.new(repo_path, branch)
     gitClient.commit_all_changed_files(message, author, email)
     gitClient.push_changes_to_remote
@@ -34,7 +34,7 @@ module Sync::Util
 
   def restore_config_from_git(master_account_id, staging_account_id, repo_path, retain_id)
     account = Account.find(staging_account_id).make_current
-    s = Sync::FileToData::Manager.new(repo_path, master_account_id, retain_id)
+    s = Sync::FileToData::Manager.new(repo_path, master_account_id, retain_id, false, @clone)
     clear_staging_data(s.affected_tables, account.id)
     s.update_all_config
     s.post_config
@@ -111,6 +111,6 @@ module Sync::Util
     end
 
     def branch_name(account_id)
-      account_id.to_s
+      @branch.present? ? @branch.to_s : account_id.to_s
     end
 end

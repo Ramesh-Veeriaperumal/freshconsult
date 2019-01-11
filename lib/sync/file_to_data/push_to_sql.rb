@@ -2,15 +2,16 @@ class Sync::FileToData::PushToSql
   include Sync::FileToData::Util
   attr_accessor :retain_id, :resync, :self_associations, :account, :mapping_table, :deleted_associations
 
-  def initialize(root_path, master_account_id, retain_id = false, resync = false, account = Account.current)
+  def initialize(root_path, master_account_id, retain_id = false, resync = false, clone = false, account = Account.current)
     @root_path = root_path
     @resync = resync
     @retain_id = retain_id
+    @clone = clone
     @master_account_id = master_account_id
     @account = Account.current
     @self_associations = []
     @deleted_associations = {}
-    @transformer = Sync::FileToData::Transformer.new(master_account_id, resync)
+    @transformer = Sync::FileToData::Transformer.new(master_account_id, resync, @clone)
     @mapping_table = {
       'Account' => {
         id: {
@@ -56,7 +57,7 @@ class Sync::FileToData::PushToSql
   end
 
   def apply_mapping(column_values, model, table, serialized_columns, action)
-    Sync::Logger.log("Apply Mapping  Model : #{model} Column Values : #{column_values.inspect} Mapping Table : #{@mapping_table.inspect}}")
+    Sync::Logger.log("Apply Mapping  Model : #{model} Column Values : #{column_values.inspect}")
     ret_val = []
     column_values.each do |column, data|
       association = MODEL_DEPENDENCIES[model].detect { |x| x[1].to_s == column.to_s }
@@ -71,8 +72,8 @@ class Sync::FileToData::PushToSql
           column_values[column] = @mapping_table[associated_model][:id][data] if data && @mapping_table[associated_model] && @mapping_table[associated_model][:id][data]
         end
       elsif column_values[column].present? && action != :deleted && @transformer.available?(model, column)
-        Sync::Logger.log("available transformer, column: #{column}, value: #{column_values[column].inspect}  model: #{model}")
         transformed_column_value = @transformer.safe_send("transform_#{model.gsub('::', '').snakecase}_#{column}", column_values[column], @mapping_table)
+        Sync::Logger.log("available transformer, column: #{column}, value: #{column_values[column].inspect}, transformed_column_value: #{transformed_column_value}  model: #{model}")
         if transformed_column_value != column_values[column] && !serialized_columns.include?(column)
           @mapping_table[model][column] ||= {}
           @mapping_table[model][column][column_values[column]] = transformed_column_value
@@ -88,7 +89,7 @@ class Sync::FileToData::PushToSql
   private
 
     def generate_id?(item, model)
-      !resync && !item.to_i.zero? 
+      !@clone && !resync && !item.to_i.zero?
     end
 
     def generate_id(item, model)

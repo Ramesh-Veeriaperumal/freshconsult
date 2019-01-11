@@ -330,6 +330,94 @@ module Channel::V2
       Account.unstub(:current)
     end
 
+    def test_facebook_post_ticket
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 2, source: 6, 
+                            facebook: { post_id: "1075277095974458_1095516297283875", msg_type: 'post', page_id: 2191450117763727, can_comment: true, post_type: 1 }
+                          }
+      ticket = TicketValidation.new(controller_params, nil)
+      assert ticket.valid?(:create)
+      Account.unstub(:current)
+    end
+
+    def test_facebook_dm_ticket
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 2, source: 6, 
+                            facebook: { post_id: "1075277095974458_1095516297283875", msg_type: 'dm', page_id: 2191450117763727, thread_id: "300175417269660::1943191972395357" }
+                          }
+      ticket = TicketValidation.new(controller_params, nil)
+      assert ticket.valid?(:create)
+      Account.unstub(:current)
+    end
+
+    def test_facebook_msg_type_not_present
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 2, source: 6, 
+                            facebook: { post_id: "1075277095974458_1095516297283875", page_id: 2191450117763727, thread_id: "300175417269660::1943191972395357" }
+                          }
+      ticket = TicketValidation.new(controller_params, nil)
+      refute ticket.valid?(:create)
+      errors = ticket.errors.full_messages
+      assert errors.include?('Facebook datatype_mismatch')
+      Account.unstub(:current)
+    end
+
+    def test_facebook_page_id_not_present
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 2, source: 6, 
+                            facebook: { post_id: "1075277095974458_1095516297283875", msg_type: 'dm', thread_id: "300175417269660::1943191972395357" }
+                          }
+      ticket = TicketValidation.new(controller_params, nil)
+      refute ticket.valid?(:create)
+      errors = ticket.errors.full_messages
+      assert errors.include?('Facebook datatype_mismatch')
+      Account.unstub(:current)
+    end
+
+
+    def test_facebook_ticket_with_invalid_comment
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 2, source: 6, 
+                            facebook: { post_id: "1075277095974458_1095516297283875", msg_type: 'post', page_id: 2191450117763727, can_comment: "true", post_type: 1 }
+                          }
+      ticket = TicketValidation.new(controller_params, nil)
+      refute ticket.valid?(:create)
+      errors = ticket.errors.full_messages
+      assert errors.include?('Facebook datatype_mismatch')
+      Account.unstub(:current)
+    end
+
+    def test_facebook_ticket_with_invalid_source
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 2, source: 3, 
+                            facebook: { post_id: "1075277095974458_1095516297283875", msg_type: 'post', page_id: 2191450117763727, can_comment: true, post_type: 1 }
+                          }
+      ticket = TicketValidation.new(controller_params, nil)
+      refute ticket.valid?(:create)
+      errors = ticket.errors.full_messages
+      assert errors.include?('Facebook invalid_field')
+      Account.unstub(:current)
+    end
+
+    def test_facebook_ticket_with_invalid_post_type
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {requester_id: 1, description: Faker::Lorem.paragraph,
+                            ticket_fields: [], statuses: statuses, status: 2, source: 6, 
+                            facebook: { post_id: "1075277095974458_1095516297283875", msg_type: 'post', page_id: 2191450117763727, can_comment: true, post_type: 5 }
+                          }
+      ticket = TicketValidation.new(controller_params, nil)
+      refute ticket.valid?(:create)
+      errors = ticket.errors.full_messages
+      assert errors.include?('Facebook not_included')
+      Account.unstub(:current)
+    end
+
     DATE_FIELDS.each do |field|
       define_method "test_#{field}_string" do
         Account.stubs(:current).returns(Account.first)

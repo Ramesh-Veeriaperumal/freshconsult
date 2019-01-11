@@ -6,6 +6,17 @@ properties:
     type: string
   active:
     type: boolean
+  sla_target:
+    type: object
+    properties:
+      priority_4:
+        $ref: '#/definitions/sla_target_response'
+      priority_3:
+        $ref: '#/definitions/sla_target_response'
+      priority_2:
+        $ref: '#/definitions/sla_target_response'
+      priority_1:
+        $ref: '#/definitions/sla_target_response'
   applicable_to:
     type: object
     properties:
@@ -24,12 +35,21 @@ properties:
       sources:
         type: array
         items:
-          type: string
+          type: integer
+          enum: [1,2,3,7,8,9,10]
       ticket_types:
         type: array
         items:
           type: string
-  is_default:
-    type: boolean
-  position:
-    type: integer
+          enum: ['Question','Incident','Problem','Feature Request']
+  escalation:
+    type: object
+    properties:
+      response:
+        $ref: '#/definitions/sla_escalation_level'
+      resolution:
+        $ref: '#/definitions/sla_escalation_response'
+required:
+  - name
+  - sla_target
+  - applicable_to

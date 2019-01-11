@@ -621,3 +621,20 @@ email_notification_update:
 # Account Configuration
 account_admin_update:
   $ref: ./request/account_admin/update.yaml
+
+#SLA Policy
+sla_policy:
+  $ref: ./resource/sla_policy.yaml
+sla_target_response:
+  $ref: ./resource/sla_target.yaml
+sla_escalation_response:
+  $ref: ./resource/sla_escalation.yaml
+sla_escalation_level:
+  $ref: ./resource/sla_escalation_level.yaml
+sla_policy_input:
+  $ref: ./request/admin/sla_policy.yaml
+sla_policy_response:
+  $ref: ./response/admin/sla_policy.yaml
+sla_policy_common:
+  $ref: ./resource/sla_policy_common.yaml
+  

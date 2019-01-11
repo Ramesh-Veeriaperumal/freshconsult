@@ -9,17 +9,17 @@ class RabbitmqWorker
   end
 
   def perform(exchange_key, message, rounting_key, lambda_feature=false)
-    
+    Rails.logger.info "RabbitMq :: UUID :: #{JSON.parse(message).fetch('uuid', 'uuid-not-set')}"
     # Publish to cti
     if cti_routing_key?(exchange_key)
       sqs_msg_obj = sqs_v2_push(SQS[:cti_screen_pop], message, 0)
-      puts " SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      Rails.logger.info "SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
 
     # Publish to ES Count
     if count_routing_key?(exchange_key, rounting_key)
       sqs_msg_obj = (Ryuken::CountPerformer.perform_async(message) rescue nil)
-      puts "CountES SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      Rails.logger.info "CountES SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
     
     # Publish to Search-v2
@@ -38,7 +38,7 @@ class RabbitmqWorker
       else
         sqs_msg_obj = (Ryuken::SearchSplitter.new.perform(nil, JSON.parse(message)) rescue nil)
       end
-      puts "Searchv2 SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      Rails.logger.info "Searchv2 SQS Message id - #{sqs_msg_obj.try(:message_id)} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
     
     # Publish to Autorefresh, AgentCollision, Collaboration (User and ticket) 
@@ -53,14 +53,14 @@ class RabbitmqWorker
     #
     if reports_routing_key?(exchange_key, rounting_key)
       sqs_msg_obj = sqs_v2_push(SQS[:reports_etl_msg_queue], message, nil)
-      puts " SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      Rails.logger.info "SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
 
     # Publish to Activities-v2
     #
     if activities_routing_key?(exchange_key, rounting_key)
       sqs_msg_obj = sqs_v2_push(SQS[:activity_queue], message, nil)
-      puts " SQS Activities Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
+      Rails.logger.info "SQS Activities Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{rounting_key} :: Exchange - #{exchange_key}"
     end
     
     Rails.logger.info("Published RMQ message via Sidekiq")
@@ -232,24 +232,21 @@ class RabbitmqWorker
     end
 
     def print_log(log, sqs_msg_obj, routing_key, exchange_key)
-      puts " #{log} SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
+      Rails.logger.info "#{log} SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
     end
 
     def publish_for_collab(exchange_key, message, routing_key)
       if collaboration_ticket_routing_key?(exchange_key, routing_key)
-        puts "pushing ticket in SQS for collab"
         sqs_msg_obj = sqs_v2_push(SQS[:collab_ticket_update_queue], message, nil)
-        puts "Collaboration SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
+        Rails.logger.info "Collaboration SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
       end
       if collaboration_user_routing_key?(exchange_key, routing_key)
-        puts "pushing user in SQS for collab"
         sqs_msg_obj = sqs_v2_push(SQS[:collab_agent_update_queue], message, nil)
-        puts "Collaboration SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
+        Rails.logger.info "Collaboration SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
       end
       if collaboration_account_routing_key?(exchange_key, routing_key)
-        puts "pushing account in SQS for collab"
         sqs_msg_obj = sqs_v2_push(SQS[:collab_ticket_update_queue], message, nil)
-        puts "Collaboration SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
+        Rails.logger.info "Collaboration SQS Message id - #{sqs_msg_obj.message_id} :: ROUTING KEY -- #{routing_key} :: Exchange - #{exchange_key}"
       end
     end
 end

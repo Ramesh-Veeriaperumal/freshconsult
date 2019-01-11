@@ -42,4 +42,16 @@ module UsageMetrics::SproutFeatures
   def installed_apps(args)
     args[:account].installed_applications.exists?
   end
+
+  def ticket_summary(args)
+    args[:account].has_feature?(:ticket_summary) && args[:account]
+      .notes
+      .where(source: Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['summary'])
+      .last
+      .try(:created_at).try(:>, 30.days.ago).present?
+  end
+
+  def canned_forms(args)
+    args[:account].canned_forms.exists?
+  end
 end

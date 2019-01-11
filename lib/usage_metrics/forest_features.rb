@@ -16,4 +16,12 @@ module UsageMetrics::ForestFeatures
   def data_center_location(args)
     args[:shard].pod_info != PodConfig['GLOBAL_POD']
   end
+
+  def sandbox(args)
+    args[:account].sandbox_job.present? || args[:account]
+      .account_additional_settings
+      .additional_settings
+      .try(:[], :sandbox)
+      .try(:[], :status).present?
+  end
 end

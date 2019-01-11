@@ -36,7 +36,7 @@ window.App = window.App || {};
     },
 
     addTargetTopForLinks: function () {
-      $('.reload-page a').each(function() {
+      $('.reload-page a:not([target])').each(function() {
         var hrefArray = this.href.split('/').slice(-1)[0];
         if(hrefArray.indexOf('#') == -1) {
           $(this).attr('target', '_top');

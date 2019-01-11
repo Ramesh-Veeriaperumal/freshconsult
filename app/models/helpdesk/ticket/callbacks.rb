@@ -64,8 +64,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   after_commit :create_initial_activity, on: :create
   after_commit :trigger_dispatcher, on: :create, :unless => :skip_dispatcher?
-  after_commit :send_outbound_email, :update_capping_on_create, :update_count_for_skill,on: :create, :if => :outbound_email?
-
+  after_commit :update_capping_on_create, :update_count_for_skill, on: :create, if: -> { outbound_email? }
+  after_commit :send_outbound_email, on: :create, if: -> { outbound_email? && import_ticket.blank? }
   after_commit :trigger_observer_events, on: :update, :if => :execute_observer?
   after_commit :enqueue_sla_calculation, :if => :enqueue_sla_calculation?
   after_commit :update_ticket_states, :notify_on_update, :update_activity,

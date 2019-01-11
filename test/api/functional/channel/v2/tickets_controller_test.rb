@@ -62,6 +62,24 @@ module Channel::V2
       params_hash
     end
 
+    def fb_page_params_hash
+      {
+        :profile_id=>Faker::Number.number(15), 
+        :access_token=>Faker::Lorem.characters,
+        :page_id=>Faker::Number.number(15),
+        :page_name=>Faker::Name.name,
+        :page_token=>Faker::Lorem.characters,
+        :page_img_url=>Faker::Internet.url,
+        :page_link=>Faker::Internet.url,
+        :fetch_since=>0,
+        :reauth_required=>false,
+        :last_error=>nil,
+        :message_since=>1544533381,
+        :enable_page=>true,
+        :realtime_messaging=>0
+      }
+    end
+
     def get_user_with_default_company
       user_company = @account.user_companies.group(:user_id).having('count(*) = 1 ').last
       if user_company.present?
@@ -169,6 +187,61 @@ module Channel::V2
       assert (t.closed_at - closed_at).to_i == 0
     ensure
       Account.any_instance.unstub(:shared_ownership_enabled?)
+    end
+
+    def test_facebook_post_ticket_create
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      fb_page_id = fetch_or_create_fb_page
+      params = {
+        requester_id: requester.id, status: 5, priority: 2, source: 6,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+        source_additional_info: {
+          facebook: { 
+            post_id: "1075277095974458_1095516297283875", 
+            msg_type: 'post', 
+            page_id: fb_page_id, 
+            can_comment: true, 
+            post_type: 1 
+          }
+        }
+      }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 201
+      t = Helpdesk::Ticket.last
+      match_json(ticket_pattern(params, t))
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
+      $infra['CHANNEL_LAYER'] = false
+      @channel_v2_api = false
+    end
+
+    def test_facebook_dm_ticket_create
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      fb_page_id = fetch_or_create_fb_page
+      params = {
+        requester_id: requester.id, status: 5, priority: 2, source: 6,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+        source_additional_info: { 
+          facebook: { 
+            post_id: "1075277095974458_1095516297283876", 
+            msg_type: 'dm', 
+            page_id: fb_page_id, 
+            thread_id: "300175417269660::1943191972395357" 
+          }
+        }
+      }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 201
+      t = Helpdesk::Ticket.last
+      match_json(ticket_pattern(params, t))
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
+      $infra['CHANNEL_LAYER'] = false
+      @channel_v2_api = false
     end
 
     def test_update_with_closed_at

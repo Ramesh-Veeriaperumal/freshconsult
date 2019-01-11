@@ -1,24 +1,34 @@
 require_relative '../unit_test_helper'
 require 'sidekiq/testing'
 require 'faker'
-
-require Rails.root.join('test', 'api', 'helpers', 'tickets_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'note_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'tickets_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
+require Rails.root.join('spec', 'support', 'agent_helper.rb')
+require Rails.root.join('test', 'api', 'helpers', 'tickets_test_helper.rb')
 
 Sidekiq::Testing.fake!
 
 class UndoSendWorkerTest < ActionView::TestCase
+  include NoteTestHelper
+  include AccountTestHelper
   include UsersTestHelper
+  include AgentHelper
   include ApiTicketsTestHelper
+  include TicketsTestHelper
 
   def setup
-    @account = Account.first.make_current
-    @account.add_feature(:undo_send)
+    @account = Account.first || create_new_account
+    @account.make_current
+    @account.launch(:undo_send)
     @customer = Account.current.users.first
+    @customer.make_current
+    @ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
   end
 
   def teardown
-    @account.revoke_feature(:undo_send)
+    @account.rollback(:undo_send)
   end
 
   def undo_send_args(ticket)
@@ -84,6 +94,90 @@ class UndoSendWorkerTest < ActionView::TestCase
     email_config = @account.email_configs.where(active: true).first || create_email_config
     params_hash = { body: body, cc_emails: email, bcc_emails: bcc_emails, from_email: email_config.reply_email }
     params_hash
+  end
+
+  def create_attachment_for_account(requester)
+    attachment = @account.attachments.new
+    attachment.description = 'abcx'
+    attachment.attachable_id = requester.id
+    attachment.attachable_type = 'Ticket::Inline'
+    attachment.content_file_name = 'testattach'
+    attachment.content_content_type = 'text/binary'
+    attachment.content_file_size = 80
+    attachment.save
+    attachment
+  end
+
+  def test_undo_send_worker_publish_solution_later
+    ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+    create_normal_reply_for(ticket)
+    undo_args = undo_send_args(ticket)
+    undo_args[:publish_solution_later] = true
+    args = HashWithIndifferentAccess.new(undo_args)
+    Tickets::UndoSendWorker.new.perform(args)
+    kbase = Account.current.solution_articles.last
+    assert_equal ticket.subject, kbase.title
+  ensure
+    @account.rollback(:undo_send)
+  end
+
+  def test_undo_send_worker_with_save_exception
+    ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+    create_normal_reply_for(ticket)
+    args = HashWithIndifferentAccess.new(undo_send_args(ticket))
+    old_notes_count = ticket.notes.count
+    Helpdesk::Note.any_instance.stubs(:save_note).returns(false)
+    Tickets::UndoSendWorker.new.perform(args)
+    Helpdesk::Note.any_instance.unstub(:save_note)
+    assert_equal old_notes_count, ticket.reload.notes.count
+  ensure
+    @account.rollback(:undo_send)
+  end
+
+  def test_undo_send_worker_with_exception
+    assert_raises(RuntimeError) do
+      Account.any_instance.stubs(:tickets).raises(RuntimeError)
+      ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+      create_normal_reply_for(ticket)
+      args = HashWithIndifferentAccess.new(undo_send_args(ticket))
+      old_notes_count = ticket.notes.count
+      Tickets::UndoSendWorker.new.perform(args)
+      Account.any_instance.unstub(:tickets)
+      assert_equal old_notes_count, ticket.reload.notes.count
+    end
+  ensure
+    @account.rollback(:undo_send)
+  end
+
+  def test_undo_send_worker_ticket_subject
+    ticket_hash = ticket_params_hash
+    ticket_hash[:subject] = 'a'
+    ticket = create_ticket(ticket_hash)
+    create_normal_reply_for(ticket)
+    undo_args = undo_send_args(ticket)
+    undo_args[:publish_solution_later] = true
+    args = HashWithIndifferentAccess.new(undo_args)
+    Tickets::UndoSendWorker.new.perform(args)
+    kbase = Account.current.solution_articles.last
+    assert_equal I18n.t('undo_send_solution_error', ticket_display_id: ticket.display_id), kbase.title
+  ensure
+    @account.rollback(:undo_send)
+  end
+
+  def test_undo_send_worker_attachments
+    ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+    create_normal_reply_for(ticket)
+    undo_args = undo_send_args(ticket)
+    att = create_attachment_for_account(@customer)
+    inline_att = create_attachment_for_account(@customer)
+    undo_args[:attachment_details] = [att.id]
+    undo_args[:inline_attachment_details] = [inline_att.id]
+    args = HashWithIndifferentAccess.new(undo_args)
+    Tickets::UndoSendWorker.new.perform(args)
+    assert_equal ticket.notes.last.inline_attachment_ids, undo_args[:inline_attachment_details]
+    assert_equal ticket.notes.last.attachments.first, att
+  ensure
+    @account.rollback(:undo_send)
   end
 
   def test_undo_send_reply

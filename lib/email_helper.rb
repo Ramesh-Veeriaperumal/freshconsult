@@ -94,8 +94,9 @@ module EmailHelper
     all_keys.present? && all_keys.any? { |key| key.to_s.include?("forward.freshdesk.com") }
   end
 
-  def customer_removed_in_reply?(ticket, in_reply_to, parse_to_emails, cc_emails)
+  def customer_removed_in_reply?(ticket, in_reply_to, parse_to_emails, cc_emails, from_email)
     to_emails_arr = []
+    to_emails_arr << from_email[:email]
     parse_to_emails.each do |to_email|
       to_emails_arr << (parse_email to_email)[:email]
     end

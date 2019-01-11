@@ -2,15 +2,16 @@ class Sync::FileToData::Manager
   include Sync::FileToData::Util
   attr_accessor :root_path, :master_account_id, :account, :failed_records
 
-  def initialize(root_path, master_account_id, retain_id = false, resync = false, account = Account.current)
+  def initialize(root_path, master_account_id, retain_id = false, resync = false, clone = false, account = Account.current)
     @root_path = root_path
     @account = account
     @resync = resync
+    @clone = clone
     @master_account_id = master_account_id
     @self_associations = []
     @failed_records = {}
     find_model_insert_order
-    @push_to_sql = Sync::FileToData::PushToSql.new(root_path, master_account_id, retain_id, resync)
+    @push_to_sql = Sync::FileToData::PushToSql.new(root_path, master_account_id, retain_id, resync, clone)
   end
 
   def update_all_config(action = :added)

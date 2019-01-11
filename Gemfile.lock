@@ -194,14 +194,14 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: 67571070f2407579d0bebb64bab4b59cf3848c48
-  tag: v1.0.8
+  revision: dc3d23f4ed44b33e76ef794dd858d9be76c2041f
+  tag: v1.0.10
   specs:
-    central-publisher (1.0.8)
+    central-publisher (1.0.10)
       active_record_shards (~> 3.2.0)
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
-      newrelic_rpm (~> 3.17.2.327)
+      newrelic_rpm (~> 5.5.0)
       rails (~> 3.2.22.3)
       redis (= 3.3.1)
       sidekiq (~> 3.4.1)
@@ -270,11 +270,11 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/launch-party.git
-  revision: 6d9aedd39a847c2c579a8baedbf5d36312ccf498
-  tag: v0.2
+  revision: a9ca3c6fd65e41311a68400f3226397101139467
+  tag: v0.2.1
   specs:
     launchparty (0.2)
-      newrelic_rpm (>= 3.17.2.327)
+      newrelic_rpm (~> 5.5.0)
       redis (>= 3)
       redis-namespace (>= 1)
 
@@ -306,8 +306,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/time_bandits
-  revision: e0de9656514365a3423fade7e345b5425e690a57
-  tag: v1.0
+  revision: 3e7044932fa5bc10e5ccbc09895e9630d7d417bf
+  tag: v1.1
   specs:
     time_bandits (0.10.12)
       activesupport (>= 2.3.2)
@@ -1019,7 +1019,7 @@ GEM
     nestful (1.1.1)
     net-http-persistent (2.9.4)
     netrc (0.11.0)
-    newrelic_rpm (3.17.2.327)
+    newrelic_rpm (5.5.0.348)
     nokogiri (1.8.5)
       mini_portile2 (~> 2.3.0)
     nokogumbo (1.5.0)
@@ -1558,7 +1558,7 @@ DEPENDENCIES
   mysql2 (~> 0.3.0)
   namae (= 0.8.4)
   net-http-persistent (~> 2.9.4)
-  newrelic_rpm (~> 3.17.2.327)
+  newrelic_rpm (~> 5.5.0)
   nokogiri (= 1.8.5)
   oauth (= 0.4.5)
   oily_png (= 1.1.1)

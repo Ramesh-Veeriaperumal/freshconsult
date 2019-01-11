@@ -550,6 +550,13 @@
 /data_export/export:
   $ref: ./data_exports/export.yaml
 
+# SLA Policy
+/sla_policy:
+  $ref: ./sla_policy/list_and_create.yaml
+/sla_policy/{id}:
+  $ref: ./sla_policy/crud.yaml
+
 # Custom Translations
 /admin/custom_translations/{id}/upload:
   $ref: ./admin/custom_translations/upload.yaml
+

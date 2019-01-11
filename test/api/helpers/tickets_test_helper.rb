@@ -1154,4 +1154,15 @@ module ApiTicketsTestHelper
   def facebook_hash(ticket)
     ticket.fb_post.post? ? fb_public_post_pattern({}, ticket.fb_post) : fb_public_dm_pattern({}, ticket.fb_post)
   end
+
+  # Save dummy fb page
+  def fetch_or_create_fb_page
+    id = @account.facebook_pages.last.page_id if @account.facebook_pages.last.present?
+    return id if id.present?
+    Social::FacebookPage.any_instance.stubs(:check_subscription).returns(true)
+    Social::FacebookPage.any_instance.stubs(:subscribe_realtime).returns(true)
+    fb_page = @account.facebook_pages.new(fb_page_params_hash)
+    fb_page.save
+    @account.facebook_pages.last.page_id
+  end
 end
