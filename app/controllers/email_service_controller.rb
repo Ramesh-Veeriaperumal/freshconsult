@@ -1,6 +1,5 @@
 require 'new_relic/agent/instrumentation/controller_instrumentation'
 require 'new_relic/agent/instrumentation/rails3/action_controller'
-require 'new_relic/agent/instrumentation/rails3/errors'
 
 class EmailServiceController < Fdadmin::MetalApiController
 
@@ -8,7 +7,6 @@ class EmailServiceController < Fdadmin::MetalApiController
   include ActionController::Redirecting
   include NewRelic::Agent::Instrumentation::ControllerInstrumentation
   include NewRelic::Agent::Instrumentation::Rails3::ActionController
-  include NewRelic::Agent::Instrumentation::Rails3::Errors
   
   append_view_path "#{Rails.root}/app/views"
 

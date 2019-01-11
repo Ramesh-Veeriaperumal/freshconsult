@@ -295,6 +295,7 @@ defaults: &defaults
     - [ticket_field_central_publish]
     - [ocr_agent_sync]
     - [ocr_task_sync]
+    - [clone]
 
 
 development:
