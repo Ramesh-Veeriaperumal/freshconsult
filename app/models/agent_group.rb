@@ -24,6 +24,7 @@ class AgentGroup < ActiveRecord::Base
   after_commit ->(obj) { obj.clear_cache_agent_group; obj.remove_from_chatgroup_channel }, on: :destroy
   after_commit ->(obj) { obj.clear_cache_agent_group; obj.add_to_chatgroup_channel }, on: :create
   after_commit :clear_agent_groups_cache
+  after_commit :clear_agent_groups_hash_cache
   after_commit :add_to_group_capping, on: :create, :if => :capping_enabled?
   after_commit :remove_from_group_capping, on: :destroy, :if => :capping_enabled?
   after_commit :sync_skill_based_user_queues
@@ -78,6 +79,10 @@ class AgentGroup < ActiveRecord::Base
   def clear_agent_groups_cache
     MemcacheKeys.delete_from_cache(ACCOUNT_AGENT_GROUPS % { account_id: Account.current.id })
   end
+
+  def clear_agent_groups_hash_cache
+    MemcacheKeys.delete_from_cache(ACCOUNT_AGENT_GROUPS_HASH % { account_id: Account.current.id })
+  end 
 
   private
 
