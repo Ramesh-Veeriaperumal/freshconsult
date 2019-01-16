@@ -1,4 +1,5 @@
 class Account < ActiveRecord::Base
+
   LP_FEATURES = [
     :select_all, :round_robin_capping, :suggest_tickets, :customer_sentiment_ui,
     :dkim, :scheduled_ticket_export, :ticket_contact_export, :disable_emails,
@@ -18,7 +19,7 @@ class Account < ActiveRecord::Base
     :skip_invoice_due_warning, :company_central_publish, :product_central_publish,
     :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
     :description_by_request, :ticket_fields_central_publish, :facebook_page_scope_migration,
-    :agent_group_central_publish, :custom_fields_search
+    :agent_group_central_publish, :custom_fields_search,:update_billing_info, :allow_billing_info_update
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze

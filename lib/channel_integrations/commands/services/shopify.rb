@@ -35,7 +35,7 @@ module ChannelIntegrations::Commands::Services
       ParamsHelper.modify_custom_fields(payload[:data][:custom_fields], name_mapping.invert)
       checkbox_names = TicketsValidationHelper.custom_checkbox_names(ticket_fields)
       ParamsHelper.assign_checkbox_value(payload[:data][:custom_fields], checkbox_names)
-      ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field }, payload[:data])
+      ParamsHelper.assign_and_clean_params({ custom_fields: :custom_field, type: :ticket_type }, payload[:data])
     end
 
     def build_placeholders(payload)

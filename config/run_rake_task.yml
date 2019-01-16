@@ -15,6 +15,7 @@ default: &default
     - "scheduler:custom_stream_twitter"
     - "forum_moderation:scan"
     - "trial_subscriptions:rollback_trail_subscriptions_data"
+    - "billing_info:enable_billing_info_update"
 
 development:
   <<: *default
