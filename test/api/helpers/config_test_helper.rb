@@ -10,6 +10,7 @@ module ConfigTestHelper
     config_hash[:email] = email_mailbox_config_pattern
     config_hash[:warnings] = warn_list_pattern
     config_hash[:growthscore_app_id] = GrowthScoreConfig['app_id']  if User.current.privilege?(:admin_tasks) || User.current.privilege?(:manage_account)
+    config_hash.merge!(update_billing_info)
     config_hash
   end
 

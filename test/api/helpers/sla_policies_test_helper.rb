@@ -58,6 +58,29 @@ module SlaPoliciesTestHelper
     sla_policy
   end
 
+  def create_sla_params_hash_with_company
+    company = create_company
+    sla_targets = create_sla_target
+    {name: Faker::Lorem.word,applicable_to:{company_ids: [company.id]},sla_target: sla_targets}
+  end
+
+  def create_sla_params_hash_with_company_and_product
+    company = create_company
+    product = create_product
+    sla_targets = create_sla_target
+    {name: Faker::Lorem.word,applicable_to:{company_ids: [company.id],product_ids:[product.id]},sla_target: sla_targets}
+
+  end
+
+  def create_sla_target
+    { 
+      priority_4: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_3: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_2: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_1: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true}
+    }
+  end
+
   def create_sla_policy_with_escalations(conditions = {}, escalations = {})
     sla_policy = FactoryGirl.build(:sla_policies, name: Faker::Lorem.words(5), description: Faker::Lorem.paragraph, account_id: @account.id,
                                                   conditions: { group_id: conditions[:group_id] || ['1']}, 

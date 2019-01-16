@@ -22,6 +22,7 @@ default: &default
     - "trial_subscriptions:rollback_trail_subscriptions_data"
     - "redis_key:set_redis_string"
     - "redis_key:delete_keys"
+    - "billing_info:enable_billing_info_update"
 
 development:
   <<: *default

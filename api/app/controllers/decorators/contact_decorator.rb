@@ -55,6 +55,7 @@ class ContactDecorator < ApiDecorator
       primary_company['domains'] = record.company.company_domains.map(&:domain)
       primary_company.merge!(record.company.tam_fields) if current_account
                                                            .tam_default_fields_enabled?
+      primary_company.merge!(record.company.custom_field)
       { primary_company: primary_company }
     else
       { primary_company: nil }

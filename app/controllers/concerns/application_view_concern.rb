@@ -100,4 +100,14 @@ module Concerns::ApplicationViewConcern
   def grace_period_exceeded?
     Time.now.utc.to_i - invoice_due_date > INVOICE_GRACE_PERIOD
   end
+
+  def update_billing_info
+    billing_info = {}
+    billing_info[:billing_info_update_enabled] = true if allow_billing_info_update?
+    billing_info
+  end
+
+  def allow_billing_info_update?
+    User.current.privilege?(:manage_account) && Account.current.launched?(:update_billing_info)
+  end
 end

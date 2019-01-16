@@ -195,6 +195,36 @@
       :decepticons_8: 190
       :decepticons_9: 191
       :decepticons_10: 192
+      :seafarers_1: 193
+      :seafarers_2: 194
+      :seafarers_3: 195
+      :seafarers_4: 196
+      :seafarers_5: 197
+      :seafarers_6: 198
+      :seafarers_7: 199
+      :seafarers_8: 200
+      :seafarers_9: 201
+      :seafarers_10: 202
+      :seafarers_11: 203
+      :seafarers_12: 204
+      :seafarers_13: 205
+      :seafarers_14: 206
+      :seafarers_15: 207
+      :seafarers_16: 208
+      :seafarers_17: 209
+      :seafarers_18: 210
+      :seafarers_19: 211
+      :seafarers_20: 212
+      :seafarers_21: 213
+      :seafarers_22: 214
+      :seafarers_23: 215
+      :seafarers_24: 216
+      :seafarers_25: 217
+      :seafarers_26: 218
+      :seafarers_27: 219
+      :seafarers_28: 220
+      :seafarers_29: 221
+      :seafarers_30: 222
 :selectable_features:
   :redis_display_id: true
   :branding: true

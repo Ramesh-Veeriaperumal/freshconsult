@@ -542,6 +542,9 @@
 /account_admin:
   $ref: ./account_admin/update.yaml
 
+/account_admin/disable_billing_info_updation:
+  $ref: ./account_admin/disable_billing_info_updation.yaml
+
 # Account 
 /accounts/cancel:
   $ref: ./accounts/cancel.yaml
@@ -559,4 +562,7 @@
 # Custom Translations
 /admin/custom_translations/{id}/upload:
   $ref: ./admin/custom_translations/upload.yaml
-
+/admin/custom_translations/primary:
+  $ref: ./admin/custom_translations/primary.yaml 
+/admin/custom_translations/{id}:
+  $ref: ./admin/custom_translations/secondary.yaml 

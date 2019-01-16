@@ -120,10 +120,10 @@ class Admin::CustomTranslations::Upload < BaseWorker
 
     existing_translation = existing_translation.translations
     new_translation = existing_translation.merge(translations)
-    new_translation.delete_if { |key, value| value.nil? }
+    new_translation.delete_if { |key, value| value.nil? || value == '' }
     if FIELDS_WITH_CHOICES.include?(field_object.field_type) && !translations['choices'].nil?
       choices_merge = (existing_translation['choices'].nil? ? {} : existing_translation['choices']).merge(translations['choices'])
-      choices_merge.delete_if { |key, value| value.nil? }
+      choices_merge.delete_if { |key, value| value.nil? || value == '' }
       new_translation['choices'] = choices_merge
     end
     new_translation

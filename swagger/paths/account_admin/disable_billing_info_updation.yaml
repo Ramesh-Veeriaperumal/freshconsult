@@ -1,0 +1,12 @@
+put:
+  tags: [Account Admin]
+  summary: Disable billing info updation
+  responses:
+    204:
+      description: Success
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

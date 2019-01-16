@@ -233,5 +233,10 @@ module Channel
       get :fetch_contact_by_email, controller_params(version: 'channel', email: 'emily@freshdesk.com')
       assert_response 404
     end
+
+    def test_fetch_contact_by_email_no_header
+      get :fetch_contact_by_email, controller_params(version: 'channel', email: 'emily@freshdesk.com')
+      assert_response 403
+    end
   end
 end

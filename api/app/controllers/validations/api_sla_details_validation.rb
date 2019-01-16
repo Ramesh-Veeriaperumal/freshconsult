@@ -5,6 +5,7 @@ class ApiSlaDetailsValidation < ApiValidation
   validates :respond_within, numericality: { greater_than_or_equal_to: SlaPolicyConstants::VALID_SLA_TIME[:min_sla_time], less_than_or_equal_to: SlaPolicyConstants::VALID_SLA_TIME[:max_sla_time] }, if: -> { errors[:respond_within].blank? }
 
   validates :resolve_within, required: true, custom_numericality: { only_integer: true }
+
   validates :resolve_within, numericality: { greater_than_or_equal_to: SlaPolicyConstants::VALID_SLA_TIME[:min_sla_time], less_than_or_equal_to: SlaPolicyConstants::VALID_SLA_TIME[:max_sla_time] }, if: -> { errors[:resolve_within].blank? }
   
   validates :business_hours, required: true, data_type: { rules: 'Boolean'}

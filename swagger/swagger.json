@@ -9740,7 +9740,7 @@
           "Account Admin"
         ],
         "summary": "Update",
-        "description": "Update Account's primary contact details",
+        "description": "Update Account's primary contact details and billing information",
         "parameters": [
           {
             "name": "account_admin",
@@ -9771,6 +9771,28 @@
             "schema": {
               "$ref": "#/definitions/method_not_allowed_error"
             }
+          }
+        }
+      }
+    },
+    "/account_admin/disable_billing_info_updation": {
+      "put": {
+        "tags": [
+          "Account Admin"
+        ],
+        "summary": "Disable billing info updation",
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
       }
@@ -9858,6 +9880,49 @@
         "responses": {
           "202": {
             "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/admin/custom_translations/primary": {
+      "get": {
+        "tags": [
+          "Custom Translations"
+        ],
+        "summary": "Download primary",
+        "description": "Download the labels for primary language",
+        "responses": {
+          "200": {
+            "description": "Success (Downloads translation file in yml format)"
+          }
+        }
+      }
+    },
+    "/admin/custom_translations/{id}": {
+      "get": {
+        "tags": [
+          "Custom Translations"
+        ],
+        "summary": "Download secondary",
+        "description": "Download the labels for secondary language",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Language code",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success (Downloads translation file in yml format)"
           },
           "400": {
             "description": "Bad Request Error",
@@ -19545,6 +19610,16 @@
         "phone": {
           "type": "string",
           "description": "phone number of account's primary contact"
+        },
+        "invoice_emails": {
+          "type": "array",
+          "description": "invoice email of account",
+          "maxItems": 1,
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
         }
       }
     }

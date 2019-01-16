@@ -708,13 +708,6 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern('applicable_to', :blank, code: :invalid_field)])
   end
 
-  def test_update_default_sla_policy
-    company = create_company
-    put :update, construct_params({ id: 1 }, applicable_to: { company_ids: [company.id] })
-    assert_response 400
-    match_json(request_error_pattern('cannot_update_default_sla'))
-  end
-
   def test_update_with_invalid_fields
     company = create_company
     @sla_policy = quick_create_sla_policy
@@ -752,6 +745,530 @@ class ApiSlaPoliciesControllerTest < ActionController::TestCase
         _sla_policy.delete 
       end
     end
+  end
+
+# ********************************************************* Company Validation for create
+
+  def test_create_sla_policy_with_comapany
+    params_hash = create_sla_params_hash_with_company
+    post :create, construct_params(params_hash)
+    assert_response 201
+    response = parse_response @response.body
+    assert_equal 11, response.size
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+  def test_create_sla_policy_product_and_comapany
+    params_hash = create_sla_params_hash_with_company_and_product
+    post :create, construct_params(params_hash)
+    assert_response 201
+    response = parse_response @response.body
+    assert_equal 11, response.size
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+    
+  end
+
+  def test_create_with_invalid_company_ids
+    post :create, construct_params({ name:Faker::Lorem.word , applicable_to: { company_ids: [10000, 1000001] },sla_target:create_sla_target})
+    assert_response 400
+    match_json([bad_request_error_pattern('company_ids', :invalid_list, list: '10000, 1000001')])
+  end
+
+  def test_create_with_invalid_company_ids_data_type
+    post :create, construct_params(name: Faker::Lorem.word , applicable_to: { company_ids: '1,2' },sla_target:create_sla_target)
+    assert_response 400
+    match_json([bad_request_error_pattern('company_ids', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
+  end
+
+  def test_create_emptying_conditions_with_blank_company_ids
+    post :create, construct_params(name: Faker::Lorem.word, applicable_to: nil,sla_target:create_sla_target)
+    assert_response 400
+    match_json([bad_request_error_pattern('applicable_to', :blank, code: :invalid_field)])
+  end
+
+# ********************************************************* Group Validation for create
+  def test_create_group_sla_policies
+    group = create_group(@account)
+    sla_target = create_sla_target
+    params_hash = {name: Faker::Lorem.word, applicable_to: { group_ids: [group.id] },sla_target: sla_target}
+    post :create, construct_params(params_hash)
+    assert_response 201
+    response = parse_response @response.body
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+  def test_create_with_invalid_group_ids
+    group = create_group(@account)
+    post :create, construct_params({name: Faker::Lorem.word, applicable_to: { group_ids: [10000, 1000001] },sla_target:create_sla_target})
+    assert_response 400
+    match_json([bad_request_error_pattern('group_ids', :invalid_list, list: '10000, 1000001')])
+  end
+
+  def test_create_with_invalid_group_ids_data_type
+    group = create_group(@account)
+    post :create, construct_params({name: Faker::Lorem.word, applicable_to: { group_ids: '1,2' },sla_target:create_sla_target})
+    assert_response 400
+    match_json([bad_request_error_pattern('group_ids', :datatype_mismatch, expected_data_type: Array, prepend_msg: :input_received, given_data_type: String)])
+  end
+
+# ********************************************************* product Validation for create
+
+  def test_create_product_sla_policies
+    product = create_product
+    sla_target = create_sla_target
+    params_hash = {name: Faker::Lorem.word, applicable_to: { product_ids: [product.id] },sla_target:sla_target}
+    post :create, construct_params(params_hash)
+    response = parse_response @response.body
+    assert_response 201
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+
+  def test_create_with_invalid_product_ids
+    product = create_product
+    params_hash = {name: Faker::Lorem.word, applicable_to: { product_ids: [10000, 1000001] },sla_target:create_sla_target}
+    put :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('product_ids', :invalid_list, list: '10000, 1000001')])
+  end
+
+  def test_create_with_invalid_product_ids_data_type
+    product = create_product
+    post :create, construct_params({name: Faker::Lorem.word, applicable_to: { product_ids: '1,2' },sla_target:create_sla_target})
+    assert_response 400
+    match_json([bad_request_error_pattern('product_ids', :datatype_mismatch, expected_data_type: Array, 
+                                              prepend_msg: :input_received, given_data_type: String)])
+  end
+
+# ********************************************************* sources Validation for create
+
+  def test_create_source_sla_policies
+    source_list = Hash[TicketConstants.source_names]
+    sla_target = create_sla_target
+    source = 3
+    params_hash = {name: Faker::Lorem.word, applicable_to: { sources: [source] },sla_target:sla_target}
+    post :create, construct_params(params_hash)
+    assert_response 201
+    response = parse_response @response.body
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+  def test_create_with_invalid_source
+    post :create, construct_params({ name: Faker::Lorem.word , applicable_to: { sources: [300] }})
+    assert_response 400
+    #match_json([bad_request_error_pattern('sources', :not_included, list: '1, 2, 3, 7, 8, 9, 10')])
+  end
+
+  def test_create_with_invalid_source_data_type
+    post :create, construct_params({ name: Faker::Lorem.word , applicable_to: { sources: '1,2' },sla_target:create_sla_target})
+    assert_response 400
+    match_json([bad_request_error_pattern('sources', :datatype_mismatch, expected_data_type: Array,prepend_msg: :input_received, given_data_type: String)])
+  end
+
+# ********************************************************* ticket_types Validation create
+
+  def test_create_ticket_types_sla_policies
+    ticket_type = "Question"
+    params_hash = {name: Faker::Lorem.word ,applicable_to: { ticket_types: ["#{ticket_type}"] },sla_target:create_sla_target}
+    post :create, construct_params(params_hash)
+    assert_response 201
+    response = parse_response @response.body
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+
+  def test_create_with_invalid_ticket_types
+    ticket_type = "NewType"
+    post :create, construct_params({ name: Faker::Lorem.word , applicable_to: { ticket_types: ["#{ticket_type}"] },sla_target:create_sla_target}) 
+    assert_response 400
+    match_json([bad_request_error_pattern('ticket_types', :invalid_list,list:'NewType')])
+  end
+
+  def test_create_with_invalid_ticket_types_data_type
+    post :create, construct_params({ name: Faker::Lorem.word , applicable_to: { ticket_types: 1 },sla_target:create_sla_target})
+    assert_response 400
+    match_json([bad_request_error_pattern('ticket_types', :datatype_mismatch, expected_data_type: Array, 
+                                                prepend_msg: :input_received, given_data_type: Integer)])
+  end
+
+# ********************************************************* SLA Target for create
+
+  def test_create_sla_target_with_3_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge({sla_target: { priority_4: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_3: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_1: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true}}})
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('priority_2', :datatype_mismatch, expected_data_type: 'key/value pair')])
+  end
+
+
+  def test_create_sla_target_without_respond_within_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {sla_target:{ priority_4: {resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_3: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_2: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_1: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true}}})
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern("sla_target[priority_4][respond_within]",:missing_field)])
+  end
+
+  def test_create_invalid_respond_within_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {sla_target: {
+                "priority_4": { respond_within: 3601, resolve_within: 3600, business_hours: false, escalation_enabled: true },
+                "priority_3": { respond_within: 1800, resolve_within: 1800, business_hours: true, escalation_enabled: true },
+                "priority_2": { respond_within: 1200, resolve_within: 1200, business_hours: false, escalation_enabled: true },
+                "priority_1": { respond_within: 900, resolve_within: 900, business_hours: false, escalation_enabled: true }
+                                }})
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_4][respond_within]', :Multiple_of_60 )])
+  end
+
+  def test_create_sla_target_without_resolve_within_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge({sla_target: {
+                "priority_4": { respond_within: 3600, resolve_within: 3600, business_hours: false, escalation_enabled: true },
+                "priority_3": { respond_within: 1800, resolve_within: 1800, business_hours: true, escalation_enabled: true },
+                "priority_2": { respond_within: 1200, resolve_within: 1200, business_hours: false, escalation_enabled: true },
+                "priority_1": { respond_within: 900,  business_hours: false, escalation_enabled: true }}})
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_1][resolve_within]', :missing_field )])
+  end
+
+  def test_create_invalid_resolve_within_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge({sla_target:{ priority_4: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_3: { respond_within: 3600,resolve_within: 1300,business_hours: false,escalation_enabled: true},
+      priority_2: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_1: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true}}})
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_3][resolve_within]', :Multiple_of_60 )])
+  end
+
+  def test_create_invalid_priority_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {sla_target: { priority_4: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_14: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_2: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_1: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true}}
+              })
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('priority_14', :invalid_field )])
+  end
+
+  def test_create_sla_policy_with_target
+    params_hash = create_sla_params_hash_with_company_and_product
+    sla_target = { sla_target:     { priority_4: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_3: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_2: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_1: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true}}}
+
+    params_hash = params_hash.merge(sla_target)
+    post :create, construct_params(params_hash)
+    assert_response 201
+    sla_policy = parse_response @response.body
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+  def test_update_lessthen_900_respond_within_sla_policy
+    params_hash = create_sla_params_hash_with_company_and_product
+    sla_target = { sla_target:     { priority_4: { respond_within: 300,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_3: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_2: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_1: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true}}}
+
+    params_hash = params_hash.merge(sla_target)
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_4][respond_within]', "must be greater than or equal to 900" )])
+  end 
+
+  def test_update_lessthen_900_resovle_within_sla_policy
+    params_hash = create_sla_params_hash_with_company_and_product
+    sla_target = { sla_target:     { priority_4: { respond_within: 900,resolve_within: 300,business_hours: false,escalation_enabled: true},
+      priority_3: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_2: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true},
+      priority_1: { respond_within: 3600,resolve_within: 900,business_hours: false,escalation_enabled: true}}}
+
+    params_hash = params_hash.merge(sla_target)
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('sla_target[priority_4][resolve_within]', "must be greater than or equal to 900" )])
+  end 
+# ********************************************************* Escalations for create
+ 
+  def test_create_Escalation_without_response_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({"escalation":  { "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}}})
+    post :create, construct_params(params_hash)    
+    assert_response 201
+    sla_policy = parse_response @response.body
+    assert_equal sla_policy.size,11
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+  def test_create_Escalation_without_resolution_sla_policy 
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({ "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] } }})
+    post :create, construct_params(params_hash) 
+    assert_response 201
+    sla_policy = parse_response @response.body
+    assert_equal sla_policy.size,11
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+  def test_create_Escalation_without_response_escalation_time_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({"escalation":  { "response": { agent_ids:[@agent_1.user_id] },
+                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                                                                      "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                                                                      "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
+                                                                  }})
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern("response[escalation_time]", :missing_field )])
+  end
+
+  def test_create_Escalation_without_resolution_escalation_time_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({ "escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                                                                        "resolution": {"level_1": { agent_ids:[@agent_1.user_id]},
+                                                                        "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                                                                        "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
+                                                                      }})
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern("resolution[level_1][escalation_time]", :missing_field )])
+  end
+
+  def test_create_Escalation_invalid_response_escalation_time_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 780, agent_ids:[@agent_1.user_id] },
+                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
+                                                                      }})
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern("response[escalation_time]", 
+      :not_included, list: '0, 1800, 3600, 7200, 14400, 28800, 43200, 86400, 172800, 259200, 604800, 1209600, 2592000')])
+  end
+
+  def test_create_Escalation_invalid_resolution_escalation_time_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                                                     "resolution": {"level_1": { escalation_time: 780, agent_ids:[@agent_1.user_id]},
+                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
+                                                                      }})
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern("resolution[level_1][escalation_time]", 
+      :not_included, list: '0, 1800, 3600, 7200, 14400, 28800, 43200, 86400, 172800, 259200, 604800, 1209600, 2592000' )])
+  end
+
+  def test_create_Escalation_duplicate_resolution_escalation_time_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                                                     "resolution": {"level_1": { escalation_time: 1800, agent_ids:[@agent_1.user_id]},
+                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
+                                                                      }})
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern("resolution[escalation_time]", :duplicate_not_allowed, name: 'escalation time', list: '1800'),
+                bad_request_error_pattern("resolution[level_2][escalation_time]", :not_included, list: '3600, 7200, 14400, 28800, 43200, 86400, 172800, 259200, 604800, 1209600, 2592000')])
+  end
+
+  def test_create_Escalation_invalid_response_Agent_id_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[8787] },
+                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
+                                                                      }})
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern("response[agent_ids]", :invalid_list, list: '8787' )])
+  end
+
+  def test_create_Escalation_invalid_resolution_agent_id_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[8787]},
+                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
+                                                                      }})
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern("resolution[level_1][agent_ids]", :invalid_list, list: '8787')])
+  end
+
+  def test_create_Escalation_without_response_Agent_id_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0 },
+                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
+                                                                      }})
+    post :create, construct_params(params_hash) 
+    sla_policy = parse_response @response.body
+    assert_response 400
+    match_json([bad_request_error_pattern("response[agent_ids]", :missing_field )])
+  end
+
+  def test_create_Escalation_without_resolution_agent_id_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                                                      "resolution": {"level_1": { escalation_time: 0},
+                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
+                                                                      }})
+    post :create, construct_params(params_hash) 
+    sla_policy = parse_response @response.body
+    assert_response 400
+    match_json([bad_request_error_pattern("resolution[level_1][agent_ids]", :missing_field )])
+  end
+
+  def test_create_Escalation_with_2_resolution_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]}}
+                                                                      }})
+    post :create, construct_params(params_hash) 
+    sla_policy = parse_response @response.body
+    assert_response 201
+    assert_equal sla_policy.size,11
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+  def test_create_Escalation_with_5_resolution_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    get_agents
+    params_hash = params_hash.merge({"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                                                      "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},
+                                                                    "level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},
+                                                                    "level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]},
+                                                                    "level_4": { escalation_time: 28800, agent_ids:[@agent_2.user_id]},
+                                                                    "level_5": { escalation_time: 259200, agent_ids:[@agent_1.user_id]}}
+                                                                      }})
+    post :create, construct_params(params_hash) 
+    assert_response 400
+    match_json([bad_request_error_pattern('level_5', :invalid_field )])
+  end
+
+  
+
+
+  def test_create_sla_policy_with_escalations
+    get_agents
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge( {"escalation":  { "response": { escalation_time: 0, agent_ids:[@agent_1.user_id] },
+                                                                        "resolution": {"level_1": { escalation_time: 0, agent_ids:[@agent_1.user_id]},"level_2": { escalation_time: 1800, agent_ids:[@agent_2.user_id]},"level_3": { escalation_time: 14400, agent_ids:[@agent_2.user_id]}}
+                                                                      }} )
+    post :create, construct_params(params_hash)
+    assert_response 201
+    sla_policy = parse_response @response.body
+    assert_equal sla_policy.size,11
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+# ********************************************************* Name Discraption and Active create
+
+
+  def test_create_with_invalid_name_sla_policy
+    post :create, construct_params({name: [12345],applicable_to:{company_ids: [company.id]},sla_target:create_sla_target})
+    assert_response 400
+    match_json([bad_request_error_pattern('name', :datatype_mismatch, expected_data_type: String, 
+                                          prepend_msg: :input_received, given_data_type: Array)])
+  end
+
+  def test_create_description_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge({description: "This sla is related to unit test"})
+    post :create, construct_params(params_hash)
+    assert_response 201
+    match_json(sla_policy_pattern(Helpdesk::SlaPolicy.first))
+    Helpdesk::SlaPolicy.first.delete
+  end
+
+  def test_create_with_invalid_description_sla_policy
+    params_hash = create_sla_params_hash_with_company
+    params_hash = params_hash.merge({description: [12,21,212]})
+    post :create, construct_params(params_hash)
+    assert_response 400
+    match_json([bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String,
+                                                  prepend_msg: :input_received, given_data_type: Array)])
+  end
+
+# ********************************************************* Mixed create
+
+  def test_create_with_invalid_fields_in_conditions_hash
+    post :create, construct_params({name: Faker::Lorem.word , applicable_to: { group_id: [1, 2], product_id: [1] },sla_target:create_sla_target})
+    assert_response 400
+    match_json([bad_request_error_pattern('group_id', :invalid_field),
+                bad_request_error_pattern('product_id', :invalid_field)])
+  end
+
+  def test_create_with_nil_conditions
+    post :create, construct_params({})
+    assert_response 400
+    match_json([bad_request_error_pattern('name', :missing_field,expected_data_type: String),bad_request_error_pattern('sla_target', :missing_field ),
+      bad_request_error_pattern('applicable_to', :missing_field,expected_data_type: 'key/value pair')])
+  end
+
+  def test_create_with_invalid_fields
+    post :create, construct_params({ name: Faker::Lorem.word , conditions: { company_ids: [1] },sla_target:create_sla_target})
+    assert_response 400
+    match_json([bad_request_error_pattern('conditions', :invalid_field)])
+  end
+
+  def test_create_with_invalid_data_type
+    post :create, construct_params({ name: Faker::Lorem.word , applicable_to: [1, 2],sla_target:create_sla_target})
+    assert_response 400
+    match_json([bad_request_error_pattern('applicable_to', :datatype_mismatch, expected_data_type: 'key/value pair',
+                                                 prepend_msg: :input_received, given_data_type: Array)])
+  end
+
+  def test_update_default_sla_policy
+    company = create_company
+    default_sla_id = Account.current.sla_policies.find_by_is_default(true).id
+    put :update, construct_params({ id: default_sla_id }, applicable_to: { company_ids: [company.id] })
+    assert_response 400
+    match_json(request_error_pattern('cannot_update_default_sla'))
   end
 
   def get_agents

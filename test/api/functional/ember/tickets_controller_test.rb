@@ -2879,7 +2879,7 @@ module Ember
       enable_adv_ticketing([:parent_child_tickets]) do
         Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
         create_parent_ticket
-        parent_ticket = Account.current.tickets.last
+        parent_ticket = Account.current.tickets.last || create_parent_ticket
         params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
         post :create, construct_params({ version: 'private' }, params_hash)
         assert_response 201

@@ -1,0 +1,7 @@
+get:
+  tags: [Custom Translations]
+  summary: Download primary
+  description: Download the labels for primary language
+  responses:
+    200:
+      description: Success (Downloads translation file in yml format)

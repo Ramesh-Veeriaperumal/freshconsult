@@ -163,7 +163,7 @@ class Users::ContactDeleteForeverWorker < BaseWorker
         while(results.present?)
           last = results.last.user_timestamp
           destroy_post(results)
-          results = scope.by_user(@user.id, last)
+          results = last.present? ? scope.by_user(@user.id, last) : []
         end
       end
     end
@@ -206,7 +206,7 @@ class Users::ContactDeleteForeverWorker < BaseWorker
     def get_next_time
       max_time = (get_others_redis_key(CONTACT_DELETE_FOREVER_MAX_TIME) || 10).to_i
       min_time = (get_others_redis_key(CONTACT_DELETE_FOREVER_MIN_TIME) || 2).to_i
-      if max_time < min_time
+      if check_min_and_max_time(min_time, max_time)
         max_time = 2
         min_time = 2
       end
@@ -216,5 +216,9 @@ class Users::ContactDeleteForeverWorker < BaseWorker
 
     def get_contact_delete_forever_concurrency
       (get_others_redis_key(CONTACT_DELETE_FOREVER_CONCURRENCY) || 1).to_i
+    end
+
+    def check_min_and_max_time(min_time, max_time)
+      max_time < min_time
     end
 end

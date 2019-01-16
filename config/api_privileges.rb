@@ -54,7 +54,7 @@ Authority::Authorization::PrivilegeList.build do
   manage_account do
     resource :"channel/freshcaller/account", only: [:destroy]
     resource :"admin/trial_subscription", only: [:create, :cancel]
-    resource :"account_admin", only: [:update]
+    resource :account_admin, only: [:update, :disable_billing_info_updation]
     resource :"admin/api_account", only: [:cancel]
     resource :"admin/api_data_export", only: [:account_export]
   end
@@ -150,7 +150,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/trial_subscription", only: [:usage_metrics]
     resource :"admin/automation", only: [:index, :destroy]
     resource :"admin/custom_translations/upload", only: [:upload]
-    resource :"admin/custom_translations/download", only: [:primary]
+    resource :"admin/custom_translations/download", only: [:primary, :secondary]
   end
 
   edit_ticket_properties do

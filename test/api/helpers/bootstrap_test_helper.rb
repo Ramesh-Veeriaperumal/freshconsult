@@ -123,6 +123,7 @@ module BootstrapTestHelper
         first_invoice_date: first_invoice.nil? ? nil : first_invoice.created_at
       }
       pattern[:subscription][:mrr] = account.subscription.cmrr if User.current.privilege?(:admin_tasks) || User.current.privilege?(:manage_account)
+      pattern[:subscription][:invoice_email] = account.invoice_emails.first if User.current.privilege?(:manage_account)
     end
     pattern[:contact_info] = account.contact_info.presence
     pattern

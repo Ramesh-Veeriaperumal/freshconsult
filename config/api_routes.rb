@@ -238,6 +238,7 @@ Helpkit::Application.routes.draw do
     resources :download, controller: 'admin/custom_translations/download', path: 'admin/custom_translations/', only: [:primary] do
       collection do
         get :primary, to: 'admin/custom_translations/download#primary'
+        get ':id', to: 'admin/custom_translations/download#secondary'
       end
     end
 
@@ -556,6 +557,7 @@ Helpkit::Application.routes.draw do
 
     # account update
     put '/account_admin', to: 'account_admins#update'
+    put 'account_admin/disable_billing_info_updation', to: 'account_admins#disable_billing_info_updation'
 
     # dirty hack - check privilege fails when using 'solutions' namespace although controller action mapping is unaffected
     get 'solutions/articles', to: 'ember/solutions/articles#index'

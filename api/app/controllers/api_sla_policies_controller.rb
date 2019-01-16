@@ -9,6 +9,18 @@ class ApiSlaPoliciesController < ApiApplicationController
     end
   end
 
+  def create
+    assign_protected
+    sla_policy_delegator = SlaPolicyDelegator.new(@item,{:params => params[cname]})
+    if sla_policy_delegator.invalid?
+      render_errors(sla_policy_delegator.errors, sla_policy_delegator.error_options)
+    elsif @item.save
+      render_201_with_location(location_url: 'sla_policies_url',item_id: @item.id)
+    else
+      render_errors(@item.errors)
+    end
+  end
+
   private
     def after_load_object
       render_request_error(:cannot_update_default_sla, 400) if @item.is_default
@@ -40,7 +52,7 @@ class ApiSlaPoliciesController < ApiApplicationController
       allowed_fields = "#{constants_class}::#{action_name.upcase}_FIELDS".constantize
       params[cname].permit(*allowed_fields)
       sla_policy = ApiSlaPolicyValidation.new(params[cname], @item)
-      render_errors sla_policy.errors, sla_policy.error_options unless sla_policy.valid?
+      render_errors sla_policy.errors, sla_policy.error_options unless sla_policy.valid?(action_name.to_sym)
     end
 
     def scoper
@@ -77,10 +89,11 @@ class ApiSlaPoliciesController < ApiApplicationController
     end
 
     def tranform_sla_target_keys(sla_target,priority,sla_detail)
+      sla_detail = ActiveSupport::HashWithIndifferentAccess.new(priority: priority,name: SlaPolicyConstants::SLA_DETAILS_NAME[priority] )  if action_name.eql?("create")
       sla_detail[:response_time] = sla_target[:respond_within] 
       sla_detail[:resolution_time] = sla_target[:resolve_within] 
       sla_detail[:override_bhrs] = !sla_target[:business_hours] 
       sla_detail[:escalation_enabled] = sla_target[:escalation_enabled] 
-      sla_detail[:name] = SlaPolicyConstants::SLA_DETAILS_NAME[priority]
+      @item.sla_details.build(sla_detail) if action_name.eql?("create")
     end
 end
