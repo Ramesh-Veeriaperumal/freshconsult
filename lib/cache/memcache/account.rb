@@ -158,6 +158,24 @@ module Cache::Memcache::Account
     end
   end
 
+  def agent_groups_hash_from_cache
+    @agent_groups_hash_from_cache ||= begin
+      key = agent_groups_hash_memcache_key
+      MemcacheKeys.fetch(key) { 
+        Rails.logger.debug "fetching agent_groups from db"
+        agent_groups_ids = Hash.new              
+        agents_groups = Account.current.agent_groups_from_cache
+        agents_groups.each do |ag|
+          agent_groups_ids[ag.group_id] ||= []          
+          agent_groups_ids[ag.group_id].push(ag.user_id)
+        end        
+        agent_groups_ids
+      }
+    end
+  end 
+
+  
+
   def products_from_cache
     key = ACCOUNT_PRODUCTS % { :account_id => self.id }
     MemcacheKeys.fetch(key) { self.products.find(:all, :order => 'name') }
@@ -620,6 +638,10 @@ module Cache::Memcache::Account
     def agent_groups_memcache_key
       ACCOUNT_AGENT_GROUPS % { account_id: id }
     end
+
+    def agent_groups_hash_memcache_key
+      ACCOUNT_AGENT_GROUPS_HASH % { account_id: id }
+    end 
 
     def tags_memcache_key
       ACCOUNT_TAGS % { :account_id => self.id }
