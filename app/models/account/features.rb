@@ -19,7 +19,8 @@ class Account < ActiveRecord::Base
     :skip_invoice_due_warning, :company_central_publish, :product_central_publish,
     :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
     :description_by_request, :ticket_fields_central_publish, :facebook_page_scope_migration,
-    :agent_group_central_publish, :custom_fields_search,:update_billing_info, :allow_billing_info_update
+    :agent_group_central_publish, :custom_fields_search,:update_billing_info,
+    :allow_billing_info_update, :pricing_plan_change_2019
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
@@ -40,7 +41,10 @@ class Account < ActiveRecord::Base
     :todos_reminder_scheduler, :smart_filter, :ticket_summary, :opt_out_analytics,
     :freshchat, :disable_old_ui, :contact_company_notes, :sandbox, :oauth2, :parent_child_infra,
     :session_replay, :segments, :freshconnect, :proactive_outreach, :audit_logs_central_publish,
-    :audit_log_ui, :omni_channel_routing, :custom_encrypted_fields, :hipaa, :freshid_saml, :canned_forms, :custom_translations
+    :audit_log_ui, :omni_channel_routing, :custom_encrypted_fields, :hipaa,
+    :freshid_saml, :canned_forms, :custom_translations, :social_tab,
+    :customize_table_view, :public_url_toggle, :add_to_response, :agent_scope,
+    :performance_report, :custom_password_policy
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -53,6 +57,10 @@ class Account < ActiveRecord::Base
   ]
 
   PODS_FOR_BOT = ['poduseast1'].freeze
+
+  PRICING_PLAN_MIGRATION_FEATURES_2019 = [:social_tab, :customize_table_view,
+    :public_url_toggle, :add_to_response, :agent_scope, :performance_report,
+    :custom_password_policy].to_set.freeze
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
@@ -339,4 +347,24 @@ class Account < ActiveRecord::Base
   def undo_send_enabled?
     has_feature?(:undo_send) || launched?(:undo_send)
   end
+
+  # Need to cleanup bellow code snippet with 2019 plan changes release
+  # START
+  def has_feature?(feature)
+    return super if launched?(:pricing_plan_change_2019)
+    PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) ? true : super
+  end
+
+  def features_list
+    return super if launched?(:pricing_plan_change_2019)
+    (super + PRICING_PLAN_MIGRATION_FEATURES_2019.to_a).uniq
+  end
+
+  def has_features?(*features)
+    unless launched?(:pricing_plan_change_2019)
+      features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) }
+    end
+    super
+  end
+  # STOP
 end
