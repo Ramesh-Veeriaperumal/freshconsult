@@ -369,4 +369,9 @@ class Account < ActiveRecord::Base
   def custom_translations_enabled?
     redis_picklist_id_enabled? && has_feature?(:custom_translations)
   end
+
+  def automatic_ticket_assignment_enabled?
+    features?(:round_robin) || features?(:round_robin_load_balancing) ||
+      skill_based_round_robin_enabled? || omni_channel_routing_enabled?
+  end
 end

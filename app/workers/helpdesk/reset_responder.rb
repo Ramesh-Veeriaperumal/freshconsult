@@ -15,11 +15,12 @@ class Helpdesk::ResetResponder < BaseWorker
       reason      = args[:reason].symbolize_keys!
       options     = {:reason => reason, :manual_publish => true}
       ticket_ids  = []
+      ocr_enabled = account.omni_channel_routing_enabled?
       return if user.nil?
 
       account.tickets.preload(:group).assigned_to(user).find_each do |ticket|
-        ticket_ids.push(ticket.id) if ticket.group.present? && (ticket.group.capping_enabled? || ticket.group.skill_based_round_robin_enabled?)
-      end if account.features?(:round_robin) || account.skill_based_round_robin_enabled?
+        ticket_ids.push(ticket.id) if ticket.group.try(:automatic_ticket_assignment_enabled?)
+      end if account.automatic_ticket_assignment_enabled?
 
       # Reset agent and internal agent for tickets
       account.tickets.where(responder_id: user.id).update_all_with_publish({ responder_id: nil }, {}, options)
@@ -35,7 +36,9 @@ class Helpdesk::ResetResponder < BaseWorker
       account.tickets.where("id in (?)", ticket_ids).preload(:group).find_each do |ticket|
         if ticket.group.try(:skill_based_round_robin_enabled?)
           trigger_sbrr ticket
-        else
+        elsif ocr_enabled && ticket.group.omni_channel_routing_enabled? && ticket.eligible_for_ocr?
+          ticket.sync_task_changes_to_ocr(nil)
+        elsif ticket.group.capping_enabled?
           ticket.assign_tickets_to_agents
         end
       end
