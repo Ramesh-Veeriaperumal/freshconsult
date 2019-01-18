@@ -694,6 +694,9 @@ Helpkit::Application.routes.draw do
         post :reply, to: 'channel/v2/conversations#reply'
         post :notes, to: 'channel/v2/conversations#create'
       end
+      collection do
+        get 'filters/:filter_id', to: 'channel/v2/ticket_misc#index'
+      end
     end
     get '/account', to: 'channel/v2/accounts#show'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]

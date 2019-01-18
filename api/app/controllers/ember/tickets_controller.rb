@@ -27,7 +27,7 @@ module Ember
 
     def index
       sanitize_filter_params
-      @delegator_klass = 'TicketFilterDelegator'
+      @delegator_klass = ticket_filter_delegator_class
       return unless validate_delegator(nil, params)
       assign_filter_params
       super
@@ -166,6 +166,18 @@ module Ember
     end
 
     private
+
+      def ticket_filter_validation_class
+        'TicketFilterValidation'
+      end
+
+      def ticket_filter_delegator_class
+        'TicketFilterDelegator'
+      end
+
+      def ticket_filter_constant_class
+        'TicketFilterConstants'
+      end
 
       def archive_scoper
         current_account.archive_tickets
@@ -424,8 +436,8 @@ module Ember
       end
 
       def validate_filter_params
-        @constants_klass = 'TicketFilterConstants'
-        @validation_klass = 'TicketFilterValidation'
+        @constants_klass = ticket_filter_constant_class
+        @validation_klass = ticket_filter_validation_class
         validate_query_params
         @ticket_filter = @validator
       end
