@@ -1427,4 +1427,8 @@ class User < ActiveRecord::Base
         self.customer_id = nil
       end
     end
+
+    def reset_to_default_ticket_permission
+      ticket_permission = Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets]
+    end
 end

@@ -214,10 +214,11 @@
   				<li class="seperator"></li>
   				<li class="row-fluid">
   					<h5 class="lead">
-  						<%=t('agent.role_and_scope')%>
+              <%= current_account.agent_scope_enabled? ? t('agent.role_and_scope') : t('agent.roles') %>
             </h5>
   				</li>
           <% if(@agent.user != current_user) %>
+          <% if current_account.agent_scope_enabled? %>
           <li class="control-group" id="agent_ticket_permission">
             <label class="control-label"><%=t('agent.ticket_scope')%></label>
             <ul class="controls">
@@ -234,7 +235,7 @@
                  <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets", :class => "radio"}) %>
                  <%=t('agent.group')%>
                   <%= content_tag( :span, t('agent.group_info'), :class => "muted info_data" ) %>
-               </label>
+              </label>
 
               </li>
               <li>
@@ -247,6 +248,7 @@
               </li>
             </ul>
           </li>
+          <%end%>
   				<li class="agent-role control-group">
   					<%= label(:agent, :roles, t('agent.role'), :class => "control-label") %>
   					<div class="controls" id="selected-roles">
@@ -283,17 +285,17 @@
         </li>
       </ul>
     </li>
-		<li class="agent-role control-group">
-			<%= label(:agent, :roles, t('agent.role'), :class => "control-label") %>
-				<ul class="controls disc-styled">
+    <li class="agent-role control-group">
+      <%= label(:agent, :roles, t('agent.role'), :class => "control-label") %>
+        <ul class="controls disc-styled">
           <% @agent.user.roles.each do |role| %>
-    				<li>
+            <li>
               <b><%= role.name %></b>
               <%= content_tag( :span, role.description, :class => "muted info_data ellipsis" ) %>
-    				</li>
+            </li>
           <% end %>
-				</ul>
-		</li>
+        </ul>
+    </li>
     <% end %>
 
 		<%  if current_account.freshcaller_enabled? %>
