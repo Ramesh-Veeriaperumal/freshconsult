@@ -493,7 +493,9 @@ private
 
   def validate_ticket_permission
     #validating permissions
-     params[:agent].delete(:ticket_permission) if Agent::PERMISSION_TOKENS_BY_KEY[params[:agent][:ticket_permission].to_i].blank?
+    if !current_account.agent_scope_enabled? || Agent::PERMISSION_TOKENS_BY_KEY[params[:agent][:ticket_permission].to_i].blank?
+      params[:agent].delete(:ticket_permission)
+    end
   end
 
   def format_api_params
