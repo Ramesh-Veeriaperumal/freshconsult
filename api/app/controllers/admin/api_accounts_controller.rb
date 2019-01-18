@@ -4,6 +4,7 @@ module Admin
     include HelperConcern
     
     before_filter :validate_params, :validate_delegator, only: [:cancel]
+    before_filter :validate_query_params, only: [:download_file]
     
     def cancel
       feedback = {:title => params[cname][:cancellation_feedback],
@@ -18,6 +19,13 @@ module Admin
 
     def self.wrap_params
       AccountsConstants::WRAP_PARAMS
+    end
+
+    def download_file
+      s3_url = current_account.safe_send(
+        AccountsConstants::DOWNLOAD_TYPE_TO_METHOD_MAP[params[:type].to_sym]
+      )
+      s3_url.nil? ? head(404) : redirect_to(s3_url, status: 302)
     end
     
     private

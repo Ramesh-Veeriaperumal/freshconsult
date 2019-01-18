@@ -313,6 +313,7 @@ Helpkit::Application.routes.draw do
     resource :accounts, controller: 'admin/api_accounts' do
       collection do
         post :cancel
+        get :download_file, path: '/:type/download'
       end
     end
 

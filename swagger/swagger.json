@@ -9829,6 +9829,37 @@
         }
       }
     },
+    "/accounts/{type}/download": {
+      "get": {
+        "tags": [
+          "File download"
+        ],
+        "description": "File Download",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "type",
+            "required": true,
+            "type": "string",
+            "enum": [
+              "beacon"
+            ],
+            "description": "Type of download"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to download URL"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/data_export/export": {
       "post": {
         "tags": [

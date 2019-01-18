@@ -1,7 +1,8 @@
 class ThirdCRM
   EVENTS = {
     subscription: 'subscription',
-    trial_subscription: 'trial_subscription'
+    trial_subscription: 'trial_subscription',
+    beacon_report: 'beacon_report'
   }
   PRODUCT_NAME = "Freshdesk"
 
@@ -85,6 +86,16 @@ class ThirdCRM
   end
 
   private
+
+    def beacon_report_info(_account, args)
+      {
+        custom: {
+          'boolean--Beacon--Opt--In': true
+        },
+        Email: args[:email],
+        LastName: args[:name]
+      }
+    end
 
     def trial_subscription_info(account, args)
       status = TRIAL_SUBSCRIPTION_ACTION_TYPE_TO_UPSELL_STATUS[args[:action_type].to_sym]
