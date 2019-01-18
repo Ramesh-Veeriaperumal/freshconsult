@@ -21,7 +21,7 @@ class Account < ActiveRecord::Base
     :db_to_bitmap_features_migration, :denormalized_select_for_update,
     :trial_subscription, :installed_app_publish, :es_tickets,
     :twitter_dm_outgoing_attachment, :twitter_mention_outgoing_attachment,
-    :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017,
+    :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017, :year_in_review_2018,
     :new_onboarding, :onboarding_inlinemanual, :skip_portal_cname_chk,
     :product_central_publish, :help_widget, :redis_picklist_id,
     :bot_email_channel, :bot_email_central_publish, :description_by_request,

@@ -4,13 +4,14 @@ module YearInReviewMethods
   include Redis::OthersRedis
 
   private
-  
+
   def fetch_review
     return { shared: false } unless review_available?
     {
       shared: @shared || false,
       url: @url,
-      user_closed: @user_closed
+      user_closed: @user_closed,
+      download: @download
     }
   end
 
@@ -34,7 +35,7 @@ module YearInReviewMethods
       get_others_redis_hash(yir_account_key)
       ismember?(yir_closed_key, User.current.id)
     end
-    @shared, @url = url_info["shared"] == "1", url_info["url"]
+    @shared, @url, @download = url_info['shared'] == "1", url_info['url'], url_info['download']
   end
 
   def yir_account_key
@@ -46,7 +47,7 @@ module YearInReviewMethods
   end
 
   def share_video
-    set_others_redis_hash_set(yir_account_key, "shared", "1")
+    set_others_redis_hash_set(yir_account_key, 'shared', '1')
     Rails.logger.info "Year in Review :: Shared video for agents :: Admin::#{Account.current.id}::#{User.current.id}"
   end
 
