@@ -28,6 +28,10 @@ class SAAS::AccountDataCleanup
     clear_fragment_caches
   end
 
+  def handle_public_url_toggle_drop_data
+    account.features.public_ticket_url.destroy
+  end
+  
   def handle_agent_scope_drop_data
     account.technicians.each do |agent|
       begin

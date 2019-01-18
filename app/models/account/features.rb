@@ -54,7 +54,7 @@ class Account < ActiveRecord::Base
     :sandbox, :oauth2, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
     :custom_encrypted_fields, :freshid_saml, :custom_translations, :parent_child_infra, :canned_forms,
-    :agent_scope
+    :agent_scope, :public_url_toggle
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
