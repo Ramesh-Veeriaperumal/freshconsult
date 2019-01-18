@@ -348,6 +348,11 @@ class Account < ActiveRecord::Base
     has_feature?(:undo_send) || launched?(:undo_send)
   end
 
+  def automatic_ticket_assignment_enabled?
+    features?(:round_robin) || features?(:round_robin_load_balancing) ||
+      skill_based_round_robin_enabled? || omni_channel_routing_enabled?
+  end
+
   # Need to cleanup bellow code snippet with 2019 plan changes release
   # START
   def has_feature?(feature)
