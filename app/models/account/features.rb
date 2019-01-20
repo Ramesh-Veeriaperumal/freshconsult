@@ -29,7 +29,7 @@ class Account < ActiveRecord::Base
     :shopify_actions, :skip_invoice_due_warning, :automation_revamp,
     :scheduled_export_fix, :compact_lang_detection,
     :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search,
-    :update_billing_info, :allow_billing_info_update
+    :update_billing_info, :allow_billing_info_update, :pricing_plan_change_2019
   ].freeze
 
   DB_FEATURES = [
@@ -53,8 +53,9 @@ class Account < ActiveRecord::Base
     :opt_out_analytics, :freshchat, :disable_old_ui, :contact_company_notes,
     :sandbox, :oauth2, :session_replay, :segments, :freshconnect, :proactive_outreach,
     :audit_logs_central_publish, :audit_log_ui, :omni_channel_routing, :undo_send,
-    :custom_encrypted_fields, :freshid_saml, :custom_translations, :parent_child_infra, :canned_forms,
-    :agent_scope, :public_url_toggle
+    :custom_encrypted_fields, :freshid_saml, :custom_translations, :parent_child_infra,
+    :canned_forms, :social_tab, :customize_table_view, :public_url_toggle,
+    :add_to_response, :agent_scope, :performance_report, :custom_password_policy
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -67,6 +68,11 @@ class Account < ActiveRecord::Base
   ]
 
   PODS_FOR_BOT = ['poduseast1'].freeze
+
+  PRICING_PLAN_MIGRATION_FEATURES_2019 = [
+    :social_tab, :customize_table_view, :public_url_toggle, :add_to_response,
+    :agent_scope, :performance_report, :custom_password_policy
+  ].to_set.freeze
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
@@ -369,9 +375,29 @@ class Account < ActiveRecord::Base
   def custom_translations_enabled?
     redis_picklist_id_enabled? && has_feature?(:custom_translations)
   end
-
+  
   def automatic_ticket_assignment_enabled?
     features?(:round_robin) || features?(:round_robin_load_balancing) ||
       skill_based_round_robin_enabled? || omni_channel_routing_enabled?
   end
+  
+  # Need to cleanup bellow code snippet block with 2019 plan changes release
+  # START
+  def has_feature?(feature)
+    return super if launched?(:pricing_plan_change_2019)
+    PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) ? true : super
+  end
+
+  def features_list
+    return super if launched?(:pricing_plan_change_2019)
+    (super + PRICING_PLAN_MIGRATION_FEATURES_2019.to_a).uniq
+  end
+
+  def has_features?(*features)
+    unless launched?(:pricing_plan_change_2019)
+      features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) }
+    end
+    super
+  end
+  # STOP
 end
