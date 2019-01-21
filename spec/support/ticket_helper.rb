@@ -11,24 +11,24 @@ module TicketHelper
     subject = params[:subject] || Faker::Lorem.words(10).join(' ')
     account_id =  group ? group.account_id : @account.id
     test_ticket = FactoryGirl.build(:ticket, :status => params[:status] || 2,
-                                         :display_id => params[:display_id], 
-                                         :requester_id =>  requester_id,
-                                         :subject => subject,
-                                         :priority => params[:priority] || 1,
-                                         :responder_id => params[:responder_id],
-                                         :source => params[:source] || 2,
-                                         :ticket_type => params[:type],
-                                         :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
-                                         :created_at => params[:created_at],
-                                         :account_id => account_id,
-                                         :deleted => params[:deleted] || 0,
-                                         :spam => params[:spam] || 0,
-                                         :custom_field => params[:custom_field],
-                                         :tag_names => params[:tag_names],
-                                         :product_id => params[:product_id],
-                                         :sl_skill_id => params[:skill_id],
-                                         :company_id => params[:company_id],
-                                         :ticket_type => params[:type])
+                                    :display_id => params[:display_id],
+                                    :requester_id =>  requester_id,
+                                    :subject => subject,
+                                    :priority => params[:priority] || 1,
+                                    :responder_id => params[:responder_id],
+                                    :source => params[:source] || 2,
+                                    :ticket_type => params[:type],
+                                    :cc_email => Helpdesk::Ticket.default_cc_hash.merge(cc_emails: cc_emails, fwd_emails: fwd_emails),
+                                    :created_at => params[:created_at],
+                                    :account_id => account_id,
+                                    :deleted => params[:deleted] || 0,
+                                    :spam => params[:spam] || 0,
+                                    :custom_field => params[:custom_field],
+                                    :tag_names => params[:tag_names],
+                                    :product_id => params[:product_id],
+                                    :sl_skill_id => params[:skill_id],
+                                    :company_id => params[:company_id],
+                                    :ticket_type => params[:type])
     test_ticket.build_ticket_body(:description => params[:description] || Faker::Lorem.paragraph)
     if params[:attachments]
       test_ticket.attachments.build(content: params[:attachments][:resource],
@@ -36,8 +36,8 @@ module TicketHelper
                                     account_id: test_ticket.account_id)
     end
     test_ticket.cloud_files = params[:cloud_files] if params[:cloud_files]
-    
-    
+
+
     if @account.link_tickets_enabled? && params[:display_ids].present?
       test_ticket.association_type = TicketConstants::TICKET_ASSOCIATION_KEYS_BY_TOKEN[:tracker]
       test_ticket.related_ticket_ids = params[:display_ids]
@@ -60,9 +60,9 @@ module TicketHelper
     parent_ticket = create_ticket
     params = { assoc_parent_id: parent_ticket.display_id, email: Faker::Internet.email,
                description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-               priority: 2, status: 2, type: Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE, 
+               priority: 2, status: 2, type: Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE,
                custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }
-    
+
     fsm_ticket =  create_ticket(params)
     fsm_ticket
   end
@@ -71,9 +71,9 @@ module TicketHelper
     ticket_ids = []
     count.times do
       ticket_ids << create_ticket(params).display_id
-    end    
+    end
     ticket_ids
-  end    
+  end
 
   def ticket_incremented?(ticket_size)
     @account.reload
@@ -83,10 +83,10 @@ module TicketHelper
   def create_test_time_entry(params = {}, test_ticket = nil)
     ticket = test_ticket.blank? ? create_ticket : test_ticket
     time_sheet = FactoryGirl.build(:time_sheet, user_id: params[:agent_id] || @agent.id,
-                                                workable_id: ticket.id,
-                                                account_id: @account.id,
-                                                billable: params[:billable] || 1,
-                                                note: Faker::Lorem.sentence(3))
+                                   workable_id: ticket.id,
+                                   account_id: @account.id,
+                                   billable: params[:billable] || 1,
+                                   note: Faker::Lorem.sentence(3))
     time_sheet.save
     time_sheet
   end
@@ -96,7 +96,18 @@ module TicketHelper
   end
 
   def create_field_agent_group
-    group = create_group(@account, { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, group_type: 
-      GroupType.group_type_id(GroupConstants::FIELD_GROUP_NAME)})
+    group = create_group(@account, { name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, group_type:
+                                     GroupType.group_type_id(GroupConstants::FIELD_GROUP_NAME)})
+  end
+
+  def add_watchers_to_ticket(account, options={})
+    account = account || @account
+    agent_ids = options[:agent_id]
+    agent_ids.each do |agent_id|
+      ticket_watcher = FactoryGirl.build(:subscription, account_id: account.id,
+                                         ticket_id: options[:ticket_id],
+                                         user_id: agent_id)
+      ticket_watcher.save!
+    end
   end
 end
