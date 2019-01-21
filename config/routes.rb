@@ -3020,6 +3020,9 @@ Helpkit::Application.routes.draw do
           get :clone_account
           post :clone_account
           post :trigger_action
+          get :clone_account
+          post :clone_account
+          post :enable_freshid
         end
       end
 

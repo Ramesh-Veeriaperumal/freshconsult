@@ -44,4 +44,9 @@ class Helpdesk::NestedTicketField < ActiveRecord::Base
   	self.label = name.titleize if label.blank?
   	self.label_in_portal = label if label_in_portal.blank?
   end
+
+  def translated_label_in_portal
+    self.ticket_field.translated_label_in_portal(self)
+  end
+
 end
