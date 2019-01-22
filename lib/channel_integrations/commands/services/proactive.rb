@@ -1,6 +1,5 @@
 module ChannelIntegrations::Commands::Services
-  class Shopify
-    # need to delete this file once proactive service changes the owner
+  class Proactive
     include ChannelIntegrations::Utils::ActionParser
     include ChannelIntegrations::Constants
     include ChannelIntegrations::CommonActions::Ticket
@@ -42,16 +41,18 @@ module ChannelIntegrations::Commands::Services
 
     def build_placeholders(payload)
       contact = current_account.contacts.find_by_email(payload[:data][:email])
-      contact_hash = contact.present? ? contact.as_json["user"].stringify_keys : {}
-      company_hash = contact.present? && contact.company.present? ? contact.company.as_json["company"].stringify_keys : {}
+      contact_hash = contact.present? ? contact.as_json['user'].stringify_keys : {}
+      company_hash = contact.present? && contact.company.present? ? contact.company.as_json['company'].stringify_keys : {}
       shopify = payload.delete(:shopify).with_indifferent_access
       shopify = transform_line_items(shopify) if payload[:context][:from] == 'DeliveryFeedback'
       payload[:data][:description] = Liquid::Template.parse(payload[:data][:description]).render({ 'shopify': shopify, 'contact': contact_hash, 'company': company_hash }.stringify_keys)
+      payload[:data][:subject] = Liquid::Template.parse(payload[:data][:subject]).render({ 'shopify': shopify, 'contact': contact_hash, 'company': company_hash }.stringify_keys)
     end
 
     def transform_line_items(shopify_payload)
       line_items = shopify_payload['line_items']
-      return shopify_payload unless line_items.present?
+      return shopify_payload if line_items.blank?
+
       line_items_title = line_items.map { |li| li['title'] }
       shopify_payload['line_items'] = line_items_title.join(', ')
       shopify_payload
