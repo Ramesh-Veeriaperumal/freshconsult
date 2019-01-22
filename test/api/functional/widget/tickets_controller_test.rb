@@ -9,6 +9,13 @@ module Widget
       super
       before_all
       @request.env['HTTP_X_WIDGET_ID'] = create_widget.id
+      log_out
+      controller.class.any_instance.stubs(:api_current_user).returns(nil)
+    end
+
+    def teardown
+      super
+      controller.class.any_instance.unstub(:api_current_user)
     end
 
     @@before_all_run = false
@@ -162,6 +169,36 @@ module Widget
       t = @account.tickets.last
       assert_response 201
       match_json({id: t.display_id})
+    end
+
+    def test_create_with_whitelisted_domain_with_restricted_helpdesk_enabled
+      @account.launch(:restricted_helpdesk)
+      @account.features.restricted_helpdesk.create
+      @account.helpdesk_permissible_domains.create(domain: 'restrictedhelpdesk.com')
+      settings = settings_hash(form_type: 1)
+      @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
+      params = { email: 'testwhitelist@restrictedhelpdesk.com', description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      t = Helpdesk::Ticket.last
+      assert_response 201
+      match_json(id: t.display_id)
+    ensure
+      @account.features.restricted_helpdesk.destroy
+      @account.rollback(:restricted_helpdesk)
+    end
+
+    def test_create_with_incorrect_domain_with_restricted_helpdesk_enabled
+      @account.launch(:restricted_helpdesk)
+      @account.features.restricted_helpdesk.create
+      @account.helpdesk_permissible_domains.create(domain: 'restrictedhelpdesk.com')
+      settings = settings_hash(form_type: 1)
+      @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
+      params = { email: "testemailuser@#{Faker::Internet.domain_name}", description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 400
+    ensure
+      @account.features.restricted_helpdesk.destroy
+      @account.rollback(:restricted_helpdesk)
     end
   end
 end
