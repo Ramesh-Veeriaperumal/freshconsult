@@ -44,7 +44,7 @@ class Account < ActiveRecord::Base
     :audit_log_ui, :omni_channel_routing, :custom_encrypted_fields, :hipaa,
     :freshid_saml, :canned_forms, :custom_translations, :social_tab,
     :customize_table_view, :public_url_toggle, :add_to_response, :agent_scope,
-    :performance_report, :custom_password_policy
+    :performance_report, :custom_password_policy,:social_tab
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
