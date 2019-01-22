@@ -54,7 +54,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
   # end
 
   def test_shopify_convert_as_ticket
-    payload, command_payload = shopify_create_ticket_command
+    payload, command_payload = proactive_create_ticket_command
     push_to_channel(command_payload)
     ticket = @account.tickets.last
     assert_equal ticket.description, payload[:description]
@@ -64,7 +64,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
 
   def test_shopify_placeholders_convert_as_ticket
     description = description_with_shopify_placeholders
-    payload, command_payload = shopify_create_ticket_command(description)
+    payload, command_payload = proactive_create_ticket_command(description)
     push_to_channel(command_payload)
     ticket = @account.tickets.last
     assert_equal ticket.status, 5
@@ -125,7 +125,7 @@ class ChannelMessagePollerTest < ActionView::TestCase
       ticket.notes.last
     end
 
-    def shopify_create_ticket_command(description=nil)
+    def proactive_create_ticket_command(description=nil)
       payload = {
         "subject": Faker::Lorem.characters(50),
         "description": description || Faker::Lorem.characters(100),
