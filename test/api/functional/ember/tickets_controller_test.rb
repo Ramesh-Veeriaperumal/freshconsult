@@ -81,6 +81,10 @@ module Ember
       ticket = Helpdesk::Ticket.where('source != ?', 10).last || create_ticket(ticket_params_hash)
       ticket
     end
+    
+    def account
+      @account ||= Account.current
+    end
 
     def get_user_with_multiple_companies
       user_company = @account.user_companies.group(:user_id).having(
