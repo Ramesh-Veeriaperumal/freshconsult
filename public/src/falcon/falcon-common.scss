@@ -49,6 +49,45 @@ $select-sprite-bg-url: "/assets/plugins/select2/select2.png";
 $fields-font-size: 13px;
 $app-delete-bg-color: #ff5959;
 
+// New button color(elephant blue) will replace green color buttons in Mint UI
+// new button theme
+//text color for button
+$app-btn-text-light: #fff;
+//Primary and Secondary Buttons
+$btn-lg-primary-top:              #264966;
+$btn-lg-primary-bottom:           #12344d;
+$btn-lg-primary-border:           #12344d;
+$btn-lg-primary-hover:            #12344d;
+$btn-lg-primary-selected-border:  #264966;
+$btn-lg-primary-disabled-top:     #92a4b2;
+$btn-lg-primary-disabled-bottom:  #8899a6;
+$btn-lg-primary-disabled-border:  #8899a6;
+$btn-secondary-top:               #fff;
+$btn-secondary-bottom:            #f3f5f7;
+
+// button colors
+$app-primary-btn:             #12344d;
+$app-primary-btn-hover:       darken($app-primary-color, 4%);
+$app-primary-btn-border:      #12344d;
+$app-primary-btn-disabled:    #b7e5d6;
+$app-primary-btn-text-disabled: #fff;
+$app-secondary-btn:           #fff;
+$app-secondary-btn-border:    #dadfe3;
+$app-secondary-btn-hover:     #f3f5f7;
+
+// applying gradient colors to secondary Buttons
+//Bulk Action Buttons
+$btn-lg-top:                      #fff;
+$btn-lg-bottom:                   #f3f5f7;
+$btn-lg-hover:                    #f3f5f7;
+$btn-lg-border:                   #cfd7df;
+$btn-lg-active-border:            #b1bdc8;
+$btn-lg-disabled:                 #f3f5f7;
+$btn-lg-disabled-border:          #ebeff3;
+$btn-lg-disabled-text:            #647a8e;
+$btn-lg-focus-border:             #2e6ed8;
+
+
 $survey-options-color: (
   strongly-disagree: #ff5959,
   some-what-disagree: #fa7543,
@@ -57,6 +96,7 @@ $survey-options-color: (
   agree: #9cd807,
   some-what-agree: #6bb437,
   strongly-agree: #189e00);
+
 
 .header,
 #footer {
@@ -472,10 +512,10 @@ li.active > a:focus{
       left: 73%;
     }
 
-      &:before {
-left: 88%;
-    transform: rotate(135deg);
-    top: 9px;
+    &:before {
+      left: 88%;
+      transform: rotate(135deg);
+      top: 9px;
     }
 
     }
@@ -517,20 +557,58 @@ left: 88%;
 }
 
 
-.btn, .btn:hover{
-  border-radius: 2px;
-  background-color: $app-btn-text-light;
-  border: solid 1px $border-color;
-  background-image: none;
-  text-transform: uppercase;
+.btn {
+  font-size: 14px; // changed 12 px to 14px
+  // border: none;
+  border: 1px $app-secondary-btn-border solid;
+  border-radius: 4px; // changed 2px to 4px
+  outline: none;
+  background: $btn-secondary-bottom;
   text-shadow: none;
+  min-width: 0px;
+  text-align: center;
+  letter-spacing: 0.3px;
+  font-weight: 500;
+  // text-transform: uppercase; commenting this property as the button text should be in normal case
+  // letter-spacing: 0.5px; commenting this property
+  // font-family: $font-family-semibold; commenting this
   color: $app-text-color;
   box-shadow: none;
-  padding: 7px 14px;
-  font-size: 12px;
-  line-height: 14px;
+  // padding: 7px 14px; commented this and added a line below to match the exact padding of new UI
+  padding: 7px 15px;
+  // line-height: 14px; commented line height as it manipulated the button padding
   text-decoration: none;
+  background-image:
+    linear-gradient(
+      to bottom,
+      $btn-lg-top,
+      $btn-lg-bottom
+    );
 
+  &:hover {
+    background-color: $btn-lg-hover;
+    background-image: none;
+  }
+
+  &:active {
+    box-shadow: none;
+    transition: 0.1s linear;
+  }
+
+  &:focus {
+    border: 1px solid $btn-lg-focus-border;
+    box-shadow: 0 0 0 1px $btn-lg-focus-border;
+  }
+
+  &.disabled,
+  &[disabled] {
+    pointer-events: none;
+    cursor: default;
+    color: $btn-lg-disabled-text;
+    border: 1px $btn-lg-disabled-border solid;
+    background-image: none;
+    background-color: $btn-lg-disabled;
+  }
 }
 
 
@@ -546,10 +624,23 @@ left: 88%;
 }
 
 
-.btn-primary, .btn-primary:hover{
-  background-color: $app-primary-btn-background;
-  border: solid 1px $app-primary-btn-border;
-  color: #fff;
+.btn-primary{
+  border: 1px $btn-lg-primary-border solid;
+    color: $app-btn-text-light;
+    letter-spacing: 0.3px;
+    font-weight: 500;
+    background-image:
+      linear-gradient(
+        to bottom,
+        $btn-lg-primary-top,
+        $btn-lg-primary-bottom
+      );
+
+    &:hover:not([disabled]) {
+      background-color: $btn-lg-primary-hover;
+      background-image: none;
+      color: $app-btn-text-light;
+    }
 
 }
 
@@ -1312,89 +1403,115 @@ div[class$="-toggle"]{
   }
 
   .btn {
-    font-size: 12px;
-      border: none;
-      border-radius: 2px;
-      outline: none;
-      background: #fff;
-      text-shadow: none;
-      min-width: 0px;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-family: $font-family-semibold;
-
+    font-size: 14px; // changed 12 px to 14px
+    // border: none;
+    border: 1px $app-secondary-btn-border solid;
+    border-radius: 4px; // changed 2px to 4px
+    outline: none;
+    background: $btn-secondary-bottom;
+    text-shadow: none;
+    min-width: 0px;
+    text-align: center;
+    letter-spacing: 0.3px;
+    font-weight: 500;
+    // text-transform: uppercase; commenting this property as the button text should be in normal case
+    // letter-spacing: 0.5px; commenting this property
+    // font-family: $font-family-semibold; commenting this
     color: $app-text-color;
-    background-color: $app-btn-background;
-      border: 1px $app-btn-border solid;
-      box-shadow: 0 1px 0 $app-btn-hover;
+    background-image:
+      linear-gradient(
+        to bottom,
+        $btn-lg-top,
+        $btn-lg-bottom
+      );
 
-      &:hover {
-        background-color: $app-btn-hover;
-        border-color: $app-btn-hover-border;
-      }
+    &:hover {
+      background-color: $btn-lg-hover;
+      background-image: none;
+    }
 
-      &.disabled,
-      &[disabled],
-      &:active {
-        box-shadow: none;
-      }
+    &:active {
+      box-shadow: none;
+      transition: 0.1s linear;
+    }
 
-      &:focus {
-        background-color: $app-btn-hover;
-        border-color: $app-btn-hover-border;
-      }
+    &:focus {
+      border: 1px solid $btn-lg-focus-border;
+      box-shadow: 0 0 0 1px $btn-lg-focus-border;
+    }
 
-      &.disabled,
-      &[disabled] {
-        background-color: $app-btn-disabled;
-        color: $app-btn-text-disabled;
-        border: 1px solid $app-btn-disabled;
-      }
-
-      input {
-        background: none;
-        padding: 0;
-        border: none;
-      }
-      &.btn-mini {
-        text-transform: initial;
-        padding: 2px 6px;
-      }
-      &.btn-flat {
-        padding: 4px 14px;
-        text-transform: capitalize;
-      }
+    &.disabled,
+    &[disabled] {
+      pointer-events: none;
+      cursor: default;
+      color: $btn-lg-disabled-text;
+      border: 1px $btn-lg-disabled-border solid;
+      background-image: none;
+      background-color: $btn-lg-disabled;
+    }
+    input {
+      background: none;
+      padding: 0;
+      border: none;
+    }
+    &.btn-mini {
+      text-transform: initial;
+      // padding: 2px 6px; added padding below to make the mini buttons look good. Metioned by UX designer Aayush
+      padding: 4px 8px;
+      font-weight: 500;
+      font-size: 12px;
+    }
+    &.btn-flat {
+      padding: 4px 14px;
+      text-transform: capitalize;
+    }
 
   }
 
   .btn-primary, .uiButton {
+    background-color: $btn-lg-primary-top;
+    border: 1px $btn-lg-primary-border solid;
     color: $app-btn-text-light;
-      background-color: $app-primary-btn-background;
-      border: 1px $app-primary-btn-border solid;
+    letter-spacing: 0.3px;
+    font-weight: 500;
+    background-image:
+      linear-gradient(
+        to bottom,
+        $btn-lg-primary-top,
+        $btn-lg-primary-bottom
+      );
 
-      &:hover {
-        background-color: $app-primary-btn-hover;
-        border-color: $app-primary-btn-border;
-      }
+    &:hover:not([disabled]) {
+      background-color: $btn-lg-primary-hover;
+      background-image: none;
+    }
 
-      &.disabled,
-      &[disabled],
-      &:active {
-        box-shadow: none;
-      }
+    &:active {
+      transition: 0.1s linear;
+      border: 1px $btn-lg-primary-selected-border solid;
+      box-shadow: inset 0 0 4px 0 rgba(0, 0, 0, 0.26);
+    }
 
-      &:focus {
-        background-color: $app-primary-btn-hover;
-        border-color: $app-primary-btn-border;
-      }
+    &:focus {
+      background-color: lighten($app-primary-btn, 5%);
+      border: 1px lighten($app-primary-btn-border, 5%) solid;
+      transform: scale(0.98);
+      transition: 0.1s linear;
+    }
 
-      &.disabled,
-      &[disabled] {
-        background-color: $app-primary-btn-disabled;
-        color: $app-btn-text-light;
-        border: 1px solid $app-primary-btn-disabled;
-      }
+    &.disabled,
+    &[disabled] {
+      cursor: not-allowed;
+      transition: 0.1s linear;
+      color: $app-secondary-btn-hover;
+      border: 1px solid $btn-lg-primary-disabled-border;
+      background-image:
+        linear-gradient(
+          to bottom,
+          $btn-lg-primary-disabled-top,
+          $btn-lg-primary-disabled-bottom
+        );
+    }
 
       &--uppercase {
         text-transform: uppercase;
@@ -1413,7 +1530,7 @@ div[class$="-toggle"]{
       &+ .dropdown-toggle {
         padding: 7px 8.5px;
         border-radius: 2px;
-        border-right: 1px #03a86b solid;
+        border-right: 1px $app-text-color solid;
         margin-left: 0px;
         border-top-left-radius: 0px;
         border-bottom-left-radius: 0px;
@@ -1890,6 +2007,7 @@ div[class$="-toggle"]{
   }
 }
 
+
 /*Chat settings*/
 
 .freshchat-edit {
@@ -1963,7 +2081,6 @@ div[class$="-toggle"]{
 @import "falcon-social";
 @import "falcon-rtl";
 @import "falcon-encrypted";
-
 
 .sandbox-notification-content {
   background: #fffade;

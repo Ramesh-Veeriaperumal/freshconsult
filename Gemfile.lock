@@ -256,7 +256,7 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/freshdesk-features.git
-  revision: 9d530cbf51b0c813dba47e73c986ca863ca12066
+  revision: f7c0e3ec6965f289c0efa280ed64a0e6613a25ed
   branch: freshdesk
   specs:
     freshdesk_features (0.0.2)

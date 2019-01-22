@@ -256,7 +256,10 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
         tickets.preload(:ticket_states).visible.find_each(batch_size: 300) do |ticket|
           update_sla_timer_stopped_at(ticket)
           group_ids.add ticket.group_id
-          set_sla_toggled_and_enqueue_sbrr(ticket) unless deleted?
+          unless deleted?
+            set_sla_toggled_and_enqueue_sbrr(ticket)
+            sync_task_changes_to_ocr(ticket, {active: [true, false]})
+          end
         end
       end
     ensure
@@ -275,6 +278,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
             update_ticket_due_by(ticket)
             group_ids.add ticket.group_id
             set_sla_toggled_and_enqueue_sbrr(ticket)
+            sync_task_changes_to_ocr(ticket, {active: [false, true]})
           end
         end
       ensure
@@ -312,4 +316,11 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   class << self
     include Cache::Memcache::Helpdesk::TicketStatus
   end
+
+  private
+
+    def sync_task_changes_to_ocr(ticket, changes)
+      @ocr_enabled ||= account.omni_channel_routing_enabled?
+      ticket.sync_task_changes_to_ocr(changes) if @ocr_enabled
+    end
 end

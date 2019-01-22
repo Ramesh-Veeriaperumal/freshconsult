@@ -13,10 +13,7 @@ class Group < ActiveRecord::Base
   include DataVersioning::Model
   include GroupConstants
 
-  TICKET_ASSIGN_TYPE = {:default => 0, :round_robin => 1, :skill_based => 2} #move other constants after merge - hari
-  VERSION_MEMBER_KEY = 'AGENTS_GROUPS'.freeze
-
-  concerned_with :round_robin_methods, :skill_based_round_robin, :presenter
+  concerned_with :round_robin_methods, :skill_based_round_robin, :presenter, :constants
 
   publishable on: [:create, :update, :destroy]
   
@@ -89,44 +86,6 @@ class Group < ActiveRecord::Base
   scope :capping_enabled_groups, :conditions => ["ticket_assign_type = 1 and capping_limit > 0"], :order => :name
   scope :skill_based_round_robin_enabled, :order => :name,
         :conditions => ["ticket_assign_type = #{Group::TICKET_ASSIGN_TYPE[:skill_based]}"]
-
-  API_OPTIONS = {
-    :except  => [:account_id,:email_on_assign,:import_id],
-    :include => { 
-      :agents => {
-        :only => [:id,:name,:email,:created_at,:updated_at,:active,:job_title,
-                  :phone,:mobile,:twitter_id, :description,:time_zone,:deleted,
-                  :helpdesk_agent,:fb_profile_id,:external_id,:language,:address, :unique_external_id],
-        :methods => [:company_id] 
-      }
-    }
-  }
-    
-  ASSIGNTIME = [
-    [ :half,    I18n.t("group.assigntime.half"),      1800 ], 
-    [ :one,     I18n.t("group.assigntime.one"),       3600 ], 
-    [ :two,     I18n.t("group.assigntime.two"),       7200 ], 
-    [ :four,    I18n.t("group.assigntime.four"),      14400 ], 
-    [ :eight,   I18n.t("group.assigntime.eight"),     28800 ], 
-    [ :twelve,  I18n.t("group.assigntime.twelve"),    43200 ], 
-    [ :day,     I18n.t("group.assigntime.day"),       86400 ],
-    [ :twoday,  I18n.t("group.assigntime.twoday"),    172800 ], 
-    [ :threeday,I18n.t("group.assigntime.threeday"),  259200 ],
-  ]
-
-  TICKET_ASSIGN_OPTIONS = [
-                            ['group_ticket_options.default',         '0'], 
-                            ['group_ticket_options.round_robin',     '1'],
-                            ['group_ticket_options.skill_based',     '2']
-                          ]
-
-  ASSIGNTIME_OPTIONS = ASSIGNTIME.map { |i| [i[1], i[2]] }
-  ASSIGNTIME_NAMES_BY_KEY = Hash[*ASSIGNTIME.map { |i| [i[2], i[1]] }.flatten]
-  ASSIGNTIME_KEYS_BY_TOKEN = Hash[*ASSIGNTIME.map { |i| [i[0], i[2]] }.flatten]
-  MAX_CAPPING_LIMIT = 100
-  CAPPING_LIMIT_OPTIONS = (2..MAX_CAPPING_LIMIT).map { |i| 
-    ["#{i} #{I18n.t("group.capping_tickets")}", i] 
-    }.insert(0, ["1 #{I18n.t("group.capping_ticket")}", 1])
   
   def excluded_agents(account)      
    return account.users.find(:all , :conditions=>['helpdesk_agent = true and id not in (?)',agents.map(&:id)]) unless agents.blank? 
@@ -222,8 +181,15 @@ class Group < ActiveRecord::Base
     group_type == Admin::AdvancedTicketing::FieldServiceManagement::Constant::SUPPORT_GROUP_TYPE
   end
 
-  private
+  def automatic_ticket_assignment_enabled?
+    AUTOMATIC_TICKET_ASSIGNMENT_TYPES.include?(ticket_assign_type)
+  end
 
+  def omni_channel_routing_enabled?
+    OMNI_CHANNEL_ASSIGNMENT_TYPES.include?(ticket_assign_type)
+  end
+
+  private
 
   def save_deleted_group_info
     @deleted_model_info = as_api_response(:central_publish_destroy)
