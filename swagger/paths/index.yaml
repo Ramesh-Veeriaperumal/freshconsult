@@ -548,6 +548,8 @@
 # Account 
 /accounts/cancel:
   $ref: ./accounts/cancel.yaml
+/accounts/{type}/download:
+  $ref: ./accounts/download.yaml
 
 # Account Export 
 /data_export/export:

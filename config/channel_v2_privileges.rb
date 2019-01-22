@@ -3,6 +3,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"channel/v2/ticket", only: %i[index create update show]
     resource :"channel/v2/conversation", only: %i[create reply]
     resource :"channel/v2/ticket_filter", only: %i[index show]
+    resource :"channel/v2/ticket_misc", only: %i[index]
   end
   manage_account do
     resource :"channel/v2/account", only: [:show]

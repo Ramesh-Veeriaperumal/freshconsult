@@ -195,14 +195,14 @@
       :decepticons_8: 190
       :decepticons_9: 191
       :decepticons_10: 192
-      :seafarers_1: 193
-      :seafarers_2: 194
-      :seafarers_3: 195
-      :seafarers_4: 196
+      :agent_scope: 193
+      :social_tab: 194
+      :public_url_toggle: 195
+      :add_to_response: 196
       :seafarers_5: 197
-      :seafarers_6: 198
-      :seafarers_7: 199
-      :seafarers_8: 200
+      :customize_table_view: 198
+      :custom_password_policy: 199
+      :performance_report: 200
       :seafarers_9: 201
       :seafarers_10: 202
       :seafarers_11: 203
@@ -267,3 +267,10 @@
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
   :undo_send: false
+  :social_tab: true
+  :customize_table_view: true
+  :public_url_toggle: true
+  :add_to_response: true
+  :agent_scope: true
+  :performance_report: true
+  :custom_password_policy: true

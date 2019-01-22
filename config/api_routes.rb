@@ -313,6 +313,7 @@ Helpkit::Application.routes.draw do
     resource :accounts, controller: 'admin/api_accounts' do
       collection do
         post :cancel
+        get :download_file, path: '/:type/download'
       end
     end
 
@@ -693,6 +694,9 @@ Helpkit::Application.routes.draw do
       member do
         post :reply, to: 'channel/v2/conversations#reply'
         post :notes, to: 'channel/v2/conversations#create'
+      end
+      collection do
+        get 'filters/:filter_id', to: 'channel/v2/ticket_misc#index'
       end
     end
     get '/account', to: 'channel/v2/accounts#show'

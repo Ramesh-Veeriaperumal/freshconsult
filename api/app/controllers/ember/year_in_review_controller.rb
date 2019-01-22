@@ -24,7 +24,8 @@ module Ember
     private
 
       def check_feature
-        return if Account.current.year_in_review_2017_enabled?
+        return if Account.current.year_in_review_2018_enabled?
+        
         render_request_error(:require_feature, 403, feature: "Year In Review")
       end
   end

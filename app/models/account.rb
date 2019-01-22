@@ -852,6 +852,14 @@ class Account < ActiveRecord::Base
     @hipaa_encryption_key ||= get_others_redis_key(cf_encryption_key) || fetch_cf_encryption_key_from_dynamo
   end
 
+  def beacon_report
+    current_user = User.current
+    Subscriptions::UpdateLeadToAutopilot.perform_async(email: current_user.email,
+                                                        event: ThirdCRM::EVENTS[:beacon_report],
+                                                        name: current_user.name)
+    generate_download_url("#{id}/beacon_report/beacon_report.pdf")
+  end
+
   protected
   
     def external_url_is_valid?(url) 
@@ -920,5 +928,13 @@ class Account < ActiveRecord::Base
 
     def cf_encryption_key
       CUSTOM_ENCRYPTED_FIELD_KEY % { account_id: self.id }
+    end
+
+    def generate_download_url(file_path)
+      if AwsWrapper::S3Object.exists?(file_path, S3_CONFIG[:bucket])
+        AwsWrapper::S3Object.url_for(file_path, S3_CONFIG[:bucket],
+                                      expires: FILE_DOWNLOAD_URL_EXPIRY_TIME,
+                                      secure: true)
+      end
     end
 end

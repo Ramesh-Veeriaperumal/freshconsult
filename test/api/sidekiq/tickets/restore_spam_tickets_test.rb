@@ -27,7 +27,7 @@ class RestoreSpamTicketsTest < ActionView::TestCase
     user.deleted_at = Time.now-1.days
     user.save
     ticket = create_ticket(spam: true, requester_id: user.id)
-    Tickets::RestoreSpamTickets.new.perform(user_ids: [user.id])
+    Tickets::RestoreSpamTicketsWorker.new.perform(user_ids: [user.id])
     ticket.reload
     user.reload
     assert ticket.spam == false
@@ -45,7 +45,7 @@ class RestoreSpamTicketsTest < ActionView::TestCase
     user1.save
     ticket1 = create_ticket(spam: true, requester_id: user1.id)
 
-    Tickets::RestoreSpamTickets.new.perform(user_ids: [user.id, user1.id])
+    Tickets::RestoreSpamTicketsWorker.new.perform(user_ids: [user.id, user1.id])
     ticket.reload
     user.reload
     assert ticket.spam == false
@@ -63,7 +63,7 @@ class RestoreSpamTicketsTest < ActionView::TestCase
     user.deleted_at = Time.now-1.days
     user.save
     ticket = create_ticket(spam: true, requester_id: user.id)
-    Tickets::RestoreSpamTickets.new.perform(user_ids: [user.id])
+    Tickets::RestoreSpamTicketsWorker.new.perform(user_ids: [user.id])
     ticket.reload
     user.reload
     assert ticket.spam == true
@@ -72,7 +72,41 @@ class RestoreSpamTicketsTest < ActionView::TestCase
 
   def test_restore_spam_ticket_with_exception
     assert_nothing_raised do
-      Tickets::RestoreSpamTickets.new.perform(nil)
+      ::Tickets::RestoreSpamTicketsWorker.new.perform({})
     end
+  end
+
+  def test_publish_restored_tickets_to_ocr
+    @account.stubs(:omni_channel_routing_enabled?).returns(true)
+    user = add_new_user(@account)
+    user.deleted_at = Time.now-1.days
+    user.save
+    ticket = create_ticket(spam: true, requester_id: user.id)
+    ::OmniChannelRouting::TaskSync.jobs.clear
+    Tickets::RestoreSpamTicketsWorker.new.perform(user_ids: [user.id])
+    ticket.reload
+    user.reload
+    assert ticket.spam == false
+    assert user.deleted_at.nil?
+    assert_equal 1, ::OmniChannelRouting::TaskSync.jobs.size
+  ensure
+    @account.unstub(:omni_channel_routing_enabled?)
+  end
+
+  def test_publish_restored_tickets_to_ocr_with_feature_off
+    @account.stubs(:omni_channel_routing_enabled?).returns(false)
+    user = add_new_user(@account)
+    user.deleted_at = Time.now-1.days
+    user.save
+    ticket = create_ticket(spam: true, requester_id: user.id)
+    ::OmniChannelRouting::TaskSync.jobs.clear
+    Tickets::RestoreSpamTicketsWorker.new.perform(user_ids: [user.id])
+    ticket.reload
+    user.reload
+    assert ticket.spam == false
+    assert user.deleted_at.nil?
+    assert_equal 0, ::OmniChannelRouting::TaskSync.jobs.size
+  ensure
+    @account.unstub(:omni_channel_routing_enabled?)
   end
 end
