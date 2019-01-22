@@ -306,8 +306,12 @@ class Agent < ActiveRecord::Base
     end
   end
 
-  def self.destroy_agents(account, type)
-    account.agents.where(agent_type: type).destroy_all
+  #Will be only called during disabling FSM via API(automations). Customers can not disable FSM from UI
+  def self.destroy_agents(account, type) 
+    agents = account.agents.where(agent_type: type).includes(:user).all
+    agents.each do |agent|
+      agent.user.make_customer
+    end
   end
 
   private

@@ -172,6 +172,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       end
 
       def destroy_field_group
+        Group.destroy_groups(Account.current, GroupType.group_type_id(FIELD_GROUP_NAME))
         GroupType.destroy_group_type(Account.current, FIELD_GROUP_NAME)
       end
 

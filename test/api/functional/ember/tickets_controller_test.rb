@@ -4251,7 +4251,7 @@ module Ember
       perform_fsm_operations
       ticket = create_ticket({type: SERVICE_TASK_TYPE})
       params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10) }      
-      put :update, construct_params({ version: 'private', id: ticket.id }, params_hash)
+      put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
       assert_response 400
     ensure
       cleanup_fsm
@@ -4263,7 +4263,7 @@ module Ember
           perform_fsm_operations
           ticket = create_ticket
           params_hash = { description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10) }      
-          put :update, construct_params({ version: 'private', id: ticket.id }, params_hash)
+          put :update, construct_params({ version: 'private', id: ticket.display_id }, params_hash)
           assert_response 200
         ensure
           cleanup_fsm
