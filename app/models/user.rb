@@ -101,7 +101,7 @@ class User < ActiveRecord::Base
   validate :max_user_emails
   validate :max_user_companies, :if => :has_multiple_companies_feature?
   validate :unique_external_id_feature, :if => :unique_external_id_changed?
-
+  validate :check_roles_for_field_agents, if: -> { Account.current.field_service_management_enabled? }, on: :update
 
 
   def email_validity
@@ -1426,6 +1426,14 @@ class User < ActiveRecord::Base
                                             :_destroy => true }
         self.customer_id = nil
       end
+    end
+
+    def check_roles_for_field_agents
+      if self.agent.try(:field_agent?) && roles_changed?
+        self.errors[:role_ids] << :field_agent_roles
+        return false
+      end
+      true
     end
 
     def reset_to_default_ticket_permission
