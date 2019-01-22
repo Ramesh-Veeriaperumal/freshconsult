@@ -38,6 +38,7 @@ class Agent < ActiveRecord::Base
   validate :validate_signature
   validate :check_agent_type_changed, on: :update
   validate :validate_agent_group_types, :if => :check_agent_group_types?
+  validate :check_ticket_permission, if: -> { Account.current.field_service_management_enabled? }
   # validate :only_primary_email, :on => [:create, :update] moved to user.rb
 
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
@@ -411,6 +412,18 @@ class Agent < ActiveRecord::Base
     if invalid_groups.present?
       self.errors[:group_ids] << :agent_group_type_mismatch
       return false
+    end
+    true
+  end
+
+  def check_ticket_permission
+    if field_agent? && self.ticket_permission != PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
+      if self.new_record? #For UI
+        self.ticket_permission = PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
+      else
+        self.errors[:ticket_permission] << :field_agent_scope
+        return false
+      end
     end
     true
   end
