@@ -31,7 +31,9 @@ pipe_tests = Dir.glob('test/api/functional/**/pipe/**/*_test.rb')
 
 search_tests = Dir.glob('test/api/**/api_search/**/*_test.rb')
 
-all_tests = (unit_tests | functional_tests | sidekiq_tests | shoryuken_tests | integration_test ) - skip_files - pipe_tests - search_tests
+mailer_tests = Dir.glob('test/app/mailers/**/*_test.rb')
+
+all_tests = (unit_tests | functional_tests | sidekiq_tests | shoryuken_tests | integration_test | mailer_tests) - skip_files - pipe_tests - search_tests
 
 puts "INFRA: #{$infra}"
 
