@@ -155,7 +155,9 @@ module DashboardConcern
 
   def widget_list(dashboard_type)
     widgets = if current_account.subscription.sprout_plan?
-                SPROUT_DASHBOARD.dup
+                items = SPROUT_DASHBOARD.dup
+                items << [:unresolved_tickets, 'unresolved-tickets', 2, 2] if current_user.privilege?(:admin_tasks) || current_user.privilege?(:view_reports)
+                items
               elsif dashboard_type.include?('admin')
                 ADMIN_DASHBOARD.dup
               elsif dashboard_type.include?('supervisor')
@@ -177,7 +179,7 @@ module DashboardConcern
       activities: !non_sprout_plan,
       todo: true,
       trend_count: non_sprout_plan,
-      unresolved_tickets: non_sprout_plan
+      unresolved_tickets: current_account.unresolved_tickets_widget_for_sprout_enabled? || non_sprout_plan
     }
     widgets_with_feature = check_widgets_with_feature(non_sprout_plan)
     chat_related_widgets = check_chat_related_widgets(non_sprout_plan)

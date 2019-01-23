@@ -13,7 +13,7 @@ class AgentType < ActiveRecord::Base
   after_commit :clear_agent_types_cache
 
   def self.agent_type_id(agent_type_name)
-    agent_type = Account.current.agent_types_from_cache.find { |type| type.name == agent_type_name }
+    agent_type = Account.current.agent_types_from_cache.find { |type| type.name == agent_type_name.to_s }
     agent_type ? agent_type.agent_type_id : nil
   end
 

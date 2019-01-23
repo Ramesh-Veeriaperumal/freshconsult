@@ -209,6 +209,14 @@ window.App.Agents = window.App.Agents || {};
 		  }
 		});
 
+		$doc.on("click.agent_agent_type_field_agent", function(){
+			if($("#agent_agent_type_field_agent").prop('checked')){ 
+				$("#roles-and-scopes").addClass('hide');
+			} else {
+				$("#roles-and-scopes").removeClass('hide');
+			}
+		});
+
 		$doc.on("click.agent-roles", "#agent-group-container-submit", function(){
 			$('#agent_group input:checked').each(function(){
 			  var group_id = $(this).attr('rel');

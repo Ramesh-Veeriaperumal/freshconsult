@@ -56,6 +56,7 @@ module AgentsTestHelper
       id: Fixnum,
       contact: restricted_agent_contact_pattern(expected_output[:user] || agent.user),
       group_ids: expected_output[:group_ids] || agent.group_ids,
+      type: AgentType.agent_type_name(agent.agent_type)
     }
   end
 

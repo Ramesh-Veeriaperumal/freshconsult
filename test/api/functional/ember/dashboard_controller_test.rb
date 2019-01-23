@@ -134,6 +134,32 @@ module Ember
       assert_response 200
     end
 
+    def test_show_unresolved_tickets_widget_for_sprout_feature
+      Subscription.any_instance.stubs(:sprout_plan?).returns(true)
+      Account.any_instance.stubs(:unresolved_tickets_widget_for_sprout_enabled?).returns(true)
+      get :show, controller_params(version: 'private', id: 1)
+      assert_response 200
+      widgets = JSON.parse(response.body)['widgets']
+      assert_equal widgets.count { |widget| widget['name'] == 'unresolved-tickets' }, 1
+      Subscription.any_instance.unstub(:sprout_plan?)
+      Account.any_instance.unstub(:unresolved_tickets_widget_for_sprout_enabled?)
+    end
+
+    def test_unresolved_tickets_widget_for_sprout_feature_for_agent
+      Subscription.any_instance.stubs(:sprout_plan?).returns(true)
+      Account.any_instance.stubs(:unresolved_tickets_widget_for_sprout_enabled?).returns(true)
+      User.any_instance.stubs(:privilege?).returns(true)
+      User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+      User.any_instance.stubs(:privilege?).with(:view_reports).returns(false)
+      get :show, controller_params(version: 'private', id: 1)
+      assert_response 200
+      widgets = JSON.parse(response.body)['widgets']
+      assert_equal widgets.count { |widget| widget['name'] == 'unresolved-tickets' }, 0
+      Subscription.any_instance.unstub(:sprout_plan?)
+      Account.any_instance.unstub(:unresolved_tickets_widget_for_sprout_enabled?)
+      User.any_instance.unstub(:privilege?)
+    end
+
     # satisfaction_survey
 
     def test_satisfaction_survey_without_active_survey

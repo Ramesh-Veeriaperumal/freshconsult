@@ -182,6 +182,10 @@ class Group < ActiveRecord::Base
     self.group_type == GroupType.group_type_id(GroupConstants::FIELD_GROUP_NAME)  
   end
 
+  def self.destroy_groups(account, type)
+    account.groups.where(group_type: type).destroy_all
+  end
+
   def support_agent_group?
     group_type == Admin::AdvancedTicketing::FieldServiceManagement::Constant::SUPPORT_GROUP_TYPE
   end

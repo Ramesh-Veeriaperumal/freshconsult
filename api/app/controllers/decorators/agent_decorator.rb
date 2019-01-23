@@ -36,13 +36,18 @@ class AgentDecorator < ApiDecorator
 
   def to_restricted_hash
     user_obj = user_object
+    type = user_object.agent ? Account.current.agent_types_from_cache.find { |type|
+      type.agent_type_id == user_object.agent.agent_type
+    }.name : Agent::SUPPORT_AGENT
+
     {
       id: user_obj.id,
       contact: {
         name: user_obj.name,
         email: user_obj.email
       },
-      group_ids: group_ids
+      group_ids: group_ids,
+      type: type
     }
   end
 

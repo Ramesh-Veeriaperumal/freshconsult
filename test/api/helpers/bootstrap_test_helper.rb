@@ -153,7 +153,8 @@ module BootstrapTestHelper
         name: agent.user.name,
         email: agent.user.email
       },
-      group_ids: agent.group_ids
+      group_ids: agent.group_ids,
+      type: AgentType.agent_type_name(agent.agent_type)
     }
   end
 

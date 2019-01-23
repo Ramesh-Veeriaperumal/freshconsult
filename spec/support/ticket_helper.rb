@@ -92,7 +92,7 @@ module TicketHelper
   end
 
   def create_field_agent
-    add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT)})
+    add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: AgentType.agent_type_id(Agent::FIELD_AGENT), ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]})
   end
 
   def create_field_agent_group

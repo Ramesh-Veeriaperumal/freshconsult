@@ -210,7 +210,9 @@
   					  <%= text_area(:agent, :signature_html , :class => "text ", :cols => "40", :rows => "5", :id => "user_binfo" ) %>
   					  <%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
   					</div>
-  				</li>
+          </li>
+          <% if !(edit? && is_field_agent?(@agent)) %>
+          <div id="roles-and-scopes">
   				<li class="seperator"></li>
   				<li class="row-fluid">
   					<h5 class="lead">
@@ -222,14 +224,12 @@
           <% if(current_account.agent_scope_enabled?) %>
             <label class="control-label"><%=t('agent.ticket_scope')%></label>
             <ul class="controls">
-              <li>
                 <label class="radio">
                   <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:checked => true ,:id=>"agent_all_tickets", :class=>"radio"}) %>
                   <%=t('agent.global')%>
                   <%= content_tag( :span, t('agent.global_info'), :class => "muted info_data" ) %>
                 </label>
 
-              </li>
               <li>
                 <label class="radio">
                  <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets", :class => "radio"}) %>
@@ -312,7 +312,8 @@
 			</span>
 		</li>
 		<% end %>
-
+    </div>
+    <% end %>
     <% if(@groups.any?) %>
       <li class="seperator"></li>
       <li class="row-fluid">
