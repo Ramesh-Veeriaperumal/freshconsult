@@ -133,9 +133,7 @@ class AgentsController < ApplicationController
   end  
 
   def create 
-    if params[:agent][:agent_type] == Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id 
-      params[:user][:role_ids] = [Account.current.roles.find_by_name("Agent").id]
-    end
+    check_field_agent_roles if Account.current.field_service_management_enabled?
     @user  = current_account.users.new #by Shan need to check later    
     group_ids = params[nscname].delete(:group_ids)
     @agent = current_account.agents.new(params[nscname]) 
@@ -162,6 +160,12 @@ class AgentsController < ApplicationController
         @scoreboard_levels = current_account.scoreboard_levels.find(:all, :order => "points ASC")
         set_skill_data
         render :action => :new
+    end
+  end
+
+  def check_field_agent_roles
+    if params[:agent][:agent_type] == Account.current.agent_types.find_by_name(Agent::FIELD_AGENT).agent_type_id 
+      params[:user][:role_ids] = [Account.current.roles.find_by_name("Agent").id]
     end
   end
   
