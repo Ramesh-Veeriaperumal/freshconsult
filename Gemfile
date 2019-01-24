@@ -266,6 +266,7 @@ group :development, :test do
   gem 'factory_girl_rails', '4.4.0'
   gem 'webrick', '1.3.1'
   gem 'jasmine'
+  gem 'spring', '1.2.0'
 end
 
 group :test do
