@@ -52,7 +52,6 @@ class TicketsExportTest < ActionView::TestCase
     assert_equal data_export.last_error, nil
     data_export.destroy
     @ticket.destroy
-    @agent.destroy
   ensure
     Export::Util.unstub(:build_attachment)
   end
@@ -80,7 +79,6 @@ class TicketsExportTest < ActionView::TestCase
     assert_equal data_export.last_error, nil
     data_export.destroy
     @ticket.destroy
-    @agent.destroy
   ensure
     Export::Util.unstub(:build_attachment)
   end
@@ -108,7 +106,6 @@ class TicketsExportTest < ActionView::TestCase
     assert_equal data_export.last_error, nil
     data_export.destroy
     @ticket.destroy
-    @agent.destroy
   ensure
     Export::Util.unstub(:build_attachment)
   end
@@ -136,7 +133,6 @@ class TicketsExportTest < ActionView::TestCase
     assert_equal data_export.last_error, nil
     data_export.destroy
     @ticket.destroy
-    @agent.destroy
   ensure
     Export::Util.unstub(:build_attachment)
   end
@@ -164,7 +160,6 @@ class TicketsExportTest < ActionView::TestCase
     assert_equal data_export.last_error, nil
     data_export.destroy
     @ticket.destroy
-    @agent.destroy
   ensure
     Export::Util.unstub(:build_attachment)
   end
@@ -193,7 +188,6 @@ class TicketsExportTest < ActionView::TestCase
     assert_equal data_export.last_error, nil
     data_export.destroy
     @ticket.destroy
-    @agent.destroy
   ensure
     Export::Util.unstub(:build_attachment)
   end

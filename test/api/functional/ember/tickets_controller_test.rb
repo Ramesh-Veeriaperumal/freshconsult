@@ -2868,8 +2868,7 @@ module Ember
     end
 
     def test_child_create_without_feature
-      create_parent_ticket
-      parent_ticket = Account.current.tickets.last
+      parent_ticket = create_parent_ticket
       params_hash = ticket_params_hash.merge(parent_id: parent_ticket.display_id)
       disable_adv_ticketing([:parent_child_tickets, :field_service_management, :parent_child_infra])
       post :create, construct_params({ version: 'private' }, params_hash)

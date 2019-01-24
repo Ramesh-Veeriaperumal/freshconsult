@@ -495,6 +495,7 @@ class CannedResponsesControllerTest < ActionController::TestCase
       title: title
     }
     put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
+    p "canned_response :: #{canned_response.inspect} :: response.body ::#{response.body.inspect}"
     assert_response 200
     assert title == ActiveSupport::JSON.decode(response.body)['title']
     match_json(ca_response_show_pattern(ca_response1.id))
