@@ -12,7 +12,8 @@ module ChannelIntegrations::Constants
   SERVICE_NAME_CLASS_MAPPING = {
     'microsoft-teams': 'MicrosoftTeams',
     'twitter': 'Twitter',
-    'shopify': 'Shopify'
+    'shopify': 'Shopify',
+    'proactive': 'Proactive'
   }.freeze
 
   # The module names for the Command/replies.

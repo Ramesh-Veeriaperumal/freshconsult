@@ -4,12 +4,15 @@ defaults: &defaults
   api_url: "http://localhost:3003"
   acc_api_url: "http://localhost:3004"
   mkp_oauth_url: "http://localhost:3005"
+  gallery_url: "http://localhost:5000"
   api_auth_key: 18a9cc87b8aaab31a31262e93841174765439bdef0f9857b
   cdn_static_assets: "d3fbrmmbx555lt.cloudfront.net/app-assets/test_data"
   dev_oauth_key: dd2dfdc28f5d160992137b6f6e81eb3dd051ae9d9099fee39ee6938d15fc3395
   dev_oauth_secret: 65000011cbcb72e99e65c2960d1b9cec9dc60d633df5469dd7961c35f80570e6
   admin_oauth_key: ed2dfdc28f5d160992137b6f6e81eb3dd051ae9d9099fee39ee6938d15fc3395
   admin_oauth_secret: 75000011cbcb72e99e65c2960d1b9cec9dc60d633df5469dd7961c35f80570e6
+  gallery_oauth_key: hd2dfdc28f5d160992137b6f6e81eb3dd051ae9d9099fee39ee6938d15fc3395
+  gallery_oauth_secret: 85000011cbcb72e99e65c2960d1b9cec9dc60d633df5469dd7961c35f80570e6
   cache_invalidation_time: 300 ### In Seconds
   custom_apps_cache_invd_time: 300 ### In Seconds
   integrations_cache_invd_time: 60 ### In Seconds
