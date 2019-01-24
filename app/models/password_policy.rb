@@ -136,6 +136,13 @@ class PasswordPolicy < ActiveRecord::Base
 	  return base_password.split("").shuffle.join
 	end
 
+	def reset_policies
+		self.tap do |password_policy|
+			password_policy.configs = {}
+			password_policy.policies = DEFAULT_PASSWORD_POLICIES
+		end
+	end
+
 	private
 		def validate_configs
 			input_policies = self.policies.map(&:to_sym)
@@ -172,5 +179,4 @@ class PasswordPolicy < ActiveRecord::Base
 		def policies_changed?
 			self.previous_changes.key?(:policies) && self.previous_changes[:policies].first != read_attribute(:policies).to_s
 		end
-
 end

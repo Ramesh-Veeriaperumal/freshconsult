@@ -3,11 +3,11 @@ module SearchService
     ES_TIMEOUT = 5
     attr_accessor :typhoeus_request, :account_id, :additional_info, :logger, :response
 
-    def initialize(path, method, uuid, payload, headers, account_id, additional_info = {})
+    def initialize(path, method, uuid, payload, headers, account_id, additional_info = {}, timeout = ES_TIMEOUT)
       @logger = SearchService::Logger.new(uuid, Search::Utils::SEARCH_LOGGING[:request])
       @account_id = account_id
       @additional_info = additional_info
-      @typhoeus_request = Typhoeus::Request.new(path, method: method, body: payload, headers: headers, accept_encoding: 'gzip, deflate', timeout: ES_TIMEOUT)
+      @typhoeus_request = Typhoeus::Request.new(path, method: method, body: payload, headers: headers, accept_encoding: 'gzip, deflate', timeout: timeout)
       attach_callbacks
       @typhoeus_request.run
     end
