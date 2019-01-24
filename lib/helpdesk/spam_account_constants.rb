@@ -1,14 +1,13 @@
 module Helpdesk::SpamAccountConstants
 
-	include Redis::RedisKeys
-  	include Redis::OthersRedis
+  include Redis::RedisKeys
+  include Redis::OthersRedis
 
-  	MAX_TO_CC_THRESHOLD = 10
-    FREE_ACCOUNT_30_DAYS_OUTBOUND_THRESHOLD = 5
-    FREE_ACCOUNT_OUTBOUND_DEFAULT_THRESHOLD = 100
-  	ACCOUNT_ID_THRESHOLD = 400000
+  MAX_TO_CC_THRESHOLD = 10
+  FREE_ACCOUNT_OUTBOUND_DEFAULT_THRESHOLD = 30
+  ACCOUNT_ID_THRESHOLD = 400000
 
-    SPAM_CHECK_TIME_LIMIT = 30 #in days
+  SPAM_CHECK_TIME_LIMIT = 30 #in days
 
   	def get_trial_account_max_to_cc_threshold
       if $trial_account_max_to_cc_threshold.blank?
@@ -17,14 +16,6 @@ module Helpdesk::SpamAccountConstants
       end
   		return $trial_account_max_to_cc_threshold
   	end
-
-    def get_free_account_30_days_threshold
-      if $free_account_30_days_threshold.blank?
-        free_account_30_days_threshold = get_others_redis_key(FREE_ACCOUNT_30_DAYS_THRESHOLD)
-        $free_account_30_days_threshold = free_account_30_days_threshold.present? ? free_account_30_days_threshold.to_i : FREE_ACCOUNT_30_DAYS_OUTBOUND_THRESHOLD
-      end
-      return $free_account_30_days_threshold
-    end
 
     def get_free_account_outbound_threshold
       if $free_account_outbound_threshold.blank?

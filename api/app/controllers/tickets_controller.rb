@@ -464,11 +464,7 @@ class TicketsController < ApiApplicationController
       if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
         return total_outbound_per_day >= 5
       elsif current_account.subscription.free?
-        if current_account.created_at >= (Time.zone.now - 30.days)
-          return total_outbound_per_day >= get_free_account_30_days_threshold
-        else
           return total_outbound_per_day >= get_free_account_outbound_threshold
-        end
       end
       return false
     end

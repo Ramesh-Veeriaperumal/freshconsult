@@ -1922,17 +1922,10 @@ class Helpdesk::TicketsController < ApplicationController
             flash.now[:error] = t(:'flash.general.outbound_limit_per_day_exceeded', :limit => get_trial_account_max_to_cc_threshold )
           end
         elsif(current_account.subscription.free?)
-          if (current_account.created_at >= (Time.zone.now - 30.days))
-            if (total_outbound_per_day >= get_free_account_30_days_threshold )
-              @outbound_limit_crossed = true
-              flash.now[:error] = t(:'flash.general.outbound_limit_per_day_30_days_free_exceeded', :limit => get_free_account_30_days_threshold )
-            end
-          else
             if (total_outbound_per_day >= get_free_account_outbound_threshold )
               @outbound_limit_crossed = true
               flash.now[:error] = t(:'flash.general.outbound_limit_per_day_free_exceeded', :limit => get_free_account_outbound_threshold )
             end
-          end
         end
       end
     end
