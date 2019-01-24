@@ -171,6 +171,40 @@ module Widget
       match_json({id: t.display_id})
     end
 
+    def test_create_with_meta_headers
+      settings = settings_hash(form_type: 1)
+      @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
+      @request.env['HTTP_USER_AGENT'] = 'Freshdesk_Native'
+      @request.env['HTTP_REFERER'] = 'http://ateam.freshdesk.com'
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      t = Helpdesk::Ticket.last
+      assert_response 201
+      match_json(id: t.display_id)
+      t = @account.tickets.last
+      meta_info = t.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
+      assert_not_equal({}, meta_info)
+      meta_info = YAML.load(meta_info.body)
+      assert_equal meta_info['user_agent'], @request.env['HTTP_USER_AGENT']
+      assert_equal meta_info['referrer'], @request.env['HTTP_REFERER']
+    end
+
+    def test_create_with_meta_params
+      settings = settings_hash(form_type: 1)
+      @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph, meta: { user_agent: 'Freshdesk_Native', referrer: 'http://ateam.freshdesk.com' } }
+      post :create, construct_params({ version: 'widget' }, params)
+      t = Helpdesk::Ticket.last
+      assert_response 201
+      match_json(id: t.display_id)
+      t = @account.tickets.last
+      meta_info = t.notes.find_by_source(Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['meta'])
+      assert_not_equal({}, meta_info)
+      meta_info = YAML.load(meta_info.body)
+      assert_equal meta_info['user_agent'], 'Freshdesk_Native'
+      assert_equal meta_info['referrer'], 'http://ateam.freshdesk.com'
+    end
+    
     def test_create_with_whitelisted_domain_with_restricted_helpdesk_enabled
       @account.launch(:restricted_helpdesk)
       @account.features.restricted_helpdesk.create

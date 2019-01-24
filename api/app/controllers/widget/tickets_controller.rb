@@ -36,6 +36,12 @@ module Widget
         super
       end
 
+      def remove_ignore_params
+        @meta = params[cname][:meta]
+        params[cname].except!(*constants_class::PARAMS_TO_REMOVE)
+        super
+      end
+
       def get_additional_params
         additional_params = {}
         additional_params[:is_ticket_fields_form] = @help_widget.ticket_fields_form?
@@ -44,7 +50,6 @@ module Widget
 
       def set_default_values
         super
-        params[cname].delete("g-recaptcha-response") #remove recaptcha parameter
         params[cname][:product_id] = @help_widget.product_id unless params[cname].key?(:product_id)
         params[cname][:source] = TicketConstants::SOURCE_KEYS_BY_TOKEN[:feedback_widget]
       end
@@ -56,9 +61,10 @@ module Widget
 
       def assign_protected
         super
-        meta_info = { "widget_source" => @help_widget.id }
-        meta_info.merge!(request.headers.slice(*Widget::TicketConstants::META_INFORMATION)) if params[cname][:meta].present?
-        (@item.meta_data ||= {}).merge!(meta_info)
+        @item.meta_data ||= {}
+        constants_class::META_KEY_MAP.keys.each do |meta_key|
+          @item.meta_data[meta_key] = (@meta && @meta[meta_key]) || request.env[constants_class::META_KEY_MAP[meta_key]]
+        end
       end
   end
 end
