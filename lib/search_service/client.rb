@@ -1,5 +1,6 @@
 module SearchService
   class Client
+    MULTI_QUERY_TIMEOUT = 10
     attr_accessor :account_id
 
     def initialize(account_id)
@@ -17,7 +18,7 @@ module SearchService
     end
 
     def multi_query(payload = nil, uuid = nil, additional_log_info = {})
-      query_request = SearchService::Request.new(multi_query_path, :post, uuid, payload, request_headers({'X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"}), @account_id, additional_log_info)
+      query_request = SearchService::Request.new(multi_query_path, :post, uuid, payload, request_headers('X-Request-Id' => uuid, 'X-Amzn-Trace-Id' => "Root=#{uuid}"), @account_id, additional_log_info, MULTI_QUERY_TIMEOUT)
       query_request.response
     end
 
