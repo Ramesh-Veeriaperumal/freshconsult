@@ -33,9 +33,9 @@ class SAAS::AccountDataCleanup
   end
   
   def handle_agent_scope_drop_data
-    account.technicians.each do |agent|
+    account.agents.each do |agent|
       begin
-        agent.reset_to_default_ticket_permission
+        agent.reset_ticket_permission
         agent.save!
       rescue Exception => e
         Rails.logger.info "Exception while saving agent.. #{e.backtrace}"
