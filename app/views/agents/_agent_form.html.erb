@@ -391,6 +391,7 @@
 			var group_details = {};
       var freshid_enabled= <%= freshid_enabled? %>;
 			var userName = '<%= @agent.user.name %>';
+      var userEmail = '<%= @agent.user.email %>';
       window.App = window.App || {};
       App.Agents = App.Agents || {};
       App.Agents.Form = App.Agents.Form || {};
@@ -410,7 +411,7 @@
           groups[<%= group.id %>] = <%= @agent.groups.include?(group) %>;
           group_details[<%= group.id %>] = ["<%= group.name %>", "<%= escape_javascript(group.description)%>", "<%= group.group_type %>"];
       <% end %>
-      App.Agents.Form.initializeData({userName: userName, roles: roles,
+      App.Agents.Form.initializeData({userName: userName, roles: roles, userEmail: userEmail,
 				role_details: role_details, freshid_enabled: freshid_enabled, groups: groups, group_details: group_details, SkillBasedRRFlag: <%=@manage_skills%>});
     });
 

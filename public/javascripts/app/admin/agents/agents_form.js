@@ -21,6 +21,7 @@ window.App.Agents = window.App.Agents || {};
 	groups: {},
 	group_details: {},
 	freshid_enabled: {},
+	userEmail: '',
   initializeData: function(data) {
     this.userName = data.userName;
     this.SkillBasedRRFlag = data.SkillBasedRRFlag;
@@ -29,6 +30,7 @@ window.App.Agents = window.App.Agents || {};
     this.groups = data.groups;
     this.group_details = data.group_details;
     this.freshid_enabled = data.freshid_enabled;
+    this.userEmail = data.userEmail;
     this.bindHandlers();
   },
 	repaintSkills: function() {
@@ -249,7 +251,7 @@ window.App.Agents = window.App.Agents || {};
 	  	    var response = jQuery.ajax({
 	            url: '/agents/search_in_freshworks',
 	            method: "GET",
-	            data: {"email": email},
+	            data: {"new_email": email,"old_email":_this.userEmail},
 	            dataType: "json",
 	            success: function(data) {
 	      		  _this.showInfoFields(data);
