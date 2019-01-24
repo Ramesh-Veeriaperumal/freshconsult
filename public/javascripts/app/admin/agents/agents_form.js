@@ -118,13 +118,15 @@ window.App.Agents = window.App.Agents || {};
 
 	disableTabForFreshidFields: function(){
 		$('.freshworks-message').removeClass('hide');
-		freshid_info_fields.attr('tabindex','-1');
+		freshid_info_fields.attr('disabled','disabled');
+		$("#user_email").focus();
 	},
 
 	enableInfoFields: function(){
 		$('.freshworks-message').addClass('hide');
 		freshid_info_fields.val('').removeClass('uneditable-input');
-		freshid_info_fields.removeAttr('tabindex');
+		freshid_info_fields.removeAttr('disabled');
+		$("#user_email").focus();
 	},
 	
 	initializeAgentForm: function() {
