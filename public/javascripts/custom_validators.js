@@ -315,7 +315,11 @@
   // Agent role validation
   // To check if atleast one role is present
   $.validator.addMethod("at_least_one_item", function(value, element, options) {
+    if(!($("#agent_agent_type_field_agent").prop('checked'))){
     return($($(element).data("selector")).length != 0)
+  } else {
+    return true
+  }
   }, jQuery.validator.format(I18n.t('validation.atleast_one_role', { defaultValue: validationDefaults.atleast_one_role })));
 
   $.validator.addClassRules("at_least_one_item", { at_least_one_item: true});

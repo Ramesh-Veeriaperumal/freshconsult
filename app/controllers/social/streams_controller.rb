@@ -4,7 +4,9 @@ class Social::StreamsController < Social::BaseController
   include Social::Stream::Interaction
   include Mobile::Actions::Social
 
-  before_filter { access_denied unless current_account.basic_twitter_enabled? }
+  before_filter do  access_denied unless current_account.basic_twitter_enabled? &&
+      current_account.social_tab_enabled?
+  end
   skip_before_filter :check_account_state
   before_filter :check_account_state
   before_filter :check_if_handles_exist, :only => [:index]

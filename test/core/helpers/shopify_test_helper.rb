@@ -12,7 +12,7 @@ module ShopifyTestHelper
     }
     shopify_data = sample_shopify_data
     options = {
-      owner: 'shopify',
+      owner: 'proactive',
       client: 'helpkit',
       pod: ChannelFrameworkConfig['pod'],
       command_name: 'create_ticket'

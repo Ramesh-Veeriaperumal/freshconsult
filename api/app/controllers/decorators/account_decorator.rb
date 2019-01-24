@@ -101,7 +101,7 @@ class AccountDecorator < ApiDecorator
     end
 
     def agents_hash
-      agents = record.agents_details_from_cache
+      agents = record.users.where(:helpdesk_agent => true).select("id,name,email").find(:all, include: [:agent])
       agents.map do |agent|
         AgentDecorator.new(agent, group_mapping_ids: agent_groups[:agents][agent.id] || []).to_restricted_hash
       end

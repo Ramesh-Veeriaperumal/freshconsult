@@ -14,7 +14,7 @@ class GroupType < ActiveRecord::Base
   after_commit :clear_group_types_cache
 
   def self.group_type_id(group_type_name)
-    group_type = Account.current.group_types_from_cache.find{ |group_type| group_type.name == group_type_name }
+    group_type = Account.current.group_types_from_cache.find{ |group_type| group_type.name == group_type_name.to_s }
     group_type ? group_type.group_type_id : nil
   end
 

@@ -19,9 +19,18 @@ class UpdateSegmentFilter < BaseWorker
 
   def fields_update(args)
     return if args['custom_field'].blank?
-    cf_name = deleted_field_name(args['custom_field']['name'])
+    field_names = get_field_names(Account.current, args['type'])
     segment_filters(args['type']) do |filter|
-      filter.data.delete_if { |filter_set| filter_set['condition'].eql?(cf_name) }
+      filter.data.delete_if do |filter_set|
+        field_names.exclude?(filter_set['condition'])
+      end
+    end
+  end
+
+  def get_field_names(account, segment_type)
+    fields = contact_segment?(segment_type) ? account.contact_form.contact_fields : account.company_form.company_fields
+    fields.collect do |field|
+      field.name.sub(CUSTOM_FIELD_PREFIX_REGEX, '')
     end
   end
 
@@ -73,10 +82,6 @@ class UpdateSegmentFilter < BaseWorker
         Rails.logger.debug("Error while saving filter :: #{filter.errors.inspect}") if filter.errors.present?
       end
     end
-  end
-
-  def deleted_field_name(cf_name)
-    cf_name.sub(/^cf_/, '')
   end
 
   def segment_field_update(type)
