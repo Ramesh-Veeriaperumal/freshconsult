@@ -194,17 +194,17 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: dc3d23f4ed44b33e76ef794dd858d9be76c2041f
-  tag: v1.0.10
+  revision: 2f092ff2afe54a5926069c3efde8ef04e6bde0a2
+  tag: v1.0.11
   specs:
-    central-publisher (1.0.10)
+    central-publisher (1.0.11)
       active_record_shards (~> 3.2.0)
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
       newrelic_rpm (~> 5.5.0)
       rails (~> 3.2.22.3)
       redis (= 3.3.1)
-      sidekiq (~> 3.4.1)
+      sidekiq (~> 3.5.4)
       uuidtools
 
 GIT
@@ -617,8 +617,23 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    celluloid (0.16.0)
-      timers (~> 4.0.0)
+    celluloid (0.17.4)
+      celluloid-essentials
+      celluloid-extras
+      celluloid-fsm
+      celluloid-pool
+      celluloid-supervision
+      timers (>= 4.1.1)
+    celluloid-essentials (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-extras (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-fsm (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-pool (0.20.5)
+      timers (>= 4.1.1)
+    celluloid-supervision (0.20.6)
+      timers (>= 4.1.1)
     chargebee (1.5.9)
       json_pure (~> 1.5)
       rest-client (~> 1.4)
@@ -654,7 +669,7 @@ GEM
     compass-rails (2.0.0)
       compass (>= 0.12.2)
     concurrent-ruby (1.0.4)
-    connection_pool (2.2.1)
+    connection_pool (2.2.2)
     crass (1.0.3)
     css_parser (1.4.5)
       addressable
@@ -682,11 +697,15 @@ GEM
       virtus
     curb (0.8.8)
     database_cleaner (1.5.3)
+    ddtrace (0.18.3)
+      msgpack
+      opentracing (>= 0.4.1)
     debug_inspector (0.0.2)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
     dnsruby (1.60.0)
+    dogstatsd-ruby (4.0.0)
     domain_name (0.5.20161129)
       unf (>= 0.0.5, < 1.0.0)
     doorkeeper (2.2.1)
@@ -898,7 +917,6 @@ GEM
     hashie (3.5.7)
     hashr (0.0.22)
     hike (1.2.3)
-    hitimes (1.2.6)
     html_to_plain_text (1.0.5)
       nokogiri (>= 1.4.0)
     htmlentities (4.3.4)
@@ -1060,6 +1078,7 @@ GEM
     omniauth-quickbooks (0.0.2)
       omniauth-oauth (~> 1.0)
     open4 (1.3.4)
+    opentracing (0.5.0)
     paperclip (4.2.4)
       activemodel (>= 3.2.0)
       activesupport (>= 3.2.0)
@@ -1283,8 +1302,8 @@ GEM
     shoryuken (2.0.4)
       aws-sdk-core (~> 2)
       celluloid (~> 0.16)
-    sidekiq (3.4.2)
-      celluloid (~> 0.16.0)
+    sidekiq (3.5.4)
+      celluloid (~> 0.17.2)
       connection_pool (~> 2.2, >= 2.2.0)
       json (~> 1.0)
       redis (~> 3.2, >= 3.2.1)
@@ -1352,11 +1371,11 @@ GEM
       ref
     thor (0.19.4)
     thread_safe (0.3.5)
+    thread_variables (0.2.0)
     thrift (0.9.2.0)
     tilt (1.4.1)
     timecop (0.8.1)
-    timers (4.0.4)
-      hitimes
+    timers (4.3.0)
     tnef (1.0.2)
     treetop (1.4.15)
       polyglot
@@ -1464,10 +1483,12 @@ DEPENDENCIES
   custom_fields!
   dalli!
   database_cleaner
+  ddtrace
   deadlock_retry!
   delayed_job!
   dev_notification!
   dnsruby
+  dogstatsd-ruby
   doorkeeper (= 2.2.1)
   dynamic_form
   dynamics_crm!
@@ -1617,7 +1638,7 @@ DEPENDENCIES
   sentient_user!
   sharding!
   shoryuken (= 2.0.4)
-  sidekiq (= 3.4.2)
+  sidekiq (= 3.5.4)
   sidekiq-pro!
   simplecov (~> 0.7.1)
   simplecov-csv

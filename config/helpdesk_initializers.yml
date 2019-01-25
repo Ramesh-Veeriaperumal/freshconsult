@@ -122,3 +122,4 @@ helpdesk:
     - default_data_config
     - emailserv_request
     - saml_config
+    - datadog
