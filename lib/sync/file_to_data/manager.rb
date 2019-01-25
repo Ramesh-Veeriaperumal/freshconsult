@@ -67,6 +67,9 @@ class Sync::FileToData::Manager
         obj.account_id = Account.current.id if obj.respond_to?('account_id')
         obj.safe_send(clear_cache_method)
       end
+    rescue StandardError => e
+      Sync::Logger.log("Error in clearing cache: account_id=#{account.id}, model=#{model}.
+                              Trace: #{e.inspect}, #{e.backtrace[0..5].inspect}".squish)
     end
 
     def persist_mapping_table(mapping_table)
