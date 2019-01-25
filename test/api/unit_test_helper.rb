@@ -9,8 +9,13 @@ def load_environment(file_name)
   if $PROGRAM_NAME =~ /public_api_test_suite.rb/
     private_changed = change_private_api_layer(file_name, false)
   end
-  require File.expand_path('../../../config/environment', __FILE__)
-  ensure
+
+  if !defined?($env_loaded) || $env_loaded != true
+    require File.expand_path('../../../config/environment', __FILE__)
+  else
+    puts "Skipping loading environment since its already loaded"
+  end
+ensure
     puts 'Switching OFF API Layer'
     change_api_layer(file_name, false) if changed
     change_private_api_layer(file_name, true) if private_changed
@@ -55,3 +60,5 @@ require 'json_expressions/minitest'
 include ActiveSupport::Rescuable
 
 Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new('test/api/reports')]
+
+$env_loaded = true # To make sure we don't load the environment again

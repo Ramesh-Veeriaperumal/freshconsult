@@ -41,6 +41,16 @@ module SimpleCovSetup
     'common' => BocGroups::COMMON_FILES
   }.freeze
 
+  # Pls consult Jey to delete the following files from the codebase - POSSIBLE_DEAD_CODE & DEAD_CODE
+
+  POSSIBLE_DEAD_CODE = [
+    'api/app/delegators/dashboard_delegator.rb'
+  ].freeze
+
+  DEAD_CODE = [].freeze
+
+  IGNORE_FILES = [].freeze
+
   SimpleCov.start do
     # Adding exact filters
     add_filter 'app/mailers'
@@ -50,18 +60,24 @@ module SimpleCovSetup
     add_filter 'app/helpers/freshfone'
 
     add_filter SimpleCov::StringFilter.new("^((?!#{root}/(api|lib|app\/models|app\/workers|app\/observers|app\/drops|app\/helpers)\/).)*$")
-    # add_filter SimpleCov::StringFilter.new("^((?!#{root}/app\/workers).)*$")
-    # add_filter SimpleCov::StringFilter.new("^((?!#{root}/app\/observers).)*$")
-    # add_filter SimpleCov::StringFilter.new("^((?!#{root}/app\/mailers).)*$")
-    # add_filter SimpleCov::StringFilter.new("^((?!#{root}/lib\/).)*$")
-
-    # TODO: remove app/controllers and continue including api/app/controllers and app/controllers/admin
 
     add_filter  'spec/'
     add_filter  'config/'
     add_filter  'test/'
     add_filter  'fdadmin'
     add_filter  'vendor/gems'
+
+    POSSIBLE_DEAD_CODE.each do |file|
+      add_filter file
+    end
+
+    DEAD_CODE.each do |file|
+      add_filter file
+    end
+
+    IGNORE_FILES.each do |file|
+      add_filter file
+    end
 
     GROUP_FILE_MAP.each do |group, filelist|
       add_group group do |src_file|
@@ -90,7 +106,6 @@ module SimpleCovSetup
   SimpleCov.coverage_dir 'tmp/coverage'
   SimpleCov.command_name "rails_app_#{$$}"
   SimpleCov.merge_timeout 3600 # 1 hour
-
 
   SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
     SimpleCov::Formatter::HTMLFormatter,

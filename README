@@ -199,3 +199,19 @@ This is useful if you're incorporating the helpdesk into your
 product using an iframe.
 
 
+== Running the Tests Faster ==
+
+Use the following command to run the tests faster for one single file
+   ```
+   $ RAILS_ENV=test bin/rake dev_test:single_file TEST=<test/to/test/file/path/file.rb>
+
+   For example
+
+   $ RAILS_ENV=test bin/rake dev_test:single_file TEST=test/api/functional/ember/contacts_controller_test.rb
+   ```
+
+Use the following commands to see the status of spring server
+
+    ```
+    $ bin/spring status
+    ```
