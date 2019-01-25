@@ -205,7 +205,7 @@
       :performance_report: 200
       :seafarers_9: 201
       :seafarers_10: 202
-      :seafarers_11: 203
+      :scenario_automation: 203
       :seafarers_12: 204
       :seafarers_13: 205
       :seafarers_14: 206
@@ -274,3 +274,4 @@
   :agent_scope: true
   :performance_report: true
   :custom_password_policy: true
+  :scenario_automation: true
