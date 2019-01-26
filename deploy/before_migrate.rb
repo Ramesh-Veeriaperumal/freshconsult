@@ -94,6 +94,7 @@ run "ln -nfs #{shared_path}/config/unsupported_features.yml #{node[:rel_path]}/c
 run "ln -nfs #{shared_path}/config/proactive_service.yml #{node[:rel_path]}/config/proactive_service.yml"
 run "ln -nfs #{shared_path}/config/ocr_config.yml #{node[:rel_path]}/config/ocr_config.yml"
 run "ln -nfs #{shared_path}/config/email_bot_ml_feedback_config.yml #{node[:rel_path]}/config/email_bot_ml_feedback_config.yml"
+run "ln -nfs #{shared_path}/config/datadog.yml #{node[:rel_path]}/config/datadog.yml"
 
 
 #supreme-code-console
