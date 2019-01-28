@@ -1,7 +1,6 @@
 config = YAML::load_file(File.join(Rails.root, 'config', 'datadog.yml'))
 datadog_enabled = config[:enable]
 
-
 if datadog_enabled
   require 'aws-sdk'
   require 'dalli'
