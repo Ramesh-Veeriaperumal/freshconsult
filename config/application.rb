@@ -115,6 +115,7 @@ module Helpkit
     config.middleware.insert_before 0, "Middleware::ApplicationLogger" if ENV['MIDDLEWARE_LOG_ENABLE'] == 'true'
     config.middleware.insert_before 0, "Middleware::GlobalRequestStore"
     config.middleware.insert_before 0, "Middleware::HealthCheck"
+    config.middleware.insert_before 0, "Middleware::GlobalTracer"
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction" if ENV['ENABLE_GLOBAL_RESTRICTION_MIDDLEWARE'] == 'true'
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000

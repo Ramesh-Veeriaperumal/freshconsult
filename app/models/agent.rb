@@ -61,6 +61,10 @@ class Agent < ActiveRecord::Base
     ticket_permission == PERMISSION_KEYS_BY_TOKEN[:all_tickets]
   end
 
+  def reset_ticket_permission
+    self.ticket_permission = PERMISSION_KEYS_BY_TOKEN[:all_tickets]
+  end
+
   def signature_htm
     self.signature_html
   end

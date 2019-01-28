@@ -101,27 +101,27 @@
                           <%= label(:user, :name, t('user.full_name'), :class => "control-label" )%>
                           <div class="controls freshid_controls">
                             <%= text_field(:user, :name, :class => "text required name uneditable-input",
-                            :value => @agent.user.name, :placeholder => t('user.name')) %>
+                            :value => @agent.user.name, :placeholder => t('user.name'), :disabled => true) %>
                           </div>
                         </li>
                         <li class="control-group">
                     <%= label(:user, :phone, t('user.phone'), :class => "control-label" )%>
                     <div class="controls freshid_controls">
-                        <%= text_field(:user, :phone, :class => "text margin-bottom uneditable-input", :value => "#{@agent.user.phone}", :placeholder => t('user.work') ) %>
+                        <%= text_field(:user, :phone, :class => "text margin-bottom uneditable-input", :value => "#{@agent.user.phone}", :placeholder => t('user.work'), :disabled => true ) %>
                     </div>
                   </li>
                   <li class="control-group">
                     <%= label(:user, :phone, t('user.mobile_phone'), :class => "control-label" )%>
                     <div class="controls freshid_controls">
                         <%= text_field(:user, :mobile, :class => "text uneditable-input",
-                              :value => "#{@agent.user.mobile}", :placeholder => t('user.mobile')) %>
+                              :value => "#{@agent.user.mobile}", :placeholder => t('user.mobile'), :disabled => true) %>
                     </div>
                   </li>
                   <li class="control-group">
                   <%= label(:user, :job_title, t('user.title'), :class => "control-label" ) %>
                   <div class="controls freshid_controls">
                     <%= text_field(:user, :job_title, :class => "text uneditable-input",
-                        :value => "#{@agent.user.job_title}", :placeholder => t('user.title')) %>
+                        :value => "#{@agent.user.job_title}", :placeholder => t('user.title'), :disabled => true) %>
                   </div>
                 </li>
                 </div>
@@ -391,6 +391,7 @@
 			var group_details = {};
       var freshid_enabled= <%= freshid_enabled? %>;
 			var userName = '<%= @agent.user.name %>';
+      var userEmail = '<%= @agent.user.email %>';
       window.App = window.App || {};
       App.Agents = App.Agents || {};
       App.Agents.Form = App.Agents.Form || {};
@@ -410,7 +411,7 @@
           groups[<%= group.id %>] = <%= @agent.groups.include?(group) %>;
           group_details[<%= group.id %>] = ["<%= group.name %>", "<%= escape_javascript(group.description)%>", "<%= group.group_type %>"];
       <% end %>
-      App.Agents.Form.initializeData({userName: userName, roles: roles,
+      App.Agents.Form.initializeData({userName: userName, roles: roles, userEmail: userEmail,
 				role_details: role_details, freshid_enabled: freshid_enabled, groups: groups, group_details: group_details, SkillBasedRRFlag: <%=@manage_skills%>});
     });
 

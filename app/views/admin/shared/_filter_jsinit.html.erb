@@ -239,7 +239,7 @@
           var method = jQuery('<div class="row-fluid"/>')
                         .append('<label class="span2"><%= t(".request_type") %></label>')
                         .append(method_dropdown)
-                        .append(FactoryUI.link('<%= t('.how_to_use_webhook').html_safe %>', 'https://support.freshdesk.com/solution/articles/132589-using-webhooks-in-observer', 'using_webhooks'));
+                        .append('<a href="https://support.freshdesk.com/solution/articles/132589-using-webhooks-in-observer" class="using_webhooks" target="_blank"><%= t('.how_to_use_webhook').html_safe %></a>');
 
           var placeholder1 = jQuery("<span class='placeholder_div'> <a class='l_placeholder btn btn-mini btn-flat'><%= t('.insert_placeholder') %></a> </span>")
           var uri_textarea = FactoryUI.paragraph("", "url", initFeed['url'], "text uri required insert-placeholder-target")
