@@ -45,7 +45,7 @@ class Account < ActiveRecord::Base
     :freshid_saml, :canned_forms, :custom_translations, :social_tab,
     :customize_table_view, :public_url_toggle, :add_to_response, :agent_scope,
     :performance_report, :custom_password_policy, :social_tab, :scenario_automation,
-    :omni_channel
+    :omni_channel, :ticket_volume_report
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
