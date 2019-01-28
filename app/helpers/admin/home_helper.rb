@@ -67,11 +67,11 @@
       },
       :sla                             =>   {
         :url                           =>   "/helpdesk/sla_policies",
-        :privilege                     =>   privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:admin_tasks) && current_account.sla_management_v2_enabled?
       },
       :"business-hours"                =>   {
         :url                           =>   "/admin/business_calendars",
-        :privilege                     =>   privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:admin_tasks) && current_account.sla_management_v2_enabled?
       },
       :"multi-product"                 =>   {
         :url                           =>   "/admin/products",

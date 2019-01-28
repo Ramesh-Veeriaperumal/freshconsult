@@ -596,7 +596,6 @@ module ApplicationHelper
                       ['{{ticket.description}}',      t('placeholder.ticket_description'),        '',         'ticket_description'],
                       ['{{ticket.url}}',              t('placeholder.ticket_url') ,            t('placeholder.tooltip.ticket_url'),         'ticket_url'],
                       ['{{ticket.portal_url}}',       t('placeholder.ticket_portal_url'),     t('placeholder.tooltip.ticket_portal_url'),          'ticket_portal_url'],
-                      ['{{ticket.due_by_time}}',      t('placeholder.ticket_due_by_time'),        '',          'ticket_due_by_time'],
                       ['{{ticket.tags}}',             t('placeholder.ticket_tags'),           '',         'ticket_tags'],
                       ['{{ticket.latest_public_comment}}',  t('placeholder.ticket_latest_public_comment'),  '',         'ticket_latest_public_comment'],
                       ['{{ticket.latest_private_comment}}', t('placeholder.ticket_latest_private_comment'), '', 'ticket_latest_private_comment'],
@@ -692,6 +691,9 @@ module ApplicationHelper
     place_holders[:tickets] << ['{{ticket.public_url}}', 'Public Ticket URL' ,
                       'URL for accessing the tickets without login', 'ticket_public_url'
                       ] if current_account.features?(:public_ticket_url) && !current_account.hipaa_and_encrypted_fields_enabled?
+
+    place_holders[:tickets] << ['{{ticket.due_by_time}}', t('placeholder.ticket_due_by_time'), '',
+                                'ticket_due_by_time'] if current_account.sla_management_v2_enabled?
 
     place_holders
   end

@@ -3,7 +3,8 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
  
   include Helpdesk::ReorderUtility
   include APIHelperMethods
-  
+
+  before_filter { access_denied unless current_account.sla_management_v2_enabled? }
   before_filter :only => [:new, :create] do |c|
     c.requires_this_feature :customer_slas
   end
