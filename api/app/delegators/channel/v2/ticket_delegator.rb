@@ -2,6 +2,7 @@ module Channel::V2
   class TicketDelegator < ::TicketDelegator
 
     validate :fb_page_presence, on: :create
+    validate :twitter_handle_presence, on: :create
 
     def ticket_fields
       []
@@ -15,6 +16,16 @@ module Channel::V2
 
     def facebook_ticket?
       ::TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook] == self.source
+    end
+
+    def twitter_handle_presence
+      if twitter_ticket?
+        errors[:twitter_handle_id] << :invalid_twitter_handle unless self.tweet.twitter_handle
+      end
+    end
+
+    def twitter_ticket?
+      ::TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter] == self.source
     end
   end
 end

@@ -8,7 +8,7 @@ module Channel::V2
                   :agent_responded_at, :status_updated_at, :sla_timer_stopped_at,
                   :on_state_time, :inbound_count, :outbound_count, :first_resp_time_by_bhrs, 
                   :resolution_time_by_bhrs, :group_escalated, :avg_response_time, 
-                  :avg_response_time_by_bhrs, :import_id, :facebook
+                  :avg_response_time_by_bhrs, :import_id, :facebook, :twitter
 
     include TimestampsValidationConcern
 
@@ -37,6 +37,11 @@ module Channel::V2
 
     validates :facebook, data_type: { rules: Hash, required: true }, hash: { validatable_fields_hash: proc { |x| x.facebook_fields_validation } }, if: -> { facebook_ticket? }, on: :create
 
+    validate :twitter_hash_presence?, unless: -> { twitter_ticket? }, on: :create
+
+    validates :twitter, data_type: { rules: Hash, required: true },
+                        hash: { validatable_fields_hash: proc { |x| x.twitter_fields_validation } }, if: -> { twitter_ticket? }, on: :create
+
     def required_default_fields
       []
     end
@@ -50,7 +55,7 @@ module Channel::V2
     end
 
     def sources
-      super | [::TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]]
+      super | [::TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook], ::TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter]]
     end
 
     def facebook_ticket?
@@ -103,6 +108,26 @@ module Channel::V2
           validate_ticket_state_attribute(self.safe_send(attribute), attribute)
         end
       end
+    end
+
+    def twitter_ticket?
+      ::TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter] == source
+    end
+
+    def twitter_hash_presence?
+      errors[:twitter] << :invalid_field if twitter.present?
+    end
+
+    def twitter_fields_validation
+      {
+        tweet_id: { data_type: { rules: Integer, required: true } },
+        tweet_type: {
+          data_type: { rules: String, required: true },
+          custom_inclusion: { in: Channel::V2::TicketConstants::TWITTER_MSG_TYPES }
+        },
+        support_handle_id: { data_type: { rules: Integer, required: true } },
+        stream_id: { data_type: { rules: Integer, required: true } }
+      }
     end
 
     def validate_ticket_state_attribute(attribute, key)

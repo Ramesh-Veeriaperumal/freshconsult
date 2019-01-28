@@ -1142,17 +1142,28 @@ module ApiTicketsTestHelper
 
   def tweet_hash(ticket)
     handle = ticket.tweet.twitter_handle
-    {
+    tweet_hash = {
       id: ticket.tweet.tweet_id.to_s,
       type: ticket.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
       requester_screen_name: ticket.requester.twitter_id
     }
+    if @channel_v2_api
+      tweet_hash.merge!(stream_id: ticket.tweet.stream_id)
+    end
+    tweet_hash
   end
 
   def facebook_hash(ticket)
     ticket.fb_post.post? ? fb_public_post_pattern({}, ticket.fb_post) : fb_public_dm_pattern({}, ticket.fb_post)
+  end
+
+  def validation_error_pattern(value)
+    {
+      description: 'Validation failed',
+      errors: [value]
+    }
   end
 
   # Save dummy fb page
