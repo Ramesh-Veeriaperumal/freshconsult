@@ -90,6 +90,7 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
   end
 
   def self.deliver_agent_notification(agent, receips, e_notification, ticket, comment, survey_id = nil, opts = {})
+      return if ticket.should_skip_agent_email_notifications?
       internal_notification = opts[:internal_notification]
       agent_template = internal_notification ? e_notification.get_internal_agent_template(agent) : e_notification.get_agent_template(agent)
       agent_plain_template = internal_notification ? e_notification.get_internal_agent_plain_template(agent) : e_notification.get_agent_plain_template(agent)
