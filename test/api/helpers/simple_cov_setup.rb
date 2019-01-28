@@ -49,7 +49,7 @@ module SimpleCovSetup
 
   DEAD_CODE = [].freeze
 
-  IGNORE_FILES = [].freeze
+  IGNORE_FILES = %w[lib/attachment_helper.rb lib/meta_data_check/meta_data_check_methods.rb].freeze
 
   SimpleCov.start do
     # Adding exact filters
