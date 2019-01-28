@@ -207,7 +207,7 @@
       :seafarers_10: 202
       :scenario_automation: 203
       :seafarers_12: 204
-      :seafarers_13: 205
+      :omni_channel: 205
       :seafarers_14: 206
       :seafarers_15: 207
       :seafarers_16: 208
@@ -274,4 +274,5 @@
   :agent_scope: true
   :performance_report: true
   :custom_password_policy: true
+  :omni_channel: true
   :scenario_automation: true
