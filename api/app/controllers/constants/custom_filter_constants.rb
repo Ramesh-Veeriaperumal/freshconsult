@@ -13,7 +13,8 @@ module CustomFilterConstants
     ['internal_agent_id', :shared_ownership, 'Shared Ownership'],
     ['internal_group_id', :shared_ownership, 'Shared Ownership'],
     ['any_agent_id',      :shared_ownership, 'Shared Ownership'],
-    ['any_group_id',      :shared_ownership, 'Shared Ownership']
+    ['any_group_id',      :shared_ownership, 'Shared Ownership'],
+    ['due_by',            :sla_management_v2, 'Sla Management v2']
   ].freeze
 
   FEATURES_KEYS_BY_FIELD   = Hash[*FEATURE_BASED_CONDITIONAL_FIELDS.map { |i| [i[0], i[1]] }.flatten]

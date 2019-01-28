@@ -2880,6 +2880,7 @@ module Ember
 
     def test_child_create
       enable_adv_ticketing([:parent_child_tickets]) do
+        Account.any_instance.stubs(:sla_management_v2).returns(true)
         Helpdesk::Ticket.any_instance.stubs(:associates=).returns(true)
         create_parent_ticket
         parent_ticket = Account.current.tickets.last || create_parent_ticket
