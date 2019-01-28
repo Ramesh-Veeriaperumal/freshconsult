@@ -210,7 +210,7 @@
       :omni_channel: 205
       :seafarers_14: 206
       :seafarers_15: 207
-      :seafarers_16: 208
+      :api_v2: 208
       :seafarers_17: 209
       :seafarers_18: 210
       :seafarers_19: 211
@@ -277,3 +277,4 @@
   :sla_management_v2: true
   :omni_channel: true
   :scenario_automation: true
+  :api_v2: true

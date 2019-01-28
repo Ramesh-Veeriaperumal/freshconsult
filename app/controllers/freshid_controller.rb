@@ -1,5 +1,6 @@
 class FreshidController < ApplicationController
   include Freshid::CallbackMethods
+  include ProfilesHelper
 
   FLASH_INVALID_USER    = 'activerecord.errors.messages.contact_admin'
   FLASH_USER_NOT_EXIST  = 'flash.general.access_denied'
