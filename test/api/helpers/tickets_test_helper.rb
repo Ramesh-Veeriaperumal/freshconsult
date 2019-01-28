@@ -82,7 +82,7 @@ module ApiTicketsTestHelper
       add_test_agent(@account, role: Role.find_by_name('Agent').id)
     end
     10.times.each do |i|
-      create_group_with_agents(@account, agent_list: [@account.agents.sample.id])
+      create_group_with_agents(@account, agent_list: [@account.agents.sample.user_id])
     end
 
     50.times.each do |i|

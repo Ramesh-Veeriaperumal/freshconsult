@@ -80,4 +80,31 @@ class InlineImageShredderTest < ActionView::TestCase
     InlineImageShredder.new.perform(args)
     assert_equal 0, InlineImageShredder.jobs.size
   end
+
+  def test_inline_image_shredder_worker_with_inline_attachments
+    requester = @account.users.first
+    attachment_id = create_attachment_for_account(requester)
+    token = @account.attachments.find(attachment_id).encoded_token
+    content = "<div>Hello</div><div><img src='https://localhost.freshdesk-dev.com/attachments?token=#{token}' alt='test'></div>"
+    AwsWrapper::S3Object.stubs(:exists?).returns(true)
+    AwsWrapper::S3Object.stubs(:read).returns(content)
+    args = {
+      model_name: 'Helpdesk::Note',
+      model_id: @account.notes.last.id
+    }
+    InlineImageShredder.new.perform(args)
+    assert_equal 0, InlineImageShredder.jobs.size
+  end
+
+  def test_inline_image_shredder_worker_with_inline_attachments_without_token
+    content = "<div>Hello</div><div><img src='https://localhost.freshdesk-dev.com/attachments?test=1' alt='test'></div>"
+    AwsWrapper::S3Object.stubs(:exists?).returns(true)
+    AwsWrapper::S3Object.stubs(:read).returns(content)
+    args = {
+      model_name: 'Helpdesk::Note',
+      model_id: @account.notes.last.id
+    }
+    InlineImageShredder.new.perform(args)
+    assert_equal 0, InlineImageShredder.jobs.size
+  end
 end

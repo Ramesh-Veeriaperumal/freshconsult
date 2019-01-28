@@ -6,7 +6,11 @@ module LoadInitializer
     else # params is Array
       params.each do |file| 
         if file.is_a?(String)
-          require "#{file_path}/#{file}.rb"
+          unless Rails.env.test?
+            require "#{file_path}/#{file}.rb"
+          else
+            require_dependency "#{file_path}/#{file}.rb"
+          end
         else # file is Hash
           file.each { |k, v| self.load_files("#{file_path}/#{k}", v) }
         end

@@ -634,7 +634,8 @@ module Channel::V2
       response = parse_response @response.body
       assert_equal 0, response.count
 
-      Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: user.id, status: 2)
+      ticket = @account.tickets.where(deleted: 0, spam: 0).first || create_ticket(requester_id: user.id)
+      ticket.update_attributes(requester_id: user.id, status: 2)
       get :index, controller_params(filter: 'new_and_my_open', email: user.email)
       assert_response 200
       response = parse_response @response.body
@@ -669,16 +670,17 @@ module Channel::V2
     def test_index_with_filter_and_requester
       $infra['CHANNEL_LAYER'] = true
       @channel_v2_api = true
-      user = add_new_user(@account)
-      requester = User.first
-      Helpdesk::Ticket.update_all(requester_id: user.id)
-      get :index, controller_params(filter: 'new_and_my_open', requester_id: "#{requester.id}")
+      user1 = add_new_user(@account)
+      user2 = add_new_user(@account)
+      ticket = @account.tickets.where(deleted: 0, spam: 0).first || create_ticket(requester_id: user1.id)
+      Helpdesk::Ticket.update_all(requester_id: user1.id)
+      get :index, controller_params(filter: 'new_and_my_open', requester_id: "#{user2.id}")
       assert_response 200
       response = parse_response @response.body
       assert_equal 0, response.count
 
-      Helpdesk::Ticket.where(deleted: 0, spam: 0).first.update_attributes(requester_id: requester.id, status: 2)
-      get :index, controller_params(filter: 'new_and_my_open', requester_id: "#{requester.id}")
+      ticket.update_attributes(requester_id: user2.id, status: 2)
+      get :index, controller_params(filter: 'new_and_my_open', requester_id: "#{user2.id}")
       assert_response 200
       response = parse_response @response.body
       assert_equal 1, response.count

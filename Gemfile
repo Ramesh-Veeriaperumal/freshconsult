@@ -47,7 +47,7 @@ gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
-gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.10'
+gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.11'
 
 group :development, :test do
   gem 'active_record_query_trace'
@@ -102,7 +102,7 @@ gem "dynamics_crm", :git => 'git@github.com:TinderBox/dynamics_crm.git', :branch
 gem "google-api-client", "~> 0.7.0"
 gem "ipaddress", "0.8.0"
 
-gem 'sidekiq', "3.4.2"
+gem 'sidekiq', "3.5.4"
 # This needs bundler 1.7.2 or 1.10.6 as other version has problem in resolving.
 source "https://690a8c5e:5d9334f0@gems.contribsys.com/" do
   gem 'sidekiq-pro'
@@ -134,6 +134,8 @@ gem "braintree","2.10.0"
 gem "lockfile","1.4.3"
 
 gem "newrelic_rpm","~> 5.5.0"
+gem "ddtrace"
+gem "dogstatsd-ruby"
 
 gem "faraday" , "0.9"
 gem 'faraday_middleware', '~> 0.10.0'
@@ -266,6 +268,7 @@ group :development, :test do
   gem 'factory_girl_rails', '4.4.0'
   gem 'webrick', '1.3.1'
   gem 'jasmine'
+  gem 'spring', '1.2.0'
 end
 
 group :test do

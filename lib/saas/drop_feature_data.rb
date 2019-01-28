@@ -83,4 +83,9 @@ module SAAS::DropFeatureData
       group.save
     end
   end
+
+  def handle_custom_password_policy_drop_data
+    account.agent_password_policy.reset_policies.save!
+    account.contact_password_policy.reset_policies.save!
+  end
 end

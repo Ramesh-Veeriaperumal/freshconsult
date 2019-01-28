@@ -1467,8 +1467,4 @@ class User < ActiveRecord::Base
       end
       true
     end
-
-    def reset_to_default_ticket_permission
-      ticket_permission = Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets]
-    end
 end
