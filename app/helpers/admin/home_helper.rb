@@ -100,7 +100,8 @@
       },
       :scenario                        =>   {
         :url                           =>   "/helpdesk/scenario_automations",
-        :privilege                     =>   privilege?(:manage_scenario_automation_rules) || privilege?(:view_admin)
+        :privilege                     =>   current_account.scenario_automation_enabled? && (
+          privilege?(:manage_scenario_automation_rules) || privilege?(:view_admin))
       },
       :ticket_template                 =>   {
         :url                           =>   "/helpdesk/ticket_templates",
