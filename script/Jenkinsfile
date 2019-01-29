@@ -65,6 +65,7 @@ def build_setup(category) {
 		      redis-server --daemonize yes
 		      cd /home/jenkins/helpkit/
 		      bundle install
+            bundle exec rake db:create RAILS_ENV=test
 	          bundle exec rake db:bootstrap RAILS_ENV=test
 	      	  """
 	      }
@@ -154,7 +155,7 @@ def distributed_run(category) {
    image_name = "";
    
    if(category != 'pronto') {
-             image_name = "792634465463.dkr.ecr.us-east-1.amazonaws.com/fdesk/backend_v2"
+             image_name = "792634465463.dkr.ecr.us-east-1.amazonaws.com/freshdesk/backend"
                       
    }else{
              image_name = "792634465463.dkr.ecr.us-east-1.amazonaws.com/fworks/pronto"
