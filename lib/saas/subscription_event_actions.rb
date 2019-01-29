@@ -7,9 +7,10 @@ class SAAS::SubscriptionEventActions
                            :basic_twitter, :basic_facebook, :rebranding, :customer_slas, :multi_timezone,
                            :multi_product, :multiple_emails, :link_tickets_toggle, :parent_child_tickets_toggle,
                            :shared_ownership_toggle, :skill_based_round_robin, :ticket_activity_export,
-                           :auto_ticket_export, :multiple_companies_toggle, :unique_contact_identifier, :support_bot, :custom_dashboard, 
-                           :round_robin, :round_robin_load_balancing, :hipaa, :agent_scope, :public_url_toggle,
-                           :custom_password_policy]
+                           :auto_ticket_export, :multiple_companies_toggle, :unique_contact_identifier,
+                           :support_bot, :custom_dashboard, :round_robin, :round_robin_load_balancing,
+                           :hipaa, :agent_scope, :public_url_toggle, :custom_password_policy,
+                           :scenario_automation].freeze
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard].freeze

@@ -13,4 +13,8 @@ class ScenarioAutomationsController < ApiApplicationController
     def load_objects
       @items = accessible_scenrios
     end
+
+    def feature_name
+      :scenario_automation
+    end
 end

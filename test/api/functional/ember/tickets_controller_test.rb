@@ -1054,6 +1054,17 @@ module Ember
       match_json({ evaluated_text: 'test #' })
     end
 
+    def test_execute_scenario_to_respond_403
+      scn_auto = @account.scn_automations.first || create_scn_automation_rule(scenario_automation_params)
+      ticket = @account.tickets.first || create_ticket(ticket_params_hash)
+      @account.launch(:pricing_plan_change_2019)
+      @account.revoke_feature :scenario_automation
+      @account.features.scenario_automations.destroy if @account.features.scenario_automations?
+      put :execute_scenario, construct_params({ version: 'private', id: ticket.display_id }, scenario_id: scn_auto.id)
+      assert_response 403
+      @account.rollback(:pricing_plan_change_2019)
+    end
+
     def test_create_with_section_fields_with_type_as_parent
       sections = construct_sections('type')
       type_field_id = @account.ticket_fields.find_by_field_type('default_ticket_type').id
