@@ -46,8 +46,9 @@ class AgentsController < ApplicationController
   end
 
   def search_in_freshworks
-    user = Freshid::User.find_by_email(params[:email].to_s) if params[:email].present?
-    user_hash = user.present? ? user_info_hash(User.new, user.as_json.symbolize_keys)[:user] : nil
+    email_changed = params[:new_email].present? && params[:new_email].casecmp(params[:old_email]) != 0
+    user = email_changed ? Freshid::User.find_by_email(params[:new_email].to_s) : current_account.users.find_by_email(params[:old_email].to_s)
+    user_hash = user.present? ? (email_changed ? user_info_hash(User.new, user.as_json.symbolize_keys)[:user] : user_info_hash(user)[:user]) : nil
     render :json => { :user_info => user_hash }
   end
     
