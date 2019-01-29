@@ -47,6 +47,7 @@ module Channel::V2
 
       if params_hash[:source_additional_info].present? && params_hash[:source_additional_info].is_a?(Hash)
         params_hash[:facebook] = params_hash[:source_additional_info][:facebook] if facebook_ticket?
+        params_hash[:twitter] = params_hash[:source_additional_info][:twitter] if twitter_ticket?
       end
 
       ticket = validation_class.new(params_hash, @item, string_request_params?)
@@ -66,12 +67,21 @@ module Channel::V2
           @facebook[:page_id] = (page.present? && page.id) ? page.id : nil
         end
       end
+
+      if create_action? && twitter_ticket?
+        @tweet = params[cname][:source_additional_info][:twitter]
+        if @tweet.present?
+          handle = Account.current.twitter_handles.where(twitter_user_id: @tweet[:support_handle_id]).first
+          @tweet[:twitter_handle_id] = handle.present? && handle.id ? handle.id : nil
+        end
+      end
       params[cname].delete(:source_additional_info)
     end
 
     def identify_social_field
       if create_action? && params[cname][:source].present?
         return ['facebook'] if facebook_ticket?
+        return ['twitter'] if twitter_ticket?
       end
       return [nil]
     end
@@ -82,6 +92,10 @@ module Channel::V2
 
     def facebook_ticket?
       params[cname][:source] == ::TicketConstants::SOURCE_KEYS_BY_TOKEN[:facebook]
+    end
+
+    def twitter_ticket?
+      params[cname][:source] == ::TicketConstants::SOURCE_KEYS_BY_TOKEN[:twitter]
     end
 
     def set_default_values
@@ -96,6 +110,7 @@ module Channel::V2
       @item.import_id = @import_id if @import_id.present?
       assign_ticket_states
       assign_fb_attributes if @facebook.present?
+      assign_twitter_attributes if @tweet.present?
     end
 
     def assign_fb_attributes
@@ -129,6 +144,17 @@ module Channel::V2
 
     def facebook_dm_ticket?
       @facebook[:msg_type].present? && @facebook[:msg_type] == Channel::V2::TicketConstants::FB_MSG_TYPES[0]
+    end
+
+    def assign_twitter_attributes
+      build_twitter_attributes
+    end
+
+    def build_twitter_attributes
+      @item.tweet = Social::Tweet.new(tweet_id: @tweet[:tweet_id],
+                                      tweet_type: @tweet[:tweet_type],
+                                      twitter_handle_id: @tweet[:twitter_handle_id],
+                                      stream_id: @tweet[:stream_id])
     end
 
     def set_attribute_accessors

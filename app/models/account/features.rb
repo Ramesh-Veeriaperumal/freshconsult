@@ -56,7 +56,8 @@ class Account < ActiveRecord::Base
     :custom_encrypted_fields, :freshid_saml, :custom_translations, :parent_child_infra,
     :canned_forms, :social_tab, :customize_table_view, :public_url_toggle,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
-    :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation
+    :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
+    :ticket_volume_report, :omni_channel, :sla_management_v2
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -72,7 +73,8 @@ class Account < ActiveRecord::Base
 
   PRICING_PLAN_MIGRATION_FEATURES_2019 = [
     :social_tab, :customize_table_view, :public_url_toggle, :add_to_response,
-    :agent_scope, :performance_report, :custom_password_policy, :scenario_automation
+    :agent_scope, :performance_report, :custom_password_policy, :scenario_automation,
+    :sla_management_v2, :omni_channel
   ].to_set.freeze
 
   LP_FEATURES.each do |item|

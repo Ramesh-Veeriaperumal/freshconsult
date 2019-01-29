@@ -1,9 +1,11 @@
 require_relative '../../../test_helper'
 require 'webmock/minitest'
+['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
 module Channel::V2
   class TicketsControllerTest < ActionController::TestCase
     include ApiTicketsTestHelper
+    include SocialTicketsCreationHelper
 
     CUSTOM_FIELDS = %w[number checkbox decimal text paragraph dropdown country state city date].freeze
 
@@ -210,6 +212,7 @@ module Channel::V2
       post :create, construct_params({ version: 'private' }, params)
       assert_response 201
       t = Helpdesk::Ticket.last
+      # To Do : use show ticket pattern to verify source additional info pattern 
       match_json(ticket_pattern(params, t))
     ensure
       Account.any_instance.unstub(:shared_ownership_enabled?)
@@ -237,7 +240,90 @@ module Channel::V2
       post :create, construct_params({ version: 'private' }, params)
       assert_response 201
       t = Helpdesk::Ticket.last
+      # To Do : use show ticket pattern to verify source additional info pattern 
       match_json(ticket_pattern(params, t))
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
+      $infra['CHANNEL_LAYER'] = false
+      @channel_v2_api = false
+    end
+
+    def test_twitter_mention_ticket_create
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      twitter_handle_id = get_twitter_handle.twitter_user_id
+      params = {
+        requester_id: requester.id, status: 5, priority: 2, source: 5,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+        source_additional_info: {
+          twitter: { 
+            tweet_id: 12345,
+            tweet_type: 'mention',
+            support_handle_id: twitter_handle_id,
+            stream_id: 3232
+          }
+        }
+      }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 201
+      t = Helpdesk::Ticket.last
+      match_json(show_ticket_pattern(params, t).except(:association_type))
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
+      $infra['CHANNEL_LAYER'] = false
+      @channel_v2_api = false
+    end
+
+    def test_twitter_dm_ticket_create
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      twitter_handle_id = get_twitter_handle.twitter_user_id
+      params = {
+        requester_id: requester.id, status: 5, priority: 2, source: 5,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+        source_additional_info: {
+          twitter: { 
+            tweet_id: 12346,
+            tweet_type: 'dm',
+            support_handle_id: twitter_handle_id,
+            stream_id: 3232
+          }
+        }
+      }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 201
+      t = Helpdesk::Ticket.last
+      match_json(show_ticket_pattern(params, t).except(:association_type))
+    ensure
+      Account.any_instance.unstub(:shared_ownership_enabled?)
+      $infra['CHANNEL_LAYER'] = false
+      @channel_v2_api = false
+    end
+
+    def test_twitter_ticket_create_with_invalid_handle_id
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      twitter_handle_id = Faker::Number.number(3).to_i
+      params = {
+        requester_id: requester.id, status: 5, priority: 2, source: 5,
+        subject: Faker::Name.name, description: Faker::Lorem.paragraph,
+        source_additional_info: {
+          twitter: {
+            tweet_id: 12346,
+            tweet_type: 'dm',
+            support_handle_id: twitter_handle_id,
+            stream_id: 3232
+          }
+        }
+      }
+      Account.any_instance.stubs(:shared_ownership_enabled?).returns(false)
+      post :create, construct_params({ version: 'private' }, params)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:twitter_handle_id,
+                                          :invalid_twitter_handle , code: 'invalid_value'))
+      match_json(pattern)
     ensure
       Account.any_instance.unstub(:shared_ownership_enabled?)
       $infra['CHANNEL_LAYER'] = false

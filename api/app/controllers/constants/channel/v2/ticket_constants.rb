@@ -31,4 +31,5 @@ module Channel::V2::TicketConstants
                            assigned_at first_response_time requester_responded_at agent_responded_at
                            status_updated_at sla_timer_stopped_at)
   FB_MSG_TYPES = ['dm', 'post'] # Dont change the index of the value
+  TWITTER_MSG_TYPES = ['dm', 'mention'].freeze
 end

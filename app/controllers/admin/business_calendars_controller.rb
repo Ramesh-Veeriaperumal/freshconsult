@@ -1,5 +1,4 @@
 class Admin::BusinessCalendarsController <  Admin::AdminController
-  
   before_filter :load_object, :only => [:update, :destroy, :edit]
 
   def load_object

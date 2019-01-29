@@ -204,10 +204,10 @@
       :custom_password_policy: 199
       :performance_report: 200
       :seafarers_9: 201
-      :seafarers_10: 202
+      :sla_management_v2: 202
       :scenario_automation: 203
-      :seafarers_12: 204
-      :seafarers_13: 205
+      :ticket_volume_report: 204
+      :omni_channel: 205
       :seafarers_14: 206
       :seafarers_15: 207
       :seafarers_16: 208
@@ -274,4 +274,6 @@
   :agent_scope: true
   :performance_report: true
   :custom_password_policy: true
+  :omni_channel: true
   :scenario_automation: true
+  :sla_management_v2: true

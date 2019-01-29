@@ -85,7 +85,7 @@ module Ember
         match_json(partial_success_response_pattern(ticket_ids, failures))
         assert_response 202
       end
-
+      
       def test_bulk_execute_scenario_with_invalid_ticket_types
         skip("ticket tests failing")
         @account.add_feature(:field_service_management)

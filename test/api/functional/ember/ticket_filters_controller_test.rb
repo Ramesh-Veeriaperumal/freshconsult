@@ -17,6 +17,7 @@ module Ember
 
     def before_all
       @account = Account.first.make_current
+      Account.any_instance.stubs(:sla_management_v2_enabled?).returns(true)
       @agent = get_admin.make_current
     end
 
@@ -138,6 +139,17 @@ module Ember
       assert_response 200
       filter = Helpdesk::Filters::CustomTicketFilter.find_by_name(new_name)
       match_custom_json(response.body, ticket_filter_show_pattern(filter))
+    end
+
+    def test_create_with_due_by_without_feature
+      Account.any_instance.stubs(:sla_management_v2_enabled?).returns(false)
+      filter_params = sample_filter_input_params
+      new_name = "#{Faker::Name.name} - #{Time.zone.now}"
+      filter_params[:name] = new_name
+      post :create, construct_params({ version: 'private' }, filter_params)
+      assert_response 400
+    ensure
+      Account.any_instance.stubs(:sla_management_v2_enabled?).returns(true)
     end
 
     def test_update_with_invalid_params

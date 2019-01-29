@@ -3,7 +3,6 @@ class Helpdesk::SlaPoliciesController < Admin::AdminController
  
   include Helpdesk::ReorderUtility
   include APIHelperMethods
-  
   before_filter :only => [:new, :create] do |c|
     c.requires_this_feature :customer_slas
   end
