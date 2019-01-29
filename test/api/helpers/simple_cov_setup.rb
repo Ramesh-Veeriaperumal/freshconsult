@@ -67,6 +67,9 @@ module SimpleCovSetup
     add_filter  'fdadmin'
     add_filter  'vendor/gems'
 
+    # Revisit again
+    add_filter  'app/helpers'
+
     POSSIBLE_DEAD_CODE.each do |file|
       add_filter file
     end

@@ -59,7 +59,19 @@ module Ember
         ApiTicketConstants::BULK_WRAP_PARAMS
       end
 
+      protected
+
+        def requires_feature(feature)
+          return if current_account.has_feature?(feature)
+
+          render_request_error(:require_feature, 403, feature: feature.to_s.titleize)
+        end
+
       private
+
+        def feature_name
+          :scenario_automation if action_name.to_sym == :bulk_execute_scenario
+        end
 
         def validate_items_to_bulk_link_or_unlink
           @items_failed = []
