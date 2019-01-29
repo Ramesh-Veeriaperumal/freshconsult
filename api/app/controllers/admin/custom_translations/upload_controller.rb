@@ -52,6 +52,7 @@ class Admin::CustomTranslations::UploadController < ApiApplicationController
 
     def generate_file_path(language)
       output_dir = "data/helpdesk/custom_translations/#{Rails.env}/#{Account.current.id}"
+      FileUtils.mkdir_p output_dir
       file_path = "#{output_dir}/#{language}-#{Time.now.utc.strftime('%B-%d-%Y-%H:%M:%S')}.yml"
       file_path
     end
