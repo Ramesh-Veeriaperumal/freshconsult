@@ -152,6 +152,7 @@ class UndoSendWorkerTest < ActionView::TestCase
   def test_undo_send_worker_ticket_subject
     ticket_hash = ticket_params_hash
     ticket_hash[:subject] = 'a'
+    ticket_hash[:requester_id] = @customer.id
     ticket = create_ticket(ticket_hash)
     create_normal_reply_for(ticket)
     undo_args = undo_send_args(ticket)
