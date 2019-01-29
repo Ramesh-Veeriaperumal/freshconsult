@@ -319,4 +319,11 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   class << self
     include Cache::Memcache::Helpdesk::TicketStatus
   end
+
+  private
+
+    def sync_task_changes_to_ocr(ticket, changes)
+      @ocr_enabled ||= account.omni_channel_routing_enabled?
+      ticket.sync_task_changes_to_ocr(changes) if @ocr_enabled
+    end
 end

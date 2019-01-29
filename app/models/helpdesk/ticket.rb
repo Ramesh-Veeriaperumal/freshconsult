@@ -1379,6 +1379,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     account.omni_channel_routing_enabled? && rr_active?
   end
 
+  def eligible_for_ocr?
+    account.omni_channel_routing_enabled? && rr_active?
+  end
+
   private
     def sphinx_data_changed?
       description_html_changed? || requester_id_changed? || responder_id_changed? || group_id_changed? || deleted_changed?
