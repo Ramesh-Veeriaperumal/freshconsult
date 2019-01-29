@@ -110,7 +110,8 @@ class AccountDecorator < ApiDecorator
     def groups_hash
       groups = record.groups_from_cache
       groups.map do |group|
-        GroupDecorator.new(group, agent_mapping_ids: agent_groups[:groups][group.id] || []).to_restricted_hash
+        GroupDecorator.new(group, agent_mapping_ids: agent_groups[:groups][group.id] || [],
+                                  group_type_mapping: Account.current.group_type_mapping).to_restricted_hash
       end
     end
 

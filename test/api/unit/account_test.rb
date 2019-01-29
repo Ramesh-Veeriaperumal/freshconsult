@@ -29,4 +29,12 @@ class AccountTest < ActionView::TestCase
     errors = account.errors.full_messages
     assert errors.include?('Domain is invalid')
   end
+
+  def test_group_type_mapping
+    account = Account.first.make_current
+    mapping = account.group_types.new(name: 'support_agent_group', group_type_id: 1, label: 'support_agent_group')
+    Account.any_instance.stubs(:group_types_from_cache).returns([mapping])
+    assert_equal account.group_type_mapping, 1 => 'support_agent_group'
+    Account.unstub(:group_type_mapping)
+  end
 end

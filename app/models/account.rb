@@ -814,6 +814,12 @@ class Account < ActiveRecord::Base
     group_types
   end
 
+  def group_type_mapping
+    group_types_from_cache.each_with_object({}) do |group_type, mapping|
+      mapping[group_type.group_type_id] = group_type.name
+    end
+  end
+
   def bot_email_response
     email_notifications.find_by_notification_type(EmailNotification::BOT_RESPONSE_TEMPLATE) || default_bot_email_response
   end

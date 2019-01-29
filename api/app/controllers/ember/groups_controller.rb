@@ -55,9 +55,11 @@ module Ember
       end
 
       def decorator_options
-        super({ agent_groups_ids: current_account.agent_groups_hash_from_cache })
+        super({
+          agent_groups_ids: current_account.agent_groups_hash_from_cache,
+          group_type_mapping: current_account.group_type_mapping
+        })
       end
-      
 
       def reset_attributes                
         if params[cname]["assignment_type"] == NO_ASSIGNMENT
