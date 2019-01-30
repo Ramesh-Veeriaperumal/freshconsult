@@ -35,7 +35,7 @@ class Solution::Article < ActiveRecord::Base
   
   serialize :seo_data, Hash
   
-  attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed
+  attr_accessor :highlight_title, :highlight_desc_un_html, :tags_changed, :prev_tags, :latest_tags
 
   attr_accessible :title, :description, :user_id, :status, :import_id, :seo_data, :outdated
 
@@ -46,6 +46,9 @@ class Solution::Article < ActiveRecord::Base
   validates_inclusion_of :status, :in => STATUS_KEYS_BY_TOKEN.values.min..STATUS_KEYS_BY_TOKEN.values.max
   validate :status_in_default_folder
   validate :check_for_spam_content
+
+  after_commit :tag_update_central_publish, :on => :update, :if => :tags_updated?
+
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -80,6 +83,23 @@ class Solution::Article < ActiveRecord::Base
   VOTE_TYPES = [:thumbs_up, :thumbs_down]
   
   SELECT_ATTRIBUTES = ["id", "thumbs_up", "thumbs_down"]
+
+  def tag_update_central_publish
+    @latest_tags = self.tags.map(&:name)
+    tag_args = {}
+    tag_args[:added_tags] = @latest_tags - @prev_tags
+    tag_args[:removed_tags] = @prev_tags - @latest_tags
+    CentralPublish::UpdateTag.perform_async(tag_args)
+
+  end
+
+  def save_tags
+    @prev_tags = self.tags.map(&:name)
+  end
+
+  def tags_updated?
+    self.tags_changed
+  end
 
   def self.articles_for_portal_conditions(portal)
     { :conditions => [' solution_folders.category_id in (?) AND solution_folders.visibility = ? ',

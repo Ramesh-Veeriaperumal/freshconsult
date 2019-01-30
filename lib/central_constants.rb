@@ -22,6 +22,8 @@ module CentralConstants
       'Social::FacebookPage' => '0',
       'Bot::Response' => '0',
       'Helpdesk::TicketField' => '0',
-      'AgentGroup' => '0'
+      'AgentGroup' => '0',
+      'Helpdesk::Tag' => '0',
+      'Helpdesk::TagUse' => '0'
   }
 end

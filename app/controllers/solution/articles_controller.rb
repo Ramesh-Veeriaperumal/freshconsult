@@ -235,6 +235,8 @@ class Solution::ArticlesController < ApplicationController
       return false unless tags_present? 
       set_tags_input
       return false unless tags_changed?
+      @article.tags_changed = true
+      @article.save_tags
       @article.tags.clear   
       @tags_input.each do |tag|      
         begin
