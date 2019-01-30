@@ -20,8 +20,8 @@
     <span class="vertical-alignment"><%= t('dispatch.cascade_text') %> &nbsp;</span>
       <%= form_for @va_rules, :url => { :controller => "va_rules", :action => "toggle_cascade" }, :html => { :id => "dispatcher_cascade" , :class => "vertical-alignment"} do |f| %>
 
-        <%= select "cascade_dispatchr", "cascade", VaRule.cascade_dispatchr_option, 
-                         {:selected => 1}, { :class => "select2 select2-flat span12", :id => "cascade_dispatchr" } %>
+        <%= select "cascade_dispatcher", "cascade", VaRule.cascade_dispatcher_option, 
+                         {:selected => 1}, { :class => "select2 select2-flat span12", :id => "cascade_dispatcher" } %>
       <% end %>
       <span id="cascade_loader" class="vertical-alignment loading-tiny loading-left"></span>
   </div>
@@ -93,13 +93,13 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
   selected_dispatchr_method = 
-  jQuery('#cascade_dispatchr').select2({
+  jQuery('#cascade_dispatcher').select2({
     minimumResultsForSearch: 1000
   });
 });
 
-jQuery('#cascade_dispatchr').change(function() {
-    var cascade_value = jQuery('#cascade_dispatchr').val();
+jQuery('#cascade_dispatcher').change(function() {
+    var cascade_value = jQuery('#cascade_dispatcher').val();
 
     new Ajax.Request('/admin/va_rules/toggle_cascade', 
                      { parameters: {cascade_dispatcher: cascade_value},

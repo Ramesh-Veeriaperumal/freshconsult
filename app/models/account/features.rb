@@ -57,8 +57,9 @@ class Account < ActiveRecord::Base
     :canned_forms, :social_tab, :customize_table_view, :public_url_toggle,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
-    :ticket_volume_report, :omni_channel, :sla_management_v2
+    :ticket_volume_report, :omni_channel, :sla_management_v2, :cascade_dispatcher
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
+
 
   COMBINED_VERSION_ENTITY_KEYS = [
     Helpdesk::TicketField::VERSION_MEMBER_KEY,
@@ -369,10 +370,6 @@ class Account < ActiveRecord::Base
     new_feature = self.changes[:plan_features][1].to_i
     return false if ((old_feature ^ new_feature) & (2**feature_val)).zero?
     @action = (old_feature & (2**feature_val)).zero? ? "add" : "drop"
-  end
-
-  def cascade_dispatcher_enabled?
-    has_feature?(:cascade_dispatcher) || features?(:cascade_dispatchr)
   end
 
   def custom_translations_enabled?
