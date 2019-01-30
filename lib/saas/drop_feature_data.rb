@@ -84,6 +84,18 @@ module SAAS::DropFeatureData
     end
   end
 
+  def handle_scenario_automation_drop_data
+    account.scn_automations.each do |scenario_automation|
+      begin
+        scenario_automation.destroy
+      rescue StandardError => e
+        Rails.logger.error "Exception while destroying scenario automation rule: \
+        #{scenario_automation.id}, account id:#{scenario_automation.account_id}, \
+        error: #{e.message}, backtrace: #{e.backtrace}"
+      end
+    end
+  end
+
   def handle_custom_password_policy_drop_data
     account.agent_password_policy.reset_policies.save!
     account.contact_password_policy.reset_policies.save!

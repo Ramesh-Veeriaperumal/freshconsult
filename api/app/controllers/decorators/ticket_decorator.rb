@@ -141,13 +141,15 @@ class TicketDecorator < ApiDecorator
   def tweet_public_hash
     return unless (Account.current.has_feature?(:advanced_twitter) || Account.current.basic_twitter_enabled?) && record.twitter? && record.tweet.twitter_handle
     handle = record.tweet.twitter_handle
-    {
+    tweet_hash = {
       id: record.tweet.tweet_id.to_s,
       type: record.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
       requester_screen_name: record.requester.twitter_id
     }
+    tweet_hash[:stream_id] = record.tweet.stream_id if channel_v2_api?
+    tweet_hash
   end
 
   def conversations

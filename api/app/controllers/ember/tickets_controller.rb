@@ -165,6 +165,18 @@ module Ember
       head 204
     end
 
+    protected
+
+      def requires_feature(feature)
+        super
+        return if @error.present?
+
+        if action_name.to_sym == :execute_scenario &&
+           !current_account.has_feature?(:scenario_automation)
+          render_request_error(:require_feature, 403, feature: feature.to_s.titleize)
+        end
+      end
+
     private
 
       def ticket_filter_validation_class

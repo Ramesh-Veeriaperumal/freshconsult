@@ -36,7 +36,12 @@
                                               updated_at: a.updated_at.try(:utc)
                                             }
                                           end
-               }
+                }
+              source_additional_info = {}
+              tweet = @item.tweet_public_hash
+              source_additional_info[:twitter] = tweet if tweet.present?
+              source_additional_info = source_additional_info.presence
+              response_hash[:source_additional_info] = source_additional_info if source_additional_info.present?
               channel_v2_attributes = @item.channel_v2_attributes
               stats_hash = @item.stats
               response_hash.merge!(channel_v2_attributes) if channel_v2_attributes

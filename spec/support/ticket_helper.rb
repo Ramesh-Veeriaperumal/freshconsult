@@ -56,9 +56,10 @@ module TicketHelper
     test_ticket
   end
 
-  def create_service_task_ticket
+  def create_service_task_ticket(options = {})
     parent_ticket = create_ticket
     params = { assoc_parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+               :responder_id => options[:responder_id],
                description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
                priority: 2, status: 2, type: Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE,
                custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }

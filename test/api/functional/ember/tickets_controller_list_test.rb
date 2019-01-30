@@ -24,6 +24,7 @@ module Ember
       @private_api = true
       Sidekiq::Worker.clear_all
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
+      Account.any_instance.stubs(:sla_management_v2_enabled?).returns(true)
       Account.current.features.es_v2_writes.destroy
       Account.current.time_zone = Time.zone.name
       Account.current.save

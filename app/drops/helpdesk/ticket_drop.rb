@@ -134,7 +134,11 @@ class Helpdesk::TicketDrop < BaseDrop
   end
   
   def due_by_time
-    in_user_time_zone(@source.due_by).strftime("%B %e %Y at %I:%M %p %Z")
+    if @source.account.sla_management_v2_enabled?
+      in_user_time_zone(@source.due_by).strftime('%B %e %Y at %I:%M %p %Z')
+    else
+      ''
+    end
   end
 
   def due_by_hrs

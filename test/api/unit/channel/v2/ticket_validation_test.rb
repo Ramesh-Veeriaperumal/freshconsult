@@ -418,6 +418,114 @@ module Channel::V2
       Account.unstub(:current)
     end
 
+    def test_twitter_mention_as_ticket
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        requester_id: 1, description: Faker::Lorem.paragraph,
+        ticket_fields: [], statuses: statuses, status: 2, source: 5,
+        twitter: { tweet_id: 126, tweet_type: 'mention', support_handle_id: 123456, stream_id: 13 }
+      }
+      ticket = TicketValidation.new(controller_params, nil)
+      assert ticket.valid?(:create)
+      Account.unstub(:current)
+    end
+
+    def test_twitter_dm_as_ticket
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        requester_id: 1, description: Faker::Lorem.paragraph,
+        ticket_fields: [], statuses: statuses, status: 2, source: 5,
+        twitter: { tweet_id: 126, tweet_type: 'dm', support_handle_id: 123456, stream_id: 13 }
+      }
+      ticket = TicketValidation.new(controller_params, nil)
+      assert ticket.valid?(:create)
+      Account.unstub(:current)
+    end
+
+    def test_twitter_tweet_type_not_present
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        requester_id: 1, description: Faker::Lorem.paragraph,
+        ticket_fields: [], statuses: statuses, status: 2, source: 5,
+        twitter: { tweet_id: 126, support_handle_id: 123456, stream_id: 13 }
+      }
+      ticket = TicketValidation.new(controller_params, nil)
+      refute ticket.valid?(:create)
+      errors = ticket.errors.full_messages
+      assert errors.include?('Twitter datatype_mismatch')
+      Account.unstub(:current)
+    end
+
+    def test_twitter_invalid_tweet_type
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        requester_id: 1, description: Faker::Lorem.paragraph,
+        ticket_fields: [], statuses: statuses, status: 2, source: 5,
+        twitter: { tweet_id: 126, tweet_type: 'post', support_handle_id: 123456, stream_id: 13 }
+      }
+      ticket = TicketValidation.new(controller_params, nil)
+      refute ticket.valid?(:create)
+      errors = ticket.errors.full_messages
+      assert errors.include?('Twitter not_included')
+      Account.unstub(:current)
+    end
+
+    def test_twitter_tweet_id_not_present
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        requester_id: 1, description: Faker::Lorem.paragraph,
+        ticket_fields: [], statuses: statuses, status: 2, source: 5,
+        twitter: { tweet_type: 'dm', support_handle_id: 123456, stream_id: 13 }
+      }
+      ticket = TicketValidation.new(controller_params, nil)
+      refute ticket.valid?(:create)
+      errors = ticket.errors.full_messages
+      assert errors.include?('Twitter datatype_mismatch')
+      Account.unstub(:current)
+    end
+
+    def test_twitter_stream_id_not_present
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        requester_id: 1, description: Faker::Lorem.paragraph,
+        ticket_fields: [], statuses: statuses, status: 2, source: 5,
+        twitter: { tweet_id: 126, tweet_type: 'dm', support_handle_id: 123456 }
+      }
+      ticket = TicketValidation.new(controller_params, nil)
+      refute ticket.valid?(:create)
+      errors = ticket.errors.full_messages
+      assert errors.include?('Twitter datatype_mismatch')
+      Account.unstub(:current)
+    end
+
+    def test_twitter_invalid_support_handle_id
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        requester_id: 1, description: Faker::Lorem.paragraph,
+        ticket_fields: [], statuses: statuses, status: 2, source: 5,
+        twitter: { tweet_id: 126, tweet_type: 'dm', support_handle_id: true, stream_id: 13 }
+      }
+      ticket = TicketValidation.new(controller_params, nil)
+      refute ticket.valid?(:create)
+      errors = ticket.errors.full_messages
+      assert errors.include?('Twitter datatype_mismatch')
+      Account.unstub(:current)
+    end
+
+    def test_twitter_ticket_invalid_source_type
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        requester_id: 1, description: Faker::Lorem.paragraph,
+        ticket_fields: [], statuses: statuses, status: 2, source: 3,
+        twitter: { tweet_id: 126, tweet_type: 'dm', support_handle_id: 123456, stream_id: 13 }
+      }
+      ticket = TicketValidation.new(controller_params, nil)
+      refute ticket.valid?(:create)
+      errors = ticket.errors.full_messages
+      assert errors.include?('Twitter invalid_field')
+      Account.unstub(:current)
+    end
+
     DATE_FIELDS.each do |field|
       define_method "test_#{field}_string" do
         Account.stubs(:current).returns(Account.first)

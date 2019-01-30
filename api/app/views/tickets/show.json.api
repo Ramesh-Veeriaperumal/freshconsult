@@ -52,7 +52,7 @@ facebook = @item.facebook_public_hash
 tweet = @item.tweet_public_hash
 source_additional_info.merge!(facebook: facebook) if facebook.present?
 source_additional_info.merge!(twitter: tweet) if tweet.present?
-source_additional_info = source_additional_info.present? ? source_additional_info : nil
+source_additional_info = source_additional_info.presence
 response_hash.merge!(source_additional_info: source_additional_info)
 response_hash.merge!(deleted: @item.deleted) if @item.deleted
 response_hash.merge!(associated_tickets_list: @item.associates) if @item.associated_ticket?

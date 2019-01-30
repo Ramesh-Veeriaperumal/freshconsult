@@ -20,6 +20,7 @@ module Ember
         super
         Sidekiq::Worker.clear_all
         before_all
+        @account.add_feature(:scenario_automation)
       end
 
       @@before_all_run = false
@@ -85,7 +86,18 @@ module Ember
         match_json(partial_success_response_pattern(ticket_ids, failures))
         assert_response 202
       end
-
+  
+      def test_bulk_execute_scenario_to_respond_403
+        scn_auto = @account.scn_automations.first || create_scn_automation_rule(scenario_automation_params)
+        ticket_id = @account.tickets.first.try(:id) || create_n_tickets(1, ticket_params_hash).first
+        @account.launch(:pricing_plan_change_2019)
+        @account.revoke_feature :scenario_automation
+        @account.features.scenario_automations.destroy if @account.features.scenario_automations?
+        post :bulk_execute_scenario, construct_params({ version: 'private' }, scenario_id: scn_auto.id, ids: [ticket_id])
+        assert_response 403
+        @account.rollback(:pricing_plan_change_2019)
+      end
+      
       def test_bulk_execute_scenario_with_invalid_ticket_types
         skip("ticket tests failing")
         @account.add_feature(:field_service_management)

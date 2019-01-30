@@ -14,6 +14,7 @@ class InlineImageShredderTest < ActionView::TestCase
 
   def setup
     Account.stubs(:current).returns(Account.first)
+    InlineImageShredder.jobs.clear
     @account = Account.current
   end
 
