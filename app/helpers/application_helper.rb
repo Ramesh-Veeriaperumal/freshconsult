@@ -2202,6 +2202,16 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
     end
   end
 
+  def sso_enable_warning_if_freshid_enabled
+    if (current_account.freshid_enabled? && current_account.freshconnect_enabled? && !current_account.sso_enabled?)
+      return content_tag('div', "<span class='sso-info'>
+            <span class='ficon-notice-o fsize-24 muted'></span>
+          </span>
+        #{t('admin.security.index.freshconnect_warning')}".html_safe, :class =>
+        "sso-notification-content")
+    end
+  end
+
   def is_sandbox_production_active
     !current_account.sandbox? &&
     SANDBOX_NOTIFICATION_STATUS.include?(current_account.sandbox_job.try(:status)) &&

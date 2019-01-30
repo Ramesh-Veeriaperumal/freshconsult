@@ -897,3 +897,21 @@ a.new_ticket_button, .nav_search, .nav_settings{
   border-radius: 2px;
   margin: 32px 20px 0;
 }
+
+.sso-info {
+  margin-right: 6px;
+  float: left;
+  position: relative;
+
+  .ficon-notice-o {
+    color: #fead00;
+  }
+}
+
+.sso-notification-content {
+    background: #fffade;
+    padding: 5px 10px;
+    font-size: 12px;
+    margin: 7px 0px;
+    font-weight: normal;
+}
