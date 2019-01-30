@@ -44,7 +44,8 @@ class Account < ActiveRecord::Base
     :audit_log_ui, :omni_channel_routing, :custom_encrypted_fields, :hipaa,
     :freshid_saml, :canned_forms, :custom_translations, :social_tab,
     :customize_table_view, :public_url_toggle, :add_to_response, :agent_scope,
-    :performance_report, :custom_password_policy, :social_tab, :scenario_automation
+    :performance_report, :custom_password_policy, :social_tab, :scenario_automation,
+    :omni_channel, :ticket_volume_report, :sla_management_v2, :api_v2
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -60,7 +61,7 @@ class Account < ActiveRecord::Base
 
   PRICING_PLAN_MIGRATION_FEATURES_2019 = [:social_tab, :customize_table_view,
     :public_url_toggle, :add_to_response, :agent_scope, :performance_report,
-    :custom_password_policy, :scenario_automation].to_set.freeze
+    :custom_password_policy, :scenario_automation, :sla_management_v2, :omni_channel, :api_v2].to_set.freeze
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do

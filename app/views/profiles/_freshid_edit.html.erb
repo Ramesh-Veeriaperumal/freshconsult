@@ -38,7 +38,7 @@
 		<%end%>
 	</div>
 	<div class="sidebar profile-sidebar">
-		<% if current_account.verified? && current_user.agent? && !current_account.launched?(:hide_api_key) %>
+		<% if show_api_key? %>
 			<div class="sidepanel api-key-form">
 			<%= content_tag( :label, t("profile.api_key.title"), :class => "title strong" ) %>
 			<%= form_tag :action => :reset_api_key, :controller => 'profiles', :method => :put do |f| %>

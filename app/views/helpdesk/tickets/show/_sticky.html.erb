@@ -126,14 +126,16 @@
 		            <a href="#" data-placement = "below" class="btn btn-collapse lnk_tkt_tracker_show_dropdown" id="lnk_tkt_tracker" data-toggle="popover" data-dropdown="close" data-ticket-id="<%= @ticket.display_id %>"><%=t('ticket.link_tracker.btn')%></a>
 				</li>
 				<%= render(:partial => "helpdesk/tickets/show/link_tracker_template") %> -->
-				<li class="ticket-btns hide_on_collapse scenario reload-action">
-					<div class="tooltip keytitle" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>					
-					 <%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
-					  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn btn-collapse', "data-keybinding" => shortcut('ticket_detail.scenario'), "data-highlight" => true, "data-template-footer" => "",
-					  				'data-template-header' => "<div class='modal-header'><span><h3 class='modal-heading-with-button'>" + t('ticket.execute_scenario') + "</h3></span><a href='/helpdesk/scenario_automations/new' target='_blank' class='pull-right modal-header-button'>" + t('ticket.create_new_scenario') + "</a></div>", "data-association" => @ticket.association_type, :id => "scenario")
-					  				 %> 
-					</div>
-				</li>
+				<% if current_account.scenario_automation_enabled? %>
+					<li class="ticket-btns hide_on_collapse scenario reload-action">
+						<div class="tooltip keytitle" title='<%="#{t('ticket.execute_scenario')}"%>' data-placement = "below" data-hotkey='<%="#{shortcut('ticket_detail.scenario')}"%>'>					
+						 <%= link_to( t('ticket.scenarios'), "/helpdesk/tickets/#{@ticket.id}/component?component=scenarios", 
+						  				:rel => 'freshdialog', "data-target" => "#execute_scenario", :class => 'btn btn-collapse', "data-keybinding" => shortcut('ticket_detail.scenario'), "data-highlight" => true, "data-template-footer" => "",
+						  				'data-template-header' => "<div class='modal-header'><span><h3 class='modal-heading-with-button'>" + t('ticket.execute_scenario') + "</h3></span><a href='/helpdesk/scenario_automations/new' target='_blank' class='pull-right modal-header-button'>" + t('ticket.create_new_scenario') + "</a></div>", "data-association" => @ticket.association_type, :id => "scenario")
+						  				 %> 
+						</div>
+					</li>
+				<% end %>
 
 			  	<% if current_account.timesheets_enabled? && privilege?(:view_time_entries) %>
 			  	<li class = "collapse_on_default">

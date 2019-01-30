@@ -33,7 +33,9 @@ class Helpdesk::TicketsController < ApplicationController
   include CompaniesHelperMethods
 
   ALLOWED_QUERY_PARAMS = ['collab', 'message', 'follow']
+  SCENARIO_AUTOMATION_ACTIONS = [:execute_scenario, :execute_bulk_scenario]
 
+  before_filter(only: SCENARIO_AUTOMATION_ACTIONS) { |c| c.requires_bitmap_feature :scenario_automation }
   before_filter :redirect_to_mobile_url
   skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:show,:suggest_tickets]
   before_filter :portal_check, :verify_format_and_tkt_id, :only => :show
