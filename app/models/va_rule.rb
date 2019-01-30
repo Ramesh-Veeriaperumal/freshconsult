@@ -5,7 +5,7 @@ class VaRule < ActiveRecord::Base
   include Va::Constants
 
   TICKET_CREATED_EVENT = { :ticket_action => :created }
-  CASCADE_DISPATCHR_DATA  = [
+  CASCADE_DISPATCHER_DATA  = [
     [ :first, "dispatch.no_cascade",    0 ],
     [ :all,   "dispatch.cascade",        1 ] 
   ]
@@ -310,8 +310,8 @@ class VaRule < ActiveRecord::Base
   end
 
 
-  def self.cascade_dispatchr_option
-    CASCADE_DISPATCHR_DATA.map { |i| [I18n.t(i[1]), i[2]] }
+  def self.cascade_dispatcher_option
+    CASCADE_DISPATCHER_DATA.map { |i| [I18n.t(i[1]), i[2]] }
   end
   
   # Used for sending webhook failure notifications
