@@ -240,6 +240,7 @@ class ContactsController < ApplicationController
   def update
     @user.update_companies(params)
     filtered_params = params[:user].reject { |k| ["added_list", "removed_list"].include?(k) }
+    @user.save_tags
     if @user.update_attributes(filtered_params)
       respond_to do |format|
         flash[:notice] = t('merge_contacts.contact_updated')
@@ -266,6 +267,7 @@ class ContactsController < ApplicationController
 
   def update_description_and_tags
     begin
+      @user.save_tags
       if @user.update_attributes(params[:user])
         updated_tags = @user.tags.collect {|tag| {:id => tag.id, :name => tag.name}}
         respond_to do |format|
