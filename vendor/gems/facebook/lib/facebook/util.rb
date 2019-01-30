@@ -85,7 +85,7 @@ module Facebook
          :photo_url => photo_url, :height => "", :page_name => page_name} if photo_url.present?
       elsif "link".eql?(feed[:type])
         link_story   = "<a href=\"#{feed[:link]}\">#{feed[:name]}</a>" if feed[:name]
-        html_content = FEED_LINK_WITH_ORIGINAL_POST % {:html_content => html_content, :link_story => link_story}
+        html_content = FEED_LINK_WITH_ORIGINAL_POST % {:html_content => html_content, :link_story => link_story, :page_name => page_name}
       else
         html_content = FEED_WITH_ORIGINAL_POST % {:html_content => html_content, :page_name => page_name
     }
