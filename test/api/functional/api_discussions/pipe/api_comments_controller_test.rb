@@ -54,7 +54,7 @@ module ApiDiscussions
 
     def test_create_without_user_id
       post :create, construct_params({ version: 'private', id: topic_obj.id }, create_comment_params_hash)
-      match_json([bad_request_error_pattern('user_id', :datatype_mismatch, code: :missing_field, expected_data_type: Integer)])
+      match_json([bad_request_error_pattern('user_id', :datatype_mismatch, code: :missing_field, expected_data_type: 'Positive Integer')])
       assert_response 400
     end
   end
