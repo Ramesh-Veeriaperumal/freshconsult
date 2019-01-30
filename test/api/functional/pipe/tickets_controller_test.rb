@@ -61,6 +61,7 @@ module Pipe
     end
 
     def test_create_with_created_at_updated_at
+      @account.stubs(:skill_based_round_robin_enabled?).returns(false)
       created_at = updated_at = Time.now
       params = {
         requester_id: requester.id, status: 2, priority: 2,
@@ -75,9 +76,11 @@ module Pipe
       match_json(ticket_pattern({}, t))
       assert (t.created_at - created_at).to_i == 0
       assert (t.updated_at - updated_at).to_i == 0
+      @account.unstub(:skill_based_round_robin_enabled?)
     end
 
     def test_create_with_pending_since
+      @account.stubs(:skill_based_round_robin_enabled?).returns(false)
       created_at = updated_at = (Time.now - 10.days)
       pending_since = (Time.now - 5.days)
       params = {
@@ -93,9 +96,11 @@ module Pipe
       match_json(ticket_pattern(params, t))
       match_json(ticket_pattern({}, t))
       assert (t.pending_since - pending_since).to_i == 0
+      @account.unstub(:skill_based_round_robin_enabled?)
     end
 
     def test_create_with_on_state_time
+      @account.stubs(:skill_based_round_robin_enabled?).returns(false)
       on_state_time = 100
       params = {
         requester_id: requester.id, status: 2, priority: 2,
@@ -109,9 +114,11 @@ module Pipe
       match_json(ticket_pattern(params, t))
       match_json(ticket_pattern({}, t))
       assert t.on_state_time - on_state_time == 0
+      @account.unstub(:skill_based_round_robin_enabled?)
     end
 
     def test_create_with_on_state_time_as_string
+      @account.stubs(:skill_based_round_robin_enabled?).returns(false)
       on_state_time = 100
       params = {
         requester_id: requester.id.to_s, status: '2', priority: '2',
@@ -126,9 +133,11 @@ module Pipe
       match_json(ticket_pattern(params.merge(status: 2, priority: 2, requester_id: t.requester_id), t))
       match_json(ticket_pattern({}, t))
       assert t.on_state_time - on_state_time == 0
+      @account.unstub(:skill_based_round_robin_enabled?)
     end
 
     def test_create_with_closed_at
+      @account.stubs(:skill_based_round_robin_enabled?).returns(false)
       created_at = Time.now - 10.days
       updated_at = Time.now - 10.days
       closed_at = Time.now - 5.days
@@ -144,9 +153,11 @@ module Pipe
       match_json(ticket_pattern(params, t))
       match_json(ticket_pattern({}, t))
       assert (t.closed_at - closed_at).to_i == 0
+      @account.unstub(:skill_based_round_robin_enabled?)
     end
 
     def test_update_with_closed_at
+      @account.stubs(:skill_based_round_robin_enabled?).returns(false)
       t = create_ticket
       t.update_attributes(created_at: Time.now - 10.days, updated_at: Time.now - 10.days)
       closed_at = Time.now - 1.days
@@ -161,6 +172,7 @@ module Pipe
       match_json(update_ticket_pattern(params, t))
       match_json(update_ticket_pattern({}, t))
       assert (t.closed_at - closed_at).to_i == 0
+      @account.unstub(:skill_based_round_robin_enabled?)
     end
 
     def test_ticket_close_after_reopened
