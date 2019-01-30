@@ -39,10 +39,12 @@ class SAAS::SubscriptionActions
   end
 
   def drop_feature_data(drop_data_features)
+    Rails.logger.info "Drop data features list:: #{drop_data_features.inspect}"
     PlanChangeWorker.perform_async({:features => drop_data_features, :action => DROP})
   end
 
   def add_feature_data(add_data_features)
+    Rails.logger.info "Add data features list:: #{add_data_features.inspect}"
     PlanChangeWorker.perform_async({:features => add_data_features, :action => ADD})
   end
 
