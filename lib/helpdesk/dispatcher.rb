@@ -7,6 +7,7 @@
     include Redis::OthersRedis
 
     DISPATCHER_ERROR = 'DISPATCHER_EXECUTION_FAILED'.freeze
+    ROUNDROBIN_ERROR = 'ROUND_ROBIN_FAILED'.freeze
 
     def self.enqueue(ticket, user_id)
       #based on account subscription, enqueue into proper queue
@@ -111,15 +112,19 @@
     end
 
     def round_robin
-      #Ticket already has an agent assigned to it or doesn't have a group
-      group = @ticket.group
-      return if group.nil?
-      if @ticket.responder_id
-        @ticket.update_capping_on_create
-        return
-      end
-      if group.round_robin_enabled?
-        @ticket.assign_agent_via_round_robin
+      begin
+        #Ticket already has an agent assigned to it or doesn't have a group
+        group = @ticket.group
+        return if group.nil?
+        if @ticket.responder_id
+          @ticket.update_capping_on_create
+          return
+        end
+        if group.round_robin_enabled?
+          @ticket.assign_agent_via_round_robin
+        end
+      rescue Exception => e
+        Va::Logger::Automation.log_error(ROUNDROBIN_ERROR, e)
       end
     end
 
