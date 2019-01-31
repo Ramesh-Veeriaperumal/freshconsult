@@ -701,13 +701,6 @@ Helpkit::Application.routes.draw do
     end
     get '/account', to: 'channel/v2/accounts#show'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
-
-    get '/solutions/categories', to: 'channel/v2/api_solutions/categories#index'
-    get '/solutions/categories/:id', to: 'channel/v2/api_solutions/categories#show'
-    get '/solutions/categories/:id/folders', to: 'channel/v2/api_solutions/folders#category_folders'
-    get '/solutions/folders/:id', to: 'channel/v2/api_solutions/folders#show'
-    get '/solutions/articles/:id', to: 'channel/v2/api_solutions/articles#show'
-    get '/solutions/folders/:id/articles', to: 'channel/v2/api_solutions/articles#folder_articles'
   end
 
   channel_routes = proc do
