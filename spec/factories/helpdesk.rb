@@ -63,7 +63,6 @@ if Rails.env.test?
       visible_in_portal true
       editable_in_portal true 
       required_in_portal false
-      required_for_closure false
     end
 
     factory :nested_ticket_field, :class => Helpdesk::NestedTicketField do |f|

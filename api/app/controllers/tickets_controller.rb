@@ -22,6 +22,7 @@ class TicketsController < ApiApplicationController
   before_filter :ticket_permission?, only: [:destroy]
   before_filter :check_search_feature, :validate_search_params, only: [:search]
   before_filter :validate_associated_tickets, only: [:create]
+  before_filter :ignore_unwanted_fields, only: [:create, :update], if: :remove_unrelated_fields?
 
   def create
     assign_protected
@@ -342,6 +343,61 @@ class TicketsController < ApiApplicationController
         FsmTicketValidation
       else
         TicketValidation
+      end
+    end
+
+    def remove_unrelated_fields?
+      Account.current.launched?(:remove_unrelated_fields)
+    end
+
+    def ignore_unwanted_fields
+      (params[cname][:custom_field] || []).delete_if do |key, value|
+        param_removable?(key)
+      end
+    end
+
+    def param_removable?(key)
+      section_ticket_fields.present? && section_ticket_fields.include?(key) && !possible_custom_fields.include?(key)
+    end
+
+    def possible_custom_fields
+      @possible_custom_fields ||= begin
+        possible_custom_fields_subset = []
+        section_picklist_list.each do |picklist_value|
+          sec_id = picklist_value.try('section').try('id')
+          possible_custom_fields_subset.concat(section_ticket_fields_mapping[sec_id] || [])
+        end
+        possible_custom_fields_subset
+      end
+    end
+
+    def section_ticket_fields_mapping
+      @section_ticket_fields_mapping ||= begin
+        Account.current.section_fields_with_field_values_mapping_cache.inject({}) do |mapping, section_field|
+          fields = mapping[section_field.section_id] || []
+          fields << section_field.ticket_field.name
+          fields << section_field.ticket_field.child_levels.pluck('name') if section_field.ticket_field.nested_field?
+          mapping[section_field.section_id] = fields.flatten
+          mapping
+        end
+      end
+    end
+
+    def section_ticket_fields
+      @section_ticket_fields ||= section_ticket_fields_mapping.values.flatten.compact
+    end
+
+    def section_picklist_list
+      Account.current.section_parent_fields_from_cache.map do |dropdown_section|
+        picklist_values = dropdown_section.picklist_values
+        dropdown_section_name = begin
+          if dropdown_section.field_type.eql?('default_ticket_type')
+            params[cname][:ticket_type] || @item.ticket_type
+          else
+            params[cname][:custom_field][dropdown_section.name] || (@item.persisted? && @item.safe_send(dropdown_section.name))
+          end
+        end
+        picklist_values.find_by_value(dropdown_section_name) if dropdown_section_name.present?
       end
     end
 

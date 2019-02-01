@@ -117,3 +117,4 @@ module Has #:nodoc:
     end
   end
 end
+
