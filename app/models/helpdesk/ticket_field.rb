@@ -33,7 +33,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
   SECTION_LIMIT = 2
 
   SECTION_DROPDOWNS = ["default_ticket_type", "custom_dropdown"]
-  VERSION_MEMBER_KEY = 'TICKET_FIELD'.freeze
+  VERSION_MEMBER_KEY = 'TICKET_FIELD_LIST'.freeze
 
   concerned_with :presenter
 

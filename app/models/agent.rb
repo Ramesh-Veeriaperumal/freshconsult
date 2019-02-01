@@ -12,7 +12,7 @@ class Agent < ActiveRecord::Base
   include Redis::OthersRedis
   include DataVersioning::Model
 
-  VERSION_MEMBER_KEY = 'AGENTS_GROUPS'.freeze
+  VERSION_MEMBER_KEY = 'AGENTS_GROUPS_LIST'.freeze
 
   concerned_with :associations, :constants, :presenter
 

@@ -1034,6 +1034,12 @@ class User < ActiveRecord::Base
     Language.find_by_code(self.language.to_s).try(:name)
   end
 
+  def supported_language
+    # added defined check to handle boolean value
+    @supported_language = (Account.current.supported_languages.include?(language) && language_object.to_key) unless defined?(@supported_language)
+    @supported_language
+  end
+
   def custom_form
     helpdesk_agent? ? nil : (Account.current || account).contact_form # memcache this
   end
