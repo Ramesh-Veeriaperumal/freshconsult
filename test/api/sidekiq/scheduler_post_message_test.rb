@@ -12,10 +12,13 @@ class SchedulerPostMessageTest < ActionView::TestCase
   SUCCESS = 200..299
   def teardown
     Account.unstub(:current)
+    WebMock.disable_net_connect!
     super
   end
 
   def test_post_message_todos_reminder
+    # TODO: Stub all external requests instead of the below hack
+    WebMock.allow_net_connect!
     Account.stubs(:current).returns(Account.first)
     @user = create_test_account
     @account = Account.current
@@ -28,6 +31,7 @@ class SchedulerPostMessageTest < ActionView::TestCase
   end
 
   def test_post_message_todos_reminder_with_invalid_params
+    WebMock.allow_net_connect!
     assert_raises(SchedulerService::Errors::BadRequestException) do
       Account.stubs(:current).returns(Account.first)
       @user = create_test_account
