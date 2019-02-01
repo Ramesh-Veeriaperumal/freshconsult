@@ -47,9 +47,11 @@ module SimpleCovSetup
     'api/app/delegators/dashboard_delegator.rb'
   ].freeze
 
-  DEAD_CODE = [].freeze
+  DEAD_CODE = [
+    'lib/password.rb'
+  ].freeze
 
-  IGNORE_FILES = %w[lib/attachment_helper.rb lib/meta_data_check/meta_data_check_methods.rb].freeze
+  IGNORE_FILES = %w[lib/attachment_helper.rb lib/meta_data_check/meta_data_check_methods.rb lib/guid.rb].freeze
 
   SimpleCov.start do
     # Adding exact filters

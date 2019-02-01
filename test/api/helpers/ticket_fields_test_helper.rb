@@ -312,6 +312,31 @@ module TicketFieldsTestHelper
     parent_custom_field
   end
 
+  def create_custom_translation(ticket_field_id, language_code, label, customer_label, choices = [], level2_field = nil )
+    type = "Helpdesk::TicketField"
+    language_id = Language.find_by_code(language_code).id
+    translation = Account.current.custom_translations.find_by_translatable_id_and_translatable_type_and_language_id(ticket_field_id,type,language_id)
+    translation = Account.current.custom_translations.new({:translatable_id => ticket_field_id, :translatable_type => type,:language_id => language_id}) unless translation.present?
+    translatable_data = {"label" => "", "customer_label" => "","choices" => {}, "customer_choices" => {}}
+    translatable_data["label"] = label + Random.rand(1..1000).to_s
+    if choices.present?
+      temp = {}
+      choices.map{ |ch| 
+        temp["choice_#{ch[0]}"] = ch[1] + Random.rand(1..1000).to_s
+      }
+      translatable_data["choices"] = temp
+      translatable_data["customer_choices"] = temp
+    end
+    if level2_field.present?
+      translatable_data["label_#{level2_field.level}"] = level2_field.label + Random.rand(1..1000).to_s
+      translatable_data["customer_label_#{level2_field.level}"] = level2_field.label_in_portal + Random.rand(1..1000).to_s
+    end
+    translatable_data["customer_label"] = customer_label + Random.rand(1000..2000).to_s if customer_label.present?
+    translation.translations = translatable_data
+    translation.save
+    translation
+  end
+
   def ticket_field_pattern(tf, hash = {})
     pattern = {
       id: tf.id,

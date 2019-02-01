@@ -317,6 +317,37 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     end
   end
 
+  def enable_freshid
+    result = {}
+    Sharding.admin_select_shard_of(params[:account_id]) do
+      begin
+        account = Account.find(params[:account_id])
+        account.make_current
+        result[:account_id] = account.id
+        if account.sso_enabled?
+          Rails.logger.info "SSO has been enabled for this account. So, you can't enable freshid"
+          result[:status] = "notice"
+        elsif account.freshid_enabled?
+          Rails.logger.info "Freshid has already been enabled for this account"
+          result[:status] = "notice"
+        else
+          Freshid::AgentsMigration.new.perform
+          account.launch(:freshworks_omnibar) # it will be enabled by default in podus.
+          result[:status] = "success"
+        end
+      rescue Exception => e
+        result[:status] = "error"
+        Rails.logger.info "Exception while enabling freshid from freshops admin : #{e.inspect}"
+      ensure
+        Account.reset_current_account
+      end
+    end
+    respond_to do |format|
+      format.json do
+        render :json => result
+      end
+    end
+  end
 
   def change_url
     result = {}

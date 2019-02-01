@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This commit hook validates the commit message for the following
 #   - It should contains a JIRA id 
@@ -8,7 +8,7 @@ printMsg(){
   echo "----------------------------"
 }
 
-jiraIssuePattern="(FDCORE|FRESHPIPE|FRESHCALL|TH|FD)-(\\d+)"
+jiraIssuePattern="(FDCORE|FRESHPIPE|FRESHCALL|TH|FD)-([0-9]+)"
 commitMsgFile=$1
 
 if [ -f ~/.jira_auth ]; then
@@ -44,6 +44,8 @@ then
   exit 1;
 fi
 
+echo "Jira issue found  ${jiraId}"
+
 if [ "$jiraId" == "" ] 
 then 
   numIssueIdsInDesc=`cat $1 | egrep -o  "${jiraIssuePattern}" | wc -l | awk '{print $1}'`
@@ -65,7 +67,7 @@ fi
 
 command -v osascript &> /dev/null  && osascript -e 'display notification "Validating JIRA ID for commit" with title "Hang in there"'
 
-curl -u "${JIRA_AUTH}" "Content-Type: application/json" -s "https://jira.freshworks.com/rest/api/2/issue/${jiraId}" > /tmp/jiraIssueResult.txt
+curl -u "${JIRA_AUTH}" -H "Content-Type: application/json" -s "https://jira.freshworks.com/rest/api/2/issue/${jiraId}" > /tmp/jiraIssueResult.txt
 
 if [ $? -ne 0  -o `cat /tmp/jiraIssueResult.txt | grep errorMessages | wc -l` -gt 0 -o `cat /tmp/jiraIssueResult.txt | grep "<html>" | wc -l` -gt 0 ]
 then

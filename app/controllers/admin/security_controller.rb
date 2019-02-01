@@ -56,7 +56,7 @@ class Admin::SecurityController <  Admin::AdminController
       @account.reset_sso_options
     end
 
-    set_password_policies unless @account.sso_enabled?
+    set_password_policies if @account.custom_password_policy_enabled? && !@account.sso_enabled?
     if @account.save && @account.account_configuration.save
       flash[:notice] = t(:'flash.sso.update.success')
       redirect_to admin_home_index_path

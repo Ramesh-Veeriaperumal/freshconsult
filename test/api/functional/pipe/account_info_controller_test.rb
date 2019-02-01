@@ -10,8 +10,9 @@ module Pipe
     end
 
     def test_info_non_existent_account
-      get :index, controller_params(version: 'pipe', account_id: 23423425235)
-      assert_response 500
+      assert_raises ActiveRecord::RecordNotFound do
+        get :index, controller_params(version: 'pipe', account_id: 23423425235)
+      end
     end
 
     private

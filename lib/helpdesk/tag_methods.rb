@@ -2,6 +2,12 @@ module Helpdesk::TagMethods
   def update_tags(tag_list, remove_tags, item)
     new_tag_list = tag_list.split(',').map(&:strip)
     old_tag_list = item.tags.map { |tag| tag.name.strip }
+    
+    tag_args = {}
+    tag_args[:added_tags] = new_tag_list
+    tag_args[:removed_tags] = {}
+    CentralPublish::UpdateTag.perform_async(tag_args)
+
 
     # Choosing the ones that are not in the old list.
     add_ticket_tags( new_tag_list.select { |tag| !old_tag_list.any? { |old| old.casecmp(tag).zero? } }, item)

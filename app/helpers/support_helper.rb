@@ -373,7 +373,7 @@ module SupportHelper
         required = (field[:required_in_portal] && field[:editable_in_portal])
         %(  <div class="controls">
             <label class="checkbox #{required ? 'required' : '' }">
-              #{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value, { :pl_value_id => pl_value_id } } #{ field[:label_in_portal] }
+              #{ ticket_form_element form_builder,:helpdesk_ticket, field, field_value, { :pl_value_id => pl_value_id } } #{ field.translated_label_in_portal.html_safe }
             </label>
           </div> ).html_safe
       else
@@ -392,12 +392,12 @@ module SupportHelper
     # adding :for attribute for requester(as email) element => to enable accessability
     if field[:name] == "requester"
       label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class, :for => "#{object_name}_email"
-    elsif field.encrypted_field?
+    elsif field.respond_to?(:encrypted_field?) && field.encrypted_field?
       label_tag "#{object_name}_#{field[:name]}",
                 content_tag(:span, "", :class => "ficon-encryption-lock encrypted", :title => t('custom_fields.encrypted_text'), 'data-toggle' => 'tooltip', 'data-placement' => 'top' ) + 
                 " #{field[:label_in_portal].html_safe}", :class => element_class, :for => "#{object_name}_email"
     else
-      label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class
+      label_tag "#{object_name}_#{field[:name]}", field.translated_label_in_portal.html_safe, :class => element_class
     end
   end
 
@@ -425,11 +425,11 @@ module SupportHelper
           text_area(object_name, field_name, { :class => element_class + " span12", :value => field_value, :rows => 6 }.merge(html_opts))
         when "dropdown" then
             select(object_name, field_name,
-                field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices,
+                field.field_type == "default_status" ? field.visible_status_choices : field.html_unescaped_choices(nil, true),
                 { :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class})
         when "dropdown_blank" then
           tkt = @ticket if field.field_type == "default_company"
-          choices = field.html_unescaped_choices(tkt)
+          choices = field.html_unescaped_choices(tkt, true)
           disabled = true if field.field_type == "default_company" && choices.empty?
           select(object_name, field_name, choices,
               { :include_blank => "...", :selected => (field.is_default_field? and is_num?(field_value)) ? field_value.to_i : field_value }, {:class => element_class, :disabled => disabled})
@@ -504,13 +504,13 @@ module SupportHelper
   # { :category_val => "", :subcategory_val => "", :item_val => "" }
   def nested_field_tag(_name, _fieldname, _field, _opt = {}, _htmlopts = {}, _field_values = {}, in_portal = false, required)
     _javascript_opts = {
-      :data_tree => _field.nested_choices,
+      :data_tree => _field.translated_nested_choices,
       :initValues => _field_values,
       :disable_children => false
     }.merge!(_opt)
     if _opt[:pl_value_id].present?
       _htmlopts.merge!({:id => gsub_id("#{_name}_#{_fieldname}_#{_opt[:pl_value_id]}")})
-      _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
+      _category = select(_name, _fieldname, _field.html_unescaped_choices(nil, true), _opt, _htmlopts)
 
       _field.nested_levels.each do |l|
         _htmlopts.merge!({:id => gsub_id("#{_name}_#{l[:name]}_#{_opt[:pl_value_id]}")})
@@ -520,7 +520,7 @@ module SupportHelper
 
       (_category + javascript_tag("jQuery('##{gsub_id(_name +"_"+ _fieldname+"_"+_opt[:pl_value_id])}').nested_select_tag(#{_javascript_opts.to_json});"))
     else
-      _category = select(_name, _fieldname, _field.html_unescaped_choices, _opt, _htmlopts)
+      _category = select(_name, _fieldname, _field.html_unescaped_choices(nil, true), _opt, _htmlopts)
 
       _field.nested_levels.each do |l|
         _javascript_opts[(l[:level] == 2) ? :subcategory_id : :item_id] = gsub_id(_name +"_"+ l[:name])
@@ -573,7 +573,7 @@ module SupportHelper
           fetch_custom_field(ticket, field.name)
           else
           field.dropdown_selected(((_field_type == "default_status") ?
-            field.all_status_choices : field.html_unescaped_choices), _field_value)
+            field.all_status_choices : field.html_unescaped_choices(nil, true)), _field_value)
           end
       when "checkbox"
         _field_value ? I18n.t('plain_yes') : I18n.t('plain_no')

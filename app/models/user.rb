@@ -104,6 +104,9 @@ class User < ActiveRecord::Base
   validate :unique_external_id_feature, :if => :unique_external_id_changed?
   validate :check_roles_for_field_agents, if: -> { Account.current.field_service_management_enabled? }, on: :update
 
+  def save_tags
+    @prev_tags = self.tags.map(&:name)
+  end
 
   def email_validity
     self.errors.add(:base, I18n.t("activerecord.errors.messages.email_invalid")) unless self[:account_id].blank? or self[:email] =~ EMAIL_VALIDATOR
@@ -142,7 +145,7 @@ class User < ActiveRecord::Base
   attr_accessor :import, :highlight_name, :highlight_job_title, :created_from_email, :sbrr_fresh_user,
                 :primary_email_attributes, :tags_updated, :keep_user_active, :escape_liquid_attributes, 
                 :role_ids_changed, :detect_language, :tag_use_updated, :user_companies_updated, 
-                :perishable_token_reset
+                :perishable_token_reset, :prev_tags, :latest_tags
   # (This role_ids_changed used to forcefully call user callbacks only when role_ids are there.
   # As role_ids are not part of user_model(it is an association_reader), 
   # agent.update_attributes won't trigger user callbacks since user doesn't have any change.

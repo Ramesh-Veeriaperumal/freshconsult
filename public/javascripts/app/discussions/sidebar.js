@@ -10,7 +10,8 @@ window.App.Discussions = window.App.Discussions || {};
 		activeForum: null,
 		categoriesLoaded: false,
 		sidebarActive: false,
-		
+		counter : 0,
+
 		start: function () {
 			this.setupStaticSidebar();
 			this.bindHandlers();
@@ -19,9 +20,23 @@ window.App.Discussions = window.App.Discussions || {};
 			$('#cm-sb-list').trigger('afterShow');
 		},
 
+		initSidebarHeight: function(element) {
+			var $element = $(element);
+			var $this = this;
+			if($element.height()) {
+				$this.setSidebarHeight($element.height() - 20);
+				return;
+			}
+			else {
+				setTimeout(function() {
+					if (++$this.counter < 10) { $this.initSidebarHeight($element) }
+				}, 150);
+			}
+		},
+
 		setupStaticSidebar: function () {
 			var $this = this;
-			$this.setSidebarHeight($("#body-container").height() - 20);
+			$this.initSidebarHeight("#body-container")
 
 			$(document).on("sticky_kit:stick.discussions.sidebar", "#cm-discussion-wrapper", function (ev) {
 				$this.setSidebarHeight($(window).height() - 20);
@@ -75,19 +90,19 @@ window.App.Discussions = window.App.Discussions || {};
 				forum_id = parseInt(window.location.pathname.replace('/discussions/forums/', ''), 10);
 				$('#sb-discussions-forum-' + forum_id).parent().addClass('active');
 				break;
-					
+
 			default:
 				if (this.activeForum !== null) {
 					$('#sb-discussions-forum-' + this.activeForum).parent().addClass('active');
 				}
 				break;
 			}
-			
+
 			$('#community-sidebar li.active').parents('.cm-sb-cat-item').addClass('toggle-open');
 			if (!$('.cm-sb-cat-item').hasClass('toggle-open')) {
 				$('.cm-sb-cat-item').first().addClass('toggle-open');
 			}
-			
+
 		},
 
 		setCurrentPageAs: function (page) {
@@ -110,7 +125,7 @@ window.App.Discussions = window.App.Discussions || {};
 			this.bindSidebarClose();
 			this.bindSidebarLoaded();
 		},
-		
+
 		bindSidebarLoaded: function () {
 			var $this = this;
 			$('#cm-sb-list').on('remoteLoaded', function () {
@@ -157,7 +172,7 @@ window.App.Discussions = window.App.Discussions || {};
 				$this.hide();
 			});
 		},
-		
+
 		show: function () {
 			if (!this.categoriesLoaded) {
 				$('#cm-sb-list').trigger('afterShow');
@@ -181,7 +196,7 @@ window.App.Discussions = window.App.Discussions || {};
 				}
 			}, 300);
 		},
-		
+
 		toggle: function () {
 			if (this.sidebarActive) {
 				this.hide();
@@ -189,7 +204,7 @@ window.App.Discussions = window.App.Discussions || {};
 				this.show();
 			}
 		},
-		
+
 		reload: function () {
 			$('#cm-sb-list').trigger('reload');
 		},

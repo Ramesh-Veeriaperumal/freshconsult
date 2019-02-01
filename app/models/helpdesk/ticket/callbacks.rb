@@ -59,6 +59,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
   before_destroy :save_deleted_ticket_info
 
   after_create :refresh_display_id, :create_meta_note, :update_content_ids
+  after_create :tag_update_central_publish, :on => :create, :if => :tags_updated?
+
   after_save :set_parent_child_assn, :if => :child_ticket?
   after_save :check_child_tkt_status, :if => :child_ticket?
 
@@ -83,6 +85,9 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :save_sentiment, on: :create 
   after_commit :update_spam_detection_service, :if => :model_changes?
   after_commit :spam_feedback_to_smart_filter, :on => :update, :if => :twitter_ticket_spammed?
+  after_commit :tag_update_central_publish, :on => :update, :if => :tags_updated?
+
+
 
   # Callbacks will be executed in the order in which they have been included. 
 
@@ -90,6 +95,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher
+
+  def tag_update_central_publish
+    tag_args = {}
+    tag_args[:added_tags] = self.misc_changes[:add_tag] if self.misc_changes.key?(:add_tag)
+    tag_args[:removed_tags] = self.misc_changes[:remove_tag] if self.misc_changes.key?(:remove_tag)
+    CentralPublish::UpdateTag.perform_async(tag_args)
+  end
 
   def set_outbound_default_values
     if email_config
@@ -580,6 +592,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
 private
+
+  def tags_updated?
+    @model_changes.key?(:tags)
+  end
 
   def model_changes?
     @model_changes.present?

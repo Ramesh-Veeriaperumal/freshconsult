@@ -32,11 +32,11 @@ SUCCESSFUL_SEARCH_TESTS = [
   "test/api/functional/api_search/tickets_controller_test.rb"
 ]
 
-LIB_TESTS = Dir.glob('test/lib/unit/*_test.rb') + Dir.glob('test/lib/*_test.rb')
+LIB_TESTS = Dir.glob('test/lib/unit/*_test.rb') + Dir.glob('test/lib/*_test.rb') + Dir.glob('test/lib/helpdesk/**/*_test.rb')
 MODEL_TESTS = Dir.glob('test/models/**/*_test.rb')
 MAILER_TESTS = Dir.glob('test/app/mailers/**/*_test.rb')
 
 ALL_TESTS_FALCON = (UNIT_TESTS | FUNCTIONAL_TESTS_EMBER | SIDEKIQ_TESTS | SHORYUKEN_TESTS | INTEGRATION_TESTS | FRESHCALLER_CHANNEL_TESTS | LIB_TESTS | MODEL_TESTS | PRESENTER_TESTS | MAILER_TESTS) - SKIP_FILES_FALCON + SUCCESSFUL_SEARCH_TESTS - SKIP_FILES_SIDEKIQ
-ALL_TESTS_PUBLIC = (FUNCTIONAL_TESTS_PUBLIC) - FUNCTIONAL_TESTS_EMBER - PIPE_TESTS - SEARCH_TESTS - SKIP_FILES_PUBLIC
+ALL_TESTS_PUBLIC = (FUNCTIONAL_TESTS_PUBLIC) - FUNCTIONAL_TESTS_EMBER - SEARCH_TESTS - SKIP_FILES_PUBLIC
 
 ALL_TESTS = (ALL_TESTS_FALCON + ALL_TESTS_PUBLIC).uniq

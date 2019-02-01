@@ -9,7 +9,7 @@ class Admin::AutomationsController < ApiApplicationController
     super
     response.api_meta = {
       count: @items_count,
-      cascading_rules: current_account.features?(:cascade_dispatchr)
+      cascading_rules: current_account.cascade_dispatcher_enabled?
     }
   end
 

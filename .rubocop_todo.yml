@@ -345,3 +345,7 @@ Lint/ParenthesesAsGroupedExpression:
 
 Rails/ApplicationRecord:
   Enabled: false
+
+Style/FormatStringToken:
+  Enabled: true
+  EnforcedStyle: template

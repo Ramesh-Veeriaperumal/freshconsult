@@ -7,6 +7,7 @@ class GroupDecorator < ApiDecorator
     super(record)
     @agent_mapping_ids = options[:agent_mapping_ids]
     @agent_groups_ids = options[:agent_groups_ids]
+    @group_type_mapping = options[:group_type_mapping] || Account.current.group_type_mapping
   end
 
   def to_hash
@@ -29,7 +30,7 @@ class GroupDecorator < ApiDecorator
       unassigned_for: unassigned_for,
       business_hour_id: business_hour_id,
       agent_ids: agent_ids,
-      group_type: GroupType.group_type_name(record.group_type),
+      group_type: @group_type_mapping[record.group_type],
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc)
     }.merge(record.round_robin_enabled? ? { auto_ticket_assign: auto_ticket_assign } : {})
@@ -40,7 +41,7 @@ class GroupDecorator < ApiDecorator
       id: record.id,
       name: record.name,
       agent_ids: agent_ids,
-      group_type: GroupType.group_type_name(record.group_type),
+      group_type: @group_type_mapping[record.group_type],
       assignment_type: assignment_type
       }
       if round_robin_enabled? && assignment_type == ROUND_ROBIN_ASSIGNMENT     
@@ -132,11 +133,10 @@ class GroupDecorator < ApiDecorator
     escalate_to: record.escalate_to,
     unassigned_for: unassigned_for,
     agent_ids: agent_ids,
-    group_type: GroupType.group_type_name(record.group_type),
+    group_type: @group_type_mapping[record.group_type],
     assignment_type: assignment_type,    
     created_at: created_at.try(:utc),
     updated_at: updated_at.try(:utc)    
   }
   end
-
 end
