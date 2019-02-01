@@ -379,7 +379,7 @@ class Agent < ActiveRecord::Base
     {:id => id, :group_id => group_id, :_destroy => id.present?}
   end
 
-  def touch_add_group_change agent_group
+  def touch_agent_group_change(agent_group)
     agent_info = { id: agent_group.group_id, name: agent_group.group.name }
     Thread.current[:group_changes].present? ? 
       Thread.current[:group_changes].push(agent_info) : 
