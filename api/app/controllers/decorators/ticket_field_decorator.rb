@@ -294,8 +294,8 @@ class TicketFieldDecorator < ApiDecorator
       translation_record.present? ? translation_record.translations[choice] || record.label : record.label
     end
 
-    def language
-      @language ||= current_user && Account.current.supported_languages.include?(current_user.language) && current_user.language_object.to_key
+    def current_user_supported_language
+      User.current.try(:supported_language)
     end
 
     def current_user
@@ -303,12 +303,12 @@ class TicketFieldDecorator < ApiDecorator
     end
 
     def translation_record
-      @translation_record ||= if Account.current.custom_translations_enabled? && language && id != -1
+      @translation_record ||= if Account.current.custom_translations_enabled? && current_user_supported_language && !TicketFieldConcern::NON_DB_FIELDS_IDS.include?(id)
                                 case level
                                 when 2..3
-                                  record.ticket_field.safe_send("#{language}_translation")
+                                  record.ticket_field.safe_send("#{current_user_supported_language}_translation")
                                 else
-                                  record.safe_send("#{language}_translation")
+                                  record.safe_send("#{current_user_supported_language}_translation")
                                 end
                               end
     end

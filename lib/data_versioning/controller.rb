@@ -56,7 +56,21 @@ module DataVersioning
         end
 
         def overall_data_version
-          Digest::MD5.hexdigest(version_set.values.join)
+          Digest::MD5.hexdigest(version_set_values.join)
+        end
+
+        def version_set_values
+          values = []
+          (Account::COMBINED_VERSION_ENTITY_KEYS | [Marketplace::Constants::MARKETPLACE_VERSION_MEMBER_KEY]).each do |key|
+            values << version_set[key]
+          end
+          if Account.current.custom_translations_enabled? && User.current.try(:supported_language)
+            CustomTranslation::VERSION_MEMBER_KEYS.values.each do |key|
+              version_key = format(key, language_code: User.current.try(:supported_language))
+              values << version_set[version_key]
+            end
+          end
+          values.compact
         end
 
         def version_set

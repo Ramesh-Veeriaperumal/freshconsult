@@ -6,7 +6,7 @@ class AgentGroup < ActiveRecord::Base
   include MemcacheKeys
   include DataVersioning::Model
 
-  VERSION_MEMBER_KEY = 'AGENTS_GROUPS'.freeze
+  VERSION_MEMBER_KEY = 'AGENTS_GROUPS_LIST'.freeze
 
   concerned_with :presenter
 

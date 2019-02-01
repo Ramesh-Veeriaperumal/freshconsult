@@ -4,7 +4,7 @@ class Freshchat::Account < ActiveRecord::Base
 
   CONFIG = YAML.load_file(File.join(Rails.root, 'config', 'freshchat.yml')).symbolize_keys
 
-  VERSION_MEMBER_KEY = 'FRESHCHAT_ACCOUNT'.freeze
+  VERSION_MEMBER_KEY = 'FRESHCHAT_ACCOUNT_LIST'.freeze
 
   self.table_name =  :freshchat_accounts
   self.primary_key = :id

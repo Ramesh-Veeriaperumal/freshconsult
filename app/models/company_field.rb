@@ -56,7 +56,7 @@ class CompanyField < ActiveRecord::Base
     :tiny_int_1   => { :column_name => "cf_boolean",  :column_limits => 10 }
   }
 
-  VERSION_MEMBER_KEY = 'COMPANY_FIELD'.freeze
+  VERSION_MEMBER_KEY = 'COMPANY_FIELD_LIST'.freeze
 
   inherits_custom_field :form_class => 'CompanyForm', :form_id => :company_form_id,
                         :custom_form_method => :default_company_form,

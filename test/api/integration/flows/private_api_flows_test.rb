@@ -112,25 +112,53 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
   end
 
   def test_account_version_header
-    requests = ['/api/_/bootstrap', '/api/_/tickets', 'api/_/ticket_fields']
-    redis_timestamp = 1.day.ago.to_i
-    version_set = {
-      'TICKET_FIELD_LIST' => redis_timestamp,
-      'CONTACT_FIELD_LIST' => redis_timestamp,
-      'COMPANY_FIELD_LIST' => redis_timestamp,
-      'SURVEY_LIST' => redis_timestamp,
-      'MARKETPLACE_APPS_LIST' => redis_timestamp,
-      'AGENTS_GROUPS_LIST' => redis_timestamp
-    }
+    requests, redis_timestamp, version_set = private_api_keys_values
     set_others_redis_hash(version_redis_key, version_set)
     acc_version = Digest::MD5.hexdigest(version_set.values.join)
     set_key(account_api_limit_key, '100', 1.minute)
 
     requests.each do |url|
       get url
-      assert_equal acc_version, response.headers["X-Account-Data-Version"]
+      assert_equal acc_version, response.headers['X-Account-Data-Version']
     end
     remove_key(account_api_limit_key)
+  end
+
+  def test_account_version_header_custom_tranlsation_with_user_supported_language
+    requests, redis_timestamp, version_set = private_api_keys_values
+    account_support_language = user_language = 'fr'
+    stub_custom_translation([account_support_language], user_language) do
+      translation_version_key = format(CustomTranslation::VERSION_MEMBER_KEYS['Helpdesk::TicketField'], language_code: account_support_language)
+      version_set[translation_version_key] = redis_timestamp
+      set_others_redis_hash(version_redis_key, version_set)
+      acc_version = Digest::MD5.hexdigest(version_set.values.join)
+      set_key(account_api_limit_key, '100', 1.minute)
+
+      requests.each do |url|
+        get url
+        assert_equal acc_version, response.headers['X-Account-Data-Version']
+      end
+      remove_key(account_api_limit_key)
+    end
+  end
+
+  def test_account_version_header_custom_tranlsation_without_user_supported_language
+    requests, redis_timestamp, version_set = private_api_keys_values
+    account_support_language = 'fr'
+    user_language = 'da'
+    stub_custom_translation([account_support_language], user_language) do
+      translation_version_key = format(CustomTranslation::VERSION_MEMBER_KEYS['Helpdesk::TicketField'], language_code: account_support_language)
+      version_set[translation_version_key] = redis_timestamp
+      set_others_redis_hash(version_redis_key, version_set)
+      acc_version = Digest::MD5.hexdigest(version_set.except(translation_version_key).values.join)
+      set_key(account_api_limit_key, '100', 1.minute)
+
+      requests.each do |url|
+        get url
+        assert_equal acc_version, response.headers['X-Account-Data-Version']
+      end
+      remove_key(account_api_limit_key)
+    end
   end
 
   def test_private_api_with_proper_app_jwt_auth
@@ -204,5 +232,29 @@ class PrivateApiFlowsTest < ActionDispatch::IntegrationTest
                                     freshconnect_domain: domain)
     acc.save!
     acc
+  end
+
+  def stub_custom_translation(acc_supported_lang, usr_lang)
+    Account.any_instance.stubs(:custom_translations_enabled?).returns(true)
+    Account.any_instance.stubs(:supported_language).returns(acc_supported_lang) if acc_supported_lang.present?
+    User.any_instance.stubs(:supported_language).returns(usr_lang) if usr_lang.present?
+    yield
+    User.any_instance.stubs(:supported_language)
+    Account.any_instance.unstub(:supported_language)
+    Account.any_instance.unstub(:custom_translation_enabled?)
+  end
+
+  def private_api_keys_values
+    requests = ['/api/_/bootstrap', '/api/_/tickets', 'api/_/ticket_fields']
+    redis_timestamp = 1.day.ago.to_i
+    version_set = {
+      'TICKET_FIELD_LIST' => redis_timestamp,
+      'CONTACT_FIELD_LIST' => redis_timestamp,
+      'COMPANY_FIELD_LIST' => redis_timestamp,
+      'SURVEY_LIST' => redis_timestamp,
+      'MARKETPLACE_APPS_LIST' => redis_timestamp,
+      'AGENTS_GROUPS_LIST' => redis_timestamp
+    }
+    [requests, redis_timestamp, version_set]
   end
 end

@@ -341,7 +341,7 @@ class Account < ActiveRecord::Base
   end
 
   def set_falcon_redis_keys
-    hash_set = Hash[COMBINED_VERSION_ENTITY_KEYS.collect { |key| ["#{key}_LIST", Time.now.utc.to_i] }]
+    hash_set = Hash[COMBINED_VERSION_ENTITY_KEYS.collect { |key| [key.to_s, Time.now.utc.to_i] }]
     set_others_redis_hash(version_key, hash_set)
   end
 
