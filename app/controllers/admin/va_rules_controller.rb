@@ -37,8 +37,7 @@ class Admin::VaRulesController < Admin::AdminController
 
   def toggle_cascade
     if current_account.cascade_dispatcher_enabled?
-      current_account.features.cascade_dispatchr.destroy if current_account.features?(:cascade_dispatchr)
-      current_account.revoke_feature(:cascade_dispatcher) if current_account.has_feature?(:cascade_dispatcher)
+      current_account.revoke_feature(:cascade_dispatcher)
     else
       current_account.add_feature(:cascade_dispatcher)
     end

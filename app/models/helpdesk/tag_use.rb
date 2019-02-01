@@ -2,6 +2,9 @@ class Helpdesk::TagUse < ActiveRecord::Base
   self.table_name =  "helpdesk_tag_uses"
   self.primary_key = :id
 
+  concerned_with :presenter
+
+
   belongs_to_account
   belongs_to :tags, 
     :class_name => 'Helpdesk::Tag',
@@ -12,6 +15,12 @@ class Helpdesk::TagUse < ActiveRecord::Base
   attr_protected :taggable_id, :taggable_type
   before_create :set_account_id
   before_save :fix_counter_cache
+
+  before_save :save_model_changes, on: :update
+
+  before_destroy :save_deleted_tag_use_info
+
+  publishable
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -33,6 +42,14 @@ class Helpdesk::TagUse < ActiveRecord::Base
   }
 
   private
+
+    def save_deleted_tag_use_info
+      @deleted_model_info = central_publish_payload
+    end
+
+    def save_model_changes
+      @model_changes = self.changes.to_hash
+    end
 
     def to_rmq_json
       {

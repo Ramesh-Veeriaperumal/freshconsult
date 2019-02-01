@@ -208,7 +208,7 @@
       :scenario_automation: 203
       :ticket_volume_report: 204
       :omni_channel: 205
-      :seafarers_14: 206
+      :personal_canned_response: 206
       :seafarers_15: 207
       :api_v2: 208
       :seafarers_17: 209
@@ -245,7 +245,6 @@
   :opt_out_analytics: false
   :disable_old_ui: true
   :oauth2: false
-  :segments: false
   :proactive_outreach: false
   :field_service_management: false
   :chat_enable: false
@@ -278,3 +277,4 @@
   :sla_management_v2: true
   :omni_channel: true
   :api_v2: true
+  :personal_canned_response: true

@@ -2098,3 +2098,17 @@ div[class$="-toggle"]{
 .modal-header .modal-roles-header:after{
    content: "\200E";
 }
+.sso-notification-content {
+  background: #fffade;
+  padding: 5px 10px;
+  font-size: 12px;
+  margin: 7px 0px;
+  border-left: 3px #fead00 solid;
+  line-height: 16px;
+
+  a:hover {
+    text-decoration: underline;
+    color: #448ee1;
+    opacity: 1;
+  }
+}

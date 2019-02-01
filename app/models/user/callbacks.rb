@@ -59,10 +59,25 @@ class User < ActiveRecord::Base
   after_commit :push_contact_deleted_info, on: :update, :if => :deleted?
   after_rollback :remove_freshid_user, on: :create, if: :freshid_enabled_and_agent?
   after_rollback :remove_freshid_user, on: :update, if: [:freshid_enabled_account?, :converted_to_agent?]
+  after_commit :tag_update_central_publish, :on => :update, :if => :tags_updated?
+
 
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
   include RabbitMq::Publisher 
+
+  def tag_update_central_publish
+    @latest_tags = self.tags.map(&:name)
+    tag_args = {}
+    tag_args[:added_tags] = @latest_tags - (@prev_tags || {})
+    tag_args[:removed_tags] = @prev_tags - @latest_tags
+    CentralPublish::UpdateTag.perform_async(tag_args)
+
+  end
+
+  def tags_updated?
+    self.tags_updated
+  end
 
   def update_freshid_user
     destroy_freshid_user # Delete old email user from freshID
