@@ -227,7 +227,7 @@ module UsersTestHelper
     new_user = add_new_user(account)
     new_user.blocked = true
     new_user.blocked_at = Time.now
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user
   end
 
@@ -241,7 +241,7 @@ module UsersTestHelper
       company_attributes << h
     end
     new_user.user_companies_attributes = Hash[(0...company_attributes.size).zip company_attributes]
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user
   end
 
@@ -264,7 +264,7 @@ module UsersTestHelper
       name:      details[:name] ||  Faker::Name.name,
       twitter_id: details[:screen_name] || Faker::Lorem.word
     )
-    user.save
+    user.save_without_session_maintenance
     user
   end
 
@@ -321,7 +321,7 @@ module UsersTestHelper
       description: Faker::Lorem.characters(10),
       account_id: @account.id
     )
-    contact.save
+    contact.save_without_session_maintenance
   end
 
   def private_api_index_contact_pattern

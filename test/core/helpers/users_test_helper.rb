@@ -46,7 +46,7 @@ module UsersTestHelper
     end
     new_user.agent = new_agent
     new_user.privileges = options[:privileges] || account.roles.find_by_id(role_id).privileges
-    v = new_user.save!
+    v = new_user.save_without_session_maintenance
     if options[:group_id]
       ag_grp = AgentGroup.new(:user_id => new_agent.user_id , :account_id =>  account.id, :group_id => options[:group_id])
       ag_grp.save!
@@ -86,7 +86,7 @@ module UsersTestHelper
       new_user.unique_external_id = options[:unique_external_id]
     end
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user.reload
   end
 
