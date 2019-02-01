@@ -2,7 +2,6 @@ require_relative '../../../unit_test_helper'
 require 'sidekiq/testing'
 require 'faker'
 Sidekiq::Testing.fake!
-# ['user_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 require Rails.root.join('spec', 'support', 'user_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'tickets_test_helper.rb')
 
@@ -67,11 +66,11 @@ class BaseWorkerTest < ActionView::TestCase
   end
 
   def test_empty_trash_with_exception
-    assert_nothing_raised do
-      ticket = create_ticket(account_id: @account.id, deleted: true)
-      Account.any_instance.stubs(:current).raises(RuntimeError)
+    ticket = create_ticket(account_id: @account.id, deleted: true)
+    Account.any_instance.stubs(:tickets).raises(RuntimeError)
+    assert_raises(RuntimeError) do
       Tickets::ClearTickets::EmptyTrash.new.perform('clear_all' => true)
-      Account.any_instance.unstub(:current)
     end
+    Account.any_instance.unstub(:tickets)
   end
 end
