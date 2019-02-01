@@ -34,7 +34,7 @@ class Admin::CustomTranslations::Upload < BaseWorker
 
   def load_yml(file_path)
     translation_file =  AwsWrapper::S3Object.read(file_path, S3_CONFIG[:bucket])
-    translation_hash = YAML.load(translation_file)
+    translation_hash = YAML.load(translation_file, safe: true)
     translation_hash
   end
 
