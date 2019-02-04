@@ -18,7 +18,7 @@ module AgentHelper
                                     :language => "en")  
     new_user.agent = new_agent
     new_user.roles = [account.roles.second]
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user.reload
     
     if options[:group_id]

@@ -202,15 +202,15 @@
       :seafarers_5: 197
       :customize_table_view: 198
       :custom_password_policy: 199
-      :performance_report: 200
-      :seafarers_9: 201
+      :seafarers_8: 200
+      :performance_report: 201
       :sla_management_v2: 202
       :scenario_automation: 203
       :ticket_volume_report: 204
       :omni_channel: 205
-      :seafarers_14: 206
+      :personal_canned_response: 206
       :seafarers_15: 207
-      :seafarers_16: 208
+      :api_v2: 208
       :seafarers_17: 209
       :seafarers_18: 210
       :seafarers_19: 211
@@ -245,7 +245,6 @@
   :opt_out_analytics: false
   :disable_old_ui: true
   :oauth2: false
-  :segments: false
   :proactive_outreach: false
   :field_service_management: false
   :chat_enable: false
@@ -267,7 +266,6 @@
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
   :undo_send: false
-  :scenario_automation: true
   :social_tab: true
   :customize_table_view: true
   :public_url_toggle: true
@@ -278,3 +276,4 @@
   :omni_channel: true
   :scenario_automation: true
   :sla_management_v2: true
+  :personal_canned_response: true

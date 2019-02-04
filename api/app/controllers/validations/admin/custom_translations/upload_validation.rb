@@ -24,7 +24,7 @@ class Admin::CustomTranslations::UploadValidation < ApiValidation
   def validate_language_code
     return if @invalid_extension
 
-    yaml_file = YAML.load(File.foreach(@translation_file.tempfile).first(2).join)
+    yaml_file = YAML.load(File.foreach(@translation_file.tempfile).first(2).join, safe: true)
     yaml_language_code = yaml_file.respond_to?(:keys) ? yaml_file.keys.last : nil
     errors[:translation_file] << :invalid_yml_file && return if yaml_language_code.nil?
     errors[:translation_file] << :mismatch_language && return if yaml_language_code.to_s != @language_code

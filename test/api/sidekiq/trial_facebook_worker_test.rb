@@ -19,9 +19,12 @@ class TrialFacebookWorkerTest < ActionView::TestCase
     @account.facebook_streams.destroy_all
     @account.tickets.where(source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook]).destroy_all
     Account.unstub(:current)
+    WebMock.disable_net_connect!
   end
 
   def setup
+    # TODO: Stub all fb methods instead of the below hack
+    WebMock.allow_net_connect!
     @account = create_test_account
     Account.stubs(:current).returns(Account.first)
     @account = Account.current

@@ -38,7 +38,7 @@ module UsersTestHelper
                                     :role_ids => options[:role_ids] || ["#{role_id}"])
     new_user.agent = new_agent
     new_user.privileges = options[:privileges] || account.roles.find_by_id(role_id).privileges
-    v = new_user.save!
+    v = new_user.save_without_session_maintenance
     if options[:group_id]
       ag_grp = AgentGroup.new(:user_id => new_agent.user_id , :account_id =>  account.id, :group_id => options[:group_id])
       ag_grp.save!
@@ -75,14 +75,14 @@ module UsersTestHelper
                                   active: options[:active] || false,
                                   tags: build_tags(options[:tags]))
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user.reload
   end
 
   def update_user
     user = Account.current.technicians.first
     user.name = Faker::Name.name
-    user.save
+    user.save_without_session_maintenance
   end
   
   def central_publish_user_pattern(user)

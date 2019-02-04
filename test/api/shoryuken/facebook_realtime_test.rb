@@ -126,6 +126,51 @@ class FacebookRealtimeTest < ActionView::TestCase
     assert_equal fb_post.description, comment_content
   end
 
+  def test_comments_to_company_post_convert_to_ticket_with_optimal_rule_type_link
+    user_id = rand(10**10)
+    post_id = rand(10**15)
+    comment_id = rand(10**15)
+    time = Time.now.utc
+    post_user_id = @fb_page.page_id
+
+    comment_feed = sample_realtime_comment(@fb_page.page_id, post_id, comment_id, user_id, time)
+    koala_post = [{
+      'id'              => "#{@fb_page.page_id}_#{post_id}",
+      'type'            => 'post',
+      'from'            => {
+        'name'          => Faker::Lorem.words(1).to_s,
+        'id'            => post_user_id.to_s
+      },
+      'message'         => 'https://www.facebook.com/',
+      'created_time'    => time.to_s,
+      'updated_time'    => Time.now.utc.to_s
+    }]
+    koala_comment = {
+      'data'            => [
+        'id'            => "#{post_id}_#{comment_id}",
+        'from'          => {
+          'name'        => Faker::Lorem.words(1).to_s,
+          'id'          => user_id.to_s
+        },
+        'type'          => 'link',
+        'can_comment'   => true,
+        'created_time'  => time.to_s,
+        'message'       => "Support #{Faker::Lorem.words(20).join(' ')}"
+      ]
+    }
+    koala_post[0]['comments'] = koala_comment
+    sqs_msg = Hashit.new(body: comment_feed.to_json)
+
+    Koala::Facebook::API.any_instance.stubs(:get_object).returns(koala_comment['data'][0], koala_post[0])
+    Ryuken::FacebookRealtime.new.perform(sqs_msg)
+    Koala::Facebook::API.any_instance.unstub(:get_object)
+    fb_comment_id = koala_comment['data'][0]['id']
+    comment_content = koala_comment['data'][0]['message']
+    fb_post = @account.facebook_posts.find_by_post_id(fb_comment_id).postable
+    assert_equal fb_post.is_a?(Helpdesk::Ticket), true
+    assert_equal fb_post.description, comment_content
+  end
+
   def test_convert_visitor_posts_to_ticket_with_broad_rule_type
     rule = @fb_page.default_stream.ticket_rules[0]
     rule[:filter_data] = { rule_type: RULE_TYPE[:broad] }

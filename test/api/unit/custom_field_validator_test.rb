@@ -456,9 +456,8 @@ class CustomFieldValidatorTest < ActionView::TestCase
     account.stubs(:id).returns(1)
     Account.stubs(:current).returns(account)
     test = SectionFieldTestValidation.new(ticket_type: 'Problem', status: 3, priority: 4, attribute1: { 'single_1' => 'jkj', 'check1_1' => false, 'check2_1' => true, 'date_1' => Time.now.zone.to_s, 'url1_1' => 'gh', 'phone' => 'dasfdf', 'multi2_1' => 'efsdff', 'number1_1' => 23, 'decimal2_1' => '12.4' })
-    refute test.valid?
-    errors = test.errors.to_h
-    assert_equal({ single_1: :section_field_absence_check_error, check1_1: :section_field_absence_check_error, check2_1: :section_field_absence_check_error, date_1: :section_field_absence_check_error, url1_1: :section_field_absence_check_error, phone: :section_field_absence_check_error, multi2_1: :section_field_absence_check_error, number1_1: :section_field_absence_check_error, decimal2_1: :section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
+    assert test.valid?
+    assert test.errors.empty?
   end
 
   def test_section_field_with_custom_dropdown_parent_validation_for_data_type_absence_error
@@ -466,23 +465,22 @@ class CustomFieldValidatorTest < ActionView::TestCase
     account.stubs(:id).returns(1)
     Account.stubs(:current).returns(account)
     test = CustomDropdownWithSectionFieldTestValidation.new(status: 3, priority: 4, attribute7: { 'custom_dropdown_1' => 'Choice4', 'single_1' => 'jkj', 'check1_1' => false, 'check2_1' => true, 'date_1' => Time.now.zone.to_s, 'number1_1' => 23, 'decimal2_1' => '12.4' })
-    refute test.valid?
-    errors = test.errors.to_h
-    assert_equal({ single_1: :section_field_absence_check_error, check1_1: :section_field_absence_check_error, check2_1: :section_field_absence_check_error, date_1: :section_field_absence_check_error, number1_1: :section_field_absence_check_error, decimal2_1: :section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
+    assert test.valid?
+    assert test.errors.empty?
   end
 
   def test_section_field_with_ticket_type_parent_validation_for_choices_absence_error
     test = SectionFieldTestValidation.new(ticket_type: 'Problem', status: 3, priority: 4, attribute2: { 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
-    refute test.valid?
-    errors = test.errors.to_h
-    assert_equal({ dropdown1_1: :section_field_absence_check_error, first_1: :section_field_absence_check_error, country_1: :section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
+    assert test.valid?
+    assert test.errors.empty?
   end
 
   def test_section_field_with_custom_dropdown_parent_validation_for_choices_absence_error
     test = CustomDropdownWithSectionFieldTestValidation.new(status: 3, priority: 4, attribute8: { 'custom_dropdown_1' => 'Choice4', 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
-    refute test.valid?
-    errors = test.errors.to_h
-    assert_equal({ dropdown1_1: :section_field_absence_check_error, first_1: :section_field_absence_check_error, country_1: :section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
+    p test.valid?
+    p test.errors.empty?
+    assert test.valid?
+    assert test.errors.empty?
   end
 
   def test_section_field_with_ticket_type_parent_validation_for_choices_required
@@ -578,11 +576,7 @@ class CustomFieldValidatorTest < ActionView::TestCase
     test = CustomDropdownWithSectionFieldTestValidation.new(attribute8: { 'custom_dropdown_1' => 'Option1', 'dropdown1_1' => 'ewee', 'first_1' => 'fsdfsdf', 'country_1' => 'ewrewtrwer' })
     refute test.valid?
     errors = test.errors.to_h
-    assert_equal({ 
-    :country_1=>:section_field_absence_check_error,
-    :custom_dropdown_1=>:not_included,
-    :dropdown1_1=>:section_field_absence_check_error,
-    :first_1=>:section_field_absence_check_error }.sort.to_h, errors.sort.to_h)
+    assert_equal({ :custom_dropdown_1 => :not_included }.sort.to_h, errors.sort.to_h)
   end
 
   def test_section_field_with_ticket_type_parent_validation_for_choices_required_with_parent_invalid

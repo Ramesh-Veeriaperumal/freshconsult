@@ -214,17 +214,18 @@ class CustomFieldValidator < ActiveModel::EachValidator
       section_parent_list.any? { |parent_field, value_mapping| value_mapping.include?(parent_value(parent_field, record, values)) }
     end
 
-    def section_parent_list
+    def section_parent_list(field = nil)
       @section_field_mapping ||= proc_to_object(options[@attribute][:section_field_mapping]) || {}
-      @section_field_mapping[@current_field.id] || {}
+      @section_field_mapping[(field || @current_field).id] || {}
     end
 
     def parent_value(parent_field, record, values)
       custom_field?(parent_field) ? values.try(:[], parent_field) : record.try(parent_field)
     end
 
-    def section_field?
-      @current_field.respond_to?(:section_field?) && @current_field.section_field?
+    def section_field?(field_to_validate = nil)
+      field_to_validate ||= @current_field
+      field_to_validate.respond_to?(:section_field?) && field_to_validate.section_field?
     end
 
     def parent_name_mapping(field)
@@ -241,8 +242,27 @@ class CustomFieldValidator < ActiveModel::EachValidator
     # 2. value present?
     # 3. nested parent field with children not set
     def validate?(record, field_name, values)
+      return false unless current_selection(record, values)
       return false if section_field? && section_parent_has_errors?(record, values) && !search_validation?
       @is_required || record.instance_variable_get("@#{field_name}_set") || (values.present? && !values.try(:[], field_name) && nested_field? && !children_set_or_blank?(record, field_name, values))
+    end
+
+    # returns true if the @current_field belongs to current selected section type/dropdown
+    # returns false if @current_field does not belongs to current section type/dropdown
+    # to validate only the ticket_fields of current selected section type/dropdown
+    def current_selection(record, values)
+      return true unless @current_field.respond_to?(:parent_id)
+      can_validate = true
+      validatable_field = @current_field.parent_id.blank? ? @current_field : section_parent_field
+      parent_mapping = section_parent_list(validatable_field)
+      if section_field?(validatable_field)
+        can_validate = parent_mapping.all? { |parent_field, value_mapping| value_mapping.include?(parent_value(parent_field, record, values)) }
+      end
+      can_validate
+    end
+
+    def section_parent_field
+      @custom_fields.detect { |field| field.id == @current_field.parent_id }
     end
 
     def section_parent_has_errors?(record, values)

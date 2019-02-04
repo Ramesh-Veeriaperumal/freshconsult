@@ -306,7 +306,7 @@ class Helpdesk::Attachment < ActiveRecord::Base
   end
 
   def fetch_from_s3
-    attachment_filename = "tempfile-#{Account.current.id}-#{self.id}"
+    attachment_filename = "tempfile-#{SecureRandom.uuid}"
     file = File.new(attachment_filename, 'w+b', 0o644)
     file.write(AwsWrapper::S3Object.read(self.content.path, self.content.bucket_name))
     file.flush.seek(0, IO::SEEK_SET) # flush data to file and set RW pointer to beginning

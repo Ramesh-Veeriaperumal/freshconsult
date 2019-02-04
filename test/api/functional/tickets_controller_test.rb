@@ -3978,9 +3978,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_date'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request'),
-                bad_request_error_pattern(custom_field_error_label('test_custom_number'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')
-               ])
+    assert_response 201
   ensure
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
@@ -3994,7 +3992,7 @@ class TicketsControllerTest < ActionController::TestCase
       params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
     end
     post :create, construct_params({}, params)
-    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_dropdown'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')])
+    assert_response 201
   ensure
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
@@ -4048,7 +4046,7 @@ class TicketsControllerTest < ActionController::TestCase
     end
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
-    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_date'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request'), bad_request_error_pattern(custom_field_error_label('test_custom_number'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')])
+    match_json(ticket_pattern(params, t.reload))
   ensure
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
@@ -4063,11 +4061,34 @@ class TicketsControllerTest < ActionController::TestCase
     end
     t = ticket
     put :update, construct_params({ id: t.display_id }, params)
-    match_json([bad_request_error_pattern(custom_field_error_label('test_custom_dropdown'), :section_field_absence_check_error, code: :incompatible_field, field: 'type', value: 'Feature Request')])
+    match_json(ticket_pattern(params, t.reload))
   ensure
     @account.ticket_fields.custom_fields.each do |x|
       x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
     end
+  end
+
+  def test_update_with_section_fields_with_custom_dropdown_parent_with_remove_fields_feature
+    @account.launch(:remove_unrelated_fields)
+    dd_field_id = create_custom_field_dropdown_with_sections.id
+    sections = construct_sections('section_custom_dropdown')
+    create_section_fields(dd_field_id, sections);
+    t = create_ticket(ticket_params_hash)
+    params = update_ticket_params_hash.except(:description).merge(custom_fields: {section_custom_dropdown: 'Choice 3'})
+    ['paragraph'].each do |custom_field|
+      params[:custom_fields]["test_custom_#{custom_field}"] = CUSTOM_FIELDS_VALUES[custom_field]
+    end
+    Sidekiq::Testing.inline! do
+      put :update, construct_params({ id: t.display_id }, params)
+    end
+    params[:custom_fields]['test_custom_paragraph'] = nil # expected_saved_params ; test_custom_paragraph will be ignored
+    match_json(ticket_pattern(params, t.reload))
+    assert_response 200
+  ensure
+    @account.ticket_fields.custom_fields.each do |x|
+      x.update_attributes(field_options: nil) if %w(number date dropdown paragraph).any? { |b| x.name.include?(b) }
+    end
+    @account.rollback(:remove_unrelated_fields)
   end
 
   def test_create_with_section_fields_without_format_required_fields

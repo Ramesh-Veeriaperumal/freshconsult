@@ -37,7 +37,7 @@ module UsersHelper
     end
     new_user.agent = new_agent
     new_user.privileges = options[:privileges] || account.roles.find_by_id(options[:role_ids].first).privileges
-    v = new_user.save!
+    v = new_user.save_without_session_maintenance
     if options[:group_id]
       ag_grp = AgentGroup.new(:user_id => new_agent.user_id , :account_id =>  account.id, :group_id => options[:group_id])
       ag_grp.save!
@@ -69,7 +69,7 @@ module UsersHelper
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
     new_user.avatar = options[:avatar] if options[:avatar]
     new_user.updated_at = options[:updated_at] if options[:updated_at]
-    new_user.save!
+    new_user.save_without_session_maintenance
     new_user.reload
   end
 
@@ -82,22 +82,22 @@ module UsersHelper
                                     :deleted => options[:deleted] || 0,
                                     :blocked => options[:blocked] || 0,
                                     :language => "en")
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user.company_ids = options[:company_ids]
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user.reload
   end
 
   def add_user_with_multiple_emails(account, number, options={})
     new_user = add_new_user(@account, options)
     new_user.helpdesk_agent = 0;
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user.reload
     number.times do |i|
       email = Faker::Internet.email
       new_user.user_emails.build({:email => email})
     end
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user.reload
   end
 
@@ -126,7 +126,7 @@ module UsersHelper
                                     :blocked => options[:blocked] || 0,
                                     :customer_id => options[:customer_id] || nil,
                                     :language => "en")
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user.reload
   end
 
@@ -144,7 +144,7 @@ module UsersHelper
                                     :blocked => options[:blocked] || 0,
                                     :customer_id => options[:customer_id] || nil,
                                     :language => "en")
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user.reload
   end
 
@@ -162,7 +162,7 @@ module UsersHelper
                                     :blocked => options[:blocked] || 0,
                                     :customer_id => options[:customer_id] || nil,
                                     :language => "en")
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user.reload
   end
   

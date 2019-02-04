@@ -116,7 +116,6 @@ module Settings
       assert_response 400
       put :change_api_v2_limit, construct_params({ version: 'pipe', limasd: true})
       assert_response 400
-      
     end
   end
 end

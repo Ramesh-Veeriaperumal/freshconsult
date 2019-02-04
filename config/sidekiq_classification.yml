@@ -179,6 +179,7 @@
     - cancel_account
     - migration
     - remove_encrypted_fields
+    - clone
   :external:
     - code_console_execution
     - integrations

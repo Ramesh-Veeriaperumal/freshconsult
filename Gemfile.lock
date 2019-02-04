@@ -1647,6 +1647,7 @@ DEPENDENCIES
   rubyzip (= 1.2.2)
   rugged
   rule_engine!
+  safe_yaml (= 1.0.4)
   sanitize (= 4.6.5)
   sass-rails (= 3.2.6)
   sax-machine (~> 0.1.0)

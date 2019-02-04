@@ -35,6 +35,7 @@ module Ember
       assign_protected
       delegator_params = construct_delegator_params
       @item.assign_attributes(validatable_delegator_attributes)
+      @item.save_tags
       return unless validate_delegator(@item, delegator_params)
       build_user_emails_attributes if @email_objects.any?
       build_other_companies if @all_companies

@@ -1,6 +1,7 @@
 class ShopifyListingController < ApplicationController
 
   INTEGRATION_URL = URI.parse(AppConfig['integrations_url'][Rails.env]).host
+  DEFAULT_SCOPE = OmniAuth::Strategies::Shopify::DEFAULT_SCOPE
 
   layout :choose_layout
 
@@ -9,6 +10,11 @@ class ShopifyListingController < ApplicationController
   skip_before_filter :set_current_account, :redactor_form_builder, :check_account_state, :set_time_zone,
                     :check_day_pass_usage, :set_locale
   before_filter :get_base_domain
+
+
+  def send_approval_request
+    redirect_to shopify_url
+  end
 
   def show
     if check_params?
@@ -25,13 +31,7 @@ class ShopifyListingController < ApplicationController
       render("/errors/invalid_domain", :layout => false)
     else
       account = params[:account].include?(@base_domain) ? params[:account] : params[:account] + @base_domain
-      account = Account.find_by_full_domain(account)
-      if account.nil?
-        render("/errors/invalid_domain", :layout => false)
-      else
-        shop_name = params[:shop]
-        redirect_to AppConfig['integrations_url'][Rails.env] + "/auth/shopify?shop=#{shop_name}&origin=id%3D#{account.id}"
-      end
+      redirect_to get_redirect_url(account)
     end
   end
 
@@ -46,6 +46,22 @@ class ShopifyListingController < ApplicationController
 
     def check_params?
       return true if (params[:hmac] && params[:shop])
+    end
+
+    def get_redirect_url(full_domain)
+      protocol = Rails.env.development? ? 'http' : 'https'
+      port = Rails.env.development? ? ':4200' : ''
+      landing_path = '/integrations/marketplace/shopify/landing'
+      shop_name = params[:shop]
+      redirect_domain = "#{protocol}://#{full_domain}#{port}#{landing_path}?remote_id=#{shop_name}"
+    end
+
+    def shopify_url
+      hmac = params[:hmac]
+      shop = params[:shop]
+      callback_url = "#{AppConfig['integrations_url'][Rails.env]}/shopify_landing&scope=#{DEFAULT_SCOPE}"
+      token = Integrations::OAUTH_CONFIG_HASH["shopify"]["consumer_token"]
+      "https://#{shop}/admin/oauth/request_grant?client_id=#{token}&redirect_uri=#{callback_url}&state=#{hmac}"
     end
 
 end

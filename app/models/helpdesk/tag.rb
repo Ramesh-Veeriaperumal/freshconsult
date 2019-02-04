@@ -5,11 +5,16 @@ class Helpdesk::Tag < ActiveRecord::Base
   include Cache::Memcache::Helpdesk::Tag
   include Search::ElasticSearchIndex
 
+  concerned_with :presenter
+  attr_accessor :model_changes
   before_save :save_model_changes
 
   after_commit  :clear_cache
   after_commit  :update_taggables, on: :update
   after_commit  :remove_taguses, on: :destroy
+  before_destroy :save_deleted_tag_info
+
+  publishable on: [:create, :update, :destroy]
   
   # Callbacks will be executed in the order in which they have been included. 
   # Included rabbitmq callbacks at the last
@@ -167,8 +172,16 @@ class Helpdesk::Tag < ActiveRecord::Base
     }
     as_json(options)
   end
+
+  def model_changes
+      @model_changes ||= {}
+  end
   
   private
+
+    def save_deleted_tag_info
+      @deleted_model_info = central_publish_payload
+    end
 
     def save_model_changes
       @model_changes = self.changes.to_hash
