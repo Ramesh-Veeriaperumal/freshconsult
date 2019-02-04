@@ -1,7 +1,5 @@
 module EmailHelper
 	include ActionView::Helpers::NumberHelper
-  include Helpdesk::Email::OutgoingCategory
-
 
   class NokogiriTimeoutError < Exception
   end
@@ -209,23 +207,4 @@ module EmailHelper
     Rails.logger.info("disabling Outgoing email for #{account_id}")
     add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, account_id)
   end
-
-  def block_spam_account params
-    account_id = params[:account_id]
-    begin
-      Sharding.select_shard_of(account_id) do
-        curr_account = Account.find_by_id(account_id).make_current
-        if !ismember?(SPAM_EMAIL_ACCOUNTS, curr_account.id)
-          if !(curr_account.subscription.active?)
-            add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, curr_account.id)
-          end
-          notify_outgoing_block(curr_account, params[:description])
-        end
-        Account.reset_current_account
-      end
-    rescue => e
-      Rails.logger.info "Error while blocking the outgoing emails of Spam account #{account_id}"
-    end
-  end
-
 end
