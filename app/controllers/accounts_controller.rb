@@ -450,7 +450,11 @@ class AccountsController < ApplicationController
     end
 
     def select_latest_shard(&block)
-      Sharding.select_latest_shard(&block)
+      if FreshopsSubdomains.include?(request.subdomain) && Sharding.all_shards.include?(params[:user][:shard_name])
+        Sharding.run_on_shard(params[:user][:shard_name], &block)
+      else
+        Sharding.select_latest_shard(&block)
+      end
     end   
 
     def build_signup_param
