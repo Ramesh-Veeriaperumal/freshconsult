@@ -85,15 +85,21 @@ module TicketFieldsTestHelper
     status_values
   end
 
-  def create_section_fields(parent_ticket_field_id = 3, sections = SECTIONS_FOR_TYPE, required = false, required_for_closure = false)
+  def create_section_fields(parent_ticket_field_id = 3, sections = SECTIONS_FOR_TYPE, required = false, required_for_closure = false, suffix = nil, ff_number = nil)
+    ticket_type_field = @account.ticket_fields.find_by_field_type('default_ticket_type')
+    unless ticket_type_field.has_sections?
+      ticket_type_field.field_options = { 'section_present': true }
+      ticket_type_field.save
+    end
+    section_id = []
     sections.each do |section|
       sections_fields = section[:ticket_fields].each_with_object([]) do |field, array|
         pos = 0
         ticket_field = case field
         when 'dropdown'
-          create_custom_field_dropdown('test_custom_dropdown', Faker::Lorem.words(5), required, required_for_closure)
+          create_custom_field_dropdown("test_custom_dropdown#{suffix}", Faker::Lorem.words(5), required, required_for_closure)
         when 'dependent'
-          create_dependent_custom_field(['test_custom_dependent_one',  'test_custom_dependent_two', 'test_custom_dependent_three'], 2)
+          create_dependent_custom_field(["test_custom_dependent_one#{suffix}", "test_custom_dependent_two#{suffix}", "test_custom_dependent_three#{suffix}"], 2, required_for_closure, ff_number)
         else
           create_custom_field(field, field, required, required_for_closure)
         end
@@ -103,6 +109,7 @@ module TicketFieldsTestHelper
       section_object = FactoryGirl.build(:section, label: section[:title],
                                                    account_id: @account.id)
       section_object.save
+      section_id << section_object.id
       section_picklist_mappings = []
       section[:value_mapping].each do |value|
         section_picklist_mappings << FactoryGirl.build(:section_picklist_mapping,  account_id: @account.id,
@@ -121,6 +128,7 @@ module TicketFieldsTestHelper
         section_fields_record.last.save
       end
     end
+    section_id
   end
 
   def create_custom_field_dropdown(name = 'test_custom_dropdown', choices = ['Get Smart', 'Pursuit of Happiness', 'Armaggedon'], field_name = "05", required = false, required_for_closure = false)
@@ -149,7 +157,7 @@ module TicketFieldsTestHelper
                                                            description: '',
                                                            required: required,
                                                            required_for_closure: required_for_closure,
-                                                           column_name: "ffs_#{field_name}",
+                                                           column_name: field_name,
                                                            flexifield_def_entry_id: flexifield_def_entry.id)
     parent_custom_field.save
 
@@ -207,38 +215,43 @@ module TicketFieldsTestHelper
     parent_custom_field
   end
 
-  def create_dependent_custom_field(labels, id = nil)
+  def create_dependent_custom_field(labels, id = nil, required_for_closure = false, ff_number = nil)
     flexifield_def_entry = []
     # ffs_07, ffs_08 and ffs_09 are created here
     ticket_field_exists = @account.ticket_fields.find_by_name("#{labels[0].downcase}_#{@account.id}")
     return ticket_field_exists if ticket_field_exists
-
-    flexifield_def_entry[0] = Account.current.ticket_field_def.flexifield_def_entries.find_by_flexifield_name("ffs_0#{id || 7}")
+    ff_name = ff_number.present? ? "ffs_#{ff_number}" : "ffs_0#{id || 7}"
+    flexifield_def_entry[0] = Account.current.ticket_field_def.flexifield_def_entries.find_by_flexifield_name(ff_name)
     if flexifield_def_entry[0].blank?
+
       flexifield_def_entry[0] = FactoryGirl.build(:flexifield_def_entry,
                                                 flexifield_def_id: @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                                 flexifield_alias: "#{labels[0].downcase}_#{@account.id}",
-                                                flexifield_name: "ffs_0#{id || 7}",
+                                                flexifield_name: ff_name,
                                                 flexifield_order: 6,
                                                 flexifield_coltype: 'dropdown',
                                                 account_id: @account.id)
       flexifield_def_entry[0].save
     end
-
     parent_custom_field = FactoryGirl.build(:ticket_field, account_id: @account.id,
                                                            name: "#{labels[0].downcase}_#{@account.id}",
                                                            label: labels[0],
                                                            label_in_portal: labels[0],
                                                            field_type: 'nested_field',
                                                            description: '',
+                                                           column_name: flexifield_def_entry[0].flexifield_name,
+                                                           ticket_form_id: 1,
+                                                           flexifield_coltype: 'dropdown',
+                                                           required_for_closure: required_for_closure,
                                                            flexifield_def_entry_id: flexifield_def_entry[0].id)
     save_var = parent_custom_field.save
 
     (1..2).each do |nested_field_id|
+      ff_name = ff_number.present? ? "ffs_#{ff_number + nested_field_id}" : "ffs_0#{nested_field_id + (id || 7)}"
       flexifield_def_entry[nested_field_id] = FactoryGirl.build(:flexifield_def_entry,
                                                                 flexifield_def_id: @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
                                                                 flexifield_alias: "#{labels[nested_field_id].downcase}_#{@account.id}",
-                                                                flexifield_name: "ffs_0#{nested_field_id + (id || 7)}",
+                                                                flexifield_name: ff_name,
                                                                 flexifield_order: 6,
                                                                 flexifield_coltype: 'dropdown',
                                                                 account_id: @account.id)
@@ -247,7 +260,7 @@ module TicketFieldsTestHelper
       is_saved = create_nested_field(flexifield_def_entry[nested_field_id], parent_custom_field, nested_field_params.merge(type: 'nested_field'), @account)
       construct_child_levels(flexifield_def_entry[nested_field_id], parent_custom_field, nested_field_params) if is_saved
 
-      flexifield_def_entry[nested_field_id].save unless Account.current.ticket_field_def.flexifield_def_entries.pluck(:flexifield_name).include?("ffs_0#{nested_field_id + (id || 7)}")
+      flexifield_def_entry[nested_field_id].save unless Account.current.ticket_field_def.flexifield_def_entries.pluck(:flexifield_name).include?(ff_name)
     end
 
     nested_field_vals = []
@@ -268,12 +281,12 @@ module TicketFieldsTestHelper
                                                 ['USA', '0',
                                                  [['California', '0', [%w[Burlingame 0], ['Los Angeles', '0']]],
                                                   ['Texas', '0', [%w[Houston 0], %w[Dallas 0]]]]]],
-                      'test_custom_dependent_one' => [['Australia', '0',
-                                                   [['New South Wales', '0', [%w[Sydney 0]]],
-                                                    ['Queensland', '0', [%w[Brisbane 0]]]]],
-                                                  ['USA', '0',
-                                                   [['California', '0', [%w[Burlingame 0], ['Los Angeles', '0']]],
-                                                    ['Texas', '0', [%w[Houston 0], %w[Dallas 0]]]]]],
+                      labels[0] => [['Australia', '0',
+                                     [['New South Wales', '0', [%w[Sydney 0]]],
+                                      ['Queensland', '0', [%w[Brisbane 0]]]]],
+                                    ['USA', '0',
+                                     [['California', '0', [%w[Burlingame 0], ['Los Angeles', '0']]],
+                                      ['Texas', '0', [%w[Houston 0], %w[Dallas 0]]]]]],
                       'First' => [['001', '0',
                                    [['011', '0', [%w[111 0]]],
                                     ['012', '0', [%w[121 0]]]]],

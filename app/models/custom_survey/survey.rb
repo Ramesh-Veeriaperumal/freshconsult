@@ -6,7 +6,7 @@ class CustomSurvey::Survey < ActiveRecord::Base
   include Cache::Memcache::Survey
   include DataVersioning::Model
 
-  VERSION_MEMBER_KEY = 'SURVEY'.freeze
+  VERSION_MEMBER_KEY = 'SURVEY_LIST'.freeze
   
   concerned_with :constants, :associations
   attr_protected :account_id, :active, :default, :deleted

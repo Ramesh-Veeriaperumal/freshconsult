@@ -108,7 +108,7 @@ class ApiApplicationController < MetalApiController
     else
       Rails.logger.info "API cache MISS | #{controller_name}/#{action_name} | Acc: #{current_account.id}"
       yield
-      MemcacheKeys.cache(response_cache_key % { account_id: current_account.id }, response.body,RESPONSE_CACHE_TIMEOUT) if response_cache_key
+      MemcacheKeys.cache(format(response_cache_key, account_id: current_account.id), response.body, RESPONSE_CACHE_TIMEOUT) if response_cache_key
     end
   end
   
@@ -662,7 +662,7 @@ class ApiApplicationController < MetalApiController
 
       User.current = api_current_user
       Thread.current[:message_uuid] = request.try(:uuid).to_a
-      Rails.logger.info "Locale:: #{I18n.locale}, User:: #{User.current.try(:id)}, User lang:: #{User.current.try(:language)}, Account lang:: #{Account.current.language}"
+      log_locale unless private_api?
     rescue ActiveRecord::RecordNotFound, ShardNotFound
       Rails.logger.error("API V2 request for invalid account. Host: #{request.host}")
       head 404
@@ -899,9 +899,13 @@ class ApiApplicationController < MetalApiController
     end
 
     def set_locale
-      I18n.locale =  (api_current_user && api_current_user.language) ? api_current_user.language : (current_portal ? current_portal.language : I18n.default_locale)
-    rescue
-      I18n.default_locale
+      begin
+        I18n.locale = (api_current_user.try(:language) || current_portal.try(:language) || I18n.default_locale)
+      rescue StandardError => exception
+        Rails.logger.debug "Exception on set locale :: #{exception.message}"
+        I18n.default_locale
+      end
+      log_locale
     end
 
     def authenticate_jwt_request
@@ -932,5 +936,9 @@ class ApiApplicationController < MetalApiController
       yield
     ensure
       enable_notification
+    end
+
+    def log_locale
+      Rails.logger.info "Locale:: #{I18n.locale}, User:: #{User.current.try(:id)}, User lang:: #{User.current.try(:language)}, Account lang:: #{Account.current.language}"
     end
 end

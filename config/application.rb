@@ -144,6 +144,11 @@ module Helpkit
     # in the database in UTC, and return them converted to the specified local zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Comment line to use default local time.
     config.time_zone = 'Chennai'
+    # https://www.rubydoc.info/gems/safe_yaml
+    # Set default_mode to unsafe, which means YAML.load() will deserialize arbitrary objects. Explicitly specify as
+    # YAML.load('', safe: true) if you do not want to deserialize objects
+    SafeYAML::OPTIONS[:default_mode] = :unsafe 
+    SafeYAML::OPTIONS[:deserialize_symbols] = true
     # ActiveSupport::JSON.backend = "JSONGem"
     ActiveSupport::JSON.backend = :json_gem
     ActiveSupport::XmlMini.backend = 'Nokogiri'

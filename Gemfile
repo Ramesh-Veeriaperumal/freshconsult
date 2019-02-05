@@ -363,5 +363,6 @@ gem 'acts_as_api', '1.0.1'
 gem "uglifier", "~> 2.7.2"
 gem "sprockets", "2.2.3"
 gem "rubocop", "0.52.1"
+gem 'safe_yaml', "1.0.4"
 
 gem 'codecov', :require => false, :group => :test

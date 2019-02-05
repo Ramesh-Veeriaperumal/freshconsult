@@ -11,7 +11,9 @@ module TicketFieldConcern
     visible_in_portal: false
   }
 
-  FIELDS = [[:skill, -1, 'skill_based_round_robin_enabled?']].freeze
+  NON_DB_FIELDS = [[:skill, -1, 'skill_based_round_robin_enabled?']].freeze
+
+  NON_DB_FIELDS_IDS = NON_DB_FIELDS.map { |i| [i[1]] }.flatten
 
   def allow_field? value
     return true if value.nil?
@@ -22,7 +24,7 @@ module TicketFieldConcern
   end
 
   def add_non_db_ticket_fields
-    FIELDS.each do |i|
+    NON_DB_FIELDS.each do |i|
       next unless allow_field? i[2]
       @items << fill_properties(i[0], i[1])
     end
