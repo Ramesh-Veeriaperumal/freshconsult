@@ -2,6 +2,7 @@
 class Helpdesk::CannedResponses::FoldersController < ApplicationController
 
   include HelpdeskControllerMethods
+  include APIHelperMethods
 
   before_filter :load_object, :only => [:update, :edit, :show, :destroy]
   before_filter :check_default, :only => [:edit, :destroy, :update]
@@ -9,7 +10,7 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
   before_filter :set_selected_tab
 
   def index
-    @current_folder = @pfolder
+    @current_folder = current_account.canned_response_folders.general_folder.first
     @ca_responses   = visible_responses(@current_folder)
     render :index
   end
@@ -84,7 +85,12 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
   private
 
   def load_object
+    errors = {:errors => []}
     @current_folder = scoper.find_by_id(params[:id])
+    if !current_account.personal_canned_response_enabled? && @current_folder.personal?
+      errors[:errors] << {:message=> t('canned_responses.errors.invalid_plan'), :error => t('canned_responses.errors.invalid_plan_failed') }
+      api_json_responder(errors, 400)
+    end
   end    
 
   def check_default

@@ -154,6 +154,7 @@
 			    			<div class='alert alert-msg visibility-msg'>
 				    			<%= t('canned_folders.visibility_change').html_safe %>
 				    		</div>
+				    		<% if current_account.personal_canned_response_enabled? && @pfolder%>
 				    		<% if @current_folder.id == @pfolder.id%>
 									<%= f.fields_for :visibility do |access| %>	
 										<div class='control-group mt20'>
@@ -182,6 +183,7 @@
 											</div>
 										</div>
 									<%end%>
+							  <%end%>
 							  <%end%>
 						  </div>
 						  <div class='control-group' id="move_to_folder" >
@@ -214,7 +216,9 @@
 	var folder_id   = <%= @current_folder.id %>;
 	var folder_name = "<%= @current_folder.name %>";
 
-	var pfolder_id = <%= @pfolder.id %>;
+	<% if(current_account.personal_canned_response_enabled?) && @pfolder%>
+	  var pfolder_id = <%= @pfolder.id %>;
+	<%end%>
 	var pfolder_visibility = <%=Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]%>;
 	var visibility_change_message = '<%= t('canned_folders.visibility_change').html_safe %>';
 	var new_ca_path = "<%= new_helpdesk_canned_responses_folder_path %>";

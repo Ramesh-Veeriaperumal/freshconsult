@@ -95,4 +95,34 @@ module SAAS::DropFeatureData
       end
     end
   end
+
+  def handle_custom_password_policy_drop_data
+    account.agent_password_policy.reset_policies.save!
+    account.contact_password_policy.reset_policies.save!
+  end
+
+  def handle_personal_canned_response_drop_data
+    folders = account.canned_response_folders
+    folders.each do |f|
+      if f.personal?
+        f.deleted = true
+        f.save
+      end
+    end
+  end
+
+  def handle_public_url_toggle_drop_data
+    account.features.public_ticket_url.destroy
+  end
+  
+  def handle_agent_scope_drop_data
+    account.agents.each do |agent|
+      begin
+        agent.reset_ticket_permission
+        agent.save!
+      rescue Exception => e
+        Rails.logger.info "Exception while saving agent.. #{e.backtrace}"
+      end
+    end
+  end
 end

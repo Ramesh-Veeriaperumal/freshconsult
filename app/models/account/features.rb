@@ -61,7 +61,8 @@ class Account < ActiveRecord::Base
 
   PRICING_PLAN_MIGRATION_FEATURES_2019 = [:social_tab, :customize_table_view,
     :public_url_toggle, :add_to_response, :agent_scope, :performance_report,
-    :custom_password_policy, :scenario_automation, :sla_management_v2, :omni_channel, :api_v2].to_set.freeze
+    :custom_password_policy, :scenario_automation, :sla_management_v2, :omni_channel, :api_v2,
+    :personal_canned_response].to_set.freeze
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do

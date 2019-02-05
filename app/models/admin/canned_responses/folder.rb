@@ -56,6 +56,9 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
   scope :personal_folder,
     :conditions => { :folder_type => FOLDER_TYPE_KEYS_BY_TOKEN[:personal] }
 
+   scope :general_folder,
+    :conditions => { :folder_type => FOLDER_TYPE_KEYS_BY_TOKEN[:default] }
+
   scope :default_folder,
     :conditions => { :is_default => true }
 
