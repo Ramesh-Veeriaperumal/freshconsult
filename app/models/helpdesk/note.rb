@@ -257,10 +257,6 @@ class Helpdesk::Note < ActiveRecord::Base
     source == SOURCE_KEYS_BY_TOKEN["note"] && schema_less_note.category == CATEGORIES[:broadcast]
   end
 
-  def channel_v2_note?
-    created_at.present? && updated_at.present?
-  end
-
   def as_json(options = {})
     return super(options) unless options[:tailored_json].blank?
     options[:methods] = Array.new if options[:methods].nil?
