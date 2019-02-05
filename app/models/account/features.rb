@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
     :installed_app_publish, :denormalized_select_for_update, :disable_banners,
     :skip_invoice_due_warning, :company_central_publish, :product_central_publish,
     :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
-    :description_by_request, :ticket_fields_central_publish, :facebook_page_scope_migration,
+    :description_by_default, :ticket_fields_central_publish, :facebook_page_scope_migration,
     :agent_group_central_publish, :custom_fields_search,:update_billing_info,
     :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish
   ].freeze
