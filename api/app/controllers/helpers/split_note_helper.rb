@@ -77,6 +77,7 @@ module SplitNoteHelper
 
   def ticket_params
     company_id = @note.user.companies.map(&:id).include?(@item.company_id) ? @item.company_id : @note.user.company_id
+    source = @item.source == TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email] ? TicketConstants::SOURCE_KEYS_BY_TOKEN[:email] : @item.source
     {
       subject: @item.subject,
       email: @note.user.email,
@@ -86,7 +87,7 @@ module SplitNoteHelper
       product_id: @item.product_id,
       company_id: company_id,
       status: @item.status,
-      source: @item.source,
+      source: source,
       ticket_type: @item.ticket_type,
       cc_email: {
         fwd_emails: [],
