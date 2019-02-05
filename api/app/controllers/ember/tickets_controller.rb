@@ -9,6 +9,7 @@ module Ember
     include Redis::OthersRedis
     include Helpdesk::Activities::ActivityMethods
     include ExportHelper
+
     decorate_views(decorate_object: [:update_properties, :execute_scenario], decorate_objects: [:index, :search])
 
     SLAVE_ACTIONS = %w(latest_note).freeze

@@ -13,6 +13,8 @@ module MemcacheKeys
   ACCOUNT_TICKET_TYPES = "v4/ACCOUNT_TICKET_TYPES:%{account_id}"
 
   ACCOUNT_AGENTS = "v4/ACCOUNT_AGENTS:%{account_id}"
+  ACCOUNT_CUSTOM_DATE_FIELDS = 'v1/ACCOUNT_CUSTOM_DATE_FIELDS:%{account_id}'.freeze
+
 
   ACCOUNT_AGENTS_DETAILS = "v3/ACCOUNT_AGENTS_DETAILS:%{account_id}"
 
