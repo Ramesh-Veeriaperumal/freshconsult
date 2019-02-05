@@ -1,1 +1,1 @@
-JSON.generate(@email_body)
+JSON.generate(@email_data)
