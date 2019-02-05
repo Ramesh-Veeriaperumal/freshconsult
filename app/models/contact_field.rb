@@ -47,7 +47,7 @@ class ContactField < ActiveRecord::Base
     :text         => { :column_name => "cf_text",     :column_limits => 10 }
   }
 
-  VERSION_MEMBER_KEY = 'CONTACT_FIELD'.freeze
+  VERSION_MEMBER_KEY = 'CONTACT_FIELD_LIST'.freeze
 
   attr_accessor :multiple_companies_contact
   inherits_custom_field :form_class => 'ContactForm', :form_id => :contact_form_id,

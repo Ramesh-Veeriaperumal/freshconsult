@@ -59,6 +59,11 @@ module Helpkit
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'
     config.time_zone = 'Chennai'
+    # https://www.rubydoc.info/gems/safe_yaml
+    # Set default_mode to unsafe, which means YAML.load() will deserialize arbitrary objects. Explicitly specify as
+    # YAML.load('', safe: true) if you do not want to deserialize objects
+    SafeYAML::OPTIONS[:default_mode] = :unsafe
+    SafeYAML::OPTIONS[:deserialize_symbols] = true
     # config.exceptions_app = ->(env) { ExceptionsController.action(:show).call(env) }
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
@@ -115,7 +120,7 @@ module Helpkit
     config.middleware.insert_before 0, "Middleware::ApplicationLogger" if ENV['MIDDLEWARE_LOG_ENABLE'] == 'true'
     config.middleware.insert_before 0, "Middleware::GlobalRequestStore"
     config.middleware.insert_before 0, "Middleware::HealthCheck"
-    config.middleware.insert_before 0, "Middleware::GlobalTracer"
+    config.middleware.insert_before 0, 'Middleware::GlobalTracer' unless Rails.env.test? || Rails.env.development?
     config.middleware.insert_before "ActionDispatch::Session::CookieStore","Rack::SSL"
     config.middleware.use "Middleware::GlobalRestriction" if ENV['ENABLE_GLOBAL_RESTRICTION_MIDDLEWARE'] == 'true'
     config.middleware.use "Middleware::ApiThrottler", :max =>  1000

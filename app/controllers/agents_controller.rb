@@ -17,6 +17,8 @@ class AgentsController < ApplicationController
   
   before_filter :load_object, :only => [:update, :destroy, :restore, :edit, :reset_password, 
     :convert_to_contact, :reset_score, :api_key] 
+  before_filter :sanitize_params, only: [:create, :update]
+
   before_filter :ssl_check, :can_assume_identity, :only => [:api_key] 
   before_filter :load_roles, :load_groups, :only => [:new, :create, :edit, :update]
   before_filter :check_demo_site, :only => [:destroy,:update,:create]
@@ -32,7 +34,6 @@ class AgentsController < ApplicationController
   before_filter :set_filter_data, :only => [ :update,  :create]
   before_filter :set_skill_data, :only => [:new, :edit]
   before_filter :access_denied, only: :reset_password, if: :freshid_enabled?
-  before_filter :sanitize_params, only: [:create, :update]
 
   def load_object
     @agent = scoper.find(params[:id])
@@ -394,14 +395,14 @@ class AgentsController < ApplicationController
   end
   
   def check_agent_limit
-    if current_account.reached_agent_limit? 
-      if (@agent && !@agent.occasional?) || (params[:agent] && params[:agent][:occasional] != "true")
+    if current_account.reached_agent_limit?
+      if (@agent && !@agent.occasional?) || (params[:agent] && params[:agent][:occasional] != true)
         flash[:notice] = t('maximum_agents_msg')
         redirect_to :back 
       end
     end
   end
-
+  
   def check_agent_limit_on_update
     if current_account.reached_agent_limit? && @agent.occasional? && current_account.occasional_agent_enabled? && params[:agent]
       params[:agent][:occasional] = true 

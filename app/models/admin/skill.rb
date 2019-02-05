@@ -10,7 +10,7 @@ class Admin::Skill < ActiveRecord::Base
 
   NOT_OPERATORS = ['is_not', 'does_not_contain', 'not_selected', 'not_in']
   MAX_NO_OF_SKILLS_PER_ACCOUNT = 180
-  VERSION_MEMBER_KEY = 'TICKET_FIELD'.freeze
+  VERSION_MEMBER_KEY = 'TICKET_FIELD_LIST'.freeze
 
   serialize :filter_data
   

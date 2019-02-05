@@ -10,7 +10,7 @@ class Account < ActiveRecord::Base
     :imap_error_status_check, :va_any_field_without_none, :encode_emoji, :auto_complete_off,
     :csat_email_scan_compatibility, :dependent_field_validation, :post_central_publish,
     :encode_emoji_subject, :note_central_publish, :db_to_bitmap_features_migration_phase2,
-    :time_sheets_central_publish, :incoming_attachment_limit_25,
+    :time_sheets_central_publish, :incoming_attachment_limit_25, :fetch_ticket_from_ref_first,
     :euc_migrated_twitter, :new_ticket_recieved_metric, :mint_portal_applicable,
     :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes,
     :count_service_es_reads, :quoted_text_parsing_feature, :shopify_actions,
@@ -314,7 +314,7 @@ class Account < ActiveRecord::Base
   end
 
   def set_falcon_redis_keys
-    hash_set = Hash[COMBINED_VERSION_ENTITY_KEYS.collect { |key| ["#{key}_LIST", Time.now.utc.to_i] }]
+    hash_set = Hash[COMBINED_VERSION_ENTITY_KEYS.collect { |key| [key.to_s, Time.now.utc.to_i] }]
     set_others_redis_hash(version_key, hash_set)
   end
 

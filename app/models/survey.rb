@@ -4,7 +4,7 @@ class Survey < ActiveRecord::Base
   include Reports::ActivityReport
   include DataVersioning::Model
   
-  VERSION_MEMBER_KEY = 'SURVEY'.freeze
+  VERSION_MEMBER_KEY = 'SURVEY_LIST'.freeze
   ANY_EMAIL_RESPONSE = 1
   RESOLVED_NOTIFICATION = 2
   CLOSED_NOTIFICATION = 3

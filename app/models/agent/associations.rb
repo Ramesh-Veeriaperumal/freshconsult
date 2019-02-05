@@ -10,9 +10,13 @@ class Agent < ActiveRecord::Base
   # Cannot modify association 'Agent#agent_groups' because the source reflection class 'Agent' is 
   # associated to 'User' via :has_one.  
   # Changing since got problem when deleting an agent in Rails3
-  has_many :agent_groups, :class_name => 'AgentGroup', 
-          :foreign_key =>'user_id', :primary_key => "user_id", 
-          :dependent => :destroy, :after_add => :touch_add_group_change
+  has_many :agent_groups,
+           class_name: 'AgentGroup',
+           foreign_key: 'user_id',
+           primary_key: 'user_id',
+           dependent: :destroy,
+           after_add: :touch_agent_group_change,
+           after_remove: :touch_agent_group_change
 
   has_many :groups, :through => :agent_groups, :dependent => :destroy
   

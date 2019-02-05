@@ -11,7 +11,7 @@ class Group < ActiveRecord::Base
 
   AUTOMATIC_TICKET_ASSIGNMENT_TYPES = [1, 2, 10].freeze
 
-  VERSION_MEMBER_KEY = 'AGENTS_GROUPS'.freeze
+  VERSION_MEMBER_KEY = 'AGENTS_GROUPS_LIST'.freeze
 
   API_OPTIONS = {
     :except  => [:account_id,:email_on_assign,:import_id],

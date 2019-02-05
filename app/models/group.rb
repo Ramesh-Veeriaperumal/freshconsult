@@ -29,10 +29,11 @@ class Group < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name, :scope => :account_id, :case_sensitive => false
 
-  has_many :agent_groups , 
-    :class_name => "AgentGroup", 
-    :foreign_key => "group_id",
-    :after_add => :touch_add_group_change
+  has_many :agent_groups,
+           class_name: 'AgentGroup',
+           foreign_key: 'group_id',
+           after_add: :touch_agent_group_change,
+           after_remove: :touch_agent_group_change
 
   has_many :agents, :through => :agent_groups, :source => :user, :order => :name,
             :conditions => ["users.deleted=?", false], :dependent => :destroy
@@ -240,7 +241,7 @@ class Group < ActiveRecord::Base
       Helpdesk::ResetGroup.perform_async({:group_id => self.id, :reason => {:delete_group => [self.name]}})
     end
 
-    def touch_add_group_change agent_group
+    def touch_agent_group_change(agent_group)
       agent_info = { id: agent_group.user_id, name: agent_group.user.name }
       Thread.current[:agent_changes].present? ? 
         Thread.current[:agent_changes].push(agent_info) : 

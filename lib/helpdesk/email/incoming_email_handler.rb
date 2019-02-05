@@ -368,29 +368,59 @@ module Helpdesk
 			end
 
 			def fetch_ticket(account, from_email, user, email_config)
+				if(account.fetch_ticket_from_ref_first_enabled?)
+					ticket = fetch_ticket_from_references(account, from_email, user, email_config)
+					return ticket unless ticket.nil?
+
+					ticket = fetch_ticket_from_subject(account, from_email, user, email_config)
+					return ticket unless ticket.nil?
+				else
+					ticket = fetch_ticket_from_subject(account, from_email, user, email_config)
+					return ticket unless ticket.nil?
+
+					ticket = fetch_ticket_from_references(account, from_email, user, email_config)
+					return ticket unless ticket.nil?
+				end
+
+				ticket = fetch_ticket_from_email_body(account, from_email, user)
+				return ticket unless ticket.nil?
+
+				ticket = fetch_ticket_from_id_span(account, from_email, user)
+				return ticket
+			end
+
+			def fetch_ticket_from_subject(account, from_email, user, email_config)
 				display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
 				ticket = account.tickets.find_by_display_id(display_id) if display_id
 				if can_be_added_to_ticket?(ticket, user, from_email)
-					Rails.logger.info "Found existing ticket by display id present in subject"
-					return ticket 
-				end
-				ticket = ticket_from_headers(from_email, account, email_config, user)
-				if can_be_added_to_ticket?(ticket, user, from_email)
-					Rails.logger.info "Found existing ticket by references(reference, in-reply-to) present in header"
-					return ticket 
-				end
-				ticket = ticket_from_email_body(account)
-				if can_be_added_to_ticket?(ticket, user, from_email)
-					Rails.logger.info "Found existing ticket by fd_tkt_identifier present in HTML content"
-					return ticket 
-				end
-				ticket = ticket_from_id_span(account)
-				if can_be_added_to_ticket?(ticket, user, from_email)
-					Rails.logger.info "Found existing ticket by fdtktid present in HTML content"
+					Rails.logger.info 'Found existing ticket by display id present in subject'
 					return ticket 
 				end
 			end
 
+			def fetch_ticket_from_references(account, from_email, user, email_config)
+				ticket = ticket_from_headers(from_email, account, email_config, user)
+				if can_be_added_to_ticket?(ticket, user, from_email)
+					Rails.logger.info 'Found existing ticket by references(reference, in-reply-to) present in header'
+					return ticket 
+				end
+			end
+
+			def fetch_ticket_from_email_body(account, from_email, user)
+				ticket = ticket_from_email_body(account)
+				if can_be_added_to_ticket?(ticket, user, from_email)
+					Rails.logger.info 'Found existing ticket by fd_tkt_identifier present in HTML content'
+					return ticket 
+				end
+			end
+
+			def fetch_ticket_from_id_span(account, from_email, user)
+				ticket = ticket_from_id_span(account)
+				if can_be_added_to_ticket?(ticket, user, from_email)
+					Rails.logger.info 'Found existing ticket by fdtktid present in HTML content'
+					return ticket 
+				end
+			end
 
 			def fetch_archived_ticket(account, from_email, user, email_config)
 				display_id = Helpdesk::Ticket.extract_id_token(params[:subject], account.ticket_id_delimiter)
