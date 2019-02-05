@@ -9595,6 +9595,8 @@ en:
       invalid_group_id: Please specify a valid group ID.
       required_folder_id: Please specify folder id.
       valid_folder_id: Please specify a valid folder ID. Personal and General folders are not editable.
+      invalid_plan: You cannot edit/update/destroy/show personal folders in sprout plan.
+      invalid_plan_failed: edit/update/destroy/show of personal folder is failed in sprout plan.
   ca_response:
     delete_confirm: Are you sure you want to delete this canned response?
   merge_contacts:
