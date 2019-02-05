@@ -39,6 +39,7 @@ class Support::LoginController < SupportController
     if @verify_captcha && @user_session.save
       @current_user_session = current_account.user_sessions.find
       @current_user = @current_user_session.record
+      DataDogHelperMethods.create_login_tags_and_send("support_login", current_account, @current_user)
       if @current_user_session && !@current_user && @current_user_session.stale_record && @current_user_session.stale_record.password_expired 
         stale_user = @current_user_session.stale_record
         stale_user.reset_perishable_token!

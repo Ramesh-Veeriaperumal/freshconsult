@@ -100,6 +100,7 @@ class UserSessionsController < ApplicationController
       @current_user_session = @current_user.account.user_sessions.new(@current_user)
       @current_user_session.web_session = true unless is_native_mobile?
       if saved && @current_user_session.save
+        DataDogHelperMethods.create_login_tags_and_send("simple_sso_login", current_account, @current_user)
         if is_native_mobile?
           cookies["mobile_access_token"] = { :value => @current_user.mobile_auth_token, :http_only => true } 
           cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
@@ -154,6 +155,7 @@ class UserSessionsController < ApplicationController
       @current_user_session = current_account.user_sessions.new(@current_user)
       @current_user_session.web_session = true unless is_native_mobile?
       if saved && @current_user_session.save
+        DataDogHelperMethods.create_login_tags_and_send("jwt_login", current_account, @current_user)
         if is_native_mobile?
           cookies["mobile_access_token"] = { :value => @current_user.mobile_auth_token, :http_only => true } 
           cookies["fd_mobile_email"] = { :value => @current_user.email, :http_only => true } 
@@ -208,6 +210,7 @@ class UserSessionsController < ApplicationController
       @current_user_session = @user_session
       @current_user = @user_session.record
       #Hack ends here      
+      DataDogHelperMethods.create_login_tags_and_send("normal_login", current_account, @current_user)
       if grant_day_pass 
         respond_to do |format|
           format.html {
