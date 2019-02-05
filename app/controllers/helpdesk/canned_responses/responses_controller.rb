@@ -138,10 +138,11 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
 
   def load_folders
     @all_folders = current_account.canned_response_folders
-    @pfolder     = @all_folders.select{|f| f.personal?}.first
-
+    @pfolder  = @all_folders.select{|f| f.personal?}.first
     @response_folders = @all_folders.clone
-    @response_folders.delete_if{ |folder| folder.id == @pfolder.id }
+    if current_account.personal_canned_response_enabled? && @pfolder
+      @response_folders.delete_if{ |folder| folder.id == @pfolder.id }
+    end
   end
 
   def load_response
@@ -157,7 +158,11 @@ class Helpdesk::CannedResponses::ResponsesController < ApplicationController
       visibility[:visibility] = Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
       visibility[:user_id]    = current_user.id
     end
-    params[:new_folder_id] = @pfolder.id if visibility[:visibility].to_i == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
+    if !current_account.personal_canned_response_enabled? && visibility[:visibility] == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]
+      visibility[:visibility] = Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all]
+      visibility[:user_id]    = current_user.id
+    end
+    params[:new_folder_id] = @pfolder.id if visibility[:visibility].to_i == Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] && @pfolder
   end
 
   def load_folder

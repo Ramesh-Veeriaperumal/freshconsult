@@ -12,7 +12,7 @@ module CannedResponsesTestHelper
   end
 
   def ca_response_pattern(ca_response_id = nil)
-    ca_response = @account.canned_responses.find(ca_response_id)
+    ca_response = @account.all_canned_responses.find(ca_response_id)
     {
       id: ca_response.id,
       title: ca_response.title,

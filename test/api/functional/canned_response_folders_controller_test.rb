@@ -50,7 +50,7 @@ class CannedResponseFoldersControllerTest < ActionController::TestCase
 
   def test_index_listing
     remove_wrap_params
-
+    
     ::Search::V2::Count::AccessibleMethods.any_instance.stubs(:ca_folders_es_request).returns(nil)
     get :index, construct_params({ version: 'v2' }, false)
     ::Search::V2::Count::AccessibleMethods.any_instance.unstub(:ca_folders_es_request)

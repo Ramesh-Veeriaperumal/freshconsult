@@ -10,10 +10,11 @@ class SAAS::SubscriptionEventActions
                            :auto_ticket_export, :multiple_companies_toggle, :unique_contact_identifier,
                            :support_bot, :custom_dashboard, :round_robin, :round_robin_load_balancing,
                            :hipaa, :agent_scope, :public_url_toggle, :custom_password_policy,
-                           :scenario_automation].freeze
+                           :scenario_automation, :personal_canned_response].freeze
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,
-                           :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard].freeze
+                           :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard, 
+                           :personal_canned_response].freeze
 
   DASHBOARD_PLANS = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:estate], 
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],

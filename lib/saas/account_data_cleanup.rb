@@ -28,17 +28,12 @@ class SAAS::AccountDataCleanup
     clear_fragment_caches
   end
 
-  def handle_public_url_toggle_drop_data
-    account.features.public_ticket_url.destroy
-  end
-  
-  def handle_agent_scope_drop_data
-    account.agents.each do |agent|
-      begin
-        agent.reset_ticket_permission
-        agent.save!
-      rescue Exception => e
-        Rails.logger.info "Exception while saving agent.. #{e.backtrace}"
+  def handle_personal_canned_response_add_data
+    folders = account.all_canned_response_folders
+    folders.each do |f|
+      if f.personal?
+        f.deleted = false
+        f.save
       end
     end
   end
