@@ -33,6 +33,8 @@ class BusinessCalendar < ActiveRecord::Base
   attr_accessible :holiday_data,:business_time_data,:version,:is_default,:name,:description,:time_zone
   validates_presence_of :time_zone, :name
 
+  concerned_with :presenter
+
   scope :default, :conditions => { :is_default => true }
 
   xss_sanitize :only => [:name, :description]

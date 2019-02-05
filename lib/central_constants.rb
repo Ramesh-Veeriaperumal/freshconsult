@@ -12,7 +12,7 @@ module CentralConstants
       'Company' => '0',
       'Agent' => '0',
       'VaRule' => '0',
-      'Group' => '0',
+      'Group' => '1',
       'Post' => '0',
       'Helpdesk::TimeSheet' => '0',
       'Social::TwitterHandle' => '0',
