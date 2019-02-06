@@ -568,3 +568,6 @@
   $ref: ./admin/custom_translations/primary.yaml 
 /admin/custom_translations/{id}:
   $ref: ./admin/custom_translations/secondary.yaml 
+
+/audit_log/export:
+  $ref: ./audit_logs/export.yaml

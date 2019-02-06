@@ -1,0 +1,27 @@
+type: object
+properties:
+  from:
+    type: string
+    enum: ["2018-11-05"]
+  to:
+    type: string
+    enum: ["2018-11-30"]
+  condition:
+    type: string
+  filter:
+    type: object
+    properties:
+      filter_set_1:
+        type: object
+        properties: 
+          entity: 
+            type: array
+          ids:
+            type: array
+      performed_by:
+        type: array
+      action:
+        type: array
+required:
+  - from
+  - to

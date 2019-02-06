@@ -7629,6 +7629,10 @@ en:
     scheduled_ticket_export_no_data:
       subject: "%{title} - No tickets created or updated"
       body: "Hello there,<br><br>It’s been a little quiet here! You have no tickets created or updated from %{latest_schedule_range}. We’ll be back once your support is in action.<br><br>%{helpdesk_name}"
+    audit_log_export:
+      subject: "Audit Log Export for %{domain}"
+      body: "You can download the file from <a href=%{url}>here</a>.If the link does not work, copy and paste the URL below in your browser's address bar:"
+      note: "This link will expire in 15 days."
     agents:
       fields:
         name: "Name"

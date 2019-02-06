@@ -1,6 +1,5 @@
 module AuditLog::AuditLogHelper
   private
-
     # options can have the likes of type (ex. :default, :currency), and any other custom value
     def description_properties(*params)
       key, value, options = params
@@ -140,9 +139,62 @@ module AuditLog::AuditLogHelper
           value
         end
       end
-      changes.inject({}) do |result, (key, value)|
-        result[(key.to_sym rescue key) || key] = symbolize.call(value)
-        result
+      changes.each_with_object({}) do |(key, value), result|
+        result[(begin
+                  key.to_sym
+                rescue StandardError
+                  key
+                end) || key] = symbolize.call(value)
       end
+    end
+
+    def export_csv(report_data, csv_file)
+      CSV.open(csv_file, 'ab') do |csv|
+        value_arr = []
+        if report_data
+          report_data.each_pair do |key, value|
+            if AuditLogConstants::EXPORT_ENRICHED_KEYS.include?(key)
+              value = value == :destroy ? ["destroy"] : value.to_s.to_a
+              value_arr.push(value)
+            elsif key == :name
+              name = value[:name].to_s.to_a
+              type = value[:url_type].to_s.to_a
+              value_arr.push("#{name}\n#{type}")
+            elsif key == :description
+              description_arr = []
+              description_arr = description_field_csv(description_arr, value)
+              description_arr = description_arr.join('')
+              value_arr.push(description_arr)
+            end
+          end
+        end
+        csv << value_arr
+        value_arr.clear
+      end
+    end
+
+    def description_field_csv(description_arr, value)
+      value.each do |description|
+        next if (description[:field]).nil?
+        description[:field] = description[:field] == 'Performer' ? 'Action Performed By' : description[:field]
+        if description[:type] == :array
+          description[:value].each do |changes|
+            description_arr = description_array_extract(description_arr, changes, description)
+          end
+        elsif description[:type] == :default
+          description_arr.push("#{description[:field]}\n\tfrom #{description[:value][:from]} to #{description[:value][:to]}\n")
+        end
+      end
+      description_arr
+    end
+
+    def description_array_extract(description_arr, changes, description)
+      description_arr.push("#{description[:field]}: #{changes[:field]}\n")
+      changes[:value].each do |ch|
+        description_arr.push("\t#{ch[:field]}\n") if ch[:value].nil?
+        description_arr.push("\t#{ch[:field]} #{ch[:operator]} #{ch[:value]}\n") if ch[:field] && ch[:operator] && !ch[:value].nil?
+        description_arr.push("\t#{ch[:field]} #{ch[:value]}\n") if ch[:field] && !ch[:value].nil? && ch[:operator].nil?
+      end
+      description_arr
     end
 end
