@@ -70,7 +70,7 @@ class TicketDecorator < ApiDecorator
   end
 
   def description_allowed?
-    @sideload_options.include?('description') || !Account.current.description_by_request_enabled?
+    @sideload_options.include?('description')
   end
 
   def freshfone_call

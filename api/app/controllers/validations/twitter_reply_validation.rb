@@ -1,9 +1,15 @@
 class TwitterReplyValidation < ApiValidation
+
+  include Twitter::TwitterText::Validation
+
+  include Social::Util
+  include Social::Twitter::Util
+
   attr_accessor :body, :tweet_type, :twitter_handle_id, :agent_id, :attachment_ids
 
   validates :tweet_type, data_type: { rules: String, required: true }, custom_inclusion: { in: ApiConstants::TWITTER_REPLY_TYPES }
-  validates :body, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::TWEET_MAX_LENGTH }, if: -> { (@tweet_type || '').to_sym != :dm }
-  validates :body, data_type: { rules: String, required: true }, custom_length: { maximum: ApiConstants::TWITTER_DM_MAX_LENGTH }, if: -> { (@tweet_type || '').to_sym == :dm }
+  validates :body, data_type: { rules: String, required: true }
+  validate :valid_body_length?
   validates :twitter_handle_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param, required: true }
   validates :agent_id, custom_numericality: { only_integer: true, greater_than: 0, allow_nil: true, ignore_string: :allow_string_param }
 
@@ -79,4 +85,19 @@ class TwitterReplyValidation < ApiValidation
     self.error_options.merge!(attachment_ids: { fileType: attachment_type.capitalize, maxSize: size_limit })
     valid
   end
+  
+  private
+
+    def valid_body_length?
+      return false if @body.blank?
+      parsed_result = parse_tweet(@body)
+      total_length = parsed_result[:weighted_length]
+      max_length = (@tweet_type || '').to_sym == :dm ? ApiConstants::TWITTER_DM_MAX_LENGTH : ApiConstants::TWEET_MAX_LENGTH
+      if max_length < total_length
+        errors[:body] << :too_long
+        self.error_options.merge!(body: { current_count: total_length, element_type: 'characters', max_count: max_length })
+        return false
+      end
+      true
+    end
 end
