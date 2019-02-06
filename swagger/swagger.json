@@ -9963,6 +9963,41 @@
           }
         }
       }
+    },
+    "/audit_log/export": {
+      "post": {
+        "summary": "Audit log export",
+        "tags": [
+          "audit_log"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/audit_log_export_input"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "429": {
+            "description": "Simultaneous export limit reached",
+            "schema": {
+              "$ref": "#/definitions/request_error_with_data"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -12585,6 +12620,52 @@
         }
       }
     },
+    "audit_log_export_input": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "enum": [
+            "2018-11-05"
+          ]
+        },
+        "to": {
+          "type": "string",
+          "enum": [
+            "2018-11-30"
+          ]
+        },
+        "condition": {
+          "type": "string"
+        },
+        "filter": {
+          "type": "object",
+          "properties": {
+            "filter_set_1": {
+              "type": "object",
+              "properties": {
+                "entity": {
+                  "type": "array"
+                },
+                "ids": {
+                  "type": "array"
+                }
+              }
+            },
+            "performed_by": {
+              "type": "array"
+            },
+            "action": {
+              "type": "array"
+            }
+          }
+        }
+      },
+      "required": [
+        "from",
+        "to"
+      ]
+    },
     "conversation_template": {
       "type": "object",
       "properties": {
@@ -13237,6 +13318,23 @@
         "active": {
           "type": "boolean"
         },
+        "sla_target": {
+          "type": "object",
+          "properties": {
+            "priority_4": {
+              "$ref": "#/definitions/sla_target_response"
+            },
+            "priority_3": {
+              "$ref": "#/definitions/sla_target_response"
+            },
+            "priority_2": {
+              "$ref": "#/definitions/sla_target_response"
+            },
+            "priority_1": {
+              "$ref": "#/definitions/sla_target_response"
+            }
+          }
+        },
         "applicable_to": {
           "type": "object",
           "properties": {
@@ -13261,24 +13359,49 @@
             "sources": {
               "type": "array",
               "items": {
-                "type": "string"
+                "type": "integer",
+                "enum": [
+                  1,
+                  2,
+                  3,
+                  7,
+                  8,
+                  9,
+                  10
+                ]
               }
             },
             "ticket_types": {
               "type": "array",
               "items": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "Question",
+                  "Incident",
+                  "Problem",
+                  "Feature Request"
+                ]
               }
             }
           }
         },
-        "is_default": {
-          "type": "boolean"
-        },
-        "position": {
-          "type": "integer"
+        "escalation": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "$ref": "#/definitions/sla_escalation_level"
+            },
+            "resolution": {
+              "$ref": "#/definitions/sla_escalation_response"
+            }
+          }
         }
-      }
+      },
+      "required": [
+        "name",
+        "sla_target",
+        "applicable_to"
+      ]
     },
     "draft": {
       "type": "object",
@@ -19657,6 +19780,96 @@
             "type": "string",
             "format": "email"
           }
+        }
+      }
+    },
+    "sla_target_response": {
+      "type": "object",
+      "properties": {
+        "respond_within": {
+          "type": "integer"
+        },
+        "resolve_within": {
+          "type": "integer"
+        },
+        "business_hours": {
+          "type": "boolean"
+        },
+        "escalation_enabled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "respond_within",
+        "resolve_within",
+        "business_hours",
+        "escalation_enabled"
+      ]
+    },
+    "sla_escalation_response": {
+      "type": "object",
+      "properties": {
+        "level_1": {
+          "$ref": "#/definitions/sla_escalation_level"
+        },
+        "level_2": {
+          "$ref": "#/definitions/sla_escalation_level"
+        },
+        "level_3": {
+          "$ref": "#/definitions/sla_escalation_level"
+        },
+        "level_4": {
+          "$ref": "#/definitions/sla_escalation_level"
+        }
+      }
+    },
+    "sla_escalation_level": {
+      "type": "object",
+      "properties": {
+        "escalation_time": {
+          "type": "integer"
+        },
+        "agent_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "sla_policy_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/sla_policy"
+        }
+      ]
+    },
+    "sla_policy_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/sla_policy"
+        },
+        {
+          "$ref": "#/definitions/sla_policy_common"
+        }
+      ]
+    },
+    "sla_policy_common": {
+      "type": "object",
+      "properties": {
+        "is_default": {
+          "type": "boolean"
+        },
+        "position": {
+          "type": "integer"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
         }
       }
     }

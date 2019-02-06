@@ -315,6 +315,7 @@ defaults: &defaults
     - [custom_translations_upload_queue]
     - [ocr_agent_sync]
     - [ocr_task_sync]
+    - [audit_log_export]
     
 development:
   <<: *defaults

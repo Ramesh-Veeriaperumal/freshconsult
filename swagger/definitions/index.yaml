@@ -167,6 +167,9 @@ automation_rule_input:
 
 account_cancellation_request:
   $ref: './request/accounts/cancel.yaml'
+
+audit_log_export_input:
+  $ref: './request/audit_log_export.yaml'
     
 # RESOURCE
 conversation_template:
