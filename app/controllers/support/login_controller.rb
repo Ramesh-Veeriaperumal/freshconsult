@@ -39,13 +39,13 @@ class Support::LoginController < SupportController
     if @verify_captcha && @user_session.save
       @current_user_session = current_account.user_sessions.find
       @current_user = @current_user_session.record
-      DataDogHelperMethods.create_login_tags_and_send("support_login", current_account, @current_user)
       if @current_user_session && !@current_user && @current_user_session.stale_record && @current_user_session.stale_record.password_expired 
         stale_user = @current_user_session.stale_record
         stale_user.reset_perishable_token!
 
         redirect_to(edit_password_reset_path(stale_user.perishable_token))
       else
+        DataDogHelperMethods.create_login_tags_and_send("support_login", current_account, @current_user) if @current_user.present?
         remove_old_filters if @current_user.agent?
         redirect_back_or_default(default_return_url) if grant_day_pass 
         #Unable to put 'grant_day_pass' in after_filter due to double render

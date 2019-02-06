@@ -11,11 +11,13 @@ class DataDogHelperMethods
     end
 
     def create_login_tags_and_send(login_type, account, user)
+      return unless user.present?
+      
       tags = [
         "account_id:#{account.id}",
         "user_type:#{user.helpdesk_agent? ? 'agent' : 'contact' }",
         "sso:#{account.sso_enabled? ? 'yes' : 'no'}",
-        "account_state:#{account.subscription.state}",
+        "account_state:#{account.try(:subscription).try(:state)}",
         "login_type:#{login_type}"
       ]
       increment_with_tags("fd.login", tags)
