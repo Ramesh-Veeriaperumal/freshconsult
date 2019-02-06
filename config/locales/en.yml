@@ -2269,6 +2269,7 @@ en:
         for_contacts: For Contacts
         password_policy_info3: Changes you make to the password policy will be applicable within 8 hours. Your agents will be prompted to update their passwords during this time. If they fail to conform, they will be logged out of the support portal and will be forced to change their passwords the next time they try to log in.
         password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
+        freshconnect_warning: If you are actively using Discuss, we recommend you to contact us to setup SSO at <a href="mailto:support@freshdesk.com">support@freshdesk.com</a> to avoid loss of conversations in Freshconnect.
       errors:
         simple_sso: 
           invalid_login_url: Please provide a valid login URL

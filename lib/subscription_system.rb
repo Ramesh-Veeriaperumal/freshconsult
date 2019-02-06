@@ -17,11 +17,15 @@ module SubscriptionSystem
   
   def requires_feature(f)
 	return if feature?(f)
-	render is_native_mobile? ? { :json => { :requires_feature => false } } : { :template => "/errors/non_covered_feature.html", :locals => {:feature => f} }
+	render is_native_mobile? ? { :json => { :requires_feature => false } } : requires_feature_template(f)
   end
   
   def check_portal_scope(f)
     require_user unless allowed_in_portal?(f)
+  end
+
+  def requires_bitmap_feature(feature)
+    render requires_feature_template(feature) unless current_account.has_feature?(feature)
   end
   
   protected
@@ -76,4 +80,12 @@ module SubscriptionSystem
       account
     end
 
+    def requires_feature_template(feature)
+      { 
+        template: "/errors/non_covered_feature.html", 
+        locals: { 
+          feature: feature 
+        } 
+      }
+    end
 end
