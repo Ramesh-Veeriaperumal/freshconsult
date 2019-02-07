@@ -20,7 +20,7 @@ gem "bootsnap", :require => false
 gem 'cld2', :require => 'cld'
 
 #For instrumenting cache-performance
-gem "time_bandits", :git => 'git@github.com:freshdesk/time_bandits', :tag => 'v1.1'
+gem "time_bandits", :git => 'git@github.com:freshdesk/fd_time_bandits', :tag => 'v1.2'
 
 gem "connection_pool"
 gem "clamav-client", "3.1.0", require: "clamav/client"
