@@ -1,7 +1,7 @@
 /*!
- * froala_editor v2.3.5 (https://www.froala.com/wysiwyg-editor)
+ * froala_editor v2.9.1 (https://www.froala.com/wysiwyg-editor)
  * License https://froala.com/wysiwyg-editor/terms/
- * Copyright 2014-2016 Froala Labs
+ * Copyright 2014-2018 Froala Labs
  */
 
 (function (factory) {
@@ -23,16 +23,15 @@
                     jQuery = require('jquery')(root);
                 }
             }
-            factory(jQuery);
-            return jQuery;
+            return factory(jQuery);
         };
     } else {
         // Browser globals
-        factory(jQuery);
+        factory(window.jQuery);
     }
 }(function ($) {
 
-  'use strict';
+  
 
   // Extend defaults.
   $.extend($.FE.DEFAULTS, {
@@ -69,17 +68,25 @@
     function save (html) {
       if (typeof html == 'undefined') html = editor.html.get();
 
+      var original_html = html;
+
       // Trigger before save event.
-      if (editor.events.trigger('save.before') === false) return false;
+      var event_returned_value = editor.events.trigger('save.before', [html]);
+
+      if (event_returned_value === false) return false;
+      else if (typeof event_returned_value == 'string') html = event_returned_value;
 
       if (editor.opts.saveURL) {
         var params = {};
+
         for (var key in editor.opts.saveParams) {
           if (editor.opts.saveParams.hasOwnProperty(key)) {
             var param = editor.opts.saveParams[key];
+
             if (typeof(param) == 'function') {
               params[key] = param.call(this);
-            } else {
+            }
+            else {
               params[key] = param;
             }
           }
@@ -99,14 +106,19 @@
           headers: editor.opts.requestHeaders
         })
         .done(function (data) {
+          _last_html = original_html;
+
           // data
           editor.events.trigger('save.after', [data]);
         })
         .fail(function (xhr) {
+
           // (error)
           _throwError(ERROR_ON_SERVER, xhr.response || xhr.responseText);
         });
-      } else {
+      }
+      else {
+
         // (error)
         _throwError(BAD_LINK);
       }
@@ -116,6 +128,7 @@
       clearTimeout(_timeout);
       _timeout = setTimeout(function () {
         var html = editor.html.get();
+
         if (_last_html != html || _force) {
           _last_html = html;
           _force = false;
@@ -161,7 +174,10 @@
     }
   }
 
-  $.FE.DefineIcon('save', { NAME: 'floppy-o' });
+  $.FE.DefineIcon('save', {
+    NAME: 'floppy-o',
+    FA5NAME: 'save'
+  });
   $.FE.RegisterCommand('save', {
     title: 'Save',
     undo: false,

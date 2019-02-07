@@ -14,7 +14,7 @@
     }
 
     &.fr-fullscreen {
-      top: 35px;
+      // top: 35px;
       padding: 0 20px;
       background: #fff;
     }
@@ -123,9 +123,27 @@
 //            Reset the input, textarea and checkbox to helpdesk theme
 // =================================================================================
 
+// hack for ordered list and un ordered list option button
+
+#formatOLOptions-1, #formatULOptions-1 {
+  width: 10px;
+}
+
+.fr-popup .fr-input-line input.fr-not-empty + label, .fr-popup .fr-input-line textarea.fr-not-empty + label {
+   top: 8px;
+}
+
+.fr_modal_footer {
+  padding: 15px !important;
+}
+
+.code_popup {
+  z-index: 999;
+}
+
 .fr-popup {
   .fr-input-line {
-    padding: 8px 0 4px 0;
+    padding: 24px 0 4px 0;
     clear: both;
 
     input[type="text"], textarea {
@@ -333,7 +351,7 @@ body .fr-overlay {
 
         &:hover {
           i.fr-delete-img {
-            display: none;
+            display: none !important; 
           }
         }
       }
@@ -638,8 +656,8 @@ body .fr-overlay {
         border: 0;
 
         &.fr-fullscreen {
-          top: 35px;
-          padding: 0 20px;
+          // top: 35px;
+          // padding: 0 20px;
           background: #fff;
         }
         .fr-element {
@@ -650,6 +668,7 @@ body .fr-overlay {
         .fr-toolbar {
           background: #fff;
           border: none;
+          @include box-shadow(none);
         }
       }
     }
