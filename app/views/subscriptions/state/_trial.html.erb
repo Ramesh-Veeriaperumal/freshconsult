@@ -3,21 +3,12 @@
   <h1 class="lead">
     <%= t('current_plan').html_safe %> :
     <strong>
-      <% if current_account.new_pricing_launched? %>
         <%= " #{ @subscription.subscription_plan.display_name }" %>
         <%if previous_plan?(@subscription.subscription_plan)%>
           <%= content_tag(:span, "2016", :class => "label") %>
-        <%elsif @subscription.classic?%>
+        <%elsif @subscription.classic? %>
           <%= content_tag(:span, t('classic_label'), :class => "label") %>
         <%end%>
-      <%elsif previous_plan?(@subscription.subscription_plan) and !current_account.new_pricing_launched?%>
-          <%= " #{ @subscription.subscription_plan.name }" %>
-      <%elsif @subscription.classic?%>
-        <%= " #{ @subscription.subscription_plan.name.split(" Classic").first }" %>
-        <%= content_tag(:span, t('classic_label'), :class => "label") %>
-      <% else %>
-        <%= " #{ @subscription.subscription_plan.display_name }" %>
-      <% end %>
     </strong>
   </h1>
   <span class="label label-<%= trial_days > 10 ? 'success' : 'important' %> label-lead">
@@ -29,11 +20,7 @@
     <!--</div>-->
   <%# end %>
   <p>
-    <% if current_account.new_pricing_launched?%>
       <%= t('choose_plan_trial_v2').html_safe %>
-    <% else %>
-      <%= t('choose_plan_trial').html_safe %>
-    <% end %>
   </p>
 </div>
 
@@ -47,7 +34,7 @@
   <%= content_tag(:h3, t('choose_plan'), :class => "lead mb0") %>
   <%= content_tag(:h5, t('downgrade_plan_v2'), :class => "lead-note") %>
 </div>
-<%= render :partial => current_account.new_pricing_launched? ? "select_new_plans" : "select_plans", :locals => { :plans => plans, :subscription => @subscription, :show_all => true } %>
+<%= render :partial => "select_new_plans", :locals => { :plans => plans, :subscription => @subscription, :show_all => true } %>
 
 <script type="text/javascript">
   function render_currency_partial(currency){

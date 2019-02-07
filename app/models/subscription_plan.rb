@@ -23,6 +23,12 @@ class SubscriptionPlan < ActiveRecord::Base
   OLD_PLANS = ["Sprout", "Blossom", "Garden", "Estate", "Forest"]
   
   scope :current, :conditions => { :classic => false }, :order => 'amount asc'
+  
+  # TODO: Remove force_2019_plan?() after 2019 plan launched
+  # START
+  scope :plans_2019, conditions: { name: ['Sprout Jan 19', 'Blossom Jan 19',
+    'Garden Jan 19', 'Estate Jan 19', 'Forest Jan 19'] }
+  # END
 
   after_commit :clear_cache
   
@@ -44,14 +50,19 @@ class SubscriptionPlan < ActiveRecord::Base
     :blossom_jan_17 => "Blossom Jan 17",
     :garden_jan_17 => "Garden Jan 17",
     :estate_jan_17 => "Estate Jan 17",
-    :forest_jan_17 => "Forest Jan 17"
+    :forest_jan_17 => "Forest Jan 17",
+    :sprout_jan_19 => "Sprout Jan 19",
+    :blossom_jan_19 => "Blossom Jan 19",
+    :garden_jan_19 => "Garden Jan 19",
+    :estate_jan_19 => "Estate Jan 19",
+    :forest_jan_19 => "Forest Jan 19"
   }
   
   BILLING_CYCLE = [
-    [ :monthly,    I18n.t("subscription_plan.billing_cycle.monthly"),    1 ],
-    [ :quarterly,  I18n.t("subscription_plan.billing_cycle.quarterly"),  3 ],
-    [ :six_month,  I18n.t("subscription_plan.billing_cycle.sixmonth"),  6 ],
-    [ :annual,     I18n.t("subscription_plan.billing_cycle.annual"),    12 ]
+    [ :monthly,    'Monthly',    1 ],
+    [ :quarterly,  'Quarterly',  3 ],
+    [ :six_month,  'Half Yearly',  6 ],
+    [ :annual,     'Annual',    12 ]
   ]
 
   BILLING_CYCLE_OPTIONS = BILLING_CYCLE.map { |i| [i[1], i[2]] }
@@ -79,6 +90,18 @@ class SubscriptionPlan < ActiveRecord::Base
     SUBSCRIPTION_PLANS[:sprout] => { },
     SUBSCRIPTION_PLANS[:sprout_classic] => { }
   }
+
+  JAN_2017_PLAN_NAMES = [
+    'Sprout Jan 17', 'Blossom Jan 17', 'Garden Jan 17', 'Estate Jan 17', 'Forest Jan 17'
+  ].freeze
+
+  JAN_2019_PLAN_NAMES = [
+    'Sprout Jan 19', 'Blossom Jan 19', 'Garden Jan 19', 'Estate Jan 19', 'Forest Jan 19'
+  ].freeze
+
+  PLAN_NAMES_BEFORE_2017_AND_NOT_GRAND_PARENT = [
+    'Sprout', 'Blossom', 'Garden', 'Estate', 'Forest'
+  ].freeze
 
   def fetch_discount(billing_cycle)
     BILLING_CYCLE_DISCOUNT[self.name].fetch(billing_cycle,1)

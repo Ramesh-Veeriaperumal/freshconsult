@@ -3,26 +3,17 @@
     <%= t('account_created', :total_time => distance_of_time_in_words(current_account.created_at, Time.now.to_s), :date => formated_date(current_account.created_at, {:format => :short_day_with_week, :include_year => true}) ) %>
   </label>
 </div>
-<div class="well-active <%= current_account.new_pricing_launched? ? 'well-active-new': '' %>">
+<div class="well-active well-active-new">
   <div class="current-plan" >
     <h1 class="plan-title <%= 'classic' if @subscription.classic?%>">
       <%= t('plan') %> :
       <strong>
-        <% if current_account.new_pricing_launched? %>
           <%= " #{ @subscription.subscription_plan.display_name }" %>
           <%if previous_plan?(@subscription.subscription_plan)%>
             <%= content_tag(:span, "2016", :class => "label") %>
-          <%elsif @subscription.classic?%>
+          <%elsif @subscription.classic? %>
             <%= content_tag(:span, t('classic_label'), :class => "label") %>
           <%end%>
-        <%elsif previous_plan?(@subscription.subscription_plan) and !current_account.new_pricing_launched?%>
-          <%= " #{ @subscription.subscription_plan.name }" %>
-        <%elsif @subscription.classic?%>
-          <%= " #{ @subscription.subscription_plan.name.split(" Classic").first }" %>
-          <%= content_tag(:span, t('classic_label'), :class => "label") %>
-        <% else %>
-          <%= " #{ @subscription.subscription_plan.display_name }" %>
-        <% end %>
       </strong>
     </h1>
   </div>
@@ -88,7 +79,7 @@
        :locals => { :invoice => @invoice, :index => 0} %>
   <%end%>
 </div>
-<%= render :partial => "/subscriptions/payment_info" if current_account.new_pricing_launched? and @subscription.card_number.present?%>
+<%= render :partial => "/subscriptions/payment_info" if @subscription.card_number.present?%>
 </div>
 
 <%= render :partial => "/subscriptions/freshfone_subscription" %>
@@ -101,7 +92,7 @@
     </a>
   </div>
   <%= content_tag(:h5, t('downgrade_plan_v2'), :class => "lead-note pb15") %>
-  <div class="choose-plan-drop" style="<%= 'display:none' if @selected_plan.nil? %>" ><%= render :partial => current_account.new_pricing_launched? ? "/subscriptions/select_new_plans" : "/subscriptions/select_plans", :locals => {:plans => @plans, :subscription => @subscription, :show_all => false } %></div>
+  <div class="choose-plan-drop" style="<%= 'display:none' if @selected_plan.nil? %>" ><%= render :partial => "/subscriptions/select_new_plans", :locals => {:plans => @plans, :subscription => @subscription, :show_all => false } %></div>
 </div>
 <% end %>
 

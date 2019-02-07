@@ -1,4 +1,4 @@
-<div class = "payment-info <%= current_account.new_pricing_launched? ? 'payment-info-new': '' %>">
+<div class = "payment-info payment-info-new">
 	<%= content_tag(:label, t('payment_info'), :class => "caption") %> 
 	<div class="pull-right">
 		<%= link_to( "#{t('change')}".html_safe, billing_subscription_url, :class => "btn btn-mini" ) %>
