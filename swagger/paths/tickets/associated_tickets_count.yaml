@@ -1,6 +1,6 @@
 get:
   tags: [ticket]
-  summary: Associated Tickets
+  summary: Associated Tickets Count
   parameters:
     - name: id
       in: path
@@ -15,8 +15,10 @@ get:
     200:
       description: Success
       schema:
-        $ref: '#/definitions/associated_tickets'
+        $ref: '#/definitions/associated_tickets_count'
     404:
       description: Ticket not found
     403:
       description: Access denied
+
+
