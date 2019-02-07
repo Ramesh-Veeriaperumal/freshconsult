@@ -25,7 +25,11 @@ class Flexifield < ActiveRecord::Base
   before_validation :nested_field_correction
 
   def self.flexiblefield_names
-    column_names.grep(/ff.+/)
+    @flexiblefield_names ||= column_names.grep(/ff.+/)
+  end
+
+  def self.flexiblefield_names_hash
+    @flexiblefield_names_hash ||= Hash[flexiblefield_names.collect { |item| [item.to_sym, ''] }]
   end
   
   def ff_def
@@ -80,7 +84,7 @@ class Flexifield < ActiveRecord::Base
   end
 
   def write_ff_attribute attribute, value
-    if self.class.flexiblefield_names.include?(attribute.to_s)
+    if self.class.flexiblefield_names_hash.key?(attribute.to_sym)
       write_attribute(attribute, value)
     elsif SERIALIZED_ATTRIBUTES.include?(attribute)
       denormalized_flexifield.safe_send "#{attribute}=", value
@@ -90,7 +94,7 @@ class Flexifield < ActiveRecord::Base
   end
 
   def read_ff_attribute attribute
-    if self.class.flexiblefield_names.include?(attribute.to_s)
+    if self.class.flexiblefield_names_hash.key?(attribute.to_sym)
       read_attribute(attribute)
     elsif SERIALIZED_ATTRIBUTES.include?(attribute)
       denormalized_flexifield.safe_send(attribute)

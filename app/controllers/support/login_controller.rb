@@ -45,6 +45,7 @@ class Support::LoginController < SupportController
 
         redirect_to(edit_password_reset_path(stale_user.perishable_token))
       else
+        DataDogHelperMethods.create_login_tags_and_send("support_login", current_account, @current_user) if @current_user.present?
         remove_old_filters if @current_user.agent?
         redirect_back_or_default(default_return_url) if grant_day_pass 
         #Unable to put 'grant_day_pass' in after_filter due to double render

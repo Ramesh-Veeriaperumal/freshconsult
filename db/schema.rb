@@ -1088,7 +1088,7 @@ ActiveRecord::Schema.define(:version => 20190115115017) do
     t.datetime "updated_at",                     :null => false
   end
 
-  add_index "custom_translations", ["account_id", "translatable_type", "language_id", "translatable_id"], :name => "ct_acc_id_translatable_type_lang_id_translatable_id"
+  add_index "custom_translations", ["account_id", "translatable_type", "language_id", "translatable_id"], :name => "ct_acc_id_translatable_type_lang_id_translatable_id", :unique => true
 
   create_table "customer_forums", :force => true do |t|
     t.integer  "customer_id", :limit => 8

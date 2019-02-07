@@ -19,11 +19,12 @@ jQuery(document).ready(function(){
         		jQuery(this).groupPlaceholders();
 			});			
 	});
-
+   <% if(current_account.personal_canned_response_enabled?) && @pfolder%>
     if (<%=@folder.id == @pfolder.id%>){
       jQuery('#select_folder').hide();
       jQuery('#admin_canned_responses_response_visibility_group_id').removeClass('required');
     }
+    <%end%>
 
 	var can_manage_canned_response = <%=current_user.privilege?(:manage_canned_responses)%> || false;
 	if (!can_manage_canned_response){
@@ -86,6 +87,7 @@ function toggleGroup(access_id)
 		<div class="control-group">
 		<%= f.fields_for :visibility do |access| %>	
 			<label class="control-label"><%=t('.available_for').html_safe%> :</label>
+			<% if current_account.personal_canned_response_enabled? %>
 			<div class="controls">
 				<label class="radio" id="only_me">
 					<%= access.radio_button  :visibility, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users], {:onclick =>"toggleGroup(this.value)", :class => "radio", :checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users] == @ca_response.helpdesk_accessible.access_type } %> 
@@ -93,6 +95,7 @@ function toggleGroup(access_id)
 					<%= access.hidden_field :user_id, :value =>current_user.id %>	
 				</label>
 			</div>
+			<%end%>
 			<div class="controls">
 				<label class="radio" id="all_agent">
 					<%= access.radio_button  :visibility, Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all], {:onclick =>"toggleGroup(this.value)",:class => "radio" ,:checked => Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:all] == @ca_response.helpdesk_accessible.access_type } %> 

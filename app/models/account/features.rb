@@ -18,7 +18,7 @@ class Account < ActiveRecord::Base
     :installed_app_publish, :denormalized_select_for_update, :disable_banners,
     :skip_invoice_due_warning, :company_central_publish, :product_central_publish,
     :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
-    :description_by_request, :ticket_fields_central_publish, :facebook_page_scope_migration,
+    :description_by_default, :ticket_fields_central_publish, :facebook_page_scope_migration,
     :agent_group_central_publish, :custom_fields_search,:update_billing_info,
     :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish
   ].freeze
@@ -61,7 +61,8 @@ class Account < ActiveRecord::Base
 
   PRICING_PLAN_MIGRATION_FEATURES_2019 = [:social_tab, :customize_table_view,
     :public_url_toggle, :add_to_response, :agent_scope, :performance_report,
-    :custom_password_policy, :scenario_automation, :sla_management_v2, :omni_channel, :api_v2].to_set.freeze
+    :custom_password_policy, :scenario_automation, :sla_management_v2, :omni_channel, :api_v2,
+    :personal_canned_response].to_set.freeze
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do
