@@ -54,11 +54,19 @@ class AccountsController < ApplicationController
   before_filter :update_language_attributes, :only => [:update_languages]
   before_filter :validate_portal_language_inclusion, :only => [:update_languages]
   before_filter(:only => [:manage_languages]) { |c| c.requires_feature :multi_language }
-  before_filter :access_denied, only: [:email_signup, :new_signup_free], :if => :params_contain_url
+  before_filter :block_url_name, only: [:email_signup, :new_signup_free], :if => :params_contain_url
   
   def show
   end   
-   
+
+  def block_url_name
+    respond_to do |format|
+      format.json {
+        render :json => { :success => false, :errors => [t("flash.signup.name_as_url")]}, :callback => params[:callback], :status => 422
+      }
+    end
+  end
+  
   def edit
     @supported_languages_list = current_account.account_additional_settings.supported_languages
     @ticket_display_id = current_account.get_max_display_id
@@ -434,6 +442,7 @@ class AccountsController < ApplicationController
         value = params[:signup][key].to_s
         (value.include?("http://") || value.include?("https://"))
       end
+      contains ||= [:user_first_name, :user_last_name].any? {|key| params[:signup][key].to_s.include?(".")}
       Rails.logger.info "Failing Signup" if contains
       contains
     end
