@@ -1,8 +1,16 @@
 development:
   audit_log:
-    api_endpoint: "http://hypertrail-dev.freshworksapi.com/api/v1/audit/account/%{account_id}"
-    username: hypertrail-ci
-    password: hypertrail-ci
+    api_endpoint: "https://hypertrail-staging.freshworksapi.com/api/v1/audit/account/%{account_id}"
+    username: freshdesk-central-qa
+    password: freshdesk-central-qa
+  audit_log_filtered_export:
+    api_endpoint: "https://hypertrail-staging.freshworksapi.com/api/v1/export/filtered/account/%{account_id}/audit"
+    username: freshdesk-central-qa
+    password: freshdesk-central-qa
+  audit_log_file_export:
+    api_endpoint: 'https://hypertrail-staging.freshworksapi.com/api/v1/export/account/%{account_id}/%{job_id}'
+    username: freshdesk-central-qa
+    password: freshdesk-central-qa
   timeline:
     api_endpoint: "http://hypertrail-dev.freshworksapi.com/api/v2/activities/account/%{account_id}"
     username: hypertrail-ci

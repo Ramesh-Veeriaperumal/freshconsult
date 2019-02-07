@@ -71,7 +71,8 @@ module Proactive
       preview = NotificationPreview.new
       preview.add_custom_preview_hash(shopify_default_values)
       message = preview.notification_preview(cname_params[:email_body])
-      @email_body = { email_body: message }
+      subject = preview.notification_preview(cname_params[:subject])
+      @email_data = { email_body: message, subject: subject }
       render :preview_email, status: service_response[:status]
     end
 

@@ -205,7 +205,7 @@ class TicketsController < ApiApplicationController
       preload_options = [:schema_less_ticket, :tags, { flexifield: [:denormalized_flexifield] }]
       @ticket_filter.include_array.each do |assoc|
         preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc.to_sym] || assoc)
-        increment_api_credit_by(2) unless (assoc.to_s == DESCRIPTION && !current_account.description_by_request_enabled?)
+        increment_api_credit_by(2) unless assoc.to_s == DESCRIPTION && current_account.description_by_default_enabled?
       end
       Rails.logger.info ":::preloads: #{preload_options.inspect}"
       preload_options
@@ -249,7 +249,7 @@ class TicketsController < ApiApplicationController
     end
 
     def validate_filter_params
-      include_description unless description_included? || current_account.description_by_request_enabled?
+      include_description if !description_included? && current_account.description_by_default_enabled?
       params.permit(*ApiTicketConstants::INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
       @ticket_filter = TicketFilterValidation.new(params, nil, string_request_params?)
       render_errors(@ticket_filter.errors, @ticket_filter.error_options) unless @ticket_filter.valid?

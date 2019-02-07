@@ -41,6 +41,23 @@ module Ember
       assert_response 404
     end
 
+
+    def test_search_with_feature_disabled
+      ca_resp = create_response(
+          title: 'when feature disabled',
+          content_html: Faker::Lorem.paragraph,
+          visibility: ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me],
+          folder_id: @ca_folder_personal.id 
+        )
+      @account.stubs(:personal_canned_response_enabled?).returns(false)
+      get :search, controller_params(version: 'private', ticket_id: @@sample_ticket.display_id, search_string: 'when')
+      assert_response 200
+      @account.unstub(:personal_canned_response_enabled?)
+      pattern = []
+      pattern << ca_response_search_pattern(ca_resp.id)
+      match_json(pattern)
+    end
+
     def test_search_without_search_string
       get :search, controller_params(version: 'private', ticket_id: @@sample_ticket.display_id)
       assert_response 400
@@ -74,7 +91,7 @@ module Ember
         )
       stub_request(:get, %r{^http://localhost:9201.*?$}).to_return(body: stub_response(ca_resp).to_json, status: 200) 
       $redis_others.perform_redis_op("set", "COUNT_ESV2_WRITE_ENABLED", true)
-      $redis_others.perform_redis_op("set", "COUNT_ESV2_READ_ENABLED", true)   
+      $redis_others.perform_redis_op("set", "COUNT_ESV2_READ_ENABLED", true) 
       get :search, controller_params(version: 'private', ticket_id: @@sample_ticket.display_id, folder_id: @ca_folder_personal.id, search_string: 'test')
       assert_response 200
       pattern = []

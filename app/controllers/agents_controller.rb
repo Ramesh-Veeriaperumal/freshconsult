@@ -509,7 +509,6 @@ private
 
   def format_api_params
     #if not specified in API request, updated as null
-    params[:agent][:occasional] ||= @agent.occasional
     params[:agent][:scoreboard_level_id] ||= @agent.scoreboard_level_id
     #conforming API params to html params
     params[:user] = params[:user] || params[:agent][:user] || {}

@@ -27,6 +27,34 @@ module AuditLogConstants
       false => I18n.t('admin.audit_log.toggle_off')
   }.freeze
 
-  FILTER_PARAMS = [:agent, :time, :type, :observer_id, :dispatcher_id, 
+  FILTER_PARAMS = [:agent, :time, :type, :observer_id, :dispatcher_id,
                    :agent_id, :supervisor_id, :next].freeze
+
+  EXPORT_FILTER_PARAMS = [:agent, :action, :type, :performed_by].freeze
+
+  EXPORT_AUDIT_LOG_PARAMS = [:filter].freeze
+
+  ENTITY_HASH = {
+    'automation_1' => 1,
+    'automation_3' => 3,
+    'automation_4' => 4
+  }.freeze
+
+  AUTOMATION_TYPES = ['automation_1', 'automation_3', 'automation_4'].freeze
+
+  TYPES = ['agent', 'subscription'].freeze
+  
+  ACTION_VALUES = ['create', 'delete', 'update'].freeze
+  
+  EXPORT_ENRICHED_KEYS = [:performer_id, :performer_name, :ip_address, :time, :action].freeze
+
+  WAITING_STATUSES = ['1001', '1002'].freeze
+
+  FAILURE_STATUSES = ['2001', '4000'].freeze
+
+  CSV_FILE = Rails.root.join('tmp', 'files')
+
+  TEMP_FILE = '%{time}_account_%{id}'.freeze
+
+  COLUMN_HEADER = ['Performer_id', 'Performer_name', 'Ip_address', 'Time', 'What Changed', 'Event', 'Description'].freeze
 end.freeze

@@ -2269,6 +2269,7 @@ en:
         for_contacts: For Contacts
         password_policy_info3: Changes you make to the password policy will be applicable within 8 hours. Your agents will be prompted to update their passwords during this time. If they fail to conform, they will be logged out of the support portal and will be forced to change their passwords the next time they try to log in.
         password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
+        freshconnect_warning: If you are actively using Discuss, we recommend you to contact us to setup SSO at <a href="mailto:support@freshdesk.com">support@freshdesk.com</a> to avoid loss of conversations in Freshconnect.
       errors:
         simple_sso: 
           invalid_login_url: Please provide a valid login URL
@@ -7628,6 +7629,10 @@ en:
     scheduled_ticket_export_no_data:
       subject: "%{title} - No tickets created or updated"
       body: "Hello there,<br><br>It’s been a little quiet here! You have no tickets created or updated from %{latest_schedule_range}. We’ll be back once your support is in action.<br><br>%{helpdesk_name}"
+    audit_log_export:
+      subject: "Audit Log Export for %{domain}"
+      body: "You can download the file from <a href=%{url}>here</a>.If the link does not work, copy and paste the URL below in your browser's address bar:"
+      note: "This link will expire in 15 days."
     agents:
       fields:
         name: "Name"
@@ -9595,6 +9600,8 @@ en:
       invalid_group_id: Please specify a valid group ID.
       required_folder_id: Please specify folder id.
       valid_folder_id: Please specify a valid folder ID. Personal and General folders are not editable.
+      invalid_plan: You cannot edit/update/destroy/show personal folders in sprout plan.
+      invalid_plan_failed: edit/update/destroy/show of personal folder is failed in sprout plan.
   ca_response:
     delete_confirm: Are you sure you want to delete this canned response?
   merge_contacts:

@@ -1,0 +1,14 @@
+Hi <%=@user%>,
+<br/>
+<br/>
+<%= "#{t('export_data.audit_log_export.body',:url => @url)}".html_safe %>
+<br/>
+<br/>
+<%=  @url %>
+<br/>
+Note: <%= "#{t('export_data.audit_log_export.note')}" %>
+<br/>
+<br/>
+Regards,
+<br/>
+<%= Account.current.helpdesk_name %> Support

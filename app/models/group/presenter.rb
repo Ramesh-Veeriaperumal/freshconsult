@@ -34,6 +34,10 @@ class Group < ActiveRecord::Base
     g.add proc { |x| x.agents.map(&:id) }, as: :agent_ids
   end
 
+  api_accessible :central_publish_associations do |t|
+    t.add :business_calendar, template: :central_publish
+  end
+
   api_accessible :central_publish_destroy do |t|
     t.add :id
     t.add :account_id   

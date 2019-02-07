@@ -101,18 +101,18 @@ class Group < ActiveRecord::Base
   def self.ticket_assign_options
     TICKET_ASSIGN_OPTIONS.map {|t| [I18n.t(t[0]),t[1]]}
   end
-	
-	def self.online_ivr_performers(group_id)
-		# optimize
-		return [] if (group = find_by_id(group_id)).blank?
-		group.agents.technicians.visible.online_agents
-	end
-	
-	def self.busy_ivr_performers(group_id)
-		# optimize
-		return [] if (group = find_by_id(group_id)).blank?
-		group.agents.technicians.visible.busy_agents
-	end
+  
+  def self.online_ivr_performers(group_id)
+    # optimize
+    return [] if (group = find_by_id(group_id)).blank?
+    group.agents.technicians.visible.online_agents
+  end
+  
+  def self.busy_ivr_performers(group_id)
+    # optimize
+    return [] if (group = find_by_id(group_id)).blank?
+    group.agents.technicians.visible.busy_agents
+  end
 
   def all_agents_list(account)
     account.agents_from_cache

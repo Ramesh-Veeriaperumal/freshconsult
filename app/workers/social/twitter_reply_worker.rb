@@ -16,9 +16,9 @@ module Social
       tweet_body = note.body.strip
       allow_attachments = true
       error_message, reply_twt, error_code = safe_send("send_tweet_as_#{args[:tweet_type]}", args[:twitter_handle_id], ticket, note, tweet_body, allow_attachments)
-      Rails.logger.info 'Reply to twitter ticket sent successfully :: ticket id :: #{ticket.display_id} :: note id :: #{note.id} :: tweet id :: #{reply_twt}' unless error_message
+      Rails.logger.info "Reply to twitter ticket sent successfully :: ticket id :: #{ticket.display_id} :: note id :: #{note.id} :: tweet id :: #{reply_twt}" unless error_message
       if error_message.present? 
-        Rails.logger.info 'Reply to twitter ticket failed :: ticket id :: #{ticket.display_id}, note id :: #{note.id}'
+        Rails.logger.info "Reply to twitter ticket failed :: ticket id :: #{ticket.display_id}, note id :: #{note.id}"
         error_code ||= 0 # if no error code is returned, having zero as dummy error
         error_response = { code: error_code, message: error_message }
         update_errors_in_schema_less_notes(error_response, note.id)

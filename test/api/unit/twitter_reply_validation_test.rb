@@ -42,7 +42,7 @@ class TwitterReplyValidationTest < ActionView::TestCase
         tweet_type: 'mention' }, item
     )
     refute validation.valid?
-    assert validation.errors.full_messages.include?('Body too_long'), 'Failing when body length exceeds 140'
+    assert validation.errors.full_messages.include?('Body too_long'), 'Failing when body length exceeds 280'
 
     validation = TwitterReplyValidation.new({
                                               body: '',
@@ -54,6 +54,54 @@ class TwitterReplyValidationTest < ActionView::TestCase
     assert(errors.include?('Body blank'))
 
     Helpdesk::Ticket.any_instance.unstub(:twitter?)
+  end
+
+  def test_body_with_url
+    Helpdesk::Ticket.any_instance.stubs(:twitter?).returns(true)
+
+    item = Helpdesk::Ticket.new
+
+    long_url = 'https://some.long.url.co/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    short_url = 'http://shorturl.co'
+    very_long_url = 'https://verylongurl.co/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'
+
+    validation = TwitterReplyValidation.new({
+                                              body: Faker::Lorem.characters(256) + ' ' + long_url,
+                                              twitter_handle_id: 1,
+                                              tweet_type: 'mention'
+                                            }, item)
+    assert validation.valid?
+
+    validation = TwitterReplyValidation.new({
+                                              body: very_long_url,
+                                              twitter_handle_id: 1,
+                                              tweet_type: 'mention'
+                                            }, item)
+    assert validation.valid?
+
+    validation = TwitterReplyValidation.new({
+                                              body: long_url + ' ' + short_url + ' ' + very_long_url,
+                                              twitter_handle_id: 1,
+                                              tweet_type: 'mention'
+                                            }, item)
+    assert validation.valid?
+
+    validation = TwitterReplyValidation.new({
+                                              body: Faker::Lorem.characters(258) + long_url,
+                                              twitter_handle_id: 1,
+                                              tweet_type: 'mention'
+                                            }, item)
+    refute validation.valid?
+    assert validation.errors.full_messages.include?('Body too_long'), 'Failing when body length exceeds 280'
+
+    validation = TwitterReplyValidation.new({
+                                              body: Faker::Lorem.characters(rand(10100..10200)),
+                                              twitter_handle_id: 1,
+                                              tweet_type: 'dm'
+                                            }, item)
+    refute validation.valid?
+    assert validation.errors.full_messages.include?('Body too_long'), 'Failing when body length exceeds 10000'
+
   end
 
   def test_mention

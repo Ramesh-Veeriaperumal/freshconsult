@@ -32,7 +32,6 @@ module Channel::V2
         @@custom_field_names << @@ticket_fields.last.name
       end
       @account.launch :add_watcher
-      @account.launch :description_by_request
       @account.save
       @@before_all_run = true
     end

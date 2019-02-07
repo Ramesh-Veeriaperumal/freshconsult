@@ -41,7 +41,17 @@ module GroupsTestHelper
       ticket_assign_type: group.ticket_assign_type,
       business_calendar_id: group.business_calendar_id,
       toggle_availability: group.toggle_availability,
-      capping_limit: group.capping_limit
+      capping_limit: group.capping_limit,
+      agents: group.agents.map do |agent|
+        { name: ag.name, id: ag.id, email: ag.email }
+      end
+    }
+  end
+
+  def central_publish_group_destroy_pattern(group)
+    {
+      id: group.id,
+      account_id: group.account_id
     }
   end
 end

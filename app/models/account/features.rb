@@ -24,7 +24,7 @@ class Account < ActiveRecord::Base
     :whitelist_supervisor_sla_limitation, :es_msearch, :year_in_review_2017, :year_in_review_2018,
     :new_onboarding, :onboarding_inlinemanual, :skip_portal_cname_chk,
     :product_central_publish, :help_widget, :redis_picklist_id,
-    :bot_email_channel, :bot_email_central_publish, :description_by_request,
+    :bot_email_channel, :bot_email_central_publish, :description_by_default,
     :bot_chat_history, :new_es_api, :filter_factory, :ticket_fields_central_publish,
     :shopify_actions, :skip_invoice_due_warning, :automation_revamp,
     :scheduled_export_fix, :compact_lang_detection,
@@ -75,7 +75,7 @@ class Account < ActiveRecord::Base
   PRICING_PLAN_MIGRATION_FEATURES_2019 = [
     :social_tab, :customize_table_view, :public_url_toggle, :add_to_response,
     :agent_scope, :performance_report, :custom_password_policy, :scenario_automation,
-    :sla_management_v2, :omni_channel
+    :sla_management_v2, :omni_channel, :personal_canned_response
   ].to_set.freeze
 
   LP_FEATURES.each do |item|

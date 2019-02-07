@@ -1402,8 +1402,10 @@ module Ember
     # 3. ticket with no permission
     # 4. Successfull split with
     #     a. normal reply
-    #     b. twitter reply
-    #     c. fb reply
+    #     b. outbound email reply
+    #     c. shared ownership enabled
+    #     d. twitter reply
+    #     e. fb reply
     # 5. error in saving ticket
     # 6. verify attachmnets moving
 
@@ -1432,6 +1434,29 @@ module Ember
       put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: note.id }, false)
       assert_response 200
       verify_split_note_activity(ticket, note)
+    end
+
+    def test_split_note_with_outbound_email_reply
+      ticket = create_ticket(source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email])
+      reply = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:email]))
+      put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: reply.id }, false)
+      assert_response 200
+      assert_equal 1, JSON.parse(response.body)['source']
+    end
+
+    def test_split_ticket_with_shared_ownership_enabled
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        group_restricted_agent = add_agent_to_group(group_id = @internal_group.id,
+                                                    ticket_permission = 2, role_id = @account.roles.first.id)
+        ticket = create_ticket({ status: @status.status_id, source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email], internal_agent_id: @internal_agent.id }, nil, @internal_group)
+        login_as(@internal_agent)
+        reply = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:email]))
+        put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: reply.id }, false)
+        assert_response 200
+        assert_equal 1, JSON.parse(response.body)['source']
+      end
     end
 
     def test_split_note_with_twitter_reply

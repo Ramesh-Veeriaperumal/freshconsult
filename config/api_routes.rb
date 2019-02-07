@@ -267,6 +267,8 @@ Helpkit::Application.routes.draw do
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
     
     resources :help_widgets, controller: 'help_widgets'
+
+    post '/audit_log/export', to: 'audit_logs#export'
     
   end
 
@@ -550,10 +552,9 @@ Helpkit::Application.routes.draw do
     end
 
     get 'canned_responses/search', to: 'ember/canned_responses#search'
-    
+
     # audit log path
     post '/audit_log', to: 'audit_logs#filter'
-    post '/audit_log/export', to: 'audit_logs#export'
     get '/audit_log/event_name', to: 'audit_logs#event_name'
 
     # account update
