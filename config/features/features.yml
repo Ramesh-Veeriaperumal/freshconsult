@@ -228,8 +228,6 @@
 :selectable_features:
   :redis_display_id: true
   :branding: true
-  :marketplace: true
-  :fa_developer: true
   :es_v2_writes: true
   :gamification_enable: false
   :parent_child_tickets: false
@@ -266,14 +264,3 @@
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
   :undo_send: false
-  :social_tab: true
-  :customize_table_view: true
-  :public_url_toggle: true
-  :add_to_response: true
-  :agent_scope: true
-  :performance_report: true
-  :custom_password_policy: true
-  :omni_channel: true
-  :scenario_automation: true
-  :sla_management_v2: true
-  :personal_canned_response: true
