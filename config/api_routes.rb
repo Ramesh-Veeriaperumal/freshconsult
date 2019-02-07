@@ -756,6 +756,7 @@ Helpkit::Application.routes.draw do
   widget_routes = proc do
     resources :tickets, controller: 'widget/tickets', only: [:create]
     resources :ticket_fields, controller: 'widget/ticket_fields', only: [:index]
+    resources :attachments, controller: 'widget/attachments', only: [:create]
   end
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do

@@ -9,7 +9,15 @@ module WidgetConcern
   end
 
   def set_widget_portal_as_current
-    # set current portal if widget is associated to product 
+    # set current portal if widget is associated to product
     @current_portal = current_account.portals.find_by_product_id(@help_widget.product_id) || @current_portal
+  end
+
+  def check_feature
+    log_and_render_404 unless current_account.help_widget_enabled?
+  end
+
+  def add_attachments
+    @item.attachments = current_account.attachments.where(id: @attachment_ids) if @attachment_ids.present?
   end
 end

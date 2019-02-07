@@ -9712,6 +9712,46 @@
         }
       }
     },
+    "/widget/attachment": {
+      "post": {
+        "tags": [
+          "Widget Attachment"
+        ],
+        "summary": "Single Attachment for widget",
+        "description": "Single Attachment for widget",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "attachments",
+            "schema": {
+              "$ref": "#/definitions/widget_attachment_create"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
     "/business_hours": {
       "get": {
         "summary": "Business Hours",
@@ -9879,6 +9919,108 @@
           },
           "403": {
             "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/sla_policy": {
+      "get": {
+        "tags": [
+          "Sla Policy"
+        ],
+        "summary": "List all",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "Sla Policy": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/sla_policy_response"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Sla Policy"
+        ],
+        "summary": "Create",
+        "description": "Create an SLA Policy application",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/sla_policy_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/sla_policy_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/sla_policy/{id}": {
+      "put": {
+        "tags": [
+          "Sla Policy"
+        ],
+        "summary": "Update",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/sla_policy_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/sla_policy_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "Rule not found"
           }
         }
       }
@@ -13305,103 +13447,6 @@
           }
         }
       }
-    },
-    "sla_policy": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "active": {
-          "type": "boolean"
-        },
-        "sla_target": {
-          "type": "object",
-          "properties": {
-            "priority_4": {
-              "$ref": "#/definitions/sla_target_response"
-            },
-            "priority_3": {
-              "$ref": "#/definitions/sla_target_response"
-            },
-            "priority_2": {
-              "$ref": "#/definitions/sla_target_response"
-            },
-            "priority_1": {
-              "$ref": "#/definitions/sla_target_response"
-            }
-          }
-        },
-        "applicable_to": {
-          "type": "object",
-          "properties": {
-            "product_ids": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "company_ids": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "group_ids": {
-              "type": "array",
-              "items": {
-                "type": "integer"
-              }
-            },
-            "sources": {
-              "type": "array",
-              "items": {
-                "type": "integer",
-                "enum": [
-                  1,
-                  2,
-                  3,
-                  7,
-                  8,
-                  9,
-                  10
-                ]
-              }
-            },
-            "ticket_types": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "Question",
-                  "Incident",
-                  "Problem",
-                  "Feature Request"
-                ]
-              }
-            }
-          }
-        },
-        "escalation": {
-          "type": "object",
-          "properties": {
-            "response": {
-              "$ref": "#/definitions/sla_escalation_level"
-            },
-            "resolution": {
-              "$ref": "#/definitions/sla_escalation_response"
-            }
-          }
-        }
-      },
-      "required": [
-        "name",
-        "sla_target",
-        "applicable_to"
-      ]
     },
     "draft": {
       "type": "object",
@@ -19783,6 +19828,103 @@
         }
       }
     },
+    "sla_policy": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "sla_target": {
+          "type": "object",
+          "properties": {
+            "priority_4": {
+              "$ref": "#/definitions/sla_target_response"
+            },
+            "priority_3": {
+              "$ref": "#/definitions/sla_target_response"
+            },
+            "priority_2": {
+              "$ref": "#/definitions/sla_target_response"
+            },
+            "priority_1": {
+              "$ref": "#/definitions/sla_target_response"
+            }
+          }
+        },
+        "applicable_to": {
+          "type": "object",
+          "properties": {
+            "product_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "company_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "group_ids": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "enum": [
+                  1,
+                  2,
+                  3,
+                  7,
+                  8,
+                  9,
+                  10
+                ]
+              }
+            },
+            "ticket_types": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Question",
+                  "Incident",
+                  "Problem",
+                  "Feature Request"
+                ]
+              }
+            }
+          }
+        },
+        "escalation": {
+          "type": "object",
+          "properties": {
+            "response": {
+              "$ref": "#/definitions/sla_escalation_level"
+            },
+            "resolution": {
+              "$ref": "#/definitions/sla_escalation_response"
+            }
+          }
+        }
+      },
+      "required": [
+        "name",
+        "sla_target",
+        "applicable_to"
+      ]
+    },
     "sla_target_response": {
       "type": "object",
       "properties": {
@@ -19870,6 +20012,15 @@
         },
         "updated_at": {
           "type": "string"
+        }
+      }
+    },
+    "widget_attachment_create": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "format": "byte"
         }
       }
     }

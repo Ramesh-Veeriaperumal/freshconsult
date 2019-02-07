@@ -200,8 +200,6 @@ agent:
   $ref: ./resource/agent.yaml
 profile:
   $ref: ./resource/profile.yaml
-sla_policy:
-  $ref: ./resource/sla_policy.yaml
 draft:
   $ref: ./resource/draft.yaml
 bot:
@@ -640,4 +638,8 @@ sla_policy_response:
   $ref: ./response/admin/sla_policy.yaml
 sla_policy_common:
   $ref: ./resource/sla_policy_common.yaml
+
+#Widget
+widget_attachment_create:
+  $ref: ./request/widget_attachment_create.yaml
   

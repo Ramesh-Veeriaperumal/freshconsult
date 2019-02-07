@@ -353,10 +353,6 @@ class Account < ActiveRecord::Base
     redis_key_exists?(REVOKE_SUPPORT_BOT) || (Rails.env.production? && PODS_FOR_BOT.exclude?(PodConfig['CURRENT_POD']))
   end
 
-  def help_widget_enabled?
-    launched?(:help_widget)
-  end
-
   def undo_send_enabled?
     has_feature?(:undo_send) || launched?(:undo_send)
   end
