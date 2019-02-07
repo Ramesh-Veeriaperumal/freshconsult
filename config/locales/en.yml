@@ -1,7 +1,7 @@
 
 en:
   meta:
-   language_name: 'English'
+    language_name: 'English'
   date:
     ago: ago
     from: from now
@@ -2543,8 +2543,6 @@ en:
         helpdesk-settings: Helpdesk
         account-settings: Account Settings
         helpdesk-productivity: Helpdesk Productivity
-        canned-response: Canned Response
-        multi-product: Multi-Product
         import: Import data from Zendesk
         agent: Agents
         feedback: Feedback widget
@@ -2648,7 +2646,6 @@ en:
         operating_hours: "Operating hours"
         set_holiday_list: "Set Holiday List"
         business_hours_multiple_locations: "Business hours for multiple locations"
-        multiple_business_hours: "Multiple Business Hours"
         multiple_products: "Multiple Products"
         multi_brand: "Multi brand"
         ticket_creation_rules: "Ticket creation rules"
@@ -5555,7 +5552,8 @@ en:
     ip_restriction: "Secure IP restriction"
     ticket_dispatch_automation: "Ticket dispatch automation"
     app_gallery: "Access to Marketplace"
-    basic_phone: "Basic phone and social channels"
+    basic_social: "Basic social channels"
+    freshcaller: "Freshcaller integration"
     time_event_automation: "Time/event based automations"
     custom_ticket_fields_and_views: "Custom ticket fields/views"
     dkim_dmarc: "DKIM/DMARC"
@@ -5566,7 +5564,10 @@ en:
     dynamic_email_alert: "Dynamic email notifications"
     linked_tickets: "Linked tickets"
     parent_child: "Parent-child ticketing"
+    agent_performance_report: "Agent performance report"
     scheduled_reports: "Scheduled reports"
+    custom_apps: "Custom apps"
+    timesheets: "Time tracking"
     ticket_templates: "Ticket templates"
     custom_surveys: "Custom satisfaction surveys"
     multiple_products: "Multiple products"
@@ -5577,16 +5578,22 @@ en:
     advanced_dkim: "Unlimited DKIM/DMARC"
     ip_whitelisting: "IP whitelisting"
     skill_based_assignment: "Skill based assignment"
+    business_hours_desc: "Business hours"
+    agent_scope_desc: "Agent scope"
+    agent_group_pf_report: "Agent and group performance report"
     advanced_phone_integration: "Advanced phone integration"
     machine_learning: "Machine learning"
     custom_data_center: "Data centre location"
     whitelisted_ip_desc: "Whitelisted IP addresses"
+    scenario_automations_desc: "Scenario automations"
+    custom_tabel_view_desc: "Custom table view"
     skill_based_assignment_desc: "Skill based assignment"
     custom_mailbox_desc: "Custom email servers"
     advanced_phone_desc: "Advanced phone features"
     multiple_products_desc: "Multiple product portals/knowledge base"
     multiple_sla_business_desc: "Multiple SLAs, timezones and business hours"
     forums_desc: "Community forum discussions"
+    canned_forms_desc: "Canned forms"
     portal_customization_desc: "Customer portal customizations"
     custom_roles_desc: "Customized agent roles"
     custom_ssl_desc: "Custom SSL certificates"
@@ -5602,11 +5609,36 @@ en:
     multilingual_kbase_desc: "Multilingual knowledge base articles"
     live_chat_desc: "Live chat configurations and transcripts"
     linked_paren_child_desc: "Linked ticket, parent child ticketing workflows"
+    sla_desc: "SLA policy"
     scheduled_reports_desc: "Scheduled reporting"
     custom_survey_desc: "Customized satisfaction surveys"
     freshchat: "Freshchat integration"
     bot: "Bot"
     custom_dashboard: "Manage team dashboards"
+    phone_calls_chat: " Phone calls & Live chat channels"
+    omni_widget: "Omnichannel widgets"
+    livechat: "Livechat widget with embedded FAQs & multiple channels (200k MUV)"
+    omni_channel_option: "omni channel option"
+    custom_data_center_desc: "Custom data center"
+    sandbox_desc: "Sandbox"
+    custom_dashboard_desc: "Custom dashboard"
+    auto_ticket_assignment_desc: "Round robin"
+    timesheets_desc: "Time sheets"
+    custom_apps_desc: "Custom apps"
+    customer_360_desc: "Customer 360"
+    customer_journey_desc: "Customer journey"
+    custom_surveys_desc: "Custom surveys"
+    agent_performance_report_desc: "Agent performance report"
+    sla_reminders_desc: "SLA reminder"
+    dynamic_email_alert_desc: "Dynamic email notification"
+    agent_collision_desc: "Agent collision"
+    custom_ticket_fields_and_views_desc: "Custom ticket fields and views"
+    helpdesk_report_desc: "helpdesk report"
+    ticket_templates_desc: "Ticket templates"
+    satisfaction_survey_desc: "Satisfaction survey"
+    custom_domain_desc: "Custom domain"
+    app_gallery_desc: "Marketplace"
+    multiple_mailboxes_desc: "Multiple mailbox"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL
