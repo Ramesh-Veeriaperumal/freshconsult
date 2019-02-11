@@ -84,8 +84,13 @@ class Signup < ActivePresenter::Base
       user.language = account.main_portal.language
     end
     
-    def build_subscription      
-      account.plan = SubscriptionPlan.find_by_name(SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17])
+    def build_subscription
+      plan_name = if redis_key_exists?(NEW_2019_PRICING_ENABLED) || ismember?(NEW_2019_PRICING_TEST_USERS, user_email)
+        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19]
+      else
+        SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17]
+      end
+      account.plan = SubscriptionPlan.find_by_name(plan_name)
     end
     
     def build_account_configuration

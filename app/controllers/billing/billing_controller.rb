@@ -257,7 +257,7 @@ class Billing::BillingController < ApplicationController
 
     def update_features
       SAAS::SubscriptionActions.new.change_plan(@account, @old_subscription, @existing_addons)
-      SAAS::SubscriptionEventActions.new(@account, @old_subscription, @existing_addons).change_plan if @account.new_pricing_launched?
+      SAAS::SubscriptionEventActions.new(@account, @old_subscription, @existing_addons).change_plan
       if Account.current.active_trial.present?
         Account.current.active_trial.update_result!(@old_subscription, Account.current.subscription)
       end

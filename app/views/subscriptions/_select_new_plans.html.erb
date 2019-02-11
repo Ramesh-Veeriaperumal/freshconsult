@@ -42,7 +42,16 @@
                     <p class="plan-details">
                       <% unless SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].nil? %>
                         <% SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].each do |feature_name| %>
-                          <%= t("features.#{feature_name}").html_safe %>
+                          <% if feature_name != "omni_channel_option" %>
+                            <%= t("features.#{feature_name}").html_safe %>
+                          <% else %>
+                            <input type="checkbox" name="omni_channel_option">
+                            <%= t("features.#{feature_name}").html_safe %>
+                            <span class="app-icon">Icon</span>
+                            <% SubscriptionsHelper::OPTIONAL_FEATURES["#{plan.name.downcase.split(' ').first}#{feature_name}"].each do |feature_item| %>
+                            <%= t("features.#{feature_item}").html_safe %>
+                            <% end%>
+                          <% end %>
                           <br>
                         <% end %>
                       <% end %>

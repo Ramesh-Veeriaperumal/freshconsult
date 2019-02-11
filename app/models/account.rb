@@ -836,6 +836,17 @@ class Account < ActiveRecord::Base
     @hipaa_encryption_key ||= get_others_redis_key(cf_encryption_key) || fetch_cf_encryption_key_from_dynamo
   end
 
+  # TODO: Remove force_2019_plan?() after 2019 plan launched
+  # START
+  def force_2019_plan?
+    !redis_key_exists?(NEW_2019_PRICING_ENABLED) && ismember?(NEW_2019_PRICING_TEST_USERS, admin_email)
+  end
+
+  def new_2019_pricing_enabled?
+    redis_key_exists?(NEW_2019_PRICING_ENABLED) || ismember?(NEW_2019_PRICING_TEST_USERS, admin_email)
+  end
+  # END
+
   protected
   
     def external_url_is_valid?(url) 

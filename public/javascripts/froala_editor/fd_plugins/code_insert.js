@@ -86,7 +86,7 @@
 			    // Load popup template.
 		    var popup_template = '<div class="code_popup fr-overlay" id="code_popup" style="display: none"></div>' +
      				'<div class="fr-modal code_popup fr-insert-code" style="display: none"> <div class="fr-modal-wrapper">' +
-      				'<div id="fr_modal_header " class="fr_modal_header fr-modal-title"> <div class="fr-modal-title-line"><h4> Code Snippet </h4><i id="fr_modal_close" class="fr_modal_close fr-modal-close"></i></div></div>' +
+      				'<div id="fr_modal_header " class="fr_modal_header fr-modal-head fr-modal-title"> <div class="fr-modal-title-line"><h4> Code Snippet </h4><i id="fr_modal_close" class="fr_modal_close fr-modal-close"></i></div></div>' +
       					template + 
       				'</div></div>';
 

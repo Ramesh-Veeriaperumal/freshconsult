@@ -233,6 +233,15 @@ GIT
     fd_rate_limiter (0.0.1)
 
 GIT
+  remote: git@github.com:freshdesk/fd_time_bandits
+  revision: 45aa86613da84d5ff971babc67908333b08cc96c
+  tag: v1.2
+  specs:
+    time_bandits (0.10.12)
+      activesupport (>= 2.3.2)
+      thread_variables
+
+GIT
   remote: git@github.com:freshdesk/formserv-gem.git
   revision: 0fa2da0e9c9eaf06eb7f419dd2e6a46027f03f5f
   specs:
@@ -303,15 +312,6 @@ GIT
   tag: hv0.0.1
   specs:
     rule_engine (0.0.1)
-
-GIT
-  remote: git@github.com:freshdesk/time_bandits
-  revision: 3e7044932fa5bc10e5ccbc09895e9630d7d417bf
-  tag: v1.1
-  specs:
-    time_bandits (0.10.12)
-      activesupport (>= 2.3.2)
-      thread_variables
 
 GIT
   remote: git@github.com:freshdesk/xeroizer.git

@@ -1,11 +1,13 @@
 <% @page_title = "Dashboard" %>
-<% if current_user && current_user.privilege?(:admin_tasks) && current_account && !current_account.falcon_ui_enabled?(current_user) %>
-    <%= check_fb_reauth_required  %>
-    <%= check_twitter_reauth_required %>
-    <%= check_smart_filter_revoked %>
-  <%= check_custom_mailbox_status %>
-  <%= live_chat_phone_deprecation %>
-  <%= old_ui_deprecation %>
+<% if current_user && current_account && !current_account.falcon_ui_enabled?(current_user) %>
+    <%if current_user.privilege?(:admin_tasks)%>
+      <%= check_fb_reauth_required  %>
+      <%= check_twitter_reauth_required %>
+      <%= check_smart_filter_revoked %>
+      <%= check_custom_mailbox_status %>
+      <%= live_chat_phone_deprecation %>
+    <% end %>  
+    <%= old_ui_deprecation %>
 <% end %>
 <div class="index-page-content" id="realtime-dashboard-content">
     <%= render :partial => "/helpdesk/realtime_dashboard/summary" %>

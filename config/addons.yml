@@ -13,7 +13,12 @@ Custom Roles:
   - :custom_roles
 Custom Slas:
   - :customer_slas
+Custom Slas 19:
+  - :customer_slas
 Custom Ssl: 
+  - :custom_domain
+  - :custom_ssl
+Custom Ssl 19:
   - :custom_domain
   - :custom_ssl
 Dynamic Sections:
@@ -22,7 +27,17 @@ Dynamic Sections:
 One Contact Multiple Companies:
   - :multiple_user_companies
   - :multiple_companies_toggle
+One Contact Multiple Companies 19:
+  - :multiple_user_companies
+  - :multiple_companies_toggle
 Enterprise Reporting:
+  - :enterprise_reporting
+  - :surveys
+  - :survey_links
+  - :timesheets
+  - :auto_ticket_export
+  - :ticket_activity_export
+Enterprise Reporting 19:
   - :enterprise_reporting
   - :surveys
   - :survey_links
@@ -48,6 +63,8 @@ Round Robin:
   - :round_robin_on_update
 Whitelisted Ips:
   - :whitelisted_ips
+Whitelisted Ips 19:
+  - :whitelisted_ips
 Custom Surveys:
   - :custom_surveys
 Call Center Advanced:
@@ -57,6 +74,8 @@ Call Center Advanced:
   - :agent_conference
   - :freshfone_warm_transfer
 Unique External Id:
+  - :unique_contact_identifier
+Unique External Id 19:
   - :unique_contact_identifier
 Helpdesk Restriction:
   - :helpdesk_restriction_toggle
@@ -73,4 +92,6 @@ Shared Ownership:
 Skill Based Round Robin:
   - :skill_based_round_robin
 Sandbox:
+  - :sandbox
+Sandbox 19:
   - :sandbox

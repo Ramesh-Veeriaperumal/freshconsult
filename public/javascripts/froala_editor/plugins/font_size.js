@@ -1,7 +1,7 @@
 /*!
- * froala_editor v2.3.5 (https://www.froala.com/wysiwyg-editor)
+ * froala_editor v2.9.1 (https://www.froala.com/wysiwyg-editor)
  * License https://froala.com/wysiwyg-editor/terms/
- * Copyright 2014-2016 Froala Labs
+ * Copyright 2014-2018 Froala Labs
  */
 
 (function (factory) {
@@ -23,21 +23,21 @@
                     jQuery = require('jquery')(root);
                 }
             }
-            factory(jQuery);
-            return jQuery;
+            return factory(jQuery);
         };
     } else {
         // Browser globals
-        factory(jQuery);
+        factory(window.jQuery);
     }
 }(function ($) {
 
-  'use strict';
+  
 
   $.extend($.FE.DEFAULTS, {
     fontSize: ['8', '9', '10', '11', '12', '14', '18', '24', '30', '36', '48', '60', '72', '96'],
     fontSizeSelection: false,
-    fontSizeDefaultSelection: '12'
+    fontSizeDefaultSelection: '12',
+    fontSizeUnit: 'px'
   });
 
   $.FE.PLUGINS.fontSize = function (editor) {
@@ -47,11 +47,17 @@
 
     function refreshOnShow($btn, $dropdown) {
       var val = $(editor.selection.element()).css('font-size');
-      $dropdown.find('.fr-command.fr-active').removeClass('fr-active');
-      $dropdown.find('.fr-command[data-param1="' + val + '"]').addClass('fr-active');
+
+      if (editor.opts.fontSizeUnit === 'pt') {
+        val = Math.round(parseFloat(val, 10) * 72 / 96) + 'pt'
+      }
+
+      $dropdown.find('.fr-command.fr-active').removeClass('fr-active').attr('aria-selected', false);
+      $dropdown.find('.fr-command[data-param1="' + val + '"]').addClass('fr-active').attr('aria-selected', true);
 
       var $list = $dropdown.find('.fr-dropdown-list');
       var $active = $dropdown.find('.fr-active').parent();
+
       if ($active.length) {
         $list.parent().scrollTop($active.offset().top - $list.offset().top - ($list.parent().outerHeight() / 2 - $active.outerHeight() / 2));
       }
@@ -63,6 +69,11 @@
     function refresh ($btn) {
       if (editor.opts.fontSizeSelection) {
         var val = editor.helpers.getPX($(editor.selection.element()).css('font-size'));
+
+        if (editor.opts.fontSizeUnit === 'pt') {
+          val = Math.round(parseFloat(val, 10) * 72 / 96) + 'pt'
+        }
+
         $btn.find('> span').text(val);
       }
     }
@@ -86,11 +97,12 @@
       return editor.opts.fontSizeDefaultSelection;
     },
     html: function () {
-      var c = '<ul class="fr-dropdown-list">';
+      var c = '<ul class="fr-dropdown-list" role="presentation">';
       var options =  this.opts.fontSize;
+
       for (var i = 0; i < options.length; i++) {
         var val = options[i];
-        c += '<li><a class="fr-command" data-cmd="fontSize" data-param1="' + val + 'px" title="' + val + '">' + val + '</a></li>';
+        c += '<li role="presentation"><a class="fr-command" tabIndex="-1" role="option" data-cmd="fontSize" data-param1="' + val + this.opts.fontSizeUnit + '" title="' + val + '">' + val + '</a></li>';
       }
       c += '</ul>';
 

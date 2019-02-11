@@ -1781,7 +1781,8 @@ def construct_new_ticket_element_for_google_gadget(form_builder,object_name, fie
   end
         
     def old_ui_deprecation
-      content_tag('div', "<a href='javascript:void(0)'></a> #{t('old_ui_deprecation')} <a href='/enable_falcon' data-method='post' > #{t('old_ui_migraton')} </a>".html_safe, class: "alert-message block-message warning full-width") if !current_account.disable_banners_enabled? && current_account.falcon_enabled?
+      deprecation_info =  current_user.privilege?(:admin_tasks) ?  "<a href='/enable_falcon' data-method='post' > #{t('old_ui_migraton')} </a>" : t('old_ui_migraton_agent')
+      content_tag('div', "<a href='javascript:void(0)'></a> #{t('old_ui_deprecation')}#{deprecation_info}".html_safe, class: "alert-message block-message warning full-width") if !current_account.disable_banners_enabled? && current_account.falcon_enabled?
     end
 
     def live_chat_phone_deprecation
