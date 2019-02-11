@@ -20,7 +20,7 @@ class Account < ActiveRecord::Base
     :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
     :description_by_default, :ticket_fields_central_publish, :facebook_page_scope_migration,
     :agent_group_central_publish, :custom_fields_search,:update_billing_info,
-    :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish
+    :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish, :native_apps
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
@@ -45,7 +45,8 @@ class Account < ActiveRecord::Base
     :freshid_saml, :canned_forms, :custom_translations, :social_tab,
     :customize_table_view, :public_url_toggle, :add_to_response, :agent_scope,
     :performance_report, :custom_password_policy, :social_tab, :scenario_automation,
-    :omni_channel, :ticket_volume_report, :sla_management_v2, :api_v2, :cascade_dispatcher, :personal_canned_response
+    :omni_channel, :ticket_volume_report, :sla_management_v2, :api_v2, :cascade_dispatcher,
+    :personal_canned_response, :marketplace
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -62,7 +63,7 @@ class Account < ActiveRecord::Base
   PRICING_PLAN_MIGRATION_FEATURES_2019 = [:social_tab, :customize_table_view,
     :public_url_toggle, :add_to_response, :agent_scope, :performance_report,
     :custom_password_policy, :scenario_automation, :sla_management_v2, :omni_channel, :api_v2,
-    :personal_canned_response].to_set.freeze
+    :personal_canned_response, :marketplace, :fa_developer].to_set.freeze
 
   LP_FEATURES.each do |item|
     define_method "#{item.to_s}_enabled?" do

@@ -1,10 +1,11 @@
-class Admin::Marketplace::InstalledExtensionsController <  Admin::AdminController
+class Admin::Marketplace::InstalledExtensionsController < Admin::AdminController
   include Marketplace::ApiMethods
   include Marketplace::ApiUtil
   include Marketplace::HelperMethods
   include Marketplace::InstExtControllerMethods
   include DataVersioning::ExternalModel
 
+  before_filter { |c| c.requires_feature :marketplace }
   before_filter :verify_oauth_callback , :only => [:oauth_callback]
   before_filter :extension, :only => [:install, :reinstall, :uninstall, :oauth_callback, :new_configs, :new_oauth_iparams, :edit_oauth_iparams]
   before_filter :extension_has_config?, :only => [:new_configs]

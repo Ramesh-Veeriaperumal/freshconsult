@@ -1,18 +1,19 @@
 class Integrations::ApplicationsController < Admin::AdminController
-
   include Integrations::AppsUtil
   include Integrations::OauthHelper
   include Marketplace::ApiHelper
   
+  before_filter { |c| c.requires_feature :marketplace }
   before_filter :load_object, :only => [:show]
+  
   def index
-    if feature?(:marketplace)
+    if current_account.native_apps_enabled?
+      @applications = Integrations::Application.available_apps(current_account)
+      @installed_applications = get_installed_apps
+    else
       installed_extensions = installed_mkp_apps(:integrations_list)
       @installed_mkp_apps = installed_extensions[:installed_mkp_apps]
       @installed_custom_apps = installed_extensions[:installed_custom_apps] if current_account.custom_apps_enabled?
-    else
-      @applications = Integrations::Application.available_apps(current_account)
-      @installed_applications = get_installed_apps
     end
 
     @custom_applications = Integrations::Application.freshplugs(current_account)

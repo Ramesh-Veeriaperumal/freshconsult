@@ -108,4 +108,8 @@ class Account < ActiveRecord::Base
   def paid_account?
     self.subscription.active? or self.subscription_payments.present?
   end
+
+  def destroy_all_slack_rule
+    self.account_va_rules.slack_destroy.destroy_all
+  end
 end

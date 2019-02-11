@@ -1,10 +1,11 @@
-class Admin::Marketplace::ExtensionsController <  Admin::AdminController
+class Admin::Marketplace::ExtensionsController < Admin::AdminController
   include Marketplace::ApiMethods
   include Marketplace::ApiUtil
   include Marketplace::HelperMethods
   include SubscriptionsHelper
   include ActionView::Helpers::NumberHelper
   
+  before_filter { |c| c.requires_feature :marketplace }
   before_filter :categories, :only => [:index, :search]
   before_filter :validate_subscription, :only => [:payment_info]
   before_filter :extension, :only => [:show, :payment_info]

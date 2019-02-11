@@ -7,7 +7,7 @@
   </ul>
 </div>
 
-<% if feature?(:marketplace) %>
+<% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
   <h3 class="title"><%=t('marketplace.apps')%></h3>
   <p><%= t('marketplace.helpnote1')%></p>
   <% if current_account.custom_apps_enabled? %>

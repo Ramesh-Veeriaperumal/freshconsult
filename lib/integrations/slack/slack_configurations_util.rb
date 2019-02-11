@@ -40,7 +40,7 @@ module Integrations::Slack::SlackConfigurationsUtil
   end
 
   def destroy_all_slack_rule
-    current_account.account_va_rules.slack_destroy.destroy_all
+    current_account.destroy_all_slack_rule
   end
 
   def validate_configs

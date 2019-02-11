@@ -1,6 +1,6 @@
-class Integrations::MarketplaceAppsController <  Admin::AdminController
+class Integrations::MarketplaceAppsController < Admin::AdminController
   # Used when MarketplaceFeature is enabled
-
+  before_filter { |c| c.requires_feature :marketplace }
   before_filter :load_object, :only => [:edit, :uninstall]
   before_filter :load_application, :only => :install
   before_filter :check_conditions, :only => [:install, :edit]
