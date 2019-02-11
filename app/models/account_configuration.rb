@@ -79,6 +79,9 @@ class AccountConfiguration < ActiveRecord::Base
       if (contact_info[:first_name].blank? or contact_info[:email].blank? or billing_emails[:invoice_emails].blank?)
         errors.add(:base,I18n.t("activerecord.errors.messages.blank"))
       end
+      if contact_info[:first_name].to_s.include?(".") or contact_info[:last_name].to_s.include?(".")
+        errors.add(:base, I18n.t("activerecord.errors.messages.invalid"))
+      end
     end
 
     def notification_email_changed?
