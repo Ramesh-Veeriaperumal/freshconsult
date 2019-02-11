@@ -181,10 +181,10 @@ class ConversationsController < ApiApplicationController
       prepare_array_fields array_fields.map(&:to_sym)
 
       # set source only for create/reply/forward action not for update action. Hence TYPE_FOR_ACTION is checked.
-      params[cname][:source] = ConversationConstants::TYPE_FOR_ACTION[action_name] if ConversationConstants::TYPE_FOR_ACTION.keys.include?(action_name)
+      params[cname][:source] = assign_source if ConversationConstants::TYPE_FOR_ACTION.key?(action_name)
 
       # only note can have choices for private field. others will be set to false always.
-      params[cname][:private] = false unless update? || params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
+      params[cname][:private] = false unless assign_private
 
       # Set ticket id from already assigned ticket only for create/reply/forward action not for update action.
       params[cname][:notable_id] = @ticket.id if @ticket
@@ -235,6 +235,14 @@ class ConversationsController < ApiApplicationController
 
     def check_for_broadcast
       render_request_error(:unable_to_perform, 403) if @item.broadcast_note?
+    end
+
+    def assign_source
+      ConversationConstants::TYPE_FOR_ACTION[action_name]
+    end
+
+    def assign_private
+      update? || params[cname][:source] == Helpdesk::Note::SOURCE_KEYS_BY_TOKEN['note']
     end
 
     # Since wrap params arguments are dynamic & needed for checking if the resource allows multipart, placing this at last.

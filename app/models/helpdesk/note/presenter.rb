@@ -127,6 +127,13 @@ class Helpdesk::Note < ActiveRecord::Base
   #   }
   # end
 
+  def central_payload_type
+    if import_note
+      action = [:create].find{ |action| transaction_include_action? action }
+      "import_note_#{action}" if action.present?
+    end
+  end
+
 
   # ************************************
   # METHOS USED BY CENTRAL PUBLISHER GEM.

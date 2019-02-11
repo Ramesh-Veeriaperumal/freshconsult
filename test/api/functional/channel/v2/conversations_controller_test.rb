@@ -1,7 +1,9 @@
 require_relative '../../../test_helper'
+['social_tickets_creation_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 module Channel::V2
   class ConversationsControllerTest < ActionController::TestCase
     include ConversationsTestHelper
+    include SocialTicketsCreationHelper
     def wrap_cname(params)
       { conversation: params }
     end
@@ -104,6 +106,89 @@ module Channel::V2
       assert_response 201
       match_json(v2_reply_note_pattern(params_hash, Helpdesk::Note.last))
       match_json(v2_reply_note_pattern({}, Helpdesk::Note.last))
+    end
+
+    def test_twitter_dm_as_note_create
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      twitter_handle_id = get_twitter_handle.twitter_user_id
+      params_hash = {
+        body: Faker::Lorem.paragraph,
+        notify_emails: [Agent.first.user.email],
+        private: true,
+        source: 5,
+        import_id: 1,
+        source_additional_info: {
+          twitter: {
+            tweet_id: 123_123,
+            tweet_type: 'dm',
+            support_handle_id: twitter_handle_id,
+            stream_id: 3232
+          }
+        }
+      }
+      post :create, construct_params({ id: ticket.display_id }, params_hash)
+      assert_response 201
+      t = Helpdesk::Note.last
+      match_json(show_note_pattern(params_hash, Helpdesk::Note.last))
+    ensure
+      $infra['CHANNEL_LAYER'] = false
+      @channel_v2_api = false
+    end
+
+    def test_twitter_mention_as_note_create
+      $infra['CHANNEL_LAYER'] = true
+      @channel_v2_api = true
+      twitter_handle_id = get_twitter_handle.twitter_user_id
+      params_hash = {
+        body: Faker::Lorem.paragraph,
+        notify_emails: [Agent.first.user.email],
+        private: true,
+        source: 5,
+        import_id: 1,
+        source_additional_info: {
+          twitter: {
+            tweet_id: 123_124,
+            tweet_type: 'mention',
+            support_handle_id: twitter_handle_id,
+            stream_id: 3232
+          }
+        }
+      }
+      post :create, construct_params({ id: ticket.display_id }, params_hash)
+      assert_response 201
+      t = Helpdesk::Note.last
+      match_json(show_note_pattern(params_hash, Helpdesk::Note.last))
+    ensure
+      $infra['CHANNEL_LAYER'] = false
+      @channel_v2_api = false
+    end
+
+    def test_twitter_note_create_with_invalid_twitter_handle_id
+      $infra['CHANNEL_LAYER'] = true
+      twitter_handle_id = Faker::Number.number(3).to_i
+      params_hash = {
+        body: Faker::Lorem.paragraph,
+        notify_emails: [Agent.first.user.email],
+        private: true,
+        source: 5,
+        import_id: 1,
+        source_additional_info: {
+          twitter: {
+            tweet_id: 123_124,
+            tweet_type: 'mention',
+            support_handle_id: twitter_handle_id,
+            stream_id: 3232
+          }
+        }
+      }
+      post :create, construct_params({ id: ticket.display_id }, params_hash)
+      assert_response 400
+      pattern = validation_error_pattern(bad_request_error_pattern(:twitter_handle_id,
+                                          :invalid_twitter_handle , code: 'invalid_value'))
+      match_json(pattern)
+    ensure
+      $infra['CHANNEL_LAYER'] = false
     end
   end
 end

@@ -694,6 +694,7 @@ Helpkit::Application.routes.draw do
   channel_v2_routes = proc do
     resources :tickets, controller: 'channel/v2/tickets', only: [:index, :create, :update, :show] do
       member do
+        get :conversations, to: 'channel/v2/conversations#ticket_conversations'
         post :reply, to: 'channel/v2/conversations#reply'
         post :notes, to: 'channel/v2/conversations#create'
       end
