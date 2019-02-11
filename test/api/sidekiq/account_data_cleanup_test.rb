@@ -44,4 +44,41 @@ class NewPlanChangeWorkerTest < ActionView::TestCase
     assert_equal group.capping_limit, 0
     assert_equal group.ticket_assign_type, 0
   end
+
+  def test_marketplace_apps_cleanup
+    create_test_account
+    mock_installed_applications = [MiniTest::Mock.new]
+    mock_app = MiniTest::Mock.new
+    mock_app.expect(:slack?, true)
+    mock_installed_applications.first.expect(:application, mock_app)
+    mock_installed_applications.first.expect(:destroy, true)
+    marketplace_response_body = {}.tap do |app|
+      app['extension_id'] = 1
+      app['addon'] = {}
+    end
+    mock_marketplace_ext_response = {}.tap do |app|
+      app['extension_id'] = 1
+      app['addon'] = false
+    end
+    freshrequest_mock = MiniTest::Mock.new
+    mock_marketplace_response = MiniTest::Mock.new
+    FreshRequest::Client.stubs(:new).returns(freshrequest_mock)
+    3.times do
+      mock_marketplace_response.expect :status, 200
+      mock_marketplace_response.expect :nil?, false
+    end
+    2.times do
+      freshrequest_mock.expect :get, mock_marketplace_response
+    end
+    mock_marketplace_response.expect :body, [marketplace_response_body]
+    mock_marketplace_response.expect :body, mock_marketplace_ext_response
+    freshrequest_mock.expect :delete, mock_marketplace_response
+
+    @account.stub(:installed_applications, mock_installed_applications) do
+      SAAS::AccountDataCleanup.new(@account, ['marketplace'], 'drop').perform_cleanup
+    end
+    assert mock_app.verify
+    assert mock_installed_applications.first.verify
+    assert freshrequest_mock.verify
+  end
 end

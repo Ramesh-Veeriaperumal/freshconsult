@@ -29,7 +29,8 @@ class Account < ActiveRecord::Base
     :shopify_actions, :skip_invoice_due_warning, :automation_revamp,
     :scheduled_export_fix, :compact_lang_detection,
     :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search,
-    :update_billing_info, :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish
+    :update_billing_info, :allow_billing_info_update, :pricing_plan_change_2019,
+    :tag_central_publish, :native_apps
   ].freeze
 
   DB_FEATURES = [
@@ -57,7 +58,8 @@ class Account < ActiveRecord::Base
     :canned_forms, :social_tab, :customize_table_view, :public_url_toggle,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
-    :ticket_volume_report, :omni_channel, :sla_management_v2, :cascade_dispatcher, :personal_canned_response
+    :ticket_volume_report, :omni_channel, :sla_management_v2, :cascade_dispatcher,
+    :personal_canned_response, :marketplace
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
 
@@ -75,7 +77,8 @@ class Account < ActiveRecord::Base
   PRICING_PLAN_MIGRATION_FEATURES_2019 = [
     :social_tab, :customize_table_view, :public_url_toggle, :add_to_response,
     :agent_scope, :performance_report, :custom_password_policy, :scenario_automation,
-    :sla_management_v2, :omni_channel, :personal_canned_response
+    :sla_management_v2, :omni_channel, :personal_canned_response, :marketplace,
+    :fa_developer
   ].to_set.freeze
 
   LP_FEATURES.each do |item|
