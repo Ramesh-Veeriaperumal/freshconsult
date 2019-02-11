@@ -12422,6 +12422,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
+      error:
+        already_present: 'Account already registered with your email in Freshchat'
+        already_logged_in: 'Already logged in to Freshchat'
+        unable_to_reach_freshchat: 'Unable to talk to Freshchat servers please contact support '
+
   mailer_notifier:
     hi: 'Hi,'
     hey_user: 'Hey %{user_name}'

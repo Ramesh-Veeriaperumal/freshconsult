@@ -20,6 +20,7 @@ class SAAS::SubscriptionEventActions
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17],
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19],
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_19],
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_19] ].freeze
 
   DROP  = "drop"

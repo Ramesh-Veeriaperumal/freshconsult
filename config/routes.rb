@@ -1171,11 +1171,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :freshchat, :only => [:index, :create, :update] do
+    resources :freshchat, :only => [:index, :create, :update, :signup] do
       collection do
         put :toggle
         post :create
         put :update
+        get :signup
       end
     end
 
