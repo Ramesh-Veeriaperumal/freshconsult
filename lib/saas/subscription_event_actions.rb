@@ -16,10 +16,12 @@ class SAAS::SubscriptionEventActions
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard, 
                            :personal_canned_response].freeze
 
-  DASHBOARD_PLANS = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:estate], 
-                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],
-                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17], 
-                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17] ].freeze
+  DASHBOARD_PLANS = [SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_19]].freeze
 
   DROP  = "drop"
   ADD   = "add"

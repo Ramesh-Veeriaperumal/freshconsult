@@ -8,11 +8,24 @@
       - :freshchat
       - :freshconnect
       - :collaboration
+      - :social_tab
+      - :omni_channel
+      - :customize_table_view
+      - :public_url_toggle
+      - :add_to_response
+      - :agent_scope
+      - :performance_report
+      - :custom_password_policy
+      - :marketplace
+      - :scenario_automation
+      - :sla_management_v2
+      - :personal_canned_response
     :inherits: []
     :exclude: []
   :blossom_jan_17:
     :name: Blossom
     :features:
+      - :fa_developer
       - :split_tickets
       - :add_watcher
       - :traffic_cop
@@ -49,8 +62,6 @@
       - :tam_default_fields
       - :contact_company_notes
       - :image_annotation
-      - :tam_default_fields
-      - :contact_company_notes
       - :todos_reminder_scheduler
       - :smart_filter
       - :session_replay
@@ -64,7 +75,6 @@
       - :forums
       - :multi_language
       - :css_customization
-      - :advanced_reporting
       - :dynamic_content
       - :ticket_templates
       - :custom_survey
@@ -82,7 +92,6 @@
       - :multi_timezone
       - :customer_slas
       - :layout_customization
-      - :multi_product
       - :collision
       - :round_robin
       - :enterprise_reporting
@@ -120,4 +129,135 @@
       - :hipaa
     :inherits:
       - :estate_jan_17
+    :exclude: []
+  :sprout_jan_19:
+    :name: Sprout
+    :features:
+      - :basic_twitter
+      - :basic_facebook
+      - :basic_dkim
+      - :freshchat
+      - :freshconnect
+      - :collaboration
+      - :auto_refresh
+      - :ticket_volume_report
+    :inherits: []
+    :exclude: []
+  :blossom_jan_19:
+    :name: Blossom
+    :features:
+      - :mailbox
+      - :agent_scope
+      - :sla_management_v2
+      - :add_to_response
+      - :public_url_toggle
+      - :social_tab
+      - :scenario_automation
+      - :customize_table_view
+      - :personal_canned_response
+      - :omni_channel
+      - :split_tickets
+      - :collision
+      - :marketplace
+      - :add_watcher
+      - :traffic_cop
+      - :custom_ticket_views
+      - :supervisor
+      - :create_observer
+      - :system_observer_events
+      - :rebranding
+      - :custom_ticket_fields
+      - :custom_company_fields
+      - :custom_contact_fields
+      - :occasional_agent
+      - :gamification
+      - :advanced_twitter
+      - :advanced_facebook
+      - :scoreboard
+      - :custom_domain
+      - :multiple_emails
+      - :advanced_reporting
+      - :requester_widget
+      - :advanced_search
+      - :user_notifications
+      - :quick_reply
+      - :tam_default_fields
+      - :todos_reminder_scheduler
+    :inherits:
+      - :sprout_jan_19
+    :exclude: []
+  :garden_jan_19:
+    :name: Garden
+    :features:
+      - :ticket_templates
+      - :surveys
+      - :default_survey
+      - :timesheets
+      - :performance_report
+      - :custom_password_policy
+      - :sitemap
+      - :contact_company_notes
+      - :allow_auto_suggest_solutions
+      - :assume_identity
+      - :sla_management
+      - :canned_forms
+      - :session_replay
+      - :image_annotation
+      - :custom_apps
+      - :fa_developer
+      - :forums
+      - :multi_language
+      - :css_customization
+      - :dynamic_content
+      - :link_tickets_toggle
+    :inherits:
+      - :blossom_jan_19
+    :exclude: []
+  :estate_jan_19:
+    :name: Estate
+    :features:
+      - :custom_survey
+      - :smart_filter
+      - :support_bot
+      - :parent_child_tickets_toggle
+      - :multi_product
+      - :multiple_business_hours
+      - :multi_timezone
+      - :customer_slas
+      - :layout_customization
+      - :round_robin
+      - :enterprise_reporting
+      - :custom_ssl
+      - :custom_roles
+      - :facebook_page_tab
+      - :chat_routing
+      - :dynamic_sections
+      - :helpdesk_restriction_toggle
+      - :round_robin_load_balancing
+      - :multiple_user_companies
+      - :multiple_companies_toggle
+      - :round_robin_on_update
+      - :shared_ownership_toggle
+      - :advanced_dkim
+      - :multi_dynamic_sections
+      - :auto_ticket_export
+      - :ticket_activity_export
+      - :unique_contact_identifier
+      - :custom_dashboard
+      - :audit_logs_central_publish
+      - :audit_log_ui
+      - :field_service_management_toggle
+      - :segments
+    :inherits:
+      - :garden_jan_19
+    :exclude: []
+  :forest_jan_19:
+    :name: Forest
+    :features:
+      - :whitelisted_ips
+      - :skill_based_round_robin
+      - :sandbox
+      - :hipaa
+    :inherits:
+      - :estate_jan_19
     :exclude: []

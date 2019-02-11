@@ -68,4 +68,6 @@ module AttachmentConstants
     'image/gif' => '.gif',
     'image/tiff' => '.tiff'
   }.freeze
+
+  WIDGET_ATTACHMENT_FIELDS = %w[content].freeze
 end.freeze

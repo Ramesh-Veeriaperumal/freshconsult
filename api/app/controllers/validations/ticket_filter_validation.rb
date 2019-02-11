@@ -2,7 +2,7 @@ class TicketFilterValidation < FilterValidation
   include TicketFilterConstants
   attr_accessor :filter, :company_id, :requester_id, :email, :updated_since,
                 :order_by, :conditions, :requester, :status, :cf, :include,
-                :include_array, :query_hash, :only
+                :include_array, :query_hash, :only, :type
 
   validates :page, custom_numericality: {
     only_integer: true, greater_than: 0, ignore_string: :allow_string_param,
@@ -20,6 +20,7 @@ class TicketFilterValidation < FilterValidation
   validate :fsm_appointment_date_filter_validation, if: -> { Account.current.field_service_management_enabled? }
   validate :verify_cf_data_type, if: -> { cf.present? }
   validates :include, data_type: { rules: String }
+  validates :type, custom_inclusion: { in: proc { |x| x.account_ticket_types } }
   validate :query_hash_or_filter_presence
   # query_hash should either be an empty string or a hash.
   # This is for 'any_time' created_at filter for which default_filter should not be applied
@@ -176,6 +177,10 @@ class TicketFilterValidation < FilterValidation
 
   def sort_field_options
     TicketsFilter.api_sort_fields_options.map(&:first).map(&:to_s)
+  end
+
+  def account_ticket_types
+    Account.current.ticket_types_from_cache.collect(&:value)
   end
 
   private

@@ -968,6 +968,16 @@ module ApiTicketsTestHelper
     @child_ticket  = create_ticket(assoc_parent_id: @parent_ticket.display_id)
   end
 
+  def create_advanced_tickets(count = {fsm: 1})
+    child_tickets = []
+    @parent_ticket = create_parent_ticket
+
+    (count[:fsm] || 0).times { child_tickets << create_ticket(assoc_parent_id: @parent_ticket.display_id, type: "Service Task") }
+    (count[:pc] || 0).times { child_tickets << create_ticket(assoc_parent_id: @parent_ticket.display_id) }
+
+    child_tickets.map(&:display_id)
+  end
+
   def create_ticket_with_attachments(min = 0, max = 1)
     ticket = create_ticket
     rand(min..max).times do

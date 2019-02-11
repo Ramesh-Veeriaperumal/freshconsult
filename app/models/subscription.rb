@@ -20,15 +20,18 @@ class Subscription < ActiveRecord::Base
                   :address2 => :billing_addr2, :city => :billing_city, :state => :billing_state,
                   :country => :billing_country, :zip => :billing_zip  }
 
-  FRESHCHAT_PLANS = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:garden], 
-                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate], 
-                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest], 
-                      SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
-                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic], 
-                      SubscriptionPlan::SUBSCRIPTION_PLANS[:premium],
-                      SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_jan_17], 
-                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
-                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17]].freeze
+  FRESHCHAT_PLANS = [SubscriptionPlan::SUBSCRIPTION_PLANS[:garden],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_classic],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:premium],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_jan_17],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_jan_19],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19],
+                     SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_19]].freeze
 
   AUTOPILOT_FILEDS = ["state", "next_renewal_at", "renewal_period", "amount", "subscription_plan_id", "agent_limit"]
 
@@ -108,6 +111,16 @@ class Subscription < ActiveRecord::Base
   validates_inclusion_of :state, :in => SUBSCRIPTION_TYPES
   # validates_numericality_of :amount, :if => :free?, :equal_to => 0.00, :message => I18n.t('not_eligible_for_free_plan')
   validates_numericality_of :agent_limit, :if => Proc.new { |a| (a.free? && a.non_new_sprout?) }, :less_than_or_equal_to => AGENTS_FOR_FREE_PLAN, :message => I18n.t('not_eligible_for_free_plan')
+
+  NEW_SPROUT = [
+    SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_17],
+    SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_19]
+  ].freeze
+
+  NEW_BLOSSOM = [
+    SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_jan_17],
+    SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_jan_19]
+  ].freeze
 
   def self.customer_count
    count(:conditions => [ " state IN ('active','free') "])
@@ -245,11 +258,11 @@ class Subscription < ActiveRecord::Base
   end
 
   def new_sprout?
-    subscription_plan_from_cache.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:sprout_jan_17]
+    NEW_SPROUT.include?(subscription_plan_from_cache.name)
   end
 
   def new_blossom?
-    subscription_plan_from_cache.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:blossom_jan_17]
+    NEW_BLOSSOM.include?(subscription_plan_from_cache.name)
   end
   
   def blossom?
@@ -265,6 +278,8 @@ class Subscription < ActiveRecord::Base
   end
 
   def classic?
+    return SubscriptionPlan::JAN_2019_PLAN_NAMES.exclude?(subscription_plan.name) if account.force_2019_plan?
+    
     subscription_plan.classic
   end
 

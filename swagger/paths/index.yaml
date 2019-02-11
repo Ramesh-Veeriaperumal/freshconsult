@@ -40,6 +40,8 @@
   $ref: ./tickets/prime_association.yaml
 /tickets/{id}/associated_tickets:
   $ref: ./tickets/associated_ticket.yaml
+/tickets/{id}/associated_tickets_count:
+  $ref: ./tickets/associated_tickets_count.yaml
 /tickets/{id}/split_note:
   $ref: ./tickets/split_note.yaml
 /tickets/{id}/draft:
@@ -533,6 +535,9 @@
 
 /help_widgets/update:
   $ref: ./help_widgets/update.yaml
+
+/widget/attachment:
+  $ref: ./widget_attachment/create.yaml
 
 # Business Hours
 /business_hours:
