@@ -66,7 +66,7 @@ module Marketplace::HelperMethods
   end
 
   def paid_app_params
-    paid_app? ? {
+    paid_app? && !offline_subscription? ? {
       :billing => {
         :addon_id => @extension['addon']['id']  
       }.merge(account_params)
@@ -82,6 +82,10 @@ module Marketplace::HelperMethods
   end
 
   def app_units_count
+    if trial_subscription?
+      # Agent limit is set to 1 as it is null for trial accounts
+      return Marketplace::Constants::ACCOUNT_ADDON_APP_UNITS
+    end
     if per_agent_plan?
       return Account.current.subscription.new_sprout? ? 
              Account.current.full_time_agents.count : Account.current.subscription.agent_limit
@@ -97,6 +101,31 @@ module Marketplace::HelperMethods
       :agent_count => app_units_count,
       :renewal_period => Account.current.subscription.renewal_period
     }
+  end
+
+  def skip_validation?
+    trial_subscription? || offline_subscription_and_addon_added?
+  end
+
+  def account_subscription_verify?
+    paid_app? && !skip_validation?
+  end
+
+  def trial_subscription?
+    Account.current.subscription.trial?
+  end
+
+  def offline_subscription_and_addon_added?
+    offline_subscription? && addon_added_to_subscription?
+  end
+
+  def offline_subscription?
+    Account.current.subscription.offline_subscription?
+  end
+
+  def addon_added_to_subscription?
+    subscription_mkp_addons = Billing::Subscription.new.retrieve_subscription(Account.current.id).subscription.addons
+    subscription_mkp_addons.present? ? subscription_mkp_addons.map { |addon| addon.id }.include?(@extension['addon']['id']) : false
   end
     
 end
