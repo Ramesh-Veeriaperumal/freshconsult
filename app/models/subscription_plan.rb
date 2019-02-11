@@ -57,7 +57,6 @@ class SubscriptionPlan < ActiveRecord::Base
     :garden_omni_jan_19 => "Garden Omni Jan 19",
     :estate_jan_19 => "Estate Jan 19",
     :estate_omni_jan_19 => "Estate Omni Jan 19",
-    :estate_jan_19 => "Estate Jan 19",
     :forest_jan_19 => "Forest Jan 19"
   }
   

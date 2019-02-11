@@ -30,7 +30,9 @@ class Subscription < ActiveRecord::Base
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17],
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_jan_19],
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_omni_jan_19],
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19],
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_19],
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_19]].freeze
 
   AUTOPILOT_FILEDS = ["state", "next_renewal_at", "renewal_period", "amount", "subscription_plan_id", "agent_limit"]
