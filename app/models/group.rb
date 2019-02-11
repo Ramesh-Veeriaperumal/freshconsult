@@ -87,6 +87,9 @@ class Group < ActiveRecord::Base
   scope :capping_enabled_groups, :conditions => ["ticket_assign_type = 1 and capping_limit > 0"], :order => :name
   scope :skill_based_round_robin_enabled, :order => :name,
         :conditions => ["ticket_assign_type = #{Group::TICKET_ASSIGN_TYPE[:skill_based]}"]
+  scope :ocr_enabled_groups,
+        order: :name,
+        conditions: ["ticket_assign_type IN (?)", OMNI_CHANNEL_ASSIGNMENT_TYPES]
   
   def excluded_agents(account)      
    return account.users.find(:all , :conditions=>['helpdesk_agent = true and id not in (?)',agents.map(&:id)]) unless agents.blank? 
