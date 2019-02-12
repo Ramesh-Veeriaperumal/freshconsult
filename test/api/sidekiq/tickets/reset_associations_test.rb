@@ -70,10 +70,11 @@ class ResetAssociationsTest < ActionView::TestCase
 
   def test_reset_associations_with_disable_link_tickets
     enable_adv_ticketing([:link_tickets]) do
+      link_tickets_old =  @account.tickets.where(association_type: [3,4])
       create_linked_tickets
       Tickets::ResetAssociations.new.perform(link_feature_disable: true)
       link_tickets = @account.tickets.where(association_type: [3,4])
-      assert_equal link_tickets.count, 0
+      assert_equal link_tickets.count, link_tickets_old.count
     end
   end
 
