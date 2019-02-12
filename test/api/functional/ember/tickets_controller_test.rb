@@ -2833,6 +2833,7 @@ module Ember
       current_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:ticket])
       assert_equal initial_count, current_data_exports.length
       @account.rollback(:ticket_contact_export)
+    ensure
       WebMock.disable_net_connect!
     end
 
@@ -2852,6 +2853,7 @@ module Ember
       assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.csv')
       @account.rollback(:ticket_contact_export)
+    ensure
       WebMock.disable_net_connect!
     end
 
@@ -2871,6 +2873,7 @@ module Ember
       assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.xls')
       @account.rollback(:ticket_contact_export)
+    ensure
       WebMock.disable_net_connect!
     end
 

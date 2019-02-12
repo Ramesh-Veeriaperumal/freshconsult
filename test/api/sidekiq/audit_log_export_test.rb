@@ -2,10 +2,13 @@ require_relative '../unit_test_helper'
 require 'sidekiq/testing'
 require 'faker'
 require 'webmock/minitest'
+require Rails.root.join('spec', 'support', 'account_helper.rb')
 
 Sidekiq::Testing.fake!
 
 class AuditLogExportTest < ActiveSupport::TestCase
+  include AccountHelper
+
   def construct_args
     {
       basic_auth: {
@@ -33,12 +36,15 @@ class AuditLogExportTest < ActiveSupport::TestCase
   def test_export_url_response
     WebMock.allow_net_connect!
     args = construct_args
-    Account.stubs(:current).returns(Account.first)
+    account = Account.first.nil? ? Account.first : create_test_account
+    Account.stubs(:current).returns(account)
     User.stubs(:current).returns(User.first)
     value = AuditLogExport.new.perform(args)
     Export::Util.stubs(:build_attachment).returns(true)
-    WebMock.disable_net_connect!
   ensure
+    WebMock.disable_net_connect!
     Export::Util.unstub(:build_attachment)
+    Account.unstub(:current)
+    User.unstub(:current)
   end
 end
