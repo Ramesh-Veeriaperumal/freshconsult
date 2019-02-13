@@ -610,6 +610,19 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(key)
   end
 
+  def installed_apps_from_cache
+    @installed_apps ||= begin
+      MemcacheKeys.fetch(installed_apps_key) do
+        installed_apps_hash
+      end
+    end
+  end
+
+  def clear_installed_application_hash_cache
+    key = installed_apps_key
+    MemcacheKeys.delete_from_cache(key)
+  end
+
   private
     def permissible_domains_memcache_key id = self.id
       HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
@@ -629,6 +642,10 @@ module Cache::Memcache::Account
 
     def agents_details_memcache_key
       ACCOUNT_AGENTS_DETAILS % { :account_id => self.id }
+    end
+
+    def installed_apps_key
+      format(INSTALLED_APPS_HASH, account_id: id)
     end
 
     def groups_memcache_key
