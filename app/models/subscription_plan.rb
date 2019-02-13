@@ -26,8 +26,10 @@ class SubscriptionPlan < ActiveRecord::Base
   
   # TODO: Remove force_2019_plan?() after 2019 plan launched
   # START
-  scope :plans_2019, conditions: { name: ['Sprout Jan 19', 'Blossom Jan 19',
-    'Garden Jan 19', 'Estate Jan 19', 'Forest Jan 19'] }
+  scope :plans_2019, conditions: { name: [
+    'Sprout Jan 19', 'Blossom Jan 19', 'Garden Jan 19', 'Estate Jan 19',
+    'Garden Omni Jan 19', 'Estate Omni Jan 19', 'Forest Jan 19'
+  ] }, :order => 'amount asc'
   # END
 
   after_commit :clear_cache
@@ -98,13 +100,22 @@ class SubscriptionPlan < ActiveRecord::Base
   ].freeze
 
   JAN_2019_PLAN_NAMES = [
-    'Sprout Jan 19', 'Blossom Jan 19', 'Garden Jan 19', 'Estate Jan 19', 'Forest Jan 19'
+    'Sprout Jan 19', 'Blossom Jan 19', 'Garden Jan 19', 'Estate Jan 19',
+    'Garden Omni Jan 19', 'Estate Omni Jan 19', 'Forest Jan 19'
   ].freeze
 
   PLAN_NAMES_BEFORE_2017_AND_NOT_GRAND_PARENT = [
     'Sprout', 'Blossom', 'Garden', 'Estate', 'Forest'
   ].freeze
 
+  OMNI_PLANS = [
+    ['Estate Omni Jan 19', 'Estate Jan 19'],
+    ['Garden Omni Jan 19', 'Garden Jan 19']
+  ].freeze
+
+  OMNI_TO_BASIC_PLAN_MAP = OMNI_PLANS.each_with_object({}) { |plan, hash| hash[plan[0].to_sym] = plan[1] }
+  BASIC_PLAN_TO_OMNI_MAP = OMNI_PLANS.each_with_object({}) { |plan, hash| hash[plan[1].to_sym] = plan[0] }
+  
   def fetch_discount(billing_cycle)
     BILLING_CYCLE_DISCOUNT[self.name].fetch(billing_cycle,1)
   end
@@ -156,5 +167,20 @@ class SubscriptionPlan < ActiveRecord::Base
   def pricing(currency)
     price[currency]
   end
+
+  def omni_plan?
+    OMNI_TO_BASIC_PLAN_MAP.key? name.to_sym
+  end
   
+  def basic_variant_name
+    OMNI_TO_BASIC_PLAN_MAP[name.to_sym]
+  end
+
+  def basic_variant?
+    BASIC_PLAN_TO_OMNI_MAP.key? name.to_sym
+  end
+
+  def omni_plan_name
+    BASIC_PLAN_TO_OMNI_MAP[name.to_sym]
+  end
 end

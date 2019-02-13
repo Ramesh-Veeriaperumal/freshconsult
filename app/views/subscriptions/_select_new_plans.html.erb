@@ -1,8 +1,10 @@
 <%
   current_plan_id = current_account.subscription.subscription_plan_id
-  current_plan_name = current_account.subscription.subscription_plan.name.downcase
+  subscribed_plan = current_account.subscription.subscription_plan
+  current_plan_name = subscribed_plan.name.downcase
   current_plan_ranking = SubscriptionsHelper::PLAN_RANKING["#{current_plan_name}"] || 0 # default rank as zero
   has_credit_card = current_account.has_credit_card? 
+  select_billing_option = current_account.new_2019_pricing_enabled? ? SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] : @subscription.renewal_period
 %>
 <div id="ChangePlan">
   <div class="plans">
@@ -10,6 +12,9 @@
       <tr>
         <% plans.each do |plan| %>
           <%
+            next if !subscription.trial? &&
+              ((subscribed_plan.omni_plan? && subscribed_plan.basic_variant_name == plan.name) ||
+              (subscribed_plan.basic_variant? && subscribed_plan.omni_plan_name == plan.name))
             plan_name = plan.name.downcase.split(' ').first
             plan_name_id = plan.name.parameterize.underscore
             plan_ranking = SubscriptionsHelper::PLAN_RANKING["#{plan.name.downcase}"] || 0 # default rank as zero
@@ -219,8 +224,7 @@
 <script type="text/javascript">
 
   if(App.SelectPlan != undefined){ App.SelectPlan.destroy() }
-
-   App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= @subscription.renewal_period %>,
+   App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= select_billing_option %>,
     "<%= current_account.subscription.subscription_plan.id %>");
 
 </script>

@@ -191,9 +191,11 @@ module SubscriptionsHelper
     format_amount(amount, currency)
   end
 
-  def cost_per_agent(plan_name, period=1, currency)
+  def cost_per_agent(plan_name, period, currency)
     billing_subscription = Billing::Subscription.new
-    period = 1 if period.nil?
+    if period.nil?
+      period = current_account.new_2019_pricing_enabled? ? SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] : 1
+    end
     plan_info = billing_subscription.retrieve_plan(plan_name, period)
     amount = (plan_info.plan.price/plan_info.plan.period)/100
     format_amount(amount, currency)

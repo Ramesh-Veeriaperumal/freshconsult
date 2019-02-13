@@ -13,6 +13,10 @@
 	margin-bottom: 20px;
 }
 
+.billing-cost .select2-container {
+	min-width: 94px;
+}
+
 .well-active {
 	@include pie-clearfix;
 	background: #fefef0;
