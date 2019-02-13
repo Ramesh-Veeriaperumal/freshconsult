@@ -237,6 +237,8 @@ module MemcacheKeys
 
   CURRENCY_NAMES = 'CURRENCY_NAMES'.freeze
 
+  INSTALLED_APPS_HASH = 'INSTALLED_APPS_HASH:%{account_id}'.freeze
+
   PLANS_AGENT_COSTS_BY_CURRENCY = 'PLANS_AGENT_COSTS_BY_CURRENCY:%{currency_name}'.freeze
 
   ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
