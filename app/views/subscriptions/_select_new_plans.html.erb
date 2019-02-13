@@ -60,19 +60,19 @@
                           <% else %>
                             <div class="omni-features hide">
                               <h4 class="omni-title"><%= t('omni_channel') %></h4>
-                              <% omni_amount = SubscriptionsHelper::OMNI_FEATURES_PRICE["#{plan.name.downcase.split(' ').first}#{feature_name}"]%>
-                              <% sign = (omni_amount > 0 && omni_amount < 30) ? '+' : '' %>
-                              <p class="omni-price <%= omni_amount == 30 ? 'forest-omni' : '' %>">
-                                <%= sign %> <%= format_amount(omni_amount, @subscription.currency_name) %>
+                              <% omni_amount = plan.omni_channel_cost(@subscription.currency_name) %>
+                              <% show_sign = omni_amount != 0 && !plan.free_omni_channel_plan? %>
+                              <p class="omni-price <%= 'free-omni-channel' if plan.free_omni_channel_plan? %>">
+                                <%= '+' if show_sign %> <%= format_amount(omni_amount, @subscription.currency_name) %>
                                 <span class="free">Free</span>
-                                <% if (omni_amount > 0 && omni_amount < 30)%>
+                                <% if show_sign %>
                                   <span class="per-agent"> <%= t('per_agent_per_month') %></span>
                                 <% end %>
                               </p>
                               <% SubscriptionsHelper::OMNI_FEATURES["#{plan.name.downcase.split(' ').first}#{feature_name}"].each do |feature_item| %>
                               <span class="omni-features-list"><%= t("features.#{feature_item}").html_safe %></span>
                               <% end%>
-                              <% if omni_amount != 30 && plan.name.downcase.include?(omniFilter)%>
+                              <% if show_sign %>
                                 <p class="toggle-omni-billing hide">
                                   <span class="omni-toggle-holder">
                                     <%= t('omni_channel') %>
@@ -246,7 +246,7 @@
 </div>
 
 <script type="text/javascript">
-
+  
   if(App.SelectPlan != undefined){ App.SelectPlan.destroy() }
    App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= select_billing_option %>,
     "<%= current_account.subscription.subscription_plan.id %>");

@@ -27,6 +27,7 @@ module SubscriptionsHelper
 
     "garden omni jan 19" => [ "everything_in_blossom", "m_k_base", "dynamic_email_alert", "sla_reminders", "forums", "agent_performance_report", "scheduled_reports", "custom_surveys", "custom_apps", "timesheets", "omni_channel_option"],
     "estate omni jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "chatbots", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "omni_channel_option"]
+
   }
 
   OMNI_FEATURES = {
@@ -35,14 +36,6 @@ module SubscriptionsHelper
     "gardenomni_channel_option" => ["chat_faq", "chat_message", "ivr", "masking_recording"],
     "estateomni_channel_option" => ["chatbots", "inapp_chat", "smart_calls", "barging_monitoring", "omni_analytics"],
     "forestomni_channel_option" => ["co_browsing", "multilingual_chat", "omni_routing"]
-  }
-
-  OMNI_FEATURES_PRICE = {
-    "sproutomni_channel_option" => 0,
-    "blossomomni_channel_option" => 0,
-    "gardenomni_channel_option" => 10,
-    "estateomni_channel_option" => 20,
-    "forestomni_channel_option" => 30
   }
 
   PLANS_FEATURES_LOSS = {

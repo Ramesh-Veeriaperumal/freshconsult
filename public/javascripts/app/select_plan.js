@@ -111,7 +111,6 @@ window.App = window.App || {};
         var amount = jQuery("[data-omni-plan-id='"+plan_name+"']").data("plan-amount");
         var plan_id = jQuery("[data-omni-plan-id='"+plan_name+"']").data("plan-id");
         jQuery("#plan-"+jQuery(button).prev().data("plan")+" .plan-cost").text(amount);
-
         this.agents = $("#agents-text-box").val();
         this.calculateCost(plan_id);
       } else {
