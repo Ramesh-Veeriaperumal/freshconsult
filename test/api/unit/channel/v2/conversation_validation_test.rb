@@ -133,5 +133,166 @@ module Channel::V2
       assert errors.include?('Updated at start_time_lt_now')
       Account.unstub(:current)
     end
+
+    def test_twitter_dm_as_note
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        body: Faker::Lorem.paragraph,
+        notify_emails: [Agent.first.user.email],
+        private: false,
+        source: 5,
+        twitter: {
+          tweet_id: Faker::Number.number(3).to_i,
+          tweet_type: 'dm',
+          support_handle_id: Faker::Number.number(4).to_i,
+          stream_id: Faker::Number.number(3).to_i
+        }
+      }
+      conversation = ConversationValidation.new(controller_params, nil)
+      assert conversation.valid?(:create)
+      Account.unstub(:current)
+    end
+
+    def test_twitter_mention_as_note
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        body: Faker::Lorem.paragraph,
+        notify_emails: [Agent.first.user.email],
+        private: false,
+        source: 5,
+        twitter: {
+          tweet_id: Faker::Number.number(3).to_i,
+          tweet_type: 'mention',
+          support_handle_id: Faker::Number.number(4).to_i,
+          stream_id:Faker::Number.number(3).to_i
+        }
+      }
+      conversation = ConversationValidation.new(controller_params, nil)
+      assert conversation.valid?(:create)
+      Account.unstub(:current)
+    end
+
+    def test_twitter_tweet_type_not_present
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        body: Faker::Lorem.paragraph,
+        notify_emails: [Agent.first.user.email],
+        private: false,
+        source: 5,
+        twitter: {
+          tweet_id: Faker::Number.number(3).to_i,
+          support_handle_id: Faker::Number.number(4).to_i,
+          stream_id: Faker::Number.number(3).to_i
+        }
+      }
+      conversation = ConversationValidation.new(controller_params, nil)
+      refute conversation.valid?(:create)
+      errors = conversation.errors.full_messages
+      assert errors.include?('Twitter datatype_mismatch')
+      Account.unstub(:current)
+    end
+
+    def test_twitter_invalid_tweet_type
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        body: Faker::Lorem.paragraph,
+        notify_emails: [Agent.first.user.email],
+        private: false,
+        source: 5,
+        twitter: {
+          tweet_id: Faker::Number.number(3).to_i,
+          tweet_type: 'post',
+          support_handle_id: Faker::Number.number(4).to_i,
+          stream_id: Faker::Number.number(3).to_i
+        }
+      }
+      conversation = ConversationValidation.new(controller_params, nil)
+      refute conversation.valid?(:create)
+      errors = conversation.errors.full_messages
+      assert errors.include?('Twitter not_included')
+      Account.unstub(:current)
+    end
+
+    def test_twitter_tweet_id_not_present
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        body: Faker::Lorem.paragraph,
+        notify_emails: [Agent.first.user.email],
+        private: false,
+        source: 5,
+        twitter: { 
+          tweet_type: 'mention',
+          support_handle_id: Faker::Number.number(4).to_i,
+          stream_id: Faker::Number.number(3).to_i
+        }
+      }
+      conversation = ConversationValidation.new(controller_params, nil)
+      refute conversation.valid?(:create)
+      errors = conversation.errors.full_messages
+      assert errors.include?('Twitter datatype_mismatch')
+      Account.unstub(:current)
+    end
+
+    def test_twitter_stream_id_not_present
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        body: Faker::Lorem.paragraph,
+        notify_emails: [Agent.first.user.email],
+        private: false,
+        source: 5,
+        twitter: {
+          tweet_id: Faker::Number.number(3).to_i,
+          tweet_type: 'dm',
+          support_handle_id: Faker::Number.number(4).to_i
+        }
+      }
+      conversation = ConversationValidation.new(controller_params, nil)
+      refute conversation.valid?(:create)
+      errors = conversation.errors.full_messages
+      assert errors.include?('Twitter datatype_mismatch')
+      Account.unstub(:current)
+    end
+
+    def test_twitter_invalid_support_handle_id
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        body: Faker::Lorem.paragraph,
+        notify_emails: [Agent.first.user.email],
+        private: false,
+        source: 5,
+        twitter: {
+          tweet_id: Faker::Number.number(3).to_i,
+          tweet_type: 'mention',
+          support_handle_id: true,
+          stream_id: Faker::Number.number(3).to_i
+        }
+      }
+      conversation = ConversationValidation.new(controller_params, nil)
+      refute conversation.valid?(:create)
+      errors = conversation.errors.full_messages
+      assert errors.include?('Twitter datatype_mismatch')
+      Account.unstub(:current)
+    end
+
+    def test_twitter_ticket_invalid_source_type
+      Account.stubs(:current).returns(Account.first)
+      controller_params = {
+        body: Faker::Lorem.paragraph,
+        notify_emails: [Agent.first.user.email],
+        private: false,
+        source: 2,
+        twitter: {
+          tweet_id: Faker::Number.number(3).to_i,
+          tweet_type: 'mention',
+          support_handle_id: Faker::Number.number(4).to_i,
+          stream_id: Faker::Number.number(3).to_i
+        }
+      }
+      conversation = ConversationValidation.new(controller_params, nil)
+      refute conversation.valid?(:create)
+      errors = conversation.errors.full_messages
+      assert errors.include?('Twitter invalid_field')
+      Account.unstub(:current)
+    end
   end
 end

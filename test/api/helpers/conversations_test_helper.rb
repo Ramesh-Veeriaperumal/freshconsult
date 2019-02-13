@@ -62,6 +62,10 @@ module ConversationsTestHelper
     }
   end
 
+  def show_note_pattern(expected_output, note)
+    v2_note_pattern(expected_output, note).merge(source_additional_info: source_additional_info(note))
+  end
+
   def private_note_pattern(expected_output, note)
     if expected_output[:from_email]
       email_config = @account.email_configs.where(reply_email: expected_output[:from_email]).first
@@ -275,5 +279,34 @@ module ConversationsTestHelper
   def private_ticket_summary_pattern(expected_output, note)
     response_pattern = ticket_summary_pattern(expected_output, note).merge(
                         cloud_files: Array)
+  end
+
+  def tweet_info_hash(note)
+    return {} unless note.tweet? && note.tweet && note.tweet.twitter_handle
+
+    handle = note.tweet.twitter_handle
+    tweet_hash = {
+      id: note.tweet.tweet_id.to_s,
+      type: note.tweet.tweet_type,
+      support_handle_id: handle.twitter_user_id.to_s,
+      support_screen_name: handle.screen_name,
+      requester_screen_name: note.notable.requester.twitter_id
+    }
+    tweet_hash[:stream_id] = note.tweet.stream_id if @channel_v2_api
+    tweet_hash
+  end
+
+  def source_additional_info(note)
+    source_info = {}
+    tweet = tweet_info_hash(note)
+    source_info[:twitter] = tweet if tweet.present?
+    source_info.presence
+  end
+
+  def validation_error_pattern(value)
+    {
+      description: 'Validation failed',
+      errors: [value]
+    }
   end
 end

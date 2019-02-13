@@ -131,6 +131,10 @@ class AccountAdditionalSettings < ActiveRecord::Base
     save
   end
 
+  def reset_ocr_account_id
+    additional_settings.delete(:ocr_account_id)
+  end
+
   private
 
   def clear_cache

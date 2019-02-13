@@ -52,7 +52,7 @@ module SimpleCovSetup
   ].freeze
 
   IGNORE_FILES = %w[lib/attachment_helper.rb lib/meta_data_check/meta_data_check_methods.rb
-                    lib/guid.rb lib/freshops_tools_worker_methods.rb].freeze
+                    lib/guid.rb lib/freshops_tools_worker_methods.rb app/drops].freeze
 
   SimpleCov.start do
     # Adding exact filters

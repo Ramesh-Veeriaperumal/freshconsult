@@ -49,6 +49,7 @@ class Helpdesk::Note < ActiveRecord::Base
       "created_at"  =>   created_at.to_i,
       "kind"        =>   kind,
       "ticket_id"   =>   (notable_type == "Helpdesk::Ticket") ? notable.display_id : "",
+      "imported"    =>   import_note ? true : false,
       # @ARCHIVE TODO Currently setting archive as false. 
       # Will change it once "archiving tickets" feature is rolled out.
       "archive"     =>   notable.archive || false,
