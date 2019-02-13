@@ -1,4 +1,7 @@
 module SAAS::DropFeatureData
+  include Marketplace::ApiMethods
+  include Marketplace::HelperMethods
+
   def handle_multi_timezone_drop_data
     UpdateTimeZone.perform_async(time_zone: account.time_zone)
   end
@@ -81,6 +84,33 @@ module SAAS::DropFeatureData
     account.groups.capping_enabled_groups.find_each do |group|
       group.capping_limit = 0
       group.save
+    end
+  end
+
+  def handle_marketplace_drop_data
+    account.installed_applications.each do |installed_application|
+      begin
+        account.destroy_all_slack_rule if installed_application.slack?
+        installed_application.destroy
+      rescue => e
+        Rails.logger.error "Exception while destroying the installed app: \
+        #{installed_application.id}, app_id: #{application_id}, Error: \
+        #{e.message}, #{e.backtrace.join("\n\t")}"
+      end
+    end
+    installed_apps = fetch_installed_extensions(account.id,
+      Marketplace::Constants::EXTENSION_TYPE.values)
+    return if installed_apps.blank?
+    
+    installed_apps.map { |ext| ext['extension_id'] }.each do |extension_id|
+      @extension = fetch_extension_details(extension_id)
+      if @extension.present?
+        log_on_error uninstall_extension({
+          extension_id: extension_id,
+          version_id: version,
+          account_full_domain: account.full_domain
+        }.merge!(paid_app_params))
+      end
     end
   end
 

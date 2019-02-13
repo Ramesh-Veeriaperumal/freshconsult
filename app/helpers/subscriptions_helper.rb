@@ -18,7 +18,7 @@ module SubscriptionsHelper
     "estate jan 17" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "agent_collision", "auto_ticket_assignment",
        "role_dashboard", "enterprise_reports", "custom_dashboard"],
     "forest jan 17" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "custom_mailbox", "advanced_phone_integration",  "custom_data_center" ],
-    
+
     "sprout jan 19" => [ "email_ticketing", "ticket_dispatch_automation" ,"knowledge_base", "basic_social", "freshchat", "freshcaller", ],
     "blossom jan 19" => [ "everything_in_sprout", "multiple_mailboxes", "app_gallery", "time_event_automation", "custom_domain", "satisfaction_survey", "ticket_templates", "helpdesk_report", "custom_ticket_fields_and_views", "agent_collision"],
     "garden jan 19" => [ "everything_in_blossom", "m_k_base", "dynamic_email_alert", "sla_reminders", "forums", "agent_performance_report", "scheduled_reports", "custom_surveys", "custom_apps", "timesheets"],

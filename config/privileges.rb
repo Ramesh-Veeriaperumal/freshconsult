@@ -623,7 +623,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"api_role", :only => [:index, :show]
     resource :"api_integrations/cti", :only => [:create, :index]
     resource :"email_preview"
-    resource :"admin/freshchat", :only => [:index, :create, :update, :toggle]
+    resource :"admin/freshchat", :only => [:index, :create, :update, :toggle, :signup]
     resource :"admin/freshmarketer", only: %i[index link unlink enable_integration disable_integration]
   end
 

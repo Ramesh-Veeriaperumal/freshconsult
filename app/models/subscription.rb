@@ -30,12 +30,33 @@ class Subscription < ActiveRecord::Base
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_17],
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_jan_19],
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:garden_omni_jan_19],
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19],
+                      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_19],
                       SubscriptionPlan::SUBSCRIPTION_PLANS[:forest_jan_19]].freeze
 
   AUTOPILOT_FILEDS = ["state", "next_renewal_at", "renewal_period", "amount", "subscription_plan_id", "agent_limit"]
 
-  
+  FRESHCALLER_PLAN_MAPPING = {
+    sprout_jan_19: 'sprout',
+    blossom_jan_19: 'sprout',
+    garden_jan_19: 'blossom',
+    garden_omni_jan_19: 'blossom',
+    estate_jan_19: 'garden',
+    estate_omni_jan_19: 'garden',
+    forest_jan_19: 'standard'
+  }.freeze
+
+  FRESHCHAT_PLAN_MAPPING = {
+      sprout_jan_19: '1101',
+      blossom_jan_19: '1101',
+      garden_jan_19: '1201',
+      garden_omni_jan_19: '1201',
+      estate_jan_19: '1301',
+      estate_omni_jan_19: '1301',
+      forest_jan_19: '1401'
+  }.freeze
+
   ACTIVE = "active"
   TRIAL = "trial"
   FREE = "free"

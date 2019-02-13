@@ -25,7 +25,8 @@ module ChatHelper
       SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
       SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic],
       SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
-      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19]
+      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19],
+      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_19]
     ].freeze
 
   def chat_activated?

@@ -373,4 +373,41 @@ module Marketplace::ApiMethods
         exception_logger("Exception type #{e.class},URL: #{api_payload} #{e.message}\n#{e.backtrace}")
       end
     end
+
+    def list_api_url(account_id)
+      Marketplace::ApiEndpoint::ENDPOINT_URL[:installed_extensions] % { 
+        product_id: Marketplace::Constants::PRODUCT_ID,
+        account_id: account_id
+      }
+    end
+
+    def show_api_url(extension_id)
+      Marketplace::ApiEndpoint::ENDPOINT_URL[:extension_details]  % { 
+        product_id:  Marketplace::Constants::PRODUCT_ID,
+        extension_id: extension_id 
+      }
+    end
+
+    def fetch_installed_extensions(account_id, types)
+      api_url = list_api_url(account_id)
+      list_url = account_payload(api_url, {}, { type: types.join(',') })
+      log_on_error get_api(list_url, MarketplaceConfig::ACC_API_TIMEOUT)
+    rescue *FRESH_REQUEST_EXP => e
+      exception_logger("Exception type #{e.class}, URL: #{list_url} \
+        #{e.message}\n#{e.backtrace}")
+    end
+
+    def fetch_extension_details(extension_id)
+      show_url = payload(show_api_url(extension_id), {})
+      log_on_error get_api(show_url, MarketplaceConfig::GLOBAL_API_TIMEOUT)
+    rescue *FRESH_REQUEST_EXP => e
+      exception_logger("Exception type #{e.class}, URL: #{show_url} \
+        #{e.message}\n#{e.backtrace}")
+    end
+
+    def log_on_error(response)
+      return response.body unless error_status?(response)
+      exception_logger("Error in fetching installed app caller method: \
+        #{caller[0]}, error: #{response.inspect}")
+    end
 end

@@ -129,11 +129,11 @@
       },
       :integrations                            =>   {
         :url                           =>   "/integrations/applications",
-        :privilege                     =>   privilege?(:admin_tasks) && !current_account.features?(:marketplace)
+        :privilege                     =>   privilege?(:admin_tasks) && current_account.launched?(:native_apps)
       },
       :apps                            =>   {
         :url                           =>   "/integrations/applications",
-        :privilege                     =>   privilege?(:admin_tasks) && current_account.features?(:marketplace)
+        :privilege                     =>   privilege?(:admin_tasks) && current_account.marketplace_enabled? && !current_account.launched?(:native_apps)
       },
       :account                         =>   {
         :url                           =>   "/account",

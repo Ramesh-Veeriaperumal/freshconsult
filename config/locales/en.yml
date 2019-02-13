@@ -8002,10 +8002,11 @@ en:
     paid_apps_trial_info: "Paid Apps are not available for trial at this point of time. Please contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> for further information."
     app_price: "%{price} / %{addon_type} / month"
     paid_app: PAID
-    no_payment_info: We do not have your payment details on file. Please update them to proceed further. <br>
+    no_payment_info: Please update your payment details to proceed further. <br>
     update_payment_info: Update payment info
-    payment_trial_info: This is a paid app with a %{trial_period} day trial period. Once the trial period is over, you will be charged %{price} / %{addon_type} / month. Press Ok to install the app. <br>  %{payment_ok_btn}
-    payment_ok: You will be charged %{price} / %{addon_type} / month for this app. This will add up to <b>%{estimate}</b> for your plan period. Press Ok to install the app. <br>  %{payment_ok_btn}
+    payment_ok: You will be charged %{price} / %{addon_type} / month for this app which will add up to <b>%{estimate}</b> for your plan period. Press <b>Ok</b> to install the app. <br>  %{payment_ok_btn}
+    payment_trial: You will be charged %{price} / %{addon_type} / month for this app once you subscribe for a paid Freshdesk plan. Press <b>Ok</b> to install the app. <br>  %{payment_ok_btn}
+    payment_contact_support: "We do not have your payment details, please contact Freshdesk's Sales or Support team to proceed further."
     v1_incompatible: "Not compatible in Old Freshdesk"
     v2_incompatible: "Not compatible in Mint Experience"
     unsupported_apps: "Unavailable apps"
@@ -12421,6 +12422,11 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
+      error:
+        already_present: 'Account already registered with your email in Freshchat'
+        already_logged_in: 'Already logged in to Freshchat'
+        unable_to_reach_freshchat: 'Unable to talk to Freshchat servers please contact support '
+
   mailer_notifier:
     hi: 'Hi,'
     hey_user: 'Hey %{user_name}'

@@ -119,7 +119,8 @@ class Admin::Freshcaller::SignupController < Admin::AdminController
           domain_url: "#{protocol}#{current_account.full_domain}",
           access_token: current_user.single_access_token
         }
-      },
+      }.merge(plan_name: Subscription::FRESHCALLER_PLAN_MAPPING[current_account.plan_name])
+        .reject { |_key, val| val.nil? },
       session_json: current_account.conversion_metric.try(:session_json),
       source: 'Freshdesk',
       medium: 'in-product',

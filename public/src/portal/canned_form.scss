@@ -12,6 +12,7 @@ $default-white: #FFF !default;
 
 body {
   margin: 0;
+  opacity: 1;
   line-height: 2;
   color: $black;
   font-size: 16px;
@@ -38,7 +39,7 @@ header {
   .logo {
     margin: 0px;
   }
-  .header {
+  .preview {
     height: 90px;
     background-color: $primary-color;
     box-shadow: 0 -2px 6px 0 rgba(0,0,0,0.05);

@@ -9,6 +9,7 @@ class Account < ActiveRecord::Base
   before_update :generate_encryption_key, if: :enabled_custom_encrypted_fields?
   before_update :delete_encrypted_fields, if: :disabled_custom_encrypted_fields?
   before_update :toggle_parent_child_infra, :if => :parent_child_dependent_features_changed?
+  before_update :clear_ocr_data, if: :ocr_feature_disabled?
   before_destroy :backup_changes, :make_shard_mapping_inactive
 
   after_create :populate_features, :change_shard_status, :make_current
@@ -200,6 +201,13 @@ class Account < ActiveRecord::Base
     AccountEncryptionKeys.update id.to_s, { hipaa_key: encryption_key }
   end
 
+  def clear_ocr_data
+    reset_ocr_account_id
+    groups.ocr_enabled_groups.each do |group|
+      group.turn_off_automatic_ticket_assignment
+    end
+  end
+
   protected
 
     def set_default_values
@@ -275,6 +283,10 @@ class Account < ActiveRecord::Base
 
     def delete_encrypted_fields
       RemoveEncryptedFieldsWorker.perform_async
+    end
+
+    def ocr_feature_disabled?
+      omni_channel_routing_feature_changed? && !omni_channel_routing_enabled?
     end
 
   private

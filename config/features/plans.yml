@@ -213,6 +213,12 @@
     :inherits:
       - :blossom_jan_19
     :exclude: []
+  :garden_omni_jan_19:
+    :name: Garden Omni Channel
+    :features: []
+    :inherits:
+      - :garden_jan_19
+    :exclude: []
   :estate_jan_19:
     :name: Estate
     :features:
@@ -250,6 +256,12 @@
       - :segments
     :inherits:
       - :garden_jan_19
+    :exclude: []
+  :estate_omni_jan_19:
+    :name: Estate Omni Channel
+    :features: []
+    :inherits:
+      - :estate_jan_19
     :exclude: []
   :forest_jan_19:
     :name: Forest

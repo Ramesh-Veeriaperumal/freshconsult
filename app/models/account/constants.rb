@@ -210,6 +210,11 @@ class Account < ActiveRecord::Base
     value[:features]
   end.flatten!.uniq!.to_set
 
+  # Pricing plan 2019 migration changes
+  [:marketplace, :fa_developer].each do |feature|
+    DB_TO_BITMAP_MIGRATION_FEATURES_LIST.add(feature)
+  end
+  
   # required for phase 2 of DB to bitmap migration.
   FEATURE_NAME_CHANGES = {
     twitter: :advanced_twitter,
