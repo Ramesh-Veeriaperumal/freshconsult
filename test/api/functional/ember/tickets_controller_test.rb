@@ -1120,6 +1120,7 @@ module Ember
     def test_create_from_email_with_bot_configuration
       Account.any_instance.stubs(:support_bot_configured?).returns(true)
       Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      Bot.any_instance.stubs(:email_channel).returns(true)
       @bot = @account.main_portal.bot || create_test_email_bot({email_channel: true})
       @account.reload
       ticket = create_ticket({source: 1})
@@ -1128,6 +1129,7 @@ module Ember
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
       assert_equal 1, ::Bot::Emailbot::SendBotEmail.jobs.size 
+      Bot.any_instance.unstub(:email_channel)
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
     end
