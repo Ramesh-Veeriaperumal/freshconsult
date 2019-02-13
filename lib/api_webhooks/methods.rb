@@ -4,7 +4,7 @@ module ApiWebhooks::Methods
 	include Va::Util
 
   def allow_api_webhook?
-    (!zendesk_import? && !freshdesk_webhook?)
+    (!zendesk_import? && !freshdesk_webhook? && import_id.blank?)
   end
 
 	def subscribe_event_create 

@@ -4,7 +4,13 @@ class ContactDecorator < ApiDecorator
   delegate  :id, :active, :address, :company_name, :deleted, :description,
             :customer_id, :email, :job_title, :language, :mobile,
             :name, :phone, :time_zone, :twitter_id, :fb_profile_id, :external_id,
-            :avatar, :whitelisted, :unique_external_id, :fb_profile_id, to: :record
+            :avatar, :whitelisted, :unique_external_id, :fb_profile_id, :import_id,
+            :deleted_at, :blocked, :blocked_at, :whitelisted, :parent_id, :extn,
+            :preferences, :password_salt, :user_role, :delta, :privileges,
+            :crypted_password, :last_login_at, :current_login_at, :history_column,
+            :last_login_ip, :current_login_ip, :login_count, :second_email,
+            :failed_login_count, :last_seen_at, :posts_count, to: :record
+
   delegate :company_id, :client_manager, to: :default_company, allow_nil: true
   delegate :multiple_user_companies_enabled?, :unique_contact_identifier_enabled?, to: 'Account.current'
 
@@ -19,6 +25,7 @@ class ContactDecorator < ApiDecorator
     @name_mapping = options[:name_mapping]
     @company_name_mapping = options[:company_name_mapping]
     @sideload_options = options[:sideload_options] || []
+    @additional_info = options[:additional_info]
   end
 
   def tags
@@ -128,7 +135,11 @@ class ContactDecorator < ApiDecorator
       name: name,
       email: email   
     }
-  end 
+  end
+
+  def channel_v2_attributes
+    channel_v2_hash if channel_v2_api? && @additional_info
+  end
 
   private
 
@@ -188,6 +199,35 @@ class ContactDecorator < ApiDecorator
                                        parent_id: record.parent_id)
       response_hash[:custom_fields] = custom_fields if custom_fields.present?
       response_hash.merge(company_info)
+    end
+
+    def channel_v2_hash
+      {
+        import_id: import_id,
+        deleted_at: deleted_at,
+        blocked: blocked,
+        blocked_at: blocked_at,
+        whitelisted: whitelisted,
+        external_id: external_id,
+        parent_id: parent_id,
+        crypted_password: crypted_password,
+        password_salt: password_salt,
+        last_login_at: last_login_at,
+        current_login_at: current_login_at,
+        last_login_ip: last_login_ip,
+        current_login_ip: current_login_ip,
+        login_count: login_count,
+        failed_login_count: failed_login_count,
+        second_email: second_email,
+        last_seen_at: last_seen_at,
+        preferences: preferences,
+        posts_count: posts_count,
+        user_role: user_role,
+        delta: delta,
+        privileges: privileges,
+        extn: extn,
+        history_column: history_column
+      }
     end
 
     def company_info
