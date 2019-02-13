@@ -78,6 +78,8 @@ class SAAS::SubscriptionActions
       account.add_features((features - ONLY_BITMAP_FEATURES))
       # drop chat routing data in freshchat table if downgrade to non chat routing plan
       disable_chat_routing(account) unless account.features?(:chat_routing)
+
+      account.reload
     end
 
     def remove_chat_feature(account)
