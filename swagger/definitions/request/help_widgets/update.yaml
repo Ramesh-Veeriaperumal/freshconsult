@@ -1,5 +1,7 @@
 type: object
 properties:
+  product_id:
+    type: integer
   name:
     type: string
   settings:
@@ -10,14 +12,14 @@ properties:
         description: Welcome message
       button_text:
         type: string
-        description: Text on the button
+        description: Text on the button ( default = Help )
       components:
         type: object
         properties:
           contact_form:
             type: boolean
             description: Contact form is On or Off On - true / Off - false
-          suggestion:
+          solution_articles:
             type: boolean
             description: Solution articles is On or Off On - true / Off - false
       contact_form:
@@ -25,8 +27,8 @@ properties:
         properties:
           form_type:
             type: integer
-            description: 1- simple form 2- form with ticket fields
-          form_tittle:
+            description: 1 - simple form 2 - form with ticket fields ( default = 1 )
+          form_title:
             type: string
             description: Title of the form
           form_submit_message:
@@ -43,23 +45,32 @@ properties:
         properties:
           position:
             type: integer
-            description: 1- Bottom_left 2- Bottom_right
+            description: 1 - Bottom_left 2 - Bottom_right ( default = 1 )
           offset_from_bottom:
             type: integer
-            description: Offset from bottom in px
+            description: Offset from bottom in px ( default = 30px )
           offset_from_right:
             type: integer
-            description: Offset from right in px
+            description: Offset from right in px ( default = 30px )
           offset_from_left:
             type: integer
-            description: Offset from left in px
-          height:
+            description: Offset from left in px ( default = 30px )
+          color_schema:
             type: integer
-            description: height of the widget in px
+            description: 1-gradient 2-solid color
+          gradient:
+            type: integer
+            description: 1-6
+          pattern:
+            type: integer
+            description: 1-6
           theme_color:
             type: string
-            description: theme of the widget
+            description: theme of the widget ( default color = 1054da )
           button_color:
             type: string
-            description: Color of the buttons in widget
+            description: Color of the buttons in widget ( default color = 16193e )
+      widget_flow:
+        type: integer
+        description: 1-Show contact options only after customers reads solution article 2-Show contact options upfront, along with solution articles
 

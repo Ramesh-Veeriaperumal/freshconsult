@@ -13,6 +13,7 @@ module HelpWidgetsTestHelper
                                 account_id: @account.id,
                                 product_id: product_id,
                                 settings: options[:settings] || settings_hash)
+
     test_widget.save()
     test_widget
   end
@@ -50,9 +51,11 @@ module HelpWidgetsTestHelper
       position: 1,
       offset_from_bottom: 30,
       offset_from_left: 30,
-      height: 600,
-      theme_color: '#1054da',
-      button_color: '#16193e'
+      color_schema: 1,
+      pattern: 1,
+      gradient: 1,
+      theme_color: "#008969",
+      button_color: "#12344d"
     }
   end
 

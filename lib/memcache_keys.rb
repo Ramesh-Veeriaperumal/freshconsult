@@ -226,10 +226,8 @@ module MemcacheKeys
   CONTACT_FILTERS = 'CONTACT_FILTERS:%{account_id}'.freeze
 
   COMPANY_FILTERS = 'COMPANY_FILTERS:%{account_id}'.freeze
-  
-  ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
 
-  HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"
+  ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
 
   HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"
 

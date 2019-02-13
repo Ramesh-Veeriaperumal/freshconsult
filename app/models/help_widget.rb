@@ -19,7 +19,15 @@ class HelpWidget < ActiveRecord::Base
   def ticket_fields_form?
     settings[:contact_form][:form_type] == HelpWidgetConstants::FORM_TYPES[:ticket_fields_form]
   end
-  
+
+  def contact_form_enabled?
+    settings[:components][:contact_form]
+  end
+
+  def solution_articles_enabled?
+    settings[:components][:solution_articles]
+  end
+
   private
 
     def upload_configs
