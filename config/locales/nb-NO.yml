@@ -1,5 +1,5 @@
-nb-NO: 
-  meta: 
+nb-NO:
+  meta:
     language_name: 'Norwegian'
   validation:
     required: "This field is required."
@@ -2449,6 +2449,7 @@ nb-NO:
   right: Høyre
   footer:
     helpdesk_software: "Kundesupport Software"
+    helpdesk_software_link: "https://freshdesk.no/"
     by_freshdesk: "levert av Freshdesk"
   tkt_unattended_in_grp: "Saker som ikke er ivaretatt i gruppen"
   agent_solves_tkt: "Agenten løser saken"

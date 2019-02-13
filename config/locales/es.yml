@@ -999,7 +999,7 @@ es:
         last_stream_delete_alert: >-
           ¿Estás seguro de querer eliminar esta cadena de twitter? No podrás ver
           las cadenas de tus clientes si no tienes asociadas cadenas por
-          defecto. 
+          defecto.
       twitter_streams:
         define_stream: Definir Cadena Social
         stream_brief: >-
@@ -1492,7 +1492,7 @@ es:
             lleguen a tu cuenta de eBay desde el departamento de soporte. Una
             vez configurado, las consultas de los clientes de eBay se
             convertirán automáticamente en tickets. También puedes responder
-            directamente desde Freshdesk. 
+            directamente desde Freshdesk.
       index:
         title: Cuentas de comercio electrónico
         renew: Renovar clave
@@ -1836,7 +1836,7 @@ es:
         help_info_4: >-
           las reglas de Supervisor actuan de modo secuencial, por esto el orden
           de las reglas es importante. Una regla puede causar ciertas acciones
-          que activen las siguientes reglas 
+          que activen las siguientes reglas
       new:
         title: Supervisor - Nueva Regla
       edit:
@@ -2039,7 +2039,7 @@ es:
           portales de freshdesk
         customer_portal_ssl_warning: >-
           Debido a que se configura una URL de helpdesk personalizada para su
-          cuenta, pasará a 
+          cuenta, pasará a
         multiple_product_ssl_warning: SSL no será aplicable si se configuran múltiples productos.
         enabled: Habilitado
         disabled: Deshabilitado
@@ -2658,7 +2658,7 @@ es:
       bulk_merge_success: >-
         Los tickets con los ids %{merged_tickets} se unieron a <a
         href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject}
-        #%{target_ticket}</a> 
+        #%{target_ticket}</a>
     general:
       outbound_limit_per_day_exceeded: >-
         You can send a maximum of 5 outbound emails a day per account during the
@@ -2903,7 +2903,7 @@ es:
       info1: >-
         La importación se ha completado correctamente. Puedes abrir el servicio
         de ayuda e ir a Cliente->%{uc_type} para ver el %{type} recién
-        agregado. 
+        agregado.
       info2: >-
         No hemos podido importar todos los %{type} del archivo CSV enviado. Aquí
         está el resumen:
@@ -3248,7 +3248,7 @@ es:
       ticket_merge:
         short: >-
           {{user_path}} combinó el ticket {{notable_path}} con
-          {{merge_ticket_path}} 
+          {{merge_ticket_path}}
         long: >-
           {{user_path}} combinó el ticket {{notable_path}} con
           {{merge_ticket_path}}
@@ -3500,7 +3500,7 @@ es:
       new_topic:
         short: 'Crear un nuevo topico {{user_path}}'
         long: >-
-          crear un nuevo topico {{user_path}} {{notable_path}} en 
+          crear un nuevo topico {{user_path}} {{notable_path}} en
           {{forum_name}}
       published_topic:
         short: 'El tema de {{user_path}} ''{{notable_path}}'' ha sido publicado'
@@ -3756,7 +3756,7 @@ es:
       Una vez activada, los Tickets asignados a este grupo se distribuirán entre
       los agentes en turnos rotativos. Si desea asignar manualmente las entradas
       o enviarlos automáticamente mediante el Despachador o Supervisor, Ud.
-      puede desactivar esta opción. 
+      puede desactivar esta opción.
     page_not_found: >-
       No se encuentra el grupo. Puede que se haya eliminado o que la URL esté
       mal escrita.
@@ -4126,7 +4126,7 @@ es:
       why_we_love_cookies: Por qué nos gustan las Cookies
       cookie_dialog_info1: >-
         Utilizamos cookies para tratar de darle una mejor experiencia en
-        Freshdesk. 
+        Freshdesk.
       cookie_dialog_info2: >-
         Usted puede aprender más acerca de qué tipo de cookies se usarán, por
         qué y cómo en nuestra %{privacy_link}. Si no te gustan  las cookies, o
@@ -4134,12 +4134,12 @@ es:
         completo también. Ten en cuenta que en nuestro soporte utilizamos
         bastante las cookies (amamos los choco-chips), y algunas partes del
         soporte pueden no funcionar correctamente si se deshabilitan las
-        cookies. 
+        cookies.
       cookie_dialog_info3: >-
         También daremos por supuesto que estás de acuerdo con la manera en que
         usamos las cookies y las acepta, como se describe en nuestra
         %{privacy_link}, a menos que decidas desactivarlas por completo a través
-        de su navegador. 
+        de su navegador.
       privacy_policy: Política de Privacidad
     no_topics_in_this_view: ~ No hay temas en esta vista ~
     reported: declarado
@@ -4684,7 +4684,7 @@ es:
       <b>publicarse</b> directamente.
     info16: >-
       Los artículos <b>publicados</b> se verán en el portal de autoservicio y
-      también aparecerán en los resultados de búsqueda. 
+      también aparecerán en los resultados de búsqueda.
     info17: >-
       El <b>borrador</b> de los artículos solo lo podrán ver los agentes y solo
       aparecerán en sus resultados de búsqueda.
@@ -4739,7 +4739,7 @@ es:
       <b>Todos los borradores</b> mostrará todos los artículos con estado de
       borrador. Si hay una  configuración de portal múltiple, puedes filtrar los
       borradores por portales concretos con solo hacer una selección en el menú
-      desplegable. 
+      desplegable.
     kbase_email_info: >-
       Todos los correos electrónicos que envíen los agentes a <b>%{email}</b> se
       almacenarán aquí como borradores.
@@ -4912,7 +4912,7 @@ es:
           ticket.<br /><br />Si has activado múltiples idiomas en tu helpdesk,
           puedes crear esta notificación de manera específica para cada idioma.
           El <i class="common-icon-outdated"></i> icono indica si la traducción
-          de la notificación a otros idiomas ha quedado obsoleta. 
+          de la notificación a otros idiomas ha quedado obsoleta.
       agent_template_3:
         topic: Ticket Asignado a un Agente
         info1: >-
@@ -4922,7 +4922,7 @@ es:
           <br/><br/>Si has activado múltiples idiomas en tu helpdesk, puedes
           crear esta notificación de manera específica para cada idioma. El <i
           class="common-icon-outdated"></i> icono indica si la traducción de la
-          notificación a otros idiomas ha quedado obsoleta. 
+          notificación a otros idiomas ha quedado obsoleta.
       agent_template_11:
         topic: Ticket sin atender en un Grupo
         info1: >-
@@ -5537,7 +5537,7 @@ es:
     performed: ' realizado '
     system_activity_timestamp: >-
       <strong class='muted'>Sistema</strong> %{system_rule} <abbr
-      data-livestamp='%{timestamp}'></abbr> (%{note_date}) 
+      data-livestamp='%{timestamp}'></abbr> (%{note_date})
     requestor_info: Información del solicitante
     view_twitter: Ver en Twitter
     view_facebook: Ver en Facebook
@@ -6569,7 +6569,7 @@ es:
     custom_apps: Aplicaciones personalizadas
     no_custom_apps: >-
       No tienes aplicaciones personalizadas instaladas. Crea e instala una nueva
-      aplicación personalizada con solo hacer clic en 
+      aplicación personalizada con solo hacer clic en
     all_categories: Todas las categorías
     in_dev_apps: Aplicaciones en desarrollo
     all: Todo
@@ -6876,7 +6876,7 @@ es:
     new_freshplug: Nuevo FreshPlug
     no_freshplugs: >-
       No hay FreshPlugs instalados. Crea e instala un nuevo FreshPlug. Para
-      ello, haz clic en 
+      ello, haz clic en
     add_new_freshplug: Nuevo FreshPlug
     freshplugs:
       refresh: Actualizar
@@ -7253,7 +7253,7 @@ es:
         Combine los contactos de Freshdesk y Google (la última actualización
         tiene prioridad)
       import_later_success: >-
-        La importación de los contactos de Google se inició correctamente 
+        La importación de los contactos de Google se inició correctamente
         Recibirá un correo electrónico a %{email} una vez que haya finalizado.
       import_success_no_stats: Contactos de Google importados correctamente.
       import_problem: Problema al importar los contactos de Google.
@@ -7684,7 +7684,7 @@ es:
         la pone a disposición de los agentes.<br><br>Puedes buscar contactos de
         Batchbook usando sus direcciones de correo electrónico. Si existen
         múltiples contactos con la misma dirección, se mostrarán todos en una
-        lista.</p><br/> 
+        lista.</p><br/>
       desc: Traiga información de contacto de su cuenta en Batchbook Freshdesk
       detect_error: >-
         Imposible de detectar version de Batchbook, Porfavor verifique el
@@ -8009,7 +8009,7 @@ es:
         password: SSO Contraseña
         logmein_company_info: >-
           Para ver tu ID de Compañia ve a Centro Administrador->Grupo
-          Técnico->Configuracion Global->Ejemplo ASP.Net C# lado servidor 
+          Técnico->Configuracion Global->Ejemplo ASP.Net C# lado servidor
         logmein_sso_pwd_info: >-
           Para establecer la contraseña de inicio único de sesión (SSO), vaya al
           centro de administración -> grupo técnico -> configuración global ->
@@ -8033,7 +8033,7 @@ es:
       desc: >-
         Busca y administra las suscripciones de tu cuenta de monitor de
         campañas,  y traer ideas sobre las estadísticas de uso de los clientes
-        dentro de Freshdesk 
+        dentro de Freshdesk
       helptext: >-
         <h4>Ayuda para la integración de Campaign Monitor </h4><br/>Para
         integrar Campaign Monitor, deberá introducir tu clave API y el
@@ -8051,7 +8051,7 @@ es:
         client_id: ID de Cliente
         client_id_info: >-
           Para obtener la Id del cliente, sigue las instrucciones descritas en
-          http://www.campaignmonitor.com/api/getting-started/#clientid 
+          http://www.campaignmonitor.com/api/getting-started/#clientid
     icontact:
       label: IContact
       desc: >-
@@ -8068,7 +8068,7 @@ es:
           Para obtener la direccion URL de tu API vaya a la seccion
           https://app.icontact.com/icp/core/externallogin and copie la URL de la
           API URL que aparece en la sección &quot;Información de su
-          Cuenta&quot;. 
+          Cuenta&quot;.
     dropbox:
       label: DropBox
       desc: Adjunta y comparte tus datos/archivos de DropBox.
@@ -9470,7 +9470,7 @@ es:
         other: Agentes
       ticket_info: >-
         Crea un nuevo ticket o añade una nota a un ticket existente con notas y
-        grabación. 
+        grabación.
       add_note: Añadir Notas
       note_placeholder: Añade notas a la llamada...
       title: Convertir en ticket
@@ -10512,12 +10512,12 @@ es:
         puedes crear múltiples categorías para productos o equipos. Esto ayudará
         a dirigir conversaciones relevantes hacia todos los niveles superiores
         de las secciones y como administrador, podrás gestionar todo desde un
-        único lugar. 
+        único lugar.
       para3: >-
         Si tienes configurados portales para múltiples productos en tu cuenta
         Freshdesk, puedes elegir vincular una categoría para cada producto. Una
         vez hecho, los usuarios podrán ver esa categoría, sus foror y todos los
-        temas tanto desde tu portal principal como desde tu portal de producto. 
+        temas tanto desde tu portal principal como desde tu portal de producto.
       para4: Saber más sobre múltiples productos en Freshdesk.
     shared:
       topic:
@@ -11035,11 +11035,11 @@ es:
   reauthorize_facebook: Reautorizar su cuenta de Facebook
   twitter_reauth: >-
     Su canal de Twitter se cuentra inaccesible. parece que su usuario o password
-    cambiaron 
+    cambiaron
   reauthorize_twitter: Reautorizar su cuenta de Twitter
   ecommerce_reauth: >-
     Tu cuenta de comercio electrónico se encuentra inaccesible. Parece que su
-    token de autenticación ha caducado. 
+    token de autenticación ha caducado.
   reauthorize_ecommerce: Vuelve a autorizar tu cuenta de comercio electrónico.
   schedule_a_complimentary_session: Programar una reunión de cortesía
   choose_a_plan: Elija un plan
@@ -11518,10 +11518,10 @@ es:
     realtime: >-
       <b>La aplicación que alimenta la cadena se ha parado </b> debido a cambios
       que se han producido en la cuenta de Facebook <a href='%{realtime_url}' >
-      Autoriza de nuevo y Activa </a> 
+      Autoriza de nuevo y Activa </a>
   import_user_notification: >-
     Puedes enviar el correo de activación de usuario a los contactos importados
-    desde la pestaña Clientes. 
+    desde la pestaña Clientes.
   what_is_cvv: Qué es cw?
   pro_details: >-
     Todas las funciones del Plan &quot;Basico&quot; más Automatización de
@@ -12434,6 +12434,7 @@ es:
   right: Derecha
   footer:
     helpdesk_software: Software de servicio de asistencia
+    helpdesk_software_link: " https://freshdesk.com/es"
     by_freshdesk: por Freshdesk
     submit_feedback: Enviar informacion
     footer_feedback_subject_placeholder: ¿Podrías decirnos como mejorar Freshdesk?
@@ -12461,7 +12462,7 @@ es:
     usuario y contraseña de Google
   portal_customizer_anon_for_t: >-
     Active esta función si quiere que sus clientes puedan conectarse usando su
-    usuario y contraseña de Twitter 
+    usuario y contraseña de Twitter
   portal_customizer_anon_for_f: >-
     Activa esta caracteristica si quieres que tus clientes sean capaces de
     entrar usando su nombre y clave de Facebook.
@@ -13697,7 +13698,7 @@ es:
         message_thread_time: Hora de la cadena de mensajes
         message_thread_time_info: >-
           El tiempo máximo para considerar los mensajes del mismo usuario como
-          en la cadena  
+          en la cadena
         direct_messages: Importar <strong>&quot;Mensajes directos&quot;</strong> como tickets
         direct_messages_info: >-
           Freshdesk convertirá todos los mensajes directos en esta página de
@@ -14262,11 +14263,11 @@ es:
     Has alcanzado el número máximo de agentes a tiempo completo que permite tu
     suscripción. Debes eliminar uno de los agentes existentes a tiempo completo
     o <a href='/subscription'>comprar agentes adicionales</a> para la cuenta.
-    También puedes agregar agentes ocasionales a continuación. 
+    También puedes agregar agentes ocasionales a continuación.
   maximum_agents_msg: >-
     Has alcanzado el número máximo de agentes que permite tu suscripción. Debes
     eliminar uno de los agentes existentes o ponerte en contacto con tu
-    administrador de cuentas para comprar agentes adicionales. 
+    administrador de cuentas para comprar agentes adicionales.
   contact_without_email_id: Contacto con id de correo electrónico sólo se puede convertir en agente
   no_date_to_display: No hay datos que mostrar
   email_command_delimeter_length_error_msg: Proporcione al menos tres caracteres para el delimitador.
@@ -14589,7 +14590,7 @@ es:
     classic: Clásico
     confirm: >-
       ¿Está seguro de que desea aplicar el nuevo aspecto? Todas las
-      personalizaciones CSS se perderán. 
+      personalizaciones CSS se perderán.
 
 
       Consejo: Cree una copia con sus personalizaciones CSS que tiene
@@ -14681,7 +14682,7 @@ es:
     widget:
       ticket_info: >-
         Crea un nuevo ticket o añade una nota a un ticket existente con notas y
-        grabación. 
+        grabación.
       note_placeholder: Añade notas a la llamada...
       new_ticket: Guardado como un nuevo ticket
       save_to_existing: Grabado en un ticket existente
@@ -14737,7 +14738,7 @@ es:
     welcome_message: Hola! como podemos ayudar hoy ?
     thank_message: >-
       Gracias por chatear con nosotros, si tienes mas preguntas por favor vuelve
-      a contactarnos 
+      a contactarnos
     wait_message: >-
       Todos nuestros agentes estan ocupados ahora, Porfavor espera un momento
       para conectar
@@ -14765,7 +14766,7 @@ es:
     show_chat_hours: Mostrar chat
     show_chat_hours_msg: >-
       Configura el tiempo en el que te encontrarás online y disponible para
-      aceptar chats. 
+      aceptar chats.
     business_hours: Durante el horario comercial
     anytime: Siempre (24/7)
     business_calendar: Seleccionar Horario Comercial
@@ -15156,7 +15157,7 @@ es:
       necesitamos que se autorice de nuevo a la aplicación. <b>Por favor, ten en
       en cuenta que la aplicación en tu página de facebook se desactivará si no
       se autoriza de nuevo antes del 12 de Octubre</b> <br/> <a
-      href='%{page_tab_url}' >Autorizar de nuevo y Activar > </a> 
+      href='%{page_tab_url}' >Autorizar de nuevo y Activar > </a>
     page_tab_info: 'Por favor, autorice de nuevo su Página de Facebook'
     no_contact: Imposible conectar con los servidores de Facebook en este momento
     portal:

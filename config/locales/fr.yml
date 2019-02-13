@@ -186,8 +186,8 @@ fr:
           Motif : %{error_message}.<br><br>
 
           Contenu du message : <br>%{failed_content}</p>
-         
-         
+
+
     note_display:
       title: Message non remis
       failed_recipient: destinataire
@@ -329,11 +329,11 @@ fr:
   reauthorize_facebook: Réautorisez votre compte Facebook.
   twitter_reauth: >-
     Votre canal Twitter n'est pas accessible. Certaines informations semblent
-    avoir été modifiées récemment (nom d'utilisateur ou mot de passe). 
+    avoir été modifiées récemment (nom d'utilisateur ou mot de passe).
   reauthorize_twitter: Réautorisez votre compte twitter.
   ecommerce_reauth: >-
     Votre compte e-commerce est inaccessible. Votre jeton d'authentification
-    semble expiré. 
+    semble expiré.
   reauthorize_ecommerce: Ré-autorisez votre compte e-commerce.
   schedule_a_complimentary_session: Prendre rendez-vous pour une séance gratuite
   choose_a_plan: Choisir un forfait
@@ -545,7 +545,7 @@ fr:
         de votre menu déroulant. Décalez les éléments en appuyant sur Tab une
         fois ou deux. Nous nous baserons sur ce décalage pour convertir les
         éléments en menu déroulant, veuillez donc procéder avec précaution. <a
-        target='_blank' href=%{learn_more}>En savoir plus</a> 
+        target='_blank' href=%{learn_more}>En savoir plus</a>
       nested_field_helptext: ''
       dropdown_items_edit: Éléments des menus déroulants - Modifier
       drop_down_items_edit: Éléments des menus déroulants - Modifier
@@ -1326,7 +1326,7 @@ fr:
           éléments de votre menu déroulant. Décalez les éléments en appuyant sur
           Tab une fois ou deux. Nous nous baserons sur ce décalage pour
           convertir les éléments en menu déroulant. Veuillez donc procéder avec
-          précaution. <a target='_blank' href=%{learn_more}>En savoir plus</a> 
+          précaution. <a target='_blank' href=%{learn_more}>En savoir plus</a>
         dropdown_items_edit: Éléments des menus déroulants - Modifier
         dropdown_items_preview: Éléments des menus déroulants – Aperçu
         status_choices: Statuts possibles
@@ -1419,7 +1419,7 @@ fr:
           éléments de votre menu déroulant. Décalez les éléments en appuyant sur
           Tab une fois ou deux. Nous nous baserons sur ce décalage pour
           convertir les éléments en menu déroulant. Veuillez donc procéder avec
-          précaution. <a target='_blank' href=%{learn_more}>En savoir plus</a> 
+          précaution. <a target='_blank' href=%{learn_more}>En savoir plus</a>
         dropdown_items_edit: Éléments des menus déroulants - Modifier
         dropdown_items_preview: Éléments des menus déroulants – Aperçu
         status_choices: Statuts possibles
@@ -1758,7 +1758,7 @@ fr:
             dans votre compte eBay depuis votre centre de support. Une fois
             configuré, toutes vos requêtes client eBay seront converties
             automatiquement en tickets. Vous pouvez également y répondre
-            directement depuis Freshdesk. 
+            directement depuis Freshdesk.
       index:
         title: Comptes e-commerce
         renew: Renouveler le jeton
@@ -2595,7 +2595,7 @@ fr:
           Freshdesk et depuis Freshdesk.
         customer_portal_ssl_warning: >-
           L'URL du service d'assistance personnalisé est configurée dans votre
-          compte, vous serez donc redirigé vers 
+          compte, vous serez donc redirigé vers
         multiple_product_ssl_warning: SSL ne pourra pas s'appliquer si plusieurs produits sont configurés.
         enabled: Activé
         disabled: Désactivé
@@ -3418,7 +3418,7 @@ fr:
       info1: >-
         Importation terminée. Vous pouvez ouvrir votre centre d'assistance et
         aller dans Client->%{uc_type} pour voir le %{type} que vous venez
-        d'ajouter. 
+        d'ajouter.
       info2: >-
         Impossible d'importer tout le %{type} dans le fichier CSV que vous avez
         envoyé. Voici le résumé :
@@ -3537,7 +3537,7 @@ fr:
       bulk_merge_success: >-
         Les tickets avec les identifiants %{merged_tickets} ont été fusionnés
         en<a
-        href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject}#%{target_ticket}</a> 
+        href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject}#%{target_ticket}</a>
       link:
         success: Le ticket a été relié au tracker
         delay_link: >-
@@ -3760,13 +3760,13 @@ fr:
     realtime: >-
       <b>L'application qui capte des flux en temps réel s'est arrêtée</b> en
       raison de modifications sur ce compte Facebook. <a href='%{realtime_url}'
-      > Autorisez et activez de nouveau l'application. </a> 
+      > Autorisez et activez de nouveau l'application. </a>
     user_creation_failed: >-
       Erreur lors de la création de l'utilisateur dans Freshdesk. Veuillez
       réessayer plus tard ou contactez l'adresse support@freshdesk.com
   import_user_notification: >-
     Vous pouvez envoyer l'e-mail d'activation Utilisateur pour les contacts
-    importés depuis l'onglet Clients. 
+    importés depuis l'onglet Clients.
   what_is_cvv: "Qu'est ce que le CVV ?"
   pro_details: >-
     Toutes les fonctions du Basic Plan et celles concernant
@@ -4130,7 +4130,7 @@ fr:
       ticket_merge:
         short: >-
           {{user_path}} a fusionné le ticket {{notable_path}} avec
-          {{merge_ticket_path}}. 
+          {{merge_ticket_path}}.
         long: >-
           {{user_path}} a fusionné le ticket {{notable_path}} avec
           {{merge_ticket_path}}.
@@ -4292,7 +4292,7 @@ fr:
           été supprimé
       delete_internal_agent:
         new: >-
-          Définir "agent interne" en tant que "aucun" que "l'agent" a 
+          Définir "agent interne" en tant que "aucun" que "l'agent" a
           %{responder_path} été supprimé
       delete_status:
         new: >-
@@ -4874,7 +4874,7 @@ fr:
       Actualisez la page pour voir les tickets enfants.
     parent_not_accessible: >-
       Oups ! Il semble que nous n'avons pas réussi à accéder aux modèles de
-      tickets pour créer des tickets enfants. 
+      tickets pour créer des tickets enfants.
     limit_exceeded: >-
       Impossible d'appliquer le modèle, car le nombre de tickets enfants
       dépasserait la limite prescrite de %{limit}.
@@ -5506,7 +5506,7 @@ fr:
     info5: "Êtes-vous sûr de vouloir supprimer ce groupe ? La suppression du groupe n'entraîne pas la suppression des agents qu'il contient."
     info6: >-
       Envoyer un e-mail à l'agent lorsqu'un nouveau ticket est attribué à ce
-      groupe 
+      groupe
     info7: 'si un ticket demeure non attribué pendant plus de '
     info8: "Nouveau : autorisez vos superviseurs à gérer l'attribution automatique des tickets et la disponibilité des agents pour les groupes auxquels ils appartiennent -"
     info8_readmore: En savoir plus
@@ -5587,7 +5587,7 @@ fr:
       Si cette option est ACTIVÉE, les tickets attribués à ce groupe seront
       distribués aux agents les uns après les autres. Si vous souhaitez
       attribuer les tickets manuellement ou à l'aide d'une règle Dispatch'r ou
-      Supervisor, cette fonction doit être DÉSACTIVÉE. 
+      Supervisor, cette fonction doit être DÉSACTIVÉE.
     capping_ticket: ticket
     capping_tickets: tickets
     page_not_found: >-
@@ -5789,6 +5789,7 @@ fr:
   right: Droite
   footer:
     helpdesk_software: Logiciel de service d’assistance
+    helpdesk_software_link: "https://freshdesk.com/fr/"
     by_freshdesk: de Freshdesk
     submit_feedback: Envoyer un commentaire
     footer_feedback_subject_placeholder: Expliquez-nous comment nous pouvons améliorer Freshdesk.
@@ -6147,7 +6148,7 @@ fr:
     currency-note: 'Tous vos prochains paiements seront en '
     free_plan_currency_note: >-
       Lorsque vous mettez à niveau ou ajoutez des agents, votre paiement sera
-      en 
+      en
     invoice_title: 'Liste des factures de tous les règlements effectués en ligne '
     no_invoice: Aucune facture présente
     sub_total: Sous-total
@@ -6182,12 +6183,12 @@ fr:
         régime, il vous suffit de les désactiver. Sachez simplement que le
         service Freshdesk est vraiment friand de cookies (notamment ceux aux
         pépites de chocolat) et il se peut que certaines options ne fonctionnent
-        pas correctement si vous les désactivez. 
+        pas correctement si vous les désactivez.
       cookie_dialog_info3: >-
         Nous partons du principe que vous acceptez la manière dont nous
         utilisons les cookies et que vous êtes d'accord avec ce qui figure dans
         notre %{privacy_link}, à moins que vous ne choisissiez de les désactiver
-        sur votre navigateur. 
+        sur votre navigateur.
       privacy_policy: Politique de confidentialité
     no_topics_in_this_view: '- Aucune discussion dans cette section -'
     reported: signalé
@@ -6759,7 +6760,7 @@ fr:
       <b>publiés</b> directement.
     info16: >-
       Les articles <b>publiés</b> sont visibles dans le portail en libre service
-      et apparaissent aussi dans les résultats de la recherche. 
+      et apparaissent aussi dans les résultats de la recherche.
     info17: >-
       Les articles des <b>brouillons</b> sont uniquement visibles par les agents
       et apparaissent uniquement dans les résultats des recherches qu'ils
@@ -6818,7 +6819,7 @@ fr:
       <b>Tous les brouillons</b> répertoriera tous les articles dont l'état est
       Brouillon. Si plusieurs portails sont configurés, vous pourrez filtrer les
       articles en brouillon depuis n'importe quel portail. Pour ce faire,
-      sélectionnez le menu déroulant. 
+      sélectionnez le menu déroulant.
     kbase_email_info: >-
       Tous les e-mails envoyés par les agents à <b>%{email}</b> seront stockés
       ici avec les brouillons.
@@ -7115,7 +7116,7 @@ fr:
   portal_customizer_option_tickets: Les utilisateurs peuvent envoyer un ticket sans se connecter
   feedbackwidget_help_para2: >-
     Un onglet personnalisable s'ouvre dans un formulaire de ticket
-    d'assistance. 
+    d'assistance.
   tag:
     title: Balises
   email_notifications:
@@ -7193,7 +7194,7 @@ fr:
         les agents ajoutent à leurs tickets via un e-mail personnalisé incluant
         un lien vers le ticket. <br/><br/>Si votre forfait comprend la prise en
         charge de plusieurs langues, vous pourrez ajouter des langues de
-        notification et personnaliser les modèles pour chaque langue. L'icône 
+        notification et personnaliser les modèles pour chaque langue. L'icône
         <i class="common-icon-outdated"></i> indique que les traductions de la
         notification dans d'autres langues peuvent ne pas être à jour.
       agent_template_10:
@@ -7242,7 +7243,7 @@ fr:
           charge multilingue dans votre centre de support, vous pouvez créer
           cette notification précise dans chaque langue. L'icône <i
           class="common-icon-outdated"></i> indique que les traductions de cette
-          notification peuvent ne pas être à jour. 
+          notification peuvent ne pas être à jour.
       agent_template_3:
         topic: Ticket attribué à un agent
         info1: >-
@@ -7252,7 +7253,7 @@ fr:
           configuré plusieurs langues dans votre centre de support, vous pouvez
           créer une notification spécifique à chaque langue. L'icône <i
           class="common-icon-outdated"></i> indique que les traductions de la
-          notification dans d'autres langues peuvent ne pas être à jour. 
+          notification dans d'autres langues peuvent ne pas être à jour.
       agent_template_11:
         topic: Ticket non pris en charge dans un groupe
         info1: >-
@@ -8209,7 +8210,7 @@ fr:
     performed: ' effectué '
     system_activity_timestamp: >-
       <strong class='muted'>Système</strong> %{system_rule} <abbr
-      data-livestamp='%{timestamp}'></abbr> (%{note_date}) 
+      data-livestamp='%{timestamp}'></abbr> (%{note_date})
     requestor_info: Informations sur le demandeur
     view_twitter: Afficher sur Twitter
     view_facebook: Afficher dans Facebook
@@ -9949,7 +9950,7 @@ fr:
     latest: Les plus récentes
     no_custom_apps: >-
       Vous n'avez aucune application personnalisée installée. Créez et installez
-      une nouvelle application personnalisée en cliquant sur 
+      une nouvelle application personnalisée en cliquant sur
     all_categories: Toutes les catégories
     in_dev_apps: Applications en développement
     all: Tout
@@ -10152,7 +10153,7 @@ fr:
     new_freshplug: Nouveau FreshPlug
     no_freshplugs: >-
       Vous n'avez aucun FreshPlug installé. Créez et installez un FreshPlug en
-      cliquant sur 
+      cliquant sur
     add_new_freshplug: Nouveau FreshPlug
     freshplugs:
       refresh: Rafraîchir
@@ -10394,7 +10395,7 @@ fr:
       form:
         shop_name: Nom/ID de la boutique
         shop_name_info: >-
-          Par exemple, si l'adresse URL de votre SEOshop est 
+          Par exemple, si l'adresse URL de votre SEOshop est
           <strong>https://nom_de_ma_boutique.webshopapp.com</strong>, veuillez
           saisir <strong>nom_de_ma_boutique</strong>.
         api_key: Clé API
@@ -11023,7 +11024,7 @@ fr:
         téléphone &amp; de mobile de Batchbook et les met à la disposition de
         vos agents.<br><br>Vous pouvez chercher les contacts sur Batchbook avec
         leur adresse e-mail. S'il y a plusieurs contacts avec la même adresse,
-        ils apparaîtront sous forme de liste.</p><br/> 
+        ils apparaîtront sous forme de liste.</p><br/>
       desc: >-
         Importez les informations sur les contacts de votre compte Batchbook sur
         Freshdesk.
@@ -11109,7 +11110,7 @@ fr:
       form:
         shop_name: Nom de la boutique
         shop_name_info: >-
-          Par exemple, si l'adresse URL de votre Shopify est 
+          Par exemple, si l'adresse URL de votre Shopify est
           <strong>https://my_shop_name.shopify.com</strong>, veuillez saisir
           <strong>nom_de_ma_boutique</strong>.
         shop_name_info_mint: >-
@@ -11297,9 +11298,9 @@ fr:
           Echec de création du ticket. Envoyez un rapport à
           support@freshdesk.com si l'erreur persiste.
         missing_remote_token: >-
-          Envoyez votre jeton d'utilisateur Slack (https://api.slack.com/web) 
+          Envoyez votre jeton d'utilisateur Slack (https://api.slack.com/web)
           avec cette commande Slash une fois. La prochaine fois, aucun jeton ne
-          sera nécessaire : simple_smile: 
+          sera nécessaire : simple_smile:
         slash_key_mismatch: >-
           La clé secrète de commande Slash ne correspond pas à la valeur
           configurée dans Freshdesk.
@@ -11472,7 +11473,7 @@ fr:
         logmein_company_info: >-
           Pour connaître l'identifiant de votre société, allez dans Centre Admin
           -> Groupe technicien -> Paramètres généraux -> ASP.Net C# exemple côté
-          serveur 
+          serveur
         logmein_sso_pwd_info: >-
           Pour définir votre mot de passe SSO, allez dans Centre Admin -> Groupe
           technicien -> Paramètres généraux -> Single Sign-On -> nouveau mot de
@@ -11482,7 +11483,7 @@ fr:
       desc: >-
         Ajoutez MailChimp à Freshdesk pour gérer vos inscriptions, exporter vos
         listes de clients et les informations nécessaires concernant leurs
-        activités vers votre service d'assistance.  
+        activités vers votre service d'assistance.
       helptext: <h4>Aide à l'intégration de MailChimp</h4>
     constantcontact:
       label: Constant Contact
@@ -11495,7 +11496,7 @@ fr:
       label: Campaign Monitor
       desc: >-
         Cherchez et gérez les inscriptions sur votre compte Campaign Monitor et
-        importez les statistiques d'utilisation directement dans Freshdesk. 
+        importez les statistiques d'utilisation directement dans Freshdesk.
       helptext: >-
         <h4>Aide à l'intégration de Campaign Monitor</h4><br/>Pour intégrer
         Campaign Monitor, vous devez entrer votre clé API et le ClientID de
@@ -11677,7 +11678,7 @@ fr:
       freshdesk_api_key: Clé API Freshdesk
       api_key_available: >-
         La clé API est disponible dans les Paramètres du profil de votre compte
-        Freshdesk 
+        Freshdesk
       new_to_freshdesk: 'Vous découvrez Freshdesk ? '
     hootsuite:
       auth_error: >-
@@ -12238,7 +12239,7 @@ fr:
   maximum_agents_msg: >-
     Vous avez atteint le nombre maximum d'agents autorisé par votre abonnement.
     Vous devez supprimer un agent existant ou contacter l'administrateur de
-    votre compte pour mettre votre compte à niveau.  
+    votre compte pour mettre votre compte à niveau.
   contact_without_email_id: Un contact avec un ID de chat peut uniquement être converti en agent
   no_date_to_display: Aucune donnée à afficher
   email_command_delimeter_length_error_msg: ' Le délimiteur doit contenir au moins trois caractères.'
@@ -12591,7 +12592,7 @@ fr:
     classic: Classique
     confirm: >-
       Voulez-vous vraiment appliquer le nouveau style ? Toutes vos
-      personnalisations CSS seront perdues. 
+      personnalisations CSS seront perdues.
 
 
       Conseil : Créez une copie des personnalisations CSS existantes et
@@ -13595,7 +13596,7 @@ fr:
     widget:
       ticket_info: >-
         Créez un ticket ou ajoutez une note au ticket existant contenant des
-        notes et des enregistrements. 
+        notes et des enregistrements.
       note_placeholder: Ajouter des notes d'appel...
       new_ticket: Enregistrer comme nouveau ticket
       save_to_existing: Enregistrer dans un ticket existant
@@ -13761,7 +13762,7 @@ fr:
         other: Agents
       ticket_info: >-
         Créer un nouveau ticket ou ajouter une note au ticket existant contenant
-        des notes et enregistrements. 
+        des notes et enregistrements.
       add_note: Ajouter des notes
       note_placeholder: Ajouter des notes d'appel...
       title: Convertir en ticket
@@ -14837,7 +14838,7 @@ fr:
     show_chat_hours: Afficher le tchat
     show_chat_hours_msg: >-
       Définissez la durée pendant laquelle vous serez en ligne et disponible
-      pour les tchats. 
+      pour les tchats.
     business_hours: Lors des heures d'ouverture
     anytime: 'En permanence (24h/24, 7j/7)'
     business_calendar: Sélectionner les heures d'ouverture
@@ -15391,13 +15392,13 @@ fr:
         marque, vous pouvez créer plusieurs catégories pour vos produits ou vos
         équipes. Cela vous permet de diriger les conversations pertinentes dans
         toutes les sections de niveau supérieur. En tant qu'administrateur, vous
-        pourrez toujours gérer tout le système d'un seul endroit. 
+        pourrez toujours gérer tout le système d'un seul endroit.
       para3: >-
         Si vous avez plusieurs portails produit configurés dans votre compte
         Freshdesk, vous pouvez choisir d'avoir l'une des catégories associée à
         ce produit. Une fois que c'est fait, les utilisateurs pourront voir
         cette catégorie, ses forums et toutes ses rubriques sur le portail
-        principal ainsi que sur le portail du produit. 
+        principal ainsi que sur le portail du produit.
       para4: Découvrez plus d'informations sur les produits multiples dans Freshdesk.
     shared:
       topic:
@@ -15638,7 +15639,7 @@ fr:
       target_note_description:
         one: >-
           %{source_topics} a été fusionnée dans la discussion
-          %{target_topic_title}. 
+          %{target_topic_title}.
         other: >-
           %{source_topics} ont été fusionnées dans la discussion
           %{target_topic_title}.
@@ -15815,7 +15816,7 @@ fr:
         authorize_text3: >-
           Acceptez les <a target='_blank'
           href='http://developers.freshdesk.com/docs/terms-of-use/'>Conditions
-          d'utilisation des développeurs</a>et procédez à l'autorisation 
+          d'utilisation des développeurs</a>et procédez à l'autorisation
         later: Plus tard
         authorize_text1: Autoriser
         authorize_text2: à utiliser votre compte ?

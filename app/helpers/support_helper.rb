@@ -394,7 +394,7 @@ module SupportHelper
       label_tag "#{object_name}_#{field[:name]}", field[:label_in_portal].html_safe, :class => element_class, :for => "#{object_name}_email"
     elsif field.respond_to?(:encrypted_field?) && field.encrypted_field?
       label_tag "#{object_name}_#{field[:name]}",
-                content_tag(:span, "", :class => "ficon-encryption-lock encrypted", :title => t('custom_fields.encrypted_text'), 'data-toggle' => 'tooltip', 'data-placement' => 'top' ) + 
+                content_tag(:span, "", :class => "ficon-encryption-lock encrypted", :title => t('custom_fields.encrypted_text'), 'data-toggle' => 'tooltip', 'data-placement' => 'top' ) +
                 " #{field[:label_in_portal].html_safe}", :class => element_class, :for => "#{object_name}_email"
     else
       label_tag "#{object_name}_#{field[:name]}", field.translated_label_in_portal.html_safe, :class => element_class
@@ -677,7 +677,7 @@ module SupportHelper
 
   def portal_copyright portal
     %(  <div class="copyright">
-        <a href="http://www.freshdesk.com" target="_blank"> #{ I18n.t('footer.helpdesk_software') } </a>
+        <a href=#{ I18n.t('footer.helpdesk_software_link') } target="_blank"> #{ I18n.t('footer.helpdesk_software') } </a>
         #{ I18n.t('footer.by_freshdesk') }
       </div> ) if Account.current.copy_right_enabled?
   end

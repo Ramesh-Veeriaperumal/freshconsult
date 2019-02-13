@@ -4690,6 +4690,7 @@ en:
   right: Right
   footer:
     helpdesk_software: Help Desk Software
+    helpdesk_software_link: "http://www.freshdesk.com"
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
     footer_feedback_subject_placeholder: Tell us how we can make Freshdesk better
@@ -12054,7 +12055,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
         invalid_name: "Invalid company name"
         required_name: "Enter company name"
   unique_external_id:
-    helpcard: 
+    helpcard:
       title: "Unique External ID"
       info: Import your customers’ unique IDs and easily identify their conversations in Freshdesk. <br><a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank">Help me set up external ID</a>
 

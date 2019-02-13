@@ -262,11 +262,11 @@ nl:
   reauthorize_facebook: Autoriseer uw Facebook-account opnieuw.
   twitter_reauth: >-
     Uw Twitter-kanaal is niet toegankelijk. Het lijkt erop dat uw gebruikersnaam
-    of wachtwoord onlangs is gewijzigd. 
+    of wachtwoord onlangs is gewijzigd.
   reauthorize_twitter: Autoriseer uw Twitter-naam opnieuw.
   ecommerce_reauth: >-
     Uw Ecommerce-account is niet toegankelijk. Het lijkt erop dat uw
-    verificatietoken is verlopen. 
+    verificatietoken is verlopen.
   reauthorize_ecommerce: Autoriseer uw Ecommerce-account opnieuw.
   schedule_a_complimentary_session: Gratis sessie plannen
   choose_a_plan: Abonnement kiezen
@@ -476,7 +476,7 @@ nl:
         vrije tekst om items toe te voegen aan de dropdown of items te bewerken.
         Druk een- of tweemaal op de tabtoets om items te laten inspringen. De
         items worden op basis van de inspringing automatisch omgezet in
-        dropdownitems, dus wees voorzichtig. Meer informatie.</a> 
+        dropdownitems, dus wees voorzichtig. Meer informatie.</a>
       nested_field_helptext: ''
       dropdown_items_edit: Dropdownitems - bewerken
       drop_down_items_edit: Dropdownitems - bewerken
@@ -1146,7 +1146,7 @@ nl:
           tabtoets om items te laten inspringen. De items worden op basis van de
           inspringing automatisch omgezet in dropdownitems, dus wees
           voorzichtig. <a target='_blank' href=%{learn_more}>Meer
-          informatie</a>. 
+          informatie</a>.
         dropdown_items_edit: Dropdownitems - bewerken
         dropdown_items_preview: Dropdownitems - voorbeeld
         status_choices: Statuskeuzen
@@ -1230,7 +1230,7 @@ nl:
           voor vrije tekst om items toe te voegen aan de dropdown of items te
           bewerken. Druk een- of tweemaal op de tabtoets om items te laten
           inspringen. De items worden op basis van de inspringing automatisch
-          omgezet in dropdownitems, dus wees voorzichtig. Meer informatie.</a> 
+          omgezet in dropdownitems, dus wees voorzichtig. Meer informatie.</a>
         dropdown_items_edit: Dropdownitems - bewerken
         dropdown_items_preview: Dropdownitems - voorbeeld
         status_choices: Statuskeuzen
@@ -1573,7 +1573,7 @@ nl:
             eBay-account binnenkomen vanuit uw helpdesk beheren. Na het
             instellen worden alle vragen van klanten van eBay automatisch
             omgezet in tickets. U kunt de vragen ook rechtstreeks beantwoorden
-            vanuit Freshdesk. 
+            vanuit Freshdesk.
       index:
         title: Ecommerce-accounts
         renew: Token vernieuwen
@@ -2540,7 +2540,7 @@ nl:
           en vanuit Freshdesk worden overgebracht.
         customer_portal_ssl_warning: >-
           Omdat voor uw account een aangepaste helpdesk-URL is geconfigureerd,
-          wordt u doorgestuurd naar 
+          wordt u doorgestuurd naar
         multiple_product_ssl_warning: >-
           SSL is niet van toepassing als er meerdere producten zijn
           geconfigureerd.
@@ -2572,7 +2572,7 @@ nl:
         ssl_info_new: >-
           Als u aangepaste SSL wilt instellen, moet u uw domein configureren met
           een uniek DNS-record dat door Freshdesk wordt geleverd. <br />
-          Hieronder kunt u uw helpdesk-URL invoeren en uw aanvraag versturen. 
+          Hieronder kunt u uw helpdesk-URL invoeren en uw aanvraag versturen.
           De certificering neemt doorgaans vijftien tot twintig werkdagen in
           beslag. <br /> <br />
         helpdesk_url: Helpdesk-URL
@@ -3479,7 +3479,7 @@ nl:
         van het gegevensvolume.
       info1: >-
         Het importeren is voltooid. Open de helpdesk en ga naar
-        Klant->%{uc_type} om het toegevoegde item (%{type}) te bekijken. 
+        Klant->%{uc_type} om het toegevoegde item (%{type}) te bekijken.
       info2: >-
         Niet alle items (%{type}) kunnen worden geïmporteerd in het CSV-bestand
         dat u hebt verzonden. Hieronder vindt u een overzicht:
@@ -3564,7 +3564,7 @@ nl:
       bulk_merge_success: >-
         Tickets met id's %{merged_tickets} zijn samengevoegd tot <a
         href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject}
-        #%{target_ticket}.</a> 
+        #%{target_ticket}.</a>
     custom_fields:
       delete:
         failure: Verwijderen van het ticketveld is mislukt.
@@ -3772,10 +3772,10 @@ nl:
     realtime: >-
       <b>De app voor het in realtime ophalen van streamfeed is beëindigd</b>
       vanwege wijzigingen in dit Facebook-account. <a href='%{realtime_url}' >
-      Voer de autorisatie opnieuw uit en schakel de app in. </a> 
+      Voer de autorisatie opnieuw uit en schakel de app in. </a>
   import_user_notification: >-
     Voor de geïmporteerde contactpersonen kunt u de activerings-e-mail voor
-    gebruikers vanaf de tab Klanten versturen. 
+    gebruikers vanaf de tab Klanten versturen.
   what_is_cvv: Wat is CVV?
   pro_details: >-
     Alles in het abonnement Basis, plus scenarioautomatisering, klantspecifieke
@@ -4163,7 +4163,7 @@ nl:
       ticket_merge:
         short: >-
           {{user_path}} heeft het ticket {{notable_path}} samengevoegd met
-          {{merge_ticket_path}}. 
+          {{merge_ticket_path}}.
         long: >-
           {{user_path}} heeft het ticket {{notable_path}} samengevoegd met
           {{merge_ticket_path}}.
@@ -5255,7 +5255,7 @@ nl:
       verwijdert, worden de medewerkers in de groep niet verwijderd.
     info6: >-
       E-mail sturen naar medewerker als een nieuw ticket aan deze groep wordt
-      toegewezen 
+      toegewezen
     info7: 'Als een ticket niet wordt toegewezen binnen '
     info8: >-
       Nieuw: Geef de supervisors de mogelijkheid om de automatische
@@ -5325,7 +5325,7 @@ nl:
       Als deze optie is ingeschakeld, worden de tickets die aan deze groep
       worden toegewezen, tussen de medewerkers verdeeld in Round Robin. Schakel
       deze optie uit als u handmatig tickets wilt toewijzen of tickets wilt
-      versturen met Dispatch'r- of Supervisor-automatisering. 
+      versturen met Dispatch'r- of Supervisor-automatisering.
     page_not_found: >-
       Deze groep is niet gevonden. Mogelijk is deze verwijderd of heeft u de URL
       verkeerd ingevoerd.
@@ -5565,6 +5565,7 @@ nl:
   right: Rechts
   footer:
     helpdesk_software: Helpdesksoftware
+    helpdesk_software_link: "https://freshdesk.com/nl"
     by_freshdesk: van Freshdesk
     submit_feedback: Feedback versturen
     footer_feedback_subject_placeholder: Laat ons weten hoe we Freshdesk kunnen verbeteren.
@@ -5938,7 +5939,7 @@ nl:
     currency-note: 'Al uw toekomstige betalingen zullen worden uitgevoerd in '
     free_plan_currency_note: >-
       Wanneer u een upgrade uitvoert of medewerkers toevoegt, zal uw betaling
-      worden uitgevoerd in 
+      worden uitgevoerd in
     invoice_title: 'Lijst met facturen voor alle onlinebetalingen '
     no_invoice: Geen facturen aanwezig
     sub_total: Subtotaal
@@ -5970,17 +5971,17 @@ nl:
       why_we_love_cookies: Waarom wij cookies gebruiken
       cookie_dialog_info1: >-
         We maken gebruik van cookies om u in Freshdesk een betere ervaring te
-        kunnen geven. 
+        kunnen geven.
       cookie_dialog_info2: >-
         Meer informatie over de typen cookies die we gebruiken en informatie
         over waarom en hoe we ze gebruiken, vindt u op %{privacy_link}.
         Desgewenst kunt u cookies uitschakelen. In de Freshdesk-service wordt
         veel gebruik gemaakt van cookies en bepaalde onderdelen werken mogelijk
-        niet correct als u cookies uitschakelt. 
+        niet correct als u cookies uitschakelt.
       cookie_dialog_info3: >-
         Daarnaast wordt aangenomen dat u instemt met de manier waarop we cookies
         gebruiken (zie %{privacy_link} voor een beschrijving), tenzij u cookies
-        uitschakelt in de browser. 
+        uitschakelt in de browser.
       privacy_policy: Privacybeleid
     no_topics_in_this_view: ~ Geen onderwerpen in deze weergave ~
     reported: gemeld
@@ -6545,7 +6546,7 @@ nl:
       <b>gepubliceerd</b>.
     info16: >-
       <b>Gepubliceerde</b> artikelen zijn zichtbaar in het selfserviceportaal en
-      worden ook in de zoekresultaten weergegeven. 
+      worden ook in de zoekresultaten weergegeven.
     info17: >-
       <b>Concept</b>artikelen zijn alleen zichtbaar voor medewerkers en worden
       alleen in de zoekresultaten voor medewerkers weergegeven.
@@ -6600,7 +6601,7 @@ nl:
     info24: >-
       In <b>Alle concepten</b> worden alle artikelen in conceptstatus
       weergegeven. Als er meerdere portalen zijn ingesteld, kunt u de dropdown
-      gebruiken om conceptartikelen voor een bepaald portaal te filteren. 
+      gebruiken om conceptartikelen voor een bepaald portaal te filteren.
     kbase_email_info: >-
       Alle e-mails die medewerkers naar <b>%{email}</b> versturen, worden hier
       als concepten opgeslagen.
@@ -7016,7 +7017,7 @@ nl:
           meerdere ondersteunde talen hebt ingesteld, kunt u voor elke taal een
           specifieke melding maken. Met het pictogram <i
           class="common-icon-outdated"></i> wordt aangegeven dat de vertalingen
-          van de melding in andere talen mogelijk zijn verouderd. 
+          van de melding in andere talen mogelijk zijn verouderd.
       agent_template_3:
         topic: Ticket toegewezen aan een medewerker
         info1: >-
@@ -7027,7 +7028,7 @@ nl:
           talen hebt ingesteld, kunt u voor elke taal een specifieke melding
           maken. Met het pictogram <i class="common-icon-outdated"></i> wordt
           aangegeven dat de vertalingen van de melding in andere talen mogelijk
-          zijn verouderd. 
+          zijn verouderd.
       agent_template_11:
         topic: Ticket niet toegewezen in groep
         info1: >-
@@ -7801,7 +7802,7 @@ nl:
     performed: ' uitgevoerd '
     system_activity_timestamp: >-
       <strong class='muted'>Systeem</strong> %{system_rule} <abbr
-      data-livestamp='%{timestamp}'></abbr> (%{note_date}) 
+      data-livestamp='%{timestamp}'></abbr> (%{note_date})
     requestor_info: Aanvragersgegevens
     view_twitter: Weergeven op Twitter
     view_facebook: Weergeven op Facebook
@@ -9396,7 +9397,7 @@ nl:
     custom_apps: Custom-apps
     no_custom_apps: >-
       U heeft geen custom-apps geïnstalleerd. Maak en installeer een nieuwe
-      custom-app door te klikken. 
+      custom-app door te klikken.
     all_categories: Alle categorieën
     in_dev_apps: Apps in ontwikkeling
     all: Alle
@@ -9574,7 +9575,7 @@ nl:
     new_freshplug: Nieuwe FreshPlug
     no_freshplugs: >-
       U hebt geen FreshPlugs geïnstalleerd. U kunt nieuwe FreshPlugs maken en
-      installeren door te klikken op 
+      installeren door te klikken op
     add_new_freshplug: Nieuwe FreshPlug
     freshplugs:
       refresh: Vernieuwen
@@ -10412,7 +10413,7 @@ nl:
         beschikbaar gesteld voor uw medewerkers.<br><br>U kunt contactpersonen
         uit Batchbook opzoeken op basis van hun e-mailadres. Als er meerdere
         contactpersonen met hetzelfde e-mailadres zijn, worden alle
-        contactpersonen als een lijst weergegeven.</p><br/> 
+        contactpersonen als een lijst weergegeven.</p><br/>
       desc: >-
         U kunt de contactpersoonsgegevens uit uw Batchbook-account importeren in
         Freshdesk.
@@ -10789,7 +10790,7 @@ nl:
         logmein_company_info: >-
           Als u uw bedrijfs-ID wilt ophalen, gaat u naar Admin Center
           (Beheercentrum) -> Technician Group (Groep technicus) -> Global
-          Settings (Algemene instellingen) -> ASP.Net C# (servervoorbeeld). 
+          Settings (Algemene instellingen) -> ASP.Net C# (servervoorbeeld).
         logmein_sso_pwd_info: >-
           Als u uw SSO-wachtwoord wilt instellen, gaat u naar Admin Center
           (Beheercentrum)->  Technician Group (Groep technicus) -> Global
@@ -10800,7 +10801,7 @@ nl:
       desc: >-
         U kunt MailChimp toevoegen aan Freshdesk en uw abonnementen beheren,
         klantenlijsten exporteren en de vereiste gegevens over de bijbehorende
-        activiteiten ophalen uit uw helpdesk.  
+        activiteiten ophalen uit uw helpdesk.
       helptext: <h4>Help bij de integratie van MailChimp</h4>
     constantcontact:
       label: Constant Contact
@@ -10814,7 +10815,7 @@ nl:
       desc: >-
         U kunt uw abonnementen van uw Campaign Monitor-account in Freshdesk
         beheren en opzoeken, en inzicht krijgen in de gebruiksstatistieken van
-        klanten. 
+        klanten.
       helptext: >-
         <h4>Hulp bij integratie van Campaign Monitor</h4><br/>Om Campaign
         Monitor te integreren heeft u uw API-sleutel en ClientID nodig van
@@ -10829,7 +10830,7 @@ nl:
         api_key_info: API-sleutel ophalen via de accountinstellingen
         client_id: Client-id
         client_id_info: >-
-          Als u het client-id wilt ophalen, gaat u naar 
+          Als u het client-id wilt ophalen, gaat u naar
           http://www.campaignmonitor.com/api/getting-started/#clientid.
     icontact:
       label: iContact
@@ -10845,7 +10846,7 @@ nl:
         api_url_info: >-
           Als u uw API-URL wilt ophalen, gaat u naar
           https://app.icontact.com/icp/core/externallogin en kopieert u de
-          API-URL uit het gedeelte met accountgegevens. 
+          API-URL uit het gedeelte met accountgegevens.
     dropbox:
       label: DropBox
       desc: U kunt uw gegevens en bestanden van DropBox bijvoegen en delen.
@@ -10973,7 +10974,7 @@ nl:
       freshdesk_api_key: Freshdesk-API-sleutel
       api_key_available: >-
         U vindt de API-sleutel in de profielinstellingen in uw
-        Freshdesk-account. 
+        Freshdesk-account.
       new_to_freshdesk: 'Nieuw bij Freshdesk? '
     hootsuite:
       auth_error: >-
@@ -11763,7 +11764,7 @@ nl:
   maximum_agents_msg: >-
     Het maximum aantal fulltimemedewerkers voor uw abonnement is bereikt.
     Verwijder een bestaande fulltimemedewerker of neem contact op met uw
-    accountbeheerder om aanvullende medewerkers aan te schaffen. 
+    accountbeheerder om aanvullende medewerkers aan te schaffen.
   contact_without_email_id: Contactpersoon met e-mail-id kan alleen worden omgezet in medewerker
   no_date_to_display: Geen gegevens om weer te geven.
   email_command_delimeter_length_error_msg: ' Geef ten minste drie tekens op voor het scheidingsteken.'
@@ -12125,7 +12126,7 @@ nl:
     classic: Klassiek
     confirm: >-
       Weet u zeker dat u het nieuwe uiterlijk wilt toepassen? Al uw
-      CSS-aanpassingen\ \ gaan verloren. 
+      CSS-aanpassingen\ \ gaan verloren.
 
 
       Tip: maak een kopie van de CSS-aanpassingen die u momenteel hebt\ \ en
@@ -13040,7 +13041,7 @@ nl:
     widget:
       ticket_info: >-
         Maak een nieuw ticket of voeg een notitie aan een bestaand ticket toe
-        met de functies voor notities en opnemen. 
+        met de functies voor notities en opnemen.
       note_placeholder: Gespreksnotities toevoegen...
       new_ticket: Opslaan als nieuw ticket
       save_to_existing: Opslaan in bestaand ticket
@@ -13197,7 +13198,7 @@ nl:
         other: Medewerkers
       ticket_info: >-
         Maak een nieuw ticket of voeg een notitie aan een bestaand ticket toe
-        met de functies voor notities en opnemen. 
+        met de functies voor notities en opnemen.
       add_note: Notities toevoegen
       note_placeholder: Gespreksnotities toevoegen...
       title: Omzetten in ticket
@@ -14610,7 +14611,7 @@ nl:
       toepassing opnieuw worden geautoriseerd. <b>Als u de autorisatie op 12
       oktober nog niet hebt uitgevoerd, zal de toepassing op uw Facebook-pagina
       worden uitgeschakeld.</b> <br/> <a href='%{page_tab_url}' >Opnieuw
-      autoriseren en inschakelen &gt; </a> 
+      autoriseren en inschakelen &gt; </a>
     page_tab_info: Voer de autorisatie voor uw Facebook-paginatab opnieuw uit.
     no_contact: >-
       Er kan momenteel geen verbinding worden gemaakt met de Facebook-servers
@@ -14770,13 +14771,13 @@ nl:
         meerdere categorieën voor producten of teams maken. Zo zorgt u voor
         relevante gesprekken voor alle secties op het hoogste niveau. Als
         beheerder hebt u bovendien nog steeds de mogelijkheid alles op één plek
-        te beheren. 
+        te beheren.
       para3: >-
         Als u meerdere productportalen in uw Freshdesk-account hebt
         geconfigureerd, kunt de gewenste categorie aan dat product koppelen. Op
         deze manier kunnen gebruikers die categorie zien, alsmede de
         bijbehorende forums en alle onderwerpen in zowel uw hoofdportaal als in
-        het productportaal. 
+        het productportaal.
       para4: Meer informatie over meerdere producten in Freshdesk.
     shared:
       topic:
