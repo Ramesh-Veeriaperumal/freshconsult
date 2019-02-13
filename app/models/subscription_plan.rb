@@ -112,10 +112,20 @@ class SubscriptionPlan < ActiveRecord::Base
     ['Estate Omni Jan 19', 'Estate Jan 19'],
     ['Garden Omni Jan 19', 'Garden Jan 19']
   ].freeze
-
+  
   OMNI_TO_BASIC_PLAN_MAP = OMNI_PLANS.each_with_object({}) { |plan, hash| hash[plan[0].to_sym] = plan[1] }
   BASIC_PLAN_TO_OMNI_MAP = OMNI_PLANS.each_with_object({}) { |plan, hash| hash[plan[1].to_sym] = plan[0] }
-  
+
+  OMNI_TO_BASIC_PLAN_MAP = OMNI_PLANS.each_with_object({}) do |plan, hash|
+    hash[plan[0].to_sym] = plan[1]
+  end.freeze
+
+  BASIC_PLAN_TO_OMNI_MAP = OMNI_PLANS.each_with_object({}) do |plan, hash|
+    hash[plan[1].to_sym] = plan[0]
+  end.freeze
+
+  FREE_OMNI_PLANS = ['Forest Jan 19'].freeze
+
   def fetch_discount(billing_cycle)
     BILLING_CYCLE_DISCOUNT[self.name].fetch(billing_cycle,1)
   end
@@ -170,6 +180,10 @@ class SubscriptionPlan < ActiveRecord::Base
 
   def omni_plan?
     OMNI_TO_BASIC_PLAN_MAP.key? name.to_sym
+  end
+
+  def free_omni_channel_plan?
+    FREE_OMNI_PLANS.include? name
   end
   
   def basic_variant_name

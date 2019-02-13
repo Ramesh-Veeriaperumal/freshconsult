@@ -11,6 +11,7 @@
     <table>
       <tr>
         <% plans.each do |plan| %>
+          <input type="hidden" data-omni-plan-id="<%= plan.name.parameterize.underscore %>" data-plan-amount="<%= fetch_plan_amount(plan) %>" data-plan-id="<%= plan.id %>"/>
           <%
             next if !subscription.trial? &&
               ((subscribed_plan.omni_plan? && subscribed_plan.basic_variant_name == plan.name) ||
@@ -21,11 +22,13 @@
             downgrade_plan_check =  plan_ranking > current_plan_ranking
             is_new_sprout = new_sprout?(plan.name)
             equal_plan_check = (plan_ranking == current_plan_ranking) && (current_plan_name != plan.name.downcase)
+            omniFilter = "omni"
           %>
           <% unless plan_name == "free"  %>
-            <% unless plan.id == subscription.subscription_plan_id and !subscription.trial? and !show_all %>
-              <td class="pricelist <%= plan.id == current_plan_id ? 'active' : ''%>"
+            <% unless plan.id == subscription.subscription_plan_id and !subscription.trial? and !show_all%>
+              <td class="pricelist <%= plan_name %> <%= plan.id == current_plan_id ? 'active' : ''%> <%= plan_name_id.include?(omniFilter) ? 'hide' : ''%>"
                   id = "plan-<%= plan_name_id %>" width='<%="#{(100/(plans.size.to_f)).to_i}%"%>'>
+                  <input type="hidden" data-omni-plan-id="<%=plan_name_id%>" data-plan-amount="<%= fetch_plan_amount(plan) %>" data-plan-id="<%= plan.id %>"/>
                   <div class="plan-details">
                     <div class="plan-title">
                       <% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
@@ -39,25 +42,46 @@
                           <%= content_tag(:div, t('free_plan_agents_v2').html_safe, :class => "info-data") %>
                         <% else %>
                           <%= content_tag(:h3, fetch_plan_amount(plan), :class => "plan-cost") %>
-                          <%= content_tag(:div, t('plan_amount'), :class => "info-data") %>
+                          
+                          <% if current_account.new_2019_pricing_enabled? %>
+                            <%= content_tag(:div, t('billed_annually'), :class => "info-data") %>
+                          <% else %>  
+                            <%= content_tag(:div, t('plan_amount'), :class => "info-data") %>
+                          <% end %>
                         <% end %>
                       <% end %>
                       <%= content_tag(:div, (plan_name == "premium") ? t("special_beta_offer") : "&nbsp;".html_safe, :class => "discount-info-text" ) if(@discount && @discount.name.downcase == "beta users special")  %>
                     </div>
-                    <p class="plan-details">
+                    <p class="plan-details plan-feature-list">
                       <% unless SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].nil? %>
                         <% SubscriptionsHelper::PLANS_FEATURES["#{plan.name.downcase}"].each do |feature_name| %>
                           <% if feature_name != "omni_channel_option" %>
-                            <%= t("features.#{feature_name}").html_safe %>
+                          <span><%= t("features.#{feature_name}").html_safe %></span>
                           <% else %>
-                            <input type="checkbox" name="omni_channel_option">
-                            <%= t("features.#{feature_name}").html_safe %>
-                            <span class="app-icon">Icon</span>
-                            <% SubscriptionsHelper::OPTIONAL_FEATURES["#{plan.name.downcase.split(' ').first}#{feature_name}"].each do |feature_item| %>
-                            <%= t("features.#{feature_item}").html_safe %>
-                            <% end%>
+                            <div class="omni-features hide">
+                              <h4 class="omni-title"><%= t('omni_channel') %></h4>
+                              <% omni_amount = SubscriptionsHelper::OMNI_FEATURES_PRICE["#{plan.name.downcase.split(' ').first}#{feature_name}"]%>
+                              <% sign = (omni_amount > 0 && omni_amount < 30) ? '+' : '' %>
+                              <p class="omni-price <%= omni_amount == 30 ? 'forest-omni' : '' %>">
+                                <%= sign %> <%= format_amount(omni_amount, @subscription.currency_name) %>
+                                <span class="free">Free</span>
+                                <% if (omni_amount > 0 && omni_amount < 30)%>
+                                  <span class="per-agent"> <%= t('per_agent_per_month') %></span>
+                                <% end %>
+                              </p>
+                              <% SubscriptionsHelper::OMNI_FEATURES["#{plan.name.downcase.split(' ').first}#{feature_name}"].each do |feature_item| %>
+                              <span class="omni-features-list"><%= t("features.#{feature_item}").html_safe %></span>
+                              <% end%>
+                              <% if omni_amount != 30 && plan.name.downcase.include?(omniFilter)%>
+                                <p class="toggle-omni-billing hide">
+                                  <span class="omni-toggle-holder">
+                                    <%= t('omni_channel') %>
+                                    <input rel="toggle" type="checkbox" data-plan-id="<%= plan.id %>" data-plan="<%= plan_name_id %>" id="exclude-omni" name="stop_sla_timer" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" checked=true />
+                                  </span>
+                                </p>
+                              <% end %>
+                            </div>
                           <% end %>
-                          <br>
                         <% end %>
                       <% end %>
                     </p>
@@ -218,7 +242,7 @@
 </div>
 
 <div id="billing-template" class="billing hide" >
-  <%= render :partial => "calculate_amount", :locals => { :amount => 0, :discount => nil } %>
+  <%= render :partial => "calculate_amount", :locals => { :amount => 0, :discount => nil, :monthly_amount => 0 } %>
 </div>
 
 <script type="text/javascript">
