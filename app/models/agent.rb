@@ -73,9 +73,9 @@ class Agent < ActiveRecord::Base
   	# Assign points to agent if no point have been given before
   	# Else increment the existing points total by the given amount
   	if self.points.nil?
-  		Agent.where(:id => self.id).update_all("points = #{score}")
+  		Agent.where(:id => self.id).update_all("points = #{score.to_i}")
   	else
-  		Agent.where(:id => self.id).update_all("points = points + #{score}")
+  		Agent.where(:id => self.id).update_all("points = points + #{score.to_i}")
   	end
   end
 
