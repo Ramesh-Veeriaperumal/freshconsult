@@ -9,7 +9,7 @@
 class Search::Filters::Docs
   include Search::Filters::QueryHelper
 
-  DEFAULT_TIMEOUT = 5
+  DEFAULT_TIMEOUT = 10
 
   attr_accessor :params, :negative_params, :with_permissible
 
