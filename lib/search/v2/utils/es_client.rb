@@ -9,7 +9,7 @@ module Search
       class EsClient
 
         ES_TIME_DEFAULT = -1
-        ES_TIMEOUT = 5
+        ES_TIMEOUT = 10
 
         attr_accessor :method, :path, :payload, :logger, :response, :log_data
 
