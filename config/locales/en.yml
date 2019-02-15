@@ -3668,6 +3668,11 @@ en:
   clone: Clone
   disable: Disable
   enable: Enable
+  unsubscribe:
+    landing_heading: 'Do you really want to unsubscribe?'
+    landing_subheading: 'We’re sorry to see you go! If you unsubscribe now, we will no longer be able to send you any more updates. You can click on ‘unsubscribe’ button below to confirm your unsubscription.'
+    success_heading: 'Successfully unsubscribed.'
+    success_subheading: 'You have successfully unsubscribed from our updates and notifications mailing lists.'
   accounts:
     associate_google:
       login_message: Login with an account administrator's credentials to associate your Google Apps login to your Freshdesk account.
@@ -12433,6 +12438,7 @@ en:
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
+  
   mailer_notifier:
     hi: 'Hi,'
     hey_user: 'Hey %{user_name}'
