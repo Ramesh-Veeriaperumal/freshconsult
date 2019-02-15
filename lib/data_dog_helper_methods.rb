@@ -4,7 +4,7 @@ class DataDogHelperMethods
   class << self
     def increment_with_tags(counter, tags)
       Rails.logger.info "DATADOG :: Counter: #{counter} :: Tags: [#{tags.join(', ')}]"
-      statsd = Datadog::Statsd.new
+      statsd = Datadog::Statsd.new(DATADOG_CONFIG["dd_agent_host"], DATADOG_CONFIG["dogstatsd_port"])
       statsd.increment(counter, tags: tags)
     rescue => e
       Rails.logger.error "DATADOG ERROR :: Exception: #{e.message} :: Backtrace: #{e.backtrace.join('\n')}"

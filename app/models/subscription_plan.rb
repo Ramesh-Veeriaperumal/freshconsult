@@ -26,8 +26,10 @@ class SubscriptionPlan < ActiveRecord::Base
   
   # TODO: Remove force_2019_plan?() after 2019 plan launched
   # START
-  scope :plans_2019, conditions: { name: ['Sprout Jan 19', 'Blossom Jan 19',
-    'Garden Jan 19', 'Estate Jan 19', 'Forest Jan 19'] }
+  scope :plans_2019, conditions: { name: [
+    'Sprout Jan 19', 'Blossom Jan 19', 'Garden Jan 19', 'Estate Jan 19',
+    'Garden Omni Jan 19', 'Estate Omni Jan 19', 'Forest Jan 19'
+  ] }, :order => 'amount asc'
   # END
 
   after_commit :clear_cache
@@ -98,13 +100,41 @@ class SubscriptionPlan < ActiveRecord::Base
   ].freeze
 
   JAN_2019_PLAN_NAMES = [
-    'Sprout Jan 19', 'Blossom Jan 19', 'Garden Jan 19', 'Estate Jan 19', 'Forest Jan 19'
+    'Sprout Jan 19', 'Blossom Jan 19', 'Garden Jan 19', 'Estate Jan 19',
+    'Garden Omni Jan 19', 'Estate Omni Jan 19', 'Forest Jan 19'
   ].freeze
 
   PLAN_NAMES_BEFORE_2017_AND_NOT_GRAND_PARENT = [
     'Sprout', 'Blossom', 'Garden', 'Estate', 'Forest'
   ].freeze
 
+  OMNI_PLANS = [
+    ['Estate Omni Jan 19', 'Estate Jan 19'],
+    ['Garden Omni Jan 19', 'Garden Jan 19']
+  ].freeze
+
+  OMNI_TO_BASIC_PLAN_MAP = OMNI_PLANS.each_with_object({}) do |plan, hash|
+    hash[plan[0].to_sym] = plan[1]
+  end.freeze
+
+  BASIC_PLAN_TO_OMNI_MAP = OMNI_PLANS.each_with_object({}) do |plan, hash|
+    hash[plan[1].to_sym] = plan[0]
+  end.freeze
+  
+  PLANS_OMNI_COST = {
+    'Garden Omni Jan 19': {
+      EUR: 10.0, INR: 719.0, USD: 10.0, ZAR: 142.0, GBP: 8.0, AUD: 14.0, BRL: 38.0
+    },
+    'Estate Omni Jan 19': {
+      EUR: 20.0, INR: 1437.0, USD: 20.0, ZAR: 285.0, GBP: 15.0, AUD: 27.0, BRL: 75.0
+    },
+    'Forest Jan 19': {
+      EUR: 30.0, INR: 2156.0, USD: 30.0, ZAR: 427.0, GBP: 23.0, AUD: 41.0, BRL: 113.0
+    }
+  }.freeze
+  
+  FREE_OMNI_PLANS = ['Forest Jan 19'].freeze
+  
   def fetch_discount(billing_cycle)
     BILLING_CYCLE_DISCOUNT[self.name].fetch(billing_cycle,1)
   end
@@ -156,5 +186,29 @@ class SubscriptionPlan < ActiveRecord::Base
   def pricing(currency)
     price[currency]
   end
+
+  def omni_plan?
+    OMNI_TO_BASIC_PLAN_MAP.key? name.to_sym
+  end
   
+  def basic_variant_name
+    OMNI_TO_BASIC_PLAN_MAP[name.to_sym]
+  end
+
+  def basic_variant?
+    BASIC_PLAN_TO_OMNI_MAP.key? name.to_sym
+  end
+
+  def omni_plan_name
+    BASIC_PLAN_TO_OMNI_MAP[name.to_sym]
+  end
+  
+  def omni_channel_cost(in_currency)
+    costs = PLANS_OMNI_COST[name.to_sym]
+    costs.nil? ? 0 : costs[in_currency.to_sym]
+  end
+
+  def free_omni_channel_plan?
+    FREE_OMNI_PLANS.include? name
+  end
 end

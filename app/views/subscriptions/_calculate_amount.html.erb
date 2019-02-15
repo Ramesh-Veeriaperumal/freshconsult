@@ -1,12 +1,19 @@
 <%= form_tag plan_subscription_url, :id => "plan_form" do %>
+<%
+	billing_cycle = if current_account.new_2019_pricing_enabled?
+		params[:billing_cycle].present? ? params[:billing_cycle].to_i : SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
+	else
+		@subscription.renewal_period
+	end
+%>
 <div class="billing-cost">
 	<hr class="billing-divider" />
 	<dl>
   	<dt><%=t('subscription.billing')%></dt>
 		<dd>
 			<%= select_tag :billing_cycle, 
-						options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.to_a, 
-															 @subscription.renewal_period), 
+						options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.dup.sort{ |x, y| y[1] <=> x[1] }, 
+															billing_cycle), 
 						:class => "select2" %>
 		</dd>
 	</dl>
@@ -34,13 +41,13 @@
 		  			<dd> 
 		  				<%= @subscription.non_free_agents %> x 
 		  				<span id="cost-per-agent">
-		  					<%= cost_per_agent(@subscription_plan.name, @subscription.billing_cycle, @subscription.currency_name) %> x <%= @subscription.billing_cycle %>
+		  					<%= cost_per_agent(@subscription_plan.name, billing_cycle, @subscription.currency_name) %> x <%= billing_cycle %>
 		  				</span>
 		  			</dd>
 		  		</dl>
 				</div>
 		  <% else %>
-		  	x <b id="cost-per-agent"><%= cost_per_agent(@subscription_plan.name, @subscription.billing_cycle, @subscription.currency_name) %></b> x <b id="number-of-months"> <%= @subscription.billing_cycle %> </b>
+		  	x <b id="cost-per-agent"><%= cost_per_agent(@subscription_plan.name, billing_cycle, @subscription.currency_name) %></b> x <b id="number-of-months"> <%= billing_cycle %> </b>
 		  <% end %>
 	</dl>
   
@@ -67,6 +74,9 @@
   				<b class="total" id="total-cost-per-agent">
   					<%= format_amount(amount, @subscription.currency_name) %>
   				</b>
+  				<p class="per-month-charges <%= billing_cycle == 1 ? 'hide' : '' %>">
+  					(<span class="symbol"></span><span class="amount"></span>/<%= t('month')%>)
+  				</p>
   			</h2>
 			</dd>	
 	  </dl>

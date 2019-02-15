@@ -173,7 +173,11 @@ class SubscriptionsController < ApplicationController
 
     #building objects
     def build_subscription
-      scoper.billing_cycle = (params[:billing_cycle].present? ? params[:billing_cycle].to_i : 1)
+      scoper.billing_cycle = if params[:billing_cycle].present?
+          params[:billing_cycle].to_i
+        else
+          current_account.new_2019_pricing_enabled? ? SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] : 1
+        end
       scoper.plan = @subscription_plan
       scoper.agent_limit = params[:agent_limit]
       scoper.free_agents = @subscription_plan.free_agents

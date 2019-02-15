@@ -16,29 +16,31 @@
         </strong>
       </h1>
     </div>
-    <div class="subscribed-plan-details current-plan-info">
-      <div id="info_1" class="subscription-info-divider free-divider free-divider--sanscard">
-        <ul>
-          <li>
-            <%= t('free_plan') %>
-          </li>
-          <li>
-            <%= is_new_sprout ? t('free_plan_agents_v2') : t('agent_seats',:no_of_agents => @subscription.agent_limit) %>
-          </li>
-          <li>
-            <%= t('account.active_since') %>
-            <strong>
-              <%= formated_date(current_account.created_at) %>
-            </strong>
-          </li>
-          <% if !is_new_sprout %>
-          <li>
-            <span class="free-plan-payment"><%= t('add_more_agents', :amount => fetch_plan_amount(plan)) %></span>
-          </li>
-          <% end %>
-          <div class="sprout-new-active"><%= link_to t( is_new_sprout ? 'enter_payment_details_to_add_v2': 'enter_payment_details_to_add').html_safe, billing_subscription_url%></div>
-          </li>
-        </ul>
+    <div class="calculate-container">
+      <div class="subscribed-plan-details current-plan-info">
+        <div id="info_1" class="subscription-info-divider free-divider free-divider--sanscard">
+          <ul>
+            <li>
+              <%= t('free_plan') %>
+            </li>
+            <li>
+              <%= is_new_sprout ? t('free_plan_agents_v2') : t('agent_seats',:no_of_agents => @subscription.agent_limit) %>
+            </li>
+            <li>
+              <%= t('account.active_since') %>
+              <strong>
+                <%= formated_date(current_account.created_at) %>
+              </strong>
+            </li>
+            <% if !is_new_sprout %>
+            <li>
+              <span class="free-plan-payment"><%= t('add_more_agents', :amount => fetch_plan_amount(plan)) %></span>
+            </li>
+            <% end %>
+            <div class="sprout-new-active"><%= link_to t( is_new_sprout ? 'enter_payment_details_to_add_v2': 'enter_payment_details_to_add').html_safe, billing_subscription_url%></div>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
 </div>
