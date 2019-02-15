@@ -197,6 +197,10 @@ class User < ActiveRecord::Base
     preferences[:user_preferences][:agent_deleted_forever]
   end
 
+  def simple_outreach_unsubscribe?
+    preferences[:user_preferences][:simple_outreach_unsubscribe]
+  end
+
   def facebook_avatar( facebook_id, profile_size = "square")
     "https://graph.facebook.com/#{facebook_id}/picture?type=#{profile_size}"
   end
@@ -1242,6 +1246,12 @@ class User < ActiveRecord::Base
 
   def active_and_verified?
     active? && primary_email.verified?
+  end
+
+  def proactive_email_outreach_unsubscribe
+    new_pref = { simple_outreach_unsubscribe: true }
+    self.merge_preferences = { user_preferences: new_pref }
+    save
   end
 
   private

@@ -2,15 +2,19 @@ development:
   signing_key: "abcdefgh12345678"
   jwt_default_expiry: 100000
   service_url: "http://localhost:3001"
+  email_cipher_key: "c6d28822fe84346e669d536edeab861dd61b2b2082b7"
 test:
   signing_key: "abcdefgh12345678"
   jwt_default_expiry: 100
   service_url: "http://localhost:3001"
+  email_cipher_key: "c6d28822fe84346e669d536edeab861dd61b2b2082b7"
 staging:
   signing_key: "abcdefgh12345678"
   jwt_default_expiry: 100000
   service_url: ""
+  email_cipher_key: ""
 production:
   signing_key: "abcdefgh12345678"
   jwt_default_expiry: 100000
   service_url: ""
+  email_cipher_key: ""

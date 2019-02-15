@@ -1,5 +1,7 @@
 module Email::EmailService::EmailCampaignDelivery
   require 'net/http/persistent'
+  include ::Proactive::EmailUnsubscribeUtil
+
   FD_EMAIL_SERVICE = (YAML::load_file(File.join(Rails.root, 'config', 'fd_email_service.yml')))[Rails.env]
   EMAIL_SERVICE_AUTHORISATION_KEY = FD_EMAIL_SERVICE['key']
   EMAIL_SERVICE_HOST = FD_EMAIL_SERVICE['host']
@@ -49,7 +51,7 @@ module Email::EmailService::EmailCampaignDelivery
   def email_data(params)
     {
       'subject' => params[:subject] || "Notification from #{Account.current.helpdesk_name}",
-      'html' => params[:description].gsub('{{', '${').gsub('}}', '}'),
+      'html' => params[:description].gsub('{{', '${').gsub('}}', '}').concat("<p>Click to <a href = ${contact.unsubscribe_link}>unsubscribe</a> from these emails</p>"),
       'tags' => tags(params[:user_ids]),
       'accountId' => params[:account_id].to_s,
       'headers' => {},
@@ -59,12 +61,14 @@ module Email::EmailService::EmailCampaignDelivery
   end
 
   def tags(user_ids)
-    Account.current.contacts.with_user_ids(user_ids).preload(:flexifield, :default_user_company, :companies).each_with_object([]) do |contact, tags|
-      tags << {
-        'email' => contact.email,
-        'name' => contact.name,
-        'html_tags' => html_tags(contact)
-      }
+    Account.current.users.with_user_ids(user_ids).preload(:flexifield, :default_user_company, :companies).each_with_object([]) do |contact, tags|
+      unless contact.simple_outreach_unsubscribe?
+        tags << {
+          'email' => contact.email,
+          'name' => contact.name,
+          'html_tags' => html_tags(contact)
+        }
+      end
     end
   end
 
@@ -78,7 +82,7 @@ module Email::EmailService::EmailCampaignDelivery
   def placeholder_substitues(customer)
     customer_klass_name = customer.class.name.downcase
     customer_attr_hash = customer.as_json[customer_klass_name]
-    customer_attr_hash.keys.inject({}) do |a, key|
+    placeholer_hash = customer_attr_hash.keys.inject({}) do |a, key|
       if key == :custom_field
         custom_field_hash = customer_attr_hash[:custom_field]
         custom_field_hash.keys.each do |custom_field_key|
@@ -89,6 +93,8 @@ module Email::EmailService::EmailCampaignDelivery
       end
       a
     end.stringify_keys
+    placeholer_hash.merge!("${contact.unsubscribe_link}" => generate_unsubscribe_link(customer)) if customer.is_a?(User)
+    placeholer_hash
   end
 
   def from_email(email_config_id)
