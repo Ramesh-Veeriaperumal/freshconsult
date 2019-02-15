@@ -417,9 +417,12 @@ class Ember::InstalledApplicationsControllerTest < ActionController::TestCase
     order_json = fetch_order.to_json
     app_id = get_installed_app('shopify').id
     order_mock = get_response_mock(order_json, 200)
+    IntegrationServices::Services::Shopify::ShopifyCustomerResource.any_instance.stubs(:http_get).returns(order_mock)
     IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.stubs(:http_get).returns(order_mock)
     param = construct_params({ version: 'private', id: app_id, event: 'fetch_orders', payload: { email: 'test120181211142937@yopmail.com'}})
     post :fetch, param
+    IntegrationServices::Services::Shopify::ShopifyOrderResource.any_instance.unstub
+    IntegrationServices::Services::Shopify::ShopifyCustomerResource.any_instance.unstub
     assert_response 200
   end
 

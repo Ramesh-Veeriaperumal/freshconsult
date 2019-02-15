@@ -160,13 +160,64 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern_with_nested_field(:settings,"form_type","It should be one of these values: '1,2'", {code:"invalid_value"})])
   end
 
+  def test_update_with_solution_articles
+    widget = create_widget
+    params_hash = widget_hash(widget)
+    request_params = {
+      settings: {
+        components: {
+          contact_form: true,
+          solution_articles: true
+        },
+        widget_flow: 1
+      }
+    }
+    put :update, construct_params({ version: 'v2', id: widget.id ,help_widget: request_params })
+    assert_response 200
+    widget.reload
+    assert widget.settings[:components][:solution_articles] == request_params[:settings][:components][:solution_articles]
+    assert widget.settings[:widget_flow] == request_params[:settings][:widget_flow]
+  end
+
+  def test_update_with_solution_articles_contact_form_disabled
+    widget = create_widget
+    params_hash = widget_hash(widget)
+    request_params = {
+      settings: {
+        components: {
+          contact_form: false,
+          solution_articles: true
+        },
+        widget_flow: 1
+      }
+    }
+    put :update, construct_params({ version: 'v2', id: widget.id ,help_widget: request_params })
+    assert_response 400
+  end
+
+  def test_update_with_solution_articles_disabled_contact_form_disabled
+    widget = create_widget
+    params_hash = widget_hash(widget)
+    request_params = {
+      settings: {
+        components: {
+          contact_form: false,
+          solution_articles: false
+        },
+        widget_flow: 1
+      }
+    }
+    put :update, construct_params({ version: 'v2', id: widget.id ,help_widget: request_params })
+    assert_response 400
+  end
+
   def test_update_components
     widget = create_widget
     params_hash = widget_hash(widget)
       request_params = {
         settings: {
         components: {
-          suggestions: true
+          solution_articles: true
         }
       }
     }
@@ -255,6 +306,39 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     match_json([bad_request_error_pattern(:length,"Unexpected/invalid field in request", {code:"invalid_field"})])
   end
 
+  def test_update_appearance
+    widget = create_widget
+    request_params = {
+      name: 'My_First_Widget',
+      settings: {
+        appearance: {
+          position: 1,
+          offset_from_bottom: 20,
+          offset_from_left: 10,
+          color_schema: 1,
+          pattern: 4,
+          gradient: 4,
+          theme_color: '#0ff5c1',
+          button_color: '#cf30e0'
+        }
+      }
+    }
+    put :update, construct_params({ version: 'v2', id: widget.id, help_widget: request_params })
+    assert_response 200
+    id = JSON.parse(@response.body)['id']
+    widget.reload
+
+    match_json(widget_show_pattern(HelpWidget.last))
+    assert widget.settings[:appearance][:position] == request_params[:settings][:appearance][:position]
+    assert widget.settings[:appearance][:offset_from_bottom] == request_params[:settings][:appearance][:offset_from_bottom]
+    assert widget.settings[:appearance][:offset_from_left] == request_params[:settings][:appearance][:offset_from_left]
+    assert widget.settings[:appearance][:color_schema] == request_params[:settings][:appearance][:color_schema]
+    assert widget.settings[:appearance][:pattern] == request_params[:settings][:appearance][:pattern]
+    assert widget.settings[:appearance][:gradient] == request_params[:settings][:appearance][:gradient]
+    assert widget.settings[:appearance][:theme_color] == request_params[:settings][:appearance][:theme_color]
+    assert widget.settings[:appearance][:button_color] == request_params[:settings][:appearance][:button_color]
+  end
+
   def test_update_all_settings
     widget = create_widget
     request_params = {
@@ -274,7 +358,9 @@ class HelpWidgetsControllerTest < ActionController::TestCase
           position: 1,
           offset_from_bottom: 40,
           offset_from_left: 20,
-          height: 700,
+          color_schema: 1,
+          pattern: 3,
+          gradient: 2,
           theme_color: '#0f45c1',
           button_color: '#cc30b0'
         }
@@ -298,7 +384,9 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert widget.settings[:appearance][:position] == request_params[:settings][:appearance][:position]
     assert widget.settings[:appearance][:offset_from_bottom] == request_params[:settings][:appearance][:offset_from_bottom]
     assert widget.settings[:appearance][:offset_from_left] == request_params[:settings][:appearance][:offset_from_left]
-    assert widget.settings[:appearance][:height] == request_params[:settings][:appearance][:height]
+    assert widget.settings[:appearance][:color_schema] == request_params[:settings][:appearance][:color_schema]
+    assert widget.settings[:appearance][:pattern] == request_params[:settings][:appearance][:pattern]
+    assert widget.settings[:appearance][:gradient] == request_params[:settings][:appearance][:gradient]
     assert widget.settings[:appearance][:theme_color] == request_params[:settings][:appearance][:theme_color]
     assert widget.settings[:appearance][:button_color] == request_params[:settings][:appearance][:button_color]
   end

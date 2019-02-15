@@ -1,5 +1,5 @@
-require 'webmock/minitest'
 require_relative '../../test_helper'
+require 'webmock/minitest'
 ['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'ticket_template_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['account_test_helper.rb', 'shared_ownership_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 ['tickets_test_helper.rb', 'bot_response_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
@@ -1120,6 +1120,7 @@ module Ember
     def test_create_from_email_with_bot_configuration
       Account.any_instance.stubs(:support_bot_configured?).returns(true)
       Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      Bot.any_instance.stubs(:email_channel).returns(true)
       @bot = @account.main_portal.bot || create_test_email_bot({email_channel: true})
       @account.reload
       ticket = create_ticket({source: 1})
@@ -1128,6 +1129,7 @@ module Ember
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
       assert_equal 1, ::Bot::Emailbot::SendBotEmail.jobs.size 
+      Bot.any_instance.unstub(:email_channel)
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
     end
@@ -2833,6 +2835,7 @@ module Ember
       current_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:ticket])
       assert_equal initial_count, current_data_exports.length
       @account.rollback(:ticket_contact_export)
+    ensure
       WebMock.disable_net_connect!
     end
 
@@ -2852,6 +2855,7 @@ module Ember
       assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.csv')
       @account.rollback(:ticket_contact_export)
+    ensure
       WebMock.disable_net_connect!
     end
 
@@ -2871,6 +2875,7 @@ module Ember
       assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.xls')
       @account.rollback(:ticket_contact_export)
+    ensure
       WebMock.disable_net_connect!
     end
 

@@ -12,10 +12,12 @@ class ContactWorkerTest < ActionView::TestCase
   def setup
     @account = Account.first.make_current
     @contact = create_search_contact(contact_params_hash)
+    WebMock.allow_net_connect!
   end
 
   def teardown
     @contact.destroy
+    WebMock.disable_net_connect!
   end
 
   def contact_params_hash

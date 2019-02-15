@@ -14,6 +14,7 @@ class UpdateCompanyIdTest < ActionView::TestCase
 
   def setup
     @account = Account.first.make_current
+    ::Tickets::UpdateCompanyId.jobs.clear
   end
 
   def construct_args(user_id, company_id)

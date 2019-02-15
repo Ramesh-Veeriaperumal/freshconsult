@@ -595,6 +595,8 @@ class User < ActiveRecord::Base
       Rails.logger.debug('::::::::API v2:#{e.message} error in contact create::::::::')
       return false
     end
+    return true if import_id.present?
+
     if (!self.deleted and !self.email.blank?)
       portal = nil
       force_notification = false

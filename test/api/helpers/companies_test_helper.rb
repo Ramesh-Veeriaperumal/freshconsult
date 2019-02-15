@@ -145,7 +145,7 @@ module CompaniesTestHelper
     response_pattern = company_pattern(expected_output, company)
     sla_array = []
     (expected_output[:sla_policies] || []).each do |sla_policy|
-      sla_array << sla_policy_pattern(sla_policy)
+      sla_array << sla_policy_private_pattern(sla_policy)
     end
     response_pattern[:sla_policies] = sla_array
     response_pattern

@@ -34,6 +34,7 @@ class Integrations::InstalledApplication < ActiveRecord::Base
   after_commit :after_commit_customize
   after_commit :clear_application_on_dip_from_cache
   after_commit :clear_fragment_caches, :if => :attachment_applications?
+  after_commit :clear_application_hash_cache
 
   publishable on: [:create, :update, :destroy], if: :publish_feature_launched?
 
@@ -231,5 +232,9 @@ class Integrations::InstalledApplication < ActiveRecord::Base
 
     def attachment_applications?
       self.application and ["dropbox","box","onedrive"].include?(self.application.name)
+    end
+
+    def clear_application_hash_cache
+      Account.current.clear_installed_application_hash_cache
     end
 end

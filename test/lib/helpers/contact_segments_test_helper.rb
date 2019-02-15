@@ -25,7 +25,7 @@ module ContactSegmentsTestHelper
       new_user.unique_external_id = options[:unique_external_id]
     end
     new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
-    new_user.save
+    new_user.save_without_session_maintenance
     new_user.reload
   end
 

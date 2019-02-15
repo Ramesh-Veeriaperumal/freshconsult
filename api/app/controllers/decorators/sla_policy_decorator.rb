@@ -55,6 +55,13 @@ class SlaPolicyDecorator < ApiDecorator
     super(record)
   end
 
+  def private_hash
+    {
+      id: record.id,
+      name: record.name
+    }
+  end
+
   def to_hash
     {
       id: record.id,

@@ -704,6 +704,7 @@ Helpkit::Application.routes.draw do
     end
     get '/account', to: 'channel/v2/accounts#show'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
+    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]
 
     get '/solutions/categories', to: 'channel/v2/api_solutions/categories#index'
     get '/solutions/categories/:id', to: 'channel/v2/api_solutions/categories#show'
@@ -735,7 +736,7 @@ Helpkit::Application.routes.draw do
     resources :companies, controller: 'channel/api_companies', only: [:create]
     resources :attachments, controller: 'channel/attachments', only: [:create]
     scope '/v2' do
-      resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :index]
+      resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :index, :show]
       resources :attachments, controller: 'channel/attachments', only: [:create, :show]
     end
     scope '/bot' do

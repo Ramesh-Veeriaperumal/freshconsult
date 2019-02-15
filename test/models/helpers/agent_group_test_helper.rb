@@ -4,7 +4,7 @@ module AgentGroupTestHelper
     agent_group = account.agent_groups.first
     return agent_group if agent_group
 
-    group = FactoryGirl.build(:group,:name=> name)
+    group = FactoryGirl.build(:group,:name=> Faker::Name.name)
     group.account_id = account.id
     group.ticket_assign_type  = options[:ticket_assign_type] if options[:ticket_assign_type]
     group.toggle_availability = options[:toggle_availability] if options[:toggle_availability]

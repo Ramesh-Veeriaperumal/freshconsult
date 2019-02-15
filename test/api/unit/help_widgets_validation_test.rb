@@ -107,6 +107,44 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     assert helpwidgetsvalidation.valid?(:update)
   end
 
+  def test_update_valid_with_solution_articles
+    Account.stubs(:current).returns(Account.new)
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'components' => {
+          'solution_articles' => true
+        }
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    assert helpwidgetsvalidation.valid?(:update)
+  end
+
+  def test_update_valid_with_solution_articles_widget_flow
+    Account.stubs(:current).returns(Account.new)
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'widget_flow' => 1
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    assert helpwidgetsvalidation.valid?(:update)
+  end
+
+  def test_update_valid_with_solution_articles_widget_flow_invalid
+    Account.stubs(:current).returns(Account.new)
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'widget_flow' => 13
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    refute helpwidgetsvalidation.valid?(:update)
+  end
+
   def test_update_invalid_with_invalid_color_code
     Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
@@ -121,5 +159,39 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     refute helpwidgetsvalidation.valid?(:update)
     errors=helpwidgetsvalidation.errors.full_messages
     assert errors.include?("Settings invalid_format")
+  end
+
+  def test_update_valid_with_valid_appearance_settings
+    Account.stubs(:current).returns(Account.new)
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'appearance' => {
+          'color_schema' => 1,
+          'gradient' => 2,
+          'pattern' => 4
+        }
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    assert helpwidgetsvalidation.valid?(:update)
+    errors=helpwidgetsvalidation.errors.full_messages
+    assert errors.blank?
+  end
+
+    def test_update_valid_with_invalid_appearance_settings
+    Account.stubs(:current).returns(Account.new)
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'appearance' => {
+          'color_schema' => 110,
+          'gradient' => 29,
+          'pattern' => 4
+        }
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    refute helpwidgetsvalidation.valid?(:update)
   end
 end

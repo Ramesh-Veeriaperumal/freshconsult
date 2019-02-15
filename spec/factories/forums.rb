@@ -26,6 +26,10 @@ if Rails.env.test?
 
     factory :monitorship do
     end
+
+    factory :forum_moderator do
+    end
+
   end
 
   FactoryGirl.define do

@@ -12,10 +12,12 @@ class CompanyWorkerTest < ActionView::TestCase
   def setup
     @account = Account.first.make_current
     @company = create_search_company(company_params_hash)
+    WebMock.allow_net_connect!
   end
 
   def teardown
     @company.destroy
+    WebMock.disable_net_connect!
   end
 
   def company_params_hash

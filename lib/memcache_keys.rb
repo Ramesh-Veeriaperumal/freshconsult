@@ -226,16 +226,16 @@ module MemcacheKeys
   CONTACT_FILTERS = 'CONTACT_FILTERS:%{account_id}'.freeze
 
   COMPANY_FILTERS = 'COMPANY_FILTERS:%{account_id}'.freeze
-  
-  ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
 
-  HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"
+  ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
 
   HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"
 
   TICKET_FIELDS_FULL = 'TICKET_FIELDS_FULL:%<account_id>s:%<language_code>s'.freeze
 
   CURRENCY_NAMES = 'CURRENCY_NAMES'.freeze
+
+  INSTALLED_APPS_HASH = 'INSTALLED_APPS_HASH:%{account_id}'.freeze
 
   PLANS_AGENT_COSTS_BY_CURRENCY = 'PLANS_AGENT_COSTS_BY_CURRENCY:%{currency_name}'.freeze
 

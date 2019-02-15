@@ -145,6 +145,35 @@ module UsersTestHelper
     }
   end
 
+  def channel_contact_pattern(contact, expected_output = {})
+    {
+      import_id: expected_output[:import_id] || contact.import_id,
+      deleted_at: expected_output[:deleted_at] || contact.deleted_at,
+      blocked: expected_output[:blocked] || contact.blocked,
+      blocked_at: expected_output[:blocked_at] || contact.blocked_at,
+      whitelisted: expected_output[:whitelisted] || contact.whitelisted,
+      external_id: expected_output[:external_id] || contact.external_id,
+      parent_id: expected_output[:parent_id] || contact.parent_id,
+      crypted_password: expected_output[:crypted_password] || contact.crypted_password,
+      password_salt: expected_output[:password_salt] || contact.password_salt,
+      last_login_at: expected_output[:last_login_at] || contact.last_login_at,
+      current_login_at: expected_output[:current_login_at] || contact.current_login_at,
+      last_login_ip: expected_output[:last_login_ip] || contact.last_login_ip,
+      current_login_ip: expected_output[:current_login_ip] || contact.current_login_ip,
+      login_count: expected_output[:login_count] || contact.login_count,
+      failed_login_count: expected_output[:failed_login_count] || contact.failed_login_count,
+      second_email: expected_output[:second_email] || contact.second_email,
+      last_seen_at: expected_output[:last_seen_at] || contact.last_seen_at,
+      preferences: expected_output[:preferences] || contact.preferences,
+      posts_count: expected_output[:posts_count] || contact.posts_count,
+      user_role: expected_output[:user_role] || contact.user_role,
+      delta: expected_output[:delta] || contact.delta,
+      privileges: expected_output[:privileges] || contact.privileges,
+      extn: expected_output[:extn] || contact.extn,
+      history_column: expected_output[:history_column] || contact.history_column
+    }.merge(contact_pattern(contact))
+  end
+
   def index_contact_pattern(contact)
     keys = [
       :avatar, :tags, :other_emails, :deleted,
@@ -392,7 +421,7 @@ module UsersTestHelper
     ret_hash.merge!(whitelisted_properties_for_activities(obj))
     ret_hash
   end
-  
+
   def whitelisted_properties_for_activities(obj)
     return {archived: true} if archived?(obj)
     {
@@ -432,7 +461,7 @@ module UsersTestHelper
     policy = type=="agent" ? Account.current.agent_password_policy_from_cache : 
                              Account.current.contact_password_policy_from_cache
     return { policies: nil } unless policy.present?
-    ret_hash = { 
+    ret_hash = {
       policies: policy.configs
     }
     policy.policies.map(&:to_s).each do |policy|
@@ -510,5 +539,98 @@ module UsersTestHelper
 
   def disable_multiple_user_companies
     Account.current.revoke_feature(:multiple_user_companies)
+  end
+
+  def channel_contact_create_payload
+    create_contact_field(cf_params(type: 'boolean', field_type: 'custom_checkbox', label: 'Check Me', editable_in_signup: 'true'))
+    create_contact_field(cf_params(type: 'date', field_type: 'custom_date', label: 'DOJ', editable_in_signup: 'true'))
+    company_a = create_company
+    company_b = create_company
+    company_c = create_company
+    {
+      active: true,
+      address: Faker::Lorem.characters(50),
+      company_id: company_a.id,
+      view_all_tickets: true,
+      description: Faker::Lorem.characters(10),
+      email: Faker::Internet.email,
+      job_title: Faker::Lorem.characters(10),
+      language: 'en',
+      mobile: Faker::Lorem.characters(10),
+      name: Faker::Lorem.characters(10),
+      phone: Faker::Lorem.characters(10),
+      time_zone: 'Central Time (US & Canada)',
+      twitter_id: Faker::Lorem.characters(10),
+      custom_fields: {
+        'check_me' => true,
+        'doj' => nil
+      },
+      deleted: true,
+      tags: [Faker::Lorem.characters(10), Faker::Lorem.characters(10), Faker::Lorem.characters(10)],
+      other_emails: [Faker::Internet.email, Faker::Internet.email],
+      facebook_id: Faker::Lorem.characters(10),
+      created_at: Time.now.utc - 30.days,
+      updated_at: Time.now.utc - 20.days,
+      other_companies: [{
+        company_id: company_b.id,
+        view_all_tickets: false
+      },
+                        {
+                          company_id: company_c.id,
+                          view_all_tickets: true
+                        }],
+      unique_external_id: Faker::Lorem.characters(10),
+      import_id: Faker::Number.number(5),
+      deleted_at: Time.now.utc - 20.days,
+      blocked: true,
+      blocked_at: Time.now.utc - 20.days,
+      whitelisted: false,
+      external_id: Faker::Lorem.characters(10),
+      parent_id: 0,
+      crypted_password: Faker::Lorem.characters(50),
+      password_salt: Faker::Lorem.characters(10),
+      last_login_at: Time.now.utc - 20.days,
+      current_login_at: nil,
+      last_login_ip: Faker::Lorem.characters(10),
+      current_login_ip: nil,
+      login_count: Faker::Number.number(1),
+      failed_login_count: 0,
+      second_email: Faker::Lorem.characters(10),
+      last_seen_at: Time.now.utc - 20.days,
+      preferences: {
+        agent_preferences: {
+          shortcuts_enabled: true,
+          shortcuts_mapping: [],
+          notification_timestamp: nil,
+          show_onBoarding: true,
+          falcon_ui: false,
+          freshchat_token: nil,
+          undo_send: false
+        },
+        user_preferences: {
+          was_agent: false,
+          agent_deleted_forever: false,
+          marked_for_hard_delete: false
+        },
+        password_expiry_date: Time.now.utc
+      },
+      posts_count: 1,
+      user_role: nil,
+      delta: false,
+      privileges: Faker::Lorem.characters(10),
+      extn: Faker::Lorem.characters(10),
+      history_column: {
+        password_history: [
+          {
+            password: '582854ae49127f64be4fcd225a1f7a72918062f8c07d38e6ff8d94b399d6726656b3a3b73ad469f45a54d8209a1052170e2effdcb8d83949a4981dd8f0cb24ad',
+            salt: '7stwDQ8YH3N5byVdUD9D'
+          },
+          {
+            password: '4eac3fed6d8953cd021f38f2d8d4b20a752a5e375ff1bb116042dfa33dbe9b60f1aade7fec59399a34b7cecd6ef138b4c94a21ec8ab13b86acb5a0c24f014ad3',
+            salt: 'v5MBS26IVdkKdsYl4WvD'
+          }
+        ]
+      }
+    }
   end
 end

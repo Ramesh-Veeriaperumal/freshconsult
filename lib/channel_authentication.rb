@@ -5,7 +5,8 @@ module ChannelAuthentication
     twitter: 'twitter'.freeze,
     zapier: 'zapier'.freeze,
     proactive: 'proactive'.freeze,
-    ocr: 'ocr_channel'.freeze
+    ocr: 'ocr_channel'.freeze,
+    freshmover: 'freshmover'.freeze
   }.freeze
 
   def channel_client_authentication    
@@ -59,15 +60,9 @@ module ChannelAuthentication
       end
     end
 
-    def channel_twitter?
-      source(request.headers['X-Channel-Auth']) == CHANNELS[:twitter]
-    rescue StandardError => e
-      invalid_credentials_error
-    end
-
-    def channel_proactive?
-      source(request.headers['X-Channel-Auth']) == CHANNELS[:proactive]
-    rescue StandardError => e
+    def channel_source?(source)
+      source(request.headers['X-Channel-Auth']) == CHANNELS[source]
+    rescue StandardError
       invalid_credentials_error
     end
 
