@@ -2455,6 +2455,7 @@ en:
         solutions: Solutions
         forums: Forums
         bots: Bots
+        outreaches: Outreaches
         customers: Customers
         reports: Reports
         administration: Administration
@@ -2507,6 +2508,7 @@ en:
         bots: Bots
         view_bots: View bots tab
         manage_bots: Manage Bots
+        manage_proactive_outreaches: Manage proactive outreaches
         reports: Reports
         analytics: Analytics
         view_reports: View reports tab

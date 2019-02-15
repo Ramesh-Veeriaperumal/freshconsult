@@ -55,6 +55,17 @@ class EmailConfig < ActiveRecord::Base
     end
   end
 
+  def friendly_email_hash
+    if active?
+      { 'email' => reply_email, 'name' => name}
+    elsif primary_role?
+      account.default_friendly_email_hash
+    else
+      product.try(:primary_email_config) ? product.primary_email_config.friendly_email_hash : 
+                                           account.default_friendly_email_hash
+    end
+  end
+
   def random_noreply_email
     noreply_id = SecureRandom.base64(40).tr('+/=', '').strip.delete("\n")
     noreply_domain = Helpdesk::EMAIL[:activation_email_domain] || "smtp.freshdesk.com"
