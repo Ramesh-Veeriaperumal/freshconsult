@@ -419,7 +419,7 @@ class ContactsControllerTest < ActionController::TestCase
     data = Account.current.data_exports.last
 
     assert data.present?
-    assert data.user_id == @user.id
+    assert (data.user_id == @user.id)
 
     # post :export_csv
     # assert_response 302

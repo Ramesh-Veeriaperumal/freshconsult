@@ -1071,10 +1071,9 @@ module Ember
     def test_assume_identity_without_feature
       contact = add_new_user(@account, deleted: false, active: true)
       assume_contact = add_new_user(@account, deleted: false, active: true)
-      Account.any_instance.stubs(:has_feature?).with(:assume_identity).returns(false)
-      Account.any_instance.stubs(:has_feature?).with(:falcon).returns(true)
+      Account.any_instance.stubs(:assume_identity_enabled?).returns(false)
       put :assume_identity, construct_params({ version: 'private', id: assume_contact.id }, nil)
-      Account.any_instance.unstub(:has_feature?)
+      Account.any_instance.unstub(:assume_identity_enabled?)
       assert_response 400
       match_json(assume_identity_error_pattern)
     end
