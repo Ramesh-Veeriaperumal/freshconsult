@@ -1,7 +1,6 @@
 class Account < ActiveRecord::Base
 
   has_many :tickets, :class_name => 'Helpdesk::Ticket'
-  has_many :import_tickets, :class_name => 'Helpdesk::Ticket'
   has_many :ticket_bodies, :class_name => 'Helpdesk::TicketBody'
   has_many :notes, :class_name => 'Helpdesk::Note'
   has_many :note_bodies, :class_name => 'Helpdesk::NoteBody'
