@@ -30,7 +30,7 @@ class DataExport < ActiveRecord::Base
   EXPORT_IN_PROGRESS_STATUS = [:started, :file_created, :file_upload].freeze
 
   scope :ticket_export, :conditions => { :source => EXPORT_TYPE[:ticket] }, :order => "id"
-  scope :data_backup, :conditions => { :source => EXPORT_TYPE[:backup] }, :limit => 1, :order => 'id'
+  scope :data_backup, conditions: { source: EXPORT_TYPE[:backup] }, :limit => 1, order: 'id desc'
   scope :contact_export, :conditions => { :source => EXPORT_TYPE[:contact] }, :order => "id"
   scope :company_export, :conditions => { :source => EXPORT_TYPE[:company] }, :order => "id"
   scope :call_history_export, :conditions => { :source => EXPORT_TYPE[:call_history] }
