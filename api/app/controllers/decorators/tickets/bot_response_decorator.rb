@@ -20,7 +20,8 @@ class Tickets::BotResponseDecorator < ApiDecorator
         title: value[:title],
         opened: value[:opened],
         useful: value[:useful],
-        agent_feedback: value[:agent_feedback]
+        agent_feedback: value[:agent_feedback],
+        folder_title: value[:folder_title]
       }
     end
     articles

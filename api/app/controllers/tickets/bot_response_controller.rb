@@ -9,11 +9,6 @@ class Tickets::BotResponseController < ApiApplicationController
   end
 
   private
-
-    def launch_party_name
-      FeatureConstants::BOT_EMAIL_CHANNEL
-    end
-
     def scoper
       current_account.tickets
     end

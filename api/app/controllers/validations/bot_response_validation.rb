@@ -19,7 +19,7 @@ class BotResponseValidation < ApiValidation
   def articles_datatype_validation
     {
       id: { custom_numericality: { only_integer: true, greater_than: 0 }, custom_inclusion: { in: suggested_articles.keys }, required: true },
-      agent_feedback: { data_type: { rules: 'Boolean' }, custom_inclusion: { in: [false] }, required: true }
+      agent_feedback: { data_type: { rules: 'Boolean' }, custom_inclusion: { in: [false, true] }, required: true }
     }
   end
 
