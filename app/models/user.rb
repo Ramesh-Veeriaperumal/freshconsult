@@ -40,6 +40,7 @@ class User < ActiveRecord::Base
   scope :technicians, :conditions => { :helpdesk_agent => true }
   scope :visible, :conditions => { :deleted => false }
   scope :active, lambda { |condition| { :conditions => { :active => condition }} }
+  scope :with_user_ids, lambda { |condition| { :conditions => { :id => condition }} }
   scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
   scope :with_contractors, lambda { |conditions| { :joins => %(INNER JOIN user_companies ON
                                                                user_companies.account_id = users.account_id AND

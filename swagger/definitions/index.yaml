@@ -151,8 +151,11 @@ bot_update_req:
 
 trial_widget_complete_step:
   $ref: './request/trial_widget/complete_step.yaml'
+
 proactive_rule_input:
   $ref: ./request/proactive/rule.yaml
+proactive_simple_outreach_input:
+  $ref: ./request/proactive/simple_outreach.yaml
 
 trial_subscription_create:
   $ref: './request/trial_subscription/create.yaml'
@@ -317,6 +320,8 @@ customer_import_details:
   $ref: ./resource/customer_import.yaml
 rule:
   $ref: ./resource/rule.yaml
+simple_outreach:
+  $ref: ./resource/simple_outreach.yaml
 automation_rule:
   $ref: ./resource/automation_rule.yaml
 automation_rule_common:
@@ -481,6 +486,8 @@ requester:
   $ref: './response/tickets/requester.yaml'
 proactive_rule_response:
   $ref: ./response/proactive/rule.yaml
+proactive_simple_outreach_response:
+  $ref: ./response/proactive/simple_outreach.yaml
 
 # Trial Widget
 trial_widget_index:

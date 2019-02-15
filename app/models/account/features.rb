@@ -30,7 +30,7 @@ class Account < ActiveRecord::Base
     :scheduled_export_fix, :compact_lang_detection,
     :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :pricing_plan_change_2019,
-    :tag_central_publish, :native_apps, :bot_agent_response
+    :tag_central_publish, :native_apps, :bot_agent_response, :simple_outreach
   ].freeze
 
   DB_FEATURES = [

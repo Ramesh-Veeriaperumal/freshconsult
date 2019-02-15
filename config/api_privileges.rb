@@ -143,7 +143,6 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/omni_channel', only: [:index]
     resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config suggest_domains validate_domain_name customize_domain]
     resource :"admin/subscription", only: [:show, :plans]
-    resource :"proactive/rule"
     resource :"ember/ocr_proxy"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
     resource :'help_widget', only: [:index, :create, :show, :update, :destroy]
@@ -218,5 +217,10 @@ Authority::Authorization::PrivilegeList.build do
   manage_segments do
     resource :"ember/segments/contact_filter"
     resource :"ember/segments/company_filter"
+  end
+
+  manage_proactive_outreaches do
+    resource :"proactive/rule"
+    resource :"proactive/simple_outreach"
   end
 end

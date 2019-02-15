@@ -262,6 +262,12 @@ Helpkit::Application.routes.draw do
           post :preview_email
         end
       end
+
+      resources :simple_outreaches, controller: 'proactive/simple_outreaches', except: [:edit] do
+        collection do
+          post :preview_email
+        end
+      end
     end
 
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]

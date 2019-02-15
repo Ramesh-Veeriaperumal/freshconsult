@@ -1,0 +1,42 @@
+get:
+  tags: [proactive simple outreaches]
+  summary: List all
+  responses:
+    200:
+      description: Success
+      schema:
+        type: object
+        properties:
+          simple_outreaches:
+            type: array
+            items:
+              $ref: '#/definitions/proactive_simple_outreach_response'
+          meta:
+            type: object
+            allOf:
+              - $ref: '#/definitions/meta'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+
+post:
+  tags: [proactive simple outreaches]
+  description: Create simple outreach
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/proactive_simple_outreach_input'
+  responses:
+    201:
+      description: Success
+      schema:
+        $ref: '#/definitions/proactive_simple_outreach_response'
+    404:
+      description: simple outreach not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

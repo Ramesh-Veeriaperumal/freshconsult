@@ -1,0 +1,18 @@
+<%= t("mailer_notifier.hi_user", user_name: @render_options[:user].name) %>
+
+<% if @render_options[:import_success] %>
+  <%= "#{t('flash.import.info21', :outreach_name => @render_options[:outreach_name])}".html_safe%>
+<% else %>
+  <%= "#{t('flash.import.info22', :failed_count => @render_options[:failed_count])}".html_safe %>
+  <%= "#{t('flash.import.info4', :type => @render_options[:type].singularize)}".html_safe if @render_options[:attachment]%>
+  <%= "#{t('flash.import.info5', :solution_link => 'https://support.freshdesk.com/support/solutions/articles/196491')}".html_safe %>
+  <%= "#{t('flash.import.info23')}".html_safe%>
+  <%= "#{t('flash.import.info24', :success_count => @render_options[:success_count])}".html_safe %>
+
+<% end %>
+
+<%= t(:'flash.import.help_desk')%>
+
+<%= t(:'flash.import.regards')%>
+
+<%= t(:'flash.import.freshdesk')%>

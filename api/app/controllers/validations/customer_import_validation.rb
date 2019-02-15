@@ -6,13 +6,7 @@ class CustomerImportValidation < ApiValidation
   validates :fields, data_type: { rules: Hash, allow_nil: false },
                      required: true
 
-  validates :file, required: true
-  validates_each :file, on: :create do |record, attr, value|
-    if value && !CSV_FILE_EXTENSION_REGEX.match(value.original_filename)
-      record.errors.add(attr,
-          ErrorConstants::ERROR_MESSAGES[:invalid_format] % ACCEPTED_FILE_TYPE)
-    end
-  end
+  validate :check_file, on: :create
 
   validate :check_field_names, if: -> { errors[:fields].blank? }
 
@@ -36,4 +30,13 @@ class CustomerImportValidation < ApiValidation
   def check_field_values
     errors[:fields] << :invalid_import_value unless fields.values.all? { |value| value !~ /\D/ }
   end
+
+  def check_file
+    if !file
+      errors[:file] = ErrorConstants::ERROR_MESSAGES[:missing_field]
+    elsif file && !CSV_FILE_EXTENSION_REGEX.match(file.original_filename)
+      errors[:file] = ErrorConstants::ERROR_MESSAGES[:invalid_format] % ACCEPTED_FILE_TYPE
+    end
+  end
+
 end

@@ -1,5 +1,8 @@
 module Proactive::Constants
-  PROACTIVE_SERVICE_ROUTES = { rules_route: 'api/v1/rules' }.freeze
+  PROACTIVE_SERVICE_ROUTES = {
+    rules_route: 'api/v1/rules',
+    simple_outreaches_route: 'api/v1/simple_outreaches'
+  }.freeze
   SUCCESS_CODES = [200, 201, 204].freeze
 
   EQUALS = 'equals'.freeze
@@ -17,6 +20,10 @@ module Proactive::Constants
   ALL_OF = 'all_of'.freeze
   ANY_OF = 'any_of'.freeze
   NONE_OF = 'none_of'.freeze
+
+  SIMPLE_OUTREACH = 'simple_outreach'.freeze
+  DELIVERY_FEEDBACK = 'delivery_feedback'.freeze
+  ABANDONED_CART = 'abandoned_cart'.freeze
 
   CF_TYPES = {
     'custom_text' => 'text',
@@ -68,4 +75,15 @@ module Proactive::Constants
   FORMAT_EXCEPTION_MSG   = 'invalid_format'.freeze
   DATE_TIME_REGEX        = /^\d{4}-\d{2}-\d{2}/
   DATE_REGEX             = /^\d{4}-\d{2}-\d{2}$/
+
+  SIMPLE_OUTREACH_IMPORT_LIMIT = 1500
+
+  # simple outreach status
+  STATUS = {
+    PENDING: 1,
+    SCHEDULED: 2,
+    IN_PROGRESS: 3,
+    COMPLETED: 4,
+    FAILED: 5
+  }.freeze
 end

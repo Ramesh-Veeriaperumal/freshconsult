@@ -257,6 +257,7 @@ class Account < ActiveRecord::Base
 
   has_one :agent_skill_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:agent_skill]}
 
+  has_many :outreach_contact_imports, class_name: 'Admin::DataImport', :conditions => { source: Admin::DataImport::IMPORT_TYPE[:outreach_contact] }, dependent: :destroy
 
   has_many :tags, :class_name =>'Helpdesk::Tag'
   has_many :tag_uses, :class_name =>'Helpdesk::TagUse'
