@@ -42,7 +42,7 @@ module GroupsTestHelper
       business_calendar_id: group.business_calendar_id,
       toggle_availability: group.toggle_availability,
       capping_limit: group.capping_limit,
-      agents: group.agents.map do |agent|
+      agents: group.agents.map do |ag|
         { name: ag.name, id: ag.id, email: ag.email }
       end
     }
