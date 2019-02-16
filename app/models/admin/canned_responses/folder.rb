@@ -29,6 +29,8 @@ class Admin::CannedResponses::Folder < ActiveRecord::Base
   FOLDER_TYPE_KEYS_BY_TOKEN = Hash[*FOLDER_TYPE.map { |i| [i[0], i[2]] }.flatten]
   FOLDER_NAMES_BY_TOKEN     = Hash[*FOLDER_TYPE.map { |i| [i[0], i[1]] }.flatten]
 
+  scope :exclude_personal_folder, conditions: ['folder_type != 100']
+
   scope :accessible_for, lambda { |agent_user|
     {
       :select => "ca_folders.*, available_responses_count",

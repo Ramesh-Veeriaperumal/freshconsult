@@ -50,7 +50,7 @@
 								</ul>
 
 							</div>
-							<%else%>
+							<%elsif current_account.personal_canned_response_enabled? %>
 							<%= t('canned_folders.viewing') %>
 							<%count = current_account.canned_responses.only_me(current_user).count(:conditions => {:folder_id => @pfolder.id})%>
 							<b ><%= CGI.escapeHTML(@pfolder.display_name) %> (<%= count %>)</b>
@@ -154,7 +154,6 @@
 			    			<div class='alert alert-msg visibility-msg'>
 				    			<%= t('canned_folders.visibility_change').html_safe %>
 				    		</div>
-				    		<% if current_account.personal_canned_response_enabled? && @pfolder%>
 				    		<% if @current_folder.id == @pfolder.id%>
 									<%= f.fields_for :visibility do |access| %>	
 										<div class='control-group mt20'>
@@ -183,7 +182,6 @@
 											</div>
 										</div>
 									<%end%>
-							  <%end%>
 							  <%end%>
 						  </div>
 						  <div class='control-group' id="move_to_folder" >
@@ -215,10 +213,9 @@
 <%= javascript_tag do -%>
 	var folder_id   = <%= @current_folder.id %>;
 	var folder_name = "<%= @current_folder.name %>";
+	var pfolder_id = <%= @pfolder.id %>;
+	var hasPersonalCanned = <%= current_account.personal_canned_response_enabled? %>
 
-	<% if(current_account.personal_canned_response_enabled?) && @pfolder%>
-	  var pfolder_id = <%= @pfolder.id %>;
-	<%end%>
 	var pfolder_visibility = <%=Helpdesk::Access::ACCESS_TYPES_KEYS_BY_TOKEN[:users]%>;
 	var visibility_change_message = '<%= t('canned_folders.visibility_change').html_safe %>';
 	var new_ca_path = "<%= new_helpdesk_canned_responses_folder_path %>";
@@ -248,7 +245,7 @@
 
   function pfolderCheck(sel_folder_id) {
     var sel_folder_name=jQuery('#move_folder_id :selected').text();
-    if(sel_folder_id==pfolder_id && folder_id!=pfolder_id) {
+    if(hasPersonalCanned && sel_folder_id==pfolder_id && folder_id!=pfolder_id) {
       jQuery('#pfolder_visibility').show();
     } else {
       jQuery('#pfolder_visibility').hide();
