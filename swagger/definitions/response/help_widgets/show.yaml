@@ -19,7 +19,7 @@ properties:
           contact_form:
             type: boolean
             description: Contact form is On or Off On - true / Off - false
-          suggestion:
+          solution_articles:
             type: boolean
             description: Solution articles is On or Off On - true / Off - false
       contact_form:
@@ -55,13 +55,22 @@ properties:
           offset_from_left:
             type: integer
             description: Offset from left in px ( default = 30px )
-          height:
+          color_schema:
             type: integer
-            description: height of the widget in px ( default = 600px )
+            description: 1-gradient 2-solid color
+          gradient:
+            type: integer
+            description: 1-6
+          pattern:
+            type: integer
+            description: 1-6
           theme_color:
             type: string
             description: theme of the widget ( default color = 1054da )
           button_color:
             type: string
             description: Color of the buttons in widget ( default color = 16193e )
+      widget_flow:
+        type: integer
+        description: 1-Show contact options only after customers reads solution article 2-Show contact options upfront, along with solution articles
 

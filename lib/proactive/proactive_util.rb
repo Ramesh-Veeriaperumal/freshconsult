@@ -20,4 +20,27 @@ module Proactive::ProactiveUtil
     end
     service_response
   end
+
+  def trigger_contact_import(args)
+    Import::SimpleOutreachWorker.perform_async(args)
+  end
+
+  def make_rud_request(request_method, type, api_route)
+    route = "#{api_route}/#{params[:id]}"
+    service_response = make_http_call(route, request_method)
+    if @item.present?
+      render type.to_sym, status: service_response[:status]
+    else
+      head service_response[:status]
+    end
+  end
+
+  def check_proactive_feature
+    render_request_error(:require_feature, 403, feature: 'Proactive Support') unless current_account.proactive_outreach_enabled?
+  end
+
+  def generate_jwt_token
+    jwt_payload = { account_id: current_account.id, sub: 'helpkit', domain: current_account.full_domain }
+    @auth = "Token #{sign_payload(jwt_payload)}"
+  end
 end

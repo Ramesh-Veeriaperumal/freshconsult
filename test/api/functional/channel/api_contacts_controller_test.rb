@@ -173,6 +173,58 @@ module Channel
       @account.revoke_feature(:unique_contact_identifier)
     end
 
+    def test_create_contact_freshmover_skipping_validation
+      $infra['CHANNEL_LAYER'] = true
+      cf = create_contact_field(cf_params(type: 'text', field_type: 'custom_text', label: 'another_city', editable_in_signup: 'true', required_for_agent: 'true'))
+      set_jwt_auth_header('freshmover')
+      payload = channel_contact_create_payload
+      post :create, construct_params({ version: 'channel' }, payload)
+      assert_response 201
+      ignore_keys = [:was_agent, :agent_deleted_forever, :marked_for_hard_delete]
+      match_json(channel_contact_pattern(User.last.reload).except(*ignore_keys))
+    ensure
+      $infra['CHANNEL_LAYER'] = false
+    end
+
+    def test_create_contact_validation_failure
+      Account.any_instance.stubs(:multi_timezone_enabled?).returns(false)
+      Account.any_instance.stubs(:features?).with(:multi_language).returns(false)
+      Account.any_instance.stubs(:features?).with(:multiple_user_companies).returns(false)
+      set_jwt_auth_header('freshmover')
+      payload = channel_contact_create_payload
+      payload[:whitelisted] = '123'
+      post :create, construct_params({ version: 'channel' }, payload)
+      assert_response 400
+      match_json([bad_request_error_pattern('language', :require_feature_for_attribute, code: :inaccessible_field,
+                                                                                        attribute: 'language', feature: :multi_language),
+                  bad_request_error_pattern('time_zone', :require_feature_for_attribute, code: :inaccessible_field,
+                                                                                         attribute: 'time_zone', feature: :multi_timezone),
+                  bad_request_error_pattern('whitelisted', :datatype_mismatch,
+                                            expected_data_type: 'Boolean', prepend_msg: :input_received, given_data_type: String)])
+    end
+
+    def test_create_contact_without_authentication_header
+      post :create, construct_params({ version: 'channel' },
+                                     name: Faker::Lorem.characters(10),
+                                     email: Faker::Internet.email)
+      assert_response 401
+      match_json(request_error_pattern(:invalid_credentials))
+    end
+
+    def test_show_a_contact_with_avatar_freshmover
+      $infra['CHANNEL_LAYER'] = true
+      set_jwt_auth_header('freshmover')
+      file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+      sample_user = add_new_user(@account)
+      sample_user.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
+      get :show, controller_params(version: 'channel', id: sample_user.id)
+      ignore_keys = [:was_agent, :agent_deleted_forever, :marked_for_hard_delete]
+      match_json(channel_contact_pattern(sample_user.reload).except(*ignore_keys))
+      assert_response 200
+    ensure
+      $infra['CHANNEL_LAYER'] = false
+    end
+
     def test_show_a_contact_without_authentication_header
       sample_user = add_new_user(@account)
       get :show, controller_params(version: 'channel', id: sample_user.id)
@@ -216,6 +268,20 @@ module Channel
       pattern = users.map { |user| index_contact_pattern(user) }
       match_json(pattern.ordered!)
       assert_response 200
+    end
+
+    def test_list_contacts_for_freshmover
+      set_jwt_auth_header('freshmover')
+      get :index, controller_params(version: 'channel')
+      users = @account.all_contacts
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal response.size, 30
+    end
+
+    def test_list_contact_without_auth
+      get :index, controller_params(version: 'channel')
+      assert_response 401
     end
 
     def test_fetch_contact_by_email

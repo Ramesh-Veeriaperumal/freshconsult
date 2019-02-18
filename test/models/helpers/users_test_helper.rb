@@ -22,7 +22,7 @@ module UsersTestHelper
     role_id = @account.roles.find_by_name("Agent").id
     new_agent = FactoryGirl.build(:agent,
                                   :account_id => account.id,
-                                  :available => 1,
+                                  :available => options[:available] || 1,
                                   :ticket_permission => options[:ticket_permission] || Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets],
                                   :agent_type => options[:agent_type] || 1)
     new_user = FactoryGirl.build(:user,

@@ -8,7 +8,8 @@ class HelpWidget < ActiveRecord::Base
     :message => I18n.t('help_widget.message'),
     :button_text => I18n.t('help_widget.button_text'),
     :components => {
-      :contact_form => true
+      :contact_form => true,
+      :solution_articles => false
     },
     :contact_form => {
       :form_type => 1,
@@ -24,9 +25,12 @@ class HelpWidget < ActiveRecord::Base
       :offset_from_right => 30,
       :offset_from_left => 30,
       :offset_from_bottom => 30,
-      :height => 600,
-      :theme_color => "#1054da",
-      :button_color => "#16193e"
-    }
+      :color_schema => 1,
+      :gradient => 1,
+      :pattern => 1,
+      :theme_color => "#008969",
+      :button_color => "#12344d"
+    },
+    :widget_flow => 1
   }
 end

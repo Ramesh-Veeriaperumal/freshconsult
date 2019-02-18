@@ -24,8 +24,6 @@ class ConversationDelegator < ConversationBaseDelegator
 
   validate :ticket_summary_presence
 
-  validate :ticket_created_time, if: -> { channel_v2_note? }
-
   def initialize(record, options = {})
     options[:attachment_ids] = skip_existing_attachments(options) if options[:attachment_ids]
     super(record, options)
@@ -107,10 +105,6 @@ class ConversationDelegator < ConversationBaseDelegator
 
   def ticket_summary_presence
     errors[:id] << :"is invalid" if summary_note?
-  end
-
-  def ticket_created_time
-    errors[:created_at] << :lt_ticket_created_at if @notable.present? && created_at < @notable.created_at
   end
 
   alias validate_unseen_replies_for_public_notes validate_unseen_replies

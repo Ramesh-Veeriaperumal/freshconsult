@@ -17,6 +17,7 @@ class FlexifieldDefEntry < ActiveRecord::Base
               :conditions => [ "flexifield_coltype = 'dropdown' or flexifield_coltype = 'checkbox'" ]  
   
   before_save :ensure_alias_is_one_word
+  before_save :clearing_custom_date_field_cache, on: [:create, :update]
   before_create :set_account_id
 
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
@@ -85,11 +86,16 @@ class FlexifieldDefEntry < ActiveRecord::Base
   def ensure_alias_is_one_word
     flexifield_alias.gsub!(/\s+/,"_")
   end
-  
-private
+
+    def clearing_custom_date_field_cache
+      if self.flexifield_coltype == 'date'
+        Account.current.clear_custom_date_fields_cache
+      end
+    end
+
   def set_account_id
     self.account_id = flexifield_def.account_id
   end
  
-  
+ 
 end

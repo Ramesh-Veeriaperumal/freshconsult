@@ -28,21 +28,6 @@ class SAAS::AccountDataCleanup
     clear_fragment_caches
   end
 
-  def handle_public_url_toggle_drop_data
-    account.features.public_ticket_url.destroy
-  end
-  
-  def handle_agent_scope_drop_data
-    account.agents.each do |agent|
-      begin
-        agent.reset_ticket_permission
-        agent.save!
-      rescue Exception => e
-        Rails.logger.info "Exception while saving agent.. #{e.backtrace}"
-      end
-    end
-  end
-
   def handle_create_observer_drop_data
     account.all_observer_rules.find_each do |rule|
       rule.destroy
@@ -166,50 +151,31 @@ end
   end
 
   def handle_custom_apps_drop_data
-    begin
-      Integrations::Application.freshplugs(account).destroy_all
-      # Remove fa_developer feature - To prevent the developer from using Marketplac Developer portal
-      account.features.fa_developer.destroy if account.features_included?(:fa_developer)
+    Integrations::Application.freshplugs(account).destroy_all
+    # Remove fa_developer feature - To prevent the developer from using Marketplac Developer portal
+    account.features.fa_developer.destroy if account.features_included?(:fa_developer)
 
-      # Remove the installed custom apps from Marketplace
-      custom_apps_ext_ids = []
-      installed_apps_ext_ids = []
-      total_custom_apps = mkp_custom_apps
-      if error_status?(total_custom_apps)
-        Rails.logger.info  "Error in fetching custom apps from Global API"
-        return
-      else
-        custom_apps_ext_ids = total_custom_apps.body.map { |ext| ext['id'] }
-      end
+    # Remove the installed custom apps from Marketplace
+    custom_apps = log_on_error mkp_custom_apps
+    return if custom_apps.blank?
 
-      installed_apps_payload = account_payload(
-        Marketplace::ApiEndpoint::ENDPOINT_URL[:installed_extensions] %
-        { :product_id => Marketplace::Constants::PRODUCT_ID, :account_id => account.id},
-        {}, {:type => "#{Marketplace::Constants::EXTENSION_TYPE[:plug]},#{Marketplace::Constants::EXTENSION_TYPE[:custom_app]}"}
-        )
-      installed_apps_response = get_api(installed_apps_payload, MarketplaceConfig::ACC_API_TIMEOUT)
-      if error_status?(installed_apps_response)
-        Rails.logger.info  "Error in fetching installed custom apps from Account API"
-        return
-      else
-        installed_apps_ext_ids = installed_apps_response.body.map { |ext| ext['extension_id'] }
-      end
+    custom_apps_ext_ids = custom_apps.map { |ext| ext['id'] }
+    installed_apps = fetch_installed_extensions(account.id, [
+        Marketplace::Constants::EXTENSION_TYPE[:plug],
+        Marketplace::Constants::EXTENSION_TYPE[:custom_app]
+      ])
+    return if installed_apps.blank?
 
-      extensions_to_delete = custom_apps_ext_ids & installed_apps_ext_ids
-      extensions_to_delete.each do |extension_id|
-        uninstall_response = uninstall_extension({:extension_id => extension_id })
-        if error_status?(uninstall_response)
-          Rails.logger.info  "Error in uninstalling the custom apps in Account API"
-          return
-        else
-          Rails.logger.info  "Done uninstalling the custom app with extension_id: #{extension_id}"
-        end
-      end
-    rescue Exception => e
-      Rails.logger.info "Exception in custom apps data deletion.. #{e.backtrace}"
-      NewRelic::Agent.notice_error(e)
-      raise e
+    installed_apps_ext_ids = installed_apps.map { |ext| ext['extension_id'] }
+    (custom_apps_ext_ids & installed_apps_ext_ids).each do |extension_id|
+      log_on_error uninstall_extension({
+        extension_id: extension_id
+      })
     end
+  rescue => e
+    Rails.logger.error "Exception in custom apps data deletion.. #{e.backtrace}"
+    NewRelic::Agent.notice_error(e)
+    raise e
   end
 
 

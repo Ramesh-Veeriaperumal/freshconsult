@@ -215,6 +215,8 @@ Helpkit::Application.routes.draw do
   match '/auth/failure' => 'authorizations#failure', :as => :failure
   match "/facebook/page/callback" => 'facebook_redirect_auth#complete'
   match "/twitter/handle/callback" => 'twitter_redirect_auth#complete'
+  match '/simple_outreach_unsubscribe_status' => 'external_action#unsubscribe', :via => :get
+  match '/simple_outreach_unsubscribe' => 'external_action#email_unsubscribe', :via => :post
 
   resources :solutions_uploaded_images, :only => [:index, :create]  do
     collection do

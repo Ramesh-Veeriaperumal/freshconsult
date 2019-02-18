@@ -125,6 +125,17 @@ module Cache::Memcache::Account
     end
   end
 
+  def custom_date_fields_from_cache
+    @custom_date_fields_from_cache ||= begin
+      key = custom_date_fields_memcache_key
+      MemcacheKeys.fetch(key) { self.ticket_fields.where(field_type: 'custom_date').find(:all) }
+    end
+  end
+
+  def clear_custom_date_fields_cache
+    MemcacheKeys.delete_from_cache(ACCOUNT_CUSTOM_DATE_FIELDS % { :account_id =>self.id })
+  end
+
   def roles_from_cache
     @roles_from_cache ||= begin
       key = roles_cache_key
@@ -634,6 +645,19 @@ module Cache::Memcache::Account
     MemcacheKeys.delete_from_cache(key)
   end
 
+  def installed_apps_from_cache
+    @installed_apps ||= begin
+      MemcacheKeys.fetch(installed_apps_key) do
+        installed_apps_hash
+      end
+    end
+  end
+
+  def clear_installed_application_hash_cache
+    key = installed_apps_key
+    MemcacheKeys.delete_from_cache(key)
+  end
+
   private
     def permissible_domains_memcache_key id = self.id
       HELPDESK_PERMISSIBLE_DOMAINS % { :account_id => id }
@@ -647,12 +671,20 @@ module Cache::Memcache::Account
       ACCOUNT_AGENTS % { :account_id => self.id }
     end
 
+    def custom_date_fields_memcache_key
+      ACCOUNT_CUSTOM_DATE_FIELDS % { :account_id => self.id }
+    end
+
     def roles_cache_key
       ACCOUNT_ROLES % { :account_id => self.id }
     end
 
     def agents_details_memcache_key
       ACCOUNT_AGENTS_DETAILS % { :account_id => self.id }
+    end
+
+    def installed_apps_key
+      format(INSTALLED_APPS_HASH, account_id: id)
     end
 
     def groups_memcache_key

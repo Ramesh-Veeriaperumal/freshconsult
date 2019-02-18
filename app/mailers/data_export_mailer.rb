@@ -1,5 +1,5 @@
 class DataExportMailer < ActionMailer::Base
-	
+  
   layout "email_font"
   include EmailHelper
   
@@ -170,6 +170,43 @@ class DataExportMailer < ActionMailer::Base
       part.html { render "agent_export", :formats => [:html] }
     end.deliver
   end
+
+   def audit_log_export(options)
+    headers = {
+      :subject => safe_send("#{options[:type]}_export_subject", options),
+      :to => options[:email],
+      :from => AppConfig['from_email'],
+      :bcc => AppConfig['reports_email'],
+      :sent_on => Time.zone.now,
+      'Reply-to' => ''
+    }
+    headers.merge!(make_header(nil, nil, Account.current.id, 'Audit_log_export'))
+    @user = options[:user]
+    @url  = options[:url]
+    @account = Account.current
+    mail(headers) do |part|
+      part.html { render 'audit_log_export', formats: [:html] }
+    end.deliver
+  end
+
+  def audit_log_export_failure(options)
+    headers = {
+      :subject => 'Audit Log Export',
+      :to => options[:email],
+      :from => AppConfig['from_email'],
+      :bcc => AppConfig['reports_email'],
+      :sent_on => Time.zone.now,
+      'Reply-to' => ''
+    }
+
+    @message = I18n.t('export_data.failure_message')
+    headers.merge!(make_header(nil, nil, Account.current.id, 'Audit_log_export'))
+    @user = options[:user]
+    @account = Account.current
+    mail(headers) do |part|
+      part.html { render 'default_template', formats: [:html] }
+    end.deliver
+  end
  
   def broadcast_message options={}
     message_id = "#{Mail.random_tag}.#{::Socket.gethostname}@private-notification.freshdesk.com"
@@ -202,6 +239,10 @@ class DataExportMailer < ActionMailer::Base
   private
     def ticket_export_subject(options)
       options[:export_params][:archived_tickets] && options[:export_params][:use_es] ? options[:export_params][:export_name] : formatted_export_subject(options)
+    end
+
+    def audit_log_export_subject(options)
+      I18n.t('export_data.audit_log_export.subject', domain: options[:domain], url: options[:url])
     end
 
     def formatted_export_subject(options)

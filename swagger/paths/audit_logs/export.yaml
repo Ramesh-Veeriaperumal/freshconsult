@@ -1,0 +1,20 @@
+post:
+  summary: Audit log export
+  tags: [audit_log]
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/audit_log_export_input'
+  responses:
+    302:
+      description: Success
+    429:
+      description: Simultaneous export limit reached
+      schema:
+        $ref: '#/definitions/request_error_with_data'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

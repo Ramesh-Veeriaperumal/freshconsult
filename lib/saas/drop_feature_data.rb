@@ -1,4 +1,7 @@
 module SAAS::DropFeatureData
+  include Marketplace::ApiMethods
+  include Marketplace::HelperMethods
+
   def handle_multi_timezone_drop_data
     UpdateTimeZone.perform_async(time_zone: account.time_zone)
   end
@@ -84,6 +87,34 @@ module SAAS::DropFeatureData
     end
   end
 
+  def handle_marketplace_drop_data
+    account.installed_applications.each do |installed_application|
+      begin
+        account.destroy_all_slack_rule if installed_application.application.slack?
+        installed_application.destroy
+      rescue StandardError => e
+        Rails.logger.error "Exception while destroying the installed app: \
+        #{installed_application.id}, app_id: #{application_id}, Error: \
+        #{e.message}, #{e.backtrace.join("\n\t")}"
+      end
+    end
+    installed_apps = fetch_installed_extensions(
+      account.id,
+      Marketplace::Constants::EXTENSION_TYPE.values
+    )
+    return if installed_apps.blank?
+    
+    installed_apps.map { |ext| ext['extension_id'] }.each do |extension_id|
+      @extension = fetch_extension_details(extension_id)
+      if @extension.present?
+        log_on_error uninstall_extension({
+          extension_id: extension_id,
+          account_full_domain: account.full_domain
+        }.merge!(paid_app_params))
+      end
+    end
+  end
+
   def handle_scenario_automation_drop_data
     account.scn_automations.each do |scenario_automation|
       begin
@@ -99,5 +130,25 @@ module SAAS::DropFeatureData
   def handle_custom_password_policy_drop_data
     account.agent_password_policy.reset_policies.save!
     account.contact_password_policy.reset_policies.save!
+  end
+
+  def handle_personal_canned_response_drop_data
+    personal_folder = account.canned_response_folders.personal_folder.first
+    personal_folder.canned_responses.each(&:destroy)
+  end
+
+  def handle_public_url_toggle_drop_data
+    account.features.public_ticket_url.destroy
+  end
+  
+  def handle_agent_scope_drop_data
+    account.agents.each do |agent|
+      begin
+        agent.reset_ticket_permission
+        agent.save!
+      rescue Exception => e
+        Rails.logger.info "Exception while saving agent.. #{e.backtrace}"
+      end
+    end
   end
 end

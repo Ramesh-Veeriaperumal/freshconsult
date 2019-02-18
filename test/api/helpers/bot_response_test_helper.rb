@@ -163,6 +163,13 @@ module BotResponseTestHelper
     Account.current.unstub(:all_launched_features)
   end
 
+  def enable_bot_agent_response
+    Account.current.stubs(:bot_agent_response_enabled?).returns(true)
+    yield
+  ensure
+    Account.current.unstub(:bot_agent_response_enabled?)
+  end
+
   def create_bot_response(ticket_id = nil, bot_id = nil)
     ticket_id = ticket_id || Helpdesk::Ticket.first.try(:id)
     bot_id = bot_id || Bot.first.try(:id)

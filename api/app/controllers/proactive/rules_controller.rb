@@ -31,18 +31,18 @@ module Proactive
     end
 
     def show
-      make_rud_request('get', 'show')
+      make_rud_request('get', 'show', PROACTIVE_SERVICE_ROUTES[:rules_route])
     end
 
     def update
       if identify_customer_type? || is_filter_action_valid
         return if email_action? && !is_email_action_valid
-        make_rud_request('put', 'update')
+        make_rud_request('put', 'update', PROACTIVE_SERVICE_ROUTES[:rules_route])
       end
     end
 
     def destroy
-      make_rud_request('delete', 'destroy')
+      make_rud_request('delete', 'destroy', PROACTIVE_SERVICE_ROUTES[:rules_route])
     end
 
     def filters
@@ -71,30 +71,12 @@ module Proactive
       preview = NotificationPreview.new
       preview.add_custom_preview_hash(shopify_default_values)
       message = preview.notification_preview(cname_params[:email_body])
-      @email_body = { email_body: message }
+      subject = preview.notification_preview(cname_params[:subject])
+      @email_data = { email_body: message, subject: subject }
       render :preview_email, status: service_response[:status]
     end
 
     private
-
-      def make_rud_request(request_method, type)
-        route = "#{PROACTIVE_SERVICE_ROUTES[:rules_route]}/#{params[:id]}"
-        service_response = make_http_call(route, request_method)
-        if @item.present?
-          render type.to_sym, status: service_response[:status]
-        else
-          head service_response[:status]
-        end
-      end
-
-      def generate_jwt_token
-        jwt_payload = { account_id: current_account.id, sub: 'helpkit', domain: current_account.full_domain }
-        @auth = "Token #{sign_payload(jwt_payload)}"
-      end
-
-      def check_proactive_feature
-        render_request_error(:require_feature, 403, feature: 'Proactive Support') unless current_account.proactive_outreach_enabled?
-      end
 
       def validate_params
         if email_action?

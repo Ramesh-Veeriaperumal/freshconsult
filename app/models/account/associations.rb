@@ -1,7 +1,6 @@
 class Account < ActiveRecord::Base
 
   has_many :tickets, :class_name => 'Helpdesk::Ticket'
-  has_many :import_tickets, :class_name => 'Helpdesk::Ticket'
   has_many :ticket_bodies, :class_name => 'Helpdesk::TicketBody'
   has_many :notes, :class_name => 'Helpdesk::Note'
   has_many :note_bodies, :class_name => 'Helpdesk::NoteBody'
@@ -257,6 +256,7 @@ class Account < ActiveRecord::Base
 
   has_one :agent_skill_import, :class_name => 'Admin::DataImport' , :conditions => {:source => Admin::DataImport::IMPORT_TYPE[:agent_skill]}
 
+  has_many :outreach_contact_imports, class_name: 'Admin::DataImport', :conditions => { source: Admin::DataImport::IMPORT_TYPE[:outreach_contact] }, dependent: :destroy
 
   has_many :tags, :class_name =>'Helpdesk::Tag'
   has_many :tag_uses, :class_name =>'Helpdesk::TagUse'
@@ -278,7 +278,7 @@ class Account < ActiveRecord::Base
   has_one  :es_enabled_account, :class_name => 'EsEnabledAccount', :dependent => :destroy
 
   delegate :bcc_email, :ticket_id_delimiter, :email_cmds_delimeter,
-    :pass_through_enabled, :api_limit, :webhook_limit, :to => :account_additional_settings
+    :pass_through_enabled, :api_limit, :webhook_limit, :reset_ocr_account_id, to: :account_additional_settings
 
   has_many :subscription_events
 

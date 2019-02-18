@@ -260,6 +260,13 @@ module Proactive
                   bad_request_error_pattern('group', :"can't be blank", code: :invalid_value)])
     end
 
+    def test_preview_email
+      params_hash = {"event":"abandoned_cart","integration_details":{"type":"shopify"},"email_body":"<div>kjnefwnnvefknfe</div>", "subject": "<div>Dummy</div>"}
+      HttpRequestProxy.any_instance.stubs(:fetch_using_req_params).returns(text: '{"placeholders":[{"name":"total_price","label":"Total Price","dummy_value":"50"}]}', status: 200)
+      post :preview_email, construct_params({ version: 'private', id: 1 }, params_hash)
+      assert_response 200
+    end
+
     def fetch_email_config
       Account.current.email_configs.where('active = true').first || create_email_config
     end
@@ -271,6 +278,5 @@ module Proactive
     def rules_index_action_payload
       { text: "{\"rules\": [{\"id\":1,\"name\":\"test\",\"description\":\"new\",\"type\":0,\"created_at\":\"2018-08-01T07:24:54.000Z\",\"updated_at\":\"2018-08-01T07:24:54.000Z\"},{\"id\":2,\"name\":\"test\",\"description\":\"safsdfaasf\",\"type\":0,\"created_at\":\"2018-08-01T07:25:02.000Z\",\"updated_at\":\"2018-08-01T07:25:02.000Z\"},{\"id\":3,\"name\":\"test\",\"description\":\"safsdfaasf\",\"type\":0,\"created_at\":\"2018-08-01T08:30:00.000Z\",\"updated_at\":\"2018-08-01T08:30:00.000Z\"}]}" }
     end
-    
   end
 end

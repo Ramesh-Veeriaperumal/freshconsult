@@ -179,11 +179,22 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         defs[name.to_sym] = { get_op_list(cont).to_sym => cont  , :name => name, :container => cont,     
         :operator => get_op_list(cont), :options => get_default_choices(:group_id) }
       end
+     # Custom date field
+     Account.current.custom_date_fields_from_cache.select { |x| x.name == TicketFilterConstants::FSM_DATE_FIELD + "_#{Account.current.id}" }.each do |col|
+       defs[get_id_from_field(col).to_sym] = {
+         get_op_from_field(col).to_sym => get_container_from_field(col),
+         name: col.label,
+         container: get_container_from_field(col),
+         operator: get_op_from_field(col),
+         options: get_custom_choices(col) 
+}
+     end
 
       #Custom fields
       Account.current.custom_dropdown_fields_from_cache.each do |col|
         defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
       end 
+
 
       nested_fields = Account.current.nested_fields_from_cache
       ActiveRecord::Associations::Preloader.new(nested_fields, %i[level1_picklist_values nested_fields_with_flexifield_def_entries]).run

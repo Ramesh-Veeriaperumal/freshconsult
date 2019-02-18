@@ -8,9 +8,10 @@ class ContactEnrichmentTest < ActionView::TestCase
   include UsersHelper
   include AccountTestHelper
   def setup
-    @account = Account.first
-    create_test_account if @account.nil?
-    @account.make_current
+    super
+    @account = Account.current
+    @user = @account.nil? ? create_test_account : add_new_user(@account)
+    @user.make_current
   end
 
   def test_contact_enrichment
@@ -77,7 +78,6 @@ class ContactEnrichmentTest < ActionView::TestCase
      :facebook=>"amaccaw", :linkedin=>"pub/alex-maccaw/78/929/ab5"}
      Clearbit::Enrichment.stubs(:find).returns(clearbit_response)
      value = ContactEnrichment.new.perform(args)
-     Account.current.reload
      assert_equal value, true
      assert_equal Account.current.account_configuration.contact_info, expected_contact_info
   end

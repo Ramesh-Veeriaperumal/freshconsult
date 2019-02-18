@@ -108,9 +108,9 @@ class ApiContactsController < ApiApplicationController
       end
     end
 
-    def decorator_options
-      super({ name_mapping: (@name_mapping || get_name_mapping),
-              sideload_options: sideload_options })
+    def decorator_options(options = {})
+      super(options.merge(name_mapping: (@name_mapping || get_name_mapping),
+              sideload_options: sideload_options))
     end
 
     def sideload_options

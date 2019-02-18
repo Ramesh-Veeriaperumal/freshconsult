@@ -65,7 +65,7 @@ class Group < ActiveRecord::Base
   :ticket_assign_type, :toggle_availability, :business_calendar_id, :agent_groups_attributes,
   :capping_limit, :group_type
 
-  attr_accessor :capping_enabled
+  attr_accessor :capping_enabled, :agent_changes
 
   accepts_nested_attributes_for :agent_groups, :allow_destroy => true
 
@@ -87,6 +87,9 @@ class Group < ActiveRecord::Base
   scope :capping_enabled_groups, :conditions => ["ticket_assign_type = 1 and capping_limit > 0"], :order => :name
   scope :skill_based_round_robin_enabled, :order => :name,
         :conditions => ["ticket_assign_type = #{Group::TICKET_ASSIGN_TYPE[:skill_based]}"]
+  scope :ocr_enabled_groups,
+        order: :name,
+        conditions: ["ticket_assign_type IN (?)", OMNI_CHANNEL_ASSIGNMENT_TYPES]
 
 
   def self.has_different_business_hours?
@@ -101,18 +104,18 @@ class Group < ActiveRecord::Base
   def self.ticket_assign_options
     TICKET_ASSIGN_OPTIONS.map {|t| [I18n.t(t[0]),t[1]]}
   end
-	
-	def self.online_ivr_performers(group_id)
-		# optimize
-		return [] if (group = find_by_id(group_id)).blank?
-		group.agents.technicians.visible.online_agents
-	end
-	
-	def self.busy_ivr_performers(group_id)
-		# optimize
-		return [] if (group = find_by_id(group_id)).blank?
-		group.agents.technicians.visible.busy_agents
-	end
+  
+  def self.online_ivr_performers(group_id)
+    # optimize
+    return [] if (group = find_by_id(group_id)).blank?
+    group.agents.technicians.visible.online_agents
+  end
+  
+  def self.busy_ivr_performers(group_id)
+    # optimize
+    return [] if (group = find_by_id(group_id)).blank?
+    group.agents.technicians.visible.busy_agents
+  end
 
   def all_agents_list(account)
     account.agents_from_cache
@@ -254,9 +257,11 @@ class Group < ActiveRecord::Base
     def touch_agent_group_change(agent_group)
       return unless agent_group.user.present?
       agent_info = { id: agent_group.user_id, name: agent_group.user.name }
-      Thread.current[:agent_changes].present? ? 
-        Thread.current[:agent_changes].push(agent_info) : 
-        Thread.current[:agent_changes]=[agent_info]
+      if self.agent_changes.present?
+        self.agent_changes.push(agent_info)
+      else
+       self.agent_changes = [agent_info]
+      end
     end
 
     def set_default_type_if_needed

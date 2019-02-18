@@ -151,8 +151,11 @@ bot_update_req:
 
 trial_widget_complete_step:
   $ref: './request/trial_widget/complete_step.yaml'
+
 proactive_rule_input:
   $ref: ./request/proactive/rule.yaml
+proactive_simple_outreach_input:
+  $ref: ./request/proactive/simple_outreach.yaml
 
 trial_subscription_create:
   $ref: './request/trial_subscription/create.yaml'
@@ -167,6 +170,9 @@ automation_rule_input:
 
 account_cancellation_request:
   $ref: './request/accounts/cancel.yaml'
+
+audit_log_export_input:
+  $ref: './request/audit_log_export.yaml'
     
 # RESOURCE
 conversation_template:
@@ -197,8 +203,6 @@ agent:
   $ref: ./resource/agent.yaml
 profile:
   $ref: ./resource/profile.yaml
-sla_policy:
-  $ref: ./resource/sla_policy.yaml
 draft:
   $ref: ./resource/draft.yaml
 bot:
@@ -316,6 +320,8 @@ customer_import_details:
   $ref: ./resource/customer_import.yaml
 rule:
   $ref: ./resource/rule.yaml
+simple_outreach:
+  $ref: ./resource/simple_outreach.yaml
 automation_rule:
   $ref: ./resource/automation_rule.yaml
 automation_rule_common:
@@ -372,6 +378,8 @@ prime_association:
   $ref: ./response/tickets/prime_association.yaml
 associated_tickets:
   $ref: ./response/tickets/associated_ticket.yaml
+associated_tickets_count:
+  $ref: ./response/tickets/associated_tickets_count.yaml
 company_with_associations:
   $ref: './response/companies/list.yaml'
 contact_activity:
@@ -478,6 +486,8 @@ requester:
   $ref: './response/tickets/requester.yaml'
 proactive_rule_response:
   $ref: ./response/proactive/rule.yaml
+proactive_simple_outreach_response:
+  $ref: ./response/proactive/simple_outreach.yaml
 
 # Trial Widget
 trial_widget_index:
@@ -592,6 +602,22 @@ help_widget_update:
 help_widget_update_response:
   $ref: ./response/help_widgets/show.yaml
 
+#Help Widget
+help_widget_index:
+  $ref: ./response/help_widgets/index.yaml
+help_widget_create_input:
+  $ref: ./request/help_widgets/create.yaml
+help_widget_create:
+  $ref: ./response/help_widgets/show.yaml
+help_widget_show:
+  $ref: ./request/help_widgets/show.yaml
+help_widget_show_response:
+  $ref: ./response/help_widgets/show.yaml
+help_widget_update:
+  $ref: ./request/help_widgets/update.yaml
+help_widget_update_response:
+  $ref: ./response/help_widgets/show.yaml
+
 #Groups Private API
 group_request:
   $ref: ./definitions/request/groups/private_group_request.yaml
@@ -637,4 +663,8 @@ sla_policy_response:
   $ref: ./response/admin/sla_policy.yaml
 sla_policy_common:
   $ref: ./resource/sla_policy_common.yaml
+
+#Widget
+widget_attachment_create:
+  $ref: ./request/widget_attachment_create.yaml
   

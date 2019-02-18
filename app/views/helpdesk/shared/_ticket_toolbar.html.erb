@@ -99,7 +99,7 @@
           <% end %>
         <% end %>
 
-        <% unless ["deleted", "spam"].include?(@current_view) %>
+        <% if !["deleted", "spam"].include?(@current_view) && current_account.scenario_automation_enabled? %>
           <a  href="/helpdesk/tickets/bulk_scenario" id="scenario"
             class="btn p0"
             rel="freshdialog"

@@ -1,7 +1,8 @@
 class TicketFilterValidation < FilterValidation
+  include TicketFilterConstants
   attr_accessor :filter, :company_id, :requester_id, :email, :updated_since,
                 :order_by, :conditions, :requester, :status, :cf, :include,
-                :include_array, :query_hash, :only
+                :include_array, :query_hash, :only, :type
 
   validates :page, custom_numericality: {
     only_integer: true, greater_than: 0, ignore_string: :allow_string_param,
@@ -16,8 +17,10 @@ class TicketFilterValidation < FilterValidation
   validates :updated_since, date_time: true
   validates :order_by, custom_inclusion: { in: proc { |x| x.sort_field_options } }
   validates :status, array: { custom_inclusion: { in: proc { |x| x.account_statuses }, ignore_string: :allow_string_param, detect_type: true } }
+  validate :fsm_appointment_date_filter_validation, if: -> { Account.current.field_service_management_enabled? }
   validate :verify_cf_data_type, if: -> { cf.present? }
   validates :include, data_type: { rules: String }
+  validates :type, custom_inclusion: { in: proc { |x| x.account_ticket_types } }
   validate :query_hash_or_filter_presence
   # query_hash should either be an empty string or a hash.
   # This is for 'any_time' created_at filter for which default_filter should not be applied
@@ -67,6 +70,37 @@ class TicketFilterValidation < FilterValidation
 
   def find_attribute
     @email ? :email : :requester_id
+  end
+
+  def fsm_appointment_date_filter_validation
+    unless @query_hash.nil?
+      query_key = get_query_key.first
+      check_dates_and_range(query_key) if query_key.present? && !DATE_FILTER_DEFAULT_OPTIONS.include?(@query_hash[query_key]['value'])
+    end
+  end
+
+  def get_query_key
+    date_fields_filter = Account.current.custom_date_fields_from_cache.select { |x| x.name == FSM_DATE_FIELD + "_#{Account.current.id}" }.map(&:name)
+    @query_hash.keys.each do |query|
+      if @query_hash[query]['condition'] == FSM_DATE_FIELD && date_fields_filter.include?(@query_hash[query]['condition'] + "_#{Account.current.id}")
+        return query
+      else
+        return [nil]
+      end
+    end
+  end
+
+  def check_dates_and_range(query)
+    @query_hash[query]['value'][:from] = @query_hash[query]['value'][:from].to_date.strftime('%Y-%m-%d')
+    @query_hash[query]['value'][:to] = @query_hash[query]['value'][:to].to_date.strftime('%Y-%m-%d')
+    given_date_range = (@query_hash[query]['value'][:to].to_date - @query_hash[query]['value'][:from].to_date).to_i
+    if given_date_range > DATE_RANGE
+      errors[:query_hash] << :date_limit_exceeded
+    elsif given_date_range < 0
+      errors[:query_hash] << :invalid_date_range
+    end
+  rescue Exception => e
+    errors[:query_hash] << :query_format_invalid
   end
 
   def verify_cf_data_type
@@ -143,6 +177,10 @@ class TicketFilterValidation < FilterValidation
 
   def sort_field_options
     TicketsFilter.api_sort_fields_options.map(&:first).map(&:to_s)
+  end
+
+  def account_ticket_types
+    Account.current.ticket_types_from_cache.collect(&:value)
   end
 
   private

@@ -45,6 +45,7 @@ class User < ActiveRecord::Base
     u.add :extn
     u.add :parent_id
     u.add :unique_external_id
+    u.add :import_id
     DATETIME_FIELDS.each do |key|
       u.add proc { |x| x.utc_format(x.send(key)) }, as: key
     end
@@ -59,7 +60,7 @@ class User < ActiveRecord::Base
       action = @model_changes["helpdesk_agent"][0] ? "create" : "destroy"
       user_type = "contact"
     end
-    "#{user_type}_#{action}"
+    import_id.present? ? "import_#{user_type}_#{action}" : "#{user_type}_#{action}"
   end
 
   def agent_or_contact

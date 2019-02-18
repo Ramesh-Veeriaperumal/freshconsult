@@ -202,4 +202,7 @@ module Redis::Keys::Others
   #Account cancellation related keys
   ACCOUNT_CANCELLATION_REQUEST_JOB_ID = "ACCOUNT_CANCELLATION_REQUEST_JOB_ID:%{account_id}".freeze
   CUSTOM_ENCRYPTED_FIELD_KEY               = "CF_ENC_ENCRYPTION_KEY:%{account_id}".freeze
+  # new pricing plan flip key
+  NEW_2019_PRICING_ENABLED = 'NEW_2019_PRICING_ENABLED'.freeze
+  NEW_2019_PRICING_TEST_USERS = 'NEW_2019_PRICING_TEST_USERS'.freeze
 end

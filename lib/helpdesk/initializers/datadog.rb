@@ -1,5 +1,5 @@
-config = YAML::load_file(File.join(Rails.root, 'config', 'datadog.yml'))
-datadog_enabled = config[:enable]
+DATADOG_CONFIG = YAML::load_file(File.join(Rails.root, 'config', 'datadog.yml'))
+datadog_enabled = DATADOG_CONFIG["enable"]
 
 if datadog_enabled
   require 'aws-sdk'
@@ -21,6 +21,6 @@ if datadog_enabled
     c.use :rack, { 'distributed_tracing' => 'true' }
     c.use :sidekiq
     c.use :faraday, { 'distributed_tracing' => 'true' }
-    c.tracer sampler: sampler, enabled: true
+    c.tracer sampler: sampler, enabled: true, hostname: DATADOG_CONFIG["dd_agent_host"], port: DATADOG_CONFIG["dd_apm_port"]
   end
 end

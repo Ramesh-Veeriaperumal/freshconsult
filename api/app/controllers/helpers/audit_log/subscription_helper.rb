@@ -6,7 +6,7 @@ module AuditLog::SubscriptionHelper
     :agent_limit, :subscription_currency_id, :card_number, :card_expiration].freeze
 
   def subscription_changes(model_data, changes)
-    return [] unless current_user.privilege?(:manage_account)
+    return [] unless User.current.privilege?(:manage_account)
     response = []
     changes = readable_subscription_changes(changes)
     model_name = :subscription

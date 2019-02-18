@@ -75,7 +75,7 @@
         Rails.logger.info "Ticket #{@ticket.id} is either spammed or deleted before getting ML response"
         return false
       else
-        @ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] && @account.bot_email_channel_enabled? && @ticket.portal.bot.try(:email_channel) && @account.support_bot_configured?
+        ((@ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] && @account.bot_email_channel_enabled? && @ticket.portal.bot.try(:email_channel)) || (@account.bot_agent_response_enabled? && !@ticket.bot?)) && @account.support_bot_configured?
       end
     end
 

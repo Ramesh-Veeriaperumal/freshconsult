@@ -1,11 +1,11 @@
 module Channel
   class ApiContactsController < ::ApiContactsController
     include ChannelAuthentication
+    decorate_views
 
     skip_before_filter :check_privilege, only: :show
     skip_before_filter :load_object, :after_load_object, only: :fetch_contact_by_email
-    skip_before_filter :check_privilege, if: :channel_twitter?
-    skip_before_filter :check_privilege, if: :channel_proactive?
+    skip_before_filter :check_privilege, if: :skip_privilege_check?
     before_filter :channel_client_authentication
 
     def create
@@ -47,15 +47,16 @@ module Channel
         @name_mapping = CustomFieldDecorator.name_mapping(@contact_fields)
         custom_fields = @name_mapping.empty? ? [nil] : @name_mapping.values
 
-        field = ContactConstants::CONTACT_FIELDS | ['custom_fields' => custom_fields]
+        field = Channel::V2::ContactConstants::CHANNEL_CREATE_FIELDS | ['custom_fields' => custom_fields]
         params[cname].permit(*field)
         ParamsHelper.modify_custom_fields(params[cname][:custom_fields], @name_mapping.invert)
-        contact = ContactValidation.new(params[cname], @item, string_request_params?)
+        contact = Channel::V2::ContactValidation.new(params[cname], @item,
+                                                     string_request_params?)
         render_custom_errors(contact, true) unless contact.valid?(:channel_contact_create)
       end
 
       def validate_filter_params
-        if channel_twitter?
+        if channel_source?(:twitter)
           params.permit(*ContactConstants::CHANNEL_INDEX_FIELDS, *ApiConstants::DEFAULT_INDEX_FIELDS)
           @contact_filter = ContactFilterValidation.new(params, nil, string_request_params?)
           render_errors(@contact_filter.errors, @contact_filter.error_options) unless @contact_filter.valid?
@@ -66,6 +67,24 @@ module Channel
 
       def contacts_filter_conditions
         params[:twitter_id].present? ? @contact_filter.conditions.push(:twitter_id) : super
+      end
+
+      def assign_protected
+        Channel::V2::ContactConstants::PROTECTED_FIELDS.each do |field|
+          @item.safe_send("#{field}=", params[cname][field]) if params[cname][field].present? && @item.respond_to?(field)
+        end
+        @item.fb_profile_id = params[cname][:facebook_id].presence
+        @item.merge_preferences = params[:preferences] if params.key?(:preferences)
+        super
+      end
+
+      def decorator_options(options = {})
+        options[:additional_info] = channel_source?(:freshmover)
+        super(options)
+      end
+
+      def skip_privilege_check?
+        channel_source?(:twitter) || channel_source?(:proactive)
       end
   end
 end

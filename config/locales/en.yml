@@ -2269,6 +2269,7 @@ en:
         for_contacts: For Contacts
         password_policy_info3: Changes you make to the password policy will be applicable within 8 hours. Your agents will be prompted to update their passwords during this time. If they fail to conform, they will be logged out of the support portal and will be forced to change their passwords the next time they try to log in.
         password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
+        freshconnect_warning: If you are actively using Discuss, we recommend you to contact us to setup SSO at <a href="mailto:support@freshdesk.com">support@freshdesk.com</a> to avoid loss of conversations in Freshconnect.
       errors:
         simple_sso: 
           invalid_login_url: Please provide a valid login URL
@@ -2438,6 +2439,7 @@ en:
         solutions: Solutions
         forums: Forums
         bots: Bots
+        outreaches: Outreaches
         customers: Customers
         reports: Reports
         administration: Administration
@@ -2490,6 +2492,7 @@ en:
         bots: Bots
         view_bots: View bots tab
         manage_bots: Manage Bots
+        manage_proactive_outreaches: Manage proactive outreaches
         reports: Reports
         view_reports: View reports tab
         admin: Admin
@@ -2959,7 +2962,7 @@ en:
       failed:  "Failed: %{count}"
       info3: "The successfully imported %{type}, can be viewed under Customer->%{uc_type}."
       info4: "Reasons why %{type}(s) failed to import can be found in the attachment."
-      info5: "Please follow the instructions mentioned in this <a href = '%{solution_link}'>link</a> to check the formatting of the CSV file"
+      info5: "Please follow the instructions mentioned in <a href = '%{solution_link}'>this link</a> to check the formatting of the CSV file"
       info6: "Please send the file to support@freshdesk.com so that we can verify and upload it from our end."
       info7: "%{type} import could not be initiated for CSV that you submitted as the file format was incorrect. Please resubmit the file after reformatting it according to the guidelines mentioned in this solution article <a href = '%{solution_link}'>link</a>."
       info8: "Agents for whom skill update failed can be found in the attachment along with the reason for the failure."
@@ -2979,6 +2982,10 @@ en:
       help_desk: Please feel free to get in touch with us if you need help.
       regards: Regards
       freshdesk: Freshdesk Team
+      info21: "Your import is complete. Your outreach %{outreach_name} will now begin."
+      info22: "You recently tried to send an outreach via Freshdesk. %{failed_count} contact(s) failed to get imported."
+      info23: "Once you clean up the errors, please create a new outreach with the new CSV to send them an email."
+      info24: "The outreach you set up will now be sent to %{success_count} contact(s) who were successfully imported."
     business_hours:
       create:
         failure: Failed to create Business Hours
@@ -3102,6 +3109,9 @@ en:
         user_not_found: No user was found with that email address
         not_allowed: "You are not authorised to access this portal. Kindly contact your helpdesk administrator."
         success: Instructions to reset your password have been emailed to you. Please check your email.
+    signup:
+      name_as_url: "Name cannot contain URLs or dots."
+
     login:
       verify_credentials: Couldn't log you in. Please verify your credentials
       login_permission_denied: Sorry! You do not have enough permission to access this page.
@@ -3658,6 +3668,11 @@ en:
   clone: Clone
   disable: Disable
   enable: Enable
+  unsubscribe:
+    landing_heading: 'Do you really want to unsubscribe?'
+    landing_subheading: 'We’re sorry to see you go! If you unsubscribe now, we will no longer be able to send you any more updates. You can click on ‘unsubscribe’ button below to confirm your unsubscription.'
+    success_heading: 'Successfully unsubscribed.'
+    success_subheading: 'You have successfully unsubscribed from our updates and notifications mailing lists.'
   accounts:
     associate_google:
       login_message: Login with an account administrator's credentials to associate your Google Apps login to your Freshdesk account.
@@ -7628,6 +7643,10 @@ en:
     scheduled_ticket_export_no_data:
       subject: "%{title} - No tickets created or updated"
       body: "Hello there,<br><br>It’s been a little quiet here! You have no tickets created or updated from %{latest_schedule_range}. We’ll be back once your support is in action.<br><br>%{helpdesk_name}"
+    audit_log_export:
+      subject: "Audit Log Export for %{domain}"
+      body: "You can download the file from <a href=%{url}>here</a>.If the link does not work, copy and paste the URL below in your browser's address bar:"
+      note: "This link will expire in 15 days."
     agents:
       fields:
         name: "Name"
@@ -9595,6 +9614,8 @@ en:
       invalid_group_id: Please specify a valid group ID.
       required_folder_id: Please specify folder id.
       valid_folder_id: Please specify a valid folder ID. Personal and General folders are not editable.
+      invalid_plan: You cannot edit/update/destroy/show personal folders in sprout plan.
+      invalid_plan_failed: edit/update/destroy/show of personal folder is failed in sprout plan.
   ca_response:
     delete_confirm: Are you sure you want to delete this canned response?
   merge_contacts:
@@ -12417,6 +12438,7 @@ en:
           point1: 'Assign conversations to a group or team member'
           point2: 'Know who your customers are - their profile, navigation path, and previous ticket details to reply with context.'
           point3: 'Resolve conversations and choose between converting them to a new ticket or appending to an existing one.'
+  
   mailer_notifier:
     hi: 'Hi,'
     hey_user: 'Hey %{user_name}'
@@ -12546,6 +12568,8 @@ en:
     webhook_dropped: "Webhook dropped"
     customer_import: "%{import_type} import for %{account_full_domain}"
     customer_import_stopped: "%{import_type} import for %{account_full_domain} stopped"
+    outreach_customer_import: "Outreach in progress"
+    outreach_customer_import_failure: "Outreach: some contacts weren't imported"
   sandbox:
     live: Sandbox is live
     sync_complete: Sandbox sync complete!

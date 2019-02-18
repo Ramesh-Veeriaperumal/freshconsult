@@ -4,20 +4,30 @@ require 'faker'
 Sidekiq::Testing.fake!
 require Rails.root.join('spec', 'support', 'user_helper.rb')
 require Rails.root.join('test', 'api', 'helpers', 'tickets_test_helper.rb')
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 
 class BaseWorkerTest < ActionView::TestCase
   include ApiTicketsTestHelper
   include UsersHelper
+  include AccountTestHelper
 
   def setup
-    Account.stubs(:current).returns(Account.first)
-    @account = Account.current
-    @user = Account.current.users.first
-    User.stubs(:current).returns(@user)
+    super
+    before_all
+  end
+
+  def before_all
+    if Account.current.nil?
+      @user = create_test_account
+      @account = @user.account.make_current
+      @user.make_current
+    else
+      @account = Account.current
+    end
   end
 
   def teardown
-    Account.unstub(:current)
+    super
   end
 
   # Unit test coverage for app/workers/tickets/clear_tickets/empty_spam.rb ##

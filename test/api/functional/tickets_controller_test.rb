@@ -77,7 +77,6 @@ class TicketsControllerTest < ActionController::TestCase
     @account.time_zone = Time.zone.name
     @account.save
     @account.revoke_feature :unique_contact_identifier
-    @account.launch :description_by_request
     @@before_all_run = true
   end
 
@@ -3346,8 +3345,8 @@ class TicketsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:dashboard_new_alias?)
   end
 
-  def test_index_with_description_in_include_after_deprecation
-    Account.any_instance.stubs(:description_by_request_enabled?).returns(true)
+  def test_index_with_description_in_include_without_description_by_default_feature
+    Account.any_instance.stubs(:description_by_default_enabled?).returns(false)
     get :index, controller_params(include: 'description')
     assert_response 200
     response = parse_response @response.body
@@ -3361,12 +3360,30 @@ class TicketsControllerTest < ActionController::TestCase
       index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
     end
     match_json(pattern)
-    Account.any_instance.unstub(:description_by_request_enabled?)
+    Account.any_instance.unstub(:description_by_default_enabled?)
   end
 
-  def test_index_without_description_in_include_after_deprecation
-    Account.any_instance.stubs(:description_by_request_enabled?).returns(true)
-    get :index, controller_params()
+  def test_index_with_description_in_include_with_description_by_default_feature
+    Account.any_instance.stubs(:description_by_default_enabled?).returns(true)
+    get :index, controller_params(include: 'description')
+    assert_response 200
+    response = parse_response @response.body
+    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
+                .created_in(Helpdesk::Ticket.created_in_last_month)
+                .order('created_at DESC')
+                .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
+    assert_equal tkts.count, response.size
+    param_object = OpenStruct.new()
+    pattern = tkts.map do |tkt|
+      index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
+    end
+    match_json(pattern)
+    Account.any_instance.unstub(:description_by_default_enabled?)
+  end
+
+  def test_index_without_description_in_include_without_description_by_default_feature
+    Account.any_instance.stubs(:description_by_default_enabled?).returns(false)
+    get :index, controller_params
     assert_response 200
     response = parse_response @response.body
     tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
@@ -3379,29 +3396,11 @@ class TicketsControllerTest < ActionController::TestCase
       index_ticket_pattern_with_associations(tkt, param_object)
     end
     match_json(pattern)
-    Account.any_instance.unstub(:description_by_request_enabled?)
+    Account.any_instance.unstub(:description_by_default_enabled?)
   end
 
-  def test_index_with_description_in_include_before_deprecation
-    Account.any_instance.stubs(:description_by_request_enabled?).returns(false)
-    get :index, controller_params(include: 'description')
-    assert_response 200
-    response = parse_response @response.body
-    tkts =  Helpdesk::Ticket.where(deleted: 0, spam: 0)
-                .created_in(Helpdesk::Ticket.created_in_last_month)
-                .order('created_at DESC')
-                .limit(ApiConstants::DEFAULT_PAGINATE_OPTIONS[:per_page])
-    assert_equal tkts.count, response.size
-    param_object = OpenStruct.new()
-    pattern = tkts.map do |tkt|
-      index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
-    end
-    match_json(pattern)
-    Account.any_instance.unstub(:description_by_request_enabled?)
-  end
-
-  def test_index_without_description_in_include_before_deprecation
-    Account.any_instance.stubs(:description_by_request_enabled?).returns(false)
+  def test_index_without_description_in_include_with_description_by_default_feature
+    Account.any_instance.stubs(:description_by_default_enabled?).returns(true)
     get :index, controller_params()
     assert_response 200
     response = parse_response @response.body
@@ -3415,7 +3414,7 @@ class TicketsControllerTest < ActionController::TestCase
       index_ticket_pattern_with_associations(tkt, param_object, [:description, :description_text])
     end
     match_json(pattern)
-    Account.any_instance.unstub(:description_by_request_enabled?)
+    Account.any_instance.unstub(:description_by_default_enabled?)
   end  
 
   def test_show_with_conversations_exceeding_limit

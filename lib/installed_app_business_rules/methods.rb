@@ -4,7 +4,7 @@ module InstalledAppBusinessRules::Methods
     include Va::Util
 
     def allow_inst_app_business_rule?
-      !zendesk_import? && !freshdesk_webhook? && !customer_import?
+      !zendesk_import? && !freshdesk_webhook? && !customer_import? && import_id.blank?
     end
     
     def inst_app_business_event_create

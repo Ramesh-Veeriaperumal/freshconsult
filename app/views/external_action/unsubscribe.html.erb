@@ -1,0 +1,32 @@
+<%= stylesheet_link_tag_with_rtl :'cdn/unsubscribe' %>
+<div class="main-content">
+  <div class="unsubscribe-container__logo">
+    <span class="admin__logo_span">
+      <img src="/images/misc/admin-logo.png" alt="Freshdesk" class="admin__logo"/>
+    </span>
+    <span class="admin__logo_text">
+      freshdesk
+    </span>
+  </div>
+  <% if @unsubscribe_status %>
+    <div class="unsubscribe-container__success">
+      <div class="unsubscribe-container__heading"><%= t('unsubscribe.success_heading') %></div>
+      <div class="unsubscribe-container__subheading"><%= t('unsubscribe.success_subheading') %></div>
+      <img class="logo-envelope" alt="logo" data-type="logo" src="assets/unsubscribe_puzzle.svg">
+    </div>
+  <% else %>
+  <div class="unsubscribe-container">
+    <div class="unsubscribe-container__heading"><%= t('unsubscribe.landing_heading') %></div>
+    <div class="unsubscribe-container__subheading"><%= t('unsubscribe.landing_subheading') %></div>
+    <div class="form-action-div">
+      <%= form_tag("simple_outreach_unsubscribe", {:method => :post, :class => "search-form"}) do %>
+        <input name='data' value='<%= @data %>' type='hidden' class="doamin-hidden"/>
+        <div>
+          <%= submit_tag "UNSUBSCRIBE", :class => "domain-btn", :id => "domain-btn"%>
+        </div>
+      <% end %>
+    </div>
+    <img class="logo-envelope" alt="logo" data-type="logo" src="assets/unsubscribe_envelope.svg">
+  </div>
+  <% end %>
+</div>

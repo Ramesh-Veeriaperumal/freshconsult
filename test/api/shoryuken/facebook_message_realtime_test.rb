@@ -21,10 +21,18 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     Account.unstub(:current)
   ensure
     Social::FacebookPage.any_instance.unstub(:unsubscribe_realtime)
+    Facebook::Core::Post.any_instance.unstub(:fetch_page_scope_id)
+    Facebook::Core::Comment.any_instance.unstub(:fetch_page_scope_id)
+    Facebook::Core::ReplyToComment.any_instance.unstub(:fetch_page_scope_id)
+    Facebook::Core::Status.any_instance.unstub(:fetch_page_scope_id)
   end
 
   def setup
     Account.stubs(:current).returns(Account.first)
+    Facebook::Core::Post.any_instance.stubs(:fetch_page_scope_id).returns(nil)
+    Facebook::Core::Comment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
+    Facebook::Core::ReplyToComment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
+    Facebook::Core::Status.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     @account = Account.current
     @fb_page = create_test_facebook_page(@account)
     @fb_page.update_attributes(realtime_messaging: true)

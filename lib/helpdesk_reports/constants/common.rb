@@ -16,9 +16,9 @@ module HelpdeskReports::Constants::Common
     :insights                      => 1013,
     :threshold                     => 1014}.freeze
 
-  DEFAULT_REPORTS     = [ :agent_summary, :group_summary, :threshold ]
+  DEFAULT_REPORTS     = [ :ticket_volume, :agent_summary, :group_summary, :threshold ]
   ADVANCED_REPORTS    = DEFAULT_REPORTS + [ :glance  ]
-  ENTERPRISE_REPORTS  = ADVANCED_REPORTS + [ :ticket_volume, :performance_distribution, :customer_report, :timespent, :qna, :insights] 
+  ENTERPRISE_REPORTS  = ADVANCED_REPORTS + [ :performance_distribution, :customer_report, :timespent, :qna, :insights]
 
   REPORT_ENUM_TO_TYPE  = REPORT_TYPE_TO_ENUM.invert.freeze
 

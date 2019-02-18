@@ -40,6 +40,8 @@
   $ref: ./tickets/prime_association.yaml
 /tickets/{id}/associated_tickets:
   $ref: ./tickets/associated_ticket.yaml
+/tickets/{id}/associated_tickets_count:
+  $ref: ./tickets/associated_tickets_count.yaml
 /tickets/{id}/split_note:
   $ref: ./tickets/split_note.yaml
 /tickets/{id}/draft:
@@ -493,6 +495,10 @@
   $ref: ./proactive/rules/list_and_create.yaml
 /proactive/rules/{id}:
   $ref: ./proactive/rules/crud.yaml
+/proactive/simple_outreaches:
+  $ref: ./proactive/simple_outreaches/list_and_create.yaml
+/proactive/simple_outreaches/{id}:
+  $ref: ./proactive/simple_outreaches/crud.yaml
 
 # Advanced Ticketing
 /advanced_ticketing:
@@ -502,16 +508,16 @@
 /advanced_ticketing/insights:
   $ref: ./advanced_ticketing/insights.yaml
 
+
 # Email Notifications
 /email_notifications/{id}:
   $ref: ./email_notifications/show_and_update.yaml
-  
+
 # Automation rules
 /automation_rules:
   $ref: ./automation_rules/list_and_create.yaml
 /automation_rules/{id}:
   $ref: ./automation_rules/crud.yaml
-
 #Groups Private API
 /groups:
   $ref: ./groups/list_and_create.yaml
@@ -523,7 +529,7 @@
   $ref: ./roles/index.yaml
 /roles/bulk_update:
   $ref: ./roles/bulk_update.yaml
-  
+
 # Help Widget
 /help_widgets:
   $ref: ./help_widgets/index.yaml
@@ -534,10 +540,13 @@
 /help_widgets/update:
   $ref: ./help_widgets/update.yaml
 
+/widget/attachment:
+  $ref: ./widget_attachment/create.yaml
+
 # Business Hours
 /business_hours:
   $ref: ./business_hours.yaml
-  
+
 # Account Admin
 /account_admin:
   $ref: ./account_admin/update.yaml
@@ -545,13 +554,13 @@
 /account_admin/disable_billing_info_updation:
   $ref: ./account_admin/disable_billing_info_updation.yaml
 
-# Account 
+# Account
 /accounts/cancel:
   $ref: ./accounts/cancel.yaml
 /accounts/{type}/download:
   $ref: ./accounts/download.yaml
 
-# Account Export 
+# Account Export
 /data_export/export:
   $ref: ./data_exports/export.yaml
 
@@ -565,6 +574,9 @@
 /admin/custom_translations/{id}/upload:
   $ref: ./admin/custom_translations/upload.yaml
 /admin/custom_translations/primary:
-  $ref: ./admin/custom_translations/primary.yaml 
+  $ref: ./admin/custom_translations/primary.yaml
 /admin/custom_translations/{id}:
   $ref: ./admin/custom_translations/secondary.yaml 
+
+/audit_log/export:
+  $ref: ./audit_logs/export.yaml

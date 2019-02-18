@@ -31,6 +31,13 @@ module SlaPoliciesTestHelper
     }
   end
 
+  def sla_policy_private_pattern(sla_policy)
+    {
+      id: Fixnum,
+      name: sla_policy.name
+    }
+  end
+
   def create_complete_sla_policy
     agent = add_agent_to_account(@account, {:name => "testing2",:active => 1, :role => 1} )
     sla_policy = create_sla_policy(agent)

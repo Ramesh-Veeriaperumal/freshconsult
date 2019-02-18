@@ -17,6 +17,25 @@ class ConversationDecorator < ApiDecorator
     construct_json.merge(source_additional_info: source_additional_info)
   end
 
+  def conversation_json
+    response_hash = {
+      body: body_html,
+      body_text: body,
+      id: id,
+      incoming: incoming,
+      private: private,
+      user_id: user_id,
+      support_email: support_email,
+      ticket_id: @ticket.display_id,
+      to_emails: to_emails,
+      created_at: created_at.try(:utc),
+      updated_at: updated_at.try(:utc),
+      attachments: attachments.map { |att| AttachmentDecorator.new(att).to_hash }
+    }
+    response_hash[:source_additional_info] = source_additional_info if channel_v2_api? && source_additional_info.present?
+    response_hash
+  end
+
   def construct_json
     schema_less_properties = schema_less_note.try(:note_properties) || {}
     {
@@ -119,13 +138,15 @@ class ConversationDecorator < ApiDecorator
   def tweet_public_hash
     return {} unless record.tweet? && record.tweet && record.tweet.twitter_handle
     handle = record.tweet.twitter_handle
-    {
+    tweet_hash = {
       id: record.tweet.tweet_id > 0 ? record.tweet.tweet_id.to_s : nil,
       type: record.tweet.tweet_type,
       support_handle_id: handle.twitter_user_id.to_s,
       support_screen_name: handle.screen_name,
       requester_screen_name: record.notable.requester.twitter_id
     }
+    tweet_hash[:stream_id] = record.tweet.stream_id if channel_v2_api?
+    tweet_hash
   end
 
   def feedback_hash

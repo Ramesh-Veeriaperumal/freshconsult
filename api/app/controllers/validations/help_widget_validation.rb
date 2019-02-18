@@ -18,14 +18,19 @@ class HelpWidgetValidation < ApiValidation
         data_type: {
           rules: Hash
         },
-        hash: { validatable_fields_hash: proc { |x| x.contact_form_format } }
+        hash: { validatable_fields_hash: proc { |x| x.enabled_components_format } }
       }
     }
   end
 
-  def contact_form_format
+  def components_list_format
     {
       contact_form: {
+        data_type: {
+          rules: 'Boolean'
+        }
+      },
+      solution_articles: {
         data_type: {
           rules: 'Boolean'
         }
@@ -74,6 +79,14 @@ class HelpWidgetValidation < ApiValidation
         hash: {
           validatable_fields_hash: proc { widget_appearance_template }
         }
+      },
+      widget_flow: {
+        data_type: {
+          rules: Integer
+        },
+        custom_inclusion: {
+          in: HelpWidgetConstants::WIDGET_FLOW_TYPES.values
+        }
       }
     }
   end
@@ -85,7 +98,7 @@ class HelpWidgetValidation < ApiValidation
           rules: 'Boolean'
         }
       },
-      suggestions: {
+      solution_articles: {
         data_type: {
           rules: 'Boolean'
         }
@@ -101,7 +114,7 @@ class HelpWidgetValidation < ApiValidation
           allow_nil: false
         },
         custom_inclusion: {
-          in: HelpWidgetConstants::FORM_TYPE_VALUES
+          in: HelpWidgetConstants::FORM_TYPES.values
         }
       },
       form_title: {
@@ -158,7 +171,7 @@ class HelpWidgetValidation < ApiValidation
           allow_nil: true
         },
         custom_inclusion: {
-          in: HelpWidgetConstants::POSITION_TYPE_VALUES
+          in: HelpWidgetConstants::POSITION_TYPES.values
         },
         custom_numericality: { only_integer: true, greater_than: 0 }
       },
@@ -183,12 +196,32 @@ class HelpWidgetValidation < ApiValidation
         },
         custom_numericality: { only_integer: true, greater_than: 0 }
       },
-      height: {
+      color_schema: {
         data_type: {
-          rules: Integer,
-          allow_nil: true
+          rules: Integer
+        },
+        custom_inclusion: {
+          in: HelpWidgetConstants::COLOR_SCHEMA_TYPES.values
         },
         custom_numericality: { only_integer: true, greater_than: 0 }
+      },
+      gradient: {
+        data_type: {
+          rules: Integer
+        },
+        custom_numericality: { only_integer: true, greater_than: 0 },
+        custom_inclusion: {
+          in: HelpWidgetConstants::PATTERN_TYPES.values
+        }
+      },
+      pattern: {
+        data_type: {
+          rules: Integer
+        },
+        custom_numericality: { only_integer: true, greater_than: 0},
+        custom_inclusion: {
+          in: HelpWidgetConstants::GRADIENT_TYPES.values
+        }
       },
       theme_color: {
         data_type: {
@@ -226,7 +259,7 @@ class HelpWidgetValidation < ApiValidation
 
   def validate_update_attributes
     settings = request_params[:settings]
-    settings.except('message', 'button_text').each_key do |settings_key|
+    settings.except('message', 'button_text', 'widget_flow').each_key do |settings_key|
       settings[settings_key].each_key do |key|
         errors[key] << I18n.t('help_widget.invalid_settings', key: key) unless "HelpWidgetConstants::#{settings_key.upcase}".constantize.include?(key.to_s)
       end

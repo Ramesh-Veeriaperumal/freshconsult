@@ -17,8 +17,10 @@ class Billing::Subscription < Billing::ChargebeeWrapper
 
   TRIAL_END = "0"
 
-  PLANS = [ :sprout, :blossom, :garden, :estate, :forest, :sprout_classic, :blossom_classic, :garden_classic,
-            :estate_classic, :basic, :pro, :premium, :sprout_jan_17, :blossom_jan_17, :garden_jan_17, :estate_jan_17, :forest_jan_17 ]
+  PLANS = [:sprout, :blossom, :garden, :estate, :forest, :sprout_classic,
+           :blossom_classic, :garden_classic, :estate_classic, :basic, :pro, :premium,
+           :sprout_jan_17, :blossom_jan_17, :garden_jan_17, :estate_jan_17, :forest_jan_17,
+           :sprout_jan_19, :blossom_jan_19, :garden_jan_19, :estate_jan_19, :forest_jan_19].freeze
 
   BILLING_PERIOD  = { 1 => "monthly", 3 => "quarterly", 6 => "half_yearly", 12 => "annual" }
 

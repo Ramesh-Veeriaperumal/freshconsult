@@ -1,9 +1,10 @@
 require_relative '../test_helper'
 require 'minitest/spec'
-['company_segments_test_helper.rb'].each { |file| require Rails.root.join("test/lib/helpers/#{file}") }
+['company_segments_test_helper.rb', 'company_helper.rb'].each { |file| require Rails.root.join("test/lib/helpers/#{file}") }
 
 class CompanySegmentTest < ActiveSupport::TestCase
   include CompanySegmentsTestHelper
+  include CompanyHelper
 
   def setup
     super

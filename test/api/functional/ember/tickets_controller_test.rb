@@ -1,5 +1,5 @@
-require 'webmock/minitest'
 require_relative '../../test_helper'
+require 'webmock/minitest'
 ['canned_responses_helper.rb', 'group_helper.rb', 'social_tickets_creation_helper.rb', 'ticket_template_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['account_test_helper.rb', 'shared_ownership_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 ['tickets_test_helper.rb', 'bot_response_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
@@ -1120,6 +1120,7 @@ module Ember
     def test_create_from_email_with_bot_configuration
       Account.any_instance.stubs(:support_bot_configured?).returns(true)
       Account.any_instance.stubs(:bot_email_channel_enabled?).returns(true)
+      Bot.any_instance.stubs(:email_channel).returns(true)
       @bot = @account.main_portal.bot || create_test_email_bot({email_channel: true})
       @account.reload
       ticket = create_ticket({source: 1})
@@ -1128,6 +1129,7 @@ module Ember
       disptchr = Helpdesk::Dispatcher.new(args)
       disptchr.execute
       assert_equal 1, ::Bot::Emailbot::SendBotEmail.jobs.size 
+      Bot.any_instance.unstub(:email_channel)
       Account.any_instance.unstub(:support_bot_configured?)
       Account.any_instance.unstub(:bot_email_channel_enabled?)
     end
@@ -1402,8 +1404,10 @@ module Ember
     # 3. ticket with no permission
     # 4. Successfull split with
     #     a. normal reply
-    #     b. twitter reply
-    #     c. fb reply
+    #     b. outbound email reply
+    #     c. shared ownership enabled
+    #     d. twitter reply
+    #     e. fb reply
     # 5. error in saving ticket
     # 6. verify attachmnets moving
 
@@ -1432,6 +1436,29 @@ module Ember
       put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: note.id }, false)
       assert_response 200
       verify_split_note_activity(ticket, note)
+    end
+
+    def test_split_note_with_outbound_email_reply
+      ticket = create_ticket(source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email])
+      reply = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:email]))
+      put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: reply.id }, false)
+      assert_response 200
+      assert_equal 1, JSON.parse(response.body)['source']
+    end
+
+    def test_split_ticket_with_shared_ownership_enabled
+      enable_feature(:shared_ownership) do
+        initialize_internal_agent_with_default_internal_group
+
+        group_restricted_agent = add_agent_to_group(group_id = @internal_group.id,
+                                                    ticket_permission = 2, role_id = @account.roles.first.id)
+        ticket = create_ticket({ status: @status.status_id, source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:outbound_email], internal_agent_id: @internal_agent.id }, nil, @internal_group)
+        login_as(@internal_agent)
+        reply = create_note(custom_note_params(ticket, Helpdesk::Note::SOURCE_KEYS_BY_TOKEN[:email]))
+        put :split_note, construct_params({ version: 'private', id: ticket.display_id, note_id: reply.id }, false)
+        assert_response 200
+        assert_equal 1, JSON.parse(response.body)['source']
+      end
     end
 
     def test_split_note_with_twitter_reply
@@ -2808,6 +2835,7 @@ module Ember
       current_data_exports = ticket_data_export(DataExport::EXPORT_TYPE[:ticket])
       assert_equal initial_count, current_data_exports.length
       @account.rollback(:ticket_contact_export)
+    ensure
       WebMock.disable_net_connect!
     end
 
@@ -2827,6 +2855,7 @@ module Ember
       assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.csv')
       @account.rollback(:ticket_contact_export)
+    ensure
       WebMock.disable_net_connect!
     end
 
@@ -2846,6 +2875,7 @@ module Ember
       assert_equal current_data_exports.last.status, DataExport::EXPORT_STATUS[:completed]
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.xls')
       @account.rollback(:ticket_contact_export)
+    ensure
       WebMock.disable_net_connect!
     end
 

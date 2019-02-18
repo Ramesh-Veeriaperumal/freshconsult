@@ -1,6 +1,7 @@
 class ProfilesController < ApplicationController
 
   include ModelControllerMethods  
+  include ProfilesHelper
   include UserHelperMethods  
   include FalconHelperMethods
   include Integrations::ProfileHelper

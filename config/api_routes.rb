@@ -262,11 +262,19 @@ Helpkit::Application.routes.draw do
           post :preview_email
         end
       end
+
+      resources :simple_outreaches, controller: 'proactive/simple_outreaches', except: [:edit] do
+        collection do
+          post :preview_email
+        end
+      end
     end
 
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
     
     resources :help_widgets, controller: 'help_widgets'
+
+    post '/audit_log/export', to: 'audit_logs#export'
     
   end
 
@@ -419,6 +427,7 @@ Helpkit::Application.routes.draw do
         put :link, to: 'ember/tickets/associates#link'
         put :unlink, to: 'ember/tickets/associates#unlink'
         get :associated_tickets, to: 'ember/tickets/associates#associated_tickets'
+        get :associated_tickets_count, to: 'ember/tickets/associates#associated_tickets_count'
         put :create_child_with_template
         put :requester, to: 'ember/tickets/requester#update'
         post :parse_template, to: 'ember/tickets#parse_template'
@@ -550,10 +559,9 @@ Helpkit::Application.routes.draw do
     end
 
     get 'canned_responses/search', to: 'ember/canned_responses#search'
-    
+
     # audit log path
     post '/audit_log', to: 'audit_logs#filter'
-    post '/audit_log/export', to: 'audit_logs#export'
     get '/audit_log/event_name', to: 'audit_logs#event_name'
 
     # account update
@@ -692,6 +700,7 @@ Helpkit::Application.routes.draw do
   channel_v2_routes = proc do
     resources :tickets, controller: 'channel/v2/tickets', only: [:index, :create, :update, :show] do
       member do
+        get :conversations, to: 'channel/v2/conversations#ticket_conversations'
         post :reply, to: 'channel/v2/conversations#reply'
         post :notes, to: 'channel/v2/conversations#create'
       end
@@ -701,6 +710,7 @@ Helpkit::Application.routes.draw do
     end
     get '/account', to: 'channel/v2/accounts#show'
     resources :ticket_filters, controller: 'channel/v2/ticket_filters', only: [:index, :show]
+    resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :show, :index]
 
     get '/solutions/categories', to: 'channel/v2/api_solutions/categories#index'
     get '/solutions/categories/:id', to: 'channel/v2/api_solutions/categories#show'
@@ -732,7 +742,7 @@ Helpkit::Application.routes.draw do
     resources :companies, controller: 'channel/api_companies', only: [:create]
     resources :attachments, controller: 'channel/attachments', only: [:create]
     scope '/v2' do
-      resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :index]
+      resources :contacts, as: 'api_contacts', controller: 'channel/api_contacts', only: [:create, :index, :show]
       resources :attachments, controller: 'channel/attachments', only: [:create, :show]
     end
     scope '/bot' do
@@ -755,6 +765,7 @@ Helpkit::Application.routes.draw do
   widget_routes = proc do
     resources :tickets, controller: 'widget/tickets', only: [:create]
     resources :ticket_fields, controller: 'widget/ticket_fields', only: [:index]
+    resources :attachments, controller: 'widget/attachments', only: [:create]
   end
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do

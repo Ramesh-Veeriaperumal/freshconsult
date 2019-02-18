@@ -15,7 +15,7 @@ class CustomerImportValidationTest < ActionView::TestCase
     customer_import_validation = create_customer_import_validation
     assert !customer_import_validation.valid?(:create)
     assert_equal(customer_import_validation.errors.full_messages.length, 2) 
-    assert customer_import_validation.errors.full_messages.include?("File missing_field")
+    assert customer_import_validation.errors.full_messages.include?("File Mandatory attribute missing")
     assert customer_import_validation.errors.full_messages.include?("Fields missing_field")
   end
 
@@ -51,7 +51,7 @@ class CustomerImportValidationTest < ActionView::TestCase
     customer_import_validation = create_customer_import_validation({}, 'company')
     assert !customer_import_validation.valid?(:create)
     assert_equal(customer_import_validation.errors.full_messages.length, 2)
-    assert customer_import_validation.errors.full_messages.include?('File missing_field')
+    assert customer_import_validation.errors.full_messages.include?('File Mandatory attribute missing')
     assert customer_import_validation.errors.full_messages.include?('Fields missing_field')
   end
 

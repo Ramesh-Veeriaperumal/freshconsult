@@ -349,3 +349,6 @@ Rails/ApplicationRecord:
 Style/FormatStringToken:
   Enabled: true
   EnforcedStyle: template
+
+Rails/RefuteMethods:
+  Enabled: false

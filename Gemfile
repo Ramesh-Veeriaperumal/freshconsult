@@ -20,7 +20,7 @@ gem "bootsnap", :require => false
 gem 'cld2', :require => 'cld'
 
 #For instrumenting cache-performance
-gem "time_bandits", :git => 'git@github.com:freshdesk/time_bandits', :tag => 'v1.1'
+gem "time_bandits", :git => 'git@github.com:freshdesk/fd_time_bandits', :tag => 'v1.2'
 
 gem "connection_pool"
 gem "clamav-client", "3.1.0", require: "clamav/client"
@@ -140,6 +140,7 @@ gem "dogstatsd-ruby"
 gem "faraday" , "0.9"
 gem 'faraday_middleware', '~> 0.10.0'
 gem "twitter", "~> 5.16.0"
+gem "twitter-text"
 gem "gnip-rule", "1.0.0"
 gem "curb", "~> 0.8.5"
 gem "sanitize", "4.6.5"

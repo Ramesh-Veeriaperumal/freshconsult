@@ -1,5 +1,6 @@
 FUNCTIONAL_TESTS_EMBER = Dir.glob('test/api/functional/ember/**/*_test.rb')
 FUNCTIONAL_TESTS_PUBLIC = Dir.glob('test/api/functional/**/*_test.rb')
+OLD_UI_FUNCTIONAL_TESTS = Dir.glob('test/app/functional/**/*_test.rb')
 UNIT_TESTS = Dir.glob('test/api/unit/*_test.rb') | Dir.glob('test/api/unit/*/*_test.rb')
 PIPE_TESTS = Dir.glob('test/api/**/pipe/**/*_test.rb')
 SEARCH_TESTS = Dir.glob('test/api/**/api_search/**/*_test.rb')
@@ -15,7 +16,9 @@ INTEGRATION_TESTS = [
 PRESENTER_TESTS = [
   'test/models/presenters/bot/response_test.rb',
   'test/models/presenters/account_test.rb',
-  'test/models/presenters/helpdesk/ticket_test.rb'
+  'test/models/presenters/helpdesk/ticket_test.rb',
+  'test/models/presenters/group_test.rb',
+  'test/models/presenters/agent_test.rb'
 ]
 SIDEKIQ_TESTS = Dir.glob('test/api/sidekiq/**/*_test.rb')
 SKIP_FILES_SIDEKIQ = Dir.glob('test/api/sidekiq/sandbox/*_test.rb') + Dir.glob('test/api/sidekiq/admin/sla/*_test.rb') + Dir.glob('test/api/sidekiq/community/clear_site_map_test.rb')
@@ -37,6 +40,6 @@ MODEL_TESTS = Dir.glob('test/models/**/*_test.rb')
 MAILER_TESTS = Dir.glob('test/app/mailers/**/*_test.rb')
 
 ALL_TESTS_FALCON = (UNIT_TESTS | FUNCTIONAL_TESTS_EMBER | SIDEKIQ_TESTS | SHORYUKEN_TESTS | INTEGRATION_TESTS | FRESHCALLER_CHANNEL_TESTS | LIB_TESTS | MODEL_TESTS | PRESENTER_TESTS | MAILER_TESTS) - SKIP_FILES_FALCON + SUCCESSFUL_SEARCH_TESTS - SKIP_FILES_SIDEKIQ
-ALL_TESTS_PUBLIC = (FUNCTIONAL_TESTS_PUBLIC) - FUNCTIONAL_TESTS_EMBER - SEARCH_TESTS - SKIP_FILES_PUBLIC
+ALL_TESTS_PUBLIC = (FUNCTIONAL_TESTS_PUBLIC | OLD_UI_FUNCTIONAL_TESTS) - FUNCTIONAL_TESTS_EMBER - SEARCH_TESTS - SKIP_FILES_PUBLIC
 
 ALL_TESTS = (ALL_TESTS_FALCON + ALL_TESTS_PUBLIC).uniq

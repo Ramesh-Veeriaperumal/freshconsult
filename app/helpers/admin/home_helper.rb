@@ -67,11 +67,11 @@
       },
       :sla                             =>   {
         :url                           =>   "/helpdesk/sla_policies",
-        :privilege                     =>   privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:admin_tasks) && current_account.sla_management_v2_enabled?
       },
       :"business-hours"                =>   {
         :url                           =>   "/admin/business_calendars",
-        :privilege                     =>   privilege?(:admin_tasks)
+        :privilege                     =>   privilege?(:admin_tasks) && current_account.sla_management_v2_enabled?
       },
       :"multi-product"                 =>   {
         :url                           =>   "/admin/products",
@@ -100,7 +100,8 @@
       },
       :scenario                        =>   {
         :url                           =>   "/helpdesk/scenario_automations",
-        :privilege                     =>   privilege?(:manage_scenario_automation_rules) || privilege?(:view_admin)
+        :privilege                     =>   current_account.scenario_automation_enabled? && (
+          privilege?(:manage_scenario_automation_rules) || privilege?(:view_admin))
       },
       :ticket_template                 =>   {
         :url                           =>   "/helpdesk/ticket_templates",

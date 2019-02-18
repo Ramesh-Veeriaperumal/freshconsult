@@ -49,13 +49,11 @@ class BotResponseValidationTest < ActionView::TestCase
     assert errors.include?("Articles datatype_mismatch")
   end
 
-  def test_bot_response_validation_with_invalid_agent_feedback_value
+  def test_bot_response_validation_with_agent_feedback_value_true
     article_id = Faker::Number.number(4).to_i
     params_hash = { articles: [{ id: article_id, agent_feedback: true }], suggested_articles: { article_id => {} } }
     bot_response_validation =  BotResponseValidation.new(params_hash)
-    refute bot_response_validation.valid?
-    errors = bot_response_validation.errors.full_messages
-    assert errors.include?("Articles not_included")
+    assert bot_response_validation.valid?
   end
 
   def test_bot_response_validation_with_customer_feedback_and_agent_feedback_value

@@ -20,4 +20,12 @@ module TicketFilterConstants
   VISIBILITY_ATTRIBUTES_NEEDED = %w(visibility group_id user_id).freeze
 
   WRAP_PARAMS = [:ticket_filter, exclude: [], format: [:json]].freeze
+
+  FSM_DATE_FIELD = 'cf_fsm_appointment_date'.freeze
+
+  DATE_FILTER_DEFAULT_OPTIONS = ['today', 'tomorrow', 'yesterday', 'week', 'last_week', 'next_week'].freeze
+
+  DATE_FIELD_REGEX = /^[0-9]{4}\-[0-1][0-9]\-[0-3][0-9]$/i
+
+  DATE_RANGE = 15
 end.freeze

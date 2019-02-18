@@ -236,6 +236,8 @@ api_error_messages:
   something_wrong_in_fsm_enable: "Something went wrong while trying to reserve fields for field service management."
   agent_type_change_not_allowed: "You cannot change the agent type"
   agent_group_type_mismatch: "Agent and group need to be of the same type"
+  date_limit_exceeded: "The maximum range for appointment dates is 15 days."
+  invalid_date_range: "Invalid date range, end date should be greater or equal to the start date."
   field_agent_scope: "Field Agent should have restricted scope"
   field_agent_roles: "Field Agent should have agent role"
 
@@ -268,5 +270,5 @@ api_error_messages:
   invalid_yml_file: "Upload a valid yml/yaml file."
   unsupported_language: "Language given in the request URL (%{language_code}) is not found. Allowed languages are %{list}"
   empty_supported_language: "No supported languages added in this account."
-
   invalid_twitter_handle: "Twitter handle doesn't exist"
+  field_validation_for_email: "It should not be blank as this is a mandatory field for sending email"

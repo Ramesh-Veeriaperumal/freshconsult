@@ -16,6 +16,6 @@ module Concerns::AppConfigurationConcern
   end
 
   def installed_apps
-    @installed_apps ||= current_account.installed_apps_hash
+    @installed_apps ||= current_account.installed_apps_from_cache
   end
 end

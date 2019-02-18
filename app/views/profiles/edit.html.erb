@@ -44,7 +44,7 @@
     </div>
   </div>
   <% end %>
-  <% if current_account.verified? && current_user.agent? && !current_account.launched?(:hide_api_key) %>
+  <% if show_api_key? %>
     <div class="sidepanel">
     <%= content_tag( :h3, t("profile.api_key.title"), :class => "title" ) %>
     <%= form_tag :action => :reset_api_key, :controller => 'profiles', :method => :put do |f| %>

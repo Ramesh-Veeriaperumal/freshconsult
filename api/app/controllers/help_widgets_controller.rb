@@ -17,7 +17,11 @@ class HelpWidgetsController < ApiApplicationController
   end
 
   def update
-    (return unless validate_delegator(@item, product_id: cname_params[:product_id])) if cname_params[:product_id]
+    delegator_hash = {
+      product_id: cname_params[:product_id],
+      settings: cname_params[:settings]
+    }
+    (return unless validate_delegator(@item, delegator_hash))
     cname_params[:settings] = @item.settings.deep_merge(cname_params[:settings].symbolize_keys) if cname_params[:settings]
     @item.update_attributes(cname_params)
   end

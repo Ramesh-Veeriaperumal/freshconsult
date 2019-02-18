@@ -69,7 +69,15 @@ module Ember
       end
 
       def validate_params
+        if replace_content_with_file?
+          params[:content] = params.delete(:file)
+          cname_params[:content] = cname_params.delete(:file)
+        end
         validate_body_params(@item)
+      end
+
+      def replace_content_with_file?
+        private_api? && params[:content].blank? && params[:file].present?
       end
 
       def sanitize_params

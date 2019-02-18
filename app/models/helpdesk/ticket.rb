@@ -422,6 +422,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     source == SOURCE_KEYS_BY_TOKEN[:facebook] ? (fb_post and fb_post.facebook_page) : nil
   end
 
+  def bot?
+    source == SOURCE_KEYS_BY_TOKEN[:bot]
+  end
+  alias :is_bot :bot?
+
   def fb_replies_allowed?
     facebook? and !fb_post.reply_to_comment? and !thread_key_nil?
   end

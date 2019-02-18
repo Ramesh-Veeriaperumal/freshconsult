@@ -21,7 +21,8 @@ class ContactValidation < ApiValidation
   attr_accessor :active, :avatar, :avatar_id, :view_all_tickets, :custom_fields, :company_name,
                 :email, :fb_profile_id, :job_title, :language, :mobile,
                 :name, :other_emails, :other_companies, :phone, :tags,
-                :time_zone, :twitter_id, :address, :description, :password, :unique_external_id
+                :time_zone, :twitter_id, :address, :description, :password, :unique_external_id,
+                :import_id
 
   alias_attribute :company_id, :company_name
   alias_attribute :customer_id, :company_name
@@ -41,7 +42,9 @@ class ContactValidation < ApiValidation
   validates :view_all_tickets, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param, allow_nil: true }
   validates :tags, data_type: { rules: Array, allow_nil: false }, array: { data_type: { rules: String }, custom_length: { maximum: ApiConstants::TAG_MAX_LENGTH_STRING } }, string_rejection: { excluded_chars: [','], allow_nil: true }
 
-  validates :active, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param }, custom_inclusion: { in: ['true', true], message: :cannot_deactivate }, if: -> { @active_set }
+  validates :active, data_type: { rules: 'Boolean',  ignore_string: :allow_string_param },  if: -> { @active_set }
+
+  validates :active, custom_inclusion: { in: ['true', true], message: :cannot_deactivate }, if: -> { @active_set && import_id.blank? }
 
   validate :contact_detail_missing, if: :email_mandatory?, on: :create
 
@@ -112,7 +115,7 @@ class ContactValidation < ApiValidation
     ignore_string: :allow_string_param
   } }, unless: -> { [:quick_create, :update_password, :channel_contact_create].include?(validation_context) }
       
-  validates :custom_fields, custom_field: { custom_fields: {
+  validates :custom_fields, allow_nil: true, custom_field: { custom_fields: {
       validatable_custom_fields: proc { Account.current.contact_form.custom_non_dropdown_fields },
       ignore_string: :allow_string_param
     }

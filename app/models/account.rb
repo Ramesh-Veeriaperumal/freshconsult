@@ -350,6 +350,10 @@ class Account < ActiveRecord::Base
     primary_email_config.active? ? primary_email_config.friendly_email : "support@#{full_domain}"
   end
 
+  def default_friendly_email_hash
+    primary_email_config.active? ? primary_email_config.friendly_email_hash : { 'email' => "support@#{full_domain}", 'name' => 'support' }
+  end
+
   def default_friendly_email_personalize(user_name)
     primary_email_config.active? ? 
       primary_email_config.friendly_email_personalize(user_name) :
@@ -865,6 +869,17 @@ class Account < ActiveRecord::Base
                                                         name: current_user.name)
     generate_download_url("#{id}/beacon_report/beacon_report.pdf")
   end
+
+  # TODO: Remove force_2019_plan?() after 2019 plan launched
+  # START
+  def force_2019_plan?
+    !redis_key_exists?(NEW_2019_PRICING_ENABLED) && ismember?(NEW_2019_PRICING_TEST_USERS, admin_email)
+  end
+
+  def new_2019_pricing_enabled?
+    redis_key_exists?(NEW_2019_PRICING_ENABLED) || ismember?(NEW_2019_PRICING_TEST_USERS, admin_email)
+  end
+  # END
 
   protected
   

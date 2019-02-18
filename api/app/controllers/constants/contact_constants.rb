@@ -16,12 +16,12 @@ module ContactConstants
 
   # INDEX_FIELDS = %w(state email phone mobile company_id tag _updated_since unique_external_id query_hash include filter).freeze
   INDEX_FIELDS = ['state', 'email', 'phone', 'mobile', 'company_id', 'tag', '_updated_since', 'unique_external_id', 'query_hash', 'include', 'filter'].freeze
-  CHANNEL_INDEX_FIELDS = INDEX_FIELDS | %w[twitter_id].freeze
   SHOW_FIELDS = %w(include).freeze
   MERGE_ARRAY_FIELDS = ['secondary_contact_ids'].freeze
   MERGE_FIELDS = %w[primary_contact_id contact].freeze | MERGE_ARRAY_FIELDS
   EXPORT_ARRAY_FIELDS = %w[default_fields custom_fields].freeze
   EXPORT_FIELDS = %w[fields].freeze
+  CHANNEL_INDEX_FIELDS = INDEX_FIELDS | %w[twitter_id].freeze
 
   SCOPE_BASED_ON_ACTION = {
     'update'  => { deleted: false, blocked: false },

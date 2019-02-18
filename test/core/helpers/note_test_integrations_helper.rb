@@ -1,3 +1,5 @@
+require_relative 'note_test_helper'
+
 module NoteTestIntegrationsHelper
   include NoteTestHelper
 

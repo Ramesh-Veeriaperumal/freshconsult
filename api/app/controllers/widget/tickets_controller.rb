@@ -6,9 +6,11 @@ module Widget
     include Helpdesk::Permission::Ticket
 
     skip_before_filter :check_privilege
+    before_filter :check_feature
     before_filter :check_ticket_permission, only: :create
     before_filter :set_widget_portal_as_current
     before_filter :check_recaptcha
+    before_filter :delegate_attachment_ids, if: :attachment_ids?
 
     private
 
@@ -31,9 +33,19 @@ module Widget
       end
 
       def validate_params
+        @attachment_ids = cname_params.delete(:attachment_ids)
         validate_widget
         return if @error.present?
         super
+      end
+
+      def attachment_ids?
+        @attachment_ids.present?
+      end
+
+      def delegate_attachment_ids
+        @delegator_klass = 'BaseDelegator'
+        validate_delegator(@item, attachment_ids: @attachment_ids)
       end
 
       def remove_ignore_params
@@ -65,6 +77,7 @@ module Widget
         constants_class::META_KEY_MAP.keys.each do |meta_key|
           @item.meta_data[meta_key] = (@meta && @meta[meta_key]) || request.env[constants_class::META_KEY_MAP[meta_key]]
         end
+        add_attachments
       end
   end
 end
