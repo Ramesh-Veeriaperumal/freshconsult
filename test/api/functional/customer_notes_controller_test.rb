@@ -18,6 +18,7 @@ class CustomerNotesControllerTest < ActionController::TestCase
     @contact = User.last || add_new_user(@account)
     @created_by_contact = add_new_user(@account)
     @company = Company.last || create_company
+    @account.add_feature(:contact_company_notes)
   end
 
   def wrap_cname(params)
