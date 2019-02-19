@@ -272,3 +272,10 @@ api_error_messages:
   empty_supported_language: "No supported languages added in this account."
   invalid_twitter_handle: "Twitter handle doesn't exist"
   field_validation_for_email: "It should not be blank as this is a mandatory field for sending email"
+
+
+  portal_language_not_supported: "Portal language is not a supported language"
+  supported_language_primary: "supported language is already a primary language"
+  invalid_language: "%{languages} is not a valid language"
+  supported_previously_added: "Primary language cannot be modified because supported language has previously been added for this account"
+  primary_or_supported: "Primary and supported/portal languages must be modified individually"

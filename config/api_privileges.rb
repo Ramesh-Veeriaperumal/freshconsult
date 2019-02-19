@@ -150,6 +150,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/automation", only: [:index, :destroy]
     resource :"admin/custom_translations/upload", only: [:upload]
     resource :"admin/custom_translations/download", only: [:primary, :secondary]
+    resource :"settings/helpdesk", only: [:index, :update]
   end
 
   edit_ticket_properties do

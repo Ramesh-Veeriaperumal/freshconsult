@@ -667,4 +667,8 @@ sla_policy_common:
 #Widget
 widget_attachment_create:
   $ref: ./request/widget_attachment_create.yaml
+
+#Custom translations
+languages:
+  $ref: ./response/admin/accounts/languages.yaml
   
