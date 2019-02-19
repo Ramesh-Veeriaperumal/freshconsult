@@ -90,7 +90,7 @@ window.App = window.App || {};
       var $this = $(button),
       to_plan = $this.data('planId'),
       to_plan_name = $this.data('plan');
-      if(to_plan == this.subscribed_plan_id || to_plan_name.indexOf("sprout") != -1){
+      if(to_plan == this.subscribed_plan_id || to_plan_name.indexOf("sprout") != -1 || (to_plan_name.indexOf("garden") || to_plan_name.indexOf("estate"))){
         if($('.pricelist.active .trial-plan-change').hasClass('hide')) {
           $('.pricelist.active .trial-plan-change').removeClass('hide').show();
         }

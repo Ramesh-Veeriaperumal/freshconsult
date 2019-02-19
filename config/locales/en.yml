@@ -3148,6 +3148,7 @@ en:
   change: Change
   back_plans_billing: Back to Plans &amp; Billing
   omni_channel: Omni-channel
+  omni_warning: All omni-channel settings will be removed permanently expect the ability to convert chats and calls to tickets
   omni_channel_content: Best-in-class ticketing, phone and chat features in one plan
   choose_different_plan: Choose a different plan
   downgrade_plan: "Note: If you downgrade a plan, you might lose some of the existing features"
@@ -5568,6 +5569,7 @@ en:
     ticket_dispatch_automation: "Ticket dispatch automation"
     app_gallery: "Access to Marketplace"
     basic_social: "Basic social channels"
+    basic_phone: "Basic phone"
     freshcaller: "Freshcaller integration"
     time_event_automation: "Time/event based automations"
     custom_ticket_fields_and_views: "Custom ticket fields/views"
@@ -5601,6 +5603,7 @@ en:
     custom_data_center: "Data centre location"
     whitelisted_ip_desc: "Whitelisted IP addresses"
     scenario_automations_desc: "Scenario automations"
+    parent_child_desc: "Parent child ticketing"
     custom_tabel_view_desc: "Custom table view"
     skill_based_assignment_desc: "Skill based assignment"
     custom_mailbox_desc: "Custom email servers"

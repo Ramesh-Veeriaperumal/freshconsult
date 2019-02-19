@@ -55,6 +55,12 @@
 			</div>
 		<% end %>
 	</div>
+	<% if show_omni_warning %>
+		<div class="omni_warning">
+			<img alt="omni channel experience" class="omni-channel-icon" src="/assets/omni-channel.svg" width="52" />
+			<span><%= t('omni_warning') %></span>
+		</div>
+	<% end %>
 	<%= t(equal_plan_rank ? 'equal_plan_doubt' : 'inequal_plan_doubt') %>
 	<%= t('downgrade_contact_us').html_safe %>
 </div>
