@@ -338,6 +338,10 @@ class Account < ActiveRecord::Base
     primary_email_config.active? ? primary_email_config.friendly_email : "support@#{full_domain}"
   end
 
+  def default_friendly_email_hash
+    primary_email_config.active? ? primary_email_config.friendly_email_hash : { 'email' => "support@#{full_domain}", 'name' => 'support' }
+  end
+
   def default_friendly_email_personalize(user_name)
     primary_email_config.active? ? 
       primary_email_config.friendly_email_personalize(user_name) :

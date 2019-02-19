@@ -3,6 +3,7 @@ defaults: &defaults
   host: "http://mailservice.freshpo.com"
   timeout: 30
   email_send_urlpath: "api/v1/email/send"
+  email_campaign_urlpath: "api/v1/campaign/send"
   account_validate_urlpath: "api/v1/account/validate/"
   sender_config_urlpath: "api/v1/account/senderconfig"
   ip_pool_category : "35"

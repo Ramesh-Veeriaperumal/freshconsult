@@ -132,13 +132,8 @@ module SAAS::DropFeatureData
   end
 
   def handle_personal_canned_response_drop_data
-    folders = account.canned_response_folders
-    folders.each do |f|
-      if f.personal?
-        f.deleted = true
-        f.save
-      end
-    end
+    personal_folder = account.canned_response_folders.personal_folder.first
+    personal_folder.canned_responses.each(&:destroy)
   end
 
   def handle_public_url_toggle_drop_data

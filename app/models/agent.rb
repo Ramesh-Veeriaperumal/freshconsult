@@ -44,7 +44,7 @@ class Agent < ActiveRecord::Base
   attr_accessible :signature_html, :user_id, :ticket_permission, :occasional, :available, :shortcuts_enabled,
     :scoreboard_level_id, :user_attributes, :group_ids, :freshchat_token, :agent_type
 
-  attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes
+  attr_accessor :agent_role_ids, :freshcaller_enabled, :user_changes, :group_changes
 
   scope :with_conditions ,lambda {|conditions| { :conditions => conditions} }
   scope :full_time_agents, :conditions => { :occasional => false, 'users.deleted' => false}
@@ -380,10 +380,13 @@ class Agent < ActiveRecord::Base
   end
 
   def touch_agent_group_change(agent_group)
+    return unless agent_group.group_id.present?
     agent_info = { id: agent_group.group_id, name: agent_group.group.name }
-    Thread.current[:group_changes].present? ? 
-      Thread.current[:group_changes].push(agent_info) : 
-      Thread.current[:group_changes]=[agent_info]
+    if self.group_changes.present?
+      self.group_changes.push(agent_info)
+    else
+      self.group_changes = [agent_info]
+    end
   end
 
   def set_default_type_if_needed

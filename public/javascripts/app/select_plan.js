@@ -110,14 +110,14 @@ window.App = window.App || {};
         var plan_name = jQuery(button).prev().data("plan").indexOf("omni") >= 0 ?  jQuery(button).prev().data("plan") : jQuery(button).prev().data("plan").replace("_", "_omni_");
         var amount = jQuery("[data-omni-plan-id='"+plan_name+"']").data("plan-amount");
         var plan_id = jQuery("[data-omni-plan-id='"+plan_name+"']").data("plan-id");
-        jQuery("#plan-"+jQuery(button).prev().data("plan")+" .plan-cost").text(amount);
+        // jQuery("#plan-"+jQuery(button).prev().data("plan")+" .plan-cost").text(amount);
         this.agents = $("#agents-text-box").val();
         this.calculateCost(plan_id);
       } else {
         var plan_name = jQuery(button).prev().data("plan").replace("_omni", '');
         var amount = jQuery("[data-omni-plan-id='"+plan_name+"']").data("plan-amount");
         var plan_id = jQuery("[data-omni-plan-id='"+plan_name+"']").data("plan-id");
-        jQuery("#plan-"+jQuery(button).prev().data("plan")+" .plan-cost").text(amount);
+        // jQuery("#plan-"+jQuery(button).prev().data("plan")+" .plan-cost").text(amount);
         this.agents = $("#agents-text-box").val();
         this.calculateCost(plan_id);
       }
