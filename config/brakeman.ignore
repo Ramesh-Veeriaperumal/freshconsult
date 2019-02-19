@@ -274,6 +274,25 @@
       "note": ""
     },
     {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "1057ae2b3fa0bcddb577744fc49452ab4e24f8890c654e493dd40017e4193b53",
+      "message": "Render path contains parameter value",
+      "file": "app/controllers/discussions/topics_controller.rb",
+      "line": 153,
+      "link": "http://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(partial => \"discussions/topics/components/#{params[:name]}\", {})",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Discussions::TopicsController",
+        "method": "component"
+      },
+      "user_input": "params[:name]",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "10b29e05dc0a9bd4a2214b5a528cf403d18f1d68dc2adc66c232af9cc032f79b",
@@ -3397,6 +3416,6 @@
       "note": "The embed is within quoted text"
     }
   ],
-  "updated": "2019-01-29 14:02:41 +0530",
+  "updated": "2019-02-19 22:51:46 +0530",
   "brakeman_version": "4.3.1"
 }
