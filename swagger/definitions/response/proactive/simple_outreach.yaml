@@ -1,0 +1,4 @@
+type: object
+allOf:
+  - $ref: '#/definitions/simple_outreach'
+  - $ref: '#/definitions/extension_generic'

@@ -43,17 +43,16 @@ class Agent < ActiveRecord::Base
     changes.merge!({
       "single_access_token" => ["*", "*"]
     }) if @model_changes.key?("single_access_token")
-    if Thread.current[:group_changes].present?
+    if self.group_changes.present?
       groups = agent_groups.pluck :group_id
-      group_changes = {added: [], removed: []}
-      Thread.current[:group_changes].uniq.each do |ag|
-        groups.include?(ag[:id]) ? group_changes[:added].push(ag) : 
-                                   group_changes[:removed].push(ag)
+      groups_hash = {added: [], removed: []}
+      self.group_changes.uniq.each do |ag|
+        groups.include?(ag[:id]) ? groups_hash[:added].push(ag) : 
+                                   groups_hash[:removed].push(ag)
       end
-      if group_changes[:added].any? || group_changes[:removed].any?
-        changes.merge!({"groups" => group_changes})
+      if groups_hash[:added].any? || groups_hash[:removed].any?
+        changes.merge!({"groups" => groups_hash})
       end
-      Thread.current[:group_changes] = nil
     end
     changes
   end

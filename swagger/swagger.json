@@ -9060,6 +9060,157 @@
         }
       }
     },
+    "/proactive/simple_outreaches": {
+      "get": {
+        "tags": [
+          "proactive simple outreaches"
+        ],
+        "summary": "List all",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "simple_outreaches": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/proactive_simple_outreach_response"
+                  }
+                },
+                "meta": {
+                  "type": "object",
+                  "allOf": [
+                    {
+                      "$ref": "#/definitions/meta"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "proactive simple outreaches"
+        ],
+        "description": "Create simple outreach",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/proactive_simple_outreach_input"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/proactive_simple_outreach_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "simple outreach not found"
+          }
+        }
+      }
+    },
+    "/proactive/simple_outreaches/{id}": {
+      "get": {
+        "tags": [
+          "proactive simple outreaches"
+        ],
+        "summary": "Show simple outreach",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/proactive_simple_outreach_response"
+            }
+          },
+          "404": {
+            "description": "simple outreach not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "proactive simple outreaches"
+        ],
+        "summary": "Delete simple outreach",
+        "description": "Destroys the simple outreach, will not be able to restore",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "404": {
+            "description": "simple outreach not found"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "proactive simple outreaches"
+        ],
+        "summary": "Update simple outreach",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/proactive_simple_outreach_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/proactive_simple_outreach_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "404": {
+            "description": "simple outreach not found"
+          }
+        }
+      }
+    },
     "/advanced_ticketing": {
       "post": {
         "tags": [
@@ -12724,6 +12875,14 @@
         }
       ]
     },
+    "proactive_simple_outreach_input": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/simple_outreach"
+        }
+      ]
+    },
     "trial_subscription_create": {
       "type": "object",
       "properties": {
@@ -15319,12 +15478,233 @@
           "type": "string"
         },
         "event": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "abandoned_cart",
+            "delivery_feedback"
+          ]
+        },
+        "filter": {
+          "type": "object",
+          "description": "filter structure for specific customers. No filters for all customers.",
+          "properties": {
+            "match_type": {
+              "type": "string",
+              "enum": [
+                "all",
+                "any"
+              ]
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entity": {
+                    "type": "string",
+                    "enum": [
+                      "contact_fields",
+                      "company_fields",
+                      "shopify_fields"
+                    ]
+                  },
+                  "field": {
+                    "type": "string"
+                  },
+                  "operator": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string",
+                    "description": "number, boolean, array, datetime"
+                  }
+                },
+                "required": [
+                  "entity",
+                  "field",
+                  "operator",
+                  "value"
+                ]
+              }
+            }
+          },
+          "required": [
+            "match_type",
+            "conditions"
+          ]
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "object",
+              "properties": {
+                "subject": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "cc_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "email": {
+                  "type": "string"
+                },
+                "email_config_id": {
+                  "type": "number"
+                },
+                "status": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "priority": {
+                  "type": "integer"
+                },
+                "group_id": {
+                  "type": "integer"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "custom_fields": {
+                  "$ref": "#/definitions/custom_field"
+                },
+                "schedule_details": {
+                  "type": "object",
+                  "properties": {
+                    "frequency": {
+                      "type": "integer",
+                      "enum": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                      ],
+                      "description": "1 - immediate 2 - minutes, 3 - hours, 4 - days, 5 - weeks"
+                    },
+                    "frequency_count": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "frequency"
+                  ]
+                }
+              }
+            }
+          }
         }
       },
       "required": [
         "name",
-        "event"
+        "event",
+        "action"
+      ]
+    },
+    "simple_outreach": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "selection": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "enum": [
+                "import"
+              ]
+            },
+            "contact_import": {
+              "type": "object",
+              "properties": {
+                "attachment_id": {
+                  "type": "integer"
+                },
+                "attachement_file_name": {
+                  "type": "string"
+                },
+                "fields": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ]
+        },
+        "action": {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "email_config_id": {
+              "type": "string"
+            },
+            "cc_emails": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "schedule_details": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "immediately",
+                    "date_time"
+                  ]
+                },
+                "time": {
+                  "type": "string",
+                  "description": "attribute only for type - date_time"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            }
+          },
+          "required": [
+            "subject",
+            "description",
+            "email",
+            "email_config_id",
+            "schedule_details"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "selection",
+        "action"
       ]
     },
     "automation_rule": {
@@ -17702,6 +18082,17 @@
       "allOf": [
         {
           "$ref": "#/definitions/rule"
+        },
+        {
+          "$ref": "#/definitions/extension_generic"
+        }
+      ]
+    },
+    "proactive_simple_outreach_response": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/simple_outreach"
         },
         {
           "$ref": "#/definitions/extension_generic"

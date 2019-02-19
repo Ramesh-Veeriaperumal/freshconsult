@@ -6,6 +6,94 @@ properties:
     type: string
   event:
     type: string
+    enum:
+      - abandoned_cart
+      - delivery_feedback
+  filter:
+    type: object
+    description: filter structure for specific customers. No filters for all customers.
+    properties:
+      match_type:
+        type: string
+        enum:
+          - all
+          - any
+      conditions:
+        type: array
+        items:
+          type: object
+          properties:
+            entity:
+              type: string
+              enum:
+                - contact_fields
+                - company_fields
+                - shopify_fields
+            field:
+              type: string
+            operator:
+              type: string
+            value:
+              type: string
+              description: number, boolean, array, datetime
+          required:
+            - entity
+            - field
+            - operator
+            - value
+    required:
+      - match_type
+      - conditions
+  action:
+    type: object
+    properties:
+      email:
+        type: object
+        properties:
+          subject:
+            type: string
+          description:
+            type: string
+          cc_emails:
+            type: array
+            items:
+              type: string
+          email:
+            type: string
+          email_config_id:
+            type: number
+          status:
+            type: integer
+          type:
+            type: string
+          priority:
+            type: integer
+          group_id:
+            type: integer
+          tags:
+            type: array
+            items:
+              type: string
+          custom_fields:
+            $ref: '#/definitions/custom_field'
+          schedule_details:
+            type: object
+            properties:
+              frequency:
+                type: integer
+                enum:
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 5
+                description:
+                  1 - immediate 2 - minutes, 3 - hours, 4 - days, 5 - weeks
+              frequency_count:
+                type: integer
+            required:
+              - frequency
 required:
   - name
   - event
+  - action

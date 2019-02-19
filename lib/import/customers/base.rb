@@ -21,11 +21,8 @@ class Import::Customers::Base
     customer_import.update_attribute(:created_at, Time.now.utc)
     parse_csv_file
     build_error_csv_file unless @failed_items.blank?
-    if redis_key_exists?(stop_redis_key)
-      customer_import && customer_import.cancelled!
-    else
-      customer_import && customer_import.completed!
-    end
+    handle_import_cancel unless @is_outreach_import
+    Rails.logger.debug "Customer stopped the #{@params[:type]} import" if redis_key_exists?(stop_redis_key) && !@is_outreach_import
     Rails.logger.debug "Customer stopped the #{@params[:type]} import" if redis_key_exists?(stop_redis_key)
     Rails.logger.debug "#{@params[:type]} import completed. 
                         Total records:#{total_rows_to_be_imported}
@@ -53,6 +50,14 @@ class Import::Customers::Base
   end
 
   private
+
+    def handle_import_cancel
+      if redis_key_exists?(stop_redis_key)
+        customer_import && customer_import.cancelled!
+      else
+        customer_import && customer_import.completed!
+      end
+    end
 
   def parse_csv_file
     csv_file = AwsWrapper::S3Object.find(@customer_params[:file_location], S3_CONFIG[:bucket])
@@ -125,6 +130,7 @@ class Import::Customers::Base
     unless @item.new_record?
       begin
         @item.update_attributes(@params_hash[:"#{@type}"]) ? @updated+=1 : failed_item(row)
+        save_contact_id if @is_outreach_import
       rescue Exception => e
         Rails.logger.debug "Error importing contact during update : 
           #{Account.current.id} #{@params_hash.inspect} #{e.message} #{e.backtrace}".squish
@@ -132,6 +138,7 @@ class Import::Customers::Base
       end
     else
       safe_send("create_imported_#{@params[:type]}") ? @created+=1 : failed_item(row)
+      save_contact_id if @is_outreach_import
     end
   end
 
@@ -263,7 +270,7 @@ class Import::Customers::Base
 
   def cleanup_file
     FileUtils.rm_f(failed_file_path) unless @failed_items.blank?
-    AwsWrapper::S3Object.delete(@customer_params[:file_location], S3_CONFIG[:bucket])
+    AwsWrapper::S3Object.delete(@customer_params[:file_location], S3_CONFIG[:bucket]) unless @is_outreach_import
   rescue => e
     NewRelic::Agent.notice_error(e, {:description => "Error while removing file from s3 :: account_id :: #{current_account.id}"})
   end

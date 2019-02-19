@@ -28,16 +28,6 @@ class SAAS::AccountDataCleanup
     clear_fragment_caches
   end
 
-  def handle_personal_canned_response_add_data
-    folders = account.all_canned_response_folders
-    folders.each do |f|
-      if f.personal?
-        f.deleted = false
-        f.save
-      end
-    end
-  end
-
   def handle_create_observer_drop_data
     account.all_observer_rules.find_each do |rule|
       rule.destroy

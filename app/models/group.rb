@@ -65,7 +65,7 @@ class Group < ActiveRecord::Base
   :ticket_assign_type, :toggle_availability, :business_calendar_id, :agent_groups_attributes,
   :capping_limit, :group_type
 
-  attr_accessor :capping_enabled
+  attr_accessor :capping_enabled, :agent_changes
 
   accepts_nested_attributes_for :agent_groups, :allow_destroy => true
 
@@ -257,9 +257,11 @@ class Group < ActiveRecord::Base
     def touch_agent_group_change(agent_group)
       return unless agent_group.user.present?
       agent_info = { id: agent_group.user_id, name: agent_group.user.name }
-      Thread.current[:agent_changes].present? ? 
-        Thread.current[:agent_changes].push(agent_info) : 
-        Thread.current[:agent_changes]=[agent_info]
+      if self.agent_changes.present?
+        self.agent_changes.push(agent_info)
+      else
+       self.agent_changes = [agent_info]
+      end
     end
 
     def set_default_type_if_needed

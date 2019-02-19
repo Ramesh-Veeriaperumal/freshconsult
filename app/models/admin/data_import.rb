@@ -14,7 +14,7 @@ class Admin::DataImport < ActiveRecord::Base
     :class_name => 'Helpdesk::Attachment',
     :dependent => :destroy
     
-  IMPORT_TYPE = { zendesk: 1, contact: 2, company: 3, agent_skill: 4 }.freeze
+  IMPORT_TYPE = { zendesk: 1, contact: 2, company: 3, agent_skill: 4, outreach_contact: 5 }.freeze
 
   IMPORT_STATUS = { started: 1,
                     completed: 2,

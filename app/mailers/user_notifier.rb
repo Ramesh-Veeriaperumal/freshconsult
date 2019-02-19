@@ -391,6 +391,52 @@ class UserNotifier < ActionMailer::Base
     end.deliver
   end
 
+  def notify_proactive_outreach_import(options = {})
+    @render_options = {}
+    email_config = options[:user].account.primary_email_config
+    configure_email_config email_config
+    @render_options[:import_success] = options[:import_success]
+    import_subject_key = @render_options[:import_success] ? 'outreach_customer_import' : 'outreach_customer_import_failure'
+
+    headers = {
+      :subject => I18n.t("mailer_notifier_subject.#{import_subject_key}"),
+      :to => options[:user].email,
+      :from => options[:user].account.default_friendly_email,
+      :bcc => AppConfig['reports_email'],
+      :sent_on => Time.zone.now,
+      :"Reply-to" => options[:user].account.default_friendly_email.to_s,
+      :"Auto-Submitted" => 'auto-generated',
+      :"X-Auto-Response-Suppress" => 'DR, RN, OOF, AutoReply'
+    }
+
+    headers.merge!(make_header(nil, nil, options[:user].account.id, 'Notify Customers Import'))
+    headers["X-FD-Email-Category"] = email_config.category if email_config.category.present?
+    @render_options.merge!({
+      user: options[:user],
+      type: options[:type],
+      outreach_name: options[:outreach_name],
+      success_count: options[:success_count],
+      failed_count: options[:failed_count],
+      attachment: options[:file_name],
+      corrupted: options[:corrupted],
+      wrong_csv: options[:wrong_csv]
+    })
+
+    unless options[:file_path].nil?
+      attachments[options[:file_name]] = {
+        mime_type: 'text/csv',
+        content: File.read(options[:file_path], :mode => 'rb')
+      }
+    end
+
+    mail(headers) do |part|
+      part.text { render 'notify_proactive_outreach_import.text.plain' }
+      part.html { render 'notify_proactive_outreach_import.text.html' }
+    end.deliver
+  ensure
+    remove_email_config
+  end
+
   private
 
     def send_the_mail(user_or_email, subject, email_body, reply_email =nil, type)

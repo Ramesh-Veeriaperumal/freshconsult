@@ -91,6 +91,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
   end
 
+  def relationship_with_account
+    'tickets'
+  end
+
   def action_in_bhrs?
     BusinessCalendar.execute(self) do
       action_occured_in_bhrs?(Time.zone.now, group)

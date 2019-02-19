@@ -22,6 +22,11 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     params_hash = { user_id: @agent.id, content: file }
   end
 
+  def attachment_params_hash_key_file
+    file = fixture_file_upload('/files/attachment.txt', 'plain/text', :binary)
+    params_hash = { user_id: @agent.id, file: file }
+  end
+
   def inline_attachment_params_hash
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpeg')
     params_hash = { content: file, inline: true, inline_type: 1 }
@@ -75,6 +80,27 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
   def test_create_with_user_id
     DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
     post :create, construct_params({version: 'private'}, attachment_params_hash)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 200
+    latest_attachment = Helpdesk::Attachment.last
+    match_json(attachment_pattern(latest_attachment))
+    assert_equal latest_attachment.attachable_type, 'UserDraft'
+    assert_equal latest_attachment.attachable_id, @agent.id
+  end
+
+  def test_create_with_file_key_without_user_id
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :create, construct_params({ version: 'private' }.merge(attachment_params_hash_key_file.except(:user_id)), attachment_params_hash_key_file.except(:user_id))
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 200
+    latest_attachment = Helpdesk::Attachment.last
+    match_json(attachment_pattern(latest_attachment))
+    assert_equal latest_attachment.attachable_type, 'UserDraft'
+  end
+
+  def test_create_with_file_key_with_user_id
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :create, construct_params({ version: 'private' }.merge(attachment_params_hash_key_file.except(:user_id)), attachment_params_hash_key_file)
     DataTypeValidator.any_instance.unstub(:valid_type?)
     assert_response 200
     latest_attachment = Helpdesk::Attachment.last

@@ -134,6 +134,10 @@ class Helpdesk::Note < ActiveRecord::Base
     end
   end
 
+  def relationship_with_account
+    'notes'
+  end
+
 
   # ************************************
   # METHOS USED BY CENTRAL PUBLISHER GEM.

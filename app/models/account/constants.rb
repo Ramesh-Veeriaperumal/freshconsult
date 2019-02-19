@@ -294,7 +294,8 @@ class Account < ActiveRecord::Base
       quoted_text_parsing_feature: false, description_by_default: false,
       ticket_fields_central_publish: false, skip_invoice_due_warning: false,
       facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: false,
-      update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false, redis_picklist_id: true
+      update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false, redis_picklist_id: true,
+      bot_agent_response: false
     }, :merge
   )
 

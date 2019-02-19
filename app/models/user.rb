@@ -40,6 +40,7 @@ class User < ActiveRecord::Base
   scope :technicians, :conditions => { :helpdesk_agent => true }
   scope :visible, :conditions => { :deleted => false }
   scope :active, lambda { |condition| { :conditions => { :active => condition }} }
+  scope :with_user_ids, lambda { |condition| { :conditions => { :id => condition }} }
   scope :with_conditions, lambda { |conditions| { :conditions => conditions} }
   scope :with_contractors, lambda { |conditions| { :joins => %(INNER JOIN user_companies ON
                                                                user_companies.account_id = users.account_id AND
@@ -199,6 +200,10 @@ class User < ActiveRecord::Base
 
   def marked_for_hard_delete?
     preferences[:user_preferences][:marked_for_hard_delete]
+  end
+
+  def simple_outreach_unsubscribe?
+    preferences[:user_preferences][:simple_outreach_unsubscribe]
   end
 
   def facebook_avatar( facebook_id, profile_size = "square")
@@ -1275,6 +1280,12 @@ class User < ActiveRecord::Base
 
   def active_and_verified?
     active? && primary_email.verified?
+  end
+
+  def proactive_email_outreach_unsubscribe
+    new_pref = { simple_outreach_unsubscribe: true }
+    self.merge_preferences = { user_preferences: new_pref }
+    save
   end
 
   private

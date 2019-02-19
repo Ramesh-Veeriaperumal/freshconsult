@@ -315,6 +315,8 @@ defaults: &defaults
     - [custom_translations_upload_queue]
     - [ocr_agent_sync]
     - [ocr_task_sync]
+    - [http_request]
+    - [simple_outreach_import]
     - [audit_log_export]
     
 development:

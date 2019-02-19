@@ -1,0 +1,46 @@
+get:
+  tags: ['proactive simple outreaches']
+  summary: Show simple outreach
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/proactive_simple_outreach_response'
+    404:
+      description: simple outreach not found
+
+delete:
+  tags: ['proactive simple outreaches']
+  summary: Delete simple outreach
+  description: Destroys the simple outreach, will not be able to restore
+  parameters:
+    - $ref: '#/parameters/id'
+  responses:
+    204:
+      description: Success
+    404:
+      description: simple outreach not found
+
+put:
+  tags: ['proactive simple outreaches']
+  summary: Update simple outreach
+  parameters:
+    - $ref: '#/parameters/id'
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/proactive_simple_outreach_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/proactive_simple_outreach_response'
+    404:
+      description: simple outreach not found
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

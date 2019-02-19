@@ -4,6 +4,20 @@ module ChannelIntegrations::Commands::Services
     include ChannelIntegrations::Constants
     include ChannelIntegrations::CommonActions::Ticket
     include Helpdesk::TagMethods
+    include Email::EmailService::EmailCampaignDelivery
+
+    def receive_send_bulk_emails(payload)
+      if Account.current.subscription.suspended?
+        Rails.logger.info("Bulk emails sent for #{payload[:context][:from]} :: Account ID : #{payload['account_id']}")
+        return default_error_format.merge(data: { reason: "Account ID : #{payload['account_id']} is suspended" })
+      end
+      deliver_email_campaign(payload[:data].merge(payload.slice(:account_id)))
+      Rails.logger.info("Bulk emails sent for #{payload[:context][:from]} :: Account ID : #{payload['account_id']}")
+      default_success_format
+    rescue StandardError => e
+      Rails.logger.error("Error sending bulk emails for #{payload[:context][:from]} :: #{e.message}")
+      default_error_format.merge(data: { reason: "Error sending bulk emails for #{payload[:context][:from]} :: #{e.message}" })
+    end
 
     def receive_create_ticket(payload)
       build_tags(payload)

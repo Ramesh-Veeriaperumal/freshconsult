@@ -179,6 +179,7 @@
     - cancel_account
     - migration
     - remove_encrypted_fields
+    - simple_outreach_import
     - clone
   :external:
     - code_console_execution
@@ -211,6 +212,7 @@
     - widget_upload_config
     - bot_email_reply
     - bot_email_ml_feedback
+    - http_request
   :free:
     - free_sla
     - free_supervisor

@@ -1,7 +1,6 @@
 require_relative '../unit_test_helper'
 require 'sidekiq/testing'
 require 'faker'
-require 'webmock/minitest'
 require Rails.root.join('spec', 'support', 'account_helper.rb')
 
 Sidekiq::Testing.fake!
@@ -34,6 +33,7 @@ class AuditLogExportTest < ActiveSupport::TestCase
   end
 
   def test_export_url_response
+    account = Account.first.nil? ? create_test_account(Faker::Lorem.word) : Account.first
     WebMock.allow_net_connect!
     args = construct_args
     account = Account.first.nil? ? Account.first : create_test_account

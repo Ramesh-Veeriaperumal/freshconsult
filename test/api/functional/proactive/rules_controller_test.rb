@@ -278,6 +278,5 @@ module Proactive
     def rules_index_action_payload
       { text: "{\"rules\": [{\"id\":1,\"name\":\"test\",\"description\":\"new\",\"type\":0,\"created_at\":\"2018-08-01T07:24:54.000Z\",\"updated_at\":\"2018-08-01T07:24:54.000Z\"},{\"id\":2,\"name\":\"test\",\"description\":\"safsdfaasf\",\"type\":0,\"created_at\":\"2018-08-01T07:25:02.000Z\",\"updated_at\":\"2018-08-01T07:25:02.000Z\"},{\"id\":3,\"name\":\"test\",\"description\":\"safsdfaasf\",\"type\":0,\"created_at\":\"2018-08-01T08:30:00.000Z\",\"updated_at\":\"2018-08-01T08:30:00.000Z\"}]}" }
     end
-    
   end
 end

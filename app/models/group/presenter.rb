@@ -53,17 +53,16 @@ class Group < ActiveRecord::Base
   end
 
   def model_changes_for_central
-    if Thread.current[:agent_changes].present?
+    if self.agent_changes.present?
       agents = agent_groups.pluck :user_id
-      agent_changes = {added: [], removed: []}
-      Thread.current[:agent_changes].uniq.each do |ag|
-        agents.include?(ag[:id]) ? agent_changes[:added].push(ag) : 
-                                   agent_changes[:removed].push(ag)
+      changes = {added: [], removed: []}
+      self.agent_changes.uniq.each do |ag|
+        agents.include?(ag[:id]) ? changes[:added].push(ag) : 
+                                   changes[:removed].push(ag)
       end
-      if agent_changes[:added].any? || agent_changes[:removed].any?
-        @model_changes.merge!({"agents" => agent_changes})
+      if changes[:added].any? || changes[:removed].any?
+        @model_changes.merge!({"agents" => changes})
       end
-      Thread.current[:agent_changes] = nil
     end
     @model_changes
   end

@@ -11,10 +11,10 @@ module Bot::Emailbot
         return
       end
       solution_ids = ml_response['data'].collect { |response| response['id'] }
-      @meta_articles = account.solution_article_meta.where('`solution_article_meta`.`id` IN (?)', solution_ids).visible_to_all.preload(:primary_article)
+      @meta_articles = account.solution_article_meta.where('`solution_article_meta`.`id` IN (?)', solution_ids).preload(:primary_article)
       if @meta_articles.any?
         create_bot_response
-        send_email_notification
+        send_email_notification if source_email?
       else
         Rails.logger.info "No articles found for solution ids from ML for the ticket #{@ticket.id}"
       end
@@ -24,6 +24,10 @@ module Bot::Emailbot
     end
 
     private
+
+      def source_email?
+        @ticket.source == Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email] && account.bot_email_channel_enabled? && @ticket.portal.bot.try(:email_channel)
+      end
 
       def fetch_ml_response
         response = RestClient::Request.execute(
@@ -56,7 +60,7 @@ module Bot::Emailbot
       def create_bot_response
         suggested_hash = {}
         @meta_articles.each do |meta_article|
-          suggested_hash[meta_article.id] = { title: meta_article.title, opened: false }
+          suggested_hash[meta_article.id] = { title: meta_article.title, opened: false, folder_title: meta_article.solution_folder_meta.name }
         end
         account.bot_responses.create(ticket_id: @ticket.id, bot_id: @ticket.portal.bot.id, query_id: @query_id, suggested_articles: suggested_hash)
       end
@@ -68,6 +72,7 @@ module Bot::Emailbot
 
       def freddy_suggestions
         string = ""
+        @meta_articles = @meta_articles.visible_to_all
         @meta_articles.each do |article|
           article_url = Rails.application.routes.url_helpers.support_solutions_article_url(article, host: article.account.host)
           article_full_url = article_url + '?query_id=' + @ticket.bot_response.query_id

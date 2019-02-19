@@ -96,6 +96,15 @@ module Admin::RolesHelper
              
          },
 
+         # *************************** Outreaches *******************************
+
+         { dom_type: "label", id: "outreaches", not_display: !current_account.proactive_outreach_enabled?,
+           children:
+
+              [{ dom_type: "check_box", id: "manage_proactive_outreaches", not_display: !current_account.proactive_outreach_enabled? }]
+
+         },
+
          # *************************** Reports **************************
 
          { :dom_type => "label", :id => "analytics", :children =>
