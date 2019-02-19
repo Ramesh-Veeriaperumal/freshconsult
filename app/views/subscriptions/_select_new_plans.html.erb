@@ -31,7 +31,7 @@
           %>
           <% unless plan_name == "free"  %>
             <% unless plan.id == subscription.subscription_plan_id and !subscription.trial? and !show_all%>
-              <td class="pricelist <%= subscribed_plan.omni_plan_name %> <%= is_active ? 'active' : ''%> <%= plan_name_id.include?(omniFilter) ? 'hide' : ''%>"
+              <td class="pricelist <%= plan_name %> <%= is_active ? 'active' : ''%> <%= plan_name_id.include?(omniFilter) ? 'hide' : ''%>"
                   id = "plan-<%= plan_name_id %>" width='<%="#{(100/(plans.size.to_f)).to_i}%"%>'>
                   <input type="hidden" data-omni-plan-id="<%=plan_name_id%>" data-plan-amount="<%= fetch_plan_amount(plan) %>" data-plan-id="<%= plan.id %>"/>
                   <div class="plan-details">

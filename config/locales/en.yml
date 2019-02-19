@@ -247,6 +247,8 @@ en:
   reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"
+  disable_omni_title: "Disabling omni-channel"
+  disable_omni_content: "You will lose all settings in chat and caller permanently expect the ability to convert chats and calls to tickets. Are you sure you want to proceed?"
   plain_on: "On"
   plain_off: "Off"
   or: or
@@ -5568,6 +5570,7 @@ en:
     ip_restriction: "Secure IP restriction"
     ticket_dispatch_automation: "Ticket dispatch automation"
     app_gallery: "Access to Marketplace"
+    basic_phone: "Basic phone channels"
     basic_social: "Basic social channels"
     basic_phone: "Basic phone"
     freshcaller: "Freshcaller integration"
