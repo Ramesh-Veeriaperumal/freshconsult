@@ -144,7 +144,7 @@ class AgentsControllerTest < ActionController::TestCase
     post :toggle_availability, admin: true, id: @user.id
     assert_response 200    
 
-    group.ticket_assign_type = 4
+    group.ticket_assign_type = 1
     group.capping_limit = 5
     group.toggle_availability = 1
     group.save
