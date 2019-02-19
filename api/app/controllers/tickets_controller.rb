@@ -23,6 +23,7 @@ class TicketsController < ApiApplicationController
   before_filter :check_search_feature, :validate_search_params, only: [:search]
   before_filter :validate_associated_tickets, only: [:create]
   before_filter :ignore_unwanted_fields, only: [:create, :update], if: :remove_unrelated_fields?
+  before_filter :check_outbound_limit_exceeded, if: :compose_email?
 
   def create
     assign_protected
@@ -98,7 +99,6 @@ class TicketsController < ApiApplicationController
     def requires_feature(feature)
       return if !compose_email?
       if Account.current.compose_email_enabled?
-        return render_request_error(:outbound_limit_exceeded, 429) if trial_outbound_limit_exceeded?
         return render_request_error(:access_denied, 403) unless Account.current.verified?
       else
         render_request_error(:require_feature, 403, feature: feature.to_s.titleize)
@@ -514,15 +514,22 @@ class TicketsController < ApiApplicationController
       Search::Tickets::Docs.new(conditions, neg_conditions).records('Helpdesk::Ticket', es_options)
     end
 
-    def trial_outbound_limit_exceeded?
+    def check_outbound_limit_exceeded
       outbound_per_day_key = OUTBOUND_EMAIL_COUNT_PER_DAY % {:account_id => current_account.id }
       total_outbound_per_day = get_others_redis_key(outbound_per_day_key).to_i
-      if ((current_account.id > get_spam_account_id_threshold) && (current_account.subscription.trial?) && (!ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)))
-        return total_outbound_per_day >= 5
+      return if ismember?(SPAM_WHITELISTED_ACCOUNTS, current_account.id)
+      if (current_account.id > get_spam_account_id_threshold) &&
+         current_account.subscription.trial? &&
+         total_outbound_per_day >= TRIAL_ACCOUNT_OUTBOUND_DEFAULT_THRESHOLD
+        error_info_hash = { count: TRIAL_ACCOUNT_OUTBOUND_DEFAULT_THRESHOLD, details: 'during the trial period' }
+        render_request_error_with_info(:outbound_limit_exceeded, 429, error_info_hash, error_info_hash)
       elsif current_account.subscription.free?
-          return total_outbound_per_day >= get_free_account_outbound_threshold
+        free_threshold = get_free_account_outbound_threshold
+        if total_outbound_per_day >= free_threshold
+          error_info_hash = { count: free_threshold, details: 'in sprout plan' }
+          render_request_error_with_info(:outbound_limit_exceeded, 429, error_info_hash, error_info_hash)
+        end
       end
-      return false
     end
 
     def recipients_limit_exceeded?

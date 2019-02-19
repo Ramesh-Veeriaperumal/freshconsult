@@ -156,7 +156,7 @@ api_error_messages:
   missing_contact_detail: "Please enter at least one contact detail"
   unassociated_values: "Values - '%{invalid_values}' not found in primary/secondary contacts"
   no_freshcaller_account: "No Freshcaller account exists"
-  outbound_limit_exceeded: "You can send a maximum of 5 outbound emails a day per account during the trial period"
+  outbound_limit_exceeded: "You can send a maximum of %{count} outbound emails a day per account %{details}"
   recipient_limit_exceeded: "You cannot email more than five people at once when you're on trial"
   dashboard_limit_exceeded: "Has exceeded maximum limit"
   announcement_limit_exceeded: "Only one active announcement per dashboard permitted"
