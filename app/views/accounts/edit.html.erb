@@ -88,7 +88,7 @@
 							<%= f.label :time_zone, t('account.time_zone'), :class => "control-label"  %>
 							<div class="controls">
 								<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
-						 		<% if current_account.time_zone_updation_running? %>
+						 		<% if current_account.time_zone_updation_running? %> 
 							 		<span class="help-block">
 											<%= t(:'account.time_zone_updation') %>
 									</span>
@@ -171,7 +171,7 @@
 			                <% end %>
 			              </div>
 			            </div>
-
+						
 						<% if current_user.is_falcon_pref? && current_account.rebranding_enabled? && !(current_account.subscription.sprout_plan?)%>
 								<div class="control-group">
 									<label class="control-label"><%= t("admin.products.portal.agent_portal") %></label>
@@ -248,18 +248,20 @@
 	DATE_FORMATS_BINDING = <%= AccountConstants::DATEFORMATS.to_json.html_safe%>
 
 	jQuery("#edit-branding").on("click", function(e){
-		if(!jQuery.browser.msie && !jQuery.browser.msedge) {
+		if(!(isIe())) {
 			e.preventDefault();
 		}
 		window.parent.postMessage({action: "preferences"}, window.origin);
 	});
 
-	jQuery("#manage-language-button").on("click", function(e){
-		if(!jQuery.browser.msie && !jQuery.browser.msedge) {
-			e.preventDefault();
+	function isIe() {
+		if (document.documentMode || /Edge/.test(navigator.userAgent)) {
+		   return true;
+		} else {
+			return false;
 		}
-		window.parent.postMessage({action: "manage-language"}, window.origin);
-	});
+
+	}
 
 	var set_default_date = function(element){
 		var date_format = DATE_FORMATS[DATE_FORMATS_BINDING[element.val()]]['moment_date_with_week']
