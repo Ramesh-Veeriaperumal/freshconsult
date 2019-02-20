@@ -123,13 +123,13 @@ class SubscriptionPlan < ActiveRecord::Base
   
   PLANS_OMNI_COST = {
     'Garden Omni Jan 19': {
-      EUR: 10.0, INR: 719.0, USD: 10.0, ZAR: 142.0, GBP: 8.0, AUD: 14.0, BRL: 38.0
+      EUR: 10.0, INR: 700.0, USD: 10.0, ZAR: 140.0, GBP: 9.0, AUD: 15.0, BRL: 40.0
     },
     'Estate Omni Jan 19': {
-      EUR: 20.0, INR: 1437.0, USD: 20.0, ZAR: 285.0, GBP: 15.0, AUD: 27.0, BRL: 75.0
+      EUR: 20.0, INR: 1500.0, USD: 20.0, ZAR: 285.0, GBP: 15.0, AUD: 25.0, BRL: 75.0
     },
     'Forest Jan 19': {
-      EUR: 30.0, INR: 2156.0, USD: 30.0, ZAR: 427.0, GBP: 23.0, AUD: 41.0, BRL: 113.0
+      EUR: 30.0, INR: 2100.0, USD: 30.0, ZAR: 425.0, GBP: 25.0, AUD: 40.0, BRL: 115.0
     }
   }.freeze
   
