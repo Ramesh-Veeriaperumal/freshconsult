@@ -115,18 +115,9 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   after_commit :clear_cache
 
-  after_commit :backup_changes
+  after_commit :construct_model_changes
 
   publishable
-
-  after_commit :discard_changes
-
-  alias :backed_picklist_values_attributes= :picklist_values_attributes=
-
-  def picklist_values_attributes=(attr)
-    backup_changes
-    self.backed_picklist_values_attributes = attr
-  end
 
   def update_ticket_filter
     return unless dropdown_field? or field_type == "default_internal_group"
@@ -574,7 +565,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
     def populate_choices
       return unless @choices
-      backup_changes if nested_field? || status_field?
       if(["nested_field"].include?(self.field_type))
         clear_picklist_cache
         run_through_picklists(@choices, picklist_values, self)

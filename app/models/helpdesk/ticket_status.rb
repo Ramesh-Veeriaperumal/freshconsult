@@ -29,11 +29,17 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   has_many :status_groups, :foreign_key => :status_id, :dependent => :destroy, :inverse_of => :status
   accepts_nested_attributes_for :status_groups, :allow_destroy => true
 
+  before_save :construct_model_changes
+
   before_update :mark_status_groups_for_destruction, :if => :deleted?
 
   after_update :update_tickets_sla_on_status_change_or_delete
 
   after_commit :clear_statuses_cache
+
+  concerned_with :presenter
+
+  publishable on: [:create, :update]
   
   scope :visible, :conditions => {:deleted => false}
 
@@ -307,6 +313,10 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     Sharding.run_on_master do
       SBRR::Execution.enqueue(ticket, args).execute if ticket.enqueue_sbrr_job?
     end
+  end
+
+  def construct_model_changes
+    @model_changes = self.changes.clone.to_hash
   end
 
   private

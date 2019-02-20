@@ -161,7 +161,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
                                                     :levels => nil,
                                                     :position => 100,
                                                     :action => "create"}).to_json
-    assert_equal CentralPublishWorker::TicketFieldWorker.jobs.size, 1
+    assert_equal CentralPublishWorker::TicketFieldWorker.jobs.size, 4
     job = CentralPublishWorker::TicketFieldWorker.jobs.first.deep_symbolize_keys
     field = @account.ticket_fields.find_by_label(labels[0])
     assert_equal job[:class], job_type
@@ -262,9 +262,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
                                             :value => l1_val)
       picklist_vals_l1.last.save
     end
-    edited_plv_id = @account.ticket_fields.find_by_label(labels[0]).picklist_values.find_by_value("Armaggedon").id
     CentralPublishWorker::TicketFieldWorker.jobs.clear
-    choices_was = ticket_field_choices_payload custom_field
     put :update, :jsonData => @default_fields.push({:field_type => "custom_dropdown",
                                                   :id => custom_field.id,
                                                   :name => "#{labels[0].downcase}_#{@account.id}",
@@ -292,16 +290,14 @@ class TicketFieldsControllerTest < ActionController::TestCase
                                                   :action => "edit"}).to_json
 
     custom_field_new = @account.ticket_fields.find_by_label(labels[0])
-    choices_is = ticket_field_choices_payload custom_field_new
     model_changes = {
-      :choices => [choices_was, choices_is],
       :position =>[custom_field.position, custom_field_new.position],
       :visible_in_portal => [custom_field.visible_in_portal, custom_field_new.visible_in_portal],
       :editable_in_portal => [custom_field.editable_in_portal, custom_field_new.editable_in_portal],
       :updated_at => [ts(custom_field.updated_at), ts(custom_field_new.updated_at)]
     }
-    assert_equal CentralPublishWorker::TicketFieldWorker.jobs.size, 1
-    job = CentralPublishWorker::TicketFieldWorker.jobs.last.deep_symbolize_keys
+    assert_equal CentralPublishWorker::TicketFieldWorker.jobs.size, 2
+    job = CentralPublishWorker::TicketFieldWorker.jobs.select { |a| a['args'][0] == 'ticket_field_update' }.last.deep_symbolize_keys
     assert_equal job[:class], job_type
     assert_equal job.slice(*job_args.keys), job_args
     assert_equal job[:args][0], event_type(:update)
@@ -462,6 +458,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
   def test_create_a_section_with_section_fields
     parent_ticket_field = @account.ticket_fields.find_by_field_type("default_ticket_type")
     pl_value = parent_ticket_field.picklist_values.create(:value => Faker::Lorem.characters(6))
+    CentralPublishWorker::TicketFieldWorker.jobs.clear
     put :update, :jsonData => @default_fields.push({:type => "paragraph",
                                                     :field_type => "custom_paragraph",
                                                     :label => "Section Field 1",
@@ -527,7 +524,6 @@ class TicketFieldsControllerTest < ActionController::TestCase
 
   def test_edit_status_field
     field = @account.ticket_fields.find_by_name('status')
-    choices_was = ticket_field_choices_payload field
     put :update, :jsonData => @default_fields.push({
                                                     :field_type => field.field_type,
                                                     :name => field.name,
@@ -541,7 +537,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
                                                     :editable_in_portal => true,
                                                     :required_in_portal => false,
                                                     :id => field.id,
-                                                    :choices => status_choices("New Status"),
+                                                    choices: status_choices,
                                                     :levels => [],
                                                     :action => "edit"}).to_json
     assert_response :redirect
@@ -549,14 +545,12 @@ class TicketFieldsControllerTest < ActionController::TestCase
     acc_id = Account.current.id
     Account.find(acc_id).make_current
     field_new = @account.ticket_fields.find_by_name('status')
-    choices_is = ticket_field_choices_payload field_new
     # assert_equal CentralPublishWorker::TicketFieldWorker.jobs.size, 1
     job = CentralPublishWorker::TicketFieldWorker.jobs.first.deep_symbolize_keys
     assert_equal job[:class], job_type
     assert_equal job.slice(*job_args.keys), job_args
     assert_equal job[:args][0], event_type(:update)
     model_changes = {
-      :choices => [choices_was, choices_is],
       :label=>[field.label, field_new.label],
       :label_in_portal=>[field.label_in_portal, field_new.label_in_portal],
       :required_for_closure => [false, true],
@@ -564,7 +558,7 @@ class TicketFieldsControllerTest < ActionController::TestCase
       :updated_at=>[ts(field.updated_at), ts(field_new.updated_at)]
     }
     event_params = event_args(field, :update, model_changes)
-    assert_equal job[:args][1].slice(*event_params.keys), event_params    
+    assert_equal job[:args][1].slice(*event_params.keys), event_params
     payload = field_new.central_publish_payload.to_json
     payload.must_match_json_expression(ticket_field_publish_pattern(field_new))
     # Discarding changes
@@ -575,7 +569,6 @@ class TicketFieldsControllerTest < ActionController::TestCase
         :required_for_closure => false,
         :editable_in_portal => false
       })
-    Helpdesk::TicketStatus.find_by_name("New Status").destroy
   end
 
   def test_edit_priority_field
