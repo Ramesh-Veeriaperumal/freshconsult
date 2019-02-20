@@ -29,12 +29,18 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   has_many :status_groups, :foreign_key => :status_id, :dependent => :destroy, :inverse_of => :status
   accepts_nested_attributes_for :status_groups, :allow_destroy => true
 
+  before_save :construct_model_changes
+
   before_update :mark_status_groups_for_destruction, :if => :deleted?
 
   after_update :update_tickets_sla_on_status_change_or_delete
 
   after_commit :clear_statuses_cache
-  
+
+  concerned_with :presenter
+
+  publishable on: [:create, :update]
+
   scope :visible, :conditions => {:deleted => false}
 
   acts_as_list :scope => :account
@@ -311,6 +317,10 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   def self.custom_status_label(name, status_id, translation_record=nil)
     translation_record && translation_record.translations && translation_record.translations["choices"] ? translation_record.translations["choices"]["choice_#{status_id}"] || name : name
+  end
+
+  def construct_model_changes
+    @model_changes = self.changes.clone.to_hash
   end
 
   class << self
