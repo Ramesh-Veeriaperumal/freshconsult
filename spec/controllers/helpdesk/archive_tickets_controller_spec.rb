@@ -11,7 +11,7 @@ describe Helpdesk::ArchiveTicketsController do
     @ticket3 = create_ticket({ :status => 2}, @group)
     @account.features.send(:archive_tickets).create  
     Sidekiq::Testing.inline! do
-      Archive::BuildCreateTicket.perform_async({:account_id => @account.id, :ticket_id => @ticket1.id})
+      Archive::TicketWorker.perform_async({:account_id => @account.id, :ticket_id => @ticket1.id})
     end
   end
 

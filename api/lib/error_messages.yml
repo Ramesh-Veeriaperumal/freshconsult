@@ -156,7 +156,7 @@ api_error_messages:
   missing_contact_detail: "Please enter at least one contact detail"
   unassociated_values: "Values - '%{invalid_values}' not found in primary/secondary contacts"
   no_freshcaller_account: "No Freshcaller account exists"
-  outbound_limit_exceeded: "You can send a maximum of 5 outbound emails a day per account during the trial period"
+  outbound_limit_exceeded: "You can send a maximum of %{count} outbound emails a day per account %{details}"
   recipient_limit_exceeded: "You cannot email more than five people at once when you're on trial"
   dashboard_limit_exceeded: "Has exceeded maximum limit"
   announcement_limit_exceeded: "Only one active announcement per dashboard permitted"
@@ -191,6 +191,7 @@ api_error_messages:
   lt_ticket_created_at: "It cannot be less than the ticket's created time"
   cannot_set_closed_at: "It cannot be set, when created_at and updated_at are not set or status is not closed"
   invalid_inline_attachments_list: "Invalid inline attachment ids : %{invalid_ids}"
+  invalid_id_list: "Invalid ids : %{invalid_ids}"
   invalid_avatar: "Avatar is invalid"
   missing_avatar: "Avatar is empty"
   invalid_default_avatar: "Default avatar is invalid"
@@ -272,3 +273,10 @@ api_error_messages:
   empty_supported_language: "No supported languages added in this account."
   invalid_twitter_handle: "Twitter handle doesn't exist"
   field_validation_for_email: "It should not be blank as this is a mandatory field for sending email"
+
+
+  portal_language_not_supported: "Portal language is not a supported language"
+  supported_language_primary: "supported language is already a primary language"
+  invalid_language: "%{languages} is not a valid language"
+  supported_previously_added: "Primary language cannot be modified because supported language has previously been added for this account"
+  primary_or_supported: "Primary and supported/portal languages must be modified individually"

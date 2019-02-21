@@ -3,7 +3,7 @@ module HelpWidgetConstants
   VALIDATION_CLASS = 'HelpWidgetValidation'.freeze
   DELEGATOR_CLASS = 'HelpWidgetDelegator'.freeze
   WHITELISTED_SETTINGS = %w(message button_text components contact_form appearance widget_flow).freeze
-  WHITELISTED_COMPONENTS = %w(contact_form solution_articles).freeze
+  WHITELISTED_COMPONENTS = %w(contact_form solution_articles predictive_support).freeze
   WHITELISTED_CONTACT_FORM = %w(form_type form_title form_submit_message form_button_text screenshot attach_file captcha secret).freeze
   WHITELISTED_APPEARANCE = %w(position offset_from_bottom offset_from_left offset_from_right color_schema gradient pattern theme_color button_color ).freeze
   COLOR_SCHEMA_TYPES = {

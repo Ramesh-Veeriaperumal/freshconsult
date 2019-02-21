@@ -107,4 +107,11 @@ module ApiDashboardConstants
   VALIDATION_CLASS = 'DashboardValidation'.freeze
   DELEGATOR_CLASS = 'DashboardDelegator'.freeze
   INTEGER_LIMIT_WITH_NONE_OPTION = -2
+
+  DEFAULT_QUERIES = {
+    'status:2 AND spam:false AND deleted:false': 'open',
+    'spam:false AND deleted:false AND (status:2 OR status:3 OR status:6 OR status:7)': 'unresolved',
+    'spam:false AND deleted:false AND agent_id:null AND status:2': 'unassigned',
+    'spam:false AND deleted:false AND (status:3 OR status:6)': 'on_hold'
+  }.freeze
 end

@@ -3633,28 +3633,65 @@ module Ember
     def test_compose_email_for_free_account_with_limit
       email_config = create_email_config
       Account.any_instance.stubs(:compose_email_enabled?).returns(true)
-      change_subscription_state("free")
-      @controller.stubs(:trial_outbound_limit_exceeded?).returns(true)
+      change_subscription_state('free')
+      @controller.stubs(:get_others_redis_key).returns(30)
       params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(email_config_id: email_config.id)
       post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
       assert_response 429
-      match_json(request_error_pattern(:outbound_limit_exceeded))
+      error_info_hash = {count:30,details: 'in sprout plan'}
+      match_json(request_error_pattern_with_info(:outbound_limit_exceeded,
+                                                 error_info_hash,
+                                                 error_info_hash))
     ensure
       Account.any_instance.unstub(:compose_email_enabled?)
-      @controller.unstub(:trial_outbound_limit_exceeded?)
+      @controller.unstub(:get_others_redis_key)
+    end
+
+    def test_compose_email_for_free_account_whitelisted
+      email_config = create_email_config
+      Account.any_instance.stubs(:compose_email_enabled?).returns(true)
+      change_subscription_state('free')
+      @controller.stubs(:ismember?).with(SPAM_WHITELISTED_ACCOUNTS, Account.current.id).returns(true)
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(email_config_id: email_config.id)
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 201
+    ensure
+      Account.any_instance.unstub(:compose_email_enabled?)
+      @controller.unstub(:ismember?)
+    end
+
+    def test_compose_email_for_trial_account_whitelisted
+      email_config = create_email_config
+      Account.any_instance.stubs(:compose_email_enabled?).returns(true)
+      change_subscription_state('trial')
+      @controller.stubs(:ismember?).with(SPAM_WHITELISTED_ACCOUNTS, Account.current.id).returns(true)
+      params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(email_config_id: email_config.id)
+      post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
+      assert_response 201
+    ensure
+      Account.any_instance.unstub(:compose_email_enabled?)
+      @controller.unstub(:ismember?)
     end
 
     def test_compose_email_with_trial_limit
       email_config = create_email_config
+      change_subscription_state('trial')
       Account.any_instance.stubs(:compose_email_enabled?).returns(true)
-      @controller.stubs(:trial_outbound_limit_exceeded?).returns(true)
+      @controller.stubs(:get_others_redis_key)
+          .with(OUTBOUND_EMAIL_COUNT_PER_DAY % { account_id: Account.current.id })
+          .returns(6)
+      @controller.stubs(:get_spam_account_id_threshold).returns(0)
       params = ticket_params_hash.except(:source, :product_id, :responder_id).merge(email_config_id: email_config.id)
       post :create, construct_params({ version: 'private', _action: 'compose_email' }, params)
       assert_response 429
-      match_json(request_error_pattern(:outbound_limit_exceeded))
+      error_info_hash = {count:5 ,details: 'during the trial period'}
+      match_json(request_error_pattern_with_info(:outbound_limit_exceeded,
+                                                 error_info_hash,
+                                                 error_info_hash))
     ensure
-      Account.any_instance.unstub(:compose_email_enabled?)
-      @controller.unstub(:trial_outbound_limit_exceeded?)
+      Account.any_instance.unstub(:compose_email_enabled)
+      @controller.unstub(:get_others_redis_key)
+      @controller.unstub(:get_spam_account_id_threshold)
     end
 
     def test_compose_email_with_unverified_account

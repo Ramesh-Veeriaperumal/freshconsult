@@ -9,6 +9,7 @@ class HelpWidget < ActiveRecord::Base
     :button_text => I18n.t('help_widget.button_text'),
     :components => {
       :contact_form => true,
+      :predictive_support => false,
       :solution_articles => false
     },
     :contact_form => {
@@ -18,7 +19,7 @@ class HelpWidget < ActiveRecord::Base
       :form_submit_message => I18n.t('help_widget.form_submit_message'),
       :attach_file => true,
       :screenshot => true,
-      :captcha => true,
+      :captcha => true
     },
     :appearance => {
       :position => 1,

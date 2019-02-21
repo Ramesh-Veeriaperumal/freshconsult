@@ -1,6 +1,7 @@
 class Dashboard::SearchServiceTrendCount < Dashboards
 
   include Search::Dashboard::QueryHelper
+  include ApiDashboardConstants
 
   TRANSFORM_DEFAULT_FIELDS = ["shared_by_me","shared_with_me"]
   COUNT_SEARCH_DOCUMENTS = ["ticketanalytics"]
@@ -43,7 +44,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
     mapping = Freshquery::Mappings.get('ticketanalytics')
     visitor_mapping = Freshquery::Parser::TermVisitor.new(mapping)
     queries.each_with_index do |query, index|
-      @response = Freshquery::Runner.instance.construct_es_query('ticketanalytics', query.to_json, visitor_mapping)
+      @response = get_es_query(query, visitor_mapping)
       context = get_context(index) 
       query_contexts << context
     end
@@ -55,7 +56,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
 
   #For unresolved widget and ticket list page single queries similar to search in elasticsearch
   def aggregation(query)
-    @response = Freshquery::Runner.instance.construct_es_query('ticketanalytics', query.to_json)
+    @response = get_es_query(query, false)
     context = get_context("", query.blank?)
     if @errors.present?
       log_error(query)
@@ -99,6 +100,30 @@ class Dashboard::SearchServiceTrendCount < Dashboards
       @tag_errors << "#{tag.to_s}" if tag.present?
     end
     context
+  end
+
+  def get_es_query(query, visitor_mapping)
+    symbolised_query = query.to_sym
+    if Account.current.query_from_singleton_enabled? && DEFAULT_QUERIES.key?(symbolised_query)
+      default_query = Freshquery::DefaultQueries.instance_variable_get(:"@#{DEFAULT_QUERIES[symbolised_query]}")
+      return default_query unless default_query.nil?
+
+      assign_query(query, visitor_mapping)
+    else
+      get_query(query, visitor_mapping)
+    end
+  end
+
+  def assign_query(query, visitor_mapping)
+    default_query = get_query(query, visitor_mapping)
+    # for queries in DEFAULT_QUERIES, es_query has to be common accross all the accounts. Hence storing in an
+    # instance variable of a singleton class and reusing them
+    Freshquery::DefaultQueries.instance_variable_set(:"@#{DEFAULT_QUERIES[query.to_sym]}", default_query)
+    default_query
+  end
+
+  def get_query(query, visitor_mapping)
+    Freshquery::Runner.instance.construct_es_query('ticketanalytics', query.to_json, visitor_mapping)
   end
 
   def custom_filter_data(filter_type)

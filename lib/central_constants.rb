@@ -25,6 +25,8 @@ module CentralConstants
     'Helpdesk::TicketField' => '0',
     'AgentGroup' => '0',
     'Helpdesk::Tag' => '0',
-    'Helpdesk::TagUse' => '0'
+    'Helpdesk::TagUse' => '0',
+    'Helpdesk::TicketStatus' => '0',
+    'Helpdesk::PicklistValue' => '0'
   }
 end

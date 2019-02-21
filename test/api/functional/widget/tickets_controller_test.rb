@@ -244,5 +244,14 @@ module Widget
       @account.features.restricted_helpdesk.destroy
       @account.rollback(:restricted_helpdesk)
     end
+
+    def test_create_with_no_contact_form_and_predictive
+      settings = settings_hash(contact_form: false, predictive_support: false)
+      @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 400
+      match_json(request_error_pattern(:ticket_creation_not_allowed, 'ticket_creation_not_allowed'))
+    end
   end
 end

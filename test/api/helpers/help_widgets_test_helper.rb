@@ -12,7 +12,7 @@ module HelpWidgetsTestHelper
                                 name: options[:name] || Faker::Name.name,
                                 account_id: @account.id,
                                 product_id: product_id,
-                                settings: options[:settings] || settings_hash)
+                                settings: options[:settings] || settings_hash(options))
 
     test_widget.save()
     test_widget
@@ -22,15 +22,16 @@ module HelpWidgetsTestHelper
     {
       message: "Welcome to dovetails support",
       button_text: "Help",
-      components: components_hash,
+      components: components_hash(options),
       contact_form: contact_settings_hash(options),
       appearance: appearance_hash
     }
   end
 
-  def components_hash
+  def components_hash(options = {})
     {
-      contact_form: true
+      contact_form: options[:contact_form] == false ? options[:contact_form] : true,
+      predictive_support: options[:predictive_support] == false ? options[:predictive_support] : true
     }
   end
 

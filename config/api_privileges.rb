@@ -24,6 +24,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/marketplace_app", only: [:index]
     resource :'admin/canned_form', only: [:index, :show, :create_handle]
     resource :"tickets/bot_response", only: %i(show update)
+    resource :"tickets/bulk_action", only: %i(bulk_archive)
 
     resource :"ember/agent", only: %i(index me achievements update)
     resource :"ember/group", only: [:index]
@@ -150,6 +151,7 @@ Authority::Authorization::PrivilegeList.build do
     resource :"admin/automation", only: [:index, :destroy]
     resource :"admin/custom_translations/upload", only: [:upload]
     resource :"admin/custom_translations/download", only: [:primary, :secondary]
+    resource :"settings/helpdesk", only: [:index, :update]
   end
 
   edit_ticket_properties do

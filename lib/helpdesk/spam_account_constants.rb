@@ -6,7 +6,7 @@ module Helpdesk::SpamAccountConstants
   MAX_TO_CC_THRESHOLD = 10
   FREE_ACCOUNT_OUTBOUND_DEFAULT_THRESHOLD = 30
   ACCOUNT_ID_THRESHOLD = 400000
-
+  TRIAL_ACCOUNT_OUTBOUND_DEFAULT_THRESHOLD = 5
   SPAM_CHECK_TIME_LIMIT = 30 #in days
 
   	def get_trial_account_max_to_cc_threshold

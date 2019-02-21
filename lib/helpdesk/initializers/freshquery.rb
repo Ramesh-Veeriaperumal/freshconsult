@@ -236,4 +236,9 @@ module Freshquery
       custom_dropdown mappings: :custom_dropdown_mappings, choices: :custom_dropdown_choices
     end
   end
+
+  class DefaultQueries
+    include Singleton
+    # Use this class to set and reuse an instance variable for default/frequently used queries
+  end
 end

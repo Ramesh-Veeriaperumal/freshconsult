@@ -274,6 +274,25 @@
       "note": ""
     },
     {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "1057ae2b3fa0bcddb577744fc49452ab4e24f8890c654e493dd40017e4193b53",
+      "message": "Render path contains parameter value",
+      "file": "app/controllers/discussions/topics_controller.rb",
+      "line": 153,
+      "link": "http://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(partial => \"discussions/topics/components/#{params[:name]}\", {})",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Discussions::TopicsController",
+        "method": "component"
+      },
+      "user_input": "params[:name]",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
       "warning_type": "SQL Injection",
       "warning_code": 0,
       "fingerprint": "10b29e05dc0a9bd4a2214b5a528cf403d18f1d68dc2adc66c232af9cc032f79b",
@@ -586,6 +605,25 @@
       },
       "user_input": "params",
       "confidence": "Weak",
+      "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
+      "fingerprint": "5e9e76ce4c097699faaba0982c296133800a8cf2b006d93cc91adcda3c8a4927",
+      "message": "Unprotected mass assignment",
+      "file": "app/controllers/posts_controller.rb",
+      "line": 64,
+      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "Topic.find_by_id_and_forum_id_and_account_id(params[:topic_id], params[:forum_id], current_account.id).posts.build(params[:post])",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "PostsController",
+        "method": "create"
+      },
+      "user_input": "params[:post]",
+      "confidence": "Medium",
       "note": ""
     },
     {
@@ -960,6 +998,25 @@
       },
       "user_input": null,
       "confidence": "Weak",
+      "note": ""
+    },
+    {
+      "warning_type": "Remote Code Execution",
+      "warning_code": 24,
+      "fingerprint": "429e8524eb7b448c8b44ead7bf448701cb076dd6f4c6b314061f4f59556b1348",
+      "message": "Unsafe reflection method constantize called with parameter value",
+      "file": "app/controllers/discussions/unpublished_controller.rb",
+      "line": 78,
+      "link": "http://brakemanscanner.org/docs/warning_types/remote_code_execution/",
+      "code": "params[:scope].constantize",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Discussions::UnpublishedController",
+        "method": "spam_scope"
+      },
+      "user_input": "params[:scope]",
+      "confidence": "High",
       "note": ""
     },
     {
@@ -3397,6 +3454,6 @@
       "note": "The embed is within quoted text"
     }
   ],
-  "updated": "2019-01-29 14:02:41 +0530",
+  "updated": "2019-02-19 22:51:46 +0530",
   "brakeman_version": "4.3.1"
 }

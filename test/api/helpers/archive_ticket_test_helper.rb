@@ -56,7 +56,7 @@ module ArchiveTicketTestHelper
 
   def convert_ticket_to_archive(ticket)
     Sidekiq::Testing.inline! do
-      Archive::BuildCreateTicket.perform_async(account_id: @account.id, ticket_id: ticket.id)
+      Archive::TicketWorker.perform_async(account_id: @account.id, ticket_id: ticket.id)
     end
   end
 
