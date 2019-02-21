@@ -1,7 +1,7 @@
 <% # Do not remove this div - fa-dev-pholder, It is used by Freshapps SDK for local testing of plugs %>
 <div id="fa-dev-pholder" style="display:none"></div>
 
-<% if feature?(:marketplace) %>
+<% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
   <% inst_plugs = installed_mkp_apps(from_page.to_sym) %>
 
   <% if inst_plugs.kind_of?(Hash) and inst_plugs[:error].present? %>

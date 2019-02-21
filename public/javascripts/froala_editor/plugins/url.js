@@ -1,7 +1,7 @@
 /*!
- * froala_editor v2.3.5 (https://www.froala.com/wysiwyg-editor)
+ * froala_editor v2.9.1 (https://www.froala.com/wysiwyg-editor)
  * License https://froala.com/wysiwyg-editor/terms/
- * Copyright 2014-2016 Froala Labs
+ * Copyright 2014-2018 Froala Labs
  */
 
 (function (factory) {
@@ -23,86 +23,167 @@
                     jQuery = require('jquery')(root);
                 }
             }
-            factory(jQuery);
-            return jQuery;
+            return factory(jQuery);
         };
     } else {
         // Browser globals
-        factory(jQuery);
+        factory(window.jQuery);
     }
 }(function ($) {
 
-  'use strict';
+  
 
-  // Extend defaults.
-  $.extend($.FE.DEFAULTS, {
-
-  });
-
-  $.FE.URLRegEx = /(\s|^|>)((http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+(\.[a-zA-Z]{2,3})?(:\d*)?(\/[^\s<]*)?)(\s|$|<)/gi;
+  $.FE.URLRegEx = '(^| |\\u00A0)(' + $.FE.LinkRegEx + '|' + '([a-z0-9+-_.]{1,}@[a-z0-9+-_.]{1,}\\.[a-z0-9+-_]{1,})' + ')$';
 
   $.FE.PLUGINS.url = function (editor) {
+    var rel = null;
 
-    function _convertURLS (contents) {
-      // All content zones.
-      contents.each (function () {
-        if (this.tagName == 'IFRAME') return;
+    /*
+     * Transform string into a hyperlink.
+     */
+    function _linkReplaceHandler (match, p1, p2) {
+      var dots = '';
 
-        // Text node.
-        if (this.nodeType == 3) {
-          var text = this.textContent.replace(/&nbsp;/gi, '');
+      while (p2.length && p2[p2.length - 1] == '.') {
+        dots += '.';
+        p2 = p2.substring(0, p2.length - 1);
+      }
 
-          // Check if text is URL.
-          if ($.FE.URLRegEx.test(text)) {
-            // Convert it to A.
-            $(this).before(text.replace($.FE.URLRegEx, '$1<a' + (editor.opts.linkAlwaysBlank ? ' target="_blank"' : '') + (editor.opts.linkAlwaysNoFollow ? ' rel="nofollow"' : '') + ' href="$2">$2</a>$7'));
+      var link = p2;
 
-            $(this).remove();
-          }
+      // Convert email.
+      if (editor.opts.linkConvertEmailAddress) {
+        if (editor.helpers.isEmail(link) && !/^mailto:.*/i.test(link)) {
+          link = 'mailto:' + link;
+        }
+      }
+      else if (editor.helpers.isEmail(link)) {
+        return p1 + p2;
+      }
+
+      if (!/^((http|https|ftp|ftps|mailto|tel|sms|notes|data)\:)/i.test(link)) {
+        link = '//' + link;
+      }
+
+      return (p1 ? p1 : '') + '<a' + (editor.opts.linkAlwaysBlank ? ' target="_blank"' : '') + (rel ? (' rel="' + rel + '"') : '') + ' data-fr-linked="true" href="' + link + '">' + p2.replace(/&amp;/g, '&').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</a>' + dots;
+    }
+
+    function _getRegEx () {
+      return new RegExp($.FE.URLRegEx, 'gi');
+    }
+
+    /*
+     * Convert link paterns from html into hyperlinks.
+     */
+    function _convertToLink (html) {
+
+      if (editor.opts.linkAlwaysNoFollow) {
+        rel = 'nofollow';
+      }
+
+      // https://github.com/froala/wysiwyg-editor/issues/1576.
+      if (editor.opts.linkAlwaysBlank) {
+        if (editor.opts.linkNoOpener) {
+          if (!rel) rel = 'noopener';
+          else rel += ' noopener';
         }
 
-        // Other type of node.
-        else if (this.nodeType == 1 && ['A', 'BUTTON', 'TEXTAREA'].indexOf(this.tagName) < 0) {
-          // Convert urls inside it.
-          _convertURLS(editor.node.contents(this));
+        if (editor.opts.linkNoReferrer) {
+          if (!rel) rel = 'noreferrer';
+          else rel += ' noreferrer';
         }
-      })
+      }
+
+      return html.replace(_getRegEx(), _linkReplaceHandler);
+    }
+
+    function _isA (node) {
+      if (!node) return false;
+
+      if (node.tagName === 'A') return true;
+
+      if (node.parentNode && node.parentNode != editor.el) return _isA(node.parentNode);
+
+      return false;
+    }
+
+    function _lastPart(text) {
+      var splits = text.split(' ');
+
+      return splits[splits.length - 1];
+    }
+
+    function _inlineType () {
+      var range = editor.selection.ranges(0);
+      var node = range.startContainer;
+
+      if (!node || node.nodeType !== Node.TEXT_NODE || range.startOffset !== (node.textContent || '').length) return false;
+
+      if (_isA(node)) return false;
+
+      if (_getRegEx().test(_lastPart(node.textContent))) {
+        $(node).before(_convertToLink(node.textContent));
+
+        // Get linked link.
+        var $link = $(node.parentNode).find('a[data-fr-linked]');
+        $link.removeAttr('data-fr-linked');
+
+        node.parentNode.removeChild(node);
+
+        // Trigger link event.
+        editor.events.trigger('url.linked', [$link.get(0)]);
+      }
+      else if (node.textContent.split(' ').length <= 2 && node.previousSibling && node.previousSibling.tagName === 'A') {
+        var text = node.previousSibling.innerText + node.textContent;
+
+        if (_getRegEx().test(_lastPart(text))) {
+          $(node.previousSibling).replaceWith(_convertToLink(text));
+
+          node.parentNode.removeChild(node);
+        }
+      }
     }
 
     /*
      * Initialize.
      */
     function _init () {
-      editor.events.on('paste.afterCleanup', function (html) {
-        if ($.FE.URLRegEx.test(html)) {
-          return html.replace($.FE.URLRegEx, '$1<a href="$2">$2</a>$7')
+      // Handle special keys.
+      editor.events.on('keypress', function (e) {
+        if (editor.selection.isCollapsed() && (e.key == '.' || e.key == ')' || e.key == '(')) {
+          _inlineType();
         }
-      });
+      }, true);
 
-      editor.events.on('keyup', function (e) {
-        var keycode = e.which;
-        if (keycode == $.FE.KEYCODE.ENTER || keycode == $.FE.KEYCODE.SPACE) {
-          _convertURLS(editor.node.contents(editor.$el.get(0)));
-        }
-      });
-
+      // Handle ENTER and SPACE.
       editor.events.on('keydown', function (e) {
         var keycode = e.which;
 
-        if (keycode == $.FE.KEYCODE.ENTER) {
-          var el = editor.selection.element();
-
-          if ((el.tagName == 'A' || $(el).parents('a').length) && editor.selection.info(el).atEnd) {
-            e.stopImmediatePropagation();
-
-            if (el.tagName !== 'A') el = $(el).parents('a')[0];
-            $(el).after('&nbsp;' + $.FE.MARKERS);
-            editor.selection.restore();
-
-            return false;
-          }
+        if (editor.selection.isCollapsed() && (keycode == $.FE.KEYCODE.ENTER || keycode == $.FE.KEYCODE.SPACE)) {
+          _inlineType();
         }
-      });
+      }, true);
+
+      // Handle pasting.
+      editor.events.on('paste.beforeCleanup', function (html) {
+        if (editor.helpers.isURL(html)) {
+          var rel_attr = null;
+
+          if (editor.opts.linkAlwaysBlank) {
+            if (editor.opts.linkNoOpener) {
+              if (!rel_attr) rel_attr = 'noopener';
+              else rel_attr += ' noopener';
+            }
+
+            if (editor.opts.linkNoReferrer) {
+              if (!rel_attr) rel_attr = 'noreferrer';
+              else rel_attr += ' noreferrer';
+            }
+          }
+
+          return '<a' + (editor.opts.linkAlwaysBlank ? ' target="_blank"' : '') + (rel_attr ? (' rel="' + rel_attr + '"') : '') + ' href="' + html + '" >' + html + '</a>';
+        }
+      })
     }
 
     return {

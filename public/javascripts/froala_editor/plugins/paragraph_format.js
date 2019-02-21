@@ -1,7 +1,7 @@
 /*!
- * froala_editor v2.3.5 (https://www.froala.com/wysiwyg-editor)
+ * froala_editor v2.9.1 (https://www.froala.com/wysiwyg-editor)
  * License https://froala.com/wysiwyg-editor/terms/
- * Copyright 2014-2016 Froala Labs
+ * Copyright 2014-2018 Froala Labs
  */
 
 (function (factory) {
@@ -23,16 +23,15 @@
                     jQuery = require('jquery')(root);
                 }
             }
-            factory(jQuery);
-            return jQuery;
+            return factory(jQuery);
         };
     } else {
         // Browser globals
-        factory(jQuery);
+        factory(window.jQuery);
     }
 }(function ($) {
 
-  'use strict';
+  
 
   $.extend($.FE.DEFAULTS, {
     paragraphFormat: {
@@ -43,7 +42,8 @@
       H4: 'Heading 4',
       PRE: 'Code'
     },
-    paragraphFormatSelection: false
+    paragraphFormatSelection: false,
+    paragraphDefaultSelection: 'Paragraph Format'
   })
 
   $.FE.PLUGINS.paragraphFormat = function (editor) {
@@ -57,11 +57,13 @@
 
       // If val is null or default tag already do nothing.
       if (val && val.toLowerCase() != defaultTag) {
+
         // Deal with nested lists.
         if ($li.find('ul, ol').length > 0) {
           var $el = $('<' + val + '>');
           $li.prepend($el);
           var node = editor.node.contents($li.get(0))[0];
+
           while (node && ['UL', 'OL'].indexOf(node.tagName) < 0) {
             var next_node = node.nextSibling;
             $el.append(node);
@@ -83,17 +85,9 @@
       var defaultTag = editor.html.defaultTag();
 
       // Prepare a temp div.
-      if (!val) val = 'div class="fr-temp-div" data-empty="true"';
+      if (!val || val.toLowerCase() == defaultTag) val = 'div class="fr-temp-div"';
 
-      // In list we don't have P so just unwrap content.
-      if (val.toLowerCase() == defaultTag) {
-        $blk.replaceWith($blk.html());
-      }
-
-      // Replace the current block with the new one.
-      else {
-        $blk.replaceWith($('<' + val + '>').html($blk.html()));
-      }
+      $blk.replaceWith($('<' + val + '>').html($blk.html()));
     }
 
     /**
@@ -107,6 +101,7 @@
 
       // Return to the regular case. We don't use P inside TD/TH.
       if (val.toLowerCase() == defaultTag) {
+
         // If node is not empty, then add a BR.
         if (!editor.node.isEmpty($blk.get(0), true)) {
           $blk.append('<br/>');
@@ -126,19 +121,20 @@
      */
     function _style($blk, val) {
       if (!val) val = 'div class="fr-temp-div"' + (editor.node.isEmpty($blk.get(0), true) ? ' data-empty="true"' : '');
-      $blk.replaceWith($('<' + val  + ' ' + editor.node.attributes($blk.get(0)) + '>').html($blk.html()));
+      $blk.replaceWith($('<' + val  + ' ' + editor.node.attributes($blk.get(0)) + '>').html($blk.html()).removeAttr('data-empty'));
     }
 
     /**
      * Apply style.
      */
     function apply (val) {
+
       // Normal.
       if (val == 'N') val = editor.html.defaultTag();
 
       // Wrap.
       editor.selection.save();
-      editor.html.wrap(true, true, true, true);
+      editor.html.wrap(true, true, !editor.opts.paragraphFormat.BLOCKQUOTE, true, true);
       editor.selection.restore();
 
       // Get blocks.
@@ -197,14 +193,15 @@
         var blk = blocks[0];
         var tag = 'N';
         var default_tag = editor.html.defaultTag();
-        if (blk.tagName.toLowerCase() != default_tag && blk != editor.$el.get(0)) {
+
+        if (blk.tagName.toLowerCase() != default_tag && blk != editor.el) {
           tag = blk.tagName;
         }
 
-        $dropdown.find('.fr-command[data-param1="' + tag + '"]').addClass('fr-active');
+        $dropdown.find('.fr-command[data-param1="' + tag + '"]').addClass('fr-active').attr('aria-selected', true);
       }
       else {
-        $dropdown.find('.fr-command[data-param1="N"]').addClass('fr-active');
+        $dropdown.find('.fr-command[data-param1="N"]').addClass('fr-active').attr('aria-selected', true);
       }
     }
 
@@ -216,7 +213,8 @@
           var blk = blocks[0];
           var tag = 'N';
           var default_tag = editor.html.defaultTag();
-          if (blk.tagName.toLowerCase() != default_tag && blk != editor.$el.get(0)) {
+
+          if (blk.tagName.toLowerCase() != default_tag && blk != editor.el) {
             tag = blk.tagName;
           }
 
@@ -224,10 +222,10 @@
             tag = 'N';
           }
 
-          $btn.find('> span').text(editor.opts.paragraphFormat[tag]);
+          $btn.find('> span').text(editor.language.translate(editor.opts.paragraphFormat[tag]));
         }
         else {
-          $btn.find('> span').text(editor.opts.paragraphFormat.N);
+          $btn.find('> span').text(editor.language.translate(editor.opts.paragraphFormat.N));
         }
       }
     }
@@ -245,14 +243,18 @@
     displaySelection: function (editor) {
       return editor.opts.paragraphFormatSelection;
     },
-    defaultSelection: 'Normal',
-    displaySelectionWidth: 100,
+    defaultSelection: function (editor) {
+      return editor.language.translate(editor.opts.paragraphDefaultSelection);
+    },
+    displaySelectionWidth: 125,
     html: function () {
-      var c = '<ul class="fr-dropdown-list">';
+      var c = '<ul class="fr-dropdown-list" role="presentation">';
       var options =  this.opts.paragraphFormat;
+
       for (var val in options) {
         if (options.hasOwnProperty(val)) {
           var shortcut = this.shortcuts.get('paragraphFormat.' + val);
+
           if (shortcut) {
             shortcut = '<span class="fr-shortcut">' + shortcut + '</span>';
           }
@@ -260,7 +262,7 @@
             shortcut = '';
           }
 
-          c += '<li><' + (val == 'N' ? this.html.defaultTag() || 'DIV' : val) + ' style="padding: 0 !important; margin: 0 !important;"><a class="fr-command" data-cmd="paragraphFormat" data-param1="' + val + '" title="' + this.language.translate(options[val]) + '">' + this.language.translate(options[val]) + '</a></' + (val == 'N' ? this.html.defaultTag() || 'DIV' : val) + '></li>';
+          c += '<li role="presentation"><' + (val == 'N' ? this.html.defaultTag() || 'DIV' : val) + ' style="padding: 0 !important; margin: 0 !important;" role="presentation"><a class="fr-command" tabIndex="-1" role="option" data-cmd="paragraphFormat" data-param1="' + val + '" title="' + this.language.translate(options[val]) + '">' + this.language.translate(options[val]) + '</a></' + (val == 'N' ? this.html.defaultTag() || 'DIV' : val) + '></li>';
         }
       }
       c += '</ul>';

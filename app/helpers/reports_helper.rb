@@ -3,6 +3,10 @@ module ReportsHelper
   include Redis::RedisKeys
   include Redis::OthersRedis
   
+  def productivity_report?
+    current_account.performance_report_enabled? || feature?(:enterprise_reporting) || (current_account.timesheets_enabled? && privilege?(:view_time_entries))
+  end
+
   def current_start_time
     
   end

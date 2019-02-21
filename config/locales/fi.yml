@@ -1,6 +1,6 @@
 fi:
   meta:
-    language_name: 'Finnish' 
+    language_name: 'Finnish'
   date:
     ago: sitten
     from: "tästä hetkestä "
@@ -2866,6 +2866,7 @@ fi:
   right: Oikealla
   footer:
     helpdesk_software: Tukipalveluohjelmisto
+    helpdesk_software_link: "https://freshdesk.fi/"
     by_freshdesk: "by Fresdesk"
     submit_feedback: "Lähetä palautetta"
     browse_community: "Selaa yhteisöä"

@@ -38,6 +38,13 @@
       <% if(@item.new_record?) %>
         <div class="mint-bg-box">
           <h5 class="lead"> <%=t('freshchat.admin.sign_up_text')%></h5>
+          <%if @is_2019_plan %>
+            <a
+              href= '/admin/freshchat/signup'
+              class="btn btn-primary signup-chat">
+              <%=t('freshchat.admin.activate_now')%>
+            </a>
+            <% else %>
           <a
             href="https://www.freshworks.com/live-chat-software/?utm_source=Freshdesk-App&utm_medium=FD-Product-Admin&utm_campaign=FD-Admin-Portal"
             target="_blank"
@@ -50,6 +57,7 @@
             class="btn btn-primary activate-freshchat hide">
             <%=t('freshchat.admin.activate_now')%>
           </a>
+          <%end %>
         </div>
       <% end %>
 

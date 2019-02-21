@@ -1,13 +1,15 @@
-class Admin::Marketplace::ExtensionsController <  Admin::AdminController
+class Admin::Marketplace::ExtensionsController < Admin::AdminController
   include Marketplace::ApiMethods
   include Marketplace::ApiUtil
   include Marketplace::HelperMethods
   include SubscriptionsHelper
   include ActionView::Helpers::NumberHelper
   
+  before_filter { |c| c.requires_feature :marketplace }
   before_filter :categories, :only => [:index, :search]
-  before_filter :validate_subscription, :only => [:payment_info]
   before_filter :extension, :only => [:show, :payment_info]
+  before_filter :validate_offline_subscription, :only => [:payment_info], :if => :offline_subscription?
+  before_filter :validate_subscription, :only => [:payment_info], :unless => :skip_validation?
   before_filter(:only => [:custom_apps]) { |c| c.requires_this_feature :custom_apps }
 
   rescue_from Exception, :with => :mkp_exception
@@ -78,7 +80,7 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
     btn_class = 'oauth-iparams-btn' if has_oauth_iparams?
     @addon_details = @extension['addon']['metadata'].find { |data| data['currency_code'] == current_account.currency_name }
     render :json => { 
-      :message => I18n.t(@addon_details['trial_period'].blank? ? 'marketplace.payment_ok' : 'marketplace.payment_trial_info',
+      :message => I18n.t(trial_subscription? ? 'marketplace.payment_trial' : 'marketplace.payment_ok',
       :trial_period => @addon_details['trial_period'],
       :price => format_amount(@addon_details['price'], @addon_details['currency_code']),
       :estimate => estimate_addon_price,
@@ -94,11 +96,19 @@ class Admin::Marketplace::ExtensionsController <  Admin::AdminController
 
     def validate_subscription
       if current_account.subscription.card_number.blank?
+        billing_path = platform_version == Marketplace::Constants::PLATFORM_VERSIONS_BY_ID[:v2] ? "/a/admin/subscription" : billing_subscription_path
         msg = ''
         msg << I18n.t('marketplace.no_payment_info')
-        msg << %(<a href='#{billing_subscription_path}' class='btn btn-default btn-primary payment-btn update-payment-info' target='_blank'>)
+        msg << %(<a href='#{billing_path}' class='btn btn-default btn-primary payment-btn update-payment-info' target='_blank'>)
         msg << I18n.t('marketplace.update_payment_info')
         msg << %(</a>)
+        render :json => { :message =>  msg }
+      end
+    end
+
+    def validate_offline_subscription
+      unless addon_added_to_subscription?
+        msg = I18n.t('marketplace.payment_contact_support')
         render :json => { :message =>  msg }
       end
     end

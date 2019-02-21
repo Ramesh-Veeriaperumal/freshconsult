@@ -13,6 +13,106 @@
 	margin-bottom: 20px;
 }
 
+.calculate-container {
+	display: inline-block;
+	width: 500px;
+}
+
+#billing-template #show-confirmation-box {
+	display: none;
+}
+
+.omni-close {
+	display: inline-block;
+}
+
+.submit-confirm {
+	padding-top: 3px;
+}
+
+.billing-cost .select2-container {
+	min-width: 94px;
+}
+
+.omni-billing-edit {
+	text-align: left;
+	padding-left: 10px;
+
+	.toggle-button {
+	    margin-left: 48px;
+	}
+}
+
+.omni_warning {
+	border: 1px solid #ffd0d6;
+	padding: 18px;
+	border-radius: 4px;
+	background-color: #ffecf0;
+	margin-bottom: 12px;
+}
+
+.omni-disabled, .omni-enabled {
+	margin-top: 10px;
+	position: relative; 
+}
+
+.choose-plan-container {
+	border-bottom: 1px solid #dadfe3;
+	margin: 20px 0;
+	padding-bottom: 10px;
+}
+
+.choose-plan-drop {
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+#ChangePlan {
+	position: relative;
+}
+
+.omni-channel-icon {
+  display: inline-block;
+  float: left;
+  margin-right: 12px;
+}
+
+.showing-omni-features {
+	border-bottom: 1px solid #dadfe3;
+}
+
+.omni-features {
+	margin-bottom: 30px;
+
+	.omni-title {
+		font-weight: bold;
+		line-height: 24px;
+		font-size: 15px;
+	}
+
+	p.omni-price {
+		color: #930003;
+		font-size: 15px;
+		letter-spacing: -0.5px;
+		line-height: normal;
+		font-weight: bold;
+	}
+}
+
+.omni-title {
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.omni-features-list {
+	list-style: disc;
+  display: list-item;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 24px;
+  margin-left: 20px;
+}
+
 .well-active {
 	@include pie-clearfix;
 	background: #fefef0;
@@ -147,6 +247,15 @@
 	@include text-align(left);
 }
 
+.per-agent {
+  font-size: 12px;
+  vertical-align: middle;
+  display: inline-block;
+  padding-bottom: 6px;
+  color: #000;
+  font-weight: 300;
+}
+
 .currency-note{
 	border: 1px solid #FFDE5E;
 	padding: 5px 10px;
@@ -154,9 +263,10 @@
 	background: #FFDE5E;
 	color: #333;
 	font-weight: 400;
+	margin-bottom: 30px;
 	span{
 		margin: 5px auto;
-		display: block;
+		display: none;
 		margin-top: -17px;
 		@include margin-left(55px);
 		border-bottom-color: #FFDE5E;
@@ -168,7 +278,17 @@
 	.billing-cost{
 		margin-top: 10px;
 		font-size: 13px;
-		h2{ font-size: 15px; }
+		
+		h2{
+			font-size: 15px;
+			vertical-align: top;
+    	display: inline-block;
+  	}
+
+  	.per-month-charges {
+  		color: #91000d;
+  		font-size: 12px;
+  	}
 		dl{ margin-top: 7px; }
 		dd, dt{
 			display: inline-block;
@@ -196,9 +316,23 @@
 	}
 }
 
+.toggle-omni-billing {
+  border-top: 1px solid #dadfe3;
+  margin-top: 35px;
+  font-weight: bold;
+  position: relative;
+  padding-top: 8px;
+  .omni-toggle-holder {
+  	position: relative;
+    top: 12px;
+  }
+}
+
 .billing-divider{
 	border-top:1px dashed #afafaf;
 	border-bottom:0;
+	display: none;
+	margin: 0px;
 }
 
 .subscribed-plan-details{
@@ -322,7 +456,7 @@ input[type=text].input-agent-count{
 	td{
 		vertical-align:top;
 		@include border-right(1px solid #efefef);
-		padding: 10px 20px 20px;
+		padding: 20px 20px 20px;
 		overflow: hidden;
 		position: relative;
 		&:last-child{
@@ -331,16 +465,55 @@ input[type=text].input-agent-count{
 	}
 	.plan-details{
 		.lead{ margin-bottom: 0; }
-		h4{ font-weight:bold; }
 		p{
 			font-size:13px;
 		}
+		p.omni-price{
+			font-size:15px;
+			.free {
+				display: none;
+			}
+
+			&.free-omni-channel {
+				color: #b1bdc8;
+				font-weight: 300;
+    		position: relative;
+				&:before {
+					content: '';
+    			display: inline-block;
+    			height: 26px;
+    			border-right: 1px solid #b1bdc8;
+    			position: absolute;
+    			transform: rotate(53deg);
+    			left: 13px;
+    			top: -2px;
+				}
+				.free {
+					display: inline-block;
+					color: #930003;
+					font-weight: bold;
+				}
+			}
+		}
 		p.plan-details{
-			@include min-height(190px);
+			@include min-height(300px);
 			font-weight: 300;
 			font-size: 15px;
 			line-height: 1.8;
 			margin-bottom: 25px;
+			padding-bottom: 15px;
+			
+			span {
+				display: list-item;
+				margin-left: 20px;
+			}
+
+			span:first-child {
+				font-style: italic;
+				display: inline-block;
+				margin-left: 0px;
+			}
+
 		}
 		.plan-brief{
 			font-size: 11px;
@@ -361,7 +534,8 @@ input[type=text].input-agent-count{
 		color:$default_txt_color;
 		font-weight: 300;
 	}
-	.active{
+
+	.active:not(.toggle-button){
 		background-color:#FFFFDD;
 		border-width: 1px 1px 0 0;
 		border-color:mix(#000, #FFFFDD, 20%);
@@ -374,7 +548,7 @@ input[type=text].input-agent-count{
 			position:absolute;
 			display: block;
 			height: 10px;
-			top: -11px;
+			top: -1px;
 		 	@include left(-1px);
 			background-color: #4D3636;
 			width: 101%;
@@ -423,6 +597,17 @@ input[type=text].input-agent-count{
 	}
 }
 
+.plans tr .pricelist.sprout .plan-details p.plan-details span:first-child {
+	font-style: normal;
+  list-style: disc;
+  display: list-item;
+  margin-left: 20px;
+}
+
+.total {
+	color: #91000d;
+	display: block;
+}
 
 .billing-actions{
 	margin-top: 10px;
@@ -634,8 +819,9 @@ input[type=text].input-agent-count{
 		width: 20%;
 	}
 	.current-plan-info{
-		width: 50%;
+		width: 100%;
 	}
+
 	.billing-info-divider {
 		width: auto;
 		max-width: 40%;
