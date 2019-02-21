@@ -254,6 +254,13 @@
 		window.parent.postMessage({action: "preferences"}, window.origin);
 	});
 
+	jQuery("#manage-language-button").on("click", function(e){
+		if(!(isIe())) {
+			e.preventDefault();
+		}
+		window.parent.postMessage({action: "manage-language"}, window.origin);
+	});
+	
 	function isIe() {
 		if (document.documentMode || /Edge/.test(navigator.userAgent)) {
 		   return true;

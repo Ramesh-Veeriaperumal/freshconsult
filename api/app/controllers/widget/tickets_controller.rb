@@ -9,7 +9,7 @@ module Widget
     before_filter :check_feature
     before_filter :check_ticket_permission, only: :create
     before_filter :set_widget_portal_as_current
-    before_filter :check_recaptcha
+    before_filter :check_recaptcha, unless: :predictive_ticket?
     before_filter :delegate_attachment_ids, if: :attachment_ids?
 
     private
@@ -36,6 +36,7 @@ module Widget
         @attachment_ids = cname_params.delete(:attachment_ids)
         validate_widget
         return if @error.present?
+        return render_request_error(:ticket_creation_not_allowed, 400, id: @widget_id) unless @help_widget.ticket_creation_enabled?
         super
       end
 
@@ -50,6 +51,7 @@ module Widget
 
       def remove_ignore_params
         @meta = params[cname][:meta]
+        @predictive = params[cname][:predictive]
         params[cname].except!(*constants_class::PARAMS_TO_REMOVE)
         super
       end
@@ -57,6 +59,7 @@ module Widget
       def get_additional_params
         additional_params = {}
         additional_params[:is_ticket_fields_form] = @help_widget.ticket_fields_form?
+        additional_params[:is_predictive] = predictive_ticket?
         additional_params
       end
 
@@ -78,6 +81,10 @@ module Widget
           @item.meta_data[meta_key] = (@meta && @meta[meta_key]) || request.env[constants_class::META_KEY_MAP[meta_key]]
         end
         add_attachments
+      end
+
+      def predictive_ticket?
+        @predictive && @help_widget.predictive?
       end
   end
 end

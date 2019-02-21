@@ -19,7 +19,15 @@ class HelpWidget < ActiveRecord::Base
   def ticket_fields_form?
     settings[:contact_form][:form_type] == HelpWidgetConstants::FORM_TYPES[:ticket_fields_form]
   end
+  
+  def predictive?
+    settings[:components][:predictive_support]
+  end
 
+  def ticket_creation_enabled?
+    contact_form_enabled? || predictive?
+  end
+  
   def contact_form_enabled?
     settings[:components][:contact_form]
   end

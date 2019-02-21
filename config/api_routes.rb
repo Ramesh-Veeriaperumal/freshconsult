@@ -19,11 +19,18 @@ Helpkit::Application.routes.draw do
         resource :bot_response, controller: 'tickets/bot_response', only: [:show, :update]
       end
     end
-    namespace :admin do 
+    namespace :admin do
       resources :upload, controller: 'custom_translations/upload', path: '/custom_translations/', only: [:upload] do
         member do
           post :upload, to: 'custom_translations/upload#upload'
         end
+      end
+    end
+
+    resources :accounts, path: 'admin/accounts' do
+      collection do
+        get :languages, to: 'settings/helpdesk#index'
+        put :languages, to: 'settings/helpdesk#update'
       end
     end
 
@@ -114,7 +121,7 @@ Helpkit::Application.routes.draw do
     match 'agents/me/reset_api_key' => 'api_profiles#reset_api_key', :defaults => { format: 'json', id: 'me' }, via: :post
 
     resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy]
-    
+
     resources :canned_response_folders, controller: 'canned_response_folders', only: [:index, :show, :create, :update]
     resources :canned_responses, controller: 'canned_responses', only: [:index, :show, :create, :update]
     resources :scenario_automations, controller: 'scenario_automations', only: :index
@@ -271,11 +278,10 @@ Helpkit::Application.routes.draw do
     end
 
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
-    
+
     resources :help_widgets, controller: 'help_widgets'
 
     post '/audit_log/export', to: 'audit_logs#export'
-    
   end
 
   ember_routes = proc do
@@ -297,9 +303,9 @@ Helpkit::Application.routes.draw do
 
     resources :ocr_proxy, controller: 'ember/ocr_proxy' do
       collection do
-        get '*all', to: 'ember/ocr_proxy#execute' 
-        put '*all', to: 'ember/ocr_proxy#execute'          
-      end 
+        get '*all', to: 'ember/ocr_proxy#execute'
+        put '*all', to: 'ember/ocr_proxy#execute'
+      end
     end
 
     # trial subscriptions
@@ -317,7 +323,7 @@ Helpkit::Application.routes.draw do
         get :account, to: 'ember/bootstrap#account'
       end
     end
-    
+
     resource :accounts, controller: 'admin/api_accounts' do
       collection do
         post :cancel
@@ -616,7 +622,7 @@ Helpkit::Application.routes.draw do
         get :forward_email_confirmation
         post :test_email_forwarding
         get :suggest_domains
-        post :validate_domain_name 
+        post :validate_domain_name
         put :customize_domain
       end
     end
@@ -645,14 +651,14 @@ Helpkit::Application.routes.draw do
     post '/search/tickets/',      to: 'ember/search/tickets#results'
     post '/search/customers/',    to: 'ember/search/customers#results'
     post '/search/topics/',       to: 'ember/search/topics#results'
-    
+
     post '/search/multiquery',    to: 'ember/search/multiquery#search_results'
 
     post '/search/autocomplete/requesters/',    to: 'ember/search/autocomplete#requesters'
     post '/search/autocomplete/agents/',        to: 'ember/search/autocomplete#agents'
     post '/search/autocomplete/companies/',     to: 'ember/search/autocomplete#companies'
     post '/search/autocomplete/tags/',          to: 'ember/search/autocomplete#tags'
-    
+
     scope '/automations/:rule_type' do
       resources :rules, controller: 'admin/automations', only: [:index, :destroy]
     end
@@ -754,13 +760,13 @@ Helpkit::Application.routes.draw do
   ocr_routes = proc do
     resources :agents, controller: 'channel/omni_channel_routing/agents', only: [:index]
     resources :groups, controller: 'channel/omni_channel_routing/groups', only: [:index]
-    resources :agents_groups, controller: 'channel/omni_channel_routing/agents_groups', only: [:index]    
+    resources :agents_groups, controller: 'channel/omni_channel_routing/agents_groups', only: [:index]
     get 'accounts/linked_accounts', to: 'channel/omni_channel_routing/linked_accounts#index'
     get 'agents/:id/task_load', to: 'channel/omni_channel_routing/agents#task_load'
     get 'groups/:id/unassigned_tasks', to: 'channel/omni_channel_routing/groups#unassigned_tasks'
     put 'tickets/:id' , to: 'channel/omni_channel_routing/tickets#assign'
     put 'accounts/linked_accounts', to: 'channel/omni_channel_routing/linked_accounts#update'
-  end 
+  end
 
   widget_routes = proc do
     resources :tickets, controller: 'widget/tickets', only: [:create]

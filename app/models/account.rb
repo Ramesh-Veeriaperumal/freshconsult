@@ -870,6 +870,13 @@ class Account < ActiveRecord::Base
     generate_download_url("#{id}/beacon_report/beacon_report.pdf")
   end
 
+  def check_and_enable_multilingual_feature
+    return if features_included?(:enable_multilingual)
+
+    features.enable_multilingual.create if supported_languages.present?
+    Community::SolutionBinarizeSync.perform_async
+  end
+
   # TODO: Remove force_2019_plan?() after 2019 plan launched
   # START
   def force_2019_plan?

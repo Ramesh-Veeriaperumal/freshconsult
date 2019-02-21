@@ -8,5 +8,5 @@ module Widget::TicketConstants
   }.freeze
   META_FIELDS = [meta: META_KEY_MAP.keys].freeze
   CREATE_FIELDS = (ApiTicketConstants::CREATE_FIELDS + %w[g-recaptcha-response]).freeze | META_FIELDS
-  PARAMS_TO_REMOVE = [:meta, 'g-recaptcha-response'].freeze
+  PARAMS_TO_REMOVE = [:meta, :predictive, 'g-recaptcha-response'].freeze
 end.freeze

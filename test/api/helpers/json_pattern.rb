@@ -67,6 +67,10 @@ module JsonPattern
     }
   end
 
+  def request_error_pattern_with_info(code, params_hash = {}, info = {})
+    request_error_pattern(code, params_hash).merge(additional_info: info)
+  end
+
   def base_error_pattern(code, params_hash = {})
     message = ErrorConstants::ERROR_MESSAGES.key?(code.to_sym) ? ErrorConstants::ERROR_MESSAGES[code.to_sym].to_s : code.to_s
     {

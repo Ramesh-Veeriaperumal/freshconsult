@@ -124,11 +124,12 @@ class TicketFieldDecorator < ApiDecorator
       created_at: created_at.try(:utc),
       updated_at: updated_at.try(:utc)
     }
-    response_hash.merge!(choices: default_agent_choices) if field_type == 'default_agent' and default_agent_choices.present?
-    response_hash.merge!(choices: default_group_choices) if field_type == 'default_group' and default_group_choices.present?
-    response_hash.merge!(choices: ticket_field_choices_by_id) if ticket_field_choices_by_id.present?
-    response_hash.merge!(portal_cc: portal_cc) if default_requester?
-    response_hash.merge!(portal_cc_to: portalcc_to) if default_requester?
+    response_hash[:choices] = default_agent_choices if field_type == 'default_agent' and default_agent_choices.present?
+    response_hash[:choices] = default_group_choices if field_type == 'default_group' and default_group_choices.present?
+    response_hash[:choices] = widget_default_status_choices if field_type == 'default_status' and widget_default_status_choices.present?
+    response_hash[:choices] = ticket_field_choices_by_id if field_type != 'default_status' && ticket_field_choices_by_id.present?
+    response_hash[:portal_cc] = portal_cc if default_requester?
+    response_hash[:portal_cc_to] = portalcc_to if default_requester?
     response_hash
   end
 
@@ -257,6 +258,18 @@ class TicketFieldDecorator < ApiDecorator
           default: default_status?(status[:status_id]),
           choice_id: status[:status_id],
           customer_display_name: status_label
+        )
+      end
+    end
+
+    # label as customer display name - hence seperate for widget
+    def widget_default_status_choices
+      Helpdesk::TicketStatus.statuses_list(Account.current).map do |status|
+        status.slice(:stop_sla_timer, :deleted, :group_ids).merge(
+          label: status[:customer_display_name],
+          value: status[:status_id],
+          default: default_status?(status[:status_id]),
+          choice_id: status[:status_id]
         )
       end
     end
