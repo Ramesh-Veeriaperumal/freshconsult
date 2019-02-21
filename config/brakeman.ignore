@@ -610,6 +610,25 @@
     {
       "warning_type": "Mass Assignment",
       "warning_code": 17,
+      "fingerprint": "5e9e76ce4c097699faaba0982c296133800a8cf2b006d93cc91adcda3c8a4927",
+      "message": "Unprotected mass assignment",
+      "file": "app/controllers/posts_controller.rb",
+      "line": 64,
+      "link": "http://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "Topic.find_by_id_and_forum_id_and_account_id(params[:topic_id], params[:forum_id], current_account.id).posts.build(params[:post])",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "PostsController",
+        "method": "create"
+      },
+      "user_input": "params[:post]",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 17,
       "fingerprint": "2805db54a76837c64c83472814ea6f8b1440588c539fd45ab90393f0d379a325",
       "check_name": "MassAssignment",
       "message": "Unprotected mass assignment",
@@ -979,6 +998,25 @@
       },
       "user_input": null,
       "confidence": "Weak",
+      "note": ""
+    },
+    {
+      "warning_type": "Remote Code Execution",
+      "warning_code": 24,
+      "fingerprint": "429e8524eb7b448c8b44ead7bf448701cb076dd6f4c6b314061f4f59556b1348",
+      "message": "Unsafe reflection method constantize called with parameter value",
+      "file": "app/controllers/discussions/unpublished_controller.rb",
+      "line": 78,
+      "link": "http://brakemanscanner.org/docs/warning_types/remote_code_execution/",
+      "code": "params[:scope].constantize",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Discussions::UnpublishedController",
+        "method": "spam_scope"
+      },
+      "user_input": "params[:scope]",
+      "confidence": "High",
       "note": ""
     },
     {
