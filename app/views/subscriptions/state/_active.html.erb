@@ -23,7 +23,7 @@
           <%end%>
       </strong>
     </h1>
-    <% if plan.omni_plan? %>
+    <% if plan.omni_plan? || plan.free_omni_channel_plan? %>
       <p class="omni-enabled">
         <img alt="omni channel experience" class="omni-close" src="/assets/tick.svg" width="11" />
         <%= t('omni_enabled') %>
@@ -127,7 +127,8 @@
     </div>
     <%= content_tag(:h5, t('omni_channel_content'), :class => "lead-note pb15") %>
   <% end %>
-    <%= render :partial => "/subscriptions/select_new_plans", :locals => {:plans => @plans, :subscription => @subscription, :show_all => false } %>
+    <%= render :partial => "/subscriptions/select_new_plans", :locals => {:plans => @plans, :subscription => @subscription, 
+      :show_all => false } %>
   </div>
 </div>
 <% end %>
@@ -193,3 +194,7 @@ jQuery(document).ready(function() {
     });
   </script>
 <% end %>
+
+<div id="omni-disable-confirmation" style="display: none;">
+ <%= t('disable_omni_content') %>
+</div>

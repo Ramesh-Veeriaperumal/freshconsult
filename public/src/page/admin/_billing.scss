@@ -15,11 +15,19 @@
 
 .calculate-container {
 	display: inline-block;
-	width: 50%;
+	width: 500px;
+}
+
+#billing-template #show-confirmation-box {
+	display: none;
 }
 
 .omni-close {
 	display: inline-block;
+}
+
+.submit-confirm {
+	padding-top: 3px;
 }
 
 .billing-cost .select2-container {
@@ -28,7 +36,21 @@
 
 .omni-billing-edit {
 	text-align: left;
+	padding-left: 10px;
+
+	.toggle-button {
+	    margin-left: 48px;
+	}
 }
+
+.omni_warning {
+	border: 1px solid #ffd0d6;
+	padding: 18px;
+	border-radius: 4px;
+	background-color: #ffecf0;
+	margin-bottom: 12px;
+}
+
 .omni-disabled, .omni-enabled {
 	margin-top: 10px;
 	position: relative; 
@@ -799,9 +821,7 @@ input[type=text].input-agent-count{
 	.current-plan-info{
 		width: 100%;
 	}
-	.omni-billing-edit {
-		padding-left: 10px;
-	}
+
 	.billing-info-divider {
 		width: auto;
 		max-width: 40%;
