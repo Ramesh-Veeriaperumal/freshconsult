@@ -20,6 +20,7 @@
       - :scenario_automation
       - :sla_management_v2
       - :personal_canned_response
+      - :api_v2
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -149,6 +150,7 @@
       - :mailbox
       - :agent_scope
       - :sla_management_v2
+      - :api_v2
       - :add_to_response
       - :public_url_toggle
       - :social_tab
