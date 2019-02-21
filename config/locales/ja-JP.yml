@@ -3831,7 +3831,7 @@ ja-JP:
   right: 正しい
   footer:
     helpdesk_software: ヘルプデスクソフトウェア
-    helpdesk_software_link: "https://freshdesk.jp/"
+    helpdesk_software_link: "https://freshdesk.jp/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: Freshdeskによる
     submit_feedback: フィードバックを送信
     footer_feedback_subject_placeholder: Freshdeskをさらに良いものとするため、お客様のご意見をお聞かせください

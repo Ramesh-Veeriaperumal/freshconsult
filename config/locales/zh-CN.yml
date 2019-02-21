@@ -2868,6 +2868,7 @@ zh-CN:
   right: 右侧
   footer:
     helpdesk_software: 帮助台软件
+    helpdesk_software_link: "https://cn.freshdesk.com/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: 来自Freshdesk
     submit_feedback: 提交反馈
     browse_community: 访问用户社区

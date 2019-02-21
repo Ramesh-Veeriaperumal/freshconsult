@@ -2933,7 +2933,7 @@ da:
   right: Rigtigt
   footer:
     helpdesk_software: "Help Desk Software"
-    helpdesk_software_link: "https://freshdesk.dk/"
+    helpdesk_software_link: "https://freshdesk.dk/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: "af Freshdesk"
   tkt_unattended_in_grp: "Billet ikke videregivet i gruppe"
   agent_solves_tkt: "Agent løser Billetten"

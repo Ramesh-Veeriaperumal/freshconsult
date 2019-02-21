@@ -4702,7 +4702,7 @@ en:
   right: Right
   footer:
     helpdesk_software: Help Desk Software
-    helpdesk_software_link: "http://www.freshdesk.com"
+    helpdesk_software_link: "https://freshdesk.com/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
     footer_feedback_subject_placeholder: Tell us how we can make Freshdesk better
