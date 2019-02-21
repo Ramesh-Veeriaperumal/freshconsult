@@ -3,6 +3,7 @@ Helpkit::Application.routes.draw do
     resources :tickets, except: [:new, :edit] do
       collection do
         post :outbound_email, to: 'tickets#create', defaults: { _action: 'compose_email' }
+        post :bulk_archive, to: 'tickets/bulk_actions#bulk_archive'
       end
       member do
         put :restore
