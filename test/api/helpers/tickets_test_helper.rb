@@ -598,8 +598,9 @@ module ApiTicketsTestHelper
     }.to_json
   end
 
-  def private_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false)
+  def private_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false, exclude_options = [])
     filter_clause = ['spam = ? AND deleted = ?', false, false]
+    excludable_fields = ApiTicketConstants::EXCLUDABLE_FIELDS
     unless all_tickets
       filter_clause[0] << ' AND created_at > ?'
       filter_clause << Time.zone.now.beginning_of_day.ago(1.month).utc
@@ -614,6 +615,9 @@ module ApiTicketsTestHelper
       pattern[:requester] = Hash if requester
       pattern[:company] = Hash if company && ticket.company
       pattern[:survey_result] = feedback_pattern(ticket.custom_survey_results.last) if survey && ticket.custom_survey_results.present?
+      exclude_options.each do |exclude|
+        pattern.delete(exclude.to_sym) if excludable_fields.include?(exclude)
+      end
       pattern
     end
   end

@@ -14,7 +14,8 @@ module Ember
 
     SLAVE_ACTIONS = %w(latest_note).freeze
 
-    INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :schema_less_ticket, :ticket_status, { flexifield: [:denormalized_flexifield]}, { requester: [:avatar, :flexifield, :companies, :user_emails, :tags] }, :custom_survey_results].freeze
+    INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :schema_less_ticket, :ticket_status, { flexifield: [:denormalized_flexifield] }, { requester: [:avatar, :flexifield, :companies, :user_emails, :tags] }, :custom_survey_results].freeze
+    INDEX_PRELOAD_OPTION_MAPPING = { custom_fields: { flexifield: [:denormalized_flexifield] } }.freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
     SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties execute_scenario).freeze
 
@@ -409,7 +410,12 @@ module Ember
           options[:contact_name_mapping] = contact_name_mapping
           options[:company_name_mapping] = company_name_mapping
         end
+        options[:discard_options] = discard_options
         super(options)
+      end
+
+      def discard_options
+        index? ? @ticket_filter.try(:exclude_array) : []
       end
 
       def contact_name_mapping
@@ -489,7 +495,11 @@ module Ember
       end
 
       def conditional_preload_options
-        params['include'].to_s.include?('company') ? INDEX_PRELOAD_OPTIONS.dup.push(:company) : INDEX_PRELOAD_OPTIONS
+        conditional_preload_options = params['include'].to_s.include?('company') ? INDEX_PRELOAD_OPTIONS.dup.push(:company) : INDEX_PRELOAD_OPTIONS.dup
+        (params[:exclude] || '').split(',').each do |exclude_param|
+          conditional_preload_options.delete(INDEX_PRELOAD_OPTION_MAPPING[exclude_param.to_sym])
+        end
+        conditional_preload_options
       end
 
       def constants_class

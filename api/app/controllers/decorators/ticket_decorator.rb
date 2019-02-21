@@ -25,6 +25,7 @@ class TicketDecorator < ApiDecorator
     @permissibles = options[:permissibles]
     @last_broadcast_message = options[:last_broadcast_message]
     @sideload_options = options[:sideload_options] || []
+    @discard_options = options[:discard_options] || []
   end
 
   def custom_fields
@@ -295,10 +296,10 @@ class TicketDecorator < ApiDecorator
       association_type: association_type,
       associated_tickets_count: subsidiary_tkts_count,
       can_be_associated: can_be_associated?,
-      custom_fields: custom_fields,
       tags: tag_names
     }
-    [hash, simple_hash, feedback_hash, shared_ownership_hash, skill_hash].inject(&:merge)
+    hash[:custom_fields] = custom_fields unless @discard_options.include?('custom_fields')
+    [hash, simple_hash, feedback_hash, shared_ownership_hash, skill_hash].inject(&:merge!)
   end
 
   def to_search_hash
