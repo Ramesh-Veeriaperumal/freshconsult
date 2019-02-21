@@ -66,8 +66,6 @@ EndOfMessage
 fi
 
 command -v osascript &> /dev/null  && osascript -e 'display notification "Validating Freshrelease ID for commit" with title "Hang in there"'
-echo "issue id ${frID}"
-echo "token ${FR_TOKEN}"
 curl -X GET \
   "https://freshworks.freshrelease.com/FD/issues/${frID}" \
   -H 'accept: application/json' \
