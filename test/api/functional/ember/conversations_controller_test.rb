@@ -25,6 +25,7 @@ module Ember
 
     def setup
       super
+      WebMock.allow_net_connect!
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       Account.current.features.es_v2_writes.destroy
       Account.find(Account.current.id).make_current
@@ -37,6 +38,7 @@ module Ember
 
     def teardown
       super
+      WebMock.disable_net_connect!
       MixpanelWrapper.unstub(:send_to_mixpanel)
       Social::CustomTwitterWorker.unstub(:perform_async)
     end
