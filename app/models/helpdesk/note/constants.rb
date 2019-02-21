@@ -44,4 +44,11 @@ class Helpdesk::Note < ActiveRecord::Base
   EXCLUDE_SOURCE =  %w{meta summary}.freeze
 	
   RELATED_ASSOCIATIONS = %w{note_body schema_less_note}.freeze
+
+  PERMITTED_PARAMS = [
+    { attachments: [:resource] },
+    { inline_attachment_ids: [] },
+    { note_body_attributes: [:body_html] }
+  ]
+
 end
