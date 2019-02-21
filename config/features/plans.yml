@@ -20,6 +20,7 @@
       - :scenario_automation
       - :sla_management_v2
       - :personal_canned_response
+      - :api_v2
     :inherits: []
     :exclude: []
   :blossom_jan_17:
@@ -149,6 +150,7 @@
       - :mailbox
       - :agent_scope
       - :sla_management_v2
+      - :api_v2
       - :add_to_response
       - :public_url_toggle
       - :social_tab
@@ -213,6 +215,12 @@
     :inherits:
       - :blossom_jan_19
     :exclude: []
+  :garden_omni_jan_19:
+    :name: Garden Omni Channel
+    :features: []
+    :inherits:
+      - :garden_jan_19
+    :exclude: []
   :estate_jan_19:
     :name: Estate
     :features:
@@ -250,6 +258,12 @@
       - :segments
     :inherits:
       - :garden_jan_19
+    :exclude: []
+  :estate_omni_jan_19:
+    :name: Estate Omni Channel
+    :features: []
+    :inherits:
+      - :estate_jan_19
     :exclude: []
   :forest_jan_19:
     :name: Forest

@@ -59,7 +59,7 @@ class Account < ActiveRecord::Base
     :canned_forms, :social_tab, :customize_table_view, :public_url_toggle,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
-    :ticket_volume_report, :omni_channel, :sla_management_v2, :cascade_dispatcher,
+    :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
     :personal_canned_response, :marketplace
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
@@ -79,7 +79,7 @@ class Account < ActiveRecord::Base
     :social_tab, :customize_table_view, :public_url_toggle, :add_to_response,
     :agent_scope, :performance_report, :custom_password_policy, :scenario_automation,
     :sla_management_v2, :omni_channel, :personal_canned_response, :marketplace,
-    :fa_developer
+    :fa_developer, :api_v2
   ].to_set.freeze
 
   LP_FEATURES.each do |item|
