@@ -3,21 +3,21 @@
                                   :id => "plan-change-confirm-#{plan.id}" } do |f| %>
   
   <% if downgrade_message_flag %>
-    <% if current_account.new_pricing_launched?%>
-        <%= render :partial => "downgrade_feature_loss", 
-                                    :locals => { 
-                                      :downgrade_msg => downgrade_msg,
-                                      :current_plan_name => current_account.subscription.subscription_plan.display_name.upcase,
-                                      :current_plan =>current_account.subscription.subscription_plan.name.downcase, 
-                                      :new_plan => plan.name.downcase
-                                    } 
-                              %>
-    <% else %>
-        <%= downgrade_msg.html_safe %>
-    <% end %>
+    <%= render :partial => "downgrade_feature_loss", 
+                                :locals => { 
+                                  :downgrade_msg => downgrade_msg,
+                                  :current_plan_name => current_account.subscription.subscription_plan.display_name.upcase,
+                                  :current_plan =>current_account.subscription.subscription_plan.name.downcase, 
+                                  :new_plan => plan.name.downcase,
+                                  :show_omni_warning => show_omni_warning
+                                } 
+                          %>
   <% end %>
 
-  <input type="hidden" name="billing_cycle" value="1" />
+  <%
+    hidden_billing_cycle_value = current_account.new_2019_pricing_enabled? ? SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] : 1
+  %>
+  <input type="hidden" name="billing_cycle" value="<%= hidden_billing_cycle_value %>" />
   <input type="hidden" name="agent_limit" value="<%= agent_limit %>" />
   <input type="hidden" name="plan_id" value="<%= plan.id %>" />
   <input type="hidden" name="currency" value="<%= currency %>" />

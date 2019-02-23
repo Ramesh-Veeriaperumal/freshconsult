@@ -43,6 +43,10 @@ class Group < ActiveRecord::Base
     t.add :account_id   
   end
 
+  api_accessible :central_publish_associations do |t|
+    t.add :business_calendar, template: :central_publish
+  end
+  
   api_accessible :central_publish_destroy do |t|
     t.add :id
     t.add :account_id   

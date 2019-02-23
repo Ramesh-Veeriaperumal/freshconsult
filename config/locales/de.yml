@@ -519,14 +519,14 @@ de:
   imap_mailbox_error: Details anzeigen
   twitter_reauth: >-
     Auf Ihren Twitter-Kanal kann nicht zugegriffen werden. Es sieht so aus, als
-    sei Ihr Benutzername oder das Kennwort neulich geändert worden. 
+    sei Ihr Benutzername oder das Kennwort neulich geändert worden.
   smart_filter_disabled: >-
     Social Signals sind vorübergehend nicht verfügbar. Wir arbeiten daran, dass
     sie schnell wieder verfügbar sind.
   reauthorize_twitter: Autorisieren Sie Ihr Twitter-Handle neu.
   ecommerce_reauth: >-
     Auf Ihr E-Commerce-Konto kann nicht zugegriffen werden. Ihr
-    Authentifizierungs-Token  scheint gesperrt zu sein. 
+    Authentifizierungs-Token  scheint gesperrt zu sein.
   reauthorize_ecommerce: Autorisieren Sie Ihr E-Commerce-Konto neu.
   schedule_a_complimentary_session: Kostenlose Sitzung planen
   choose_a_plan: Plan auswählen
@@ -748,7 +748,7 @@ de:
         Sie Elemente ein, indem Sie die Tabulator-Taste ein- oder zweimal
         drücken. Je nach Einrückung konvertieren wir es zu den
         Auswahlfeldelementen. Geben Sie daher besondere Obacht.<a
-        target='_blank' href=%{learn_more}>Mehr erfahren</a> 
+        target='_blank' href=%{learn_more}>Mehr erfahren</a>
       nested_field_helptext: ''
       dropdown_items_edit: Auswahlfeldelemente - Ansicht bearbeiten
       drop_down_items_edit: Dropdown-Elemente - Bearbeiten
@@ -1595,7 +1595,7 @@ de:
           und rücken Sie Elemente ein, indem Sie die Tabulator-Taste ein- oder
           zweimal drücken. Je nach Einrückung konvertieren wir sie zu
           Auswahlfeldelementen. Gehen Sie deshalb besonders vorsichtig vor. <a
-          target='_blank' href=%{learn_more}>Mehr erfahren</a> 
+          target='_blank' href=%{learn_more}>Mehr erfahren</a>
         dropdown_items_edit: Auswahlfeldelemente - Ansicht bearbeiten
         dropdown_items_preview: Auswahlfeldelemente - Vorschau
         status_choices: Statusoptionen
@@ -1690,7 +1690,7 @@ de:
           und rücken Sie Elemente ein, indem Sie die Tabulator-Taste ein- oder
           zweimal drücken. Je nach Einrückung konvertieren wir sie zu
           Auswahlfeldelementen. Gehen Sie deshalb besonders vorsichtig vor. <a
-          target='_blank' href=%{learn_more}>Mehr erfahren</a> 
+          target='_blank' href=%{learn_more}>Mehr erfahren</a>
         dropdown_items_edit: Auswahlfeldelemente - Ansicht bearbeiten
         dropdown_items_preview: Auswahlfeldelemente - Vorschau
         status_choices: Statusoptionen
@@ -1812,7 +1812,7 @@ de:
         info1: >-
           Wenn Sie möchten, dass Ihre Kunden und Support-Bearbeiter in Ihrer
           eigenen Domäne auf Ihr Support-Portal zugreifen, können Sie Ihre
-          Support-URL ​<b>yourcompany.freshdesk.com​</b> auf Ihre Domäne (z. B. 
+          Support-URL ​<b>yourcompany.freshdesk.com​</b> auf Ihre Domäne (z. B.
           ​<b>support.yourcompany.com</b> verweisen.
         info2: >-
           Sie können auch eine spezifische Lösung und Forumskategorien
@@ -1826,7 +1826,7 @@ de:
           Falls Sie Benutzerberechtigungen einrichten und Einstellungen für die
           Forumsmoderation optimieren möchten, klicken Sie auf die Registerkarte
           „Einstellungen". Die Einstellungen können nicht für jedes Portal
-          einzeln konfiguriert werden, sondern gelten allgemein für alle 
+          einzeln konfiguriert werden, sondern gelten allgemein für alle
           erstellten Portale.
         editor_shortcuts: Bearbeiter Shortcuts
         preview_changes: Vorschau der Änderungen
@@ -2021,7 +2021,7 @@ de:
             eingehen, von Ihrem Helpdesk aus verwalten. Nach erfolgtem
             Einrichten werden aus all Ihren eBay-Kundenanfragen automatisch
             Tickets erstellt. Sie können diese auch direkt von Freshdeck aus
-            beantworten. 
+            beantworten.
       index:
         title: E-Commerce-Konten
         renew: Token verlängern
@@ -2980,7 +2980,7 @@ de:
           übermittelt werden.
         customer_portal_ssl_warning: >-
           Da für Ihr Konto eine benutzerdefinierte Helpdesk-URL konfiguriert
-          ist, werden Sie weitergeleitet an 
+          ist, werden Sie weitergeleitet an
         multiple_product_ssl_warning: 'SSL wird nicht angewendet, wenn mehrere Produkte konfiguriert sind.'
         enabled: Aktiviert
         disabled: Deaktiviert
@@ -3866,7 +3866,7 @@ de:
       info1: >-
         Ihr Import wurde erfolgreich abgeschlossen. Sie können Ihren Helpdesk
         öffnen und Kunde->%{uc_type} aufrufen, um neu hinzugefügte %{type}
-        anzuzeigen.  
+        anzuzeigen.
       info2: >-
         Wir konnten nicht alle %{type} in die CSV-Datei importieren, die Sie
         gesendet haben. Sie finden die Zusammenfassung unten:
@@ -3991,7 +3991,7 @@ de:
       bulk_merge_success: >-
         Die Tickets mit den IDs %{merged_tickets} wurden in das <a
         href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject}
-        Nummer %{target_ticket}</a> zusammengeführt 
+        Nummer %{target_ticket}</a> zusammengeführt
       link:
         success: Das Ticket wurde erfolgreich mit dem Tracker verknüpft
         delay_link: >-
@@ -4251,14 +4251,14 @@ de:
     realtime: >-
       <b>Der Echtzeit-Stream zum Abrufen der App wird gestoppt,</b> da einige
       Änderungen am Facebook-Konto vorgenommen wurden. <a href='%{realtime_url}'
-      > Erneut autorisieren und aktivieren </a> 
+      > Erneut autorisieren und aktivieren </a>
     user_creation_failed: >-
       Bei der Erstellung des Benutzers in Freshdesk ist ein Fehler aufgetreten.
       Bitte versuchen Sie es später noch einmal oder kontaktieren Sie
       support@freshdesk.com
   import_user_notification: >-
     Sie können die E-Mail zur Benutzeraktivierung für die importierten Kontakte
-    von der Kundenregisterkarte aus verschicken. 
+    von der Kundenregisterkarte aus verschicken.
   what_is_cvv: Was ist eine CVV?
   pro_details: >-
     Alle Features des „Basic“-Plans und Szenario-Automationen, kundenspezifische
@@ -4651,7 +4651,7 @@ de:
       ticket_merge:
         short: >-
           {{user_path}} hat Ticket „{{notable_path}}“ zu {{merge_ticket_path}}
-          zusammengeführt 
+          zusammengeführt
         long: >-
           {{user_path}} hat Ticket „{{notable_path}}“ zu {{merge_ticket_path}}
           zusammengeführt
@@ -5061,7 +5061,7 @@ de:
       invoice_email_info: Rechnungsadresse
       invoice_emails: E-Mail
       restore_account: >-
-        Ihr Konto wurde geschlossen und die Daten werden am 
+        Ihr Konto wurde geschlossen und die Daten werden am
         <strong>%{delete_at}</strong> gelöscht. Um Ihr Konto wiederherzustellen,
         kontaktieren Sie <a
         href='mailto:support@freshdesk.com'>support@freshdesk.com</a>.
@@ -5436,7 +5436,7 @@ de:
       Tickets anzuzeigen.
     parent_not_accessible: >-
       Ups! Anscheinend können wir zur Erstellung der untergeordneten Tickets
-      nicht auf die Ticketvorlagen zugreifen. 
+      nicht auf die Ticketvorlagen zugreifen.
     limit_exceeded: >-
       Vorlage kann nicht verwendet werden, da die Anzahl der untergeordneten
       Tickets die vorgegebene maximale Anzahl von %{limit} überschreiten würde.
@@ -6087,7 +6087,7 @@ de:
       werden die darin enthaltenen Bearbeiter nicht gelöscht.
     info6: >-
       E-Mail an Bearbeiter schicken, wenn dieser Gruppe ein neues Ticket
-      zugewiesen wird 
+      zugewiesen wird
     info7: 'wenn ein Ticket nicht zugewiesen ist für mehr als '
     info8: >-
       Neu: Gestatten Sie Ihren Supervisors, die automatische Ticketzuweisung und
@@ -6176,7 +6176,7 @@ de:
       Bei Aktivierung werden dieser Gruppe zugewiesene Tickets unter den
       Bearbeitern in Round Robin Fashion verteilt. Wenn Sie manuell Tickets
       zuweisen und sie mithilfe der Verteiler- oder Supervisor-Automatisierung
-      verteilen möchten, können Sie diese Funktion deaktivieren. 
+      verteilen möchten, können Sie diese Funktion deaktivieren.
     capping_ticket: Ticket
     capping_tickets: Tickets
     page_not_found: >-
@@ -6400,6 +6400,7 @@ de:
   footer:
     helpdesk_software: Helpdesk-Software
     by_freshdesk: von Freshdesk
+    helpdesk_software_link: "https://freshdesk.com/de/"
     submit_feedback: Feedback senden
     footer_feedback_subject_placeholder: 'Sagen Sie uns, wie wir Freshdesk verbessern können'
     footer_feedback_thanks: Vielen Dank für Ihr Feedback!
@@ -6479,7 +6480,7 @@ de:
     remove_company: Kontakt-Unternehmen-Verknüpfung entfernen
     remove_company_text: >-
       In den von %{user_name} erstellten bestehenden Tickets für dieses
-      Unternehmen: 
+      Unternehmen:
     removed_association: 'Sie sind dabei, eine Kontakt-Unternehmen-Verknüpfung zu entfernen.'
     retain_company: 'Unternehmensname kann weiterhin sein:'
     rename_company: 'Unternehmensname sollte aktualisiert werden auf:'
@@ -6828,18 +6829,18 @@ de:
       why_we_love_cookies: Warum wir Cookies lieben
       cookie_dialog_info1: >-
         Wir nutzen Cookies, um Ihnen eine bessere Benutzererfahrung in Freshdesk
-        zu bieten. 
+        zu bieten.
       cookie_dialog_info2: >-
         In unserer %{privacy_link} erfahren Sie mehr über von uns verwendete
         Cookies und deren Funktion. Wenn Sie Cookies nicht leiden können oder
         Sie einfach auf Diät sind, können Sie alles Cookies deaktivieren.
         Beachten Sie jedoch, dass der Freshdesk-Service einige Cookies intensiv
         verwendet und durch eine Deaktivierung einige Teile von Freshdesk nicht
-        ordnungsgemäß funktionieren werden. 
+        ordnungsgemäß funktionieren werden.
       cookie_dialog_info3: >-
         Wir nehmen außerdem an, dass Sie der Art und Weise zustimmen, wie wir
         Cookies verwenden und in unserer %{privacy_link} beschrieben haben. Dies
-        gilt nicht, wenn Sie alle Cookies in Ihrem Browser deaktiviert haben. 
+        gilt nicht, wenn Sie alle Cookies in Ihrem Browser deaktiviert haben.
       privacy_policy: Datenschutzrichtlinie
     no_topics_in_this_view: ~ Keine Themen in dieser Ansicht ~
     reported: gemeldet
@@ -7892,7 +7893,7 @@ de:
           unterstützen, können Sie diese Benachrichtigung für jede einzelne
           Sprache erstellen. Das Symbol <i class="common-icon-outdated"></i>
           zeigt an, dass die Benachrichtigungsübersetzungen in andere Sprachen
-          ggf. veraltet sind. 
+          ggf. veraltet sind.
       agent_template_11:
         topic: Ticket unaufbesichtigt in einer Gruppe
         info1: >-
@@ -8753,7 +8754,7 @@ de:
     create_ticket_title: Ticket erstellen
     submit_a_ticket_info: >-
       Der Anfragende wird eine E-Mail-Benachrichtigung erhalten, dass ein neues
-      Ticket erstellt wurde. Dies kann unter „Admin > 
+      Ticket erstellt wurde. Dies kann unter „Admin >
       E-Mail-Benachrichtigungen“ deaktiviert werden.
     convert_ticket_title: In Ticket umwandeln
     reply_form:
@@ -8926,7 +8927,7 @@ de:
     performed: ' durchgeführt '
     system_activity_timestamp: >-
       <strong class='muted'>System</strong> %{system_rule} <abbr
-      data-livestamp='%{timestamp}'></abbr> (%{note_date}) 
+      data-livestamp='%{timestamp}'></abbr> (%{note_date})
     requestor_info: Infos zum Anforderer
     view_twitter: In Twitter anzeigen
     view_facebook: Auf Facebook anzeigen
@@ -10889,7 +10890,7 @@ de:
       Es handelt sich hierbei um eine kostenpflichtige App mit einem
       %{trial_period}-tägigen Testzeitraum. Sobald der Testzeitraum abgelaufen
       ist, wird Ihnen %{price} / %{addon_type} / Monat in Rechnung gestellt.
-      Bitte tippen Sie auf „OK“, um die App zu installieren. <br> 
+      Bitte tippen Sie auf „OK“, um die App zu installieren. <br>
       %{payment_ok_btn}
     payment_ok: >-
       Für diese App wird Ihnen %{price} / %{addon_type} / Monat in Rechnung
@@ -11415,7 +11416,7 @@ de:
       no_status: k.A.
       info1: >-
         Das Verwenden desselben Synchronisierungstags für mehrere Google-Konten
-        ermöglicht Ihnen das Teilen der Freshdesk-Kontakte mit allen Konten. 
+        ermöglicht Ihnen das Teilen der Freshdesk-Kontakte mit allen Konten.
         Wenn Sie keine Kontakte in Google synchronisieren möchten, können Sie es
         leer lassen.
       sync_group_info: >-
@@ -11898,7 +11899,7 @@ de:
         verfügbar.<br><br>Sie können Kontakte von Batchbook suchen, indem Sie
         nach deren E-Mail-Adresse suchen. Falls mehrere Kontakte über die
         gleiche E-Mail-Adresse verfügen, werden sie alle in Form einer Liste
-        angezeigt.</p><br/> 
+        angezeigt.</p><br/>
       desc: >-
         Importieren Sie Kontaktinformationen von Ihrem Batchbook-Konto in
         Freshdesk
@@ -12459,7 +12460,7 @@ de:
         password: SSO-Kennwort
         logmein_company_info: >-
           Ihre Unternehmens-ID finden Sie unter „Admin > Bearbeitergruppe >
-          Globale Einstellungen > ASP.Net C# serverseitiges Beispiel“. 
+          Globale Einstellungen > ASP.Net C# serverseitiges Beispiel“.
         logmein_sso_pwd_info: >-
           Um Ihr SSO-Kennwort einzurichten, gehen Sie zu „Admin >
           Bearbeitergruppe > Globale Einstellungen > Single Sign-On > Neues
@@ -12469,7 +12470,7 @@ de:
       desc: >-
         Fügen Sie MailChimp zu Freskdesk hinzu, und verwalten Sie so Ihre
         Abonnements, exportieren Sie Kundenlisten und rufen Sie notwendige
-        Informationen zu ihren Aktivitäten aus Ihrem Helpdesk ab.  
+        Informationen zu ihren Aktivitäten aus Ihrem Helpdesk ab.
       helptext: <h4>Hilfe für MailChimp-Integration</h4>
     constantcontact:
       label: Constant Contact
@@ -12483,7 +12484,7 @@ de:
       desc: >-
         Suchen und verwalten Sie Abonnements in Ihrem Campaign Monitor-Konto,
         und erhalten Sie einen Überblick über Kundenstatistiken direkt in
-        Freshdesk. 
+        Freshdesk.
       helptext: >-
         <h4>Integrationshilfe für Campaign Monitor Integration </h4><br/>Für die
         Integration mit Campaign Monitor sollten Sie Ihren API-Schlüssel und die
@@ -12517,7 +12518,7 @@ de:
         api_url_info: >-
           Öffnen Sie zum Abrufen Ihrer API-URL den Link
           https://app.icontact.com/icp/core/externallogin, und kopieren Sie die
-          API-URL aus dem Abschnitt „Kontoinformationen“. 
+          API-URL aus dem Abschnitt „Kontoinformationen“.
     dropbox:
       label: DropBox
       desc: Teilen und verbreiten Sie Ihre Daten/Dateien aus DropBox.
@@ -12710,7 +12711,7 @@ de:
       freshdesk_api_key: Freshdesk API-Schlüssel
       api_key_available: >-
         Sie können den API-Schlüssel in den Profileinstellungen Ihres
-        Freshdesk-Kontos abrufen 
+        Freshdesk-Kontos abrufen
       new_to_freshdesk: Neu bei Freshdesk
     hootsuite:
       auth_error: >-
@@ -13235,7 +13236,7 @@ de:
   maximum_agents_msg: >-
     Sie haben die maximale Anzahl von Bearbeitern für Ihr Abonnement erreicht.
     Sie müssen einen vorhandenen Bearbeiter löschen oder sich an Ihren
-    Kontoadministrator wenden, um zusätzliche Bearbeiter zu erwerben. 
+    Kontoadministrator wenden, um zusätzliche Bearbeiter zu erwerben.
   contact_agent_deleted_forever: Dieser Kontakt wurde endgültig gelöscht
   contact_marked_for_hard_delete: Dieser Kontakt ist für eine dauerhafte Löschung vorgesehen
   contact_without_email_id: Kontakt mit E-Mail-ID kann nur in einen Agenten konvertiert werden
@@ -13548,7 +13549,7 @@ de:
     mint: Mint
     confirm: >-
       Möchten Sie den neuen Look wirklich anwenden? Alle Ihre CSS-Anpassungen\ \
-      gehen dadurch verloren. 
+      gehen dadurch verloren.
 
 
       Tipp: Erstellen Sie eine Kopie Ihrer aktuellen\ \ CSS-Anpassungen und
@@ -14030,7 +14031,7 @@ de:
         positive: Tickets werden hier ja blitzschnell zugewiesen!
         negative: >-
           Sie haben Schwierigkeiten beim Verteilen von Aufgaben?
-          Dispatch'r-Regeln können bei der automatischen Zuweisung helfen 
+          Dispatch'r-Regeln können bei der automatischen Zuweisung helfen
         neutral: ''
         display_text: Durchschnittliche Erstzuweisungszeit
       d8:
@@ -14802,7 +14803,7 @@ de:
     widget:
       ticket_info: >-
         Erstellen Sie ein neues Ticket oder fügen Sie dem vorhandenen Ticket mit
-        der Anmerkungs- und Aufzeichnungsfunktion eine Anmerkung hinzu. 
+        der Anmerkungs- und Aufzeichnungsfunktion eine Anmerkung hinzu.
       note_placeholder: Anrufanmerkungen hinzufügen...
       new_ticket: Als neues Ticket speichern
       save_to_existing: Als vorhandenes Ticket speichern
@@ -15062,7 +15063,7 @@ de:
         other: Bearbeiter
       ticket_info: >-
         Erstellen Sie ein neues Ticket oder fügen Sie dem vorhandenen Ticket mit
-        der Anmerkungs- und Aufzeichnungsfunktion eine Anmerkung hinzu. 
+        der Anmerkungs- und Aufzeichnungsfunktion eine Anmerkung hinzu.
       add_note: Anmerkungen hinzufügen
       note_placeholder: Anrufanmerkungen hinzufügen...
       title: In Ticket umwandeln
@@ -16253,12 +16254,12 @@ de:
         pflegen, können Sie mehrere Kategorien für Produkte und Teams erstellen.
         Dadurch können Sie relevante Konversationen in all Ihren wichtigen
         Bereich vorantreiben, und als Administrator können Sie alles von einer
-        Stelle aus verwalten. 
+        Stelle aus verwalten.
       para3: >-
         Falls Sie in Ihrem Freshdesk-Konto mehrere Produktportale eingerichtet
         haben, können Sie eine Ihrer Kategorien mit einem der Produkte
         verknüpfen. Danach können Benutzer die Kategorie, ihre Foren und alle
-        Themen sowohl im Hauptportal als auch im Produktportal sehen, 
+        Themen sowohl im Hauptportal als auch im Produktportal sehen,
       para4: Erfahren Sie mehr über multiple Produkte in Freshdesk.
     shared:
       topic:
@@ -16393,7 +16394,7 @@ de:
           content: >-
             Wir freuen uns, unser bevorzugtes Kundenprogramm bekanntzugeben -
             den exklusiven Platin-Club für unsere Kunden.
-             
+
             Zu den Leistungen zählen:<br>Expressversand - 2 Tage von der
             Bestellung bis zur Lieferung. Oder kostenloser Versand!
 
@@ -16415,12 +16416,12 @@ de:
             teilzunehmen? Bitte antworten Sie hier!
 
 
-            Danke, 
+            Danke,
 
             Acme-Support
         - subject: Wiederkehrende Einkaufsrabatte
           content: >-
-            Hallo, 
+            Hallo,
 
             können wir wiederkehrende Einkaufsrabatte bekommen? Wir bestellen
             viel über Ihre Website, deshalb kam die Frage auf.
@@ -16431,25 +16432,25 @@ de:
             Hermoine
         - subject: Kosten für den Premiumplan?
           content: |-
-            Wie viel kostet der Premiumplan? Lohnt sich der Kauf wirklich? 
+            Wie viel kostet der Premiumplan? Lohnt sich der Kauf wirklich?
             Phileas
           replies:
             - >-
-              Hallo Phileas, 
+              Hallo Phileas,
 
               wir haben uns letztes Jahr registriert und es hat sehr gut
               funktioniert: Wir haben einen Jahresvertrag für $300/Jahr
               bekommen. Das ist jedoch die beste Investition gewesen. Die
-              geringen wiederkehrenden Gebühren sind es auf jeden Fall Wert! 
+              geringen wiederkehrenden Gebühren sind es auf jeden Fall Wert!
 
               Oliver Twist
         - subject: Wie richte ich mein Konto ein?
           content: >-
             Hallo, ich bin neu bei Acme. Kann mir jemand bei der Einrichtung
-            meines Kontos helfen? 
+            meines Kontos helfen?
 
 
-            Danke, 
+            Danke,
 
             Matt
         - subject: Benutzerhandbücher für Gadgets
@@ -16777,7 +16778,7 @@ de:
         authorize_text3: >-
           <a target='_blank'
           href='https://developers.freshdesk.com/v2/docs/terms-of-use/'>Nutzungsbedingungen
-          für Entwickler </a> zustimmen und autorisieren 
+          für Entwickler </a> zustimmen und autorisieren
         authorize_text2: zur Nutzung Ihres Kontos?
         authorize_success: Sie haben diese Anfrage erlaubt
         authorize_failure: Sie haben keinen Zugriff auf diese Seite
@@ -17513,7 +17514,7 @@ de:
       zendesk_import_success: Ihr Import aus Zendesk war erfolgreich. Super.
       zendesk_freshness: >-
         Wir freuen uns, dass Sie sich für den Wechsel entschieden haben, und
-        hoffen, dass Ihnen die neue Aufmachung unserer Software gefällt. 
+        hoffen, dass Ihnen die neue Aufmachung unserer Software gefällt.
       write_to_email: >-
         Bitte schreiben Sie an <a
         href='mailto:support@freshdesk.com'>support@freshdesk.com</a>, falls Sie
@@ -17614,7 +17615,7 @@ de:
       for_metric: 'Für Metrik: '
       report_export_complete: >-
         Der von Ihnen angeforderte Export %{@ticket_export} des Berichts
-        %{@report_label} ist abgeschlossen. 
+        %{@report_label} ist abgeschlossen.
       download_attachment: Die Datei ist dieser E-Mail angehängt.
       download_file_plain: >-
         Sie können die Datei von %{export_url} herunterladen (sie läuft in 45

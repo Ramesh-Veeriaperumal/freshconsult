@@ -59,6 +59,11 @@ module Helpkit
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'
     config.time_zone = 'Chennai'
+    # https://www.rubydoc.info/gems/safe_yaml
+    # Set default_mode to unsafe, which means YAML.load() will deserialize arbitrary objects. Explicitly specify as
+    # YAML.load('', safe: true) if you do not want to deserialize objects
+    SafeYAML::OPTIONS[:default_mode] = :unsafe
+    SafeYAML::OPTIONS[:deserialize_symbols] = true
     # config.exceptions_app = ->(env) { ExceptionsController.action(:show).call(env) }
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.

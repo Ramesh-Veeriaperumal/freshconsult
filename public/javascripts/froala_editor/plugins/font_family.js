@@ -1,7 +1,7 @@
 /*!
- * froala_editor v2.3.5 (https://www.froala.com/wysiwyg-editor)
+ * froala_editor v2.9.1 (https://www.froala.com/wysiwyg-editor)
  * License https://froala.com/wysiwyg-editor/terms/
- * Copyright 2014-2016 Froala Labs
+ * Copyright 2014-2018 Froala Labs
  */
 
 (function (factory) {
@@ -23,16 +23,15 @@
                     jQuery = require('jquery')(root);
                 }
             }
-            factory(jQuery);
-            return jQuery;
+            return factory(jQuery);
         };
     } else {
         // Browser globals
-        factory(jQuery);
+        factory(window.jQuery);
     }
 }(function ($) {
 
-  'use strict';
+  
 
   $.extend($.FE.DEFAULTS, {
     fontFamily: {
@@ -40,7 +39,7 @@
       'Georgia,serif': 'Georgia',
       'Impact,Charcoal,sans-serif': 'Impact',
       'Tahoma,Geneva,sans-serif': 'Tahoma',
-      'Times New Roman,Times,serif': 'Times New Roman',
+      'Times New Roman,Times,serif,-webkit-standard': 'Times New Roman',
       'Verdana,Geneva,sans-serif': 'Verdana'
     },
     fontFamilySelection: false,
@@ -53,11 +52,12 @@
     }
 
     function refreshOnShow($btn, $dropdown) {
-      $dropdown.find('.fr-command.fr-active').removeClass('fr-active');
-      $dropdown.find('.fr-command[data-param1="' + _getSelection() + '"]').addClass('fr-active');
+      $dropdown.find('.fr-command.fr-active').removeClass('fr-active').attr('aria-selected', false);
+      $dropdown.find('.fr-command[data-param1="' + _getSelection() + '"]').addClass('fr-active').attr('aria-selected', true);
 
       var $list = $dropdown.find('.fr-dropdown-list');
       var $active = $dropdown.find('.fr-active').parent();
+
       if ($active.length) {
         $list.parent().scrollTop($active.offset().top - $list.offset().top - ($list.parent().outerHeight() / 2 - $active.outerHeight() / 2));
       }
@@ -78,7 +78,7 @@
     function _matches (array1, array2) {
       for (var i = 0; i < array1.length; i++) {
         for (var j = 0; j < array2.length; j++) {
-          if (array1[i] == array2[j]) {
+          if (array1[i].toLowerCase() == array2[j].toLowerCase()) {
             return [i, j];
           }
         }
@@ -92,11 +92,13 @@
       var font_array = _getArray(val);
 
       var font_matches = [];
+
       for (var key in editor.opts.fontFamily) {
         if (editor.opts.fontFamily.hasOwnProperty(key)) {
           var c_font_array = _getArray(key);
 
           var match = _matches(font_array, c_font_array);
+
           if (match) {
             font_matches.push([key, match]);
           }
@@ -109,6 +111,7 @@
       // Times,Arial should be detected as being Times, not Arial.
       font_matches.sort(function (a, b) {
         var f_diff = a[1][0] - b[1][0];
+
         if (f_diff === 0) {
           return a[1][1] - b[1][1];
         }
@@ -124,7 +127,7 @@
       if (editor.opts.fontFamilySelection) {
         var val = $(editor.selection.element()).css('font-family').replace(/(sans-serif|serif|monospace|cursive|fantasy)/gi, '').replace(/"|'|/g, '').split(',');
 
-        $btn.find('> span').text(editor.opts.fontFamily[_getSelection()] || val[0] || editor.opts.fontFamilyDefaultSelection);
+        $btn.find('> span').text(editor.opts.fontFamily[_getSelection()] || val[0] || editor.language.translate(editor.opts.fontFamilyDefaultSelection));
       }
     }
 
@@ -146,11 +149,12 @@
     },
     displaySelectionWidth: 120,
     html: function () {
-      var c = '<ul class="fr-dropdown-list">';
+      var c = '<ul class="fr-dropdown-list" role="presentation">';
       var options = this.opts.fontFamily;
+
       for (var val in options) {
         if (options.hasOwnProperty(val)) {
-          c += '<li><a class="fr-command" data-cmd="fontFamily" data-param1="' + val + '" style="font-family: ' + val + '" title="' + options[val] + '">' + options[val] + '</a></li>';
+          c += '<li role="presentation"><a class="fr-command" tabIndex="-1" role="option" data-cmd="fontFamily" data-param1="' + val + '" style="font-family: ' + val + '" title="' + options[val] + '">' + options[val] + '</a></li>';
         }
       }
       c += '</ul>';

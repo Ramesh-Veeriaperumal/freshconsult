@@ -1,7 +1,7 @@
 /*!
- * froala_editor v2.3.5 (https://www.froala.com/wysiwyg-editor)
+ * froala_editor v2.9.1 (https://www.froala.com/wysiwyg-editor)
  * License https://froala.com/wysiwyg-editor/terms/
- * Copyright 2014-2016 Froala Labs
+ * Copyright 2014-2018 Froala Labs
  */
 
 (function (factory) {
@@ -23,16 +23,15 @@
                     jQuery = require('jquery')(root);
                 }
             }
-            factory(jQuery);
-            return jQuery;
+            return factory(jQuery);
         };
     } else {
         // Browser globals
-        factory(jQuery);
+        factory(window.jQuery);
     }
 }(function ($) {
 
-  'use strict';
+  
 
   // Extend defaults.
   $.extend($.FE.DEFAULTS, {
@@ -45,20 +44,23 @@
     var _map;
 
     // if &, then index should be 0
-    function _process(el) {
+    function _process (el) {
       var text = el.textContent;
+
       if (text.match(_reg_exp)) {
         var new_text = '';
+
         for (var j = 0; j < text.length; j++) {
           if (_map[text[j]]) new_text += _map[text[j]];
           else new_text += text[j];
         }
+
         el.textContent = new_text;
       }
     }
 
     function _encode (el) {
-      if (el && ['STYLE', 'SCRIPT'].indexOf(el.tagName) >= 0) return true;
+      if (el && ['STYLE', 'SCRIPT', 'svg', 'IFRAME'].indexOf(el.tagName) >= 0) return true;
 
       var contents = editor.node.contents(el);
 
@@ -83,6 +85,7 @@
       if (html.length === 0) return '';
 
       var x = editor.clean.exec(html, _encode).replace(/\&amp;/g, '&');
+
       return x;
     }
 
@@ -99,6 +102,7 @@
       var entities_array = editor.opts.entities.split(';');
       _map = {};
       _reg_exp = '';
+
       for (var i = 0; i < entities_text.length; i++) {
         var chr = entities_text.charAt(i);
         _map[chr] = entities_array[i] + ';';

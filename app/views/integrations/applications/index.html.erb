@@ -5,7 +5,7 @@
   <%= render :partial => "helpnote" %>
 <% end %>
 <!-- TITLE -->
-<% if feature?(:marketplace) %>
+<% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
   <h3 class="title"><%=t('marketplace.apps')%></h3>
   <div class="intro"><%=t('marketplace.app_description')%></div>
 <% else %>
@@ -18,7 +18,7 @@
 <div id="integrations-list">
   <div>
     <div class="tab-actions">
-      <% if feature?(:marketplace) %>
+      <% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
         <div class="button-bar browse-apps pull-right <%= active_account ? '' : 'tooltip' %>" 
           <% unless active_account %> data-placement=below title="<%=t('marketplace.tooltip.suspended')%>" <% end %> >
           <a class="browse-btn btn btn-flat browse-apps-btn <%= active_account ? '' : 'disabled' %> " 
@@ -40,7 +40,7 @@
     </div>
     <ul class="tabs nav-tabs sleek-tab" id="myTab">
       <li class="active">
-        <% if feature?(:marketplace) %>
+        <% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
           <a href="#apps" class="apps-tab mkt-apps" data-toggle="tab"><%= t('marketplace.apps').html_safe %></a>
         <% else %>
           <a href="#native-apps" class="apps-tab nat-apps" data-toggle="tab"><%= t('integrations.native_integrations') %></a>
@@ -54,7 +54,7 @@
     </ul>
 
     <div id="myTabContent" class="tab-content">
-      <% if feature?(:marketplace) %>
+      <% if feature?(:marketplace) && !Account.current.launched?(:native_apps) %>
         <%= render :partial => '/admin/marketplace/marketplace_apps', :locals => { 
                    :installed_mkp_apps => @installed_mkp_apps, :more_apps_params => more_apps_params } %>
       <% else %>

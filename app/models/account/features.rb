@@ -30,8 +30,8 @@ class Account < ActiveRecord::Base
     :scheduled_export_fix, :compact_lang_detection,
     :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :pricing_plan_change_2019,
-    :tag_central_publish, :native_apps, :archive_tickets_api, :bot_agent_response, :simple_outreach,
-    :query_from_singleton
+    :tag_central_publish, :native_apps, :archive_tickets_api, :bot_agent_response, :simple_outreach, 
+    :fetch_ticket_from_ref_first, :query_from_singleton
   ].freeze
 
   DB_FEATURES = [
@@ -264,6 +264,7 @@ class Account < ActiveRecord::Base
     features?(:euc_hide_agent_metrics)
   end
 
+  # TODO: Remove new_pricing_launched?() after 2019 pricing plan launch
   def new_pricing_launched?
     on_new_plan? || redis_key_exists?(NEW_SIGNUP_ENABLED)
   end
@@ -284,6 +285,7 @@ class Account < ActiveRecord::Base
     redis_key_exists?(TWITTER_SMART_FILTER_REVOKED) && smart_filter_enabled? && !Account.current.twitter_handles_from_cache.blank?
   end
 
+  # TODO: Remove on_new_plan?() after 2019 pricing plan launch
   def on_new_plan?
     @on_new_plan ||= [:sprout_jan_17,:blossom_jan_17,:garden_jan_17,:estate_jan_17,:forest_jan_17].include?(plan_name)
   end

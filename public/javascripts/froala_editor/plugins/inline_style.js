@@ -1,7 +1,7 @@
 /*!
- * froala_editor v2.3.5 (https://www.froala.com/wysiwyg-editor)
+ * froala_editor v2.9.1 (https://www.froala.com/wysiwyg-editor)
  * License https://froala.com/wysiwyg-editor/terms/
- * Copyright 2014-2016 Froala Labs
+ * Copyright 2014-2018 Froala Labs
  */
 
 (function (factory) {
@@ -23,16 +23,15 @@
                     jQuery = require('jquery')(root);
                 }
             }
-            factory(jQuery);
-            return jQuery;
+            return factory(jQuery);
         };
     } else {
         // Browser globals
-        factory(jQuery);
+        factory(window.jQuery);
     }
 }(function ($) {
 
-  'use strict';
+  
 
   $.extend($.FE.DEFAULTS, {
     inlineStyles: {
@@ -44,7 +43,15 @@
   $.FE.PLUGINS.inlineStyle = function (editor) {
     function apply (val) {
       if (editor.selection.text() !== '') {
-        editor.html.insert($.FE.START_MARKER + '<span style="' + val + '">' + editor.selection.text() + '</span>' + $.FE.END_MARKER);
+        var splits = val.split(';');
+
+        for (var i = 0; i < splits.length; i++) {
+          var new_split = splits[i].split(':');
+
+          if (splits[i].length && new_split.length == 2) {
+            editor.format.applyStyle(new_split[0].trim(), new_split[1].trim())
+          }
+        }
       }
       else {
         editor.html.insert('<span style="' + val + '">' + $.FE.INVISIBLE_SPACE + $.FE.MARKERS + '</span>');
@@ -60,11 +67,12 @@
   $.FE.RegisterCommand('inlineStyle', {
     type: 'dropdown',
     html: function () {
-      var c = '<ul class="fr-dropdown-list">';
+      var c = '<ul class="fr-dropdown-list" role="presentation">';
       var options =  this.opts.inlineStyles;
+
       for (var val in options) {
         if (options.hasOwnProperty(val)) {
-          c += '<li><span style="' + options[val] + '"><a class="fr-command" data-cmd="inlineStyle" data-param1="' + options[val] + '" title="' + this.language.translate(val) + '">' + this.language.translate(val) + '</a></span></li>';
+          c += '<li role="presentation"><span style="' + options[val] + '" role="presentation"><a class="fr-command" tabIndex="-1" role="option" data-cmd="inlineStyle" data-param1="' + options[val] + '" title="' + this.language.translate(val) + '">' + this.language.translate(val) + '</a></span></li>';
         }
       }
       c += '</ul>';

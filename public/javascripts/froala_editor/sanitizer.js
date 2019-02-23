@@ -69,7 +69,9 @@ window.Sanitizer = window.Sanitizer || {};
     },
 
     sanitizeSrcAttribute: function(codeInsertedHtml) {
-      codeInsertedHtml = codeInsertedHtml.replace(/src="data:text\/html;base64(.*)"/i, '')
+      codeInsertedHtml = codeInsertedHtml.replace(/src="data:text\/html;base64(.*)"/i, '');
+      // https://jira.freshworks.com/browse/FD-17189
+      codeInsertedHtml = codeInsertedHtml.replace(/src="data:image\/svg\+xml;base64(.*)"/i, '');
       return codeInsertedHtml
     }
 

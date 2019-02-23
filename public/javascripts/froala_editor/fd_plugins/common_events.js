@@ -16,7 +16,18 @@
           editor.fullscreen.toggle();
           $(editor.opts.toolbarContainer).removeClass('fr-fullscreen');
         }
-      })
+      });
+
+      editor.$oel.on('froalaEditor.video.inserted', function (e, editor, $video) {
+        $video.html(Sanitizer.sanitizeSrcAttribute($video.html()));
+      });
+
+      editor.$oel.on('froalaEditor.link.beforeInsert', function (e, editor, link, text, attrs) {
+        if(link.match(/src="data:image\/svg\+xml;base64(.*)"/i) 
+            || text.match(/src="data:image\/svg\+xml;base64(.*)"/i)){
+          return false;
+        }
+      });
 
       editor.$oel.on('froalaEditor.commands.after', function (e, editor, cmd, param1, param2) {
       // Do something here.
@@ -31,7 +42,6 @@
         } else if(cmd == 'linkInsert') {
             $('.fr-element a').attr('rel', 'noreferrer noopener');
         }
-
       });
 
       editor.$oel.on('froalaEditor.commands.before', function (e, editor, cmd, param1, param2) {
