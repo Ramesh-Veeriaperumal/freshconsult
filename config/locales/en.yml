@@ -6065,10 +6065,6 @@ en:
     deleted: The facebook page %{facebook_page} has been removed.
     error_on_reply_fb: "Your reply could not be posted on your Facebook page. Please try again later or check with your admin."
     facebook_user_blocked: "Facebook isn't allowing us to send your reply."
-
-    page_already_subscribed: "Some of the facebook pages you are trying to add is already linked to an freshdesk account."
-    no_subscription_response: "Couldn't connect with facebook. Please try again after some time."
-
     user_blocked: "This user has blocked your page. You will not be able to send them any messages."
     not_authorized: You were not authorized by Facebook
     realtime: "<b>Realtime stream feed fetching app is stopped</b> due to some changes on this Facebook account <a href='%{realtime_url}' > Re-authorize and Enable </a> "

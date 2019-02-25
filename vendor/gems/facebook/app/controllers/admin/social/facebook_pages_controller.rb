@@ -34,17 +34,10 @@ class Admin::Social::FacebookPagesController < Admin::AdminController
         page_params = fb_page.except(:fetch_since, :message_since)
         page.update_attributes(page_params)
       else
-        begin
-          break unless current_account.add_new_facebook_page?
-          page = scoper.new(fb_page)
-          page.save 
-        rescue Social::FacebookPage::AlreadyLinkedException => e
-          Rails.logger.debug "Trying to add a page that is already present in another account, account: #{current_account.id}, fb_page: #{fb_page[:page_id]}"
-          errors = I18n.t('facebook.page_already_subscribed')
-        rescue Social::FacebookPage::NoResponseException => e
-          Rails.logger.error "Something went wrong while making the facebook subscription call, account: #{current_account.id}, fb_page: #{fb_page[:page_id]}"
-          errors = I18n.t('facebook.no_subscription_response')
-        end
+        break unless current_account.add_new_facebook_page?
+
+        page = scoper.new(fb_page)
+        page.save
       end
     end
 
