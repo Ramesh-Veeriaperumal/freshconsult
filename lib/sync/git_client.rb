@@ -186,11 +186,13 @@ module Sync
     end
 
     def clone_repo
-      @repo_client ||= Rugged::Repository.clone_at(@repo_url, @repo_path,
-                                                   transfer_progress: lambda { |total_objects, indexed_objects, received_objects, local_objects, total_deltas, indexed_deltas, received_bytes|
-                                                     print '.'
-                                                   },
-                                                   credentials: credentials)
+      FileUtils.mkdir_p(@repo_path)
+      run_git_command do
+        run_and_log('git init')
+        run_and_log("git remote add origin #{@repo_url}")
+        run_and_log('git fetch --all')
+      end
+      @repo_client ||= Rugged::Repository.new("#{@repo_path}/.git") if File.directory?("#{@repo_path}/.git")
     end
 
     def credentials
