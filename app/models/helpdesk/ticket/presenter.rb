@@ -122,12 +122,15 @@ class Helpdesk::Ticket < ActiveRecord::Base
     custom_ticket_fields.inject([]) do |arr, field|
       begin
         field_value = safe_send(field.name)
-        arr.push({
-          ff_alias: field.flexifield_def_entry.flexifield_alias,
-          ff_name: field.flexifield_def_entry.flexifield_name,
-          ff_coltype: field.flexifield_def_entry.flexifield_coltype,
-          field_value: field.field_type == 'custom_date' ? utc_format(field_value) : field_value
-        })
+        ff_def_entry = field.flexifield_def_entry
+        custom_field = {
+          name: ff_def_entry.flexifield_alias,
+          label: field.label,
+          type: ff_def_entry.flexifield_coltype,
+          value: field.field_type == 'custom_date' ? utc_format(field_value) : field_value,
+          column: ff_def_entry.flexifield_name
+        }
+        arr.push(custom_field)
       rescue Exception => e
         Rails.logger.error "Error while fetching ticket custom field value - #{e}\n#{e.message}\n#{e.backtrace.join("\n")}"
         NewRelic::Agent.notice_error(e)

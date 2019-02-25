@@ -57,4 +57,31 @@ module Billing::BillingHelper
     def card_expiry_key
       CARD_EXPIRY_KEY % { :account_id => @account.id }
     end
+
+    def omni_channel_ticket_params
+      description = 'Customer has switched to / purchased an Omni-channel Freshdesk plan. <br>'
+      account_info = "<b>Account ID</b> : #{@account.id} <br>"
+      domain_info = "<b>Domain</b> : #{@account.full_domain} <br>"
+      previous_plan = "<b>Previous plan</b> : #{@old_subscription.plan_name} <br>"
+      new_plan = "<b>Current plan </b> : #{@account.subscription.plan_name} <br>"
+      currency = "<b>Currency </b> : #{@account.subscription.currency.name} <br>"
+      description << account_info << domain_info << previous_plan << new_plan
+      description << currency << 'Change made from chargebee <br>'
+      description << 'Ensure plan is set correctly in chat and caller. <br>'
+      {
+        email: 'billing@freshdesk.com',
+        subject: 'Update chat and caller plans',
+        status: Helpdesk::Ticketfields::TicketStatus::OPEN,
+        priority: PRIORITY_KEYS_BY_TOKEN[:low],
+        description: description.html_safe,
+        tags:  'OmnichannelPlan'
+      }
+    end
+
+    def omni_plan_change?
+      @old_subscription.subscription_plan.omni_plan? ||
+        @old_subscription.subscription_plan.free_omni_channel_plan? ||
+        @account.subscription_plan.omni_plan? || @account.subscription_plan.free_omni_channel_plan?
+    end
+
 end

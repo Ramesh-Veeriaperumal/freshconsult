@@ -31,6 +31,14 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   before_create :assign_picklist_id, if: :redis_picklist_id_enabled?
 
+  before_save :construct_model_changes
+
+  before_destroy :save_deleted_picklist_info
+
+  concerned_with :presenter
+
+  publishable
+
 
   CACHEABLE_ATTRIBUTES = ["id", "account_id", "pickable_id", "pickable_type", "value", "position", "created_at", "updated_at"]
   
@@ -71,6 +79,14 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   def self.with_exclusive_scope(method_scoping = {}, &block) # for account_id in sub_picklist_values query
     with_scope(method_scoping, :overwrite, &block)
+  end
+
+  def construct_model_changes
+    @model_changes = self.changes.clone.to_hash
+  end
+
+  def save_deleted_picklist_info
+    @deleted_model_info = as_api_response(:central_publish_destroy)
   end
   
   private

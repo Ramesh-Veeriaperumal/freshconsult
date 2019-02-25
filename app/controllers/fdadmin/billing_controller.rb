@@ -154,6 +154,9 @@ class Fdadmin::BillingController < Fdadmin::DevopsMainController
 
       update_features if update_features?
       @account.account_additional_settings.set_payment_preference(@billing_data.subscription.cf_reseller)
+      if plan_changed? && omni_plan_change?
+        ProductFeedbackWorker.perform_async(omni_channel_ticket_params)
+      end
     end
 
     def subscription_activated(content)

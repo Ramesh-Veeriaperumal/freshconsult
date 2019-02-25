@@ -68,7 +68,9 @@
                               <% omni_amount = plan.omni_channel_cost(@subscription.currency_name) %>
                               <% show_sign = omni_amount != 0 && !plan.free_omni_channel_plan? %>
                               <p class="omni-price <%= 'free-omni-channel' if plan.free_omni_channel_plan? %>">
-                                <%= '+' if show_sign %> <%= format_amount(omni_amount, @subscription.currency_name) %>
+                                <span class="price-value">
+                                  <%= '+' if show_sign %> <%= format_amount(omni_amount, @subscription.currency_name) %>
+                                </span>
                                 <span class="free">Free</span>
                                 <% if show_sign %>
                                   <span class="per-agent"> <%= t('per_agent_per_month') %></span>
