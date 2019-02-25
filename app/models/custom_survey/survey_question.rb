@@ -3,6 +3,8 @@ class CustomSurvey::SurveyQuestion < ActiveRecord::Base
   self.primary_key = :id
   belongs_to_account
   belongs_to :survey
+
+  include Surveys::PresenterHelper
   
   DEFAULT_FIELD_PROPS = {}
   CUSTOM_FIELDS_SUPPORTED = [:custom_survey_radio]
@@ -36,7 +38,11 @@ class CustomSurvey::SurveyQuestion < ActiveRecord::Base
   scope :feedback, :conditions => {:default => false}
 
   xss_sanitize :only => [:name, :label], :plain_sanitizer => [:label, :name]
- 
+
+  before_destroy :deleted_survey_model_info
+  publishable
+  concerned_with :presenter
+
   def survey_method(param_survey_id)
     (Account.current || account).custom_surveys.find_by_id(param_survey_id)
   end
@@ -44,4 +50,5 @@ class CustomSurvey::SurveyQuestion < ActiveRecord::Base
   def face_values
     choices.map { |c| c[:face_value] }
   end
+
 end

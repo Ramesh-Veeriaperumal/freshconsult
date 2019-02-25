@@ -26,6 +26,14 @@ module CentralConstants
       'Helpdesk::Tag' => '0',
       'Helpdesk::TagUse' => '0',
       'Helpdesk::TicketStatus' => '0',
-      'Helpdesk::PicklistValue' => '0'
+      'Helpdesk::PicklistValue' => '0',
+      'Survey' => '0',
+      'SurveyHandle' => '0',
+      'SurveyResult' => '0',
+      'CustomSurvey::Survey' => '0',
+      'CustomSurvey::SurveyQuestion' => '0',
+      'CustomSurvey::SurveyQuestionChoice' => '0',
+      'CustomSurvey::SurveyHandle' => '0',
+      'CustomSurvey::SurveyResult' => '0'
   }
 end

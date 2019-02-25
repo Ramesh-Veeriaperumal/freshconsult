@@ -58,7 +58,8 @@ module SurveysTestHelper
                                     comments_text: I18n.t('admin.surveys.new_thanks.comments_feedback'),
                                     active: (@account.features?(:survey_links) ? true : false),
                                     can_comment: true,
-                                    default: false)
+                                    default: false,
+                                    send_while: 2)
     survey.save
     if custom_survey
       unhappy_text = survey.unhappy_text.blank? ? I18n.t('helpdesk.ticket_notifier.reply.unhappy') : survey.unhappy_text
@@ -105,6 +106,20 @@ module SurveysTestHelper
     ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
     ticket
   end
+
+  def create_default_survey_result(ticket, rating, response_note = nil, survey_id = nil)
+    result = @account.survey_results.build(account_id: @account,
+                                           survey_id: survey_id || @account.survey.id,
+                                           surveyable_id: ticket.id,
+                                           surveyable_type: 'Helpdesk::Ticket',
+                                           customer_id: ticket.requester_id,
+                                           agent_id: response_note ? response_note.user_id : ticket.responder_id,
+                                           group_id: ticket.group_id,
+                                           response_note_id: ticket,
+                                           rating: rating)
+    result.save
+    result
+end
 
   def v1_survey_params
     { rating: 1,  feedback: Faker::Lorem.paragraph }
@@ -164,5 +179,82 @@ module SurveysTestHelper
     else
       create_survey_link_feature
     end
+  end
+
+  def central_survey_pattern(survey)
+    {
+      id: survey.id,
+      account_id: survey.account_id,
+      send_while: send_while_hash(survey.send_while),
+      created_at: survey.created_at,
+      updated_at: survey.updated_at,
+      title_text: survey.title_text,
+      active: survey.active,
+      thanks_text: survey.thanks_text,
+      feedback_response_text: survey.feedback_response_text,
+      can_comment: survey.can_comment,
+      comments_text: survey.comments_text,
+      default: survey.default,
+      link_text: survey.link_text,
+      happy_text: survey.happy_text,
+      neutral_text: survey.neutral_text,
+      unhappy_text: survey.unhappy_text,
+      deleted: survey.deleted,
+      good_to_bad: survey.good_to_bad
+    }
+  end
+
+  def send_while_hash(send_while)
+    {
+      id: send_while,
+      type: Survey::SEND_WHILE_MAPPING[send_while]
+    }
+  end
+
+  def survey_handle_questions_pattern(handle)
+    survey_questions = handle.survey.survey_questions
+
+    survey_questions.map do |question|
+      {
+        id: question.id,
+        account_id: question.account_id,
+        survey_id: question.survey_id,
+        name: question.name,
+        field_type: question.field_type,
+        position: question.position,
+        deleted: question.deleted,
+        label: question.label,
+        column_name: question.column_name,
+        default: question.default,
+        created_at: question.created_at,
+        updated_at: question.updated_at
+      }
+    end
+  end
+
+  def surveyable_pattern(survey_assoc)
+    {
+      id: survey_assoc.surveyable_id,
+      _model: survey_assoc.surveyable_type
+    }
+  end
+
+  def survey_result_data_payload(result)
+    survey_result_data = result.survey_result_data.reload
+    survey_questions = result.survey_result_data.custom_fields_cache
+
+    survey_questions.map do |question|
+      face_value = survey_result_data.safe_send(question.column_name)
+      result = { question_id: question.id, question: question.name }
+
+      if face_value.present?
+        choices = question.choices
+        choice = choices.find { |c| c[:face_value] == face_value }[:name]
+        result.merge!(choice: choice, choice_value: face_value, rating: old_rating(face_value))
+      else
+        result.merge!(choice: nil, choice_value: nil, rating: nil)
+      end
+      result
+    end.compact
   end
 end

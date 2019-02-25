@@ -296,6 +296,7 @@ defaults: &defaults
     - [ocr_agent_sync]
     - [ocr_task_sync]
     - [clone]
+    - [surveys_central_publish]
 
 
 development:

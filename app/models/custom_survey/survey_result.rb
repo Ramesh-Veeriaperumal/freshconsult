@@ -3,8 +3,10 @@ class CustomSurvey::SurveyResult < ActiveRecord::Base
   self.table_name = :survey_results
 
   include Va::Observer::Util
+  include CustomSurvey::SurveyResult::PublisherMethods
 
-  concerned_with :associations, :callbacks
+  concerned_with :associations, :callbacks, :presenter
+  publishable
 
   # Survey result types 
   RATING    = 1
