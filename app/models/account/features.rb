@@ -31,7 +31,8 @@ class Account < ActiveRecord::Base
     :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :pricing_plan_change_2019,
     :tag_central_publish, :native_apps, :archive_tickets_api, :bot_agent_response, :simple_outreach, 
-    :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish
+    :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
+    :id_for_choices_write
   ].freeze
 
   DB_FEATURES = [
