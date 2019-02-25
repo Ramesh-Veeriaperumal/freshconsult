@@ -201,6 +201,26 @@ class Helpdesk::TicketField < ActiveRecord::Base
     (FIELD_CLASS[field_type.to_sym][:type] === :default)
   end
 
+  def parent_field
+    if level == 3
+      parent.child_levels.find { |sub_level_field| sub_level_field.level == 2 }
+    else
+      parent
+    end
+  end
+
+  def flexifield_name
+    column_name || flexifield_def_entry.try(:flexifield_name)
+  end
+
+  def child_nested_field?
+    nested_field? && level.present?
+  end
+
+  def parent_nested_field?
+    nested_field? && level.nil?
+  end
+
   def nested_field?
     field_type == "nested_field"
   end
@@ -513,6 +533,82 @@ class Helpdesk::TicketField < ActiveRecord::Base
     # else
     #   return false
     # end
+  end
+
+  def picklist_values_by_id
+    case level
+    when nil
+      picklist_values.each_with_object({}) do |pv, h|
+        h[pv.picklist_id] = pv.value
+      end
+    when 2
+      parent.level_2_choices_by_id
+    when 3
+      parent.level_3_choices_by_id
+    end
+  end
+
+  def picklist_ids_by_value
+    case level
+    when nil
+      picklist_values.each_with_object({}) do |pv, h|
+        h[pv.value.downcase] = pv.picklist_id
+      end
+    when 2
+      parent.level_2_choices_by_value
+    when 3
+      parent.level_3_choices_by_value
+    end
+  end
+
+  def level_2_choices_by_id
+    choice_hash = {}
+    picklist_values.each do |pv|
+      pv.sub_picklist_values.each do |l2pv|
+        choice_hash[l2pv.id] = l2pv.value
+      end
+    end
+    choice_hash
+  end
+
+  def level_3_choices_by_id
+    choice_hash = {}
+    picklist_values.each do |pv|
+      pv.sub_picklist_values.each do |l2pv|
+        l2pv.sub_picklist_values.each do |l3pv|
+          choice_hash[l3pv.id] = l3pv.value
+        end
+      end
+    end
+    choice_hash
+  end
+
+  def level_2_choices_by_value
+    choice_hash = {}
+    picklist_values.each do |pv|
+      pv.sub_picklist_values.each do |l2pv|
+        l2value = l2pv.value.downcase
+        choice_hash[l2value] ||= {}
+        choice_hash[l2value][pv.value] = l2pv.picklist_id
+      end
+    end
+    choice_hash
+  end
+
+  def level_3_choices_by_value
+    choice_hash = {}
+    picklist_values.each do |pv|
+      pv.sub_picklist_values.each do |l2pv|
+        l2pv.sub_picklist_values.each do |l3pv|
+          l3value = l3pv.value.downcase
+          l2value = l2pv.value.downcase
+          choice_hash[l3value] ||= {}
+          choice_hash[l3value][l2value] ||= {}
+          choice_hash[l3value][l2value][pv.value] = l3pv.picklist_id
+        end
+      end
+    end
+    choice_hash
   end
 
   def translated_label_in_portal(record = self)
