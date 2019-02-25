@@ -1,10 +1,65 @@
 require_relative '../unit_test_helper'
+require_relative '../test_helper'
+require Rails.root.join('spec', 'support', 'account_helper.rb')
 
 class AccountTest < ActionView::TestCase
+  include AccountHelper
+  include UsersTestHelper
+
+  def setup
+    super
+    before_all
+  end
+
+  @@before_all_run = false
+
+  def before_all
+    return if @@before_all_run
+    @account = create_test_account
+    supported_languages = pick_languages(@account.language, 3)
+    @account.account_additional_settings.update_attributes(:supported_languages => supported_languages)
+    @account.account_additional_settings.update_attributes(:additional_settings => { :portal_languages => supported_languages.sample(2) })
+    @account.features.enable_multilingual.create unless @account.features?(:enable_multilingual)
+    Account.stubs(:first).returns(Account.current)
+    @@before_all_run = true
+  end
+
+  def teardown
+    super
+  end
+
+  def subscription
+    Account.current.subscription
+  end
+
+  def agent_types
+    Account.current.agent_types
+  end
+
+  def account_additional_settings
+    Account.current.account_additional_settings
+  end
+
+  def contact_form
+    Account.current.contact_form
+  end
+
+  def company_form
+    Account.current.company_form
+  end
+
+  def id
+    1
+  end
+
+  def account_cancel_request_job_key
+    1
+  end
+
   def test_domain_valid
     account = Account.new(domain: "test-1234", name: "Test Account")
     account.time_zone = "Chennai"
-    plan = SubscriptionPlan.find_by_name "Sprout"
+    plan = Account.current.plan
     account.plan = plan
     assert account.valid?
   end
@@ -31,10 +86,390 @@ class AccountTest < ActionView::TestCase
   end
 
   def test_group_type_mapping
-    account = Account.first.make_current
+    account = Account.current
     mapping = account.group_types.new(name: 'support_agent_group', group_type_id: 1, label: 'support_agent_group')
     Account.any_instance.stubs(:group_types_from_cache).returns([mapping])
     assert_equal account.group_type_mapping, 1 => 'support_agent_group'
     Account.unstub(:group_type_mapping)
   end
+
+  def test_node_feature_list
+    Account.current.node_feature_list
+    assert_equal response.status, 200
+  end
+
+  def test_mark_as
+    Account.any_instance.stubs(:save!).returns(true)
+    Account.current.mark_as!(:sandbox)
+    assert_equal response.status, 200
+  ensure
+    Account.any_instance.unstub(:save!)
+  end
+
+  def test_survey
+    Account.stubs(:new_survey_enabled?).returns(true)
+    Account.current.survey
+    assert_equal response.status, 200
+    Account.stubs(:new_survey_enabled?).returns(false)
+    Account.current.survey
+    assert_equal response.status, 200
+  ensure
+    Account.unstub(:new_survey_enabled?)
+  end
+
+  def test_fields_with_in_operators
+    Account.current.fields_with_in_operators
+    assert_equal response.status, 200
+  end
+
+  def test_installed_apps_hash
+    Account.current.installed_apps_hash
+    assert_equal response.status, 200
+  end
+
+  def test_max_display_id_without_stub
+    Account.current.max_display_id
+    assert_equal response.status, 200
+  end
+
+  def test_account_managers
+    Account.current.account_managers
+    assert_equal response.status, 200
+  end
+
+  def test_reply_emails
+    Account.current.reply_emails
+    assert_equal response.status, 200
+  end
+
+  def test_reply_personalize_emails
+    Account.current.reply_personalize_emails('username')
+    assert_equal response.status, 200
+  end
+
+  def test_support_emails
+    Account.current.support_emails
+    assert_equal response.status, 200
+  end
+
+  def test_parsed_support_emails
+    Account.current.parsed_support_emails
+    assert_equal response.status, 200
+  end
+
+  def test_support_emails_in_downcase
+    Account.current.support_emails_in_downcase
+    assert_equal response.status, 200
+  end
+
+  def test_has_multiple_portals?
+    Account.current.has_multiple_portals?
+    assert_equal response.status, 200
+  end
+
+  def test_enable_ticket_archiving
+    Account.current.enable_ticket_archiving
+    assert_equal response.status, 200
+  end
+
+  def test_set_custom_dashboard_limit
+    Account.current.set_custom_dashboard_limit([])
+    assert_equal response.status, 200
+  end
+
+  def test_verify_account_with_email
+    Account.current.verify_account_with_email
+    assert_equal response.status, 200
+  end
+
+  def test_remove_secondary_companies
+    Account.current.remove_secondary_companies
+    assert_equal response.status, 200
+  end
+
+  def test_ehawk_reputation_score
+    Account.any_instance.stubs(:get_others_redis_key).returns('response' => 'resp')
+    Account.current.ehawk_reputation_score
+    assert_equal response.status, 200
+  ensure
+    Account.any_instance.unstub(:get_others_redis_key)
+  end
+
+  def test_update_ticket_dynamo_shard
+    Account.current.update_ticket_dynamo_shard
+    assert_equal response.status, 200
+  end
+
+  def test_kill_account_activation_email_job
+    Account.current.kill_account_activation_email_job
+    assert_equal response.status, 200
+  end
+
+  def test_signup_method
+    Account.current.signup_method
+    assert_equal response.status, 200
+  end
+
+  def test_active_suspended?
+    Account.current.active_suspended?
+    assert_equal response.status, 200
+  end
+
+  def test_create_freshid_org_and_account
+    Account.any_instance.stubs(:freshid_enabled?).returns(true)
+    Freshid::Organisation.stubs(:create).returns({})
+    User.any_instance.stubs(:sync_profile_from_freshid).returns(true)
+    User.any_instance.stubs(:save).returns(true)
+    User.any_instance.stubs(:freshid_attributes).returns(1)
+    User.any_instance.stubs(:enqueue_activation_email).returns(true)
+    Account.current.create_freshid_org_and_account([], [], User.new)
+    assert_equal response.status, 200
+  ensure
+    User.any_instance.unstub(:freshid_attributes)
+    User.any_instance.unstub(:enqueue_activation_email)
+    User.any_instance.unstub(:sync_profile_from_freshid)
+    User.any_instance.unstub(:save)
+    Account.any_instance.unstub(:freshid_enabled?)
+    Freshid::Organisation.unstub(:create)
+  end
+
+  def test_ticket_custom_dropdown_nested_fields
+    Account.current.ticket_custom_dropdown_nested_fields
+    assert_equal response.status, 200
+  end
+
+  def test_esv1
+    Account.current.esv1_enabled?
+    assert_equal response.status, 200
+  end
+
+  def test_permissible_domains
+    Account.current.permissible_domains
+    assert_equal response.status, 200
+  end
+
+  def test_permissible_domains=
+    Account.current.permissible_domains=([])
+    assert_equal response.status, 200
+  end
+
+  def test_public_ticket_token
+    Account.current.public_ticket_token
+    assert_equal response.status, 200
+  end
+
+  def test_attachment_secret
+    Account.current.attachment_secret
+    assert_equal response.status, 200
+  end
+
+  def test_round_robin_capping_enabled?
+    Account.current.round_robin_capping_enabled?
+    assert_equal response.status, 200
+  end
+
+  def test_validate_required_ticket_fields?
+    Account.current.validate_required_ticket_fields?
+    assert_equal response.status, 200
+  end
+
+  def test_freshfone_active?
+    Account.current.freshfone_active?
+    assert_equal response.status, 200
+  end
+
+  def test_es_multilang_soln?
+    Account.current.es_multilang_soln?
+    assert_equal response.status, 200
+  end
+
+  def test_active_groups
+    Account.current.active_groups
+    assert_equal response.status, 200
+  end
+
+  def test_has_any_scheduled_ticket_export?
+    Account.current.has_any_scheduled_ticket_export?
+    assert_equal response.status, 200
+  end
+
+  def test_enabled_features_list
+    Account.current.enabled_features_list
+    assert_equal response.status, 200
+  end
+
+  def test_set_time_zone_updation_redis
+    Account.current.set_time_zone_updation_redis
+    assert_equal response.status, 200
+  end
+
+  def test_remove_time_zone_updation_redis
+    Account.current.remove_time_zone_updation_redis
+    assert_equal response.status, 200
+  end
+
+  def test_active_trial
+    Account.current.active_trial
+    assert_equal response.status, 200
+  end
+
+  def test_can_add_agents?
+    Account.current.can_add_agents?(1)
+    assert_equal response.status, 200
+  end
+
+  def test_agent_limit_reached?
+    Account.current.agent_limit_reached?(1)
+    assert_equal response.status, 200
+  end
+
+  def test_max_display_id
+    Account.any_instance.stubs(:features?).returns(true)
+    Account.current.max_display_id
+    assert_equal response.status, 200
+  ensure
+    Account.any_instance.unstub(:features?)
+  end
+
+  def test_active?
+    Account.current.active?
+    assert_equal response.status, 200
+  end
+
+  def test_suspended?
+    Account.current.suspended?
+    assert_equal response.status, 200
+  end
+
+  def test_master_queries?
+    Account.current.master_queries?
+    assert_equal response.status, 200
+  end
+
+  def test_premium_gamification_account?
+    Account.current.premium_gamification_account?
+    assert_equal response.status, 200
+    Account.current.default_friendly_email
+    assert_equal response.status, 200
+    Account.current.default_friendly_email_personalize('user_name')
+    assert_equal response.status, 200
+    Account.current.default_email
+    assert_equal response.status, 200
+  end
+
+  def test_host
+    Account.current.host
+    Account.current.full_url
+    Account.current.url_protocol
+  end
+
+  def test_remove_feature
+    Account.current.has_multiple_products?
+    Account.current.kbase_email
+    Account.current.has_credit_card?
+  end
+
+  def test_date_type
+    Account.current.date_type('%b %-d %Y')
+    Account.current.default_form
+  end
+
+  def test_portal_languages
+    Account.current.portal_languages
+    Account.current.onboarding_pending?
+    assert_equal response.status, 200
+    Account.current.advanced_twitter?
+    assert_equal response.status, 200
+    Account.current.add_twitter_handle?
+    assert_equal response.status, 200
+    Account.current.add_custom_twitter_stream?
+    assert_equal response.status, 200
+    Account.current.twitter_feature_present?
+  end
+
+  def test_ehawk_spam?
+    Account.current.ehawk_spam?
+    Account.current.dashboard_shard_name
+    Account.current.schedule_account_activation_email(1)
+  end
+
+  def test_versionize_timestamp
+    Account.current.versionize_timestamp
+    assert_equal response.status, 200
+    Account.current.email_service_provider
+    assert_equal response.status, 200
+    Account.current.full_signup?
+    assert_equal response.status, 200
+    Account.current.allow_incoming_emails?
+    assert_equal response.status, 200
+    Account.current.email_subscription_state
+    Account.current.bots_hash
+  end
+
+  def test_create_freshid_account_with_user_for_org
+    Freshid::Organisation.stubs(:create).returns(true)
+    Freshid::Organisation.stubs(:create_for_account).returns(true)
+    Freshid::Organisation.any_instance.stubs(:map_to_account).returns(true)
+    Account.current.create_freshid_org_without_account_and_user
+    assert_equal response.status, 200
+    Account.current.map_freshid_org_to_account(1)
+    assert_equal response.status, 200
+    Account.current.freshid_attributes
+  ensure
+    Freshid::Organisation.any_instance.unstub(:map_to_account)
+    Freshid::Organisation.unstub(:create)
+    Freshid::Organisation.unstub(:create_for_account)
+    Freshid::Organisation.unstub(:new)
+  end
+
+  def test_sync_user_info_from_freshid
+    Account.any_instance.stubs(:redis_key_exists?).returns(true)
+    Account.current.initiate_freshid_migration
+    assert_equal response.status, 200
+    Account.current.freshid_migration_complete
+    assert_equal response.status, 200
+    Account.current.freshid_migration_in_progress?
+    assert_equal response.status, 200
+  ensure
+    Account.any_instance.unstub(:redis_key_exists?)
+  end
+
+  def test_account_cancellation_request_job_key
+    Account.current.kill_account_cancellation_request_job
+    assert_equal response.status, 200
+    Account.current.delete_account_cancellation_request_job_key
+    assert_equal response.status, 200
+    Account.current.canned_responses_inline_images
+    Account.current.contact_custom_field_types
+    assert_equal response.status, 200
+    Account.current.company_custom_field_types
+    assert_equal response.status, 200
+    Account.current.sandbox_domain
+  end
+
+  def test_get_or_create_agent_types
+    Account.current.get_or_create_group_types
+    assert_equal response.status, 200
+    Account.current.group_type_mapping
+    Account.current.bot_email_response
+    assert_equal response.status, 200
+    Account.current.falcon_and_encrypted_fields_enabled?
+    assert_equal response.status, 200
+  end
+
+  def test_hipaa_and_encrypted_fields_enabled
+    Account.current.hipaa_and_encrypted_fields_enabled?
+    assert_equal response.status, 200
+    Account.current.remove_encrypted_fields
+    assert_equal response.status, 200
+    Account.current.hipaa_encryption_key
+    assert_equal response.status, 200
+    Account.current.beacon_report
+    Account.current.force_2019_plan?
+    assert_equal response.status, 200
+    Account.current.new_2019_pricing_enabled?
+    assert_equal response.status, 200
+  end
+
+
 end

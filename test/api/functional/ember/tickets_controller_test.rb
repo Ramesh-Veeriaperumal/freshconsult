@@ -343,6 +343,18 @@ module Ember
       match_json([])
     end
 
+    def test_index_with_exclude_custom_fields
+      get :index, controller_params(version: 'private', exclude: 'custom_fields')
+      assert_response 200
+      match_json(private_api_ticket_index_pattern(true, false, false, 'created_at', 'desc', true, ['custom_fields']))
+    end
+
+    def test_index_with_exclude_with_incorrect_field
+      get :index, controller_params(version: 'private', exclude: 'attachment')
+      assert_response 400
+      match_json([bad_request_error_pattern('exclude', :not_included, list: ApiTicketConstants::EXCLUDABLE_FIELDS.join(','))])
+    end
+
     def test_show_when_account_suspended
       ticket = create_ticket
       change_subscription_state('suspended')

@@ -61,7 +61,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     ticket_ids.each do |ticket_id|
       @account.make_current
       Sidekiq::Testing.inline! do
-        Archive::BuildCreateTicket.perform_async(account_id: @account.id, ticket_id: ticket_id)
+        Archive::TicketWorker.perform_async(account_id: @account.id, ticket_id: ticket_id)
       end
     end
   end

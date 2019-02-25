@@ -1,10 +1,9 @@
 #!/bin/bash
 
-echo -n "Please enter your JIRA user name          : "
-read email
-echo -n "Please enter your JIRA password           : "
-read password
+echo "Get your Freshrelease token from https://freshworks.freshrelease.com/api_token.json"
+echo "Please enter your Freshrelease token "
+read token
 
-echo "JIRA_AUTH='${email}:${password}'" > ~/.jira_auth
-chmod +x ~/.jira_auth
+echo "FR_TOKEN='${token}'" > ~/.fr_auth
+chmod +x ~/.fr_auth
 echo "You are all set to commit"

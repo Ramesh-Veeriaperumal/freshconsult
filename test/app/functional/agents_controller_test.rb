@@ -157,6 +157,7 @@ class AgentsControllerTest < ActionController::TestCase
     post :toggle_availability, admin: true, id: @user.id
     assert_response 200    
     # :admin => 1
+    group.destroy
     log_out
   end
 

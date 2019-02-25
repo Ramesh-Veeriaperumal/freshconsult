@@ -8,14 +8,14 @@ printMsg(){
   echo "----------------------------"
 }
 
-jiraIssuePattern="(FDCORE|FRESHPIPE|FRESHCALL|TH|FD)-([0-9]+)"
+issuePattern="(FDCORE|FRESHPIPE|FRESHCALL|TH|FD)-([0-9]+)"
 commitMsgFile=$1
 
-if [ -f ~/.jira_auth ]; then
-  chmod +x ~/.jira_auth
-  . ~/.jira_auth
-else 
-  echo "Missing JIRA auth file.Run the following command to setup.
+if [[ -f ~/.fr_auth ]]; then
+  chmod +x ~/.fr_auth
+  . ~/.fr_auth
+else
+  echo "Missing Freshrelease auth file.Run the following command to setup.
 
 bash script/githooks/setupGit
 "
@@ -23,40 +23,40 @@ bash script/githooks/setupGit
 fi
 
 
-jiraId=`cat $1 | head -n 1 | egrep -o -m 1 "${jiraIssuePattern}"`
-msgWordCount=`cat $1 | head -n 1 | tr -s ' ' '\n' | egrep -v "${jiraIssuePattern}" | wc -l`
+frID=`cat $1 | head -n 1 | egrep -o -m 1 "${issuePattern}"`
+msgWordCount=`cat $1 | head -n 1 | tr -s ' ' '\n' | egrep -v "${issuePattern}" | wc -l`
 
 #merge commit
-if [ `git rev-parse -q --verify MERGE_HEAD | wc -c` -gt 1 ]
-then 
+if [[ `git rev-parse -q --verify MERGE_HEAD | wc -c` -gt 1 ]]
+then
   exit 0;
 fi
 
 #Sos for override
-if [ `cat $1 | head -n 1 | grep SoS | wc -l` -gt 0 ] 
-then 
+if [[ `cat $1 | head -n 1 | grep SoS | wc -l` -gt 0 ]]
+then
   exit 0;
 fi
 
-if [ $msgWordCount -lt 3 ] 
-then 
-  printMsg "Please enter a decriptive commit msg title" 
+if [[ ${msgWordCount} -lt 3 ]]
+then
+  printMsg "Please enter a decriptive commit msg title"
   exit 1;
 fi
 
-echo "Jira issue found  ${jiraId}"
+echo "Issue found  ${frID}"
 
-if [ "$jiraId" == "" ] 
-then 
-  numIssueIdsInDesc=`cat $1 | egrep -o  "${jiraIssuePattern}" | wc -l | awk '{print $1}'`
-  if [ $numIssueIdsInDesc -gt 0 ] 
+if [[ "$frID" == "" ]]
+then
+  numIssueIdsInDesc=`cat $1 | egrep -o  "${issuePattern}" | wc -l | awk '{print $1}'`
+  if [[ ${numIssueIdsInDesc} -gt 0 ]]
     then
-      printMsg "$numIssueIdsInDesc Jira Issue Id was found as part of the commit description. 
+      printMsg "$numIssueIdsInDesc Issue Id was found as part of the commit description.
 Please enter a valid Jira Id in the commit message instead."
     else
-      read -r -d '' MSG << EndOfMessage 
-Missing JIRA Issue id. The commit message needs to contain a valid JIRA Issue id.
-Example : 
+      read -r -d '' MSG << EndOfMessage
+Missing Issue id. The commit message needs to contain a valid Issue id.
+Example :
 
 FDCORE-3352 : This is a sample commit message
 EndOfMessage
@@ -65,39 +65,39 @@ EndOfMessage
   exit 1;
 fi
 
-command -v osascript &> /dev/null  && osascript -e 'display notification "Validating JIRA ID for commit" with title "Hang in there"'
+command -v osascript &> /dev/null  && osascript -e 'display notification "Validating Freshrelease ID for commit" with title "Hang in there"'
+curl -X GET \
+  "https://freshworks.freshrelease.com/FD/issues/${frID}" \
+  -H 'accept: application/json' \
+  -H "authorization: Token token=${FR_TOKEN}" \
+  -H 'content-type: application/json' > /tmp/FRResult.txt
+   if [[ $? -ne 0  || `cat /tmp/FRResult.txt | grep errorMessages | wc -l` -gt 0 || `cat /tmp/FRResult.txt | grep "<html>" | wc -l` -gt 0 ]]
+    then
+      cat /tmp/FRResult.txt
+      echo "\n Error accessing Issues status. Could not complete commit. Please run script/githooks/setupGit if you need to setup access to Freshrelease"
+      exit 1;
+    fi;
+    assigneeEmail=`cat /tmp/FRResult.txt | ruby -r rubygems -r json -e "puts (JSON[STDIN.read])['users'][0]['email'];"`
+    issueStatus=`cat /tmp/FRResult.txt | ruby -r rubygems -r json -e "puts (JSON[STDIN.read])['issue']['status_id'];"`
 
-curl -u "${JIRA_AUTH}" -H "Content-Type: application/json" -s "https://jira.freshworks.com/rest/api/2/issue/${jiraId}" > /tmp/jiraIssueResult.txt
+    gitUserEmail=`git var GIT_AUTHOR_IDENT | egrep -o "<.*?@.*?.com>" | sed -e 's/[<>]//g'`
 
-if [ $? -ne 0  -o `cat /tmp/jiraIssueResult.txt | grep errorMessages | wc -l` -gt 0 -o `cat /tmp/jiraIssueResult.txt | grep "<html>" | wc -l` -gt 0 ]
-then
-  cat /tmp/jiraIssueResult.txt
-  echo "Error accessing Jira issues status. Could not complete commit. Please run script/githooks/setupGit if you need to setup access to jira"
-  exit 1;
-fi;
+    if [[ "$issueStatus" != "19" &&  "$issueStatus" != "18" && "$issueStatus" != "4409" ]]
+    then
+      printMsg "Issue needs to be [In Progress] or [Open] or [Ready for Review].
+    Kindly update the status before the commit"
+    exit 1;
+    fi;
 
+    if [[ "$assigneeEmail" != "$gitUserEmail" ]]
+    then
+      printMsg "You are not the assignee on the Issue [$frID].
+    Assignee: '$assigneeEmail'
+    Your Email (git): '$gitUserEmail'
 
-jiraAssigneeEmail=`cat /tmp/jiraIssueResult.txt | ruby -r rubygems -r json -e "puts (JSON[STDIN.read])['fields']['assignee']['emailAddress'];"`
-jiraIssueStatus=`cat /tmp/jiraIssueResult.txt | ruby -r rubygems -r json -e "puts (JSON[STDIN.read])['fields']['status']['name'];"`
-
-gitUserEmail=`git var GIT_AUTHOR_IDENT | egrep -o "<.*?@.*?.com>" | sed -e 's/[<>]//g'`
-
-if [ "$jiraIssueStatus" != "In Progress" -a  "$jiraIssueStatus" != "Open" -a "$jiraIssueStatus" != "In Review" ]
-then
-  printMsg "Jira Issue ${jiraId} is in Status[${jiraIssueStatus}]. It needs to be [In Progress] or [Open] or [In Review].
-Kindly update the status before the commit"
-exit 1;
-fi;
-
-if [ "$jiraAssigneeEmail" != "$gitUserEmail" ]
-then
-  printMsg "You are not the assignee on the Jira Issue [$jiraId].
-Jira Assignee: '$jiraAssigneeEmail'
-Your Email (git): '$gitUserEmail'
-
-Tip : If your git email is incorrect, update your email in git using the following command
-git config user.email ${jiraAssigneeEmail}"
-exit 1;
-fi;
+    Tip : If your git email is incorrect, update your email in git using the following command
+    git config user.email ${assigneeEmail}"
+    exit 1;
+    fi;
 
 exit 0;

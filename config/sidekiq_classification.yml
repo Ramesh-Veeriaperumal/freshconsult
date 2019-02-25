@@ -247,14 +247,12 @@
     - learn_spam_message
     - sendgrid_domain_updates
   :archive:
+    - archive_ticket
+    - archive_account_tickets
     - manual_publish
     - delayed_central_publish
-    - archive_ticket_splitter
-    - archive_build_create_ticket
-    - archive_modify_ticket_association
-    - archive_delete_ticket
-    - archive_delete_ticket_dependencies
     - es_v2_queue
+
   :exports:
     - scheduled_ticket_export_config
     - scheduled_ticket_export

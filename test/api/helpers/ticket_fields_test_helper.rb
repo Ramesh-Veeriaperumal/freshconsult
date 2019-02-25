@@ -744,6 +744,59 @@ module TicketFieldsTestHelper
     ret
   end
 
+  def central_publish_ticket_status_pattern(status)
+    status_properties = {
+      id: status.id,
+      status_id: status.status_id,
+      name: status.name,
+      customer_display_name: status.customer_display_name,
+      stop_sla_timer: status.stop_sla_timer,
+      deleted: status.deleted,
+      is_default: status.is_default,
+      account_id: status.account_id,
+      ticket_field_id: status.ticket_field_id,
+      position: status.position,
+      created_at: status.created_at.try(:utc).try(:iso8601),
+      updated_at: status.updated_at.try(:utc).try(:iso8601)
+    }
+    status_properties[:group_ids] = status.group_ids if Account.current.shared_ownership_enabled? && !status.is_default
+    status_properties
+  end
+
+  def model_changes_ticket_status(old_name, new_name)
+    {
+      'name' => [old_name, new_name]
+    }
+  end
+
+  def central_publish_picklist_pattern(pl_value)
+    {
+      id: pl_value.id,
+      pickable_id: pl_value.pickable_id,
+      pickable_type: pl_value.pickable_type,
+      position: pl_value.position,
+      value: pl_value.value,
+      account_id: pl_value.account_id,
+      picklist_id: pl_value.picklist_id,
+      created_at: pl_value.created_at.try(:utc).try(:iso8601),
+      updated_at: pl_value.updated_at.try(:utc).try(:iso8601)
+    }
+  end
+
+  def model_changes_picklist_values(old_value, new_value)
+    {
+      'value' => [old_value, new_value]
+    }
+  end
+
+  def central_publish_picklist_destroy_pattern(pl_value)
+    {
+      id: pl_value.id,
+      pickable_id: pl_value.pickable_id,
+      account_id: pl_value.account_id
+    }
+  end
+
   private
     def unused_ffs_col
       ffs_col = ''

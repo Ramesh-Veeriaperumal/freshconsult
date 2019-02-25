@@ -19,6 +19,7 @@ class ResetAssociationsTest < ActionView::TestCase
     @account = Account.current
     @agent = get_admin
     @agent.make_current
+    Tickets::ResetAssociations.jobs.clear
   end
 
   def teardown

@@ -2,7 +2,7 @@ class TicketFilterValidation < FilterValidation
   include TicketFilterConstants
   attr_accessor :filter, :company_id, :requester_id, :email, :updated_since,
                 :order_by, :conditions, :requester, :status, :cf, :include,
-                :include_array, :query_hash, :only, :type
+                :include_array, :exclude, :exclude_array, :query_hash, :only, :type
 
   validates :page, custom_numericality: {
     only_integer: true, greater_than: 0, ignore_string: :allow_string_param,
@@ -28,6 +28,7 @@ class TicketFilterValidation < FilterValidation
   validates :query_hash, data_type: { rules: String, allow_nil: false }, unless: -> { query_hash.is_a?(Hash) }
   validates :query_hash, data_type: { rules: Hash, allow_nil: false }, if: -> { errors[:filter].blank? && !query_hash_empty_string? }
   validate :validate_include, if: -> { errors[:include].blank? && include }
+  validate :validate_exclude, if: -> { private_api? && errors[:exclude].blank? && exclude }
   validate :validate_filter_param, if: -> { errors[:filter].blank? && filter.present? && private_api? }
   validate :validate_query_hash, if: -> { errors.blank? && query_hash.present? }
   validates :ids, data_type: { rules: Array, allow_nil: false },
@@ -134,6 +135,14 @@ class TicketFilterValidation < FilterValidation
         errors[:include] << :require_feature
         (self.error_options ||= {}).merge!(include: { feature: TicketFilterConstants::FEATURES_NAMES_BY_SIDE_LOAD_KEY[unauthorised_side_loadings.first] })
       end
+    end
+  end
+
+  def validate_exclude
+    @exclude_array = exclude.split(',').map!(&:strip)
+    if @exclude_array.blank? || (@exclude_array - ApiTicketConstants::EXCLUDABLE_FIELDS).present?
+      errors[:exclude] << :not_included
+      (self.error_options ||= {}).merge!(exclude: { list: ApiTicketConstants::EXCLUDABLE_FIELDS.join(', ') })
     end
   end
 

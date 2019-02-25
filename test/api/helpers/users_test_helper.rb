@@ -381,7 +381,7 @@ module UsersTestHelper
       @account.make_current
       temp_ticket = create_ticket(requester_id: contact.id, status: 5)
       Sidekiq::Testing.inline! do
-        Archive::BuildCreateTicket.perform_async(account_id: @account.id, ticket_id: temp_ticket.id)
+        Archive::TicketWorker.perform_async(account_id: @account.id, ticket_id: temp_ticket.id)
       end
     end
     @account.archive_tickets.permissible(@agent).requester_active(contact).newest(10)

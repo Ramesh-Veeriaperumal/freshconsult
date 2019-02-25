@@ -126,10 +126,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
     "ticket_field_#{action}"
   end
 
-  def self.central_publish_enabled?
-    Account.current.ticket_fields_central_publish_enabled?
-  end
-
   def model_changes_for_central
     @model_changes
   end

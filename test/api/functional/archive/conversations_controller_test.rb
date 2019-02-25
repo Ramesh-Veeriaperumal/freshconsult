@@ -80,9 +80,10 @@ class Archive::ConversationsControllerTest < ActionController::TestCase
 
   def test_without_archive_feature
     archive_ticket = @account.archive_tickets.find_by_ticket_id( @archive_ticket.id)
-    @account.features.archive_tickets.destroy
+    Account.any_instance.stubs(:enabled_features_list).returns([])
     get :ticket_conversations, controller_params(id: archive_ticket.display_id)
     assert_response 403
+    Account.any_instance.unstub(:enabled_features_list)
   end
 
   private

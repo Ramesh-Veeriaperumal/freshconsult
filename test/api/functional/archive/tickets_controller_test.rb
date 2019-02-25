@@ -101,9 +101,10 @@ class Archive::TicketsControllerTest < ActionController::TestCase
   end
 
   def test_without_archive_feature
-    @account.features.archive_tickets.destroy
+    Account.any_instance.stubs(:enabled_features_list).returns([])
     get :show, controller_params(id: 1)
     assert_response 403
+    Account.any_instance.unstub(:enabled_features_list)
   end
 
   def test_export_with_no_params

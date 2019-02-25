@@ -2,7 +2,6 @@ require 'custom_logger'
 require 'sidekiq/api'
 class BaseWorker
 
-  
   include Sidekiq::Worker
   protected
     def execute_on_db(db_name="run_on_slave")

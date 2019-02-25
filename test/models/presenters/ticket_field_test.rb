@@ -21,6 +21,7 @@ class TicketFieldTest < ActiveSupport::TestCase
     @account.sections.map(&:destroy)
     @account.ticket_fields_with_nested_fields.custom_fields.each {|custom_field| custom_field.destroy }
     return if @@before_all_run
+    @account = @account.make_current
     @account.ticket_fields.custom_fields.each(&:destroy)
     @account.launch(:ticket_fields_central_publish)
     CentralPublishWorker::TicketFieldWorker.jobs.clear
@@ -90,5 +91,4 @@ class TicketFieldTest < ActiveSupport::TestCase
     payload = field.central_publish_payload.to_json
     payload.must_match_json_expression(ticket_field_publish_pattern(field))
   end
-  
 end

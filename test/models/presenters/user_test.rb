@@ -1,6 +1,9 @@
 require_relative '../test_helper'
+require 'faker'
+require Rails.root.join('spec', 'support', 'user_helper.rb')
 
 class UserTest < ActiveSupport::TestCase
+  include UsersHelper
 
   def test_central_publish_payload
     user = add_new_user(@account)
@@ -20,7 +23,7 @@ class UserTest < ActiveSupport::TestCase
   def test_user_update_with_feature
     CentralPublishWorker::UserWorker.jobs.clear
     update_user
-    assert_equal 1, CentralPublishWorker::UserWorker.jobs.size
+    assert_equal 0, CentralPublishWorker::UserWorker.jobs.size
     user = Account.current.technicians.first
     payload = user.central_publish_payload.to_json
     payload.must_match_json_expression(central_publish_user_pattern(user))

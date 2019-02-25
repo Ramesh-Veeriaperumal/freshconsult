@@ -191,6 +191,7 @@ api_error_messages:
   lt_ticket_created_at: "It cannot be less than the ticket's created time"
   cannot_set_closed_at: "It cannot be set, when created_at and updated_at are not set or status is not closed"
   invalid_inline_attachments_list: "Invalid inline attachment ids : %{invalid_ids}"
+  invalid_id_list: "Invalid ids : %{invalid_ids}"
   invalid_avatar: "Avatar is invalid"
   missing_avatar: "Avatar is empty"
   invalid_default_avatar: "Default avatar is invalid"
