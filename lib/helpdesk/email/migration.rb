@@ -1,4 +1,4 @@
-#args = {:user_name=>"user@gmail.com", :password=>"password", :notify_email=>"notify@gmail.com", :envelope_address=>"envelope@local.freshdesk.com", :server_name=>"imap.gmail.com", :folder=>"INBOX", :tags_name=>"email_import", :gmail_tags=>false, :start_time=>"DD-MMM-YYYY HH:MM:SS +0000", :end_time=>"DD-MMM-YYYY HH:MM:SS +0000"}
+#args = {:user_name=>"user@gmail.com", :password=>"password", :notify_email=>"notify@gmail.com", :envelope_address=>"envelope@local.freshdesk.com", :server_name=>"imap.gmail.com", :folder=>"INBOX", :tags_name=>["email_import"], :gmail_tags=>false, :start_time=>"DD-MMM-YYYY HH:MM:SS +0000", :end_time=>"DD-MMM-YYYY HH:MM:SS +0000"}
 #Helpdesk::Email::EmailMigration.new(args).uids_list
 #Helpdesk::Email::EmailMigration.new(args).process
 
