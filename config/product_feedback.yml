@@ -5,6 +5,10 @@ development:
   <<: *common
   api_key: dummy-api-key
   feedback_account: http://localhost.freshdesk-dev.com:3000
+test:
+  <<: *common
+  api_key: dummy-api-key
+  feedback_account: http://localhost.freshdesk-dev.com:3000
 staging:
   <<: *common
   api_key: dummy-api-key
