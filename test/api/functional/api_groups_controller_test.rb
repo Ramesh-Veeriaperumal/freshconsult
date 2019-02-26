@@ -168,6 +168,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
   end
 
   def test_index
+    Group.delete_all
     3.times do
       create_group(@account)
     end
