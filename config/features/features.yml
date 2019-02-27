@@ -325,6 +325,8 @@
       :reports_98: 320
       :reports_99: 321
       :reports_100: 322
+      :freshreports_analytics: 323
+      :disable_old_reports: 324
 :selectable_features:
   :redis_display_id: true
   :branding: true

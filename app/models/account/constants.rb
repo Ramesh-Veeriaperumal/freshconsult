@@ -152,7 +152,8 @@ class Account < ActiveRecord::Base
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
     :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :skill_based_round_robin => false,
-    :salesforce_v2 => false, :advanced_search => false, :advanced_search_bulk_actions => false,:dynamics_v2 => false, :chat => false, :chat_routing => false }
+    :salesforce_v2 => false, :advanced_search => false, :advanced_search_bulk_actions => false, :dynamics_v2 => false, :chat => false, :chat_routing => false,
+    :freshreports_analytics => false, :disable_old_reports => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true,

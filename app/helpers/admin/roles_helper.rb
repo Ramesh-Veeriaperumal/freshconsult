@@ -107,16 +107,17 @@ module Admin::RolesHelper
 
          # *************************** Reports **************************
 
-         { :dom_type => "label", :id => "analytics", :children =>
+         { dom_type: 'label', id: 'reports', children:
 
-             [{ :dom_type => "check_box", :id => "view_reports", :class => "nested",
-                :children => 
-                
-                [{ :dom_type => "check_box", :id => "export_reports"},
-                 { :dom_type => "check_box", :id => "manage_dashboard"}]
-                
-             }]
+             [{ dom_type: 'check_box', id: 'view_reports', class: 'nested', not_display: current_account.disable_old_reports_enabled?,
+                children:
+              
+                [{ dom_type: 'check_box', id: 'export_reports' },
+                 { dom_type: 'check_box', id: 'manage_dashboard' }]
              
+              },
+              { dom_type: 'check_box', id: 'view_analytics', not_display: !current_account.freshreports_analytics_enabled? }]
+          
          },
 
          # *************************** Admin **************************
