@@ -13100,11 +13100,11 @@ Thanks,<br>
 Rebecca<br>
 Saul's support"
   help_widget:
-    name: "Welcome to %{name}"
-    form_title: "Send us a message"
-    form_button_text: "Send message"
-    form_submit_message: "Thank you for your feedback"
-    message: "Welcome to support"
+    name: "Welcome to %{name} Support"
+    message: "Welcome to Support"
+    form_title: "Contact us"
+    form_button_text: "Send"
+    form_submit_message: "Thank you for your feedback."
     button_text: "Help"
     untitled_widget: "Untitled widget %{count}"
     invalid_components: "Invalid components hash with %{key}"

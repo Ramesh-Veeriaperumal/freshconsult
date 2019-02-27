@@ -1,0 +1,28 @@
+post:
+  tags: [Widget Search Solution]
+  summary: Search solution articles for widget
+  description: Search solution articles for widget
+  parameters:
+    - in: body
+      name: article_seacrh
+      schema:
+        type: object
+        properties:
+          term:
+            type: string
+  responses:
+    200:
+      description: Success
+      schema:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

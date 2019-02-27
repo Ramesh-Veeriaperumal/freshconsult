@@ -776,6 +776,29 @@ Helpkit::Application.routes.draw do
     resources :tickets, controller: 'widget/tickets', only: [:create]
     resources :ticket_fields, controller: 'widget/ticket_fields', only: [:index]
     resources :attachments, controller: 'widget/attachments', only: [:create]
+    namespace :widget, path: '' do
+      namespace :search do
+        resources :solutions, controller: 'solutions' do
+          collection do
+            post :results, path: ''
+          end
+        end
+      end
+      namespace :solutions do
+        resources :article, path: '', controller: 'articles' do
+          collection do
+            get :suggested_articles
+          end
+        end
+        resources :article, controller: 'articles', only: :show do
+          member do
+            put :thumbs_up
+            put :thumbs_down
+            put :hit
+          end
+        end
+      end
+    end
   end
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do

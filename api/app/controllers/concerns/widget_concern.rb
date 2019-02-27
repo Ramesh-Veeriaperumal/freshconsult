@@ -11,13 +11,28 @@ module WidgetConcern
   def set_widget_portal_as_current
     # set current portal if widget is associated to product
     @current_portal = current_account.portals.find_by_product_id(@help_widget.product_id) || @current_portal
+    @current_portal.make_current
   end
 
   def check_feature
-    log_and_render_404 unless current_account.help_widget_enabled?
+    render_request_error(:require_feature, 403, feature: :help_widget) unless current_account.help_widget_enabled?
+  end
+
+  def check_open_solutions
+    render_request_error(:require_feature, 403, feature: :open_solutions) unless current_account.features?(:open_solutions)
   end
 
   def add_attachments
     @item.attachments = current_account.attachments.where(id: @attachment_ids) if @attachment_ids.present?
+  end
+
+  def set_current_language
+    if params[:url_locale].present? && current_account.multilingual?
+      Language.set_current(
+        request_language: http_accept_language.language_region_compatible_from(I18n.available_locales),
+        url_locale: params[:url_locale]
+      )
+    end
+    Language.fetch_from_portal({}).make_current unless Language.current?
   end
 end

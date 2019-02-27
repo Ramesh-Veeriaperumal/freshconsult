@@ -102,6 +102,30 @@ module SolutionsTestHelper
     }
   end
 
+  def widget_article_show_pattern(article)
+    widget_article_search_pattern(article).merge(
+      attachments: widget_attachment_pattern(article.attachments),
+      description: article.description
+    )
+  end
+
+  def widget_article_search_pattern(article)
+    {
+      id: article.parent_id,
+      title: article.title,
+      modified_at: article.modified_at.try(:utc),
+      language_id: article.language_id
+    }
+  end
+
+  def widget_attachment_pattern(attachments)
+    ret = []
+    attachments.each do |attachment|
+      ret << attachment_pattern(attachment)
+    end
+    ret
+  end
+
   def v1_category_payload
     { solution_category: { name: "API V1", description: "API V1 Description" } }.to_json
   end
