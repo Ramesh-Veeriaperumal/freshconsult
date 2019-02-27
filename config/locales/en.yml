@@ -2495,6 +2495,7 @@ en:
         manage_proactive_outreaches: Manage proactive outreaches
         reports: Reports
         view_reports: View reports tab
+        view_analytics: View analytics tab
         admin: Admin
         not_administrator: Not view any Administrator options
         operational_admin: Perform Operational Admin actions

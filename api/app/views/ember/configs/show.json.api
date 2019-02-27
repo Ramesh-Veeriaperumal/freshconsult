@@ -1,0 +1,1 @@
+JSON.generate(ConfigDataDecorator.new(@config).safe_send(@config[:id]))

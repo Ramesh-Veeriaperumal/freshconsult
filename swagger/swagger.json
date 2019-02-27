@@ -10347,6 +10347,40 @@
           }
         }
       }
+    },
+    "/configs/{id}": {
+      "get": {
+        "tags": [
+          "Configs"
+        ],
+        "summary": "Configs Show",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Config Information",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/configs_show"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -20546,6 +20580,15 @@
         "content": {
           "type": "string",
           "format": "byte"
+        }
+      }
+    },
+    "configs_show": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Config Information"
         }
       }
     }

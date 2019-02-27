@@ -565,6 +565,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    # to get any config data
+    resources :configs, controller: 'ember/configs', only: [:show]
+
     get 'canned_responses/search', to: 'ember/canned_responses#search'
 
     # audit log path
