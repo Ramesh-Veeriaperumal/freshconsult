@@ -115,6 +115,10 @@ module DeleteSpamConcern
     def destroy_item(item)
       # TODO-EMBERAPI "Deleted_at" not populated on User - use of field to be verified
       return false if spam_or_deleted?(item)
+      destroy_or_delete(item)
+    end
+
+    def destroy_or_delete(item)
       if item.respond_to?(:deleted)
         item.deleted = true
         store_dirty_tags(item) if item.is_a?(Helpdesk::Ticket)

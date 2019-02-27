@@ -73,6 +73,30 @@ module UsersHelper
     new_user.reload
   end
 
+  def add_marked_for_hard_delete_user(account, options={})
+    tag_names = options[:tags].is_a?(Array) ? options[:tags].join(",") : options[:tags]
+    new_user = FactoryGirl.build(:user, :account => account,
+                                    :name => options[:name] || Faker::Name.name,
+                                    :email => options[:email] || Faker::Internet.email,
+                                    :time_zone => "Chennai",
+                                    :delta => 1,
+                                    :deleted => options[:deleted] || 0,
+                                    :blocked => options[:blocked] || 0,
+                                    :active => options.key?(:active) ? options[:active] : 1,
+                                    :company_id => options[:customer_id] || nil,
+                                    :language => "en",
+                                    :tag_names => tag_names)
+    if options[:unique_external_id]
+      new_user.unique_external_id = options[:unique_external_id]
+    end
+    new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
+    new_user.avatar = options[:avatar] if options[:avatar]
+    new_user.updated_at = options[:updated_at] if options[:updated_at]
+    new_user.save_without_session_maintenance
+    new_user.delete_forever!
+    new_user.reload
+  end
+
   def add_new_contractor(account, options={})
     new_user = FactoryGirl.build(:user, :account => account,
                                     :name => options[:name] || Faker::Name.name,
