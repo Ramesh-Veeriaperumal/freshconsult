@@ -460,6 +460,20 @@ class User < ActiveRecord::Base
     self.preferences[:agent_preferences][:falcon_ui] || Account.current.disable_old_ui_enabled?
   end
 
+  def old_notes_first?
+    if self.preferences[:agent_preferences][:oldest_on_top].to_s.blank?
+      nil # will take account settings preference
+    else
+      self.preferences[:agent_preferences][:oldest_on_top]
+    end
+  end
+
+  def set_notes_pref(pref = true)
+    new_pref = { oldest_on_top: (pref.to_s.to_bool rescue true) }
+    self.merge_preferences = { agent_preferences: new_pref }
+    save
+  end
+
   def falcon_invite_eligible?
     (account.falcon_ui_enabled? && !account.disable_old_ui_enabled? && self.preferences_without_defaults.try(:[], :agent_preferences).try(:[],:falcon_ui).nil?)
   end

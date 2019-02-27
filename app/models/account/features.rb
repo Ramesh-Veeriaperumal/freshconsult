@@ -47,7 +47,7 @@ class Account < ActiveRecord::Base
     :customize_table_view, :public_url_toggle, :add_to_response, :agent_scope,
     :performance_report, :custom_password_policy, :social_tab, :scenario_automation,
     :omni_channel, :ticket_volume_report, :sla_management_v2, :api_v2, :cascade_dispatcher,
-    :personal_canned_response, :marketplace
+    :personal_canned_response, :marketplace, :reverse_notes
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -372,6 +372,16 @@ class Account < ActiveRecord::Base
       features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) }
     end
     super
+  end
+
+  def latest_notes_first_enabled?(current_user = :no_user)
+    !oldest_notes_first_enabled?(current_user)
+  end
+
+  def oldest_notes_first_enabled?(current_user = :no_user)
+    return true unless reverse_notes_enabled?
+    user_settings = current_user.old_notes_first? if current_user != :no_user
+    user_settings.nil? ? account_additional_settings.old_notes_first? : user_settings
   end
   # STOP
 end

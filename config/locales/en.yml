@@ -6694,6 +6694,13 @@ en:
     name: Account Name
     cancel: Cancel
     customize_portal: "Helpdesk rebranding"
+    sort_conversations:
+      label: "Sort conversations"
+      helpnote: "This is the order in which messages will appear in tickets."
+      latest_top: "You'll now see the newest conversation on top."
+      oldest_top: "You'll now see the oldest conversation on top."
+      option1: "Show newest on top"
+      option2: "Show oldest on top"
     forums_toggle:
         title: "Forums"
         forums_disabled: "Forums have been disabled for this account."

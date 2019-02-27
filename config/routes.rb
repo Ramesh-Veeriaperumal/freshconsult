@@ -722,6 +722,7 @@ Helpkit::Application.routes.draw do
   match '/register/:activation_code' => 'activations#new', :as => :register
   match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email
   match '/activate/:perishable_token' => 'activations#create', :as => :activate
+  match '/set_notes_order' => 'users#set_conversation_preference', :as => :set_notes_order, via: :put
 
   resources :activations do
     member do
