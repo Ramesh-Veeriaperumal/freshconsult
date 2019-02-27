@@ -147,6 +147,12 @@ class AutomationEssentialsControllerTest < ActionController::TestCase
     match_json(features: Account.current.enabled_features_list)
   end
 
+  def test_execurte_script_get_features_list
+    put :execute_script, controller_params(version: 'v2',script_to_execute: 'Account.current.enabled_features_list')
+    assert_response 200
+    match_json(result: Account.current.enabled_features_list)
+  end
+
   def test_bitmap_add_feature_for_production_env
     assert_equal Account.current.send("#{@test_bitmap_feature_name}_enabled?"), false
     Rails.env.stubs(:production?).returns(true)
@@ -232,6 +238,14 @@ class AutomationEssentialsControllerTest < ActionController::TestCase
     put :bitmap_revoke_feature, controller_params(version: 'v2', feature: @invalid_feature_name)
     assert_response 400
     match_json(request_error_pattern(:invalid_values, fields: 'feature'))
+  end
+
+  def test_execute_script_for_production_env
+    Rails.env.stubs(:production?).returns(true)
+    put :execute_script, controller_params(version: 'v2', script_to_execute: 'Account.find(2).make_current')
+    assert_response 400
+    match_json(request_error_pattern(:unsupported_environment))
+    Rails.env.unstub(:production?)
   end
 
   def setup

@@ -154,6 +154,7 @@ Helpkit::Application.routes.draw do
         get :features_list
         put :bitmap_add_feature
         put :bitmap_revoke_feature
+        put :execute_script
       end
     end
 
@@ -642,7 +643,6 @@ Helpkit::Application.routes.draw do
                                         only: [:index]
     resources :agent_password_policy, controller: 'ember/agent_password_policies',
                                         only: [:index]
-
     resource :subscription, controller: 'admin/subscriptions', only: [:show]
     get '/plans', to: 'admin/subscriptions#plans'
 
