@@ -16,7 +16,6 @@ class MailboxValidatorTest < ActionView::TestCase
           'user_name' => Faker::Internet.email,
           'password' => Faker::Lorem.word,
           'domain' => Faker::Lorem.word
-
         },
         'imap_mailbox_attributes' => {
           '_destroy' => '0',
@@ -27,7 +26,10 @@ class MailboxValidatorTest < ActionView::TestCase
           'authentication' => 'plain',
           'user_name' => Faker::Internet.email,
           'password' => Faker::Lorem.word,
-          'folder' => 'inbox'
+          'folders_list' => {
+            "standard"=>["inbox"]
+           },
+          'application_id' => 1
         }
       }
     }

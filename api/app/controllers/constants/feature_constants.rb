@@ -17,5 +17,5 @@ module FeatureConstants
   BOT_EMAIL_CHANNEL = :bot_email_channel.freeze
   BOT_CHAT_HISTORY = :bot_chat_history.freeze
   AUTOMATION_REVAMP = :automation_revamp.freeze
-  ARCHIVE_API = :archive_tickets_api.freeze
+  ARCHIVE_API = :archive_tickets_api
 end

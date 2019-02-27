@@ -1,7 +1,7 @@
 /*!
- * froala_editor v2.3.5 (https://www.froala.com/wysiwyg-editor)
+ * froala_editor v2.9.1 (https://www.froala.com/wysiwyg-editor)
  * License https://froala.com/wysiwyg-editor/terms/
- * Copyright 2014-2016 Froala Labs
+ * Copyright 2014-2018 Froala Labs
  */
 
 (function (factory) {
@@ -23,38 +23,56 @@
                     jQuery = require('jquery')(root);
                 }
             }
-            factory(jQuery);
-            return jQuery;
+            return factory(jQuery);
         };
     } else {
         // Browser globals
-        factory(jQuery);
+        factory(window.jQuery);
     }
 }(function ($) {
 
-  'use strict';
+  
 
   $.FE.PLUGINS.align = function (editor) {
     function apply (val) {
-      // Wrap.
-      editor.selection.save();
-      editor.html.wrap(true, true, true, true);
-      editor.selection.restore();
 
-      var blocks = editor.selection.blocks();
+      var el = editor.selection.element();
 
-      for (var i = 0; i < blocks.length; i++) {
-        $(blocks[i]).css('text-align', val).removeClass('fr-temp-div');
-        if ($(blocks[i]).attr('class') === '') $(blocks[i]).removeAttr('class');
+      if ($(el).parents('.fr-img-caption').length) {
+        $(el).css('text-align', val);
       }
+      else {
+        // Wrap.
+        editor.selection.save();
+        editor.html.wrap(true, true, true, true);
+        editor.selection.restore();
 
-      editor.selection.save();
-      editor.html.unwrap();
-      editor.selection.restore();
+        var blocks = editor.selection.blocks();
+
+        for (var i = 0; i < blocks.length; i++) {
+
+          // Check if we should reset to default value.
+          if (editor.helpers.getAlignment($(blocks[i].parentNode)) == val) {
+            $(blocks[i]).css('text-align', '').removeClass('fr-temp-div');
+          }
+          else {
+            $(blocks[i]).css('text-align', val).removeClass('fr-temp-div');
+          }
+
+          if ($(blocks[i]).attr('class') === '') $(blocks[i]).removeAttr('class');
+
+          if ($(blocks[i]).attr('style') === '') $(blocks[i]).removeAttr('style');
+        }
+
+        editor.selection.save();
+        editor.html.unwrap();
+        editor.selection.restore();
+      }
     }
 
     function refresh ($btn) {
       var blocks = editor.selection.blocks();
+
       if (blocks.length) {
         var alignment = editor.helpers.getAlignment($(blocks[0]));
 
@@ -64,17 +82,34 @@
 
     function refreshOnShow($btn, $dropdown) {
       var blocks = editor.selection.blocks();
+
       if (blocks.length) {
         var alignment = editor.helpers.getAlignment($(blocks[0]));
 
-        $dropdown.find('a.fr-command[data-param1="' + alignment + '"]').addClass('fr-active');
+        $dropdown.find('a.fr-command[data-param1="' + alignment + '"]').addClass('fr-active').attr('aria-selected', true);
+      }
+    }
+
+    function refreshForToolbar($btn) {
+      var blocks = editor.selection.blocks();
+
+      if (blocks.length) {
+        var alignment = editor.helpers.getAlignment($(blocks[0]));
+
+        // Capitalize.
+        alignment = alignment.charAt(0).toUpperCase() + alignment.slice(1);
+
+        if ('align' + alignment == $btn.attr('data-cmd')) {
+          $btn.addClass('fr-active');
+        }
       }
     }
 
     return {
       apply: apply,
       refresh: refresh,
-      refreshOnShow: refreshOnShow
+      refreshOnShow: refreshOnShow,
+      refreshForToolbar: refreshForToolbar
     }
   }
 
@@ -93,11 +128,12 @@
       justify: 'Align Justify'
     },
     html: function () {
-      var c = '<ul class="fr-dropdown-list">';
+      var c = '<ul class="fr-dropdown-list" role="presentation">';
       var options =  $.FE.COMMANDS.align.options;
+
       for (var val in options) {
         if (options.hasOwnProperty(val)) {
-          c += '<li><a class="fr-command fr-title" data-cmd="align" data-param1="' + val + '" title="' + this.language.translate(options[val]) + '">' + this.icon.create('align-' + val) + '</a></li>';
+          c += '<li role="presentation"><a class="fr-command fr-title" tabIndex="-1" role="option" data-cmd="align" data-param1="' + val + '" title="' + this.language.translate(options[val]) + '">' + this.icon.create('align-' + val) + '<span class="fr-sr-only">' + this.language.translate(options[val]) + '</span></a></li>';
         }
       }
       c += '</ul>';
@@ -114,6 +150,50 @@
       this.align.refreshOnShow($btn, $dropdown);
     },
     plugin: 'align'
+  })
+
+  $.FE.RegisterCommand('alignLeft', {
+    type: 'button',
+    icon: 'align-left',
+    callback: function () {
+      this.align.apply('left')
+    },
+    refresh: function ($btn) {
+      this.align.refreshForToolbar($btn)
+    }
+  })
+
+  $.FE.RegisterCommand('alignRight', {
+    type: 'button',
+    icon: 'align-right',
+    callback: function () {
+      this.align.apply('right')
+    },
+    refresh: function ($btn) {
+      this.align.refreshForToolbar($btn)
+    }
+  })
+
+  $.FE.RegisterCommand('alignCenter', {
+    type: 'button',
+    icon: 'align-center',
+    callback: function () {
+      this.align.apply('center')
+    },
+    refresh: function ($btn) {
+      this.align.refreshForToolbar($btn)
+    }
+  })
+
+  $.FE.RegisterCommand('alignJustify', {
+    type: 'button',
+    icon: 'align-justify',
+    callback: function () {
+      this.align.apply('justify')
+    },
+    refresh: function ($btn) {
+      this.align.refreshForToolbar($btn)
+    }
   })
 
 }));

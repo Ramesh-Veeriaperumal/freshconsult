@@ -233,6 +233,7 @@ class Account < ActiveRecord::Base
   has_many :custom_survey_handles, :class_name => 'CustomSurvey::SurveyHandle'
   has_many :custom_survey_results, :class_name => 'CustomSurvey::SurveyResult'
   has_many :custom_survey_remarks, :class_name => 'CustomSurvey::SurveyRemark'
+  has_many :survey_question_choices, :class_name => 'CustomSurvey::SurveyQuestionChoice'
 
   has_many :scoreboard_ratings
   has_many :scoreboard_levels

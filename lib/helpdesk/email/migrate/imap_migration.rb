@@ -1,4 +1,4 @@
-#args = {:user_name=>"user@gmail.com", :password=>"password", :notify_email=>"notify@gmail.com", :envelope_address=>"envelope@local.freshdesk.com", :server_name=>"imap.gmail.com", :folder=>"INBOX", :tags_name=>"email_import", :gmail_tags=>false, :start_time=>"DD-MMM-YYYY HH-MM-SS +0000", :end_time=>"DD-MMM-YYYY HH-MM-SS +0000"}
+#args = {:user_name=>"user@gmail.com", :password=>"password", :notify_email=>"notify@gmail.com", :envelope_address=>"envelope@local.freshdesk.com", :server_name=>"imap.gmail.com", :folder=>"INBOX", :tags_name=>["email_import","custom2"], :gmail_tags=>false, :start_time=>"DD-MMM-YYYY HH-MM-SS +0000", :end_time=>"DD-MMM-YYYY HH-MM-SS +0000"}
 #Helpdesk::Email::EmailMigration.new(args)
 
 require 'net/imap'
@@ -15,10 +15,10 @@ module Helpdesk::Email::Migrate
 
     def initialize(args={})
       initialise_attributes(args)
-      self.port ||= 993
-      self.ssl ||= true
-      self.folder ||= "INBOX"
-      self.gmail_tags ||= false
+      self.port        = self.port.present? ? self.port : 993
+      self.ssl         = self.ssl.nil? ? true : self.ssl
+      self.folder      = self.folder.nil? ? "INBOX" : self.folder
+      self.gmail_tags  = self.gmail_tags.nil? ? false : self.gmail_tags
       parse_time
       connect_imap_server
     end
@@ -34,12 +34,12 @@ module Helpdesk::Email::Migrate
     def parse_time
       mailbox_log "Sample start_time/end_time DD-MMM-YYYY HH:MM:SS +0000"
       if start_time.present?
-        DateTime.strptime(self.start_time, '%d-%b-%Y %H:%M:%S %z')
-        self.start_date = start_time[0..10]
+        date = DateTime.strptime(self.start_time, '%d-%b-%Y %H:%M:%S %z') 
+        self.start_date = date.strftime("%d-%b-%Y")
       end 
       if end_time.present? 
-        DateTime.strptime(self.end_time, '%d-%b-%Y %H:%M:%S %z')
-        self.end_date = end_time[0..10] 
+        date = DateTime.strptime(self.end_time, '%d-%b-%Y %H:%M:%S %z') + 1  #end date will be one day after than end_time
+        self.end_date = date.strftime("%d-%b-%Y")
       end
     end 
 

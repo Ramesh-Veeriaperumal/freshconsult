@@ -1,5 +1,8 @@
 class ImapMailbox < ActiveRecord::Base
   include Cache::Memcache::EmailConfig
+
+  include EmailHelper
+  
   self.primary_key = :id
 
   belongs_to :email_config
@@ -28,14 +31,15 @@ class ImapMailbox < ActiveRecord::Base
         :server_port => port,
         :authentication => authentication,
         :delete_from_server => delete_from_server,
-        :folder => folder,
+        :folders_list => {"standard"=>["inbox"]},
         :use_ssl => use_ssl,
         :to_email => email_config.to_email,
         :account_id => account_id,
         :time_zone => account.time_zone,
         :timeout => timeout, 
         :pod_info => pod_info,
-        :domain => account.full_domain
+        :domain => account.full_domain,
+        :application_id => imap_application_id
       },
       :action => action
       }.to_json

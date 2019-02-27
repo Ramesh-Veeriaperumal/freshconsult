@@ -5,9 +5,9 @@ module MemcacheReadWriteMethods
       block.call
     rescue Dalli::UnmarshalError => e
       x = ['undefined class/module CompanyField', 'undefined class/module ContactFieldChoice',
-            'undefined class/module CustomSurvey::SurveyQuestion']
+           'undefined class/module CustomSurvey::SurveyQuestion']
       if x.any? { |word| e.message.include?(word) }
-        Rails.logger.debug "#{Account.current}  #{e.message}"
+         Rails.logger.debug "#{Account.current}  #{e.message}"
       end
       NewRelic::Agent.notice_error(e)
       return
@@ -30,7 +30,7 @@ module MemcacheReadWriteMethods
     newrelic_begin_rescue { memcache_client.get(key, raw) }
   end
 
-  def cache(key,value,expiry = 0, raw = false)
+  def cache(key, value, expiry = 0, raw = false)
     newrelic_begin_rescue { memcache_client.set(key, value, expiry, raw) }
   end
 
@@ -59,8 +59,8 @@ module MemcacheReadWriteMethods
     if cache_data.nil?
       Rails.logger.debug "Cache hit missed :::::: #{key}"
       cache(key, (cache_data = set_null(block.call)), expiry)
-    elsif after_cache_msg
-      Rails.logger.debug "::::: #{after_cache_msg} :::::: #{key}"
+    else
+      Rails.logger.debug "::::: #{after_cache_msg} :::::: #{key}" if after_cache_msg
     end
     unset_null(cache_data)
   end

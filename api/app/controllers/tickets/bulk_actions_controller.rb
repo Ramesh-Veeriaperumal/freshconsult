@@ -10,6 +10,7 @@ module Tickets
       @validation_klass = 'ArchiveValidation'
       params_hash = params[cname].merge(skip_bulk_validations: true)
       return unless validate_body_params(nil, params_hash) && validate_archive_delegator
+
       archive_tickets
       head 204
     end
@@ -30,7 +31,7 @@ module Tickets
       def validate_archive_delegator
         @delegator_klass = 'ArchiveDelegator'
         if cname_params[:ids].present?
-          delegator_params = { 
+          delegator_params = {
             ids: cname_params[:ids],
             permissible_ids: permissible_ticket_ids(cname_params[:ids])
           }
@@ -49,6 +50,10 @@ module Tickets
 
       def constants_class
         :ApiTicketConstants.to_s.freeze
+      end
+
+      def scoper
+        current_account.tickets
       end
   end
 end

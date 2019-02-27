@@ -315,6 +315,7 @@ defaults: &defaults
     - [http_request]
     - [simple_outreach_import]
     - [audit_log_export]
+    - [surveys_central_publish]
     
 development:
   <<: *defaults

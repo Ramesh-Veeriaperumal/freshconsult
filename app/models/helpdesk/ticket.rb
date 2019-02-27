@@ -1088,12 +1088,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def custom_field= custom_field_hash
     @custom_field = new_record? ? custom_field_hash : nil
-    assign_ff_values custom_field_hash unless new_record?
+    unless new_record?
+      assign_ff_values custom_field_hash
+      if account.id_for_choices_write_enabled?
+        benchmark_ticket_field_data do
+          ticket_field_data.assign_ff_values(custom_field_hash)
+        end
+      end
+    end
   end
 
-  def set_ff_value ff_alias, ff_value
+  def set_ff_value(ff_alias, ff_value, ff_def = nil)
+    self.ff_def ||= ff_def if ff_def.present?
     @custom_field = nil
     flexifield.set_ff_value ff_alias, ff_value
+    if account.id_for_choices_write_enabled?
+      benchmark_ticket_field_data do
+        ticket_field_data.set_ff_value ff_alias, ff_value
+      end
+    end
   end
   # flexifield - custom_field syncing code ends here
 
@@ -1419,6 +1432,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
   #Shared ownership methods ends here
+
+    def benchmark_ticket_field_data
+      time_taken = Benchmark.realtime { yield }
+      Rails.logger.debug "Time taken: #{time_taken} Ticket: #{display_id} Account: #{account_id}"
+    end
 
     # def rl_exceeded_operation
     #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,

@@ -80,6 +80,21 @@ staging:
     shard_6: 10000000000000
     shard_7: 10000000000000
     shard_8: 10000000000000
+    clone_shard_1: 10000000000000
+    alpha_shard_1: 10000000000000
+    auto_shard_1: 10000000000000
+    fal_shard_1: 10000000000000
+    atm_shard_1: 10000000000000
+    g10_shard_1: 10000000000000
+    shadow_shard_1: 10000000000000
+    suicide_shard_1: 10000000000000
+    wild_shard_1: 10000000000000
+    infi_shard_1: 10000000000000
+    deceptions_shard_1: 10000000000000
+    hp_shard_1: 10000000000000
+    sk_shard_1: 10000000000000
+    sea_shard_1: 10000000000000
+    spirit_shard_1: 10000000000000
 
 production:
   <<: *defaults

@@ -11,6 +11,14 @@ class CustomSurvey::Survey < ActiveRecord::Base
   TITLE_TEXT_LIMIT  = 150
   LINK_TEXT_LIMIT   = 500
 
+  SEND_WHILE_MAPPING = {
+    1 => :any_email_response,
+    2 => :resolved_notification,
+    3 => :closed_notification,
+    4 => :specific_email_response,
+    5 => :place_holder
+  }.freeze
+
   CUSTOMER_RATINGS_MAP = [
     [:EXTREMELY_HAPPY,    103, 'extremely_happy',    '#4e8d00', '#e6efdd', 'strongly-agree'],
     [:VERY_HAPPY,         102, 'very_happy',         '#6bb436', '#ebf4e3', 'some-what-agree'],

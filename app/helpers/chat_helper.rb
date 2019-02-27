@@ -21,6 +21,13 @@ module ChatHelper
     [ 'DELETE', Net::HTTP::Delete]
   ]
   HTTP_METHODS = Hash[*LIVECHAT_ROUTE_MAPPINGS.map { |i| [i[0], i[1]] }.flatten]
+  CHAT_SUPPORT_PLANS = [ 
+      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
+      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic],
+      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17],
+      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_19],
+      SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_omni_jan_19]
+    ].freeze
 
   def chat_activated?
     !current_account.subscription.suspended? && feature?(:chat) && current_account.chat_setting.site_id
@@ -329,9 +336,7 @@ module ChatHelper
   end
 
   def is_chat_support_plan?
-    chat_support_plans = [ SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_classic],
-                           SubscriptionPlan::SUBSCRIPTION_PLANS[:estate_jan_17]]
-    chat_support_plans.include?(current_account.subscription.subscription_plan.name)
+    CHAT_SUPPORT_PLANS.include?(current_account.subscription.subscription_plan.name)
   end
 
   def chat_widget_list(widgets)

@@ -1,7 +1,7 @@
 /*!
- * froala_editor v2.3.5 (https://www.froala.com/wysiwyg-editor)
+ * froala_editor v2.9.1 (https://www.froala.com/wysiwyg-editor)
  * License https://froala.com/wysiwyg-editor/terms/
- * Copyright 2014-2016 Froala Labs
+ * Copyright 2014-2018 Froala Labs
  */
 
 (function (factory) {
@@ -23,20 +23,19 @@
                     jQuery = require('jquery')(root);
                 }
             }
-            factory(jQuery);
-            return jQuery;
+            return factory(jQuery);
         };
     } else {
         // Browser globals
-        factory(jQuery);
+        factory(window.jQuery);
     }
 }(function ($) {
 
-  'use strict';
+  
 
   $.FE.PLUGINS.quote = function (editor) {
     function _deepestParent(node) {
-      while (node.parentNode && node.parentNode != editor.$el.get(0)) {
+      while (node.parentNode && node.parentNode != editor.el) {
         node = node.parentNode;
       }
 
@@ -44,6 +43,7 @@
     }
 
     function _increase () {
+
       // Get blocks.
       var blocks = editor.selection.blocks();
       var i;
@@ -58,6 +58,7 @@
 
       var $quote = $('<blockquote>');
       $quote.insertBefore(blocks[0]);
+
       for (i = 0; i < blocks.length; i++) {
         $quote.append(blocks[i]);
       }
@@ -69,6 +70,7 @@
     }
 
     function _decrease () {
+
       // Get blocks.
       var blocks = editor.selection.blocks();
       var i;
@@ -94,6 +96,7 @@
     }
 
     function apply (val) {
+
       // Wrap.
       editor.selection.save();
       editor.html.wrap(true, true, true, true);
@@ -120,9 +123,22 @@
   $.FE.RegisterCommand('quote', {
     title: 'Quote',
     type: 'dropdown',
-    options: {
-      increase: 'Increase',
-      decrease: 'Decrease'
+    html: function () {
+      var c = '<ul class="fr-dropdown-list" role="presentation">';
+      var options =  {
+        increase: 'Increase',
+        decrease: 'Decrease'
+      };
+
+      for (var val in options) {
+        if (options.hasOwnProperty(val)) {
+          var shortcut = this.shortcuts.get('quote.' + val);
+          c += '<li role="presentation"><a class="fr-command fr-title fr-active ' + val + '" tabIndex="-1" role="option" data-cmd="quote" data-param1="' + val + '" title="' + options[val] + ' ' + '(' + shortcut + ')">' + this.language.translate(options[val]) + '</a></li>';
+        }
+      }
+      c += '</ul>';
+
+      return c;
     },
     callback: function (cmd, val) {
       this.quote.apply(val);

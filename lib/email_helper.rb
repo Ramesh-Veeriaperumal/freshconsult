@@ -203,6 +203,11 @@ module EmailHelper
     return !(email_config && email_config.smtp_mailbox) && ($redis_others.get("ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE") == "1" || account.launched?(:send_emails_via_fd_email_service_feature))
   end
 
+  def imap_application_id
+    $fd_email_service_credentials ||= (YAML::load_file(File.join(Rails.root, 'config', 'fd_email_service.yml')))[Rails.env]
+    return $fd_email_service_credentials["imap_application_id"]
+  end
+
   def block_outgoing_email(account_id)
     Rails.logger.info("disabling Outgoing email for #{account_id}")
     add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, account_id)

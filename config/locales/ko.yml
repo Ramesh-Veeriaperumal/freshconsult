@@ -3135,6 +3135,7 @@ ko:
   right: 권리
   footer:
     helpdesk_software: 헬프데스크
+    helpdesk_software_link: "https://freshdesk.kr/"
     by_freshdesk: "제공: Freshdesk"
     submit_feedback: "피드백 제출"
     browse_community: "커뮤니티 돌아보기"

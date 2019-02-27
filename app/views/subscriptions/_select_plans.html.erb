@@ -3,6 +3,7 @@
   current_plan_name = current_account.subscription.subscription_plan.name.downcase
   current_plan_ranking = SubscriptionsHelper::PLAN_RANKING[current_plan_name] || 0 # default rank as zero
   has_credit_card = current_account.has_credit_card? 
+  select_billing_option = current_account.new_2019_pricing_enabled? ? SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] : @subscription.renewal_period
 %>
 <div id="ChangePlan">
   <div class="plans">
@@ -21,12 +22,7 @@
                   <div class="plan-details">
                     <div class="plan-title">
                       <% bool_beta_plan = (plan_name == "premium" && @discount  && @discount.name.downcase == "beta users special") %>
-                      
-                      <%if current_account.new_pricing_launched?%>
-                        <%= content_tag(:h2, plan.display_name, :class => "lead") %>
-                      <%else%>
-                        <%= content_tag(:h2, plan.name, :class => "lead") %>
-                      <%end%>
+                      <%= content_tag(:h2, plan.display_name, :class => "lead") %>
                       <div class="plan-brief"></div>
                       <% if(bool_beta_plan) %>
                         <%= content_tag(:h3, "<span class='discount-strikethrough'>$29 </span> $19 " +  content_tag(:span, t('plan_amount'), :class => "info-data")) %>
@@ -181,7 +177,7 @@
 
   if(App.SelectPlan != undefined){ App.SelectPlan.destroy() } 
 
-   App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= @subscription.renewal_period %>,
+   App.SelectPlan.initialize("<%= @subscription.currency_name %>",<%= select_billing_option %>,
     "<%= current_account.subscription.subscription_plan.id %>");
 
 </script>
