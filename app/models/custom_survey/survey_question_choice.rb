@@ -3,6 +3,8 @@ class CustomSurvey::SurveyQuestionChoice < ActiveRecord::Base
   self.table_name = :survey_question_choices
   self.primary_key = :id 
 
+  include Surveys::PresenterHelper
+
   belongs_to_account
 
   stores_custom_field_choice  :custom_field_class => 'CustomSurvey::SurveyQuestion', 
@@ -20,4 +22,11 @@ class CustomSurvey::SurveyQuestionChoice < ActiveRecord::Base
 
   xss_sanitize :only => [:value], :plain_sanitizer => [:value]
 
+  belongs_to :survey_question, :class_name => 'CustomSurvey::SurveyQuestion', :foreign_key => 'survey_question_id'
+
+  before_destroy :deleted_survey_model_info
+
+  publishable
+  concerned_with :presenter
+  
 end

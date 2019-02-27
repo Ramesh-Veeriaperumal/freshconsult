@@ -221,6 +221,10 @@ module MemcacheKeys
 
   COMPANY_FILTERS = 'COMPANY_FILTERS:%{account_id}'.freeze
   
+  PICKLIST_VALUES_BY_ID = 'v1/PICKLIST_VALUES_BY_ID:%{account_id}:%{column_name}'.freeze
+
+  PICKLIST_IDS_BY_VALUE = 'v1/PICKLIST_VALUES_BY_VALUE:%{account_id}:%{column_name}'.freeze
+
   TICKET_FIELDS_FULL = 'TICKET_FIELDS_FULL:%<account_id>s:%<language_code>s'.freeze
   
   ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"

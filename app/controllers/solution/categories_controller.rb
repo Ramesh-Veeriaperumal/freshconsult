@@ -21,7 +21,7 @@ class Solution::CategoriesController < ApplicationController
   around_filter :run_on_slave, :only => :sidebar
 
   def index
-    @categories = current_portal.solution_category_meta.includes(:solution_folder_meta)
+    @categories = current_portal.solution_category_meta.includes(:primary_category, { :solution_folder_meta => [:primary_folder]}, :portal_solution_categories )
 
     respond_to do |format|
       format.html { @page_canonical = solution_categories_url }# index.html.erb

@@ -3,6 +3,7 @@ class SurveyResult < ActiveRecord::Base
   self.primary_key = :id
 
   include Va::Observer::Util
+  include CustomSurvey::SurveyResult::PublisherMethods
 
   belongs_to_account
     
@@ -12,11 +13,15 @@ class SurveyResult < ActiveRecord::Base
   belongs_to :agent,:conditions => {:deleted => false},:class_name => 'User', :foreign_key => :agent_id
   belongs_to :customer,:class_name => 'User', :foreign_key => :customer_id
   belongs_to :group,:class_name => 'Group', :foreign_key => :group_id
+  belongs_to :survey, :class_name => 'CustomSurvey::Survey', :foreign_key => :survey_id
 
   after_create :update_ticket_rating
   before_create :update_observer_events
   after_commit :filter_observer_events, on: :create, :if => :user_present?
   
+  concerned_with :presenter
+  publishable
+
   def add_feedback(feedback)
     note = surveyable.notes.build({
       :user_id => customer_id,

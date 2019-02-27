@@ -1,4 +1,5 @@
 defaults: &defaults
+  imap_application_id: 1
   key: "33E15283B3FE1D1FD22B1619DA9C"
   host: "http://mailservice.freshpo.com"
   timeout: 30

@@ -11,7 +11,6 @@ class Social::FacebookPage < ActiveRecord::Base
   include Social::Constants
   include MixpanelWrapper
 
-  before_create  :check_subscription
   before_create  :create_mapping
   before_destroy :unregister_stream_subscription
   after_destroy  :remove_mapping
@@ -94,13 +93,6 @@ class Social::FacebookPage < ActiveRecord::Base
       facebook_page_mapping.facebook_page_id = page_id
       facebook_page_mapping.save
     end    
-  end
-
-  def check_subscription
-    response = Facebook::PageTab::Configure.new(self).execute("check_subscription")
-    raise NoResponseException if response.nil?
-    subscription = JSON.parse(response)
-    raise AlreadyLinkedException if subscription["data"].size > 0
   end
 
   def remove_mapping
