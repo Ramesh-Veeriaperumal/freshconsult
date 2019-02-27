@@ -357,7 +357,6 @@ en:
   facebook_reauth: "Your Facebook channel is inaccessible. It looks like your username, password, or permission has been changed recently."
   custom_mailbox_error: "Something went wrong. We are unable to fetch emails from your custom mailbox."
   old_ui_deprecation: "You're currently using the old version of Freshdesk which will be deprecated by the 31st of March 2019."
-  old_ui_migraton_agent: "Please contact your administrator."
   old_ui_migraton: "Click here to switch to Mint."
   live_chat_phone_deprecation: "The live chat and phone channel features in your account will be deprecated by the 30th of November 2018."
   live_chat_phone_migration: "Migrate to Freshchat and Freshcaller."
