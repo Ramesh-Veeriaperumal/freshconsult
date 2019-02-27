@@ -197,6 +197,10 @@ class User < ActiveRecord::Base
     preferences[:user_preferences][:agent_deleted_forever]
   end
 
+  def marked_for_hard_delete?
+    preferences[:user_preferences][:marked_for_hard_delete]
+  end
+
   def simple_outreach_unsubscribe?
     preferences[:user_preferences][:simple_outreach_unsubscribe]
   end
