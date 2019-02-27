@@ -111,10 +111,10 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def throttle?
-      if (Account.current.fluffy_enabled? && @request.env['HTTP_X_FW_RATELIMITING_MANAGED'] == "true") || Account.current.apigee_enabled?
+      if is_fluffy_enabled? || is_apigee_enabled?
         return false
       else
-        Rails.logger.info "Inside throttle? method :: Host: #{@host}, SOURCE IP: #{@request.env['HTTP_X_REAL_IP']}"
+        Rails.logger.info "Inside throttle? method :: Host: #{@host}, SOURCE IP: #{@request.env['HTTP_X_REAL_IP']} "
         !skipped_domain? && account_id
       end
     end
@@ -220,5 +220,13 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def unset_current_account
       Thread.current[:account] = nil
+    end
+
+    def is_fluffy_enabled?
+      Account.current && Account.current.fluffy_enabled? && @request.env['HTTP_X_FW_RATELIMITING_MANAGED'] == "true"
+    end
+
+    def is_apigee_enabled?
+      Account.current && Account.current.apigee_enabled?
     end
 end
