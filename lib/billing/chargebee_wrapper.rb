@@ -1,5 +1,5 @@
 class Billing::ChargebeeWrapper
-
+	PRODUCT_NAME = 'fdesk'.freeze
 	def initialize
     subscription = Account.current.subscription
     ChargeBee.configure(:site => subscription.currency_billing_site, 
@@ -69,7 +69,7 @@ class Billing::ChargebeeWrapper
 
 	#other
 	def update_customer(account_id, data)
-		data[:meta_data] = {:customer_key => Account.current.full_domain}.to_json # update for existing customers
+		data[:meta_data] = { :customer_key => "#{PRODUCT_NAME}.#{Account.current.id}" }.to_json # update for existing customers
 		data[:cf_account_domain] = Account.current.full_domain
 		ChargeBee::Customer.update(account_id, data)
 	end
