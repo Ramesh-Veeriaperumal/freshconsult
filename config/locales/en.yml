@@ -4676,6 +4676,7 @@ en:
     info1: This is a deleted Agent
     info2: Email has already been taken
     info4: Convert to a Contact
+    hard_deleted_email: The contact associated with this email is being permanently deleted and not accessible. Please wait for this to be completed before trying to add the email.
     contact_exists: A requester with email '%{existing_email}' already exists, %{use_email}
     signature: Signature
     insert_placeholder: Insert Placeholder
