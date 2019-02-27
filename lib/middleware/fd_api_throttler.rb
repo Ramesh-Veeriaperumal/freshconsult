@@ -111,8 +111,12 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def throttle?
-      Rails.logger.error "Inside throttle? method :: Host: #{@host}, SOURCE IP: #{@request.env['HTTP_X_REAL_IP']}"
-      !skipped_domain? && account_id && !Account.current.try(:apigee_enabled?)
+      if (Account.current.fluffy_enabled? && @request.env['HTTP_X_FW_RATELIMITING_MANAGED'] == "true") || Account.current.apigee_enabled?
+        return false
+      else
+        Rails.logger.info "Inside throttle? method :: Host: #{@host}, SOURCE IP: #{@request.env['HTTP_X_REAL_IP']}"
+        !skipped_domain? && account_id
+      end
     end
 
     def increment_redis_key(used)
