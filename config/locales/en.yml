@@ -1091,7 +1091,7 @@ en:
         enabled_header: "Social Signals Enabled"
         disabled_header: "Enable Social Signals"
         desc_with_keywords: "Automatically convert relevant tweets to tickets. Supports only English language for now."
-        desc_without_keywords: "Automatically convert only relevant @mentions to tickets. Supports only English language for now." 
+        desc_without_keywords: "Automatically convert only relevant @mentions to tickets. Supports only English language for now."
         convert_tweet: "Start converting tweets into tickets"
         convert_dm: "Start converting direct messages into tickets"
         convert_all: "Convert relevant @mentions into tickets"
@@ -2202,7 +2202,7 @@ en:
       failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator
     security:
       index:
-        not_admin_email: "Please enter a valid admin email" 
+        not_admin_email: "Please enter a valid admin email"
         shared_secret: Shared Secret
         remote_login_url: Remote login URL
         shared_secret_info: Please copy this token and keep it safe. You need this to enable Remote authentication. This is a shared secret between you and Freshdesk.
@@ -2271,7 +2271,7 @@ en:
         password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
         freshconnect_warning: If you are actively using Discuss, we recommend you to contact us to setup SSO at <a href="mailto:support@freshdesk.com">support@freshdesk.com</a> to avoid loss of conversations in Freshconnect.
       errors:
-        simple_sso: 
+        simple_sso:
           invalid_login_url: Please provide a valid login URL
         saml_sso:
           invalid_login_url: Please provide a valid SAML login URL
@@ -2340,7 +2340,7 @@ en:
         portal_customization: Portal Customization
         portal_settings: Portal settings
         agent_portal: Agent Portal
-        edit_branding: Edit Branding        
+        edit_branding: Edit Branding
         edit_portal: Edit Portal
         customize_portal: "Customize portal"
         save_and_customize: "Save & Customize portal"
@@ -6678,6 +6678,14 @@ en:
     name: Account Name
     cancel: Cancel
     customize_portal: "Helpdesk rebranding"
+    sort_conversations:
+      label: "Sort conversations"
+      helpnote: "This is the order in which messages will appear in tickets."
+      latest_top: "You'll now see the newest conversation on top."
+      oldest_top: "You'll now see the oldest conversation on top."
+
+      option1: "Show newest on top"
+      option2: "Show oldest on top"
     forums_toggle:
         title: "Forums"
         forums_disabled: "Forums have been disabled for this account."
@@ -8973,7 +8981,7 @@ en:
     shared_ownership:
       label: "Shared Ownership"
       desc: "Get improved agent visibility over tickets that require assistance from specialised teams with the ability to share tickets between agents."
-    ticket_summary: 
+    ticket_summary:
       label: "Summary"
       desc: "Create and share a summary of problems faced by customers when you're working on tickets."
     marketplace_login:
@@ -10325,7 +10333,7 @@ en:
       avg_first_res_time: Average 1st response time
       avg_res_time: Average response time
       avg_resolution_time: Average resolution time
-      received_tickets: Tickets Received 
+      received_tickets: Tickets Received
       tickets_enagaged: Tickets Engaged
       agent: Agent
     timespent:
@@ -12062,7 +12070,7 @@ en:
         invalid_name: "Invalid company name"
         required_name: "Enter company name"
   unique_external_id:
-    helpcard: 
+    helpcard:
       title: "Unique External ID"
       info: Import your customers’ unique IDs and easily identify their conversations in Freshdesk. <br><a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank">Help me set up external ID</a>
 
@@ -12445,7 +12453,7 @@ en:
     dear_user_plain: 'Dear user,'
     portal_support: '%{portal_name} Support'
     cool: 'Cool!'
-    role: 
+    role:
       one: 'role'
       other: 'roles'
     thanks: "Thanks,"
@@ -12458,10 +12466,10 @@ en:
     moderator_approval: "Moderator approval"
     sincerely: "Sincerely,"
     security_notification:
-      trusted_ip_enabled: 
+      trusted_ip_enabled:
         one: 'IP whitelisting has been enabled on your account. Your portal will be accessible only in the IP range below:'
         other: 'IP whitelisting has been enabled on your account. Your portal will be accessible only in the IP ranges below:'
-      trusted_ip_modified: 
+      trusted_ip_modified:
         one: 'The whitelisted IP addresses were modified on your account. Your portal will be accessible only in the IP range below:'
         other: 'The whitelisted IP addresses were modified on your account. Your portal will be accessible only in the IP ranges below:'
       trusted_ip_disabled: "IP whitelisting has been disabled on your account."
@@ -12537,7 +12545,7 @@ en:
       webhook_drop_limit: "A webhook that was scheduled 24 hours ago for execution has now been dropped since you consistently exceeded your API rate limits."
       webhook_drop_support: "If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, click here https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq."
       webhook_drop_support_link: "If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, <a href='https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq'>click here.</a>"
-  mailer_notifier_subject: 
+  mailer_notifier_subject:
     agent_email_changed: '%{portal_name}: Agent email address changed'
     agent_details_updated: Your %{changed_attributes} in %{account_name} has been updated
     agent_added: "%{account_name}: A new agent was added to your account"
@@ -12603,7 +12611,7 @@ en:
       agent_line: "The administrator has changed the URL of your helpdesk. Going forward, you can login by hitting the URL: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
       admin_line: "The URL of your helpdesk has changed. Going forward, you can login by hitting the URL: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
       cheers: "Cheers,"
-      team: "Freshdesk Team"  
+      team: "Freshdesk Team"
   fixtures:
     ticket_templates:
       name: "Initiate a Refund"
@@ -12617,9 +12625,9 @@ Date of purchase: <br><br>
 Regards,<br>
 &lt;company name&gt; support.</p></div>"
     canned_response:
-      title: We’ve received your request 
+      title: We’ve received your request
     default_forum:
-      - subject: End of season sale 
+      - subject: End of season sale
         content: "We hope you’re all set for the end of summer sale, 2018.<br><br>
 Tune in on the 5th of August, from 12PM to 4PM, for some really cool offers (it’s the end of summer after all). <br><br>
 Here’s a sneak peek on what’s in store for you - <br><br>
@@ -12665,7 +12673,7 @@ All you have to do is choose ‘fast tracked delivery’, when you’re placing 
 - Joe"
         replies:
           - "Oh, this is a godsend. Thank you!<br><br> - Clarice"
-      - subject: Horrible service 
+      - subject: Horrible service
         content: "One day prior to the delivery of my package, I was told it was “Undeliverable”. Sucks that I had to wait for four days just to hear this.<br><br>
 - Finch"
         replies:
@@ -12692,7 +12700,7 @@ In case you have <i>forgotten your password</i>, click on the <b>forgot password
 Note: Once you verify the updated email details, you can resume your activities on your account."
         - category: Getting started with us
           folder: Your account
-          title: Inviting your team onboard 
+          title: Inviting your team onboard
           description: "Add your team members to your account to make collaboration easy. You can have multiple teams in an account. You can also add one contact to many teams.<br><br>
 Follow these steps to get your team onboard:<br><br>
 <ol><li>Select <b>my account</b> from the menu bar.</li>
@@ -12701,7 +12709,7 @@ Follow these steps to get your team onboard:<br><br>
 <i>Alternatively</i>, from the contacts page, you can toggle on the <b>add member</b> and an invitation link will be sent to that respective contact. <br><br>
 Pro tip - Tag your team to collaborate and get feedback on your work by typing “@” followed by the team name.You can make announcements about progress of your work, deadlines, updates or anything you want to communicate with the rest of your team, by tagging teams."
         - category: Getting started with us
-          folder: Your documents 
+          folder: Your documents
           title: Creating templates
           description: "Tired of documenting the same kind of things (meeting notes, product requirements, and ideas) over and over again every day? Just create a doc and save it as a template, in three simple steps.<br><br>
 Step 1 - Create a new document or reuse an existing one, to fill in the content you’d like to save as a template. <br><br>
@@ -12834,7 +12842,7 @@ In case you miss it, we make two more attempts at the slot selected by you on tw
           description: "<p> </p>"
         - category: Information collected
           folder: Opt-out policy
-          title: Service related announcements            
+          title: Service related announcements
           description: "<p> </p>"
       travel:
         - category: Getting started with us
@@ -12856,8 +12864,8 @@ Note: Once you verify the updated email details, you can resume your activities 
 3. Choose a package from the list of options.<br><br>
 4. Enter the passenger details of one member (an adult).<br><br>
 5. Proceed to make the payment. If you have a discount code please enter it."
-        - category: Your journey 
-          folder: Travel details                
+        - category: Your journey
+          folder: Travel details
           title: Baggage restrictions
           description: "The baggage restrictions for intercontinental flights are as follows: <br><br>
 <ul><li>Economy Class: 1 bag up to 23 kg</li><br>
@@ -12869,7 +12877,7 @@ For carry-on luggage: <br>
 <li>Economy class and Premium Economy class passengers are permitted one carry-on.</li></ul> <br>
 Note: Carry-on luggage can be upto 8 kgs."
         - category: FAQs
-          folder: Flight FAQs 
+          folder: Flight FAQs
           title: "How can I cancel my booking and how much will it cost?"
           description: "Select the trip that you would like to cancel, and click on the “cancel trip” button that is below the trip details. We will hold back 15% of the trip’s fare and transfer the rest of the amount to your account."
         - category: FAQs
@@ -12885,11 +12893,11 @@ Note: Carry-on luggage can be upto 8 kgs."
           title: Membership guidelines
           description: "<p> </p>"
         - category: Membership
-          folder: Platinum club 
+          folder: Platinum club
           title: Gifts and packages
           description: "<p> </p>"
         - category: Membership
-          folder: Platinum club 
+          folder: Platinum club
           title: Trips and hotels
           description: "<p> </p>"
         - category: Membership
@@ -12904,19 +12912,19 @@ Note: Carry-on luggage can be upto 8 kgs."
           folder: Diamond club
           title: Trips and hotels
           description: "<p> </p>"
-        - category: Travel insurance 
+        - category: Travel insurance
           folder: Travel insurance for members
           title: Platinum club members
           description: "<p> </p>"
-        - category: Travel insurance 
+        - category: Travel insurance
           folder: Travel insurance for members
           title: Diamond club members
           description: "<p> </p>"
-        - category: Travel insurance 
+        - category: Travel insurance
           folder: Travel insurance for non-members
           title: Applying for travel insurance
           description: "<p> </p>"
-        - category: Travel insurance 
+        - category: Travel insurance
           folder: Travel insurance for non-members
           title: Availing travel insurance
           description: "<p> </p>"
@@ -12934,7 +12942,7 @@ Note: Carry-on luggage can be upto 8 kgs."
             - "<p>Hey Emily,</p><br /><p>Thanks for writing to us!\n<br />I can confirm that our Aldovia store does have the Mary Jane shoes in size 8. I’ve asked them to block a pair for you. Feel free to pick them up anytime :)</p><br /><p>Cheers,\n<br />Rebecca.</p><br /><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk. <a href = https://support.freshdesk.com/support/solutions/articles/37541-forward-and-convert-your-support-emails-to-tickets-in-freshdesk target= _blank>See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"
         - subject: Vintage table lamp - Out of stock?
           description: "<p>Hello,</p><br /><p>I saw a vintage table lamp on your site last month and I’d bookmarked it to buy it later for a friend. I can’t seem to find it anymore though. Is it out of stock or do you not sell those anymore?</p><br /><p>Thanks,\n<br />Matt.</p><p><hr></p><p>P.S. This is a sample message that has been sent to you from website page. <a href = https://support.freshdesk.com/support/solutions/articles/37690-getting-feedback-from-your-website-with-the-feedback-widget target= _blank>See how you can add your own feedback widget</a> on your website or app</p>"
-          replies: 
+          replies:
             - "<p>Hi Matt,</p><br /><p>Thanks for writing in!</p><br /><p>I’m sorry to say those vintage lamps are currently out of stock. I checked with our supplier though and they think it should be available by the end of next month. But if you’d rather not wait that long, I’d love to help you find something else to gift your friend. Let me know what their interests are and I’ll send across a list :)</p><br /><p>Cheers,\n<br />Janet\n<br />Saul’s Emporium Support</p>"
       ecommerce:
         - subject: Need to change my shipping address
@@ -12956,7 +12964,7 @@ I hope this was helpful. If you have any further doubts, feel free to reach out 
 Richard Gere<br>
 Saul's Emporium"
             - "Hey Richard,<br><br> Thank you so much.<br><br> Anne Richard"
-        - subject: Status of my replacement 
+        - subject: Status of my replacement
           description: "I requested a replacement on my order (#123) and I was told that it would take two working days to have my request processed. <br><br>
 It’s been four days now, I received no further information on this and I’m growing tired of waiting. Can you tell me what’s going on? <br><br>
 Matt Rogers"

@@ -39,6 +39,18 @@ class AccountAdditionalSettings < ActiveRecord::Base
     !supported_languages_was.nil?
   end
 
+  def notes_order=(val)
+    additional_settings[:old_notes_first] = (val.to_s.to_bool rescue true)
+  end
+
+  def old_notes_first?
+    if additional_settings[:old_notes_first].to_s.blank?
+      true # default order, old notes appear first
+    else
+      additional_settings[:old_notes_first]
+    end
+  end
+
   def validate_bcc_emails
     (bcc_email || "").split(",").each do |email|
       errors.add(:base,"Invalid email: #{email}") unless email =~ AccountConstants::EMAIL_SCANNER
