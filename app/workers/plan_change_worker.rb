@@ -9,16 +9,20 @@ class PlanChangeWorker
     features  = args[:features]
     action    = args[:action]
 
-    features.each do |feature|
-      method = "#{action}_#{feature}_data"
-      # Adding this block due to dynamic sections bug
-      # Ref: https://github.com/freshdesk/helpkit/commit/7da2749537bfac540bbf8495d144e8a68c9c9e0d
-      #
-      begin
-        safe_send(method, account) if respond_to?(method)
-      rescue Exception => e
-        NewRelic::Agent.notice_error(e)
+    if action != 'drop'
+      features.each do |feature|
+        method = "#{action}_#{feature}_data"
+        # Adding this block due to dynamic sections bug
+        # Ref: https://github.com/freshdesk/helpkit/commit/7da2749537bfac540bbf8495d144e8a68c9c9e0d
+        #
+        begin
+          safe_send(method, account) if respond_to?(method)
+        rescue Exception => e
+          NewRelic::Agent.notice_error(e)
+        end
       end
+    else
+      Rails.logger.debug "PLAN_CHANGE_HOT_FIX:: action: drop, acc_id: #{account.id}, features: #{features.inspect}"
     end
   end
 
