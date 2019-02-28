@@ -286,6 +286,17 @@ class Helpdesk::TicketField < ActiveRecord::Base
     }
   end
 
+  def nested_field_choices_by_id(picklist_values = self.picklist_values)
+    picklist_values.collect do |c|
+      {
+        name: c.value,
+        value: c.value,
+        id: c.id,
+        choices: nested_field_choices_by_id(c.sub_picklist_values)
+      }
+    end
+  end
+
   def dropdown_choices_with_name
     level1_picklist_values.collect { |c| [c.value, c.value] }
   end
@@ -674,9 +685,40 @@ class Helpdesk::TicketField < ActiveRecord::Base
       return unless @choices
       if(["nested_field"].include?(self.field_type))
         clear_picklist_cache
-        run_through_picklists(@choices, picklist_values, self)
+        Account.current.nested_field_revamp_enabled? ? run_through_picklists_with_id(@choices, picklist_values, self) 
+          : run_through_picklists(@choices, picklist_values, self)
       elsif("default_status".eql?(self.field_type))
         @choices.each_with_index{|attr,position| update_ticket_status(attr,position)}
+      end
+    end
+
+    def run_through_picklists_with_id(choices, picklists, parent)
+      choices.each_with_index do |choice, index|
+        choice.symbolize_keys!
+        pl_id = choice[:id]
+        pl_value = choice[:value]
+        current_tree = picklists.find{ |p| p.id == pl_id}
+        if current_tree
+          current_tree.destroy and next if choice[:destroyed]
+          current_tree.position = index + 1
+          current_tree.value = pl_value
+          if choice[:choices].present?
+            run_through_picklists_with_id(choice[:choices], 
+                                  current_tree.sub_picklist_values, 
+                                  current_tree)
+          end
+        else
+          build_picklists_with_id(choice, parent, index)
+        end
+      end
+    end
+
+    def build_picklists_with_id(choice, parent_pl_value, position=0)
+      choice.except!(:id, :destroyed).merge(position: position+1)
+      if parent_pl_value.id == self.id
+        picklist_values.build(choice)
+      else
+        parent_pl_value.sub_picklist_values.build(choice)
       end
     end
 

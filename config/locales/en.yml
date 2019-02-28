@@ -185,6 +185,7 @@ en:
   or: or
   go_to_new_ui: "Switch to the Mint experience"
   enable: "Enable"
+  enter: "Enter"
   email_failure:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
@@ -642,6 +643,10 @@ en:
       nested_unique_names: Agent label should not be same as other two levels
       nested_3rd_level: Label required for 3rd level items
       field_has_section: Field has section
+      values_for: Values for Level
+      note: "Note: "
+      nested_note_content: " Actual deletion of items will happen only on save "
+      nested_field_validation: "Some fields don’t have any value. Please enter value to continue"
     section:
       fsm_section_delete: This default section cannot be deleted
       remove_type: Section is associated with this type
