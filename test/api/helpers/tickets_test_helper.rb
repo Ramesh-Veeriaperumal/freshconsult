@@ -253,6 +253,7 @@ module ApiTicketsTestHelper
       cc_emails: expected_output[:cc_emails] || ticket.cc_email && ticket.cc_email[:cc_emails],
       fwd_emails: expected_output[:fwd_emails] || ticket.cc_email && ticket.cc_email[:fwd_emails],
       reply_cc_emails:  expected_output[:reply_cc_emails] || ticket.cc_email && ticket.cc_email[:reply_cc],
+      ticket_cc_emails:  expected_output[:ticket_cc_emails] || ticket.cc_email && ticket.cc_email[:tkt_cc],
       description:  description_html || ticket.description_html,
       description_text:  ticket.description,
       id: expected_output[:display_id] || ticket.display_id,

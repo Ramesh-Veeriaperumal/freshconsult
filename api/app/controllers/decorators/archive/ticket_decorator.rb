@@ -22,6 +22,7 @@ class Archive::TicketDecorator < TicketDecorator
       cc_emails: cc_email.try(:[], :cc_emails),
       fwd_emails: cc_email.try(:[], :fwd_emails),
       reply_cc_emails: cc_email.try(:[], :reply_cc),
+      ticket_cc_emails: cc_email.try(:[], :tkt_cc),
       fr_escalated: fr_escalated,
       spam: spam,
       group_id: group_id,
