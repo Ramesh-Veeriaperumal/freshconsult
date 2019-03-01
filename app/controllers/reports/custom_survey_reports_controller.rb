@@ -8,19 +8,24 @@ class Reports::CustomSurveyReportsController < ApplicationController
   before_filter :set_selected_tab, :report_filter_data_hash, :only => :index
   before_filter :save_report_max_limit?,                     :only   => [:save_reports_filter]
   before_filter :construct_report_filters,                   :only   => [:save_reports_filter,:update_reports_filter]
-  
+
   around_filter :run_on_slave,                               :except => [:save_reports_filter,:update_reports_filter,:delete_reports_filter]
-  
+
   helper_method :enable_schedule_report?
 
   attr_accessor :report_type
-  
+
   def index
     @hide_agent_reporting = Account.current.hide_agent_metrics_feature?
     @surveys = surveys_json
     @agents = agents
     @groups = groups
     @default_all_values = {:agent => AGENT_ALL_URL_REF, :group => GROUP_ALL_URL_REF, :rating => RATING_ALL_URL_REF}
+    if request.path.include?('/analytics/')
+      render 'analytics/custom_survey_reports/index'
+    else
+      render 'reports/custom_survey_reports/index'
+    end
   end
 
   def aggregate_report
@@ -34,7 +39,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
   def agent_wise_report
     render :json => {:table_format_data => agent_wise_report_data}
   end
-  
+
   def remarks
     remarks = survey.survey_results.remarks(default_params)
     question_column_name = survey_question.column_name
@@ -54,7 +59,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
       :data_hash   => @data_map
     )
     report_filter.save
-    
+
     #Disabling the schedule for custom survey
     @data_map[:schedule_config] = {enabled: false}
     render :json => {:status=> 200,
@@ -108,7 +113,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
 
     def set_selected_tab
       @selected_tab = :reports
-    end 
+    end
 
     def set_report_type
       @report_type = :satisfaction_survey
@@ -117,7 +122,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
     def page_limit
       10
     end
-    
+
     def survey
       @survey ||= current_account.custom_surveys.find(which_survey)
     end
@@ -129,19 +134,19 @@ class Reports::CustomSurveyReportsController < ApplicationController
     def agents
       current_account.users.technicians.map{ |user| {:id => user.id, :name => user.name} }
     end
-    
+
     def groups
       current_account.groups.map{ |group| {:id => group.id, :name => group.name} }
     end
-    
+
     def surveys_json
       current_account.custom_surveys.with_questions_and_choices.as_reports_json
     end
-    
+
     def which_survey
       params[:survey_id] || current_account.survey.id
     end
-    
+
     def default_params
       {:survey_id => which_survey, :start_date => start_date, :end_date => end_date}
     end
@@ -153,7 +158,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
         condition = default_params
         condition[:column_name] = question.column_name
         results = survey.survey_results.aggregate(condition)
-        results = filter results      
+        results = filter results
         results, unanswered = format_aggregate_report results
         question_wise_result = {
           :unanswered => (question.default? ? unanswered_handles : unanswered),
@@ -166,7 +171,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
 
     def filter scope, column_name=nil
       scope = scope.group_filter(params[:group_id]) if group?
-      scope = scope.agent_filter(params[:agent_id]) if agent? 
+      scope = scope.agent_filter(params[:agent_id]) if agent?
       scope = scope.rating_filter({
         :column_name => column_name,
         :value => params[:rating]
@@ -177,10 +182,10 @@ class Reports::CustomSurveyReportsController < ApplicationController
     def format_aggregate_report results
       formatted_result = []
       unanswered = 0
-      results.each do |result| 
+      results.each do |result|
         if result[:rating].present?
           formatted_result << {
-            :survey_id => result[:survey_id], 
+            :survey_id => result[:survey_id],
             :rating => result[:rating],
             :total => result[:total]
           }
@@ -210,7 +215,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
       condition[:column_name] = survey_question.column_name
       results = survey.survey_results.group_wise(condition)
       generate_report(results)
-    end    
+    end
 
     def generate_report results
       results = filter results
@@ -237,7 +242,7 @@ class Reports::CustomSurveyReportsController < ApplicationController
     def group?
       (params[:group_id] && params[:group_id] != GROUP_ALL_URL_REF)
     end
-  
+
     def current_page
       params[:page] = 1 if params[:page].blank?
       params[:page]
