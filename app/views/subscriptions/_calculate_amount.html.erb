@@ -5,12 +5,15 @@
 <div class="billing-cost">
 	<hr class="billing-divider" />
 	<dl>
-  	<dt><%=t('subscription.billing')%></dt>
-		<dd>
+  	<dt class="vertical-top"><%=t('subscription.billing')%></dt>
+		<dd class="vertical-top">
 			<%= select_tag :billing_cycle, 
 						options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.dup.sort{ |x, y| y[1] <=> x[1] }, 
 															billing_cycle), 
 						:class => "select2" %>
+			<p class="save-info <%= billing_cycle == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]? 'hide' : '' %>">
+				<%= t('choose_annual')%> <span class="money"><%= t('save_20_percent')%></span>
+			</p>
 		</dd>
 	</dl>
   <dl>
@@ -54,7 +57,7 @@
 		  	</dt>
 		  	<dd class="numbers">
 		  		<h2>
-		  			<b class="total" id="total-cost-per-agent">
+		  			<b class="total" id="total-cost-currency-value">
 		  				<%= format_amount(amount+discount, @subscription.currency_name) %>
 		  			</b>
 		  		</h2>
@@ -67,7 +70,7 @@
 	  	</dt>
   		<dd class="numbers">
   			<h2>
-  				<b class="total" id="total-cost-per-agent">
+  				<b class="total" id="total-cost-currency-value">
   					<%= format_amount(amount, @subscription.currency_name) %>
   				</b>
   				<p class="per-month-charges <%= billing_cycle == 1 ? 'hide' : '' %>">
@@ -76,6 +79,18 @@
   			</h2>
 			</dd>	
 	  </dl>
+	  <dl id="total-cost" class="tr-total <%= billing_cycle == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]? '' : 'hide' %>">
+	  	<dt>
+	  		<%= t('you_save') %>
+	  	</dt>
+  		<dd class="numbers">
+				<p>
+				<input type="hidden" value="<%= cost_per_agent(@subscription_plan.name, SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly], @subscription.currency_name) %>" id="cost-per-month-value">
+				</p>
+				<span class="you-save-amount"></span>
+  		</dd>
+  	</dl>
+
 
 		<% unless current_account.has_credit_card? %>
 			<div class="currency-note"><span class="arrow-up"></span>
