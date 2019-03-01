@@ -19,9 +19,9 @@ class Account < ActiveRecord::Base
     :skip_invoice_due_warning, :company_central_publish, :product_central_publish,
     :redis_picklist_id, :help_widget, :bot_email_channel, :bot_email_central_publish,
     :description_by_default, :ticket_fields_central_publish, :facebook_page_scope_migration,
-    :agent_group_central_publish, :custom_fields_search,:update_billing_info,
+    :agent_group_central_publish, :custom_fields_search,:update_billing_info, :fluffy,
     :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish, :native_apps,
-    :surveys_central_publish, :id_for_choices_write
+    :surveys_central_publish, :id_for_choices_write, :nested_field_revamp
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
@@ -47,7 +47,8 @@ class Account < ActiveRecord::Base
     :customize_table_view, :public_url_toggle, :add_to_response, :agent_scope,
     :performance_report, :custom_password_policy, :social_tab, :scenario_automation,
     :omni_channel, :ticket_volume_report, :sla_management_v2, :api_v2, :cascade_dispatcher,
-    :personal_canned_response, :marketplace
+    :personal_canned_response, :marketplace, :reverse_notes,
+    :freshreports_analytics, :disable_old_reports
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
   COMBINED_VERSION_ENTITY_KEYS = [
@@ -372,6 +373,16 @@ class Account < ActiveRecord::Base
       features.delete_if { |feature| PRICING_PLAN_MIGRATION_FEATURES_2019.include?(feature) }
     end
     super
+  end
+
+  def latest_notes_first_enabled?(current_user = :no_user)
+    !oldest_notes_first_enabled?(current_user)
+  end
+
+  def oldest_notes_first_enabled?(current_user = :no_user)
+    return true unless reverse_notes_enabled?
+    user_settings = current_user.old_notes_first? if current_user != :no_user
+    user_settings.nil? ? account_additional_settings.old_notes_first? : user_settings
   end
   # STOP
 end

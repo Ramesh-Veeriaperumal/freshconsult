@@ -9,7 +9,10 @@
 		};
 	var obj = _.extend({}, obj, jstDefaults);
 %>
-<div class="custom-fields-props-dialog modal hide fade <%= (obj.isContactEmail || obj.custom_form_type == 'company') ? 'single-column' : '' %>" id='CustomPropsModal'>
+<div class="custom-fields-props-dialog modal hide fade <%= (obj.isContactEmail || 
+	obj.custom_form_type == 'company') ? 'single-column' : '' %>
+	<%= nested_field_revamp_enabled ? 'nested-field-modal' : '' %>" 
+	id='CustomPropsModal'>
 	<div class='modal-header clearfix'>
 		<%=JST['custom-form/template/custom_modal_header'](obj)%>
 	</div>
@@ -68,6 +71,12 @@
 				<span class='ficon-plus'></span> 
 				<%= translate.get('addNewChoice') %> 
 			</a> 
+		<% } %>
+		<% if (obj.field_type == 'nested_field' && nested_field_revamp_enabled && !obj.isFresh) { %>
+			<div class="nested-note">
+				<span class="error hide"><span class='ficon-notice-o'></span><%= translate.get('nested_field_validation') %></span>
+				<span class="warning"><strong><%= translate.get('note') %></strong> <%= translate.get('nested_note_content') %></span>
+			</div>
 		<% } %>
 		<a class="btn" id="cancel-btn"><%= translate.get('cancel') %></a> 
 		<input type="submit" value="<%= translate.get('done') %>" class="btn btn-primary" id='PropsSubmitBtn' /> 

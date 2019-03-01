@@ -152,7 +152,8 @@ class Account < ActiveRecord::Base
     :count_es_writes => false, :count_es_reads => false, :activity_revamp => true, :countv2_writes => false, :countv2_reads => false,
     :helpdesk_restriction_toggle => false, :freshfone_acw => false, :ticket_templates => false, :cti => false, :all_notify_by_custom_server => false,
     :freshfone_custom_forwarding => false, :freshfone_onboarding => false, :freshfone_gv_forward => false, :skill_based_round_robin => false,
-    :salesforce_v2 => false, :advanced_search => false, :advanced_search_bulk_actions => false,:dynamics_v2 => false, :chat => false, :chat_routing => false }
+    :salesforce_v2 => false, :advanced_search => false, :advanced_search_bulk_actions => false, :dynamics_v2 => false, :chat => false, :chat_routing => false,
+    :freshreports_analytics => false, :disable_old_reports => false }
 
   # This list below is for customer portal features list only to prevent from adding addition features
   ADMIN_CUSTOMER_PORTAL_FEATURES =  {:anonymous_tickets => true, :open_solutions => true, :auto_suggest_solutions => true,
@@ -294,9 +295,10 @@ class Account < ActiveRecord::Base
       saml_ecrypted_assertion: false, quoted_text_parsing_feature: false,
       product_central_publish: false, help_widget: false, company_central_publish: false,
       field_service_management_lp: false, bot_email_channel: false,
-      description_by_default: false, ticket_fields_central_publish: false,
+      description_by_default: false, ticket_fields_central_publish: false, fluffy: false,
       facebook_page_scope_migration: false, agent_group_central_publish: false, custom_fields_search: false,
-      update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false, redis_picklist_id: true
+      update_billing_info: false, allow_billing_info_update: false, tag_central_publish: false, redis_picklist_id: true,
+      nested_field_revamp: false
     }, :merge
   )
 

@@ -197,6 +197,10 @@ class User < ActiveRecord::Base
     preferences[:user_preferences][:agent_deleted_forever]
   end
 
+  def marked_for_hard_delete?
+    preferences[:user_preferences][:marked_for_hard_delete]
+  end
+
   def simple_outreach_unsubscribe?
     preferences[:user_preferences][:simple_outreach_unsubscribe]
   end
@@ -458,6 +462,20 @@ class User < ActiveRecord::Base
 
   def is_falcon_pref?
     self.preferences[:agent_preferences][:falcon_ui] || Account.current.disable_old_ui_enabled?
+  end
+
+  def old_notes_first?
+    if self.preferences[:agent_preferences][:oldest_on_top].to_s.blank?
+      nil # will take account settings preference
+    else
+      self.preferences[:agent_preferences][:oldest_on_top]
+    end
+  end
+
+  def set_notes_pref(pref = true)
+    new_pref = { oldest_on_top: (pref.to_s.to_bool rescue true) }
+    self.merge_preferences = { agent_preferences: new_pref }
+    save
   end
 
   def falcon_invite_eligible?

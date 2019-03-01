@@ -95,6 +95,7 @@ run "ln -nfs #{shared_path}/config/proactive_service.yml #{node[:rel_path]}/conf
 run "ln -nfs #{shared_path}/config/ocr_config.yml #{node[:rel_path]}/config/ocr_config.yml"
 run "ln -nfs #{shared_path}/config/email_bot_ml_feedback_config.yml #{node[:rel_path]}/config/email_bot_ml_feedback_config.yml"
 run "ln -nfs #{shared_path}/config/datadog.yml #{node[:rel_path]}/config/datadog.yml"
+run "ln -nfs #{shared_path}/config/freshvisuals.yml #{node[:rel_path]}/config/helpdesk_reports/freshvisuals.yml"
 
 
 #supreme-code-console

@@ -2098,6 +2098,19 @@ div[class$="-toggle"]{
 .modal-header .modal-roles-header:after{
    content: "\200E";
 }
+
+#CustomFieldsPropsDialog .modal.nested-field-modal{
+  .add-choice.selected-field, .nested-section:last-child .selected-field {
+    .dropchoice .input-wrapper {
+      border-color: $app-primary-btn-background;
+    }
+  }
+  .nested-note {
+    .error {
+      color: $app-delete-bg-color;
+    }
+  }
+}
 .sso-notification-content {
   background: #fffade;
   padding: 5px 10px;

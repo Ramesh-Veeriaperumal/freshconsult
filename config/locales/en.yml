@@ -185,6 +185,7 @@ en:
   or: or
   go_to_new_ui: "Switch to the Mint experience"
   enable: "Enable"
+  enter: "Enter"
   email_failure:
     dropped:
       summary_error_text: "Message dropped - Invalid or problematic address"
@@ -357,7 +358,6 @@ en:
   facebook_reauth: "Your Facebook channel is inaccessible. It looks like your username, password, or permission has been changed recently."
   custom_mailbox_error: "Something went wrong. We are unable to fetch emails from your custom mailbox."
   old_ui_deprecation: "You're currently using the old version of Freshdesk which will be deprecated by the 31st of March 2019."
-  old_ui_migraton_agent: "Please contact your administrator."
   old_ui_migraton: "Click here to switch to Mint."
   live_chat_phone_deprecation: "The live chat and phone channel features in your account will be deprecated by the 30th of November 2018."
   live_chat_phone_migration: "Migrate to Freshchat and Freshcaller."
@@ -643,6 +643,10 @@ en:
       nested_unique_names: Agent label should not be same as other two levels
       nested_3rd_level: Label required for 3rd level items
       field_has_section: Field has section
+      values_for: Values for Level
+      note: "Note: "
+      nested_note_content: " Actual deletion of items will happen only on save "
+      nested_field_validation: "Some fields don’t have any value. Please enter value to continue"
     section:
       fsm_section_delete: This default section cannot be deleted
       remove_type: Section is associated with this type
@@ -2515,6 +2519,7 @@ en:
         reports: Reports
         analytics: Analytics
         view_reports: View reports tab
+        view_analytics: View analytics tab
         admin: Admin
         not_administrator: Not view any Administrator options
         operational_admin: Perform Operational Admin actions
@@ -4638,6 +4643,7 @@ en:
     info1: This is a deleted Agent
     info2: Email has already been taken
     info4: Convert to a Contact
+    hard_deleted_email: The contact associated with this email is being permanently deleted and not accessible. Please wait for this to be completed before trying to add the email.
     contact_exists: A requester with email '%{existing_email}' already exists, %{use_email}
     signature: Signature
     insert_placeholder: Insert Placeholder
@@ -6694,6 +6700,13 @@ en:
     name: Account Name
     cancel: Cancel
     customize_portal: "Helpdesk rebranding"
+    sort_conversations:
+      label: "Sort conversations"
+      helpnote: "This is the order in which messages will appear in tickets."
+      latest_top: "You'll now see the newest conversation on top."
+      oldest_top: "You'll now see the oldest conversation on top."
+      option1: "Show newest on top"
+      option2: "Show oldest on top"
     forums_toggle:
         title: "Forums"
         forums_disabled: "Forums have been disabled for this account."

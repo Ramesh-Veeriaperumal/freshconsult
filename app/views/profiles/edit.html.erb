@@ -3,17 +3,17 @@
   <%= render :partial => "freshid_edit" %>
 <% else %>
 <%= content_tag( :h3, t("profile.edit"), :class => "title itil-hide" ) %>
-<%= form_for @profile , :url => { :action=> "update", :controller => 'profiles'} , :html => { :multipart => true } do |f| %>
-  <%= f.error_messages %>
-  <%= render :partial => "form" %>
-  <div class="button-container">
-    <%if  Account.current.verified? &&  User.current.active? %>
-      <a href="#email-preview" class="email-preview" ><%= t("preview")%></a>
-    <% end %>
-    <%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
-      <a href="<%= current_account.falcon_ui_enabled?(current_user) ? '/a/' : '/' %>" target="_top" class="btn"><%= t('cancel') %></a>
-  </div>    
-<%end%>
+  <%= form_for @profile , :url => { :action=> "update", :controller => 'profiles'} , :html => { :multipart => true } do |f| %>
+    <%= f.error_messages %>
+    <%= render :partial => "form" %>
+    <div class="button-container">
+      <%if  Account.current.verified? &&  User.current.active? %>
+        <a href="#email-preview" class="email-preview" ><%= t("preview")%></a>
+      <% end %>
+      <%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
+        <a href="<%= current_account.falcon_ui_enabled?(current_user) ? '/a/' : '/' %>" target="_top" class="btn"><%= t('cancel') %></a>
+    </div>
+  <%end%>
 
 
 <% content_for :sidebar do %>
@@ -31,19 +31,6 @@
   <% end %>
   </div>
 <% end %>
-  <% if current_account.undo_send_enabled? && current_account.falcon_ui_enabled?(current_user) %>
-  <div class="sidepanel">
-    <div class="row-fluid undo-send-option">
-      <div class="span10 align-left undo-toggle"><%= t("undo_toggle") %></div>
-      <div class="span2 align-right">
-        <input rel="toggle" type="checkbox" id="undo_reply" name="undo_send_toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_user.preferences[:agent_preferences][:undo_send]%>checked="true"<%end%> />
-      </div>
-    </div>
-    <div class="row-fluid">
-      <div class=" span12 align-left undo-send-tip"><%= t("undo_toggle_tip") %></div>
-    </div>
-  </div>
-  <% end %>
   <% if show_api_key? %>
     <div class="sidepanel">
     <%= content_tag( :h3, t("profile.api_key.title"), :class => "title" ) %>
@@ -58,6 +45,34 @@
     </div>
     <!-- Include this integrations partial in all user profile pages which shows API key.-->  
     <%= render :partial => "integrations" %>
+  <% end %>
+  <% if current_account.falcon_ui_enabled?(current_user) && (current_account.undo_send_enabled? || current_account.reverse_notes_enabled?)%>
+  <div class="sidepanel">
+    <%if current_account.reverse_notes_enabled?%>
+      <div class="row-fluid">
+        <div class="span10 sort-conversations__label"><%= t("account.sort_conversations.label") %></div>
+        <div class="span12 sort-conversations__select">
+        <%= select_tag :sort_conversations, options_for_select([[t("account.sort_conversations.option1"), false], [t("account.sort_conversations.option2"), true]], current_account.oldest_notes_first_enabled?(current_user)) %>
+          </div>
+      </div>
+      <div class="row-fluid">
+        <div id="sort_conversation" class="span12 align-left sort-conversations__tip" data-notice="<%= t("account.sort_conversations.helpnote") %>" data-alert-false="<%= t("account.sort_conversations.latest_top")%>" data-alert-true="<%= t("account.sort_conversations.oldest_top")%>">
+        <%= t("account.sort_conversations.helpnote") %>
+        </div>
+      </div>
+    <%end%>
+    <%if current_account.undo_send_enabled?%>
+      <div class="row-fluid undo-send-option">
+        <div class="span10 align-left undo-toggle"><%= t("undo_toggle") %></div>
+        <div class="span2 align-right">
+          <input rel="toggle" type="checkbox" id="undo_reply" name="undo_send_toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_user.preferences[:agent_preferences][:undo_send]%>checked="true"<%end%> />
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class=" span12 align-left undo-send-tip"><%= t("undo_toggle_tip") %></div>
+      </div>
+    <%end%>
+  </div>
   <% end %>
 <% end%>
 <script type="text/javascript">
@@ -86,25 +101,39 @@ jQuery(document).ready(function() {
 </script>
 <% end %>
 <script type="text/javascript">
-  function update_preferences(status_url){
-    jQuery.ajax({
-      url: status_url,
-      type: "post"  
-    }).then(()=>{
-      jQuery("#noticeajax").html("<%=t("undo_toggle_success")%>").show();
-      closeableFlash('#noticeajax');
-      jQuery(document).scrollTop(0);
-    }, ()=>{
-      jQuery("#noticeajax").html("<%=t("undo_toggle_error")%>").show();
-      closeableFlash('#noticeajax');
-    })
-  }
-  jQuery("#undo_reply").on('change', function(){
-    if(this.checked){
-      update_preferences("<%= enable_undo_send_path%>");
+  jQuery(document).ready(function() {
+    function sortConversationOrderCallback() {
+      var alertMessage = 'data-alert-'+jQuery("#sort_conversations").val();
+      jQuery("#sort_conversation").html(jQuery("#sort_conversation").attr(alertMessage));
+      setTimeout(function(){ 
+        jQuery("#sort_conversation").html(jQuery("#sort_conversation").attr('data-notice'));
+      }, 2500);
     }
-    else{
-      update_preferences("<%= disable_undo_send_path%>");
+
+    function update_preferences(status_url, reqType = 'post', dataObject = {}, callback){
+      jQuery.ajax({
+        url: status_url,
+        data: dataObject,
+        dataType: 'application/json',
+        type: reqType,
+        success:function(data) {
+          if(typeof(callback) === 'function') {
+            callback();
+          }
+        }
+      });
     }
+    jQuery("#undo_reply").on('change', function(){
+      if(this.checked){
+        update_preferences("<%= enable_undo_send_path%>");
+      }
+      else{
+        update_preferences("<%= disable_undo_send_path%>");
+      }
+    });
+
+    jQuery("#sort_conversations").on('change', function(){
+      update_preferences("<%= set_notes_order_path%>", 'put', { 'oldest_on_top': jQuery("#sort_conversations").val() }, sortConversationOrderCallback.bind(this));
+    });
   });
 </script>

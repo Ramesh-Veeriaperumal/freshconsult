@@ -11,7 +11,7 @@ class UsersController < ApplicationController
                      :only => [:revert_identity, :profile_image,
                                :profile_image_no_blank, :enable_falcon,
                                :disable_falcon, :accept_gdpr_compliance,
-                               :enable_undo_send, :disable_undo_send]
+                               :enable_undo_send, :disable_undo_send, :set_conversation_preference]
   before_filter :set_ui_preference, :only => [:show]
   before_filter :set_selected_tab
   skip_before_filter :load_object , :only => [ :show, :edit ]
@@ -20,6 +20,7 @@ class UsersController < ApplicationController
   before_filter :load_items, :only => :block
   before_filter :has_access_to_enable_falcon?, :only => [:enable_falcon_for_all]
   before_filter :has_access_to_disable_old_ui?, :only => [:disable_old_helpdesk]
+  before_filter :req_feature, :only => [:set_conversation_preference]
 
   ##redirect to contacts
   def index
@@ -191,6 +192,11 @@ class UsersController < ApplicationController
     head :no_content
   end
 
+  def set_conversation_preference
+    current_user.set_notes_pref(params[:oldest_on_top]) if current_account.falcon_ui_enabled?(current_user) && params[:oldest_on_top].present?
+    head :no_content
+  end
+
   protected
   
     def scoper
@@ -233,5 +239,11 @@ class UsersController < ApplicationController
     def has_access_to_disable_old_ui?
       return head(401) unless current_account.falcon_enabled?
       return head(403) if current_account.disable_old_ui_enabled?
+    end
+
+    def req_feature
+      if !current_account.reverse_notes_enabled? || current_user.customer?
+        return head(401)
+      end
     end
 end

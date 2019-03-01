@@ -102,6 +102,15 @@
 								<div class="help-block"><%=t('account.info4')%></div>
 					  		</div>
 						</div>
+						<% if current_account.reverse_notes_enabled? && current_account.falcon_ui_enabled?(current_user) %>
+						<div class="control-group">
+							<%= f.label :sort_conversations, t('account.sort_conversations.label'), :class => "control-label"  %>
+							<div class="controls">
+								<%= select_tag :oldest_on_top, options_for_select([[t("account.sort_conversations.option1"), false], [t("account.sort_conversations.option2"), true]], current_account.oldest_notes_first_enabled?) %>
+								<div class="help-block"><%=t('account.sort_conversations.helpnote')%></div>
+					 		</div>
+						</div>
+						<%end%>
 						<% if current_account.subscription.forum_available_plan? %>
 							<div class="control-group account-forum-toggle">
 								<%= f.label :account_forums, t('account.forums_toggle.title') , :class => "control-label" %>

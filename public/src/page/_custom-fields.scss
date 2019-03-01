@@ -732,3 +732,258 @@ $encrypted-placeholder-color: #FFD18B;
 	50% { background-color: rgba(#F7F7DC,1);}
 	100% { background-color: rgba(#F7F7DC,0);}
 }
+
+//Nested Field revamp Style changes
+
+$delete-color: #a7232f;
+$border-color: #dadfe3;
+$drag-icon-color: #b7c0c7;
+$transparent: rgba(0,0,0,0);
+$deled-choice-color: #e6e9eb;
+$selected-field-color: #6f7c87;
+$enter-icon-color: #acb6be;
+$drag-icon-color-2: #183247;
+$add-icon-color: #76ad20;
+
+
+.modal.nested-field-modal {
+	.modal-body{
+		max-height: 450px;
+	}
+	.nested-section {
+		.nested-icon {
+			font-size: 14px;
+	    border: 1px solid $border-color;
+	    @include padding(0px 4px);
+	    @include margin(4px);
+	    border-radius: 50%;
+	    line-height: 0;
+	    background: #fff;
+	    text-align: center;
+		}
+		.delete-choice {
+	    @include float(right);
+	    color: $selected-field-color;
+	    &:focus, &:hover {
+	    	color: #fff;
+	    	background-color: $delete-color;
+	    }
+		}
+		.ficon-drag-vertical {
+	    font-size: 18px;
+	    cursor: move;
+	    @include margin(0);
+	    @include padding(3px 3px 4px);
+	    color: $drag-icon-color;
+	    display: inline-block;
+		}
+		.dropchoice {
+	    width: 90%;
+	    @include padding(0);
+	    @include margin(0);
+	    display: inline-block;
+	    input[disabled] {
+		    background: #fff;
+		    cursor: not-allowed;
+			}
+			.input-wrapper {
+		    border: 1px solid $border-color;
+		    border-bottom-color: $transparent;
+			}
+			input {
+				@include margin(0);
+				@include padding(0);
+				border: none;
+				box-shadow: none;
+				height: 24px;
+				line-height: 18px;
+				@include padding-left(5px);
+    		width: 90%;
+    		border-radius: 0;
+    		&+ .error {
+    			display: none !important;
+    		}
+			}
+		}
+		.left-icon {
+			@include float(left);
+	    width: 10%;
+		}
+		.right-icon{
+	    position: absolute;
+	    right: 5px;
+	    top: 2px;
+	    &.enter-icon {
+  	    top: 3px;
+		    @include padding-right(5px);
+		    color: $enter-icon-color;
+		    .ficon-enter-icon {
+		    	font-size: 10px;
+			    top: 1px;
+			    position: relative;
+		    }
+	    }
+		}
+		.nested-icon-wrapper {
+	    width: 100%;
+	    border: 1px solid $border-color;
+	    border-bottom: none;
+	    background: #fff;
+	    display: inline-block;
+    }
+		.fieldset {
+			padding: 0;
+			margin: 0;
+			&.ui-sortable-placeholder{
+				&.selected-field {
+					&:before, &:after {
+						visibility: hidden;
+					}
+				}
+			}
+			&.ui-sortable-helper{
+				width: 336px !important;
+				@include margin-left(-10px);
+				.dropchoice {
+					width: 298px;
+				}
+				&:not(.selected-field) {
+					.ficon-drag-vertical {
+						color: $drag-icon-color-2;
+					}
+					.dropchoice .input-wrapper, .left-icon .nested-icon-wrapper {
+						border: 1px solid $border-color;
+						input {
+							width: 98%;
+						}
+					}
+				}
+			}
+		}
+		.add-choice {
+			@include padding(0);
+			@include margin(0);
+			left: 0;
+			line-height:18px;
+			width: 100%;
+			.ficon-plus {
+        @include padding(0px 3px);
+        @include margin(5px);
+		    font-size: 14px;
+		    line-height: 0;
+		    position: relative;
+		    display: inline-block;
+		    background-color: $add-icon-color;
+			}
+			.dropchoice .input-wrapper, .left-icon .nested-icon-wrapper {
+				border-bottom: 1px solid $border-color;
+			}
+			.enter-placeholder {
+		    top: 4px;
+  			opacity: 0.3;
+  			.ficon-enter-icon {
+  				font-size: 10px;
+  			}
+			}
+			input {
+				width: 82%;
+			}
+		}
+		.error-choice .dropchoice .input-wrapper{
+			border-color: $delete-color;
+		}
+		.nested-title {
+			@include padding(0);
+			@include margin(0);
+		  border-radius: 4px 4px 0 0;
+	    border: 1px solid $border-color;
+	    border-bottom: none;
+			.title-text {
+		    font-size: 14px;
+		    @include padding(10px 15px);
+			}
+		}
+		&:not(:last-child) .selected-field:not(.add-choice){
+			&:before, &:after {
+        content: "\A";
+		    border-style: solid;
+		    border-width: 13px 12px;
+		    position: absolute;
+		    right: -23px;
+		    border-color: $transparent;
+		    border-left-color: $selected-field-color;
+		    top: 0px;
+			}
+			&:after{
+				border-left-color: #fff;
+				right: -22px;
+			}
+			&:not(.deleted-choice) {
+				.left-icon {
+					.nested-icon-wrapper{
+						background: $selected-field-color;
+						border-color: $selected-field-color;
+					}
+					.ficon-drag-vertical{
+						color: #fff;
+					}
+				}
+				.dropchoice .input-wrapper{
+					border-color: $selected-field-color;
+					border-right-color: $transparent;
+				}
+			}
+		}
+		.deleted-choice {
+	    background: $deled-choice-color;
+    	.restore-delete{
+		    font-size: 10px;
+		    @include padding(3px);
+		    cursor: pointer;
+		    width: 10px;
+		    @include margin(2px 4px);
+		    display: inline-block;
+    	}
+			.nested-icon-wrapper, .input-wrapper .field_maxlength{
+				background: $deled-choice-color;
+			}
+			.delete-choice {
+				display: none;
+			}
+			&.selected-field.fieldset{
+				&:before, &:after {
+					border-left-color: $deled-choice-color;
+				}
+			}
+			& *:not(.right-icon):not(.restore-delete) {
+				cursor: not-allowed;
+				pointer-events: none;
+			}
+			.dropchoice {
+				opacity: 0.4;
+			}
+		}
+		
+	}
+	.add-choice.selected-field, .nested-section:last-child .selected-field {
+		.dropchoice .input-wrapper{
+   		border-color: rgba(82, 168, 236, 0.8);
+   	}
+	}
+}
+.nested-note {
+  @include float(left);
+  &.error-note {
+  	.warning {
+  		display: none;
+  	}
+  	.error {
+  		display: inline-block;
+  	}
+  	.ficon-notice-o {
+	    font-size: 16px;
+	    vertical-align: text-bottom;
+	    @include padding-right(5px);
+  	}
+  }
+}
