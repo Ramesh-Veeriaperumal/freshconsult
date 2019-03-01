@@ -60,7 +60,8 @@
                           data-plan-id = "<%= plan.id %>"
                           class="plan-button edit-plan"
                           id='<%= "#{ plan.display_name }_button" %>'
-                          data-current-plan=true>
+                          data-current-plan=true
+                          data-billing-cycle=<%= @subscription.renewal_period %>>
                 <%= t('edit_plan') %>
               </a>
             <% end %>

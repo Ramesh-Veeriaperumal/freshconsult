@@ -49,6 +49,9 @@ window.App = window.App || {};
       $(".subscribed-plan-details").html(data_content);
     },
     bindPlanChange: function (ev, button) {
+      if($(button).data('billing-cycle')) {
+        this.billing_cycle = $(button).data('billing-cycle')
+      }
       ev.stopPropagation();
       this.choosePlan(ev.currentTarget);
     },

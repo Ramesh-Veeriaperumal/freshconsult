@@ -234,14 +234,17 @@ module SubscriptionsHelper
     current_account.currency_name.eql?(DEFAULT_CURRENCY)
   end
 
-  def plan_button(plan, button_label, button_classes, free_plan_flag, add_freshdialog, title = "", data_submit_label = "", data_close_label = "", data_classes = "", data_submit_loading = t('please_wait'))
+  def plan_button(plan, button_label, button_classes, free_plan_flag, add_freshdialog,
+    title = "", data_submit_label = "", data_close_label = "", data_classes = "",
+    data_submit_loading = t('please_wait'), billing_cycle = SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual])
     output = []
     output << %(<button data-plan="#{ plan.name.parameterize.underscore }" 
                   data-plan-id="#{ plan.id }" 
                   class="#{button_classes}" 
                   id="#{ plan.name.parameterize.underscore }_button" 
                   data-current-plan="false"
-                  data-free-plan="#{ free_plan_flag }" )
+                  data-free-plan="#{ free_plan_flag }"
+                  data-billing-cycle="#{ billing_cycle }")
     if add_freshdialog
       output << %(data-target="#confirm-message-#{plan.id}"  
                     title="#{ title }"

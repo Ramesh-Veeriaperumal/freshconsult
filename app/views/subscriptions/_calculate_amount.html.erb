@@ -1,10 +1,6 @@
 <%= form_tag plan_subscription_url, :id => "plan_form" do %>
 <%
-	billing_cycle = if current_account.new_2019_pricing_enabled?
-		params[:billing_cycle].present? ? params[:billing_cycle].to_i : SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
-	else
-		@subscription.renewal_period
-	end
+	billing_cycle = params[:billing_cycle].present? ? params[:billing_cycle].to_i : @subscription.renewal_period
 %>
 <div class="billing-cost">
 	<hr class="billing-divider" />
