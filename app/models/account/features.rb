@@ -32,7 +32,7 @@ class Account < ActiveRecord::Base
     :update_billing_info, :allow_billing_info_update, :pricing_plan_change_2019,
     :tag_central_publish, :native_apps, :archive_tickets_api, :bot_agent_response, :simple_outreach, 
     :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
-    :id_for_choices_write
+    :id_for_choices_write, :fluffy
   ].freeze
 
   DB_FEATURES = [
@@ -61,7 +61,8 @@ class Account < ActiveRecord::Base
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
-    :personal_canned_response, :marketplace
+    :personal_canned_response, :marketplace, :reverse_notes,
+    :freshreports_analytics, :disable_old_reports
   ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
 
 
@@ -382,6 +383,16 @@ class Account < ActiveRecord::Base
   def automatic_ticket_assignment_enabled?
     features?(:round_robin) || features?(:round_robin_load_balancing) ||
       skill_based_round_robin_enabled? || omni_channel_routing_enabled?
+  end
+
+  def latest_notes_first_enabled?(current_user = :no_user)
+    !oldest_notes_first_enabled?(current_user)
+  end
+
+  def oldest_notes_first_enabled?(current_user = :no_user)
+    return true unless reverse_notes_enabled?
+    user_settings = current_user.old_notes_first? if current_user != :no_user
+    user_settings.nil? ? account_additional_settings.old_notes_first? : user_settings
   end
   
   # Need to cleanup bellow code snippet block with 2019 plan changes release

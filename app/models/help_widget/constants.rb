@@ -18,7 +18,7 @@ class HelpWidget < ActiveRecord::Base
       :form_button_text => I18n.t('help_widget.form_button_text'),
       :form_submit_message => I18n.t('help_widget.form_submit_message'),
       :attach_file => true,
-      :screenshot => true,
+      :screenshot => false,
       :captcha => true
     },
     :appearance => {

@@ -671,4 +671,8 @@ widget_attachment_create:
 #Custom translations
 languages:
   $ref: ./response/admin/accounts/languages.yaml
+
+# Config Data 
+configs_show:
+  $ref: ./response/configs/show.yaml
   

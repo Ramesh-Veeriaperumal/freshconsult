@@ -154,6 +154,7 @@ Helpkit::Application.routes.draw do
         get :features_list
         put :bitmap_add_feature
         put :bitmap_revoke_feature
+        put :execute_script
       end
     end
 
@@ -565,6 +566,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    # to get any config data
+    resources :configs, controller: 'ember/configs', only: [:show]
+
     get 'canned_responses/search', to: 'ember/canned_responses#search'
 
     # audit log path
@@ -639,7 +643,6 @@ Helpkit::Application.routes.draw do
                                         only: [:index]
     resources :agent_password_policy, controller: 'ember/agent_password_policies',
                                         only: [:index]
-
     resource :subscription, controller: 'admin/subscriptions', only: [:show]
     get '/plans', to: 'admin/subscriptions#plans'
 
@@ -773,6 +776,29 @@ Helpkit::Application.routes.draw do
     resources :tickets, controller: 'widget/tickets', only: [:create]
     resources :ticket_fields, controller: 'widget/ticket_fields', only: [:index]
     resources :attachments, controller: 'widget/attachments', only: [:create]
+    namespace :widget, path: '' do
+      namespace :search do
+        resources :solutions, controller: 'solutions' do
+          collection do
+            post :results, path: ''
+          end
+        end
+      end
+      namespace :solutions do
+        resources :article, path: '', controller: 'articles' do
+          collection do
+            get :suggested_articles
+          end
+        end
+        resources :article, controller: 'articles', only: :show do
+          member do
+            put :thumbs_up
+            put :thumbs_down
+            put :hit
+          end
+        end
+      end
+    end
   end
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do

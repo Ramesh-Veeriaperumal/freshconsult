@@ -1,0 +1,20 @@
+get:
+  tags: [Widget Suggested Articles]
+  summary: Suggested articles for widget
+  description: Suggested articles for widget
+  responses:
+    200:
+      description: Success
+      schema:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'

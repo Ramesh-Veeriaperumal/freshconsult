@@ -870,14 +870,7 @@
             "name": "type",
             "in": "query",
             "type": "string",
-            "description": "ticket_type of the ticket to be filtered with",
-            "enum": [
-              "Question",
-              "Incident",
-              "Feature Request",
-              "Problem",
-              "Service Task"
-            ]
+            "description": "ticket_type of the ticket to be filtered with"
           }
         ],
         "responses": {
@@ -914,14 +907,7 @@
             "name": "type",
             "in": "query",
             "type": "string",
-            "description": "ticket_type of the ticket to be filtered with",
-            "enum": [
-              "Question",
-              "Incident",
-              "Feature Request",
-              "Problem",
-              "Service Task"
-            ]
+            "description": "ticket_type of the ticket to be filtered with"
           }
         ],
         "responses": {
@@ -3522,6 +3508,7 @@
           "404": {
             "description": "Import not found"
           }
+        }
       }
     },
     "/contacts/imports/{id}/cancel": {
@@ -9959,6 +9946,206 @@
         }
       }
     },
+    "/widget/search/solutions": {
+      "post": {
+        "tags": [
+          "Widget Search Solution"
+        ],
+        "summary": "Search solution articles for widget",
+        "description": "Search solution articles for widget",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "article_seacrh",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "term": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/widget/suggested_articles": {
+      "get": {
+        "tags": [
+          "Widget Suggested Articles"
+        ],
+        "summary": "Suggested articles for widget",
+        "description": "Suggested articles for widget",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/widget/solutions/article/{id}": {
+      "get": {
+        "tags": [
+          "Widget Solution Article"
+        ],
+        "summary": "Get solution article for widget",
+        "description": "Get solution article for widget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "attachments": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/attachment"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/widget/solutions/article/{id}/hit": {
+      "put": {
+        "tags": [
+          "Widget Solution Article"
+        ],
+        "summary": "Increase hit count of solution article in widget",
+        "description": "Increase hit count of solution article in widget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/widget/solutions/article/{id}/thumbs_up": {
+      "put": {
+        "tags": [
+          "Widget Solution Article"
+        ],
+        "summary": "Increase thumbs_up count of solution article in widget",
+        "description": "Increase thumbs_up count of solution article in widget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/widget/solutions/article/{id}/thumbs_down": {
+      "put": {
+        "tags": [
+          "Widget Solution Article"
+        ],
+        "summary": "Increase thumbs_down count of solution article in widget",
+        "description": "Increase thumbs_down count of solution article in widget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/business_hours": {
       "get": {
         "summary": "Business Hours",
@@ -10344,6 +10531,40 @@
             "schema": {
               "$ref": "#/definitions/request_error_with_data"
             }
+          }
+        }
+      }
+    },
+    "/configs/{id}": {
+      "get": {
+        "tags": [
+          "Configs"
+        ],
+        "summary": "Configs Show",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Config Information",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/configs_show"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
       }
@@ -20643,6 +20864,15 @@
         "content": {
           "type": "string",
           "format": "byte"
+        }
+      }
+    },
+    "configs_show": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Config Information"
         }
       }
     }

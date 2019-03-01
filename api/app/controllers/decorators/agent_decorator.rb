@@ -15,6 +15,7 @@ class AgentDecorator < ApiDecorator
     {
       available: record.available,
       show_rr_toggle: record.toggle_availability?,
+      latest_notes_first: Account.current.latest_notes_first_enabled?(record.user),
       occasional: record.occasional,
       id: record.user_id,
       ticket_scope: record.ticket_permission,

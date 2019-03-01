@@ -68,6 +68,14 @@ module Ember
       contact_ids
     end
 
+    def create_n_marked_for_hard_delete_users(count, account, params = {})
+      contact_ids = []
+      count.times do
+        contact_ids << add_marked_for_hard_delete_user(account, params).id
+      end
+      contact_ids
+    end
+
     def construct_other_companies_hash(company_ids)
       other_companies = []
       (1..company_ids.count-1).each do |itr|
@@ -780,6 +788,12 @@ module Ember
       assert_response 405
     end
 
+    def test_deletion_of_hard_deleted_contact
+      contact_id = add_marked_for_hard_delete_user(@account)
+      delete :destroy, controller_params(version: 'private', id: contact_id)
+      assert_response 404
+    end
+
     def test_deletion_with_errors
       contact = add_new_user(@account)
       User.any_instance.stubs(:save).returns(false)
@@ -794,6 +808,12 @@ module Ember
       contact = add_new_user(@account, deleted: true)
       put :restore, controller_params(version: 'private', id: contact.id)
       assert_response 204
+    end
+
+    def marked_for_delete_restore
+      contact = add_marked_for_hard_delete_user(@account)
+      put :restore, controller_params(version: 'private', id: contact.id)
+      assert_response 404
     end
 
     def test_restoring_non_existing_contact
@@ -888,6 +908,12 @@ module Ember
 
     def bulk_restore
       contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, deleted: true)
+      put :bulk_restore, construct_params({ version: 'private' }, ids: contact_ids)
+      assert_response 204
+    end
+
+    def bulk_restore_of_marked_for_hard_deleted_contacts
+      contact_ids = create_n_marked_for_hard_delete_users(BULK_CONTACT_CREATE_COUNT, @account, deleted: true)
       put :bulk_restore, construct_params({ version: 'private' }, ids: contact_ids)
       assert_response 204
     end

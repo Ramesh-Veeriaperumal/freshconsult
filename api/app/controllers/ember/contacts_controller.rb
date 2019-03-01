@@ -337,9 +337,15 @@ module Ember
         item.save
       end
 
+      def destroy_item(item)
+        return false if item.marked_for_hard_delete? || spam_or_deleted?(item)
+
+        destroy_or_delete(item)
+      end
+
       def restore_item(item)
-        return false unless item.deleted
-        return false if item.agent_deleted_forever?
+        return false if item.marked_for_hard_delete? || item.agent_deleted_forever? || !item.deleted
+
         item.deleted = false
         item.save
       end

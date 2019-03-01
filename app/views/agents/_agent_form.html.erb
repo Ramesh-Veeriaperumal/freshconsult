@@ -24,8 +24,12 @@
 
   <% if @existing_user %>
   	<div id="errorExplanation" class="errorExplanation">
-		  <%= "#{t('agent.info2')} " %>
-		  <%= link_to(t('agent.view_user') , @existing_user ) %>
+      <% if @existing_user.marked_for_hard_delete? %>
+        <%= "#{t('agent.hard_deleted_email')} " %>
+      <% else %>
+        <%= "#{t('agent.info2')} " %>
+        <%= link_to(t('agent.view_user') , @existing_user ) %>
+      <% end %>
 	  </div>
   <%else%>
     <%= error_messages_for :user %>

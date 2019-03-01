@@ -225,4 +225,8 @@ Authority::Authorization::PrivilegeList.build do
     resource :"proactive/rule"
     resource :"proactive/simple_outreach"
   end
+
+  view_analytics do
+    resource :"ember/config", only: [:show]
+  end
 end

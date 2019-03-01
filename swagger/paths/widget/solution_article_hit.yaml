@@ -1,0 +1,13 @@
+put:
+  tags: [Widget Solution Article]
+  summary: Increase hit count of solution article in widget
+  description: Increase hit count of solution article in widget
+  parameters:
+    - name: id
+      in: path
+      type: integer
+      format: int64
+      required: true
+  responses:
+    204:
+      description: Success

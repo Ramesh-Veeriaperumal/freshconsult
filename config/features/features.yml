@@ -164,7 +164,7 @@
       :report_field_regenerate: 159
       :saml_old_issuer: 160
       :countv2_reads: 161
-      :g10_10: 162
+      :reverse_notes: 162
       :opt_out_analytics: 163
       :disable_old_ui: 164
       :omni_channel_routing: 165
@@ -325,6 +325,8 @@
       :reports_98: 320
       :reports_99: 321
       :reports_100: 322
+      :freshreports_analytics: 323
+      :disable_old_reports: 324
 :selectable_features:
   :redis_display_id: true
   :branding: true
@@ -364,3 +366,4 @@
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
   :undo_send: false
+  :reverse_notes: false

@@ -126,3 +126,4 @@ helpdesk:
     - emailserv_request
     - saml_config
     - datadog
+    - freshvisuals

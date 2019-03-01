@@ -56,6 +56,8 @@ class ApiContactsController < ApiApplicationController
   end
 
   def destroy
+    return head 404 if @item.marked_for_hard_delete?
+
     @item.update_attribute(:deleted, true)
     head 204
   end
@@ -70,7 +72,7 @@ class ApiContactsController < ApiApplicationController
   end
 
   def restore
-    if (@item.deleted && @item.parent_id != 0) || @item.agent_deleted_forever?
+    if (@item.deleted && @item.parent_id != 0) || @item.agent_deleted_forever? || @item.marked_for_hard_delete?
       head 404
     else
       @item.update_attribute(:deleted, false)

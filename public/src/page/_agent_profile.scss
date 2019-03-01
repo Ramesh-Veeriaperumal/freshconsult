@@ -5,6 +5,24 @@
 	}
 }
 
+.sort-conversations__label {
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.sort-conversations__select {
+	margin: 0 0 6px;
+}
+
+.sort-conversations__tip {
+	color: $grayLight;
+	margin-top: -4px;
+	line-height: 1.4;
+	font-size: 12px;
+	margin-bottom: 20px;
+	min-height: 40px;
+}
+
 .undo-send-option {
 	padding-top: 4px;
 }
@@ -71,7 +89,7 @@
 			font-size: 12px;
 			line-height: 18px;
 		}
-		
+
 	}
 
 	.profile-rightcontent{
@@ -194,7 +212,7 @@
 
 #searching-agent-email .loading-box{
 	top: 250px;
-    width: 110px; 
+    width: 110px;
     height: 2%;
     position: absolute ;
     background-color: $content-color;
