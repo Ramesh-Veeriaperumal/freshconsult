@@ -15,11 +15,14 @@ class CannedResponsesControllerTest < ActionController::TestCase
   include AwsTestHelper
 
   def setup
-    shard = ShardMapping.first
-    shard.status = 200 unless shard.status == 200
-    shard.save
+    CannedResponsesController.any_instance.stubs(:accessible_from_esv2).returns(nil)
     super
     before_all
+  end
+
+  def teardown
+    super
+    CannedResponsesController.unstub(:accessible_from_esv2)
   end
 
   @@sample_ticket  = nil
@@ -326,7 +329,7 @@ class CannedResponsesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_group_access
-    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 2, [1])))
+    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 2, [Account.first.groups_from_cache.first.try(:id)])))
     assert_response 201
     match_json(ca_response_show_pattern(ActiveSupport::JSON.decode(response.body)['id']))
   end
@@ -347,7 +350,7 @@ class CannedResponsesControllerTest < ActionController::TestCase
 
   def test_create_with_group_access_with_multipart
     @request.env['CONTENT_TYPE'] = 'multipart/form-data'
-    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 2, [1])))
+    post :create, construct_params(build_ca_param(create_ca_response_input(@@ca_folder_all.id, 2, [Account.first.groups_from_cache.first.try(:id)])))
     assert_response 201
     match_json(ca_response_show_pattern(ActiveSupport::JSON.decode(response.body)['id']))
   end
@@ -359,7 +362,7 @@ class CannedResponsesControllerTest < ActionController::TestCase
   end
 
   def test_create_personal_with_group
-    post :create, construct_params(build_ca_param(create_ca_response_input(@ca_folder_personal.id, 2, [1])))
+    post :create, construct_params(build_ca_param(create_ca_response_input(@ca_folder_personal.id, 2, [Account.first.groups_from_cache.first.try(:id)])))
     assert_response 400
     match_json(validation_error_pattern(bad_request_error_pattern(:folder_id, 'You can only save canned responses just visible to you in the personal folder.', code: 'invalid_value')))
   end
@@ -371,7 +374,7 @@ class CannedResponsesControllerTest < ActionController::TestCase
   end
 
   def test_craete_invalid_folder_id
-    post :create, construct_params(build_ca_param(create_ca_response_input(100, 2, [1])))
+    post :create, construct_params(build_ca_param(create_ca_response_input(100, 2, [Account.first.groups_from_cache.first.try(:id)])))
     assert_response 400
     match_json(validation_error_pattern(bad_request_error_pattern(:folder_id, 'Please specify a valid folder ID.', code: 'invalid_value')))
   end
@@ -532,7 +535,7 @@ class CannedResponsesControllerTest < ActionController::TestCase
     ca_response1 = create_canned_response(@@ca_folder_all.id)
     canned_response = {
       visibility: 2,
-      group_ids: [1]
+      group_ids: [Account.first.groups_from_cache.first.try(:id)]
     }
     put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
     assert_response 200
@@ -545,7 +548,7 @@ class CannedResponsesControllerTest < ActionController::TestCase
     ca_response1 = create_canned_response(@ca_folder_personal.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
     canned_response = {
       visibility: 2,
-      group_ids: [1]
+      group_ids: [Account.first.groups_from_cache.first.try(:id)]
     }
     put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
     assert_response 400
@@ -555,7 +558,7 @@ class CannedResponsesControllerTest < ActionController::TestCase
     ca_response1 = create_canned_response(@ca_folder_personal.id, ::Admin::UserAccess::VISIBILITY_KEYS_BY_TOKEN[:only_me])
     canned_response = {
       visibility: 2,
-      group_ids: [1],
+      group_ids: [Account.first.groups_from_cache.first.try(:id)],
       folder_id: @@ca_folder_all.id
     }
     put :update, construct_params(build_ca_param(canned_response)).merge(id: ca_response1.id)
