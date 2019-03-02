@@ -8,6 +8,9 @@ module Helpdesk
       def setup
         Account.stubs(:current).returns(Account.first)
         Account.stubs(:find_by_full_domain).returns(Account.first)
+        shard = ShardMapping.first
+        shard.status = 200 unless shard.status == 200
+        shard.save
         @from_email = Faker::Internet.email
         @to_email = Faker::Internet.email
       end

@@ -15,6 +15,9 @@ class CannedResponsesControllerTest < ActionController::TestCase
   include AwsTestHelper
 
   def setup
+    shard = ShardMapping.first
+    shard.status = 200 unless shard.status == 200
+    shard.save
     super
     before_all
   end
