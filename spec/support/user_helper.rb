@@ -35,6 +35,8 @@ module UsersHelper
     if options[:unique_external_id]
       new_user.unique_external_id = options[:unique_external_id]
     end
+    @account = Account.first if @account.blank?
+    options[:role_ids] = [@account.roles.find_by_name("Agent").id] if options[:role_ids].blank?
     new_user.agent = new_agent
     new_user.privileges = options[:privileges] || account.roles.find_by_id(options[:role_ids].first).privileges
     v = new_user.save_without_session_maintenance

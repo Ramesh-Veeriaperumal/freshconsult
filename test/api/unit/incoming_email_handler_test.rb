@@ -683,7 +683,7 @@ module Helpdesk
         subject = 'Test Subject'
         params = default_params(id, subject)
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
-        ticket_response = incoming_email_handler.fetch_archive_or_normal_ticket_by_display_id(1, Account.first)
+        ticket_response = incoming_email_handler.fetch_archive_or_normal_ticket_by_display_id(Account.first.tickets.first.try(:display_id), Account.first)
         assert_equal Helpdesk::Ticket.first.try(:id), ticket_response.try(:id)
       end
 

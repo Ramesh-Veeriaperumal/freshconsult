@@ -12,6 +12,13 @@ class Support::NotesControllerTest < ActionController::TestCase
 
 
   def setup
+    Account.any_instance.stubs(:current).returns(Account.first)
+    @account = Account.current
+    super
+  end
+
+  def teardown
+    Account.unstub(:current)
     super
   end
 
@@ -19,8 +26,9 @@ class Support::NotesControllerTest < ActionController::TestCase
   	user = add_new_user(Account.current, :active => true)
     user.make_current
     t1 = create_ticket(:requester_id => user.id)
+    Helpdesk::Ticket.stubs(:find_by_param).returns(Account.first.tickets.last)
     login_as(user)
-    post :create, :version => :private, ticket_id: t1.id, :helpdesk_note => { :note_body_attributes => { :body => "Hi Hello" }}
+    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body => "Hi Hello" }}
     assert_response 302
     assert flash[:notice], "The note has been added to your ticket."
 
@@ -36,9 +44,10 @@ class Support::NotesControllerTest < ActionController::TestCase
   	user = add_new_user(Account.current, :active => true)
     user.make_current
     t1 = create_ticket(:requester_id => user.id)
+    Helpdesk::Ticket.stubs(:find_by_param).returns(Account.first.tickets.last)
     login_as(user)
     Helpdesk::Note.any_instance.stubs(:save_note).returns(false)
-    post :create, :version => :private, ticket_id: t1.id, :helpdesk_note => { :note_body_attributes => { :body => "Hi Hello" }}
+    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body => "Hi Hello" }}
     assert_response 302
     # assert flash[:notice], "The note has been added to your ticket."
     Helpdesk::Note.any_instance.unstub(:save_note)
@@ -53,8 +62,9 @@ class Support::NotesControllerTest < ActionController::TestCase
     user1 = add_new_user(Account.current, :active => true)
     remove_privilege(user, :manage_tickets)
     t1 = create_ticket(:requester_id => user1.id)
+    Helpdesk::Ticket.stubs(:find_by_param).returns(Account.first.tickets.last)
     login_as(user)
-    post :create, :version => :private, ticket_id: t1.id, :helpdesk_note => { :note_body_attributes => { :body => "Hi Hello" }}
+    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body => "Hi Hello" }}
     assert_response 302
     log_out
     user.destroy
