@@ -1,0 +1,9 @@
+<%= node[:opsworks][:environment] %>:
+  :esv2_host:  <%= node[:ymls][:elastic_search][:search_v2][:host_name] %>
+  <% queue_suffix = node[:ymls][:shoryuken][:queue_config][:cluster_etlqueue][:sqs_queue].split("-") %>
+  <% queue_suffix.any? {|q_n| q_n.gsub!(q_n,"%{cluster}") if q_n.include?("cluster")} %>
+  :queue_key: <%= "#{queue_suffix.join("-")}" %>
+  :esv2_service_host: <%= node[:ymls][:elastic_search][:search_v2][:search_service] %>
+  :product_name: <%= node[:ymls][:elastic_search][:search_v2][:product_name] %>
+  :auth_token: <%= node[:ymls][:elastic_search][:search_v2][:service_auth_token] %>
+

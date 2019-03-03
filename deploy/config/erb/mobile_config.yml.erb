@@ -1,0 +1,5 @@
+notifications_url:
+  <%= node[:opsworks][:environment] %>: <%= node[:ymls][:mobile_push][:notifications_url] %>
+
+secret_key: <%= node[:ymls][:mobile_push][:secret_key] %>
+mobile_token_key: <%= node[:ymls][:mobile_push][:mobile_token_key] %>

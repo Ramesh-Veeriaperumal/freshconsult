@@ -1,0 +1,17 @@
+<%= node[:opsworks][:environment]%>:
+  communication_url: "<%= node[:ymls][:livechat][:comm_url]%>"
+  secret_key: "<%= node[:ymls][:livechat][:secret_key]%>"
+  chat_debug: 1
+  app_id: <%=node[:ymls][:livechat][:app_id]%>
+  http_only: <%=node[:ymls][:livechat][:http_only]%>
+  asset_url:
+    js: "<%=node[:ymls][:livechat][:asset_js_url]%>"
+    css: "<%= node[:ymls][:livechat][:asset_css_url]%>"
+    cloudfront: "<%= node[:ymls][:livechat][:cloudfront_url]%>"
+  support_account:
+    url : "<%=node[:ymls][:livechat][:support_url]%>"
+    site_id: "<%=node[:ymls][:livechat][:support_site_id]%>"
+    widget_id : "<%=node[:ymls][:livechat][:support_widget_id]%>"
+    livechat_server : "<%= node[:ymls][:livechat][:livechat_server]%>"
+  cobrowsing:
+    socket_io_server: "<%= node[:ymls][:livechat][:socket_io_server]%>"

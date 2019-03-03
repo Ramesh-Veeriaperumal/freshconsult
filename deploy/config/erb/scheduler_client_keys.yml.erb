@@ -1,0 +1,6 @@
+<%= node[:opsworks][:environment] %>:
+  end_point: <%= node[:ymls][:scheduler_client_keys][:end_point] %>
+  token: <%= node[:ymls][:scheduler_client_keys][:token] %>
+  todo_group_name: <%= node[:ymls][:scheduler_client_keys][:todo_group_name] %>
+  export_group_name: <%= node[:ymls][:scheduler_client_keys][:export_group_name] %>
+

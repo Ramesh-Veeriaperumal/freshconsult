@@ -1,0 +1,7 @@
+common: &common
+  feedback_path: api/channel/tickets
+
+<%= node[:opsworks][:environment] %>: 
+  <<: *common
+  api_key: <%= node[:ymls][:product_feedback][:api_key] %>
+  feedback_account: <%= node[:ymls][:config][:feedback_account] %>

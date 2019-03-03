@@ -1,0 +1,7 @@
+hosted_zone: <%= node[:ymls][:pod_dns][:hosted_zone] %>
+CNAME:
+  ttl: 600
+  value:
+    <% node[:ymls][:pod_dns][:domains].each do |pod_info, domain| %>
+    <%= pod_info %>: <%= domain %>
+    <% end %>

@@ -1,0 +1,5 @@
+defaults: &defaults
+  secret_key: <%= node[:ymls][:mailbox][:secret_key]%>
+
+<%= node[:opsworks][:environment] %>:
+  <<: *defaults

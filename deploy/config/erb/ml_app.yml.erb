@@ -1,0 +1,11 @@
+<%= node[:opsworks][:environment] %>:
+  auth_key: <%= node[:ymls][:ml_app][:auth_key] %>
+  host: <%= node[:ymls][:ml_app][:host] %>
+  method: post
+  url: <%= node[:ymls][:ml_app][:url] %>
+  timeout: 5
+  ticket_count: 12
+  kissmetrics: <%= node[:ymls][:ml_app][:kissmetrics] %>
+  sentiment_host: <%= node[:ymls][:ml_app][:sentiment_host] %>
+  predict_url: <%= node[:ymls][:ml_app][:predict_url] %>
+  feedback_url: <%= node[:ymls][:ml_app][:feedback_url] %>

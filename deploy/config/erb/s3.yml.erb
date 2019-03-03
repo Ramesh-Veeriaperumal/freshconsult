@@ -1,0 +1,29 @@
+common: &common
+  access_key_id: <%= node[:opsworks_access_keys][:access_key_id]%>
+  secret_access_key: <%= node[:opsworks_access_keys][:secret_access_key] %>
+  region: <%= node[:opsworks_access_keys][:region] ? node[:opsworks_access_keys][:region] : 'us-east-1' %>
+  s3_host_name: <%= node[:opsworks_access_keys][:s3_host_name] %>
+  AWS_CALLING_FORMAT: SUBDOMAIN
+  access_key_id_euc: <%= node[:opsworks_access_keys][:access_key_id]%>
+  secret_access_key_euc: <%= node[:opsworks_access_keys][:secret_access_key] %>
+  region_euc: 'eu-central-1'
+  http_open_timeout: 10,
+  http_read_timeout: 15,
+  max_retries: 1
+
+<%= node[:opsworks][:environment]%>:
+  <<: *common
+  bucket: <%= node[:ymls][:s3][:bucket] %>
+  reports_bucket: <%= node[:ymls][:s3][:reports_bucket] %>
+  ticket_body: <%= node[:ymls][:s3][:ticket_body] %>
+  note_body: <%= node[:ymls][:s3][:note_body] %>
+  archive_ticket_body: <%= node[:ymls][:s3][:archive_ticket_body] %>
+  archive_note_body: <%= node[:ymls][:s3][:archive_note_body] %>
+  contact_note_body: <%= node[:ymls][:s3][:contact_note_body] %>
+  company_note_body: <%= node[:ymls][:s3][:company_note_body] %>
+  bi_reports_list_bucket: <%= node[:ymls][:s3][:bi_reports_list_bucket] %>
+  primary_email_storage_bucket: <%= node[:ymls][:s3][:primary_email_storage_bucket] %>
+  archive_email_storage_bucket: <%= node[:ymls][:s3][:archive_email_storage_bucket] %>
+  failed_email_storage_bucket: <%= node[:ymls][:s3][:failed_email_storage_bucket] %>
+  baikal_bucket: <%= node[:ymls][:s3][:baikal_bucket] %>
+  help_widget_bucket: <%= node[:ymls][:s3][:help_widget_bucket] %>

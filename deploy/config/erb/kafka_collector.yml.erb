@@ -1,0 +1,6 @@
+<%= node[:opsworks][:environment] %>:
+  service: <%= node[:ymls][:kafka][:service]%>
+  kafka_collector_endpoint: <%= node[:ymls][:kafka][:endpoint]%>
+  path: <%= node[:ymls][:kafka][:path] %>
+  method: <%= node[:ymls][:kafka][:method] %>
+  timeout: <%= node[:ymls][:kafka][:timeout] %>

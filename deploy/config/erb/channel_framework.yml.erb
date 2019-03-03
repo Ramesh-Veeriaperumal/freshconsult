@@ -1,0 +1,6 @@
+<%= node[:opsworks][:environment] %>:
+  dedup_interval: <%= node[:ymls][:channel_framework][:dedup_interval] %>
+  hop_interval: <%= node[:ymls][:channel_framework][:hop_interval] %>
+  schema_version: <%= node[:ymls][:channel_framework][:schema_version] %>
+  pod: <%= node[:ymls][:channel_framework][:pod] %>
+  region: <%= node[:opsworks_access_keys][:region] %>

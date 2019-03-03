@@ -1,0 +1,101 @@
+oauth_options:
+  salesforce:
+    site: https://login.salesforce.com
+    authorize_url: /services/oauth2/authorize
+    token_url: /services/oauth2/token
+  google:
+    site: https://www.google.com/
+  mailchimp:
+    authorize_uri: https://login.mailchimp.com/oauth2/authorize
+    access_token_uri: https://login.mailchimp.com/oauth2/token
+  nimble:
+    token_method: :post
+    site: "https://api.nimble.com"
+  google_oauth2:
+    site: https://accounts.google.com
+    token_url: /o/oauth2/token
+  box:
+    site: https://www.box.com
+    token_url: /api/oauth2/token
+    authorize_url: /api/oauth2/authorize
+  slack:
+    site: "https://slack.com" 
+  infusionsoft:
+    authorize_url: "https://signin.infusionsoft.com/app/oauth/authorize"
+    token_url: "https://api.infusionsoft.com/token"
+  quickbooks:
+    site: "https://oauth.intuit.com"
+    request_token_path: "/oauth/v1/get_request_token"
+    authorize_url: "https://appcenter.intuit.com/Connect/Begin"
+    access_token_path: "/oauth/v1/get_access_token" 
+  google_contacts:
+    site: https://accounts.google.com
+    token_url: /o/oauth2/token
+
+<% layer = node[:opsworks][:instance][:layers].first %>
+
+<%= node[:opsworks][:environment]%>:
+ salesforce:
+  consumer_token: <%= node[:ymls][:oauth_config][:salesforce_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:salesforce_secret] %>
+ quickbooks:
+  consumer_token: <%= node[:ymls][:oauth_config][:quickbooks_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:quickbooks_secret] %>
+ github:
+  consumer_token: <%= node[:ymls][:oauth_config][:github_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:github_secret] %>
+ google_oauth2:
+  consumer_token: <%= node[:ymls][:oauth_config][:google_oauth2_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:google_oauth2_secret] %>
+  api_key: <%= node[:ymls][:oauth_config][:google_oauth2_apikey] %>
+  client_id_ios: <%= node[:ymls][:oauth_config][:google_oauth2_client_id_ios] %>
+  client_id_iosv4_classic: <%= node[:ymls][:oauth_config][:google_oauth2_client_id_iosv4_classic] %>
+ google_contacts:
+  consumer_token: <%= node[:ymls][:oauth_config][:google_contacts_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:google_contacts_secret] %>
+ google_gadget_oauth2:
+  consumer_token: <%= node[:ymls][:oauth_config][:google_gadget_oauth2_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:google_gadget_oauth2_secret] %>
+ mailchimp:
+  consumer_token: <%= node[:ymls][:oauth_config][:mailchimp_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:mailchimp_secret] %>
+ constantcontact:
+  consumer_token: <%= node[:ymls][:oauth_config][:constantcontact_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:constantcontact_secret] %>
+ nimble:
+  consumer_token: <%= node[:ymls][:oauth_config][:nimble_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:nimble_secret] %>
+ surveymonkey:
+  consumer_token: <%= node[:ymls][:oauth_config][:surveymonkey_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:surveymonkey_secret] %>
+  options:
+    api_key: <%= node[:ymls][:oauth_config][:surveymonkey_api_key] %>
+ shopify:
+   consumer_token: <%= node[:ymls][:oauth_config][:shopify_token] %>
+   consumer_secret: <%= node[:ymls][:oauth_config][:shopify_secret] %>
+   options:
+      scope: 'read_orders'   
+ box:
+  consumer_token: <%= node[:ymls][:oauth_config][:box_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:box_secret] %>
+ slack:
+   consumer_token: <%= node[:ymls][:oauth_config][:slack_token] %>
+   consumer_secret: <%= node[:ymls][:oauth_config][:slack_secret] %>
+   slash_command_token: <%= node[:ymls][:oauth_config][:slack_slash_cmd_token] %>
+ infusionsoft:
+   consumer_token: <%= node[:ymls][:oauth_config][:infusionsoft_token] %>
+   consumer_secret: <%= node[:ymls][:oauth_config][:infusionsoft_secret] %>
+ outlook_contacts: 
+  consumer_token: <%= node[:ymls][:oauth_config][:outlook_token] %>
+  consumer_secret: <%= node[:ymls][:oauth_config][:outlook_secret] %>
+ salesforce_v2:
+   consumer_token: <%= node[:ymls][:oauth_config][:salesforce_v2_token] %>
+   consumer_secret: <%= node[:ymls][:oauth_config][:salesforce_v2_secret] %>
+<% unless layer.include?("twilio") %>
+ microsoft_teams:
+   consumer_token: <%= node[:ymls][:oauth_config][:microsoft_teams_token] %>
+   consumer_secret: <%= node[:ymls][:oauth_config][:microsoft_teams_secret] %>
+ google_hangout_chat:
+   consumer_token: <%= node[:ymls][:oauth_config][:google_hangout_chat_token] %>
+   consumer_secret: <%= node[:ymls][:oauth_config][:google_hangout_chat_secret] %>
+<% end %>

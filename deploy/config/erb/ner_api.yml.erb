@@ -1,0 +1,7 @@
+common: &common
+  username: <%= node[:ymls][:ner][:username] %>
+  secret_key: <%= node[:ymls][:ner][:secret_key] %>
+  iv: <%= node[:ymls][:ner][:iv] %>
+<%= node[:opsworks][:environment] %>: 
+  <<: *common
+  datetime: <%= node[:ymls][:ner][:datetime] %>

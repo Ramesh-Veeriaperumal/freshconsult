@@ -1,0 +1,7 @@
+<%= node[:opsworks][:environment]%>:
+  collab_url: <%= node[:ymls][:collab][:collab_url] %>
+  rts_url: <%= node[:ymls][:collab][:rts_url] %>
+  secret_key: <%= node[:ymls][:collab][:secret_key] %>
+  freshconnect_url: <%= node[:ymls][:collab][:freshconnect_url] %>
+  product_name: <%= node[:ymls][:collab][:product_name] %>
+  freshconnect_endpoint: <%= node[:ymls][:collab][:freshconnect_endpoint] %>

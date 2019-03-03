@@ -1,0 +1,10 @@
+autopilot:
+  common: &common
+    contact_url: "https://api2.autopilothq.com/v1/contact"
+    trigger_url: "https://api2.autopilothq.com/v1/trigger/%{trigger_code}/contact/%{person_id}"
+    contact_with_trigger_url: "https://api2.autopilothq.com/v1/trigger/%{trigger_code}/contact"
+  <%= node[:opsworks][:environment]%>:
+    <<: *common
+    access_key: <%= node[:ymls][:autopilot][:access_key] %>
+    trigger_code: "0002"
+    ui_token: <%= node[:ymls][:autopilot][:ui_token] %>

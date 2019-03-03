@@ -1,0 +1,71 @@
+<%= node[:opsworks][:environment]%>:
+  adapter:  mysql2
+  database: <%= node[:ymls][:database][:global][:database] %>
+  username: <%= node[:ymls][:database][:global][:username] %>
+  password: <%= node[:ymls][:database][:global][:password] %>
+  host: <%= node[:ymls][:database][:global][:host] %>
+  pool: <%= @pool_size %>
+  port: 3306
+  encoding: utf8
+  reconnect: true
+  <% if @is_app_layer %>
+  read_timeout: 20
+  connect_timeout: 5
+  semian:
+    enable: true # Top level flag to turn on/off Semian.
+    success_threshold: 3 # No of consecutive success after which circuit changes from half_open to closed state.
+    error_threshold: 3 # No of consecutive errors after which circuit opens.
+    error_timeout: 15 # Time taken to move from open to half_open state.
+    bulkhead: false # Should be false always, we are not using this feature.
+    dryrun: false # Dryrun is a watcher mode which just logs virtual circuit breaker state transitions and doesn't open or close circuit in reality.
+  <% else %>
+  read_timeout: 200
+  connect_timeout: 20
+  <% end %>
+  shards:
+    <% node[:ymls][:database][:shards].each do |shard_name, db_config| %>
+    <%= shard_name %>:
+      database: <%= db_config[:database] %>
+      username: <%= db_config[:username] %>
+      password: <%= db_config[:password] %>
+      host: <%= db_config[:host] %>
+      not_a_shard: false
+      port: 3306
+      encoding: utf8
+      <% if @is_app_layer %>
+      semian:
+        enable: true
+        success_threshold: 3
+        error_threshold: 3
+        error_timeout: 15
+        bulkhead: false
+        dryrun: false
+      <% end %>
+      slave:
+      <% if @is_resque_layer || @is_sidekiq_layer || node[:opsworks][:instance][:hostname].include?("utility") || node[:opsworks][:instance][:hostname].include?("freshops") %>
+        <% if node[:opsworks][:environment] == "production" %>
+        host: <%= db_config[:slave2_host] %>
+        <% else %>
+        host: <%= db_config[:slave2][:host] %>
+        username: <%= db_config[:slave2][:username] %>
+        password: <%= db_config[:slave2][:password] %>
+        port: <%= db_config[:slave2][:port] %>
+        <% end %>
+      <% else %>
+        <% if node[:opsworks][:environment] == "production" %>
+        host: <%= db_config[:slave1_host] %>
+        <% else %>
+        host: <%= db_config[:slave1][:host] %>
+        username: <%= db_config[:slave1][:username] %>
+        password: <%= db_config[:slave1][:password] %>
+        port: <%= db_config[:slave1][:port] %>
+        <% end %>
+        semian:
+          enable: true
+          success_threshold: 3
+          error_threshold: 3
+          error_timeout: 15
+          bulkhead: false
+          dryrun: false
+      <% end %>
+    <% end %>

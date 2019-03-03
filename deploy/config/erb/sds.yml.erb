@@ -1,0 +1,5 @@
+<%= node[:opsworks][:environment]%>:
+  global_enable: true
+  service_url: <%= node[:ymls][:sds][:service_url] %>
+  timeout: 2.0
+  outgoing_block_mrr_threshold: <%= node[:ymls][:sds][:outgoing_block_mrr_threshold] %>
