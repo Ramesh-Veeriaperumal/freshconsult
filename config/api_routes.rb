@@ -762,7 +762,7 @@ Helpkit::Application.routes.draw do
   end
 
   ocr_routes = proc do
-    resources :agents, controller: 'channel/omni_channel_routing/agents', only: [:index]
+    resources :agents, controller: 'channel/omni_channel_routing/agents', only: [:index, :update]
     resources :groups, controller: 'channel/omni_channel_routing/groups', only: [:index]
     resources :agents_groups, controller: 'channel/omni_channel_routing/agents_groups', only: [:index]
     get 'accounts/linked_accounts', to: 'channel/omni_channel_routing/linked_accounts#index'
