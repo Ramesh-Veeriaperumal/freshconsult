@@ -7,6 +7,8 @@ class Group < ActiveRecord::Base
     load_based_omni_channel_assignment: 10,
   }.freeze
 
+  TICKET_ASSIGN_TYPE_BY_KEYS = Hash[*TICKET_ASSIGN_TYPE.map { |i| [i[1], i[0]] }.flatten]
+
   OMNI_CHANNEL_ASSIGNMENT_TYPES = [10].freeze
 
   AUTOMATIC_TICKET_ASSIGNMENT_TYPES = [1, 2, 10].freeze
