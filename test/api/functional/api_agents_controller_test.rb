@@ -288,7 +288,7 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
     agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
-    params = {role_ids: [Role.find_by_name('Account Administrator').id], ticket_scope: 2}
+    params = { role_ids: [Role.find_by_name('Account Administrator').id], ticket_scope: Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] }
     Account.stubs(:current).returns(Account.first)
     put :update, construct_params({ id: agent.id }, params)
     assert_response 400
@@ -300,11 +300,43 @@ class ApiAgentsControllerTest < ActionController::TestCase
     Account.unstub(:current)
   end
 
+  def test_update_field_agent_from_restricted_to_group_scope
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
+    params = { ticket_scope: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] }
+    Account.stubs(:current).returns(Account.first)
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 200
+    assert JSON.parse(response.body)['ticket_scope'] == Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets]
+  ensure
+    agent.destroy
+    field_agent_type.destroy
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.unstub(:current)
+  end
+
+  def test_update_field_agent_from_group_scope_to_restricted_scope
+    Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+    field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
+    agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] })
+    params = { ticket_scope: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] }
+    Account.stubs(:current).returns(Account.first)
+    put :update, construct_params({ id: agent.id }, params)
+    assert_response 200
+    assert JSON.parse(response.body)["ticket_scope"] == Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
+  ensure
+    agent.destroy
+    field_agent_type.destroy
+    Account.any_instance.unstub(:field_service_management_enabled?)
+    Account.unstub(:current)
+  end
+
   def test_update_field_agent_with_multiple_role
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
     agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
-    params = {role_ids: [Role.find_by_name('Administrator').id,Role.find_by_name('Agent').id]}
+    params = { role_ids: [Role.find_by_name('Administrator').id,Role.find_by_name('Agent').id] }
     Account.stubs(:current).returns(Account.first)
     put :update, construct_params({ id: agent.id }, params)
     assert_response 400

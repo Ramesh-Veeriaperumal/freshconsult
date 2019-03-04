@@ -424,13 +424,9 @@ class Agent < ActiveRecord::Base
   end
 
   def check_ticket_permission
-    if field_agent? && self.ticket_permission != PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
-      if self.new_record? #For UI
-        self.ticket_permission = PERMISSION_KEYS_BY_TOKEN[:assigned_tickets]
-      else
-        self.errors[:ticket_permission] << :field_agent_scope
-        return false
-      end
+    if field_agent? && !ALLOWED_PERMISSION_FOR_FIELD_AGENT.include?(self.ticket_permission)
+      self.errors[:ticket_permission] << :field_agent_scope
+      return false
     end
     true
   end

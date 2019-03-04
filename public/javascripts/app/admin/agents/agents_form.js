@@ -116,6 +116,24 @@ window.App.Agents = window.App.Agents || {};
 		$('#user_job_title').val(data.user_info.job_title).addClass('uneditable-input');
 	},
 
+	defaultScope: function(agentType) {
+       if (agentType === 'field_agent') {
+       	$("#role_and_scope").text(I18n.t('agent.scope'));
+       	$("#agent_role").addClass('hide');
+       	$("#global_scope").addClass('hide');
+       } else {
+       	$("#role_and_scope").text(I18n.t('agent.role_and_scope'));
+       	$("#agent_role").removeClass('hide');
+       	$("#global_scope").removeClass('hide');
+       } 
+	},
+
+	resetScope: function(agentType) {
+       if (agentType === 'field_agent') {
+       	$("#agent_assigned_tickets").prop("checked", true);
+       }
+	},
+
 	disableTabForFreshidFields: function(){
 		$('.freshworks-message').removeClass('hide');
 		freshid_info_fields.attr('disabled','disabled');
@@ -128,6 +146,8 @@ window.App.Agents = window.App.Agents || {};
 		freshid_info_fields.removeAttr('disabled');
 		$("#user_email").focus();
 	},
+
+
 	
 	initializeAgentForm: function() {
 		var $doc = $(document);
@@ -144,6 +164,9 @@ window.App.Agents = window.App.Agents || {};
 				}
 	      	}
       	}
+
+  		var agentType = $("input[name='agent[agent_type]']:checked").val();
+  		_this.defaultScope(agentType);
       	
 		$doc.on("click.agent-roles", 'div.icon_remove', function(){
 			$('#role_'+$(this).attr('rel')).remove();
@@ -213,12 +236,10 @@ window.App.Agents = window.App.Agents || {};
 		  }
 		});
 
-		$doc.on("click.agent_agent_type_field_agent", function(){
-			if($("#agent_agent_type_field_agent").prop('checked')){ 
-				$("#roles-and-scopes").addClass('hide');
-			} else {
-				$("#roles-and-scopes").removeClass('hide');
-			}
+		$("input[name='agent[agent_type]']").on( "change", function(event) {
+			var agentType = event.target.value;
+			_this.defaultScope(agentType);
+  			_this.resetScope(agentType);
 		});
 
 		$doc.on("click.agent-roles", "#agent-group-container-submit", function(){
