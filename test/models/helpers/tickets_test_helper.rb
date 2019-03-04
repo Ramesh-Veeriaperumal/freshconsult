@@ -158,12 +158,11 @@ module TicketsTestHelper
       first_assigned_at: ticket.first_assigned_at.try(:utc).try(:iso8601),
       first_response_time: ticket.first_response_time.try(:utc).try(:iso8601),
       product_id: ticket.product_id,
+      association_type: ticket.association_type,
       archive: ticket.archive,
       internal_agent_id: ticket.internal_agent_id,
       internal_group_id: ticket.internal_group_id,
-      on_state_time: ticket.on_state_time,
-      associates: render_assoc_hash(ticket.association_type),
-      associates_rdb: ticket.associates_rdb
+      on_state_time: ticket.on_state_time
     }
     ret_hash[:skill_id] = ticket.sl_skill_id if Account.current.skill_based_round_robin_enabled?
     ret_hash
@@ -184,15 +183,6 @@ module TicketsTestHelper
       display_id: ticket.display_id,
       account_id: ticket.account_id,
       archive: false
-    }
-  end
-
-  def render_assoc_hash(current_association_type)
-    return nil if current_association_type.blank?
-
-    {
-      id: current_association_type,
-      type: TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[current_association_type]
     }
   end
 end

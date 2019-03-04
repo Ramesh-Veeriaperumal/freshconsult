@@ -5,7 +5,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   api_accessible :central_publish do |tf|
     tf.add :id
-    tf.add :account_id
     tf.add :ticket_form_id, as: :form_id
     tf.add :name
     tf.add :label
