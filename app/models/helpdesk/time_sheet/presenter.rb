@@ -9,6 +9,8 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
   api_accessible :central_publish do |t|
     t.add :id
     t.add :account_id
+    t.add :ticket_id, if: :belongs_to_ticket?
+    t.add :archive_ticket_id, if: :belongs_to_archive_ticket?
     t.add :billable
     t.add :time_spent
     t.add :timer_running
@@ -21,13 +23,12 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   api_accessible :central_publish_associations do |t|
     t.add :user, template: :central_publish
-    t.add :_workable, as: :workable
   end
 
   api_accessible :central_publish_destroy do |t|
     t.add :id
     t.add :account_id
-    t.add :_workable, as: :workable
+    t.add :ticket_id
   end
 
   def self.central_publish_enabled?
@@ -54,13 +55,5 @@ class Helpdesk::TimeSheet < ActiveRecord::Base
 
   def belongs_to_archive_ticket?
     workable_type == 'Helpdesk::ArchiveTicket'
-  end
-
-  def _workable
-    {
-      id: workable_id,
-      display_id: ticket_id,
-      _model: workable_type
-    }
   end
 end
