@@ -519,7 +519,6 @@ module TicketFieldsTestHelper
   def ticket_field_publish_pattern(field)
     pattern = {
       id: field.id,
-      account_id: field.account_id,
       form_id: field.ticket_form_id,
       name: field.name,
       label: field.label,
