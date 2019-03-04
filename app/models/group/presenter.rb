@@ -15,7 +15,7 @@ class Group < ActiveRecord::Base
     g.add proc { |x| x.utc_format(x.created_at) }, as: :created_at
     g.add proc { |x| x.utc_format(x.updated_at) }, as: :updated_at
     g.add :import_id
-    g.add :ticket_assign_type_hash, as: :ticket_assign_type
+    g.add :ticket_assign_type
     g.add :business_calendar_id
     g.add :toggle_availability
     g.add :capping_limit
@@ -73,12 +73,5 @@ class Group < ActiveRecord::Base
 
   def relationship_with_account
     "groups"
-  end
-
-  def ticket_assign_type_hash
-    {
-      id: ticket_assign_type,
-      type: Group::TICKET_ASSIGN_TYPE_BY_KEYS[ticket_assign_type].to_s
-    }
   end
 end
