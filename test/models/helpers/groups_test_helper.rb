@@ -25,6 +25,13 @@ module GroupsTestHelper
     group
   end
 
+  def ticket_assign_type_hash(group)
+    {
+     id: group.ticket_assign_type,
+     type: Group::TICKET_ASSIGN_TYPE_BY_KEYS[group.ticket_assign_type].to_s
+    }
+  end
+
   def central_publish_group_pattern(group)
     {
       id: group.id,
@@ -38,7 +45,7 @@ module GroupsTestHelper
       created_at: group.created_at.try(:utc).try(:iso8601),
       updated_at: group.updated_at.try(:utc).try(:iso8601),
       import_id: group.import_id,
-      ticket_assign_type: group.ticket_assign_type,
+      ticket_assign_type: ticket_assign_type_hash(group),
       business_calendar_id: group.business_calendar_id,
       toggle_availability: group.toggle_availability,
       capping_limit: group.capping_limit,
