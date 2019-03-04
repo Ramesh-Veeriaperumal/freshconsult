@@ -16,7 +16,7 @@ class AccountDataCleanupTest < ActionView::TestCase
 
   def test_account_cleanup_drop_data
     # Observer rules
-    create_new_account('testdomain', Faker::Internet.email)
+    @account = create_new_account(Faker::Lorem.word, Faker::Internet.email)
     va_rule = FactoryGirl.build(:va_rule, name: "created by #{Faker::Name.name}", description: Faker::Lorem.sentence(2), action_data: [{ name: 'priority', value: '3' }], filter_data: { events: [{ name: 'priority', from: '--', to: '--' }], performer: { 'type' => '1' }, conditions: [{ name: 'ticket_type', operator: 'in', value: ['Problem', 'Question'] }] }, account_id: @account.id, rule_type: VAConfig::OBSERVER_RULE)
     va_rule.save(validate: false)
 
@@ -89,11 +89,11 @@ class AccountDataCleanupTest < ActionView::TestCase
     Account.any_instance.unstub(:round_robin_enabled?)
     Account.any_instance.unstub(:parent_child_tickets_enabled?)
     Account.any_instance.unstub(:features_included?)
-    Account.current.destroy if !Account.current.nil? && Account.current.id != 1
+    Account.current.destroy if !Account.current.nil? && Account.current.id != 1 && !Account.current.id.nil?
   end
 
   def test_skill_based_round_robin_drop_data_without_round_robin_feature
-    create_new_account('testdomain', Faker::Internet.email)
+    @account = create_new_account(Faker::Lorem.word, Faker::Internet.email)
     Account.any_instance.stubs(:features?).with(:round_robin).returns(false)
     Account.any_instance.stubs(:features?).with(:round_robin_load_balancing).returns(false)
     group = create_group @account, ticket_assign_type: Group::TICKET_ASSIGN_TYPE[:skill_based]
@@ -101,11 +101,11 @@ class AccountDataCleanupTest < ActionView::TestCase
     assert_equal @account.reload.groups.skill_based_round_robin_enabled.length, 0
   ensure
     Account.any_instance.unstub(:features?)
-    Account.current.destroy if !Account.current.nil? && Account.current.id != 1
+    Account.current.destroy if !Account.current.nil? && Account.current.id != 1 && !Account.current.id.nil?
   end
 
   def test_account_cleanup_add_data
-    create_new_account('testdomain', Faker::Internet.email)
+    @account = create_new_account(Faker::Lorem.word, Faker::Internet.email)
     # Twitter handle
     get_twitter_handle
 
@@ -123,6 +123,6 @@ class AccountDataCleanupTest < ActionView::TestCase
 
     SAAS::AccountDataCleanup.new(@account, ['smart_filter', 'shared_ownership', 'link_tickets', 'parent_child_tickets_toggle', 'parent_child_tickets', 'multiple_companies_toggle', 'tam_default_fields', 'unique_contact_identifier', 'custom_dashboard', 'disable_old_ui', 'link_tickets_toggle'], 'add').perform_cleanup
   ensure
-    Account.current.destroy if !Account.current.nil? && Account.current.id != 1
+    Account.current.destroy if !Account.current.nil? && Account.current.id != 1 && !Account.current.id.nil?
   end
 end

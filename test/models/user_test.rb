@@ -255,6 +255,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   def test_user_signup
+    ChargeBee::Customer.stubs(:update).returns(true)
     activation_params = {
       user: {
         name: Faker::Name.name
@@ -268,6 +269,7 @@ class UserTest < ActiveSupport::TestCase
   ensure
     User.any_instance.unstub(:save_without_session_maintenance)
     User.any_instance.unstub(:can_verify_account?)
+    ChargeBee::Customer.unstub(:update)
   end
 
   def test_user_name_with_only_unique_external_id

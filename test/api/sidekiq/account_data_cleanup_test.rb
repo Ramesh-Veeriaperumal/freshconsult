@@ -33,7 +33,7 @@ class NewPlanChangeWorkerTest < ActionView::TestCase
     assert_equal group.ticket_assign_type, 0
   end
 		
-  def test_in_planchangeworker_round_robin_drop_data
+  def test_in_planchangeworker_round_robin_drop_data_should_not_work
     create_test_account 
     group = @account.groups[0]
     group.capping_limit = 0

@@ -45,7 +45,7 @@ SUCCESSFUL_SEARCH_TESTS = [
   "test/api/functional/api_search/tickets_controller_test.rb"
 ]
 
-LIB_TESTS = Dir.glob('test/lib/unit/*_test.rb') + Dir.glob('test/lib/*_test.rb') + Dir.glob('test/lib/helpdesk/**/*_test.rb') + Dir.glob('test/lib/integration_services/**/*_test.rb') + Dir.glob('test/lib/saas/*_test.rb')
+LIB_TESTS = Dir.glob('test/lib/unit/*_test.rb') + Dir.glob('test/lib/*_test.rb') + Dir.glob('test/lib/helpdesk/**/*_test.rb') + Dir.glob('test/lib/integration_services/**/*_test.rb') + Dir.glob('test/lib/saas/*_test.rb') + Dir.glob('test/lib/spam/*_test.rb')
 MODEL_TESTS = Dir.glob('test/models/**/*_test.rb')
 MAILER_TESTS = Dir.glob('test/app/mailers/**/*_test.rb')
 

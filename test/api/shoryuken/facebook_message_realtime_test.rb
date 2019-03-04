@@ -19,6 +19,7 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     @account.facebook_streams.destroy_all
     @account.tickets.where(source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook]).destroy_all
     Account.unstub(:current)
+    WebMock.disable_net_connect!
   ensure
     Social::FacebookPage.any_instance.unstub(:unsubscribe_realtime)
     Facebook::Core::Post.any_instance.unstub(:fetch_page_scope_id)
@@ -28,6 +29,7 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
   end
 
   def setup
+    Webmock.allow_net_connect!
     Account.stubs(:current).returns(Account.first)
     Facebook::Core::Post.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     Facebook::Core::Comment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
