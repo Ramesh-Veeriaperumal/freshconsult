@@ -4675,6 +4675,7 @@ en:
     permissions: Permissions
     role_and_scope: Roles and Scope
     roles: Roles
+    scope: Scope
     remove_role: Remove role
     roles_description: Associate one or more roles with this agent.
     groups_description: Associate one or more groups with this agent.
