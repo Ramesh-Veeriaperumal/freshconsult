@@ -2,7 +2,7 @@ require_relative '../../../test_helper'
 module Channel
   module Bot
     class ServicesControllerTest < ActionController::TestCase
-      include BotTestHelper
+      include ApiBotTestHelper
       include ProductsHelper
       include JweTestHelper
       include AttachmentsTestHelper

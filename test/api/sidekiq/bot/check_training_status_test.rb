@@ -4,7 +4,7 @@ Sidekiq::Testing.fake!
 require Rails.root.join('test', 'api', 'helpers', 'bot_test_helper.rb')
 
 class CheckTrainingStatusTest < ActionView::TestCase
-  include BotTestHelper
+  include ApiBotTestHelper
 
   def setup
     Account.stubs(:current).returns(Account.first)

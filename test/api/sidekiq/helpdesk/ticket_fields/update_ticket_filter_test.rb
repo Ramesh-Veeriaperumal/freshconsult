@@ -13,7 +13,7 @@ class SidekiqUpdateTicketFilterTest < ActionView::TestCase
   include TicketFieldsTestHelper
   include QueryHashHelper
   include AccountTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
 
   def setup
     super

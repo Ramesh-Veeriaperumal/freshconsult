@@ -10,9 +10,9 @@ Sidekiq::Testing.fake!
 
 class ResetInternalGroupTest < ActionView::TestCase
   include GroupsTestHelper
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include AccountTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
 
   def setup
     super

@@ -4,11 +4,11 @@ Dir["#{Rails.root}/test/core/functional/helpdesk/automation_test_cases/*.rb"].ea
 class Admin::VaRulesControllerTest < ActionController::TestCase
 
 #include helpers
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   #include DynamoTestHelper
  # include LinkTicketAssertions
   include NoteTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
   include AccountTestHelper
 
 #include tests

@@ -1,7 +1,7 @@
 ['ticket_fields_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 module TicketsTestHelper
-  include TicketFieldsTestHelper
+  include CoreTicketFieldsTestHelper
 
   MAX_DESC_LIMIT = 10000
 

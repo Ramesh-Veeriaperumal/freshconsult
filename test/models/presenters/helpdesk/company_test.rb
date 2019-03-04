@@ -64,7 +64,8 @@ class CompanyTest < ActiveSupport::TestCase
   def company_destroy_pattern(expected_output = {}, company)
   {
     id: company.id,
-    account_id: company.account_id
+    account_id: company.account_id,
+    name: company.name
   }
   end
 
@@ -112,7 +113,7 @@ class CompanyTest < ActiveSupport::TestCase
 
   def test_central_publish_custom_fields_update
     company_field = create_company_field(company_params(type: 'text', field_type: 'custom_text', label: 'Company text', name: 'cf_company_text', field_options: { 'widget_position' => 12 }))
-    column_name = company_field.column_name
+    column_name = company_field.name
     company = create_company
     CentralPublishWorker::CompanyWorker.jobs.clear
     company.reload

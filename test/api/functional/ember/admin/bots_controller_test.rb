@@ -3,7 +3,7 @@ require_relative '../../../test_helper'
 module Ember
   module Admin
     class BotsControllerTest < ActionController::TestCase
-      include BotTestHelper
+      include ApiBotTestHelper
       include SolutionsHelper
       include ProductsHelper
       include AttachmentsTestHelper

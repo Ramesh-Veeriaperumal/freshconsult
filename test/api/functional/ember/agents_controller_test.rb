@@ -121,14 +121,14 @@ class Ember::AgentsControllerTest < ActionController::TestCase
     end
     get :index, controller_params(version: 'private')
     assert_response 200
-    agents = @account.agents.order('users.name')
+    agents = @account.agents.order('users.name').limit(30)
     pattern = agents.map { |agent| private_api_agent_pattern(agent) }
     match_json(pattern.ordered)
   end
 
   def test_agent_index_with_only_filter
     create_rr_agent
-    agents = @account.agents.order('users.name')
+    agents = @account.agents.order('users.name').limit(30)
     # livechat_pattern = agents.map { |agent| livechat_agent_availability(agent) }.to_h
     # Ember::AgentsController.any_instance.stubs(:get_livechat_agent_details).returns(livechat_pattern)
     round_robin_groups = Group.round_robin_groups.map(&:id)
@@ -257,11 +257,11 @@ class Ember::AgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_field_agent_with_multiple_role
+    Account.stubs(:current).returns(Account.first)
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
     agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
     params = {role_ids: [Role.find_by_name('Administrator').id,Role.find_by_name('Agent').id]}
-    Account.stubs(:current).returns(Account.first)
     put :update, construct_params({ id: agent.id }, params)
     assert_response 400
     match_json([bad_request_error_pattern('user.role_ids', :field_agent_roles, :code => :invalid_value)])

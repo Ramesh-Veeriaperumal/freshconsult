@@ -505,6 +505,7 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_update_with_all_default_fields_required_invalid
     enable_tam_fields
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
     default_non_required_fiels = CompanyField.where(required_for_agent: false,  column_name: 'default')
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
     put :update, construct_params({ id: company.id },  domains: [],

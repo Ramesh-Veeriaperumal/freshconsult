@@ -106,7 +106,7 @@ class Contacts::MiscControllerTest < ActionController::TestCase
     post :export, construct_params(params_hash)
     assert_response 400
     match_json([bad_request_error_pattern(:default_fields, :not_included, list: (contact_form.safe_send(:default_contact_fields, true).map(&:name) - ['tag_names']).join(',')),
-                bad_request_error_pattern(:custom_fields, :not_included, list: contact_form.custom_contact_fields.map(&:name).collect { |x| x[3..-1] }.join(','))])
+                bad_request_error_pattern(:custom_fields, :not_included, list: (contact_form.safe_send(:custom_contact_fields).map(&:name).collect { |x| x[3..-1] }).join(','))])
   end
 
   def test_response_for_export_csv_with_invalid_params

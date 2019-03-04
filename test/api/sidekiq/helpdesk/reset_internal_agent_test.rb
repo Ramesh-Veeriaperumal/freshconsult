@@ -11,9 +11,9 @@ Sidekiq::Testing.fake!
 
 class ResetInternalAgentTest < ActionView::TestCase
   include GroupsTestHelper
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include AccountTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
 
   def setup
     super

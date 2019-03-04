@@ -9,8 +9,8 @@ require_relative '../../../core/helpers/tickets_test_helper.rb'
 class TicketNotifierTest < ActionMailer::TestCase
   include AccountTestHelper
   include ControllerTestHelper
-  include UsersTestHelper
-  include TicketsTestHelper
+  include CoreUsersTestHelper
+  include CoreTicketsTestHelper
   include TicketHelper
   include UsersHelper
   

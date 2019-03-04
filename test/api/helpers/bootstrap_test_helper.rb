@@ -192,7 +192,7 @@ module BootstrapTestHelper
 
   def agent_group_pattern(account)
     pattern = {'agents' => [], 'groups' => []}
-    account.agents.each do |agent|
+    account.users.where(helpdesk_agent: true).each do |agent|
       pattern['agents'] << agent_simple_pattern(agent)
     end
     account.groups.each do |group|

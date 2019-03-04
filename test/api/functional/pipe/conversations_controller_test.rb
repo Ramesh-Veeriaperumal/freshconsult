@@ -2,12 +2,17 @@ require_relative '../../test_helper'
 module Pipe
   class ConversationsControllerTest < ActionController::TestCase
     include ConversationsTestHelper
+
+    def setup
+      super
+    end
+
     def wrap_cname(params)
       { conversation: params }
     end
 
     def ticket
-      ticket = Helpdesk::Ticket.last || create_ticket(ticket_params_hash)
+      ticket = @account.tickets.last || create_ticket(ticket_params_hash)
       ticket
     end
 

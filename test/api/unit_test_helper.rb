@@ -59,6 +59,6 @@ require 'minitest/reporters'
 require 'json_expressions/minitest'
 include ActiveSupport::Rescuable
 
-Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new('test/api/reports')]
+Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new('test/reports')]
 
 $env_loaded = true # To make sure we don't load the environment again

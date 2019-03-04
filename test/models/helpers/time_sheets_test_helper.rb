@@ -1,7 +1,7 @@
 ['users_test_helper.rb'].each { |file| require Rails.root.join("test/core/helpers/#{file}") }
 
 module TimeSheetsTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
 
   DATETIME_FIELDS     = [:start_time, :executed_at, :created_at, :updated_at].freeze
 

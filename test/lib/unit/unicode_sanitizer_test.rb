@@ -6,7 +6,7 @@ require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'tickets_test_helper.rb')
 
 class UnicodeSanitizerTest < ActionView::TestCase
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include AccountTestHelper
 
   def setup

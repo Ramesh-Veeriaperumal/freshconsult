@@ -3,8 +3,8 @@ require_relative '../test_helper'
 class SanitizeFieldsTest < ActiveSupport::TestCase
     include ContactFieldsTestHelper
     include CompanyFieldsTestHelper
-    include TicketFieldsTestHelper
-    include TicketsTestHelper
+    include CoreTicketFieldsTestHelper
+    include CoreTicketsTestHelper
     include CompanyTestHelper
     include SanitizeTestHelper
 

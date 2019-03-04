@@ -4,7 +4,7 @@ Dir["#{Rails.root}/test/core/functional/helpdesk/conversation_test_cases/*.rb"].
 class Helpdesk::ConversationsControllerTest < ActionController::TestCase
 
 #include helpers
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include DynamoTestHelper
   include LinkTicketAssertions
   include NoteTestHelper

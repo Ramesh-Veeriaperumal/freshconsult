@@ -4,7 +4,7 @@ require 'minitest/spec'
 
 class ContactSegmentTest < ActiveSupport::TestCase
   include ContactSegmentsTestHelper
-  include CompanyHelper
+  include ApiCompanyHelper
 
   def setup
     super

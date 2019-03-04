@@ -5,7 +5,7 @@ module Ember
     include ApiTicketsTestHelper
     include TicketFieldsTestHelper
     include ProductsHelper
-    include CompanyHelper
+    include ApiCompanyHelper
     include GroupHelper
     include QueryHashHelper
     include Redis::RedisKeys

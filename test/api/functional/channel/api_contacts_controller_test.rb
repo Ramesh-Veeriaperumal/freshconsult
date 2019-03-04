@@ -184,6 +184,7 @@ module Channel
       match_json(channel_contact_pattern(User.last.reload).except(*ignore_keys))
     ensure
       $infra['CHANNEL_LAYER'] = false
+      cf.update_attribute(:required_for_agent, false)
     end
 
     def test_create_contact_validation_failure
@@ -273,7 +274,7 @@ module Channel
     def test_list_contacts_for_freshmover
       set_jwt_auth_header('freshmover')
       get :index, controller_params(version: 'channel')
-      users = @account.all_contacts
+      users = @account.all_contacts.where(deleted: false)
       user_size = users.size < 30 ? users.size : 30
       assert_response 200
       response = parse_response @response.body

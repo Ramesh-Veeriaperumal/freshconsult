@@ -1,6 +1,7 @@
 require_relative '../../../test_helper'
+require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 module AgentsSandboxHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
 
   def agents_data(account)
     create_agents_data(account)

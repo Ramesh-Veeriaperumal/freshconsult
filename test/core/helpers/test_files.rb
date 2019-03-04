@@ -12,7 +12,7 @@ Dir["#{Rails.root}/test/core/custom_assertions/*.rb"].each { |file| require file
 
 include AccountTestHelper
 include ControllerTestHelper
-include UsersTestHelper
+include CoreUsersTestHelper
 include ActiveSupport::Rescuable
 
-Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new]
+Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new('test/reports')]

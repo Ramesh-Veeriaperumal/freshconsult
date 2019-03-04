@@ -1,6 +1,6 @@
 ['contact_fields_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
-module UsersTestHelper
+module CoreUsersTestHelper
   include ContactFieldsTestHelper
 
   XSS_SCRIPT_TEXT = "<script> alert('hi'); </script>"

@@ -9,7 +9,7 @@ module ProvisionSandboxTestHelper
   include GroupHelper
   include ::TicketFieldsTestHelper
   include TicketTemplateHelper
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include TicketFieldsSandboxHelper
   include TicketTemplatesSandboxHelper
   include TagsSandboxHelper
@@ -214,5 +214,9 @@ module ProvisionSandboxTestHelper
       master_account_shard = ShardMapping.fetch_by_account_id(master_account_id)
       Integer(SANDBOX_ID_OFFSET[master_account_shard.shard_name])
     end
+  end
+
+  def stub_data
+    { subscription: { status: 'in_trial', trial_start: 1549360375, trial_end: 1564912374 } }
   end
 end

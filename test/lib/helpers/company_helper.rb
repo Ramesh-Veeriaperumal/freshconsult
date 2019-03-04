@@ -1,5 +1,6 @@
-module CompanyHelper
+module ApiCompanyHelper
   def create_company(options = {})
+    account = @account || Account.current
     name = options[:name] || Faker::Name.name
     company = FactoryGirl.build(:company, name: name)
     company.account_id = account.id

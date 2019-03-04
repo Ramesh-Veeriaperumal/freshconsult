@@ -9,7 +9,7 @@ class Ember::PortalsControllerTest < ActionController::TestCase
   include PortalsTestHelper
   include AttachmentsTestHelper
   include PortalsCustomisationTestHelper
-  include BotTestHelper
+  include ApiBotTestHelper
   include ProductsHelper
 
   def setup

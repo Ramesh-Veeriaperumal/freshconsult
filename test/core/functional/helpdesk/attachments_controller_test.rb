@@ -2,11 +2,11 @@ require_relative '../../test_helper'
 Dir["#{Rails.root}/test/core/functional/helpdesk/attachment_test_cases/*.rb"].each { |file| require file }
 
 class Helpdesk::AttachmentsControllerTest < ActionController::TestCase
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include NoteTestHelper
-  include ForumsTestHelper
+  include CoreForumsTestHelper
   include CompanyTestHelper
-  include SolutionsTestHelper
+  include CoreSolutionsTestHelper
 
   #test_cases
   include AttachmentPermissionsNegativeTests

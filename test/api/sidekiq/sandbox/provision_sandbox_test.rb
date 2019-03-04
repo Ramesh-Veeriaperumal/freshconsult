@@ -11,6 +11,7 @@ class ProvisionSandboxTest < ActionView::TestCase
   @@count_data = {}
 
   def setup
+    ChargeBee::Rest.stubs(:request).returns(stub_data)
     unless @@count_data.present?
       @production_account = Account.first
       if @production_account
@@ -24,6 +25,7 @@ class ProvisionSandboxTest < ActionView::TestCase
   end
 
   def teardown
+    ChargeBee::Rest.unstub(:request)
     Account.unstub(:current)
     super
   end

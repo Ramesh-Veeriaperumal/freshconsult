@@ -1,7 +1,7 @@
 require_relative '../test_helper'
 
 class PostTest < ActiveSupport::TestCase
-  include DiscussionsTestHelper
+  include ModelsDiscussionsTestHelper
 
   def setup
     super

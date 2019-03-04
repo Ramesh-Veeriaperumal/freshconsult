@@ -11,7 +11,7 @@
 #   include CreateTicketHelper
 #   include ControllerTestHelper
 #   include TimeEntriesTestHelper
-#   include TicketsTestHelper
+#   include CoreTicketsTestHelper
 
 #   def setup
 #     super

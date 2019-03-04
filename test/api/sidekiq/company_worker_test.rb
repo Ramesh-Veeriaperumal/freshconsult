@@ -16,7 +16,7 @@ class CompanyWorkerTest < ActionView::TestCase
   end
 
   def teardown
-    @company.destroy
+    @company.destroy if @company
     WebMock.disable_net_connect!
   end
 

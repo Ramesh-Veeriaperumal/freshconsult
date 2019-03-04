@@ -8,7 +8,7 @@ require Rails.root.join('test', 'core', 'helpers', 'controller_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'note_test_helper.rb')
 
 class UpdateTicketStatesTest < ActionView::TestCase
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include UsersHelper
   include ControllerTestHelper
   include AutomationsHelper

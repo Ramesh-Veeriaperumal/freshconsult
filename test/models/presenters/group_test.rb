@@ -1,8 +1,8 @@
 require_relative '../test_helper'
 
 class GroupTest < ActiveSupport::TestCase
-  include GroupsTestHelper
-  include UsersTestHelper
+  include ModelsGroupsTestHelper
+  include ModelsUsersTestHelper
 
   def test_central_publish_create_payload
     group = create_group(@account)

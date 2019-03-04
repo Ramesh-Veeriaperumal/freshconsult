@@ -1,4 +1,4 @@
-module ForumsTestHelper
+module CoreForumsTestHelper
 
   def create_test_category
     forum_category = FactoryGirl.build(:forum_category, :account_id => @account.id,

@@ -2,7 +2,7 @@
 
 module CompanySegmentsTestHelper
   include SegmentsHelper
-  include CompanyHelper
+  include ApiCompanyHelper
 
   def all_fields
     field_scoper.company_fields_from_cache

@@ -1,6 +1,8 @@
 require_relative '../test_helper'
 require 'faker'
+require Rails.root.join('test', 'core', 'helpers', 'account_test_helper.rb')
 class AccountTest < ActiveSupport::TestCase
+  include AccountTestHelper
   
   def test_create
     CentralPublishWorker::AccountWorker.jobs.clear

@@ -6,7 +6,7 @@ require_relative '../../../api/helpers/privileges_helper'
 
 class Support::NotesControllerTest < ActionController::TestCase
   include ControllerTestHelper
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include UsersTestHelper
   include PrivilegesHelper
 
@@ -32,7 +32,7 @@ class Support::NotesControllerTest < ActionController::TestCase
     assert_response 302
     assert flash[:notice], "The note has been added to your ticket."
 
-    post :create, :version => :private, ticket_id: t1.id, :helpdesk_note => { :note_body_attributes => { :body => "Hi Hello how are you" }}, format: 'mobile'
+    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body => "Hi Hello how are you" }}, format: 'mobile'
     assert_response 200
     assert JSON.parse(response.body)["success"] == true
     log_out

@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class CategoryTest < ActiveSupport::TestCase
-  include SolutionsTestHelper
+  include ModelsSolutionsTestHelper
 
   def test_central_publish_payload
     category = add_new_category

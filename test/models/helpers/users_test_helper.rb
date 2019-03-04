@@ -1,6 +1,6 @@
 ['contact_fields_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
-module UsersTestHelper
+module ModelsUsersTestHelper
   include ContactFieldsTestHelper
 
   def add_test_agent(account=nil, options={})
