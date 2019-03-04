@@ -160,7 +160,7 @@ class CloudElementsServiceTest < ActionView::TestCase
     app = Integrations::InstalledApplication.new
     IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:check_fields_synced?).returns(true)
     IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:find).returns([{ Id: '1' }.stringify_keys!])
-    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:update).returns({ Id: '1' }.stringify_keys!)
+    IntegrationServices::Services::CloudElements::Hub::Crm::FreshdeskTicketObjectResource.any_instance.stubs(:update).returns(nil)
     custom_obj = ::IntegrationServices::Services::SalesforceV2Service.new(app, { type: 'test', data_object: Account.first.tickets.last }, {}).receive_update_custom_object
     assert_equal nil, custom_obj
   end

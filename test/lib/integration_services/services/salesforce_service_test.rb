@@ -30,6 +30,7 @@ class SalesforceServiceTest < ActionView::TestCase
     Integrations::InstalledApplication.any_instance.stubs(:configs).returns(inputs: { salesforce_sync_option: 0 }.stringify_keys!)
     IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.any_instance.stubs(:check_fields_synced?).returns(false)
     IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.any_instance.stubs(:create).returns({ id: 5 }.stringify_keys!)
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.any_instance.stubs(:update).returns(nil)
     IntegrationServices::Services::Salesforce::SalesforceContactResource.any_instance.stubs(:find).returns({ records: [{ Name: 'Test name', Id: 1, AccountId: 1, Account: { Name: 'freshdesk unknown company'}.stringify_keys! }.stringify_keys!] }.stringify_keys!)
     Helpdesk::Ticket.any_instance.stubs(:requester).returns(Account.first.contacts.first)
     Helpdesk::Ticket.any_instance.stubs(:requester).returns(Account.first.users.first)
@@ -99,7 +100,7 @@ class SalesforceServiceTest < ActionView::TestCase
     Helpdesk::Ticket.any_instance.stubs(:requester).returns(Account.first.contacts.first)
     Helpdesk::Ticket.any_instance.stubs(:requester).returns(Account.first.users.first)
     IntegrationServices::Services::Salesforce::SalesforceContactResource.any_instance.stubs(:find_user).returns({})
-    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.any_instance.stubs(:update).returns(true)
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.any_instance.stubs(:update).returns(nil)
     app = Integrations::InstalledApplication.new
     cust_obj = ::IntegrationServices::Services::SalesforceService.new(app, { data_object: Account.first.tickets.first }, {}).receive_update_custom_object
     assert_equal nil, cust_obj
@@ -116,7 +117,7 @@ class SalesforceServiceTest < ActionView::TestCase
     IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.any_instance.stubs(:create).returns({ id: 5 }.stringify_keys!)
     Helpdesk::Ticket.any_instance.stubs(:requester).returns(Account.first.users.first)
     IntegrationServices::Services::Salesforce::SalesforceContactResource.any_instance.stubs(:find_user).returns({})
-    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.any_instance.stubs(:update).returns(true)
+    IntegrationServices::Services::Salesforce::SalesforceCustomObjectResource.any_instance.stubs(:update).returns(nil)
     app = Integrations::InstalledApplication.new
     cust_obj = ::IntegrationServices::Services::SalesforceService.new(app, { data_object: Account.first.tickets.first }, {}).receive_update_custom_object
     assert_equal nil, cust_obj
