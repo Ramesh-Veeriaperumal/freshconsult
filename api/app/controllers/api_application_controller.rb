@@ -662,7 +662,11 @@ class ApiApplicationController < MetalApiController
 
       User.current = api_current_user
       Thread.current[:message_uuid] = request.try(:uuid).to_a
-      log_locale unless private_api?
+      if private_api?
+        log_session_details(:set_current_account) if Account.current.session_logs_enabled?
+      else
+        log_locale
+      end
     rescue ActiveRecord::RecordNotFound, ShardNotFound
       Rails.logger.error("API V2 request for invalid account. Host: #{request.host}")
       head 404
@@ -840,8 +844,13 @@ class ApiApplicationController < MetalApiController
     end
 
     def handle_unverified_request
+      log_session_details(:handle_unverified_request) if Account.current && Account.current.session_logs_enabled?
       render_request_error :invalid_credentials, 401
       # TODO-EMBERAPI Need to decide what exactly to send back
+    end
+
+    def log_session_details(parent)
+      Rails.logger.info "Session details logging :: #{parent} :: #{request.headers['X-CSRF-Token']} :: #{form_authenticity_token} :: #{session.inspect}"
     end
 
     def set_root_key
