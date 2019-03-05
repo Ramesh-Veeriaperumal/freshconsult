@@ -88,7 +88,7 @@ module FilterFactory::Filter
       end
 
       def fetch_fql_runner_response(query)
-        runner_response = Freshquery::Runner.instance.construct_es_query(scoper[:documents].to_s, query.to_json)
+        runner_response = Freshquery::Runner.instance.construct_es_query(scoper[:documents].to_s, JSON.dump(query))
         raise FilterFactory::Errors::FQLFormatException if runner_response.errors
         raise FilterFactory::Errors::FQLValidationException unless runner_response.valid?
         runner_response
@@ -98,7 +98,7 @@ module FilterFactory::Filter
         doc_types = [scoper[:documents]]
         template = scoper[:context]
         params = {
-          search_terms: decode_values(fql_response.terms.to_json),
+          search_terms: decode_values(JSON.dump(fql_response.terms)),
           offset: (page.to_i - 1) * per_page.to_i,
           account_id: Account.current.id,
           size: per_page.to_i + 1,
