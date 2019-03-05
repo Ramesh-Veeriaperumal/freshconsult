@@ -1,0 +1,10 @@
+defaults: &defaults
+ host: <%= node[:ymls][:redis_round_robin][:host] %>
+ port: <%= node[:ymls][:redis_round_robin][:port] %>
+ timeout: <%= node[:ymls][:redis_round_robin][:timeout] %>
+ keepalive: <%= node[:ymls][:redis_round_robin][:keepalive] %>
+<%= node[:opsworks][:environment] %>:
+  <<: *defaults
+ 
+slave:
+  <<: *defaults

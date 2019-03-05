@@ -1,0 +1,6 @@
+defaults: &defaults
+  account_url: <%= node[:ymls][:announcements][:account_url] %>
+  shared_secret: <%= node[:ymls][:announcements][:shared_secret] %>
+
+<%= node[:opsworks][:environment]%>:
+  <<: *defaults

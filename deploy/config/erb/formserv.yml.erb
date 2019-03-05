@@ -1,0 +1,10 @@
+<% if node[:ymls][:formserv] %>
+  <%= node[:opsworks][:environment]%>:
+    formserv_url: <%= node[:ymls][:formserv][:formserv_url] %>
+    product_name: <%= node[:ymls][:formserv][:product_name] %>
+    api_token: <%= node[:ymls][:formserv][:api_token] %>
+    keep_connection_alive: true
+    fallback: true
+    connection_timeout: 5
+    open_connection_timeout: 5
+<% end %>

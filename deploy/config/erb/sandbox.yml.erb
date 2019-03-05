@@ -1,0 +1,6 @@
+<%= node[:opsworks][:environment]%>:
+  repo_url: <%= node[:ymls][:sandbox][:repo_url] %>
+  public_key: <%= @public_key %>
+  private_key: <%= @private_key %>
+  username: <%= node[:ymls][:sandbox][:ssh_id] %>
+  sandbox_assets: <%= node[:ymls][:sandbox][:sandbox_assets] %>

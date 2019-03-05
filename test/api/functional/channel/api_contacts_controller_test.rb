@@ -274,9 +274,10 @@ module Channel
       set_jwt_auth_header('freshmover')
       get :index, controller_params(version: 'channel')
       users = @account.all_contacts
+      user_size = users.size < 30 ? users.size : 30
       assert_response 200
       response = parse_response @response.body
-      assert_equal response.size, 30
+      assert_equal response.size, user_size
     end
 
     def test_list_contact_without_auth

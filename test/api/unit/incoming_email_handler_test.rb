@@ -8,6 +8,9 @@ module Helpdesk
       def setup
         Account.stubs(:current).returns(Account.first)
         Account.stubs(:find_by_full_domain).returns(Account.first)
+        shard = ShardMapping.first
+        shard.status = 200 unless shard.status == 200
+        shard.save
         @from_email = Faker::Internet.email
         @to_email = Faker::Internet.email
       end
@@ -680,7 +683,7 @@ module Helpdesk
         subject = 'Test Subject'
         params = default_params(id, subject)
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
-        ticket_response = incoming_email_handler.fetch_archive_or_normal_ticket_by_display_id(1, Account.first)
+        ticket_response = incoming_email_handler.fetch_archive_or_normal_ticket_by_display_id(Account.first.tickets.first.try(:display_id), Account.first)
         assert_equal Helpdesk::Ticket.first.try(:id), ticket_response.try(:id)
       end
 

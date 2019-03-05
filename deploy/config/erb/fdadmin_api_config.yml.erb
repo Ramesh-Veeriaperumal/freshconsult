@@ -1,0 +1,13 @@
+secret_key: <%= node[:ymls][:fdadmin_api][:secret_key] %>
+timeout: 30
+accept: application/json
+content_type: application/json
+
+common: &common
+  resource_import_api: "resources/import"
+  authorization_username: <%= node[:ymls][:fdadmin_api][:authorization_username] %>
+  authorization_password: <%= node[:ymls][:fdadmin_api][:authorization_password] %>
+  activity_url: "/api/v1/activity/create_activity"
+<%= node[:opsworks][:environment] %>:
+  <<: *common
+  url: <%= node[:ymls][:fdadmin_api][:host] %>

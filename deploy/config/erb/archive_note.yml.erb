@@ -1,0 +1,8 @@
+defaults: &defaults
+  <% node[:ymls][:archive_note][:shard_id_map].each do |shard, tabel_id| %>
+  <%= shard %>: <%= tabel_id %>
+  <% end %>
+
+<%= node[:opsworks][:environment]%>:
+  <<: *defaults
+  

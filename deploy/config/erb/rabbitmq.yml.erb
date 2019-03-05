@@ -1,0 +1,13 @@
+<%= node[:opsworks][:environment]%>:
+  connection_config:
+    host: <%= node[:ymls][:rabbitmq][:host] %>
+    port: 9999
+    username: <%= node[:ymls][:rabbitmq][:username] %>
+    password: <%= node[:ymls][:rabbitmq][:password] %>
+    heartbeat: 30
+    automatic_recovery: true
+    recover_from_connection_close: true
+    threaded: <%= @is_resque_layer %>
+  shards: 1
+  resources: ['ticket', 'note', 'archive_ticket', 'archive_note', 'company', 'user', 'topic', 'post', 'article', 'tag', 'tag_use', 'account', 'cti_call', 'caller']
+  secret_key: <%= node[:ymls][:rabbitmq][:secret_key] %>

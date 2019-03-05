@@ -1,0 +1,17 @@
+<% region = node[:ymls][:lambda_exchange_keys][:region] ? node[:ymls][:lambda_exchange_keys][:region] : 'us-east-1' %>
+common: &common
+  access_key_id: <%= node[:ymls][:lambda_exchange_keys][:access_key_id] %>
+  secret_access_key: <%= node[:ymls][:lambda_exchange_keys][:secret_access_key] %>
+  region: <%= region %>
+  resources: ['tickets', 'notes', 'accounts', 'archive_tickets', 'users', 'companies']
+
+
+
+<%= node[:opsworks][:environment] %>:
+  <<: *common
+  tickets_interchange: arn:aws:lambda:<%= region %>:<%= node[:opsworks][:account_id] %>:function:ticketInterchange-<%= node[:opsworks][:environment] %>
+  accounts_interchange: arn:aws:lambda:<%= region %>:<%= node[:opsworks][:account_id] %>:function:accountInterchange-<%= node[:opsworks][:environment] %>
+  notes_interchange: arn:aws:lambda:<%= region %>:<%= node[:opsworks][:account_id] %>:function:noteInterchange-<%= node[:opsworks][:environment] %>
+  archive_tickets_interchange: arn:aws:lambda:<%= region %>:<%= node[:opsworks][:account_id] %>:function:archieveTicketInterchange-<%= node[:opsworks][:environment] %>
+  users_interchange: arn:aws:lambda:<%= region %>:<%= node[:opsworks][:account_id] %>:function:userInterchange-<%= node[:opsworks][:environment] %>
+  companies_interchange: arn:aws:lambda:<%= region %>:<%= node[:opsworks][:account_id] %>:function:companyInterchange-<%= node[:opsworks][:environment] %>

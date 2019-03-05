@@ -1,0 +1,10 @@
+defaults: &defaults
+ host: <%= node[:ymls][:redis_mobile][:host] %>
+ port: <%= node[:ymls][:redis_mobile][:port] %>
+ timeout: <%= node[:ymls][:redis_mobile][:timeout] %>
+ keepalive: <%= node[:ymls][:redis_mobile][:keepalive] %>
+<%= node[:opsworks][:environment] %>:
+  <<: *defaults
+ 
+slave:
+  <<: *defaults

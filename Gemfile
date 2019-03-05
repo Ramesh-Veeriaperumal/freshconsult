@@ -367,3 +367,5 @@ gem "rubocop", "0.52.1"
 gem 'safe_yaml', "1.0.4"
 
 gem 'codecov', :require => false, :group => :test
+
+gem 'ejson', :require => false

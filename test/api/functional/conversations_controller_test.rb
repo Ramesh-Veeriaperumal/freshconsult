@@ -34,7 +34,10 @@ class ConversationsControllerTest < ActionController::TestCase
   def create_note_params_hash
     body = Faker::Lorem.paragraph
     agent_email1 = Agent.last.user.email
-    agent_email2 = Agent.find { |x| x.user.email != agent_email1 }.try(:user).try(:email) || add_test_agent(@account, role: Role.find_by_name('Agent').id).email
+    agent_email2 = Agent.first.user.email
+    agent_email1 = add_test_agent(Account.first, role: Role.find_by_name('Agent').id).email unless agent_email1.end_with?('freshdesk.com')
+    agent_email2 = add_test_agent(Account.first, role: Role.find_by_name('Agent').id).email unless agent_email2.end_with?('freshdesk.com')
+    agent_email2 = add_test_agent(Account.first, role: Role.find_by_name('Agent').id).email if agent_email1 == agent_email2
     email = [agent_email1, agent_email2]
     params_hash = { body: body, notify_emails: email, private: true }
     params_hash

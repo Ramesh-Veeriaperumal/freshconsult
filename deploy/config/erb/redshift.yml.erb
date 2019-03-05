@@ -1,0 +1,14 @@
+<%= node[:opsworks][:environment] %>:
+  env_name: <%= node[:ymls][:redshift][:env_name] %>
+  host: <%= node[:ymls][:redshift][:host] %>
+  dbname: <%= node[:ymls][:redshift][:dbname] %>
+  port: 5439
+  connect_timeout: 120
+  write:
+    user: <%= node[:ymls][:redshift][:write_user] %>
+    password: <%= node[:ymls][:redshift][:write_user_pwd] %>
+  read:
+    user: <%= node[:ymls][:redshift][:read_user] %>
+    password: <%= node[:ymls][:redshift][:read_user_pwd] %>
+  
+

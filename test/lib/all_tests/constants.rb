@@ -1,6 +1,6 @@
 FUNCTIONAL_TESTS_EMBER = Dir.glob('test/api/functional/ember/**/*_test.rb')
 FUNCTIONAL_TESTS_PUBLIC = Dir.glob('test/api/functional/**/*_test.rb')
-OLD_UI_FUNCTIONAL_TESTS = Dir.glob('test/app/functional/**/*_test.rb')
+OLD_UI_FUNCTIONAL_TESTS = Dir.glob('test/app/controllers/**/*_test.rb')
 UNIT_TESTS = Dir.glob('test/api/unit/*_test.rb') | Dir.glob('test/api/unit/*/*_test.rb')
 PIPE_TESTS = Dir.glob('test/api/**/pipe/**/*_test.rb')
 SEARCH_TESTS = Dir.glob('test/api/**/api_search/**/*_test.rb')
@@ -45,7 +45,7 @@ SUCCESSFUL_SEARCH_TESTS = [
   "test/api/functional/api_search/tickets_controller_test.rb"
 ]
 
-LIB_TESTS = Dir.glob('test/lib/unit/*_test.rb') + Dir.glob('test/lib/*_test.rb') + Dir.glob('test/lib/helpdesk/**/*_test.rb')
+LIB_TESTS = Dir.glob('test/lib/unit/*_test.rb') + Dir.glob('test/lib/*_test.rb') + Dir.glob('test/lib/helpdesk/**/*_test.rb') + Dir.glob('test/lib/integration_services/**/*_test.rb')
 MODEL_TESTS = Dir.glob('test/models/**/*_test.rb')
 MAILER_TESTS = Dir.glob('test/app/mailers/**/*_test.rb')
 

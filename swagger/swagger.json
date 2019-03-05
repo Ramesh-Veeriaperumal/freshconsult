@@ -14944,6 +14944,12 @@
                     "type": "string"
                   }
                 },
+                "ticket_cc_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "fr_escalated": {
                   "type": "boolean"
                 },
@@ -15016,6 +15022,12 @@
                   }
                 },
                 "reply_cc_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "ticket_cc_emails": {
                   "type": "array",
                   "items": {
                     "type": "string"
@@ -15254,6 +15266,12 @@
                     }
                   },
                   "reply_cc_emails": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "ticket_cc_emails": {
                     "type": "array",
                     "items": {
                       "type": "string"

@@ -1,6 +1,14 @@
 require_relative '../test_helper'
 class ApiBusinessHoursControllerTest < ActionController::TestCase
   include BusinessHoursTestHelper
+
+  def setup
+    shard = ShardMapping.first
+    shard.status = 200 unless shard.status == 200
+    shard.save
+    @account = Account.first
+  end
+
   def wrap_cname(params)
     { api_business_hour: params }
   end
