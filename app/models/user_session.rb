@@ -27,7 +27,21 @@ class UserSession < Authlogic::Session::Base
   def self.sign_cookie
     @@sign_cookie
   end
-  
+
+  def save(&block)
+    Rails.logger.info "Creating user session :: #{Account.current.id} :: #{email}"
+    (0..4).to_a.each { |i| Rails.logger.debug caller[i] }
+    result = super(&block)
+    Rails.logger.info "Done saving user session :: #{record.id if record} :: #{controller.session.inspect if controller}"
+    result
+  end
+
+  def destroy
+    Rails.logger.info "Destroying session for :: #{Account.current.id} :: #{record.id if record}"
+    (0..4).to_a.each { |i| Rails.logger.debug caller[i] }
+    super
+  end
+
   def set_user_time_zone
     Time.zone = self.attempted_record.time_zone
   end
