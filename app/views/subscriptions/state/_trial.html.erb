@@ -70,50 +70,11 @@ jQuery(document).ready(function() {
 
     jQuery(document).on('click', ".choose-plan-title .toggle-button", function(i){
       if(jQuery(i.target).closest(".toggle-button").hasClass("active")) {
-        jQuery(".plan-feature-list").addClass("showing-omni-features");
-        //jQuery("#ChangePlan").animate({'left': '-100%'}, 200).css("opacity", 0).animate({'left': '100%'}, 1);
-        toHide.each(function(item){
-          jQuery("#"+item).addClass("hide");
-        });
-
-        jQuery(".pricelist").each(function(){
-          if(jQuery(this).attr("id").indexOf("omni") > 0) {
-            jQuery(this).removeClass("hide");
-          }
-        });
-        //jQuery("#ChangePlan").css("opacity", 1).animate({'left': '0'}, 220);
-        jQuery(".omni-features").delay(300).removeClass("hide");
-        window.scrollTo(0,290);
+        show_omni_plans();
       } else {
-        jQuery(".plan-feature-list").removeClass("showing-omni-features");
-        //jQuery("#ChangePlan").animate({'left': '100%'}, 200).css("opacity", 0).animate({'left': '-100%'}, 1);
-        toHide.each(function(item){
-          jQuery("#"+item).removeClass("hide");
-        });
-
-        jQuery(".pricelist").each(function(){
-          if(jQuery(this).attr("id").indexOf("omni") > 0) {
-            jQuery(this).addClass("hide");
-          }
-        });
-        jQuery(".omni-features").addClass("hide");
-        //jQuery("#ChangePlan").css("opacity", 1).animate({'left': '0'}, 220);
+        hide_omni_plans();
       }
     });
-
-});
-</script>
-<script type="text/javascript">
-  function render_currency_partial(currency){
-    calculate_request = jQuery.post( "/subscription/calculate_plan_amount", { "currency": currency },
-      function(data){
-        jQuery("#ChangePlan").removeClass("sloading");
-        jQuery("#ChangePlan").html(data);
-        if(jQuery(".choose-plan-title .toggle-button").hasClass("active")) {
-          jQuery(".choose-plan-title .toggle-button").removeClass("active");
-        }
-      } );
-  }
 
   jQuery('#switch-currency').on('change', function(){
     jQuery("#ChangePlan").empty();
@@ -121,6 +82,53 @@ jQuery(document).ready(function() {
     var currency = this.value;
     render_currency_partial(currency);
   });
+
+  function render_currency_partial(currency) {
+    calculate_request = jQuery.post( "/subscription/calculate_plan_amount", { "currency": currency },
+    function(data){
+      jQuery("#ChangePlan").removeClass("sloading");
+      jQuery("#ChangePlan").html(data);
+      if(jQuery(".choose-plan-title .toggle-button").hasClass("active")) {
+        show_omni_plans();
+      } else {
+        hide_omni_plans();
+      }
+    } );
+  }
+
+  function show_omni_plans() {
+    jQuery(".plan-feature-list").addClass("showing-omni-features");
+    toHide.each(function(item){
+      jQuery("#"+item).addClass("hide");
+    });
+
+    jQuery(".pricelist").each(function(){
+      if(jQuery(this).attr("id").indexOf("omni") > 0) {
+        jQuery(this).removeClass("hide");
+      }
+    });
+    jQuery(".omni-features").delay(300).removeClass("hide");
+  }
+
+  function hide_omni_plans() {
+    jQuery(".plan-feature-list").removeClass("showing-omni-features");
+    toHide.each(function(item){
+      jQuery("#"+item).removeClass("hide");
+    });
+
+    jQuery(".pricelist").each(function(){
+      if(jQuery(this).attr("id").indexOf("omni") > 0) {
+        jQuery(this).addClass("hide");
+      }
+    });
+    jQuery(".omni-features").addClass("hide");
+  }
+
+});
+</script>
+
+<script type="text/javascript">
+
 </script>
 
 

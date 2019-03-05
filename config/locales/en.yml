@@ -11993,6 +11993,9 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   trial_plan_downgrade: "Important: You are currently downgrading from %{plan_from} plan to %{plan_to} plan"
   discounted_sum: "After Discount"
   selecting_plan: "Selecting..."
+  choose_annual: "Choose annual to"
+  save_20_percent: "save 20%"
+  you_save: "You save"
   proceed_billing_info: "Yes, Proceed to Billing"
   buy_plan: "Buy this Plan"
   classic_label: "Classic"
@@ -12005,7 +12008,7 @@ https://support.freshdesk.com/solution/articles/221418-computer-telephony-integr
   plan: "Plan"
   omni_enabled: "Omni channel - included"
   omni_disabled: "Omni channel - not included"
-  edit_plan: "Edit Plan"
+  edit_plan: "Edit billing"
   please_wait: Please Wait...
   account_created: "Account created %{total_time} ago on %{date}"
   not_available: "N/A"

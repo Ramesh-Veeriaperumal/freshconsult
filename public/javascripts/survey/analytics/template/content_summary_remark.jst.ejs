@@ -1,0 +1,17 @@
+<div class="span2 survey-info">
+	<%=  JST["survey/analytics/template/stats_percentile"]({
+				className:data.ratingSmiley,
+				percentage:data.ratingPercentage,
+				status:false,
+				dotClasses: [] }) %>
+</div>
+
+<ul class="span6 survey-answers">
+	<li>
+		<span class="overview-percentage"><%= data.ratingCount %></span></br>
+		<span class="muted rating-question-status"><%=SurveyI18N.answered%></span>
+	</li>
+	<li>
+		<span class="muted rating-status"><%=data.ratingText%></span>
+	</li>
+</ul>
