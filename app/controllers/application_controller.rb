@@ -51,6 +51,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # :secret => 'cf40acf193a63c36888fc1c1d4e94d32'
   skip_before_filter :verify_authenticity_token
   #before_filter :print_logs
+  around_filter :log_csrf
   before_filter :verify_authenticity_token, :if => :web_request?
   # See ActionController::Base for details 
   # Uncomment this to filter the contents of submitted sensitive data parameters
@@ -359,5 +360,11 @@ class ApplicationController < ActionController::Base
       redirect_to admin_home_index_path
     end
 
+    def log_csrf
+      start_token = session[:_csrf_token] if session
+      yield
+      end_token = session[:_csrf_token] if session
+      Rails.logger.info "CSRF observed :: changed :: #{start_token != end_token}:: #{start_token} :: #{end_token}"
+    end
 end
 
