@@ -119,11 +119,11 @@ window.App.Agents = window.App.Agents || {};
 	defaultScope: function(agentType) {
        if (agentType === 'field_agent') {
        	$("#role_and_scope").text(I18n.t('agent.scope'));
-       	$("#agent_role").addClass('hide');
+       	$("#agent_role_wrapper").addClass('hide');
        	$("#global_scope").addClass('hide');
        } else {
        	$("#role_and_scope").text(I18n.t('agent.role_and_scope'));
-       	$("#agent_role").removeClass('hide');
+       	$("#agent_role_wrapper").removeClass('hide');
        	$("#global_scope").removeClass('hide');
        } 
 	},
