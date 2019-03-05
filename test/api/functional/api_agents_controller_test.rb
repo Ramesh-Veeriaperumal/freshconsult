@@ -294,8 +294,8 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([ bad_request_error_pattern('user.role_ids', :field_agent_roles, :code => :invalid_value), bad_request_error_pattern('ticket_permission', :field_agent_scope, :code => :invalid_value)])
   ensure
-    agent.destroy
-    field_agent_type.destroy
+    agent.destroy if agent.present?
+    field_agent_type.destroy if field_agent_type.present?
     Account.any_instance.unstub(:field_service_management_enabled?)
     Account.unstub(:current)
   end
@@ -333,6 +333,9 @@ class ApiAgentsControllerTest < ActionController::TestCase
   end
 
   def test_update_field_agent_with_multiple_role
+    Account.any_instance.stubs(:agent_types_from_cache).returns(Account.first.agents.first)
+    Agent.any_instance.stubs(:find).returns(Account.first.agent_types.first)
+    Agent.any_instance.stubs(:length).returns(0)
     Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
     field_agent_type = AgentType.create_agent_type(@account, Agent::FIELD_AGENT)
     agent = add_test_agent(@account, { role: Role.find_by_name('Agent').id, agent_type: field_agent_type.agent_type_id, ticket_permission: Agent::PERMISSION_KEYS_BY_TOKEN[:assigned_tickets] })
@@ -342,8 +345,8 @@ class ApiAgentsControllerTest < ActionController::TestCase
     assert_response 400
     match_json([bad_request_error_pattern('user.role_ids', :field_agent_roles, :code => :invalid_value)])
   ensure
-    agent.destroy
-    field_agent_type.destroy
+    agent.destroy if agent.present?
+    field_agent_type.destroy if field_agent_type.present?
     Account.any_instance.unstub(:field_service_management_enabled?)
     Account.unstub(:current)
   end
