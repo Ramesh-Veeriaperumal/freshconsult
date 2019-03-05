@@ -119,6 +119,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def custom_fields_hash
+    pv_transformer = Helpdesk::Ticketfields::PicklistValueTransformer::StringToId.new(self)
     custom_ticket_fields.inject([]) do |arr, field|
       begin
         field_value = safe_send(field.name)
@@ -130,6 +131,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
           value: field.field_type == 'custom_date' ? utc_format(field_value) : field_value,
           column: ff_def_entry.flexifield_name
         }
+        if field.flexifield_coltype == 'dropdown'
+          picklist_id = pv_transformer.transform(field_value, ff_def_entry.flexifield_name) if field_value # fetch picklist_id of the field
+          custom_field[:choice_id] = picklist_id
+        end
         arr.push(custom_field)
       rescue Exception => e
         Rails.logger.error "Error while fetching ticket custom field value - #{e}\n#{e.message}\n#{e.backtrace.join("\n")}"
