@@ -6400,7 +6400,7 @@ de:
   footer:
     helpdesk_software: Helpdesk-Software
     by_freshdesk: von Freshdesk
-    helpdesk_software_link: "https://freshdesk.com/de/"
+    helpdesk_software_link: "https://freshdesk.com/de/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     submit_feedback: Feedback senden
     footer_feedback_subject_placeholder: 'Sagen Sie uns, wie wir Freshdesk verbessern können'
     footer_feedback_thanks: Vielen Dank für Ihr Feedback!

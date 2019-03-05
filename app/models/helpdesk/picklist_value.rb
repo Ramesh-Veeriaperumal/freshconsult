@@ -56,13 +56,22 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
 
   def choices=(c_attr)
     sub_picklist_values.clear
-    c_attr.each_with_index do |c, index| 
-      if c.size > 2 && c[2].is_a?(Array)
-        sub_picklist_values.build({:value => c[0], :position => index+1, :choices => c[2]})
-      else
-        sub_picklist_values.build({:value => c[0], :position => index+1})
-      end
-    end  
+    c_attr.each_with_index do |choice, index|
+      sub_picklist_values.build(build_choice_attributes(choice, index))
+    end 
+  end
+
+  def build_choice_attributes choice, index
+    if Account.current.nested_field_revamp_enabled?
+      choice.symbolize_keys!
+      choice.except!(:id, :destroyed).merge!(position: index+1)
+    else 
+      attributes = {
+        value: choice[0], 
+        position: index+1
+      }
+      choice[2].present? ? attributes.merge!(choices: choice[2]) : attributes
+    end
   end
 
   def required_ticket_fields

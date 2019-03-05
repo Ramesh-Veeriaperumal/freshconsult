@@ -1,0 +1,12 @@
+<div class="well well-survey well-new">
+<!--	<h3 class="lead"><%= data.question %></h3> -->
+	<div class="row-fluid survey-summary percentage-container">
+	   <% if(data.isRatingFilter){ %>
+		<%= JST["survey/analytics/template/content_summary_report"]({data: data})%>
+	   <%}else{%>
+		<%= JST["survey/analytics/template/content_summary_remark"]({data: data})%>
+	   <%}%>
+
+	</div>
+
+</div>

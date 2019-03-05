@@ -18,6 +18,10 @@
 	width: 500px;
 }
 
+.current-plan-info .save-info {
+	width: 100%;
+}
+
 #billing-template #show-confirmation-box {
 	display: none;
 }
@@ -274,6 +278,30 @@
 	}
 }
 
+.you-save-amount,
+.money {
+	color: #91000d;
+	font-weight: bold;
+}
+
+.vertical-top {
+	vertical-align: top;
+}
+
+dt.vertical-top {
+	padding-top: 5px;	
+}
+
+.save-info {
+	font-size: 12px;
+  margin-bottom: 0px;
+  padding-top: 5px;
+  width: 100px;
+  .money {
+  	font-weight: bold;
+  }
+}
+
 #billing-template{
 	.billing-cost{
 		margin-top: 10px;
@@ -288,6 +316,7 @@
   	.per-month-charges {
   		color: #91000d;
   		font-size: 12px;
+  		margin-bottom: 0px;
   	}
 		dl{ margin-top: 7px; }
 		dd, dt{
@@ -478,15 +507,25 @@ input[type=text].input-agent-count{
 				color: #b1bdc8;
 				font-weight: 300;
     		position: relative;
-				&:before {
-					content: '';
-    			display: inline-block;
-    			height: 26px;
-    			border-right: 1px solid #b1bdc8;
-    			position: absolute;
-    			transform: rotate(53deg);
-    			left: 13px;
-    			top: -2px;
+				
+				.price-value {
+			    display: inline-block;
+			    overflow: hidden;
+			    vertical-align: bottom;
+			     padding: 0 2px;
+
+					&:before {
+						content: '';
+						border-top: 1px solid #b1bdc8;
+						height: 0px;
+						display: block;
+						width: 100%;
+						transform: rotate(164deg);
+						position: relative;
+						top: 12px;
+						padding: 0 8px;
+						left: -38%;
+					}
 				}
 				.free {
 					display: inline-block;
@@ -494,6 +533,7 @@ input[type=text].input-agent-count{
 					font-weight: bold;
 				}
 			}
+
 		}
 		p.plan-details{
 			@include min-height(300px);
@@ -565,14 +605,15 @@ input[type=text].input-agent-count{
 			color: #fff;
 			font-weight: bold;
 			text-shadow: none;
+			background-image: none;
 		}
 	}
 
-	button{
+	button {
 		margin-top:6px;
 	}
-	.billing{
-		min-height: 150px;
+	.billing {
+		min-height: 190px;
 		td{
 			border:0;
 			vertical-align:middle;

@@ -1,0 +1,21 @@
+<%for(var key in data.percentile){%>
+	<div class="span2 survey-info">
+		<%=  JST["survey/analytics/template/stats_percentile"]({
+					className:data.percentile[key].smiley,
+					percentage:data.percentile[key].percentage,
+					status:data.percentile[key].status,
+					dotClasses:data.percentile[key].dotClasses,
+					dotValues:data.percentile[key].dotValues })%>
+	</div>
+<%}%>
+<div class="survey-answers">
+	<div class="survey-answered-pod">
+		<div class="overview-percentage"><%= data.answered %></div>
+		<div class="muted rating-status"><%=SurveyI18N.answered%></div>
+	</div>
+	<div>
+	<div class="overview-percentage"><%= data.unanswered %></div>
+		<div class="muted rating-status"><%=SurveyI18N.unanswered%></div>
+	</div>
+
+</div>

@@ -1,0 +1,10 @@
+<blockquote class="survey-response-blockquote"><%=msg%></blockquote>
+<div class="survey-details">
+	<span class="csat-muted"><%=SurveyI18N.response_to%>:</span>
+	<a href="/helpdesk/tickets/<%=ticket.display_id%>" target="_blank"><%-ticket.subject%>
+	<span class="csat-muted">#<%=ticket.display_id%></span></a>
+</div>
+<div class="survey-details">
+	<%if(group){%><span class="csat-muted"><%=SurveyI18N.group%>:</span> <%=group.name%><span class="group-agent-separator"><i class="survey-grey-dot"></i></span><%}%>
+	<%if(agent){%><span class="csat-muted"><%=SurveyI18N.agent%>:</span> <%=agent.name%><%}%>
+</div>

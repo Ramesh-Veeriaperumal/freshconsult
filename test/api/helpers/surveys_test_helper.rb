@@ -126,6 +126,20 @@ module SurveysTestHelper
     result
 end
 
+  def create_default_survey_result(ticket, rating, response_note = nil, survey_id = nil)
+    result = @account.survey_results.build(account_id: @account,
+                                           survey_id: survey_id || @account.survey.id,
+                                           surveyable_id: ticket.id,
+                                           surveyable_type: 'Helpdesk::Ticket',
+                                           customer_id: ticket.requester_id,
+                                           agent_id: response_note ? response_note.user_id : ticket.responder_id,
+                                           group_id: ticket.group_id,
+                                           response_note_id: ticket,
+                                           rating: rating)
+    result.save
+    result
+end
+
   def v1_survey_params
     { rating: 1,  feedback: Faker::Lorem.paragraph }
   end

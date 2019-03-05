@@ -65,7 +65,7 @@
 				<% break;
 			case 'nested_field':  %> 
 				<select class='input-xlarge' disabled>
-					<% nestedTree = new NestedField(admin_choices);
+					<% nestedTree = new NestedField(admin_choices, nested_field_revamp_enabled);
 						var choice = nestedTree.getCategory() ;
 						choice = choice.split(",");
 					%>

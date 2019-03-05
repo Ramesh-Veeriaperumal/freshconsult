@@ -6,6 +6,7 @@ module Helpdesk::Email::OutgoingCategory
   include Redis::OthersRedis
   include Spam::SpamAction
   include Helpdesk::SpamAccountConstants
+  include EmailHelper
 
   CATEGORIES = [
     [:trial,      1],
@@ -132,14 +133,6 @@ module Helpdesk::Email::OutgoingCategory
         end
       end
     end
-  end
-
-  def notify_outgoing_block(account, rules)
-    subject = "Detected suspicious spam account :#{account.id}" #should be called only when account object is set
-    additional_info = "Emails sent by the account has suspicious content . Contains content blacklisted by rule : #{rules} ."
-    additional_info << "Outgoing emails blocked!!" if !(Account.current.subscription.active?)
-    notify_account_blocks(account, subject, additional_info)
-    update_freshops_activity(account, "Outgoing emails blocked due to blacklisted spam rules match", "block_outgoing_email") if !(Account.current.subscription.active?)
   end
 
 end

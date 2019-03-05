@@ -47,7 +47,7 @@ module TicketFieldsHelper
     def get_choices(field, account)
       case field.field_type
         when "nested_field" then
-          field.nested_choices
+          account.nested_field_revamp_enabled? ? field.nested_field_choices_by_id : field.nested_choices
         when "default_status" then
           Helpdesk::TicketStatus.statuses_list(account)
         else
