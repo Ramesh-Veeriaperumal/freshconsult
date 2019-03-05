@@ -14,6 +14,7 @@ class ApiApplicationController < MetalApiController
   protect_from_forgery
   skip_before_filter :verify_authenticity_token
   before_filter :unset_thread_variables
+  around_filter :log_csrf
   before_filter :verify_authenticity_token, if: :csrf_check_reqd?
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
@@ -949,5 +950,12 @@ class ApiApplicationController < MetalApiController
 
     def log_locale
       Rails.logger.info "Locale:: #{I18n.locale}, User:: #{User.current.try(:id)}, User lang:: #{User.current.try(:language)}, Account lang:: #{Account.current.language}"
+    end
+
+    def log_csrf
+      start_token = session[:_csrf_token] if session
+      yield
+      end_token = session[:_csrf_token] if session
+      Rails.logger.info "CSRF observed :: changed :: #{start_token != end_token}:: #{start_token} :: #{end_token}"
     end
 end
