@@ -18,7 +18,7 @@ module AgentTestHelper
       id: agent.id,
       user_id: agent.user_id,
       signature: agent.signature,
-      ticket_permission: agent.ticket_permission,
+      ticket_permission: ticket_permission_hash(agent),
       occasional: agent.occasional,
       google_viewer_id: agent.google_viewer_id,
       signature_html: agent.signature_html,
@@ -33,6 +33,13 @@ module AgentTestHelper
       agent_type: agent.agent_type,
       groups: agent.groups.map { |ag| {name: ag.name, id: ag.id }}
     }.merge(user_fields_pattern(agent.user))
+  end
+
+  def ticket_permission_hash(agent)
+    {
+      id: agent.ticket_permission,
+      permission: Agent::PERMISSION_TOKENS_BY_KEY[agent.ticket_permission].to_s
+    }
   end
 
   def user_fields_pattern(user)

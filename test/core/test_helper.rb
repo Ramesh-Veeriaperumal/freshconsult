@@ -1,6 +1,3 @@
-require 'simplecov'
-require 'simplecov-rcov'
-require 'simplecov-csv'
 require_relative 'helpers/test_files.rb'
 require 'fakeweb'
 

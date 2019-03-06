@@ -16,7 +16,7 @@ class Agent < ActiveRecord::Base
     s.add :id
     s.add :user_id
     s.add :signature
-    s.add :ticket_permission
+    s.add :ticket_permission_hash, as: :ticket_permission
     s.add :occasional
     s.add :google_viewer_id
     s.add :signature_html
@@ -63,5 +63,12 @@ class Agent < ActiveRecord::Base
 
   def central_publish_worker_class
     "CentralPublishWorker::UserWorker"
+  end
+
+  def ticket_permission_hash
+    {
+      id: ticket_permission,
+      permission: PERMISSION_TOKENS_BY_KEY[ticket_permission].to_s
+    }
   end
 end

@@ -399,6 +399,7 @@ class Agent < ActiveRecord::Base
     else
       self.group_changes = [agent_info]
     end
+    clear_group_cache
   end
 
   def set_default_type_if_needed
