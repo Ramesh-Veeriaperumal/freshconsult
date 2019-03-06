@@ -47,7 +47,10 @@ class TopicObserver < ActiveRecord::Observer
   end
 
   def monitor_topic topic
-    send_later(:send_monitorship_emails, topic)
+    topic.forum.monitorships.active_monitors.all(:include => :portal).each do |monitor|
+      next if monitor.user.email.blank? or (topic.user_id == monitor.user_id)
+      TopicMailer.send_later(:monitor_email, monitor.user.email, topic, topic.user, monitor.portal, *monitor.sender_and_host)
+    end
   end
 
   def create_ticket topic
@@ -73,13 +76,6 @@ class TopicObserver < ActiveRecord::Observer
     
     topic.first_post.cloud_files.each do |cloud_file|
       ticket.cloud_files.build({:url => cloud_file.url, :application_id => cloud_file.application_id, :filename => cloud_file.filename })
-    end
-  end
-
-  def send_monitorship_emails topic
-    topic.forum.monitorships.active_monitors.all(:include => :portal).each do |monitor|
-      next if monitor.user.email.blank? or (topic.user_id == monitor.user_id)
-      TopicMailer.monitor_email(monitor.user.email, topic, topic.user, monitor.portal, *monitor.sender_and_host)
     end
   end
 
