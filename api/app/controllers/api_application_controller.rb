@@ -851,7 +851,7 @@ class ApiApplicationController < MetalApiController
     end
 
     def log_session_details(parent)
-      Rails.logger.info "Session details logging :: #{parent} :: #{request.headers['X-CSRF-Token']} :: #{form_authenticity_token} :: #{session.inspect}"
+      Rails.logger.info "Session details logging :: #{parent} :: #{request.headers['X-CSRF-Token']} :: #{session.inspect}"
     end
 
     def set_root_key
