@@ -72,7 +72,7 @@ module Billing::BillingHelper
         email: 'billing@freshdesk.com',
         subject: 'Update chat and caller plans',
         status: Helpdesk::Ticketfields::TicketStatus::OPEN,
-        priority: PRIORITY_KEYS_BY_TOKEN[:low],
+        priority: TicketConstants::PRIORITY_KEYS_BY_TOKEN[:low],
         description: description.html_safe,
         tags:  'OmnichannelPlan'
       }
