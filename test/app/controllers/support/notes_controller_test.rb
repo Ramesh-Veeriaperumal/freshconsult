@@ -28,11 +28,11 @@ class Support::NotesControllerTest < ActionController::TestCase
     t1 = create_ticket(:requester_id => user.id)
     Helpdesk::Ticket.stubs(:find_by_param).returns(Account.first.tickets.last)
     login_as(user)
-    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body => "Hi Hello" }}
+    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body_html => "Hi Hello" }}
     assert_response 302
     assert flash[:notice], "The note has been added to your ticket."
 
-    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body => "Hi Hello how are you" }}, format: 'mobile'
+    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body_html => "Hi Hello how are you" }}, format: 'mobile'
     assert_response 200
     assert JSON.parse(response.body)["success"] == true
     log_out
@@ -47,7 +47,7 @@ class Support::NotesControllerTest < ActionController::TestCase
     Helpdesk::Ticket.stubs(:find_by_param).returns(Account.first.tickets.last)
     login_as(user)
     Helpdesk::Note.any_instance.stubs(:save_note).returns(false)
-    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body => "Hi Hello" }}
+    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body_html => "Hi Hello" }}
     assert_response 302
     # assert flash[:notice], "The note has been added to your ticket."
     Helpdesk::Note.any_instance.unstub(:save_note)
@@ -64,7 +64,7 @@ class Support::NotesControllerTest < ActionController::TestCase
     t1 = create_ticket(:requester_id => user1.id)
     Helpdesk::Ticket.stubs(:find_by_param).returns(Account.first.tickets.last)
     login_as(user)
-    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body => "Hi Hello" }}
+    post :create, :version => :private, ticket_id: t1.display_id, :helpdesk_note => { :note_body_attributes => { :body_html => "Hi Hello" }}
     assert_response 302
     log_out
     user.destroy
