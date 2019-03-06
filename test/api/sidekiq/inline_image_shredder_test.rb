@@ -9,7 +9,7 @@ require Rails.root.join('test', 'api', 'helpers', 'attachments_test_helper.rb')
 Sidekiq::Testing.fake!
 
 class InlineImageShredderTest < ActionView::TestCase
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include AttachmentsTestHelper
 
   def setup

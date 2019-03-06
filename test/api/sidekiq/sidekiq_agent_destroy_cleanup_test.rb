@@ -10,7 +10,7 @@ require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 
 class SidekiqAgentDestroyCleanupTest < ActionView::TestCase
 
-  include UsersTestHelper
+  include CoreUsersTestHelper
   include CannedResponsesHelper
   include GroupHelper
   include TicketTemplateHelper

@@ -53,13 +53,4 @@ class TicketStatusTest < ActiveSupport::TestCase
     assert_equal({}, job['args'][1]['model_changes'])
     job['args'][1]['model_properties'].must_match_json_expression(pattern)
   end
-
-  def test_custom_dropdown_picklist_values_launch_party_disabled
-    @account.rollback(:ticket_fields_central_publish)
-    CentralPublishWorker::TicketFieldWorker.jobs.clear
-    create_custom_field_dropdown(Faker::Lorem.characters(10), [Faker::Lorem.characters(10)])
-    assert_equal 0, CentralPublishWorker::TicketFieldWorker.jobs.size
-  ensure
-    @account.launch(:ticket_fields_central_publish)
-  end
 end

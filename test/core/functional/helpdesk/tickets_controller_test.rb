@@ -4,13 +4,13 @@ Dir["#{Rails.root}/test/core/functional/helpdesk/ticket_test_cases/*.rb"].each {
 class Helpdesk::TicketsControllerTest < ActionController::TestCase
 
   # include helpers
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include DynamoTestHelper
   include LinkTicketAssertions
   include NoteTestHelper
   include SharedOwnershipTestHelper
   include AccountTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
   include ControllerTestHelper
 
   # include tests

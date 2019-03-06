@@ -4,7 +4,7 @@
 
 module BotResponseTestHelper
   include TicketHelper
-  include SolutionsTestHelper
+  include CoreSolutionsTestHelper
   include AttachmentsTestHelper
   include ControllerTestHelper
   include UsersTestHelper

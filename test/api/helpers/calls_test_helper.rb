@@ -14,7 +14,7 @@ module Freshcaller::CallsTestHelper
       id: call.id,
       fc_call_id: call.fc_call_id,
       recording_status: call.recording_status,
-      ticket_display_id: call.notable.notable.id,
+      ticket_display_id: call.notable.notable.display_id,
       note_id: call.notable.id
     }
   end

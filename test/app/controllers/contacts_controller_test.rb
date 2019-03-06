@@ -3,7 +3,7 @@ require_relative '../../core/helpers/users_test_helper'
 require_relative '../../core/helpers/controller_test_helper'
 
 class ContactsControllerTest < ActionController::TestCase
-  include UsersTestHelper
+  include CoreUsersTestHelper
   include ControllerTestHelper
 
   def test_create_contact
@@ -39,7 +39,7 @@ class ContactsControllerTest < ActionController::TestCase
 
     @user = Account.current.account_managers.first.make_current
 
-    user = Account.current.users.first
+    user = Account.current.users.where('email is NOT NULL').first
 
     post :create_contact, user: { name: user.name, email: user.email, time_zone: 'Chennai', language: 'en' }
     assert_response 200
@@ -84,6 +84,7 @@ class ContactsControllerTest < ActionController::TestCase
 
     user = add_agent(@account, agent: 0)
 
+    User.any_instance.stubs(:update_attributes).returns(true)
     put :update_contact, id: user.id, user: { email: user.email, job_title: 'Developer', phone: "8787687687" }
     assert_response 302
 

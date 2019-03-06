@@ -41,12 +41,4 @@ class TicketStatusTest < ActiveSupport::TestCase
     assert_equal(model_changes_ticket_status(status_name, status.name), job['args'][1]['model_changes'])
   end
 
-  def test_ticket_status_with_launch_party_disabled
-    @account.rollback(:ticket_fields_central_publish)
-    CentralPublishWorker::TicketFieldWorker.jobs.clear
-    create_custom_status(Faker::Lorem.characters(10))
-    assert_equal 0, CentralPublishWorker::TicketFieldWorker.jobs.size
-  ensure
-    @account.rollback(:ticket_fields_central_publish)
-  end
 end

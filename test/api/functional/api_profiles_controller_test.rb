@@ -39,6 +39,7 @@ class ApiProfilesControllerTest < ActionController::TestCase
 
   def test_update_valid_profile_info
     currentuser = User.current
+    Account.any_instance.stubs(:multi_timezone_enabled?).returns(true)
     params_hash = { time_zone: 'Central Time (US & Canada)', language: 'hu', signature: Faker::Lorem.paragraph }
     put :update, construct_params({ version: 'private', id: 'me' }, params_hash)
     assert_response 200
@@ -73,6 +74,7 @@ class ApiProfilesControllerTest < ActionController::TestCase
   def test_update_profile_error
     params_hash = { time_zone: 'Central Time (US & Canada)', language: 'hu', signature: Faker::Lorem.paragraph }
     Agent.any_instance.stubs(:update_attributes).returns(false)
+    Account.any_instance.stubs(:multi_timezone_enabled?).returns(true)
     put :update, construct_params({ version: 'private', id: 'me' }, params_hash)
     assert_response 500
   ensure

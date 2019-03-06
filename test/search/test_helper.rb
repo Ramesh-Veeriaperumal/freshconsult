@@ -9,7 +9,7 @@ Dir["#{Rails.root}/test/search/helpers/*.rb"].each { |file| require file }
 include ActiveSupport::Rescuable
 include AccountHelper
 include UsersHelper
-include CompanyHelper
+include ApiCompanyHelper
 include ForumHelper
 include SolutionsHelper
 include TicketHelper

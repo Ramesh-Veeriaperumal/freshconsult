@@ -12,7 +12,7 @@ require Rails.root.join('test', 'api', 'helpers', 'custom_dashboard', 'widget_ob
 Sidekiq::Testing.fake!
 class ResetGroupTest < ActionView::TestCase
   include AccountTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
   include GroupHelper
   include TicketHelper
   include ArchiveTicketTestHelper

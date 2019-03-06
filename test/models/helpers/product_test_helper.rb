@@ -61,7 +61,7 @@ module ProductTestHelper
       name: product.name,
       description: product.description,
       account_id: product.account_id,
-      product_push_timestamp: product_push_timestamp,
+      #product_push_timestamp: product_push_timestamp,
       portal_id: product.portal.id,
       email_config_ids: product.email_configs.all(:select => :id).collect(&:id),
       created_at: product.created_at.try(:utc).try(:iso8601),
@@ -80,15 +80,32 @@ module ProductTestHelper
         created_at = email["created_at"].try(:utc).try(:iso8601)
         updated_at = email["updated_at"].try(:utc).try(:iso8601)
         email.merge!({"created_at" => created_at, "updated_at" => updated_at})
-        arr[index] = email
+        arr[index] = email.slice!("activator_token")
       end
     end
 
     {
-      portal: (product.portal ? product.portal.as_json["portal"] : {}),
+      portal: (product.portal ? construct_portal_hash(product.portal) : {}),
       email_configs: arr
     }
 
+  end
+
+  def construct_portal_hash(portal)
+    {
+      id: portal.id,
+      name: portal.name,
+      product_id: portal.product_id,
+      account_id: portal.account_id,
+      portal_url: portal.portal_url,
+      solution_category_id: portal.solution_category_id,
+      forum_category_id: portal.forum_category_id,
+      language: portal.language,
+      main_portal: portal.main_portal,
+      ssl_enabled: portal.ssl_enabled,
+      created_at: portal.created_at,
+      updated_at: portal.updated_at
+    }
   end
 
 end

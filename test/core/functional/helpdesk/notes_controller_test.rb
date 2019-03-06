@@ -4,13 +4,13 @@ require 'sidekiq/testing'
 Dir["#{Rails.root}/test/core/functional/helpdesk/conversation_test_cases/*.rb"].each { |file| require file }
 
 class Helpdesk::NotesControllerTest < ActionController::TestCase
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include DynamoTestHelper
   include LinkTicketAssertions
   include NoteTestHelper
   include NoteTestIntegrationsHelper
   include TicketConstants
-  include UsersTestHelper
+  include CoreUsersTestHelper
 
   def setup
     super

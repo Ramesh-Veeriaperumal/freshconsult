@@ -10,10 +10,12 @@ class DeleteSandboxTest < ActionView::TestCase
   SUCCESS = 200..299
 
   def setup
+    ChargeBee::Rest.stubs(:request).returns(stub_data)
     super
   end
 
   def teardown
+    ChargeBee::Rest.unstub(:request)
     Account.unstub(:current)
     super
   end

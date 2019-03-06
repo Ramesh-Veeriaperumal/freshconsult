@@ -5,7 +5,7 @@ require Rails.root.join('test', 'api', 'helpers', 'sandbox_test_helper.rb')
 
 class Admin::SandboxesControllerTest < ActionController::TestCase
   include AccountTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
   include SandboxTestHelper
   def setup
     super

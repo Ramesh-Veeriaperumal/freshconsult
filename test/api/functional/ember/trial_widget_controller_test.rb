@@ -6,7 +6,7 @@ require Rails.root.join('test', 'api', 'helpers', 'trial_widget_test_helper.rb')
 
 class Ember::TrialWidgetControllerTest < ActionController::TestCase
   include AccountTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
   include TrialWidgetTestHelper
 
   def setup

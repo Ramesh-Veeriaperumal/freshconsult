@@ -1,4 +1,4 @@
-module TicketFieldsTestHelper
+module CoreTicketFieldsTestHelper
 	include Helpdesk::Ticketfields::ControllerMethods
 
   FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date' }

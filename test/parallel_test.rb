@@ -55,6 +55,8 @@ end
 def process_logger(message)
   puts "[Process:#{ENV['CHILD_PROCESS_ID']}] #{message}"
 end
+is_failed = false
+
 
 number_of_parallel_jobs.to_i.times do |i|
   Process.fork do
@@ -100,6 +102,13 @@ number_of_parallel_jobs.to_i.times do |i|
     process_logger "Dropped process database helpkit_child_#{child_process_id}"
     # print process message
     process_logger "ends at #{Time.now.strftime('%d/%m/%Y %H:%M:%S')}"
+    puts "============#{suite_type} result ======================"
+    puts `cat test/tmp_result_#{i}.log`
+    puts "============#{suite_type} result ends ======================"
+    if `grep 'Process exitted because of the exception' test/tmp_result_#{i}.log`.length > 0
+      is_failed = true
+    end
+    `rm -f test/tmp_result_#{i}.log`
   end
 end
 
@@ -109,15 +118,6 @@ processes = Process.waitall
 p "All process ends for #{suite_type} at #{Time.now.strftime('%d/%m/%Y %H:%M:%S')}"
 
 
-is_failed = false
-number_of_parallel_jobs.to_i.times do |i|
-  puts "============#{suite_type} result ======================"
-  puts `cat test/tmp_result_#{i}.log`
-  puts "============#{suite_type} result ends ======================"
-  if `grep 'Process exitted because of the exception' test/tmp_result_#{i}.log`.length > 0
-    is_failed = true
-  end
-  `rm -f test/tmp_result_#{i}.log`
-end
+
 
 raise "Something Went Wrong. A #{suite_type} process failed" if is_failed

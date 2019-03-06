@@ -13,7 +13,7 @@ class ResetResponderTest < ActionView::TestCase
   include ControllerTestHelper
   include ArchiveTicketTestHelper
   include AccountTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
 
   def setup
     super

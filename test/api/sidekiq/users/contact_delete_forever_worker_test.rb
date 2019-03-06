@@ -12,8 +12,8 @@ Sidekiq::Testing.fake!
 class ContactDeleteForeverWorkerTest < ActionView::TestCase
   include AccountTestHelper
   include ContactSegmentsTestHelper
-  include TicketsTestHelper
-  include ForumsTestHelper
+  include CoreTicketsTestHelper
+  include CoreForumsTestHelper
   include Redis::RedisKeys
   include Redis::OthersRedis
 

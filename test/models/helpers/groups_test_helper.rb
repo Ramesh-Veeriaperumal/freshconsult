@@ -1,4 +1,4 @@
-module GroupsTestHelper
+module ModelsGroupsTestHelper
   def create_group(account, options= {},group_type= 1)
     group = account.groups.find_by_name(options[:name])
     return group if group

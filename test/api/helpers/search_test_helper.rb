@@ -305,13 +305,23 @@ module SearchTestHelper
       domains: domains(company),
       created_at: company.created_at.try(:utc),
       updated_at: company.updated_at.try(:utc),
-      custom_fields: Hash,
+      custom_fields: construct_custom_field_hash(company),
       user_count: user_count
     }
   end
 
+  def construct_custom_field_hash(company)
+    custom_field_hash = {}
+    company.custom_field.each do |k,v|
+      new_key = k.sub('cf_','')
+      custom_field_hash[new_key] = v
+    end
+    custom_field_hash
+  end
+
   def public_search_company_pattern(company)
-    private_search_company_pattern(company).except(:user_count)
+    public_hash = private_search_company_pattern(company).except(:user_count,:custom_fields)
+    public_hash[:custom_fields] = Hash
   end
 
   def domains(company)

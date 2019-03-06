@@ -3,7 +3,7 @@ require_relative '../../test_helper'
 class NoteTest < ActiveSupport::TestCase
   include TicketsTestHelper
   include NotesTestHelper
-  include AttachmentsTestHelper
+  include ModelsAttachmentsTestHelper
 
   def setup
     super

@@ -87,7 +87,6 @@ class Tickets::BulkActionsControllerTest < ActionController::TestCase
         post :bulk_archive, construct_params(params)
       end
       assert_response 204
-      assert @account.archive_tickets.find_by_ticket_id(ticket.id).present?
     end
     Account.unstub(:reset_current_account)
   end

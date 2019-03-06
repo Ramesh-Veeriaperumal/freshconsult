@@ -6,7 +6,7 @@ require Rails.root.join('test', 'api', 'helpers', 'bot_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'controller_test_helper.rb')
 
 class MlSolutionsTrainingTest < ActionView::TestCase
-  include BotTestHelper
+  include ApiBotTestHelper
   include SolutionsHelper
   include ControllerTestHelper
   include SolutionBuilderHelper

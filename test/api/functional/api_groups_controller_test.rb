@@ -29,7 +29,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                                     auto_ticket_assign: true)
     assert_response 400
     res = JSON.parse response.body
-    assert_equal res["errors"][0]["message"], "Auto ticket assignment is not available for field service groups."
+    match_json([bad_request_error_pattern('ticket_assign_type', :invalid_field_auto_assign, :code => :invalid_value)])
   ensure
     destroy_field_group
     destroy_field_agent
@@ -45,7 +45,7 @@ class ApiGroupsControllerTest < ActionController::TestCase
     post :create, construct_params({}, name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph, auto_ticket_assign: true, group_type: FIELD_GROUP_NAME)
     assert_response 400
     res = JSON.parse response.body
-    assert_equal res["errors"][0]["message"],"Auto ticket assignment is not available for field service groups."
+    match_json([bad_request_error_pattern('ticket_assign_type', :invalid_field_auto_assign, :code => :invalid_value)])
   ensure
     destroy_field_group
     destroy_field_agent
@@ -63,8 +63,8 @@ class ApiGroupsControllerTest < ActionController::TestCase
                                                     auto_ticket_assign: true, agent_ids: [1])
     assert_response 400
     res = JSON.parse response.body
-    assert_equal res["errors"][0]["message"], "Agent and group need to be of the same type."
-    assert_equal res["errors"][1]["message"], "Auto ticket assignment is not available for field service groups."
+    match_json([bad_request_error_pattern('ticket_assign_type', :invalid_field_auto_assign, :code => :invalid_value),
+                bad_request_error_pattern('agent_groups', :invalid_agent_ids, :code => :invalid_value)])
   ensure
     destroy_field_group
     destroy_field_agent

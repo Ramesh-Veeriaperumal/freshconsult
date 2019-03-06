@@ -4,7 +4,7 @@ Dir["#{Rails.root}/test/core/functional/helpdesk/bulk_ticket_actions_test_cases/
 class Helpdesk::BulkTicketActionsControllerTest < ActionController::TestCase
 
 #include helpers
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include SharedOwnershipTestHelper
   include AccountTestHelper
   include ControllerTestHelper

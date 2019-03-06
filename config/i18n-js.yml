@@ -33,6 +33,8 @@ translations:
     , '*.agent.more'
     , '*.agent.manage_skills'
     , '*.agent.add_skills'
+    , '*.agent.role_and_scope'
+    , '*.agent.scope'
     , '*.plain_on'
     , '*.plain_off'
     , '*.plain_yes'

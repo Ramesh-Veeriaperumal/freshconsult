@@ -19,8 +19,8 @@ require 'minitest/spec'
 # Dir["#{Rails.root}/test/core/helpers/controller_test_helper.rb"].each { |file| require file }
 
 include AccountTestHelper
-include UsersTestHelper
+include ModelsUsersTestHelper
 include ControllerTestHelper
 include ActiveSupport::Rescuable
 
-Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new]
+Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new('test/reports')]

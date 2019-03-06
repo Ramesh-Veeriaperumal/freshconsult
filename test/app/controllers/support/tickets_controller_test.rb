@@ -7,8 +7,8 @@ require_relative '../../../api/helpers/archive_ticket_test_helper'
 
 class Support::TicketsControllerTest < ActionController::TestCase
   include ControllerTestHelper
-  include TicketsTestHelper
-  include UsersTestHelper
+  include CoreTicketsTestHelper
+  include CoreUsersTestHelper
   include PrivilegesHelper
   include ArchiveTicketTestHelper
   ARCHIVE_DAYS = 120
@@ -58,14 +58,14 @@ class Support::TicketsControllerTest < ActionController::TestCase
   	user.make_current
   	t1 = create_ticket(requester_id: user.id)
   	login_as(user)
-  	post :close, :version => :private, id: t1.id
+  	post :close, :version => :private, id: t1.display_id
   	assert_response 302
   	assert user.tickets.find(t1.id).status == 5
   	assert_equal flash[:notice], "Your ticket has been successfully closed."
 
   	t2 = create_ticket(requester_id: user.id)
   	Helpdesk::Ticket.any_instance.stubs(:update_attribute).returns(false)
-  	post :close, :version => :private, id: t2.id
+  	post :close, :version => :private, id: t2.display_id
   	assert_response 302
   	assert user.tickets.find(t2.id).status == 2
   	assert_equal flash[:notice], "Closing the ticket failed."
@@ -81,19 +81,19 @@ class Support::TicketsControllerTest < ActionController::TestCase
   	user.make_current
   	t1 = create_ticket(requester_id: user.id, cc_emails: [Faker::Internet.email] )
   	login_as(user)
-  	put :add_people, :version => :private, id: t1.id, :helpdesk_ticket => { :cc_email => { :reply_cc => Faker::Internet.email }}
+  	put :add_people, :version => :private, id: t1.display_id, :helpdesk_ticket => { :cc_email => { :reply_cc => Faker::Internet.email }}
   	assert_response 302
   	assert_equal flash[:notice], "Email(s) successfully added to CC."
     t1.destroy
 
     t1 = create_ticket(requester_id: user.id)
-    put :add_people, :version => :private, id: t1.id, :helpdesk_ticket => { :cc_email => { :reply_cc => Faker::Internet.email }}
+    put :add_people, :version => :private, id: t1.display_id, :helpdesk_ticket => { :cc_email => { :reply_cc => Faker::Internet.email }}
     assert_response 302
     assert_equal flash[:notice], "Email(s) successfully added to CC."
 
   	email_array = []
   	60.times { email_array << Faker::Internet.email}
-  	put :add_people, :version => :private, id: t1.id, :helpdesk_ticket => { :cc_email => {:reply_cc => email_array}}
+  	put :add_people, :version => :private, id: t1.display_id, :helpdesk_ticket => { :cc_email => {:reply_cc => email_array}}
   	assert_response 302
   	assert_equal flash[:error], "You can add upto 50 CC emails"
 
@@ -134,7 +134,7 @@ class Support::TicketsControllerTest < ActionController::TestCase
   	t1 = create_ticket(requester_id: user.id)
   	login_as(user)
     # Helpdesk::Ticket.any_instance.stubs(:update_ticket_attributes).returns(true)
-  	put :update, :version => :private, :helpdesk_ticket => { :subject => "test subject" }, id: t1.id
+  	put :update, :version => :private, :helpdesk_ticket => { :subject => "test subject" }, id: t1.display_id
   	assert_response 302
     assert flash[:notice], "The ticket has been updated"
     # Helpdesk::Ticket.any_instance.unstub(:update_attribute)
@@ -148,7 +148,7 @@ class Support::TicketsControllerTest < ActionController::TestCase
   	user.make_current
   	t1 = create_ticket(requester_id: user.id)
   	login_as(user)
-  	get :show, :version => :private, id: t1.id
+  	get :show, :version => :private, id: t1.display_id
   	assert_response 200
 
   	log_out
@@ -241,7 +241,7 @@ class Support::TicketsControllerTest < ActionController::TestCase
     user.save
     user.make_current
     login_as(user)
-    get :show, :version => :private, id: @archive_ticket.id
+    get :show, :version => :private, id: @archive_ticket.display_id
     assert_response 302
     log_out
     cleanup_archive_ticket(@archive_ticket, {conversations: true})

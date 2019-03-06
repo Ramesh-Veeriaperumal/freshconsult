@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class FolderTest < ActiveSupport::TestCase
-  include SolutionsTestHelper
+  include ModelsSolutionsTestHelper
 
   def test_central_publish_payload
     folder = add_new_folder

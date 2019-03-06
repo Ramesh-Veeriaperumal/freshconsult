@@ -215,12 +215,15 @@
   					  <%= hidden_field(:agent, :user_id, :id => "user_id" ) %>
   					</div>
           </li>
-          <% if !(edit? && is_field_agent?(@agent)) %>
           <div id="roles-and-scopes">
   				<li class="seperator"></li>
   				<li class="row-fluid">
   					<h5 class="lead">
-              <%= current_account.agent_scope_enabled? ? t('agent.role_and_scope') : t('agent.roles')%>
+              <% if current_account.agent_scope_enabled? %>
+                <span id="role_and_scope"></span>
+              <% else %>
+               t('agent.roles')
+              <% end %>
             </h5>
   				</li>
           <% if(@agent.user != current_user) %>
@@ -228,19 +231,19 @@
           <% if(current_account.agent_scope_enabled?) %>
             <label class="control-label"><%=t('agent.ticket_scope')%></label>
             <ul class="controls">
+              <li id="global_scope">
                 <label class="radio">
-                  <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:checked => true ,:id=>"agent_all_tickets", :class=>"radio"}) %>
+                  <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:all_tickets] ,{:id=>"agent_all_tickets", :class=>"radio"}) %>
                   <%=t('agent.global')%>
                   <%= content_tag( :span, t('agent.global_info'), :class => "muted info_data" ) %>
                 </label>
-
+              </li>
               <li>
                 <label class="radio">
                  <%= radio_button(:agent, :ticket_permission, Agent::PERMISSION_KEYS_BY_TOKEN[:group_tickets] ,{:id=>"agent_group_tickets", :class => "radio"}) %>
                  <%=t('agent.group_access')%>
                  <%= content_tag( :span, t('agent.group_info'), :class => "muted info_data" ) %>
                </label>
-
               </li>
               <li>
                 <label class="radio">
@@ -248,12 +251,11 @@
                  <%=t('agent.individual')%>
                  <%= content_tag( :span, t('agent.individual_info'), :class => "muted info_data" ) %>
                </label>
-
               </li>
             </ul>
           <%end%>
           </li>
-  				<li class="agent-role control-group">
+  				<li id="agent_role_wrapper" class="agent-role control-group hide">
   					<%= label(:agent, :roles, t('agent.role'), :class => "control-label") %>
   					<div class="controls" id="selected-roles">
               <input type="hidden" value="" name="roleValidate" class="at_least_one_item"
@@ -317,7 +319,6 @@
 		</li>
 		<% end %>
     </div>
-    <% end %>
     <% if(@groups.any?) %>
       <li class="seperator"></li>
       <li class="row-fluid">

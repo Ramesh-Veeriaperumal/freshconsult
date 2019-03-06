@@ -81,7 +81,10 @@ class PlanChangeWorkerTest < ActionView::TestCase
   end
 
   def test_drop_custom_roles_data
+    User.any_instance.stubs(:save).returns(true)
     PlanChangeWorker.new.drop_custom_roles_data(Account.current)
+  ensure
+    User.any_instance.unstub(:save)
   end
 
   def test_drop_dynamic_sections_data

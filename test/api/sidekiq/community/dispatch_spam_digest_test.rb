@@ -6,7 +6,7 @@ Sidekiq::Testing.fake!
 require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 
 class DispatchSpamDigestTest < ActionView::TestCase
-  include UsersTestHelper
+  include CoreUsersTestHelper
 
   def setup
     Account.stubs(:current).returns(Account.first)

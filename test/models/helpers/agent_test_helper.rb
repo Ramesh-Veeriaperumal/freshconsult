@@ -7,7 +7,7 @@ module AgentTestHelper
     :parent_id, :unique_external_id, :last_login_at, :current_login_at, :last_seen_at, 
     :blocked_at, :deleted_at]
 
-  def update_agent
+  def update_agent_availability
     agent = Account.current.agents.first
     agent.available = !agent.available
     agent.save

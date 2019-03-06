@@ -4,10 +4,12 @@ require Rails.root.join('test', 'models', 'helpers', 'agent_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 require 'sidekiq/testing'
 
-class AgentTest < ActionView::TestCase
-  include GroupHelper
-  include UsersTestHelper
+class AgentTest < ActiveSupport::TestCase
+  include CoreUsersTestHelper
   include AgentTestHelper
+  include ModelsGroupsTestHelper
+  include ModelsUsersTestHelper
+  include GroupHelper
 
   # def test_agent_update_without_feature
   #   @account.rollback(:audit_logs_central_publish)

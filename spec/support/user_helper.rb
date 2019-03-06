@@ -16,6 +16,7 @@ module UsersHelper
   end
 
   def add_agent(account, options={})
+    role_id = @account.roles.find_by_name("Agent").id
     new_agent = FactoryGirl.build(:agent,
                                       :account_id => account.id,
                                       :available => 1,
@@ -23,15 +24,15 @@ module UsersHelper
                                       :agent_type => options[:agent_type] || 1)
     new_user = FactoryGirl.build(:user,
                                     :account_id => account.id,
-                                    :name => options[:name],
-                                    :email => options[:email],
-                                    :helpdesk_agent => options[:agent],
-                                    :time_zone => "Chennai",
-                                    :active => options[:active],
-                                    :user_role => options[:role],
+                                    :name => options[:name] || Faker::Name.name,
+                                    :email => options[:email] || Faker::Internet.email,
+                                    :helpdesk_agent => options[:agent] || 1,
+                                    :time_zone => options[:time_zone] || "Chennai",
+                                    :active => options[:active] || 1,
+                                    :user_role => options[:role] || role_id,
                                     :delta => 1,
                                     :language => "en",
-                                    :role_ids => options[:role_ids])
+                                    :role_ids => options[:role_ids] || ["#{role_id}"])
     if options[:unique_external_id]
       new_user.unique_external_id = options[:unique_external_id]
     end
