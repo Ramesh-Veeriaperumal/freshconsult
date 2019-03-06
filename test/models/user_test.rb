@@ -1,9 +1,11 @@
 require_relative '../test_helper'
 require 'faker'
 require Rails.root.join('spec', 'support', 'user_helper.rb')
+require Rails.root.join('spec', 'support', 'company_helper.rb')
 
 class UserTest < ActiveSupport::TestCase
   include UsersHelper
+  include CompanyHelper
 
   def test_user_allowed_for_password_reset
     user = add_new_user(@account)
@@ -310,6 +312,8 @@ class UserTest < ActiveSupport::TestCase
   def test_update_user_companies
     Account.any_instance.stubs(:skill_based_round_robin_enabled?).returns(true)
     User.any_instance.stubs(:skill_ids=).returns(true)
+    new_company = create_company
+    new_user = add_new_user(@account, customer_id: new_company.id)
     user_params = {
       user: {
         name: Faker::Name.name,
@@ -319,12 +323,11 @@ class UserTest < ActiveSupport::TestCase
         client_manager: false,
         removed_companies: ['test'].to_json,
         added_companies: [{ 'company_name' => 'test1', 'client_manager' => false, 'default_company' => true }].to_json,
-        edited_companies: [{ 'id' => @account.companies.first.id, 'company_name' => 'test2', 'client_manager' => false, 'default_company' => true }].to_json,
+        edited_companies: [{ 'id' => new_company.id, 'company_name' => 'test2', 'client_manager' => false, 'default_company' => true }].to_json,
         user_skills_attributes: [{ 'rank' => 1, 'skill_id' => 1 }]
       }
     }
-    user = @account.users.find_by_id(3)
-    assert_includes user.build_user_attributes(user_params), 1
+    assert_includes new_user.build_user_attributes(user_params), 1
   ensure
     Account.any_instance.unstub(:skill_based_round_robin_enabled?)
     User.any_instance.unstub(:skill_ids=)
