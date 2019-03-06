@@ -19,8 +19,8 @@ class Support::SignupsController < SupportController
   end
   
   def create
-    if verify_recaptcha(model: @user, message: t('captcha_verify_message'),
-                        hostname: current_portal.method(:matches_host?)) && @user.signup!(params, current_portal)
+    if (current_account.disable_signup_captcha_enabled? || verify_recaptcha(model: @user, message: t('captcha_verify_message'),
+                        hostname: current_portal.method(:matches_host?))) && @user.signup!(params, current_portal)
       e_notification = current_account.email_notifications.find_by_notification_type(EmailNotification::USER_ACTIVATION)
       if e_notification.requester_notification?
         flash[:notice] = t(:'activation_link', :email => @user.email)
