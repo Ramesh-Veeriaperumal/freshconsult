@@ -1,7 +1,7 @@
 FUNCTIONAL_TESTS_EMBER = Dir.glob('test/api/functional/ember/**/*_test.rb')
 FUNCTIONAL_TESTS_PUBLIC = Dir.glob('test/api/functional/**/*_test.rb')
 OLD_UI_FUNCTIONAL_TESTS = Dir.glob('test/app/controllers/**/*_test.rb')
-UNIT_TESTS = Dir.glob('test/api/unit/*_test.rb') | Dir.glob('test/api/unit/*/*_test.rb')
+UNIT_TESTS = Dir.glob('test/api/unit/*_test.rb') | Dir.glob('test/api/unit/*/*_test.rb') | Dir.glob('test/api/lib/**/*_test.rb')
 PIPE_TESTS = Dir.glob('test/api/**/pipe/**/*_test.rb')
 SEARCH_TESTS = Dir.glob('test/api/**/api_search/**/*_test.rb')
 FRESHCALLER_CHANNEL_TESTS = Dir.glob('test/api/functional/channel/freshcaller/**/*_test.rb')

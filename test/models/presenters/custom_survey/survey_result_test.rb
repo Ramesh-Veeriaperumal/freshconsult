@@ -2,21 +2,24 @@ require_relative '../../test_helper'
 require Rails.root.join('test', 'api', 'helpers', 'surveys_test_helper.rb')
 
 class SurveyResultTest < ActiveSupport::TestCase
-  include SurveysTestHelper
-  include TicketsTestHelper
   include ::CustomSurvey::SurveyResult::PublisherMethods
+  include TicketsTestHelper
+  include SurveysTestHelper
+
+  @@ticket = nil
 
   def setup
     super
     Sidekiq::Worker.clear_all
     before_all
+    @@ticket = @ticket = @@ticket || create_ticket
   end
 
   def before_all
     @account.launch(:surveys_central_publish)
     create_survey(1, true)
     CentralPublishWorker::SurveyWorker.jobs.clear
-    @ticket ||= create_ticket
+    @@before_all_run = true
   end
 
   def test_survey_result_payload
@@ -47,7 +50,7 @@ class SurveyResultTest < ActiveSupport::TestCase
         customer_id: result.customer_id,
         agent_id: result.agent_id,
         response_note_id: result.response_note_id,
-        rating: old_rating(result.rating),
+        rating: result.old_rating(result.rating),
         group_id: result.group_id,
         custom_fields: survey_result_data_payload(result),
         created_at: result.created_at.try(:utc).try(:iso8601),
