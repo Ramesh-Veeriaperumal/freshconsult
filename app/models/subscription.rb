@@ -88,7 +88,6 @@ class Subscription < ActiveRecord::Base
   before_save :update_amount
   
   before_update :cache_old_model
-  # after_update :update_features 
 
   after_update :add_to_crm
   after_update :update_reseller_subscription
@@ -523,12 +522,6 @@ class Subscription < ActiveRecord::Base
     def free_plan?
       subscription_plan_from_cache.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:free]
     end
-    
-    def update_features
-      return if subscription_plan_id == @old_subscription.subscription_plan_id
-      SAAS::SubscriptionActions.new.change_plan(account, @old_subscription)
-    end
-
 
     def update_billing_address(card)
       billing_address = self.billing_address
