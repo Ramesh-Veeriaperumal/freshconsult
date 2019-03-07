@@ -269,6 +269,12 @@ end if File.exists? recaptcha_file
 
 GC::Profiler.enable if defined?(GC) && defined?(GC::Profiler) && GC::Profiler.respond_to?(:enable)
 
-# Enable rbtrace by default as this is useful to get callstack and other runtime information.
+# Enabling rbtrace is useful to get callstack and other runtime information.
 # There is no overhead unless we invoke rbtrace and attach the pid.
-require 'rbtrace'
+if defined?(PhusionPassenger) # rbtrace should be enabled only after passenger starts(for foreground jobs)
+  PhusionPassenger.on_event(:after_installing_signal_handlers) do
+    require 'rbtrace'
+  end
+else
+  require 'rbtrace' # For background jobs
+end

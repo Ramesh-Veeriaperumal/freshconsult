@@ -48,7 +48,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
       context = get_context(index) 
       query_contexts << context
     end
-    result = SearchService::Client.new(Account.current.id).multi_aggregate({"query_contexts" => query_contexts}.to_json).records
+    result = SearchService::Client.new(Account.current.id).multi_aggregate(JSON.dump('query_contexts' => query_contexts)).records
     return result unless @errors.present?
     log_error(query_contexts)
     modify_error_tags_response(result)
@@ -68,7 +68,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
       group << group_by_field(@group_by.last, false) 
       context["group_by"]  = group
     end
-    SearchService::Client.new(Account.current.id).aggregate(context.to_json).records
+    SearchService::Client.new(Account.current.id).aggregate(JSON.dump(context)).records
   end
 
   private
@@ -94,7 +94,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
       context["tag"] = tag.to_s
     end
     if @response.present? && @response.valid?
-      context["params"]["filter"] = decode_values(@response.terms.to_json) # Hack to handle special characters ' " \ in query
+      context['params']['filter'] = decode_values(JSON.dump(@response.terms)) # Hack to handle special characters ' " \ in query
     elsif !blank_query # adding this condition for if query blank need to get full ticket count
       @errors << "Error in forming ES Query in FQL in count cluster #{@response.inspect} :: tag :: #{tag.to_s}"
       @tag_errors << "#{tag.to_s}" if tag.present?
@@ -123,7 +123,7 @@ class Dashboard::SearchServiceTrendCount < Dashboards
   end
 
   def get_query(query, visitor_mapping)
-    Freshquery::Runner.instance.construct_es_query('ticketanalytics', query.to_json, visitor_mapping)
+    Freshquery::Runner.instance.construct_es_query('ticketanalytics', JSON.dump(query), visitor_mapping)
   end
 
   def custom_filter_data(filter_type)

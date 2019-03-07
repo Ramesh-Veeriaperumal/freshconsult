@@ -48,7 +48,7 @@ module SimpleCovSetup
   ].freeze
 
   DEAD_CODE = [
-    'lib/password.rb'
+    'lib/import/forums.rb', 'lib/password.rb'
   ].freeze
 
   IGNORE_FILES = %w[lib/attachment_helper.rb lib/meta_data_check/meta_data_check_methods.rb
