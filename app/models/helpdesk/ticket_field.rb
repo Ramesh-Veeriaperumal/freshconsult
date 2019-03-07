@@ -18,17 +18,20 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :level, :parent_id, :prefered_ff_col, :import_id, :choices, :picklist_values_attributes, 
     :ticket_statuses_attributes, :ticket_form_id, :column_name, :flexifield_coltype
 
-  CUSTOM_FIELD_PROPS = {  
-    :custom_text            => { :type => :custom, :dom_type => :text},
-    :custom_paragraph       => { :type => :custom, :dom_type => :paragraph},
-    :custom_checkbox        => { :type => :custom, :dom_type => :checkbox},
-    :custom_number          => { :type => :custom, :dom_type => :number},
-    :custom_dropdown        => { :type => :custom, :dom_type => :dropdown_blank},
-    :custom_date            => { :type => :custom, :dom_type => :date},
-    :custom_decimal         => { :type => :custom, :dom_type => :decimal},
-    :nested_field           => { :type => :custom, :dom_type => :nested_field},
-    :encrypted_text         => { :type => :custom, :dom_type => :encrypted_text}
-  }
+  CUSTOM_FIELD_PROPS = {
+    custom_text: { type: :custom, dom_type: :text },
+    custom_paragraph: { type: :custom, dom_type: :paragraph },
+    custom_checkbox: { type: :custom, dom_type: :checkbox },
+    custom_number: { type: :custom, dom_type: :number },
+    custom_dropdown: { type: :custom, dom_type: :dropdown_blank },
+    custom_date: { type: :custom, dom_type: :date },
+    custom_date_time: { type: :custom, dom_type: :date },
+    custom_decimal: { type: :custom, dom_type: :decimal },
+    nested_field: { type: :custom, dom_type: :nested_field },
+    encrypted_text: { type: :custom, dom_type: :encrypted_text }
+  }.freeze
+
+  CUSTOM_DATE_TIME = 'custom_date_time'.freeze
 
   SECTION_LIMIT = 2
 
@@ -108,6 +111,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   publishable
 
+  def self.custom_fields_to_show
+    CUSTOM_FIELD_PROPS.except(CUSTOM_DATE_TIME.to_sym)
+  end
+
   def update_ticket_filter
     return unless dropdown_field? or field_type == "default_internal_group"
     # 1. when the custom dropdown is being deleted, delete conditions associated with the field in ticket filters
@@ -160,29 +167,29 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
 
   # Enumerator constant for mapping the CSS class name to the field type
-  FIELD_CLASS = { :default_subject        => { :type => :default, :dom_type => "text", :form_field => "subject", :visible_in_view_form => false },
-                  :default_requester      => { :type => :default, :dom_type => "requester", :form_field => "email"  , :visible_in_view_form => false },
-                  :default_ticket_type    => { :type => :default, :dom_type => "dropdown_blank"},
-                  :default_status         => { :type => :default, :dom_type => "dropdown"}, 
-                  :default_priority       => { :type => :default, :dom_type => "dropdown"},
-                  :default_group          => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
-                  :default_agent          => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
-                  :default_internal_group => { :type => :default, :dom_type => "dropdown_blank", :form_field => "internal_group_id"},
-                  :default_internal_agent => { :type => :default, :dom_type => "dropdown_blank", :form_field => "internal_agent_id"},
-                  :default_source         => { :type => :default, :dom_type => "hidden"},
-                  :default_description    => { :type => :default, :dom_type => "html_paragraph", :form_field => "description_html", :visible_in_view_form => false },
-                  :default_product        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "product_id" },
-                  :default_company        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "company_id" },
-                  :custom_text            => { :type => :custom,  :dom_type => "text"},
-                  :custom_paragraph       => { :type => :custom,  :dom_type => "paragraph"},
-                  :custom_checkbox        => { :type => :custom,  :dom_type => "checkbox"},
-                  :custom_number          => { :type => :custom,  :dom_type => "number"},
-                  :custom_date            => { :type => :custom,  :dom_type => "date"},
-                  :custom_decimal         => { :type => :custom,  :dom_type => "decimal"},
-                  :custom_dropdown        => { :type => :custom,  :dom_type => "dropdown_blank"},
-                  :nested_field           => { :type => :custom,  :dom_type => "nested_field"},
-                  :encrypted_text         => { :type => :custom,  :dom_type => "encrypted_text"}
-                }
+  FIELD_CLASS = { default_subject: { type: :default, dom_type: 'text', form_field: 'subject', visible_in_view_form: false },
+                  default_requester: { type: :default, dom_type: 'requester', form_field: 'email', visible_in_view_form: false },
+                  default_ticket_type: { type: :default, dom_type: 'dropdown_blank' },
+                  default_status: { type: :default, dom_type: 'dropdown' },
+                  default_priority: { type: :default, dom_type: 'dropdown' },
+                  default_group: { type: :default, dom_type: 'dropdown_blank', form_field: 'group_id' },
+                  default_agent: { type: :default, dom_type: 'dropdown_blank', form_field: 'responder_id' },
+                  default_internal_group: { type: :default, dom_type: 'dropdown_blank', form_field: 'internal_group_id' },
+                  default_internal_agent: { type: :default, dom_type: 'dropdown_blank', form_field: 'internal_agent_id' },
+                  default_source: { type: :default, dom_type: 'hidden' },
+                  default_description: { type: :default, dom_type: 'html_paragraph', form_field: 'description_html', visible_in_view_form: false },
+                  default_product: { type: :default, dom_type: 'dropdown_blank', form_field: 'product_id' },
+                  default_company: { type: :default, dom_type: 'dropdown_blank', form_field: 'company_id' },
+                  custom_text: { type: :custom,  dom_type: 'text' },
+                  custom_paragraph: { type: :custom,  dom_type: 'paragraph' },
+                  custom_checkbox: { type: :custom,  dom_type: 'checkbox' },
+                  custom_number: { type: :custom,  dom_type: 'number' },
+                  custom_date: { type: :custom,  dom_type: 'date' },
+                  custom_decimal: { type: :custom,  dom_type: 'decimal' },
+                  custom_dropdown: { type: :custom,  dom_type: 'dropdown_blank' },
+                  nested_field: { type: :custom,  dom_type: 'nested_field' },
+                  encrypted_text: { type: :custom,  dom_type: 'encrypted_text', visible_in_view_form: false },
+                  custom_date_time: { type: :custom, dom_type: 'date', visible_in_view_form: false }}.freeze
 
   def dom_type
     FIELD_CLASS[field_type.to_sym][:dom_type]
@@ -650,6 +657,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def fsm_reserved_custom_field?
     name.starts_with?(Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_FIELDS_PREFIX)
+  end
+
+  def custom_date_time_field?
+    self.field_type == CUSTOM_DATE_TIME
   end
 
   protected
