@@ -35,11 +35,64 @@ class AuditLogsControllerTest < ActionController::TestCase
   end
 
   def test_export_works
-    skip
     HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns({:id => 1})
     HyperTrail::AuditLog.any_instance.expects(:trigger_export).returns(true)
     post :export, {version: 'private', format: 'json', from: 1.month.ago.to_s, to: Time.now.to_s}
     assert_response 200
+    HyperTrail::AuditLog.any_instance.unstub(:fetch_job_id)
+    HyperTrail::AuditLog.any_instance.unstub(:trigger_export)
+  end
+
+  def test_validate_filter_params_fails_when_invalid_params_during_export
+    post :export, {version: 'private', format: 'json'}
+    assert_response 400
+  end
+
+  def test_validate_export_params_delegator_when_invalid
+    DataExport.stubs(:audit_log_export_limit_reached?).returns(true)
+    HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns({:id => 1})
+    HyperTrail::AuditLog.any_instance.expects(:trigger_export).returns(true)
+    post :export, {version: 'private', format: 'json', from: 1.month.ago.to_s, to: Time.now.to_s}
+    assert_response 400
+    DataExport.unstub(:audit_log_export_limit_reached?)
+    HyperTrail::AuditLog.any_instance.unstub(:fetch_job_id)
+    HyperTrail::AuditLog.any_instance.unstub(:trigger_export)
+  end
+
+  def test_agent_id_given_for_filtering
+    HyperTrail::AuditLog.any_instance.stubs(:fetch).returns(hypertrail_sample_response)
+    post :filter, {version: 'private', format: 'json', agent_id: Account.current.agents.first.id}
+    assert_response 200
+    match_json audit_log_filter_response
+    assert_equal response.api_meta[:next], next_url
+    HyperTrail::AuditLog.any_instance.unstub(:fetch)
+  end
+
+  def test_invalid_agent_id_given_for_filtering
+    HyperTrail::AuditLog.any_instance.stubs(:fetch).returns(hypertrail_sample_response)
+    post :filter, {version: 'private', format: 'json', agent_id: 901239090123}
+    assert_response 200
+    match_json audit_log_filter_response
+    assert_equal response.api_meta[:next], next_url
+    HyperTrail::AuditLog.any_instance.unstub(:fetch)
+  end
+
+  def test_export_works_with_filter_invalid
+    HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns({:id => 1})
+    HyperTrail::AuditLog.any_instance.expects(:trigger_export).returns(true)
+    post :export, {version: 'private', format: 'json', from: 1.month.ago.to_s, to: Time.now.to_s, filter: { filter_set_1: { entity: ["contact"], ids: [1] } }}
+    assert_response 400
+    HyperTrail::AuditLog.any_instance.unstub(:fetch_job_id)
+    HyperTrail::AuditLog.any_instance.unstub(:trigger_export)
+  end
+
+  def test_export_works_with_filter_valid
+    HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns({:id => 1})
+    HyperTrail::AuditLog.any_instance.expects(:trigger_export).returns(true)
+    post :export, {version: 'private', format: 'json', from: 1.month.ago.to_s, to: Time.now.to_s, filter: { filter_set_1: { entity: ["agent"], ids: [1] } }, condition: []}
+    assert_response 200
+    HyperTrail::AuditLog.any_instance.unstub(:fetch_job_id)
+    HyperTrail::AuditLog.any_instance.unstub(:trigger_export)
   end
 
   private
