@@ -399,11 +399,11 @@ class Account < ActiveRecord::Base
   end
 
   def portal_name #by Shan temp.
-    main_portal.name
+    main_portal_from_cache.name
   end
   
    def language
-    main_portal.language
+    main_portal_from_cache.language
    end
   
   #Sentient things start here, can move to lib some time later - Shan
