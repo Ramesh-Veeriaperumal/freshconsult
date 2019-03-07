@@ -6,6 +6,7 @@ module Helpdesk::Email::OutgoingCategory
   include Redis::OthersRedis
   include Spam::SpamAction
   include Helpdesk::SpamAccountConstants
+  include EmailHelper
 
   CATEGORIES = [
     [:trial,      1],

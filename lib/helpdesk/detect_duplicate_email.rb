@@ -26,9 +26,7 @@ module Helpdesk::DetectDuplicateEmail
                                                                         from  : #{from}
                                                                         to    : #{to}
                                                                   message_id  : #{message_id}"
-      NewRelic::Agent.notice_error msg
       Rails.logger.debug msg
-      DevNotification.publish(email_topic, subject, msg)
       true
     end
   end

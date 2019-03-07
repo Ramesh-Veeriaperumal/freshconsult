@@ -26,6 +26,9 @@
 				this.hideDialog();
 			}, this) );
 			$(document).on('click.custom-fields', this.options.propsSubmitBtn, $.proxy(function(){
+				if(nested_field_revamp_enabled && this.options.currentData.field_type === 'nested_field' && this.instance.validateNestedChoices()){
+					return false;
+				}
 				$(this.options.customPropertiesDiv).submit();
 			}, this) );
 			$(document).on('keypress.custom-fields', this.options.customPropertiesDiv + " input", $.proxy(function(e) {
@@ -33,6 +36,9 @@
 				var keyCode = e.which || e.keyCode || e.charCode;
 				// To save the properties on pressing enter
 				if(keyCode == 13) {
+					if(nested_field_revamp_enabled && this.options.currentData.field_type === 'nested_field' && this.instance.validateNestedChoices()){
+						return false;
+					}
 					$(this.options.customPropertiesDiv).submit();
 					$('.twipsy :visible').hide(); //tooltip fix
 				}
@@ -75,6 +81,9 @@
 			//the width of dialog is changed to accommodate mapped internal groups column for status configuration
 			if(this.options.currentData.field_type === 'default_status' && shared_ownership_enabled){
 				$(this.options.customPropsModal).css('width', '760px');
+			}
+			if(this.options.currentData.field_type === 'nested_field' && nested_field_revamp_enabled){
+				$(this.options.customPropsModal).css({"width": "1030px", "top": "42%", "left": "40%"});
 			}
 			$(this.options.customPropsModal).modal('show');
 		},

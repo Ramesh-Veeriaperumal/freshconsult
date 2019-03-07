@@ -173,11 +173,8 @@ class SubscriptionsController < ApplicationController
 
     #building objects
     def build_subscription
-      scoper.billing_cycle = if params[:billing_cycle].present?
-          params[:billing_cycle].to_i
-        else
-          current_account.new_2019_pricing_enabled? ? SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] : 1
-        end
+      scoper.billing_cycle = params[:billing_cycle].present? ? params[:billing_cycle].to_i : 
+        SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]
       scoper.plan = @subscription_plan
       scoper.agent_limit = params[:agent_limit]
       scoper.free_agents = @subscription_plan.free_agents
@@ -324,6 +321,7 @@ class SubscriptionsController < ApplicationController
     def update_features
       #Check for addon changes also if customers are allowed to choose the addons.
       return if scoper.subscription_plan_id == @cached_subscription.subscription_plan_id
+      ProductFeedbackWorker.perform_async(omni_channel_ticket_params) if omni_plan_change?
       SAAS::SubscriptionActions.new.change_plan(scoper.account, @cached_subscription, @cached_addons)
       SAAS::SubscriptionEventActions.new(scoper.account, @cached_subscription, @cached_addons).change_plan
       if Account.current.active_trial.present?
@@ -396,5 +394,33 @@ class SubscriptionsController < ApplicationController
         flash[:error] = t("subscription.error.invalid_currency")
         redirect_to subscription_url
       end
+    end
+
+    def omni_channel_ticket_params
+      account = scoper.account
+      description = 'Customer has switched to / purchased an Omni-channel Freshdesk plan. <br>'
+      account_info = "<b>Account ID</b> : #{account.id} <br>"
+      domain_info = "<b>Domain</b> : #{account.full_domain} <br>"
+      previous_plan = "<b>Previous plan</b> : #{@cached_subscription.plan_name} <br>"
+      new_plan = "<b>Current plan</b> : #{account.subscription.plan_name} <br>"
+      currency = "<b>Currency</b> : #{account.subscription.currency.name} <br>"
+      contact = "<b>Contact</b> : #{current_user.email} <br>"
+      description << account_info << domain_info << previous_plan
+      description << new_plan << currency << contact
+      description << 'Ensure plan is set correctly in chat and caller. <br>'
+      {
+        email: 'billing@freshdesk.com',
+        subject: 'Update chat and caller plans',
+        status: Helpdesk::Ticketfields::TicketStatus::OPEN,
+        priority: PRIORITY_KEYS_BY_TOKEN[:low],
+        description: description.html_safe,
+        tags:  'OmnichannelPlan'
+      }
+    end
+
+    def omni_plan_change?
+      @cached_subscription.subscription_plan.omni_plan? ||
+        @cached_subscription.subscription_plan.free_omni_channel_plan? ||
+        scoper.subscription_plan.omni_plan? || scoper.subscription_plan.free_omni_channel_plan?
     end
 end

@@ -17,8 +17,9 @@ class EmailServiceController < Fdadmin::MetalApiController
   include EmailHelper
 
   before_filter :http_authenticate
-  before_filter :determine_pod
-  before_filter :check_account_status, :check_user_status
+  before_filter :determine_pod, :only => [:new, :create]
+  before_filter :check_account_status, :only => [:new, :create]
+  before_filter :check_user_status, :only => [:new, :create]
   before_filter :set_default_locale, :set_msg_id
 
   def new
@@ -29,6 +30,11 @@ class EmailServiceController < Fdadmin::MetalApiController
     incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
     incoming_email_handler.perform 
     head :ok, content_type: "text/html"
+  end
+
+  def spam_threshold_reached
+    block_spam_account params
+    render status: :ok, :json => { :request_id => Thread.current[:message_uuid][0], :success => true, :message => nil}
   end
 
   private
@@ -82,7 +88,7 @@ class EmailServiceController < Fdadmin::MetalApiController
   def http_authenticate
       if (!authenticated_email_service_request?(request.authorization))
         Rails.logger.info "Authorization Failed"
-        head :forbidden, content_type: "text/html"
+        render status: :forbidden, :json => { :request_id => Thread.current[:message_uuid][0], :success => false, :message => "Autherization Failed"}
       end
   end
 

@@ -660,7 +660,9 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account = Account.find_by_id(params[:account_id]) 
     begin
       account.make_current
-      result[:status] = account.contact_import.destroy ? "success" : "failure"
+      key = format(STOP_CONTACT_IMPORT, account_id: account.id)
+      set_others_redis_key(key, true)
+      result[:status] = account.contact_imports.running_contact_imports.first.cancelled! ? "success" : "failure"
     rescue Exception => e
       result[:status] = "failure"
     ensure
@@ -678,7 +680,7 @@ class Fdadmin::AccountsController < Fdadmin::DevopsMainController
     account = Account.find(params[:account_id])
     begin
       account.make_current
-      result[:status] = (import = account.contact_import) ? import.import_status : false
+      result[:status] = (import = account.contact_imports.running_contact_imports.first) ? import.import_status : false
     rescue Exception => e
       result[:status] = "failure"
     ensure

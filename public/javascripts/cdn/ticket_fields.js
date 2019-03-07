@@ -24,6 +24,7 @@
 //= require custom-form/template/nested_field_edit
 //= require custom-form/template/nested_field_label
 //= require custom-form/template/nested_field
+//= require custom-form/template/nested_dropdown_choice
 //= require custom-form/template/section_confirm
 //= require custom-form/template/section_dialogue
 //= require custom-form/template/section_header

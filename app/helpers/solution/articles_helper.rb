@@ -2,7 +2,7 @@ module Solution::ArticlesHelper
 
   include Solution::LanguageTabsHelper
   include HumanizeHelper
-  
+
   def language_tabs
     %{<div class="tab">
         <a href="/" class="active"><span>English</span></a>
@@ -13,7 +13,7 @@ module Solution::ArticlesHelper
       </div>
     }.html_safe
   end
-  
+
   def draft_info_text
     @current_item ||= @article.draft || @article
     if @article.draft and @article.draft.locked?
@@ -26,10 +26,10 @@ module Solution::ArticlesHelper
       ].join(' ').html_safe
     end
   end
-  
+
   def discard_link
     return unless privilege?(:delete_solution)
-    link_to(  t('solutions.drafts.discard'), 
+    link_to(  t('solutions.drafts.discard'),
               solution_draft_delete_path(@article.parent_id, @article.language_id),
               :method => 'delete',
               :confirm => t('solution.articles.draft.discard_confirm'),
@@ -39,17 +39,17 @@ module Solution::ArticlesHelper
 
   def publish_link
     return if @article.solution_folder_meta.is_default? or !privilege?(:publish_solution)
-    link_to(  t('solutions.drafts.publish'), 
+    link_to(  t('solutions.drafts.publish'),
               solution_draft_publish_path(@article.parent_id, @article.language_id),
-              :method => 'post', 
+              :method => 'post',
               :class => 'draft-btn draft-btn-publish') if (current_account.verified? && (@article.draft.present? || @article.status == Solution::Article::STATUS_KEYS_BY_TOKEN[:draft]))
   end
-  
+
   def form_data_attrs
     return {
       :"new-article" => true
     } if @article.new_record?
-    
+
     {
       :"autosave-path" => solution_draft_autosave_path(@article.parent_id, @article.language_id),
       :timestamp => @article.draft.present? ? @article.draft.updation_timestamp : false,
@@ -71,7 +71,7 @@ module Solution::ArticlesHelper
         voted_users_solution_article_path(@article_meta.id, {:vote => type, :language_id => @article.language_id}),
         :rel => "freshdialog",
         :class => "article-#{t_type}",
-        :title => t(t_type.pluralize), 
+        :title => t(t_type.pluralize),
         "data-target" => "#article-#{t_type}",
         "data-template-footer" => "",
         "data-width" => "400px" )}
@@ -120,7 +120,7 @@ module Solution::ArticlesHelper
 
   def article_properties_edit_link(link_text)
     return unless privilege?(:manage_solutions) || privilege?(:publish_solution)
-    link_to( link_text, 
+    link_to( link_text,
             properties_solution_article_path(@article.parent_id,{:edit => true, :language_id => @article.language_id}),
             :rel => "freshdialog",
             :class => "article-properties",
@@ -129,7 +129,7 @@ module Solution::ArticlesHelper
               :target => "#article-prop-#{@article.id}",
               :width => "700px",
               "close-label" => t('cancel'),
-              "submit-label" => t('save'), 
+              "submit-label" => t('save'),
               "submit-loading" => t('saving')
             }).html_safe
   end
@@ -146,10 +146,11 @@ module Solution::ArticlesHelper
   def not_in_portal_notification article
     if Account.current.multilingual? && !Account.current.all_portal_language_objects.include?(article.language)
       op = ""
-      op << %(<div class="not-in-portal">) 
+      op << %(<div class="not-in-portal">)
       op << t('solution.articles.language_not_in_portal') + " - "
       if privilege?(:admin_tasks)
-        op << pjax_link_to(t('solution.articles.change_language_settings', :language_name => article.language.name), manage_languages_path)
+        op << (current_user.is_falcon_pref? ? link_to(t('solution.articles.change_language_settings', :language_name => article.language.name), '/a/admin/account/languages', :target => '_top', :id => 'manage-account-languages')
+              : pjax_link_to(t('solution.articles.change_language_settings', :language_name => article.language.name), manage_languages_path) )
       else
         op << t('solution.articles.contact_admin').html_safe
       end
