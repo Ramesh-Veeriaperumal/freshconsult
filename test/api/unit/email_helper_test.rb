@@ -3,7 +3,11 @@ class EmailHelperTest < ActiveSupport::TestCase
 
 	include EmailHelper
 
-	def test_block_spam_account 
+	def test_block_spam_account
+		EmailHelperTest.any_instance.stubs(:ismember?).returns(false)
+		EmailHelperTest.any_instance.stubs(:add_member_to_redis_set).returns(true)
+		EmailHelperTest.any_instance.stubs(:get_all_members_in_a_redis_set).returns([Subscription.where("state = 'trial'").first.account_id])
+		Subscription.any_instance.stubs(:active?).returns(false)
 		account_id = Subscription.where("state = 'trial'").first.account_id
 		remove_member_from_redis_set(SPAM_EMAIL_ACCOUNTS, account_id)
 		params = {
