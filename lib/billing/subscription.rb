@@ -83,6 +83,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
   def activate_subscription(subscription, address_details)
     data = subscription_data(subscription).merge( :trial_end => TRIAL_END )
     data = data.merge(address_details)
+    data.merge!(:addons => marketplace_addons(subscription))
     ChargeBee::Subscription.update(subscription.account_id, data)
   end 
 
@@ -290,7 +291,7 @@ class Billing::Subscription < Billing::ChargebeeWrapper
         if all_addons
           marketplace_addon_ids = all_addons.select { |addon| addon.id.include?(Marketplace::Constants::ADDON_ID_PREFIX) }.map(&:id)
           marketplace_addon_ids.each do |addon_id|
-            ext = extension_details(mkp_extension_id(addon_id)).body
+            ext = extension_details(mkp_extension_id(addon_id), Marketplace::Constants::EXTENSION_TYPE[:plug]).body
             marketplace_addons << { :id => addon_id,
             :quantity => mkp_app_units_count(ext["addon"]["addon_type"], subscription) }
           end

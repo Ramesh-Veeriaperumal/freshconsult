@@ -92,7 +92,6 @@ module EmailNotificationConstants
 
 
   NOTIFICATION_TYPES = {
-
     REQUEST_FRESHFONE_FEATURE =>  "Request Freshfone Feature",
     PREVIEW_EMAIL =>  "Preview Email",
     IMPORT_EMAIL =>  "Import Email",
@@ -182,13 +181,27 @@ module EmailNotificationConstants
     PHONE_TRIAL_NUMBER_DELETION_REMINDER_LAST_DAY =>  "phone_trial_number_deletion_reminder_last_day" 
   }
 
-
   EMAIL_SETTING_CONFIGS = (YAML::load_file(File.join(Rails.root, 'config', 'mailgun_out_going_email_mappings.yml')))[Rails.env]
   POD_TYPES = EMAIL_SETTING_CONFIGS["pod_types"]
 
   SPAM_FILTERED_NOTIFICATIONS = [ REPLY, FORWARD]
 
   RECENT_ACCOUNT_SPAM_FILTERED_NOTIFICATIONS = [ REPLY ]
+
+  TICKET_SOURCE = [
+    'EMAIL',
+    'PORTAL',
+    'PHONE',
+    'FORUM',
+    'TWITTER',
+    'FACEBOOK',
+    'CHAT',
+    'MOBI_HELP',
+    'FEEDBACK_WIDGET',
+    'OUTBOUND_EMAIL',
+    'ECOMMERCE',
+    'BOT'
+  ].freeze
 
   AGENT_INVITE_NOTIFICATION = {
     agent_subject_template: '{{portal_name}} agent invitation',
