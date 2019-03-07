@@ -47,7 +47,8 @@ class SlaNotifier < ActionMailer::Base
         :sent_on                   => Time.now,
         "Reply-to"                 => "#{ticket.friendly_reply_email_config.reply_email}",
         "Auto-Submitted"           => "auto-generated", 
-        "X-Auto-Response-Suppress" => "DR, RN, OOF, AutoReply"
+        'X-Auto-Response-Suppress' => 'DR, RN, OOF, AutoReply',
+        'X-SOURCE' => EmailNotificationConstants::TICKET_SOURCE[ticket.source - 1]
       }
       headers.merge!(make_header(ticket.display_id, nil, ticket.account_id, n_type))
       headers.merge!({"X-FD-Email-Category" => ticket.friendly_reply_email_config.category}) if ticket.friendly_reply_email_config.category.present?
