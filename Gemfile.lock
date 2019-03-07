@@ -252,11 +252,11 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/fresh_request.git
-  revision: 7c521607a3fda8b2976ad5b5b8684ea2b32c635b
-  branch: v20
+  revision: e81aa61fb827c26533dd1828190c646e698496b3
+  branch: release
   specs:
     fresh_request (0.0.1)
-      faraday (~> 0.9.0)
+      faraday
       faraday_middleware
       hashie
       multi_json
@@ -1098,7 +1098,7 @@ GEM
     parallel (1.12.1)
     parser (2.5.0.0)
       ast (~> 2.4.0)
-    patron (0.7.1)
+    patron (0.13.1)
     pg (0.18.4)
     phantomjs (2.1.1.0)
     polyglot (0.3.5)
