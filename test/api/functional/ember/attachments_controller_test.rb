@@ -22,6 +22,11 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     params_hash = { user_id: @agent.id, content: file }
   end
 
+  def attachment_unicode_params_hash
+    file = fixture_file_upload('files/shib%E2%80%AE3pm.txt', 'plain/text', :binary)
+    params_hash = { user_id: @agent.id, content: file }
+  end
+
   def inline_attachment_params_hash
     file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
     params_hash = { content: file, inline: true, inline_type: 1 }
@@ -175,5 +180,18 @@ class Ember::AttachmentsControllerTest < ActionController::TestCase
     params_hash = { attachable_id: 10_000, attachable_type: 'ticket' }
     put :unlink, construct_params({ version: 'private', id: attachment.id }, params_hash)
     assert_response 404
+  end
+
+  def test_create_with_unicode_control_character_filename
+    DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+    post :create, construct_params({ version: 'private' }, attachment_unicode_params_hash)
+    DataTypeValidator.any_instance.unstub(:valid_type?)
+    assert_response 200
+    latest_attachment = Helpdesk::Attachment.last
+    match_json(attachment_pattern(latest_attachment))
+    assert_equal latest_attachment.attachable_type, 'UserDraft'
+    assert_equal latest_attachment.attachable_id, @agent.id
+    p latest_attachment
+    assert_equal latest_attachment.content_file_name, 'shib_E2_80_AE3pm.txt'
   end
 end
