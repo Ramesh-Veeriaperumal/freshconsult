@@ -10500,6 +10500,52 @@
         }
       }
     },
+    "/admin/accounts/languages": {
+      "get": {
+        "tags": [
+          "Account Languages"
+        ],
+        "summary": "Get languages",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/languages"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Account Languages"
+        ],
+        "summary": "Update languages",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/languages"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/languages"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/audit_log/export": {
       "post": {
         "summary": "Audit log export",
@@ -20785,6 +20831,26 @@
         "content": {
           "type": "string",
           "format": "byte"
+        }
+      }
+    },
+    "languages": {
+      "type": "object",
+      "properties": {
+        "primary_language": {
+          "type": "string"
+        },
+        "supported_languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "portal_languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
