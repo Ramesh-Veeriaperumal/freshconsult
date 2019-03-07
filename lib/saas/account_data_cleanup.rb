@@ -37,29 +37,13 @@ class SAAS::AccountDataCleanup
     Fixtures::DefaultObserver.create_rule
   end
 
-def handle_supervisor_drop_data
-  account.all_supervisor_rules.destroy_all
-end
-
-def handle_add_watcher_drop_data
-  account.ticket_subscriptions.find_each do |ts|
-    ts.destroy
+  def handle_supervisor_drop_data
+    account.all_supervisor_rules.destroy_all
   end
-end
 
-def handle_basic_twitter_drop_data
-  Social::TwitterHandle.drop_advanced_twitter_data(account)
-end
-
-def handle_basic_facebook_drop_data
-  #we need to keep one fb page. So removing everything except the oldest one.
-  fb_count = 0
-  account.facebook_pages.order("created_at asc").find_each do |fb|
-    next if fb_count < 1
-    fb.destroy
-    fb_count+=1
+  def handle_add_watcher_drop_data
+    account.ticket_subscriptions.find_each(&:destroy)
   end
-end
 
   def handle_skill_based_round_robin_drop_data
     account.groups.skill_based_round_robin_enabled.each do |group|

@@ -193,6 +193,10 @@ module Cache::Memcache::Account
     end
   end
 
+  def clear_feature_from_cache
+    MemcacheKeys.delete_from_cache(FEATURES_LIST % { :account_id => self.id }) 
+  end
+
   def reset_feature_from_cache_variable
     @feature_from_cache = nil
   end

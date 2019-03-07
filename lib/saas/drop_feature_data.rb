@@ -22,6 +22,25 @@ module SAAS::DropFeatureData
     end
   end
 
+  def handle_advanced_twitter_drop_data
+    Social::TwitterHandle.drop_advanced_twitter_data(account)
+  end
+
+  def handle_advanced_facebook_drop_data
+    # we need to keep one fb page. So removing everything except the oldest one.
+    fb_pages = account.facebook_pages.order('created_at asc')
+    fb_pages.each_with_index do |fb_page, index|
+      next if index.zero?
+
+      begin
+        Rails.logger.debug "Facebook page : #{fb_page.inspect} is being deleted"
+        fb_page.destroy
+      rescue StandardError => e
+        Rails.logger.error "Error while removing facebook page: #{e.backtrace}"
+      end
+    end
+  end
+
   def handle_css_customization_drop_data
     update_all_in_batches(custom_css: nil, updated_at: Time.now) do |cond|
       account.portal_templates.where(@conditions).limit(@batch_size).update_all(cond)

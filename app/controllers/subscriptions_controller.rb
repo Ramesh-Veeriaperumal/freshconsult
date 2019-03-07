@@ -322,7 +322,6 @@ class SubscriptionsController < ApplicationController
       #Check for addon changes also if customers are allowed to choose the addons.
       return if scoper.subscription_plan_id == @cached_subscription.subscription_plan_id
       ProductFeedbackWorker.perform_async(omni_channel_ticket_params) if omni_plan_change?
-      SAAS::SubscriptionActions.new.change_plan(scoper.account, @cached_subscription, @cached_addons)
       SAAS::SubscriptionEventActions.new(scoper.account, @cached_subscription, @cached_addons).change_plan
       if Account.current.active_trial.present?
         Account.current.active_trial.update_result!(@cached_subscription, Account.current.subscription)
