@@ -23,6 +23,7 @@ module Helpdesk::Ticketfields::Constants
     number:        ['number', NUMBER_FIELDS, NUMBER_FIELD_COUNT],
     checkbox:      ['checkbox', CHECKBOX_FIELDS, CHECKBOX_FIELD_COUNT],
     date:          ['date', DATE_FIELDS, DATE_FIELD_COUNT],
+    date_time:     ['date_time', DATE_FIELDS, DATE_FIELD_COUNT],
     paragraph:     ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MLT_FIELDS.length],
     decimal:       ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT],
     encrypted_text:['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ESLT_FIELDS.length]

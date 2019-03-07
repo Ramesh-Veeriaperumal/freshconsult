@@ -1,7 +1,7 @@
 module CoreTicketFieldsTestHelper
 	include Helpdesk::Ticketfields::ControllerMethods
 
-  FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date' }
+  FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date', 'date_time' => 'date' }.freeze
 
   CHARACTER_FIELDS = (1..80).collect { |n| "ffs_#{"%02d" % n}" }
   NUMBER_FIELDS = (1..20).collect { |n| "ff_int#{"%02d" % n}" }
@@ -12,17 +12,18 @@ module CoreTicketFieldsTestHelper
 
   # Whenever you add new fields here, ensure that you add it in search indexing.
   FIELD_COLUMN_MAPPING = {
-    "text"         => [["text" , "dropdown"], CHARACTER_FIELDS],
-    "nested_field" => [["text" , "dropdown"], CHARACTER_FIELDS],
-    "dropdown"     => [["text" , "dropdown"], CHARACTER_FIELDS],
-    "number"       => ["number", NUMBER_FIELDS],
-    "checkbox"     => ["checkbox", CHECKBOX_FIELDS],
-    "date"         => ["date", DATE_FIELDS],
-    "paragraph"    => ["paragraph", TEXT_FIELDS],
-    "decimal"      => ["decimal", DECIMAL_FIELDS]
-  }
+    'text'         => [['text', 'dropdown'], CHARACTER_FIELDS],
+    'nested_field' => [['text', 'dropdown'], CHARACTER_FIELDS],
+    'dropdown'     => [['text', 'dropdown'], CHARACTER_FIELDS],
+    'number'       => ['number', NUMBER_FIELDS],
+    'checkbox'     => ['checkbox', CHECKBOX_FIELDS],
+    'date'         => ['date', DATE_FIELDS],
+    'date_time'    => ['date_time', DATE_FIELDS],
+    'paragraph'    => ['paragraph', TEXT_FIELDS],
+    'decimal'      => ['decimal', DECIMAL_FIELDS]
+  }.freeze
 
-  def create_custom_field(name, type, required = false, required_for_closure = false)
+  def create_custom_field(name, type, _required = false, _required_for_closure = false)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
     return ticket_field_exists if ticket_field_exists
     flexifield_mapping = flexifield_mapping(type)

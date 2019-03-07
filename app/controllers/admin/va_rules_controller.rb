@@ -311,8 +311,8 @@ class Admin::VaRulesController < Admin::AdminController
       cf = current_account.ticket_fields.non_encrypted_custom_fields.preload(:flexifield_def_entry)
       cf.select!{|field| field.flexifield_def_entry.flexifield_name.starts_with?('ff') } if supervisor_rules_controller?
       
-      # Skipping Fields reserved for FSM.
-      cf.reject! { |field| field.fsm_reserved_custom_field? }
+      # Skipping Fields reserved for FSM and custom Datetime fields.
+      cf.reject! { |field| field.fsm_reserved_custom_field? || field.custom_date_time_field? }
       unless cf.blank?
         filter_hash.push({ :name => -1,
                            :value => "---------------------"

@@ -1,7 +1,7 @@
 module TicketFieldsTestHelper
   include Helpdesk::Ticketfields::ControllerMethods
 
-  FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date' }.freeze
+  FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date', 'date_time' => 'date' }.freeze
   FIELD_MAPPING_DN = { 'paragraph' => 'mlt', 'text' => 'slt' }.freeze
   SECTIONS_FOR_TYPE = [ { title: 'section1', value_mapping: %w(Question Problem), ticket_fields: %w(test_custom_number test_custom_date) },
                         { title: 'section2', value_mapping: ['Incident'], ticket_fields: %w(test_custom_paragraph test_custom_dropdown) } ]
@@ -17,6 +17,7 @@ module TicketFieldsTestHelper
       ticket_field_exists.update_attributes(required: required, required_for_closure: required_for_closure)
       return ticket_field_exists
     end
+    field_num = (type == 'date_time' && field_num == '05') ? '06' : field_num
     flexifield_mapping = type == 'text' ? unused_ffs_col : "ff_#{FIELD_MAPPING[type]}#{field_num}"
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
