@@ -132,6 +132,7 @@ api_error_messages:
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
   invalid_company_id: "There is no record matching the id %{company_id}"
   facebook_user_blocked: "Facebook 230 exception"
+  ebay_reply_limit_exceeded: "Exceeded maximum message limit of 2000 letters"
   unable_to_perform: "Unable to perform"
   traffic_cop_alert: "Ticket has been updated with new conversations"
   undo_send_enqueued_alert: "Someone may have responded to this ticket. Please refresh in a while and review your response."
@@ -280,3 +281,6 @@ api_error_messages:
   invalid_language: "%{languages} is not a valid language"
   supported_previously_added: "Primary language cannot be modified because supported language has previously been added for this account"
   primary_or_supported: "Primary and supported/portal languages must be modified individually"
+
+  invalid_ebay_ticket_source: "Invalid ticket source"
+

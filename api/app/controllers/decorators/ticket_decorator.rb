@@ -145,6 +145,14 @@ class TicketDecorator < ApiDecorator
     }
   end
 
+  def ebay
+    return unless Account.current.has_feature?(:ecommerce) && record.ecommerce? && record.ebay_account.present?
+
+    {
+      name: record.ebay_account.name
+    }
+  end
+
   def facebook_public_hash
     return unless (Account.current.has_feature?(:advanced_facebook) || Account.current.basic_facebook_enabled?) && record.facebook?
     FacebookPostDecorator.new(record.fb_post).public_hash
