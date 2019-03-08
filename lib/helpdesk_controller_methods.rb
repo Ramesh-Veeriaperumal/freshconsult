@@ -11,7 +11,7 @@ module HelpdeskControllerMethods
     base.send :before_filter, :build_item,          :only => [:new, :create]
     base.send :before_filter, :load_item,           :only => [:show, :edit, :update ]
     base.send :before_filter, :load_multiple_items, :only => [:destroy, :restore]
-    base.send :before_filter, :add_to_history,      :only => [:show]
+    # base.send :before_filter, :add_to_history,      :only => [:show]
   end
 
   def create

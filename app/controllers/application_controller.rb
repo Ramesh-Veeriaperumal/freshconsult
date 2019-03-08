@@ -60,6 +60,8 @@ class ApplicationController < ActionController::Base
   #
 
   # Will set the request url for pjax to change the state
+  after_filter :remove_session_data
+  
   def set_pjax_url
     if is_ajax?
       response.headers['X-PJAX-URL'] = request.url
@@ -365,6 +367,10 @@ class ApplicationController < ActionController::Base
       yield
       end_token = session[:_csrf_token] if session
       Rails.logger.info "CSRF observed :: changed :: #{start_token != end_token}:: #{start_token} :: #{end_token}"
+    end
+
+    def remove_session_data
+      session[:helpdesk_history] = nil if session && session[:helpdesk_history]
     end
 end
 
