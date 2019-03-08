@@ -92,6 +92,8 @@ class ApiApplicationController < MetalApiController
  # This should be the last arount filter , can be make available to public as needed
   around_filter :response_cache, only: [:index, :show], if: :private_api?
 
+  after_filter :remove_session_data
+
   SINGULAR_RESPONSE_FOR = %w(show create update).freeze
   COLLECTION_RESPONSE_FOR = %w(index search).freeze
   CURRENT_VERSION = 'private-v1'.freeze
@@ -956,6 +958,10 @@ class ApiApplicationController < MetalApiController
       start_token = session[:_csrf_token] if session
       yield
       end_token = session[:_csrf_token] if session
-      Rails.logger.info "CSRF observed :: changed :: #{start_token != end_token}:: #{start_token} :: #{end_token}"
+      Rails.logger.info "CSRF observed :: changed :: #{start_token != end_token}:: #{start_token} :: #{end_token} :: Tab :: #{request.env['HTTP_X_CLIENT_INSTANCE_ID']}"
+    end
+
+    def remove_session_data
+      session[:helpdesk_history] = nil if session && session[:helpdesk_history]
     end
 end
