@@ -86,9 +86,8 @@ class Helpdesk::Reminder < ActiveRecord::Base
 
   private
 
-    # since reminder.user is api_current_user setting Account.current.id to avoid user query
     def set_account_id
-      self.account_id = Account.current.id || user.account_id
+      self.account_id = user.account_id
     end
 
     def reminder_modified?
