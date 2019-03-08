@@ -49,7 +49,7 @@ class SAAS::SubscriptionEventActions
   def change_plan
     
     if plan_changed?
-      remove_old_plan_db_features
+      remove_old_plan_db_features if old_plan.present?
       reset_plan_features
       remove_chat_feature
       add_new_plan_features
