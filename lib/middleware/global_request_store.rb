@@ -9,6 +9,8 @@ require 'rack/body_proxy'
 
 module Middleware
   class GlobalRequestStore
+    THREAD_RESET_KEYS = [:account, :user, :portal, :shard_selection, :shard_name_payload, :notifications, :email_config, :business_hour, :current_ip, :create_sandbox_account].freeze
+
     def initialize(app)
       @app = app
     end
@@ -21,10 +23,19 @@ module Middleware
         CustomRequestStore.clear!
       end
     ensure
-      unless returned
-        CustomRequestStore.end!
-        CustomRequestStore.clear!
-      end
+      unset_thread_variables
+      CustomRequestStore.end!
+      CustomRequestStore.clear!
     end
+
+    private
+
+      # We are clearing all thread values storing account related info here, to avoid stale values affecting future requests.
+      # GlobalRequestStore resumes after controllers and other middlewares that uses these values
+      def unset_thread_variables
+        THREAD_RESET_KEYS.each do |key|
+          Thread.current[key] = nil
+        end
+      end
   end
 end

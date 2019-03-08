@@ -53,6 +53,7 @@ class ApplicationController < ActionController::Base
   #before_filter :print_logs
   around_filter :log_csrf
   before_filter :verify_authenticity_token, :if => :web_request?
+
   # See ActionController::Base for details 
   # Uncomment this to filter the contents of submitted sensitive data parameters
   # from your application log (in this case, all fields with names like "password"). 
@@ -65,6 +66,10 @@ class ApplicationController < ActionController::Base
       response.headers['X-PJAX-URL'] = request.url
     end
   end
+
+  # Will set the request url for pjax to change the state
+  after_filter :remove_session_data
+
 
   def set_locale
     I18n.locale =  (current_user && current_user.language) ? current_user.language : (current_portal ? current_portal.language : I18n.default_locale) 
@@ -365,6 +370,10 @@ class ApplicationController < ActionController::Base
       yield
       end_token = session[:_csrf_token] if session
       Rails.logger.info "CSRF observed :: changed :: #{start_token != end_token}:: #{start_token} :: #{end_token}"
+    end
+
+    def remove_session_data
+      session[:helpdesk_history] = nil if session && session[:helpdesk_history]
     end
 end
 
