@@ -188,7 +188,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
                   custom_decimal: { type: :custom,  dom_type: 'decimal' },
                   custom_dropdown: { type: :custom,  dom_type: 'dropdown_blank' },
                   nested_field: { type: :custom,  dom_type: 'nested_field' },
-                  encrypted_text: { type: :custom,  dom_type: 'encrypted_text', visible_in_view_form: false },
+                  encrypted_text: { type: :custom,  dom_type: 'encrypted_text' },
                   custom_date_time: { type: :custom, dom_type: 'date', visible_in_view_form: false }}.freeze
 
   def dom_type
