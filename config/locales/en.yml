@@ -5660,6 +5660,8 @@ en:
     holiday_routing: "Holiday routing for phone calls"
     voice_ivr: "Voice IVR"
     omni_routing: "Omnichannel Routing"
+    hippa_compliance: "HIPAA Compliance"
+    extend_api: "Extendable API rate limit"
     omni_channel_option: "omni channel option"
     custom_data_center_desc: "Custom data center"
     sandbox: "Sandbox"
