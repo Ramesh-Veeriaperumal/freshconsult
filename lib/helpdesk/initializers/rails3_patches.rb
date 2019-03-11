@@ -380,3 +380,36 @@ module AbstractController
 
   end
 end
+
+# Overwriting ActionDispatch::Request#reset_session to track all session
+# resets happening along with its callers.
+#
+#   rails/actionpack/lib/action_dispatch/http/request.rb#215
+#
+#     def reset_session
+#       session.destroy if session && session.respond_to?(:destroy)
+#       self.session = {}
+#       @env['action_dispatch.request.flash_hash'] = nil
+#     end
+#
+# Extending for the sole purpose of tracking and will be removed once done
+module ActionDispatch
+  class Request
+    def reset_session
+      Rails.logger.debug "Session reset called from :: #{caller_stack(12).inspect}"
+      if session && session.respond_to?(:destroy)
+        Rails.logger.debug "Session reset called for :: #{session.inspect}"
+        session.destroy
+        Rails.logger.debug "Session destroyed :: #{session.inspect}"
+      end
+      self.session = {}
+      @env['action_dispatch.request.flash_hash'] = nil
+    end
+
+     private
+
+       def caller_stack(num)
+        (2..num).to_a.map { |i| caller[i] }
+      end
+  end
+end
