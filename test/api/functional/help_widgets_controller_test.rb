@@ -15,6 +15,24 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     @account.launch(:help_widget)
   end
 
+  def stub_freshmarketer_client
+    ::Freshmarketer::Client.any_instance.stubs(:enable_predictive_support).returns(true)
+    ::Freshmarketer::Client.any_instance.stubs(:disable_predictive_support).returns(true)
+    ::Freshmarketer::Client.any_instance.stubs(:enable_predictive_integration).returns(true)
+    ::Freshmarketer::Client.any_instance.stubs(:disable_predictive_integration).returns(true)
+    ::Freshmarketer::Client.any_instance.stubs(:create_experiment).returns(exp_id: 'test', status: true)
+    ::Freshmarketer::Client.any_instance.stubs(:fetch_cdn_script).returns(freshmarketer_hash[:cdn_script])
+  end
+
+  def unstub_freshmarketer_client
+    ::Freshmarketer::Client.any_instance.unstub(:enable_predictive_support)
+    ::Freshmarketer::Client.any_instance.unstub(:disable_predictive_support)
+    ::Freshmarketer::Client.any_instance.unstub(:enable_predictive_integration)
+    ::Freshmarketer::Client.any_instance.unstub(:disable_predictive_integration)
+    ::Freshmarketer::Client.any_instance.unstub(:create_experiment)
+    ::Freshmarketer::Client.any_instance.unstub(:fetch_cdn_script)
+  end
+
   def test_index
     create_widget
     get :index, controller_params(version: 'v2')
@@ -29,7 +47,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
   def test_index_with_invalid_field
     get :index, controller_params(version: 'v2', test: 'test')
     assert_response 400
-    match_json(validation_error_pattern(bad_request_error_pattern(:test,'Unexpected/invalid field in request', {code:"invalid_field"})))
+    match_json(validation_error_pattern(bad_request_error_pattern(:test, 'Unexpected/invalid field in request', code: 'invalid_field')))
   end
 
   def test_show
@@ -37,6 +55,13 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     get :show, controller_params(version: 'v2', id: help_widget.id)
     assert_response 200
     match_json(widget_show_pattern(help_widget))
+  end
+
+  def test_freshmarketer_info
+    AccountAdditionalSettings.any_instance.stubs(:freshmarketer_hash).returns(freshmarketer_hash)
+    get :freshmarketer_info, controller_params(version: 'v2')
+    assert_response 200
+    assert JSON.parse(@response.body)['freshmarketer_name'] == 'harlin-mani.fmstack2.com'
   end
 
   def test_show_with_invalid_help_widget_id
@@ -57,7 +82,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     help_widget = create_widget
     get :show, controller_params(version: 'v2', id: help_widget.id, test: 'test')
     assert_response 400
-    match_json(validation_error_pattern(bad_request_error_pattern(:test,'Unexpected/invalid field in request', {code:"invalid_field"})))
+    match_json(validation_error_pattern(bad_request_error_pattern(:test, 'Unexpected/invalid field in request', code: 'invalid_field')))
   end
 
   def test_show_without_feature
@@ -93,21 +118,42 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     refute deleted_widget.active
   end
 
+  def test_soft_delete_with_predictive_support
+    link_freshmarketer_account
+    stub_freshmarketer_client
+    help_widget = create_widget
+    additional_settings = Account.current.account_additional_settings
+    additional_settings.additional_settings[:widget_predictive_support] = fm_widget_settings('fresh.com', help_widget.id)
+    additional_settings.save
+    help_widget.settings[:components][:predictive_support] = true
+    help_widget.settings[:predictive_support][:domain_list] = ['test.fresh.com', 'test1.fresh.com']
+    help_widget.save
+    delete :destroy, controller_params(version: 'v2', id: help_widget.id)
+    assert_response 204
+    deleted_widget = Account.current.help_widgets.find(help_widget.id)
+    refute deleted_widget.active
+    fm_widget_hash = Account.current.account_additional_settings.widget_predictive_support_hash
+    assert fm_widget_hash['fresh.com'][:exp_id] == 'test'
+    assert fm_widget_hash['fresh.com'][:widget_ids] == []
+    unstub_freshmarketer_client
+    unlink_freshmarketer_account
+  end
+
   def test_update_appearance
     widget = create_widget
     request_params = {
       settings: {
         appearance: {
-          'theme_color' => "#0f52d5",
-          'button_color' => "#16193e"
+          'theme_color' => '#0f52d5',
+          'button_color' => '#16193e'
         }
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id, help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 200
     widget.reload
     id = JSON.parse(@response.body)['id']
-    match_json(widget_show_pattern( HelpWidget.last))
+    match_json(widget_show_pattern(widget))
     assert widget.settings[:appearance][:theme_color] == request_params[:settings][:appearance].fetch('theme_color')
     assert widget.settings[:appearance][:button_color] == request_params[:settings][:appearance].fetch('button_color')
   end
@@ -118,13 +164,13 @@ class HelpWidgetsControllerTest < ActionController::TestCase
       settings: {
         appearance: {
           theme_color: '0f52d5',
-          button_color:'16193e'
+          button_color: '16193e'
         }
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id, help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field('settings','theme_color','It should be in the \'accepted #{attribute}\' format', {code:"invalid_value"})])
+    match_json([bad_request_error_pattern_with_nested_field('settings', 'theme_color', 'It should be in the \'accepted #{attribute}\' format', {code:"invalid_value"})])
   end
 
   def test_update_contact_form
@@ -137,11 +183,11 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         }
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id, help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 200
     widget.reload
     id = JSON.parse(@response.body)['id']
-    match_json(widget_show_pattern( HelpWidget.last))
+    match_json(widget_show_pattern(widget))
     assert widget.settings[:contact_form][:form_type] == request_params[:settings][:contact_form][:form_type]
   end
 
@@ -155,9 +201,9 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         }
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id ,help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 400
-    match_json([bad_request_error_pattern_with_nested_field(:settings,"form_type","It should be one of these values: '1,2'", {code:"invalid_value"})])
+    match_json([bad_request_error_pattern_with_nested_field(:settings, 'form_type', "It should be one of these values: '1,2'", code: 'invalid_value')])
   end
 
   def test_update_with_solution_articles
@@ -172,7 +218,7 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         widget_flow: 1
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id ,help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 200
     widget.reload
     assert widget.settings[:components][:solution_articles] == request_params[:settings][:components][:solution_articles]
@@ -191,8 +237,9 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         widget_flow: 1
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id ,help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:widget_flow, 'Cannot be set, due to insufficient permissions.', code: 'inaccessible_field')))
   end
 
   def test_update_with_solution_articles_disabled_contact_form_disabled
@@ -207,26 +254,331 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         widget_flow: 1
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id ,help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 400
+    match_json(validation_error_pattern(bad_request_error_pattern(:widget_flow, 'Cannot be set, due to insufficient permissions.', code: 'inaccessible_field')))
   end
 
   def test_update_components
     widget = create_widget
     params_hash = widget_hash(widget)
-      request_params = {
-        settings: {
+    request_params = {
+      settings: {
         components: {
           solution_articles: true
         }
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id, help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 200
     widget.reload
     id = JSON.parse(@response.body)['id']
-    match_json(widget_show_pattern( HelpWidget.last))
+    match_json(widget_show_pattern(widget))
     refute widget.settings[:components] == request_params[:settings][:components]
+  end
+
+  def test_update_with_invalid_domain
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['test.fresh.commmmmmmmm']
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    match_json(validation_error_pattern(bad_request_error_pattern(:domain_list, 'Sorry, please enter a valid domain.', code: 'invalid_value')))
+    assert_response 400
+  end
+
+  def test_update_with_predictive_without_domain_list
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: []
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    match_json(validation_error_pattern(bad_request_error_pattern(:domain_list, 'Please specify URLs to track for predictive support.', code: 'invalid_value')))
+    assert_response 400
+  end
+
+  def test_update_without_predictive_with_domain_list
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: false
+        },
+        predictive_support: {
+          domain_list: ['test.fresh.com']
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    assert widget.settings[:components][:predictive_support] == false
+    assert widget.settings[:predictive_support] = predictive_support_hash
+    widget.reload
+  end
+
+  def test_update_domain_list_to_empty
+    widget = create_widget
+    widget.settings[:components][:predictive_support] = true
+    widget.settings[:predictive_support][:domain_list] = ['test.fresh.com']
+    request_params = {
+      settings: {
+        predictive_support: {
+          domain_list: []
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 400
+  end
+
+  def test_update_with_more_than_three_domain
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['test.fresh.com', 'test1.fresh.com', 'test2.fresh.com', 'test3.fresh.com']
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 400
+  end
+
+  def test_update_components_with_predictive_support
+    link_freshmarketer_account
+    stub_freshmarketer_client
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['test.fresh.com']
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(widget))
+    assert widget.settings[:components][:predictive_support] == true
+    assert widget.settings[:freshmarketer][:org_id] == widget_freshmarketer_hash[:org_id]
+    assert widget.settings[:freshmarketer][:project_id] == widget_freshmarketer_hash[:project_id]
+    assert widget.settings[:freshmarketer][:cdn_script] == widget_freshmarketer_hash[:cdn_script]
+    fm_widget_hash = Account.current.account_additional_settings.widget_predictive_support_hash
+    assert fm_widget_hash['fresh.com'][:exp_id] == 'test'
+    assert fm_widget_hash['fresh.com'][:widget_ids] == [widget.id]
+    refute fm_widget_hash.key?('test.fresh.com')
+    unstub_freshmarketer_client
+    unlink_freshmarketer_account
+    assert Account.current.account_additional_settings.widget_predictive_support_hash == {}
+    widget.reload
+    assert widget.settings[:components][:predictive_support] == false
+  end
+
+  def test_update_components_with_predictive_support_with_domain_list
+    link_freshmarketer_account
+    stub_freshmarketer_client
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['test.fresh.com', 'fresh.com']
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(widget))
+    assert widget.settings[:predictive_support][:domain_list] == ['test.fresh.com', 'fresh.com']
+    fm_widget_hash = Account.current.account_additional_settings.widget_predictive_support_hash
+    assert fm_widget_hash['fresh.com'][:exp_id] == 'test'
+    assert fm_widget_hash['fresh.com'][:widget_ids] == [widget.id]
+    refute fm_widget_hash.key?('test.fresh.com')
+    unlink_freshmarketer_account
+    unstub_freshmarketer_client
+  end
+
+  def test_update_domain_list_with_up_case
+    link_freshmarketer_account
+    stub_freshmarketer_client
+    widget = create_widget
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['test.fresh.com', 'TEST.FRESH.COM']
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(widget))
+    assert widget.settings[:predictive_support][:domain_list] == ['test.fresh.com']
+    fm_widget_hash = Account.current.account_additional_settings.widget_predictive_support_hash
+    assert fm_widget_hash['fresh.com'][:exp_id] == 'test'
+    assert fm_widget_hash['fresh.com'][:widget_ids] == [widget.id]
+    refute fm_widget_hash.key?('test.fresh.com')
+    refute fm_widget_hash.key?('FRESH.COM')
+    unlink_freshmarketer_account
+    unstub_freshmarketer_client
+  end
+
+  def test_update_domain_list
+    link_freshmarketer_account
+    stub_freshmarketer_client
+    widget = create_widget
+    widget.settings[:components][:predictive_support] = true
+    widget.save
+    request_params = {
+      settings: {
+        predictive_support: {
+          domain_list: ['test.fresh.com']
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(widget))
+    assert widget.settings[:predictive_support][:domain_list] == ['test.fresh.com']
+    fm_widget_hash = Account.current.account_additional_settings.widget_predictive_support_hash
+    assert fm_widget_hash['fresh.com'][:exp_id] == 'test'
+    assert fm_widget_hash['fresh.com'][:widget_ids] == [widget.id]
+    refute fm_widget_hash.key?('test.fresh.com')
+    unlink_freshmarketer_account
+    unstub_freshmarketer_client
+  end
+
+  def test_update_remove_domain_list
+    link_freshmarketer_account
+    stub_freshmarketer_client
+    widget = create_widget
+    additional_settings = Account.current.account_additional_settings
+    additional_settings.additional_settings[:widget_predictive_support] = fm_widget_settings('fresh.com', widget.id)
+    additional_settings.save
+    widget.settings[:components][:predictive_support] = true
+    widget.settings[:predictive_support][:domain_list] = ['test.fresh.com', 'test1.fresh.com']
+    widget.save
+    request_params = {
+      settings: {
+        predictive_support: {
+          domain_list: ['test.fresh1.com']
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(widget))
+    assert widget.settings[:predictive_support][:domain_list] == ['test.fresh1.com']
+    fm_widget_hash = Account.current.account_additional_settings.widget_predictive_support_hash
+    assert fm_widget_hash['fresh.com'][:exp_id] == 'test'
+    assert fm_widget_hash['fresh.com'][:widget_ids] == []
+    refute fm_widget_hash.key?('test.fresh.com')
+    assert fm_widget_hash['fresh1.com'][:exp_id] == 'test'
+    assert fm_widget_hash['fresh1.com'][:widget_ids] == [widget.id]
+    refute fm_widget_hash.key?('test.fresh1.com')
+    unlink_freshmarketer_account
+    unstub_freshmarketer_client
+  end
+
+  def test_update_remove_domain_list_with_predictive_enabled
+    link_freshmarketer_account
+    stub_freshmarketer_client
+    widget = create_widget
+    additional_settings = Account.current.account_additional_settings
+    additional_settings.additional_settings[:widget_predictive_support] = fm_widget_settings('fresh.com', widget.id)
+    additional_settings.save
+    widget.settings[:components][:predictive_support] = false
+    widget.settings[:predictive_support][:domain_list] = ['test.fresh.com']
+    widget.save
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: true
+        },
+        predictive_support: {
+          domain_list: ['test.fresh.com', 'test.fresh1.com']
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(widget))
+    assert widget.settings[:predictive_support][:domain_list] == ['test.fresh.com', 'test.fresh1.com']
+    fm_widget_hash = Account.current.account_additional_settings.widget_predictive_support_hash
+    assert fm_widget_hash['fresh.com'][:exp_id] == 'test'
+    assert fm_widget_hash['fresh.com'][:widget_ids] == [widget.id]
+    refute fm_widget_hash.key?('test.fresh.com')
+    assert fm_widget_hash['fresh1.com'][:exp_id] == 'test'
+    assert fm_widget_hash['fresh1.com'][:widget_ids] == [widget.id]
+    refute fm_widget_hash.key?('test.fresh1.com')
+    unlink_freshmarketer_account
+    unstub_freshmarketer_client
+  end
+
+  def test_update_disable_predictive_support
+    widget = create_widget
+    link_freshmarketer_account
+    stub_freshmarketer_client
+    additional_settings = Account.current.account_additional_settings
+    additional_settings.additional_settings[:widget_predictive_support] = fm_widget_settings('fresh.com', widget.id)
+    additional_settings.save
+    widget.settings[:components][:predictive_support] = true
+    widget.settings[:predictive_support][:domain_list] = ['test.fresh.com']
+    widget.save
+    request_params = {
+      settings: {
+        components: {
+          predictive_support: false
+        }
+      }
+    }
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
+    assert_response 200
+    widget.reload
+    id = JSON.parse(@response.body)['id']
+    match_json(widget_show_pattern(widget))
+    assert widget.settings[:components][:predictive_support] == false
+    fm_widget_hash = Account.current.account_additional_settings.widget_predictive_support_hash
+    assert fm_widget_hash['fresh.com'][:exp_id] == 'test'
+    assert fm_widget_hash['fresh.com'][:widget_ids] == []
+    unlink_freshmarketer_account
+    unstub_freshmarketer_client
   end
 
   def test_update_with_invalid_components
@@ -240,10 +592,10 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         }
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id, help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 400
-    match_json([bad_request_error_pattern(:script, "Invalid settings hash with script", {code:"invalid_value"}),
-               bad_request_error_pattern(:name, "Invalid settings hash with name", {code:"invalid_value"})])
+    match_json([bad_request_error_pattern(:script, 'Invalid settings hash with script', code: 'invalid_value'),
+                bad_request_error_pattern(:name, 'Invalid settings hash with name', code: 'invalid_value')])
   end
 
   def test_update_welcome_message
@@ -254,11 +606,11 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         message: 'Hai Dear'
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id, help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 200
     widget.reload
     id = JSON.parse(@response.body)['id']
-    match_json(widget_show_pattern( HelpWidget.last))
+    match_json(widget_show_pattern(widget))
     assert widget.settings[:message] == request_params[:settings][:message]
   end
 
@@ -270,11 +622,11 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         button_text: 'Submit'
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id, help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 200
     widget.reload
     id = JSON.parse(@response.body)['id']
-    match_json(widget_show_pattern( HelpWidget.last))
+    match_json(widget_show_pattern(widget))
     assert widget.settings[:button_text] == request_params[:settings][:button_text]
   end
 
@@ -283,12 +635,12 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     request_params = {
       name: 'My_First_Widget'
     }
-    put :update, construct_params({ version: 'v2', id: widget.id, help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 200
     id = JSON.parse(@response.body)['id']
     widget.reload
 
-    match_json(widget_show_pattern( HelpWidget.last))
+    match_json(widget_show_pattern(widget))
     assert widget.name == request_params[:name]
   end
 
@@ -301,12 +653,12 @@ class HelpWidgetsControllerTest < ActionController::TestCase
       },
       length: 3
     }
-    put :update, construct_params({ version: 'v2', id: widget.id, help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 400
-    match_json([bad_request_error_pattern(:length,"Unexpected/invalid field in request", {code:"invalid_field"})])
+    match_json([bad_request_error_pattern(:length, 'Unexpected/invalid field in request', code: 'invalid_field')])
   end
 
-  def test_update_appearance
+  def test_update_appearance_all
     widget = create_widget
     request_params = {
       name: 'My_First_Widget',
@@ -323,12 +675,12 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         }
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id, help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 200
     id = JSON.parse(@response.body)['id']
     widget.reload
 
-    match_json(widget_show_pattern(HelpWidget.last))
+    match_json(widget_show_pattern(widget))
     assert widget.settings[:appearance][:position] == request_params[:settings][:appearance][:position]
     assert widget.settings[:appearance][:offset_from_bottom] == request_params[:settings][:appearance][:offset_from_bottom]
     assert widget.settings[:appearance][:offset_from_left] == request_params[:settings][:appearance][:offset_from_left]
@@ -363,15 +715,20 @@ class HelpWidgetsControllerTest < ActionController::TestCase
           gradient: 2,
           theme_color: '#0f45c1',
           button_color: '#cc30b0'
+        },
+        predictive_support: {
+          welcome_message: "Hi I'm Lisa",
+          message: 'what is the problem ?',
+          success_message: 'Thank you ji'
         }
       }
     }
-    put :update, construct_params({ version: 'v2', id: widget.id, help_widget: request_params })
+    put :update, construct_params(version: 'v2', id: widget.id, help_widget: request_params)
     assert_response 200
     id = JSON.parse(@response.body)['id']
     widget.reload
 
-    match_json(widget_show_pattern(HelpWidget.last))
+    match_json(widget_show_pattern(widget))
     assert widget.name == request_params[:name]
     assert widget.settings[:message] == request_params[:settings][:message]
     assert widget.settings[:button_text] == request_params[:settings][:button_text]
@@ -389,6 +746,9 @@ class HelpWidgetsControllerTest < ActionController::TestCase
     assert widget.settings[:appearance][:gradient] == request_params[:settings][:appearance][:gradient]
     assert widget.settings[:appearance][:theme_color] == request_params[:settings][:appearance][:theme_color]
     assert widget.settings[:appearance][:button_color] == request_params[:settings][:appearance][:button_color]
+    assert widget.settings[:predictive_support][:welcome_message] == request_params[:settings][:predictive_support][:welcome_message]
+    assert widget.settings[:predictive_support][:message] == request_params[:settings][:predictive_support][:message]
+    assert widget.settings[:predictive_support][:success_message] == request_params[:settings][:predictive_support][:success_message]
   end
 
   def test_create_with_no_product_associated
@@ -400,11 +760,10 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         }
       }
     }
-    post :create, construct_params({ version: 'v2', help_widget: request_params })
+    post :create, construct_params(version: 'v2', help_widget: request_params)
     assert_response 201
     id = JSON.parse(@response.body)['id']
-    match_json(widget_show_pattern( HelpWidget.last))
-    assert id == HelpWidget.last.id
+    match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
   end
 
   def test_create_with_product_associated
@@ -417,15 +776,13 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         }
       }
     }
-    post :create, construct_params({ version: 'v2', help_widget: request_params })
+    post :create, construct_params(version: 'v2', help_widget: request_params)
     assert_response 201
     id = JSON.parse(@response.body)['id']
-    match_json(widget_show_pattern( HelpWidget.last))
-    assert id == HelpWidget.last.id
+    match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
   end
 
   def test_create_with_name
-
     request_params = {
       product_id: nil,
       name: 'Best_Widget',
@@ -435,11 +792,10 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         }
       }
     }
-    post :create, construct_params({ version: 'v2', help_widget: request_params })
+    post :create, construct_params(version: 'v2', help_widget: request_params)
     assert_response 201
     id = JSON.parse(@response.body)['id']
-    match_json(widget_show_pattern( HelpWidget.last))
-    assert id == HelpWidget.last.id
+    match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
   end
 
   def test_create_with_invalid_fields
@@ -452,9 +808,9 @@ class HelpWidgetsControllerTest < ActionController::TestCase
       },
       product_name: 'Flower'
     }
-    post :create, construct_params({ version: 'v2', help_widget: request_params })
+    post :create, construct_params(version: 'v2', help_widget: request_params)
     assert_response 400
-    match_json([bad_request_error_pattern(:product_name,"Unexpected/invalid field in request", {code:"invalid_field"})])
+    match_json([bad_request_error_pattern(:product_name, 'Unexpected/invalid field in request', code: 'invalid_field')])
   end
 
   def test_create_with_invalid_component_fields
@@ -463,13 +819,13 @@ class HelpWidgetsControllerTest < ActionController::TestCase
       settings: {
         components: {
           contact_form: true,
-          gender: "male"
+          gender: 'male'
         }
       }
     }
-    post :create, construct_params({ version: 'v2', help_widget: request_params })
+    post :create, construct_params(version: 'v2', help_widget: request_params)
     assert_response 400
-    match_json([bad_request_error_pattern(:request_params,"Invalid components hash with gender", {code:"invalid_value"})])
+    match_json([bad_request_error_pattern(:request_params, 'Invalid components hash with gender', code: 'invalid_value')])
   end
 
   def test_create_with_invalid_product_associated
@@ -481,9 +837,9 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         }
       }
     }
-    post :create, construct_params({ version: 'v2', help_widget: request_params })
+    post :create, construct_params(version: 'v2', help_widget: request_params)
     assert_response 400
-    match_json([bad_request_error_pattern(:product_id,"The product matching the given product_id is inaccessible to you", {code:"inaccessible_value"})])
+    match_json([bad_request_error_pattern(:product_id, 'The product matching the given product_id is inaccessible to you', code: 'inaccessible_value')])
   end
 
   def test_config_upload_for_create
@@ -496,13 +852,12 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         }
       }
     }
-    sidekiq_inline {
-      post :create, construct_params({ version: 'v2', help_widget: request_params })
-    }
+    sidekiq_inline do
+      post :create, construct_params(version: 'v2', help_widget: request_params)
+    end
     assert_response 201
     id = JSON.parse(@response.body)['id']
-    match_json(widget_show_pattern(HelpWidget.last))
-    assert id == Account.current.help_widgets.active.last.id
+    match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
     # file_path = HelpWidget::FILE_PATH % { :widget_id => id }
     # bucket = S3_CONFIG[:bucket]
     # assert AwsWrapper::S3Object.exists?(file_path, bucket)
@@ -510,9 +865,9 @@ class HelpWidgetsControllerTest < ActionController::TestCase
 
   def test_config_upload_for_delete
     widget = create_widget
-    sidekiq_inline {
+    sidekiq_inline do
       delete :destroy, controller_params(version: 'v2', id: widget.id)
-    }
+    end
     assert_response 204
     deleted_widget = Account.current.help_widgets.find(widget.id)
     refute deleted_widget.active
@@ -529,17 +884,15 @@ class HelpWidgetsControllerTest < ActionController::TestCase
         }
       }
     }
-    sidekiq_inline {
-      post :create, construct_params({ version: 'v2', help_widget: request_params })
-    }
+    sidekiq_inline do
+      post :create, construct_params(version: 'v2', help_widget: request_params)
+    end
     assert_response 201
     id = JSON.parse(@response.body)['id']
-    match_json(widget_show_pattern(HelpWidget.last))
-    assert id == Account.current.help_widgets.active.last.id
+    match_json(widget_show_pattern(Account.current.help_widgets.find_by_id(id)))
     file_path = HelpWidget::FILE_PATH % { :widget_id => id }
     bucket = S3_CONFIG[:bucket]
     assert AwsWrapper::S3Object.exists?(file_path, bucket)
     AwsWrapper::S3Object.unstub(:store)
   end
-
 end

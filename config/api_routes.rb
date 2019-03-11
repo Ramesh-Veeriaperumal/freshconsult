@@ -281,7 +281,11 @@ Helpkit::Application.routes.draw do
 
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
 
-    resources :help_widgets, controller: 'help_widgets'
+    resources :help_widgets, controller: 'help_widgets' do
+      collection do
+        get :freshmarketer_info
+      end
+    end
 
     post '/audit_log/export', to: 'audit_logs#export'
   end

@@ -147,6 +147,23 @@ class AccountAdditionalSettings < ActiveRecord::Base
     additional_settings.delete(:ocr_account_id)
   end
 
+  def freshmarketer_settings_hash
+    app_url = freshmarketer_app_url.split('//').last
+    {
+      org_id: app_url.split('/org/').last.split('/').first.to_i,
+      project_id: app_url.split('/project/').last.split('/').first.to_i,
+      cdn_script: freshmarketer_cdn_script
+    }
+  end
+
+  def freshmarketer_name
+    freshmarketer_app_url.split('//').last.split('/').first
+  end
+
+  def widget_predictive_support_hash
+    additional_settings[:widget_predictive_support] || {}
+  end
+
   private
 
   def clear_cache

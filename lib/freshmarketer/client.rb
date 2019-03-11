@@ -71,6 +71,64 @@ class Freshmarketer::Client
     response['createsraccount']
   end
 
+  def enable_predictive_support(exp_id = freshmarketer_acc_id)
+    query_param = {
+      access_key: auth_token,
+      account_id: exp_id
+    }
+    invoke_call do
+      response = request(query_param, ENABLE_PREDICTIVE_SUPPORT_URL, :put)
+      response['enablepredictivesupport']['result']
+    end
+  end
+
+  def disable_predictive_support(exp_id = freshmarketer_acc_id)
+    query_param = {
+      access_key: auth_token,
+      account_id: exp_id
+    }
+    invoke_call do
+      response = request(query_param, DISABLE_PREDICTIVE_SUPPORT_URL, :put)
+      response['disablepredictivesupport']['result']
+    end
+  end
+
+  def create_experiment(domain)
+    query_param = {
+      access_key: auth_token,
+      enable_predictive_support: true
+    }
+    invoke_call do
+      response = request(query_param, CREATE_EXPERIMENT, :post, domain: domain)
+      {
+        exp_id: response['create_experiment']['result'],
+        status: true
+      }
+    end
+  end
+
+  def enable_predictive_integration(exp_id)
+    query_param = {
+      access_key: auth_token,
+      account_id: exp_id
+    }
+    invoke_call do
+      response = request(query_param, ENABLE_INTEGRATION_URL, :post)
+      response['status_code'] == 200
+    end
+  end
+
+  def disable_predictive_integration(exp_id)
+    query_param = {
+      access_key: auth_token,
+      account_id: exp_id
+    }
+    invoke_call do
+      response = request(query_param, DISABLE_INTEGRATION_URL, :post)
+      response['disableintegration']['result']
+    end
+  end
+
   def associate_account(token)
     payload = { token: token, domain: account_domain }
     response = request(account_setup_params, ASSOCIATE_ACCOUNT_URL, :post, payload)
@@ -101,13 +159,20 @@ class Freshmarketer::Client
       Rails.logger.info "Freshmarketer API Request ::: path: #{path} request_type: #{request_type}"
       connection = freshmarketer_connection
       response = begin
-        if request_type == :get
+        case request_type
+        when :get
           connection.get do |req|
             req.url "#{FreshmarketerConfig['api_endpoint']}#{path}"
             req.params = params
           end
-        else
+        when :post
           connection.post do |req|
+            req.url "#{FreshmarketerConfig['api_endpoint']}#{path}"
+            req.params = params
+            req.body = payload
+          end
+        when :put
+          connection.put do |req|
             req.url "#{FreshmarketerConfig['api_endpoint']}#{path}"
             req.params = params
             req.body = payload
@@ -132,6 +197,7 @@ class Freshmarketer::Client
       if success_response_codes.include?(response.status)
         @response_code = :ok
       else
+        Rails.logger.error "Freshmarketer API Error Response :: #{response}"
         case response_msg['messagecode']
         when 'E403IT', 'E409IC', 'E403IS', 'E403SR'
           raise ForbiddenRequestException, response_msg['messagecode']
@@ -185,7 +251,8 @@ class Freshmarketer::Client
     def clear_freshmarketer_hash
       account_additional_settings = Account.current.account_additional_settings
       if account_additional_settings.present? && account_additional_settings.additional_settings[:freshmarketer].present?
-        account_additional_settings.additional_settings.delete(:freshmarketer)
+        unlink_freshmarketer_from_widget if account_additional_settings.additional_settings[:widget_predictive_support].present?
+        account_additional_settings.additional_settings = account_additional_settings.additional_settings.except(:freshmarketer, :widget_predictive_support)
         account_additional_settings.save
       end
     end
@@ -194,6 +261,16 @@ class Freshmarketer::Client
     def account_domain
       domain_name = Account.current.host
       domain_name.include?(AppConfig['base_domain'][Rails.env]) ? domain_name : domain_name.partition('.').last
+    end
+
+    def unlink_freshmarketer_from_widget
+      Account.current.help_widgets.active.each do |widget|
+        next unless widget.settings[:components][:predictive_support]
+
+        widget.settings[:components][:predictive_support] = false
+        widget.settings.delete(:freshmarketer)
+        widget.save
+      end
     end
 
     class BadRequestException < StandardError

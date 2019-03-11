@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20190110073546) do
+ActiveRecord::Schema.define(:version => 20190306113857) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -2207,7 +2207,7 @@ ActiveRecord::Schema.define(:version => 20190110073546) do
     t.datetime "updated_at",              :null => false
   end
 
-  add_index "help_widgets", ["account_id", "active"], :name => "index_help_widgets_on_account_id_and_active"
+  add_index 'help_widgets', ['account_id', 'active', 'created_at'], name: 'index_help_widgets_on_account_id_and_active_and_created_at'
 
   create_table "helpdesk_accesses", :force => true do |t|
     t.string   "accessible_type"

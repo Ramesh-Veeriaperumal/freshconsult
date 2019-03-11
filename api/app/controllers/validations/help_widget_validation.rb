@@ -7,6 +7,7 @@ class HelpWidgetValidation < ApiValidation
   validate :validate_settings, if: -> { request_params[:settings].present? && errors.blank? }
   validate :validate_create_attributes, if: -> { errors.blank? }, on: :create
   validate :validate_update_attributes, if: -> { errors.blank? && request_params[:settings].present? }, on: :update
+  validate :validate_domain, if: -> { request_params[:settings].present? && request_params[:settings][:predictive_support].present? }, on: :update
 
   def initialize(request_params, item = nil, allow_string_param = false)
     super(request_params, item, allow_string_param)
@@ -78,6 +79,14 @@ class HelpWidgetValidation < ApiValidation
         },
         hash: {
           validatable_fields_hash: proc { widget_appearance_template }
+        }
+      },
+      predictive_support: {
+        data_type: {
+          rules: Hash
+        },
+        hash: {
+          validatable_fields_hash: proc { widget_predictive_support_template }
         }
       },
       widget_flow: {
@@ -211,16 +220,16 @@ class HelpWidgetValidation < ApiValidation
         },
         custom_numericality: { only_integer: true, greater_than: 0 },
         custom_inclusion: {
-          in: HelpWidgetConstants::PATTERN_TYPES.values
+          in: HelpWidgetConstants::GRADIENT_TYPES.values
         }
       },
       pattern: {
         data_type: {
           rules: Integer
         },
-        custom_numericality: { only_integer: true, greater_than: 0},
+        custom_numericality: { only_integer: true, greater_than: 0 },
         custom_inclusion: {
-          in: HelpWidgetConstants::GRADIENT_TYPES.values
+          in: HelpWidgetConstants::PATTERN_TYPES.values
         }
       },
       theme_color: {
@@ -248,6 +257,55 @@ class HelpWidgetValidation < ApiValidation
         }
       }
     }
+  end
+
+  def widget_predictive_support_template
+    {
+      domain_list: {
+        data_type: {
+          rules: Array,
+          allow_nil: false
+        },
+        custom_length: {
+          maximum: HelpWidgetConstants::MAX_DOMAIN_ALLOWED,
+          message_options: { element_type: :values }
+        }
+      },
+      welcome_message: {
+        data_type: {
+          rules: String,
+          allow_nil: true
+        },
+        custom_length: {
+          maximum: HelpWidgetConstants::TEXT_FIELDS_MAX_LENGTH
+        }
+      },
+      message: {
+        data_type: {
+          rules: String,
+          allow_nil: true
+        },
+        custom_length: {
+          maximum: HelpWidgetConstants::TEXT_AREA_MAX_LENGTH
+        }
+      },
+      success_message: {
+        data_type: {
+          rules: String,
+          allow_nil: true
+        },
+        custom_length: {
+          maximum: HelpWidgetConstants::TEXT_AREA_MAX_LENGTH
+        }
+      }
+    }
+  end
+
+  def validate_domain
+    domain_list = request_params[:settings][:predictive_support][:domain_list] || []
+    domain_list.each do |domain|
+      return errors[:domain_list] << I18n.t('help_widget.invalid_domain') unless domain.match(HelpWidgetConstants::DOMAIN_VALADITION_REGEX)
+    end
   end
 
   def validate_create_attributes

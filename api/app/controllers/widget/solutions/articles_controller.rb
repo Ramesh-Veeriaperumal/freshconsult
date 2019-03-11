@@ -51,6 +51,8 @@ module Widget
           return if @error.present?
 
           set_widget_portal_as_current
+          return render_request_error(:solution_article_not_enabled, 400, id: @widget_id) unless @help_widget.solution_articles_enabled?
+          
           set_current_language
         end
 

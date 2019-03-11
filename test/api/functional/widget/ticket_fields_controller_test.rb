@@ -13,8 +13,6 @@ module Widget
       @current_portal = current_product ? @account.portals.find_by_product_id(current_product) : current_account.main_portal_from_cache
     end
 
-    @@before_all_run = false
-
     def wrap_cname(_params)
       remove_wrap_params
       {}
@@ -45,6 +43,14 @@ module Widget
       get :index, controller_params
       assert_response 400
       match_json(request_error_pattern(:invalid_help_widget, 'invalid_help_widget'))
+    end
+
+    def test_index_with_contact_form_disabled
+      @widget.settings[:components][:contact_form] = false
+      @widget.save
+      get :index, controller_params
+      assert_response 400
+      match_json(request_error_pattern(:contact_form_not_enabled, 'contact_form_not_enabled'))
     end
   end
 end

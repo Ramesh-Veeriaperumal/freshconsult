@@ -12,6 +12,8 @@ module Widget
       before_filter :set_current_language
 
       def results
+        return render_request_error(:solution_article_not_enabled, 400, id: @widget_id) unless @help_widget.solution_articles_enabled?
+        
         @search_context = :portal_spotlight_solution
         @items = esv2_query_results(esv2_portal_models)
       end
