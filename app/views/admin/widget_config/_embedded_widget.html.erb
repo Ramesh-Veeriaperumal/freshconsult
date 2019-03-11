@@ -1,3 +1,9 @@
+<%
+  form_height_message_key, embedded_code_key, embed_code_intro_key = current_account.help_widget_enabled? ?
+  ['.feedbackform_form_height_message', '.feedbackform_embedded_code', 'feedbackform_embed_code_intro'] :
+  ['.feedbackwidget_form_height_message', '.feedbackwidget_embedded_code', 'feedbackwidget_embed_code_intro']
+%>
+
 <%= form_for :widget_config, :html => { :class => "form-horizontal", :rel => "validate",
 		:name => "widget_config_embedded", :id => "WidgetConfigembedded" } do |f| %>
 <div class="row-fluid">
@@ -32,7 +38,7 @@
 		 	<input type="text" class="text span2 number" size="4" name="formHeight" id="formHeight" value="" placeholder= "<%= t('.feedbackwidget_height_placeholder') %>"/>
 		 	<span class="add-on-outer"><%= t(".feedbackwidget_px") %></span>
 		 	<div class="info-data">
-        <%= t(".feedbackwidget_form_height_message") %>
+        <%= t(form_height_message_key) %>
       </div>
 		</div>
   </div>
@@ -75,8 +81,8 @@
   </div>
 <ul class="ui-form">
   <li class="code-view">
-		<h3 id="feedbackwidget_embedded_code" class="title"><%= t('.feedbackwidget_embedded_code') %></h3>
-		<p class="intro pt5"><%= t('feedbackwidget_embed_code_intro').html_safe  %></p>
+		<h3 id="feedbackwidget_embedded_code" class="title"><%= t(embedded_code_key) %></h3>
+		<p class="intro pt5"><%= t(embed_code_intro_key).html_safe  %></p>
     <textarea id="embeddedCode" class="codetextarea"></textarea>
   </li>
  </ul>

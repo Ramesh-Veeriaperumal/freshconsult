@@ -2069,11 +2069,13 @@ en:
         feedbackwidget_height_placeholder: "500"
         feedbackwidget_form_customization: Customize Form
         feedbackwidget_embedded_code: Embedded Widget code
+        feedbackform_embedded_code: Embed code
         feedbackwidget_widget_code: Widget code
         feedbackwidget_embedded_form_code: Embedded form code
         feedbackwidget_form_submit_message: "Form Submit Message"
         feedbackwidget_form_height: "Form height"
         feedbackwidget_form_height_message: "If you see scroll bars in your widget, adjust the widget height."
+        feedbackform_form_height_message: "If you see scroll bars in your widget, adjust the form height."
         feedbackwidget_px: "px"
         thankyou_default: "Thank you for your feedback"
         thankyou_info: "Message to be displayed after a user submits the ticket form"
@@ -3861,6 +3863,7 @@ en:
   add_new_email: Add new email
   chatwidget_title: Live Chat
   feedbackwidget_title: Feedback widget
+  feedbackform_title: Feedback form
   errors_in_your_address: "Errors encountered with your address:"
   set_priority_as: Set Priority as
   sign_in_info: You will be signing in with
@@ -5499,6 +5502,7 @@ en:
       exceeded_message: "%{current_message} (current text exceeds recommendation)"
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
+  feedbackform_intro: "Customize your form and embed it into your website or product. To add or remove fields, please <a href='/a/admin/ticket_fields' target='_blank'>go to Admin > Ticket Fields</a>"
   chatwidget_intro: Customize your Live Chat widget below and see a realtime preview.
   save: Save
   save_add_child: Save and add child
@@ -5722,7 +5726,9 @@ en:
   favicon: Favicon
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
+  feedbackform_help_para1: The feedback form lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the form on your website. Once done, copy-paste the generated embed code in your website or app, to start using the feedback form.
   widget_config_tour_text: Help me get started with the feedback widget
+  form_config_tour_text: Help me get started with the feedback form
   chatwidget_help_content:
     title: Live Chat
     info1: Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site.
@@ -6588,6 +6594,7 @@ en:
   forgot_password: Forgot Password
   change_plan: Change plan
   feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
+  feedbackform_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the feedback form.
   import_forum: Forums
   title: Title
   new_ticket_created: New Ticket Created
