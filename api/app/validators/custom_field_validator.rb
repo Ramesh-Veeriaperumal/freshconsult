@@ -126,6 +126,12 @@ class CustomFieldValidator < ActiveModel::EachValidator
       DateTimeValidator.new(date_options).validate(record)
     end
 
+    # Date Time validator for date_time field
+    def validate_custom_date_time(record, field_name)
+      date_time_options = construct_options(attributes: field_name, allow_nil: !@is_required, only_date: false, required: @is_required)
+      DateTimeValidator.new(date_time_options).validate(record)
+    end
+
     # Search methods, validates array of custom fields
     def validate_custom_text_array(record, field_name)
       values = record.safe_send(field_name)

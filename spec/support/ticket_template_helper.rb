@@ -57,7 +57,8 @@ module TicketTemplateHelper
       { :type => "custom_paragraph", :ff_name => "ff_text07", :ff_coltype => "paragraph", :name=> "additional_info" },
       { :type => "custom_date", :ff_name => "ff_date07", :ff_coltype => "date", :name=> "date" },
       { :type => "custom_decimal", :ff_name => "ff_decimal07", :ff_coltype => "decimal", :name=> "average" },
-      { :type => "custom_checkbox", :ff_name => "ff_boolean07", :ff_coltype => "checkbox", :name=> "availability" }
+      { :type => "custom_checkbox", :ff_name => "ff_boolean07", :ff_coltype => "checkbox", :name=> "availability" },
+      { type: 'custom_date_time', ff_name: 'ff_date08', ff_coltype: 'date_time', name: 'appointment_time' }
     ]
   end
 end

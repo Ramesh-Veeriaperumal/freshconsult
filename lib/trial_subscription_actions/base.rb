@@ -1,10 +1,8 @@
 class TrialSubscriptionActions::Base < SAAS::SubscriptionEventActions
 
-  DROP_DATA_FEATURES = (SAAS::SubscriptionActions::DROP_DATA_FEATURES +
-    DROP_DATA_FEATURES_V2).uniq.freeze
+  DROP_DATA_FEATURES = DROP_DATA_FEATURES_V2.freeze
 
-  ADD_DATA_FEATURES  = (SAAS::SubscriptionActions::ADD_DATA_FEATURES + 
-    ADD_DATA_FEATURES_V2).uniq.freeze
+  ADD_DATA_FEATURES  = ADD_DATA_FEATURES_V2.freeze
 
   attr_accessor :trial_subscription
 

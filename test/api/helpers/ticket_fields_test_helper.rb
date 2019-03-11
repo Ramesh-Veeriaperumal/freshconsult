@@ -1,7 +1,7 @@
 module TicketFieldsTestHelper
   include Helpdesk::Ticketfields::ControllerMethods
 
-  FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date' }
+  FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date', 'date_time' => 'date' }.freeze
 
   DEFAULT_FIELDS = %w[default_priority default_source default_status default_ticket_type default_product default_skill].freeze
 
@@ -14,7 +14,13 @@ module TicketFieldsTestHelper
     else
       flexifield_mapping = type == 'text' ? 'ffs_13' : "ff_#{FIELD_MAPPING[type]}05"
     end
-    flexifield_mapping = type == 'text' ? unused_ffs_col : "ff_#{FIELD_MAPPING[type]}05"
+    flexifield_mapping =  if type == 'text' 
+                            unused_ffs_col 
+                          elsif type == 'date_time'
+                            "ff_#{FIELD_MAPPING[type]}06"
+                          else
+                            "ff_#{FIELD_MAPPING[type]}05"
+                          end
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
                                              flexifield_alias: "#{name.downcase}_#{@account.id}",

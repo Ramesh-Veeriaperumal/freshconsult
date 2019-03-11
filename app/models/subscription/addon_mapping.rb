@@ -21,14 +21,18 @@ class Subscription::AddonMapping < ActiveRecord::Base
   def add_feature_data
     if DROP_DATA_ADDONS.include?(subscription_addon.name)
       features = self.subscription_addon.features
-      SAAS::SubscriptionActions.new.add_feature_data(features)
+      SAAS::SubscriptionEventActions.new(Account.current).handle_feature_data(
+        features, SAAS::SubscriptionEventActions::ADD
+      )
     end
   end
 
   def drop_feature_data
     if DROP_DATA_ADDONS.include?(subscription_addon.name)
       features = self.subscription_addon.features
-      SAAS::SubscriptionActions.new.drop_feature_data(features)
+      SAAS::SubscriptionEventActions.new(Account.current).handle_feature_data(
+        features, SAAS::SubscriptionEventActions::DROP
+      )
     end
   end
 end

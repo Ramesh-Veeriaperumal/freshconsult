@@ -8,11 +8,13 @@
         <%= render_as_list f, field %>
         <% end %>
       </ul>
-      <div class="control-group">
-        <div class="controls recaptcha-control">
-          <%= recaptcha_tags :display => { :theme => "white" } %>
+      <% unless current_account.disable_signup_captcha_enabled? %>
+        <div class="control-group">
+          <div class="controls recaptcha-control">
+            <%= recaptcha_tags :display => { :theme => "white" } %>
+          </div>
         </div>
-      </div>
+      <% end %>
     </fieldset>
     <div class="form-actions">
       <%= submit_tag t('register'), { :class => "btn btn-primary" } -%>

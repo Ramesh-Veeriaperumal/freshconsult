@@ -16,7 +16,7 @@ class Account < ActiveRecord::Base
                           attachment euattachment eucattachment ausattachment indattachment cobrowsing) + FreshopsSubdomains + PartnerSubdomains
 
   PLANS_AND_FEATURES = {
-    :basic => { :features => [ :twitter, :custom_domain, :multiple_emails ] },
+    :basic => { :features => [ :twitter, :custom_domain, :multiple_emails, :marketplace ] },
 
     :pro => {
       :features => [ :gamification, :scenario_automations, :customer_slas, :business_hours, :forums,
@@ -30,7 +30,7 @@ class Account < ActiveRecord::Base
     },
 
     :sprout => {
-      :features => [ :scenario_automations, :business_hours ]
+      :features => [ :scenario_automations, :business_hours, :marketplace ]
     },
 
     :blossom => {
@@ -60,7 +60,7 @@ class Account < ActiveRecord::Base
     },
 
     :sprout_classic => {
-      :features => [ :scenario_automations, :business_hours, :custom_domain, :multiple_emails ]
+      :features => [ :scenario_automations, :business_hours, :custom_domain, :multiple_emails, :marketplace ]
     },
 
     :blossom_classic => {
@@ -84,7 +84,7 @@ class Account < ActiveRecord::Base
     },
 
     :sprout_jan_17 => {
-      :features => [ :scenario_automations, :business_hours ]
+      :features => [ :scenario_automations, :business_hours, :marketplace ]
     },
 
     :blossom_jan_17 => {

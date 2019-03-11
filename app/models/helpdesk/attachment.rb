@@ -20,12 +20,17 @@ class Helpdesk::Attachment < ActiveRecord::Base
   NON_THUMBNAIL_RESOURCES = ["Helpdesk::Ticket", "Helpdesk::Note", "Account",
     "Helpdesk::ArchiveTicket", "Helpdesk::ArchiveNote"]
 
+  # Below are list of control characters. Please refer https://en.m.wikipedia.org/wiki/Unicode_control_characters
+  CONTROL_CHARACTER_PATTERN = /[\u0000-\u001f]|\u007f|[\u0080-\u009f]|[\u202a-\u202e]/.freeze
+
   self.table_name =  "helpdesk_attachments"
   belongs_to_account
 
   belongs_to :attachable, :polymorphic => true
 
   has_many :shared_attachments, :class_name => 'Helpdesk::SharedAttachment'
+
+  before_save :sanitise_file_name
 
    has_attached_file :content,
     :storage => :s3,
@@ -315,6 +320,10 @@ class Helpdesk::Attachment < ActiveRecord::Base
 
   def set_random_secret
     self.random_secret = SecureRandom.hex(8)
+  end
+
+  def sanitise_file_name
+    self.content_file_name.gsub!(CONTROL_CHARACTER_PATTERN, '')
   end
 
   def set_account_id

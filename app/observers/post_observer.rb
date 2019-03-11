@@ -29,13 +29,9 @@ class PostObserver < ActiveRecord::Observer
 	end
 
 	def monitor_reply(post)
-    send_later(:send_monitorship_emails, post)
-  end
-
-  def send_monitorship_emails(post)
     post.topic.monitorships.active_monitors.all(:include => [:portal, :user]).each do |monitorship|
-    	next if monitorship.user.email.blank? or (post.user_id == monitorship.user_id)
-    	PostMailer.monitor_email(monitorship.user.email, post, post.user, monitorship.portal, *monitorship.sender_and_host)
+      next if monitorship.user.email.blank? or (post.user_id == monitorship.user_id)
+      PostMailer.send_later(:monitor_email, monitorship.user.email, post, post.user, monitorship.portal, *monitorship.sender_and_host)
     end
   end
 

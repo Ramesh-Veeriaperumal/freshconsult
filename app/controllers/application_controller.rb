@@ -61,6 +61,8 @@ class ApplicationController < ActionController::Base
   #
 
   # Will set the request url for pjax to change the state
+  after_filter :remove_session_data
+  
   def set_pjax_url
     if is_ajax?
       response.headers['X-PJAX-URL'] = request.url
