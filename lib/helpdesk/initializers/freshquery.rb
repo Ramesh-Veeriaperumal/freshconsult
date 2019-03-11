@@ -16,19 +16,19 @@ module Freshquery
     end
 
     def custom_string_mappings
-      proc { Account.current.flexifield_def_entries.preload(:ticket_field).map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_text' }.compact.to_h }
+      proc { Account.current.flexifields_with_ticket_fields_from_cache.map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_text' }.compact.to_h }
     end
 
     def custom_number_mappings
-      proc { Account.current.flexifield_def_entries.preload(:ticket_field).map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_number' }.compact.to_h }
+      proc { Account.current.flexifields_with_ticket_fields_from_cache.map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_number' }.compact.to_h }
     end
 
     def custom_checkbox_mappings
-      proc { Account.current.flexifield_def_entries.preload(:ticket_field).map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_checkbox' }.compact.to_h }
+      proc { Account.current.flexifields_with_ticket_fields_from_cache.map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_checkbox' }.compact.to_h }
     end
 
     def custom_dropdown_mappings
-      proc { Account.current.flexifield_def_entries.preload(:ticket_field).map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_dropdown' }.compact.to_h }
+      proc { Account.current.flexifields_with_ticket_fields_from_cache.map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if x.ticket_field.field_type == 'custom_dropdown' }.compact.to_h }
     end
 
     def custom_dropdown_choices
@@ -44,8 +44,8 @@ module Freshquery
     include Singleton
 
     def custom_dropdown_mappings
-     proc { Account.current.flexifield_def_entries.preload(:ticket_field).map{|x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if ['custom_dropdown','nested_field'].include?(x.ticket_field.field_type)}.compact.to_h }
-   end
+      proc { Account.current.flexifields_with_ticket_fields_from_cache.map { |x| [TicketDecorator.display_name(x.flexifield_alias), x.flexifield_name] if ['custom_dropdown', 'nested_field'].include?(x.ticket_field.field_type) }.compact.to_h }
+    end
 
    def custom_dropdown_choices
      proc { TicketsValidationHelper.custom_dropdown_field_choices.map { |k, v| [TicketDecorator.display_name(k), v] }.to_h.merge(
