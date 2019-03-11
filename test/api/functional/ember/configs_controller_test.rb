@@ -18,6 +18,7 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
   end
 
   def test_config_response
+    User.any_instance.stubs(:time_zone).returns('Casablanca')
     get :show, controller_params(version: 'private', id: 'freshvisuals')
     assert_response 200
     end_point = JSON.parse(response.body)['url']
@@ -26,6 +27,9 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
     assert_equal payload[:firstName], @user.name
     assert_equal payload[:email], @user.email
     assert_equal payload[:userId], @user.id
+    assert_equal payload[:timezone], 'Africa/Casablanca'
+  ensure
+    User.any_instance.unstub(:time_zone)
   end
 
   def test_invalid_config_response

@@ -26,17 +26,13 @@ module Ember
         {
           firstName: current_user.name,
           email: current_user.email,
-          timezone: TimeZone.find_time_zone,
-          tenantId: Account.current.id,
+          timezone: TimeZone.fetch_tzinfoname,
+          tenantId: current_account.id,
           userId: current_user.id,
           sessionExpiration: Time.now.to_i + FreshVisualsConfig['session_expiration'].to_i,
           iat: Time.now.to_i,
           exp: Time.now.to_i + FreshVisualsConfig['session_expiration'].to_i
         }
-      end
-
-      def current_user
-        User.current
       end
 
       def constants_class
