@@ -76,19 +76,46 @@ window.App = window.App || {};
       this.choosePlan(this.clone_button);
     },
     agentChange: function (ev, agent) {
+      var non_omni_plan_id = this.nonOmniId(agent);
+      var parent_plan_element = this.parentPlanItem(agent);
       if(this.IsNumeric(agent.value) && agent.value != 0){
         this.agents = Math.abs(agent.value);
-        $(".billing-submit").attr("disabled", "true")
-        this.calculateCost(null);
+        $(".billing-submit").attr("disabled", "true");
+        this.callCalculateCost(non_omni_plan_id, parent_plan_element);
       }
       else{
         agent.value = this.agents;
       }
     },
+    callCalculateCost: function(planId, parentPlanElement){
+      if(planId) {
+        this.calculateCost(planId);
+      } else {
+        this.calculateCost(null);
+      }
+    },
     billingCycleChange: function (billing_period) {
+      var non_omni_plan_id = this.nonOmniId(billing_period);
+      var parent_plan_element = this.parentPlanItem(billing_period);
       this.billing_cycle = billing_period.value;
-      $(".billing-submit").attr("disabled", "true")
-      this.calculateCost(null);
+      $(".billing-submit").attr("disabled", "true");
+      this.callCalculateCost(non_omni_plan_id, parent_plan_element);
+    },
+    parentPlanItem: function(selectedItem) {
+      return jQuery(selectedItem).closest(".pricelist").length ? jQuery(selectedItem).closest(".pricelist") : jQuery(selectedItem).closest(".calculate-container");
+    },
+    nonOmniId: function(selectedItem){
+      var non_omni_plan = null;
+      var non_omni_plan_id = null;
+      var parent_plan_element = this.parentPlanItem(selectedItem);
+      if(jQuery(parent_plan_element).find(".toggle-button").hasClass("active")) {
+       non_omni_plan = jQuery(parent_plan_element).prev().attr("data-omni-plan-id").replace(/_/,"_omni_");
+       return jQuery(jQuery("[data-omni-plan-id='"+non_omni_plan+"']")[0]).attr("data-plan-id");
+      } else {
+       non_omni_plan = jQuery(parent_plan_element).prev().attr("data-omni-plan-id").replace("_omni_","_");
+       return jQuery(jQuery("[data-omni-plan-id='"+non_omni_plan+"']")[0]).attr("data-plan-id");
+      }
+
     },
     trialPlanChange: function (button) {
       var $this = $(button),
