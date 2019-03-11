@@ -1,0 +1,40 @@
+post:
+  tags: [Solution Folder]
+  summary: Create a folder
+  parameters:
+    - name: data
+      in: body
+      required: true
+      schema:
+        $ref: '#/definitions/folder_input'
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/folder_response'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied
+
+get:
+  tags: [Solution Folder]
+  summary: List folders
+  parameters:
+    - name: language_id
+      in: query
+      type: integer
+      format: int64
+  responses:
+    200:
+      description: Success
+      schema:
+        $ref: '#/definitions/solution_folder'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

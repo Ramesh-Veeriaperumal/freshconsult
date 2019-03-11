@@ -1,0 +1,3 @@
+JSON.generate(@items.map do |item|
+  Solutions::CategoryDecorator.new(item, portal_id: params[:portal_id]).summary_hash
+end)

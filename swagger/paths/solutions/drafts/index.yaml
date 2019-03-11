@@ -1,0 +1,20 @@
+get:
+  tags: [drafts]
+  summary: List recent drafts for the user in the portal
+  parameters:
+    - name: portal_id
+      in: query
+      type: string
+      description: Portal ID
+      required: true
+  responses: 
+    200: 
+      description: Success
+      schema:
+        $ref: '#/definitions/solution_article'
+    400:
+      description: Bad Request Error
+      schema:
+        $ref: '#/definitions/bad_request_error'
+    403:
+      description: Access denied

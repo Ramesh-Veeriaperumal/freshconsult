@@ -52,6 +52,14 @@ class Ember::PortalsControllerTest < ActionController::TestCase
     assert_response 404
   end
 
+  def test_show_for_portal_without_name
+    product = create_product
+    portal = create_portal(product_id: product.id)
+    get :show, controller_params(version: 'private', id: portal.id)
+    assert_response 200
+    match_json(portal_pattern(portal))
+  end
+
   def test_show_without_access
     portal = Account.current.portals.first
     User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)

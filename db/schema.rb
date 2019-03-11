@@ -3645,6 +3645,7 @@ ActiveRecord::Schema.define(:version => 20190306113857) do
     t.datetime "created_at",                                                :null => false
     t.datetime "updated_at",                                                :null => false
     t.string   "available"
+    t.integer  "article_order",                  :default => 1
   end
 
   add_index "solution_folder_meta", ["account_id", "solution_category_meta_id", "position"], :name => "index_folder_meta_on_account_id_category_meta_and_position"

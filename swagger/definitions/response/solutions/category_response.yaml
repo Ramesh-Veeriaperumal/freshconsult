@@ -1,0 +1,25 @@
+type: object
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  description:
+    type: string
+  visible_in_portals:
+    type: array
+    items:
+      type: object
+      properties:
+        portal_id:
+          type: integer
+          description: Portal Id to which the category is mapped
+        position:
+          type: integer
+          description: Position of the category in that portal
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time

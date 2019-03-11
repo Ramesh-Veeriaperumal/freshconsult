@@ -1,0 +1,34 @@
+type: object
+properties:
+  categories:
+    type: array
+    description: List of categories
+    items:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        language_id:
+          type: integer
+        folders_count:
+          type: integer
+        position:
+          type: integer
+        folders:
+          type: array
+          description: List of folders
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              language_id:
+                type: integer
+              articles_count:
+                type: integer
+              position:
+                type: integer

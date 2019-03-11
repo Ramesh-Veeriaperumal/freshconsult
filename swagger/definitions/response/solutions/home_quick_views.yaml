@@ -1,0 +1,30 @@
+type: object
+properties:
+  all_categories:
+    type: number
+  all_articles:
+    type: number
+  all_drafts:
+    type: number
+  my_drafts:
+    type: number
+  published_articles:
+    type: number
+  all_feedback:
+    type: number
+  my_feedback:
+    type: number
+  unassociated_categories:
+    type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: number
+        description:
+          type: string
+        name:
+          type: string
+  unassociated_categories_count:
+    type: number
+

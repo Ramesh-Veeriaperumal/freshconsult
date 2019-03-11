@@ -2,7 +2,7 @@ module PortalsTestHelper
   def portal_pattern(portal)
     portal_hash = {
       id: Fixnum,
-      name: portal.name,
+      name: portal.portal_name,
       host: portal.host,
       default: portal.main_portal?,
       product_id: portal.product_id,

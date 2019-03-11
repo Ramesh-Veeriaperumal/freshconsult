@@ -39,6 +39,8 @@ module Ember
     def index
       if filter_api?
         handle_segments
+      elsif params[:ids].present?
+        @items = scoper.where(id: params[:ids]).preload(preload_options)
       else
         super
         @sideload_options = @validator.include_array || []
@@ -69,6 +71,10 @@ module Ember
             true
           end
         end
+      end
+
+      def launch_party_name
+        FeatureConstants::KBASE_MINT if action_name == 'index' && params[:ids].present?
       end
 
       def fetch_objects(items = scoper)

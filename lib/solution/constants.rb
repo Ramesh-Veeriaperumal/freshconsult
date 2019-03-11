@@ -45,6 +45,16 @@ module Solution::Constants
   VISIBILITY_NAMES_BY_KEY = Hash[*VISIBILITY.map { |i| [i[2], i[1]] }.flatten] 
   VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten] 
 
+  ARTICLE_ORDER_TYPE = [
+    [:custom, 'solution_article_meta.position', 1],
+    [:title_asc, 'solution_articles.title ASC', 2],
+    [:created_desc, 'solution_articles.created_at DESC', 3],
+    [:created_asc, 'solution_articles.created_at ASC', 4],
+    [:updated_desc, 'solution_articles.updated_at DESC', 5]
+  ].freeze
+
+  ARTICLE_ORDER_COLUMN_BY_TYPE = Hash[*ARTICLE_ORDER_TYPE.map { |i| [i[2], i[1]] }.flatten]
+
   BOT_VISIBILITIES = [VISIBILITY_KEYS_BY_TOKEN[:anyone], VISIBILITY_KEYS_BY_TOKEN[:bot]].freeze
 
   API_OPTIONS = {

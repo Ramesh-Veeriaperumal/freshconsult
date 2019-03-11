@@ -4,7 +4,7 @@ class Solution::Object
 	
 	META_ATTRIBUTES = {
 		:solution_category => [:is_default, :portal_ids, :portals, :portal_solution_categories_attributes],
-		:solution_folder => [:visibility, :is_default, :customer_folders_attributes],
+		:solution_folder => [:visibility, :is_default, :customer_folders_attributes, :article_order],
 		:solution_article => [:art_type]
 	}
 
@@ -39,7 +39,7 @@ class Solution::Object
 		create_parent_translation
 		if save_check?
 			@meta_obj.save
-             add_errors_to_base
+			add_errors_to_base
 		end
 		@meta_obj
 	end

@@ -2,8 +2,11 @@ module Ember
   module Solutions
     class ArticlesController < ApiSolutions::ArticlesController
       include HelperConcern
+      include BulkActionConcern
+      include SolutionBulkActionConcern
 
       before_filter :filter_ids, only: [:index]
+      before_filter :validate_bulk_update_article_params, :validate_language, only: [:bulk_update]
 
       decorate_views(decorate_object: [:article_content])
 
@@ -21,11 +24,29 @@ module Ember
         load_article
       end
 
+      def bulk_update
+        @succeeded_list = []
+        @failed_list = []
+        @article_meta = meta_scoper.where(id: cname_params[:ids]).preload(:solution_folder_meta, primary_article: [:solution_folder_meta, :article_body])
+        @article_meta.each do |article_meta|
+          if update_article_properties(article_meta)
+            @succeeded_list << article_meta.id
+          else
+            @failed_list << (article_meta.errors.any? ? article_meta : article_meta.safe_send(language_scoper))
+          end
+        end
+        render_bulk_action_response(@succeeded_list, @failed_list)
+      end
+
       def self.wrap_params
         ::SolutionConstants::ARTICLE_WRAP_PARAMS
       end
 
       private
+        
+        def constants_class
+          'SolutionsConstants'.freeze
+        end
 
         def load_article
           language_id = params[:language_id] || Language.for_current_account.id

@@ -1,0 +1,22 @@
+type: object
+properties:
+  ids: 
+    type: array
+    description: List of article ids to update
+    items:
+      type: integer
+  properties:
+    type: object
+    properties:
+      folder_id:
+        type: integer
+        description: New folder id of the articles
+      agent_id:
+        type: integer
+        description: Author id of the articles
+      tags:
+        type: array
+        description: Array of tags to be mapped to the articles
+        items:
+          type: string
+
