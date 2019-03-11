@@ -1,13 +1,13 @@
 {
   "checksum": {
-    "previous": "e0171d6e60d500aa74aff4ff1d51835d08fdc9c3c8b44c12b415c8ceb2f350d5",
-    "current": "e0171d6e60d500aa74aff4ff1d51835d08fdc9c3c8b44c12b415c8ceb2f350d5"
+    "previous": "03689101d9532bb72fa1b7d77a42613a1df1d70c9a9a23489248f38767890517",
+    "current": "03689101d9532bb72fa1b7d77a42613a1df1d70c9a9a23489248f38767890517"
   },
   "fonts": [
-    "public/assets/glyphs_e0171d6e60d500aa74aff4ff1d51835d.ttf",
-    "public/assets/glyphs_e0171d6e60d500aa74aff4ff1d51835d.svg",
-    "public/assets/glyphs_e0171d6e60d500aa74aff4ff1d51835d.woff",
-    "public/assets/glyphs_e0171d6e60d500aa74aff4ff1d51835d.eot"
+    "public/assets/glyphs_03689101d9532bb72fa1b7d77a42613a.ttf",
+    "public/assets/glyphs_03689101d9532bb72fa1b7d77a42613a.svg",
+    "public/assets/glyphs_03689101d9532bb72fa1b7d77a42613a.woff",
+    "public/assets/glyphs_03689101d9532bb72fa1b7d77a42613a.eot"
   ],
   "glyphs": {
     "abandoned-call": {
