@@ -12,6 +12,7 @@ class Admin::FreshchatController < Admin::AdminController
     plan_enum = Subscription::FRESHCHAT_PLAN_MAPPING[current_account.plan_name]
     path = "#{Freshchat::Account::CONFIG[:agentWidgetHostUrl]}/app/v1/signup/unity_signup?email=#{CGI.escape(current_user.email)}"
     path << "&plan=#{plan_enum}" if plan_enum.present?
+    path << '&first_referrer=Freshdesk omnichannel'
     request = HTTParty::Request.new(Net::HTTP::Post, URI.encode_www_form(path))
     freshchat_response = request.perform
     Rails.logger.info "Freshchat Response :: #{freshchat_response.body} #{freshchat_response.code} #{freshchat_response.message} #{freshchat_response.headers.inspect}"
