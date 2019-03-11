@@ -222,6 +222,7 @@ class Account < ActiveRecord::Base
   has_many :twitter_streams, :class_name => 'Social::TwitterStream'
   has_many :facebook_streams, :class_name => 'Social::FacebookStream'
   has_many :social_ticket_rules, class_name: 'Social::TicketRule'
+  has_many :custom_twitter_streams, class_name: 'Social::Stream', conditions: { type: 'Social::TwitterStream', social_id: nil }
 
   has_many :surveys
   has_many :survey_handles, :through => :surveys

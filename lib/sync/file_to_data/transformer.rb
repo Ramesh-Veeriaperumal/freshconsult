@@ -4,6 +4,7 @@ class Sync::FileToData::Transformer
   include Sync::Transformer::SlaPolicy
   include Sync::Transformer::VaRule
   include Sync::Transformer::InlineAttachment
+  include Sync::Transformer::Social
 
   TRANSFORMATIONS = {
     'Helpdesk::TicketField'             => ['name', 'column_name'],
@@ -19,6 +20,9 @@ class Sync::FileToData::Transformer
     'EmailNotification'                 => ['requester_template', 'agent_template'],
     'Helpdesk::ParentChildTemplate'     => ['parent_template_id', 'child_template_id'],
     'Helpdesk::PicklistValue'           => ['picklist_id'],
+    'Social::Stream'                    => ['data'],
+    'Social::TicketRule'                => ['action_data'],
+    'Social::TwitterHandle'             => ['state']
   }.freeze
 
   CUSTOM_TEXT_FIELDS_TYPES = {

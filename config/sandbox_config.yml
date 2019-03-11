@@ -33,6 +33,13 @@ MODEL_DEPENDENCIES:
   Product: []
   VaRule: []
   Helpdesk::TicketTemplate: []
+  Social::TwitterHandle : []
+  Social::Stream:
+  - - - Social::TwitterHandle
+    - social_id
+  Social::TicketRule:
+  - - - Social::Stream
+    - stream_id
   Helpdesk::ParentChildTemplate:
   - - -  Helpdesk::TicketTemplate
     - parent_template_id
@@ -48,12 +55,14 @@ MODEL_DEPENDENCIES:
       - ScenarioAutomation
       - Admin::CannedResponses::Response
       - VaRule
+      - Social::Stream
     - accessible_id
     - accessible_type
   Helpdesk::Attachment:
   - - - User
       - Account
       - Helpdesk::TicketTemplate
+      - Social::TwitterHandle
     - attachable_id
     - attachable_type
   Helpdesk::CloudFile:

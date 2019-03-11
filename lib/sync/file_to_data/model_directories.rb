@@ -2,14 +2,17 @@ class Sync::FileToData::ModelDirectories
   include Sync::Constants
   include Sync::Util
   attr_accessor :account, :path
-  def initialize(path, account = Account.current)
+  def initialize(path, clone, account = Account.current)
     @path = path
     @account = account
+    @clone = clone
     @model_directories = {}
   end
 
   def perform
-    RELATIONS.each do |relation|
+    all_relations = RELATIONS
+    all_relations += CLONE_RELATIONS if @clone
+    all_relations.each do |relation|
       directories_for_model(relation[0])
     end
     @model_directories

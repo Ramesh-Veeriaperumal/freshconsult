@@ -25,6 +25,7 @@ class Social::TwitterStream < Social::Stream
     :conditions  => {:rule_type => nil} ,
     :autosave => true
 
+  has_many :filter_rules, class_name: 'Social::TicketRule', foreign_key: :stream_id, dependent: :destroy
 
   validates_presence_of :includes
 
@@ -143,6 +144,10 @@ class Social::TwitterStream < Social::Stream
     self.data[:kind] == TWITTER_STREAM_TYPE[:custom]
   end
 
+  def dm_stream?
+    self.data[:kind] == TWITTER_STREAM_TYPE[:dm]
+  end
+
   def update_volume_in_redis
     hash_key = select_valid_date(Time.now)
     newrelic_begin_rescue do
@@ -236,10 +241,6 @@ class Social::TwitterStream < Social::Stream
 
     def can_create_dm_rule?
       self.twitter_handle and dm_stream?
-    end
-
-    def dm_stream?
-      self.data[:kind] == TWITTER_STREAM_TYPE[:dm]
     end
 
     def group(group_id)
