@@ -17,7 +17,6 @@ class TicketFilterValidation < FilterValidation
   validates :updated_since, date_time: true
   validates :order_by, custom_inclusion: { in: proc { |x| x.sort_field_options } }
   validates :status, array: { custom_inclusion: { in: proc { |x| x.account_statuses }, ignore_string: :allow_string_param, detect_type: true } }
-  validate :fsm_appointment_date_filter_validation, if: -> { Account.current.field_service_management_enabled? }
   validate :verify_cf_data_type, if: -> { cf.present? }
   validates :include, data_type: { rules: String }
   validates :type, custom_inclusion: { in: proc { |x| x.account_ticket_types } }

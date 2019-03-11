@@ -710,6 +710,60 @@ module Ember
       end
     end
 
+    def test_create_service_task_ticket_with_all_custom_fields
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          parent_ticket = create_ticket
+          params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+                     description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                     priority: 2, status: 2, type: SERVICE_TASK_TYPE,
+                     custom_fields: { cf_fsm_contact_name: 'test', cf_fsm_service_location: 'test', cf_fsm_phone_number: 'test', cf_fsm_appointment_start_time: '2019-10-10T12:23:00', cf_fsm_appointment_end_time: '2019-10-11T12:23:00' } }
+          post :create, construct_params({ version: 'private' }, params)
+          assert_response 201
+        ensure
+          cleanup_fsm
+        end
+      end
+    end
+
+    def test_create_service_task_ticket_with_all_custom_fields_invalid_appointment_time_range
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          parent_ticket = create_ticket
+          params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+                     description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                     priority: 2, status: 2, type: SERVICE_TASK_TYPE,
+                     custom_fields: { cf_fsm_contact_name: 'test', cf_fsm_service_location: 'test', cf_fsm_phone_number: 'test', cf_fsm_appointment_start_time: '2019-10-12T12:23:00', cf_fsm_appointment_end_time: '2019-10-11T12:23:00' } }  
+          post :create, construct_params({ version: 'private' }, params)
+          assert_response 400
+          match_json([bad_request_error_pattern('custom_fields.cf_fsm_appointment_end_time', :invalid_date_time_range)])
+        ensure
+          cleanup_fsm
+        end
+      end
+    end
+
+    def test_create_service_task_ticket_with_invalid_values_for_datetime_fields
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          parent_ticket = create_ticket
+          params = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+                     description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                     priority: 2, status: 2, type: SERVICE_TASK_TYPE,
+                     custom_fields: { cf_fsm_contact_name: 'test', cf_fsm_service_location: 'test', cf_fsm_phone_number: 'test', cf_fsm_appointment_start_time: 'test', cf_fsm_appointment_end_time: 'test' } }
+          post :create, construct_params({ version: 'private' }, params)
+          assert_response 400
+          match_json([bad_request_error_pattern('custom_fields.cf_fsm_appointment_start_time', :invalid_date, accepted: 'combined date and time ISO8601'),
+          bad_request_error_pattern('custom_fields.cf_fsm_appointment_end_time', :invalid_date, accepted: 'combined date and time ISO8601')])
+        ensure
+          cleanup_fsm
+        end
+      end
+    end
+
     def test_create_service_task_ticket_failure
       enable_adv_ticketing([:field_service_management]) do
         begin
@@ -835,6 +889,51 @@ module Ember
           put :update, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
           match_json([bad_request_error_pattern('ticket_type', :from_service_task_not_possible, :code => :invalid_value)])
           assert_response 400
+        ensure
+          cleanup_fsm
+        end
+      end
+    end
+
+    def test_update_service_task_ticket_type_with_all_fsm_fields_valid
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations      
+          fsm_ticket = create_service_task_ticket
+          params = {custom_fields: { cf_fsm_contact_name: Faker::Lorem.characters(10), cf_fsm_service_location: Faker::Lorem.characters(10), cf_fsm_phone_number: Faker::Lorem.characters(10), cf_fsm_appointment_start_time: '2019-10-10T12:23:00', cf_fsm_appointment_end_time: '2019-10-11T12:23:00' }}
+          put :update, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
+          assert_response 200
+        ensure
+          cleanup_fsm
+        end
+      end
+    end
+
+    def test_update_service_task_ticket_type_with_all_fsm_fields_invalid
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          fsm_ticket = create_service_task_ticket
+          params = {custom_fields: { cf_fsm_contact_name: Faker::Lorem.characters(10), cf_fsm_service_location: Faker::Lorem.characters(10), cf_fsm_phone_number: Faker::Lorem.characters(10), cf_fsm_appointment_start_time: Faker::Lorem.characters(10), cf_fsm_appointment_end_time: Faker::Lorem.characters(10) }}
+          put :update, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
+          assert_response 400
+          match_json([bad_request_error_pattern('custom_fields.cf_fsm_appointment_start_time', :invalid_date, accepted: 'combined date and time ISO8601'),
+          bad_request_error_pattern('custom_fields.cf_fsm_appointment_end_time', :invalid_date, accepted: 'combined date and time ISO8601')])
+        ensure
+          cleanup_fsm
+        end
+      end
+    end
+
+    def test_update_service_task_ticket_type_with_invalid_appointment_time_range
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          fsm_ticket = create_service_task_ticket
+          params = {custom_fields: { cf_fsm_contact_name: 'test', cf_fsm_service_location: 'test', cf_fsm_phone_number: 'test', cf_fsm_appointment_start_time: '2019-10-12T10:23:00', cf_fsm_appointment_end_time: '2019-10-11T12:23:00'}}
+          put :update, construct_params({ id: fsm_ticket.display_id, version: 'private' }, params)
+          assert_response 400
+          match_json([bad_request_error_pattern('custom_fields.cf_fsm_appointment_end_time', :invalid_date_time_range)])
         ensure
           cleanup_fsm
         end
@@ -4508,14 +4607,21 @@ module Ember
 
     def test_other_custom_field_validations_when_fsm_enabled
       create_custom_field('email1', 'text',true)
-      perform_fsm_operations
-      params_hash = { email: Faker::Internet.email, description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
-                      priority: 2, status: 2, type: SERVICE_TASK_TYPE, responder_id: @agent.id, custom_fields: {cf_fsm_contact_name: "test",cf_fsm_service_location: "test", cf_fsm_phone_number: "test"} }      
-      post :create, construct_params({ version: 'private' }, params_hash)
-      assert_response 201
-    ensure
-      @account.ticket_fields.find_by_name("email1_#{@account.id}").destroy
-      cleanup_fsm
+      enable_adv_ticketing([:field_service_management]) do
+        begin
+          perform_fsm_operations
+          parent_ticket = create_ticket
+          params_hash = { parent_id: parent_ticket.display_id, email: Faker::Internet.email,
+                          description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
+                          priority: 2, status: 2, type: SERVICE_TASK_TYPE, custom_fields: { cf_fsm_contact_name: 'test',
+                          cf_fsm_service_location: 'test', cf_fsm_phone_number: 'test', email1: Faker::Internet.email }}
+          post :create, construct_params({ version: 'private' }, params_hash )
+          assert_response 201
+        ensure
+          @account.ticket_fields.find_by_name("email1_#{@account.id}").destroy
+          cleanup_fsm
+        end
+      end
     end
   end
 end

@@ -1,4 +1,4 @@
-<% 	var fsm_fields = ["cf_fsm_contact_name" + "_" + current_account_id, "cf_fsm_phone_number" + "_" + current_account_id, "cf_fsm_service_location" + "_" + current_account_id, "cf_fsm_appointment_date" + "_" + current_account_id, "cf_fsm_appointment_start_time" + "_" + current_account_id, "cf_fsm_appointment_end_time" + "_" + current_account_id],
+<% 	var fsm_fields = ["cf_fsm_contact_name" + "_" + current_account_id, "cf_fsm_phone_number" + "_" + current_account_id, "cf_fsm_service_location" + "_" + current_account_id, "cf_fsm_appointment_start_time" + "_" + current_account_id, "cf_fsm_appointment_end_time" + "_" + current_account_id],
 		isDefault = fsm_fields.includes(obj.name) ? true : /^default/.test(field_type) ,
 		field_with_section = "field_options" in obj && field_options.section_present
 		delete_icon = isDefault || field_with_section ? 'ficon-trash-strike-thru' : 'ficon-trash-o',

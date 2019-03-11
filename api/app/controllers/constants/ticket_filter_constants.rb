@@ -21,9 +21,13 @@ module TicketFilterConstants
 
   WRAP_PARAMS = [:ticket_filter, exclude: [], format: [:json]].freeze
 
-  FSM_DATE_FIELD = 'cf_fsm_appointment_date'.freeze
+  FSM_APPOINTMENT_START_TIME = 'cf_fsm_appointment_start_time'.freeze
 
-  DATE_FILTER_DEFAULT_OPTIONS = ['today', 'tomorrow', 'yesterday', 'week', 'last_week', 'next_week'].freeze
+  FSM_APPOINTMENT_END_TIME = 'cf_fsm_appointment_end_time'.freeze
+
+  FSM_DATE_TIME_FIELD = [FSM_APPOINTMENT_START_TIME, FSM_APPOINTMENT_END_TIME].freeze
+
+  DATE_TIME_FILTER_DEFAULT_OPTIONS = ['today', 'tomorrow', 'yesterday', 'week', 'last_week', 'next_week'].freeze
 
   DATE_FIELD_REGEX = /^[0-9]{4}\-[0-1][0-9]\-[0-3][0-9]$/i
 
