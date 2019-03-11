@@ -34,16 +34,26 @@ module Solution::Constants
  # Solution folder visiblity constants moved to here
 
  VISIBILITY = [
-  [ :anyone,       "solutions.visibility.all_users",        1 ], 
-  [ :logged_users, "solutions.visibility.logged_in_users",  2 ],
-  [ :agents,       "solutions.visibility.agents",           3 ],
-  [ :company_users ,"solutions.visibility.select_company" , 4 ],
+  [ :anyone,        "solutions.visibility.all_users",       1 ], 
+  [ :logged_users,  "solutions.visibility.logged_in_users", 2 ],
+  [ :agents,        "solutions.visibility.agents",          3 ],
+  [ :company_users, "solutions.visibility.select_company",  4 ],
   [ :bot,           "solutions.visibility.bot",             5 ]
   ]
   
   VISIBILITY_OPTIONS = VISIBILITY.map { |i| [i[1], i[2]] }
   VISIBILITY_NAMES_BY_KEY = Hash[*VISIBILITY.map { |i| [i[2], i[1]] }.flatten] 
   VISIBILITY_KEYS_BY_TOKEN = Hash[*VISIBILITY.map { |i| [i[0], i[2]] }.flatten] 
+
+  ARTICLE_ORDER_TYPE = [
+    [:custom, 'solution_article_meta.position', 1],
+    [:title_asc, 'solution_articles.title ASC', 2],
+    [:created_desc, 'solution_articles.created_at DESC', 3],
+    [:created_asc, 'solution_articles.created_at ASC', 4],
+    [:updated_desc, 'solution_articles.updated_at DESC', 5]
+  ].freeze
+
+  ARTICLE_ORDER_COLUMN_BY_TYPE = Hash[*ARTICLE_ORDER_TYPE.map { |i| [i[2], i[1]] }.flatten]
 
   BOT_VISIBILITIES = [VISIBILITY_KEYS_BY_TOKEN[:anyone], VISIBILITY_KEYS_BY_TOKEN[:bot]].freeze
 

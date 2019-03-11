@@ -120,7 +120,7 @@ class Solution::FolderMeta < ActiveRecord::Base
   def has_company_visiblity?
     visibility == VISIBILITY_KEYS_BY_TOKEN[:company_users]
   end
-  
+
   def visible_to_bot?
     BOT_VISIBILITIES.include?(visibility)
   end
@@ -154,9 +154,28 @@ class Solution::FolderMeta < ActiveRecord::Base
 	end
 
 	def visible_articles
-		@visible_articles ||= ((visible_articles_count > 0) ? published_article_meta.all : [])
+		@visible_articles ||= ((visible_articles_count > 0) ? sorted_published_article_meta.all : [])
 	end
 
+ 	def sorted_solution_article_meta
+   		@sorted_solution_article_meta ||= (Language.current? ? solution_article_meta.reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[article_order]) : solution_article_meta)
+ 	end
+ 
+	def sorted_solution_articles
+		@sorted_solution_atricles ||= (Language.current? ? solution_articles.reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[article_order]) : solution_articles)
+	end
+ 
+	def sorted_published_article_meta
+		@sorted_published_article_meta ||= (Language.current? ? published_article_meta.reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[article_order]) : published_article_meta)
+	end 
+
+	def add_companies(customer_ids, add_to_existing)
+	    customer_folders.destroy_all unless add_to_existing
+	    customer_ids.each do |cust_id|
+	      customer_folders.build({:customer_id => cust_id}) unless self.customer_ids.include?(cust_id)
+	    end
+	end
+	
 	private
 
 	def clear_cache
@@ -167,31 +186,24 @@ class Solution::FolderMeta < ActiveRecord::Base
 		clear_cache unless (previous_changes.keys & ['solution_category_meta_id', 'position']).empty?
 	end
 
-  def add_companies(customer_ids, add_to_existing)
-    customer_folders.destroy_all unless add_to_existing
-    customer_ids.each do |cust_id|
-      customer_folders.build({:customer_id => cust_id}) unless self.customer_ids.include?(cust_id)
-    end
-  end
-
-  def name_uniqueness
-  	self.solution_folders.each do |f|
-  		f.name_uniqueness_validation
-  		if f.errors[:name].any?
-  			errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
-  			break
+	def name_uniqueness
+  		self.solution_folders.each do |f|
+	  		f.name_uniqueness_validation
+	  		if f.errors[:name].any?
+	  			errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
+	  			break
+	  		end
   		end
   	end
-  end
 
-  def companies_limit_check
-    if customer_folders.size > COMPANIES_LIMIT
-      errors.add(:base, I18n.t("solution.folders.visibility.companies_limit_exceeded"))
-      return false
-    else
-      return true
-    end
-  end
+	def companies_limit_check
+		if customer_folders.size > COMPANIES_LIMIT
+		  errors.add(:base, I18n.t("solution.folders.visibility.companies_limit_exceeded"))
+		  return false
+		else
+		  return true
+		end
+	end
 
 	scope :visible, lambda {|user|
 		{
