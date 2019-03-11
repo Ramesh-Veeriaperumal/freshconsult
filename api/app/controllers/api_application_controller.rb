@@ -45,6 +45,7 @@ class ApiApplicationController < MetalApiController
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone, :set_msg_id
   before_filter :force_utf8_params
   before_filter :set_cache_buster
+  before_filter :set_service_worker
 
   include AuthenticationSystem
   include HelpdeskSystem
@@ -963,5 +964,13 @@ class ApiApplicationController < MetalApiController
 
     def remove_session_data
       session[:helpdesk_history] = nil if session && session[:helpdesk_history]
+    end
+
+    def set_service_worker
+      if current_account.service_worker_enabled?
+        cookies[:service_worker] = true
+      else
+        cookies.delete 'service_worker'
+      end
     end
 end
