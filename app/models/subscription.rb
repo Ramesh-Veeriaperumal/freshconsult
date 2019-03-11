@@ -35,7 +35,26 @@ class Subscription < ActiveRecord::Base
 
   AUTOPILOT_FILEDS = ["state", "next_renewal_at", "renewal_period", "amount", "subscription_plan_id", "agent_limit"]
 
-  
+  FRESHCALLER_PLAN_MAPPING = {
+    sprout_jan_19: 'sprout',
+    blossom_jan_19: 'sprout',
+    garden_jan_19: 'blossom',
+    garden_omni_jan_19: 'blossom',
+    estate_jan_19: 'garden',
+    estate_omni_jan_19: 'garden',
+    forest_jan_19: 'standard'
+  }.freeze
+
+  FRESHCHAT_PLAN_MAPPING = {
+      sprout_jan_19: '1101',
+      blossom_jan_19: '1101',
+      garden_jan_19: '1201',
+      garden_omni_jan_19: '1201',
+      estate_jan_19: '1301',
+      estate_omni_jan_19: '1301',
+      forest_jan_19: '1401'
+  }.freeze
+
   ACTIVE = "active"
   TRIAL = "trial"
   FREE = "free"
@@ -69,7 +88,6 @@ class Subscription < ActiveRecord::Base
   before_save :update_amount
   
   before_update :cache_old_model
-  # after_update :update_features 
 
   after_update :add_to_crm
   after_update :update_reseller_subscription
@@ -504,12 +522,6 @@ class Subscription < ActiveRecord::Base
     def free_plan?
       subscription_plan_from_cache.name == SubscriptionPlan::SUBSCRIPTION_PLANS[:free]
     end
-    
-    def update_features
-      return if subscription_plan_id == @old_subscription.subscription_plan_id
-      SAAS::SubscriptionActions.new.change_plan(account, @old_subscription)
-    end
-
 
     def update_billing_address(card)
       billing_address = self.billing_address

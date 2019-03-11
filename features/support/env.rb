@@ -6,9 +6,6 @@
 ENV["RAILS_ENV"] = "test"
 require 'cucumber/rails'
 require 'cucumber_statistics/autoload'
-require 'simplecov'
-require 'simplecov-rcov'
-require 'simplecov-csv'
 $tmp_path = 'features/cucumber_statistics'
 # Capybara defaults to CSS3 selectors rather than XPath.
 # If you'd prefer to use XPath, just uncomment this line and adjust any

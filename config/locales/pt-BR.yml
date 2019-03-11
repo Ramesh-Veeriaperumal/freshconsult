@@ -5928,7 +5928,7 @@ pt-BR:
   right: Direita
   footer:
     helpdesk_software: Software de helpdesk automatizado
-    helpdesk_software_link: "https://freshdesk.com/br/"
+    helpdesk_software_link: "https://freshdesk.com/br/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: do Freshdesk
     submit_feedback: Enviar feedback
     footer_feedback_subject_placeholder: Nos diga como podemos fazer o Freshdesk melhor

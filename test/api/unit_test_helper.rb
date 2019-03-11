@@ -1,6 +1,6 @@
 ENV['RAILS_ENV'] = 'test'
 file_name = File.expand_path('../../../config/infra_layer.yml', __FILE__)
-require File.expand_path('../../../test/api/helpers/simple_cov_setup', __FILE__)
+require File.expand_path('../../../test/helpers/simple_cov_setup', __FILE__)
 
 def load_environment(file_name)
   puts 'Switching ON API Layer'

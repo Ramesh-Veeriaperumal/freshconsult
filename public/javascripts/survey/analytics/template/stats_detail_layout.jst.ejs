@@ -1,0 +1,24 @@
+<%= JST["survey/analytics/template/content_switch"]()%>
+<div id="survey_report_summary"><%= JST["survey/analytics/template/content_summary"]({data:SurveySummary.create()})%></div>
+
+<div class="" id="survey_overview">
+	<%=  JST["survey/analytics/template/content_stats_chart"]() %>
+	<% if(agentReporting){ %>
+		<div id="reportView">
+			<ul class="nav nav-tabs sleek-tab" id="viewReportBy" data-report-type=<%= SurveyReportData.defaultAllValues.group %>>
+				<li class="active"><a onclick="SurveyTable.type.change(this)" data-report-type=<%=  SurveyReportData.defaultAllValues.group %> ><%= SurveyI18N.group %></a></li>
+				<li><a onclick="SurveyTable.type.change(this)" data-report-type= <%= SurveyReportData.defaultAllValues.agent %> ><%= SurveyI18N.agent %></a></li>
+			</ul>
+		</div>
+	<% }  %>
+
+	<div id="survey_table">
+		<%=  JST["survey/analytics/template/stats_detail_table"]({
+			table:SurveyTable.format(),
+			agentReporting: agentReporting
+		}) %>
+	</div>
+</div>
+<div class="survey-responses" style="display:none;" id="survey_responses">
+	<%=  JST["survey/analytics/template/content_response_layout"]({remarks:[]}) %>
+</div>

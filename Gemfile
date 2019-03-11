@@ -40,7 +40,7 @@ gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/freshdesk/rack
 gem "rack-cache", "~> 1.2"
 
 gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
-gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'v20'
+gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'release'
 gem 'batch_api', :git => 'git@github.com:freshdesk/batch_api.git', :branch => 'fd-batch-api'
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.4'

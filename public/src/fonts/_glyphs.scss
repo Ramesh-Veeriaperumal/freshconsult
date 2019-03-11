@@ -4,11 +4,11 @@
 
 @font-face {
   font-family: "glyphs";
-  src: font-url("glyphs_2344b7c35d0202144ffa15fd6a5cf917.eot");
-  src: font-url("glyphs_2344b7c35d0202144ffa15fd6a5cf917.eot?#iefix") format("embedded-opentype"),
-       font-url("glyphs_2344b7c35d0202144ffa15fd6a5cf917.woff") format("woff"),
-       font-url("glyphs_2344b7c35d0202144ffa15fd6a5cf917.ttf") format("truetype"),
-       font-url("glyphs_2344b7c35d0202144ffa15fd6a5cf917.svg#glyphs") format("svg");
+  src: font-url("glyphs_e0171d6e60d500aa74aff4ff1d51835d.eot");
+  src: font-url("glyphs_e0171d6e60d500aa74aff4ff1d51835d.eot?#iefix") format("embedded-opentype"),
+       font-url("glyphs_e0171d6e60d500aa74aff4ff1d51835d.woff") format("woff"),
+       font-url("glyphs_e0171d6e60d500aa74aff4ff1d51835d.ttf") format("truetype"),
+       font-url("glyphs_e0171d6e60d500aa74aff4ff1d51835d.svg#glyphs") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +16,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: "glyphs";
-    src: font-url("glyphs_2344b7c35d0202144ffa15fd6a5cf917.svg#glyphs") format("svg");
+    src: font-url("glyphs_e0171d6e60d500aa74aff4ff1d51835d.svg#glyphs") format("svg");
   }
 }
 
@@ -161,6 +161,7 @@
 .ficon-dots:before,
 .ficon-down-arrow:before,
 .ficon-download:before,
+.ficon-drag-vertical:before,
 .ficon-dropbox:before,
 .ficon-dropdown-circle:before,
 .ficon-dropdown_blank:before,
@@ -177,6 +178,7 @@
 .ficon-email_commands_setting:before,
 .ficon-encrypted_text:before,
 .ficon-encryption-lock:before,
+.ficon-enter-icon:before,
 .ficon-eraser:before,
 .ficon-eraser-o:before,
 .ficon-exchange:before,
@@ -429,6 +431,7 @@
 .ficon-twitter-source:before,
 .ficon-twitter-ticket:before,
 .ficon-underline:before,
+.ficon-undo:before,
 .ficon-undo-inherit:before,
 .ficon-unlink:before,
 .ficon-unlink-tracker:before,
@@ -599,6 +602,7 @@
 .ficon-dots:before { content: "\f132"; }
 .ficon-down-arrow:before { content: "\f230"; }
 .ficon-download:before { content: "\f202"; }
+.ficon-drag-vertical:before { content: "\f2cc"; }
 .ficon-dropbox:before { content: "\f133"; }
 .ficon-dropdown-circle:before { content: "\f224"; }
 .ficon-dropdown_blank:before { content: "\f134"; }
@@ -615,6 +619,7 @@
 .ficon-email_commands_setting:before { content: "\f13b"; }
 .ficon-encrypted_text:before { content: "\f2ca"; }
 .ficon-encryption-lock:before { content: "\f2cb"; }
+.ficon-enter-icon:before { content: "\f2ce"; }
 .ficon-eraser:before { content: "\f243"; }
 .ficon-eraser-o:before { content: "\f244"; }
 .ficon-exchange:before { content: "\f245"; }
@@ -867,6 +872,7 @@
 .ficon-twitter-source:before { content: "\f1fb"; }
 .ficon-twitter-ticket:before { content: "\f2a2"; }
 .ficon-underline:before { content: "\f25d"; }
+.ficon-undo:before { content: "\f2d0"; }
 .ficon-undo-inherit:before { content: "\f266"; }
 .ficon-unlink:before { content: "\f25e"; }
 .ficon-unlink-tracker:before { content: "\f233"; }

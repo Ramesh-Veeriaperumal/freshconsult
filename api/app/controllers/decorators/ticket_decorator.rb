@@ -30,7 +30,18 @@ class TicketDecorator < ApiDecorator
 
   def custom_fields
     custom_fields_hash = {}
-    custom_field_via_mapping.each { |k, v| custom_fields_hash[@name_mapping[k]] = format_date(v) }
+    ticket_fields_cache = Account.current.ticket_fields_from_cache
+    custom_field_via_mapping.each do |k, v|
+      custom_fields_hash[@name_mapping[k]] = if v.respond_to?(:utc)
+                                               if ticket_fields_cache.find { |x| x.name.eql?(k) && x.custom_date_time_field? }
+                                                 format_date(v, true)
+                                               else
+                                                 format_date(v)
+                                               end
+                                             else
+                                               v
+                                             end
+    end
     custom_fields_hash
   end
 
@@ -131,6 +142,14 @@ class TicketDecorator < ApiDecorator
       tweet_id: record.tweet.tweet_id.to_s,
       tweet_type: record.tweet.tweet_type,
       twitter_handle_id: record.tweet.twitter_handle_id
+    }
+  end
+
+  def ebay
+    return unless Account.current.has_feature?(:ecommerce) && record.ecommerce? && record.ebay_account.present?
+
+    {
+      name: record.ebay_account.name
     }
   end
 

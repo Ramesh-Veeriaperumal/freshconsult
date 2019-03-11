@@ -86,8 +86,8 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
       special_cases << [ANY_VALUE[:without_none], t('any_val.excluding_none')]  if current_account.va_any_field_without_none_enabled?
       cf = current_account.ticket_fields.event_fields
 
-      # Skipping Fields reserved for FSM
-      cf.reject! { |field| field.fsm_reserved_custom_field? }
+      # Skipping Fields reserved for FSM and custom Datetime fields.
+      cf.reject! { |field| field.fsm_reserved_custom_field? || field.custom_date_time_field? }
       unless cf.blank? 
         event_hash.push({ :name => -1,
                           :value => "-----------------------" 

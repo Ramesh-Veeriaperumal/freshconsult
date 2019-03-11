@@ -17,7 +17,7 @@
       <div class='field-info-wrapper'>
         <%= content_tag(:h3, t("custom_fields.drag_and_drop_field"), :class => "title") %> 
         <ul id="custom-fields" class="custom-fields"> 
-          <% Helpdesk::TicketField::CUSTOM_FIELD_PROPS.each do |field, details| %>
+          <% Helpdesk::TicketField.custom_fields_to_show.each do |field, details| %>
             <% next if ( details[:dom_type] == :encrypted_text and !@hipaa_enabled )%>
             <li class="field tooltip" data-type="<%="#{details[:dom_type]}"%>" 
                 data-field-type="<%="#{field}"%>" data-fresh="true" 
@@ -60,6 +60,7 @@
     custom_ticket_fields_enabled = <%= current_account.custom_ticket_fields_enabled? %>
     sharedGroups = <%= @groups.to_json.html_safe %>;
     show_sandbox_notification = <%= show_sandbox_notification %>;
+    nested_field_revamp_enabled = <%= Account.current.nested_field_revamp_enabled? %>;
 
     tf_lang = {
       untitled:                   "<%= t("ticket_fields.untitled") %>",
@@ -131,6 +132,10 @@
       mappedInternalGroup:        '<%= t("admin.contact_fields.formfield_props.mapped_internal_groups") %>',
       encrypted_field_banner_text:   '<%= t("ticket_fields.encrypted_field_banner_text") %>',
       encrypted_text: '<%= t("custom_fields.encrypted_text") %>',
+      values_for: '<%= t("ticket_fields.formfield_props.values_for") %>',
+      note: '<%= t("ticket_fields.formfield_props.note") %>',
+      nested_note_content: '<%= t("ticket_fields.formfield_props.nested_note_content") %>',
+      nested_field_validation: '<%= t("ticket_fields.formfield_props.nested_field_validation") %>',
 
       default:            '<%= t("admin.contact_fields.formfield_props.default") %>',
       number:             '<%= t("custom_fields.number") %>',
@@ -153,6 +158,7 @@
       done:               '<%= t("done") %>',
       preview:            '<%= t("preview") %>',
       edit:               '<%= t("edit") %>',
+      enter:              '<%= t("enter") %>',
       nestedFieldLabel:   '<%= t("ticket_fields.formfield_props.nested_label") %>',
       level:              '<%= t("ticket_fields.formfield_props.level") %>',
       maxItemsReached:    '<%= t("admin.contact_fields.formfield_props.max_choices") %>',

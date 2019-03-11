@@ -438,7 +438,7 @@ class Account < ActiveRecord::Base
     unless p_features.nil?
       p_features[:inherits].each { |p_n| remove_features_of(p_n) } unless p_features[:inherits].nil?
       
-      p_features[:features].each { |f_n| features.safe_send(f_n).destroy } unless p_features[:features].nil?
+      p_features[:features].each { |f_n| features.safe_send(f_n).delete } unless p_features[:features].nil?
     end
   end
 

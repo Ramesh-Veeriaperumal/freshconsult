@@ -5,7 +5,7 @@ sla_policy_hash = @item.sla_policy_hash
 response_hash[:description] = @item.ticket_body.description_html
 response_hash[:description_text] = @item.ticket_body.description
 
-[:requester, :stats, :conversations, :deleted, :freshfone_call, :fb_post, :tweet, :ticket_topic].each do |attribute|
+[:requester, :stats, :conversations, :deleted, :freshfone_call, :fb_post, :tweet, :ticket_topic, :ebay].each do |attribute|
   value = @item.safe_send(attribute)
   response_hash.merge!(attribute => value) if value
 end

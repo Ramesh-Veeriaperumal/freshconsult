@@ -29,9 +29,12 @@ module SegmentFiltersTestHelper
   end
 
   def test_create_segment_filter
-    skip('failures and errors 21')
+    Ember::Segments::BaseFiltersController.const_set(:SEGMENT_LIMIT, '5368709119.0')
+    Ember::Segments::ContactFiltersController.any_instance.stubs(:limit_exceeded?).returns(false)
+    Ember::Segments::CompanyFiltersController.any_instance.stubs(:limit_exceeded?).returns(false)
     post :create, construct_params({ version: 'private'}, filter_params)
     assert_response 200
+    Ember::Segments::BaseFiltersController.safe_send(:remove_const, :SEGMENT_LIMIT)
   end
 
   def test_update_segment_filter

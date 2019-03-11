@@ -210,7 +210,7 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
   def test_index_with_invalid_filter_value
     get :index, controller_params({ type: 'junk' }, {})
     assert_response 400
-    match_json([bad_request_error_pattern('type', :not_included, list: 'default_subject, default_requester, default_ticket_type, default_status, default_priority, default_group, default_agent, default_source, default_description, default_product, default_company, custom_text, custom_paragraph, custom_checkbox, custom_number, custom_date, custom_decimal, custom_dropdown, nested_field, encrypted_text')])
+    match_json([bad_request_error_pattern('type', :not_included, list: 'default_subject, default_requester, default_ticket_type, default_status, default_priority, default_group, default_agent, default_source, default_description, default_product, default_company, custom_text, custom_paragraph, custom_checkbox, custom_number, custom_date, custom_decimal, custom_dropdown, nested_field, encrypted_text, custom_date_time')])
   end
 
   def test_index_with_valid_filter
@@ -219,5 +219,27 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
     response = parse_response @response.body
     assert_equal ['nested_field'], response.map { |x| x['type'] }.uniq
     assert_equal 1, response.count
+  end
+
+  def test_index_with_custom_date_time
+    params = { type: Helpdesk::TicketField::CUSTOM_DATE_TIME, column_name: 'ff_date09', flexifield_coltype: 'date_time', ff_name: Faker::Lorem.characters(10) }
+    flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
+                                             flexifield_def_id: @account.flexi_field_defs.find_by_name("Ticket_#{@account.id}").id,
+                                             flexifield_alias: "#{params[:name]}_#{@account.id}",
+                                             flexifield_name: params[:ff_name],
+                                             flexifield_coltype: params[:ff_coltype],
+                                             account_id: @account.id)
+    flexifield_def_entry.save
+    custom_field = FactoryGirl.build(:ticket_field, account_id: @account.id,
+                                                    name: "#{params[:name]}_#{@account.id}",
+                                                    field_type: params[:type],
+                                                    flexifield_def_entry_id: flexifield_def_entry.id)
+    custom_field.save
+    get :index, controller_params({}, {})
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal @account.ticket_fields.size, response.count
+    cd_field = response.find { |x| x['type'] == Helpdesk::TicketField::CUSTOM_DATE_TIME }
+    assert_equal true, cd_field.present?
   end
 end

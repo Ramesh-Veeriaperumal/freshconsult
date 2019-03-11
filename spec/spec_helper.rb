@@ -1,12 +1,9 @@
 require 'rubygems'
 require 'spork'
 
-require 'simplecov'
-require 'simplecov-csv'
 require 'pry'
 require 'rspec/collection_matchers'
 require 'sidekiq/testing'
-require 'simplecov-rcov'
 
 # WebMock
 #require 'webmock/rspec'
@@ -16,40 +13,40 @@ require 'simplecov-rcov'
 Dir[File.expand_path(File.join(File.dirname(__FILE__),'filters',  '*.rb'))].each {|f| require f}
 
 
-SimpleCov.start do
-  add_filter  'spec/'
-  add_filter  'config/'
-  add_filter  'test/'
-  add_filter  'app/controllers/fdadmin'
-  add_filter  'lib/fdadmin'
-  add_filter  'reports'
-  add_filter  'search'
-  add_filter  'api/'
-  add_filter  'vendor/ruby'
-  add_filter  SpecFilter.new({}) #CustomFilter requires atleast one argument. So the ugly empty hash.
+# SimpleCov.start do
+#   add_filter  'spec/'
+#   add_filter  'config/'
+#   add_filter  'test/'
+#   add_filter  'app/controllers/fdadmin'
+#   add_filter  'lib/fdadmin'
+#   add_filter  'reports'
+#   add_filter  'search'
+#   add_filter  'api/'
+#   add_filter  'vendor/ruby'
+#   add_filter  SpecFilter.new({}) #CustomFilter requires atleast one argument. So the ugly empty hash.
 
-  #add_filter '/vendor/'
-  add_group  'mailgun',      'lib/helpdesk/email'
-  add_group  'email',        'lib/helpdesk/process_email.rb'
-  add_group  'plugins',      '/vendor/'
-  add_group  'controllers',  'app/controllers'
-  add_group  'models',       'app/models'
-  add_group  'libs',         'lib/'
-  add_group  'workers',      'app/workers'
-  add_group  'integrations', 'integrations'
-  add_group  'freshfone',    'freshfone'
+#   #add_filter '/vendor/'
+#   add_group  'mailgun',      'lib/helpdesk/email'
+#   add_group  'email',        'lib/helpdesk/process_email.rb'
+#   add_group  'plugins',      '/vendor/'
+#   add_group  'controllers',  'app/controllers'
+#   add_group  'models',       'app/models'
+#   add_group  'libs',         'lib/'
+#   add_group  'workers',      'app/workers'
+#   add_group  'integrations', 'integrations'
+#   add_group  'freshfone',    'freshfone'
 
-  # add_group 'reports', 'reports'
-  # add_group 'search', 'search'
-end
+#   # add_group 'reports', 'reports'
+#   # add_group 'search', 'search'
+# end
 
-SimpleCov.coverage_dir 'tmp/coverage'
+# SimpleCov.coverage_dir 'tmp/coverage'
 
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-  SimpleCov::Formatter::HTMLFormatter,
-  SimpleCov::Formatter::CSVFormatter,
-  SimpleCov::Formatter::RcovFormatter,
-]
+# SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+#   SimpleCov::Formatter::HTMLFormatter,
+#   SimpleCov::Formatter::CSVFormatter,
+#   SimpleCov::Formatter::RcovFormatter,
+# ]
 
 
 Spork.prefork do

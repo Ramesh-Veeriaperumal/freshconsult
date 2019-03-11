@@ -49,6 +49,9 @@ window.App = window.App || {};
       $(".subscribed-plan-details").html(data_content);
     },
     bindPlanChange: function (ev, button) {
+      if($(button).data('billing-cycle')) {
+        this.billing_cycle = $(button).data('billing-cycle')
+      }
       ev.stopPropagation();
       this.choosePlan(ev.currentTarget);
     },
@@ -209,11 +212,6 @@ window.App = window.App || {};
             if(jQuery(".subscribed-plan-details .billing-info-divider:visible").length <= 0) {
               $(".omni-billing-edit").show();
             }
-            var currency_symbol = jQuery("#total-cost-per-agent").text().trim().charAt(0);
-            var no_of_months = parseInt(jQuery("#number-of-months").text());
-            var per_month_amount  = Math.floor(parseInt(jQuery("#total-cost-per-agent").text().trim().replace(currency_symbol, "").replace(",", "")) / no_of_months);
-            $(".per-month-charges .symbol").text(currency_symbol);
-            $(".per-month-charges .amount").text(per_month_amount);
             $("#billing-template .billing-cancel").show();
             $("#billing-template .billing-submit").val(I18n.t('common_js_translations.update_plan'));
             $("#billing-template .billing-submit").addClass('btn-primary');
@@ -228,12 +226,7 @@ window.App = window.App || {};
               this.omni_disabled = null;
             }
           } 
-          else {     
-            var currency_symbol = jQuery("#total-cost-per-agent").text().trim().charAt(0);
-            var no_of_months = parseInt(jQuery("#number-of-months").text());
-            var per_month_amount  = Math.floor(parseInt(jQuery("#total-cost-per-agent").text().trim().replace(currency_symbol, "").replace(",", "")) / no_of_months);
-            $(".per-month-charges .symbol").text(currency_symbol);
-            $(".per-month-charges .amount").text(per_month_amount);
+          else {
             $("#billing-template .billing-cancel").hide();
             // $("#billing-template .billing-submit").addClass('btn-flat');
             $("#billing-template .billing-submit").removeClass('btn-primary');
@@ -241,11 +234,29 @@ window.App = window.App || {};
             if(curren_plan_id) {
               $("#"+curren_plan_id+" .toggle-omni-billing").removeClass("hide");              
             }
-
           }
+          $this.perMonthCost();
         }
       );
     },
+    perMonthCost: function() {
+      var total_cost = $("#total-cost-currency-value").text().trim();
+      var agent_count = $("#agents-text-box").val();
+      var currency_symbol = total_cost.indexOf("R$") >= 0 ? total_cost.substr(0,2) : total_cost.charAt(0);
+      var no_of_months = parseInt(jQuery("#number-of-months").text());
+      var per_month_amount  = Math.floor(this.currencyToNumber(total_cost) / no_of_months);
+      var per_month_cost = this.currencyToNumber($("#cost-per-month-value").val());
+      var you_save = currency_symbol+""+((per_month_cost * 12 * agent_count) - this.currencyToNumber(total_cost));
+
+      $(".you-save-amount").text(you_save);
+      $(".per-month-charges .symbol").text(currency_symbol);
+      $(".per-month-charges .amount").text(per_month_amount);
+    },
+
+    currencyToNumber: function(currency_val) {
+      return parseInt(currency_val.replace(/^.|,|\$/g, ""));
+    },
+
     destroy: function(){
       $(document).off(this.namespace());
     }
