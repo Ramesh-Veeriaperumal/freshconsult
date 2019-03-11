@@ -1,34 +1,42 @@
 <%= javascript_include_tag :'cdn/widget_config' %>
+<% help_widget_enabled = current_account.help_widget_enabled? %>
 <% if current_account.main_portal.preferences.present?
 	$tab_color = current_account.main_portal.preferences[:tab_color]
    end %>
+
+<% title_key, intro_key = help_widget_enabled ? ['feedbackform_title', 'feedbackform_intro'] :
+												['feedbackwidget_title', 'feedbackwidget_intro']
+%>
 
 <% content_for :helpcard do -%>
 <%= render :partial => "helpnote" %>
 <%- end %>
 
 	 	<a href="/admin/home" class="btn pull-right"><%= t('go_back') %></a>
+<%= content_tag( :h2, t(title_key), :class => "title") %>
+<%= content_tag( :div, t(intro_key).html_safe, :class => "intro") %>
 
-<%= content_tag( :h2, t("feedbackwidget_title"), :class => "title") %>
-<%= content_tag( :div, t("feedbackwidget_intro"), :class => "intro") %>
-
-<div>
-	<ul data-tabs="tabs" class="nav-tabs tabs" id="fw-tabs">
-	    <li class="active">
-	      <a href="#popup" data-toggle="tab" id="popup-tab"><%= t(".feedbackwidget_popup_tab").html_safe  %></a>
-	    </li>
-	    <li class="">
-	      <a href="#embedded" id="embedded-tab"><%= t(".feedbackwidget_embedded_tab").html_safe  %></a>
-	    </li>
-	</ul>
-</div>
+<% unless help_widget_enabled %>
+  <div>
+  	<ul data-tabs="tabs" class="nav-tabs tabs" id="fw-tabs">
+  	  <li class="active">
+  	    <a href="#popup" data-toggle="tab" id="popup-tab"><%= t(".feedbackwidget_popup_tab").html_safe  %></a>
+  	  </li>
+  	  <li class="">
+  	    <a href="#embedded" id="embedded-tab"><%= t(".feedbackwidget_embedded_tab").html_safe  %></a>
+  	  </li>
+  	</ul>
+  </div>
+<% end %>
 
 <div class="tab-content" id="fw-tab-content">
-  <div class="tab-pane active" id="popup">
-    <%#= render :partial => "popup_embedded_widget", :locals => {:selected_widget_type => "popup", :tab_color => $tab_color} %>
-		<%= render :partial => "popup_widget", :locals => { :tab_color => $tab_color} %>
-  </div>
-  <div class="tab-pane" id="embedded">
+  <% unless help_widget_enabled %>
+    <div class="tab-pane active" id="popup">
+      <%#= render :partial => "popup_embedded_widget", :locals => {:selected_widget_type => "popup", :tab_color => $tab_color} %>
+  		<%= render :partial => "popup_widget", :locals => { :tab_color => $tab_color } %>
+    </div>
+  <% end %>
+  <div class="tab-pane <%= help_widget_enabled ? 'active' : '' %>" id="embedded">
     <%#= render :partial => "popup_embedded_widget", :locals => {:selected_widget_type => "embedded", :tab_color => $tab_color} %>
 		<%= render :partial => "embedded_widget" %>
   </div>
@@ -40,7 +48,7 @@
 
 			var widget_urls = <%= widget_asset_url.to_json.html_safe %>,
 				account_url = "<%= "#{current_account.full_url}" %>";
-			var widget_config = new WidgetConfig(widget_urls, account_url );
+			var widget_config = new WidgetConfig(widget_urls, account_url, <%= help_widget_enabled %> );
 
 		    $('.pseudoCheckbox').bind('change', function(ev) {
 		    	$(this).siblings('[rel=pseudo]').val(this.checked ? '' : 'no');
