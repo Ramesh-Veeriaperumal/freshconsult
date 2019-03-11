@@ -33,8 +33,13 @@ class AuditLogExportTest < ActiveSupport::TestCase
   end
 
   def test_export_url_response
+    HTTParty.stubs(:get).returns(HTTParty, true)
+    HTTParty.stubs(:body).returns({ status: 200, data: { export_url: 'dummy_url' }.stringify_keys! }.to_json)
+    AuditLogExport.any_instance.stubs(:export_csv).returns(true)
+    AuditLogExport.any_instance.stubs(:upload_file).returns(true)
+    AwsWrapper::S3Object.stubs(:store).returns(true)
+    DataExportMailer.stubs(:audit_log_export).returns(true)
     account = Account.first.nil? ? create_test_account(Faker::Lorem.word) : Account.first
-    WebMock.allow_net_connect!
     args = construct_args
     account = Account.first.nil? ? Account.first : create_test_account
     Account.stubs(:current).returns(account)
@@ -42,7 +47,6 @@ class AuditLogExportTest < ActiveSupport::TestCase
     value = AuditLogExport.new.perform(args)
     Export::Util.stubs(:build_attachment).returns(true)
   ensure
-    WebMock.disable_net_connect!
     Export::Util.unstub(:build_attachment)
     Account.unstub(:current)
     User.unstub(:current)
