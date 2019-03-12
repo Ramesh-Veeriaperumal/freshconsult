@@ -25,7 +25,7 @@ module SubscriptionsHelper
     "estate jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys"],
     "forest jan 19" => [ "everything_in_estate", "ip_whitelisting", "skill_based_assignment", "sandbox", "custom_data_center", "hippa_compliance", "extend_api", "omni_channel_option"],
 
-    "garden omni jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base"],
+    "garden omni jan 19" => [ "everything_in_blossom", "satisfaction_survey", "timesheets", "sla_reminders", "agent_performance_report", "ticket_templates", "m_k_base", "omni_channel_option"],
     "estate omni jan 19" => [ "everything_in_garden", "multiple_products", "multiple_sla", "portal_customization", "custom_roles", "auto_ticket_assignment", "enterprise_reports", "custom_dashboard", "custom_surveys", "omni_channel_option"]
 
   }
