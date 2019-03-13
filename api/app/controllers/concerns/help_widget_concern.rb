@@ -7,7 +7,7 @@ module HelpWidgetConcern
       portal = get_portal(product_id)
       settings = HelpWidget::DEFAULT_SETTINGS
       assign_portal_defaults(portal, settings) if portal.present?
-      settings[:components] = settings_param[:components]
+      settings[:components].merge!(settings_param[:components].symbolize_keys)
       settings
     end
 
@@ -16,8 +16,7 @@ module HelpWidgetConcern
     end
 
     def assign_portal_defaults(portal, settings)
-      settings[:message] = I18n.t('help_widget.name',name: portal.name) if portal.name
-      settings[:appearance][:theme_color] =  portal.preferences[:bg_color] if portal.preferences[:bg_color]
+      settings[:message] = I18n.t('help_widget.name', name: portal.name) if portal.name
       settings[:appearance][:button_color] = portal.preferences[:tab_color] if portal.preferences[:tab_color]
     end
 end

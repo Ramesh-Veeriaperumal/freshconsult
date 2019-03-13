@@ -281,7 +281,11 @@ Helpkit::Application.routes.draw do
 
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
 
-    resources :help_widgets, controller: 'help_widgets'
+    resources :help_widgets, controller: 'help_widgets' do
+      collection do
+        get :freshmarketer_info
+      end
+    end
 
     post '/audit_log/export', to: 'audit_logs#export'
   end
@@ -290,6 +294,30 @@ Helpkit::Application.routes.draw do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :groups, controller: 'ember/groups', only: [:index, :show, :create, :update, :destroy]
     resources :omni_channels, controller: 'ember/omni_channels', only: :index
+
+    resources :solutions, only: [] do
+      collection do
+        resources :home, controller: 'ember/solutions/home', only: [] do
+          collection do
+            get :summary
+            get :quick_views
+          end
+        end
+        resources :folders, controller: 'ember/solutions/folders', only: [:index, :show, :create, :update, :destroy] do
+          collection do
+            put :bulk_update
+          end
+        end
+
+        resources :articles, controller: 'ember/solutions/articles', only: [] do
+          collection do
+            put :bulk_update
+          end
+        end
+
+        resources :drafts, controller: 'ember/solutions/drafts', only: [:index]
+      end
+    end
 
     resources :roles, controller: 'api_roles', only: [:index] do
       collection do

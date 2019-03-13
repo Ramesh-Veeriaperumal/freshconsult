@@ -1,0 +1,5 @@
+class ApiSolutions::CategoryFilterValidation < FilterValidation
+  attr_accessor :portal_id
+
+  validates :portal_id, numericality: { only_integer: true, greater_than: 0 }, if: -> { portal_id }
+end

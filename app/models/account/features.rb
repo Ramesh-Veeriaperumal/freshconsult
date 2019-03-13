@@ -32,7 +32,7 @@ class Account < ActiveRecord::Base
     :update_billing_info, :allow_billing_info_update, :pricing_plan_change_2019,
     :tag_central_publish, :native_apps, :archive_tickets_api, :bot_agent_response, :simple_outreach, 
     :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
-    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp
+    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint
   ].freeze
 
   DB_FEATURES = [

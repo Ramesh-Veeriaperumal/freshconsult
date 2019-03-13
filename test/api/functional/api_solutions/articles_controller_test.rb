@@ -537,7 +537,7 @@ module ApiSolutions
       sample_folder = get_folder_meta
       get :folder_articles, controller_params(id: sample_folder.id)
       assert_response 200
-      articles = sample_folder.solution_articles.where(language_id: @account.language_object.id)
+      articles = sample_folder.solution_articles.where(language_id: @account.language_object.id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[sample_folder.article_order])
       pattern = articles.map { |article| solution_article_pattern_index(article) }
       match_json(pattern.ordered!)
     end
@@ -546,7 +546,7 @@ module ApiSolutions
       sample_folder = get_folder_meta
       get :folder_articles, controller_params(id: sample_folder.id, language: @account.supported_languages.last)
       assert_response 200
-      articles = sample_folder.solution_articles.where(language_id: Language.find_by_code(@account.supported_languages.last).id)
+      articles = sample_folder.solution_articles.where(language_id: Language.find_by_code(@account.supported_languages.last).id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[sample_folder.article_order])
       pattern = articles.map { |article| solution_article_pattern_index(article) }
       match_json(pattern.ordered!)
     end
@@ -555,7 +555,7 @@ module ApiSolutions
       sample_folder = get_folder_meta
       get :folder_articles, controller_params(id: sample_folder.id, language: @account.language)
       assert_response 200
-      articles = sample_folder.solution_articles.where(language_id: @account.language_object.id)
+      articles = sample_folder.solution_articles.where(language_id: @account.language_object.id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[sample_folder.article_order])
       pattern = articles.map { |article| solution_article_pattern_index(article) }
       match_json(pattern.ordered!)
     end
@@ -565,6 +565,27 @@ module ApiSolutions
       get :folder_articles, controller_params(id: sample_folder.id, language: 'aaaa')
       assert_response 404
       match_json(request_error_pattern(:language_not_allowed, code: 'aaaa', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+    end
+
+    def test_private_folder_index
+      enable_kbase_mint do
+        sample_folder = get_folder_meta
+        get :folder_articles, controller_params(version: 'private', id: sample_folder.id)
+        assert_response 200
+        assert_equal response.api_root_key, :articles
+        assert_not_nil response.api_meta[:count]
+        assert_not_nil response.api_meta[:next_page]
+        articles = sample_folder.solution_articles.where(language_id: @account.language_object.id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[sample_folder.article_order])
+        pattern = articles.map { |article| solution_article_pattern_index(article) }
+        match_json(pattern.ordered!)
+      end
+    end
+
+    def test_private_folder_index_without_launchparty
+      sample_folder = get_folder_meta
+      get :folder_articles, controller_params(version: 'private', id: sample_folder.id)
+      assert_response 403
+      match_json(request_error_pattern(:require_feature, feature: 'Kbase Mint'))
     end
 
     # Delete article

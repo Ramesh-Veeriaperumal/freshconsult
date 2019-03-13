@@ -84,12 +84,7 @@ class QueryHash
     end
 
     def is_created_at?(query)
-      if Account.current.field_service_management_enabled? # can be replaced with Account.current.custom_date_fields_from_cache.present? when we support filter for all custom date fields
-        date_field_fsm = Account.current.custom_date_fields_from_cache.select { |x| x.name == TicketFilterConstants::FSM_DATE_FIELD + "_#{Account.current.id}" }.first.name
-        (query['condition'] == 'created_at' && query['operator'] == 'is_greater_than') || date_field_fsm == "#{query['condition']}_#{Account.current.id}" || query['ff_name'] == date_field_fsm
-      else
-        query['condition'] == 'created_at' && query['operator'] == 'is_greater_than'
-      end
+      query['condition'] == 'created_at' && query['operator'] == 'is_greater_than'
     end
 
     def formatted_created_at(query)

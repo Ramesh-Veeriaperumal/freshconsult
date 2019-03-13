@@ -3,9 +3,15 @@ module SolutionConstants
 
   CATEGORY_ATTRIBUTES_TO_BE_STRIPPED = %w(name).freeze
 
-  FOLDER_FIELDS = %w(description name visibility company_ids).freeze
+  FOLDER_FIELDS = %w[description name visibility company_ids category_id].freeze
+
+  FOLDER_FIELDS_PRIVATE_API = FOLDER_FIELDS | %w[article_order]
 
   FOLDER_ATTRIBUTES_TO_BE_STRIPPED = %w(name).freeze
+
+  BULK_UPDATE_FIELDS = %w[properties].freeze
+
+  BULK_UPDATE_FOLDER_PROPERTIES = %w[category_id visibility].freeze
 
   ARTICLE_SEO_DATA_FIELDS = %w(meta_title meta_description meta_keywords).freeze
   ARTICLE_LANGUAGE_FIELDS = %w(title description status
@@ -28,6 +34,8 @@ module SolutionConstants
     update: [:json, :multipart_form]
   }.freeze
 
+  BULK_UPDATE_ARTICLE_PROPERTIES = %w[folder_id user_id tags].freeze
+  
   TITLE_MAX_LENGTH = 240
   TITLE_MIN_LENGTH = 3
 
@@ -35,7 +43,7 @@ module SolutionConstants
 
   LOAD_OBJECT_EXCEPT = [:category_folders, :folder_articles, :article_content].freeze
 
-  INDEX_FIELDS = %w(language).freeze
+  INDEX_FIELDS = %w[language].freeze
   RECENT_ARTICLES_FIELDS = %w[ids user_id language_id].freeze
   ARTICLE_CONTENT_FIELDS = %w[language_id].freeze
 end

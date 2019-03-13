@@ -1,0 +1,14 @@
+type: object
+properties:
+  name:
+    type: string
+  description:
+    type: string
+  portal_id:
+    type: integer
+    description: Portal to which the category to be updated belongs.
+  visible_in_portals:
+    type: array
+    description: Array of portal ids to be mapped to category. Allowed only if the account is configured with multiple portals.
+    items:
+      type: integer

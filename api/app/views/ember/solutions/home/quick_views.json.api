@@ -1,0 +1,11 @@
+@count_hash = {
+   all_categories: @categories.count,
+   all_articles: @articles.count,
+   all_drafts: @drafts.count,
+   my_drafts: @my_drafts.count,
+   published_articles: @published_articles.count,
+   all_feedback: @all_feedback.count,
+   my_feedback: @my_feedback.count,
+   unassociated_categories: @orphan_categories,
+   unassociated_categories_count: @orphan_categories.count
+ }.to_json

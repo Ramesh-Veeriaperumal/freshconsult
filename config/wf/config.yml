@@ -78,6 +78,7 @@ defaults: &defaults
          customer:           [customer]
          tags:               [tags]
          date:               [date]
+         datetime:           [date_time]
     freshfone_calls:
          datetime:           [created_at, date_time_range]
          int:                [numeric, numeric_delimited]

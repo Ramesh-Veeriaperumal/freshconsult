@@ -28,7 +28,15 @@
         <%= "#{t('agent.hard_deleted_email')} " %>
       <% else %>
         <%= "#{t('agent.info2')} " %>
-        <%= link_to(t('agent.view_user') , @existing_user ) %>
+        <% if @existing_user.deleted %>
+          <% if current_account.reached_agent_limit? || @agent.occasional? %>
+            <%= link_to( t('contacts.info2'), {:controller => :contacts, :action => :make_occasional_agent, :id => @existing_user.id}, :method => :put, :confirm => t('contacts.convert_note'), 'data-domhelper-name' => 'convert-agent-occasional' )%>
+          <% else %>
+            <%= link_to( t('contacts.info2'), {:controller => :contacts, :action => :make_agent, :id => @existing_user.id}, :method => :put, :confirm => t('contacts.convert_note'), 'data-domhelper-name' => 'convert-agent-fulltime' )%>
+          <% end %>
+        <% else %>
+          <%= link_to(t('agent.view_user') , @existing_user ) %>
+        <% end %>
       <% end %>
 	  </div>
   <%else%>

@@ -7,33 +7,33 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/bootstrap"
     resource :"ember/bootstrap/agents_group"
     resource :"ember/tickets/collab", only: [:notify]
-    resource :"ember/tickets/delete_spam", only: %i(spam bulk_spam unspam bulk_unspam)
+    resource :"ember/tickets/delete_spam", only: %i[spam bulk_spam unspam bulk_unspam]
     resource :"ember/tickets/activity"
-    resource :"ember/canned_response", only: %i(search)
-    resource :"ember/ticket", only: %i(index show create execute_scenario spam latest_note create_child_with_template parse_template fetch_errored_email_details suppression_list_alert)
-    resource :"ember/tickets/bulk_action", only: %i(bulk_execute_scenario bulk_link bulk_unlink)
+    resource :"ember/canned_response", only: %i[search]
+    resource :"ember/ticket", only: %i[index show create execute_scenario spam latest_note create_child_with_template parse_template fetch_errored_email_details suppression_list_alert]
+    resource :"ember/tickets/bulk_action", only: %i[bulk_execute_scenario bulk_link bulk_unlink]
     resource :"ember/tickets/associate", only: [:link, :unlink, :associated_tickets, :prime_association, :associated_tickets_count]
     resource :"ember/ticket_filter", only: [:index, :show, :create, :update, :destroy]
     resource :"ember/attachment", only: [:create, :show]
     resource :"ember/freshcaller/setting", only: %i[index desktop_notification redirect_url]
-    resource :"ember/conversation", only: %i(create ticket_conversations full_text)
+    resource :"ember/conversation", only: %i[create ticket_conversations full_text]
     resource :"ember/subscription"
     resource :"ember/ticket_field", only: [:index]
     resource :"ember/todo", only: [:index, :create, :update, :destroy]
-    resource :"ember/twitter_handles", only: %i(index check_following)
+    resource :"ember/twitter_handles", only: %i[index check_following]
     resource :"ember/marketplace_app", only: [:index]
     resource :'admin/canned_form', only: [:index, :show, :create_handle]
-    resource :"tickets/bot_response", only: %i(show update)
-    resource :"tickets/bulk_action", only: %i(bulk_archive)
+    resource :"tickets/bot_response", only: %i[show update]
+    resource :"tickets/bulk_action", only: %i[bulk_archive]
 
-    resource :"ember/agent", only: %i(index me achievements update)
+    resource :"ember/agent", only: %i[index me achievements update]
     resource :"ember/group", only: [:index]
     resource :"ember/survey", only: [:index, :show]
     resource :"ember/dashboard/activity", only: [:index]
     resource :"ember/portal", only: [:index]
     resource :"ember/email_config", only: [:index, :search, :show]
-    resource :"ember/dashboard", only: %i(scorecard show survey_info)
-    resource :"ember/dashboard/quest", only: %i(index)
+    resource :"ember/dashboard", only: %i[scorecard show survey_info]
+    resource :"ember/dashboard/quest", only: %i[index]
     resource :"ember/contact_field", only: [:index]
     resource :"ember/company_field", only: [:index]
     resource :"ember/livechat_setting", only: [:index]
@@ -42,14 +42,15 @@ Authority::Authorization::PrivilegeList.build do
     resource :"ember/integrated_user"
 
     resource :"ember/search/ticket", only: [:results]
-    resource :"ember/search/autocomplete", only: %i(requesters agents companies tags)
+    resource :"ember/search/autocomplete", only: %i[requesters agents companies tags]
     resource :"ember/leaderboard", only: [:agents, :groups]
     resource :"ember/product_feedback"
-    resource :"ember/ticket_template", only: %i(show index)
+    resource :"ember/ticket_template", only: %i[show index]
     resource :"ember/search/multiquery", only: [:search_results]
     resource :"ember/search/logger", only: [:log_click]
-    resource :"ember/year_in_review", only: %i(index clear)
-    resource :"ember/custom_dashboard", only: %i(widgets_data show index bar_chart_data)
+    resource :"ember/year_in_review", only: %i[index clear]
+    resource :"ember/custom_dashboard", only: %i[widgets_data show index bar_chart_data]
+    resource :"settings/helpdesk", only: [:index]
   end
 
   manage_account do
@@ -67,7 +68,7 @@ Authority::Authorization::PrivilegeList.build do
 
   reply_ticket do
     resource :"ember/conversation", only: %i[reply facebook_reply tweet ecommerce_reply reply_template broadcast undo_send]
-    resource :"ember/tickets/draft", only: %i(save_draft show_draft clear_draft)
+    resource :"ember/tickets/draft", only: %i[save_draft show_draft clear_draft]
     resource :"ember/tickets/bulk_action", only: [:bulk_update]
     resource :"ember/agent", only: [:enable_undo_send, :disable_undo_send]
   end
@@ -92,7 +93,7 @@ Authority::Authorization::PrivilegeList.build do
 
   view_contacts do
     resource :"ember/contact", only: %i[index show activities bulk_send_invite timeline]
-    resource :"ember/company", only: %i(index show activities)
+    resource :"ember/company", only: %i[index show activities]
     resource :"ember/contact/todo", only: [:index]
     resource :"ember/search/customer", only: [:results]
     resource :customer_note, only: [:show, :index]
@@ -127,7 +128,7 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   delete_ticket do
-    resource :"ember/tickets/delete_spam", only: %i(empty_trash empty_spam delete_forever destroy bulk_delete restore bulk_restore)
+    resource :"ember/tickets/delete_spam", only: %i[empty_trash empty_spam delete_forever destroy bulk_delete restore bulk_restore]
   end
 
   admin_tasks do
@@ -136,35 +137,35 @@ Authority::Authorization::PrivilegeList.build do
     resource :'ember/trial_widget', only: %i[index sales_manager complete_step]
     resource :'ember/contact_password_policy', only: [:index]
     resource :'ember/agent_password_policy', only: [:index] # Not using it now.
-    resource :"ember/group" , only: [:index, :create, :update, :show, :destroy]
-    resource :"api_role", :only => [:index, :bulk_update]
+    resource :"ember/group", only: [:index, :create, :update, :show, :destroy]
+    resource :api_role, only: [:index, :bulk_update]
     resource :'admin/canned_form'
     resource :"ember/portal", only: [:show, :update]
-    resource :'audit_log', only: [:filter, :export, :event_name]
+    resource :audit_log, only: [:filter, :export, :event_name]
     resource :'ember/omni_channel', only: [:index]
     resource :"ember/admin/onboarding", only: %i[update_activation_email resend_activation_email update_channel_config suggest_domains validate_domain_name customize_domain]
     resource :"admin/subscription", only: [:show, :plans]
     resource :"ember/ocr_proxy"
     resource :'ember/admin/advanced_ticketing', only: [:create, :destroy, :insights]
-    resource :'help_widget', only: [:index, :create, :show, :update, :destroy]
+    resource :help_widget, only: [:index, :create, :show, :update, :destroy, :freshmarketer_info]
     resource :"admin/trial_subscription", only: [:usage_metrics]
     resource :"admin/automation", only: [:index, :destroy]
     resource :"admin/custom_translations/upload", only: [:upload]
     resource :"admin/custom_translations/download", only: [:primary, :secondary]
-    resource :"settings/helpdesk", only: [:index, :update]
+    resource :"settings/helpdesk", only: [:update]
   end
 
   edit_ticket_properties do
-    resource :"ember/ticket", only: %i(update update_properties)
+    resource :"ember/ticket", only: %i[update update_properties]
     resource :"ember/tickets/bulk_action", only: [:bulk_update]
   end
 
   view_time_entries do
-    resource :"ember/time_entry", only: %i(index create ticket_time_entries show)
+    resource :"ember/time_entry", only: %i[index create ticket_time_entries show]
   end
 
   edit_time_entries do
-    resource :"ember/time_entry", only: %i(update destroy toggle_timer), owned_by: { scoper: :time_sheets }
+    resource :"ember/time_entry", only: %i[update destroy toggle_timer], owned_by: { scoper: :time_sheets }
   end
 
   export_customers do
@@ -183,22 +184,33 @@ Authority::Authorization::PrivilegeList.build do
   end
 
   view_solutions do
-    resource :"ember/solutions/article", only: [:index,:article_content]
+    resource :"ember/solutions/article", only: [:index,:article_content, :folder_articles, :show]
+    resource :"ember/solutions/category", :only => [:index, :show]
+    resource :"ember/solutions/folder", :only => [:index, :category_folders, :show]
     resource :"ember/search/multiquery", only: [:search_results]
     resource :"ember/admin/bot", only: [:bot_folders]
+    resource :'ember/solutions/home', only: %i[summary quick_views]
+    resource :"ember/solutions/draft", only: [:index]
   end
 
   manage_solutions do
     resource :"ember/admin/bot", only: [:create_bot_folder]
+    resource :"ember/solutions/folder", only: [:create, :update, :destroy, :bulk_update]
+    resource :"ember/solutions/category", :only => [:create, :update, :destroy]
+    resource :"ember/company", only: %i[index]
+  end
+
+  publish_solution do
+    resource :"ember/solutions/article", only: [:bulk_update, :create, :update]
   end
 
   view_reports do
-    resource :"ember/dashboard", only: %i(unresolved_tickets_data ticket_trends ticket_metrics)
+    resource :"ember/dashboard", only: %i[unresolved_tickets_data ticket_trends ticket_metrics]
     resource :"ember/year_in_review", only: [:share]
     resource :"ember/admin/bot", only: [:analytics, :remove_analytics_mock_data]
   end
 
-  view_admin do 
+  view_admin do
     resource :"ember/agent", only: [:complete_gdpr_acceptance]
   end
 

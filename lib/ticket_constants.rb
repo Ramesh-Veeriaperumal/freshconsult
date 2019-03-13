@@ -362,6 +362,8 @@ module TicketConstants
 
   SLA_CALCULATION_MAX_RETRY = 5
 
+  DATE_TIME_REGEX = /^\d{4}-\d{2}-\d{2}/i
+
   def self.translate_priority_name(priority)
     I18n.t(PRIORITY_NAMES_BY_KEY[priority])
   end

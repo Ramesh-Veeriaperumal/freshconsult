@@ -1,9 +1,6 @@
 db/schema.rb @venkatesanmurali @thanashyam
 db/migrate/*.rb @venkatesanmurali @thanashyam
 
-Gemfile @hrishikesh-p @thanashyam
-Gemfile.lock @hrishikesh-p @thanashyam
-
 lib/rabbit_mq/* @sram2020
 
 swagger/* @thanashyam @venkatesanmurali @abinaya21 @ksashikumar

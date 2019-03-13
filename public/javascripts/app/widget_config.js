@@ -5,10 +5,11 @@ var WidgetConfig = function () {};
 (function ($) {
 	"use strict";
 
-	WidgetConfig = function (urls, account_url) {
+	WidgetConfig = function (urls, account_url, help_widget_enabled) {
 		this.urls = urls;
 		this.account_url = account_url;
 		this.asset_url = this.urls.http;
+		this.help_widget_enabled = help_widget_enabled;
 		this.initialize();
 	};
 
@@ -38,8 +39,11 @@ var WidgetConfig = function () {};
 		setDefaults: function () {
 			this.formHash = $H();
 			this.formHash.set('queryString', '');
-
-			this.activeForm = $("#fw-tab-content form:visible");
+			if (this.help_widget_enabled) {
+				this.activeForm = $("#fw-tab-content form");
+			} else {
+				this.activeForm = $("#fw-tab-content form:visible");
+			}
 		},
 		bindHandlers: function () {
 			var $this = this;

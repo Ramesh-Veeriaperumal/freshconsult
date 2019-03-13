@@ -2,6 +2,7 @@ require_relative '../test_helper'
 
 class ApiTicketFieldsControllerTest < ActionController::TestCase
   include TicketFieldsTestHelper
+  include Admin::AdvancedTicketing::FieldServiceManagement::Util
   def wrap_cname(_params)
     remove_wrap_params
     {}
@@ -241,5 +242,22 @@ class ApiTicketFieldsControllerTest < ActionController::TestCase
     assert_equal @account.ticket_fields.size, response.count
     cd_field = response.find { |x| x['type'] == Helpdesk::TicketField::CUSTOM_DATE_TIME }
     assert_equal true, cd_field.present?
+  ensure
+    custom_field.destroy
+    flexifield_def_entry.destroy
+  end
+
+  def test_index_with_fsm_fields
+    Account.stubs(:current).returns(Account.first)
+    old_ticket_fields_count = @account.ticket_fields.size
+    fsm_fields_count = Admin::AdvancedTicketing::FieldServiceManagement::Constant::CUSTOM_FIELDS_TO_RESERVE.count
+    reserve_fsm_custom_fields
+    get :index, controller_params({}, {})
+    assert_response 200
+    response = parse_response @response.body
+    assert_equal old_ticket_fields_count + fsm_fields_count, response.count
+  ensure
+    destroy_custom_fields
+    Account.unstub(:current)
   end
 end

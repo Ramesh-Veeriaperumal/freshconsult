@@ -39,6 +39,15 @@ module Settings
       match_json(helpdesk_languages_pattern(@account))
     end
 
+    def test_helpdesk_index_without_privilege
+      User.any_instance.stubs(:privilege?).with(:manage_tickets).returns(false)
+      get :index, controller_params
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    ensure
+      User.any_instance.unstub(:privilege?)
+    end
+
     def test_helpdesk_update
       put :update, construct_params('primary_language' => 'en')
       assert_response 200

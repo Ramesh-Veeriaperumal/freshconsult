@@ -33,9 +33,11 @@ module Widget
       end
 
       def set_widget
-        widget = HelpWidget.last || create_widget
-        @portal = @account.portals.find_by_product_id(widget.product_id)
-        @request.env['HTTP_X_WIDGET_ID'] = widget.id
+        @widget = HelpWidget.last || create_widget
+        @widget.settings[:components][:solution_articles] = true
+        @widget.save
+        @portal = @account.portals.find_by_product_id(@widget.product_id)
+        @request.env['HTTP_X_WIDGET_ID'] = @widget.id
       end
 
       def article_params(category, status = nil)
@@ -154,6 +156,14 @@ module Widget
         Account.any_instance.unstub(:features?)
       end
 
+      def test_suggested_articles_with_solution_disabled
+        @widget.settings[:components][:solution_articles] = false
+        @widget.save
+        get :suggested_articles, controller_params
+        assert_response 400
+        match_json(request_error_pattern(:solution_article_not_enabled, 'solution_article_not_enabled'))
+      end
+
       def test_show_without_open_solutions
         Account.any_instance.stubs(:features?).with(:open_solutions).returns(false)
         get :show, controller_params(id: @article.parent_id)
@@ -166,6 +176,14 @@ module Widget
         get :show, controller_params(id: @article.parent_id)
         assert_response 403
         Account.any_instance.unstub(:help_widget_enabled?)
+      end
+
+      def test_show_with_solution_disabled
+        @widget.settings[:components][:solution_articles] = false
+        @widget.save
+        get :show, controller_params(id: @article.parent_id)
+        assert_response 400
+        match_json(request_error_pattern(:solution_article_not_enabled, 'solution_article_not_enabled'))
       end
     end
   end

@@ -1,0 +1,32 @@
+type: object
+properties:
+  ids: 
+    type: array
+    description: List of folder ids to update
+    items:
+      type: integer
+  properties:
+    type: object
+    properties:
+      category_id:
+        type: integer
+        description: New category id
+      visibility:
+        type: integer
+        enum: [1,2,3,4,5]
+        description: >
+          visibility:
+             * `All users` - 1
+             * `Logged users` - 2
+             * `Agents` - 3
+             * `Companies` - 4
+             * `Bot` - 5
+      company_ids:
+        type: array
+        description: List of company ids for which this folder visible to (Applicable only if visibility is 4).
+        items:
+          type: integer
+      add_to_existing:
+        type: boolean
+        description:
+          Indicates weather to add the list of companies to existing list or not. 
