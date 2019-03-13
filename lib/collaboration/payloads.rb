@@ -3,7 +3,7 @@ class Collaboration::Payloads
   include Redis::OthersRedis
 
   HK_CLIENT_ID = 'hk'.freeze
-  TOKEN_EXPIRY_TIME = 7200 # (in sec) 2 HRS
+  TOKEN_EXPIRY_TIME = 1_296_000 # (in sec) 15 DAYS
 
   def initialize(params = nil)
     @ticket = Account.current.tickets.find_by_display_id(params[:ticket_id]) if params.present? && params[:ticket_id].present?
