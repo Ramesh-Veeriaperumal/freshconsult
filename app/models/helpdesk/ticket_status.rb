@@ -78,13 +78,13 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def self.sla_timer_on_status_ids(account)
-    statuses = account.ticket_status_values
+    statuses = account.ticket_status_values_from_cache
     statuses.reject(&:stop_sla_timer).map(&:status_id)
   end
   
   def self.statuses(account)
     disp_col_name = self.display_name
-    statuses = account.ticket_status_values
+    statuses = account.ticket_status_values_from_cache
     statuses.map{|status| [translate_status_name(status, disp_col_name), status.status_id]}
   end
   
@@ -94,7 +94,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   def self.status_names(account)
     disp_col_name = self.display_name
-    statuses = account.ticket_status_values
+    statuses = account.ticket_status_values_from_cache
     statuses.map{|status| [status.status_id, translate_status_name(status, disp_col_name)]}
   end
   
@@ -103,18 +103,17 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
   
   def self.donot_stop_sla_statuses(account)
-    statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => {:stop_sla_timer => false})
+    statuses = account.ticket_status_values_from_cache.select { |status| status.status_id unless status.stop_sla_timer }
     statuses.collect { |status| status.status_id }
   end
   
   def self.onhold_statuses(account)
-    statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => ["stop_sla_timer = true
-               and status_id not in (?,?)", RESOLVED, CLOSED])
+    statuses = account.ticket_status_values_from_cache.select { |status| status.status_id if status.stop_sla_timer && !resolved_statuses.include?(status.status_id) }
     statuses.collect { |status| status.status_id }
   end
   
   def self.onhold_and_closed_statuses(account)
-    statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => {:stop_sla_timer => true})
+    statuses = account.ticket_status_values_from_cache.select { |status| status.status_id if status.stop_sla_timer }
     statuses.collect { |status| status.status_id }
   end
 

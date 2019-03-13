@@ -1,11 +1,11 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!--
-2019-2-28: Created with FontForge (http://fontforge.org)
+2019-3-8: Created with FontForge (http://fontforge.org)
 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
 <metadata>
-Created by FontForge 20170925 at Thu Feb 28 08:50:47 2019
+Created by FontForge 20170925 at Fri Mar  8 18:19:00 2019
  By Yasaswini Balasubramaniam
 Copyright (c) 2019, Yasaswini Balasubramaniam
 </metadata>
@@ -545,9 +545,9 @@ d="M380 410c30 0 54 -24 54 -54v-163c0 -120 -97 -217 -217 -217s-217 97 -217 217s9
 c-8 0 -13 -6 -13 -14c0 -97 79 -176 176 -176c8 0 13 5 13 13z" />
     <glyph glyph-name="uniF283" unicode="&#xf283;" horiz-adv-x="414" 
 d="M244 192l162 -162c10 -10 10 -27 0 -37v0v0c-10 -10 -26 -10 -36 0l-163 163l-163 -163v0c-10 -10 -26 -10 -36 0s-10 27 0 37l162 162l-162 163v0c-10 10 -10 27 0 37s26 10 36 0l163 -163l163 163v0c10 10 26 10 36 0s10 -27 0 -37z" />
-    <glyph glyph-name="uniF2D0" unicode="&#xf2d0;" horiz-adv-x="474" 
-d="M109 128c4 13 17 20 30 16s21 -17 17 -30l-24 -80c-4 -13 -17 -20 -30 -16l-84 22c-13 4 -21 17 -17 30s17 21 30 17l25 -7c-49 83 -36 190 36 260c87 84 229 84 316 0s87 -222 0 -306c-25 -24 -54 -41 -87 -52c-13 -4 -27 2 -31 15s2 27 15 31c25 8 49 21 68 40
-c68 66 68 172 0 238s-178 66 -246 0c-57 -55 -66 -140 -26 -205l8 27v0z" />
+    <glyph glyph-name="uniF2D0" unicode="&#xf2d0;" horiz-adv-x="491" 
+d="M103 76l12 44c3 10 15 16 25 13s16 -14 13 -24l-26 -88c-3 -10 -14 -16 -24 -13l-89 25c-10 3 -16 13 -13 23s14 17 24 14l43 -12c-61 89 -52 211 28 290c90 90 237 91 327 1s90 -235 0 -325c-26 -25 -56 -44 -90 -55c-10 -3 -22 2 -25 12s3 21 13 24c28 9 53 26 74 47
+c75 74 76 195 1 269s-197 74 -272 0c-67 -67 -74 -171 -21 -245z" />
     <glyph glyph-name="uniF150" unicode="&#xf150;" horiz-adv-x="434" 
 d="M283 236c5 0 9 -5 9 -10s-4 -9 -9 -9h-111c-5 0 -9 4 -9 9s4 10 9 10h111zM252 189c5 0 10 -5 10 -10s-5 -9 -10 -9h-80c-5 0 -9 4 -9 9s4 10 9 10h80zM380 410c30 0 54 -24 54 -54v-163c0 -120 -97 -217 -217 -217s-217 97 -217 217s97 217 217 217h163zM330 151v0v106
 c0 12 -10 22 -22 22h-160c-12 0 -23 -10 -23 -22v-128v-56c0 31 26 56 57 56h126c12 0 22 10 22 22z" />

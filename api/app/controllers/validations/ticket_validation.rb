@@ -1,4 +1,6 @@
 class TicketValidation < ApiValidation
+  include Admin::AdvancedTicketing::FieldServiceManagement::Constant
+
   MANDATORY_FIELD_ARRAY = [:requester_id, :phone, :email, :twitter_id, 
     :facebook_id, :unique_external_id].freeze
   MANDATORY_FIELD_STRING_WITHOUT_UNIQUE_EXTERNAL_ID = (MANDATORY_FIELD_ARRAY - 
@@ -138,6 +140,7 @@ class TicketValidation < ApiValidation
             } 
           }, unless: :unique_external_identifier_enabled?
 
+  validate :checking_appointment_time_range, if: -> { Account.current.field_service_management_enabled? && self.ticket_type == Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE }
   def initialize(request_params, item, allow_string_param = false)
     @request_params = request_params
     @status_ids = request_params[:statuses].map(&:status_id)
@@ -244,4 +247,21 @@ class TicketValidation < ApiValidation
       description: { data_type: { rules: String } }
     }
   end
+
+  def checking_appointment_time_range
+    if @request_params[:custom_fields].present?
+      start_time = @request_params[:custom_fields][FSM_APPOINTMENT_START_TIME + "_#{Account.current.id}"]
+      end_time = @request_params[:custom_fields][FSM_APPOINTMENT_END_TIME + "_#{Account.current.id}"]
+      if start_time.present? && end_time.present?
+        if date_time_regex_check(start_time) && date_time_regex_check(end_time) && end_time.to_datetime < start_time.to_datetime
+          errors.add(:"custom_fields.#{FSM_APPOINTMENT_END_TIME}", 'invalid_date_time_range')
+        end
+      end
+    end
+  end
+
+  def date_time_regex_check(value)
+    value.match(TicketConstants::DATE_TIME_REGEX).present?
+  end
+
 end

@@ -57,7 +57,7 @@
     this.section_instance = {};
     this.sortSender = null;
   },
-  fsm_fields = ["cf_fsm_contact_name", "cf_fsm_phone_number", "cf_fsm_service_location", "cf_fsm_appointment_date", "cf_fsm_appointment_start_time", "cf_fsm_appointment_end_time"].map(function(field){ return (field + "_" + current_account_id); });
+  fsm_fields = ["cf_fsm_contact_name", "cf_fsm_phone_number", "cf_fsm_service_location", 'cf_fsm_appointment_start_time', 'cf_fsm_appointment_end_time'].map(function(field){ return (field + "_" + current_account_id); });
   customFieldsForm.prototype = {
     uniqId: function () {
       return Math.round(new Date().getTime() + (Math.random() * 100));

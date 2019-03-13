@@ -855,7 +855,7 @@ class User < ActiveRecord::Base
   end
 
   def has_ticket_permission? ticket
-    (can_view_all_tickets?) or (ticket_agent?(ticket)) or (group_ticket_permission && (group_ticket?(ticket)))
+    (ticket_agent?(ticket)) || (can_view_all_tickets?) || (group_ticket_permission && (group_ticket?(ticket)))
   end
 
   # For a customer we need to check if he is the requester of the ticket
