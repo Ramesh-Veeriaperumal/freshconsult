@@ -297,6 +297,7 @@ defaults: &defaults
     - [ocr_task_sync]
     - [clone]
     - [surveys_central_publish]
+    - [freshvisual_configs]
 
 
 development:

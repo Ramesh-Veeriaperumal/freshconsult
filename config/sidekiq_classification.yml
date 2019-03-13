@@ -39,6 +39,7 @@
     - twitter_reply
     - ocr_agent_sync
     - ocr_task_sync
+    - freshvisual_configs
 
   :central_realtime:
     - central_publish

@@ -21,7 +21,8 @@ class Account < ActiveRecord::Base
     :description_by_default, :ticket_fields_central_publish, :facebook_page_scope_migration,
     :agent_group_central_publish, :custom_fields_search,:update_billing_info, :fluffy,
     :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish, :native_apps,
-    :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :disable_signup_captcha
+    :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :disable_signup_captcha,
+    :freshvisual_configs
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze
@@ -49,7 +50,8 @@ class Account < ActiveRecord::Base
     :omni_channel, :ticket_volume_report, :sla_management_v2, :api_v2, :cascade_dispatcher,
     :personal_canned_response, :marketplace, :reverse_notes,
     :freshreports_analytics, :disable_old_reports
-  ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
+  ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
+  # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   COMBINED_VERSION_ENTITY_KEYS = [
     Helpdesk::TicketField::VERSION_MEMBER_KEY,
