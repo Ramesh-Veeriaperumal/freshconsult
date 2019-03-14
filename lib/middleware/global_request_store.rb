@@ -9,7 +9,7 @@ require 'rack/body_proxy'
 
 module Middleware
   class GlobalRequestStore
-    THREAD_RESET_KEYS = [:account, :user, :portal, :shard_selection, :shard_name_payload, :notifications, :email_config, :business_hour, :current_ip, :create_sandbox_account].freeze
+    THREAD_RESET_KEYS = [:account, :user, :portal, :shard_selection, :shard_name_payload, :notifications, :email_config, :business_hour, :current_ip, :create_sandbox_account, :language].freeze
 
     def initialize(app)
       @app = app
