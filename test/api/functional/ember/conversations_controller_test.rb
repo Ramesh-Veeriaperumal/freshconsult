@@ -561,6 +561,7 @@ module Ember
 
     def test_ticket_conversations_with_fone_call
       # while creating freshfone account during tests MixpanelWrapper was throwing error, so stubing that
+      Account.any_instance.stubs(:freshfone_enabled?).returns(true)
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       ticket = new_ticket_from_call
       remove_wrap_params
@@ -568,20 +569,25 @@ module Ember
       get :ticket_conversations, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 200
       match_json(conversations_pattern(ticket))
+    ensure
       MixpanelWrapper.unstub(:send_to_mixpanel)
+      Account.any_instance.unstub(:freshfone_enabled?)
     end
 
     def test_ticket_conversations_with_freshcaller_call
-      skip('failures and errors 21')
       # while creating freshcaller account during tests MixpanelWrapper was throwing error, so stubing that
+      Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
-      ticket  = new_ticket_from_freshcaller_call
+      ticket = new_ticket_from_freshcaller_call
       remove_wrap_params
       assert ticket.notes.all.map { |n| n.freshcaller_call.present? || nil }.compact.present?
       get :ticket_conversations, construct_params({ version: 'private', id: ticket.display_id }, false)
+      ticket.notes.reload
       assert_response 200
       match_json(conversations_pattern_freshcaller(ticket))
+    ensure
       MixpanelWrapper.unstub(:send_to_mixpanel)
+      Account.any_instance.unstub(:freshcaller_enabled?)
     end
 
     def test_ticket_conversations_on_spammed_ticket
@@ -777,12 +783,11 @@ module Ember
     end
 
     def test_tweet_reply_with_requth
-      skip('failures and errors 21')
       ticket = create_twitter_ticket
       Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(true)
       post :tweet, construct_params({ version: 'private', id: ticket.display_id }, body: Faker::Lorem.sentence[0..130],
                                     tweet_type: 'dm',
-                                    twitter_handle_id: 1)
+                                    twitter_handle_id: get_twitter_handle.id)
       assert_response 400
       match_json([bad_request_error_pattern('twitter_handle_id', 'requires re-authorization')])
       Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(false)

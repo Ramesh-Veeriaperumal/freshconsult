@@ -2935,7 +2935,7 @@ module Ember
     end
 
     def test_export_inline_sidekiq_csv_with_no_tickets
-      WebMock.allow_net_connect!
+      RestClient::Request.any_instance.stubs(:execute).returns(ActionDispatch::TestResponse.new)
       @account.launch(:ticket_contact_export)
       2.times do
         create_ticket
@@ -2949,11 +2949,11 @@ module Ember
       assert_equal initial_count, current_data_exports.length
       @account.rollback(:ticket_contact_export)
     ensure
-      WebMock.disable_net_connect!
+      RestClient::Request.any_instance.unstub(:execute)
     end
 
     def test_export_inline_sidekiq_csv_with_privilege
-      WebMock.allow_net_connect!
+      RestClient::Request.any_instance.stubs(:execute).returns(ActionDispatch::TestResponse.new)
       @account.launch(:ticket_contact_export)
       2.times do
         create_ticket
@@ -2969,11 +2969,11 @@ module Ember
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.csv')
       @account.rollback(:ticket_contact_export)
     ensure
-      WebMock.disable_net_connect!
+      RestClient::Request.any_instance.unstub(:execute)
     end
 
     def test_export_inline_sidekiq_xls_with_privilege
-      WebMock.allow_net_connect!
+      RestClient::Request.any_instance.stubs(:execute).returns(ActionDispatch::TestResponse.new)
       @account.launch(:ticket_contact_export)
       2.times do
         create_ticket
@@ -2989,7 +2989,7 @@ module Ember
       assert current_data_exports.last.attachment.content_file_name.ends_with?('.xls')
       @account.rollback(:ticket_contact_export)
     ensure
-      WebMock.disable_net_connect!
+      RestClient::Request.any_instance.unstub(:execute)
     end
 
     def test_update_with_company_id

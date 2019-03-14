@@ -154,12 +154,14 @@ class AccountsControllerTest < ActionController::TestCase
     assert parsed_response['account_name']
   end
 
-  def test_valid_domain
+  def test_domain_validation_performs_correctly_for_invalid_domain
     get :validate_domain, company_domain: 'test.a.http://af.com', format: 'json'
     parsed_response = parse_response response.body
     assert_response 422
     assert_equal parsed_response['success'], false
+  end
 
+  def test_domain_validation_performs_correctly_for_valid_domain
     get :validate_domain, company_domain: 'test06032019', format: 'json'
     parsed_response = parse_response response.body
     assert_response 200
@@ -238,7 +240,7 @@ class AccountsControllerTest < ActionController::TestCase
     Account.any_instance.unstub(:update_default_domain_and_email_config)
   end
 
-  def test_update_domain_with_freshid_disabled_and_activation_job_present
+  def test_update_domain_with_freshid_disabled_and_activation_job_present_html_format
     ActionView::Renderer.any_instance.stubs(:render).returns('')
     Account.any_instance.stubs(:freshid_enabled?).returns(false)
     Account.any_instance.stubs(:update_default_domain_and_email_config).returns(true)
@@ -247,7 +249,22 @@ class AccountsControllerTest < ActionController::TestCase
     Sidekiq::ScheduledSet.any_instance.stubs(:find_job).returns([Faker::Lorem.word])
     get :update_domain, company_domain: Faker::Lorem.word, support_email: Faker::Lorem.word, format: 'html'
     assert_response 200
+  ensure
+    ActionView::Renderer.any_instance.unstub(:render)
+    Account.any_instance.unstub(:freshid_enabled?)
+    Account.any_instance.unstub(:update_default_domain_and_email_config)
+    Account.any_instance.unstub(:kill_account_activation_email_job)
+    User.any_instance.unstub(:reset_perishable_token!)
+    Sidekiq::ScheduledSet.any_instance.unstub(:find_job)
+  end
 
+  def test_update_domain_with_freshid_disabled_and_activation_job_present_json_format
+    ActionView::Renderer.any_instance.stubs(:render).returns('')
+    Account.any_instance.stubs(:freshid_enabled?).returns(false)
+    Account.any_instance.stubs(:update_default_domain_and_email_config).returns(true)
+    Account.any_instance.stubs(:kill_account_activation_email_job).returns(true)
+    User.any_instance.stubs(:reset_perishable_token!).returns(true)
+    Sidekiq::ScheduledSet.any_instance.stubs(:find_job).returns([Faker::Lorem.word])
     get :update_domain, company_domain: Faker::Lorem.word, format: 'json'
     assert_response 200
   ensure
