@@ -32,6 +32,10 @@ class Social::TwitterHandle < ActiveRecord::Base
     state == TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]
   end
 
+  def activation_required?
+    state == TWITTER_STATE_KEYS_BY_TOKEN[:activation_required]
+  end
+
   def check_ticket_rules # @ARV@ TODO REMOVE_AFTER_MIGRATION
     {:convert => capture_mention_as_ticket? }
   end
@@ -94,6 +98,18 @@ class Social::TwitterHandle < ActiveRecord::Base
         twitter.default_stream.prepare_for_downgrade_to_sprout
         twitter.save!
       end
+    end
+  end
+
+  def activate_mention_streams
+    stream = default_stream
+    stream.data[:gnip] = true
+    stream.data[:gnip_rule_state] = Social::Constants::GNIP_RULE_STATES_KEYS_BY_TOKEN[:none]
+    if stream.save
+      stream.subscribe_to_gnip
+    else
+      Rails.logger.error "Error while activating the stream :: #{stream.id} :: account id :: #{stream.account_id}"
+      raise
     end
   end
 
