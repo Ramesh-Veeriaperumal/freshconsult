@@ -40,6 +40,10 @@ tests_to_run.each do |file|
   end
 end
 
+puts "[Parent Process] The queue of files is as follows: "
+puts queue.inspect
+puts "*" * 40
+
 # Making necessary code changes compatible for parallel running
 `sed -i -e "s/helpkit_test_rails3/helpkit_<%= ENV['TEST_ENV_NAME'] %>/g" config/database.yml`
 `cat test/lib/helpdesk/initializers/redis.rb > lib/helpdesk/initializers/redis.rb`
