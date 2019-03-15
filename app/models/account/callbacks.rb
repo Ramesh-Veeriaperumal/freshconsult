@@ -21,6 +21,7 @@ class Account < ActiveRecord::Base
   after_update :update_livechat_url_time_zone, :if => :livechat_enabled?
   after_update :update_activity_export, :if => :ticket_activity_export_enabled?
   after_update :update_advanced_ticketing_applications, :if => :disable_old_ui_feature_changed?
+  after_update :update_freshvisual_configs, :if => :call_freshvisuals_api?
   after_update :set_disable_old_ui_changed_now, :if => :disable_old_ui_changed?
 
   before_validation :sync_name_helpdesk_name
@@ -615,4 +616,18 @@ class Account < ActiveRecord::Base
     def set_disable_old_ui_changed_now
       self.disable_old_ui_changed = true
     end
+
+    def call_freshvisuals_api?
+      freshvisual_configs_enabled? && analytics_features_changed?
+    end
+
+    def analytics_features_changed?
+      reports_features = HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST
+      changes[:plan_features].present? && reports_features.any? { |f| safe_send("#{f}_feature_changed?") }
+    end
+
+    def update_freshvisual_configs
+      Reports::FreshvisualConfigs.perform_async
+    end
+    
 end

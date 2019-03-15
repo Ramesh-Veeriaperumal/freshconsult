@@ -6,8 +6,8 @@ development:
       from: "+12345646409"
       to: ["+918056045905", "+917373157814"]
     mail:
-      from: "freshfone@freshdesk.com"
-      to: "freshfone@freshdesk.com"
+      from: "freshfone@freshworks.com"
+      to: "freshfone@freshworks.com"
   freshfone_request:
     to: "support@freshfone.freshdesk.com"
 test:
@@ -18,7 +18,7 @@ test:
       from: "+12345646409"
       to: ["+918056045905", "+917373157814"]
     mail:
-      from: "freshfone@freshdesk.com"
-      to: "freshfone@freshdesk.com"
+      from: "freshfone@freshworks.com"
+      to: "freshfone@freshworks.com"
   freshfone_request:
     to: "support@freshfone.freshdesk.com"
