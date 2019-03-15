@@ -1,7 +1,10 @@
 class Admin::Social::TwitterHandlesController < ApplicationController
 
   include ErrorHandle
-
+  include ChannelIntegrations::Utils::Schema
+  include ChannelIntegrations::Constants
+  include Social::Util
+  include Social::SmartFilter
   before_filter :build_item, :twitter_wrapper, :only => [:authdone]
   before_filter :load_item, :only => [:destroy]
   
@@ -47,6 +50,23 @@ class Admin::Social::TwitterHandlesController < ApplicationController
     redirect_to admin_social_streams_url
   end
 
+  def activate
+    begin
+      handle = current_account.twitter_handles.find_by_id(params[:id])
+      handle.state = Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:active]
+      if handle.save
+        handle.activate_mention_streams
+        handle.initialise_smart_filter if handle.smart_filter_enabled?
+        post_activate_command_to_central(Social::TwitterHandle::ACTIVATE_HANDLE_COMMAND, handle)
+      end
+    rescue StandardError => e
+      error_msg = "Error while activating the handle :: #{handle.id} :: #{handle.account_id} :: Exception: #{e.message} :: #{e.backtrace[0..50]}"
+      Rails.logger.error(error_msg)
+      NewRelic::Agent.notice_error(error_msg)
+    end
+    redirect_to admin_social_streams_url
+  end
+
 
   private
   def twitter_wrapper
@@ -75,5 +95,4 @@ class Admin::Social::TwitterHandlesController < ApplicationController
     session[:request_token]  = nil
     session[:request_secret] = nil
   end
-
 end

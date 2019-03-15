@@ -531,7 +531,7 @@ Authority::Authorization::PrivilegeList.build do
   # super_admin
   admin_tasks do
     resource :"admin/business_calendar"
-    resource :"social/twitter_handle", :only => [:index, :edit, :update, :destroy, :signin, :authdone, :search]
+    resource :"social/twitter_handle", :only => [:index, :edit, :update, :destroy, :signin, :authdone, :search, :activate]
     resource :"social/streams"
     resource :"admin/social/facebook_stream", :only => [:index, :edit, :update]
     resource :"admin/social/facebook_page", :only => [:destroy, :enable_pages]

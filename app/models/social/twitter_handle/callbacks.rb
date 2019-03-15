@@ -71,6 +71,10 @@ class Social::TwitterHandle < ActiveRecord::Base
     @custom_previous_changes || HashWithIndifferentAccess.new
   end
 
+  def initialise_smart_filter
+    Social::SmartFilterInitWorker.perform_async(smart_filter_init_params: smart_filter_init_params)
+  end
+
   private
     def add_default_search
       if search_keys.blank?
@@ -106,7 +110,7 @@ class Social::TwitterHandle < ActiveRecord::Base
     def persist_previous_changes
       @custom_previous_changes = changes
     end
-    
+
     def construct_stream_params(name, type, subscription, search_keys)
      stream_params = {
        :name     => name,
@@ -126,14 +130,10 @@ class Social::TwitterHandle < ActiveRecord::Base
      stream_params
    end
 
-    def smart_filter_init_params 
+    def smart_filter_init_params
       {
         "account_id" => smart_filter_accountID(:twitter, self.account_id, self.twitter_user_id)
       }.to_json
-    end
-
-    def initialise_smart_filter
-      Social::SmartFilterInitWorker.perform_async({:smart_filter_init_params => smart_filter_init_params})
     end
 
     def new_smart_filter_enabled?
