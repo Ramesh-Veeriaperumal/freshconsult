@@ -46,6 +46,10 @@ module Concerns::ApplicationViewConcern
     Account.current.twitter_reauth_check_from_cache
   end
 
+  def twitter_app_blocked?
+    redis_key_exists?(TWITTER_APP_BLOCKED)
+  end
+
   def custom_mailbox_error?
     Account.current.check_custom_mailbox_status
   end

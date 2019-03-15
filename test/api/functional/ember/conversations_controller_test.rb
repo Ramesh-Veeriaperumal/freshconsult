@@ -17,6 +17,8 @@ module Ember
     include AwsTestHelper
     include ArchiveTicketTestHelper
     include Redis::UndoSendRedis
+    include Redis::RedisKeys
+    include Redis::OthersRedis
 
     BULK_ATTACHMENT_CREATE_COUNT = 2
     BULK_NOTE_CREATE_COUNT       = 2
@@ -791,6 +793,19 @@ module Ember
       assert_response 400
       match_json([bad_request_error_pattern('twitter_handle_id', 'requires re-authorization')])
       Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(false)
+    end
+
+    def test_tweet_reply_with_app_blocked
+      set_others_redis_key(TWITTER_APP_BLOCKED, true, 5)
+      twitter_handle = get_twitter_handle
+      ticket = create_twitter_ticket(twitter_handle: twitter_handle)
+      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, body: Faker::Lorem.sentence[0..130],
+                                                                                 tweet_type: 'dm',
+                                                                                 twitter_handle_id: twitter_handle.id)
+      assert_response 400
+      match_json([bad_request_error_pattern('twitter_app_state', 'is blocked')])
+    ensure
+      remove_others_redis_key TWITTER_APP_BLOCKED
     end
 
     def test_twitter_reply_to_tweet_ticket
