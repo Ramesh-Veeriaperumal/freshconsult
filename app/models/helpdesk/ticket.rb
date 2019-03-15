@@ -62,8 +62,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :round_robin_assignment, :related_ticket_ids, :tracker_ticket_id, :unique_external_id, :assoc_parent_tkt_id,
     :sbrr_turned_on, :status_sla_toggled_to, :replicated_state, :skip_sbrr_assigner, :bg_jobs_inline,
     :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
-    :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save, :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background,
-    :sla_calculation_time, :import_ticket, :ocr_update, :skip_ocr_sync
+    :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save, 
+    :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background,
+    :sla_calculation_time, :import_ticket, :ocr_update, :skip_ocr_sync, :custom_fields_hash
+
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
     # - will be clearing these after activity publish.
@@ -1073,14 +1075,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def custom_field= custom_field_hash
+    self.custom_fields_hash = custom_field_hash
     @custom_field = new_record? ? custom_field_hash : nil
     unless new_record?
-      assign_ff_values custom_field_hash
-      if account.id_for_choices_write_enabled?
-        benchmark_ticket_field_data {
-          ticket_field_data.assign_ff_values(custom_field_hash)
-        }
-      end
+      assign_ff_values(custom_field_hash)
+      @custom_field = nil
     end
   end
 
@@ -1088,11 +1087,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
     self.ff_def ||= ff_def if ff_def.present?
     @custom_field = nil
     flexifield.set_ff_value ff_alias, ff_value
-    if account.id_for_choices_write_enabled?
-      benchmark_ticket_field_data {
-        ticket_field_data.set_ff_value ff_alias, ff_value
-      }
-    end
   end
   # flexifield - custom_field syncing code ends here
 
