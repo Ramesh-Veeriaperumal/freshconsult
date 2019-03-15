@@ -25,7 +25,7 @@ module Ember
     before_filter :validate_attachments_permission, only: [:create, :update]
     before_filter :check_enabled_undo_send, only: [:undo_send]
 
-    SINGULAR_RESPONSE_FOR = %w(reply create update tweet facebook_reply broadcast).freeze
+    SINGULAR_RESPONSE_FOR = %w[reply create update tweet facebook_reply broadcast ecommerce_reply].freeze
     SLAVE_ACTIONS = %w(ticket_conversations).freeze
     DUMMY_ID_FOR_UNDO_SEND_NOTE = 9_007_199_254_740_991
 
@@ -410,7 +410,7 @@ module Ember
       end
 
       def ember_redirect?
-        %i(create reply facebook_reply broadcast).include?(action_name.to_sym)
+        %i[create reply facebook_reply ecommerce_reply broadcast].include?(action_name.to_sym)
       end
 
       def render_201_with_location(template_name: "conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)
@@ -424,7 +424,7 @@ module Ember
           @item.build_ebay_question(user_id: current_user.id, item_id: @ticket.ebay_question.item_id, ebay_account_id: @ticket.ebay_question.ebay_account_id, account_id: @ticket.account_id)
           if message && @item.ebay_question.save
             Ecommerce::EbayMessageWorker.new.perform(ebay_account_id: @ticket.ebay_question.ebay_account_id, ticket_id: @ticket.id, note_id: @item.id, start_time: message[:timestamp].to_time)
-            render_201_with_location(template_name: 'ember/conversations/ecommerce_reply')
+            render_response(true)
           else
             @item.deleted = true
             @item.save
