@@ -181,18 +181,17 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       end
 
       #Custom fields
+
       Account.current.custom_dropdown_fields_from_cache.each do |col|
-        defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
-      end 
-
-
+        defs[fetch_field_key(col).to_sym] = build_field_hash(col)
+      end
       nested_fields = Account.current.nested_fields_from_cache
       ActiveRecord::Associations::Preloader.new(nested_fields, %i[level1_picklist_values nested_fields_with_flexifield_def_entries]).run
 
       nested_fields.each do |col|
-        defs[get_id_from_field(col).to_sym] = {get_op_from_field(col).to_sym => get_container_from_field(col) ,:name => col.label, :container => get_container_from_field(col), :operator => get_op_from_field(col), :options => get_custom_choices(col) }
+        defs[fetch_field_key(col).to_sym] = build_field_hash(col)
         col.nested_fields_with_flexifield_def_entries.each do |nested_col|
-          defs[get_id_from_field(nested_col).to_sym] = {get_op_list('dropdown').to_sym => 'dropdown' ,:name => nested_col.label , :container => 'dropdown', :operator => get_op_list('dropdown'), :options => [] }
+          defs[fetch_field_key(nested_col).to_sym] = {get_op_list('dropdown').to_sym => 'dropdown' ,:name => nested_col.label , :container => 'dropdown', :operator => get_op_list('dropdown'), :options => [] }
         end
       end
       
@@ -209,6 +208,34 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       defs[:"helpdesk_ticket_states.resolved_at"] = ({:operator => :is_greater_than,:is_in => :resolved_at, :options => [], :name => "helpdesk_ticket_states.resolved_at", :container => :resolved_at})
       defs
     end
+  end
+
+  def build_field_hash(col)
+    field_container = get_container_from_field(col)
+    {
+      get_op_from_field(col).to_sym => field_container,
+      :name => col.label,
+      :container => field_container,
+      :operator => get_op_from_field(col),
+      :options => fetch_custom_choices(col)
+    }
+  end
+
+  def fetch_custom_choices(col)
+    join_tf_data? ? get_custom_choices_by_id(col) : get_custom_choices(col)
+  end
+
+  def fetch_field_key(col)
+    join_tf_data? ? fetch_ffs_col_name_from_field(col) : get_id_from_field(col)
+  end
+
+  def join_tf_data?
+    @join_tf_data ||= Account.current.join_ticket_field_data_enabled?
+  end
+
+  def fetch_ffs_col_name_from_field(tf)
+    col_name = tf.respond_to?(:column_name) && tf.column_name.present? ? tf.column_name : tf.flexifield_def_entry.flexifield_name
+    "ticket_field_data.#{col_name}"
   end
   
   def default_order
@@ -319,7 +346,16 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     else  
       @format = params[:wf_export_format].to_sym
     end
-    
+
+    if join_tf_data? && !params[:data_hash].blank? 
+      params[:data_hash] = ActiveSupport::JSON.decode params[:data_hash] if !params[:data_hash].kind_of?(Array)
+      make_duplicate_params(params[:data_hash].dup)
+      picklist_transformer = Helpdesk::Ticketfields::PicklistValueTransformer::StringToId.new
+      benchmark_ticket_filter {
+        picklist_transformer.modify_data_hash(params[:data_hash])
+      }
+    end
+
     action_hash = []
     if !params[:data_hash].blank? 
       action_hash = params[:data_hash]
@@ -348,7 +384,40 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     if params[:wf_submitted] == 'true'
       validate!
     end
+    if join_tf_data? && @original_data 
+      process_query_hash
+    end
     return self
+  end
+
+  def make_duplicate_params(array_list)
+    benchmark_ticket_filter {
+      @cloned_data = Marshal.load(Marshal.dump(array_list))
+      Rails.logger.info "Marshal"
+    }
+
+    benchmark_ticket_filter {
+      @original_data = @cloned_data.each_with_object({}) do |obj, res_hash|
+        if obj['ff_name'] && obj['ff_name'] != 'default'
+          res_hash[obj['ff_name']] = obj
+        end
+      end
+      Rails.logger.info "loop end"
+    }
+  end
+
+  def benchmark_ticket_filter
+    time_taken = Benchmark.realtime { yield }
+    Rails.logger.info "Ticket Filter Time taken: #{time_taken} Account ID: #{Account.current.id}"
+  end
+
+  def process_query_hash
+    self.query_hash.each do |q_hash|
+      if @original_data[q_hash['ff_name']]
+        q_hash['value'] = @original_data[q_hash['ff_name']]['value']
+        q_hash['condition'] = @original_data[q_hash['ff_name']]['condition']
+      end
+    end
   end
 
   def add_requester_conditions(params)
@@ -473,7 +542,11 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def get_joins(all_conditions)
     all_joins = [""]
-    all_joins = joins if all_conditions[0].include?("flexifields")
+    if join_tf_data?
+      all_joins = tf_data_join if all_conditions[0].include?("ticket_field_data")
+    else
+      all_joins = joins if all_conditions[0].include?("flexifields")
+    end
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
     all_joins[0].concat(statues_join) if all_conditions[0].include?("helpdesk_ticket_statuses")
@@ -526,6 +599,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def joins
     ["INNER JOIN flexifields ON flexifields.flexifield_set_id = helpdesk_tickets.id and  flexifields.account_id = helpdesk_tickets.account_id "]
+  end
+
+  def tf_data_join
+    ["INNER JOIN ticket_field_data ON ticket_field_data.flexifield_set_id = helpdesk_tickets.id and  ticket_field_data.account_id = helpdesk_tickets.account_id "]          
   end      
 
   def order_field

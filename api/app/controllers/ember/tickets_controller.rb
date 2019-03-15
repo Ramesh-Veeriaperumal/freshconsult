@@ -495,7 +495,9 @@ module Ember
       end
 
       def conditional_preload_options
-        conditional_preload_options = params['include'].to_s.include?('company') ? INDEX_PRELOAD_OPTIONS.dup.push(:company) : INDEX_PRELOAD_OPTIONS.dup
+        preload_options_list = INDEX_PRELOAD_OPTIONS.dup
+        preload_options_list << :ticket_field_data if current_account.join_ticket_field_data_enabled?
+        conditional_preload_options = params['include'].to_s.include?('company') ? preload_options_list.push(:company) : preload_options_list
         (params[:exclude] || '').split(',').each do |exclude_param|
           conditional_preload_options.delete(INDEX_PRELOAD_OPTION_MAPPING[exclude_param.to_sym])
         end

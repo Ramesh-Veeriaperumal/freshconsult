@@ -888,6 +888,12 @@ class Account < ActiveRecord::Base
   end
   # END
 
+  def custom_dropdown_choice_hash
+    @custom_dropdown_choice_hash ||= custom_dropdown_fields_from_cache.collect do |x|
+      [x.name, x.dropdown_choices_with_name.flatten.uniq]
+    end.to_h
+  end
+
   protected
   
     def external_url_is_valid?(url) 

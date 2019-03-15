@@ -289,9 +289,11 @@ module Cache::Memcache::Account
   end
 
   def event_flexifields_with_ticket_fields_from_cache
-    key = ACCOUNT_EVENT_FIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      ticket_field_def.flexifield_def_entries.event_fields.find(:all, :include => :ticket_field)
+    @event_flexifields_with_ticket_fields_from_cache ||= begin
+      key = format(ACCOUNT_EVENT_FIELDS, account_id: id)
+      MemcacheKeys.fetch(key) do
+        ticket_field_def.flexifield_def_entries.event_fields.find(:all, include: :ticket_field)
+      end
     end
   end
 
@@ -305,9 +307,11 @@ module Cache::Memcache::Account
   end
 
   def ticket_fields_from_cache
-    key = ACCOUNT_TICKET_FIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      ticket_fields_with_nested_fields.all
+    @ticket_fields_from_cache ||= begin
+      key = format(ACCOUNT_TICKET_FIELDS, account_id: id)
+      MemcacheKeys.fetch(key) do
+        ticket_fields_with_nested_fields.all
+      end
     end
   end
 

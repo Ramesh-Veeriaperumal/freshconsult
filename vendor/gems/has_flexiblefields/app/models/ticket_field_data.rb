@@ -8,6 +8,7 @@ class TicketFieldData < ActiveRecord::Base
   delegate :to_ff_alias, :to_ff_field, :to_ff_def_entry, to: :flexifield_def
 
   ALLOWED_FIELD_TYPES = ['custom_dropdown', 'custom_number', 'custom_checkbox', 'nested_field', 'custom_date'].freeze
+  NEW_DROPDOWN_COLUMN_NAMES = column_names.grep(/ffs.+/)[80..249]
 
   def ff_def
     self[:flexifield_def_id]
@@ -19,7 +20,7 @@ class TicketFieldData < ActiveRecord::Base
 
   def get_ff_value(ff_alias, field = nil)
     field ||= fields_from_cache[ff_alias]
-    if ff_def_entry
+    if field
       process_while_reading field
     else
       raise ArgumentError, "Flexifield alias: #{ff_alias} not found in flexifeld def mapping"

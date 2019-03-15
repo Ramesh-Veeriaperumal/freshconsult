@@ -7,8 +7,7 @@ module ParentChildHelper
     ff_def_id = Account.current.flexi_field_defs.first.id
     @item.ff_def = ff_def_id
     if Account.current.id_for_choices_write_enabled?
-      build_ticket_field_data
-      ticket_field_data.ff_def = ff_def_id
+      @item.ticket_field_data.ff_def = ff_def_id
     end
     build_tkt_body
   end
