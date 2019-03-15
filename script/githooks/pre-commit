@@ -1,5 +1,24 @@
 #!/bin/bash
 
+function validate_ejson() {
+  is_invalid=0
+  for f in $(git diff --cached --name-only --diff-filter=ACM -- ./deploy/config/*.ejson)
+  do
+    tf=$(mktemp)
+    git show :${f} > $tf
+    ./deploy/config/dynamic_config_util.rb validate --file="$tf"
+    if [ $? -ne 0 ]; then
+      echo "ERROR: EJSON file $f validation failed"
+      is_invalid=1
+    fi
+    rm -f $tf
+  done
+
+  (( is_invalid )) && { echo "ERROR: You have secrets not encrypted, run \"ejson encrypt ./deploy/config/*.ejson\" and try again"; exit 1; }
+}
+
+validate_ejson
+
 #disabling this script 
 exit 0;
 

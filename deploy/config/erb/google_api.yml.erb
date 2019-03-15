@@ -1,0 +1,10 @@
+<%= node[:opsworks][:environment] %>:
+  google_oauth2:
+    consumer_token: <%= node[:ymls][:google_api][:token] %>
+    consumer_secret:  <%= node[:ymls][:google_api][:secret] %>
+    options:
+      scope: https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile
+    base_calendar_id: admin@freshpo.com
+    access_token: <%= node[:ymls][:google_api][:access_token] %>
+    refresh_token: <%= node[:ymls][:google_api][:refresh_token] %>
+

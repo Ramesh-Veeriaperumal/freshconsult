@@ -1,0 +1,12 @@
+common: &common
+  :dynamo: 
+    :access_key_id: <%= node[:opsworks_access_keys][:access_key_id]%>
+    :secret_access_key: <%= node[:opsworks_access_keys][:secret_access_key] %>
+    :region: <%= node[:opsworks_access_keys][:region] ? node[:opsworks_access_keys][:region] : 'us-east-1' %>
+  :sqs: 
+    :access_key_id: <%= node[:opsworks_access_keys][:access_key_id]%>
+    :secret_access_key: <%= node[:opsworks_access_keys][:secret_access_key] %>
+    :region: <%= node[:opsworks_access_keys][:region] ? node[:opsworks_access_keys][:region] : 'us-east-1' %>
+
+:<%= node[:opsworks][:environment]%>:
+  <<: *common

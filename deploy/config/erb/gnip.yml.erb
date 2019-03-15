@@ -1,0 +1,11 @@
+common: &common
+  user_name: <%= node[:ymls][:gnip][:user_name] %>
+  password: <%= node[:ymls][:gnip][:password] %>
+
+<%= node[:opsworks][:environment] %>:
+  Twitter:
+    <<: *common
+    rules_url: <%= node[:ymls][:gnip][:rules_url] %>
+    replay_rules_url: <%= node[:ymls][:gnip][:replay_rules_url] %>
+    stream_url: <%= node[:ymls][:gnip][:stream_url] %>
+    replay_stream_url: <%= node[:ymls][:gnip][:replay_stream_url] %>

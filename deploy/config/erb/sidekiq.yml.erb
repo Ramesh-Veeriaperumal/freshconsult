@@ -1,0 +1,13 @@
+<%= node[:opsworks][:environment]%>:
+  <% if @is_sidekiq_archive_layer %>
+  host: <%= node[:ymls][:sidekiq][:archive_host] %>
+  port: <%= node[:ymls][:sidekiq][:archive_port] %>
+	<% else %>
+  host: <%= node[:ymls][:sidekiq][:host] %>
+  port: <%= node[:ymls][:sidekiq][:port] %>
+	<% end %>
+  namespace: <%= node[:unique_keys][:sidekiq][:namespace] %>
+  keepalive: <%= node[:ymls][:sidekiq][:keepalive] %>
+  <% if node[:opsworks][:instance][:hostname].include?('sidekiq-realtime-') || node[:opsworks][:instance][:hostname].include?('sidekiq-common-') %>
+  scheduled_poll_interval: <%= node[:ymls][:sidekiq][:scheduled_poll_interval] %>
+  <% end %>

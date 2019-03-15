@@ -1,0 +1,15 @@
+<% 
+hostname = node[:opsworks][:instance][:hostname]
+if hostname.include?("shoryuken-sidekiq-cluster1")
+	@cluster_name = "cluster1"
+elsif hostname.include?("shoryuken-sidekiq-cluster2")
+	@cluster_name = "cluster2"
+elsif hostname.include?("shoryuken-sidekiq-cluster3")
+	@cluster_name = "cluster3"
+else	
+	@cluster_name = "cluster1"	
+end
+%>
+---
+- <%= @cluster_name %>
+

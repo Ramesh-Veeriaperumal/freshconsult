@@ -1,0 +1,24 @@
+<%= node[:opsworks][:environment] %>:
+  zapier:
+    auth_type: <%= node[:ymls][:channel_api_keys][:zapier][:auth_type]%>
+    jwt_secret: <%= node[:ymls][:channel_api_keys][:zapier][:jwt_secret]%>
+    secret_key: <%= node[:ymls][:channel_api_keys][:zapier][:secret_key]%>
+    iv: <%= node[:ymls][:channel_api_keys][:zapier][:iv]%>
+  frankbot:
+    auth_type: <%= node[:ymls][:channel_api_keys][:frankbot][:auth_type]%>
+    secret_key: <%= node[:ymls][:channel_api_keys][:frankbot][:secret_key]%>
+    jwt_secret: <%= node[:ymls][:channel_api_keys][:frankbot][:jwt_secret]%>
+    jwt_default_expiry: <%= node[:ymls][:channel_api_keys][:frankbot][:jwt_default_expiry]%>
+  twitter:
+    auth_type: <%= node[:ymls][:channel_api_keys][:twitter][:auth_type]%>
+    jwt_secret: <%= node[:ymls][:channel_api_keys][:twitter][:jwt_secret]%>
+  proactive:
+    auth_type: <%= node[:ymls][:channel_api_keys][:proactive][:auth_type]%>
+    jwt_secret: <%= node[:ymls][:channel_api_keys][:proactive][:jwt_secret]%>
+  ocr_channel:
+    auth_type: <%= node[:ymls][:channel_api_keys][:ocr_channel][:auth_type]%>
+    jwt_secret: <%= node[:ymls][:channel_api_keys][:ocr_channel][:jwt_secret]%>
+    jwt_default_expiry: <%= node[:ymls][:channel_api_keys][:ocr_channel][:jwt_default_expiry]%>
+  freshmover:
+    auth_type: <%= node[:ymls][:channel_api_keys][:freshmover][:auth_type]%>
+    jwt_secret: <%= node[:ymls][:channel_api_keys][:freshmover][:jwt_secret]%>

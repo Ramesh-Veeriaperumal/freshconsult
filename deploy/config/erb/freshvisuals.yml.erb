@@ -1,0 +1,5 @@
+<%= node[:opsworks][:environment] %>:
+  secret_key: <%= node[:ymls][:freshvisuals][:secret_key] %>
+  app_name: <%= node[:ymls][:freshvisuals][:app_name] %>
+  end_point: <%= node[:ymls][:freshvisuals][:end_point] %>
+  session_expiration: <%= node[:ymls][:freshvisuals][:session_expiration] %>

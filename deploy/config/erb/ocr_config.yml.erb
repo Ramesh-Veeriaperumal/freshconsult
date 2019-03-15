@@ -1,0 +1,7 @@
+<%= node[:opsworks][:environment] %>:
+  api_endpoint: <%= node[:ymls][:ocr_config][:api_endpoint]%>
+  auth_type: <%= node[:ymls][:ocr_config][:auth_type]%>
+  jwt_secret: <%= node[:ymls][:ocr_config][:jwt_secret]%>
+  jwt_default_expiry: <%= node[:ymls][:ocr_config][:jwt_default_expiry]%>
+  admin_jwt_secret: <%= node[:ymls][:ocr_config][:admin_jwt_secret]%>
+  

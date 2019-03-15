@@ -1,0 +1,6 @@
+<%= node[:opsworks][:environment]%>:
+  host: <%= node[:ymls][:reports][:host] %>
+  ticket_reports: "/enterprise_reports/execute/%{priority}"
+  timesheet_reports: "/example/execute"
+  web_req_timeout: <%= node[:ymls][:reports][:web_req_timeout] %>
+  bg_req_timeout: <%= node[:ymls][:reports][:bg_req_timeout] %>

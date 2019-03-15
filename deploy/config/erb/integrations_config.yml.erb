@@ -1,0 +1,31 @@
+app:
+  icontact:
+    app_id: <%= node[:ymls][:integrations][:icontact_app_id] %>
+  xero:
+    consumer_key: <%= node[:ymls][:integrations][:xero_consumer_key] %>
+    consumer_secret: <%= node[:ymls][:integrations][:xero_consumer_secret] %>
+  onedrive:
+    client_id: <%= node[:ymls][:integrations][:onedrive_client_id] %>
+    client_secret: <%= node[:ymls][:integrations][:onedrive_client_secret] %>
+  cloud_elements:
+    <%= node[:opsworks][:environment]%>:
+      server_url: <%= node[:ymls][:integrations][:cloud_elements_server_url] %>
+      auth_header: <%= node[:ymls][:integrations][:cloud_elements_auth_header] %>
+      crm_formula_template_id:
+        salesforce_v2: <%= node[:ymls][:integrations][:crm_template_id_salesforcev2] %>
+        dynamics_v2: <%= node[:ymls][:integrations][:crm_template_id_dynamicv2] %>
+      fd_formula_template_id:
+        salesforce_v2: <%= node[:ymls][:integrations][:fd_template_id_salesforcev2] %>
+        dynamics_v2: <%= node[:ymls][:integrations][:fd_template_id_dynamicv2] %>
+marketplace_landing_paths:
+  github: "/integrations/github/oauth_install"
+  quickbooks: "/integrations/marketplace/quickbooks_sso/landing"
+  shopify: "/integrations/marketplace/shopify/landing"
+  google: "/integrations/marketplace/google/home"
+
+api_keys:
+  google_business_calendar: <%= node[:ymls][:integrations][:google_business_calendar] %>
+proxy_server:
+  host: <%= node[:ymls][:integrations][:outgoing_proxy_host]%>
+  port: 80
+  protocol: "http"

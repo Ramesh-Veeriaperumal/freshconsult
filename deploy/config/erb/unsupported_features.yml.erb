@@ -1,0 +1,21 @@
+common: &common
+  poduseast: []
+  podeucentral: []
+  podapsoutheast: []
+  podapsouth: []
+
+development:
+  <<: *common
+staging:
+  <<: *common
+test:
+  <<: *common
+production:
+  poduseast1: []
+  podeucentral1:
+    - :session_replay
+    - :freshconnect
+  podapsoutheast2:
+    - :freshconnect
+  podapsouth1:
+    - :freshconnect

@@ -1,0 +1,14 @@
+defaults: &defaults
+  shard_name: _x_w
+  state: _x_m
+  trial: x_c
+  free: x_b
+  paid: x_j
+  suspended: x_a
+  <% node[:ymls][:database][:shards].keys.each do |shard_name| %>
+  <% shard_number = shard_name.to_s.match("^.*shard\_(.*)") %>
+  <%= shard_name%>: <%= $1 %>
+  <% end %>
+  
+<%= node[:opsworks][:environment]%>:
+  <<: *defaults

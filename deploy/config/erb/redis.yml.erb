@@ -1,0 +1,11 @@
+defaults: &defaults
+ host: <%= node[:ymls][:redis][:host] %>
+ port: <%= node[:ymls][:redis][:port] %>
+ namespace: <%= node[:unique_keys][:redis][:namespace] %>
+ timeout: <%= node[:ymls][:redis][:timeout] %>
+ keepalive: <%= node[:ymls][:redis][:keepalive] %>
+<%= node[:opsworks][:environment] %>:
+  <<: *defaults
+
+slave:
+  <<: *defaults

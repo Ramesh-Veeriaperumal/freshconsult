@@ -1,0 +1,5 @@
+defaults: &defaults
+  app_id: <%= node[:ymls][:heap_analytics][:app_id] %>
+
+<%= node[:opsworks][:environment]%>:
+  <<: *defaults

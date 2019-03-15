@@ -1,0 +1,14 @@
+<% if node[:ymls][:central] %>
+<%= node[:opsworks][:environment]%>:
+  api_endpoint: <%= node[:ymls][:central][:api_endpoint] %>
+  service_token: <%= node[:ymls][:central][:service_token] %>
+  central_secret:
+    twitter: 
+      label: <%= node[:ymls][:central][:central_secret][:twitter][:label] %>
+      key: <%= node[:ymls][:central][:central_secret][:twitter][:key] %>
+      iv: <%= node[:ymls][:central][:central_secret][:twitter][:iv] %>
+    installed_application: 
+      label: <%= node[:ymls][:central][:central_secret][:installed_application][:label] %>
+      key: <%= node[:ymls][:central][:central_secret][:installed_application][:key] %>
+      iv: <%= node[:ymls][:central][:central_secret][:installed_application][:iv] %>
+<% end %>

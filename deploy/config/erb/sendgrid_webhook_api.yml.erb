@@ -1,0 +1,21 @@
+<%= node[:opsworks][:environment]%>:
+  sendgrid:
+    api:
+      set_url: https://api.sendgrid.com/v3/user/webhooks/parse/settings
+      get_specific_domain_url: https://api.sendgrid.com/v3/user/webhooks/parse/settings/
+      delete_url: https://api.sendgrid.com/v3/user/webhooks/parse/settings/
+      update_url: https://api.sendgrid.com/v3/user/webhooks/parse/settings/
+    api_key: <%= node[:ymls][:sendgrid_webhook][:api_key] %>
+    global_verification_key: <%= node[:ymls][:sendgrid_webhook][:global_verification_key] %>
+    timeout: 30
+    dkim:
+      key:
+        sub_users: 
+          <% node[:ymls][:sendgrid_webhook][:dkim][:key][:sub_users].each do |key, value| %>
+          <%= key %>: <%= value %>
+          <%end%>
+        parent: <%= node[:ymls][:sendgrid_webhook][:dkim][:key][:parent] %>
+      configure:
+        timeout: <%= node[:ymls][:sendgrid_webhook][:dkim][:configure][:timeout] %>
+        retries: <%= node[:ymls][:sendgrid_webhook][:dkim][:configure][:retries] %>
+        expire: <%= node[:ymls][:sendgrid_webhook][:dkim][:configure][:expire] %>

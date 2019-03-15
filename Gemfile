@@ -360,3 +360,5 @@ gem "uglifier", "~> 2.7.2"
 gem "sprockets", "2.2.3"
 gem "rubocop", "0.52.1"
 gem 'safe_yaml', "1.0.4"
+
+gem 'ejson', :require => false

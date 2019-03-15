@@ -1,0 +1,19 @@
+<%= node[:opsworks][:environment] %>:
+  fbots_service: "bot-admin"
+  freshdesk_product_id: <%= node[:ymls][:bot][:product_id] %>
+  template_hash: <%= node[:ymls][:bot][:template_hash] %>
+  create_bot_url: <%= node[:ymls][:bot][:create_bot_url] %>
+  update_bot_url: <%= node[:ymls][:bot][:update_bot_url] %>
+  avatar_bucket_url: <%= node[:ymls][:bot][:avatar_bucket_url] %>
+  avatar_cdn_url: <%= node[:ymls][:bot][:avatar_cdn_url] %>
+  ml_onboarding_url: <%= node[:ymls][:bot][:ml_onboarding_url] %>
+  ml_authorization_key: <%= node[:ymls][:bot][:ml_authorization_key] %>
+  widget_code_src: <%= node[:ymls][:bot][:widget_code_src] %>
+  widget_code_env: "<%= node[:ymls][:bot][:widget_code_env] %>"
+  analytics_url: <%= node[:ymls][:bot][:analytics_url] %>
+  email_bot_domain: <%= node[:ymls][:bot][:email_bot_domain] %>
+  email_bot_path: <%= node[:ymls][:bot][:email_bot_path] %>
+  email_bot_article_cdn_url: <%= node[:ymls][:bot][:email_bot_article_cdn_url] %>
+  widget_code_region: <%= node[:ymls][:bot][:widget_code_region] %>
+  master_client_external_id: <%= node[:ymls][:bot][:master_client_external_id] %>
+  chat_history_url: <%= node[:ymls][:bot][:chat_history_url] %>

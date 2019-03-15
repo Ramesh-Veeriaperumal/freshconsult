@@ -1,0 +1,40 @@
+# Email settings for pop/imap fetching
+incoming:
+  <%= node[:opsworks][:environment] %>:
+    type: imap
+    server: <%= node[:ymls][:email][:incoming_server] %>
+    port: 993
+    ssl: true
+    use_login: true
+    username: <%= node[:ymls][:email][:incoming_username] %>
+    password: <%= node[:ymls][:email][:incoming_password] %>
+    processed_folder: fdver2m
+
+# Email settings for sending mail
+outgoing:
+  <%= node[:opsworks][:environment] %>:
+    address: <%= node[:ymls][:email][:outgoing_address] %>
+    port: 587
+    domain: <%= node[:ymls][:email][:outgoing_domain] %>
+    authentication: :plain
+    user_name: <%= node[:ymls][:email][:outgoing_user_name] %>
+    password: <%= node[:ymls][:email][:outgoing_password] %>
+
+<% node[:ymls][:email][:categories].each do |category, config| %>
+<%= category %>:
+  <%= node[:opsworks][:environment] %>:
+    address: <%= config[:address] %>
+    port: <%= config[:port] %>
+    domain: <%= config[:domain] %>
+    authentication: <%= config[:authentication].to_sym %>
+    user_name: <%= config[:user_name] %>
+    password: <%= config[:password] %>
+
+<% end %>
+
+processing_timeout: 600
+retry_count: 25
+outgoing_spam_account: 1
+domain_validation_key: <%= node[:ymls][:email][:domain_validation_key]%>
+auto_block_user: <%= node[:ymls][:email][:auto_block_email]%>
+activation_email_domain: <%= node[:ymls][:email][:activation_email_domain]%>
