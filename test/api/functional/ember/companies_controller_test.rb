@@ -106,7 +106,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_errors
-    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
     avatar_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
     params_hash = company_params_hash.merge(avatar_id: avatar_id)
     Company.any_instance.stubs(:save).returns(false)
@@ -116,7 +116,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_avatar_id
-    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
     avatar_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
     params_hash = company_params_hash.merge(avatar_id: avatar_id)
     post :create, construct_params({ version: 'private' }, params_hash)
@@ -166,7 +166,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     end
 
   def test_show_a_company_with_avatar
-    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpeg')
     sample_company = create_company
     sample_company.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
     get :show, construct_params(version: 'private', id: sample_company.id)
@@ -400,7 +400,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_remove_avatar
-    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
     avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
     company = create_company(avatar: avatar)
     put :update, construct_params({ version: 'private', id: company.id }, avatar_id: nil)
@@ -411,7 +411,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_change_avatar
-    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
     avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
     company = create_company(avatar: avatar)
     new_avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
@@ -423,7 +423,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_add_avatar
-    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
     avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
     company = create_company
     put :update, construct_params({ version: 'private', id: company.id }, avatar_id: avatar.id)
