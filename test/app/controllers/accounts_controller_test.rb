@@ -538,7 +538,6 @@ class AccountsControllerTest < ActionController::TestCase
     @controller.instance_variable_set(:@account, Account.first)
     @controller.safe_send(:build_primary_email_and_portal)
     assert @controller.instance_variable_get(:@account).primary_email_config.active
-    
   ensure
     I18n.unstub(:available_locales)
     Account.any_instance.unstub(:build_primary_email_config)
