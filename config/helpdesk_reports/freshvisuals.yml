@@ -3,6 +3,8 @@ defaults: &defaults
   app_name: dummy
   end_point: dummy
   session_expiration: 36000
+  session_expiration_for_pricing_api: 30
+  timeout_for_pricing_api: 10
 development:
   <<: *defaults
 staging:

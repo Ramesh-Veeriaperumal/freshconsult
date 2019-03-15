@@ -32,7 +32,8 @@ class Account < ActiveRecord::Base
     :update_billing_info, :allow_billing_info_update, :pricing_plan_change_2019,
     :tag_central_publish, :native_apps, :archive_tickets_api, :bot_agent_response, :simple_outreach, 
     :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
-    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint
+    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
+    :freshvisual_configs
   ].freeze
 
   DB_FEATURES = [
@@ -63,8 +64,8 @@ class Account < ActiveRecord::Base
     :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
     :personal_canned_response, :marketplace, :reverse_notes,
     :freshreports_analytics, :disable_old_reports
-  ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
-
+  ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
+  # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   COMBINED_VERSION_ENTITY_KEYS = [
     Helpdesk::TicketField::VERSION_MEMBER_KEY,

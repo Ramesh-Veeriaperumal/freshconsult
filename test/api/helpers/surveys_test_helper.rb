@@ -224,9 +224,10 @@ end
   end
 
   def send_while_hash(send_while)
+    type = Survey::SEND_WHILE_MAPPING[send_while] || ""
     {
       id: send_while,
-      type: Survey::SEND_WHILE_MAPPING[send_while]
+      type: type
     }
   end
 

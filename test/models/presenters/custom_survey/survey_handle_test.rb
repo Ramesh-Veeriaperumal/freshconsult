@@ -28,13 +28,13 @@ class SurveyHandleTest < ActiveSupport::TestCase
   end
 
   def test_survey_handle_payload
-    skip('failures and errors 21')
-    survey = @account.custom_surveys.last
+    survey = @account.custom_surveys.first
     create_custom_survey_handle(@ticket, survey.id)
-    survey_handle = @account.custom_survey_handles.last
+    survey_handle = @account.custom_survey_handles.first
     payload = survey_handle.central_publish_payload.to_json
     payload.must_match_json_expression(survey_handle_pattern(survey_handle))
     assoc_payload = survey_handle.associations_to_publish.to_json
+
     assoc_payload.must_match_json_expression(
       survey: central_survey_pattern(survey),
       survey_questions: survey_handle_questions_pattern(survey_handle),
