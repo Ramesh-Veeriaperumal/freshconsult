@@ -746,7 +746,8 @@
         "_timeout": "30",
         "_url": "api/v1/email/send",
         "_antivirus_url": "/api/v1/antivirus/scan",
-        "_campaign_url": "api/v1/campaign/send"
+        "_campaign_url": "api/v1/campaign/send",
+        "_imap_application_id": 1
       },
       "fdadmin_api": {
         "authorization_password": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:HBaaizw+pAM8R76aOdB0fK+SwYsW29aK:oKJcHRFNBy/cnVEoPUR6oSdYG/VGIwv54qBXTsrpRXO3Uxc=]",
@@ -1391,6 +1392,12 @@
       "datadog": {
         "license_key": "EJ[1:8wajzLRWh16pSFUbQnVAtbEElr+pt/iaY2e5x6hrAxg=:JsU3V4SBURAtMbZwkfe4SE0B7Ua1cegl:GoWwZzxhN7TntRImqO4OU96PB6MbC1/Rvs2NOwYzW7QzqdbV2WxESTFmMNYRFNwu]",
         "_enable": "true"
+      },
+      "freshvisuals": {
+        "secret_key": "EJ[1:YF3lQpG5+Z00j00ovHPs50zBBAjVCAxiywoFajt+Hl4=:mCucgefYZk/I0zJkrspSM9jCA3XJnsqj:gwSSj5XJs/wDmhIW6TaccnMTVqSKeglglsZ43w3Kuzq1Jw+Okn6S/rrEtY/U2faucRmsrN/In258Jjdw]",
+        "_app_name": "freshdesk-staging",
+        "_end_point": "https://staging.freshreports.com",
+        "_session_expiration": 36000
       }
     },
     "unique_keys": {
