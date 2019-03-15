@@ -826,6 +826,6 @@ module TicketFieldsTestHelper
     end
 
     def ffs_col_taken?(ffs_col)
-      @account.flexifield_def_entries.select{|flexifield| flexifield['flexifield_name'] == ffs_col}.present?
+      @account.reload.flexifield_def_entries.select{|flexifield| flexifield['flexifield_name'] == ffs_col}.present?
     end
 end
