@@ -147,19 +147,6 @@ module HelpdeskControllerMethods
     end
   end
 
-  def autocomplete #Ideally account scoping should go to autocomplete_scoper -Shan (POSSIBLE DEAD CODE)
-    items = autocomplete_scoper.find(
-      :all,
-      :conditions => ["#{autocomplete_field} like ? and account_id = ?", "%#{params[:v]}%", current_account],
-      :limit => 30)
-
-    r = {:results => items.map {|i| {:id => autocomplete_id(i), :value => i.safe_send(autocomplete_field)} } }
-
-    respond_to do |format|
-      format.json { render :json => r.to_json }
-    end
-  end
-
   def check_domain_exists
     if @company.errors && @company.errors[:"company_domains.domain"].include?("has already been taken")
       @company.company_domains.each do |cd|
