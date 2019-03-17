@@ -1,7 +1,9 @@
 $link-text-color: #254d6d;
 $link-text-active-color: #02b875;
 $hover-bg-color: #f3f3f3;
-
+$error-bg-color: #ffecf0;
+$error-border-color: #ffd0d6;
+$error-text-color: #12344d;
 $font-family-normal: 'Proxima Nova Rg', "Helvetica Neue", Helvetica, Arial !default;
 $font-family-bold: 'Proxima Nova bold', "Helvetica Neue", Helvetica, Arial !default;
 $font-family-semibold: 'Proxima Nova sbold', "Helvetica Neue", Helvetica, Arial !default;
@@ -13,6 +15,29 @@ $font-family-semibold: 'Proxima Nova sbold', "Helvetica Neue", Helvetica, Arial 
       border-radius: inherit;
     }
   }
+}
+
+.twitter-blocked .warning {
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.twitter-blocked span {
+  display: inline-block;
+  border-left: 1px solid $error-border-color;
+  height: 16px;
+  padding-left: 10px;
+  margin-left: 6px; 
+  vertical-align: middle;
+}
+
+.twitter-blocked {
+  border: 1px solid $error-border-color;
+  background-color: $error-bg-color;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  color: $error-text-color;
 }
 
 #social-tab-falcon-identifier {

@@ -1,4 +1,4 @@
- 
+
 <% if current_user && current_user.privilege?(:admin_tasks) && current_account %>
     <%= check_smart_filter_revoked %>
 <% end %> 
@@ -30,131 +30,140 @@
       </div>
     <% end %>
   </div>
-
   <div class="tw-wrapper span10">
-    <div id="center-pane" class="center-pane clearfix">
-
-      <div class="tw-header">
-        <%= render :partial => 'social_search' %>
-      </div>
-
-      <!-- No Visible streams -->
-      <% if @streams.empty? && @custom_streams.empty? %>
-        <div class="scl-search-here">
-          <%= t("social.streams.index.search_twitter") %>
-          <span class="image-lazy-load">
-            <img src="/images/social/noresults-search.png" 
-              data-src-retina="/images/social/noresults-search.png" alt />
-          </span>
-        </div>
-        <div class="info-highlight no-stream"><%= t("social.streams.index.no_activity_available") %></div>
-      <% end %>
-      <!-- / No Visible streams -->
-
-
-      <!-- only custom Visible streams -->
-      <% if @streams.empty? && !@custom_streams.empty? %>
-        <div class="info-highlight no-stream"><%= t("social.streams.index.click_activity") %></div>
-      <% end %>
-      <!-- /only custom Visible streams -->
-
-      <div id="streamHighlight" class='info-highlight center' style="display:none;">
-        <a href='#' class="new-tweets"> 0 </a>
-      </div>
-
-      <div id="stream_error_msgs" class='info-highlight center' style="display:none;"></div>
-
-      <div class="info-highlight center" id="tweet_noresults" style="display:none;">
-        <%= t('social.streams.no_results') %>
-      </div>
-
-      <div id="streamTemplate" class="tw-streams"> </div>
-
-      <div style="display:none;text-align:center;" class="more_results" id="more_stream_feeds">
-        <button class="uiButton" id="show_more_feeds"><%= t("discussions.show_more") %></button>
-      </div>
-
-      <div id="no_old_results" class = 'info-highlight center' style="display:none">
-        <%= t('social.streams.twitter.no_older_results')%>
-      </div>
-
-      <div id="social_meta_info" style="display:none">
-        <input type="hidden" id="social_search_type" value="streams"/>
-        <input type="hidden" id="stream_ids" value="<%= @meta_data.map{ |data| data[:stream_id] }.join(',')%>" />
-        <input type="hidden" id="first_ids" value="<%= @meta_data.map{ |data| data[:first_feed_id] }.join(',')%>" />
-        <input type="hidden" id="last_ids" value="<%= @meta_data.map{ |data| data[:last_feed_id] }.join(',')%>" />
-        <input type="hidden" id="refresh_url" value = "" />
-        <input type="hidden" id="next_results" value= "" />
-      </div>
-    </div>
-
-    <div class="tw-explorer">
-      <% social_reauth = social_reauth_required %>
-      <% if social_reauth.present? && !current_account.falcon_ui_enabled?(current_user) %>
-       <%= social_reauth %>
-      <% else %>
-        <div class="info-highlight fs-notify">
-            <a href="https://support.freshdesk.com/support/solutions/articles/195564-understanding-the-options-in-the-social-tab" target="_blank"><b><%= t('social.streams.twitter.flash_card_text')%></b></a>
-        </div>
-      <% end %>
-      
-      <% if privilege?(:reply_ticket) and @visible_handles.any? %>
-        <div class="ph-grey">
-          <h4 class="title pane-title pst-twt"><%= t('social.streams.post_tweet') %></h4>
-          <div class="twt-box clear">
-            <%= render :partial => 'social/twitter/post_tweet', :locals => {:handles => @visible_handles } %>
-          </div>
-        </div>
-      <% end %>
-      <div id="query-box" class="bb-box head">
-        <div id="recent_search">
-          <%= render :partial => 'recent_search' %>
+    <% if is_twitter_blocked? %>
+      <div class="row-fluid">
+        <div class="twitter-blocked clearfix row-fluid span12 pull-right">
+          <img src="/images/social/alert-icon.svg" class="warning">  
+          <span><%= t("social.streams.index.twitter_blocked") %></span>
         </div>
       </div>
-    </div>
-    <% content_for :pagefixed do -%>
-    <div class="tw-wrapper row-fluid">
-      <div id="conv-panel" class="tw-explorer conv-panel tweets-open">
+    <% end %>
+    <div class="twitter-stream-container clearfix">
+      <div id="center-pane" class="center-pane clearfix">
 
-        <div id="conv-floater" style="display:block;">
-          <div class="pane-head">
-            <h3 class="ph conv-title"> <%= t('social.streams.interactions')%> </h3>
-            <span class="floatr ph-icons conv-closebtn">
-              <%= font_icon "cross", :size => 24 %>
+        <div class="tw-header">
+          <%= render :partial => 'social_search' %>
+        </div>
+
+        <!-- No Visible streams -->
+        <% if @streams.empty? && @custom_streams.empty? %>
+          <div class="scl-search-here">
+            <%= t("social.streams.index.search_twitter") %>
+            <span class="image-lazy-load">
+              <img src="/images/social/noresults-search.png" 
+                data-src-retina="/images/social/noresults-search.png" alt />
             </span>
           </div>
-          <div id="conv-wrapper"></div>
+          <div class="info-highlight no-stream"><%= t("social.streams.index.no_activity_available") %></div>
+        <% end %>
+        <!-- / No Visible streams -->
+
+
+        <!-- only custom Visible streams -->
+        <% if @streams.empty? && !@custom_streams.empty? %>
+          <div class="info-highlight no-stream"><%= t("social.streams.index.click_activity") %></div>
+        <% end %>
+        <!-- /only custom Visible streams -->
+
+        <div id="streamHighlight" class='info-highlight center' style="display:none;">
+          <a href='#' class="new-tweets"> 0 </a>
         </div>
 
-        <div id="userinfo-floater" style="display:none;">
-          <div class="pane-head">
-            <a href="javascript:void(0);" class="floatl ph-icons" id="backtoconv-btn">
-              <%= font_icon "arrow-left", :size => 24 %>
-            </a>
-            <h3 class="ph"> <%= t('social.streams.twitter.user_profile')%></h3>
-            <a href="javascript:void(0);" class="floatr ph-icons conv-closebtn">
-              <%= font_icon "cross", :size => 24 %>
-            </a>
-          </div>
-          <div id="stream_userinfo"></div>
+        <div id="stream_error_msgs" class='info-highlight center' style="display:none;"></div>
+
+        <div class="info-highlight center" id="tweet_noresults" style="display:none;">
+          <%= t('social.streams.no_results') %>
         </div>
 
-        <div id="retweet-floater" style="display:none">
-          <div class="pane-head">
-            <a href="javascript:void(0);" class="floatl ph-icons" id="backtoconv-btn">
-              <%= font_icon "arrow-left", :size => 24 %>
-            </a>
-            <span id="default_rt_header"> <h3 class="ph span10"><%= t("social.streams.index.retweets") %></h3> </span>
-            <span id="changed_rt_header" style="display:none"> <h3 class="ph span10"></h3></span>
-            <a href="javascript:void(0);" class="floatr ph-icons conv-closebtn">
-              <%= font_icon "cross", :size => 24 %>
-            </a>
-          </div>
-          <div id="retweet-info"></div>
+        <div id="streamTemplate" class="tw-streams"> </div>
+
+        <div style="display:none;text-align:center;" class="more_results" id="more_stream_feeds">
+          <button class="uiButton" id="show_more_feeds"><%= t("discussions.show_more") %></button>
+        </div>
+
+        <div id="no_old_results" class = 'info-highlight center' style="display:none">
+          <%= t('social.streams.twitter.no_older_results')%>
+        </div>
+
+        <div id="social_meta_info" style="display:none">
+          <input type="hidden" id="social_search_type" value="streams"/>
+          <input type="hidden" id="stream_ids" value="<%= @meta_data.map{ |data| data[:stream_id] }.join(',')%>" />
+          <input type="hidden" id="first_ids" value="<%= @meta_data.map{ |data| data[:first_feed_id] }.join(',')%>" />
+          <input type="hidden" id="last_ids" value="<%= @meta_data.map{ |data| data[:last_feed_id] }.join(',')%>" />
+          <input type="hidden" id="refresh_url" value = "" />
+          <input type="hidden" id="next_results" value= "" />
         </div>
       </div>
+
+      <div class="tw-explorer">
+        <% social_reauth = social_reauth_required %>
+        <% if social_reauth.present? && !current_account.falcon_ui_enabled?(current_user) %>
+         <%= social_reauth %>
+        <% else %>
+          <div class="info-highlight fs-notify">
+              <a href="https://support.freshdesk.com/support/solutions/articles/195564-understanding-the-options-in-the-social-tab" target="_blank"><b><%= t('social.streams.twitter.flash_card_text')%></b></a>
+          </div>
+        <% end %>
+        
+        <% if privilege?(:reply_ticket) and @visible_handles.any? %>
+          <div class="ph-grey">
+            <h4 class="title pane-title pst-twt"><%= t('social.streams.post_tweet') %></h4>
+            <div class="twt-box clear">
+              <%= render :partial => 'social/twitter/post_tweet', :locals => {:handles => @visible_handles } %>
+            </div>
+          </div>
+        <% end %>
+        <div id="query-box" class="bb-box head">
+          <div id="recent_search">
+            <%= render :partial => 'recent_search' %>
+          </div>
+        </div>
+      </div>
+      <% content_for :pagefixed do -%>
+      <div class="tw-wrapper row-fluid">
+        <div id="conv-panel" class="tw-explorer conv-panel tweets-open">
+
+          <div id="conv-floater" style="display:block;">
+            <div class="pane-head">
+              <h3 class="ph conv-title"> <%= t('social.streams.interactions')%> </h3>
+              <span class="floatr ph-icons conv-closebtn">
+                <%= font_icon "cross", :size => 24 %>
+              </span>
+            </div>
+            <div id="conv-wrapper"></div>
+          </div>
+
+          <div id="userinfo-floater" style="display:none;">
+            <div class="pane-head">
+              <a href="javascript:void(0);" class="floatl ph-icons" id="backtoconv-btn">
+                <%= font_icon "arrow-left", :size => 24 %>
+              </a>
+              <h3 class="ph"> <%= t('social.streams.twitter.user_profile')%></h3>
+              <a href="javascript:void(0);" class="floatr ph-icons conv-closebtn">
+                <%= font_icon "cross", :size => 24 %>
+              </a>
+            </div>
+            <div id="stream_userinfo"></div>
+          </div>
+
+          <div id="retweet-floater" style="display:none">
+            <div class="pane-head">
+              <a href="javascript:void(0);" class="floatl ph-icons" id="backtoconv-btn">
+                <%= font_icon "arrow-left", :size => 24 %>
+              </a>
+              <span id="default_rt_header"> <h3 class="ph span10"><%= t("social.streams.index.retweets") %></h3> </span>
+              <span id="changed_rt_header" style="display:none"> <h3 class="ph span10"></h3></span>
+              <a href="javascript:void(0);" class="floatr ph-icons conv-closebtn">
+                <%= font_icon "cross", :size => 24 %>
+              </a>
+            </div>
+            <div id="retweet-info"></div>
+          </div>
+        </div>
+      </div>
+      <%- end %>
     </div>
-    <%- end %>
   </div>
 </div>
 

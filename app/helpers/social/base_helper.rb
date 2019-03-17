@@ -1,9 +1,15 @@
 module Social::BaseHelper
+  include Redis::OthersRedis
+  include Redis::RedisKeys
 
   Social::Twitter::Constants::AVATAR_SIZES.each do |size|
     define_method("#{size}_twt_avatar") do |org_avatar_url|
       org_avatar_url[size]
     end
+  end
+
+  def is_twitter_blocked?
+    redis_key_exists?(TWITTER_APP_BLOCKED)
   end
 
   def blossom_or_blossom_classic?

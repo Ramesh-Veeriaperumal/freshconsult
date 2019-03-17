@@ -7774,6 +7774,7 @@ en:
         all: All
         search_twitter: "Search twitter for updates "
         no_activity_available: "No activity available"
+        twitter_blocked: "Unable to reach twitter servers at the moment. Please reply directly from Twitter"
         click_activity: "Click on a stream to see activity"
       search:
         exclude_handles: Filter out tweets from these handles
