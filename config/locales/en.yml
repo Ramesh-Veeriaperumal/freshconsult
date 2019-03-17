@@ -7776,6 +7776,7 @@ en:
         no_activity_available: "No activity available"
         twitter_blocked: "Unable to reach twitter servers at the moment. Please reply directly from Twitter"
         click_activity: "Click on a stream to see activity"
+        twitter_blocked: "Unable to reach twitter servers at the moment. Please reply directly from Twitter"
       search:
         exclude_handles: Filter out tweets from these handles
         img_twitter: <i class="ficon-twitter fsize-18" size="18"></i>
