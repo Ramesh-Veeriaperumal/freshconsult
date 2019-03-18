@@ -243,6 +243,20 @@ module MemcacheKeys
   PLANS_AGENT_COSTS_BY_CURRENCY = 'PLANS_AGENT_COSTS_BY_CURRENCY:%{currency_name}'.freeze
 
   ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
+    
+  def fetch_from_cache(key, &block)
+    @cached_values = {} unless @cached_values
+    return @cached_values[key] if @cached_values[key]
+    val = MemcacheKeys.fetch(key, &block)
+    @cached_values[key] = val
+    val
+  end
+
+  def delete_value_from_cache(key)
+    MemcacheKeys.delete_from_cache(key)
+    @cached_values.delete(key) if @cached_values
+  end
+
   class << self
 
     include MemcacheReadWriteMethods

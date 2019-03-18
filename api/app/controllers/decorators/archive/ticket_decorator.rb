@@ -9,10 +9,10 @@ class Archive::TicketDecorator < TicketDecorator
 
   def custom_fields
     custom_fields_hash = {}
-    ticket_fields_cache = Account.current.ticket_fields_from_cache
+    custom_fields_mapping = Account.current.ticket_fields_from_cache.select { |field| field.default == false }.map { |x| [x.name, x.field_type] }.to_h
     custom_field.each do |k, v|
       custom_fields_hash[@name_mapping[k]] = if v.respond_to?(:utc)
-                                               if ticket_fields_cache.find { |x| x.name.eql?(k) && x.custom_date_time_field? }
+                                               if custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_DATE_TIME 
                                                  format_date(v, true)
                                                else
                                                  format_date(v)
