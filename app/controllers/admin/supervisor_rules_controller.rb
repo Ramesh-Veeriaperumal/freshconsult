@@ -8,7 +8,7 @@ class Admin::SupervisorRulesController < Admin::VaRulesController
   end
 
   def ticket_field_actions_for_automations
-    fields = current_account.ticket_fields.non_encrypted_custom_fields.reject(&:fsm_reserved_custom_field?).all
+    fields = current_account.ticket_fields.non_encrypted_custom_fields.all.reject(&:fsm_reserved_custom_field?)
     fields.reject! { |tf| TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES.include?(tf.flexifield_def_entry.flexifield_name) }
   end
 
