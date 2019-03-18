@@ -36,7 +36,8 @@
     <% end %>
   </div>
 
-  <div class="calculate-container">
+  <input type="hidden" data-omni-plan-id="<%= plan.name.parameterize.underscore %>" data-plan-id="<%= plan.id %>"/>
+  <div class="calculate-container" id="<%= plan.name.parameterize.underscore %>">
     <% if plan.omni_plan? || plan.basic_variant? %>
       <p class="omni-billing-edit hide">
         <span><%= t('omni_channel') %></span>
