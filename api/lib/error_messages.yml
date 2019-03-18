@@ -240,8 +240,8 @@ api_error_messages:
   agent_group_type_mismatch: "Agent and group need to be of the same type"
   date_limit_exceeded: "The maximum range for appointment dates is 15 days."
   invalid_date_time_range: "Invalid date time range, end time should be greater or equal to the start time."
-  field_agent_scope: "Field Agent should have restricted scope"
-  field_agent_roles: "Field Agent should have agent role"
+  field_agent_scope: "Field technician should have restricted or group scope"
+  field_agent_roles: "Field technician should have agent role"
 
   source_update_not_permitted: "Source of tickets of sources %{sources} can not be updated."
   #help widget validation error messages
@@ -252,12 +252,12 @@ api_error_messages:
   default_role_modified: "You cannot modify a default role."
   missing_privileges: "Please check privileges that are dependent on: '%{list}'"
   should_be_child: A ticket of type %{type} cannot be created without parent_id
-  to_service_task_not_possible: The type of a ticket can not be updated to Service Task
-  from_service_task_not_possible: The type of a Service Task ticket can not be updated
-  only_field_group_allowed: Only Service Groups can be assigned to a ticket of type Service Task
-  field_group_not_allowed: Tickets that are not of type Service Task cannot be assigned a Field Agent Group
-  only_field_agent_allowed: Only Field Technicians can be assigned to a ticket of type Service Task
-  field_agent_not_allowed: Tickets that are not of type Service Task cannot be assigned a Field Technician
+  to_service_task_not_possible: The type of a ticket can not be updated to service task
+  from_service_task_not_possible: The type of a service task ticket can not be updated
+  only_field_group_allowed: Only service groups can be assigned to a ticket of type service task
+  only_field_agent_allowed: Only field technicians can be assigned to a ticket of type service task
+  field_agent_not_allowed: Tickets that are not of type service task cannot be assigned a field technician
+  field_group_not_allowed: Tickets that are not of type service Task cannot be assigned a field technician
   invalid_field_auto_assign: "Auto ticket assignment is not available for service groups."
   invalid_agent_ids: "Agent and group need to be of the same type."
   existing_import_inprogress: "We're still processing the previous import. Retry when it's complete."
