@@ -4229,7 +4229,7 @@ en:
       active: "Full-Time"
       occasional: "Occasional"
       deleted: "Deleted"
-      field_agent: "Field Technicians"
+      field_agent: "Field technicians"
     sort:
       sorted_by: Sorted by
       name: "Name"
@@ -4667,7 +4667,7 @@ en:
       title4: Scopes and Roles
       info14: You can choose which tickets your agents can see by modifying their Ticket Scope. You should also specify what actions an agent is able to perform within your helpdesk by choosing a Role.
       info15: Note that you will not be able to either modify your own roles or delete yourself as an agent.
-      title5: Field Technician
+      title5: Field technician
       info16: A field technician is an expert representative from the company who assists users with maintainance, repairs or any other operations outside the company premises on specified locations.
     make_admin: Make this agent an admin
     view_user: View User
@@ -4697,7 +4697,7 @@ en:
     occasional_description: This agent will be accessing the support portal
     full_time: Full time
     occasional: Occasional
-    field_agent: Field Technician
+    field_agent: Field technician
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
     insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"
