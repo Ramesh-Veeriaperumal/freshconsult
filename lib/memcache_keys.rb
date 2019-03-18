@@ -232,6 +232,19 @@ module MemcacheKeys
   HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"
 
   INSTALLED_APPS_HASH = 'INSTALLED_APPS_HASH:%{account_id}'.freeze
+    
+  def fetch_from_cache(key, &block)
+    @cached_values = {} unless @cached_values
+    return @cached_values[key] if @cached_values[key]
+    val = MemcacheKeys.fetch(key, &block)
+    @cached_values[key] = val
+    val
+  end
+
+  def delete_value_from_cache(key)
+    MemcacheKeys.delete_from_cache(key)
+    @cached_values.delete(key) if @cached_values
+  end
 
   class << self
 
