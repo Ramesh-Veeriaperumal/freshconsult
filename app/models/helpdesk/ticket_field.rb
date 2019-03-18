@@ -35,6 +35,8 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   CUSTOM_DATE_TIME = 'custom_date_time'.freeze
 
+  DATE_TIME_FIELD = 'date_time'.freeze
+
   SECTION_LIMIT = 2
 
   SECTION_DROPDOWNS = ["default_ticket_type", "custom_dropdown"]

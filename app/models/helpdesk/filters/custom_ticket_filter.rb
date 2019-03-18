@@ -180,6 +180,29 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         :operator => get_op_list(cont), :options => get_default_choices(:group_id) }
       end
 
+# Custom date field
+#      Account.current.custom_date_fields_from_cache.each do |col|
+#        defs[get_id_from_field(col).to_sym] = {
+#          get_op_from_field(col).to_sym => get_container_from_field(col),
+#          name: col.label,
+#          container: get_container_from_field(col),
+#          operator: get_op_from_field(col),
+#          options: get_custom_choices(col)
+#         }
+     #      end
+
+    # Custom date time field
+     fsm_date_time_fields = TicketFilterConstants::FSM_DATE_TIME_FIELDS.collect { |x| x + "_#{Account.current.id}" }
+     Account.current.custom_date_time_fields_from_cache.select { |x| fsm_date_time_fields.include?(x.name) }.each do |col|
+      defs[get_id_from_field(col).to_sym] = {
+        get_op_from_field(col).to_sym => get_container_from_field(col),
+        name: col.label,
+        container: get_container_from_field(col),
+        operator: get_op_from_field(col),
+        options: get_custom_choices(col)
+      }
+     end
+
       #Custom fields
 
       Account.current.custom_dropdown_fields_from_cache.each do |col|
@@ -452,7 +475,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def sql_conditions
     @sql_conditions  ||= begin
-
       if errors? 
         all_sql_conditions = [" 1 = 2 "] 
       else

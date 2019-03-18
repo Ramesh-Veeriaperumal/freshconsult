@@ -58,17 +58,19 @@ module TicketHelper
 
   def create_service_task_ticket(options = {})
     parent_ticket = create_ticket
+    fsm_fields = [:fsm_contact_name, :fsm_phone_number, :fsm_service_location, :fsm_appointment_start_time, :fsm_appointment_end_time]
+    fsm_custom_fields = Hash[options.select { |key, _| fsm_fields.include? key }.map { |k, v| ["cf_#{k}_#{Account.current.id}", v] }]
+
     params = { assoc_parent_id: parent_ticket.display_id, email: Faker::Internet.email,
-               :responder_id => options[:responder_id],
+               responder_id: options[:responder_id],
                description: Faker::Lorem.characters(10), subject: Faker::Lorem.characters(10),
                priority: 2, status: 2, type: Admin::AdvancedTicketing::FieldServiceManagement::Constant::SERVICE_TASK_TYPE,
-               custom_fields: { cf_fsm_contact_name: "test", cf_fsm_service_location: "test", cf_fsm_phone_number: "test" } }
-
-    fsm_ticket =  create_ticket(params)
+               custom_field: fsm_custom_fields }
+    fsm_ticket = create_ticket(params)
     fsm_ticket
   end
 
-  def create_n_tickets(count, params={})
+  def create_n_tickets(count, params = {})
     ticket_ids = []
     count.times do
       ticket_ids << create_ticket(params).display_id

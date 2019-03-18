@@ -129,7 +129,20 @@ module Cache::Memcache::Account
   end
 
   def clear_custom_date_fields_cache
-    MemcacheKeys.delete_from_cache(ACCOUNT_CUSTOM_DATE_FIELDS % { :account_id =>self.id })
+    @custom_date_fields_from_cache = nil
+    MemcacheKeys.delete_from_cache(custom_date_fields_memcache_key)
+  end
+
+  def custom_date_time_fields_from_cache
+    @custom_date_time_fields_from_cache ||= begin
+      key = custom_date_time_fields_memcache_key
+      MemcacheKeys.fetch(key) { self.ticket_fields.where(field_type: 'custom_date_time').find(:all) }
+    end
+  end
+
+  def clear_custom_date_time_fields_cache
+    @custom_date_time_fields_from_cache = nil
+    MemcacheKeys.delete_from_cache(custom_date_time_fields_memcache_key)
   end
 
   def roles_from_cache
@@ -662,7 +675,11 @@ module Cache::Memcache::Account
     end
 
     def custom_date_fields_memcache_key
-      ACCOUNT_CUSTOM_DATE_FIELDS % { :account_id => self.id }
+      format(ACCOUNT_CUSTOM_DATE_FIELDS, account_id: self.id)
+    end
+
+    def custom_date_time_fields_memcache_key
+      format(ACCOUNT_CUSTOM_DATE_TIME_FIELDS, account_id: self.id)
     end
 
     def roles_cache_key

@@ -48,7 +48,7 @@ class QueryHash
 
     def transform_value(query)
       val = query['value']
-      return formatted_created_at(query) if is_created_at?(query)
+      return formatted_created_at(query) if date_time_field?(query)
       if format.eql?(:system)
         val.is_a?(Array) ? val.join(',') : val
       else
@@ -83,8 +83,14 @@ class QueryHash
       TicketDecorator.display_name(get_ff_field_name_from_query(query))
     end
 
-    def is_created_at?(query)
-      query['condition'] == 'created_at' && query['operator'] == 'is_greater_than'
+    def date_time_field?(query)
+      if Account.current.field_service_management_enabled? # can be replaced with Account.current.custom_date_time_fields_from_cache.present? when we support filter for all custom date time fields
+        fsm_date_time_fields = TicketFilterConstants::FSM_DATE_TIME_FIELDS.collect { |x| x + "_#{Account.current.id}" }
+        (query['condition'] == 'created_at' && query['operator'] == 'is_greater_than') || TicketFilterConstants::FSM_DATE_TIME_FIELDS.include?(query['condition']) || fsm_date_time_fields.include?(query['ff_name'])
+      # elsif Account.current.custom_date_fields_from_cache.present?
+      else
+        query['condition'] == 'created_at' && query['operator'] == 'is_greater_than'
+      end
     end
 
     def formatted_created_at(query)

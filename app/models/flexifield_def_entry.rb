@@ -17,7 +17,7 @@ class FlexifieldDefEntry < ActiveRecord::Base
               :conditions => [ "flexifield_coltype = 'dropdown' or flexifield_coltype = 'checkbox'" ]  
   
   before_save :ensure_alias_is_one_word
-  before_save :clearing_custom_date_field_cache, on: [:create, :update]
+  after_commit :clear_custom_date_field_cache, :clear_custom_date_time_field_cache, on: [:create, :update, :destroy]
   before_create :set_account_id
 
   #https://github.com/rails/rails/issues/988#issuecomment-31621550
@@ -87,11 +87,17 @@ class FlexifieldDefEntry < ActiveRecord::Base
     flexifield_alias.gsub!(/\s+/,"_")
   end
 
-    def clearing_custom_date_field_cache
-      if self.flexifield_coltype == 'date'
-        Account.current.clear_custom_date_fields_cache
-      end
+  def clear_custom_date_field_cache
+    if self.flexifield_coltype == 'date'
+      Account.current.clear_custom_date_fields_cache
     end
+  end
+
+  def clear_custom_date_time_field_cache
+    if self.flexifield_coltype == Helpdesk::TicketField::DATE_TIME_FIELD
+      Account.current.clear_custom_date_time_fields_cache
+    end
+  end
 
   def set_account_id
     self.account_id = flexifield_def.account_id

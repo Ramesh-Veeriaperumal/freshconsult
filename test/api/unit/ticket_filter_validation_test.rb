@@ -135,4 +135,99 @@ class TicketFilterValidationTest < ActionView::TestCase
     ticket_filter = TicketFilterValidation.new(query_hash: '', version: 'private')
     assert ticket_filter.valid?
   end
+
+  def test_fsm_appointment_time_filter_with_valid_start_time
+    Account.stubs(:current).returns(Account.first)
+    Account.current.stubs(:field_service_management_enabled?).returns(true)
+    perform_fsm_operations
+    query_hash_params = {
+      '0' => { 'condition' => 'cf_fsm_appointment_start_time', 'operator' => 'is', 'value' => { from: '2018-12-02T12:12:00', to: '2018-12-12T10:12:00' }, 'type' => 'custom_field' }
+    }
+    ticket_filter = TicketFilterValidation.new(query_hash: query_hash_params, version: 'private')
+    assert ticket_filter.valid?
+  ensure
+    cleanup_fsm
+    Account.any_instance.unstub(:field_service_management_enabled?)
+  end
+
+  def test_fsm_appointment_time_filter_with_valid_start_and_end_time
+    Account.stubs(:current).returns(Account.first)
+    Account.current.stubs(:field_service_management_enabled?).returns(true)
+    perform_fsm_operations
+    query_hash_params = {
+      '0' => { 'condition' => 'cf_fsm_appointment_start_time', 'operator' => 'is', 'value' => { from: '2018-12-02T12:12:00', to: '2018-12-12T10:12:00' }, 'type' => 'custom_field' },
+      '1' => { 'condition' => 'cf_fsm_appointment_end_time', 'operator' => 'is', 'value' => { from: '2018-12-02T12:12:00', to: '2018-12-12T10:12:00' }, 'type' => 'custom_field' }
+    }
+    ticket_filter = TicketFilterValidation.new(query_hash: query_hash_params, version: 'private')
+    assert ticket_filter.valid?
+  ensure
+    cleanup_fsm
+    Account.any_instance.unstub(:field_service_management_enabled?)
+  end
+
+  def test_fsm_appointment_time_filter_with_all_default_dropdown_value
+    Account.stubs(:current).returns(Account.first)
+    Account.current.stubs(:field_service_management_enabled?).returns(true)
+    perform_fsm_operations
+    failed_option = []
+    TicketFilterConstants::DATE_TIME_FILTER_DEFAULT_OPTIONS.each do |value|
+      query_hash_params = {
+        '0' => { 'condition' => 'cf_fsm_appointment_start_time', 'operator' => 'is', 'value' => value, 'type' => 'custom_field' }
+      }
+      ticket_filter = TicketFilterValidation.new(query_hash: query_hash_params, version: 'private')
+      failed_option << value unless ticket_filter.valid?
+    end
+    refute failed_option.present?
+  ensure
+    cleanup_fsm
+    Account.any_instance.unstub(:field_service_management_enabled?)
+  end
+
+  def test_fsm_appointment_time_filter_with_invalid_start_and_end_time
+    Account.stubs(:current).returns(Account.first)
+    Account.current.stubs(:field_service_management_enabled?).returns(true)
+    perform_fsm_operations
+    query_hash_params = {
+      '0' => { 'condition' => 'cf_fsm_appointment_start_time', 'operator' => 'is', 'value' => { from: '2018-12-12', to: '2018-12-02' }, 'type' => 'custom_field' }
+    }
+    ticket_filter = TicketFilterValidation.new(query_hash: query_hash_params, version: 'private')
+    refute ticket_filter.valid?
+    error = ticket_filter.errors.full_messages
+    assert error.include?('Query hash[0] invalid_date_time_range')
+  ensure
+    cleanup_fsm
+    Account.any_instance.unstub(:field_service_management_enabled?)
+  end
+
+  def test_fsm_appointment_time_filter_with_invalid_datetime_range
+    Account.stubs(:current).returns(Account.first)
+    Account.current.stubs(:field_service_management_enabled?).returns(true)
+    perform_fsm_operations
+    query_hash_params = {
+      '0' => { 'condition' => 'cf_fsm_appointment_start_time', 'operator' => 'is', 'value' => { from: '2018-12-02', to: '2018-12-31' }, 'type' => 'custom_field' }
+    }
+    ticket_filter = TicketFilterValidation.new(query_hash: query_hash_params, version: 'private')
+    refute ticket_filter.valid?
+    error = ticket_filter.errors.full_messages
+    assert error.include?('Query hash[0] date_limit_exceeded')
+  ensure
+    cleanup_fsm
+    Account.any_instance.unstub(:field_service_management_enabled?)
+  end
+
+  def test_fsm_appointment_date_filter_with_invalid_string
+    Account.stubs(:current).returns(Account.first)
+    Account.current.stubs(:field_service_management_enabled?).returns(true)
+    perform_fsm_operations
+    query_hash_params = {
+      '0' => { 'condition' => 'cf_fsm_appointment_start_time', 'operator' => 'is', 'value' => Faker::Lorem.characters(10), 'type' => 'custom_field' }
+    }
+    ticket_filter = TicketFilterValidation.new(query_hash: query_hash_params, version: 'private')
+    refute ticket_filter.valid?
+    error = ticket_filter.errors.full_messages
+    assert error.include?('Query hash[0] query_format_invalid')
+  ensure
+    cleanup_fsm
+    Account.any_instance.unstub(:field_service_management_enabled?)
+  end
 end
