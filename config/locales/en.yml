@@ -6033,7 +6033,7 @@ en:
       name: DKIM
       title: DKIM Settings
       help: How to configure DKIM settings?
-      help_note: DKIM helps you digitally sign email from your help desk with your email domain name(s). This helps build you brand identity in all communications with your customers.
+      help_note: DKIM helps you digitally sign email from your helpdesk with your email domain name(s). This helps you build brand identity in all communications with your customers.
       description: Please update the following DNS settings in your Internet Service Provider's website. Once you have copied all the settings for each domain, you can click the Verify button to validate that the settings are active
       config: Configure
       configuring: Configuring...
