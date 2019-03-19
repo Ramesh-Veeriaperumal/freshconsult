@@ -366,4 +366,3 @@
   :cascade_dispatcher: false
   :custom_encrypted_fields: false
   :undo_send: false
-  :reverse_notes: false

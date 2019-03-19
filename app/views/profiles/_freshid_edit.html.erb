@@ -55,17 +55,19 @@
 
 		<% end %>
 		<%if current_account.reverse_notes_enabled? && current_account.falcon_ui_enabled?(current_user)%>
-      <div class="row-fluid">
-        <div class="span10 sort-conversations__label"><%= t("account.sort_conversations.label") %></div>
-        <div class="span12 sort-conversations__select">
-          <%= select_tag :sort_conversations, options_for_select([[t("account.sort_conversations.option1"), false], [t("account.sort_conversations.option2"), true]], current_account.oldest_notes_first_enabled?(current_user)) %>
-        </div>
-      </div>
-      <div class="row-fluid">
-        <div id="sort_conversation" class="span12 align-left sort-conversations__tip" data-notice="<%= t("account.sort_conversations.helpnote") %>" data-alert-false="<%= t("account.sort_conversations.latest_top")%>" data-alert-true="<%= t("account.sort_conversations.oldest_top")%>">
-          <%= t("account.sort_conversations.helpnote") %>
-        </div>
-      </div>
+			<div class="sort-conversations-freshid">
+				<div class="row-fluid">
+					<div class="span10 sort-conversations__label"><%= t("account.sort_conversations.label") %></div>
+					<div class="span12 sort-conversations__select">
+						<%= select_tag :sort_conversations, options_for_select([[t("account.sort_conversations.option1"), false], [t("account.sort_conversations.option2"), true]], current_account.oldest_notes_first_enabled?(current_user)) %>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div id="sort_conversation" class="span12 align-left sort-conversations__tip" data-notice="<%= t("account.sort_conversations.helpnote") %>" data-alert-false="<%= t("account.sort_conversations.latest_top")%>" data-alert-true="<%= t("account.sort_conversations.oldest_top")%>">
+						<%= t("account.sort_conversations.helpnote") %>
+					</div>
+				</div>
+			</div>
     <%end%>
     
 		<% if current_account.undo_send_enabled? && current_account.falcon_ui_enabled?(current_user) %>

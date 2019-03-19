@@ -62,4 +62,20 @@ class FreshopsMailer < ActionMailer::Base
     }
     mail(headers).deliver
   end
+
+  def send_daypass_usage_export(to_email, csv)
+    headers = {
+      to:  to_email,
+      cc:  "ramkumar@freshworks.com",
+      subject:  "Daypass Usage Report",
+      sent_on:  Time.now,
+      body:  "Please find Daypass Usage Report"
+    }
+
+    attachments.inline['day_pass_usage.csv'] = {
+      mime_type: 'application/csv; charset=utf-8; header=present',
+      content: csv
+    }
+    mail(headers).deliver
+  end
 end
