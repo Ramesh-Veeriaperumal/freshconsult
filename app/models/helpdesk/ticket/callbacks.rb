@@ -990,8 +990,8 @@ private
   def round_robin_attribute_changes
     Hash.new.tap do |field_changes|
       field_changes[:active]   = rr_active_change if rr_active_changed?
-      field_changes[:agent_id] = @model_changes[:responder_id] if @model_changes.key?(:responder_id)
-      field_changes[:group_id] = @model_changes[:group_id] if @model_changes.key?(:group_id)
+      field_changes[:agent_id] = @model_changes[:responder_id].map(&:to_s).map(&:presence) if @model_changes.key?(:responder_id)
+      field_changes[:group_id] = @model_changes[:group_id].map(&:to_s).map(&:presence) if @model_changes.key?(:group_id)
     end
   end
 end
