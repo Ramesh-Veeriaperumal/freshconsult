@@ -157,6 +157,13 @@ class Solution::FolderMeta < ActiveRecord::Base
 		@visible_articles ||= ((visible_articles_count > 0) ? published_article_meta.all : [])
 	end
 
+  def add_companies(customer_ids, add_to_existing)
+    customer_folders.destroy_all unless add_to_existing
+    customer_ids.each do |cust_id|
+      customer_folders.build({ customer_id: cust_id }) unless self.customer_ids.include?(cust_id)
+    end
+  end
+  
 	private
 
 	def clear_cache
@@ -166,13 +173,6 @@ class Solution::FolderMeta < ActiveRecord::Base
 	def clear_cache_with_condition
 		clear_cache unless (previous_changes.keys & ['solution_category_meta_id', 'position']).empty?
 	end
-
-  def add_companies(customer_ids, add_to_existing)
-    customer_folders.destroy_all unless add_to_existing
-    customer_ids.each do |cust_id|
-      customer_folders.build({:customer_id => cust_id}) unless self.customer_ids.include?(cust_id)
-    end
-  end
 
   def name_uniqueness
   	self.solution_folders.each do |f|
