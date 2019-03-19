@@ -69,6 +69,18 @@ module Settings
       match_json([bad_request_error_pattern('primary_language', :invalid_language, languages: 'invalid_primary_language')])
     end
 
+    def test_update_invalid_language_in_production
+      Rails.env.stubs(:production?).returns(true)
+      put :update, construct_params('primary_language' => 'en', 'supported_languages' => ['ca', 'test-ui'], 'portal_languages' => ['ca'])
+      assert_response 400
+      match_json([bad_request_error_pattern('supported_languages', :invalid_language, languages: 'test-ui')])
+      put :update, construct_params('primary_language' => 'invalid_primary_language', 'supported_languages' => ['ca'], 'portal_languages' => ['ca'])
+      assert_response 400
+      match_json([bad_request_error_pattern('primary_language', :invalid_language, languages: 'invalid_primary_language')])
+    ensure
+      Rails.env.unstub(:production?)
+    end
+
     def test_portal_language_not_supported
       @account.account_additional_settings.supported_languages = ['ru-RU', 'fr']
       @account.account_additional_settings.additional_settings[:portal_languages] = ['fr']
