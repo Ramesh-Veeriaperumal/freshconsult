@@ -167,7 +167,11 @@ module Fdadmin::AccountsControllerMethods
 	end
 
   def trigger_enable_old_ui_action
-    InternalService::FreshopsOperations.perform_async(params)
+    ::InternalService::FreshopsOperations.perform_async(params)
+  end
+
+  def trigger_daypass_export_action
+  	::InternalService::FreshopsOperations.perform_async(params)
   end
 	
 	def trigger_stop_account_cancellation_action
@@ -175,5 +179,4 @@ module Fdadmin::AccountsControllerMethods
 		account.make_current
 		account.kill_account_cancellation_request_job
 	end
-
 end
