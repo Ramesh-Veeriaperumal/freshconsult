@@ -327,4 +327,8 @@ class CustomFieldsController < Admin::AdminController
     def denormalized_flexifields_enabled?
       @denormalized_flexifields_enabled ||= Account.current.denormalized_flexifields_enabled?
     end
+
+    def ticket_field_limit_increase_enabled?
+      @ticket_field_limit_increase_enabled ||= Account.current.ticket_field_limit_increase_enabled?
+    end
 end

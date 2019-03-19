@@ -309,6 +309,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
     level1_picklist_values.collect { |c| [c.value, c.value] }
   end
 
+  def dropdown_choices_with_picklist_id
+    level1_picklist_values.collect { |c| [c.picklist_id, c.picklist_id] }
+  end
+
   def dropdown_choices_with_id
     level1_picklist_values.collect { |c| [c.id, c.value] }
   end
@@ -579,7 +583,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     choice_hash = {}
     picklist_values.each do |pv|
       pv.sub_picklist_values.each do |l2pv|
-        choice_hash[l2pv.id] = l2pv.value
+        choice_hash[l2pv.picklist_id] = l2pv.value
       end
     end
     choice_hash
@@ -590,7 +594,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
     picklist_values.each do |pv|
       pv.sub_picklist_values.each do |l2pv|
         l2pv.sub_picklist_values.each do |l3pv|
-          choice_hash[l3pv.id] = l3pv.value
+          choice_hash[l3pv.picklist_id] = l3pv.value
         end
       end
     end

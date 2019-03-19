@@ -203,6 +203,7 @@ class TicketsController < ApiApplicationController
 
     def conditional_preload_options
       preload_options = [:schema_less_ticket, :tags, { flexifield: [:denormalized_flexifield] }]
+      preload_options.push(:ticket_field_data) if Account.current.join_ticket_field_data_enabled?
       @ticket_filter.include_array.each do |assoc|
         preload_options << (ApiTicketConstants::INCLUDE_PRELOAD_MAPPING[assoc.to_sym] || assoc)
         increment_api_credit_by(2) unless assoc.to_s == DESCRIPTION && current_account.description_by_default_enabled?

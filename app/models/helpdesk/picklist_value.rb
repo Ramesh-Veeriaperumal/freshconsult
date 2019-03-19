@@ -3,7 +3,7 @@ class Helpdesk::PicklistValue < ActiveRecord::Base
   include Redis::DisplayIdRedis
   include Redis::RedisKeys
 
-  clear_memcache [ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING,TICKET_FIELDS_FULL]
+  clear_memcache [ACCOUNT_SECTION_FIELDS_WITH_FIELD_VALUE_MAPPING, TICKET_FIELDS_FULL, ACCOUNT_CUSTOM_DROPDOWN_FIELDS]
 
   belongs_to_account
   self.table_name =  "helpdesk_picklist_values"

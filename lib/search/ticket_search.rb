@@ -124,6 +124,10 @@ module Search::TicketSearch
     [[NONE_VALUE, I18n.t("filter_options.none")]].concat(tf.dropdown_choices_with_name)
   end
 
+  def get_custom_choices_by_id(tf)
+    [[NONE_VALUE, nil]].concat(tf.dropdown_choices_with_picklist_id)
+  end
+
   def get_default_choices(criteria_key)
     if criteria_key == :status
       statuses = [[0, I18n.t("filter_options.unresolved")]]

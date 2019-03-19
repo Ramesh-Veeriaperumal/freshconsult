@@ -1451,6 +1451,7 @@ Helpkit::Application.routes.draw do
         end
         member do
           delete :destroy
+          put :activate
         end
       end
     end

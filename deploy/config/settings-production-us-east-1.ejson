@@ -127,7 +127,8 @@
         "_sender_config_url": "api/v1/account/senderconfig",
         "_ip_pool_category": "35",
         "_antivirus_url": "/api/v1/antivirus/scan",
-        "_campaign_url": "api/v1/campaign/send"
+        "_campaign_url": "api/v1/campaign/send",
+        "_imap_application_id": 1
       },
       "product_feedback": {
         "api_key": "EJ[1:XjydMeaDit5iQOdO2BYyxGWAe2valrGsZkjdB+E//iY=:kDmFw/Y1xPLLHi2Hb1JfGRGbdGGAv+9i:V/So0WVDD+5fFcuHOlNE/GydZXXUFzTu2O+nSTxTaH9KKgY5]"
@@ -1864,6 +1865,12 @@
       "datadog": {
         "license_key": "EJ[1:XjydMeaDit5iQOdO2BYyxGWAe2valrGsZkjdB+E//iY=:O8mVboAe0QKem2FyqcqFEvupmHyriqss:JnLz4wzYnr7O1gHgwIh0+Vjc861BsfBlgtLq5da5egtmDT80LicRQF+wTdD1F0kG]",
         "_enable": true
+      },
+      "freshvisuals": {
+        "secret_key": "EJ[1:Sbcy+2pq+5dzpq/JnrUGHJG5BXoliS9n6qhmxkbKxxA=:OG1koLXcp+Ehy9BGOTAwuQwcv7ONp6GI:FiP+ZpaZfxuZSrfvWVmK2kSOcA0O13stg8anir82hPdnXp2V8Yg+llCX40KIWF/F3YWcv1BWQBXK4bao]",
+        "_app_name": "freshdesk",
+        "_end_point": "https://freshdesk-us.freshreports.com",
+        "_session_expiration": 36000
       }
     },
     "unique_keys": {

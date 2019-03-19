@@ -30,6 +30,10 @@ module MemcacheReadWriteMethods
     newrelic_begin_rescue { memcache_client.get(key, raw) }
   end
 
+  def get_multi_from_cache(keys)
+    newrelic_begin_rescue { memcache_client.get_multi(keys) }
+  end
+
   def cache(key, value, expiry = 0, raw = false)
     newrelic_begin_rescue { memcache_client.set(key, value, expiry, raw) }
   end

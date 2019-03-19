@@ -20,7 +20,7 @@ module Channel::V2
     def validate_params
       custom_number_fields = []
       # We are obtaining the mapping in order to swap the field names while rendering(both successful and erroneous requests), instead of formatting the fields again.
-      @ticket_fields = Account.current.ticket_fields_from_cache
+      @ticket_fields = ::Account.current.ticket_fields_from_cache
       @ticket_fields.each do |field|
         if field.field_type == 'custom_number'
           custom_number_fields.push(field.name)
@@ -63,7 +63,7 @@ module Channel::V2
       if create_action? && facebook_ticket?
         @facebook = params[cname][:source_additional_info][:facebook]
         if @facebook.present?
-          page = Account.current.facebook_pages.where(:page_id=>@facebook[:page_id]).first
+          page = ::Account.current.facebook_pages.where(:page_id=>@facebook[:page_id]).first
           @facebook[:page_id] = (page.present? && page.id) ? page.id : nil
         end
       end
@@ -71,7 +71,7 @@ module Channel::V2
       if create_action? && twitter_ticket?
         @tweet = params[cname][:source_additional_info][:twitter]
         if @tweet.present?
-          handle = Account.current.twitter_handles.where(twitter_user_id: @tweet[:support_handle_id]).first
+          handle = ::Account.current.twitter_handles.where(twitter_user_id: @tweet[:support_handle_id]).first
           @tweet[:twitter_handle_id] = handle.present? && handle.id ? handle.id : nil
         end
       end

@@ -7,8 +7,10 @@ module Helpdesk::Ticketfields::Constants
   CHECKBOX_FIELD_COUNT  = 10
   TEXT_FIELD_COUNT      = 10
   DECIMAL_FIELD_COUNT   = 10
+  TICKET_FIELD_DATA_DROPDOWN_COUNT = 250
 
   DROPDOWN_FIELDS = (1..DROPDOWN_FIELD_COUNT).collect { |n| "ffs_#{format('%02d', n)}" }.freeze
+  TICKET_FIELD_DATA_DROPDOWN_FIELDS = (1..TICKET_FIELD_DATA_DROPDOWN_COUNT).collect { |n| "ffs_#{format('%02d', n)}" }.freeze
   NUMBER_FIELDS   = (1..NUMBER_FIELD_COUNT).collect { |n| "ff_int#{format('%02d', n)}" }.freeze
   DATE_FIELDS     = (1..DATE_FIELD_COUNT).collect { |n| "ff_date#{format('%02d', n)}" }.freeze
   CHECKBOX_FIELDS = (1..CHECKBOX_FIELD_COUNT).collect { |n| "ff_boolean#{format('%02d', n)}" }.freeze
@@ -38,6 +40,27 @@ module Helpdesk::Ticketfields::Constants
     date:    DATE_FIELD_COUNT,
     boolean: CHECKBOX_FIELD_COUNT,
     decimal: DECIMAL_FIELD_COUNT
+  }.freeze
+
+  TICKET_FIELD_DATA_COUNT = {
+    string:  TICKET_FIELD_DATA_DROPDOWN_COUNT,
+    text:    TEXT_FIELD_COUNT,
+    number:  NUMBER_FIELD_COUNT,
+    date:    DATE_FIELD_COUNT,
+    boolean: CHECKBOX_FIELD_COUNT,
+    decimal: DECIMAL_FIELD_COUNT
+  }.freeze
+
+  TICKET_FIELD_DATA_COLUMN_MAPPING = {
+    text:           ['text', SERIALIZED_SLT_FIELDS, SERIALIZED_SLT_FIELDS.length],
+    nested_field:   [['text', 'dropdown'], TICKET_FIELD_DATA_DROPDOWN_FIELDS, TICKET_FIELD_DATA_DROPDOWN_COUNT],
+    dropdown:       [['text', 'dropdown'], TICKET_FIELD_DATA_DROPDOWN_FIELDS, TICKET_FIELD_DATA_DROPDOWN_COUNT],
+    number:         ['number', NUMBER_FIELDS, NUMBER_FIELD_COUNT],
+    checkbox:       ['checkbox', CHECKBOX_FIELDS, CHECKBOX_FIELD_COUNT],
+    date:           ['date', DATE_FIELDS, DATE_FIELD_COUNT],
+    paragraph:      ['paragraph', SERIALIZED_MLT_FIELDS, SERIALIZED_MLT_FIELDS.length],
+    decimal:        ['decimal', DECIMAL_FIELDS, DECIMAL_FIELD_COUNT],
+    encrypted_text: ['encrypted_text', SERIALIZED_ESLT_FIELDS, SERIALIZED_ESLT_FIELDS.length]
   }.freeze
 
   MAX_ALLOWED_COUNT_DN = {

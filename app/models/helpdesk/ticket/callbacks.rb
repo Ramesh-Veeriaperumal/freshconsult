@@ -857,11 +857,6 @@ private
     build_flexifield
     self.flexifield_def = Account.current.ticket_field_def
     assign_ff_values custom_field
-    if account.id_for_choices_write_enabled?
-      benchmark_ticket_field_data do
-        ticket_field_data.assign_ff_values custom_field
-      end
-    end
     @custom_field = nil
   end
 

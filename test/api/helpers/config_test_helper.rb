@@ -40,6 +40,8 @@ module ConfigTestHelper
     else
       social_config[:twitter_reauth_required] = false
     end
+
+    social_config[:twitter_app_blocked] = true if twitter_app_blocked?
     social_config
   end
 

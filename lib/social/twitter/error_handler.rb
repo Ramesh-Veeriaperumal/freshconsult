@@ -9,6 +9,8 @@ module Social::Twitter::ErrorHandler
     
     include Social::Util
     include Social::Constants
+    include Redis::OthersRedis
+    include Redis::RedisKeys
     def twt_sandbox(handle, timeout = TwitterConfig::TWITTER_TIMEOUT)
       
       #overide timeout according the the env timeout values
@@ -58,7 +60,10 @@ module Social::Twitter::ErrorHandler
         social_error_code = exception.code
         @social_error_msg =  exception.message.include?("not following") ? 
                               "#{I18n.t('social.streams.twitter.not_following')}" : "#{I18n.t('social.streams.twitter.client_error')}"
-        if exception.message.include?("temporarily locked")  
+        if social_error_code == Twitter::Error::Codes::CANNOT_WRITE
+          set_others_redis_key(TWITTER_APP_BLOCKED, true, nil)
+        end
+        if exception.message.include?("temporarily locked")
           @sandbox_handle.state = Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]
           @sandbox_handle.last_error = exception.to_s
           @sandbox_handle.save

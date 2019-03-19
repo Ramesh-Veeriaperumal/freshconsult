@@ -16,7 +16,7 @@ class HelpWidget < ActiveRecord::Base
   end
 
   def account_url
-    Account.current.full_url
+    "https://#{Account.current.full_domain}"
   end
 
   def language

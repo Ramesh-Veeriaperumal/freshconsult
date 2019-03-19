@@ -12,12 +12,10 @@ class ContactWorkerTest < ActionView::TestCase
   def setup
     @account = Account.first.make_current
     @contact = create_search_contact(contact_params_hash)
-    WebMock.allow_net_connect!
   end
 
   def teardown
     @contact.destroy
-    WebMock.disable_net_connect!
   end
 
   def contact_params_hash
@@ -32,6 +30,7 @@ class ContactWorkerTest < ActionView::TestCase
   end
 
   def test_index
+    RestClient::Request.any_instance.stubs(:execute).returns(ActionDispatch::TestResponse.new)
     export_entry = @account.data_exports.new(
                             :source => DataExport::EXPORT_TYPE["contact".to_sym], 
                             :user => User.current,
@@ -51,5 +50,6 @@ class ContactWorkerTest < ActionView::TestCase
     assert_equal export_entry.last_error, nil
   ensure
     export_entry.destroy
+    RestClient::Request.any_instance.unstub(:execute)
   end
 end

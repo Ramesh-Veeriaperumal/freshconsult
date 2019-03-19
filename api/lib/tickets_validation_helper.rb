@@ -17,9 +17,7 @@ class TicketsValidationHelper
     end
 
     def custom_dropdown_field_choices
-      Account.current.custom_dropdown_fields_from_cache.collect do |x|
-        [x.name, x.dropdown_choices_with_name.flatten.uniq]
-      end.to_h
+      Account.current.custom_dropdown_choice_hash
     end
 
     def section_field_parent_field_mapping

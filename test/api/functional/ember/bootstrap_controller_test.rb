@@ -154,6 +154,15 @@ class Ember::BootstrapControllerTest < ActionController::TestCase
     Account.current.unstub(:twitter_reauth_check_from_cache)
   end
 
+  def test_account_with_twitter_app_blocked
+    set_others_redis_key(TWITTER_APP_BLOCKED, true, 1)
+    get :account, controller_params(version: 'private')
+    assert_response 200
+    match_json(account_pattern(Account.current, Account.current.main_portal))
+  ensure
+    remove_others_redis_key TWITTER_APP_BLOCKED
+  end
+
   def test_account_with_custom_inbox_error
     Account.current.stubs(:check_custom_mailbox_status).returns(true)
     get :account, controller_params(version: 'private')

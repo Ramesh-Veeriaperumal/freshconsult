@@ -7,7 +7,7 @@ module SimpleOutreachConstants
   SELECTION_TYPES = [SELECTION_IMPORT, SELECTION_SEGMENT, SELECTION_CONTACT].freeze
 
   COMPOSE_EMAIL_FIELDS = %w[subject description email email_config_id cc_emails].freeze
-  VALIDATION_CLASSES = %w[Proactive::EmailValidation Proactive::SimpleOutreachValidation Proactive::CustomerImportValidation].freeze # multiple validations are coming up
+  VALIDATION_CLASSES = %w[Proactive::EmailValidation Proactive::SimpleOutreachValidation Proactive::CustomerImportValidation].freeze
   DELEGATOR_CLASSES = %w[Proactive::SimpleOutreachDelegator].freeze
   SIMPLE_OUTREACH_FIELDS = %w[name description selection].freeze
   SELECTION_FIELDS = %w[type contact_import].freeze

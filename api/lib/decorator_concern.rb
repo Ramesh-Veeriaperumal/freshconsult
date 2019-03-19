@@ -46,8 +46,9 @@ module DecoratorConcern
 
   def decorate_object
     # To create decorator object if the views involve considerable cosmetic manipulations.
-    if decorator_options
-      decorator, options = decorator_options
+    result = decorator_options
+    if result
+      decorator, options = result
       @item = decorator.new(@item, (options || {}))
     end
   end
