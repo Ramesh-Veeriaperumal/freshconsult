@@ -1,0 +1,16 @@
+<% if node[:ymls][:datadog].nil? || node[:ymls][:datadog][:enable].nil? %>
+enable: false
+<% else %>
+enable: <%= node[:ymls][:datadog][:enable] %>
+dd_agent_host: <%= node[:opsworks][:instance][:private_ip] %>
+<% if !node[:ymls][:datadog][:apm_port].nil? %>
+dd_apm_port: <%= node[:ymls][:datadog][:apm_port] %>
+<% else %>
+dd_apm_port: 8126
+<% end %>
+<% if !node[:ymls][:datadog][:dogstatsd_port].nil? %>
+dogstatsd_port: <%= node[:ymls][:datadog][:dogstatsd_port] %>
+<% else %>
+dogstatsd_port: 8127
+<% end %>
+<% end %>

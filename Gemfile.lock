@@ -194,8 +194,8 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: 45998022f407005fc47f58624d83373b154a3198
-  tag: v1.0.12
+  revision: 49d9d0bd13dc8c6d682bf2a1d236f4b683e2cc4d
+  tag: v1.0.13
   specs:
     central-publisher (1.0.12)
       active_record_shards (~> 3.2.0)
@@ -712,6 +712,7 @@ GEM
       railties (>= 3.2)
     dynamic_form (1.1.4)
     ejs (1.1.1)
+    ejson (1.2.0)
     encryptor (1.1.3)
     equalizer (0.0.10)
     erubis (2.7.0)
@@ -1495,6 +1496,7 @@ DEPENDENCIES
   dynamics_crm!
   ebayr!
   ejs (= 1.1.1)
+  ejson
   emailserv_request!
   encryptor (= 1.1.3)
   facebook!

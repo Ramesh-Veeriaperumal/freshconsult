@@ -233,33 +233,6 @@ module TicketsFilter
     eval "Helpdesk::Ticket"
   end
 
-  def self.search(scope, field, value)
-    return scope unless (field && value)
-
-    loose_match = ["#{field} like ?", "%#{value}%"]
-    exact_match = {field => value}
-
-    conditions = case field.to_sym
-      when :subject
-        loose_match
-      when :display_id
-        exact_match
-      when :description
-        loose_match
-      when :status
-        exact_match
-      when :urgent
-        exact_match
-      when :source
-        exact_match
-    end
-
-    # Protect us from SQL injection in the 'field' param
-    return scope unless conditions
-
-    scope.where(conditions)
-  end
-
   protected
     def self.load_conditions(user,filter)
       donot_stop_sla_status_query = "select status_id from helpdesk_ticket_statuses where

@@ -203,4 +203,6 @@ module Redis::Keys::Others
   # new pricing plan flip key
   NEW_2019_PRICING_ENABLED = "NEW_2019_PRICING_ENABLED"
   NEW_2019_PRICING_TEST_USERS = "NEW_2019_PRICING_TEST_USERS"
+  #social twitter key
+  TWITTER_APP_BLOCKED = 'TWITTER_APP_BLOCKED'.freeze
 end

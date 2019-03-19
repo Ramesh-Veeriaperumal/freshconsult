@@ -110,26 +110,6 @@ class Helpdesk::Issue < ActiveRecord::Base
 
   end
 
-  def self.search(scope, field, value)
-
-    return scope unless (field && value)
-
-    loose_match = ["#{field} like ?", "%#{value}%"]
-    exact_match = {field => value}
-
-    conditions = case field.to_sym
-      when :title 
-        loose_match
-      when :description 
-        loose_match
-    end
-
-    # Protect us from SQL injection in the 'field' param
-    return scope unless conditions
-
-    scope.where(conditions)
-  end
-
   def nickname
     title
   end

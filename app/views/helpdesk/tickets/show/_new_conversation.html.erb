@@ -1,3 +1,4 @@
+<% ticket_source =  5 %>
 <div class="redactor conversation_thread">
 	<div class="conversation">
 		<div class="avatar-wrap"><%= user_avatar(current_user, :thumb, "preview_pic circle") %></div>
@@ -80,7 +81,9 @@
 			<div id="TicketPseudoReply" class="pseudo_reply">
 
 				<% if privilege?(:reply_ticket) && @ticket.show_reply? %>
-				<a href="" id="FwdButton" rel="note-button" data-note-type="reply" data-domhelper-name="reply-button" data-replyto-handle="<%= @ticket.twitter? ? "#{@ticket.latest_twitter_comment_user} " : "" %>" data-user="<%= "@#{@ticket.requester.twitter_id} " %>" ><%= t('ticket.reply_to')  %></a> / 
+				<% disabled = is_twitter_blocked? ? "disabled" : "" %>
+				<% disabled = @ticket.source == ticket_source ? disabled : "" %>
+				<a href="" class="<%= disabled %>" id="FwdButton" rel="note-button" data-note-type="reply" data-domhelper-name="reply-button" data-replyto-handle="<%= @ticket.twitter? ? "#{@ticket.latest_twitter_comment_user} " : "" %>" data-user="<%= "@#{@ticket.requester.twitter_id} " %>" ><%= t('ticket.reply_to')  %></a> / 
 				<% end %>
         		<% if privilege?(:forward_ticket) %>
 			  		<a href="" id="FwdButton" rel="note-button" data-note-type="fwd" data-domhelper-name="fwd-button"><%= t('fwd_to') %></a> /
@@ -104,6 +107,14 @@
 				<% end %>
 			</div>
 		</div>
+		<% if privilege?(:reply_ticket) && (is_twitter_blocked? && (@ticket.source == ticket_source)) %>
+			<div class="row-fluid">
+				<div class="twitter-blocked">
+				  <img src="/assets/misc/alert-icon.svg" class="warning">  
+				  <span><%= t("social.streams.index.twitter_blocked") %></span>
+				</div>
+			</div>
+		<% end %>
 
 	</div>
 	<%= render :partial	=> "helpdesk/tickets/show/nba_suggestions" %>

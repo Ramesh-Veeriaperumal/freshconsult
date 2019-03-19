@@ -109,8 +109,11 @@ $bdr-color:#e1e1e1;
 }
 .tw-wrapper{
   background:$pane-bg;
-  border:solid 1px $bdr-color;
-  border-radius: 4px;
+  .twitter-stream-container {
+    border:solid 1px $bdr-color;
+    border-radius: 4px;
+    overflow: hidden;
+  }
   .tw-header{
     background:$head-bg;
     border-bottom: solid 1px #d5d5d5;

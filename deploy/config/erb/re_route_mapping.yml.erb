@@ -1,0 +1,15 @@
+"^/helpdesk/tickets/view/": "/a/tickets"
+"^/helpdesk/tickets/filter/": "/a/tickets"
+"^/admin/.+": "/a/admin/"
+"^/solution/.+": "/a/solutions/"
+"^/discussions/.+": "/a/forums/"
+"^/social/.+": "/a/social/"
+"^/reports.*": "/a/reports/"
+"^/contacts/filter.*": "/a/contacts/"
+"^/agents/.*": "/a/admin/"
+"^/support.*": "/a/"
+<% if node[:opsworks][:instance][:layers].any? && !node[:opsworks][:instance][:layers].include?("hk-app-freshfone-twilio") %>
+"^/contacts/\d+/.+": "/a/contacts/" 
+"^/companies/\d+/.+": "/a/companies/"
+"^/groups/\d+/.+": "/a/admin/"
+<%end%>

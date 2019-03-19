@@ -11,7 +11,7 @@ class Account < ActiveRecord::Base
     :csat_email_scan_compatibility, :dependent_field_validation, :post_central_publish,
     :encode_emoji_subject, :note_central_publish, :db_to_bitmap_features_migration_phase2,
     :time_sheets_central_publish, :incoming_attachment_limit_25, :fetch_ticket_from_ref_first,
-    :euc_migrated_twitter, :new_ticket_recieved_metric, :mint_portal_applicable,
+    :allow_huge_ccs, :euc_migrated_twitter, :new_ticket_recieved_metric, :mint_portal_applicable,
     :twitter_microservice, :twitter_handle_publisher, :count_service_es_writes,
     :count_service_es_reads, :quoted_text_parsing_feature, :shopify_actions,
     :count_service_es_writes, :old_link_back_url_validation, :db_to_bitmap_features_migration,
@@ -22,7 +22,7 @@ class Account < ActiveRecord::Base
     :agent_group_central_publish, :custom_fields_search,:update_billing_info, :fluffy,
     :allow_billing_info_update, :pricing_plan_change_2019, :tag_central_publish, :native_apps,
     :surveys_central_publish, :id_for_choices_write, :nested_field_revamp, :session_logs, :disable_signup_captcha,
-    :freshvisual_configs
+    :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data
   ].freeze
 
   DB_FEATURES = [:custom_survey, :requester_widget, :archive_tickets, :sitemap, :freshfone].freeze

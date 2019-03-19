@@ -1,0 +1,10 @@
+<%= node[:opsworks][:environment] %>:
+<% 
+@queue_name = ""
+if node[:opsworks][:instance][:hostname].include?("sidekiq-archive") 
+  @queue_name = "_shard_" + node[:opsworks][:instance][:hostname].split("sidekiq-archive-").last
+elsif node[:opsworks][:instance][:hostname].include?("fc-bg-sidekiq-archive-")
+  @queue_name = "_shard_" + node[:opsworks][:instance][:hostname].split("fc-bg-sidekiq-archive-").last
+end %>
+  archive_account_tickets: "<%= 'archive_account_tickets' + @queue_name %>"
+  archive_ticket: "<%= 'archive_ticket' + @queue_name %>"

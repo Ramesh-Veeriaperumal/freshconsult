@@ -1,11 +1,11 @@
 class NestedFieldCorrection
-  attr_accessor :flexifield
+  attr_accessor :flexifield, :column_name_map, :column_id_map
 
   LEVEL_1 = 0
   LEVEL_2 = 1
   LEVEL_3 = 2
 
-  def initialize(flexifield)
+  def initialize(flexifield = nil)
     @flexifield = flexifield
     @column_id_map = {}
     @column_name_map = {}
@@ -58,14 +58,16 @@ class NestedFieldCorrection
     def nested_column_key_pair
       @nested_column_key_pair = begin 
         Account.current.nested_ticket_fields_from_cache.each_with_object(Hash.new { |h, k| h[k] = [] }) do |ticket_field, result_hash|
-          result_hash[ticket_field.id][current_level(ticket_field)] = ticket_field.column_name
-          @column_id_map[ticket_field.column_name] = ticket_field.id
-          @column_name_map[ticket_field.column_name] = ticket_field.name
+          col_name = fetch_column_name(ticket_field)
+          result_hash[ticket_field.id][current_level(ticket_field)] = col_name
+          @column_id_map[col_name] = ticket_field.id
+          @column_name_map[col_name] = ticket_field.name
           
           ticket_field.child_levels.each do |_child|
-            result_hash[_child.parent_id][current_level(_child)] = _child.column_name
-            @column_id_map[_child.column_name] = _child.parent_id
-            @column_name_map[_child.column_name] = _child.name
+            col_name = fetch_column_name(_child)
+            result_hash[_child.parent_id][current_level(_child)] = col_name
+            @column_id_map[col_name] = _child.parent_id
+            @column_name_map[col_name] = _child.name
           end
         end
       end
@@ -97,5 +99,17 @@ class NestedFieldCorrection
       field_set.collect do |column_name|
         flexifield.safe_send("#{column_name}=", nil)
       end
+    end
+
+    def ff_def_entries
+      @ff_def_entries ||= begin
+        Account.current.flexifield_def_entries.each_with_object({}) do |def_entry, result_hash|
+          result_hash[def_entry.id] = def_entry.flexifield_name
+        end
+      end
+    end
+
+    def fetch_column_name(ticket_field)
+      ticket_field.column_name.present? ? ticket_field.column_name : ff_def_entries[ticket_field.flexifield_def_entry_id]
     end
 end

@@ -1,0 +1,13 @@
+# Used in account class to fill the pod info as part of shard_mapping
+CURRENT_POD: <%= node[:ymls][:pods][:current_pod] %> # values can be poduseast, podeu. This should exactly match with the values of Nginx. Else routing may fail.
+
+GLOBAL_POD: <%= node[:ymls][:pods][:global_pod] %>
+
+CURRENT_REGION: <%= node[:ymls][:pods][:current_region] %>
+
+pod_paths:
+  pod_endpoint: <%= node[:ymls][:pods][:pod_endpoint] %>
+
+access_key_id: <%= node[:ymls][:pods][:access_key_id] %>
+secret_access_key: <%= node[:ymls][:pods][:secret_access_key] %>
+region: "us-east-1"

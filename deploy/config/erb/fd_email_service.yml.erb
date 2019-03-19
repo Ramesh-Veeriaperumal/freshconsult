@@ -1,0 +1,16 @@
+<%= node[:opsworks][:environment] %>:
+  key: <%= node[:ymls][:fd_email_service][:key] %>
+  host: <%= node[:ymls][:fd_email_service][:host] %>
+  timeout: <%= node[:ymls][:fd_email_service][:timeout] %>
+  email_send_urlpath: <%= node[:ymls][:fd_email_service][:url] %>
+  email_campaign_urlpath: <%= node[:ymls][:fd_email_service][:campaign_url] %>
+  account_validate_urlpath: <%= node[:ymls][:fd_email_service][:account_validate_url] %>
+  sender_config_urlpath: <%= node[:ymls][:fd_email_service][:sender_config_url] %>
+  antivirus_urlpath: <%= node[:ymls][:fd_email_service][:antivirus_url] %>
+  ip_pool_category: <%= node[:ymls][:fd_email_service][:ip_pool_category] %>
+  incoming_email_api_key1: <%= node[:ymls][:fd_email_service][:incoming_email_api_key1] %>
+  incoming_email_api_key2: <%= node[:ymls][:fd_email_service][:incoming_email_api_key2] %>
+  imap_application_id: <%= node[:ymls][:fd_email_service][:imap_application_id] %>
+  ip_pool_names:
+    - freshworks_email_high
+    - freshworks_email_low

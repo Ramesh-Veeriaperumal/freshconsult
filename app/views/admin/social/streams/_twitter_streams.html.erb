@@ -18,6 +18,9 @@
             <%if stream.default_stream? and (stream.twitter_handle.reauth_required? || euc_migrated_handle?(stream.twitter_handle)) %>
                 <a onclick="<%= set_twitter_url_in_redis(@auth_redirect_url, @account_url, @state) %>" class="label label-important align-fix <%= @auth_redirect_url ? '': 'disabled' %>"><%= t('.reauthorize')%></a>
             <%end%>
+            <%if stream.default_stream? and (stream.twitter_handle.activation_required?) %>
+                <%= link_to(t('.activate'), activate_admin_social_twitter_path(stream.twitter_handle.id), class: 'label label-important align-fix', 'data-method' => 'put')%>
+            <%end%>
           </td>
           <td class="text-left">
             <% if stream.accessible %>
@@ -41,3 +44,4 @@
     </table>
   </div>
 </div>
+

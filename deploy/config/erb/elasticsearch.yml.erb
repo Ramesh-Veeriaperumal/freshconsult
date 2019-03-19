@@ -1,0 +1,17 @@
+<%= node[:opsworks][:environment] %>:
+  :count_host: 
+  <% node[:ymls][:elastic_search][:count].each do |es_details| %>
+  - <%= es_details[:host] %>:<%= es_details[:port] %>
+  <% end %>
+  :count_v2_host: 
+  <% node[:ymls][:elastic_search][:count_v2].each do |es_details| %>
+  - <%= es_details[:host] %>:<%= es_details[:port] %>
+  <% end %>
+  :hosts: 
+  <% node[:ymls][:elastic_search][:ey].each do |es_details| %>
+  - <%= es_details[:host] %>:<%= es_details[:port] %>
+  <% end %>
+  :aws_hosts: 
+  <% node[:ymls][:elastic_search][:aws].each do |es_details| %>
+  - <%= es_details[:host] %>:<%= es_details[:port] %>
+  <% end %>

@@ -43,7 +43,7 @@ class Flexifield < ActiveRecord::Base
   def get_ff_value ff_alias
     ff_def_entry = to_ff_def_entry ff_alias
     if ff_def_entry
-      process_while_reading ff_def_entry.flexifield_name, ff_def_entry.flexifield_coltype
+      process_while_reading ff_def_entry.flexifield_name, ff_def_entry.flexifield_coltype, ff_alias
     else
       raise ArgumentError, "Flexifield alias: #{ff_alias} not found in flexifeld def mapping"
     end
@@ -53,7 +53,7 @@ class Flexifield < ActiveRecord::Base
     ff_field ||= to_ff_field ff_alias
     if ff_field       
       ff_value = nil if ff_value.blank?
-      write_ff_attribute ff_field, ff_value
+      write_ff_attribute ff_field, ff_value, ff_alias
     else
       raise ArgumentError, "Flexifield alias: #{ff_alias} not found in flexifeld def mapping"
     end
@@ -79,13 +79,18 @@ class Flexifield < ActiveRecord::Base
 
   def retrieve_ff_values_via_mapping
     Account.current.ticket_field_def.ff_alias_column_type_mapping.each_with_object({}) do |(aliass, column_name_and_field_type), ff_values|
-      ff_values[aliass] = process_while_reading(*column_name_and_field_type)
+      ff_values[aliass] = process_while_reading(*column_name_and_field_type, aliass)
     end
   end
 
-  def write_ff_attribute attribute, value
+  def write_ff_attribute(attribute, value, ff_alias)
+    if TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES.include?(attribute.to_s)
+      flexifield_set.ticket_field_data.set_ff_value(ff_alias, value)
+      return
+    end
     if self.class.flexiblefield_names_hash.key?(attribute.to_sym)
       write_attribute(attribute, value)
+      flexifield_set.ticket_field_data.set_ff_value(ff_alias, value) if id_for_choices_write_enabled?
     elsif SERIALIZED_ATTRIBUTES.include?(attribute)
       denormalized_flexifield.safe_send "#{attribute}=", value
     else
@@ -93,9 +98,15 @@ class Flexifield < ActiveRecord::Base
     end
   end
 
-  def read_ff_attribute attribute
-    if self.class.flexiblefield_names_hash.key?(attribute.to_sym)
-      read_attribute(attribute)
+  def read_ff_attribute(attribute, field_type, ff_alias)
+    if TicketFieldData::NEW_DROPDOWN_COLUMN_NAMES.include?(attribute.to_s)
+      flexifield_set.ticket_field_data.get_ff_value(ff_alias)
+    elsif self.class.flexiblefield_names_hash.key?(attribute.to_sym)
+      if field_type == 'dropdown' && ticket_field_limit_increase_enabled?
+        flexifield_set.ticket_field_data.get_ff_value(ff_alias)
+      else
+        read_attribute(attribute)
+      end
     elsif SERIALIZED_ATTRIBUTES.include?(attribute)
       denormalized_flexifield.safe_send(attribute)
     else
@@ -128,8 +139,15 @@ class Flexifield < ActiveRecord::Base
 
   private
 
-    def process_while_reading column_name, field_type
-      Time.use_zone('UTC') { read_ff_attribute(column_name) }
+    def process_while_reading(column_name, field_type, aliass)
+      Time.use_zone('UTC') { read_ff_attribute(column_name, field_type, aliass) }
     end
 
+    def id_for_choices_write_enabled?
+      @id_for_choices_write_enabled ||= account.id_for_choices_write_enabled?
+    end
+
+    def ticket_field_limit_increase_enabled?
+      @ticket_field_limit_increase_enabled ||= account.ticket_field_limit_increase_enabled?
+    end
 end

@@ -1,0 +1,6 @@
+defaults: &defaults
+  app_id: <%= node[:ymls][:zendesk][:app_id]%>
+  falcon_app_id: <%= node[:ymls][:zendesk][:falcon_app_id]%>
+
+<%= node[:opsworks][:environment] %>:
+  <<: *defaults

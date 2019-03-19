@@ -32,15 +32,15 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
   end.reduce(&:merge)
 
   # Curated reports list maintained in Freshvisuals.
-  CURATED_REPORTS_LIST = ['Agent performance', 'Group performance', 'Helpdesk in depth report', 'Performance distribution', 'Ticket volume trend',
-                          'Customer analysis', 'Ticket Lifecycle Report', 'Time sheet summary report', 'Satisfaction survey report', 'Shared ownership',
-                          'Linked tracker ticket', 'Child parent ticket', 'Tags reports', 'Field service management report'].freeze
+  CURATED_REPORTS_LIST = ['Agent performance', 'Group performance', 'Helpdesk in-depth', 'Performance distribution', 'Ticket volume trends',
+                          'Top Customer analysis', 'Ticket Lifecycle', 'Time sheet summary', 'Satisfaction survey', 'Shared ownership',
+                          'Linked tickets summary', 'Parent tickets summary', 'Tags summary', 'Field service trends'].freeze
 
   # CURATED_REPORTS = {:agent_performance=>{:config_type=>:curated_reports, :value=>"Agent performance"}, :group_performance=>{:config_type=>:curated_reports, :value=>"Group performance"},...}
   CURATED_REPORTS = Hash[CURATED_REPORTS_LIST.map { |c| [c.tr('-', '_').parameterize('_').to_sym, { config_type: :curated_reports, value: c }] }]
 
   # List of Freshdesk resources that can be restricted at the account level in Fresh Visuals.
-  RESOURCE_RESTRICTION_LIST = ['Tickets', 'Timesheet', 'Tags', 'CSAT questions', 'CSAT responses'].freeze
+  RESOURCE_RESTRICTION_LIST = ['Tickets', 'Timesheets', 'Tags', 'CSAT questions', 'CSAT responses'].freeze
 
   # RESOURCE_RESTRICTION = {:tickets=>{:config_type=>:resource_restriction, :value=>"Tickets"}, :csat=>{:config_type=>:resource_restriction, :value=>"CSAT"}, :timesheet=>{:config_type=>:resource_restriction, :value=>"Timesheet"}, :tags=>{:config_type=>:resource_restriction, :value=>"Tags"}}
   RESOURCE_RESTRICTION = Hash[RESOURCE_RESTRICTION_LIST.map { |c| [c.parameterize('_').to_sym, { config_type: :resource_restriction, value: c }] }]
@@ -57,13 +57,13 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
     # ticket_activity_export: [],
 
     # Existing Reports features that have mapping in freshvisuals.
-    timesheets: CURATED_REPORTS[:time_sheet_summary_report],
-    advanced_reporting: CURATED_REPORTS[:helpdesk_in_depth_report],
+    timesheets: CURATED_REPORTS[:time_sheet_summary],
+    advanced_reporting: CURATED_REPORTS[:helpdesk_in_depth],
     auto_ticket_export: FEATURE_CONFIGS[:landing_data_schedules],
-    surveys: CURATED_REPORTS[:satisfaction_survey_report],
-    enterprise_reporting: [CURATED_REPORTS[:ticket_volume_trend], CURATED_REPORTS[:performance_distribution], CURATED_REPORTS[:ticket_lifecycle_report], CURATED_REPORTS[:customer_analysis]],
+    surveys: CURATED_REPORTS[:satisfaction_survey],
+    enterprise_reporting: [CURATED_REPORTS[:ticket_volume_trends], CURATED_REPORTS[:performance_distribution], CURATED_REPORTS[:ticket_lifecycle], CURATED_REPORTS[:top_customer_analysis]],
     performance_report: [CURATED_REPORTS[:agent_performance], CURATED_REPORTS[:group_performance]],
-    ticket_volume_report: CURATED_REPORTS[:ticket_volume_trend],
+    ticket_volume_report: CURATED_REPORTS[:ticket_volume_trends],
 
     # New features list.
     analytics_landing_search: FEATURE_CONFIGS[:landing_search],
@@ -92,20 +92,20 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
     analytics_widget_delete: FEATURE_CONFIGS[:widget_delete],
     analytics_agent_performance: CURATED_REPORTS[:agent_performance],
     analytics_group_performance: CURATED_REPORTS[:group_performance],
-    analytics_helpdesk_in_depth_report: CURATED_REPORTS[:helpdesk_in_depth_report],
+    analytics_helpdesk_in_depth_report: CURATED_REPORTS[:helpdesk_in_depth],
     analytics_performance_distribution: CURATED_REPORTS[:performance_distribution],
-    analytics_ticket_volume_trend: CURATED_REPORTS[:ticket_volume_trend],
-    analytics_customer_analysis: CURATED_REPORTS[:customer_analysis],
-    analytics_ticket_lifecycle_report: CURATED_REPORTS[:ticket_lifecycle_report],
-    analytics_time_sheet_summary_report: CURATED_REPORTS[:time_sheet_summary_report],
-    analytics_satisfaction_survey_report: CURATED_REPORTS[:satisfaction_survey_report],
+    analytics_ticket_volume_trend: CURATED_REPORTS[:ticket_volume_trends],
+    analytics_customer_analysis: CURATED_REPORTS[:top_customer_analysis],
+    analytics_ticket_lifecycle_report: CURATED_REPORTS[:ticket_lifecycle],
+    analytics_time_sheet_summary_report: CURATED_REPORTS[:time_sheet_summary],
+    analytics_satisfaction_survey_report: CURATED_REPORTS[:satisfaction_survey],
     analytics_shared_ownership: CURATED_REPORTS[:shared_ownership],
-    analytics_linked_tracker_ticket: CURATED_REPORTS[:linked_tracker_ticket],
-    analytics_child_parent_ticket: CURATED_REPORTS[:child_parent_ticket],
-    analytics_tags_reports: CURATED_REPORTS[:tags_reports],
-    field_service_management: CURATED_REPORTS[:field_service_management_report],
+    analytics_linked_tracker_ticket: CURATED_REPORTS[:linked_tickets_summary],
+    analytics_child_parent_ticket: CURATED_REPORTS[:parent_tickets_summary],
+    analytics_tags_reports: CURATED_REPORTS[:tags_summary],
+    field_service_management: CURATED_REPORTS[:field_service_trends],
     analytics_tickets_resource: RESOURCE_RESTRICTION[:tickets],
-    analytics_timesheet_resource: RESOURCE_RESTRICTION[:timesheet],
+    analytics_timesheet_resource: RESOURCE_RESTRICTION[:timesheets],
     analytics_tags_resource: RESOURCE_RESTRICTION[:tags],
     analytics_csat_questions: RESOURCE_RESTRICTION[:csat_questions],
     analytics_csat_responses: RESOURCE_RESTRICTION[:csat_responses]
@@ -117,19 +117,19 @@ module HelpdeskReports::Constants::FreshvisualFeatureMapping
     RESOURCE_RESTRICTION[:tickets][:value] => [
       CURATED_REPORTS[:agent_performance][:value],
       CURATED_REPORTS[:group_performance][:value],
-      CURATED_REPORTS[:helpdesk_in_depth_report][:value],
+      CURATED_REPORTS[:helpdesk_in_depth][:value],
       CURATED_REPORTS[:performance_distribution][:value],
-      CURATED_REPORTS[:ticket_volume_trend][:value],
-      CURATED_REPORTS[:ticket_lifecycle_report][:value],
+      CURATED_REPORTS[:ticket_volume_trends][:value],
+      CURATED_REPORTS[:ticket_lifecycle][:value],
       CURATED_REPORTS[:shared_ownership][:value],
-      CURATED_REPORTS[:linked_tracker_ticket][:value],
-      CURATED_REPORTS[:child_parent_ticket][:value],
-      CURATED_REPORTS[:field_service_management_report][:value]
+      CURATED_REPORTS[:linked_tickets_summary][:value],
+      CURATED_REPORTS[:parent_tickets_summary][:value],
+      CURATED_REPORTS[:field_service_trends][:value]
     ],
-    RESOURCE_RESTRICTION[:csat_questions][:value] => [CURATED_REPORTS[:satisfaction_survey_report][:value], CURATED_REPORTS[:customer_analysis][:value]],
-    RESOURCE_RESTRICTION[:csat_responses][:value] => [CURATED_REPORTS[:satisfaction_survey_report][:value], CURATED_REPORTS[:customer_analysis][:value]],
-    RESOURCE_RESTRICTION[:timesheet][:value] => [CURATED_REPORTS[:time_sheet_summary_report][:value]],
-    RESOURCE_RESTRICTION[:tags][:value] => [CURATED_REPORTS[:tags_reports][:value]]
+    RESOURCE_RESTRICTION[:csat_questions][:value] => [CURATED_REPORTS[:satisfaction_survey][:value], CURATED_REPORTS[:top_customer_analysis][:value]],
+    RESOURCE_RESTRICTION[:csat_responses][:value] => [CURATED_REPORTS[:satisfaction_survey][:value], CURATED_REPORTS[:top_customer_analysis][:value]],
+    RESOURCE_RESTRICTION[:timesheets][:value] => [CURATED_REPORTS[:time_sheet_summary][:value]],
+    RESOURCE_RESTRICTION[:tags][:value] => [CURATED_REPORTS[:tags_summary][:value]]
   }.freeze
 
   REPORTS_FEATURES_LIST = FD_FRESVISUAL_FEATURE_MAPPING.keys.freeze

@@ -1,0 +1,8 @@
+defaults: &defaults
+    pod_types: 
+    <% node[:ymls][:mailgun_out_going_email_mappings][:pod_types].each do |pod_number,pod_name| %>
+      <%= pod_number %> : <%= pod_name %>
+    <% end %>
+
+<%= node[:opsworks][:environment]%>:
+  <<: *defaults

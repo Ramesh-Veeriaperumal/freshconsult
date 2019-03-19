@@ -1,0 +1,12 @@
+consumer_token:
+  <%= node[:opsworks][:environment] %>:
+    default: <%= node[:ymls][:twitter][:consumer_token] %>
+    fallback: <%= node[:ymls][:twitter][:consumer_token_fallback] %>
+consumer_secret:
+  <%= node[:opsworks][:environment] %>:
+    default: <%= node[:ymls][:twitter][:consumer_secret] %>
+    fallback: <%= node[:ymls][:twitter][:consumer_secret_fallback] %>
+callback_url:
+  <%= node[:opsworks][:environment]%>: http://twitterintegration.heroku.com/twitter/auth
+twitter_timeout:
+  <%= node[:opsworks][:environment]%>: 2

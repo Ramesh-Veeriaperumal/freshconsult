@@ -49,6 +49,18 @@ class Social::TwitterStream < Social::Stream
     }
   end
 
+  def subscribe_to_gnip(environments = nil)
+    envs = environments.nil? ? gnip_envs(subscribe: true) : environments
+    if account.active?
+      args = {
+        rule: gnip_rule,
+        env: envs,
+        action: RULE_ACTION[:add]
+      }
+      Social::Gnip::RuleWorker.perform_async(args) if valid_params?(args)
+    end
+  end
+
   private
     def set_default_values
       self.data[:gnip]            ||= false
@@ -62,18 +74,6 @@ class Social::TwitterStream < Social::Stream
 
     def persist_previous_changes
       @custom_previous_changes = changes
-    end
-
-    def subscribe_to_gnip(environments=nil)
-      envs = environments.nil? ? gnip_envs({:subscribe => true}) : environments
-      if self.account.active?
-        args = {
-          :rule       => gnip_rule,
-          :env        => envs,
-          :action     => RULE_ACTION[:add]
-        }
-        Social::Gnip::RuleWorker.perform_async(args) if valid_params?(args)
-      end
     end
 
     def valid_rule?

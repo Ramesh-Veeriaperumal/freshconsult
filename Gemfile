@@ -46,7 +46,7 @@ gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
-gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.12'
+gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.13'
 
 group :development, :test do
   gem 'active_record_query_trace'  
@@ -360,3 +360,5 @@ gem "uglifier", "~> 2.7.2"
 gem "sprockets", "2.2.3"
 gem "rubocop", "0.52.1"
 gem 'safe_yaml', "1.0.4"
+
+gem 'ejson', :require => false

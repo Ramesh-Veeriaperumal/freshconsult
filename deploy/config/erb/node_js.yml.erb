@@ -1,0 +1,27 @@
+defaults: &defaults
+  faye_host: <%= node[:ymls][:node_js][:faye_host] %>
+  faye_server: <%= node[:ymls][:node_js][:faye_server] %>
+  agentcollision_host: <%= node[:ymls][:node_js][:agentcollision_host] %>
+  agentcollision_server: <%= node[:ymls][:node_js][:agentcollision_server] %>
+  autorefresh_host: <%= node[:ymls][:node_js][:autorefresh_host] %>
+  autorefresh_server: <%= node[:ymls][:node_js][:autorefresh_server] %>
+  rest_secret_key: <%= node[:ymls][:node_js][:rest_secret_key] %>
+  auto_refresh_secret: <%= node[:ymls][:node_js][:auto_refresh_secret] %>
+  auto_refresh_channel: "refresh"
+  agent_collision_channel: "collision"
+  agentcollision:
+    key: "Chromehelpkit"
+    iv:  "1324659871023654"
+  autorefresh:
+    key: "AutoRefreshHelpkit"
+    iv:  "1324659871023654"
+  socket_host_new: <%= node[:ymls][:node_js][:socket_host_new] %>
+  socket_autorefresh_host_new: <%= node[:ymls][:node_js][:socket_autorefresh_host_new] %>
+  
+
+slave:
+  <<: *defaults
+
+<%= node[:opsworks][:environment]%>:
+  <<: *defaults
+  secret_key: <%= node[:ymls][:node_js][:secret_key] %>

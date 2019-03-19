@@ -1,0 +1,14 @@
+defaults: &defaults
+  base_url: <%= node[:ymls][:freshid][:base_url] %>
+  ui_url: <%= node[:ymls][:freshid][:ui_url] %>
+  client_id: <%= node[:ymls][:freshid][:client_id] %>
+  client_secret: <%= node[:ymls][:freshid][:client_secret] %>
+  product: <%= node[:ymls][:freshid][:product] %>
+  callback_api_secret: <%= node[:ymls][:freshid][:callback_api_secret] %>
+  central_url: <%= node[:ymls][:freshid][:central_url] %>
+  customer_base_url: <%= node[:ymls][:freshid][:customer_base_url] %>
+  customer_client_id: <%= node[:ymls][:freshid][:customer_client_id] %>
+  customer_client_secret: <%= node[:ymls][:freshid][:customer_client_secret] %>
+
+<%= node[:opsworks][:environment] %>:
+  <<: *defaults

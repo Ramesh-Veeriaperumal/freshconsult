@@ -19,6 +19,12 @@ module Helpdesk::TicketsHelper
   include Cache::Memcache::Helpdesk::TicketTemplate #Methods for tkt templates count
   include Cache::FragmentCache::Base # Methods for fragment caching
   include Helpdesk::SpamAccountConstants
+  include Redis::OthersRedis
+  include Redis::RedisKeys
+
+  def is_twitter_blocked?
+    redis_key_exists?(TWITTER_APP_BLOCKED)
+  end
 
   def ticket_sidebar
     tabs = [["TicketProperties", t('ticket.properties').html_safe,         "ticket"],

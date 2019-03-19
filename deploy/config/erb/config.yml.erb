@@ -1,0 +1,120 @@
+# Used for subscription emails (subscription_notifier.rb)
+app_name: Freshdesk
+from_email: support@freshdesk.com
+cs_email: customersuccess@freshdesk.com
+billing_email: billing@freshdesk.com
+reports_email: reports@freshdesk.com
+integrations_email: integration@freshdesk.com
+office365_email: outlook@freshdesk.com
+free_plan_agts: 1
+app_website: http://www.freshdesk.com
+support_url: https://support.freshdesk.com
+privacy_policy: https://www.freshdesk.com/privacy
+latest_shard: <%= node[:ymls][:config][:latest_shard] %>
+feedback_account:
+  <%= node[:opsworks][:environment] %>: <%= node[:ymls][:config][:feedback_account] %>
+
+# Used in account creation (account.rb)
+base_domain: 
+  <%= node[:opsworks][:environment] %>: <%= node[:ymls][:config][:base_domain] %>
+
+demo_site:
+  <%= node[:opsworks][:environment] %>:  "<%= node[:ymls][:config][:demo_site] %>"
+
+sub_bcc_email:
+  <%= node[:opsworks][:environment] %>:  "<%= node[:ymls][:config][:sub_bcc_email] %>"
+    
+crm:
+  <%= node[:opsworks][:environment] %>: 
+    api_key: <%= node[:ymls][:config][:crm_api_key] %>
+    domain:  "freshdesk"
+
+salesforce:
+  <%= node[:opsworks][:environment] %>: 
+    consumer_key : <%= node[:ymls][:config][:salesforce_consumer_key] %>
+    consumer_secret : <%= node[:ymls][:config][:salesforce_consumer_secret] %>
+    access_token : <%= node[:ymls][:config][:salesforce_access_token] %>
+    access_secret : <%= node[:ymls][:config][:salesforce_access_secret] %>
+
+marketo:
+  <%= node[:opsworks][:environment] %>:
+    access_key: <%= node[:ymls][:config][:marketo_access_key] %>
+    secret_key: <%= node[:ymls][:config][:marketo_secret_key] %>
+    api_subdomain: <%= node[:ymls][:config][:marketo_api_subdomain] %>
+    api_version: <%= node[:ymls][:config][:marketo_api_version] %>
+
+
+
+integrations_url:
+  <%= node[:opsworks][:environment] %>: <%= node[:ymls][:config][:integrations_url] %>
+
+global_integration_url:
+  <%= node[:opsworks][:environment] %>: <%= node[:ymls][:config][:global_integration_url] %>
+
+reseller_portal:
+  user_name: <%= node[:ymls][:config][:reseller_portal_user_name] %>
+  password: <%= node[:ymls][:config][:reseller_portal_password] %>
+  shared_secret: <%= node[:ymls][:config][:reseller_portal_shared_secret] %>
+  portal_url:
+    <%= node[:opsworks][:environment] %>: <%= node[:ymls][:config][:reseller_portal_portal_url] %>
+
+client_debugging:
+  bugsnag:
+    <%= node[:opsworks][:environment] %>:
+      api_key: <%= node[:ymls][:config][:bugsnag_api_key] %>
+
+freshchat:
+  <%= node[:opsworks][:environment] %>:
+    token: <%= node[:ymls][:config][:freshchat][:token] %>
+    app_id: <%= node[:ymls][:config][:freshchat][:app_id] %>
+
+freshsales:
+  <%= node[:opsworks][:environment] %>:
+    authentication_token: <%= node[:ymls][:config][:freshsales_auth_token] %>
+    portal_url: <%= node[:ymls][:config][:freshsales_portal_url] %>
+
+natero:
+  <%= node[:opsworks][:environment] %>:
+    url: <%= node[:ymls][:config][:natero_url] %>
+    api_key: <%= node[:ymls][:config][:natero_api_key] %>
+
+# Set this to true if you want to require CC info when creating a trial account for a paid plan
+require_payment_info_for_trials: false
+
+# Credit card gateway: One of brain_tree, authorize_net_cim, payment_express, or trust_commerce
+gateway: brain_tree
+
+# Used for accessing the site admin controllers, to manage plans,
+# discounts, etc.  This is prepended to base_domain, so 'admin'
+# here will allow admin.example.com to serve the admin interface.
+admin_subdomain: admin
+
+attachment:
+  attachment_common: &attachment_common 
+    protocol: http
+    port: ':3000'
+  <%= node[:opsworks][:environment] %>:
+    <<: *attachment_common
+    domain: 
+      <% node[:ymls][:config][:attachment].each do |podinfo,domain| %>
+      <%= podinfo %>: <%= domain %>
+      <% end %>
+    protocol: https
+    port:
+
+freshops_subdomain:
+  <% node[:ymls][:freshops][:subdomains].each do |podinfo,domain| %>
+  <%= podinfo %>: <%= domain %>
+  <% end %>
+  
+partner_subdomain:
+  poduseast1: partner
+  podeuwest1: partnereu
+  podeucentral1: partnereuc
+  podapsoutheast2: partneraus
+  podapsouth1: partnerind
+
+billing_subdomain: billing
+
+# Show Trial Expiry notifier only if the trail days is less than 100 (dashboard/index.html)
+show_trail_notifier_in_days: 30

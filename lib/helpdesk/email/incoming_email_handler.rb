@@ -565,7 +565,9 @@ module Helpdesk
 				end
 				to_emails = parse_to_emails
 				global_cc = parse_all_cc_emails(account.kbase_email, account.support_emails)
-				if max_email_limit_reached? "Ticket", to_emails, global_cc 
+				if Account.current.allow_huge_ccs_enabled?
+					global_cc = global_cc[0..48] if global_cc.present?
+				elsif max_email_limit_reached? 'Ticket', to_emails, global_cc 
 					email_processing_log "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for the ticket"
 					return processed_email_data(PROCESSED_EMAIL_STATUS[:max_email_limit], account.id)
 				end
@@ -694,6 +696,10 @@ module Helpdesk
 				cc_array = get_email_array params[:cc]
 				cc_array.concat(additional_emails || [])
 				cc_array.compact.map{|i| i.downcase}.uniq
+				if Account.current.allow_huge_ccs_enabled?
+					cc_array = cc_array[0..48]
+				end
+				cc_array
 			end
 
 			def cleansed_html
@@ -901,7 +907,11 @@ module Helpdesk
 				parsed_cc_emails.delete(ticket.account.kbase_email)
 				cc_emails = parsed_cc_emails
 				to_emails = parse_to_emails
-				if max_email_limit_reached? "Note", to_emails, cc_emails
+
+				if Account.current.allow_huge_ccs_enabled?
+					cc_emails = cc_emails[0..48] if cc_emails.present?
+					to_emails = to_emails[0..48] if to_emails.present?
+				elsif max_email_limit_reached? 'Note', to_emails, cc_emails
 					email_processing_log "You have exceeded the limit of #{TicketConstants::MAX_EMAIL_COUNT} cc emails for the note"
 					return processed_email_data(PROCESSED_EMAIL_STATUS[:max_email_limit], ticket.account.id)
 				end

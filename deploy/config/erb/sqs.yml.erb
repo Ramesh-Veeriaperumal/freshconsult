@@ -1,0 +1,1 @@
+<%= { node[:opsworks][:environment] => node[:ymls][:sqs_queues].to_hash }.to_yaml %>
