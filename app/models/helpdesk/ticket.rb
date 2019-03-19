@@ -829,7 +829,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def schema_less_attributes(attribute, args)
-    Rails.logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
     build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array)
     (attribute.to_s.include? '=') ? schema_less_ticket.safe_send(attribute, args) : schema_less_ticket.safe_send(attribute)

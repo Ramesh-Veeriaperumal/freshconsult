@@ -115,7 +115,7 @@ class ApiApplicationController < MetalApiController
       MemcacheKeys.cache(format(response_cache_key, account_id: current_account.id), response.body, RESPONSE_CACHE_TIMEOUT) if response_cache_key
     end
   end
-  
+
   def response_cache_key
     @cache_key ||= self.class::RESPONSE_CACHE_KEYS[action_name] if defined? self.class::RESPONSE_CACHE_KEYS
   end
@@ -341,7 +341,6 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_account_state
-      Rails.logger.info "::: Check account state :::"
       if current_account.suspended?
         if private_api?
           render_request_error(:account_suspended, 402) if RESTRICTED_ACCESS_METHODS.include?(request.method_symbol)
@@ -680,7 +679,7 @@ class ApiApplicationController < MetalApiController
 
     def set_current_portal
       @current_portal ||= Portal.fetch_by_url(request_host) || @current_account.main_portal_from_cache
-      @current_portal.make_current 
+      @current_portal.make_current
     end
 
     def get_request?
@@ -823,10 +822,8 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_day_pass_usage_with_user_time_zone
-      Rails.logger.info "::: day pass check started :::"
       user_zone = TimeZone.find_time_zone
       Time.use_zone(user_zone) { check_day_pass_usage }
-      Rails.logger.info "::: day pass check done :::"
     end
 
     def use_time_zone
@@ -918,7 +915,7 @@ class ApiApplicationController < MetalApiController
         Rails.logger.debug "Exception on set locale :: #{exception.message}"
         I18n.default_locale
       end
-      log_locale
+      # log_locale
     end
 
     def authenticate_jwt_request
