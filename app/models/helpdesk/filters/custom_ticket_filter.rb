@@ -520,6 +520,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     order.to_sym.eql?(:agent_responded_at) || order.to_sym.eql?(:requester_responded_at)
   end
 
+  def sort_by_flexi_field?(order_by)
+    TicketFilterConstants::SORTABLE_CUSTOM_FIELDS.key?(order_by)
+  end
+
   def results
     db_type = (sort_by_response? || !Account.current.master_queries?) ? :run_on_slave : :run_on_master
     Sharding.safe_send(db_type) do
@@ -566,8 +570,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins = [""]
     if join_tf_data?
       all_joins = tf_data_join if all_conditions[0].include?("ticket_field_data")
-    else
-      all_joins = joins if all_conditions[0].include?("flexifields")
+    elsif all_conditions[0].include?('flexifields') || sort_by_flexi_field?(order)
+      all_joins = joins
     end
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
@@ -640,6 +644,12 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       
       if sort_by_response? 
         "if(helpdesk_ticket_states.#{order} IS NULL, helpdesk_tickets.created_at, helpdesk_ticket_states.#{order}) #{order_type}"
+      elsif sort_by_flexi_field?(order_columns)
+        def_entry = Account.current.flexifields_with_ticket_fields_from_cache.find do |x|
+          x.flexifield_alias == TicketFilterConstants::SORTABLE_CUSTOM_FIELDS[order_columns] + "_#{Account.current.id}"
+        end
+        flexi_col_name = def_entry.flexifield_name
+        "flexifields.#{flexi_col_name} #{order_type}"
       else
         if order_parts.size > 1
           "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
