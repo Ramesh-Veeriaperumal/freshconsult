@@ -11,6 +11,9 @@ module Social::Twitter::ErrorHandler
     include Social::Constants
     include Redis::OthersRedis
     include Redis::RedisKeys
+    include ChannelIntegrations::Utils::Schema
+    include ChannelIntegrations::Constants
+
     def twt_sandbox(handle, timeout = TwitterConfig::TWITTER_TIMEOUT)
       
       #overide timeout according the the env timeout values
