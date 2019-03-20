@@ -98,7 +98,7 @@ module TicketsTestHelper
       due_by: ticket.due_by.try(:utc).try(:iso8601),
       created_at: ticket.created_at.try(:utc).try(:iso8601),
       closed_at: ticket.closed_at.try(:utc).try(:iso8601),
-      custom_fields: ticket.custom_fields_hash,
+      custom_fields: ticket.central_custom_fields_hash,
       company_id: ticket.company_id,
       sla_policy_id: ticket.sla_policy_id,
       is_escalated: ticket.isescalated,
