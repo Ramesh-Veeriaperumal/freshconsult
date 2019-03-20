@@ -60,8 +60,11 @@ module Social::Twitter::ErrorHandler
         social_error_code = exception.code
         @social_error_msg =  exception.message.include?("not following") ? 
                               "#{I18n.t('social.streams.twitter.not_following')}" : "#{I18n.t('social.streams.twitter.client_error')}"
-        if social_error_code == Twitter::Error::Codes::CANNOT_WRITE
+        if social_error_code == Twitter::Error::Codes::CANNOT_WRITE &&
+           !redis_key_exists?(TWITTER_APP_BLOCKED)
           set_others_redis_key(TWITTER_APP_BLOCKED, true, nil)
+          post_command_to_central(Social::Twitter::Constants::MONITOR_APP_PERMISSION,
+                                  'twitter')
         end
         if exception.message.include?("temporarily locked")
           @sandbox_handle.state = Social::TwitterHandle::TWITTER_STATE_KEYS_BY_TOKEN[:reauth_required]

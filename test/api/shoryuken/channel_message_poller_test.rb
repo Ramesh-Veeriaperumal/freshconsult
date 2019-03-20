@@ -71,6 +71,32 @@ class ChannelMessagePollerTest < ActionView::TestCase
     assert_equal ticket.subject, payload[:subject]
   end
 
+  def test_unblock_app_command_payload
+    sqs_body = {
+      data: {
+        payload_type: 'helpkit_command',
+        account_id: @account.id,
+        owner: 'twitter',
+        command: 'unblock_app',
+        payload: {
+          data: {},
+          context: {},
+          command_name: 'unblock_app',
+          owner: 'twitter',
+          pod: 'development'
+        },
+        msg_id: Faker::Lorem.characters(50)
+
+      }
+    }
+    sqs_payload = Minitest::Mock.new
+    sqs_payload.expect(:body, sqs_body.to_json)
+    $redis_others.perform_redis_op('set', 'TWITTER_APP_BLOCKED', true)
+    Ryuken::ChannelMessagePoller.new.perform(sqs_payload)
+    redis_key_status = $redis_others.perform_redis_op('exists', 'TWITTER_APP_BLOCKED')
+    assert redis_key_status.blank?
+  end
+
   private
 
     def twitter_create_ticket_command
