@@ -14,4 +14,21 @@ class ApiDecorator
     Rails.logger.error "API V2 Boolean convert error #{record.class} id #{record.id} with #{field_to_be_converted} is '#{value}'"
     value
   end
+  
+  def private_api?
+    defined?($infra) && $infra['PRIVATE_API']
+  end
+
+  def channel_v2_api?
+    defined?($infra) && $infra['CHANNEL_LAYER']
+  end
+
+  def format_date(value, utc_format = false)
+    return utc_format ? value.utc : value.strftime('%F') if value.respond_to?(:utc)
+    value
+  end
+
+  def app_current?
+    Thread.current[:app_integration].present?
+  end
 end
