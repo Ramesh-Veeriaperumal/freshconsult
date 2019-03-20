@@ -175,20 +175,24 @@ module Social::Util
     Account.current.launched?(:euc_migrated_twitter) && ismember?(EU_TWITTER_HANDLES, "#{Account.current.id}:#{handle.twitter_user_id}")
   end
 
-  def post_activate_command_to_central(command, handle)
-    payload_hash = command_payload(command, handle)
+  def post_command_to_central(command, client, *args)
+    payload_hash = command_payload(command, client, *args)
     msg_id = generate_msg_id(payload_hash)
     Rails.logger.info "Command from Helpkit, Command: #{command}, Msg_id: #{msg_id}"
     Channel::CommandWorker.perform_async({ payload: payload_hash }, msg_id)
   end
 
-  def command_payload(command_name, handle)
-    schema = default_command_schema('helpkit', command_name)
-    schema.merge!(safe_send("#{command_name}_payload", handle))
+  def command_payload(command_name, client, *args)
+    schema = default_command_schema(client, command_name)
+    schema.merge!(safe_send("#{command_name}_payload", *args))
   end
 
   def generate_msg_id(payload)
     Digest::MD5.hexdigest(payload.to_s)
+  end
+
+  def monitor_app_permission_payload
+    { data: {}, context: {} }
   end
 
   def activate_handle_payload(handle)
