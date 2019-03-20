@@ -24,7 +24,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :source_hash, as: :source
     t.add :requester_id
     t.add :skill_id, :if => proc { Account.current.skill_based_round_robin_enabled? }
-    t.add :custom_fields_hash, as: :custom_fields
+    t.add :central_custom_fields_hash, as: :custom_fields
     t.add :product_id
     t.add :company_id
     t.add :sla_policy_id
@@ -132,7 +132,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     }
   end
 
-  def custom_fields_hash
+  def central_custom_fields_hash
     pv_transformer = Helpdesk::Ticketfields::PicklistValueTransformer::StringToId.new(self)
     custom_ticket_fields.inject([]) do |arr, field|
       begin
