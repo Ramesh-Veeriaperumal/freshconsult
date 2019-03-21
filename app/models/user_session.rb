@@ -30,7 +30,6 @@ class UserSession < Authlogic::Session::Base
   end
 
   def save(&block)
-    Rails.logger.info "Creating user session :: #{Account.current.id} :: #{email}"
     (0..4).to_a.each { |i| Rails.logger.debug caller[i] }
     result = super(&block)
     Rails.logger.info "Done saving user session :: #{record.id if record} :: #{controller.session.inspect if controller}"

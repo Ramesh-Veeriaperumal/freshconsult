@@ -132,7 +132,6 @@ class Product < ActiveRecord::Base
     def update_dashboard_widgets
       # Updates dashboard widgets with product binding
       Helpdesk::DeactivateProductWidgets.perform_async({ product_id: id })
-      Rails.logger.info("Enqueuing job to DeactivateProductWidgets worker")
     end
 
    def widget_update

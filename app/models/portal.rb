@@ -347,7 +347,6 @@ class Portal < ActiveRecord::Base
     def save_route_info
       if portal_url_changed?
         Rails.logger.info "portal_url changed #{portal_url}"
-        Rails.logger.info "Old URL #{portal_url_was},  #{portal_url}, #{account_id}, #{account.full_domain}"
         destroy_route_info(portal_url_was) unless portal_url_was.blank? #delete old portal url
         Redis::RoutesRedis.set_route_info(portal_url, account_id, account.full_domain) unless portal_url.blank? #add new portal url
       end

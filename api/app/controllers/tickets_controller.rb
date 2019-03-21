@@ -155,9 +155,7 @@ class TicketsController < ApiApplicationController
       if current_account.count_es_api_enabled?
         tickets_from_es
       else
-        Rails.logger.info ":::Loading objects started:::"
         super tickets_filter.preload(conditional_preload_options)
-        Rails.logger.info ":::Loading objects done:::"
       end
     end
 

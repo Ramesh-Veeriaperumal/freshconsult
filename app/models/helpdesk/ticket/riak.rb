@@ -20,7 +20,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   # fetching data from riak
   def read_from_riak
-    Rails.logger.info "Riak ticket read #{self.account_id}/#{self.id}"
     data = Helpdesk::Riak::Ticket::Body.get_from_riak("#{self.account_id}/#{self.id}")
     riak_ticket_body = Helpdesk::TicketBody.new(data["ticket_body"])
     riak_ticket_body.new_record = false
