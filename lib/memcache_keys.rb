@@ -12,7 +12,7 @@ module MemcacheKeys
 
   ACCOUNT_AGENTS = "v4/ACCOUNT_AGENTS:%{account_id}"
 
-  ACCOUNT_AGENTS_DETAILS = "v3/ACCOUNT_AGENTS_DETAILS:%{account_id}"
+  ACCOUNT_AGENTS_DETAILS = 'v5/ACCOUNT_AGENTS_DETAILS:%{account_id}'.freeze
 
   ACCOUNT_ROLES = "v1/ACCOUNT_ROLES:%{account_id}"
 
