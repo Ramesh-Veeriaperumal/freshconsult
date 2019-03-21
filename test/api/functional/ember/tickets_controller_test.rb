@@ -28,6 +28,7 @@ module Ember
     include ArchiveTicketTestHelper
     include DiscussionsTestHelper
     include BotResponseTestHelper
+    include TicketFiltersHelper
     include ::Admin::AdvancedTicketing::FieldServiceManagement::Util
     include ::Admin::AdvancedTicketing::FieldServiceManagement::Constant
     ARCHIVE_DAYS = 120
@@ -4622,6 +4623,172 @@ module Ember
           cleanup_fsm
         end
       end
+    end
+
+    def test_filter_by_appointment_time_with_date_range_for_start_time
+      begin
+        Account.stubs(:current).returns(Account.first)
+        Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+        perform_fsm_operations
+        Account.reset_current_account
+        Account.stubs(:current).returns(Account.first)
+        fsm_ticket_1 = create_service_task_ticket(fsm_appointment_start_time: "2019-12-03T18:30:00Z")
+        fsm_ticket_2 = create_service_task_ticket(fsm_appointment_start_time: "2019-11-23T18:30:00Z")
+        query_hash_params = {
+              '0' => { 'condition' => 'cf_fsm_appointment_start_time', 'operator' => 'is', 'value' => { "from": "2019-11-28T18:30:00Z","to": "2019-12-10T18:29:59Z" }, 'type' => 'custom_field' }
+            }
+        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+        assert_response 200
+        response_body = JSON.parse(response.body)
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.id }.present?
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_2.id }.nil?
+      ensure
+        fsm_ticket_1.destroy
+        fsm_ticket_2.destroy
+        cleanup_fsm
+        Account.unstub(:field_service_management_enabled?)
+        Account.unstub(:current)
+      end
+    end
+
+    def test_filter_by_appointment_time_with_default
+      begin
+        Account.stubs(:current).returns(Account.first)
+        Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+        perform_fsm_operations
+        Account.reset_current_account
+        Account.stubs(:current).returns(Account.first)
+        fsm_ticket_1 = create_service_task_ticket(fsm_appointment_start_time: Date.today.strftime('%Y-%m-%dT%H:%m:%S'))
+        fsm_ticket_2 = create_service_task_ticket(fsm_appointment_start_time: "2019-11-23T18:30:00Z")
+        query_hash_params = {
+              '0' => { 'condition' => 'cf_fsm_appointment_start_time', 'operator' => 'is', 'value' => 'today', 'type' => 'custom_field' }
+            }
+        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+        assert_response 200
+        response_body = JSON.parse(response.body)
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.id }.present?
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_2.id }.nil?
+      ensure
+        fsm_ticket_1.destroy
+        fsm_ticket_2.destroy
+        cleanup_fsm
+        Account.unstub(:field_service_management_enabled?)
+        Account.unstub(:current)
+      end
+    end
+
+    def test_filter_by_appointment_time_with_date_range_for_end_time
+      begin
+        Account.stubs(:current).returns(Account.first)
+        Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+        perform_fsm_operations
+        Account.reset_current_account
+        Account.stubs(:current).returns(Account.first)
+        fsm_ticket_1 = create_service_task_ticket(fsm_appointment_end_time: "2019-12-03T18:30:00Z")
+        fsm_ticket_2 = create_service_task_ticket(fsm_appointment_end_time: "2019-11-23T18:30:00Z")
+        query_hash_params = {
+              '0' => { 'condition' => 'cf_fsm_appointment_end_time', 'operator' => 'is', 'value' => { "from": "2019-12-01T18:30:00Z","to": "2019-12-10T18:29:59Z" }, 'type' => 'custom_field' }
+            }
+        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+        assert_response 200
+        response_body = JSON.parse(response.body)
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.id }.present?
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_2.id }.nil?
+      ensure
+        fsm_ticket_1.destroy
+        fsm_ticket_2.destroy
+        cleanup_fsm
+        Account.unstub(:field_service_management_enabled?)
+        Account.unstub(:current)
+      end
+    end
+
+    def test_filter_by_appointment_time_with_date_range_for_start_time_and_end_time
+      begin
+        Account.stubs(:current).returns(Account.first)
+        Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+        perform_fsm_operations
+        Account.reset_current_account
+        Account.stubs(:current).returns(Account.first)
+        fsm_ticket_1 = create_service_task_ticket(fsm_appointment_start_time: "2019-12-03T18:30:00Z", fsm_appointment_end_time: "2019-12-15T18:30:00Z" )
+        fsm_ticket_2 = create_service_task_ticket(fsm_appointment_start_time: "2019-11-23T18:30:00Z", fsm_appointment_end_time: "2019-12-03T18:30:00Z")
+        fsm_ticket_3 = create_service_task_ticket(fsm_appointment_start_time: "2019-11-01T18:30:00Z", fsm_appointment_end_time: "2019-11-15T18:30:00Z")
+        query_hash_params = {
+              '0' => { 'condition' => 'cf_fsm_appointment_start_time', 'operator' => 'is', 'value' => { "from": "2019-11-15T18:30:00Z","to": "2019-11-25T18:29:59Z" }, 'type' => 'custom_field' },
+              '0' => { 'condition' => 'cf_fsm_appointment_end_time', 'operator' => 'is', 'value' => { "from": "2019-12-01T18:30:00Z","to": "2019-12-10T18:29:59Z" }, 'type' => 'custom_field' }
+            }
+        get :index, controller_params({ version: 'private', query_hash: query_hash_params }, false)
+        assert_response 200
+        response_body = JSON.parse(response.body)
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_2.id }.present?
+        assert response_body.find { |ticket| ticket['id'] == fsm_ticket_1.id || ticket['id'] == fsm_ticket_3.id }.nil?
+      ensure
+        fsm_ticket_1.destroy
+        fsm_ticket_2.destroy
+        cleanup_fsm
+        Account.unstub(:field_service_management_enabled?)
+        Account.unstub(:current)
+      end
+    end
+
+    def test_service_task_tickets_order_by_appointment_time_desc
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      Account.stubs(:current).returns(Account.first)
+      perform_fsm_operations
+      Account.reset_current_account
+      Account.stubs(:current).returns(Account.first)
+      Account.current.tickets.where(ticket_type: SERVICE_TASK_TYPE).destroy_all
+      fsm_ticket1 = create_service_task_ticket(fsm_appointment_start_time: Time.zone.today.advance(days: 3).strftime('%Y-%m-%dT%H:%m:%S'))
+      fsm_ticket2 = create_service_task_ticket(fsm_appointment_start_time: Time.zone.today.advance(days: 2).strftime('%Y-%m-%dT%H:%m:%S'))
+      ticket = create_ticket
+      get :index, controller_params(version: 'private', order_by: 'appointment_start_time', order_type: 'desc')
+      assert_response 200
+      ticket_list = JSON.parse(response.body)
+      assert ticket_list.size >= 5
+      assert_equal ticket_list[0]['id'], fsm_ticket1.id
+      assert_equal ticket_list[1]['id'], fsm_ticket2.id
+    ensure
+      Account.any_instance.unstub(:field_service_management_enabled?)
+      cleanup_fsm
+      Account.unstub(:current)
+    end
+
+    def query_hash_param(condition, operator, value, type = 'default')
+      {
+        'condition' => condition,
+        'operator' => operator,
+        'value' => value,
+        'type' => type
+      }
+    end
+
+    def test_service_task_tickets_order_by_appointment_time_asc
+      Account.any_instance.stubs(:field_service_management_enabled?).returns(true)
+      Account.stubs(:current).returns(Account.first)
+      perform_fsm_operations
+      Account.reset_current_account
+      Account.stubs(:current).returns(Account.first)
+      Account.current.tickets.where(ticket_type: SERVICE_TASK_TYPE).destroy_all
+      fsm_ticket1 = create_service_task_ticket(fsm_appointment_start_time: Time.zone.today.advance(days: 3).strftime('%Y-%m-%dT%H:%m:%S'))
+      fsm_ticket2 = create_service_task_ticket(fsm_appointment_start_time: Time.zone.today.advance(days: 2).strftime('%Y-%m-%dT%H:%m:%S'))
+      ticket = create_ticket
+      query_hash_params = { '0' => query_hash_param('ticket_type', 'is_in', ['Service Task']) }
+      get :index, controller_params({ version: 'private', order_by: 'appointment_start_time', order_type: 'asc', query_hash: query_hash_params }, false)
+      assert_response 200
+      ticket_list = JSON.parse(response.body)
+      assert ticket_list.size == 2
+      assert_equal ticket_list[1]['id'], fsm_ticket1.id
+      assert_equal ticket_list[0]['id'], fsm_ticket2.id
+    ensure
+      Account.any_instance.unstub(:field_service_management_enabled?)
+      cleanup_fsm
+      Account.unstub(:current)
+    end
+
+    def test_order_by_without_enabling_fsm
+      get :index, controller_params(version: 'private', updated_since: Time.zone.now.iso8601, order_by: 'appointment_start_time')
+      assert_response 400
+      match_json([bad_request_error_pattern('order_by', :not_included, list: sort_field_options.join(','), code: :invalid_value)])
     end
   end
 end

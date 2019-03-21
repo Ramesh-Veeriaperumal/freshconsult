@@ -79,7 +79,6 @@ class AccountsController < ApplicationController
   end
   
   def check_domain
-    puts "#{params[:domain]}"
     render :json => { :account_name => true }, :callback => params[:callback]
   end
 

@@ -1,5 +1,6 @@
 module I18n
 
+    # Modifying TEST_LANGUAGES will affect 'all' in 'lib/language.rb' file
     TEST_LANGUAGES = [:"test-ui"].freeze
     #the below languages have dummy locale files in config
     #paperclip gem introduces these locales causing the order of available locales to be messed up. 

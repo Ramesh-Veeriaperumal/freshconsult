@@ -17,6 +17,7 @@ class TicketFilterValidation < FilterValidation
   validates :updated_since, date_time: true
   validates :order_by, custom_inclusion: { in: proc { |x| x.sort_field_options } }
   validates :status, array: { custom_inclusion: { in: proc { |x| x.account_statuses }, ignore_string: :allow_string_param, detect_type: true } }
+  validate :fsm_appointment_time_filter_validation, if: -> { Account.current.field_service_management_enabled? && @query_hash.present? }
   validate :verify_cf_data_type, if: -> { cf.present? }
   validates :include, data_type: { rules: String }
   validates :type, custom_inclusion: { in: proc { |x| x.account_ticket_types } }
@@ -72,35 +73,34 @@ class TicketFilterValidation < FilterValidation
     @email ? :email : :requester_id
   end
 
-  def fsm_appointment_date_filter_validation
-    unless @query_hash.nil?
-      query_key = get_query_key.first
-      check_dates_and_range(query_key) if query_key.present? && !DATE_FILTER_DEFAULT_OPTIONS.include?(@query_hash[query_key]['value'])
-    end
-  end
-
-  def get_query_key
-    date_fields_filter = Account.current.custom_date_fields_from_cache.select { |x| x.name == FSM_DATE_FIELD + "_#{Account.current.id}" }.map(&:name)
-    @query_hash.keys.each do |query|
-      if @query_hash[query]['condition'] == FSM_DATE_FIELD && date_fields_filter.include?(@query_hash[query]['condition'] + "_#{Account.current.id}")
-        return query
-      else
-        return [nil]
+  def fsm_appointment_time_filter_validation
+    if @query_hash.is_a?(Hash)
+      query_key = get_query_key
+      query_key.each do |query|
+        check_dates_and_range(query) unless DATE_TIME_FILTER_DEFAULT_OPTIONS.include?(@query_hash[query]['value'])
       end
     end
   end
 
+  def get_query_key
+    fsm_conditions = []
+    @query_hash.keys.each do |query|
+      if FSM_DATE_TIME_FIELDS.include?(@query_hash[query]['condition'])
+        fsm_conditions << query
+      end
+    end
+    fsm_conditions
+  end
+
   def check_dates_and_range(query)
-    @query_hash[query]['value'][:from] = @query_hash[query]['value'][:from].to_date.strftime('%Y-%m-%d')
-    @query_hash[query]['value'][:to] = @query_hash[query]['value'][:to].to_date.strftime('%Y-%m-%d')
-    given_date_range = (@query_hash[query]['value'][:to].to_date - @query_hash[query]['value'][:from].to_date).to_i
+    given_date_range = (@query_hash[query]['value'][:to].to_datetime - @query_hash[query]['value'][:from].to_datetime).to_f
     if given_date_range > DATE_RANGE
-      errors[:query_hash] << :date_limit_exceeded
+      errors[:"query_hash[#{query}]"] << :date_limit_exceeded
     elsif given_date_range < 0
-      errors[:query_hash] << :invalid_date_range
+      errors[:"query_hash[#{query}]"] << :invalid_date_time_range
     end
   rescue Exception => e
-    errors[:query_hash] << :query_format_invalid
+    errors[:"query_hash[#{query}]"] << :query_format_invalid
   end
 
   def verify_cf_data_type

@@ -829,7 +829,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def schema_less_attributes(attribute, args)
-    Rails.logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
     build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array)
     (attribute.to_s.include? '=') ? schema_less_ticket.safe_send(attribute, args) : schema_less_ticket.safe_send(attribute)
@@ -1383,7 +1382,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   alias_method :rr_active?, :rr_active
 
   def round_robin_attributes
-    { active: rr_active, agent_id: responder_id, group_id: group_id }
+    { active: rr_active, agent_id: responder_id.to_s.presence, group_id: group_id.to_s.presence }
   end
 
   def eligible_for_ocr?

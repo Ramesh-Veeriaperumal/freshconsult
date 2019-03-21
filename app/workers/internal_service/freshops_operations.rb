@@ -1,6 +1,6 @@
 class InternalService::FreshopsOperations < BaseWorker
   include Sidekiq::Worker
-  include FreshopsUtils
+  include InternalService::FreshopsUtils
   sidekiq_options queue: :freshops_service, retry: 0, backtrace: true, failures: :exhausted
 
   def perform(args)
@@ -18,4 +18,8 @@ class InternalService::FreshopsOperations < BaseWorker
       invoke_enable_old_ui
     end
 
+    def trigger_daypass_export_service(args)
+      return if @account.nil?
+      export_daypass_usage(args[:export_duration], args[:user_email])
+    end
 end

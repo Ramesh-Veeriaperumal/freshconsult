@@ -115,6 +115,7 @@ module Search::TicketSearch
   end
   
   def get_op_list(name)
+    name = name.eql?('date_time') ? 'datetime' : name
     containers = Wf::Config.data_types[:helpdesk_tickets][name]
     container_klass = Wf::Config.containers[containers.first].constantize
     container_klass.operators.first   

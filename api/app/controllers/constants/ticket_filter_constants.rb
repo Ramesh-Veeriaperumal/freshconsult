@@ -25,11 +25,15 @@ module TicketFilterConstants
 
   FSM_APPOINTMENT_END_TIME = 'cf_fsm_appointment_end_time'.freeze
 
-  FSM_DATE_TIME_FIELD = [FSM_APPOINTMENT_START_TIME, FSM_APPOINTMENT_END_TIME].freeze
+  FSM_DATE_TIME_FIELDS = [FSM_APPOINTMENT_START_TIME, FSM_APPOINTMENT_END_TIME].freeze
 
   DATE_TIME_FILTER_DEFAULT_OPTIONS = ['today', 'tomorrow', 'yesterday', 'week', 'last_week', 'next_week'].freeze
+
+  DATE_TIME_FILTER_DEFAULT_OPTIONS_HASH = Hash[DATE_TIME_FILTER_DEFAULT_OPTIONS.map { |option| [option.to_sym, option] }]
 
   DATE_FIELD_REGEX = /^[0-9]{4}\-[0-1][0-9]\-[0-3][0-9]$/i
 
   DATE_RANGE = 15
+
+  SORTABLE_CUSTOM_FIELDS = { 'appointment_start_time' => FSM_APPOINTMENT_START_TIME }.freeze
 end.freeze

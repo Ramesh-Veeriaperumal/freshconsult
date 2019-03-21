@@ -82,14 +82,14 @@ class Helpdesk::Ticket < ActiveRecord::Base
   after_commit :remove_links, :on => :update, :if => :unlinked_now?
   after_commit :sync_task_changes_to_ocr, on: :update, if: :allow_ocr_sync?
   after_commit :enqueue_skill_based_round_robin, :on => :update, :if => :enqueue_sbrr_job?
-  after_commit :save_sentiment, on: :create 
+  after_commit :save_sentiment, on: :create
   after_commit :update_spam_detection_service, :if => :model_changes?
   after_commit :spam_feedback_to_smart_filter, :on => :update, :if => :twitter_ticket_spammed?
   after_commit :tag_update_central_publish, :on => :update, :if => :tags_updated?
 
 
 
-  # Callbacks will be executed in the order in which they have been included. 
+  # Callbacks will be executed in the order in which they have been included.
 
   publishable
 
@@ -339,8 +339,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
    end
     save #Should move this to unless block.. by Shan
 
-    if @ticket.cc_email_hash.present? && @ticket.cc_email_hash[:cc_emails].present? && get_others_redis_key("NOTIFY_CC_ADDED_VIA_DISPATCHER").present? 
-        Helpdesk::TicketNotifier.send_later(:send_cc_email, @ticket, nil, {:cc_emails => @ticket.cc_email_hash[:cc_emails].to_a })
+    if @ticket.cc_email_hash.present? && @ticket.cc_email_hash[:cc_emails].present? && get_others_redis_key('NOTIFY_CC_ADDED_VIA_DISPATCHER').present?
+      Helpdesk::TicketNotifier.send_later(:send_cc_email, @ticket, nil, {:cc_emails => @ticket.cc_email_hash[:cc_emails].to_a })
     end
 
     self.va_rules_after_save_actions.each do |action|
@@ -412,8 +412,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
       if e.message =~ /NOSCRIPT No matching script/
         Redis::DisplayIdLua.load_display_id_lua_script_to_redis
       end
-    end 
-    
+    end
+
     #normal workflow
     if computed_display_id.nil?
       return
@@ -465,7 +465,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
     Rails.logger.debug "Linking Related tickets [#{related_ticket_ids}] to tracker_ticket #{self.display_id}"
     if related_ticket_ids.count == 1
       if @related_ticket.present?
-        set_tkt_assn_type(@related_ticket, :related) ? (self.associates = [@related_ticket.display_id]) : 
+        set_tkt_assn_type(@related_ticket, :related) ? (self.associates = [@related_ticket.display_id]) :
           update_associates_count(self)
       end
     elsif related_ticket_ids.count > 1
@@ -566,8 +566,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   def enqueue_sla_calculation
     increment_sla_retry_count
-    job_id = Sla::Calculation.perform_async(:ticket_id => self.id, :sla_state_attributes => sla_state_attributes, 
-      :sla_calculation_time => sla_calculation_time.to_i, :retries => sla_retries_count)
+    job_id = Sla::Calculation.perform_async(
+      ticket_id: id,
+      sla_state_attributes: sla_state_attributes,
+      sla_calculation_time: sla_calculation_time.to_i,
+      retries: sla_retries_count
+    )
     Rails.logger.debug "Sla on background, ticket #{self.id} #{self.display_id} #{sla_state_attributes.inspect} Job Id :: #{job_id}"
   end
 
@@ -576,7 +580,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def allow_ocr_sync?
-    res = account.omni_channel_routing_enabled? && 
+    res = account.omni_channel_routing_enabled? &&
       !skip_ocr_sync && observer_will_not_be_enqueued? &&
         disable_observer_rule.nil? && !ocr_update &&
           Thread.current[:observer_doer_id].nil? &&
@@ -751,7 +755,7 @@ private
       self.requester = requester
     end
   end
-  
+
   def can_add_requester?
     email.present? || twitter_id.present? || external_id.present? || phone.present? || unique_external_id.present?
   end
@@ -852,7 +856,7 @@ private
     end
     regenerate_fields
   end
-  
+
   def assign_flexifield
     build_flexifield
     self.flexifield_def = Account.current.ticket_field_def
@@ -960,9 +964,8 @@ private
     if (Account.current.launched?(:spam_detection_service) && @model_changes.include?(:spam) &&
      self.source.eql?(Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:email]))
       type = @model_changes[:spam][1] ? :spam : :ham
-      SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id, 
+      SpamDetection::LearnTicketWorker.perform_async({ :ticket_id => self.id,
         :type => Helpdesk::Email::Constants::MESSAGE_TYPE_BY_NAME[type]})
-      Rails.logger.info "Enqueued job to sidekiq to learn ticket"
     end
   end
 
@@ -971,9 +974,12 @@ private
   def reopen_tickets item
     ::Tickets::ReopenTickets.perform_async({:ticket_ids=>[item.display_id]})
   end
-  
+
   def spam_feedback_to_smart_filter
-    Social::SmartFilterFeedbackWorker.perform_async({ :ticket_id => id, :type_of_feedback => Social::Constants::SMART_FILTER_FEEDBACK_TYPE[:spam]}) 
+    Social::SmartFilterFeedbackWorker.perform_async({
+      ticket_id: id,
+      type_of_feedback: Social::Constants::SMART_FILTER_FEEDBACK_TYPE[:spam]
+    })
   end
 
   def sanitize_meta_data
@@ -998,8 +1004,8 @@ private
   def round_robin_attribute_changes
     Hash.new.tap do |field_changes|
       field_changes[:active]   = rr_active_change if rr_active_changed?
-      field_changes[:agent_id] = @model_changes[:responder_id] if @model_changes.key?(:responder_id)
-      field_changes[:group_id] = @model_changes[:group_id] if @model_changes.key?(:group_id)
+      field_changes[:agent_id] = @model_changes[:responder_id].map(&:to_s).map(&:presence) if @model_changes.key?(:responder_id)
+      field_changes[:group_id] = @model_changes[:group_id].map(&:to_s).map(&:presence) if @model_changes.key?(:group_id)
     end
   end
 end

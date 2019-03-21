@@ -180,6 +180,29 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
         :operator => get_op_list(cont), :options => get_default_choices(:group_id) }
       end
 
+# Custom date field
+#      Account.current.custom_date_fields_from_cache.each do |col|
+#        defs[get_id_from_field(col).to_sym] = {
+#          get_op_from_field(col).to_sym => get_container_from_field(col),
+#          name: col.label,
+#          container: get_container_from_field(col),
+#          operator: get_op_from_field(col),
+#          options: get_custom_choices(col)
+#         }
+     #      end
+
+    # Custom date time field
+     fsm_date_time_fields = TicketFilterConstants::FSM_DATE_TIME_FIELDS.collect { |x| x + "_#{Account.current.id}" }
+     Account.current.custom_date_time_fields_from_cache.select { |x| fsm_date_time_fields.include?(x.name) }.each do |col|
+      defs[get_id_from_field(col).to_sym] = {
+        get_op_from_field(col).to_sym => get_container_from_field(col),
+        name: col.label,
+        container: get_container_from_field(col),
+        operator: get_op_from_field(col),
+        options: get_custom_choices(col)
+      }
+     end
+
       #Custom fields
 
       Account.current.custom_dropdown_fields_from_cache.each do |col|
@@ -452,7 +475,6 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def sql_conditions
     @sql_conditions  ||= begin
-
       if errors? 
         all_sql_conditions = [" 1 = 2 "] 
       else
@@ -496,6 +518,10 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
 
   def sort_by_response? 
     order.to_sym.eql?(:agent_responded_at) || order.to_sym.eql?(:requester_responded_at)
+  end
+
+  def sort_by_flexi_field?(order_by)
+    TicketFilterConstants::SORTABLE_CUSTOM_FIELDS.key?(order_by)
   end
 
   def results
@@ -544,8 +570,8 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
     all_joins = [""]
     if join_tf_data?
       all_joins = tf_data_join if all_conditions[0].include?("ticket_field_data")
-    else
-      all_joins = joins if all_conditions[0].include?("flexifields")
+    elsif all_conditions[0].include?('flexifields') || sort_by_flexi_field?(order)
+      all_joins = joins
     end
     all_joins[0].concat(monitor_ships_join) if all_conditions[0].include?("helpdesk_subscriptions.user_id")
     all_joins[0].concat(tags_join) if all_conditions[0].include?("helpdesk_tags.name")
@@ -618,6 +644,12 @@ class Helpdesk::Filters::CustomTicketFilter < Wf::Filter
       
       if sort_by_response? 
         "if(helpdesk_ticket_states.#{order} IS NULL, helpdesk_tickets.created_at, helpdesk_ticket_states.#{order}) #{order_type}"
+      elsif sort_by_flexi_field?(order_columns)
+        def_entry = Account.current.flexifields_with_ticket_fields_from_cache.find do |x|
+          x.flexifield_alias == TicketFilterConstants::SORTABLE_CUSTOM_FIELDS[order_columns] + "_#{Account.current.id}"
+        end
+        flexi_col_name = def_entry.flexifield_name
+        "flexifields.#{flexi_col_name} #{order_type}"
       else
         if order_parts.size > 1
           "#{order_parts.first.camelcase.constantize.table_name}.#{order_parts.last} #{order_type}"
