@@ -28,6 +28,7 @@ module Ember
           email: current_user.email,
           timezone: TimeZone.fetch_tzinfoname,
           tenantId: current_account.id,
+          portalUrl: "#{current_account.url_protocol}://#{current_account.full_domain}",
           userId: current_user.id,
           sessionExpiration: Time.now.to_i + FreshVisualsConfig['session_expiration'].to_i,
           iat: Time.now.to_i,
