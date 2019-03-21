@@ -8,7 +8,7 @@
         <%= render_as_list f, field %>
         <% end %>
       </ul>
-      <% unless current_account.disable_signup_captcha_enabled? %>
+      <% unless current_account.bypass_signup_captcha_enabled? %>
         <div class="control-group">
           <div class="controls recaptcha-control">
             <%= recaptcha_tags :display => { :theme => "white" } %>
