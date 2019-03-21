@@ -18,9 +18,15 @@ module Redis::OthersRedis
 		end
 	end
 
-	def set_others_redis_with_expiry(key, value, options)
-		newrelic_begin_rescue { $redis_others.perform_redis_op("set", key, value, options) }
-	end
+  def set_others_redis_key_if_not_present(key, value)
+    newrelic_begin_rescue do
+      $redis_others.perform_redis_op('setnx', key, value)
+    end
+  end
+
+  def set_others_redis_with_expiry(key, value, options)
+    newrelic_begin_rescue { $redis_others.perform_redis_op('set', key, value, options) }
+  end
 
 	def remove_others_redis_key key
 		newrelic_begin_rescue { $redis_others.perform_redis_op("del", key) }
