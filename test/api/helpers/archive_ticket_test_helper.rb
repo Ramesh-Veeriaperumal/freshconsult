@@ -125,8 +125,10 @@ module ArchiveTicketTestHelper
     tags = [Faker::Name.name, Faker::Name.name]
     @create_group ||= create_group_with_agents(@account, agent_list: [@agent.id])
     params_hash = { email: email, cc_emails: cc_emails, subject: subject,
-                    priority: 2, status: 5, type: 'Problem', responder_id: @agent.id, source: 1, tags: tags,
+                    priority: 2, status: 5, type: 'Problem', responder_id: @agent.id, source: params[:source] || 1, tags: tags,
                     group_id: @create_group.id, created_at: params[:created_at] || 120.days.ago, account_id: @account.id }
+    params_hash[:company_id] = params[:company_id] if params[:company_id]
+    params_hash[:requester_id] = params[:requester_id] if params[:requester_id]
     params_hash
   end
 
