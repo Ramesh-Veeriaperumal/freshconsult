@@ -61,7 +61,7 @@ class Account < ActiveRecord::Base
 		subscription.save!
 	end
 
-  def perform_account_cancellation(feedback)
+  def perform_account_cancellation(feedback = {})
     response = Billing::Subscription.new.cancel_subscription(self)
     if response
       cancellation_feedback = "#{feedback[:title]} #{feedback[:additional_info]}"

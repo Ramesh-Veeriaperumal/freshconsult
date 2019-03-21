@@ -54,7 +54,7 @@ class Ember::IntegratedResourcesControllerTest < ActionController::TestCase
       application_id: app.id,
       integrated_resource: {
         remote_integratable_id: 'ROSH-100',
-        local_integratable_id: t1.id,
+        local_integratable_id: t1.display_id,
         installed_application_id: gcal_app.id,
         local_integratable_type: 'Helpdesk::Ticket'
       }

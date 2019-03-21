@@ -94,6 +94,8 @@ module AccountConstants
   SANDBOX_TRAIL_PERIOD = 180
   MAX_INVOICE_EMAILS = 1
 
+  ANONYMOUS_EMAIL = 'freshdeskdemo'.freeze
+
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT
   end

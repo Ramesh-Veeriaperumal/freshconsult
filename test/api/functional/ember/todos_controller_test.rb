@@ -213,7 +213,7 @@ module Ember
 
     def test_update_to_ticket_todo
       ticket = get_ticket
-      reminder = get_new_reminder('test delete', ticket.display_id)
+      reminder = get_new_reminder('test delete', ticket.id)
       todo = { body: Faker::Lorem.characters(200), completed: true }
       put :update, construct_params({ version: 'private', id: reminder.id }, todo)
       assert_response 200
@@ -333,7 +333,7 @@ module Ember
 
     def test_update_reminder_with_ticket_todo
       ticket = get_ticket
-      reminder = get_new_reminder('test delete', ticket.display_id)
+      reminder = get_new_reminder('test delete', ticket.id)
       todo = { body: Faker::Lorem.characters(200), completed: true, reminder_at: reminder.updated_at.utc.iso8601 }
       put :update, construct_params({ version: 'private', id: reminder.id }, todo)
       assert_response 200
@@ -407,7 +407,7 @@ module Ember
 
     def test_update_with_reminder_and_rememberable_type
       ticket = get_ticket
-      reminder = get_new_reminder('test delete', ticket.display_id)
+      reminder = get_new_reminder('test delete', ticket.id)
       put :update, construct_params({ version: 'private', id: reminder.id }, body: 'Ticket todo 1')
       assert_response 200
       match_json(todo_pattern({todo_id: reminder.id, body: 'Ticket todo 1', type: 'ticket', rememberable_id: ticket.display_id,ticket_subject: ticket.subject}))
@@ -415,7 +415,7 @@ module Ember
 
     def test_index_with_type_and_rememberable_id
       ticket = get_ticket
-      reminder = get_new_reminder('test delete', ticket.display_id)
+      reminder = get_new_reminder('test delete', ticket.id)
       get :index, controller_params({ version: 'private', type: 'ticket', rememberable_id: ticket.display_id })
       assert_response 200
       a = parse_response response.body
@@ -424,7 +424,7 @@ module Ember
 
     def test_fetch_reminders_with_reminder_id
       ticket = get_ticket
-      reminder = get_new_reminder('test delete', ticket.display_id)
+      reminder = get_new_reminder('test delete', ticket.id)
       put :update, construct_params({ version: 'private', id: reminder.id}, body: 'Ticket todo 1' )
       assert_response 200
       match_json(todo_pattern({todo_id: reminder.id, body: 'Ticket todo 1', type: 'ticket', rememberable_id: ticket.display_id,  ticket_subject: ticket.subject}))
@@ -432,7 +432,7 @@ module Ember
 
     def test_index_without_type_and_reminder_id
       ticket = get_ticket
-      reminder = get_new_reminder('test delete', ticket.display_id)
+      reminder = get_new_reminder('test delete', ticket.id)
       get :index, controller_params({ version: 'private', rememberable_id: ticket.display_id})
       assert_response 200
       a = parse_response response.body

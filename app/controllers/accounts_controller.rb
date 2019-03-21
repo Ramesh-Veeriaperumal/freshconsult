@@ -6,11 +6,13 @@ class AccountsController < ApplicationController
   include Redis::TicketsRedis
   include Redis::DisplayIdRedis
   include Onboarding::OnboardingRedisMethods
+  include AccountConstants
 
   layout :choose_layout 
-  
-  skip_before_filter :check_privilege, :verify_authenticity_token, :only => [:check_domain, :new_signup_free, :email_signup, :signup_validate_domain,
-                                                                             :create, :rebrand, :dashboard, :rabbitmq_exchange_info, :edit_domain]
+
+  skip_before_filter :check_privilege, :verify_authenticity_token, only: [:check_domain, :new_signup_free, :email_signup, :signup_validate_domain,
+                                                                          :create, :rebrand, :dashboard, :rabbitmq_exchange_info, :edit_domain,
+                                                                          :anonymous_signup]
 
   skip_before_filter :set_locale, :except => [:cancel, :show, :edit, :manage_languages, :edit_domain]
   skip_before_filter :set_time_zone, :set_current_account,
@@ -31,6 +33,7 @@ class AccountsController < ApplicationController
 
   around_filter :select_latest_shard, :except => [:update,:cancel,:edit,:show,:delete_favicon,:delete_logo,:manage_languages,:update_languages, :edit_domain, :validate_domain, :update_domain]
 
+  before_filter :anonymous_signup_enabled?, :build_anonymous_signup_params, only: [:anonymous_signup]
   before_filter :validate_signup_email, only: [:email_signup, :new_signup_free]
   before_filter :check_for_existing_accounts, only: [:email_signup, :new_signup_free]
 
@@ -45,10 +48,10 @@ class AccountsController < ApplicationController
   before_filter :check_sandbox?, :only => [:cancel]
   before_filter :admin_selected_tab, :only => [:show, :edit, :cancel, :manage_languages  ]
   before_filter :validate_custom_domain_feature, :only => [:update]
-  before_filter :build_signup_param, :build_signup_contact, only: [:new_signup_free, :email_signup]
+  before_filter :build_signup_param, :build_signup_contact, only: [:new_signup_free, :email_signup, :anonymous_signup]
   before_filter :check_supported_languages, :only =>[:update], :if => :multi_language_available?
   before_filter :set_native_mobile, only: :new_signup_free
-  before_filter :set_additional_signup_params, only: [:email_signup, :new_signup_free]
+  before_filter :set_additional_signup_params, only: [:email_signup, :new_signup_free, :anonymous_signup]
   before_filter :validate_feature_params, :only => [:update]
   before_filter :update_language_attributes, :only => [:update_languages]
   before_filter :validate_portal_language_inclusion, :only => [:update_languages]
@@ -100,6 +103,26 @@ class AccountsController < ApplicationController
         format.json {
           render :json => { :success => false, :errors => @signup.all_errors }, :callback => params[:callback]
         }
+      end
+    end
+  end
+
+  def anonymous_signup
+    @signup = Signup.new(params[:signup])
+    if @signup.save
+      mark_account_as_anonymous
+      finish_signup
+      respond_to do |format|
+        format.json do
+          render json: { success: true,
+                         url: signup_complete_url(token: @signup.user.perishable_token, host: @signup.account.full_domain),
+                         callback: params[:callback],
+                         account_id: @signup.account.id }
+        end
+      end
+    else
+      respond_to do |format|
+        format.json render json: { success: false, errors: @signup.all_errors }, callback: params[:callback]
       end
     end
   end
@@ -604,13 +627,38 @@ class AccountsController < ApplicationController
     end
 
     def validate_signup_email
-      params["user"]["email"].downcase!
-      @domain_generator = DomainGenerator.new(params["user"]["email"])
+      params['user']['email'].downcase!
+      @domain_generator = DomainGenerator.new(params['user']['email'])
       unless @domain_generator.valid?
-        render :json => { :success => false,
-          :errors => @domain_generator.errors[:email]},
-          :status => :unprocessable_entity
+        render json: { success: false, errors: @domain_generator.errors[:email] },
+          status: :unprocessable_entity
       end
+    end
+
+    def anonymous_signup_enabled?
+      unless redis_key_exists?(ANONYMOUS_ACCOUNT_SIGNUP_ENABLED)
+        respond_to do |format|
+          format.json do
+            render(json: { error: :access_denied }, status: 403)
+            return
+          end
+        end
+      end
+    end
+
+    def build_anonymous_signup_params
+      params[:user] = {
+        email: generate_demo_email,
+        first_name: 'Demo',
+        last_name: 'Account'
+      }
+      params[:account] = { user: params[:user] }
+      @domain_generator = DomainGenerator.new(params[:user][:email], [], action_name)
+    end
+
+    def generate_demo_email
+      current_time = (Time.now.utc.to_f * 1000).to_i
+      "#{ANONYMOUS_EMAIL}#{current_time}@example.com"
     end
 
     def signup_type_from_action(metrics_obj)
@@ -717,5 +765,9 @@ class AccountsController < ApplicationController
       @signup.account.launched?(:new_onboarding) ? 
         signup_complete_url(:token => @signup.user.perishable_token, :host => @signup.account.full_domain) :
         edit_account_domain_url(:perishable_token => @signup.user.perishable_token, :host => @signup.account.full_domain)
+    end
+
+    def mark_account_as_anonymous
+      @signup.account.account_additional_settings.mark_account_as_anonymous
     end
 end
