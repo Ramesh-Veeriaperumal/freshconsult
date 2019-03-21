@@ -12,7 +12,6 @@ class PostObserver < ActiveRecord::Observer
 
 	def after_create(post)
 		update_cached_fields(post)
-		monitor_reply(post) if post.published?
 		unless post.topic.last_post_id.nil?
 			create_activity(post, 'new_post') if post.published?
 		end
@@ -21,6 +20,10 @@ class PostObserver < ActiveRecord::Observer
   
   def before_destroy(post)
     create_activity(post, 'delete_post', User.current) unless post.trash#TODO-RAILS3
+  end
+
+  def after_commit(post)
+    monitor_reply(post) if post.safe_send(:transaction_include_action?, :create) && post.published?
   end
 
 	def after_destroy(post)
