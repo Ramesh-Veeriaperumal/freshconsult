@@ -264,6 +264,12 @@ module Ember
         match_json(article_content_pattern(draft.article))
       end
 
+      def test_show_article_without_feature
+        article = @account.solution_articles.last
+        get :show, controller_params(version: 'private', id: article.parent_id)
+        assert_response 200
+      end
+
       def test_bulk_update_without_launchparty
         article = @account.solution_articles.where(language_id: 6).last
         put :bulk_update, construct_params({ version: 'private' }, ids: article.parent_id, properties: { visibility: 1 })
