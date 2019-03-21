@@ -25,8 +25,12 @@ class TopicObserver < ActiveRecord::Observer
 
   def after_save(topic)
     update_forum_counter_cache(topic)
-    after_publishing(topic) if topic.published_changed? and topic.published?
+    @publishing = true if topic.published_changed? and topic.published?
     enqueue_topic_for_spam_check(topic)
+  end
+
+  def after_commit(topic)
+    after_publishing(topic) if @publishing
   end
 
   def after_update(topic)
