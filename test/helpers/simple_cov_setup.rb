@@ -23,9 +23,7 @@ module SimpleCovSetup
 
   # Pls consult Jey to delete the following files from the codebase - POSSIBLE_DEAD_CODE & DEAD_CODE
 
-  POSSIBLE_DEAD_CODE = [
-    'api/app/delegators/dashboard_delegator.rb'
-  ].freeze
+  POSSIBLE_DEAD_CODE = ['api/app/delegators/dashboard_delegator.rb'].freeze
 
   DEAD_CODE = [
     'lib/password.rb',
@@ -37,6 +35,23 @@ module SimpleCovSetup
   IGNORE_FILES = %w[lib/attachment_helper.rb lib/meta_data_check/meta_data_check_methods.rb
                     lib/guid.rb lib/freshops_tools_worker_methods.rb app/drops lib/helpdesk/send_and_set_helper.rb
                     lib/freshfone].freeze
+
+  IGNORE_FILES_SECONDARY_APP_HELPERS = %w[lib/portal/portal_filters.rb lib/portal/helpers/discussions_helper.rb
+                    lib/portal/helpers/discussions_voting_helper.rb lib/portal/helpers/article.rb
+                    lib/meta_helper_methods.rb lib/auth/google_login_authenticator.rb lib/forum_helper_methods.rb
+                    lib/confirm_delete_helper.rb lib/rtl_helper.rb lib/community_helper.rb lib/tab_helper.rb
+                    lib/store_helper.rb lib/json_escape.rb lib/community/monitorship_helper.rb lib/solution/cache.rb].freeze
+
+  IGNORE_FILES_SECONDARY_APP_MAILERS = %w[lib/community/mailer_helper.rb]
+
+  IGNORE_FILES_APP_CONTROLLERS_HELPDESK = %w[lib/dashboard_controller_methods.rb lib/dashboard/elastic_search_methods.rb
+                                             lib/helpdesk/merge_ticket_actions.rb lib/shared_personal_methods.rb
+                                             lib/helpdesk/adjacent_tickets.rb lib/ticket_validation_methods.rb].freeze
+
+  IGNORE_FILES_APP_CONTROLLERS_INTEGRATIONS = %w[lib/integrations/dynamicscrm/crm_util.rb lib/integrations/dynamicscrm/api_util.rb
+                                             lib/integrations/controller_methods.rb lib/integrations/infusionsoft/infusionsoft_util.rb
+                                             lib/integrations/office365/auth_helper.rb lib/integrations/remote_configurations/seoshop.rb
+                                             lib/integrations/sugarcrm/api_util.rb].freeze
 
   def self.start_simplecov
     SimpleCov.start do
@@ -67,6 +82,22 @@ module SimpleCovSetup
       end
 
       IGNORE_FILES.each do |file|
+        add_filter file
+      end
+
+      IGNORE_FILES_SECONDARY_APP_HELPERS.each do |file|
+        add_filter file
+      end
+
+      IGNORE_FILES_SECONDARY_APP_MAILERS.each do |file|
+        add_filter file
+      end
+
+      IGNORE_FILES_APP_CONTROLLERS_HELPDESK.each do |file|
+        add_filter file
+      end
+
+      IGNORE_FILES_APP_CONTROLLERS_INTEGRATIONS.each do |file|
         add_filter file
       end
 
