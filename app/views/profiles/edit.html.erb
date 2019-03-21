@@ -48,8 +48,8 @@
     <% end %>
 
     <% if current_account.falcon_ui_enabled?(current_user) && (current_account.undo_send_enabled? || current_account.reverse_notes_enabled?)%>
-      <div class="sidepanel">
-        <%if current_account.reverse_notes_enabled?%>
+      <%if current_account.reverse_notes_enabled?%>
+        <div class="sidepanel">
           <div class="row-fluid">
             <div class="span10 sort-conversations__label"><%= t("account.sort_conversations.label") %></div>
             <div class="span12 sort-conversations__select">
@@ -61,8 +61,10 @@
               <%= t("account.sort_conversations.helpnote") %>
             </div>
           </div>
-        <%end%>
-        <%if current_account.undo_send_enabled?%>
+        </div>
+      <%end%>
+      <%if current_account.undo_send_enabled?%>
+        <div class="sidepanel">
           <div class="row-fluid undo-send-option">
             <div class="span10 align-left undo-toggle"><%= t("undo_toggle") %></div>
             <div class="span2 align-right">
@@ -72,8 +74,8 @@
           <div class="row-fluid">
             <div class=" span12 align-left undo-send-tip"><%= t("undo_toggle_tip") %></div>
           </div>
-        <%end%>
-      </div>
+        </div>
+      <%end%>
     <% end %>
 
 

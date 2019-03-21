@@ -7,7 +7,7 @@ class Channel::OmniChannelRouting::LinkedAccountsControllerTest < ActionControll
     link_freshcaller
     @account.reload
     append_header
-    expected_json = { accounts: [{ id: @account.id, product: 'freshdesk', domain: @account.full_domain }, { id: @freshchat.id, product: 'freshchat', domain: 'freshchat.com', enabled: true }, { id: @freshcaller.freshcaller_account_id, product: 'freshcaller', domain: @freshcaller.domain }] }
+    expected_json = { accounts: [{ id: @account.id.to_s, product: 'freshdesk', domain: @account.full_domain }, { id: @freshchat.app_id, product: 'freshchat', domain: 'freshchat.com', enabled: true }, { id: @freshcaller.freshcaller_account_id.to_s, product: 'freshcaller', domain: @freshcaller.domain }] }
     get :index, controller_params(version: 'channel/ocr/accounts')
     match_json(expected_json)
     assert_response 200
@@ -21,7 +21,7 @@ class Channel::OmniChannelRouting::LinkedAccountsControllerTest < ActionControll
     link_freshcaller
     @account.reload
     append_header
-    expected_json = { accounts: [{ id: @account.id, product: 'freshdesk', domain: @account.full_domain }, { id: @freshcaller.freshcaller_account_id, product: 'freshcaller', domain: @freshcaller.domain }] }
+    expected_json = { accounts: [{ id: @account.id.to_s, product: 'freshdesk', domain: @account.full_domain }, { id: @freshcaller.freshcaller_account_id.to_s, product: 'freshcaller', domain: @freshcaller.domain }] }
     get :index, controller_params(version: 'channel/ocr/accounts')
     match_json(expected_json)
     assert_response 200
@@ -34,7 +34,7 @@ class Channel::OmniChannelRouting::LinkedAccountsControllerTest < ActionControll
     link_freshchat
     @account.reload
     append_header
-    expected_json = { accounts: [{ id: @account.id, product: 'freshdesk', domain: @account.full_domain }, { id: @freshchat.id, product: 'freshchat', domain: 'freshchat.com', enabled: true }] }
+    expected_json = { accounts: [{ id: @account.id.to_s, product: 'freshdesk', domain: @account.full_domain }, { id: @freshchat.app_id, product: 'freshchat', domain: 'freshchat.com', enabled: true }] }
     get :index, controller_params(version: 'channel/ocr/accounts')
     assert_response 200
   ensure
@@ -46,7 +46,7 @@ class Channel::OmniChannelRouting::LinkedAccountsControllerTest < ActionControll
     @account.stubs(:freshcaller_account).returns(nil)
     @account.stubs(:freshchat_account).returns(nil)
     append_header
-    expected_json = { accounts: [{ id: @account.id, product: 'freshdesk', domain: @account.full_domain }] }
+    expected_json = { accounts: [{ id: @account.id.to_s, product: 'freshdesk', domain: @account.full_domain }] }
     get :index, controller_params(version: 'channel/ocr/accounts')
     match_json(expected_json)
     assert_response 200

@@ -20,7 +20,6 @@ module Ember
     def create
       if @item.save
         @item = dashboard_details_hash(@item)
-        Rails.logger.info "Dashboard created: Account:#{current_account.id}:dashboard:#{@item[:id]} User:#{current_user.id}"
         render 'ember/custom_dashboard/show', status: 201
       else
         render_errors(@item.errors)
@@ -51,7 +50,6 @@ module Ember
       head 404 and return unless widget
       config = widget.config_data.merge(view_all: true)
       config[:ticket_filter_id] = widget.ticket_filter_id unless widget.config_data['ticket_filter_id']
-      Rails.logger.info("Bar chart data for config :: #{config.inspect}")
       @bar_chart_result = ::Dashboard::Custom::BarChart.new(nil, config).preview
     end
 
@@ -63,7 +61,6 @@ module Ember
       @item.touch unless @item.changed?
       if @item.save
         @item = dashboard_details_hash(@item)
-        Rails.logger.info "Dashboard updated: Account:#{current_account.id}:dashboard:#{@item[:id]} User:#{current_user.id}"
         render 'ember/custom_dashboard/show'
       else
         render_errors(@item.errors)
@@ -72,7 +69,6 @@ module Ember
 
     def destroy
       @item.destroy
-      Rails.logger.info "Dashboard deleted: Account:#{current_account.id}:dashboard:#{@item.id} User:#{current_user.id}"
       head 204
     end
 

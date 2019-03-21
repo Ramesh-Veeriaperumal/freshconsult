@@ -14,10 +14,10 @@ class ContactsController < ApplicationController
    before_filter :check_demo_site, :only => [:destroy,:update,:update_contact, :update_description_and_tags, :create, :create_contact]
    before_filter :set_selected_tab
    before_filter(:only => [:make_occasional_agent]) { |c| c.requires_this_feature :occasional_agent }
-   before_filter :load_item, :only => [:edit, :update, :update_contact, :update_description_and_tags, :make_agent,:make_occasional_agent, 
+   before_filter :load_item, :only => [:edit, :update, :update_contact, :update_description_and_tags, :make_agent,:make_occasional_agent,
                                         :change_password, :update_password]
    before_filter :can_change_password?, :only => [:change_password, :update_password]
-   before_filter :load_password_policy, :only => [:change_password]                                        
+   before_filter :load_password_policy, :only => [:change_password]
    before_filter :check_agent_limit, :can_make_agent, :only => [:make_agent]
 
    around_filter :run_on_slave, :only => [:index]
@@ -58,31 +58,31 @@ class ContactsController < ApplicationController
         end
         render :json => array
       end
-    end    
+    end
   end
 
   def new
     initialize_new_user
   end
-  
+
   def quick_contact_with_company
     if initialize_and_signup!
         flash[:notice] = t(:'flash.contacts.create.success')
-    else  
+    else
         check_email_exist
-        flash[:notice] =  activerecord_error_list(@user.errors)      
+        flash[:notice] =  activerecord_error_list(@user.errors)
     end
     redirect_to(company_url(@user.company || params[:id]))
   end
-  
-  def create   
+
+  def create
     if initialize_and_signup!
       flash[:notice] = @flash_notice || render_to_string(:partial => '/contacts/contact_notice', :formats => [:html], :locals => { :message => t('flash.contacts.create.success') } ).html_safe
       respond_to do |format|
         format.html { redirect_to redirection_url }
         format.xml  { render :xml => @user, :status => :created, :location => contacts_url(@user) }
-        format.nmobile { 
-            render :json => { :requester_id  => @user.id , :success => true , :success_message => t("flash.contacts.create.success") 
+        format.nmobile {
+            render :json => { :requester_id  => @user.id , :success => true , :success_message => t("flash.contacts.create.success")
                                         }.to_json }
         format.json {
             render :json => @user.as_json
@@ -103,17 +103,17 @@ class ContactsController < ApplicationController
     end
   end
 
-  def create_contact # new method to implement dynamic validations, as many forms post to create action 
+  def create_contact # new method to implement dynamic validations, as many forms post to create action
     @flash_notice = t('flash.contacts.create.success')
     create
   end
-  
+
   def change_password
     #do nothing
   end
-  
+
   def update_password
-   
+
     if params[:user][:password] != params[:user][:password_confirmation]
       flash[:error] = t(:'flash.password_resets.update.password_does_not_match')
       redirect_to change_password_contact_path(@user)
@@ -121,7 +121,7 @@ class ContactsController < ApplicationController
       @user.password = params[:user][:password]
       @user.password_confirmation = params[:user][:password_confirmation]
       @user.active = true #by Shan need to revisit..
-      
+
       if @user.save
         @user.reset_perishable_token!
         flash[:notice] = t(:'flash.password_resets.update.success')
@@ -129,9 +129,9 @@ class ContactsController < ApplicationController
       else
         flash[:error] = @user.errors.full_messages.join("<br/>").html_safe
         redirect_to change_password_contact_path(@user)
-      end     
+      end
     end
-    
+
   end
 
   def unblock
@@ -154,13 +154,13 @@ class ContactsController < ApplicationController
   end
 
   def hover_card
-    @user = current_account.all_users.find(params[:id])    
+    @user = current_account.all_users.find(params[:id])
     render :partial => "hover_card"
   end
 
   def hover_card_in_new_tab
-    @user = current_account.all_users.find(params[:id])    
-    render :partial => "hover_card", :locals => 
+    @user = current_account.all_users.find(params[:id])
+    render :partial => "hover_card", :locals =>
       {
         :new_tab => true
       }
@@ -190,7 +190,7 @@ class ContactsController < ApplicationController
     flash[:notice] = t(:'contacts.export_start')
     redirect_to :back
   end
-  
+
   def show
     email = params[:email]
     @user = nil # reset the user object.
@@ -209,7 +209,6 @@ class ContactsController < ApplicationController
     end
 
     load_companies
-    Rails.logger.info "$$$$$$$$ -> #{@user.inspect}"
 
     respond_to do |format|
       format.html { }
@@ -236,7 +235,7 @@ class ContactsController < ApplicationController
       }
     end
   end
-  
+
   def update
     @user.update_companies(params)
     filtered_params = params[:user].reject { |k| ["added_list", "removed_list"].include?(k) }
@@ -284,7 +283,7 @@ class ContactsController < ApplicationController
         end
       end
     rescue Exception => e
-      NewRelic::Agent.notice_error(e) 
+      NewRelic::Agent.notice_error(e)
       updated_tags = @user.tags.collect {|tag| {:id => tag.id, :name => tag.name}}
       respond_to do |format|
         format.json { render :json => updated_tags, :status => :ok}
@@ -294,7 +293,7 @@ class ContactsController < ApplicationController
 
   def verify_email
     @user_mail = current_account.user_emails.find(params[:email_id])
-    @user_mail.user.reset_primary_email(params[:email_id]) 
+    @user_mail.user.reset_primary_email(params[:email_id])
     @user_mail.user.save
     flash[:notice] = t('merge_contacts.activation_sent')
     respond_to do |format|
@@ -305,25 +304,25 @@ class ContactsController < ApplicationController
   def cname
     @cname ='user'
   end
-  
+
   def make_occasional_agent
     respond_to do |format|
       if @item.make_agent(:occasional => true)
-        format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
+        format.html { flash[:notice] = t(:'flash.contacts.to_agent')
           redirect_to @item }
         format.xml  { render :xml => @item, :status => 200 }
       else
         format.html { redirect_to :back }
         format.xml  { render :xml => @item.errors, :status => 500 }
-      end   
+      end
     end
   end
-  
+
   def make_agent
     respond_to do |format|
-      if @item.make_agent  
-        agent = Agent.find_by_user_id(@item.id)      
-        format.html { flash[:notice] = t(:'flash.contacts.to_agent') 
+      if @item.make_agent
+        agent = Agent.find_by_user_id(@item.id)
+        format.html { flash[:notice] = t(:'flash.contacts.to_agent')
           redirect_to @item }
         format.xml  { render :xml => agent, :status => 200 }
         format.json {render :json => agent.as_json,:status => 200}
@@ -331,21 +330,21 @@ class ContactsController < ApplicationController
         format.html { redirect_to :back }
         format.xml  { render :xml => @item.errors, :status => 500 }
         format.json { render :json => @item.errors.fd_json,:status => 500 }
-      end   
+      end
     end
   end
 
-  def autocomplete   
-    items = current_account.companies.find(:all, 
-                                            :conditions => ["name like ? ", "%#{params[:v]}%"], 
+  def autocomplete
+    items = current_account.companies.find(:all,
+                                            :conditions => ["name like ? ", "%#{params[:v]}%"],
                                             :limit => 30)
 
-    r = {:results => items.map {|i| {:id => i.id, :value => i.name} } }  
+    r = {:results => items.map {|i| {:id => i.id, :value => i.name} } }
     respond_to do |format|
       format.json { render :json => r.to_json }
-    end    
+    end
   end
- 
+
   def contact_email
     email = params[:email]
     @user = current_account.user_emails.user_for_email(email) unless email.blank?
@@ -393,11 +392,11 @@ protected
 
     @item || raise(ActiveRecord::RecordNotFound)
   end
-   
+
   def set_selected_tab
       @selected_tab = :customers
   end
-  
+
   def check_email_exist
     @user.user_emails.each do |ue|
       if(ue.new_record? and @user.errors[:"user_emails.email"].include? "has already been taken")
@@ -408,12 +407,12 @@ protected
   end
 
  def check_agent_limit
-    if current_account.reached_agent_limit? 
-      error_message = { :errors => { :message => t('maximum_agents_msg') }}  
+    if current_account.reached_agent_limit?
+      error_message = { :errors => { :message => t('maximum_agents_msg') }}
       respond_to do |format|
-        format.html { 
-          flash[:notice] = t('maximum_agents_msg') 
-          redirect_to :back 
+        format.html {
+          flash[:notice] = t('maximum_agents_msg')
+          redirect_to :back
         }
         format.json { render :json => error_message, :status => :bad_request}
         format.xml { render :xml => error_message.to_xml , :status => :bad_request}
@@ -433,17 +432,17 @@ protected
       end
     end
   end
-  
+
   def can_make_agent
     unless @item.has_email?
-      error_message = { :errors => { :message => t('contact_without_email_id') }} 
+      error_message = { :errors => { :message => t('contact_without_email_id') }}
       respond_to do |format|
           format.json { render :json => error_message, :status => :bad_request}
           format.xml { render :xml => error_message.to_xml , :status => :bad_request}
-      end 
+      end
     end
   end
-  
+
   def redirection_url # Moved out to overwrite in Freshservice
     contact_url(@user)
   end
@@ -452,13 +451,13 @@ protected
 
     def set_required_fields
       @user ||= current_account.users.new
-      @user.required_fields = { :fields => current_account.contact_form.agent_required_contact_fields, 
+      @user.required_fields = { :fields => current_account.contact_form.agent_required_contact_fields,
                                 :error_label => :label }
     end
 
     def define_contact_tickets
       @total_user_tickets = current_account.tickets.permissible(current_user).
-        requester_active(@user).visible.newest(11).find(:all, 
+        requester_active(@user).visible.newest(11).find(:all,
           :include => [:ticket_states,:ticket_status,:responder,:requester])
       @total_user_tickets_size = @total_user_tickets.length
       @user_tickets = @total_user_tickets.take(10)
@@ -503,7 +502,7 @@ protected
       order_by = "#{order_by} DESC" if(!params[:order_type].blank? && params[:order_type].casecmp("desc") == 0)
       @sort_state = params[:state] || cookies[:contacts_sort] || 'all'
       begin
-        @contacts ||= scoper.filter(params[:letter], 
+        @contacts ||= scoper.filter(params[:letter],
                                   params[:page],
                                   params.fetch(:state , @sort_state),
                                   per_page,order_by).preload(:avatar, :companies, :default_user_company).all
@@ -528,14 +527,14 @@ protected
       end
     end
 
-    def run_on_slave(&block) 
+    def run_on_slave(&block)
       Sharding.run_on_slave(&block)
     end
-    
+
     def load_password_policy
       @password_policy = @user.agent? ? current_account.agent_password_policy : current_account.contact_password_policy
     end
-    
+
     def can_change_password?
       redirect_to helpdesk_dashboard_url unless @user.allow_password_update?
     end

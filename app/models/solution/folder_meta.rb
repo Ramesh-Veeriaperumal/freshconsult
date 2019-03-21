@@ -175,7 +175,7 @@ class Solution::FolderMeta < ActiveRecord::Base
 	      customer_folders.build({:customer_id => cust_id}) unless self.customer_ids.include?(cust_id)
 	    end
 	end
-	
+
 	private
 
 	def clear_cache
@@ -187,14 +187,14 @@ class Solution::FolderMeta < ActiveRecord::Base
 	end
 
 	def name_uniqueness
-  		self.solution_folders.each do |f|
-	  		f.name_uniqueness_validation
-	  		if f.errors[:name].any?
-	  			errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
-	  			break
-	  		end
-  		end
-  	end
+    self.solution_folders.each do |f|
+      f.name_uniqueness_validation
+      if f.errors[:name].any?
+        errors.add(:name, I18n.t("activerecord.errors.messages.taken"))
+        break
+      end
+    end
+  end
 
 	def companies_limit_check
 		if customer_folders.size > COMPANIES_LIMIT

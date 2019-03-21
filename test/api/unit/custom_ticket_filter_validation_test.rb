@@ -122,5 +122,9 @@ class CustomTicketFilterValidationTest < ActionView::TestCase
     def features_included?(feature)
       false
     end
+
+    def field_service_management_enabled?
+      false
+    end
   end
 end

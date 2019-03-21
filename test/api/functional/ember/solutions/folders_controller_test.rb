@@ -166,15 +166,15 @@ module Ember
         end
       end
 
-#       def test_bulk_update_with_visibility_with_companies
-#         enable_kbase_mint do
-#           sample_category_meta = get_category_with_folders
-#           company = get_company
-#           put :bulk_update, construct_params({ version: 'private' }, ids: sample_category_meta.solution_folder_meta.pluck(:id), properties: { visibility: 4, company_ids: [company.id] })
-#           assert_response 204
-#           sample_category_meta.reload.solution_folder_meta.each { |folder| assert folder.customer_folders.pluck(:customer_id).include?(company.id) }
-#         end
-#       end
+      def test_bulk_update_with_visibility_with_companies
+        enable_kbase_mint do
+          sample_category_meta = get_category_with_folders
+          company = get_company
+          put :bulk_update, construct_params({ version: 'private' }, ids: sample_category_meta.solution_folder_meta.pluck(:id), properties: { visibility: 4, company_ids: [company.id] })
+          assert_response 204
+          sample_category_meta.reload.solution_folder_meta.each { |folder| assert folder.customer_folders.pluck(:customer_id).include?(company.id) }
+        end
+      end
 
       def test_bulk_update_with_visibility_with_invalid_companies
         enable_kbase_mint do

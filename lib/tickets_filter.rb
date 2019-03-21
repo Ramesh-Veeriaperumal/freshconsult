@@ -148,6 +148,7 @@ module TicketsFilter
       sort_fields << [ :agent_responded_at, "tickets_filter.sort_fields.agent_responded_at"]
     end
     sort_fields.insert(0, [ :due_by, "tickets_filter.sort_fields.due_by"]) if Account.current && Account.current.sla_management_enabled?
+    sort_fields << [:appointment_start_time, 'tickets_filter.sort_fields.appointment_start_time'] if Account.current && Account.current.field_service_management_enabled?
     sort_fields
   end
 
