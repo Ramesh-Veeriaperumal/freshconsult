@@ -17,7 +17,7 @@ module MemcacheKeys
 
   ACCOUNT_CUSTOM_DATE_TIME_FIELDS = 'v1/ACCOUNT_CUSTOM_DATE_TIME_FIELDS:%{account_id}'.freeze
 
-  ACCOUNT_AGENTS_DETAILS = 'v4/ACCOUNT_AGENTS_DETAILS:%{account_id}'.freeze
+  ACCOUNT_AGENTS_DETAILS = 'v5/ACCOUNT_AGENTS_DETAILS:%{account_id}'.freeze
 
   ACCOUNT_ROLES = "v1/ACCOUNT_ROLES:%{account_id}"
 
