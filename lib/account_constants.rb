@@ -88,6 +88,7 @@ module AccountConstants
    DASHBOARD_LIMITS = { min: { dashboard: 5, widgets: { scorecard: 6, bar_chart: 3, csat: 3, leaderboard: 3, forum_moderation: 1, ticket_trend_card: 2, time_trend_card: 2, sla_trend_card: 2 } },
                        mid: { dashboard: 5, widgets: { scorecard: 8, bar_chart: 4, csat: 3, leaderboard: 3, forum_moderation: 1, ticket_trend_card: 3, time_trend_card: 3, sla_trend_card: 3 } },
                        max: { dashboard: 10, widgets: { scorecard: 12, bar_chart: 5, csat: 3, leaderboard: 3, forum_moderation: 1, ticket_trend_card: 4, time_trend_card: 4, sla_trend_card: 4 } } }
+  ANONYMOUS_EMAIL = 'freshdeskdemo'.freeze
 
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT

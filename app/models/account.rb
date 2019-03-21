@@ -227,7 +227,10 @@ class Account < ActiveRecord::Base
   def active_trial
     @active_trial_subscription ||= trial_subscriptions.trials_by_status(:active).first
   end
- 
+
+  def anonymous_account?
+    account_additional_settings.additional_settings[:anonymous_account] if account_additional_settings.additional_settings.present?
+  end
   class << self # class methods
 
     def reset_current_account

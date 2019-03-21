@@ -38,6 +38,31 @@ module AccountTestHelper
     @account = signup.account.make_current
   end
 
+  def create_sample_account(domain = 'localhost', user_email = Helpdesk::EMAIL[:sample_email])
+    ENV['SEED'] = 'global/002_subscription_plans'
+    ENV['FIXTURE_PATH'] = 'db/fixtures/global'
+    SeedFu::PopulateSeed.populate
+    ENV['SEED'] = nil
+    ENV['FIXTURE_PATH'] = nil
+    Account.reset_current_account
+    signup = Signup.new(
+      account_name: 'Test Account',
+      account_domain: domain,
+      locale: I18n.default_locale,
+      time_zone: 'Chennai',
+      user_name: 'Support',
+      user_password: 'test1234',
+      user_password_confirmation: 'test1234', 
+      user_email: user_email,
+      user_helpdesk_agent: true,
+      new_plan_test: true
+    )
+    signup.save
+    PopulateGlobalBlacklistIpsTable.create_default_record
+    @account = signup.account.make_current
+    update_currency
+  end
+
   def disable_background_fixtures
     remove_others_redis_key(BACKGROUND_FIXTURES_ENABLED)
   end

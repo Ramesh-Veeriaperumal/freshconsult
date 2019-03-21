@@ -161,6 +161,7 @@
     - update_segment_filter
     - remove_encrypted_fields
     - clone
+    - anonymous_account_cleanup
   :external:
     - code_console_execution
     - integrations

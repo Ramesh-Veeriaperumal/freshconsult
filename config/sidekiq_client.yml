@@ -298,7 +298,7 @@ defaults: &defaults
     - [clone]
     - [surveys_central_publish]
     - [freshvisual_configs]
-
+    - [anonymous_account_cleanup]
 
 development:
   <<: *defaults
