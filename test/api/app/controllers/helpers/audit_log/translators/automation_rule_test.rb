@@ -1,4 +1,4 @@
-require './test/test_helper'
+require './test/api/unit_test_helper'
 require './api/app/controllers/helpers/audit_log/translators/automation_rule.rb'
 
 # Stub class to test the logic
@@ -14,8 +14,13 @@ end
 class AuditLog::Translators::AutomationRuleTest < ActionView::TestCase
   def setup
     super
-    Account.first.make_current
+    Account.stubs(:current).returns(Account.first)
     @rule = AutomationRuleFakeClass.new(VAConfig::BUSINESS_RULE)
+  end
+
+  def teardown
+    Account.unstub(:current)
+    super
   end
 
   def test_readable_rule_changes_business_rule
