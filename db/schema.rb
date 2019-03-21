@@ -2636,6 +2636,8 @@ ActiveRecord::Schema.define(:version => 20190115115017) do
   add_index "helpdesk_ticket_states", ["id", "agent_responded_at"],  :name => "index_id_and_agent_responded_at"
   add_index "helpdesk_ticket_states", ["account_id", "ticket_id"], :name => "index_helpdesk_ticket_states_on_account_and_ticket", :unique => true
   execute "ALTER TABLE helpdesk_ticket_states ADD PRIMARY KEY (id,account_id)"
+  add_index 'helpdesk_ticket_states', ['account_id', 'closed_at'], name: 'index_on_helpdesk_ticket_states_account_id_and_closed_at'
+  add_index 'helpdesk_ticket_states', ['account_id', 'resolved_at'], name: 'index_on_helpdesk_ticket_states_account_id_and_resolved_at'
 
   create_table "helpdesk_ticket_statuses", :force => true do |t|
     t.integer  "status_id",             :limit => 8

@@ -1365,7 +1365,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   alias_method :rr_active?, :rr_active
  
   def round_robin_attributes
-     { active: rr_active, agent_id: responder_id, group_id: group_id }
+     { active: rr_active, agent_id: responder_id.to_s.presence, group_id: group_id.to_s.presence }
   end
 
   def eligible_for_ocr?

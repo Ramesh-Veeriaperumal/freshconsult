@@ -40,7 +40,7 @@ RSpec.describe Integrations::ApplicationsController do
     log_in(@agent)
   end
 
-  it "renders the application index template" do
+  it "renders the application index templatewhich lists all installed aplications" do
     get 'index'
     response.should render_template "integrations/applications/index"
   end

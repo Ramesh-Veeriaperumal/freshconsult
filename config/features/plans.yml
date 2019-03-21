@@ -196,6 +196,7 @@
       - :analytics_report_save
       - :analytics_widget_delete
       - :analytics_helpdesk_in_depth_report
+      - :reverse_notes
     :inherits:
       - :sprout_jan_19
     :exclude: []
