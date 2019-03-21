@@ -18,9 +18,9 @@ class Admin::AccountAdditionalSettingsController < Admin::AdminController
   end
 
   def update_font
-    unless params["font-family"].blank?
+    if params['font-family'].present?
       @account_additional_settings = current_account.account_additional_settings
-      @account_additional_settings.font_settings = {"font-family" => params["font-family"]}
+      @account_additional_settings.font_settings = { 'font-family' => params['font-family'], 'font-size' => DEFAULTS_FONT_SETTINGS[:email_template]['font-size'] }
     end
     
     respond_to do |format|
