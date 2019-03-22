@@ -205,7 +205,7 @@ class Support::TicketsControllerTest < ActionController::TestCase
     t1 = create_ticket(requester_id: agent.id)
     user.make_current
     login_as(user)
-    get :index, :version => :private, requested_by: User.first
+    get :index, :version => :private, requested_by: Account.current.users.first
     assert_response 200
     log_out
     user.destroy

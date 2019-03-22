@@ -28,6 +28,7 @@ class Ember::ConfigsControllerTest < ActionController::TestCase
     assert_equal payload[:email], @user.email
     assert_equal payload[:userId], @user.id
     assert_equal payload[:timezone], 'Africa/Casablanca'
+    assert_equal payload[:portalUrl], "#{@account.url_protocol}://#{@account.full_domain}"
   ensure
     User.any_instance.unstub(:time_zone)
   end

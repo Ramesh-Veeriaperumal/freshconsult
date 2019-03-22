@@ -316,6 +316,7 @@ defaults: &defaults
     - [simple_outreach_import]
     - [audit_log_export]
     - [surveys_central_publish]
+    - [anonymous_account_cleanup]
     - [freshvisual_configs]
     
 development:

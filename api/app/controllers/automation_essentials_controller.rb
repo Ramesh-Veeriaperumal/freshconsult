@@ -40,7 +40,6 @@ class AutomationEssentialsController < ApiApplicationController
       Rails.logger.error("Exception while running the script #{params[:script_to_execute]} error message -> #{e.message} error trace -> #{e.backtrace}")
       @output = "Exception while running the script '#{params[:script_to_execute]}' error message -> '#{e.message}'"
     end
-    Rails.logger.info "output for -> #{@output}"
     render 'execute_script_result'
   end
 

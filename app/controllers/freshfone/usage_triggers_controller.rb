@@ -46,14 +46,12 @@ class Freshfone::UsageTriggersController < FreshfoneBaseController
 
     def calls_inbound
       Rails.logger.info "Inbound Calls Limit Exceeded, for Account Id :: #{freshfone_account.account_id}"
-      Rails.logger.info "Params :: #{params}"
       subscription.inbound_will_change!
       subscription.inbound_usage_exceeded!
     end
 
     def calls_outbound
       Rails.logger.info "Outbound Calls Limit Exceeded, for Account Id :: #{freshfone_account.account_id}"
-      Rails.logger.info "Params :: #{params}"
       subscription.outbound_will_change!
       subscription.outbound_usage_exceeded!
     end

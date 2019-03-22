@@ -274,7 +274,6 @@ module Ember
 
       def paginate_items(items, ff_load = false)
         if ff_load
-          Rails.logger.info ':::FilterFactory Pagination started:::'
           add_link_header(page: (page + 1)) if items.length > per_page
           items[0..(per_page - 1)] # get paginated_collection of length 'per_page'
         else
@@ -319,7 +318,6 @@ module Ember
       end
 
       def log_and_render_301_archive
-        Rails.logger.debug "The ticket is archived. Id: #{params[:id]}, method: #{params[:action]}, controller: #{params[:controller]}"
         redirect_to archive_ticket_link, status: 301
       end
 
