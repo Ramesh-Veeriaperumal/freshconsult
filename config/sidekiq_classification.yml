@@ -183,6 +183,7 @@
     - remove_encrypted_fields
     - simple_outreach_import
     - clone
+    - anonymous_account_cleanup
   :external:
     - code_console_execution
     - integrations

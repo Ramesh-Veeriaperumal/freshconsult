@@ -867,7 +867,7 @@ module Channel::V2
       ticket.requester.destroy
       get :index, controller_params(include: 'requester')
       assert_response 200
-      requester_hash = JSON.parse(response.body).select { |x| x['id'] == ticket.id }.first['requester']
+      requester_hash = JSON.parse(response.body).select { |x| x['id'] == ticket.display_id }.first['requester']
       ticket.destroy
       assert requester_hash.nil?
     ensure

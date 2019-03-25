@@ -1,4 +1,4 @@
-require './test/test_helper'
+require './test/api/unit_test_helper'
 require 'ostruct'
 
 class FakeIncomingPhoneNumbers
