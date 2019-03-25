@@ -30,7 +30,7 @@ module AgentTestHelper
       updated_at: agent.updated_at.try(:utc).try(:iso8601),
       active_since: agent.active_since.try(:utc).try(:iso8601),
       last_active_at: agent.last_active_at.try(:utc).try(:iso8601),
-      agent_type: agent.agent_type,
+      agent_type: agent_type_hash(agent),
       groups: agent.groups.map { |ag| {name: ag.name, id: ag.id }}
     }.merge(user_fields_pattern(agent.user))
   end
@@ -39,6 +39,13 @@ module AgentTestHelper
     {
       id: agent.ticket_permission,
       permission: Agent::PERMISSION_TOKENS_BY_KEY[agent.ticket_permission].to_s
+    }
+  end
+
+  def agent_type_hash(agent)
+    {
+      id: agent.agent_type,
+      name: AgentType.agent_type_name(agent.agent_type)
     }
   end
 
