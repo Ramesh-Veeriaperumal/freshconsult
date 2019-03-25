@@ -873,7 +873,7 @@ window.App = window.App || {};
 			$('body').on('blur.template_form','#helpdesk_ticket_template_name',function(e){
 				var srcElement = e.target || e.srcElement, value=$(srcElement).val()?$(srcElement).val():'No Name';
 				if($(srcElement).hasClass('new_child_name')){
-					$('.parent-li ul li:last-child .edit').html("<i class='ficon-pencil'></i>"+value)
+					$('.parent-li ul li:last-child .edit').html("<i class='ficon-pencil'></i>").append(document.createTextNode(value));
 				}else if($(srcElement).hasClass('edit_parent_name')){
 					$('.parent-li').find('.edit a').text(value);
 				}else{
