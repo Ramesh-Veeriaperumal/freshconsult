@@ -303,6 +303,8 @@ module Ember
 
       def test_bulk_update_author
         enable_kbase_mint do
+          Account.any_instance.stubs(:agents_details_from_cache).returns(Agent.new)
+          Agent.any_instance.stubs(:detect).returns(true)
           folder = @account.solution_folder_meta.where(is_default: false).first
           populate_articles(folder)
           articles = folder.solution_article_meta.pluck(:id)
