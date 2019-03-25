@@ -27,12 +27,12 @@ class CompanyDecorator < ApiDecorator
   end
 
   def sla_policies
-    @sla_policies.map { |item| SlaPolicyDecorator.new(item) }
+    @sla_policies.map { |item| SlaPolicyDecorator.new(item).private_hash }
   end
 
   def avatar_hash
     return nil unless avatar.present?
-    AttachmentDecorator.new(avatar).to_hash.merge(thumb_url: record.avatar.attachment_url_for_api(true, :thumb))
+    AttachmentDecorator.new(avatar).to_hash
   end
 
   def to_hash
@@ -47,7 +47,7 @@ class CompanyDecorator < ApiDecorator
       custom_fields: custom_fields,
       avatar: avatar_hash
     }
-    response.merge!(tam_fields) if tam_default_fields_enabled?
+    response.merge!(tam_fields)
     response
   end
 

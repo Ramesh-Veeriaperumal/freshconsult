@@ -1,4 +1,4 @@
-module SolutionsTestHelper
+module CoreSolutionsTestHelper
 
   def solution_default_params(base, name = :name, opts = {})
     {

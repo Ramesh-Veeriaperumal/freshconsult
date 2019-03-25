@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20190110073546) do
+ActiveRecord::Schema.define(:version => 20190306113857) do
 
   create_table "account_additional_settings", :force => true do |t|
     t.string   "email_cmds_delimeter"
@@ -1115,7 +1115,7 @@ ActiveRecord::Schema.define(:version => 20190110073546) do
     t.datetime "updated_at",                     :null => false
   end
 
-  add_index "custom_translations", ["account_id", "translatable_type", "language_id", "translatable_id"], :name => "ct_acc_id_translatable_type_lang_id_translatable_id"
+  add_index "custom_translations", ["account_id", "translatable_type", "language_id", "translatable_id"], :name => "ct_acc_id_translatable_type_lang_id_translatable_id", :unique => true
 
   create_table "customer_forums", :force => true do |t|
     t.integer  "customer_id", :limit => 8
@@ -2207,7 +2207,7 @@ ActiveRecord::Schema.define(:version => 20190110073546) do
     t.datetime "updated_at",              :null => false
   end
 
-  add_index "help_widgets", ["account_id", "active"], :name => "index_help_widgets_on_account_id_and_active"
+  add_index 'help_widgets', ['account_id', 'active', 'created_at'], name: 'index_help_widgets_on_account_id_and_active_and_created_at'
 
   create_table "helpdesk_accesses", :force => true do |t|
     t.string   "accessible_type"
@@ -2691,6 +2691,8 @@ ActiveRecord::Schema.define(:version => 20190110073546) do
   add_index "helpdesk_ticket_states", ["id", "agent_responded_at"],  :name => "index_id_and_agent_responded_at"
   add_index "helpdesk_ticket_states", ["account_id", "ticket_id"], :name => "index_helpdesk_ticket_states_on_account_and_ticket", :unique => true
   execute "ALTER TABLE helpdesk_ticket_states ADD PRIMARY KEY (id,account_id)"
+  add_index 'helpdesk_ticket_states', ['account_id', 'closed_at'], name: 'index_on_helpdesk_ticket_states_account_id_and_closed_at'
+  add_index 'helpdesk_ticket_states', ['account_id', 'resolved_at'], name: 'index_on_helpdesk_ticket_states_account_id_and_resolved_at'
 
   create_table "helpdesk_ticket_statuses", :force => true do |t|
     t.integer  "status_id",             :limit => 8
@@ -3645,6 +3647,7 @@ ActiveRecord::Schema.define(:version => 20190110073546) do
     t.datetime "created_at",                                                :null => false
     t.datetime "updated_at",                                                :null => false
     t.string   "available"
+    t.integer  "article_order",                  :default => 1
   end
 
   add_index "solution_folder_meta", ["account_id", "solution_category_meta_id", "position"], :name => "index_folder_meta_on_account_id_category_meta_and_position"
@@ -4640,4 +4643,358 @@ ActiveRecord::Schema.define(:version => 20190110073546) do
       t.text        :config_json
       t.timestamps
   end
+
+  create_table 'ticket_field_data', id: false, force: true do |t|
+    t.integer  'id',         limit: 8, null: false
+    t.integer  'account_id', limit: 8, null: false
+    t.integer  'flexifield_def_id', limit: 8
+    t.integer  'flexifield_set_id', limit: 8
+    t.string   'flexifield_set_type'
+    t.datetime 'created_at'
+    t.datetime 'updated_at'
+    t.integer  'ffs_01',  limit: 3
+    t.integer  'ffs_02',  limit: 3
+    t.integer  'ffs_03',  limit: 3
+    t.integer  'ffs_04',  limit: 3
+    t.integer  'ffs_05',  limit: 3
+    t.integer  'ffs_06',  limit: 3
+    t.integer  'ffs_07',  limit: 3
+    t.integer  'ffs_08',  limit: 3
+    t.integer  'ffs_09',  limit: 3
+    t.integer  'ffs_10',  limit: 3
+    t.integer  'ffs_11',  limit: 3
+    t.integer  'ffs_12',  limit: 3
+    t.integer  'ffs_13',  limit: 3
+    t.integer  'ffs_14',  limit: 3
+    t.integer  'ffs_15',  limit: 3
+    t.integer  'ffs_16',  limit: 3
+    t.integer  'ffs_17',  limit: 3
+    t.integer  'ffs_18',  limit: 3
+    t.integer  'ffs_19',  limit: 3
+    t.integer  'ffs_20',  limit: 3
+    t.integer  'ffs_21',  limit: 3
+    t.integer  'ffs_22',  limit: 3
+    t.integer  'ffs_23',  limit: 3
+    t.integer  'ffs_24',  limit: 3
+    t.integer  'ffs_25',  limit: 3
+    t.integer  'ffs_26',  limit: 3
+    t.integer  'ffs_27',  limit: 3
+    t.integer  'ffs_28',  limit: 3
+    t.integer  'ffs_29',  limit: 3
+    t.integer  'ffs_30',  limit: 3
+    t.integer  'ffs_31',  limit: 3
+    t.integer  'ffs_32',  limit: 3
+    t.integer  'ffs_33',  limit: 3
+    t.integer  'ffs_34',  limit: 3
+    t.integer  'ffs_35',  limit: 3
+    t.integer  'ffs_36',  limit: 3
+    t.integer  'ffs_37',  limit: 3
+    t.integer  'ffs_38',  limit: 3
+    t.integer  'ffs_39',  limit: 3
+    t.integer  'ffs_40',  limit: 3
+    t.integer  'ffs_41',  limit: 3
+    t.integer  'ffs_42',  limit: 3
+    t.integer  'ffs_43',  limit: 3
+    t.integer  'ffs_44',  limit: 3
+    t.integer  'ffs_45',  limit: 3
+    t.integer  'ffs_46',  limit: 3
+    t.integer  'ffs_47',  limit: 3
+    t.integer  'ffs_48',  limit: 3
+    t.integer  'ffs_49',  limit: 3
+    t.integer  'ffs_50',  limit: 3
+    t.integer  'ffs_51',  limit: 3
+    t.integer  'ffs_52',  limit: 3
+    t.integer  'ffs_53',  limit: 3
+    t.integer  'ffs_54',  limit: 3
+    t.integer  'ffs_55',  limit: 3
+    t.integer  'ffs_56',  limit: 3
+    t.integer  'ffs_57',  limit: 3
+    t.integer  'ffs_58',  limit: 3
+    t.integer  'ffs_59',  limit: 3
+    t.integer  'ffs_60',  limit: 3
+    t.integer  'ffs_61',  limit: 3
+    t.integer  'ffs_62',  limit: 3
+    t.integer  'ffs_63',  limit: 3
+    t.integer  'ffs_64',  limit: 3
+    t.integer  'ffs_65',  limit: 3
+    t.integer  'ffs_66',  limit: 3
+    t.integer  'ffs_67',  limit: 3
+    t.integer  'ffs_68',  limit: 3
+    t.integer  'ffs_69',  limit: 3
+    t.integer  'ffs_70',  limit: 3
+    t.integer  'ffs_71',  limit: 3
+    t.integer  'ffs_72',  limit: 3
+    t.integer  'ffs_73',  limit: 3
+    t.integer  'ffs_74',  limit: 3
+    t.integer  'ffs_75',  limit: 3
+    t.integer  'ffs_76',  limit: 3
+    t.integer  'ffs_77',  limit: 3
+    t.integer  'ffs_78',  limit: 3
+    t.integer  'ffs_79',  limit: 3
+    t.integer  'ffs_80',  limit: 3
+    t.integer  'ffs_81',  limit: 3
+    t.integer  'ffs_82',  limit: 3
+    t.integer  'ffs_83',  limit: 3
+    t.integer  'ffs_84',  limit: 3
+    t.integer  'ffs_85',  limit: 3
+    t.integer  'ffs_86',  limit: 3
+    t.integer  'ffs_87',  limit: 3
+    t.integer  'ffs_88',  limit: 3
+    t.integer  'ffs_89',  limit: 3
+    t.integer  'ffs_90',  limit: 3
+    t.integer  'ffs_91',  limit: 3
+    t.integer  'ffs_92',  limit: 3
+    t.integer  'ffs_93',  limit: 3
+    t.integer  'ffs_94',  limit: 3
+    t.integer  'ffs_95',  limit: 3
+    t.integer  'ffs_96',  limit: 3
+    t.integer  'ffs_97',  limit: 3
+    t.integer  'ffs_98',  limit: 3
+    t.integer  'ffs_99',  limit: 3
+    t.integer  'ffs_100', limit: 3
+    t.integer  'ffs_101', limit: 3
+    t.integer  'ffs_102', limit: 3
+    t.integer  'ffs_103', limit: 3
+    t.integer  'ffs_104', limit: 3
+    t.integer  'ffs_105', limit: 3
+    t.integer  'ffs_106', limit: 3
+    t.integer  'ffs_107', limit: 3
+    t.integer  'ffs_108', limit: 3
+    t.integer  'ffs_109', limit: 3
+    t.integer  'ffs_110', limit: 3
+    t.integer  'ffs_111', limit: 3
+    t.integer  'ffs_112', limit: 3
+    t.integer  'ffs_113', limit: 3
+    t.integer  'ffs_114', limit: 3
+    t.integer  'ffs_115', limit: 3
+    t.integer  'ffs_116', limit: 3
+    t.integer  'ffs_117', limit: 3
+    t.integer  'ffs_118', limit: 3
+    t.integer  'ffs_119', limit: 3
+    t.integer  'ffs_120', limit: 3
+    t.integer  'ffs_121', limit: 3
+    t.integer  'ffs_122', limit: 3
+    t.integer  'ffs_123', limit: 3
+    t.integer  'ffs_124', limit: 3
+    t.integer  'ffs_125', limit: 3
+    t.integer  'ffs_126', limit: 3
+    t.integer  'ffs_127', limit: 3
+    t.integer  'ffs_128', limit: 3
+    t.integer  'ffs_129', limit: 3
+    t.integer  'ffs_130', limit: 3
+    t.integer  'ffs_131', limit: 3
+    t.integer  'ffs_132', limit: 3
+    t.integer  'ffs_133', limit: 3
+    t.integer  'ffs_134', limit: 3
+    t.integer  'ffs_135', limit: 3
+    t.integer  'ffs_136', limit: 3
+    t.integer  'ffs_137', limit: 3
+    t.integer  'ffs_138', limit: 3
+    t.integer  'ffs_139', limit: 3
+    t.integer  'ffs_140', limit: 3
+    t.integer  'ffs_141', limit: 3
+    t.integer  'ffs_142', limit: 3
+    t.integer  'ffs_143', limit: 3
+    t.integer  'ffs_144', limit: 3
+    t.integer  'ffs_145', limit: 3
+    t.integer  'ffs_146', limit: 3
+    t.integer  'ffs_147', limit: 3
+    t.integer  'ffs_148', limit: 3
+    t.integer  'ffs_149', limit: 3
+    t.integer  'ffs_150', limit: 3
+    t.integer  'ffs_151', limit: 3
+    t.integer  'ffs_152', limit: 3
+    t.integer  'ffs_153', limit: 3
+    t.integer  'ffs_154', limit: 3
+    t.integer  'ffs_155', limit: 3
+    t.integer  'ffs_156', limit: 3
+    t.integer  'ffs_157', limit: 3
+    t.integer  'ffs_158', limit: 3
+    t.integer  'ffs_159', limit: 3
+    t.integer  'ffs_160', limit: 3
+    t.integer  'ffs_161', limit: 3
+    t.integer  'ffs_162', limit: 3
+    t.integer  'ffs_163', limit: 3
+    t.integer  'ffs_164', limit: 3
+    t.integer  'ffs_165', limit: 3
+    t.integer  'ffs_166', limit: 3
+    t.integer  'ffs_167', limit: 3
+    t.integer  'ffs_168', limit: 3
+    t.integer  'ffs_169', limit: 3
+    t.integer  'ffs_170', limit: 3
+    t.integer  'ffs_171', limit: 3
+    t.integer  'ffs_172', limit: 3
+    t.integer  'ffs_173', limit: 3
+    t.integer  'ffs_174', limit: 3
+    t.integer  'ffs_175', limit: 3
+    t.integer  'ffs_176', limit: 3
+    t.integer  'ffs_177', limit: 3
+    t.integer  'ffs_178', limit: 3
+    t.integer  'ffs_179', limit: 3
+    t.integer  'ffs_180', limit: 3
+    t.integer  'ffs_181', limit: 3
+    t.integer  'ffs_182', limit: 3
+    t.integer  'ffs_183', limit: 3
+    t.integer  'ffs_184', limit: 3
+    t.integer  'ffs_185', limit: 3
+    t.integer  'ffs_186', limit: 3
+    t.integer  'ffs_187', limit: 3
+    t.integer  'ffs_188', limit: 3
+    t.integer  'ffs_189', limit: 3
+    t.integer  'ffs_190', limit: 3
+    t.integer  'ffs_191', limit: 3
+    t.integer  'ffs_192', limit: 3
+    t.integer  'ffs_193', limit: 3
+    t.integer  'ffs_194', limit: 3
+    t.integer  'ffs_195', limit: 3
+    t.integer  'ffs_196', limit: 3
+    t.integer  'ffs_197', limit: 3
+    t.integer  'ffs_198', limit: 3
+    t.integer  'ffs_199', limit: 3
+    t.integer  'ffs_200', limit: 3
+    t.integer  'ffs_201', limit: 3
+    t.integer  'ffs_202', limit: 3
+    t.integer  'ffs_203', limit: 3
+    t.integer  'ffs_204', limit: 3
+    t.integer  'ffs_205', limit: 3
+    t.integer  'ffs_206', limit: 3
+    t.integer  'ffs_207', limit: 3
+    t.integer  'ffs_208', limit: 3
+    t.integer  'ffs_209', limit: 3
+    t.integer  'ffs_210', limit: 3
+    t.integer  'ffs_211', limit: 3
+    t.integer  'ffs_212', limit: 3
+    t.integer  'ffs_213', limit: 3
+    t.integer  'ffs_214', limit: 3
+    t.integer  'ffs_215', limit: 3
+    t.integer  'ffs_216', limit: 3
+    t.integer  'ffs_217', limit: 3
+    t.integer  'ffs_218', limit: 3
+    t.integer  'ffs_219', limit: 3
+    t.integer  'ffs_220', limit: 3
+    t.integer  'ffs_221', limit: 3
+    t.integer  'ffs_222', limit: 3
+    t.integer  'ffs_223', limit: 3
+    t.integer  'ffs_224', limit: 3
+    t.integer  'ffs_225', limit: 3
+    t.integer  'ffs_226', limit: 3
+    t.integer  'ffs_227', limit: 3
+    t.integer  'ffs_228', limit: 3
+    t.integer  'ffs_229', limit: 3
+    t.integer  'ffs_230', limit: 3
+    t.integer  'ffs_231', limit: 3
+    t.integer  'ffs_232', limit: 3
+    t.integer  'ffs_233', limit: 3
+    t.integer  'ffs_234', limit: 3
+    t.integer  'ffs_235', limit: 3
+    t.integer  'ffs_236', limit: 3
+    t.integer  'ffs_237', limit: 3
+    t.integer  'ffs_238', limit: 3
+    t.integer  'ffs_239', limit: 3
+    t.integer  'ffs_240', limit: 3
+    t.integer  'ffs_241', limit: 3
+    t.integer  'ffs_242', limit: 3
+    t.integer  'ffs_243', limit: 3
+    t.integer  'ffs_244', limit: 3
+    t.integer  'ffs_245', limit: 3
+    t.integer  'ffs_246', limit: 3
+    t.integer  'ffs_247', limit: 3
+    t.integer  'ffs_248', limit: 3
+    t.integer  'ffs_249', limit: 3
+    t.integer  'ffs_250', limit: 3
+    t.datetime 'ff_date01'
+    t.datetime 'ff_date02'
+    t.datetime 'ff_date03'
+    t.datetime 'ff_date04'
+    t.datetime 'ff_date05'
+    t.datetime 'ff_date06'
+    t.datetime 'ff_date07'
+    t.datetime 'ff_date08'
+    t.datetime 'ff_date09'
+    t.datetime 'ff_date10'
+    t.datetime 'ff_date11'
+    t.datetime 'ff_date12'
+    t.datetime 'ff_date13'
+    t.datetime 'ff_date14'
+    t.datetime 'ff_date15'
+    t.datetime 'ff_date16'
+    t.datetime 'ff_date17'
+    t.datetime 'ff_date18'
+    t.datetime 'ff_date19'
+    t.datetime 'ff_date20'
+    t.datetime 'ff_date21'
+    t.datetime 'ff_date22'
+    t.datetime 'ff_date23'
+    t.datetime 'ff_date24'
+    t.datetime 'ff_date25'
+    t.datetime 'ff_date26'
+    t.datetime 'ff_date27'
+    t.datetime 'ff_date28'
+    t.datetime 'ff_date29'
+    t.datetime 'ff_date30'
+    t.integer  'ff_int01', limit: 8
+    t.integer  'ff_int02', limit: 8
+    t.integer  'ff_int03', limit: 8
+    t.integer  'ff_int04', limit: 8
+    t.integer  'ff_int05', limit: 8
+    t.integer  'ff_int06', limit: 8
+    t.integer  'ff_int07', limit: 8
+    t.integer  'ff_int08', limit: 8
+    t.integer  'ff_int09', limit: 8
+    t.integer  'ff_int10', limit: 8
+    t.integer  'ff_int11', limit: 8
+    t.integer  'ff_int12', limit: 8
+    t.integer  'ff_int13', limit: 8
+    t.integer  'ff_int14', limit: 8
+    t.integer  'ff_int15', limit: 8
+    t.integer  'ff_int16', limit: 8
+    t.integer  'ff_int17', limit: 8
+    t.integer  'ff_int18', limit: 8
+    t.integer  'ff_int19', limit: 8
+    t.integer  'ff_int20', limit: 8
+    t.integer  'ff_int21', limit: 8
+    t.integer  'ff_int22', limit: 8
+    t.integer  'ff_int23', limit: 8
+    t.integer  'ff_int24', limit: 8
+    t.integer  'ff_int25', limit: 8
+    t.integer  'ff_int26', limit: 8
+    t.integer  'ff_int27', limit: 8
+    t.integer  'ff_int28', limit: 8
+    t.integer  'ff_int29', limit: 8
+    t.integer  'ff_int30', limit: 8
+    t.boolean  'ff_boolean01'
+    t.boolean  'ff_boolean02'
+    t.boolean  'ff_boolean03'
+    t.boolean  'ff_boolean04'
+    t.boolean  'ff_boolean05'
+    t.boolean  'ff_boolean06'
+    t.boolean  'ff_boolean07'
+    t.boolean  'ff_boolean08'
+    t.boolean  'ff_boolean09'
+    t.boolean  'ff_boolean10'
+    t.boolean  'ff_boolean11'
+    t.boolean  'ff_boolean12'
+    t.boolean  'ff_boolean13'
+    t.boolean  'ff_boolean14'
+    t.boolean  'ff_boolean15'
+    t.boolean  'ff_boolean16'
+    t.boolean  'ff_boolean17'
+    t.boolean  'ff_boolean18'
+    t.boolean  'ff_boolean19'
+    t.boolean  'ff_boolean20'
+    t.boolean  'ff_boolean21'
+    t.boolean  'ff_boolean22'
+    t.boolean  'ff_boolean23'
+    t.boolean  'ff_boolean24'
+    t.boolean  'ff_boolean25'
+    t.boolean  'ff_boolean26'
+    t.boolean  'ff_boolean27'
+    t.boolean  'ff_boolean28'
+    t.boolean  'ff_boolean29'
+    t.boolean  'ff_boolean30'
+  end
+
+  add_index 'ticket_field_data', ['account_id', 'flexifield_set_id'], name: 'index_flexifields_on_account_id_and_flexifield_set_id'
+  add_index 'ticket_field_data', ['flexifield_def_id'], name: 'index_flexifields_on_flexifield_def_id'
+  execute 'ALTER TABLE ticket_field_data ADD PRIMARY KEY (id,account_id)'
 end

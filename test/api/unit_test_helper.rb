@@ -1,6 +1,6 @@
 ENV['RAILS_ENV'] = 'test'
 file_name = File.expand_path('../../../config/infra_layer.yml', __FILE__)
-require File.expand_path('../../../test/api/helpers/simple_cov_setup', __FILE__)
+require File.expand_path('../../../test/helpers/simple_cov_setup', __FILE__)
 
 def load_environment(file_name)
   puts 'Switching ON API Layer'
@@ -59,6 +59,6 @@ require 'minitest/reporters'
 require 'json_expressions/minitest'
 include ActiveSupport::Rescuable
 
-Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new('test/api/reports')]
+Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new, Minitest::Reporters::JUnitReporter.new('test/reports')]
 
 $env_loaded = true # To make sure we don't load the environment again

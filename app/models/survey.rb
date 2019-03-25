@@ -2,6 +2,7 @@ class Survey < ActiveRecord::Base
   
   self.primary_key = :id
   include Reports::ActivityReport
+  include Surveys::PresenterHelper
   include DataVersioning::Model
 
   VERSION_MEMBER_KEY = 'SURVEY_LIST'.freeze
@@ -10,6 +11,14 @@ class Survey < ActiveRecord::Base
   CLOSED_NOTIFICATION = 3
   SPECIFIC_EMAIL_RESPONSE = 4
   PLACE_HOLDER = 5
+
+  SEND_WHILE_MAPPING = {
+    1 => :any_email_response,
+    2 => :resolved_notification,
+    3 => :closed_notification,
+    4 => :specific_email_response,
+    5 => :place_holder
+  }.freeze
 
   #customer rating
   HAPPY = 1
@@ -35,10 +44,15 @@ class Survey < ActiveRecord::Base
   belongs_to :account
   has_many :survey_handles, :dependent => :destroy
   has_many :survey_results, :dependent => :destroy
+  has_many :survey_questions, class_name: 'CustomSurvey::SurveyQuestion', foreign_key: :survey_id,
+                              conditions: { deleted: false }, include: [:custom_field_choices], order: 'position'
 
   xss_sanitize :only => [:link_text, :happy_text, :neutral_text , :unhappy_text], 
                :plain_sanitizer => [:link_text, :happy_text, :neutral_text , :unhappy_text ]
   
+  publishable on: [:create, :update]
+  concerned_with :presenter
+
   def can_send?(ticket, s_while)    
     ( account.features?(:surveys, :survey_links) && ticket.requester && 
            ticket.requester.customer? && ((send_while == s_while) || s_while == PLACE_HOLDER) )

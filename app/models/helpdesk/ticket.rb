@@ -64,7 +64,8 @@ class Helpdesk::Ticket < ActiveRecord::Base
     :sbrr_ticket_dequeued, :sbrr_user_score_incremented, :sbrr_fresh_ticket, :skip_sbrr, :model_changes,
     :schedule_observer, :required_fields_on_closure, :observer_args, :skip_sbrr_save, 
     :sbrr_state_attributes, :escape_liquid_attributes, :update_sla, :sla_on_background, 
-    :sla_calculation_time, :disable_sla_calculation, :import_ticket, :ocr_update, :skip_ocr_sync
+    :sla_calculation_time, :disable_sla_calculation, :import_ticket, :ocr_update, :skip_ocr_sync,
+    :custom_fields_hash
     # :skip_sbrr_assigner and :skip_sbrr_save can be combined together if needed.
     # Added :system_changes, :activity_type, :misc_changes for activity_revamp -
     # - will be clearing these after activity publish.
@@ -828,7 +829,6 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def schema_less_attributes(attribute, args)
-    Rails.logger.debug "schema_less_attributes - method_missing :: args is #{args} and attribute :: #{attribute}"
     build_schema_less_ticket unless schema_less_ticket
     args = args.first if args && args.is_a?(Array)
     (attribute.to_s.include? '=') ? schema_less_ticket.safe_send(attribute, args) : schema_less_ticket.safe_send(attribute)
@@ -1087,11 +1087,16 @@ class Helpdesk::Ticket < ActiveRecord::Base
   end
 
   def custom_field= custom_field_hash
+    self.custom_fields_hash = custom_field_hash
     @custom_field = new_record? ? custom_field_hash : nil
-    assign_ff_values custom_field_hash unless new_record?
+    unless new_record?
+      assign_ff_values(custom_field_hash)
+      @custom_field = nil
+    end
   end
 
-  def set_ff_value ff_alias, ff_value
+  def set_ff_value(ff_alias, ff_value, ff_def = nil)
+    self.ff_def ||= ff_def if ff_def.present?
     @custom_field = nil
     flexifield.set_ff_value ff_alias, ff_value
   end
@@ -1377,7 +1382,7 @@ class Helpdesk::Ticket < ActiveRecord::Base
   alias_method :rr_active?, :rr_active
 
   def round_robin_attributes
-    { active: rr_active, agent_id: responder_id, group_id: group_id }
+    { active: rr_active, agent_id: responder_id.to_s.presence, group_id: group_id.to_s.presence }
   end
 
   def eligible_for_ocr?
@@ -1419,6 +1424,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     end
 
   #Shared ownership methods ends here
+
+    def benchmark_ticket_field_data
+      time_taken = Benchmark.realtime { yield }
+      Rails.logger.debug "Time taken: #{time_taken} Ticket: #{display_id} Account: #{account_id}"
+    end
 
     # def rl_exceeded_operation
     #   key = "RL_%{table_name}:%{account_id}:%{user_id}" % {:table_name => self.class.table_name, :account_id => self.account_id,

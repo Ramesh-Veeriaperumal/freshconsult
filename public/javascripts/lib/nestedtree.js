@@ -18,8 +18,9 @@
  */ 
 
 var $t = Class.create({
-  initialize: function(id) {
-    this.id = id || "0"; 
+  initialize: function(id, listId) {
+    this.id = id || "0";
+    this.listId = listId || 0;
     this.children = $H();
   },
   set: function(key, child){
@@ -31,19 +32,20 @@ var $t = Class.create({
 });
 
 var NestedField = Class.create({
-  initialize: function(data) {                  
+  initialize: function(data, feature_check) {                  
     this._blank = "...";   
     this.tree = new $H();
+    this.revamped = feature_check;
     this.readData(data);
   },
-  readData: function(data){   
+  readData: function(data){
     delete this.tree;
     this.tree = new $H();
     this.third_level = this.second_level = false;
    	if(typeof data == "string")
-    	this.parseString(data);
-	  else if(typeof data == "object")
-		  this.parseObject(data);	
+    	this.parseString(data);      
+    else if(typeof data == "object")
+      this.revamped ? this.parseObjectArray(data) : this.parseObject(data);
   },
   removeTests: function(text){
     return text.replace(/[\t\r]/g, '').strip();
@@ -52,21 +54,50 @@ var NestedField = Class.create({
     return /[\t\r]/g.test(text);
   },
   parseObject: function(_obj){
-	_self = this; 
-	_obj.each(function(_category){
-		_self.tree.set(_category[0], new $t(_category[1]));     
-		if(!_category[2]) return;
-		    _category[2].each(function(_subcategory){
-				 _self.tree.get(_category[0]).set(_subcategory[0], new $t(_subcategory[1]));
-         _self.setSecondPresent();
-				 if(!_subcategory[2]) return;
-					_subcategory[2].each(function(_item){
-					    _self.tree.get(_category[0]).get(_subcategory[0]).set(_item[0], new $t(_item[1]));
-              _self.setThirdPresent();
-					});
-			});
-	});
+  _self = this; 
+    _obj.each(function(_category){
+      _self.tree.set(_category[0], new $t(_category[1]));     
+      if(!_category[2]) return;
+          _category[2].each(function(_subcategory){
+           _self.tree.get(_category[0]).set(_subcategory[0], new $t(_subcategory[1]));
+           _self.setSecondPresent();
+           if(!_subcategory[2]) return;
+            _subcategory[2].each(function(_item){
+                _self.tree.get(_category[0]).get(_subcategory[0]).set(_item[0], new $t(_item[1]));
+                _self.setThirdPresent();
+            });
+        });
+    });
   },        
+  parseObjectArray: function(_obj){
+	_self = this;
+  var count = 0;
+  	_obj.each(function(_category){
+      if(!_category.id) {
+        _category.id = Date.now() + count;
+        count++;
+      }
+  		_self.tree.set(_category.value, new $t(_category.value, _category.id));    
+  		if(!_category.choices) return;
+  		    _category.choices.each(function(_subcategory){
+            if(!_subcategory.id) {
+              _subcategory.id = Date.now() + count;
+              count++;
+            }
+  				 _self.tree.get(_category.value).set(_subcategory.value, new $t(_subcategory.value, _subcategory.id));
+           _self.setSecondPresent();
+  				 if(!_subcategory.choices) return;
+  					_subcategory.choices.each(function(_item){
+                if(!_item.id) {
+                  _item.id = Date.now() + count;
+                  count++;
+                }
+  					    _self.tree.get(_category.value).get(_subcategory.value).set(_item.value, new $t(_item.value, _item.id));
+                _self.setThirdPresent();
+  					});
+  			});
+  	});
+  },
   parseString: function(_text){
 	_self = this,
 	_category = "",
@@ -176,7 +207,9 @@ var NestedField = Class.create({
       return ((subcategory_key != "-1" && this.tree.get(category_key)!='-1') ? 
               ( subcategory_key ? this.tree.get(category_key).get(subcategory_key).children : $H()) : $H() ) || $H();
   },
-
+  converttoArray: function(){
+    return this.revamped ? this.toObjectArray() : this.toArray();
+  },
   toString: function(){
       _self = this, _treeString = "";
       _self.tree.each(function(_category){
@@ -204,5 +237,21 @@ var NestedField = Class.create({
            _category_array.push((_subcategory_array.length) ? [escapeHtml(_category.key), escapeHtml(_category.value.id), _subcategory_array] : [escapeHtml(_category.key), escapeHtml(_category.value.id)]);
         });          
         return _category_array;      
+  },
+  toObjectArray: function(tree){
+    tree = tree || this.tree;
+    var _self = this, object_array = [];
+    tree.each(function(item){ 
+      if(item.value.children){
+        object_array.push({ 
+          value: escapeHtml(item.key), 
+          id: item.value.listId, 
+          name: escapeHtml(item.key),
+          destroyed: item.destroyed ? item.destroyed : false, 
+          choices: _self.toObjectArray(item.value.children)
+        });
+      }
+    });          
+    return object_array;      
   }
 });

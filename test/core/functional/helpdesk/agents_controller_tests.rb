@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 
 class AgentsControllerTest < ActionController::TestCase
-  include UsersTestHelper
+  include CoreUsersTestHelper
   include ControllerTestHelper
 
   def setup

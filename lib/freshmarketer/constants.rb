@@ -9,6 +9,9 @@ module Freshmarketer
     GET_SESSION_URL = '/sr/session/%<session_id>s'.freeze
     GET_EXPERIMENT_URL = '/sr/expdetails'.freeze
     REMOVE_ACCOUNT_URL = '/sr/removeaccount'.freeze
+    ENABLE_PREDICTIVE_SUPPORT_URL = '/sr/enablepredictivesupport'.freeze
+    DISABLE_PREDICTIVE_SUPPORT_URL = '/sr/disablepredictivesupport'.freeze
+    CREATE_EXPERIMENT = '/sr/create_experiment'.freeze
     ERROR_CODE_MAPPING = {
       'E400ID' => :invalid_domain_name,
       'E400IE' => :invalid_email_id,

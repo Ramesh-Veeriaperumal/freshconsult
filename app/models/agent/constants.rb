@@ -61,4 +61,5 @@ class Agent < ActiveRecord::Base
   DELETED_AGENT = 'deleted'
   
   AGENT_GROUP_TYPE_MAPPING = GroupConstants::GROUPS_AGENTS_MAPPING.invert
+  ALLOWED_PERMISSION_FOR_FIELD_AGENT = [PERMISSION_KEYS_BY_TOKEN[:assigned_tickets], PERMISSION_KEYS_BY_TOKEN[:group_tickets]].freeze
 end

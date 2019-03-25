@@ -166,13 +166,13 @@ Helpkit::Application.routes.draw do
     match '/search/autocomplete/tags',         to: 'search/v2/autocomplete#tags',                via: :get
     match '/search/merge_topic',               to: 'search/v2/merge_topics#search_topics',       via: :post
     match '/contact_merge/search',             to: 'search/v2/merge_contacts#index',             via: :get
-    
+
     match '/search/tickets', to: 'search/v2/spotlight#tickets', via: :post
 
     match '/search/related_solutions/ticket/:ticket', to: 'search/v2/solutions#related_solutions',  via: :get, constraints: { format: /(html|js)/ }
     match '/search/search_solutions/ticket/:ticket',  to: 'search/v2/solutions#search_solutions',   via: :get, constraints: { format: /(html|js)/ }
     match '/search/tickets/filter/:search_field',     to: 'search/v2/tickets#index',                via: :post
-    
+
     # Linked ticket routes
     match '/search/ticket_associations/filter/:search_field', to: 'search/v2/ticket_associations#index'
     match '/search/ticket_associations/recent_trackers',      to: 'search/v2/ticket_associations#recent_trackers', via: :post
@@ -184,13 +184,13 @@ Helpkit::Application.routes.draw do
     match '/support/search/topics/suggest',    to: 'support/search_v2/spotlight#suggest_topic',     via: :get
 
     match 'support/search/articles/:article_id/related_articles', to: 'support/search_v2/solutions#related_articles', via: :get
-    
+
     # Freshfone paths
     match '/freshfone/autocomplete/requester_search', to: 'search/v2/freshfone/autocomplete#contact_by_numbers',  via: :get
     match '/freshfone/autocomplete/customer_phone_number', to: 'search/v2/freshfone/autocomplete#customer_by_phone',  via: :get
     match '/freshfone/autocomplete/customer_contact', to: 'search/v2/freshfone/autocomplete#contact_by_numberfields',  via: :get
   end
-  
+
   root :to => 'home#index'
 
   match "/support/sitemap" => "support#sitemap", :format => "xml", :as => :sitemap, :via => :get
@@ -250,7 +250,7 @@ Helpkit::Application.routes.draw do
     end
   end
 
-  resources :email_preview do 
+  resources :email_preview do
     collection do
       post :generate_preview
       post :send_test_email
@@ -722,9 +722,11 @@ Helpkit::Application.routes.draw do
   match '/disable_falcon' => 'users#disable_falcon', :as => :disable_falcon, via: :post
   match '/enable_undo_send' => 'users#enable_undo_send', :as => :enable_undo_send, via: :post
   match '/disable_undo_send' => 'users#disable_undo_send', :as => :disable_undo_send, via: :post
+  match '/set_notes_order' => 'users#set_conversation_preference', :as => :set_notes_order, via: :put
   match '/register/:activation_code' => 'activations#new', :as => :register
   match 'register_new_email/:activation_code' => 'activations#new_email', :as => :register_new_email
   match '/activate/:perishable_token' => 'activations#create', :as => :activate
+  match '/set_notes_order' => 'users#set_conversation_preference', :as => :set_notes_order, via: :put
 
   resources :activations do
     member do
@@ -1164,7 +1166,7 @@ Helpkit::Application.routes.draw do
     end
 
     resources :dkim_configurations, path: 'email_configs/dkim' do
-      member do 
+      member do
         post :create
         get :verify_email_domain
         post :remove_dkim_config
@@ -1180,11 +1182,12 @@ Helpkit::Application.routes.draw do
       end
     end
 
-    resources :freshchat, :only => [:index, :create, :update] do
+    resources :freshchat, :only => [:index, :create, :update, :signup] do
       collection do
         put :toggle
         post :create
         put :update
+        get :signup
       end
     end
 
@@ -1198,7 +1201,7 @@ Helpkit::Application.routes.draw do
         post :process_csv
       end
     end
-    
+
     match '/agent_skills/' => 'user_skills#index', :via => :get
     match '/agent_skills/:user_id' => 'user_skills#show', :via => :get
     match '/agent_skills/:user_id' => 'user_skills#update', :via => :put
@@ -1261,7 +1264,7 @@ Helpkit::Application.routes.draw do
     end
     match '/email_notifications/:type/:id/edit' => 'email_notifications#edit', :as => :edit_notification
     resources :onboarding, only: [:index] do
-      collection do 
+      collection do
         post :update_channel_configs
         post :update_activation_email
         post :resend_activation_email
@@ -1394,7 +1397,7 @@ Helpkit::Application.routes.draw do
       end
     end
     namespace :freshcaller, :path => 'freshcaller' do
-      resources :signup do 
+      resources :signup do
         collection do
           post :link
         end
@@ -1448,6 +1451,7 @@ Helpkit::Application.routes.draw do
         end
         member do
           delete :destroy
+          put :activate
         end
       end
     end
@@ -1572,7 +1576,7 @@ Helpkit::Application.routes.draw do
         end
       end
       resources :merge_contacts, :only => :index
-      
+
       # Paths for mobile search v2
       namespace :mobile do
         resources :suggest, only: :index
@@ -1597,7 +1601,7 @@ Helpkit::Application.routes.draw do
           end
         end
       end
-      
+
       resources :ticket_associations, :only => [:index, :recent_trackers]
     end
 
@@ -1638,6 +1642,7 @@ Helpkit::Application.routes.draw do
   match '/search/remove_recent_search' => 'search/home#remove_recent_search', :method => :post
   # routes for custom survey reports
   match '/reports/custom_survey' => 'reports/custom_survey_reports#index', :as => :custom_survey_activity
+  match '/analytics/custom_survey' => 'reports/custom_survey_reports#index', :as => :custom_survey_analytics_activity
   match '/reports/custom_survey/aggregate_report/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#aggregate_report', :as => :custom_survey_aggregate_report
   match '/reports/custom_survey/group_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#group_wise_report', :as => :custom_survey_group_wise_report
   match '/reports/custom_survey/agent_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#agent_wise_report', :as => :custom_survey_agent_wise_report
@@ -1646,6 +1651,15 @@ Helpkit::Application.routes.draw do
   match '/reports/custom_survey/update_reports_filter' =>  'reports/custom_survey_reports#update_reports_filter', :as => :custom_survey_update_reports_filter
   match '/reports/custom_survey/delete_reports_filter' =>  'reports/custom_survey_reports#delete_reports_filter', :as => :custom_survey_delete_reports_filter
   match '/reports/custom_survey/export_csv' => 'reports/custom_survey_reports#export_csv'
+
+  match '/analytics/custom_survey/aggregate_report/:survey_id/:group_id/:agent_id/:date_range' => 'reports/custom_survey_reports#aggregate_report', :as => :custom_survey_analytics_aggregate_report
+  match '/analytics/custom_survey/group_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#group_wise_report', :as => :custom_survey_analytics_group_wise_report
+  match '/analytics/custom_survey/agent_wise_report/:survey_id/:group_id/:agent_id/:survey_question_id/:date_range' => 'reports/custom_survey_reports#agent_wise_report', :as => :custom_survey_analytics_agent_wise_report
+  match '/analytics/custom_survey/responses/:survey_id/:group_id/:agent_id/:survey_question_id/:rating/:date_range' => 'reports/custom_survey_reports#remarks', :as => :custom_survey_analytics_remarks
+  match '/analytics/custom_survey/save_reports_filter' =>  'reports/custom_survey_reports#save_reports_filter', :as => :custom_survey_save_analytics_reports_filter
+  match '/analytics/custom_survey/update_reports_filter' =>  'reports/custom_survey_reports#update_reports_filter', :as => :custom_survey_update_analytics_reports_filter
+  match '/analytics/custom_survey/delete_reports_filter' =>  'reports/custom_survey_reports#delete_reports_filter', :as => :custom_survey_delete_analytics_reports_filter
+  match '/analytics/custom_survey/export_csv' => 'reports/custom_survey_reports#export_csv'
 
   # Keep this below search to override contact_merge_search_path
   #
@@ -1657,7 +1671,7 @@ Helpkit::Application.routes.draw do
       post :merge
     end
   end
-  
+
   #to support old path for timesheet_reports
   #old path : hostname/timesheet_reports
   #new path structure : hostname/reports/timesheet
@@ -1667,7 +1681,7 @@ Helpkit::Application.routes.draw do
   namespace :reports do
 
     match '', action: :index, method: :get
-    
+
     # 'timesheet' resource must be placed before new reports path, else it matches to v2/reports_controller
     # timesheet report uses reports/timesheet_reports_controller
     # both timesheet and new reports share the same path structure
@@ -1685,7 +1699,7 @@ Helpkit::Application.routes.draw do
         post :time_entries_list
       end
     end
-    
+
     resources :scheduled_exports, only: [:index] do
       collection do
         get :activities, action: :edit_activity
@@ -1706,7 +1720,7 @@ Helpkit::Application.routes.draw do
     #both timesheet and new reports share the same path structure
     #path : reports/:report_type
     resource only: [], path: '(:ver)/:report_type', constraints: {ver: /v2/}, controller: 'v2/tickets/reports' do
-      collection do 
+      collection do
         get  :index
         get  :configure_export
         post :fetch_metrics
@@ -1764,6 +1778,7 @@ Helpkit::Application.routes.draw do
   match '/activity_reports/helpdesk/export_to_excel' => 'reports/helpdesk_reports#export_to_excel', :as => :helpdesk_activity_export
   match '/gamification/reports' => 'reports/gamification_reports#index', :as => :scoreboard_activity
   match '/survey/reports' => 'reports/survey_reports#index', :as => :survey_activity
+  match '/survey/analytics' => 'reports/survey_reports#index', :as => :survey_analytics_activity
   match '/survey/reports/:category/:view' => 'reports/survey_reports#index', :as => :survey_back_to_list
   match '/survey/reports_list' => 'reports/survey_reports#list', :as => :survey_list
   match '/survey/report_details/:entity_id/:category' => 'reports/survey_reports#report_details', :as => :survey_detail_report
@@ -1881,6 +1896,7 @@ Helpkit::Application.routes.draw do
       put :update_domain
       get :validate_domain
       get :signup_validate_domain
+      post :anonymous_signup
     end
   end
 
@@ -1912,6 +1928,7 @@ Helpkit::Application.routes.draw do
   match '/email/validate_domain' => 'email#validate_domain', :as => :validate_domain
   match '/email/validate_account' => 'email#validate_account', :as => :validate_account
   match '/email/account_details' => 'email#account_details', :as => :account_details
+  match '/email_service/spam_threshold_reached' => 'email_service#spam_threshold_reached', :as => :spam_threshold_reached
   match '/helpdesk/tickets/execute_scenario(/:id)' => 'helpdesk/tickets#execute_scenario' # For mobile apps backward compatibility
   match '/helpdesk/dashboard/:freshfone_group_id/agents' => 'helpdesk/dashboard#load_ffone_agents_by_group'
 
@@ -2894,9 +2911,9 @@ Helpkit::Application.routes.draw do
       collection do
         get :token
       end
-    end            
-    
-    
+    end
+
+
   end
 
   resources :rabbit_mq, :only => [:index]
@@ -3295,7 +3312,7 @@ Helpkit::Application.routes.draw do
   match '/freshid/saml_agent_authorize_callback', :controller => 'freshid', :action => 'saml_agent_authorize_callback', :method => :get
   match '/freshid/saml_customer_authorize_callback', :controller => 'freshid', :action => 'saml_customer_authorize_callback', :method => :get
   match '/freshid/event_callback', :controller => 'freshid', :action => 'event_callback', :method => :post
-  match '/freshid/logout', :controller => 'user_sessions', :action => 'freshid_destroy', :method => :get 
+  match '/freshid/logout', :controller => 'user_sessions', :action => 'freshid_destroy', :method => :get
 
   post '/yearin_review/share', to: 'year_in_review#share'
   post '/yearin_review/clear', to: 'year_in_review#clear'

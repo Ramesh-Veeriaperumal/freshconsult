@@ -1,5 +1,5 @@
 ['contact_fields_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
-module ContactFieldsTestHelper
+module ApiContactFieldsTestHelper
   include ContactFieldsHelper
   # Patterns
   def contact_field_pattern_without_choices(expected_output = {}, contact_field)

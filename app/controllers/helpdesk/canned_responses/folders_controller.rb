@@ -10,7 +10,7 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
   before_filter :set_selected_tab
 
   def index
-    @current_folder = current_account.canned_response_folders.general_folder.first
+    @current_folder = current_account.personal_canned_response_enabled? ? @pfolder : current_account.canned_response_folders.general_folder.first
     @ca_responses   = visible_responses(@current_folder)
     render :index
   end
@@ -91,20 +91,23 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
       errors[:errors] << {:message=> t('canned_responses.errors.invalid_plan'), :error => t('canned_responses.errors.invalid_plan_failed') }
       api_json_responder(errors, 400)
     end
-  end    
+  end
 
   def check_default
     if @current_folder.is_default?
       raise t('canned_folders.no_edit')
     end
-  end    
+  end
 
   def load_folders
     @pfolder = current_account.canned_response_folders.personal_folder.first
     if privilege?(:manage_canned_responses)
-      @ca_res_folders = current_account.canned_response_folders.all
-    else
+      @ca_res_folders = current_account.personal_canned_response_enabled? ?
+        current_account.canned_response_folders.all : current_account.canned_response_folders.exclude_personal_folder
+    elsif current_account.personal_canned_response_enabled?
       @ca_res_folders = [@pfolder]
+    else
+      @ca_res_folders = []
     end
   end
 
@@ -126,7 +129,7 @@ class Helpdesk::CannedResponses::FoldersController < ApplicationController
 
   def set_selected_tab
     @selected_tab = :admin
-  end  
+  end
 
   def after_destroy_url
     helpdesk_canned_responses_folders_path

@@ -3,16 +3,18 @@ class CustomSurvey::Survey < ActiveRecord::Base
   self.table_name = :surveys
   
   include Reports::ActivityReport
+  include Surveys::PresenterHelper
   include Cache::Memcache::Survey
   include DataVersioning::Model
 
   VERSION_MEMBER_KEY = 'SURVEY_LIST'.freeze
   
-  concerned_with :constants, :associations
+  concerned_with :constants, :associations, :presenter
   attr_protected :account_id, :active, :default, :deleted
 
   after_commit :clear_custom_survey_cache, :if => :active_survey_updated?
 
+  publishable on: [:create, :update]
   xss_sanitize :only => [:link_text, :happy_text, :neutral_text , :unhappy_text , :title_text, :thanks_text , :feedback_response_text, :comments_text ], 
                :plain_sanitizer => [:link_text, :happy_text, :neutral_text , :unhappy_text ,:title_text, :thanks_text , :feedback_response_text, :comments_text ]
 
@@ -127,4 +129,5 @@ class CustomSurvey::Survey < ActiveRecord::Base
     }
     as_json(options)['survey']
   end
+
 end

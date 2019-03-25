@@ -9,7 +9,7 @@ module SubscriptionsHelper
     "estate" => [ "everything_in_garden", "agent_collision", "custom_roles", "custom_ssl", "enterprise_reports", "portal_customization" ],
     "forest" => [ "everything_in_estate", "custom_mailbox", "ip_restriction" ],
 
-    "sprout jan 17" => [ "email_ticketing", "ticket_dispatch_automation" ,"knowledge_base", "app_gallery", "basic_phone", "freshchat" ],
+    "sprout jan 17" => [ "email_ticketing", "ticket_dispatch_automation" , "knowledge_base", "app_gallery", "basic_phone", "freshchat" ],
     "blossom jan 17" => [ "everything_in_sprout", "multiple_mailboxes", "time_event_automation", "sla_reminders", "custom_domain", "satisfaction_survey",
       "helpdesk_report", "custom_ticket_fields_and_views"],
     "garden jan 17" => [ "everything_in_blossom", "m_k_base", "dynamic_email_alert", "forums", "scheduled_reports",
@@ -143,9 +143,11 @@ module SubscriptionsHelper
     format_amount(amount, currency)
   end
 
-  def cost_per_agent(plan_name, period=1, currency)
+  def cost_per_agent(plan_name, period, currency)
     billing_subscription = Billing::Subscription.new
-    period = 1 if period.nil?
+    if period.nil?
+      period = current_account.new_2019_pricing_enabled? ? SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual] : 1
+    end
     plan_info = billing_subscription.retrieve_plan(plan_name, period)
     amount = (plan_info.plan.price/plan_info.plan.period)/100
     format_amount(amount, currency)
@@ -167,14 +169,17 @@ module SubscriptionsHelper
     current_account.currency_name.eql?(DEFAULT_CURRENCY)
   end
 
-  def plan_button(plan, button_label, button_classes, free_plan_flag, add_freshdialog, title = "", data_submit_label = "", data_close_label = "", data_classes = "", data_submit_loading = t('please_wait'))
+  def plan_button(plan, button_label, button_classes, free_plan_flag, add_freshdialog,
+    title = "", data_submit_label = "", data_close_label = "", data_classes = "",
+    data_submit_loading = t('please_wait'), billing_cycle = SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual])
     output = []
     output << %(<button data-plan="#{ plan.name.parameterize.underscore }" 
                   data-plan-id="#{ plan.id }" 
                   class="#{button_classes}" 
                   id="#{ plan.name.parameterize.underscore }_button" 
                   data-current-plan="false"
-                  data-free-plan="#{ free_plan_flag }" )
+                  data-free-plan="#{ free_plan_flag }"
+                  data-billing-cycle="#{ billing_cycle }")
     if add_freshdialog
       output << %(data-target="#confirm-message-#{plan.id}"  
                     title="#{ title }"

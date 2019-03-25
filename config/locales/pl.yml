@@ -3184,6 +3184,7 @@ pl:
   right: Prawa
   footer:
     helpdesk_software: "Oprogramowanie centrum pomocy"
+    helpdesk_software_link: "https://freshdesk.com.pl/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: "przez Freshdesk"
     submit_feedback: "Prześlij opinię"
     browse_community: "Przeglądaj społeczność"

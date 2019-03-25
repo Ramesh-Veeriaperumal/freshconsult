@@ -24,6 +24,14 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
       @action_input = ActiveSupport::JSON.encode @va_rule.action_data
     end
 
+    def ticket_field_filters_for_automations
+      current_account.ticket_fields.non_encrypted_custom_fields.preload(:flexifield_def_entry)
+    end
+
+    def ticket_field_actions_for_automations
+      fields = current_account.ticket_fields.non_encrypted_custom_fields.reject(&:fsm_reserved_custom_field?)
+    end
+
     def get_event_performer
       [[-2, t('admin.observer_rules.event_performer')]]
     end
@@ -86,8 +94,8 @@ class Admin::ObserverRulesController < Admin::SupervisorRulesController
       special_cases << [ANY_VALUE[:without_none], t('any_val.excluding_none')]  if current_account.va_any_field_without_none_enabled?
       cf = current_account.ticket_fields.event_fields
 
-      # Skipping Fields reserved for FSM
-      cf.reject! { |field| field.fsm_reserved_custom_field? }
+      # Skipping Fields reserved for FSM and custom Datetime fields.
+      cf.reject! { |field| field.fsm_reserved_custom_field? || field.custom_date_time_field? }
       unless cf.blank? 
         event_hash.push({ :name => -1,
                           :value => "-----------------------" 

@@ -7,6 +7,7 @@ module Ember
       def setup
         super
         initial_setup
+        @account.reload
       end
 
       @@initial_setup_run = false
@@ -99,33 +100,27 @@ module Ember
         @draft_body.account = @account
         @draft_body.save
 
-        @folder_meta = Solution::FolderMeta.new
-        @folder_meta.visibility = 1
-        @folder_meta.solution_category_meta = @category_meta
-        @folder_meta.account = @account
-        @folder_meta.save
+        @category = Solution::Category.new
+        @category.name = "es category"
+        @category.description = "es cat description"
+        @category.language_id = Language.find_by_code('es').id
+        @category.parent_id = @category_meta.id
+        @category.account = @account
+        @category.save
 
         @folder = Solution::Folder.new
-        @folder.name = 'test folder'
-        @folder.description = 'test description'
+        @folder.name = 'es folder'
+        @folder.description = 'es folder description'
         @folder.account = @account
         @folder.parent_id = @folder_meta.id
         @folder.language_id = Language.find_by_code('es').id
         @folder.save
 
-        @articlemeta = Solution::ArticleMeta.new
-        @articlemeta.art_type = 1
-        @articlemeta.solution_folder_meta_id = @folder_meta.id
-        @articlemeta.solution_category_meta = @folder_meta.solution_category_meta
-        @articlemeta.account_id = @account.id
-        @articlemeta.published = false
-        @articlemeta.save
-
         @article_with_lang = Solution::Article.new
-        @article_with_lang.title = 'Sample'
+        @article_with_lang.title = 'es article'
         @article_with_lang.description = '<b>aaa</b>'
         @article_with_lang.status = 1
-        @article_with_lang.language_id = 8
+        @article_with_lang.language_id = Language.find_by_code('es').id
         @article_with_lang.parent_id = @articlemeta.id
         @article_with_lang.account_id = @account.id
         @article_with_lang.user_id = @account.agents.first.id
@@ -268,6 +263,230 @@ module Ember
         assert_response 200
         match_json(article_content_pattern(draft.article))
       end
+
+      def test_show_article_without_feature
+        article = @account.solution_articles.last
+        get :show, controller_params(version: 'private', id: article.parent_id)
+        assert_response 200
+      end
+
+      def test_bulk_update_without_launchparty
+        article = @account.solution_articles.where(language_id: 6).last
+        put :bulk_update, construct_params({ version: 'private' }, ids: article.parent_id, properties: { visibility: 1 })
+        assert_response 403
+        match_json(request_error_pattern(:require_feature, feature: 'Kbase Mint'))
+      end
+
+      def test_bulk_update_tags
+        enable_kbase_mint do
+          article = @account.solution_articles.where(language_id: 6).last
+          tags = [Faker::Name.name, Faker::Name.name]
+          put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { tags: tags })
+          assert_response 204
+          article.reload
+          assert (article.reload.tags.map(&:name) - tags).empty?
+        end
+      end
+
+      def test_bulk_update_tags_without_tags_privilege
+        enable_kbase_mint do
+          User.any_instance.stubs(:privilege?).with(:create_tags).returns(false)
+          User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+          article = @account.solution_articles.where(language_id: 6).last
+          tags = [Faker::Name.name, Faker::Name.name]
+          put :bulk_update, construct_params({ version: 'private' }, ids: [article.parent_id], properties: { tags: tags })
+          assert_response 400
+        end
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_author
+        enable_kbase_mint do
+          Account.any_instance.stubs(:agents_details_from_cache).returns(Agent.new)
+          Agent.any_instance.stubs(:detect).returns(true)
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          agent_id = @account.agents.first.id
+          User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+          User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(true)
+          tags = [Faker::Name.name, Faker::Name.name]
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { agent_id: agent_id })
+          assert_response 204
+          assert folder.reload.solution_article_meta.all? { |meta| meta.solution_articles.where(language_id: @account.language_object.id).first.user_id == agent_id }
+        end
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_author_without_publish_solution
+        enable_kbase_mint do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          agent_id = @account.agents.first.id
+          User.any_instance.stubs(:privilege?).with(:publish_solution).returns(false)
+          tags = [Faker::Name.name, Faker::Name.name]
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { agent_id: agent_id })
+          assert_response 403
+        end
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_author_without_admin_tasks
+        enable_kbase_mint do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          agent_id = @account.agents.first.id
+          User.any_instance.stubs(:privilege?).with(:publish_solution).returns(true)
+          User.any_instance.stubs(:privilege?).with(:admin_tasks).returns(false)
+          tags = [Faker::Name.name, Faker::Name.name]
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { agent_id: agent_id })
+          assert_response 400
+          match_json(bulk_validation_error_pattern(:agent_id, :cannot_change_author_id))
+        end
+      ensure
+        User.any_instance.unstub(:privilege?)
+      end
+
+      def test_bulk_update_invaild_author
+        enable_kbase_mint do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          tags = [Faker::Name.name, Faker::Name.name]
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { agent_id: 10_192_910 })
+          assert_response 400
+          match_json(bulk_validation_error_pattern(:agent_id, :invalid_agent_id))
+        end
+      end
+
+      def test_bulk_update_invaild_author_datatype
+        enable_kbase_mint do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          tags = [Faker::Name.name, Faker::Name.name]
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { agent_id: 'one' })
+          assert_response 400
+          match_json(bulk_validation_error_pattern(:agent_id, :datatype_mismatch))
+        end
+      end
+
+      def test_bulk_update_folder
+        enable_kbase_mint do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { folder_id: folder.id })
+          assert_response 204
+          assert folder.reload.solution_article_meta.all? { |meta| meta.solution_folder_meta_id == folder.id }
+        end
+      end
+
+      def test_bulk_update_invalid_folder
+        enable_kbase_mint do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          tags = [Faker::Name.name, Faker::Name.name]
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { folder_id: 10_102_910_201 })
+          assert_response 400
+          match_json(bulk_validation_error_pattern(:folder_id, :invalid_folder_id))
+        end
+      end
+
+      def test_bulk_update_invaild_folder_datatype
+        enable_kbase_mint do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { folder_id: 'one' })
+          assert_response 400
+          match_json(bulk_validation_error_pattern(:folder_id, :datatype_mismatch))
+        end
+      end
+
+      def test_bulk_update_without_anyproperties
+        enable_kbase_mint do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          tags = [Faker::Name.name, Faker::Name.name]
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles)
+          assert_response 400
+          match_json(error_pattern(:properties, :missing_field))
+        end
+      end
+
+      def test_bulk_update_articles_exception
+        enable_kbase_mint do
+          folder = @account.solution_folder_meta.where(is_default: false).first
+          populate_articles(folder)
+          articles = folder.solution_article_meta.pluck(:id)
+          tags = [Faker::Name.name, Faker::Name.name]
+          Solution::ArticleMeta.any_instance.stubs(:save!).raises(StandardError)
+          put :bulk_update, construct_params({ version: 'private' }, ids: articles, properties: { folder_id: folder.id })
+          assert_response 202
+        end
+      ensure
+        Solution::ArticleMeta.any_instance.unstub(:save!)
+      end
+
+      private
+
+        def populate_articles(folder_meta)
+          return if folder_meta.article_count > 4
+          for i in 1..2 do
+            articlemeta = Solution::ArticleMeta.new
+            articlemeta.art_type = 1
+            articlemeta.solution_folder_meta_id = folder_meta.id
+            articlemeta.solution_category_meta = folder_meta.solution_category_meta
+            articlemeta.account_id = @account.id
+            articlemeta.published = false
+            articlemeta.save
+
+            article_with_lang = Solution::Article.new
+            article_with_lang.title = Faker::Name.name
+            article_with_lang.description = '<b>aaa</b>'
+            article_with_lang.status = 1
+            article_with_lang.language_id = @account.language_object.id
+            article_with_lang.parent_id = articlemeta.id
+            article_with_lang.account_id = @account.id
+            article_with_lang.user_id = @account.agents.first.id
+            article_with_lang.save
+          end
+        end
+
+        def bulk_validation_error_pattern(field, code)
+          {
+            description: 'Validation failed',
+            errors: [
+              {
+                field: 'properties',
+                nested_field: "properties.#{field}",
+                message: :string,
+                code: code.to_s
+              }
+            ]
+          }
+        end
+
+        def error_pattern(field, code)
+          {
+            description: 'Validation failed',
+            errors: [
+              {
+                field: field.to_s,
+                message: :string,
+                code: code.to_s
+              }
+            ]
+          }
+        end
     end
   end
 end

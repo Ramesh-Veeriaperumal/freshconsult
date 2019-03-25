@@ -5,6 +5,33 @@
 	}
 }
 
+.sort-conversations__label {
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.row-fluid .sort-conversations__select {
+	margin: 0 0 6px;
+}
+
+.sort-conversations__tip {
+	color: $grayLight;
+	margin-top: -4px;
+	line-height: 1.4;
+	font-size: 12px;
+	min-height: 40px;
+	padding-right: 5px;
+}
+
+.sort-conversations-freshid {
+	margin-top: 20px;
+	padding-left: 20px;
+}
+
+.sort-conversations-freshid .sort-conversations__select {
+	margin-left: 0;
+}
+
 .undo-send-option {
 	padding-top: 4px;
 }
@@ -71,7 +98,7 @@
 			font-size: 12px;
 			line-height: 18px;
 		}
-		
+
 	}
 
 	.profile-rightcontent{
@@ -194,7 +221,7 @@
 
 #searching-agent-email .loading-box{
 	top: 250px;
-    width: 110px; 
+    width: 110px;
     height: 2%;
     position: absolute ;
     background-color: $content-color;

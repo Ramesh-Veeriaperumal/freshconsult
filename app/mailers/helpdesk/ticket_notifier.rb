@@ -689,7 +689,8 @@ class  Helpdesk::TicketNotifier < ActionMailer::Base
 
       headers = {
         "Message-ID"  =>  "<#{message_id}>",
-        :sent_on      =>  Time.now
+        :sent_on => Time.now.getlocal,
+        'X-SOURCE' => EmailNotificationConstants::TICKET_SOURCE[ticket.source - 1]
       }
 
       if auto_submitted

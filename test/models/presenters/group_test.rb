@@ -1,8 +1,8 @@
 require_relative '../test_helper'
 
 class GroupTest < ActiveSupport::TestCase
-  include GroupsTestHelper
-  include UsersTestHelper
+  include ModelsGroupsTestHelper
+  include ModelsUsersTestHelper
 
   def test_central_publish_create_payload
     group = create_group(@account)
@@ -39,6 +39,52 @@ class GroupTest < ActiveSupport::TestCase
     payload.must_match_json_expression(central_publish_group_pattern(group))
     assert_equal 'group_update', job['args'][0]
     assert_equal({ 'agents' => {'added' => [{'id' => new_agent.id, 'name' => new_agent.name}], 'removed' => [] } }, job['args'][1]['model_changes'])
+  end
+
+  def test_central_publish_payload_remove_agents
+    agents = []
+    5.times do
+      agents << add_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    group = create_group_with_agents(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, agent_list: agents.map(&:id))
+    group.reload
+    group.agent_changes.clear
+    CentralPublisher::Worker.jobs.clear
+    agent_groups = group.agent_groups
+    revised_agent_groups = agent_groups.select { |ag| ag.user_id == agents[0].id }.map(&:destroy)
+    agent_groups -= revised_agent_groups
+    group.agent_groups = agent_groups
+    group.save
+    assert_equal 1, CentralPublisher::Worker.jobs.size
+    job = CentralPublisher::Worker.jobs.last
+    payload = group.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_group_pattern(group))
+    assert_equal 'group_update', job['args'][0]
+    assert_equal({ 'agents' => {'added' => [], 'removed' => [{'id' => agents[0].id, 'name' => agents[0].name}] } }, job['args'][1]['model_changes'])
+  end
+
+  def test_central_publish_payload_add_remove_agents
+    new_agent = add_agent(@account, role: Role.find_by_name('Agent').id)
+    agents = []
+    5.times do
+      agents << add_agent(@account, role: Role.find_by_name('Agent').id)
+    end
+    group = create_group_with_agents(@account, name: Faker::Lorem.characters(7), description: Faker::Lorem.paragraph, agent_list: agents.map(&:id))
+    group.reload
+    group.agent_changes.clear
+    CentralPublisher::Worker.jobs.clear
+    agent_groups = group.agent_groups
+    revised_agent_groups = agent_groups.select { |ag| ag.user_id == agents[0].id }.map(&:destroy)
+    agent_groups -= revised_agent_groups
+    group.agent_groups = agent_groups
+    group.agent_groups.build(user_id: new_agent.id)
+    group.save
+    assert_equal 1, CentralPublisher::Worker.jobs.size
+    job = CentralPublisher::Worker.jobs.last
+    payload = group.central_publish_payload.to_json
+    payload.must_match_json_expression(central_publish_group_pattern(group))
+    assert_equal 'group_update', job['args'][0]
+    assert_equal({ 'agents' => {'added' => [{'id' => new_agent.id, 'name' => new_agent.name}], 'removed' => [{'id' => agents[0].id, 'name' => agents[0].name}] } }, job['args'][1]['model_changes'])
   end
 
   def test_central_publish_destroy_payload

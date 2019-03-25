@@ -84,14 +84,14 @@ module GroupsTestHelper
     result=Hash.new
     result[:id]=business_hour.id
     result[:name]=business_hour.name    
-    result  
+    result
   end
 
   def is_business_hour_present?(expected_output, group)
     business_hour_id=expected_output[business_hour_id].nil? ? group.business_calendar_id : expected_output[business_hour_id]
     business_hour=Account.current.business_calendar.find_by_id(business_hour_id)
     return business_hour.nil? ? false : true
-  end  
+  end
 
   def decorate_boolean(value)
     value ? value.to_s.to_bool : value

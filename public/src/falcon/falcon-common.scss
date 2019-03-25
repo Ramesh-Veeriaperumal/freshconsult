@@ -1694,7 +1694,13 @@ div[class$="-toggle"]{
   .edit_agent .redactor_editor{
     min-height: 320px;
   }
-
+  .redactor_editor {
+    p,
+    li,
+    div {
+      font-size: 14px;
+    }
+  }
 }
 
 .survey-rep-filter{

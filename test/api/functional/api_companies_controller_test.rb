@@ -505,25 +505,14 @@ class ApiCompaniesControllerTest < ActionController::TestCase
 
   def test_update_with_all_default_fields_required_invalid
     enable_tam_fields
-    default_non_required_fiels = CompanyField.where(required_for_agent: false,  column_name: 'default')
+    company = create_company(name: Faker::Lorem.characters(10), description: Faker::Lorem.paragraph)
+    default_non_required_fiels = CompanyField.where(required_for_agent: false, column_name: 'default')
     default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
-    put :update, construct_params({ id: company.id },  domains: [],
-                                                       description: nil,
-                                                       note: nil,
-                                                       health_score: nil,
-                                                       account_tier: nil,
-                                                       industry: nil,
-                                                       renewal_date: nil)
+    put :update, construct_params({ id: company.id }, name: nil)
     assert_response 400
-    match_json([bad_request_error_pattern('note', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
-                bad_request_error_pattern('description', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
-                bad_request_error_pattern('domains', :blank),
-                bad_request_error_pattern('health_score', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
-                bad_request_error_pattern('account_tier', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
-                bad_request_error_pattern('industry', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null'),
-                bad_request_error_pattern('renewal_date', :invalid_date, accepted: 'yyyy-mm-dd')])
+    match_json([bad_request_error_pattern('name', :datatype_mismatch, expected_data_type: String, prepend_msg: :input_received, given_data_type: 'Null')])
   ensure
-    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) }
+    default_non_required_fiels.map { |x| x.toggle!(:required_for_agent) } if default_non_required_fiels.present?
   end
 
   def test_update_with_custom_fields_required_which_is_already_present

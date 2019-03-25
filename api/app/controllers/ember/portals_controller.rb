@@ -51,9 +51,7 @@ module Ember
       end
 
       def load_objects
-        
-        @items = current_account.portals.all
-        
+        @items = current_account.portals.preload(:fav_icon, :product, :helpdesk_logo)
       end
 
       def preload_options

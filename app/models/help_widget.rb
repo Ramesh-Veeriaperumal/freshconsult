@@ -10,6 +10,8 @@ class HelpWidget < ActiveRecord::Base
 
   after_commit :clear_cache, :upload_configs
 
+  default_scope order: 'created_at DESC'
+
   scope :active, conditions: { active: true }
 
   def captcha_enabled?
@@ -18,6 +20,14 @@ class HelpWidget < ActiveRecord::Base
 
   def ticket_fields_form?
     settings[:contact_form][:form_type] == HelpWidgetConstants::FORM_TYPES[:ticket_fields_form]
+  end
+
+  def predictive?
+    settings[:components][:predictive_support]
+  end
+
+  def ticket_creation_enabled?
+    contact_form_enabled? || predictive?
   end
 
   def contact_form_enabled?

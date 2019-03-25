@@ -116,8 +116,11 @@ class Admin::CustomTranslations::Upload < BaseWorker
   def compare_and_merge(field_object, translations)
     field_object = field_object.parent unless field_object.level.nil?
     existing_translation = field_object.safe_send(language_translation)
-    return translations if existing_translation.nil?
-
+    if existing_translation.nil?
+      translations.delete_if { |key, value| value.nil? || value == '' }
+      translations['choices'].delete_if { |key, value| value.nil? || value == '' } if translations['choices'].is_a? Hash
+      return translations
+    end
     existing_translation = existing_translation.translations
     new_translation = existing_translation.merge(translations)
     new_translation.delete_if { |key, value| value.nil? || value == '' }

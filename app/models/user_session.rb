@@ -16,6 +16,7 @@ class UserSession < Authlogic::Session::Base
   before_create :reset_persistence_token, :delete_assume_user_keys, :if => :single_session_per_user?
   before_create :log_login_info, :if => :web_session
   before_destroy :reset_persistence_token, :if => :single_session_per_user?
+  after_save :set_csrf_token, except: :destroy
 
   generalize_credentials_error_messages true
   consecutive_failed_logins_limit 10
@@ -27,7 +28,20 @@ class UserSession < Authlogic::Session::Base
   def self.sign_cookie
     @@sign_cookie
   end
-  
+
+  def save(&block)
+    (0..4).to_a.each { |i| Rails.logger.debug caller[i] }
+    result = super(&block)
+    Rails.logger.info "Done saving user session :: #{record.id if record} :: #{controller.session.inspect if controller}"
+    result
+  end
+
+  def destroy
+    Rails.logger.info "Destroying session for :: #{Account.current.id} :: #{record.id if record}"
+    (0..4).to_a.each { |i| Rails.logger.debug caller[i] }
+    super
+  end
+
   def set_user_time_zone
     Time.zone = self.attempted_record.time_zone
   end
@@ -108,4 +122,11 @@ class UserSession < Authlogic::Session::Base
       attempted_record.failed_login_count.to_i >= ACCOUNT_LOCKDOWN_WARNING_LIMIT
     end
 
+    def set_csrf_token
+      Rails.logger.debug "User session :: set_csrf_token :: Account id :: #{record.account_id} :: User id :: #{record.id}"
+      if controller && controller.session
+        controller.session['_csrf_token'] ||= SecureRandom.base64(32)
+        Rails.logger.debug "User session :: CSRF token set :: #{controller.session.inspect}"
+      end
+    end
 end

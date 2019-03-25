@@ -13,7 +13,7 @@ require Rails.root.join('test', 'api', 'helpers', 'archive_ticket_test_helper.rb
 
 class TicketsExportTest < ActionView::TestCase
   include AgentHelper
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include SearchTestHelper
   include ArchiveTicketTestHelper
 

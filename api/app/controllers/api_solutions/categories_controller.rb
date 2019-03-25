@@ -1,6 +1,7 @@
 module ApiSolutions
   class CategoriesController < ApiApplicationController
     include SolutionConcern
+    include HelperConcern
     include Solution::LanguageControllerMethods
     decorate_views
 
@@ -28,7 +29,11 @@ module ApiSolutions
     private
 
       def scoper
-        current_account.solution_categories
+        solutions_scoper.solution_categories
+      end
+
+      def launch_party_name
+        FeatureConstants::KBASE_MINT if private_api?
       end
 
       def meta_scoper
@@ -55,9 +60,8 @@ module ApiSolutions
         if create?
           return false unless validate_language
         end
-        params[cname].permit(*SolutionConstants::CATEGORY_FIELDS)
-        category = ApiSolutions::CategoryValidation.new(params[cname], @item)
-        render_errors category.errors, category.error_options unless category.valid?
+        return unless validate_body_params(@item)
+        return unless validate_delegator(nil, cname_params)
       end
 
       def sanitize_params
@@ -81,27 +85,29 @@ module ApiSolutions
         end
       end
 
+      def constants_class
+        'ApiSolutions::CategoryConstants'.freeze
+      end
+
       def validate_filter_params
-        super(SolutionConstants::INDEX_FIELDS)
+        @validation_klass = 'ApiSolutions::CategoryFilterValidation'.freeze
+        return unless validate_query_params
+        return unless validate_delegator(nil, portal_id: params[:portal_id])
       end
 
       def load_objects(items = scoper)
-        super(items.where(language_id: @lang_id).joins(:solution_category_meta, solution_category_meta: :portal_solution_categories).where('solution_category_meta.is_default = false').order('portal_solution_categories.position').preload(:solution_category_meta))
+        @items = if params[:portal_id].present?
+                   items.where(language_id: @lang_id).preload(solution_category_meta: :portal_solution_categories)
+                 else
+                   items.where(language_id: @lang_id).joins(:solution_category_meta).where('solution_category_meta.is_default = false').preload(solution_category_meta: :portal_solution_categories)
+                 end
+        super(@items) unless private_api?
       end
 
       def load_meta(id)
         meta = meta_scoper.find_by_id(id)
         log_and_render_404 unless meta
         meta
-      end
-
-      def set_custom_errors(item = @item)
-        unless item.respond_to?(:parent)
-          bad_portal_ids = item.portal_solution_categories.select { |x| x.errors.present? }.map(&:portal_id)
-          item.errors[:visible_in_portals] << :invalid_list if bad_portal_ids.present?
-          @error_options = { remove: :"category.portal_solution_categories", visible_in_portals: { list: bad_portal_ids.join(', ').to_s } }
-        end
-        @error_options
       end
   end
 end

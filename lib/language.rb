@@ -16,6 +16,8 @@ class Language
 									:name => lang.last) 
 					arr
 				end)
+
+    PROD_LANGUAGES = LANGUAGES.reject{ |x| I18n::TEST_LANGUAGES.map(&:to_s).include?(x.code.to_s) }
 	
 	alias :to_s :name
 	alias :to_i :id
@@ -43,7 +45,7 @@ class Language
 	class << self
 
 		def all
-			LANGUAGES
+          Rails.env.production? ? PROD_LANGUAGES : LANGUAGES
 		end
 
 		def all_codes

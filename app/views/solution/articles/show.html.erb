@@ -85,4 +85,11 @@
 			App.Solutions.Article.triggerTranslationsModal();
 		<% end %>
 	});
+
+	jQuery("#manage-account-languages").on("click", function(e){
+    if(!jQuery.browser.msie && !jQuery.browser.msedge) {
+		  e.preventDefault();
+		}
+		window.parent.postMessage({action: "manage-language"}, window.origin);
+	});
 </script>

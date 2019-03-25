@@ -17,11 +17,13 @@ class Social::TwitterHandle < ActiveRecord::Base
   DM_THREADTIME_KEYS_BY_TOKEN = Hash[*DM_THREADTIME.map { |i| [i[0], i[2]] }.flatten]
 
   TWITTER_STATES = [
-    [:active,          "Active Account",           1],
-    [:reauth_required, "Reauthorization Required", 2],
-    [:disabled,        "Disabled Account",         3]
+    [:active,                     'Active Account',           1],
+    [:reauth_required,            'Reauthorization Required', 2],
+    [:disabled,                   'Disabled Account',         3],
+    [:activation_required,        'Activation Required',      4]
   ]
 
   TWITTER_STATE_KEYS_BY_TOKEN = Hash[*TWITTER_STATES.map { |i| [i[0], i[2]] }.flatten]
   TWITTER_NAMES_BY_STATE_KEYS = TWITTER_STATE_KEYS_BY_TOKEN.invert
+  ACTIVATE_HANDLE_COMMAND = 'activate_handle'.freeze
 end

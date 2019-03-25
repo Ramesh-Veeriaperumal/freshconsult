@@ -1,0 +1,63 @@
+defaults: &defaults
+  premium:
+    total: 50
+    failed: 2
+    pg_duty_total: 50
+    pg_duty_failed: 2
+  free:
+    total: 50
+    failed: 2
+    pg_duty_total: 50
+    pg_duty_failed: 2
+  trial:
+    total: 50
+    failed: 2
+    pg_duty_total: 50
+    pg_duty_failed: 2
+  active:
+    total: 50
+    failed: 2
+    pg_duty_total: 50
+    pg_duty_failed: 2
+  delayed:
+    total: 50
+    failed: 2
+    pg_duty_total: 50
+    pg_duty_failed: 2 
+  mailbox:
+    total: 50
+    failed: 2
+    pg_duty_total: 50
+    pg_duty_failed: 2    
+
+<%= node[:opsworks][:environment]%>:
+  premium:
+    total: 1000
+    failed: 100
+    pg_duty_total: 5000
+    pg_duty_failed: 200
+  free:
+    total: 1000
+    failed: 100
+    pg_duty_total: 5000
+    pg_duty_failed: 200
+  trial:
+    total: 1000
+    failed: 100
+    pg_duty_total: 5000
+    pg_duty_failed: 200
+  active:
+    total: 1000
+    failed: 100
+    pg_duty_total: 5000
+    pg_duty_failed: 200
+  delayed:
+    total: 1000
+    failed: 100
+    pg_duty_total: 5000
+    pg_duty_failed: 200
+  mailbox:
+    total: 800
+    failed: 200
+    pg_duty_total: 5000
+    pg_duty_failed: 200

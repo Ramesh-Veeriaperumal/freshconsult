@@ -40,14 +40,14 @@ gem 'rack-ssl', :require => 'rack/ssl', :git => 'git://github.com/freshdesk/rack
 gem "rack-cache", "~> 1.2"
 
 gem 'sneaky-save', :git => 'git://github.com/partyearth/sneaky-save.git'
-gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'v20'
+gem 'fresh_request', :git => 'git@github.com:freshdesk/fresh_request.git', :branch => 'release'
 gem 'batch_api', :git => 'git@github.com:freshdesk/batch_api.git', :branch => 'fd-batch-api'
 #for ruby ~> 2.1.0 upgrade
 gem 'iconv', '~> 1.0.4'
 gem 'thrift', '~> 0.9.2.0'
 gem 'charlock_holmes', "0.7.3"
 gem "tnef", "1.0.2"
-gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.11'
+gem "central-publisher", :git => 'git@github.com:freshdesk/central-publisher.git', :tag => 'v1.0.13'
 
 group :development, :test do
   gem 'active_record_query_trace'
@@ -367,3 +367,5 @@ gem "rubocop", "0.52.1"
 gem 'safe_yaml', "1.0.4"
 
 gem 'codecov', :require => false, :group => :test
+
+gem 'ejson', :require => false

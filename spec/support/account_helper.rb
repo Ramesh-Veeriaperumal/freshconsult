@@ -29,6 +29,7 @@ module AccountHelper
   end
 
   def create_new_account(domain = "localhost", user_email = Helpdesk::EMAIL[:sample_email])
+    Account.reset_current_account
     signup = Signup.new(  
       :account_name => 'Test Account',
       :account_domain => domain,
@@ -45,6 +46,7 @@ module AccountHelper
     PopulateGlobalBlacklistIpsTable.create_default_record
     @acc = signup.account
     @acc.make_current
+    @acc.reload
     create_dummy_customer
     @acc
   end
@@ -55,7 +57,7 @@ module AccountHelper
     if @customer.nil?
       @customer = FactoryGirl.build(:user, :account => @acc, :email => Faker::Internet.email,
                               :user_role => 3)
-      @customer.save
+      @customer.save_without_session_maintenance
     end
     @customer
   end

@@ -80,11 +80,6 @@ module Facebook
         @graph.delete_connections("me", "subscribed_apps")
       end
 
-      def check_subscription
-        options = {"authorization": "Bearer #{@page_token}"}
-        RestClient.get("#{FACEBOOK_GRAPH_URL}/#{GRAPH_API_VERSION}/me/subscribed_apps", options)
-      end
-
       #Update's a Custom name to a page tab
       def update(options)
         @graph.put_connections("me", "tabs/app_#{@app_id}",{

@@ -36,6 +36,7 @@ module AgentsTestHelper
 
       available: expected_output[:available] || agent.available,
       show_rr_toggle: expected_output[:show_rr_toggle] || agent.toggle_availability?,
+      latest_notes_first: expected_output[:latest_notes_first] || Account.current.latest_notes_first_enabled?(agent.user),
       occasional: expected_output[:occasional] || agent.occasional,
       id: Fixnum,
       ticket_scope: expected_output[:ticket_scope] || agent.ticket_permission,

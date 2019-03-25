@@ -19,8 +19,7 @@ module Helpdesk::TicketCustomFields
         
       field = attribute.to_s.chomp("=")
       args = args.first if !args.blank? && args.is_a?(Array) 
-      self.ff_def ||= fetch_flexifield_def_id
-      set_ff_value field, args
+      set_ff_value field, args, fetch_flexifield_def_id
     end
 
     private

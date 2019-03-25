@@ -23,7 +23,6 @@ module Widget
                                 validatable_custom_fields: proc { |x| TicketsValidationHelper.custom_dropdown_fields(x) },
                                 drop_down_choices: proc { TicketsValidationHelper.custom_dropdown_field_choices },
                                 nested_field_choices: proc { TicketsValidationHelper.custom_nested_field_choices },
-                                required_based_on_status: proc { |x| x.closure_status? },
                                 required_attribute: :required_in_portal,
                                 section_field_mapping: proc { |x| TicketsValidationHelper.section_field_parent_field_mapping }
                               } }, if: :is_ticket_field_form?
@@ -37,7 +36,7 @@ module Widget
     end
 
     def is_ticket_field_form?
-      additional_params[:is_ticket_fields_form]
+      additional_params[:is_ticket_fields_form] && !additional_params[:is_predictive]
     end
 
     def required_default_customer_fields

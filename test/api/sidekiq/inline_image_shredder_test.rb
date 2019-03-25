@@ -9,7 +9,7 @@ require Rails.root.join('test', 'api', 'helpers', 'attachments_test_helper.rb')
 Sidekiq::Testing.fake!
 
 class InlineImageShredderTest < ActionView::TestCase
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include AttachmentsTestHelper
 
   def setup
@@ -25,7 +25,7 @@ class InlineImageShredderTest < ActionView::TestCase
 
   def create_archive_ticket_with_id(ticket_id)
     Sidekiq::Testing.inline! do
-      Archive::BuildCreateTicket.perform_async(account_id: @account.id, ticket_id: ticket_id)
+      Archive::TicketWorker.perform_async(account_id: @account.id, ticket_id: ticket_id)
     end
   end
 

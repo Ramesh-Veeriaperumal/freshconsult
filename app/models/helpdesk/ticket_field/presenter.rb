@@ -5,6 +5,7 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   api_accessible :central_publish do |tf|
     tf.add :id
+    tf.add :account_id
     tf.add :ticket_form_id, as: :form_id
     tf.add :name
     tf.add :label
@@ -124,10 +125,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
     action = [:create, :update, :destroy].find{ |action| 
       transaction_include_action? action }
     "ticket_field_#{action}"
-  end
-
-  def self.central_publish_enabled?
-    Account.current.ticket_fields_central_publish_enabled?
   end
 
   def model_changes_for_central

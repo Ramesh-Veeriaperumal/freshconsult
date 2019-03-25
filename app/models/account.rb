@@ -230,7 +230,10 @@ class Account < ActiveRecord::Base
   def active_trial
     @active_trial_subscription ||= trial_subscriptions.trials_by_status(:active).first
   end
- 
+
+  def anonymous_account?
+    account_additional_settings.additional_settings[:anonymous_account] if account_additional_settings.additional_settings.present?
+  end
   class << self # class methods
 
     def reset_current_account
@@ -438,7 +441,7 @@ class Account < ActiveRecord::Base
     unless p_features.nil?
       p_features[:inherits].each { |p_n| remove_features_of(p_n) } unless p_features[:inherits].nil?
       
-      p_features[:features].each { |f_n| features.safe_send(f_n).destroy } unless p_features[:features].nil?
+      p_features[:features].each { |f_n| features.safe_send(f_n).delete } unless p_features[:features].nil?
     end
   end
 
@@ -870,6 +873,13 @@ class Account < ActiveRecord::Base
     generate_download_url("#{id}/beacon_report/beacon_report.pdf")
   end
 
+  def check_and_enable_multilingual_feature
+    return if features_included?(:enable_multilingual)
+
+    features.enable_multilingual.create if supported_languages.present?
+    Community::SolutionBinarizeSync.perform_async
+  end
+
   # TODO: Remove force_2019_plan?() after 2019 plan launched
   # START
   def force_2019_plan?
@@ -880,6 +890,12 @@ class Account < ActiveRecord::Base
     redis_key_exists?(NEW_2019_PRICING_ENABLED) || ismember?(NEW_2019_PRICING_TEST_USERS, admin_email)
   end
   # END
+
+  def custom_dropdown_choice_hash
+    @custom_dropdown_choice_hash ||= custom_dropdown_fields_from_cache.collect do |x|
+      [x.name, x.dropdown_choices_with_name.flatten.uniq]
+    end.to_h
+  end
 
   protected
   

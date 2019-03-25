@@ -1,6 +1,6 @@
 require_relative '../unit_test_helper'
 
-class ActivityFilterValidationTest < ActionView::TestCase
+class SendGridDomainUpdatesTest < ActionView::TestCase
   include Redis::OthersRedis
 
   def setup
@@ -126,6 +126,7 @@ class ActivityFilterValidationTest < ActionView::TestCase
   end
 
   def test_create_record
+    status = ShardMapping.find_by_account_id(Account.current.id)[:status]
     Freemail.stubs(:free_or_disposable?).returns(true)
     FreshdeskErrorsMailer.stubs(:error_email).returns(true)
     SendgridDomainUpdates.stubs(:send_request).returns(ResponseStub.new(200))
@@ -143,6 +144,7 @@ class ActivityFilterValidationTest < ActionView::TestCase
     SendgridDomainUpdates.any_instance.stubs(:update_freshops_activity).returns(true)
     SendgridDomainUpdates.new.create_record('domain', 2)
   ensure
+    ShardMapping.find_by_account_id(Account.current.id).update_attributes(:status => status)
     Email::AntiSpam.unstub(:scan)
     SendgridDomainUpdates.any_instance.unstub(:notify_account_blocks)
     SendgridDomainUpdates.any_instance.unstub(:update_freshops_activity)

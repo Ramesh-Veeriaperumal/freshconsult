@@ -1,7 +1,7 @@
 module TicketFieldsTestHelper
   include Helpdesk::Ticketfields::ControllerMethods
 
-  FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date' }.freeze
+  FIELD_MAPPING = { 'number' => 'int', 'checkbox' => 'boolean', 'paragraph' => 'text', 'decimal' => 'decimal', 'date' => 'date', 'date_time' => 'date' }.freeze
   FIELD_MAPPING_DN = { 'paragraph' => 'mlt', 'text' => 'slt' }.freeze
   SECTIONS_FOR_TYPE = [ { title: 'section1', value_mapping: %w(Question Problem), ticket_fields: %w(test_custom_number test_custom_date) },
                         { title: 'section2', value_mapping: ['Incident'], ticket_fields: %w(test_custom_paragraph test_custom_dropdown) } ]
@@ -11,13 +11,14 @@ module TicketFieldsTestHelper
   DEFAULT_FIELDS = %w[default_priority default_source default_status default_ticket_type default_product default_skill].freeze
 
 
-  def create_custom_field(name, type, required = false, required_for_closure = false)
+  def create_custom_field(name, type, field_num = '05', required = false, required_for_closure = false)
     ticket_field_exists = @account.ticket_fields.find_by_name("#{name}_#{@account.id}")
     if ticket_field_exists
       ticket_field_exists.update_attributes(required: required, required_for_closure: required_for_closure)
       return ticket_field_exists
     end
-    flexifield_mapping = type == 'text' ? unused_ffs_col : "ff_#{FIELD_MAPPING[type]}05"
+    field_num = (type == 'date_time' && field_num == '05') ? '06' : field_num
+    flexifield_mapping = type == 'text' ? unused_ffs_col : "ff_#{FIELD_MAPPING[type]}#{field_num}"
     flexifield_def_entry = FactoryGirl.build(:flexifield_def_entry,
                                              flexifield_def_id: @account.flexi_field_defs.find_by_module('Ticket').id,
                                              flexifield_alias: "#{name.downcase}_#{@account.id}",
@@ -83,6 +84,23 @@ module TicketFieldsTestHelper
                                                        ticket_field_id: status_field.id)
     status_values.save
     status_values
+  end
+
+  def sample_status_ticket_fields(locale = 'en', val, cx_display_name, position)
+    current_locale = I18n.locale
+    I18n.locale = locale
+    val = I18n.t(val) if val == "open"
+    field_options = { :field_type => "default_status", :label => "Status", :label_in_porta => "Status", :description => "dads", :position => 6, :active => true, :required => true, :required_for_closure => false, :visible_in_portal => true, :editable_in_portal => false, :required_in_portal => false, 
+                    :choices => [ { "customer_display_name" => cx_display_name, "position" => 1, "name" => I18n.t("open"), "status_id" => 2, "deleted" => false }, 
+                    { "customer_display_name" => I18n.t("awaiting_your_reply"), "stop_sla_timer" => true, "position" => 2, "name" => I18n.t("pending"), "status_id" => 3, "deleted" => false}, 
+                    { "customer_display_name" => I18n.t("this_ticket_has_been_resolved"), "position" => 3, "name" => I18n.t("resolved"), "status_id" => 4, "deleted" => false}, 
+                    { "customer_display_name" => I18n.t("this_ticket_has_been_closed"), "position" => 4, "name" => I18n.t("closed"), "status_id" => 5, "deleted" => false}, 
+                    { "customer_display_name" => "Awaiting your Reply", "stop_sla_timer" => true, "position" => 5, "name" => "Waiting on Customer", "status_id" => 6, "deleted" => false}, 
+                    { "customer_display_name" => "Being Processed", "stop_sla_timer" => false, "position" => 6, "name" => "Waiting on Third Party", "status_id" => 7, "deleted"=> false}, 
+                    { "customer_display_name" => I18n.t("awaiting_your_reply"), "stop_sla_timer" => false, "position" => position, "name"=> val, "deleted"=>false } ], 
+                    :field_options=>{}, :denormalized_field=>true, :action=>"edit" }
+    I18n.locale = current_locale
+    field_options
   end
 
   def create_section_fields(parent_ticket_field_id = 3, sections = SECTIONS_FOR_TYPE, required = false, required_for_closure = false, suffix = nil, ff_number = nil)
@@ -502,6 +520,7 @@ module TicketFieldsTestHelper
   def ticket_field_publish_pattern(field)
     pattern = {
       id: field.id,
+      account_id: field.account_id,
       form_id: field.ticket_form_id,
       name: field.name,
       label: field.label,
@@ -744,6 +763,58 @@ module TicketFieldsTestHelper
     ret
   end
 
+  def central_publish_ticket_status_pattern(status)
+    status_properties = {
+      id: status.id,
+      status_id: status.status_id,
+      name: status.name,
+      customer_display_name: status.customer_display_name,
+      stop_sla_timer: status.stop_sla_timer,
+      deleted: status.deleted,
+      is_default: status.is_default,
+      account_id: status.account_id,
+      ticket_field_id: status.ticket_field_id,
+      position: status.position,
+      created_at: status.created_at.try(:utc).try(:iso8601),
+      updated_at: status.updated_at.try(:utc).try(:iso8601)
+    }
+    status_properties[:group_ids] = status.group_ids if Account.current.shared_ownership_enabled? && !status.is_default
+    status_properties
+  end
+
+  def model_changes_ticket_status(old_name, new_name)
+    {
+      'name' => [old_name, new_name]
+    }
+  end
+
+  def central_publish_picklist_pattern(pl_value)
+    {
+      id: pl_value.id,
+      pickable_id: pl_value.pickable_id,
+      position: pl_value.position,
+      value: pl_value.value,
+      account_id: pl_value.account_id,
+      picklist_id: pl_value.picklist_id,
+      created_at: pl_value.created_at.try(:utc).try(:iso8601),
+      updated_at: pl_value.updated_at.try(:utc).try(:iso8601)
+    }
+  end
+
+  def model_changes_picklist_values(old_value, new_value)
+    {
+      'value' => [old_value, new_value]
+    }
+  end
+
+  def central_publish_picklist_destroy_pattern(pl_value)
+    {
+      id: pl_value.id,
+      pickable_id: pl_value.pickable_id,
+      account_id: pl_value.account_id
+    }
+  end
+
   private
     def unused_ffs_col
       ffs_col = ''
@@ -755,6 +826,6 @@ module TicketFieldsTestHelper
     end
 
     def ffs_col_taken?(ffs_col)
-      @account.flexifield_def_entries.select{|flexifield| flexifield['flexifield_name'] == ffs_col}.present?
+      @account.reload.flexifield_def_entries.select{|flexifield| flexifield['flexifield_name'] == ffs_col}.present?
     end
 end

@@ -1,8 +1,11 @@
 class CustomSurvey::SurveyHandle < ActiveRecord::Base
   self.primary_key = :id
   self.table_name = :survey_handles
-  
-  concerned_with :associations, :constants
+  include Surveys::PresenterHelper
+
+  before_destroy :deleted_survey_model_info
+  publishable
+  concerned_with :associations, :constants, :presenter
 
   def self.create_handle(ticket, note, specific_include)
     send_while = specific_include ? CustomSurvey::Survey::SPECIFIC_EMAIL_RESPONSE : CustomSurvey::Survey::ANY_EMAIL_RESPONSE

@@ -5399,6 +5399,7 @@ it:
   right: Destra
   footer:
     helpdesk_software: "Software di helpdesk"
+    helpdesk_software_link: "https://freshdesk.it/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: "di Freshdesk"
     submit_feedback: "Lascia il tuo feedback"
     footer_feedback_subject_placeholder: "Se Freshdesk lanciasse un prodotto nel 2017, quale dovrebbe essere?"

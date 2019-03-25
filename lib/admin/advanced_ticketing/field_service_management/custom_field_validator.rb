@@ -20,7 +20,10 @@ module Admin::AdvancedTicketing::FieldServiceManagement
       max_count = max_allowed_count(field_data_group)
 
       new_field_data_count = add_new_custom_fields_count(field_data_count_by_type, new_custom_fields_count)
-      new_field_data_count.all? {|key, _| new_field_data_count[key] < max_count[key] }
+      new_field_data_count.try(:each) do |key, _|
+        max_value = key == :date_time ?  max_count[:date] : max_count[key]
+        new_field_data_count[key] < max_value
+      end
     end
 
     def custom_fields_data

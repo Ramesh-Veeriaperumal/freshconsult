@@ -3,6 +3,7 @@ Helpkit::Application.routes.draw do
     resources :tickets, except: [:new, :edit] do
       collection do
         post :outbound_email, to: 'tickets#create', defaults: { _action: 'compose_email' }
+        post :bulk_archive, to: 'tickets/bulk_actions#bulk_archive'
       end
       member do
         put :restore
@@ -19,11 +20,18 @@ Helpkit::Application.routes.draw do
         resource :bot_response, controller: 'tickets/bot_response', only: [:show, :update]
       end
     end
-    namespace :admin do 
+    namespace :admin do
       resources :upload, controller: 'custom_translations/upload', path: '/custom_translations/', only: [:upload] do
         member do
           post :upload, to: 'custom_translations/upload#upload'
         end
+      end
+    end
+
+    resources :accounts, path: 'admin/accounts' do
+      collection do
+        get :languages, to: 'settings/helpdesk#index'
+        put :languages, to: 'settings/helpdesk#update'
       end
     end
 
@@ -114,7 +122,7 @@ Helpkit::Application.routes.draw do
     match 'agents/me/reset_api_key' => 'api_profiles#reset_api_key', :defaults => { format: 'json', id: 'me' }, via: :post
 
     resources :agents, controller: 'api_agents', only: [:index, :show, :update, :destroy]
-    
+
     resources :canned_response_folders, controller: 'canned_response_folders', only: [:index, :show, :create, :update]
     resources :canned_responses, controller: 'canned_responses', only: [:index, :show, :create, :update]
     resources :scenario_automations, controller: 'scenario_automations', only: :index
@@ -146,6 +154,7 @@ Helpkit::Application.routes.draw do
         get :features_list
         put :bitmap_add_feature
         put :bitmap_revoke_feature
+        put :execute_script
       end
     end
 
@@ -271,17 +280,44 @@ Helpkit::Application.routes.draw do
     end
 
     resources :email_notifications, controller: 'admin/api_email_notifications', only: [:show, :update]
-    
-    resources :help_widgets, controller: 'help_widgets'
+
+    resources :help_widgets, controller: 'help_widgets' do
+      collection do
+        get :freshmarketer_info
+      end
+    end
 
     post '/audit_log/export', to: 'audit_logs#export'
-    
   end
 
   ember_routes = proc do
     resources :ticket_fields, controller: 'ember/ticket_fields', only: [:index, :update]
     resources :groups, controller: 'ember/groups', only: [:index, :show, :create, :update, :destroy]
     resources :omni_channels, controller: 'ember/omni_channels', only: :index
+
+    resources :solutions, only: [] do
+      collection do
+        resources :home, controller: 'ember/solutions/home', only: [] do
+          collection do
+            get :summary
+            get :quick_views
+          end
+        end
+        resources :folders, controller: 'ember/solutions/folders', only: [:index, :show, :create, :update, :destroy] do
+          collection do
+            put :bulk_update
+          end
+        end
+
+        resources :articles, controller: 'ember/solutions/articles', only: [] do
+          collection do
+            put :bulk_update
+          end
+        end
+
+        resources :drafts, controller: 'ember/solutions/drafts', only: [:index]
+      end
+    end
 
     resources :roles, controller: 'api_roles', only: [:index] do
       collection do
@@ -297,9 +333,9 @@ Helpkit::Application.routes.draw do
 
     resources :ocr_proxy, controller: 'ember/ocr_proxy' do
       collection do
-        get '*all', to: 'ember/ocr_proxy#execute' 
-        put '*all', to: 'ember/ocr_proxy#execute'          
-      end 
+        get '*all', to: 'ember/ocr_proxy#execute'
+        put '*all', to: 'ember/ocr_proxy#execute'
+      end
     end
 
     # trial subscriptions
@@ -317,7 +353,7 @@ Helpkit::Application.routes.draw do
         get :account, to: 'ember/bootstrap#account'
       end
     end
-    
+
     resource :accounts, controller: 'admin/api_accounts' do
       collection do
         post :cancel
@@ -423,6 +459,7 @@ Helpkit::Application.routes.draw do
         # This alternate route is to handle limitation in ember route generation : api/_/tickets/:ticket_id/split_note?note_id=Number
         match '/split_note' => 'ember/tickets#split_note', via: :put
         post :facebook_reply, to: 'ember/conversations#facebook_reply'
+        post :ecommerce_reply, to: 'ember/conversations#ecommerce_reply'
         get :prime_association, to: 'ember/tickets/associates#prime_association'
         put :link, to: 'ember/tickets/associates#link'
         put :unlink, to: 'ember/tickets/associates#unlink'
@@ -558,6 +595,9 @@ Helpkit::Application.routes.draw do
       end
     end
 
+    # to get any config data
+    resources :configs, controller: 'ember/configs', only: [:show]
+
     get 'canned_responses/search', to: 'ember/canned_responses#search'
 
     # audit log path
@@ -616,7 +656,7 @@ Helpkit::Application.routes.draw do
         get :forward_email_confirmation
         post :test_email_forwarding
         get :suggest_domains
-        post :validate_domain_name 
+        post :validate_domain_name
         put :customize_domain
       end
     end
@@ -632,7 +672,6 @@ Helpkit::Application.routes.draw do
                                         only: [:index]
     resources :agent_password_policy, controller: 'ember/agent_password_policies',
                                         only: [:index]
-
     resource :subscription, controller: 'admin/subscriptions', only: [:show]
     get '/plans', to: 'admin/subscriptions#plans'
 
@@ -645,14 +684,14 @@ Helpkit::Application.routes.draw do
     post '/search/tickets/',      to: 'ember/search/tickets#results'
     post '/search/customers/',    to: 'ember/search/customers#results'
     post '/search/topics/',       to: 'ember/search/topics#results'
-    
+
     post '/search/multiquery',    to: 'ember/search/multiquery#search_results'
 
     post '/search/autocomplete/requesters/',    to: 'ember/search/autocomplete#requesters'
     post '/search/autocomplete/agents/',        to: 'ember/search/autocomplete#agents'
     post '/search/autocomplete/companies/',     to: 'ember/search/autocomplete#companies'
     post '/search/autocomplete/tags/',          to: 'ember/search/autocomplete#tags'
-    
+
     scope '/automations/:rule_type' do
       resources :rules, controller: 'admin/automations', only: [:index, :destroy]
     end
@@ -752,20 +791,43 @@ Helpkit::Application.routes.draw do
   end
 
   ocr_routes = proc do
-    resources :agents, controller: 'channel/omni_channel_routing/agents', only: [:index]
+    resources :agents, controller: 'channel/omni_channel_routing/agents', only: [:index, :update]
     resources :groups, controller: 'channel/omni_channel_routing/groups', only: [:index]
-    resources :agents_groups, controller: 'channel/omni_channel_routing/agents_groups', only: [:index]    
+    resources :agents_groups, controller: 'channel/omni_channel_routing/agents_groups', only: [:index]
     get 'accounts/linked_accounts', to: 'channel/omni_channel_routing/linked_accounts#index'
     get 'agents/:id/task_load', to: 'channel/omni_channel_routing/agents#task_load'
     get 'groups/:id/unassigned_tasks', to: 'channel/omni_channel_routing/groups#unassigned_tasks'
     put 'tickets/:id' , to: 'channel/omni_channel_routing/tickets#assign'
     put 'accounts/linked_accounts', to: 'channel/omni_channel_routing/linked_accounts#update'
-  end 
+  end
 
   widget_routes = proc do
     resources :tickets, controller: 'widget/tickets', only: [:create]
     resources :ticket_fields, controller: 'widget/ticket_fields', only: [:index]
     resources :attachments, controller: 'widget/attachments', only: [:create]
+    namespace :widget, path: '' do
+      namespace :search do
+        resources :solutions, controller: 'solutions' do
+          collection do
+            post :results, path: ''
+          end
+        end
+      end
+      namespace :solutions do
+        resources :article, path: '', controller: 'articles' do
+          collection do
+            get :suggested_articles
+          end
+        end
+        resources :article, controller: 'articles', only: :show do
+          member do
+            put :thumbs_up
+            put :thumbs_down
+            put :hit
+          end
+        end
+      end
+    end
   end
 
   scope '/api', defaults: { version: 'v2', format: 'json' }, constraints: { format: /(json|$^)/ } do

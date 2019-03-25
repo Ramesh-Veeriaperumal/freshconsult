@@ -1,6 +1,6 @@
 ['solutions_helper.rb', 'solution_builder_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
-module SolutionsTestHelper
+module ModelsSolutionsTestHelper
   include SolutionsHelper
   include SolutionBuilderHelper
 

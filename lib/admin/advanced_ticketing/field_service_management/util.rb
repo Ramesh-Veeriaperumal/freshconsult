@@ -36,7 +36,7 @@ module Admin::AdvancedTicketing::FieldServiceManagement
           field_options: { "section_present": true }
         }
 
-        raise "Couldn't create a new ticket type for Service Task" unless type_field.update_attributes(type_field_options)
+        raise "Couldn't create a new ticket type for service task" unless type_field.update_attributes(type_field_options)
       end
 
       # Reserve the required FSM custom fields. refer: CUSTOM_FIELDS_TO_RESERVE

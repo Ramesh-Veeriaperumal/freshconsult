@@ -13,10 +13,10 @@ Sidekiq::Testing.fake!
 class UndoSendWorkerTest < ActionView::TestCase
   include NoteTestHelper
   include AccountTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
   include AgentHelper
   include ApiTicketsTestHelper
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
 
   def setup
     @account = Account.first || create_new_account

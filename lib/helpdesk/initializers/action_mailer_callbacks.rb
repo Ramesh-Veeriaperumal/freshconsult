@@ -39,7 +39,6 @@ module ActionMailerCallbacks
       end 
       category_id = nil
       email_config = Thread.current[:email_config]
-      ip_pool = nil
       if (email_config && email_config.smtp_mailbox)
         smtp_mailbox = email_config.smtp_mailbox
         smtp_settings = {
@@ -59,25 +58,13 @@ module ActionMailerCallbacks
       elsif (email_config && email_config.category)
         Rails.logger.debug "Used EXISTING category : #{email_config.category} in email config : #{email_config.id} while email delivery"
         category_id = email_config.category
-        sender_config = get_sender_config(account_id, category_id, mail_type)
-        unless sender_config.nil?
-          category_id = sender_config["categoryId"]
-          ip_pool = sender_config["ipPoolName"]
-        end
         set_smtp_settings_util(category_id)
         mail.delivery_method(:smtp, self.smtp_settings)
-        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email, ip_pool)
+        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       else
         notification_type = is_num?(mail_type) ? mail_type : get_notification_type_id(mail_type) 
         params = { :account_id => account_id, :ticket_id => ticket_id, :type => notification_type, :note_id => note_id }
         category_id = get_notification_category_id(mail, notification_type)
-        spam = check_spam_category(mail, params)
-        category_id = spam unless spam.nil?
-        sender_config = get_sender_config(account_id, category_id, mail_type)
-        unless sender_config.nil?
-          category_id = sender_config["categoryId"]
-          ip_pool = sender_config["ipPoolName"]
-        end
         if category_id.blank?
           mailgun_traffic = get_mailgun_percentage
           if mailgun_traffic > 0 && Random::DEFAULT.rand(100) < mailgun_traffic
@@ -90,10 +77,14 @@ module ActionMailerCallbacks
           set_smtp_settings_util(category_id)
           mail.delivery_method(:smtp, self.smtp_settings)
         end
-        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email, ip_pool)
+        set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       end
       @email_confg = nil
       mail.header["X-FD-Email-Category"] = category_id
+      # adding header for mentioning the type of email
+      mail.header['X-EMAIL-TYPE'] = get_email_type mail_type
+      mail.header['X-SOURCE'] = get_source mail if mail.header['X-SOURCE'].blank?
+      mail.header['X-ACCOUNT-TYPE'] = get_account_type
     end
 
     def reset_smtp_settings(mail, use_mailgun = false)
@@ -106,14 +97,15 @@ module ActionMailerCallbacks
       end
       Rails.logger.debug "Fetched category : #{category_id} while email delivery"
       set_smtp_settings_util(category_id)
-      mail.delivery_method(:smtp, self.smtp_settings)  
+      mail.delivery_method(:smtp, self.smtp_settings)
       return category_id
     end
     def set_smtp_settings_util(category_id)
       smtp_settings = (read_smtp_settings(category_id)).merge!(:return_response => true)
       self.smtp_settings = smtp_settings
     end
-    def set_custom_headers(mail, category_id, account_id, ticket_id, mail_type, note_id, from_email, ip_pool= nil)
+
+    def set_custom_headers( mail, category_id, account_id, ticket_id, mail_type, note_id, from_email)
       if Helpdesk::Email::OutgoingCategory::MAILGUN_PROVIDERS.include?(category_id.to_i)
         Rails.logger.debug "Sending email via mailgun"
         message_id = encrypt_custom_variables(account_id, ticket_id, note_id, mail_type, from_email, category_id)
@@ -125,8 +117,8 @@ module ActionMailerCallbacks
         smtpapi_hash = {
           "unique_args" => get_unique_args(from_email, account_id, ticket_id, note_id, mail_type, category_id)
         }
-        smtpapi_hash.merge!("ip_pool" => ip_pool) if ip_pool.present?
         mail.header['X-SMTPAPI'] = smtpapi_hash.to_json
+        mail.header['X-CUSTOM-PARAMS'] = smtpapi_hash.to_json
       end
     rescue => e
       Rails.logger.debug "Error while setting custom headers - #{e.message} - #{e.backtrace}"
@@ -254,27 +246,40 @@ module ActionMailerCallbacks
       end
     end
 
-    def check_spam_category(mail, params)
-      category = nil
-      begin
-        notification_type = params[:type].to_i
-
-        if (account_created_recently? && recent_account_spam_filtered_notifications.include?(notification_type)) || spam_filtered_notifications.include?(notification_type)
-          spam_params = {:headers => mail.header.to_s, :text => mail.text_part.to_s, :html => mail.html_part.to_s }
-          email = Helpdesk::Email::SpamDetector.construct_raw_mail(spam_params)
-          response = FdSpamDetectionService::Service.new(params[:account_id], email).check_spam
-          if response.spam?
-            category = Helpdesk::Email::OutgoingCategory::CATEGORY_BY_TYPE[:spam] 
-            check_spam_rules(response)
-          end
-          Rails.logger.info "Spam check response for outgoing email with Account ID : #{params[:account_id]}, Ticket ID: #{params[:ticket_id]}, Note ID: #{params[:note_id]} - #{response.spam?}"
-        end
-      rescue => e
-        Rails.logger.info "Error in outgoing email spam check: #{e.message} - #{e.backtrace}"
+    def get_email_type(mail_type)
+      if transaction_email_types.include? mail_type
+        'TRANSACTION'
+      elsif notification_email_types.include? mail_type
+        'NOTIFICATION'
+      else
+        'SYSTEM'
       end
-      return category
-    end 
+    end
 
+    def transaction_email_types
+      ['Reply', 'Forward', 'Reply to Forward', 'Notify Outbound Email']
+    end
+
+    def notification_email_types
+      ['1', '4', '7', '8', '10', '25', '19', '20', '21', 'Email to Requestor', 'Internal Email', '15', '24', '201']
+    end
+
+    def get_account_type
+      subscription = get_subscription
+      if subscription.eql?('default')
+        'MONITORING'
+      else
+        subscription.upcase
+      end
+    end
+
+    def get_source(mail)
+      if mail.present? && mail.header['X-SOURCE'].present? && mail.header['X-SOURCE'].value.present?
+        mail.header['X-SOURCE'].to_s
+      else
+        'MONITORING'
+      end
+    end
   end
 end
 

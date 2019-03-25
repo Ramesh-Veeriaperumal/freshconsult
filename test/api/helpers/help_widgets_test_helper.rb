@@ -1,4 +1,4 @@
-require "#{Rails.root}/spec/support/products_helper.rb"
+require Rails.root.join('spec', 'support', 'products_helper.rb')
 module HelpWidgetsTestHelper
   include ProductsHelper
   def create_widget(options = {})
@@ -9,28 +9,30 @@ module HelpWidgetsTestHelper
       product_id = test_product.id
     end
     test_widget = FactoryGirl.build(:help_widget,
-                                name: options[:name] || Faker::Name.name,
-                                account_id: @account.id,
-                                product_id: product_id,
-                                settings: options[:settings] || settings_hash)
-
-    test_widget.save()
+                                    name: options[:name] || Faker::Name.name,
+                                    account_id: @account.id,
+                                    product_id: product_id,
+                                    settings: options[:settings] || settings_hash(options))
+    test_widget.save
     test_widget
   end
 
   def settings_hash(options = {})
     {
-      message: "Welcome to dovetails support",
-      button_text: "Help",
-      components: components_hash,
+      message: 'Welcome to dovetails support',
+      button_text: 'Help',
+      components: components_hash(options),
       contact_form: contact_settings_hash(options),
-      appearance: appearance_hash
+      appearance: appearance_hash,
+      predictive_support: predictive_support_hash,
+      widget_flow: 2
     }
   end
 
-  def components_hash
+  def components_hash(options = {})
     {
-      contact_form: true
+      contact_form: options[:contact_form] == false ? options[:contact_form] : true,
+      predictive_support: options[:predictive_support] == false ? options[:predictive_support] : true
     }
   end
 
@@ -54,8 +56,16 @@ module HelpWidgetsTestHelper
       color_schema: 1,
       pattern: 1,
       gradient: 1,
-      theme_color: "#008969",
-      button_color: "#12344d"
+      theme_color: '#00a886',
+      button_color: '#12344d'
+    }
+  end
+
+  def predictive_support_hash
+    {
+      welcome_message: 'Hello , I am ADA !',
+      message: 'Hai , how may I help you ?',
+      success_message: 'Awesome, Happy that your problem has been addressed'
     }
   end
 
@@ -74,7 +84,7 @@ module HelpWidgetsTestHelper
       id: widget.id,
       product_id: widget.product_id,
       name: widget.name,
-      settings: widget.settings
+      settings: widget.settings.except(:freshmarketer)
     }
   end
 
@@ -110,5 +120,49 @@ module HelpWidgetsTestHelper
       field.save
     end
   end
-end
 
+  def freshmarketer_hash
+    {
+      acc_id: '4151515152535E435F41585143594C5A5F5F5B',
+      auth_token: 'f05bjpn7lh1vi7gm2ioahpbe8jkmalhl06hjf3jj',
+      cdn_script: "<script src='//s3-us-west-2.amazonaws.com/zargetlab-js-bucket/200002700/5004.js'></script>",
+      app_url: 'https://harlin-mani.fmstack2.com/ab/#/org/200002700/project/5004/experiment/5006/session/sessions',
+      integrate_url: 'https://harlin-mani.fmstack2.com/ab/#/org/200002700/project/5004/settings/integration'
+    }
+  end
+
+  def link_freshmarketer_account
+    settings = Account.current.account_additional_settings
+    settings.additional_settings = { freshmarketer: freshmarketer_hash }
+    settings.save
+  end
+
+  def unlink_freshmarketer_account
+    freshmarketer_client.unlink_account
+  end
+
+  def freshmarketer_client
+    @freshmarketer_client ||= ::Freshmarketer::Client.new
+  end
+
+  def widget_freshmarketer_hash
+    {
+      org_id: 200_002_700,
+      project_id: 5_004,
+      cdn_script: "<script src='//s3-us-west-2.amazonaws.com/zargetlab-js-bucket/200002700/5004.js'></script>"
+    }
+  end
+
+  def predictive_experiment_hash(widget_id, exp_id = 'test')
+    {
+      exp_id: exp_id,
+      widget_ids: [widget_id]
+    }
+  end
+
+  def fm_widget_settings(domain, widget_id, exp_id = 'test')
+    {
+      domain => predictive_experiment_hash(widget_id, exp_id)
+    }
+  end
+end

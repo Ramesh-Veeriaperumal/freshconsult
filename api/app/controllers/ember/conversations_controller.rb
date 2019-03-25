@@ -13,18 +13,19 @@ module Ember
     include AttachmentsValidationConcern
     include DeleteSpamConcern
     include Redis::UndoSendRedis
+    include Ecommerce::Ebay::ReplyHelper
 
     decorate_views(
       decorate_objects: [:ticket_conversations],
-      decorate_object: %i(create update reply facebook_reply tweet broadcast)
+      decorate_object: %i[create update reply facebook_reply tweet broadcast ecommerce_reply]
     )
 
-    before_filter :can_send_user?, only: %i(create reply facebook_reply tweet broadcast)
+    before_filter :can_send_user?, only: %i[create reply facebook_reply ecommerce_reply tweet broadcast]
     before_filter :link_tickets_enabled?, only: [:broadcast]
     before_filter :validate_attachments_permission, only: [:create, :update]
     before_filter :check_enabled_undo_send, only: [:undo_send]
 
-    SINGULAR_RESPONSE_FOR = %w(reply create update tweet facebook_reply broadcast).freeze
+    SINGULAR_RESPONSE_FOR = %w[reply create update tweet facebook_reply broadcast ecommerce_reply].freeze
     SLAVE_ACTIONS = %w(ticket_conversations).freeze
     DUMMY_ID_FOR_UNDO_SEND_NOTE = 9_007_199_254_740_991
 
@@ -108,6 +109,19 @@ module Ember
       draft_attachments = @delegator.draft_attachments
       @item.attachments = @item.attachments + draft_attachments if draft_attachments
       handle_twitter_conversations
+    end
+
+    def ecommerce_reply
+      @validation_klass = 'EbayReplyValidation'
+      return unless validate_body_params(@ticket)
+
+      sanitize_params
+      build_object
+      assign_note_attributes
+      @delegator_klass = 'EbayReplyDelegator'
+      return unless validate_delegator(@item)
+
+      handle_ebay_conversations
     end
 
     def reply_forward_template
@@ -396,12 +410,31 @@ module Ember
       end
 
       def ember_redirect?
-        %i(create reply facebook_reply broadcast).include?(action_name.to_sym)
+        %i[create reply facebook_reply ecommerce_reply broadcast].include?(action_name.to_sym)
       end
 
       def render_201_with_location(template_name: "conversations/#{action_name}", location_url: 'conversation_url', item_id: @item.id)
         return super(location_url: location_url) if ember_redirect?
         render template_name, location: safe_send(location_url, item_id), status: 201
+      end
+
+      def handle_ebay_conversations
+        if @item.save_note
+          message = Ecommerce::Ebay::Api.new(ebay_account_id: @ticket.ebay_question.ebay_account_id).make_ebay_api_call(:reply_to_buyer, ticket: @ticket, note: @item)
+          @item.build_ebay_question(user_id: current_user.id, item_id: @ticket.ebay_question.item_id, ebay_account_id: @ticket.ebay_question.ebay_account_id, account_id: @ticket.account_id)
+          if message && @item.ebay_question.save
+            Ecommerce::EbayMessageWorker.new.perform(ebay_account_id: @ticket.ebay_question.ebay_account_id, ticket_id: @ticket.id, note_id: @item.id, start_time: message[:timestamp].to_time)
+            render_response(true)
+          else
+            @item.deleted = true
+            @item.save
+            @item.errors.add(:base, 'ebay_note_not_added')
+            render_response(false)
+          end
+        else
+          @item.errors.add(:base, 'ebay_note_not_added')
+          render_response(false)
+        end
       end
 
       def handle_twitter_conversations

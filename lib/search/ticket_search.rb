@@ -115,6 +115,7 @@ module Search::TicketSearch
   end
   
   def get_op_list(name)
+    name = name.eql?('date_time') ? 'datetime' : name
     containers = Wf::Config.data_types[:helpdesk_tickets][name]
     container_klass = Wf::Config.containers[containers.first].constantize
     container_klass.operators.first   
@@ -122,6 +123,10 @@ module Search::TicketSearch
   
   def get_custom_choices(tf)
     [[NONE_VALUE, I18n.t("filter_options.none")]].concat(tf.dropdown_choices_with_name)
+  end
+
+  def get_custom_choices_by_id(tf)
+    [[NONE_VALUE, nil]].concat(tf.dropdown_choices_with_picklist_id)
   end
 
   def get_default_choices(criteria_key)

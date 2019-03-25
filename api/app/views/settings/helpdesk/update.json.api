@@ -1,0 +1,5 @@
+JSON.generate(
+  "primary_language": @item.main_portal.language,
+  "supported_languages": @item.supported_languages.to_a,
+  "portal_languages": @item.portal_languages.to_a
+)

@@ -59,6 +59,11 @@ module Helpkit
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'
     config.time_zone = 'Chennai'
+    # https://www.rubydoc.info/gems/safe_yaml
+    # Set default_mode to unsafe, which means YAML.load() will deserialize arbitrary objects. Explicitly specify as
+    # YAML.load('', safe: true) if you do not want to deserialize objects
+    SafeYAML::OPTIONS[:default_mode] = :unsafe
+    SafeYAML::OPTIONS[:deserialize_symbols] = true
     # config.exceptions_app = ->(env) { ExceptionsController.action(:show).call(env) }
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
@@ -68,10 +73,19 @@ module Helpkit
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
 
-    # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password]
+    # Filtering out Encrypted fields
     config.filter_parameters += [/^cf_enc_/]
     config.filter_parameters += [/^enc_/]
+
+    # Other sensitive fields to be filtered out
+    config.filter_parameters += [:password, :password_confirmation, :creditcard]
+
+    # Fields to be filtered to reduce the logging impact
+    config.filter_parameters += [
+      :description_html, :description, # Ticket bodies and Articles
+      :raw_text, :raw_html, :body, :body_html, :full_text, :full_text_html, # Note bodies, Contact/Company bodies
+      :desc_un_html # Articles
+    ]
 
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
@@ -231,8 +245,6 @@ module Helpkit
       end
     end
 
-    config.filter_parameters += [:password, :password_confirmation, :creditcard]
-
     config.assets.paths += (Dir["#{Rails.root}/public/*"] - ["#{Rails.root}/public/assets"]).sort_by { |dir| -dir.size }
 
     config.assets.digest = true
@@ -264,6 +276,12 @@ end if File.exists? recaptcha_file
 
 GC::Profiler.enable if defined?(GC) && defined?(GC::Profiler) && GC::Profiler.respond_to?(:enable)
 
-# Enable rbtrace by default as this is useful to get callstack and other runtime information.
+# Enabling rbtrace is useful to get callstack and other runtime information.
 # There is no overhead unless we invoke rbtrace and attach the pid.
-require 'rbtrace'
+if defined?(PhusionPassenger) # rbtrace should be enabled only after passenger starts(for foreground jobs)
+  PhusionPassenger.on_event(:after_installing_signal_handlers) do
+    require 'rbtrace'
+  end
+else
+  require 'rbtrace' # For background jobs
+end

@@ -92,7 +92,6 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
         set_redis_expiry(key, api_expiry) if !expiry_set && (@count <= used_limit)
       end
       set_rate_limit_headers if @count
-      log_data("Throttled :: Host: #{@host}, Time: #{Time.zone.now}, Count: (#{@count}), AccountId: #{account_id}", 'debug')
     end
 
     def account_id
@@ -111,8 +110,11 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
     end
 
     def throttle?
-      Rails.logger.error "Inside throttle? method :: Host: #{@host}, SOURCE IP: #{@request.env['HTTP_X_REAL_IP']}"
-      !skipped_domain? && account_id && !Account.current.try(:apigee_enabled?)
+      if is_fluffy_enabled? || is_apigee_enabled?
+        return false
+      else
+        !skipped_domain? && account_id
+      end
     end
 
     def increment_redis_key(used)
@@ -216,5 +218,13 @@ class Middleware::FdApiThrottler < Rack::Throttle::Hourly
 
     def unset_current_account
       Thread.current[:account] = nil
+    end
+
+    def is_fluffy_enabled?
+      Account.current && Account.current.fluffy_enabled? && @request.env['HTTP_X_FW_RATELIMITING_MANAGED'] == "true"
+    end
+
+    def is_apigee_enabled?
+      Account.current && Account.current.apigee_enabled?
     end
 end

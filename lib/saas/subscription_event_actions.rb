@@ -4,17 +4,21 @@ class SAAS::SubscriptionEventActions
 
   DROP_DATA_FEATURES_V2 = [:create_observer, :supervisor, :add_watcher, :custom_ticket_views, :custom_apps,
                            :custom_ticket_fields, :custom_company_fields, :custom_contact_fields, :occasional_agent,
-                           :basic_twitter, :basic_facebook, :rebranding, :customer_slas, :multi_timezone,
+                           :advanced_twitter, :advanced_facebook, :rebranding, :customer_slas, :multi_timezone,
                            :multi_product, :multiple_emails, :link_tickets_toggle, :parent_child_tickets_toggle,
                            :shared_ownership_toggle, :skill_based_round_robin, :ticket_activity_export,
                            :auto_ticket_export, :multiple_companies_toggle, :unique_contact_identifier,
                            :support_bot, :custom_dashboard, :round_robin, :round_robin_load_balancing,
                            :hipaa, :agent_scope, :public_url_toggle, :custom_password_policy,
-                           :scenario_automation, :personal_canned_response, :marketplace].freeze
+                           :scenario_automation, :personal_canned_response, :marketplace,
+                           :custom_domain, :css_customization, :custom_roles,
+                           :dynamic_sections, :custom_survey, :mailbox,
+                           :helpdesk_restriction_toggle, :ticket_templates,
+                           :round_robin_load_balancing, :multi_timezone].freeze
 
   ADD_DATA_FEATURES_V2  = [:link_tickets_toggle, :parent_child_tickets_toggle, :multiple_companies_toggle,
                            :tam_default_fields, :smart_filter, :contact_company_notes, :unique_contact_identifier, :custom_dashboard, 
-                           :personal_canned_response].freeze
+                           :personal_canned_response, :round_robin].freeze
 
   DASHBOARD_PLANS = [SubscriptionPlan::SUBSCRIPTION_PLANS[:estate],
                      SubscriptionPlan::SUBSCRIPTION_PLANS[:forest],
@@ -25,6 +29,10 @@ class SAAS::SubscriptionEventActions
 
   DROP  = "drop"
   ADD   = "add"
+
+  SELECTABLE_DB_FEATURES = (Account::SELECTABLE_FEATURES.keys +
+                           Account::TEMPORARY_FEATURES.keys +
+                           Account::ADMIN_CUSTOMER_PORTAL_FEATURES.keys).freeze
 
   ####################################################################################################################
   #ideally we need to initialize this class with account object, old subscription object and addons
@@ -41,6 +49,7 @@ class SAAS::SubscriptionEventActions
   def change_plan
     
     if plan_changed?
+      remove_old_plan_db_features if old_plan.present?
       reset_plan_features
       remove_chat_feature
       add_new_plan_features
@@ -57,11 +66,32 @@ class SAAS::SubscriptionEventActions
       #add on removal case. we need to remove the feature in this case.
       to_be_removed.each do |addon|
         next if plan_features.include?(addon) # Don't remove features which are all related to current plan
-        account.revoke_feature(addon) rescue nil
+
+        begin
+          if reset_in_db?(addon)
+            Rails.logger.debug "ADDON::REMOVED as db feature, #{addon}"
+            account.remove_feature(feature)
+          else
+            account.revoke_feature(addon)
+          end
+        rescue StandardError => e
+          Rails.logger.error("Exception while revoking addon feature addon: \
+            #{addon}, error: #{e.backtrace}")
+        end
       end
       #to add new addons thats coming in to get added
       to_be_added.each do |addon|
-        account.add_feature(addon) rescue nil
+        begin
+          if reset_in_db?(addon)
+            Rails.logger.debug "ADDON::ADDED as db feature, #{addon}"
+            account.add_features(addon)
+          else
+            account.add_feature(addon)
+          end
+        rescue StandardError => e
+          Rails.logger.error "Exception while revoking addon feature acc_id: \
+            #{account.id} addon: #{addon}, error: #{e.backtrace}"
+        end
       end
     end
     
@@ -72,7 +102,22 @@ class SAAS::SubscriptionEventActions
 
   end
 
+  def handle_feature_data(features, event)
+    params = { features: features, action: event }
+    Rails.logger.debug "#{event} data features list:: #{features.inspect} to \
+      acc_id: #{account.id}"
+    NewPlanChangeWorker.perform_async(params)
+  end
+
   private
+
+    def remove_old_plan_db_features
+      account.remove_features_of(old_plan.subscription_plan.canon_name)
+    end
+
+    def reset_in_db?(feature)
+      SELECTABLE_DB_FEATURES.include?(feature) && !account.launched?(:db_to_bitmap_features_migration_phase2)
+    end
 
     def reset_plan_features
       account.features_list.each do |feature|
@@ -116,11 +161,6 @@ class SAAS::SubscriptionEventActions
       handle_feature_data(add_data_features_v2, ADD) if add_data_features_v2.present?
     end
 
-
-    def handle_feature_data(features_data, event)
-      NewPlanChangeWorker.perform_async({:features => features_data, :action => event})
-    end
-
     def remove_chat_feature
       account.revoke_feature(:chat) if !account.subscription.is_chat_plan? && account.has_feature?(:chat)
     end
@@ -155,7 +195,8 @@ class SAAS::SubscriptionEventActions
     end
 
     def plan_changed?
-      new_plan.subscription_plan_id != old_plan.subscription_plan_id
+      (new_plan.subscription_plan_id != old_plan.subscription_plan_id) &&
+        ::PLANS[:subscription_plans][new_plan.subscription_plan.canon_name.to_sym].present?
     end
 
     def handle_custom_dasboard_launch

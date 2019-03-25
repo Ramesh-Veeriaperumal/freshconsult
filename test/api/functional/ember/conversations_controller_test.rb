@@ -17,6 +17,8 @@ module Ember
     include AwsTestHelper
     include ArchiveTicketTestHelper
     include Redis::UndoSendRedis
+    include Redis::RedisKeys
+    include Redis::OthersRedis
 
     BULK_ATTACHMENT_CREATE_COUNT = 2
     BULK_NOTE_CREATE_COUNT       = 2
@@ -25,6 +27,7 @@ module Ember
 
     def setup
       super
+      WebMock.allow_net_connect!
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       Account.current.features.es_v2_writes.destroy
       Account.find(Account.current.id).make_current
@@ -37,6 +40,7 @@ module Ember
 
     def teardown
       super
+      WebMock.disable_net_connect!
       MixpanelWrapper.unstub(:send_to_mixpanel)
       Social::CustomTwitterWorker.unstub(:perform_async)
     end
@@ -559,6 +563,7 @@ module Ember
 
     def test_ticket_conversations_with_fone_call
       # while creating freshfone account during tests MixpanelWrapper was throwing error, so stubing that
+      Account.any_instance.stubs(:freshfone_enabled?).returns(true)
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
       ticket = new_ticket_from_call
       remove_wrap_params
@@ -566,19 +571,25 @@ module Ember
       get :ticket_conversations, construct_params({ version: 'private', id: ticket.display_id }, false)
       assert_response 200
       match_json(conversations_pattern(ticket))
+    ensure
       MixpanelWrapper.unstub(:send_to_mixpanel)
+      Account.any_instance.unstub(:freshfone_enabled?)
     end
 
     def test_ticket_conversations_with_freshcaller_call
       # while creating freshcaller account during tests MixpanelWrapper was throwing error, so stubing that
+      Account.any_instance.stubs(:freshcaller_enabled?).returns(true)
       MixpanelWrapper.stubs(:send_to_mixpanel).returns(true)
-      ticket  = new_ticket_from_freshcaller_call
+      ticket = new_ticket_from_freshcaller_call
       remove_wrap_params
       assert ticket.notes.all.map { |n| n.freshcaller_call.present? || nil }.compact.present?
       get :ticket_conversations, construct_params({ version: 'private', id: ticket.display_id }, false)
+      ticket.notes.reload
       assert_response 200
       match_json(conversations_pattern_freshcaller(ticket))
+    ensure
       MixpanelWrapper.unstub(:send_to_mixpanel)
+      Account.any_instance.unstub(:freshcaller_enabled?)
     end
 
     def test_ticket_conversations_on_spammed_ticket
@@ -778,12 +789,24 @@ module Ember
       Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(true)
       post :tweet, construct_params({ version: 'private', id: ticket.display_id }, body: Faker::Lorem.sentence[0..130],
                                     tweet_type: 'dm',
-                                    twitter_handle_id: 1)
+                                    twitter_handle_id: get_twitter_handle.id)
       assert_response 400
       match_json([bad_request_error_pattern('twitter_handle_id', 'requires re-authorization')])
       Social::TwitterHandle.any_instance.stubs(:reauth_required?).returns(false)
     end
 
+    def test_tweet_reply_with_app_blocked
+      set_others_redis_key(TWITTER_APP_BLOCKED, true, 5)
+      twitter_handle = get_twitter_handle
+      ticket = create_twitter_ticket(twitter_handle: twitter_handle)
+      post :tweet, construct_params({ version: 'private', id: ticket.display_id }, body: Faker::Lorem.sentence[0..130],
+                                    tweet_type: 'dm',
+                                    twitter_handle_id: twitter_handle.id)
+      assert_response 400
+      match_json(validation_error_pattern(bad_request_error_pattern('twitter', :twitter_write_access_blocked)))
+    ensure
+      remove_others_redis_key TWITTER_APP_BLOCKED
+    end
     def test_twitter_reply_to_tweet_ticket
       Sidekiq::Testing.inline! do
         with_twitter_update_stubbed do
@@ -1991,6 +2014,76 @@ module Ember
       assert_equal post.attachments.count, note.attachments.count
       assert_equal post.inline_attachments.count, note.inline_attachments.count
       assert_equal post.cloud_files.count, note.cloud_files.count
+    end
+
+    def test_ecommerce_reply_without_params
+      ticket = create_ebay_ticket
+      post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, {})
+      assert_response 400
+      match_json([bad_request_error_pattern('body', :datatype_mismatch, code: :missing_field, expected_data_type: String)])
+    end
+
+    def test_ecommerce_reply_with_invalid_ticket
+      ticket = create_ticket
+      body_hash = { body: Faker::Lorem.characters(10) }
+      post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, body_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('ticket_id', :not_an_ebay_ticket)])
+    end
+
+    def test_ecommerce_reply_with_invalid_privilege
+      ticket = create_ebay_ticket
+      User.any_instance.stubs(:privilege?).with(:reply_ticket).returns(false)
+      body_hash = { body: Faker::Lorem.paragraph }
+      Ecommerce::Ebay::Api.any_instance.stubs(:make_ebay_api_call).returns(timestamp: Time.current)
+      post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, body_hash)
+      assert_response 403
+      match_json(request_error_pattern(:access_denied))
+    ensure
+      User.any_instance.unstub(:privilege?)
+      Ecommerce::Ebay::Api.any_instance.unstub(:make_ebay_api_call)
+    end
+
+    def test_ecommerce_reply_with_invalid_agent_id
+      ticket = create_ebay_ticket
+      body_hash = { body: Faker::Lorem.paragraph, agent_id: User.last.try(:id) + 10 }
+      post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, body_hash)
+      assert_response 400
+      match_json([bad_request_error_pattern('agent_id', :absent_in_db, resource: :agent, attribute: :agent_id)])
+    end
+
+    def test_ecommerce_reply
+      ticket = create_ebay_ticket
+      body_hash = { body: Faker::Lorem.paragraph }
+      Ecommerce::Ebay::Api.any_instance.stubs(:make_ebay_api_call).returns(timestamp: Time.current)
+      post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, body_hash)
+      assert_response 201
+      latest_note = Helpdesk::Note.last
+      match_json(private_note_pattern(body_hash, latest_note))
+    ensure
+      Ecommerce::Ebay::Api.any_instance.unstub(:make_ebay_api_call)
+    end
+
+    def test_ecommerce_reply_with_ebay_api_failure
+      ticket = create_ebay_ticket
+      body_hash = { body: Faker::Lorem.paragraph }
+      post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, body_hash)
+      assert_response 400
+    end
+
+    def test_ecommerce_reply_with_note_save_failure
+      ticket = create_ebay_ticket
+      Helpdesk::Note.any_instance.stubs(:save_note).returns(false)
+      body_hash = { body: Faker::Lorem.paragraph }
+      post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, body_hash)
+      assert_response 400
+    end
+
+    def test_ecommerce_reply_with_invalid_body
+      ticket = create_ticket
+      body_hash = { body: Faker::Lorem.characters(2010) }
+      post :ecommerce_reply, construct_params({ version: 'private', id: ticket.display_id }, body_hash)
+      assert_response 400
     end
 
     private

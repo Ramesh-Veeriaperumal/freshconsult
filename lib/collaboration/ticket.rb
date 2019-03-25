@@ -2,7 +2,7 @@ class Collaboration::Ticket
 	include Collaboration::TicketFilter
 
 	HK_CLIENT_ID = "hk"
-	TOKEN_EXPIRY_TIME = 7200 # (in sec) 2 HRS
+  TOKEN_EXPIRY_TIME = 1_296_000 # (in sec) 15 DAYS
 	DEF_PAGE_NUM = 1
 	DEF_FETCH_LIMIT = 30
 	FILTER_LIST = ["ongoing_collab"]

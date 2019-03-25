@@ -4,6 +4,7 @@ JSON.generate(@items.map do |item|
     cc_emails: item.cc_email.try(:[], :cc_emails),
     fwd_emails: item.cc_email.try(:[], :fwd_emails),
     reply_cc_emails: item.cc_email.try(:[], :reply_cc),
+    ticket_cc_emails: item.cc_email.try(:[], :tkt_cc),
     fr_escalated: item.fr_escalated,
     spam: item.spam,
     email_config_id: item.email_config_id,

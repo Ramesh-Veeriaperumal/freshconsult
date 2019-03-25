@@ -14,7 +14,8 @@ module Ember
 
     SLAVE_ACTIONS = %w(latest_note).freeze
 
-    INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :schema_less_ticket, :ticket_status, { flexifield: [:denormalized_flexifield]}, { requester: [:avatar, :flexifield, :companies, :user_emails, :tags] }, :custom_survey_results].freeze
+    INDEX_PRELOAD_OPTIONS = [:ticket_states, :tags, :schema_less_ticket, :ticket_status, { flexifield: [:denormalized_flexifield] }, { requester: [:avatar, :flexifield, :companies, :user_emails, :tags] }, :custom_survey_results].freeze
+    INDEX_PRELOAD_OPTION_MAPPING = { custom_fields: { flexifield: [:denormalized_flexifield] } }.freeze
     DEFAULT_TICKET_FILTER = :all_tickets.to_s.freeze
     SINGULAR_RESPONSE_FOR = %w(show create update split_note update_properties execute_scenario).freeze
 
@@ -273,7 +274,6 @@ module Ember
 
       def paginate_items(items, ff_load = false)
         if ff_load
-          Rails.logger.info ':::FilterFactory Pagination started:::'
           add_link_header(page: (page + 1)) if items.length > per_page
           items[0..(per_page - 1)] # get paginated_collection of length 'per_page'
         else
@@ -318,7 +318,6 @@ module Ember
       end
 
       def log_and_render_301_archive
-        Rails.logger.debug "The ticket is archived. Id: #{params[:id]}, method: #{params[:action]}, controller: #{params[:controller]}"
         redirect_to archive_ticket_link, status: 301
       end
 
@@ -409,7 +408,12 @@ module Ember
           options[:contact_name_mapping] = contact_name_mapping
           options[:company_name_mapping] = company_name_mapping
         end
+        options[:discard_options] = discard_options
         super(options)
+      end
+
+      def discard_options
+        index? ? @ticket_filter.try(:exclude_array) : []
       end
 
       def contact_name_mapping
@@ -489,7 +493,13 @@ module Ember
       end
 
       def conditional_preload_options
-        params['include'].to_s.include?('company') ? INDEX_PRELOAD_OPTIONS.dup.push(:company) : INDEX_PRELOAD_OPTIONS
+        preload_options_list = INDEX_PRELOAD_OPTIONS.dup
+        preload_options_list << :ticket_field_data if current_account.join_ticket_field_data_enabled?
+        conditional_preload_options = params['include'].to_s.include?('company') ? preload_options_list.push(:company) : preload_options_list
+        (params[:exclude] || '').split(',').each do |exclude_param|
+          conditional_preload_options.delete(INDEX_PRELOAD_OPTION_MAPPING[exclude_param.to_sym])
+        end
+        conditional_preload_options
       end
 
       def constants_class

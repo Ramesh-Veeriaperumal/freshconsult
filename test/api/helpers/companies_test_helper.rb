@@ -1,9 +1,10 @@
 ['company_fields_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 ['contact_fields_helper.rb', 'company_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 ['attachments_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
+['company_helper.rb'].each { |file| require Rails.root.join("test/lib/helpers/#{file}") }
 module CompaniesTestHelper
   include ContactFieldsHelper
-  include CompanyHelper
+  include ApiCompanyHelper
   include AttachmentsTestHelper
   # Patterns
 

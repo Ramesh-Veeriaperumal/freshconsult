@@ -953,7 +953,7 @@ sv-SE:
           rullgardinsmenyn. Tryck på Tabb-tangenten en eller två gånger för att
           göra indrag. Vi kommer att konvertera dessa till objekt i
           rullgardinsmenyn baserat på indragen, så var extra försiktig. <a
-          target='_blank' href=%{learn_more}>Läs mer</a> 
+          target='_blank' href=%{learn_more}>Läs mer</a>
         dropdown_items_edit: Rullgardinselement - redigera vy
         dropdown_items_preview: Rullgardinselement - förhandsgranska
         status_choices: Statusval
@@ -1035,7 +1035,7 @@ sv-SE:
           rullgardinsmenyn. Tryck på Tabb-tangenten en eller två gånger för att
           göra indrag. Vi kommer att konvertera dessa till objekt i
           rullgardinsmenyn baserat på indragen, så var extra försiktig. <a
-          target='_blank' href=%{learn_more}>Läs mer</a> 
+          target='_blank' href=%{learn_more}>Läs mer</a>
         dropdown_items_edit: Rullgardinselement - redigera vy
         dropdown_items_preview: Rullgardinselement - förhandsgranska
         status_choices: Statusval
@@ -2819,7 +2819,7 @@ sv-SE:
             Med Freshdesk kan du hantera de kundfrågor som kommer till ditt
             eBay-konto via din supportavdelning. När du har ställt in det ändras
             alla kundfrågor från eBay automatiskt till ärenden. Du kan också
-            svara på dem direkt i Freshdesk. 
+            svara på dem direkt i Freshdesk.
       new:
         site_helptext: välj en eBay-plats där du vill sälja dina produkter
         account_name: Kontonamn
@@ -3091,7 +3091,7 @@ sv-SE:
         volymen av dina data.
       info1: >-
         Din import har slutförts. Du kan öppna support och gå till
-        Kund->%{uc_type} för att visa nyligen tillagd %{type}. 
+        Kund->%{uc_type} för att visa nyligen tillagd %{type}.
       info2: >-
         Vi kunde inte importera alla %{type} i csv-filen som du har skickat.
         Sammanställningen visas nedan:
@@ -3163,7 +3163,7 @@ sv-SE:
       bulk_merge_success: >-
         Ärendena med ID %{merged_tickets} lades samman till <a
         href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject}
-        #%{target_ticket}</a> 
+        #%{target_ticket}</a>
     custom_fields:
       delete:
         failure: Ärendefältet kunde inte tas bort.
@@ -4948,6 +4948,7 @@ sv-SE:
   right: Höger
   footer:
     helpdesk_software: Programvara för hjälpcenter
+    helpdesk_software_link: "https://freshdesk.com/se/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: av Freshdesk
     submit_feedback: Skicka in feedback
     browse_community: Bläddra bland användargrupper
@@ -5734,7 +5735,7 @@ sv-SE:
       en gång.
     info16: >-
       <b>Publicerade</b> artiklar visas i självbetjäningsportalen och i
-      sökresultat. 
+      sökresultat.
     info17: >-
       Artiklar som är <b>utkast</b> visas endast för representanterna och i
       representanternas sökresultat.
@@ -5822,17 +5823,17 @@ sv-SE:
 
 
       Importera %{type} från CSV
-               
-
-       
-       
 
 
 
-        
-       
-      \ \ 
-       
+
+
+
+
+
+
+      \ \
+
     sample_data: Provdata
     contact_import_data_info: >-
       Se till att din CSV-fil är i UTF-8-format och att första raden innehåller
@@ -6162,7 +6163,7 @@ sv-SE:
           kontrollera ärendet.<br /><br />Om du har ställt in stöd för flera
           språk i din helpdesk kan du skapa ett aktiveringsmeddelande för varje
           språk. Ikonen <i class="common-icon-outdated"></i> visar att
-          meddelandeöversättningarna för andra språk kan vara föråldrade. 
+          meddelandeöversättningarna för andra språk kan vara föråldrade.
       agent_template_3:
         topic: Ärende tilldelat till representant
         info1: >-
@@ -6172,7 +6173,7 @@ sv-SE:
           ärendet.<br/><br/>Om du har ställt in stöd för flera språk i din
           helpdesk kan du skapa ett aktiveringsmeddelande för varje språk.
           Ikonen <i class="common-icon-outdated"></i> visar att
-          meddelandeöversättningarna för andra språk kan vara föråldrade. 
+          meddelandeöversättningarna för andra språk kan vara föråldrade.
       agent_template_11:
         topic: Ärendet är oövervakat i en grupp
         info1: >-
@@ -6901,7 +6902,7 @@ sv-SE:
     performed: ' performed '
     system_activity_timestamp: >-
       <strong class='muted'>System</strong> %{system_rule} <abbr
-      data-livestamp='%{timestamp}'></abbr> (%{note_date}) 
+      data-livestamp='%{timestamp}'></abbr> (%{note_date})
     requestor_info: Information om beställaren
     view_twitter: Visa på Twitter
     view_facebook: Visa på Facebook
@@ -7909,7 +7910,7 @@ sv-SE:
       body: >-
         Ärende-exporten du begärt är klar. Du kan ladda ner filen <a
         href=%{url}>här</a>. Om länken inte fungerar, kopiera och klistra in
-        URL:en nedan i din webbläsares adressfält:  
+        URL:en nedan i din webbläsares adressfält:
       note: Den här länken är giltig i 15 dagar.
     fields:
       ticket_id: Ärende-ID
@@ -9238,7 +9239,7 @@ sv-SE:
       freshdesk_api_key: API-nyckel för Freshdesk
       api_key_available: >-
         Du hittar din API-nyckel under profilinställningar i ditt
-        Freshdesk-konto 
+        Freshdesk-konto
       new_to_freshdesk: 'Nykomling till Freshdesk? '
     ilos:
       portal_forum:
@@ -11008,7 +11009,7 @@ sv-SE:
     widget:
       ticket_info: >-
         Skapa nytt ärende eller lägg till anteckning till befintligt ärende
-        tillsammans med anteckningar och inspelning. 
+        tillsammans med anteckningar och inspelning.
       note_placeholder: Lägg till samtalsanteckningar...
       new_ticket: Spara som nytt ärende
       save_to_existing: Spara till ett befintligt ärende
@@ -11519,7 +11520,7 @@ sv-SE:
         pricing: Se alla samtalskostnader och länder som stöds
         request_subject: |-
           Telefonärende - %{account_name}
-           
+
         email_message: Freshfone-funktion krävs
         success: Vi återkommer till dig inom två vardagar.
         error_message: Tyvärr kan din förfrågan inte göras nu. Försök igen senare.
@@ -12086,12 +12087,12 @@ sv-SE:
         Om du exempelvis har en supportportal för ditt varumärke kan du skapa
         flera kategorier för produkter eller team. Detta hjälper dig att driva
         på relevanta konversationer till alla dina topnivåavdelningar och som
-        administratör kan du ändå hantera allt på ett ställe. 
+        administratör kan du ändå hantera allt på ett ställe.
       para3: >-
         Om du har flera produktportaler konfigurerade i ditt Freshdesk-konto kan
         du välja att länka en av dina kategorier till den produkten. När du gör
         det kan användare se kategorin, dess forum och alla dess ämnen både på
-        din huvudportal och din produktportal. 
+        din huvudportal och din produktportal.
       para4: Läs mer om att hantera flera produkter i Freshdesk.
     shared:
       topic:

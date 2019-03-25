@@ -1,6 +1,7 @@
 module EmailHelper
 	include ActionView::Helpers::NumberHelper
 
+
   class NokogiriTimeoutError < Exception
   end
 
@@ -203,8 +204,40 @@ module EmailHelper
     return !(email_config && email_config.smtp_mailbox) && ($redis_others.get("ROUTE_NOTIFICATIONS_VIA_EMAIL_SERVICE") == "1" || account.launched?(:send_emails_via_fd_email_service_feature))
   end
 
+  def imap_application_id
+    $fd_email_service_credentials ||= (YAML::load_file(File.join(Rails.root, 'config', 'fd_email_service.yml')))[Rails.env]
+    return $fd_email_service_credentials["imap_application_id"]
+  end
+
   def block_outgoing_email(account_id)
     Rails.logger.info("disabling Outgoing email for #{account_id}")
     add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, account_id)
   end
+
+  def block_spam_account params
+    account_id = params[:account_id]
+    begin
+      Sharding.select_shard_of(account_id) do
+        curr_account = Account.find_by_id(account_id).make_current
+        if !ismember?(SPAM_EMAIL_ACCOUNTS, curr_account.id)
+          if !(curr_account.subscription.active?)
+            add_member_to_redis_set(SPAM_EMAIL_ACCOUNTS, curr_account.id)
+          end
+          notify_outgoing_block(curr_account, params[:description])
+        end
+        Account.reset_current_account
+      end
+    rescue => e
+      Rails.logger.info "Error while blocking the outgoing emails of Spam account #{account_id}"
+    end
+  end
+
+  def notify_outgoing_block(account, rules)
+    subject = "Detected suspicious spam account :#{account.id}" #should be called only when account object is set
+    additional_info = "Emails sent by the account has suspicious content . Contains content blacklisted by rule : #{rules} ."
+    additional_info << "Outgoing emails blocked!!" if !(Account.current.subscription.active?)
+    notify_account_blocks(account, subject, additional_info)
+    update_freshops_activity(account, "Outgoing emails blocked due to blacklisted spam rules match", "block_outgoing_email") if !(Account.current.subscription.active?)
+  end
+
 end

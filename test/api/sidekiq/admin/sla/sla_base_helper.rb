@@ -2,7 +2,7 @@
 ['sla_policies_test_helper.rb'].each { |file| require "#{Rails.root}/test/api/helpers/#{file}" }
 
 module SlaBaseHelper
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include SlaPoliciesTestHelper
 
   def create_test_ticket_sla_reminder(agent, group)

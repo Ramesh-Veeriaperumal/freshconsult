@@ -9,7 +9,7 @@ module ProvisionSandboxTestHelper
   include GroupHelper
   include ::TicketFieldsTestHelper
   include TicketTemplateHelper
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
   include TicketFieldsSandboxHelper
   include TicketTemplatesSandboxHelper
   include TagsSandboxHelper
@@ -26,11 +26,13 @@ module ProvisionSandboxTestHelper
   include PasswordPolicesSandboxHelper
   include AgentsSandboxHelper
   include CannedResponsesSandboxHelper
+  include SocialSandboxHelper
 
-  IGNORE_TABLES = ["helpdesk_shared_attachments", "helpdesk_attachments", "users", "agents", "user_emails", "helpdesk_tags", "helpdesk_accesses"]
+  IGNORE_TABLES = ["helpdesk_shared_attachments", "helpdesk_attachments", "users", "agents", "user_emails", "helpdesk_tags", "helpdesk_accesses", "social_twitter_handles", "social_streams", "social_ticket_rules"]
   MODELS = ['canned_responses', 'agents', 'ticket_fields', 'skills', 'password_policies', 'va_rules', 'sla_policies', 'email_notifications', 'company_form', 'contact_form', 'custom_surveys', 'status_groups', 'roles', 'tags']
   MODEL_TABLE_MAPPING = Hash[ActiveRecord::Base.send(:descendants).collect {|c| [c.name, c.table_name]}]
   IGNORE_TABLES_FOR_OFFSET = ['group_accesses', 'user_accesses', 'user_roles']
+  CLONE_MODELS = ['twitter_handles', 'twitter_streams', 'social_ticket_rules']
 
   def model_table_mapping
     @model_table_mapping = Hash[ActiveRecord::Base.send(:descendants).collect {|c| [c.name, c.table_name]}]
@@ -44,12 +46,12 @@ module ProvisionSandboxTestHelper
     @sandbox_affected_tables ||= MODEL_DEPENDENCIES.keys.map {|table| model_table_mapping[table]}.compact - IGNORE_TABLES
   end
 
-  def account_list_data(account_id)
+  def account_list_data(account_id, clone)
     shard_name = ShardMapping.find_by_account_id(account_id).try(:[], :shard_name)
     account_data = {}
     Sharding.run_on_shard(shard_name) do
       sandbox_affected_tables.each do |table|
-        account_data[table] = column_exists?(table, 'id') ? sql_list_query(account_id, table) : [sql_count_query(account_id, table)]
+        account_data[table] = column_exists?(table, 'id') && !clone ? sql_list_query(account_id, table) : [sql_count_query(account_id, table)]
       end
     end
     account_data
@@ -59,9 +61,9 @@ module ProvisionSandboxTestHelper
     table_model_mapping[table].constantize.columns.map(&:name).include?(column_name)
   end
 
-  def models_data(master_account_id, sandbox_account_id)
-    master_account_data = account_list_data(master_account_id)
-    sandbox_account_data = account_list_data(sandbox_account_id)
+  def models_data(master_account_id, sandbox_account_id, clone = false)
+    master_account_data = account_list_data(master_account_id, clone)
+    sandbox_account_data = account_list_data(sandbox_account_id, clone)
     {:master_account_data => master_account_data, :sandbox_account_data => sandbox_account_data}
   end
 
@@ -134,6 +136,12 @@ module ProvisionSandboxTestHelper
       next if model == "ticket_fields"
       send("create_#{model}_data", account) if respond_to?("create_#{model}_data")
       send("create_#{model}_data_for_conflict", account) if respond_to?("create_#{model}_data_for_conflict")
+    end
+  end
+
+  def create_sample_data_clone_in_production(account)
+    CLONE_MODELS.each do |model|
+      send("create_#{model}_data", account) if respond_to?("create_#{model}_data")
     end
   end
 
@@ -214,5 +222,9 @@ module ProvisionSandboxTestHelper
       master_account_shard = ShardMapping.fetch_by_account_id(master_account_id)
       Integer(SANDBOX_ID_OFFSET[master_account_shard.shard_name])
     end
+  end
+
+  def stub_data
+    { subscription: { status: 'in_trial', trial_start: 1549360375, trial_end: 1564912374 } }
   end
 end

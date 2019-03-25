@@ -4376,6 +4376,7 @@ ru-RU:
   right: Правильно
   footer:
     helpdesk_software: "ПО службы поддержки"
+    helpdesk_software_link: "https://freshdesk.ru/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: "от Freshdesk"
     submit_feedback: "Отправить отзыв"
     footer_feedback_subject_placeholder: "Расскажите нам, как сделать Freshdesk лучше"

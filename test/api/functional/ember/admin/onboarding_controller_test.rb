@@ -5,7 +5,7 @@ require Rails.root.join('spec', 'support', 'email_helper.rb')
 
 class Ember::Admin::OnboardingControllerTest < ActionController::TestCase
   include AccountTestHelper
-  include UsersTestHelper
+  include CoreUsersTestHelper
   include OnboardingTestHelper
   include TicketHelper
   include EmailHelper

@@ -276,7 +276,7 @@
 		},
 
 		deleteSecFieldsdialog: function (field, id) {
-			if(!fsm_fields.includes(field)){
+			if(fsm_fields.indexOf(field) == -1){
 				this.options.ui		= field; //Field or ui.item
 				var no_of_existence	= $(this.options.formContainer).find("[data-id = '"+id+"']").length,
 				confirm_type	= (no_of_existence == 1) ? 'confirmDeleteField' : 'deleteSecField';

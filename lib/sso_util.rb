@@ -161,6 +161,7 @@ module SsoUtil
     @current_user_session = @current_user.account.user_sessions.new(@current_user)
     @current_user_session.web_session = true unless is_native_mobile?
     if !@current_user.new_record? && @current_user_session.save
+      DataDogHelperMethods.create_login_tags_and_send("saml_login", current_account, @current_user)
       if is_native_mobile?
         cookies['mobile_access_token'] = { value: @current_user.mobile_auth_token, http_only: true }
         cookies['fd_mobile_email'] = { value: @current_user.email, http_only: true }

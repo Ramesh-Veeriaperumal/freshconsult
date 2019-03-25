@@ -1,0 +1,8 @@
+<div class="user-profile-rounded image-lazy-load" size_type="thumb">
+	<img alt="<%=user.name%>" class="img-circle" onerror="imgerror(this)" size_type="thumb" <%if(user.avatar){%>src="<%=user.avatar%>"<%}else{%>src="<%=PROFILE_BLANK_THUMB_PATH%>"<%}%>>
+</div>
+<div class="report_contact">
+	<div class="survey-user-name"><%=user.name%></div>
+	<span class="survey-greydot-holder"><i class="survey-grey-dot"></i></span>
+	<div class="survey-date pull-left"><%=SurveyUtil.getDateString(user.createdAt)%></div>
+</div>

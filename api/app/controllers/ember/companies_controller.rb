@@ -39,6 +39,8 @@ module Ember
     def index
       if filter_api?
         handle_segments
+      elsif params[:ids].present?
+        @items = scoper.where(id: params[:ids]).preload(preload_options)
       else
         super
         @sideload_options = @validator.include_array || []
@@ -71,6 +73,10 @@ module Ember
         end
       end
 
+      def launch_party_name
+        FeatureConstants::KBASE_MINT if action_name == 'index' && params[:ids].present?
+      end
+
       def fetch_objects(items = scoper)
         @items = items.find_all_by_id(params[cname][:ids])
       end
@@ -101,11 +107,17 @@ module Ember
       end
 
       def load_sla_policy
-        active_sla_policies = current_account.sla_policies.rule_based.active
-        sla = active_sla_policies.select do |policy|
-          policy.conditions[:company_id].present? && policy.conditions[:company_id].include?(@item.id)
+        all_active_sla_policies = current_account.sla_policies.active
+        company_sla_policies = []
+        default_sla_policy = []
+        all_active_sla_policies.each do |policy|
+          if !policy.is_default && policy.conditions[:company_id].present? && policy.conditions[:company_id].include?(@item.id)
+            company_sla_policies.push(policy)
+          elsif policy.is_default
+            default_sla_policy.push(policy)
+          end
         end
-        @sla_policies = sla.empty? ? current_account.sla_policies.default : sla
+        @sla_policies = company_sla_policies.empty? ? default_sla_policy : company_sla_policies
       end
 
       def decorator_options_hash

@@ -52,7 +52,11 @@ module Helpdesk::Ticketfields::ControllerMethods
   end
 
   def available_columns(type)
-    (FIELD_COLUMN_MAPPING[type.to_sym][1] - used_columns(type))
+    if ticket_field_limit_increase_enabled?
+      (TICKET_FIELD_DATA_COLUMN_MAPPING[type.to_sym][1] - used_columns(type))
+    else
+      (FIELD_COLUMN_MAPPING[type.to_sym][1] - used_columns(type))
+    end
   end
 
   private
@@ -106,7 +110,8 @@ module Helpdesk::Ticketfields::ControllerMethods
       @used_columns ||= {}
       @used_columns[type] ||= begin
         Sharding.run_on_slave do
-          Account.current.ticket_field_def.flexifield_def_entries.select(:flexifield_name).where(flexifield_coltype: FIELD_COLUMN_MAPPING[type.to_sym][0]).map(&:flexifield_name)
+          field_mapping = type.eql?('date') || type.eql?('date_time') ? [ FIELD_COLUMN_MAPPING['date'.to_sym][0], FIELD_COLUMN_MAPPING['date_time'.to_sym][0] ] : FIELD_COLUMN_MAPPING[type.to_sym][0]
+          Account.current.ticket_field_def.flexifield_def_entries.select(:flexifield_name).where(flexifield_coltype: field_mapping ).map(&:flexifield_name)
         end
       end
     end
@@ -122,5 +127,9 @@ module Helpdesk::Ticketfields::ControllerMethods
           @used_columns[child_field.flexifield_coltype].delete(child_field.column_name)
         end
       end
+    end
+
+    def ticket_field_limit_increase_enabled?
+      @ticket_field_limit_increase_enabled ||= Account.current.ticket_field_limit_increase_enabled?
     end
 end

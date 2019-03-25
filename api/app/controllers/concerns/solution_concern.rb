@@ -20,6 +20,20 @@ module SolutionConcern
     @lang_id = current_request_language.id
   end
 
+  def validate_portal_id
+    errors[:portal_id] << :invalid_portal_id if Account.current.portals.where(id: @portal_id).blank?
+  end
+
+  def solution_portal
+    @solution_portal ||= begin
+      current_account.portals.where(id: params[:portal_id]).first if params.key?(:portal_id)
+    end
+  end
+
+  def solutions_scoper
+    solution_portal || current_account
+  end
+
   def current_request_language
     Language.find_by_code(params[:language] || Account.current.language)
   end

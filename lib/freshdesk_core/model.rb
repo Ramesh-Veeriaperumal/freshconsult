@@ -228,7 +228,8 @@ module FreshdeskCore::Model
                     'admin_sandbox_jobs',
                     'help_widgets',
                     'bot_responses',
-                    'custom_translations'].freeze
+                    'custom_translations',
+                    'ticket_field_data'].freeze
 
   STATUS = {
       :deleted => 0,

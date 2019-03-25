@@ -1,5 +1,6 @@
 class SurveyHandle < ActiveRecord::Base
   self.primary_key = :id
+  include Surveys::PresenterHelper
   belongs_to_account
     
   NOTIFICATION_VS_SEND_WHILE = {
@@ -11,6 +12,12 @@ class SurveyHandle < ActiveRecord::Base
   belongs_to :surveyable, :polymorphic => true
   belongs_to :response_note, :class_name => 'Helpdesk::Note'
   belongs_to :survey_result
+  has_many :survey_questions, :class_name => 'CustomSurvey::SurveyQuestion', :through => :survey
+
+  before_destroy :deleted_survey_model_info
+
+  publishable
+  concerned_with :presenter
 
   delegate :portal, :to => :surveyable
   
@@ -78,5 +85,5 @@ class SurveyHandle < ActiveRecord::Base
     def clear_survey_result
       survey_result.destroy
     end
-    
+
 end

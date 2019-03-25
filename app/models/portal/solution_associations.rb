@@ -25,6 +25,11 @@ class Portal < ActiveRecord::Base
            through: :public_category_meta,
            source: :solution_folder_meta
 
+  has_many :solution_categories,
+           class_name: 'Solution::Category',
+           through: :public_category_meta,
+           order: 'portal_solution_categories.position'
+
   has_many :bot_article_meta,
            class_name: 'Solution::ArticleMeta',
            through: :bot_folder_meta,

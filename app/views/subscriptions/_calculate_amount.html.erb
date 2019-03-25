@@ -1,13 +1,19 @@
 <%= form_tag plan_subscription_url, :id => "plan_form" do %>
+<%
+	billing_cycle = params[:billing_cycle].present? ? params[:billing_cycle].to_i : @subscription.renewal_period
+%>
 <div class="billing-cost">
 	<hr class="billing-divider" />
 	<dl>
-  	<dt><%=t('subscription.billing')%></dt>
-		<dd>
+  	<dt class="vertical-top"><%=t('subscription.billing')%></dt>
+		<dd class="vertical-top">
 			<%= select_tag :billing_cycle, 
-						options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.to_a, 
-															 @subscription.renewal_period), 
+						options_for_select(SubscriptionPlan::BILLING_CYCLE_OPTIONS.dup.sort{ |x, y| y[1] <=> x[1] }, 
+															billing_cycle), 
 						:class => "select2" %>
+			<p class="save-info <%= billing_cycle == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]? 'hide' : '' %>">
+				<%= t('choose_annual')%> <span class="money"><%= t('save_20_percent')%></span>
+			</p>
 		</dd>
 	</dl>
   <dl>
@@ -34,13 +40,13 @@
 		  			<dd> 
 		  				<%= @subscription.non_free_agents %> x 
 		  				<span id="cost-per-agent">
-		  					<%= cost_per_agent(@subscription_plan.name, @subscription.billing_cycle, @subscription.currency_name) %> x <%= @subscription.billing_cycle %>
+		  					<%= cost_per_agent(@subscription_plan.name, billing_cycle, @subscription.currency_name) %> x <%= billing_cycle %>
 		  				</span>
 		  			</dd>
 		  		</dl>
 				</div>
 		  <% else %>
-		  	x <b id="cost-per-agent"><%= cost_per_agent(@subscription_plan.name, @subscription.billing_cycle, @subscription.currency_name) %></b> x <b id="number-of-months"> <%= @subscription.billing_cycle %> </b>
+		  	x <b id="cost-per-agent"><%= cost_per_agent(@subscription_plan.name, billing_cycle, @subscription.currency_name) %></b> x <b id="number-of-months"> <%= billing_cycle %> </b>
 		  <% end %>
 	</dl>
   
@@ -51,7 +57,7 @@
 		  	</dt>
 		  	<dd class="numbers">
 		  		<h2>
-		  			<b class="total" id="total-cost-per-agent">
+		  			<b class="total" id="total-cost-currency-value">
 		  				<%= format_amount(amount+discount, @subscription.currency_name) %>
 		  			</b>
 		  		</h2>
@@ -64,12 +70,27 @@
 	  	</dt>
   		<dd class="numbers">
   			<h2>
-  				<b class="total" id="total-cost-per-agent">
+  				<b class="total" id="total-cost-currency-value">
   					<%= format_amount(amount, @subscription.currency_name) %>
   				</b>
+  				<p class="per-month-charges <%= billing_cycle == 1 ? 'hide' : '' %>">
+  					(<span class="symbol"></span><span class="amount"></span>/<%= t('date.month')%>)
+  				</p>
   			</h2>
 			</dd>	
 	  </dl>
+	  <dl id="total-cost" class="tr-total <%= billing_cycle == SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:annual]? '' : 'hide' %>">
+	  	<dt>
+	  		<%= t('you_save') %>
+	  	</dt>
+  		<dd class="numbers">
+				<p>
+				<input type="hidden" value="<%= cost_per_agent(@subscription_plan.name, SubscriptionPlan::BILLING_CYCLE_KEYS_BY_TOKEN[:monthly], @subscription.currency_name) %>" id="cost-per-month-value">
+				</p>
+				<span class="you-save-amount"></span>
+  		</dd>
+  	</dl>
+
 
 		<% unless current_account.has_credit_card? %>
 			<div class="currency-note"><span class="arrow-up"></span>
@@ -85,7 +106,18 @@
 		<% downgrade_confirm = ( (@subscription.subscription_plan_id < current_subscription.subscription_plan_id) or (current_subscription.classic? and @subscription.sprout?) ) ? true : false %>
 		<% submit_text = @subscription.state == 'trial' ? t('enter_payment') : @subscription.non_free_agents <= @subscription.free_agents ? t('activate_free_plan') : t('make_payment') %>
 		<input type="submit" class="btn btn-flat billing-cancel" value="<%= t('cancel') %>" />
-		<%= submit_tag(submit_text, :class => "btn btn-flat billing-submit submit-disable", 
+		<a id="show-confirmation-box" href="#omni-disable-confirmation" class="btn submit-confirm hide btn-primary" rel="freshdialog"
+			data-width="450"
+			title="<%= t('disable_omni_title')%>"
+			data-target="#omni-disable-confirmation"
+			data-close-on-submit="true"
+			data-submit-label="<%=t('plain_yes')%>"
+			data-close-label="<%=t('plain_no')%>"
+			data-destroy-on-close="true"
+			>
+			<%= t('update_plan') %>
+			</a>
+		<%= submit_tag(submit_text, :class => "btn billing-submit submit-disable", 
 					:id => "commit", :name => "commit", "data-loading-text" => t('please_wait')) %>
 					
 	</div>

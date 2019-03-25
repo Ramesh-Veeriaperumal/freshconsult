@@ -139,10 +139,14 @@ module AutomationControllerMethods
     current_account.features?(:multi_language)
   end
 
+  def ticket_field_actions_for_automations
+    current_account.ticket_fields.non_encrypted_custom_fields.reject { |cf| cf.fsm_reserved_custom_field? || cf.custom_date_time_field? }
+  end
+
   def add_custom_actions action_hash
     special_case = none_option
     # Skipping Fields reserved for FSM.
-    cf = current_account.ticket_fields.non_encrypted_custom_fields.reject { |cf| cf.fsm_reserved_custom_field? }
+    cf = ticket_field_actions_for_automations
     cf.each do |field|
       action_hash.push({
                          :id => field.id,

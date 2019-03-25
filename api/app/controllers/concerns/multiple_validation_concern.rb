@@ -6,8 +6,8 @@ module MultipleValidationConcern
     validation_klasses.each do |validation_klass_name|
       klass_name_snake_cased = validation_klass_name.demodulize.underscore
       item = try_method("#{klass_name_snake_cased}_item")
-      request_params = try_method("#{klass_name_snake_cased}_request_params")
-      params_hash = try_method("#{klass_name_snake_cased}_params_hash")
+      request_params = try_method("#{klass_name_snake_cased}_request_params", {})
+      params_hash = try_method("#{klass_name_snake_cased}_params_hash", {})
       permit_params = permit_params_wrapper("#{klass_name_snake_cased}_permit_params?")
       valid = validate_request(item, request_params, params_hash, validation_klass_name, permit_params)
       break unless valid
@@ -35,11 +35,11 @@ module MultipleValidationConcern
   end
 
   def validate_request(item, request_params, params_hash, klass_name, permit_params = true, url_params = false)
-    if permit_params
+    if permit_params && request_params.present?
       default_fields = url_params ? fetch_default_params : []
       request_params.permit(*fields_to_validate(klass_name), *default_fields)
     end
-    @validator = validation_klass(klass_name).new(params_hash || request_params, item, string_request_params?)
+    @validator = validation_klass(klass_name).new(params_hash.presence || request_params, item, string_request_params?)
     valid = @validator.valid?(action_context(klass_name) || action_name.to_sym)
     render_custom_errors(@validator, true) unless valid
     valid
@@ -50,8 +50,8 @@ module MultipleValidationConcern
     try_method(method_name)
   end
 
-  def try_method(method_name)
-    self.class.method_defined?(method_name) ? safe_send(method_name) : nil
+  def try_method(method_name, default_return_value = nil)
+    self.class.method_defined?(method_name) ? safe_send(method_name) : default_return_value
   end
 
   def permit_params_wrapper(method_name)

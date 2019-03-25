@@ -29,11 +29,17 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   has_many :status_groups, :foreign_key => :status_id, :dependent => :destroy, :inverse_of => :status
   accepts_nested_attributes_for :status_groups, :allow_destroy => true
 
+  before_save :construct_model_changes
+
   before_update :mark_status_groups_for_destruction, :if => :deleted?
 
   after_update :update_tickets_sla_on_status_change_or_delete
 
   after_commit :clear_statuses_cache
+
+  concerned_with :presenter
+
+  publishable on: [:create, :update]
   
   scope :visible, :conditions => {:deleted => false}
 
@@ -72,13 +78,13 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
 
   def self.sla_timer_on_status_ids(account)
-    statuses = account.ticket_status_values
+    statuses = account.ticket_status_values_from_cache
     statuses.reject(&:stop_sla_timer).map(&:status_id)
   end
   
   def self.statuses(account)
     disp_col_name = self.display_name
-    statuses = account.ticket_status_values
+    statuses = account.ticket_status_values_from_cache
     statuses.map{|status| [translate_status_name(status, disp_col_name), status.status_id]}
   end
   
@@ -88,7 +94,7 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
 
   def self.status_names(account)
     disp_col_name = self.display_name
-    statuses = account.ticket_status_values
+    statuses = account.ticket_status_values_from_cache
     statuses.map{|status| [status.status_id, translate_status_name(status, disp_col_name)]}
   end
   
@@ -97,18 +103,17 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
   end
   
   def self.donot_stop_sla_statuses(account)
-    statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => {:stop_sla_timer => false})
+    statuses = account.ticket_status_values_from_cache.select { |status| status.status_id unless status.stop_sla_timer }
     statuses.collect { |status| status.status_id }
   end
   
   def self.onhold_statuses(account)
-    statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => ["stop_sla_timer = true
-               and status_id not in (?,?)", RESOLVED, CLOSED])
+    statuses = account.ticket_status_values_from_cache.select { |status| status.status_id if status.stop_sla_timer && !resolved_statuses.include?(status.status_id) }
     statuses.collect { |status| status.status_id }
   end
   
   def self.onhold_and_closed_statuses(account)
-    statuses = account.ticket_status_values.find(:all, :select => "status_id", :conditions => {:stop_sla_timer => true})
+    statuses = account.ticket_status_values_from_cache.select { |status| status.status_id if status.stop_sla_timer }
     statuses.collect { |status| status.status_id }
   end
 
@@ -307,6 +312,10 @@ class Helpdesk::TicketStatus < ActiveRecord::Base
     Sharding.run_on_master do
       SBRR::Execution.enqueue(ticket, args).execute if ticket.enqueue_sbrr_job?
     end
+  end
+
+  def construct_model_changes
+    @model_changes = self.changes.clone.to_hash
   end
 
   private

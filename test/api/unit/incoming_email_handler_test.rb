@@ -3,11 +3,14 @@ require_relative '../../core/helpers/tickets_test_helper'
 module Helpdesk
   module Email
     class IncomingEmailHandlerTest < ActionView::TestCase
-      include TicketsTestHelper
+      include CoreTicketsTestHelper
 
       def setup
         Account.stubs(:current).returns(Account.first)
         Account.stubs(:find_by_full_domain).returns(Account.first)
+        shard = ShardMapping.first
+        shard.status = 200 unless shard.status == 200
+        shard.save
         @from_email = Faker::Internet.email
         @to_email = Faker::Internet.email
       end
@@ -497,40 +500,44 @@ module Helpdesk
         id = Faker::Lorem.characters(50)
         subject = 'Test Subject'
         params = default_params(id, subject)
-        Helpdesk::Ticket.stubs(:extract_id_token).returns(Helpdesk::Ticket.first.try(:display_id))
+        Helpdesk::Ticket.stubs(:extract_id_token).returns(Account.first.tickets.first.try(:display_id))
+        IncomingEmailHandler.any_instance.stubs(:can_be_added_to_ticket?).returns(true)
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
-        ticket_response = incoming_email_handler.fetch_ticket(Account.first, { email: 'from_email@email.com' }, User.first, nil)
-        assert_equal Helpdesk::Ticket.first.try(:id), ticket_response.try(:id)
+        ticket_response = incoming_email_handler.fetch_ticket_from_subject(Account.first, { email: 'from_email@email.com' }, User.first, nil)
+        assert_equal Account.first.tickets.first.try(:id), ticket_response.try(:id)
       end
 
       def test_email_fetch_ticket_from_headers
         id = Faker::Lorem.characters(50)
         subject = 'Test Subject'
         params = default_params(id, subject)
-        IncomingEmailHandler.any_instance.stubs(:ticket_from_headers).returns(Helpdesk::Ticket.first)
+        IncomingEmailHandler.any_instance.stubs(:ticket_from_headers).returns(Account.first.tickets.first)
+        IncomingEmailHandler.any_instance.stubs(:can_be_added_to_ticket?).returns(true)
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
-        ticket_response = incoming_email_handler.fetch_ticket(Account.first, { email: 'from_email@email.com' }, User.first, nil)
-        assert_equal Helpdesk::Ticket.first.try(:id), ticket_response.try(:id)
+        ticket_response = incoming_email_handler.fetch_ticket_from_references(Account.first, { email: 'from_email@email.com' }, User.first, nil)
+        assert_equal Account.first.tickets.first.try(:id), ticket_response.try(:id)
       end
 
       def test_email_fetch_ticket_from_email_body
         id = Faker::Lorem.characters(50)
         subject = 'Test Subject'
         params = default_params(id, subject)
-        IncomingEmailHandler.any_instance.stubs(:ticket_from_email_body).returns(Helpdesk::Ticket.first)
+        IncomingEmailHandler.any_instance.stubs(:ticket_from_email_body).returns(Account.first.tickets.first)
+        IncomingEmailHandler.any_instance.stubs(:can_be_added_to_ticket?).returns(true)
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
-        ticket_response = incoming_email_handler.fetch_ticket(Account.first, { email: 'from_email@email.com' }, User.first, nil)
-        assert_equal Helpdesk::Ticket.first.try(:id), ticket_response.try(:id)
+        ticket_response = incoming_email_handler.fetch_ticket_from_email_body(Account.first, { email: 'from_email@email.com' }, User.first)
+        assert_equal Account.first.tickets.first.try(:id), ticket_response.try(:id)
       end
 
       def test_email_fetch_ticket_from_id_span
         id = Faker::Lorem.characters(50)
         subject = 'Test Subject'
         params = default_params(id, subject)
-        IncomingEmailHandler.any_instance.stubs(:ticket_from_id_span).returns(Helpdesk::Ticket.first)
+        IncomingEmailHandler.any_instance.stubs(:ticket_from_id_span).returns(Account.first.tickets.first)
+        IncomingEmailHandler.any_instance.stubs(:can_be_added_to_ticket?).returns(true)
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
-        ticket_response = incoming_email_handler.fetch_ticket(Account.first, { email: 'from_email@email.com' }, User.first, nil)
-        assert_equal Helpdesk::Ticket.first.try(:id), ticket_response.try(:id)
+        ticket_response = incoming_email_handler.fetch_ticket_from_id_span(Account.first, { email: 'from_email@email.com' }, User.first)
+        assert_equal Account.first.tickets.first.try(:id), ticket_response.try(:id)
       end
 
       def test_email_perform_with_create_article_fail
@@ -680,8 +687,8 @@ module Helpdesk
         subject = 'Test Subject'
         params = default_params(id, subject)
         incoming_email_handler = Helpdesk::Email::IncomingEmailHandler.new(params)
-        ticket_response = incoming_email_handler.fetch_archive_or_normal_ticket_by_display_id(1, Account.first)
-        assert_equal Helpdesk::Ticket.first.try(:id), ticket_response.try(:id)
+        ticket_response = incoming_email_handler.fetch_archive_or_normal_ticket_by_display_id(Account.first.tickets.first.try(:display_id), Account.first)
+        assert_equal Account.first.tickets.first.try(:id), ticket_response.try(:id)
       end
 
       def test_incoming_email_validates_numericals_in_str

@@ -1,7 +1,7 @@
 ['ticket_fields_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
 
 module TicketsTestHelper
-  include TicketFieldsTestHelper
+  include CoreTicketFieldsTestHelper
 
   MAX_DESC_LIMIT = 10000
 
@@ -98,7 +98,7 @@ module TicketsTestHelper
       due_by: ticket.due_by.try(:utc).try(:iso8601),
       created_at: ticket.created_at.try(:utc).try(:iso8601),
       closed_at: ticket.closed_at.try(:utc).try(:iso8601),
-      custom_fields: ticket.custom_fields_hash,
+      custom_fields: ticket.central_custom_fields_hash,
       company_id: ticket.company_id,
       sla_policy_id: ticket.sla_policy_id,
       is_escalated: ticket.isescalated,
@@ -158,11 +158,12 @@ module TicketsTestHelper
       first_assigned_at: ticket.first_assigned_at.try(:utc).try(:iso8601),
       first_response_time: ticket.first_response_time.try(:utc).try(:iso8601),
       product_id: ticket.product_id,
-      association_type: ticket.association_type,
       archive: ticket.archive,
       internal_agent_id: ticket.internal_agent_id,
       internal_group_id: ticket.internal_group_id,
-      on_state_time: ticket.on_state_time
+      on_state_time: ticket.on_state_time,
+      associates: render_assoc_hash(ticket.association_type),
+      associates_rdb: ticket.associates_rdb
     }
     ret_hash[:skill_id] = ticket.sl_skill_id if Account.current.skill_based_round_robin_enabled?
     ret_hash
@@ -183,6 +184,15 @@ module TicketsTestHelper
       display_id: ticket.display_id,
       account_id: ticket.account_id,
       archive: false
+    }
+  end
+
+  def render_assoc_hash(current_association_type)
+    return nil if current_association_type.blank?
+
+    {
+      id: current_association_type,
+      type: TicketConstants::TICKET_ASSOCIATION_TOKEN_BY_KEY[current_association_type]
     }
   end
 end

@@ -1,6 +1,6 @@
 class DomainGenerator
 
-	attr_accessor :email, :email_name, :domain, :subdomain, :excluded_domains
+	attr_accessor :email, :email_name, :domain, :subdomain, :excluded_domains, :signup_mode
 
 	include ActiveModel::Validations
 
@@ -8,22 +8,29 @@ class DomainGenerator
 	DOMAIN_SUGGESTION_KEYWORDS = ["help", "assist", "service", "care", 
 		"aid", "relations", "desk", "team"]
 	DOMAIN_SUGGESTIONS = DOMAIN_SUGGESTION_KEYWORDS + DOMAIN_SUGGESTION_KEYWORDS.map{|sugg| "-#{sugg}"}
+  ANONYMOUS_DOMAIN = 'demo'.freeze
+  ANONYMOUS_SIGNUP = 'anonymous_signup'.freeze
 
 	validates_presence_of :email
 	validate :email_validity
 	validate :disposable_email?
 
-	def initialize(email, excluded_domains = [])
-		self.email = Mail::Address.new(email)
-		self.excluded_domains = excluded_domains
-		Rails.logger.warn "Email not valid" unless self.valid?
-	end
+  def initialize(email, excluded_domains = [], signup_mode = nil)
+    self.email = Mail::Address.new(email)
+    self.excluded_domains = excluded_domains
+    Rails.logger.warn 'Email not valid' unless valid?
+    self.signup_mode = signup_mode
+  end
 
-	def domain
-		@domain ||= generate_helpdesk_domain
-		@domain = generate_random_domain_name while @domain.blank?
-		@domain
-	end
+  def domain
+    if signup_mode == ANONYMOUS_SIGNUP
+      @domain ||= generate_demo_domain while @domain.blank?
+    else
+      @domain ||= generate_helpdesk_domain
+      @domain = generate_random_domain_name while @domain.blank?
+    end
+    @domain
+  end
 
 	def email_company_name
 		@email_company_name ||= email.domain.split('.').first
@@ -102,6 +109,27 @@ class DomainGenerator
 	def random_digits
 		SecureRandom.random_number.to_s[2..4]
 	end
+
+    def generate_demo_domain
+      demo_domain = generate_default_demo_domain
+      demo_domain = generate_random_demo_domain while demo_domain.blank?
+      demo_domain
+    end
+
+    def generate_default_demo_domain
+      current_time = (Time.now.utc.to_f * 1000).to_i
+      domain_suggestion = "#{ANONYMOUS_DOMAIN}#{current_time}.#{HELPDESK_BASE_DOMAIN}"
+      return domain_suggestion if valid_domain?(domain_suggestion)
+    end
+
+    def generate_random_demo_domain
+      current_time = (Time.now.utc.to_f * 1000).to_i
+      DOMAIN_SUGGESTIONS.each do |suggestion|
+        current_domain_suggestion = "#{ANONYMOUS_DOMAIN}#{suggestion}#{current_time}.#{HELPDESK_BASE_DOMAIN}"
+        return current_domain_suggestion if valid_domain?(current_domain_suggestion)
+      end
+      nil
+    end
 
 	# validations
 	def email_validity

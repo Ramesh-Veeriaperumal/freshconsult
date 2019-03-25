@@ -17,7 +17,7 @@ module Proactive::SimpleOutreachConcern
   end
 
   def email_params
-    @email_params ||= params[cname][:action][:email].except(:schedule_details).dup
+    @email_params ||= params[cname][:action][:email].except(:schedule_details).dup if email_params_present?
   end
 
   def simple_outreach_delegator_item
@@ -25,10 +25,13 @@ module Proactive::SimpleOutreachConcern
   end
 
   def simple_outreach_delegator_options
-    options_hash = { email_config_id: email_params[:email_config_id] }
+    options_hash = {}
+    options_hash = { email_config_id: email_params[:email_config_id] } if email_params_present? && email_params.key?(:email_config_id)
     options_hash.merge!(
         attachment_id: cname_params[:selection][:contact_import][:attachment_id],
-        attachment_file_name: cname_params[:selection][:contact_import][:attachment_file_name]) if csv_import?
+        attachment_file_name: cname_params[:selection][:contact_import][:attachment_file_name]
+      ) if csv_import? && action_name.to_sym == :create
+    options_hash
   end
 
   def simple_outreach_validation_params_hash
@@ -44,8 +47,7 @@ module Proactive::SimpleOutreachConcern
   end
 
   def simple_outreach_validation_fields
-    outreach_fields = create? ? (SIMPLE_OUTREACH_FIELDS | ['selection' => SELECTION_FIELDS]) : (SIMPLE_OUTREACH_FIELDS - ['selection'])
-    outreach_fields =  outreach_fields | ['contact_import' => CONTACT_IMPORT_FIELDS]
+    create? ? (SIMPLE_OUTREACH_FIELDS | ['selection' => SELECTION_FIELDS] | ['contact_import' => CONTACT_IMPORT_FIELDS]) : (SIMPLE_OUTREACH_FIELDS - ['selection'])
   end
 
   def customer_import_validation_params_hash
@@ -69,5 +71,9 @@ module Proactive::SimpleOutreachConcern
 
   def type_present?
     cname_params[:selection].present? && cname_params[:selection][:type].present?
+  end
+
+  def email_params_present?
+    params[cname][:action].present? && params[cname][:action][:email].present?
   end
 end

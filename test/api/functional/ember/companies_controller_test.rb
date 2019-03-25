@@ -10,6 +10,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   include Redis::RedisKeys
   include Redis::OthersRedis
   include CustomFieldsTestHelper
+  include SolutionsTestHelper
 
   BULK_CREATE_COMPANY_COUNT = 2
 
@@ -61,7 +62,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     ticket_ids.each do |ticket_id|
       @account.make_current
       Sidekiq::Testing.inline! do
-        Archive::BuildCreateTicket.perform_async(account_id: @account.id, ticket_id: ticket_id)
+        Archive::TicketWorker.perform_async(account_id: @account.id, ticket_id: ticket_id)
       end
     end
   end
@@ -105,7 +106,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_errors
-    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
     avatar_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
     params_hash = company_params_hash.merge(avatar_id: avatar_id)
     Company.any_instance.stubs(:save).returns(false)
@@ -115,7 +116,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_create_with_avatar_id
-    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
     avatar_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
     params_hash = company_params_hash.merge(avatar_id: avatar_id)
     post :create, construct_params({ version: 'private' }, params_hash)
@@ -165,7 +166,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     end
 
   def test_show_a_company_with_avatar
-    file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('files/image33kb.jpg', 'image/jpeg')
     sample_company = create_company
     sample_company.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
     get :show, construct_params(version: 'private', id: sample_company.id)
@@ -266,6 +267,70 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
     assert_equal Account.current.companies.where('name like ?', "#{letter}%").count, response.size
   end
 
+  def test_index_with_ids
+    enable_kbase_mint do
+      companies = []
+      BULK_CREATE_COMPANY_COUNT.times do
+        companies << create_company
+      end
+      get :index, controller_params(version: 'private', ids: companies.map(&:id).join(','))
+      assert_response 200
+      pattern = []
+      companies.each do |company|
+        pattern << company_pattern_with_associations({}, company, [])
+      end
+      match_json(pattern)
+    end
+  end
+
+  def test_index_with_ids_without_launchparty
+    company = create_company
+    get :index, controller_params(version: 'private', ids: company.id)
+    assert_response 403
+    match_json(request_error_pattern(:require_feature, feature: 'Kbase Mint'))
+  end
+
+  def test_index_with_invalid_ids
+    enable_kbase_mint do
+      company = create_company
+      get :index, controller_params(version: 'private', ids: company.id + 20)
+      assert_response 200
+      assert_equal parse_response(response.body).size, 0
+    end
+  end
+
+  def test_index_with_limit_exceeded
+    enable_kbase_mint do
+      company_ids = Array.new(260) { rand(1...1000) }
+      get :index, controller_params(version: 'private', ids: company_ids.join(','))
+      assert_response 400
+      match_json([bad_request_error_pattern('ids', :too_long, element_type: :values, max_count: "#{Solution::Constants::COMPANIES_LIMIT}", current_count: company_ids.size)])
+    end
+  end
+
+  def test_index_with_valid_and_invalid_ids
+    enable_kbase_mint do
+      companies = []
+      BULK_CREATE_COMPANY_COUNT.times do
+        companies << create_company
+      end
+      valid_company = companies.first
+      company_ids = [companies.first.id, companies.last.id + 20]
+      get :index, controller_params(version: 'private', ids: company_ids.join(','))
+      assert_response 200
+      response = parse_response @response.body
+      assert_equal response.size, 1
+    end
+  end
+
+  def test_index_with_string_ids_params
+    enable_kbase_mint do
+      get :index, controller_params(version: 'private', ids: 'abc')
+      assert_response 400
+      match_json([bad_request_error_pattern('ids', :array_datatype_mismatch, expected_data_type: 'Positive Integer')])
+    end
+  end
+
   def test_activities_with_invalid_type
     company = create_company
     contact = add_new_user(@account, customer_id: company.id)
@@ -335,7 +400,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_remove_avatar
-    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
     avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
     company = create_company(avatar: avatar)
     put :update, construct_params({ version: 'private', id: company.id }, avatar_id: nil)
@@ -346,7 +411,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_change_avatar
-    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
     avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
     company = create_company(avatar: avatar)
     new_avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
@@ -358,7 +423,7 @@ class Ember::CompaniesControllerTest < ActionController::TestCase
   end
 
   def test_update_add_avatar
-    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+    file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
     avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
     company = create_company
     put :update, construct_params({ version: 'private', id: company.id }, avatar_id: avatar.id)

@@ -395,7 +395,6 @@ module Channel::V2
                             'language' => 'en',
                             'timezone' => 'America/Los_Angeles' }
       item = nil
-      byebug
       contact = ContactValidation.new(controller_params, item)
       refute contact.valid?(:channel_contact_create)
       errors = contact.errors.full_messages

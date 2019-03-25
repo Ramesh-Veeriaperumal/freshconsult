@@ -31,7 +31,6 @@ module Channel
         end
 
         def notify_to_iris
-          Rails.logger.info "Pushing bot training completion to iris. Bot id is #{@bot.id}"
           push_data_to_service(IrisNotificationsConfig['api']['collector_path'], iris_payload)
         end
 

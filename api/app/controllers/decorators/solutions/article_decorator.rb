@@ -4,10 +4,11 @@ class Solutions::ArticleDecorator < ApiDecorator
 
   SEARCH_CONTEXTS_WITHOUT_DESCRIPTION = [:agent_insert_solution, :filtered_solution_search]
 
-  def initialize(record, options)
+  def initialize(record, options = {})
     super(record)
     @user = options[:user]
     @search_context = options[:search_context]
+    @draft = options[:draft]
   end
 
   def tags
@@ -22,12 +23,12 @@ class Solutions::ArticleDecorator < ApiDecorator
     ret_hash = {
       id: parent_id,
       type: parent.art_type,
-      category_id: parent.solution_category_meta.id,
+      category_id: category_id,
       folder_id: parent.solution_folder_meta.id,
       folder_visibility: parent.solution_folder_meta.visibility,
-      agent_id: user_id,
+      agent_id: get_user_id,
       path: record.to_param,
-      modified_at: modified_at.try(:utc),
+      modified_at: get_modified_at.try(:utc),
       modified_by: modified_by,
       language_id: language_id
     }
@@ -94,7 +95,7 @@ class Solutions::ArticleDecorator < ApiDecorator
     end
 
     def attachments_hash
-     attachments.map { |a| AttachmentDecorator.new(a).to_hash }
+      (@draft.try(:attachments) || attachments).map { |a| AttachmentDecorator.new(a).to_hash }
     end
 
     def description_hash(item)
@@ -105,6 +106,18 @@ class Solutions::ArticleDecorator < ApiDecorator
     end
 
     def record_or_draft
-      record.status == Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] ? draft : record
+      @draft || (record.status == Solution::Constants::STATUS_KEYS_BY_TOKEN[:draft] ? draft : record)
+    end
+
+    def category_id
+      @draft.try(:category_meta_id) || parent.solution_category_meta.id
+    end
+
+    def get_user_id
+      @draft.try(:user_id) || record.user_id
+    end
+
+    def get_modified_at
+      @draft.try(:modified_at) || record.modified_at
     end
 end

@@ -2,7 +2,10 @@ class Helpdesk::Ticket < ActiveRecord::Base
 
   belongs_to_account
 
-  has_flexiblefields :class_name => 'Flexifield', :as => :flexifield_set
+  has_flexiblefields class_name: 'Flexifield', as: :flexifield_set, inverse_of: :flexifield_set
+
+  has_one :ticket_field_data, inverse_of: :flexifield_set, dependent: :destroy, as: :flexifield_set
+  accepts_nested_attributes_for :ticket_field_data
 
   has_many_attachments
 
@@ -132,4 +135,13 @@ class Helpdesk::Ticket < ActiveRecord::Base
   def set_inline_attachable_type(inline_attachment)
     inline_attachment.attachable_type = "Ticket::Inline"
   end
+
+  def ticket_field_data_with_safe_access
+    if ticket_field_data_without_safe_access.blank?
+      build_ticket_field_data
+      ticket_field_data.flexifield_def = account.ticket_field_def
+    end
+    ticket_field_data_without_safe_access
+  end
+  alias_method_chain :ticket_field_data, :safe_access
 end

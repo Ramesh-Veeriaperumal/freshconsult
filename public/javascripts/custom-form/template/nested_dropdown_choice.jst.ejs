@@ -1,0 +1,37 @@
+<% isDeleted = item.destroyed ? true : false %>
+<% deletedClassName = isDeleted ? 'deleted-choice' : '' %>
+
+<% if(item['id'] || item['name']) { %>
+    <fieldset class='fieldset <%= deletedClassName %> clear'
+                data-destroy="<%= isDeleted %>"
+                data-choice-id="<%= item['id'] ? item['id'] : '0' %>">
+        <div class= "left-icon clear">
+            <div class="nested-icon-wrapper center">
+                <span class="rearrange-icon ficon-drag-vertical"></span>
+            </div>
+        </div>
+        <span class="dropchoice">
+            <div class="input-wrapper">
+                <input type="text" name="choice_<%= item['id']%>" 
+                    value="<%= item['name'].replace(/"/g, '&quot;') %>" required class='field_maxlength'
+                    maxlength='255'/>
+            </div>
+        </span>
+        <div class= "right-icon">
+            <span class='ficon-cross delete-choice nested-icon'></span>
+            <span class='ficon-undo hide nested-icon'></span>
+        </div>
+    </fieldset>
+<% } else { %>
+    <fieldset class="add-choice">
+        <div class= "left-icon"><div class="nested-icon-wrapper center">
+            <span class="ficon-plus"></span>
+        </div></div>
+        <span class="dropchoice">
+            <div class="input-wrapper">
+                <input type="text" placeholder="<%= translate.get('addNewChoice') %>" name="choice_<%= (new Date().getTime()) %>" class='field_maxlength' data-level-id=<%= item.levelId %> maxlength='255'/>
+            </div>
+            <div class= "right-icon enter-placeholder"><span class='ficon-enter-icon'></span> <%= translate.get('enter') %></div>
+        </span>
+    </fieldset>
+<% } %>

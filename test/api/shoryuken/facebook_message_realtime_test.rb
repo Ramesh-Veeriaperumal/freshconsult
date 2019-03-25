@@ -14,11 +14,13 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
 
   def teardown
     Social::FacebookPage.any_instance.stubs(:unsubscribe_realtime).returns(true)
-    super
+    @account ||= Account.first
     @account.facebook_pages.destroy_all
     @account.facebook_streams.destroy_all
     @account.tickets.where(source: Helpdesk::Ticket::SOURCE_KEYS_BY_TOKEN[:facebook]).destroy_all
     Account.unstub(:current)
+    WebMock.disable_net_connect!
+    super
   ensure
     Social::FacebookPage.any_instance.unstub(:unsubscribe_realtime)
     Facebook::Core::Post.any_instance.unstub(:fetch_page_scope_id)
@@ -28,12 +30,14 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
   end
 
   def setup
+    WebMock.allow_net_connect!
     Account.stubs(:current).returns(Account.first)
     Facebook::Core::Post.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     Facebook::Core::Comment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     Facebook::Core::ReplyToComment.any_instance.stubs(:fetch_page_scope_id).returns(nil)
     Facebook::Core::Status.any_instance.stubs(:fetch_page_scope_id).returns(nil)
-    @account = Account.current
+    @account = Account.current || Account.first
+    user = @account.nil? ? @account.users.first : create_test_account
     @fb_page = create_test_facebook_page(@account)
     @fb_page.update_attributes(realtime_messaging: true)
     @user_id = rand(10**10)
@@ -43,14 +47,14 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     thread_id = rand(10**10)
     msg_id = thread_id + 20
     time = Time.now.utc
-
+  
     realtime_dm_event = realtime_dms(@fb_page.page_id, msg_id, @user_id, time)
     sqs_msg = Hashit.new(body: realtime_dm_event.to_json)
     dm = sample_dms(thread_id, @user_id, msg_id, time)
     msg = dm[0]['messages']['data'][0]
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(msg)
     Sqs::FacebookMessage.new(sqs_msg.body).process
-
+  
     dm_msg_id = msg[:id]
     ticket = @account.facebook_posts.find_by_post_id(dm_msg_id).postable
     assert_equal ticket.is_a?(Helpdesk::Ticket), true
@@ -64,11 +68,11 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     rule = @fb_page.dm_stream.ticket_rules[0]
     rule[:action_data][:group_id] = group.id
     rule.save!
-
+  
     thread_id = rand(10**10)
     msg_id = thread_id + 20
     time = Time.now.utc
-
+  
     realtime_dm_event = realtime_dms(@fb_page.page_id, msg_id, @user_id, time)
     sqs_msg = Hashit.new(body: realtime_dm_event.to_json)
     dm = sample_dms(thread_id, @user_id, msg_id, time)
@@ -76,7 +80,7 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(msg)
     Sqs::FacebookMessage.new(sqs_msg.body).process
     dm_msg_id = msg[:id]
-
+  
     ticket = @account.facebook_posts.find_by_post_id(dm_msg_id).postable
     assert_equal ticket.is_a?(Helpdesk::Ticket), true
     assert_equal ticket.group_id, group.id
@@ -89,7 +93,7 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     thread_id = rand(10**10)
     msg_id = thread_id + 20
     time = Time.now.utc
-
+  
     realtime_dm_event = realtime_dms(@fb_page.page_id, msg_id, @user_id, time)
     sqs_msg = Hashit.new(body: realtime_dm_event.to_json)
     dm = sample_dms(thread_id, @user_id, msg_id, time)
@@ -111,7 +115,7 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     thread_id = rand(10**10)
     msg_id = thread_id + 20
     time = Time.now.utc
-
+  
     realtime_dm_event = realtime_dms(@fb_page.page_id, msg_id, @user_id, time)
     sqs_msg = Hashit.new(body: realtime_dm_event.to_json)
     dm = sample_dms(thread_id, @user_id, msg_id, time)
@@ -119,7 +123,7 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     second_msg = dm[1]['messages']['data'][0]
     Koala::Facebook::API.any_instance.stubs(:get_object).returns(first_msg, second_msg)
     Sqs::FacebookMessage.new(sqs_msg.body).process
-
+  
     first_msg_id = first_msg[:id]
     second_msg_id = second_msg[:id]
     assert_equal @account.facebook_posts.find_by_post_id(first_msg_id).postable.is_a?(Helpdesk::Ticket), true
@@ -134,10 +138,10 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     thread_id = "#{@fb_page.page_id.to_s}#{MESSAGE_THREAD_ID_DELIMITER}#{@user_id}"
     Timecop.travel(1.seconds)
     create_facebook_dm_as_ticket(@fb_page, thread_id, @user_id)
-
+  
     msg_id = rand(10**10)
     time = Time.now.utc
-
+  
     realtime_dm_event = realtime_dms(@fb_page.page_id, msg_id, @user_id, time)
     sqs_msg = Hashit.new(body: realtime_dm_event.to_json)
     dm = sample_dms(thread_id, @user_id, msg_id, time)
@@ -158,7 +162,7 @@ class FacebookMessagesRealtimeTest < ActionView::TestCase
     thread_id = rand(10**10)
     msg_id = thread_id + 20
     time = Time.now.utc
-
+  
     realtime_dm_event = realtime_dms(@fb_page.page_id, msg_id, @user_id, time)
     sqs_msg = Hashit.new(body: realtime_dm_event.to_json)
     dm = sample_dms(thread_id, @user_id, msg_id, time)

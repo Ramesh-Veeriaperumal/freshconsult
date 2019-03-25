@@ -2,7 +2,7 @@
 
   'use strict';
 
-	$.FroalaEditor.DEFAULTS.key = 'Qg1Ti1LXd2URVJh1DWXG==';
+	$.FroalaEditor.DEFAULTS.key = 'QB4G4C3A14hC7D6E6C5D2E3C2C6A7A5cODOe1HLEBFZOTGHW==';
 
 	// By default the editor will use the font_awesome. Changing to our icons
 	$.FroalaEditor.DefineIconTemplate('fd_design_icon', '<i class="ficon-[NAME]"></i>');
@@ -66,6 +66,9 @@ function invokeEditor(element_id,type,attr) {
 		linkEditButtons: ['linkOpen', 'linkEdit', 'linkRemove'],
 		imageUploadMethod: 'POST',
 		imageUploadParam: 'image[uploaded_data]',
+		videoInsertButtons: ['videoByURL', 'videoEmbed'],
+		imageEditButtons: ['imageReplace', 'imageAlign', 'imageRemove', 'imageLink', 'linkOpen', 'linkEdit', 'linkRemove', '-', 'imageDisplay', 'imageStyle', 'imageAlt', 'imageSize'],
+		colorsHEXInput: false,
 		imageUploadParams: {
 			'_uniquekey': new Date().getTime(),
 			'authenticity_token': jQuery('[name="csrf-token"]').attr('content')
@@ -79,7 +82,7 @@ function invokeEditor(element_id,type,attr) {
 		case 'solution':
 		  froala_solution_options = {
 				pluginsEnabled: ['fullscreen', 'paragraphFormat', 'paragraphStyle', 'fontSize', 'fontFamily', 'colors', 'align', 'lists', 'quote', 'image', 'imageManager', 'video', 'table', 'link', 'codeView', 'lineBreaker', 'codeInsert','pasteHandler', 'codeBeautifier', 'commonEvents', 'pasteToggler'],
-				toolbarButtons: ['paragraphFormat', 'fontFamily', 'fontSize', 'color', 'bold', 'italic', 'underline', 'strikethrough', 'paragraphStyle', '|',  'align', '|', 'formatOL', 'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertTable', 'insertImage', 'insertVideo',  'codeInsert', 'insertHR', '|', 'plainText', 'defaultFormatting', 'originalFormatting', '|', 'html', 'fullscreen'],
+				toolbarButtons: ['paragraphFormat', 'fontFamily', 'fontSize', 'color', 'bold', 'italic', 'underline', 'strikethrough', 'paragraphStyle', '|',  'align', '|', 'formatOL', 'formatUL', 'outdent', 'indent', '|', 'insertLink', 'insertTable', 'insertImage', 'insertVideo',  'codeInsert', 'insertHR', '|', 'clearFormatting', 'defaultFormatting', 'originalFormatting', '|', 'html', 'fullscreen'],
 				imageUploadURL: '/solutions_uploaded_images',
 				imageManagerLoadURL: '/solutions_uploaded_images',
 				sanitizeType: "solution",

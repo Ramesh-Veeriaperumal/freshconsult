@@ -1,0 +1,8 @@
+defaults: &defaults
+  tcp_host: <%= node[:ymls][:clamav][:host] %>
+  tcp_port: "3310"
+  connection_pool_size: 5
+  timeout: 10
+  socket_timeout: 15
+<%= node[:opsworks][:environment]%>:
+  <<: *defaults

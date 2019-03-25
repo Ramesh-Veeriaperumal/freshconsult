@@ -1,11 +1,11 @@
 class Integrations::InstalledApplicationsController < Admin::AdminController
 
   class VersionDetectionError < Exception; end
-
   include Integrations::AppsUtil
   include Integrations::Slack::SlackConfigurationsUtil #Belongs to Old Slack. Remove when Slack v1 is obselete.
   include Redis::OthersRedis
 
+  before_filter { |c| c.requires_feature :marketplace }
   before_filter :strip_slash, :only => [:install, :update]
   before_filter :load_object
   before_filter :check_application_installable, :only => [:install, :update]

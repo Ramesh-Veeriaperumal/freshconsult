@@ -1,0 +1,243 @@
+    # The root url of your site. This is necessary because email processing takes place
+# outside of the normal HTTP request/response cycle, and we need to generate links
+# to pages within the site.
+APP_NAME: Freshdesk
+
+HOST: 
+    development:    "localhost:3000"
+    test:           "localhost:3000"
+    production:     "freshdesk.com"
+    staging:        "freshpo.com"
+
+ASSET_URL: 
+    development:    
+      http:      "http://localhost:3000/widget"
+      https:      "https://localhost:3000/widget"
+    test:           
+      http:      "http://localhost:3000/widget"
+      https:      "https://localhost:3000/widget"
+    production:     
+      http:         "http://assets.freshdesk.com/widget"
+      https:        "https://s3.amazonaws.com/assets.freshdesk.com/widget"
+    staging:
+      http:      "http://assets.freshpo.com/widget"
+      https:      "https://s3.amazonaws.com/assets.freshpo.com/widget"
+EMAIL_LOGO_URL:
+  development:  "https://localhost:3000/email/logo.png"
+  test:         "https://localhost:3000/email/logo.png"
+  production:   "https://s3.amazonaws.com/assets.freshdesk.com/email/logo.png"
+  staging:      "https://s3.amazonaws.com/assets.freshpo.com/email/logo.png"
+EMAIL_TYPE_TO_MESSAGE_ID_DOMAIN:
+  automation: "automation.freshdesk.com"
+  notification: "notification.freshdesk.com"
+
+AGENT:
+  name: Customer Service
+  email: custserv@freshdesk.com
+
+DEFAULT_TICKET_PROPERTIES:
+  email_ticket:
+    email: emily.dean@freshdesk.com
+    name: Emily Dean
+
+  feedback_widget_ticket:
+    email: matt.rogers@freshdesk.com
+    name: Matt Rogers
+    meta:
+      user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/62.0.3202.62
+      referrer: https://sauls.freshdesk.com/en/support/home
+
+  chat_ticket:
+    email: norman.jones@freshdesk.com
+    name: Norman Jones
+    meta:
+      user_agent: Mozilla/5.0 (Windows 10.0.0; Win64; x64) Chrome/62.0.3202.62
+      referrer: /support/home
+      location: Mount Hope, Kansas, United States
+
+# This is the title staff members will see when they are using the helpdesk application
+STAFF_FACING_TITLE: FreshDesk
+
+# This is the title your customers will see when using the "customer service portal"
+USER_FACING_TITLE: FreshDesk
+
+
+# Example settings for receiving mail via imap:
+#
+#    incoming:
+#        development:
+#            type: imap                 # Type of connection, either imap or pop
+#            server: imap.email.com     # Address of the server
+#            port: 143                  # Port to use (defaults to 143 for imap)
+#            authentication: PLAIN      # Authentication type to use, defaults to PLAIN
+#            ssl: true                  # Use SSL to connect
+#            username: <your username>  
+#            password: <your password>
+#
+#
+# Example settings for receiving mail via GMail's imap:
+#
+#    incoming:
+#        development:
+#            type: imap                 # Type of connection, either imap or pop
+#            server: imap.email.com     # Address of the server
+#            port: 993                  # Port to use (defaults to 143 for imap)
+#            use_login: true            # use LOGIN instead of AUTHENTICATE to connect (some IMAP servers, like GMail, do not support AUTHENTICATE)
+#            ssl: true                  # Use SSL to connect
+#            username: <your username>  
+#            password: <your password>
+#
+# 
+# Example settings for receiving mail via pop:
+#
+#    incoming:
+#        development:
+#            type: pop                  # Type of connection, either imap or pop
+#            server: pop.email.com      # Address of the server
+#            port: 110                  # Port to use (defaults to 110 for imap)
+#            ssl: true                  # Use SSL to connect
+#            username: <your username>  
+#            password: <your password>
+#
+
+
+EMAIL: 
+
+    # This will be the reply_to address in all outgoing email
+    from: support@freshdesk.com
+
+    staging_support_email: vijay@freshdesk.com
+    default_requester_email: rachel@freshdesk.com
+    production_dev_ops_email: dev-ops@freshdesk.com
+    sample_email: sample@freshdesk.com
+    spam_watcher:  <%= node[:ymls][:spam_watcher][:email] %>
+
+    # This is the subject line for all replies
+    reply_subject: "Your support request"
+
+# This determines whether or not incoming support requests are automatically
+# hidden if they're classified as spam by the build in spam filter. You should
+# leave this set to "true" until you've manually flagged, say, 100 spams. 
+SPAM_TRAINING_MODE: true
+
+# These are salt values used to generate access keys, so that anonymous
+# users can access their tickets. Change them to some unique noise.
+#SECRET_3 WILL BE USED FOR FACEBOOK
+SECRET_1: 19-30ihfojgsnfgo2h40t8hgkhndhfgkerhKJHKHIDYHfinro;quhwro
+SECRET_2: f;07934t8y6[okfdkjhqw3eUHEUY970DKUHoyudououoH780))&7*(3o
+SECRET_3: abcdefgihfojgsnfgo2h40t8hgkhndhfgkerhKJHKHIDYHfinro98712
+SHARED_SECRET: 7e8c587a5f7aff66519ae35eabb6b76f1632d0f058a84607702
+
+# The names route that the user will be redirect to if they don't
+# have permission to access an area
+ACCESS_DENIED_ROUTE: support_login_url   
+
+# These are permissions for the different user roles
+ROLES:
+    anonymous: 
+        permissions:
+            portal_request:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_knowledgebase:   false   # Can create / edit / delete knowledgebase articles & guides?
+            manage_tickets:         false   # Can assign / edit / respond to tickets?
+            manage_users:           false   # Can assign roles to users?
+            post_in_forums:         false   # Can respond to topics or post new ones?
+            manage_forums:          false   # Forums administration
+            manage_account:         false   # Account administration
+            manage_reports:          false    # Can see and run reports
+    customer:
+        permissions:
+            portal_request:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_knowledgebase:   false   # Can create / edit / delete knowledgebase articles & guides?
+            manage_tickets:         false   # Can assign / edit / respond to tickets?
+            manage_users:           false   # Can assign roles to users?
+            post_in_forums:         true    # Can respond to topics or post new ones?
+            manage_forums:          false   # Forums administration
+            manage_account:         false   # Account administration
+            manage_reports:          false    # Can see and run reports
+  
+    techsupport:
+        title:                      Tech Support
+        description:                Allowed to manage tickets, but not edit the knowledgebase
+        permissions:
+            portal_request:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_knowledgebase:   false   # Can create / edit / delete knowledgebase articles & guides?
+            manage_tickets:         true    # Can assign / edit / respond to tickets?
+            manage_users:           false   # Can assign roles to users?
+            post_in_forums:         true    # Can respond to topics or post new ones?
+            manage_forums:          false   # Forums administration
+            manage_account:         false   # Account administration
+            manage_reports:          false    # Can see and run reports
+    writer:
+        title:                      Writer
+        description:                Allowed to edit the knowledgebase, but not manage tickets
+        permissions:
+            portal_request:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_knowledgebase:   true    # Can create / edit / delete knowledgebase articles & guides?
+            manage_tickets:         false   # Can assign / edit / respond to tickets?
+            manage_users:           false   # Can assign roles to users?
+            post_in_forums:         true    # Can respond to topics or post new ones?
+            manage_forums:          false   # Forums administration
+            manage_account:         false   # Account administration
+            manage_reports:          false    # Can see and run reports
+    poweruser:
+        title:                      Power User
+        description:                Can do everything except user administration
+        permissions:
+            portal_request:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_knowledgebase:   true    # Can create / edit / delete knowledgebase articles & guides?
+            manage_tickets:         true    # Can assign / edit / respond to tickets?
+            manage_users:           false   # Can assign roles to users?
+            post_in_forums:         true    # Can respond to topics or post new ones?
+            manage_forums:          true    # Forums administration
+            manage_account:         false   # Account administration
+            manage_reports:          false    # Can see and run reports
+            view_users_info:        true    # Can see users info
+    admin:
+        title:                      Administrator
+        description:                Has total access
+        permissions:
+            manage_tickets:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_users:           true    # Can create / edit / delete knowledgebase articles & guides?
+            portal_request:         true    # Can assign / edit / respond to tickets?
+            post_in_forums:         true    # Can respond to topics or post new ones?
+            manage_forums:          true    # Forums administration
+            manage_account:         false   # Account administration
+            manage_reports:          true    # Can see and run reports
+            view_users_info:        true    # Can see users info
+    account_admin:
+            title:                      Account Admin
+            description:                Can manage account
+            permissions:
+               manage_tickets:         true    # Can sumit request for support?
+               portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+               manage_knowledgebase:   true    # Can browse & search the knowledgebase?
+               manage_users:           true    # Can create / edit / delete knowledgebase articles & guides?
+               portal_request:         true    # Can assign / edit / respond to tickets?
+               post_in_forums:         true    # Can respond to topics or post new ones?
+               manage_forums:          true    # Forums administration
+               manage_account:         true   # Account administration
+               manage_reports:          true    # Can see and run reports
+               view_users_info:        true    # Can see users info
+    supervisor:
+        title:                      Supervisor
+        description:                Can do everything except administrator including reports
+        permissions:
+            portal_request:         true    # Can sumit request for support?
+            portal_knowledgebase:   true    # Can browse & search the knowledgebase?
+            manage_knowledgebase:   true    # Can create / edit / delete knowledgebase articles & guides?
+            manage_tickets:         true    # Can assign / edit / respond to tickets?
+            manage_users:           false   # Can assign roles to users?
+            post_in_forums:         true    # Can respond to topics or post new ones?
+            manage_forums:          true    # Forums administration
+            manage_account:         false   # Account administration
+            manage_reports:          true    # Can see and run reports
+            view_users_info:        true    # Can see users info
+
+

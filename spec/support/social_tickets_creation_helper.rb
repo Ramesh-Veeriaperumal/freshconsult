@@ -17,6 +17,21 @@ module SocialTicketsCreationHelper
       filter HashWithIndifferentAccess.new(exclude_twitter_handles: [])
     end
 
+    factory :seed_dm_twitter_stream, class: Social::TwitterStream do
+      name 'Social Stream'
+      type 'Social::TwitterStream'
+      includes ['Freshdesk']
+      excludes []
+      data HashWithIndifferentAccess.new(kind: 'DM')
+      filter HashWithIndifferentAccess.new(exclude_twitter_handles: [])
+    end
+
+    factory :seed_social_filter_rules, class: Social::TicketRule do
+      filter_data HashWithIndifferentAccess.new(includes: [])
+      action_data HashWithIndifferentAccess.new(product_id: '', group_id: '')
+      sequence(:position) { |n| n }
+    end
+
     factory :seed_facebook_pages, class: Social::FacebookPage do
       sequence(:page_id) { |n| n }
       profile_id (Time.now.to_f * 10**6).to_i

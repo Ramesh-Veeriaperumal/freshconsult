@@ -249,6 +249,8 @@ scenario_automation:
   $ref: ./resource/scenario_automation.yaml
 solution_article:
   $ref: ./resource/solution_article.yaml
+solution_folder:
+  $ref: ./resource/solution_folder.yaml
 extension_generic:
   $ref: ./resource/extension/generic.yaml
 extended_contact:
@@ -602,22 +604,6 @@ help_widget_update:
 help_widget_update_response:
   $ref: ./response/help_widgets/show.yaml
 
-#Help Widget
-help_widget_index:
-  $ref: ./response/help_widgets/index.yaml
-help_widget_create_input:
-  $ref: ./request/help_widgets/create.yaml
-help_widget_create:
-  $ref: ./response/help_widgets/show.yaml
-help_widget_show:
-  $ref: ./request/help_widgets/show.yaml
-help_widget_show_response:
-  $ref: ./response/help_widgets/show.yaml
-help_widget_update:
-  $ref: ./request/help_widgets/update.yaml
-help_widget_update_response:
-  $ref: ./response/help_widgets/show.yaml
-
 #Groups Private API
 group_request:
   $ref: ./definitions/request/groups/private_group_request.yaml
@@ -667,4 +653,29 @@ sla_policy_common:
 #Widget
 widget_attachment_create:
   $ref: ./request/widget_attachment_create.yaml
-  
+
+# Solutions
+solution_home_summary_response:
+  $ref: ./response/solutions/home_summary.yaml
+solution_home_quick_view_response:
+  $ref: ./response/solutions/home_quick_views.yaml
+category_input:
+  $ref: ./request/solutions/category_input.yaml
+category_response:
+  $ref: ./response/solutions/category_response.yaml
+folder_input:
+  $ref: ./request/solutions/folder_input.yaml
+folder_response:
+  $ref: ./response/solutions/folder_response.yaml
+folder_bulk_update_input:
+  $ref: ./request/solutions/folder_bulk_update_input.yaml
+article_bulk_update_input:
+  $ref: ./request/solutions/article_bulk_update_input.yaml
+
+#Custom translations
+languages:
+  $ref: ./response/admin/accounts/languages.yaml
+
+# Config Data 
+configs_show:
+  $ref: ./response/configs/show.yaml

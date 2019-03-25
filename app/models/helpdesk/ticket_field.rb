@@ -20,17 +20,22 @@ class Helpdesk::TicketField < ActiveRecord::Base
     :level, :parent_id, :prefered_ff_col, :import_id, :choices, :picklist_values_attributes, 
     :ticket_statuses_attributes, :ticket_form_id, :column_name, :flexifield_coltype
 
-  CUSTOM_FIELD_PROPS = {  
-    :custom_text            => { :type => :custom, :dom_type => :text},
-    :custom_paragraph       => { :type => :custom, :dom_type => :paragraph},
-    :custom_checkbox        => { :type => :custom, :dom_type => :checkbox},
-    :custom_number          => { :type => :custom, :dom_type => :number},
-    :custom_dropdown        => { :type => :custom, :dom_type => :dropdown_blank},
-    :custom_date            => { :type => :custom, :dom_type => :date},
-    :custom_decimal         => { :type => :custom, :dom_type => :decimal},
-    :nested_field           => { :type => :custom, :dom_type => :nested_field},
-    :encrypted_text         => { :type => :custom, :dom_type => :encrypted_text}
-  }
+  CUSTOM_FIELD_PROPS = {
+    custom_text: { type: :custom, dom_type: :text },
+    custom_paragraph: { type: :custom, dom_type: :paragraph },
+    custom_checkbox: { type: :custom, dom_type: :checkbox },
+    custom_number: { type: :custom, dom_type: :number },
+    custom_dropdown: { type: :custom, dom_type: :dropdown_blank },
+    custom_date: { type: :custom, dom_type: :date },
+    custom_date_time: { type: :custom, dom_type: :date },
+    custom_decimal: { type: :custom, dom_type: :decimal },
+    nested_field: { type: :custom, dom_type: :nested_field },
+    encrypted_text: { type: :custom, dom_type: :encrypted_text }
+  }.freeze
+
+  CUSTOM_DATE_TIME = 'custom_date_time'.freeze
+
+  DATE_TIME_FIELD = 'date_time'.freeze
 
   SECTION_LIMIT = 2
 
@@ -115,17 +120,12 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   after_commit :clear_cache
 
-  after_commit :backup_changes
+  after_commit :construct_model_changes
 
   publishable
 
-  after_commit :discard_changes
-
-  alias :backed_picklist_values_attributes= :picklist_values_attributes=
-
-  def picklist_values_attributes=(attr)
-    backup_changes
-    self.backed_picklist_values_attributes = attr
+  def self.custom_fields_to_show
+    CUSTOM_FIELD_PROPS.except(CUSTOM_DATE_TIME.to_sym)
   end
 
   def update_ticket_filter
@@ -181,29 +181,29 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
 
   # Enumerator constant for mapping the CSS class name to the field type
-  FIELD_CLASS = { :default_subject        => { :type => :default, :dom_type => "text", :form_field => "subject", :visible_in_view_form => false },
-                  :default_requester      => { :type => :default, :dom_type => "requester", :form_field => "email"  , :visible_in_view_form => false },
-                  :default_ticket_type    => { :type => :default, :dom_type => "dropdown_blank"},
-                  :default_status         => { :type => :default, :dom_type => "dropdown"}, 
-                  :default_priority       => { :type => :default, :dom_type => "dropdown"},
-                  :default_group          => { :type => :default, :dom_type => "dropdown_blank", :form_field => "group_id"},
-                  :default_agent          => { :type => :default, :dom_type => "dropdown_blank", :form_field => "responder_id"},
-                  :default_internal_group => { :type => :default, :dom_type => "dropdown_blank", :form_field => "internal_group_id"},
-                  :default_internal_agent => { :type => :default, :dom_type => "dropdown_blank", :form_field => "internal_agent_id"},
-                  :default_source         => { :type => :default, :dom_type => "hidden"},
-                  :default_description    => { :type => :default, :dom_type => "html_paragraph", :form_field => "description_html", :visible_in_view_form => false },
-                  :default_product        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "product_id" },
-                  :default_company        => { :type => :default, :dom_type => "dropdown_blank", :form_field => "company_id" },
-                  :custom_text            => { :type => :custom,  :dom_type => "text"},
-                  :custom_paragraph       => { :type => :custom,  :dom_type => "paragraph"},
-                  :custom_checkbox        => { :type => :custom,  :dom_type => "checkbox"},
-                  :custom_number          => { :type => :custom,  :dom_type => "number"},
-                  :custom_date            => { :type => :custom,  :dom_type => "date"},
-                  :custom_decimal         => { :type => :custom,  :dom_type => "decimal"},
-                  :custom_dropdown        => { :type => :custom,  :dom_type => "dropdown_blank"},
-                  :nested_field           => { :type => :custom,  :dom_type => "nested_field"},
-                  :encrypted_text         => { :type => :custom,  :dom_type => "encrypted_text", :visible_in_view_form => false }
-                }
+  FIELD_CLASS = { default_subject: { type: :default, dom_type: 'text', form_field: 'subject', visible_in_view_form: false },
+                  default_requester: { type: :default, dom_type: 'requester', form_field: 'email', visible_in_view_form: false },
+                  default_ticket_type: { type: :default, dom_type: 'dropdown_blank' },
+                  default_status: { type: :default, dom_type: 'dropdown' },
+                  default_priority: { type: :default, dom_type: 'dropdown' },
+                  default_group: { type: :default, dom_type: 'dropdown_blank', form_field: 'group_id' },
+                  default_agent: { type: :default, dom_type: 'dropdown_blank', form_field: 'responder_id' },
+                  default_internal_group: { type: :default, dom_type: 'dropdown_blank', form_field: 'internal_group_id' },
+                  default_internal_agent: { type: :default, dom_type: 'dropdown_blank', form_field: 'internal_agent_id' },
+                  default_source: { type: :default, dom_type: 'hidden' },
+                  default_description: { type: :default, dom_type: 'html_paragraph', form_field: 'description_html', visible_in_view_form: false },
+                  default_product: { type: :default, dom_type: 'dropdown_blank', form_field: 'product_id' },
+                  default_company: { type: :default, dom_type: 'dropdown_blank', form_field: 'company_id' },
+                  custom_text: { type: :custom,  dom_type: 'text' },
+                  custom_paragraph: { type: :custom,  dom_type: 'paragraph' },
+                  custom_checkbox: { type: :custom,  dom_type: 'checkbox' },
+                  custom_number: { type: :custom,  dom_type: 'number' },
+                  custom_date: { type: :custom,  dom_type: 'date' },
+                  custom_decimal: { type: :custom,  dom_type: 'decimal' },
+                  custom_dropdown: { type: :custom,  dom_type: 'dropdown_blank' },
+                  nested_field: { type: :custom,  dom_type: 'nested_field' },
+                  encrypted_text: { type: :custom,  dom_type: 'encrypted_text' },
+                  custom_date_time: { type: :custom, dom_type: 'date', visible_in_view_form: false }}.freeze
 
   def dom_type
     FIELD_CLASS[field_type.to_sym][:dom_type]
@@ -220,6 +220,26 @@ class Helpdesk::TicketField < ActiveRecord::Base
   
   def is_default_field?
     (FIELD_CLASS[field_type.to_sym][:type] === :default)
+  end
+
+  def parent_field
+    if level == 3
+      parent.child_levels.find { |sub_level_field| sub_level_field.level == 2 }
+    else
+      parent
+    end
+  end
+
+  def flexifield_name
+    column_name || flexifield_def_entry.try(:flexifield_name)
+  end
+
+  def child_nested_field?
+    nested_field? && level.present?
+  end
+
+  def parent_nested_field?
+    nested_field? && level.nil?
   end
 
   def nested_field?
@@ -289,6 +309,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def dropdown_choices_with_name
     level1_picklist_values.collect { |c| [c.value, c.value] }
+  end
+
+  def dropdown_choices_with_picklist_id
+    level1_picklist_values.collect { |c| [c.picklist_id, c.picklist_id] }
   end
 
   def dropdown_choices_with_id
@@ -531,6 +555,82 @@ class Helpdesk::TicketField < ActiveRecord::Base
     # end
   end
 
+  def picklist_values_by_id
+    case level
+    when nil
+      picklist_values.each_with_object({}) do |pv, h|
+        h[pv.picklist_id] = pv.value
+      end
+    when 2
+      parent.level_2_choices_by_id
+    when 3
+      parent.level_3_choices_by_id
+    end
+  end
+
+  def picklist_ids_by_value
+    case level
+    when nil
+      picklist_values.each_with_object({}) do |pv, h|
+        h[pv.value.downcase] = pv.picklist_id
+      end
+    when 2
+      parent.level_2_choices_by_value
+    when 3
+      parent.level_3_choices_by_value
+    end
+  end
+
+  def level_2_choices_by_id
+    choice_hash = {}
+    picklist_values.each do |pv|
+      pv.sub_picklist_values.each do |l2pv|
+        choice_hash[l2pv.picklist_id] = l2pv.value
+      end
+    end
+    choice_hash
+  end
+
+  def level_3_choices_by_id
+    choice_hash = {}
+    picklist_values.each do |pv|
+      pv.sub_picklist_values.each do |l2pv|
+        l2pv.sub_picklist_values.each do |l3pv|
+          choice_hash[l3pv.picklist_id] = l3pv.value
+        end
+      end
+    end
+    choice_hash
+  end
+
+  def level_2_choices_by_value
+    choice_hash = {}
+    picklist_values.each do |pv|
+      pv.sub_picklist_values.each do |l2pv|
+        l2value = l2pv.value.downcase
+        choice_hash[l2value] ||= {}
+        choice_hash[l2value][pv.value] = l2pv.picklist_id
+      end
+    end
+    choice_hash
+  end
+
+  def level_3_choices_by_value
+    choice_hash = {}
+    picklist_values.each do |pv|
+      pv.sub_picklist_values.each do |l2pv|
+        l2pv.sub_picklist_values.each do |l3pv|
+          l3value = l3pv.value.downcase
+          l2value = l2pv.value.downcase
+          choice_hash[l3value] ||= {}
+          choice_hash[l3value][l2value] ||= {}
+          choice_hash[l3value][l2value][pv.value] = l3pv.picklist_id
+        end
+      end
+    end
+    choice_hash
+  end
+
   def encrypted_field?
     field_type.to_sym == CUSTOM_FIELD_PROPS[:encrypted_text][:dom_type]
   end
@@ -541,6 +641,10 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
   def fsm_reserved_custom_field?
     name.starts_with?(Admin::AdvancedTicketing::FieldServiceManagement::Constant::FSM_FIELDS_PREFIX)
+  end
+
+  def custom_date_time_field?
+    self.field_type == CUSTOM_DATE_TIME
   end
 
   protected
@@ -574,7 +678,6 @@ class Helpdesk::TicketField < ActiveRecord::Base
 
     def populate_choices
       return unless @choices
-      backup_changes if nested_field? || status_field?
       if(["nested_field"].include?(self.field_type))
         clear_picklist_cache
         run_through_picklists(@choices, picklist_values, self)

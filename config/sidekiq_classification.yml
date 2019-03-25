@@ -40,6 +40,7 @@
     - undo_send
     - ocr_agent_sync
     - ocr_task_sync
+    - freshvisual_configs
 
   :central_realtime:
     - central_publish
@@ -48,6 +49,7 @@
     - ticket_field_central_publish
     - active_note_central_publish
     - company_central_publish
+    - surveys_central_publish
 
   :scheduled:
     - scheduled_reports
@@ -181,6 +183,7 @@
     - remove_encrypted_fields
     - simple_outreach_import
     - clone
+    - anonymous_account_cleanup
   :external:
     - code_console_execution
     - integrations
@@ -247,14 +250,12 @@
     - learn_spam_message
     - sendgrid_domain_updates
   :archive:
+    - archive_ticket
+    - archive_account_tickets
     - manual_publish
     - delayed_central_publish
-    - archive_ticket_splitter
-    - archive_build_create_ticket
-    - archive_modify_ticket_association
-    - archive_delete_ticket
-    - archive_delete_ticket_dependencies
     - es_v2_queue
+
   :exports:
     - scheduled_ticket_export_config
     - scheduled_ticket_export

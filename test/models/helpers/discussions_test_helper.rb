@@ -1,6 +1,6 @@
 ['forum_helper.rb'].each { |file| require "#{Rails.root}/spec/support/#{file}" }
 
-module DiscussionsTestHelper
+module ModelsDiscussionsTestHelper
   include ForumHelper
 
   def central_publish_post_pattern(post)

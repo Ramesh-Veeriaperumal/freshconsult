@@ -7,6 +7,7 @@ module Proactive
     include MultipleValidationConcern
     include SimpleOutreachConstants
 
+    before_filter :log_cname_params # Added since the action key will not be logged normally
     before_filter :check_proactive_feature, :generate_jwt_token
     skip_before_filter :build_object, only: [:create]
     skip_before_filter :load_object, only: [:destroy, :show, :update, :preview_email]
@@ -36,7 +37,7 @@ module Proactive
     def update
       return unless request_multiple_validation(fetch_validation_classes)
       return unless request_multiple_delegator_validation(DELEGATOR_CLASSES)
-      make_rud_request('put', 'update')
+      make_rud_request('put', 'update', PROACTIVE_SERVICE_ROUTES[:simple_outreaches_route])
     end
 
     def destroy
@@ -86,5 +87,9 @@ module Proactive
         }
       end
 
+      def log_cname_params
+        Rails.logger.info("Processing SimpleOutreachesController : #{action_name}")
+        Rails.logger.info("Controller Parameters : #{cname_params.to_json} ")
+      end
   end
 end

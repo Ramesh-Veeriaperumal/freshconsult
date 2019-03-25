@@ -12,6 +12,7 @@ module Widget
     decorate_views
 
     def create
+      return render_request_error(:contact_form_not_enabled, 400, id: @widget_id) unless @help_widget.contact_form_enabled?
       render_custom_errors unless @item.save
     end
 

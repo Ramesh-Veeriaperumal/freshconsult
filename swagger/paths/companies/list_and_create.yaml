@@ -10,6 +10,10 @@ get:
       in: query
       type: string
       description: Comma-separated, possible values - contacts_count
+    - name: ids
+      in: query
+      type: string
+      description: Comma-separated company ids
   responses:
     200:
       description: Success

@@ -5512,6 +5512,7 @@ ar:
   right: يمين
   footer:
     helpdesk_software: "برنامج مكتب الدعم"
+    helpdesk_software_link: "https://freshdesk.ae/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: "بواسطة Freshdesk"
     submit_feedback: "إرسال ملاحظات"
     footer_feedback_subject_placeholder: "If Freshdesk could launch anything in 2017, what would it be?"

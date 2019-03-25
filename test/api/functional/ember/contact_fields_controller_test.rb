@@ -1,7 +1,7 @@
 require_relative '../../test_helper'
 module Ember
   class ContactFieldsControllerTest < ActionController::TestCase
-    include ContactFieldsTestHelper
+    include ApiContactFieldsTestHelper
     def wrap_cname(params)
       { contact_field: params }
     end

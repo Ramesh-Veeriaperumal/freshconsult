@@ -315,9 +315,9 @@
 
 #Solutions
 /solutions/articles:
-  $ref: ./solutions/articles.yaml
+  $ref: ./solutions/article/list.yaml
 /solutions/articles/{id}/article_content:
-  $ref: ./solutions/article_content.yaml
+  $ref: ./solutions/article/content.yaml
 
 
 #Search
@@ -541,7 +541,19 @@
   $ref: ./help_widgets/update.yaml
 
 /widget/attachment:
-  $ref: ./widget_attachment/create.yaml
+  $ref: ./widget/attachment_create.yaml
+/widget/search/solutions:
+  $ref: ./widget/search_solutions.yaml
+/widget/suggested_articles:
+  $ref: ./widget/suggested_articles.yaml
+/widget/solutions/article/{id}:
+  $ref: /widget/solution_article_show.yaml
+/widget/solutions/article/{id}/hit:
+  $ref: /widget/solution_article_hit.yaml
+/widget/solutions/article/{id}/thumbs_up:
+  $ref: /widget/solution_article_thumbs_up.yaml
+/widget/solutions/article/{id}/thumbs_down:
+  $ref: /widget/solution_article_thumbs_down.yaml
 
 # Business Hours
 /business_hours:
@@ -577,6 +589,30 @@
   $ref: ./admin/custom_translations/primary.yaml
 /admin/custom_translations/{id}:
   $ref: ./admin/custom_translations/secondary.yaml 
+/admin/accounts/languages:
+  $ref: ./admin/accounts/languages.yaml
 
 /audit_log/export:
   $ref: ./audit_logs/export.yaml
+
+/solutions/home/summary:
+  $ref: ./solutions/home_summary.yaml
+/solutions/home/quick_views:
+  $ref: ./solutions/home_quick_views.yaml
+/solution/categories:
+  $ref: ./solutions/category/list_and_create.yaml
+/solutions/categories/{id}:
+  $ref: ./solutions/category/crud.yaml
+/solutions/folders:
+  $ref: ./solutions/folder/create_index.yaml
+/solutions/folders/{id}:
+  $ref: ./solutions/folder/read_update_delete.yaml
+/solutions/folders/bulk_update:
+  $ref: ./solutions/folder/bulk_update.yaml
+/solutions/articles/bulk_update:
+  $ref: ./solutions/article/bulk_update.yaml
+/solutions/drafts:
+  $ref: ./solutions/drafts/index.yaml
+
+/configs/{id}:
+  $ref: ./configs/show.yaml

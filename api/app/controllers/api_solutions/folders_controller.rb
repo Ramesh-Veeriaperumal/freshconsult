@@ -3,7 +3,7 @@ module ApiSolutions
     include SolutionConcern
     include Solution::LanguageControllerMethods
     decorate_views(decorate_objects: [:category_folders])
-    SLAVE_ACTIONS = %w(index category_folders).freeze
+    SLAVE_ACTIONS = %w[index category_folders].freeze
     before_filter :validate_filter_params, only: [:category_folders]
 
     def create
@@ -27,13 +27,14 @@ module ApiSolutions
       if validate_language
         @item = solution_category_meta(params[:id])
         if @item
-          @items = paginate_items(@item.solution_folders.where(language_id: @lang_id).order('solution_folder_meta.position').preload(:solution_folder_meta))
+          load_category_folders
+          response.api_root_key = :folders if private_api?
           render '/api_solutions/folders/index'
         else
           log_and_render_404
         end
       else
-        return false
+        false
       end
     end
 
@@ -41,6 +42,10 @@ module ApiSolutions
 
       def scoper
         current_account.solution_folders
+      end
+
+      def launch_party_name
+        FeatureConstants::KBASE_MINT if private_api?
       end
 
       def meta_scoper
@@ -51,6 +56,11 @@ module ApiSolutions
         @meta = Solution::Builder.folder(solution_folder_meta: @folder_params, language_id: @lang_id)
         @item = @meta.safe_send(language_scoper)
         !(@item.errors.any? || @item.parent.errors.any?)
+      end
+
+      def load_category_folders
+        @items = @item.solution_folders.where(language_id: @lang_id).order('solution_folder_meta.position').preload(:solution_folder_meta)
+        load_objects(@items) unless private_api?
       end
 
       # Load category if create endpoint is triggered with primitive language
@@ -79,7 +89,8 @@ module ApiSolutions
         if create?
           return false unless validate_language && load_category
         end
-        params[cname].permit(*SolutionConstants::FOLDER_FIELDS)
+        fields = private_api? ? SolutionConstants::FOLDER_FIELDS_PRIVATE_API : SolutionConstants::FOLDER_FIELDS
+        params[cname].permit(*fields)
         folder = ApiSolutions::FolderValidation.new(params[cname], @item, @lang_id)
         render_errors folder.errors, folder.error_options unless folder.valid?(action_name.to_sym)
       end
@@ -124,7 +135,7 @@ module ApiSolutions
       end
 
       def set_custom_errors(item = @item)
-        unless item.respond_to?(:parent)
+        if !item.respond_to?(:parent) && item.respond_to?(:customer_folders)
           bad_customer_ids = item.customer_folders.select { |x| x.errors.present? }.map(&:customer_id)
           item.errors[:company_ids] << :invalid_list if bad_customer_ids.present?
           @error_options = { remove: :"customer_folders.customer", company_ids: { list: bad_customer_ids.join(', ').to_s } }

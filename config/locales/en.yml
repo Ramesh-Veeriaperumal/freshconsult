@@ -1,7 +1,7 @@
 
 en:
   meta:
-   language_name: 'English'
+    language_name: 'English'
   date:
     ago: ago
     from: from now
@@ -247,6 +247,8 @@ en:
   reorder_rules: Reorder Active Rules
   plain_yes: "Yes"
   plain_no: "No"
+  disable_omni_title: "Disabling omni-channel"
+  disable_omni_content: "You will lose all settings in chat and caller permanently expect the ability to convert chats and calls to tickets. Are you sure you want to proceed?"
   plain_on: "On"
   plain_off: "Off"
   or: or
@@ -1091,7 +1093,7 @@ en:
         enabled_header: "Social Signals Enabled"
         disabled_header: "Enable Social Signals"
         desc_with_keywords: "Automatically convert relevant tweets to tickets. Supports only English language for now."
-        desc_without_keywords: "Automatically convert only relevant @mentions to tickets. Supports only English language for now." 
+        desc_without_keywords: "Automatically convert only relevant @mentions to tickets. Supports only English language for now."
         convert_tweet: "Start converting tweets into tickets"
         convert_dm: "Start converting direct messages into tickets"
         convert_all: "Convert relevant @mentions into tickets"
@@ -2047,11 +2049,13 @@ en:
         feedbackwidget_height_placeholder: "500"
         feedbackwidget_form_customization: Customize Form
         feedbackwidget_embedded_code: Embedded Widget code
+        feedbackform_embedded_code: Embed code
         feedbackwidget_widget_code: Widget code
         feedbackwidget_embedded_form_code: Embedded form code
         feedbackwidget_form_submit_message: "Form Submit Message"
         feedbackwidget_form_height: "Form height"
         feedbackwidget_form_height_message: "If you see scroll bars in your widget, adjust the widget height."
+        feedbackform_form_height_message: "If you see scroll bars in your widget, adjust the form height."
         feedbackwidget_px: "px"
         thankyou_default: "Thank you for your feedback"
         thankyou_info: "Message to be displayed after a user submits the ticket form"
@@ -2202,7 +2206,7 @@ en:
       failure: You are not permitted to perform certain actions in the scenario. Please contact the administrator
     security:
       index:
-        not_admin_email: "Please enter a valid admin email" 
+        not_admin_email: "Please enter a valid admin email"
         shared_secret: Shared Secret
         remote_login_url: Remote login URL
         shared_secret_info: Please copy this token and keep it safe. You need this to enable Remote authentication. This is a shared secret between you and Freshdesk.
@@ -2271,7 +2275,7 @@ en:
         password_policy_info4: Please note that once you enable password policy for your account (either default or advanced), you will not be able to disable it.
         freshconnect_warning: If you are actively using Discuss, we recommend you to contact us to setup SSO at <a href="mailto:support@freshdesk.com">support@freshdesk.com</a> to avoid loss of conversations in Freshconnect.
       errors:
-        simple_sso: 
+        simple_sso:
           invalid_login_url: Please provide a valid login URL
         saml_sso:
           invalid_login_url: Please provide a valid SAML login URL
@@ -2340,7 +2344,7 @@ en:
         portal_customization: Portal Customization
         portal_settings: Portal settings
         agent_portal: Agent Portal
-        edit_branding: Edit Branding        
+        edit_branding: Edit Branding
         edit_portal: Edit Portal
         customize_portal: "Customize portal"
         save_and_customize: "Save & Customize portal"
@@ -2495,6 +2499,7 @@ en:
         manage_proactive_outreaches: Manage proactive outreaches
         reports: Reports
         view_reports: View reports tab
+        view_analytics: View analytics tab
         admin: Admin
         not_administrator: Not view any Administrator options
         operational_admin: Perform Operational Admin actions
@@ -2529,8 +2534,6 @@ en:
         helpdesk-settings: Helpdesk
         account-settings: Account Settings
         helpdesk-productivity: Helpdesk Productivity
-        canned-response: Canned Response
-        multi-product: Multi-Product
         import: Import data from Zendesk
         agent: Agents
         feedback: Feedback widget
@@ -2633,7 +2636,6 @@ en:
         operating_hours: "Operating hours"
         set_holiday_list: "Set Holiday List"
         business_hours_multiple_locations: "Business hours for multiple locations"
-        multiple_business_hours: "Multiple Business Hours"
         multiple_products: "Multiple Products"
         multi_brand: "Multi brand"
         ticket_creation_rules: "Ticket creation rules"
@@ -3896,6 +3898,7 @@ en:
   add_new_email: Add new email
   chatwidget_title: Live Chat
   feedbackwidget_title: Feedback widget
+  feedbackform_title: Feedback form
   errors_in_your_address: "Errors encountered with your address:"
   set_priority_as: Set Priority as
   sign_in_info: You will be signing in with
@@ -4258,7 +4261,7 @@ en:
       active: "Full-Time"
       occasional: "Occasional"
       deleted: "Deleted"
-      field_agent: "Field Agents"
+      field_agent: "Field technicians"
     sort:
       sorted_by: Sorted by
       name: "Name"
@@ -4675,6 +4678,7 @@ en:
     info1: This is a deleted Agent
     info2: Email has already been taken
     info4: Convert to a Contact
+    hard_deleted_email: The contact associated with this email is being permanently deleted and not accessible. Please wait for this to be completed before trying to add the email.
     contact_exists: A requester with email '%{existing_email}' already exists, %{use_email}
     signature: Signature
     insert_placeholder: Insert Placeholder
@@ -4695,8 +4699,8 @@ en:
       title4: Scopes and Roles
       info14: You can choose which tickets your agents can see by modifying their Ticket Scope. You should also specify what actions an agent is able to perform within your helpdesk by choosing a Role.
       info15: Note that you will not be able to either modify your own roles or delete yourself as an agent.
-      title5: Field Agent
-      info16: A field agent is an expert representative from the company who assists users with maintainance, repairs or any other operations outside the company premises on specified locations.
+      title5: Field technician
+      info16: A field technician is an expert representative from the company who assists users with maintainance, repairs or any other operations outside the company premises on specified locations.
     make_admin: Make this agent an admin
     view_user: View User
     use_email: Use this email
@@ -4706,6 +4710,7 @@ en:
     permissions: Permissions
     role_and_scope: Roles and Scope
     roles: Roles
+    scope: Scope
     remove_role: Remove role
     roles_description: Associate one or more roles with this agent.
     groups_description: Associate one or more groups with this agent.
@@ -4725,7 +4730,7 @@ en:
     occasional_description: This agent will be accessing the support portal
     full_time: Full time
     occasional: Occasional
-    field_agent: Field Agent
+    field_agent: Field technician
     day_pass_expired: Your day pass has expired, please login to acquire a new day pass.
     insufficient_day_pass: Unable to allocate a day pass for you, please contact your administrator.
     password_reset_message: "Do you want to reset %{requester}'s password?"
@@ -4740,6 +4745,7 @@ en:
   right: Right
   footer:
     helpdesk_software: Help Desk Software
+    helpdesk_software_link: "http://www.freshdesk.com"
     by_freshdesk: by Freshdesk
     submit_feedback: Submit Feedback
     footer_feedback_subject_placeholder: Tell us how we can make Freshdesk better
@@ -5529,6 +5535,7 @@ en:
       exceeded_message: "%{current_message} (current text exceeds recommendation)"
   import_updated: Updated
   feedbackwidget_intro: Customize your freshdesk widget below and see a realtime preview.
+  feedbackform_intro: "Customize your form and embed it into your website or product. To add or remove fields, please <a href='/a/admin/ticket_fields' target='_blank'>go to Admin > Ticket Fields</a>"
   chatwidget_intro: Customize your Live Chat widget below and see a realtime preview.
   save: Save
   save_add_child: Save and add child
@@ -5606,7 +5613,9 @@ en:
     ip_restriction: "Secure IP restriction"
     ticket_dispatch_automation: "Ticket dispatch automation"
     app_gallery: "Access to Marketplace"
-    basic_phone: "Basic phone and social channels"
+    basic_phone: "Basic phone channels"
+    basic_social: "Basic social channels"
+    freshcaller: "Freshcaller integration"
     time_event_automation: "Time/event based automations"
     custom_ticket_fields_and_views: "Custom ticket fields/views"
     dkim_dmarc: "DKIM/DMARC"
@@ -5617,7 +5626,10 @@ en:
     dynamic_email_alert: "Dynamic email notifications"
     linked_tickets: "Linked tickets"
     parent_child: "Parent-child ticketing"
+    agent_performance_report: "Agent performance report"
     scheduled_reports: "Scheduled reports"
+    custom_apps: "Custom apps"
+    timesheets: "Time tracking"
     ticket_templates: "Ticket templates"
     custom_surveys: "Custom satisfaction surveys"
     multiple_products: "Multiple products"
@@ -5628,16 +5640,22 @@ en:
     advanced_dkim: "Unlimited DKIM/DMARC"
     ip_whitelisting: "IP whitelisting"
     skill_based_assignment: "Skill based assignment"
+    business_hours_desc: "Business hours"
+    agent_scope_desc: "Agent scope"
+    agent_group_pf_report: "Agent and group performance report"
     advanced_phone_integration: "Advanced phone integration"
     machine_learning: "Machine learning"
     custom_data_center: "Data centre location"
     whitelisted_ip_desc: "Whitelisted IP addresses"
+    scenario_automations_desc: "Scenario automations"
+    custom_tabel_view_desc: "Custom table view"
     skill_based_assignment_desc: "Skill based assignment"
     custom_mailbox_desc: "Custom email servers"
     advanced_phone_desc: "Advanced phone features"
     multiple_products_desc: "Multiple product portals/knowledge base"
     multiple_sla_business_desc: "Multiple SLAs, timezones and business hours"
     forums_desc: "Community forum discussions"
+    canned_forms_desc: "Canned forms"
     portal_customization_desc: "Customer portal customizations"
     custom_roles_desc: "Customized agent roles"
     custom_ssl_desc: "Custom SSL certificates"
@@ -5653,11 +5671,36 @@ en:
     multilingual_kbase_desc: "Multilingual knowledge base articles"
     live_chat_desc: "Live chat configurations and transcripts"
     linked_paren_child_desc: "Linked ticket, parent child ticketing workflows"
+    sla_desc: "SLA policy"
     scheduled_reports_desc: "Scheduled reporting"
     custom_survey_desc: "Customized satisfaction surveys"
     freshchat: "Freshchat integration"
     bot: "Bot"
     custom_dashboard: "Manage team dashboards"
+    phone_calls_chat: " Phone calls & Live chat channels"
+    omni_widget: "Omnichannel widgets"
+    livechat: "Livechat widget with embedded FAQs & multiple channels (200k MUV)"
+    omni_channel_option: "omni channel option"
+    custom_data_center_desc: "Custom data center"
+    sandbox_desc: "Sandbox"
+    custom_dashboard_desc: "Custom dashboard"
+    auto_ticket_assignment_desc: "Round robin"
+    timesheets_desc: "Time sheets"
+    custom_apps_desc: "Custom apps"
+    customer_360_desc: "Customer 360"
+    customer_journey_desc: "Customer journey"
+    custom_surveys_desc: "Custom surveys"
+    agent_performance_report_desc: "Agent performance report"
+    sla_reminders_desc: "SLA reminder"
+    dynamic_email_alert_desc: "Dynamic email notification"
+    agent_collision_desc: "Agent collision"
+    custom_ticket_fields_and_views_desc: "Custom ticket fields and views"
+    helpdesk_report_desc: "helpdesk report"
+    ticket_templates_desc: "Ticket templates"
+    satisfaction_survey_desc: "Satisfaction survey"
+    custom_domain_desc: "Custom domain"
+    app_gallery_desc: "Marketplace"
+    multiple_mailboxes_desc: "Multiple mailbox"
   zendesk_account: "Zendesk Account Details"
   zendesk_import_files: "Select what to import?"
   file_url: Full XML Export URL
@@ -5696,7 +5739,9 @@ en:
   favicon: Favicon
   is_expiring_today: is expiring today
   feedbackwidget_help_para1: The feedback widget lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the widget on your website. Once done, copy-paste the generated embed code in your website or app, to start using the Feedback Widget.
+  feedbackform_help_para1: The feedback form lets you embed a ticket form directly into your website or product. You can customize the look and feel, and placement of the form on your website. Once done, copy-paste the generated embed code in your website or app, to start using the feedback form.
   widget_config_tour_text: Help me get started with the feedback widget
+  form_config_tour_text: Help me get started with the feedback form
   chatwidget_help_content:
     title: Live Chat
     info1: Freshdesk's integrated Live Chat solution lets you view and chat with users on your website, online software, or support portal directly from within Freshdesk. You can customize the whole chat window (including default texts, color, etc) and even proactively initiate chat sessions when visitors spend more time on your site.
@@ -6049,10 +6094,6 @@ en:
     facebook_user_blocked: "Facebook isn't allowing us to send your reply."
     error_on_reply_fb: "Your reply could not be posted on your Facebook page. Please try again later or check with your admin."
     facebook_user_blocked: "Facebook isn't allowing us to send your reply."
-
-    page_already_subscribed: "Some of the facebook pages you are trying to add is already linked to an freshdesk account."
-    no_subscription_response: "Couldn't connect with facebook. Please try again after some time."
-
     user_blocked: "This user has blocked your page. You will not be able to send them any messages."
     not_authorized: You were not authorized by Facebook
     realtime: "<b>Realtime stream feed fetching app is stopped</b> due to some changes on this Facebook account <a href='%{realtime_url}' > Re-authorize and Enable </a> "
@@ -6567,6 +6608,7 @@ en:
   forgot_password: Forgot Password
   change_plan: Change plan
   feedbackwidget_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the Freshdesk widget.
+  feedbackform_embed_code_intro: Please copy and paste the code below anywhere before the &lt;/body&gt; tag in the html template of your site or every page where you'd like to provide the feedback form.
   import_forum: Forums
   title: Title
   new_ticket_created: New Ticket Created
@@ -6682,6 +6724,14 @@ en:
     name: Account Name
     cancel: Cancel
     customize_portal: "Helpdesk rebranding"
+    sort_conversations:
+      label: "Sort conversations"
+      helpnote: "This is the order in which messages will appear in tickets."
+      latest_top: "You'll now see the newest conversation on top."
+      oldest_top: "You'll now see the oldest conversation on top."
+
+      option1: "Show newest on top"
+      option2: "Show oldest on top"
     forums_toggle:
         title: "Forums"
         forums_disabled: "Forums have been disabled for this account."
@@ -8023,10 +8073,11 @@ en:
     paid_apps_trial_info: "Paid Apps are not available for trial at this point of time. Please contact <a href='mailto:support@freshdesk.com'>support@freshdesk.com</a> for further information."
     app_price: "%{price} / %{addon_type} / month"
     paid_app: PAID
-    no_payment_info: We do not have your payment details on file. Please update them to proceed further. <br>
+    no_payment_info: Please update your payment details to proceed further. <br>
     update_payment_info: Update payment info
-    payment_trial_info: This is a paid app with a %{trial_period} day trial period. Once the trial period is over, you will be charged %{price} / %{addon_type} / month. Press Ok to install the app. <br>  %{payment_ok_btn}
-    payment_ok: You will be charged %{price} / %{addon_type} / month for this app. This will add up to <b>%{estimate}</b> for your plan period. Press Ok to install the app. <br>  %{payment_ok_btn}
+    payment_ok: You will be charged %{price} / %{addon_type} / month for this app which will add up to <b>%{estimate}</b> for your plan period. Press <b>Ok</b> to install the app. <br>  %{payment_ok_btn}
+    payment_trial: You will be charged %{price} / %{addon_type} / month for this app once you subscribe for a paid Freshdesk plan. Press <b>Ok</b> to install the app. <br>  %{payment_ok_btn}
+    payment_contact_support: "We do not have your payment details, please contact Freshdesk's Sales or Support team to proceed further."
     v1_incompatible: "Not compatible in Old Freshdesk"
     v2_incompatible: "Not compatible in Mint Experience"
     unsupported_apps: "Unavailable apps"
@@ -8977,7 +9028,7 @@ en:
     shared_ownership:
       label: "Shared Ownership"
       desc: "Get improved agent visibility over tickets that require assistance from specialised teams with the ability to share tickets between agents."
-    ticket_summary: 
+    ticket_summary:
       label: "Summary"
       desc: "Create and share a summary of problems faced by customers when you're working on tickets."
     marketplace_login:
@@ -10329,7 +10380,7 @@ en:
       avg_first_res_time: Average 1st response time
       avg_res_time: Average response time
       avg_resolution_time: Average resolution time
-      received_tickets: Tickets Received 
+      received_tickets: Tickets Received
       tickets_enagaged: Tickets Engaged
       agent: Agent
     timespent:
@@ -12066,7 +12117,7 @@ en:
         invalid_name: "Invalid company name"
         required_name: "Enter company name"
   unique_external_id:
-    helpcard: 
+    helpcard:
       title: "Unique External ID"
       info: Import your customers’ unique IDs and easily identify their conversations in Freshdesk. <br><a href="https://support.freshdesk.com/support/solutions/articles/226804-identifying-contacts-with-an-external-id" target="_blank">Help me set up external ID</a>
 
@@ -12449,7 +12500,7 @@ en:
     dear_user_plain: 'Dear user,'
     portal_support: '%{portal_name} Support'
     cool: 'Cool!'
-    role: 
+    role:
       one: 'role'
       other: 'roles'
     thanks: "Thanks,"
@@ -12462,10 +12513,10 @@ en:
     moderator_approval: "Moderator approval"
     sincerely: "Sincerely,"
     security_notification:
-      trusted_ip_enabled: 
+      trusted_ip_enabled:
         one: 'IP whitelisting has been enabled on your account. Your portal will be accessible only in the IP range below:'
         other: 'IP whitelisting has been enabled on your account. Your portal will be accessible only in the IP ranges below:'
-      trusted_ip_modified: 
+      trusted_ip_modified:
         one: 'The whitelisted IP addresses were modified on your account. Your portal will be accessible only in the IP range below:'
         other: 'The whitelisted IP addresses were modified on your account. Your portal will be accessible only in the IP ranges below:'
       trusted_ip_disabled: "IP whitelisting has been disabled on your account."
@@ -12541,7 +12592,7 @@ en:
       webhook_drop_limit: "A webhook that was scheduled 24 hours ago for execution has now been dropped since you consistently exceeded your API rate limits."
       webhook_drop_support: "If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, click here https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq."
       webhook_drop_support_link: "If you wish to prevent this from happening again, mail us at support@freshdesk.com to raise your API limits. To learn more about how we support webhooks and why we drop them, <a href='https://support.freshdesk.com/support/solutions/articles/217264-webhooks-faq'>click here.</a>"
-  mailer_notifier_subject: 
+  mailer_notifier_subject:
     agent_email_changed: '%{portal_name}: Agent email address changed'
     agent_details_updated: Your %{changed_attributes} in %{account_name} has been updated
     agent_added: "%{account_name}: A new agent was added to your account"
@@ -12607,7 +12658,7 @@ en:
       agent_line: "The administrator has changed the URL of your helpdesk. Going forward, you can login by hitting the URL: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
       admin_line: "The URL of your helpdesk has changed. Going forward, you can login by hitting the URL: <a href='%{url}'> %{url} </a> (bookmark this for easier access)"
       cheers: "Cheers,"
-      team: "Freshdesk Team"  
+      team: "Freshdesk Team"
   fixtures:
     ticket_templates:
       name: "Initiate a Refund"
@@ -12621,9 +12672,9 @@ Date of purchase: <br><br>
 Regards,<br>
 &lt;company name&gt; support.</p></div>"
     canned_response:
-      title: We’ve received your request 
+      title: We’ve received your request
     default_forum:
-      - subject: End of season sale 
+      - subject: End of season sale
         content: "We hope you’re all set for the end of summer sale, 2018.<br><br>
 Tune in on the 5th of August, from 12PM to 4PM, for some really cool offers (it’s the end of summer after all). <br><br>
 Here’s a sneak peek on what’s in store for you - <br><br>
@@ -12669,7 +12720,7 @@ All you have to do is choose ‘fast tracked delivery’, when you’re placing 
 - Joe"
         replies:
           - "Oh, this is a godsend. Thank you!<br><br> - Clarice"
-      - subject: Horrible service 
+      - subject: Horrible service
         content: "One day prior to the delivery of my package, I was told it was “Undeliverable”. Sucks that I had to wait for four days just to hear this.<br><br>
 - Finch"
         replies:
@@ -12696,7 +12747,7 @@ In case you have <i>forgotten your password</i>, click on the <b>forgot password
 Note: Once you verify the updated email details, you can resume your activities on your account."
         - category: Getting started with us
           folder: Your account
-          title: Inviting your team onboard 
+          title: Inviting your team onboard
           description: "Add your team members to your account to make collaboration easy. You can have multiple teams in an account. You can also add one contact to many teams.<br><br>
 Follow these steps to get your team onboard:<br><br>
 <ol><li>Select <b>my account</b> from the menu bar.</li>
@@ -12705,7 +12756,7 @@ Follow these steps to get your team onboard:<br><br>
 <i>Alternatively</i>, from the contacts page, you can toggle on the <b>add member</b> and an invitation link will be sent to that respective contact. <br><br>
 Pro tip - Tag your team to collaborate and get feedback on your work by typing “@” followed by the team name.You can make announcements about progress of your work, deadlines, updates or anything you want to communicate with the rest of your team, by tagging teams."
         - category: Getting started with us
-          folder: Your documents 
+          folder: Your documents
           title: Creating templates
           description: "Tired of documenting the same kind of things (meeting notes, product requirements, and ideas) over and over again every day? Just create a doc and save it as a template, in three simple steps.<br><br>
 Step 1 - Create a new document or reuse an existing one, to fill in the content you’d like to save as a template. <br><br>
@@ -12838,7 +12889,7 @@ In case you miss it, we make two more attempts at the slot selected by you on tw
           description: "<p> </p>"
         - category: Information collected
           folder: Opt-out policy
-          title: Service related announcements            
+          title: Service related announcements
           description: "<p> </p>"
       travel:
         - category: Getting started with us
@@ -12860,8 +12911,8 @@ Note: Once you verify the updated email details, you can resume your activities 
 3. Choose a package from the list of options.<br><br>
 4. Enter the passenger details of one member (an adult).<br><br>
 5. Proceed to make the payment. If you have a discount code please enter it."
-        - category: Your journey 
-          folder: Travel details                
+        - category: Your journey
+          folder: Travel details
           title: Baggage restrictions
           description: "The baggage restrictions for intercontinental flights are as follows: <br><br>
 <ul><li>Economy Class: 1 bag up to 23 kg</li><br>
@@ -12873,7 +12924,7 @@ For carry-on luggage: <br>
 <li>Economy class and Premium Economy class passengers are permitted one carry-on.</li></ul> <br>
 Note: Carry-on luggage can be upto 8 kgs."
         - category: FAQs
-          folder: Flight FAQs 
+          folder: Flight FAQs
           title: "How can I cancel my booking and how much will it cost?"
           description: "Select the trip that you would like to cancel, and click on the “cancel trip” button that is below the trip details. We will hold back 15% of the trip’s fare and transfer the rest of the amount to your account."
         - category: FAQs
@@ -12889,11 +12940,11 @@ Note: Carry-on luggage can be upto 8 kgs."
           title: Membership guidelines
           description: "<p> </p>"
         - category: Membership
-          folder: Platinum club 
+          folder: Platinum club
           title: Gifts and packages
           description: "<p> </p>"
         - category: Membership
-          folder: Platinum club 
+          folder: Platinum club
           title: Trips and hotels
           description: "<p> </p>"
         - category: Membership
@@ -12908,19 +12959,19 @@ Note: Carry-on luggage can be upto 8 kgs."
           folder: Diamond club
           title: Trips and hotels
           description: "<p> </p>"
-        - category: Travel insurance 
+        - category: Travel insurance
           folder: Travel insurance for members
           title: Platinum club members
           description: "<p> </p>"
-        - category: Travel insurance 
+        - category: Travel insurance
           folder: Travel insurance for members
           title: Diamond club members
           description: "<p> </p>"
-        - category: Travel insurance 
+        - category: Travel insurance
           folder: Travel insurance for non-members
           title: Applying for travel insurance
           description: "<p> </p>"
-        - category: Travel insurance 
+        - category: Travel insurance
           folder: Travel insurance for non-members
           title: Availing travel insurance
           description: "<p> </p>"
@@ -12938,7 +12989,7 @@ Note: Carry-on luggage can be upto 8 kgs."
             - "<p>Hey Emily,</p><br /><p>Thanks for writing to us!\n<br />I can confirm that our Aldovia store does have the Mary Jane shoes in size 8. I’ve asked them to block a pair for you. Feel free to pick them up anytime :)</p><br /><p>Cheers,\n<br />Rebecca.</p><br /><p><hr></p><p>P.S. This is a sample email that’s been converted into a ticket by Freshdesk. <a href = https://support.freshdesk.com/support/solutions/articles/37541-forward-and-convert-your-support-emails-to-tickets-in-freshdesk target= _blank>See how you can start converting email</a> from customers into tickets in your helpdesk.</p>"
         - subject: Vintage table lamp - Out of stock?
           description: "<p>Hello,</p><br /><p>I saw a vintage table lamp on your site last month and I’d bookmarked it to buy it later for a friend. I can’t seem to find it anymore though. Is it out of stock or do you not sell those anymore?</p><br /><p>Thanks,\n<br />Matt.</p><p><hr></p><p>P.S. This is a sample message that has been sent to you from website page. <a href = https://support.freshdesk.com/support/solutions/articles/37690-getting-feedback-from-your-website-with-the-feedback-widget target= _blank>See how you can add your own feedback widget</a> on your website or app</p>"
-          replies: 
+          replies:
             - "<p>Hi Matt,</p><br /><p>Thanks for writing in!</p><br /><p>I’m sorry to say those vintage lamps are currently out of stock. I checked with our supplier though and they think it should be available by the end of next month. But if you’d rather not wait that long, I’d love to help you find something else to gift your friend. Let me know what their interests are and I’ll send across a list :)</p><br /><p>Cheers,\n<br />Janet\n<br />Saul’s Emporium Support</p>"
       ecommerce:
         - subject: Need to change my shipping address
@@ -12960,7 +13011,7 @@ I hope this was helpful. If you have any further doubts, feel free to reach out 
 Richard Gere<br>
 Saul's Emporium"
             - "Hey Richard,<br><br> Thank you so much.<br><br> Anne Richard"
-        - subject: Status of my replacement 
+        - subject: Status of my replacement
           description: "I requested a replacement on my order (#123) and I was told that it would take two working days to have my request processed. <br><br>
 It’s been four days now, I received no further information on this and I’m growing tired of waiting. Can you tell me what’s going on? <br><br>
 Matt Rogers"
@@ -13094,12 +13145,17 @@ Thanks,<br>
 Rebecca<br>
 Saul's support"
   help_widget:
-    name: "Welcome to %{name}"
-    form_title: "Send us a message"
-    form_button_text: "Send message"
-    form_submit_message: "Thank you for your feedback"
-    message: "Welcome to support"
+    name: "Welcome to %{name} Support"
+    message: "Welcome to Support"
+    form_title: "Contact us"
+    form_button_text: "Send"
+    form_submit_message: "Thank you for your feedback."
     button_text: "Help"
     untitled_widget: "Untitled widget %{count}"
     invalid_components: "Invalid components hash with %{key}"
     invalid_settings: "Invalid settings hash with %{key}"
+    welcome_message: "Can we help?"
+    predictive_message: "We noticed you’re stuck. Tell us what you were trying to accomplish, and our support team will reach out to you as soon as possible."
+    success_message: "Thanks. We'll be in touch!"
+    invalid_domain: "Sorry, please enter a valid domain."
+    domain_list_empty: "Please specify URLs to track for predictive support."

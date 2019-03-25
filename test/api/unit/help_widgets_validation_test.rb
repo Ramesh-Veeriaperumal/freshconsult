@@ -4,13 +4,13 @@ class HelpWidgetsValidationTest < ActionView::TestCase
 
   def test_create_invalid_without_settings
     Account.stubs(:current).returns(Account.new)
-    request_params  = {
+    request_params = {
       'product_id' => 1,
       'name' => 'Create_Widget'
     }
     helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
     refute helpwidgetsvalidation.valid?(:create)
-    errors=helpwidgetsvalidation.errors.full_messages
+    errors = helpwidgetsvalidation.errors.full_messages
     assert errors.include?("Settings can't be blank")
   end
 
@@ -25,34 +25,32 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     }
     helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
     refute helpwidgetsvalidation.valid?(:create)
-    errors=helpwidgetsvalidation.errors.full_messages
-    p errors
-    assert errors.include?("Length Invalid settings hash with length")
+    errors = helpwidgetsvalidation.errors.full_messages
+    assert errors.include?('Length Invalid settings hash with length')
   end
 
   def test_create_invalid_with_false_settings_type
     Account.stubs(:current).returns(Account.new)
     request_params = {
       product_id: 5,
-      name: "Harry",
+      name: 'Harry',
       settings: true
     }
     helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
     refute helpwidgetsvalidation.valid?(:create)
-    errors=helpwidgetsvalidation.errors.full_messages
-    p errors
-    assert errors.include?("Settings datatype_mismatch")
+    errors = helpwidgetsvalidation.errors.full_messages
+    assert errors.include?('Settings datatype_mismatch')
   end
 
   def test_create_valid_with_expected_parameters
     Account.stubs(:current).returns(Account.new)
     request_params = {
       product_id: nil,
-      name: "Harry",
+      name: 'Harry',
       settings: {
         components: {
-        contact_form: true
-      }
+          contact_form: true
+        }
       }
     }
     helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
@@ -61,7 +59,7 @@ class HelpWidgetsValidationTest < ActionView::TestCase
 
   def test_update_invalid_with_invalid_appearance_hash
     Account.stubs(:current).returns(Account.new)
-    request_params ={
+    request_params = {
       id: 1,
       settings: {
         appearance: {
@@ -71,9 +69,8 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     }
     helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
     refute helpwidgetsvalidation.valid?(:update)
-    errors=helpwidgetsvalidation.errors.full_messages
-    p errors
-    assert errors.include?("Sdsd Invalid settings hash with sdsd")
+    errors = helpwidgetsvalidation.errors.full_messages
+    assert errors.include?('Sdsd Invalid settings hash with sdsd')
   end
 
   def test_update_invalid_with_invalid_contact_form_hash
@@ -88,9 +85,8 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     })
     helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
     refute helpwidgetsvalidation.valid?(:update)
-    errors=helpwidgetsvalidation.errors.full_messages
-    p errors
-    errors.include?("Sdsd Invalid settings hash with contact_form : sdsd")
+    errors = helpwidgetsvalidation.errors.full_messages
+    errors.include?('Sdsd Invalid settings hash with contact_form : sdsd')
   end
 
   def test_update_valid_with_valid_hashes
@@ -157,8 +153,22 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     })
     helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
     refute helpwidgetsvalidation.valid?(:update)
-    errors=helpwidgetsvalidation.errors.full_messages
-    assert errors.include?("Settings invalid_format")
+    errors = helpwidgetsvalidation.errors.full_messages
+    assert errors.include?('Settings invalid_format')
+  end
+
+  def test_update_components_with_predictive_support
+    Account.stubs(:current).returns(Account.new)
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'components' => {
+          'predictive_support' => true
+        }
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    assert helpwidgetsvalidation.valid?(:update)
   end
 
   def test_update_valid_with_valid_appearance_settings
@@ -175,19 +185,66 @@ class HelpWidgetsValidationTest < ActionView::TestCase
     })
     helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
     assert helpwidgetsvalidation.valid?(:update)
-    errors=helpwidgetsvalidation.errors.full_messages
-    assert errors.blank?
   end
 
-    def test_update_valid_with_invalid_appearance_settings
+  def test_update_valid_predictive_support_hash
     Account.stubs(:current).returns(Account.new)
     request_params = ActionController::Parameters.new ({
       'id' => 1,
       'settings' => {
-        'appearance' => {
-          'color_schema' => 110,
-          'gradient' => 29,
-          'pattern' => 4
+        'predictive_support' => {
+          'domain_list' => ['us.ikl.ok'],
+          'welcome_message' => 'hi',
+          'success_message' => 'Succcess',
+          'message' => 'hello'
+        }
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    errors = helpwidgetsvalidation.errors.full_messages
+    assert errors.blank?
+  end
+
+  def test_update_invalid_predictive_support_hash
+    Account.stubs(:current).returns(Account.new)
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'predictive_support' => {
+          'welcome' => 'hi',
+          'success' => 'Succcess',
+          'message' => 'hello'
+        }
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    refute helpwidgetsvalidation.valid?(:update)
+  end
+
+  def test_update_empty_text_fields_predictive_support_hash
+    Account.stubs(:current).returns(Account.new)
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'predictive_support' => {
+          'domain_list' => ['ui.okl.po'],
+          'welcome_message' => nil,
+          'success_message' => nil,
+          'message' => nil
+        }
+      }
+    })
+    helpwidgetsvalidation = HelpWidgetValidation.new(request_params)
+    assert helpwidgetsvalidation.valid?(:update)
+  end
+
+  def test_update_domain_array_nil_predictive_support_hash
+    Account.stubs(:current).returns(Account.new)
+    request_params = ActionController::Parameters.new ({
+      'id' => 1,
+      'settings' => {
+        'predictive_support' => {
+          'domain_list' => nil
         }
       }
     })

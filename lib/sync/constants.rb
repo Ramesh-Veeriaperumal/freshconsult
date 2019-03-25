@@ -38,6 +38,11 @@ module Sync::Constants
     ["products",                     []]
   ]
 
+  CLONE_RELATIONS       = [
+    ['twitter_handles',               [{ twitter_streams: [:filter_rules, { accessible: [:group_accesses, :user_accesses] }] }, :avatar]],
+    ['custom_twitter_streams',        [:ticket_rules, { accessible: [:group_accesses, :user_accesses] }]]
+  ]
+
   ASSOCIATIONS_TO_REINDEX = [
     "scn_automations",
     "canned_responses",

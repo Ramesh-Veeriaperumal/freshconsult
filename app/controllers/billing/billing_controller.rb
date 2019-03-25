@@ -158,6 +158,9 @@ class Billing::BillingController < ApplicationController
 
       update_features if update_features?
       @account.account_additional_settings.set_payment_preference(@billing_data.subscription.cf_reseller)
+      if plan_changed? && omni_plan_change?
+       ProductFeedbackWorker.perform_async(omni_channel_ticket_params)
+      end
     end
 
     def subscription_activated(content)
@@ -254,8 +257,7 @@ class Billing::BillingController < ApplicationController
     end
 
     def update_features
-      SAAS::SubscriptionActions.new.change_plan(@account, @old_subscription, @existing_addons)
-      SAAS::SubscriptionEventActions.new(@account, @old_subscription, @existing_addons).change_plan if @account.new_pricing_launched?
+      SAAS::SubscriptionEventActions.new(@account, @old_subscription, @existing_addons).change_plan
       if Account.current.active_trial.present?
         Account.current.active_trial.update_result!(@old_subscription, Account.current.subscription)
       end

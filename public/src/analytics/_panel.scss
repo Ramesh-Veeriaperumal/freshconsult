@@ -1,0 +1,39 @@
+// Panel settings
+$border-color: #eee;
+
+// Report content panel styles
+.survey_report_content_wrapper{
+  border:1px solid #EBEBEB;
+  border-top: 0;
+  padding: 12px;
+}
+.report-panel-wrapper{
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background-color: #F5F7F9;
+    overflow: scroll;
+  //  @include border-radius(6px);
+  //  border: 1px solid $border-color;
+	.report-panel-left{
+		width: 356px;
+		@include left(0);
+		position: absolute;
+  //  background: #F8F8F8;
+	}
+	.report-panel-content{
+		@include margin-left(388px);
+  //  padding: 20px;
+  //  width: 67%;
+		@include min-height(600px);
+		background: #fff;
+    height: 100%;
+  /*  border:1px solid #EBEBEB;
+      border-radius: 5px; */
+    box-shadow: -1px 1px 1px #EBEBEB;
+	//	@include border-left(1px solid $border-color);
+	}
+	.no_questions{
+		@include margin-left(0);
+	}
+}

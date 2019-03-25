@@ -346,7 +346,7 @@ module ApiSolutions
     def test_index
       get :index, controller_params
       assert_response 200
-      categories = @account.reload.solution_categories.joins(:solution_category_meta, {solution_category_meta: :portal_solution_categories}).where('solution_categories.language_id = ?',@account.language_object.id).order('portal_solution_categories.position').select{|x| x unless x.parent.is_default }
+      categories = @account.reload.solution_categories.joins(:solution_category_meta).where('solution_categories.language_id = ?', @account.language_object.id).select { |x| x unless x.parent.is_default }
       pattern = categories.map { |category| solution_category_pattern(category) }
       match_json(pattern)
     end
@@ -354,7 +354,7 @@ module ApiSolutions
     def test_index_with_language_param
       get :index, controller_params(language: @account.language)
       assert_response 200
-      categories = @account.reload.solution_categories.joins(:solution_category_meta, {solution_category_meta: :portal_solution_categories}).where('solution_categories.language_id = ?',@account.language_object.id).order('portal_solution_categories.position').select{|x| x unless x.parent.is_default }
+      categories = @account.reload.solution_categories.joins(:solution_category_meta).where('solution_categories.language_id = ?', @account.language_object.id).select { |x| x unless x.parent.is_default }
       pattern = categories.map { |category| solution_category_pattern(category) }
       match_json(pattern)
     end
@@ -363,6 +363,31 @@ module ApiSolutions
       get :index, controller_params(language: 'aaa')
       assert_response 404
       match_json(request_error_pattern(:language_not_allowed, code: 'aaa', list: (@account.supported_languages + [@account.language]).sort.join(', ')))
+    end
+
+    def test_index_with_portal_id
+      get :index, controller_params(portal_id: @account.main_portal.id)
+      assert_response 200
+      categories = @account.reload.solution_categories.joins(:solution_category_meta, solution_category_meta: :portal_solution_categories).where('solution_categories.language_id = ? AND portal_solution_categories.portal_id = ?', @account.language_object.id, @account.main_portal.id).order('portal_solution_categories.position').select { |x| x unless x.parent.is_default }
+      pattern = categories.map { |category| solution_category_pattern(category) }
+    end
+
+    def test_index_with_invalid_portal_id_param
+      get :index, controller_params(portal_id: -2)
+      assert_response 400
+      match_json([bad_request_error_pattern('portal_id', :'must be greater than 0')])
+    end
+
+    def test_index_with_invalid_portal_id
+      get :index, controller_params(portal_id: @account.portals.last.id + 20)
+      assert_response 400
+      match_json([bad_request_error_pattern('portal_id', :invalid_portal_id)])
+    end
+
+    def test_index_with_invalid_query_param
+      get :index, controller_params(test: 'test')
+      assert_response 400
+      match_json([bad_request_error_pattern('test', :invalid_field)])
     end
 
     # Query Params test

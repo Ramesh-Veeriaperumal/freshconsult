@@ -25,11 +25,23 @@ class TicketDecorator < ApiDecorator
     @permissibles = options[:permissibles]
     @last_broadcast_message = options[:last_broadcast_message]
     @sideload_options = options[:sideload_options] || []
+    @discard_options = options[:discard_options] || []
+    @custom_fields_mapping = Account.current.ticket_fields_from_cache.select { |field| field.default == false }.map { |x| [x.name, x.field_type] }.to_h
   end
 
   def custom_fields
     custom_fields_hash = {}
-    custom_field_via_mapping.each { |k, v| custom_fields_hash[@name_mapping[k]] = format_date(v) }
+    custom_field_via_mapping.each do |k, v|
+      custom_fields_hash[@name_mapping[k]] = if v.respond_to?(:utc)
+                                               if @custom_fields_mapping[k] == Helpdesk::TicketField::CUSTOM_DATE_TIME
+                                                 format_date(v, true)
+                                               else
+                                                 format_date(v)
+                                               end
+                                             else
+                                               v
+                                             end
+    end
     custom_fields_hash
   end
 
@@ -130,6 +142,14 @@ class TicketDecorator < ApiDecorator
       tweet_id: record.tweet.tweet_id.to_s,
       tweet_type: record.tweet.tweet_type,
       twitter_handle_id: record.tweet.twitter_handle_id
+    }
+  end
+
+  def ebay
+    return unless Account.current.has_feature?(:ecommerce) && record.ecommerce? && record.ebay_account.present?
+
+    {
+      name: record.ebay_account.name
     }
   end
 
@@ -286,6 +306,7 @@ class TicketDecorator < ApiDecorator
       cc_emails: cc_email.try(:[], :cc_emails),
       fwd_emails: cc_email.try(:[], :fwd_emails),
       reply_cc_emails: cc_email.try(:[], :reply_cc),
+      ticket_cc_emails: cc_email.try(:[], :tkt_cc),
       fr_escalated: fr_escalated,
       spam: spam,
       email_config_id: email_config_id,
@@ -295,10 +316,10 @@ class TicketDecorator < ApiDecorator
       association_type: association_type,
       associated_tickets_count: subsidiary_tkts_count,
       can_be_associated: can_be_associated?,
-      custom_fields: custom_fields,
       tags: tag_names
     }
-    [hash, simple_hash, feedback_hash, shared_ownership_hash, skill_hash].inject(&:merge)
+    hash[:custom_fields] = custom_fields unless @discard_options.include?('custom_fields')
+    [hash, simple_hash, feedback_hash, shared_ownership_hash, skill_hash].inject(&:merge!)
   end
 
   def to_search_hash

@@ -3,6 +3,7 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
   include ::Freshcaller::CallConcern
   skip_before_filter :check_privilege, :set_current_account, :check_day_pass_usage_with_user_time_zone
   before_filter :reset_current_user
+  before_filter :filter_current_user, only: [:create, :update]
   before_filter :custom_authenticate_request
   decorate_views(decorate_object: [:create])
 
@@ -16,7 +17,7 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
   end
 
   def update
-    call_delegator = CallDelegator.new(@item, @options.slice(:ticket_display_id, :agent_email, :contact_id))
+    call_delegator = CallDelegator.new(@item, @options.slice(:ticket_display_id, :agent_email, :call_agent_email, :contact_id))
     if call_delegator.valid?
       load_call_attributes call_delegator
       handle_call_status_flows
@@ -33,6 +34,10 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
   end
 
   private
+
+    def filter_current_user
+      @load_current_user = true
+    end
 
     def scoper
       current_account.freshcaller_calls
@@ -114,8 +119,20 @@ class Channel::Freshcaller::CallsController < ApiApplicationController
 
     def load_call_attributes(delegator)
       @ticket = delegator.ticket || @item.associated_ticket
-      @agent = delegator.agent
+      @agent = delegator.agent unless non_attended_call?
       @contact = delegator.contact || load_contact_from_search || load_contact_from_number
+      resolve_creator delegator
+      resolve_call_agent delegator
+    end
+
+    def resolve_creator(delegator)
+      return @creator = delegator.creator unless non_attended_call?
+
+      reset_current_user
+    end
+
+    def resolve_call_agent(delegator)
+      @call_agent = delegator.call_agent unless non_attended_call?
     end
 
     def reset_current_user

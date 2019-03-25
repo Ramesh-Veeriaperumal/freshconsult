@@ -24,11 +24,12 @@ class Helpdesk::Ticket < ActiveRecord::Base
     t.add :source_hash, as: :source
     t.add :requester_id
     t.add :skill_id, :if => proc { Account.current.skill_based_round_robin_enabled? }
-    t.add :custom_fields_hash, as: :custom_fields
+    t.add :central_custom_fields_hash, as: :custom_fields
     t.add :product_id
     t.add :company_id
     t.add :sla_policy_id
-    t.add :association_type
+    t.add :association_hash, as: :associates
+    t.add :associates_rdb
     t.add :isescalated, as: :is_escalated
     t.add :fr_escalated
     t.add :resolution_time_by_bhrs, as: :time_to_resolution_in_bhrs
@@ -122,16 +123,37 @@ class Helpdesk::Ticket < ActiveRecord::Base
     }
   end
 
-  def custom_fields_hash
+  def association_hash
+    render_assoc_hash(association_type)
+  end
+
+  def render_assoc_hash(current_association_type)
+    return nil if current_association_type.blank?
+
+    {
+      id: current_association_type,
+      type: TICKET_ASSOCIATION_TOKEN_BY_KEY[current_association_type]
+    }
+  end
+
+  def central_custom_fields_hash
+    pv_transformer = Helpdesk::Ticketfields::PicklistValueTransformer::StringToId.new(self)
     custom_ticket_fields.inject([]) do |arr, field|
       begin
         field_value = safe_send(field.name)
-        arr.push({
-          ff_alias: field.flexifield_def_entry.flexifield_alias,
-          ff_name: field.flexifield_def_entry.flexifield_name,
-          ff_coltype: field.flexifield_def_entry.flexifield_coltype,
-          field_value: field.field_type == 'custom_date' ? utc_format(field_value) : field_value
-        })
+        ff_def_entry = field.flexifield_def_entry
+        custom_field = {
+          name: ff_def_entry.flexifield_alias,
+          label: field.label,
+          type: ff_def_entry.flexifield_coltype,
+          value: field.field_type == 'custom_date' ? utc_format(field_value) : field_value,
+          column: ff_def_entry.flexifield_name
+        }
+        if field.flexifield_coltype == 'dropdown'
+          picklist_id = pv_transformer.transform(field_value, ff_def_entry.flexifield_name) if field_value # fetch picklist_id of the field
+          custom_field[:choice_id] = picklist_id
+        end
+        arr.push(custom_field)
       rescue Exception => e
         Rails.logger.error "Error while fetching ticket custom field value - #{e}\n#{e.message}\n#{e.backtrace.join("\n")}"
         NewRelic::Agent.notice_error(e)
@@ -174,6 +196,11 @@ class Helpdesk::Ticket < ActiveRecord::Base
     column_attribute_mapping.each_pair do |key, val| 
       changes[val] = changes.delete(key) if changes.key?(key)
     end
+    changes[:status] = [old_status_hash(changes[:status][0]), status_hash] if status_modified?
+    if association_type_modified?
+      changes[:associates] = [old_association_hash, association_hash]
+      changes.delete(:association_type)
+    end
     changes[:description] = [nil, DONT_CARE_VALUE] if description_content_changed?
     # Handling changes to custom_fields - flexifield name should be replaced with flexifield alias
     flexifield_changes = changes.select { |k, v| k.to_s.starts_with?(*FLEXIFIELD_PREFIXES) }
@@ -182,6 +209,25 @@ class Helpdesk::Ticket < ActiveRecord::Base
       changes[custom_field_name_mapping[key.to_s]] = val
     end
     changes.except(*flexifield_changes.keys)
+  end
+
+  def status_modified?
+    @model_changes.present? && @model_changes[:status].present?
+  end
+
+  def association_type_modified?
+    @model_changes.present? && @model_changes[:association_type].present?
+  end
+
+  def old_status_hash(old_status_val)
+    ticket_status = Account.current.ticket_status_values_from_cache.find { |status| status.status_id == old_status_val }
+    return {} if ticket_status.blank?
+
+    { id: ticket_status.status_id, name: ticket_status.name }
+  end
+
+  def old_association_hash
+    render_assoc_hash(@model_changes[:association_type][0])
   end
 
   def system_changes_for_central

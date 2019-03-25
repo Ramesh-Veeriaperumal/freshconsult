@@ -303,16 +303,20 @@ class Admin::VaRulesController < Admin::AdminController
       ]
     end
 
+    def ticket_field_filters_for_automations
+      current_account.ticket_fields.non_encrypted_custom_fields.preload(:flexifield_def_entry)
+    end
+
 
     def add_custom_filters filter_hash
       nested_special_case = [[ANY_VALUE[:with_none], t('any_val.any_value')], ['', t('none')]]
       nested_special_case << [ANY_VALUE[:without_none], t('any_val.excluding_none')]  if current_account.va_any_field_without_none_enabled?
 
-      cf = current_account.ticket_fields.non_encrypted_custom_fields.preload(:flexifield_def_entry)
+      cf = ticket_field_filters_for_automations
       cf.select!{|field| field.flexifield_def_entry.flexifield_name.starts_with?('ff') } if supervisor_rules_controller?
       
-      # Skipping Fields reserved for FSM.
-      cf.reject! { |field| field.fsm_reserved_custom_field? }
+      # Skipping Fields reserved for FSM and custom Datetime fields.
+      cf.reject! { |field| field.fsm_reserved_custom_field? || field.custom_date_time_field? }
       unless cf.blank?
         filter_hash.push({ :name => -1,
                            :value => "---------------------"

@@ -78,7 +78,7 @@ class Support::CustomSurveysController < SupportController #for Portal Customiza
     end
     
     def load_survey_result
-      @survey_result = current_account.custom_survey_results.find(params[:survey_result])
+      @survey_result = current_account.custom_survey_results.preload(survey: [survey_questions: [:survey, :custom_field_choices_desc]]).find(params[:survey_result])
       send_result_error unless @survey_result
     end
     

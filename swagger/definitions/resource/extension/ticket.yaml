@@ -14,6 +14,10 @@ allOf:
         type: array
         items:
           type: string
+      ticket_cc_emails:
+        type: array
+        items:
+          type: string
       fr_escalated:
         type: boolean
       spam:

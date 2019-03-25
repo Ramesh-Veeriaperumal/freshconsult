@@ -8,7 +8,7 @@ require Rails.root.join('test', 'core', 'helpers', 'forums_test_helper.rb')
 
 class ClearModerationRecordsTest < ActionView::TestCase
   include AccountTestHelper
-  include ForumsTestHelper
+  include CoreForumsTestHelper
 
   def setup
     Account.stubs(:current).returns(Account.first)

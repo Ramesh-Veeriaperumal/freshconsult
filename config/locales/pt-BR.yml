@@ -327,11 +327,11 @@ pt-BR:
   reauthorize_facebook: Reautorizar sua conta do Facebook.
   twitter_reauth: >-
     Seu canal do Twitter está inacessível. Parece que seu nome de usuário ou sua
-    senha foram alterados recentemente. 
+    senha foram alterados recentemente.
   reauthorize_twitter: Reautorizar seu acesso com o Twitter.
   ecommerce_reauth: >-
     Não é possível acessar sua conta de comércio eletrônico. Parece que seu
-    token de autorização expirou. 
+    token de autorização expirou.
   reauthorize_ecommerce: Reautorizar sua conta de comércio eletrônico
   schedule_a_complimentary_session: Marque uma sessão gratuita
   choose_a_plan: Escolher um plano
@@ -543,7 +543,7 @@ pt-BR:
         de sua lista suspensa e pressione a tecla TAB uma ou duas vezes para
         criar o recuo. Converteremos o texto dessa área nos itens da lista
         suspensa com base no recuo, por isso, escreva o texto com atenção.<a
-        target='_blank' href=%{learn_more}> Saiba mais</a> 
+        target='_blank' href=%{learn_more}> Saiba mais</a>
       nested_field_helptext: ''
       dropdown_items_edit: Itens da lista suspensa - modo de edição
       drop_down_items_edit: Itens da lista suspensa - Editar
@@ -1340,7 +1340,7 @@ pt-BR:
           de sua lista suspensa e pressione a tecla TAB uma ou duas vezes para
           criar o recuo. Converteremos o texto dessa área nos itens da lista
           suspensa com base no recuo, por isso, escreva o texto com atenção.<a
-          target='_blank' href=%{learn_more}> Saiba mais</a> 
+          target='_blank' href=%{learn_more}> Saiba mais</a>
         dropdown_items_edit: Itens da lista suspensa - modo de edição
         dropdown_items_preview: Itens da lista suspensa - Visualização
         status_choices: Opções de status
@@ -1435,7 +1435,7 @@ pt-BR:
           de sua lista suspensa e pressione a tecla TAB uma ou duas vezes para
           criar o recuo. Converteremos o texto dessa área nos itens da lista
           suspensa com base no recuo, por isso, escreva o texto com atenção.<a
-          target='_blank' href=%{learn_more}> Saiba mais</a> 
+          target='_blank' href=%{learn_more}> Saiba mais</a>
         dropdown_items_edit: Itens da lista suspensa - modo de edição
         dropdown_items_preview: Itens da lista suspensa - Visualização
         status_choices: Opções de status
@@ -1762,7 +1762,7 @@ pt-BR:
             de clientes enviadas para sua conta do eBay. Depois que ele for
             configurado, todas as consultas dos seus clientes do eBay serão
             automaticamente convertidas em tickets. Você também pode
-            respondê-las diretamente no Freshdesk. 
+            respondê-las diretamente no Freshdesk.
       index:
         title: Contas de comércio eletrônico
         renew: Renovar token
@@ -2706,7 +2706,7 @@ pt-BR:
           "para" e "do" Freshdesk.
         customer_portal_ssl_warning: >-
           Como um URL do helpdesk personalizado está configurado em sua conta,
-          você será redirecionado para 
+          você será redirecionado para
         multiple_product_ssl_warning: O SSL não será aplicável se vários produtos estiverem configurados.
         enabled: Habilitado
         disabled: Desabilitado
@@ -3513,7 +3513,7 @@ pt-BR:
         dependendo do volume de seus dados
       info1: >-
         A importação foi concluída com sucesso. Abra seu helpdesk e vá para
-        Cliente->%{uc_type} para ver os %{type} recém-adicionados. 
+        Cliente->%{uc_type} para ver os %{type} recém-adicionados.
       info2: >-
         Não foi possível importar todos os %{type} do arquivo CSV que você
         enviou. Veja o resumo abaixo:
@@ -3627,7 +3627,7 @@ pt-BR:
       bulk_merge_success: >-
         O ticket com os IDs %{merged_tickets} foram mesclados no ticket <a
         href="/helpdesk/tickets/%{target_ticket}">%{target_ticket_subject} nº
-        %{target_ticket}</a> 
+        %{target_ticket}</a>
       link:
         success: O ticket foi associado com sucesso ao controlador
         delay_link: >-
@@ -3854,13 +3854,13 @@ pt-BR:
     realtime: >-
       <b>O aplicativo de coleta de feed de transmissão em tempo real foi
       interrompido</b> devido a algumas alterações nesta conta do Facebook. <a
-      href='%{realtime_url}' >Reautorizar e habilitar</a> 
+      href='%{realtime_url}' >Reautorizar e habilitar</a>
     user_creation_failed: >-
       Erro ao criar usuário no Freshdesk. Tente novamente mais tarde ou entre em
       contato com o suporte pelo e-mail support@freshdesk.com.
   import_user_notification: >-
     Você pode enviar o e-mail de ativação do usuário para os contatos importados
-    da guia Clientes 
+    da guia Clientes
   what_is_cvv: O que é cvv?
   pro_details: >-
     Todas as funcionalidades do plano &quot;Básico&quot; mais automação de
@@ -4242,7 +4242,7 @@ pt-BR:
       ticket_merge:
         short: >-
           {{user_path}} mesclou o ticket {{notable_path}} com
-          {{merge_ticket_path}} 
+          {{merge_ticket_path}}
         long: >-
           {{user_path}} mesclou o ticket {{notable_path}} para
           {{merge_ticket_path}}
@@ -4999,7 +4999,7 @@ pt-BR:
       para visualizar os tickets filhos.
     parent_not_accessible: >-
       Opa! Parece que não podemos acessar os modelos de ticket para criar
-      tickets filhos. 
+      tickets filhos.
     limit_exceeded: >-
       Não foi possível aplicar o modelo, porque o número de tickets filhos
       excede o limite permitido de %{limit}.
@@ -5621,7 +5621,7 @@ pt-BR:
       seus analistas.
     info6: >-
       Enviar e-mail para o analista quando um novo ticket for atribuído a este
-      grupo 
+      grupo
     info7: 'se o ticket permanecer não atribuído por mais de '
     info8: >-
       Novo: permite que seus supervisores gerenciem a atribuição automática de
@@ -5711,7 +5711,7 @@ pt-BR:
       serão distribuídos entre os analistas na atribuição de tickets. Se você
       desejar atribuir os tickets manualmente ou distribuí-los usando o
       Distribuidor ou as automações do Supervisor, você pode DESLIGAR este
-      recurso. 
+      recurso.
     capping_ticket: ticket
     capping_tickets: tickets
     page_not_found: >-
@@ -5928,6 +5928,7 @@ pt-BR:
   right: Direita
   footer:
     helpdesk_software: Software de helpdesk automatizado
+    helpdesk_software_link: "https://freshdesk.com/br/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: do Freshdesk
     submit_feedback: Enviar feedback
     footer_feedback_subject_placeholder: Nos diga como podemos fazer o Freshdesk melhor
@@ -6318,18 +6319,18 @@ pt-BR:
       why_we_love_cookies: Por que adoramos os cookies
       cookie_dialog_info1: >-
         Usamos os cookies para oferecer a você uma experiência melhor no
-        Freshdesk. 
+        Freshdesk.
       cookie_dialog_info2: >-
         Você pode saber mais sobre os tipos de cookies que usamos, por quê e
         como eles são usados em %{privacy_link}. Se você odeia cookies, ou está
         de dieta, você também pode desativar todos eles, mas observe que os
         serviços do Freshdesk são bem grandes em alguns cookies (adoramos
         aqueles com gotas de chocolate), e algumas partes do Freshdesk podem não
-        funcionar adequadamente se você desativar os cookies. 
+        funcionar adequadamente se você desativar os cookies.
       cookie_dialog_info3: >-
         Também consideramos que você concorda em usar os cookies e aceita isso,
         conforme descrito em %{privacy_link}, ao menos que você escolha
-        desabilitar todos eles por meio de seu navegador. 
+        desabilitar todos eles por meio de seu navegador.
       privacy_policy: Política de privacidade
     no_topics_in_this_view: ~ Nenhum tópico nesta exibição ~
     reported: informado
@@ -6900,7 +6901,7 @@ pt-BR:
       diretamente.
     info16: >-
       Um artigo <b>publicado</b> estará visível no portal de autoatendimento e
-      também será exibido exibido nos resultados de pesquisa. 
+      também será exibido exibido nos resultados de pesquisa.
     info17: >-
       O <b>rascunho</b> dos arquivos ficam visíveis somente aos analistas e
       serão exibidos apenas nos resultados de pesquisa dos analistas.
@@ -6954,7 +6955,7 @@ pt-BR:
       A seção <b>Todos os rascunhos</b> listará todos os artigos com o status de
       rascunho. Se tiver configurado vários portais, você pode filtrar os
       arquivos em rascunho em qualquer um dos seus portais selecionando o menu
-      suspenso. 
+      suspenso.
     kbase_email_info: >-
       Todos os e-mails enviados por agentes para <b>%{email}</b> serão
       armazenados como rascunhos.
@@ -7254,7 +7255,7 @@ pt-BR:
   portal_customizer_option_tickets: Os usuários podem enviar um ticket sem fazer login.
   feedbackwidget_help_para2: >-
     É possível abrir uma guia personalizável em um formuláro de ticket de
-    suporte. 
+    suporte.
   tag:
     title: Tags
   email_notifications:
@@ -7379,7 +7380,7 @@ pt-BR:
           para o suporte em seu helpdesk, você poderá criar uma notificação
           dessa específica para cada idioma. O ícone <i
           class="common-icon-outdated"></i> indica que as traduções da
-          notificação em outros idiomas podem estar desatualizadas. 
+          notificação em outros idiomas podem estar desatualizadas.
       agent_template_3:
         topic: Ticket atribuído a um analista
         info1: >-
@@ -7389,7 +7390,7 @@ pt-BR:
           tenha configurado o suporte para vários idiomas em seu helpdesk, você
           pode criar essa notificação em todos os idiomas oferecidos. O ícone <i
           class="common-icon-outdated"></i> indica que as traduções da
-          notificação em outros idiomas podem estar desatualizadas. 
+          notificação em outros idiomas podem estar desatualizadas.
       agent_template_11:
         topic: Ticket não acompanhado em um Grupo
         info1: >-
@@ -7623,7 +7624,7 @@ pt-BR:
   downgrade_to_sprout: >-
     <span class="label label-important">Importante</span>&nbsp;&nbsp;Você
     decidiu encerrar a versão de avaliação e ativar o plano <b>%{new_plan}</b>.
-    Devido ao downgrade do plano <b>%{current_plan}</b> para o plano 
+    Devido ao downgrade do plano <b>%{current_plan}</b> para o plano
     <b>%{new_plan}</b>, você perderá todos os dados e configurações associados
     aos recursos do plano %{current_plan} e não poderá recuperá-los.<br /><br />
     Para ver a lista completa de planos e recursos, visite <a target="_blank"
@@ -8375,7 +8376,7 @@ pt-BR:
     performed: ' realizado '
     system_activity_timestamp: >-
       <strong class='muted'>Sistema</strong> %{system_rule} <abbr
-      data-livestamp='%{timestamp}'></abbr> (%{note_date}) 
+      data-livestamp='%{timestamp}'></abbr> (%{note_date})
     requestor_info: Informações do solicitante
     view_twitter: Exibir no Twitter
     view_facebook: Exibir no Facebook
@@ -10148,7 +10149,7 @@ pt-BR:
     latest: Mais recente
     no_custom_apps: >-
       Você não tem aplicativos personalizados instalados. Crie e instale um novo
-      aplicativo personalizado clicando 
+      aplicativo personalizado clicando
     all_categories: Todas as categorias
     in_dev_apps: Aplicativos em desenvolvimento
     all: Todos
@@ -10361,7 +10362,7 @@ pt-BR:
     new_freshplug: Novo FreshPlug
     no_freshplugs: >-
       Você não tem nenhum FreshPlug instalado. Crie e instale um novo FreshPlug
-      clicando em 
+      clicando em
     add_new_freshplug: Novo FreshPlug
     freshplugs:
       refresh: Atualizar
@@ -11325,7 +11326,7 @@ pt-BR:
         e Celular do Batchbook e as disponibiliza para seus analistas.
         <br><br>Você pode procurar os contatos do Batchbook, pesquisando o
         endereço de e-mail. Se houver vários contatos com o mesmo endereço,
-        todos eles serão exibidos como uma lista.</p><br/> 
+        todos eles serão exibidos como uma lista.</p><br/>
       desc: Traga informações do contato de sua conta no Batchbook para o Freshdesk
       detect_error: Não foi possível identificar a versão do Batchbook. Verifique o domínio.
       form:
@@ -11817,7 +11818,7 @@ pt-BR:
         logmein_company_info: >-
           Para obter sua ID da empresa vá para Centro de administração -> Grupo
           de técnicos ->Configurações globais -> Exemplo de servidor do ASP.Net
-          C# 
+          C#
         logmein_sso_pwd_info: >-
           Para definir sua senha de Logon único, vá para Centro de administração
           -> Grupo de técnicos -> Configurações globais -> Logon único -> nova
@@ -11827,7 +11828,7 @@ pt-BR:
       desc: >-
         Adicione o MailChimp ao Freshdesk e inicie o gerenciamento de suas
         inscrições, exporte lista de clientes e obtenha as informações
-        necessárias sobre as atividades deles usando o helpdesk.  
+        necessárias sobre as atividades deles usando o helpdesk.
       helptext: <h4>Ajuda com a integração do MailChimp</h4>
     constantcontact:
       label: Constant Contact
@@ -11841,7 +11842,7 @@ pt-BR:
       desc: >-
         Consulte e gerencie assinaturas em sua conta do Campaign Monitor e traga
         as percepções sobre as estatísticas de uso dos clientes diretamente para
-        dentro do Freshdesk. 
+        dentro do Freshdesk.
       helptext: >-
         <h4>Ajuda para a Integração com o Campaign Monitor</h4><br/>Para
         integrar com o Campaign Monitor, você deve entrar sua Chave da API e o
@@ -11874,7 +11875,7 @@ pt-BR:
         api_url_info: >-
           Para obter sua URL da API, vá para
           https://app.icontact.com/icp/core/externallogin e copie a URL da API
-          na seção &quot;Informações da conta&quot;. 
+          na seção &quot;Informações da conta&quot;.
     dropbox:
       label: DropBox
       desc: Anexe e compartilhe seus dados/arquivos usando o DropBox.
@@ -12023,7 +12024,7 @@ pt-BR:
       freshdesk_api_key: Chave da API do Freshdesk
       api_key_available: >-
         A chave da API pode ser obtida em Configurações do perfil na sua conta
-        do Freshdesk 
+        do Freshdesk
       new_to_freshdesk: 'Novo no Freshdesk? '
     hootsuite:
       auth_error: >-
@@ -12596,7 +12597,7 @@ pt-BR:
   maximum_agents_msg: >-
     Você atingiu o número máximo de analistas permitidos em sua assinatura. Você
     precisa excluir um analista existente ou entrar em contato com o
-    administrador da sua conta para adquirir analistas adicionais. 
+    administrador da sua conta para adquirir analistas adicionais.
   contact_without_email_id: O contato com ID de e-mail pode ser convertido apenas em um analista
   no_date_to_display: Nenhum dado para exibir
   email_command_delimeter_length_error_msg: ' Informe pelo menos 3 caracteres para serem delimitadores'
@@ -13964,7 +13965,7 @@ pt-BR:
     widget:
       ticket_info: >-
         Crie um novo ticket ou adicione uma anotação ao ticket existente com as
-        anotações e a gravação. 
+        anotações e a gravação.
       note_placeholder: Adicionar anotações de chamada...
       new_ticket: Salvar como um novo ticket
       save_to_existing: Salvar em um ticket existente
@@ -14130,7 +14131,7 @@ pt-BR:
         other: Analistas
       ticket_info: >-
         Crie um novo ticket ou adicione uma anotação ao ticket existente com as
-        anotações e a gravação. 
+        anotações e a gravação.
       add_note: Adicionar anotações
       note_placeholder: Adicionar anotações de chamada...
       title: Converter em ticket
@@ -15192,7 +15193,7 @@ pt-BR:
     show_chat_hours: Mostrar chat
     show_chat_hours_msg: >-
       Defina o período durante o qual você estará on-line e disponível para
-      aceitar chats. 
+      aceitar chats.
     business_hours: Durante o horário de atendimento
     anytime: Sempre (24/7)
     business_calendar: Selecionar horário de atendimento
@@ -15586,7 +15587,7 @@ pt-BR:
       estamos solicitando uma nova autorização para o aplicativo. <b>O
       aplicativo será desativado na sua página do Facebook, se você não fornecer
       uma nova autorização até 12 de outubro</b> <br/> <a href='%{page_tab_url}'
-      >Reautorizar e ativar > </a> 
+      >Reautorizar e ativar > </a>
     page_tab_info: Reautorize sua guia Página do Facebook
     no_contact: >-
       Não é possível acessar os servidores do Facebook para as guias Página no
@@ -15746,13 +15747,13 @@ pt-BR:
         poderá criar várias categorias para produtos ou equipes. Isso ajudará
         você a direcionar conversas relevantes para todas as suas seções de
         nível superior e, como um administrador, você ainda pode gerenciar tudo
-        de um só lugar. 
+        de um só lugar.
       para3: >-
         Se você tiver portais com vários produtos configurados em sua conta do
         Freshdesk, poderá escolher ter uma de suas categorias vinculada a um
         produto. Depois que você fizer isso, os usuários poderão ver essa
         categoria, seus fóruns e todos os seus tópicos, tanto em seu portal
-        principal quanto no portal do produto. 
+        principal quanto no portal do produto.
       para4: Saiba mais sobre como ter vários produtos no Freshdesk.
     shared:
       topic:
@@ -16162,7 +16163,7 @@ pt-BR:
         authorize_text3: >-
           Aceite os <a target='_blank'
           href='http://developers.freshdesk.com/docs/terms-of-use/'>Termos de
-          uso para desenvolvedores</a> e autorize 
+          uso para desenvolvedores</a> e autorize
         later: Mais tarde
         authorize_text1: Autorizar
         authorize_text2: utilizar sua conta?

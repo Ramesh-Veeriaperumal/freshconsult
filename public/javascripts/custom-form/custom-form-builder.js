@@ -57,7 +57,7 @@
     this.section_instance = {};
     this.sortSender = null;
   },
-  fsm_fields = ["cf_fsm_contact_name", "cf_fsm_phone_number", "cf_fsm_service_location", "cf_fsm_appointment_date", "cf_fsm_appointment_start_time", "cf_fsm_appointment_end_time"].map(function(field){ return (field + "_" + current_account_id); });
+  fsm_fields = ["cf_fsm_contact_name", "cf_fsm_phone_number", "cf_fsm_service_location", 'cf_fsm_appointment_start_time', 'cf_fsm_appointment_end_time'].map(function(field){ return (field + "_" + current_account_id); });
   customFieldsForm.prototype = {
     uniqId: function () {
       return Math.round(new Date().getTime() + (Math.random() * 100));
@@ -192,7 +192,7 @@
       if($.inArray(dataItem.field_type, this.settings.nonEditableFields) >= 0) {
         dataItem.is_editable = false;
       } else {
-        dataItem.is_editable = fsm_fields.includes(dataItem.name) ? false : true ;
+        dataItem.is_editable = fsm_fields.indexOf(dataItem.name) == -1;
       }
 
       dataItem.custom_form_type = this.settings.customFormType;
@@ -226,7 +226,7 @@
           instance = $(element).data('customfield'),
           selectedPicklistIds = {},
           fieldtype = instance.getProperties()['field_type'];
-      if(!this.data.get(id) || !fsm_fields.includes(this.data.get(id).name)){     
+      if(!this.data.get(id) || fsm_fields.indexOf(this.data.get(id).name) == -1){     
         if ($.inArray(fieldtype, this.settings.nonEditableFields) == -1) {
           if(id && (this.data.get(id).has_section))
             selectedPicklistIds = this.section_instance.selectedPicklist(id);
@@ -299,7 +299,7 @@
       if(this.section_instance.getNumSections(id) > 0) {
         return;
       }
-      if(!fsm_fields.includes(this.settings.currentData._object.name)){
+      if(fsm_fields.indexOf(this.settings.currentData._object.name) == -1){
         if($(sourcefield).closest('ul').hasClass('section-body')){
           //Section Field
           this.section_instance.deleteSecFieldsdialog(sourcefield, id);

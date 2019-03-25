@@ -88,7 +88,7 @@
 							<%= f.label :time_zone, t('account.time_zone'), :class => "control-label"  %>
 							<div class="controls">
 								<%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.all %>
-						 		<% if current_account.time_zone_updation_running? %> 
+						 		<% if current_account.time_zone_updation_running? %>
 							 		<span class="help-block">
 											<%= t(:'account.time_zone_updation') %>
 									</span>
@@ -101,6 +101,13 @@
 								<%= f.text_field :ticket_display_id, :value => @ticket_display_id, :class => "text number auto", :size => "15" %>
 								<div class="help-block"><%=t('account.info4')%></div>
 					  		</div>
+						</div>
+						<div class="control-group">
+							<%= f.label :sort_conversations, t('account.sort_conversations.label'), :class => "control-label"  %>
+							<div class="controls">
+								<%= select_tag :oldest_on_top, options_for_select([[t("account.sort_conversations.option1"), false], [t("account.sort_conversations.option2"), true]], current_account.oldest_notes_first_enabled?) %>
+								<div class="help-block"><%=t('account.sort_conversations.helpnote')%></div>
+					 		</div>
 						</div>
 						<% if current_account.subscription.forum_available_plan? %>
 							<div class="control-group account-forum-toggle">
@@ -171,7 +178,7 @@
 			                <% end %>
 			              </div>
 			            </div>
-						
+
 						<% if current_user.is_falcon_pref? && current_account.rebranding_enabled? && !(current_account.subscription.sprout_plan?)%>
 								<div class="control-group">
 									<label class="control-label"><%= t("admin.products.portal.agent_portal") %></label>
@@ -254,6 +261,13 @@
 		window.parent.postMessage({action: "preferences"}, window.origin);
 	});
 
+	jQuery("#manage-language-button").on("click", function(e){
+		if(!(isIe())) {
+			e.preventDefault();
+		}
+		window.parent.postMessage({action: "manage-language"}, window.origin);
+	});
+	
 	function isIe() {
 		if (document.documentMode || /Edge/.test(navigator.userAgent)) {
 		   return true;

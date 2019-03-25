@@ -200,7 +200,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
         connection.execute(sql)
       end
     rescue Exception => e
-      puts "Exception occurred while inserting data into stats table ::: #{e.message}" 
+      Rails.logger.error("Exception occurred while inserting data into stats table ::: #{e.message}")
       NewRelic::Agent.notice_error(e)
     end
   end
@@ -220,8 +220,7 @@ class Helpdesk::TicketState <  ActiveRecord::Base
         check_and_update_ticket_stats(stats_table_name,f_hash,datetime)
       end
     rescue Exception => e
-      puts "Exception occurred while updating data into stats table"
-      puts e.backtrace.join("\n\t")
+      Rails.logger.error("Exception occurred while updating data into stats table ::: #{e.message}")
       NewRelic::Agent.notice_error(e)
     end
   end

@@ -6,6 +6,7 @@ module ApiSolutions
     include CloudFilesHelper
 
     SLAVE_ACTIONS = %w(index folder_articles).freeze
+    SKIP_KBASE_MINT_LAUNCHPARTY_ACTIONS = %w[index article_content show].freeze
 
     decorate_views(decorate_objects: [:folder_articles])
     before_filter :validate_query_params, only: [:folder_articles]
@@ -42,17 +43,11 @@ module ApiSolutions
     def folder_articles
       if validate_language
         if load_folder
-          @items = paginate_items(
-            @folder.solution_articles.where(language_id: @lang_id).preload(
-              {
-                solution_article_meta: [
-                  :solution_folder_meta,
-                  :solution_category_meta
-                ]
-              },
-              :article_body, :draft, draft: :draft_body
-            )
-          )
+          load_objects
+          if private_api?
+            response.api_root_key = :articles
+            response.api_meta = { count: @items_count, next_page: @more_items }
+          end
           render '/api_solutions/articles/index'
         end
       else
@@ -74,6 +69,10 @@ module ApiSolutions
         current_account.solution_article_meta
       end
 
+      def launch_party_name
+        FeatureConstants::KBASE_MINT if private_api? && SKIP_KBASE_MINT_LAUNCHPARTY_ACTIONS.exclude?(action_name)
+      end
+
       def create_or_update_article
         article_delegator = build_article_delegator
         if !article_delegator.valid?
@@ -84,6 +83,18 @@ module ApiSolutions
           return true
         end
         false
+      end
+
+      def load_objects
+        super(@folder.solution_articles.where(language_id: @lang_id).reorder(Solution::Constants::ARTICLE_ORDER_COLUMN_BY_TYPE[@folder.article_order]).preload(
+          {
+            solution_article_meta: [
+              :solution_folder_meta,
+              :solution_category_meta
+            ]
+          },
+          :article_body, :draft, draft: :draft_body
+        ))
       end
 
       def remove_lang_scoper_params

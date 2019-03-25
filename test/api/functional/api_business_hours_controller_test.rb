@@ -1,6 +1,16 @@
 require_relative '../test_helper'
 class ApiBusinessHoursControllerTest < ActionController::TestCase
   include BusinessHoursTestHelper
+
+  def setup
+    Account.any_instance.stubs(:multiple_business_hours_enabled?).returns(:true)
+    super
+  end
+
+  def teardown
+    Account.any_instance.unstub(:multiple_business_hours_enabled?)
+  end
+
   def wrap_cname(params)
     { api_business_hour: params }
   end
@@ -39,10 +49,11 @@ class ApiBusinessHoursControllerTest < ActionController::TestCase
 
   def test_index_without_privilege
     business_hour = create_business_calendar
-    User.any_instance.stubs(:privilege?).returns(false).once
+    User.any_instance.stubs(:privilege?).returns(false)
     get :show, construct_params(id: business_hour.id)
     assert_response 403
     match_json(request_error_pattern(:access_denied))
+    User.any_instance.unstub(:privilege?)
   end
 
   def test_index_with_link_header

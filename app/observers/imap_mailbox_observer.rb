@@ -2,6 +2,7 @@ class ImapMailboxObserver < ActiveRecord::Observer
 
   include Mailbox::HelperMethods
   include Cache::Memcache::EmailConfig
+  include EmailHelper
 
   def before_create mailbox
     set_account mailbox
@@ -40,7 +41,7 @@ class ImapMailboxObserver < ActiveRecord::Observer
   end
 
   def commit_on_destroy mailbox
-    params = { :mailbox_id => mailbox.id, :account_id => mailbox.account_id, :action => "delete" }
+    params = {:mailbox_attributes => {:id => mailbox.id, :account_id => mailbox.account_id, :application_id => imap_application_id},:action => "delete"}
     $sqs_mailbox.send_message(params.to_json) unless Rails.env.test?
   end
 

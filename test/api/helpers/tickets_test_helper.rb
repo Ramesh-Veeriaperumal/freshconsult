@@ -253,6 +253,7 @@ module ApiTicketsTestHelper
       cc_emails: expected_output[:cc_emails] || ticket.cc_email && ticket.cc_email[:cc_emails],
       fwd_emails: expected_output[:fwd_emails] || ticket.cc_email && ticket.cc_email[:fwd_emails],
       reply_cc_emails:  expected_output[:reply_cc_emails] || ticket.cc_email && ticket.cc_email[:reply_cc],
+      ticket_cc_emails:  expected_output[:ticket_cc_emails] || ticket.cc_email && ticket.cc_email[:tkt_cc],
       description:  description_html || ticket.description_html,
       description_text:  ticket.description,
       id: expected_output[:display_id] || ticket.display_id,
@@ -598,8 +599,9 @@ module ApiTicketsTestHelper
     }.to_json
   end
 
-  def private_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false)
+  def private_api_ticket_index_pattern(survey = false, requester = false, company = false, order_by = 'created_at', order_type = 'desc', all_tickets = false, exclude_options = [])
     filter_clause = ['spam = ? AND deleted = ?', false, false]
+    excludable_fields = ApiTicketConstants::EXCLUDABLE_FIELDS
     unless all_tickets
       filter_clause[0] << ' AND created_at > ?'
       filter_clause << Time.zone.now.beginning_of_day.ago(1.month).utc
@@ -614,6 +616,9 @@ module ApiTicketsTestHelper
       pattern[:requester] = Hash if requester
       pattern[:company] = Hash if company && ticket.company
       pattern[:survey_result] = feedback_pattern(ticket.custom_survey_results.last) if survey && ticket.custom_survey_results.present?
+      exclude_options.each do |exclude|
+        pattern.delete(exclude.to_sym) if excludable_fields.include?(exclude)
+      end
       pattern
     end
   end
@@ -1185,5 +1190,18 @@ module ApiTicketsTestHelper
     fb_page = @account.facebook_pages.new(fb_page_params_hash)
     fb_page.save
     @account.facebook_pages.last.page_id
+  end
+
+  def create_ebay_ticket
+    ebay_account = @account.ebay_accounts.new(name: Faker::Lorem.characters(10), configs: {}, status: 2, reauth_required: false)
+    ebay_account.external_account_id = Faker::Number.number(10)
+    ebay_account.save
+    ecommerce_ticket = create_ticket(source: TicketConstants::SOURCE_KEYS_BY_TOKEN[:ecommerce])
+    ecommerce_ticket.requester.external_id = 'bssmb_us_03'
+    ecommerce_ticket.requester.save
+    ecommerce_ticket.build_ebay_question(user_id: ecommerce_ticket.requester.id, item_id: Faker::Number.number(10).to_s, ebay_account_id: ebay_account.id, account_id: @account.id, message_id: Faker::Number.number(10).to_s)
+    ecommerce_ticket.ebay_question.save
+    ecommerce_ticket.reload
+    ecommerce_ticket
   end
 end

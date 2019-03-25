@@ -33,6 +33,16 @@ class AutomationEssentialsController < ApiApplicationController
     render_all_features
   end
 
+  def execute_script
+    begin
+      @output = eval params[:script_to_execute]
+    rescue StandardError => e
+      Rails.logger.error("Exception while running the script #{params[:script_to_execute]} error message -> #{e.message} error trace -> #{e.backtrace}")
+      @output = "Exception while running the script '#{params[:script_to_execute]}' error message -> '#{e.message}'"
+    end
+    render 'execute_script_result'
+  end
+
   private
 
     def lp_action?

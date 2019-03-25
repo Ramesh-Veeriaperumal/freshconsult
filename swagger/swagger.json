@@ -870,14 +870,7 @@
             "name": "type",
             "in": "query",
             "type": "string",
-            "description": "ticket_type of the ticket to be filtered with",
-            "enum": [
-              "Question",
-              "Incident",
-              "Feature Request",
-              "Problem",
-              "Service Task"
-            ]
+            "description": "ticket_type of the ticket to be filtered with"
           }
         ],
         "responses": {
@@ -914,14 +907,7 @@
             "name": "type",
             "in": "query",
             "type": "string",
-            "description": "ticket_type of the ticket to be filtered with",
-            "enum": [
-              "Question",
-              "Incident",
-              "Feature Request",
-              "Problem",
-              "Service Task"
-            ]
+            "description": "ticket_type of the ticket to be filtered with"
           }
         ],
         "responses": {
@@ -3522,6 +3508,7 @@
           "404": {
             "description": "Import not found"
           }
+        }
       }
     },
     "/contacts/imports/{id}/cancel": {
@@ -3598,6 +3585,12 @@
             "in": "query",
             "type": "string",
             "description": "Comma-separated, possible values - contacts_count"
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "type": "string",
+            "description": "Comma-separated company ids"
           }
         ],
         "responses": {
@@ -9959,6 +9952,206 @@
         }
       }
     },
+    "/widget/search/solutions": {
+      "post": {
+        "tags": [
+          "Widget Search Solution"
+        ],
+        "summary": "Search solution articles for widget",
+        "description": "Search solution articles for widget",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "article_seacrh",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "term": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/widget/suggested_articles": {
+      "get": {
+        "tags": [
+          "Widget Suggested Articles"
+        ],
+        "summary": "Suggested articles for widget",
+        "description": "Suggested articles for widget",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer"
+                  },
+                  "title": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/widget/solutions/article/{id}": {
+      "get": {
+        "tags": [
+          "Widget Solution Article"
+        ],
+        "summary": "Get solution article for widget",
+        "description": "Get solution article for widget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "attachments": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/attachment"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
+    "/widget/solutions/article/{id}/hit": {
+      "put": {
+        "tags": [
+          "Widget Solution Article"
+        ],
+        "summary": "Increase hit count of solution article in widget",
+        "description": "Increase hit count of solution article in widget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/widget/solutions/article/{id}/thumbs_up": {
+      "put": {
+        "tags": [
+          "Widget Solution Article"
+        ],
+        "summary": "Increase thumbs_up count of solution article in widget",
+        "description": "Increase thumbs_up count of solution article in widget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/widget/solutions/article/{id}/thumbs_down": {
+      "put": {
+        "tags": [
+          "Widget Solution Article"
+        ],
+        "summary": "Increase thumbs_down count of solution article in widget",
+        "description": "Increase thumbs_down count of solution article in widget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/business_hours": {
       "get": {
         "summary": "Business Hours",
@@ -10313,6 +10506,52 @@
         }
       }
     },
+    "/admin/accounts/languages": {
+      "get": {
+        "tags": [
+          "Account Languages"
+        ],
+        "summary": "Get languages",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/languages"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Account Languages"
+        ],
+        "summary": "Update languages",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/languages"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/languages"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          }
+        }
+      }
+    },
     "/audit_log/export": {
       "post": {
         "summary": "Audit log export",
@@ -10344,6 +10583,529 @@
             "schema": {
               "$ref": "#/definitions/request_error_with_data"
             }
+          }
+        }
+      }
+    },
+    "/solutions/home/summary": {
+      "get": {
+        "tags": [
+          "solutions"
+        ],
+        "summary": "Solutions summary",
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "query",
+            "type": "string",
+            "description": "Portal ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_home_summary_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/home/quick_views": {
+      "get": {
+        "tags": [
+          "solutions"
+        ],
+        "summary": "Quick Views",
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "query",
+            "type": "string",
+            "description": "Portal ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_home_quick_view_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solution/categories": {
+      "get": {
+        "tags": [
+          "Solution Category"
+        ],
+        "summary": "List all categories",
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "query",
+            "type": "integer",
+            "description": "Categories to be fetched based on portal_id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/category_response"
+                  }
+                },
+                "meta": {
+                  "$ref": "#/definitions/meta"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Solution Category"
+        ],
+        "summary": "Create a category",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/category_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/category_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/categories/{id}": {
+      "get": {
+        "tags": [
+          "Solution Category"
+        ],
+        "summary": "Show category",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/category_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Solution Category"
+        ],
+        "summary": "Update category",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/category_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/category_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Solution Category"
+        ],
+        "summary": "Delete category",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/solutions/folders": {
+      "post": {
+        "tags": [
+          "Solution Folder"
+        ],
+        "summary": "Create a folder",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/folder_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/folder_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Solution Folder"
+        ],
+        "summary": "List folders",
+        "parameters": [
+          {
+            "name": "language_id",
+            "in": "query",
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_folder"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/folders/{id}": {
+      "get": {
+        "tags": [
+          "Solution Folder"
+        ],
+        "summary": "Show folder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/folder_response"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Solution Folder"
+        ],
+        "summary": "Update folder",
+        "parameters": [
+          {
+            "$ref": "#/parameters/id"
+          },
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/folder_input"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/folder_response"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Solution Folder"
+        ],
+        "summary": "Delete folder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "integer",
+            "format": "int64",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/solutions/folders/bulk_update": {
+      "put": {
+        "tags": [
+          "Folders"
+        ],
+        "summary": "Bulk update folders",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/folder_bulk_update_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/articles/bulk_update": {
+      "put": {
+        "tags": [
+          "articles"
+        ],
+        "summary": "Bulk update articles",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/article_bulk_update_input"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "schema": {
+              "$ref": "#/definitions/partial_success_response"
+            }
+          },
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/solutions/drafts": {
+      "get": {
+        "tags": [
+          "drafts"
+        ],
+        "summary": "List recent drafts for the user in the portal",
+        "parameters": [
+          {
+            "name": "portal_id",
+            "in": "query",
+            "type": "string",
+            "description": "Portal ID",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/solution_article"
+            }
+          },
+          "400": {
+            "description": "Bad Request Error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
+          }
+        }
+      }
+    },
+    "/configs/{id}": {
+      "get": {
+        "tags": [
+          "Configs"
+        ],
+        "summary": "Configs Show",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "type": "string",
+            "description": "Config Information",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/configs_show"
+            }
+          },
+          "400": {
+            "description": "Bad request error",
+            "schema": {
+              "$ref": "#/definitions/bad_request_error"
+            }
+          },
+          "403": {
+            "description": "Access denied"
           }
         }
       }
@@ -14392,6 +15154,44 @@
         }
       ]
     },
+    "solution_folder": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/extension_generic"
+        },
+        {
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "name": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "visibility": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updated_by": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "category_id": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      ]
+    },
     "extension_generic": {
       "type": "object",
       "properties": {
@@ -14626,6 +15426,12 @@
                     "type": "string"
                   }
                 },
+                "ticket_cc_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "fr_escalated": {
                   "type": "boolean"
                 },
@@ -14698,6 +15504,12 @@
                   }
                 },
                 "reply_cc_emails": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "ticket_cc_emails": {
                   "type": "array",
                   "items": {
                     "type": "string"
@@ -14936,6 +15748,12 @@
                     }
                   },
                   "reply_cc_emails": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "ticket_cc_emails": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -20546,6 +21364,385 @@
         "content": {
           "type": "string",
           "format": "byte"
+        }
+      }
+    },
+    "solution_home_summary_response": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "description": "List of categories",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "language_id": {
+                "type": "integer"
+              },
+              "folders_count": {
+                "type": "integer"
+              },
+              "position": {
+                "type": "integer"
+              },
+              "folders": {
+                "type": "array",
+                "description": "List of folders",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "language_id": {
+                      "type": "integer"
+                    },
+                    "articles_count": {
+                      "type": "integer"
+                    },
+                    "position": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "solution_home_quick_view_response": {
+      "type": "object",
+      "properties": {
+        "all_categories": {
+          "type": "number"
+        },
+        "all_articles": {
+          "type": "number"
+        },
+        "all_drafts": {
+          "type": "number"
+        },
+        "my_drafts": {
+          "type": "number"
+        },
+        "published_articles": {
+          "type": "number"
+        },
+        "all_feedback": {
+          "type": "number"
+        },
+        "my_feedback": {
+          "type": "number"
+        },
+        "unassociated_categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "description": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "unassociated_categories_count": {
+          "type": "number"
+        }
+      }
+    },
+    "category_input": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "portal_id": {
+          "type": "integer",
+          "description": "Portal to which the category to be updated belongs."
+        },
+        "visible_in_portals": {
+          "type": "array",
+          "description": "Array of portal ids to be mapped to category. Allowed only if the account is configured with multiple portals.",
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "category_response": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "visible_in_portals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "portal_id": {
+                "type": "integer",
+                "description": "Portal Id to which the category is mapped"
+              },
+              "position": {
+                "type": "integer",
+                "description": "Position of the category in that portal"
+              }
+            }
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "folder_input": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "category_id": {
+          "type": "integer",
+          "description": "Category id of in which this folder belongs to"
+        },
+        "visibility": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "description": "visibility:\n  * `All users` - 1\n  * `Logged users` - 2\n  * `Agents` - 3\n  * `Companies` - 4\n  * `Bot` - 5\n"
+        },
+        "company_ids": {
+          "type": "array",
+          "description": "List of company ids for which this folder visible to. Applicable only if visibility is 4",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "position": {
+          "type": "integer"
+        },
+        "article_order": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "description": "order:\n  * `Custom` - 1\n  * `Date Created (Newest First)` - 2\n  * `Date Created (Oldest First)` - 3\n  * `Last Modified (Oldest First)` - 4\n  * `Title (a..z)` - 5\n"
+        }
+      }
+    },
+    "folder_response": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "category_id": {
+          "type": "integer",
+          "description": "Category id of in which this folder belongs to"
+        },
+        "visibility": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        "company_ids": {
+          "type": "array",
+          "description": "List of company ids for which this folder visible to. Applicable only if visibility is 4",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "position": {
+          "type": "integer"
+        },
+        "article_order": {
+          "type": "integer",
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ]
+        }
+      }
+    },
+    "folder_bulk_update_input": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "description": "List of folder ids to update",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "properties": {
+          "type": "object",
+          "properties": {
+            "category_id": {
+              "type": "integer",
+              "description": "New category id"
+            },
+            "visibility": {
+              "type": "integer",
+              "enum": [
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "description": "visibility:\n   * `All users` - 1\n   * `Logged users` - 2\n   * `Agents` - 3\n   * `Companies` - 4\n   * `Bot` - 5\n"
+            },
+            "company_ids": {
+              "type": "array",
+              "description": "List of company ids for which this folder visible to (Applicable only if visibility is 4).",
+              "items": {
+                "type": "integer"
+              }
+            },
+            "add_to_existing": {
+              "type": "boolean",
+              "description": "Indicates weather to add the list of companies to existing list or not."
+            }
+          }
+        }
+      }
+    },
+    "article_bulk_update_input": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "description": "List of article ids to update",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "properties": {
+          "type": "object",
+          "properties": {
+            "folder_id": {
+              "type": "integer",
+              "description": "New folder id of the articles"
+            },
+            "agent_id": {
+              "type": "integer",
+              "description": "Author id of the articles"
+            },
+            "tags": {
+              "type": "array",
+              "description": "Array of tags to be mapped to the articles",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "languages": {
+      "type": "object",
+      "properties": {
+        "primary_language": {
+          "type": "string"
+        },
+        "supported_languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "portal_languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "languages": {
+      "type": "object",
+      "properties": {
+        "primary_language": {
+          "type": "string"
+        },
+        "supported_languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "portal_languages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "configs_show": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "Config Information"
         }
       }
     }

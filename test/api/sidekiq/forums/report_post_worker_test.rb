@@ -5,8 +5,8 @@ require Rails.root.join('test', 'core', 'helpers', 'forums_test_helper.rb')
 require Rails.root.join('test', 'core', 'helpers', 'users_test_helper.rb')
 
 class ReportPostWorkerTest < ActionView::TestCase
-  include ForumsTestHelper
-  include UsersTestHelper
+  include CoreForumsTestHelper
+  include CoreUsersTestHelper
 
   def setup
     Account.stubs(:current).returns(Account.first)

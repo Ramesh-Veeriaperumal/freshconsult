@@ -8,8 +8,8 @@ module BootstrapTestHelper
 
   DEFAULTS_FONT_SETTINGS = {
     email_template: {
-      "font-size"   => '13px',
-      "font-family" => '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif'
+      'font-size' => '14px',
+      'font-family' => '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif'
     }
   }.freeze
 
@@ -160,19 +160,19 @@ module BootstrapTestHelper
 
   def group_assignment_type(group)
     GroupConstants::DB_ASSIGNMENT_TYPE_FOR_MAP[group.ticket_assign_type]
-  end 
+  end
 
   def round_robin_enabled?
     Account.current.features? :round_robin
-  end 
+  end
 
-  def round_robin_hash(group)      
-    rr_type=get_round_robin_type(group)    
+  def round_robin_hash(group)
+    rr_type=get_round_robin_type(group)
     hash={
-      round_robin_type: rr_type,      
+      round_robin_type: rr_type,
       allow_agents_to_change_availability: group.toggle_availability
-    }    
-    hash.merge!({capping_limit: group.capping_limit}) unless rr_type == GroupConstants::ROUND_ROBIN    
+    }
+    hash.merge!({capping_limit: group.capping_limit}) unless rr_type == GroupConstants::ROUND_ROBIN
     hash
   end
 
@@ -182,17 +182,17 @@ module BootstrapTestHelper
       name: group.name,
       agent_ids: group.agents.map(&:id),
       group_type: GroupType.group_type_name(group.group_type),
-      assignment_type: group_assignment_type(group)        
+      assignment_type: group_assignment_type(group)
     }
     if round_robin_enabled? && group_assignment_type(group) == GroupConstants::ROUND_ROBIN_ASSIGNMENT
       ret_hash.merge!(round_robin_hash(group))
-    end 
+    end
     ret_hash
   end
 
   def agent_group_pattern(account)
     pattern = {'agents' => [], 'groups' => []}
-    account.agents.each do |agent|
+    account.users.where(helpdesk_agent: true).each do |agent|
       pattern['agents'] << agent_simple_pattern(agent)
     end
     account.groups.each do |group|
@@ -221,8 +221,8 @@ module BootstrapTestHelper
     agent.user
   end
 
-  def account_with_trial_subscription_pattern(account, portal, 
-    subscription, subscription_plan)
+  def account_with_trial_subscription_pattern(account, portal,
+                                              subscription, subscription_plan)
     response_pattern = account_pattern(account, portal)
     response_pattern[:account][:trial_subscription] = {
       active: (subscription.status == 0),
@@ -240,7 +240,6 @@ module BootstrapTestHelper
     round_robin_type=2 if group.ticket_assign_type==1 && group.capping_limit!=0
     round_robin_type=3 if group.ticket_assign_type==2
     round_robin_type
-  end 
+  end
 
 end
-

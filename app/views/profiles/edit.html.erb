@@ -2,102 +2,142 @@
 <% if freshid_enabled? %>
   <%= render :partial => "freshid_edit" %>
 <% else %>
-<%= content_tag( :h3, t("profile.edit"), :class => "title itil-hide" ) %>
-<%= form_for @profile , :url => { :action=> "update", :controller => 'profiles'} , :html => { :multipart => true } do |f| %>
-  <%= f.error_messages %>
-  <%= render :partial => "form" %>
-  <div class="button-container">
-    <%if  Account.current.verified? &&  User.current.active? %>
-      <a href="#email-preview" class="email-preview" ><%= t("preview")%></a>
-    <% end %>
-   	<%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
-      <a href="<%= current_account.falcon_ui_enabled?(current_user) ? '/a/' : '/' %>" target="_top" class="btn"><%= t('cancel') %></a>
-	</div>	  
-<%end%>
-
-
-<% content_for :sidebar do %>
-  <% unless current_account.sso_enabled? %>	
-	<div class="sidepanel">
-		<%= content_tag( :h3, t("profile.change_password"), :class => "title" ) %>
-    <% if current_account.falcon_ui_enabled?(current_user) %>
-      <%= form_for "not_resource", :remote => true, :url => { :action => :change_password, :controller => 'profiles', :method => :put} do |f| %>
-        <%= render :partial => "change_password_form", :locals => { :f => f } %>
+  <%= content_tag( :h3, t("profile.edit"), :class => "title itil-hide" ) %>
+  <%= form_for @profile , :url => { :action=> "update", :controller => 'profiles'} , :html => { :multipart => true } do |f| %>
+    <%= f.error_messages %>
+    <%= render :partial => "form" %>
+    <div class="button-container">
+      <%if  Account.current.verified? &&  User.current.active? %>
+        <a href="#email-preview" class="email-preview" ><%= t("preview")%></a>
       <% end %>
-    <% else %>
-    <%= form_tag :action => :change_password, :controller => 'profiles', :method => :put do |f| %>
-        <%= render :partial => "change_password_form", :locals => { :f => f } %>
-    <% end %>
-  <% end %>
-  </div>
-<% end %>
-  <% if current_account.undo_send_enabled? && current_account.falcon_ui_enabled?(current_user) %>
-  <div class="sidepanel">
-    <div class="row-fluid undo-send-option">
-      <div class="span10 align-left undo-toggle"><%= t("undo_toggle") %></div>
-      <div class="span2 align-right">
-        <input rel="toggle" type="checkbox" id="undo_reply" name="undo_send_toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_user.preferences[:agent_preferences][:undo_send]%>checked="true"<%end%> />
-      </div>
+      <%= f.submit t('save_changes'), { :class => "btn btn-primary" } %>
+      <a href="<%= current_account.falcon_ui_enabled?(current_user) ? '/a/' : '/' %>" target="_top" class="btn"><%= t('cancel') %></a>
     </div>
-    <div class="row-fluid">
-      <div class=" span12 align-left undo-send-tip"><%= t("undo_toggle_tip") %></div>
-    </div>
-  </div>
-  <% end %>
-  <% if show_api_key? %>
-    <div class="sidepanel">
-    <%= content_tag( :h3, t("profile.api_key.title"), :class => "title" ) %>
-    <%= form_tag :action => :reset_api_key, :controller => 'profiles', :method => :put do |f| %>
-      <ul class="ui-form">
-        <label class="center" for="api_key"><%=@profile.user.single_access_token%></label>
-      </ul> 
-      <div class="button-container">
-          <%= submit_tag t("profile.api_key.reset"), :class => "btn", :confirm => t("profile.api_key.reset_warning") %>
-      </div>
-    <% end %>
-    </div>
-    <!-- Include this integrations partial in all user profile pages which shows API key.-->  
-    <%= render :partial => "integrations" %>
-  <% end %>
-<% end%>
-<script type="text/javascript">
-jQuery(document).ready(function() { 
+  <%end%>
 
-  jQuery(function () { 
-    var popover_message = jQuery('#password').data('content');
-    if(popover_message){
-      jQuery("#password").popover({
-        html: true,
-        trigger: 'manual', 
-        placement: 'left',
-        reloadContent: false,
-        template: "<div class='arrow'></div><div class='inner'><div class='content'><p></p></div></div>",
-        content: function(){
-                  return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_should") %></h5>" +jQuery("#password").attr("data-content") + "</div>"
-                }
-      }).focus(function(){
-          jQuery(this).popover("show");
-      }).blur(function(){
-          jQuery(this).popover("hide");
-      }); 
-    }
-  });
-});
-</script>
-<% end %>
+
+  <% content_for :sidebar do %>
+    <% unless current_account.sso_enabled? %>
+      <div class="sidepanel">
+        <%= content_tag( :h3, t("profile.change_password"), :class => "title" ) %>
+        <% if current_account.falcon_ui_enabled?(current_user) %>
+          <%= form_for "not_resource", :remote => true, :url => { :action => :change_password, :controller => 'profiles', :method => :put} do |f| %>
+            <%= render :partial => "change_password_form", :locals => { :f => f } %>
+          <% end %>
+        <% else %>
+          <%= form_tag :action => :change_password, :controller => 'profiles', :method => :put do |f| %>
+            <%= render :partial => "change_password_form", :locals => { :f => f } %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+    <% if show_api_key? %>
+      <div class="sidepanel">
+        <%= content_tag( :h3, t("profile.api_key.title"), :class => "title" ) %>
+        <%= form_tag :action => :reset_api_key, :controller => 'profiles', :method => :put do |f| %>
+          <ul class="ui-form">
+            <label class="center" for="api_key"><%=@profile.user.single_access_token%></label>
+          </ul>
+          <div class="button-container">
+            <%= submit_tag t("profile.api_key.reset"), :class => "btn", :confirm => t("profile.api_key.reset_warning") %>
+          </div>
+        <% end %>
+      </div>
+      <!-- Include this integrations partial in all user profile pages which shows API key.-->
+      <%= render :partial => "integrations" %>
+    <% end %>
+
+    <% if current_account.falcon_ui_enabled?(current_user) && (current_account.undo_send_enabled? || current_account.reverse_notes_enabled?)%>
+      <%if current_account.reverse_notes_enabled?%>
+        <div class="sidepanel">
+          <div class="row-fluid">
+            <div class="span10 sort-conversations__label"><%= t("account.sort_conversations.label") %></div>
+            <div class="span12 sort-conversations__select">
+              <%= select_tag :sort_conversations, options_for_select([[t("account.sort_conversations.option1"), false], [t("account.sort_conversations.option2"), true]], current_account.oldest_notes_first_enabled?(current_user)) %>
+            </div>
+          </div>
+          <div class="row-fluid">
+            <div id="sort_conversation" class="span12 align-left sort-conversations__tip" data-notice="<%= t("account.sort_conversations.helpnote") %>" data-alert-false="<%= t("account.sort_conversations.latest_top")%>" data-alert-true="<%= t("account.sort_conversations.oldest_top")%>">
+              <%= t("account.sort_conversations.helpnote") %>
+            </div>
+          </div>
+        </div>
+      <%end%>
+      <%if current_account.undo_send_enabled?%>
+        <div class="sidepanel">
+          <div class="row-fluid undo-send-option">
+            <div class="span10 align-left undo-toggle"><%= t("undo_toggle") %></div>
+            <div class="span2 align-right">
+              <input rel="toggle" type="checkbox" id="undo_reply" name="undo_send_toggle" data-checked-label="<%= t('plain_yes') %>" data-unchecked-label="<%= t('plain_no') %>" <%if current_user.preferences[:agent_preferences][:undo_send]%>checked="true"<%end%> />
+            </div>
+          </div>
+          <div class="row-fluid">
+            <div class=" span12 align-left undo-send-tip"><%= t("undo_toggle_tip") %></div>
+          </div>
+        </div>
+      <%end%>
+    <% end %>
+
+
+  <% end%> # content_for sidebar
+<% end %> # freshid
 <script type="text/javascript">
-  function update_preferences(status_url){
-    jQuery.ajax({
-      url: status_url,
-      type: "post"  
+    jQuery(document).ready(function() {
+
+        jQuery(function () {
+            var popover_message = jQuery('#password').data('content');
+            if(popover_message){
+                jQuery("#password").popover({
+                    html: true,
+                    trigger: 'manual',
+                    placement: 'left',
+                    reloadContent: false,
+                    template: "<div class='arrow'></div><div class='inner'><div class='content'><p></p></div></div>",
+                    content: function(){
+                        return "<div class='password-wrapper'><h5 class='policy-title'><%= t("admin.security.password_policy_popover.password_should") %></h5>" +jQuery("#password").attr("data-content") + "</div>"
+                    }
+                }).focus(function(){
+                    jQuery(this).popover("show");
+                }).blur(function(){
+                    jQuery(this).popover("hide");
+                });
+            }
+        });
     });
-  }
-  jQuery("#undo_reply").on('change', function(){
-    if(this.checked){
-      update_preferences("<%= enable_undo_send_path%>");
-    }
-    else{
-      update_preferences("<%= disable_undo_send_path%>");
-    }
-  });
+
+    jQuery(document).ready(function() {
+        function sortConversationOrderCallback() {
+            var alertMessage = 'data-alert-'+jQuery("#sort_conversations").val();
+            jQuery("#sort_conversation").html(jQuery("#sort_conversation").attr(alertMessage));
+            setTimeout(function(){
+                jQuery("#sort_conversation").html(jQuery("#sort_conversation").attr('data-notice'));
+            }, 2500);
+        }
+
+        function update_preferences(status_url, reqType = 'post', dataObject = {}, callback){
+            jQuery.ajax({
+                url: status_url,
+                data: dataObject,
+                dataType: 'application/json',
+                type: reqType,
+                success:function(data) {
+                    if(typeof(callback) === 'function') {
+                        callback();
+                    }
+                }
+            });
+        }
+        jQuery("#undo_reply").on('change', function(){
+            if(this.checked){
+                update_preferences("<%= enable_undo_send_path%>");
+            }
+            else{
+                update_preferences("<%= disable_undo_send_path%>");
+            }
+        });
+
+        jQuery("#sort_conversations").on('change', function(){
+            update_preferences("<%= set_notes_order_path%>", 'put', { 'oldest_on_top': jQuery("#sort_conversations").val() }, sortConversationOrderCallback.bind(this));
+        });
+    });
 </script>

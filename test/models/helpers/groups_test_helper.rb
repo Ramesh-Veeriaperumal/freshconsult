@@ -1,4 +1,4 @@
-module GroupsTestHelper
+module ModelsGroupsTestHelper
   def create_group(account, options= {},group_type= 1)
     group = account.groups.find_by_name(options[:name])
     return group if group
@@ -38,13 +38,20 @@ module GroupsTestHelper
       created_at: group.created_at.try(:utc).try(:iso8601),
       updated_at: group.updated_at.try(:utc).try(:iso8601),
       import_id: group.import_id,
-      ticket_assign_type: group.ticket_assign_type,
+      ticket_assign_type: ticket_assign_type_hash(group),
       business_calendar_id: group.business_calendar_id,
       toggle_availability: group.toggle_availability,
       capping_limit: group.capping_limit,
       agents: group.agents.map do |ag|
         { name: ag.name, id: ag.id, email: ag.email }
       end
+    }
+  end
+
+  def ticket_assign_type_hash(group)
+    {
+      id: group.ticket_assign_type,
+      type: Group::TICKET_ASSIGN_TYPE_BY_KEYS[group.ticket_assign_type].to_s
     }
   end
 

@@ -1,3 +1,6 @@
-	<%= content_tag( :h3, t('feedbackwidget_help_title'), :class => 'title' ) %>
-	<%= content_tag( :p,  t('feedbackwidget_help_para1')) %>
-	<%= inm_tour_button(t('widget_config_tour_text'),13752) %>
+<% help_title_key, help_para_key, tour_text_key = current_account.help_widget_enabled? ?
+						['feedbackform_title', 'feedbackform_help_para1', 'form_config_tour_text'] :
+						['feedbackwidget_help_title', 'feedbackwidget_help_para1', 'widget_config_tour_text'] %>
+<%= content_tag( :h3, t(help_title_key), :class => 'title' ) %>
+<%= content_tag( :p,  t(help_para_key)) %>
+<%= inm_tour_button(t(tour_text_key),13752) %>

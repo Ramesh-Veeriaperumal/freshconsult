@@ -165,6 +165,10 @@ class Solution::Draft < ActiveRecord::Base
     create_activity('new_draft') if article.published?
   end
 
+  def self.my_drafts(portal_id, language_id)
+    where(user_id: User.current.id).joins(:article, category_meta: :portal_solution_categories).where('portal_solution_categories.portal_id = ? AND solution_articles.language_id = ?', portal_id, language_id)
+  end
+
   private
 
     def move_attachments

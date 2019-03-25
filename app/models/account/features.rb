@@ -30,7 +30,10 @@ class Account < ActiveRecord::Base
     :scheduled_export_fix, :compact_lang_detection,
     :facebook_page_scope_migration, :agent_group_central_publish, :custom_fields_search,
     :update_billing_info, :allow_billing_info_update, :pricing_plan_change_2019,
-    :tag_central_publish, :native_apps, :bot_agent_response, :simple_outreach
+    :tag_central_publish, :native_apps, :archive_tickets_api, :bot_agent_response, :simple_outreach, 
+    :fetch_ticket_from_ref_first, :query_from_singleton, :surveys_central_publish,
+    :id_for_choices_write, :fluffy, :session_logs, :nested_field_revamp, :service_worker, :kbase_mint,
+    :freshvisual_configs, :ticket_field_limit_increase, :join_ticket_field_data, :byepass_signup_captcha
   ].freeze
 
   DB_FEATURES = [
@@ -58,10 +61,11 @@ class Account < ActiveRecord::Base
     :canned_forms, :social_tab, :customize_table_view, :public_url_toggle,
     :add_to_response, :agent_scope, :performance_report, :custom_password_policy,
     :social_tab, :unresolved_tickets_widget_for_sprout, :scenario_automation,
-    :ticket_volume_report, :omni_channel, :sla_management_v2, :cascade_dispatcher,
-    :personal_canned_response, :marketplace
-  ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE)
-
+    :ticket_volume_report, :omni_channel, :sla_management_v2, :api_v2, :cascade_dispatcher,
+    :personal_canned_response, :marketplace, :reverse_notes,
+    :freshreports_analytics, :disable_old_reports
+  ].concat(ADVANCED_FEATURES + ADVANCED_FEATURES_TOGGLE + HelpdeskReports::Constants::FreshvisualFeatureMapping::REPORTS_FEATURES_LIST).uniq
+  # Doing uniq since some REPORTS_FEATURES_LIST are present in Bitmap. Need REPORTS_FEATURES_LIST to check if reports related Bitmap changed.
 
   COMBINED_VERSION_ENTITY_KEYS = [
     Helpdesk::TicketField::VERSION_MEMBER_KEY,
@@ -78,7 +82,7 @@ class Account < ActiveRecord::Base
     :social_tab, :customize_table_view, :public_url_toggle, :add_to_response,
     :agent_scope, :performance_report, :custom_password_policy, :scenario_automation,
     :sla_management_v2, :omni_channel, :personal_canned_response, :marketplace,
-    :fa_developer
+    :fa_developer, :api_v2
   ].to_set.freeze
 
   LP_FEATURES.each do |item|
@@ -215,7 +219,6 @@ class Account < ActiveRecord::Base
   end
 
   def customer_sentiment_enabled?
-    Rails.logger.info "customer_sentiment : #{launched?(:customer_sentiment)}"
     launched?(:customer_sentiment)
   end
 
@@ -263,6 +266,7 @@ class Account < ActiveRecord::Base
     features?(:euc_hide_agent_metrics)
   end
 
+  # TODO: Remove new_pricing_launched?() after 2019 pricing plan launch
   def new_pricing_launched?
     on_new_plan? || redis_key_exists?(NEW_SIGNUP_ENABLED)
   end
@@ -283,6 +287,7 @@ class Account < ActiveRecord::Base
     redis_key_exists?(TWITTER_SMART_FILTER_REVOKED) && smart_filter_enabled? && !Account.current.twitter_handles_from_cache.blank?
   end
 
+  # TODO: Remove on_new_plan?() after 2019 pricing plan launch
   def on_new_plan?
     @on_new_plan ||= [:sprout_jan_17,:blossom_jan_17,:garden_jan_17,:estate_jan_17,:forest_jan_17].include?(plan_name)
   end
@@ -374,10 +379,20 @@ class Account < ActiveRecord::Base
   def custom_translations_enabled?
     redis_picklist_id_enabled? && has_feature?(:custom_translations)
   end
-  
+
   def automatic_ticket_assignment_enabled?
     features?(:round_robin) || features?(:round_robin_load_balancing) ||
       skill_based_round_robin_enabled? || omni_channel_routing_enabled?
+  end
+
+  def latest_notes_first_enabled?(current_user = :no_user)
+    !oldest_notes_first_enabled?(current_user)
+  end
+
+  def oldest_notes_first_enabled?(current_user = :no_user)
+    return true unless reverse_notes_enabled?
+    user_settings = current_user.old_notes_first? if current_user != :no_user
+    user_settings.nil? ? account_additional_settings.old_notes_first? : user_settings
   end
   
   # Need to cleanup bellow code snippet block with 2019 plan changes release

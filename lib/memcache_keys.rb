@@ -15,8 +15,9 @@ module MemcacheKeys
   ACCOUNT_AGENTS = "v4/ACCOUNT_AGENTS:%{account_id}"
   ACCOUNT_CUSTOM_DATE_FIELDS = 'v1/ACCOUNT_CUSTOM_DATE_FIELDS:%{account_id}'.freeze
 
+  ACCOUNT_CUSTOM_DATE_TIME_FIELDS = 'v1/ACCOUNT_CUSTOM_DATE_TIME_FIELDS:%{account_id}'.freeze
 
-  ACCOUNT_AGENTS_DETAILS = "v3/ACCOUNT_AGENTS_DETAILS:%{account_id}"
+  ACCOUNT_AGENTS_DETAILS = 'v5/ACCOUNT_AGENTS_DETAILS:%{account_id}'.freeze
 
   ACCOUNT_ROLES = "v1/ACCOUNT_ROLES:%{account_id}"
 
@@ -143,7 +144,7 @@ module MemcacheKeys
 
   POD_SHARD_ACCOUNT_MAPPING = "v3/POD_SHARD_ACCOUNT_MAPPING:%{pod_info}:%{shard_name}"
 
-  ACCOUNT_ADDITIONAL_SETTINGS = "v3/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}"
+  ACCOUNT_ADDITIONAL_SETTINGS = 'v4/ACCOUNT_ADDITIONAL_SETTINGS:%{account_id}'.freeze
 
   INSTALLED_FRESHPLUGS = "v3/FA:%{page}:PLUGS:%{account_id}:%{platform_version}"
 
@@ -227,6 +228,10 @@ module MemcacheKeys
 
   COMPANY_FILTERS = 'COMPANY_FILTERS:%{account_id}'.freeze
 
+  PICKLIST_VALUES_BY_ID = 'v1/PICKLIST_VALUES_BY_ID:%{account_id}:%{column_name}'.freeze
+
+  PICKLIST_IDS_BY_VALUE = 'v1/PICKLIST_VALUES_BY_VALUE:%{account_id}:%{column_name}'.freeze
+
   ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
 
   HELP_WIDGETS = "v1/HELP_WIDGETS:%{account_id}:%{id}"
@@ -240,6 +245,20 @@ module MemcacheKeys
   PLANS_AGENT_COSTS_BY_CURRENCY = 'PLANS_AGENT_COSTS_BY_CURRENCY:%{currency_name}'.freeze
 
   ACCOUNT_AGENT_TYPES = "v1/ACCOUNT_AGENT_TYPES:%{account_id}"
+    
+  def fetch_from_cache(key, &block)
+    @cached_values = {} unless @cached_values
+    return @cached_values[key] if @cached_values[key]
+    val = MemcacheKeys.fetch(key, &block)
+    @cached_values[key] = val
+    val
+  end
+
+  def delete_value_from_cache(key)
+    MemcacheKeys.delete_from_cache(key)
+    @cached_values.delete(key) if @cached_values
+  end
+
   class << self
 
     include MemcacheReadWriteMethods

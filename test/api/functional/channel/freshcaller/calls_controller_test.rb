@@ -28,8 +28,7 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_create_with_invalid_auth
     invalid_auth_header
-    post :create, construct_params(version: 'channel', fc_call_id: get_call_id)
-    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
+    assert_create_unauthorized
   end
 
   def test_update_with_invalid_auth
@@ -49,21 +48,12 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_create_with_valid_params_and_basic_auth
     set_basic_auth_header
-    post :create, construct_params(version: 'channel', fc_call_id: get_call_id)
-    result = parse_response(@response.body)
-    match_json(create_pattern(::Freshcaller::Call.last))
-    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+    assert_create
   end
 
   def test_update_recording_status_and_basic_auth
     set_basic_auth_header
-    call_id = get_call_id
-    create_call(fc_call_id: call_id)
-    put :update, construct_params(version: 'channel', id: call_id, recording_status: 1)
-    call = ::Freshcaller::Call.last
-    match_json(create_pattern(call))
-    assert_equal 1, call.recording_status
-    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+    assert_update
   end
 
   def test_update_recording_status_and_basic_auth_with_out_create
@@ -78,10 +68,17 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_create_with_valid_params
     set_auth_header
-    post :create, construct_params(version: 'channel', fc_call_id: get_call_id)
-    result = parse_response(@response.body)
-    match_json(create_pattern(::Freshcaller::Call.last))
-    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+    assert_create
+  end
+
+  def test_create_with_valid_params_with_agent
+    auth_header_with_agent_email
+    assert_create
+  end
+
+  def test_create_with_valid_params_with_contact
+    auth_header_with_contact_key
+    assert_create_unauthorized
   end
 
   def test_create_with_update_field
@@ -100,32 +97,38 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
 
   def test_update_recording_status
     set_auth_header
+    assert_update
+  end
+
+  def test_update_recording_status_with_agent
+    auth_header_with_agent_email
+    assert_update
+  end
+
+  def test_update_recording_status_with_contact
+    auth_header_with_contact_key
     call_id = get_call_id
     create_call(fc_call_id: call_id)
     put :update, construct_params(version: 'channel', id: call_id, recording_status: 1)
-    call = ::Freshcaller::Call.last
-    match_json(create_pattern(call))
-    assert_equal 1, call.recording_status
-    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
   end
 
   def test_update_with_missed_call_params
-    User.current = @account.users.first
     set_auth_header
-    call_id = get_call_id
-    create_call(fc_call_id: call_id)
-    put :update, construct_params(convert_incoming_call_params(call_id, 'no-answer'))
-    result = parse_response(@response.body)
-    call = ::Freshcaller::Call.last
-    match_json(ticket_only_pattern(call))
-    assert_equal call.notable.description.present?, true # for missed call, the call will be directly assocaited to ticket
-    assert_equal call.notable.description_html.present?, true
-    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
-    assert_equal User.current, nil
+    assert_voice_mail_missed_call('no-answer')
+  end
+
+  def test_update_with_missed_call_params_with_agent
+    auth_header_with_agent_email
+    assert_voice_mail_missed_call('no-answer')
+  end
+
+  def test_update_with_missed_call_params_with_contact
+    auth_header_with_contact_key
+    assert_voicemail_missed_call_unauthorized('no-answer')
   end
 
   def test_update_with_default_call_status_params
-    User.current = @account.users.first
     set_auth_header
     call_id = get_call_id
     create_call(fc_call_id: call_id)
@@ -136,20 +139,21 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_equal call.notable.description.present?, true # for default call status, the call will be directly assocaited to ticket
     assert_equal call.notable.description_html.present?, true
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
-    assert_equal User.current, nil
   end
 
   def test_update_with_voicemail_params
     set_auth_header
-    call_id = get_call_id
-    create_call(fc_call_id: call_id)
-    put :update, construct_params(convert_call_params(call_id, 'voicemail'))
-    result = parse_response(@response.body)
-    call = ::Freshcaller::Call.last
-    match_json(ticket_with_note_pattern(call))
-    assert_equal call.notable.notable.description.present?, true # for voicemail, the call will be associated to note of a ticket
-    assert_equal call.notable.notable.description_html.present?, true
-    assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+    assert_voice_mail_missed_call('voicemail')
+  end
+
+  def test_update_with_voicemail_params_with_agent
+    auth_header_with_agent_email
+    assert_voice_mail_missed_call('voicemail')
+  end
+
+  def test_update_with_voicemail_params_with_contact
+    auth_header_with_contact_key
+    assert_voicemail_missed_call_unauthorized('voicemail')
   end
 
   def test_update_with_abandoned_params
@@ -163,7 +167,6 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     assert_equal call.notable.description.present?, true # for default call status, the call will be directly assocaited to ticket
     assert_equal call.notable.description_html.present?, true
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
-    assert_equal User.current, nil
   end
 
   def test_update_with_voicemail_abandoned_sceanrio
@@ -245,18 +248,4 @@ class Channel::Freshcaller::CallsControllerTest < ActionController::TestCase
     put :update, construct_params(version: 'channel', id: '', recording_status: 1)
     assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:not_found]
   end
-
-  private
-
-    def set_auth_header
-      request.env['HTTP_AUTHORIZATION'] = "token=#{sign_payload({'account_id': '1', 'api_key': 'xxx' })}"
-    end
-
-    def invalid_auth_header
-      request.env['HTTP_AUTHORIZATION'] = "token=invalid"
-    end
-
-    def set_basic_auth_header
-      request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token, "X")
-    end
 end

@@ -6,7 +6,7 @@ WebMock.allow_net_connect!
 module Ember
   module Admin  
     class BotFeedbacksControllerTest < ActionController::TestCase
-      include BotTestHelper
+      include ApiBotTestHelper
       include SolutionsHelper
       include SolutionBuilderHelper
 

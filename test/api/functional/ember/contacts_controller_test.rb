@@ -68,6 +68,14 @@ module Ember
       contact_ids
     end
 
+    def create_n_marked_for_hard_delete_users(count, account, params = {})
+      contact_ids = []
+      count.times do
+        contact_ids << add_marked_for_hard_delete_user(account, params).id
+      end
+      contact_ids
+    end
+
     def construct_other_companies_hash(company_ids)
       other_companies = []
       (1..company_ids.count-1).each do |itr|
@@ -88,7 +96,7 @@ module Ember
 
     def test_create_with_avatar_and_avatar_id
       attachment_id = create_attachment(attachable_type: 'UserDraft', attachable_id: @agent.id).id
-      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
       params_hash = contact_params_hash.merge(avatar_id: attachment_id, avatar: file)
       DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
       @request.env['CONTENT_TYPE'] = 'multipart/form-data'
@@ -126,7 +134,7 @@ module Ember
     end
 
     def test_create_with_errors
-      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
       avatar_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
       params_hash = contact_params_hash.merge(avatar_id: avatar_id)
       User.any_instance.stubs(:save).returns(false)
@@ -136,7 +144,7 @@ module Ember
     end
 
     def test_create_with_avatar_id
-      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
       avatar_id = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id).id
       params_hash = contact_params_hash.merge(avatar_id: avatar_id)
       post :create, construct_params({ version: 'private' }, params_hash)
@@ -698,7 +706,7 @@ module Ember
     end
 
     def test_show_a_contact_with_avatar
-      file = fixture_file_upload('files/image33kb.jpg', 'image/jpg')
+      file = fixture_file_upload('files/image33kb.jpg', 'image/jpeg')
       sample_user = add_new_user(@account)
       sample_user.build_avatar(content_content_type: file.content_type, content_file_name: file.original_filename)
       get :show, controller_params(version: 'private', id: sample_user.id)
@@ -780,6 +788,12 @@ module Ember
       assert_response 405
     end
 
+    def test_deletion_of_hard_deleted_contact
+      contact_id = add_marked_for_hard_delete_user(@account)
+      delete :destroy, controller_params(version: 'private', id: contact_id)
+      assert_response 404
+    end
+
     def test_deletion_with_errors
       contact = add_new_user(@account)
       User.any_instance.stubs(:save).returns(false)
@@ -794,6 +808,12 @@ module Ember
       contact = add_new_user(@account, deleted: true)
       put :restore, controller_params(version: 'private', id: contact.id)
       assert_response 204
+    end
+
+    def marked_for_delete_restore
+      contact = add_marked_for_hard_delete_user(@account)
+      put :restore, controller_params(version: 'private', id: contact.id)
+      assert_response 404
     end
 
     def test_restoring_non_existing_contact
@@ -888,6 +908,12 @@ module Ember
 
     def bulk_restore
       contact_ids = create_n_users(BULK_CONTACT_CREATE_COUNT, @account, deleted: true)
+      put :bulk_restore, construct_params({ version: 'private' }, ids: contact_ids)
+      assert_response 204
+    end
+
+    def bulk_restore_of_marked_for_hard_deleted_contacts
+      contact_ids = create_n_marked_for_hard_delete_users(BULK_CONTACT_CREATE_COUNT, @account, deleted: true)
       put :bulk_restore, construct_params({ version: 'private' }, ids: contact_ids)
       assert_response 204
     end
@@ -1089,7 +1115,7 @@ module Ember
     end
 
     def test_update_remove_avatar
-      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
       avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
       contact = add_new_user(@account, avatar: avatar)
       put :update, construct_params({ version: 'private', id: contact.id }, avatar_id: nil)
@@ -1100,7 +1126,7 @@ module Ember
     end
 
     def test_update_change_avatar
-      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
       avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
       contact = add_new_user(@account, avatar: avatar)
       new_avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
@@ -1112,7 +1138,7 @@ module Ember
     end
 
     def test_update_add_avatar
-      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
       avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
       contact = add_new_user(@account)
       put :update, construct_params({ version: 'private', id: contact.id }, avatar_id: avatar.id)
@@ -1123,7 +1149,7 @@ module Ember
     end
 
     def test_update_avatar_and_contact_update_failure
-      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpg')
+      file = fixture_file_upload('/files/image33kb.jpg', 'image/jpeg')
       avatar = create_attachment(content: file, attachable_type: 'UserDraft', attachable_id: @agent.id)
       contact = add_new_user(@account)
       other_contact = add_new_user(@account)

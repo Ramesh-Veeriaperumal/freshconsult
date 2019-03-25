@@ -26,12 +26,12 @@ module AccountConstants
   } 
   
   # Default email settings for additional settings
-  DEFAULTS_FONT_SETTINGS = { 
-    :email_template => { 
-      "font-size"   => '13px',
-      "font-family" => '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif'
+  DEFAULTS_FONT_SETTINGS = {
+    email_template: {
+      'font-size' => '14px',
+      'font-family' => '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif'
     }
-  } 
+  }.freeze
 
   DATA_DATEFORMATS = { 
     :non_us => {
@@ -93,6 +93,8 @@ module AccountConstants
   HIPAA_ENCRYPTION_ALGORITHM = 'AES-256-CBC'
   SANDBOX_TRAIL_PERIOD = 180
   MAX_INVOICE_EMAILS = 1
+
+  ANONYMOUS_EMAIL = 'freshdeskdemo'.freeze
 
   def attachment_limit
     @attachment_limit ||= Account.current.outgoing_attachment_limit_25_enabled? ? 25 : ATTACHMENT_LIMIT

@@ -24,6 +24,7 @@ class AuditLogsControllerTest < ActionController::TestCase
     assert_response 200
     match_json audit_log_filter_response
     assert_equal response.api_meta[:next], next_url
+    HyperTrail::AuditLog.any_instance.unstub(:fetch)
   end
 
   def test_audit_log_event_name
@@ -32,6 +33,69 @@ class AuditLogsControllerTest < ActionController::TestCase
     resp = @account.all_va_rules.map { |rule| { name: rule.name, id: rule.id } }
     match_json resp
   end
+
+  def test_export_works
+    HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns({:id => 1})
+    HyperTrail::AuditLog.any_instance.expects(:trigger_export).returns(true)
+    post :export, {version: 'private', format: 'json', from: 1.month.ago.to_s, to: Time.now.to_s}
+    assert_response 200
+    HyperTrail::AuditLog.any_instance.unstub(:fetch_job_id)
+    HyperTrail::AuditLog.any_instance.unstub(:trigger_export)
+  end
+
+  def test_validate_filter_params_fails_when_invalid_params_during_export
+    post :export, {version: 'private', format: 'json'}
+    assert_response 400
+  end
+
+  def test_validate_export_params_delegator_when_invalid
+    DataExport.stubs(:audit_log_export_limit_reached?).returns(true)
+    HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns({:id => 1})
+    HyperTrail::AuditLog.any_instance.expects(:trigger_export).returns(true)
+    post :export, {version: 'private', format: 'json', from: 1.month.ago.to_s, to: Time.now.to_s}
+    assert_response 400
+    DataExport.unstub(:audit_log_export_limit_reached?)
+    HyperTrail::AuditLog.any_instance.unstub(:fetch_job_id)
+    HyperTrail::AuditLog.any_instance.unstub(:trigger_export)
+  end
+
+  def test_agent_id_given_for_filtering
+    HyperTrail::AuditLog.any_instance.stubs(:fetch).returns(hypertrail_sample_response)
+    post :filter, {version: 'private', format: 'json', agent_id: Account.current.agents.first.id}
+    assert_response 200
+    match_json audit_log_filter_response
+    assert_equal response.api_meta[:next], next_url
+    HyperTrail::AuditLog.any_instance.unstub(:fetch)
+  end
+
+  def test_invalid_agent_id_given_for_filtering
+    HyperTrail::AuditLog.any_instance.stubs(:fetch).returns(hypertrail_sample_response)
+    post :filter, {version: 'private', format: 'json', agent_id: 901239090123}
+    assert_response 200
+    match_json audit_log_filter_response
+    assert_equal response.api_meta[:next], next_url
+    HyperTrail::AuditLog.any_instance.unstub(:fetch)
+  end
+
+  def test_export_works_with_filter_invalid
+    HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns({:id => 1})
+    HyperTrail::AuditLog.any_instance.expects(:trigger_export).returns(true)
+    post :export, {version: 'private', format: 'json', from: 1.month.ago.to_s, to: Time.now.to_s, filter: { filter_set_1: { entity: ["contact"], ids: [1] } }}
+    assert_response 400
+    HyperTrail::AuditLog.any_instance.unstub(:fetch_job_id)
+    HyperTrail::AuditLog.any_instance.unstub(:trigger_export)
+  end
+
+  def test_export_works_with_filter_valid
+    HyperTrail::AuditLog.any_instance.stubs(:fetch_job_id).returns({:id => 1})
+    HyperTrail::AuditLog.any_instance.expects(:trigger_export).returns(true)
+    post :export, {version: 'private', format: 'json', from: 1.month.ago.to_s, to: Time.now.to_s, filter: { filter_set_1: { entity: ["agent"], ids: [1] } }, condition: []}
+    assert_response 200
+    HyperTrail::AuditLog.any_instance.unstub(:fetch_job_id)
+    HyperTrail::AuditLog.any_instance.unstub(:trigger_export)
+  end
+
+  private
 
   def audit_log_filter_response
     [{"time"=>1526981491586, "ip_address"=>"127. 0. 0. 1", "name"=>{"name"=>"2314211", "url_type"=>"agent", "id"=>74341}, "event_performer"=>{"id"=>37, "name"=>"Admin", "url_type"=>"agent"}, "action"=>"update", "event_type"=>"Agent", "description"=>[{"type"=>"default", "field"=>"Email", "value"=>{"from"=>"dslads@dsadasa.com", "to"=>"dsqslads@dsadasa.com"}}, {"type"=>"default", "field"=>"Ticket Permission", "value"=>{"from"=>"Global Access", "to"=>"Group Access"}}]}, {"time"=>1526980693092, "ip_address"=>nil, "name"=>{"name"=>"subscription", "url_type"=>"subscription", "id"=>6}, "event_performer"=>{"id"=>0, "name"=>"system", "url_type"=>"agent"}, "action"=>"update", "event_type"=>"Subscription", "description"=>[{"type"=>"default", "field"=>"Agent Limit", "value"=>{"from"=>10, "to"=>9}}, {"type"=>"default", "field"=>"Subscription State", "value"=>{"from"=>"active", "to"=>"trial"}}, {"type"=>"default", "field"=>"Renewal Period", "value"=>{"from"=>"Monthly", "to"=>"Quarterly"}}, {"type"=>"default", "field"=>"Card Number", "value"=>{"from"=>"************1111", "to"=>"dsadadasa"}}, {"type"=>"default", "field"=>"Card Expiration", "value"=>{"from"=>"12-2019", "to"=>"2018-08-30T09:16:07Z"}}, {"type"=>"default", "field"=>"Subscription Plan", "value"=>{"from"=>"Forest", "to"=>"Estate"}}, {"type"=>"default", "field"=>"Subscription Currency", "value"=>{"from"=>"EUR", "to"=>"INR"}}]}]

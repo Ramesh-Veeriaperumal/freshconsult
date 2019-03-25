@@ -132,6 +132,8 @@ api_error_messages:
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
   invalid_company_id: "There is no record matching the id %{company_id}"
   facebook_user_blocked: "Facebook 230 exception"
+  twitter_write_access_blocked: "Cannot write, Twitter write permission has been revoked"
+  ebay_reply_limit_exceeded: "Exceeded maximum message limit of 2000 letters"
   unable_to_perform: "Unable to perform"
   traffic_cop_alert: "Ticket has been updated with new conversations"
   undo_send_enqueued_alert: "Someone may have responded to this ticket. Please refresh in a while and review your response."
@@ -156,7 +158,7 @@ api_error_messages:
   missing_contact_detail: "Please enter at least one contact detail"
   unassociated_values: "Values - '%{invalid_values}' not found in primary/secondary contacts"
   no_freshcaller_account: "No Freshcaller account exists"
-  outbound_limit_exceeded: "You can send a maximum of 5 outbound emails a day per account during the trial period"
+  outbound_limit_exceeded: "You can send a maximum of %{count} outbound emails a day per account %{details}"
   recipient_limit_exceeded: "You cannot email more than five people at once when you're on trial"
   dashboard_limit_exceeded: "Has exceeded maximum limit"
   announcement_limit_exceeded: "Only one active announcement per dashboard permitted"
@@ -164,6 +166,7 @@ api_error_messages:
   unanswered_time_period_invalid: "End at should be greater than Start at"
   invalid_bot_state: "Cannot perform the action as bot state is invalid"
   not_mock_data: 'Cannot perform the action as bot already shows original analytics data'
+
 
   not_allowed_to_accept_gdpr: "Not able to accept Gdpr Terms"
   app_unavailable: "The %{feature} feature is not enabled. Please make sure to install %{app} app"
@@ -191,6 +194,7 @@ api_error_messages:
   lt_ticket_created_at: "It cannot be less than the ticket's created time"
   cannot_set_closed_at: "It cannot be set, when created_at and updated_at are not set or status is not closed"
   invalid_inline_attachments_list: "Invalid inline attachment ids : %{invalid_ids}"
+  invalid_id_list: "Invalid ids : %{invalid_ids}"
   invalid_avatar: "Avatar is invalid"
   missing_avatar: "Avatar is empty"
   invalid_default_avatar: "Default avatar is invalid"
@@ -237,9 +241,9 @@ api_error_messages:
   agent_type_change_not_allowed: "You cannot change the agent type"
   agent_group_type_mismatch: "Agent and group need to be of the same type"
   date_limit_exceeded: "The maximum range for appointment dates is 15 days."
-  invalid_date_range: "Invalid date range, end date should be greater or equal to the start date."
-  field_agent_scope: "Field Agent should have restricted scope"
-  field_agent_roles: "Field Agent should have agent role"
+  invalid_date_time_range: "Invalid date time range, end time should be greater or equal to the start time."
+  field_agent_scope: "Field technician should have restricted or group scope"
+  field_agent_roles: "Field technician should have agent role"
 
   source_update_not_permitted: "Source of tickets of sources %{sources} can not be updated."
   #help widget validation error messages
@@ -250,13 +254,13 @@ api_error_messages:
   default_role_modified: "You cannot modify a default role."
   missing_privileges: "Please check privileges that are dependent on: '%{list}'"
   should_be_child: A ticket of type %{type} cannot be created without parent_id
-  to_service_task_not_possible: The type of a ticket can not be updated to Service Task
-  from_service_task_not_possible: The type of a Service Task ticket can not be updated
-  only_field_group_allowed: Only Field Agent Groups can be assigned to a ticket of type Service Task
-  field_group_not_allowed: Tickets that are not of type Service Task cannot be assigned a Field Agent Group
-  only_field_agent_allowed: Only Field Agents can be assigned to a ticket of type Service Task
-  field_agent_not_allowed: Tickets that are not of type Service Task cannot be assigned a Field Agent
-  invalid_field_auto_assign: "Auto ticket assignment is not available for field service groups."
+  to_service_task_not_possible: The type of a ticket can not be updated to service task
+  from_service_task_not_possible: The type of a service task ticket can not be updated
+  only_field_group_allowed: Only service groups can be assigned to a ticket of type service task
+  only_field_agent_allowed: Only field technicians can be assigned to a ticket of type service task
+  field_agent_not_allowed: Tickets that are not of type service task cannot be assigned a field technician
+  field_group_not_allowed: Tickets that are not of type service Task cannot be assigned a field technician
+  invalid_field_auto_assign: "Auto ticket assignment is not available for service groups."
   invalid_agent_ids: "Agent and group need to be of the same type."
   existing_import_inprogress: "We're still processing the previous import. Retry when it's complete."
   invalid_import_value: "Invalid value. Should be set as the index of field"
@@ -271,4 +275,16 @@ api_error_messages:
   unsupported_language: "Language given in the request URL (%{language_code}) is not found. Allowed languages are %{list}"
   empty_supported_language: "No supported languages added in this account."
   invalid_twitter_handle: "Twitter handle doesn't exist"
+  # Solutions
+  invalid_portal_id: 'Portal id is invalid'
   field_validation_for_email: "It should not be blank as this is a mandatory field for sending email"
+
+
+  portal_language_not_supported: "Portal language is not a supported language"
+  supported_language_primary: "supported language is already a primary language"
+  invalid_language: "%{languages} is not a valid language"
+  supported_previously_added: "Primary language cannot be modified because supported language has previously been added for this account"
+  primary_or_supported: "Primary and supported/portal languages must be modified individually"
+
+  invalid_ebay_ticket_source: "Invalid ticket source"
+

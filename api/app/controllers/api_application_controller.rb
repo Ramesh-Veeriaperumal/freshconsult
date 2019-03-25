@@ -14,6 +14,7 @@ class ApiApplicationController < MetalApiController
   protect_from_forgery
   skip_before_filter :verify_authenticity_token
   before_filter :unset_thread_variables
+  around_filter :log_csrf
   before_filter :verify_authenticity_token, if: :csrf_check_reqd?
 
   # Do not change the order as record_not_unique is inheriting from statement invalid error
@@ -44,6 +45,7 @@ class ApiApplicationController < MetalApiController
   before_filter :set_time_zone, :check_day_pass_usage_with_user_time_zone, :set_msg_id
   before_filter :force_utf8_params
   before_filter :set_cache_buster
+  before_filter :set_service_worker
 
   include AuthenticationSystem
   include HelpdeskSystem
@@ -91,6 +93,8 @@ class ApiApplicationController < MetalApiController
  # This should be the last arount filter , can be make available to public as needed
   around_filter :response_cache, only: [:index, :show], if: :private_api?
 
+  after_filter :remove_session_data
+
   SINGULAR_RESPONSE_FOR = %w(show create update).freeze
   COLLECTION_RESPONSE_FOR = %w(index search).freeze
   CURRENT_VERSION = 'private-v1'.freeze
@@ -111,7 +115,7 @@ class ApiApplicationController < MetalApiController
       MemcacheKeys.cache(format(response_cache_key, account_id: current_account.id), response.body, RESPONSE_CACHE_TIMEOUT) if response_cache_key
     end
   end
-  
+
   def response_cache_key
     @cache_key ||= self.class::RESPONSE_CACHE_KEYS[action_name] if defined? self.class::RESPONSE_CACHE_KEYS
   end
@@ -337,7 +341,6 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_account_state
-      Rails.logger.info "::: Check account state :::"
       if current_account.suspended?
         if private_api?
           render_request_error(:account_suspended, 402) if RESTRICTED_ACCESS_METHODS.include?(request.method_symbol)
@@ -621,7 +624,6 @@ class ApiApplicationController < MetalApiController
         access_denied
         return false
       elsif verify_password_expired?
-        Rails.logger.debug 'API V2 Password expired error'
         render_request_error :password_expired, 403
         return false
       end
@@ -662,7 +664,11 @@ class ApiApplicationController < MetalApiController
 
       User.current = api_current_user
       Thread.current[:message_uuid] = request.try(:uuid).to_a
-      log_locale unless private_api?
+      if private_api?
+        log_session_details(:set_current_account) if Account.current.session_logs_enabled?
+      else
+        log_locale
+      end
     rescue ActiveRecord::RecordNotFound, ShardNotFound
       Rails.logger.error("API V2 request for invalid account. Host: #{request.host}")
       head 404
@@ -672,7 +678,7 @@ class ApiApplicationController < MetalApiController
 
     def set_current_portal
       @current_portal ||= Portal.fetch_by_url(request_host) || @current_account.main_portal_from_cache
-      @current_portal.make_current 
+      @current_portal.make_current
     end
 
     def get_request?
@@ -815,10 +821,8 @@ class ApiApplicationController < MetalApiController
     end
 
     def check_day_pass_usage_with_user_time_zone
-      Rails.logger.info "::: day pass check started :::"
       user_zone = TimeZone.find_time_zone
       Time.use_zone(user_zone) { check_day_pass_usage }
-      Rails.logger.info "::: day pass check done :::"
     end
 
     def use_time_zone
@@ -840,8 +844,13 @@ class ApiApplicationController < MetalApiController
     end
 
     def handle_unverified_request
+      log_session_details(:handle_unverified_request) if Account.current && Account.current.session_logs_enabled?
       render_request_error :invalid_credentials, 401
       # TODO-EMBERAPI Need to decide what exactly to send back
+    end
+
+    def log_session_details(parent)
+      Rails.logger.info "Session details logging :: #{parent} :: #{request.headers['X-CSRF-Token']} :: #{session.inspect}"
     end
 
     def set_root_key
@@ -905,7 +914,7 @@ class ApiApplicationController < MetalApiController
         Rails.logger.debug "Exception on set locale :: #{exception.message}"
         I18n.default_locale
       end
-      log_locale
+      # log_locale
     end
 
     def authenticate_jwt_request
@@ -940,5 +949,24 @@ class ApiApplicationController < MetalApiController
 
     def log_locale
       Rails.logger.info "Locale:: #{I18n.locale}, User:: #{User.current.try(:id)}, User lang:: #{User.current.try(:language)}, Account lang:: #{Account.current.language}"
+    end
+
+    def log_csrf
+      start_token = session[:_csrf_token] if session
+      yield
+      end_token = session[:_csrf_token] if session
+      Rails.logger.info "CSRF observed :: changed :: #{start_token != end_token}:: #{start_token} :: #{end_token} :: Tab :: #{request.env['HTTP_X_CLIENT_INSTANCE_ID']}"
+    end
+
+    def remove_session_data
+      session[:helpdesk_history] = nil if session && session[:helpdesk_history]
+    end
+
+    def set_service_worker
+      if current_account.service_worker_enabled?
+        cookies[:service_worker] = true
+      else
+        cookies.delete 'service_worker'
+      end
     end
 end

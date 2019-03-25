@@ -1,0 +1,6 @@
+<%= node[:opsworks][:environment] %>:
+  port: <%= node[:ymls][:thrift][:port]%>
+  activities:
+    host: <%= node[:ymls][:thrift][:activities_host] %>
+  activities_export:
+    host: <%= node[:ymls][:thrift][:activities_export_host] %>

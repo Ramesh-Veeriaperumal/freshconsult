@@ -15,7 +15,7 @@ class Sync::FileToData::Manager
   end
 
   def update_all_config(action = :added)
-    @model_directories = Sync::FileToData::ModelDirectories.new(root_path).perform
+    @model_directories = Sync::FileToData::ModelDirectories.new(root_path, @clone).perform
     Rails.logger.info("Sandbox model_directories account #{account.id} #{@model_directories.inspect}")
     @model_insert_order.each do |model|
       @model_directories[model].each do |id, model_directories|

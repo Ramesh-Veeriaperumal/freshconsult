@@ -1,0 +1,36 @@
+type: object
+properties:
+  name: 
+    type: string
+  description:
+    type: string
+  category_id:
+    type: integer
+    description: Category id of in which this folder belongs to
+  visibility:
+    type: integer
+    enum: [1,2,3,4,5]
+    description: >
+      visibility:
+        * `All users` - 1
+        * `Logged users` - 2
+        * `Agents` - 3
+        * `Companies` - 4
+        * `Bot` - 5
+  company_ids:
+    type: array
+    description: List of company ids for which this folder visible to. Applicable only if visibility is 4
+    items:
+      type: integer
+  position:
+    type: integer
+  article_order:
+    type: integer
+    enum: [1,2,3,4,5,6,7]
+    description: >
+      order:
+        * `Custom` - 1
+        * `Date Created (Newest First)` - 2
+        * `Date Created (Oldest First)` - 3
+        * `Last Modified (Oldest First)` - 4
+        * `Title (a..z)` - 5

@@ -1,5 +1,6 @@
 class Admin::CloneWorker < BaseWorker
   include Sync::Constants
+  include Cache::Memcache::Twitter
   sidekiq_options :queue => :clone, :retry => 0, :backtrace => true, :failures => :exhausted
 
   def perform(args)
@@ -39,6 +40,10 @@ class Admin::CloneWorker < BaseWorker
       clone_account.tickets.destroy_all
     end
 
+    def destroy_twitter_handles(clone_account)
+      clone_account.twitter_handles.destroy_all
+    end
+
     def post_data_migration_activities
       Sharding.admin_select_shard_of(@clone_account_id) do
         clone_account = Account.find(@clone_account_id).make_current
@@ -50,6 +55,10 @@ class Admin::CloneWorker < BaseWorker
         clone_account.safe_send(:enable_searchv2)
         post_account_activities(clone_account)
         freshid_migration(clone_account)
+        central_publish_social_data(clone_account)
+        # Cache would be populated as empty while loading the account for 
+        # the first time after signup. This is required to repopulate the cache
+        clear_twitter_handles_cache
       end
     end
 
@@ -65,7 +74,17 @@ class Admin::CloneWorker < BaseWorker
       clone_account.time_zone = @account.time_zone
       clone_account.reputation =  @account.verified?
       clone_account.plan_features = @account.plan_features
+      (clone_account.account_additional_settings.additional_settings[:clone] ||= {})[:account_id] = @account.id
       clone_account.save
+    end
+
+    def central_publish_social_data(clone_account)
+      clone_account.twitter_handles.each do |twt_handle|
+        twt_handle.manual_publish_to_central(nil, :create, {}, false)
+      end
+      clone_account.twitter_streams.each do |twt_stream|
+        twt_stream.manual_publish_to_central(nil, :create, {}, false) if twt_stream.dm_stream?
+      end
     end
 
     def pre_migration_activities(committer)
@@ -74,6 +93,7 @@ class Admin::CloneWorker < BaseWorker
         branch_name = "#{@clone_account_id}-obsolete"
         ::Sync::Workflow.new(nil, false, @clone_account_id, true, branch_name).sync_config_from_production(committer)
         destroy_tickets(clone_account)
+        destroy_twitter_handles(clone_account)
       end
       @account.make_current
     end

@@ -11,7 +11,9 @@ module Sync::Util
   end
 
   def commit_config_to_git(repo_path, master_account_id = nil, sandbox = false)
-    RELATIONS.each do |relation|
+    all_relations = RELATIONS
+    all_relations += CLONE_RELATIONS if @clone
+    all_relations.each do |relation|
       Sync::DataToFile::Manager.new(repo_path, master_account_id, relation[0], relation[1], sandbox).write_config
     end
   end

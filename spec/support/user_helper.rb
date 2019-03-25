@@ -16,6 +16,7 @@ module UsersHelper
   end
 
   def add_agent(account, options={})
+    role_id = @account.roles.find_by_name("Agent").id
     new_agent = FactoryGirl.build(:agent,
                                       :account_id => account.id,
                                       :available => 1,
@@ -23,18 +24,20 @@ module UsersHelper
                                       :agent_type => options[:agent_type] || 1)
     new_user = FactoryGirl.build(:user,
                                     :account_id => account.id,
-                                    :name => options[:name],
-                                    :email => options[:email],
-                                    :helpdesk_agent => options[:agent],
-                                    :time_zone => "Chennai",
-                                    :active => options[:active],
-                                    :user_role => options[:role],
+                                    :name => options[:name] || Faker::Name.name,
+                                    :email => options[:email] || Faker::Internet.email,
+                                    :helpdesk_agent => options[:agent] || 1,
+                                    :time_zone => options[:time_zone] || "Chennai",
+                                    :active => options[:active] || 1,
+                                    :user_role => options[:role] || role_id,
                                     :delta => 1,
                                     :language => "en",
-                                    :role_ids => options[:role_ids])
+                                    :role_ids => options[:role_ids] || ["#{role_id}"])
     if options[:unique_external_id]
       new_user.unique_external_id = options[:unique_external_id]
     end
+    @account = Account.first if @account.blank?
+    options[:role_ids] = [@account.roles.find_by_name("Agent").id] if options[:role_ids].blank?
     new_user.agent = new_agent
     new_user.privileges = options[:privileges] || account.roles.find_by_id(options[:role_ids].first).privileges
     v = new_user.save_without_session_maintenance
@@ -70,6 +73,30 @@ module UsersHelper
     new_user.avatar = options[:avatar] if options[:avatar]
     new_user.updated_at = options[:updated_at] if options[:updated_at]
     new_user.save_without_session_maintenance
+    new_user.reload
+  end
+
+  def add_marked_for_hard_delete_user(account, options={})
+    tag_names = options[:tags].is_a?(Array) ? options[:tags].join(",") : options[:tags]
+    new_user = FactoryGirl.build(:user, :account => account,
+                                    :name => options[:name] || Faker::Name.name,
+                                    :email => options[:email] || Faker::Internet.email,
+                                    :time_zone => "Chennai",
+                                    :delta => 1,
+                                    :deleted => options[:deleted] || 0,
+                                    :blocked => options[:blocked] || 0,
+                                    :active => options.key?(:active) ? options[:active] : 1,
+                                    :company_id => options[:customer_id] || nil,
+                                    :language => "en",
+                                    :tag_names => tag_names)
+    if options[:unique_external_id]
+      new_user.unique_external_id = options[:unique_external_id]
+    end
+    new_user.custom_field = options[:custom_fields] if options.key?(:custom_fields)
+    new_user.avatar = options[:avatar] if options[:avatar]
+    new_user.updated_at = options[:updated_at] if options[:updated_at]
+    new_user.save_without_session_maintenance
+    new_user.delete_forever!
     new_user.reload
   end
 

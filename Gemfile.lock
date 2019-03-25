@@ -194,10 +194,10 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/central-publisher.git
-  revision: 2f092ff2afe54a5926069c3efde8ef04e6bde0a2
-  tag: v1.0.11
+  revision: 49d9d0bd13dc8c6d682bf2a1d236f4b683e2cc4d
+  tag: v1.0.13
   specs:
-    central-publisher (1.0.11)
+    central-publisher (1.0.12)
       active_record_shards (~> 3.2.0)
       faraday (= 0.9)
       faraday_middleware (~> 0.10.0)
@@ -252,11 +252,11 @@ GIT
 
 GIT
   remote: git@github.com:freshdesk/fresh_request.git
-  revision: 7c521607a3fda8b2976ad5b5b8684ea2b32c635b
-  branch: v20
+  revision: e81aa61fb827c26533dd1828190c646e698496b3
+  branch: release
   specs:
     fresh_request (0.0.1)
-      faraday (~> 0.9.0)
+      faraday
       faraday_middleware
       hashie
       multi_json
@@ -721,6 +721,7 @@ GEM
       railties (>= 3.2)
     dynamic_form (1.1.4)
     ejs (1.1.1)
+    ejson (1.2.0)
     encryptor (1.1.3)
     equalizer (0.0.10)
     erubis (2.7.0)
@@ -1097,7 +1098,7 @@ GEM
     parallel (1.12.1)
     parser (2.5.0.0)
       ast (~> 2.4.0)
-    patron (0.7.1)
+    patron (0.13.1)
     pg (0.18.4)
     phantomjs (2.1.1.0)
     polyglot (0.3.5)
@@ -1515,6 +1516,7 @@ DEPENDENCIES
   dynamics_crm!
   ebayr!
   ejs (= 1.1.1)
+  ejson
   emailserv_request!
   encryptor (= 1.1.3)
   facebook!

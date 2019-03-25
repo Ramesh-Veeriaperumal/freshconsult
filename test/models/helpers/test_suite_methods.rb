@@ -4,8 +4,10 @@ module TestSuiteMethods
   GNIP_ENABLED = false
   RIAK_ENABLED = false
 
-  DatabaseCleaner.clean_with(:truncation,
+  if !defined?($clean_db) || $clean_db == true
+    DatabaseCleaner.clean_with(:truncation,
                              pre_count: true, reset_ids: false)
+  end
   $redis_others.flushall
 end
 

@@ -1,5 +1,5 @@
 ['company_fields_test_helper.rb'].each { |file| require "#{Rails.root}/test/core/helpers/#{file}" }
-module CompaniesTestHelper
+module ModelsCompaniesTestHelper
   def create_company params = {}
     company = FactoryGirl.build(:company, :name => params[:name] || Faker::Name.name )
     company.save

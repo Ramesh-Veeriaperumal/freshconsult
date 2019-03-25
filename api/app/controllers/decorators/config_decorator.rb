@@ -43,6 +43,7 @@ class ConfigDecorator < ApiDecorator
 
   def twitter_config
     twitter_config = {}
+    twitter_config[:twitter_app_blocked] = true if twitter_app_blocked?
     if twitter_reauth_required?
       twitter_config[:twitter_reauth_required] = true
       twitter_config[:twitter_reauth_link] = twitter_reauth_link

@@ -10,7 +10,7 @@ Sidekiq::Testing.fake!
 class UpdateCompanyIdTest < ActionView::TestCase
 
   include AccountTestHelper
-  include TicketsTestHelper
+  include CoreTicketsTestHelper
 
   def setup
     @account = Account.first.make_current

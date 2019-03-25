@@ -108,21 +108,17 @@ module Cache::Memcache::Account
   end
 
   def ticket_types_from_cache
-    @ticket_types_from_cache ||= begin
-      key = ticket_types_memcache_key
-      MemcacheKeys.fetch(key) { ticket_type_values.all }
-    end
+    key = ticket_types_memcache_key
+    fetch_from_cache(key) { ticket_type_values.all }
   end
 
   def clear_ticket_types_from_cache
-    MemcacheKeys.delete_from_cache(ticket_types_memcache_key)
+    delete_value_from_cache(ticket_types_memcache_key)
   end
 
   def agents_from_cache
-    @agents_from_cache ||= begin
-      key = agents_memcache_key
-      MemcacheKeys.fetch(key) { self.agents.find(:all, :include => [:user,:agent_groups]) }
-    end
+    key = agents_memcache_key
+    fetch_from_cache(key) { self.agents.find(:all, include: [:user, :agent_groups]) }
   end
 
   def custom_date_fields_from_cache
@@ -133,7 +129,20 @@ module Cache::Memcache::Account
   end
 
   def clear_custom_date_fields_cache
-    MemcacheKeys.delete_from_cache(ACCOUNT_CUSTOM_DATE_FIELDS % { :account_id =>self.id })
+    @custom_date_fields_from_cache = nil
+    MemcacheKeys.delete_from_cache(custom_date_fields_memcache_key)
+  end
+
+  def custom_date_time_fields_from_cache
+    @custom_date_time_fields_from_cache ||= begin
+      key = custom_date_time_fields_memcache_key
+      MemcacheKeys.fetch(key) { self.ticket_fields.where(field_type: 'custom_date_time').find(:all) }
+    end
+  end
+
+  def clear_custom_date_time_fields_cache
+    @custom_date_time_fields_from_cache = nil
+    MemcacheKeys.delete_from_cache(custom_date_time_fields_memcache_key)
   end
 
   def roles_from_cache
@@ -144,10 +153,8 @@ module Cache::Memcache::Account
   end
 
   def agents_details_from_cache
-    @agents_details_from_cache ||= begin
-      key = agents_details_memcache_key
-      MemcacheKeys.fetch(key) { self.users.where(:helpdesk_agent => true).select("id,name,email").all }
-    end
+    key = agents_details_memcache_key
+    fetch_from_cache(key) { users.where(helpdesk_agent: true).select('id,name,email,privileges').all }
   end
 
   def groups_from_cache
@@ -160,14 +167,12 @@ module Cache::Memcache::Account
   end
 
   def group_types_from_cache
-    @group_types_from_cache ||= begin
-      key = group_types_memcache_key
-      MemcacheKeys.fetch(key) {self.get_or_create_group_types}      
-    end
+    key = group_types_memcache_key
+    fetch_from_cache(key) { self.get_or_create_group_types }
   end
 
   def clear_group_types_cache
-    MemcacheKeys.delete_from_cache(ACCOUNT_GROUP_TYPES % { :account_id =>self.id })
+    delete_value_from_cache(format(ACCOUNT_GROUP_TYPES, account_id: self.id))
   end
 
   def agent_groups_from_cache
@@ -289,9 +294,11 @@ module Cache::Memcache::Account
   end
 
   def event_flexifields_with_ticket_fields_from_cache
-    key = ACCOUNT_EVENT_FIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      ticket_field_def.flexifield_def_entries.event_fields.find(:all, :include => :ticket_field)
+    @event_flexifields_with_ticket_fields_from_cache ||= begin
+      key = format(ACCOUNT_EVENT_FIELDS, account_id: id)
+      MemcacheKeys.fetch(key) do
+        ticket_field_def.flexifield_def_entries.event_fields.find(:all, include: :ticket_field)
+      end
     end
   end
 
@@ -305,10 +312,8 @@ module Cache::Memcache::Account
   end
 
   def ticket_fields_from_cache
-    key = ACCOUNT_TICKET_FIELDS % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      ticket_fields_with_nested_fields.all
-    end
+    key = format(ACCOUNT_TICKET_FIELDS, account_id: self.id)
+    fetch_from_cache(key) { ticket_fields_with_nested_fields.all }
   end
 
   def nested_ticket_fields_from_cache
@@ -387,9 +392,9 @@ module Cache::Memcache::Account
   end
 
   def agent_names_from_cache
-    key = ACCOUNT_AGENT_NAMES % { :account_id => self.id }
-    MemcacheKeys.fetch(key) do
-      users.find(:all, :conditions => { :helpdesk_agent => 1 }).map(&:name)
+    key = format(ACCOUNT_AGENT_NAMES, account_id: self.id)
+    fetch_from_cache(key) do
+      users.find(:all, conditions: { helpdesk_agent: 1 }).map(&:name)
     end
   end
 
@@ -628,16 +633,14 @@ module Cache::Memcache::Account
     end
   end
 
-   def agent_types_from_cache
-    @agent_types_from_cache ||= begin
-      key = agent_type_memcache_key(self.id) 
-      MemcacheKeys.fetch(key) { self.get_or_create_agent_types }
-    end
-  end
+  def agent_types_from_cache
+    key = agent_type_memcache_key(self.id)
+    fetch_from_cache(key) { self.get_or_create_agent_types }
+ end
 
   def clear_agent_types_cache
     key = agent_type_memcache_key(self.id)
-    MemcacheKeys.delete_from_cache(key)
+    delete_value_from_cache(key)
   end
 
   def clear_company_filters_cache
@@ -672,7 +675,11 @@ module Cache::Memcache::Account
     end
 
     def custom_date_fields_memcache_key
-      ACCOUNT_CUSTOM_DATE_FIELDS % { :account_id => self.id }
+      format(ACCOUNT_CUSTOM_DATE_FIELDS, account_id: self.id)
+    end
+
+    def custom_date_time_fields_memcache_key
+      format(ACCOUNT_CUSTOM_DATE_TIME_FIELDS, account_id: self.id)
     end
 
     def roles_cache_key

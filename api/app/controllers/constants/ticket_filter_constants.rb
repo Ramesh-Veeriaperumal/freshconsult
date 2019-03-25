@@ -6,7 +6,7 @@ module TicketFilterConstants
   FILTER = (Helpdesk::Filters::CustomTicketFilter::DEFAULT_FILTERS.keys |
       %w(watching on_hold raised_by_me shared_by_me shared_with_me)).freeze
 
-  INDEX_FIELDS = %w[filter ids company_id requester_id email order_by order_type updated_since include query_hash only article_id].freeze
+  INDEX_FIELDS = %w[filter ids company_id requester_id email order_by order_type updated_since include query_hash only article_id exclude].freeze
 
   RENAME_FILTER_NAMES = { 'watching' => 'monitored_by' }.freeze
 
@@ -21,11 +21,19 @@ module TicketFilterConstants
 
   WRAP_PARAMS = [:ticket_filter, exclude: [], format: [:json]].freeze
 
-  FSM_DATE_FIELD = 'cf_fsm_appointment_date'.freeze
+  FSM_APPOINTMENT_START_TIME = 'cf_fsm_appointment_start_time'.freeze
 
-  DATE_FILTER_DEFAULT_OPTIONS = ['today', 'tomorrow', 'yesterday', 'week', 'last_week', 'next_week'].freeze
+  FSM_APPOINTMENT_END_TIME = 'cf_fsm_appointment_end_time'.freeze
+
+  FSM_DATE_TIME_FIELDS = [FSM_APPOINTMENT_START_TIME, FSM_APPOINTMENT_END_TIME].freeze
+
+  DATE_TIME_FILTER_DEFAULT_OPTIONS = ['today', 'tomorrow', 'yesterday', 'week', 'last_week', 'next_week'].freeze
+
+  DATE_TIME_FILTER_DEFAULT_OPTIONS_HASH = Hash[DATE_TIME_FILTER_DEFAULT_OPTIONS.map { |option| [option.to_sym, option] }]
 
   DATE_FIELD_REGEX = /^[0-9]{4}\-[0-1][0-9]\-[0-3][0-9]$/i
 
   DATE_RANGE = 15
+
+  SORTABLE_CUSTOM_FIELDS = { 'appointment_start_time' => FSM_APPOINTMENT_START_TIME }.freeze
 end.freeze

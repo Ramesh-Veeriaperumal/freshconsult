@@ -231,4 +231,34 @@ module Social::Util
     twt[:twitter_extended_entities].present? && twt[:twitter_extended_entities]['media'].present?
   end
 
+  def post_command_to_central(command, client, *args)
+    payload_hash = command_payload(command, client, *args)
+    msg_id = generate_msg_id(payload_hash)
+    Rails.logger.info "Command from Helpkit, Command: #{command}, Msg_id: #{msg_id}"
+    Channel::CommandWorker.perform_async({ payload: payload_hash }, msg_id)
+  end
+
+  def command_payload(command_name, client, *args)
+    schema = default_command_schema(client, command_name)
+    schema.merge!(safe_send("#{command_name}_payload", *args))
+  end
+
+  def generate_msg_id(payload)
+    Digest::MD5.hexdigest(payload.to_s)
+  end
+
+  def monitor_app_permission_payload
+    { data: {}, context: {} }
+  end
+
+  def activate_handle_payload(handle)
+    {
+      data: {
+        source_account_id: Account.current.account_additional_settings.additional_settings[:clone][:account_id],
+        twitter_handle_id: handle.id,
+        twitter_user_id: handle.twitter_user_id
+      },
+      context: {}
+    }
+  end
 end

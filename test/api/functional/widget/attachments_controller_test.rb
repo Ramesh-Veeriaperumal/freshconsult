@@ -14,7 +14,8 @@ module Widget
     end
 
     def before_all
-      @request.env['HTTP_X_WIDGET_ID'] = create_widget.id
+      @widget = create_widget
+      @request.env['HTTP_X_WIDGET_ID'] = @widget.id
       @request.env['CONTENT_TYPE'] = 'multipart/form-data'
       @account.launch :help_widget
     end
@@ -32,6 +33,16 @@ module Widget
       latest_attachment = Helpdesk::Attachment.last
       match_json(id: latest_attachment.id)
       assert_equal latest_attachment.attachable_type, 'UserDraft'
+    end
+
+    def test_create_attachment_with_contact_form_disabled
+      @widget.settings[:components][:contact_form] = false
+      @widget.save
+      DataTypeValidator.any_instance.stubs(:valid_type?).returns(true)
+      post :create, construct_params({ version: 'widget' }, attachment_params_hash)
+      DataTypeValidator.any_instance.unstub(:valid_type?)
+      assert_response 400
+      match_json(request_error_pattern(:contact_form_not_enabled, 'contact_form_not_enabled'))
     end
 
     def test_attachment_invalid_size_create

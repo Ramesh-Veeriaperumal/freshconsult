@@ -5,6 +5,11 @@ class Channel::OmniChannelRouting::AgentsControllerTest < ActionController::Test
   include AgentHelper
   include GroupHelper
   include TicketHelper
+  include AgentsTestHelper
+
+  def wrap_cname(params)
+    { agent: params }
+  end
 
   def test_index
     3.times do
@@ -13,7 +18,7 @@ class Channel::OmniChannelRouting::AgentsControllerTest < ActionController::Test
     append_header
     get :index, controller_params(version: 'channel/ocr')
     pattern = []
-    Account.current.agents.order(:name).all.each do |agent|
+    Account.current.agents.each do |agent|
       pattern << agent_pattern_for_index_ocr(agent)
     end
     assert_response 200
@@ -77,5 +82,21 @@ class Channel::OmniChannelRouting::AgentsControllerTest < ActionController::Test
     assert_response 200
     ticket.destroy
     destroy_agent_group
+  end
+
+  def test_update_agent_availability
+    @account.add_feature(:omni_channel_routing)
+    @agent = add_agent_to_account(@account, active: 1, role: 4, available: false)
+    OmniChannelRouting::AgentSync.jobs.clear
+    append_header
+    params = { availability: true }
+    put :update, construct_params({ version: 'channel/ocr', id: @agent.user_id }, params)
+    assert_response 200
+    @agent.reload
+    match_json(agent_pattern_with_additional_details({available: params[:availability]}, @agent.user))
+    match_json(agent_pattern_with_additional_details({}, @agent.user))
+    assert_equal 0, OmniChannelRouting::AgentSync.jobs.size
+  ensure
+    @account.revoke_feature(:omni_channel_routing)
   end
 end

@@ -39,6 +39,18 @@ class AccountAdditionalSettings < ActiveRecord::Base
     !supported_languages_was.nil?
   end
 
+  def notes_order=(val)
+    additional_settings[:old_notes_first] = (val.to_s.to_bool rescue true)
+  end
+
+  def old_notes_first?
+    if additional_settings[:old_notes_first].to_s.blank?
+      true # default order, old notes appear first
+    else
+      additional_settings[:old_notes_first]
+    end
+  end
+
   def validate_bcc_emails
     (bcc_email || "").split(",").each do |email|
       errors.add(:base,"Invalid email: #{email}") unless email =~ AccountConstants::EMAIL_SCANNER
@@ -133,6 +145,23 @@ class AccountAdditionalSettings < ActiveRecord::Base
 
   def reset_ocr_account_id
     additional_settings.delete(:ocr_account_id)
+  end
+
+  def freshmarketer_settings_hash
+    app_url = freshmarketer_app_url.split('//').last
+    {
+      org_id: app_url.split('/org/').last.split('/').first.to_i,
+      project_id: app_url.split('/project/').last.split('/').first.to_i,
+      cdn_script: freshmarketer_cdn_script
+    }
+  end
+
+  def freshmarketer_name
+    freshmarketer_app_url.split('//').last.split('/').first
+  end
+
+  def widget_predictive_support_hash
+    additional_settings[:widget_predictive_support] || {}
   end
 
   private

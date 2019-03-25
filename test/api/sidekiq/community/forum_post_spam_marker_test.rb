@@ -9,7 +9,7 @@ require Rails.root.join('spec', 'support', 'forum_dynamo_helper.rb')
 
 class ForumPostSpamMarkerTest < ActionView::TestCase
   include AccountTestHelper
-  include ForumsTestHelper
+  include CoreForumsTestHelper
   include ForumDynamoHelper
 
   def setup

@@ -4321,6 +4321,7 @@ zh-TW:
   right: 右邊
   footer:
     helpdesk_software: 幫助台軟體
+    helpdesk_software_link: "https://cn.freshdesk.com/?utm_source=portal&utm_medium=reflink&utm_campaign=portal_reflink"
     by_freshdesk: 透過Freshdesk
     submit_feedback: 提交回饋
     footer_feedback_subject_placeholder: "告訴我們可以如何改善 Freshdesk"

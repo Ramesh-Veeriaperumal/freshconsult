@@ -3,8 +3,27 @@
 		<%= translate.get('dropdown_items_edit') %>
 	</h3>
 	<a href="#" id="nestedDoneEdit" class="button-link pull-right"><%= translate.get('preview') %></a>
-    <div class="alert m0 mb5 mr5">
-    <%= unescapeHtml(translate.get('nestedfield_helptext')) %>
+  <% if (!obj.isFresh && nested_field_revamp_enabled) { %>
+    <div name="custom-choices" class="custom-choices row-fluid" id="custom_choices">
+      <% _.each(obj.levelLabels, function(level, key){  %>
+        <% levelId = key + 1 %>
+        <div id="level<%= levelId %>-section" data-level-id=<%= levelId %> class="nested-section colsets section span4">
+          <fieldset class="nested-title">
+            <div class="title-text"> 
+              <%= translate.get('values_for') %> - <%= levelId %>
+            </div>
+          </fieldset>
+          <div class="nested-choices"> </div>
+          <%= JST['custom-form/template/nested_dropdown_choice']({item: {levelId: levelId} })%>
+        </div>
+      <% }) %>
     </div>
-  	<textarea id="nestedTextarea" rows="15" name="nestedTextarea" class="paragraph" rel="nestedfield"></textarea>
+  <% } else { %>
+    <div class="alert m0 mb5 mr5">
+      <%= unescapeHtml(translate.get('nestedfield_helptext')) %>
+    </div>
+    <textarea id="nestedTextarea" rows="15" name="nestedTextarea" class="paragraph" rel="nestedfield"></textarea>
+  <% } %>
 </div>
+
+

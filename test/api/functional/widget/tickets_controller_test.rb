@@ -131,12 +131,15 @@ module Widget
     end
 
     def test_create_without_default_fields_required
+      Account.any_instance.stubs(:unique_contact_identifier_enabled?).returns(false)
       settings = settings_hash(form_type: 2)
       toggle_required_attribute(Helpdesk::TicketField.where(required_in_portal: true, default: 1))
       @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
       post :create, construct_params({ version: 'widget' }, {})
       assert_response 400
       match_json([bad_request_error_pattern('requester_id', :fill_a_mandatory_field, field_names: 'requester_id, phone, email, twitter_id, facebook_id')])
+    ensure
+      Account.any_instance.unstub(:unique_contact_identifier_enabled?)
     end
 
     def test_create_with_all_default_fields_required_invalid
@@ -162,7 +165,7 @@ module Widget
                   bad_request_error_pattern('responder_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'String'),
                   bad_request_error_pattern('product_id', :datatype_mismatch, expected_data_type: 'Positive Integer', prepend_msg: :input_received, given_data_type: 'String'),
                   bad_request_error_pattern('priority', :not_included, list: '1,2,3,4'),
-                  bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7'),
+                  bad_request_error_pattern('status', :not_included, list: '2,3,4,5,6,7,8'),
                   bad_request_error_pattern('type', :not_included, list: 'Question,Incident,Problem,Feature Request,Refund')])
       assert_response 400
       toggle_required_attribute(default_non_required_fields)
@@ -243,6 +246,15 @@ module Widget
     ensure
       @account.features.restricted_helpdesk.destroy
       @account.rollback(:restricted_helpdesk)
+    end
+
+    def test_create_with_no_contact_form_and_predictive
+      settings = settings_hash(contact_form: false, predictive_support: false)
+      @request.env['HTTP_X_WIDGET_ID'] = create_widget(settings: settings).id
+      params = { email: Faker::Internet.email, description: Faker::Lorem.paragraph }
+      post :create, construct_params({ version: 'widget' }, params)
+      assert_response 400
+      match_json(request_error_pattern(:ticket_creation_not_allowed, 'ticket_creation_not_allowed'))
     end
   end
 end

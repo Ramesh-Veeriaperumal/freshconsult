@@ -42,7 +42,6 @@ class ActionController::TestCase
     Dalli::Client.any_instance.stubs(:delete).returns(true)
     Dalli::Client.any_instance.stubs(:set).returns(true)
 
-
     Rails.logger.debug "START #{@test_name}"
   end
 

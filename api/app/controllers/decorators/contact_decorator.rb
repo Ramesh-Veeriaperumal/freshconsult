@@ -82,7 +82,7 @@ class ContactDecorator < ApiDecorator
   def avatar_hash
     # Should be cached
     return nil unless avatar.present?
-    AttachmentDecorator.new(avatar).to_hash.merge(thumb_url: record.avatar.attachment_url_for_api(true, :thumb))
+    AttachmentDecorator.new(avatar).to_hash
   end
 
   def to_hash

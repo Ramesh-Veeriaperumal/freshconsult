@@ -14,7 +14,7 @@ module Freshcaller::CallsTestHelper
       id: call.id,
       fc_call_id: call.fc_call_id,
       recording_status: call.recording_status,
-      ticket_display_id: call.notable.notable.id,
+      ticket_display_id: call.notable.notable.display_id,
       note_id: call.notable.id
     }
   end
@@ -85,4 +85,79 @@ module Freshcaller::CallsTestHelper
   def get_call_id
     Random.rand(2..100000)
   end
+
+  private
+
+    def assert_create_unauthorized
+      post :create, construct_params(version: 'channel', fc_call_id: get_call_id)
+      assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
+    end
+
+    def assert_create
+      post :create, construct_params(version: 'channel', fc_call_id: get_call_id)
+      result = parse_response(@response.body)
+      match_json(create_pattern(::Freshcaller::Call.last))
+      assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+    end
+
+    def assert_update
+      call_id = get_call_id
+      create_call(fc_call_id: call_id)
+      put :update, construct_params(version: 'channel', id: call_id, recording_status: 1)
+      call = ::Freshcaller::Call.last
+      match_json(create_pattern(call))
+      assert_equal 1, call.recording_status
+      assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+    end
+
+    def assert_voice_mail_missed_call(status)
+      call_id = get_call_id
+      create_call(fc_call_id: call_id)
+      put :update, construct_params(convert_incoming_call_params(call_id, status))
+      result = parse_response(@response.body)
+      call = ::Freshcaller::Call.last
+      assert_missed_call(response, call) if status == 'no-answer'
+      assert_voicemail(response, call) if status == 'voicemail'
+      assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:created]
+    end
+
+    def assert_missed_call(_response, call)
+      match_json(ticket_only_pattern(call))
+      assert_equal call.notable.description.present?, true # for missed call, the call will be directly assocaited to ticket
+      assert_equal call.notable.description_html.present?, true
+    end
+
+    def assert_voicemail(_response, call)
+      match_json(ticket_with_note_pattern(call))
+      assert_equal call.notable.notable.description.present?, true # for voicemail, the call will be associated to note of a ticket
+      assert_equal call.notable.notable.description_html.present?, true
+    end
+
+    def assert_voicemail_missed_call_unauthorized(status)
+      call_id = get_call_id
+      create_call(fc_call_id: call_id)
+      put :update, construct_params(convert_incoming_call_params(call_id, status))
+      assert_response Rack::Utils::SYMBOL_TO_STATUS_CODE[:unauthorized]
+    end
+
+    def set_auth_header
+      request.env['HTTP_AUTHORIZATION'] = "token=#{sign_payload('account_id': '1', 'api_key': @agent.single_access_token)}"
+    end
+
+    def auth_header_with_agent_email
+      request.env['HTTP_AUTHORIZATION'] = "token=#{sign_payload('account_id': '1', 'api_key': @agent.single_access_token, 'agent_email': @agent.email)}"
+    end
+
+    def auth_header_with_contact_key
+      contact = @account.users.contacts.first
+      request.env['HTTP_AUTHORIZATION'] = "token=#{sign_payload('account_id': '1', 'api_key': contact.single_access_token)}"
+    end
+
+    def invalid_auth_header
+      request.env['HTTP_AUTHORIZATION'] = "token=#{sign_payload('account_id': '1', 'api_key': 'xxx')}"
+    end
+
+    def set_basic_auth_header
+      request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(@agent.single_access_token, 'X')
+    end
 end

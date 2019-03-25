@@ -5,7 +5,7 @@ require Rails.root.join('test', 'api', 'helpers', 'bot_test_helper.rb')
 require Rails.root.join('test', 'api', 'sidekiq', 'create_ticket_helper.rb')
 
 class BotCleanupTest < ActionView::TestCase
-  include BotTestHelper
+  include ApiBotTestHelper
   include CreateTicketHelper
 
   def setup

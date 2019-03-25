@@ -1,0 +1,14 @@
+# Variable setting is based on layer the instance is in. 
+# Based on this variable some middlewares are not loaded.
+
+# Public API could go to any layer
+# Private API cannot be served from the Public API layers
+# Layers that includes `support` and `mobihelp` in their layers will have SUPPORT_LAYER set to true
+
+API_LAYER: <%= @is_fc_app_layer || @is_fc_api_layer || @is_pipeline_layer %>
+SUPPORT_LAYER: <%= @is_support_layer %>
+PIPE_LAYER: <%= @is_pipeline_layer %>
+PRIVATE_API: <%= @is_fc_app_layer && !@is_fc_api_public_layer && !@is_fc_api_apigee_layer && !@is_fc_api_channel_layer %>
+FRESHID_LAYER: <%= @is_freshid_layer %>
+APIGEE_API_LAYER: <%= @is_fc_api_apigee_layer %>
+CHANNEL_LAYER: <%= @is_fc_api_channel_layer %>

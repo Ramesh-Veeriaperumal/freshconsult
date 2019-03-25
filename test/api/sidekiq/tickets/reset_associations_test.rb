@@ -19,6 +19,7 @@ class ResetAssociationsTest < ActionView::TestCase
     @account = Account.current
     @agent = get_admin
     @agent.make_current
+    Tickets::ResetAssociations.jobs.clear
   end
 
   def teardown
@@ -49,6 +50,7 @@ class ResetAssociationsTest < ActionView::TestCase
 
   def test_reset_associations_for_tracker_ticket
     enable_adv_ticketing([:link_tickets]) do
+      @agent = get_admin if @agent.nil?
       create_linked_tickets
       create_broadcast_note(@tracker_id)
       Tickets::ResetAssociations.new.perform(ticket_ids: [@tracker_id])
