@@ -119,10 +119,15 @@ class Reports::V2::Tickets::ReportsController < ApplicationController
   end
   ############## QnA and Insights Metric Start ########################
   def fetch_qna_metric
+    sanitize_qna_metric
     save_recent_question(params[:question])
     generate_data
     @data[:last_dump_time]  = @last_dump_time
     send_json_result
+  end
+
+  def sanitize_qna_metric
+    params[:question][:text] = h(params[:question][:text])
   end
 
   def fetch_insights_metric
