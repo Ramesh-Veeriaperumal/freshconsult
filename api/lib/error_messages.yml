@@ -132,6 +132,7 @@ api_error_messages:
   cant_add_primary_resource_to_others: "Cannot add %{resource} to %{attribute} since it is %{status}"
   invalid_company_id: "There is no record matching the id %{company_id}"
   facebook_user_blocked: "Facebook 230 exception"
+  twitter_write_access_blocked: "Cannot write, Twitter write permission has been revoked"
   ebay_reply_limit_exceeded: "Exceeded maximum message limit of 2000 letters"
   unable_to_perform: "Unable to perform"
   traffic_cop_alert: "Ticket has been updated with new conversations"
@@ -165,6 +166,7 @@ api_error_messages:
   unanswered_time_period_invalid: "End at should be greater than Start at"
   invalid_bot_state: "Cannot perform the action as bot state is invalid"
   not_mock_data: 'Cannot perform the action as bot already shows original analytics data'
+
 
   not_allowed_to_accept_gdpr: "Not able to accept Gdpr Terms"
   app_unavailable: "The %{feature} feature is not enabled. Please make sure to install %{app} app"

@@ -800,14 +800,13 @@ module Ember
       twitter_handle = get_twitter_handle
       ticket = create_twitter_ticket(twitter_handle: twitter_handle)
       post :tweet, construct_params({ version: 'private', id: ticket.display_id }, body: Faker::Lorem.sentence[0..130],
-                                                                                 tweet_type: 'dm',
-                                                                                 twitter_handle_id: twitter_handle.id)
+                                    tweet_type: 'dm',
+                                    twitter_handle_id: twitter_handle.id)
       assert_response 400
-      match_json([bad_request_error_pattern('twitter_app_state', 'is blocked')])
+      match_json(validation_error_pattern(bad_request_error_pattern('twitter', :twitter_write_access_blocked)))
     ensure
       remove_others_redis_key TWITTER_APP_BLOCKED
     end
-
     def test_twitter_reply_to_tweet_ticket
       Sidekiq::Testing.inline! do
         with_twitter_update_stubbed do
