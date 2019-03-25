@@ -1,4 +1,5 @@
 require File.expand_path('../spam_constants', __FILE__)
+require 'spam_watcher/spam_watcher_redis_methods'
 require "timeout"
 
 module SpamWatcherCallbacks
@@ -65,6 +66,8 @@ module SpamWatcherCallbacks
               account_id = self.account_id
               key = "#{key}"
               max_count = "#{threshold}".to_i
+              threshold_from_redis = SpamWatcherRedisMethods.spam_threshold account_id, user_id, key
+              max_count = threshold_from_redis.to_i unless threshold_from_redis.nil?
               final_key = key + ":" + account_id.to_s + ":" + user_id.to_s
               # this case is added for the sake of skipping imports
               return true if (((key == "sw_helpdesk_tickets") or (key == "sw_helpdesk_notes")) && ((Time.now.to_i - self.created_at.to_i) > 1.day))
