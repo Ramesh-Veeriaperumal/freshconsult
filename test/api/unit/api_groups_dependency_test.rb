@@ -9,7 +9,7 @@ class ApiGroupsDependencyTest < ActionView::TestCase
       :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_last_active_time, :reset_language,
       :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token, :set_selected_tab, :load_group,
       :set_capping_limit, :filter_params, :build_attributes, :set_user_role, :set_account_skills_present, :set_gon_data,
-      :unset_thread_variables, :ensure_proper_sts_header, :record_query_comment, :log_csrf, :remove_session_data, :log_csrf, :remove_session_data]
+      :unset_thread_variables, :ensure_proper_sts_header, :record_query_comment, :log_csrf, :remove_session_data]
     actual_filters = GroupsController._process_action_callbacks.map { |c| c.filter.to_s }.reject { |f| f.starts_with?('_') }.compact
     assert_equal expected_filters.map(&:to_s).sort, actual_filters.sort
   end

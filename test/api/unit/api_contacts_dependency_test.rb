@@ -8,7 +8,7 @@ class ApiContactsDependencyTest < ActionView::TestCase
                         :remove_rails_2_flash_before, :check_account_state, :check_agent_deleted_forever, :set_time_zone, :check_day_pass_usage, :force_utf8_params,
                         :persist_user_agent, :set_cache_buster, :remove_pjax_param, :set_pjax_url, :set_last_active_time, :reset_language,
                         :remove_rails_2_flash_after, :set_affiliate_cookie, :verify_authenticity_token, :build_item, :load_multiple_items,
-                        :add_to_history, :redirect_to_mobile_url, :clean_params, :check_demo_site, :set_selected_tab, :load_item,
+                        :redirect_to_mobile_url, :clean_params, :check_demo_site, :set_selected_tab, :load_item,
                         :can_change_password?, :load_password_policy, :check_agent_limit, :can_make_agent, :run_on_slave, :set_mobile,
                         :init_user_email, :load_companies, :check_parent, :fetch_contacts, :set_native_mobile, :set_required_fields,
                         :unset_thread_variables, :validate_state_param,
